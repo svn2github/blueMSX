@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-20 00:39:29 $
+** $Date: 2005-01-20 00:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,7 +116,7 @@ static void crtcRenderVideoBuffer(void) {
 
     switch (crtc.cursor.mode ) {
     case CURSOR_BLINK:
-        if (crtc.cursor.blinkcount = 0) {
+        if (crtc.cursor.blinkcount <= 0) {
             bDrawCusor = 1;
             crtc.cursor.blinkcount = crtc.cursor.blinkrate;
         }
@@ -203,18 +203,22 @@ static void crtcCursorUpdate(void)
     case 32:
         crtc.cursor.mode = CURSOR_DISABLED;
         crtc.cursor.blinkrate = 0;
+        crtc.cursor.blinkcount = 0;
         break;
     case 64:
         crtc.cursor.mode = CURSOR_BLINK;
         crtc.cursor.blinkrate = 16;    // Get Hz from emu
+        crtc.cursor.blinkcount = 16;
         break;
     case 96:
         crtc.cursor.mode = CURSOR_BLINK;
         crtc.cursor.blinkrate = 32;    // Get Hz from emu
+        crtc.cursor.blinkcount = 32;
         break;
     default:
         crtc.cursor.mode = CURSOR_NOBLINK;
         crtc.cursor.blinkrate = 0;
+        crtc.cursor.blinkcount = 0;
     }
     
     crtc.cursor.rasterStart = crtc.registers.reg[CRTC_R10] & 0x1f;
