@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-25 04:49:47 $
+** $Date: 2005-01-28 19:45:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,8 @@ static int     sysMemBuffering = 0;
 static char    MyDeviceName[128];
 static RECT    MyDeviceRect;
 static int     isFullscreen = 0;
+static int     fullscreenWidth = 0;
+static int     fullscreenHeight = 0;
 
 #ifndef DDBLTFAST_DONOTWAIT
 #define DDBLTFAST_DONOTWAIT 0x00000020
@@ -124,7 +126,7 @@ typedef struct {
     GUID*   lpGUID;
     GUID    GUID;
     BOOL    fFound;
-}   FindDeviceData;
+} FindDeviceData;
 
 BOOL CALLBACK FindDeviceCallback(GUID* lpGUID, LPSTR szName, LPSTR szDevice, LPVOID lParam) {
     FindDeviceData *p = (FindDeviceData*)lParam;
@@ -142,6 +144,59 @@ BOOL CALLBACK FindDeviceCallback(GUID* lpGUID, LPSTR szName, LPSTR szDevice, LPV
     }
     return TRUE;
 }
+
+typedef struct {
+    int width;
+    int height;
+    int bitCount;
+} DxDisplayMode;
+
+#define MAX_DISPLAY_MODES 128
+
+DxDisplayMode displayModes[MAX_DISPLAY_MODES];
+static int displayModeCount = 0;
+
+static HRESULT WINAPI EnumDisplayModes(LPDDSURFACEDESC desc, LPVOID context) {
+    int width     = desc->dwWidth;
+    int height    = desc->dwHeight;
+    int bitCount  = desc->ddpfPixelFormat.dwRGBBitCount;
+
+    if (width < 640 || height < 480 || (bitCount != 16 && bitCount != 32)) {
+        return DDENUMRET_OK;
+    }
+
+    if (displayModeCount < MAX_DISPLAY_MODES) {
+        displayModes[displayModeCount].width    = width;
+        displayModes[displayModeCount].height   = height;
+        displayModes[displayModeCount].bitCount = bitCount;
+
+        displayModeCount++;
+    }
+
+    return DDENUMRET_OK;
+}
+
+int DirectDrawGetDisplayModeCount() {
+    return displayModeCount;
+}
+
+DxDisplayMode* DirectDrawGetDisplayMode(int index) {
+    if (index >= displayModeCount) {
+        return NULL;
+    }
+    return displayModes + index;
+}
+
+void DirectDrawInitDisplayModes() {
+    LPDIRECTDRAW ddraw;
+    displayModeCount = 0;
+    DirectDrawCreate(NULL, &ddraw, NULL);
+    if (ddraw != NULL) {
+        IDirectDraw_EnumDisplayModes(ddraw, 0, NULL, NULL, EnumDisplayModes);
+        IDirectDraw_Release(ddraw);
+    }
+}
+
 
 IDirectDraw * DirectDrawCreateFromDevice(LPSTR szDevice) {
     IDirectDraw*    pdd = NULL;
@@ -206,6 +261,7 @@ void DirectXExitFullscreenMode()
         lpDDSDraw = NULL;
     }
     if( lpDD != NULL ) {
+        IDirectDraw_SetCooperativeLevel(lpDD, NULL, DDSCL_NORMAL);
         IDirectDraw_Release(lpDD);
         lpDD = NULL;
     }
@@ -217,6 +273,8 @@ void DirectXExitFullscreenMode()
     }
 
     isFullscreen = 0;
+
+    DirectXSetGDISurface();
 }
 
 
@@ -225,6 +283,12 @@ int DirectXEnterFullscreenMode(HWND hwnd, int width, int height, int depth, int 
     DDSURFACEDESC   ddsd;
     DDSCAPS     ddscaps;
     HRESULT     ddrval;
+
+//    width  = 1600;
+//    height = 1200;
+
+    fullscreenWidth  = width;
+    fullscreenHeight = height;
 
     DirectXExitFullscreenMode();
 
@@ -433,7 +497,7 @@ void DirectXUpdateSurface(Video* pVideo,
     POINT pt = {0, 0};
     int width  = zoom * 320;
     int height = zoom * 240;
-    RECT destRect = {0, 0, width, height};
+    RECT destRect = {0, 0, isFullscreen?fullscreenWidth:width, isFullscreen?fullscreenHeight:height};
     RECT rcRect = {0, 0, width, height};
     void* surfaceBuffer;
 

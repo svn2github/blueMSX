@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-25 04:49:46 $
+** $Date: 2005-01-28 19:45:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,15 +156,18 @@ static void initRGBTable(Video* pVideo)
 **
 ******************************************************************************
 */
-static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    static UInt32 rndVal = 51;
     UInt16* pDst1       = (UInt16*)pDestination;
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt16);
 
@@ -193,7 +196,7 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
                 colNext1 = pSrc[w++];
                 colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb1  = pRgbTable16[colTmp];
+                colRgb1  = rgbTable[colTmp];
 
                 colPrev1  = colCur;
                 colCur    = colNext1;
@@ -201,7 +204,7 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
                 colNext1 = pSrc[w++];
                 colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable16[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev1 = colCur;
                 colCur   = colNext1;
@@ -229,8 +232,8 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
 
                 colNext = pSrc[w];
                 colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                colRgb2 = pRgbTable16[((colTmp + colNext) >> 1) & YCBCR_MASK];
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[((colTmp + colNext) >> 1) & YCBCR_MASK];
 
                 noise = (UInt16)(rnd >> 31) * 0x0821;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -251,15 +254,18 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
     }
 }
 
-static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    static UInt32 rndVal = 51;
     UInt32* pDst1       = (UInt32*)pDestination;
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt32);
 
@@ -288,7 +294,7 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
                 colNext1 = pSrc[w++];
                 colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb1  = pRgbTable32[colTmp];
+                colRgb1  = rgbTable[colTmp];
 
                 colPrev1  = colCur;
                 colCur    = colNext1;
@@ -296,7 +302,7 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
                 colNext1 = pSrc[w++];
                 colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable32[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev1 = colCur;
                 colCur   = colNext1;
@@ -324,8 +330,8 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
 
                 colNext = pSrc[w];
                 colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                colRgb2 = pRgbTable32[((colTmp + colNext) >> 1) & YCBCR_MASK];
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[((colTmp + colNext) >> 1) & YCBCR_MASK];
 
                 noise = (rnd >> 29) * 0x10101;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -346,15 +352,189 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
     }
 }
 
-static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copySharpPAL_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    static UInt32 rndVal = 51;
+    UInt16* pDst1       = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = rgbTable[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (UInt16)((rnd >> 31) * 0x821);
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[((colTmp + colNext) >> 1) & YCBCR_MASK];
+
+                noise = (UInt16)((rnd >> 31) * 0x821);
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
+        }
+
+        pDst1 += dstPitch;
+    }
+}
+
+
+static void copySharpPAL_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
+    UInt32* pDst1       = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = rgbTable[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[((colTmp + colNext) >> 1) & YCBCR_MASK];
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
+        }
+
+        pDst1 += dstPitch;
+    }
+}
+
+static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
     UInt16* pDst1       = (UInt16*)pDestination;
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt16);
 
@@ -383,7 +563,7 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
                 colNext1 = pSrc[w++];
                 colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
                 colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb1  = pRgbTable16[colTmp];
+                colRgb1  = rgbTable[colTmp];
 
                 colPrev1  = colCur;
                 colCur    = colNext1;
@@ -391,7 +571,7 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
                 colNext1 = pSrc[w++];
                 colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable16[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev1 = colCur;
                 colCur   = colNext1;
@@ -421,8 +601,8 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
 
                 colNext = pSrc[w];
                 colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                colRgb2 = pRgbTable16[colNext];
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[colNext];
 
                 noise = (UInt16)(rnd >> 31) * 0x0821;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -445,15 +625,18 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
     }
 }
 
-static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    static UInt32 rndVal = 51;
     UInt32* pDst1       = (UInt32*)pDestination;
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt32);
 
@@ -482,7 +665,7 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
                 colNext1 = pSrc[w++];
                 colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
                 colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb1  = pRgbTable32[colTmp];
+                colRgb1  = rgbTable[colTmp];
 
                 colPrev1  = colCur;
                 colCur    = colNext1;
@@ -490,7 +673,7 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
                 colNext1 = pSrc[w++];
                 colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable32[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev1 = colCur;
                 colCur   = colNext1;
@@ -520,8 +703,8 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
 
                 colNext = pSrc[w];
                 colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                colRgb2 = pRgbTable32[colNext];
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[colNext];
 
                 noise = (rnd >> 30) * 0x10101;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -544,17 +727,189 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
     }
 }
 
-
-
-static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copyMonitorPAL_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    static UInt32 rndVal = 51;
+    UInt16* pDst1       = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = rgbTable[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[colNext];
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+                rnd *= 23;
+                colCur = colNext;
+            }
+        }
+
+        pDst1 += dstPitch;
+    }
+}
+
+static void copyMonitorPAL_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
+    UInt32* pDst1       = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = rgbTable[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (rnd >> 30) * 0x10101;
+
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = rgbTable[colNext];
+
+                noise = (rnd >> 30) * 0x10101;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+                rnd *= 23;
+                colCur = colNext;
+            }
+        }
+
+        pDst1 += dstPitch;
+    }
+}
+
+
+
+static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
     UInt16* pDst1       = (UInt16*)pDestination;
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt16);
 
@@ -592,7 +947,7 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable16[colTmp];
+                colRgb1 = rgbTable[colTmp];
 
                 colPrev2 = colPrev1;
                 colPrev1 = colCur;
@@ -607,7 +962,7 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable16[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev2 = colPrev1;
                 colPrev1 = colCur;
@@ -643,12 +998,12 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable16[colTmp];
+                colRgb1 = rgbTable[colTmp];
 
                 colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable16[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 noise = (UInt16)(rnd >> 31) * 0x0821;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -669,15 +1024,18 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
     }
 }
 
-static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    static UInt32 rndVal = 51;
     UInt32* pDst1       = (UInt32*)pDestination;
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt32);
 
@@ -715,7 +1073,7 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable32[colTmp];
+                colRgb1 = rgbTable[colTmp];
 
                 colPrev2 = colPrev1;
                 colPrev1 = colCur;
@@ -730,7 +1088,7 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable32[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 colPrev2 = colPrev1;
                 colPrev1 = colCur;
@@ -766,12 +1124,12 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                colRgb1 = pRgbTable32[colTmp];
+                colRgb1 = rgbTable[colTmp];
 
                 colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                colRgb2 = pRgbTable32[colTmp];
+                colRgb2 = rgbTable[colTmp];
 
                 noise = (rnd >> 29) * 0x10101;
                 pDst2[dstIndex] = colRgb1 + noise;
@@ -792,13 +1150,244 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
     }
 }
 
-static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copyPAL_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    static UInt32 rndVal = 51;
+    UInt16* pDst1       = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev2 = colCur;
+        UInt32 colPrev1 = colCur;
+        UInt32 colNext1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext2;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt16 noise;
+
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+
+                noise = (UInt16)((rnd >> 31) * 0x821);
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+
+                colLgt = colCur;
+
+                colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[colTmp];
+
+                colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                noise = (UInt16)((rnd >> 31) * 0x821);
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+
+                rnd *= 23;
+                colPrev1 = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst1 += dstPitch;
+    }
+}
+
+static void copyPAL_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
+    UInt32* pDst1       = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev2 = colCur;
+        UInt32 colPrev1 = colCur;
+        UInt32 colNext1 = colCur;
+        int dstIndex = 0;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext2;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt32 noise;
+
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int width = srcWidth;
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+
+                colLgt = colCur;
+
+                colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = rgbTable[colTmp];
+
+                colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = rgbTable[colTmp];
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst1[dstIndex++] = colRgb1 + noise;
+                pDst1[dstIndex++] = colRgb2 + noise;
+
+
+                rnd *= 23;
+                colPrev1 = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst1 += dstPitch;
+    }
+}
+
+static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
     UInt16* pDst        = (UInt16*)pDestination;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
     
     dstPitch /= (int)sizeof(UInt16);
 
@@ -817,7 +1406,7 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
+                pDst[w] = rgbTable[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
 
                 rnd *= 23;
                 colPrev = colCur;
@@ -833,7 +1422,7 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
+                pDst[w] = rgbTable[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
 
                 rnd *= 23;
                 colPrev = colCur;
@@ -845,13 +1434,16 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 }
 
 
-static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    static UInt32 rndVal = 51;
     UInt32* pDst        = (UInt32*)pDestination;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
     int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
 
     dstPitch /= (int)sizeof(UInt32);
 
@@ -870,7 +1462,7 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
+                pDst[w] = rgbTable[colTmp] + (rnd >> 31)  * 0x10101;
 
                 rnd *= 23;
                 colPrev = colCur;
@@ -886,7 +1478,120 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
                 colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
                 colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
+                pDst[w] = rgbTable[colTmp] + (rnd >> 31)  * 0x10101;
+
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst += dstPitch;
+    }
+}
+
+static void copyPAL_1x05_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
+    UInt16* pDst        = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    for (h = 0; h < height; h += 2) {
+        UInt32* pSrc1 = frame->line[h + 0].buffer;
+        UInt32* pSrc2 = frame->line[h + 1].buffer;
+        UInt32 colCur = pSrc1[0];
+        UInt32 colPrev = colCur;
+        int w;
+
+        if (frame->line[h].doubleWidth) {
+            for (w = 0; w < srcWidth; w++) {
+                UInt32 colNext1 = ((pSrc1[2 * w] + pSrc1[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colNext2 = ((pSrc2[2 * w] + pSrc2[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colNext  = ((colNext1 + colNext2) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
+
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+
+                pDst[w] = rgbTable[colTmp] + (UInt16)(rnd >> 31) * 0x0821;
+
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
+            }
+        }
+        else {
+            for (w = 0; w < srcWidth; w++) {
+                UInt32 colNext = ((pSrc1[w] + pSrc2[w]) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
+
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+
+                pDst[w] = rgbTable[colTmp] + (UInt16)(rnd >> 31) * 0x0821;
+
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst += dstPitch;
+    }
+}
+
+
+static void copyPAL_1x05_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable, UInt32 rnd)
+{
+    static UInt32 rndVal = 51;
+    UInt32* pDst        = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    rndVal *= 13;
+    rnd    *= rndVal;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    for (h = 0; h < height; h += 2) {
+        UInt32* pSrc1 = frame->line[h + 0].buffer;
+        UInt32* pSrc2 = frame->line[h + 1].buffer;
+        UInt32 colCur = pSrc1[0];
+        UInt32 colPrev = colCur;
+        int w;
+
+        if (frame->line[h].doubleWidth) {
+            for (w = 0; w < srcWidth; w++) {
+                UInt32 colNext1 = ((pSrc1[2 * w] + pSrc1[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colNext2 = ((pSrc2[2 * w] + pSrc2[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colNext  = ((colNext1 + colNext2) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
+
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+
+                pDst[w] = rgbTable[colTmp] + (rnd >> 31)  * 0x10101;
+
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
+            }
+        }
+        else {
+            for (w = 0; w < srcWidth; w++) {
+                UInt32 colNext = ((pSrc1[w] + pSrc2[w]) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
+
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+
+                pDst[w] = rgbTable[colTmp] + (rnd >> 31)  * 0x10101;
 
                 rnd *= 23;
                 colPrev = colCur;
@@ -904,9 +1609,8 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
 **
 ******************************************************************************
 */
-static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)pDestination;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
@@ -921,10 +1625,10 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         if (frame->line[h].doubleWidth) {
             int width = srcWidth / 4 * 2;
             while (width--) {
-                pDst[0] = pRgbTable16[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
-                pDst[1] = pRgbTable16[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
-                pDst[2] = pRgbTable16[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
-                pDst[3] = pRgbTable16[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
+                pDst[0] = rgbTable[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
+                pDst[1] = rgbTable[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
+                pDst[2] = rgbTable[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
+                pDst[3] = rgbTable[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
                 pSrc += 8;
                 pDst += 4;
             }
@@ -932,10 +1636,10 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         else {
             int width = srcWidth / 4;
             while (width--) {
-                pDst[0] = pRgbTable16[pSrc[0]];
-                pDst[1] = pRgbTable16[pSrc[1]];
-                pDst[2] = pRgbTable16[pSrc[2]];
-                pDst[3] = pRgbTable16[pSrc[3]];
+                pDst[0] = rgbTable[pSrc[0]];
+                pDst[1] = rgbTable[pSrc[1]];
+                pDst[2] = rgbTable[pSrc[2]];
+                pDst[3] = rgbTable[pSrc[3]];
                 pSrc += 4;
                 pDst += 4;
             }
@@ -945,9 +1649,8 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 }
 
 
-static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst        = (UInt32*)pDestination;
     int height          = frame->lines;
     int srcWidth        = frame->maxWidth;
@@ -962,10 +1665,10 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         if (frame->line[h].doubleWidth) {
             int width = srcWidth / 4 * 2;
             while (width--) {
-                pDst[0] = pRgbTable32[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
-                pDst[1] = pRgbTable32[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
-                pDst[2] = pRgbTable32[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
-                pDst[3] = pRgbTable32[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
+                pDst[0] = rgbTable[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
+                pDst[1] = rgbTable[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
+                pDst[2] = rgbTable[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
+                pDst[3] = rgbTable[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
                 pSrc += 8;
                 pDst += 4;
             }
@@ -973,10 +1676,10 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         else {
             int width = srcWidth / 4;
             while (width--) {
-                pDst[0] = pRgbTable32[pSrc[0]];
-                pDst[1] = pRgbTable32[pSrc[1]];
-                pDst[2] = pRgbTable32[pSrc[2]];
-                pDst[3] = pRgbTable32[pSrc[3]];
+                pDst[0] = rgbTable[pSrc[0]];
+                pDst[1] = rgbTable[pSrc[1]];
+                pDst[2] = rgbTable[pSrc[2]];
+                pDst[3] = rgbTable[pSrc[3]];
                 pSrc += 4;
                 pDst += 4;
             }
@@ -985,10 +1688,80 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     }
 }
 
-
-static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copy_1x05_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    UInt16* pDst        = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    for (h = 0; h < height; h += 2) {
+        UInt16* pOldDst = pDst;
+        UInt32* pSrc1 = frame->line[h + 0].buffer;
+        UInt32* pSrc2 = frame->line[h + 1].buffer;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth;
+            while (width--) {
+                UInt32 col0 = ((pSrc1[0] + pSrc1[1]) >> 1) & YCBCR_MASK;
+                UInt32 col1 = ((pSrc2[0] + pSrc2[1]) >> 1) & YCBCR_MASK;
+                
+                *pDst++ = rgbTable[((col0 + col1) >> 1) & YCBCR_MASK];
+                pSrc1 += 2;
+                pSrc2 += 2;
+            }
+        }
+        else {
+            int width = srcWidth;
+            while (width--) {
+                *pDst++ = rgbTable[((*pSrc1++ + *pSrc2++) >> 1) & YCBCR_MASK];
+            }
+        }
+        pDst = pOldDst + dstPitch; 
+    }
+}
+
+
+static void copy_1x05_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
+{
+    UInt32* pDst        = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    for (h = 0; h < height; h += 2) {
+        UInt32* pOldDst = pDst;
+        UInt32* pSrc1 = frame->line[h + 0].buffer;
+        UInt32* pSrc2 = frame->line[h + 1].buffer;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth;
+            while (width--) {
+                UInt32 col0 = ((pSrc1[0] + pSrc1[1]) >> 1) & YCBCR_MASK;
+                UInt32 col1 = ((pSrc2[0] + pSrc2[1]) >> 1) & YCBCR_MASK;
+                
+                *pDst++ = rgbTable[((col0 + col1) >> 1) & YCBCR_MASK];
+                pSrc1 += 2;
+                pSrc2 += 2;
+            }
+        }
+        else {
+            int width = srcWidth;
+            while (width--) {
+                *pDst++ = rgbTable[((*pSrc1++ + *pSrc2++) >> 1) & YCBCR_MASK];
+            }
+        }
+        pDst = pOldDst + dstPitch; 
+    }
+}
+
+
+static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
+{
     UInt16* pDst1       = (UInt16*)pDestination;
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     int height          = frame->lines;
@@ -1011,10 +1784,10 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         if (frame->line[h].doubleWidth) {
             int width = srcWidth / 4 * 2;
             while (width--) {
-                UInt16 col1 = pRgbTable16[pSrc[0]];
-                UInt16 col2 = pRgbTable16[pSrc[1]];
-                UInt16 col3 = pRgbTable16[pSrc[2]];
-                UInt16 col4 = pRgbTable16[pSrc[3]];
+                UInt16 col1 = rgbTable[pSrc[0]];
+                UInt16 col2 = rgbTable[pSrc[1]];
+                UInt16 col3 = rgbTable[pSrc[2]];
+                UInt16 col4 = rgbTable[pSrc[3]];
                 pSrc  += 4;
 
                 pDst1[0] = col1;
@@ -1033,10 +1806,10 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         else {
             int width = srcWidth / 4;
             while (width--) {
-                UInt16 col1 = pRgbTable16[pSrc[0]];
-                UInt16 col2 = pRgbTable16[pSrc[1]];
-                UInt16 col3 = pRgbTable16[pSrc[2]];
-                UInt16 col4 = pRgbTable16[pSrc[3]];
+                UInt16 col1 = rgbTable[pSrc[0]];
+                UInt16 col2 = rgbTable[pSrc[1]];
+                UInt16 col3 = rgbTable[pSrc[2]];
+                UInt16 col4 = rgbTable[pSrc[3]];
                 pSrc  += 4;
 
                 pDst1[0] = col1;
@@ -1066,9 +1839,8 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     }
 }
 
-static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
 {
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst1       = (UInt32*)pDestination;
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     int height          = frame->lines;
@@ -1091,10 +1863,10 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         if (frame->line[h].doubleWidth) {
             int width = srcWidth / 4 * 2;
             while (width--) {
-                UInt32 col1 = pRgbTable32[pSrc[0]];
-                UInt32 col2 = pRgbTable32[pSrc[1]];
-                UInt32 col3 = pRgbTable32[pSrc[2]];
-                UInt32 col4 = pRgbTable32[pSrc[3]];
+                UInt32 col1 = rgbTable[pSrc[0]];
+                UInt32 col2 = rgbTable[pSrc[1]];
+                UInt32 col3 = rgbTable[pSrc[2]];
+                UInt32 col4 = rgbTable[pSrc[3]];
                 pSrc  += 4;
 
                 pDst1[0] = col1;
@@ -1113,10 +1885,10 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         else {
             int width = srcWidth / 4;
             while (width--) {
-                UInt32 col1 = pRgbTable32[pSrc[0]];
-                UInt32 col2 = pRgbTable32[pSrc[1]];
-                UInt32 col3 = pRgbTable32[pSrc[2]];
-                UInt32 col4 = pRgbTable32[pSrc[3]];
+                UInt32 col1 = rgbTable[pSrc[0]];
+                UInt32 col2 = rgbTable[pSrc[1]];
+                UInt32 col3 = rgbTable[pSrc[2]];
+                UInt32 col4 = rgbTable[pSrc[3]];
                 pSrc  += 4;
 
                 pDst1[0] = col1;
@@ -1146,11 +1918,119 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     }
 }
 
+static void copy_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
+{
+    UInt16* pDst1       = (UInt16*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
 
-static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+    dstPitch /= (int)sizeof(UInt16);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt16* pDst1old = pDst1;
+        UInt32* pSrc = frame->line[h].buffer;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
+            while (width--) {
+                pDst1[0] = rgbTable[pSrc[0]];
+                pDst1[1] = rgbTable[pSrc[1]];
+                pDst1[2] = rgbTable[pSrc[2]];
+                pDst1[3] = rgbTable[pSrc[3]];
+                pDst1 += 4;
+                pSrc  += 4;
+            }
+        }
+        else {
+            int width = srcWidth / 4;
+            while (width--) {
+                UInt16 col1 = rgbTable[pSrc[0]];
+                UInt16 col2 = rgbTable[pSrc[1]];
+                UInt16 col3 = rgbTable[pSrc[2]];
+                UInt16 col4 = rgbTable[pSrc[3]];
+                pSrc  += 4;
+
+                pDst1[0] = col1;
+                pDst1[1] = col1;
+                pDst1[2] = col2;
+                pDst1[3] = col2;
+                pDst1[4] = col3;
+                pDst1[5] = col3;
+                pDst1[6] = col4;
+                pDst1[7] = col4;
+                pDst1 += 8;
+            }
+        }
+
+        pDst1 = pDst1old + dstPitch;
+    }
+}
+
+static void copy_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
+{
+    UInt32* pDst1       = (UInt32*)pDestination;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pDst1old = pDst1;
+        UInt32* pSrc = frame->line[h].buffer;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
+            while (width--) {
+                pDst1[0] = rgbTable[pSrc[0]];
+                pDst1[1] = rgbTable[pSrc[1]];
+                pDst1[2] = rgbTable[pSrc[2]];
+                pDst1[3] = rgbTable[pSrc[3]];
+                pDst1 += 4;
+                pSrc  += 4;
+            }
+        }
+        else {
+            int width = srcWidth / 4;
+            while (width--) {
+                UInt32 col1 = rgbTable[pSrc[0]];
+                UInt32 col2 = rgbTable[pSrc[1]];
+                UInt32 col3 = rgbTable[pSrc[2]];
+                UInt32 col4 = rgbTable[pSrc[3]];
+                pSrc  += 4;
+
+                pDst1[0] = col1;
+                pDst1[1] = col1;
+                pDst1[2] = col2;
+                pDst1[3] = col2;
+                pDst1[4] = col3;
+                pDst1[5] = col3;
+                pDst1[6] = col4;
+                pDst1[7] = col4;
+                pDst1 += 8;
+            }
+        }
+
+        pDst1 = pDst1old + dstPitch;
+    }
+}
+
+
+
+static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
 {
 	UInt16  ImgSrc[320 * 240];
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)ImgSrc;
     int srcHeight       = frame->lines;
     int srcWidth        = frame->maxWidth;
@@ -1164,14 +2044,14 @@ static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         UInt32* pSrc = frame->line[h].buffer;
         int width = srcWidth / 8;
         while (width--) {
-            pDst[0] = pRgbTable16[pSrc[0]];
-            pDst[1] = pRgbTable16[pSrc[1]];
-            pDst[2] = pRgbTable16[pSrc[2]];
-            pDst[3] = pRgbTable16[pSrc[3]];
-            pDst[4] = pRgbTable16[pSrc[4]];
-            pDst[5] = pRgbTable16[pSrc[5]];
-            pDst[6] = pRgbTable16[pSrc[6]];
-            pDst[7] = pRgbTable16[pSrc[7]];
+            pDst[0] = rgbTable[pSrc[0]];
+            pDst[1] = rgbTable[pSrc[1]];
+            pDst[2] = rgbTable[pSrc[2]];
+            pDst[3] = rgbTable[pSrc[3]];
+            pDst[4] = rgbTable[pSrc[4]];
+            pDst[5] = rgbTable[pSrc[5]];
+            pDst[6] = rgbTable[pSrc[6]];
+            pDst[7] = rgbTable[pSrc[7]];
             pSrc += 8;
             pDst += 8;
         }
@@ -1180,10 +2060,9 @@ static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     hq2x_32(ImgSrc, pDestination, srcWidth, srcHeight, dstPitch);
 }
 
-static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
 {
 	UInt32  ImgSrc[320 * 240];
-	UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst        = (UInt32*)ImgSrc;
     int srcHeight       = frame->lines;
     int srcWidth        = frame->maxWidth;
@@ -1197,14 +2076,14 @@ static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
         UInt32* pSrc = frame->line[h].buffer;
         int width = srcWidth / 8;
         while (width--) {
-            pDst[0] = pRgbTable32[pSrc[0]];
-            pDst[1] = pRgbTable32[pSrc[1]];
-            pDst[2] = pRgbTable32[pSrc[2]];
-            pDst[3] = pRgbTable32[pSrc[3]];
-            pDst[4] = pRgbTable32[pSrc[4]];
-            pDst[5] = pRgbTable32[pSrc[5]];
-            pDst[6] = pRgbTable32[pSrc[6]];
-            pDst[7] = pRgbTable32[pSrc[7]];
+            pDst[0] = rgbTable[pSrc[0]];
+            pDst[1] = rgbTable[pSrc[1]];
+            pDst[2] = rgbTable[pSrc[2]];
+            pDst[3] = rgbTable[pSrc[3]];
+            pDst[4] = rgbTable[pSrc[4]];
+            pDst[5] = rgbTable[pSrc[5]];
+            pDst[6] = rgbTable[pSrc[6]];
+            pDst[7] = rgbTable[pSrc[7]];
             pSrc += 8;
             pDst += 8;
         }
@@ -1213,10 +2092,9 @@ static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
     scale(2, pDestination, dstPitch, ImgSrc, srcWidth * sizeof(UInt32), sizeof(UInt32), srcWidth, srcHeight);
 }
 
-static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
 {
 	UInt16  ImgSrc[320 * 240];
-	UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)ImgSrc;
     int srcHeight       = frame->lines;
     int srcWidth        = frame->maxWidth;
@@ -1230,14 +2108,14 @@ static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
         UInt32* pSrc = frame->line[h].buffer;
         int width = srcWidth / 8;
         while (width--) {
-            pDst[0] = pRgbTable16[pSrc[0]];
-            pDst[1] = pRgbTable16[pSrc[1]];
-            pDst[2] = pRgbTable16[pSrc[2]];
-            pDst[3] = pRgbTable16[pSrc[3]];
-            pDst[4] = pRgbTable16[pSrc[4]];
-            pDst[5] = pRgbTable16[pSrc[5]];
-            pDst[6] = pRgbTable16[pSrc[6]];
-            pDst[7] = pRgbTable16[pSrc[7]];
+            pDst[0] = rgbTable[pSrc[0]];
+            pDst[1] = rgbTable[pSrc[1]];
+            pDst[2] = rgbTable[pSrc[2]];
+            pDst[3] = rgbTable[pSrc[3]];
+            pDst[4] = rgbTable[pSrc[4]];
+            pDst[5] = rgbTable[pSrc[5]];
+            pDst[6] = rgbTable[pSrc[6]];
+            pDst[7] = rgbTable[pSrc[7]];
             pSrc += 8;
             pDst += 8;
         }
@@ -1558,59 +2436,191 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
     }
 }
 
-void videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch)
+static void videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch)
 {
-    static UInt32 rnd = 51;
-    if (frame == NULL) {
-        return;
-    }
-
-    // Update simple rand generator
-    rnd *= 13;
-
     switch (bitDepth) {
     case 16:
         switch (pVideo->palMode) {
         case VIDEO_PAL_FAST:
-            if (zoom == 2) copy_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
-            else           copy_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            if (zoom == 2) copy_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
+            else           copy_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_MONITOR:
-            if (zoom == 2) copyMonitorPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
-            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            if (zoom == 2) copyMonitorPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
             break;
         case VIDEO_PAL_SHARP:
-            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
-            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
             break;
         case VIDEO_PAL_SHARP_NOISE:
-            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
-            else           copyPAL_1x1_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
+            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
             break;
         case VIDEO_PAL_BLUR:
-            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
-            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
             break;
         case VIDEO_PAL_BLUR_NOISE:
-            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
-            else           copyPAL_1x1_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
+            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
             break;
 		case VIDEO_PAL_HQ2X: // Can't do 16bit hq2x so just use scale2x instead
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
                 if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
-                    scale2x_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+                    scale2x_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
                 }
                 else {
-                    copy_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+                    copy_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
                 }
             }
             else {
-                copy_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+                copy_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
             }
             break;
         }
+        break;
+    case 32:
+        switch (pVideo->palMode) {
+        case VIDEO_PAL_FAST:
+            if (zoom == 2) copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            else           copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            break;
+        case VIDEO_PAL_MONITOR:
+            if (zoom == 2) copyMonitorPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            break;
+        case VIDEO_PAL_SHARP:
+            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            else           copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            break;
+        case VIDEO_PAL_SHARP_NOISE:
+            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            break;
+        case VIDEO_PAL_BLUR:
+            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            break;
+        case VIDEO_PAL_BLUR_NOISE:
+            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            break;
+		case VIDEO_PAL_SCALE2X:
+            if (zoom==2) {
+                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
+                    scale2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+                }
+                else {
+                    copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+                }
+            }
+            else {
+                copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            }
+            break;
+		case VIDEO_PAL_HQ2X:
+            if (zoom==2) {
+                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
+                    hq2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable16);
+                }
+                else {
+                    copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+                }
+            }
+            else {
+                copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            }
+            break;
+        }
+        break;
+    }
+}
 
+static void videoRender480(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch)
+{
+    switch (bitDepth) {
+    case 16:
+        switch (pVideo->palMode) {
+        default:
+        case VIDEO_PAL_FAST:
+		case VIDEO_PAL_SCALE2X:
+		case VIDEO_PAL_HQ2X:
+            if (zoom == 2) copy_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
+            else           copy_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
+            break;
+        case VIDEO_PAL_MONITOR:
+            if (zoom == 2) copyMonitorPAL_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            break;
+        case VIDEO_PAL_SHARP:
+            if (zoom == 2) copySharpPAL_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            else           copy_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
+            break;
+        case VIDEO_PAL_SHARP_NOISE:
+            if (zoom == 2) copySharpPAL_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            break;
+        case VIDEO_PAL_BLUR:
+            if (zoom == 2) copyPAL_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            else           copyPAL_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
+            break;
+        case VIDEO_PAL_BLUR_NOISE:
+            if (zoom == 2) copyPAL_2x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            else           copyPAL_1x05_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            break;
+        }
+        break;
+    case 32:
+        switch (pVideo->palMode) {
+        default:
+        case VIDEO_PAL_FAST:
+		case VIDEO_PAL_SCALE2X:
+		case VIDEO_PAL_HQ2X:
+            if (zoom == 2) copy_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            else           copy_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            break;
+        case VIDEO_PAL_MONITOR:
+            if (zoom == 2) copyMonitorPAL_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            break;
+        case VIDEO_PAL_SHARP:
+            if (zoom == 2) copySharpPAL_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            else           copy_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
+            break;
+        case VIDEO_PAL_SHARP_NOISE:
+            if (zoom == 2) copySharpPAL_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            break;
+        case VIDEO_PAL_BLUR:
+            if (zoom == 2) copyPAL_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            else           copyPAL_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
+            break;
+        case VIDEO_PAL_BLUR_NOISE:
+            if (zoom == 2) copyPAL_2x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            else           copyPAL_1x05_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            break;
+        }
+        break;
+    }
+}
+
+void videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch)
+{
+    if (frame == NULL) {
+        return;
+    }
+
+    if (frame->lines <= 240) {
+        videoRender240(pVideo, frame, bitDepth, zoom, pDst, dstPitch);
+    }
+    else {
+        videoRender480(pVideo, frame, bitDepth, zoom, pDst, dstPitch);
+    }
+
+    switch (bitDepth) {
+    case 16:
         if (pVideo->colorSaturationEnable) {
             colorSaturation_16(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->colorSaturationWidth);
         }
@@ -1621,59 +2631,6 @@ void videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void
 
         break;
     case 32:
-        switch (pVideo->palMode) {
-        case VIDEO_PAL_FAST:
-            if (zoom == 2) copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            else           copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            break;
-        case VIDEO_PAL_MONITOR:
-            if (zoom == 2) copyMonitorPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
-            else           copyPAL_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            break;
-        case VIDEO_PAL_SHARP:
-            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            else           copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            break;
-        case VIDEO_PAL_SHARP_NOISE:
-            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
-            else           copyPAL_1x1_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
-            break;
-        case VIDEO_PAL_BLUR:
-            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            else           copyPAL_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            break;
-        case VIDEO_PAL_BLUR_NOISE:
-            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
-            else           copyPAL_1x1_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
-            break;
-		case VIDEO_PAL_SCALE2X:
-            if (zoom==2) {
-                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
-                    scale2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-                }
-                else {
-                    copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-                }
-            }
-            else {
-                copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            }
-            break;
-		case VIDEO_PAL_HQ2X:
-            if (zoom==2) {
-                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
-                    hq2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
-                }
-                else {
-                    copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-                }
-            }
-            else {
-                copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
-            }
-            break;
-        }
-
         if (pVideo->colorSaturationEnable) {
             colorSaturation_32(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->colorSaturationWidth);
         }
