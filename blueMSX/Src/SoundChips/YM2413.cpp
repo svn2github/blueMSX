@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-30 22:53:28 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,6 @@ struct YM_2413 {
     Mixer* mixer;
     Int32  handle;
 
-    Int32  deviceHandle;
     OpenYM2413 ym2413;
     UInt8  address;
     UInt8  registers[256];
@@ -58,26 +57,12 @@ struct YM_2413 {
     Int32  defaultBuffer[BUFFER_SIZE];
 };
 
-static int overSampling = 1;
+static int refCount = 0;
 static YM_2413* theYm2413 = NULL;
 
 extern "C" {
     
-static void destroy(void* ref) {
-    YM_2413* ym2413 = (YM_2413*)ref;
-
-    theYm2413 = NULL;
-
-    deviceManagerUnregister(ym2413->deviceHandle);
-
-    ioPortUnregister(0x7c);
-    ioPortUnregister(0x7d);
-
-    mixerUnregisterChannel(ym2413->mixer, ym2413->handle);
-    delete ym2413;
-}
-
-static void saveState(void* ref)
+void ym2413SaveState(YM_2413* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     SaveState* state = saveStateOpenForWrite("msxmusic");
@@ -89,7 +74,7 @@ static void saveState(void* ref)
     ym2413->ym2413.saveState();
 }
 
-static void loadState(void* ref)
+void ym2413LoadState(YM_2413* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     SaveState* state = saveStateOpenForRead("msxmusic");
@@ -101,20 +86,19 @@ static void loadState(void* ref)
     ym2413->ym2413.loadState();
 }
 
-static void reset(void* ref)
+void ym2413Reset(YM_2413* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
 
     ym2413->ym2413.reset(msxSystemTime());
 }
 
-
-void ym2413WriteAddress(YM_2413* ym2413, UInt16 ioPort, UInt8 address)
+void ym2413WriteAddress(YM_2413* ym2413, UInt8 address)
 {
     ym2413->address = address;
 }
 
-void ym2413WriteData(YM_2413* ym2413, UInt16 ioPort, UInt8 data)
+void ym2413WriteData(YM_2413* ym2413, UInt8 data)
 {
     UInt32 systemTime = boardSystemTime();
     mixerSync(ym2413->mixer);
@@ -141,25 +125,13 @@ static Int32* sync(void* ref, UInt32 count)
     return ym2413->buffer;
 }
 
-void ym2413SetOversampling(int Oversampling)
+YM_2413* ym2413Create(Mixer* mixer)
 {
-    if (Oversampling > 0) {
-        overSampling = Oversampling;
-    }
-
-    if (theYm2413) {
-        theYm2413->ym2413.setSampleRate(SAMPLERATE, overSampling);
-    }
-}
-
-int ym2413Create(Mixer* mixer)
-{
-    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     YM_2413* ym2413;
     
-    if (theYm2413 != NULL) {
+    if (refCount++) {
         // The device is already initialized. But don't report an error
-        return 1;
+        return theYm2413;
     }
 
     ym2413 = new YM_2413;
@@ -167,17 +139,25 @@ int ym2413Create(Mixer* mixer)
     theYm2413 = ym2413;
 
     ym2413->mixer = mixer;
-    ym2413->deviceHandle = deviceManagerRegister(AUDIO_YM2413, &callbacks, ym2413);
 
     ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
 
-    ym2413->ym2413.setSampleRate(SAMPLERATE, overSampling);
+    ym2413->ym2413.setSampleRate(SAMPLERATE, boardGetYm2413Oversampling());
 	ym2413->ym2413.setVolume(32767);
-    
-    ioPortRegister(0x7c, NULL, (IoPortWrite)ym2413WriteAddress, ym2413);
-    ioPortRegister(0x7d, NULL, (IoPortWrite)ym2413WriteData,    ym2413);
 
-    return 1;
+    return ym2413;
 }
+
+void ym2413Destroy(YM_2413* ym2413) 
+{
+    if (--refCount == 0) {
+        theYm2413 = NULL;
+    }
+
+    mixerUnregisterChannel(ym2413->mixer, ym2413->handle);
+    delete ym2413;
+}
+
+
 
 }

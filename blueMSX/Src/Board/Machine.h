@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-30 22:53:25 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,15 +65,6 @@ typedef struct {
         VdpVersion vdpVersion;
         int vramSize;
     } video;
-    struct {
-        int enableAY8910;
-        int enableSN76489;
-        int enableYM2413;
-        int enableY8950;
-        int enableMoonsound;
-        int enablePCM;
-        int moonsoundSRAM;
-    } audio;
     struct {
         int enable;
         int batteryBacked;

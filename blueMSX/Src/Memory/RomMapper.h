@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,7 +109,10 @@ typedef enum {
     ROM_SVI328FDC   = 75,
     ROM_COLECO      = 76,
     ROM_SONYHBI55   = 77,
-    ROM_MAXROMID    = 77
+    ROM_MSXMUSIC    = 78,
+    ROM_MOONSOUND   = 79,
+    ROM_MSXAUDIODEV = 80,
+    ROM_MAXROMID    = 80
 } RomType;
 
 static char* romTypeToString(RomType romType) {
@@ -184,11 +187,15 @@ static char* romTypeToString(RomType romType) {
     case ROM_EXTRAM1MB:   return "1MB External RAM";
     case ROM_EXTRAM2MB:   return "2MB External RAM";
     case ROM_EXTRAM4MB:   return "4MB External RAM";
+    case ROM_MSXMUSIC:    return "MSX Music";
     case ROM_MSXAUDIO:    return "MSX Audio";
+    case ROM_MOONSOUND:   return "Moonsound";
     case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
     case ROM_COLECO:      return "ColecoVision Cartridge";
     case ROM_SONYHBI55:   return "Sony HBI-55";
+    case ROM_MSXAUDIODEV: return "MSX Audio Chip";
+    case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
 
     case ROM_UNKNOWN:     return "Unknown";
     }
@@ -268,11 +275,15 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_EXTRAM1MB:   return "EXTRAM 2MB";
     case ROM_EXTRAM2MB:   return "EXTRAM 1MB";
     case ROM_EXTRAM4MB:   return "EXTRAM 4MB";
+    case ROM_MSXMUSIC:    return "MSXMUSIC";
     case ROM_MSXAUDIO:    return "MSXAUDIO";
+    case ROM_MOONSOUND:   return "MOONSOUND";
     case ROM_KOREAN90:    return "90IN1";
     case ROM_SVI328:      return "SVI328";
     case ROM_COLECO:      return "COLECO";
     case ROM_SONYHBI55:   return "HBI-55";
+    case ROM_MSXAUDIODEV: return "MSXAUDIO";
+    case ROM_TURBORPCM:   return "TURBOR PCM";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }

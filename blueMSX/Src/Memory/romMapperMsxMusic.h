@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,31 +27,12 @@
 **
 ******************************************************************************
 */
-#ifndef YM2413_H
-#define YM2413_H
+#ifndef ROMMAPPER_MSX_MUSIC_H
+#define ROMMAPPER_MSX_MUSIC_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "MSXTypes.h"
 
-#include "msxTypes.h"
-#include "audioMixer.h"
-
-/* Type definitions */
-typedef struct YM_2413 YM_2413;
-
-/* Constructor and destructor */
-YM_2413* ym2413Create(Mixer* mixer);
-void ym2413Destroy(YM_2413* ym2413);
-void ym2413WriteAddress(YM_2413* ym2413, UInt8 address);
-void ym2413WriteData(YM_2413* ym2413, UInt8 data);
-void ym2413Reset(YM_2413* ref);
-void ym2413SaveState(YM_2413* ref);
-void ym2413LoadState(YM_2413* ref);
-
-#ifdef __cplusplus
-}
-#endif
+int romMapperMsxMusicCreate(char* filename, UInt8* romData, 
+                            int size, int slot, int sslot, int startPage);
 
 #endif
-

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-30 22:53:27 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ static char pacHeader[] = "PAC2 BACKUP DATA";
 
 typedef struct {
     int deviceHandle;
+    YM_2413* ym2413;
     UInt8 romData[0x10000];
     UInt8 sram[0x2000];
     char sramFilename[512];
@@ -119,10 +120,20 @@ static void destroy(RomMapperFMPAC* rm)
 {
     sramSave(rm->sramFilename, rm->sram, 0x1ffe, pacHeader, strlen(pacHeader));
 
+    ioPortUnregister(0x7c);
+    ioPortUnregister(0x7d);
+    
+    ym2413Destroy(rm->ym2413);
+
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
     free(rm);
+}
+
+static void reset(RomMapperFMPAC* rm) 
+{
+    ym2413Reset(rm->ym2413);
 }
 
 static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value) 
@@ -157,10 +168,10 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
         ioPortWrite(NULL, 0x7d, value);
 		break;
 	case 0x3ff6:
-        rm->romData[0x3ff6] = value;
-        rm->romData[0x7ff6] = value;
-        rm->romData[0xbff6] = value;
-        rm->romData[0xfff6] = value;
+        rm->romData[0x3ff6] = value & 0x11;
+        rm->romData[0x7ff6] = value & 0x11;
+        rm->romData[0xbff6] = value & 0x11;
+        rm->romData[0xfff6] = value & 0x11;
 		break;
 	case 0x3ff7:
         if ((value & 3) != rm->bankSelect) {
@@ -193,10 +204,24 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
     }
 }
 
+static void writeIo(RomMapperFMPAC* rm, UInt16 port, UInt8 data)
+{
+    if (rm->romData[0x3ff6] & 1) {
+        switch (port & 1) {
+        case 0:
+            ym2413WriteAddress(rm->ym2413, data);
+            break;
+        case 1:
+            ym2413WriteData(rm->ym2413, data);
+            break;
+        }
+    }
+}
+
 int romMapperFMPACCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperFMPAC* rm;
 
     if (size != 0x10000) {
@@ -208,7 +233,12 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_FMPAC, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 2, NULL, write, destroy, rm);
 
-    ym2413Create(boardGetMixer());
+    rm->ym2413 = ym2413Create(boardGetMixer());
+
+    if (boardGetYm2413Enable()) {
+        ioPortRegister(0x7c, NULL, writeIo, rm);
+        ioPortRegister(0x7d, NULL, writeIo, rm);
+    }
 
     memcpy(rm->romData, romData, 0x10000);
     memset(rm->sram, 0xff, 0x2000);
@@ -243,4 +273,3 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
 
     return 1;
 }
-

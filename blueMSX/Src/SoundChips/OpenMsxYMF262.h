@@ -25,25 +25,27 @@ class TimerCallback
 		virtual void callback(byte value) = 0;
 };
 
-extern void moonsoundTimerSet(int timer, int count);
-extern void moonsoundTimerStart(int timer, int start, byte ref);
+extern void moonsoundTimerSet(void* ref, int timer, int count);
+extern void moonsoundTimerStart(void* ref, int timer, int start, byte timerRef);
 
 template<int freq, byte flag>
 class Timer
 {
 	public:
-        Timer(TimerCallback *cb) {
+        Timer(TimerCallback *cb, void* reference) {
+            ref = reference;
             id = 12500 / freq;
         }
 		virtual ~Timer() {}
 		void setValue(byte value) {
-            moonsoundTimerSet(id, id * (256 - value));
+            moonsoundTimerSet(ref, id, id * (256 - value));
         }
 		void setStart(bool start, const EmuTime &time) {
-            moonsoundTimerStart(id, start, flag);
+            moonsoundTimerStart(ref, id, start, flag);
         }
 
 	private:
+        void* ref;
         int id;
 };
 
@@ -179,7 +181,7 @@ static const int STATUS_T1      = R04_MASK_T1;
 class YMF262 : public SoundDevice, public TimerCallback
 {
 	public:
-		YMF262(short volume, const EmuTime &time);
+		YMF262(short volume, const EmuTime &time, void* ref);
 		virtual ~YMF262();
 		
 		virtual void reset(const EmuTime &time);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,8 +37,13 @@
 typedef struct Y8950 Y8950;
 
 /* Constructor and destructor */
-int y8950Create(Mixer* mixer);
-void y8950SetOversampling(int oversampling);
+Y8950* y8950Create(Mixer* mixer);
+void y8950Destroy(Y8950* y8950);
+void y8950Reset(Y8950* y8950);
+void y8950LoadState(Y8950* y8950);
+void y8950SaveState(Y8950* y8950);
+UInt8 y8950Read(Y8950* y8950, UInt16 ioPort);
+void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value);
 
 void y8950Tick(UInt32 elapsedTime);
 

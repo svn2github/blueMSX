@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:25 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,10 +47,7 @@
 #include "sramLoader.h"
 #include "JoystickIO.h"
 #include "AY8910.h"
-#include "YM2413.h"
-#include "Y8950.h"
 #include "KeyClick.h"
-#include "Moonsound.h"
 #include "audioMixer.h"
 #include "romMapper.h"
 #include "VDP.h"
@@ -116,7 +113,8 @@
 #include "romMapperTurboRTimer.h"
 #include "romMapperTurboRPCM.h"
 #include "romMapperSonyHBI55.h"
-
+#include "romMapperMsxMusic.h"
+#include "romMapperMoonsound.h"
 
 extern int  WaitForSync(void);
 extern void Keyboard(UInt8* keybardMap);
@@ -298,9 +296,6 @@ void msxInitStatistics(Machine* machine)
 
 static int initMachine(Machine* machine, 
                        Mixer* mixer, 
-                       int enableYM2413,
-                       int enableY8950,
-                       int enableMoonsound,
                        VdpSyncMode vdpSyncMode)
 {
     char cmosName[128];
@@ -452,6 +447,21 @@ static int initMachine(Machine* machine,
             continue;
         }
 
+        if (machine->slotInfo[i].romType == ROM_SONYHBI55) {
+            success &= romMapperSonyHBI55Create();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXAUDIODEV) {
+            success &= romMapperMsxAudioCreate(NULL, NULL, 0, 0, 0, 0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_TURBORPCM) {
+            success &= romMapperTurboRPcmCreate();
+            continue;
+        }
+        
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {
@@ -484,16 +494,16 @@ static int initMachine(Machine* machine,
             success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage);
             break;
 
+        case ROM_MOONSOUND:
+            success &= romMapperMoonsoundCreate(romName, buf, size, 640);
+            break;
+
         case ROM_SCC:
             success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCC_EXTENDED);
             break;
 
         case ROM_SCCPLUS:
             success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCCP_EXTENDED);
-            break;
-
-        case ROM_SONYHBI55:
-            success &= romMapperSonyHBI55Create();
             break;
             
         case ROM_KONAMI4:
@@ -596,6 +606,10 @@ static int initMachine(Machine* machine,
             useFmPac++;
             success &= romMapperFMPACCreate(romName, buf, size, slot, subslot, startPage);
             break;
+            
+        case ROM_MSXMUSIC:
+            success &= romMapperMsxMusicCreate(romName, buf, size, slot, subslot, startPage);
+            break;
 
         case ROM_NORMAL:
             success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
@@ -656,29 +670,8 @@ static int initMachine(Machine* machine,
         free(jisyoRom);
     }
 
-    // Enable sound chips
-    if (enableY8950) {
-        success &= y8950Create(mixer);
-    }
-
-    if (enableYM2413) {
-        success &= ym2413Create(mixer);
-    }
-
-    if (machine->audio.enablePCM) {
-        success &= romMapperTurboRPcmCreate();
-    }
-
-    if (enableMoonsound) {
-        buf = romLoad("Machines/Shared Roms/MOONSOUND.rom", NULL, &size);
-        if (buf == NULL) {
-            buf = calloc(1, 0x200000);
-        }
-        if (buf != NULL) {
-            success &= moonsoundCreate(mixer, buf, size, machine->audio.moonsoundSRAM);
-            free(buf);
-        }
-    }
+    ay8910 = ay8910Create(mixer, AY8910_MSX);
+    joyIO = joystickIoCreate(ay8910);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
@@ -764,16 +757,7 @@ int msxRun(Machine* machine,
     slotManagerCreate();
 
     success = initMachine(machine, mixer,  
-                          devInfo->audio.enableYM2413, 
-                          devInfo->audio.enableY8950, 
-                          devInfo->audio.enableMoonsound,
                           devInfo->video.vdpSyncMode);
-
-
-    if (machine->audio.enableAY8910) {
-        ay8910 = ay8910Create(mixer, AY8910_MSX);
-        joyIO = joystickIoCreate(ay8910);
-    }
 
     for (i = 0; i < 2; i++) {
         if (devInfo->cartridge[i].inserted) {
@@ -933,6 +917,7 @@ static int romTypeIsRom(RomType romType) {
     switch (romType) {
     case ROM_SCC:         return 1;
     case ROM_SCCPLUS:     return 1;
+    case ROM_MOONSOUND:   return 1;
     case ROM_SNATCHER:    return 1;
     case ROM_SDSNATCHER:  return 1;
     case ROM_SCCMIRRORED: return 1;
@@ -1098,10 +1083,6 @@ void msxSaveState()
     saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
     saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
 
-    saveStateSet(state, "enableYM2413",    di->audio.enableYM2413);
-    saveStateSet(state, "enableY8950",     di->audio.enableY8950);
-    saveStateSet(state, "enableMoonsound", di->audio.enableMoonsound);
-
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
     saveStateClose(state);
@@ -1153,10 +1134,6 @@ void msxLoadState()
     di->cassette.inserted = saveStateGet(state, "casInserted", 0);
     saveStateGetBuffer(state, "casName",  di->cassette.name, sizeof(di->cassette.name));
     saveStateGetBuffer(state, "casInZip", di->cassette.inZipName, sizeof(di->cassette.inZipName));
-
-    di->audio.enableYM2413    = saveStateGet(state, "enableYM2413",    0);
-    di->audio.enableY8950     = saveStateGet(state, "enableY8950",     0);
-    di->audio.enableMoonsound = saveStateGet(state, "enableMoonsound", 0);
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
 

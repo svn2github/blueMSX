@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-28 05:09:08 $
+** $Date: 2005-01-02 08:22:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,10 +43,7 @@
 #include "Machine.h"
 #include "Board.h"
 
-#define WM_UPDATECONTROLS  (WM_USER + 0)
-
 static HWND hDlgSound = NULL;
-static int audioEnable = 0;
 static int propModified = 0;
 static Mixer* theMixer;
 static Video* theVideo;
@@ -566,19 +563,6 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
             if (rv != CB_ERR) {
                 if (strcmp(machineName, buffer)) {
                     strcpy(machineName, buffer);
-
-                    if (machineIsValid(buffer, 1)) {
-                        Machine* machine = machineCreate(buffer);
-                        if (machine != NULL) {
-                            audioEnable = (machine->audio.enableYM2413    ? 1 : 0) |
-                                          (machine->audio.enableY8950     ? 2 : 0) |
-                                          (machine->audio.enableMoonsound ? 4 : 0);
-                            if (hDlgSound != NULL) {
-                                SendMessage(hDlgSound, WM_UPDATECONTROLS, 0, 0);
-                            }
-                            machineDestroy(machine);
-                        }
-                    }
                 }
             }
             return TRUE;
@@ -662,7 +646,9 @@ static RomType romTypeList[] = {
     ROM_KOREAN126,
     ROM_HOLYQURAN,
     ROM_FMPAC,
+    ROM_MSXMUSIC,
     ROM_MSXAUDIO,
+    ROM_MOONSOUND,
     ROM_DISKPATCH,
     ROM_CASPATCH,
     ROM_TC8566AF,
@@ -679,6 +665,8 @@ static RomType romTypeList[] = {
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_SONYHBI55,
+    ROM_MSXAUDIODEV,
+    ROM_TURBORPCM,
     ROM_UNKNOWN,
 };
 
@@ -1403,19 +1391,14 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
         SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETPOS,   1, (LPARAM)(100 - pProperties->sound.masterVolume));
 
+        setButtonCheck(hDlg, IDC_ENABLEMSXMUSIC,  pProperties->sound.chip.enableYM2413, 1);
+        setButtonCheck(hDlg, IDC_ENABLEMSXAUDIO,  pProperties->sound.chip.enableY8950, 1);
+        setButtonCheck(hDlg, IDC_ENABLEMOONSOUND, pProperties->sound.chip.enableMoonsound, 1);
+
         stereo = pProperties->sound.stereo;
         SetWindowText(GetDlgItem(hDlg, IDC_STEREO), stereo ? langPropSndStereoText() : langPropSndMonoText());
 
-        SendMessage(hDlg, WM_UPDATECONTROLS, 0, 0);
-
         return FALSE;
-
-    case WM_UPDATECONTROLS:
-        setButtonCheck(hDlg, IDC_ENABLEMSXMUSIC,  audioEnable & 1, 1);
-        setButtonCheck(hDlg, IDC_ENABLEMSXAUDIO,  audioEnable & 2, 1);
-        setButtonCheck(hDlg, IDC_ENABLEMOONSOUND, audioEnable & 4, 1);
-
-        return TRUE;
 
     case WM_COMMAND:
         if (LOWORD(wParam) >= IDC_VOLENABLE1 && LOWORD(wParam) < IDC_VOLENABLE1 + MIXER_CHANNEL_TYPE_COUNT) {
@@ -1471,10 +1454,6 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             pProperties->sound.chip.y8950Oversampling = 1 << index;
             index = SendDlgItemMessage(hDlg, IDC_OVERSAMPLEMOONSOUND, CB_GETCURSEL, 0, 0);
             pProperties->sound.chip.moonsoundOversampling = 1 << index;
-
-            audioEnable = (pProperties->sound.chip.enableYM2413    ? 1 : 0) |
-                          (pProperties->sound.chip.enableY8950     ? 2 : 0) |
-                          (pProperties->sound.chip.enableMoonsound ? 4 : 0);
 
             for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
                 pProperties->sound.mixerChannel[i].volume = 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i),    TBM_GETPOS,   0, 0);
@@ -1973,9 +1952,6 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
 
     centered = 0;
     hDlgSound = NULL;
-    audioEnable = (pProperties->sound.chip.enableYM2413    ? 1 : 0) |
-                  (pProperties->sound.chip.enableY8950     ? 2 : 0) |
-                  (pProperties->sound.chip.enableMoonsound ? 4 : 0);
     theMixer = mixer;
     theVideo = video;
 
@@ -2065,10 +2041,6 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
     PropertySheet(&psh);
 
     if (propModified) {
-        pProperties->sound.chip.enableYM2413    = (audioEnable & 1) ? 1 : 0;
-        pProperties->sound.chip.enableY8950     = (audioEnable & 2) ? 1 : 0;
-        pProperties->sound.chip.enableMoonsound = (audioEnable & 4) ? 1 : 0;
-
         propModified = memcmp(&oldProp, pProperties, sizeof(Properties));
     }
 

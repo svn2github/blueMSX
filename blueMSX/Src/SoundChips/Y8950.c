@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-30 22:53:28 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,6 @@ struct Y8950 {
     Int32  handle;
 
     FM_OPL* opl;
-    int    deviceHandle;
     UInt8  address;
     UInt32 timer1;
     UInt32 counter1;
@@ -61,34 +60,36 @@ extern INT32 ams;
 extern INT32 vib;
 extern INT32 feedback2;
 
-#define MAX_DEVICES 2
+#define MAX_DEVICES 8
 
-static int overSampling = 1;
 static Y8950* theY8950[MAX_DEVICES];
 
-static UInt8 y8950ReadAddress(Y8950* y8950, UInt16 ioPort)
+UInt8 y8950Read(Y8950* y8950, UInt16 ioPort)
 {
-    return (UInt8)OPLRead(y8950->opl, 0);
-}
-
-static UInt8 y8950ReadData(Y8950* y8950, UInt16 ioPort)
-{
-    if (y8950->opl->address == 0x14) {
-        mixerSync(y8950->mixer);
+    switch (ioPort & 1) {
+    case 0:
+        return (UInt8)OPLRead(y8950->opl, 0);
+    case 1:
+        if (y8950->opl->address == 0x14) {
+            mixerSync(y8950->mixer);
+        }
+        return (UInt8)OPLRead(y8950->opl, 1);
+        break;
     }
-    return (UInt8)OPLRead(y8950->opl, 1);
+    return  0xff;
 }
 
-static void y8950WriteAddress(Y8950* y8950, UInt16 ioPort, UInt8 address)
+void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value)
 {
-    OPLWrite(y8950->opl, 0, address);
-}
-
-static void y8950WriteData(Y8950* y8950, UInt16 ioPort, UInt8 data)
-{
-    mixerSync(y8950->mixer);
-
-    OPLWrite(y8950->opl, 1, data);
+    switch (ioPort & 1) {
+    case 0:
+        OPLWrite(y8950->opl, 0, value);
+        break;
+    case 1:
+        mixerSync(y8950->mixer);
+        OPLWrite(y8950->opl, 1, value);
+        break;
+    }
 }
 
 static Int32* y8950Sync(void* ref, UInt32 count) 
@@ -104,7 +105,7 @@ static Int32* y8950Sync(void* ref, UInt32 count)
 }
 
 
-static void saveState(Y8950* y8950)
+void y8950SaveState(Y8950* y8950)
 {
     SaveState* state = saveStateOpenForWrite("msxaudio1");
 
@@ -124,7 +125,7 @@ static void saveState(Y8950* y8950)
     YM_DELTAT_ADPCM_SaveState(y8950->opl->deltat);
 }
 
-static void loadState(Y8950* y8950)
+void y8950LoadState(Y8950* y8950)
 {
     SaveState* state = saveStateOpenForRead("msxaudio1");
 
@@ -145,51 +146,31 @@ static void loadState(Y8950* y8950)
     YM_DELTAT_ADPCM_LoadState(y8950->opl->deltat);
 }
 
-static void destroy(Y8950* y8950) 
+void y8950Destroy(Y8950* y8950) 
 {
-    int i;
-    for (i = 0; i < MAX_DEVICES; i++) {
-        if (y8950 == theY8950[i]) {
-            theY8950[i] = NULL;
-        }
-    }
-
-    deviceManagerUnregister(y8950->deviceHandle);
-
-    ioPortUnregister(0xc0);
-    ioPortUnregister(0xc1);
-
     mixerUnregisterChannel(y8950->mixer, y8950->handle);
     OPLDestroy(y8950->opl);
 }
 
-static void reset(Y8950* y8950)
+void y8950Reset(Y8950* y8950)
 {
-    int i;
-    for (i = 0; i < MAX_DEVICES; i++) {
-        Y8950* y8950 = theY8950[i];
-        if (y8950 != NULL) {
-            y8950->counter1 = -1;
-            y8950->counter2 = -1;
-            OPLResetChip(y8950->opl);
-        }
-    }
+    y8950->counter1 = -1;
+    y8950->counter2 = -1;
+    OPLResetChip(y8950->opl);
 }
 
-int y8950Create(Mixer* mixer)
+Y8950* y8950Create(Mixer* mixer)
 {
-    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     Y8950* y8950;
     int i;
     
     for (i = 0; i < MAX_DEVICES && theY8950[i] != NULL; i++);
 
     if (i == MAX_DEVICES) {
-        return 0;
+        return NULL;
     }
 
     y8950 = (Y8950*)calloc(1, sizeof(Y8950));
-    y8950->deviceHandle = deviceManagerRegister(AUDIO_Y8950, &callbacks, y8950);
 
     y8950->mixer = mixer;
     y8950->counter1 = -1;
@@ -198,7 +179,7 @@ int y8950Create(Mixer* mixer)
     y8950->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, y8950Sync, y8950);
 
     y8950->opl = OPLCreate(OPL_TYPE_Y8950, FREQUENCY, SAMPLERATE, 256, y8950);
-    OPLSetOversampling(y8950->opl, overSampling);
+    OPLSetOversampling(y8950->opl, boardGetY8950Oversampling());
     OPLResetChip(y8950->opl);
 
     for (i = 0; i < MAX_DEVICES; i++) {
@@ -208,10 +189,7 @@ int y8950Create(Mixer* mixer)
         }
     }
 
-    ioPortRegister(0xc0, y8950ReadAddress, y8950WriteAddress, y8950);
-    ioPortRegister(0xc1, y8950ReadData,    y8950WriteData,    y8950);
-
-    return 1;
+    return y8950;
 }
 
 void y8950TimerSet(void* ref, int timer, int count)
@@ -269,20 +247,3 @@ void y8950Tick(UInt32 elapsedTime)
         }
     }
 }
-
-void y8950SetOversampling(int oversampling)
-{
-    int i;
-
-    if (oversampling > 0) {
-        overSampling = oversampling;
-    }
-
-    for (i = 0; i < MAX_DEVICES; i++) {
-        Y8950* y8950 = theY8950[i];
-        if (y8950 != NULL) {  
-            OPLSetOversampling(y8950->opl, overSampling);
-        }
-    }
-}
-

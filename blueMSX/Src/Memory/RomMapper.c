@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,6 +152,8 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "pac"))          return ROM_PAC;
     if (0 == strcmpnocase(name, "fmpac"))        return ROM_FMPAC;
     if (0 == strcmpnocase(name, "msxaudio"))     return ROM_MSXAUDIO;
+    if (0 == strcmpnocase(name, "msxmusic"))     return ROM_MSXMUSIC;
+    if (0 == strcmpnocase(name, "moonsound"))    return ROM_MOONSOUND;
     if (0 == strcmpnocase(name, "tc8566af"))     return ROM_TC8566AF;
     if (0 == strcmpnocase(name, "mb8877a"))      return ROM_NATIONALFDC;
     if (0 == strcmpnocase(name, "diskpatch"))    return ROM_DISKPATCH;
@@ -173,7 +175,6 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "bunsetsu"))     return ROM_BUNSETU;
     if (0 == strcmpnocase(name, "coleco"))       return ROM_COLECO;
     if (0 == strcmpnocase(name, "svi328"))       return ROM_SVI328;
-    if (0 == strcmpnocase(name, "hbi55"))        return ROM_SONYHBI55;
 
     return ROM_UNKNOWN;
 }    

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2004-12-28 22:48:38 $
+** $Date: 2005-01-02 08:22:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -846,6 +846,9 @@ void archShowPropertiesDialog(PropPage  startPane) {
         oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
         oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound)
     {
+        boardSetY8950Enable(pProperties->sound.chip.enableY8950);
+        boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
+        boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
         restart = 1;
     }
 
@@ -931,6 +934,7 @@ static RomType romTypeList[] = {
     ROM_HOLYQURAN,
     ROM_FMPAC,
     ROM_MSXAUDIO,
+    ROM_MOONSOUND,
     ROM_DISKPATCH,
     ROM_CASPATCH,
     ROM_TC8566AF,
@@ -946,7 +950,6 @@ static RomType romTypeList[] = {
     ROM_NATIONAL,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
-    ROM_SONYHBI55,
     ROM_UNKNOWN,
 };
 
@@ -2819,14 +2822,6 @@ void archShowMachineEditor()
     apply = confShowDialog(st.hwnd, pProperties->emulation.machineName);
     exitDialogShow();
     if (apply) {
-        Machine* machine = machineCreate(pProperties->emulation.machineName);
-        if (machine != NULL) {
-            pProperties->sound.chip.enableYM2413    = machine->audio.enableYM2413;
-            pProperties->sound.chip.enableY8950     = machine->audio.enableY8950;
-            pProperties->sound.chip.enableMoonsound = machine->audio.enableMoonsound;
-            pProperties->sound.chip.moonsoundSRAM   = machine->audio.moonsoundSRAM;
-            machineDestroy(machine);
-        }
         actionEmuResetHard();
     }
     updateMenu(0);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-30 22:53:26 $
+** $Date: 2005-01-02 08:22:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -230,10 +230,6 @@ static void getDeviceInfo(DeviceInfo* deviceInfo)
     strcpy(properties->cassette.tape,      deviceInfo->cassette.name);
     strcpy(properties->cassette.tapeZip,   deviceInfo->cassette.inZipName);
     
-    properties->sound.chip.enableYM2413    = deviceInfo->audio.enableYM2413;
-    properties->sound.chip.enableY8950     = deviceInfo->audio.enableY8950;
-    properties->sound.chip.enableMoonsound = deviceInfo->audio.enableMoonsound;
-
     properties->emulation.vdpSyncMode      = deviceInfo->video.vdpSyncMode;
 
     updateExtendedRomName(0, properties->cartridge.slotA, properties->cartridge.slotAZip);
@@ -272,11 +268,6 @@ static void setDeviceInfo(DeviceInfo* deviceInfo)
     strcpy(deviceInfo->cassette.name,      properties->cassette.tape);
     strcpy(deviceInfo->cassette.inZipName, properties->cassette.tapeZip);
     
-    /* Set audio config */
-    deviceInfo->audio.enableYM2413    = properties->sound.chip.enableYM2413;
-    deviceInfo->audio.enableY8950     = properties->sound.chip.enableY8950;
-    deviceInfo->audio.enableMoonsound = properties->sound.chip.enableMoonsound;
-
     /* Set video config */
     deviceInfo->video.vdpSyncMode     = properties->emulation.vdpSyncMode;
 }

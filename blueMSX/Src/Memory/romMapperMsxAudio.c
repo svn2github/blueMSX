@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,9 @@
 #include "Switches.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "IoPort.h"
+#include "Board.h"
+#include "Y8950.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -39,6 +42,8 @@
 
 typedef struct {
     int deviceHandle;
+    Y8950* y8950;
+    int ioBase;
     UInt8* romData;
     UInt8 ram[0x1000];
     int bankSelect; 
@@ -48,6 +53,8 @@ typedef struct {
     int startPage;
 } RomMapperMsxAudio;
 
+static int deviceCount = 0;
+
 static void saveState(RomMapperMsxAudio* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapperMsxAudio");
@@ -56,6 +63,8 @@ static void saveState(RomMapperMsxAudio* rm)
     saveStateSetBuffer(state, "ram", rm->ram, sizeof(rm->ram));
     
     saveStateClose(state);
+
+    y8950SaveState(rm->y8950);
 }
 
 static void loadState(RomMapperMsxAudio* rm)
@@ -66,14 +75,28 @@ static void loadState(RomMapperMsxAudio* rm)
     saveStateGetBuffer(state, "ram", rm->ram, sizeof(rm->ram));
 
     saveStateClose(state);
+    
+    y8950LoadState(rm->y8950);
 }
 
 static void destroy(RomMapperMsxAudio* rm)
 {
-    slotUnregister(rm->slot, rm->sslot, rm->startPage);
+    ioPortUnregister(rm->ioBase + 0);
+    ioPortUnregister(rm->ioBase + 1);
+
+    deviceCount--;
+
+    y8950Destroy(rm->y8950);
+
+    if (rm->sizeMask != -1) {
+        slotUnregister(rm->slot, rm->sslot, rm->startPage);
+    }
+
     deviceManagerUnregister(rm->deviceHandle);
 
-    free(rm->romData);
+    if (rm->romData != NULL) {
+        free(rm->romData);
+    }
     free(rm);
 }
 
@@ -84,6 +107,11 @@ static UInt8 read(RomMapperMsxAudio* rm, UInt16 address)
     }
 
 	return rm->romData[(0x8000 * rm->bankSelect + (address & 0x7fff)) & rm->sizeMask];
+}
+
+static void reset(RomMapperMsxAudio* rm) 
+{
+    y8950Reset(rm->y8950);
 }
 
 static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
@@ -101,35 +129,45 @@ static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value)
 int romMapperMsxAudioCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMsxAudio* rm;
     int i;
-
-    if (size < 0x8000 || startPage != 0) {
-        return 0;
-    }
 
     rm = malloc(sizeof(RomMapperMsxAudio));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MSXAUDIO, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 8, read, write, destroy, rm);
 
-    rm->romData = malloc(size);
-    memcpy(rm->romData, romData, size);
-    memset(rm->ram, 0, 0x1000);
-    rm->bankSelect = 0;
-    rm->sizeMask = size - 1;
-    rm->slot  = slot;
-    rm->sslot = sslot;
-    rm->startPage  = startPage;
+    rm->ioBase = 0xc0 + deviceCount++ * 2;
 
-    if (!switchGetAudio()) {
-        rm->romData[0x408e] = 0;
+    rm->romData = NULL;
+
+    if (size > 0) {
+        slotRegister(slot, sslot, startPage, 8, read, write, destroy, rm);
+
+        rm->romData = malloc(size);
+        memcpy(rm->romData, romData, size);
+        memset(rm->ram, 0, 0x1000);
+        rm->bankSelect = 0;
+        rm->sizeMask = size - 1;
+        rm->slot  = slot;
+        rm->sslot = sslot;
+        rm->startPage  = startPage;
+
+        if (!switchGetAudio()) {
+            rm->romData[0x408e] = 0;
+        }
+
+        for (i = 0; i < 8; i++) {   
+            slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
+        }
     }
 
-    for (i = 0; i < 8; i++) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
+    if (boardGetY8950Enable()) {
+        rm->y8950 = y8950Create(boardGetMixer());
+        ioPortRegister(rm->ioBase + 0, y8950Read, y8950Write, rm->y8950);
+        ioPortRegister(rm->ioBase + 1, y8950Read, y8950Write, rm->y8950);
     }
+
 
     return 1;
 }

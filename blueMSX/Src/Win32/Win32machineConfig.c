@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-30 22:53:28 $
+** $Date: 2005-01-02 08:22:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -402,8 +402,10 @@ static void getSlotControl(HWND hDlg)
     if (editSlotInfo.romType == SRAM_MATSUCHITA || editSlotInfo.romType == ROM_TURBORTIMER ||
         editSlotInfo.romType == SRAM_S1985 || editSlotInfo.romType == ROM_S1990 ||
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
+        editSlotInfo.romType == ROM_MOONSOUND ||
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
-        editSlotInfo.romType == ROM_JISYO) {
+        editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
+        editSlotInfo.romType == ROM_TURBORPCM) {
         return;
     }
 
@@ -426,6 +428,7 @@ static void getSlotControl(HWND hDlg)
 static void getAddressControl(HWND hDlg)
 {
     if (editSlotInfo.romType == ROM_NORMAL      || 
+        editSlotInfo.romType == ROM_MSXMUSIC    ||
         editSlotInfo.romType == ROM_DISKPATCH   || 
         editSlotInfo.romType == ROM_CASPATCH    ||
         editSlotInfo.romType == ROM_MICROSOL    ||
@@ -472,7 +475,9 @@ static void endEditControls(HWND hDlg)
     case ROM_SDSNATCHER:
     case ROM_SCCMIRRORED:
     case ROM_SCCEXTENDED:
+    case ROM_SONYHBI55:
         strcpy(editSlotInfo.name, "");
+        break;
 
     case ROM_EXTRAM:
         strcpy(editSlotInfo.name, "");
@@ -501,6 +506,8 @@ static void endEditControls(HWND hDlg)
     case SRAM_MATSUCHITA:
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
+    case ROM_MSXAUDIODEV:
+    case ROM_TURBORPCM:
     case ROM_TURBORTIMER:
         strcpy(editSlotInfo.name, "");
         editSlotInfo.slot      = 0;
@@ -512,6 +519,7 @@ static void endEditControls(HWND hDlg)
     case ROM_JISYO:
     case ROM_KANJI:
     case ROM_KANJI12:
+    case ROM_MOONSOUND:
         editSlotInfo.slot      = 0;
         editSlotInfo.subslot   = 0;
         editSlotInfo.startPage = 0;
@@ -538,7 +546,6 @@ static void endEditControls(HWND hDlg)
     case ROM_KOREAN80:
     case ROM_KOREAN90:
     case ROM_KOREAN126:
-    case ROM_SONYHBI55:
     case ROM_HOLYQURAN:
         editSlotInfo.startPage = 2;
         editSlotInfo.pageCount = 4;
@@ -602,7 +609,8 @@ static void setEditControls(HWND hDlg)
 
     if (romType != RAM_NORMAL && romType != RAM_MAPPER && romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
-        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_TURBORTIMER) 
+        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_TURBORTIMER && 
+        romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM) 
     {
         if (romSize == 0) {
             sprintf(buffer, "Unknown");
@@ -621,6 +629,8 @@ static void setEditControls(HWND hDlg)
     if (romType == SRAM_MATSUCHITA || romType == SRAM_S1985 || 
         romType == ROM_S1990 || romType == ROM_KANJI || romType == ROM_TURBORTIMER ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
+        romType == ROM_MOONSOUND ||
+        romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
         romType == ROM_KANJI12 || romType == ROM_JISYO) 
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
@@ -657,7 +667,7 @@ static void setEditControls(HWND hDlg)
     // Set address
     if (romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
-        romType == ROM_SVI738FDC ||
+        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC ||
         romType == ROM_FMPAC || romType == ROM_BUNSETU)
     {
         int size = (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
@@ -784,6 +794,7 @@ static void setEditControls(HWND hDlg)
     case ROM_SVI738FDC:
     case ROM_FMPAC:
     case ROM_BUNSETU:
+    case ROM_MSXMUSIC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
@@ -824,7 +835,6 @@ static void setEditControls(HWND hDlg)
     case ROM_KOREAN80:
     case ROM_KOREAN90:
     case ROM_KOREAN126:
-    case ROM_SONYHBI55:
     case ROM_HOLYQURAN:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
@@ -835,6 +845,7 @@ static void setEditControls(HWND hDlg)
     case ROM_SDSNATCHER:
     case ROM_SCCMIRRORED:
     case ROM_SCCEXTENDED:
+    case ROM_SONYHBI55:
     case ROM_PAC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -845,6 +856,7 @@ static void setEditControls(HWND hDlg)
     case ROM_JISYO:
     case ROM_KANJI:
     case ROM_KANJI12:
+    case ROM_MOONSOUND:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "n/a");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -856,6 +868,8 @@ static void setEditControls(HWND hDlg)
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
     case ROM_TURBORTIMER:
+    case ROM_MSXAUDIODEV:
+    case ROM_TURBORPCM:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
         EnableWindow(GetDlgItem(hDlg, IDC_ROMBROWSE), FALSE);
@@ -920,7 +934,9 @@ static RomType romTypeList[] = {
     ROM_HOLYQURAN,
     ROM_FMPAC,
     ROM_PAC,
+    ROM_MSXMUSIC,
     ROM_MSXAUDIO,
+    ROM_MOONSOUND,
     ROM_KONAMI4NF, 
     ROM_ASCII16NF,
     ROM_SNATCHER,
@@ -928,6 +944,8 @@ static RomType romTypeList[] = {
     ROM_SCCMIRRORED,
     ROM_SCCEXTENDED,
     ROM_SONYHBI55,
+    ROM_MSXAUDIODEV,
+    ROM_TURBORPCM,
     ROM_UNKNOWN,
 };
 
@@ -1590,38 +1608,6 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
             int change = 1;
 
             switch (LOWORD(wParam)) {
-            case IDC_MOONSOUNDSRAM:
-                if (HIWORD(wParam) == CBN_SELCHANGE) {
-                    switch(SendMessage(GetDlgItem(hDlg, IDC_MOONSOUNDSRAM), CB_GETCURSEL, 0, 0)) {
-                    case 0:  machine->audio.moonsoundSRAM = 128;   break;
-                    default: machine->audio.moonsoundSRAM = 256;  break;
-                    case 2:  machine->audio.moonsoundSRAM = 640;  break;
-                    case 3:  machine->audio.moonsoundSRAM = 1024; break;
-                    case 4:  machine->audio.moonsoundSRAM = 2048; break;
-                    }
-                }
-                else {
-                    change = 0;
-                }
-                break;
-            case IDC_ENABLEMSXMUSIC:
-                machine->audio.enableYM2413 = getBtCheck(hDlg, IDC_ENABLEMSXMUSIC);
-                break;
-            case IDC_ENABLEMSXAUDIO:
-                machine->audio.enableY8950 = getBtCheck(hDlg, IDC_ENABLEMSXAUDIO);
-                break;
-            case IDC_ENABLEMOONSOUND:
-                machine->audio.enableMoonsound = getBtCheck(hDlg, IDC_ENABLEMOONSOUND);
-                break;
-            case IDC_ENABLEPCM:
-                machine->audio.enablePCM = getBtCheck(hDlg, IDC_ENABLEPCM);
-                break;
-            case IDC_ENABLEAY8910:
-                machine->audio.enableAY8910 = getBtCheck(hDlg, IDC_ENABLEAY8910);
-                break;
-            case IDC_ENABLESN76489:
-                machine->audio.enableSN76489 = getBtCheck(hDlg, IDC_ENABLESN76489);
-                break;
             case IDC_CONF_VIDEOCHIP:
                 {
                     char videoSel[64];
@@ -1671,23 +1657,6 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         case VDP_V9958: SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_SETCURSEL, 3, 0); break;
         }
         updateVramList(hDlg);
-        
-        setBtCheck(hDlg, IDC_ENABLEMSXMUSIC, machine->audio.enableYM2413, 1);
-        setBtCheck(hDlg, IDC_ENABLEMSXAUDIO, machine->audio.enableY8950,  1);
-        setBtCheck(hDlg, IDC_ENABLEMOONSOUND, machine->audio.enableMoonsound, 1);
-        setBtCheck(hDlg, IDC_ENABLEPCM, machine->audio.enablePCM, 1);
-        setBtCheck(hDlg, IDC_ENABLEAY8910, machine->audio.enableAY8910, 1);
-        setBtCheck(hDlg, IDC_ENABLESN76489, machine->audio.enableSN76489, 1);
-        
-        EnableWindow(GetDlgItem(hDlg, IDC_MOONSOUNDSRAM), machine->audio.enableMoonsound);
-
-        switch (machine->audio.moonsoundSRAM) {
-        default:   SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_SETCURSEL, 0, 0); break;
-        case 256:  SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_SETCURSEL, 1, 0); break;
-        case 640:  SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_SETCURSEL, 2, 0); break;
-        case 1024: SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_SETCURSEL, 3, 0); break;
-        case 2048: SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_SETCURSEL, 4, 0); break;
-        }
         return TRUE;
     }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 22:48:37 $
+** $Date: 2005-01-02 08:22:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,7 @@
 #include "romMapperPhilipsFdc.h"
 #include "romMapperSvi738Fdc.h"
 #include "romMapperSonyHBI55.h"
+#include "romMapperMoonsound.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -257,6 +258,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SCCPLUS:
             romMapperSCCplusCreate(romName, buf, size, slot, sslot, 2, SCCP_EXTENDED);
+            break;
+
+        case ROM_MOONSOUND:
+            romMapperMoonsoundCreate(romName, buf, size, 640);
             break;
             
         case ROM_KONAMI4:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,9 +36,17 @@ extern "C" {
 
 #include "msxTypes.h"
 #include "audioMixer.h"
+    
+typedef struct Moonsound Moonsound;
 
 /* Constructor and destructor */
-int moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSize);
+Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSize);
+void moonsoundDestroy(Moonsound* moonsound);
+void moonsoundReset(Moonsound* moonsound);
+UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort);
+void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value);
+void moonsoundLoadState(Moonsound* moonsound);
+void moonsoundSaveState(Moonsound* moonsound);
 
 void moonsoundTick(UInt32 elapsedTime);
 void moonsoundSetOversampling(int Oversampling);

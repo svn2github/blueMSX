@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:25 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,11 +55,6 @@ typedef struct {
         char inZipName[512];
     } cassette;
     struct {
-        int enableYM2413;
-        int enableY8950;
-        int enableMoonsound;
-    } audio;
-    struct {
         VdpSyncMode vdpSyncMode;
     } video;
 } DeviceInfo;
@@ -99,9 +94,6 @@ int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
 
-int boardGetFdcTimingEnable();
-void boardSetFdcTimingEnable(int enable);
-
 char* boardGetBaseDirectory();
 
 Mixer* boardGetMixer();
@@ -112,14 +104,30 @@ void boardChangeCassette(char* name, const char* fileInZipFile);
 
 int  boardGetCassetteInserted();
 
-void boardSetDirectory(char* dir);
-void boardSetYm2413Oversampling(int value);
-void boardSetY8950Oversampling(int value);
-void boardSetMoonsoundOversampling(int value);
-
 #define boardFrequency() (6 * 3579545)
 
 unsigned long boardSystemTime();
+
+// The following methods are more generic config than board specific
+// They should be moved from board.
+void boardSetDirectory(char* dir);
+
+void boardSetFdcTimingEnable(int enable);
+int  boardGetFdcTimingEnable();
+
+void boardSetYm2413Oversampling(int value);
+int  boardGetYm2413Oversampling();
+void boardSetY8950Oversampling(int value);
+int  boardGetY8950Oversampling();
+void boardSetMoonsoundOversampling(int value);
+int  boardGetMoonsoundOversampling();
+
+void boardSetYm2413Enable(int value);
+int  boardGetYm2413Enable();
+void boardSetY8950Enable(int value);
+int  boardGetY8950Enable();
+void boardSetMoonsoundEnable(int value);
+int  boardGetMoonsoundEnable();
 
 #endif /* BOARD_H */
 

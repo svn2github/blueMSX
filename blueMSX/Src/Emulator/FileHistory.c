@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 22:48:35 $
+** $Date: 2005-01-02 08:22:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -320,6 +320,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             properties->cartridge.slotAType != ROM_FMPAC               &&
             properties->cartridge.slotAType != ROM_PAC                 &&
             properties->cartridge.slotAType != ROM_MSXAUDIO            &&
+            properties->cartridge.slotAType != ROM_MOONSOUND           &&
             properties->cartridge.slotAType != ROM_SNATCHER            &&
             properties->cartridge.slotAType != ROM_SDSNATCHER          &&
             properties->cartridge.slotAType != ROM_SCCMIRRORED         &&
@@ -363,6 +364,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             properties->cartridge.slotBType != ROM_FMPAC               &&
             properties->cartridge.slotBType != ROM_PAC                 &&
             properties->cartridge.slotBType != ROM_MSXAUDIO            &&
+            properties->cartridge.slotBType != ROM_MOONSOUND           &&
             properties->cartridge.slotBType != ROM_SNATCHER            &&
             properties->cartridge.slotBType != ROM_SDSNATCHER          &&
             properties->cartridge.slotBType != ROM_SCCMIRRORED         &&

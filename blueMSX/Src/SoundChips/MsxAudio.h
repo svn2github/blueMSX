@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxAudio.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,6 @@ int msxaudioCreate(Mixer* mixer);
 
 void msxaudioTick(UInt32 elapsedTime);
 void msxaudioTick2();
-void msxaudioSetOversampling(int Oversampling);
 
 #ifdef __cplusplus
 }

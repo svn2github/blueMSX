@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-30 22:53:25 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,32 +79,6 @@ int readMachine(Machine* machine, char* machineName, char* file)
     else if (0 == strcmp(buffer, "64kB")) machine->video.vramSize = 64 * 1024;
     else if (0 == strcmp(buffer, "128kB")) machine->video.vramSize = 128 * 1024;
     else return 0;
-
-    // Read audio info
-    GetPrivateProfileString("Audio", "YM2413", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "0")) machine->audio.enableYM2413 = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enableYM2413 = 1;
-    else return 0;
-
-    GetPrivateProfileString("Audio", "Y8950", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "0")) machine->audio.enableY8950 = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enableY8950 = 1;
-    else return 0;
- 
-    // If not configured, enable it for MSX2 configs (assuming that the VDP is configured correctly
-    GetPrivateProfileString("Audio", "Moonsound", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "none")) {
-        machine->audio.enableMoonsound = machine->video.vdpVersion == VDP_V9938 || machine->video.vdpVersion == VDP_V9958;
-    }
-    else if (0 == strcmp(buffer, "0")) machine->audio.enableMoonsound = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enableMoonsound = 1;
-    else return 0;
-
-    GetPrivateProfileString("Audio", "Moonsound SRAM", "none", buffer, 10000, file);
-    if (0 == sscanf(buffer, "%dkB", &value)) {
-        value = 640;
-    }
-    machine->audio.moonsoundSRAM = value;
 
     // Read CMOS info
     GetPrivateProfileString("CMOS", "Enable CMOS", "none", buffer, 10000, file);
@@ -211,27 +185,6 @@ int readMachine(Machine* machine, char* machineName, char* file)
 
         slotBuf += strlen(slotBuf) + 1;
     }
- 
-    // If not configured, enable PCM for Turbo-R configs
-    GetPrivateProfileString("Audio", "PCM", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "none"))   machine->audio.enablePCM = machine->cpu.hasR800;
-    else if (0 == strcmp(buffer, "0")) machine->audio.enablePCM = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enablePCM = 1;
-    else return 0;
- 
-    // If not configured, enable SN76489 for Coleco configs
-    GetPrivateProfileString("Audio", "SN76489", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "none"))   machine->audio.enableSN76489 = machine->board.type == BOARD_COLECO;
-    else if (0 == strcmp(buffer, "0")) machine->audio.enableSN76489 = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enableSN76489 = 1;
-    else return 0;
- 
-    // If not configured, enable AY8910 for MSX and SVI configs
-    GetPrivateProfileString("Audio", "AY8910", "none", buffer, 10000, file);
-    if (0 == strcmp(buffer, "none"))   machine->audio.enableAY8910 = machine->board.type != BOARD_COLECO;
-    else if (0 == strcmp(buffer, "0")) machine->audio.enableAY8910 = 0;
-    else if (0 == strcmp(buffer, "1")) machine->audio.enableAY8910 = 1;
-    else return 0;
 
     machine->slotInfoCount = i;
 
@@ -250,23 +203,6 @@ void machineSave(Machine* machine)
     mkdir(dir);
 
     sprintf(file, "Machines/%s/config.ini", machine->name);
-
-    // Write audio info
-    WritePrivateProfileString("Audio", "AY8910", machine->audio.enableAY8910 ? "1" : "0", file);
-    WritePrivateProfileString("Audio", "SN76489", machine->audio.enableSN76489 ? "1" : "0", file);
-    WritePrivateProfileString("Audio", "PCM", machine->audio.enablePCM ? "1" : "0", file);
-    WritePrivateProfileString("Audio", "YM2413", machine->audio.enableYM2413 ? "1" : "0", file);
-    WritePrivateProfileString("Audio", "Y8950", machine->audio.enableY8950 ? "1" : "0", file);
-    WritePrivateProfileString("Audio", "Moonsound", machine->audio.enableMoonsound ? "1" : "0", file);
-    
-
-    if (machine->audio.moonsoundSRAM < 1000) {
-        sprintf(buffer, "%dkB", machine->audio.moonsoundSRAM);
-    }
-    else {
-        sprintf(buffer, "%dMB", machine->audio.moonsoundSRAM / 1024);
-    }
-    WritePrivateProfileString("Audio", "Moonsound SRAM", buffer, file);
 
     // Write CMOS info
     WritePrivateProfileString("CMOS", "Enable CMOS", machine->cmos.enable ? "1" : "0", file);
@@ -517,13 +453,6 @@ void machineUpdate(Machine* machine)
     else {
         machine->video.vramSize = 16 * 1024;
     }
-
-    // Check Moonsound SRAM size
-    if      (machine->audio.moonsoundSRAM <=  128) machine->audio.moonsoundSRAM = 128;
-    else if (machine->audio.moonsoundSRAM <=  256) machine->audio.moonsoundSRAM = 256;
-    else if (machine->audio.moonsoundSRAM <=  640) machine->audio.moonsoundSRAM = 640;
-    else if (machine->audio.moonsoundSRAM <= 1024) machine->audio.moonsoundSRAM = 1024;
-    else                                           machine->audio.moonsoundSRAM = 2048;
 }
 
 
@@ -549,12 +478,6 @@ void machineLoadState(Machine* machine)
     
     machine->video.vdpVersion      = saveStateGet(state, "videoVersion",      0);
     machine->video.vramSize        = saveStateGet(state, "videoVramSize",     0x10000);
-    
-    machine->audio.enableYM2413    = saveStateGet(state, "enableYM2413",      0);
-    machine->audio.enableY8950     = saveStateGet(state, "enableY8950",       0);
-    machine->audio.enableMoonsound = saveStateGet(state, "enableMoonsound",   0);
-
-    machine->audio.moonsoundSRAM   = saveStateGet(state, "moonsoundSRAM",     0);
     
     machine->cmos.enable           = saveStateGet(state, "cmosEnable",        0);
     machine->cmos.batteryBacked    = saveStateGet(state, "cmosBatteryBacked", 0);
@@ -597,10 +520,6 @@ void machineLoadState(Machine* machine)
     
     machine->cpu.hasR800 = hasR800;
 
-    machine->audio.enablePCM       = saveStateGet(state, "enablePCM",         machine->cpu.hasR800);
-    machine->audio.enableAY8910    = saveStateGet(state, "enableAY8910",      machine->board.type != BOARD_COLECO);
-    machine->audio.enableSN76489   = saveStateGet(state, "enableSN76489",     machine->board.type == BOARD_COLECO);
-
     saveStateClose(state);
 
     machineUpdate(machine);
@@ -628,14 +547,7 @@ void machineSaveState(Machine* machine)
     saveStateSet(state, "videoVersion",      machine->video.vdpVersion);
     saveStateSet(state, "videoVramSize",     machine->video.vramSize);
     
-    saveStateSet(state, "enableYM2413",      machine->audio.enableYM2413);
-    saveStateSet(state, "enableY8950",       machine->audio.enableY8950);
-    saveStateSet(state, "enableMoonsound",   machine->audio.enableMoonsound);
-    saveStateSet(state, "enablePCM",         machine->audio.enablePCM);
-    saveStateSet(state, "enableAY8910",      machine->audio.enableAY8910);
-    saveStateSet(state, "enableSN76489",     machine->audio.enableSN76489);
-    saveStateSet(state, "moonsoundSRAM",     machine->audio.moonsoundSRAM);
-    
+
     saveStateSet(state, "cmosEnable",        machine->cmos.enable);
     saveStateSet(state, "cmosBatteryBacked", machine->cmos.batteryBacked);
     

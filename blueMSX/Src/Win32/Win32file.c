@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 05:09:08 $
+** $Date: 2005-01-02 08:22:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,7 +66,9 @@ static RomType romTypeList[] = {
     ROM_KOREAN126,
     ROM_HOLYQURAN,
     ROM_FMPAC,
+    ROM_MSXMUSIC,
     ROM_MSXAUDIO,
+    ROM_MOONSOUND,
     ROM_DISKPATCH,
     ROM_TC8566AF,
     ROM_MICROSOL,
@@ -84,6 +86,8 @@ static RomType romTypeList[] = {
     ROM_SVI328,
     ROM_COLECO,
     ROM_SONYHBI55,
+    ROM_MSXAUDIODEV,
+    ROM_TURBORPCM,
     ROM_UNKNOWN,
 };
 

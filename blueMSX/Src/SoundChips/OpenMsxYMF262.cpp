@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.1.1.1 2004-12-04 20:25:32 dvik Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.2 2005-01-02 08:22:12 dvik Exp $
 
 /*
  *
@@ -1815,8 +1815,8 @@ void YMF262::reset(const EmuTime &time)
 	setInternalMute(true);
 }
 
-YMF262::YMF262(short volume, const EmuTime &time)
-	: timer1(this), timer2(this)
+YMF262::YMF262(short volume, const EmuTime &time, void* ref)
+	: timer1(this, ref), timer2(this, ref)
 {
     chanOut = chanout;
 

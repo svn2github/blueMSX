@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,9 +43,7 @@
 extern void PatchReset(BoardType boardType);
 
 static int boardType;
-static int fdcTimingEnable = 1;
 static int cassetteInserted = 0;
-static char baseDirectory[512];
 static Mixer* boardMixer = NULL;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
@@ -340,39 +338,78 @@ int boardGetCassetteInserted()
     return cassetteInserted;
 }
 
+/////////////////////////////////////////////////////////////
+// Not board specific stuff....
+
+static char baseDirectory[512];
+static int fdcTimingEnable       = 1;
+static int oversamplingYM2413    = 1;
+static int oversamplingY8950     = 1;
+static int oversamplingMoonsound = 1;
+static int enableYM2413          = 1;
+static int enableY8950           = 1;
+static int enableMoonsound       = 1;
+
 char* boardGetBaseDirectory() {
     return baseDirectory;
 }
 
-void boardSetDirectory(char* dir)
-{
+void boardSetDirectory(char* dir) {
     strcpy(baseDirectory, dir);
 }
 
-int boardGetFdcTimingEnable()
-{
+int boardGetFdcTimingEnable() {
     return fdcTimingEnable;
 }
 
-void boardSetFdcTimingEnable(int enable)
-{
+void boardSetFdcTimingEnable(int enable) {
     fdcTimingEnable = enable;
 }
 
-void boardSetYm2413Oversampling(int value)
-{
-    ym2413SetOversampling(value);
+void boardSetYm2413Oversampling(int value) {
+    oversamplingYM2413 = value;
 }
 
-void boardSetY8950Oversampling(int value) 
-{
-#ifdef USE_OPENMSX_MSXAUDIO
-    msxaudioSetOversampling(value);
-#else
-    y8950SetOversampling(value);
-#endif
+int boardGetYm2413Oversampling() {
+    return oversamplingYM2413;
 }
-void boardSetMoonsoundOversampling(int value)
-{
-    moonsoundSetOversampling(value);
+
+void boardSetY8950Oversampling(int value) {
+    oversamplingY8950 = value;
+}
+
+int boardGetY8950Oversampling() {
+    return oversamplingY8950;
+}
+
+void boardSetMoonsoundOversampling(int value) {
+    oversamplingMoonsound = value;
+}
+
+int boardGetMoonsoundOversampling() {
+    return oversamplingMoonsound;
+}
+
+void boardSetYm2413Enable(int value) {
+    enableYM2413 = value;
+}
+
+int boardGetYm2413Enable() {
+    return enableYM2413;
+}
+
+void boardSetY8950Enable(int value) {
+    enableY8950 = value;
+}
+
+int boardGetY8950Enable() {
+    return enableY8950;
+}
+
+void boardSetMoonsoundEnable(int value) {
+    enableMoonsound = value;
+}
+
+int boardGetMoonsoundEnable() {
+    return enableMoonsound;
 }

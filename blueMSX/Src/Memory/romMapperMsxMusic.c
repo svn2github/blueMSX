@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-01-02 08:22:11 $
 **
@@ -27,26 +27,33 @@
 **
 ******************************************************************************
 */
-#include "romMapperNormal.h"
+#include "romMapperMsxMusic.h"
 #include "romMapper.h"
-#include "SlotManager.h"
 #include "DeviceManager.h"
+#include "SlotManager.h"
+#include "IoPort.h"
+#include "YM2413.h"
+#include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-
 
 typedef struct {
-    int deviceHandle;
+    int      deviceHandle;
+    YM_2413* ym2413;
     UInt8* romData;
     int slot;
     int sslot;
     int startPage;
-} RomMapperNormal;
+} MsxMusic;
 
-static void destroy(RomMapperNormal* rm)
+static void destroy(MsxMusic* rm)
 {
+    ioPortUnregister(0x7c);
+    ioPortUnregister(0x7d);
+
+    ym2413Destroy(rm->ym2413);
+
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -54,11 +61,46 @@ static void destroy(RomMapperNormal* rm)
     free(rm);
 }
 
-int romMapperNormalCreate(char* filename, UInt8* romData, 
-                          int size, int slot, int sslot, int startPage) 
+static void reset(MsxMusic* rm) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
-    RomMapperNormal* rm;
+    ym2413Reset(rm->ym2413);
+}
+
+static void loadState(MsxMusic* rm)
+{
+    SaveState* state = saveStateOpenForRead("MsxMusic");
+
+    saveStateClose(state);
+    
+    ym2413LoadState(rm->ym2413);
+}
+
+static void saveState(MsxMusic* rm)
+{
+    SaveState* state = saveStateOpenForWrite("MsxMusic");
+
+    saveStateClose(state);
+
+    ym2413SaveState(rm->ym2413);
+}
+
+static void write(MsxMusic* rm, UInt16 ioPort, UInt8 data)
+{
+    switch (ioPort & 1) {
+    case 0:
+        ym2413WriteAddress(rm->ym2413, data);
+        break;
+    case 1:
+        ym2413WriteData(rm->ym2413, data);
+        break;
+    }
+}
+
+int romMapperMsxMusicCreate(char* filename, UInt8* romData, 
+                            int size, int slot, int sslot, int startPage) 
+{
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    MsxMusic* rm = malloc(sizeof(MsxMusic));
     int pages = size / 0x2000 + ((size & 0x1fff) ? 1 : 0);
     int i;
 
@@ -66,10 +108,14 @@ int romMapperNormalCreate(char* filename, UInt8* romData,
         return 0;
     }
 
-    rm = malloc(sizeof(RomMapperNormal));
+    rm->deviceHandle = deviceManagerRegister(ROM_MSXMUSIC, &callbacks, rm);
 
-    rm->deviceHandle = deviceManagerRegister(ROM_NORMAL, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, NULL, NULL, destroy, rm);
+    rm->ym2413 = ym2413Create(boardGetMixer());
+    
+    if (boardGetYm2413Enable()) {
+        ioPortRegister(0x7c, NULL, write, rm);
+        ioPortRegister(0x7d, NULL, write, rm);
+    }
 
     rm->romData = malloc(pages * 0x2000);
     memcpy(rm->romData, romData, size);
@@ -82,6 +128,7 @@ int romMapperNormalCreate(char* filename, UInt8* romData,
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
 
+    reset(rm);
+
     return 1;
 }
-

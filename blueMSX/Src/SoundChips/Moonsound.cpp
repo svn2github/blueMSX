@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-01-02 08:22:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,6 @@
 extern "C" {
 #include "Board.h"
 #include "SaveState.h"
-#include "IoPort.h"
-#include "romMapper.h"
-#include "DeviceManager.h"
 }
 
 #define FREQUENCY        3579545
@@ -52,8 +49,6 @@ struct Moonsound {
     Mixer* mixer;
     Int32 handle;
 
-    Int32  Oversampling;
-    Int32  deviceHandle;
     YMF278* ymf278;
     YMF262* ymf262;
     Int32  buffer[BUFFER_SIZE];
@@ -69,24 +64,43 @@ struct Moonsound {
 };
 
 Moonsound* theMoonsound = NULL;
-static volatile int initialized = 0;
+
+void moonsoundTimerSet(void* ref, int timer, int count)
+{
+    Moonsound* moonsound = (Moonsound*)ref;
+
+    if (timer == 1) {
+        if (moonsound->counter1 != -1) {
+            moonsound->counter1 = count;
+        }
+        moonsound->timer1 = count;
+    }
+    else {
+        if (moonsound->counter2 != -1) {
+            moonsound->counter2 = count;
+        }
+        moonsound->timer2 = count;
+    }
+}
+
+void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
+{
+    Moonsound* moonsound = (Moonsound*)ref;
+
+    if (timer == 1) {
+        moonsound->timerRef1 = timerRef;
+        moonsound->counter1  = start ? moonsound->timer1 : (UInt32)-1;
+    }
+    else {
+        moonsound->timerRef2 = timerRef;
+        moonsound->counter2  = start ? moonsound->timer2 : (UInt32)-1;
+    }
+}
 
 extern "C" {
 
-static void destroy(void* rm) {
-    Moonsound* moonsound = (Moonsound*)rm;
-
-    initialized = 0;
-
-    deviceManagerUnregister(moonsound->deviceHandle);
-
-    ioPortUnregister(0x7e);
-    ioPortUnregister(0x7f);
-    ioPortUnregister(0xc4);
-    ioPortUnregister(0xc5);
-    ioPortUnregister(0xc6);
-    ioPortUnregister(0xc7);
-
+void moonsoundDestroy(Moonsound* moonsound) 
+{
     mixerUnregisterChannel(moonsound->mixer, moonsound->handle);
 
     delete moonsound->ymf262;
@@ -95,10 +109,8 @@ static void destroy(void* rm) {
     theMoonsound = NULL;
 }
 
-static void saveState(void* rm)
+void moonsoundSaveState(Moonsound* moonsound)
 {
-    Moonsound* moonsound = (Moonsound*)rm;
-
     SaveState* state = saveStateOpenForWrite("moonsound");
 
     saveStateSet(state, "timer1",    moonsound->timer1);
@@ -116,10 +128,8 @@ static void saveState(void* rm)
     moonsound->ymf278->saveState();
 }
 
-static void loadState(void* rm)
+void moonsoundLoadState(Moonsound* moonsound)
 {
-    Moonsound* moonsound = (Moonsound*)rm;
-
     SaveState* state = saveStateOpenForRead("moonsound");
 
     moonsound->timer1    =        saveStateGet(state, "timer1",    0);
@@ -137,10 +147,8 @@ static void loadState(void* rm)
     moonsound->ymf278->loadState();
 }
 
-static void reset(void* rm)
+void moonsoundReset(Moonsound* moonsound)
 {
-    Moonsound* moonsound = (Moonsound*)rm;
-
     UInt32 systemTime = boardSystemTime();
 
     moonsound->counter1 = (UInt32)-1;
@@ -173,37 +181,7 @@ static Int32* sync(void* ref, UInt32 count)
     return moonsound->buffer;
 }
 
-}
-
-void moonsoundTimerSet(int timer, int count)
-{
-    if (timer == 1) {
-        if (theMoonsound->counter1 != -1) {
-            theMoonsound->counter1 = count;
-        }
-        theMoonsound->timer1 = count;
-    }
-    else {
-        if (theMoonsound->counter2 != -1) {
-            theMoonsound->counter2 = count;
-        }
-        theMoonsound->timer2 = count;
-    }
-}
-
-void moonsoundTimerStart(int timer, int start, UInt8 ref)
-{
-    if (timer == 1) {
-        theMoonsound->timerRef1 = ref;
-        theMoonsound->counter1  = start ? theMoonsound->timer1 : (UInt32)-1;
-    }
-    else {
-        theMoonsound->timerRef2 = ref;
-        theMoonsound->counter2  = start ? theMoonsound->timer2 : (UInt32)-1;
-    }
-}
-
-extern "C" void moonsoundTick(UInt32 elapsedTime) 
+void moonsoundTick(UInt32 elapsedTime) 
 {
     if (theMoonsound != NULL) {
         while (elapsedTime--) {
@@ -224,7 +202,7 @@ extern "C" void moonsoundTick(UInt32 elapsedTime)
     }
 }
 
-extern "C" UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
+UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
 {
 	UInt8 result = 0xff;
     UInt32 systemTime = boardSystemTime();
@@ -251,7 +229,8 @@ extern "C" UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
 
     return result;
 }
-extern "C" void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
+
+void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
 {
     UInt32 systemTime = boardSystemTime();
 	if (ioPort < 0xC0) {
@@ -279,51 +258,31 @@ extern "C" void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
 	}
 }
 
-extern "C" void moonsoundSetOversampling(int Oversampling)
+Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSize)
 {
-    if (initialized) {
-        theMoonsound->Oversampling = Oversampling;
-        
-        theMoonsound->ymf262->setSampleRate(SAMPLERATE, theMoonsound->Oversampling);
-        theMoonsound->ymf278->setSampleRate(SAMPLERATE, theMoonsound->Oversampling);
-    }
-}
-
-extern "C" int moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSize)
-{
-    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     Moonsound* moonsound = new Moonsound;
     UInt32 systemTime = boardSystemTime();
-
-    theMoonsound = moonsound;
 
     moonsound->mixer = mixer;
     moonsound->counter1 = (UInt32)-1;
     moonsound->counter2 = (UInt32)-1;
-    moonsound->Oversampling = 1;
 
     moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, sync, moonsound);
 
-    moonsound->deviceHandle = deviceManagerRegister(AUDIO_MOONSOUND, &callbacks, moonsound);
-
-    moonsound->ymf262 = new YMF262(0, systemTime);
-    moonsound->ymf262->setSampleRate(SAMPLERATE, moonsound->Oversampling);
+    moonsound->ymf262 = new YMF262(0, systemTime, moonsound);
+    moonsound->ymf262->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
 	moonsound->ymf262->setVolume(32767);
 
     moonsound->ymf278 = new YMF278(0, sramSize, romData, romSize, systemTime);
-    moonsound->ymf278->setSampleRate(SAMPLERATE, moonsound->Oversampling);
+    moonsound->ymf278->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
     moonsound->ymf278->setVolume(32767);
+    
+    theMoonsound = moonsound;
 
-    initialized = 1;
-
-    ioPortRegister(0x7e, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-    ioPortRegister(0x7f, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-    ioPortRegister(0xc4, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-    ioPortRegister(0xc5, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-    ioPortRegister(0xc6, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-    ioPortRegister(0xc7, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
-
-    return 1;
+    return moonsound;
 }
+
+}
+
 
 

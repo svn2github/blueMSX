@@ -480,10 +480,22 @@
 					RelativePath="..\..\Src\Memory\romMapperMicrosol.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMoonsound.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMoonsound.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxAudio.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxDos2.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxMusic.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxMusic.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNational.c">
@@ -517,9 +529,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
@@ -701,6 +710,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSCCplus.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.h">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-30 22:53:25 $
+** $Date: 2005-01-02 08:22:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -626,10 +626,6 @@ void sviSaveState()
     saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
     saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
     saveStateSetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
-
-    saveStateSet(state, "enableYM2413",    di->audio.enableYM2413);
-    saveStateSet(state, "enableY8950",     di->audio.enableY8950);
-    saveStateSet(state, "enableMoonsound", di->audio.enableMoonsound);
 
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
