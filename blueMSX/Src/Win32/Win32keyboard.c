@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-03-13 22:52:02 $
+** $Date: 2005-03-16 16:17:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -649,8 +649,14 @@ static void keyboardHanldeKeypress(int code, int pressed) {
 static DWORD buttonState = 0;
 static int hasFocus = 0;
 
-void keyboardSetFocus(int focus) {
-    hasFocus = focus;
+void keyboardSetFocus(int handle, int focus) 
+{
+    if (focus) {
+        hasFocus |= handle;
+    }
+    else {
+        hasFocus &= ~handle;
+    }
 }
 
 static void keyboardResetKbd() 

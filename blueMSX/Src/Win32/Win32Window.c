@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-03-13 22:52:01 $
+** $Date: 2005-03-16 16:17:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -365,7 +365,8 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
         break;
 
     case WM_ACTIVATE:
-        keybardEnableEdit(wParam != WA_INACTIVE);
+        keyboardSetFocus(2, LOWORD(wParam) != WA_INACTIVE);
+        keybardEnableEdit(LOWORD(wParam) != WA_INACTIVE);
         break;
 
     case WM_CLOSE:
@@ -377,6 +378,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
         KillTimer(hwnd, TIMER_POLL_INPUT);
         keyboardCancelConfig();
         keybardEnableEdit(0);
+        keyboardSetFocus(2, 0);
         {
             char* name = (char*)objectGet(hwnd, WM_DROPDOWN_KEYBOARDCONFIG);
             if (name != NULL) {
