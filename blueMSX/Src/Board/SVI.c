@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-02-27 07:53:37 $
+** $Date: 2005-02-27 10:40:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -478,7 +478,17 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
 
     dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 1, 0, 0x10000, mappedRAM);
 
-    dbgDeviceAddCallstack(dbgDevice, "Callstack", r800->callstack, r800->callstackSize);
+    if (r800->callstackSize > 255) {
+        static UInt16 callstack[0x100];
+        int beginning = r800->callstackSize & 0xff;
+        int reminder = 256 - beginning;
+        memcpy(callstack, r800->callstack + beginning, reminder * sizeof(UInt16));
+        memcpy(callstack + reminder, r800->callstack, beginning * sizeof(UInt16));
+        dbgDeviceAddCallstack(dbgDevice, "Callstack", callstack, 256);
+    }
+    else {
+        dbgDeviceAddCallstack(dbgDevice, "Callstack", r800->callstack, r800->callstackSize);
+    }
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
 

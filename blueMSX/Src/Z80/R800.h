@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-27 05:31:29 $
+** $Date: 2005-02-27 10:40:40 $
 **
 ** Author: Daniel Vik
 **
@@ -232,7 +232,8 @@ typedef struct
     void*         ref;              /* User defined pointer which is   */
                                     /* passed to the callbacks         */
 
-    UInt8         callstackSize;    /* Nr of entries in the callstack  */
+    UInt32        callstackSize;    /* Nr of entries in the callstack  */
+                                    /* only last 256 entries are stored*/
     UInt16        callstack[256];   /* Callstack buffer                */
     char          breakpoints[0x10000];
 } R800;
