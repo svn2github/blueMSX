@@ -152,7 +152,7 @@ static void updateWindowMenu()
         AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, "Continue\tF5");
         AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, "Break All\tCtrl+Alt+Break");
         AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Stop Debugging\tShift+F5");
-        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Restart\tCtrl+Shift+F5");
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_RESTART,  "Restart\tCtrl+Shift+F5");
     }
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into\tF10");
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
@@ -379,7 +379,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
         case MENU_FILE_EXIT:
-            CloseWindow(hwnd);
+            SendMessage(hwnd, WM_CLOSE, 0, 0);
             return 0;
 
         case MENU_HELP_ABOUT:
