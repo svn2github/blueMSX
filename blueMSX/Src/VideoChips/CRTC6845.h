@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-24 08:45:55 $
+** $Date: 2005-01-25 16:59:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,18 +31,45 @@
 #define CRTC_H
 
 #include "MSXTypes.h"
+#include "Board.h"
+#include "VideoManager.h"
 
-typedef enum { CRTC_MSX, CRTC_SVI } CrtcConnector;
+typedef struct
+{
+    int     mode;
+    UInt8   rasterStart;
+    UInt8   rasterEnd;
+    UInt16  addressStart;
+    int     blinkrate;
+    UInt32  blinkstart;
+} Crtc6845Cursor;
 
-UInt8 crtcRead(void* dummy, UInt16 ioPort);
-void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value);
-void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value);
-void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value);
+typedef struct
+{
+    UInt8    address;  // AR
+    UInt8    reg[18];  // R0-R17
+} Crtc6845Register;
+
+typedef struct
+{
+    Crtc6845Cursor   cursor;
+    Crtc6845Register registers;
+    UInt32           frameCounter;
+    int              frameRate;
+    int              deviceHandle;
+    int              videoHandle;
+    int              videoEnabled;
+    BoardTimer*      timerDisplay;   
+    FrameBufferData* frameBufferData;
+} CRTC6845;
+
+UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort);
+void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
+void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
 
 void crtcMemWrite(UInt16 address, UInt8 value);
 UInt8 crtcMemRead(UInt16 address);
-int crtcMemBankStatus(void);
 
-int  crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size);
+CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size);
 
 #endif

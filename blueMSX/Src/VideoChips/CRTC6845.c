@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-01-25 04:49:45 $
+** $Date: 2005-01-25 16:58:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,33 +29,32 @@
 */
 
 #include "CRTC6845.h"
-#include "Board.h"
 #include "IoPort.h"
-#include "VideoManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
+#include <stdlib.h>
 #include <memory.h>
 
 /*
-    AR Address Register
-    R0 Horizontal Total (Character)                       SVI Default: 107
-    R1 Horizontal Displayed (Character)                   SVI Default: 80
-    R2 Horizontal Sync Position (Character)               SVI Default: 88
-    R3 Sync Width (Vertical-Raster, Horizontal-Character) SVI Default:  8
-    R4 Vertical Total (Line)                              SVI Default: 38
-    R5 Vertical Total Adjust (Raster)                     SVI Default: 5
-    R6 Vertical Displayed (Line)                          SVI Default: 24
-    R7 Vertical Sync Position (Line)                      SVI Default: 30
-    R8 Interlace and Skew                                 SVI Default: 0
-    R9 Maximum Raster Address (Raster)                    SVI Default: 7
-    R10 Cursor Start Raster (Raster)
-    R11 Cursor End Raster (Raster)
-    R12 Start Address (H)
-    R13 Start Address (L)
-    R14 Cursor (H)
-    R15 Cursor (L)
-    R16 Light Pen (H)
-    R17 Light Pen (L)
+   AR Address Register
+   R0 Horizontal Total (Character)                       SVI Default: 107
+   R1 Horizontal Displayed (Character)                   SVI Default: 80
+   R2 Horizontal Sync Position (Character)               SVI Default: 88
+   R3 Sync Width (Vertical-Raster, Horizontal-Character) SVI Default:  8
+   R4 Vertical Total (Line)                              SVI Default: 38
+   R5 Vertical Total Adjust (Raster)                     SVI Default: 5
+   R6 Vertical Displayed (Line)                          SVI Default: 24
+   R7 Vertical Sync Position (Line)                      SVI Default: 30
+   R8 Interlace and Skew                                 SVI Default: 0
+   R9 Maximum Raster Address (Raster)                    SVI Default: 7
+   R10 Cursor Start Raster (Raster)
+   R11 Cursor End Raster (Raster)
+   R12 Start Address (H)
+   R13 Start Address (L)
+   R14 Cursor (H)
+   R15 Cursor (L)
+   R16 Light Pen (H)
+   R17 Light Pen (L)
 */
 
 #define CHAR_WIDTH           7
@@ -76,64 +75,32 @@ static const UInt8 crtcRegisterValueMask[18] = {
     0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff 
 };
 
-typedef struct
-{
-    int     mode;
-    UInt8   rasterStart;
-    UInt8   rasterEnd;
-    UInt16  addressStart;
-    int     blinkrate;
-    UInt32  blinkstart;
-} TYP_CURSOR;
-
-typedef struct
-{
-    UInt8    address;  // AR
-    UInt8    reg[18];  // R0-R17
-} TYP_REGISTER;
-
-typedef struct
-{
-    TYP_CURSOR   cursor;
-    TYP_REGISTER registers;
-    UInt32       frameCounter;
-} TYP_CRTC;
-
-static TYP_CRTC crtc;
-static int crtcConnector;
+//static TYP_CRTC crtc;
 static UInt8 crtcROM[0x1000];
 static UInt8 crtcMemory[0x800];
-static UInt8 crtcMemoryBankControl = 0;
-
-// Video frame buffer info
-static int crtcDeviceHandle = 0;
-static int crtcVideoHandle = 0;
-static int crtcVideoEnabled = 0;
-static FrameBufferData* crtcFrameBufferData = NULL;
 
 // Frame refresh timer info
-#define REFRESH_PERIOD (boardFrequency() / 50) // 50Hz frame refresh
-static BoardTimer* crtcTimerDisplay;
+#define REFRESH_PERIOD (boardFrequency() /  50)
 
-static void crtcRenderVideoBuffer(void)
+static void crtcRenderVideoBuffer(CRTC6845* crtc)
 {
     UInt32 color[2];
     int x, y;
     int charWidth, charHeight;
-    int Nr  = crtc.registers.reg[CRTC_R9] + 1; // Number of rasters per character
+    int Nr  = crtc->registers.reg[CRTC_R9] + 1; // Number of rasters per character
     FrameBuffer* crtcFrameBuffer = frameBufferFlipDrawFrame(); // Call once per frame
 
-    crtc.frameCounter++;
+    crtc->frameCounter++;
 
-    charWidth = crtc.registers.reg[CRTC_R1];
-    if (charWidth >= crtc.registers.reg[CRTC_R0])
-        charWidth = crtc.registers.reg[CRTC_R0] - 1;
+    charWidth = crtc->registers.reg[CRTC_R1];
+    if (charWidth >= crtc->registers.reg[CRTC_R0])
+        charWidth = crtc->registers.reg[CRTC_R0] - 1;
     if (charWidth > 80)
         charWidth = 80;
 
-    charHeight = crtc.registers.reg[CRTC_R6];
-    if (charHeight >= crtc.registers.reg[CRTC_R4])
-        charHeight = crtc.registers.reg[CRTC_R4] - 1;
+    charHeight = crtc->registers.reg[CRTC_R6];
+    if (charHeight >= crtc->registers.reg[CRTC_R4])
+        charHeight = crtc->registers.reg[CRTC_R4] - 1;
     if (charHeight > 25)
         charHeight = 25;
 
@@ -163,9 +130,9 @@ static void crtcRenderVideoBuffer(void)
             if (x >= hadjust && x < charWidth + hadjust) {
                 pattern = crtcROM[16*crtcMemory[charAddress]+charRaster];
 
-                if (charAddress == crtc.cursor.addressStart) {
-                    if (((crtc.frameCounter - crtc.cursor.blinkstart) & crtc.cursor.blinkrate) || (crtc.cursor.mode==CURSOR_NOBLINK)) {
-                        pattern ^= charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
+                if (charAddress == crtc->cursor.addressStart) {
+                    if (((crtc->frameCounter - crtc->cursor.blinkstart) & crtc->cursor.blinkrate) || (crtc->cursor.mode==CURSOR_NOBLINK)) {
+                        pattern ^= charRaster >= crtc->cursor.rasterStart && charRaster <= crtc->cursor.rasterEnd ? 0xff : 0;
                     }
                 }
             }
@@ -182,71 +149,96 @@ static void crtcRenderVideoBuffer(void)
     }
 }
 
-static void crtcCursorUpdate(void)
+static void crtcCursorUpdate(CRTC6845* crtc)
 {
-    switch (crtc.registers.reg[CRTC_R10] & 0x60 ) {
+    switch (crtc->registers.reg[CRTC_R10] & 0x60 ) {
     case 32:
-        crtc.cursor.mode = CURSOR_DISABLED;
-        crtc.cursor.blinkrate = 0;
+        crtc->cursor.mode = CURSOR_DISABLED;
+        crtc->cursor.blinkrate = 0;
         break;
     case 64:
-        crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = 16;
+        crtc->cursor.mode = CURSOR_BLINK;
+        crtc->cursor.blinkrate = 16;
         break;
     case 96:
-        crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = 32;
+        crtc->cursor.mode = CURSOR_BLINK;
+        crtc->cursor.blinkrate = 32;
         break;
     default:
-        crtc.cursor.mode = CURSOR_NOBLINK;
-        crtc.cursor.blinkrate = 0;
+        crtc->cursor.mode = CURSOR_NOBLINK;
+        crtc->cursor.blinkrate = 0;
     }
-    crtc.cursor.blinkstart = crtc.frameCounter - crtc.cursor.blinkrate;
-    crtc.cursor.rasterStart = crtc.registers.reg[CRTC_R10] & 0x1f;
+    crtc->cursor.blinkstart = crtc->frameCounter - crtc->cursor.blinkrate;
+    crtc->cursor.rasterStart = crtc->registers.reg[CRTC_R10] & 0x1f;
 }
 
-UInt8 crtcRead(void* dummy, UInt16 ioPort)
+// Timer callback that is called once every frame
+static void crtcOnDisplay(CRTC6845* crtc, UInt32 time)
 {
-    if (crtc.registers.address < 18)
-        return crtc.registers.reg[crtc.registers.address];
-    else
-        return 0xff;
+    // Render VRAM if video is connected
+    if (crtc->videoEnabled)
+        crtcRenderVideoBuffer(crtc);
+
+    boardTimerAdd(crtc->timerDisplay, time + REFRESH_PERIOD);
 }
 
-void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
+// Callback called when video connector is enabled
+static void crtcVideoEnable(CRTC6845* crtc)
 {
-    if (crtc.registers.address < 16) {
-        value &= crtcRegisterValueMask[crtc.registers.address];
-        crtc.registers.reg[crtc.registers.address] = value;
-        switch (crtc.registers.address) {
+    crtc->videoEnabled = 1;
+}
+
+// Callback called when video connector is disabled
+static void crtcVideoDisable(CRTC6845* crtc)
+{
+    crtc->videoEnabled = 0;
+}
+
+static void saveState(CRTC6845* crtc)
+{
+    SaveState* state = saveStateOpenForWrite("crtc6845");
+
+    saveStateClose(state);
+}
+
+static void loadState(CRTC6845* crtc)
+{
+    SaveState* state = saveStateOpenForRead("vdp");
+
+    saveStateClose(state);
+}
+UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort)
+{
+    if (crtc->registers.address < 18)
+        return crtc->registers.reg[crtc->registers.address];
+
+    return 0xff;
+}
+
+void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
+{
+    if (crtc->registers.address < 16) {
+        value &= crtcRegisterValueMask[crtc->registers.address];
+        crtc->registers.reg[crtc->registers.address] = value;
+        switch (crtc->registers.address) {
         case CRTC_R10:
-            crtcCursorUpdate();
+            crtcCursorUpdate(crtc);
             break;
         case CRTC_R11:
-            crtc.cursor.rasterEnd = crtc.registers.reg[CRTC_R11];
+            crtc->cursor.rasterEnd = crtc->registers.reg[CRTC_R11];
             break;
         case CRTC_R14:
         case CRTC_R15:
-            crtc.cursor.addressStart = (crtc.registers.reg[CRTC_R14] << 8) | crtc.registers.reg[CRTC_R15];
-            crtc.cursor.blinkstart = crtc.frameCounter - crtc.cursor.blinkrate;
+            crtc->cursor.addressStart = (crtc->registers.reg[CRTC_R14] << 8) | crtc->registers.reg[CRTC_R15];
+            crtc->cursor.blinkstart = crtc->frameCounter - crtc->cursor.blinkrate;
             break;
         }
     }
 }
 
-void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value)
+void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
 {
-    crtc.registers.address = value & 0x1f;
-}
-
-void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value)
-{
-   crtcMemoryBankControl = value & 1;
-}
-
-int crtcMemBankStatus(void)
-{
-   return (crtcMemoryBankControl);
+    crtc->registers.address = value & 0x1f;
 }
 
 void crtcMemWrite(UInt16 address, UInt8 value)
@@ -263,113 +255,53 @@ UInt8 crtcMemRead(UInt16 address)
         return 0xff;
 }
 
-// Timer callback that is called once every frame
-static void crtcOnDisplay(void* dummy, UInt32 time)
+static void crtc6845Reset(CRTC6845* crtc)
 {
-    // Render VRAM if video is connected
-    if (crtcVideoEnabled)
-        crtcRenderVideoBuffer();
-
-    boardTimerAdd(crtcTimerDisplay, time + REFRESH_PERIOD);
-}
-
-// Callback called when video connector is enabled
-static void crtcVideoEnable(void* dummy)
-{
-    crtcVideoEnabled = 1;
-}
-
-// Callback called when video connector is disabled
-static void crtcVideoDisable(void* dummy)
-{
-    crtcVideoEnabled = 0;
-}
-
-static void reset(void* dummy)
-{
-    crtcMemoryBankControl = 0;
-    memset(&crtc, 0, sizeof(crtc));
+    memset(&crtc->registers, 0, sizeof(&crtc->registers));
+    memset(&crtc->cursor, 0, sizeof(&crtc->cursor));
     memset(crtcMemory, 0xff, sizeof(crtcMemory));
+    crtc->frameCounter = 0;
 }
 
-static void destroy(void* dummy) 
+static void crtc6845Destroy(CRTC6845* crtc)
 {
-    deviceManagerUnregister(crtcDeviceHandle);
-    videoManagerUnregister(crtcVideoHandle);
-    boardTimerDestroy(crtcTimerDisplay);
+    deviceManagerUnregister(crtc->deviceHandle);
+    videoManagerUnregister(crtc->videoHandle);
+    boardTimerDestroy(crtc->timerDisplay);
 
-    switch (crtcConnector) {
-    case CRTC_MSX:
-        ioPortUnregister(0x78);
-        ioPortUnregister(0x79);
-//        ioPortUnregister(0x79);
-        break;
-
-    case CRTC_SVI:
-        ioPortUnregister(0x50);
-        ioPortUnregister(0x51);
-        ioPortUnregister(0x58);
-        break;
-    }
+    free(crtc);    
 }
 
-static void saveState(void* dummy)
+CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size)
 {
-    SaveState* state = saveStateOpenForWrite("crtc6845");
-    saveStateClose(state);
-}
+    CRTC6845* crtc;
 
-static void loadState(void* dummy)
-{
-    SaveState* state = saveStateOpenForRead("vdp");
-}
-
-int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
-{
-    crtcConnector  = connector;
-
-    if (size != 0x1000) {
-    	return 0;
-    }
-
-    reset(NULL);
+    if (size != 0x1000)
+    	return NULL;
 
     memset(crtcROM, 0xff, sizeof(crtcROM));
     memcpy(&crtcROM[0], romData, size);
 
-    switch (crtcConnector) {
-    case CRTC_MSX:
-        ioPortRegister(0x78, NULL,     crtcWriteLatch, NULL); // CRTC Address latch
-        ioPortRegister(0x79, crtcRead, crtcWrite,      NULL); // CRTC Controller register 
-//        ioPortRegister(0x79, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
-        break;
-
-    case CRTC_SVI:
-        ioPortRegister(0x50, NULL,     crtcWriteLatch, NULL); // CRTC Address latch
-        ioPortRegister(0x51, crtcRead, crtcWrite,      NULL); // CRTC Controller register 
-        ioPortRegister(0x58, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
-        break;
-
-    default:
-        return 0;
-    }
+    crtc = malloc(sizeof(CRTC6845));
+    crtc6845Reset(crtc);
+    crtc->frameRate = frameRate;
 
     // Create and start frame refresh timer
-    crtcTimerDisplay = boardTimerCreate(crtcOnDisplay, NULL);
-    boardTimerAdd(crtcTimerDisplay, boardSystemTime() + REFRESH_PERIOD);
+    crtc->timerDisplay = boardTimerCreate(crtcOnDisplay, crtc);
+    boardTimerAdd(crtc->timerDisplay, boardSystemTime() + REFRESH_PERIOD);
 
     // Initialize device
     {
-        DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
-        crtcDeviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, NULL);
+        DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
+        crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
     }
 
     // Initialize video frame buffer
     {
         VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
-        crtcFrameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT, 2);
-        crtcVideoHandle = videoManagerRegister("CRTC6845", crtcFrameBufferData, &videoCallbacks, NULL);
+        crtc->frameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT, 2);
+        crtc->videoHandle = videoManagerRegister("CRTC6845", crtc->frameBufferData, &videoCallbacks, crtc);
     }
 
-    return 1;
+    return crtc;
 }

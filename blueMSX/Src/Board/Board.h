@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-16 06:48:15 $
+** $Date: 2005-01-25 16:55:44 $
 **
 ** More info: http://www.bluemsx.com
 **

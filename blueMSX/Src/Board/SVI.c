@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-19 17:10:20 $
+** $Date: 2005-01-25 16:56:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,8 +54,10 @@
 #include "romMapperNormal.h"
 #include "romMapperCasette.h"
 #include "romMapperPlain.h"
+#include "romMapperSvi328Prn.h"
+#include "romMapperSvi80Col.h"
 #include "svi328Fdc.h"
-#include "CRTC6845.h"
+// #include "I8250.h"
 
 /* Hardware */
 static Machine*        sviMachine;
@@ -159,9 +161,10 @@ void sviClearInt(UInt32 irq)
 
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000)
+    if ((svi80colMemBankCtrlStatus()) && (address & 0xf000) == 0xf000)
     {
-        crtcMemWrite(address & 0xfff, value);
+        svi80colMemWrite(address & 0xfff, value);
+/*
 #ifdef _DEBUG
         address &= 0xfff;
         if (address < 0x800) {
@@ -171,6 +174,7 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
             }
         }
 #endif
+*/
     }
     else
         slotWrite(&ref, address, value);
@@ -178,8 +182,8 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000) 
-        return crtcMemRead(address & 0xfff);
+    if ((svi80colMemBankCtrlStatus()) && (address & 0xf000) == 0xf000) 
+        return svi80colMemRead(address & 0xfff);
     else
         return slotRead(&ref, address);
 }
@@ -305,6 +309,33 @@ void sviInitStatistics(Machine* machine)
     }
 }
 
+/*
+typedef struct {
+    int    deviceHandle;
+    I8250* i8250;
+} SviUART;
+
+SviUART* uart;
+
+static UInt8 rs232Read(SviUART* rs232, UInt16 ioPort)
+{
+    return i8250Read(rs232->i8250, ioPort - 0x28);
+}
+
+static void rs232Write(SviUART* rs232, UInt16 ioPort, UInt8 value)
+{
+    i8250Write(rs232->i8250, ioPort - 0x28, value);
+}
+static UInt8 modemRead(SviUART* modem, UInt16 ioPort)
+{
+    return i8250Read(modem->i8250, ioPort - 0x20);
+}
+
+static void modemWrite(SviUART* modem, UInt16 ioPort, UInt8 value)
+{
+    i8250Write(modem->i8250, ioPort - 0x20, value);
+}
+*/
 static int sviInitMachine(Machine* machine, 
                           Mixer* mixer,
                           VdpSyncMode vdpSyncMode)
@@ -318,7 +349,7 @@ static int sviInitMachine(Machine* machine,
 
     /* Initialize VDP */
     sviVramSize = machine->video.vramSize;
-//    vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
+    vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     /* Initialize memory */
     for (i = 0; i < 4; i++) {
@@ -382,6 +413,11 @@ static int sviInitMachine(Machine* machine,
             continue;
         }
 
+        if (machine->slotInfo[i].romType == ROM_SVI328PRN) {
+            success &= romMapperSvi328PrnCreate();
+            continue;
+        }
+
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {
@@ -399,8 +435,10 @@ static int sviInitMachine(Machine* machine,
         case ROM_CASPATCH:
             success &= romMapperCasetteCreate(romName, buf, size, slot, subslot, startPage);
             break;
-        case ROM_SVI80COL:
-            success &= crtcInit(CRTC_SVI, romName, buf, size);
+        case ROM_SVI80COL: {
+                int frameRate = (vdpSyncMode == VDP_SYNC_60HZ) ? 60 : 50;
+                success &= romMapperSvi80ColCreate(SVI80COL_SVI, frameRate, buf, size);
+            }
             break;
         }
         free(buf);
@@ -409,11 +447,40 @@ static int sviInitMachine(Machine* machine,
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
     }
+/*
+uart = malloc(sizeof(SviUART));
+uart->i8250 = i8250Create(rs232Read , rs232Write ,
+                          rs232Read , rs232Write ,
+                          rs232Read ,
+                          rs232Read , rs232Write ,
+                          rs232Read , rs232Write ,
+                          rs232Read ,
+                          rs232Read ,
+                          rs232Read , rs232Write ,
+                          uart);
+// Modem
+ioPortRegister(0x20, modemRead, modemWrite, uart);
+ioPortRegister(0x21, modemRead, modemWrite, uart);
+ioPortRegister(0x22, modemRead, NULL,      uart);
+ioPortRegister(0x23, modemRead, modemWrite, uart);
+ioPortRegister(0x24, modemRead, modemWrite,  uart);
+ioPortRegister(0x25, modemRead, NULL,  uart);
+ioPortRegister(0x26, modemRead, NULL,  uart);
 
+// RS-232
+ioPortRegister(0x28, rs232Read, rs232Write, uart);
+ioPortRegister(0x29, rs232Read, rs232Write, uart);
+ioPortRegister(0x2A, rs232Read, NULL,      uart);
+ioPortRegister(0x2B, rs232Read, rs232Write, uart);
+ioPortRegister(0x2C, rs232Read, rs232Write,  uart);
+ioPortRegister(0x2D, rs232Read, NULL,  uart);
+ioPortRegister(0x2E, rs232Read, NULL,  uart);
+
+i8250Reset(uart);
+//i8250Destroy(uart);
+*/
     sviMemSetBank(0xDF);
     ledSetCapslock(0);
-
-vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     return success;
 }
