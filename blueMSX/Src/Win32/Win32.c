@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-01-29 09:35:14 $
+** $Date: 2005-01-29 10:15:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -975,6 +975,9 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
+        pProperties->video.fullscreen.width != oldProp.video.fullscreen.width ||
+        pProperties->video.fullscreen.height != oldProp.video.fullscreen.height ||
+        pProperties->video.fullscreen.bitDepth != oldProp.video.fullscreen.bitDepth ||
         pProperties->video.size != oldProp.video.size ||
         pProperties->video.horizontalStretch != oldProp.video.horizontalStretch ||
         pProperties->video.verticalStretch != oldProp.video.verticalStretch ||
@@ -1450,7 +1453,7 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->colorSaturationEnable = 0;
     videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
                 bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
-                -1 * zoom * WIDTH * sizeof(DWORD));
+                -1 * zoom * WIDTH * sizeof(DWORD), 0);
 
     st.pVideo->palMode               = palMode;
     st.pVideo->scanLinesEnable       = scanLinesEnable;
@@ -1520,7 +1523,7 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
             videoRender(st.pVideo, frameBuffer, 32, zoom, 
                         (char*)st.bmBitsGDI + borderWidth * sizeof(DWORD) + (zoom * HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
-                        -1 * zoom * WIDTH * sizeof(DWORD));
+                        -1 * zoom * WIDTH * sizeof(DWORD), 0);
             st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
             st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
             st.bmInfo.bmiHeader.biBitCount = 32;

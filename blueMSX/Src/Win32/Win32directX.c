@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-29 00:28:52 $
+** $Date: 2005-01-29 10:15:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -508,6 +508,7 @@ void DirectXUpdateSurface(Video* pVideo,
     POINT pt = {0, 0};
     int width  = zoom * 320;
     int height = zoom * 240;
+    int scale;
     RECT destRect = {0, 0, 
                      isFullscreen ? currentFullscreenMode->width : width, 
                      isFullscreen ? currentFullscreenMode->height : height};
@@ -589,7 +590,10 @@ void DirectXUpdateSurface(Video* pVideo,
         }
     }
 
-    videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch);
+    scale = videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch, 1);
+
+    rcRect.right  /= scale;
+    rcRect.bottom /= scale;
 
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
