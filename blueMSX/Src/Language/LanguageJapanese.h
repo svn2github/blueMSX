@@ -1,9 +1,10 @@
 /*****************************************************************************
+
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-01-21 03:36:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +49,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartFMPac         = "FMPAC+カートリッジ";
     ls->menuCartPac           = "PAC+カートリッジ";
     ls->menuCartSpecial         = "その他";
-
+    
     ls->menuDiskInsert          = "挿入";
     ls->menuDiskEject           = "取り出し";
     ls->menuDiskAutoStart       = "挿入/取り出し後リセット";
@@ -59,11 +60,12 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCasSetPosition      = "テープ位置セット";
     ls->menuCasRewind           = "巻き戻し";
     ls->menuCasNoRecentFiles   = "- 使用ファイルなし -";
-
+    
     ls->menuZoomNormal          = "標準サイズ";
     ls->menuZoomDouble          = "2倍サイズ";
     ls->menuZoomFullscreen      = "フルスクリーン";
     
+
     ls->menuPropsEmulation      = "エミュレーション";
     ls->menuPropsVideo          = "ビデオ";
     ls->menuPropsSound          = "サウンド";
@@ -98,14 +100,18 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuRun                 = "実行";
     ls->menuWindow              = "ウィンドウ";
     ls->menuOptions             = "オプション";
+
     ls->menuHelp                = "ヘルプ";
     
+
     ls->errorTitle              = "blueMSX エラー";
     ls->errorEnterFullscreen    = "フルスクリーンモードにできません.           \n";
     ls->errorDirectXFailed      = "DirectX オブジェクトを作成できません.           \nGDIを代わりに使用します.\nグラフィックカードの設定を確認してください.";
+
     ls->errorNoRomInZip         = "zipファイルの中に.romファイルが見つかりません.";
     ls->errorNoDskInZip         = "zipファイルの中に.dskファイルが見つかりません.";
     ls->errorNoCasInZip         = "zipファイルの中に.casファイルが見つかりません.";
+
     ls->errorNoHelp             = "blueMSXのヘルプファイルが見つかりません.";
     ls->errorStartEmu           = "MSXエミュレータの開始に失敗しました.";
 
@@ -171,6 +177,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propControls            = "コントロール";
     ls->propPerformance         = "パフォーマンス";
     
+
     ls->propEmuGeneralGB        = "一般 ";
     ls->propEmuFamilyText       = "MSXの種類:";
     ls->propEmuMemoryGB         = "メモリ ";
@@ -268,8 +275,6 @@ void langInitJapanese(LanguageStrings* ls)
                                   "黙示的を問わず一切の保証はありません. またこのソ\フトウェアの使用の結果生じた"
                                   "いかなる損害についても, 作者は責任を負いません.\r\n\r\n"
                                   "詳しい説明については, www.bluemsx.com をご覧ください. ";
-
-
     
     ls->dlgAboutDevel           = "開発者\r\n========";
 
@@ -338,7 +343,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->slotEditMemSize          = "サイズ:";
     ls->slotEditMemSlot          = "スロット:";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - マシン構\成を別名で保存...";
+    ls->confSaveAsTitle          = "blueMSX - マシン構\成を別名で保存...";
     ls->confSaveAsMachineName    = "構\成名:";
 
     ls->confSaveTitle            = "blueMSX - マシン構\成の保存";
@@ -355,7 +360,6 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->confDiscardTitle         = "blueMSX - マシン構\成編集";
     
-
     ls->propSndMoonsound         = " Moonsound";
 
     ls->propFileTypesGB          = "ファイル種類 ";
@@ -385,7 +389,6 @@ void langInitJapanese(LanguageStrings* ls)
     
     ls->warningTitle             = "blueMSX - Warning";
     ls->tooltipStop              = "エミュレーションを停止します";
-
 
     // New entries in 1.5.1
     ls->enumControlsJoyKeyset   = "キーセット";    
@@ -532,21 +535,36 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->propPriorityBoost        = " blueMSXに割当てるプライオリティーのブースト";
 
-    // New entries in 2.1
+    // New entries in 2.0.1
     ls->propEmuFdcTiming        = "FDDドライブのタイミングを無効化";
     ls->shortcutToggleFdcTiming = "FDDドライブのタイミング 有無";
     ls->propUseRegistry         = "レジストリに設定を保存する";
 
     // New entries in 2.2
-    ls->menuCartHBI55           = "Sony HBI-55+カートリッジ";
+    ls->menuCartHBI55           = "Sony HBI-55 カートリッジ";
     ls->propSndPcm              = " Turbo-R PCM";
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
-    
-    ls->keyconfigSelectedKey    = "Selected Key:";
-    ls->keyconfigMappedTo       = "Mapped To:";
-    ls->keyconfigMappingScheme  = "エキストラ:";
+    ls->propMonColorGhosting    = "RFモジュレータ";
+
+    ls->keyconfigSelectedKey    = "選択キー:";
+    ls->keyconfigMappedTo       = "対象キー:";
+    ls->keyconfigMappingScheme  = "マッピングスキーム:";
+
+    ls->discardChanges          = "構\成が失われますが、よろしいですか?";
+    ls->overwriteConfig         = "構\成を上書きしてよろしいですか?";
+
+    ls->confSaveAsTitle         = "別名で保存...";
+    ls->confSaveAsName          = "名前:";
+
+    ls->menuToolsKeyboard       = "キーボード構成編集";
+    ls->shortcutShowKeyboard    = "キーボード構成編集の表示";
+
+    ls->menuVideoSource         = "ビデオソース";
+    ls->menuVideoSourceDefault  = "ビデオソースの接続がありません";
 };
 
+
 #endif
+
