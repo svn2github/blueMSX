@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-12 09:30:07 $
+** $Date: 2005-02-12 09:31:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,8 @@
 #include "Debugger.h"
 
 typedef void (*SetDebugInfo)(void* ref, DbgDevice*);
+
+void debugDeviceManagerReset();
 
 int debugDeviceRegister(const char* name, SetDebugInfo setDebugInfo, void* ref);
 void debugDeviceUnregister(int handle);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-12 09:30:07 $
+** $Date: 2005-02-12 09:31:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,12 @@ typedef struct {
 } DebugDeviceManager;
 
 static DebugDeviceManager devManager;
+
+void debugDeviceManagerReset() 
+{
+    devManager.count = 0;
+    devManager.lastHandle = 0;
+}
 
 int debugDeviceRegister(const char* name, SetDebugInfo setDebugInfo, void* ref)
 {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-02-10 07:18:43 $
+** $Date: 2005-02-12 09:31:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include "ziphelper.h"
 #include "ArchNotifications.h"
 #include "VideoManager.h"
+#include "DebugDeviceManager.h"
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
@@ -232,6 +233,7 @@ int boardRun(Machine* machine,
     syncVideo = videoSync;
 
     videoManagerReset();
+    debugDeviceManagerReset();
 
     boardMixer = mixer;
 
