@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-17 05:52:33 $
+** $Date: 2005-02-06 01:41:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@ typedef struct {
 static UInt8 lineBuffer[2][384];
 static UInt8* lineBufs[2] = { NULL, NULL };
 static UInt8* lineBuf = NULL;
+static int nonVisibleLine = -1;
 
 
 UInt8* spritesLine(VDP* vdp, int line) {
@@ -194,6 +195,10 @@ UInt8* spritesLine(VDP* vdp, int line) {
     return lineBufs[bufIndex ^ 1];
 }
 
+void spriteLineInvalidate(VDP* vdp, int line) {
+    nonVisibleLine = line - vdp->firstLine;
+}
+
 UInt8* colorSpritesLine(VDP* vdp, int line) {
     int solidColor;
     int bufIndex;
@@ -217,6 +222,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     bufIndex = line & 1;
     
     if (line == 0) {
+        nonVisibleLine = -1;
         // This is an not 100% correct optimization. CC sprites should be shown only when
         // they collide with a non CC sprite. However very few games/demos uses this and
         // it is safe to disable the CC sprites if no non CC sprites are visible.
@@ -224,7 +230,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         ccColorCheckMask = 0xf0;
     }
 
-    if (idx == 0) {
+    if (idx == 0 || nonVisibleLine == line) {
         lineBufs[bufIndex] = NULL;
         return NULL;
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-05 08:54:01 $
+** $Date: 2005-02-06 01:41:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -228,6 +228,8 @@ struct VDP {
     FrameBufferData* frameBuffer;
 };
 
+#include "SpriteLine.h"
+
 static void vdpBlink(VDP* vdp)
 {
     if(vdp->blinkCnt) {
@@ -264,7 +266,7 @@ static void scheduleScrModeChange(VDP* vdp)
 static void scheduleHint(VDP* vdp)
 {
     vdp->timeHint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
-    boardTimerAdd(vdp->timerHint, vdp->timeHint + 59);
+    boardTimerAdd(vdp->timerHint, vdp->timeHint + 59 + 10);
 }
 
 static void scheduleVint(VDP* vdp)
@@ -559,6 +561,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     case 23:
         if (change) {
             scheduleHint(vdp);
+            spriteLineInvalidate(vdp, (boardSystemTime() - vdp->frameStartTime) / HPERIOD);
         }
         if (!(vdp->vdpRegs[0] & 0x10)) {
             boardClearInt(INT_IE1);
