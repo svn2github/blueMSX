@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-01-26 06:20:57 $
+** $Date: 2005-01-26 22:01:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,9 +57,6 @@
    R17 Light Pen (L)
 */
 
-#define CHAR_WIDTH           7
-#define MAX_CHARS_PER_LINE  84
-#define DISPLAY_WIDTH       ((CHAR_WIDTH * MAX_CHARS_PER_LINE) / 2) // NOTE: DISPLAY_WIDTH should *never* exceed 320 !!
 #define DISPLAY_HEIGHT      240
 
 extern UInt32 videoGetColor(int R, int G, int B); // FIXME: Do something nicer
@@ -74,10 +71,6 @@ static const UInt8 crtcRegisterValueMask[18] = {
     0x7f, 0x7f, 0xf3, 0x1f, 0x7f, 0x1f,
     0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff 
 };
-
-//static TYP_CRTC crtc;
-static UInt8 crtcROM[0x1000];
-static UInt8 crtcMemory[0x800];
 
 // Frame refresh timer info
 #define REFRESH_PERIOD (boardFrequency() /  50)
@@ -95,14 +88,10 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
     charWidth = crtc->registers.reg[CRTC_R1];
     if (charWidth >= crtc->registers.reg[CRTC_R0])
         charWidth = crtc->registers.reg[CRTC_R0] - 1;
-    if (charWidth > 80)
-        charWidth = 80;
 
     charHeight = crtc->registers.reg[CRTC_R6];
     if (charHeight >= crtc->registers.reg[CRTC_R4])
         charHeight = crtc->registers.reg[CRTC_R4] - 1;
-    if (charHeight > 25)
-        charHeight = 25;
 
     color[0] = videoGetColor(0, 0, 0);       // Cen be calculated once. The interface
     color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
@@ -116,17 +105,18 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
         int charAddress = charLine * charWidth - hadjust; 
 
         if (charLine < 0 || charLine >= charHeight) {
-            for (x = 0; x < DISPLAY_WIDTH; x++) {
+            for (x = 0; x < crtc->displayWidth; x++) {
                 linePtr[x] = color[0];
             }
             continue;
         }
 
-        for (x = 0; x < MAX_CHARS_PER_LINE; x++) {
+        for (x = 0; x < crtc->charsPerLine; x++) {
             UInt8 pattern = 0;
+            int   i;
 
             if (x >= hadjust && x < charWidth + hadjust) {
-                pattern = crtcROM[16*crtcMemory[charAddress]+charRaster];
+                pattern = crtc->romData[(16*crtc->vram[charAddress & crtc->vramMask]+charRaster) & crtc->romMask];
 
                 if (charAddress == crtc->cursor.addressStart) {
                     if (((crtc->frameCounter - crtc->cursor.blinkstart) & crtc->cursor.blinkrate) || (crtc->cursor.mode==CURSOR_NOBLINK)) {
@@ -134,14 +124,22 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
                     }
                 }
             }
-            linePtr[0] = color[(pattern >> 7) & 1];
-            linePtr[1] = color[(pattern >> 6) & 1];
-            linePtr[2] = color[(pattern >> 5) & 1];
-            linePtr[3] = color[(pattern >> 4) & 1];
-            linePtr[4] = color[(pattern >> 3) & 1];
-            linePtr[5] = color[(pattern >> 2) & 1];
-            linePtr[6] = color[(pattern >> 1) & 1];
-            linePtr += 7;
+            switch (crtc->charWidth) {
+            default: linePtr[7] = color[(pattern >> 0) & 1];
+            case 7:  linePtr[6] = color[(pattern >> 1) & 1];
+            case 6:  linePtr[5] = color[(pattern >> 2) & 1];
+            case 5:  linePtr[4] = color[(pattern >> 3) & 1];
+            case 4:  linePtr[3] = color[(pattern >> 4) & 1];
+            case 3:  linePtr[2] = color[(pattern >> 5) & 1];
+            case 2:  linePtr[1] = color[(pattern >> 6) & 1];
+            case 1:  linePtr[0] = color[(pattern >> 7) & 1];
+            }
+            linePtr += crtc->charWidth;
+
+            for (i = 0; i < crtc->charSpace; i++) {
+                *linePtr++ = color[0];
+            }
+
             charAddress++;
         }
     }
@@ -239,25 +237,21 @@ void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
     crtc->registers.address = value & 0x1f;
 }
 
-void crtcMemWrite(UInt16 address, UInt8 value)
+void crtcMemWrite(CRTC6845* crtc, UInt16 address, UInt8 value)
 {
-    if (address < 0x800)
-        crtcMemory[address] = value;
+    crtc->vram[address & crtc->vramMask] = value;
 }
 
-UInt8 crtcMemRead(UInt16 address)
+UInt8 crtcMemRead(CRTC6845* crtc, UInt16 address)
 {
-    if (address < 0x800)
-        return crtcMemory[address];
-    else
-        return 0xff;
+    return crtc->vram[address & crtc->vramMask];
 }
 
 static void crtc6845Reset(CRTC6845* crtc)
 {
     memset(&crtc->registers, 0, sizeof(&crtc->registers));
     memset(&crtc->cursor, 0, sizeof(&crtc->cursor));
-    memset(crtcMemory, 0xff, sizeof(crtcMemory));
+    memset(crtc->vram, 0xff, crtc->vramMask + 1);
     crtc->frameCounter = 0;
 }
 
@@ -270,19 +264,44 @@ static void crtc6845Destroy(CRTC6845* crtc)
     free(crtc);    
 }
 
-CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size)
+CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize, 
+                         int charWidth, int charSpace, int charsPerLine, int borderChars)
 {
     CRTC6845* crtc;
-
-    if (size != 0x1000)
-    	return NULL;
-
-    memset(crtcROM, 0xff, sizeof(crtcROM));
-    memcpy(&crtcROM[0], romData, size);
+    int logSize;
+    int pixelZoom = 1;
 
     crtc = calloc(1, sizeof(CRTC6845));
+    
+    crtc->vram = malloc(vramSize);
+    crtc->vramMask = vramSize - 1;
+
+    for (logSize = 1; logSize < size; logSize <<= 1);
+
+    crtc->romData = malloc(logSize);
+    memset(crtc->romData, 0xff, logSize);
+    crtc->romMask = logSize - 1;
+    memcpy(crtc->romData, romData, size);
+
     crtc6845Reset(crtc);
+
     crtc->frameRate = frameRate;
+
+    crtc->charWidth     = charWidth;
+    crtc->charSpace     = charSpace;
+    crtc->charsPerLine  = charsPerLine;
+    crtc->displayWidth  = (charWidth + charSpace) * (charsPerLine + borderChars);
+
+    // The displayWidth calculation is necessary for the frame buffer rendering
+    // since the frame buffer allows at most 320 pixel wide screens, although
+    // each pixel can have two real pixels (the zoom argument)
+    if (crtc->displayWidth > 320) {
+        pixelZoom = 2;
+        crtc->displayWidth /= 2;
+    }
+    if (crtc->displayWidth > 320) {
+        crtc->displayWidth = 320;
+    }
 
     // Create and start frame refresh timer
     crtc->timerDisplay = boardTimerCreate(crtcOnDisplay, crtc);
@@ -297,7 +316,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size)
     // Initialize video frame buffer
     {
         VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
-        crtc->frameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT, 2);
+        crtc->frameBufferData = frameBufferDataCreate(crtc->displayWidth, DISPLAY_HEIGHT, pixelZoom);
         crtc->videoHandle = videoManagerRegister("CRTC6845", crtc->frameBufferData, &videoCallbacks, crtc);
     }
 

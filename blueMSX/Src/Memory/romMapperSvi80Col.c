@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-25 16:57:26 $
+** $Date: 2005-01-26 22:01:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,17 +38,18 @@
 typedef struct {
     int connector;
     int deviceHandle;
+    UInt8 memBankCtrl;
     CRTC6845* crtc6845;
 } RomMapperSvi80Col;
 
-static UInt8 memBankCtrl;
+static RomMapperSvi80Col* svi80colInstance = NULL;
 
 static void saveState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForWrite("Svi80Col");
 
     saveStateSet(state, "connector",  svi80col->connector);
-    saveStateSet(state, "memBankCtrl",  memBankCtrl);
+    saveStateSet(state, "memBankCtrl",  svi80col->memBankCtrl);
     
     saveStateClose(state);
 }
@@ -57,8 +58,8 @@ static void loadState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForRead("Svi80Col");
 
-    svi80col->connector  = (UInt8)saveStateGet(state, "connector",  0);
-    memBankCtrl  = (UInt8)saveStateGet(state, "memBankCtrl",  0);
+    svi80col->connector   =        saveStateGet(state, "connector",  0);
+    svi80col->memBankCtrl = (UInt8)saveStateGet(state, "memBankCtrl",  0);
 
     saveStateClose(state);
 }
@@ -101,27 +102,27 @@ static void writeIoLatch(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value
 
 static void writeIoMemBankCtrl(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value)
 {
-    memBankCtrl = value & 1;
+    svi80col->memBankCtrl = value & 1;
 }
 
 int svi80colMemBankCtrlStatus(void)
 {
-   return (memBankCtrl);
+   return svi80colInstance->memBankCtrl;
 }
 
 void svi80colMemWrite(UInt16 address, UInt8 value)
 {
-    crtcMemWrite(address, value);
+    crtcMemWrite(svi80colInstance->crtc6845, address, value);
 }
 
 UInt8 svi80colMemRead(UInt16 address)
 {
-    return crtcMemRead(address);
+    return crtcMemRead(svi80colInstance->crtc6845, address);
 }
 
 static void reset(RomMapperSvi80Col* svi80col)
 {
-    memBankCtrl = 0;
+    svi80col->memBankCtrl = 0;
 }
 
 int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* romData, int size)
@@ -133,11 +134,13 @@ int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* r
     	return 0;
 
     svi80col = malloc(sizeof(RomMapperSvi80Col));
+    svi80colInstance = svi80col;
+
     svi80col->connector  = connector;
     svi80col->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, svi80col);
 
     svi80col->crtc6845 = NULL;
-    svi80col->crtc6845 = crtc6845Create(frameRate, romData, size);
+    svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 80, 4);
 
     switch (svi80col->connector) {
     case SVI80COL_MSX:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-25 16:59:03 $
+** $Date: 2005-01-26 22:01:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,15 +61,24 @@ typedef struct
     int              videoEnabled;
     BoardTimer*      timerDisplay;   
     FrameBufferData* frameBufferData;
+    UInt8*           vram;
+    UInt32           vramMask;
+    UInt8*           romData;
+    UInt32           romMask;
+    int              charWidth;
+    int              charSpace;
+    int              charsPerLine;
+    int              displayWidth;
 } CRTC6845;
 
 UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort);
 void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
 void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
 
-void crtcMemWrite(UInt16 address, UInt8 value);
-UInt8 crtcMemRead(UInt16 address);
+void crtcMemWrite(CRTC6845* crtc, UInt16 address, UInt8 value);
+UInt8 crtcMemRead(CRTC6845* crtc, UInt16 address);
 
-CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size);
+CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize, 
+                         int charWidth, int charSpace, int charsPerLine, int borderChars);
 
 #endif

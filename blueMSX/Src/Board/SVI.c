@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-01-25 16:56:15 $
+** $Date: 2005-01-26 22:01:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -161,7 +161,7 @@ void sviClearInt(UInt32 irq)
 
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((svi80colMemBankCtrlStatus()) && (address & 0xf000) == 0xf000)
+    if ((svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
     {
         svi80colMemWrite(address & 0xfff, value);
 /*
@@ -182,7 +182,7 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((svi80colMemBankCtrlStatus()) && (address & 0xf000) == 0xf000) 
+    if ((svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
         return svi80colMemRead(address & 0xfff);
     else
         return slotRead(&ref, address);
