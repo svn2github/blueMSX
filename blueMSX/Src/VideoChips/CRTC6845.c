@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-17 11:06:16 $
+** $Date: 2005-01-17 13:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,7 +85,26 @@ static UInt8 crtcROM[0x1000];
 static UInt8 crtcMemory[0x800];
 static UInt8 crtcMemoryBankControl = 0;
 
+// 80 x 25 characters (8x8 pixels/char, no colors)
+static UInt8 crtcScreenBuffer[0x3e80];
+
 static int crtcConnector;
+
+static void crtcScreenWrite(UInt16 address, UInt8 value)
+{
+    if (address < 80 * 25)
+        memcpy(&crtcScreenBuffer[address*8], &crtcROM[value], 8);
+}
+
+void crtcScreenRefresh(void)
+{
+/*
+    - Blit crtcScreenBuffer to display
+    - Reorganize buffer for VideoRender interface?
+    - Draw cursor
+    - Timer for blinking cursor
+*/
+}
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
@@ -120,8 +139,10 @@ int crtcMemBankStatus(void)
 
 void crtcMemWrite(UInt16 address, UInt8 value)
 {
-    if (address < 0x800)
+    if (address < 0x800) {
         crtcMemory[address] = value;
+        crtcScreenWrite(address, value);
+    }
 }
 
 UInt8 crtcMemRead(UInt16 address)
@@ -138,13 +159,16 @@ void crtcReset(void)
     crtcMemoryBankControl = 0;
     memset(crtcRegister, 0, sizeof(crtcRegister));
     memset(crtcMemory, 0xff, sizeof(crtcMemory));
+    memset(crtcScreenBuffer, 0, sizeof(crtcScreenBuffer));
 }
 
 int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
 {
     crtcConnector  = connector;
 
-    if (size != 0x1000) {        return 0;    }
+    if (size != 0x1000) {
+    	return 0;
+    }
 
     crtcReset();
 
