@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-10 07:43:48 $
+** $Date: 2005-02-28 17:04:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,12 +63,14 @@ UInt8* spritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
 
+    vdp->vdpStatus[0] &= 0x80;
+
     if (idx == 0) {
         lineBufs[bufIndex] = NULL;
         return NULL;
     }
 
-    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs) || !spritesEnable) {
+    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs)) {
         lineBufs[bufIndex] = NULL;
         return lineBufs[bufIndex ^ 1];
     }
@@ -192,6 +194,11 @@ UInt8* spritesLine(VDP* vdp, int line) {
     }
 
     lineBufs[bufIndex] = lineBuf + 32;
+
+    if (!spritesEnable) {
+        return NULL;
+    }
+
     return lineBufs[bufIndex ^ 1];
 }
 
@@ -221,6 +228,8 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
     
+    vdp->vdpStatus[0] &= 0x80;
+
     if (line == 0) {
         nonVisibleLine = -1000;
         // This is an not 100% correct optimization. CC sprites should be shown only when
@@ -235,7 +244,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         return NULL;
     }
 
-    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs) || !spritesEnable) {
+    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs)) {
         lineBufs[bufIndex] = NULL;
         return lineBufs[bufIndex ^ 1];
     }
@@ -266,7 +275,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         }
 
         if (visibleCnt == 8) {
-			if (~vdp->vdpStatus[0] & 0xc0) {
+			if ((~vdp->vdpStatus[0] & 0xc0)) {
 				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | sprite;
 			}
             break;
@@ -297,7 +306,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         return lineBufs[bufIndex ^ 1];
     }
 
-    if (~vdp->vdpStatus[0] & 0x40) {
+    if ((~vdp->vdpStatus[0] & 0x40)) {
 		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
 	}
     
@@ -420,6 +429,11 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     }
 
     lineBufs[bufIndex] = lineBuf + 32;
+
+    if (!spritesEnable) {
+        return NULL;
+    }
+
     return lineBufs[bufIndex ^ 1];
 }
 
