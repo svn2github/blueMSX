@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-14 20:47:50 $
+** $Date: 2005-01-15 19:36:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,9 +52,7 @@
 #include "ramNormal.h"
 #include "RomLoader.h"
 #include "romMapperNormal.h"
-#include "romMapperBasic.h"
 #include "romMapperCasette.h"
-#include "romMapperStandard.h"
 #include "romMapperPlain.h"
 #include "svi328Fdc.h"
 
@@ -77,98 +75,118 @@ static UInt32          sviRamSize;
 static UInt32          sviVramSize;
 static int             useRom;
 static int             traceEnabled;
-
 static UInt8*          sviRam;
+static UInt8           psgAYReg15;
 
-typedef enum { BANK_02=0, BANK_12=1, BANK_22=2, BANK_32=3 } sviBanksHigh;
-typedef enum { BANK_01=0, BANK_11=1, BANK_21=2, BANK_31=3 } sviBanksLow;
-
-static UInt8 sviMemoryLow[4][0x8000];
-static UInt8 sviMemoryHigh[4][0x8000];
-static UInt8 sviBankLow;
-static UInt8 sviBankHigh;
-static UInt8 sviLowReadOnly;
-static UInt8 psgAYReg15;
-
-void sviLoadState();
-void sviSaveState();
+typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
+typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
 
 extern int  WaitForSync(void);
 extern void PatchZ80(void* ref, CpuRegs* cpu);
 
+void sviLoadState();
+void sviSaveState();
+
+void sviTraceEnable(const char* fileName) {
+    traceEnabled = r800OpenTrace(fileName);
+}
+
+void sviTraceDisable() {
+    r800CloseTrace();
+    traceEnabled = 0;
+}
+
+int sviTraceGetEnable() {
+    return traceEnabled;
+}
+
+UInt32 sviGetRamSize()
+{ 
+    return sviRamSize / 1024;
+}
+
+UInt32 sviGetVramSize()
+{
+    return sviVramSize / 1024;
+}
+
+int sviUseRom()
+{
+    return useRom;
+}
+
+int sviUseMegaRom()
+{
+    return 0;
+}
+
+int sviUseMegaRam()
+{
+    return 0;
+}
+
+int sviUseFmPac()
+{
+    return 0;
+}
+
+UInt32 sviSystemTime() 
+{
+    if (r800) {
+        return r800GetSystemTime(r800);
+    }
+    return 0;
+}
+
+void sviSetInt(UInt32 irq)
+{
+    pendingInt |= irq;
+    r800SetInt(r800);
+}
+
+UInt32 sviGetInt()
+{
+    return pendingInt;
+}
+
+void sviClearInt(UInt32 irq)
+{
+    pendingInt &= ~irq;
+    if (pendingInt == 0)
+        r800ClearInt(r800);
+}
+
 static void sviMemReset()
 {
-    memset(sviMemoryHigh, 0xff, 0x20000);
-    memset(sviMemoryLow, 0xff, 0x20000); 
+    slotManagerReset();
 }
 
 static void sviMemSetBank(UInt8 AYReg15)
 {
-    UInt8 value = 0;
+    UInt8 pages;
     int i;
 
     psgAYReg15 = AYReg15;
 
-    sviBankLow = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?BANK_01:BANK_31:BANK_21:BANK_11;
-    sviBankHigh = (AYReg15&4)?(AYReg15&16)?BANK_02:BANK_32:BANK_22;
-    sviLowReadOnly = ((sviBankLow==BANK_01)||(sviBankLow==BANK_11))?1:0;
+    /* Map the SVI-328 bank to pages */
+    pages = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?BANK_01:BANK_31:BANK_21:BANK_11;
+    pages |= (AYReg15&4)?(AYReg15&16)?BANK_02:BANK_32:BANK_22;
 
-    switch (sviBankLow) {
-        case BANK_01:
-            value = 0; // 0000
-            break;
-        case BANK_11:
-            value = 5; // 0101
-            break;
-        case BANK_21:
-            value = 10; // 1010
-            break;
-        case BANK_31:
-            value = 15; // 1111
-            break;
+    for (i = 0; i < 4; i++) {
+        slotSetRamSlot(i, pages & 3);
+        pages >>= 2;
     }
-    switch (sviBankHigh) {
-        case BANK_02:
-            value |= 0; // 00000000
-            break;
-
-        case BANK_22:
-            value |= 160; // 10100000
-            break;
-        case BANK_32:
-            value |= 240; // 11110000
-            break;
-    }
-    for (i = 0; i < 4; i++) {        slotSetRamSlot(i, value & 3);        value >>= 2;    }
-}
-
-void sviMemWrite(void* ref, UInt16 address, UInt8 value)
-{
-    if (address & 0x8000)
-        sviMemoryHigh[sviBankHigh][address & 0x7FFF] = value;
-    else
-        if(!sviLowReadOnly)
-            sviMemoryLow[sviBankLow][address] = value;
-}
-
-UInt8 sviMemRead(void* ref, UInt16 address)
-{
-    if (address & 0x8000)
-        return sviMemoryHigh[sviBankHigh][address & 0x7FFF];
-    else
-        return sviMemoryLow[sviBankLow][address];
 }
 
 static void sviSaveMemory()
 {
     SaveState* state = saveStateOpenForWrite("sviMemory");
 
-    saveStateSetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
-    saveStateSetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
-
-    saveStateSet(state, "sviBankLow",     sviBankLow);
-    saveStateSet(state, "sviBankHigh",    sviBankHigh);
-    saveStateSet(state, "sviLowReadOnly", sviLowReadOnly);
+//    saveStateSetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
+//    saveStateSetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
+//    saveStateSet(state, "sviBankLow",     sviBankLow);
+//    saveStateSet(state, "sviBankHigh",    sviBankHigh);
+//    saveStateSet(state, "sviLowReadOnly", sviLowReadOnly);
     saveStateSet(state, "psgAYReg15",     psgAYReg15);
 
     saveStateClose(state);
@@ -178,40 +196,14 @@ static void sviLoadMemory()
 {
     SaveState* state = saveStateOpenForRead("sviMemory");
 
-
-    saveStateGetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
-    saveStateGetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
-
-    sviBankLow     = (UInt8)saveStateGet(state, "sviBankLow",     0);
-    sviBankHigh    = (UInt8)saveStateGet(state, "sviBankHigh",    0);
-    sviLowReadOnly = (UInt8)saveStateGet(state, "sviLowReadOnly", 0);
+//    saveStateGetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
+//    saveStateGetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
+//    sviBankLow     = (UInt8)saveStateGet(state, "sviBankLow",     0);
+//    sviBankHigh    = (UInt8)saveStateGet(state, "sviBankHigh",    0);
+//    sviLowReadOnly = (UInt8)saveStateGet(state, "sviLowReadOnly", 0);
     psgAYReg15     = (UInt8)saveStateGet(state, "psgAYReg15",     0);
 
     saveStateClose(state);
-}
-
-//static UInt16 patchAddress[] = {0x0069,0x006C,0x006F,0x0072,0x0075,0x0078,0x210A,0x21A9,0};
-static UInt16 patchAddress[] = {0x006C,0x006F,0x0072,0x0075,0x0078,0x210A,0x21A9,0};
-
-static void sviPatchROM(void)
-{
-    int i;
-
-    /* Patch SVI-328 BIOS and BASIC for cassette handling */
-    for (i = 0; patchAddress[i]; i++) {
-        sviMemoryLow[BANK_01][patchAddress[i]] = 0xED;
-        sviMemoryLow[BANK_01][patchAddress[i]+1] = 0xFE;
-        sviMemoryLow[BANK_01][patchAddress[i]+2] = 0xC9;
-    }
-
-    sviMemoryLow[BANK_01][0x2073]=0x01;   // Skip delay loop after save
-    sviMemoryLow[BANK_01][0x20D0]=0x10;   // Write $55 only $10 times, instead
-    sviMemoryLow[BANK_01][0x20D1]=0x00;   //   of $190
-    sviMemoryLow[BANK_01][0x20E3]=0x00;   // Cancel instruction
-    sviMemoryLow[BANK_01][0x20E4]=0x00;
-    sviMemoryLow[BANK_01][0x20E5]=0x00;
-    sviMemoryLow[BANK_01][0x20E6]=0xED;
-    sviMemoryLow[BANK_01][0x20E7]=0xFE;
 }
 
 /*
@@ -268,94 +260,11 @@ static void sviPsgWriteHandler(void* arg, UInt16 address, UInt8 value)
     }
 }
 
-
-
-void sviTraceEnable(const char* fileName) {
-    traceEnabled = r800OpenTrace(fileName);
-}
-
-void sviTraceDisable() {
-    r800CloseTrace();
-    traceEnabled = 0;
-}
-
-int sviTraceGetEnable() {
-    return traceEnabled;
-}
-
-UInt32 sviGetRamSize()
-{ 
-    return sviRamSize / 1024;
-}
-
-UInt32 sviGetVramSize()
-{
-    return sviVramSize / 1024;
-}
-
-int sviUseRom()
-{
-    return useRom;
-}
-
-int sviUseMegaRom()
-{
-    return 0;
-}
-
-int sviUseMegaRam()
-{
-    return 0;
-}
-
-int sviUseFmPac()
-{
-    return 0;
-}
-
-UInt32 sviSystemTime() 
-{
-    if (r800) {
-        return r800GetSystemTime(r800);
-    }
-    return 0;
-}
-
-UInt8* sviGetRamPage(int page)
-{
-    static UInt8 emptyRam[0x2000];
-
-    if (sviRam == NULL) {
-        return emptyRam;
-    }
-
-    return sviRam + ((page * 0x2000) & (sviRamSize - 1));
-}
-
-void sviSetInt(UInt32 irq)
-{
-    pendingInt |= irq;
-    r800SetInt(r800);
-}
-
-UInt32 sviGetInt()
-{
-    return pendingInt;
-}
-
-void sviClearInt(UInt32 irq)
-{
-    pendingInt &= ~irq;
-    if (pendingInt == 0)
-        r800ClearInt(r800);
-}
-
 void sviInitStatistics(Machine* machine)
 {
     int i;
 
     sviVramSize = machine->video.vramSize;
-//    sviRamSize = 0x28000;
 
     for (i = 0; i < machine->slotInfoCount; i++) {
         if (machine->slotInfo[i].romType == RAM_NORMAL) {
@@ -380,8 +289,12 @@ static int sviInitMachine(Machine* machine,
     vdpInit(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     /* Initialize memory */
-    for (i = 0; i < 4; i++) {        slotSetSubslotted(i, 0);    }
-    for (i = 0; i < 2; i++) {        cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);    }
+    for (i = 0; i < 4; i++) {
+        slotSetSubslotted(i, 0);
+    }
+    for (i = 0; i < 2; i++) {
+        cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
+    }
 
     /* Initialize RAM */
     for (i = 0; i < machine->slotInfoCount; i++) {
@@ -405,15 +318,12 @@ static int sviInitMachine(Machine* machine,
             success &= ramNormalCreate(size, slot, subslot, startPage, &sviRam, &sviRamSize);
             continue;
         }
-        if (machine->slotInfo[i].romType == ROM_SVI328FDC) {
-            success &= svi328FdcCreate();
-            continue;
-        }
     }
 
     if (sviRam == NULL) {
         return 0;
     }
+
     for (i = 0; i < machine->slotInfoCount; i++) {
         int slot;
         int subslot;
@@ -434,6 +344,11 @@ static int sviInitMachine(Machine* machine,
         if (machine->slotInfo[i].romType == RAM_NORMAL) {
             continue;
         }
+
+        if (machine->slotInfo[i].romType == ROM_SVI328FDC) {
+            success &= svi328FdcCreate();
+            continue;
+        }
         
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
@@ -443,26 +358,12 @@ static int sviInitMachine(Machine* machine,
         }
 
         switch (machine->slotInfo[i].romType) {
-        case ROM_0x4000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
-            break;
-
-        case ROM_BASIC:
-            success &= romMapperBasicCreate(romName, buf, size, slot, subslot, startPage);
-            break;
-
         case ROM_PLAIN:
             success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
             break;
-
-        case ROM_STANDARD:
-            success &= romMapperStandardCreate(romName, buf, size, slot, subslot, startPage);
-            break;
-            
         case ROM_NORMAL:
             success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
             break;
-
         case ROM_CASPATCH:
             success &= romMapperCasetteCreate(romName, buf, size, slot, subslot, startPage);
             break;
@@ -475,27 +376,7 @@ static int sviInitMachine(Machine* machine,
     }
 
     sviMemSetBank(0xDF);
-/*
-    sviMemReset();
-
-    buf = romLoad(machine->slotInfo[0].name, machine->slotInfo[0].inZipName, &size);
-    if (buf != NULL) {
-        if (size < 0x8001)
-            memcpy(&sviMemoryLow[BANK_01][0], buf, size);
-        else
-            success = 0;
-        free(buf);
-    }
-    else
-        success = 0;
-*/
     ledSetCapslock(0);
-
-    /* Patch BASIC ROM for cassette usage */
-    sviPatchROM();
-
-    /* Initialize FDC */
-//    svi328FdcCreate();
 
     return success;
 }
@@ -503,6 +384,11 @@ static int sviInitMachine(Machine* machine,
 void sviReset()
 {
     UInt32 systemTime = boardSystemTime();
+
+    vdpReset();
+
+    slotManagerReset();
+
     if (r800 != NULL) {
         r800Reset(r800, systemTime);
     }
@@ -510,10 +396,7 @@ void sviReset()
         ay8910Reset(ay8910);
     }
 
-    vdpReset();
-    
- //   sviMemSetBank(0xDF);
-    slotManagerReset();
+    sviMemSetBank(0xDF);
 
     ledSetCapslock(0);
 
@@ -580,9 +463,7 @@ int sviRun(Machine* machine,
     deviceManagerCreate();
     boardInit(0);
     ioPortReset();
-//    ramMapperIoCreate();
 
-//    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
@@ -683,52 +564,15 @@ int sviGetRefreshRate()
     return vdpGetRefreshRate();
 }
 
-void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
+UInt8* sviGetRamPage(int page)
 {
-    UInt8* buf;
-    int size;
+    static UInt8 emptyRam[0x2000];
 
-    if (cart && strlen(cart) == 0)
-        cart = NULL;
-
-    if (cartZip && strlen(cartZip) == 0)
-        cartZip = NULL;
-
-    if (sviDevInfo != NULL) {
-        sviDevInfo->cartridge[cartNo].inserted = cart != NULL;
-        sviDevInfo->cartridge[cartNo].type = romType;
-        strcpy(sviDevInfo->cartridge[cartNo].name, cart ? cart : "");
-        strcpy(sviDevInfo->cartridge[cartNo].inZipName, cartZip ? cartZip : "");
+    if (sviRam == NULL) {
+        return emptyRam;
     }
 
-    if (cartNo == 0) {
-        memset(&sviMemoryLow[BANK_11][0], 0xff, 0x8000);
-        buf = romLoad(cart, cartZip, &size);
-        if (buf != NULL && size < 0x8001) {
-            memcpy(&sviMemoryLow[BANK_11][0], buf, size);
-            useRom = 1;
-        }
-        else
-            useRom = 0;
-            free(buf);
-    }
-}
-
-void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
-{
-    if (fileName && strlen(fileName) == 0)
-        fileName = NULL;
-
-    if (fileInZipFile && strlen(fileInZipFile) == 0)
-        fileInZipFile = NULL;
-
-    if (sviDevInfo != NULL) {
-        sviDevInfo->diskette[driveId].inserted = fileName != NULL;
-        strcpy(sviDevInfo->diskette[driveId].name, fileName ? fileName : "");
-        strcpy(sviDevInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
-    }
-
-    diskChangeSVI(driveId, fileName, fileInZipFile);
+    return sviRam + ((page * 0x2000) & (sviRamSize - 1));
 }
 
 int sviChangeCassette(char *name, const char *fileInZipFile)
@@ -749,6 +593,43 @@ int sviChangeCassette(char *name, const char *fileInZipFile)
     tapeInsert(name, fileInZipFile);
 
     return sviDevInfo ? sviDevInfo->cassette.inserted : 0;
+}
+
+void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
+{
+    if (cart && strlen(cart) == 0)
+        cart = NULL;
+
+    if (cartZip && strlen(cartZip) == 0)
+        cartZip = NULL;
+
+    if (sviDevInfo != NULL) {
+        sviDevInfo->cartridge[cartNo].inserted = cart != NULL;
+        sviDevInfo->cartridge[cartNo].type = romType;
+        strcpy(sviDevInfo->cartridge[cartNo].name, cart ? cart : "");
+        strcpy(sviDevInfo->cartridge[cartNo].inZipName, cartZip ? cartZip : "");
+    }
+
+    if (cartNo == 0) {
+        cartridgeInsert(cartNo, ROM_PLAIN, cart, cartZip); 
+    }
+}
+
+void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
+{
+    if (fileName && strlen(fileName) == 0)
+        fileName = NULL;
+
+    if (fileInZipFile && strlen(fileInZipFile) == 0)
+        fileInZipFile = NULL;
+
+    if (sviDevInfo != NULL) {
+        sviDevInfo->diskette[driveId].inserted = fileName != NULL;
+        strcpy(sviDevInfo->diskette[driveId].name, fileName ? fileName : "");
+        strcpy(sviDevInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
+    }
+
+    diskChangeSVI(driveId, fileName, fileInZipFile);
 }
 
 void sviSaveState()
@@ -835,4 +716,3 @@ void sviLoadState()
 
     saveStateClose(state);
 }
-

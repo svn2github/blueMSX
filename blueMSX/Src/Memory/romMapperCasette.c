@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperCasette.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2005-01-15 19:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,12 +32,13 @@
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
+#include "Board.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-
 static UInt16 patchAddress[] = { 0x00e1, 0x00e4, 0x00e7, 0x00ea, 0x00ed, 0x00f0, 0x00f3, 0 };
+static UInt16 patchAddressSVI[] = {0x006C,0x006F,0x0072,0x0075,0x0078,0x210A,0x21A9,0}; // 0x0069
 
 typedef struct {
     int deviceHandle;
@@ -80,12 +81,31 @@ int romMapperCasetteCreate(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    // Patch the disk rom
-    for (i = 0; patchAddress[i]; i++) {
-        UInt8* ptr = rm->romData + patchAddress[i];
-        ptr[0] = 0xed;
-        ptr[1] = 0xfe;
-        ptr[2] = 0xc9;
+    if (boardGetType() == BOARD_SVI) {
+        // Patch the SVI-328 BIOS and BASIC for cassette handling
+        for (i = 0; patchAddressSVI[i]; i++) {
+            UInt8* ptr = rm->romData + patchAddressSVI[i];
+            ptr[0] = 0xed;
+            ptr[1] = 0xfe;
+            ptr[2] = 0xc9;
+        }
+        rm->romData[0x2073]=0x01;   // Skip delay loop after save
+        rm->romData[0x20D0]=0x10;   // Write $55 only $10 times, instead
+        rm->romData[0x20D1]=0x00;   //   of $190
+        rm->romData[0x20E3]=0x00;   // Cancel instruction
+        rm->romData[0x20E4]=0x00;
+        rm->romData[0x20E5]=0x00;
+        rm->romData[0x20E6]=0xED;
+        rm->romData[0x20E7]=0xFE;
+    }
+    else {
+        // Patch the casette rom
+        for (i = 0; patchAddress[i]; i++) {
+            UInt8* ptr = rm->romData + patchAddress[i];
+            ptr[0] = 0xed;
+            ptr[1] = 0xfe;
+            ptr[2] = 0xc9;
+        }
     }
 
     for (i = 0; i < pages; i++) {
