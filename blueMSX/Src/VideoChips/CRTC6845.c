@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-01-31 08:10:37 $
+** $Date: 2005-01-31 09:54:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,6 +71,9 @@ static const UInt8 crtcRegisterValueMask[18] = {
     0x7f, 0x7f, 0xf3, 0x1f, 0x7f, 0x1f,
     0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff 
 };
+
+static void saveState(CRTC6845* crtc);
+static void loadState(CRTC6845* crtc);
 
 // Frame refresh timer info
 #define REFRESH_PERIOD (boardFrequency() /  50)
@@ -190,19 +193,6 @@ static void crtcVideoDisable(CRTC6845* crtc)
     crtc->videoEnabled = 0;
 }
 
-static void saveState(CRTC6845* crtc)
-{
-    SaveState* state = saveStateOpenForWrite("crtc6845");
-
-    saveStateClose(state);
-}
-
-static void loadState(CRTC6845* crtc)
-{
-    SaveState* state = saveStateOpenForRead("vdp");
-
-    saveStateClose(state);
-}
 UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort)
 {
     if (crtc->registers.address < 18)
@@ -323,4 +313,110 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
     }
 
     return crtc;
+}
+
+static void saveState(CRTC6845* crtc)
+{
+    char tag[32];
+    int index;
+
+    SaveState* state = saveStateOpenForWrite("crtc6845");
+
+    saveStateGet(state, "crtc->cursor.mode",         crtc->cursor.mode);
+    saveStateGet(state, "crtc->cursor.rasterStart",  crtc->cursor.rasterStart);
+    saveStateGet(state, "crtc->cursor.rasterEnd",    crtc->cursor.rasterEnd);
+    saveStateGet(state, "crtc->cursor.addressStart", crtc->cursor.addressStart);
+    saveStateGet(state, "crtc->cursor.blinkrate",    crtc->cursor.blinkrate);
+    saveStateGet(state, "crtc->cursor.blinkstart",   crtc->cursor.blinkstart);
+
+    for (index = 0; index < 18; index++) {
+        sprintf(tag, "crtc->registers.reg[%d]", index);
+        saveStateSet(state, tag, crtc->registers.reg[index]);
+    }
+
+    saveStateGet(state, "crtc->frameCounter",    crtc->frameCounter);
+    saveStateGet(state, "crtc->frameRate",       crtc->frameRate);
+    saveStateGet(state, "crtc->deviceHandle",    crtc->deviceHandle);
+    saveStateGet(state, "crtc->videoHandle",     crtc->videoHandle);
+    saveStateGet(state, "crtc->videoEnabled",    crtc->videoEnabled);
+    saveStateGet(state, "crtc->timerDisplay",    crtc->timerDisplay);
+    saveStateGet(state, "crtc->vramMask",        crtc->vramMask);
+    saveStateGet(state, "crtc->romMask",         crtc->romMask);
+    saveStateGet(state, "crtc->charWidth",       crtc->charWidth);
+    saveStateGet(state, "crtc->charSpace",       crtc->charSpace);
+    saveStateGet(state, "crtc->charsPerLine",    crtc->charsPerLine);
+    saveStateGet(state, "crtc->displayWidth",    crtc->displayWidth);
+
+    saveStateSetBuffer(state, "crtc->vram", crtc->vram, 0x800);
+    saveStateSetBuffer(state, "crtc->romData", crtc->romData, 0x1000);
+
+    saveStateClose(state);
+}
+
+static void loadState(CRTC6845* crtc)
+{
+    UInt32 systemTime = boardSystemTime() + 100;
+    char tag[32];
+    int index;
+    int pixelZoom = 1;
+
+    SaveState* state = saveStateOpenForRead("crtc6845");
+
+    crtc->cursor.mode         = saveStateGet(state, "crtc->cursor.mode",         0);
+    crtc->cursor.rasterStart  = saveStateGet(state, "crtc->cursor.rasterStart",  0);
+    crtc->cursor.rasterEnd    = saveStateGet(state, "crtc->cursor.rasterEnd",    0);
+    crtc->cursor.addressStart = saveStateGet(state, "crtc->cursor.addressStart", 0);
+    crtc->cursor.blinkrate    = saveStateGet(state, "crtc->cursor.blinkrate",    0);
+    crtc->cursor.blinkstart   = saveStateGet(state, "crtc->cursor.blinkstart",   0);
+    
+    for (index = 0; index < 18; index++) {
+    	sprintf(tag, "crtc->registers.reg[%d]", index);
+        crtc->registers.reg[index] = saveStateGet(state, tag, 0);
+    }
+
+    crtc->frameCounter    = saveStateGet(state, "crtc->frameCounter",   0);
+    crtc->frameRate       = saveStateGet(state, "crtc->frameRate",      0);
+    crtc->deviceHandle    = saveStateGet(state, "crtc->deviceHandle",   0);
+    crtc->videoHandle     = saveStateGet(state, "crtc->videoHandle",    0);
+    crtc->videoEnabled    = saveStateGet(state, "crtc->videoEnabled",   0);
+    crtc->timerDisplay    = saveStateGet(state, "crtc->timerDisplay",   systemTime);
+    crtc->vramMask        = saveStateGet(state, "crtc->vramMask",       0);
+    crtc->romMask         = saveStateGet(state, "crtc->romMask",        0);
+    crtc->charWidth       = saveStateGet(state, "crtc->charWidth",      0);
+    crtc->charSpace       = saveStateGet(state, "crtc->charSpace",      0);
+    crtc->charsPerLine    = saveStateGet(state, "crtc->charsPerLine",   0);
+    crtc->displayWidth    = saveStateGet(state, "crtc->displayWidth",   0);
+
+    saveStateGetBuffer(state, "crtc->vram", crtc->vram, 0x800);
+    saveStateGetBuffer(state, "crtc->romData", crtc->romData, 0x1000);
+
+    saveStateClose(state);
+ 
+    // The displayWidth calculation is necessary for the frame buffer rendering
+    // since the frame buffer allows at most 320 pixel wide screens, although
+    // each pixel can have two real pixels (the zoom argument)
+    if (crtc->displayWidth > 320) {
+        pixelZoom = 2;
+        crtc->displayWidth /= 2;
+    }
+    if (crtc->displayWidth > 320) {
+        crtc->displayWidth = 320;
+    }
+
+    // Create and start frame refresh timer
+    crtc->timerDisplay = boardTimerCreate(crtcOnDisplay, crtc);
+    boardTimerAdd(crtc->timerDisplay, boardSystemTime() + REFRESH_PERIOD);
+
+    // Initialize device
+    {
+        DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
+        crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
+    }
+
+    // Initialize video frame buffer
+    {
+        VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
+        crtc->frameBufferData = frameBufferDataCreate(crtc->displayWidth, DISPLAY_HEIGHT, pixelZoom);
+        crtc->videoHandle = videoManagerRegister("CRTC6845", crtc->frameBufferData, &videoCallbacks, crtc);
+    }
 }

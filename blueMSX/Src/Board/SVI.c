@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-01-31 08:45:04 $
+** $Date: 2005-01-31 09:53:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,7 @@ static int             useRom;
 static int             traceEnabled;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
-static int             svi80ColEnabled
+static int             svi80ColEnabled;
 
 typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
 typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
@@ -525,7 +525,6 @@ int sviRun(Machine* machine,
     if (loadState) {
         r800LoadState(r800);
         boardInit(&r800->systemTime);
-        sviLoadMemory();
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);
         machineLoadState(sviMachine);
@@ -684,7 +683,6 @@ void sviSaveState()
 
     saveStateClose(state);
 
-    sviSaveMemory();
     joystickIoSaveState(joyIO);
     machineSaveState(sviMachine);
     r800SaveState(r800);
