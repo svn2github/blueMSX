@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-03-13 07:23:36 $
+** $Date: 2005-03-13 09:28:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -349,7 +349,7 @@ SCC* sccCreate(Mixer* mixer)
 
 void sccDestroy(SCC* scc)
 {
-    debugDeviceUnregister(scc->debugHandle);
+//    debugDeviceUnregister(scc->debugHandle);
     mixerUnregisterChannel(scc->mixer, scc->handle);
     free(scc);
 }
