@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-01-20 19:07:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -213,6 +213,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumVideoMonColor       = "Färg";
     ls->enumVideoMonGrey        = "Svartvit";
     ls->enumVideoMonGreen       = "Grön";
+    ls->enumVideoMonAmber       = "Orange";
 
     ls->enumVideoTypePAL        = "PAL";
     ls->enumVideoTypeNTSC       = "NTSC";
