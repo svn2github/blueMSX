@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-13 02:04:47 $
+** $Date: 2004-12-13 22:35:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -372,7 +372,15 @@ void propInitDefaults(Properties* pProperties)
 
 #endif
 
-void propLoad(Properties* pProperties) 
+// propLoadDefault loads registry settings that can not be reset
+static void propLoadDefault(Properties* pProperties) 
+{
+    getIntValue("DisableScreensaver", (long*)&pProperties->settings.disableScreensaver);
+    getIntValue("RegisterTypes", (long*)&pProperties->emulation.registerFileTypes);
+    getIntValue("DisableWinKeys", (long*)&pProperties->emulation.disableWinKeys);
+}
+
+static void propLoad(Properties* pProperties) 
 {
     int i;
     getIntValue("EmuLanguage", (long*)&pProperties->language);
@@ -395,7 +403,6 @@ void propLoad(Properties* pProperties)
     getIntValue("DisableWinKeys", (long*)&pProperties->emulation.disableWinKeys);
     getIntValue("PriorityBoost", (long*)&pProperties->emulation.priorityBoost);
     
-
     getIntValue("Monitor", (long*)&pProperties->video.monType);
     getIntValue("VideoEmu", (long*)&pProperties->video.palEmu);
     getIntValue("VideoSize", (long*)&pProperties->video.size);
@@ -733,6 +740,9 @@ Properties* propCreate(int useDefault)
 
     if (!useDefault) {
         propLoad(pProperties);
+    }
+    else {
+        propLoadDefault(pProperties);
     }
 
     // Verify machine name

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-13 02:04:49 $
+** $Date: 2004-12-13 22:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -202,6 +202,7 @@ static BOOL registerFileType(char* extension, char* appName, char* description, 
 
     rv = RegCreateKeyEx(HKEY_CLASSES_ROOT, extension, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
     rv = RegSetValueEx(hKey, "", 0, REG_SZ, appName, strlen(appName) + 1);
+    RegCloseKey(hKey);
 
     sprintf(buffer, "%s /onearg %%1", fileName);
     sprintf(path, "%s\\Shell\\Open\\command", appName);
@@ -218,6 +219,35 @@ static BOOL registerFileType(char* extension, char* appName, char* description, 
     return TRUE;
 }
 
+static BOOL unregisterFileType(char* extension, char* appName, char* description, int iconIndex) {
+    char path[MAX_PATH];
+    HKEY hKey;
+    DWORD rv;
+
+    rv = RegOpenKeyEx(HKEY_CLASSES_ROOT, extension, 0, KEY_ALL_ACCESS, &hKey);
+    if (rv == ERROR_SUCCESS) {
+        char buffer[MAX_PATH + 32];
+        UInt32 length;
+        UInt32 type;
+        rv = RegQueryValueEx(hKey, "", 0, &type, buffer, &length);
+        RegCloseKey(hKey);
+        if (type == REG_SZ) {
+            if (strcmp(buffer, appName) == 0) {
+                RegDeleteKey(HKEY_CLASSES_ROOT, extension);
+            }
+
+            sprintf(path, "%s\\DefaultIcon", appName);
+            rv = RegOpenKeyEx(HKEY_CLASSES_ROOT, path, 0, KEY_ALL_ACCESS, &hKey);
+            if (rv == ERROR_SUCCESS) {
+                RegCloseKey(hKey);
+                RegDeleteKey(HKEY_CLASSES_ROOT, path);
+            }
+        }
+    }
+
+    return TRUE;
+}
+
 static void registerFileTypes() {
     registerFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".di1", "blueMSXdsk", "DSK Image", 1);
@@ -227,6 +257,17 @@ static void registerFileTypes() {
     registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
     registerFileType(".cas", "blueMSXcas", "CAS Image", 3);
     registerFileType(".sta", "blueMSXsta", "blueMSX State", 4);
+}
+
+static void unregisterFileTypes() {
+    unregisterFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".di1", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".di2", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".rom", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".cas", "blueMSXcas", "CAS Image", 3);
+    unregisterFileType(".sta", "blueMSXsta", "blueMSX State", 4);
 }
 
 void centerDialog(HWND hwnd, int noActivate) {
@@ -816,6 +857,9 @@ void archShowPropertiesDialog(PropPage  startPane) {
     
     if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
         registerFileTypes();
+    }
+    else {
+        unregisterFileTypes();
     }
     
     if (pProperties->emulation.disableWinKeys && !oldProp.emulation.disableWinKeys) {
@@ -2552,6 +2596,9 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     if (pProperties->emulation.registerFileTypes) {
         registerFileTypes();
+    }
+    else {
+        unregisterFileTypes();
     }
 
     pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);

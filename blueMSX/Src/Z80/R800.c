@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 07:54:14 $
+** $Date: 2004-12-13 22:35:03 $
 **
 ** Author: Daniel Vik
 **
@@ -5538,11 +5538,11 @@ static void r800SwitchCpu(R800* r800) {
     switch (r800->cpuMode) {
     default:
     case CPU_Z80:
-        r800->delay[DLY_MEM]       = (R800_MASTER_FREQUENCY / 3579545) * 3;
-        r800->delay[DLY_MEMOP]     = (R800_MASTER_FREQUENCY / 3579545) * 3;
-        r800->delay[DLY_MEMPAGE]   = (R800_MASTER_FREQUENCY / 3579545) * 0;
-        r800->delay[DLY_PREIO]     = (R800_MASTER_FREQUENCY / 3579545) * 1;
-        r800->delay[DLY_POSTIO]    = (R800_MASTER_FREQUENCY / 3579545) * 3;
+        r800->delay[DLY_MEM]       = freqAdjust * 3;
+        r800->delay[DLY_MEMOP]     = freqAdjust * 3;
+        r800->delay[DLY_MEMPAGE]   = freqAdjust * 0;
+        r800->delay[DLY_PREIO]     = freqAdjust * 1;
+        r800->delay[DLY_POSTIO]    = freqAdjust * 3;
         r800->delay[DLY_M1]        = freqAdjust * 2;
         r800->delay[DLY_XD]        = freqAdjust * 1;
         r800->delay[DLY_IM]        = freqAdjust * 2;
@@ -5566,15 +5566,15 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_PUSH]      = freqAdjust * 1;
         r800->delay[DLY_RET]       = freqAdjust * 1;
         r800->delay[DLY_RLD]       = freqAdjust * 4;
-        r800->delay[DLY_S1990VDP]  = (R800_MASTER_FREQUENCY / 3579545) * 0;
+        r800->delay[DLY_S1990VDP]  = freqAdjust * 0;
         break;
 
     case CPU_R800:
-        r800->delay[DLY_MEM]       = (R800_MASTER_FREQUENCY / 7159090) * 2;
-        r800->delay[DLY_MEMOP]     = (R800_MASTER_FREQUENCY / 7159090) * 1;
-        r800->delay[DLY_MEMPAGE]   = (R800_MASTER_FREQUENCY / 7159090) * 1;
-        r800->delay[DLY_PREIO]     = (R800_MASTER_FREQUENCY / 7159090) * 0;
-        r800->delay[DLY_POSTIO]    = (R800_MASTER_FREQUENCY / 7159090) * 3;
+        r800->delay[DLY_MEM]       = freqAdjust * 2;
+        r800->delay[DLY_MEMOP]     = freqAdjust * 1;
+        r800->delay[DLY_MEMPAGE]   = freqAdjust * 1;
+        r800->delay[DLY_PREIO]     = freqAdjust * 0;
+        r800->delay[DLY_POSTIO]    = freqAdjust * 3;
         r800->delay[DLY_M1]        = freqAdjust * 0;
         r800->delay[DLY_XD]        = freqAdjust * 0;
         r800->delay[DLY_IM]        = freqAdjust * 0;
@@ -5598,7 +5598,7 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_PUSH]      = freqAdjust * 1;
         r800->delay[DLY_RET]       = freqAdjust * 0;
         r800->delay[DLY_RLD]       = freqAdjust * 1;
-        r800->delay[DLY_S1990VDP]  = (R800_MASTER_FREQUENCY / 7159090) * 57;
+        r800->delay[DLY_S1990VDP]  = freqAdjust * 57;
         break;
     }
 }
