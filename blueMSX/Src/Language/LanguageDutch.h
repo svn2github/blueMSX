@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 23:12:40 $
+** $Date: 2005-01-16 06:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -346,7 +346,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Afsluiten Aanpassen Machine Configuratie";
     ls->confExitSaveText         = "De gemaakte wijzigingen in de huidige configuratie niet toepassen?";
 
-    ls->confSaveAsTitle          = "blueMSX - Sla Machine Configuratie op als...";
+    ls->confSaveAsMachineTitle   = "blueMSX - Sla Machine Configuratie op als...";
     ls->confSaveAsMachineName    = "Machine Naam:";
 
     ls->confEditMemInternalRoms  = "blueMSX - Interne roms";

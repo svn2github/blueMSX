@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-01-16 06:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@ extern void PatchReset(BoardType boardType);
 static int boardType;
 static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
+UInt32* boardSysTime;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
@@ -52,7 +53,6 @@ static void   (*initStatistics)(Machine*)                     = msxInitStatistic
 static void   (*softReset)()                                  = msxReset;
 static int    (*run)(Machine*, DeviceInfo*, Mixer*, int, int) = msxRun;
 static void   (*setFrequency)(UInt32)                         = msxSetFrequency;
-static UInt32 (*systemTime)()                                 = msxSystemTime;
 static void   (*saveState)()                                  = msxSaveState;
 static int    (*getRefreshRate)()                             = msxGetRefreshRate;
 static void   (*setInt)(UInt32)                               = msxSetInt;
@@ -83,7 +83,6 @@ static void boardSetType(BoardType type)
         softReset       = msxReset;
         run             = msxRun;
         setFrequency    = msxSetFrequency;
-        systemTime      = msxSystemTime;
         saveState       = msxSaveState;
         getRefreshRate  = msxGetRefreshRate;
         setInt          = msxSetInt;
@@ -110,7 +109,6 @@ static void boardSetType(BoardType type)
         softReset       = sviReset;
         run             = sviRun;
         setFrequency    = sviSetFrequency;
-        systemTime      = sviSystemTime;
         saveState       = sviSaveState;
         getRefreshRate  = sviGetRefreshRate;
         setInt          = sviSetInt;
@@ -137,7 +135,6 @@ static void boardSetType(BoardType type)
         softReset       = colecoReset;
         run             = colecoRun;
         setFrequency    = colecoSetFrequency;
-        systemTime      = colecoSystemTime;
         saveState       = colecoSaveState;
         getRefreshRate  = colecoGetRefreshRate;
         setInt          = colecoSetInt;
@@ -245,11 +242,6 @@ void boardSetFrequency(int frequency)
     setFrequency(frequency);
     
 	mixerSetBoardFrequency(frequency);
-}
-
-UInt32 boardSystemTime()
-{
-    return systemTime();
 }
 
 int  boardGetRefreshRate()
@@ -453,9 +445,11 @@ UInt32 boardTimerCheckTimeout()
     return timerList->next->timeout - currentTime;
 }
 
-void boardInit(UInt32 systemTime)
+void boardInit(UInt32* systemTime)
 {
-    timeAnchor = systemTime;
+    boardSysTime = systemTime;
+
+    timeAnchor = *systemTime;
     if (timerList != NULL) {
         for (;;) {
             BoardTimer* timer = timerList->next;

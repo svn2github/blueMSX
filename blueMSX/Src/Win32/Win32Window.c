@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-16 03:23:21 $
+** $Date: 2005-01-16 06:48:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -338,7 +338,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
 
     case WM_BUTTON_SAVEAS:
         {
-            char* name = openConfigFile(hwnd, "title", "desc", keyboardGetConfigs(), keyboardGetCurrentConfig());
+            char* name = openConfigFile(hwnd, langConfSaveAsTitle(), langConfSaveAsName(), keyboardGetConfigs(), keyboardGetCurrentConfig());
             if (name != NULL) {
                 if (0 == strcmp(name, keyboardGetCurrentConfig())) {
                     if (IDYES == MessageBox(hwnd, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-15 19:36:13 $
+** $Date: 2005-01-16 06:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -461,10 +461,12 @@ int sviRun(Machine* machine,
     }
 
     deviceManagerCreate();
-    boardInit(0);
-    ioPortReset();
 
     r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+
+    boardInit(&r800->systemTime);
+    ioPortReset();
+
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -508,7 +510,7 @@ int sviRun(Machine* machine,
 
     if (loadState) {
         r800LoadState(r800);
-        boardInit(boardSystemTime());
+        boardInit(&r800->systemTime);
         sviLoadMemory();
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);

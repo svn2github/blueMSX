@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-14 09:33:49 $
+** $Date: 2005-01-16 06:48:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -338,7 +338,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->slotEditMemSize          = "サイズ:";
     ls->slotEditMemSlot          = "スロット:";
 
-    ls->confSaveAsTitle          = "blueMSX - マシン構\成を別名で保存...";
+    ls->confSaveAsMachineTitle   = "blueMSX - マシン構\成を別名で保存...";
     ls->confSaveAsMachineName    = "構\成名:";
 
     ls->confSaveTitle            = "blueMSX - マシン構\成の保存";

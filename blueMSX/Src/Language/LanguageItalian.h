@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 23:12:41 $
+** $Date: 2005-01-16 06:48:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -344,7 +344,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Esci dall'editor di configurazione";
     ls->confExitSaveText         = "Vuoi annullare i cambiamenti apportati alla configurazione attuale?";
 
-    ls->confSaveAsTitle          = "blueMSX - Salva la configurazione con nome";
+    ls->confSaveAsMachineTitle   = "blueMSX - Salva la configurazione con nome";
     ls->confSaveAsMachineName    = "Nome della macchina:";
     
     ls->confEditMemInternalRoms  = "blueMSX - Roms interne"; 

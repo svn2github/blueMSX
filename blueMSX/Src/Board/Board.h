@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-01-16 06:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,7 +59,7 @@ typedef struct {
     } video;
 } DeviceInfo;
 
-void boardInit(UInt32 systemTime);
+void boardInit(UInt32* systemTime);
 
 int boardRun(Machine* machine, 
              DeviceInfo* deviceInfo,
@@ -108,7 +108,10 @@ int  boardGetCassetteInserted();
 
 #define boardFrequency() (6 * 3579545)
 
-unsigned long boardSystemTime();
+static UInt32 boardSystemTime() {
+    extern UInt32* boardSysTime;
+    return *boardSysTime;
+}
 
 typedef void (*BoardTimerCb)(void* ref, UInt32 time);
 

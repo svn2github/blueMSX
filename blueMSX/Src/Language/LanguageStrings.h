@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-15 03:06:49 $
+** $Date: 2005-01-16 06:48:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -427,11 +427,13 @@ typedef struct {
     _TCHAR* confExitSaveTitle;
     _TCHAR* confExitSaveText;
 
-    _TCHAR* confSaveAsTitle;
+    _TCHAR* confSaveAsMachineTitle;
     _TCHAR* confSaveAsMachineName;
 
     _TCHAR* confEditMemInternalRoms;
 
+    _TCHAR* confSaveAsTitle;
+    _TCHAR* confSaveAsName;
 
     _TCHAR* shortcutSaveConfig;
     _TCHAR* shortcutOverwriteConfig;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-03 23:12:31 $
+** $Date: 2005-01-16 06:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -764,12 +764,13 @@ int msxRun(Machine* machine,
 
     deviceManagerCreate();
 
-    boardInit(0);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+
+    boardInit(&r800->systemTime);
 
     ioPortReset();
     ramMapperIoCreate();
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -811,7 +812,7 @@ int msxRun(Machine* machine,
 
     if (loadState) {
         r800LoadState(r800);
-        boardInit(boardSystemTime());
+        boardInit(&r800->systemTime);
 
         deviceManagerLoadState();
         slotLoadState();

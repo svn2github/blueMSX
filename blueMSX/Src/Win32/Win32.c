@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-01-16 01:57:26 $
+** $Date: 2005-01-16 06:48:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2594,4 +2594,8 @@ void archThemeUpdate(Theme* theme) {
 
 int archGetFramesPerSecond() {
     return st.framesPerSecond;
+}
+
+void archEmulationStartFailure() {
+     MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
 }

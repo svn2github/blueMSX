@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-16 03:23:15 $
+** $Date: 2005-01-16 06:48:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,5 +57,6 @@ void archUpdateEmuDisplay(int synchronous, int evenOdd, int interlace);
 void archDiskQuickChangeNotify();
 void archEmulationStartNotification();
 void archEmulationStopNotification();
+void archEmulationStartFailure();
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-15 23:55:15 $
+** $Date: 2005-01-16 06:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -293,8 +293,6 @@ static void emulatorThread() {
                        *emuStateName ? emuStateName : NULL,
                        frequency);
 
-    archEventSet(emuStartEvent);
-
     ledSetAll(0);
     emuState = EMU_STOPPED;
 
@@ -303,6 +301,8 @@ static void emulatorThread() {
     if (!success) {
         emulationStartFailure = 1;
     }
+    
+    archEventSet(emuStartEvent);
 }
 
 
@@ -401,7 +401,7 @@ void emulatorStart(char* stateName) {
     if (emulationStartFailure) {
         archEmulationStopNotification();
         emuState = EMU_STOPPED;
-//        MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
+        archEmulationStartFailure();
     }
     if (emuState != EMU_STOPPED) {
         emuState = EMU_RUNNING;

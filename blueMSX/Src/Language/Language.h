@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-15 03:06:49 $
+** $Date: 2005-01-16 06:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -447,6 +447,8 @@ _TCHAR* langDlgConfSaveAsMachineName();
 
 _TCHAR* langSlotEditMemInternalRoms();
 
+_TCHAR* langConfSaveAsTitle();
+_TCHAR* langConfSaveAsName();
 
 _TCHAR* langShortcutSaveConfig();
 _TCHAR* langShortcutOverwriteConfig();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-13 23:13:53 $
+** $Date: 2005-01-16 06:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -402,10 +402,12 @@ int colecoRun(Machine* machine,
     }
 
     deviceManagerCreate();
-    boardInit(0);
+    
+    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, NULL);
+
+    boardInit(&r800->systemTime);
     ioPortReset();
 
-    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -425,7 +427,7 @@ int colecoRun(Machine* machine,
 
     if (loadState) {
         r800LoadState(r800);
-        boardInit(boardSystemTime());
+        boardInit(&r800->systemTime);
         colecoLoadMemory();
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);

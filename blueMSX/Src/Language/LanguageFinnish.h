@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 23:12:41 $
+** $Date: 2005-01-16 06:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -347,7 +347,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Poistu kokoonpano editorista";
     ls->confExitSaveText         = "Haluatko hylätä muutokset nykyiseen kokoonpanoon?";
 
-    ls->confSaveAsTitle          = "blueMSX - Tallenna laitekokoonpano nimellä...";
+    ls->confSaveAsMachineTitle   = "blueMSX - Tallenna laitekokoonpano nimellä...";
     ls->confSaveAsMachineName    = "Laitekokoonpano:";
 
     ls->confEditMemInternalRoms  = "blueMSX - Sisäiset rommit";
