@@ -380,6 +380,9 @@
 			Name="Common"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Common\DebugMemory.c">
+			</File>
+			<File
 				RelativePath="..\..\Src\Common\MsxTypes.h">
 			</File>
 		</Filter>
@@ -556,6 +559,12 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.c">
@@ -943,12 +952,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\RTC.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\IoDevice\Svi328Fdc.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\IoDevice\Svi328Fdc.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\SviPPI.c">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-11 08:45:40 $
+** $Date: 2005-01-31 08:10:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,6 +94,7 @@ static void destroy(RamMapper* rm)
     ramMapperIoRemove(rm->handle);
     slotUnregister(rm->slot, rm->sslot, 0);
     deviceManagerUnregister(rm->deviceHandle);
+    free(rm->ramData);
 
     free(rm);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-01-27 01:04:57 $
+** $Date: 2005-01-31 08:10:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,7 +57,7 @@
 #include "romMapperSvi328Prn.h"
 #include "romMapperSvi80Col.h"
 #include "romMapperSvi328Rs232.h"
-#include "svi328Fdc.h"
+#include "romMapperSvi328Fdc.h"
 
 /* Hardware */
 static Machine*        sviMachine;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-01-28 19:45:32 $
+** $Date: 2005-01-31 08:10:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -260,6 +260,8 @@ static void crtc6845Destroy(CRTC6845* crtc)
     deviceManagerUnregister(crtc->deviceHandle);
     videoManagerUnregister(crtc->videoHandle);
     boardTimerDestroy(crtc->timerDisplay);
+
+    frameBufferDataDestroy(crtc->frameBufferData);
 
     free(crtc);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/RTC.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:59 $
+** $Date: 2005-01-31 08:10:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -345,4 +345,6 @@ void rtcDestroy(RTC* rtc)
 
         fclose(file);
     }
+
+    free(rtc);
 }

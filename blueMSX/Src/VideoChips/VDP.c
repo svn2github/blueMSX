@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-30 10:05:40 $
+** $Date: 2005-01-31 08:10:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1016,6 +1016,8 @@ static void destroy(VDP* vdp)
     boardTimerDestroy(vdp->timerVint);
 
     vdpCmdDestroy(vdp->cmdEngine);
+
+    frameBufferDataDestroy(vdp->frameBuffer);
 
     free(vdp);
 }

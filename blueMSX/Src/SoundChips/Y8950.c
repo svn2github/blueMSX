@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-03 06:12:59 $
+** $Date: 2005-01-31 08:10:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,6 +218,8 @@ void y8950Destroy(Y8950* y8950)
     boardTimerDestroy(y8950->timer1);
     boardTimerDestroy(y8950->timer2);
     OPLDestroy(y8950->opl);
+
+    free(y8950);
 }
 
 void y8950Reset(Y8950* y8950)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-25 04:49:43 $
+** $Date: 2005-01-31 08:10:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -836,6 +836,8 @@ int msxRun(Machine* machine,
         boardTimerAdd(timer, boardSystemTime() + 1);
 
         r800Execute(r800);
+
+        boardTimerDestroy(timer);
     }
         
     msxTraceDisable();
@@ -859,6 +861,8 @@ int msxRun(Machine* machine,
     slotManagerDestroy();
 
     deviceManagerDestroy();
+
+    r800Destroy(r800);
 
     msxMachine = NULL;
     msxDevInfo = NULL;

@@ -9,6 +9,7 @@
 */
 #include "R800dasm.h"
 #include <stdio.h>
+#include <string.h>
 
 static FILE* traceFile = NULL;
 
@@ -351,7 +352,7 @@ void r800ExecuteTrace(R800* r800, UInt32 endTime)
     char mnemonic[64];
 
     if (traceFile == NULL) {
-        r800Execute(r800, endTime);
+        r800ExecuteUntil(r800, endTime);
         return;
     }
 

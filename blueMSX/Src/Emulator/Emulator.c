@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-29 00:28:48 $
+** $Date: 2005-01-31 08:10:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -289,6 +289,9 @@ void emulatorStart(char* stateName) {
     UInt32 color = videoGetColor(0, 0, 0);
     int i;
 
+    
+    dbgEnable();
+
     archEmulationStartNotification();
 
     emulatorResume();
@@ -417,6 +420,9 @@ void emulatorStop() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
 
     archEmulationStopNotification();
+    
+    dbgDisable();
+    dbgPrint();
 }
 
 void emulatorSetFrequency(int logFrequency, int* frequency) {

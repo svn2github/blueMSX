@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 06:13:00 $
+** $Date: 2005-01-31 08:10:38 $
 **
 ** Author: Daniel Vik
 **
@@ -5451,7 +5451,7 @@ static void writeIoPortDummy(void* ref, UInt16 address, UInt8 value) {
 static void  patchDummy(void* ref, CpuRegs* regs) {
 }
 
-static void  timerCbDummy(void* ref, CpuRegs* regs) {
+static void  timerCbDummy(void* ref) {
 }
 
 static void r800InitTables() {
@@ -5759,7 +5759,7 @@ void r800SetTimeoutAt(R800* r800, SystemTime time)
     r800->timeout = time;
 }
 
-void r800Execute(R800* r800, UInt32 endTime) {
+void r800Execute(R800* r800) {
     static SystemTime lastRefreshTime = 0;
 
     while (!r800->terminate) {
