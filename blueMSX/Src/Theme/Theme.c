@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-11 02:09:16 $
+** $Date: 2005-01-11 03:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@ struct ThemeItem {
     void*        object;
     ThemeTrigger trigger;
     ThemeTrigger visible;
+    ThemeTrigger pressed;
 };
 
 #define TEST(a, x) ((a & THEME_TRIGGER_NOT) ? !(x) : (x))
@@ -139,14 +140,9 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_VSTRETCH:    idx = TEST(actionType, themeTriggerVideoVstretch()); break;
     }
 
-    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY;
-    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY - THEME_TRIGGER_FIRST_KEY) {
+    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_PRESSED;
+    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY_PRESSED - THEME_TRIGGER_FIRST_KEY_PRESSED) {
         idx = TEST(actionType, themeTriggerKeyPressed(key));
-    }
-
-    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_EDIT;
-    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY_EDIT - THEME_TRIGGER_FIRST_KEY_EDIT) {
-        idx = TEST(actionType, themeTriggerKeyEdit(key));
     }
 
     key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_CONFIG;
@@ -189,7 +185,7 @@ static char* actionTypeToStr(ThemeTrigger actionType)
     return str;
 }
 
-static void themeAddLast(Theme* theme, ItemType itemType, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+static void themeAddLast(Theme* theme, ItemType itemType, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
     ThemeItem* item = malloc(sizeof(ThemeItem));
     ThemeItem** pItem = &theme->itemList;
@@ -204,6 +200,7 @@ static void themeAddLast(Theme* theme, ItemType itemType, void* object, ThemeTri
     item->object = object;
     item->trigger = trigger;
     item->visible = visible;
+    item->pressed = pressed;
     item->next = NULL;
 }
 
@@ -295,42 +292,42 @@ void themeDestroy(Theme* theme)
 
 void themeAddImage(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_IMAGE, object, trigger, visible);
+    themeAddLast(theme, ITEM_IMAGE, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
 void themeAddMeter(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_METER, object, trigger, visible);
+    themeAddLast(theme, ITEM_METER, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
 void themeAddSlider(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_SLIDER, object, trigger, visible);
+    themeAddLast(theme, ITEM_SLIDER, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
 void themeAddText(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_TEXT, object, trigger, visible);
+    themeAddLast(theme, ITEM_TEXT, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
-void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_BUTTON, object, trigger, visible);
+    themeAddLast(theme, ITEM_BUTTON, object, trigger, visible, pressed);
 }
 
-void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_DUALBUTTON, object, trigger, visible);
+    themeAddLast(theme, ITEM_DUALBUTTON, object, trigger, visible, pressed);
 }
 
-void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_TOGGLEBUTTON, object, trigger, visible);
+    themeAddLast(theme, ITEM_TOGGLEBUTTON, object, trigger, visible, pressed);
 }
 
 void themeAddObject(Theme* theme, void* object, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_OBJECT, object, THEME_TRIGGER_NONE, visible);
+    themeAddLast(theme, ITEM_OBJECT, object, THEME_TRIGGER_NONE, visible, THEME_TRIGGER_NONE);
 }
 
 void themeMouseMove(Theme* theme, void*  dc, int x, int y)
@@ -518,7 +515,6 @@ void themeUpdate(Theme* theme, void* dc)
     }
 
     // Update visibility
-
     for (item = theme->itemList; item != NULL; item = item->next) {
         int   visible = actionTypeToInt(item->visible);
         if (visible == -1) {
@@ -553,8 +549,27 @@ void themeUpdate(Theme* theme, void* dc)
         }
     }
 
-    // Update items
+    // Update pressed
+    for (item = theme->itemList; item != NULL; item = item->next) {
+        int   pressed = actionTypeToInt(item->pressed);
+        if (pressed == -1) {
+            continue;
+        }
 
+        switch (item->type) {
+        case ITEM_BUTTON:
+            redraw |= activeButtonForcePushed(item->object, pressed);
+            break;
+        case ITEM_DUALBUTTON:
+            redraw |= activeDualButtonForcePushed(item->object, pressed);
+            break;
+        case ITEM_TOGGLEBUTTON:
+            redraw |= activeToggleButtonForcePushed(item->object, pressed);
+            break;
+        }
+    }
+
+    // Update items
     for (item = theme->itemList; item != NULL; item = item->next) {
         int   idx = actionTypeToInt(item->trigger);
         char* str = actionTypeToStr(item->trigger);
@@ -581,11 +596,9 @@ void themeUpdate(Theme* theme, void* dc)
             if (redraw) activeButtonDraw(item->object, dc);
             break;
         case ITEM_BUTTON:
-//            if (idx != -1) redraw |= activeButtonForcePushed(item->object, idx);
             if (redraw) activeButtonDraw(item->object, dc);
             break;
         case ITEM_DUALBUTTON:
-//            if (idx != -1) redraw |= activeDualButtonForcePushed(item->object, idx);
             if (redraw) activeDualButtonDraw(item->object, dc);
             break;
         }

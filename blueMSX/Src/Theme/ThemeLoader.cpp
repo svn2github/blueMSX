@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 02:09:17 $
+** $Date: 2005-01-11 03:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -239,7 +239,7 @@ static int getIndexedTrigger(TiXmlElement* el, char* triggerName, int idx)
     const char* s = inverted ? trigger + 4 : trigger;
     int         t = inverted ? THEME_TRIGGER_NOT : 0;
     
-    if (0 == strcmp(s, "key-edit"))       return t | (THEME_TRIGGER_FIRST_KEY_EDIT + idx);
+    if (0 == strcmp(s, "key-pressed"))    return t | (THEME_TRIGGER_FIRST_KEY_PRESSED + idx);
     if (0 == strcmp(s, "key-configured")) return t | (THEME_TRIGGER_FIRST_KEY_CONFIG + idx);
 
     return -1;
@@ -521,7 +521,7 @@ static void addButton(Theme* theme, TiXmlElement* el)
     int arga, argb;
     ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb);
 
-    themeAddButton(theme, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible);
+    themeAddButton(theme, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible, THEME_TRIGGER_NONE);
 }
 
 static void addToggleButton(Theme* theme, TiXmlElement* el)
@@ -545,7 +545,8 @@ static void addToggleButton(Theme* theme, TiXmlElement* el)
     int arga, argb;
     ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb);
 
-    themeAddToggleButton(theme, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible);
+    themeAddToggleButton(theme, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), 
+                         trigger, visible, THEME_TRIGGER_NONE);
 }
 
 static void addDualButton(Theme* theme, TiXmlElement* el)
@@ -579,7 +580,8 @@ static void addDualButton(Theme* theme, TiXmlElement* el)
     }
 
     themeAddDualButton(theme, activeDualButtonCreate(x, y, cols, bitmap, action1, arg1x, arg1y,
-                                                      action2, arg2x, arg2y, vertical), trigger, visible);
+                                                      action2, arg2x, arg2y, vertical), 
+                       trigger, visible, THEME_TRIGGER_NONE);
 }
 
 static void addKeyButton(Theme* theme, TiXmlElement* el)
@@ -603,9 +605,12 @@ static void addKeyButton(Theme* theme, TiXmlElement* el)
         }
     }
 
-    ThemeTrigger trigger = (ThemeTrigger)(THEME_TRIGGER_FIRST_KEY + keycode);
+    ThemeTrigger trigger = (ThemeTrigger)(THEME_TRIGGER_FIRST_KEY_CONFIG + keycode);
+    ThemeTrigger pressed = (ThemeTrigger)(THEME_TRIGGER_FIRST_KEY_PRESSED + keycode);
     ButtonEvent action = (ButtonEvent)actionKeyPress;
-    themeAddButton(theme, activeButtonCreate(x, y, cols, bitmap, action, keycode, -1), trigger, visible);
+
+    themeAddToggleButton(theme, activeToggleButtonCreate(x, y, cols, bitmap, action, keycode, -1), 
+                         trigger, visible, pressed);
 }
 
 

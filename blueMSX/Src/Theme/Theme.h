@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-10 16:07:11 $
+** $Date: 2005-01-11 03:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,11 +101,11 @@ void themeAddImage(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigge
 
 void themeAddText(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
-void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
-void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
-void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
 void themeAddMeter(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
