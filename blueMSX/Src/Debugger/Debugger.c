@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 10:21:11 $
+** $Date: 2005-02-21 08:04:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,8 @@
 
 #include "Debugger.h"
 #include "DebugDeviceManager.h"
+#include "Emulator.h"
+#include "Actions.h"
 #include <stdlib.h>
 
 struct Debugger {
@@ -241,4 +243,30 @@ const DbgIoPorts* dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int index)
     }
     return dbgDevice->ioPorts[index];
 }
+
+void dbgRun()
+{
+    if (emulatorGetState() != EMU_RUNNING) {
+        actionEmuTogglePause();
+    }
+}
+
+void dbgStop()
+{
+    emulatorStop();
+}
+
+void dbgPause()
+{
+    if (emulatorGetState() == EMU_RUNNING) {
+        actionEmuTogglePause();
+    }
+}
+
+void dbgStep()
+{
+    if (emulatorGetState() == EMU_PAUSED) {
+    }
+}
+
 

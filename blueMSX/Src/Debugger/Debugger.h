@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-15 20:28:55 $
+** $Date: 2005-02-21 08:04:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,6 +99,11 @@ int                    dbgDeviceGetRegisterBankCount(DbgDevice* dbgDevice);
 const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int regBankIndex);
 int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
 const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
+
+void dbgRun();
+void dbgStop();
+void dbgPause();
+void dbgStep();
 
 
 // Internal structure and interface

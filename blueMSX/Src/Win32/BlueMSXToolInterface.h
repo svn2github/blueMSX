@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-15 20:28:57 $
+** $Date: 2005-02-21 08:04:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,6 +120,7 @@ typedef int           (__stdcall *ToolDeviceGetRegisterBankCount)(Device* device
 typedef RegisterBank* (__stdcall *ToolDeviceGetRegisterBank)(Device* device, int regBankIndex);
 typedef int           (__stdcall *ToolDeviceGetIoPortsCount)(Device* device);
 typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPortIndex);
+typedef void          (__stdcall *ToolAction)();
 
 typedef struct {
     ToolSnapshotCreate              create;
@@ -134,6 +135,11 @@ typedef struct {
     ToolDeviceGetRegisterBank       getRegisterBank;
     ToolDeviceGetIoPortsCount       getIoPortsCount;
     ToolDeviceGetIoPorts            getIoPorts;
+
+    ToolAction                      run;
+    ToolAction                      stop;
+    ToolAction                      pause;
+    ToolAction                      step;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);

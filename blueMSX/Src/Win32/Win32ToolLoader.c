@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-13 10:21:12 $
+** $Date: 2005-02-21 08:04:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "Win32ToolLoader.h"
 #include "BlueMSXToolInterface.h"
 #include "Debugger.h"
+#include "Actions.h"
 
 #define MAX_TOOLS 16
 
@@ -139,6 +140,26 @@ IoPorts* __stdcall toolDeviceGetIoPorts(Device* d, int p)
     return (IoPorts*)dbgDeviceGetIoPorts((DbgDevice*)d, p);
 }
 
+void __stdcall toolRun()
+{
+    dbgRun();
+}
+
+void __stdcall toolStop()
+{
+    dbgStop();
+}
+
+void __stdcall toolPause()
+{
+    dbgPause();
+}
+
+void __stdcall toolStep()
+{
+    dbgStep();
+}
+
 static Interface toolInterface = {
     toolSnapshotCreate,
     toolSnapshotDestroy,
@@ -150,7 +171,11 @@ static Interface toolInterface = {
     toolDeviceGetRegisterBankCount,
     toolDeviceGetRegisterBank,
     toolDeviceGetIoPortsCount,
-    toolDeviceGetIoPorts
+    toolDeviceGetIoPorts,
+    toolRun,
+    toolStop,
+    toolPause,
+    toolStep
 };
 
 void toolLoadAll(const char* path)
