@@ -73,6 +73,7 @@ private:
     int    lineCount;
 
     COLORREF colorBlack;
+    COLORREF colorLtGray;
     COLORREF colorGray;
     COLORREF colorRed;
 

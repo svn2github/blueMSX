@@ -66,6 +66,7 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
         colorBlack = RGB(0, 0, 0);
+        colorLtGray = RGB(240, 240, 240);
         colorGray  = RGB(64, 64, 64);
         colorRed   = RGB(255, 0, 0);
         SetBkMode(hMemdc, TRANSPARENT);
@@ -408,8 +409,8 @@ void CpuRegisters::drawText(int top, int bottom)
                 PatBlt(hMemdc, x, 3, textWidth + 1, textHeight - 5, PATCOPY);
                 if (regValue[0] >= 0) {
                     RECT r = { x + 1, 1, x + textWidth + 2, textHeight };
-                    const char* text = (regVal & 0x80) ? "SZYHXPNC" + j : " ";
-                    DrawText(hMemdc, text, 1, &r, DT_LEFT);
+                    SetTextColor(hMemdc, (regVal & 0x80) ? colorBlack : colorLtGray);
+                    DrawText(hMemdc, "SZYHXPNC" + j, 1, &r, DT_LEFT);
                     regVal <<= 1;
                 }
             }

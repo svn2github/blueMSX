@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-03-04 07:03:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,6 @@ static const Int16 voltTable[16] = {
 };
 
 static Int32* sn76489Sync(void* ref, UInt32 count);
-static void updateRegister(SN76489* sn76489, UInt8 reg, UInt8 data);
 
 
 struct SN76489 {
@@ -131,7 +130,7 @@ void sn76489SaveState(SN76489* sn76489)
     saveStateClose(state);
 }
 
-static void getDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
+static void setDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
     int i;
@@ -145,22 +144,12 @@ static void getDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
     }
 }
 
-static int dbgWriteRegister(SN76489* sn76489, char* name, int regIndex, UInt32 value)
-{
-    updateRegister(sn76489, (UInt8)regIndex, (UInt8)value);
-
-    return 1;
-}
-
 SN76489* sn76489Create(Mixer* mixer)
 {
-    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     SN76489* sn76489 = (SN76489*)calloc(1, sizeof(SN76489));
     int i;
 
     sn76489->mixer = mixer;
-
-    sn76489->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SN76489 PSG", &dbgCallbacks, sn76489);
 
     sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
 
@@ -200,62 +189,70 @@ void sn76489Destroy(SN76489* sn76489)
     free(sn76489);
 }
 
-static void updateRegister(SN76489* sn76489, UInt8 reg, UInt8 data)
+void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
 {
     UInt32 period;
 
     mixerSync(sn76489->mixer);
 
-    sn76489->regs[reg] = data;
-
-	switch (reg) {
-	case 0:
-	case 2:
-	case 4:
-		period = sn76489->regs[reg];
-        sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
-
-		if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
-			period = sn76489->regs[4] * 16;
-            sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
-		}
-        
-		break;
-
-	case 1:
-	case 3:
-	case 5:
-	case 7:
-        sn76489->ampVolume[reg >> 1] = data & 0x0f;
-		break;
-
-	case 6:
-		if ((sn76489->regs[6] & 0x03) == 0x03) {
-			period = sn76489->regs[4] * 16;
-            sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
-		}
-        else {
-		    period = 256 << (sn76489->regs[6] & 0x03);
-            sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
-        }
-
-		sn76489->noiseRand = 0x0f35;
-		break;
-	}
-}
-
-void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
-{
 	if (data & 0x80) {
 		int reg = (data >> 4) & 0x07;
 		sn76489->latch = reg;
 
-        updateRegister(sn76489, reg, (sn76489->regs[reg] & 0x3f0) | (data & 0x0f));
+		sn76489->regs[reg] = (sn76489->regs[reg] & 0x3f0) | (data & 0x0f);
+
+		switch (reg) {
+		case 0:
+		case 2:
+		case 4:
+			period = sn76489->regs[reg];
+            sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+
+			if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+			}
+            
+			break;
+
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+            sn76489->ampVolume[reg >> 1] = data & 0x0f;
+			break;
+
+		case 6:
+			if ((sn76489->regs[6] & 0x03) == 0x03) {
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+			}
+            else {
+		        period = 256 << (sn76489->regs[6] & 0x03);
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+            }
+
+			sn76489->noiseRand = 0x0f35;
+			break;
+		}
 	}
 	else {
 		int reg = sn76489->latch;
-        if (reg == 0 || reg == 2 || reg == 4) {
-            updateRegister(sn76489, reg, (sn76489->regs[reg] & 0x0f) | ((data & 0x3f) << 4));
+
+		switch (reg) {
+		case 0:
+		case 2:
+		case 4:
+			sn76489->regs[reg] = (sn76489->regs[reg] & 0x0f) | ((data & 0x3f) << 4);
+            
+			period = sn76489->regs[reg];
+            sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+
+            if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+			}
+			break;
 		}
 	}
 }
@@ -328,3 +325,4 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
 
     return sn76489->buffer;
 }
+
