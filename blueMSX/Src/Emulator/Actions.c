@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-02-03 07:33:23 $
+** $Date: 2005-02-06 08:32:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -942,23 +942,17 @@ void actionVideoSetScanlines(int value) {
 }
 
 void actionVideoSetRfModulation(int value) {
-    state.properties->video.colorSaturationWidth = 4 * value / 100;
+    state.properties->video.colorSaturationWidth = (int)ceil((5 - 1) * value / 100.0);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetColorMode(int value) {
-    propGetGlobalProperties()->video.monType = P_VIDEO_MONCOUNT * value / 100;
-    if (state.properties->video.monType >= P_VIDEO_MONCOUNT) {
-        state.properties->video.monType = P_VIDEO_MONCOUNT - 1;
-    }
+    propGetGlobalProperties()->video.monType = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetFilter(int value) {
-    state.properties->video.palEmu = P_VIDEO_PALCOUNT * value / 100;
-    if (state.properties->video.palEmu >= P_VIDEO_PALCOUNT) {
-        state.properties->video.palEmu = P_VIDEO_PALCOUNT - 1;
-    }
+    state.properties->video.palEmu = (int)ceil((P_VIDEO_PALCOUNT - 1) * value / 100.0);
     archUpdateEmuDisplayConfig();
 }
 

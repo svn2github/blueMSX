@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-03 06:12:58 $
+** $Date: 2005-02-06 08:32:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,7 +112,7 @@ void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
         moonsound->timerRef1 = timerRef;
         moonsound->timerStarted1 = start;
         if (start) {
-            moonsound->timeout1 = boardSystemTime() + boardFrequency() / 12435 * moonsound->timerValue1;
+            moonsound->timeout1 = boardSystemTime() + boardFrequency() * moonsound->timerValue1 / 12435;
             boardTimerAdd(moonsound->timer1, moonsound->timeout1);
         }
         else {
@@ -123,7 +123,7 @@ void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
         moonsound->timerRef2 = timerRef;
         moonsound->timerStarted2 = start;
         if (start) {
-            moonsound->timeout2 = boardSystemTime() + boardFrequency() / 12435 * moonsound->timerValue2;
+            moonsound->timeout2 = boardSystemTime() + boardFrequency() * moonsound->timerValue2 / 12435;
             boardTimerAdd(moonsound->timer2, moonsound->timeout2);
         }
         else {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-26 08:15:47 $
+** $Date: 2005-02-06 08:32:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -476,22 +476,15 @@ int themeTriggerVideoScanlines() {
 }
 
 int themeTriggerVideoRfModulation() {
-    return propGetGlobalProperties()->video.colorSaturationWidth * 100 / 4;
+    return propGetGlobalProperties()->video.colorSaturationWidth * 100 / (5 - 1);
 }
 
 int themeTriggerVideoColorMode() {
-    // Ugly fix that only works if P_VIDEO_MONCOUNT is an integer fraction of 100
-    if (propGetGlobalProperties()->video.monType == P_VIDEO_MONCOUNT - 1) {
-        return 100;
-    }
-    return propGetGlobalProperties()->video.monType * 100 / P_VIDEO_MONCOUNT;
+    return propGetGlobalProperties()->video.monType * 100 / (P_VIDEO_MONCOUNT - 1);
 }
 
 int themeTriggerVideoFilter() {
-    if (propGetGlobalProperties()->video.palEmu == P_VIDEO_PALCOUNT - 1) {
-        return 100;
-    }
-    return propGetGlobalProperties()->video.palEmu * 100 / P_VIDEO_PALCOUNT;
+    return propGetGlobalProperties()->video.palEmu * 100 / (P_VIDEO_PALCOUNT - 1);
 }
 
 int themeTriggerVideoEnableMon1() {

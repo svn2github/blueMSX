@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-25 05:44:17 $
+** $Date: 2005-02-06 08:32:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "MsxTypes.h"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 struct ActiveImage {
     ArchBitmap* bitmap;
@@ -872,9 +873,8 @@ int activeSliderShow(ActiveSlider* activeSlider, int show)
 
 int activeSliderSetImage(ActiveSlider* activeSlider, int index)
 {
-    if (index > 0) {
-        index = 1 + (activeSlider->count - 1) * index / 100;
-    }
+    index = (int)ceil(index * (activeSlider->count - 1) / 100.0);
+
     if (index >= activeSlider->count) {
         index = activeSlider->count - 1;
     }
