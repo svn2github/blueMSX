@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-02-24 07:52:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,7 +218,7 @@ static void onFdcDone(void* ref, UInt32 time)
 
 static void doSync(UInt32 time, int breakpointHit)
 {
-    int execTime = syncToRealClock(fdcActive, 0);
+    int execTime = syncToRealClock(fdcActive, breakpointHit);
     if (execTime < 0) {
         stop();
         return;

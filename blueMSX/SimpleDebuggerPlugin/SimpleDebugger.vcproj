@@ -150,6 +150,9 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
+			RelativePath=".\DasmIcons.bmp">
+		</File>
+		<File
 			RelativePath=".\debugger.manifest">
 		</File>
 		<File

@@ -24,6 +24,7 @@
 ******************************************************************************
 */
 #include "Disassembly.h"
+#include "ToolInterface.h"
 #include "Resource.h"
 #include <stdio.h>
 
@@ -347,26 +348,73 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 }
 
 
-BOOL Disassembly::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
+
+namespace {
+
+class BitmapIcons 
 {
+public:
+    BitmapIcons(HINSTANCE hInstance, int id, int count) {
+        HBITMAP hBitmap = (HBITMAP)LoadBitmap(hInstance, MAKEINTRESOURCE(id));
+        hMemDC  = CreateCompatibleDC(GetWindowDC(NULL));
+        SelectObject(hMemDC, hBitmap);
+        
+        BITMAP bmp; 
+        GetObject(hBitmap, sizeof(BITMAP), (PSTR)&bmp);
+        width  = bmp.bmWidth / count;
+        height = bmp.bmHeight;
+    }
+
+    ~BitmapIcons() {
+        DeleteDC(hMemDC);
+    }
+
+    void drawIcon(HDC hdc, int x, int y, int index) {
+        BitBlt(hdc, x, y, width, height, hMemDC, width * index, 0, SRCCOPY);
+    }
+
+private:
+    HDC hMemDC;
+    int width;
+    int height;
+};
+
+}
+
+static Disassembly* disassembly = NULL;
+static BitmapIcons* bitmapIcons = NULL;
+
+static LRESULT CALLBACK dasmWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    return disassembly->wndProc(hwnd, iMsg, wParam, lParam);
+}
+
+LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    HDC hdc;
+
     switch (iMsg) {
-    case WM_INITDIALOG:
-        hMemdc = CreateCompatibleDC(GetWindowDC(NULL));
-        SetTextColor(hMemdc, RGB(0, 0, 0));
+    case WM_CREATE:
+        hdc = GetDC(hwnd);
+        hMemdc = CreateCompatibleDC(hdc);
+        ReleaseDC(hwnd, hdc);
+        SetTextColor(hMemdc, RGB(64, 64, 64));
         SetBkMode(hMemdc, TRANSPARENT);
-        SelectObject(hMemdc, GetStockObject(WHITE_BRUSH)); 
-        hFont = CreateFont(-MulDiv(12, GetDeviceCaps(hMemdc, LOGPIXELSY), 72), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Fixedsys");
+        hFont = CreateFont(-MulDiv(10, GetDeviceCaps(hMemdc, LOGPIXELSY), 72), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Courier New");
+
+        hBrushWhite  = CreateSolidBrush(RGB(255, 255, 255));
+        hBrushLtGray = CreateSolidBrush(RGB(239, 237, 222));
+        hBrushDkGray = CreateSolidBrush(RGB(128, 128, 128));
 
         SelectObject(hMemdc, hFont); 
         TEXTMETRIC tm;
         if (GetTextMetrics(hMemdc, &tm)) {
             textHeight = tm.tmHeight;
         }
-
-        return FALSE;
+        return 0;
 
     case WM_ERASEBKGND:
-        return TRUE;
+        return 1;
 
     case WM_SIZE:
         updateScroll();
@@ -374,7 +422,21 @@ BOOL Disassembly::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_VSCROLL:
         scrollWindow(LOWORD(wParam));
-         return TRUE;
+         return 0;
+
+    case WM_LBUTTONUP:
+        if (LOWORD(lParam) < 25 && lineCount > 10) {
+            SCROLLINFO si;
+
+            si.cbSize = sizeof (si);
+            si.fMask  = SIF_POS;
+            GetScrollInfo (hwnd, SB_VERT, &si);
+
+            toggleBreakpoint(lineInfo[si.nPos + HIWORD(lParam) / textHeight].address);
+
+            InvalidateRect(hwnd, NULL, TRUE);
+        }
+        return 0;
 
     case WM_PAINT:
         {
@@ -383,16 +445,21 @@ BOOL Disassembly::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             RECT r;
             GetClientRect(hwnd, &r);
+            int top    = ps.rcPaint.top;
+            int height = ps.rcPaint.bottom - ps.rcPaint.top;
 
-            HBITMAP hBitmap = CreateCompatibleBitmap(hMemdc, r.right, r.bottom);
+            HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), r.right, r.bottom);
             HBITMAP hBitmapOrig = (HBITMAP)SelectObject(hMemdc, hBitmap);
+
+            SelectObject(hMemdc, hBrushLtGray);  
+            PatBlt(hMemdc, 0, top, 21, height, PATCOPY);
             
-            PatBlt(hMemdc, 0, 0, r.right, r.bottom, PATCOPY);
+            SelectObject(hMemdc, hBrushWhite); 
+            PatBlt(hMemdc, 21, top, r.right - 21, height, PATCOPY);
 
             drawText(ps.rcPaint.top, ps.rcPaint.bottom);
-            //drawVisibleLines(r.bottom / textHeight);
 
-            BitBlt(hdc, 0, 0, r.right, r.bottom, hMemdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, 0, top, r.right, height, hMemdc, 0, top, SRCCOPY);
 
             DeleteObject(SelectObject(hMemdc, hBitmapOrig));
             EndPaint(hwnd, &ps);
@@ -400,35 +467,50 @@ BOOL Disassembly::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_DESTROY:
+        DeleteObject(hBrushWhite);
+        DeleteObject(hBrushLtGray);
+        DeleteObject(hBrushDkGray);
         DeleteDC(hMemdc);
         break;
     }
 
-    return FALSE;
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
-
-static BOOL CALLBACK globalDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{ 
-    static Disassembly* disassembly = NULL;
-
-    if (iMsg == WM_INITDIALOG) {
-        disassembly = (Disassembly*)lParam;
-    }
-
-    BOOL rv = disassembly != NULL ? disassembly->dlgProc(iMsg, wParam, lParam) : FALSE;
-    
-    if (iMsg == WM_DESTROY) {
-        disassembly = NULL;
-    }
-
-    return rv;
-}
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) : 
     linePos(0), lineCount(0), programCounter(0), firstVisibleLine(0)
 {
-    hwnd = CreateDialogParam(hInstance, MAKEINTRESOURCE(IDD_DISASSEMBLY), owner, globalDlgProc, (LPARAM)this);
+    disassembly = this;
+
+    static WNDCLASSEX wndClass;
+
+    wndClass.cbSize         = sizeof(wndClass);
+    wndClass.style          = CS_VREDRAW;
+    wndClass.lpfnWndProc    = dasmWndProc;
+    wndClass.cbClsExtra     = 0;
+    wndClass.cbWndExtra     = 0;
+    wndClass.hInstance      = hInstance;
+    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
+    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
+    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
+    wndClass.hbrBackground  = NULL;
+    wndClass.lpszMenuName   = NULL;
+    wndClass.lpszClassName  = "msxdasm";
+
+    RegisterClassEx(&wndClass);
+
+    if (bitmapIcons == NULL) {
+        bitmapIcons = new BitmapIcons(hInstance, IDB_DASMICONS, 5);
+    }
+
+    for (int i = 0; i < 0x10000; i++) {
+        breakpoint[i] = BP_NONE;
+    }
+
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxdasm", "Disassembly", 
+                          WS_OVERLAPPED | WS_CLIPCHILDREN | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
+                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
     invalidateContent();
 }
 
@@ -451,6 +533,26 @@ void Disassembly::updatePosition(RECT& rect)
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
+void Disassembly::toggleBreakpoint(int address) {
+    if (breakpoint[address] == BP_NONE) {
+        breakpoint[address] = BP_SET;
+        SetBreakpoint(address);
+    }
+    else {
+        breakpoint[address] = BP_NONE;
+        ClearBreakpoint(address);
+    }
+}
+
+void Disassembly::updateBreakpoints()
+{
+    for (int addr = 0; addr < 0x10000; addr++) {
+        if (breakpoint[addr] == BP_SET) {
+            SetBreakpoint(addr);
+        }
+    }
+}
+
 void Disassembly::invalidateContent()
 {
     lineCount = 0;
@@ -458,7 +560,6 @@ void Disassembly::invalidateContent()
 
     sprintf(lineInfo[lineCount].text, "Disassembly unavailable.");
     lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
-    lineInfo[lineCount].breakpoint = 0;
     lineInfo[lineCount].haspc = 0;
     lineCount++;
     
@@ -474,7 +575,6 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         sprintf(lineInfo[lineCount].text, "%.4X     ", addr);
         int len = dasm(memory, addr, lineInfo[lineCount].text + 7);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
-        lineInfo[lineCount].breakpoint = 0;
         lineInfo[lineCount].address = addr;
         lineInfo[lineCount].haspc = addr == pc;
         if (addr == pc) {
@@ -585,12 +685,30 @@ void Disassembly::drawText(int top, int bottom)
 
     RECT r = { 30, textHeight * (FirstLine - yPos), 300, textHeight };
 
+    r.bottom += r.top;
+
     for (int i = FirstLine; i <= LastLine; i++) {
+        int address = lineInfo[i].address;
         if (lineInfo[i].haspc) {
-            r.left = 5;
-            DrawText(hMemdc, "->", 2, &r, DT_LEFT);
-            r.left = 30;
+            if (breakpoint[address] == BP_SET) {
+                bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
+            }
+            else if (breakpoint[address] == BP_DISABLED) {
+                bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
+            }
+            else {
+                bitmapIcons->drawIcon(hMemdc, 4, r.top, 0);
+            }
         }
+        else {
+            if (breakpoint[address] == BP_SET) {
+                bitmapIcons->drawIcon(hMemdc, 4, r.top, 1);
+            }
+            else if (breakpoint[address] == BP_DISABLED) {
+                bitmapIcons->drawIcon(hMemdc, 4, r.top, 2);
+            }
+        }
+
         DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
         r.top += textHeight;
         r.bottom += textHeight;

@@ -111,6 +111,16 @@ void Toolbar::hide()
     ShowWindow(hwnd, false);
 }
 
+int Toolbar::getHeight()
+{
+    if (!IsWindowVisible(hwnd)) {
+        return 0;
+    }
+    RECT r;
+    GetWindowRect(hwnd, &r);
+    return r.bottom - r.top - 1;
+}
+
 void Toolbar::updatePosition()
 {
     RECT parentRect;

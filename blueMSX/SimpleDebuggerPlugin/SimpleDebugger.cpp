@@ -13,6 +13,7 @@
 using namespace std;
 
 static HWND dbgHwnd = NULL;
+static HWND viewHwnd = NULL;
 static StatusBar* statusBar = NULL;
 static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
@@ -42,7 +43,7 @@ static void updateTooltip(int id, char* str)
 
 static Toolbar* initializeToolbar(HWND owner)
 {
-    Toolbar* toolBar = new Toolbar(GetDllHinstance(), dbgHwnd, IDB_TOOLBAR, RGB(239, 237, 222), IDB_TOOLBARBG);
+    Toolbar* toolBar = new Toolbar(GetDllHinstance(), owner, IDB_TOOLBAR, RGB(239, 237, 222), IDB_TOOLBARBG);
 
     toolBar->addSeparator();
     toolBar->addButton(0, TB_RESUME);
@@ -152,9 +153,60 @@ void updateDeviceState()
     }
 }
 
-static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+
+static LRESULT CALLBACK wndProcView(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
+    case WM_CREATE:
+        return 0;
+
+    case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RECT r;
+            GetClientRect(hwnd, &r);
+            HBRUSH hBrush = (HBRUSH)SelectObject(hdc, GetStockObject(GRAY_BRUSH)); 
+            PatBlt(hdc, 0, 0, r.right, r.bottom, PATCOPY);
+            SelectObject(hdc, hBrush);
+            EndPaint(hwnd, &ps);
+        }
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+
+static void updateWindowPositions()
+{    
+    if (statusBar != NULL) {
+        statusBar->updatePosition();
+    }
+    if (toolBar != NULL) {
+        toolBar->updatePosition();
+    }
+    if (viewHwnd != NULL) {
+        RECT r;
+        GetClientRect(dbgHwnd, &r);
+
+        if (statusBar != NULL) {
+            r.bottom -= statusBar->getHeight();
+        }
+        if (toolBar != NULL) {
+            r.top    += toolBar->getHeight();
+            r.bottom -= toolBar->getHeight();
+        }
+
+        SetWindowPos(viewHwnd, NULL, r.left, r.top, r.right, r.bottom, SWP_NOZORDER);
+    }
+}
+
+static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    switch (iMsg) {
+    case WM_CREATE:
+        return 0;
+
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
         case TB_RESUME:
@@ -182,15 +234,18 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_STATUS:
-        updateStatusBar();
-        updateToolBar();
+        if (statusBar != NULL) {
+            updateStatusBar();
+        }
+        if (toolBar != NULL) {
+            updateToolBar();
+        }
         updateDeviceState();
         return 0;
 
     case WM_SIZE:
-        statusBar->updatePosition();
-        toolBar->updatePosition();
-        return TRUE;
+        updateWindowPositions();
+        break;
         
     case WM_NOTIFY:
         switch(((LPNMHDR)lParam)->code){
@@ -209,25 +264,52 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
         }
         break;
 
+    case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            EndPaint(hwnd, &ps);
+        }
+        return 0;
+
     case WM_CLOSE:
         dbgHwnd = NULL;
         delete statusBar;
         statusBar = NULL;
         delete toolBar;
         toolBar = NULL;
-        EndDialog(hDlg, TRUE);
-		
-        return TRUE;
-
-    case WM_INITDIALOG:
-        ShowWindow(hDlg, SW_SHOW);
-        return FALSE;
+        viewHwnd = NULL;
+        DestroyWindow(hwnd);
+		break;
     }
 
-    return FALSE;
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 void OnCreateTool() {
+    WNDCLASSEX wndClass;
+
+    wndClass.cbSize         = sizeof(wndClass);
+    wndClass.style          = 0;
+    wndClass.lpfnWndProc    = wndProc;
+    wndClass.cbClsExtra     = 0;
+    wndClass.cbWndExtra     = 0;
+    wndClass.hInstance      = GetDllHinstance();
+    wndClass.hIcon          = NULL;
+    wndClass.hIconSm        = NULL;
+    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
+    wndClass.hbrBackground  = NULL;
+    wndClass.lpszMenuName   = NULL;
+    wndClass.lpszClassName  = "msxdebugger";
+
+    RegisterClassEx(&wndClass);
+    
+    wndClass.lpfnWndProc    = wndProcView;
+    wndClass.lpszClassName  = "msxdebuggerview";
+    wndClass.style          = 0;
+    wndClass.lpszMenuName   = NULL;
+
+    RegisterClassEx(&wndClass);
 }
 
 void OnDestroyTool() {
@@ -238,7 +320,15 @@ void OnShowTool() {
         return;
     }
 
-    dbgHwnd = CreateDialog(GetDllHinstance(), MAKEINTRESOURCE(IDD_DEVICEVIEWER), NULL, dlgProc);
+    dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
+                           WS_OVERLAPPEDWINDOW, 
+                           CW_USEDEFAULT, CW_USEDEFAULT, 600, 600, NULL, NULL, GetDllHinstance(), NULL);
+
+    viewHwnd = CreateWindow("msxdebuggerview", "", 
+                            WS_OVERLAPPED | WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
+
+    ShowWindow(dbgHwnd, TRUE);
+    ShowWindow(viewHwnd, TRUE);
 
     std::vector<int> fieldVector;
     fieldVector.push_back(0);
@@ -251,14 +341,17 @@ void OnShowTool() {
     toolBar->show();
     updateToolBar();
 
-    disassembly = new Disassembly(GetDllHinstance(), dbgHwnd);
+    disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
     RECT r = { 0, 32, 400, 500 };
     disassembly->updatePosition(r);
     disassembly->show();
+
+    updateWindowPositions();
 }
 
 void OnEmulatorStart() {
     if (dbgHwnd != NULL) {
+        disassembly->updateBreakpoints();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }

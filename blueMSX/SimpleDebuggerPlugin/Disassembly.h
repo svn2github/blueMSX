@@ -40,23 +40,29 @@ public:
     void updateContent(BYTE* memory, WORD pc);
     void invalidateContent();
     void updateScroll();
+    void updateBreakpoints();
 
-    BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 
     int dasm(BYTE* memory, WORD PC, char* dest);
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
+    void toggleBreakpoint(int address);
 
     HWND   hwnd;
     HDC    hMemdc;
     HFONT  hFont;
+    HBRUSH hBrushWhite;
+    HBRUSH hBrushLtGray;
+    HBRUSH hBrushDkGray;
     int    textHeight;
+
+    enum BpState { BP_NONE = 0, BP_SET = 1, BP_DISABLED = 2 };
     
     struct LineInfo {
         WORD address;
-        bool breakpoint;
         bool haspc;
         char text[48];
         int  textLength;
@@ -66,6 +72,7 @@ private:
     int      firstVisibleLine;
     int      lineCount;
     LineInfo lineInfo[0x10000];
+    BpState  breakpoint[0x10000];
     int      linePos;
 };
 

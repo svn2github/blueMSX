@@ -76,3 +76,13 @@ void StatusBar::hide()
 {
     ShowWindow(hwnd, false);
 }
+
+int StatusBar::getHeight()
+{
+    if (!IsWindowVisible(hwnd)) {
+        return 0;
+    }
+    RECT r;
+    GetWindowRect(hwnd, &r);
+    return r.bottom - r.top;
+}

@@ -37,6 +37,7 @@ public:
     void updatePosition();
     void show();
     void hide();
+    int getHeight();
 
 private:
     HWND hwnd;

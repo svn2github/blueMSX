@@ -39,6 +39,9 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDB_TOOLBAR             BITMAP                  "Toolbar.bmp"
 IDB_TOOLBARBG           BITMAP                  "ToolbarBg.bmp"
+IDB_DASMICONS           BITMAP                  "DasmIcons.bmp"
+
+IDI_BLUEMSX             ICON                    "bluemsx.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -53,11 +56,12 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
 END
 
-IDD_DISASSEMBLY DIALOGEX 0, 0, 300, 159
-STYLE DS_SETFONT | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
-    WS_VSCROLL
-EXSTYLE WS_EX_CLIENTEDGE
-FONT 8, "System", 700, 0, 0x0
+IDD_DISASSEMBLY DIALOGEX 0, 0, 305, 158
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | 
+    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_VSCROLL
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Disassembly"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
 END
 
