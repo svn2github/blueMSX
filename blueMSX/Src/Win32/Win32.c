@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-01-25 04:49:46 $
+** $Date: 2005-01-25 06:10:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1490,6 +1490,8 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     case WM_PAINT:
         if (pProperties->video.driver == P_VIDEO_DRVGDI && emulatorGetState() != EMU_STOPPED) {
             PAINTSTRUCT ps;
+            FrameBuffer* frameBuffer;
+            int borderWidth;
             HDC hdc = BeginPaint(hwnd, &ps);   
             int zoom = getZoom();
             int width;
@@ -1504,13 +1506,29 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             if (st.bmBitsGDI == 0) {
                 st.bmBitsGDI = malloc(4096 * 4096 * sizeof(UInt32));
             }
-            videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
-                        (char*)st.bmBitsGDI + zoom * (HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
+            frameBuffer = frameBufferGetViewFrame();
+            if (frameBuffer == NULL) {
+                frameBuffer = frameBufferGetWhiteNoiseFrame();
+            }
+        
+            borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
+            if (borderWidth > 0) {
+                DWORD* ptr  = st.bmBitsGDI;
+                int y;
+                for (y = 0; y < zoom * HEIGHT; y++) {
+                    memset(ptr, 0, borderWidth * sizeof(DWORD));
+                    ptr += zoom * WIDTH;
+                    memset(ptr - borderWidth, 0, borderWidth * sizeof(DWORD));
+                }
+            }
+
+            videoRender(st.pVideo, frameBuffer, 32, zoom, 
+                        (char*)st.bmBitsGDI + borderWidth * sizeof(DWORD) + (zoom * HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
                         -1 * zoom * WIDTH * sizeof(DWORD));
             st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
             st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
             st.bmInfo.bmiHeader.biBitCount = 32;
-            StretchDIBits(hdc, 0, 0,  width, height, 0, 0, zoom * WIDTH, zoom * HEIGHT, st.bmBitsGDI, 
+            StretchDIBits(hdc, 0, 0, width, height, 0, 0, zoom * WIDTH, zoom * HEIGHT, st.bmBitsGDI, 
                             &st.bmInfo, DIB_RGB_COLORS, SRCCOPY);
             EndPaint(hwnd, &ps);
             st.frameCount++;
@@ -1920,6 +1938,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_UPDATE:
+        frameBufferFlipViewFrame();
         InvalidateRect(st.emuHwnd, NULL, FALSE);
         return 0;
 
