@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-28 22:48:36 $
+** $Date: 2004-12-29 00:10:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -223,11 +223,9 @@ void i8255Write(I8255* i8255, UInt16 port, UInt8 value)
     case 3:
         if (value & 0x80) {
             i8255->reg[3] = value;
-#if 0
             i8255Write(i8255, 0, i8255->reg[0]);
             i8255Write(i8255, 1, i8255->reg[1]);
             i8255Write(i8255, 2, i8255->reg[2]);
-#endif
         }
         else {
             UInt8 mask = 1 << ((value >> 1) & 0x07);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2004-12-29 00:10:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -102,16 +102,6 @@ static void saveState(MsxPPI* ppi)
     i8255SaveState(ppi->i8255);
 }
 
-static UInt8 read(MsxPPI* ppi, UInt16 ioPort)
-{
-    return i8255Read(ppi->i8255, ioPort);
-}
-
-static void write(MsxPPI* ppi, UInt16 ioPort, UInt8 value)
-{
-    i8255Write(ppi->i8255, ioPort, value);
-}
-
 static void writeA(MsxPPI* ppi, UInt8 value)
 {
     if (value != ppi->regA) {
@@ -176,10 +166,10 @@ void msxPPICreate()
 
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());
 
-    ioPortRegister(0xa8, read, write, ppi);
-    ioPortRegister(0xa9, read, write, ppi);
-    ioPortRegister(0xaa, read, write, ppi);
-    ioPortRegister(0xab, read, write, ppi);
+    ioPortRegister(0xa8, i8255Read, i8255Write, ppi->i8255);
+    ioPortRegister(0xa9, i8255Read, i8255Write, ppi->i8255);
+    ioPortRegister(0xaa, i8255Read, i8255Write, ppi->i8255);
+    ioPortRegister(0xab, i8255Read, i8255Write, ppi->i8255);
 
     reset(ppi);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-28 22:48:37 $
+** $Date: 2004-12-29 00:10:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,7 +77,7 @@ static void loadState(SonyHBI55* rm)
 {
     SaveState* state = saveStateOpenForRead("SonyHBI55");
 
-    rm->mode    =         saveStateGet(state,  "mode",    0);
+    rm->mode    =         saveStateGet(state, "mode",    0);
     rm->address = (UInt16)saveStateGet(state, "address", 0);
 
     saveStateClose(state);
@@ -95,16 +95,6 @@ static void saveState(SonyHBI55* rm)
     saveStateClose(state);
 
     i8255SaveState(rm->i8255);
-}
-
-static UInt8 read(SonyHBI55* rm, UInt16 ioPort)
-{
-    return i8255Read(rm->i8255, ioPort);
-}
-
-static void write(SonyHBI55* rm, UInt16 ioPort, UInt8 value)
-{
-    i8255Write(rm->i8255, ioPort, value);
 }
 
 static void writeA(SonyHBI55* rm, UInt8 value)
@@ -173,10 +163,10 @@ int romMapperSonyHBI55Create()
                             readCHi, writeCHi,
                             rm);
 
-    ioPortRegister(0xb0, read, write, rm);
-    ioPortRegister(0xb1, read, write, rm);
-    ioPortRegister(0xb2, read, write, rm);
-    ioPortRegister(0xb3, read, write, rm);
+    ioPortRegister(0xb0, i8255Read, i8255Write, rm->i8255);
+    ioPortRegister(0xb1, i8255Read, i8255Write, rm->i8255);
+    ioPortRegister(0xb2, i8255Read, i8255Write, rm->i8255);
+    ioPortRegister(0xb3, i8255Read, i8255Write, rm->i8255);
 
     reset(rm);
 

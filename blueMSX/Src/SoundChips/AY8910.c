@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-26 10:09:54 $
+** $Date: 2004-12-29 00:10:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,7 +278,7 @@ void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
     case 4:
     case 5:
         period = ay8910->regs[address & 6] | ((Int32)(ay8910->regs[address | 1]) << 8);
-        period *= (~ay8910->enable >> (address >> 1)) & 1;
+//        period *= (~ay8910->enable >> (address >> 1)) & 1;
         ay8910->toneStep[address >> 1] = period > 4 ? BASE_PHASE_STEP / period : 1 << 31;
         break;
         
