@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-04 07:14:16 $
+** $Date: 2005-01-05 05:48:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,7 +119,7 @@ static int emuUseSynchronousUpdate()
 {
     return properties->emulation.syncMethod == P_EMU_SYNC1MS && 
            properties->emulation.speed == 50 &&
-           !enableSynchronousUpdate &&
+           enableSynchronousUpdate &&
            emulatorGetMaxSpeed() == 0;
 }
 
