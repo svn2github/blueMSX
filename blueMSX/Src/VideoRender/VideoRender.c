@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-03 23:12:41 $
+** $Date: 2005-01-05 00:50:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2391,6 +2391,91 @@ void videoSetScanLines(Video* pVideo, int enable, int scanLinesPct)
     pVideo->scanLinesPct    = scanLinesPct;
 }
 
+void videoSetColorSaturation(Video* pVideo, int enable, int width)
+{
+    pVideo->colorSaturationEnable = enable;
+    pVideo->colorSaturationWidth  = width;
+}
+
+void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blur)
+{
+    // This can be made more efficient by using 32 bit arithmetic and calculate
+    // two pixels at the time....
+    UInt16* pBuf = (UInt16*)pBuffer;
+    int w, h;
+
+    pitch  /= sizeof(UInt32);
+
+    for (h = 0; h < height; h++) {
+        UInt32 p0 = pBuf[0];
+        UInt32 p1 = pBuf[1];
+        for (w = 2; w < width; w++) {
+            UInt32 p2 = pBuf[w];
+            pBuf[w] = (UInt16)((p0 & 0x07e0) | (p1 & 0x001f) | (((p1 + p2) / 2) & 0xf800));
+            p0 = p1;
+            p1 = p2;
+        }
+        pBuf += pitch;
+    }
+}
+
+void colorSaturation_32(void* pBuffer, int width, int height, int pitch, int blur)
+{
+    UInt32* pBuf = (UInt32*)pBuffer;
+    int w, h;
+
+    pitch  /= sizeof(UInt32);
+
+    switch (blur) {
+    case 0:
+        break;
+
+    case 1:
+        for (h = 0; h < height; h++) {
+            UInt32 p0 = pBuf[0] & 0xfefefe;
+            UInt32 p1 = pBuf[1] & 0xfefefe;
+            for (w = 2; w < width; w++) {
+                UInt32 p2 = pBuf[w] & 0xfefefe;
+                pBuf[w] = (((p0 + p1) / 2) & 0x00ff00) | (p1 & 0x0000ff) | (((p1 + p2) / 2) & 0xff0000);
+                p0 = p1;
+                p1 = p2;
+            }
+            pBuf += pitch;
+        }
+        break;
+
+    case 2:
+        for (h = 0; h < height; h++) {
+            UInt32 p0 = pBuf[0];
+            UInt32 p1 = pBuf[1];
+            for (w = 2; w < width; w++) {
+                UInt32 p2 = pBuf[w];
+                pBuf[w] = (p0 & 0x00ff00) | (p1 & 0x0000ff) | (((p1 + p2) / 2) & 0xff0000);
+                p0 = p1;
+                p1 = p2;
+            }
+            pBuf += pitch;
+        }
+        break;
+
+    case 3:
+        for (h = 0; h < height; h++) {
+            UInt32 p0 = pBuf[0] & 0xfefefe;
+            UInt32 p1 = pBuf[1] & 0xfefefe;
+            UInt32 p2 = pBuf[2] & 0xfefefe;
+            for (w = 3; w < width; w++) {
+                UInt32 p3 = pBuf[w] & 0xfefefe;;
+                pBuf[w] = (((p0 + p1) / 2) & 0x00ff00) | (p2 & 0x0000ff) | (p3 & 0xff0000);
+                p0 = p1;
+                p1 = p2;
+                p2 = p3;
+            }
+            pBuf += pitch;
+        }
+        break;
+    }
+}
+
 void scanLines_16(void* pBuffer, int width, int height, int pitch, int interlace, int evenOddPage, int scanLinesPct)
 {
     UInt32* pBuf = (UInt32*)pBuffer;
@@ -2405,11 +2490,6 @@ void scanLines_16(void* pBuffer, int width, int height, int pitch, int interlace
     height /= 2;
     width /= 2;
 
-#if 0    
-    if (interlace && !deInterlace && evenOddPage) {
-        pBuf += pitch / 2;
-    }
-#endif
     if (scanLinesPct == 0) {
         for (h = 0; h < height; h++) {
             memset(pBuf, 0, width * sizeof(UInt32));
@@ -2441,11 +2521,7 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int interlace
     pitch = pitch * 2 / sizeof(UInt32);
     scanLinesPct = scanLinesPct * 255 / 100;
     height /= 2;
-#if 0    
-    if (interlace && !deInterlace && evenOddPage) {
-        pBuf += pitch / 2;
-    }
-#endif
+
     if (scanLinesPct == 0) {
         for (h = 0; h < height; h++) {
             memset(pBuf, 0, width * sizeof(UInt32));
@@ -2521,9 +2597,14 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
 
         }
 
+        if (pVideo->colorSaturationEnable) {
+            colorSaturation_16(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->colorSaturationWidth);
+        }
+
         if (pVideo->scanLinesEnable) {
             scanLines_16(pDst, 320 * zoom, 240 * zoom, dstPitch, interlace, evenOddPage, pVideo->scanLinesPct);
         }
+
         break;
     case 32:
         switch (pVideo->palMode) {
@@ -2585,6 +2666,10 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
                 copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
             }
             break;
+        }
+
+        if (pVideo->colorSaturationEnable) {
+            colorSaturation_32(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->colorSaturationWidth);
         }
 
         if (pVideo->scanLinesEnable) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-03 23:12:43 $
+** $Date: 2005-01-05 00:51:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -999,12 +999,20 @@ static char* strDec(int value) {
     return buffer;
 }
 
+static char* strPt(int value) {
+    static char buffer[32];
+    sprintf(buffer, "%d.%d", value / 2, 5 * (value & 1));
+    return buffer;
+}
+
 static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     static Properties* pProperties;
     static int palEmu;
     static int monType;
     static int oldScanlinesEnable;
     static int oldScanlinesPct;
+    static int oldColorGhostingEnable;
+    static int oldColorGhostingWidth;
     static int oldHoriz;
     static int oldVert;
     static int oldDeinterlace;
@@ -1065,17 +1073,21 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         palEmu             = pProperties->video.palEmu;
         monType            = pProperties->video.monType;
 
-        oldScanlinesEnable = pProperties->video.scanlinesEnable;
-        oldScanlinesPct    = pProperties->video.scanlinesPct;
-        oldHoriz           = pProperties->video.horizontalStretch;
-        oldVert            = pProperties->video.verticalStretch;
-        oldDeinterlace     = pProperties->video.deInterlace;
+        oldScanlinesEnable     = pProperties->video.scanlinesEnable;
+        oldScanlinesPct        = pProperties->video.scanlinesPct;
+        oldColorGhostingEnable = pProperties->video.colorSaturationEnable;
+        oldColorGhostingWidth  = pProperties->video.colorSaturationWidth;
+        oldHoriz               = pProperties->video.horizontalStretch;
+        oldVert                = pProperties->video.verticalStretch;
+        oldDeinterlace         = pProperties->video.deInterlace;
 
         SendMessage(GetDlgItem(hDlg, IDC_MONBRIGHTNESSTEXT), WM_SETTEXT, 0, (LPARAM)langPropMonBrightness());
         SendMessage(GetDlgItem(hDlg, IDC_MONCONTRASTTEXT), WM_SETTEXT, 0, (LPARAM)langPropMonContrast());
         SendMessage(GetDlgItem(hDlg, IDC_MONSATURATIONTEXT), WM_SETTEXT, 0, (LPARAM)langPropMonSaturation());
         SendMessage(GetDlgItem(hDlg, IDC_MONGAMMATEXT), WM_SETTEXT, 0, (LPARAM)langPropMonGamma());
         SendMessage(GetDlgItem(hDlg, IDC_SCANLINESENABLE), WM_SETTEXT, 0, (LPARAM)langPropMonScanlines());
+        SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGENABLE), WM_SETTEXT, 0, (LPARAM)langPropMonColorGhosting());
+        
 
         contrast   = pProperties->video.contrast;
         brightness = pProperties->video.brightness;
@@ -1083,13 +1095,21 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         gamma      = pProperties->video.gamma;
 
         setButtonCheck(hDlg, IDC_SCANLINESENABLE, pProperties->video.scanlinesEnable, 1);
+        setButtonCheck(hDlg, IDC_COLORGHOSTINGENABLE, pProperties->video.colorSaturationEnable, 1);
 
         EnableWindow(GetDlgItem(hDlg, IDC_SCANLINESSLIDEBAR), oldScanlinesEnable);
         EnableWindow(GetDlgItem(hDlg, IDC_SCANLINESVALUE), oldScanlinesEnable);
+        
+        EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), oldColorGhostingEnable);
+        EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGVALUE), oldColorGhostingEnable);
 
         SendMessage(GetDlgItem(hDlg, IDC_SCANLINESSLIDEBAR), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
         SendMessage(GetDlgItem(hDlg, IDC_SCANLINESSLIDEBAR), TBM_SETPOS,   1, (LPARAM)(100 - oldScanlinesPct));
         SendMessage(GetDlgItem(hDlg, IDC_SCANLINESVALUE), WM_SETTEXT, 0, (LPARAM)strPct(100 - oldScanlinesPct));
+
+        SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 3));
+        SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), TBM_SETPOS,   1, (LPARAM)oldColorGhostingWidth);
+        SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGVALUE), WM_SETTEXT, 0, (LPARAM)strPt(oldColorGhostingWidth));
 
         SendMessage(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 200));
         SendMessage(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), TBM_SETPOS,   1, (LPARAM)saturation);
@@ -1121,6 +1141,15 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             EnableWindow(GetDlgItem(hDlg, IDC_SCANLINESVALUE), pProperties->video.scanlinesEnable);
             
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+            updateEmuWindow();
+            break;
+
+        case IDC_COLORGHOSTINGENABLE:
+            pProperties->video.colorSaturationEnable = getButtonCheck(hDlg, IDC_COLORGHOSTINGENABLE);
+            EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), pProperties->video.colorSaturationEnable);
+            EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGVALUE), pProperties->video.colorSaturationEnable);
+
+            videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
             updateEmuWindow();
             break;
 
@@ -1178,6 +1207,14 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
             updateEmuWindow();
             return 0;
+            
+        case IDC_COLORGHOSTINGSLIDEBAR:
+            pProperties->video.colorSaturationWidth = SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), TBM_GETPOS, 0, 0);
+            SendMessage(GetDlgItem(hDlg, IDC_COLORGHOSTINGVALUE), WM_SETTEXT, 0, (LPARAM)strPt(pProperties->video.colorSaturationWidth));
+
+            videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+            updateEmuWindow();
+            return 0;
 
         case IDC_MONSATURATIONSLIDE:
             value = SendMessage(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), TBM_GETPOS, 0, 0);
@@ -1221,6 +1258,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         if ((((NMHDR FAR *)lParam)->code) == PSN_QUERYCANCEL) {
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+            videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
             videoSetPalMode(theVideo, pProperties->video.palEmu);
             videoSetColors(theVideo, pProperties->video.saturation, pProperties->video.brightness, 
                            pProperties->video.contrast, pProperties->video.gamma);
@@ -1235,11 +1273,13 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 videoSetColorMode(theVideo, VIDEO_GREEN);
                 break;
             }
-            pProperties->video.horizontalStretch = oldHoriz;
-            pProperties->video.verticalStretch   = oldVert;
-            pProperties->video.deInterlace       = oldDeinterlace;
-            pProperties->video.scanlinesEnable   = oldScanlinesEnable;
-            pProperties->video.scanlinesPct      = oldScanlinesPct;
+            pProperties->video.horizontalStretch     = oldHoriz;
+            pProperties->video.verticalStretch       = oldVert;
+            pProperties->video.deInterlace           = oldDeinterlace;
+            pProperties->video.scanlinesEnable       = oldScanlinesEnable;
+            pProperties->video.scanlinesPct          = oldScanlinesPct;
+            pProperties->video.colorSaturationEnable = oldColorGhostingEnable;
+            pProperties->video.colorSaturationWidth  = oldColorGhostingWidth;
             updateEmuWindow();
             return FALSE;
         }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 23:12:39 $
+** $Date: 2005-01-05 00:50:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,6 +107,8 @@ typedef struct {
     int                 saturation;
     int                 scanlinesEnable;
     int                 scanlinesPct;
+    int                 colorSaturationEnable;
+    int                 colorSaturationWidth;
     int                 gamma;
 } VideoProperties;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-03 23:12:41 $
+** $Date: 2005-01-05 00:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -479,6 +479,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Scanlines:";
+    ls->propMonColorGhosting    = "Color Ghosting";
 
     ls->dlgRomType              = "Rom Type:";
     ls->propOpenRomGB           = "Open Rom Dialog ";

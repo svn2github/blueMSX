@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-24 08:32:29 $
+** $Date: 2005-01-05 00:50:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,21 +66,24 @@ void propInitDefaults(Properties* pProperties)
     pProperties->emulation.disableWinKeys    = 0;
     pProperties->emulation.priorityBoost     = 0;
     
-    pProperties->video.monType            = P_VIDEO_COLOR;
-    pProperties->video.palEmu             = P_VIDEO_PALNONE;
-    pProperties->video.size               = P_VIDEO_SIZEX2;
-    pProperties->video.driver             = P_VIDEO_DRVDIRECTX_VIDEO;
-    pProperties->video.frameSkip          = P_VIDEO_FSKIP0;
-    pProperties->video.fullRes            = P_VIDEO_FRES640X480_32;
-    pProperties->video.deInterlace        = 1;
-    pProperties->video.horizontalStretch  = 0;
-    pProperties->video.verticalStretch    = 0;
-    pProperties->video.contrast           = 100;
-    pProperties->video.brightness         = 100;
-    pProperties->video.saturation         = 100;
-    pProperties->video.gamma              = 100;
-    pProperties->video.scanlinesEnable    = 0;
-    pProperties->video.scanlinesPct       = 80;
+    pProperties->video.monType               = P_VIDEO_COLOR;
+    pProperties->video.palEmu                = P_VIDEO_PALNONE;
+    pProperties->video.size                  = P_VIDEO_SIZEX2;
+    pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
+    pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
+    pProperties->video.fullRes               = P_VIDEO_FRES640X480_32;
+    pProperties->video.deInterlace           = 1;
+    pProperties->video.horizontalStretch     = 0;
+    pProperties->video.verticalStretch       = 0;
+    pProperties->video.contrast              = 100;
+    pProperties->video.brightness            = 100;
+    pProperties->video.saturation            = 100;
+    pProperties->video.gamma                 = 100;
+    pProperties->video.scanlinesEnable       = 0;
+    pProperties->video.colorSaturationEnable = 0;
+    pProperties->video.scanlinesPct          = 85;
+    pProperties->video.colorSaturationWidth  = 2;
+    
 
     pProperties->sound.driver             = P_SOUND_DRVDIRECTX;
     pProperties->sound.frequency          = P_SOUND_FREQ44;
@@ -235,21 +238,23 @@ void propInitDefaults(Properties* pProperties)
     pProperties->emulation.disableWinKeys    = 0;
     pProperties->emulation.priorityBoost     = 0;
 
-    pProperties->video.monType            = P_VIDEO_COLOR;
-    pProperties->video.palEmu             = P_VIDEO_PALNYC;
-    pProperties->video.size               = P_VIDEO_SIZEX2;
-    pProperties->video.driver             = P_VIDEO_DRVDIRECTX_VIDEO;
-    pProperties->video.frameSkip          = P_VIDEO_FSKIP0;
-    pProperties->video.fullRes            = P_VIDEO_FRES640X480_32;
-    pProperties->video.deInterlace        = 1;
-    pProperties->video.horizontalStretch  = 1;
-    pProperties->video.verticalStretch    = 0;
-    pProperties->video.contrast           = 100;
-    pProperties->video.brightness         = 100;
-    pProperties->video.saturation         = 100;
-    pProperties->video.gamma              = 100;
-    pProperties->video.scanlinesEnable    = 0;
-    pProperties->video.scanlinesPct       = 80;
+    pProperties->video.monType               = P_VIDEO_COLOR;
+    pProperties->video.palEmu                = P_VIDEO_PALNYC;
+    pProperties->video.size                  = P_VIDEO_SIZEX2;
+    pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
+    pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
+    pProperties->video.fullRes               = P_VIDEO_FRES640X480_32;
+    pProperties->video.deInterlace           = 1;
+    pProperties->video.horizontalStretch     = 1;
+    pProperties->video.verticalStretch       = 0;
+    pProperties->video.contrast              = 100;
+    pProperties->video.brightness            = 100;
+    pProperties->video.saturation            = 100;
+    pProperties->video.gamma                 = 100;
+    pProperties->video.scanlinesEnable       = 0;
+    pProperties->video.colorSaturationEnable = 0;
+    pProperties->video.scanlinesPct          = 85;
+    pProperties->video.colorSaturationWidth  = 2;
 
     pProperties->sound.driver           = P_SOUND_DRVDIRECTX;
     pProperties->sound.frequency        = P_SOUND_FREQ44;
@@ -418,6 +423,8 @@ static void propLoad(Properties* pProperties)
     getIntValue("VideoGamma", (long*)&pProperties->video.gamma);
     getIntValue("ScanlinesEnable", (long*)&pProperties->video.scanlinesEnable);
     getIntValue("ScanlinesPct", (long*)&pProperties->video.scanlinesPct);
+    getIntValue("ColorGhostingEnable", (long*)&pProperties->video.colorSaturationEnable);
+    getIntValue("ColorGhostingWidth", (long*)&pProperties->video.colorSaturationWidth);
 
     getIntValue("Sound-Out", (long*)&pProperties->sound.driver);
     getIntValue("Frequency", (long*)&pProperties->sound.frequency);
@@ -592,6 +599,8 @@ void propSave(Properties* pProperties)
     setIntValue("VideoGamma", pProperties->video.gamma);
     setIntValue("ScanlinesEnable", pProperties->video.scanlinesEnable);
     setIntValue("ScanlinesPct", pProperties->video.scanlinesPct);
+    setIntValue("ColorGhostingEnable", pProperties->video.colorSaturationEnable);
+    setIntValue("ColorGhostingWidth", pProperties->video.colorSaturationWidth);
 
     setIntValue("Sound-Out", pProperties->sound.driver);
     setIntValue("Frequency", pProperties->sound.frequency);

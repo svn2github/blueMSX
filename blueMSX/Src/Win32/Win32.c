@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-04 07:14:16 $
+** $Date: 2005-01-05 00:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2219,17 +2219,20 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 int zoom = 2;
                 DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
                 DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
-                VideoPalMode palMode = st.pVideo->palMode;
-                int scanLinesEnable  = st.pVideo->scanLinesEnable;
+                VideoPalMode palMode      = st.pVideo->palMode;
+                int scanLinesEnable       = st.pVideo->scanLinesEnable;
+                int colorSaturationEnable = st.pVideo->colorSaturationEnable;
 
                 st.pVideo->palMode = VIDEO_PAL_FAST;
                 st.pVideo->scanLinesEnable = 0;
+                st.pVideo->colorSaturationEnable = 0;
                 videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
                             emulatorGetScrLineWidth(), bmBitsDst, 
                             -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
 
-                st.pVideo->palMode         = palMode;
-                st.pVideo->scanLinesEnable = scanLinesEnable;
+                st.pVideo->palMode               = palMode;
+                st.pVideo->scanLinesEnable       = scanLinesEnable;
+                st.pVideo->colorSaturationEnable = colorSaturationEnable;
 
                 ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
 
@@ -2244,17 +2247,20 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 int zoom = 1;
                 DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
                 DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
-                VideoPalMode palMode = st.pVideo->palMode;
-                int scanLinesEnable  = st.pVideo->scanLinesEnable;
+                VideoPalMode palMode      = st.pVideo->palMode;
+                int scanLinesEnable       = st.pVideo->scanLinesEnable;
+                int colorSaturationEnable = st.pVideo->colorSaturationEnable;
 
                 st.pVideo->palMode = VIDEO_PAL_FAST;
                 st.pVideo->scanLinesEnable = 0;
+                st.pVideo->colorSaturationEnable = 0;
                 videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
                             emulatorGetScrLineWidth(), bmBitsDst, 
                             -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
 
-                st.pVideo->palMode         = palMode;
-                st.pVideo->scanLinesEnable = scanLinesEnable;
+                st.pVideo->palMode               = palMode;
+                st.pVideo->scanLinesEnable       = scanLinesEnable;
+                st.pVideo->colorSaturationEnable = colorSaturationEnable;
 
                 ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
 
@@ -2595,6 +2601,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, 
                   pProperties->video.contrast, pProperties->video.gamma);
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+    videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
 
     st.mixer  = mixerCreate();
 

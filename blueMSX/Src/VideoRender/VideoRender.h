@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-03 23:12:42 $
+** $Date: 2005-01-05 00:50:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,8 @@ struct Video {
     UInt32 decay;
     int scanLinesEnable;
     int scanLinesPct;
+    int colorSaturationEnable;
+    int colorSaturationWidth;
     double gamma;
     double saturation;
     double brightness;
@@ -86,5 +88,6 @@ void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast,
 UInt32 videoGetColor(int R, int G, int B);
 
 void videoSetScanLines(Video* pVideo, int enable, int scanLinesPct);
+void videoSetColorSaturation(Video* pVideo, int enable, int width);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-04 20:46:22 $
+** $Date: 2005-01-05 00:50:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -682,10 +682,16 @@ void keyboardUpdate()
                            ((buffer[DIK_LALT]     & 0x80) >> 3) | ((buffer[DIK_RALT]     & 0x80) >> 2) | 
                            ((buffer[DIK_LWIN]     & 0x80) >> 1) | ((buffer[DIK_RWIN]     & 0x80) >> 0);
 
-            if (!(kbdModifiers &&
+            if (kbdModifiers &&
                   ((buffer[DIK_F6]  | buffer[DIK_F7]  | buffer[DIK_F8]  | buffer[DIK_F9]  | 
-                    buffer[DIK_F10] | buffer[DIK_F11] | buffer[DIK_F12]) >> 7)))
+                    buffer[DIK_F10] | buffer[DIK_F11] | buffer[DIK_F12]) >> 7))
             {
+                int i;
+                for (i = 0; i < 256; i++) {
+                    keyboardHanldeKeypress(i, 0);
+                }
+            }
+            else {
                 int i;
                 for (i = 0; i < 256; i++) {
                     keyboardHanldeKeypress(i, buffer[i] >> 7);
