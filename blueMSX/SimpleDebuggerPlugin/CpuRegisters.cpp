@@ -82,14 +82,69 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
             textHeight = tm.tmHeight;
             textWidth = tm.tmMaxCharWidth;
         }
+
+        dataInput2 = new HexInputDialog(hwnd, -100,0,23,22,2);
+        dataInput4 = new HexInputDialog(hwnd, -100,0,45,22,4);
+        dataInput2->hide();
+        dataInput4->hide();
         return 0;
 
     case WM_ERASEBKGND:
         return 1;
 
     case WM_LBUTTONDOWN:
-        SetFocus(hwnd);
+        {
+            SetFocus(hwnd);
+
+            if (regValue[0] < 0) {
+                return 0;
+            }
+        
+            SCROLLINFO si;
+
+            si.cbSize = sizeof (si);
+            si.fMask  = SIF_POS;
+            GetScrollInfo (hwnd, SB_VERT, &si);
+
+            int x = (LOWORD(lParam) - 10) / textWidth;
+            int col;
+            int row = HIWORD(lParam) / textHeight;
+
+            if (x >= 0 && x < 10 * registersPerRow && x % 10 >= 4 && x % 10 < 8) {
+                col = x / 10;
+                int reg = col * lineCount + row + si.nPos;
+                if (reg < 12) {
+                    currentEditRegister = reg;
+                    dataInput4->setPosition(10 + (10 * col + 4) * textWidth, row * textHeight - 2);
+                    dataInput4->setValue(regValue[reg]);
+                    dataInput4->show();
+                }
+                else if (reg < 15) {
+                    currentEditRegister = reg;
+                    dataInput2->setPosition(10 + (10 * col + 4) * textWidth, row * textHeight - 2);
+                    dataInput2->setValue(regValue[reg]);
+                    dataInput2->show();
+                }
+            }
+        }
         return 0;
+
+
+    case HexInputDialog::EC_KILLFOCUS:
+    case HexInputDialog::EC_NEWVALUE:
+        if (currentEditRegister >= 0) {
+            if ((HexInputDialog*)wParam == dataInput2) {
+                regValue[currentEditRegister] = (UInt8)lParam;
+            }
+            else {
+                regValue[currentEditRegister] = (UInt16)lParam;
+            }
+            InvalidateRect(hwnd, NULL, TRUE);
+        }
+        currentEditRegister = -1;
+        dataInput2->hide();
+        dataInput4->hide();
+        return FALSE;
 
     case WM_SIZE:
         updateScroll();
@@ -127,6 +182,8 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
         DeleteObject(hBrushWhite);
         DeleteObject(hBrushLtGray);
         DeleteObject(hBrushDkGray);
+        delete dataInput2;
+        delete dataInput4;
         DeleteDC(hMemdc);
         break;
     }
@@ -136,7 +193,7 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
 
 
 CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0)
+    lineCount(0), currentEditRegister(-1)
 {
     cpuRegisters = this;
 
@@ -183,13 +240,17 @@ void CpuRegisters::hide()
 
 void CpuRegisters::updatePosition(RECT& rect)
 {
+    dataInput2->hide();
+    dataInput4->hide();
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
 void CpuRegisters::invalidateContent()
 {
+    dataInput2->hide();
+    dataInput4->hide();
     for (int i = 0; i < 15; i++) {
-        regModified[i] = 0;
+        refRegValue[i] = -1;
         regValue[i] = -1;
     }
     
@@ -198,9 +259,12 @@ void CpuRegisters::invalidateContent()
 
 void CpuRegisters::updateContent(RegisterBank* regBank)
 {
+    dataInput2->hide();
+    dataInput4->hide();
+
     for (int i = 0; i < 15; i++) {
         int val = regBank->reg[i].value;
-        regModified[i] = regValue[i] != val;
+        refRegValue[i] = regValue[i];
         regValue[i] = val;
     }
     
@@ -318,7 +382,7 @@ void CpuRegisters::drawText(int top, int bottom)
                 sprintf(text, "???");
             }
             else {
-                SetTextColor(hMemdc, regModified[reg] ? colorRed : colorGray);
+                SetTextColor(hMemdc, refRegValue[reg] != regValue[reg] ? colorRed : colorGray);
                 if (reg < 12) {
                     sprintf(text, "%.4X", regValue[reg]);
                 }

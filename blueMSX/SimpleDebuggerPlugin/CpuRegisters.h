@@ -27,6 +27,7 @@
 
 #include <windows.h>
 #include "ToolInterface.h"
+#include "EditControls.h"
 
 class CpuRegisters {
 public:
@@ -59,6 +60,8 @@ private:
     int    textHeight;
     int    textWidth;
 
+    int    currentEditRegister;
+
     int    registersPerRow;
     int    lineCount;
 
@@ -67,7 +70,10 @@ private:
     COLORREF colorRed;
 
     int regValue[15];
-    int regModified[15];
+    int refRegValue[15];
+    
+    HexInputDialog* dataInput2;
+    HexInputDialog* dataInput4;
 };
 
 #endif //CPU_REGISTERS_H

@@ -333,11 +333,17 @@ void Memory::hide()
 
 void Memory::updatePosition(RECT& rect)
 {
+    dataInput1->hide();
+    dataInput2->hide();
+
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
 void Memory::invalidateContent()
 {
+    dataInput1->hide();
+    dataInput2->hide();
+
     MemList::iterator it;
     while(!memList.empty()) {
         delete memList.front();
@@ -354,6 +360,9 @@ void Memory::invalidateContent()
 
 void Memory::updateContent(Snapshot* snapshot)
 {
+    dataInput1->hide();
+    dataInput2->hide();
+
     bool devicesChanged = false;
 
     std::string currentMemoryTitle;
