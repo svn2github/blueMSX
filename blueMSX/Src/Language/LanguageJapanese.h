@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-03-12 16:28:20 $
+** $Date: 2005-03-13 05:27:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -576,9 +576,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPortsLptText        = "ポート:";
     ls->propPortsCom1Text       = "ポート 1:";
 
-	ls->shortcutShowDebugger    = "デバッガー表示";
-    ls->shortcutShowTrainer     = "トレーナー表示";
-    ls->shortcutShowPorts       = "ポート構成設定の表示";
+	ls->shortcutShowDebugger    = "デバッガー表\示";
+    ls->shortcutShowTrainer     = "トレーナー表\示";
+    ls->shortcutShowPorts       = "ポート構\成設定の表\示";
 };
 
 
