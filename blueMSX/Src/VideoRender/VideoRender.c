@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-05 01:01:00 $
+** $Date: 2005-01-18 10:17:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,8 @@
 ******************************************************************************
 */
 #include "videoRender.h"
+#include "FrameBuffer.h"
+#include "Emulator.h"
 #include "scalebit.h"
 #include "Hq2x.h"
 #include <stdlib.h>
@@ -44,13 +46,9 @@ static UInt16 pRgbTableColor16[MAX_YCBCR_VALUE];
 static UInt16 pRgbTableGreen16[MAX_YCBCR_VALUE];
 static UInt16 pRgbTableWhite16[MAX_YCBCR_VALUE];
 
-#define USE_RGB
 
 UInt32 YJKtoYCbCrTable[32][64][64];
 
-#ifndef USE_RGB
-static UInt32 history[480][640];
-#endif
 static int initialized = 0;
 
 #define ABS(a) ((a) < 0 ? -1 * (a) : (a))
@@ -67,7 +65,6 @@ static void initYJKtoYCbCrTable() {
             for (K = 0; K < 64; K++) {
 		        int j = (J & 0x1f) - (J & 0x20);
 		        int k = (K & 0x1f) - (K & 0x20);
-#ifdef USE_RGB
 			    int r = 255 * (y + j) / 31;
 			    int g = 255 * (y + k) / 31;
 			    int b = 255 * ((5 * y - 2 * j - k) / 4) / 31;
@@ -76,20 +73,6 @@ static void initYJKtoYCbCrTable() {
                 g = MIN(255, MAX(0, g));
                 b = MIN(255, MAX(0, b));
                 YJKtoYCbCrTable[y][J][K] = videoGetColor(r, g, b);
-#else
-			    double r = 8.22 * (y + j);
-			    double g = 8.22 * (y + k);
-			    double b = 2.06 * (5 * y - 2 * j - k);
-                int Y  = (int)(0.2989 * r + 0.5866 * g + 0.1145 * b);
-                int Cb = (int)(b - Y);
-                int Cr = (int)(r - Y);
-
-                Y = MIN(255, MAX(0, Y));
-                Cb = MIN(255, MAX(-256, Cb));
-                Cr = MIN(255, MAX(-256, Cr));
-
-                YJKtoYCbCrTable[y][J][K] = (Y / 8) | ((16 + (Cb / 16)) << 6) | ((16 + (Cr / 16)) << 12);
-#endif
             }
         }
     }
@@ -123,16 +106,6 @@ static void initRGBTable(Video* pVideo)
     generateGammaTable(pVideo);
 
     for (YCbCr = 0; YCbCr < MAX_YCBCR_VALUE; YCbCr++) {
-#ifndef USE_RGB
-        int Y  = 8 * (YCbCr & 0x01f);
-        int Cb = (int)((16 * (((YCbCr >> 6) & 0x1f) - 16)) * pVideo->saturation);
-        int Cr = (int)((16 * (((YCbCr >> 12) & 0x1f) - 16)) * pVideo->saturation);
-
-        int R = videoGamma(Cr + Y);
-        int G = videoGamma((int)(Y - (0.1145/0.5866)*Cb - (0.2989/0.5866)*Cr));
-        int B = videoGamma(Cb + Y);
-        int L = videoGamma(Y);
-#else
         int R = 8 * ((YCbCr >> 12) & 0x01f);
         int G = 8 * ((YCbCr >> 6) & 0x01f);
         int B = 8 * ((YCbCr >> 0) & 0x01f);
@@ -160,7 +133,7 @@ static void initRGBTable(Video* pVideo)
         G = videoGamma(G);
         B = videoGamma(B);
         L = videoGamma(Y);
-#endif
+
         pRgbTableColor32[YCbCr] = (R << 16) | (G << 8) | (B << 0);
         pRgbTableColor16[YCbCr] = ((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3);
 
@@ -179,1540 +152,728 @@ static void initRGBTable(Video* pVideo)
 **
 ******************************************************************************
 */
-static void copySharpPAL_2x2_16(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                                int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt16* pDst1       = (UInt16*)pDestination;
-    UInt16* pDst2       = pDst1 + dstPitch / sizeof(UInt16);
+    UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt16);
 
-    if (deInterlace && interlace) {
-        // Draw even page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable16[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-        }
-
-        // Draw odd page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable16[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = pRgbTable16[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable16[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 3) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = pRgbTable16[((colTmp + colNext) >> 1) & YCBCR_MASK];
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
+                dstIndex++;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
         }
 
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 3) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
-                    dstIndex++;
-
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable16[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
-                    dstIndex++;
-
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pDst3 = pDst2;
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+        pDst3 = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
     }
 }
 
-static void copySharpPAL_2x2_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                                int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt32* pDst1       = (UInt32*)pDestination;
-    UInt32* pDst2       = pDst1 + dstPitch / sizeof(UInt32);
+    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt32);
 
-    if (deInterlace && interlace) {
-        // Draw even page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-        }
-
-        // Draw odd page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = pRgbTable32[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable32[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = pRgbTable32[((colTmp + colNext) >> 1) & YCBCR_MASK];
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                dstIndex++;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
         }
 
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[((colTmp + colNext) >> 1) & YCBCR_MASK];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pDst3 = pDst2;
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+        pDst3 = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
     }
 }
 
-static void copyPAL_2x2_16(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, UInt32 decay, int evenOddPage, int interlace)
+static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt16* pDst1       = (UInt16*)pDestination;
-    UInt16* pDst2       = pDst1 + dstPitch / sizeof(UInt16);
+    UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt16);
 
-    if (deInterlace && interlace) {
-        // Draw even page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            UInt32 colPrev2 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-                    colNext1  = colNext2;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1  = colNext2;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    colTmp = history[h][w] - colLgt;
-                    colLgt += ((-colTmp >> 24) & (decay * colTmp / 5)) - ((colTmp >> 24) & (decay * -colTmp / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-        }
-
-        // Draw odd page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            UInt32 colPrev2 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-                    colNext1  = colNext2;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1  = colNext2;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    colTmp = history[h][w] - colLgt;
-                    colLgt += ((-colTmp >> 24) & (decay * colTmp / 5)) - ((colTmp >> 24) & (decay * -colTmp / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = pRgbTable16[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable16[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable16[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = pRgbTable16[colNext];
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef);
+                dstIndex++;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
         }
 
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            UInt32 colPrev2 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt16 noise;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-                    colNext1  = colNext2;
-
-                    colNext2 = pSrc[w++];
-                    colTmp   = ((colNext2 + colPrev2) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2  = pRgbTable16[colTmp];
-
-                    colPrev2  = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1  = colNext2;
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
-                    dstIndex++;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt16 colRgb1;
-                    UInt16 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt16 noise;
-
-                    colNext = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    colTmp = history[h][w] - colLgt;
-                    colLgt += ((-colTmp >> 24) & (decay * colTmp / 5)) - ((colTmp >> 24) & (decay * -colTmp / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable16[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable16[colTmp];
-
-                    noise = (UInt16)(rnd >> 31) * 0x0821;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
-                    dstIndex++;
-
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pDst3 = pDst2;
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+        pDst3  = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
     }
 }
 
-static void copyMonitorPAL_2x2_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                                  int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt32* pDst1       = (UInt32*)pDestination;
-    UInt32* pDst2       = pDst1 + dstPitch / sizeof(UInt32);
+    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt32);
 
-    if (deInterlace && interlace) {
-        // Draw even page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[colNext];
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-        }
-
-        // Draw odd page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[colNext];
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext1;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext1 = pSrc[w++];
+                colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb1  = pRgbTable32[colTmp];
+
+                colPrev1  = colCur;
+                colCur    = colNext1;
+
+                colNext1 = pSrc[w++];
+                colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable32[colTmp];
+
+                colPrev1 = colCur;
+                colCur   = colNext1;
+
+                noise = (rnd >> 30) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+                colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
+                colRgb2 = pRgbTable32[colNext];
+
+                noise = (rnd >> 30) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
+                dstIndex++;
+
+                rnd *= 23;
+                colCur = colNext;
+            }
         }
 
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext1;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext1 = pSrc[w++];
-                    colTmp   = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp   = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1  = pRgbTable32[colTmp];
-
-                    colPrev1  = colCur;
-                    colCur    = colNext1;
-
-                    colNext1 = pSrc[w++];
-                    colTmp  = ((colNext1   + colCur) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colCur) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-                    colTmp  = ((colNext + colCur) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[((colTmp + colCur) >> 1) & YCBCR_MASK];
-                    colRgb2 = pRgbTable32[colNext];
-
-                    noise = (rnd >> 30) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = ((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    pDst1[dstIndex] = ((pDst1[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f);
-                    dstIndex++;
-
-                    rnd *= 23;
-                    colCur = colNext;
-                }
-            }
-
-            pDst3 = pDst2;
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+        pDst3  = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
     }
 }
 
-static void copyPAL_2x2_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, UInt32 decay, int evenOddPage, int interlace)
-{
-    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32* pDst1       = (UInt32*)pDestination;
-    UInt32* pDst2       = pDst1 + dstPitch / sizeof(UInt32);
-    UInt32* pDst3       = pDst2;
-    int w;
-    int h;
 
-    srcPitch *= 2;
 
-    if (deInterlace && interlace) {
-        // Draw even page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev2 = colCur;
-            UInt32 colPrev1 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-
-                    noise = (rnd >> 29) * 0x10101;
-
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst1[dstIndex++] = colRgb1 + noise;
-                    pDst1[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-        }
-
-        // Draw odd page
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev2 = colCur;
-            UInt32 colPrev1 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex++] = colRgb1 + noise;
-                    pDst2[dstIndex++] = colRgb2 + noise;
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
-    }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
-
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
-        }
-
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev2 = colCur;
-            UInt32 colPrev1 = colCur;
-            UInt32 colNext1 = colCur;
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 colNext2;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-                    colNext2 = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-                    w++;
-
-                    colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    colPrev2 = colPrev1;
-                    colPrev1 = colCur;
-                    colCur   = colNext1;
-                    colNext1 = colNext2;
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f));
-                    dstIndex++;
-
-                    rnd *= 23;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext;
-                    UInt32 colRgb1;
-                    UInt32 colRgb2;
-                    UInt32 colTmp;
-                    UInt32 colLgt;
-                    UInt32 noise;
-
-                    colNext = pSrc[w];
-
-#ifndef USE_RGB
-                    colLgt  = colCur & 0x1f;
-                    noise = history[h][w] - colLgt;
-                    colLgt += ((-noise >> 24) & (decay * noise / 5)) - ((noise >> 24) & (decay * -noise / 16));
-                    history[h][w] = colLgt;
-                    colLgt += colCur & 0xffffffe0;
-#else
-                    colLgt = colCur;
-#endif
-
-                    colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb1 = pRgbTable32[colTmp];
-
-                    colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
-                    colRgb2 = pRgbTable32[colTmp];
-
-                    noise = (rnd >> 29) * 0x10101;
-                    pDst2[dstIndex] = colRgb1 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f));
-                    dstIndex++;
-                    pDst2[dstIndex] = colRgb2 + noise;
-                    pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f));
-                    dstIndex++;
-
-                    rnd *= 23;
-                    colPrev1 = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pDst3 = pDst2;
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
-    }
-}
-
-static void copyPAL_1x1_16(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32 *pSrc2       = pSrc + 2 * srcWidth * srcHeight;
+    UInt16* pDst1       = (UInt16*)pDestination;
+    UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
+    UInt16* pDst3       = pDst2;
+    int height          = frame->lines;
+    int h;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev2 = colCur;
+        UInt32 colPrev1 = colCur;
+        UInt32 colNext1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext2;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt16 noise;
+
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable16[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable16[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt16 colRgb1;
+                UInt16 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt16 noise;
+
+                colNext = pSrc[w];
+
+                colLgt = colCur;
+
+                colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable16[colTmp];
+
+                colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable16[colTmp];
+
+                noise = (UInt16)(rnd >> 31) * 0x0821;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb1 >> 1) & 0x7bef));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7bef) + ((colRgb2 >> 1) & 0x7bef));
+                dstIndex++;
+
+                rnd *= 23;
+                colPrev1 = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst3 = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
+    }
+}
+
+static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+{
+    UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    UInt32* pDst1       = (UInt32*)pDestination;
+    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
+    UInt32* pDst3       = pDst2;
+    int height          = frame->lines;
+    int h;
+
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
+    }
+
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev2 = colCur;
+        UInt32 colPrev1 = colCur;
+        UInt32 colNext1 = colCur;
+        int dstIndex = 0;
+
+        if (width > 320) {
+            int w;
+            for (w = 0; w < width;) {
+                UInt32 colNext2;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt32 noise;
+
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable32[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+                colNext2 = pSrc[w];
+
+                colLgt = colCur;
+                w++;
+
+                colTmp  = ((colPrev2 + colNext2) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colNext1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp   + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable32[colTmp];
+
+                colPrev2 = colPrev1;
+                colPrev1 = colCur;
+                colCur   = colNext1;
+                colNext1 = colNext2;
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f));
+                dstIndex++;
+
+                rnd *= 23;
+            }
+        }
+        else {
+            int w;
+            for (w = 0; w < width; w++) {
+                UInt32 colNext;
+                UInt32 colRgb1;
+                UInt32 colRgb2;
+                UInt32 colTmp;
+                UInt32 colLgt;
+                UInt32 noise;
+
+                colNext = pSrc[w];
+
+                colLgt = colCur;
+
+                colTmp  = ((colPrev1 + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb1 = pRgbTable32[colTmp];
+
+                colTmp  = ((colNext + colPrev1) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colLgt) >> 1) & YCBCR_MASK;
+                colRgb2 = pRgbTable32[colTmp];
+
+                noise = (rnd >> 29) * 0x10101;
+                pDst2[dstIndex] = colRgb1 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb1 >> 1) & 0x7f7f7f));
+                dstIndex++;
+                pDst2[dstIndex] = colRgb2 + noise;
+                pDst1[dstIndex] = (((pDst3[dstIndex] >> 1) & 0x7f7f7f) + ((colRgb2 >> 1) & 0x7f7f7f));
+                dstIndex++;
+
+                rnd *= 23;
+                colPrev1 = colCur;
+                colCur = colNext;
+            }
+        }
+        pDst3 = pDst2;
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
+    }
+}
+
+static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
+{
+    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)pDestination;
-    int w;
+    int height          = frame->lines;
     int h;
+    
+    dstPitch /= (int)sizeof(UInt16);
 
-    srcPitch *= 2;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev = colCur;
+        int width = frame->line[h].width;
+        int w;
 
-    if (interlace) {
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev = colCur;
+        if (width > 320) {
+            for (w = 0; w < width; w++) {
+                UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
 
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = (((((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK) >> 1) + ((((pSrc2[2 * w] + pSrc2[2 * w + 1]) >> 1) & YCBCR_MASK) >> 1)) & YCBCR_MASK;
-                    UInt32 colTmp;
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+                pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
 
-                    pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = ((pSrc[w] + pSrc2[w]) >> 1) & YCBCR_MASK;
-                    UInt32 colTmp;
-
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
-
-                    pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst = (UInt16*) ((UInt8*)pDst + dstPitch);
         }
-    }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
-        
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev = colCur;
+        else {
+            for (w = 0; w < width; w++) {
+                UInt32 colNext = pSrc[w];
+                UInt32 colTmp;
 
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
-                    UInt32 colTmp;
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+                pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
 
-                    pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = pSrc[w];
-                    UInt32 colTmp;
-
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
-
-                    pDst[w] = pRgbTable16[colTmp] + (UInt16)(rnd >> 31)  * 0x0821;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pDst = (UInt16*) ((UInt8*)pDst + dstPitch);
         }
+        pDst += dstPitch;
     }
 }
 
-static void copyPAL_1x1_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+
+static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32 *pSrc2       = pSrc + 2 * srcWidth * srcHeight;
     UInt32* pDst        = (UInt32*)pDestination;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt32);
 
-    if (interlace) {
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev = colCur;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        UInt32 colCur = pSrc[0];
+        UInt32 colPrev = colCur;
+        int width = frame->line[h].width;
+        int w;
 
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = (((((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK) >> 1) + ((((pSrc2[2 * w] + pSrc2[2 * w + 1]) >> 1) & YCBCR_MASK) >> 1)) & YCBCR_MASK;
-                    UInt32 colTmp;
+        if (width > 320) {
+            for (w = 0; w < width; w++) {
+                UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
+                UInt32 colTmp;
 
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-                    pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
+                pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
 
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = ((pSrc[w] + pSrc2[w]) >> 1) & YCBCR_MASK;
-                    UInt32 colTmp;
-
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
-
-                    pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst = (UInt32*)((UInt8*)pDst + dstPitch);
         }
-    }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
+        else {
+            for (w = 0; w < width; w++) {
+                UInt32 colNext = pSrc[w];
+                UInt32 colTmp;
 
-        for (h = 0; h < srcHeight; h++) {
-            UInt32 colCur = pSrc[0];
-            UInt32 colPrev = colCur;
+                colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
+                colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
 
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
-                    UInt32 colTmp;
+                pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
 
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
-
-                    pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
+                rnd *= 23;
+                colPrev = colCur;
+                colCur = colNext;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    UInt32 colNext = pSrc[w];
-                    UInt32 colTmp;
-
-                    colTmp  = ((colPrev + colNext) >> 1) & YCBCR_MASK;
-                    colTmp  = ((colTmp + colCur) >> 1) & YCBCR_MASK;
-
-                    pDst[w] = pRgbTable32[colTmp] + (rnd >> 31)  * 0x10101;
-
-                    rnd *= 23;
-                    colPrev = colCur;
-                    colCur = colNext;
-                }
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pDst = (UInt32*)((UInt8*)pDst + dstPitch);
         }
+        pDst += dstPitch;
     }
 }
 
@@ -1723,563 +884,336 @@ static void copyPAL_1x1_32(void* pSource, int srcWidth, int srcHeight, int* srcD
 **
 ******************************************************************************
 */
-static void copy_1x1_16(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                        int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32 *pSrc2       = pSrc + 2 * srcWidth * srcHeight;
     UInt16* pDst        = (UInt16*)pDestination;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcWidth /= 8;
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt16);
 
-    if (interlace) {
-        for (h = 0; h < srcHeight; h++) {
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable16[(((((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK) + (((pSrc2[0] + pSrc2[1]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable16[(((((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK) + (((pSrc2[2] + pSrc2[3]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable16[(((((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK) + (((pSrc2[4] + pSrc2[5]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable16[(((((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK) + (((pSrc2[6] + pSrc2[7]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable16[(((((pSrc[8] + pSrc[9]) >> 1) & YCBCR_MASK) + (((pSrc2[8] + pSrc2[9]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable16[(((((pSrc[10] + pSrc[11]) >> 1) & YCBCR_MASK) + (((pSrc2[10] + pSrc2[11]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable16[(((((pSrc[12] + pSrc[13]) >> 1) & YCBCR_MASK) + (((pSrc2[12] + pSrc2[13]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable16[(((((pSrc[14] + pSrc[15]) >> 1) & YCBCR_MASK) + (((pSrc2[14] + pSrc2[15]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 16;
-                    pSrc2 += 16;
-                    pDst += 8;
-                }
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width / 4;
 
-                pSrc -= 16 * srcWidth;
-                pSrc2 -= 16 * srcWidth;
-                pDst -= 8 * srcWidth;
+        if (width > 320 / 4) {
+            while (width--) {
+                pDst[0] = pRgbTable16[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
+                pDst[1] = pRgbTable16[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
+                pDst[2] = pRgbTable16[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
+                pDst[3] = pRgbTable16[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
+                pSrc += 8;
+                pDst += 4;
             }
-            else {
-                for (w = 0; w < srcWidth; w ++) {
-                    pDst[0] = pRgbTable16[((pSrc[0] + pSrc2[0]) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable16[((pSrc[1] + pSrc2[1]) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable16[((pSrc[2] + pSrc2[2]) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable16[((pSrc[3] + pSrc2[3]) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable16[((pSrc[4] + pSrc2[4]) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable16[((pSrc[5] + pSrc2[5]) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable16[((pSrc[6] + pSrc2[6]) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable16[((pSrc[7] + pSrc2[7]) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 8;
-                    pSrc2 += 8;
-                    pDst += 8;
-                }
-
-                pSrc -= 8 * srcWidth;
-                pSrc2 -= 8 * srcWidth;
-                pDst -= 8 * srcWidth;
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst = (UInt16*)((UInt8*)pDst + dstPitch);
         }
-    }
-    else {
-        if (evenOddPage) pSrc += 2 * 8 * srcWidth * srcHeight;
-        for (h = 0; h < srcHeight; h++) {
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable16[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable16[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable16[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable16[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable16[((pSrc[8] + pSrc[9]) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable16[((pSrc[10] + pSrc[11]) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable16[((pSrc[12] + pSrc[13]) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable16[((pSrc[14] + pSrc[15]) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 16;
-                    pDst += 8;
-                }
-
-                pSrc -= 16 * srcWidth;
-                pDst -= 8 * srcWidth;
+        else {
+            while (width--) {
+                pDst[0] = pRgbTable16[pSrc[0]];
+                pDst[1] = pRgbTable16[pSrc[1]];
+                pDst[2] = pRgbTable16[pSrc[2]];
+                pDst[3] = pRgbTable16[pSrc[3]];
+                pSrc += 4;
+                pDst += 4;
             }
-            else {
-                for (w = 0; w < srcWidth; w ++) {
-                    pDst[0] = pRgbTable16[pSrc[0]];
-                    pDst[1] = pRgbTable16[pSrc[1]];
-                    pDst[2] = pRgbTable16[pSrc[2]];
-                    pDst[3] = pRgbTable16[pSrc[3]];
-                    pDst[4] = pRgbTable16[pSrc[4]];
-                    pDst[5] = pRgbTable16[pSrc[5]];
-                    pDst[6] = pRgbTable16[pSrc[6]];
-                    pDst[7] = pRgbTable16[pSrc[7]];
-                    
-                    pSrc += 8;
-                    pDst += 8;
-                }
-
-                pSrc -= 8 * srcWidth;
-                pDst -= 8 * srcWidth;
-            }
-
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pDst = (UInt16*)((UInt8*)pDst + dstPitch);
         }
+        pDst += dstPitch;
     }
 }
 
-static void copy_1x1_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                        int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+
+static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32 *pSrc2       = pSrc + 2 * srcWidth * srcHeight;
     UInt32* pDst        = (UInt32*)pDestination;
-    int w;
+    int height          = frame->lines;
     int h;
 
-    srcWidth /= 8;
+    dstPitch /= (int)sizeof(UInt16);
 
-    srcPitch *= 2;
+    for (h = 0; h < height; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width / 4;
 
-    if (interlace) {
-        for (h = 0; h < srcHeight; h++) {
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable32[(((((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK) + (((pSrc2[0] + pSrc2[1]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable32[(((((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK) + (((pSrc2[2] + pSrc2[3]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable32[(((((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK) + (((pSrc2[4] + pSrc2[5]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable32[(((((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK) + (((pSrc2[6] + pSrc2[7]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable32[(((((pSrc[8] + pSrc[9]) >> 1) & YCBCR_MASK) + (((pSrc2[8] + pSrc2[9]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable32[(((((pSrc[10] + pSrc[11]) >> 1) & YCBCR_MASK) + (((pSrc2[10] + pSrc2[11]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable32[(((((pSrc[12] + pSrc[13]) >> 1) & YCBCR_MASK) + (((pSrc2[12] + pSrc2[13]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable32[(((((pSrc[14] + pSrc[15]) >> 1) & YCBCR_MASK) + (((pSrc2[14] + pSrc2[15]) >> 1) & YCBCR_MASK)) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 16;
-                    pSrc2 += 16;
-                    pDst += 8;
-                }
-                pSrc -= 16 * srcWidth;
-                pSrc2 -= 16 * srcWidth;
-                pDst -= 8 * srcWidth;
+        if (width > 320 / 4) {
+            while (width--) {
+                pDst[0] = pRgbTable32[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
+                pDst[1] = pRgbTable32[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
+                pDst[2] = pRgbTable32[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
+                pDst[3] = pRgbTable32[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
+                pSrc += 8;
+                pDst += 4;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable32[((pSrc[0] + pSrc2[0]) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable32[((pSrc[1] + pSrc2[1]) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable32[((pSrc[2] + pSrc2[2]) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable32[((pSrc[3] + pSrc2[3]) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable32[((pSrc[4] + pSrc2[4]) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable32[((pSrc[5] + pSrc2[5]) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable32[((pSrc[6] + pSrc2[6]) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable32[((pSrc[7] + pSrc2[7]) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 8;
-                    pSrc2 += 8;
-                    pDst += 8;
-                }
-                pSrc -= 8 * srcWidth;
-                pSrc2 -= 8 * srcWidth;
-                pDst -= 8 * srcWidth;
-            }        
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst = (UInt32*)((UInt8*)pDst + dstPitch);
         }
-    }
-    else {
-        if (evenOddPage) pSrc += 2 * 8 * srcWidth * srcHeight;
-        for (h = 0; h < srcHeight; h++) {
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable32[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
-                    pDst[1] = pRgbTable32[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
-                    pDst[2] = pRgbTable32[((pSrc[4] + pSrc[5]) >> 1) & YCBCR_MASK];
-                    pDst[3] = pRgbTable32[((pSrc[6] + pSrc[7]) >> 1) & YCBCR_MASK];
-                    pDst[4] = pRgbTable32[((pSrc[8] + pSrc[9]) >> 1) & YCBCR_MASK];
-                    pDst[5] = pRgbTable32[((pSrc[10] + pSrc[11]) >> 1) & YCBCR_MASK];
-                    pDst[6] = pRgbTable32[((pSrc[12] + pSrc[13]) >> 1) & YCBCR_MASK];
-                    pDst[7] = pRgbTable32[((pSrc[14] + pSrc[15]) >> 1) & YCBCR_MASK];
-                    
-                    pSrc += 16;
-                    pDst += 8;
-                }
-                pSrc -= 16 * srcWidth;
-                pDst -= 8 * srcWidth;
+        else {
+            while (width--) {
+                pDst[0] = pRgbTable32[pSrc[0]];
+                pDst[1] = pRgbTable32[pSrc[1]];
+                pDst[2] = pRgbTable32[pSrc[2]];
+                pDst[3] = pRgbTable32[pSrc[3]];
+                pSrc += 4;
+                pDst += 4;
             }
-            else {
-                for (w = 0; w < srcWidth; w++) {
-                    pDst[0] = pRgbTable32[pSrc[0]];
-                    pDst[1] = pRgbTable32[pSrc[1]];
-                    pDst[2] = pRgbTable32[pSrc[2]];
-                    pDst[3] = pRgbTable32[pSrc[3]];
-                    pDst[4] = pRgbTable32[pSrc[4]];
-                    pDst[5] = pRgbTable32[pSrc[5]];
-                    pDst[6] = pRgbTable32[pSrc[6]];
-                    pDst[7] = pRgbTable32[pSrc[7]];
-                    
-                    pSrc += 8;
-                    pDst += 8;
-                }
-                pSrc -= 8 * srcWidth;
-                pDst -= 8 * srcWidth;
-            }        
-            pSrc = (UInt32*)((UInt8*)pSrc + srcPitch);
-            pDst = (UInt32*)((UInt8*)pDst + dstPitch);
         }
+        pDst += dstPitch;
     }
 }
 
-static void copy_2x2_16(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                        int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+
+static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt16* pDst1       = (UInt16*)pDestination;
-    UInt16* pDst2       = pDst1 + dstPitch / sizeof(UInt16);
-    int w;
-    int h;    
+    UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
+    int height          = frame->lines;
+    int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt16);
 
-    if (deInterlace && interlace) {
-        UInt32 *pSrc2 = pSrc + 2 * srcWidth * srcHeight;
-
-        for (h = 0; h < srcHeight; h++) {
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    pDst1[dstIndex]   = pRgbTable16[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable16[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable16[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable16[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable16[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable16[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable16[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable16[pSrc2[w++]];
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth;) {
-                    UInt16 col1 = pRgbTable16[pSrc[w]];
-                    UInt16 col2 = pRgbTable16[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable16[pSrc[w]];
-                    col2 = pRgbTable16[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable16[pSrc[w]];
-                    col2 = pRgbTable16[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable16[pSrc[w]];
-                    col2 = pRgbTable16[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
+    for (h = 0; h < height; h++) {
+        UInt16* pDst1old = pDst1;
+        UInt16* pDst2old = pDst2;
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width / 4;
+
+        if (width > 320 / 4) {
+            while (width--) {
+                UInt16 col1 = pRgbTable16[pSrc[0]];
+                UInt16 col2 = pRgbTable16[pSrc[1]];
+                UInt16 col3 = pRgbTable16[pSrc[2]];
+                UInt16 col4 = pRgbTable16[pSrc[3]];
+                pSrc  += 4;
+
+                pDst1[0] = col1;
+                pDst1[1] = col2;
+                pDst1[2] = col3;
+                pDst1[3] = col4;
+                pDst1 += 4;
+
+                pDst2[0] = col1;
+                pDst2[1] = col2;
+                pDst2[2] = col3;
+                pDst2[3] = col4;
+                pDst2 += 4;
+            }
+        }
+        else {
+            while (width--) {
+                UInt16 col1 = pRgbTable16[pSrc[0]];
+                UInt16 col2 = pRgbTable16[pSrc[1]];
+                UInt16 col3 = pRgbTable16[pSrc[2]];
+                UInt16 col4 = pRgbTable16[pSrc[3]];
+                pSrc  += 4;
+
+                pDst1[0] = col1;
+                pDst1[1] = col1;
+                pDst1[2] = col2;
+                pDst1[3] = col2;
+                pDst1[4] = col3;
+                pDst1[5] = col3;
+                pDst1[6] = col4;
+                pDst1[7] = col4;
+                pDst1 += 8;
+
+                pDst2[0] = col1;
+                pDst2[1] = col1;
+                pDst2[2] = col2;
+                pDst2[3] = col2;
+                pDst2[4] = col3;
+                pDst2[5] = col3;
+                pDst2[6] = col4;
+                pDst2[7] = col4;
+                pDst2 += 8;
+            }
         }
 
-        for (h = 0; h < srcHeight; h++) {
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt16 col1 = pRgbTable16[pSrc[w++]];
-                    UInt16 col2 = pRgbTable16[pSrc[w++]];
-                    UInt16 col3 = pRgbTable16[pSrc[w++]];
-                    UInt16 col4 = pRgbTable16[pSrc[w++]];
-
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth;) {
-                    UInt16 col1 = pRgbTable16[pSrc[w++]];
-                    UInt16 col2 = pRgbTable16[pSrc[w++]];
-                    UInt16 col3 = pRgbTable16[pSrc[w++]];
-                    UInt16 col4 = pRgbTable16[pSrc[w++]];
-
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt16*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt16*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+        pDst1 = pDst1old + dstPitch * 2;
+        pDst2 = pDst2old +  dstPitch * 2;
     }
 }
 
-void copy_2x2_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDestination, 
-                 int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage, int interlace)
+static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
     UInt32* pDst1       = (UInt32*)pDestination;
-    UInt32* pDst2       = pDst1 + dstPitch / sizeof(UInt32);
-    int w;
+    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
+    int height          = frame->lines;
     int h;
 
-    srcPitch *= 2;
+    dstPitch /= (int)sizeof(UInt32);
 
-    if (deInterlace && interlace) {
-        UInt32 *pSrc2 = pSrc + 2 * srcWidth * srcHeight;
-
-        for (h = 0; h < srcHeight; h++) {
-            int dstIndex = 0;
-
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    pDst1[dstIndex]   = pRgbTable32[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable32[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable32[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable32[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable32[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable32[pSrc2[w++]];
-                    
-                    pDst1[dstIndex]   = pRgbTable32[pSrc[w]];
-                    pDst2[dstIndex++] = pRgbTable32[pSrc2[w++]];
-                }
-            }
-            else {
-                for (w = 0; w < srcWidth;) {
-                    UInt32 col1 = pRgbTable32[pSrc[w]];
-                    UInt32 col2 = pRgbTable32[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable32[pSrc[w]];
-                    col2 = pRgbTable32[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable32[pSrc[w]];
-                    col2 = pRgbTable32[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-
-                    col1 = pRgbTable32[pSrc[w]];
-                    col2 = pRgbTable32[pSrc2[w++]];
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col2;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pSrc2 = (UInt32*)((UInt8*)pSrc2 + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
-        }
+    if (frame->interlaceOdd) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
-    else {
-        if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
 
-        if (interlace && evenOddPage) {
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch);
-            srcHeight--;
-        }
-        for (h = 0; h < srcHeight; h++) {
-            int dstIndex = 0;
+    for (h = 0; h < height; h++) {
+        UInt32* pDst1old = pDst1;
+        UInt32* pDst2old = pDst2;
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = frame->line[h].width / 4;
 
-            if (srcDoubleWidth[h]) {
-                for (w = 0; w < 2 * srcWidth;) {
-                    UInt32 col1 = pRgbTable32[pSrc[w++]];
-                    UInt32 col2 = pRgbTable32[pSrc[w++]];
-                    UInt32 col3 = pRgbTable32[pSrc[w++]];
-                    UInt32 col4 = pRgbTable32[pSrc[w++]];
+        if (width > 320 / 4) {
+            while (width--) {
+                UInt32 col1 = pRgbTable32[pSrc[0]];
+                UInt32 col2 = pRgbTable32[pSrc[1]];
+                UInt32 col3 = pRgbTable32[pSrc[2]];
+                UInt32 col4 = pRgbTable32[pSrc[3]];
+                pSrc  += 4;
 
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                }
+                pDst1[0] = col1;
+                pDst1[1] = col2;
+                pDst1[2] = col3;
+                pDst1[3] = col4;
+                pDst1 += 4;
+
+                pDst2[0] = col1;
+                pDst2[1] = col2;
+                pDst2[2] = col3;
+                pDst2[3] = col4;
+                pDst2 += 4;
             }
-            else {
-                for (w = 0; w < srcWidth;) {
-                    UInt32 col1 = pRgbTable32[pSrc[w++]];
-                    UInt32 col2 = pRgbTable32[pSrc[w++]];
-                    UInt32 col3 = pRgbTable32[pSrc[w++]];
-                    UInt32 col4 = pRgbTable32[pSrc[w++]];
-
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    pDst1[dstIndex]   = col1;
-                    pDst2[dstIndex++] = col1;
-                    
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    pDst1[dstIndex]   = col2;
-                    pDst2[dstIndex++] = col2;
-                    
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    pDst1[dstIndex]   = col3;
-                    pDst2[dstIndex++] = col3;
-                    
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                    pDst1[dstIndex]   = col4;
-                    pDst2[dstIndex++] = col4;
-                }
-            }
-
-            pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
-            pDst1 = (UInt32*)((UInt8*)pDst1 + dstPitch * 2);
-            pDst2 = (UInt32*)((UInt8*)pDst2 + dstPitch * 2);
         }
+        else {
+            while (width--) {
+                UInt32 col1 = pRgbTable32[pSrc[0]];
+                UInt32 col2 = pRgbTable32[pSrc[1]];
+                UInt32 col3 = pRgbTable32[pSrc[2]];
+                UInt32 col4 = pRgbTable32[pSrc[3]];
+                pSrc  += 4;
+
+                pDst1[0] = col1;
+                pDst1[1] = col1;
+                pDst1[2] = col2;
+                pDst1[3] = col2;
+                pDst1[4] = col3;
+                pDst1[5] = col3;
+                pDst1[6] = col4;
+                pDst1[7] = col4;
+                pDst1 += 8;
+
+                pDst2[0] = col1;
+                pDst2[1] = col1;
+                pDst2[2] = col2;
+                pDst2[3] = col2;
+                pDst2[4] = col3;
+                pDst2[5] = col3;
+                pDst2[6] = col4;
+                pDst2[7] = col4;
+                pDst2 += 8;
+            }
+        }
+
+        pDst1 = pDst1old + dstPitch * 2;
+        pDst2 = pDst2old +  dstPitch * 2;
     }
 }
 
-static void hq2x_2x2_32(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
-                        int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
+
+static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
+	UInt16  ImgSrc[320 * 240];
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-	UInt16  ImgSrc[320*250];
-	UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32* pDst1       = (UInt32*)pDestination;
-	int w, h;    
+    UInt16* pDst        = (UInt16*)ImgSrc;
+    int srcHeight       = frame->lines;
+    int srcWidth        = frame->line[0].width;
+	int h;  
 
-    if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
+    if (srcWidth == 0) {
+        return;
+    }  
 
-	srcPitch/=2;
-
-    for (h=0; h<srcHeight; h++) 
-	{
-        for (w=0; w<srcWidth; w++) 
-		{
-			ImgSrc[w+h*srcWidth]=pRgbTable16[pSrc[w]];
+    for (h = 0; h < srcHeight; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = srcWidth / 8;
+        while (width--) {
+            pDst[0] = pRgbTable16[pSrc[0]];
+            pDst[1] = pRgbTable16[pSrc[1]];
+            pDst[2] = pRgbTable16[pSrc[2]];
+            pDst[3] = pRgbTable16[pSrc[3]];
+            pDst[4] = pRgbTable16[pSrc[4]];
+            pDst[5] = pRgbTable16[pSrc[5]];
+            pDst[6] = pRgbTable16[pSrc[6]];
+            pDst[7] = pRgbTable16[pSrc[7]];
+            pSrc += 8;
+            pDst += 8;
         }
-		pSrc+=srcPitch;
     }
-    hq2x_32(ImgSrc, pDst1, srcWidth, srcHeight, dstPitch);
+
+    hq2x_32(ImgSrc, pDestination, srcWidth, srcHeight, dstPitch);
 }
 
-static void scale2x_2x2_32(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
+static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
-	UInt32  ImgSrc[80000];
+	UInt32  ImgSrc[320 * 240];
 	UInt32* pRgbTable32 = (UInt32*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt32* pDst1       = (UInt32*)pDestination;
-	int w, h;    
+    UInt32* pDst        = (UInt32*)ImgSrc;
+    int srcHeight       = frame->lines;
+    int srcWidth        = frame->line[0].width;
+	int h;
 
-    if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
-
-	srcPitch/=2;
-
-    for (h=0; h<srcHeight; h++) 
-	{
-        for (w=0; w<srcWidth; w++) 
-		{
-			ImgSrc[w+h*srcWidth]=pRgbTable32[pSrc[w]];
-        }
-		pSrc+=srcPitch;
+    if (srcWidth == 0) {
+        return;
     }
-    scale(2, &pDst1[0], srcWidth*8, &ImgSrc[0], srcWidth*4, 4, srcWidth, srcHeight);
+
+    for (h = 0; h < srcHeight; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = srcWidth / 8;
+        while (width--) {
+            pDst[0] = pRgbTable32[pSrc[0]];
+            pDst[1] = pRgbTable32[pSrc[1]];
+            pDst[2] = pRgbTable32[pSrc[2]];
+            pDst[3] = pRgbTable32[pSrc[3]];
+            pDst[4] = pRgbTable32[pSrc[4]];
+            pDst[5] = pRgbTable32[pSrc[5]];
+            pDst[6] = pRgbTable32[pSrc[6]];
+            pDst[7] = pRgbTable32[pSrc[7]];
+            pSrc += 8;
+            pDst += 8;
+        }
+    }
+
+    scale(2, pDestination, dstPitch, ImgSrc, srcWidth * sizeof(UInt32), sizeof(UInt32), srcWidth, srcHeight);
 }
 
-static void scale2x_2x2_16(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
-                           int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
+static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32 rnd, void* pRgbTable)
 {
-    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
-    UInt32* pSrc        = (UInt32*)pSource;
-    UInt16* pDst1       = (UInt16*)pDestination;
-	UInt16  ImgSrc[320*250];
-	int w, h,index;    
+	UInt16  ImgSrc[320 * 240];
+	UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+    UInt16* pDst        = (UInt16*)ImgSrc;
+    int srcHeight       = frame->lines;
+    int srcWidth        = frame->line[0].width;
+	int h;
 
-    if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
-    srcPitch *= 2;
-    index=0;
-    for (h=0; h<srcHeight; h++) 
-	{
-        for (w=0; w<srcWidth; w++) 
-		{
-			ImgSrc[index]=pRgbTable16[pSrc[w]];
-			index++;
-        }
-        pSrc  = (UInt32*)((UInt8*)pSrc  + srcPitch);
+    if (srcWidth == 0) {
+        return;
     }
-    scale(2, &pDst1[0], srcWidth*4, &ImgSrc[0], srcWidth*2, 2, srcWidth, srcHeight);
+
+    for (h = 0; h < srcHeight; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = srcWidth / 8;
+        while (width--) {
+            pDst[0] = pRgbTable16[pSrc[0]];
+            pDst[1] = pRgbTable16[pSrc[1]];
+            pDst[2] = pRgbTable16[pSrc[2]];
+            pDst[3] = pRgbTable16[pSrc[3]];
+            pDst[4] = pRgbTable16[pSrc[4]];
+            pDst[5] = pRgbTable16[pSrc[5]];
+            pDst[6] = pRgbTable16[pSrc[6]];
+            pDst[7] = pRgbTable16[pSrc[7]];
+            pSrc += 8;
+            pDst += 8;
+        }
+    }
+
+    scale(2, pDestination, dstPitch, ImgSrc, srcWidth * sizeof(UInt16), sizeof(UInt16), srcWidth, srcHeight);
 }
 
 /*****************************************************************************
@@ -2318,7 +1252,6 @@ void videoDestroy(Video* pVideo)
 void videoSetFrameSkip(Video* pVideo, UInt32 skipCount)
 {
     if (skipCount > 3) skipCount = 3;
-    pVideo->decay = 3 - skipCount;
 }
 
 void videoSetDeInterlace(Video* pVideo, int doDeInterlace)
@@ -2328,18 +1261,7 @@ void videoSetDeInterlace(Video* pVideo, int doDeInterlace)
 
 UInt32 videoGetColor(int R, int G, int B)
 {
-    int Y  = (int)(0.2989*R + 0.5866*G + 0.1145*B);
-    int Cb = B - Y;
-    int Cr = R - Y;
-
-#ifdef USE_RGB
     return ((R >> 3) << 12) | ((G >> 3) << 6) | (B >> 3);
-#endif
-    Y  = MAX(0,   MIN(31, Y / 8));
-    Cb = 16 + MAX(-16, MIN(15, Cb / 16));
-    Cr = 16 + MAX(-16, MIN(15, Cr / 16));
-
-    return Y | (Cb << 6) | (Cr << 12);
 }
 
 void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma)
@@ -2404,7 +1326,7 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
     UInt16* pBuf = (UInt16*)pBuffer;
     int w, h;
 
-    pitch  /= sizeof(UInt32);
+    pitch  /= (int)sizeof(UInt32);
 
     switch (blur) {
     case 0:
@@ -2473,7 +1395,7 @@ void colorSaturation_32(void* pBuffer, int width, int height, int pitch, int blu
     UInt32* pBuf = (UInt32*)pBuffer;
     int w, h;
 
-    pitch  /= sizeof(UInt32);
+    pitch  /= (int)sizeof(UInt32);
 
     switch (blur) {
     case 0:
@@ -2537,7 +1459,7 @@ void colorSaturation_32(void* pBuffer, int width, int height, int pitch, int blu
     }
 }
 
-void scanLines_16(void* pBuffer, int width, int height, int pitch, int interlace, int evenOddPage, int scanLinesPct)
+void scanLines_16(void* pBuffer, int width, int height, int pitch, int scanLinesPct)
 {
     UInt32* pBuf = (UInt32*)pBuffer;
     int w, h;
@@ -2546,7 +1468,7 @@ void scanLines_16(void* pBuffer, int width, int height, int pitch, int interlace
         return;
     }
 
-    pitch = pitch * 2 / sizeof(UInt32);
+    pitch = pitch * 2 / (int)sizeof(UInt32);
     scanLinesPct = scanLinesPct * 32 / 100;
     height /= 2;
     width /= 2;
@@ -2570,7 +1492,7 @@ void scanLines_16(void* pBuffer, int width, int height, int pitch, int interlace
     }
 }
 
-void scanLines_32(void* pBuffer, int width, int height, int pitch, int interlace, int evenOddPage, int scanLinesPct)
+void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLinesPct)
 {
     UInt32* pBuf = (UInt32*)pBuffer;
     int w, h;
@@ -2579,7 +1501,7 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int interlace
         return;
     }
 
-    pitch = pitch * 2 / sizeof(UInt32);
+    pitch = pitch * 2 / (int)sizeof(UInt32);
     scanLinesPct = scanLinesPct * 255 / 100;
     height /= 2;
 
@@ -2602,10 +1524,20 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int interlace
     }
 }
 
-void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int interlace,
-                 void* pSrc, int srcWidth, int srcHeight, int* srcDoubleWidth, void* pDst, int srcPitch, int dstPitch)
+void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch)
 {
     static UInt32 rnd = 51;
+    FrameBuffer* frame;
+    
+    if (emulatorGetState() == EMU_RUNNING) {
+        frame = frameBufferFlipViewFrame();
+    }
+    else {
+        frame = frameBufferGetViewFrame();
+    }
+    if (frame == NULL) {
+        return;
+    }
 
     // Update simple rand generator
     rnd *= 13;
@@ -2614,48 +1546,43 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
     case 16:
         switch (pVideo->palMode) {
         case VIDEO_PAL_FAST:
-            if (zoom == 2) copy_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
-            else           copy_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
+            if (zoom == 2) copy_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            else           copy_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            break;
+        case VIDEO_PAL_MONITOR:
+            if (zoom == 2) copyMonitorPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_SHARP:
-            if (zoom == 2) copySharpPAL_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
-            else           copyPAL_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
+            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_SHARP_NOISE:
-            if (zoom == 2) copySharpPAL_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, evenOddPage, interlace);
-            else           copyPAL_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, evenOddPage, interlace);
+            if (zoom == 2) copySharpPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_BLUR:
-            if (zoom == 2) copyPAL_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, pVideo->decay, evenOddPage, interlace);
-            else           copyPAL_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
+            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_BLUR_NOISE:
-            if (zoom == 2) copyPAL_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, pVideo->decay, evenOddPage, interlace);
-            else           copyPAL_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, evenOddPage, interlace);
+            if (zoom == 2) copyPAL_2x2_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
+            else           copyPAL_1x1_16(frame, pDst, dstPitch, rnd, pVideo->pRgbTable16);
             break;
 		case VIDEO_PAL_HQ2X: // Can't do 16bit hq2x so just use scale2x instead
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (!*srcDoubleWidth && !interlace) {
-                    scale2x_2x2_16(pSrc, srcWidth, srcHeight, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage);
+                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                    scale2x_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
                 }
                 else {
-                    copy_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
+                    copy_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
                 }
             }
             else {
-                copy_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
+                copy_1x1_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
             }
             break;
-        case VIDEO_PAL_STRETCHED :
-            if (zoom == 2 && (*srcDoubleWidth) || interlace) {
-                copy_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
-            }
-            else {
-                copy_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage, interlace);
-            }
-            break;
-
         }
 
         if (pVideo->colorSaturationEnable) {
@@ -2663,68 +1590,60 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
         }
 
         if (pVideo->scanLinesEnable) {
-            scanLines_16(pDst, 320 * zoom, 240 * zoom, dstPitch, interlace, evenOddPage, pVideo->scanLinesPct);
+            scanLines_16(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->scanLinesPct);
         }
 
         break;
     case 32:
         switch (pVideo->palMode) {
         case VIDEO_PAL_FAST:
-            if (zoom == 2) copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
-            else           copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
+            else           copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_MONITOR:
-            if (zoom == 2) copyMonitorPAL_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable32, evenOddPage, interlace);
-            else           copyPAL_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copyMonitorPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_SHARP:
-            if (zoom == 2) copySharpPAL_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
-            else           copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
+            else           copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_SHARP_NOISE:
-            if (zoom == 2) copySharpPAL_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable32, evenOddPage, interlace);
-            else           copyPAL_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copySharpPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_BLUR:
-            if (zoom == 2) copyPAL_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, pVideo->decay, evenOddPage, interlace);
-            else           copyPAL_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_BLUR_NOISE:
-            if (zoom == 2) copyPAL_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable32, pVideo->decay, evenOddPage, interlace);
-            else           copyPAL_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable32, evenOddPage, interlace);
+            if (zoom == 2) copyPAL_2x2_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
+            else           copyPAL_1x1_32(frame, pDst, dstPitch, rnd, pVideo->pRgbTable32);
             break;
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (!*srcDoubleWidth && !interlace) {
-                    scale2x_2x2_32(pSrc, srcWidth, srcHeight, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage);
+                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                    scale2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
                 }
                 else {
-                    copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+                    copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
                 }
             }
             else {
-                copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+                copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             }
             break;
 		case VIDEO_PAL_HQ2X:
             if (zoom==2) {
-                if (!*srcDoubleWidth && !interlace) {
-                    hq2x_2x2_32(pSrc, srcWidth, srcHeight, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage);
+                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                    hq2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
                 }
                 else {
-                    copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+                    copy_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
                 }
             }
             else {
-                copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
-            }
-            break;
-        case VIDEO_PAL_STRETCHED :
-            if (zoom == 2 && (*srcDoubleWidth) || interlace) {
-                copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
-            }
-            else {
-                copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+                copy_1x1_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
             }
             break;
         }
@@ -2734,7 +1653,7 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
         }
 
         if (pVideo->scanLinesEnable) {
-            scanLines_32(pDst, 320 * zoom, 240 * zoom, dstPitch, interlace, evenOddPage, pVideo->scanLinesPct);
+            scanLines_32(pDst, 320 * zoom, 240 * zoom, dstPitch, pVideo->scanLinesPct);
         }
         break;
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-01-18 10:17:17 $
+** $Date: 2005-01-18 10:17:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,38 +27,35 @@
 **
 ******************************************************************************
 */
-#ifndef EMULATOR_H
-#define EMULATOR_H
+#ifndef FRAME_BUFFER_H
+#define FRAME_BUFFER_H
 
-#include "MsxTypes.h"
-#include "Properties.h"
-#include "AudioMixer.h"
+#include "MSXTypes.h"
 
-typedef enum { EMU_RUNNING, EMU_PAUSED, EMU_STOPPED, EMU_SUSPENDED } EmuState;
+#define MAX_LINE_WIDTH 640
 
-void emulatorInit(Properties* properties, Mixer* mixer);
+typedef struct {
+    int width;    // Width of line in frame buffer
+    UInt32 buffer[MAX_LINE_WIDTH];
+} LineBuffer;
 
-void emuEnableSynchronousUpdate(int enable);
+typedef struct {
+    int interlaceOdd; // 0 in most cases, 1 if odd interlaced frame
+    int lines;        // Number of lines in frame buffer
+    LineBuffer line[480];
+} FrameBuffer;
 
-void emulatorSetFrequency(int logFrequency, int* frequency);
-void emulatorRestartSound();
-void emulatorSuspend();
-void emulatorResume();
-void emulatorDoResume();
-void emulatorRestart();
-void emulatorStart(char* stateName);
-void emulatorStop();
-void emulatorSetMaxSpeed(int enable);
-int  emulatorGetMaxSpeed();
-int emulatorGetCpuOverflow();
-int emulatorGetSyncPeriod();
-EmuState emulatorGetState();
-void emulatorSetState(EmuState state);
-void emulatorRunOne();
-UInt32 emulatorGetCpuSpeed();
-UInt32 emulatorGetCpuUsage();
-void emulatorResetMixer();
-int emulatorGetCurrentScreenMode();
+typedef struct FrameBufferData FrameBufferData;
+
+
+FrameBuffer* frameBufferGetViewFrame();
+FrameBuffer* frameBufferFlipViewFrame();
+FrameBuffer* frameBufferGetDrawFrame();
+FrameBuffer* frameBufferFlipDrawFrame();
+
+FrameBufferData* frameBufferDataCreate();
+void frameBufferDataDestroy(FrameBufferData* frameData);
+
+void frameBufferSetActive(FrameBufferData* frameData);
 
 #endif
-

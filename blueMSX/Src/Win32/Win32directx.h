@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directx.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-01-18 10:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,12 +46,9 @@ typedef enum {
     DXE_CREATEFROMWINDOW      = -9
 } DirectXError;
 
-void DirectXUpdateSurface(Video* pVideo, void* srcBits, 
-                          int srcWidth, int srcHeight, 
-                          int* srcDoubleWidth, int noFlip, 
+void DirectXUpdateSurface(Video* pVideo, int noFlip, 
                           int dstPitchY, int dstOffset, int zoom, 
-                          int horizontalStretch, int verticalStretch,
-                          int evenOddPage, int interlace);
+                          int horizontalStretch, int verticalStretch);
 void DirectXExitFullscreenMode();
 int DirectXEnterFullscreenMode(HWND hwnd, int width, int height, int depth, 
                                int useVideoBackBuffer, int useSysMemBuffering);

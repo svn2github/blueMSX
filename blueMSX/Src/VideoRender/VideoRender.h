@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-05 00:50:43 $
+** $Date: 2005-01-18 10:17:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,6 @@ typedef enum {
     VIDEO_PAL_BLUR_NOISE,
 	VIDEO_PAL_SCALE2X,
     VIDEO_PAL_HQ2X,
-    VIDEO_PAL_STRETCHED
 } VideoPalMode;
 
 typedef struct Video Video;
@@ -56,7 +55,6 @@ struct Video {
     UInt16* pRgbTable16;
     UInt32* pRgbTable32;
     VideoPalMode palMode;
-    UInt32 decay;
     int scanLinesEnable;
     int scanLinesPct;
     int colorSaturationEnable;
@@ -79,9 +77,7 @@ void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
 
 void videoSetPalMode(Video* pVideo, VideoPalMode palMode);
 
-void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int interlace,
-                 void* pSrc, int srcWidth, int srcHeight, int* srcDoubleWidth,
-                 void* pDst, int srcPitch, int dstPitch);
+void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch);
 
 void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma);
 

@@ -793,6 +793,12 @@
 			Name="VideoRender"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\VideoChips\FrameBuffer.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoChips\FrameBuffer.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\VideoRender\hq2x.c">
 			</File>
 			<File

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchEvent.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-01-18 10:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,5 +34,10 @@ void* archEventCreate(int initState);
 void archEventDestroy(void* event);
 void archEventSet(void* event);
 void archEventWait(void* event, int timeout);
+
+void* archSemaphoreCreate(int initCount);
+void archSemaphoreDestroy(void* semaphore);
+void archSemaphoreSignal(void* semaphore);
+void archSemaphoreWait(void* semaphore, int timeout);
 
 #endif

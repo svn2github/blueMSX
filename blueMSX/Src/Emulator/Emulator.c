@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-16 06:48:16 $
+** $Date: 2005-01-18 10:17:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,9 +75,6 @@ static int lastScreenMode;
 static int lastEvenOdd;
 static int lastInterlace;
 
-static UInt32* frameBuffer;
-static int*    scrLineWidth;
-
 static UInt32 emuTimeIdle       = 0;
 static UInt32 emuTimeTotal      = 1;
 static UInt32 emuTimeOverflow   = 0;
@@ -136,21 +133,8 @@ void emuEnableSynchronousUpdate(int enable)
     enableSynchronousUpdate = enable;
 }
 
-UInt32* emulatorGetFrameBuffer()
-{
-    return frameBuffer;
-}
-
-int* emulatorGetScrLineWidth()
-{
-    return scrLineWidth;
-}
-
 void emulatorInit(Properties* theProperties, Mixer* theMixer)
 {
-    frameBuffer  = calloc(4 * WIDTH * HEIGHT, sizeof(UInt32));
-    scrLineWidth = calloc(256, sizeof(int));
-
     properties = theProperties;
     mixer      = theMixer;
 }
@@ -316,10 +300,6 @@ void emulatorStart(char* stateName) {
 
     emuExitFlag = 0;
 
-    for (i = 0; i < 4 * WIDTH * HEIGHT; i++) {
-        frameBuffer[i] = color;
-    }
-
     for (i = 0; i < 256; i++) {
         emuFixedPalette[i] = videoGetColor(255 * ((i >> 2) & 7) / 7, 
                                            255 * ((i >> 5) & 7) / 7, 
@@ -359,9 +339,6 @@ void emulatorStart(char* stateName) {
     }
 
     boardSetMachine(machine);
-
-    emuFrameBuffer  = frameBuffer;
-    emuLineWidth    = scrLineWidth;
 
     emuSyncEvent  = CreateEvent(NULL, 0, 0, NULL);
     emuStartEvent = CreateEvent(NULL, 0, 0, NULL);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-01-17 20:59:23 $
+** $Date: 2005-01-18 10:17:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -779,9 +779,6 @@ static void updateVideoRender(Video* pVideo, Properties* pProperties) {
 	case P_VIDEO_PALHQ2X:
 		videoSetPalMode(pVideo, VIDEO_PAL_HQ2X);
 		break;
-	case P_VIDEO_PAL_STRETCHED:
-		videoSetPalMode(pVideo, VIDEO_PAL_STRETCHED);
-		break;
     }
 
     videoSetFrameSkip(pVideo, pProperties->video.frameSkip);
@@ -1425,11 +1422,9 @@ static void emuWindowDraw()
         (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
         pProperties->video.driver == P_VIDEO_DRVDIRECTX))
     {
-        DirectXUpdateSurface(st.pVideo, emulatorGetFrameBuffer(), WIDTH, HEIGHT, emulatorGetScrLineWidth(), 
-                             st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
+        DirectXUpdateSurface(st.pVideo, st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
                              0, 0, getZoom(), 
-                             pProperties->video.horizontalStretch, pProperties->video.verticalStretch, 
-                             st.evenOdd, st.interlace);
+                             pProperties->video.horizontalStretch, pProperties->video.verticalStretch);
         st.frameCount++;
     }
 }
@@ -1440,7 +1435,6 @@ void* createScreenShot(int large, int* bitmapSize)
 
     int zoom = large ? 2 : 1;
 
-    DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
     DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
     VideoPalMode palMode      = st.pVideo->palMode;
     int scanLinesEnable       = st.pVideo->scanLinesEnable;
@@ -1449,9 +1443,9 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->palMode = VIDEO_PAL_FAST;
     st.pVideo->scanLinesEnable = 0;
     st.pVideo->colorSaturationEnable = 0;
-    videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
-                emulatorGetScrLineWidth(), bmBitsDst, 
-                -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
+    videoRender(st.pVideo, 32, zoom, 
+                bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
+                -1 * zoom * WIDTH * sizeof(DWORD));
 
     st.pVideo->palMode               = palMode;
     st.pVideo->scanLinesEnable       = scanLinesEnable;
@@ -1488,7 +1482,6 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         if (pProperties->video.driver == P_VIDEO_DRVGDI && emulatorGetState() != EMU_STOPPED) {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);   
-            DWORD* bmBitsSrc;
             int zoom = getZoom();
             int width;
             int height;
@@ -1498,14 +1491,13 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
             width = r.right - r.left;
             height = r.bottom - r.top;
-            bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() +  WIDTH * (HEIGHT - 1) * 2;
             
             if (st.bmBitsGDI == 0) {
                 st.bmBitsGDI = malloc(4096 * 4096 * sizeof(UInt32));
             }
-            videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
-                        emulatorGetScrLineWidth(), st.bmBitsGDI, 
-                        -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
+            videoRender(st.pVideo, 32, zoom, 
+                        (char*)st.bmBitsGDI + zoom * (HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
+                        -1 * zoom * WIDTH * sizeof(DWORD));
             st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
             st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
             st.bmInfo.bmiHeader.biBitCount = 32;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-17 05:52:32 $
+** $Date: 2005-01-18 10:17:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,8 +45,9 @@ extern UInt32 YJKtoYCbCrTable[32][64][64];
 
 UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderExtra)
 {
+    FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
     int lineSize = line512 ? 2 : 1;
-    UInt32 *dstBitmap;
+    UInt32 *linePtr;
     int offset;
 
     if (!displayEnable) {
@@ -59,49 +60,49 @@ UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderEx
         return NULL;
     }
 
-    dstBitmap = emuFrameBuffer + (vdp->vdpStatus[2] & 0x02) * WIDTH * HEIGHT +  2 * WIDTH * Y;
-
-    emuLineWidth[Y] = line512;
+    linePtr = frameBuffer->line[Y].buffer;
+    frameBuffer->line[Y].width = 320 * lineSize;
 
     if (Y > 0) {
         for (offset = lineSize * ((WIDTH - 256) / 2 + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset--) {
-            dstBitmap[offset] = bgColor;
+            linePtr[offset] = bgColor;
         }
     }
 
     if (!(vdp->screenOn && vdp->drawArea)) {
         for(offset = lineSize * WIDTH - 1; offset >= 0; offset--) {
-            dstBitmap[offset] = bgColor;
+            linePtr[offset] = bgColor;
         }
 
         return NULL;
     }
 
     /* Return pointer to the scanline in emuFrameBuffer */
-    return dstBitmap + lineSize * ((WIDTH - 256) / 2 + vdp->HAdjust + borderExtra);
+    return linePtr + lineSize * ((WIDTH - 256) / 2 + vdp->HAdjust + borderExtra);
 }
 
 static void RefreshRightBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderExtra) {
+    FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
     int lineSize = line512 ? 2 : 1;
-    UInt32 *dstBitmap;
+    UInt32 *linePtr;
     int offset;
 
     Y -= vdpIsVideoPal(vdp) ? 27 : 0;
-
 
     if (Y < 0 || Y >= HEIGHT || !displayEnable) {
         return;
     }
     
-    dstBitmap = emuFrameBuffer + (vdp->vdpStatus[2] & 0x02) * WIDTH * HEIGHT +  2 * WIDTH * Y;
+    linePtr = frameBuffer->line[Y].buffer;
+
     for(offset = lineSize * ((WIDTH - 256) / 2 - vdp->HAdjust + borderExtra); offset >= lineSize; offset--) {
-        dstBitmap[lineSize * WIDTH - offset] = bgColor;
+        linePtr[lineSize * WIDTH - offset] = bgColor;
     }
 }
 
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    UInt32* dstBitmap;
+    UInt32* linePtr;
     UInt8*  charTable;
     int     patternBase;
     UInt32  color[2];
@@ -114,9 +115,9 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 9);
+    linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 9);
     Y -= vdp->firstLine;
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -128,21 +129,21 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
     for (X = 0; X < 40; X++) {
         int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
-        dstBitmap[0] = color[(pattern >> 7) & 1];
-        dstBitmap[1] = color[(pattern >> 6) & 1];
-        dstBitmap[2] = color[(pattern >> 5) & 1];
-        dstBitmap[3] = color[(pattern >> 4) & 1];
-        dstBitmap[4] = color[(pattern >> 3) & 1];
-        dstBitmap[5] = color[(pattern >> 2) & 1];
+        linePtr[0] = color[(pattern >> 7) & 1];
+        linePtr[1] = color[(pattern >> 6) & 1];
+        linePtr[2] = color[(pattern >> 5) & 1];
+        linePtr[3] = color[(pattern >> 4) & 1];
+        linePtr[4] = color[(pattern >> 3) & 1];
+        linePtr[5] = color[(pattern >> 2) & 1];
         charTable++;
-        dstBitmap += 6;
+        linePtr += 6;
     }
 }
 
 
 static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 {
-    UInt32* dstBitmap;
+    UInt32* linePtr;
     UInt8   colPattern;
     UInt8*  charTable;
     int     patternBase;
@@ -157,9 +158,9 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         return;
     }
     
-    dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 9);
+    linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 9);
     Y -= vdp->firstLine;
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -182,20 +183,20 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         color = colors + ((colPattern >> 6) & 2);
         colPattern <<= 1;
 
-        dstBitmap[0] = color[(charPattern >> 7) & 1];
-        dstBitmap[1] = color[(charPattern >> 6) & 1];
-        dstBitmap[2] = color[(charPattern >> 5) & 1];
-        dstBitmap[3] = color[(charPattern >> 4) & 1];
-        dstBitmap[4] = color[(charPattern >> 3) & 1];
-        dstBitmap[5] = color[(charPattern >> 2) & 1];
+        linePtr[0] = color[(charPattern >> 7) & 1];
+        linePtr[1] = color[(charPattern >> 6) & 1];
+        linePtr[2] = color[(charPattern >> 5) & 1];
+        linePtr[3] = color[(charPattern >> 4) & 1];
+        linePtr[4] = color[(charPattern >> 3) & 1];
+        linePtr[5] = color[(charPattern >> 2) & 1];
         charTable++;
-        dstBitmap += 6;
+        linePtr += 6;
     }
 }
 
 static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -207,9 +208,9 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
     int    rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
         sprLine = spritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
 
@@ -218,7 +219,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -234,28 +235,28 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         charPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
 
         if (sprLine != NULL) {
-            col = sprLine[0]; dstBitmap[0] = col ? emuPalette[col] : color[(charPattern >> 7) & 1]; 
-            col = sprLine[1]; dstBitmap[1] = col ? emuPalette[col] : color[(charPattern >> 6) & 1];
-            col = sprLine[2]; dstBitmap[2] = col ? emuPalette[col] : color[(charPattern >> 5) & 1]; 
-            col = sprLine[3]; dstBitmap[3] = col ? emuPalette[col] : color[(charPattern >> 4) & 1];
-            col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col] : color[(charPattern >> 3) & 1]; 
-            col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col] : color[(charPattern >> 2) & 1];
-            col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col] : color[(charPattern >> 1) & 1]; 
-            col = sprLine[7]; dstBitmap[7] = col ? emuPalette[col] : color[(charPattern >> 0) & 1];
+            col = sprLine[0]; linePtr[0] = col ? emuPalette[col] : color[(charPattern >> 7) & 1]; 
+            col = sprLine[1]; linePtr[1] = col ? emuPalette[col] : color[(charPattern >> 6) & 1];
+            col = sprLine[2]; linePtr[2] = col ? emuPalette[col] : color[(charPattern >> 5) & 1]; 
+            col = sprLine[3]; linePtr[3] = col ? emuPalette[col] : color[(charPattern >> 4) & 1];
+            col = sprLine[4]; linePtr[4] = col ? emuPalette[col] : color[(charPattern >> 3) & 1]; 
+            col = sprLine[5]; linePtr[5] = col ? emuPalette[col] : color[(charPattern >> 2) & 1];
+            col = sprLine[6]; linePtr[6] = col ? emuPalette[col] : color[(charPattern >> 1) & 1]; 
+            col = sprLine[7]; linePtr[7] = col ? emuPalette[col] : color[(charPattern >> 0) & 1];
             sprLine += 8;
         }
         else {
-            dstBitmap[0] = color[(charPattern >> 7) & 1];
-            dstBitmap[1] = color[(charPattern >> 6) & 1];
-            dstBitmap[2] = color[(charPattern >> 5) & 1];
-            dstBitmap[3] = color[(charPattern >> 4) & 1];
-            dstBitmap[4] = color[(charPattern >> 3) & 1];
-            dstBitmap[5] = color[(charPattern >> 2) & 1];
-            dstBitmap[6] = color[(charPattern >> 1) & 1];
-            dstBitmap[7] = color[(charPattern >> 0) & 1];
+            linePtr[0] = color[(charPattern >> 7) & 1];
+            linePtr[1] = color[(charPattern >> 6) & 1];
+            linePtr[2] = color[(charPattern >> 5) & 1];
+            linePtr[3] = color[(charPattern >> 4) & 1];
+            linePtr[4] = color[(charPattern >> 3) & 1];
+            linePtr[5] = color[(charPattern >> 2) & 1];
+            linePtr[6] = color[(charPattern >> 1) & 1];
+            linePtr[7] = color[(charPattern >> 0) & 1];
         }
         charTable++; 
-        dstBitmap += 8; 
+        linePtr += 8; 
         X++;
     }
 
@@ -266,7 +267,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -282,9 +283,9 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     if (X == 0) {
         int mask;
 
-        dstBitmap = RefreshBorder(vdp, Y,  emuPalette[vdp->BGColor], 0, 0);
+        linePtr = RefreshBorder(vdp, Y,  emuPalette[vdp->BGColor], 0, 0);
         sprLine = spritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
  
@@ -295,7 +296,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         colorBase   = vdp->colTabBase & mask;
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -312,29 +313,29 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         charPattern = vdp->vram[patternBase | index];
 
         if (sprLine != NULL) {
-            col = sprLine[0]; dstBitmap[0] = col ? emuPalette[col] : color[(charPattern >> 7) & 1]; 
-            col = sprLine[1]; dstBitmap[1] = col ? emuPalette[col] : color[(charPattern >> 6) & 1];
-            col = sprLine[2]; dstBitmap[2] = col ? emuPalette[col] : color[(charPattern >> 5) & 1];
-            col = sprLine[3]; dstBitmap[3] = col ? emuPalette[col] : color[(charPattern >> 4) & 1];
-            col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col] : color[(charPattern >> 3) & 1];
-            col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col] : color[(charPattern >> 2) & 1];
-            col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col] : color[(charPattern >> 1) & 1];
-            col = sprLine[7]; dstBitmap[7] = col ? emuPalette[col] : color[(charPattern >> 0) & 1];
+            col = sprLine[0]; linePtr[0] = col ? emuPalette[col] : color[(charPattern >> 7) & 1]; 
+            col = sprLine[1]; linePtr[1] = col ? emuPalette[col] : color[(charPattern >> 6) & 1];
+            col = sprLine[2]; linePtr[2] = col ? emuPalette[col] : color[(charPattern >> 5) & 1];
+            col = sprLine[3]; linePtr[3] = col ? emuPalette[col] : color[(charPattern >> 4) & 1];
+            col = sprLine[4]; linePtr[4] = col ? emuPalette[col] : color[(charPattern >> 3) & 1];
+            col = sprLine[5]; linePtr[5] = col ? emuPalette[col] : color[(charPattern >> 2) & 1];
+            col = sprLine[6]; linePtr[6] = col ? emuPalette[col] : color[(charPattern >> 1) & 1];
+            col = sprLine[7]; linePtr[7] = col ? emuPalette[col] : color[(charPattern >> 0) & 1];
             sprLine += 8;
         }
         else {
-            dstBitmap[0] = color[(charPattern >> 7) & 1];
-            dstBitmap[1] = color[(charPattern >> 6) & 1];
-            dstBitmap[2] = color[(charPattern >> 5) & 1];
-            dstBitmap[3] = color[(charPattern >> 4) & 1];
-            dstBitmap[4] = color[(charPattern >> 3) & 1];
-            dstBitmap[5] = color[(charPattern >> 2) & 1];
-            dstBitmap[6] = color[(charPattern >> 1) & 1];
-            dstBitmap[7] = color[(charPattern >> 0) & 1];
+            linePtr[0] = color[(charPattern >> 7) & 1];
+            linePtr[1] = color[(charPattern >> 6) & 1];
+            linePtr[2] = color[(charPattern >> 5) & 1];
+            linePtr[3] = color[(charPattern >> 4) & 1];
+            linePtr[4] = color[(charPattern >> 3) & 1];
+            linePtr[5] = color[(charPattern >> 2) & 1];
+            linePtr[6] = color[(charPattern >> 1) & 1];
+            linePtr[7] = color[(charPattern >> 0) & 1];
         }
 
         charTable++;
-        dstBitmap += 8; 
+        linePtr += 8; 
         X++;
     }
 
@@ -345,7 +346,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -357,9 +358,9 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
     int    rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
         sprLine = spritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
 
@@ -368,7 +369,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         patternBase = vdp->chrGenBase & ((-1 << 11) | ((y >> 2) & 7));
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -383,29 +384,29 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         bc = emuPalette[colPattern & 0x0f];
 
         if (sprLine != NULL) {
-            col = sprLine[0]; dstBitmap[0] = col ? emuPalette[col] : fc; 
-            col = sprLine[1]; dstBitmap[1] = col ? emuPalette[col] : fc;
-            col = sprLine[2]; dstBitmap[2] = col ? emuPalette[col] : fc; 
-            col = sprLine[3]; dstBitmap[3] = col ? emuPalette[col] : fc;
-            col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col] : bc; 
-            col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col] : bc;
-            col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col] : bc; 
-            col = sprLine[7]; dstBitmap[7] = col ? emuPalette[col] : bc;
+            col = sprLine[0]; linePtr[0] = col ? emuPalette[col] : fc; 
+            col = sprLine[1]; linePtr[1] = col ? emuPalette[col] : fc;
+            col = sprLine[2]; linePtr[2] = col ? emuPalette[col] : fc; 
+            col = sprLine[3]; linePtr[3] = col ? emuPalette[col] : fc;
+            col = sprLine[4]; linePtr[4] = col ? emuPalette[col] : bc; 
+            col = sprLine[5]; linePtr[5] = col ? emuPalette[col] : bc;
+            col = sprLine[6]; linePtr[6] = col ? emuPalette[col] : bc; 
+            col = sprLine[7]; linePtr[7] = col ? emuPalette[col] : bc;
             sprLine += 8;
         }
         else {
-            dstBitmap[0] = fc; 
-            dstBitmap[1] = fc;
-            dstBitmap[2] = fc; 
-            dstBitmap[3] = fc;
-            dstBitmap[4] = bc; 
-            dstBitmap[5] = bc;
-            dstBitmap[6] = bc; 
-            dstBitmap[7] = bc;
+            linePtr[0] = fc; 
+            linePtr[1] = fc;
+            linePtr[2] = fc; 
+            linePtr[3] = fc;
+            linePtr[4] = bc; 
+            linePtr[5] = bc;
+            linePtr[6] = bc; 
+            linePtr[7] = bc;
         }
 
         charTable++; 
-        dstBitmap += 8; 
+        linePtr += 8; 
         X++;
     }
 
@@ -418,7 +419,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -439,9 +440,9 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         int mask;
         int y;
 
-        dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
         sprLine = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
@@ -458,18 +459,18 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuPalette[vdp->BGColor];
-            dstBitmap[0] = bgColor;
-            dstBitmap[1] = bgColor;
-            dstBitmap[2] = bgColor;
-            dstBitmap[3] = bgColor;
-            dstBitmap[4] = bgColor;
-            dstBitmap[5] = bgColor;
-            dstBitmap[6] = bgColor;
-            dstBitmap[7] = bgColor;
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr[6] = bgColor;
+            linePtr[7] = bgColor;
             charTable++; 
             X++;
             sprLine += sprLine != NULL ? 8 : 0;
-            dstBitmap += 8;
+            linePtr += 8;
         }
 
         if (hScroll512) {
@@ -486,29 +487,29 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
         if (sprLine != NULL) {
             switch (hScroll & 7) {
-                case 1: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 6) & 1]; 
-                case 2: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 5) & 1]; 
-                case 3: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 4) & 1]; 
-                case 4: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 3) & 1]; 
-                case 5: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 2) & 1]; 
-                case 6: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 1) & 1]; 
-                case 7: col = *sprLine++; *dstBitmap++ = col ? emuPalette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++;
+                case 1: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 6) & 1]; 
+                case 2: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 5) & 1]; 
+                case 3: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 4) & 1]; 
+                case 4: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 3) & 1]; 
+                case 5: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 2) & 1]; 
+                case 6: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 1) & 1]; 
+                case 7: col = *sprLine++; *linePtr++ = col ? emuPalette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++;
             }
         }
         else {
             switch (hScroll & 7) {
-                case 1: *dstBitmap++ = color[(charPattern >> 6) & 1]; 
-                case 2: *dstBitmap++ = color[(charPattern >> 5) & 1]; 
-                case 3: *dstBitmap++ = color[(charPattern >> 4) & 1]; 
-                case 4: *dstBitmap++ = color[(charPattern >> 3) & 1]; 
-                case 5: *dstBitmap++ = color[(charPattern >> 2) & 1]; 
-                case 6: *dstBitmap++ = color[(charPattern >> 1) & 1]; 
-                case 7: *dstBitmap++ = color[(charPattern >> 0) & 1];  charTable++;
+                case 1: *linePtr++ = color[(charPattern >> 6) & 1]; 
+                case 2: *linePtr++ = color[(charPattern >> 5) & 1]; 
+                case 3: *linePtr++ = color[(charPattern >> 4) & 1]; 
+                case 4: *linePtr++ = color[(charPattern >> 3) & 1]; 
+                case 5: *linePtr++ = color[(charPattern >> 2) & 1]; 
+                case 6: *linePtr++ = color[(charPattern >> 1) & 1]; 
+                case 7: *linePtr++ = color[(charPattern >> 0) & 1];  charTable++;
             }
         }
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -525,29 +526,29 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         charPattern = vdp->vram[patternBase | index];
 
         if (sprLine != NULL) {
-            col = sprLine[0]; dstBitmap[0] = col ? emuPalette[col >> 1] : color[(charPattern >> 7) & 1]; 
-            col = sprLine[1]; dstBitmap[1] = col ? emuPalette[col >> 1] : color[(charPattern >> 6) & 1];
-            col = sprLine[2]; dstBitmap[2] = col ? emuPalette[col >> 1] : color[(charPattern >> 5) & 1];
-            col = sprLine[3]; dstBitmap[3] = col ? emuPalette[col >> 1] : color[(charPattern >> 4) & 1];
-            col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col >> 1] : color[(charPattern >> 3) & 1];
-            col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col >> 1] : color[(charPattern >> 2) & 1];
-            col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col >> 1] : color[(charPattern >> 1) & 1];
-            col = sprLine[7]; dstBitmap[7] = col ? emuPalette[col >> 1] : color[(charPattern >> 0) & 1];
+            col = sprLine[0]; linePtr[0] = col ? emuPalette[col >> 1] : color[(charPattern >> 7) & 1]; 
+            col = sprLine[1]; linePtr[1] = col ? emuPalette[col >> 1] : color[(charPattern >> 6) & 1];
+            col = sprLine[2]; linePtr[2] = col ? emuPalette[col >> 1] : color[(charPattern >> 5) & 1];
+            col = sprLine[3]; linePtr[3] = col ? emuPalette[col >> 1] : color[(charPattern >> 4) & 1];
+            col = sprLine[4]; linePtr[4] = col ? emuPalette[col >> 1] : color[(charPattern >> 3) & 1];
+            col = sprLine[5]; linePtr[5] = col ? emuPalette[col >> 1] : color[(charPattern >> 2) & 1];
+            col = sprLine[6]; linePtr[6] = col ? emuPalette[col >> 1] : color[(charPattern >> 1) & 1];
+            col = sprLine[7]; linePtr[7] = col ? emuPalette[col >> 1] : color[(charPattern >> 0) & 1];
             sprLine += 8;
         }
         else {
-            dstBitmap[0] = color[(charPattern >> 7) & 1];
-            dstBitmap[1] = color[(charPattern >> 6) & 1];
-            dstBitmap[2] = color[(charPattern >> 5) & 1];
-            dstBitmap[3] = color[(charPattern >> 4) & 1];
-            dstBitmap[4] = color[(charPattern >> 3) & 1];
-            dstBitmap[5] = color[(charPattern >> 2) & 1];
-            dstBitmap[6] = color[(charPattern >> 1) & 1];
-            dstBitmap[7] = color[(charPattern >> 0) & 1];
+            linePtr[0] = color[(charPattern >> 7) & 1];
+            linePtr[1] = color[(charPattern >> 6) & 1];
+            linePtr[2] = color[(charPattern >> 5) & 1];
+            linePtr[3] = color[(charPattern >> 4) & 1];
+            linePtr[4] = color[(charPattern >> 3) & 1];
+            linePtr[5] = color[(charPattern >> 2) & 1];
+            linePtr[6] = color[(charPattern >> 1) & 1];
+            linePtr[7] = color[(charPattern >> 0) & 1];
         }
 
         charTable++;
-        dstBitmap += 8; 
+        linePtr += 8; 
         X++;
     }
 
@@ -559,7 +560,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 {
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
     static int     addrSwitch;
@@ -574,9 +575,9 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y,  emuPalette[vdp->BGColor], 0, 0);
+        linePtr = RefreshBorder(vdp, Y,  emuPalette[vdp->BGColor], 0, 0);
         sprLine   = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
 
@@ -599,24 +600,24 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuPalette[vdp->BGColor];
-            dstBitmap[0] = bgColor;
-            dstBitmap[1] = bgColor;
-            dstBitmap[2] = bgColor;
-            dstBitmap[3] = bgColor;
-            dstBitmap[4] = bgColor;
-            dstBitmap[5] = bgColor;
-            dstBitmap[6] = bgColor;
-            dstBitmap[7] = bgColor;
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr[6] = bgColor;
+            linePtr[7] = bgColor;
 
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine   += sprLine != NULL ? 8 : 0;
-            dstBitmap += 8;
+            linePtr += 8;
             charTable += 4;
             X++;
         }
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -645,52 +646,52 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     while (X < X2) {
         if (sprLine != NULL) {
             if (hScroll & 1) {
-                col = sprLine[0]; dstBitmap[0] = emuPalette[col? col >> 1 : charTable[0] & 0x0f]; UPDATE_T();
-                col = sprLine[1]; dstBitmap[1] = emuPalette[col? col >> 1 : charTable[1] >> 4];
-                col = sprLine[2]; dstBitmap[2] = emuPalette[col? col >> 1 : charTable[1] & 0x0f]; UPDATE_T();
-                col = sprLine[3]; dstBitmap[3] = emuPalette[col? col >> 1 : charTable[2] >> 4];
-                col = sprLine[4]; dstBitmap[4] = emuPalette[col? col >> 1 : charTable[2] & 0x0f]; UPDATE_T();
-                col = sprLine[5]; dstBitmap[5] = emuPalette[col? col >> 1 : charTable[3] >> 4];
-                col = sprLine[6]; dstBitmap[6] = emuPalette[col? col >> 1 : charTable[3] & 0x0f]; UPDATE_T();
-                col = sprLine[7]; dstBitmap[7] = emuPalette[col? col >> 1 : charTable[4] >> 4];
+                col = sprLine[0]; linePtr[0] = emuPalette[col? col >> 1 : charTable[0] & 0x0f]; UPDATE_T();
+                col = sprLine[1]; linePtr[1] = emuPalette[col? col >> 1 : charTable[1] >> 4];
+                col = sprLine[2]; linePtr[2] = emuPalette[col? col >> 1 : charTable[1] & 0x0f]; UPDATE_T();
+                col = sprLine[3]; linePtr[3] = emuPalette[col? col >> 1 : charTable[2] >> 4];
+                col = sprLine[4]; linePtr[4] = emuPalette[col? col >> 1 : charTable[2] & 0x0f]; UPDATE_T();
+                col = sprLine[5]; linePtr[5] = emuPalette[col? col >> 1 : charTable[3] >> 4];
+                col = sprLine[6]; linePtr[6] = emuPalette[col? col >> 1 : charTable[3] & 0x0f]; UPDATE_T();
+                col = sprLine[7]; linePtr[7] = emuPalette[col? col >> 1 : charTable[4] >> 4];
             }
             else {     
-                col = sprLine[0]; dstBitmap[0] = emuPalette[col? col >> 1 : charTable[0] >> 4];
-                col = sprLine[1]; dstBitmap[1] = emuPalette[col? col >> 1 : charTable[0] & 0x0f]; UPDATE_T();
-                col = sprLine[2]; dstBitmap[2] = emuPalette[col? col >> 1 : charTable[1] >> 4];
-                col = sprLine[3]; dstBitmap[3] = emuPalette[col? col >> 1 : charTable[1] & 0x0f]; UPDATE_T();
-                col = sprLine[4]; dstBitmap[4] = emuPalette[col? col >> 1 : charTable[2] >> 4];
-                col = sprLine[5]; dstBitmap[5] = emuPalette[col? col >> 1 : charTable[2] & 0x0f]; UPDATE_T();
-                col = sprLine[6]; dstBitmap[6] = emuPalette[col? col >> 1 : charTable[3] >> 4];
-                col = sprLine[7]; dstBitmap[7] = emuPalette[col? col >> 1 : charTable[3] & 0x0f]; UPDATE_T();
+                col = sprLine[0]; linePtr[0] = emuPalette[col? col >> 1 : charTable[0] >> 4];
+                col = sprLine[1]; linePtr[1] = emuPalette[col? col >> 1 : charTable[0] & 0x0f]; UPDATE_T();
+                col = sprLine[2]; linePtr[2] = emuPalette[col? col >> 1 : charTable[1] >> 4];
+                col = sprLine[3]; linePtr[3] = emuPalette[col? col >> 1 : charTable[1] & 0x0f]; UPDATE_T();
+                col = sprLine[4]; linePtr[4] = emuPalette[col? col >> 1 : charTable[2] >> 4];
+                col = sprLine[5]; linePtr[5] = emuPalette[col? col >> 1 : charTable[2] & 0x0f]; UPDATE_T();
+                col = sprLine[6]; linePtr[6] = emuPalette[col? col >> 1 : charTable[3] >> 4];
+                col = sprLine[7]; linePtr[7] = emuPalette[col? col >> 1 : charTable[3] & 0x0f]; UPDATE_T();
             }
             sprLine += 8;
         }
         else {
             if (hScroll & 1) {
-                dstBitmap[0] = emuPalette[charTable[0] & 0x0f]; UPDATE_T();
-                dstBitmap[1] = emuPalette[charTable[1] >> 4];
-                dstBitmap[2] = emuPalette[charTable[1] & 0x0f]; UPDATE_T();
-                dstBitmap[3] = emuPalette[charTable[2] >> 4];
-                dstBitmap[4] = emuPalette[charTable[2] & 0x0f]; UPDATE_T();
-                dstBitmap[5] = emuPalette[charTable[3] >> 4];
-                dstBitmap[6] = emuPalette[charTable[3] & 0x0f]; UPDATE_T();
-                dstBitmap[7] = emuPalette[charTable[4] >> 4];
+                linePtr[0] = emuPalette[charTable[0] & 0x0f]; UPDATE_T();
+                linePtr[1] = emuPalette[charTable[1] >> 4];
+                linePtr[2] = emuPalette[charTable[1] & 0x0f]; UPDATE_T();
+                linePtr[3] = emuPalette[charTable[2] >> 4];
+                linePtr[4] = emuPalette[charTable[2] & 0x0f]; UPDATE_T();
+                linePtr[5] = emuPalette[charTable[3] >> 4];
+                linePtr[6] = emuPalette[charTable[3] & 0x0f]; UPDATE_T();
+                linePtr[7] = emuPalette[charTable[4] >> 4];
             }
             else {     
-                dstBitmap[0] = emuPalette[charTable[0] >> 4];
-                dstBitmap[1] = emuPalette[charTable[0] & 0x0f]; UPDATE_T();
-                dstBitmap[2] = emuPalette[charTable[1] >> 4];
-                dstBitmap[3] = emuPalette[charTable[1] & 0x0f]; UPDATE_T();
-                dstBitmap[4] = emuPalette[charTable[2] >> 4];
-                dstBitmap[5] = emuPalette[charTable[2] & 0x0f]; UPDATE_T();
-                dstBitmap[6] = emuPalette[charTable[3] >> 4];
-                dstBitmap[7] = emuPalette[charTable[3] & 0x0f]; UPDATE_T();
+                linePtr[0] = emuPalette[charTable[0] >> 4];
+                linePtr[1] = emuPalette[charTable[0] & 0x0f]; UPDATE_T();
+                linePtr[2] = emuPalette[charTable[1] >> 4];
+                linePtr[3] = emuPalette[charTable[1] & 0x0f]; UPDATE_T();
+                linePtr[4] = emuPalette[charTable[2] >> 4];
+                linePtr[5] = emuPalette[charTable[2] & 0x0f]; UPDATE_T();
+                linePtr[6] = emuPalette[charTable[3] >> 4];
+                linePtr[7] = emuPalette[charTable[3] & 0x0f]; UPDATE_T();
             }
         }
     #undef UPDATE_T
 
-        dstBitmap += 8; 
+        linePtr += 8; 
         charTable += 4;
         X++;
      }
@@ -707,16 +708,16 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     static int     hScroll512;
     static int     scroll;
     static int     page;
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
     int col;
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor & 0x03], 1, 0);
+        linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor & 0x03], 1, 0);
         sprLine   = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         
@@ -736,24 +737,24 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuPalette[vdp->BGColor & 0x03];
-            dstBitmap[0]  = dstBitmap[1]  = bgColor; 
-            dstBitmap[2]  = dstBitmap[3]  = bgColor; 
-            dstBitmap[4]  = dstBitmap[5]  = bgColor; 
-            dstBitmap[6]  = dstBitmap[7]  = bgColor; 
-            dstBitmap[8]  = dstBitmap[9]  = bgColor; 
-            dstBitmap[10] = dstBitmap[11] = bgColor; 
-            dstBitmap[12] = dstBitmap[13] = bgColor; 
-            dstBitmap[14] = dstBitmap[15] = bgColor; 
+            linePtr[0]  = linePtr[1]  = bgColor; 
+            linePtr[2]  = linePtr[3]  = bgColor; 
+            linePtr[4]  = linePtr[5]  = bgColor; 
+            linePtr[6]  = linePtr[7]  = bgColor; 
+            linePtr[8]  = linePtr[9]  = bgColor; 
+            linePtr[10] = linePtr[11] = bgColor; 
+            linePtr[12] = linePtr[13] = bgColor; 
+            linePtr[14] = linePtr[15] = bgColor; 
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine += sprLine != NULL ? 8 : 0; 
-            dstBitmap += 16; 
+            linePtr += 16; 
             charTable += 4;
             X++;
         }
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -765,87 +766,87 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     while (X < X2) {
         if (sprLine != NULL) {
             if (scroll & 1) {
-                (col = sprLine[0]) ? dstBitmap[0]  = dstBitmap[1]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[0],
-                    dstBitmap[0]  = emuPalette[(col >> 2) & 3],
-                    dstBitmap[1]  = emuPalette[(col >> 0) & 3]);
+                    linePtr[0]  = emuPalette[(col >> 2) & 3],
+                    linePtr[1]  = emuPalette[(col >> 0) & 3]);
                 UPDATE_T();
-                (col = sprLine[1]) ? dstBitmap[2]  = dstBitmap[3]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[1],
-                    dstBitmap[2]  = emuPalette[(col >> 6) & 3], 
-                    dstBitmap[3]  = emuPalette[(col >> 4) & 3]);
+                    linePtr[2]  = emuPalette[(col >> 6) & 3], 
+                    linePtr[3]  = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
-                (col = sprLine[2]) ? dstBitmap[4]  = dstBitmap[5]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[1], 
-                    dstBitmap[4]  = emuPalette[(col >> 2) & 3], 
-                    dstBitmap[5]  = emuPalette[(col >> 0) & 3]);
+                    linePtr[4]  = emuPalette[(col >> 2) & 3], 
+                    linePtr[5]  = emuPalette[(col >> 0) & 3]);
                 UPDATE_T();
-                (col = sprLine[3]) ? dstBitmap[6]  = dstBitmap[7]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[2],
-                    dstBitmap[6]  = emuPalette[(col >> 6) & 3],
-                    dstBitmap[7]  = emuPalette[(col >> 4) & 3]);
+                    linePtr[6]  = emuPalette[(col >> 6) & 3],
+                    linePtr[7]  = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
-                (col = sprLine[4]) ? dstBitmap[8]  = dstBitmap[9]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[2],
-                    dstBitmap[8]  = emuPalette[(col >> 2) & 3],
-                    dstBitmap[9]  = emuPalette[(col >> 0) & 3]);
+                    linePtr[8]  = emuPalette[(col >> 2) & 3],
+                    linePtr[9]  = emuPalette[(col >> 0) & 3]);
                 UPDATE_T();
-                (col = sprLine[5]) ? dstBitmap[10] = dstBitmap[11] = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[3], 
-                    dstBitmap[10] = emuPalette[(col >> 6) & 3], 
-                    dstBitmap[11] = emuPalette[(col >> 4) & 3]); 
+                    linePtr[10] = emuPalette[(col >> 6) & 3], 
+                    linePtr[11] = emuPalette[(col >> 4) & 3]); 
                 UPDATE_T();
-                (col = sprLine[6]) ? dstBitmap[12] = dstBitmap[13] = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[3],
-                    dstBitmap[12] = emuPalette[(col >> 2) & 3], 
-                    dstBitmap[13] = emuPalette[(col >> 0) & 3]); 
+                    linePtr[12] = emuPalette[(col >> 2) & 3], 
+                    linePtr[13] = emuPalette[(col >> 0) & 3]); 
                 UPDATE_T();
-                (col = sprLine[7]) ? dstBitmap[14] = dstBitmap[15] = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[4],
-                    dstBitmap[14] = emuPalette[(col >> 6) & 3],
-                    dstBitmap[15] = emuPalette[(col >> 4) & 3]);
+                    linePtr[14] = emuPalette[(col >> 6) & 3],
+                    linePtr[15] = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
             }
             else {
-                (col = sprLine[0]) ? dstBitmap[0]  = dstBitmap[1]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[0], 
-                    dstBitmap[0]  = emuPalette[(col >> 6) & 3], 
-                    dstBitmap[1]  = emuPalette[(col >> 4) & 3]);
+                    linePtr[0]  = emuPalette[(col >> 6) & 3], 
+                    linePtr[1]  = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
-                (col = sprLine[1]) ? dstBitmap[2]  = dstBitmap[3]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[0], 
-                    dstBitmap[2]  = emuPalette[(col >> 2) & 3],
-                    dstBitmap[3]  = emuPalette[(col >> 0) & 3]); 
+                    linePtr[2]  = emuPalette[(col >> 2) & 3],
+                    linePtr[3]  = emuPalette[(col >> 0) & 3]); 
                 UPDATE_T();
-                (col = sprLine[2]) ? dstBitmap[4]  = dstBitmap[5]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[1], 
-                    dstBitmap[4]  = emuPalette[(col >> 6) & 3], 
-                    dstBitmap[5]  = emuPalette[(col >> 4) & 3]);
+                    linePtr[4]  = emuPalette[(col >> 6) & 3], 
+                    linePtr[5]  = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
-                (col = sprLine[3]) ? dstBitmap[6]  = dstBitmap[7]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[1],
-                    dstBitmap[6]  = emuPalette[(col >> 2) & 3], 
-                    dstBitmap[7]  = emuPalette[(col >> 0) & 3]);
+                    linePtr[6]  = emuPalette[(col >> 2) & 3], 
+                    linePtr[7]  = emuPalette[(col >> 0) & 3]);
                 UPDATE_T();
-                (col = sprLine[4]) ? dstBitmap[8]  = dstBitmap[9]  = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[2], 
-                    dstBitmap[8]  = emuPalette[(col >> 6) & 3],
-                    dstBitmap[9]  = emuPalette[(col >> 4) & 3]);
+                    linePtr[8]  = emuPalette[(col >> 6) & 3],
+                    linePtr[9]  = emuPalette[(col >> 4) & 3]);
                 UPDATE_T();
-                (col = sprLine[5]) ? dstBitmap[10] = dstBitmap[11] = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[2], 
-                    dstBitmap[10] = emuPalette[(col >> 2) & 3],
-                    dstBitmap[11] = emuPalette[(col >> 0) & 3]); 
+                    linePtr[10] = emuPalette[(col >> 2) & 3],
+                    linePtr[11] = emuPalette[(col >> 0) & 3]); 
                 UPDATE_T();
-                (col = sprLine[6]) ? dstBitmap[12] = dstBitmap[13] = emuPalette[(col >> 1) & 3] : 
+                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = emuPalette[(col >> 1) & 3] : 
                     (col = charTable[3],
-                    dstBitmap[12] = emuPalette[(col >> 6) & 3], 
-                    dstBitmap[13] = emuPalette[(col >> 4) & 3]); 
+                    linePtr[12] = emuPalette[(col >> 6) & 3], 
+                    linePtr[13] = emuPalette[(col >> 4) & 3]); 
                 UPDATE_T();
-                (col = sprLine[7]) ? dstBitmap[14] = dstBitmap[15] = emuPalette[(col >> 1) & 3] :
+                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = emuPalette[(col >> 1) & 3] :
                     (col = charTable[3],
-                    dstBitmap[14] = emuPalette[(col >> 2) & 3], 
-                    dstBitmap[15] = emuPalette[(col >> 0) & 3]);
+                    linePtr[14] = emuPalette[(col >> 2) & 3], 
+                    linePtr[15] = emuPalette[(col >> 0) & 3]);
                 UPDATE_T();
             }
             sprLine += 8; 
@@ -853,76 +854,76 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         else {
             if (scroll & 1) {
                 col = charTable[0]; 
-                dstBitmap[0]  = emuPalette[(col >> 2) & 3]; 
-                dstBitmap[1]  = emuPalette[(col >> 0) & 3]; 
+                linePtr[0]  = emuPalette[(col >> 2) & 3]; 
+                linePtr[1]  = emuPalette[(col >> 0) & 3]; 
                 UPDATE_T();
                 col = charTable[1]; 
-                dstBitmap[2]  = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[3]  = emuPalette[(col >> 4) & 3];
+                linePtr[2]  = emuPalette[(col >> 6) & 3]; 
+                linePtr[3]  = emuPalette[(col >> 4) & 3];
                 UPDATE_T();
                 col = charTable[1]; 
-                dstBitmap[4]  = emuPalette[(col >> 2) & 3];
-                dstBitmap[5]  = emuPalette[(col >> 0) & 3];
+                linePtr[4]  = emuPalette[(col >> 2) & 3];
+                linePtr[5]  = emuPalette[(col >> 0) & 3];
                 UPDATE_T();
                 col = charTable[2]; 
-                dstBitmap[6]  = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[7]  = emuPalette[(col >> 4) & 3];
+                linePtr[6]  = emuPalette[(col >> 6) & 3]; 
+                linePtr[7]  = emuPalette[(col >> 4) & 3];
                 UPDATE_T();
                 col = charTable[2]; 
-                dstBitmap[8]  = emuPalette[(col >> 2) & 3]; 
-                dstBitmap[9]  = emuPalette[(col >> 0) & 3];
+                linePtr[8]  = emuPalette[(col >> 2) & 3]; 
+                linePtr[9]  = emuPalette[(col >> 0) & 3];
                 UPDATE_T();
                 col = charTable[3]; 
-                dstBitmap[10] = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[11] = emuPalette[(col >> 4) & 3]; 
+                linePtr[10] = emuPalette[(col >> 6) & 3]; 
+                linePtr[11] = emuPalette[(col >> 4) & 3]; 
                 UPDATE_T();
                 col = charTable[3]; 
-                dstBitmap[12] = emuPalette[(col >> 2) & 3]; 
-                dstBitmap[13] = emuPalette[(col >> 0) & 3];
+                linePtr[12] = emuPalette[(col >> 2) & 3]; 
+                linePtr[13] = emuPalette[(col >> 0) & 3];
                 UPDATE_T();
                 col = charTable[4]; 
-                dstBitmap[14] = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[15] = emuPalette[(col >> 4) & 3]; 
+                linePtr[14] = emuPalette[(col >> 6) & 3]; 
+                linePtr[15] = emuPalette[(col >> 4) & 3]; 
                 UPDATE_T();
             }
             else {
                 col = charTable[0];
-                dstBitmap[0]  = emuPalette[(col >> 6) & 3];
-                dstBitmap[1]  = emuPalette[(col >> 4) & 3];
+                linePtr[0]  = emuPalette[(col >> 6) & 3];
+                linePtr[1]  = emuPalette[(col >> 4) & 3];
                 UPDATE_T();
                 col = charTable[0];
-                dstBitmap[2]  = emuPalette[(col >> 2) & 3]; 
-                dstBitmap[3]  = emuPalette[(col >> 0) & 3]; 
+                linePtr[2]  = emuPalette[(col >> 2) & 3]; 
+                linePtr[3]  = emuPalette[(col >> 0) & 3]; 
                 UPDATE_T();
                 col = charTable[1];
-                dstBitmap[4]  = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[5]  = emuPalette[(col >> 4) & 3]; 
+                linePtr[4]  = emuPalette[(col >> 6) & 3]; 
+                linePtr[5]  = emuPalette[(col >> 4) & 3]; 
                 UPDATE_T();
                 col = charTable[1]; 
-                dstBitmap[6]  = emuPalette[(col >> 2) & 3];
-                dstBitmap[7]  = emuPalette[(col >> 0) & 3]; 
+                linePtr[6]  = emuPalette[(col >> 2) & 3];
+                linePtr[7]  = emuPalette[(col >> 0) & 3]; 
                 UPDATE_T();
                 col = charTable[2]; 
-                dstBitmap[8]  = emuPalette[(col >> 6) & 3];
-                dstBitmap[9]  = emuPalette[(col >> 4) & 3]; 
+                linePtr[8]  = emuPalette[(col >> 6) & 3];
+                linePtr[9]  = emuPalette[(col >> 4) & 3]; 
                 UPDATE_T();
                 col = charTable[2]; 
-                dstBitmap[10] = emuPalette[(col >> 2) & 3];
-                dstBitmap[11] = emuPalette[(col >> 0) & 3]; 
+                linePtr[10] = emuPalette[(col >> 2) & 3];
+                linePtr[11] = emuPalette[(col >> 0) & 3]; 
                 UPDATE_T();
                 col = charTable[3]; 
-                dstBitmap[12] = emuPalette[(col >> 6) & 3]; 
-                dstBitmap[13] = emuPalette[(col >> 4) & 3]; 
+                linePtr[12] = emuPalette[(col >> 6) & 3]; 
+                linePtr[13] = emuPalette[(col >> 4) & 3]; 
                 UPDATE_T();
                 col = charTable[3]; 
-                dstBitmap[14] = emuPalette[(col >> 2) & 3];
-                dstBitmap[15] = emuPalette[(col >> 0) & 3]; 
+                linePtr[14] = emuPalette[(col >> 2) & 3];
+                linePtr[15] = emuPalette[(col >> 0) & 3]; 
                 UPDATE_T();
             }
         }
     #undef UPDATE_T
 
-        dstBitmap += 16; 
+        linePtr += 16; 
         charTable += 4;
         X++;
     }
@@ -935,7 +936,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 {
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
     static int     hScroll512;
@@ -948,9 +949,9 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 0);
+        linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 0);
         sprLine = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         
@@ -972,24 +973,24 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuPalette[vdp->BGColor];
-            dstBitmap[0]  = dstBitmap[1]  = bgColor; 
-            dstBitmap[2]  = dstBitmap[3]  = bgColor; 
-            dstBitmap[4]  = dstBitmap[5]  = bgColor; 
-            dstBitmap[6]  = dstBitmap[7]  = bgColor; 
-            dstBitmap[8]  = dstBitmap[9]  = bgColor; 
-            dstBitmap[10] = dstBitmap[11] = bgColor; 
-            dstBitmap[12] = dstBitmap[13] = bgColor; 
-            dstBitmap[14] = dstBitmap[15] = bgColor; 
+            linePtr[0]  = linePtr[1]  = bgColor; 
+            linePtr[2]  = linePtr[3]  = bgColor; 
+            linePtr[4]  = linePtr[5]  = bgColor; 
+            linePtr[6]  = linePtr[7]  = bgColor; 
+            linePtr[8]  = linePtr[9]  = bgColor; 
+            linePtr[10] = linePtr[11] = bgColor; 
+            linePtr[12] = linePtr[13] = bgColor; 
+            linePtr[14] = linePtr[15] = bgColor; 
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine   += sprLine != NULL ? 8 : 0;
-            dstBitmap += 16; 
+            linePtr += 16; 
             charTable += 4;
             X++; 
         }
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -1018,87 +1019,87 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
         if (sprLine != NULL) {
             if (scroll & 1) {
-                (col = sprLine[0]) ? dstBitmap[0]  = dstBitmap[1]  = emuPalette[col >> 1] : 
+                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = emuPalette[col >> 1] : 
                 (col = charTable[vdp->vram128], 
-                dstBitmap[0]  = emuPalette[col >> 4],
-                dstBitmap[1]  = emuPalette[col & 0xf]);
+                linePtr[0]  = emuPalette[col >> 4],
+                linePtr[1]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[1]) ? dstBitmap[2]  = dstBitmap[3]  = emuPalette[col >> 1] :
+                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = emuPalette[col >> 1] :
                 (col = charTable[1],  
-                dstBitmap[2]  = emuPalette[col >> 4],
-                dstBitmap[3]  = emuPalette[col & 0xf]); 
+                linePtr[2]  = emuPalette[col >> 4],
+                linePtr[3]  = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[2]) ? dstBitmap[4]  = dstBitmap[5]  = emuPalette[col >> 1] : 
+                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = emuPalette[col >> 1] : 
                 (col = charTable[vdp->vram128|1],
-                dstBitmap[4]  = emuPalette[col >> 4],
-                dstBitmap[5]  = emuPalette[col & 0xf]);
+                linePtr[4]  = emuPalette[col >> 4],
+                linePtr[5]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[3]) ? dstBitmap[6]  = dstBitmap[7]  = emuPalette[col >> 1] : 
+                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = emuPalette[col >> 1] : 
                 (col = charTable[2],   
-                dstBitmap[6]  = emuPalette[col >> 4],
-                dstBitmap[7]  = emuPalette[col & 0xf]); 
+                linePtr[6]  = emuPalette[col >> 4],
+                linePtr[7]  = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[4]) ? dstBitmap[8]  = dstBitmap[9]  = emuPalette[col >> 1] :
+                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = emuPalette[col >> 1] :
                 (col = charTable[vdp->vram128|2], 
-                dstBitmap[8]  = emuPalette[col >> 4], 
-                dstBitmap[9]  = emuPalette[col & 0xf]);
+                linePtr[8]  = emuPalette[col >> 4], 
+                linePtr[9]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[5]) ? dstBitmap[10] = dstBitmap[11] = emuPalette[col >> 1] : 
+                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = emuPalette[col >> 1] : 
                 (col = charTable[3],      
-                dstBitmap[10] = emuPalette[col >> 4],
-                dstBitmap[11] = emuPalette[col & 0xf]); 
+                linePtr[10] = emuPalette[col >> 4],
+                linePtr[11] = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[6]) ? dstBitmap[12] = dstBitmap[13] = emuPalette[col >> 1] : 
+                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = emuPalette[col >> 1] : 
                 (col = charTable[vdp->vram128|3], 
-                dstBitmap[12] = emuPalette[col >> 4], 
-                dstBitmap[13] = emuPalette[col & 0xf]);
+                linePtr[12] = emuPalette[col >> 4], 
+                linePtr[13] = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[7]) ? dstBitmap[14] = dstBitmap[15] = emuPalette[col >> 1] : 
+                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = emuPalette[col >> 1] : 
                 (col = charTable[4],  
-                dstBitmap[14] = emuPalette[col >> 4], 
-                dstBitmap[15] = emuPalette[col & 0xf]); 
+                linePtr[14] = emuPalette[col >> 4], 
+                linePtr[15] = emuPalette[col & 0xf]); 
                 UPDATE_T();
             }
             else {
-                (col = sprLine[0]) ? dstBitmap[0]  = dstBitmap[1]  = emuPalette[col >> 1] : 
+                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = emuPalette[col >> 1] : 
                 (col = charTable[0],      
-                dstBitmap[0]  = emuPalette[col >> 4],
-                dstBitmap[1]  = emuPalette[col & 0xf]);
+                linePtr[0]  = emuPalette[col >> 4],
+                linePtr[1]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[1]) ? dstBitmap[2]  = dstBitmap[3]  = emuPalette[col >> 1] : 
+                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = emuPalette[col >> 1] : 
                 (col = charTable[vdp->vram128], 
-                dstBitmap[2]  = emuPalette[col >> 4],
-                dstBitmap[3]  = emuPalette[col & 0xf]);
+                linePtr[2]  = emuPalette[col >> 4],
+                linePtr[3]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[2]) ? dstBitmap[4]  = dstBitmap[5]  = emuPalette[col >> 1] :
+                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = emuPalette[col >> 1] :
                 (col = charTable[1],    
-                dstBitmap[4]  = emuPalette[col >> 4], 
-                dstBitmap[5]  = emuPalette[col & 0xf]);
+                linePtr[4]  = emuPalette[col >> 4], 
+                linePtr[5]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[3]) ? dstBitmap[6]  = dstBitmap[7]  = emuPalette[col >> 1] :
+                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = emuPalette[col >> 1] :
                 (col = charTable[vdp->vram128|1],
-                dstBitmap[6]  = emuPalette[col >> 4], 
-                dstBitmap[7]  = emuPalette[col & 0xf]);
+                linePtr[6]  = emuPalette[col >> 4], 
+                linePtr[7]  = emuPalette[col & 0xf]);
                 UPDATE_T();
-                (col = sprLine[4]) ? dstBitmap[8]  = dstBitmap[9]  = emuPalette[col >> 1] : 
+                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = emuPalette[col >> 1] : 
                 (col = charTable[2],      
-                dstBitmap[8]  = emuPalette[col >> 4], 
-                dstBitmap[9]  = emuPalette[col & 0xf]); 
+                linePtr[8]  = emuPalette[col >> 4], 
+                linePtr[9]  = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[5]) ? dstBitmap[10] = dstBitmap[11] = emuPalette[col >> 1] :
+                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = emuPalette[col >> 1] :
                 (col = charTable[vdp->vram128|2], 
-                dstBitmap[10] = emuPalette[col >> 4], 
-                dstBitmap[11] = emuPalette[col & 0xf]); 
+                linePtr[10] = emuPalette[col >> 4], 
+                linePtr[11] = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[6]) ? dstBitmap[12] = dstBitmap[13] = emuPalette[col >> 1] : 
+                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = emuPalette[col >> 1] : 
                 (col = charTable[3],   
-                dstBitmap[12] = emuPalette[col >> 4], 
-                dstBitmap[13] = emuPalette[col & 0xf]); 
+                linePtr[12] = emuPalette[col >> 4], 
+                linePtr[13] = emuPalette[col & 0xf]); 
                 UPDATE_T();
-                (col = sprLine[7]) ? dstBitmap[14] = dstBitmap[15] = emuPalette[col >> 1] : 
+                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = emuPalette[col >> 1] : 
                 (col = charTable[vdp->vram128|3], 
-                dstBitmap[14] = emuPalette[col >> 4], 
-                dstBitmap[15] = emuPalette[col & 0xf]); 
+                linePtr[14] = emuPalette[col >> 4], 
+                linePtr[15] = emuPalette[col & 0xf]); 
                 UPDATE_T();
             }
             sprLine += 8; 
@@ -1106,76 +1107,76 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
         else {
             if (scroll & 1) {
                 col = charTable[vdp->vram128];  
-                dstBitmap[0]  = emuPalette[col >> 4]; 
-                dstBitmap[1]  = emuPalette[col & 0xf];
+                linePtr[0]  = emuPalette[col >> 4]; 
+                linePtr[1]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[1];
-                dstBitmap[2]  = emuPalette[col >> 4]; 
-                dstBitmap[3]  = emuPalette[col & 0xf];
+                linePtr[2]  = emuPalette[col >> 4]; 
+                linePtr[3]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[vdp->vram128|1];
-                dstBitmap[4]  = emuPalette[col >> 4];
-                dstBitmap[5]  = emuPalette[col & 0xf];
+                linePtr[4]  = emuPalette[col >> 4];
+                linePtr[5]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[2];
-                dstBitmap[6]  = emuPalette[col >> 4];
-                dstBitmap[7]  = emuPalette[col & 0xf]; 
+                linePtr[6]  = emuPalette[col >> 4];
+                linePtr[7]  = emuPalette[col & 0xf]; 
                 UPDATE_T();
                 col = charTable[vdp->vram128|2];
-                dstBitmap[8]  = emuPalette[col >> 4]; 
-                dstBitmap[9]  = emuPalette[col & 0xf]; 
+                linePtr[8]  = emuPalette[col >> 4]; 
+                linePtr[9]  = emuPalette[col & 0xf]; 
                 UPDATE_T();
                 col = charTable[3];
-                dstBitmap[10] = emuPalette[col >> 4]; 
-                dstBitmap[11] = emuPalette[col & 0xf];
+                linePtr[10] = emuPalette[col >> 4]; 
+                linePtr[11] = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[vdp->vram128|3];
-                dstBitmap[12] = emuPalette[col >> 4]; 
-                dstBitmap[13] = emuPalette[col & 0xf];
+                linePtr[12] = emuPalette[col >> 4]; 
+                linePtr[13] = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[4];
-                dstBitmap[14] = emuPalette[col >> 4]; 
-                dstBitmap[15] = emuPalette[col & 0xf];
+                linePtr[14] = emuPalette[col >> 4]; 
+                linePtr[15] = emuPalette[col & 0xf];
                 UPDATE_T();
             }
             else {
                 col = charTable[0];
-                dstBitmap[0]  = emuPalette[col >> 4];
-                dstBitmap[1]  = emuPalette[col & 0xf];
+                linePtr[0]  = emuPalette[col >> 4];
+                linePtr[1]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[vdp->vram128];
-                dstBitmap[2]  = emuPalette[col >> 4];
-                dstBitmap[3]  = emuPalette[col & 0xf];
+                linePtr[2]  = emuPalette[col >> 4];
+                linePtr[3]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[1];
-                dstBitmap[4]  = emuPalette[col >> 4];
-                dstBitmap[5]  = emuPalette[col & 0xf];
+                linePtr[4]  = emuPalette[col >> 4];
+                linePtr[5]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[vdp->vram128|1];
-                dstBitmap[6]  = emuPalette[col >> 4];
-                dstBitmap[7]  = emuPalette[col & 0xf];
+                linePtr[6]  = emuPalette[col >> 4];
+                linePtr[7]  = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[2];
-                dstBitmap[8]  = emuPalette[col >> 4];
-                dstBitmap[9]  = emuPalette[col & 0xf]; 
+                linePtr[8]  = emuPalette[col >> 4];
+                linePtr[9]  = emuPalette[col & 0xf]; 
                 UPDATE_T();
                 col = charTable[vdp->vram128|2];
-                dstBitmap[10] = emuPalette[col >> 4];
-                dstBitmap[11] = emuPalette[col & 0xf]; 
+                linePtr[10] = emuPalette[col >> 4];
+                linePtr[11] = emuPalette[col & 0xf]; 
                 UPDATE_T();
                 col = charTable[3];
-                dstBitmap[12] = emuPalette[col >> 4];
-                dstBitmap[13] = emuPalette[col & 0xf];
+                linePtr[12] = emuPalette[col >> 4];
+                linePtr[13] = emuPalette[col & 0xf];
                 UPDATE_T();
                 col = charTable[vdp->vram128|3];
-                dstBitmap[14] = emuPalette[col >> 4];
-                dstBitmap[15] = emuPalette[col & 0xf];
+                linePtr[14] = emuPalette[col >> 4];
+                linePtr[15] = emuPalette[col & 0xf];
                 UPDATE_T();
             }
         }
     #undef UPDATE_T
 
-        dstBitmap += 16; 
+        linePtr += 16; 
         charTable += 4;
         X++;
     }
@@ -1192,7 +1193,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         0x49, 0x4B, 0x59, 0x5B, 0xC9, 0xCB, 0xD9, 0xDB 
     };
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
     static int     hScroll;
@@ -1206,9 +1207,9 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
         sprLine = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         
@@ -1231,24 +1232,24 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuFixedPalette[vdp->BGColor];
-            dstBitmap[0] = bgColor;
-            dstBitmap[1] = bgColor;
-            dstBitmap[2] = bgColor;
-            dstBitmap[3] = bgColor;
-            dstBitmap[4] = bgColor;
-            dstBitmap[5] = bgColor;
-            dstBitmap[6] = bgColor;
-            dstBitmap[7] = bgColor;
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr[6] = bgColor;
+            linePtr[7] = bgColor;
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine   += sprLine != NULL ? 8 : 0; 
             charTable += 4;
-            dstBitmap += 8; 
+            linePtr += 8; 
             X++; 
         }
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -1275,68 +1276,68 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     while (X < X2) {
         if (sprLine != NULL) {
             if (scroll & 1) {
-                col = sprLine[0]; dstBitmap[0] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[0]; linePtr[0] = col ? emuFixedSpritePalette[col >> 1] : 
             emuFixedPalette[charTable[vdp->vram128]]; UPDATE_T();
-                col = sprLine[1]; dstBitmap[1] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[1]; linePtr[1] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[1]]; UPDATE_T();
-                col = sprLine[2]; dstBitmap[2] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[2]; linePtr[2] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
-                col = sprLine[3]; dstBitmap[3] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[3]; linePtr[3] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[2]]; UPDATE_T();
-                col = sprLine[4]; dstBitmap[4] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[4]; linePtr[4] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
-                col = sprLine[5]; dstBitmap[5] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[5]; linePtr[5] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[3]]; UPDATE_T();
-                col = sprLine[6]; dstBitmap[6] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[6]; linePtr[6] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
-                col = sprLine[7]; dstBitmap[7] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[7]; linePtr[7] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[4]]; UPDATE_T();
             }
             else {
-                col = sprLine[0]; dstBitmap[0] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[0]; linePtr[0] = col ? emuFixedSpritePalette[col >> 1] : 
             emuFixedPalette[charTable[0]]; UPDATE_T();
-                col = sprLine[1]; dstBitmap[1] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[1]; linePtr[1] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128]]; UPDATE_T();
-                col = sprLine[2]; dstBitmap[2] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[2]; linePtr[2] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[1]]; UPDATE_T();
-                col = sprLine[3]; dstBitmap[3] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[3]; linePtr[3] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
-                col = sprLine[4]; dstBitmap[4] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[4]; linePtr[4] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[2]]; UPDATE_T();
-                col = sprLine[5]; dstBitmap[5] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[5]; linePtr[5] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
-                col = sprLine[6]; dstBitmap[6] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[6]; linePtr[6] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[3]]; UPDATE_T();
-                col = sprLine[7]; dstBitmap[7] = col ? emuFixedSpritePalette[col >> 1] : 
+                col = sprLine[7]; linePtr[7] = col ? emuFixedSpritePalette[col >> 1] : 
                 emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
             }
             sprLine += 8; 
         }
         else {
             if (scroll & 1) {
-                dstBitmap[0] = emuFixedPalette[charTable[vdp->vram128]];   UPDATE_T();
-                dstBitmap[1] = emuFixedPalette[charTable[1]];         UPDATE_T();
-                dstBitmap[2] = emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
-                dstBitmap[3] = emuFixedPalette[charTable[2]];         UPDATE_T();
-                dstBitmap[4] = emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
-                dstBitmap[5] = emuFixedPalette[charTable[3]];         UPDATE_T();
-                dstBitmap[6] = emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
-                dstBitmap[7] = emuFixedPalette[charTable[4]];         UPDATE_T();
+                linePtr[0] = emuFixedPalette[charTable[vdp->vram128]];   UPDATE_T();
+                linePtr[1] = emuFixedPalette[charTable[1]];         UPDATE_T();
+                linePtr[2] = emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
+                linePtr[3] = emuFixedPalette[charTable[2]];         UPDATE_T();
+                linePtr[4] = emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
+                linePtr[5] = emuFixedPalette[charTable[3]];         UPDATE_T();
+                linePtr[6] = emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
+                linePtr[7] = emuFixedPalette[charTable[4]];         UPDATE_T();
             }
             else {
-                dstBitmap[0] = emuFixedPalette[charTable[0]];         UPDATE_T();
-                dstBitmap[1] = emuFixedPalette[charTable[vdp->vram128]];   UPDATE_T();
-                dstBitmap[2] = emuFixedPalette[charTable[1]];         UPDATE_T();
-                dstBitmap[3] = emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
-                dstBitmap[4] = emuFixedPalette[charTable[2]];         UPDATE_T();
-                dstBitmap[5] = emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
-                dstBitmap[6] = emuFixedPalette[charTable[3]];         UPDATE_T();
-                dstBitmap[7] = emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
+                linePtr[0] = emuFixedPalette[charTable[0]];         UPDATE_T();
+                linePtr[1] = emuFixedPalette[charTable[vdp->vram128]];   UPDATE_T();
+                linePtr[2] = emuFixedPalette[charTable[1]];         UPDATE_T();
+                linePtr[3] = emuFixedPalette[charTable[vdp->vram128|1]]; UPDATE_T();
+                linePtr[4] = emuFixedPalette[charTable[2]];         UPDATE_T();
+                linePtr[5] = emuFixedPalette[charTable[vdp->vram128|2]]; UPDATE_T();
+                linePtr[6] = emuFixedPalette[charTable[3]];         UPDATE_T();
+                linePtr[7] = emuFixedPalette[charTable[vdp->vram128|3]]; UPDATE_T();
             }
         }
     #undef UPDATE_T
 
-        charTable += 4; dstBitmap += 8; X++;
+        charTable += 4; linePtr += 8; X++;
     }
 
     if (rightBorder) {
@@ -1347,7 +1348,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = emptylineBuf;
     static int hScroll512;
@@ -1362,9 +1363,9 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y,  emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
+        linePtr = RefreshBorder(vdp, Y,  emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
         sprLine = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         
@@ -1386,19 +1387,19 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuFixedPalette[vdp->vdpRegs[7]];
-            dstBitmap[0] = bgColor;
-            dstBitmap[1] = bgColor;
-            dstBitmap[2] = bgColor;
-            dstBitmap[3] = bgColor;
-            dstBitmap[4] = bgColor;
-            dstBitmap[5] = bgColor;
-            dstBitmap[6] = bgColor;
-            dstBitmap[7] = bgColor;
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr[6] = bgColor;
+            linePtr[7] = bgColor;
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine += sprLine != NULL ? 8 : 0; 
             charTable += 4; 
-            dstBitmap += 8;
+            linePtr += 8;
             X++; 
         }
 
@@ -1417,16 +1418,16 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         if (sprLine != NULL) {
             switch (vdpHScroll(vdp) & 3) {
             case 0:
-                col = sprLine[0]; y = t0 >> 3; *dstBitmap++ = col ? emuPalette[col >> 1] : 
+                col = sprLine[0]; y = t0 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
                 y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 1:
-                col = sprLine[1]; y = t1 >> 3; *dstBitmap++ = col ? emuPalette[col >> 1] : 
+                col = sprLine[1]; y = t1 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
                 y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 2:
-                col = sprLine[2]; y = t2 >> 3; *dstBitmap++ = col ? emuPalette[col >> 1] : 
+                col = sprLine[2]; y = t2 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
                 y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 3:
-                col = sprLine[3]; y = t3 >> 3; *dstBitmap++ = col ? emuPalette[col >> 1] : 
+                col = sprLine[3]; y = t3 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
                 y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             }
             sprLine += 4;
@@ -1434,19 +1435,19 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         else {
             switch (vdpHScroll(vdp) & 3) {
             case 0:
-                y = t0 >> 3; *dstBitmap++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t0 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 1:
-                y = t1 >> 3; *dstBitmap++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t1 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 2:
-                y = t2 >> 3; *dstBitmap++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t2 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 3:
-                y = t3 >> 3; *dstBitmap++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t3 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             }
         }
         charTable += 2; 
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -1483,20 +1484,20 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         J = (t2 & 0x07) | ((t3 & 0x07) << 3);
 
         if (sprLine != NULL) {
-            col = sprLine[0]; y = t0 >> 3; dstBitmap[0] = col ? emuPalette[col >> 1] : 
+            col = sprLine[0]; y = t0 >> 3; linePtr[0] = col ? emuPalette[col >> 1] : 
         y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[1]; y = t1 >> 3; dstBitmap[1] = col ? emuPalette[col >> 1] : 
+            col = sprLine[1]; y = t1 >> 3; linePtr[1] = col ? emuPalette[col >> 1] : 
         y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[2]; y = t2 >> 3; dstBitmap[2] = col ? emuPalette[col >> 1] : 
+            col = sprLine[2]; y = t2 >> 3; linePtr[2] = col ? emuPalette[col >> 1] : 
         y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[3]; y = t3 >> 3; dstBitmap[3] = col ? emuPalette[col >> 1] : 
+            col = sprLine[3]; y = t3 >> 3; linePtr[3] = col ? emuPalette[col >> 1] : 
         y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
         }
         else {
-            y = t0 >> 3; dstBitmap[0] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            y = t1 >> 3; dstBitmap[1] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            y = t2 >> 3; dstBitmap[2] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            y = t3 >> 3; dstBitmap[3] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            y = t0 >> 3; linePtr[0] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            y = t1 >> 3; linePtr[1] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            y = t2 >> 3; linePtr[2] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            y = t3 >> 3; linePtr[3] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
         }
 
         t0 = charTable[2];         UPDATE_T();
@@ -1511,49 +1512,49 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             if (sprLine != NULL) {
                 switch (vdpHScroll(vdp) & 3) {
                 case 1:
-                    col = sprLine[6]; y = t2 >> 3; dstBitmap[6] = col ? emuPalette[col >> 1] : 
+                    col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? emuPalette[col >> 1] : 
                     y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 2:
-                    col = sprLine[5]; y = t1 >> 3; dstBitmap[5] = col ? emuPalette[col >> 1] : 
+                    col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? emuPalette[col >> 1] : 
                     y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 3:
-                    col = sprLine[4]; y = t0 >> 3; dstBitmap[4] = col ? emuPalette[col >> 1] : 
+                    col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? emuPalette[col >> 1] : 
                     y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 }
             }
             else {
                 switch (vdpHScroll(vdp) & 3) {
                 case 1:
-                    y = t2 >> 3; dstBitmap[6] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t2 >> 3; linePtr[6] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 2:
-                    y = t1 >> 3; dstBitmap[5] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t1 >> 3; linePtr[5] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 3:
-                    y = t0 >> 3; dstBitmap[4] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t0 >> 3; linePtr[4] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 }
             }
         }
         else {
             if (sprLine != NULL) {
-                col = sprLine[4]; y = t0 >> 3; dstBitmap[4] = col ? 
+                col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? 
                     emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[5]; y = t1 >> 3; dstBitmap[5] = col ? 
+                col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? 
                     emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[6]; y = t2 >> 3; dstBitmap[6] = col ? 
+                col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? 
                     emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[7]; y = t3 >> 3; dstBitmap[7] = col ? 
+                col = sprLine[7]; y = t3 >> 3; linePtr[7] = col ? 
                     emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 sprLine += 8; 
             }
             else {
-                y = t0 >> 3; dstBitmap[4] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                y = t1 >> 3; dstBitmap[5] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                y = t2 >> 3; dstBitmap[6] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                y = t3 >> 3; dstBitmap[7] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t0 >> 3; linePtr[4] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t1 >> 3; linePtr[5] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t2 >> 3; linePtr[6] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                y = t3 >> 3; linePtr[7] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             }
         }
     #undef UPDATE_T
 
-        charTable += 4; dstBitmap += 8; X++;
+        charTable += 4; linePtr += 8; X++;
     }
 
     if (rightBorder) {
@@ -1564,7 +1565,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
-    static UInt32* dstBitmap = NULL;
+    static UInt32* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = emptylineBuf;
     static int hScroll512;
@@ -1580,9 +1581,9 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
     int rightBorder;
 
     if (X == 0) {
-        dstBitmap = RefreshBorder(vdp, Y, emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
         sprLine = colorSpritesLine(vdp, Y);
-        if (dstBitmap == NULL) {
+        if (linePtr == NULL) {
             return;
         }
         
@@ -1605,19 +1606,19 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuFixedPalette[vdp->vdpRegs[7]];
-            dstBitmap[0] = bgColor;
-            dstBitmap[1] = bgColor;
-            dstBitmap[2] = bgColor;
-            dstBitmap[3] = bgColor;
-            dstBitmap[4] = bgColor;
-            dstBitmap[5] = bgColor;
-            dstBitmap[6] = bgColor;
-            dstBitmap[7] = bgColor;
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr[6] = bgColor;
+            linePtr[7] = bgColor;
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             sprLine   += sprLine != NULL ? 8 : 0; 
             charTable += 4; 
-            dstBitmap += 8;
+            linePtr += 8;
             X++; 
         }
 
@@ -1632,32 +1633,32 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         if (sprLine != NULL) {
             switch (hscroll & 3) {
             case 0:
-                col = sprLine[0]; *dstBitmap++ = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
+                col = sprLine[0]; *linePtr++ = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
             case 1:
-                col = sprLine[1]; *dstBitmap++ = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
+                col = sprLine[1]; *linePtr++ = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
             case 2:
-                col = sprLine[2]; *dstBitmap++ = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
+                col = sprLine[2]; *linePtr++ = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
             case 3:
-                col = sprLine[3]; *dstBitmap++ = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
+                col = sprLine[3]; *linePtr++ = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
             }
             sprLine += 4;
         }
         else {
             switch (hscroll & 3) {
             case 0:
-                *dstBitmap++ = YJKColor(t0 >> 3, J, K);
+                *linePtr++ = YJKColor(t0 >> 3, J, K);
             case 1:
-                *dstBitmap++ = YJKColor(t1 >> 3, J, K);
+                *linePtr++ = YJKColor(t1 >> 3, J, K);
             case 2:
-                *dstBitmap++ = YJKColor(t2 >> 3, J, K);
+                *linePtr++ = YJKColor(t2 >> 3, J, K);
             case 3:
-                *dstBitmap++ = YJKColor(t3 >> 3, J, K);
+                *linePtr++ = YJKColor(t3 >> 3, J, K);
             }
         }
         charTable += 2;
     }
 
-    if (dstBitmap == NULL) {
+    if (linePtr == NULL) {
         return;
     }
 
@@ -1693,16 +1694,16 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
         if (sprLine != NULL) {
-            col = sprLine[0]; dstBitmap[0] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
-            col = sprLine[1]; dstBitmap[1] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
-            col = sprLine[2]; dstBitmap[2] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
-            col = sprLine[3]; dstBitmap[3] = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
+            col = sprLine[0]; linePtr[0] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
+            col = sprLine[1]; linePtr[1] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
+            col = sprLine[2]; linePtr[2] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
+            col = sprLine[3]; linePtr[3] = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
         }
         else {
-            dstBitmap[0] = YJKColor(t0 >> 3, J, K);
-            dstBitmap[1] = YJKColor(t1 >> 3, J, K);
-            dstBitmap[2] = YJKColor(t2 >> 3, J, K);
-            dstBitmap[3] = YJKColor(t3 >> 3, J, K);
+            linePtr[0] = YJKColor(t0 >> 3, J, K);
+            linePtr[1] = YJKColor(t1 >> 3, J, K);
+            linePtr[2] = YJKColor(t2 >> 3, J, K);
+            linePtr[3] = YJKColor(t3 >> 3, J, K);
         }
 
         t0 = charTable[2];        UPDATE_T();
@@ -1717,42 +1718,42 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
             if (sprLine != NULL) {
                 switch (hscroll & 3) {
                 case 1:
-                    col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
+                    col = sprLine[6]; linePtr[6] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
                 case 2:
-                    col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
+                    col = sprLine[5]; linePtr[5] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
                 case 3:
-                    col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
+                    col = sprLine[4]; linePtr[4] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
                 }
             }
             else {
                 switch (hscroll & 3) {
                 case 1:
-                    dstBitmap[6] = YJKColor(t2 >> 3, J, K);
+                    linePtr[6] = YJKColor(t2 >> 3, J, K);
                 case 2:
-                    dstBitmap[5] = YJKColor(t1 >> 3, J, K);
+                    linePtr[5] = YJKColor(t1 >> 3, J, K);
                 case 3:
-                    dstBitmap[4] = YJKColor(t0 >> 3, J, K);
+                    linePtr[4] = YJKColor(t0 >> 3, J, K);
                 }
             }
         }
         else {
             if (sprLine != NULL) {
-                col = sprLine[4]; dstBitmap[4] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
-                col = sprLine[5]; dstBitmap[5] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
-                col = sprLine[6]; dstBitmap[6] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
-                col = sprLine[7]; dstBitmap[7] = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
+                col = sprLine[4]; linePtr[4] = col ? emuPalette[col >> 1] : YJKColor(t0 >> 3, J, K);
+                col = sprLine[5]; linePtr[5] = col ? emuPalette[col >> 1] : YJKColor(t1 >> 3, J, K);
+                col = sprLine[6]; linePtr[6] = col ? emuPalette[col >> 1] : YJKColor(t2 >> 3, J, K);
+                col = sprLine[7]; linePtr[7] = col ? emuPalette[col >> 1] : YJKColor(t3 >> 3, J, K);
                 sprLine += 8; 
             }
             else {
-                dstBitmap[4] = YJKColor(t0 >> 3, J, K);
-                dstBitmap[5] = YJKColor(t1 >> 3, J, K);
-                dstBitmap[6] = YJKColor(t2 >> 3, J, K);
-                dstBitmap[7] = YJKColor(t3 >> 3, J, K);
+                linePtr[4] = YJKColor(t0 >> 3, J, K);
+                linePtr[5] = YJKColor(t1 >> 3, J, K);
+                linePtr[6] = YJKColor(t2 >> 3, J, K);
+                linePtr[7] = YJKColor(t3 >> 3, J, K);
             }
         }
     #undef UPDATE_T
 
-        charTable += 4; dstBitmap += 8;
+        charTable += 4; linePtr += 8;
         X++;
     }
 

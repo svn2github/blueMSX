@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-17 08:01:20 $
+** $Date: 2005-01-18 10:17:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "IoPort.h"
 #include "SaveState.h"
 #include "DeviceManager.h"
+#include "FrameBuffer.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -221,6 +222,8 @@ struct VDP {
     UInt8  vram[VRAM_SIZE];
     
     int deviceHandle;
+
+    FrameBufferData* frameBuffer;
 };
 
 static void vdpBlink(VDP* vdp)
@@ -320,7 +323,14 @@ static void onDrawAreaStart(VDP* vdp, UInt32 time)
 static void onDisplay(VDP* vdp, UInt32 time)
 {
     int isPal = vdpIsVideoPal(vdp); 
-    
+
+    FrameBuffer* frameBuffer;
+    frameBuffer = frameBufferFlipDrawFrame();
+    frameBuffer->lines = 240;
+    frameBuffer->interlaceOdd = (~vdp->vdpStatus[2] & 0x02) && 
+                                (vdpIsInterlaceOn(vdp->vdpRegs) &&
+                                ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128));
+
     refreshRate = isPal ? 50 : 60; // Update global refresh rate
 
     sync(vdp, time);
@@ -1017,6 +1027,8 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->vramMask      = (vramPages << 14) - 1;
     vdp->vdpVersion    = version;
     vdp->vdpConnector  = connector;
+
+    vdp->frameBuffer   = frameBufferDataCreate();
 
     if (sync == VDP_SYNC_AUTO) {
         vdp->palMask  = ~0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Event.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-01-18 10:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,5 +51,26 @@ void archEventWait(void* event, int timeout)
     }
 
     WaitForSingleObject(event, timeout);
+}
+
+
+void* archSemaphoreCreate(int initCount)
+{
+    return CreateSemaphore(NULL, initCount, 100, NULL);
+}
+
+void archSemaphoreDestroy(void* semaphore)
+{
+    CloseHandle(semaphore);
+}
+
+void archSemaphoreSignal(void* semaphore)
+{
+    ReleaseSemaphore(semaphore, 1, NULL);
+}
+
+void archSemaphoreWait(void* semaphore, int timeout)
+{
+    archEventWait(semaphore, timeout);
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-16 09:34:41 $
+** $Date: 2005-01-18 10:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -418,17 +418,17 @@ int DirectXUpdateWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     return DXE_OK;
 }
 
-void DirectXUpdateSurface(Video* pVideo, void* srcBits, int srcWidth, int srcHeight, int* srcDoubleWidth, 
+void DirectXUpdateSurface(Video* pVideo, 
                           int noFlip, int dstPitchY, int dstOffset, int zoom, 
-                          int horizontalStretch, int verticalStretch, int evenOddPage, int interlace) 
+                          int horizontalStretch, int verticalStretch) 
 {
     DDSURFACEDESC ddsd;
     LPDIRECTDRAWSURFACE surface = NULL;
     LPDIRECTDRAWSURFACE  lpDDSTemp;
     HRESULT     ddrval;
     POINT pt = {0, 0};
-    RECT destRect = {0, 0, zoom * srcWidth, zoom * srcHeight};
-    RECT rcRect = {0, 0, zoom * srcWidth, zoom * srcHeight};
+    RECT destRect = {0, 0, zoom * 320, zoom * 240};
+    RECT rcRect = {0, 0, zoom * 320, zoom * 240};
 
     if (lpDDSPrimary == NULL) {
         return;
@@ -469,8 +469,7 @@ void DirectXUpdateSurface(Video* pVideo, void* srcBits, int srcWidth, int srcHei
         return;
     }
 
-    videoRender(pVideo, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, evenOddPage, interlace,
-                srcBits, srcWidth, srcHeight, srcDoubleWidth, ddsd.lpSurface, sizeof(DWORD) * srcWidth, ddsd.lPitch);
+    videoRender(pVideo, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, ddsd.lpSurface, ddsd.lPitch);
 
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
