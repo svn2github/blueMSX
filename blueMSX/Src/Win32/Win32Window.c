@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-03-16 16:17:22 $
+** $Date: 2005-03-17 07:24:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -321,7 +321,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
     case WM_TIMER:
         switch(wParam) {
         case TIMER_POLL_INPUT:
-            objectEnable(hwnd, WM_BUTTON_SAVE, keyboardConfigIsModified());
+            objectEnable(hwnd, WM_BUTTON_SAVE, !keyboardIsCurrentConfigDefault() && keyboardConfigIsModified());
             break;
         }
         break;

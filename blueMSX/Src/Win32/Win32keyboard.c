@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-03-16 16:17:22 $
+** $Date: 2005-03-17 07:24:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -329,8 +329,8 @@ static void initKbdTable()
     kbdTable[DIK_NUMPAD8    ] = EK_NUM8;
     kbdTable[DIK_NUMPAD9    ] = EK_NUM9;
 
-    kbdTable[DIK_RWIN       ] = EK_TORIKE;
-    kbdTable[DIK_LWIN       ] = EK_JIKKOU;
+    kbdTable[DIK_LWIN       ] = EK_TORIKE;
+    kbdTable[DIK_RWIN       ] = EK_JIKKOU;
     kbdTable[DIK_LSHIFT     ] = EK_LSHIFT;
     kbdTable[DIK_RSHIFT     ] = EK_RSHIFT;
     kbdTable[DIK_LCONTROL   ] = EK_CTRL;
@@ -903,6 +903,11 @@ void keyboardSetDirectory(char* directory)
 char* keyboardGetCurrentConfig()
 {
     return currentConfigFile;
+}
+
+int keyboardIsCurrentConfigDefault() 
+{
+    return strcmp(currentConfigFile, DefaultConfigName) == 0;
 }
 
 void inputInit()
