@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-24 19:37:03 $
+** $Date: 2005-01-24 19:41:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2023,8 +2023,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id)
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
-//        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
-        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pDriverName, lpPrinterInfo[dwItem].pPrinterName))
+        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
     }
 
