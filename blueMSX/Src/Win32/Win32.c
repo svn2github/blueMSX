@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-01-15 03:06:50 $
+** $Date: 2005-01-15 05:40:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -792,7 +792,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     emulatorSetFrequency(50, NULL);
     enterDialogShow();
-    inputDestroy();
+//    inputDestroy();
 //    inputReset(st.hwnd);
     propUpdateJoyinfo(pProperties);
     changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);

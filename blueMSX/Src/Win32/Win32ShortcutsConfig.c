@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-15 03:06:51 $
+** $Date: 2005-01-15 05:40:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1333,13 +1333,13 @@ int shortcutsShowDialog(HWND hwnd, Properties* pProperties) {
     shortcutsRef = calloc(1, sizeof(Shortcuts));
     memcpy(shortcutsRef, shortcuts, sizeof(Shortcuts));
 
-    inputDestroy();
+//    inputDestroy();
     rv = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_SHORTCUTSCONFIG), hwnd, shortcutsProc);
     if (rv) {
         strcpy(pProperties->emulation.shortcutProfile, shortcutProfile);
     }
 
-    inputDestroy();
+//    inputDestroy();
 
     free(shortcuts);
     free(shortcutsRef);

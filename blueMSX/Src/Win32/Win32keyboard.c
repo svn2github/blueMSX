@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-15 03:06:51 $
+** $Date: 2005-01-15 05:40:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 
 static int kbdTable[KBD_TABLE_LEN];
 static int kbdTableBackup[KBD_TABLE_LEN];
+static int keyStatus[KBD_TABLE_LEN];
 static char dikStrings[KBD_TABLE_LEN][32];
 static int selectedKey;
 static int selectedDikKey;
@@ -49,10 +50,18 @@ static char keyboardConfigDir[MAX_PATH];
 static char DefaultConfigName[] = "blueMSX Default";
 static char currentConfigFile[MAX_PATH];
 
+#define KEY_CODE_BUTTON1 256
+#define KEY_CODE_JOYUP    (256 + 32 + 0)
+#define KEY_CODE_JOYDOWN  (256 + 32 + 1)
+#define KEY_CODE_JOYLEFT  (256 + 32 + 2)
+#define KEY_CODE_JOYRIGHT (256 + 32 + 3)
+
 #define INIT_DIK(val) strcpy(dikStrings[DIK_##val], #val)
 
 static void initDikStr()
 {
+    int i;
+
     INIT_DIK(0);
     INIT_DIK(1);
     INIT_DIK(2);
@@ -197,6 +206,15 @@ static void initDikStr()
     INIT_DIK(Y);
     INIT_DIK(YEN);
     INIT_DIK(Z);
+
+    for (i = 0; i < 32; i++) {
+        sprintf(dikStrings[KEY_CODE_BUTTON1 + i], "BUTTON%d", i + 1);
+    }
+
+    strcpy(dikStrings[KEY_CODE_JOYLEFT],  "JOYLEFT");
+    strcpy(dikStrings[KEY_CODE_JOYRIGHT], "JOYRIGHT");
+    strcpy(dikStrings[KEY_CODE_JOYUP],    "JOYUP");
+    strcpy(dikStrings[KEY_CODE_JOYDOWN],  "JOYDOWN");
 }
 
 char* dik2str(int dikKey) 
@@ -593,40 +611,7 @@ void joystickSetButtons(int index, int buttonA, int buttonB)
     joyInfo[index].buttonB = buttonB;
 }
 
-DWORD joystickUpdate()
-{
-    int i;
-    DWORD buttonMask = 0;
-
-    for (i = 0; i < joyCount; i++) {
-        DWORD mask;
-        joyInfo[i].state = joystickUpdateState(i, &mask);
-        buttonMask |= mask;
-    }
-
-    return buttonMask;
-}
-
-
-static int keyStatus[512];
-
-void keyboardEnable(int enable)
-{
-    memset(keyStatus, 0, sizeof(keyStatus));
-    if (kbdDevice != NULL) {
-        IDirectInputDevice_Unacquire(kbdDevice);
-        if (enable) {
-            IDirectInputDevice_Acquire(kbdDevice);
-        }
-    }
-}
-
-int keyboardGetModifiers()
-{
-    return kbdModifiers;
-}
-
-void keyboardHanldeKeypress(int code, int pressed) {
+static void keyboardHanldeKeypress(int code, int pressed) {
     int wasPressed = keyStatus[code];
     int keyCode = kbdTable[code];
     int isEditing = editEnabled && selectedKey != 0;
@@ -658,6 +643,51 @@ void keyboardHanldeKeypress(int code, int pressed) {
     else {
         keyboardKeyUp(keyCode);
     }
+}
+
+DWORD joystickUpdate()
+{
+    int i;
+    DWORD buttonMask = 0;
+    DWORD joyMask = 0;
+    DWORD mask;
+
+    for (i = 0; i < joyCount; i++) {
+        DWORD mask;
+        joyInfo[i].state = joystickUpdateState(i, &mask);
+        joyMask |= joyInfo[i].state;
+        buttonMask |= mask;
+    }
+
+    mask = buttonMask;
+    for (i = 0; i < 32; i++) {
+        keyboardHanldeKeypress(KEY_CODE_BUTTON1 + i, mask & 1);
+        mask >>= 1;
+    }
+    
+    mask = joyMask;
+    for (i = 0; i < 4; i++) {
+        keyboardHanldeKeypress(KEY_CODE_JOYUP + i, mask & 1);
+        mask >>= 1;
+    }
+
+    return buttonMask;
+}
+
+void keyboardEnable(int enable)
+{
+    memset(keyStatus, 0, sizeof(keyStatus));
+    if (kbdDevice != NULL) {
+        IDirectInputDevice_Unacquire(kbdDevice);
+        if (enable) {
+            IDirectInputDevice_Acquire(kbdDevice);
+        }
+    }
+}
+
+int keyboardGetModifiers()
+{
+    return kbdModifiers;
 }
 
 void keyboardUpdate() 
