@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2005-03-18 10:09:39 $
+** $Date: 2005-03-20 10:45:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -924,6 +924,11 @@ typedef struct {
     int themeIndex;
     int X;
     int Y;
+
+	//Precalc vars
+	int clientWidth;
+	int clientHeight;
+
 } WinState;
 
 
@@ -1503,31 +1508,42 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     case WM_RBUTTONUP:
         return SendMessage(GetParent(hwnd), iMsg, wParam, lParam);
 
+	case WM_WINDOWPOSCHANGED :
+		if ( pProperties->video.driver == P_VIDEO_DRVGDI  )
+		{	
+			int zoom = getZoom();
+			RECT r;
+
+			GetClientRect ( hwnd, &r );
+
+			st.clientWidth = r.right - r.left;
+			st.clientHeight = r.bottom - r.top;
+			
+            st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
+            st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
+            st.bmInfo.bmiHeader.biBitCount = 32;
+		}
     case WM_PAINT:
-        if (pProperties->video.driver == P_VIDEO_DRVGDI && emulatorGetState() != EMU_STOPPED) {
+        if (pProperties->video.driver == P_VIDEO_DRVGDI && emulatorGetState() != EMU_STOPPED) 
+		{
             PAINTSTRUCT ps;
             FrameBuffer* frameBuffer;
             int borderWidth;
-            HDC hdc = BeginPaint(hwnd, &ps);   
+            HDC hdc;   
             int zoom = getZoom();
-            int width;
-            int height;
-            RECT r;
 
-            GetClientRect(hwnd, &r);
-
-            width = r.right - r.left;
-            height = r.bottom - r.top;
-            
             if (st.bmBitsGDI == 0) {
                 st.bmBitsGDI = malloc(4096 * 4096 * sizeof(UInt32));
             }
+
             frameBuffer = frameBufferGetViewFrame();
             if (frameBuffer == NULL) {
                 frameBuffer = frameBufferGetWhiteNoiseFrame();
             }
         
+			// clear borders
             borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
+
             if (borderWidth > 0) {
                 DWORD* ptr  = st.bmBitsGDI;
                 int y;
@@ -1538,22 +1554,36 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
                 }
             }
 
-            videoRender(st.pVideo, frameBuffer, 32, zoom, 
+			// render image
+            videoRender(st.pVideo, 
+						frameBuffer, 
+						32, 
+						zoom, 
                         (char*)st.bmBitsGDI + borderWidth * sizeof(DWORD) + (zoom * HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
                         0, -1 * zoom * WIDTH * sizeof(DWORD), 0);
-            st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
-            st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
-            st.bmInfo.bmiHeader.biBitCount = 32;
-            StretchDIBits(hdc, 0, 0, width, height, 0, 0, zoom * WIDTH, zoom * HEIGHT, st.bmBitsGDI, 
-                            &st.bmInfo, DIB_RGB_COLORS, SRCCOPY);
+
+			// Beginpaint moved because it's only needed to output the framebuffer
+			hdc = BeginPaint ( hwnd, &ps );
+
+			StretchDIBits(hdc,
+						  0, 0, 
+						  st.clientWidth, st.clientHeight, 
+						  0, 0, 
+						  zoom * WIDTH, zoom * HEIGHT, 
+						  st.bmBitsGDI, 
+                          &st.bmInfo, 
+						  DIB_RGB_COLORS, 
+						  SRCCOPY);
+
             EndPaint(hwnd, &ps);
             st.frameCount++;
+
         }
         else if (pProperties->video.driver != P_VIDEO_DRVGDI && 
                  (emulatorGetState() == EMU_PAUSED || emulatorGetState() == EMU_SUSPENDED)) {
             PAINTSTRUCT ps;
             BeginPaint(hwnd, &ps);
-            EndPaint(hwnd, &ps);
+		    EndPaint(hwnd, &ps);
             SetEvent(st.ddrawEvent);
         }
         else {
@@ -1983,9 +2013,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 HDC hMemDC = CreateCompatibleDC(hdc);
                 HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, st.hBitmap);
 
-                themePageDraw(st.themePageActive, hMemDC);
-
-                if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+                 if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+					// the theme is only drawn when not in fullscreen mode
+					themePageDraw(st.themePageActive, hMemDC);
                     BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
                 }
                 else {
@@ -2246,6 +2276,9 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     st.bmInfo.bmiHeader.biClrImportant   = 0;
     st.ddrawEvent    = CreateEvent(NULL, FALSE, FALSE, NULL);
     st.ddrawAckEvent = CreateEvent(NULL, FALSE, FALSE, NULL);    
+	
+
+
 
     st.pVideo = videoCreate();
     videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, 
