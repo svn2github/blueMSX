@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-06 23:20:43 $
+** $Date: 2005-02-06 23:38:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,16 +104,6 @@ void moonsoundTimerSet(void* ref, int timer, int count)
     }
 }
 
-static UInt32 calcTimeout(Moonsound* moonsound, UInt32 time)
-{
-    UInt64 currentTime = boardSystemTime64();
-    UInt64 frequency   = boardFrequency64() / 12380;
-
-    currentTime = frequency * (currentTime / frequency);
-
-    return (UInt32)((currentTime + time * frequency) / HIRES_CYCLES_PER_LORES_CYCLE);
-}
-
 void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
 {
     Moonsound* moonsound = (Moonsound*)ref;
@@ -122,7 +112,7 @@ void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
         moonsound->timerRef1 = timerRef;
         moonsound->timerStarted1 = start;
         if (start) {
-            moonsound->timeout1 = calcTimeout(moonsound, moonsound->timerValue1);
+            moonsound->timeout1 = boardCalcRelativeTimeout(12380, moonsound->timerValue1);
             boardTimerAdd(moonsound->timer1, moonsound->timeout1);
         }
         else {
@@ -133,7 +123,7 @@ void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
         moonsound->timerRef2 = timerRef;
         moonsound->timerStarted2 = start;
         if (start) {
-            moonsound->timeout2 = calcTimeout(moonsound, moonsound->timerValue2);
+            moonsound->timeout2 = boardCalcRelativeTimeout(12380, moonsound->timerValue2);
             boardTimerAdd(moonsound->timer2, moonsound->timeout2);
         }
         else {

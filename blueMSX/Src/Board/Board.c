@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-06 23:20:41 $
+** $Date: 2005-02-06 23:38:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -429,6 +429,21 @@ int boardGetCassetteInserted()
     return cassetteInserted;
 }
 
+#define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
+#define boardFrequency64() (HIRES_CYCLES_PER_LORES_CYCLE * boardFrequency())
+
+static UInt64 boardSystemTime64();
+
+UInt32 boardCalcRelativeTimeout(UInt32 timerFrequency, UInt32 nextTimeout)
+{
+    UInt64 currentTime = boardSystemTime64();
+    UInt64 frequency   = boardFrequency64() / timerFrequency;
+
+    currentTime = frequency * (currentTime / frequency);
+
+    return (UInt32)((currentTime + nextTimeout * frequency) / HIRES_CYCLES_PER_LORES_CYCLE);
+}
+
 /////////////////////////////////////////////////////////////
 // Board timer
 
@@ -515,14 +530,6 @@ void boardTimerRemove(BoardTimer* timer)
     timer->prev = timer;
 }
 
-UInt64 boardSystemTime64() {
-    UInt32 currentTime = boardSystemTime();
-    boardSysTime64 += HIRES_CYCLES_PER_LORES_CYCLE * (currentTime - oldTime);
-    oldTime = currentTime;
-    return boardSysTime64;
-}
-
-
 UInt32 boardTimerCheckTimeout()
 {
     UInt32 currentTime = boardSystemTime();
@@ -546,6 +553,13 @@ UInt32 boardTimerCheckTimeout()
     setCpuTimeout(timerList->next->timeout);
 
     return timerList->next->timeout - currentTime;
+}
+
+static UInt64 boardSystemTime64() {
+    UInt32 currentTime = boardSystemTime();
+    boardSysTime64 += HIRES_CYCLES_PER_LORES_CYCLE * (currentTime - oldTime);
+    oldTime = currentTime;
+    return boardSysTime64;
 }
 
 void boardInit(UInt32* systemTime)

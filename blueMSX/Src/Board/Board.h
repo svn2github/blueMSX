@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-06 23:20:41 $
+** $Date: 2005-02-06 23:38:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,15 +107,12 @@ void boardChangeCassette(char* name, const char* fileInZipFile);
 
 int  boardGetCassetteInserted();
 
-#define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
 #define boardFrequency() (6 * 3579545)
-#define boardFrequency64() (HIRES_CYCLES_PER_LORES_CYCLE * boardFrequency())
 
 static UInt32 boardSystemTime() {
     extern UInt32* boardSysTime;
     return *boardSysTime;
 }
-UInt64 boardSystemTime64();
 
 typedef void (*BoardTimerCb)(void* ref, UInt32 time);
 
@@ -126,6 +123,7 @@ void boardTimerDestroy(BoardTimer* timer);
 void boardTimerAdd(BoardTimer* timer, UInt32 timeout);
 void boardTimerRemove(BoardTimer* timer);
 UInt32 boardTimerCheckTimeout();
+UInt32 boardCalcRelativeTimeout(UInt32 timerFrequency, UInt32 nextTimeout);
 
 // The following methods are more generic config than board specific
 // They should be moved from board.
