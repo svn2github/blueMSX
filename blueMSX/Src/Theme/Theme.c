@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-15 23:23:33 $
+** $Date: 2005-01-16 03:23:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -605,6 +605,7 @@ Theme* themeCreate(const char* name)
     theme->currentPage = 0;
     theme->pageCount = 0;
     theme->pages[0] = NULL;
+    theme->themeHandler = TH_NORMAL;
     return theme;
 }
 
@@ -614,6 +615,11 @@ void themeDestroy(Theme* theme)
         themePageDestroy(theme->pages[theme->pageCount]);
     }
     free(theme);
+}
+
+void themeSetHandler(Theme* theme, ThemeHandler themeHandler) 
+{
+    theme->themeHandler = themeHandler;
 }
 
 void themeAddPage(Theme* theme, ThemePage* themePage) 
@@ -746,23 +752,5 @@ void themeCollectionOpenWindow(ThemeCollection* tc, unsigned long hash)
         return;
     }
 
-    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_NORMAL, 1);
-}
-
-void themeCollectionOpenKbdWindow(ThemeCollection* tc, unsigned long hash)
-{
-    Theme* theme = NULL;
-
-    int i;
-    for (i = 0; i < THEME_MAX_WINDOWS; i++) {
-        if (tc->theme[i] && themeGetNameHash(tc->theme[i]->name) == hash) {
-            theme = tc->theme[i];
-            break;
-        }
-    }
-    if (theme == NULL || tc->theme[i]->reference != NULL) {
-        return;
-    }
-
-    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_KBDCONFIG, 1);
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i], 1);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-14 09:33:49 $
+** $Date: 2005-01-16 03:23:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,11 +85,14 @@ struct ThemePage {
     int               btPressed;
 };
 
+typedef enum { TH_NORMAL, TH_KBDCONFIG, TH_PROPERTIES } ThemeHandler;
+
 struct Theme {
     char   name[64];
     void*  reference;
     int currentPage;
     int pageCount;
+    ThemeHandler themeHandler;
     ThemePage* pages[THEME_MAX_PAGES];
 };
 
@@ -116,11 +119,11 @@ ThemeCollection* themeCollectionCreate();
 void themeCollectionDestroy(ThemeCollection* tc);
 void themeCollectionAddWindow(ThemeCollection* tc, Theme* theme);
 void themeCollectionOpenWindow(ThemeCollection* themeCollection, unsigned long hash);
-void themeCollectionOpenKbdWindow(ThemeCollection* themeCollection, unsigned long hash);
 
 Theme*     themeCreate(const char* name);
 void       themeDestroy(Theme* theme);
 void       themeAddPage(Theme* theme, ThemePage* page);
+void       themeSetHandler(Theme* theme, ThemeHandler themeHandler);
 ThemePage* themeGetCurrentPage(Theme* theme);
 int        themeGetCurrentPageIndex(Theme* theme);
 int        themeGetPageCount(Theme* theme);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-15 23:23:35 $
+** $Date: 2005-01-16 03:23:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,7 +156,6 @@ static void* windowDataGet(HWND hwnd)
 //////////////////////////////////////////////////////////////////////////
 typedef struct WindowInfo {
     HWND hwnd;
-    WindowHandler handler;
     int  captionHeight;
     int  isMinimized;
     int  isMoving;
@@ -544,7 +543,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         return 0;
     }
 
-    if (wi && wi->handler == WH_KBDCONFIG) {
+    if (wi && wi->theme->themeHandler == TH_KBDCONFIG) {
         rv = keyboardDlgProc(hwnd, iMsg, wParam, lParam);
     }
     else {
@@ -575,7 +574,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 /// Description:
 ///     Creates a window based on the theme configuration
 //////////////////////////////////////////////////////////////////////////
-void* archWindowCreate(Theme* theme, WindowHandler handler, int childWindow) 
+void* archWindowCreate(Theme* theme, int childWindow) 
 {
     HINSTANCE hInstance = GetModuleHandle(NULL);
     WindowInfo* wi;
@@ -603,7 +602,6 @@ void* archWindowCreate(Theme* theme, WindowHandler handler, int childWindow)
 
     wi = calloc(1, sizeof(WindowInfo));
     wi->theme = theme;
-    wi->handler = handler;
 
     if (childWindow) {
         return CreateWindowEx(WS_EX_TOOLWINDOW, "blueMSX Popup", theme->name, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-14 09:33:50 $
+** $Date: 2005-01-16 03:23:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,17 +218,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-setstereo"))      return (ButtonEvent)actionSetVolumeStereo;
 
     if (0 == strcmp(action, "theme-setpage"))        buttonEvent = (ButtonEvent)themeSetPageFromHash;
-    if (0 == strcmp(action, "theme-openwindow")) {
-        buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
-
-        // Overload window type if handler specified
-        const char* handler = el->Attribute("handler");
-        if (handler != NULL) {
-            if (0 == strcmp(handler, "keyboardconfig")) {
-                buttonEvent = (ButtonEvent)themeCollectionOpenKbdWindow;
-            }
-        }
-    }
+    if (0 == strcmp(action, "theme-openwindow"))     buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
 
     if (buttonEvent != NULL) {
         const char* argaStr = el->Attribute(arg1Tag);
@@ -241,9 +231,6 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
                 *arg1 = (int)theme;
             }
             if (buttonEvent == (ButtonEvent)themeCollectionOpenWindow) {
-                *arg1 = (int)themeCollection;
-            }
-            if (buttonEvent == (ButtonEvent)themeCollectionOpenKbdWindow) {
                 *arg1 = (int)themeCollection;
             }
         }
@@ -898,6 +885,15 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
         if (name == NULL) {
             name = "window";
         }
+
+        ThemeHandler themeHandler = TH_NORMAL;
+        
+        const char* handler = modeEl->Attribute("handler");
+        if (handler != NULL) {
+            if (0 == strcmp(handler, "keyboard-config")) {
+                themeHandler = TH_KBDCONFIG;
+            }
+        }
         const char* type = modeEl->Attribute("type");
         if (type != NULL && 0 == strcmp(type, "multipage")) {
             TiXmlElement* pageEl;
@@ -915,6 +911,7 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
 
                 if (theme == NULL) {
                     theme = themeCreate(name);
+                    themeSetHandler(theme, themeHandler);
                 }
 
                 ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, 0, 0, 0);
@@ -930,6 +927,7 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
             
             if (theme == NULL) {
                 theme = themeCreate(name);
+                themeSetHandler(theme, themeHandler);
             }
             ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, 0, 0, 0);
             themeAddPage(theme, themePage);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-15 23:55:15 $
+** $Date: 2005-01-16 03:23:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,8 +50,7 @@ int archKeyboardIsKeySelected(int msxKeyCode);
 int archGetFramesPerSecond();
 
 
-typedef enum { WH_NORMAL, WH_KBDCONFIG, WH_PROPERTIES } WindowHandler;
-void* archWindowCreate(struct Theme* theme, WindowHandler handler, int childWindow);
+void* archWindowCreate(struct Theme* theme, int childWindow);
 
 void archUpdateEmuDisplay(int synchronous, int evenOdd, int interlace);
 

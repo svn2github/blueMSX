@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-15 23:23:35 $
+** $Date: 2005-01-16 03:23:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #include <windows.h>
 #include "Theme.h"
 
-void* archWindowCreate(Theme* theme, WindowHandler handler, int childWindow);
+void* archWindowCreate(Theme* theme, int childWindow);
 void* archObjectCreate(char* id, void* window, int x, int y, 
                        int width, int height, int arg1, int arg2);
 void archObjectDestroy(char* id, void* object);
