@@ -2,9 +2,9 @@
 *****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/Delphi/BlueMSXToolInterface.pas,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-03-04 14:51:12 $
+** $Date: 2005-03-10 13:53:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,6 @@ Type
   Int16  = Smallint;
   Int32  = Longint;
 
-
   TEmulatorState =
     (
       EMULATOR_STOPPED,
@@ -49,6 +48,9 @@ Type
       DEVTYPE_VIDEO,
       DEVTYPE_IOPORT
     );
+
+  TByteArray = array of byte;
+  PByteArray = ^TByteArray;
 
   TDevice =
     Record
@@ -137,6 +139,8 @@ Type
   TToolDeviceWriteIoPort             = function  ( ioPorts: PIoPorts; portIndex: Integer; value: DWORD ): integer; stdcall;
   TToolAction                        = procedure; stdcall;
   TToolBreakpoint                    = procedure ( value: Word ); stdcall;
+  TToolPath                          = function: pchar; stdcall;
+  TToolEmulatorVersion               = procedure ( Major, Minor, buildNumber: PInteger ); stdcall;
 
 
   TInterface =
@@ -168,11 +172,39 @@ Type
       setBreakpoint             : TToolBreakpoint;
       clearBreakPoint           : TToolBreakpoint;
 
+      getToolDirectory          : TToolPath;
+      getEmulatorVersion        : TToolEmulatorVersion;
+
     end;
   PInterface = ^TInterface;
 
   CreateFn = function ( toolInterface: PInterface; name: PChar; length: integer ): integer; stdcall;
   NotifyFn = procedure; stdcall;
+
+var
+  toolSnapshotCreate              : TToolSnapshotCreate;
+  toolSnapshotDestroy             : TToolSnapshotDestroy;
+  toolGetState                    : TToolGetEmulatorState;
+  toolSnapshotGetDeviceCount      : TToolSnapshotGetDeviceCount;
+  toolSnapshotGetDevice           : TToolSnapshotGetDevice;
+
+  toolDeviceGetMemoryBlockCount   : TToolDeviceGetMemoryBlockCount;
+  toolDeviceGetMemoryBlock        : TToolDeviceGetMemoryBlock;
+  toolDeviceGetRegisterBankCount  : TToolDeviceGetRegisterBankCount;
+  toolDeviceGetRegisterBank       : TToolDeviceGetRegisterBank;
+  toolDeviceGetIoPortsCount       : TToolDeviceGetIoPortsCount;
+  toolDeviceGetIoPorts            : TToolDeviceGetIoPorts;
+  toolDeviceWriteMemory           : TToolDeviceWriteMemory;
+  toolDeviceRun                   : TToolAction;
+  toolDeviceStop                  : TToolAction;
+  toolDevicePause                 : TToolAction;
+  toolDeviceStep                  : TToolAction;
+  toolSetBreakpoint               : TToolBreakpoint;
+  toolClearBreakpoint             : TToolBreakpoint;
+
+  toolGetToolDirectory            : TToolPath;
+  toolGetEmulatorVersion          : TToolEmulatorVersion;
+
 
 implementation
 
