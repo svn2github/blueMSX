@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -198,6 +198,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             case ROM_SCCPLUS:
                 romMapperSCCplusCreate(romName, NULL, 0, slot, sslot, 2, SCCP_EXTENDED);
                 break;
+
+            case ROM_SONYHBI55:
+                romMapperSonyHBI55Create();
+                break;
             }
             break;
         }
@@ -333,10 +337,6 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             
         case ROM_KOREAN126:
             romMapperKorean126Create(romName, buf, size, slot, sslot, 2);
-            break;
-
-        case ROM_SONYHBI55:
-            romMapperSonyHBI55Create();
             break;
 
         case ROM_MSXAUDIO:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-16 08:02:35 $
+** $Date: 2004-12-28 22:48:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,6 +97,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_SCCPLUS)     && 
             strcmp(fname, CARTNAME_FMPAC)       && 
             strcmp(fname, CARTNAME_PAC)         && 
+            strcmp(fname, CARTNAME_SONYHBI55)   && 
             strcmp(fname, CARTNAME_EXTRAM512KB) && 
             strcmp(fname, CARTNAME_EXTRAM1MB)   &&
             strcmp(fname, CARTNAME_EXTRAM2MB)   &&
@@ -323,7 +324,8 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             properties->cartridge.slotAType != ROM_SDSNATCHER          &&
             properties->cartridge.slotAType != ROM_SCCMIRRORED         &&
             properties->cartridge.slotAType != ROM_SCC                 &&
-            properties->cartridge.slotAType != ROM_SCCPLUS)  
+            properties->cartridge.slotAType != ROM_SCCPLUS             &&
+            properties->cartridge.slotAType != ROM_SONYHBI55)
         {
             done = 1;
         }
@@ -348,6 +350,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             strcmp(properties->cartridge.slotB, CARTNAME_SCCPLUS)      &&
             strcmp(properties->cartridge.slotB, CARTNAME_FMPAC)        &&
             strcmp(properties->cartridge.slotB, CARTNAME_PAC)          &&
+            strcmp(properties->cartridge.slotB, CARTNAME_SONYHBI55)    &&
             strcmp(properties->cartridge.slotB, CARTNAME_EXTRAM512KB)  &&
             strcmp(properties->cartridge.slotB, CARTNAME_EXTRAM1MB)    &&
             strcmp(properties->cartridge.slotB, CARTNAME_EXTRAM2MB)    &&
@@ -364,7 +367,8 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             properties->cartridge.slotBType != ROM_SDSNATCHER          &&
             properties->cartridge.slotBType != ROM_SCCMIRRORED         &&
             properties->cartridge.slotBType != ROM_SCC                 &&
-            properties->cartridge.slotBType != ROM_SCCPLUS) 
+            properties->cartridge.slotBType != ROM_SCCPLUS             &&
+            properties->cartridge.slotBType != ROM_SONYHBI55) 
         {
             done = 1;
         }

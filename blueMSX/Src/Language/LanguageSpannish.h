@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-17 20:44:25 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -527,10 +527,13 @@ void langInitSpanish(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Dar a blueMSX una elevada prioridad";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "No sincronizar unidade disco"; 
     ls->shortcutToggleFdcTiming = "Sincronizar o no unidade disco"; 
     ls->propUseRegistry         = "Grabar la configuración en el Registro";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Cartucho Sony HBI-55";
 };
 
 #endif

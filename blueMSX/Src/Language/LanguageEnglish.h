@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-16 08:02:35 $
+** $Date: 2004-12-28 22:48:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -526,10 +526,13 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Boost the priority of blueMSX";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
     ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
     ls->propUseRegistry         = "Save Configuration in the Registry";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
 };
 
 

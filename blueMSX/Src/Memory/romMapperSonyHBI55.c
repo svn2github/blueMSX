@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,12 +41,13 @@
 #include "Switches.h"
 #include "Led.h"
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     int    deviceHandle;
     I8255* i8255;
 
-    UInt8  sram[0x4000];
+    UInt8  sram[0x1000];
     UInt16 address;
     int    mode;
 } SonyHBI55;
@@ -58,7 +59,7 @@ static void destroy(SonyHBI55* rm)
     ioPortUnregister(0xb2);
     ioPortUnregister(0xb3);
     
-    sramSave(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x4000, NULL, 0);
+    sramSave(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x1000, NULL, 0);
 
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -120,16 +121,20 @@ static void writeB(SonyHBI55* rm, UInt8 value)
 static void writeCLo(SonyHBI55* rm, UInt8 value)
 {
     if (rm->mode == 1) {
-        rm->sram[rm->address] &= 0xf0;
-        rm->sram[rm->address] |= value;
+        if (rm->address > 0) {
+            rm->sram[rm->address] &= 0xf0;
+            rm->sram[rm->address] |= value;
+        }
     }
 }
 
 static void writeCHi(SonyHBI55* rm, UInt8 value)
 {
     if (rm->mode == 1) {
-        rm->sram[rm->address] &= 0x0f;
-        rm->sram[rm->address] |= value << 4;
+        if (rm->address > 0) {
+            rm->sram[rm->address] &= 0x0f;
+            rm->sram[rm->address] |= value << 4;
+        }
     }
 }
 
@@ -156,8 +161,9 @@ int romMapperSonyHBI55Create()
     SonyHBI55* rm = malloc(sizeof(SonyHBI55));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SONYHBI55, &callbacks, rm);
-    
-    sramLoad(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x4000, NULL, 0);
+
+    memset(rm->sram, 0xff, sizeof(rm->sram));
+    sramLoad(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x1000, NULL, 0);
 
     rm->sram[0] = 0x53;
 

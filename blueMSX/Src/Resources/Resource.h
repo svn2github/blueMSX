@@ -126,6 +126,8 @@
 #define ID_FILE_CARTB_EXTRAM2MB         40068
 #define ID_FILE_CARTA_EXTRAM4MB         40069
 #define ID_FILE_CARTB_EXTRAM4MB         40070
+#define ID_FILE_CARTA_SONYHBI55         40071
+#define ID_FILE_CARTB_SONYHBI55         40072
 
 #define ID_CARTRIDGEA_HISTORY           30000
 #define ID_CARTRIDGEB_HISTORY           30050
@@ -133,12 +135,12 @@
 #define ID_DISKDRIVEB_HISTORY           30150
 #define ID_CASSETTE_HISTORY             30200
 
-#define ID_RUN_RUN                      40071
-#define ID_RUN_PAUSE                    40072
-#define ID_RUN_STOP                     40073
-#define ID_RUN_RESET                    40074
-#define ID_RUN_SOFTRESET                40075
-#define ID_RUN_CLEANRESET               40076
+#define ID_RUN_RUN                      40081
+#define ID_RUN_PAUSE                    40082
+#define ID_RUN_STOP                     40083
+#define ID_RUN_RESET                    40084
+#define ID_RUN_SOFTRESET                40085
+#define ID_RUN_CLEANRESET               40086
 
 #define ID_SIZE_NORMAL                  40157
 #define ID_SIZE_X2                      40158

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2004-12-28 22:48:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,6 +156,7 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
               0 == strcmp(CARTNAME_SCCPLUS,     filename) ? ROM_SCCPLUS :
               0 == strcmp(CARTNAME_FMPAC,       filename) ? ROM_FMPAC :
               0 == strcmp(CARTNAME_PAC,         filename) ? ROM_PAC :
+              0 == strcmp(CARTNAME_SONYHBI55,   filename) ? ROM_SONYHBI55 :
               0 == strcmp(CARTNAME_EXTRAM512KB, filename) ? ROM_EXTRAM512KB :
               0 == strcmp(CARTNAME_EXTRAM1MB,   filename) ? ROM_EXTRAM1MB :
               0 == strcmp(CARTNAME_EXTRAM2MB,   filename) ? ROM_EXTRAM2MB :

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-23 04:41:32 $
+** $Date: 2004-12-28 22:48:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -530,10 +530,13 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->propPriorityBoost        = " Nosta blueMSX:n prioriteettiä";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "Disabloi levykeaseman ajoitus";
     ls->shortcutToggleFdcTiming = "Enabloi/Disabloi levykeaseman ajoitus";
     ls->propUseRegistry         = "Tallenna konfiguraatio rekisteriin";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
 };
 
 #endif

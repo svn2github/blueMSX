@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-26 10:09:54 $
+** $Date: 2004-12-28 22:48:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 #define CARTNAME_SCCPLUS     "SCC+ Cartridge"
 #define CARTNAME_FMPAC       "FM-PAC Cartridge"
 #define CARTNAME_PAC         "PAC Cartridge"
+#define CARTNAME_SONYHBI55   "Sony HBI-55"
 #define CARTNAME_EXTRAM512KB "512kB External RAM"
 #define CARTNAME_EXTRAM1MB   "1MB External RAM"
 #define CARTNAME_EXTRAM2MB   "2MB External RAM"

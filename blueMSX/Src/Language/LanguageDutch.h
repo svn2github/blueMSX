@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-17 20:44:19 $
+** $Date: 2004-12-28 22:48:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCartNoRecentFiles   = "- geen recente bestanden -";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
+    
     ls->menuCartSpecial         = "Speciaal";
 
     ls->menuDiskInsert          = "Toevoegen";
@@ -526,11 +527,13 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Aan blueMSX een hoge prioriteit geven";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "Niet synchroniseren diskette drive"; 
     ls->shortcutToggleFdcTiming = "Synchroniseren/Niet synchroniseren diskette drive"; 
     ls->propUseRegistry         = "Opslaan de configuratie in het Register";
 
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
 };
 
 #endif

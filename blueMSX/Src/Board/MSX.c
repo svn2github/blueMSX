@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2004-12-28 22:48:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -492,6 +492,10 @@ static int initMachine(Machine* machine,
         case ROM_SCCPLUS:
             success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCCP_EXTENDED);
             break;
+
+        case ROM_SONYHBI55:
+            success &= romMapperSonyHBI55Create();
+            break;
             
         case ROM_KONAMI4:
             success &= romMapperKonami4Create(romName, buf, size, slot, subslot, startPage);
@@ -583,10 +587,6 @@ static int initMachine(Machine* machine,
             
         case ROM_KOREAN90:
             success &= romMapperKorean90Create(romName, buf, size, slot, subslot, startPage);
-            break;
-
-        case ROM_SONYHBI55:
-            success &= romMapperSonyHBI55Create();
             break;
             
         case ROM_KOREAN126:

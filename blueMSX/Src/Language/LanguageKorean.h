@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -521,6 +521,14 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgCFdcNumDrivesText    = "드라이브의 갯수:";
 
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
+
+    // New entries in 2.1
+    ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
+    ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
+    ls->propUseRegistry         = "Save Configuration in the Registry";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55 카트리지";
 };
 
 #endif

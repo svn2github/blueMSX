@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-17 20:44:24 $
+** $Date: 2004-12-28 22:48:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -532,10 +532,13 @@ void langInitFrench(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Donner à blueMSX une priorité élevée";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "Ne pas synchroniser le lecteur de disquettes"; 
     ls->shortcutToggleFdcTiming = "Synchroniser ou non le lecteur de disquettes"; 
     ls->propUseRegistry         = "Sauvegarder la configuration dans le Registre"; 
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Cartouche Sony HBI-55";
 };
 
 #endif

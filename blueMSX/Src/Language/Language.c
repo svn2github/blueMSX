@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-16 08:02:35 $
+** $Date: 2004-12-28 22:48:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -292,6 +292,7 @@ _TCHAR* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
 _TCHAR* langMenuCartSCC() { return ls->menuCartSCC; }
 _TCHAR* langMenuCartFMPac()  { return ls->menuCartFMPac; }
 _TCHAR* langMenuCartPac()  { return ls->menuCartPac; }
+_TCHAR* langMenuCartHBI55() { return ls->menuCartHBI55; }
 _TCHAR* langMenuCartSpecial() { return ls->menuCartSpecial; }
 
 _TCHAR* langMenuDiskInsert() { return ls->menuDiskInsert; }

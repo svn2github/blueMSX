@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-17 18:14:22 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -526,10 +526,13 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->propPriorityBoost        = " Höj prioriteten på blueMSX";
     
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "Slå Av Diskettstationstiming";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
     ls->propUseRegistry         = "Spara konnfigurering i Windows Registry";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
 };
 
 #endif

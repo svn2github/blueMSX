@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-17 04:11:00 $
+** $Date: 2004-12-28 22:48:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -532,10 +532,13 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->propPriorityBoost        = " blueMSXに割当てるプライオリティーのブースト";
 
-    // New entries in 2.0.1
+    // New entries in 2.1
     ls->propEmuFdcTiming        = "FDDドライブのタイミングを無効化";
     ls->shortcutToggleFdcTiming = "FDDドライブのタイミング 有無";
     ls->propUseRegistry         = "レジストリに設定を保存する";
+
+    // New entries in 2.2
+    ls->menuCartHBI55           = "Sony HBI-55+カートリッジ";
 };
 
 #endif

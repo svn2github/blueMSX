@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2004-12-28 05:09:08 $
+** $Date: 2004-12-28 22:48:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1699,6 +1699,14 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             break;
         case ID_FILE_CARTB_PAC:            
             insertCartridge(pProperties, 1, CARTNAME_PAC, NULL, ROM_PAC, 0);
+            updateMenu(0);
+            break;
+        case ID_FILE_CARTA_SONYHBI55:            
+            insertCartridge(pProperties, 0, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
+            updateMenu(0);
+            break;
+        case ID_FILE_CARTB_SONYHBI55:            
+            insertCartridge(pProperties, 1, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
             updateMenu(0);
             break;
 

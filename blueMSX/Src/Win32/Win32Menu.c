@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-28 22:48:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,6 +169,11 @@ static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcut
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
+    _stprintf(langBuffer, "%s", langMenuCartHBI55());
+    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SONYHBI55, langBuffer);
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
     _stprintf(langBuffer, "%s", "External RAM 512 kB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM512KB, langBuffer);
 
@@ -280,6 +285,11 @@ static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcut
 
     _stprintf(langBuffer, "%s", langMenuCartPac());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_PAC, langBuffer);
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+    _stprintf(langBuffer, "%s", langMenuCartHBI55());
+    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SONYHBI55, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
