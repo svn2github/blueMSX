@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-28 04:37:29 $
+** $Date: 2005-03-01 08:37:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,30 +93,46 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "GenericKonami")    return ROM_KONAMI4NF;
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
 
-    if (name == "0x4000")       return ROM_0x4000;
-    if (name == "0xC000")       return ROM_0xC000;
-    if (name == "auto")         return ROM_PLAIN;
-    if (name == "basic")        return ROM_BASIC;
+    // System roms
     if (name == "Bunsetsu")     return ROM_BUNSETU;
-    if (name == "caspatch")     return ROM_CASPATCH;
-    if (name == "coleco")       return ROM_COLECO;
-    if (name == "cx5m")         return ROM_UNKNOWN;
+    if (name == "CasPatch")     return ROM_CASPATCH;
+    if (name == "Coleco")       return ROM_COLECO;
     if (name == "FMPAC")        return ROM_FMPAC;
-    if (name == "fMSXPatched")  return ROM_DISKPATCH;
+    if (name == "DiskPatch")    return ROM_DISKPATCH;
     if (name == "fsa1fm1")      return ROM_UNKNOWN;
     if (name == "fsa1fm2")      return ROM_UNKNOWN;
     if (name == "Jisyo")        return ROM_JISYO;
-    if (name == "kanji")        return ROM_KANJI;
+    if (name == "Kanji")        return ROM_KANJI;
     if (name == "Kanji12")      return ROM_KANJI12;
     if (name == "MB8877A")      return ROM_NATIONALFDC;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "TC8566AF")     return ROM_TC8566AF;
     if (name == "WD2793")       return ROM_PHILIPSFDC;
     if (name == "Microsol")     return ROM_MICROSOL;
-    if (name == "MoonSound")    return ROM_MOONSOUND;
+    if (name == "Moonsound")    return ROM_MOONSOUND;
+
+    if (name == "Panasonic16")  return ROM_PANASONIC16;
+    if (name == "Panasonic32")  return ROM_PANASONIC32;
+    if (name == "Standard16K")  return ROM_MSXDOS2;
+    if (name == "SVI328CART")   return ROM_SVI328;
+    if (name == "SVI80COL")     return ROM_SVI80COL;
+    if (name == "SVI738FDC")    return ROM_SVI738FDC;
+    if (name == "MSX-AUDIO")    return ROM_MSXAUDIO;
+    if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
+    if (name == "CX5M-MUSIC")   return ROM_UNKNOWN; // not implemented
+    if (name == "National")     return ROM_UNKNOWN; // not implemented
+    if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
+    if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
+
+    // Roms not supproted in this format in the db
+    if (name == "0x4000")       return ROM_0x4000;
+    if (name == "0xC000")       return ROM_0xC000;
+    if (name == "auto")         return ROM_PLAIN;
+    if (name == "basic")        return ROM_BASIC;
 
     return ROM_UNKNOWN;
 }
+
 
 extern "C" RomType mediaDbOldStringToType(const char* romName)
 {
@@ -509,10 +525,41 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                     }
                 }
 
+                if (strcmp(dmp->Value(), "sccpluscart") == 0) {
+                    RomType romType = ROM_SCC;
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "boot") == 0) {
+                            TiXmlNode* name = it->FirstChild();
+                            if (name != NULL && strcmp(name->Value(), "scc+") == 0) {
+                                romType = ROM_SCCPLUS;
+                            }
+                        }
+                    }
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "hash") == 0) {
+                            const char* type = it->Attribute("algo");
+                            if (type != NULL) {
+                                if (strcmp(type, "sha1") == 0) {
+                                    TiXmlNode* hash = it->FirstChild();
+                                    string sha1(hash->Value());
+                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+                                }
+                                if (strcmp(type, "crc") == 0) {
+                                    UInt32 crc32;
+                                    TiXmlNode* hash = it->FirstChild();
+                                    if (sscanf(hash->Value(), "%x", &crc32) == 1) {
+                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (strcmp(dmp->Value(), "rom") == 0) {
                     RomType romType = ROM_PLAIN;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
-                        if (strcmp(it->Value(), "size") == 0) {
+                        if (strcmp(it->Value(), "start") == 0) {
                             TiXmlNode* name = it->FirstChild();
                             if (name != NULL) {
                                 if (strcmp(name->Value(), "0x0000") == 0) {
