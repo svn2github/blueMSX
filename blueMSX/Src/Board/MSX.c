@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-01 05:20:28 $
+** $Date: 2005-02-01 07:14:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@
 #include "AY8910.h"
 #include "KeyClick.h"
 #include "audioMixer.h"
+#include "Keyboard.h"
 #include "romMapper.h"
 #include "VDP.h"
 #include "V9938.h"
@@ -830,6 +831,7 @@ int msxRun(Machine* machine,
         }
         tapeLoadState();
         videoManagerLoadState();
+        keyboardLoadState();
     }
 
     if (success) {
@@ -1101,6 +1103,7 @@ void msxSaveState()
     }
     tapeSaveState();
     videoManagerSaveState();
+    keyboardSaveState();
 }
 
 void msxLoadState()

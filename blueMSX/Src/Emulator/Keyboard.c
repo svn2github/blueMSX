@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-11 09:02:52 $
+** $Date: 2005-02-01 07:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,10 +28,12 @@
 ******************************************************************************
 */
 #include "Keyboard.h"
+#include "SaveState.h"
 #include <string.h>
 
 static char* keyNames[EK_KEYCOUNT];
 static UInt16 keyMap[EK_KEYCOUNT];
+static KeyboardKeymap keymapType = KEYMAP_MSX;
 
 static void initKeyNameTable()
 {
@@ -404,6 +406,8 @@ void keyboardReset()
 
 void keyboardSetKeymap(KeyboardKeymap keymap) 
 {    
+    keymapType = keymap;
+
     switch (keymap) {
     case KEYMAP_MSX:
         initKeyMapMSX();
@@ -423,3 +427,18 @@ UInt8* keyboardGetState() {
     return keyboardState;
 }
 
+void keyboardLoadState()
+{
+    SaveState* state = saveStateOpenForRead("keyboard");
+    keymapType = saveStateGet(state, "keymapType",  0);
+    saveStateClose(state);
+    keyboardSetKeymap(keymapType);
+
+}
+
+void keyboardSaveState()
+{
+    SaveState* state = saveStateOpenForWrite("keyboard");
+    saveStateSet(state, "keymapType",  keymapType);
+    saveStateClose(state);
+}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-02-01 04:43:31 $
+** $Date: 2005-02-01 07:14:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,8 @@
 #include "JoystickIO.h"
 #include "AY8910.h"
 #include "KeyClick.h"
+#include "Keyboard.h"
+#include "Keyboard.h"
 #include "Casette.h"
 #include "Disk.h"
 #include "IoPort.h"
@@ -532,6 +534,7 @@ int sviRun(Machine* machine,
         ay8910LoadState(ay8910);
         tapeLoadState();
         videoManagerLoadState();
+        keyboardLoadState();
     }
 
     if (success) {
@@ -697,6 +700,7 @@ void sviSaveState()
     ay8910SaveState(ay8910);
     tapeSaveState();
     videoManagerSaveState();
+    keyboardSaveState();
 }
 
 void sviLoadState()

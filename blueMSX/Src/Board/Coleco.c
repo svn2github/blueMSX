@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-01 04:43:30 $
+** $Date: 2005-02-01 07:14:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -431,6 +431,7 @@ int colecoRun(Machine* machine,
         joystickIoLoadState(joyIO);
         machineLoadState(colecoMachine);
         sn76489LoadState(sn76489);
+        keyboardLoadState();
     }
 
     if (success) {
@@ -544,6 +545,7 @@ void colecoSaveState()
     r800SaveState(r800);
     sn76489SaveState(sn76489);
     deviceManagerSaveState();
+    keyboardSaveState();
 }
 
 void colecoLoadState()

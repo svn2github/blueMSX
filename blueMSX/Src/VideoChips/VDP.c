@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-01 04:43:33 $
+** $Date: 2005-02-01 07:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -797,7 +797,6 @@ static void saveState(VDP* vdp)
     saveStateSet(state, "vdp->blinkFlag",       vdp->blinkFlag);
     saveStateSet(state, "vdp->blinkCnt",        vdp->blinkCnt);
     saveStateSet(state, "vdp->drawArea",        vdp->drawArea);
-    saveStateSet(state, "vdp->lineOffset",      vdp->lineOffset);
     saveStateSet(state, "vramPages",       vdp->vramPages);
     saveStateSet(state, "vdp->vdpConnector",    vdp->vdpConnector);
     saveStateSet(state, "vdp->vdpVersion",      vdp->vdpVersion);
@@ -846,7 +845,6 @@ static void loadState(VDP* vdp)
     vdp->blinkFlag      =         saveStateGet(state, "vdp->blinkFlag",       0);
     vdp->blinkCnt       =         saveStateGet(state, "vdp->blinkCnt",        0);
     vdp->drawArea       =         saveStateGet(state, "vdp->drawArea",        0);
-    vdp->lineOffset     =         saveStateGet(state, "vdp->lineOffset",      256);
     vdp->vramPages      =         saveStateGet(state, "vramPages",       8);
     vdp->vdpConnector   =         saveStateGet(state, "vdp->vdpConnector",    VDP_MSX);
     vdp->vdpVersion     =         saveStateGet(state, "vdp->vdpVersion",      0);
@@ -871,6 +869,7 @@ static void loadState(VDP* vdp)
     vdp->lastLine        = vdpIsVideoPal(vdp) ? 313 : 262;    
     vdp->FGColor         = vdp->vdpRegs[7] >> 4;
     vdp->BGColor         = vdp->vdpRegs[7] & 0x0F;
+    vdp->lineOffset      = 0;
 
     switch (vdp->vdpVersion) {
     case VDP_TMS9929A:
