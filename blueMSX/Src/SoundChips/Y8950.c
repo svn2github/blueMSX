@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-11 00:11:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,7 @@ extern INT32 vib;
 extern INT32 feedback2;
 
 static Y8950* theY8950 = NULL;
+static volatile int initialized = 0;
 
 static UInt8 y8950ReadAddress(Y8950* y8950, UInt16 ioPort)
 {
@@ -142,6 +143,8 @@ static void loadState(Y8950* y8950)
 }
 
 static void destroy(Y8950* y8950) {
+    initialized = 0;
+
     deviceManagerUnregister(y8950->deviceHandle);
 
     ioPortUnregister(0xc0);
@@ -164,7 +167,7 @@ static void reset(Y8950* y8950)
 
 void y8950SetOversampling(int oversampling)
 {
-    if (theY8950) {
+    if (initialized) {
         theY8950->oversampling = oversampling;
         
         OPLSetOversampling(theY8950->opl, theY8950->oversampling);
@@ -190,6 +193,8 @@ int y8950Create(Mixer* mixer)
     y8950->opl = OPLCreate(OPL_TYPE_Y8950, FREQUENCY, SAMPLERATE, 256);
     OPLSetOversampling(y8950->opl, y8950->oversampling);
     OPLResetChip(y8950->opl);
+
+    initialized = 1;
 
     ioPortRegister(0xc0, y8950ReadAddress, y8950WriteAddress, y8950);
     ioPortRegister(0xc1, y8950ReadData,    y8950WriteData,    y8950);

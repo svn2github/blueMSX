@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-11 00:11:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,9 +67,13 @@ struct Moonsound {
 };
 
 Moonsound* theMoonsound = NULL;
+static volatile int initialized = 0;
 
 extern "C" static void destroy(void* rm) {
     Moonsound* moonsound = (Moonsound*)rm;
+
+    initialized = 0;
+
     deviceManagerUnregister(moonsound->deviceHandle);
 
     ioPortUnregister(0x7e);
@@ -271,7 +275,7 @@ extern "C" void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
 
 extern "C" void moonsoundSetOversampling(int Oversampling)
 {
-    if (theMoonsound) {
+    if (initialized) {
         theMoonsound->Oversampling = Oversampling;
         
         theMoonsound->ymf262->setSampleRate(SAMPLERATE, theMoonsound->Oversampling);
@@ -303,6 +307,8 @@ extern "C" int moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sra
     moonsound->ymf278 = new YMF278(0, sramSize, romData, romSize, systemTime);
     moonsound->ymf278->setSampleRate(SAMPLERATE, moonsound->Oversampling);
     moonsound->ymf278->setVolume(32767);
+
+    initialized = 1;
 
     ioPortRegister(0x7e, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
     ioPortRegister(0x7f, (IoPortRead)moonsoundRead, (IoPortWrite)moonsoundWrite, moonsound);
