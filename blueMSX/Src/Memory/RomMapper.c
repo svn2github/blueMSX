@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-23 16:48:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,6 +131,7 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "konami4"))      return ROM_KONAMI4;
     if (0 == strcmpnocase(name, "ascii8"))       return ROM_ASCII8;
     if (0 == strcmpnocase(name, "halnote"))      return ROM_HALNOTE;
+    if (0 == strcmpnocase(name, "coleco"))       return ROM_BASIC;
     if (0 == strcmpnocase(name, "basic"))        return ROM_BASIC;
     if (0 == strcmpnocase(name, "0x4000"))       return ROM_0x4000;
     if (0 == strcmpnocase(name, "konamisynth"))  return ROM_KONAMISYNTH;
