@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-24 08:45:55 $
+** $Date: 2005-01-26 08:15:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 #include "build_number.h"
 #include "version.h"
 #include "ArchNotifications.h"
+#include "ArchControls.h"
 #include "VideoManager.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
@@ -762,4 +763,44 @@ char* themeTriggerSelectedKey() {
 
 char* themeTriggerMappedKey() {
     return archGetMappedKey();
+}
+
+char* themeTriggerControlsPort1() {
+    int hwType = propGetGlobalProperties()->joy1.hwType;
+    switch (propGetGlobalProperties()->joy1.type) {
+    case P_JOY_NONE:
+        return "none";
+    case P_JOY_MOUSE:
+        return "mouse";
+    case P_JOY_NUMPAD:
+        return "numpad";
+    case P_JOY_KEYSET:
+        return "keyset";
+    case P_JOY_HW:
+        if (hwType < archJoystickGetCount()) {
+            return archJoystickGetName(hwType);
+        }
+        break;
+    }
+    return "unknown";
+}
+
+char* themeTriggerControlsPort2() {
+    int hwType = propGetGlobalProperties()->joy2.hwType;
+    switch (propGetGlobalProperties()->joy2.type) {
+    case P_JOY_NONE:
+        return "none";
+    case P_JOY_MOUSE:
+        return "mouse";
+    case P_JOY_NUMPAD:
+        return "numpad";
+    case P_JOY_KEYSET:
+        return "keyset";
+    case P_JOY_HW:
+        if (hwType < archJoystickGetCount()) {
+            return archJoystickGetName(hwType);
+        }
+        break;
+    }
+    return "unknown";
 }

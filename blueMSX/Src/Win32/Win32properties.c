@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-24 19:41:47 $
+** $Date: 2005-01-26 08:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1704,7 +1704,7 @@ static updateJoystickList(HWND hDlg, int id, int type, int hwType) {
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyKeyset());
 
     for (i = 0; i < archJoystickGetCount(); i++) {
-        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)joystickGetName(i));
+        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)archJoystickGetName(i));
     }
 
     if (type == P_JOY_HW) {
@@ -1743,7 +1743,7 @@ static int getJoystickList(HWND hDlg, int id, int* hwType, char* hwName, int* hw
         *hwIndex = 0;
 
         for (i = 0; i < *hwType; i++) {
-            if (0 == strcpy(selection, joystickGetName(i))) {
+            if (0 == strcpy(selection, archJoystickGetName(i))) {
                 *hwIndex++;
             }
         }
@@ -1813,7 +1813,7 @@ void propUpdateJoyinfo(Properties* pProperties)
         int i;
 
         for (i = 0; i < joyCount; i++) {
-            if (0 == strcmp(pProperties->joy1.hwName, joystickGetName(i))) {
+            if (0 == strcmp(pProperties->joy1.hwName, archJoystickGetName(i))) {
                 if (subindex == pProperties->joy1.hwIndex) {
                     pProperties->joy1.hwType = i;
                     return;
@@ -1830,7 +1830,7 @@ void propUpdateJoyinfo(Properties* pProperties)
         int i;
 
         for (i = 0; i < joyCount; i++) {
-            if (0 == strcmp(pProperties->joy2.hwName, joystickGetName(i))) {
+            if (0 == strcmp(pProperties->joy2.hwName, archJoystickGetName(i))) {
                 if (subindex == pProperties->joy2.hwIndex) {
                     pProperties->joy2.hwType = i;
                     return;

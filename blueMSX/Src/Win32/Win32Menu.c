@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-23 11:42:35 $
+** $Date: 2005-01-26 08:15:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,12 +32,121 @@
 #include "Win32Menu.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
-#include "Language.h"
 #include "Resource.h"
+#include "Language.h"
 #include "archMenu.h"
 #include "Actions.h"
 #include "Casette.h"
 #include "VideoManager.h"
+#include "ArchControls.h"
+#include "ArchNotifications.h"
+
+
+#define ID_FILE                         40010
+#define ID_FILE_LOAD                    40011
+#define ID_FILE_SAVE                    40012
+#define ID_FILE_QLOAD                   40013
+#define ID_FILE_QSAVE                   40014
+#define ID_LOG_WAV                      40015
+#define ID_PRT_SCR                      40016
+#define ID_FILE_EXIT                    40017
+
+#define ID_FILE_INSERT_CARTRIDGEA       40018
+#define ID_FILE_INSERT_CARTRIDGEB       40019
+#define ID_FILE_REMOVE_CARTRIDGEA       40020
+#define ID_FILE_REMOVE_CARTRIDGEB       40021
+#define ID_FILE_CARTRIDGE_AUTORESET     40022
+#define ID_FILE_INSERT_DISKETTEA        40023
+#define ID_FILE_INSERT_DISKETTEDIRA     40024
+#define ID_FILE_INSERT_DISKETTEA_RESET  40025
+#define ID_FILE_INSERT_DISKETTEB        40026
+#define ID_FILE_INSERT_DISKETTEDIRB     40027
+#define ID_FILE_REMOVE_DISKETTEA        40028
+#define ID_FILE_REMOVE_DISKETTEB        40029
+#define ID_FILE_INSERT_CASSETTE         40030
+#define ID_FILE_REMOVE_CASSETTE         40031
+#define ID_FILE_REWIND_CASSETTE         40032
+#define ID_FILE_POSITION_CASSETTE       40033
+#define ID_FILE_SAVE_CASSETTE           40034
+#define ID_FILE_READONLY_CASSETTE       40035
+#define ID_FILE_AUTOREWNIND_CASSETTE    40036
+#define ID_FILE_CARTA_FMPAC             40037
+#define ID_FILE_CARTB_FMPAC             40038
+#define ID_FILE_CARTA_PAC               40039
+#define ID_FILE_CARTB_PAC               40040
+#define ID_FILE_CARTA_MEGARAM128        40041
+#define ID_FILE_CARTB_MEGARAM128        40042
+#define ID_FILE_CARTA_MEGARAM256        40043
+#define ID_FILE_CARTB_MEGARAM256        40044
+#define ID_FILE_CARTA_MEGARAM512        40045
+#define ID_FILE_CARTB_MEGARAM512        40046
+#define ID_FILE_CARTA_MEGARAM768        40047
+#define ID_FILE_CARTB_MEGARAM768        40048
+#define ID_FILE_CARTA_MEGARAM2M         40049
+#define ID_FILE_CARTB_MEGARAM2M         40050
+#define ID_FILE_CARTA_SNATCHER          40051
+#define ID_FILE_CARTB_SNATCHER          40052
+#define ID_FILE_CARTA_SDSNATCHER        40053
+#define ID_FILE_CARTB_SDSNATCHER        40054
+#define ID_FILE_CARTA_SCCMIRRORED       40055
+#define ID_FILE_CARTB_SCCMIRRORED       40056
+#define ID_FILE_CARTA_SCCEXPANDED       40057
+#define ID_FILE_CARTB_SCCEXPANDED       40058
+#define ID_FILE_CARTA_SCC               40059
+#define ID_FILE_CARTB_SCC               40060
+#define ID_FILE_CARTA_SCCPLUS           40061
+#define ID_FILE_CARTB_SCCPLUS           40062
+#define ID_FILE_CARTA_EXTRAM512KB       40063
+#define ID_FILE_CARTB_EXTRAM512KB       40064
+#define ID_FILE_CARTA_EXTRAM1MB         40065
+#define ID_FILE_CARTB_EXTRAM1MB         40066
+#define ID_FILE_CARTA_EXTRAM2MB         40067
+#define ID_FILE_CARTB_EXTRAM2MB         40068
+#define ID_FILE_CARTA_EXTRAM4MB         40069
+#define ID_FILE_CARTB_EXTRAM4MB         40070
+#define ID_FILE_CARTA_SONYHBI55         40071
+#define ID_FILE_CARTB_SONYHBI55         40072
+
+#define ID_CARTRIDGEA_HISTORY           30000
+#define ID_CARTRIDGEB_HISTORY           30050
+#define ID_DISKDRIVEA_HISTORY           30100
+#define ID_DISKDRIVEB_HISTORY           30150
+#define ID_CASSETTE_HISTORY             30200
+#define ID_VIDEO_CONNECTORS             30250
+#define ID_CTRLPORT1_BASE               30300
+#define ID_CTRLPORT2_BASE               30325
+
+#define ID_RUN_RUN                      40081
+#define ID_RUN_PAUSE                    40082
+#define ID_RUN_STOP                     40083
+#define ID_RUN_RESET                    40084
+#define ID_RUN_SOFTRESET                40085
+#define ID_RUN_CLEANRESET               40086
+
+#define ID_SIZE_NORMAL                  40157
+#define ID_SIZE_X2                      40158
+#define ID_SIZE_FULLSCREEN              40159
+#define ID_SIZE_MINIMIZED               40160
+
+#define ID_OPTIONS_EMULATION            40121
+#define ID_OPTIONS_AUDIO                40122
+#define ID_OPTIONS_VIDEO                40123
+#define ID_OPTIONS_CONTROLS             40124
+#define ID_OPTIONS_PERFORMANCE          40125
+#define ID_OPTIONS_SETTINGS             40126
+#define ID_OPTIONS_LANGUAGE             40127
+#define ID_OPTIONS_APEARANCE            40128
+#define ID_OPTIONS_PORTS                40129
+
+#define ID_HELP_HELP                    40151
+#define ID_HELP_ABOUT                   40152
+
+#define ID_TOOLS_MACHINEEDITOR          40154
+#define ID_TOOLS_SHORTCUTSEDITOR        40155
+#define ID_TOOLS_KEYBOARDEDITOR         40156
+
+
+
 
 #ifndef MIM_BACKGROUND
 #define MIM_BACKGROUND              0x00000002
@@ -76,6 +185,8 @@ static HMENU hMenuRun = NULL;
 static HMENU hMenuDiskA = NULL;
 static HMENU hMenuDiskB = NULL;
 static HMENU hMenuCasette = NULL;
+static HMENU hMenuControlsPort1 = NULL;
+static HMENU hMenuControlsPort2 = NULL;
 static HMENU hMenuZoom = NULL;
 static HMENU hMenuOptions = NULL;
 static HMENU hMenuHelp = NULL;
@@ -518,6 +629,56 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
+static HMENU menuCreateControlsPort1(Properties* pProperties, Shortcuts* shortcuts) {
+    HMENU           hMenu = CreatePopupMenu();
+    PropControlsJoy joyType = pProperties->joy1.type;
+    int             hwType  = joyType == P_JOY_HW ? pProperties->joy1.hwType : -1;
+    int i;
+
+    setMenuColor(hMenu);
+
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NONE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 0, langEnumControlsJoyNone());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_MOUSE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 1, langEnumControlsJoyMouse());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NUMPAD ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 2, langEnumControlsJoyNumpad());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 3, langEnumControlsJoyKeyset());
+
+    for (i = 0; i < archJoystickGetCount(); i++) {
+        AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
+                ID_CTRLPORT1_BASE + 4 + i, archJoystickGetName(i));
+    }
+    
+    return hMenu;
+}
+
+static HMENU menuCreateControlsPort2(Properties* pProperties, Shortcuts* shortcuts) {
+    HMENU           hMenu = CreatePopupMenu();
+    PropControlsJoy joyType = pProperties->joy2.type;
+    int             hwType  = joyType == P_JOY_HW ? pProperties->joy2.hwType : -1;
+    int i;
+
+    setMenuColor(hMenu);
+
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NONE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 0, langEnumControlsJoyNone());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_MOUSE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 1, langEnumControlsJoyMouse());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NUMPAD ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 2, langEnumControlsJoyNumpad());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 3, langEnumControlsJoyKeyset());
+
+    for (i = 0; i < archJoystickGetCount(); i++) {
+        AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
+                ID_CTRLPORT2_BASE + 4 + i, archJoystickGetName(i));
+    }
+    
+    return hMenu;
+}
+
 static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts) {
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
@@ -906,28 +1067,32 @@ void menuUpdate(Properties* pProperties,
     if (hMenuDiskA) DestroyMenu(hMenuDiskA);
     if (hMenuDiskB) DestroyMenu(hMenuDiskB);
     if (hMenuCasette) DestroyMenu(hMenuCasette);
+    if (hMenuControlsPort1) DestroyMenu(hMenuControlsPort1);
+    if (hMenuControlsPort2) DestroyMenu(hMenuControlsPort2);
     if (hMenuZoom) DestroyMenu(hMenuZoom);
     if (hMenuOptions) DestroyMenu(hMenuOptions);
     if (hMenuHelp) DestroyMenu(hMenuHelp);
     if (hMenuFile) DestroyMenu(hMenuFile);
     if (hMenuTools) DestroyMenu(hMenuTools);
 
-    hMenuReset        = menuCreateReset(pProperties, shortcuts);
-    hMenuCartSpecialA = menuCreateCartSpecialA(pProperties, shortcuts);
-    hMenuCartSpecialB = menuCreateCartSpecialB(pProperties, shortcuts);
-    hMenuVideoConnect = menuCreateVideoConnect(pProperties, shortcuts);
-    hMenuCartA        = menuCreateCartA(pProperties, shortcuts, enableSpecial);
-    hMenuCartB        = menuCreateCartB(pProperties, shortcuts, enableSpecial);
-    hMenuRun          = menuCreateRun(pProperties, shortcuts, isRunning, isStopped);
-    hMenuDiskA        = menuCreateDiskA(pProperties, shortcuts);
-    hMenuDiskB        = menuCreateDiskB(pProperties, shortcuts);
-    hMenuCasette      = menuCreateCassette(pProperties, shortcuts);
-    hMenuZoom         = menuCreateZoom(pProperties, shortcuts);
-    hMenuOptions      = menuCreateOptions(pProperties, shortcuts);
-    hMenuHelp         = menuCreateHelp(pProperties, shortcuts);
-    hMenuFile         = menuCreateFile(pProperties, shortcuts, isStopped, logSound, tempStateExits, enableSpecial);
-    hMenuTools        = menuCreateTools(pProperties, shortcuts);
-
+    hMenuReset         = menuCreateReset(pProperties, shortcuts);
+    hMenuCartSpecialA  = menuCreateCartSpecialA(pProperties, shortcuts);
+    hMenuCartSpecialB  = menuCreateCartSpecialB(pProperties, shortcuts);
+    hMenuVideoConnect  = menuCreateVideoConnect(pProperties, shortcuts);
+    hMenuCartA         = menuCreateCartA(pProperties, shortcuts, enableSpecial);
+    hMenuCartB         = menuCreateCartB(pProperties, shortcuts, enableSpecial);
+    hMenuRun           = menuCreateRun(pProperties, shortcuts, isRunning, isStopped);
+    hMenuDiskA         = menuCreateDiskA(pProperties, shortcuts);
+    hMenuDiskB         = menuCreateDiskB(pProperties, shortcuts);
+    hMenuCasette       = menuCreateCassette(pProperties, shortcuts);
+    hMenuControlsPort1 = menuCreateControlsPort1(pProperties, shortcuts);
+    hMenuControlsPort2 = menuCreateControlsPort2(pProperties, shortcuts);
+    hMenuZoom          = menuCreateZoom(pProperties, shortcuts);
+    hMenuOptions       = menuCreateOptions(pProperties, shortcuts);
+    hMenuHelp          = menuCreateHelp(pProperties, shortcuts);
+    hMenuFile          = menuCreateFile(pProperties, shortcuts, isStopped, logSound, tempStateExits, enableSpecial);
+    hMenuTools         = menuCreateTools(pProperties, shortcuts);
+ 
     InvalidateRect(menuHwnd, NULL, TRUE);
 }
 
@@ -1012,6 +1177,16 @@ void archShowMenuCassette(int x, int y) {
     showPopupMenu(hMenuCasette, x, y);
 }
 
+void archShowMenuControlsPort1(int x, int y) {
+    archUpdateMenu(0);
+    showPopupMenu(hMenuControlsPort1, x, y);
+}
+
+void archShowMenuControlsPort2(int x, int y) {
+    archUpdateMenu(0);
+    showPopupMenu(hMenuControlsPort2, x, y);
+}
+
 void archShowMenuZoom(int x, int y) {
     showPopupMenu(hMenuZoom, x, y);
 }
@@ -1026,9 +1201,31 @@ void archShowMenuTools(int x, int y) {
 
 int menuCommand(Properties* pProperties, int command) 
 {
-    int i = command - ID_VIDEO_CONNECTORS;
+    int i;
+    
+    i = command - ID_VIDEO_CONNECTORS;
     if (i >= 0 && i < 16) {
         videoManagerSetActive(i);
+        return 1;
+    }
+    
+    i = command - ID_CTRLPORT1_BASE;
+    if (i >= 0 && i < 16) {
+        if (i >= 4) {
+            pProperties->joy1.hwType = i - 4;
+            i = 4;
+        }
+        pProperties->joy1.type = i;
+        return 1;
+    }
+
+    i = command - ID_CTRLPORT2_BASE;
+    if (i >= 0 && i < 16) {
+        if (i >= 4) {
+            pProperties->joy2.hwType = i - 4;
+            i = 4;
+        }
+        pProperties->joy2.type = i;
         return 1;
     }
 
@@ -1174,11 +1371,8 @@ int menuCommand(Properties* pProperties, int command)
     case ID_PRT_SCR:                        actionScreenCapture();          return 0;
     case ID_FILE_POSITION_CASSETTE:         actionCasSetPosition();         return 0;
     case ID_FILE_REWIND_CASSETTE:           actionCasRewind();              return 0;
-    case ID_TB_DISKA:
     case ID_FILE_INSERT_DISKETTEA:          actionDiskInsertA();            return 0;
-    case ID_TB_DISKB:
     case ID_FILE_INSERT_DISKETTEB:          actionDiskInsertB();            return 0;
-    case ID_TB_CAS:
     case ID_FILE_INSERT_DISKETTEDIRA:       actionDiskDirInsertA();         return 0;
     case ID_FILE_INSERT_DISKETTEDIRB:       actionDiskDirInsertB();         return 0;
     case ID_FILE_INSERT_CASSETTE:           actionCasInsert();              return 0;
@@ -1186,9 +1380,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_FILE_LOAD:                      actionLoadState();              return 0;
     case ID_FILE_QSAVE:                     actionQuickSaveState();         return 0;
     case ID_FILE_QLOAD:                     actionQuickLoadState();         return 0;
-    case ID_TB_CARTA:
     case ID_FILE_INSERT_CARTRIDGEA:         actionCartInsert1();            return 0;
-    case ID_TB_CARTB:
     case ID_FILE_INSERT_CARTRIDGEB:         actionCartInsert2();            return 0;
     case ID_LOG_WAV:                        actionToggleWaveCapture();      return 0;
     case ID_FILE_EXIT:                      actionQuit();                   return 0;
@@ -1196,13 +1388,8 @@ int menuCommand(Properties* pProperties, int command)
     case ID_SIZE_X2:                        actionWindowSizeNormal();       return 0;
     case ID_SIZE_MINIMIZED:                 actionWindowSizeMinimized();    return 0;
     case ID_SIZE_FULLSCREEN:                actionWindowSizeFullscreen();   return 0;
-    case ID_TB_PLAY:
-    case ID_TB_PAUSE:
-    case ID_TB_PLAYPAUSE:
     case ID_RUN_RUN:                        actionEmuTogglePause();         return 0;
-    case ID_TB_STOP:
     case ID_RUN_STOP:                       actionEmuStop();                return 0;
-    case ID_TB_RESET:
     case ID_RUN_RESET:                      actionEmuResetHard();           return 0;
     case ID_RUN_SOFTRESET:                  actionEmuResetSoft();           return 0;
     case ID_RUN_CLEANRESET:                 actionEmuResetClean();          return 0;
@@ -1219,7 +1406,6 @@ int menuCommand(Properties* pProperties, int command)
     case ID_OPTIONS_EMULATION:              actionPropShowEmulation();      return 0;
     case ID_OPTIONS_VIDEO:                  actionPropShowVideo();          return 0;
     case ID_OPTIONS_AUDIO:                  actionPropShowAudio();          return 0;
-    case ID_TB_PROPERTIES:
     case ID_OPTIONS_CONTROLS:               actionPropShowControls();       return 0;
     case ID_OPTIONS_PERFORMANCE:            actionPropShowPerformance();    return 0;
     case ID_OPTIONS_SETTINGS:               actionPropShowSettings();       return 0;
@@ -1229,7 +1415,6 @@ int menuCommand(Properties* pProperties, int command)
     case ID_TOOLS_MACHINEEDITOR:            actionToolsShowMachineEditor(); return 0;
     case ID_TOOLS_SHORTCUTSEDITOR:          actionToolsShowShorcutEditor(); return 0;
     case ID_TOOLS_KEYBOARDEDITOR:           actionToolsShowKeyboardEditor();return 0;
-    case ID_TB_HELP:
     case ID_HELP_HELP:                      actionHelpShowHelp();           return 0;
     case ID_HELP_ABOUT:                     actionHelpShowAbout();          return 0;
     }

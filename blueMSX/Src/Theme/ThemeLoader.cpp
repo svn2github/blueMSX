@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-01-25 05:44:17 $
+** $Date: 2005-01-26 08:15:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,8 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-diska"))              return (ButtonEvent)actionMenuDiskA;
     if (0 == strcmp(action, "menu-diskb"))              return (ButtonEvent)actionMenuDiskB;
     if (0 == strcmp(action, "menu-cassette"))           return (ButtonEvent)actionMenuCassette;
+    if (0 == strcmp(action, "menu-controlsport1"))      return (ButtonEvent)actionMenuControlsPort1;
+    if (0 == strcmp(action, "menu-controlsport2"))      return (ButtonEvent)actionMenuControlsPort2;
     if (0 == strcmp(action, "menu-windowsize"))         return (ButtonEvent)actionMenuZoom;
     if (0 == strcmp(action, "menu-options"))            return (ButtonEvent)actionMenuOptions;
     if (0 == strcmp(action, "menu-help"))               return (ButtonEvent)actionMenuHelp;
@@ -453,6 +455,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "text-buildandversion"))     return t | THEME_TRIGGER_TEXT_BUILDANDVER;
     if (0 == strcmp(s, "text-selectedkey"))         return t | THEME_TRIGGER_TEXT_SELECTEDKEY;
     if (0 == strcmp(s, "text-mappedkey"))           return t | THEME_TRIGGER_TEXT_MAPPEDKEY;
+    if (0 == strcmp(s, "text-controlsport1"))       return t | THEME_TRIGGER_TEXT_CONTROLSPORT1;
+    if (0 == strcmp(s, "text-controlsport2"))       return t | THEME_TRIGGER_TEXT_CONTROLSPORT2;
     
     if (0 == strcmp(s, "lang-kbd-selkey"))          return t | THEME_TRIGGER_LANG_KBD_SELKEY;
     if (0 == strcmp(s, "lang-kbd-mappedto"))        return t | THEME_TRIGGER_LANG_KBD_MAPPEDTO;

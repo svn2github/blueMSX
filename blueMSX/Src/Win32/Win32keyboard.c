@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-25 04:49:47 $
+** $Date: 2005-01-26 08:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -592,7 +592,7 @@ int archJoystickGetCount() {
     return joyCount;
 }
 
-char* joystickGetName(int index) {
+char* archJoystickGetName(int index) {
     return joyInfo[index].name;
 }
 
