@@ -922,19 +922,10 @@
 			Name="Resources"
 			Filter="">
 			<File
-				RelativePath="..\..\Src\Resources\audio.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\bluemsx.ico">
-			</File>
-			<File
 				RelativePath="..\..\Src\Resources\bluemsx.manifest">
 			</File>
 			<File
 				RelativePath="..\..\Src\Resources\blueMSX.rc">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\blueMSXtop.bmp">
 			</File>
 			<File
 				RelativePath="..\..\Src\BuildInfo\build_info.txt">
@@ -973,121 +964,7 @@ buildnumber.exe
 				RelativePath="..\..\Src\BuildInfo\build_number.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\Resources\caps.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\capskana.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\comdlg32.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\diskA.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\diskB.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\diskimage.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\expmark.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagBrazil.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagFrance.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagItaly.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagJapan.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagNetherlands.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagSpain.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagSweden.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\flagUSA.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\frontswitch.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\history.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\internal.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\joystick.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\kana.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\keyboard.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\machine.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\mixerpan.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\mixervol.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\mixervol2.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\monitor.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\MSX.bmp">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\MSXsmall.bmp">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\open.ico">
-			</File>
-			<File
 				RelativePath="..\..\Src\Resources\Resource.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\screensaver.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\screensettings.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\slots.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\stopwatch.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\tape.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\toolbar.bmp">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\transparent.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\Volume01.ico">
-			</File>
-			<File
-				RelativePath="..\..\Src\Resources\warning.ico">
 			</File>
 		</Filter>
 		<Filter
