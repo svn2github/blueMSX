@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-30 23:17:29 $
+** $Date: 2005-02-09 20:52:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2271,7 +2271,7 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
     UInt16* pBuf = (UInt16*)pBuffer;
     int w, h;
 
-    pitch  /= (int)sizeof(UInt32);
+    pitch  /= (int)sizeof(UInt16);
 
     switch (blur) {
     case 0:
@@ -2279,10 +2279,10 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
 
     case 1:
         for (h = 0; h < height; h++) {
-            UInt32 p0 = pBuf[0] & 0xfefefe;
+            UInt16 p0 = pBuf[0] & 0xf7de;
             for (w = 1; w < width; w++) {
-                UInt32 p1 = pBuf[w] & 0xfefefe;
-                pBuf[w] = (UInt16)((p0 & 0x00ff00) | (((p0 + p1) / 2) & 0x0000ff) | (p1 & 0xff0000));
+                UInt16 p1 = pBuf[w] & 0xf7de;
+                pBuf[w] = (UInt16)((p0 & 0x07e0) | (((p0 + p1) / 2) & 0x001f) | (p1 & 0xf800));
                 p0 = p1;
             }
             pBuf += pitch;
@@ -2291,11 +2291,11 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
 
     case 2:
         for (h = 0; h < height; h++) {
-            UInt32 p0 = pBuf[0];
-            UInt32 p1 = pBuf[1];
+            UInt16 p0 = pBuf[0];
+            UInt16 p1 = pBuf[1];
             for (w = 2; w < width; w++) {
-                UInt32 p2 = pBuf[w];
-                pBuf[w] = (UInt16)((p0 & 0x00ff00) | (p1 & 0x0000ff) | (((p1 + p2) / 2) & 0xff0000));
+                UInt16 p2 = pBuf[w];
+                pBuf[w] = (UInt16)((p0 & 0x07e0) | (p1 & 0x001f) | (((p1 + p2) / 2) & 0xf800));
                 p0 = p1;
                 p1 = p2;
             }
@@ -2305,11 +2305,11 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
 
     case 3:
         for (h = 0; h < height; h++) {
-            UInt32 p0 = pBuf[0];
-            UInt32 p1 = pBuf[1];
+            UInt16 p0 = pBuf[0];
+            UInt16 p1 = pBuf[1];
             for (w = 2; w < width; w++) {
-                UInt32 p2 = pBuf[w];
-                pBuf[w] = (UInt16)((p0 & 0x00ff00) | (p1 & 0x0000ff) | (p2 & 0xff0000));
+                UInt16 p2 = pBuf[w];
+                pBuf[w] = (UInt16)((p0 & 0x07e0) | (p1 & 0x001f) | (p2 & 0xf800));
                 p0 = p1;
                 p1 = p2;
             }
@@ -2319,12 +2319,12 @@ void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blu
 
     case 4:
         for (h = 0; h < height; h++) {
-            UInt32 p0 = pBuf[0] & 0xfefefe;
-            UInt32 p1 = pBuf[1] & 0xfefefe;
-            UInt32 p2 = pBuf[2] & 0xfefefe;
+            UInt16 p0 = pBuf[0] & 0xf7de;
+            UInt16 p1 = pBuf[1] & 0xf7de;
+            UInt16 p2 = pBuf[2] & 0xf7de;
             for (w = 3; w < width; w++) {
-                UInt32 p3 = pBuf[w] & 0xfefefe;;
-                pBuf[w] = (UInt16)((((p0 + p1) / 2) & 0x00ff00) | (p2 & 0x0000ff) | (p3 & 0xff0000));
+                UInt16 p3 = pBuf[w] & 0xf7de;;
+                pBuf[w] = (UInt16)((((p0 + p1) / 2) & 0x07e0) | (p2 & 0x001f) | (p3 & 0xf800));
                 p0 = p1;
                 p1 = p2;
                 p2 = p3;

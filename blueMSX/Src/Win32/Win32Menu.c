@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-01 05:20:39 $
+** $Date: 2005-02-09 20:52:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1192,6 +1192,7 @@ void archShowMenuZoom(int x, int y) {
 }
 
 void archShowMenuOptions(int x, int y) {
+    archUpdateMenu(0);
     showPopupMenu(hMenuOptions, x, y);
 }
 
@@ -1205,7 +1206,12 @@ int menuCommand(Properties* pProperties, int command)
     
     i = command - ID_VIDEO_CONNECTORS;
     if (i >= 0 && i < 16) {
-        videoManagerSetActive(i);
+        if (videoManagerGetActive() == i) {
+            videoManagerSetActive(-1);
+        }
+        else {
+            videoManagerSetActive(i);
+        }
         return 1;
     }
     
