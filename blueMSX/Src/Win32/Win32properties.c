@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-16 08:02:36 $
+** $Date: 2004-12-18 00:30:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2173,7 +2173,7 @@ static BOOL setRegStrValue(char* keyDir, char* keyStr, char* value) {
 
 static void getIniStrValue(char* keyDir, char* keyStr, char* returnValue) {  
     char file[1024];
-    char defStr[128];
+    char defStr[512];
 
     if (keyFile != NULL)      sprintf(file, "%s", keyFile);
     else if (keyPath != NULL) sprintf(file, "%s\\%s.ini", keyPath, keyDir);
@@ -2181,7 +2181,7 @@ static void getIniStrValue(char* keyDir, char* keyStr, char* returnValue) {
 
     strcpy(defStr, returnValue);
 
-    GetPrivateProfileString("General", keyStr, defStr, returnValue, 64, file);      
+    GetPrivateProfileString("General", keyStr, defStr, returnValue, 512, file);      
 }
 
 static void getIniIntValue(char* keyDir, char* keyStr, DWORD* returnValue) {  

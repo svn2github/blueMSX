@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-16 08:57:43 $
+** $Date: 2004-12-18 00:30:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@ static int   ramImageSize[2];
 static int   sectorsPerTrack[2];
 static int   fileSize[2];
 static int   sides[2];
+static int   tracks[2];
 static int   changed[2];
 
 
@@ -89,10 +90,12 @@ int diskGetSectorSize(int driveId, int side, int track, int density)
     if (driveId >= MAXDRIVES)
         return 0;
 
-    if (boardGetType() == BOARD_SVI)
+    if (boardGetType() == BOARD_SVI) {
         secSize = (track==0 && side==0 && density==1) ? 128 : 256;
-    else
+    }
+    else {
         secSize = 512;
+    }
 
     return secSize;
 }
@@ -199,6 +202,7 @@ static void diskUpdateInfo(int driveId)
 
     sectorsPerTrack[driveId] = 9;
     sides[driveId]           = 2;
+    tracks[driveId]          = 80;
     changed[driveId]         = 1;
 
     if (fileSize[driveId] / 512 == 1440) {
@@ -210,6 +214,51 @@ static void diskUpdateInfo(int driveId)
         return;
     }
 
+    if (buf[0] ==0xeb) {
+        switch (buf[0x15]) {
+        case 0xf8:
+	        sides[driveId]           = 1;
+            tracks[driveId]          = 80;
+	        sectorsPerTrack[driveId] = 9;
+            return;
+        case 0xf9:
+	        sides[driveId]           = 2;
+            tracks[driveId]          = 80;
+	        sectorsPerTrack[driveId] = 9;
+            return;
+        case 0xfa:
+	        sides[driveId]           = 1;
+            tracks[driveId]          = 80;
+	        sectorsPerTrack[driveId] = 8;
+            return;
+        case 0xfb:
+	        sides[driveId]           = 2;
+            tracks[driveId]          = 80;
+	        sectorsPerTrack[driveId] = 8;
+            return;
+        case 0xfc:
+	        sides[driveId]           = 1;
+            tracks[driveId]          = 40;
+	        sectorsPerTrack[driveId] = 9;
+            return;
+        case 0xfd:
+	        sides[driveId]           = 2;
+            tracks[driveId]          = 40;
+	        sectorsPerTrack[driveId] = 9;
+            return;
+        case 0xfe:
+	        sides[driveId]           = 1;
+            tracks[driveId]          = 40;
+	        sectorsPerTrack[driveId] = 8;
+            return;
+        case 0xff:
+	        sides[driveId]           = 2;
+            tracks[driveId]          = 40;
+	        sectorsPerTrack[driveId] = 8;
+            return;
+        }
+    }
+    
     if ((buf[0] == 0xe9) || (buf[0] ==0xeb)) {
 	    sectorsPerTrack[driveId] = buf[0x18] + 256 * buf[0x19];
 	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];

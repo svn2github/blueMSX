@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:05:52 $
+** $Date: 2004-12-18 00:30:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -354,9 +354,9 @@ int machineIsValid(char* machineName, int checkRoms)
             FILE* file = fopen(machine->slotInfo[i].name, "r");
             if (file == NULL) {
                 if (success) {
-                    printf("\n%s: Cant find rom:\n", machineName);
+//                    printf("\n%s: Cant find rom:\n", machineName);
                 }
-                printf("     %s\n", machine->slotInfo[i].name);
+//                printf("     %s\n", machine->slotInfo[i].name);
                 success = 0;
                 continue;
             }
