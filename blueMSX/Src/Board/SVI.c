@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-03 23:12:31 $
+** $Date: 2005-01-10 13:09:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,7 +571,7 @@ void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
         strcpy(sviDevInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
-    diskChange(driveId, fileName, fileInZipFile);
+    diskChangeSVI(driveId, fileName, fileInZipFile);
 }
 
 int sviChangeCassette(char *name, const char *fileInZipFile)

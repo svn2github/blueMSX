@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:58 $
+** $Date: 2005-01-10 13:09:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #define MAXDRIVES 2
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
+UInt8 diskChangeSVI(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
 UInt8 diskEnabled(int driveId);
 UInt8 diskPresent(int driveId);

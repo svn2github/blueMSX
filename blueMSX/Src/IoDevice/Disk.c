@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-20 21:03:50 $
+** $Date: 2005-01-10 13:09:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -225,7 +225,7 @@ static void diskUpdateInfo(int driveId)
 	        sides[driveId]           = 2;
             tracks[driveId]          = 80;
 	        sectorsPerTrack[driveId] = 9;
-            // This check is needed to get the SVI dos disks to work
+            // This check is needed to get the SVI-738 MSX-DOS disks to work
             // Maybe it should be applied to other cases as well
             rv = diskReadSector(driveId, buf, 2, 0, 0, 512, &sectorSize);
             if (rv && buf[0] == 0xf8) {
@@ -370,29 +370,6 @@ UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int trac
     return 0;
 }
 
-
-static int diskCheckSize(int driveId, int dskImageSize)
-{
-    fileSize[driveId] = dskImageSize;
-
-    if (boardGetType() == BOARD_SVI) {
-        switch (dskImageSize) {
-        case 172032:	/* Single sided */
-            sides[driveId] = 1;
-            return 1;
-        case 346112:	/* Double sided */
-            sides[driveId] = 2;
-            return 1;
-        default:
-            return 0;
-        }
-	}
-    else {
-        diskUpdateInfo(driveId);
-        return 1;
-    }
-}
-
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
 {
     struct stat s;
@@ -420,20 +397,17 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     rv = stat(fileName, &s);
     if (rv == 0) {
         if (s.st_mode & S_IFDIR) {
-            if (boardGetType() == BOARD_SVI) {
-                return 1;
-            }
-            else {
-                ramImageBuffer[driveId] = dirLoadFile(fileName, &ramImageSize[driveId]);
-                diskCheckSize(driveId, ramImageSize[driveId]);
-                return ramImageBuffer[driveId] != NULL;
-            }
+            ramImageBuffer[driveId] = dirLoadFile(fileName, &ramImageSize[driveId]);
+            fileSize[driveId] = ramImageSize[driveId];
+            diskUpdateInfo(driveId);
+            return ramImageBuffer[driveId] != NULL;
         }
     }
 
     if (fileInZipFile != NULL) {
         ramImageBuffer[driveId] = zipLoadFile(fileName, fileInZipFile, &ramImageSize[driveId]);
-        diskCheckSize(driveId, ramImageSize[driveId]);
+        fileSize[driveId] = ramImageSize[driveId];
+        diskUpdateInfo(driveId);
         return ramImageBuffer[driveId] != NULL;
     }
 
@@ -450,12 +424,77 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     }
 
     fseek(drives[driveId],0,SEEK_END);
-    if (!diskCheckSize(driveId, ftell(drives[driveId]))) {
-        fclose(drives[driveId]);
-        drives[driveId] = NULL;
-    }
+    fileSize[driveId] = ftell(drives[driveId]);
 
     diskUpdateInfo(driveId);
+
+    return 1;
+}
+
+static int diskUpdateInfoSVI(int driveId, int dskImageSize)
+{
+    tracks[driveId] = 40;
+    changed[driveId] = 1;
+    fileSize[driveId] = dskImageSize;
+
+    switch (dskImageSize) {
+        case 172032:	/* Single sided */
+            sides[driveId] = 1;
+            return 1;
+        case 346112:	/* Double sided */
+            sides[driveId] = 2;
+            return 1;
+        default:
+            sides[driveId] = 0;
+            return 0;
+	}
+}
+
+UInt8 diskChangeSVI(int driveId, char* fileName, const char* fileInZipFile)
+{
+    if (driveId >= MAXDRIVES)
+        return 0;
+
+    /* Close previous disk image */
+    if(drives[driveId] != NULL) { 
+        fclose(drives[driveId]);
+        drives[driveId] = NULL; 
+    }
+
+    if (ramImageBuffer[driveId] != NULL) {
+        // Flush to file??
+        free(ramImageBuffer[driveId]);
+        ramImageBuffer[driveId] = NULL;
+    }
+
+    if(!fileName) {
+        return 0;
+    }
+
+    if (fileInZipFile != NULL) {
+        ramImageBuffer[driveId] = zipLoadFile(fileName, fileInZipFile, &ramImageSize[driveId]);
+        diskUpdateInfoSVI(driveId, ramImageSize[driveId]);
+        return ramImageBuffer[driveId] != NULL;
+    }
+
+    drives[driveId] = fopen(fileName, "r+b");
+    RdOnly[driveId] = 0;
+
+    if (drives[driveId] == NULL) {
+        drives[driveId] = fopen(fileName, "rb");
+        RdOnly[driveId] = 1;
+    }
+
+    if (drives[driveId] == NULL) {
+        return 0;
+    }
+
+    fseek(drives[driveId],0,SEEK_END);
+    if (!diskUpdateInfoSVI(driveId, ftell(drives[driveId]))) {
+        fclose(drives[driveId]);
+        drives[driveId] = NULL;
+        return 0;
+    }
 
     return 1;
 }
