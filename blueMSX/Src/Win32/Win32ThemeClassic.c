@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-14 06:11:32 $
+** $Date: 2005-01-25 05:44:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,7 @@ static ThemePage* themeCreateSmall()
 
     themePageAddImage(theme, activeImageCreate(0, 0, 1, archBitmapCreateFromId(IDB_CLASSIC_BGSMALL), 1),    THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(283, 278, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(283, 278, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
 
     themePageAddImage(theme, activeImageCreate(204, 300, 2, archBitmapCreateFromId(IDB_CLASSIC_DISKA), 2),  THEME_TRIGGER_IMG_DISKA, THEME_TRIGGER_NONE);
     themePageAddImage(theme, activeImageCreate(222, 300, 2, archBitmapCreateFromId(IDB_CLASSIC_DISKB), 2),  THEME_TRIGGER_IMG_DISKB, THEME_TRIGGER_NONE);
@@ -67,9 +67,9 @@ static ThemePage* themeCreateSmall()
     themePageAddImage(theme, activeImageCreate(68, 298, 2, archBitmapCreateFromId(IDB_CLASSIC_FPS), 2), THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
     themePageAddImage(theme, activeImageCreate(177, 298, 2, archBitmapCreateFromId(IDB_CLASSIC_FREQ), 2), THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(143, 299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 5, 0, 0, 1),  THEME_TRIGGER_TEXT_FREQ, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(55,  299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(96, 299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 5, 0, 0, 0),   THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(143, 299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 1),  THEME_TRIGGER_TEXT_FREQ, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(55,  299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(96, 299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 0),   THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
 
     themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_RESET),
                                               (ButtonEvent)actionEmuResetHard, 0, 0, 
@@ -120,8 +120,8 @@ static ThemePage* themeCreateNormal()
 
     themePageAddImage(theme, activeImageCreate(0, 0, 1, archBitmapCreateFromId(IDB_CLASSIC_BG), 1), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(538, 514, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(606, 514, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_BUILDNUMBER, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(538, 514, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(606, 514, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_BUILDNUMBER, THEME_TRIGGER_NONE);
 
     themePageAddImage(theme, activeImageCreate(439, 540, 2, archBitmapCreateFromId(IDB_CLASSIC_DISKA), 2), THEME_TRIGGER_IMG_DISKA, THEME_TRIGGER_NONE);
     themePageAddImage(theme, activeImageCreate(457, 540, 2, archBitmapCreateFromId(IDB_CLASSIC_DISKB), 2), THEME_TRIGGER_IMG_DISKB, THEME_TRIGGER_NONE);
@@ -133,10 +133,10 @@ static ThemePage* themeCreateNormal()
     themePageAddImage(theme, activeImageCreate(238, 538, 2, archBitmapCreateFromId(IDB_CLASSIC_FPS), 2), THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
     themePageAddImage(theme, activeImageCreate(342, 538, 2, archBitmapCreateFromId(IDB_CLASSIC_FREQ), 2), THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(370, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 9, 0, 0, 0),  THEME_TRIGGER_TEXT_SCREEN, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(310, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 5, 0, 0, 1),  THEME_TRIGGER_TEXT_FREQ, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(225, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(268, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 5, 0, 0, 0),  THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(370, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 9, 0, 0, 0),  THEME_TRIGGER_TEXT_SCREEN, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(310, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 1),  THEME_TRIGGER_TEXT_FREQ, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(225, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(268, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 0),  THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
 
     themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_RESET),
                                           (ButtonEvent)actionEmuResetHard, 0, 0, 
@@ -194,8 +194,8 @@ static ThemePage* themeCreateFullscreen()
 
     themePageAddImage(theme, activeImageCreate(-4, -51, 1, archBitmapCreateFromId(IDB_CLASSIC_BG), 1), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(534, 463, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
-    themePageAddText(theme, activeTextCreate(602, 463, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_BUILDNUMBER, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(534, 463, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(602, 463, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_BUILDNUMBER, THEME_TRIGGER_NONE);
 
     return theme;
 }
@@ -220,7 +220,7 @@ static ThemePage* themeCreateSmallFullscreen()
 
     themePageAddImage(theme, activeImageCreate(-4, -51, 1, archBitmapCreateFromId(IDB_CLASSIC_BGSMALL), 1), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
-    themePageAddText(theme, activeTextCreate(279, 227, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
+    themePageAddText(theme, activeTextCreate(279, 227, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
 
     return theme;
 }

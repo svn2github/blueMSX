@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-24 08:45:55 $
+** $Date: 2005-01-25 05:44:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -776,7 +776,13 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
     if (trigger == -1) {
         return;
     }
-    
+
+    int startChar = 0;
+    el->QueryIntAttribute("startchar", &startChar);
+
+    int charCount = 256;
+    el->QueryIntAttribute("charcount", &charCount);
+
     int width = 10;
     el->QueryIntAttribute("width", &width);
     
@@ -804,7 +810,7 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
         visible = THEME_TRIGGER_NONE;
     }
     
-    themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, width, type, color, rightAlign), trigger, visible);
+    themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, startChar, charCount, width, type, color, rightAlign), trigger, visible);
 }
 
 static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, TiXmlElement* root, const char* name, int width, int height, int emuWidth, int emuHeight, int fullscreen) 

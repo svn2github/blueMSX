@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-15 03:06:49 $
+** $Date: 2005-01-25 05:44:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -664,6 +664,8 @@ int activeNativeTextShow(ActiveNativeText* activeText, int show)
 
 struct ActiveText{
     ActiveImage* font;
+    int startChar;
+    int charCount;
     char* string;
     int size;
     int x;
@@ -673,7 +675,7 @@ struct ActiveText{
     ActiveNativeText* nativeText;
 };
 
-ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int width, int type, int color, int rightAligned)
+ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int startChar, int charCount, int width, int type, int color, int rightAligned)
 {
     ActiveText* activeText = malloc(sizeof(ActiveText));
 
@@ -682,13 +684,15 @@ ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int wid
         return activeText;
     }
     activeText->nativeText = NULL;
-    activeText->font   = activeImageCreate(x, y, cols, bitmap, 256);
-    activeText->string = calloc(1, width);
-    activeText->size   = width;
-    activeText->x      = x;
-    activeText->y      = y;
-    activeText->width  = activeImageGetWidth(activeText->font);
-    activeText->right  = rightAligned;
+    activeText->font       = activeImageCreate(x, y, cols, bitmap, charCount);
+    activeText->startChar  = startChar;
+    activeText->charCount  = charCount;
+    activeText->string     = calloc(1, width);
+    activeText->size       = width;
+    activeText->x          = x;
+    activeText->y          = y;
+    activeText->width      = activeImageGetWidth(activeText->font);
+    activeText->right      = rightAligned;
 
     return activeText;
 }
@@ -719,7 +723,7 @@ int activeTextSetText(ActiveText* activeText, char* string)
         count = activeText->size;
     }
 
-    memset(tmpString, 0, activeText->size);
+    memset(tmpString, 32, activeText->size);
     if (activeText->right) {
         memcpy(tmpString + activeText->size - count, string, count);
     }
@@ -744,7 +748,7 @@ void activeTextDraw(ActiveText* activeText, void* dc)
     }
 
     for (i = 0; i < activeText->size; i++) {
-        activeImageSetImage(activeText->font, (unsigned char)activeText->string[i]);
+        activeImageSetImage(activeText->font, ((UInt8)activeText->string[i]) - activeText->startChar);
         activeImageSetPosition(activeText->font, activeText->x + i * activeText->width, activeText->y);
         activeImageDraw(activeText->font, dc);
     }

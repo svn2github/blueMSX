@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-14 09:33:50 $
+** $Date: 2005-01-25 05:44:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -87,7 +87,7 @@ int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed);
 
 typedef struct ActiveText ActiveText;
 
-ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int width, int type, int color, int rightAligned);
+ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int startChar, int charCount, int width, int type, int color, int rightAligned);
 void activeTextDestroy(ActiveText* activeText);
 int activeTextSetText(ActiveText* activeText, char* string);
 void activeTextDraw(ActiveText* activeText, void* dc);
