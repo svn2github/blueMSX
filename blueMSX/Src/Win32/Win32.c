@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2005-03-09 22:10:14 $
+** $Date: 2005-03-10 07:41:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1015,6 +1015,8 @@ void archShowPropertiesDialog(PropPage  startPane) {
     {
         restart = 1;
     }
+
+    boardSetFdcTimingEnable(pProperties->emulation.enableFdcTiming);
 
     /* Update switches */
     switchSetAudio(pProperties->emulation.audioSwitch);

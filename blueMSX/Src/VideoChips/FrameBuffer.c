@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-29 01:32:16 $
+** $Date: 2005-03-10 07:41:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ struct FrameBufferData {
 };
 
 static void* semaphore = NULL;
+static FrameBuffer* deintBuffer = NULL;
 
 static void waitSem() {
     if (semaphore == NULL) {
@@ -176,10 +177,17 @@ FrameBuffer* frameBufferGetWhiteNoiseFrame()
     return frameBuffer;
 }
 
+void frameBufferClearDeinterlace()
+{
+    if (deintBuffer != NULL) {
+        void* buf = deintBuffer;
+        deintBuffer = NULL;
+        free(buf);
+    }
+}
 
 FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer)
 {
-    static FrameBuffer* deintBuffer = NULL;
     int y;
 
     if (deintBuffer == NULL) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-10 08:59:03 $
+** $Date: 2005-03-10 07:41:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,6 +177,10 @@ void videoManagerUnregister(int handle)
 
     if (isActive || videoManager.count == 0) {
         videoManagerSetActive(0);
+    }
+
+    if (videoManager.count == 0) {
+        frameBufferClearDeinterlace();
     }
 
     archVideoOutputChange();
