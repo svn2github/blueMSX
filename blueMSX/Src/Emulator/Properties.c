@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-10 07:18:44 $
+** $Date: 2005-02-10 09:13:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -245,7 +245,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->emulation.priorityBoost     = 0;
 
     pProperties->video.monType               = P_VIDEO_COLOR;
-    pProperties->video.palEmu                = P_VIDEO_PALNYC;
+    pProperties->video.palEmu                = P_VIDEO_PALMON;
     pProperties->video.size                  = P_VIDEO_SIZEX2;
     pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
     pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
