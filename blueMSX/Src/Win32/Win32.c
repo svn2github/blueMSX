@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-01-29 10:15:43 $
+** $Date: 2005-01-30 01:05:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1357,9 +1357,6 @@ void archUpdateWindow() {
             SetWindowLong(st.hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_VISIBLE);
 
             rv = DirectXEnterFullscreenMode(st.emuHwnd, 
-                                            pProperties->video.fullscreen.width,
-                                            pProperties->video.fullscreen.height,
-                                            pProperties->video.fullscreen.bitDepth, 
                                             pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
                                             pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
             if (rv != DXE_OK) {
@@ -1453,7 +1450,7 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->colorSaturationEnable = 0;
     videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
                 bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
-                -1 * zoom * WIDTH * sizeof(DWORD), 0);
+                0, -1 * zoom * WIDTH * sizeof(DWORD), 0);
 
     st.pVideo->palMode               = palMode;
     st.pVideo->scanLinesEnable       = scanLinesEnable;
@@ -1523,7 +1520,7 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
             videoRender(st.pVideo, frameBuffer, 32, zoom, 
                         (char*)st.bmBitsGDI + borderWidth * sizeof(DWORD) + (zoom * HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
-                        -1 * zoom * WIDTH * sizeof(DWORD), 0);
+                        0, -1 * zoom * WIDTH * sizeof(DWORD), 0);
             st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;
             st.bmInfo.bmiHeader.biHeight   = zoom * HEIGHT;
             st.bmInfo.bmiHeader.biBitCount = 32;

@@ -25,19 +25,19 @@
 //#define USE_INLINE_ASSEMBLY
 
 static int   LUT16to32[65536];
+
 #ifndef USE_INLINE_ASSEMBLY
+
 static int   Luminance[65536];
+#define treshold 0x30
+
 #else
 static int   RGBtoYUV[65536];
-#endif
 const __int64 reg_blank = 0;
 const __int64 const3    = 0x0000000300030003;
 const __int64 const5    = 0x0000000500050005;
 const __int64 const6    = 0x0000000600060006;
 const __int64 const14   = 0x0000000E000E000E;
-#ifndef USE_INLINE_ASSEMBLY
-#define treshold 0x30
-#else
 const __int64 treshold  = 0x0000000000300706;
 #endif
 
@@ -2996,7 +2996,7 @@ void hq2x_32(void* pSrc, void* pDest, int Xres, int Yres, int BpL)
     }
 }
 
-void InitLUTs(void)
+void hq2x_init(void)
 {
     int i, j, k;
 

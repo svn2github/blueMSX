@@ -835,6 +835,12 @@
 				RelativePath="..\..\Src\VideoRender\hq2x.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\VideoRender\hq3x.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoRender\hq3x.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\VideoRender\Scale2x.h">
 			</File>
 			<File

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-29 10:15:43 $
+** $Date: 2005-01-30 01:05:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,7 @@ void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
 
 void videoSetPalMode(Video* pVideo, VideoPalMode palMode);
 
-int videoRender(Video* pVideo, FrameBuffer* frameBuffer, int bitDepth, int zoom, void* pDst, int dstPitch, int canScaleDown);
+int videoRender(Video* pVideo, FrameBuffer* frameBuffer, int bitDepth, int zoom, void* pDst, int dstOffset, int dstPitch, int canChangeZoom);
 
 void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma);
 

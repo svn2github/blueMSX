@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-29 10:15:43 $
+** $Date: 2005-01-30 01:05:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,8 @@ static LPDIRECTDRAWCLIPPER  lpClipper = NULL;       // clipper for primary
 static HWND    hwndThis;
 static int     MyDevice;
 static int     sysMemBuffering = 0;
+static int     screenWidth  = 320;
+static int     screenHeight = 240;
 static char    MyDeviceName[128];
 static RECT    MyDeviceRect;
 static int     isFullscreen = 0;
@@ -296,14 +298,20 @@ void DirectXExitFullscreenMode()
 }
 
 
-int DirectXEnterFullscreenMode(HWND hwnd, int width, int height, int depth, int useVideoBackBuffer, int useSysMemBuffering)
+int DirectXEnterFullscreenMode(HWND hwnd, int useVideoBackBuffer, int useSysMemBuffering)
 {
     DDSURFACEDESC   ddsd;
     DDSCAPS     ddscaps;
     HRESULT     ddrval;
+    int width  = currentFullscreenMode->width;
+    int height = currentFullscreenMode->height;
+    int depth  = currentFullscreenMode->bitCount; 
+
+    screenWidth  = width;
+    screenHeight = height;
 
     DirectXExitFullscreenMode();
-
+    
     sysMemBuffering = useSysMemBuffering;
     isFullscreen = 1;
 
@@ -404,6 +412,9 @@ BOOL DirectXEnterWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     lpDDSBack = NULL;
     hwndThis = hwnd;
     sysMemBuffering = useSysMemBuffering;
+
+    screenWidth  = width;
+    screenHeight = height;
 
     DirectXExitFullscreenMode();
 
@@ -506,13 +517,9 @@ void DirectXUpdateSurface(Video* pVideo,
     HRESULT     ddrval;
     FrameBuffer* frameBuffer;
     POINT pt = {0, 0};
-    int width  = zoom * 320;
-    int height = zoom * 240;
-    int scale;
-    RECT destRect = {0, 0, 
-                     isFullscreen ? currentFullscreenMode->width : width, 
-                     isFullscreen ? currentFullscreenMode->height : height};
-    RECT rcRect = {0, 0, width, height};
+    int canChangeZoom;
+    RECT destRect = { 0, 0, screenWidth, screenHeight };
+    RECT rcRect;
     void* surfaceBuffer;
 
     if (lpDDSPrimary == NULL) {
@@ -561,18 +568,33 @@ void DirectXUpdateSurface(Video* pVideo,
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
 
+    canChangeZoom = -1; // Allow scale down when possible
+    if (isFullscreen && currentFullscreenMode->width >= 3 * 320) {
+        canChangeZoom = 1; // Allow scale up in fullscreen
+    }
+    
     if (horizontalStretch) {
-        rcRect.right -= (320 - frameBuffer->maxWidth) * zoom;
+        zoom = videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, 
+                            surfaceBuffer, 0, ddsd.lPitch, canChangeZoom);
     }
     else {
-        int borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
-        if (borderWidth > 0) {
-            int y;
+        int bitCount = ddsd.ddpfPixelFormat.dwRGBBitCount;
+        int borderWidth = (320 - frameBuffer->maxWidth) / 2;
+        int y;
 
+        if (borderWidth <= 0) {
+            zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
+                               surfaceBuffer, 0, ddsd.lPitch, canChangeZoom);
+        }
+        else {
+            zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
+                               surfaceBuffer, borderWidth * bitCount / 8, ddsd.lPitch, canChangeZoom);
+
+            borderWidth *= zoom;
             if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
                 UInt16* ptr  = surfaceBuffer;
                 surfaceBuffer = ptr + borderWidth;
-                for (y = 0; y < height; y++) {
+                for (y = 0; y < screenHeight; y++) {
                     memset(ptr, 0, borderWidth * sizeof(UInt16));
                     ptr += ddsd.lPitch / sizeof(UInt16);
                     memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt16));
@@ -581,7 +603,7 @@ void DirectXUpdateSurface(Video* pVideo,
             else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
                 UInt32* ptr  = surfaceBuffer;
                 surfaceBuffer = ptr + borderWidth;
-                for (y = 0; y < height; y++) {
+                for (y = 0; y < screenHeight; y++) {
                     memset(ptr, 0, borderWidth * sizeof(UInt32));
                     ptr += ddsd.lPitch / sizeof(UInt32);
                     memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt32));
@@ -589,11 +611,6 @@ void DirectXUpdateSurface(Video* pVideo,
             }
         }
     }
-
-    scale = videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch, 1);
-
-    rcRect.right  /= scale;
-    rcRect.bottom /= scale;
 
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
@@ -614,11 +631,6 @@ void DirectXUpdateSurface(Video* pVideo,
     destRect.bottom += dstPitchY;
     if (destRect.right  < 64) destRect.right = 64;
     if (destRect.bottom < 64)  destRect.bottom = 64;
-    
-    if (verticalStretch) {
-        rcRect.top    += 7 * zoom;
-        rcRect.bottom -= 7 * zoom;
-    }
 
     pt.x -= MyDeviceRect.left;
     pt.y -= MyDeviceRect.top;
@@ -627,7 +639,22 @@ void DirectXUpdateSurface(Video* pVideo,
     destRect.top += dstOffset;
     destRect.bottom += dstOffset;
     
-    rcRect.top -= dstPitchY;
+    do {
+        rcRect.top = 0;
+        rcRect.left = 0;
+        rcRect.bottom = 240 * zoom;
+        rcRect.right  = 320 * zoom;
+
+        if (horizontalStretch) {
+            rcRect.right -= (320 - frameBuffer->maxWidth) * zoom;
+        }
+        rcRect.top -= dstPitchY;
+
+        if (verticalStretch) {
+            rcRect.top    += 7 * zoom;
+            rcRect.bottom -= 7 * zoom;
+        }
+    } while (0);
 
     if (lpDDSBack != NULL && !noFlip) {
 	    DDSCAPS ddscaps = { DDSCAPS_BACKBUFFER };

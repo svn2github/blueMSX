@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-29 10:15:42 $
+** $Date: 2005-01-30 01:05:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,8 @@
 #include "FrameBuffer.h"
 #include "Emulator.h"
 #include "scalebit.h"
-#include "Hq2x.h"
+#include "hq2x.h"
+#include "hq3x.h"
 #include <stdlib.h>
 #include <math.h>
 #include <memory.h>
@@ -2059,6 +2060,38 @@ static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     hq2x_32(ImgSrc, pDestination, srcWidth, srcHeight, dstPitch);
 }
 
+static void hq3x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
+{
+	UInt16  ImgSrc[320 * 240];
+    UInt16* pDst        = (UInt16*)ImgSrc;
+    int srcHeight       = frame->lines;
+    int srcWidth        = frame->maxWidth;
+	int h;
+
+    if (srcWidth == 0) {
+        return;
+    }  
+
+    for (h = 0; h < srcHeight; h++) {
+        UInt32* pSrc = frame->line[h].buffer;
+        int width = srcWidth / 8;
+        while (width--) {
+            pDst[0] = rgbTable[pSrc[0]];
+            pDst[1] = rgbTable[pSrc[1]];
+            pDst[2] = rgbTable[pSrc[2]];
+            pDst[3] = rgbTable[pSrc[3]];
+            pDst[4] = rgbTable[pSrc[4]];
+            pDst[5] = rgbTable[pSrc[5]];
+            pDst[6] = rgbTable[pSrc[6]];
+            pDst[7] = rgbTable[pSrc[7]];
+            pSrc += 8;
+            pDst += 8;
+        }
+    }
+
+    hq3x_32(ImgSrc, pDestination, srcWidth, srcHeight, dstPitch);
+}
+
 static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
 {
 	UInt32  ImgSrc[320 * 240];
@@ -2142,7 +2175,8 @@ Video* videoCreate()
 
     initRGBTable(pVideo);
 
-    InitLUTs();
+    hq2x_init();
+    hq3x_init();
 
     pVideo->palMode = VIDEO_PAL_FAST;
     pVideo->pRgbTable16 = pRgbTableColor16;
@@ -2435,16 +2469,17 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
     }
 }
 
-static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch, int canScaleDown)
+static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, 
+                          void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
 {
-    int rv = 1;
+    pDst = (char*)pDst + zoom * dstOffset;
 
     switch (bitDepth) {
     case 16:
         switch (pVideo->palMode) {
         case VIDEO_PAL_FAST:
             if (zoom == 2) {
-                if (pVideo->scanLinesEnable || pVideo->colorSaturationEnable || !canScaleDown) {
+                if (pVideo->scanLinesEnable || pVideo->colorSaturationEnable || canChangeZoom == 0) {
                     copy_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
                 }
                 else {
@@ -2453,7 +2488,7 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
                     if (h) copy_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
                     else {
                         copy_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
-                        rv = 2;
+                        zoom = 1;
                     }
                 }
             }
@@ -2499,7 +2534,7 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
         switch (pVideo->palMode) {
         case VIDEO_PAL_FAST:
             if (zoom == 2) {
-                if (pVideo->scanLinesEnable || pVideo->colorSaturationEnable || !canScaleDown) {
+                if (pVideo->scanLinesEnable || pVideo->colorSaturationEnable || canChangeZoom == 0) {
                     copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
                 }
                 else {
@@ -2508,7 +2543,7 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
                     if (h) copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
                     else {
                         copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
-                        rv = 2;
+                        zoom = 1;
                     }
                 }
             }
@@ -2550,7 +2585,14 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
 		case VIDEO_PAL_HQ2X:
             if (zoom==2) {
                 if (frame->line[0].doubleWidth == 0 && frame->interlace == INTERLACE_NONE) {
-                    hq2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable16);
+                    if (canChangeZoom > 0) {
+                        pDst = (char*)pDst + dstOffset;
+                        hq3x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable16);
+                        zoom =3;
+                    }
+                    else {
+                        hq2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable16);
+                    }
                 }
                 else {
                     copy_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
@@ -2563,11 +2605,14 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
         }
         break;
     }
-    return rv;
+    return zoom;
 }
 
-static int videoRender480(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch, int canScaleDown)
+static int videoRender480(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, 
+                          void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
 {
+    pDst = (char*)pDst + zoom * dstOffset;
+
     switch (bitDepth) {
     case 16:
         switch (pVideo->palMode) {
@@ -2632,15 +2677,14 @@ static int videoRender480(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
         }
         break;
     }
-    return 1;
+    return zoom;
 }
 
-int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch, int canScaleDown)
+int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, 
+                void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
 {
-    int rv = 1;
-
     if (frame == NULL) {
-        return rv;
+        return zoom;
     }
 
     if (frame->interlace != INTERLACE_NONE && pVideo->deInterlace) {
@@ -2648,10 +2692,10 @@ int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void*
     }
 
     if (frame->lines <= 240) {
-        videoRender240(pVideo, frame, bitDepth, zoom, pDst, dstPitch, canScaleDown);
+        zoom = videoRender240(pVideo, frame, bitDepth, zoom, pDst, dstOffset, dstPitch, canChangeZoom);
     }
     else {
-        videoRender480(pVideo, frame, bitDepth, zoom, pDst, dstPitch, canScaleDown);
+        zoom = videoRender480(pVideo, frame, bitDepth, zoom, pDst, dstOffset, dstPitch, canChangeZoom);
     }
 
     switch (bitDepth) {
@@ -2676,5 +2720,5 @@ int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void*
         break;
     }
 
-    return rv;
+    return zoom;
 }
