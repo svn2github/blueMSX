@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-07 06:38:29 $
+** $Date: 2005-01-07 07:47:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -151,7 +151,7 @@ ActiveButton* activeButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, But
 {
     ActiveButton* activeButton = malloc(sizeof(ActiveButton));
 
-    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 4);
+    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 3);
     activeButton->x       = x;
     activeButton->y       = y;
     activeButton->width   = activeImageGetWidth(activeButton->bitmap);
@@ -320,7 +320,7 @@ ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bit
 {
     ActiveDualButton* activeButton = malloc(sizeof(ActiveDualButton));
 
-    activeButton->bitmap   = activeImageCreate(x, y, cols, bitmap, 5);
+    activeButton->bitmap   = activeImageCreate(x, y, cols, bitmap, 4);
     activeButton->x        = x;
     activeButton->y        = y;
     activeButton->width    = activeImageGetWidth(activeButton->bitmap);

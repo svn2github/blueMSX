@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-01-07 07:47:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -140,11 +140,11 @@ static Theme* themeCreateNormal()
                                           (ButtonEvent)actionEmuResetHard, 0, 0, 
                                           (ButtonEvent)actionMenuReset, 8, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
     themeAddButton(theme, activeButtonCreate(52, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_PLAY),
-                                          (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_IMG_NOT_RUNNING, THEME_TRIGGER_NONE);
+                                          (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_NOT_RUNNING);
     themeAddButton(theme, activeButtonCreate(78, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_PAUSE),
-                                          (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_IMG_RUNNING, THEME_TRIGGER_NONE);
+                                          (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_RUNNING);
     themeAddButton(theme, activeButtonCreate(104, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_STOP),
-                                          (ButtonEvent)actionEmuStop, 0, 0), THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
+                                          (ButtonEvent)actionEmuStop, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_NOT_STOPPED);
     themeAddDualButton(theme, activeDualButtonCreate(136, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_CART1),
                                           (ButtonEvent)actionCartInsert1, 0, 0, 
                                           (ButtonEvent)actionMenuCart1, 136, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
