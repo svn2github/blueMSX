@@ -509,7 +509,7 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) :
     }
 
     hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxdasm", "Disassembly", 
-                          WS_OVERLAPPED | WS_CLIPCHILDREN | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
+                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
                           CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
     invalidateContent();
 }

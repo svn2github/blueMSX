@@ -4,6 +4,7 @@
 #include "StatusBar.h"
 #include "Toolbar.h"
 #include "Disassembly.h"
+#include "CpuRegisters.h"
 #include "resrc1.h"
 #include <string>
 #include <commctrl.h>
@@ -17,6 +18,7 @@ static HWND viewHwnd = NULL;
 static StatusBar* statusBar = NULL;
 static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
+static CpuRegisters* cpuRegisters = NULL;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -127,14 +129,14 @@ void updateDeviceState()
             if (device->type == DEVTYPE_CPU && memCount > 0) {
                 UInt16 pc = 0;
 
-                for (j = 0; j < regBankCount; j++) {
-                    RegisterBank* regBank = DeviceGetRegisterBank(device, j);
-                    for (UInt32 k = 0; k < regBank->count; k++) {
-                        if (0 == strcmp("PC", regBank->reg[k].name)) {
-                            pc = (UInt16)regBank->reg[k].value;
-                        }
+                RegisterBank* regBank = DeviceGetRegisterBank(device, 0);
+                for (UInt32 k = 0; k < regBank->count; k++) {
+                    if (0 == strcmp("PC", regBank->reg[k].name)) {
+                        pc = (UInt16)regBank->reg[k].value;
                     }
                 }
+
+                cpuRegisters->updateContent(regBank);
 
                 MemoryBlock* mem = DeviceGetMemoryBlock(device, 0);
                 if (mem->size == 0x10000) {
@@ -150,6 +152,7 @@ void updateDeviceState()
 
     if (!disassemblyUpdated) {
         disassembly->invalidateContent();
+        cpuRegisters->invalidateContent();
     }
 }
 
@@ -322,10 +325,10 @@ void OnShowTool() {
 
     dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
                            WS_OVERLAPPEDWINDOW, 
-                           CW_USEDEFAULT, CW_USEDEFAULT, 600, 600, NULL, NULL, GetDllHinstance(), NULL);
+                           CW_USEDEFAULT, CW_USEDEFAULT, 700, 600, NULL, NULL, GetDllHinstance(), NULL);
 
     viewHwnd = CreateWindow("msxdebuggerview", "", 
-                            WS_OVERLAPPED | WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
+                            WS_OVERLAPPED | WS_CHILD | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
 
     ShowWindow(dbgHwnd, TRUE);
     ShowWindow(viewHwnd, TRUE);
@@ -345,6 +348,13 @@ void OnShowTool() {
     RECT r = { 0, 32, 400, 500 };
     disassembly->updatePosition(r);
     disassembly->show();
+
+
+    cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
+    RECT r2 = { 410, 32, 610, 500 };
+    cpuRegisters->updatePosition(r2);
+    cpuRegisters->show();
+    
 
     updateWindowPositions();
 }

@@ -150,6 +150,12 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
+			RelativePath=".\CpuRegisters.cpp">
+		</File>
+		<File
+			RelativePath=".\CpuRegisters.h">
+		</File>
+		<File
 			RelativePath=".\DasmIcons.bmp">
 		</File>
 		<File
