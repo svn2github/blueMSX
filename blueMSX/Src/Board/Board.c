@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-19 05:26:32 $
+** $Date: 2005-01-21 01:06:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -243,7 +243,9 @@ void boardSaveState(const char* stateFile)
     saveState(stateFile);
 
     bitmap = archScreenCapture(SC_SMALL, &size);
-    zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
+    if (size > 0) {
+        zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
+    }
 }
 
 void boardSetFrequency(int frequency)

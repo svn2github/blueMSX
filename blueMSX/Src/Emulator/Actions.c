@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-17 20:58:56 $
+** $Date: 2005-01-21 01:06:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void actionToggleWaveCapture() {
         mixerStopLog(state.mixer);
     }
     else {
-        mixerStartLog(state.mixer, generateSaveFilename(state.properties, audioDir, audioPrefix, ".wav"));
+        mixerStartLog(state.mixer, generateSaveFilename(state.properties, audioDir, audioPrefix, ".wav", 2));
     }
     archUpdateMenu(0);
 }
@@ -170,7 +170,7 @@ void actionQuickLoadState() {
 void actionQuickSaveState() {
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
-        strcpy(state.properties->filehistory.quicksave, generateSaveFilename(state.properties, stateDir, statePrefix, ".sta"));
+        strcpy(state.properties->filehistory.quicksave, generateSaveFilename(state.properties, stateDir, statePrefix, ".sta", 2));
         boardSaveState(state.properties->filehistory.quicksave);
         emulatorResume();
     }
@@ -969,7 +969,7 @@ void actionSetWaveCapture(int value) {
     else {
         mixerStartLog(state.mixer, generateSaveFilename(state.properties, 
                                                         audioDir, 
-                                                        audioPrefix, ".wav"));
+                                                        audioPrefix, ".wav", 2));
     }
     archUpdateMenu(0);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-02 08:22:10 $
+** $Date: 2005-01-21 01:06:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -424,45 +424,60 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 
 
 
-char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension)
+char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension, int digits)
 {
 	WIN32_FIND_DATA fileData;
     FILETIME writeTime;
     HANDLE hFile;
 	char lastfile[512];
     static char filename[512];
-	char filenum[12];
     char baseName[128];
     int fileIndex = 0;
+    int prefixLen = 1 + strlen(prefix);
+    int i;
+    int numMod = 1;
+    char filenameFormat[32] = "%s\\%s%s_";
+    char destfileFormat[32];
+
+    for (i = 0; i < digits; i++) {
+        strcat(filenameFormat, "?");
+        numMod *= 10;
+    }
+    strcat(filenameFormat, "%s");
+    sprintf(destfileFormat, "%%s\\%%s%%s_%%0%di%%s", digits);
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 
 	mkdir(directory);
 
-    sprintf(filename, "%s\\%s%s_??%s", directory, prefix, baseName, extension);
+    sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
     hFile = FindFirstFile(filename,&fileData);
     if (hFile != INVALID_HANDLE_VALUE) {
+        int filenameLen;
+
         writeTime = fileData.ftLastWriteTime;
 		strcpy(lastfile, fileData.cFileName);
+
 	    while (FindNextFile(hFile, &fileData ) != 0) {
             if (CompareFileTime(&fileData.ftLastWriteTime, &writeTime) < 0) {
                 break;
             }
             writeTime = fileData.ftLastWriteTime;
-            strcpy(lastfile,fileData.cFileName);
+            strcpy(lastfile, fileData.cFileName);
 		}
-		
-        filenum[0]=lastfile[strlen(lastfile) - 6];
-		filenum[1]=lastfile[strlen(lastfile) - 5];
-		filenum[2]='\0';
 
-        fileIndex = (atoi(filenum) + 1) % 100;
+        filenameLen = strlen(lastfile);
+
+        if (filenameLen > prefixLen + digits) {
+            lastfile[filenameLen- prefixLen] = 0;
+            fileIndex = (atoi(&lastfile[filenameLen- prefixLen - digits]) + 1) % numMod;
+        }
     }
 
     FindClose(hFile);
 
-    sprintf(filename, "%s\\%s%s_%02i%s", directory, prefix, baseName, fileIndex, extension);
+    sprintf(filename, destfileFormat, directory, prefix, baseName, fileIndex, extension);
 
     return filename;
 }

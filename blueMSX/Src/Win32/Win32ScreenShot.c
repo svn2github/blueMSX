@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-16 09:34:41 $
+** $Date: 2005-01-21 01:06:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -211,6 +211,7 @@ void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xO
     HDC hdcCompatible;
     HBITMAP  hbmScreen;
     PBITMAPINFO pbi;
+    HBITMAP hBitmapOrig;
 
     hdcScreen=GetDC(hwnd);
     if (hdcScreen==NULL)
@@ -232,18 +233,20 @@ void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xO
         return;
     }
 
-    SelectObject(hdcCompatible, hbmScreen);
+    hBitmapOrig = (HBITMAP)SelectObject(hdcCompatible, hbmScreen);
     BitBlt(hdcCompatible, 0, 0, width, height, hdcScreen, xOffset, yOffset, SRCCOPY);
 
     pbi = CreateBitmapInfoStructure(hbmScreen);
-    if (SaveBitmap(generateSaveFilename(properties, baseDir, basePrefix, ".bmp"), pbi, hbmScreen, hdcCompatible)==E_FAIL) {
+    if (SaveBitmap(generateSaveFilename(properties, baseDir, basePrefix, ".bmp", 4), pbi, hbmScreen, hdcCompatible)==E_FAIL) {
         MessageBox(NULL,"Error saving bitmap!",langErrorTitle(),MB_OK);
     }
     if (pbi != NULL) {
         LocalFree(pbi);
     }
 
-    ReleaseDC(hwnd,hdcScreen);
+    DeleteObject(SelectObject(hdcCompatible, hBitmapOrig));
+    DeleteDC(hdcCompatible);
+    ReleaseDC(hwnd, hdcScreen);
 }
 
 /*
@@ -305,7 +308,7 @@ void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int
 {
     int bitmapSize;
     void* bitmap = ScreenShot2(src, srcPitch, width, height, &bitmapSize);
-	FILE* file = fopen(generateSaveFilename(properties, baseDir, basePrefix, ".bmp"), "wb");
+	FILE* file = fopen(generateSaveFilename(properties, baseDir, basePrefix, ".bmp", 4), "wb");
     if (file != NULL) {
     	fwrite(bitmap, 1, bitmapSize, file);
         fclose(file);

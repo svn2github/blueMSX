@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-01-20 18:39:12 $
+** $Date: 2005-01-21 01:06:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@
 #include "JoystickIO.h"
 #include "RomLoader.h"
 #include "build_number.h"
+#include "FrameBuffer.h"
 
 #include "Win32Sound.h"
 #include "Win32Properties.h"
@@ -1440,6 +1441,12 @@ void* createScreenShot(int large, int* bitmapSize)
     VideoPalMode palMode      = st.pVideo->palMode;
     int scanLinesEnable       = st.pVideo->scanLinesEnable;
     int colorSaturationEnable = st.pVideo->colorSaturationEnable;
+    
+    FrameBuffer* frameBuffer = frameBufferGetViewFrame();
+
+    if (frameBuffer == NULL || frameBuffer->maxWidth <= 0 || frameBuffer->lines <= 0) {
+        return NULL;
+    }
 
     st.pVideo->palMode = VIDEO_PAL_FAST;
     st.pVideo->scanLinesEnable = 0;
@@ -1453,10 +1460,10 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->colorSaturationEnable = colorSaturationEnable;
 
     if (bitmapSize != NULL) {
-        bitmap = ScreenShot2(bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom, bitmapSize);
+        bitmap = ScreenShot2(bmBitsDst, 320 * zoom, (frameBuffer->maxWidth / 2) * zoom, 240 * zoom, bitmapSize);
     }
     else {
-        ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
+        ScreenShot3(pProperties, bmBitsDst, 320 * zoom, (frameBuffer->maxWidth / 2) * zoom, 240 * zoom);
     }
 
     free(bmBitsDst);
