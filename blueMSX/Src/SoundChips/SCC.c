@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-26 11:31:52 $
+** $Date: 2005-02-02 08:32:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -464,6 +464,21 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
     }
 }
 
+
+static Int32 filter4(Int32 ch, Int32 input) {
+    static Int32 x0[5], x1[5], x2[5];
+    static Int32 y0[5], y1[5], y2[5];
+
+    x2[ch] = x1[ch];
+	x1[ch] = x0[ch];
+	x0[ch] = input;
+
+	y2[ch] = y1[ch];
+	y1[ch] = y0[ch];
+    y0[ch] = (4 * x0[ch] + 6 * x1[ch] + 3 * x2[ch] - 3 * y1[ch] - 5 * y2[ch]) / 10;
+	return y0[ch];
+}
+
 static Int32* sccSync(SCC* scc, UInt32 count)
 {
     Int32* buffer  = scc->buffer;
@@ -477,20 +492,28 @@ static Int32* sccSync(SCC* scc, UInt32 count)
         for (channel = 0; channel < 5; channel++) {
             /* Precalculate values for sample generating loop */
             Int8*  waveData  = scc->wave[channel];
-            Int32  volume    = 26 * (Int32)scc->volume[channel] * scc->period[channel] / (32 + scc->period[channel]);
-            Int32  phaseStep = scc->phaseStep[channel] * ((scc->enable >> channel) & 1);
+            Int32  nvolume   = 25600 * 40 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
+            Int32  phaseStep = scc->phaseStep[channel];
             Int32  phase     = scc->phase[channel];
             UInt32 index;
+            Int32  volume = scc->daVolume[channel];
+
+            if (nvolume > volume) {
+                volume = nvolume;
+            }
 
             /* Add to output buffer using linear interpolation */
             for (index = 0; index < count; index++) {
                 phase = (phase + phaseStep) & 0xfffffff;
-                scc->daVolume[channel] += 3 * (waveData[phase >> 23] * volume - scc->daVolume[channel]) / 4;
-                buffer[index] += scc->daVolume[channel];
+                buffer[index] += filter4(channel, waveData[phase >> 23] * volume / 25600);
+                if (volume > nvolume) {
+                    volume = 99 * volume / 100;
+                }
             }
 
             /* Save phase */
             scc->phase[channel] = phase;
+            scc->daVolume[channel] = volume;
         }
     }
     else {

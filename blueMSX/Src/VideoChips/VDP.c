@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-01 07:14:45 $
+** $Date: 2005-02-02 08:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -777,37 +777,37 @@ static void saveState(VDP* vdp)
     char tag[32];
     int index;
 
-    saveStateGet(state, "vdp->frameStartTime",    vdp->frameStartTime);
-    saveStateGet(state, "vdp->timeScrMode",       vdp->timeScrMode);
-    saveStateGet(state, "vdp->timeHint",          vdp->timeHint);
-    saveStateGet(state, "vdp->timeVint",          vdp->timeVint);
-    saveStateGet(state, "vdp->timeDrawAreaStart", vdp->timeDrawAreaStart);
-    saveStateGet(state, "vdp->timeVStart",        vdp->timeVStart);
-    saveStateGet(state, "vdp->timeDisplay",       vdp->timeDisplay);
+    saveStateGet(state, "frameStartTime",    vdp->frameStartTime);
+    saveStateGet(state, "timeScrMode",       vdp->timeScrMode);
+    saveStateGet(state, "timeHint",          vdp->timeHint);
+    saveStateGet(state, "timeVint",          vdp->timeVint);
+    saveStateGet(state, "timeDrawAreaStart", vdp->timeDrawAreaStart);
+    saveStateGet(state, "timeVStart",        vdp->timeVStart);
+    saveStateGet(state, "timeDisplay",       vdp->timeDisplay);
 
-    saveStateSet(state, "vdp->palKey",          vdp->palKey);
-    saveStateSet(state, "vdp->vdpKey",          vdp->vdpKey);
-    saveStateSet(state, "vdp->vramAddress",     vdp->vramAddress);
-    saveStateSet(state, "vdp->vdpData",         vdp->vdpData);
-    saveStateSet(state, "vdp->vdpDataLatch",    vdp->vdpDataLatch);
+    saveStateSet(state, "palKey",          vdp->palKey);
+    saveStateSet(state, "vdpKey",          vdp->vdpKey);
+    saveStateSet(state, "vramAddress",     vdp->vramAddress);
+    saveStateSet(state, "vdpData",         vdp->vdpData);
+    saveStateSet(state, "vdpDataLatch",    vdp->vdpDataLatch);
     saveStateSet(state, "xfgColor",        vdp->XFGColor);
     saveStateSet(state, "xbgColor",        vdp->XBGColor);
-    saveStateSet(state, "vdp->intStartTime",    vdp->intStartTime);
-    saveStateSet(state, "vdp->firstLine",       vdp->firstLine);
-    saveStateSet(state, "vdp->blinkFlag",       vdp->blinkFlag);
-    saveStateSet(state, "vdp->blinkCnt",        vdp->blinkCnt);
-    saveStateSet(state, "vdp->drawArea",        vdp->drawArea);
+    saveStateSet(state, "intStartTime",    vdp->intStartTime);
+    saveStateSet(state, "firstLine",       vdp->firstLine);
+    saveStateSet(state, "blinkFlag",       vdp->blinkFlag);
+    saveStateSet(state, "blinkCnt",        vdp->blinkCnt);
+    saveStateSet(state, "drawArea",        vdp->drawArea);
     saveStateSet(state, "vramPages",       vdp->vramPages);
-    saveStateSet(state, "vdp->vdpConnector",    vdp->vdpConnector);
-    saveStateSet(state, "vdp->vdpVersion",      vdp->vdpVersion);
-    saveStateGet(state, "vdp->leftBorder",      vdp->leftBorder);
-    saveStateGet(state, "vdp->hRefresh",        vdp->hRefresh);
+    saveStateSet(state, "vdpConnector",    vdp->vdpConnector);
+    saveStateSet(state, "vdpVersion",      vdp->vdpVersion);
+    saveStateGet(state, "leftBorder",      vdp->leftBorder);
+    saveStateGet(state, "hRefresh",        vdp->hRefresh);
 
     saveStateSetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateSetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
 
     for (index = 0; index < sizeof(vdp->palette) / sizeof(vdp->palette[0]); index++) {
-        sprintf(tag, "vdp->palette%d", index);
+        sprintf(tag, "palette%d", index);
         saveStateSet(state, tag, vdp->palette[index]);
     }
     
@@ -825,37 +825,37 @@ static void loadState(VDP* vdp)
     char tag[32];
     int index;
 
-    vdp->frameStartTime    =      saveStateGet(state, "vdp->frameStartTime",    systemTime);
-    vdp->timeScrMode       =      saveStateGet(state, "vdp->timeScrMode",       systemTime);
-    vdp->timeHint          =      saveStateGet(state, "vdp->timeHint",          systemTime);
-    vdp->timeVint          =      saveStateGet(state, "vdp->timeVint",          systemTime);
-    vdp->timeDrawAreaStart =      saveStateGet(state, "vdp->timeDrawAreaStart", systemTime);
-    vdp->timeVStart        =      saveStateGet(state, "vdp->timeVStart",        systemTime);
-    vdp->timeDisplay       =      saveStateGet(state, "vdp->timeDisplay",       systemTime);
+    vdp->frameStartTime    =      saveStateGet(state, "frameStartTime",    systemTime);
+    vdp->timeScrMode       =      saveStateGet(state, "timeScrMode",       systemTime);
+    vdp->timeHint          =      saveStateGet(state, "timeHint",          systemTime);
+    vdp->timeVint          =      saveStateGet(state, "timeVint",          systemTime);
+    vdp->timeDrawAreaStart =      saveStateGet(state, "timeDrawAreaStart", systemTime);
+    vdp->timeVStart        =      saveStateGet(state, "timeVStart",        systemTime);
+    vdp->timeDisplay       =      saveStateGet(state, "timeDisplay",       systemTime);
 
-    vdp->palKey         =         saveStateGet(state, "vdp->palKey",          0);
-    vdp->vdpKey         =         saveStateGet(state, "vdp->vdpKey",          0);
-    vdp->vramAddress    = (UInt16)saveStateGet(state, "vdp->vramAddress",     0);
-    vdp->vdpData        = (UInt8) saveStateGet(state, "vdp->vdpData",         0);
-    vdp->vdpDataLatch   = (UInt8) saveStateGet(state, "vdp->vdpDataLatch",    0);
+    vdp->palKey         =         saveStateGet(state, "palKey",          0);
+    vdp->vdpKey         =         saveStateGet(state, "vdpKey",          0);
+    vdp->vramAddress    = (UInt16)saveStateGet(state, "vramAddress",     0);
+    vdp->vdpData        = (UInt8) saveStateGet(state, "vdpData",         0);
+    vdp->vdpDataLatch   = (UInt8) saveStateGet(state, "vdpDataLatch",    0);
     vdp->XFGColor       = (UInt8) saveStateGet(state, "xfgColor",        0);
     vdp->XBGColor       = (UInt8) saveStateGet(state, "xbgColor",        0);
-    vdp->intStartTime   =         saveStateGet(state, "vdp->intStartTime",    0);
-    vdp->firstLine      =         saveStateGet(state, "vdp->firstLine",       1);
-    vdp->blinkFlag      =         saveStateGet(state, "vdp->blinkFlag",       0);
-    vdp->blinkCnt       =         saveStateGet(state, "vdp->blinkCnt",        0);
-    vdp->drawArea       =         saveStateGet(state, "vdp->drawArea",        0);
+    vdp->intStartTime   =         saveStateGet(state, "intStartTime",    0);
+    vdp->firstLine      =         saveStateGet(state, "firstLine",       1);
+    vdp->blinkFlag      =         saveStateGet(state, "blinkFlag",       0);
+    vdp->blinkCnt       =         saveStateGet(state, "blinkCnt",        0);
+    vdp->drawArea       =         saveStateGet(state, "drawArea",        0);
     vdp->vramPages      =         saveStateGet(state, "vramPages",       8);
-    vdp->vdpConnector   =         saveStateGet(state, "vdp->vdpConnector",    VDP_MSX);
-    vdp->vdpVersion     =         saveStateGet(state, "vdp->vdpVersion",      0);
-    vdp->leftBorder     =         saveStateGet(state, "vdp->leftBorder",      200);
-    vdp->hRefresh       =         saveStateGet(state, "vdp->hRefresh",        1024);
+    vdp->vdpConnector   =         saveStateGet(state, "vdpConnector",    VDP_MSX);
+    vdp->vdpVersion     =         saveStateGet(state, "vdpVersion",      0);
+    vdp->leftBorder     =         saveStateGet(state, "leftBorder",      200);
+    vdp->hRefresh       =         saveStateGet(state, "hRefresh",        1024);
 
     saveStateGetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateGetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
 
     for (index = 0; index < sizeof(vdp->palette) / sizeof(vdp->palette[0]); index++) {
-        sprintf(tag, "vdp->palette%d", index);
+        sprintf(tag, "palette%d", index);
         vdp->palette[index] = saveStateGet(state, tag, 0);
     }
 

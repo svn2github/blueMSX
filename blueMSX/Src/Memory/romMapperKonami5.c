@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 11:31:52 $
+** $Date: 2005-02-02 08:32:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,6 +185,7 @@ int romMapperKonami5Create(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
     rm->scc = sccCreate(boardGetMixer());
+    sccSetMode(rm->scc, SCC_REAL);
     rm->sccEnable = 0;
 
     rm->romMapper[0] = 0;
