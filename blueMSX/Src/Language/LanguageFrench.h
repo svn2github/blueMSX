@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-03-03 16:38:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -538,11 +538,40 @@ void langInitFrench(LanguageStrings* ls)
     ls->propUseRegistry         = "Sauvegarder la configuration dans le Registre"; 
 
     // New entries in 2.2
-    ls->menuCartHBI55           = "Cartouche Sony HBI-55";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
-    ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->menuCartHBI55           = "Cartouche Sony HBI-55"; 
+    ls->propSndPcm              = " Turbo-R PCM"; 
+    ls->propSndAY8910           = " AY8910 PSG"; 
+    ls->propSndSN76489          = " SN76489 PSG"; 
+    ls->enumVideoEmuHq2x        = "Hq2x"; 
+    ls->propMonColorGhosting    = "Modulateur RF"; 
+
+    ls->keyconfigSelectedKey    = "Touche MSX sélectionnée:"; 
+    ls->keyconfigMappedTo       = "Assignée à la touche PC :"; 
+    ls->keyconfigMappingScheme  = "Configuration du clavier:"; 
+
+    ls->discardChanges          = "Voulez-vous ignorer les changements apportés à cette configuration ?"; 
+    ls->overwriteConfig         = "Voulez-vous remplacer cette configuration ?"; 
+
+    ls->confSaveAsTitle         = "Sauver sous..."; 
+    ls->confSaveAsName          = "Nom:"; 
+
+    ls->menuToolsKeyboard       = "Editeur de clavier"; 
+    ls->shortcutShowKeyboard    = "Accéder à l'éditeur de clavier"; 
+
+    ls->menuVideoSource         = "Source Vidéo"; 
+    ls->menuVideoSourceDefault  = "Aucune source vidéo"; 
+    ls->menuVideoChipAutodetect = "Détection automatique"; 
+    ls->propFullscreenResText   = "Résolution plein écran:"; 
+    ls->dlgSavePreview          = "Prévisualiser"; 
+    ls->dlgSaveDate             = "Date de sauvegarde:";
+    
+    ls->enumVideoMonAmber       = "Ambre";
+
+    ls->menuPropsPorts          = "Ports";
+    ls->propPortsLptGB          = "Port parallèle ";
+    ls->propPortsComGB          = "Ports série ";
+    ls->propPortsLptText        = "Port:";
+    ls->propPortsCom1Text       = "Port 1:";
 };
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-20 19:07:48 $
+** $Date: 2005-03-03 16:38:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -538,6 +538,35 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->propMonColorGhosting    = "RF-Modulering";
+
+    ls->keyconfigSelectedKey    = "Välj tangent:";
+    ls->keyconfigMappedTo       = "Mappad till:";
+    ls->keyconfigMappingScheme  = "Mapschema:";
+
+    ls->discardChanges          = "Vill du stänga verktyget utan att spara dina ändringar?";
+    ls->overwriteConfig         = "Vill du skriva över konfigurationen?";
+
+    ls->confSaveAsTitle         = "Spara Konfigurering Som...";
+    ls->confSaveAsName          = "Namn:";
+
+    ls->menuToolsKeyboard       = "Tangentbordseditor";
+    ls->shortcutShowKeyboard    = "Visa Tangentbordseditor";
+
+    ls->menuVideoSource         = "Videokälla";
+    ls->menuVideoSourceDefault  = "Ingen videokälla inkopplad";
+    ls->menuVideoChipAutodetect = "Automatisk detektering av video chip";
+    ls->propFullscreenResText   = "Fullskärmsupplösning:";
+    ls->dlgSavePreview          = "Förvisning";
+    ls->dlgSaveDate             = "Tid Sparad:";
+    
+    ls->enumVideoMonAmber       = "Amber";
+
+    ls->menuPropsPorts          = "Portar";
+    ls->propPortsLptGB          = "Parallellport ";
+    ls->propPortsComGB          = "Serieportar ";
+    ls->propPortsLptText        = "Port:";
+    ls->propPortsCom1Text       = "Port 1:";
 };
 
 #endif

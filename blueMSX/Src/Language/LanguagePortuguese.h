@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-03-03 16:38:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -537,11 +537,40 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propUseRegistry         = "Salvar a configuração no Registo";
 
     // New entries in 2.2
-    ls->menuCartHBI55           = "Cartucho Sony HBI-55";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
-    ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->menuCartHBI55           = "Cartucho Sony HBI-55"; 
+    ls->propSndPcm              = " Turbo-R PCM"; 
+    ls->propSndAY8910           = " AY8910 PSG"; 
+    ls->propSndSN76489          = " SN76489 PSG"; 
+    ls->enumVideoEmuHq2x        = "Hq2x"; 
+    ls->propMonColorGhosting    = "Modulador RF"; 
+
+    ls->keyconfigSelectedKey    = "Tecla MSX seleccionada:"; 
+    ls->keyconfigMappedTo       = "Atribuída à tecla PC :"; 
+    ls->keyconfigMappingScheme  = "Configuração do teclado:"; 
+
+    ls->discardChanges          = "Você quer desfazer as alterações da configuração atual?"; 
+    ls->overwriteConfig         = "Você quer substituir esta configuração do teclado ?"; 
+
+    ls->confSaveAsTitle         = "Salvar Como"; 
+    ls->confSaveAsName          = "Nome:"; 
+
+    ls->menuToolsKeyboard       = "Configuração do Teclado"; 
+    ls->shortcutShowKeyboard    = "Mostre Configuração do Teclado"; 
+
+    ls->menuVideoSource         = "Fonte Vídeo"; 
+    ls->menuVideoSourceDefault  = "Nenhuma fonte vídeo"; 
+    ls->menuVideoChipAutodetect = "Detecção automática"; 
+    ls->propFullscreenResText   = "Resolução tela cheia:"; 
+    ls->dlgSavePreview          = "Visualizar"; 
+    ls->dlgSaveDate             = "Data:"; 
+
+    ls->enumVideoMonAmber       = "Ambarino"; 
+
+    ls->menuPropsPorts          = "Portas"; 
+    ls->propPortsLptGB          = "Porta paralela "; 
+    ls->propPortsComGB          = "Portas de série "; 
+    ls->propPortsLptText        = "Porta:"; 
+    ls->propPortsCom1Text       = "Porta 1:"; 
 };
 
 #endif

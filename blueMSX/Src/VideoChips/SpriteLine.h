@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-28 17:04:04 $
+** $Date: 2005-03-03 16:38:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
 
-    vdp->vdpStatus[0] &= 0x80;
+    vdp->vdpStatus[0] &= 0xa0;
 
     if (idx == 0) {
         lineBufs[bufIndex] = NULL;
@@ -228,7 +228,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
     
-    vdp->vdpStatus[0] &= 0x80;
+    vdp->vdpStatus[0] &= 0xa0;
 
     if (line == 0) {
         nonVisibleLine = -1000;

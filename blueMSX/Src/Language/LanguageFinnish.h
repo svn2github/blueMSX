@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-16 06:48:16 $
+** $Date: 2005-03-03 16:38:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -541,6 +541,37 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->propMonColorGhosting    = "RF-modulaattori";
+ 
+    ls->keyconfigSelectedKey    = "Valittu näppäin:";
+    ls->keyconfigMappedTo       = "Mapattu näppäimeen:";
+    ls->keyconfigMappingScheme  = "Näppäimistökartta:";
+ 
+    ls->discardChanges          = "Haluatko kumota muutokset?";
+    ls->overwriteConfig         = "Haluatko tallettaa muutokset nykyiseen konfiguraatioon?";
+ 
+    ls->confSaveAsTitle         = "Tallenna konfiguraatio nimellä...";
+    ls->confSaveAsName          = "Nimi:";
+ 
+    ls->menuToolsKeyboard       = "Näppäimistöeditori";
+    ls->shortcutShowKeyboard    = "Näytä näppäimistöeditori";
+ 
+    ls->menuVideoSource         = "Videolähde";
+    ls->menuVideoSourceDefault  = "Videolähdettä ei ole kytketty";
+    ls->menuVideoChipAutodetect = "Tunnista videolähde automaattisesti";
+    ls->propFullscreenResText   = "Täysruudun resoluutio:";
+    ls->dlgSavePreview          = "Esikatsele";
+    ls->dlgSaveDate             = "Aika talletettu:";
+    
+    ls->enumVideoMonAmber       = "Amber";
+
+    ls->menuPropsPorts          = "Ports";
+    ls->propPortsLptGB          = "Parallel port ";
+    ls->propPortsComGB          = "Serial ports ";
+    ls->propPortsLptText        = "Port:";
+    ls->propPortsCom1Text       = "Port 1:";
+
+
 };
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-10 07:18:44 $
+** $Date: 2005-03-03 16:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,7 +70,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPropsControls       = "Controls";
     ls->menuPropsPerformance    = "Performance";
     ls->menuPropsLanguage       = "Language";
-    ls->menuPropsPorts          = "Ports";
     
     ls->menuHelpHelp            = "Help Topics";
     ls->menuHelpAbout           = "About blueMSX";
@@ -212,15 +211,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propJoyKeyest1          = "Config keyset A";
     ls->propJoyKeyest2          = "Config keyset B";
 
-    ls->propPortsLptGB          = "Parallel port ";
-    ls->propPortsComGB          = "Serial ports ";
-    ls->propPortsLptText        = "Port:";
-    ls->propPortsCom1Text       = "Port 1:";
-
     ls->enumVideoMonColor       = "Color";
     ls->enumVideoMonGrey        = "Black and white";
     ls->enumVideoMonGreen       = "Green";
-    ls->enumVideoMonAmber       = "Amber";
 
     ls->enumVideoTypePAL        = "PAL";
     ls->enumVideoTypeNTSC       = "NTSC";
@@ -566,6 +559,14 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propFullscreenResText   = "Fullscreen Resolution:";
     ls->dlgSavePreview          = "Show Preview";
     ls->dlgSaveDate             = "Time Saved:";
+    
+    ls->enumVideoMonAmber       = "Amber";
+
+    ls->menuPropsPorts          = "Ports";
+    ls->propPortsLptGB          = "Parallel port ";
+    ls->propPortsComGB          = "Serial ports ";
+    ls->propPortsLptText        = "Port:";
+    ls->propPortsCom1Text       = "Port 1:";
 };
 
 
