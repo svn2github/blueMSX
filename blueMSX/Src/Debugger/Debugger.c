@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-12 10:09:42 $
+** $Date: 2005-02-12 20:18:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 
 #include "Debugger.h"
+#include "DebugDeviceManager.h"
 #include <stdlib.h>
 
 struct Debugger {
@@ -36,6 +37,7 @@ struct Debugger {
     DebuggerEvent onEmulatorStop;
     DebuggerEvent onEmulatorPause;
     DebuggerEvent onEmulatorResume;
+    void* ref;
 };
 
 #define MAX_DEVICES 64
@@ -46,7 +48,10 @@ struct DbgSnapshot {
     DbgDevice* dbgDevice[MAX_DEVICES];
 };
 
+typedef enum { DBG_STOPPED, DBG_RUNNING, DBG_PAUSED } DbgState;
+
 static Debugger* debuggerList[MAX_DEBUGGERS];
+static DbgState  dbgState = DBG_STOPPED;
 
 static void onDefault() {
 }
@@ -54,7 +59,8 @@ static void onDefault() {
 Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorStop,
                          DebuggerEvent onEmulatorPause,
-                         DebuggerEvent onEmulatorResume)
+                         DebuggerEvent onEmulatorResume,
+                         void* ref)
 {
     Debugger* debugger = malloc(sizeof(Debugger));
     int i;
@@ -63,6 +69,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
     debugger->onEmulatorStop   = onEmulatorStop   ? onEmulatorStop   : onDefault;
     debugger->onEmulatorPause  = onEmulatorPause  ? onEmulatorPause  : onDefault;
     debugger->onEmulatorResume = onEmulatorResume ? onEmulatorResume : onDefault;
+    debugger->ref = ref;
 
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] == NULL) {
@@ -92,9 +99,12 @@ void debuggerDestroy(Debugger* debugger)
 void debuggerNotifyEmulatorStart()
 {
     int i;
+    
+    dbgState = DBG_RUNNING;
+
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onEmulatorStart();
+            debuggerList[i]->onEmulatorStart(debuggerList[i]->ref);
         }
     }
 }
@@ -102,9 +112,12 @@ void debuggerNotifyEmulatorStart()
 void debuggerNotifyEmulatorStop()
 {
     int i;
+
+    dbgState = DBG_STOPPED;
+
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onEmulatorStop();
+            debuggerList[i]->onEmulatorStop(debuggerList[i]->ref);
         }
     }
 }
@@ -112,9 +125,12 @@ void debuggerNotifyEmulatorStop()
 void debuggerNotifyEmulatorPause()
 {
     int i;
+    
+    dbgState = DBG_PAUSED;
+
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onEmulatorPause();
+            debuggerList[i]->onEmulatorPause(debuggerList[i]->ref);
         }
     }
 }
@@ -122,23 +138,52 @@ void debuggerNotifyEmulatorPause()
 void debuggerNotifyEmulatorResume()
 {
     int i;
+    
+    dbgState = DBG_RUNNING;
+
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onEmulatorResume();
+            debuggerList[i]->onEmulatorResume(debuggerList[i]->ref);
         }
     }
 }
 
-
 DbgSnapshot* dbgSnapshotCreate(Debugger* debugger) 
 {
-    DbgSnapshot* dbgSnapshot = malloc(sizeof(DbgSnapshot));
+    DbgSnapshot* dbgSnapshot;
+    
+    if (dbgState != DBG_PAUSED) {
+        return NULL;
+    }
+
+    dbgSnapshot = malloc(sizeof(DbgSnapshot));
+
+    debugDeviceGetSnapshot(dbgSnapshot->dbgDevice, &dbgSnapshot->count);
 
     return dbgSnapshot;
 }
 
 void dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot)
 {
+    int i;
+
+    for (i = 0; i < dbgSnapshot->count; i++) {
+        DbgDevice* dbgDevice = dbgSnapshot->dbgDevice[i];
+        int j;
+        for (j = 0; j < MAX_DBG_COMPONENTS; j++) {
+            if (dbgDevice->memoryBlock[j] != NULL) {
+                free(dbgDevice->memoryBlock[j]);
+            }
+            if (dbgDevice->registerBank[j] != NULL) {
+                free(dbgDevice->registerBank[j]);
+            }
+            if (dbgDevice->ioPorts[j] != NULL) {
+                free(dbgDevice->ioPorts[j]);
+            }
+        }
+
+        free(dbgDevice);
+    }
     free(dbgSnapshot);
 }
 

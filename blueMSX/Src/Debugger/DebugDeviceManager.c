@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-12 09:31:27 $
+** $Date: 2005-02-12 20:18:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "DebugDeviceManager.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_DEVICES 64
 
@@ -95,6 +96,24 @@ void debugDeviceUnregister(int handle)
     }
 }
 
+void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count)
+{
+    int index = 0;
+    int i;
+
+    for (i = 0; i < devManager.count; i++) {
+        if (devManager.di[i].handle != 0) {
+            dbgDeviceList[index] = calloc(1, sizeof(DbgDevice));
+            strcpy(dbgDeviceList[index]->name, devManager.di[i].name);
+            dbgDeviceList[index]->deviceHandle = devManager.di[i].handle;
+            devManager.di[i].setDebugInfo(devManager.di[i].ref, dbgDeviceList[index++]);
+        }
+    }
+
+    *count = index;
+}
+
+
 DbgDevice* dbgDeviceCreate(int handle)
 {
     DbgDevice* device = calloc(1, sizeof(DbgDevice));
@@ -111,16 +130,25 @@ DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
                                         UInt32 size,
                                         UInt8* memory)
 {
-    DbgMemoryBlock*  mem = dbgDevice->memoryBlock[0];
-    if (mem != NULL) mem = dbgDevice->memoryBlock[1];
-    if (mem != NULL) mem = dbgDevice->memoryBlock[2];
-    if (mem != NULL) mem = dbgDevice->memoryBlock[3];
+    DbgMemoryBlock* mem;
+    int i;
+    for (i = 0; i < MAX_DBG_COMPONENTS; i++) {
+        if (dbgDevice->memoryBlock[i] == NULL) {
+            break;
+        }
+    }
+
+    if (i == MAX_DBG_COMPONENTS) {
+        return NULL;
+    }
 
     mem = malloc(sizeof(DbgMemoryBlock) + size);
     strcpy(mem->name, name);
     mem->startAddress = startAddress;
     mem->size = size;
     memcpy(mem->memory, memory, size);
+
+    dbgDevice->memoryBlock[i] = mem;
 
     return mem;
 }
@@ -130,14 +158,23 @@ DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
                                           const char* name,
                                           UInt32 registerCount)
 {
-    DbgRegisterBank*     regBank = dbgDevice->registerBank[0];
-    if (regBank != NULL) regBank = dbgDevice->registerBank[1];
-    if (regBank != NULL) regBank = dbgDevice->registerBank[2];
-    if (regBank != NULL) regBank = dbgDevice->registerBank[3];
+    DbgRegisterBank* regBank;
+    int i;
+    for (i = 0; i < MAX_DBG_COMPONENTS; i++) {
+        if (dbgDevice->registerBank[i] == NULL) {
+            break;
+        }
+    }
+
+    if (i == MAX_DBG_COMPONENTS) {
+        return NULL;
+    }
 
     regBank = calloc(1, sizeof(DbgRegisterBank) + registerCount * sizeof(struct DbgRegister));
     strcpy(regBank->name, name);
     regBank->count = registerCount;
+
+    dbgDevice->registerBank[i] = regBank;
 
     return regBank;
 }
@@ -155,14 +192,23 @@ DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
                                 const char* name,
                                 UInt32 ioPortsCount)
 {
-    DbgIoPorts*          ioPorts = dbgDevice->ioPorts[0];
-    if (ioPorts != NULL) ioPorts = dbgDevice->ioPorts[1];
-    if (ioPorts != NULL) ioPorts = dbgDevice->ioPorts[2];
-    if (ioPorts != NULL) ioPorts = dbgDevice->ioPorts[3];
+    DbgIoPorts* ioPorts;
+    int i;
+    for (i = 0; i < MAX_DBG_COMPONENTS; i++) {
+        if (dbgDevice->ioPorts[i] == NULL) {
+            break;
+        }
+    }
+
+    if (i == MAX_DBG_COMPONENTS) {
+        return NULL;
+    }
 
     ioPorts = calloc(1, sizeof(DbgIoPorts) + ioPortsCount * sizeof(struct DbgIoPort));
     strcpy(ioPorts->name, name);
     ioPorts->count = ioPortsCount;
+
+    dbgDevice->ioPorts[i] = ioPorts;
 
     return ioPorts;
 }

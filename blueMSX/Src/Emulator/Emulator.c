@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-02-12 10:09:42 $
+** $Date: 2005-02-12 20:18:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -288,12 +288,27 @@ static void emulatorThread() {
     archEventSet(emuStartEvent);
 }
 
+#if 0
+// Test code for debugger interface
+static Debugger* debugger;
 
+void onEmuPause()
+{
+    DbgSnapshot* snapshot = dbgSnapshotCreate(debugger);
+
+    dbgSnapshotDestroy(snapshot);
+}
+#endif
 void emulatorStart(char* stateName) {
     UInt32 color = videoGetColor(0, 0, 0);
     int i;
 
-    
+#if 0
+    if (debugger == NULL) {
+        debugger = debuggerCreate(NULL, NULL, onEmuPause, NULL, NULL);
+    }
+#endif
+
     dbgEnable();
 
     archEmulationStartNotification();

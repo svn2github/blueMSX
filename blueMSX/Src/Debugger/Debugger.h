@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-12 10:09:42 $
+** $Date: 2005-02-12 20:18:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,11 +32,11 @@
 
 #include "MsxTypes.h"
 
-typedef void (*DebuggerEvent)();
-
 typedef struct Debugger    Debugger;
 typedef struct DbgSnapshot DbgSnapshot;
 typedef struct DbgDevice   DbgDevice;
+
+typedef void (*DebuggerEvent)();
 
 typedef struct {
     char   name[32];
@@ -66,7 +66,8 @@ typedef struct {
 Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorStop,
                          DebuggerEvent onEmulatorPause,
-                         DebuggerEvent onEmulatorResume);
+                         DebuggerEvent onEmulatorResume,
+                         void* ref);
 
 void debuggerDestroy(Debugger* debugger);
 
@@ -85,11 +86,12 @@ const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex
 
 // Internal structure and interface
 
+#define MAX_DBG_COMPONENTS 4
 struct DbgDevice {
     char name[64];
-    DbgMemoryBlock*  memoryBlock[4];
-    DbgRegisterBank* registerBank[4];
-    DbgIoPorts*      ioPorts[4];
+    DbgMemoryBlock*  memoryBlock[MAX_DBG_COMPONENTS];
+    DbgRegisterBank* registerBank[MAX_DBG_COMPONENTS];
+    DbgIoPorts*      ioPorts[MAX_DBG_COMPONENTS];
     int              deviceHandle;
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-12 09:31:27 $
+** $Date: 2005-02-12 20:18:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,5 +61,7 @@ void dbgIoPortsAddPort(DbgIoPorts* ioPorts,
                        int index,
                        UInt16 port,
                        UInt8 value);
+
+void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count);
 
 #endif /*DEBUG_DEVICE_MANAGER_H*/
