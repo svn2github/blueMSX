@@ -2,8 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by SimpleDebugger.rc
 //
-#define IDC_SCROLLBAR1                  1004
-#define IDC_DEVICETREE                  1005
 #define IDC_STATIC                      -1
 #define IDD_DISASSVSCROLL               -1
 
@@ -14,7 +12,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1005
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

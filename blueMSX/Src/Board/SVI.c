@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-02-23 08:48:32 $
+** $Date: 2005-02-25 03:07:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -476,7 +476,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
         mappedRAM[i] = slotPeek(NULL, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, mappedRAM);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 0, 0x10000, mappedRAM);
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
 

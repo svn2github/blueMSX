@@ -1,9 +1,13 @@
-#define IDD_DEVICEVIEWER          100
-#define IDD_DISASSEMBLY           101
+#define IDD_MEMORYTOOLBAR         100
+#define IDD_MEMORYTOOLBAR1        101
+#define IDD_MEMORYTOOLBAR2        102
 
 #define IDB_TOOLBAR              1004
 #define IDB_TOOLBARBG            1005
 #define IDB_DASMICONS            1006
+
+#define IDC_ADDRESS             10004
+#define IDC_MEMORY              10005
 
 #define IDI_BLUEMSX              2001
 

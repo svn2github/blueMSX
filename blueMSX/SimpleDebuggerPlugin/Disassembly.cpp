@@ -398,18 +398,21 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         hdc = GetDC(hwnd);
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
-        SetTextColor(hMemdc, RGB(64, 64, 64));
         SetBkMode(hMemdc, TRANSPARENT);
         hFont = CreateFont(-MulDiv(10, GetDeviceCaps(hMemdc, LOGPIXELSY), 72), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Courier New");
 
         hBrushWhite  = CreateSolidBrush(RGB(255, 255, 255));
         hBrushLtGray = CreateSolidBrush(RGB(239, 237, 222));
         hBrushDkGray = CreateSolidBrush(RGB(128, 128, 128));
+        
+        colorBlack = RGB(0, 0, 0);
+        colorGray  = RGB(160, 160, 160);
 
         SelectObject(hMemdc, hFont); 
         TEXTMETRIC tm;
         if (GetTextMetrics(hMemdc, &tm)) {
             textHeight = tm.tmHeight;
+            textWidth = tm.tmMaxCharWidth;
         }
         return 0;
 
@@ -561,6 +564,8 @@ void Disassembly::invalidateContent()
     sprintf(lineInfo[lineCount].text, "Disassembly unavailable.");
     lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
     lineInfo[lineCount].haspc = 0;
+    lineInfo[lineCount].dataText[0] = 0;
+    lineInfo[lineCount].dataTextLength = 0;
     lineCount++;
     
     InvalidateRect(hwnd, NULL, TRUE);
@@ -572,16 +577,29 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     programCounter = 0;
 
     for (int addr = 0; addr < 0x10000; ) {
-        sprintf(lineInfo[lineCount].text, "%.4X     ", addr);
-        int len = dasm(memory, addr, lineInfo[lineCount].text + 7);
+        sprintf(lineInfo[lineCount].text, "%.4X:               ", addr);
+        int len = dasm(memory, addr, lineInfo[lineCount].text + 18);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
         lineInfo[lineCount].address = addr;
         lineInfo[lineCount].haspc = addr == pc;
+
+        lineInfo[lineCount].dataText[0] = 0;
+        lineInfo[lineCount].dataTextLength = 0;
+
         if (addr == pc) {
             programCounter = lineCount;
         }
-        lineCount++;
+        int i = min(3, len);
+        while (i--) {
+            char text[16];
+            sprintf(text, "%.2x ", memory[addr]);
+            strcat(lineInfo[lineCount].dataText, text);
+            lineInfo[lineCount].dataTextLength += 3;
+            len--;
+            addr++;
+        }
         addr += len;
+        lineCount++;
     }
     updateScroll();
     InvalidateRect(hwnd, NULL, TRUE);
@@ -708,6 +726,12 @@ void Disassembly::drawText(int top, int bottom)
                 bitmapIcons->drawIcon(hMemdc, 4, r.top, 2);
             }
         }
+
+        SetTextColor(hMemdc, colorGray);
+        r.left += 6 * textWidth;
+        DrawText(hMemdc, lineInfo[i].dataText, lineInfo[i].dataTextLength, &r, DT_LEFT);
+        r.left -= 6 * textWidth;
+        SetTextColor(hMemdc, colorBlack);
 
         DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
         r.top += textHeight;

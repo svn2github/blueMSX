@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-02-25 03:07:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -378,7 +378,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, colecoMemory);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 0, 0x10000, colecoMemory);
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
 

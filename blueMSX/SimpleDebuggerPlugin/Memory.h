@@ -22,52 +22,82 @@
 **
 ******************************************************************************
 */
-#ifndef CPU_REGISTERS_H
-#define CPU_REGISTERS_H
+#ifndef MEMORY_H
+#define MEMORY_H
 
 #include <windows.h>
+#include <string>
+#include <list>
 #include "ToolInterface.h"
 
-class CpuRegisters {
+class Memory {
 public:
-    CpuRegisters(HINSTANCE hInstance, HWND owner);
-    ~CpuRegisters();
+    Memory(HINSTANCE hInstance, HWND owner);
+    ~Memory();
 
     void show();
     void hide();
     
     void updatePosition(RECT& rect);
 
-    void updateContent(RegisterBank* regBank);
+    void updateContent(Snapshot* snapshot);
     void invalidateContent();
 
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    BOOL toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
+    struct MemoryItem {
+        MemoryItem(const std::string t, UInt8* m, int s) : size(s), title(t), flag(true) {
+            memory = new UInt8[s];
+            ref    = new UInt8[s];
+            memcpy(memory, m, s);
+            memcpy(ref,    m, s);
+        }
+        ~MemoryItem() {
+            delete[] memory;
+            delete[] ref;
+        }
+        UInt8* memory;
+        UInt8* ref;
+        int    size;
+        std::string title;
+        bool flag;
+    };
 
+    typedef std::list<MemoryItem*> MemList;
+
+    void showAddress(int addr);
     void scrollWindow(int sbAction);
     void updateScroll();
+    void updateDropdown();
+    void updateWindowPositions();
+    void setNewMemory(const std::string& title);
     void drawText(int top, int bottom);
 
     HWND   hwnd;
+    HWND   memHwnd;
+    HWND   toolHwnd;
     HDC    hMemdc;
     HFONT  hFont;
-    HFONT  hFontBold;
     HBRUSH hBrushWhite;
     HBRUSH hBrushLtGray;
     HBRUSH hBrushDkGray;
     int    textHeight;
     int    textWidth;
 
-    int    registersPerRow;
+    int    memPerRow;
     int    lineCount;
 
     COLORREF colorBlack;
     COLORREF colorGray;
     COLORREF colorRed;
 
-    int regValue[15];
-    int regModified[15];
+    int currentAddress;
+
+    MemList memList;
+    MemoryItem* currentMemory;
 };
 
-#endif //CPU_REGISTERS_H
+#endif //MEMORY_H

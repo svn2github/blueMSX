@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-22 03:39:13 $
+** $Date: 2005-02-25 03:07:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,7 +105,7 @@ static void destroy(RamMapper* rm)
 
 static void getDebugInfo(RamMapper* rm, DbgDevice* dbgDevice)
 {
-    dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->size, rm->ramData);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Mapped", 0, rm->size, rm->ramData);
 }
 
 static void dbgWriteMemory(RamMapper* rm, char* name, void* data, int start, int size)
@@ -151,7 +151,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     rm->handle  = ramMapperIoAdd(pages * 0x4000, write, rm);
     
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Mapped", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "RAM", &dbgCallbacks, rm);
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
     slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-22 03:39:14 $
+** $Date: 2005-02-25 03:07:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -86,7 +86,7 @@ static void destroy(RamNormal* rm)
 
 static void getDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
 {
-    dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->pages * 0x2000, rm->ramData);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Normal", 0, rm->pages * 0x2000, rm->ramData);
 }
 
 static void dbgWriteMemory(RamNormal* rm, char* name, void* data, int start, int size)
@@ -124,7 +124,7 @@ int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     memset(rm->ramData, 0xff, sizeof(rm->ramData));
 
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Normal", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "RAM", &dbgCallbacks, rm);
 
     for (i = 0; i < pages; i++) {
         slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 1);

@@ -5,6 +5,7 @@
 #include "Toolbar.h"
 #include "Disassembly.h"
 #include "CpuRegisters.h"
+#include "Memory.h"
 #include "resrc1.h"
 #include <string>
 #include <commctrl.h>
@@ -19,6 +20,7 @@ static StatusBar* statusBar = NULL;
 static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
 static CpuRegisters* cpuRegisters = NULL;
+static Memory* memory = NULL;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -102,6 +104,10 @@ void updateDeviceState()
 {
     bool disassemblyUpdated = false;
 
+    if (GetEmulatorState() == EMULATOR_RUNNING) {
+        return;
+    }
+
     Snapshot* snapshot = SnapshotCreate();
     if (snapshot != NULL) {
         int deviceCount = SnapshotGetDeviceCount(snapshot);
@@ -144,8 +150,9 @@ void updateDeviceState()
                     disassemblyUpdated = true;
                 }
             }
-
         }
+
+        memory->updateContent(snapshot);
 
         SnapshotDestroy(snapshot);
     }
@@ -325,7 +332,7 @@ void OnShowTool() {
 
     dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
                            WS_OVERLAPPEDWINDOW, 
-                           CW_USEDEFAULT, CW_USEDEFAULT, 700, 600, NULL, NULL, GetDllHinstance(), NULL);
+                           CW_USEDEFAULT, CW_USEDEFAULT, 720, 800, NULL, NULL, GetDllHinstance(), NULL);
 
     viewHwnd = CreateWindow("msxdebuggerview", "", 
                             WS_OVERLAPPED | WS_CHILD | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
@@ -345,16 +352,19 @@ void OnShowTool() {
     updateToolBar();
 
     disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
-    RECT r = { 0, 32, 400, 500 };
+    RECT r = { 3, 0, 507, 470 };
     disassembly->updatePosition(r);
     disassembly->show();
 
-
     cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 410, 32, 610, 500 };
+    RECT r2 = { 510, 0, 710, 470 };
     cpuRegisters->updatePosition(r2);
     cpuRegisters->show();
-    
+
+    memory = new Memory(GetDllHinstance(), viewHwnd);
+    RECT r3 = { 3, 473, 710, 700 };
+    memory->updatePosition(r3);
+    memory->show();
 
     updateWindowPositions();
 }

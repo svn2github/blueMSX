@@ -57,7 +57,12 @@ private:
     HBRUSH hBrushWhite;
     HBRUSH hBrushLtGray;
     HBRUSH hBrushDkGray;
+    
+    COLORREF colorBlack;
+    COLORREF colorGray;
+
     int    textHeight;
+    int    textWidth;
 
     enum BpState { BP_NONE = 0, BP_SET = 1, BP_DISABLED = 2 };
     
@@ -66,6 +71,8 @@ private:
         bool haspc;
         char text[48];
         int  textLength;
+        char dataText[48];
+        int  dataTextLength;
     };
 
     int      programCounter;
