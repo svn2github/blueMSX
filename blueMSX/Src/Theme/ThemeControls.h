@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-10 16:07:11 $
+** $Date: 2005-01-14 09:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,7 +119,7 @@ int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y);
 
 typedef struct ActiveObject ActiveObject;
 
-ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id);
+ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id, int arg1, int arg2);
 void activeObjectDestroy(ActiveObject* activeObject);
 void activeObjectActivate(ActiveObject* activeObject, void* window);
 

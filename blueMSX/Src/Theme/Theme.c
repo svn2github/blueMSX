@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-14 06:11:31 $
+** $Date: 2005-01-14 09:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -641,13 +641,35 @@ int themeGetPageCount(Theme* theme)
 
 void themeSetPageFromHash(Theme* theme, unsigned long hash)
 {
+    int oldPage = theme->currentPage;
     int i;
     for (i = 0; i < theme->pageCount; i++) {
         if (themeGetNameHash(theme->pages[i]->name) == hash) {
             theme->currentPage = i;
         }
     }
+    if (oldPage != theme->currentPage) {
+        themePageActivate(theme->pages[oldPage], NULL);
+    }
     archThemeUpdate(theme);
+}
+
+char* themeGetPageName(Theme* theme, int index)
+{
+    return theme->pages[index]->name;
+}
+
+char** themeGetPageNames(Theme* theme)
+{
+    static char* names[256];
+    int i = 0;
+
+    for (i = 0; i < theme->pageCount; i++) {
+        names[i] = theme->pages[i]->name;
+    }
+    names[i] = NULL;
+
+    return names;
 }
 
 ThemePage* themeGetPage(Theme* theme, int index)
@@ -723,5 +745,23 @@ void themeCollectionOpenWindow(ThemeCollection* tc, unsigned long hash)
         return;
     }
 
-    tc->theme[i]->reference = archWindowCreate(tc->theme[i]);
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_NORMAL);
+}
+
+void themeCollectionOpenKbdWindow(ThemeCollection* tc, unsigned long hash)
+{
+    Theme* theme = NULL;
+
+    int i;
+    for (i = 0; i < THEME_MAX_WINDOWS; i++) {
+        if (tc->theme[i] && themeGetNameHash(tc->theme[i]->name) == hash) {
+            theme = tc->theme[i];
+            break;
+        }
+    }
+    if (theme == NULL || tc->theme[i]->reference != NULL) {
+        return;
+    }
+
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_KBDCONFIG);
 }

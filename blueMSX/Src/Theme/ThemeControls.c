@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-10 16:07:11 $
+** $Date: 2005-01-14 09:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -949,21 +949,26 @@ int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y)
 struct ActiveObject 
 {
     char id[64];
+    void* handle;
     int x;
     int y;
     int width;
     int height;
+    int arg1;
+    int arg2;
     void* object;
 };
 
-void* archObjectCreate(char* id, void* window, int x, int y, int width, int height);
+void* archObjectCreate(char* id, void* window, int x, int y, int width, int height, int arg1, int arg2);
 void archObjectDestroy(char* id, void* object);
 
-ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id)
+ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id, int arg1, int arg2)
 {
     ActiveObject* activeObject = malloc(sizeof(ActiveObject));
 
     strcpy(activeObject->id, id);
+    activeObject->arg1   = arg1;
+    activeObject->arg2   = arg2;
     activeObject->x      = x;
     activeObject->y      = y;
     activeObject->width  = width;
@@ -983,12 +988,14 @@ void activeObjectDestroy(ActiveObject* activeObject)
 void activeObjectActivate(ActiveObject* activeObject, void* window)
 {
     if (window != NULL && activeObject->object == NULL) {
-        activeObject->object = archObjectCreate(activeObject->id, 
+        activeObject->object = archObjectCreate(activeObject->id,
                                                 window, 
                                                 activeObject->x, 
                                                 activeObject->y, 
                                                 activeObject->width, 
-                                                activeObject->height);
+                                                activeObject->height,
+                                                activeObject->arg1,
+                                                activeObject->arg2);
     }
 
     if (window == NULL && activeObject->object != NULL) {

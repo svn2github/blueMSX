@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-01-14 06:11:32 $
+** $Date: 2005-01-14 09:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2901,12 +2901,28 @@ void archThemeSetNext() {
     archUpdateWindow();
 }
 
+
+// Object window messages
+
+#define WM_OBJECT_BASE              (WM_USER + 1300)
+
+#define WM_DROPDOWN_KEYBOARDCONFIG  (WM_OBJECT_BASE + 31)
+#define WM_DROPDOWN_THEMEPAGES      (WM_OBJECT_BASE + 32)
+#define WM_DROPDOWN_MACHINECONFIG   (WM_OBJECT_BASE + 33)
+
+#define WM_BUTTON_OK                (WM_OBJECT_BASE + 1)
+#define WM_BUTTON_CANCEL            (WM_OBJECT_BASE + 2)
+#define WM_BUTTON_SAVE              (WM_OBJECT_BASE + 3)
+#define WM_BUTTON_SAVEAS            (WM_OBJECT_BASE + 4)
+
+
 /////////////////////////////////////////////////////////////////////
 ////  Implementation of theme popup windows
 /////////////////////////////////////////////////////////////////////
 
 typedef struct WindowInfo {
     HWND hwnd;
+    WindowHandler handler;
     int  captionHeight;
     int  isMinimized;
     int  isMoving;
@@ -2919,6 +2935,33 @@ typedef struct WindowInfo {
     RGNDATA* rgnData;
     int      rgnEnable;
 } WindowInfo;
+
+
+/////////////////////////////////////////////////////////////////////
+////  Implementation of keyboard specific messages
+/////////////////////////////////////////////////////////////////////
+
+static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    WindowInfo* wi = windowDataGet(hwnd);
+
+    switch (iMsg) {
+    case WM_DROPDOWN_THEMEPAGES:
+        themeSetPageFromHash(wi->theme, themeGetNameHash((char*)lParam));
+        SendMessage(hwnd, WM_UPDATE, 0, 0);
+        return 0;
+
+    case WM_BUTTON_OK:
+        SendMessage(hwnd, WM_CLOSE, 0, 0);
+        break;
+    }
+
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+
+/////////////////////////////////////////////////////////////////////
+////  Clip region methods
+/////////////////////////////////////////////////////////////////////
 
 static void windowSetClipRegion(WindowInfo* wi, int enable) 
 {
@@ -3015,7 +3058,7 @@ static void windowCreateClipRegion(WindowInfo* wi)
     }
 }
 
-static BOOL CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     WindowInfo* wi = windowDataGet(hwnd);
 
@@ -3045,7 +3088,8 @@ static BOOL CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         windowDataSet(hwnd, 0, NULL);
         wi->theme->reference = NULL;
         free(wi);
-        EndDialog(hwnd, FALSE);
+        wi = NULL;
+        DestroyWindow(hwnd);
         break;
 
     case WM_ENTERSIZEMOVE:
@@ -3175,10 +3219,14 @@ static BOOL CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
     }
 
+    if (wi && wi->handler == WH_KBDCONFIG) {
+        return keyboardDlgProc(hwnd, iMsg, wParam, lParam);
+    }
+
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
-void* archWindowCreate(Theme* theme) {
+void* archWindowCreate(Theme* theme, WindowHandler handler) {
     HINSTANCE hInstance = GetModuleHandle(NULL);
     WindowInfo* wi;
 
@@ -3205,6 +3253,7 @@ void* archWindowCreate(Theme* theme) {
 
     wi = calloc(1, sizeof(WindowInfo));
     wi->theme = theme;
+    wi->handler = handler;
 
 #if 1
     return CreateWindowEx(WS_EX_TOOLWINDOW, "blueMSX Popup", theme->name, 
@@ -3725,16 +3774,11 @@ char* themeTriggerMappedKey() {
     return "";
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 ///
 /// Theme objects
 
-
-//////////////////////////////////////////////////////////////////////////
-// Methods for parent window to control the child object windows
-//
 #define OBJECT_ID_NONE                      0
 #define OBJECT_ID_BUTTON_OK                 1
 #define OBJECT_ID_BUTTON_CANCEL             2
@@ -3742,7 +3786,7 @@ char* themeTriggerMappedKey() {
 #define OBJECT_ID_BUTTON_SAVEAS             4
 
 #define OBJECT_ID_DROPDOWN_KEYBOARDCONFIG   31
-#define OBJECT_ID_DROPDOWN_KEYBOARDTHEMES   32
+#define OBJECT_ID_DROPDOWN_THEMEPAGES       32
 #define OBJECT_ID_DROPDOWN_MACHINECONFIG    33
 
 #define WM_OBJECT_CONTOL_BASE (WM_USER + 1400)
@@ -3781,23 +3825,142 @@ void objectEnable(HWND parent, int objectId, int enable)
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int objectId;
+    int notifyId;
+    Theme* theme;
+    char text[64];
+} DropdownInfo;
 
-#define WM_OBJECT_BASE              (WM_USER + 1500)
+static void updateMachineConfigs(HWND hDlg, char* text) 
+{
+}
 
-#define WM_BUTTON_OK                (WM_OBJECT_BASE + 1)
-#define WM_BUTTON_CANCEL            (WM_OBJECT_BASE + 2)
-#define WM_BUTTON_SAVE              (WM_OBJECT_BASE + 3)
-#define WM_BUTTON_SAVEAS            (WM_OBJECT_BASE + 4)
+static void updateKeyConfigs(HWND hDlg, char* text) 
+{
+}
 
-#define WM_DROPDOWN_KEYBOARDCONFIG  (WM_OBJECT_BASE + 31)
-#define WM_DROPDOWN_KEYBOARDTHEMES  (WM_OBJECT_BASE + 32)
-#define WM_DROPDOWN_MACHINECONFIG   (WM_OBJECT_BASE + 33)
+static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    DropdownInfo* oi;
 
-////////////////////////////////////////////////////////////////////////
-///
-/// Button object windows
-///
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        oi = (DropdownInfo*)malloc(sizeof(DropdownInfo));
+        *oi = *(DropdownInfo*)lParam;
+        SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
+        SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, 96, SWP_NOZORDER);
+        windowDataSet(hwnd, oi->objectId, oi);
+        SendMessage(hwnd, WM_OBJECT_UPDATE, 0, 0);
+        return FALSE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDC_CONTROL) {
+            static int isChanging = 0;
+            if (isChanging == 0 && HIWORD(wParam) == CBN_SELCHANGE) {
+                char sel[64];
+                int idx;
+                int rv;
+
+                isChanging = 1;
+
+                idx = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETCURSEL, 0, 0);
+                rv = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETLBTEXT, idx, (LPARAM)sel);
+                if (rv != CB_ERR) {
+                    oi = (DropdownInfo*)windowDataGet(hwnd);
+                    SendMessage(GetParent(hwnd), (UINT)oi->notifyId, 0, (LPARAM)sel);
+                }
+                isChanging = 0;
+            }
+        }
+        return TRUE;
+    case WM_CLOSE:
+        oi = (DropdownInfo*)windowDataGet(hwnd);
+        windowDataSet(hwnd, 0, NULL);
+        free(oi);
+        break;
+    case WM_OBJECT_UPDATE:
+        while (CB_ERR != SendDlgItemMessage(hwnd, IDC_CONTROL, CB_DELETESTRING, 0, 0));
+
+        oi = (DropdownInfo*)windowDataGet(hwnd);
+
+        {
+            char** items = { NULL };
+            int index = 0;
+
+            switch (oi->objectId) {
+            case OBJECT_ID_DROPDOWN_MACHINECONFIG:
+                items = machineGetAvailable(0);
+                break;
+            case OBJECT_ID_DROPDOWN_KEYBOARDCONFIG:
+                items = keyboardGetConfigs();
+                break;
+            case OBJECT_ID_DROPDOWN_THEMEPAGES:
+                items = themeGetPageNames((Theme*)oi->theme);
+                break;
+            }
+
+            while (*items != NULL) {
+                SendDlgItemMessage(hwnd, IDC_CONTROL, CB_ADDSTRING, 0, (LPARAM)*items);
+
+                if (index == 0 || 0 == strcmp(*items, oi->text)) {
+                    SendDlgItemMessage(hwnd, IDC_CONTROL, CB_SETCURSEL, index, 0);
+                }
+                items++;
+                index++;
+            }
+        }
+        break;
+    case WM_OBJECT_SHOW:
+        ShowWindow(hwnd, lParam);
+        break;
+    case WM_OBJECT_ENABLE:
+        EnableWindow(hwnd, lParam);
+        break;
+    }
+    return FALSE;
+}
+
+void* objectDropdownCreate(HWND hwnd, char* id, int x, int y, int width, int height, int arg1, int arg2)
+{
+    DropdownInfo oi = { x, y, width, height, 0, 0 };
+
+    if (0 == strcmp(id, "dropdown-keyconfigs")) {
+        oi.text[0] = 0;
+        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDCONFIG;
+        oi.notifyId = WM_DROPDOWN_KEYBOARDCONFIG;
+    }
+    
+    if (0 == strcmp(id, "dropdown-machineconfigs")) {
+        oi.text[0] = 0;
+        oi.objectId = OBJECT_ID_DROPDOWN_MACHINECONFIG;
+        oi.notifyId = WM_DROPDOWN_MACHINECONFIG;
+    }
+
+    if (0 == strcmp(id, "dropdown-themepages")) {
+        Theme* theme = (Theme*)arg1;
+        strcpy(oi.text, themeGetPageName(theme, themeGetCurrentPageIndex(theme)));
+        oi.objectId = OBJECT_ID_DROPDOWN_THEMEPAGES;
+        oi.notifyId = WM_DROPDOWN_THEMEPAGES;
+        oi.theme    = (Theme*)arg1;
+    }
+    
+    if (oi.objectId == 0) {
+        return NULL;
+    }
+
+    return CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DROPDOWN), hwnd, dropdownProc, (LPARAM)&oi);
+}
+
+void objectDropdownDestroy(void* object) 
+{
+    DestroyWindow((HWND)object);
+}
+
+
 typedef struct {
     int x;
     int y;
@@ -3875,145 +4038,13 @@ void objectButtonDestroy(void* object)
     DestroyWindow((HWND)object);
 }
 
-////////////////////////////////////////////////////////////////////////
-///
-/// Dropdown object windows
-///
-typedef struct {
-    int x;
-    int y;
-    int width;
-    int height;
-    int objectId;
-    int notifyId;
-    char text[64];
-} DropdownInfo;
-
-static void updateMachineConfigs(HWND hDlg, char* text) 
-{
-}
-
-static void updateKeyConfigs(HWND hDlg, char* text) 
-{
-}
-
-static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    static DropdownInfo* oi;
-
-    switch (iMsg) {
-    case WM_INITDIALOG:
-        oi = (DropdownInfo*)lParam;
-        SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
-        SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, 96, SWP_NOZORDER);
-        windowDataSet(hwnd, oi->objectId, oi);
-        SendMessage(hwnd, WM_OBJECT_UPDATE, 0, 0);
-        return FALSE;
-    case WM_COMMAND:
-        if (wParam == IDC_CONTROL) {
-            static int isChanging = 0;
-            if (isChanging == 0 && HIWORD(wParam) == CBN_SELCHANGE) {
-                char sel[64];
-                int idx;
-                int rv;
-
-                isChanging = 1;
-
-                idx = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETCURSEL, 0, 0);
-                rv = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETLBTEXT, idx, (LPARAM)sel);
-                if (rv != CB_ERR) {
-                    oi = (DropdownInfo*)windowDataGet(hwnd);
-                    SendMessage(GetParent(hwnd), (UINT)oi->notifyId, 0, (LPARAM)sel);
-                }
-                isChanging = 0;
-            }
-        }
-        return TRUE;
-    case WM_CLOSE:
-        windowDataSet(hwnd, 0, NULL);
-        break;
-    case WM_OBJECT_UPDATE:
-        while (CB_ERR != SendDlgItemMessage(hwnd, IDC_CONTROL, CB_DELETESTRING, 0, 0));
-
-        oi = (DropdownInfo*)windowDataGet(hwnd);
-
-        SendMessage(GetParent(hwnd), (UINT)oi->notifyId, 0, (LPARAM)oi->text);
-
-        {
-            char** items = { NULL };
-            int index = 0;
-
-            switch (oi->objectId) {
-            case OBJECT_ID_DROPDOWN_MACHINECONFIG:
-                items = machineGetAvailable(0);
-                break;
-            case OBJECT_ID_DROPDOWN_KEYBOARDCONFIG:
-                items = keyboardGetConfigs();
-                break;
-            case OBJECT_ID_DROPDOWN_KEYBOARDTHEMES:
-                break;
-            }
-
-            while (*items != NULL) {
-                SendDlgItemMessage(hwnd, IDC_CONTROL, CB_ADDSTRING, 0, (LPARAM)*items);
-
-                if (index == 0 || 0 == strcmp(*items, oi->text)) {
-                    SendDlgItemMessage(hwnd, IDC_CONTROL, CB_SETCURSEL, index, 0);
-                }
-                items++;
-                index++;
-            }
-        }
-        break;
-    case WM_OBJECT_SHOW:
-        ShowWindow(hwnd, lParam);
-        break;
-    case WM_OBJECT_ENABLE:
-        EnableWindow(hwnd, lParam);
-        break;
-    }
-    return FALSE;
-}
-
-void* objectDropdownCreate(HWND hwnd, char* id, int x, int y, int width, int height)
-{
-    DropdownInfo oi = { x, y, width, height, 0, 0 };
-
-    if (0 == strcmp(id, "dropdown-keyconfigs")) {
-        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDCONFIG;
-        oi.notifyId = WM_DROPDOWN_KEYBOARDCONFIG;
-    }
-    if (0 == strcmp(id, "dropdown-keyboardthemes")) {
-        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDTHEMES;
-        oi.notifyId = WM_DROPDOWN_KEYBOARDTHEMES;
-    }
-    
-    if (0 == strcmp(id, "dropdown-machineconfigs")) {
-        oi.objectId = OBJECT_ID_DROPDOWN_MACHINECONFIG;
-        oi.notifyId = WM_DROPDOWN_MACHINECONFIG;
-    }
-    
-    if (oi.objectId == 0) {
-        return NULL;
-    }
-
-    return CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DROPDOWN), hwnd, dropdownProc, (LPARAM)&oi);
-}
-
-void objectDropdownDestroy(void* object) 
-{
-    DestroyWindow((HWND)object);
-}
-
-////////////////////////////////////////////////////////////////////////
-
-void* archObjectCreate(char* id, void* window, int x, int y, int width, int height)
+void* archObjectCreate(char* id, void* window, int x, int y, int width, int height, int arg1, int arg2)
 {
     if (0 == strncmp(id, "button-", 7)) {
         return objectButtonCreate(window, id, x, y, width, height);
     }
     if (0 == strncmp(id, "dropdown-", 9)) {
-        return objectDropdownCreate(window, id, x, y, width, height);
+        return objectDropdownCreate(window, id, x, y, width, height, arg1, arg2);
     }
     return NULL;
 }
@@ -4027,3 +4058,4 @@ void archObjectDestroy(char* id, void* object)
         objectDropdownDestroy(object);
     }
 }
+

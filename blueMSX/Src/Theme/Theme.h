@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-14 06:11:31 $
+** $Date: 2005-01-14 09:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -111,9 +111,12 @@ ThemePage* themePageCreate(const char* name,
 
 unsigned long themeGetNameHash(const char* name);
 
+
 ThemeCollection* themeCollectionCreate();
 void themeCollectionDestroy(ThemeCollection* tc);
 void themeCollectionAddWindow(ThemeCollection* tc, Theme* theme);
+void themeCollectionOpenWindow(ThemeCollection* themeCollection, unsigned long hash);
+void themeCollectionOpenKbdWindow(ThemeCollection* themeCollection, unsigned long hash);
 
 Theme*     themeCreate(const char* name);
 void       themeDestroy(Theme* theme);
@@ -121,9 +124,9 @@ void       themeAddPage(Theme* theme, ThemePage* page);
 ThemePage* themeGetCurrentPage(Theme* theme);
 int        themeGetCurrentPageIndex(Theme* theme);
 int        themeGetPageCount(Theme* theme);
+char*      themeGetPageName(Theme* theme, int index);
 void       themeSetPageFromHash(Theme* theme, unsigned long hash);
-void       themeCollectionOpenWindow(ThemeCollection* themeCollection,unsigned long hash);
-
+char**     themeGetPageNames(Theme* theme);
 
 void themePageDestroy(ThemePage* theme);
 void themePageAddImage(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);

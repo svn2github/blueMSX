@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-14 06:11:32 $
+** $Date: 2005-01-14 09:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,8 +218,18 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-setstereo"))      return (ButtonEvent)actionSetVolumeStereo;
 
     if (0 == strcmp(action, "theme-setpage"))        buttonEvent = (ButtonEvent)themeSetPageFromHash;
-    if (0 == strcmp(action, "theme-openwindow"))     buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
-    
+    if (0 == strcmp(action, "theme-openwindow")) {
+        buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
+
+        // Overload window type if handler specified
+        const char* handler = el->Attribute("handler");
+        if (handler != NULL) {
+            if (0 == strcmp(handler, "keyboardconfig")) {
+                buttonEvent = (ButtonEvent)themeCollectionOpenKbdWindow;
+            }
+        }
+    }
+
     if (buttonEvent != NULL) {
         const char* argaStr = el->Attribute(arg1Tag);
         if (argaStr != NULL) {
@@ -231,6 +241,9 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
                 *arg1 = (int)theme;
             }
             if (buttonEvent == (ButtonEvent)themeCollectionOpenWindow) {
+                *arg1 = (int)themeCollection;
+            }
+            if (buttonEvent == (ButtonEvent)themeCollectionOpenKbdWindow) {
                 *arg1 = (int)themeCollection;
             }
         }
@@ -696,7 +709,10 @@ static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage*
         visible = THEME_TRIGGER_NONE;
     }
 
-    themePageAddObject(themePage, activeObjectCreate(x, y, width, height, id), visible);
+    int arg1 = 0;
+    if (0 == strcmp(id, "dropdown-themepages")) arg1 = (int)theme;
+
+    themePageAddObject(themePage, activeObjectCreate(x, y, width, height, id, arg1, 0), visible);
 }
 
 static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
