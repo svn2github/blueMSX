@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:27 $
+** $Date: 2005-01-03 23:12:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -542,6 +542,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSndPcm              = " Turbo-R PCM";
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
+    ls->enumVideoEmuHq2x        = "Hq2x";
 };
 
 #endif

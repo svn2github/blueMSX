@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:26 $
+** $Date: 2005-01-03 23:12:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -542,6 +542,7 @@ _TCHAR* langEnumVideoEmuYcBlur() { return ls->enumVideoEmuYcBlur; }
 _TCHAR* langEnumVideoEmuComp() { return ls->enumVideoEmuComp; }
 _TCHAR* langEnumVideoEmuCompBlur() { return ls->enumVideoEmuCompBlur; }
 _TCHAR* langEnumVideoEmuScale2x() { return ls->enumVideoEmuScale2x; }
+_TCHAR* langEnumVideoEmuHq2x() { return ls->enumVideoEmuHq2x; }
 
 _TCHAR* langEnumVideoSize1x() { return ls->enumVideoSize1x; }
 _TCHAR* langEnumVideoSize2x() { return ls->enumVideoSize2x; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:27 $
+** $Date: 2005-01-03 23:12:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -311,6 +311,7 @@ typedef struct {
     _TCHAR* enumVideoEmuComp;
     _TCHAR* enumVideoEmuCompBlur;
     _TCHAR* enumVideoEmuScale2x;
+    _TCHAR* enumVideoEmuHq2x;
 
     _TCHAR* enumVideoSize1x;
     _TCHAR* enumVideoSize2x;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-02 08:22:13 $
+** $Date: 2005-01-03 23:12:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -363,7 +363,7 @@ static _TCHAR* pVideoVideoType[] = {
     NULL
 };
 
-static _TCHAR pVideoEmuData[8][64];
+static _TCHAR pVideoEmuData[9][64];
 static _TCHAR* pVideoPalEmu[] = {
     pVideoEmuData[0],
     pVideoEmuData[1],
@@ -372,6 +372,7 @@ static _TCHAR* pVideoPalEmu[] = {
     pVideoEmuData[4],
     pVideoEmuData[5],
     pVideoEmuData[6],
+    pVideoEmuData[7],
     NULL
 };
 
@@ -1036,6 +1037,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         _stprintf(pVideoPalEmu[4], "%s", langEnumVideoEmuComp());
         _stprintf(pVideoPalEmu[5], "%s", langEnumVideoEmuCompBlur());
         _stprintf(pVideoPalEmu[6], "%s", langEnumVideoEmuScale2x());
+        _stprintf(pVideoPalEmu[7], "%s", langEnumVideoEmuHq2x());
 
         _stprintf(pVideoMonSize[0], "%s", langEnumVideoSize1x());
         _stprintf(pVideoMonSize[1], "%s", langEnumVideoSize2x());

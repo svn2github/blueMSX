@@ -84,7 +84,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -768,6 +768,12 @@
 		<Filter
 			Name="VideoRender"
 			Filter="">
+			<File
+				RelativePath="..\..\Src\VideoRender\hq2x.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoRender\hq2x.h">
+			</File>
 			<File
 				RelativePath="..\..\Src\VideoRender\Scale2x.h">
 			</File>

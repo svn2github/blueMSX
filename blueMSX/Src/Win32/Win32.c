@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-02 08:22:13 $
+** $Date: 2005-01-03 23:12:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -711,6 +711,9 @@ void updateVideoRender() {
         break;
 	case P_VIDEO_PALSCALE2X:
 		videoSetPalMode(st.pVideo, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(st.pVideo, VIDEO_PAL_HQ2X);
 		break;
 	case P_VIDEO_PAL_STRETCHED:
 		videoSetPalMode(st.pVideo, VIDEO_PAL_STRETCHED);

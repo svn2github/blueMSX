@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-01-03 23:12:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,6 @@
 #include "romMapperMoonsound.h"
 
 extern int  WaitForSync(void);
-extern void Keyboard(UInt8* keybardMap);
 
 void PatchZ80(void* ref, CpuRegs* cpuRegs);
 

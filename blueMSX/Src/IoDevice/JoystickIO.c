@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-26 00:07:35 $
+** $Date: 2005-01-03 23:12:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,10 +32,10 @@
 #include "SaveState.h"
 #include "Led.h"
 #include "Switches.h"
+#include "ArchControls.h"
 #include <stdlib.h>
 #include <string.h>
 
-extern UInt8 Joystick(UInt8 no);
 extern void mouseEmuGetState(int* dx, int* dy);
 extern int  mouseEmuGetButtonState(int checkAlways);
 
@@ -119,7 +119,7 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
         }
 
         if(joyIO->controls[joyId].type != JOYTYPE_MOUSE) {
-            UInt8 state = Joystick((UInt8)joyId);
+            UInt8 state = archJoystickGetState((UInt8)joyId);
             int   renshaSpeed = switchGetRensha();
             if (renshaSpeed) {
                 state &= (((UInt64)renshaSpeed * systemTime / boardFrequency()) & 1) << 4;

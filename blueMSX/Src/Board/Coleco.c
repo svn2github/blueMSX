@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-01-03 23:12:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "KeyClick.h"
 #include "IoPort.h"
 #include "RomLoader.h"
+#include "ArchControls.h"
 
 /* Hardware */
 static Machine*        colecoMachine;
@@ -58,7 +59,6 @@ static UInt32          nextSyncTime;
 static UInt32          loopTime;
 static int             syncCount;
 static int             SyncPeriod;
-static UInt8           KeyMap[16];
 static UInt32          colecoFrequency;
 static int             pendingInt;
 static UInt32          colecoRamSize;
@@ -72,7 +72,6 @@ void colecoLoadState();
 void colecoSaveState();
 
 extern int  WaitForSync(void);
-extern void Keyboard(UInt8* keybardMap);
 
 static int joyMode = 0;
 
@@ -89,6 +88,7 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
 {
     UInt8 joyState = joystickReadColeco(joyIO, ioPort >> 1);
+    UInt8* keyMap = archKeyboardGetState();
     UInt8 value;
 
     if (joyMode != 0) {
@@ -103,32 +103,32 @@ static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
     value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
 
 	if (ioPort & 2) {
-		if      (~KeyMap[ 9] & 0x08) value |= 0x0A; // 0
-		else if (~KeyMap[ 9] & 0x10) value |= 0x0D; // 1
-		else if (~KeyMap[ 9] & 0x20) value |= 0x07; // 2
-		else if (~KeyMap[ 9] & 0x40) value |= 0x0C; // 3
-		else if (~KeyMap[ 9] & 0x80) value |= 0x02; // 4
-		else if (~KeyMap[10] & 0x01) value |= 0x03; // 5
-		else if (~KeyMap[10] & 0x02) value |= 0x0E; // 6
-		else if (~KeyMap[10] & 0x04) value |= 0x05; // 7
-		else if (~KeyMap[10] & 0x08) value |= 0x01; // 8
-		else if (~KeyMap[10] & 0x10) value |= 0x0B; // 9
-		else if (~KeyMap[ 9] & 0x01) value |= 0x09; // *
-		else if (~KeyMap[ 9] & 0x04) value |= 0x06; // / to #
+		if      (~keyMap[ 9] & 0x08) value |= 0x0A; // 0
+		else if (~keyMap[ 9] & 0x10) value |= 0x0D; // 1
+		else if (~keyMap[ 9] & 0x20) value |= 0x07; // 2
+		else if (~keyMap[ 9] & 0x40) value |= 0x0C; // 3
+		else if (~keyMap[ 9] & 0x80) value |= 0x02; // 4
+		else if (~keyMap[10] & 0x01) value |= 0x03; // 5
+		else if (~keyMap[10] & 0x02) value |= 0x0E; // 6
+		else if (~keyMap[10] & 0x04) value |= 0x05; // 7
+		else if (~keyMap[10] & 0x08) value |= 0x01; // 8
+		else if (~keyMap[10] & 0x10) value |= 0x0B; // 9
+		else if (~keyMap[ 9] & 0x01) value |= 0x09; // *
+		else if (~keyMap[ 9] & 0x04) value |= 0x06; // / to #
     }
     else {
-		if      (~KeyMap[0] & 0x01) value |= 0x0A; // 0
-		else if (~KeyMap[0] & 0x02) value |= 0x0D; // 1
-		else if (~KeyMap[0] & 0x04) value |= 0x07; // 2
-		else if (~KeyMap[0] & 0x08) value |= 0x0C; // 3
-		else if (~KeyMap[0] & 0x10) value |= 0x02; // 4
-		else if (~KeyMap[0] & 0x20) value |= 0x03; // 5
-		else if (~KeyMap[0] & 0x40) value |= 0x0E; // 6
-		else if (~KeyMap[0] & 0x80) value |= 0x05; // 7
-		else if (~KeyMap[1] & 0x01) value |= 0x01; // 8
-		else if (~KeyMap[1] & 0x02) value |= 0x0B; // 9
-		else if (~KeyMap[1] & 0x04) value |= 0x09; // - to *
-		else if (~KeyMap[1] & 0x08) value |= 0x06; // = to #
+		if      (~keyMap[0] & 0x01) value |= 0x0A; // 0
+		else if (~keyMap[0] & 0x02) value |= 0x0D; // 1
+		else if (~keyMap[0] & 0x04) value |= 0x07; // 2
+		else if (~keyMap[0] & 0x08) value |= 0x0C; // 3
+		else if (~keyMap[0] & 0x10) value |= 0x02; // 4
+		else if (~keyMap[0] & 0x20) value |= 0x03; // 5
+		else if (~keyMap[0] & 0x40) value |= 0x0E; // 6
+		else if (~keyMap[0] & 0x80) value |= 0x05; // 7
+		else if (~keyMap[1] & 0x01) value |= 0x01; // 8
+		else if (~keyMap[1] & 0x02) value |= 0x0B; // 9
+		else if (~keyMap[1] & 0x04) value |= 0x09; // - to *
+		else if (~keyMap[1] & 0x08) value |= 0x06; // = to #
 	}
 
     return value;
@@ -367,8 +367,6 @@ static void onSync(void* ref, UInt32 time)
 
     mixerSync(colecoMixer);
 
-    Keyboard(KeyMap);
-
     boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
 }
 
@@ -417,8 +415,6 @@ int colecoRun(Machine* machine,
                               devInfo->cartridge[0].name,
                               devInfo->cartridge[0].inZipName);
     }
-
-    memset(KeyMap, 0xff, 16);
 
     r800SetFrequency(r800, CPU_Z80,  machine->cpu.freqZ80);
     r800SetFrequency(r800, CPU_R800, machine->cpu.freqR800);
@@ -532,8 +528,6 @@ void colecoSaveState()
     saveStateSetBuffer(state, "cartName01",  di->cartridge[1].name, strlen(di->cartridge[1].name) + 1);
     saveStateSetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, strlen(di->cartridge[1].inZipName) + 1);
 
-    saveStateSetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
-
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
     saveStateClose(state);
@@ -567,8 +561,6 @@ void colecoLoadState()
     di->cartridge[1].type = saveStateGet(state, "cartType01",     0);
     saveStateGetBuffer(state, "cartName01",  di->cartridge[1].name, sizeof(di->cartridge[1].name));
     saveStateGetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, sizeof(di->cartridge[1].inZipName));
-
-    saveStateGetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
 

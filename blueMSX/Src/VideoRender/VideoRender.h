@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:48:48 $
+** $Date: 2005-01-03 23:12:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@ typedef enum {
     VIDEO_PAL_BLUR, 
     VIDEO_PAL_BLUR_NOISE,
 	VIDEO_PAL_SCALE2X,
+    VIDEO_PAL_HQ2X,
     VIDEO_PAL_STRETCHED
 } VideoPalMode;
 

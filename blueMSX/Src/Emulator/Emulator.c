@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-02 08:22:10 $
+** $Date: 2005-01-03 23:12:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -544,14 +544,6 @@ void RefreshScreen(int screenMode, int evenOdd, int interlace) {
             emuFrameskipCounter = properties->video.frameSkip;
         }
     }
-}
-
-UInt8 Joystick(UInt8 joystickNo) {
-    return archJoystickGetState(joystickNo);
-}
-
-void Keyboard(UInt8* keyboardState) {
-    memcpy(keyboardState, archKeyboardGetState(), 16);
 }
 
 int WaitForSync(void) {

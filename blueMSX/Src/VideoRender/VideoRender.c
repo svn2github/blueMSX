@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 21:13:39 $
+** $Date: 2005-01-03 23:12:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "videoRender.h"
 #include "scalebit.h"
+#include "Hq2x.h"
 #include <stdlib.h>
 #include <math.h>
 #include <memory.h>
@@ -2208,6 +2209,31 @@ void copy_2x2_32(void* pSource, int srcWidth, int srcHeight, int* srcDoubleWidth
     }
 }
 
+static void hq2x_2x2_32(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
+                        int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
+{
+    UInt16* pRgbTable16 = (UInt16*)pRgbTable;
+	UInt16  ImgSrc[320*250];
+	UInt32* pRgbTable32 = (UInt32*)pRgbTable;
+    UInt32* pSrc        = (UInt32*)pSource;
+    UInt32* pDst1       = (UInt32*)pDestination;
+	int w, h;    
+
+    if (evenOddPage) pSrc += 2 * srcWidth * srcHeight;
+
+	srcPitch/=2;
+
+    for (h=0; h<srcHeight; h++) 
+	{
+        for (w=0; w<srcWidth; w++) 
+		{
+			ImgSrc[w+h*srcWidth]=pRgbTable16[pSrc[w]];
+        }
+		pSrc+=srcPitch;
+    }
+    hq2x_32(ImgSrc, pDst1, srcWidth, srcHeight, dstPitch);
+}
+
 static void scale2x_2x2_32(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
                            int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
 {
@@ -2235,7 +2261,6 @@ static void scale2x_2x2_32(void* pSource, int srcWidth, int srcHeight, void* pDe
 static void scale2x_2x2_16(void* pSource, int srcWidth, int srcHeight, void* pDestination, 
                            int srcPitch, int dstPitch, UInt32 rnd, void* pRgbTable, int evenOddPage)
 {
-
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt32* pSrc        = (UInt32*)pSource;
     UInt16* pDst1       = (UInt16*)pDestination;
@@ -2275,6 +2300,8 @@ Video* videoCreate()
     deInterlace        = 1;
 
     initRGBTable(pVideo);
+
+    InitLUTs();
 
     pVideo->palMode = VIDEO_PAL_FAST;
     pVideo->pRgbTable16 = pRgbTableColor16;
@@ -2469,6 +2496,7 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
             if (zoom == 2) copyPAL_2x2_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, pVideo->decay, evenOddPage, interlace);
             else           copyPAL_1x1_16(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, rnd, pVideo->pRgbTable16, evenOddPage, interlace);
             break;
+		case VIDEO_PAL_HQ2X: // Can't do 16bit hq2x so just use scale2x instead
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
                 if (!*srcDoubleWidth && !interlace) {
@@ -2527,6 +2555,19 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, int evenOddPage, int int
             if (zoom==2) {
                 if (!*srcDoubleWidth && !interlace) {
                     scale2x_2x2_32(pSrc, srcWidth, srcHeight, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage);
+                }
+                else {
+                    copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+                }
+            }
+            else {
+                copy_1x1_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
+            }
+            break;
+		case VIDEO_PAL_HQ2X:
+            if (zoom==2) {
+                if (!*srcDoubleWidth && !interlace) {
+                    hq2x_2x2_32(pSrc, srcWidth, srcHeight, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable16, evenOddPage);
                 }
                 else {
                     copy_2x2_32(pSrc, srcWidth, srcHeight, srcDoubleWidth, pDst, srcPitch, dstPitch, 0, pVideo->pRgbTable32, evenOddPage, interlace);
