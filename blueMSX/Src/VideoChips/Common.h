@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-25 04:49:45 $
+** $Date: 2005-02-05 08:54:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,7 +97,7 @@ static void RefreshRightBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int
     
     linePtr = frameBuffer->line[Y].buffer;
 
-    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset >= lineSize; offset--) {
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset--) {
         linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor;
     }
 }
@@ -113,7 +113,7 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         RefreshRightBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 7);
     }
 
-    if (X != 0) {
+    if (X > 6 || X2 <= 6) {
         return;
     }
 
@@ -156,10 +156,10 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         RefreshRightBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 7);
     }
 
-    if (X != 0) {
+    if (X > 6 || X2 <= 6) {
         return;
     }
-    
+
     linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 1, 9);
     Y -= vdp->firstLine;
     if (linePtr == NULL) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-31 08:10:38 $
+** $Date: 2005-02-05 08:54:01 $
 **
 ** Author: Daniel Vik
 **
@@ -5779,7 +5779,7 @@ void r800Execute(R800* r800) {
         if (r800->cpuMode == CPU_R800) {
             if (r800->systemTime - lastRefreshTime > 222 * 3) {
                 lastRefreshTime = r800->systemTime;
-                r800->systemTime += 12 * 3;
+                r800->systemTime += 20 * 3;
             }
         }
 

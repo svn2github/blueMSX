@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPhilipsFdc.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2005-02-05 08:54:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,6 +77,7 @@ static void loadState(RomMapperPhilipsFdc* rm)
 
 static void destroy(RomMapperPhilipsFdc* rm)
 {
+    wd2793Destroy(rm->fdc);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 

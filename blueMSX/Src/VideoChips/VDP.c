@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-05 01:17:26 $
+** $Date: 2005-02-05 08:54:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -183,7 +183,6 @@ struct VDP {
     int    vram128;
     int    vramMask;
     int    lineOffset;
-    UInt32 intStartTime;
     int    firstLine;
     int    lastLine;
     int    leftBorder;
@@ -210,7 +209,6 @@ struct VDP {
     BoardTimer* timerVStart;
     BoardTimer* timerScrModeChange;
     BoardTimer* timerHint;
-    BoardTimer* timerHint2;
     BoardTimer* timerVint;
 
     UInt32 frameStartTime;
@@ -266,8 +264,7 @@ static void scheduleScrModeChange(VDP* vdp)
 static void scheduleHint(VDP* vdp)
 {
     vdp->timeHint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
-    boardTimerAdd(vdp->timerHint, vdp->timeHint);
-    boardTimerAdd(vdp->timerHint2, vdp->timeHint + 130);
+    boardTimerAdd(vdp->timerHint, vdp->timeHint + 59);
 }
 
 static void scheduleVint(VDP* vdp)
@@ -286,12 +283,6 @@ static void scheduleDrawAreaStart(VDP* vdp)
 }
 
 static void onHint(VDP* vdp, UInt32 time)
-{
-    sync(vdp, time);
-    vdp->intStartTime = time;
-}
-
-static void onHint2(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
 
@@ -333,6 +324,8 @@ static void onDrawAreaStart(VDP* vdp, UInt32 time)
 static void onDisplay(VDP* vdp, UInt32 time)
 {
     int isPal = vdpIsVideoPal(vdp); 
+    
+    sync(vdp, time);
 
     if (vdp->videoEnabled) {
         FrameBuffer* frameBuffer;
@@ -348,8 +341,6 @@ static void onDisplay(VDP* vdp, UInt32 time)
     }
 
     refreshRate = isPal ? 50 : 60; // Update global refresh rate
-
-    sync(vdp, time);
 
     vdp->scr0splitLine = 0;
     vdp->curLine = 0;
@@ -376,7 +367,7 @@ static void onDisplay(VDP* vdp, UInt32 time)
 static void onScrModeChange(VDP* vdp, UInt32 time)
 {
     int scanLine = (boardSystemTime() - vdp->frameStartTime) / HPERIOD;
-
+    int screenMode = vdp->screenMode;
     sync(vdp, time);
 
     switch (((vdp->vdpRegs[0] & 0x0e) >> 1) | (vdp->vdpRegs[1] & 0x18)) {
@@ -391,8 +382,6 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x07: vdp->screenMode = 8; break;
     case 0x12: vdp->screenMode = 13; break;
     }
-
-    vdp->scr0splitLine = (scanLine - vdp->firstLine) & ~7;
 
     vdp->chrTabBase = (((int)vdp->vdpRegs[2] << 10) | ~(-1 << 10)) & vdp->vramMask;
     vdp->chrGenBase = (((int)vdp->vdpRegs[4] << 11) | ~(-1 << 11)) & vdp->vramMask;
@@ -437,6 +426,10 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
         break;
     }
     
+    if (screenMode != vdp->screenMode) {
+        vdp->scr0splitLine = (scanLine - vdp->firstLine) & ~7;
+    }
+
     if (vdp->screenMode == 0 || vdp->screenMode == 13) {
         vdp->hRefresh = 960;
         vdp->leftBorder = 102 + 92;
@@ -799,7 +792,6 @@ static void saveState(VDP* vdp)
     saveStateSet(state, "vdpDataLatch",    vdp->vdpDataLatch);
     saveStateSet(state, "xfgColor",        vdp->XFGColor);
     saveStateSet(state, "xbgColor",        vdp->XBGColor);
-    saveStateSet(state, "intStartTime",    vdp->intStartTime);
     saveStateSet(state, "firstLine",       vdp->firstLine);
     saveStateSet(state, "blinkFlag",       vdp->blinkFlag);
     saveStateSet(state, "blinkCnt",        vdp->blinkCnt);
@@ -847,7 +839,6 @@ static void loadState(VDP* vdp)
     vdp->vdpDataLatch   = (UInt8) saveStateGet(state, "vdpDataLatch",    0);
     vdp->XFGColor       = (UInt8) saveStateGet(state, "xfgColor",        0);
     vdp->XBGColor       = (UInt8) saveStateGet(state, "xbgColor",        0);
-    vdp->intStartTime   =         saveStateGet(state, "intStartTime",    0);
     vdp->firstLine      =         saveStateGet(state, "firstLine",       1);
     vdp->blinkFlag      =         saveStateGet(state, "blinkFlag",       0);
     vdp->blinkCnt       =         saveStateGet(state, "blinkCnt",        0);
@@ -906,7 +897,6 @@ static void loadState(VDP* vdp)
 
     boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
     boardTimerAdd(vdp->timerHint, vdp->timeHint);
-    boardTimerAdd(vdp->timerHint2, vdp->timeHint);
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
     boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
     boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
@@ -938,7 +928,6 @@ static void reset(VDP* vdp)
     vdp->blinkFlag       = 0;
     vdp->blinkCnt        = 0;
     vdp->drawArea        = 0;
-    vdp->intStartTime    = 0;
     vdp->lastLine        = 0;
     vdp->screenOn        = 0;
     vdp->VAdjust         = 0;
@@ -1020,7 +1009,6 @@ static void destroy(VDP* vdp)
     boardTimerDestroy(vdp->timerVStart);
     boardTimerDestroy(vdp->timerScrModeChange);
     boardTimerDestroy(vdp->timerHint);
-    boardTimerDestroy(vdp->timerHint2);
     boardTimerDestroy(vdp->timerVint);
 
     vdpCmdDestroy(vdp->cmdEngine);
@@ -1055,7 +1043,6 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerVStart        = boardTimerCreate(onVStart, vdp);
     vdp->timerScrModeChange = boardTimerCreate(onScrModeChange, vdp);
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
-    vdp->timerHint2         = boardTimerCreate(onHint2, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
 
     vdp->vramPages     = vramPages;
@@ -1113,10 +1100,10 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
         break;
 
     case VDP_SVI:
-        ioPortRegister(0x80, NULL,          write,      vdp); // vdp->vdpRegs vdp->vram Write
-        ioPortRegister(0x81, NULL,          writeLatch, vdp); // vdp->vdpRegs Address Latch
-        ioPortRegister(0x84, read,       NULL,          vdp); // vdp->vdpRegs vdp->vram Read
-        ioPortRegister(0x85, readStatus, NULL,          vdp); // vdp->vdpRegs Status Read
+        ioPortRegister(0x80, NULL,       write,      vdp); // vdp->vdpRegs vdp->vram Write
+        ioPortRegister(0x81, NULL,       writeLatch, vdp); // vdp->vdpRegs Address Latch
+        ioPortRegister(0x84, read,       NULL,       vdp); // vdp->vdpRegs vdp->vram Read
+        ioPortRegister(0x85, readStatus, NULL,       vdp); // vdp->vdpRegs Status Read
         break;
 
     case VDP_COLECO:
@@ -1129,4 +1116,3 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
 }
 
 #include "common.h"
-
