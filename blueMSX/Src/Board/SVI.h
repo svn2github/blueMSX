@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-02-06 19:33:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,11 +38,14 @@
 #include "audioMixer.h"
 #include <stdio.h>
 
-int sviRun(Machine* machine, 
-           DeviceInfo* deviceInfo,
-           Mixer* mixer,
-           int loadState,
-           int frequency);
+int sviCreate(Machine* machine, 
+              DeviceInfo* deviceInfo,
+              int loadState,
+              int frequency);
+void sviDestroy();
+
+void sviRun();
+void sviStop();
 
 void sviReset();
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-02-05 06:38:57 $
+** $Date: 2005-02-06 19:33:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,6 @@
 /* Hardware */
 static Machine*        sviMachine;
 static DeviceInfo*     sviDevInfo;
-static Mixer*          sviMixer;
 static AY8910*         ay8910;
 static AudioKeyClick*  keyClick;
 static R800*           r800;
@@ -88,7 +87,6 @@ static int             svi80ColEnabled;
 typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
 typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
 
-extern int  WaitForSync(void);
 extern void PatchZ80(void* ref, CpuRegs* cpu);
 
 void sviLoadState();
@@ -275,7 +273,6 @@ void sviInitStatistics(Machine* machine)
 }
 
 static int sviInitMachine(Machine* machine, 
-                          Mixer* mixer,
                           VdpSyncMode vdpSyncMode)
 {
     UInt8* buf;
@@ -429,35 +426,22 @@ static void cpuTimeout(void* ref)
     boardTimerCheckTimeout();
 }
 
-static void onSync(void* ref, UInt32 time)
-{
-    BoardTimer* timer = (BoardTimer*)ref;
-    int execTime = 0;
-
-    while (execTime == 0) {
-        execTime = WaitForSync();
-
-        if (execTime < 0) {
-            r800StopExecution(r800);
-            return;
-        }
-    }
-
-    mixerSync(sviMixer);
-
-    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+void sviRun() {
+    r800Execute(r800);
 }
 
-int sviRun(Machine* machine, 
-           DeviceInfo* devInfo,
-           Mixer* mixer,
-           int loadState,
-           int frequency)
+void sviStop() {
+    r800StopExecution(r800);
+}
+
+int sviCreate(Machine* machine, 
+              DeviceInfo* devInfo,
+              int loadState,
+              int frequency)
 {
     int success;
     int i;
 
-    sviMixer     = mixer;
     sviMachine   = machine;
     sviDevInfo   = devInfo;
 
@@ -485,19 +469,19 @@ int sviRun(Machine* machine,
     ioPortReset();
 
     r800Reset(r800, 0);
-    mixerReset(mixer);
+    mixerReset(boardGetMixer());
 
-    ay8910 = ay8910Create(mixer, AY8910_SVI);
+    ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI);
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgWriteHandler, NULL);
 
-    keyClick  = audioKeyClickCreate(mixer);
+    keyClick  = audioKeyClickCreate(boardGetMixer());
 
     joyIO = joystickIoCreateSVI();
     
     sviPPICreate(joyIO);
     slotManagerCreate();
 
-    success = sviInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
+    success = sviInitMachine(machine, devInfo->video.vdpSyncMode);
 
     if (devInfo->cartridge[0].inserted) {
         sviChangeCartridge(0, devInfo->cartridge[0].type, 
@@ -537,16 +521,14 @@ int sviRun(Machine* machine,
         keyboardLoadState();
     }
 
-    if (success) {
-        BoardTimer* timer = boardTimerCreate(onSync, NULL);
-        
-        boardTimerAdd(timer, boardSystemTime() + 1);
-
-        r800Execute(r800);
-        
-        boardTimerDestroy(timer);
+    if (!success) {
+        sviDestroy();
     }
 
+    return success;
+}
+
+void sviDestroy() {    
     sviTraceDisable();
 
     joystickIoDestroySVI(joyIO);
@@ -571,8 +553,6 @@ int sviRun(Machine* machine,
     sviDevInfo = NULL;
 
     useRom     = 0;
-
-    return success;
 }
 
 void sviSetFrequency(UInt32 frequency)

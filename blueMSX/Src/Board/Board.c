@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-03 07:33:22 $
+** $Date: 2005-02-06 19:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,9 +52,14 @@ UInt32* boardSysTime;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
+static int    (*sync)(int)                                    = NULL;
+
 static void   (*initStatistics)(Machine*)                     = msxInitStatistics;
 static void   (*softReset)()                                  = msxReset;
-static int    (*run)(Machine*, DeviceInfo*, Mixer*, int, int) = msxRun;
+static int    (*create)(Machine*, DeviceInfo*, int, int)      = msxCreate;
+static void   (*destroy)()                                    = msxDestroy;
+static void   (*run)()                                        = msxRun;
+static void   (*stop)()                                       = msxStop;
 static void   (*setFrequency)(UInt32)                         = msxSetFrequency;
 static void   (*saveState)()                                  = msxSaveState;
 static int    (*getRefreshRate)()                             = msxGetRefreshRate;
@@ -84,7 +89,10 @@ static void boardSetType(BoardType type)
     case BOARD_MSX:
         initStatistics  = msxInitStatistics;
         softReset       = msxReset;
+        create          = msxCreate;
+        destroy         = msxDestroy;
         run             = msxRun;
+        stop            = msxStop;
         setFrequency    = msxSetFrequency;
         saveState       = msxSaveState;
         getRefreshRate  = msxGetRefreshRate;
@@ -110,7 +118,10 @@ static void boardSetType(BoardType type)
     case BOARD_SVI:
         initStatistics  = sviInitStatistics;
         softReset       = sviReset;
+        create          = sviCreate;
+        destroy         = sviDestroy;
         run             = sviRun;
+        stop            = sviStop;
         setFrequency    = sviSetFrequency;
         saveState       = sviSaveState;
         getRefreshRate  = sviGetRefreshRate;
@@ -136,7 +147,10 @@ static void boardSetType(BoardType type)
     case BOARD_COLECO:
         initStatistics  = colecoInitStatistics;
         softReset       = colecoReset;
+        create          = colecoCreate;
+        destroy         = colecoDestroy;
         run             = colecoRun;
+        stop            = colecoStop;
         setFrequency    = colecoSetFrequency;
         saveState       = colecoSaveState;
         getRefreshRate  = colecoGetRefreshRate;
@@ -163,14 +177,37 @@ static void boardSetType(BoardType type)
     PatchReset(boardType);
 }
 
+static void onSync(void* ref, UInt32 time)
+{
+    BoardTimer* timer = (BoardTimer*)ref;
+    int execTime = 0;
+
+    while (execTime == 0) {
+        execTime = sync(0);
+
+        if (execTime < 0) {
+            stop();
+            return;
+        }
+    }
+
+    mixerSync(boardMixer);
+
+    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+}
+
 int boardRun(Machine* machine, 
              DeviceInfo* deviceInfo,
              Mixer* mixer,
              char* stateFile,
-             int frequency)
+             int frequency,
+             int (*videoSync)(int))
 {
     int loadState = 0;
+    int success;
     boardSetType(machine->board.type);
+
+    sync = videoSync;
 
     videoManagerReset();
 
@@ -196,7 +233,18 @@ int boardRun(Machine* machine,
         }
     }
 
-    return run(machine, deviceInfo, mixer, loadState, frequency);
+    success = create(machine, deviceInfo, loadState, frequency);
+    if (success) {
+        BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        
+        boardTimerAdd(timer, boardSystemTime() + 1);
+
+        run();
+
+        boardTimerDestroy(timer);
+    }
+
+    return success;
 }
 
 BoardType boardGetType()

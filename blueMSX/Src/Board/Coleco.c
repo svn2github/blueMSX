@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-01 07:14:28 $
+** $Date: 2005-02-06 19:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,6 @@
 /* Hardware */
 static Machine*        colecoMachine;
 static DeviceInfo*     colecoDevInfo;
-static Mixer*          colecoMixer;
 static SN76489*        sn76489;
 static R800*           r800;
 static JoystickIO*     joyIO;
@@ -72,8 +71,6 @@ static UInt8 colecoMemory[0x10000];
 
 void colecoLoadState();
 void colecoSaveState();
-
-extern int  WaitForSync(void);
 
 static int joyMode = 0;
 
@@ -292,7 +289,6 @@ void colecoInitStatistics(Machine* machine)
 }
 
 static int colecoInitMachine(Machine* machine, 
-                          Mixer* mixer,
                           VdpSyncMode vdpSyncMode)
 {
     UInt8* buf;
@@ -353,34 +349,21 @@ static void cpuTimeout(void* ref)
     boardTimerCheckTimeout();
 }
 
-static void onSync(void* ref, UInt32 time)
-{
-    BoardTimer* timer = (BoardTimer*)ref;
-    int execTime = 0;
-
-    while (execTime == 0) {
-        execTime = WaitForSync();
-
-        if (execTime < 0) {
-            r800StopExecution(r800);
-            return;
-        }
-    }
-
-    mixerSync(colecoMixer);
-
-    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+void colecoRun() {
+    r800Execute(r800);
 }
 
-int colecoRun(Machine* machine, 
-           DeviceInfo* devInfo,
-           Mixer* mixer,
-           int loadState,
-           int frequency)
+void colecoStop() {
+    r800StopExecution(r800);
+}
+
+int colecoCreate(Machine* machine, 
+                 DeviceInfo* devInfo,
+                 int loadState,
+                 int frequency)
 {
     int success;
 
-    colecoMixer     = mixer;
     colecoMachine   = machine;
     colecoDevInfo   = devInfo;
 
@@ -407,10 +390,10 @@ int colecoRun(Machine* machine,
     ioPortReset();
 
     r800Reset(r800, 0);
-    mixerReset(mixer);
+    mixerReset(boardGetMixer());
 
-    sn76489 = sn76489Create(mixer);
-    success = colecoInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
+    sn76489 = sn76489Create(boardGetMixer());
+    success = colecoInitMachine(machine, devInfo->video.vdpSyncMode);
 
     joyIO = joystickIoCreateColeco();
 
@@ -434,16 +417,14 @@ int colecoRun(Machine* machine,
         keyboardLoadState();
     }
 
-    if (success) {
-        BoardTimer* timer = boardTimerCreate(onSync, NULL);
-        
-        boardTimerAdd(timer, boardSystemTime() + 1);
-
-        r800Execute(r800);
-        
-        boardTimerDestroy(timer);
+    if (!success) {
+        colecoDestroy();
     }
 
+    return success;
+}
+
+void colecoDestroy() {    
     colecoTraceDisable();
 
     joystickIoDestroyColeco(joyIO);
@@ -459,8 +440,6 @@ int colecoRun(Machine* machine,
     colecoDevInfo = NULL;
 
     useRom     = 0;
-
-    return success;
 }
 
 void colecoSetFrequency(UInt32 frequency)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-03 06:12:57 $
+** $Date: 2005-02-06 19:33:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,11 +36,14 @@
 #include "audioMixer.h"
 #include <stdio.h>
 
-int colecoRun(Machine* machine, 
-              DeviceInfo* deviceInfo,
-              Mixer* mixer,
-              int loadState,
-              int frequency);
+int colecoCreate(Machine* machine, 
+                 DeviceInfo* deviceInfo,
+                 int loadState,
+                 int frequency);
+void colecoDestroy();
+
+void colecoRun();
+void colecoStop();
 
 void colecoReset();
 

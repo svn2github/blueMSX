@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-01 07:14:28 $
+** $Date: 2005-02-06 19:33:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,15 +120,12 @@
 #include "romMapperMsxPrn.h"
 #include "romMapperMoonsound.h"
 
-extern int  WaitForSync(void);
-
 void PatchZ80(void* ref, CpuRegs* cpuRegs);
 
 void msxLoadState();
 
 // Hardware
 static Machine*        msxMachine;
-static Mixer*          msxMixer;
 static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
 static R800*           r800;
@@ -294,7 +291,6 @@ void msxInitStatistics(Machine* machine)
 
 
 static int initMachine(Machine* machine, 
-                       Mixer* mixer, 
                        VdpSyncMode vdpSyncMode)
 {
     char cmosName[128];
@@ -674,7 +670,7 @@ static int initMachine(Machine* machine,
         free(jisyoRom);
     }
 
-    ay8910 = ay8910Create(mixer, AY8910_MSX);
+    ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX);
     joyIO = joystickIoCreate(ay8910);
 
     for (i = 0; i < 8; i++) {
@@ -725,35 +721,22 @@ static void cpuTimeout(void* ref)
     boardTimerCheckTimeout();
 }
 
-static void onSync(void* ref, UInt32 time)
-{
-    BoardTimer* timer = (BoardTimer*)ref;
-    int execTime = 0;
-
-    while (execTime == 0) {
-        execTime = WaitForSync();
-
-        if (execTime < 0) {
-            r800StopExecution(r800);
-            return;
-        }
-    }
-
-    mixerSync(msxMixer);
-
-    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+void msxRun() {
+    r800Execute(r800);
 }
 
-int msxRun(Machine* machine, 
-           DeviceInfo* devInfo,
-           Mixer* mixer,
-           int loadState,
-           int frequency)
+void msxStop() {
+    r800StopExecution(r800);
+}
+
+int msxCreate(Machine* machine, 
+              DeviceInfo* devInfo,
+              int loadState,
+              int frequency)
 {
     int success;
     int i;
 
-    msxMixer     = mixer;
     msxMachine   = machine;
     msxDevInfo   = devInfo;
 
@@ -778,7 +761,7 @@ int msxRun(Machine* machine,
     ramMapperIoCreate();
 
     r800Reset(r800, 0);
-    mixerReset(mixer);
+    mixerReset(boardGetMixer());
 
     currentRomType[0] = ROM_UNKNOWN;
     currentRomType[1] = ROM_UNKNOWN;
@@ -786,8 +769,7 @@ int msxRun(Machine* machine,
     msxPPICreate();
     slotManagerCreate();
 
-    success = initMachine(machine, mixer,  
-                          devInfo->video.vdpSyncMode);
+    success = initMachine(machine, devInfo->video.vdpSyncMode);
 
     for (i = 0; i < 2; i++) {
         if (devInfo->cartridge[i].inserted) {
@@ -834,16 +816,14 @@ int msxRun(Machine* machine,
         keyboardLoadState();
     }
 
-    if (success) {
-        BoardTimer* timer = boardTimerCreate(onSync, NULL);
-        
-        boardTimerAdd(timer, boardSystemTime() + 1);
-
-        r800Execute(r800);
-
-        boardTimerDestroy(timer);
+    if (!success) {
+        msxDestroy();
     }
-        
+
+    return success;
+}
+
+void msxDestroy() {        
     msxTraceDisable();
 
     rtcDestroy(rtc);
@@ -875,8 +855,6 @@ int msxRun(Machine* machine,
     useMegaRom = 0;
     useMegaRam = 0;
     useFmPac   = 0;
-
-    return success;
 }
 
 void msxSetFrequency(UInt32 frequency)

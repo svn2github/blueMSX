@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-31 08:10:35 $
+** $Date: 2005-02-06 19:33:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,6 +53,8 @@ UInt32  emuPalette[16];
 UInt32* emuFrameBuffer;
 int*    emuLineWidth;
 
+static int WaitForSync(int maxSpeed);
+
 static void*  emuThread;
 static void*  emuSyncEvent;
 static void*  emuStartEvent;
@@ -61,6 +63,7 @@ static int    emuExitFlag;
 static UInt32 emuSysTime = 0;
 static UInt32 emuFrequency = 3579545;
 int           emuMaxSpeed = 0;
+int           emuMaxEmuSpeed = 0; // Max speed issued by emulation
 static char   emuStateName[512];
 static volatile int      emuSuspendFlag;
 static volatile EmuState emuState = EMU_STOPPED;
@@ -270,7 +273,7 @@ static void emulatorThread() {
                        &deviceInfo,
                        mixer,
                        *emuStateName ? emuStateName : NULL,
-                       frequency);
+                       frequency, WaitForSync);
 
     ledSetAll(0);
     emuState = EMU_STOPPED;
@@ -529,16 +532,19 @@ void RefreshScreen(int screenMode) {
     }
 }
 
-int WaitForSync(void) {
+static int WaitForSync(int maxSpeed) {
     LARGE_INTEGER li1;
     LARGE_INTEGER li2;
     static UInt32 tmp = 0;
     static UInt32 cnt = 0;
     UInt32 sysTime;
     UInt32 diffTime;
-    UInt32 syncPeriod = emulatorGetSyncPeriod();
+    UInt32 syncPeriod;
     static int overflowCount = 0;
 
+    emuMaxEmuSpeed = maxSpeed;
+
+    syncPeriod = emulatorGetSyncPeriod();
     QueryPerformanceCounter(&li1);
 
     emuSuspendFlag = 1;
@@ -550,7 +556,7 @@ int WaitForSync(void) {
 
     do {
         WaitForSingleObject(emuSyncEvent, INFINITE);
-        if ((emuMaxSpeed && !emuExitFlag) || overflowCount > 0) {
+        if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
             WaitForSingleObject(emuSyncEvent, INFINITE);
         }
         overflowCount = 0;
@@ -577,7 +583,7 @@ int WaitForSync(void) {
         diffTime = 0;
     }
 
-    if (emuMaxSpeed) {
+    if (emuMaxSpeed || emuMaxEmuSpeed) {
         diffTime *= 10;
         if (diffTime > 20 * syncPeriod) {
             diffTime =  20 * syncPeriod;

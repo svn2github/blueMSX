@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-25 16:55:44 $
+** $Date: 2005-02-06 19:33:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,8 @@ int boardRun(Machine* machine,
              DeviceInfo* deviceInfo,
              Mixer* mixer,
              char* stateFile,
-             int frequency);
+             int frequency,
+             int (*videoSync)(int));
 
 BoardType boardGetType();
 
