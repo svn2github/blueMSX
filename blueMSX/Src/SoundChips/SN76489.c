@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-03 06:12:59 $
+** $Date: 2005-01-05 06:38:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,16 +104,17 @@ void sn76489SaveState(SN76489* sn76489)
     int i;
 
     saveStateSet(state, "latch",           sn76489->latch);
+    saveStateSet(state, "noiseRand",       sn76489->noiseRand);
     saveStateSet(state, "ctrlVolume",      sn76489->ctrlVolume);
     saveStateSet(state, "oldSampleVolume", sn76489->oldSampleVolume);
     saveStateSet(state, "daVolume",        sn76489->daVolume);
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 8; i++) {
         sprintf(tag, "reg%d", i);
         saveStateSet(state, tag, sn76489->regs[i]);
     }
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 4; i++) {
         sprintf(tag, "phase%d", i);
         saveStateSet(state, tag, sn76489->tonePhase[i]);
 
