@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-15 18:07:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -519,7 +519,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propEmuPauseSwitch      = " ポーズ スイッチ";
     ls->propVideoFreqText       = "ビデオ 周波数:";
     ls->propVideoFreqAuto       = "自動";
-    ls->propSndOversampleText   = "オーバーサンプリング:";
+    ls->propSndOversampleText   = "サンプリング:";
 
     ls->confChipExtras          = "エキストラ";
     ls->confBoardGB             = "基盤 ";
@@ -531,6 +531,10 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgCFdcNumDrivesText    = "ドライブの数:";
 
     ls->propPriorityBoost        = " blueMSXに割当てるプライオリティーのブースト";
+
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "FDDドライブのタイミングを無効化";
+    ls->shortcutToggleFdcTiming = "FDDドライブのタイミング 有無";
 };
 
 #endif

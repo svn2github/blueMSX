@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-15 18:07:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -525,6 +525,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgCFdcNumDrivesText    = "Antal Diskettenheter:";
 
     ls->propPriorityBoost        = " Höj prioriteten på blueMSX";
+    
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Slå Av Diskettstationstiming";
+    ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
 };
 
 #endif
