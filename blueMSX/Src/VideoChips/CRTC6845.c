@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-01-25 16:58:48 $
+** $Date: 2005-01-26 06:20:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,8 +106,6 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
 
     color[0] = videoGetColor(0, 0, 0);       // Cen be calculated once. The interface
     color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
-
-    crtcFrameBuffer->interlaceOdd = 0; // These fields could be set once only but 
 
     for (y = 0; y < DISPLAY_HEIGHT; y++) {
         UInt32* linePtr = crtcFrameBuffer->line[y].buffer;
@@ -282,7 +280,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size)
     memset(crtcROM, 0xff, sizeof(crtcROM));
     memcpy(&crtcROM[0], romData, size);
 
-    crtc = malloc(sizeof(CRTC6845));
+    crtc = calloc(1, sizeof(CRTC6845));
     crtc6845Reset(crtc);
     crtc->frameRate = frameRate;
 
