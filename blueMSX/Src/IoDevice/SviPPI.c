@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2005-01-04 07:14:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include "ArchControls.h"
 #include "Switches.h"
 #include "Led.h"
+#include "Keyboard.h"
 #include <stdlib.h>
 
 
@@ -180,7 +181,7 @@ static UInt8 readA(SviPPI* ppi)
 
 static UInt8 readB(SviPPI* ppi)
 {
-    UInt8* keymap = archKeyboardGetState();
+    UInt8* keymap = keyboardGetState();
     return keymap[ppi->row];
 }
 

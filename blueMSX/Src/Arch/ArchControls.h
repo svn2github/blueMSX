@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchControls.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2005-01-04 07:14:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,10 +32,6 @@
 
 #include "MsxTypes.h"
 
-typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
-
-void archKeyboardSetKeymap(KeyboardKeymap keymap);
-UInt8* archKeyboardGetState();
 UInt8 archJoystickGetState(int joystickNo);
 int  archJoystickGetCount();
 void archMouseSetForceLock(int lock);

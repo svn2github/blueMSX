@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-02 08:22:13 $
+** $Date: 2005-01-04 07:14:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1572,19 +1572,6 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         SetWindowText(GetDlgItem(hDlg, IDC_VIDEOGROUPBOX), langDlgChipVideoGB());
         SetWindowText(GetDlgItem(hDlg, IDC_VIDEOCHIP), langDlgChipVideoChip());
         SetWindowText(GetDlgItem(hDlg, IDC_VIDEORAM), langDlgChipVideoRam());
-        SetWindowText(GetDlgItem(hDlg, IDC_SNDCHIPEMUGROUPBOX), langDlgChipSoundGB());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXMUSIC), langPropSndMsxMusicText());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXAUDIO), langPropSndMsxAudioText());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMOONSOUND), langPropSndMoonsound());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEPCM), langPropSndPcm());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEAY8910), langPropSndAY8910());
-        SetWindowText(GetDlgItem(hDlg, IDC_ENABLESN76489), langPropSndSN76489());
-
-        SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"128 kB");
-        SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"256 kB");
-        SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"640 kB");
-        SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"1 MB");
-        SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"2 MB");
 
         SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_ADDSTRING, 0, (LPARAM)"TMS9929A   (PAL)");
         SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_ADDSTRING, 0, (LPARAM)"TMS99x8A   (NTSC)");

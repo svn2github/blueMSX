@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 05:09:08 $
+** $Date: 2005-01-04 07:14:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,337 +29,273 @@
 */
 #define DIRECTINPUT_VERSION     0x0500
 #include "Win32keyboard.h"
+#include "Keyboard.h"
 #include <windows.h>
 #include <stdio.h>
 #include <winioctl.h>
 #include <dinput.h>
- 
 
-#ifndef DIK_WEBFORWARD
-#define DIK_WEBFORWARD      0xE9
-#define DIK_WEBBACK         0xEA
-#endif
+static char dik2str[512][32];
 
-static BYTE msxKeyMap[16];
+#define INIT_DIK(val) strcpy(dik2str[DIK_##val], #val)
 
-typedef struct { 
-    DWORD Code; 
-    WORD  VirtKey;
-    DWORD DCode;
-    byte Pos; 
-    byte Mask; 
-    char* Name;
-} KeyMapEntry;
+static void initDikStr()
+{
+    INIT_DIK(0);
+    INIT_DIK(1);
+    INIT_DIK(2);
+    INIT_DIK(3);
+    INIT_DIK(4);
+    INIT_DIK(5);
+    INIT_DIK(6);
+    INIT_DIK(7);
+    INIT_DIK(8);
+    INIT_DIK(9);
+    INIT_DIK(A);
+    INIT_DIK(ABNT_C1);
+    INIT_DIK(ABNT_C2);
+    INIT_DIK(ADD);
+    INIT_DIK(APOSTROPHE);
+    INIT_DIK(APPS);
+    INIT_DIK(AT);
+    INIT_DIK(AX);
+    INIT_DIK(B);
+    INIT_DIK(BACK);
+    INIT_DIK(BACKSLASH);
+    INIT_DIK(C);
+    INIT_DIK(CALCULATOR);
+    INIT_DIK(CAPITAL);
+    INIT_DIK(COLON);
+    INIT_DIK(COMMA);
+    INIT_DIK(CONVERT);
+    INIT_DIK(D);
+    INIT_DIK(DECIMAL);
+    INIT_DIK(DELETE);
+    INIT_DIK(DIVIDE);
+    INIT_DIK(DOWN);
+    INIT_DIK(E);
+    INIT_DIK(END);
+    INIT_DIK(EQUALS);
+    INIT_DIK(ESCAPE);
+    INIT_DIK(F);
+    INIT_DIK(F1);
+    INIT_DIK(F2);
+    INIT_DIK(F3);
+    INIT_DIK(F4);
+    INIT_DIK(F5);
+    INIT_DIK(F6);
+    INIT_DIK(F7);
+    INIT_DIK(F8);
+    INIT_DIK(F9);
+    INIT_DIK(F10);
+    INIT_DIK(F11);
+    INIT_DIK(F12);
+    INIT_DIK(F13);
+    INIT_DIK(F14);
+    INIT_DIK(F15);
+    INIT_DIK(G);
+    INIT_DIK(GRAVE);
+    INIT_DIK(H);
+    INIT_DIK(HOME);
+    INIT_DIK(I);
+    INIT_DIK(INSERT);
+    INIT_DIK(J);
+    INIT_DIK(K);
+    INIT_DIK(KANA);
+    INIT_DIK(KANJI);
+    INIT_DIK(L);
+    INIT_DIK(LBRACKET);
+    INIT_DIK(LCONTROL);
+    INIT_DIK(LEFT);
+    INIT_DIK(LMENU);
+    INIT_DIK(LSHIFT);
+    INIT_DIK(LWIN);
+    INIT_DIK(M);
+    INIT_DIK(MAIL);
+    INIT_DIK(MEDIASELECT);
+    INIT_DIK(MEDIASTOP);
+    INIT_DIK(MINUS);
+    INIT_DIK(MULTIPLY);
+    INIT_DIK(MUTE);
+    INIT_DIK(MYCOMPUTER);
+    INIT_DIK(N);
+    INIT_DIK(NEXT);
+    INIT_DIK(NEXTTRACK);
+    INIT_DIK(NOCONVERT);
+    INIT_DIK(NUMLOCK);
+    INIT_DIK(NUMPAD0);
+    INIT_DIK(NUMPAD1);
+    INIT_DIK(NUMPAD2);
+    INIT_DIK(NUMPAD3);
+    INIT_DIK(NUMPAD4);
+    INIT_DIK(NUMPAD5);
+    INIT_DIK(NUMPAD6);
+    INIT_DIK(NUMPAD7);
+    INIT_DIK(NUMPAD8);
+    INIT_DIK(NUMPAD9);
+    INIT_DIK(NUMPADCOMMA);
+    INIT_DIK(NUMPADENTER);
+    INIT_DIK(NUMPADEQUALS);
+    INIT_DIK(O);
+    INIT_DIK(OEM_102);
+    INIT_DIK(P);
+    INIT_DIK(PAUSE);
+    INIT_DIK(PERIOD);
+    INIT_DIK(PLAYPAUSE);
+    INIT_DIK(POWER);
+    INIT_DIK(PREVTRACK);
+    INIT_DIK(PRIOR);
+    INIT_DIK(Q);
+    INIT_DIK(R);
+    INIT_DIK(RBRACKET);
+    INIT_DIK(RCONTROL);
+    INIT_DIK(RETURN);
+    INIT_DIK(RIGHT);
+    INIT_DIK(RMENU);
+    INIT_DIK(RSHIFT);
+    INIT_DIK(RWIN);
+    INIT_DIK(S);
+    INIT_DIK(SCROLL);
+    INIT_DIK(SEMICOLON);
+    INIT_DIK(SLASH);
+    INIT_DIK(SLEEP);
+    INIT_DIK(SPACE);
+    INIT_DIK(STOP);
+    INIT_DIK(SUBTRACT);
+    INIT_DIK(SYSRQ);
+    INIT_DIK(T);
+    INIT_DIK(TAB);
+    INIT_DIK(U);
+    INIT_DIK(UNDERLINE);
+    INIT_DIK(UNLABELED);
+    INIT_DIK(UP);
+    INIT_DIK(V);
+    INIT_DIK(VOLUMEDOWN);
+    INIT_DIK(VOLUMEUP);
+    INIT_DIK(W);
+    INIT_DIK(WAKE);
+    INIT_DIK(WEBBACK);
+    INIT_DIK(WEBFAVORITES);
+    INIT_DIK(WEBFORWARD);
+    INIT_DIK(WEBHOME);
+    INIT_DIK(WEBREFRESH);
+    INIT_DIK(WEBSEARCH);
+    INIT_DIK(WEBSTOP);
+    INIT_DIK(X);
+    INIT_DIK(Y);
+    INIT_DIK(YEN);
+    INIT_DIK(Z);
+}
 
-/* Key mapping table */
-static KeyMapEntry keyMapSvi[] = {
-    { 0x0B, 0,           DIK_0,          0,  0x01, "0"         }, /* 0          */
-    { 0x02, 0,           DIK_1,          0,  0x02, "1"         }, /* 1          */
-    { 0x03, 0,           DIK_2,          0,  0x04, "2"         }, /* 2          */
-    { 0x04, 0,           DIK_3,          0,  0x08, "3"         }, /* 3          */
-    { 0x05, 0,           DIK_4,          0,  0x10, "4"         }, /* 4          */
-    { 0x06, 0,           DIK_5,          0,  0x20, "5"         }, /* 5          */
-    { 0x07, 0,           DIK_6,          0,  0x40, "6"         }, /* 6          */
-    { 0x08, 0,           DIK_7,          0,  0x80, "7"         }, /* 7          */
-	{ 0x09, 0,           DIK_8,          1,  0x01, "8"         }, /* 8          */
-    { 0x0A, 0,           DIK_9,          1,  0x02, "9"         }, /* 9          */
-    { 0x27, 0,           DIK_SEMICOLON,  1,  0x04, ";"         }, /* ;          */
-    { 0x28, 0,           DIK_APOSTROPHE, 1,  0x08, "'"         }, /* '          */
-    { 0x33, 0,           DIK_COMMA,      1,  0x10, ","         }, /* ,         */
-	{ 0x0D, 0,           DIK_EQUALS,     1,  0x20, "="         }, /* =          */
-    { 0x34, 0,           DIK_PERIOD,     1,  0x40, "."         }, /* .          */
-    { 0x35, 0,           DIK_SLASH,      1,  0x80, "/"         }, /* /          */
-	{ 0x0C, 0,           DIK_MINUS,      2,  0x01, "-"         }, /* -          */
-    { 0x1E, 0,           DIK_A,          2,  0x02, "A"         }, /* A          */
-    { 0x30, 0,           DIK_B,          2,  0x04, "B"         }, /* B          */
-    { 0x2E, 0,           DIK_C,          2,  0x08, "C"         }, /* C          */
-    { 0x20, 0,           DIK_D,          2,  0x10, "D"         }, /* D          */
-    { 0x12, 0,           DIK_E,          2,  0x20, "E"         }, /* E          */
-    { 0x21, 0,           DIK_F,          2,  0x40, "F"         }, /* F          */
-    { 0x22, 0,           DIK_G,          2,  0x80, "G"         }, /* G          */
-    { 0x23, 0,           DIK_H,          3,  0x01, "H"         }, /* H          */
-    { 0x17, 0,           DIK_I,          3,  0x02, "I"         }, /* I          */
-    { 0x24, 0,           DIK_J,          3,  0x04, "J"         }, /* J          */
-    { 0x25, 0,           DIK_K,          3,  0x08, "K"         }, /* K          */
-    { 0x26, 0,           DIK_L,          3,  0x10, "L"         }, /* L          */
-    { 0x32, 0,           DIK_M,          3,  0x20, "M"         }, /* M          */
-    { 0x31, 0,           DIK_N,          3,  0x40, "N"         }, /* N          */
-    { 0x18, 0,           DIK_O,          3,  0x80, "O"         }, /* O          */
-    { 0x19, 0,           DIK_P,          4,  0x01, "P"         }, /* P          */
-    { 0x10, 0,           DIK_Q,          4,  0x02, "Q"         }, /* Q          */
-    { 0x13, 0,           DIK_R,          4,  0x04, "R"         }, /* R          */
-    { 0x1F, 0,           DIK_S,          4,  0x08, "S"         }, /* S          */
-    { 0x14, 0,           DIK_T,          4,  0x10, "T"         }, /* T          */
-    { 0x16, 0,           DIK_U,          4,  0x20, "U"         }, /* U          */
-    { 0x2f, 0,           DIK_V,          4,  0x40, "V"         }, /* V          */
-    { 0x11, 0,           DIK_W,          4,  0x80, "W"         }, /* W          */
-	{ 0x2D, 0,           DIK_X,          5,  0x01, "X"         }, /* X          */
-    { 0x15, 0,           DIK_Y,          5,  0x02, "Y"         }, /* Y          */
-    { 0x2C, 0,           DIK_Z,          5,  0x04, "Z"         }, /* Z          */
-    { 0x1A, 0,           DIK_LBRACKET,   5,  0x08, "["         }, /* [          */
-	{ 0x2B, 0,           DIK_BACKSLASH,  5,  0x10, "\\"        }, /* \          */
-    { 0x1B, 0,           DIK_RBRACKET,   5,  0x20, "]"         }, /* ]          */
-    { 0x0E, 0,           DIK_BACK,       5,  0x40, "BACK"      }, /* BACKSPACE  */
-    { 0x48, 0,           DIK_UP,         5,  0x80, "UP"        }, /* UP ARROW   */
-    { 0x00, VK_LSHIFT,   DIK_LSHIFT,     6,  0x01, "SHIFT"     }, /* SHIFT      */
-    { 0x00, VK_RSHIFT,   DIK_RSHIFT,     6,  0x01, "SHIFT"     }, /* SHIFT      */
-    { 0x00, VK_LCONTROL, DIK_LCONTROL,   6,  0x02, "CTRL"      }, /* CONTROL    */
-    { 0x00, VK_RCONTROL, DIK_RCONTROL,   6,  0x02, "CTRL"      }, /* CONTROL    */
-    { 0x00, VK_LMENU,    DIK_LMENU,      6,  0x04, "LGRAP"     }, /* LGRAP      */
-    { 0x00, VK_RMENU,    DIK_RMENU,      6,  0x08, "RGRAP"     }, /* RGRAP      */
-    { 0x01, 0,           DIK_ESCAPE,     6,  0x10, "ESC"       }, /* ESCAPE     */
-    { 0x49, 0,           DIK_PRIOR,      6,  0x20, "STOP"      }, /* STOP/BREAK */ //VK 69 - PAGE UP key
-    { 0x1C, 0,           DIK_RETURN,     6,  0x40, "ENTER"     }, /* ENTER     */
-    { 0x9C, 0,           DIK_NUMPADENTER,6,  0x40, "ENTER"     }, /* Enter on numeric keypad */
-	{ 0x4B, 0,           DIK_LEFT,       6,  0x80, "LEFT"      }, /* LEFT ARROW */
-    { 0x3B, 0,           DIK_F1,         7,  0x01, "F1"        }, /* F1         */
-    { 0x3C, 0,           DIK_F2,         7,  0x02, "F2"        }, /* F2         */
-    { 0x3D, 0,           DIK_F3,         7,  0x04, "F3"        }, /* F3         */
-    { 0x3E, 0,           DIK_F4,         7,  0x08, "F4"        }, /* F4         */
-    { 0x3F, 0,           DIK_F5,         7,  0x10, "F5"        }, /* F5         */
-    { 0x47, 0,           DIK_HOME,       7,  0x20, "HOME"      }, /* HOME/CLS   */ //VK 67 - HOME key
-    { 0x52, 0,           DIK_INSERT,     7,  0x40, "INS"       }, /* INSERT     */ //VK 2d - INS key
-    { 0x50, 0,           DIK_DOWN,       7,  0x80, "DOWN"      }, /* DOWN ARROW */
-    { 0x39, 0,           DIK_SPACE,      8,  0x01, "SPACE"     }, /* SPACE      */
-    { 0x0F, 0,           DIK_TAB,        8,  0x02, "TAB"       }, /* TAB        */
-    { 0x53, 0,           DIK_DELETE,     8,  0x04, "DEL"       }, /* DELETE     */ //VK 6e - DEL key
-    { 0x00, VK_CAPITAL,  DIK_CAPITAL,    8,  0x08, "CAPS"      }, /* CAPSLOCK   */
-//  { 0x4F, 0,           DIK_END,        7,  0x40, "SELECT"    }, /* SELECT     */ //VK 23 - END key
-    { 0x4F, 0,           DIK_SCROLL,     8,  0x10, "SELECT"    }, /* SELECT     */
-    { 0x4F, 0,           DIK_SYSRQ,      8,  0x20, "PRINT"     }, /* PRINT      */
-    { 0x00, 0,           0,              8,  0x40, ""          },
-    { 0x4D, 0,           DIK_RIGHT,      8,  0x80, "RIGHT"     }, /* RIGHT ARROW */
-    { 0x00, VK_NUMPAD0,  DIK_NUMPAD0,    9,  0x01, "NUM0"       }, /* NUMPAD 0   */
-    { 0x00, VK_NUMPAD1,  DIK_NUMPAD1,    9,  0x02, "NUM1"       }, /* NUMPAD 1   */
-    { 0x00, VK_NUMPAD2,  DIK_NUMPAD2,    9,  0x04, "NUM2"       }, /* NUMPAD 2   */
-    { 0x00, VK_NUMPAD3,  DIK_NUMPAD3,    9,  0x08, "NUM3"       }, /* NUMPAD 3   */
-    { 0x00, VK_NUMPAD4,  DIK_NUMPAD4,    9,  0x10, "NUM4"       }, /* NUMPAD 4   */
-    { 0x00, VK_NUMPAD5,  DIK_NUMPAD5,    9,  0x20, "NUM5"       }, /* NUMPAD 5   */
-    { 0x00, VK_NUMPAD6,  DIK_NUMPAD6,    9,  0x40, "NUM6"       }, /* NUMPAD 6   */
-    { 0x00, VK_NUMPAD7,  DIK_NUMPAD7,    9,  0x80, "NUM7"       }, /* NUMPAD 7   */
-    { 0x00, VK_NUMPAD8,  DIK_NUMPAD8,    10, 0x01, "NUM8"       }, /* NUMPAD 8   */
-    { 0x00, VK_NUMPAD9,  DIK_NUMPAD9,    10, 0x02, "NUM9"       }, /* NUMPAD 9   */
-    { 0x4E, VK_ADD,      DIK_ADD,        10, 0x04, "NUM+"       }, /* NUMPAD +   */
-    { 0x4A, VK_SUBTRACT, DIK_SUBTRACT,   10, 0x08, "NUM-"       }, /* NUMPAD -   */
-    { 0x37, VK_MULTIPLY, DIK_MULTIPLY,   10, 0x10, "NUM*"       }, /* NUMPAD *   */
-    { 0x35, VK_DIVIDE,   DIK_DIVIDE,     10, 0x20, "NUM/"       }, /* NUMPAD /   */
-    { 0x45, VK_DECIMAL,  DIK_DECIMAL,    10, 0x40, "NUM."       }, /* NUMPAD .   */
-    { 0x00, VK_NEXT,     DIK_NEXT,       10, 0x80, "NUM,"       }, /* NUMPAD ,   */ //VK 22 - PAGE DOWN key
-    { 0x00, 0, 0, 0,  0x00 }  /** The End. **/
-};
+static int kbdTable[512];
 
-/* Key mapping table */
-static KeyMapEntry keyMapEnglish[] = {
-    { 0x0B, 0,           DIK_0,          0,  0x01, "0"         }, /* 0          */
-    { 0x02, 0,           DIK_1,          0,  0x02, "1"         }, /* 1          */
-    { 0x03, 0,           DIK_2,          0,  0x04, "2"         }, /* 2          */
-    { 0x04, 0,           DIK_3,          0,  0x08, "3"         }, /* 3          */
-    { 0x05, 0,           DIK_4,          0,  0x10, "4"         }, /* 4          */
-    { 0x06, 0,           DIK_5,          0,  0x20, "5"         }, /* 5          */
-    { 0x07, 0,           DIK_6,          0,  0x40, "6"         }, /* 6          */
-    { 0x08, 0,           DIK_7,          0,  0x80, "7"         }, /* 7          */
-    { 0x09, 0,           DIK_8,          1,  0x01, "8"         }, /* 8          */
-    { 0x0A, 0,           DIK_9,          1,  0x02, "9"         }, /* 9          */
-    { 0x0C, 0,           DIK_MINUS,      1,  0x04, "-"         }, /* -          */
-    { 0x0D, 0,           DIK_EQUALS,     1,  0x08, "="         }, /* =          */
-    { 0x2B, 0,           DIK_BACKSLASH,  1,  0x10, "\\"        }, /* \          */
-    { 0x1A, 0,           DIK_LBRACKET,   1,  0x20, "["         }, /* [          */
-    { 0x1B, 0,           DIK_RBRACKET,   1,  0x40, "]"         }, /* ]          */
-    { 0x27, 0,           DIK_SEMICOLON,  1,  0x80, ";"         }, /* ;          */
-    { 0x28, 0,           DIK_APOSTROPHE, 2,  0x01, "'"         }, /* '          */
-    { 0x29, 0,           DIK_GRAVE,      2,  0x02, "`"         }, /* `          */
-    { 0x33, 0,           DIK_COMMA,      2,  0x04, ","         }, /* ,          */
-    { 0x34, 0,           DIK_PERIOD,     2,  0x08, "."         }, /* .          */
-    { 0x35, 0,           DIK_SLASH,      2,  0x10, "/"         }, /* /          */
-    { 0x1E, 0,           DIK_A,          2,  0x40, "A"         }, /* A          */
-    { 0x30, 0,           DIK_B,          2,  0x80, "B"         }, /* B          */
-    { 0x2E, 0,           DIK_C,          3,  0x01, "C"         }, /* C          */
-    { 0x20, 0,           DIK_D,          3,  0x02, "D"         }, /* D          */
-    { 0x12, 0,           DIK_E,          3,  0x04, "E"         }, /* E          */
-    { 0x21, 0,           DIK_F,          3,  0x08, "F"         }, /* F          */
-    { 0x22, 0,           DIK_G,          3,  0x10, "G"         }, /* G          */
-    { 0x23, 0,           DIK_H,          3,  0x20, "H"         }, /* H          */
-    { 0x17, 0,           DIK_I,          3,  0x40, "I"         }, /* I          */
-    { 0x24, 0,           DIK_J,          3,  0x80, "J"         }, /* J          */
-    { 0x25, 0,           DIK_K,          4,  0x01, "K"         }, /* K          */
-    { 0x26, 0,           DIK_L,          4,  0x02, "L"         }, /* L          */
-    { 0x32, 0,           DIK_M,          4,  0x04, "M"         }, /* M          */
-    { 0x31, 0,           DIK_N,          4,  0x08, "N"         }, /* N          */
-    { 0x18, 0,           DIK_O,          4,  0x10, "O"         }, /* O          */
-    { 0x19, 0,           DIK_P,          4,  0x20, "P"         }, /* P          */
-    { 0x10, 0,           DIK_Q,          4,  0x40, "Q"         }, /* Q          */
-    { 0x13, 0,           DIK_R,          4,  0x80, "R"         }, /* R          */
-    { 0x1F, 0,           DIK_S,          5,  0x01, "S"         }, /* S          */
-    { 0x14, 0,           DIK_T,          5,  0x02, "T"         }, /* T          */
-    { 0x16, 0,           DIK_U,          5,  0x04, "U"         }, /* U          */
-    { 0x2f, 0,           DIK_V,          5,  0x08, "V"         }, /* V          */
-    { 0x11, 0,           DIK_W,          5,  0x10, "W"         }, /* W          */
-    { 0x2D, 0,           DIK_X,          5,  0x20, "X"         }, /* X          */
-    { 0x15, 0,           DIK_Y,          5,  0x40, "Y"         }, /* Y          */
-    { 0x2C, 0,           DIK_Z,          5,  0x80, "Z"         }, /* Z          */
-    { 0x3B, 0,           DIK_F1,         6,  0x20, "F1"        }, /* F1         */
-    { 0x3C, 0,           DIK_F2,         6,  0x40, "F2"        }, /* F2         */
-    { 0x3D, 0,           DIK_F3,         6,  0x80, "F3"        }, /* F3         */
-    { 0x3E, 0,           DIK_F4,         7,  0x01, "F4"        }, /* F4         */
-    { 0x3F, 0,           DIK_F5,         7,  0x02, "F5"        }, /* F5         */
-    { 0x01, 0,           DIK_ESCAPE,     7,  0x04, "ESC"       }, /* ESCAPE     */
-    { 0x0F, 0,           DIK_TAB,        7,  0x08, "TAB"       }, /* TAB        */
-    { 0x49, 0,           DIK_PRIOR,      7,  0x10, "STOP"      }, /* STOP/BREAK */ //VK 69 - PAGE UP key
-    { 0x0E, 0,           DIK_BACK,       7,  0x20, "BACK"      }, /* BACKSPACE  */
-    { 0x4F, 0,           DIK_END,        7,  0x40, "SELECT"    }, /* SELECT     */ //VK 23 - END key
-    { 0x1C, 0,           DIK_RETURN,     7,  0x80, "RETURN"    }, /* RETURN     */
-    { 0x9C, 0,           DIK_NUMPADENTER,7,  0x80, "ENTER"     }, /* Enter on numeric keypad */
-    { 0x39, 0,           DIK_SPACE,      8,  0x01, "SPACE"     }, /* SPACE      */
-    { 0x47, 0,           DIK_HOME,       8,  0x02, "HOME"      }, /* HOME/CLS   */ //VK 67 - HOME key
-    { 0x52, 0,           DIK_INSERT,     8,  0x04, "INS"       }, /* INSERT     */ //VK 2d - INS key
-    { 0x53, 0,           DIK_DELETE,     8,  0x08, "DEL"       }, /* DELETE     */ //VK 6e - DEL key
-    { 0x4B, 0,           DIK_LEFT,       8,  0x10, "LEFT"      }, /* LEFT ARROW */
-    { 0x48, 0,           DIK_UP,         8,  0x20, "UP"        }, /* UP ARROW   */
-    { 0x4D, 0,           DIK_RIGHT,      8,  0x80, "RIGHT"     }, /* RIGHT ARROW */
-    { 0x50, 0,           DIK_DOWN,       8,  0x40, "DOWN"      }, /* DOWN ARROW */
-    { 0x37, VK_MULTIPLY, DIK_MULTIPLY,   9,  0x01, "NUM*"      }, /* NUMPAD *   */
-    { 0x4E, VK_ADD,      DIK_ADD,        9,  0x02, "NUM+"      }, /* NUMPAD +   */
-    { 0x35, VK_DIVIDE,   DIK_DIVIDE,     9,  0x04, "NUM/"       }, /* NUMPAD /   */
-    { 0x00, VK_NUMPAD0,  DIK_NUMPAD0,    9,  0x08, "NUM0"       }, /* NUMPAD 0   */
-    { 0x00, VK_NUMPAD1,  DIK_NUMPAD1,    9,  0x10, "NUM1"       }, /* NUMPAD 1   */
-    { 0x00, VK_NUMPAD2,  DIK_NUMPAD2,    9,  0x20, "NUM2"       }, /* NUMPAD 2   */
-    { 0x00, VK_NUMPAD3,  DIK_NUMPAD3,    9,  0x40, "NUM3"       }, /* NUMPAD 3   */
-    { 0x00, VK_NUMPAD4,  DIK_NUMPAD4,    9,  0x80, "NUM4"       }, /* NUMPAD 4   */
-    { 0x00, VK_NUMPAD5,  DIK_NUMPAD5,    10, 0x01, "NUM5"       }, /* NUMPAD 5   */
-    { 0x00, VK_NUMPAD6,  DIK_NUMPAD6,    10, 0x02, "NUM6"       }, /* NUMPAD 6   */
-    { 0x00, VK_NUMPAD7,  DIK_NUMPAD7,    10, 0x04, "NUM7"       }, /* NUMPAD 7   */
-    { 0x00, VK_NUMPAD8,  DIK_NUMPAD8,    10, 0x08, "NUM8"       }, /* NUMPAD 8   */
-    { 0x00, VK_NUMPAD9,  DIK_NUMPAD9,    10, 0x10, "NUM9"       }, /* NUMPAD 9   */
-    { 0x4A, VK_SUBTRACT, DIK_SUBTRACT,   10, 0x20, "NUM-"       }, /* NUMPAD -   */
-    { 0x00, VK_NEXT,     DIK_NEXT,       10, 0x40, "NUM,"       }, /* NUMPAD ,   */ //VK 22 - PAGE DOWN key
-    { 0x45, VK_DECIMAL,  DIK_DECIMAL,    10, 0x80, "NUM."       }, /* NUMPAD .   */
-    { 0x00, 0,           0,              11, 0x01, ""           },
-    { 0x00, 0,           DIK_RWIN,       11, 0x02, "JIKKOU"     },
-    { 0x00, 0,           DIK_WEBBACK,    11, 0x02, "JIKKOU"     },
-    { 0x00, 0,           0,              11, 0x04, ""           },
-    { 0x00, 0,           DIK_LWIN,       11, 0x08, "TORIKESHI"  },
-    { 0x00, 0,           DIK_WEBFORWARD, 11, 0x08, "TORIKESHI"  },
-    { 0x00, 0,           0,              11, 0x10, ""           },
-    { 0x00, 0,           0,              11, 0x20, ""           },
-    { 0x00, 0,           0,              11, 0x40, ""           },
-    { 0x00, 0,           0,              11, 0x80, ""           },
-    { 0x00, VK_LSHIFT,   DIK_LSHIFT,     6,  0x01, "SHIFT"      }, /* SHIFT      */
-    { 0x00, VK_RSHIFT,   DIK_RSHIFT,     6,  0x01, "SHIFT"      }, /* SHIFT      */
-    { 0x00, VK_LCONTROL, DIK_LCONTROL,   6,  0x02, "CTRL"       }, /* CONTROL    */
-    { 0x00, VK_RCONTROL, DIK_RCONTROL,   2,  0x20, "CTRL"       }, /* ACC        */
-    { 0x00, VK_LMENU,    DIK_LMENU,      6,  0x04, "GRAPH"      }, /* GRAPH      */
-    { 0x00, VK_RMENU,    DIK_RMENU,      6,  0x10, "CODE"       }, /* CODE       */
-    { 0x00, VK_CAPITAL,  DIK_CAPITAL,    6,  0x08, "CAPS"       }, /* CAPSLOCK   */
-    { 0x00, 0, 0, 0,  0x00 }  /** The End. **/
-};
+// initKbdTable initializes the keyboard table with default keys
+static void initKbdTable()
+{
+    memset (kbdTable, 0, sizeof(kbdTable));
 
-/* Key mapping table */
-KeyMapEntry keyMapJapanese[] = {
-    { 0x0B, 0,           DIK_0,          0,  0x01, "0"          }, /* 0          */
-    { 0x02, 0,           DIK_1,          0,  0x02, "1"          }, /* 1          */
-    { 0x03, 0,           DIK_2,          0,  0x04, "2"          }, /* 2          */
-    { 0x04, 0,           DIK_3,          0,  0x08, "3"          }, /* 3          */
-    { 0x05, 0,           DIK_4,          0,  0x10, "4"          }, /* 4          */
-    { 0x06, 0,           DIK_5,          0,  0x20, "5"          }, /* 5          */
-    { 0x07, 0,           DIK_6,          0,  0x40, "6"          }, /* 6          */
-    { 0x08, 0,           DIK_7,          0,  0x80, "7"          }, /* 7          */
-    { 0x09, 0,           DIK_8,          1,  0x01, "8"          }, /* 8          */
-    { 0x0A, 0,           DIK_9,          1,  0x02, "9"          }, /* 9          */
-    { 0x0C, 0,           DIK_MINUS,      1,  0x04, "-"          }, /* -          */
-    { 0x0D, 0,           DIK_CIRCUMFLEX, 1,  0x08, "^"          }, /* ^          */
-    { 0x7D, 0,           DIK_YEN,		 1,  0x10, "\\"         }, /* \          */
-    { 0x1A, 0,           DIK_AT,	     1,  0x20, "@"          }, /* @          */
-    { 0x1B, 0,           DIK_LBRACKET,   1,  0x40, "["          }, /* [          */
-    { 0x27, 0,           DIK_SEMICOLON,  1,  0x80, ";"          }, /* ;          */
-    { 0x28, 0,           DIK_COLON, 	 2,  0x01, ":"          }, /* :          */
-    { 0x2B, 0,           DIK_RBRACKET,   2,  0x02, "]"          }, /* ]          */
-    { 0x33, 0,           DIK_COMMA,      2,  0x04, ","          }, /* ,          */
-    { 0x34, 0,           DIK_PERIOD,     2,  0x08, "."          }, /* .          */
-    { 0x35, 0,           DIK_SLASH,      2,  0x10, "/"          }, /* /          */
-    { 0x73, 0,           DIK_BACKSLASH,  2,  0x20, "\\"         }, /* \          */
-    { 0x1E, 0,           DIK_A,          2,  0x40, "A"          }, /* A          */
-    { 0x30, 0,           DIK_B,          2,  0x80, "B"          }, /* B          */
-    { 0x2E, 0,           DIK_C,          3,  0x01, "C"          }, /* C          */
-    { 0x20, 0,           DIK_D,          3,  0x02, "D"          }, /* D          */
-    { 0x12, 0,           DIK_E,          3,  0x04, "E"          }, /* E          */
-    { 0x21, 0,           DIK_F,          3,  0x08, "F"          }, /* F          */
-    { 0x22, 0,           DIK_G,          3,  0x10, "G"          }, /* G          */
-    { 0x23, 0,           DIK_H,          3,  0x20, "H"          }, /* H          */
-    { 0x17, 0,           DIK_I,          3,  0x40, "I"          }, /* I          */
-    { 0x24, 0,           DIK_J,          3,  0x80, "J"          }, /* J          */
-    { 0x25, 0,           DIK_K,          4,  0x01, "K"          }, /* K          */
-    { 0x26, 0,           DIK_L,          4,  0x02, "L"          }, /* L          */
-    { 0x32, 0,           DIK_M,          4,  0x04, "M"          }, /* M          */
-    { 0x31, 0,           DIK_N,          4,  0x08, "N"          }, /* N          */
-    { 0x18, 0,           DIK_O,          4,  0x10, "O"          }, /* O          */
-    { 0x19, 0,           DIK_P,          4,  0x20, "P"          }, /* P          */
-    { 0x10, 0,           DIK_Q,          4,  0x40, "Q"          }, /* Q          */
-    { 0x13, 0,           DIK_R,          4,  0x80, "R"          }, /* R          */
-    { 0x1F, 0,           DIK_S,          5,  0x01, "S"          }, /* S          */
-    { 0x14, 0,           DIK_T,          5,  0x02, "T"          }, /* T          */
-    { 0x16, 0,           DIK_U,          5,  0x04, "U"          }, /* U          */
-    { 0x2f, 0,           DIK_V,          5,  0x08, "V"          }, /* V          */
-    { 0x11, 0,           DIK_W,          5,  0x10, "W"          }, /* W          */
-    { 0x2D, 0,           DIK_X,          5,  0x20, "X"          }, /* X          */
-    { 0x15, 0,           DIK_Y,          5,  0x40, "Y"          }, /* Y          */
-    { 0x2C, 0,           DIK_Z,          5,  0x80, "Z"          }, /* Z          */
-    { 0x3B, 0,           DIK_F1,         6,  0x20, "F1"         }, /* F1         */
-    { 0x3C, 0,           DIK_F2,         6,  0x40, "F2"         }, /* F2         */
-    { 0x3D, 0,           DIK_F3,         6,  0x80, "F3"         }, /* F3         */
-    { 0x3E, 0,           DIK_F4,         7,  0x01, "F4"         }, /* F4         */
-    { 0x3F, 0,           DIK_F5,         7,  0x02, "F5"         }, /* F5         */
-    { 0x01, 0,           DIK_ESCAPE,     7,  0x04, "ESC"        }, /* ESCAPE     */
-    { 0x0F, 0,           DIK_TAB,        7,  0x08, "TAB"        }, /* TAB        */
-    { 0x49, 0,           DIK_PRIOR,      7,  0x10, "STOP"       }, /* STOP/BREAK */ //VK 69 - PAGE UP key
-    { 0x0E, 0,           DIK_BACK,       7,  0x20, "BACK"       }, /* BACKSPACE  */
-    { 0x4F, 0,           DIK_END,        7,  0x40, "SELECT"     }, /* SELECT     */ //VK 23 - END key
-    { 0x1C, 0,           DIK_RETURN,     7,  0x80, "RETURN"     }, /* RETURN     */
-    { 0x9C, 0,           DIK_NUMPADENTER,7,  0x80, "ENTER"      }, /* Enter on numeric keypad */
-    { 0x39, 0,           DIK_SPACE,      8,  0x01, "SPACE"      }, /* SPACE      */
-    { 0x47, 0,           DIK_HOME,       8,  0x02, "HOME"       }, /* HOME/CLS   */ //VK 67 - HOME key
-    { 0x52, 0,           DIK_INSERT,     8,  0x04, "INS"        }, /* INSERT     */ //VK 2d - INS key
-    { 0x53, 0,           DIK_DELETE,     8,  0x08, "DEL"        }, /* DELETE     */ //VK 6e - DEL key
-    { 0x4B, 0,           DIK_LEFT,       8,  0x10, "LEFT"       }, /* LEFT ARROW */
-    { 0x48, 0,           DIK_UP,         8,  0x20, "UP"         }, /* UP ARROW   */
-    { 0x4D, 0,           DIK_RIGHT,      8,  0x80, "RIGHT"      }, /* RIGHT ARROW */
-    { 0x50, 0,           DIK_DOWN,       8,  0x40, "DOWN"       }, /* DOWN ARROW */
-    { 0x37, VK_MULTIPLY, DIK_MULTIPLY,   9,  0x01, "NUM*"       }, /* NUMPAD *   */
-    { 0x4E, VK_ADD,      DIK_ADD,        9,  0x02, "NUM+"       }, /* NUMPAD +   */
-    { 0x35, VK_DIVIDE,   DIK_DIVIDE,     9,  0x04, "NUM/"       }, /* NUMPAD /   */
-    { 0x00, VK_NUMPAD0,  DIK_NUMPAD0,    9,  0x08, "NUM0"       }, /* NUMPAD 0   */
-    { 0x00, VK_NUMPAD1,  DIK_NUMPAD1,    9,  0x10, "NUM1"       }, /* NUMPAD 1   */
-    { 0x00, VK_NUMPAD2,  DIK_NUMPAD2,    9,  0x20, "NUM2"       }, /* NUMPAD 2   */
-    { 0x00, VK_NUMPAD3,  DIK_NUMPAD3,    9,  0x40, "NUM3"       }, /* NUMPAD 3   */
-    { 0x00, VK_NUMPAD4,  DIK_NUMPAD4,    9,  0x80, "NUM4"       }, /* NUMPAD 4   */
-    { 0x00, VK_NUMPAD5,  DIK_NUMPAD5,    10, 0x01, "NUM5"       }, /* NUMPAD 5   */
-    { 0x00, VK_NUMPAD6,  DIK_NUMPAD6,    10, 0x02, "NUM6"       }, /* NUMPAD 6   */
-    { 0x00, VK_NUMPAD7,  DIK_NUMPAD7,    10, 0x04, "NUM7"       }, /* NUMPAD 7   */
-    { 0x00, VK_NUMPAD8,  DIK_NUMPAD8,    10, 0x08, "NUM8"       }, /* NUMPAD 8   */
-    { 0x00, VK_NUMPAD9,  DIK_NUMPAD9,    10, 0x10, "NUM9"       }, /* NUMPAD 9   */
-    { 0x4A, VK_SUBTRACT, DIK_SUBTRACT,   10, 0x20, "NUM-"       }, /* NUMPAD -   */
-    { 0x00, VK_NEXT,     DIK_NEXT,       10, 0x40, "NUM,"       }, /* NUMPAD ,   */ //VK 22 - PAGE DOWN key
-    { 0x45, VK_DECIMAL,  DIK_DECIMAL,    10, 0x80, "NUM."       }, /* NUMPAD .   */
-    { 0x00, 0,           0,              11, 0x01 },
-    { 0x00, 0,           DIK_RWIN,       11, 0x02, "JIKKOU"     },
-    { 0x00, 0,           DIK_LWIN,       11, 0x08, "TORIKESHI"  },
-    { 0x00, 0,           0,              11, 0x04 },
-    { 0x00, 0,           DIK_WEBBACK,    11, 0x02, "JIKKOU"     },
-    { 0x00, 0,           DIK_CONVERT,    11, 0x02, "JIKKOU"     }, /* Jikkou     */ 
-    { 0x00, 0,           DIK_WEBFORWARD, 11, 0x08, "TORIKESHI"  },
-    { 0x00, 0,           DIK_NOCONVERT,  11, 0x08, "TORIKESHI"  }, /* Torikeshi  */
-    { 0x00, 0,           0,              11, 0x10 },
-    { 0x00, 0,           0,              11, 0x20 },
-    { 0x00, 0,           0,              11, 0x40 },
-    { 0x00, 0,           0,              11, 0x80 },
-    { 0x00, VK_LSHIFT,   DIK_LSHIFT,     6,  0x01 }, /* SHIFT      */
-    { 0x00, VK_RSHIFT,   DIK_RSHIFT,     6,  0x01 }, /* SHIFT      */
-    { 0x00, VK_LCONTROL, DIK_LCONTROL,   6,  0x02 }, /* CONTROL    */
-    { 0x00, VK_RCONTROL, DIK_RCONTROL,   6,  0x02 }, /* CONTROL    */
-    { 0x00, VK_LMENU,    DIK_LMENU,      6,  0x04 }, /* GRAPH      */
-    { 0x00, VK_RMENU,    DIK_RMENU,      6,  0x10 }, /* CODE       */
-    { 0x00, VK_CAPITAL,  DIK_CAPITAL,    6,  0x08 }, /* CAPSLOCK   */
-    { 0x00, 0, 0, 0,  0x00 }  /** The End. **/
-};
+    kbdTable[DIK_0          ] = EK_0;
+    kbdTable[DIK_1          ] = EK_1;
+    kbdTable[DIK_2          ] = EK_2;
+    kbdTable[DIK_3          ] = EK_3;
+    kbdTable[DIK_4          ] = EK_4;
+    kbdTable[DIK_5          ] = EK_5;
+    kbdTable[DIK_6          ] = EK_6;
+    kbdTable[DIK_7          ] = EK_7;
+    kbdTable[DIK_8          ] = EK_8;
+    kbdTable[DIK_9          ] = EK_9;
+    
+    kbdTable[DIK_MINUS      ] = EK_NEG;
+    kbdTable[DIK_EQUALS     ] = EK_CIRCFLX;
+    kbdTable[DIK_BACKSLASH  ] = EK_BKSLASH;
+    kbdTable[DIK_LBRACKET   ] = EK_JAP01;
+    kbdTable[DIK_RBRACKET   ] = EK_LBRACK;
+    kbdTable[DIK_SEMICOLON  ] = EK_SEMICOL;
+    kbdTable[DIK_APOSTROPHE ] = EK_COLON;
+    kbdTable[DIK_GRAVE      ] = EK_RBRACK;
+    kbdTable[DIK_COMMA      ] = EK_COMMA;
+    kbdTable[DIK_PERIOD     ] = EK_PERIOD;
+    kbdTable[DIK_SLASH      ] = EK_DIV;
+    
+    kbdTable[DIK_A          ] = EK_A;
+    kbdTable[DIK_B          ] = EK_B;
+    kbdTable[DIK_C          ] = EK_C;
+    kbdTable[DIK_D          ] = EK_D;
+    kbdTable[DIK_E          ] = EK_E;
+    kbdTable[DIK_F          ] = EK_F;
+    kbdTable[DIK_G          ] = EK_G;
+    kbdTable[DIK_H          ] = EK_H;
+    kbdTable[DIK_I          ] = EK_I;
+    kbdTable[DIK_J          ] = EK_J;
+    kbdTable[DIK_K          ] = EK_K;
+    kbdTable[DIK_L          ] = EK_L;
+    kbdTable[DIK_M          ] = EK_M;
+    kbdTable[DIK_N          ] = EK_N;
+    kbdTable[DIK_O          ] = EK_O;
+    kbdTable[DIK_P          ] = EK_P;
+    kbdTable[DIK_Q          ] = EK_Q;
+    kbdTable[DIK_R          ] = EK_R;
+    kbdTable[DIK_S          ] = EK_S;
+    kbdTable[DIK_T          ] = EK_T;
+    kbdTable[DIK_U          ] = EK_U;
+    kbdTable[DIK_V          ] = EK_V;
+    kbdTable[DIK_W          ] = EK_W;
+    kbdTable[DIK_X          ] = EK_X;
+    kbdTable[DIK_Y          ] = EK_Y;
+    kbdTable[DIK_Z          ] = EK_Z;
+
+    kbdTable[DIK_F1         ] = EK_F1;
+    kbdTable[DIK_F2         ] = EK_F2;
+    kbdTable[DIK_F3         ] = EK_F3;
+    kbdTable[DIK_F4         ] = EK_F4;
+    kbdTable[DIK_F5         ] = EK_F5;
+    kbdTable[DIK_ESCAPE     ] = EK_ESC;
+    kbdTable[DIK_TAB        ] = EK_TAB;
+    kbdTable[DIK_PRIOR      ] = EK_STOP;
+    kbdTable[DIK_BACK       ] = EK_BKSPACE;
+    kbdTable[DIK_END        ] = EK_SELECT;
+    kbdTable[DIK_RETURN     ] = EK_RETURN;
+    kbdTable[DIK_SPACE      ] = EK_SPACE;
+    kbdTable[DIK_HOME       ] = EK_CLS;
+    kbdTable[DIK_INSERT     ] = EK_INS;
+    kbdTable[DIK_DELETE     ] = EK_DEL;
+    kbdTable[DIK_LEFT       ] = EK_LEFT;
+    kbdTable[DIK_UP         ] = EK_UP;
+    kbdTable[DIK_RIGHT      ] = EK_RIGHT;
+    kbdTable[DIK_DOWN       ] = EK_DOWN;
+
+    kbdTable[DIK_MULTIPLY   ] = EK_NUMMUL;
+    kbdTable[DIK_ADD        ] = EK_NUMADD;
+    kbdTable[DIK_DIVIDE     ] = EK_NUMDIV;
+    kbdTable[DIK_SUBTRACT   ] = EK_NUMSUB;
+    kbdTable[DIK_DECIMAL    ] = EK_NUMPER;
+    kbdTable[DIK_NEXT       ] = EK_NUMCOM;
+    kbdTable[DIK_NUMPAD0    ] = EK_NUM0;
+    kbdTable[DIK_NUMPAD1    ] = EK_NUM1;
+    kbdTable[DIK_NUMPAD2    ] = EK_NUM2;
+    kbdTable[DIK_NUMPAD3    ] = EK_NUM3;
+    kbdTable[DIK_NUMPAD4    ] = EK_NUM4;
+    kbdTable[DIK_NUMPAD5    ] = EK_NUM5;
+    kbdTable[DIK_NUMPAD6    ] = EK_NUM6;
+    kbdTable[DIK_NUMPAD7    ] = EK_NUM7;
+    kbdTable[DIK_NUMPAD8    ] = EK_NUM8;
+    kbdTable[DIK_NUMPAD9    ] = EK_NUM9;
+
+    kbdTable[DIK_RWIN       ] = EK_JAP2;
+    kbdTable[DIK_LWIN       ] = EK_JAP3;
+    kbdTable[DIK_LSHIFT     ] = EK_LSHIFT;
+    kbdTable[DIK_RSHIFT     ] = EK_RSHIFT;
+    kbdTable[DIK_LCONTROL   ] = EK_CTRL;
+    kbdTable[DIK_LMENU      ] = EK_GRAPH;
+    kbdTable[DIK_RMENU      ] = EK_JAP4;
+    kbdTable[DIK_CAPITAL    ] = EK_CAPS;
+    kbdTable[DIK_NUMPADENTER] = EK_PAUSE;
+    kbdTable[DIK_SYSRQ      ] = EK_PRINT;
+}
+
+
+
+
 
 #define MAX_JOYSTICKS 8
 
@@ -368,7 +304,6 @@ static int                  dinputVersion;
 static LPDIRECTINPUTDEVICE  kbdDevice = NULL;
 static LPDIRECTINPUTDEVICE2 kbdDevice2 = NULL;
 static HWND                 dinputWindow;
-static KeyMapEntry*         keyMap;
 static int                  kbdModifiers;
 struct JoyInfo {
     LPDIRECTINPUTDEVICE  diDevice;
@@ -387,64 +322,6 @@ static int joyCount;
 
 #define STRUCTSIZE(x) ((dinputVersion == 0x0300) ? sizeof(x##_DX3) : sizeof(x))
 
-
-static void modifyKeyMapVirtKey(WORD oldKey, WORD newKey) {
-    int i;
-    for (i = 0; keyMap[i].Mask != 0; i++) {
-        if (keyMap[i].VirtKey == oldKey) {
-            keyMap[i].VirtKey = newKey;
-        }
-    }
-}
-
-void archKeyboardSetKeymap(KeyboardKeymap keymap) 
-{    
-    int i;
-    BOOL success;
-    char klId[KL_NAMELENGTH];
-    OSVERSIONINFO ovi;
-
-    switch (keymap) {
-    case KEYMAP_MSX:
-        keyMap = keyMapEnglish;
-        memset(klId, 0, sizeof(klId));
-
-        /* Modify scan code map if nessecary */
-        success = GetKeyboardLayoutName(klId) ;
-        if (success) {
-            if (0 == strcmp(klId + 4, "0411")) {
-                keyMap = keyMapJapanese;
-            }
-        }
-        break;
-
-    case KEYMAP_SVI:
-        keyMap = keyMapSvi;
-        break;
-
-    case KEYMAP_COLECO:
-        keyMap = keyMapEnglish;
-        break;
-    }
-
-    ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    GetVersionEx(&ovi);
-    if (ovi.dwMajorVersion <= 4) {
-        modifyKeyMapVirtKey(VK_NEXT,     0);
-        modifyKeyMapVirtKey(VK_LSHIFT,   VK_SHIFT);
-        modifyKeyMapVirtKey(VK_RSHIFT,   VK_SHIFT);
-        modifyKeyMapVirtKey(VK_LCONTROL, VK_CONTROL);
-        modifyKeyMapVirtKey(VK_RCONTROL, VK_CONTROL);
-        modifyKeyMapVirtKey(VK_LMENU,    VK_MENU);
-        modifyKeyMapVirtKey(VK_RMENU,    VK_NEXT);
-    } 
-
-    for (i = 0; keyMap[i].Mask != 0; i++) {
-        if (keyMap[i].Code != 0) {
-            keyMap[i].VirtKey = MapVirtualKey(keyMap[i].Code, 1);
-        }
-    }
-}
 
 static BOOL CALLBACK enumKeyboards(LPCDIDEVICEINSTANCE devInst, LPVOID ref)
 {
@@ -554,11 +431,15 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
 
 int inputInit(HWND hwnd)
 {
+    DIPROPDWORD dipdw = { { sizeof(DIPROPDWORD), sizeof(DIPROPHEADER), 0, DIPH_DEVICE }, 256 };
     HRESULT rv   = 234;
     joyCount     = 0;
     kbdModifiers = 0;
-    
-    memset(msxKeyMap, 0xff, 16);
+
+    initDikStr();
+    initKbdTable();
+
+    keyboardReset();
 
     dinputWindow = hwnd;
     dinputVersion = DIRECTINPUT_VERSION;
@@ -583,6 +464,8 @@ int inputInit(HWND hwnd)
         printf("Failed to create DirectInput device\n");
         return 0;
     }
+
+	rv = IDirectInputDevice_SetProperty(kbdDevice, DIPROP_BUFFERSIZE,&dipdw.diph);
 
     rv = IDirectInput_EnumDevices(dinput, DIDEVTYPE_JOYSTICK, enumJoysticksCallback, 0, DIEDFL_ATTACHEDONLY);
 
@@ -698,14 +581,16 @@ DWORD joystickUpdate()
     return buttonMask;
 }
 
+
+static int keyStatus[512];
+
 void keyboardEnable(int enable)
 {
+    memset(keyStatus, 0, sizeof(keyStatus));
     if (kbdDevice != NULL) {
+        IDirectInputDevice_Unacquire(kbdDevice);
         if (enable) {
             IDirectInputDevice_Acquire(kbdDevice);
-        }
-        else {
-            IDirectInputDevice_Unacquire(kbdDevice);
         }
     }
 }
@@ -715,16 +600,62 @@ int keyboardGetModifiers()
     return kbdModifiers;
 }
 
-unsigned char* archKeyboardGetState() {
-    return msxKeyMap;
+void keyboardHanldeKeypress(int code, int pressed) {
+    int wasPressed = keyStatus[code];
+    int keyCode = kbdTable[code];
+
+    keyStatus[code] = pressed;
+
+    if (pressed == wasPressed || keyCode == 0) {
+        return;
+    }
+
+    if (pressed) {
+        keyboardKeyDown(keyCode);
+    }
+    else {
+        keyboardKeyUp(keyCode);
+    }
 }
+
+#if 0
+
+void keyboardUpdate()
+{
+#define DINPUT_BUFFERSIZE 256
+    DIDEVICEOBJECTDATA rgod[DINPUT_BUFFERSIZE];
+    DWORD itemcount = DINPUT_BUFFERSIZE;
+    HRESULT rv;
+
+    do {
+        rv = IDirectInputDevice_GetDeviceData(kbdDevice, sizeof(DIDEVICEOBJECTDATA), rgod, &itemcount, 0);
+        if (rv == DIERR_INPUTLOST || rv == DIERR_NOTACQUIRED) {
+            keyboardEnable(1);
+        }
+    } while (rv == DIERR_INPUTLOST);
+
+    if (rv == DI_OK || rv == DI_BUFFEROVERFLOW) {
+        DWORD i = 0;
+        kbdModifiers = 0;
+        for (i = 0; i < itemcount; i++) {
+            int keyCode = rgod[i].dwOfs;
+            
+            if (keyCode == DIK_LSHIFT   || keyCode == DIK_RSHIFT   || 
+                keyCode == DIK_LCONTROL || keyCode == DIK_RCONTROL || 
+                keyCode == DIK_LALT     || keyCode == DIK_RALT     || 
+                keyCode == DIK_LWIN     || keyCode == DIK_RWIN) 
+            {
+                kbdModifiers = 1;
+            }
+            keyboardHanldeKeypress(rgod[i].dwOfs, (rgod[i].dwData & 0x80));
+        }
+    }
+}    
+
+#else
 
 void keyboardUpdate() 
 { 
-    int i;
-    
-    memset(msxKeyMap, 0xff, 16);
-
     if (!GetFocus()) {
         return;
     }
@@ -755,11 +686,9 @@ void keyboardUpdate()
                   ((buffer[DIK_F6]  | buffer[DIK_F7]  | buffer[DIK_F8]  | buffer[DIK_F9]  | 
                     buffer[DIK_F10] | buffer[DIK_F11] | buffer[DIK_F12]) >> 7)))
             {
-                for (i = 0; keyMap[i].Mask != 0; i++) {
-                    if (buffer[keyMap[i].DCode] >> 7) {
-//                  if ((buffer[keyMap[i].DCode] >> 7) || customKeys[keyMap[i].VirtKey] > 0) {
-                        msxKeyMap[keyMap[i].Pos] &= ~keyMap[i].Mask;
-                    }
+                int i;
+                for (i = 0; i < 256; i++) {
+                    keyboardHanldeKeypress(i, buffer[i] >> 7);
                 }
             }
 
@@ -773,11 +702,5 @@ void keyboardUpdate()
                    (GetAsyncKeyState(VK_CONTROL) > 1UL ? KBD_LCTRL    : 0) |
                    (GetAsyncKeyState(VK_LWIN)    > 1UL ? KBD_LWIN     : 0) |
                    (GetAsyncKeyState(VK_RWIN)    > 1UL ? KBD_RWIN     : 0);
-
-    // If we got here, DirectInput failed. Use old input mechanism
-    for (i = 0; keyMap[i].Mask != 0; i++) {
-        if (keyMap[i].VirtKey != 0 && GetAsyncKeyState(keyMap[i].VirtKey) > 1UL) {
-            msxKeyMap[keyMap[i].Pos] &= ~keyMap[i].Mask;
-        }
-    }
 } 
+#endif

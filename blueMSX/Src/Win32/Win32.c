@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-03 23:12:43 $
+** $Date: 2005-01-04 07:14:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2641,7 +2641,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     ShowWindow(st.emuHwnd, SW_HIDE);
 
     inputInit(st.hwnd);
-    archKeyboardSetKeymap(KEYMAP_MSX);
     propUpdateJoyinfo(pProperties);
     joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);

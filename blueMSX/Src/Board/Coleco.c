@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-03 23:12:29 $
+** $Date: 2005-01-04 07:14:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,8 @@
 #include "IoPort.h"
 #include "RomLoader.h"
 #include "ArchControls.h"
+#include "Keyboard.h"
+
 
 /* Hardware */
 static Machine*        colecoMachine;
@@ -88,7 +90,7 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
 {
     UInt8 joyState = joystickReadColeco(joyIO, ioPort >> 1);
-    UInt8* keyMap = archKeyboardGetState();
+    UInt8* keyMap = keyboardGetState();
     UInt8 value;
 
     if (joyMode != 0) {

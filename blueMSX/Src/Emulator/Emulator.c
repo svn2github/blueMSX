@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-03 23:12:36 $
+** $Date: 2005-01-04 07:14:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 #include "ArchSound.h"
 #include "ArchControls.h"
 #include "ArchNotifications.h"
+#include "Keyboard.h"
 
 #include <math.h>
 
@@ -377,13 +378,13 @@ void emulatorStart(char* stateName) {
     switch (machine->board.type) {
     default:
     case BOARD_MSX:
-        archKeyboardSetKeymap(KEYMAP_MSX);
+        keyboardSetKeymap(KEYMAP_MSX);
         break;
     case BOARD_SVI:
-        archKeyboardSetKeymap(KEYMAP_SVI);
+        keyboardSetKeymap(KEYMAP_SVI);
         break;
     case BOARD_COLECO:
-        archKeyboardSetKeymap(KEYMAP_COLECO);
+        keyboardSetKeymap(KEYMAP_COLECO);
         break;
     }
 

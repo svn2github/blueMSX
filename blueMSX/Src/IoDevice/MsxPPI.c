@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-29 00:10:48 $
+** $Date: 2005-01-04 07:14:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include "ArchControls.h"
 #include "Switches.h"
 #include "Led.h"
+#include "Keyboard.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -133,7 +134,7 @@ static void writeCHi(MsxPPI* ppi, UInt8 value)
 
 static UInt8 readB(MsxPPI* ppi)
 {
-    UInt8* keymap = archKeyboardGetState();
+    UInt8* keymap = keyboardGetState();
     UInt8 value = keymap[ppi->row];
 
     if (ppi->row == 8) {
