@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-12 03:36:47 $
+** $Date: 2005-02-16 09:04:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -527,7 +527,6 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.startPage = 0;
         break;
 
-    case ROM_PAC:
     case ROM_SNATCHER:
     case ROM_SDSNATCHER:
     case ROM_SCCMIRRORED:
@@ -548,6 +547,7 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.startPage = 0;
         break;
 
+    case ROM_PAC:
     case ROM_FMPAC:
         editSlotInfo.pageCount = 2;
         break;
@@ -695,7 +695,8 @@ static void setEditControls(HWND hDlg)
         romType == ROM_MOONSOUND ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
         romType == ROM_KANJI12 || romType == ROM_JISYO ||
-        romType == ROM_SVI328FDC || ROM_SVI80COL || ROM_SVI328PRN || ROM_MSXPRN || ROM_SVI328RS232)
+        romType == ROM_SVI328FDC || romType == ROM_SVI80COL || 
+        romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232)
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMSLOT), "Unmapped");
@@ -732,10 +733,10 @@ static void setEditControls(HWND hDlg)
     if (romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
         romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC ||
-        romType == ROM_FMPAC || romType == ROM_BUNSETU)
+        romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU)
     {
         int size = (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
-                   romType == ROM_FMPAC ? 2 : 
+                   romType == ROM_FMPAC || romType == ROM_PAC ? 2 : 
                    romPages > 8 ? 8 : romPages < 1 ? 1 : romPages;
         int end = 8 - size;
         int start = editSlotInfo.startPage < end ? editSlotInfo.startPage : end;
@@ -904,13 +905,19 @@ static void setEditControls(HWND hDlg)
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
+        
+    case ROM_PAC:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0x7FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
+        break;
 
     case ROM_SNATCHER:
     case ROM_SDSNATCHER:
     case ROM_SCCMIRRORED:
     case ROM_SCCEXTENDED:
     case ROM_SONYHBI55:
-    case ROM_PAC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
