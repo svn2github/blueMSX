@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-20 18:37:03 $
+** $Date: 2005-01-23 11:38:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -323,6 +323,7 @@ _TCHAR* langMenuPropsSettings() { return ls->menuPropsSettings; }
 _TCHAR* langMenuPropsFile() { return ls->menuPropsFile; }
 _TCHAR* langMenuPropsApearance() { return ls->menuPropsApearance; }
 _TCHAR* langMenuPropsLanguage() { return ls->menuPropsLanguage; }
+_TCHAR* langMenuPropsPorts() { return ls->menuPropsPorts; }
 
 _TCHAR* langMenuVideoSource()        { return ls->menuVideoSource; }
 _TCHAR* langMenuVideoSourceDefault() { return ls->menuVideoSourceDefault; }
@@ -444,6 +445,7 @@ _TCHAR* langPropSound() { return ls->propSound; }
 _TCHAR* langPropControls() { return ls->propControls; }
 _TCHAR* langPropPerformance() { return ls->propPerformance; }
 _TCHAR* langPropSettings() { return ls->propSettings; }
+_TCHAR* langPropPorts() { return ls->propPorts; }
 
 _TCHAR* langPropSetFileHistoryGB() { return ls->propSetFileHistoryGB; }
 _TCHAR* langPropSetFileHistorySize() { return ls->propSetFileHistorySize; }
@@ -522,6 +524,11 @@ _TCHAR* langPropJoyButtonText() { return ls->propJoyButtonText; }
 _TCHAR* langPropJoyKeysetGB() { return ls->propJoyKeysetGB; }
 _TCHAR* langPropJoyKeyest1() { return ls->propJoyKeyest1; }
 _TCHAR* langPropJoyKeyest2() { return ls->propJoyKeyest2; }
+
+_TCHAR* langPropPortsLptGB() { return ls->propPortsLptGB; }
+_TCHAR* langPropPortsComGB() { return ls->propPortsComGB; }
+_TCHAR* langPropPortsLptText() { return ls->propPortsLptText; }
+_TCHAR* langPropPortsCom1Text() { return ls->propPortsCom1Text; }
 
 _TCHAR* langPropSettDefSlotGB() { return ls->propSettDefSlotGB; }
 _TCHAR* langPropSettDefSlots() { return ls->propSettDefSlots; }

@@ -51,6 +51,7 @@
 #define IDI_WARN                        30126
 #define IDI_BROWSE                      30127
 #define IDI_HISTORY                     30129
+#define IDI_PORTS                       30130
 
 
 #define IDI_FLAG_NETHERLANDS            30150
@@ -156,6 +157,7 @@
 #define ID_OPTIONS_SETTINGS             40126
 #define ID_OPTIONS_LANGUAGE             40127
 #define ID_OPTIONS_APEARANCE            40128
+#define ID_OPTIONS_PORTS                40129
 
 #define ID_HELP_HELP                    40151
 #define ID_HELP_ABOUT                   40152
@@ -208,6 +210,7 @@
 #define IDD_OPEN_ROMDROPDOWN            124
 #define IDD_SHORTCUTSCONFIG             125
 #define IDD_APEARANCE                   126
+#define IDD_PORTS                       127
 
 #define IDD_BUTTON                      130
 #define IDD_DROPDOWN                    131
@@ -242,6 +245,8 @@
 #define IDC_MONDEINTERLACE              1027
 #define IDC_VDPFREQ                     1028
 #define IDC_VDPFREQTEXT                 1029
+#define IDC_PORTSLPT                    1030
+#define IDC_PORTSCOM1                   1031
 
 #define IDC_EMUGENERALGROUPBOX          1800
 #define IDC_EMUFAMILYTEXT               1801
@@ -351,6 +356,11 @@
 #define IDC_JOYBUTTONA2                 2214
 #define IDC_JOYBUTTONB1                 2215
 #define IDC_JOYBUTTONB2                 2216
+
+#define IDC_PORTSLPTGROUPBOX            2217
+#define IDC_PORTSCOMGROUPBOX            2218
+#define IDC_PORTSLPTTEXT                2219
+#define IDC_PORTSCOM1TEXT               2220
 
 #define IDC_SETINGSFILEHISTORYGOUPBOX   2300
 #define IDC_SETINGSHISTORYSIZETEXT      2301

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-20 18:39:32 $
+** $Date: 2005-01-23 11:42:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
- 
+#include <strsafe.h>
+
 #include "Win32Properties.h"
 #include "ThemeLoader.h"
 #include "Win32keyboard.h"
@@ -635,7 +636,7 @@ static RomType romTypeList[] = {
     ROM_CROSSBLAIM,
     ROM_HARRYFOX,
     ROM_LODERUNNER,
-	ROM_KONAMISYNTH,
+    ROM_KONAMISYNTH,
     ROM_MAJUTSUSHI,
     ROM_HALNOTE,
     ROM_SCC,
@@ -1151,6 +1152,8 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGSLIDEBAR), pProperties->video.colorSaturationEnable);
             EnableWindow(GetDlgItem(hDlg, IDC_COLORGHOSTINGVALUE), pProperties->video.colorSaturationEnable);
 
+
+
             videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
             updateEmuWindow();
             break;
@@ -1210,6 +1213,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             SendMessage(GetDlgItem(hDlg, IDC_SCANLINESVALUE), WM_SETTEXT, 0, (LPARAM)strPct(100 - pProperties->video.scanlinesPct));
 
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+
             updateEmuWindow();
             return 0;
             
@@ -1263,6 +1267,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         if ((((NMHDR FAR *)lParam)->code) == PSN_QUERYCANCEL) {
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+
             videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
             videoSetPalMode(theVideo, pProperties->video.palEmu);
             videoSetColors(theVideo, pProperties->video.saturation, pProperties->video.brightness, 
@@ -1990,13 +1995,164 @@ static BOOL CALLBACK controlsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
     return FALSE;
 }
 
+static BOOL updatePortsLptList(HWND hDlg, int id)
+{
+    LPPRINTER_INFO_2 lpPrinterInfo = NULL;
+    TCHAR sBuf[MAX_PATH];
+    DWORD dwNeeded;
+    DWORD dwReturned;
+    DWORD dwItem;
+
+    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
+
+    // Get buffer size
+    EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 2, NULL, 0, &dwNeeded, &dwReturned);
+
+    // Allocate memory
+    lpPrinterInfo = (LPPRINTER_INFO_2)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
+    if (lpPrinterInfo == NULL)
+        return FALSE;
+
+    if (!EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 2, (LPBYTE)lpPrinterInfo, dwNeeded, &dwNeeded, &dwReturned))
+        return FALSE;
+
+    // Add static members
+//    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumPortsLptNone());
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"None");
+
+    // Add printers 
+    for (dwItem = 0; dwItem < dwReturned; dwItem++) {
+        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
+            SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
+    }
+
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
+
+    // Free memory
+    HeapFree(GetProcessHeap(), 0, lpPrinterInfo);
+
+    return TRUE;
+}
+
+static BOOL IsNumeric(LPCTSTR pszString, BOOL bIgnoreColon)
+{
+    BOOL bNumeric = TRUE;
+    size_t cch;
+    unsigned int i;
+
+    if (!SUCCEEDED(StringCchLength(pszString, MAX_PATH-1, &cch)))
+        return FALSE;
+    if (cch == 0)
+        return FALSE;
+
+    for (i=0; i<cch && bNumeric; i++) {
+        bNumeric = (_istdigit(pszString[i]) != 0);
+        if (bIgnoreColon && (pszString[i] == _T(':')))
+            bNumeric = TRUE;
+    }
+    return bNumeric;
+}
+
+static BOOL updatePortsComList(HWND hDlg, int id)
+{
+    PORT_INFO_2 *lpPortInfo = NULL;
+    TCHAR sBuf[MAX_PATH];
+    DWORD dwNeeded;
+    DWORD dwReturned;
+    DWORD dwItem;
+
+    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
+
+    // Get buffer size
+    EnumPorts(NULL, 2, NULL, 0, &dwNeeded, &dwReturned);
+
+    // Allocate memory
+    lpPortInfo = (PORT_INFO_2*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
+    if (lpPortInfo == NULL)
+        return FALSE;
+
+    if (!EnumPorts(NULL, 2, (LPBYTE)lpPortInfo, dwNeeded, &dwNeeded, &dwReturned))
+        return FALSE;
+
+    // Add static members
+//    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumPortsComNone());
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"None");
+
+    // Add COM ports 
+    for (dwItem = 0; dwItem < dwReturned; dwItem++) {
+        size_t cch;
+        if SUCCEEDED(StringCchLength(lpPortInfo[dwItem].pPortName, MAX_PATH-1, &cch))
+            if (cch > 3)
+                if ((_tcsnicmp(lpPortInfo[dwItem].pPortName, _T("COM"), 3) == 0) && IsNumeric(&lpPortInfo[dwItem].pPortName[3], TRUE))
+                    if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPortInfo[dwItem].pPortName, lpPortInfo[dwItem].pDescription))
+                        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
+    }
+
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
+
+    // Free memory
+    HeapFree(GetProcessHeap(), 0, lpPortInfo);
+
+    return TRUE;
+}
+
+static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    static Properties* pProperties;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:  
+        if (!centered) {
+            updateDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES, 0, 1);
+            centered = 1;
+        }
+
+        SendMessage(GetDlgItem(hDlg, IDC_PORTSLPTGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropPortsLptGB());
+        SendMessage(GetDlgItem(hDlg, IDC_PORTSCOMGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropPortsComGB());
+        SendMessage(GetDlgItem(hDlg, IDC_PORTSLPTTEXT), WM_SETTEXT, 0, (LPARAM)langPropPortsLptText());
+        SendMessage(GetDlgItem(hDlg, IDC_PORTSCOM1TEXT), WM_SETTEXT, 0, (LPARAM)langPropPortsCom1Text());
+        SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
+        SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
+
+        updatePortsLptList(hDlg, IDC_PORTSLPT);
+        updatePortsComList(hDlg, IDC_PORTSCOM1);
+
+        pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
+
+        return FALSE;
+        
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+        case IDC_PORTSLPT:
+            return TRUE;
+
+        case IDC_PORTSCOM1:
+            return TRUE;
+        }
+        return FALSE;
+
+    case WM_NOTIFY:
+        if (((NMHDR FAR*)lParam)->code == PSN_APPLY || ((NMHDR FAR*)lParam)->code == PSN_QUERYCANCEL) {
+            saveDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES);
+        }
+
+        if ((((NMHDR FAR *)lParam)->code) != PSN_APPLY) {
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
 
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video) {
 	HINSTANCE       hInst = (HINSTANCE)GetModuleHandle(NULL);
-    PROPSHEETPAGE   psp[7];
+    PROPSHEETPAGE   psp[8];
     PROPSHEETHEADER psh;
     Properties oldProp = *pProperties;
 
@@ -2074,6 +2230,16 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
     psp[6].pszTitle = langPropSettings();
     psp[6].lParam = (LPARAM)pProperties;
     psp[6].pfnCallback = NULL;
+
+    psp[7].dwSize = sizeof(PROPSHEETPAGE);
+    psp[7].dwFlags = PSP_USEICONID | PSP_USETITLE;
+    psp[7].hInstance = hInst;
+    psp[7].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
+    psp[7].pszIcon = NULL;
+    psp[7].pfnDlgProc = portsDlgProc;
+    psp[7].pszTitle = langPropPorts();
+    psp[7].lParam = (LPARAM)pProperties;
+    psp[7].pfnCallback = NULL;
     
     psh.dwSize = sizeof(PROPSHEETHEADER);
     psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE | PSH_NOAPPLYNOW;

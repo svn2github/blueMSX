@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-20 18:37:04 $
+** $Date: 2005-01-23 11:38:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,6 +70,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPropsControls       = "Controls";
     ls->menuPropsPerformance    = "Performance";
     ls->menuPropsLanguage       = "Language";
+    ls->menuPropsPorts          = "Ports";
     
     ls->menuHelpHelp            = "Help Topics";
     ls->menuHelpAbout           = "About blueMSX";
@@ -171,6 +172,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSound               = "Sound";
     ls->propControls            = "Controls";
     ls->propPerformance         = "Performance";
+    ls->propPorts               = "Ports";
     
     ls->propEmuGeneralGB        = "General ";
     ls->propEmuFamilyText       = "MSX machine:";
@@ -209,6 +211,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propJoyKeysetGB         = "Joystick keysets ";
     ls->propJoyKeyest1          = "Config keyset A";
     ls->propJoyKeyest2          = "Config keyset B";
+
+    ls->propPortsLptGB          = "Parallel port ";
+    ls->propPortsComGB          = "Serial ports ";
+    ls->propPortsLptText        = "Port:";
+    ls->propPortsCom1Text       = "Port 1:";
 
     ls->enumVideoMonColor       = "Color";
     ls->enumVideoMonGrey        = "Black and white";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-23 11:37:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,7 @@
 #define CARTNAME_MEGARAM768  "768kB MegaRAM"
 #define CARTNAME_MEGARAM2M   "2MB MegaRAM"
 
-typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE } PropPage;
+typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
 
 typedef enum { P_EMU_SYNC1MS = 0, P_EMU_SYNCAUTO, P_EMU_SYNCNONE } PropEmuSync;
 typedef enum { P_VDP_SYNCAUTO = 0, P_VDP_SYNC50HZ, P_VDP_SYNC60HZ } PropVdpSync; 

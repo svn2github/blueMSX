@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-20 18:37:04 $
+** $Date: 2005-01-23 11:38:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,6 +81,7 @@ typedef struct {
     _TCHAR* menuPropsSound;
     _TCHAR* menuPropsControls;
     _TCHAR* menuPropsPerformance;
+    _TCHAR* menuPropsPorts;
     _TCHAR* menuPropsSettings;
     _TCHAR* menuPropsFile;
     _TCHAR* menuPropsApearance;
@@ -205,6 +206,7 @@ typedef struct {
     _TCHAR* propSound;
     _TCHAR* propControls;
     _TCHAR* propPerformance;
+    _TCHAR* propPorts;
     _TCHAR* propSettings;
 
     _TCHAR* propEmuGeneralGB;
@@ -272,6 +274,11 @@ typedef struct {
     _TCHAR* propJoyKeysetGB;
     _TCHAR* propJoyKeyest1;
     _TCHAR* propJoyKeyest2;
+
+    _TCHAR* propPortsLptGB;
+    _TCHAR* propPortsComGB;
+    _TCHAR* propPortsLptText;
+    _TCHAR* propPortsCom1Text;
     
     _TCHAR* propSetFileHistoryGB;
     _TCHAR* propSetFileHistorySize;

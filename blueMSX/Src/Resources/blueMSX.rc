@@ -163,7 +163,22 @@ BEGIN
     PUSHBUTTON      "Config keyset",IDC_JOYKEYSET2,176,128,87,12
 //    LTEXT           "Autofire:",IDC_JOYAUTOFIRETEXT2,176,150,39,13
 //    COMBOBOX        IDC_AUTOFIRE2,214,148,48,136,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    
+END
+
+IDD_PORTS DIALOGEX 0, 0, 300, 181
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Parallel port",IDC_PORTSLPTGROUPBOX,19,16,262,75
+    ICON            IDI_PORTS,IDC_STATIC,30,33,21,20
+    LTEXT           "Port:",IDC_PORTSLPTTEXT,65,30,58,11
+    COMBOBOX        IDC_PORTSLPT,105,28,157,115,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    GROUPBOX        "Serial ports",IDC_PORTSCOMGROUPBOX,19,94,262,75
+    ICON            IDI_PORTS,IDC_STATIC,30,111,21,20
+    LTEXT           "Port 1:",IDC_PORTSCOM1TEXT,65,108,58,11
+    COMBOBOX        IDC_PORTSCOM1,105,106,157,115,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_SOUND DIALOGEX 0, 0, 300, 181
@@ -613,6 +628,7 @@ IDI_CASIMAGE            ICON                    "casimage.ico"
 IDI_STATEIMAGE          ICON                    "stateimage.ico"
 IDI_AUDIO               ICON                    "audio.ico"
 IDI_JOYSTICK            ICON                    "joystick.ico"
+IDI_PORTS               ICON                    "ports.ico"
 IDI_KEYBOARD            ICON                    "keyboard.ico"
 IDI_MACHINE             ICON                    "machine.ico"
 IDI_MONITOR             ICON                    "monitor.ico"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-20 18:37:03 $
+** $Date: 2005-01-23 11:38:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,7 @@ _TCHAR* langMenuPropsSettings();
 _TCHAR* langMenuPropsFile();
 _TCHAR* langMenuPropsApearance();
 _TCHAR* langMenuPropsLanguage();
+_TCHAR* langMenuPropsPorts();
 
 _TCHAR* langMenuVideoSource();
 _TCHAR* langMenuVideoSourceDefault();
@@ -226,6 +227,7 @@ _TCHAR* langPropPerformance();
 _TCHAR* langPropSettings();
 _TCHAR* langPropApearance();
 _TCHAR* langPropFile();
+_TCHAR* langPropPorts();
 
 _TCHAR* langPropEmuGeneralGB();
 _TCHAR* langPropEmuFamilyText();
@@ -289,6 +291,11 @@ _TCHAR* langPropJoyButtonText();
 _TCHAR* langPropJoyKeysetGB();
 _TCHAR* langPropJoyKeyest1();
 _TCHAR* langPropJoyKeyest2();
+
+_TCHAR* langPropPortsLptGB();
+_TCHAR* langPropPortsComGB();
+_TCHAR* langPropPortsLptText();
+_TCHAR* langPropPortsCom1Text();
 
 _TCHAR* langPropSetFileHistoryGB();
 _TCHAR* langPropSetFileHistorySize();
