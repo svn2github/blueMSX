@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-01-31 08:10:33 $
+** $Date: 2005-01-31 08:45:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,6 +80,7 @@ static int             useRom;
 static int             traceEnabled;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
+static int             svi80ColEnabled
 
 typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
 typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
@@ -161,20 +162,9 @@ void sviClearInt(UInt32 irq)
 
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
+    if ((svi80ColEnabled && svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
     {
         svi80colMemWrite(address & 0xfff, value);
-/*
-#ifdef _DEBUG
-        address &= 0xfff;
-        if (address < 0x800) {
-            if (value < 0x5f) {
-                value += 0x20;
-                putchar(value);
-            }
-        }
-#endif
-*/
     }
     else
         slotWrite(&ref, address, value);
@@ -182,7 +172,7 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
+    if ((svi80ColEnabled && svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
         return svi80colMemRead(address & 0xfff);
     else
         return slotRead(&ref, address);
@@ -208,34 +198,6 @@ static void sviMemSetBank(UInt8 AYReg15)
         slotSetRamSlot(i, pages & 3);
         pages >>= 2;
     }
-}
-
-static void sviSaveMemory()
-{
-    SaveState* state = saveStateOpenForWrite("sviMemory");
-
-//    saveStateSetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
-//    saveStateSetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
-//    saveStateSet(state, "sviBankLow",     sviBankLow);
-//    saveStateSet(state, "sviBankHigh",    sviBankHigh);
-//    saveStateSet(state, "sviLowReadOnly", sviLowReadOnly);
-    saveStateSet(state, "psgAYReg15",     psgAYReg15);
-
-    saveStateClose(state);
-}
-
-static void sviLoadMemory()
-{
-    SaveState* state = saveStateOpenForRead("sviMemory");
-
-//    saveStateGetBuffer(state, "sviMemoryLow", sviMemoryLow, sizeof(sviMemoryLow));
-//    saveStateGetBuffer(state, "sviMemoryHigh", sviMemoryHigh, sizeof(sviMemoryHigh));
-//    sviBankLow     = (UInt8)saveStateGet(state, "sviBankLow",     0);
-//    sviBankHigh    = (UInt8)saveStateGet(state, "sviBankHigh",    0);
-//    sviLowReadOnly = (UInt8)saveStateGet(state, "sviLowReadOnly", 0);
-    psgAYReg15     = (UInt8)saveStateGet(state, "psgAYReg15",     0);
-
-    saveStateClose(state);
 }
 
 /*
@@ -319,6 +281,7 @@ static int sviInitMachine(Machine* machine,
     int i;
 
     sviRam = NULL;
+    svi80ColEnabled = 0;
 
     /* Initialize VDP */
     sviVramSize = machine->video.vramSize;
@@ -415,7 +378,8 @@ static int sviInitMachine(Machine* machine,
             break;
         case ROM_SVI80COL: {
                 int frameRate = (vdpSyncMode == VDP_SYNC_60HZ) ? 60 : 50;
-                success &= romMapperSvi80ColCreate(SVI80COL_SVI, frameRate, buf, size);
+                svi80ColEnabled = romMapperSvi80ColCreate(SVI80COL_SVI, frameRate, buf, size);
+                success &= svi80ColEnabled;
             }
             break;
         }
@@ -716,6 +680,8 @@ void sviSaveState()
 
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
+    saveStateSet(state, "psgAYReg15",     psgAYReg15);
+
     saveStateClose(state);
 
     sviSaveMemory();
@@ -761,6 +727,8 @@ void sviLoadState()
     saveStateGetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
+
+    psgAYReg15     = (UInt8)saveStateGet(state, "psgAYReg15",     0);
 
     saveStateClose(state);
 }
