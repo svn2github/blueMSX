@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-17 20:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -527,6 +527,10 @@ void langInitSpanish(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Dar a blueMSX una elevada prioridad";
 
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "No sincronizar unidade disco"; 
+    ls->shortcutToggleFdcTiming = "Sincronizar o no unidade disco"; 
+    ls->propUseRegistry         = "Grabar la configuración en el Registro";
 };
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-17 20:44:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -530,8 +530,12 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgFdcGB                = "Contrôleur de lecteur de disquettes ";
     ls->dlgCFdcNumDrivesText    = "Nombre de lecteurs:";
 
-    ls->propPriorityBoost        = " Donner à blueMSX une priorité élevée";
+    ls->propPriorityBoost       = " Donner à blueMSX une priorité élevée";
 
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Ne pas synchroniser le lecteur de disquettes"; 
+    ls->shortcutToggleFdcTiming = "Synchroniser ou non le lecteur de disquettes"; 
+    ls->propUseRegistry         = "Sauvegarder la configuration dans le Registre"; 
 };
 
 #endif

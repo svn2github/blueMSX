@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-17 20:44:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -527,6 +527,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgCFdcNumDrivesText    = "Numero di lettore:"; 
 
     ls->propPriorityBoost       = " Dare a blueMSX una precedenza elevata";
+
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Non sincronizzare disco floppy"; 
+    ls->shortcutToggleFdcTiming = "Sincronizzare o no disco floppy"; 
+    ls->propUseRegistry         = "Salva la configurazione nel Registro";
 };
 
 #endif

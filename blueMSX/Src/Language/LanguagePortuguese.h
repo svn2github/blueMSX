@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-17 20:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -531,6 +531,10 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->propPriorityBoost       = " Dar à blueMSX uma prioridade elevada";
 
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Não synchroniser disco drive"; 
+    ls->shortcutToggleFdcTiming = "Synchroniser ou não disco drive"; 
+    ls->propUseRegistry         = "Salvar a configuração no Registo";
 };
 
 #endif
