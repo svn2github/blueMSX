@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-15 23:55:32 $
+** $Date: 2005-03-18 10:09:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,7 +84,8 @@ void mixerStopLog(Mixer* mixer);
 /* Internal interface methods */
 void mixerReset(Mixer* mixer);
 void mixerSync(Mixer* mixer);
-Int32 mixerRegisterChannel(Mixer* mixer, MixerAudioType audioType, Int32 stereo, 
+
+Int32 mixerRegisterChannel(Mixer* mixer, Int32 audioType, Int32 stereo, 
                            MixerUpdateCallback callback, void*param);
 void mixerUnregisterChannel(Mixer* mixer, Int32 handle);
 

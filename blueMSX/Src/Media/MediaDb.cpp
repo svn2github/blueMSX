@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-03-07 20:18:12 $
+** $Date: 2005-03-18 10:09:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -467,7 +467,9 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
         string  year;
         string  system;
         
-        for (TiXmlElement* item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
+        TiXmlElement* item;
+
+        for (item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
             if (strcmp(item->Value(), "system") == 0) {
                 TiXmlNode* name = item->FirstChild();
                 if (name != NULL) {
@@ -687,13 +689,13 @@ extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size)
     MediaType* mediaType = mediaDbLookup(romdb, buffer, size);
 
     if (mediaType == NULL &&
-        size <= 0x8000 && romData[0] == 0xF3 && romData[1] == 0x31)
+        size <= 0x8000 && (unsigned char)romData[0] == 0xF3 && romData[1] == 0x31)
     {
         mediaType = &defaultSvi;
     }
 
     if (mediaType == NULL &&
-        size <= 0x8000 && romData[0] == 0x55 && romData[1] == 0xAA) 
+        size <= 0x8000 && (unsigned char)romData[0] == 0x55 && (unsigned char)romData[1] == 0xAA) 
     {
         mediaType = &defaultColeco;
     }

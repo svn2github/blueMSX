@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2005-03-16 16:17:21 $
+** $Date: 2005-03-18 10:09:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1350,7 +1350,7 @@ void themeSet(char* themeName, int forceMatch) {
     InvalidateRect(st.hwnd, NULL, TRUE);
 }
 
-PropVideoSize archGetWindowedSize() {
+int archGetWindowedSize() {
     return st.normalViedoSize;
 }
 

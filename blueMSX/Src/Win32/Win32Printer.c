@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-31 20:25:07 $
+** $Date: 2005-03-18 10:09:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,8 +29,18 @@
 */
 #include <windows.h>
 #include <tchar.h>
+
+
+
+#ifdef __GNUC__ // FIXME: Include is not available in gnu c
+#include <string.h>
+static HRESULT StringCchCopy(LPTSTR d, size_t l, LPCTSTR s) { strncpy(d, s, l); d[l-1]=0; return S_OK; }
+static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s); if (*l > m) *l = m; return S_OK; }
+#else
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
+#endif
+
 #include "Win32Printer.h"
 #include "ArchPrinter.h"
 

@@ -49,9 +49,11 @@ INCLUDE += -I$(ROOT_DIR)/Src/Bios
 INCLUDE += -I$(ROOT_DIR)/Src/Board
 INCLUDE += -I$(ROOT_DIR)/Src/BuildInfo
 INCLUDE += -I$(ROOT_DIR)/Src/Common
+INCLUDE += -I$(ROOT_DIR)/Src/Debugger
 INCLUDE += -I$(ROOT_DIR)/Src/Emulator
 INCLUDE += -I$(ROOT_DIR)/Src/IoDevice
 INCLUDE += -I$(ROOT_DIR)/Src/Language
+INCLUDE += -I$(ROOT_DIR)/Src/Media
 INCLUDE += -I$(ROOT_DIR)/Src/Memory
 INCLUDE += -I$(ROOT_DIR)/Src/Resources
 INCLUDE += -I$(ROOT_DIR)/Src/SoundChips
@@ -69,9 +71,11 @@ vpath % $(ROOT_DIR)/Src/Bios
 vpath % $(ROOT_DIR)/Src/Board
 vpath % $(ROOT_DIR)/Src/BuildInfo
 vpath % $(ROOT_DIR)/Src/Common
+vpath % $(ROOT_DIR)/Src/Debugger
 vpath % $(ROOT_DIR)/Src/Emulator
 vpath % $(ROOT_DIR)/Src/IoDevice
 vpath % $(ROOT_DIR)/Src/Language
+vpath % $(ROOT_DIR)/Src/Media
 vpath % $(ROOT_DIR)/Src/Memory
 vpath % $(ROOT_DIR)/Src/Resources
 vpath % $(ROOT_DIR)/Src/SoundChips
@@ -95,12 +99,14 @@ SOURCE_FILES += Win32directX.c
 SOURCE_FILES += Win32directXSound.c 
 SOURCE_FILES += Win32Event.c 
 SOURCE_FILES += Win32file.c 
+SOURCE_FILES += Win32FileTypes.c
 SOURCE_FILES += Win32Help.c 
 SOURCE_FILES += Win32joystick.c 
 SOURCE_FILES += Win32keyboard.c 
 SOURCE_FILES += Win32machineConfig.c 
 SOURCE_FILES += Win32Menu.c 
 SOURCE_FILES += Win32MouseEmu.c 
+SOURCE_FILES += Win32Printer.c 
 SOURCE_FILES += Win32properties.c 
 SOURCE_FILES += Win32ScreenShot.c 
 SOURCE_FILES += Win32ShortcutsConfig.c 
@@ -108,7 +114,12 @@ SOURCE_FILES += Win32snd.c
 SOURCE_FILES += Win32ThemeClassic.c 
 SOURCE_FILES += Win32Thread.c 
 SOURCE_FILES += Win32Timer.c 
+SOURCE_FILES += Win32ToolLoader.c
+SOURCE_FILES += Win32Uart.c
+SOURCE_FILES += Win32Window.c
 SOURCE_FILES += Win32wmmSound.c 
+
+SOURCE_FILES += DebugMemory.c
 
 SOURCE_FILES += Patch.c 
 
@@ -118,7 +129,6 @@ SOURCE_FILES += ramMapper.c
 SOURCE_FILES += ramMapperIo.c
 SOURCE_FILES += ramNormal.c
 SOURCE_FILES += RomLoader.c
-SOURCE_FILES += RomMapper.c 
 SOURCE_FILES += romMapperASCII16.c
 SOURCE_FILES += romMapperASCII16nf.c
 SOURCE_FILES += romMapperASCII16sram.c
@@ -129,6 +139,7 @@ SOURCE_FILES += romMapperCrossBlaim.c
 SOURCE_FILES += romMapperDisk.c
 SOURCE_FILES += romMapperF4device.c
 SOURCE_FILES += romMapperFMPAC.c
+SOURCE_FILES += romMapperFMPAK.c
 SOURCE_FILES += romMapperPAC.c
 SOURCE_FILES += romMapperGameMaster2.c
 SOURCE_FILES += romMapperHarryFox.c
@@ -155,6 +166,11 @@ SOURCE_FILES += romMapperPlain.c
 SOURCE_FILES += romMapperRType.c
 SOURCE_FILES += romMapperSCCplus.c
 SOURCE_FILES += romMapperStandard.c
+SOURCE_FILES += romMapperSonyHBI55.c
+SOURCE_FILES += romMapperSvi80Col.c
+SOURCE_FILES += romMapperSvi328Fdc.c
+SOURCE_FILES += romMapperSvi328Prn.c
+SOURCE_FILES += romMapperSvi328Rs232.c
 SOURCE_FILES += romMapperTC8566AF.c
 SOURCE_FILES += romMapperPhilipsFdc.c
 SOURCE_FILES += romMapperNationalFdc.c
@@ -163,6 +179,9 @@ SOURCE_FILES += romMapperMicrosol.c
 SOURCE_FILES += romMapperTurboRPcm.c
 SOURCE_FILES += romMapperTurboRTimer.c
 SOURCE_FILES += romMapperMajutsushi.c
+SOURCE_FILES += romMapperMoonsound.c
+SOURCE_FILES += romMapperMsxMusic.c
+SOURCE_FILES += romMapperMsxPrn.c
 SOURCE_FILES += romMapperKonamiSynth.c
 SOURCE_FILES += romMapperCasette.c
 SOURCE_FILES += romMapperS1990.c
@@ -170,9 +189,21 @@ SOURCE_FILES += sramMapperMatsuchita.c
 SOURCE_FILES += sramMapperS1985.c
 SOURCE_FILES += sramLoader.c
 
+SOURCE_FILES += DebugDevicemanager.c
+SOURCE_FILES += Debugger.c 
+
+SOURCE_FILES += Crc32.c
+SOURCE_FILES += MediaDb.cpp
+SOURCE_FILES += Sha1.cpp 
+
+SOURCE_FILES += CRTC6845.c 
+SOURCE_FILES += FrameBuffer.c 
 SOURCE_FILES += VDP.c 
 SOURCE_FILES += V9938.c 
+SOURCE_FILES += VideoManager.c 
 
+SOURCE_FILES += hq2x.c 
+SOURCE_FILES += hq3x.c 
 SOURCE_FILES += Scalebit.c 
 SOURCE_FILES += VideoRender.c
 
@@ -185,12 +216,15 @@ SOURCE_FILES += DirAsDisk.c
 SOURCE_FILES += Disk.c 
 SOURCE_FILES += JoystickIo.c 
 SOURCE_FILES += Led.c 
+SOURCE_FILES += MsxPPI.c 
+SOURCE_FILES += PrinterIO.c 
 SOURCE_FILES += RTC.c 
-SOURCE_FILES += Svi328Fdc.c 
+SOURCE_FILES += SviPPI.c 
 SOURCE_FILES += Switches.c 
 SOURCE_FILES += TC8566AF.c 
 SOURCE_FILES += WD2793.c 
 SOURCE_FILES += WDCRC.c
+SOURCE_FILES += I8250.c
 
 SOURCE_FILES += Language.c
 
@@ -217,6 +251,7 @@ SOURCE_FILES += SN76489.c
 SOURCE_FILES += Actions.c 
 SOURCE_FILES += CommandLine.c 
 SOURCE_FILES += Emulator.c 
+SOURCE_FILES += Keyboard.c
 SOURCE_FILES += FileHistory.c 
 SOURCE_FILES += LaunchFile.c 
 SOURCE_FILES += Properties.c 
@@ -227,6 +262,7 @@ SOURCE_FILES += StrcmpNoCase.c
 SOURCE_FILES += TokenExtract.c 
 
 SOURCE_FILES += Theme.c 
+SOURCE_FILES += ThemeTriggers.c
 SOURCE_FILES += ThemeControls.c 
 SOURCE_FILES += ThemeLoader.c 
 

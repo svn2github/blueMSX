@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-03-15 22:02:39 $
+** $Date: 2005-03-18 10:09:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,8 +34,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifdef __GNUC__ // FIXME: Include is not available in gnu c
+static HRESULT StringCchCopy(LPTSTR d, size_t l, LPCTSTR s) { strncpy(d, s, l); d[l-1]=0; return S_OK; }
+static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s); if (*l > m) *l = m; return S_OK; }
+#define StringCchPrintf(s, l, f, a, b) sprintf(s, f, a, b)
+#else
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
+#endif
 
 #include "Win32Properties.h"
 #include "Win32DirectX.h"

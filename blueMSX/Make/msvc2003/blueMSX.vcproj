@@ -76,7 +76,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
-				OptimizeForProcessor="0"
+				OptimizeForProcessor="3"
 				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger"
 				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
