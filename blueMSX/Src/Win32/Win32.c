@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2005-03-10 07:41:34 $
+** $Date: 2005-03-13 23:34:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1872,8 +1872,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 DWORD buttons;
                 ShotcutHotkey key;
                 int i;
+                HWND hwndFocus = GetFocus();
 
-                keyboardSetFocus(GetFocus() != NULL);
+                keyboardSetFocus(hwndFocus == st.hwnd || hwndFocus == st.emuHwnd);
                 
                 if (emulatorGetState() != EMU_RUNNING) {
                     archPollInput();
