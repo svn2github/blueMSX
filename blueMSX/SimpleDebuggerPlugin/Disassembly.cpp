@@ -403,10 +403,12 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
         hBrushWhite  = CreateSolidBrush(RGB(255, 255, 255));
         hBrushLtGray = CreateSolidBrush(RGB(239, 237, 222));
-        hBrushDkGray = CreateSolidBrush(RGB(222, 222, 255));
+        hBrushDkGray = CreateSolidBrush(RGB(232, 232, 232));
+        hBrushBlack  = CreateSolidBrush(RGB(200, 200, 255));
         
         colorBlack = RGB(0, 0, 0);
         colorGray  = RGB(160, 160, 160);
+        colorWhite = RGB(255, 255, 255);
 
         SelectObject(hMemdc, hFont); 
         TEXTMETRIC tm;
@@ -426,6 +428,31 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_VSCROLL:
         scrollWindow(LOWORD(wParam));
          return 0;
+
+    case WM_TIMER:
+        {
+            RECT r;
+            GetClientRect(hwnd, &r);
+            int visibleLines = r.bottom / textHeight;
+
+            if (GetAsyncKeyState(VK_UP) > 1UL)    updateScroll(currentLine - 1);
+            if (GetAsyncKeyState(VK_DOWN) > 1UL)  updateScroll(currentLine + 1);
+            if (GetAsyncKeyState(VK_PRIOR) > 1UL) updateScroll(currentLine > visibleLines ? currentLine - visibleLines : 0);
+            if (GetAsyncKeyState(VK_NEXT) > 1UL)  updateScroll(currentLine + VK_NEXT);
+        }
+        break;
+
+    case WM_SETFOCUS:
+        hasKeyboardFocus = true;
+        InvalidateRect(hwnd, NULL, TRUE);
+        SetTimer(hwnd, 33, 100, 0);
+        break;
+
+    case WM_KILLFOCUS:
+        hasKeyboardFocus = false;
+        InvalidateRect(hwnd, NULL, TRUE);
+        KillTimer(hwnd, 33);
+        break;
 
     case WM_LBUTTONDOWN:
         SetFocus(hwnd);
@@ -481,6 +508,7 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         DeleteObject(hBrushWhite);
         DeleteObject(hBrushLtGray);
         DeleteObject(hBrushDkGray);
+        DeleteObject(hBrushBlack);
         DeleteDC(hMemdc);
         break;
     }
@@ -491,7 +519,8 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) : 
     linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
-    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), breakpointCount(0)
+    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), breakpointCount(0),
+    hasKeyboardFocus(false)
 {
     disassembly = this;
 
@@ -648,6 +677,19 @@ void Disassembly::setCursor(WORD address)
     }
 }
 
+WORD Disassembly::dasm(WORD pc, char* dest)
+{
+    dest[0] = 0;
+
+    for (int i = lineCount - 1; i >= 0; i--) {
+        if (pc >= lineInfo[i].address) {
+            strcat(dest, lineInfo[i].text + 18);
+            return lineInfo[i].address;
+        }
+    }
+    return 0;
+}
+
 void Disassembly::invalidateContent()
 {
     clearRuntoBreakpoint();
@@ -664,19 +706,6 @@ void Disassembly::invalidateContent()
     lineCount++;
     
     InvalidateRect(hwnd, NULL, TRUE);
-}
-
-WORD Disassembly::dasm(WORD pc, char* dest)
-{
-    dest[0] = 0;
-
-    for (int i = lineCount - 1; i >= 0; i--) {
-        if (pc >= lineInfo[i].address) {
-            strcat(dest, lineInfo[i].text + 18);
-            return lineInfo[i].address;
-        }
-    }
-    return 0;
 }
 
 void Disassembly::updateContent(BYTE* memory, WORD pc)
@@ -711,7 +740,35 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         addr += len;
         lineCount++;
     }
+    if (currentLine == -1) {
+        currentLine = programCounter;
+    }
     updateScroll();
+
+    SetFocus(hwnd);
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::onWmKeyUp(int keyCode)
+{
+    RECT r;
+    GetClientRect(hwnd, &r);
+    int visibleLines = r.bottom / textHeight;
+
+    switch (keyCode) {
+    case VK_UP:
+        updateScroll(currentLine - 1);
+        break;
+    case VK_DOWN:
+        updateScroll(currentLine + 1);
+        break;
+    case VK_NEXT:
+        updateScroll(currentLine + visibleLines);
+        break;
+    case VK_PRIOR:
+        updateScroll(currentLine > visibleLines ? currentLine - visibleLines : 0);
+        break;
+    }
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
@@ -733,7 +790,14 @@ void Disassembly::updateScroll(int index)
     
     else {
         currentLine = index;
-        firstVisibleLine = index - visibleLines / 2;
+        if (currentLine < firstVisibleLine + 1) {
+            firstVisibleLine = currentLine - visibleLines / 2;
+        }
+
+        if (currentLine >= firstVisibleLine + visibleLines - 1) {
+            firstVisibleLine = currentLine - visibleLines / 2;
+        }
+//        firstVisibleLine = index - visibleLines / 2;
     }
 
     if (firstVisibleLine >= lineCount) {
@@ -826,7 +890,7 @@ void Disassembly::drawText(int top, int bottom)
         if (i == currentLine) {
             RECT rc;
             GetClientRect(hwnd, &rc);
-            SelectObject(hMemdc, hBrushDkGray); 
+            SelectObject(hMemdc, hasKeyboardFocus ? hBrushBlack : hBrushDkGray); 
             PatBlt(hMemdc, 21, r.top, rc.right - 21, r.bottom - r.top, PATCOPY);
         }
 
@@ -855,7 +919,7 @@ void Disassembly::drawText(int top, int bottom)
         r.left += 6 * textWidth;
         DrawText(hMemdc, lineInfo[i].dataText, lineInfo[i].dataTextLength, &r, DT_LEFT);
         r.left -= 6 * textWidth;
-        SetTextColor(hMemdc, colorBlack);
+        SetTextColor(hMemdc, i == currentLine && hasKeyboardFocus ? colorWhite : colorBlack);
 
         DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
         r.top += textHeight;

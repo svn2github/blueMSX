@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-02-27 10:40:39 $
+** $Date: 2005-02-28 00:53:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -506,7 +506,8 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 11, "PC",  16, r800->regs.PC.W);
     dbgRegisterBankAddRegister(regBank, 12, "I",   8,  r800->regs.I);
     dbgRegisterBankAddRegister(regBank, 13, "R",   8,  r800->regs.R);
-    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
+//    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
+    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 & 1) && (~r800->regs.iff1 & 2) ?1 : 0);
 }
 
 static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
@@ -527,8 +528,8 @@ static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
     case 12: r800->regs.I = (UInt8)value; break;
     case 13: r800->regs.R = (UInt8)value; break;
     case 14: 
-        r800->regs.iff1 = (UInt8)(value & 1); 
-        r800->regs.iff2 = (UInt8)((value >> 1) & 1); 
+        r800->regs.iff1 = 2;//(UInt8)(value & 1); 
+        r800->regs.iff2 = 1;//(UInt8)((value >> 1) & 1); 
         break;
     }
 

@@ -374,6 +374,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
             break;
         }
+        return 0;
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
@@ -564,22 +565,22 @@ void OnShowTool() {
     toolBar->show();
 
     disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
-    RECT r = { 3, 3, 457, 400 };
+    RECT r = { 3, 3, 457, 420 };
     disassembly->updatePosition(r);
     disassembly->show();
 
     cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 460, 3, 710, 180 };
+    RECT r2 = { 460, 3, 710, 190 };
     cpuRegisters->updatePosition(r2);
     cpuRegisters->show();
 
     callstack = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
-    RECT r5 = { 460, 183, 710, 400 };
+    RECT r5 = { 460, 193, 710, 420 };
     callstack->updatePosition(r5);
     callstack->show();
 
     memory = new Memory(GetDllHinstance(), viewHwnd);
-    RECT r3 = { 3, 403, 710, 630 };
+    RECT r3 = { 3, 423, 710, 630 };
     memory->updatePosition(r3);
     memory->show();
     updateWindowPositions();

@@ -42,6 +42,8 @@ public:
     
     void updatePosition(RECT& rect);
 
+    void onWmKeyUp(int keyCode);
+
     void updateContent(BYTE* memory, WORD pc);
     void invalidateContent();
     void updateScroll(int address = -1);
@@ -70,9 +72,11 @@ private:
     HBRUSH hBrushWhite;
     HBRUSH hBrushLtGray;
     HBRUSH hBrushDkGray;
+    HBRUSH hBrushBlack;
     
     COLORREF colorBlack;
     COLORREF colorGray;
+    COLORREF colorWhite;
 
     int    textHeight;
     int    textWidth;
@@ -97,6 +101,7 @@ private:
     int      breakpointCount;
     BpState  breakpoint[0x10000];
     int      linePos;
+    bool     hasKeyboardFocus;
 };
 
 #endif //DISASSEMBLY_H

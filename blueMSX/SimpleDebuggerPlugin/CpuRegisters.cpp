@@ -106,13 +106,29 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
             si.fMask  = SIF_POS;
             GetScrollInfo (hwnd, SB_VERT, &si);
 
-            int x = (LOWORD(lParam) - 10) / textWidth;
-            int col;
             int row = HIWORD(lParam) / textHeight;
 
+            if (row == 0) {
+                int flag = (LOWORD(lParam) - 12 - textWidth * 6) / (textWidth + 4);
+                if (flag >= 0 && flag < 8) {
+                    if (currentRegBank != NULL) {
+                        regValue[0] ^= (1 << (7 - flag));
+                        DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                    }
+                    InvalidateRect(hwnd, NULL, TRUE);
+                }
+                return 0;
+            }
+
+            if (row + si.nPos  >= lineCount) {
+                return 0;
+            }
+
+            int x = (LOWORD(lParam) - 10) / textWidth;
             if (x >= 0 && x < 10 * registersPerRow && x % 10 >= 4 && x % 10 < 8) {
-                col = x / 10;
-                int reg = col * lineCount + row + si.nPos;
+                int col = x / 10;
+                int reg = col * (lineCount - 1) + row + si.nPos - 1;
+
                 if (reg < 12) {
                     currentEditRegister = reg;
                     dataInput4->setPosition(10 + (10 * col + 4) * textWidth, row * textHeight - 2);
@@ -300,7 +316,7 @@ void CpuRegisters::updateScroll()
         r.right -= 11 * textWidth;
     }
 
-    lineCount = (14 + registersPerRow) / registersPerRow;
+    lineCount = 1 + (14 + registersPerRow) / registersPerRow;
 
     SCROLLINFO si;
     si.cbSize    = sizeof(SCROLLINFO);
@@ -375,16 +391,41 @@ void CpuRegisters::drawText(int top, int bottom)
     int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
 
     for (int i = FirstLine; i <= LastLine; i++) {
+        if (i == 0) {
+            SelectObject(hMemdc, hBrushLtGray); 
+            PatBlt(hMemdc, 0, 0, 300, textHeight + 1, PATCOPY);
+
+            SelectObject(hMemdc, hBrushWhite); 
+            WORD regVal = regValue[0];
+            for (int j = 0; j < 8; j++) {
+                SelectObject(hMemdc, hFontBold);
+                SetTextColor(hMemdc, colorBlack);
+                RECT r = { 10, 1, textWidth * 8, textHeight };
+                DrawText(hMemdc, "Flags", 5, &r, DT_LEFT);
+                SelectObject(hMemdc, hFont);
+
+                int x = 12 + textWidth * 6 + j * (textWidth + 4);
+                PatBlt(hMemdc, x, 3, textWidth + 1, textHeight - 5, PATCOPY);
+                if (regValue[0] >= 0) {
+                    RECT r = { x + 1, 1, x + textWidth + 2, textHeight };
+                    const char* text = (regVal & 0x80) ? "SZYHXPNC" + j : " ";
+                    DrawText(hMemdc, text, 1, &r, DT_LEFT);
+                    regVal <<= 1;
+                }
+            }
+            continue;
+        }
+
         RECT r = { 10, textHeight * (i - yPos), 100, textHeight * (i + 1 - yPos) };
         for (int j = 0; j < registersPerRow; j++) {
-            int reg = j * lineCount + i; //i * registersPerRow + j;
+            int reg = j * (lineCount - 1) + i - 1;
 
             if (reg >= 15) {
                 continue;
             }
 
             SetTextColor(hMemdc, colorBlack);
-            SelectObject(hMemdc, hFontBold); 
+            SelectObject(hMemdc, hFontBold);
             DrawText(hMemdc, regName[reg], strlen(regName[reg]), &r, DT_LEFT);
             SelectObject(hMemdc, hFont); 
             r.left  += 4 * textWidth;

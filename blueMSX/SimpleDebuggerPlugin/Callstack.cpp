@@ -49,7 +49,7 @@ LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
 
         hBrushWhite  = CreateSolidBrush(RGB(255, 255, 255));
         hBrushLtGray = CreateSolidBrush(RGB(239, 237, 222));
-        hBrushDkGray = CreateSolidBrush(RGB(222, 222, 255));
+        hBrushDkGray = CreateSolidBrush(RGB(232, 232, 232));
         
         colorBlack = RGB(0, 0, 0);
         colorGray  = RGB(160, 160, 160);
@@ -84,8 +84,10 @@ LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
             si.fMask  = SIF_POS;
             GetScrollInfo (hwnd, SB_VERT, &si);
             int row = si.nPos + HIWORD(lParam) / textHeight;
-            disassembly->setCursor(lineInfo[row].address);
-            currentLine = row;
+            if (row < lineCount) {
+                disassembly->setCursor(lineInfo[row].address);
+                currentLine = row;
+            }
             InvalidateRect(hwnd, NULL, TRUE);
         }
         return 0;
