@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-03-06 20:29:31 $
+** $Date: 2005-03-13 22:52:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -328,6 +328,15 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
 
     case WM_BUTTON_CLOSE:
         SendMessage(hwnd, WM_CLOSE, 0, 0);
+        break;
+
+    case WM_DROPDOWN_KEYBOARDCONFIG:
+        {
+            char* name = (char*)lParam;
+            if (name != NULL) {
+                keyboardLoadConfig(name);
+            }
+        }
         break;
 
     case WM_BUTTON_SAVE:

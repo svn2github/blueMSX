@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-03-06 20:29:31 $
+** $Date: 2005-03-13 22:52:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -846,6 +846,12 @@ int keyboardLoadConfig(char* configName)
             GetPrivateProfileString("Keymapping", keyCode, "", dikName, sizeof(dikName), fileName);
             dikKey = str2dik(dikName);
             if (dikKey > 0) {
+                int j;
+                for (j = 0; j < KBD_TABLE_LEN; j++) {
+                    if (kbdTable[j] == i) {
+                        kbdTable[j] = 0;
+                    }
+                }
                 kbdTable[dikKey] = i;
             }
         }
