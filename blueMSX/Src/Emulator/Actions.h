@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-17 20:59:12 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -133,6 +133,12 @@ void actionCasToggleReadonly();
 void actionVolumeToggleStereo();
 void actionCpuTraceToggle();
 
+void actionToggleHorizontalStretch();
+void actionToggleVerticalStretch();
+void actionToggleScanlinesEnable();
+void actionToggleDeinterlaceEnable();
+void actionToggleRfModulatorEnable();
+
 void actionMuteToggleMaster();
 void actionMuteTogglePsg();
 void actionMuteTogglePcm();
@@ -156,6 +162,13 @@ void actionSetFullscreen(int value);
 void actionSetCasReadonly(int value);
 void actionSetVolumeMute(int value);
 void actionSetVolumeStereo(int value);
+
+void actionVideoSetGamma(int value);
+void actionVideoSetBrightness(int value);
+void actionVideoSetContrast(int value);
+void actionVideoSetSaturation(int value);
+void actionVideoSetScanlines(int value);
+void actionVideoSetRfModulation(int value);
 
 void actionVolumeSetMaster(int value);
 void actionVolumeSetPsg(int value);

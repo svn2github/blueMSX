@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-16 03:23:20 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,13 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_L_MASTER:    idx = themeTriggerVolMasterLeft(); break;
     case THEME_TRIGGER_IMG_R_MASTER:    idx = themeTriggerVolMasterRight(); break;
 
+    case THEME_TRIGGER_VIDEO_GAMMA:         idx = themeTriggerVideoGamma(); break;
+    case THEME_TRIGGER_VIDEO_BRIGHTNESS:    idx = themeTriggerVideoBrightness(); break;
+    case THEME_TRIGGER_VIDEO_CONTRAST:      idx = themeTriggerVideoContrast(); break;
+    case THEME_TRIGGER_VIDEO_SATURATION:    idx = themeTriggerVideoSaturation(); break;
+    case THEME_TRIGGER_VIDEO_SCANLINES:     idx = themeTriggerVideoScanlines(); break;
+    case THEME_TRIGGER_VIDEO_RFMODULATION:  idx = themeTriggerVideoRfModulation(); break;
+
     case THEME_TRIGGER_LEVEL_MASTER:    idx = themeTriggerLevelMaster(); break;
     case THEME_TRIGGER_LEVEL_PSG:       idx = themeTriggerLevelPsg(); break;
     case THEME_TRIGGER_LEVEL_PCM:       idx = themeTriggerLevelPcm(); break;
@@ -136,9 +143,11 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_DISK_RI:     idx = TEST(actionType, themeTriggerConfDiskRI()); break;
     case THEME_TRIGGER_IMG_CART_RI:     idx = TEST(actionType, themeTriggerConfCartRI()); break;
     case THEME_TRIGGER_IMG_CAS_RO:      idx = TEST(actionType, themeTriggerConfCasRO()); break;
-    case THEME_TRIGGER_IMG_SCANLINES:   idx = TEST(actionType, themeTriggerVideoScanlines()); break;
-    case THEME_TRIGGER_IMG_HSTRETCH:    idx = TEST(actionType, themeTriggerVideoHstretch()); break;
-    case THEME_TRIGGER_IMG_VSTRETCH:    idx = TEST(actionType, themeTriggerVideoVstretch()); break;
+    case THEME_TRIGGER_VIDEO_SCANLINES_EN: idx = TEST(actionType, themeTriggerVideoScanlinesEn()); break;
+    case THEME_TRIGGER_VIDEO_DEINTERLACE_EN: idx = TEST(actionType, themeTriggerVideoDeinterlaceEn()); break;
+    case THEME_TRIGGER_VIDEO_RFMODULATION_EN: idx = TEST(actionType, themeTriggerVideoRfModulatorEn()); break;
+    case THEME_TRIGGER_VIDEO_HSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoHstretchEn()); break;
+    case THEME_TRIGGER_VIDEO_VSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoVstretchEn()); break;
     }
 
     key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_PRESSED;
@@ -172,7 +181,11 @@ static char* actionTypeToStr(ThemeTrigger actionType)
     case THEME_TRIGGER_TEXT_ROMMAPPER2SHORT: str = themeTriggerRomMapper2Short(); break;
     case THEME_TRIGGER_TEXT_RUNNAME:         str = themeTriggerRunningName(); break;
     case THEME_TRIGGER_TEXT_MACHINENAME:     str = themeTriggerMachineName(); break;
-    case THEME_TRIGGER_TEXT_SCANLINESPCT:    str = themeTriggerVideoScanlinePct(); break;
+    case THEME_TRIGGER_TEXT_SCANLINESPCT:    str = themeTriggerVideoScanlinePctText(); break;
+    case THEME_TRIGGER_TEXT_VIDEOGAMMA:      str = themeTriggerVideoGammaText(); break;
+    case THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS: str = themeTriggerVideoBrightnessText(); break;
+    case THEME_TRIGGER_TEXT_VIDEOCONTRAST:   str = themeTriggerVideoContrastText(); break;
+    case THEME_TRIGGER_TEXT_VIDEOSATURATION: str = themeTriggerVideoSaturationText(); break;
     case THEME_TRIGGER_TEXT_VERSION:         str = themeTriggerVersion(); break;
     case THEME_TRIGGER_TEXT_BUILDNUMBER:     str = themeTriggerBuildNumber(); break;
     case THEME_TRIGGER_TEXT_BUILDANDVER:     str = themeTriggerBuildAndVersion(); break;

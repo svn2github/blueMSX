@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-17 20:59:18 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,6 +69,12 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     }
 
     if (0 == strcmp(action, "switch-togglefdctiming"))  return (ButtonEvent)actionToggleFdcTiming;
+    
+    if (0 == strcmp(action, "switch-videohstretch"))    return (ButtonEvent)actionToggleHorizontalStretch;
+    if (0 == strcmp(action, "switch-videovstretch"))    return (ButtonEvent)actionToggleVerticalStretch;
+    if (0 == strcmp(action, "switch-videoscanlines"))   return (ButtonEvent)actionToggleScanlinesEnable;
+    if (0 == strcmp(action, "switch-videodeinterlace")) return (ButtonEvent)actionToggleDeinterlaceEnable;
+    if (0 == strcmp(action, "switch-videorfmodulator")) return (ButtonEvent)actionToggleRfModulatorEnable;
 
     if (0 == strcmp(action, "switch-audioswitch"))      return (ButtonEvent)actionToggleMsxAudioSwitch;
     if (0 == strcmp(action, "switch-frontswitch"))      return (ButtonEvent)actionToggleFrontSwitch;
@@ -182,6 +188,13 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "port2-setnumpad"))         return (ButtonEvent)actionPort2SetNumpad;
     if (0 == strcmp(action, "port2-setkeyset"))         return (ButtonEvent)actionPort2SetKeyset;
     if (0 == strcmp(action, "port2-setjoystick"))       return (ButtonEvent)actionPort2SetJoystick;
+
+    if (0 == strcmp(action, "video-gamma"))        return (ButtonEvent)actionVideoSetGamma;
+    if (0 == strcmp(action, "video-brightness"))   return (ButtonEvent)actionVideoSetBrightness;
+    if (0 == strcmp(action, "video-contrast"))     return (ButtonEvent)actionVideoSetContrast;
+    if (0 == strcmp(action, "video-saturation"))   return (ButtonEvent)actionVideoSetSaturation;
+    if (0 == strcmp(action, "video-scanlines"))    return (ButtonEvent)actionVideoSetScanlines;
+    if (0 == strcmp(action, "video-rfmodulation")) return (ButtonEvent)actionVideoSetRfModulation;
 
     if (0 == strcmp(action, "level-master"))      return (ButtonEvent)actionVolumeSetMaster;
     if (0 == strcmp(action, "level-psg"))         return (ButtonEvent)actionVolumeSetPsg;
@@ -331,6 +344,13 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "led-rensha"))               return t | THEME_TRIGGER_RENSHALED;
     
     if (0 == strcmp(s, "slider-emuspeed"))          return t | THEME_TRIGGER_EMUSPEED;
+    \
+    if (0 == strcmp(s, "video-gamma"))          return t | THEME_TRIGGER_VIDEO_GAMMA;
+    if (0 == strcmp(s, "video-brightness"))     return t | THEME_TRIGGER_VIDEO_BRIGHTNESS;
+    if (0 == strcmp(s, "video-contrast"))       return t | THEME_TRIGGER_VIDEO_CONTRAST;
+    if (0 == strcmp(s, "video-saturation"))     return t | THEME_TRIGGER_VIDEO_SATURATION;
+    if (0 == strcmp(s, "video-scanlines"))      return t | THEME_TRIGGER_VIDEO_SCANLINES;
+    if (0 == strcmp(s, "video-rfmodulation"))   return t | THEME_TRIGGER_VIDEO_RFMODULATION;
 
     if (0 == strcmp(s, "level-master"))            return t | THEME_TRIGGER_LEVEL_MASTER;
     if (0 == strcmp(s, "level-psg"))               return t | THEME_TRIGGER_LEVEL_PSG;
@@ -374,11 +394,17 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "status-diskreset"))         return t | THEME_TRIGGER_IMG_DISK_RI;
     if (0 == strcmp(s, "status-cartreset"))         return t | THEME_TRIGGER_IMG_CART_RI;
     if (0 == strcmp(s, "status-casreadonly"))       return t | THEME_TRIGGER_IMG_CAS_RO;
-    if (0 == strcmp(s, "status-scanlines"))         return t | THEME_TRIGGER_IMG_SCANLINES;
-    if (0 == strcmp(s, "status-hstretch"))          return t | THEME_TRIGGER_IMG_HSTRETCH;
-    if (0 == strcmp(s, "status-vstretch"))          return t | THEME_TRIGGER_IMG_VSTRETCH;
-    
+    if (0 == strcmp(s, "status-scanlines"))         return t | THEME_TRIGGER_VIDEO_SCANLINES_EN;
+    if (0 == strcmp(s, "status-deinterlace"))       return t | THEME_TRIGGER_VIDEO_DEINTERLACE_EN;
+    if (0 == strcmp(s, "status-rfmodulation"))      return t | THEME_TRIGGER_VIDEO_RFMODULATION_EN;
+    if (0 == strcmp(s, "status-hstretch"))          return t | THEME_TRIGGER_VIDEO_HSTRETCH_EN;
+    if (0 == strcmp(s, "status-vstretch"))          return t | THEME_TRIGGER_VIDEO_VSTRETCH_EN;
+
     if (0 == strcmp(s, "text-scanlinespct"))        return t | THEME_TRIGGER_TEXT_SCANLINESPCT;
+    if (0 == strcmp(s, "text-videogamma"))          return t | THEME_TRIGGER_TEXT_VIDEOGAMMA;
+    if (0 == strcmp(s, "text-videobrightness"))     return t | THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS;
+    if (0 == strcmp(s, "text-videocontrast"))       return t | THEME_TRIGGER_TEXT_VIDEOCONTRAST;
+    if (0 == strcmp(s, "text-videosaturation"))     return t | THEME_TRIGGER_TEXT_VIDEOSATURATION;
     if (0 == strcmp(s, "text-emufrequency"))        return t | THEME_TRIGGER_TEXT_FREQ;
     if (0 == strcmp(s, "text-cpuusage"))            return t | THEME_TRIGGER_TEXT_CPU;
     if (0 == strcmp(s, "text-framespersecond"))     return t | THEME_TRIGGER_TEXT_FPS;

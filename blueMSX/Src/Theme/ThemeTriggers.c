@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-15 23:55:33 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -429,23 +429,85 @@ int themeTriggerConfCasRO() {
     return propGetGlobalProperties()->cassette.readOnly;
 }
 
-int themeTriggerVideoScanlines() {
+int themeTriggerVideoScanlinesEn() {
     return propGetGlobalProperties()->video.scanlinesEnable;
 }
 
-int themeTriggerVideoHstretch() {
+int themeTriggerVideoHstretchEn() {
     return propGetGlobalProperties()->video.horizontalStretch;
 }
 
-int themeTriggerVideoVstretch() {
+int themeTriggerVideoVstretchEn() {
     return propGetGlobalProperties()->video.verticalStretch;
 }
 
-char* themeTriggerVideoScanlinePct() {
+int themeTriggerVideoDeinterlaceEn() {
+    return propGetGlobalProperties()->video.deInterlace;
+}
+
+int themeTriggerVideoRfModulatorEn() {
+    return propGetGlobalProperties()->video.colorSaturationEnable;
+}
+
+int themeTriggerVideoGamma() {
+    return propGetGlobalProperties()->video.gamma / 2;
+}
+
+int themeTriggerVideoBrightness() {
+    return propGetGlobalProperties()->video.brightness / 2;
+}
+
+int themeTriggerVideoContrast() {
+    return propGetGlobalProperties()->video.contrast / 2;
+}
+
+int themeTriggerVideoSaturation() {
+    return propGetGlobalProperties()->video.saturation / 2;
+}
+
+int themeTriggerVideoScanlines() {
+    return 100 - propGetGlobalProperties()->video.scanlinesPct;
+}
+
+int themeTriggerVideoRfModulation() {
+    return propGetGlobalProperties()->video.colorSaturationWidth * 100 / 4;
+}
+
+
+char* themeTriggerVideoScanlinePctText() {
     static char buffer[16];
     sprintf(buffer, (propGetGlobalProperties()->video.scanlinesEnable ? "%d%%" : ""), 100 - propGetGlobalProperties()->video.scanlinesPct);
     return buffer;
 }
+
+char* themeTriggerVideoGammaText() {
+    static char buffer[16];
+    int value = propGetGlobalProperties()->video.gamma;
+    sprintf(buffer, "%d.%.2d", value / 100, value % 100);
+    return buffer;
+}
+
+char* themeTriggerVideoContrastText() {
+    static char buffer[16];
+    int value = propGetGlobalProperties()->video.contrast;
+    sprintf(buffer, "%d.%.2d", value / 100, value % 100);
+    return buffer;
+}
+
+char* themeTriggerVideoBrightnessText() {
+    static char buffer[16];
+    int value = propGetGlobalProperties()->video.brightness;
+    sprintf(buffer, "%d.%.2d", value / 100, value % 100);
+    return buffer;
+}
+
+char* themeTriggerVideoSaturationText() {
+    static char buffer[16];
+    int value = propGetGlobalProperties()->video.saturation;
+    sprintf(buffer, "%d.%.2d", value / 100, value % 100);
+    return buffer;
+}
+
 
 char* themeTriggerScreenMode() {
     static char* txtScreenMode[14] = {

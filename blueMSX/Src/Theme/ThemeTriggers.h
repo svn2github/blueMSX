@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-11 03:02:49 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,10 +96,18 @@ typedef enum {
     THEME_TRIGGER_IMG_DISK_RI,
     THEME_TRIGGER_IMG_CART_RI,
     THEME_TRIGGER_IMG_CAS_RO,
-    THEME_TRIGGER_IMG_SCANLINES,
-    THEME_TRIGGER_IMG_HSTRETCH,
-    THEME_TRIGGER_IMG_VSTRETCH,
+
+    THEME_TRIGGER_VIDEO_HSTRETCH_EN,
+    THEME_TRIGGER_VIDEO_VSTRETCH_EN,
+    THEME_TRIGGER_VIDEO_SCANLINES_EN,
+    THEME_TRIGGER_VIDEO_DEINTERLACE_EN,
+    THEME_TRIGGER_VIDEO_RFMODULATION_EN,
+
     THEME_TRIGGER_TEXT_SCANLINESPCT,
+    THEME_TRIGGER_TEXT_VIDEOGAMMA,
+    THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS,
+    THEME_TRIGGER_TEXT_VIDEOCONTRAST,
+    THEME_TRIGGER_TEXT_VIDEOSATURATION,
     THEME_TRIGGER_TEXT_FREQ,
     THEME_TRIGGER_TEXT_CPU,
     THEME_TRIGGER_TEXT_FPS,
@@ -138,6 +146,13 @@ typedef enum {
     THEME_TRIGGER_PAN_MSXMUSIC,
     THEME_TRIGGER_PAN_MSXAUDIO,
     THEME_TRIGGER_PAN_MOONSOUND,
+
+    THEME_TRIGGER_VIDEO_GAMMA,
+    THEME_TRIGGER_VIDEO_BRIGHTNESS,
+    THEME_TRIGGER_VIDEO_CONTRAST,
+    THEME_TRIGGER_VIDEO_SATURATION,
+    THEME_TRIGGER_VIDEO_SCANLINES,
+    THEME_TRIGGER_VIDEO_RFMODULATION,
     
     THEME_TRIGGER_RENSHA,
     THEME_TRIGGER_RENSHALED,
@@ -215,9 +230,11 @@ int themeTriggerMachineFmPac();
 int themeTriggerConfDiskRI();
 int themeTriggerConfCartRI();
 int themeTriggerConfCasRO();
-int themeTriggerVideoScanlines();
-int themeTriggerVideoHstretch();
-int themeTriggerVideoVstretch();
+int themeTriggerVideoHstretchEn();
+int themeTriggerVideoVstretchEn();
+int themeTriggerVideoScanlinesEn();
+int themeTriggerVideoDeinterlaceEn();
+int themeTriggerVideoRfModulatorEn();
 
 // The following themeTrigger functions should return a value between 0 and 100
 int themeTriggerVolKbdLeft();
@@ -236,6 +253,13 @@ int themeTriggerVolPcmLeft();
 int themeTriggerVolPcmRight();
 int themeTriggerVolMasterLeft();
 int themeTriggerVolMasterRight();
+
+int themeTriggerVideoGamma();
+int themeTriggerVideoBrightness();
+int themeTriggerVideoContrast();
+int themeTriggerVideoSaturation();
+int themeTriggerVideoScanlines();
+int themeTriggerVideoRfModulation();
 
 int themeTriggerLevelMaster();
 int themeTriggerLevelPsg();
@@ -257,7 +281,11 @@ int themeTriggerLevelRensha();
 int themeTriggerLevelEmuSpeed();
 
 // The following themeTrigger functions should return a string
-char* themeTriggerVideoScanlinePct();
+char* themeTriggerVideoScanlinePctText();
+char* themeTriggerVideoGammaText();
+char* themeTriggerVideoContrastText();
+char* themeTriggerVideoBrightnessText();
+char* themeTriggerVideoSaturationText();
 char* themeTriggerScreenMode();
 char* themeTriggerScreenModeShort();
 char* themeTriggerMemoryRam();

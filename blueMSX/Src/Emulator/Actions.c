@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-21 01:06:31 $
+** $Date: 2005-01-21 02:05:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,33 @@ void actionToggleFdcTiming() {
     state.properties->emulation.enableFdcTiming = !state.properties->emulation.enableFdcTiming;
     boardSetFdcTimingEnable(state.properties->emulation.enableFdcTiming);
 }
+
+
+void actionToggleHorizontalStretch() {
+    state.properties->video.horizontalStretch = !state.properties->video.horizontalStretch;
+    archUpdateEmuDisplay(0);
+}
+
+void actionToggleVerticalStretch() {
+    state.properties->video.verticalStretch = !state.properties->video.verticalStretch;
+    archUpdateEmuDisplay(0);
+}
+
+void actionToggleScanlinesEnable() {
+    state.properties->video.scanlinesEnable = !state.properties->video.scanlinesEnable;
+    archUpdateEmuDisplay(0);
+}
+
+void actionToggleDeinterlaceEnable() {
+    state.properties->video.deInterlace = !state.properties->video.deInterlace;
+    archUpdateEmuDisplay(0);
+}
+
+void actionToggleRfModulatorEnable() {
+    state.properties->video.colorSaturationEnable = !state.properties->video.colorSaturationEnable;
+    archUpdateEmuDisplay(0);
+}
+
 
 void actionQuit() {
     archQuit();
@@ -851,6 +878,36 @@ void actionMenuTools(int x, int y) {
 
 // Actions controlled by value 0 - 100
 
+
+void actionVideoSetGamma(int value) {
+    state.properties->video.gamma = 2 * value;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetBrightness(int value) {
+    state.properties->video.brightness = 2 * value;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetContrast(int value) {
+    state.properties->video.colorSaturationEnable = 2 * value;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetSaturation(int value) {
+    state.properties->video.saturation = 2 * value;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetScanlines(int value) {
+    state.properties->video.scanlinesPct = 100 - value;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetRfModulation(int value) {
+    state.properties->video.colorSaturationWidth = 4 * value / 100;
+    archUpdateEmuDisplayConfig();
+}
 
 
 void actionEmuSpeedSet(int value) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-01-21 01:06:31 $
+** $Date: 2005-01-21 02:05:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2565,6 +2565,13 @@ void archUpdateEmuDisplay(int synchronous) {
             WaitForSingleObject(st.ddrawAckEvent, 500);
         }
     }
+}
+
+void archUpdateEmuDisplayConfig() {
+    videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, pProperties->video.contrast, pProperties->video.gamma);
+    videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
+    videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+    updateEmuWindow();
 }
 
 void archThemeSetNext() {
