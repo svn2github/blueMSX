@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-12 22:18:26 $
+** $Date: 2004-12-19 18:55:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,12 +156,13 @@ static void changeBank(RomMapperPanasonic* rm, int region, int bank)
         slotMapPage(rm->slot, rm->sslot, region, boardGetRamPage(bank - RAM_BASE), region != 3, 0);
 	} 
     else {
+		int offset = bank * 0x2000 & (rm->romSize - 1);
         if (region == 3) {
             rm->readSection = READ_ROM;
-            rm->readOffset = bank * 0x2000;
-            rm->readBlock = rm->romData + bank * 0x2000;
+            rm->readOffset = offset;
+            rm->readBlock = rm->romData + offset;
         }
-        slotMapPage(rm->slot, rm->sslot, region, rm->romData + bank * 0x2000, region != 3, 0);
+        slotMapPage(rm->slot, rm->sslot, region, rm->romData + offset, region != 3, 0);
 	}
 }
 
@@ -193,7 +194,7 @@ static UInt8 read(RomMapperPanasonic* rm, UInt16 address)
 
 	bank = rm->romMapper[address >> 13];
     if (bank < SRAM_BASE) {
-        return rm->romData[bank * 0x2000  + (address & 0x1fff)];
+        return rm->romData[(bank * 0x2000 & (rm->romSize - 1))  + (address & 0x1fff)];
     }
     if (rm->sramSize > 0 && bank >= SRAM_BASE && bank < rm->maxSRAMBank) {
 		int offset = (bank - SRAM_BASE) * 0x2000 & (rm->sramSize - 1);

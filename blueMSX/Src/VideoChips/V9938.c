@@ -133,6 +133,7 @@ typedef struct {
     int   DX;
     int   DY;
     int   NX;
+    int   kNX;
     int   NY;
     int   ASX;
     int   ADX;
@@ -1011,9 +1012,10 @@ static void vdpCmdSetCommand(UInt32 systemTime)
     /* Argument depends on UInt8 or dot operation */
     if ((MMC.CM & 0x0C) == 0x0C) {
         MMC.TX = MMC.ARG & 0x04 ? -PPB[MMC.screenMode] : PPB[MMC.screenMode];
-        MMC.NX = MMC.NX/PPB[MMC.screenMode];
+        MMC.NX = MMC.kNX/PPB[MMC.screenMode];
     }
     else {
+        MMC.NX = MMC.kNX;
         MMC.TX = MMC.ARG & 0x04 ? -1 : 1;
     }
 
@@ -1059,8 +1061,8 @@ void vdpCmdWrite(UInt8 reg, UInt8 value, UInt32 systemTime)
 	case 0x05: MMC.DX = (MMC.DX & 0x00ff) | ((value & 0x01) << 8); break;
 	case 0x06: MMC.DY = (MMC.DY & 0xff00) | value;                 break;
 	case 0x07: MMC.DY = (MMC.DY & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x08: MMC.NX = (MMC.NX & 0xff00) | value;                 break;
-	case 0x09: MMC.NX = (MMC.NX & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x08: MMC.kNX = (MMC.kNX & 0xff00) | value;                 break;
+	case 0x09: MMC.kNX = (MMC.kNX & 0x00ff) | ((value & 0x03) << 8); break;
 	case 0x0a: MMC.NY = (MMC.NY & 0xff00) | value;                 break;
 	case 0x0b: MMC.NY = (MMC.NY & 0x00ff) | ((value & 0x03) << 8); break;
 	case 0x0c: 
