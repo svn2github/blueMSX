@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-01-30 09:09:42 $
+** $Date: 2005-01-30 23:17:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1448,6 +1448,7 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->palMode = VIDEO_PAL_FAST;
     st.pVideo->scanLinesEnable = 0;
     st.pVideo->colorSaturationEnable = 0;
+
     videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
                 bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
                 0, -1 * zoom * WIDTH * sizeof(DWORD), 0);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-30 01:05:09 $
+** $Date: 2005-01-30 23:17:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1623,7 +1623,7 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         UInt32* pSrc = frame->line[h].buffer;
 
         if (frame->line[h].doubleWidth) {
-            int width = srcWidth / 4 * 2;
+            int width = srcWidth / 4;
             while (width--) {
                 pDst[0] = rgbTable[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
                 pDst[1] = rgbTable[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
@@ -1663,7 +1663,7 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         UInt32* pSrc = frame->line[h].buffer;
 
         if (frame->line[h].doubleWidth) {
-            int width = srcWidth / 4 * 2;
+            int width = srcWidth / 4;
             while (width--) {
                 pDst[0] = rgbTable[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
                 pDst[1] = rgbTable[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];

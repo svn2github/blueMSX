@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-21 01:06:31 $
+** $Date: 2005-01-30 23:17:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -433,7 +433,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     static char filename[512];
     char baseName[128];
     int fileIndex = 0;
-    int prefixLen = 1 + strlen(prefix);
+    int extensionLen = strlen(extension);
     int i;
     int numMod = 1;
     char filenameFormat[32] = "%s\\%s%s_";
@@ -469,9 +469,9 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
 
         filenameLen = strlen(lastfile);
 
-        if (filenameLen > prefixLen + digits) {
-            lastfile[filenameLen- prefixLen] = 0;
-            fileIndex = (atoi(&lastfile[filenameLen- prefixLen - digits]) + 1) % numMod;
+        if (filenameLen > extensionLen + digits) {
+            lastfile[filenameLen - extensionLen] = 0;
+            fileIndex = (atoi(&lastfile[filenameLen - extensionLen - digits]) + 1) % numMod;
         }
     }
 
