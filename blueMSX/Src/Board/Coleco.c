@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-04 07:14:15 $
+** $Date: 2005-01-13 23:13:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -285,8 +285,10 @@ void colecoClearInt(UInt32 irq)
 
 void colecoInitStatistics(Machine* machine)
 {
+    int i;
+
     colecoVramSize = machine->video.vramSize;
-    colecoRamSize = 0x28000;
+    for (i = 0; i < machine->slotInfoCount; i++) {        if (machine->slotInfo[i].romType == RAM_NORMAL) {            colecoRamSize = 0x2000 * machine->slotInfo[i].pageCount;        }    }
 }
 
 static int colecoInitMachine(Machine* machine, 
