@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxPrn.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-24 22:00:31 $
+** $Date: 2005-01-31 20:22:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@ typedef struct {
     int deviceHandle;
     UInt8 prnData;
     UInt8 prnStrobe;
+    int prnReady;
 } RomMapperMsxPrn;
 
 static void saveState(RomMapperMsxPrn* prn)
@@ -68,12 +69,14 @@ static void destroy(RomMapperMsxPrn* prn)
     ioPortUnregister(0x90);
     ioPortUnregister(0x91);
 
+    printerIODestroy();
+
     free(prn);
 }
 
 static UInt8 readIo(RomMapperMsxPrn* prn, UInt16 ioPort) 
 {
-    if (printerIOReady())
+    if (prn->prnReady)
         return 0xfd;
 	    
     return 0xff;
@@ -107,10 +110,12 @@ int romMapperMsxPrnCreate(void)
 
     prn = malloc(sizeof(RomMapperMsxPrn));
 
+    prn->prnReady = printerIOCreate();
+
     prn->deviceHandle = deviceManagerRegister(ROM_MSXPRN, &callbacks, prn);
 
     ioPortRegister(0x90, readIo, writeIo, prn);
-    ioPortRegister(0x91, NULL, writeIo, prn);
+    ioPortRegister(0x91, readIo, writeIo, prn);
 
     reset(prn);
 

@@ -525,6 +525,9 @@
 					RelativePath="..\..\Src\Memory\romMapperMsxMusic.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxPrn.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNational.c">
 				</File>
 				<File
@@ -722,6 +725,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxDos2.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxPrn.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNational.h">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-23 22:04:21 $
+** $Date: 2005-01-31 20:22:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "MsxTypes.h"
 
 void printerIOWrite(UInt8 value);
-int printerIOReady(void);
+int printerIOCreate(void);
+void printerIODestroy(void);
 
 #endif

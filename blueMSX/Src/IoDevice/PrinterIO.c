@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-23 22:03:51 $
+** $Date: 2005-01-31 20:21:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,12 @@ void printerIOWrite(UInt8 value)
     archPrinterWrite(value);
 }
 
-int printerIOReady(void)
+int printerIOCreate(void)
 {
-    return archPrinterReady();
+    return archPrinterCreate();
+}
+
+void printerIODestroy(void)
+{
+    archPrinterDestroy();
 }

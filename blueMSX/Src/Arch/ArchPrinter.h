@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchPrinter.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-23 22:00:17 $
+** $Date: 2005-01-31 20:20:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "MsxTypes.h"
 
 void archPrinterWrite(UInt8 value);
-int archPrinterReady(void);
+int archPrinterCreate(void);
+void archPrinterDestroy(void);
 
 #endif
