@@ -80,22 +80,27 @@ static void write(RomMapperF4device* rm, UInt16 ioPort, UInt8 value)
 		rm->status = value | 0x7f;
 	} 
     else {
-		rm->status = (rm->status & 0x20) | (value & 0x20);
+		rm->status = (rm->status & 0x20) | (value & 0xa0);
 	}
+}
+
+static void reset(RomMapperF4device* rm)
+{
+    rm->status = rm->inverted ? 0xff : 0;
 }
 
 int romMapperF4deviceCreate(int inverted) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperF4device* rm = malloc(sizeof(RomMapperF4device));
 
-    rm->status = inverted ? 0xff : 0;
 
     rm->inverted   = inverted;
     rm->deviceHandle = deviceManagerRegister(inverted ? ROM_F4INVERTED : ROM_F4DEVICE, &callbacks, rm);
 
     ioPortRegister(0xf4, read, write, rm);
 
+    reset(rm);
+
     return 1;
 }
-
