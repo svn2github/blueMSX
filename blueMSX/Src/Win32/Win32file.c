@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-12 03:36:47 $
+** $Date: 2005-02-28 03:56:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ static RomType romTypeList[] = {
     ROM_PLAIN,
     ROM_BASIC,
     ROM_0x4000,
+    ROM_0xC000,
     ROM_KOEI,
     ROM_RTYPE,
     ROM_CROSSBLAIM,

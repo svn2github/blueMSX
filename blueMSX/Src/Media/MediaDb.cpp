@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-11 16:49:43 $
+** $Date: 2005-02-28 03:55:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,58 @@ static MediaDb* diskdb;
 static MediaDb* casdb;
 static RomType  romdbDefaultType = ROM_UNKNOWN;
 
+RomType mediaDbStringToType(const std::string name)
+{
+    // Megaroms
+    if (name == "ASCII16")          return ROM_ASCII16;
+    if (name == "ASCII16SRAM2")     return ROM_ASCII16SRAM;
+    if (name == "ASCII8")           return ROM_ASCII8;
+    if (name == "ASCII8SRAM8")      return ROM_ASCII8SRAM;
+    if (name == "KoeiSRAM8")        return ROM_KOEI;
+    if (name == "KoeiSRAM32")       return ROM_KOEI;
+    if (name == "Konami")           return ROM_KONAMI4;
+    if (name == "KonamiSCC")        return ROM_KONAMI5;
+    if (name == "Halnote")          return ROM_HALNOTE;
+    if (name == "HarryFox")         return ROM_HARRYFOX;
+    if (name == "HolyQuran")        return ROM_HOLYQURAN;
+    if (name == "CrossBlaim")       return ROM_CROSSBLAIM;
+    if (name == "Zemina80in1")      return ROM_KOREAN80;
+    if (name == "Zemina90in1")      return ROM_KOREAN90;
+    if (name == "Zemina126in1")     return ROM_KOREAN126;
+    if (name == "Wizardry")         return ROM_ASCII8;
+    if (name == "GameMaster2")      return ROM_GAMEMASTER2;
+    if (name == "SuperLodeRunner")  return ROM_LODERUNNER;
+    if (name == "R-Type")           return ROM_RTYPE;
+    if (name == "Majutsushi")       return ROM_MAJUTSUSHI;
+    if (name == "Synthesizer")      return ROM_KONAMISYNTH;
+    if (name == "GenericKonami")    return ROM_KONAMI4NF;
+    if (name == "SuperPierrot")     return ROM_ASCII16NF;
+
+    if (name == "0x4000")       return ROM_0x4000;
+    if (name == "0xC000")       return ROM_0xC000;
+    if (name == "auto")         return ROM_PLAIN;
+    if (name == "basic")        return ROM_BASIC;
+    if (name == "Bunsetsu")     return ROM_BUNSETU;
+    if (name == "caspatch")     return ROM_CASPATCH;
+    if (name == "coleco")       return ROM_COLECO;
+    if (name == "cx5m")         return ROM_UNKNOWN;
+    if (name == "FMPAC")        return ROM_FMPAC;
+    if (name == "fMSXPatched")  return ROM_DISKPATCH;
+    if (name == "fsa1fm1")      return ROM_UNKNOWN;
+    if (name == "fsa1fm2")      return ROM_UNKNOWN;
+    if (name == "Jisyo")        return ROM_JISYO;
+    if (name == "kanji")        return ROM_KANJI;
+    if (name == "Kanji12")      return ROM_KANJI12;
+    if (name == "MB8877A")      return ROM_NATIONALFDC;
+    if (name == "SVI738FDC")    return ROM_SVI738FDC;
+    if (name == "TC8566AF")     return ROM_TC8566AF;
+    if (name == "WD2793")       return ROM_PHILIPSFDC;
+    if (name == "Microsol")     return ROM_MICROSOL;
+    if (name == "MoonSound")    return ROM_MOONSOUND;
+
+    return ROM_UNKNOWN;
+}
+
 extern "C" RomType mediaDbOldStringToType(const char* romName)
 {
     string name(romName);
@@ -79,6 +131,7 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "halnote")      return ROM_HALNOTE;
     if (name == "basic")        return ROM_BASIC;
     if (name == "0x4000")       return ROM_0x4000;
+    if (name == "0xC000")       return ROM_0xC000;
     if (name == "konamisynth")  return ROM_KONAMISYNTH;
     if (name == "majutsushi")   return ROM_MAJUTSUSHI;
     if (name == "ascii16")      return ROM_ASCII16;
@@ -130,8 +183,8 @@ extern "C" const char* romTypeToString(RomType romType)
     switch (romType) {    
     case ROM_STANDARD:    return "Standard";
     case ROM_MSXDOS2:     return "MSXDOS 2";
-    case ROM_KONAMI5:     return "Konami 5";
-    case ROM_KONAMI4:     return "Konami 4";
+    case ROM_KONAMI5:     return "Konami SCC";
+    case ROM_KONAMI4:     return "Konami";
     case ROM_ASCII8:      return "ASCII 8";
     case ROM_ASCII16:     return "ASCII 16";
     case ROM_GAMEMASTER2: return "Game Master 2 (SRAM)";
@@ -141,8 +194,9 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_CROSSBLAIM:  return "Cross Blaim";
     case ROM_HARRYFOX:    return "Harry Fox";
     case ROM_MAJUTSUSHI:  return "Konami Majutsushi";
-    case ROM_KOREAN80:    return "Korean 80 in 1";
-    case ROM_KOREAN126:   return "Korean 126 in 1";
+    case ROM_KOREAN80:    return "Zemina 80 in 1";
+    case ROM_KOREAN90:    return "Zemina 90 in 1";
+    case ROM_KOREAN126:   return "Zemina 126 in 1";
     case ROM_SCC:         return "SCC";
     case ROM_SCCPLUS:     return "SCC+";
     case ROM_SNATCHER:    return "The Snatcher";
@@ -150,8 +204,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SCCMIRRORED: return "SCC mirrored";
     case ROM_SCCEXTENDED: return "SCC extended";
     case ROM_FMPAC:       return "FMPAC (SRAM)";
-    case ROM_KONAMI4NF:   return "Konami4 alt.";
-    case ROM_ASCII16NF:   return "ASCII 16 alt.";
+    case ROM_KONAMI4NF:   return "Konami Generic";
+    case ROM_ASCII16NF:   return "Super Pierrot";
     case ROM_PLAIN:       return "Mirrored ROM";
     case ROM_NORMAL:      return "Normal ROM";
     case ROM_DISKPATCH:   return "Normal + Disk Patch";
@@ -185,6 +239,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_HALNOTE:     return "Halnote";
     case ROM_LODERUNNER:  return "Lode Runner";
     case ROM_0x4000:      return "Normal 0x4000";
+    case ROM_0xC000:      return "Normal 0xC000";
     case ROM_KONAMISYNTH: return "Konami Synthesizer";
     case ROM_PAC:         return "PAC (SRAM)";
     case ROM_MEGARAM:     return "MegaRAM";
@@ -201,7 +256,6 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MSXMUSIC:    return "MSX Music";
     case ROM_MSXAUDIO:    return "MSX Audio";
     case ROM_MOONSOUND:   return "Moonsound";
-    case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
     case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
     case ROM_SVI328PRN:   return "SVI-328 Printer";
@@ -221,11 +275,11 @@ extern "C" const char* romTypeToString(RomType romType)
 
 extern "C" const char* romTypeToShortString(RomType romType) 
 {
-    switch (romType) {    
+    switch (romType) {
     case ROM_STANDARD:    return "STANDARD";
     case ROM_MSXDOS2:     return "MSXDOS2";
-    case ROM_KONAMI5:     return "KONAMI5";
-    case ROM_KONAMI4:     return "KONAMI4";
+    case ROM_KONAMI5:     return "KONAMI SCC";
+    case ROM_KONAMI4:     return "KONAMI";
     case ROM_ASCII8:      return "ASCII8";
     case ROM_ASCII16:     return "ASCII16";
     case ROM_GAMEMASTER2: return "GMASTER2";
@@ -234,8 +288,9 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_RTYPE:       return "R-TYPE";
     case ROM_CROSSBLAIM:  return "CROSSBLAIM";
     case ROM_HARRYFOX:    return "HARRYFOX";
-    case ROM_KOREAN80:    return "80IN1";
-    case ROM_KOREAN126:   return "126IN1";
+    case ROM_KOREAN80:    return "ZEM 80IN1";
+    case ROM_KOREAN126:   return "ZEM 126IN1";
+    case ROM_KOREAN90:    return "ZEM 90IN1";
     case ROM_SCC:         return "SCC";
     case ROM_SCCPLUS:     return "SCC+";
     case ROM_SNATCHER:    return "SNATCHER";
@@ -243,8 +298,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SCCMIRRORED: return "SCCMIRRORED";
     case ROM_SCCEXTENDED: return "SCCEXTENDED";
     case ROM_FMPAC:       return "FMPAC";
-    case ROM_KONAMI4NF:   return "KONAMI4ALT";
-    case ROM_ASCII16NF:   return "ASCII16ALT";
+    case ROM_KONAMI4NF:   return "KONAMI GEN";
+    case ROM_ASCII16NF:   return "SUPERPIERR";
     case ROM_PLAIN:       return "MIRRORED";
     case ROM_NORMAL:      return "NORMAL";
     case ROM_DISKPATCH:   return "DISKPATCH";
@@ -278,6 +333,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_HALNOTE:     return "HALNOTE";
     case ROM_LODERUNNER:  return "LODERUNNER";
     case ROM_0x4000:      return "0x4000";
+    case ROM_0xC000:      return "0xC000";
     case ROM_KONAMISYNTH: return "KONSYNTH";
     case ROM_MAJUTSUSHI:  return "MAJUTSUSHI";
     case ROM_PAC:         return "PAC";
@@ -295,7 +351,6 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MSXMUSIC:    return "MSXMUSIC";
     case ROM_MSXAUDIO:    return "MSXAUDIO";
     case ROM_MOONSOUND:   return "MOONSOUND";
-    case ROM_KOREAN90:    return "90IN1";
     case ROM_SVI328:      return "SVI328";
     case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_SVI328PRN:   return "SVI328PRN";
@@ -374,22 +429,22 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
         return;
     }
     
-    for (TiXmlElement* el = root->FirstChildElement(); el != NULL; el = el->NextSiblingElement()) {
-        if (strcmp(el->Value(), elemTag) != 0) {
+    for (TiXmlElement* sw = root->FirstChildElement(); sw != NULL; sw = sw->NextSiblingElement()) {
+        if (strcmp(sw->Value(), "software") != 0) {
             continue;
         }
 
-        RomType romType = ROM_UNKNOWN;
         string  title;
         string  company;
         string  year;
         string  remark;
+        string  system;
         
-        for (TiXmlElement* item = el->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
-            if (strcmp(item->Value(), "romtype") == 0) {
+        for (TiXmlElement* item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
+            if (strcmp(item->Value(), "system") == 0) {
                 TiXmlNode* name = item->FirstChild();
                 if (name != NULL) {
-                    romType = mediaDbOldStringToType(name->Value());
+                    system = name->Value();
                 }
             }
             if (strcmp(item->Value(), "title") == 0) {
@@ -417,23 +472,82 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 }
             }
         }
-        
-        for (TiXmlElement* item = el->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
-            if (strcmp(item->Value(), "crc") == 0) {
-                TiXmlNode* name = item->FirstChild();
-                if (name != NULL) {
-                    UInt32 crc32;
-                    if (sscanf(name->Value(), "%x", &crc32) == 1) {
-                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+
+        for (item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
+            if (strcmp(item->Value(), "dump") != 0) {
+                continue;
+            }
+            for (TiXmlElement* dmp = item->FirstChildElement(); dmp != NULL; dmp = dmp->NextSiblingElement()) {
+                if (strcmp(dmp->Value(), "megarom") == 0) {
+                    RomType romType = ROM_UNKNOWN;
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "type") == 0) {
+                            TiXmlNode* name = it->FirstChild();
+                            if (name != NULL) {
+                                romType = mediaDbStringToType(name->Value());
+                            }
+                        }
+                    }
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "hash") == 0) {
+                            const char* type = it->Attribute("algo");
+                            if (type != NULL) {
+                                if (strcmp(type, "sha1") == 0) {
+                                    TiXmlNode* hash = it->FirstChild();
+                                    string sha1(hash->Value());
+                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+                                }
+                                if (strcmp(type, "crc") == 0) {
+                                    UInt32 crc32;
+                                    TiXmlNode* hash = it->FirstChild();
+                                    if (sscanf(hash->Value(), "%x", &crc32) == 1) {
+                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            if (strcmp(item->Value(), "sha1") == 0) {
-                TiXmlNode* name = item->FirstChild();
-                if (name != NULL) {
-                    string sha1(name->Value());
-                    if (sha1.length() == 40) {
-                        mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+
+                if (strcmp(dmp->Value(), "rom") == 0) {
+                    RomType romType = ROM_PLAIN;
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "size") == 0) {
+                            TiXmlNode* name = it->FirstChild();
+                            if (name != NULL) {
+                                if (strcmp(name->Value(), "0x0000") == 0) {
+                                    romType = ROM_STANDARD;
+                                }
+                                if (strcmp(name->Value(), "0x4000") == 0) {
+                                    romType = ROM_0x4000;
+                                }
+                                if (strcmp(name->Value(), "0x8000") == 0) {
+                                    romType = ROM_BASIC;
+                                }
+                                if (strcmp(name->Value(), "0xC000") == 0) {
+                                    romType = ROM_0xC000;
+                                }
+                            }
+                        }
+                    }
+                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "hash") == 0) {
+                            const char* type = it->Attribute("algo");
+                            if (type != NULL) {
+                                if (strcmp(type, "sha1") == 0) {
+                                    TiXmlNode* hash = it->FirstChild();
+                                    string sha1(hash->Value());
+                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+                                }
+                                if (strcmp(type, "crc") == 0) {
+                                    UInt32 crc32;
+                                    TiXmlNode* hash = it->FirstChild();
+                                    if (sscanf(hash->Value(), "%x", &crc32) == 1) {
+                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -468,7 +582,7 @@ extern "C" void mediaDbCreateRomdb(const char* oldFileName, const char* xmlFileN
     }
 
     mediaDbAddFromOldFile(romdb, oldFileName, FORMAT_ROM);
-    mediaDbAddFromXmlFile(romdb, xmlFileName, "romdb", "rom");
+    mediaDbAddFromXmlFile(romdb, xmlFileName, "softwaredb", "softwaredb");
 }
 
 extern "C" void mediaDbCreateDiskdb(const char* oldFileName, const char* xmlFileName)
@@ -478,7 +592,7 @@ extern "C" void mediaDbCreateDiskdb(const char* oldFileName, const char* xmlFile
     }
 
     mediaDbAddFromOldFile(diskdb, oldFileName, FORMAT_DISK);
-    mediaDbAddFromXmlFile(diskdb, xmlFileName, "diskdb", "disk");
+//    mediaDbAddFromXmlFile(diskdb, xmlFileName, "diskdb", "disk");
 }
 
 extern "C" void mediaDbCreateCasdb(const char* oldFileName, const char* xmlFileName)
@@ -488,7 +602,7 @@ extern "C" void mediaDbCreateCasdb(const char* oldFileName, const char* xmlFileN
     }
 
     mediaDbAddFromOldFile(casdb, oldFileName, FORMAT_CAS);
-    mediaDbAddFromXmlFile(casdb, xmlFileName, "casdb", "cas");
+//    mediaDbAddFromXmlFile(casdb, xmlFileName, "casdb", "cas");
 }
 
 extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size) 

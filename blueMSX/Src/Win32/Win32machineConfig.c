@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-16 09:04:12 $
+** $Date: 2005-02-28 03:56:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -619,6 +619,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_0xC000:
+        editSlotInfo.startPage = 6;
+        editSlotInfo.pageCount = 2;
+        break;
+
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
@@ -880,6 +885,12 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
+    case ROM_0xC000:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0xC000 - 0xFFFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_MSXDOS2:
     case ROM_ASCII8:
     case ROM_ASCII8SRAM:
@@ -990,6 +1001,7 @@ static RomType romTypeList[] = {
     ROM_PLAIN,
     ROM_BASIC,
     ROM_0x4000,
+    ROM_0xC000,
     ROM_MSXDOS2,
     ROM_ASCII8,
     ROM_ASCII8SRAM,

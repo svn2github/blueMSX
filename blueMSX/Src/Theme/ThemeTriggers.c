@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-02-28 03:55:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
         sprintf(text, 
                 "                                 "
                 "Special thanks to: "
+                "Patrick van Arkel,  "
                 "Ricardo Bittencourt,  "
                 "Rudolf Lechleitner,  "
                 "MkII,  "

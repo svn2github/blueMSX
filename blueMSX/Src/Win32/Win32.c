@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2005-02-13 10:21:11 $
+** $Date: 2005-02-28 03:56:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -250,6 +250,7 @@ static RomType romTypeList[] = {
     ROM_PLAIN,
     ROM_BASIC,
     ROM_0x4000,
+    ROM_0xC000,
     ROM_KOEI,
     ROM_RTYPE,
     ROM_CROSSBLAIM,
@@ -2093,7 +2094,7 @@ void setDefaultPath() {
     tapeSetDirectory(buffer, "");
 
     sprintf(buffer, "%s\\romdb.dat", rootDir);
-    sprintf(buffer2, "%s\\romdb.xml", rootDir);
+    sprintf(buffer2, "%s\\softwaredb.xml", rootDir);
     mediaDbCreateRomdb(buffer, buffer2);
 
     sprintf(buffer, "%s\\diskdb.dat", rootDir);

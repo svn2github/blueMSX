@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-11 16:49:43 $
+** $Date: 2005-02-28 03:55:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,6 +214,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         switch (romType) {
         case ROM_0x4000:
+            romMapperNormalCreate(romName, buf, size, slot, sslot, 2);
+            break;
+            
+        case ROM_0xC000:
             romMapperNormalCreate(romName, buf, size, slot, sslot, 2);
             break;
 

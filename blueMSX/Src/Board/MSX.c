@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-02-28 00:53:35 $
+** $Date: 2005-02-28 03:55:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -483,6 +483,10 @@ static int initMachine(Machine* machine,
 
         switch (machine->slotInfo[i].romType) {
         case ROM_0x4000:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_0xC000:
             success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
@@ -1004,6 +1008,7 @@ static int romTypeIsRom(RomType romType) {
     case SRAM_MATSUCHITA: return 1;
     case ROM_BASIC:       return 1;
     case ROM_0x4000:      return 1;
+    case ROM_0xC000:      return 1;
 	case ROM_KONAMISYNTH: return 1;
     }
     return 0;
