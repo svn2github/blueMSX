@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-12 20:18:34 $
+** $Date: 2005-02-13 10:21:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,8 @@ typedef struct DbgDevice   DbgDevice;
 
 typedef void (*DebuggerEvent)();
 
+typedef enum { DBG_STOPPED, DBG_PAUSED, DBG_RUNNING } DbgState;
+
 typedef struct {
     char   name[32];
     UInt32 startAddress;
@@ -71,8 +73,9 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
 
 void debuggerDestroy(Debugger* debugger);
 
-DbgSnapshot*     dbgSnapshotCreate(Debugger* debugger);
+DbgSnapshot*     dbgSnapshotCreate();
 void             dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot);
+DbgState         dbgGetState();
 int              dbgSnapshotGetDeviceCount(DbgSnapshot* dbgSnapshot);
 const DbgDevice* dbgSnapshotGetDevice(DbgSnapshot* dbgSnapshot, int deviceIndex);
 
@@ -89,6 +92,9 @@ const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex
 #define MAX_DBG_COMPONENTS 4
 struct DbgDevice {
     char name[64];
+    int memoryBlockCount;
+    int registerBankCount;
+    int ioPortsCount;
     DbgMemoryBlock*  memoryBlock[MAX_DBG_COMPONENTS];
     DbgRegisterBank* registerBank[MAX_DBG_COMPONENTS];
     DbgIoPorts*      ioPorts[MAX_DBG_COMPONENTS];

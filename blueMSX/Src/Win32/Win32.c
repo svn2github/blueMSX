@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2005-02-12 03:36:47 $
+** $Date: 2005-02-13 10:21:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,7 @@
 
 #include "Win32Sound.h"
 #include "Win32Properties.h"
+#include "Win32ToolLoader.h"
 #include "Win32joystick.h"
 #include "Win32keyboard.h"
 #include "Win32Printer.h"
@@ -2043,6 +2044,9 @@ void setDefaultPath() {
     chdir(buffer);
 
     GetCurrentDirectory(MAX_PATH - 1, st.pCurDir);
+    
+    sprintf(buffer, "%s\\Tools", st.pCurDir);
+    toolLoadAll(buffer);
 
     // Get Root directory
     file = fopen("wrtest", "w");
@@ -2380,6 +2384,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             SetEvent(st.ddrawAckEvent);
         }
     }
+
+    toolUnLoadAll();
 
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     shortcutsDestroyProfile(st.shortcuts);

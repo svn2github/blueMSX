@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-10 07:18:48 $
+** $Date: 2005-02-13 10:21:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "Win32Menu.h"
+#include "Win32ToolLoader.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Resource.h"
@@ -116,7 +117,8 @@
 #define ID_CASSETTE_HISTORY             30200
 #define ID_VIDEO_CONNECTORS             30250
 #define ID_CTRLPORT1_BASE               30300
-#define ID_CTRLPORT2_BASE               30325
+#define ID_CTRLPORT2_BASE               30350
+#define ID_TOOLPLUGINS                  30400
 
 #define ID_RUN_RUN                      40081
 #define ID_RUN_PAUSE                    40082
@@ -767,6 +769,7 @@ static HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts) {
 static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts) {
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
+    int count;
 
     setMenuColor(hMenu);
 
@@ -778,6 +781,19 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts) {
 
     _stprintf(langBuffer, "%s", langMenuToolsKeyboard());
     AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langBuffer);
+
+    count = toolGetCount();
+
+    if (count > 0) {
+        int i;
+
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+        for (i = 0; i < count; i++) {
+            _stprintf(langBuffer, "%s", toolInfoGetName(toolInfoGet(i)));
+            AppendMenu(hMenu, MF_STRING, ID_TOOLPLUGINS + i, langBuffer);
+        }
+    }
     
     return hMenu;
 }
@@ -1211,6 +1227,12 @@ void archShowMenuTools(int x, int y) {
 int menuCommand(Properties* pProperties, int command) 
 {
     int i;
+
+    i = command - ID_TOOLPLUGINS;
+    if (i >= 0 && i < 50) {
+        toolInfoShowTool(toolInfoGet(i));
+    }
+
     
     i = command - ID_VIDEO_CONNECTORS;
     if (i >= 0 && i < 16) {

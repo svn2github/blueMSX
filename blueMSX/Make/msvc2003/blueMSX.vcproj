@@ -252,6 +252,9 @@
 					RelativePath="..\..\Src\Win32\Win32Timer.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32ToolLoader.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32Uart.c">
 				</File>
 				<File
@@ -264,6 +267,9 @@
 			<Filter
 				Name="Include"
 				Filter="">
+				<File
+					RelativePath="..\..\Src\Win32\BlueMSXToolInterface.h">
+				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Common.h">
 				</File>
@@ -314,6 +320,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32ThemeClassic.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32ToolLoader.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Uart.h">

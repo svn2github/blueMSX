@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-12 20:18:34 $
+** $Date: 2005-02-13 10:21:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -149,6 +149,7 @@ DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
     memcpy(mem->memory, memory, size);
 
     dbgDevice->memoryBlock[i] = mem;
+    dbgDevice->memoryBlockCount = i + 1;
 
     return mem;
 }
@@ -175,6 +176,7 @@ DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
     regBank->count = registerCount;
 
     dbgDevice->registerBank[i] = regBank;
+    dbgDevice->registerBankCount = i + 1;
 
     return regBank;
 }
@@ -209,6 +211,7 @@ DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
     ioPorts->count = ioPortsCount;
 
     dbgDevice->ioPorts[i] = ioPorts;
+    dbgDevice->ioPortsCount = i + 1;
 
     return ioPorts;
 }

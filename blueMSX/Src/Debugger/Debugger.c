@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-12 20:18:34 $
+** $Date: 2005-02-13 10:21:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,8 +47,6 @@ struct DbgSnapshot {
     int count;
     DbgDevice* dbgDevice[MAX_DEVICES];
 };
-
-typedef enum { DBG_STOPPED, DBG_RUNNING, DBG_PAUSED } DbgState;
 
 static Debugger* debuggerList[MAX_DEBUGGERS];
 static DbgState  dbgState = DBG_STOPPED;
@@ -148,7 +146,7 @@ void debuggerNotifyEmulatorResume()
     }
 }
 
-DbgSnapshot* dbgSnapshotCreate(Debugger* debugger) 
+DbgSnapshot* dbgSnapshotCreate() 
 {
     DbgSnapshot* dbgSnapshot;
     
@@ -185,5 +183,62 @@ void dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot)
         free(dbgDevice);
     }
     free(dbgSnapshot);
+}
+
+DbgState dbgGetState()
+{
+    return dbgState;
+}
+
+int dbgSnapshotGetDeviceCount(DbgSnapshot* dbgSnapshot)
+{
+    return dbgSnapshot->count;
+}
+
+const DbgDevice* dbgSnapshotGetDevice(DbgSnapshot* dbgSnapshot, int index)
+{
+    if (index >= dbgSnapshot->count) {
+        return NULL;
+    }
+    return dbgSnapshot->dbgDevice[index];
+}
+
+int dbgDeviceGetMemoryBlockCount(DbgDevice* dbgDevice)
+{
+    return dbgDevice->memoryBlockCount;
+}
+
+const DbgMemoryBlock* dbgDeviceGetMemoryBlock(DbgDevice* dbgDevice, int index)
+{
+    if (index >= dbgDevice->memoryBlockCount) {
+        return NULL;
+    }
+    return dbgDevice->memoryBlock[index];
+}
+
+int dbgDeviceGetRegisterBankCount(DbgDevice* dbgDevice)
+{
+    return dbgDevice->registerBankCount;
+}
+
+const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int index)
+{
+    if (index >= dbgDevice->registerBankCount) {
+        return NULL;
+    }
+    return dbgDevice->registerBank[index];
+}
+
+int dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice)
+{
+    return dbgDevice->ioPortsCount;
+}
+
+const DbgIoPorts* dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int index)
+{
+    if (index >= dbgDevice->ioPortsCount) {
+        return NULL;
+    }
+    return dbgDevice->ioPorts[index];
 }
 

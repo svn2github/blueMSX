@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:        msxTypes.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.h,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.1 $
 **
-** Description: Type definitions
+** $Date: 2005-02-13 10:21:12 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
@@ -27,56 +27,22 @@
 **
 ******************************************************************************
 */
-#ifndef BLUEMSX_TYPES
-#define BLUEMSX_TYPES
+#ifndef WIN32_TOOL_LOADER_H
+#define WIN32_TOOL_LOADER_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <windows.h>
 
+typedef struct ToolInfo ToolInfo;
 
-#ifdef __GNUC__
-#define __int64 long long
-#endif
+void toolLoadAll(const char* path);
+void toolUnLoadAll();
 
-/* So far, only support for MSVC types
- */
-typedef unsigned char    UInt8;
-typedef unsigned short   UInt16;
-typedef unsigned long    UInt32;
-typedef unsigned __int64 UInt64;
-typedef signed   char    Int8;
-typedef signed   short   Int16;
-typedef signed   long    Int32;
+int toolGetCount();
 
+ToolInfo* toolInfoGet(int index);
 
-// Debug replacement for malloc and free to easier find memory leaks.
-#if 1
+const char* toolInfoGetName(ToolInfo* toolInfo);
 
-#define malloc dbgMalloc
-#define calloc dbgCalloc
-#define free   dbgFree
-
-#include <stdlib.h>
-
-void* dbgMalloc(size_t size);
-void* dbgCalloc(size_t size, size_t count);
-void dbgFree(void* ptr);
-void dbgEnable();
-void dbgDisable();
-void dbgPrint();
-
-#else
-
-#define dbgEnable()
-#define dbgDisable()
-#define dbgPrint()
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
+void toolInfoShowTool(ToolInfo* toolInfo);
 
 #endif
