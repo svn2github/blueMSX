@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-15 03:06:51 $
+** $Date: 2005-01-15 23:55:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,11 +59,9 @@ void keyboardStartConfig();
 void keyboardCancelConfig();
 int  keyboardConfigIsModified();
 void keybardEnableEdit(int enable);
-int keyboardIsKeySelected(int msxKeyCode);
-int keyboardIsKeyConfigured(int msxKeyCode);
+int archKeyboardIsKeySelected(int msxKeyCode);
+int archKeyboardIsKeyConfigured(int msxKeyCode);
 void keyboardSetSelectedKey(int msxKeyCode);
-char* getSelectedKey();
-char* getMappedKey();
 
 void keyboardEnable(int enable);
 void keyboardUpdate();

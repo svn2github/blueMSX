@@ -1008,6 +1008,9 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Resources\Resource.h">
 			</File>
+			<File
+				RelativePath="..\..\Src\BuildInfo\version.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="TinyXML"
@@ -1231,6 +1234,9 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Theme\ThemeLoader.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Theme\ThemeTriggers.c">
 			</File>
 			<File
 				RelativePath="..\..\Src\Theme\ThemeTriggers.h">

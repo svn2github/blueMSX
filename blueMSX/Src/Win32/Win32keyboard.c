@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-15 05:40:43 $
+** $Date: 2005-01-15 23:55:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -885,7 +885,7 @@ void inputInit()
     fclose(file);
 }
 
-char* getSelectedKey()
+char* archGetSelectedKey()
 {
     if (selectedKey != 0) {
         char* keyCode = (char*)keyboardKeyCodeToString(selectedKey);
@@ -896,7 +896,7 @@ char* getSelectedKey()
     return "";
 }
 
-char* getMappedKey()
+char* archGetMappedKey()
 {
     if (selectedKey != 0) {
         return dik2str(selectedDikKey);
@@ -917,12 +917,12 @@ void keyboardSetSelectedKey(int msxKeyCode)
     }
 }
 
-int keyboardIsKeySelected(int msxKeyCode)
+int archKeyboardIsKeySelected(int msxKeyCode)
 {
     return editEnabled && (msxKeyCode == selectedKey);
 }
 
-int keyboardIsKeyConfigured(int msxKeyCode)
+int archKeyboardIsKeyConfigured(int msxKeyCode)
 {
     int i;
 

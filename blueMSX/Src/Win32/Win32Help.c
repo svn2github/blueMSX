@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-22 21:13:45 $
+** $Date: 2005-01-15 23:55:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,73 +32,9 @@
 #include "Language.h"
 #include "build_number.h"
 #include "Resource.h"
+#include "version.h"
 #include <stdio.h>
  
-
-void createAboutInfo(char* buffer, int length, unsigned int clk)
-{
-    static char text[4096];
-    static int  len = 0;
-
-    if (len == 0) {
-        sprintf(text, 
-                "                                 "
-                "Special thanks to: "
-                "Ricardo Bittencourt,  "
-                "Rudolf Lechleitner,  "
-                "MkII,  "
-                "Shimanuki Koshi,  "
-                "Roger Filipe,  "
-                "Kobayashi Michiko,  "
-                "Ulver,  "
-                "Nicolas Beyaert,  "
-                "SLotman,  "
-                "Laurent Halter,  "
-                "Fabio Albergaria Dias,  "
-                "Glafouk,  "
-                "Martijn van Tienen,  "
-                "Víctor Fernández Sánchez,  "
-                "William Ouwehand,  "
-                "Miikka \"MP83\" Poikela,  "
-                "Davide Platania a.k.a. Kruznak,  "
-                "Wouter Vermaelen,  "
-                "Manuel Bilderbeek,  "
-                "Maarten ter Huurne,  "
-                "Jussi Pitkänen,  "
-                "Tobias Keizer,  "
-                "Hondarer,  "
-                "Atarulum,  "
-                "Sandy Pleyte,  "
-                "Amer Dugmag,  "
-                "Alex Wulms,  "
-                "BouKiCHi,  "
-                "Marat Fayzullin,  "
-                "Jarek Burczynski,  "
-                "R. Belmont,  "
-                "O. Galibert,  "
-                "Tatsuyuki Satoh,  "
-                "Gilles Vollant"
-                "......          ......"
-                "and YOU !!!!"
-                "                                     ");
-
-        len = strlen(text);
-    }
-
-    {
-#define SHOW_VERSION_TIME 100
-        int pos = clk % (len + SHOW_VERSION_TIME - length);
-        if (pos < SHOW_VERSION_TIME) {
-            sprintf(buffer, "version %s  build %d", BLUE_MSX_VERSION, BUILD_NUMBER);
-        }
-        else {
-            strncpy(buffer, text + pos - SHOW_VERSION_TIME, length);
-        }
-    }
-    buffer[length] = 0;
-}
-
-
 static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-13 06:16:01 $
+** $Date: 2005-01-15 23:55:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -742,11 +742,23 @@ void propSave(Properties* pProperties)
     }
 }
 
+static Properties* globalProperties = NULL;
+
+Properties* propGetGlobalProperties()
+{
+    return globalProperties;
+}
+
 Properties* propCreate(int useDefault) 
 {
     Properties* pProperties;
 
     pProperties = malloc(sizeof(Properties));
+
+    if (globalProperties == NULL) {
+        globalProperties = pProperties;
+    }
+
     pProperties->joy1.id = 1;
     pProperties->joy2.id = 2;
     propInitDefaults(pProperties);

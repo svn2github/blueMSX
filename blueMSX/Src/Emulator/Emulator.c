@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-05 05:48:10 $
+** $Date: 2005-01-15 23:55:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,7 +203,7 @@ void timerCallback(void* timer) {
             refreshRate = boardGetRefreshRate();
 
             if (!emuUseSynchronousUpdate()) {
-                archUpdateEmuDisplay(0, lastScreenMode, lastEvenOdd, lastInterlace);
+                archUpdateEmuDisplay(0, lastEvenOdd, lastInterlace);
             }
         }
     }
@@ -474,8 +474,14 @@ void emulatorResume() {
     if (emuState == EMU_SUSPENDED) {
         archSoundResume();
         emuState = EMU_RUNNING;
-        archUpdateEmuDisplay(0, lastScreenMode, lastEvenOdd, lastInterlace);
+        archUpdateEmuDisplay(0, lastEvenOdd, lastInterlace);
     }
+}
+
+
+int emulatorGetCurrentScreenMode()
+{
+    return lastScreenMode;
 }
 
 void emulatorRestart() {
@@ -541,7 +547,7 @@ void RefreshScreen(int screenMode, int evenOdd, int interlace) {
     if (emuUseSynchronousUpdate()) {
         emuFrameskipCounter--;
         if (emuFrameskipCounter < 0) {
-            archUpdateEmuDisplay(1, screenMode, evenOdd, interlace);
+            archUpdateEmuDisplay(1, evenOdd, interlace);
             emuFrameskipCounter = properties->video.frameSkip;
         }
     }

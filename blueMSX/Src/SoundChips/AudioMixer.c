@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-06 07:04:37 $
+** $Date: 2005-01-15 23:55:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -291,9 +291,18 @@ static void updateVolumes(Mixer* mixer)
     }
 }
 
+static Mixer* globalMixer = NULL;
+
+Mixer* mixerGetGlobalMixer()
+{
+    return globalMixer;
+}
+
 Mixer* mixerCreate()
 {
     Mixer* mixer = (Mixer*)calloc(1, sizeof(Mixer));
+
+    if (globalMixer == NULL) globalMixer = mixer;
 
     return mixer;
 }
@@ -301,6 +310,7 @@ Mixer* mixerCreate()
 void mixerDestroy(Mixer* mixer)
 {
     mixerStopLog(mixer);
+    globalMixer = NULL;
     free(mixer);
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-22 21:13:46 $
+** $Date: 2005-01-15 23:55:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,10 +33,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#define BLUE_MSX_VERSION "2.1"
-
 void helpShowAbout(HWND hwnd);
-void createAboutInfo(char* buffer, int length, unsigned int clk);
 
 
 #endif

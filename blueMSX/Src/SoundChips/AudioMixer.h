@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-01-15 23:55:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,8 @@ typedef Int32 (*MixerWriteCallback)(void*, Int16*, UInt32);
 /* Constructor and destructor */
 Mixer* mixerCreate();
 void mixerDestroy(Mixer* mixer);
+
+Mixer* mixerGetGlobalMixer();
 
 Int32 mixerGetMasterVolume(Mixer* mixer, int leftRight);
 void mixerSetMasterVolume(Mixer* mixer, Int32 volume);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-13 06:16:01 $
+** $Date: 2005-01-15 23:55:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -245,5 +245,7 @@ typedef struct {
 Properties* propCreate(int useDefault);
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
+
+Properties* propGetGlobalProperties();
 
 #endif
