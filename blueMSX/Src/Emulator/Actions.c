@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-02-06 08:32:37 $
+** $Date: 2005-02-12 10:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "AudioMixer.h"
 #include "Board.h"
 #include "Casette.h"
+#include "Debugger.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
@@ -304,9 +305,11 @@ void actionEmuTogglePause() {
         emulatorStart(NULL);
     }
     else if (emulatorGetState() == EMU_PAUSED) {
+        debuggerNotifyEmulatorResume();
         emulatorSetState(EMU_RUNNING);
     }
-    else {
+    else {  
+        debuggerNotifyEmulatorPause();
         emulatorSetState(EMU_PAUSED);
     }
     archUpdateMenu(0);

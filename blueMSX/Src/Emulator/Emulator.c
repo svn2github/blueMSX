@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-10 01:41:05 $
+** $Date: 2005-02-12 10:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "Emulator.h"
 #include "MsxTypes.h"
+#include "Debugger.h"
 #include "Board.h"
 #include "FileHistory.h"
 #include "Switches.h"
@@ -396,6 +397,8 @@ void emulatorStart(char* stateName) {
         boardSetMoonsoundOversampling(properties->sound.chip.moonsoundOversampling);
 
         strcpy(properties->emulation.machineName, machine->name);
+
+        debuggerNotifyEmulatorStart();
     }
 } 
 
@@ -403,6 +406,8 @@ void emulatorStop() {
     if (emuState == EMU_STOPPED) {
         return;
     }
+
+    debuggerNotifyEmulatorStop();
 
     emuState = EMU_STOPPED;
 

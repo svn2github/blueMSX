@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-12 09:30:07 $
+** $Date: 2005-02-12 10:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,7 +83,7 @@ int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
 const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
 
 
-// Internal structure
+// Internal structure and interface
 
 struct DbgDevice {
     char name[64];
@@ -93,5 +93,9 @@ struct DbgDevice {
     int              deviceHandle;
 };
 
+void debuggerNotifyEmulatorStart();
+void debuggerNotifyEmulatorStop();
+void debuggerNotifyEmulatorPause();
+void debuggerNotifyEmulatorResume();
 
 #endif /*DEBUGGER_H*/

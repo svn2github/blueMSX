@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-12 09:30:07 $
+** $Date: 2005-02-12 10:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,11 +39,14 @@ struct Debugger {
 };
 
 #define MAX_DEVICES 64
+#define MAX_DEBUGGERS 64
 
 struct DbgSnapshot {
     int count;
     DbgDevice* dbgDevice[MAX_DEVICES];
 };
+
+static Debugger* debuggerList[MAX_DEBUGGERS];
 
 static void onDefault() {
 }
@@ -54,11 +57,19 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorResume)
 {
     Debugger* debugger = malloc(sizeof(Debugger));
+    int i;
 
     debugger->onEmulatorStart  = onEmulatorStart  ? onEmulatorStart  : onDefault;
     debugger->onEmulatorStop   = onEmulatorStop   ? onEmulatorStop   : onDefault;
     debugger->onEmulatorPause  = onEmulatorPause  ? onEmulatorPause  : onDefault;
     debugger->onEmulatorResume = onEmulatorResume ? onEmulatorResume : onDefault;
+
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] == NULL) {
+            debuggerList[i] = debugger;
+            break;
+        }
+    }
 
     return debugger;
 }
@@ -66,8 +77,58 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
 
 void debuggerDestroy(Debugger* debugger)
 {
+    int i;
+
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] == debugger) {
+            debuggerList[i] = NULL;
+            break;
+        }
+    }
+
     free(debugger);
 }
+
+void debuggerNotifyEmulatorStart()
+{
+    int i;
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onEmulatorStart();
+        }
+    }
+}
+
+void debuggerNotifyEmulatorStop()
+{
+    int i;
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onEmulatorStop();
+        }
+    }
+}
+
+void debuggerNotifyEmulatorPause()
+{
+    int i;
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onEmulatorPause();
+        }
+    }
+}
+
+void debuggerNotifyEmulatorResume()
+{
+    int i;
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onEmulatorResume();
+        }
+    }
+}
+
 
 DbgSnapshot* dbgSnapshotCreate(Debugger* debugger) 
 {
