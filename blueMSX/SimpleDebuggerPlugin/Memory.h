@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include "ToolInterface.h"
+#include "EditControls.h"
 
 class Memory {
 public:
@@ -98,6 +99,8 @@ private:
 
     MemList memList;
     MemoryItem* currentMemory;
+
+    HexInputDialog* hexInput;
 };
 
 #endif //MEMORY_H

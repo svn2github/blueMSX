@@ -171,6 +171,12 @@
 			RelativePath=".\Disassembly.h">
 		</File>
 		<File
+			RelativePath=".\EditControls.cpp">
+		</File>
+		<File
+			RelativePath=".\EditControls.h">
+		</File>
+		<File
 			RelativePath=".\Memory.cpp">
 		</File>
 		<File

@@ -27,8 +27,6 @@
 #include "Resource.h"
 #include <stdio.h>
 #include <string>
-#include <CommCtrl.h>
-#include <RichEdit.h>
 
 
 static Memory* memory = NULL;
@@ -81,8 +79,7 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-      SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_SETEVENTMASK, 0, 
-                         SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETEVENTMASK, 0, 0) | ENM_KEYEVENTS); 
+        hexInput = new HexInputDialog(hwnd, 300,3,75,22,6);
         return FALSE;
 
     case WM_COMMAND:
@@ -100,50 +97,12 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         }
         return TRUE;
 
-   case WM_NOTIFY:  
-        switch (LOWORD(wParam)) { 
-        case IDC_ADDRESS: 
-            {
-                MSGFILTER *keyfilter = (MSGFILTER *)lParam; 
-                int keyCode;
-                switch(keyfilter->nmhdr.code) { 
-                case EN_MSGFILTER: 
-                    switch(keyfilter->msg) { 
-                    case WM_CHAR: 
-                        GETTEXTLENGTHEX tl = {GTL_DEFAULT, CP_ACP};
-                        int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTLENGTHEX, (WPARAM)&tl, 0);
-                        if (len == E_INVALIDARG) {
-                            len = 0;
-                        }
-                        keyCode = keyfilter->wParam;
-                        if (len < 6) {
-                            if ((keyCode >= '0' && keyCode <= '9') ||
-                                (keyCode >= 'a' && keyCode <= 'f') ||
-                                (keyCode >= 'A' && keyCode <= 'F'))
-                            {
-                                if (keyCode >= 'a' && keyCode <= 'f') {
-                                    keyfilter->wParam -= 'a' - 'A';
-                                }
-                                SetWindowLong(hwnd, DWL_MSGRESULT, 0);
-                                return TRUE;
-                            }
-                        }
-                        if (keyCode == '\r' || keyCode == '\n') {
-                            GETTEXTEX t = {15, GT_DEFAULT, CP_ACP, NULL, NULL};
-                            char text[16];
-                            int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
-                            text[len] = 0;
-                            int addr = 0;
-                            sscanf(text, "%X", &addr);
-                            showAddress(addr);
-                        }
+    case WM_CLOSE:
+        delete hexInput;
+        return FALSE;
 
-                        SetWindowLong(hwnd, DWL_MSGRESULT, 1);
-                        return TRUE;
-                    }
-                }
-            }
-        }
+    case HexInputDialog::WM_NEWVALUE:
+        showAddress(wParam);
         return FALSE;
     }
     return FALSE;
@@ -253,71 +212,10 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
-static void ShowError() {
-    LPVOID lpMsgBuf;
-    if (!FormatMessage( 
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-        FORMAT_MESSAGE_FROM_SYSTEM | 
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        GetLastError(),
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-        (LPTSTR) &lpMsgBuf,
-        0,
-        NULL ))
-    {
-        // Handle the error.
-        return;
-    }
-
-    // Process any inserts in lpMsgBuf.
-    // ...
-
-    // Display the string.
-    MessageBox( NULL, (LPCTSTR)lpMsgBuf, "Error", MB_OK | MB_ICONINFORMATION );
-
-    // Free the buffer.
-    LocalFree( lpMsgBuf );
-}
-
-static int  richeditVersion = 0;
-
-static void initRichEditControlDll()
-{
-    static bool richeditinitialized = false;
-    if (richeditinitialized) {
-        InitCommonControls();
-        return;
-    }
-
-    std::string richeditLibrary;
-
-    OSVERSIONINFO osInfo;
-    memset( &osInfo, 0, sizeof(OSVERSIONINFO) );
-    osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
-    if ( GetVersionEx( &osInfo ) ) {
-        if ( osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
-            richeditLibrary = "RICHED20.Dll";
-            richeditVersion = 2;
-        }
-        else if ( osInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS ) { //Windows 9.x
-            richeditLibrary = "RICHED32.DLL";
-            richeditVersion = 1;
-        }
-    }       
-
-    if  (NULL == LoadLibrary(richeditLibrary.c_str())) {
-        richeditVersion = 0;
-    }
-}        
-
 
 Memory::Memory(HINSTANCE hInstance, HWND owner) : 
     lineCount(0), currentAddress(0), currentMemory(NULL)
 {
-    initRichEditControlDll();
-
     memory = this;
 
     static WNDCLASSEX wndClass;
@@ -352,19 +250,7 @@ Memory::Memory(HINSTANCE hInstance, HWND owner) :
                              WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD, 
                              CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, hwnd, NULL, hInstance, NULL);
 
-    switch (richeditVersion) {
-    default:
-        toolHwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_MEMORYTOOLBAR), hwnd, wndToolProc);
-        break;
-    case 1:
-        toolHwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_MEMORYTOOLBAR1), hwnd, wndToolProc);
-        break;
-    case 2:
-        toolHwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_MEMORYTOOLBAR2), hwnd, wndToolProc);
-        break;
-    }
-
-    if (toolHwnd == NULL) ShowError();
+    toolHwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_MEMORYTOOLBAR), hwnd, wndToolProc);
 
     ShowWindow(memHwnd, TRUE);
     ShowWindow(toolHwnd, TRUE);

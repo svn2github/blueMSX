@@ -1,6 +1,7 @@
 #define IDD_MEMORYTOOLBAR         100
-#define IDD_MEMORYTOOLBAR1        101
-#define IDD_MEMORYTOOLBAR2        102
+
+#define IDD_RICHEDITCTRL1         201
+#define IDD_RICHEDITCTRL2         202
 
 #define IDB_TOOLBAR              1004
 #define IDB_TOOLBARBG            1005
