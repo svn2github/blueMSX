@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-09 09:40:14 $
+** $Date: 2005-01-14 01:22:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,7 +174,7 @@ static char* romTypeToString(RomType romType) {
     case ROM_HALNOTE:     return "Halnote";
     case ROM_LODERUNNER:  return "Lode Runner";
     case ROM_0x4000:      return "Normal 0x4000";
-	case ROM_KONAMISYNTH: return "Konami Synthesizer";
+    case ROM_KONAMISYNTH: return "Konami Synthesizer";
     case ROM_PAC:         return "PAC (SRAM)";
     case ROM_MEGARAM:     return "MegaRAM";
     case ROM_MEGARAM128:  return "128kB MegaRAM";
@@ -192,6 +192,7 @@ static char* romTypeToString(RomType romType) {
     case ROM_MOONSOUND:   return "Moonsound";
     case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
+    case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
     case ROM_COLECO:      return "Coleco Cartridge";
     case ROM_SONYHBI55:   return "Sony HBI-55";
     case ROM_MSXAUDIODEV: return "MSX Audio Chip";
@@ -261,8 +262,8 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_HALNOTE:     return "HALNOTE";
     case ROM_LODERUNNER:  return "LODERUNNER";
     case ROM_0x4000:      return "0x4000";
-	case ROM_KONAMISYNTH: return "KONSYNTH";
-	case ROM_MAJUTSUSHI:  return "MAJUTSUSHI";
+    case ROM_KONAMISYNTH: return "KONSYNTH";
+    case ROM_MAJUTSUSHI:  return "MAJUTSUSHI";
     case ROM_PAC:         return "PAC";
     case ROM_MEGARAM:     return "MEGARAM";
     case ROM_MEGARAM128:  return "MEGARAM128";
@@ -280,6 +281,7 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_MOONSOUND:   return "MOONSOUND";
     case ROM_KOREAN90:    return "90IN1";
     case ROM_SVI328:      return "SVI328";
+    case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_COLECO:      return "COLECO";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-02 08:22:09 $
+** $Date: 2005-01-14 01:22:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,6 +171,7 @@ int readMachine(Machine* machine, char* machineName, char* file)
                                 machine->slotInfo[i].romType == ROM_MICROSOL    ||
                                 machine->slotInfo[i].romType == ROM_NATIONALFDC ||
                                 machine->slotInfo[i].romType == ROM_PHILIPSFDC  ||
+                                machine->slotInfo[i].romType == ROM_SVI328FDC   ||
                                 machine->slotInfo[i].romType == ROM_SVI738FDC;
         arg = extractToken(slotBuf, 5);
         strcpy(machine->slotInfo[i].name, arg ? arg : "");
@@ -435,6 +436,7 @@ void machineUpdate(Machine* machine)
                                 machine->slotInfo[i].romType == ROM_MICROSOL      ||
                                 machine->slotInfo[i].romType == ROM_NATIONALFDC   ||
                                 machine->slotInfo[i].romType == ROM_PHILIPSFDC    ||
+                                machine->slotInfo[i].romType == ROM_SVI328FDC     ||
                                 machine->slotInfo[i].romType == ROM_SVI738FDC;
     }
 

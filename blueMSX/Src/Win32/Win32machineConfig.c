@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-10 22:31:09 $
+** $Date: 2005-01-14 01:23:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -161,8 +161,16 @@ static void setSubSlotsEnable(HWND hDlg, int nEnable) {
         machine->slot[3].subslotted = 0;
         setCartSlotDropdown(hDlg, 0, IDC_CONF_SLOTCART1);
         setCartSlotDropdown(hDlg, 1, IDC_CONF_SLOTCART2);
-        SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
-        SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
+        switch (machine->board.type) {
+        case BOARD_SVI:
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 1, 0);
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
+            break;
+        case BOARD_COLECO:
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
+            break;
+        }
     }
     EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED1), nEnable);
     EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED2), nEnable);
@@ -452,7 +460,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_MOONSOUND ||
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
-        editSlotInfo.romType == ROM_TURBORPCM) {
+        editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC) {
         return;
     }
 
@@ -556,6 +564,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
     case ROM_TURBORTIMER:
+    case ROM_SVI328FDC:
         strcpy(editSlotInfo.name, "");
         editSlotInfo.slot      = 0;
         editSlotInfo.subslot   = 0;
@@ -657,7 +666,7 @@ static void setEditControls(HWND hDlg)
     if (romType != RAM_NORMAL && romType != RAM_MAPPER && romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_TURBORTIMER && 
-        romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM) 
+        romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC) 
     {
         if (romSize == 0) {
             sprintf(buffer, "Unknown");
@@ -678,7 +687,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
         romType == ROM_MOONSOUND ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
-        romType == ROM_KANJI12 || romType == ROM_JISYO) 
+        romType == ROM_KANJI12 || romType == ROM_JISYO || romType == ROM_SVI328FDC) 
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMSLOT), "Unmapped");
@@ -917,6 +926,7 @@ static void setEditControls(HWND hDlg)
     case ROM_TURBORTIMER:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
+    case ROM_SVI328FDC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
         EnableWindow(GetDlgItem(hDlg, IDC_ROMBROWSE), FALSE);
@@ -941,6 +951,7 @@ static RomType romTypeList[] = {
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
     ROM_SVI738FDC,
+    ROM_SVI328FDC,
     ROM_KANJI,
     ROM_KANJI12,
     SRAM_MATSUCHITA,
@@ -973,7 +984,7 @@ static RomType romTypeList[] = {
     ROM_HARRYFOX,
     ROM_LODERUNNER,
     ROM_HALNOTE,
-	ROM_KONAMISYNTH,
+    ROM_KONAMISYNTH,
     ROM_MAJUTSUSHI,
     ROM_KOREAN80,
     ROM_KOREAN90,

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-10 13:09:59 $
+** $Date: 2005-01-14 01:22:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,15 @@
 #include "Casette.h"
 #include "Disk.h"
 #include "IoPort.h"
+#include "MegaromCartridge.h"
+#include "SlotManager.h"
+#include "ramNormal.h"
 #include "RomLoader.h"
+#include "romMapperNormal.h"
+#include "romMapperBasic.h"
+#include "romMapperCasette.h"
+#include "romMapperStandard.h"
+#include "romMapperPlain.h"
 #include "svi328Fdc.h"
 
 /* Hardware */
@@ -69,6 +77,8 @@ static UInt32          sviRamSize;
 static UInt32          sviVramSize;
 static int             useRom;
 static int             traceEnabled;
+
+static UInt8*          sviRam;
 
 typedef enum { BANK_02=0, BANK_12=1, BANK_22=2, BANK_32=3 } sviBanksHigh;
 typedef enum { BANK_01=0, BANK_11=1, BANK_21=2, BANK_31=3 } sviBanksLow;
@@ -307,8 +317,16 @@ void sviClearInt(UInt32 irq)
 
 void sviInitStatistics(Machine* machine)
 {
+    int i;
+
     sviVramSize = machine->video.vramSize;
-    sviRamSize = 0x28000;
+//    sviRamSize = 0x28000;
+
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        if (machine->slotInfo[i].romType == RAM_NORMAL) {
+            sviRamSize = 0x2000 * machine->slotInfo[i].pageCount;
+        }
+    }
 }
 
 static int sviInitMachine(Machine* machine, 
@@ -318,12 +336,110 @@ static int sviInitMachine(Machine* machine,
     UInt8* buf;
     int success = 1;
     int size;
+    int i;
+
+    sviRam = NULL;
 
     /* Initialize VDP */
     sviVramSize = machine->video.vramSize;
     vdpInit(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     /* Initialize memory */
+    for (i = 0; i < 4; i++) {        slotSetSubslotted(i, 0);    }
+    for (i = 0; i < 2; i++) {        cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);    }
+
+    /* Initialize RAM */
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        int slot;
+        int subslot;
+        int startPage;
+        char* romName;
+        
+        // Don't map slots with error
+        if (machine->slotInfo[i].error) {
+            continue;
+        }
+
+        romName   = strlen(machine->slotInfo[i].inZipName) ? machine->slotInfo[i].inZipName : machine->slotInfo[i].name;
+        slot      = machine->slotInfo[i].slot;
+        subslot   = machine->slotInfo[i].subslot;
+        startPage = machine->slotInfo[i].startPage;
+        size      = 0x2000 * machine->slotInfo[i].pageCount;
+
+        if (machine->slotInfo[i].romType == RAM_NORMAL) {
+            success &= ramNormalCreate(size, slot, subslot, startPage, &sviRam, &sviRamSize);
+            continue;
+        }
+        if (machine->slotInfo[i].romType == ROM_SVI328FDC) {
+            success &= svi328FdcCreate();
+            continue;
+        }
+    }
+
+    if (sviRam == NULL) {
+        return 0;
+    }
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        int slot;
+        int subslot;
+        int startPage;
+        char* romName;
+        
+        // Don't map slots with error
+        if (machine->slotInfo[i].error) {
+            continue;
+        }
+
+        romName   = strlen(machine->slotInfo[i].inZipName) ? machine->slotInfo[i].inZipName : machine->slotInfo[i].name;
+        slot      = machine->slotInfo[i].slot;
+        subslot   = machine->slotInfo[i].subslot;
+        startPage = machine->slotInfo[i].startPage;
+        size      = 0x2000 * machine->slotInfo[i].pageCount;
+        
+        if (machine->slotInfo[i].romType == RAM_NORMAL) {
+            continue;
+        }
+        
+        buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
+
+        if (buf == NULL) {
+            success = 0;
+            continue;
+        }
+
+        switch (machine->slotInfo[i].romType) {
+        case ROM_0x4000:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_BASIC:
+            success &= romMapperBasicCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_PLAIN:
+            success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_STANDARD:
+            success &= romMapperStandardCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_NORMAL:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_CASPATCH:
+            success &= romMapperCasetteCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+        }
+        free(buf);
+    }
+
+    for (i = 0; i < 8; i++) {
+        slotMapRamPage(0, 0, i);
+    }
+
+/*
     sviMemReset();
     sviMemSetBank(0xDF);
 
@@ -337,14 +453,14 @@ static int sviInitMachine(Machine* machine,
     }
     else
         success = 0;
-
+*/
     ledSetCapslock(0);
 
     /* Patch BASIC ROM for cassette usage */
     sviPatchROM();
 
     /* Initialize FDC */
-    svi328FdcCreate();
+//    svi328FdcCreate();
 
     return success;
 }
@@ -361,7 +477,8 @@ void sviReset()
 
     vdpReset();
     
-    sviMemSetBank(0xDF);
+ //   sviMemSetBank(0xDF);
+    slotManagerReset();
 
     ledSetCapslock(0);
 
@@ -428,8 +545,10 @@ int sviRun(Machine* machine,
     deviceManagerCreate();
     boardInit(0);
     ioPortReset();
+//    ramMapperIoCreate();
 
-    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+//    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -441,6 +560,7 @@ int sviRun(Machine* machine,
     joyIO = joystickIoCreateSVI();
     
     sviPPICreate(joyIO);
+    slotManagerCreate();
 
     success = sviInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
 
@@ -505,6 +625,8 @@ int sviRun(Machine* machine,
     sviChangeCassette(0, 0);
 
     vdpDestroy();
+    
+    slotManagerDestroy();
 
     deviceManagerDestroy();
 

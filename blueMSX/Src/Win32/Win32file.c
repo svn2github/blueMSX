@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-02 08:22:13 $
+** $Date: 2005-01-14 01:23:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,7 @@ static RomType romTypeList[] = {
     ROM_HARRYFOX,
     ROM_LODERUNNER,
     ROM_HALNOTE,
-	ROM_KONAMISYNTH,
+    ROM_KONAMISYNTH,
     ROM_MAJUTSUSHI,
     ROM_SCC,
     ROM_SCCPLUS,
