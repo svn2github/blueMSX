@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-25 22:18:03 $
+** $Date: 2005-02-26 08:02:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,7 +110,7 @@ static void getDebugInfo(RamMapper* rm, DbgDevice* dbgDevice)
 
 static int dbgWriteMemory(RamMapper* rm, char* name, void* data, int start, int size)
 {
-    if (strcmp(name, "RAM") || start + size > rm->size) {
+    if (strcmp(name, "Mapped") || start + size > rm->size) {
         return 0;
     }
 

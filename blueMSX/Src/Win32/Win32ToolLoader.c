@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-25 20:01:31 $
+** $Date: 2005-02-26 08:02:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,19 +170,19 @@ void __stdcall toolClearBreakpoint(UInt16 address)
     dbgClearBreakpoint(address);
 }
 
-void __stdcall toolWriteMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size)
+int __stdcall toolWriteMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size)
 {
-    dbgDeviceWriteMemory((DbgMemoryBlock*)memoryBlock, data, startAddr, size);
+    return dbgDeviceWriteMemory((DbgMemoryBlock*)memoryBlock, data, startAddr, size);
 }
 
-void __stdcall toolWriteRegister(RegisterBank* regBank, int regIndex, UInt32 value)
+int __stdcall toolWriteRegister(RegisterBank* regBank, int regIndex, UInt32 value)
 {
-    dbgDeviceWriteRegister((DbgRegisterBank*)regBank, regIndex, value);
+    return dbgDeviceWriteRegister((DbgRegisterBank*)regBank, regIndex, value);
 }
 
-void __stdcall toolDeviceWriteIoPort(IoPorts* ioPorts, int portIndex, UInt32 value)
+int __stdcall toolDeviceWriteIoPort(IoPorts* ioPorts, int portIndex, UInt32 value)
 {
-    dbgDeviceWriteIoPort((DbgIoPorts*)ioPorts, portIndex, value);
+    return dbgDeviceWriteIoPort((DbgIoPorts*)ioPorts, portIndex, value);
 }
 
 static Interface toolInterface = {

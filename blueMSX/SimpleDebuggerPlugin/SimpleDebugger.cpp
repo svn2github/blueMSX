@@ -143,20 +143,20 @@ static void updateWindowMenu()
 
     HMENU hMenuDebug = CreatePopupMenu();
     if (state == EMULATOR_STOPPED) {
-        AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, "Start");
+        AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, "Start\tF5");
     }
     else {
-        AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, "Continue");
-        AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, "Break All");
-        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Stop Debugging");
-        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Restart");
+        AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, "Continue\tF5");
+        AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, "Break All\tCtrl+Alt+Break");
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Stop Debugging\tShift+F5");
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Restart\tCtrl+Shift+F5");
     }
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into");
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor");
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into\tF10");
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint");
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint");
-    AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint");
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
+    AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint\tCtrl+Shift+F9");
 
     HMENU hMenuWindow = CreatePopupMenu();
     AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_DISASSEMBLY, "Disassembly");
@@ -313,7 +313,55 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 {
     switch (iMsg) {
     case WM_CREATE:
+        RegisterHotKey(hwnd, 1, 0, VK_F5);
+        RegisterHotKey(hwnd, 2, MOD_CONTROL | MOD_ALT, VK_CANCEL);
+        RegisterHotKey(hwnd, 3, MOD_SHIFT, VK_F5);
+        RegisterHotKey(hwnd, 4, MOD_CONTROL | MOD_SHIFT, VK_F5);
+        RegisterHotKey(hwnd, 5, 0, VK_F10);
+        RegisterHotKey(hwnd, 6, MOD_SHIFT, VK_F10);
+        RegisterHotKey(hwnd, 7, 0, VK_F9);
+        RegisterHotKey(hwnd, 8, MOD_SHIFT, VK_F9);
+        RegisterHotKey(hwnd, 9, MOD_CONTROL | MOD_SHIFT, VK_F9);
         return 0;
+
+    case WM_HOTKEY:
+        switch (wParam) {
+        case 1:
+            SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_CONTINUE, 0);
+            break;
+        case 2:
+            if (GetEmulatorState() == EMULATOR_RUNNING)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BREAKALL, 0);
+            break;
+        case 3:
+            if (GetEmulatorState() != EMULATOR_STOPPED)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STOP, 0);
+            break;
+        case 4:
+            if (GetEmulatorState() == EMULATOR_PAUSED)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RESTART, 0);
+            break;
+        case 5:
+            if (GetEmulatorState() == EMULATOR_PAUSED)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP, 0);
+            break;
+        case 6:
+            if (GetEmulatorState() == EMULATOR_PAUSED && cursorPresent)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RUNTO, 0);
+            break;
+        case 7:
+            if (GetEmulatorState() != EMULATOR_STOPPED && cursorPresent)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPTOGGLE, 0);
+            break;
+        case 8:
+            if (GetEmulatorState() != EMULATOR_STOPPED && cursorhasBp)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
+            break;
+        case 9:
+            if (debuggerHasBp)
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
+            break;
+        }
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
@@ -429,6 +477,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_CLOSE:
+        disassembly->clearAllBreakpoints();
         dbgHwnd = NULL;
         delete statusBar;
         statusBar = NULL;
@@ -469,6 +518,9 @@ void OnCreateTool() {
 }
 
 void OnDestroyTool() {
+    if (dbgHwnd != NULL) {
+        CloseWindow(dbgHwnd);
+    }
 }
 
 void OnShowTool() {

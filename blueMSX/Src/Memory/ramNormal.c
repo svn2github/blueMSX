@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-02-26 08:02:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,7 +91,7 @@ static void getDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
 
 static int dbgWriteMemory(RamNormal* rm, char* name, void* data, int start, int size)
 {
-    if (strcmp(name, "RAM") || start + size > rm->pages * 0x2000) {
+    if (strcmp(name, "Normal") || start + size > rm->pages * 0x2000) {
         return 0;
     }
 
