@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-29 00:10:53 $
+** $Date: 2005-02-08 00:48:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -387,7 +387,7 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
         ay8910->daVolume += 2 * (ay8910->ctrlVolume - ay8910->daVolume) / 3;
         
         /* Store calclulated sample value */
-        ay8910->buffer[index] = 10 * ay8910->daVolume;
+        ay8910->buffer[index] = 9 * ay8910->daVolume;
     }
 
     return ay8910->buffer;

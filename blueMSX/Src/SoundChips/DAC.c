@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/DAC.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-02-08 00:48:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,7 +122,7 @@ static Int32* dacSync(DAC* dac, UInt32 count)
 
         /* Perform simple 1 pole low pass IIR filtering */
         dac->daVolume += 2 * (dac->ctrlVolume - dac->daVolume) / 3;
-        dac->buffer[index] = 6 * dac->daVolume;
+        dac->buffer[index] = 6 * 9 * dac->daVolume / 10;
     }
 
     dac->enabled = dac->buffer[count - 1] != 0;

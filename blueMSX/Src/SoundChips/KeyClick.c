@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/KeyClick.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-02-08 00:48:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,7 +103,7 @@ static Int32* audioKeyClickSync(void* ref, UInt32 count)
 
         /* Perform simple 1 pole low pass IIR filtering */
         keyClick->daVolume += 2 * (keyClick->ctrlVolume - keyClick->daVolume) / 3;
-        keyClick->buffer[index] = 8 * keyClick->daVolume;
+        keyClick->buffer[index] = 7 * keyClick->daVolume;
     }
 
     return keyClick->buffer;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-16 19:34:03 $
+** $Date: 2005-02-08 00:48:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -133,7 +133,7 @@ YM_2413* ym2413Create(Mixer* mixer)
     ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
 
     ym2413->ym2413.setSampleRate(SAMPLERATE, boardGetYm2413Oversampling());
-	ym2413->ym2413.setVolume(32767);
+	ym2413->ym2413.setVolume(32767 * 9 / 10);
 
     return ym2413;
 }

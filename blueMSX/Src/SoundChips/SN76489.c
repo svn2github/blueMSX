@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-05 06:38:58 $
+** $Date: 2005-02-08 00:48:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -303,7 +303,7 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
         sn76489->daVolume += 2 * (sn76489->ctrlVolume - sn76489->daVolume) / 3;
         
         /* Store calclulated sample value */
-        sn76489->buffer[index] = 10 * sn76489->daVolume;
+        sn76489->buffer[index] = 9 * sn76489->daVolume;
     }
 
     return sn76489->buffer;

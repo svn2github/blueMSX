@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-07 01:03:39 $
+** $Date: 2005-02-08 00:48:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -304,11 +304,11 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
 
     moonsound->ymf262 = new YMF262(0, systemTime, moonsound);
     moonsound->ymf262->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
-	moonsound->ymf262->setVolume(32767);
+	moonsound->ymf262->setVolume(32767 * 9 / 10);
 
     moonsound->ymf278 = new YMF278(0, sramSize, romData, romSize, systemTime);
     moonsound->ymf278->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
-    moonsound->ymf278->setVolume(32767);
+    moonsound->ymf278->setVolume(32767 * 9 / 10);
 
     return moonsound;
 }

@@ -1034,7 +1034,7 @@ int	Y8950UpdateOne(FM_OPL *OPL)
 	if(	!DELTAT->flag )
 		OPL->status	&= 0xfe;
 	/* return result */
-	return data	/ (1 << (OPL_OUTSB - 3));
+	return (data / (1 << (OPL_OUTSB - 3))) * 9 / 10;
 }
 
 /* ---------- reset	one	of chip	---------- */
