@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-11 00:11:58 $
+** $Date: 2004-12-21 22:38:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,7 +69,9 @@ struct Moonsound {
 Moonsound* theMoonsound = NULL;
 static volatile int initialized = 0;
 
-extern "C" static void destroy(void* rm) {
+extern "C" {
+
+static void destroy(void* rm) {
     Moonsound* moonsound = (Moonsound*)rm;
 
     initialized = 0;
@@ -91,7 +93,7 @@ extern "C" static void destroy(void* rm) {
     theMoonsound = NULL;
 }
 
-extern "C" static void saveState(void* rm)
+static void saveState(void* rm)
 {
     Moonsound* moonsound = (Moonsound*)rm;
 
@@ -112,7 +114,7 @@ extern "C" static void saveState(void* rm)
     moonsound->ymf278->saveState();
 }
 
-extern "C" static void loadState(void* rm)
+static void loadState(void* rm)
 {
     Moonsound* moonsound = (Moonsound*)rm;
 
@@ -133,7 +135,7 @@ extern "C" static void loadState(void* rm)
     moonsound->ymf278->loadState();
 }
 
-extern "C" static void reset(void* rm)
+static void reset(void* rm)
 {
     Moonsound* moonsound = (Moonsound*)rm;
 
@@ -145,7 +147,7 @@ extern "C" static void reset(void* rm)
     moonsound->ymf278->reset(systemTime);
 }
 
-extern "C" static Int32* sync(void* ref, UInt32 count) 
+static Int32* sync(void* ref, UInt32 count) 
 {
     Moonsound* moonsound = (Moonsound*)ref;
     int* genBuf1 = NULL;
@@ -167,6 +169,8 @@ extern "C" static Int32* sync(void* ref, UInt32 count)
     }
 
     return moonsound->buffer;
+}
+
 }
 
 void moonsoundTimerSet(int timer, int count)

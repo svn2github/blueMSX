@@ -44,46 +44,57 @@ OUTPUT_OBJS = $(addprefix $(OUTPUT_DIR)/, $(OBJS))
 # Include paths
 #
 INCLUDE = 
+INCLUDE += -I$(ROOT_DIR)/Src/Arch
 INCLUDE += -I$(ROOT_DIR)/Src/Bios
+INCLUDE += -I$(ROOT_DIR)/Src/Board
 INCLUDE += -I$(ROOT_DIR)/Src/BuildInfo
 INCLUDE += -I$(ROOT_DIR)/Src/Common
+INCLUDE += -I$(ROOT_DIR)/Src/Emulator
 INCLUDE += -I$(ROOT_DIR)/Src/IoDevice
 INCLUDE += -I$(ROOT_DIR)/Src/Language
 INCLUDE += -I$(ROOT_DIR)/Src/Memory
 INCLUDE += -I$(ROOT_DIR)/Src/Resources
 INCLUDE += -I$(ROOT_DIR)/Src/SoundChips
+INCLUDE += -I$(ROOT_DIR)/Src/Theme
+INCLUDE += -I$(ROOT_DIR)/Src/TinyXML
 INCLUDE += -I$(ROOT_DIR)/Src/Unzip
+INCLUDE += -I$(ROOT_DIR)/Src/Utils
 INCLUDE += -I$(ROOT_DIR)/Src/VideoChips
 INCLUDE += -I$(ROOT_DIR)/Src/VideoRender
 INCLUDE += -I$(ROOT_DIR)/Src/Win32
 INCLUDE += -I$(ROOT_DIR)/Src/Z80
-INCLUDE += -I$(ROOT_DIR)/Src/TinyXML
 
+vpath % $(ROOT_DIR)/Src/Arch
 vpath % $(ROOT_DIR)/Src/Bios
+vpath % $(ROOT_DIR)/Src/Board
 vpath % $(ROOT_DIR)/Src/BuildInfo
 vpath % $(ROOT_DIR)/Src/Common
+vpath % $(ROOT_DIR)/Src/Emulator
 vpath % $(ROOT_DIR)/Src/IoDevice
 vpath % $(ROOT_DIR)/Src/Language
 vpath % $(ROOT_DIR)/Src/Memory
 vpath % $(ROOT_DIR)/Src/Resources
 vpath % $(ROOT_DIR)/Src/SoundChips
+vpath % $(ROOT_DIR)/Src/Theme
+vpath % $(ROOT_DIR)/Src/TinyXML
 vpath % $(ROOT_DIR)/Src/Unzip
+vpath % $(ROOT_DIR)/Src/Utils
 vpath % $(ROOT_DIR)/Src/VideoChips
 vpath % $(ROOT_DIR)/Src/VideoRender
 vpath % $(ROOT_DIR)/Src/Win32
 vpath % $(ROOT_DIR)/Src/Z80
-vpath % $(ROOT_DIR)/Src/TinyXML
 
 #
 # Source files
 #
 SOURCE_FILES  =
 SOURCE_FILES += Win32.c 
+SOURCE_FILES += Win32Bitmap.c 
+SOURCE_FILES += Win32dir.cpp 
 SOURCE_FILES += Win32directX.c 
 SOURCE_FILES += Win32directXSound.c 
+SOURCE_FILES += Win32Event.c 
 SOURCE_FILES += Win32file.c 
-SOURCE_FILES += Win32dir.cpp 
-SOURCE_FILES += Win32FileHistory.c 
 SOURCE_FILES += Win32Help.c 
 SOURCE_FILES += Win32joystick.c 
 SOURCE_FILES += Win32keyboard.c 
@@ -92,38 +103,16 @@ SOURCE_FILES += Win32Menu.c
 SOURCE_FILES += Win32MouseEmu.c 
 SOURCE_FILES += Win32properties.c 
 SOURCE_FILES += Win32ScreenShot.c 
+SOURCE_FILES += Win32ShortcutsConfig.c 
 SOURCE_FILES += Win32snd.c 
+SOURCE_FILES += Win32ThemeClassic.c 
+SOURCE_FILES += Win32Thread.c 
 SOURCE_FILES += Win32Timer.c 
 SOURCE_FILES += Win32wmmSound.c 
-SOURCE_FILES += Win32ShortcutsConfig.c 
-SOURCE_FILES += Win32Theme.c 
-SOURCE_FILES += Win32Controls.c 
-SOURCE_FILES += Win32ThemeClassic.c 
-SOURCE_FILES += Win32ThemeLoader.cpp 
-
-SOURCE_FILES += tinystr.cpp 
-SOURCE_FILES += tinyxml.cpp 
-SOURCE_FILES += tinyxmlerror.cpp 
-SOURCE_FILES += tinyxmlparser.cpp 
 
 SOURCE_FILES += Patch.c 
 
 SOURCE_FILES += ziphelper.c 
-
-SOURCE_FILES += Machine.c 
-SOURCE_FILES += Board.c 
-SOURCE_FILES += MSX.c 
-SOURCE_FILES += SVI.c 
-
-SOURCE_FILES += SaveState.c 
-
-SOURCE_FILES += IoPort.c
-SOURCE_FILES += MegaromCartridge.c
-SOURCE_FILES += SlotManager.c
-SOURCE_FILES += DeviceManager.c
-SOURCE_FILES += I8255.c
-
-SOURCE_FILES += sramLoader.c
 
 SOURCE_FILES += ramMapper.c
 SOURCE_FILES += ramMapperIo.c
@@ -179,19 +168,7 @@ SOURCE_FILES += romMapperCasette.c
 SOURCE_FILES += romMapperS1990.c
 SOURCE_FILES += sramMapperMatsuchita.c
 SOURCE_FILES += sramMapperS1985.c
-
-SOURCE_FILES += AY8910.c
-SOURCE_FILES += Fmopl.c 
-SOURCE_FILES += KeyClick.c 
-SOURCE_FILES += Moonsound.c 
-SOURCE_FILES += OpenMsxYM2413.cpp 
-SOURCE_FILES += OpenMsxYMF262.cpp 
-SOURCE_FILES += OpenMsxYMF278.cpp 
-SOURCE_FILES += SCC.c 
-SOURCE_FILES += Dac.c 
-SOURCE_FILES += Y8950.c 
-SOURCE_FILES += YM2413.cpp 
-SOURCE_FILES += Ymdeltat.c 
+SOURCE_FILES += sramLoader.c
 
 SOURCE_FILES += VDP.c 
 SOURCE_FILES += V9938.c 
@@ -203,20 +180,67 @@ SOURCE_FILES += R800.c
 SOURCE_FILES += R800Dasm.c 
 SOURCE_FILES += R800SaveState.c 
 
-SOURCE_FILES += Led.c 
-SOURCE_FILES += Switches.c 
 SOURCE_FILES += Casette.c 
+SOURCE_FILES += DirAsDisk.c 
 SOURCE_FILES += Disk.c 
+SOURCE_FILES += JoystickIo.c 
+SOURCE_FILES += Led.c 
+SOURCE_FILES += RTC.c 
 SOURCE_FILES += Svi328Fdc.c 
+SOURCE_FILES += Switches.c 
 SOURCE_FILES += TC8566AF.c 
 SOURCE_FILES += WD2793.c 
-SOURCE_FILES += WDCRC.c 
-SOURCE_FILES += DirAsDisk.c 
-SOURCE_FILES += JoystickIo.c 
-SOURCE_FILES += RTC.c 
-SOURCE_FILES += AudioMixer.c
+SOURCE_FILES += WDCRC.c
 
 SOURCE_FILES += Language.c
+
+SOURCE_FILES += tinystr.cpp 
+SOURCE_FILES += tinyxml.cpp 
+SOURCE_FILES += tinyxmlerror.cpp 
+SOURCE_FILES += tinyxmlparser.cpp 
+ 
+SOURCE_FILES += AudioMixer.c
+SOURCE_FILES += AY8910.c
+SOURCE_FILES += Dac.c 
+SOURCE_FILES += Fmopl.c 
+SOURCE_FILES += KeyClick.c 
+SOURCE_FILES += Moonsound.c 
+SOURCE_FILES += OpenMsxYM2413.cpp 
+SOURCE_FILES += OpenMsxYMF262.cpp 
+SOURCE_FILES += OpenMsxYMF278.cpp 
+SOURCE_FILES += SCC.c 
+SOURCE_FILES += Y8950.c 
+SOURCE_FILES += YM2413.cpp 
+SOURCE_FILES += Ymdeltat.c 
+SOURCE_FILES += SN76489.c 
+
+SOURCE_FILES += Actions.c 
+SOURCE_FILES += CommandLine.c 
+SOURCE_FILES += Emulator.c 
+SOURCE_FILES += FileHistory.c 
+SOURCE_FILES += LaunchFile.c 
+SOURCE_FILES += Properties.c 
+
+SOURCE_FILES += IsFileExtension.c 
+SOURCE_FILES += SaveState.c 
+SOURCE_FILES += StrcmpNoCase.c 
+SOURCE_FILES += TokenExtract.c 
+
+SOURCE_FILES += Theme.c 
+SOURCE_FILES += ThemeControls.c 
+SOURCE_FILES += ThemeLoader.c 
+
+SOURCE_FILES += IoPort.c
+SOURCE_FILES += MegaromCartridge.c
+SOURCE_FILES += SlotManager.c
+SOURCE_FILES += DeviceManager.c
+SOURCE_FILES += I8255.c
+
+SOURCE_FILES += Board.c 
+SOURCE_FILES += Machine.c 
+SOURCE_FILES += MSX.c 
+SOURCE_FILES += SVI.c 
+SOURCE_FILES += Coleco.c 
 
 SOURCE_FILES += blueMSX.rc
 

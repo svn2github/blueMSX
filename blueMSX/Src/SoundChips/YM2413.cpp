@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-21 22:38:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,7 +59,9 @@ struct YM_2413 {
 
 static YM_2413* theYm2413 = NULL;
 
-extern "C" static void destroy(void* ref) {
+extern "C" {
+    
+static void destroy(void* ref) {
     YM_2413* ym2413 = (YM_2413*)ref;
 
     theYm2413 = NULL;
@@ -73,7 +75,7 @@ extern "C" static void destroy(void* ref) {
     delete ym2413;
 }
 
-extern "C" static void saveState(void* ref)
+static void saveState(void* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     SaveState* state = saveStateOpenForWrite("msxmusic");
@@ -85,7 +87,7 @@ extern "C" static void saveState(void* ref)
     ym2413->ym2413.saveState();
 }
 
-extern "C" static void loadState(void* ref)
+static void loadState(void* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     SaveState* state = saveStateOpenForRead("msxmusic");
@@ -97,7 +99,7 @@ extern "C" static void loadState(void* ref)
     ym2413->ym2413.loadState();
 }
 
-extern "C" static void reset(void* ref)
+static void reset(void* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
 
@@ -105,12 +107,12 @@ extern "C" static void reset(void* ref)
 }
 
 
-extern "C" void ym2413WriteAddress(YM_2413* ym2413, UInt16 ioPort, UInt8 address)
+void ym2413WriteAddress(YM_2413* ym2413, UInt16 ioPort, UInt8 address)
 {
     ym2413->address = address;
 }
 
-extern "C" void ym2413WriteData(YM_2413* ym2413, UInt16 ioPort, UInt8 data)
+void ym2413WriteData(YM_2413* ym2413, UInt16 ioPort, UInt8 data)
 {
     UInt32 systemTime = boardSystemTime();
     mixerSync(ym2413->mixer);
@@ -118,7 +120,7 @@ extern "C" void ym2413WriteData(YM_2413* ym2413, UInt16 ioPort, UInt8 data)
     ym2413->ym2413.writeReg(ym2413->address, data, systemTime);
 }
 
-extern "C" static Int32* sync(void* ref, UInt32 count) 
+static Int32* sync(void* ref, UInt32 count) 
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     int* genBuf;
@@ -137,7 +139,7 @@ extern "C" static Int32* sync(void* ref, UInt32 count)
     return ym2413->buffer;
 }
 
-extern "C" void ym2413SetOversampling(int Oversampling)
+void ym2413SetOversampling(int Oversampling)
 {
     if (theYm2413 && Oversampling > 0) {
         theYm2413->Oversampling = Oversampling;
@@ -146,7 +148,7 @@ extern "C" void ym2413SetOversampling(int Oversampling)
     }
 }
 
-extern "C" int ym2413Create(Mixer* mixer)
+int ym2413Create(Mixer* mixer)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     YM_2413* ym2413 = new YM_2413;
@@ -166,4 +168,6 @@ extern "C" int ym2413Create(Mixer* mixer)
     ioPortRegister(0x7d, NULL, (IoPortWrite)ym2413WriteData,    ym2413);
 
     return 1;
+}
+
 }

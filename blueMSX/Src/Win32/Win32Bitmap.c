@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Bitmap.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-21 22:38:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,8 +30,6 @@
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include <windows.h>
-
-typedef struct ArchText ArchText;
 
 struct ArchText {
     HFONT hFont;
