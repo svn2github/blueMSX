@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-16 08:02:35 $
+** $Date: 2004-12-16 08:57:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,8 +201,6 @@ static void diskUpdateInfo(int driveId)
     sides[driveId]           = 2;
     changed[driveId]         = 1;
 
-    // FIXME: This check is already done in diskCheckSize.
-    //        Is it needed here as well?
     if (fileSize[driveId] / 512 == 1440) {
         return;
     }
@@ -215,7 +213,7 @@ static void diskUpdateInfo(int driveId)
     if ((buf[0] == 0xe9) || (buf[0] ==0xeb)) {
 	    sectorsPerTrack[driveId] = buf[0x18] + 256 * buf[0x19];
 	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];
-#if 1
+#if 0
         if (memcmp(&buf[3], "ASC 2.2", 7)) {
             sectorsPerTrack[driveId] = 9;
             sides[driveId]           = 1;
@@ -236,8 +234,23 @@ static void diskUpdateInfo(int driveId)
     if (sectorsPerTrack[driveId] == 0  || sides[driveId] == 0 || 
         sectorsPerTrack[driveId] > 255 || sides[driveId] > 2) 
     {
-        sectorsPerTrack[driveId] = 9;
-        sides[driveId]           = 2;
+    	switch (fileSize[driveId]) {
+        case 327680:  /* 80 tracks, 1 side, 8 sectors/track */
+	        sectorsPerTrack[driveId] = 8;
+	        sides[driveId] = 1;
+            break;
+        case 368640:  /* 80 tracks, 1 side, 9 sectors/track */
+	        sectorsPerTrack[driveId] = 9;
+	        sides[driveId] = 1;
+            break;
+        case 655360:  /* 80 tracks, 2 side, 8 sectors/track */
+	        sectorsPerTrack[driveId] = 8;
+	        sides[driveId] = 2;
+            break;
+        default:
+            sectorsPerTrack[driveId] = 9;
+            sides[driveId]           = 2;
+        }
     }
 }
 
@@ -326,34 +339,8 @@ static int diskCheckSize(int driveId, int dskImageSize)
         }
 	}
     else {
-    	switch (dskImageSize) {
-#if 0
-        // FIXME: This does not work on some existing disk images, for 
-        //        example the mania disks which are 360kB big but formatted 
-        //        as two sided. However the check for 720kB is needed
-        //        since some copy protection sets the sides to one even
-        //        though the disk has two sides
-        case 327680:  /* 80 tracks, 1 side, 8 sectors/track */
-	        sectorsPerTrack[driveId] = 8;
-	        sides[driveId] = 1;
-            return 1;
-        case 368640:  /* 80 tracks, 1 side, 9 sectors/track */
-	        sectorsPerTrack[driveId] = 9;
-	        sides[driveId] = 1;
-            return 1;
-        case 655360:  /* 80 tracks, 2 side, 8 sectors/track */
-	        sectorsPerTrack[driveId] = 8;
-	        sides[driveId] = 2;
-            return 1;
-#endif
-        case 737280:  /* 80 tracks, 2 side, 9 sectors/track */
-	        sectorsPerTrack[driveId] = 9;
-	        sides[driveId] = 2;
-            return 1;
-        default:
-                diskUpdateInfo(driveId);
-            return 1;
-        }
+        diskUpdateInfo(driveId);
+        return 1;
     }
 }
 
