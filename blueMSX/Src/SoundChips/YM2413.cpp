@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2005-01-06 07:04:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -95,7 +95,7 @@ void ym2413Reset(YM_2413* ref)
 
 void ym2413WriteAddress(YM_2413* ym2413, UInt8 address)
 {
-    ym2413->address = address;
+    ym2413->address = address & 0x3f;
 }
 
 void ym2413WriteData(YM_2413* ym2413, UInt8 data)

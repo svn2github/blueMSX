@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-05 02:59:27 $
+** $Date: 2005-01-06 07:04:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,6 +146,11 @@ static void reset(RomMapperFMPAC* rm)
     if (rm->ym2413 != NULL) {
         ym2413Reset(rm->ym2413);
     }
+
+    rm->romData[0x3ff6] = 0;
+    rm->romData[0x7ff6] = 0;
+    rm->romData[0xbff6] = 0;
+    rm->romData[0xfff6] = 0;
 }
 
 static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value) 
@@ -174,10 +179,14 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
         update = 1;
         break;
 	case 0x3ff4:
-        ioPortWrite(NULL, 0x7c, value);
+        if (rm->ym2413 != NULL) {
+            ym2413WriteAddress(rm->ym2413, value);
+        }
 		break;
 	case 0x3ff5:
-        ioPortWrite(NULL, 0x7d, value);
+        if (rm->ym2413 != NULL) {
+            ym2413WriteData(rm->ym2413, value);
+        }
 		break;
 	case 0x3ff6:
         rm->romData[0x3ff6] = value & 0x11;

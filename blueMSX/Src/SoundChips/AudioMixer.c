@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-01-06 07:04:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,7 +266,7 @@ static void recalculateChannelVolume(Mixer* mixer, MixerChannel* channel)
 static void updateVolumes(Mixer* mixer) 
 {
     int i;
-    int diff = archGetSystemUpTime(100) - mixer->oldTick;
+    int diff = archGetSystemUpTime(50) - mixer->oldTick;
 
     if (diff) {
         int newVol = mixer->volIntLeft - diff;
