@@ -1113,10 +1113,12 @@ void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
         break;
 	case 0x0d: 
         vdpCmd->ARG = value; 
-        vdpCmd->vramRead  = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 4) & 1];
-        vdpCmd->vramWrite = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 5) & 1];
-        vdpCmd->maskRead  = vdpCmd->vramMask[(value >> 4) & 1];
-        vdpCmd->maskWrite = vdpCmd->vramMask[(value >> 5) & 1];
+        if ((vdpCmd->ARG ^ value) & 0x30) {
+            vdpCmd->vramRead  = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 4) & 1];
+            vdpCmd->vramWrite = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 5) & 1];
+            vdpCmd->maskRead  = vdpCmd->vramMask[(value >> 4) & 1];
+            vdpCmd->maskWrite = vdpCmd->vramMask[(value >> 5) & 1];
+        }
         break;
 	case 0x0e: 
 		vdpCmd->LO = value & 0x0F;
