@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-20 09:39:59 $
+** $Date: 2005-01-20 16:21:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,33 +35,31 @@
 #include <memory.h>
 
 /*
-     AR Address Register
-     R0 Horizontal Total (Character)                        SVI Default: 107
-     R1 Horizontal Displayed (Character)                    SVI Default: 80
-     R2 Horizontal Sync Position (Character)                SVI Default: 88
-     R3 Sync Width (Vertical-Raster, Horizontal-Character)  SVI Default:  8
-     R4 Vertical Total (Line)                               SVI Default: 38
-     R5 Vertical Total Adjust (Raster)                      SVI Default: 5
-     R6 Vertical Displayed (Line)                           SVI Default: 24
-     R7 Vertical Sync Position (Line)                       SVI Default: 30
-     R8 Interlace and Skew                                   SVI Default: 0
-     R9 Maximum Raster Address (Raster)                     SVI Default: 7
-     R10 Cursor Start Raster (Raster)
-     R11 Cursor End Raster (Raster)
-     R12 Start Address (H)
-     R13 Start Address (L)
-     R14 Cursor (H)
-     R15 Cursor (L)
-     R16 Light Pen (H)
-     R17 Light Pen (L)
+    AR Address Register
+    R0 Horizontal Total (Character)                       SVI Default: 107
+    R1 Horizontal Displayed (Character)                   SVI Default: 80
+    R2 Horizontal Sync Position (Character)               SVI Default: 88
+    R3 Sync Width (Vertical-Raster, Horizontal-Character) SVI Default:  8
+    R4 Vertical Total (Line)                              SVI Default: 38
+    R5 Vertical Total Adjust (Raster)                     SVI Default: 5
+    R6 Vertical Displayed (Line)                          SVI Default: 24
+    R7 Vertical Sync Position (Line)                      SVI Default: 30
+    R8 Interlace and Skew                                 SVI Default: 0
+    R9 Maximum Raster Address (Raster)                    SVI Default: 7
+    R10 Cursor Start Raster (Raster)
+    R11 Cursor End Raster (Raster)
+    R12 Start Address (H)
+    R13 Start Address (L)
+    R14 Cursor (H)
+    R15 Cursor (L)
+    R16 Light Pen (H)
+    R17 Light Pen (L)
 */
-
 
 #define CHAR_WIDTH           7
 #define MAX_CHARS_PER_LINE  84
 #define DISPLAY_WIDTH       (CHAR_WIDTH * MAX_CHARS_PER_LINE) // NOTE: DISPLAY_WIDTH should *never* exceed 640 !!
 #define DISPLAY_HEIGHT      240
-
 
 extern UInt32 videoGetColor(int R, int G, int B); // FIXME: Do something nicer
 
@@ -114,12 +112,13 @@ static FrameBufferData* crtcFrameBufferData = NULL;
 #define REFRESH_PERIOD (boardFrequency() / 50) // 50Hz frame refresh
 static BoardTimer* crtcTimerDisplay;
 
-static void crtcRenderVideoBuffer(void) {
-    FrameBuffer* crtcFrameBuffer = frameBufferFlipDrawFrame(); // Call once per frame
-    int Nr  = crtc.registers.reg[CRTC_R9] + 1; // Number of rasters per character
+static void crtcRenderVideoBuffer(void)
+{
     UInt32 color[2];
     int x, y;
     int charWidth, charHeight;
+    int Nr  = crtc.registers.reg[CRTC_R9] + 1; // Number of rasters per character
+    FrameBuffer* crtcFrameBuffer = frameBufferFlipDrawFrame(); // Call once per frame
 
     crtc.frameCounter++;
 
@@ -162,12 +161,11 @@ static void crtcRenderVideoBuffer(void) {
                 pattern = crtcROM[16*crtcMemory[charAddress]+charRaster];
 
                 if (charAddress == crtc.cursor.addressStart) {
-                    if ((crtc.frameCounter - crtc.cursor.blinkstart) & crtc.cursor.blinkrate) {
+                    if (((crtc.frameCounter - crtc.cursor.blinkstart) & crtc.cursor.blinkrate) || (crtc.cursor.mode==CURSOR_NOBLINK)) {
                         pattern = charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
                     }
                 }
             }
-
             linePtr[0] = color[(pattern >> 7) & 1];
             linePtr[1] = color[(pattern >> 6) & 1];
             linePtr[2] = color[(pattern >> 5) & 1];
@@ -200,15 +198,8 @@ static void crtcCursorUpdate(void)
         crtc.cursor.mode = CURSOR_NOBLINK;
         crtc.cursor.blinkrate = 0;
     }
-
     crtc.cursor.blinkstart = crtc.frameCounter - crtc.cursor.blinkrate;
-
     crtc.cursor.rasterStart = crtc.registers.reg[CRTC_R10] & 0x1f;
-    crtc.cursor.rasterEnd = crtc.registers.reg[CRTC_R11];
-
-    crtc.cursor.addressStart = crtc.registers.reg[CRTC_R14];
-    crtc.cursor.addressStart <<= 8;
-    crtc.cursor.addressStart |= crtc.registers.reg[CRTC_R15];
 }
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
@@ -221,15 +212,19 @@ UInt8 crtcRead(void* dummy, UInt16 ioPort)
 
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
 {
-    if (crtc.registers.address < 18) {
+    if (crtc.registers.address < 16) {
         value &= crtcRegisterValueMask[crtc.registers.address];
         crtc.registers.reg[crtc.registers.address] = value;
         switch (crtc.registers.address) {
         case CRTC_R10:
+            crtcCursorUpdate();
+            break;
         case CRTC_R11:
+            crtc.cursor.rasterEnd = crtc.registers.reg[CRTC_R11];
+            break;
         case CRTC_R14:
         case CRTC_R15:
-            crtcCursorUpdate();
+            crtc.cursor.addressStart = (crtc.registers.reg[CRTC_R14] << 8) | crtc.registers.reg[CRTC_R15];
             break;
         }
     }
@@ -319,7 +314,8 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
         ioPortRegister(0x58, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
         break;
 
-    default:        return 0;
+    default:
+        return 0;
     }
 
     // Create and start frame refresh timer
