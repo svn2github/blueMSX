@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-26 08:15:48 $
+** $Date: 2005-02-01 05:20:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1216,6 +1216,8 @@ int menuCommand(Properties* pProperties, int command)
             i = 4;
         }
         pProperties->joy1.type = i;
+
+        archUpdateJoystick();
         return 1;
     }
 
@@ -1226,6 +1228,8 @@ int menuCommand(Properties* pProperties, int command)
             i = 4;
         }
         pProperties->joy2.type = i;
+        
+        archUpdateJoystick();
         return 1;
     }
 

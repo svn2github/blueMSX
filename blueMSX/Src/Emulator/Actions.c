@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-30 09:09:40 $
+** $Date: 2005-02-01 05:20:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -247,45 +247,55 @@ void actionToggleMouseCapture() {
 
 void actionPort1SetNone() {
 	state.properties->joy1.type = P_JOY_NONE;
+    archUpdateJoystick();
 }
 
 void actionPort1SetMouse() {
 	state.properties->joy1.type = P_JOY_MOUSE;
+    archUpdateJoystick();
 }
 
 void actionPort1SetNumpad() {
 	state.properties->joy1.type = P_JOY_NUMPAD;
+    archUpdateJoystick();
 }
 
 void actionPort1SetKeyset() {
 	state.properties->joy1.type = P_JOY_KEYSET;
+    archUpdateJoystick();
 }
 
 void actionPort1SetJoystick() {
 	if (archJoystickGetCount()) {
 		state.properties->joy1.type = P_JOY_HW;
+        archUpdateJoystick();
 	}
 }
 
 void actionPort2SetNone() {
 	state.properties->joy2.type = P_JOY_NONE;
+    archUpdateJoystick();
 }
 
 void actionPort2SetMouse() {
 	state.properties->joy2.type = P_JOY_MOUSE;
+    archUpdateJoystick();
 }
 
 void actionPort2SetNumpad() {
 	state.properties->joy2.type = P_JOY_NUMPAD;
+    archUpdateJoystick();
 }
 
 void actionPort2SetKeyset() {
 	state.properties->joy2.type = P_JOY_KEYSET;
+    archUpdateJoystick();
 }
 
 void actionPort2SetJoystick() {
 	if (archJoystickGetCount()) {
     	state.properties->joy2.type = P_JOY_HW;
+        archUpdateJoystick();
     }
 }
 

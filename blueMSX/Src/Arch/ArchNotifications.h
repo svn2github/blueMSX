@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-21 02:05:38 $
+** $Date: 2005-02-01 05:20:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@ typedef enum { SC_NORMAL, SC_SMALL, SC_LARGE } ScreenCaptureType;
 void* archScreenCapture(ScreenCaptureType type, int* bitmapSize);
 
 void archQuit();
+void archUpdateJoystick();
 void archUpdateMenu(int show);
 void archVideoOutputChange();
 void archUpdateWindow();

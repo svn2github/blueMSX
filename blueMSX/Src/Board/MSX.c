@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-01 04:43:30 $
+** $Date: 2005-02-01 05:20:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,6 +53,7 @@
 #include "romMapper.h"
 #include "VDP.h"
 #include "V9938.h"
+#include "VideoManager.h"
 #include "romMapper.h"
 #include "Casette.h"
 #include "Disk.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2005-01-30 23:17:30 $
+** $Date: 2005-02-01 05:20:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -789,7 +789,38 @@ static void updateVideoRender(Video* pVideo, Properties* pProperties) {
     videoSetFrameSkip(pVideo, pProperties->video.frameSkip);
 }
 
-void updateJoystick(Properties* pProperties) {    
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
+#define WM_UPDATE            (WM_USER + 1245)
+#define WM_LAUNCHFILE        (WM_USER + 1249)
+
+#define TIMER_STATUSBAR_UPDATE              10
+#define TIMER_POLL_INPUT                    11
+#define TIMER_POLL_FRAMECOUNT               12
+#define TIMER_SCREENUPDATE                  13
+#define TIMER_SCREENSHOT                    14
+#define TIMER_THEME                         17
+#define TIMER_MENUUPDATE                    18
+#define TIMER_CLIP_REGION                   19
+
+void  PatchDiskSetBusy(int driveId, int busy);
+
+static void updateMenu(int show);
+
+typedef void (*KbdLockFun)(); 
+
+KbdLockFun kbdLockEnable = NULL;
+KbdLockFun kbdLockDisable = NULL;
+
+static Properties* pProperties;
+
+
+void archUpdateJoystick() {    
     switch (pProperties->joy1.type) {
     case P_JOY_NONE:
     case P_JOY_MOUSE:
@@ -840,36 +871,6 @@ void updateJoystick(Properties* pProperties) {
     JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
     JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
 }
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-
-#define WM_UPDATE            (WM_USER + 1245)
-#define WM_LAUNCHFILE        (WM_USER + 1249)
-
-#define TIMER_STATUSBAR_UPDATE              10
-#define TIMER_POLL_INPUT                    11
-#define TIMER_POLL_FRAMECOUNT               12
-#define TIMER_SCREENUPDATE                  13
-#define TIMER_SCREENSHOT                    14
-#define TIMER_THEME                         17
-#define TIMER_MENUUPDATE                    18
-#define TIMER_CLIP_REGION                   19
-
-void  PatchDiskSetBusy(int driveId, int busy);
-
-static void updateMenu(int show);
-
-typedef void (*KbdLockFun)(); 
-
-KbdLockFun kbdLockEnable = NULL;
-KbdLockFun kbdLockDisable = NULL;
-
-static Properties* pProperties;
 
 typedef struct {
     HWND emuHwnd;
@@ -971,7 +972,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     updateVideoRender(st.pVideo, pProperties);
 
     /* Always update joystick controls */
-    updateJoystick(pProperties);
+    archUpdateJoystick(pProperties);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -2297,7 +2298,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
 
     updateVideoRender(st.pVideo, pProperties);
-    updateJoystick(pProperties);
+    archUpdateJoystick(pProperties);
     
     romMapperSetDefaultType(pProperties->cartridge.defaultType);
 
