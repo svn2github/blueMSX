@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-25 04:49:45 $
+** $Date: 2005-01-29 01:32:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -176,3 +176,20 @@ FrameBuffer* frameBufferGetWhiteNoiseFrame()
     return frameBuffer;
 }
 
+
+FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer)
+{
+    static FrameBuffer* deintBuffer = NULL;
+    int y;
+
+    if (deintBuffer == NULL) {
+        deintBuffer = calloc(1, sizeof(FrameBuffer));
+    }
+    deintBuffer->lines = frameBuffer->lines < FB_MAX_LINES / 2 ? 2 * frameBuffer->lines : FB_MAX_LINES;
+    deintBuffer->maxWidth = frameBuffer->maxWidth;
+
+    for (y = frameBuffer->interlace == INTERLACE_ODD ? 1 : 0; y < FB_MAX_LINES; y += 2) {
+        deintBuffer->line[y] = frameBuffer->line[y / 2];
+    }
+    return deintBuffer;
+}

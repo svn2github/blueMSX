@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-28 19:45:32 $
+** $Date: 2005-01-29 01:32:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,6 @@ static void initYJKtoYCbCrTable() {
 }
 
 static int gammaTable[3 * 256];
-static int deInterlace = 0;
 static void generateGammaTable(Video* pVideo)
 {
     int i;
@@ -171,7 +170,7 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -269,7 +268,7 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -365,7 +364,7 @@ static void copySharpPAL_2x1_16(FrameBuffer* frame, void* pDestination, int dstP
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -451,7 +450,7 @@ static void copySharpPAL_2x1_32(FrameBuffer* frame, void* pDestination, int dstP
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -538,7 +537,7 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -640,7 +639,7 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -740,7 +739,7 @@ static void copyMonitorPAL_2x1_16(FrameBuffer* frame, void* pDestination, int ds
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -824,7 +823,7 @@ static void copyMonitorPAL_2x1_32(FrameBuffer* frame, void* pDestination, int ds
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -913,7 +912,7 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -1039,7 +1038,7 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -1163,7 +1162,7 @@ static void copyPAL_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -1277,7 +1276,7 @@ static void copyPAL_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -1770,7 +1769,7 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -1849,7 +1848,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         pDst2 += dstPitch;
         height--;
@@ -1927,7 +1926,7 @@ static void copy_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 
     dstPitch /= (int)sizeof(UInt16);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -1981,7 +1980,7 @@ static void copy_2x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 
     dstPitch /= (int)sizeof(UInt32);
 
-    if (frame->interlaceOdd) {
+    if (frame->interlace == INTERLACE_ODD) {
         pDst1 += dstPitch;
         height--;
     }
@@ -2132,14 +2131,14 @@ static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 */
 Video* videoCreate() 
 {
-    Video* pVideo = (Video*)calloc(sizeof(Video), 1);
+    Video* pVideo = (Video*)calloc(1, sizeof(Video));
     initYJKtoYCbCrTable();
 
-    pVideo->gamma      = 1;
-    pVideo->saturation = 1;
-    pVideo->brightness = 0;
-    pVideo->contrast   = 1;
-    deInterlace        = 1;
+    pVideo->gamma       = 1;
+    pVideo->saturation  = 1;
+    pVideo->brightness  = 0;
+    pVideo->contrast    = 1;
+    pVideo->deInterlace = 0;
 
     initRGBTable(pVideo);
 
@@ -2162,9 +2161,9 @@ void videoSetFrameSkip(Video* pVideo, UInt32 skipCount)
     if (skipCount > 3) skipCount = 3;
 }
 
-void videoSetDeInterlace(Video* pVideo, int doDeInterlace)
+void videoSetDeInterlace(Video* pVideo, int deInterlace)
 {
-    deInterlace = doDeInterlace;
+    pVideo->deInterlace = deInterlace;
 }
 
 UInt32 videoGetColor(int R, int G, int B)
@@ -2468,7 +2467,7 @@ static void videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int 
 		case VIDEO_PAL_HQ2X: // Can't do 16bit hq2x so just use scale2x instead
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && frame->interlace == INTERLACE_NONE) {
                     scale2x_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
                 }
                 else {
@@ -2509,7 +2508,7 @@ static void videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int 
             break;
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && frame->interlace == INTERLACE_NONE) {
                     scale2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
                 }
                 else {
@@ -2522,7 +2521,7 @@ static void videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int 
             break;
 		case VIDEO_PAL_HQ2X:
             if (zoom==2) {
-                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && frame->interlace == INTERLACE_NONE) {
                     hq2x_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable16);
                 }
                 else {
@@ -2610,6 +2609,10 @@ void videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void
 {
     if (frame == NULL) {
         return;
+    }
+
+    if (frame->interlace != INTERLACE_NONE && pVideo->deInterlace) {
+        frame = frameBufferDeinterlace(frame);
     }
 
     if (frame->lines <= 240) {

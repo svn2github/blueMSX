@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-25 04:49:45 $
+** $Date: 2005-01-29 01:32:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -331,9 +331,12 @@ static void onDisplay(VDP* vdp, UInt32 time)
         FrameBuffer* frameBuffer;
         frameBuffer = frameBufferFlipDrawFrame();
         frameBuffer->lines = 240;
-        frameBuffer->interlaceOdd = (~vdp->vdpStatus[2] & 0x02) && 
-                                    (vdpIsInterlaceOn(vdp->vdpRegs) &&
-                                    ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128));
+        if (vdpIsInterlaceOn(vdp->vdpRegs) && ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128)) {
+            frameBuffer->interlace = (vdp->vdpStatus[2] & 0x02) ? INTERLACE_EVEN : INTERLACE_ODD;
+        }
+        else {
+            frameBuffer->interlace = INTERLACE_NONE;
+        }
     }
 
     refreshRate = isPal ? 50 : 60; // Update global refresh rate

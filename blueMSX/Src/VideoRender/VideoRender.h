@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-25 04:49:46 $
+** $Date: 2005-01-29 01:32:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,6 +65,7 @@ struct Video {
     double saturation;
     double brightness;
     double contrast;
+    int deInterlace;
 };
 
 Video* videoCreate();

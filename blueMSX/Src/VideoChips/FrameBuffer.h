@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-25 04:49:45 $
+** $Date: 2005-01-29 01:32:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,11 +40,12 @@ typedef struct {
     UInt32 buffer[FB_MAX_LINE_WIDTH];
 } LineBuffer;
 
+typedef enum { INTERLACE_NONE, INTERLACE_ODD, INTERLACE_EVEN } InterlaceMode;
 typedef struct {
-    int age;          // Internal use
-    int interlaceOdd; // 0 in most cases, 1 if odd interlaced frame
-    int lines;        // Number of lines in frame buffer
+    int age;           // Internal use
+    InterlaceMode interlace; 
     int maxWidth;
+    int lines;         // Number of lines in frame buffer
     LineBuffer line[FB_MAX_LINES];
 } FrameBuffer;
 
@@ -57,6 +58,7 @@ FrameBuffer* frameBufferGetDrawFrame();
 FrameBuffer* frameBufferFlipDrawFrame();
 
 FrameBuffer* frameBufferGetWhiteNoiseFrame();
+FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer);
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom);
 void frameBufferDataDestroy(FrameBufferData* frameData);

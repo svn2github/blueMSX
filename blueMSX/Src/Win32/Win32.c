@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-01-29 00:28:50 $
+** $Date: 2005-01-29 01:32:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2596,6 +2596,7 @@ void archUpdateEmuDisplayConfig() {
     videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, pProperties->video.contrast, pProperties->video.gamma);
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
     videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+    videoSetDeInterlace(st.pVideo, pProperties->video.deInterlace);
     switch (pProperties->video.monType) {
     case P_VIDEO_COLOR:
         videoSetColorMode(st.pVideo, VIDEO_COLOR);
