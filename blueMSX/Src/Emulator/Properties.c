@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-29 00:28:49 $
+** $Date: 2005-01-30 09:09:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,7 @@ void propInitDefaults(Properties* pProperties)
     int i;
     pProperties->language = EMU_LANG_ENGLISH;
     
+    pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
     strcpy(pProperties->settings.themeName, "Classic");
 
@@ -218,6 +219,7 @@ void propInitDefaults(Properties* pProperties)
     int i;
     pProperties->language                 = EMU_LANG_ENGLISH;
 
+    pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
     if (GetSystemMetrics(SM_CYSCREEN) > 600) {
         strcpy(pProperties->settings.themeName, "DIGIblue V2.1");
@@ -396,6 +398,7 @@ static void propLoad(Properties* pProperties)
     int i;
     getIntValue("EmuLanguage", (long*)&pProperties->language);
 
+    getIntValue("ShowStatePreview", (long*)&pProperties->settings.showStatePreview);
     getIntValue("DisableScreensaver", (long*)&pProperties->settings.disableScreensaver);
     getStrValue("ThemeName20", (char*)pProperties->settings.themeName);
 
@@ -576,6 +579,7 @@ void propSave(Properties* pProperties)
     int i;
     setIntValue("EmuLanguage", pProperties->language);
 
+    setIntValue("ShowStatePreview", pProperties->settings.showStatePreview);
     setIntValue("DisableScreensaver",   pProperties->settings.disableScreensaver);
     setStrValue("ThemeName20", (char*)pProperties->settings.themeName);
 

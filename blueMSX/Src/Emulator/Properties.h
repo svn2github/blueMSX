@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-29 00:28:49 $
+** $Date: 2005-01-30 09:09:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -221,6 +221,7 @@ typedef struct {
 
 typedef struct {
     int disableScreensaver;
+    int showStatePreview;
     char themeName[128];
     struct {  
         long left; 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-15 23:23:35 $
+** $Date: 2005-01-30 09:09:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "RomLoader.h"
 #include "zipHelper.h"
 #include "Win32Common.h"
+#include "Win32ScreenShot.h"
 #include "Language.h"
 
 static RomType romTypeList[] = {
@@ -308,6 +309,223 @@ char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, int
 
     return pFileName; 
 } 
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+static int doShowPreview = 0;
+
+UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    static HBITMAP hBmp = INVALID_HANDLE_VALUE;
+
+    switch (iMsg) {
+    case WM_TIMER:
+        if (wParam == 13) {
+            updateDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE, 0, 0);
+            ShowWindow(GetParent(hDlg), SW_NORMAL);
+            KillTimer(hDlg, 13);
+        }
+        return 0;
+        
+    case WM_INITDIALOG:
+        {
+            SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWBUTTON), langDlgSavePreview());
+            ShowWindow(GetParent(hDlg), SW_HIDE);
+            updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
+            SetTimer(hDlg, 13, 250, 0);
+
+            SendDlgItemMessage(hDlg, IDC_PREVIEWBUTTON, BM_SETCHECK, doShowPreview ? BST_CHECKED : BST_UNCHECKED, 0);
+        }
+        return 0;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDC_PREVIEWBUTTON) {
+            int newChecked = BST_CHECKED == SendDlgItemMessage(hDlg, IDC_PREVIEWBUTTON, BM_GETCHECK, 0, 0);
+            if (newChecked != doShowPreview) {
+                doShowPreview = newChecked;
+                InvalidateRect(hDlg, NULL, TRUE);
+            }
+        }
+        return 0;
+
+    case WM_SIZE:
+        {
+            RECT r;
+            int height;
+            int width;
+            HWND hwnd;
+
+            GetClientRect(GetParent(hDlg), &r);
+            
+            height = r.bottom - r.top;
+            width  = r.right - r.left;
+
+            hwnd = GetDlgItem(hDlg, IDC_PREVIEWBUTTON);
+            SetWindowPos(hwnd, NULL, width - 220, 215, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        }
+        return 0;
+        
+    case WM_DESTROY:
+        saveDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE);
+        return 0;
+        
+    case WM_NOTIFY:
+        {
+            OFNOTIFY* ofn = (OFNOTIFY*)lParam;
+            switch (ofn->hdr.code) {
+            case CDN_SELCHANGE:
+                {
+                    char fileName[MAX_PATH];
+                    int fileSize = SendMessage(GetParent(hDlg), CDM_GETFILEPATH, MAX_PATH, (LPARAM)fileName);
+
+                    if (hBmp != INVALID_HANDLE_VALUE) {
+                        DeleteObject(hBmp);
+                        hBmp = INVALID_HANDLE_VALUE;
+                    }
+
+                    if (isFileExtension(fileName, ".sta")) {                        
+                        Int32 size = 0;
+                        void* buffer = zipLoadFile(fileName, "screenshot.bmp", &size);
+                        if (buffer != 0) {
+                            hBmp = BitmapFromData(buffer);
+                            free(buffer);
+                        }
+
+                        InvalidateRect(hDlg, NULL, TRUE);
+                    }
+                }
+                break;
+            }
+        }
+        return 0;
+
+    case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hDlg, &ps);
+
+            if (hBmp != INVALID_HANDLE_VALUE && doShowPreview) {
+                BITMAP bmp;
+                if(GetObject(hBmp, sizeof(BITMAP), (LPSTR)&bmp)) {
+                    HDC hMemDC = CreateCompatibleDC(hdc);
+                    HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, hBmp);
+                    int bmWidth = 200;
+                    int bmHeight = bmp.bmHeight * bmWidth / bmp.bmWidth;
+                    RECT r;
+                    int height;
+                    int width;
+
+                    if (bmHeight > 180) {
+                        bmHeight = 180;
+                        bmWidth = bmp.bmWidth * bmHeight / bmp.bmHeight;
+                    }
+
+                    GetClientRect(GetParent(hDlg), &r);
+                
+                    height = r.bottom - r.top;
+                    width  = r.right - r.left;
+                    SetStretchBltMode(hdc, HALFTONE);
+                    StretchBlt(hdc, width - 220, 30, bmWidth, bmHeight, hMemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+                    SelectObject(hMemDC, hBitmap);
+                    DeleteDC(hMemDC);    
+                }
+            }
+            EndPaint(hDlg, &ps);
+        }
+        return 0;
+    }
+
+    return 0;
+}
+
+char* openStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+                    int newFileSize, char* defExt, int* filterIndex, int* showPreview)
+{ 
+    OPENFILENAME ofn; 
+    BOOL rv; 
+    static char pFileName[MAX_PATH];
+    FILE* file;
+
+    pFileName[0] = 0; 
+
+    if (showPreview != NULL) {
+        doShowPreview = *showPreview;
+    }
+    else {
+        doShowPreview = 1;
+    }
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = (HINSTANCE)GetModuleHandle(NULL); 
+    ofn.lpstrFilter = pFilter ? pFilter : "*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0; 
+    ofn.nFilterIndex = filterIndex ? *filterIndex : 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = pDir; 
+    ofn.lpstrTitle = pTitle; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_HIDEREADONLY | (newFileSize < 0 ? OFN_FILEMUSTEXIST : 0); 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = hookStateProc; 
+    ofn.lpTemplateName = MAKEINTRESOURCE(IDD_OPEN_STATEDIALOG); 
+
+    rv = GetOpenFileName(&ofn); 
+
+    if (showPreview != NULL) {
+        *showPreview = doShowPreview;
+    }
+
+    if (!rv) {
+        return NULL; 
+    }
+
+    if (filterIndex) {
+        *filterIndex = ofn.nFilterIndex;
+    }
+
+    if (pDir != NULL) {
+        GetCurrentDirectory(MAX_PATH - 1, pDir);
+    }
+
+    file = fopen(pFileName, "r");
+    if (file != NULL) {
+        fclose(file);
+    }
+    else {
+        if (defExt) {
+            if (strlen(pFileName) <= strlen(defExt)) {
+                strcat(pFileName, defExt);
+            }
+            else {
+                char* pos = pFileName + strlen(pFileName) - strlen(defExt);
+                int  len  = strlen(defExt);
+                while (len--) {
+                    if (toupper(pos[len]) != toupper(defExt[len])) {
+                        break;
+                    }
+                }
+                if (len >= 0) {
+                    strcat(pFileName, defExt);
+                }
+            }
+        }
+        file = fopen(pFileName, "a+");
+        if (file != NULL) {
+            fclose(file);
+        }
+    }
+
+    return pFileName; 
+} 
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-26 08:38:06 $
+** $Date: 2005-01-30 09:09:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,8 +152,8 @@ void actionLoadState() {
     char* filename;
 
     emulatorSuspend();
-    filename = archFileOpen(langDlgLoadState(), "CPU state   (*.sta)\0*.sta\0", 
-                            state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
+    filename = archFileStateOpen(langDlgLoadState(), "CPU state   (*.sta)\0*.sta\0", 
+                                 state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
     if (filename != NULL) {
         emulatorStop();
         emulatorStart(filename);

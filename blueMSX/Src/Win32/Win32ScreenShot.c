@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-21 01:06:33 $
+** $Date: 2005-01-30 09:09:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,23 @@
 
 static char baseDir[512];
 static char basePrefix[512];
+
+typedef struct {
+	DWORD Size;
+    DWORD Reserved1;
+    DWORD OffRaster;
+    DWORD OffBits;
+    DWORD Width;
+    DWORD Height;
+	WORD  Planes;
+    WORD  BitCount;
+	DWORD Compression;
+    DWORD SizeImage;
+    DWORD XPelsPerMeter;
+    DWORD YPelsPerMeter;
+    DWORD ClrUsed;
+    DWORD ClrImportant;
+} BMPHeader;
 
 static HRESULT SaveBitmap(char *strFileName, PBITMAPINFO pbi, HBITMAP hBMP, HDC hDC)
 {
@@ -255,42 +272,37 @@ void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xO
  */
 void* ScreenShot2(void* src, int srcPitch, int width, int height, int* bitmapSize)
 {
-    struct {
-	    DWORD Size, Reserved1, OffRaster, OffBits, Width, Height;
-	    WORD  Planes, BitCount;
-	    DWORD Compression, SizeImage, XPelsPerMeter, YPelsPerMeter, ClrUsed, ClrImportant;
-    } BMPHeader;
-    
     DWORD* srcPtr = (DWORD*)src;
+    BMPHeader hdr;
     int w;
     int h;
 
-    int size = 2 + sizeof(BMPHeader) + 3 * width * height;
+    int size = 2 + sizeof(hdr) + 3 * width * height;
     BYTE* bitmap = (BYTE*)malloc(size);
     BYTE* dstPtr = bitmap;
 
     *bitmapSize = size;
 
-	BMPHeader.BitCount      = 24;
-	BMPHeader.Size          = width * height * BMPHeader.BitCount / 8 + 0x36;
-	BMPHeader.Reserved1     = 0;
-	BMPHeader.OffRaster     = 0x36;
-	BMPHeader.OffBits       = 0x28;
-	BMPHeader.Width         = width;
-	BMPHeader.Height        = height;
-	BMPHeader.Planes        = 1;
-	BMPHeader.Compression   = 0;
-	BMPHeader.SizeImage     = width * height * BMPHeader.BitCount / 8;
-	BMPHeader.XPelsPerMeter = 0;
-	BMPHeader.YPelsPerMeter = 0;
-	BMPHeader.ClrUsed       = 0;
-    BMPHeader.ClrImportant  = 0;
+	hdr.BitCount      = 24;
+	hdr.Size          = width * height * hdr.BitCount / 8 + 0x36;
+	hdr.Reserved1     = 0;
+	hdr.OffRaster     = 0x36;
+	hdr.OffBits       = 0x28;
+	hdr.Width         = width;
+	hdr.Height        = height;
+	hdr.Planes        = 1;
+	hdr.Compression   = 0;
+	hdr.SizeImage     = width * height * hdr.BitCount / 8;
+	hdr.XPelsPerMeter = 0;
+	hdr.YPelsPerMeter = 0;
+	hdr.ClrUsed       = 0;
+    hdr.ClrImportant  = 0;
 
     *dstPtr++ = 'B';
     *dstPtr++ = 'M';
 
-    memcpy(dstPtr, &BMPHeader, sizeof(BMPHeader));
-    dstPtr += sizeof(BMPHeader);
+    memcpy(dstPtr, &hdr, sizeof(hdr));
+    dstPtr += sizeof(hdr);
 
     for (h = 0; h < height; h++) {
         for (w = 0; w < width; w++) {
@@ -320,4 +332,37 @@ void screenshotSetDirectory(char* directory, char* prefix)
 {
     strcpy(baseDir, directory);
     strcpy(basePrefix, prefix);
+}
+
+
+HBITMAP BitmapFromData(void* bmp) {
+    char*       bitmap = (char*)bmp;
+    BMPHeader*  hdr    = (BMPHeader*)(bitmap + 2);
+    char*       data   = (char*)(hdr + 1);
+    BITMAPINFO* bmi;
+    HDC         hdc;
+    HBITMAP     hbm;
+
+    if (bitmap[0] != 'B' || bitmap[1] != 'M') {
+        return INVALID_HANDLE_VALUE;
+    }
+
+    bmi = (BITMAPINFO*)malloc(sizeof(BITMAPINFOHEADER));
+    bmi->bmiHeader.biSize         = sizeof(BITMAPINFOHEADER);
+    bmi->bmiHeader.biWidth        = hdr->Width;
+    bmi->bmiHeader.biHeight       = hdr->Height;
+    bmi->bmiHeader.biPlanes       = hdr->Planes;
+    bmi->bmiHeader.biBitCount     = hdr->BitCount;
+    bmi->bmiHeader.biCompression  = BI_RGB; 
+    bmi->bmiHeader.biSizeImage    = hdr->SizeImage;
+    bmi->bmiHeader.biClrImportant = 0; 
+
+    hdc = GetDC(NULL);
+    hbm = CreateCompatibleBitmap(hdc, hdr->Width, hdr->Height);
+
+    SetDIBits(hdc, hbm, 0, hdr->Height, data, bmi, DIB_RGB_COLORS);
+
+    DeleteDC(hdc);
+
+    return hbm;
 }

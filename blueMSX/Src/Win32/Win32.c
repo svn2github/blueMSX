@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-01-30 01:05:12 $
+** $Date: 2005-01-30 09:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2521,6 +2521,18 @@ char* archFileOpen(char* title, char* extensionList, char* defaultDir, char* ext
 
     enterDialogShow();
     fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
+    exitDialogShow();
+    SetCurrentDirectory(st.pCurDir);
+
+    return fileName;
+}
+
+char* archFileStateOpen(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defautExtension, int createFileSize)
+{
+    char* fileName;
+
+    enterDialogShow();
+    fileName = openStateFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension, &pProperties->settings.showStatePreview);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 

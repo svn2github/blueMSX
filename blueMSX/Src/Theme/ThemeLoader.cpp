@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-01-29 20:32:22 $
+** $Date: 2005-01-30 09:09:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -854,7 +854,7 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     int x = 0;
     root->QueryIntAttribute("x", &x);
     int y = 0;
-    root->QueryIntAttribute("x", &y);
+    root->QueryIntAttribute("y", &y);
 
     dx += x;
     dy += y;

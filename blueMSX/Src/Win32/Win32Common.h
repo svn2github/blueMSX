@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Common.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-16 00:49:24 $
+** $Date: 2005-01-30 09:09:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,8 @@ typedef enum {
     DLG_ID_OPEN = 4,
     DLG_ID_MACHINECONFIG = 6,
     DLG_ID_ZIPOPEN = 7,
-    DLG_ID_TAPEPOS = 8 
+    DLG_ID_TAPEPOS = 8,
+    DLG_ID_OPENSTATE = 9,
 } DialogIds;
 
 void centerDialog(HWND hDlg, int noActivate);

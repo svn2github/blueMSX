@@ -95,6 +95,8 @@
 #define IDD_APEARANCE                   126
 #define IDD_PORTS                       127
 
+#define IDD_OPEN_STATEDIALOG            128
+
 #define IDD_BUTTON                      130
 #define IDD_DROPDOWN                    131
 
@@ -412,6 +414,9 @@
 #define IDC_SCUTHOTKEYTEXT              2710
 #define IDC_SCUTREMOVE                  2711
 #define IDC_SCUTASSIGN                  2712
+
+#define IDC_PREVIEWIMAGE                2780
+#define IDC_PREVIEWBUTTON               2781
 
 #define IDC_CONTROL                     2800
 

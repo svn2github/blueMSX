@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchDialog.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-17 20:58:54 $
+** $Date: 2005-01-30 09:09:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,9 @@
 
 char* archDirOpen(char* title, char* defaultDir);
 char* archFileOpen(char* title, char* fileDescription, char* defaultDir, 
+                   char* extensions, int* selectedExtension, char* defautExtension, 
+                   int createFileSize);
+char* archFileStateOpen(char* title, char* fileDescription, char* defaultDir, 
                    char* extensions, int* selectedExtension, char* defautExtension, 
                    int createFileSize);
 char* archFileRomOpen(char* title, char* fileDescription, char* defaultDir, 
