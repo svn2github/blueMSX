@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-06 01:41:58 $
+** $Date: 2005-02-10 07:43:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -222,7 +222,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     bufIndex = line & 1;
     
     if (line == 0) {
-        nonVisibleLine = -1;
+        nonVisibleLine = -1000;
         // This is an not 100% correct optimization. CC sprites should be shown only when
         // they collide with a non CC sprite. However very few games/demos uses this and
         // it is safe to disable the CC sprites if no non CC sprites are visible.
