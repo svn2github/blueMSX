@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-13 06:16:02 $
+** $Date: 2005-01-14 06:11:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,28 +51,17 @@ struct ThemeDefaultInfo {
 
 enum ThemeInfo { THEME_SMALL = 0, THEME_NORMAL = 1, THEME_SMALLFULLSCREEN = 2, THEME_FULLSCREEN = 3 };
 
-static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, const char* arg1Tag, const char* arg2Tag, int* arg1, int* arg2, Theme* theme)
+static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, 
+                             const char* arg1Tag, const char* arg2Tag, int* arg1, int* arg2, 
+                             ThemeCollection* themeCollection, Theme* theme)
 {
+    ButtonEvent buttonEvent = 0;
+
     *arg1 = 1;
     *arg2 = 1;
 
-    const char* argaStr = el->Attribute(arg1Tag);
-    if (argaStr != NULL) {
-        if ((*argaStr >= 'A' && *argaStr <= 'Z') ||
-            (*argaStr >= 'a' && *argaStr <= 'z'))
-        {
-            *arg1 = (int)theme;
-            *arg2 = themeGetNameHash(argaStr);
-        }
-        else {
-            el->QueryIntAttribute(arg1Tag, arg1);
-            el->QueryIntAttribute(arg2Tag, arg2);
-        }
-    }
-    else {
-        el->QueryIntAttribute(arg1Tag, arg1);
-        el->QueryIntAttribute(arg2Tag, arg2);
-    }
+    el->QueryIntAttribute(arg1Tag, arg1);
+    el->QueryIntAttribute(arg2Tag, arg2);
 
     const char* action = el->Attribute(actionTag);
     if (action == NULL) {
@@ -228,9 +217,26 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, const char
     if (0 == strcmp(action, "audio-setmute"))        return (ButtonEvent)actionSetVolumeMute;
     if (0 == strcmp(action, "audio-setstereo"))      return (ButtonEvent)actionSetVolumeStereo;
 
-    if (0 == strcmp(action, "theme-setpage"))        return (ButtonEvent)themeSetPageFromHash;
+    if (0 == strcmp(action, "theme-setpage"))        buttonEvent = (ButtonEvent)themeSetPageFromHash;
+    if (0 == strcmp(action, "theme-openwindow"))     buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
     
-	return NULL;
+    if (buttonEvent != NULL) {
+        const char* argaStr = el->Attribute(arg1Tag);
+        if (argaStr != NULL) {
+            const char* argaStr = el->Attribute(arg1Tag);
+            *arg1 = NULL;
+            *arg2 = themeGetNameHash(argaStr);
+
+            if (buttonEvent == (ButtonEvent)themeSetPageFromHash) {
+                *arg1 = (int)theme;
+            }
+            if (buttonEvent == (ButtonEvent)themeCollectionOpenWindow) {
+                *arg1 = (int)themeCollection;
+            }
+        }
+    }
+
+	return buttonEvent;
 }
 
 static int getKeyCode(TiXmlElement* el, char* triggerName)
@@ -417,7 +423,7 @@ static ArchBitmap* loadBitmap(TiXmlElement* el, int* x, int* y, int* columns)
 }
 
 
-static void addImage(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -433,7 +439,7 @@ static void addImage(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
 }
 
-static void addLed(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -454,7 +460,7 @@ static void addLed(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 2), trigger, visible);
 }
 
-static void addMeter(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -478,7 +484,7 @@ static void addMeter(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddMeter(themePage, activeMeterCreate(x, y, cols, bitmap, max), trigger, visible);
 }
 
-static void addSlider(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -497,7 +503,7 @@ static void addSlider(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     }
 
     int arga, argb;
-    SliderEvent action = (SliderEvent)getAction(el, "action", "arga", "argb", &arga, &argb, theme);
+    SliderEvent action = (SliderEvent)getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
 
     int max = 1;
     el->QueryIntAttribute("max", &max);
@@ -517,7 +523,7 @@ static void addSlider(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddSlider(themePage, activeSliderCreate(x, y, cols, bitmap, action, max, direction, sensitivity), trigger, visible);
 }
 
-static void addButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -536,12 +542,12 @@ static void addButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     }
 
     int arga, argb;
-    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, theme);
+    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
 
     themePageAddButton(themePage, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible, THEME_TRIGGER_NONE);
 }
 
-static void addToggleButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -560,13 +566,13 @@ static void addToggleButton(Theme* theme, ThemePage* themePage, TiXmlElement* el
     }
 
     int arga, argb;
-    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, theme);
+    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
 
     themePageAddToggleButton(themePage, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), 
                          trigger, visible, THEME_TRIGGER_NONE);
 }
 
-static void addDualButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -585,10 +591,10 @@ static void addDualButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     }
 
     int arg1x, arg1y;
-    ButtonEvent action1 = getAction(el, "action1", "arg1x", "arg1y", &arg1x, &arg1y, theme);
+    ButtonEvent action1 = getAction(el, "action1", "arg1x", "arg1y", &arg1x, &arg1y, themeCollection, theme);
     
     int arg2x, arg2y;
-    ButtonEvent action2 = getAction(el, "action2", "arg2x", "arg2y", &arg2x, &arg2y, theme);
+    ButtonEvent action2 = getAction(el, "action2", "arg2x", "arg2y", &arg2x, &arg2y, themeCollection, theme);
 
     int vertical = 0;
     const char* align = el->Attribute("direction");
@@ -601,7 +607,7 @@ static void addDualButton(Theme* theme, ThemePage* themePage, TiXmlElement* el)
                        trigger, visible, THEME_TRIGGER_NONE);
 }
 
-static void addKeyButton(Theme* theme, ThemePage* themePage, TiXmlElement* el, ArchBitmap* srcBitmap, 
+static void addKeyButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el, ArchBitmap* srcBitmap, 
                          int srcX, int srcY, ThemeTrigger visible)
 {
     int x      = -1;
@@ -638,7 +644,7 @@ static void addKeyButton(Theme* theme, ThemePage* themePage, TiXmlElement* el, A
                          trigger, visible, pressed);
 }
 
-static void addKeyboard(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -660,7 +666,7 @@ static void addKeyboard(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     TiXmlElement* keyEl;
     for (keyEl = el->FirstChildElement(); keyEl != NULL; keyEl = keyEl->NextSiblingElement()) {
         if (strcmp(keyEl->Value(), "key") == 0) {
-            addKeyButton(theme, themePage, keyEl, bitmap, x, y, visible);
+            addKeyButton(themeCollection, theme, themePage, keyEl, bitmap, x, y, visible);
         }
     }
 
@@ -668,7 +674,7 @@ static void addKeyboard(Theme* theme, ThemePage* themePage, TiXmlElement* el)
 }
 
 
-static void addObject(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x = 0;
     int y = 0;
@@ -693,7 +699,7 @@ static void addObject(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddObject(themePage, activeObjectCreate(x, y, width, height, id), visible);
 }
 
-static void addText(Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -736,7 +742,7 @@ static void addText(Theme* theme, ThemePage* themePage, TiXmlElement* el)
     themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, width, type, color, rightAlign), trigger, visible);
 }
 
-static ThemePage* loadThemePage(Theme* theme, TiXmlElement* root, const char* name, int width, int height, int emuWidth, int emuHeight, int fullscreen) 
+static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, TiXmlElement* root, const char* name, int width, int height, int emuWidth, int emuHeight, int fullscreen) 
 {
     ThemePage* themePage = NULL;
 
@@ -826,41 +832,103 @@ static ThemePage* loadThemePage(Theme* theme, TiXmlElement* root, const char* na
     
     for (infoEl = root->FirstChildElement(); infoEl != NULL; infoEl = infoEl->NextSiblingElement()) {
         if (strcmp(infoEl->Value(), "image") == 0) {
-            addImage(theme, themePage, infoEl);
+            addImage(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "led") == 0) {
-            addLed(theme, themePage, infoEl);
+            addLed(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "text") == 0) {
-            addText(theme, themePage, infoEl);
+            addText(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "button") == 0) {
-            addButton(theme, themePage, infoEl);
+            addButton(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "dualbutton") == 0) {
-            addDualButton(theme, themePage, infoEl);
+            addDualButton(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "togglebutton") == 0) {
-            addToggleButton(theme, themePage, infoEl);
+            addToggleButton(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "keyboard") == 0) {
-            addKeyboard(theme, themePage, infoEl);
+            addKeyboard(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "meter") == 0) {
-            addMeter(theme, themePage, infoEl);
+            addMeter(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "slider") == 0) {
-            addSlider(theme, themePage, infoEl);
+            addSlider(themeCollection, theme, themePage, infoEl);
         }
         if (strcmp(infoEl->Value(), "object") == 0) {
-            addObject(theme, themePage, infoEl);
+            addObject(themeCollection, theme, themePage, infoEl);
         }
     }
 
     return themePage;
 }
 
-static Theme* loadMainTheme(TiXmlElement* root, ThemeInfo themeInfo) 
+static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root)
+{
+    TiXmlElement* modeEl;
+    int count = 0;
+    
+    for (modeEl = root->FirstChildElement(); modeEl != NULL; modeEl = modeEl->NextSiblingElement()) {
+        Theme* theme = NULL;
+
+        if (strcmp(modeEl->Value(), "window") != 0) {
+            continue;
+        }
+
+        const char* name = modeEl->Attribute("name");
+        if (name == NULL) {
+            name = "window";
+        }
+        const char* type = modeEl->Attribute("type");
+        if (type != NULL && 0 == strcmp(type, "multipage")) {
+            TiXmlElement* pageEl;
+            for (pageEl = modeEl->FirstChildElement(); pageEl != NULL; pageEl = pageEl->NextSiblingElement()) {
+                int width  = 320;
+                int height = 200;
+
+                pageEl->QueryIntAttribute("width", &width);
+                pageEl->QueryIntAttribute("height", &height);
+                
+                const char* pageName = pageEl->Attribute("name");
+                if (pageName == NULL) {
+                    pageName = name;
+                }
+
+                if (theme == NULL) {
+                    theme = themeCreate(name);
+                }
+
+                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, 0, 0, 0);
+                themeAddPage(theme, themePage);
+            }
+        }
+        else {
+            int   width  = 320;
+            int   height = 200;
+
+            modeEl->QueryIntAttribute("width", &width);
+            modeEl->QueryIntAttribute("height", &height);
+            
+            if (theme == NULL) {
+                theme = themeCreate(name);
+            }
+            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, 0, 0, 0);
+            themeAddPage(theme, themePage);
+        }
+
+        if (theme != NULL) {
+            themeCollectionAddWindow(themeCollection, theme);
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root, ThemeInfo themeInfo) 
 {
     Theme* theme = NULL;
 
@@ -880,6 +948,8 @@ static Theme* loadMainTheme(TiXmlElement* root, ThemeInfo themeInfo)
             continue;
         }
 
+        const char* name = themeDefaultInfo[themeInfo].mode;
+
         const char* type = modeEl->Attribute("type");
         if (type != NULL && 0 == strcmp(type, "multipage")) {
             TiXmlElement* pageEl;
@@ -893,15 +963,14 @@ static Theme* loadMainTheme(TiXmlElement* root, ThemeInfo themeInfo)
                 }
                 
                 if (theme == NULL) {
-                    theme = themeCreate();
+                    theme = themeCreate(name);
+                }
+                const char* pageName = pageEl->Attribute("name");
+                if (pageName == NULL) {
+                    pageName = name;
                 }
 
-                const char* name = pageEl->Attribute("name");
-                if (name == NULL) {
-                    name = themeDefaultInfo[themeInfo].mode;
-                }
-
-                ThemePage* themePage = loadThemePage(theme, pageEl, name, width, height, emuWidth, emuHeight, fullscreen);
+                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, emuWidth, emuHeight, fullscreen);
                 themeAddPage(theme, themePage);
             }
         }
@@ -909,7 +978,6 @@ static Theme* loadMainTheme(TiXmlElement* root, ThemeInfo themeInfo)
             // Get width and height of main window
             int   width     = themeDefaultInfo[themeInfo].width;
             int   height    = themeDefaultInfo[themeInfo].height;
-            char* name      = themeDefaultInfo[themeInfo].mode;
 
             if (!fullscreen) {
                 modeEl->QueryIntAttribute("width", &width);
@@ -917,9 +985,9 @@ static Theme* loadMainTheme(TiXmlElement* root, ThemeInfo themeInfo)
             }
 
             if (theme == NULL) {
-                theme = themeCreate();
+                theme = themeCreate(name);
             }
-            ThemePage* themePage = loadThemePage(theme, modeEl, name, width, height, emuWidth, emuHeight, fullscreen);
+            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, emuWidth, emuHeight, fullscreen);
             themeAddPage(theme, themePage);
         }
     }
@@ -960,19 +1028,21 @@ extern "C" ThemeCollection* themeLoad(char* themeName)
         name = themeName;
     }
 
-    ThemeCollection* themeCollection = (ThemeCollection*)calloc(1, sizeof(ThemeCollection));
+    ThemeCollection* themeCollection = themeCollectionCreate();
 
     strcpy(themeCollection->name, name);
 
-    themeCollection->little          = loadMainTheme(root, THEME_SMALL);
-    themeCollection->normal          = loadMainTheme(root, THEME_NORMAL);
-    themeCollection->fullscreen      = loadMainTheme(root, THEME_FULLSCREEN);
-    themeCollection->smallfullscreen = loadMainTheme(root, THEME_SMALLFULLSCREEN);
+    themeCollection->little          = loadMainTheme(themeCollection, root, THEME_SMALL);
+    themeCollection->normal          = loadMainTheme(themeCollection, root, THEME_NORMAL);
+    themeCollection->fullscreen      = loadMainTheme(themeCollection, root, THEME_FULLSCREEN);
+    themeCollection->smallfullscreen = loadMainTheme(themeCollection, root, THEME_SMALLFULLSCREEN);
 
-    if (themeCollection->little == NULL && themeCollection->normal == NULL &&
+    int count = loadThemeWindows(themeCollection, root);
+
+    if (count == 0 && themeCollection->little == NULL && themeCollection->normal == NULL &&
         themeCollection->fullscreen == NULL && themeCollection->smallfullscreen == NULL) 
     {
-        free(themeCollection);
+        themeCollectionDestroy(themeCollection);
         themeCollection = NULL;
     }
 

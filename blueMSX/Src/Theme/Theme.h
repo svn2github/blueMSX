@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-13 06:16:02 $
+** $Date: 2005-01-14 06:11:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,12 +42,16 @@ typedef struct {
     int y;
 } ClipPoint;
 
-typedef struct {
-    char   name[32];
+#define THEME_MAX_WINDOWS 64
+#define THEME_MAX_PAGES   64
+
+typedef struct ThemeCollection {
+    char   name[64];
     Theme* little;
     Theme* normal;
     Theme* smallfullscreen;
     Theme* fullscreen;
+    Theme* theme[THEME_MAX_WINDOWS];
 } ThemeCollection;
 
 struct ThemePage {
@@ -81,9 +85,9 @@ struct ThemePage {
     int               btPressed;
 };
 
-#define THEME_MAX_PAGES 64
-
 struct Theme {
+    char   name[64];
+    void*  reference;
     int currentPage;
     int pageCount;
     ThemePage* pages[THEME_MAX_PAGES];
@@ -105,34 +109,31 @@ ThemePage* themePageCreate(const char* name,
                            int        clipPointCount,
                            ClipPoint* clipPointList);
 
-Theme*     themeCreate();
+unsigned long themeGetNameHash(const char* name);
+
+ThemeCollection* themeCollectionCreate();
+void themeCollectionDestroy(ThemeCollection* tc);
+void themeCollectionAddWindow(ThemeCollection* tc, Theme* theme);
+
+Theme*     themeCreate(const char* name);
 void       themeDestroy(Theme* theme);
 void       themeAddPage(Theme* theme, ThemePage* page);
 ThemePage* themeGetCurrentPage(Theme* theme);
 int        themeGetCurrentPageIndex(Theme* theme);
 int        themeGetPageCount(Theme* theme);
 void       themeSetPageFromHash(Theme* theme, unsigned long hash);
-unsigned long themeGetNameHash(const char* name);
+void       themeCollectionOpenWindow(ThemeCollection* themeCollection,unsigned long hash);
 
 
 void themePageDestroy(ThemePage* theme);
-
 void themePageAddImage(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
-
 void themePageAddText(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
-
 void themePageAddButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
-
 void themePageAddDualButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
-
 void themePageAddToggleButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
-
 void themePageAddMeter(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
-
 void themePageAddSlider(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
-
 void themePageAddObject(ThemePage* theme, void* object, ThemeTrigger visible);
-
 void themePageActivate(ThemePage* theme, void* window);
 void themePageUpdate(ThemePage* theme, void* dc);
 void themePageDraw(ThemePage* theme, void* dc);

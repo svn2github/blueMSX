@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-13 06:15:59 $
+** $Date: 2005-01-14 06:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,7 +40,8 @@ void archUpdateWindow();
 PropVideoSize archGetWindowedSize();
 void archMinimizeWindow();
 void archThemeSetNext();
-void archThemeUpdate();
+void archThemeUpdate(struct Theme* theme);
+void* archWindowCreate(struct Theme* theme);
 
 void archUpdateEmuDisplay(int synchronous, int screenMode, int evenOdd, int interlace);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-13 06:16:03 $
+** $Date: 2005-01-14 06:11:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -227,14 +227,14 @@ static ThemePage* themeCreateSmallFullscreen()
 
 ThemeCollection* themeClassicCreate() 
 {
-    ThemeCollection* themeCollection = calloc(1, sizeof(ThemeCollection));
+    ThemeCollection* themeCollection = themeCollectionCreate();
 
     strcpy(themeCollection->name, "Classic");
 
-    themeCollection->little          = themeCreate();
-    themeCollection->normal          = themeCreate();
-    themeCollection->fullscreen      = themeCreate();
-    themeCollection->smallfullscreen = themeCreate();
+    themeCollection->little          = themeCreate("little");
+    themeCollection->normal          = themeCreate("normal");
+    themeCollection->fullscreen      = themeCreate("fullscreen");
+    themeCollection->smallfullscreen = themeCreate("smallfullscreen");
     
     themeAddPage(themeCollection->little,          themeCreateSmall());
     themeAddPage(themeCollection->normal,          themeCreateNormal());

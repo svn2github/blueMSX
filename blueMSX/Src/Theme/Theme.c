@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-13 06:16:02 $
+** $Date: 2005-01-14 06:11:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -596,9 +596,11 @@ void themePageUpdate(ThemePage* themePage, void* dc)
 
 ///////////////////////////////////////////////////////////////
 
-Theme* themeCreate() 
+Theme* themeCreate(const char* name) 
 {
     Theme* theme = malloc(sizeof(Theme));
+    strcpy(theme->name, name);
+    theme->reference = NULL;
     theme->currentPage = 0;
     theme->pageCount = 0;
     theme->pages[0] = NULL;
@@ -645,7 +647,7 @@ void themeSetPageFromHash(Theme* theme, unsigned long hash)
             theme->currentPage = i;
         }
     }
-    archThemeUpdate();
+    archThemeUpdate(theme);
 }
 
 ThemePage* themeGetPage(Theme* theme, int index)
@@ -667,4 +669,59 @@ UInt32 themeGetNameHash(const char* name)
     }
 
     return tag;
+}
+
+////////////////////////
+
+ThemeCollection* themeCollectionCreate() 
+{
+    ThemeCollection* tc = (ThemeCollection*)calloc(1, sizeof(ThemeCollection));
+    return tc;
+}
+
+void themeCollectionDestroy(ThemeCollection* tc) 
+{
+    int i;
+
+    if (tc->little)          themeDestroy(tc->little);
+    if (tc->normal)          themeDestroy(tc->normal);
+    if (tc->fullscreen)      themeDestroy(tc->fullscreen);
+    if (tc->smallfullscreen) themeDestroy(tc->smallfullscreen);
+
+    for (i = 0; i < THEME_MAX_WINDOWS; i++) {
+        if (tc->theme[i] != NULL) {
+            themeDestroy(tc->theme[i]);
+            tc->theme[i] = NULL;
+        }
+    }
+}
+
+
+void themeCollectionAddWindow(ThemeCollection* tc, Theme* theme)
+{
+    int i;
+
+    for (i = 0; i < THEME_MAX_WINDOWS; i++) {
+        if (tc->theme[i] == NULL) {
+            tc->theme[i] = theme;
+        }
+    }
+}
+
+void themeCollectionOpenWindow(ThemeCollection* tc, unsigned long hash)
+{
+    Theme* theme = NULL;
+
+    int i;
+    for (i = 0; i < THEME_MAX_WINDOWS; i++) {
+        if (tc->theme[i] && themeGetNameHash(tc->theme[i]->name) == hash) {
+            theme = tc->theme[i];
+            break;
+        }
+    }
+    if (theme == NULL || tc->theme[i]->reference != NULL) {
+        return;
+    }
+
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i]);
 }

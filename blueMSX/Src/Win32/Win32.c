@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-01-13 06:16:02 $
+** $Date: 2005-01-14 06:11:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1938,6 +1938,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         }
         break;
 
+    case WM_NCMOUSEMOVE:
+        if (st.themePageActive) {
+            checkClipRegion();
+        }
+        break;
+
     case WM_MOUSEMOVE:
         if (st.themePageActive) {
             POINT pt;
@@ -2635,6 +2641,57 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
 
 
+//////////////////////////////////////////////////////////////////////////
+// Methods to manage object window data
+//
+typedef struct {
+    HWND  hwnd;
+    int   id;
+    void* data;
+} WindowData;
+
+#define WINDOW_DATA_NO 1024
+
+WindowData windowData[WINDOW_DATA_NO];
+
+void windowDataSet(HWND hwnd, int id, void* data)
+{
+    if (id != 0) {
+        int i;
+        for (i = 0; i < WINDOW_DATA_NO - 1; i++) {
+            if (windowData[i].hwnd == hwnd || windowData[i].hwnd == NULL) {
+                windowData[i].hwnd = hwnd;
+                windowData[i].id   = id;
+                windowData[i].data = data;
+                return;
+            }
+        }
+    }
+    else {
+        int i;
+        for (i = 0; windowData[i].hwnd != NULL; i++) {
+            if (windowData[i].hwnd == hwnd) {
+                while (windowData[i + 1].hwnd != NULL) {
+                    windowData[i] = windowData[i + 1];
+                    i++;
+                }
+                return;
+            }
+        }
+    }
+}
+
+void* windowDataGet(HWND hwnd)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (windowData[i].hwnd == hwnd) {
+            return windowData[i].data;
+        }
+    }
+    return NULL;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Win32file.h"
@@ -2844,8 +2901,333 @@ void archThemeSetNext() {
     archUpdateWindow();
 }
 
-void archThemeUpdate() {
-    themeSet(pProperties->settings.themeName, 0);
+/////////////////////////////////////////////////////////////////////
+////  Implementation of theme popup windows
+/////////////////////////////////////////////////////////////////////
+
+typedef struct WindowInfo {
+    HWND hwnd;
+    int  captionHeight;
+    int  isMinimized;
+    int  isMoving;
+    Theme* theme;
+    
+    HBITMAP hBitmap;
+    
+    HRGN     hrgn;
+    int      rgnSize;
+    RGNDATA* rgnData;
+    int      rgnEnable;
+} WindowInfo;
+
+static void windowSetClipRegion(WindowInfo* wi, int enable) 
+{
+    if (wi->rgnEnable == enable) {
+        return;
+    }
+    if (!enable || wi->rgnData == NULL || wi->isMoving) {
+        SetWindowRgn(wi->hwnd, NULL, TRUE);
+        wi->rgnEnable = 0;
+    }
+    else {
+        HRGN hrgn = ExtCreateRegion(NULL, wi->rgnSize, wi->rgnData);
+        SetWindowRgn(wi->hwnd, hrgn, TRUE);
+        wi->rgnEnable = 1;
+    }
+}
+
+static void windowUpdateClipRegion(WindowInfo* wi) 
+{
+    if (wi->rgnData != NULL && wi->hrgn != NULL) {
+        POINT pt;
+        RECT r;
+
+        GetCursorPos(&pt);
+        GetWindowRect(wi->hwnd, &r);
+        windowSetClipRegion(wi, !PtInRegion(wi->hrgn, pt.x - r.left, pt.y - r.top));
+    }
+}
+
+static void windowCheckClipRegion(WindowInfo* wi) 
+{
+    if (wi->rgnData != NULL && wi->hrgn != NULL) {
+        POINT pt;
+        RECT r;
+
+        GetCursorPos(&pt);
+        GetWindowRect(wi->hwnd, &r);
+        if (wi->rgnEnable == !PtInRegion(wi->hrgn, pt.x - r.left, pt.y - r.top)) {
+            SetTimer(wi->hwnd, TIMER_CLIP_REGION, 500, NULL);
+        }
+    }
+}
+
+static void windowCreateClipRegion(WindowInfo* wi)
+{
+    ThemePage* themePage = themeGetCurrentPage(wi->theme);
+
+    if (themePage->clipPoint.count > 0) {
+        int i;
+        HRGN hrgn;
+        POINT pt[512];
+        int dx = GetSystemMetrics(SM_CXFIXEDFRAME);
+        int dy = GetSystemMetrics(SM_CYFIXEDFRAME) + wi->captionHeight;
+
+        for (i = 0; i < themePage->clipPoint.count; i++) {
+            ClipPoint cp = themePage->clipPoint.list[i];
+            pt[i].x = cp.x + dx;
+            pt[i].y = cp.y + dy;
+        }
+
+        hrgn = CreatePolygonRgn(pt, themePage->clipPoint.count, WINDING);
+        wi->rgnSize = 0;
+        if (hrgn != NULL) {
+            wi->rgnSize = GetRegionData(hrgn, 0, NULL);
+            if (wi->rgnSize > 0) {
+                wi->rgnData = malloc(wi->rgnSize);
+                wi->rgnSize = GetRegionData(hrgn, wi->rgnSize, wi->rgnData);
+                if (wi->rgnSize == 0) {
+                    free(wi->rgnData);
+                    wi->rgnData = NULL;
+                }
+            }
+            if (wi->rgnSize == 0) {
+                wi->rgnData = NULL;
+            }
+            else {
+                int width  = themePage->width  + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
+                int height = themePage->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + wi->captionHeight;
+
+                wi->hrgn = CreateRectRgn(0, 0, width, height);
+                CombineRgn(wi->hrgn, wi->hrgn, hrgn, RGN_XOR);
+            }
+            DeleteObject(hrgn);
+        }
+    }
+
+    setClipRegion(themePage->clipPoint.count > 0);
+
+    if (wi->rgnData == NULL) {
+        KillTimer(wi->hwnd, TIMER_CLIP_REGION);
+    }
+    else {
+        SetTimer(wi->hwnd, TIMER_CLIP_REGION, 500, NULL);
+    }
+}
+
+static BOOL CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    WindowInfo* wi = windowDataGet(hwnd);
+
+    switch (iMsg) {
+    case WM_CREATE:
+        {
+            ThemePage* themePage;
+            CREATESTRUCT* cs = (CREATESTRUCT*)lParam;
+
+            wi = (WindowInfo*)cs->lpCreateParams;
+            windowDataSet(hwnd, 1, wi);
+
+            wi->hwnd = hwnd;
+            wi->captionHeight = GetSystemMetrics((GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW) ? SM_CYSMCAPTION : SM_CYCAPTION);
+            
+            themePage = themeGetCurrentPage(wi->theme);
+            SendMessage(hwnd, WM_UPDATE, 0, 0);
+
+            ShowWindow(hwnd, TRUE); 
+            
+            SetTimer(hwnd, TIMER_STATUSBAR_UPDATE, 100, NULL);
+        }
+        return 0;
+
+    case WM_CLOSE:
+        KillTimer(hwnd, TIMER_STATUSBAR_UPDATE);
+        windowDataSet(hwnd, 0, NULL);
+        wi->theme->reference = NULL;
+        free(wi);
+        EndDialog(hwnd, FALSE);
+        break;
+
+    case WM_ENTERSIZEMOVE:
+        wi->isMoving = 1;
+        break;
+
+    case WM_EXITSIZEMOVE:
+        wi->isMoving = 0;
+        windowUpdateClipRegion(wi);
+        break;
+
+    case WM_TIMER:
+        switch(wParam) {
+        case TIMER_STATUSBAR_UPDATE:
+            themePageUpdate(themeGetCurrentPage(wi->theme), GetDC(hwnd));
+            break;
+        case TIMER_CLIP_REGION:
+            windowUpdateClipRegion(wi);
+            break;
+        case TIMER_THEME:
+            if (!wi->isMinimized) {
+                POINT pt;
+                RECT r;
+                HDC hdc;
+
+                GetCursorPos(&pt);
+                GetWindowRect(hwnd, &r);
+
+                if (!PtInRect(&r, pt)) {
+                    KillTimer(hwnd, TIMER_THEME);
+                }
+
+                ScreenToClient(hwnd, &pt);
+
+                hdc = GetDC(hwnd);
+                themePageMouseMove(themeGetCurrentPage(wi->theme), hdc, pt.x, pt.y);
+                ReleaseDC(hwnd, hdc);
+            }
+            break;
+        }
+        return 0;
+
+    case WM_UPDATE:
+        {
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            int width;
+            int height;
+
+            width  = themePage->width  + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
+            height = themePage->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + wi->captionHeight;
+            
+            if (wi->hBitmap) {
+                DeleteObject(wi->hBitmap);
+            }
+            wi->hBitmap = CreateCompatibleBitmap(GetDC(hwnd), width, height);
+
+            SetWindowPos(hwnd, NULL, 0, 0, width, height, 
+                         SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+
+            themePageActivate(themePage, hwnd);
+            windowCreateClipRegion(wi);
+
+            InvalidateRect(hwnd, NULL, TRUE);
+        }
+        return 0;
+
+    case WM_NCMOUSEMOVE:
+        windowCheckClipRegion(wi);
+        break;
+        
+    case WM_MOUSEMOVE:
+        {
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            POINT pt;
+            GetCursorPos(&pt);
+            ScreenToClient(hwnd, &pt);
+            themePageMouseMove(themePage, GetDC(hwnd), pt.x, pt.y);
+            windowCheckClipRegion(wi);
+        }
+        SetTimer(hwnd, TIMER_THEME, 250, NULL);
+
+        break;
+
+    case WM_LBUTTONDOWN:
+        {
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            POINT pt;
+            SetCapture(hwnd);
+            GetCursorPos(&pt);
+            ScreenToClient(hwnd, &pt);
+            themePageMouseButtonDown(themePage, GetDC(hwnd), pt.x, pt.y);
+        }
+        break;
+
+    case WM_LBUTTONUP:
+        {
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            POINT pt;
+            
+            ReleaseCapture();
+            GetCursorPos(&pt);
+            ScreenToClient(hwnd, &pt);
+            themePageMouseButtonUp(themePage, GetDC(hwnd), pt.x, pt.y);
+        }
+
+    case WM_ERASEBKGND:
+        return 1;
+
+    case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps); 
+            HDC hMemDC = CreateCompatibleDC(hdc);
+            HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, wi->hBitmap);
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            
+            themePageUpdate(themePage, hMemDC); //OWN DC
+            themePageDraw(themePage, hMemDC);
+
+            BitBlt(hdc, 0, 0, themePage->width, themePage->height, hMemDC, 0, 0, SRCCOPY);
+
+            SelectObject(hMemDC, hBitmap);
+            DeleteDC(hMemDC);                
+
+            EndPaint(hwnd, &ps);
+        }
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+
+void* archWindowCreate(Theme* theme) {
+    HINSTANCE hInstance = GetModuleHandle(NULL);
+    WindowInfo* wi;
+
+    static int initialized = 0;
+    if (!initialized) {
+        static WNDCLASSEX wndClass;
+        wndClass.cbSize         = sizeof(wndClass);
+        wndClass.style          = CS_OWNDC;
+        wndClass.lpfnWndProc    = windowProc;
+        wndClass.cbClsExtra     = 0;
+        wndClass.cbWndExtra     = 0;
+        wndClass.hInstance      = hInstance;
+        wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
+        wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
+        wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
+        wndClass.hbrBackground  = NULL;
+        wndClass.lpszMenuName   = NULL;
+        wndClass.lpszClassName  = "blueMSX Popup";
+
+        RegisterClassEx(&wndClass);
+
+        initialized = 1;
+    }
+
+    wi = calloc(1, sizeof(WindowInfo));
+    wi->theme = theme;
+
+#if 1
+    return CreateWindowEx(WS_EX_TOOLWINDOW, "blueMSX Popup", theme->name, 
+                        WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
+                        WS_SYSMENU | WS_MINIMIZEBOX, 
+                        CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, st.hwnd, NULL, 
+                        hInstance, wi);
+#else
+    return CreateWindow("blueMSX Popup", theme->name, 
+                        WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
+                        WS_SYSMENU | WS_MINIMIZEBOX, 
+                        CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, NULL, NULL, 
+                        hInstance, wi);
+#endif
+}
+
+void archThemeUpdate(Theme* theme) {
+    if (theme->reference == NULL) {
+        themeSet(pProperties->settings.themeName, 0);
+    }
+    else {
+        SendMessage(theme->reference, WM_UPDATE, 0, 0);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -3351,7 +3733,7 @@ char* themeTriggerMappedKey() {
 
 
 //////////////////////////////////////////////////////////////////////////
-// Methods to manage object window data
+// Methods for parent window to control the child object windows
 //
 #define OBJECT_ID_NONE                      0
 #define OBJECT_ID_BUTTON_OK                 1
@@ -3363,57 +3745,6 @@ char* themeTriggerMappedKey() {
 #define OBJECT_ID_DROPDOWN_KEYBOARDTHEMES   32
 #define OBJECT_ID_DROPDOWN_MACHINECONFIG    33
 
-typedef struct {
-    HWND  hwnd;
-    int   id;
-    void* data;
-} WindowData;
-
-#define WINDOW_DATA_NO 256
-
-WindowData windowData[WINDOW_DATA_NO];
-
-void windowDataSet(HWND hwnd, int id, void* data)
-{
-    if (id != OBJECT_ID_NONE) {
-        int i;
-        for (i = 0; i < WINDOW_DATA_NO - 1; i++) {
-            if (windowData[i].hwnd == hwnd || windowData[i].hwnd == NULL) {
-                windowData[i].hwnd = hwnd;
-                windowData[i].id   = id;
-                windowData[i].data = data;
-                return;
-            }
-        }
-    }
-    else {
-        int i;
-        for (i = 0; windowData[i].hwnd != NULL; i++) {
-            if (windowData[i].hwnd == hwnd) {
-                while (windowData[i + 1].hwnd != NULL) {
-                    windowData[i] = windowData[i + 1];
-                    i++;
-                }
-                return;
-            }
-        }
-    }
-}
-
-void* windowDataGet(HWND hwnd)
-{
-    int i;
-    for (i = 0; windowData[i].hwnd != NULL; i++) {
-        if (windowData[i].hwnd == hwnd) {
-            return windowData[i].data;
-        }
-    }
-    return NULL;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Methods for parent window to control the child object windows
-//
 #define WM_OBJECT_CONTOL_BASE (WM_USER + 1400)
 
 #define WM_OBJECT_UPDATE                    (WM_OBJECT_CONTOL_BASE + 1)
