@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:48 $
+** $Date: 2004-12-16 08:02:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -272,6 +272,7 @@ typedef struct {
     _TCHAR* propFileTypes;
     _TCHAR* propDisableWinKeys;
     _TCHAR* propPriorityBoost;
+    _TCHAR* propUseRegistry;
     _TCHAR* propClearHistory;
     _TCHAR* propSettDefSlotGB;
     _TCHAR* propSettDefSlots;

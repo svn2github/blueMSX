@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:48 $
+** $Date: 2004-12-16 08:02:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -529,6 +529,7 @@ void langInitEnglish(LanguageStrings* ls)
     // New entries in 2.0.1
     ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
     ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
+    ls->propUseRegistry         = "Save Configuration in the Registry";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2004-12-16 08:02:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,6 +135,10 @@ void verifyFileHistory(char* history, RomType* historyType) {
 }
 
 int fileExist(char* fileName, char* zipFile) {
+    if (fileName == NULL || *fileName == 0) {
+        return 0;
+    }
+
     if (zipFile == NULL || *zipFile == 0) {
         FILE* file = fopen(fileName, "r");
         if (file != NULL) {

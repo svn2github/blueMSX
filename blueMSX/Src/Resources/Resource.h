@@ -365,6 +365,7 @@
 #define IDC_SETTINGSFILETYPES           2307
 #define IDC_SETTINGSDISABLEWINKEYS      2308
 #define IDC_SETTINGSPRIORITYBOOST       2309
+#define IDC_SETTINGSUSEREGISTRY         2310
 
 #define IDC_KEYUP                       1030
 #define IDC_KEYDOWN                     1031

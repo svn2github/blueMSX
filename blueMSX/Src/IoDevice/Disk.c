@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-10 21:41:53 $
+** $Date: 2004-12-16 08:02:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,10 +214,13 @@ static void diskUpdateInfo(int driveId)
 
     if ((buf[0] == 0xe9) || (buf[0] ==0xeb)) {
 	    sectorsPerTrack[driveId] = buf[0x18] + 256 * buf[0x19];
-	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];        if (memcmp(&buf[3], "ASC 2.2", 7)) {
+	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];
+#if 1
+        if (memcmp(&buf[3], "ASC 2.2", 7)) {
             sectorsPerTrack[driveId] = 9;
             sides[driveId]           = 1;
         }
+#endif
     }
     else {
         rv = diskReadSector(driveId, buf, 2, 0, 0, 512, &sectorSize);
@@ -415,6 +418,8 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
         fclose(drives[driveId]);
         drives[driveId] = NULL;
     }
-    if (boardGetType() == BOARD_SVI)
-        changed[driveId] = 1;    else        diskUpdateInfo(driveId);
-    return 1;}
+
+    diskUpdateInfo(driveId);
+
+    return 1;
+}

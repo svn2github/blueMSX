@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:50 $
+** $Date: 2004-12-16 08:02:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,12 @@ static Mixer* theMixer;
 static Video* theVideo;
 static int centered = 0;
 extern void emulatorRestartSound();
+
+static int canUseRegistry = 0;
+static int useRegistry = 0;
+static char* keyPath = NULL;
+static char* keyFile = NULL;
+static char registryKey[] = "blueMSX";
 
 static char virtualKeys[256][32] = {
     "",
@@ -849,11 +855,14 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSFILETYPES), langPropFileTypes());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDISABLEWINKEYS), langPropDisableWinKeys());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSPRIORITYBOOST), langPropPriorityBoost());
+        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSUSEREGISTRY), langPropUseRegistry());
 
         setButtonCheck(hDlg, IDC_SETTINGSFILETYPES, pProperties->emulation.registerFileTypes, 1);
         setButtonCheck(hDlg, IDC_SETTINGSDISABLEWINKEYS, pProperties->emulation.disableWinKeys, 1);
         setButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST, pProperties->emulation.priorityBoost, 1);
         setButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER, pProperties->settings.disableScreensaver, 1);
+        setButtonCheck(hDlg, IDC_SETTINGSUSEREGISTRY, useRegistry && canUseRegistry, 1);
+        EnableWindow(GetDlgItem(hDlg, IDC_SETTINGSUSEREGISTRY), canUseRegistry);
 
         return FALSE;
 
@@ -893,6 +902,9 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         pProperties->emulation.disableWinKeys    = getButtonCheck(hDlg, IDC_SETTINGSDISABLEWINKEYS);
         pProperties->settings.disableScreensaver = getButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER);
         pProperties->emulation.priorityBoost     = getButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST);
+        if (canUseRegistry) {
+            useRegistry = getButtonCheck(hDlg, IDC_SETTINGSUSEREGISTRY);
+        }
 
         propModified = 1;
         
@@ -2065,11 +2077,6 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
 //////////////////////////////////////////////////////////////////////////////
 // Host dependent load/save methods, Can be moved to its own file
 
-static int canUseRegistry = 0;
-static char* keyPath = NULL;
-static char* keyFile = NULL;
-static char registryKey[] = "blueMSX";
-
 static void getRegStrValue(char* keyDir, char* keyStr, char* returnValue) {  
     char value[1024];
     LONG rv;
@@ -2212,23 +2219,23 @@ static BOOL setIniStrValue(char* keyDir, char* keyStr, char* value) {
 }
   
 void getStrValue(char* keyStr, char* returnValue) {
-    if (canUseRegistry) getRegStrValue(registryKey, keyStr, returnValue);
-    else                getIniStrValue(registryKey, keyStr, returnValue);
+    if (useRegistry) getRegStrValue(registryKey, keyStr, returnValue);
+    else             getIniStrValue(registryKey, keyStr, returnValue);
 }
 
 void getIntValue(char* keyStr, long* returnValue) {
-    if (canUseRegistry) getRegIntValue(registryKey, keyStr, returnValue);
-    else                getIniIntValue(registryKey, keyStr, returnValue);
+    if (useRegistry) getRegIntValue(registryKey, keyStr, returnValue);
+    else             getIniIntValue(registryKey, keyStr, returnValue);
 }   
     
 int setStrValue(char* keyStr, char* value) {
-    if (canUseRegistry) return setRegStrValue(registryKey, keyStr, value);
-    else                return setIniStrValue(registryKey, keyStr, value);
+    if (useRegistry) return setRegStrValue(registryKey, keyStr, value);
+    else             return setIniStrValue(registryKey, keyStr, value);
 }
 
 int setIntValue(char* keyStr, long value) {
-    if (canUseRegistry) return setRegIntValue(registryKey, keyStr, value);
-    else                return setIniIntValue(registryKey, keyStr, value);
+    if (useRegistry) return setRegIntValue(registryKey, keyStr, value);
+    else             return setIniIntValue(registryKey, keyStr, value);
 }
 
 char* getLocalDirectory() {
@@ -2256,27 +2263,30 @@ char* getLocalDirectory() {
     return dir;
 }
 
-void initProperties(char* iniFile) 
+void propertiesUseRegistry(int enable)
 {
-    canUseRegistry = 0;
+    useRegistry = enable && canUseRegistry;
+}
 
-#ifndef PROPERTIES_NO_REGISTRY
-    if (iniFile == NULL) {
-        DWORD test = 0;
+void propertiesInit(char* iniFile) 
+{
+    DWORD test = 0;
 
-        setRegIntValue(registryKey, "Test", 42);
-        getRegIntValue(registryKey, "Test", &test);
+    setRegIntValue(registryKey, "Test", 42);
+    getRegIntValue(registryKey, "Test", &test);
 
-        canUseRegistry = test == 42;
-    }
-#endif
+    canUseRegistry = test == 42;
+    useRegistry = 0;
 
-#ifdef PROPERTIES_LOCAL_INI_FILE
     keyPath = getLocalDirectory();
-#endif
 
     if (iniFile != NULL && *iniFile != 0) {
+        canUseRegistry = 0;
         keyFile = malloc(MAX_PATH);
         strcpy(keyFile, iniFile);
+    }
+
+    if (canUseRegistry) {
+        getRegIntValue(registryKey, "UseRegistry", &useRegistry);
     }
 }

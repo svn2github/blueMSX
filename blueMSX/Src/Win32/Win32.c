@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-13 22:35:02 $
+** $Date: 2004-12-16 08:02:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2539,7 +2539,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     RegisterClassEx(&wndClass);
 
     resetRegistry = emuCheckResetArgument(szLine);
-    initProperties(emuCheckIniFileArgument(szLine));
+    propertiesInit(emuCheckIniFileArgument(szLine));
     pProperties = propCreate(resetRegistry);
        
     if (resetRegistry == 2) {
