@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-02-22 03:39:14 $
+** $Date: 2005-02-25 22:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include <stdlib.h>
+#include <string.h>
 #include <memory.h>
 
 /*
@@ -275,7 +276,7 @@ static void getDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
     DbgRegisterBank* regBank;
     int i;
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, crtc->vramMask + 1, crtc->vram);
+    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, 0, crtc->vramMask + 1, crtc->vram);
    
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", 16);
 
@@ -286,18 +287,22 @@ static void getDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
     }
 }
 
-static void dbgWriteMemory(CRTC6845* crtc, char* name, void* data, int start, int size)
+static int dbgWriteMemory(CRTC6845* crtc, char* name, void* data, int start, int size)
 {
     if (strcmp(name, "VRAM") || (UInt32)start + size > crtc->vramMask + 1) {
-        return;
+        return 0;
     }
 
     memcpy(crtc->vram + start, data, size);
+
+    return 1;
 }
 
-static void dbgWriteRegister(CRTC6845* crtc, char* name, int regIndex, UInt32 value)
+static int dbgWriteRegister(CRTC6845* crtc, char* name, int regIndex, UInt32 value)
 {
     crtcUpdateRegister(crtc, (UInt8)regIndex, (UInt8)value);
+
+    return 1;
 }
 
 CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-22 03:39:12 $
+** $Date: 2005-02-25 22:18:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -164,19 +164,19 @@ DbgSnapshot* dbgSnapshotCreate()
     return dbgSnapshot;
 }
 
-void dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
+int dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
 {
-    debugDeviceWriteMemory(memoryBlock, data, startAddr, size);
+    return debugDeviceWriteMemory(memoryBlock, data, startAddr, size);
 }
 
-void dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
+int dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
 {
-    debugDeviceWriteRegister(regBank, regIndex, value);
+    return debugDeviceWriteRegister(regBank, regIndex, value);
 }
 
-void dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
+int dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
 {
-    debugDeviceWriteIoPort(ioPorts, portIndex, value);
+    return debugDeviceWriteIoPort(ioPorts, portIndex, value);
 }
 
 void dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot)

@@ -486,7 +486,7 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) : 
-    linePos(0), lineCount(0), programCounter(0), firstVisibleLine(0)
+    linePos(0), lineCount(0), programCounter(0), firstVisibleLine(0), editEnabled(false)
 {
     disassembly = this;
 
@@ -533,6 +533,16 @@ void Disassembly::show()
 void Disassembly::hide()
 {
     ShowWindow(hwnd, false);
+}
+
+void Disassembly::enableEdit()
+{
+    editEnabled = true;
+}
+
+void Disassembly::disableEdit()
+{
+    editEnabled = false;
 }
 
 void Disassembly::updatePosition(RECT& rect)

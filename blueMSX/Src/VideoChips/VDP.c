@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-02-22 03:39:15 $
+** $Date: 2005-02-25 22:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -943,7 +943,7 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
 
     sync(vdp, boardSystemTime());
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, vdp->vramSize, vdp->vram);
+    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, 0, vdp->vramSize, vdp->vram);
    
     cmdRegCount = vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958 ? 15 : 0;
 
@@ -966,16 +966,18 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     }
 }
 
-static void dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
+static int dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
 {
     if (strcmp(name, "VRAM") || start + size > vdp->vramSize) {
-        return;
+        return 0;
     }
 
     memcpy(vdp->vram + start, data, size);
+
+    return 1;
 }
 
-static void dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
+static int dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
 {
     int regCount;
     if (vdp->vdpVersion == VDP_V9938) regCount = 24;
@@ -983,10 +985,12 @@ static void dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
     else regCount = 8;
 
     if (regIndex > regCount) {
-        return;
+        return 0;
     }
 
     vdpUpdateRegisters(vdp, (UInt8)regIndex, (UInt8)value);
+
+    return 1;
 }
 
 static void reset(VDP* vdp)

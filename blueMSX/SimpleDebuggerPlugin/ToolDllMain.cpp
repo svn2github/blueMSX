@@ -58,8 +58,8 @@ MemoryBlock* DeviceGetMemoryBlock(Device* device, int index) {
     return toolDeviceGetMemoryBlock(device, index);
 }
 
-void DeviceWriteMemoryBlockMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size) {
-    toolDeviceWriteMemory(memoryBlock, data, startAddr, size);
+bool DeviceWriteMemoryBlockMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size) {
+    return toolDeviceWriteMemory(memoryBlock, data, startAddr, size) != 0;
 }
 
 int DeviceGetRegisterBankCount(Device* device) {
@@ -70,8 +70,8 @@ RegisterBank* DeviceGetRegisterBank(Device* device, int index) {
     return toolDeviceGetRegisterBank(device, index);
 }
 
-void DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32 value) {
-    toolDeviceWriteRegister(regBank, regIndex, value);
+bool DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32 value) {
+    return toolDeviceWriteRegister(regBank, regIndex, value) != 0;
 }
 
 int DeviceGetIoPortsCount(Device* device) {
@@ -82,8 +82,8 @@ IoPorts* DeviceGetIoPorts(Device* device, int index) {
     return toolDeviceGetIoPorts(device, index);
 }
 
-void DeviceWriteIoPortsPort(IoPorts* ioPorts, int portIndex, UInt32 value) {
-    toolDeviceWriteIoPort(ioPorts, portIndex, value);
+bool DeviceWriteIoPortsPort(IoPorts* ioPorts, int portIndex, UInt32 value) {
+    return toolDeviceWriteIoPort(ioPorts, portIndex, value) != 0;
 }
 
 void EmulatorRun() {

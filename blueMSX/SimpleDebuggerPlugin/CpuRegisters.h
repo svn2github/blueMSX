@@ -37,6 +37,9 @@ public:
     void show();
     void hide();
     
+    void enableEdit();
+    void disableEdit();
+    
     void updatePosition(RECT& rect);
 
     void updateContent(RegisterBank* regBank);
@@ -49,6 +52,8 @@ private:
     void scrollWindow(int sbAction);
     void updateScroll();
     void drawText(int top, int bottom);
+
+    bool     editEnabled;
 
     HWND   hwnd;
     HDC    hMemdc;

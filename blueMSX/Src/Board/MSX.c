@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-02-25 03:07:46 $
+** $Date: 2005-02-25 22:18:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -756,7 +756,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
         mappedRAM[i] = slotPeek(NULL, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 0, 0x10000, mappedRAM);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 1, 0, 0x10000, mappedRAM);
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
 
@@ -777,7 +777,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
 }
 
-static void dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
+static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
 {
     switch (regIndex) {
     case  0: r800->regs.AF.W = (UInt16)value; break;
@@ -799,6 +799,8 @@ static void dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value
         r800->regs.iff2 = (UInt8)((value >> 1) & 1); 
         break;
     }
+
+    return 1;
 }
 
 int msxCreate(Machine* machine, 

@@ -371,31 +371,42 @@ void OnShowTool() {
     RECT r3 = { 3, 473, 710, 700 };
     memory->updatePosition(r3);
     memory->show();
-
     updateWindowPositions();
 }
 
 void OnEmulatorStart() {
     if (dbgHwnd != NULL) {
         disassembly->updateBreakpoints();
+        disassembly->disableEdit();
+        cpuRegisters->disableEdit();
+        memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }
 
 void OnEmulatorStop() {
     if (dbgHwnd != NULL) {
+        disassembly->disableEdit();
+        cpuRegisters->disableEdit();
+        memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }
 
 void OnEmulatorPause() {
     if (dbgHwnd != NULL) {
+        disassembly->enableEdit();
+        cpuRegisters->enableEdit();
+        memory->enableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }
 
 void OnEmulatorResume() {
     if (dbgHwnd != NULL) {
+        disassembly->disableEdit();
+        cpuRegisters->disableEdit();
+        memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }

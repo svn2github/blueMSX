@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-25 03:07:46 $
+** $Date: 2005-02-25 22:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -86,16 +86,18 @@ static void destroy(RamNormal* rm)
 
 static void getDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
 {
-    dbgDeviceAddMemoryBlock(dbgDevice, "Normal", 0, rm->pages * 0x2000, rm->ramData);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Normal", 0, 0, rm->pages * 0x2000, rm->ramData);
 }
 
-static void dbgWriteMemory(RamNormal* rm, char* name, void* data, int start, int size)
+static int dbgWriteMemory(RamNormal* rm, char* name, void* data, int start, int size)
 {
     if (strcmp(name, "RAM") || start + size > rm->pages * 0x2000) {
-        return;
+        return 0;
     }
 
     memcpy(rm->ramData + start, data, size);
+
+    return 1;
 }
 
 int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 

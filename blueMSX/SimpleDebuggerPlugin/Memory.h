@@ -39,6 +39,9 @@ public:
     void show();
     void hide();
     
+    void enableEdit();
+    void disableEdit();
+
     void updatePosition(RECT& rect);
 
     void updateContent(Snapshot* snapshot);
@@ -50,16 +53,17 @@ public:
 
 private:
     struct MemoryItem {
-        MemoryItem(const std::string t, UInt8* m, int s) : size(s), title(t), flag(true) {
-            memory = new UInt8[s];
-            ref    = new UInt8[s];
-            memcpy(memory, m, s);
-            memcpy(ref,    m, s);
+        MemoryItem(const std::string t, MemoryBlock* m) : memBlock(m), size(m->size), title(t), flag(true) {
+            memory = new UInt8[size];
+            ref    = new UInt8[size];
+            memcpy(memory, m->memory, size);
+            memcpy(ref,    m->memory, size);
         }
         ~MemoryItem() {
             delete[] memory;
             delete[] ref;
         }
+        MemoryBlock* memBlock;
         UInt8* memory;
         UInt8* ref;
         int    size;
@@ -76,6 +80,8 @@ private:
     void updateWindowPositions();
     void setNewMemory(const std::string& title);
     void drawText(int top, int bottom);
+
+    bool     editEnabled;
 
     HWND   hwnd;
     HWND   memHwnd;

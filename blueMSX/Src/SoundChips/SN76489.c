@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-22 03:39:14 $
+** $Date: 2005-02-25 22:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,9 +145,11 @@ static void getDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
     }
 }
 
-static void dbgWriteRegister(SN76489* sn76489, char* name, int regIndex, UInt32 value)
+static int dbgWriteRegister(SN76489* sn76489, char* name, int regIndex, UInt32 value)
 {
     updateRegister(sn76489, (UInt8)regIndex, (UInt8)value);
+
+    return 1;
 }
 
 SN76489* sn76489Create(Mixer* mixer)

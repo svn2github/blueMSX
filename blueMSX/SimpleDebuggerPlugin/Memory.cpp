@@ -185,7 +185,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
         {
             SetFocus(hwnd);
-            if (currentMemory == NULL) {
+            if (currentMemory == NULL || !editEnabled) {
                 return 0;
             }
 
@@ -215,7 +215,14 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case HexInputDialog::EC_KILLFOCUS:
     case HexInputDialog::EC_NEWVALUE:
         if (currentMemory != 0 && currentEditAddress >= 0 && currentEditAddress < currentMemory->size) {
-            currentMemory->memory[currentEditAddress] = (UInt8)lParam;
+            UInt8 value = (UInt8)lParam;
+            bool success = false;
+            if (currentMemory->memory[currentEditAddress] != value) {
+                success = DeviceWriteMemoryBlockMemory(currentMemory->memBlock, &value, currentEditAddress, 1);
+            }
+            if (success) {
+                currentMemory->memory[currentEditAddress] = value;
+            }
             InvalidateRect(memHwnd, NULL, TRUE);
         }
         currentEditAddress = -1;
@@ -272,7 +279,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 }
 
 Memory::Memory(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1)
+    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), editEnabled(false)
 {
     memory = this;
 
@@ -329,6 +336,18 @@ void Memory::show()
 void Memory::hide()
 {
     ShowWindow(hwnd, false);
+}
+
+void Memory::enableEdit()
+{
+    editEnabled = true;
+}
+
+void Memory::disableEdit()
+{
+    editEnabled = false;
+    dataInput1->hide();
+    dataInput2->hide();
 }
 
 void Memory::updatePosition(RECT& rect)
@@ -402,7 +421,7 @@ void Memory::updateContent(Snapshot* snapshot)
                 }
             }
             if (it == memList.end()) {
-                memList.push_back(new MemoryItem(memName, mem->memory, mem->size));
+                memList.push_back(new MemoryItem(memName, mem));
                 devicesChanged = true;
             }
         }

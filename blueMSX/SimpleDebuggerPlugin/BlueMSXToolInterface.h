@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-25 20:01:22 $
+** $Date: 2005-02-25 22:17:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,6 +77,7 @@ struct Device {
 typedef struct {
     int    deviceId;
     char   name[32];
+    int    writeProtected;
     UInt32 startAddress;
     UInt32 size;
     UInt8  memory[1];
@@ -119,13 +120,13 @@ typedef Device*       (__stdcall *ToolSnapshotGetDevice)(Snapshot* Snapshot, int
 
 typedef int           (__stdcall *ToolDeviceGetMemoryBlockCount)(Device* device);
 typedef MemoryBlock*  (__stdcall *ToolDeviceGetMemoryBlock)(Device* device, int memBlockIndex);
-typedef void          (__stdcall *ToolDeviceWriteMemory)(MemoryBlock* memoryBlock, void* data, int startAddr, int size);
+typedef int           (__stdcall *ToolDeviceWriteMemory)(MemoryBlock* memoryBlock, void* data, int startAddr, int size);
 typedef int           (__stdcall *ToolDeviceGetRegisterBankCount)(Device* device);
 typedef RegisterBank* (__stdcall *ToolDeviceGetRegisterBank)(Device* device, int regBankIndex);
-typedef void          (__stdcall *ToolDeviceWriteRegister)(RegisterBank* regBank, int regIndex, UInt32 value);
+typedef int           (__stdcall *ToolDeviceWriteRegister)(RegisterBank* regBank, int regIndex, UInt32 value);
 typedef int           (__stdcall *ToolDeviceGetIoPortsCount)(Device* device);
 typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPortIndex);
-typedef void          (__stdcall *ToolDeviceWriteIoPort)(IoPorts* ioPorts, int portIndex, UInt32 value);
+typedef int           (__stdcall *ToolDeviceWriteIoPort)(IoPorts* ioPorts, int portIndex, UInt32 value);
 typedef void          (__stdcall *ToolAction)();
 typedef void          (__stdcall *ToolBreakpoint)(UInt16);
 

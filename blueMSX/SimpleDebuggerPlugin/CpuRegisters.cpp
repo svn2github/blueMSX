@@ -96,7 +96,7 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
         {
             SetFocus(hwnd);
 
-            if (regValue[0] < 0) {
+            if (regValue[0] < 0 || !editEnabled) {
                 return 0;
             }
         
@@ -191,7 +191,7 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
 
 
 CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentEditRegister(-1)
+    lineCount(0), currentEditRegister(-1), editEnabled(false)
 {
     cpuRegisters = this;
 
@@ -234,6 +234,18 @@ void CpuRegisters::show()
 void CpuRegisters::hide()
 {
     ShowWindow(hwnd, false);
+}
+
+void CpuRegisters::enableEdit()
+{
+    editEnabled = true;
+}
+
+void CpuRegisters::disableEdit()
+{
+    editEnabled = false;
+    dataInput2->hide();
+    dataInput4->hide();
 }
 
 void CpuRegisters::updatePosition(RECT& rect)

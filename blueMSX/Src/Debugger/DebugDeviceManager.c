@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-22 03:39:12 $
+** $Date: 2005-02-25 22:18:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,43 +118,46 @@ void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count)
     *count = index;
 }
 
-void debugDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
+int debugDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
 {
     int i;
 
     for (i = 0; i < devManager.count; i++) {
         if (devManager.di[i].handle == memoryBlock->deviceHandle) {
             if (devManager.di[i].callbacks.writeMemory != NULL) {
-                devManager.di[i].callbacks.writeMemory(devManager.di[i].ref, memoryBlock->name, data, startAddr, size);
+                return devManager.di[i].callbacks.writeMemory(devManager.di[i].ref, memoryBlock->name, data, startAddr, size);
             }
         }
     }
+    return 0;
 }
 
-void debugDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
+int debugDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
 {
     int i;
 
     for (i = 0; i < devManager.count; i++) {
         if (devManager.di[i].handle == regBank->deviceHandle) {
             if (devManager.di[i].callbacks.writeRegister != NULL) {
-                devManager.di[i].callbacks.writeRegister(devManager.di[i].ref, regBank->name, regIndex, value);
+                return devManager.di[i].callbacks.writeRegister(devManager.di[i].ref, regBank->name, regIndex, value);
             }
         }
     }
+    return 0;
 }
 
-void debugDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
+int debugDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
 {
     int i;
 
     for (i = 0; i < devManager.count; i++) {
         if (devManager.di[i].handle == ioPorts->deviceHandle) {
             if (devManager.di[i].callbacks.writeIoPort != NULL) {
-                devManager.di[i].callbacks.writeIoPort(devManager.di[i].ref, ioPorts->name, portIndex, value);
+                return devManager.di[i].callbacks.writeIoPort(devManager.di[i].ref, ioPorts->name, portIndex, value);
             }
         }
     }
+    return 0;
 }
 
 DbgDevice* dbgDeviceCreate(int handle)
@@ -169,6 +172,7 @@ DbgDevice* dbgDeviceCreate(int handle)
 
 DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
                                         const char* name,
+                                        int   writeProtected,
                                         UInt32 startAddress,
                                         UInt32 size,
                                         UInt8* memory)
@@ -187,6 +191,7 @@ DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
 
     mem = malloc(sizeof(DbgMemoryBlock) + size);
     strcpy(mem->name, name);
+    mem->writeProtected = writeProtected;
     mem->startAddress = startAddress;
     mem->size = size;
     mem->deviceHandle = dbgDevice->deviceHandle;

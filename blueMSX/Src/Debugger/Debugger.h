@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-22 03:39:13 $
+** $Date: 2005-02-25 22:18:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,7 @@ typedef enum { DBG_STOPPED, DBG_PAUSED, DBG_RUNNING } DbgState;
 typedef struct {
     int    deviceHandle;
     char   name[32];
+    int    writeProtected;
     UInt32 startAddress;
     UInt32 size;
     UInt8  memory[1];
@@ -103,9 +104,9 @@ const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int regBan
 int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
 const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
 
-void dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size);
-void dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value);
-void dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value);
+int dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size);
+int dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value);
+int dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value);
 
 void dbgRun();
 void dbgStop();

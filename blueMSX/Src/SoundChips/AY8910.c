@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-22 03:39:14 $
+** $Date: 2005-02-25 22:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,9 +181,11 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
     }
 }
 
-static void dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 value)
+static int dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 value)
 {
     updateRegister(ay8910, (UInt8)regIndex, (UInt8)value);
+
+    return 1;
 }
 
 AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)

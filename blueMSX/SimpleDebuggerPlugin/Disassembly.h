@@ -35,6 +35,9 @@ public:
     void show();
     void hide();
     
+    void enableEdit();
+    void disableEdit();
+    
     void updatePosition(RECT& rect);
 
     void updateContent(BYTE* memory, WORD pc);
@@ -50,6 +53,8 @@ private:
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
     void toggleBreakpoint(int address);
+
+    bool     editEnabled;
 
     HWND   hwnd;
     HDC    hMemdc;
