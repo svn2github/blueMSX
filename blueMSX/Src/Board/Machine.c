@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-08 09:05:37 $
+** $Date: 2005-02-09 01:46:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,8 +446,14 @@ void machineUpdate(Machine* machine)
         if (machine->video.vramSize >= 128 * 1024) {
             machine->video.vramSize = 128 * 1024;
         }
-        else {
+        else if (machine->video.vramSize >= 64 * 1024) {
             machine->video.vramSize = 64 * 1024;
+        }
+        else if (machine->video.vramSize >= 32 * 1024) {
+            machine->video.vramSize = 32 * 1024;
+        }
+        else {
+            machine->video.vramSize = 16 * 1024;
         }
     }
     else if (machine->video.vdpVersion == VDP_V9958) {
