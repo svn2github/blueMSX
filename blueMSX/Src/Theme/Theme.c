@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-26 08:15:47 $
+** $Date: 2005-01-29 00:28:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -754,7 +754,6 @@ void themeCollectionDestroy(ThemeCollection* tc)
     if (tc->little)          themeDestroy(tc->little);
     if (tc->normal)          themeDestroy(tc->normal);
     if (tc->fullscreen)      themeDestroy(tc->fullscreen);
-    if (tc->smallfullscreen) themeDestroy(tc->smallfullscreen);
 
     for (i = 0; i < THEME_MAX_WINDOWS; i++) {
         if (tc->theme[i] != NULL) {

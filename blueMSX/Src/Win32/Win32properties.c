@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-28 18:57:47 $
+** $Date: 2005-01-29 00:28:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
 #include <strsafe.h>
 
 #include "Win32Properties.h"
+#include "Win32DirectX.h"
 #include "ThemeLoader.h"
 #include "Win32keyboard.h"
 #include "resource.h"
@@ -907,6 +908,40 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
     return FALSE;
 }
 
+static void updateFullscreenResList(HWND hDlg) {
+    int count = DirectDrawGetAvailableDisplayModeCount();
+    DxDisplayMode* curDdm = DirectDrawGetDisplayMode();
+    int i;
+
+    while (CB_ERR != SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, CB_DELETESTRING, 0, 0));
+
+    for (i = 0; i < count; i++) {
+        char text[32];
+        DxDisplayMode* ddm = DirectDrawGetAvailableDisplayMode(i);
+        sprintf(text, "%d x %d - %d bit", ddm->width, ddm->height, ddm->bitCount);
+        SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, CB_ADDSTRING, 0, (LPARAM)text);
+        if (ddm->width == curDdm->width && ddm->height == curDdm->height && ddm->bitCount == curDdm->bitCount) {
+            SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, CB_SETCURSEL, i, 0);
+        }
+    }
+}
+
+static void getFullscreenResList(HWND hDlg, int* width, int* height, int* bitCount) 
+{
+    DxDisplayMode* ddm = NULL;
+    int index = SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, CB_GETCURSEL, 0, 0);
+
+    if (index >= 0) {
+        ddm = DirectDrawGetAvailableDisplayMode(index);
+    }
+    if (ddm == NULL) {
+        ddm = DirectDrawGetDisplayMode();
+    }
+    *width    = ddm->width;
+    *height   = ddm->height;
+    *bitCount = ddm->bitCount;
+}
+
 
 static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     static Properties* pProperties;
@@ -939,14 +974,16 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         _stprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
 
         /* Init language specific dialog items */
-        SendMessage(GetDlgItem(hDlg, IDC_PERFVIDEODRVGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFDISPDRVTEXT), WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDispDrvText());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFFRAMESKIPTEXT), WM_SETTEXT, 0, (LPARAM)langPropPerfFrameSkipText());
-        SendMessage(GetDlgItem(hDlg, IDC_AUDIODRVGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvGB());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFSNDDRVTEXT), WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvText());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFSNDBUFSZTEXT), WM_SETTEXT, 0, (LPARAM)langPropPerfAudioBufSzText());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFEMUGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropPerfEmuGB());
-        SendMessage(GetDlgItem(hDlg, IDC_PERFSYNCMODETEXT), WM_SETTEXT, 0, (LPARAM)langPropPerfSyncModeText());
+        SendDlgItemMessage(hDlg, IDC_PERFVIDEODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());
+        SendDlgItemMessage(hDlg, IDC_PERFDISPDRVTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDispDrvText());
+        SendDlgItemMessage(hDlg, IDC_PERFFRAMESKIPTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfFrameSkipText());
+        SendDlgItemMessage(hDlg, IDC_AUDIODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvGB());
+        SendDlgItemMessage(hDlg, IDC_PERFSNDDRVTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvText());
+        SendDlgItemMessage(hDlg, IDC_PERFSNDBUFSZTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioBufSzText());
+        SendDlgItemMessage(hDlg, IDC_PERFEMUGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfEmuGB());
+        SendDlgItemMessage(hDlg, IDC_PERFSYNCMODETEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfSyncModeText());
+        SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, WM_SETTEXT, 0, (LPARAM)langPropFullscreenResText());
+        
 
         initDropList(hDlg, IDC_SNDDRIVER, pSoundDriver, pProperties->sound.driver);
         {
@@ -963,6 +1000,8 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         initDropList(hDlg, IDC_FRAMESKIP, pVideoFrameSkip, pProperties->video.frameSkip);
         initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethod);
 
+        updateFullscreenResList(hDlg);
+
         return FALSE;
 
     case WM_NOTIFY:
@@ -974,11 +1013,20 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
             return FALSE;
         }
             
+        getFullscreenResList(hDlg, 
+                             &pProperties->video.fullscreen.width,
+                             &pProperties->video.fullscreen.height,
+                             &pProperties->video.fullscreen.bitDepth);
+                                
         pProperties->sound.driver           = getDropListIndex(hDlg, IDC_SNDDRIVER, pSoundDriver);
         pProperties->sound.bufSize          = soundBufSizes[getDropListIndex(hDlg, IDC_SNDBUFSZ, pSoundBufferSize)];
         pProperties->video.driver           = getDropListIndex(hDlg, IDC_VIDEODRV, pVideoDriver);
         pProperties->video.frameSkip        = getDropListIndex(hDlg, IDC_FRAMESKIP, pVideoFrameSkip);
         pProperties->emulation.syncMethod   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
+
+        DirectDrawSetDisplayMode(pProperties->video.fullscreen.width,
+                                pProperties->video.fullscreen.height,
+                                pProperties->video.fullscreen.bitDepth);
 
         propModified = 1;
         

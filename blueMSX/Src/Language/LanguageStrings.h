@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-23 11:38:42 $
+** $Date: 2005-01-29 00:28:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -248,6 +248,7 @@ typedef struct {
     _TCHAR* propPerfAudioBufSzText;
     _TCHAR* propPerfEmuGB;
     _TCHAR* propPerfSyncModeText;
+    _TCHAR* propFullscreenResText;
 
     _TCHAR* propSndChipEmuGB;
     _TCHAR* propSndMixerGB;

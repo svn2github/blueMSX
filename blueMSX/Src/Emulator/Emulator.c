@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-20 08:15:52 $
+** $Date: 2005-01-29 00:28:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,9 +45,6 @@
 #include "Keyboard.h"
 
 #include <math.h>
-
-#define WIDTH  320
-#define HEIGHT 240
 
 UInt32  emuFixedPalette[256];
 UInt32  emuFixedSpritePalette[16];

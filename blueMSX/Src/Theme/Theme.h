@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-16 03:23:20 $
+** $Date: 2005-01-29 00:28:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,6 @@ typedef struct ThemeCollection {
     char   name[64];
     Theme* little;
     Theme* normal;
-    Theme* smallfullscreen;
     Theme* fullscreen;
     Theme* theme[THEME_MAX_WINDOWS];
 } ThemeCollection;

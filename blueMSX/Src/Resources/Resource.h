@@ -178,6 +178,8 @@
 #define IDC_PERFSNDBUFSZTEXT            2005
 #define IDC_PERFEMUGROUPBOX             2006
 #define IDC_PERFSYNCMODETEXT            2007
+#define IDC_PERFFULLSCREEN              2008
+#define IDC_PERFFULLSCREENTEXT          2009
 
 #define IDC_SNDCHIPEMUGROUPBOX          2100
 #define IDC_SNDMIXERGROUPBOX            2101

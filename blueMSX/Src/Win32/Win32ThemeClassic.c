@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-25 05:44:17 $
+** $Date: 2005-01-29 00:28:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -200,31 +200,6 @@ static ThemePage* themeCreateFullscreen()
     return theme;
 }
 
-static ThemePage* themeCreateSmallFullscreen()
-{
-    ThemePage* theme = themePageCreate("smallfullscreen",
-                               320,                 // Width
-                               240,                 // Hidth
-                               0,                   // Emu pos x
-                               0,                   // Emu pos y
-                               320,                 // Emu width
-                               240,                 // Emu height
-                               0, 
-                               0, 
-                               320,
-                               RGB(219, 221, 224),
-                               RGB(128, 128, 255),
-                               RGB(0, 0, 0),
-                               0,
-                               NULL);
-
-    themePageAddImage(theme, activeImageCreate(-4, -51, 1, archBitmapCreateFromId(IDB_CLASSIC_BGSMALL), 1), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-
-    themePageAddText(theme, activeTextCreate(279, 227, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT2), 0, 256, 5, 0, 0, 0), THEME_TRIGGER_TEXT_VERSION, THEME_TRIGGER_NONE);
-
-    return theme;
-}
-
 ThemeCollection* themeClassicCreate() 
 {
     ThemeCollection* themeCollection = themeCollectionCreate();
@@ -234,12 +209,10 @@ ThemeCollection* themeClassicCreate()
     themeCollection->little          = themeCreate("little");
     themeCollection->normal          = themeCreate("normal");
     themeCollection->fullscreen      = themeCreate("fullscreen");
-    themeCollection->smallfullscreen = themeCreate("smallfullscreen");
     
     themeAddPage(themeCollection->little,          themeCreateSmall());
     themeAddPage(themeCollection->normal,          themeCreateNormal());
     themeAddPage(themeCollection->fullscreen,      themeCreateFullscreen());
-    themeAddPage(themeCollection->smallfullscreen, themeCreateSmallFullscreen());
 
     return themeCollection;
 }

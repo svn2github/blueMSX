@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-23 11:38:42 $
+** $Date: 2005-01-29 00:28:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -268,6 +268,7 @@ _TCHAR* langPropPerfAudioDrvText();
 _TCHAR* langPropPerfAudioBufSzText();
 _TCHAR* langPropPerfEmuGB();
 _TCHAR* langPropPerfSyncModeText();
+_TCHAR* langPropFullscreenResText();
 
 _TCHAR* langPropSndChipEmuGB();
 _TCHAR* langPropSndMixerGB();

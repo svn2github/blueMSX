@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directx.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-18 10:17:20 $
+** $Date: 2005-01-29 00:28:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,18 @@ typedef enum {
     DXE_SETCLIPPER            = -8,
     DXE_CREATEFROMWINDOW      = -9
 } DirectXError;
+
+typedef struct {
+    int width;
+    int height;
+    int bitCount;
+} DxDisplayMode;
+
+void DirectDrawInitDisplayModes();
+void DirectDrawSetDisplayMode(int width, int height, int bitCount);
+DxDisplayMode* DirectDrawGetDisplayMode();
+int DirectDrawGetAvailableDisplayModeCount();
+DxDisplayMode* DirectDrawGetAvailableDisplayMode(int index);
 
 void DirectXUpdateSurface(Video* pVideo, int noFlip, 
                           int dstPitchY, int dstOffset, int zoom, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-15 23:55:31 $
+** $Date: 2005-01-29 00:28:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,7 +71,9 @@ void propInitDefaults(Properties* pProperties)
     pProperties->video.size                  = P_VIDEO_SIZEX2;
     pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
     pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
-    pProperties->video.fullRes               = P_VIDEO_FRES640X480_32;
+    pProperties->video.fullscreen.width      = 640;
+    pProperties->video.fullscreen.height     = 480;
+    pProperties->video.fullscreen.bitDepth   = 32;
     pProperties->video.deInterlace           = 1;
     pProperties->video.horizontalStretch     = 0;
     pProperties->video.verticalStretch       = 0;
@@ -244,7 +246,9 @@ void propInitDefaults(Properties* pProperties)
     pProperties->video.size                  = P_VIDEO_SIZEX2;
     pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
     pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
-    pProperties->video.fullRes               = P_VIDEO_FRES640X480_32;
+    pProperties->video.fullscreen.width      = 640;
+    pProperties->video.fullscreen.height     = 480;
+    pProperties->video.fullscreen.bitDepth   = 32;
     pProperties->video.deInterlace           = 1;
     pProperties->video.horizontalStretch     = 1;
     pProperties->video.verticalStretch       = 0;
@@ -415,7 +419,9 @@ static void propLoad(Properties* pProperties)
     getIntValue("VideoSize", (long*)&pProperties->video.size);
     getIntValue("Video Drvr", (long*)&pProperties->video.driver);
     getIntValue("FrameSkip", (long*)&pProperties->video.frameSkip);
-    getIntValue("FullRes", (long*)&pProperties->video.fullRes);
+    getIntValue("FullscreenWidth", (long*)&pProperties->video.fullscreen.width);
+    getIntValue("FullscreenHeight", (long*)&pProperties->video.fullscreen.height);
+    getIntValue("FullscreenBitDepth", (long*)&pProperties->video.fullscreen.bitDepth);
     getIntValue("DeInterlace", (long*)&pProperties->video.deInterlace);
     getIntValue("HorizontalStretch", (long*)&pProperties->video.horizontalStretch);
     getIntValue("VerticalStretch", (long*)&pProperties->video.verticalStretch);
@@ -592,7 +598,9 @@ void propSave(Properties* pProperties)
     setIntValue("VideoSize", pProperties->video.size);
     setIntValue("Video Drvr", pProperties->video.driver);
     setIntValue("FrameSkip", pProperties->video.frameSkip);
-    setIntValue("FullRes", pProperties->video.fullRes);
+    setIntValue("FullscreenWidth", pProperties->video.fullscreen.width);
+    setIntValue("FullscreenHeight", pProperties->video.fullscreen.height);
+    setIntValue("FullscreenBitDepth", pProperties->video.fullscreen.bitDepth);
     setIntValue("DeInterlace", pProperties->video.deInterlace);
     setIntValue("HorizontalStretch", pProperties->video.horizontalStretch);
     setIntValue("VerticalStretch", pProperties->video.verticalStretch);

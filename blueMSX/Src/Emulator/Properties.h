@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-23 11:37:22 $
+** $Date: 2005-01-29 00:28:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,6 @@ typedef enum { P_VIDEO_PALNONE = 0, P_VIDEO_PALMON, P_VIDEO_PALYC, P_VIDEO_PALNY
 typedef enum { P_VIDEO_SIZEX1 = 0, P_VIDEO_SIZEX2, P_VIDEO_SIZEFULLSCREEN } PropVideoSize;
 typedef enum { P_VIDEO_DRVDIRECTX_VIDEO = 0, P_VIDEO_DRVDIRECTX, P_VIDEO_DRVGDI } PropVideoDriver;
 typedef enum { P_VIDEO_FSKIP0 = 0, P_VIDEO_FSKIP1, P_VIDEO_FSKIP2, P_VIDEO_FSKIP3, P_VIDEO_FSKIP4, P_VIDEO_FSKIP5 } PropVideoFrameSkip;
-typedef enum { P_VIDEO_FRES320X240_16 = 0, P_VIDEO_FRES320X240_32, P_VIDEO_FRES640X480_16, P_VIDEO_FRES640X480_32 } PropVideoFullRes;
 typedef enum { P_VIDEO_FREQ_AUTO, P_VIDEO_FREQ_50HZ, P_VIDEO_FREQ_60HZ } PropVideoFrequency;
 typedef enum { P_SOUND_DRVNONE = 0, P_SOUND_DRVWMM, P_SOUND_DRVDIRECTX } PropSoundDriver;
 typedef enum { P_SOUND_FREQ11 = 0, P_SOUND_FREQ22, P_SOUND_FREQ44 } PropSoundFrequency;
@@ -97,7 +96,11 @@ typedef struct {
     PropVideoSize       size;
     PropVideoDriver     driver;
     PropVideoFrameSkip  frameSkip;
-    PropVideoFullRes    fullRes;
+    struct {
+        int width;
+        int height;
+        int bitDepth;
+    } fullscreen;
     PropVideoFrequency  frequency;
     int                 deInterlace;
     int                 horizontalStretch;

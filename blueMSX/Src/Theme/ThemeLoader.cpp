@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-01-26 08:15:47 $
+** $Date: 2005-01-29 00:28:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,11 +45,10 @@ struct ThemeDefaultInfo {
 } themeDefaultInfo[] = {
     { "small",           320, 240 },
     { "normal",          640, 480 },
-    { "smallfullscreen", 320, 240 },
     { "fullscreen",      640, 480 }
 };
 
-enum ThemeInfo { THEME_SMALL = 0, THEME_NORMAL = 1, THEME_SMALLFULLSCREEN = 2, THEME_FULLSCREEN = 3 };
+enum ThemeInfo { THEME_SMALL = 0, THEME_NORMAL = 1, THEME_FULLSCREEN = 2 };
 
 static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, 
                              const char* arg1Tag, const char* arg2Tag, int* arg1, int* arg2, 
@@ -1021,7 +1020,7 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
     TiXmlElement* modeEl;
     
     for (modeEl = root->FirstChildElement(); modeEl != NULL; modeEl = modeEl->NextSiblingElement()) {
-        int fullscreen = themeInfo == THEME_SMALLFULLSCREEN || themeInfo == THEME_FULLSCREEN;
+        int fullscreen = themeInfo == THEME_FULLSCREEN;
         int emuWidth  = themeDefaultInfo[themeInfo].width;
         int emuHeight = themeDefaultInfo[themeInfo].height;
 
@@ -1124,12 +1123,11 @@ extern "C" ThemeCollection* themeLoad(char* themeName, char* path)
     themeCollection->little          = loadMainTheme(themeCollection, root, THEME_SMALL);
     themeCollection->normal          = loadMainTheme(themeCollection, root, THEME_NORMAL);
     themeCollection->fullscreen      = loadMainTheme(themeCollection, root, THEME_FULLSCREEN);
-    themeCollection->smallfullscreen = loadMainTheme(themeCollection, root, THEME_SMALLFULLSCREEN);
 
     int count = loadThemeWindows(themeCollection, root);
 
     if (count == 0 && themeCollection->little == NULL && themeCollection->normal == NULL &&
-        themeCollection->fullscreen == NULL && themeCollection->smallfullscreen == NULL) 
+        themeCollection->fullscreen == NULL) 
     {
         themeCollectionDestroy(themeCollection);
         themeCollection = NULL;
@@ -1164,7 +1162,6 @@ extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
                     if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
                     if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
                     if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
-                    if (themeCollection->smallfullscreen == NULL) themeCollection->smallfullscreen = themeList[0]->smallfullscreen;
                     themeList[index++] = themeCollection;
                 }
             }

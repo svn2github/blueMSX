@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-01-25 06:10:56 $
+** $Date: 2005-01-29 00:28:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -975,7 +975,6 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
-        pProperties->video.fullRes != oldProp.video.fullRes ||
         pProperties->video.size != oldProp.video.size ||
         pProperties->video.horizontalStretch != oldProp.video.horizontalStretch ||
         pProperties->video.verticalStretch != oldProp.video.verticalStretch ||
@@ -1176,22 +1175,7 @@ static void checkClipRegion() {
 }
 
 static int getZoom() {
-    switch (pProperties->video.size) {
-    case P_VIDEO_SIZEX1:
-        return 1;
-    case P_VIDEO_SIZEX2:
-        return 2;
-    case P_VIDEO_SIZEFULLSCREEN:
-        switch (pProperties->video.fullRes) {
-        case P_VIDEO_FRES320X240_16:
-        case P_VIDEO_FRES320X240_32:
-            return 1;
-        case P_VIDEO_FRES640X480_16:
-        case P_VIDEO_FRES640X480_32:
-            return 2;
-        }
-    }
-    return 1;
+    return pProperties->video.size == P_VIDEO_SIZEX1 ? 1 : 2;
 }
 
 
@@ -1202,6 +1186,9 @@ void themeSet(char* themeName, int forceMatch) {
     int h  = GetSystemMetrics(SM_CYSCREEN);
     int ex = 0;
     int ey = 0;
+    int ew = 0;
+    int eh = 0;
+    HWND z = 0;
     int index;
 
     if (themeName == NULL) {
@@ -1230,16 +1217,7 @@ void themeSet(char* themeName, int forceMatch) {
         st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->normal);
         break;
     case P_VIDEO_SIZEFULLSCREEN:
-        switch (pProperties->video.fullRes) {
-        case P_VIDEO_FRES320X240_16:
-        case P_VIDEO_FRES320X240_32:
-            st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->smallfullscreen);
-            break;
-        case P_VIDEO_FRES640X480_16:
-        case P_VIDEO_FRES640X480_32:
-            st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->fullscreen);
-            break;
-        }
+        st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->fullscreen);
         break;
     }
 
@@ -1251,10 +1229,13 @@ void themeSet(char* themeName, int forceMatch) {
         DeleteObject(st.hBitmap);
     }
 
-    menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
-                st.themePageActive->menu.textColor, 
-                st.themePageActive->menu.x, st.themePageActive->menu.y,
-                st.themePageActive->menu.width, 32);
+    {
+        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+        menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
+                    st.themePageActive->menu.textColor, 
+                    st.themePageActive->menu.x, st.themePageActive->menu.y,
+                    pProperties->video.size == P_VIDEO_SIZEFULLSCREEN ? ddm->width : st.themePageActive->menu.width, 32);
+    }
 
     if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
         x = st.X;
@@ -1263,11 +1244,20 @@ void themeSet(char* themeName, int forceMatch) {
         h = st.themePageActive->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
         ex = st.themePageActive->emuWinX;
         ey = st.themePageActive->emuWinY;
+        ew = getZoom() * WIDTH;
+        eh = getZoom() * HEIGHT;
+        z  = HWND_NOTOPMOST;
+    }
+    else {
+        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+        w = ew = ddm->width;
+        h = eh = ddm->height;
+        z  = HWND_TOPMOST;
     }
 
     st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), w, h);
-    SetWindowPos(st.hwnd, HWND_NOTOPMOST, x, y, w, h, SWP_SHOWWINDOW);
-    SetWindowPos(st.emuHwnd, NULL, ex, ey, getZoom() * WIDTH, getZoom() * HEIGHT, SWP_NOZORDER);
+    SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
+    SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
 
     if (st.rgnData != NULL) {
         SetWindowRgn(st.hwnd, NULL, TRUE);
@@ -1280,52 +1270,57 @@ void themeSet(char* themeName, int forceMatch) {
         st.hrgn = NULL;
     }
 
-    if (st.themePageActive->clipPoint.count > 0) {
-        int i;
-        HRGN hrgn;
-        POINT pt[512];
-        int dx = GetSystemMetrics(SM_CXFIXEDFRAME);
-        int dy = GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
+    if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+        setClipRegion(0);
+    } 
+    else {
+        if (st.themePageActive->clipPoint.count > 0) {
+            int i;
+            HRGN hrgn;
+            POINT pt[512];
+            int dx = GetSystemMetrics(SM_CXFIXEDFRAME);
+            int dy = GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
 
-        for (i = 0; i < st.themePageActive->clipPoint.count; i++) {
-            ClipPoint cp = st.themePageActive->clipPoint.list[i];
-            pt[i].x = cp.x + dx;
-            pt[i].y = cp.y + dy;
-        }
+            for (i = 0; i < st.themePageActive->clipPoint.count; i++) {
+                ClipPoint cp = st.themePageActive->clipPoint.list[i];
+                pt[i].x = cp.x + dx;
+                pt[i].y = cp.y + dy;
+            }
 
-        hrgn = CreatePolygonRgn(pt, st.themePageActive->clipPoint.count, WINDING);
-        st.rgnSize = 0;
-        if (hrgn != NULL) {
-            st.rgnSize = GetRegionData(hrgn, 0, NULL);
-            if (st.rgnSize > 0) {
-                st.rgnData = malloc(st.rgnSize);
-                st.rgnSize = GetRegionData(hrgn, st.rgnSize, st.rgnData);
+            hrgn = CreatePolygonRgn(pt, st.themePageActive->clipPoint.count, WINDING);
+            st.rgnSize = 0;
+            if (hrgn != NULL) {
+                st.rgnSize = GetRegionData(hrgn, 0, NULL);
+                if (st.rgnSize > 0) {
+                    st.rgnData = malloc(st.rgnSize);
+                    st.rgnSize = GetRegionData(hrgn, st.rgnSize, st.rgnData);
+                    if (st.rgnSize == 0) {
+                        free(st.rgnData);
+                        st.rgnData = NULL;
+                    }
+                }
                 if (st.rgnSize == 0) {
-                    free(st.rgnData);
                     st.rgnData = NULL;
                 }
+                else {
+                    st.hrgn = CreateRectRgn(0, 0, w, h);
+                    CombineRgn(st.hrgn, st.hrgn, hrgn, RGN_XOR);
+                }
+                DeleteObject(hrgn);
             }
-            if (st.rgnSize == 0) {
-                st.rgnData = NULL;
-            }
-            else {
-                st.hrgn = CreateRectRgn(0, 0, w, h);
-                CombineRgn(st.hrgn, st.hrgn, hrgn, RGN_XOR);
-            }
-            DeleteObject(hrgn);
+        }
+
+        setClipRegion(st.themePageActive->clipPoint.count > 0);
+
+        if (st.rgnData == NULL) {
+            KillTimer(st.hwnd, TIMER_CLIP_REGION);
+        }
+        else {
+            SetTimer(st.hwnd, TIMER_CLIP_REGION, 500, NULL);
         }
     }
 
-    setClipRegion(st.themePageActive->clipPoint.count > 0);
-
-    if (st.rgnData == NULL) {
-        KillTimer(st.hwnd, TIMER_CLIP_REGION);
-    }
-    else {
-        SetTimer(st.hwnd, TIMER_CLIP_REGION, 500, NULL);
-    }
-
-    InvalidateRect(st.hwnd, NULL, FALSE);
+    InvalidateRect(st.hwnd, NULL, TRUE);
 }
 
 PropVideoSize archGetWindowedSize() {
@@ -1351,21 +1346,14 @@ void archUpdateWindow() {
         }
         else {
             int rv;
-            int depth = pProperties->video.fullRes == P_VIDEO_FRES320X240_16 ||
-                        pProperties->video.fullRes == P_VIDEO_FRES640X480_16 ? 16 : 32;
-
             SetWindowLong(st.hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_VISIBLE);
 
-            rv = DirectXEnterFullscreenMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT, depth, 
+            rv = DirectXEnterFullscreenMode(st.emuHwnd, 
+                                            pProperties->video.fullscreen.width,
+                                            pProperties->video.fullscreen.height,
+                                            pProperties->video.fullscreen.bitDepth, 
                                             pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
                                             pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
-            if (rv != DXE_OK) {
-                DirectXExitFullscreenMode();
-                zoom = 2;
-                rv = DirectXEnterFullscreenMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT, 16, 
-                                            pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
-                                            pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
-            }
             if (rv != DXE_OK) {
                 MessageBox(NULL, langErrorEnterFullscreen(), langErrorTitle(), MB_OK);
                 DirectXExitFullscreenMode();
@@ -1405,6 +1393,11 @@ void archUpdateWindow() {
 
     {
         RECT r = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
+        if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+            DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+            r.right  = ddm->width;
+            r.bottom = ddm->height;
+        }
         mouseEmuSetCaptureInfo(&r);
     }
 
@@ -1412,9 +1405,7 @@ void archUpdateWindow() {
 
     st.enteringFullscreen = 0;
 
-    if (emulatorGetState() != EMU_RUNNING) {
-        InvalidateRect(st.hwnd, NULL, TRUE);
-    }
+    InvalidateRect(NULL, NULL, TRUE);
 }
 
 
@@ -1752,7 +1743,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         }
 
     case WM_SIZE:
-        InvalidateRect(hwnd, NULL, FALSE);
+        InvalidateRect(hwnd, NULL, TRUE);
         break;
         
     case WM_ACTIVATE:
@@ -1939,7 +1930,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_UPDATE:
         frameBufferFlipViewFrame();
-        InvalidateRect(st.emuHwnd, NULL, FALSE);
+        InvalidateRect(st.emuHwnd, NULL, TRUE);
         return 0;
 
     case WM_INPUTLANGCHANGE:
@@ -1955,7 +1946,15 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                 themePageDraw(st.themePageActive, hMemDC);
 
-                BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
+                if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+                    BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
+                }
+                else {
+                    RECT r;
+                    GetClientRect(hwnd, &r);
+                    StretchBlt(hdc, 0, 0, r.right, r.bottom, 
+                               hMemDC, 0, 0, st.themePageActive->width, st.themePageActive->height, SRCCOPY);
+                }
 
                 SelectObject(hMemDC, hBitmap);
                 DeleteDC(hMemDC);                
@@ -2142,6 +2141,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     InitCommonControls(); 
 
+    DirectDrawInitDisplayModes();
+
     wndClass.cbSize         = sizeof(wndClass);
     wndClass.style          = CS_OWNDC;
     wndClass.lpfnWndProc    = wndProc;
@@ -2202,6 +2203,10 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
                   pProperties->video.contrast, pProperties->video.gamma);
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
     videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+
+    DirectDrawSetDisplayMode(pProperties->video.fullscreen.width,
+                             pProperties->video.fullscreen.height,
+                             pProperties->video.fullscreen.bitDepth);
 
     st.mixer  = mixerCreate();
 
