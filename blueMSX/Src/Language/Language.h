@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 02:09:16 $
+** $Date: 2005-01-15 03:06:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -147,6 +147,8 @@ _TCHAR* langErrorNoDskInZip();
 _TCHAR* langErrorNoCasInZip();
 _TCHAR* langErrorNoHelp();
 _TCHAR* langErrorStartEmu();
+_TCHAR* langDiscardChanges();
+_TCHAR* langOverwriteConfig();
 
 _TCHAR* langTooltipReset();
 _TCHAR* langTooltipCart1();

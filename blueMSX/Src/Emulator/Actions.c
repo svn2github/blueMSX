@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-07 06:38:28 $
+** $Date: 2005-01-15 03:06:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1029,6 +1029,7 @@ void actionKeyPress(int keyCode, int pressed)
 {
     if (pressed) {
         keyboardKeyDown(keyCode);
+        archKeyboardSetSelectedKey(keyCode);
     }
     else {
         keyboardKeyUp(keyCode);

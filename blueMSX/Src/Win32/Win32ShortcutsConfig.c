@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-13 06:16:03 $
+** $Date: 2005-01-15 03:06:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1094,7 +1094,7 @@ static BOOL CALLBACK shortcutsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
             LV_COLUMN lvc = {0};
             char buffer[32];
             
-            inputReset(hDlg);
+//            inputReset(hDlg);
             baseHwnd = hDlg;
             baseHotkeyCtrlProc = (WNDPROC)SetWindowLong(GetDlgItem(hDlg, IDC_SCUTHOTKEY), GWL_WNDPROC, (LONG)hotkeyCtrlProc);
             SendDlgItemMessage(hDlg, IDC_SCUTHOTKEY, WM_INITIALIZE, 0, 0);
@@ -1345,7 +1345,7 @@ int shortcutsShowDialog(HWND hwnd, Properties* pProperties) {
     free(shortcutsRef);
 
     SetFocus(hwnd);
-    inputReset(hwnd);
+//    inputReset(hwnd);
     keyboardUpdate();
 
     return rv;

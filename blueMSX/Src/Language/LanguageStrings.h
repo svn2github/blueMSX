@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 02:09:16 $
+** $Date: 2005-01-15 03:06:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,7 +128,9 @@ typedef struct {
     _TCHAR* errorNoCasInZip;
     _TCHAR* errorNoHelp;
     _TCHAR* errorStartEmu;
-    
+    _TCHAR* discardChanges;
+    _TCHAR* overwriteConfig;
+
     _TCHAR* tooltipReset;
     _TCHAR* tooltipCart1;
     _TCHAR* tooltipCart2;

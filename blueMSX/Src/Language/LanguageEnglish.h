@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-11 02:09:16 $
+** $Date: 2005-01-15 03:06:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -542,6 +542,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->keyconfigSelectedKey    = "Selected Key:";
     ls->keyconfigMappedTo       = "Mapped To:";
     ls->keyconfigMappingScheme  = "Mapping Scheme:";
+
+    ls->discardChanges          = "Do you want to discard changes?";
+    ls->overwriteConfig         = "Do you want to overwrite the current configuration?";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-01-14 09:33:50 $
+** $Date: 2005-01-15 03:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -793,7 +793,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     emulatorSetFrequency(50, NULL);
     enterDialogShow();
     inputDestroy();
-    inputReset(st.hwnd);
+//    inputReset(st.hwnd);
     propUpdateJoyinfo(pProperties);
     changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);
     exitDialogShow();
@@ -2619,6 +2619,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
     }
 
+    sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     shortcutsDestroyProfile(st.shortcuts);
     videoDestroy(st.pVideo);
     propDestroy(pProperties);
@@ -2901,6 +2902,112 @@ void archThemeSetNext() {
     archUpdateWindow();
 }
 
+void archKeyboardSetSelectedKey(int keyCode) {
+    keyboardSetSelectedKey(keyCode);
+}
+
+
+/////////////////////////////////////////////////////////////////////
+/// Generic save as dialog for fixed positioned files
+///
+typedef struct {
+    char*  title;
+    char*  description;
+    char** itemList;
+    char*  name;
+} SaveAsDlgInfo;
+
+static BOOL CALLBACK saveAsProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    SaveAsDlgInfo* sdi = windowDataGet(hwnd);
+    char buffer[64];
+    int i;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        sdi = (SaveAsDlgInfo*)lParam;
+        windowDataSet(hwnd, 1, sdi);
+
+        SetWindowText(hwnd, sdi->title);
+        SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAMETEXT), sdi->description);
+        SetWindowText(GetDlgItem(hwnd, IDOK), langDlgSave());
+        SetWindowText(GetDlgItem(hwnd, IDCANCEL), langDlgCancel());
+
+        for (i = 0; sdi->itemList[i] != NULL; i++) {
+            SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_ADDSTRING, 0, (LPARAM)sdi->itemList[i]);
+            if (0 == strcmpnocase(sdi->itemList[i], sdi->name)) {
+                SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), sdi->name);
+                SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, i, 0);
+                EnableWindow(GetDlgItem(hwnd, IDOK), TRUE);
+            }
+        }
+        return FALSE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDC_MACHINELIST:
+            if (HIWORD(wParam) == 1 || HIWORD(wParam) == 2) {
+                char buffer[64];
+                int index = SendMessage(GetDlgItem(hwnd, IDC_MACHINELIST), LB_GETCURSEL, 0, 0);
+                SendMessage(GetDlgItem(hwnd, IDC_MACHINELIST), LB_GETTEXT, index, (LPARAM)buffer);
+                SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), buffer);
+                if (HIWORD(wParam) == 2) {
+                    SendMessage(hwnd, WM_COMMAND, IDOK, 0);
+                }
+            }
+            return TRUE;
+
+        case IDC_MACHINENAME:
+            GetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), buffer, 63);
+
+            EnableWindow(GetDlgItem(hwnd, IDOK), strlen(buffer) != 0);      
+
+            SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, -1, 0);
+
+            for (i = 0; sdi->itemList[i] != NULL; i++) {
+                if (0 == strcmpnocase(sdi->itemList[i], buffer)) {
+                    SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, i, 0);
+                }
+            }
+            return TRUE;
+        case IDOK:
+            GetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), sdi->name, 63);
+            windowDataSet(hwnd, 0, 0);
+            EndDialog(hwnd, TRUE);
+            return TRUE;
+        case IDCANCEL:
+            windowDataSet(hwnd, 0, 0);
+            EndDialog(hwnd, FALSE);
+            return TRUE;
+        }
+        break;
+
+    case WM_CLOSE:
+        windowDataSet(hwnd, 0, 0);
+        EndDialog(hwnd, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+int launchSaveAsDialog(HWND parent, char* title, char* description,
+                       char** itemList, char* name)
+{
+    SaveAsDlgInfo* sdi = (SaveAsDlgInfo*)calloc(1, sizeof(SaveAsDlgInfo));
+    int rv;
+
+    sdi->title       = title;
+    sdi->description = description;
+    sdi->itemList    = itemList;
+    sdi->name        = name;
+
+    rv = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CONF_SAVEAS), parent, saveAsProc, (LPARAM)sdi);
+    free(sdi);
+    return rv;
+}
+
+/////////////////////////////////////////////////////////////////////
 
 // Object window messages
 
@@ -2914,7 +3021,14 @@ void archThemeSetNext() {
 #define WM_BUTTON_CANCEL            (WM_OBJECT_BASE + 2)
 #define WM_BUTTON_SAVE              (WM_OBJECT_BASE + 3)
 #define WM_BUTTON_SAVEAS            (WM_OBJECT_BASE + 4)
+#define WM_BUTTON_CLOSE             (WM_OBJECT_BASE + 5)
 
+#define WM_CLOSE_RESULT_OK      0xefdf0012
+#define WM_CLOSE_RESULT_CANCEL  0xefdf0013
+
+
+void objectEnable(HWND parent, int notifyId, int enable);
+void objectUpdate(HWND parent, int notifyId, int arg);
 
 /////////////////////////////////////////////////////////////////////
 ////  Implementation of theme popup windows
@@ -2936,24 +3050,72 @@ typedef struct WindowInfo {
     int      rgnEnable;
 } WindowInfo;
 
-
-/////////////////////////////////////////////////////////////////////
-////  Implementation of keyboard specific messages
-/////////////////////////////////////////////////////////////////////
-
 static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     WindowInfo* wi = windowDataGet(hwnd);
 
     switch (iMsg) {
-    case WM_DROPDOWN_THEMEPAGES:
-        themeSetPageFromHash(wi->theme, themeGetNameHash((char*)lParam));
-        SendMessage(hwnd, WM_UPDATE, 0, 0);
+    case WM_CREATE:
+        keyboardStartConfig();
+        objectUpdate(hwnd, WM_DROPDOWN_KEYBOARDCONFIG, (int)keyboardGetCurrentConfig());
+        SetTimer(hwnd, TIMER_POLL_INPUT, 500, NULL);
         return 0;
 
-    case WM_BUTTON_OK:
+    case WM_TIMER:
+        switch(wParam) {
+        case TIMER_POLL_INPUT:
+            objectEnable(hwnd, WM_BUTTON_SAVE, keyboardConfigIsModified());
+            break;
+        }
+        break;
+
+    case WM_BUTTON_CLOSE:
         SendMessage(hwnd, WM_CLOSE, 0, 0);
         break;
+
+    case WM_BUTTON_SAVE:
+        if (keyboardConfigIsModified()) {
+            if (IDYES == MessageBox(hwnd, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+                keyboardSaveConfig(keyboardGetCurrentConfig());
+            }
+        }
+        break;
+
+    case WM_BUTTON_SAVEAS:
+        {
+            char name[64];
+            int rv;
+            
+            strcpy(name, keyboardGetCurrentConfig());
+            rv = launchSaveAsDialog(hwnd, "title", "desc", keyboardGetConfigs(), name);
+            if (rv != 0) {
+                if (0 == strcmp(name, keyboardGetCurrentConfig())) {
+                    if (IDYES == MessageBox(hwnd, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+                        keyboardSaveConfig(keyboardGetCurrentConfig());
+                    }
+                }
+                else {
+                    keyboardSaveConfig(name);
+                    objectUpdate(hwnd, WM_DROPDOWN_KEYBOARDCONFIG, (int)keyboardGetCurrentConfig());
+                }
+            }
+        }
+        break;
+
+    case WM_ACTIVATE:
+        keybardEnableEdit(wParam != WA_INACTIVE);
+        break;
+
+    case WM_CLOSE:
+        if (keyboardConfigIsModified()) {
+            if (IDNO == MessageBox(hwnd, langDiscardChanges(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+                return WM_CLOSE_RESULT_CANCEL;
+            }
+        }
+        KillTimer(hwnd, TIMER_POLL_INPUT);
+        keyboardCancelConfig();
+        keybardEnableEdit(0);
+        return WM_CLOSE_RESULT_OK;
     }
 
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
@@ -3061,6 +3223,7 @@ static void windowCreateClipRegion(WindowInfo* wi)
 static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     WindowInfo* wi = windowDataGet(hwnd);
+    LRESULT rv = 0;
 
     switch (iMsg) {
     case WM_CREATE:
@@ -3081,15 +3244,15 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             
             SetTimer(hwnd, TIMER_STATUSBAR_UPDATE, 100, NULL);
         }
+        break;
+
+    case WM_DROPDOWN_THEMEPAGES:
+        themeSetPageFromHash(wi->theme, themeGetNameHash((char*)lParam));
+        SendMessage(hwnd, WM_UPDATE, 0, 0);
         return 0;
 
     case WM_CLOSE:
-        KillTimer(hwnd, TIMER_STATUSBAR_UPDATE);
-        windowDataSet(hwnd, 0, NULL);
-        wi->theme->reference = NULL;
-        free(wi);
-        wi = NULL;
-        DestroyWindow(hwnd);
+        // Special handling at the end
         break;
 
     case WM_ENTERSIZEMOVE:
@@ -3130,7 +3293,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             }
             break;
         }
-        return 0;
+        break;
 
     case WM_UPDATE:
         {
@@ -3145,6 +3308,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
                 DeleteObject(wi->hBitmap);
             }
             wi->hBitmap = CreateCompatibleBitmap(GetDC(hwnd), width, height);
+            themePageActivate(themePage, NULL);
 
             SetWindowPos(hwnd, NULL, 0, 0, width, height, 
                          SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
@@ -3220,10 +3384,26 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     }
 
     if (wi && wi->handler == WH_KBDCONFIG) {
-        return keyboardDlgProc(hwnd, iMsg, wParam, lParam);
+        rv = keyboardDlgProc(hwnd, iMsg, wParam, lParam);
+    }
+    else {
+        rv = iMsg == WM_CLOSE ? 0 : DefWindowProc(hwnd, iMsg, wParam, lParam);
     }
 
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
+    if (iMsg == WM_CLOSE) {
+        if (rv != WM_CLOSE_RESULT_CANCEL) {
+            KillTimer(hwnd, TIMER_STATUSBAR_UPDATE);
+            windowDataSet(hwnd, 0, NULL);
+            themePageActivate(themeGetCurrentPage(wi->theme), NULL);
+            wi->theme->reference = NULL;
+            free(wi);
+            wi = NULL;
+            DestroyWindow(hwnd);
+        }
+        rv = 0;
+    }
+
+    return iMsg == WM_CREATE ? 0 : rv;
 }
 
 void* archWindowCreate(Theme* theme, WindowHandler handler) {
@@ -3741,17 +3921,16 @@ char* themeTriggerBuildAndVersion() {
     return buffer;
 }
 
-
 int themeTriggerKeyPressed(int keyCode) {
-    return keyboardGetKeyState(keyCode);
+    return keyboardGetKeyState(keyCode) || themeTriggerKeyEdit(keyCode);
 }
 
 int themeTriggerKeyEdit(int keyCode) {
-    return 0;
+    return keyboardIsKeySelected(keyCode);
 }
 
 int themeTriggerKeyConfigured(int keyCode) {
-    return 0;
+    return !keyboardIsKeyConfigured(keyCode);
 }
 
 char* themeTriggerLangKbdSelKey() {
@@ -3767,11 +3946,11 @@ char* themeTriggerLangKbdMapSCheme() {
 }
 
 char* themeTriggerSelectedKey() {
-    return "";
+    return getSelectedKey();
 }
 
 char* themeTriggerMappedKey() {
-    return "";
+    return getMappedKey();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3779,47 +3958,37 @@ char* themeTriggerMappedKey() {
 ///
 /// Theme objects
 
-#define OBJECT_ID_NONE                      0
-#define OBJECT_ID_BUTTON_OK                 1
-#define OBJECT_ID_BUTTON_CANCEL             2
-#define OBJECT_ID_BUTTON_SAVE               3
-#define OBJECT_ID_BUTTON_SAVEAS             4
-
-#define OBJECT_ID_DROPDOWN_KEYBOARDCONFIG   31
-#define OBJECT_ID_DROPDOWN_THEMEPAGES       32
-#define OBJECT_ID_DROPDOWN_MACHINECONFIG    33
-
 #define WM_OBJECT_CONTOL_BASE (WM_USER + 1400)
 
 #define WM_OBJECT_UPDATE                    (WM_OBJECT_CONTOL_BASE + 1)
 #define WM_OBJECT_SHOW                      (WM_OBJECT_CONTOL_BASE + 2)
 #define WM_OBJECT_ENABLE                    (WM_OBJECT_CONTOL_BASE + 3)
 
-void objectUpdate(HWND parent, int objectId)
+void objectUpdate(HWND parent, int notifyId, int arg)
 {
     int i;
     for (i = 0; windowData[i].hwnd != NULL; i++) {
-        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
-            SendMessage(windowData[i].hwnd, WM_OBJECT_UPDATE, 0, 0);
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == notifyId) {
+            SendMessage(windowData[i].hwnd, WM_OBJECT_UPDATE, 0, (LPARAM)arg);
         }
     }
 }
 
-void objectShow(HWND parent, int objectId, int show)
+void objectShow(HWND parent, int notifyId, int show)
 {
     int i;
     for (i = 0; windowData[i].hwnd != NULL; i++) {
-        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == notifyId) {
             SendMessage(windowData[i].hwnd, WM_OBJECT_SHOW, 0, show);
         }
     }
 }
 
-void objectEnable(HWND parent, int objectId, int enable)
+void objectEnable(HWND parent, int notifyId, int enable)
 {
     int i;
     for (i = 0; windowData[i].hwnd != NULL; i++) {
-        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == notifyId) {
             SendMessage(windowData[i].hwnd, WM_OBJECT_ENABLE, 0, enable);
         }
     }
@@ -3830,19 +3999,10 @@ typedef struct {
     int y;
     int width;
     int height;
-    int objectId;
     int notifyId;
     Theme* theme;
     char text[64];
 } DropdownInfo;
-
-static void updateMachineConfigs(HWND hDlg, char* text) 
-{
-}
-
-static void updateKeyConfigs(HWND hDlg, char* text) 
-{
-}
 
 static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
@@ -3854,7 +4014,7 @@ static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lP
         *oi = *(DropdownInfo*)lParam;
         SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
         SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, 96, SWP_NOZORDER);
-        windowDataSet(hwnd, oi->objectId, oi);
+        windowDataSet(hwnd, oi->notifyId, oi);
         SendMessage(hwnd, WM_OBJECT_UPDATE, 0, 0);
         return FALSE;
     case WM_COMMAND:
@@ -3886,19 +4046,21 @@ static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lP
         while (CB_ERR != SendDlgItemMessage(hwnd, IDC_CONTROL, CB_DELETESTRING, 0, 0));
 
         oi = (DropdownInfo*)windowDataGet(hwnd);
-
+        if (lParam != 0) {
+            strcpy(oi->text, (char*)lParam);
+        }
         {
             char** items = { NULL };
             int index = 0;
 
-            switch (oi->objectId) {
-            case OBJECT_ID_DROPDOWN_MACHINECONFIG:
+            switch (oi->notifyId) {
+            case WM_DROPDOWN_MACHINECONFIG:
                 items = machineGetAvailable(0);
                 break;
-            case OBJECT_ID_DROPDOWN_KEYBOARDCONFIG:
+            case WM_DROPDOWN_KEYBOARDCONFIG:
                 items = keyboardGetConfigs();
                 break;
-            case OBJECT_ID_DROPDOWN_THEMEPAGES:
+            case WM_DROPDOWN_THEMEPAGES:
                 items = themeGetPageNames((Theme*)oi->theme);
                 break;
             }
@@ -3930,25 +4092,22 @@ void* objectDropdownCreate(HWND hwnd, char* id, int x, int y, int width, int hei
 
     if (0 == strcmp(id, "dropdown-keyconfigs")) {
         oi.text[0] = 0;
-        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDCONFIG;
         oi.notifyId = WM_DROPDOWN_KEYBOARDCONFIG;
     }
     
     if (0 == strcmp(id, "dropdown-machineconfigs")) {
         oi.text[0] = 0;
-        oi.objectId = OBJECT_ID_DROPDOWN_MACHINECONFIG;
         oi.notifyId = WM_DROPDOWN_MACHINECONFIG;
     }
 
     if (0 == strcmp(id, "dropdown-themepages")) {
         Theme* theme = (Theme*)arg1;
         strcpy(oi.text, themeGetPageName(theme, themeGetCurrentPageIndex(theme)));
-        oi.objectId = OBJECT_ID_DROPDOWN_THEMEPAGES;
         oi.notifyId = WM_DROPDOWN_THEMEPAGES;
         oi.theme    = (Theme*)arg1;
     }
     
-    if (oi.objectId == 0) {
+    if (oi.notifyId == 0) {
         return NULL;
     }
 
@@ -3967,7 +4126,6 @@ typedef struct {
     int width;
     int height;
     char* text;
-    int objectId;
     int notifyId;
 } ButtonInfo;
 
@@ -3981,7 +4139,7 @@ static BOOL CALLBACK buttonProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
         SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, oi->height, SWP_NOZORDER);
         SetWindowText(GetDlgItem(hwnd, IDC_CONTROL), oi->text);
-        windowDataSet(hwnd, oi->objectId, (void*)oi->notifyId);
+        windowDataSet(hwnd, oi->notifyId, (void*)oi->notifyId);
         return FALSE;
     case WM_COMMAND:
         if (wParam == IDC_CONTROL) {
@@ -3995,7 +4153,7 @@ static BOOL CALLBACK buttonProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         ShowWindow(hwnd, lParam);
         break;
     case WM_OBJECT_ENABLE:
-        EnableWindow(hwnd, lParam);
+        EnableWindow(GetDlgItem(hwnd, IDC_CONTROL), lParam);
         break;
     }
     return FALSE;
@@ -4003,30 +4161,30 @@ static BOOL CALLBACK buttonProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
 void* objectButtonCreate(HWND hwnd, char* id, int x, int y, int width, int height)
 {
-    ButtonInfo oi = { x, y, width, height, NULL, 0, 0};
+    ButtonInfo oi = { x, y, width, height, NULL, 0};
     
+    if (0 == strcmp(id, "button-close")) {
+        oi.text     = langDlgClose();
+        oi.notifyId = WM_BUTTON_CLOSE;
+    }
     if (0 == strcmp(id, "button-ok")) {
         oi.text     = langDlgOK();
-        oi.objectId = OBJECT_ID_BUTTON_OK;
         oi.notifyId = WM_BUTTON_OK;
     }
     if (0 == strcmp(id, "button-cancel")) {
         oi.text = langDlgCancel();
-        oi.objectId = OBJECT_ID_BUTTON_CANCEL;
         oi.notifyId = WM_BUTTON_CANCEL;
     }
     if (0 == strcmp(id, "button-save")) {
         oi.text = langDlgSave();
-        oi.objectId = OBJECT_ID_BUTTON_SAVE;
         oi.notifyId = WM_BUTTON_SAVE;
     }
     if (0 == strcmp(id, "button-saveas")) {
         oi.text = langDlgSaveAs();
-        oi.objectId = OBJECT_ID_BUTTON_SAVEAS;
         oi.notifyId = WM_BUTTON_SAVEAS;
     }
     
-    if (oi.objectId == 0) {
+    if (oi.notifyId == 0) {
         return NULL;
     }
 

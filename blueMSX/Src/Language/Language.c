@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 02:09:09 $
+** $Date: 2005-01-15 03:06:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -366,6 +366,8 @@ _TCHAR* langErrorNoDskInZip() { return ls->errorNoDskInZip; }
 _TCHAR* langErrorNoCasInZip() { return ls->errorNoCasInZip; }
 _TCHAR* langErrorNoHelp() { return ls->errorNoHelp; }
 _TCHAR* langErrorStartEmu() { return ls->errorStartEmu; }
+_TCHAR* langDiscardChanges()  {return ls->discardChanges; }
+_TCHAR* langOverwriteConfig()  {return ls->overwriteConfig; }
 
 _TCHAR* langTooltipReset() { return ls->tooltipReset; }
 _TCHAR* langTooltipCart1() { return ls->tooltipCart1; }

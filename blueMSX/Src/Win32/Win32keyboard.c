@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-13 06:16:03 $
+** $Date: 2005-01-15 03:06:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,11 @@
 #define KBD_TABLE_LEN 512
 
 static int kbdTable[KBD_TABLE_LEN];
+static int kbdTableBackup[KBD_TABLE_LEN];
 static char dikStrings[KBD_TABLE_LEN][32];
+static int selectedKey;
+static int selectedDikKey;
+static int editEnabled;
 
 static char keyboardConfigDir[MAX_PATH];
 
@@ -372,7 +376,7 @@ static BOOL CALLBACK enumKeyboards(LPCDIDEVICEINSTANCE devInst, LPVOID ref)
         rv = IDirectInputDevice_SetDataFormat(kbdDevice, &c_dfDIKeyboard);
         if (rv == DI_OK) {
             rv = IDirectInputDevice_SetCooperativeLevel(kbdDevice, dinputWindow,
-                DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+                DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
             if (rv != DI_OK) {
                 if (kbdDevice2 != NULL) {
                     IDirectInputDevice_Release(kbdDevice2);
@@ -429,7 +433,7 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
         return DIENUM_CONTINUE;
     }
     
-    rv = IDirectInputDevice_SetCooperativeLevel(joyInfo[joyCount].diDevice, dinputWindow, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+    rv = IDirectInputDevice_SetCooperativeLevel(joyInfo[joyCount].diDevice, dinputWindow, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
     if (rv != DI_OK) {
         IDirectInputDevice_Release(joyInfo[joyCount].diDevice);
         return DIENUM_CONTINUE;
@@ -625,15 +629,31 @@ int keyboardGetModifiers()
 void keyboardHanldeKeypress(int code, int pressed) {
     int wasPressed = keyStatus[code];
     int keyCode = kbdTable[code];
-
+    int isEditing = editEnabled && selectedKey != 0;
     keyStatus[code] = pressed;
 
-    if (pressed == wasPressed || keyCode == 0) {
+    if (pressed == wasPressed || (keyCode == 0 && !isEditing)) {
         return;
     }
 
     if (pressed) {
-        keyboardKeyDown(keyCode);
+        if (isEditing) {
+            int i;
+            for (i = 0; i < KBD_TABLE_LEN; i++) {
+                if (kbdTable[i] == selectedKey) {
+                    kbdTable[i] = 0;
+                }
+            }
+
+            kbdTable[code] = selectedKey;
+            selectedKey    = 0;
+            selectedDikKey = 0;
+
+            keyboardKeyUp(keyCode);
+        }
+        else {
+            keyboardKeyDown(keyCode);
+        }
     }
     else {
         keyboardKeyUp(keyCode);
@@ -800,6 +820,8 @@ void keyboardSaveConfig(char* configName)
         WritePrivateProfileString("Keymapping", keyCode, dikName, fileName);
     }
     
+    memcpy(kbdTableBackup, kbdTable, sizeof(kbdTableBackup));
+    
     sprintf(currentConfigFile, configName);
 }
 
@@ -831,4 +853,79 @@ void inputInit()
     }
     sprintf(currentConfigFile, DefaultConfigName);
     fclose(file);
+}
+
+char* getSelectedKey()
+{
+    if (selectedKey != 0) {
+        char* keyCode = (char*)keyboardKeyCodeToString(selectedKey);
+        if (keyCode != NULL) {
+            return keyCode;
+        }
+    }
+    return "";
+}
+
+char* getMappedKey()
+{
+    if (selectedKey != 0) {
+        return dik2str(selectedDikKey);
+    }
+    return "";
+}
+
+void keyboardSetSelectedKey(int msxKeyCode)
+{
+    int i;
+    selectedKey = msxKeyCode;
+    selectedDikKey = 0;
+
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        if (kbdTable[i] == selectedKey) {
+            selectedDikKey = i;
+        }
+    }
+}
+
+int keyboardIsKeySelected(int msxKeyCode)
+{
+    return editEnabled && (msxKeyCode == selectedKey);
+}
+
+int keyboardIsKeyConfigured(int msxKeyCode)
+{
+    int i;
+
+    if (!editEnabled) {
+        return 1;
+    }
+
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        if (kbdTable[i] == msxKeyCode) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void keybardEnableEdit(int enable)
+{
+    editEnabled = enable;
+    selectedKey = 0;
+    selectedDikKey = 0;
+}
+
+void keyboardStartConfig() 
+{
+    memcpy(kbdTableBackup, kbdTable, sizeof(kbdTableBackup));
+}
+
+void keyboardCancelConfig() 
+{
+    memcpy(kbdTable, kbdTableBackup, sizeof(kbdTableBackup));
+}
+
+int  keyboardConfigIsModified()
+{
+    return memcmp(kbdTable, kbdTableBackup, sizeof(kbdTableBackup));
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-14 09:33:49 $
+** $Date: 2005-01-15 03:06:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -502,6 +502,7 @@ void themePageDraw(ThemePage* themePage, void*  dc)
 void themePageActivate(ThemePage* themePage, void* window)
 {
     ThemeItem* item;
+
     for (item = themePage->itemList; item != NULL; item = item->next) {
         if (item->type == ITEM_OBJECT) {
             activeObjectActivate(item->object, window);
