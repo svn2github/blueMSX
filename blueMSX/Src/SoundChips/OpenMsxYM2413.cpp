@@ -1354,6 +1354,17 @@ OpenYM2413::~OpenYM2413()
 {
 }
 
+static int filter(int input) {
+    static int in[3];
+
+    in[2] = in[1];
+    in[1] = in[0];
+    in[0] = input;
+
+    return (in[0] + in[2] + 2 * in[1]) / 4;
+}
+
+
 int* OpenYM2413::updateBuffer(int length)
 {
 	if (isInternalMuted()) {
@@ -1381,7 +1392,9 @@ int* OpenYM2413::updateBuffer(int length)
 		    }
 		    advance();
         }
-		*(buf++) = (output << 5) / oplOversampling;
+        
+//		*(buf++) = (output << 5) / oplOversampling;
+		*(buf++) = filter((output << 5) / oplOversampling);
 	}
 	checkMute();
 	return buffer;
