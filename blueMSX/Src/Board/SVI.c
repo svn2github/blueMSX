@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-02-25 22:18:03 $
+** $Date: 2005-02-27 05:06:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -477,6 +477,8 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     }
 
     dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 1, 0, 0x10000, mappedRAM);
+
+    regBank = dbgDeviceAddCallstack(dbgDevice, "Callstack", r800->callstack, r800->callstackSize);
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
 

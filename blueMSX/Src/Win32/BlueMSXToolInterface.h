@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-02-27 05:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,6 +97,13 @@ typedef struct {
 typedef struct {
     int    deviceId;
     char   name[32];
+    UInt32 size;
+    UInt32 callstack[1];
+} Callstack;
+
+typedef struct {
+    int    deviceId;
+    char   name[32];
     UInt32 count;
     struct IoPort {
         UInt16 port;
@@ -124,6 +131,8 @@ typedef int           (__stdcall *ToolDeviceWriteMemory)(MemoryBlock* memoryBloc
 typedef int           (__stdcall *ToolDeviceGetRegisterBankCount)(Device* device);
 typedef RegisterBank* (__stdcall *ToolDeviceGetRegisterBank)(Device* device, int regBankIndex);
 typedef int           (__stdcall *ToolDeviceWriteRegister)(RegisterBank* regBank, int regIndex, UInt32 value);
+typedef int           (__stdcall *ToolDeviceGetCallstackCount)(Device* device);
+typedef Callstack*    (__stdcall *ToolDeviceGetCallstack)(Device* device, int callstackIndex);
 typedef int           (__stdcall *ToolDeviceGetIoPortsCount)(Device* device);
 typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPortIndex);
 typedef int           (__stdcall *ToolDeviceWriteIoPort)(IoPorts* ioPorts, int portIndex, UInt32 value);
@@ -143,6 +152,8 @@ typedef struct {
     ToolDeviceGetRegisterBankCount  getRegisterBankCount;
     ToolDeviceGetRegisterBank       getRegisterBank;
     ToolDeviceWriteRegister         writeRegisterBankRegister;
+    ToolDeviceGetCallstackCount     getCallstackCount;
+    ToolDeviceGetCallstack          getCallstack;
     ToolDeviceGetIoPortsCount       getIoPortsCount;
     ToolDeviceGetIoPorts            getIoPorts;
     ToolDeviceWriteIoPort           writeIoPortsPort;

@@ -16,6 +16,8 @@ static ToolDeviceWriteMemory           toolDeviceWriteMemory;
 static ToolDeviceGetRegisterBankCount  toolDeviceGetRegisterBankCount;
 static ToolDeviceGetRegisterBank       toolDeviceGetRegisterBank;
 static ToolDeviceWriteRegister         toolDeviceWriteRegister;
+static ToolDeviceGetCallstackCount     toolDeviceGetCallstackCount;
+static ToolDeviceGetCallstack          toolDeviceGetCallstack;
 static ToolDeviceGetIoPortsCount       toolDeviceGetIoPortsCount;
 static ToolDeviceGetIoPorts            toolDeviceGetIoPorts;
 static ToolDeviceWriteIoPort           toolDeviceWriteIoPort;
@@ -74,6 +76,14 @@ bool DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32
     return toolDeviceWriteRegister(regBank, regIndex, value) != 0;
 }
 
+int DeviceGetCallstackCount(Device* device) {
+    return toolDeviceGetCallstackCount(device);
+}
+
+Callstack* DeviceGetCallstack(Device* device, int index) {
+    return toolDeviceGetCallstack(device, index);
+}
+
 int DeviceGetIoPortsCount(Device* device) {
     return toolDeviceGetIoPortsCount(device);
 }
@@ -130,6 +140,8 @@ extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface
     toolDeviceGetRegisterBankCount  = toolInterface->getRegisterBankCount;
     toolDeviceGetRegisterBank       = toolInterface->getRegisterBank;
     toolDeviceWriteRegister         = toolInterface->writeRegisterBankRegister;
+    toolDeviceGetCallstackCount     = toolInterface->getCallstackCount;
+    toolDeviceGetCallstack          = toolInterface->getCallstack;
     toolDeviceGetIoPortsCount       = toolInterface->getIoPortsCount;
     toolDeviceGetIoPorts            = toolInterface->getIoPorts;
     toolDeviceWriteIoPort           = toolInterface->writeIoPortsPort;

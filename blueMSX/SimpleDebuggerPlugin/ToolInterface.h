@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-25 22:18:00 $
+** $Date: 2005-02-27 05:06:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,8 @@ bool DeviceWriteMemoryBlockMemory(MemoryBlock* memoryBlock, void* data, int star
 int DeviceGetRegisterBankCount(Device* device);
 RegisterBank* DeviceGetRegisterBank(Device* device, int index);
 bool DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32 value);
+int DeviceGetCallstackCount(Device* device);
+Callstack* DeviceGetCallstack(Device* device, int index);
 int DeviceGetIoPortsCount(Device* device);
 IoPorts* DeviceGetIoPorts(Device* device, int index);
 bool DeviceWriteIoPortsPort(IoPorts* ioPorts, int portIndex, UInt32 value);

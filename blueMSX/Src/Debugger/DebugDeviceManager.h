@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-25 22:18:03 $
+** $Date: 2005-02-27 05:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,11 @@ DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
                                         UInt32 startAddress,
                                         UInt32 size,
                                         UInt8* memory);
+
+DbgCallstack* dbgDeviceAddCallstack(DbgDevice* dbgDevice,
+                                    const char* name,
+                                    UInt16* callstack, 
+                                    int size);
 
 DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
                                           const char* name,

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-25 22:18:03 $
+** $Date: 2005-02-27 05:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,6 +76,13 @@ typedef struct {
 typedef struct {
     int    deviceHandle;
     char   name[32];
+    UInt32 size;
+    UInt32 callstack[1];
+} DbgCallstack;
+
+typedef struct {
+    int    deviceHandle;
+    char   name[32];
     UInt32 count;
     struct DbgIoPort {
         UInt16 port;
@@ -101,6 +108,8 @@ int                    dbgDeviceGetMemoryBlockCount(DbgDevice* dbgDevice);
 const DbgMemoryBlock*  dbgDeviceGetMemoryBlock(DbgDevice* dbgDevice, int memBlockIndex);
 int                    dbgDeviceGetRegisterBankCount(DbgDevice* dbgDevice);
 const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int regBankIndex);
+int                    dbgDeviceGetCallstackCount(DbgDevice* dbgDevice);
+const DbgCallstack*    dbgDeviceGetCallstack(DbgDevice* dbgDevice, int callstackIndex);
 int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
 const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
 
@@ -129,6 +138,7 @@ struct DbgDevice {
     DbgMemoryBlock*  memoryBlock[MAX_DBG_COMPONENTS];
     DbgRegisterBank* registerBank[MAX_DBG_COMPONENTS];
     DbgIoPorts*      ioPorts[MAX_DBG_COMPONENTS];
+    DbgCallstack*    callstack;
 };
 
 void debuggerNotifyEmulatorStart();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-25 22:18:03 $
+** $Date: 2005-02-27 05:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -245,6 +245,19 @@ const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int index)
         return NULL;
     }
     return dbgDevice->registerBank[index];
+}
+
+int dbgDeviceGetCallstackCount(DbgDevice* dbgDevice)
+{
+    return dbgDevice->callstack != NULL ? 1 : 0;
+}
+
+const DbgCallstack* dbgDeviceGetCallstack(DbgDevice* dbgDevice, int index)
+{
+    if (index >= dbgDeviceGetCallstackCount(dbgDevice)) {
+        return NULL;
+    }
+    return dbgDevice->callstack;
 }
 
 int dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice)

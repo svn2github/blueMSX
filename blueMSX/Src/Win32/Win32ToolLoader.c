@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-26 08:02:34 $
+** $Date: 2005-02-27 05:06:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,6 +130,16 @@ RegisterBank* __stdcall toolDeviceGetRegisterBank(Device* d, int r)
     return (RegisterBank*)dbgDeviceGetRegisterBank((DbgDevice*)d, r);
 }
 
+int __stdcall toolDeviceGetCallstackCount(Device* d)
+{
+    return dbgDeviceGetCallstackCount((DbgDevice*)d);
+}
+
+Callstack* __stdcall toolDeviceGetCallstack(Device* d, int c)
+{
+    return (Callstack*)dbgDeviceGetCallstack((DbgDevice*)d, c);
+}
+
 int __stdcall toolDeviceGetIoPortsCount(Device* d)
 {
     return dbgDeviceGetIoPortsCount((DbgDevice*)d);
@@ -197,6 +207,8 @@ static Interface toolInterface = {
     toolDeviceGetRegisterBankCount,
     toolDeviceGetRegisterBank,
     toolWriteRegister,
+    toolDeviceGetCallstackCount,
+    toolDeviceGetCallstack,
     toolDeviceGetIoPortsCount,
     toolDeviceGetIoPorts,
     toolDeviceWriteIoPort,
