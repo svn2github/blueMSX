@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-30 09:09:41 $
+** $Date: 2005-02-03 07:33:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -564,6 +564,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuVideoSourceDefault  = "No Video Source Connected";
     ls->propFullscreenResText   = "Fullscreen Resolution:";
     ls->dlgSavePreview          = "Show Preview";
+    ls->dlgSaveDate             = "Time Saved:";
 };
 
 

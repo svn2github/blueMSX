@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-30 23:17:26 $
+** $Date: 2005-02-03 07:33:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@
 #include "VideoManager.h"
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 extern void PatchReset(BoardType boardType);
 
@@ -222,6 +223,8 @@ void boardReset()
 
 void boardSaveState(const char* stateFile)
 {
+    char buf[128];
+    time_t ltime;
     SaveState* state;
     int size;
     void* bitmap;
@@ -247,6 +250,12 @@ void boardSaveState(const char* stateFile)
         zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
     }
     free(bitmap);
+
+    memset(buf, 0, 128);
+    time(&ltime);
+    strftime(buf, 128, "%X   %A, %B %d, %Y", localtime(&ltime));
+    zipSaveFile(stateFile, "date.txt", 1, buf, strlen(buf) + 1);
+
 }
 
 void boardSetFrequency(int frequency)

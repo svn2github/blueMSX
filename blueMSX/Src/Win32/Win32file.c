@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-30 10:05:41 $
+** $Date: 2005-02-03 07:33:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -330,6 +330,7 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_INITDIALOG:
         {
             SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWBUTTON), langDlgSavePreview());
+            SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATETEXT), langDlgSaveDate());
             ShowWindow(GetParent(hDlg), SW_HIDE);
             updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
             SetTimer(hDlg, 13, 250, 0);
@@ -362,6 +363,12 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
             hwnd = GetDlgItem(hDlg, IDC_PREVIEWBUTTON);
             SetWindowPos(hwnd, NULL, width - 220, 215, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+            
+            hwnd = GetDlgItem(hDlg, IDC_PREVIEWDATETEXT);
+            SetWindowPos(hwnd, NULL, 8, height - 26, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+            hwnd = GetDlgItem(hDlg, IDC_PREVIEWDATE);
+            SetWindowPos(hwnd, NULL, 81, height - 26, width - 187, 15, SWP_NOZORDER);
         }
         return 0;
         
@@ -380,6 +387,8 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             case CDN_SELCHANGE:
                 {
                     char fileName[MAX_PATH];
+                    void* buffer;
+                    Int32 size;
                     int fileSize = SendMessage(GetParent(hDlg), CDM_GETFILEPATH, MAX_PATH, (LPARAM)fileName);
 
                     if (hBmp != INVALID_HANDLE_VALUE) {
@@ -387,9 +396,15 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                         hBmp = INVALID_HANDLE_VALUE;
                     }
 
-                    if (isFileExtension(fileName, ".sta")) {                        
-                        Int32 size = 0;
-                        void* buffer = zipLoadFile(fileName, "screenshot.bmp", &size);
+                    SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATE), "");                     
+                    buffer = zipLoadFile(fileName, "date.txt", &size);
+                    if (buffer != 0) {
+                        SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATE), buffer);     
+                        free(buffer);
+                    }
+
+                    if (isFileExtension(fileName, ".sta")) {
+                        buffer = zipLoadFile(fileName, "screenshot.bmp", &size);
                         if (buffer != 0) {
                             hBmp = BitmapFromData(buffer);
                             free(buffer);
@@ -524,6 +539,61 @@ char* openStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
         if (file != NULL) {
             fclose(file);
         }
+    }
+
+    return pFileName; 
+} 
+
+char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview) { 
+    OPENFILENAME ofn; 
+    BOOL rv; 
+    static char pFileName[MAX_PATH]; 
+    pFileName[0] = 0; 
+
+    if (showPreview != NULL) {
+        doShowPreview = *showPreview;
+    }
+    else {
+        doShowPreview = 1;
+    }
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = (HINSTANCE)GetModuleHandle(NULL); 
+    ofn.lpstrFilter = pFilter ? pFilter : "*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0; 
+    ofn.nFilterIndex = pFilterIndex ? *pFilterIndex : 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = pDir; 
+    ofn.lpstrTitle = pTitle; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLETEMPLATE | OFN_HIDEREADONLY | OFN_ENABLEHOOK; 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = hookStateProc; 
+    ofn.lpTemplateName = MAKEINTRESOURCE(IDD_OPEN_STATEDIALOG); 
+
+    rv = GetSaveFileName(&ofn); 
+
+    if (showPreview != NULL) {
+        *showPreview = doShowPreview;
+    }
+
+    if (!rv) { 
+        return NULL; 
+    } 
+
+    if (pFilterIndex) {
+        *pFilterIndex = ofn.nFilterIndex;
+    }
+
+    if (pDir != NULL) {
+        GetCurrentDirectory(MAX_PATH - 1, pDir);
     }
 
     return pFileName; 
@@ -680,6 +750,7 @@ char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex,
 
     return pFileName; 
 } 
+
 
 ///////////////////////////////////////////////////////////////////////////
 

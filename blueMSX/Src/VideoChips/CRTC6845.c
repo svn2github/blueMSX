@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-02-01 04:43:33 $
+** $Date: 2005-02-03 07:33:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -286,7 +286,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
     crtc->charWidth     = charWidth;
     crtc->charSpace     = charSpace;
     crtc->charsPerLine  = charsPerLine;
-    crtc->displayWidth  = (charWidth + charSpace) * (charsPerLine + borderChars);
+    crtc->displayWidth  = ((charWidth + charSpace) * (charsPerLine + borderChars)) & ~7;
 
     // The displayWidth calculation is necessary for the frame buffer rendering
     // since the frame buffer allows at most 320 pixel wide screens, although

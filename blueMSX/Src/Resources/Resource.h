@@ -417,6 +417,8 @@
 
 #define IDC_PREVIEWIMAGE                2780
 #define IDC_PREVIEWBUTTON               2781
+#define IDC_PREVIEWDATE                 2782
+#define IDC_PREVIEWDATETEXT             2783
 
 #define IDC_CONTROL                     2800
 

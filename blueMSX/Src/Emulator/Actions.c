@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-01 05:20:30 $
+** $Date: 2005-02-03 07:33:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,8 +169,8 @@ void actionSaveState() {
 
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
-        filename = archFileSave(langDlgSaveState(), "CPU state   (*.sta)\0*.sta\0", 
-                                state.properties->emulation.statsDefDir, ".sta\0", NULL);
+        filename = archFileStateSave(langDlgSaveState(), "CPU state   (*.sta)\0*.sta\0", 
+                                     state.properties->emulation.statsDefDir, ".sta\0", NULL);
         if (filename != NULL && strlen(filename) != 0) {
             char *ptr = filename + strlen(filename) - 1;
             while(*ptr != '.' && ptr > filename) {

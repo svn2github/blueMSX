@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-30 09:09:41 $
+** $Date: 2005-02-03 07:33:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -397,6 +397,7 @@ _TCHAR* langDlgSaveAs();
 _TCHAR* langDlgRun();
 _TCHAR* langDlgClose();
 _TCHAR* langDlgSavePreview();
+_TCHAR* langDlgSaveDate();
 _TCHAR* langDlgConfConfigText();
 _TCHAR* langDlgConfSlotLayout();
 _TCHAR* langDlgConfMemory();

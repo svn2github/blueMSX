@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchDialog.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-30 09:09:36 $
+** $Date: 2005-02-03 07:33:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,8 @@ char* archFileRomOpen(char* title, char* fileDescription, char* defaultDir,
                       char* extensions, int* selectedExtension, char* defautExtension, RomType* romType);
 char* archFileSave(char* title, char* fileDescription, char* defaultDir, 
                    char* extensions, int* selectedExtension);
+char* archFileStateSave(char* title, char* extensionList, char* defaultDir, 
+                        char* extensions, int* selectedExtension);
 void archFileFromZipDialog(ZipFileDlgInfo* dlgInfo);
 
 void archShowPropertiesDialog(PropPage page);
