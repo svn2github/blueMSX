@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-05 02:59:28 $
+** $Date: 2005-01-06 09:06:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1981,169 +1981,23 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             break;
 
         case TIMER_STATUSBAR_UPDATE:
-
             if (!st.minimized) {
-                static UInt32 aboutCnt = 0;
                 static UInt32 resetCnt = 0;
-                StatusInfo statusInfo;
-                int fps = st.framesPerSecond;
-                int reset;
 
-                if (fps == 59 || fps == 61) fps = 60;
-                if (fps == 49 || fps == 51) fps = 50;
-
-                statusInfo.emuPaused        = emulatorGetState() != EMU_RUNNING && emulatorGetState() != EMU_STOPPED;
-                statusInfo.emuRunning       = emulatorGetState() == EMU_RUNNING;
-                statusInfo.emuStopped       = emulatorGetState() == EMU_STOPPED;
-                statusInfo.cpuTraceEnable   = boardTraceGetEnable();
-                statusInfo.ledCas           = tapeIsBusy();
-                statusInfo.ledFrontSwitch   = pProperties->emulation.frontSwitch ? 1 : 0;
-                statusInfo.ledPauseSwitch   = pProperties->emulation.pauseSwitch ? 1 : 0;
-                statusInfo.ledAudioSwitch   = pProperties->emulation.audioSwitch ? 1 : 0;
-                statusInfo.ledDiskA         = ledGetFdd1(); 
-                statusInfo.ledDiskB         = ledGetFdd2();
-                statusInfo.ledCaps          = ledGetCapslock();
-                statusInfo.ledKana          = ledGetKana();
-                statusInfo.ledTurboR        = ledGetTurboR();
-                statusInfo.ledPause         = ledGetPause();
-                statusInfo.renshaLed        = ledGetRensha();
-                statusInfo.ledRecord        = mixerIsLogging(st.mixer) ? 1 : 0;
-                statusInfo.fdcTiming        = boardGetFdcTimingEnable();
-                statusInfo.audioMaster      = pProperties->sound.masterEnable ? 1 : 0;
-                statusInfo.audioStereo      = pProperties->sound.stereo ? 1 : 0;
-                statusInfo.audioPsg         = pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable ? 1 : 0;
-                statusInfo.audioScc         = pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable ? 1 : 0;          
-                statusInfo.audioMsxMusic    = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable ? 1 : 0;
-                statusInfo.audioMsxAudio    = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable ? 1 : 0;
-                statusInfo.audioMoonsound   = pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable ? 1 : 0;
-                statusInfo.audioPcm         = pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable ? 1 : 0;
-                statusInfo.audioKbd         = pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable ? 1 : 0;
-                statusInfo.volPsgLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_LEFT);
-                statusInfo.volPsgRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_RIGHT);
-                statusInfo.volSccLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_LEFT);
-                statusInfo.volSccRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMsxMusicLeft  = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_LEFT);
-                statusInfo.volMsxMusicRight = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMsxAudioLeft  = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_LEFT);
-                statusInfo.volMsxAudioRight = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMoonsoundLeft = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_LEFT);
-                statusInfo.volMoonsoundRight= mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_RIGHT);
-                statusInfo.volKbdLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
-                statusInfo.volKbdRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_RIGHT);
-                statusInfo.volPcmLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_LEFT);
-                statusInfo.volPcmRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMasterLeft    = mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_LEFT);
-                statusInfo.volMasterRight   = mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_RIGHT);
-
-                statusInfo.levelMaster     = pProperties->sound.masterVolume;
-                statusInfo.levelPsg        = pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume;
-                statusInfo.levelPcm        = pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume;
-                statusInfo.levelScc        = pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume;
-                statusInfo.levelKeyboard   = pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume;
-                statusInfo.levelMsxMusic   = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume;
-                statusInfo.levelMsxAudio   = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume;
-                statusInfo.levelMoonsound  = pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume;
-                statusInfo.panPsg          = pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan;
-                statusInfo.panPcm          = pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan;
-                statusInfo.panScc          = pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan;
-                statusInfo.panKeyboard     = pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan;
-                statusInfo.panMsxMusic     = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan;
-                statusInfo.panMsxAudio     = pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan;
-                statusInfo.panMoonsound    = pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan;
-                
-                statusInfo.renshaLevel     = 100 * pProperties->joy1.autofire / 11;
-
-                statusInfo.emuSpeed        = pProperties->emulation.speed;
-
-                statusInfo.port1None       = pProperties->joy1.type == P_JOY_NONE ? 1 : 0;
-                statusInfo.port1Mouse      = pProperties->joy1.type == P_JOY_MOUSE ? 1 : 0;
-                statusInfo.port1Num        = pProperties->joy1.type == P_JOY_NUMPAD ? 1 : 0;
-                statusInfo.port1Kbd        = pProperties->joy1.type == P_JOY_KEYSET ? 1 : 0;
-                statusInfo.port1Joy        = pProperties->joy1.type == P_JOY_HW ? 1 : 0;
-                statusInfo.port2None       = pProperties->joy2.type == P_JOY_NONE ? 1 : 0;
-                statusInfo.port2Mouse      = pProperties->joy2.type == P_JOY_MOUSE ? 1 : 0;
-                statusInfo.port2Num        = pProperties->joy2.type == P_JOY_NUMPAD ? 1 : 0;
-                statusInfo.port2Kbd        = pProperties->joy2.type == P_JOY_KEYSET ? 1 : 0;
-                statusInfo.port2Joy        = pProperties->joy2.type == P_JOY_HW ? 1 : 0;
-
-                reset = 0;
                 if (emulatorGetState() == EMU_RUNNING) {
-                    reset = (resetCnt++ & 0x3f) == 0;
+                    if ((resetCnt++ & 0x3f) == 0) {
+                        mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MOONSOUND, 1);
+                        mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, 1);
+                        mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, 1);
+                        mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_SCC, 1);
+                    }
                 }
-                statusInfo.machineMoonsound = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MOONSOUND, reset);
-                statusInfo.machineMsxAudio  = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, reset);
-                statusInfo.machineMsxMusic  = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, reset);
-                statusInfo.machineScc       = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_SCC, reset);
-                statusInfo.machineRom       = boardUseRom();
-                statusInfo.machineMegaRom   = boardUseMegaRom();
-                statusInfo.machineMegaRam   = boardUseMegaRam();
-                statusInfo.machineFmPac     = boardUseFmPac();
-                
-                statusInfo.confDiskRI       = pProperties->diskdrive.autostartA;
-                statusInfo.confCartRI       = pProperties->cartridge.autoReset;
-                statusInfo.confCasRO        = pProperties->cassette.readOnly;
-                statusInfo.videoScanlines   = pProperties->video.scanlinesEnable;
-                statusInfo.videoHstretch    = pProperties->video.horizontalStretch;
-                statusInfo.videoVstretch    = pProperties->video.verticalStretch;
-
-                sprintf(statusInfo.videoScanlinePct, (pProperties->video.scanlinesEnable ? "%d%%" : ""), 100 - pProperties->video.scanlinesPct);
-
-                strcpy(statusInfo.romMapper1, pProperties->cartridge.slotA[0] ? romTypeToString(pProperties->cartridge.slotAType) : "");
-                strcpy(statusInfo.romMapper2, pProperties->cartridge.slotB[0] ? romTypeToString(pProperties->cartridge.slotBType) : ""); 
-                strcpy(statusInfo.romMapper1Short, pProperties->cartridge.slotA[0] ? romTypeToShortString(pProperties->cartridge.slotAType) : "");
-                strcpy(statusInfo.romMapper2Short, pProperties->cartridge.slotB[0] ? romTypeToShortString(pProperties->cartridge.slotBType) : "");
-
-                strcpy(statusInfo.version, BLUE_MSX_VERSION);
-                sprintf(statusInfo.buildNumber, "%d", BUILD_NUMBER);
-                
-                if (boardGetRamSize() >= 1024) {
-                    sprintf(statusInfo.memoryRam, "%dMB", boardGetRamSize() / 1024);
-                }
-                else {
-                    sprintf(statusInfo.memoryRam, "%dkB", boardGetRamSize());
-                }
-                sprintf(statusInfo.memoryVram, "%dkB", boardGetVramSize());
-
-                if (emulatorGetState() != EMU_STOPPED) {
-                    static char* txtScreenMode[14] = {
-                        "SCREEN 0",  "SCREEN 1", "SCREEN 2",  "SCREEN 3",
-                        "SCREEN 4",  "SCREEN 5", "SCREEN 6",  "SCREEN 7",
-                        "SCREEN 8",  "SCREEN 9", "SCREEN 10", "SCREEN 11",
-                        "SCREEN 12", "TEXT80"
-                    };
-                    static char* txtScreenModeShort[14] = {
-                        "SCR 0",  "SCR 1", "SCR 2",  "SCR 3",
-                        "SCR 4",  "SCR 5", "SCR 6",  "SCR 7",
-                        "SCR 8",  "SCR 9", "SCR 10", "SCR 11",
-                        "SCR 12", "TXT 80"
-                    };
-
-                    sprintf(statusInfo.screenMode, txtScreenMode[st.screenMode]);
-                    sprintf(statusInfo.screenModeShort, txtScreenModeShort[st.screenMode]);
-                    sprintf(statusInfo.fpsString, "%2d", fps);
-                    sprintf(statusInfo.cpuString, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
-                            emulatorGetCpuUsage() % 10);
-                    sprintf(statusInfo.emuFrequency, "%d%%", emulatorGetCpuSpeed());
-                    createAboutInfo(statusInfo.buildAndVersion, 30, 0);
-                    aboutCnt = 0;
-                }
-                else {
-                    sprintf(statusInfo.screenMode, "");
-                    sprintf(statusInfo.screenModeShort, "");
-                    sprintf(statusInfo.emuFrequency, "");
-                    sprintf(statusInfo.fpsString, "");
-                    sprintf(statusInfo.cpuString, "");
-                    createAboutInfo(statusInfo.buildAndVersion, 30, aboutCnt++ / 2);
-                }
-
-                strcpy(statusInfo.machineName, pProperties->emulation.machineName);
-                strcpy(statusInfo.runningName, createSaveFileBaseName(pProperties, 1));
 
                 PatchDiskSetBusy(0, 0);
                 PatchDiskSetBusy(1, 0);
                 tapeSetBusy(0);
 
-                themeUpdate(st.themeActive, GetDC(hwnd), &statusInfo);
+                themeUpdate(st.themeActive, GetDC(hwnd));
             }
             break;
 
@@ -2971,4 +2825,466 @@ void archThemeSetNext() {
     strcpy(pProperties->settings.themeName, st.themeList[st.themeIndex]->name);
 
     archUpdateWindow();
+}
+
+/////////////////////////////////////////////////////////////////////
+////  Implementation of theme triggers
+/////////////////////////////////////////////////////////////////////
+
+int themeTriggerEmuStopped() {
+    return emulatorGetState() == EMU_STOPPED;
+}
+
+int themeTriggerEmuPaused() {
+    return emulatorGetState() != EMU_RUNNING && emulatorGetState() != EMU_STOPPED;
+}
+
+int themeTriggerEmuRunning() {
+    return emulatorGetState() == EMU_RUNNING;
+}
+
+int themeTriggerFdcTiming() {
+    return boardGetFdcTimingEnable();
+}
+
+int themeTriggerCpuTraceEnable() {
+    return boardTraceGetEnable();
+}
+
+int themeTriggerLedDiskA() {
+    return ledGetFdd1(); 
+}
+
+int themeTriggerLedDiskB() {
+    return ledGetFdd2();
+}
+
+int themeTriggerLedCas() {
+    return tapeIsBusy();
+}
+
+int themeTriggerLedAudioSwitch() {
+    return pProperties->emulation.audioSwitch ? 1 : 0;
+}
+
+int themeTriggerLedFrontSwitch() {
+    return pProperties->emulation.frontSwitch ? 1 : 0;
+}
+
+int themeTriggerLedPauseSwitch() {
+    return pProperties->emulation.pauseSwitch ? 1 : 0;
+}
+
+int themeTriggerLedCaps() {
+    return ledGetCapslock();
+}
+
+int themeTriggerLedKana() {
+    return ledGetKana();
+}
+
+int themeTriggerLedTurboR() {
+    return ledGetTurboR();
+}
+
+int themeTriggerLedPause() {
+    return ledGetPause();
+}
+
+int themeTriggerLedRecord() {
+    return mixerIsLogging(st.mixer) ? 1 : 0;
+}
+
+int themeTriggerLedRensha() {
+    return ledGetRensha();
+}
+
+int themeTriggerAudioStereo() {
+    return pProperties->sound.stereo ? 1 : 0;
+}
+
+int themeTriggerAudioMaster() {
+    return pProperties->sound.masterEnable ? 1 : 0;
+}
+
+int themeTriggerAudioKbd(){
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable ? 1 : 0;
+}
+
+int themeTriggerAudioMoonsound() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable ? 1 : 0;
+}
+
+int themeTriggerAudioMsxAudio() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable ? 1 : 0;
+}
+
+int themeTriggerAudioMsxMusic() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable ? 1 : 0;
+}
+
+int themeTriggerAudioPsg() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable ? 1 : 0;
+}
+
+int themeTriggerAudioScc() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable ? 1 : 0;          
+}
+
+int themeTriggerAudioPcm() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable ? 1 : 0;
+}
+
+int themeTriggerVolKbdLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolKbdRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolMoonsoundLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolMoonsoundRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolMsxAudioLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolMsxAudioRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolMsxMusicLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolMsxMusicRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolPsgLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolPsgRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolSccLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolSccRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolPcmLeft() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolPcmRight() {
+    return mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolMasterLeft() {
+    return mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolMasterRight() {
+    return mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerLevelMaster() {
+    return pProperties->sound.masterVolume;
+}
+
+int themeTriggerLevelPsg() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume;
+}
+
+int themeTriggerLevelPcm() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume;
+}
+
+int themeTriggerLevelScc() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume;
+}
+
+int themeTriggerLevelKeyboard() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume;
+}
+
+int themeTriggerLevelMsxMusic() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume;
+}
+
+int themeTriggerLevelMsxAudio() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume;
+}
+
+int themeTriggerLevelMoonsound() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume;
+}
+
+int themeTriggerPanPsg() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan;
+}
+
+int themeTriggerPanPcm() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan;
+}
+
+int themeTriggerPanScc() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan;
+}
+
+int themeTriggerPanKeyboard() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan;
+}
+
+int themeTriggerPanMsxMusic() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan;
+}
+
+int themeTriggerPanMsxAudio() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan;
+}
+
+int themeTriggerPanMoonsound() {
+    return pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan;
+}
+
+int themeTriggerLevelRensha() {
+    return 100 * pProperties->joy1.autofire / 11;
+}
+
+int themeTriggerLevelEmuSpeed() {
+    return pProperties->emulation.speed;
+}
+
+int themeTriggerPort1None() {
+    return pProperties->joy1.type == P_JOY_NONE ? 1 : 0;
+}
+
+int themeTriggerPort1Mouse() {
+    return pProperties->joy1.type == P_JOY_MOUSE ? 1 : 0;
+}
+
+int themeTriggerPort1Num() {
+    return pProperties->joy1.type == P_JOY_NUMPAD ? 1 : 0;
+}
+
+int themeTriggerPort1Kbd() {
+    return pProperties->joy1.type == P_JOY_KEYSET ? 1 : 0;
+}
+
+int themeTriggerPort1Joy() {
+    return pProperties->joy1.type == P_JOY_HW ? 1 : 0;
+}
+
+int themeTriggerPort2None() {
+    return pProperties->joy2.type == P_JOY_NONE ? 1 : 0;
+}
+
+int themeTriggerPort2Mouse() {
+    return pProperties->joy2.type == P_JOY_MOUSE ? 1 : 0;
+}
+
+int themeTriggerPort2Num() {
+    return pProperties->joy2.type == P_JOY_NUMPAD ? 1 : 0;
+}
+
+int themeTriggerPort2Kbd() {
+    return pProperties->joy2.type == P_JOY_KEYSET ? 1 : 0;
+}
+
+int themeTriggerPort2Joy() {
+    return pProperties->joy2.type == P_JOY_HW ? 1 : 0;
+}
+
+int themeTriggerMachineMoonsound() {
+    return mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MOONSOUND, 0);
+}
+
+int themeTriggerMachineMsxAudio() {
+    return mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, 0);
+}
+
+int themeTriggerMachineMsxMusic() {
+    return mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, 0);
+}
+
+int themeTriggerMachineScc() {
+    return mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_SCC, 0);
+}
+
+int themeTriggerMachineRom() {
+    return boardUseRom();
+}
+
+int themeTriggerMachineMegaRom() {
+    return boardUseMegaRom();
+}
+
+int themeTriggerMachineMegaRam() {
+    return boardUseMegaRam();
+}
+
+int themeTriggerMachineFmPac() {
+    return boardUseFmPac();
+}
+
+int themeTriggerConfDiskRI() {
+    return pProperties->diskdrive.autostartA;
+}
+
+int themeTriggerConfCartRI() {
+    return pProperties->cartridge.autoReset;
+}
+
+int themeTriggerConfCasRO() {
+    return pProperties->cassette.readOnly;
+}
+
+int themeTriggerVideoScanlines() {
+    return pProperties->video.scanlinesEnable;
+}
+
+int themeTriggerVideoHstretch() {
+    return pProperties->video.horizontalStretch;
+}
+
+int themeTriggerVideoVstretch() {
+    return pProperties->video.verticalStretch;
+}
+
+char* themeTriggerVideoScanlinePct() {
+    static char buffer[16];
+    sprintf(buffer, (pProperties->video.scanlinesEnable ? "%d%%" : ""), 100 - pProperties->video.scanlinesPct);
+    return buffer;
+}
+
+char* themeTriggerScreenMode() {
+    static char* txtScreenMode[14] = {
+        "SCREEN 0",  "SCREEN 1", "SCREEN 2",  "SCREEN 3",
+        "SCREEN 4",  "SCREEN 5", "SCREEN 6",  "SCREEN 7",
+        "SCREEN 8",  "SCREEN 9", "SCREEN 10", "SCREEN 11",
+        "SCREEN 12", "TEXT80"
+    };
+    if (emulatorGetState() == EMU_STOPPED) {
+        return "";
+    }
+    return txtScreenMode[st.screenMode];
+}
+
+char* themeTriggerScreenModeShort() {
+    static char* txtScreenModeShort[14] = {
+        "SCR 0",  "SCR 1", "SCR 2",  "SCR 3",
+        "SCR 4",  "SCR 5", "SCR 6",  "SCR 7",
+        "SCR 8",  "SCR 9", "SCR 10", "SCR 11",
+        "SCR 12", "TXT 80"
+    };
+    if (emulatorGetState() == EMU_STOPPED) {
+        return "";
+    }
+    return txtScreenModeShort[st.screenMode];
+}
+
+char* themeTriggerMemoryRam() {
+    static char buffer[16];
+    if (boardGetRamSize() >= 1024) {
+        sprintf(buffer, "%dMB", boardGetRamSize() / 1024);
+    }
+    else {
+        sprintf(buffer, "%dkB", boardGetRamSize());
+    }
+    return buffer;
+}
+
+char* themeTriggerMemoryVram() {
+    static char buffer[16];
+    sprintf(buffer, "%dkB", boardGetVramSize());
+    return buffer;
+}
+
+char* themeTriggerEmuFrequency() {
+    static char buffer[16];
+    if (emulatorGetState() == EMU_STOPPED) {
+        return "";
+    }
+    sprintf(buffer, "%d%%", emulatorGetCpuSpeed());
+    return buffer;
+}
+
+char* themeTriggerFpsString() {
+    static char buffer[16];
+    int fps;
+    
+    if (emulatorGetState() == EMU_STOPPED) {
+        return "";
+    }
+    fps = st.framesPerSecond;
+    if (fps == 59 || fps == 61) fps = 60;
+    if (fps == 49 || fps == 51) fps = 50;
+    sprintf(buffer, "%2d", fps);
+    return buffer;
+}
+
+char* themeTriggerCpuString() {
+    static char buffer[16];
+    if (emulatorGetState() == EMU_STOPPED) {
+        return "";
+    }
+    sprintf(buffer, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
+            emulatorGetCpuUsage() % 10);
+    return buffer;
+}
+
+char* themeTriggerRomMapper1() {
+    return pProperties->cartridge.slotA[0] ? romTypeToString(pProperties->cartridge.slotAType) : "";
+}
+
+char* themeTriggerRomMapper2() {
+    return pProperties->cartridge.slotB[0] ? romTypeToString(pProperties->cartridge.slotBType) : ""; 
+}
+
+char* themeTriggerRomMapper1Short() {
+    return pProperties->cartridge.slotA[0] ? romTypeToShortString(pProperties->cartridge.slotAType) : "";
+}
+
+char* themeTriggerRomMapper2Short() {
+    return pProperties->cartridge.slotB[0] ? romTypeToShortString(pProperties->cartridge.slotBType) : "";
+}
+
+char* themeTriggerMachineName() {
+    return pProperties->emulation.machineName;
+}
+
+char* themeTriggerRunningName() {
+    return createSaveFileBaseName(pProperties, 1);
+}
+
+char* themeTriggerBuildNumber() {
+    static char buffer[16];
+    sprintf(buffer, "%d", BUILD_NUMBER);
+    return buffer;
+}
+
+char* themeTriggerVersion() {
+    return BLUE_MSX_VERSION;
+}
+
+char* themeTriggerBuildAndVersion() {
+    static int aboutCnt = 0;
+    static char buffer[128];
+    if (emulatorGetState() != EMU_STOPPED) {
+        aboutCnt = 0;
+    }
+    createAboutInfo(buffer, 30, aboutCnt++ / 2);
+    return buffer;
 }

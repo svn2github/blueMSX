@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:48 $
+** $Date: 2005-01-06 09:06:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,126 +42,126 @@ struct ThemeItem {
 
 #define TEST(a, x) ((a & THEME_TRIGGER_NOT) ? !(x) : (x))
 
-static int actionTypeToInt(ThemeTrigger actionType, StatusInfo* statusInfo)
+static int actionTypeToInt(ThemeTrigger actionType)
 {
     int idx = -1;
     switch (actionType & THEME_TRIGGER_MASK) {
-    case THEME_TRIGGER_IMG_DISKA:   idx = TEST(actionType, statusInfo->ledDiskA); break;
-    case THEME_TRIGGER_IMG_DISKB:   idx = TEST(actionType, statusInfo->ledDiskB); break;
-    case THEME_TRIGGER_IMG_CAS:     idx = TEST(actionType, statusInfo->ledCas); break;
-    case THEME_TRIGGER_IMG_AS:      idx = TEST(actionType, statusInfo->ledAudioSwitch); break;
-    case THEME_TRIGGER_IMG_TRACE:   idx = TEST(actionType, statusInfo->cpuTraceEnable); break;
-    case THEME_TRIGGER_IMG_FS:      idx = TEST(actionType, statusInfo->ledFrontSwitch); break;
-    case THEME_TRIGGER_IMG_PS:      idx = TEST(actionType, statusInfo->ledPauseSwitch); break;
-    case THEME_TRIGGER_IMG_CAPS:    idx = TEST(actionType, statusInfo->ledCaps); break;
-    case THEME_TRIGGER_IMG_KANA:    idx = TEST(actionType, statusInfo->ledKana); break;
-    case THEME_TRIGGER_IMG_TURBOR:  idx = TEST(actionType, statusInfo->ledTurboR); break;
-    case THEME_TRIGGER_IMG_PAUSE:   idx = TEST(actionType, statusInfo->ledPause); break;
-    case THEME_TRIGGER_IMG_REC:     idx = TEST(actionType, statusInfo->ledRecord); break;
-    case THEME_TRIGGER_IMG_STOPPED: idx = TEST(actionType, statusInfo->emuStopped); break;
-    case THEME_TRIGGER_IMG_PAUSED:  idx = TEST(actionType, statusInfo->emuPaused); break;
-    case THEME_TRIGGER_IMG_RUNNING: idx = TEST(actionType, statusInfo->emuRunning); break;
+    case THEME_TRIGGER_IMG_DISKA:       idx = TEST(actionType, themeTriggerLedDiskA()); break;
+    case THEME_TRIGGER_IMG_DISKB:       idx = TEST(actionType, themeTriggerLedDiskB()); break;
+    case THEME_TRIGGER_IMG_CAS:         idx = TEST(actionType, themeTriggerLedCas()); break;
+    case THEME_TRIGGER_IMG_AS:          idx = TEST(actionType, themeTriggerLedAudioSwitch()); break;
+    case THEME_TRIGGER_IMG_TRACE:       idx = TEST(actionType, themeTriggerCpuTraceEnable()); break;
+    case THEME_TRIGGER_IMG_FS:          idx = TEST(actionType, themeTriggerLedFrontSwitch()); break;
+    case THEME_TRIGGER_IMG_PS:          idx = TEST(actionType, themeTriggerLedPauseSwitch()); break;
+    case THEME_TRIGGER_IMG_CAPS:        idx = TEST(actionType, themeTriggerLedCaps()); break;
+    case THEME_TRIGGER_IMG_KANA:        idx = TEST(actionType, themeTriggerLedKana()); break;
+    case THEME_TRIGGER_IMG_TURBOR:      idx = TEST(actionType, themeTriggerLedTurboR()); break;
+    case THEME_TRIGGER_IMG_PAUSE:       idx = TEST(actionType, themeTriggerLedPause()); break;
+    case THEME_TRIGGER_IMG_REC:         idx = TEST(actionType, themeTriggerLedRecord()); break;
+    case THEME_TRIGGER_IMG_STOPPED:     idx = TEST(actionType, themeTriggerEmuStopped()); break;
+    case THEME_TRIGGER_IMG_PAUSED:      idx = TEST(actionType, themeTriggerEmuPaused()); break;
+    case THEME_TRIGGER_IMG_RUNNING:     idx = TEST(actionType, themeTriggerEmuRunning()); break;
 
-    case THEME_TRIGGER_IMG_FDCTIMING: idx = TEST(actionType, statusInfo->fdcTiming); break;
-    case THEME_TRIGGER_IMG_KBD:     idx = TEST(actionType, statusInfo->audioKbd); break;
-    case THEME_TRIGGER_IMG_MOON:    idx = TEST(actionType, statusInfo->audioMoonsound); break;
-    case THEME_TRIGGER_IMG_MSXA:    idx = TEST(actionType, statusInfo->audioMsxAudio); break;
-    case THEME_TRIGGER_IMG_MSXM:    idx = TEST(actionType, statusInfo->audioMsxMusic); break;
-    case THEME_TRIGGER_IMG_PSG:     idx = TEST(actionType, statusInfo->audioPsg); break;
-    case THEME_TRIGGER_IMG_SCC:     idx = TEST(actionType, statusInfo->audioScc); break;
-    case THEME_TRIGGER_IMG_PCM:     idx = TEST(actionType, statusInfo->audioPcm); break;
-    case THEME_TRIGGER_IMG_MASTER:  idx = TEST(actionType, statusInfo->audioMaster); break;
-    case THEME_TRIGGER_IMG_STEREO:  idx = TEST(actionType, statusInfo->audioStereo); break;
-    case THEME_TRIGGER_IMG_L_KBD:    idx = statusInfo->volKbdLeft; break;
-    case THEME_TRIGGER_IMG_R_KBD:    idx = statusInfo->volKbdRight; break;
-    case THEME_TRIGGER_IMG_L_MOON:   idx = statusInfo->volMoonsoundLeft; break;
-    case THEME_TRIGGER_IMG_R_MOON:   idx = statusInfo->volMoonsoundRight; break;
-    case THEME_TRIGGER_IMG_L_MSXA:   idx = statusInfo->volMsxAudioLeft; break;
-    case THEME_TRIGGER_IMG_R_MSXA:   idx = statusInfo->volMsxAudioRight; break;
-    case THEME_TRIGGER_IMG_L_MSXM:   idx = statusInfo->volMsxMusicLeft; break;
-    case THEME_TRIGGER_IMG_R_MSXM:   idx = statusInfo->volMsxMusicRight; break;
-    case THEME_TRIGGER_IMG_L_PSG:    idx = statusInfo->volPsgLeft; break;
-    case THEME_TRIGGER_IMG_R_PSG:    idx = statusInfo->volPsgRight; break;
-    case THEME_TRIGGER_IMG_L_SCC:    idx = statusInfo->volSccLeft; break;
-    case THEME_TRIGGER_IMG_R_SCC:    idx = statusInfo->volSccRight; break;
-    case THEME_TRIGGER_IMG_L_PCM:    idx = statusInfo->volPcmLeft; break;
-    case THEME_TRIGGER_IMG_R_PCM:    idx = statusInfo->volPcmRight; break;
-    case THEME_TRIGGER_IMG_L_MASTER: idx = statusInfo->volMasterLeft; break;
-    case THEME_TRIGGER_IMG_R_MASTER: idx = statusInfo->volMasterRight; break;
+    case THEME_TRIGGER_IMG_FDCTIMING:   idx = TEST(actionType, themeTriggerFdcTiming()); break;
+    case THEME_TRIGGER_IMG_KBD:         idx = TEST(actionType, themeTriggerAudioKbd()); break;
+    case THEME_TRIGGER_IMG_MOON:        idx = TEST(actionType, themeTriggerAudioMoonsound()); break;
+    case THEME_TRIGGER_IMG_MSXA:        idx = TEST(actionType, themeTriggerAudioMsxAudio()); break;
+    case THEME_TRIGGER_IMG_MSXM:        idx = TEST(actionType, themeTriggerAudioMsxMusic()); break;
+    case THEME_TRIGGER_IMG_PSG:         idx = TEST(actionType, themeTriggerAudioPsg()); break;
+    case THEME_TRIGGER_IMG_SCC:         idx = TEST(actionType, themeTriggerAudioScc()); break;
+    case THEME_TRIGGER_IMG_PCM:         idx = TEST(actionType, themeTriggerAudioPcm()); break;
+    case THEME_TRIGGER_IMG_MASTER:      idx = TEST(actionType, themeTriggerAudioMaster()); break;
+    case THEME_TRIGGER_IMG_STEREO:      idx = TEST(actionType, themeTriggerAudioStereo()); break;
+    case THEME_TRIGGER_IMG_L_KBD:       idx = themeTriggerVolKbdLeft(); break;
+    case THEME_TRIGGER_IMG_R_KBD:       idx = themeTriggerVolKbdRight(); break;
+    case THEME_TRIGGER_IMG_L_MOON:      idx = themeTriggerVolMoonsoundLeft(); break;
+    case THEME_TRIGGER_IMG_R_MOON:      idx = themeTriggerVolMoonsoundRight(); break;
+    case THEME_TRIGGER_IMG_L_MSXA:      idx = themeTriggerVolMsxAudioLeft(); break;
+    case THEME_TRIGGER_IMG_R_MSXA:      idx = themeTriggerVolMsxAudioRight(); break;
+    case THEME_TRIGGER_IMG_L_MSXM:      idx = themeTriggerVolMsxMusicLeft(); break;
+    case THEME_TRIGGER_IMG_R_MSXM:      idx = themeTriggerVolMsxMusicRight(); break;
+    case THEME_TRIGGER_IMG_L_PSG:       idx = themeTriggerVolPsgLeft(); break;
+    case THEME_TRIGGER_IMG_R_PSG:       idx = themeTriggerVolPsgRight(); break;
+    case THEME_TRIGGER_IMG_L_SCC:       idx = themeTriggerVolSccLeft(); break;
+    case THEME_TRIGGER_IMG_R_SCC:       idx = themeTriggerVolSccRight(); break;
+    case THEME_TRIGGER_IMG_L_PCM:       idx = themeTriggerVolPcmLeft(); break;
+    case THEME_TRIGGER_IMG_R_PCM:       idx = themeTriggerVolPcmRight(); break;
+    case THEME_TRIGGER_IMG_L_MASTER:    idx = themeTriggerVolMasterLeft(); break;
+    case THEME_TRIGGER_IMG_R_MASTER:    idx = themeTriggerVolMasterRight(); break;
 
-    case THEME_TRIGGER_LEVEL_MASTER:    idx = statusInfo->levelMaster; break;
-    case THEME_TRIGGER_LEVEL_PSG:       idx = statusInfo->levelPsg; break;
-    case THEME_TRIGGER_LEVEL_PCM:       idx = statusInfo->levelPcm; break;
-    case THEME_TRIGGER_LEVEL_SCC:       idx = statusInfo->levelScc; break;
-    case THEME_TRIGGER_LEVEL_KEYBOARD:  idx = statusInfo->levelKeyboard; break;
-    case THEME_TRIGGER_LEVEL_MSXMUSIC:  idx = statusInfo->levelMsxMusic; break;
-    case THEME_TRIGGER_LEVEL_MSXAUDIO:  idx = statusInfo->levelMsxAudio; break;
-    case THEME_TRIGGER_LEVEL_MOONSOUND: idx = statusInfo->levelMoonsound; break;
-    case THEME_TRIGGER_PAN_PSG:         idx = statusInfo->panPsg; break;
-    case THEME_TRIGGER_PAN_PCM:         idx = statusInfo->panPcm; break;
-    case THEME_TRIGGER_PAN_SCC:         idx = statusInfo->panScc; break;
-    case THEME_TRIGGER_PAN_KEYBOARD:    idx = statusInfo->panKeyboard; break;
-    case THEME_TRIGGER_PAN_MSXMUSIC:    idx = statusInfo->panMsxMusic; break;
-    case THEME_TRIGGER_PAN_MSXAUDIO:    idx = statusInfo->panMsxAudio; break;
-    case THEME_TRIGGER_PAN_MOONSOUND:   idx = statusInfo->panMoonsound; break;
+    case THEME_TRIGGER_LEVEL_MASTER:    idx = themeTriggerLevelMaster(); break;
+    case THEME_TRIGGER_LEVEL_PSG:       idx = themeTriggerLevelPsg(); break;
+    case THEME_TRIGGER_LEVEL_PCM:       idx = themeTriggerLevelPcm(); break;
+    case THEME_TRIGGER_LEVEL_SCC:       idx = themeTriggerLevelScc(); break;
+    case THEME_TRIGGER_LEVEL_KEYBOARD:  idx = themeTriggerLevelKeyboard(); break;
+    case THEME_TRIGGER_LEVEL_MSXMUSIC:  idx = themeTriggerLevelMsxMusic(); break;
+    case THEME_TRIGGER_LEVEL_MSXAUDIO:  idx = themeTriggerLevelMsxAudio(); break;
+    case THEME_TRIGGER_LEVEL_MOONSOUND: idx = themeTriggerLevelMoonsound(); break;
+    case THEME_TRIGGER_PAN_PSG:         idx = themeTriggerPanPsg(); break;
+    case THEME_TRIGGER_PAN_PCM:         idx = themeTriggerPanPcm(); break;
+    case THEME_TRIGGER_PAN_SCC:         idx = themeTriggerPanScc(); break;
+    case THEME_TRIGGER_PAN_KEYBOARD:    idx = themeTriggerPanKeyboard(); break;
+    case THEME_TRIGGER_PAN_MSXMUSIC:    idx = themeTriggerPanMsxMusic(); break;
+    case THEME_TRIGGER_PAN_MSXAUDIO:    idx = themeTriggerPanMsxAudio(); break;
+    case THEME_TRIGGER_PAN_MOONSOUND:   idx = themeTriggerPanMoonsound(); break;
 
-    case THEME_TRIGGER_EMUSPEED:        idx = statusInfo->emuSpeed; break;
+    case THEME_TRIGGER_EMUSPEED:        idx = themeTriggerLevelEmuSpeed(); break;
 
-    case THEME_TRIGGER_RENSHA:          idx = statusInfo->renshaLevel; break;
-    case THEME_TRIGGER_RENSHALED:       idx = statusInfo->renshaLed; break;
+    case THEME_TRIGGER_RENSHA:          idx = themeTriggerLevelRensha(); break;
+    case THEME_TRIGGER_RENSHALED:       idx = TEST(actionType, themeTriggerLedRensha()); break;
 
-    case THEME_TRIGGER_IMG_PORT1_EN:    idx = TEST(actionType, statusInfo->port1None ^ 0xffff); break;
-    case THEME_TRIGGER_IMG_PORT1_NONE:  idx = TEST(actionType, statusInfo->port1None); break;
-    case THEME_TRIGGER_IMG_PORT1_MOUSE: idx = TEST(actionType, statusInfo->port1Mouse); break;
-    case THEME_TRIGGER_IMG_PORT1_NUM:   idx = TEST(actionType, statusInfo->port1Num); break;
-    case THEME_TRIGGER_IMG_PORT1_KBD:   idx = TEST(actionType, statusInfo->port1Kbd); break;
-    case THEME_TRIGGER_IMG_PORT1_JOY:   idx = TEST(actionType, statusInfo->port1Joy); break;
-    case THEME_TRIGGER_IMG_PORT2_EN:    idx = TEST(actionType, statusInfo->port2None ^ 0xffff); break;
-    case THEME_TRIGGER_IMG_PORT2_NONE:  idx = TEST(actionType, statusInfo->port2None); break;
-    case THEME_TRIGGER_IMG_PORT2_MOUSE: idx = TEST(actionType, statusInfo->port2Mouse); break;
-    case THEME_TRIGGER_IMG_PORT2_NUM:   idx = TEST(actionType, statusInfo->port2Num); break;
-    case THEME_TRIGGER_IMG_PORT2_KBD:   idx = TEST(actionType, statusInfo->port2Kbd); break;
-    case THEME_TRIGGER_IMG_PORT2_JOY:   idx = TEST(actionType, statusInfo->port2Joy); break;
-    case THEME_TRIGGER_IMG_M_MOON:      idx = TEST(actionType, statusInfo->machineMoonsound); break;
-    case THEME_TRIGGER_IMG_M_MSXM:      idx = TEST(actionType, statusInfo->machineMsxMusic); break;
-    case THEME_TRIGGER_IMG_M_MSXA:      idx = TEST(actionType, statusInfo->machineMsxAudio); break;
-    case THEME_TRIGGER_IMG_M_SCC:       idx = TEST(actionType, statusInfo->machineScc); break;
-    case THEME_TRIGGER_IMG_M_ROM:       idx = TEST(actionType, statusInfo->machineRom); break;
-    case THEME_TRIGGER_IMG_M_MEGAROM:   idx = TEST(actionType, statusInfo->machineMegaRom); break;
-    case THEME_TRIGGER_IMG_M_MEGARAM:   idx = TEST(actionType, statusInfo->machineMegaRam); break;
-    case THEME_TRIGGER_IMG_M_FMPAC:     idx = TEST(actionType, statusInfo->machineFmPac); break;
-    case THEME_TRIGGER_IMG_DISK_RI:     idx = TEST(actionType, statusInfo->confDiskRI); break;
-    case THEME_TRIGGER_IMG_CART_RI:     idx = TEST(actionType, statusInfo->confCartRI); break;
-    case THEME_TRIGGER_IMG_CAS_RO:      idx = TEST(actionType, statusInfo->confCasRO); break;
-    case THEME_TRIGGER_IMG_SCANLINES:   idx = TEST(actionType, statusInfo->videoScanlines); break;
-    case THEME_TRIGGER_IMG_HSTRETCH:    idx = TEST(actionType, statusInfo->videoHstretch); break;
-    case THEME_TRIGGER_IMG_VSTRETCH:    idx = TEST(actionType, statusInfo->videoVstretch); break;
+    case THEME_TRIGGER_IMG_PORT1_EN:    idx = TEST(actionType, themeTriggerPort1None() ^ 0xffff); break;
+    case THEME_TRIGGER_IMG_PORT1_NONE:  idx = TEST(actionType, themeTriggerPort1None()); break;
+    case THEME_TRIGGER_IMG_PORT1_MOUSE: idx = TEST(actionType, themeTriggerPort1Mouse()); break;
+    case THEME_TRIGGER_IMG_PORT1_NUM:   idx = TEST(actionType, themeTriggerPort1Num()); break;
+    case THEME_TRIGGER_IMG_PORT1_KBD:   idx = TEST(actionType, themeTriggerPort1Kbd()); break;
+    case THEME_TRIGGER_IMG_PORT1_JOY:   idx = TEST(actionType, themeTriggerPort1Joy()); break;
+    case THEME_TRIGGER_IMG_PORT2_EN:    idx = TEST(actionType, themeTriggerPort2None() ^ 0xffff); break;
+    case THEME_TRIGGER_IMG_PORT2_NONE:  idx = TEST(actionType, themeTriggerPort2None()); break;
+    case THEME_TRIGGER_IMG_PORT2_MOUSE: idx = TEST(actionType, themeTriggerPort2Mouse()); break;
+    case THEME_TRIGGER_IMG_PORT2_NUM:   idx = TEST(actionType, themeTriggerPort2Num()); break;
+    case THEME_TRIGGER_IMG_PORT2_KBD:   idx = TEST(actionType, themeTriggerPort2Kbd()); break;
+    case THEME_TRIGGER_IMG_PORT2_JOY:   idx = TEST(actionType, themeTriggerPort2Joy()); break;
+    case THEME_TRIGGER_IMG_M_MOON:      idx = TEST(actionType, themeTriggerMachineMoonsound()); break;
+    case THEME_TRIGGER_IMG_M_MSXM:      idx = TEST(actionType, themeTriggerMachineMsxMusic()); break;
+    case THEME_TRIGGER_IMG_M_MSXA:      idx = TEST(actionType, themeTriggerMachineMsxAudio()); break;
+    case THEME_TRIGGER_IMG_M_SCC:       idx = TEST(actionType, themeTriggerMachineScc()); break;
+    case THEME_TRIGGER_IMG_M_ROM:       idx = TEST(actionType, themeTriggerMachineRom()); break;
+    case THEME_TRIGGER_IMG_M_MEGAROM:   idx = TEST(actionType, themeTriggerMachineMegaRom()); break;
+    case THEME_TRIGGER_IMG_M_MEGARAM:   idx = TEST(actionType, themeTriggerMachineMegaRam()); break;
+    case THEME_TRIGGER_IMG_M_FMPAC:     idx = TEST(actionType, themeTriggerMachineFmPac()); break;
+    case THEME_TRIGGER_IMG_DISK_RI:     idx = TEST(actionType, themeTriggerConfDiskRI()); break;
+    case THEME_TRIGGER_IMG_CART_RI:     idx = TEST(actionType, themeTriggerConfCartRI()); break;
+    case THEME_TRIGGER_IMG_CAS_RO:      idx = TEST(actionType, themeTriggerConfCasRO()); break;
+    case THEME_TRIGGER_IMG_SCANLINES:   idx = TEST(actionType, themeTriggerVideoScanlines()); break;
+    case THEME_TRIGGER_IMG_HSTRETCH:    idx = TEST(actionType, themeTriggerVideoHstretch()); break;
+    case THEME_TRIGGER_IMG_VSTRETCH:    idx = TEST(actionType, themeTriggerVideoVstretch()); break;
     }
     return idx;
 }
 
-static char* actionTypeToStr(ThemeTrigger actionType, StatusInfo* statusInfo)
+static char* actionTypeToStr(ThemeTrigger actionType)
 {
     char* str = NULL;
 
     switch (actionType & THEME_TRIGGER_MASK) {
-    case THEME_TRIGGER_TEXT_FREQ:   str = statusInfo->emuFrequency; break;
-    case THEME_TRIGGER_TEXT_CPU:    str = statusInfo->cpuString; break;
-    case THEME_TRIGGER_TEXT_FPS:    str = statusInfo->fpsString; break;
-    case THEME_TRIGGER_TEXT_RAM:    str = statusInfo->memoryRam; break;
-    case THEME_TRIGGER_TEXT_VRAM:   str = statusInfo->memoryVram; break;
-    case THEME_TRIGGER_TEXT_SCREEN: str = statusInfo->screenMode; break;
-    case THEME_TRIGGER_TEXT_SCREENSHORT: str = statusInfo->screenModeShort; break;
-    case THEME_TRIGGER_TEXT_ROMMAPPER1: str = statusInfo->romMapper1; break;
-    case THEME_TRIGGER_TEXT_ROMMAPPER2: str = statusInfo->romMapper2; break;
-    case THEME_TRIGGER_TEXT_ROMMAPPER1SHORT: str = statusInfo->romMapper1Short; break;
-    case THEME_TRIGGER_TEXT_ROMMAPPER2SHORT: str = statusInfo->romMapper2Short; break;
-    case THEME_TRIGGER_TEXT_RUNNAME:str = statusInfo->runningName; break;
-    case THEME_TRIGGER_TEXT_MACHINENAME: str = statusInfo->machineName; break;
-    case THEME_TRIGGER_TEXT_SCANLINESPCT: str = statusInfo->videoScanlinePct; break;
-    case THEME_TRIGGER_TEXT_VERSION: str = statusInfo->version; break;
-    case THEME_TRIGGER_TEXT_BUILDNUMBER: str = statusInfo->buildNumber; break;
-    case THEME_TRIGGER_TEXT_BUILDANDVER: str = statusInfo->buildAndVersion; break;
+    case THEME_TRIGGER_TEXT_FREQ:            str = themeTriggerEmuFrequency(); break;
+    case THEME_TRIGGER_TEXT_CPU:             str = themeTriggerCpuString(); break;
+    case THEME_TRIGGER_TEXT_FPS:             str = themeTriggerFpsString(); break;
+    case THEME_TRIGGER_TEXT_RAM:             str = themeTriggerMemoryRam(); break;
+    case THEME_TRIGGER_TEXT_VRAM:            str = themeTriggerMemoryVram(); break;
+    case THEME_TRIGGER_TEXT_SCREEN:          str = themeTriggerScreenMode(); break;
+    case THEME_TRIGGER_TEXT_SCREENSHORT:     str = themeTriggerScreenModeShort(); break;
+    case THEME_TRIGGER_TEXT_ROMMAPPER1:      str = themeTriggerRomMapper1(); break;
+    case THEME_TRIGGER_TEXT_ROMMAPPER2:      str = themeTriggerRomMapper2(); break;
+    case THEME_TRIGGER_TEXT_ROMMAPPER1SHORT: str = themeTriggerRomMapper1Short(); break;
+    case THEME_TRIGGER_TEXT_ROMMAPPER2SHORT: str = themeTriggerRomMapper2Short(); break;
+    case THEME_TRIGGER_TEXT_RUNNAME:         str = themeTriggerRunningName(); break;
+    case THEME_TRIGGER_TEXT_MACHINENAME:     str = themeTriggerMachineName(); break;
+    case THEME_TRIGGER_TEXT_SCANLINESPCT:    str = themeTriggerVideoScanlinePct(); break;
+    case THEME_TRIGGER_TEXT_VERSION:         str = themeTriggerVersion(); break;
+    case THEME_TRIGGER_TEXT_BUILDNUMBER:     str = themeTriggerBuildNumber(); break;
+    case THEME_TRIGGER_TEXT_BUILDANDVER:     str = themeTriggerBuildAndVersion(); break;
     }
     return str;
 }
@@ -444,7 +444,7 @@ void themeDraw(Theme* theme, void*  dc)
     }
 }
 
-void themeUpdate(Theme* theme, void*  dc, StatusInfo* statusInfo)
+void themeUpdate(Theme* theme, void*  dc)
 {
     ThemeItem* item;
     int redraw = 0;
@@ -456,7 +456,7 @@ void themeUpdate(Theme* theme, void*  dc, StatusInfo* statusInfo)
     // Update visibility
 
     for (item = theme->itemList; item != NULL; item = item->next) {
-        int   visible = actionTypeToInt(item->visible, statusInfo);
+        int   visible = actionTypeToInt(item->visible);
 
         if (visible == -1) {
             continue;
@@ -487,8 +487,8 @@ void themeUpdate(Theme* theme, void*  dc, StatusInfo* statusInfo)
     // Update items
 
     for (item = theme->itemList; item != NULL; item = item->next) {
-        int   idx = actionTypeToInt(item->trigger, statusInfo);
-        char* str = actionTypeToStr(item->trigger, statusInfo);
+        int   idx = actionTypeToInt(item->trigger);
+        char* str = actionTypeToStr(item->trigger);
 
         switch (item->type) {
         case ITEM_IMAGE:

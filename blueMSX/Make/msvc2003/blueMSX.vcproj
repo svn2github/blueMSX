@@ -1226,6 +1226,9 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Theme\ThemeLoader.h">
 			</File>
+			<File
+				RelativePath="..\..\Src\Theme\ThemeTriggers.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Arch"
