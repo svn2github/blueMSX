@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-30 09:09:43 $
+** $Date: 2005-01-30 10:05:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -366,6 +366,10 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
         
     case WM_DESTROY:
+        if (hBmp != INVALID_HANDLE_VALUE) {
+            DeleteObject(hBmp);
+            hBmp = INVALID_HANDLE_VALUE;
+        }
         saveDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE);
         return 0;
         

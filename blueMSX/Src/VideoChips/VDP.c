@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-29 01:32:16 $
+** $Date: 2005-01-30 10:05:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -331,8 +331,9 @@ static void onDisplay(VDP* vdp, UInt32 time)
         FrameBuffer* frameBuffer;
         frameBuffer = frameBufferFlipDrawFrame();
         frameBuffer->lines = 240;
-        if (vdpIsInterlaceOn(vdp->vdpRegs) && ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128)) {
-            frameBuffer->interlace = (vdp->vdpStatus[2] & 0x02) ? INTERLACE_EVEN : INTERLACE_ODD;
+        if (vdpIsInterlaceOn(vdp->vdpRegs)) {
+            frameBuffer->interlace = 
+                (vdp->vdpStatus[2] & 0x02) && (vdp->vdpRegs[9]  & 0x04) && vdp->vram128 ? INTERLACE_EVEN : INTERLACE_ODD;
         }
         else {
             frameBuffer->interlace = INTERLACE_NONE;
