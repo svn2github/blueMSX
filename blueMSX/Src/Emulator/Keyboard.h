@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-07 06:38:28 $
+** $Date: 2005-01-08 19:56:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,8 @@
 typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
 
 // Emulator Keys (Based on MSX Turbo-R keyboard layout)
+
+#define EK_NONE      0
 
 // ROW 0
 #define EK_F1        1
@@ -147,6 +149,8 @@ typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
 // SVI SPECIFIC KEYS
 #define EK_PRINT    93
 
+#define EK_KEYCOUNT 94
+
 
 void keyboardReset();
 void keyboardKeyDown(int keyCode);
@@ -156,6 +160,9 @@ int keyboardGetKeyState(int keyCode);
 
 void keyboardSetKeymap(KeyboardKeymap keymap);
 UInt8* keyboardGetState();
+
+int keyboardStringToKeyCode(const char* keyName);
+const char* keyboardKeyCodeToString(int keyCode);
 
 #endif
 

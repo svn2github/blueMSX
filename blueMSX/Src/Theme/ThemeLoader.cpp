@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-07 06:38:30 $
+** $Date: 2005-01-08 19:56:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@ extern "C" {
 #include "StrcmpNoCase.h"
 #include "ArchBitmap.h"
 #include "ArchText.h"
+#include "Keyboard.h"
 }
 
 #define MAX_CLIP_POINTS 512
@@ -214,6 +215,17 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, const char
     
 	return NULL;
 }
+
+static int getKeyCode(TiXmlElement* el, char* triggerName)
+{
+    const char* keycode = el->Attribute(triggerName);
+    if (keycode == NULL) {
+        return -1;
+    }
+    
+    return keyboardStringToKeyCode(keycode);
+}
+
 
 static int getIndexedTrigger(TiXmlElement* el, char* triggerName, int idx)
 {
@@ -548,9 +560,8 @@ static void addKeyButton(Theme* theme, TiXmlElement* el)
         return;
     }
 
-    int keycode = -1;
-    el->QueryIntAttribute("keycode", &keycode);
-    if (keycode < 0 || keycode > 255) {
+    int keycode = getKeyCode(el, "keycode");
+    if (keycode < 0) {
         return;
     }
 

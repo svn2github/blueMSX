@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-07 06:38:28 $
+** $Date: 2005-01-08 19:56:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,9 +28,108 @@
 ******************************************************************************
 */
 #include "Keyboard.h"
+#include <string.h>
 
+static char* keyNames[EK_KEYCOUNT];
+static UInt16 keyMap[EK_KEYCOUNT];
 
-static UInt16 keyMap[128];
+static void initKeyNameTable()
+{
+    keyNames[EK_NONE   ] = "none";
+    keyNames[EK_F1     ] = "f1";
+    keyNames[EK_F2     ] = "f2";
+    keyNames[EK_F3     ] = "f3";
+    keyNames[EK_F4     ] = "f4";
+    keyNames[EK_F5     ] = "f5";
+    keyNames[EK_STOP   ] = "stop";
+    keyNames[EK_CLS    ] = "cls";
+    keyNames[EK_SELECT ] = "select";
+    keyNames[EK_INS    ] = "ins";
+    keyNames[EK_DEL    ] = "del";
+    keyNames[EK_ESC    ] = "esc";
+    keyNames[EK_1      ] = "1";
+    keyNames[EK_2      ] = "2";
+    keyNames[EK_3      ] = "3";
+    keyNames[EK_4      ] = "4";
+    keyNames[EK_5      ] = "5";
+    keyNames[EK_6      ] = "6";
+    keyNames[EK_7      ] = "7";
+    keyNames[EK_8      ] = "8";
+    keyNames[EK_9      ] = "9";
+    keyNames[EK_0      ] = "0";
+    keyNames[EK_NEG    ] = "neg";
+    keyNames[EK_CIRCFLX] = "circomflex";
+    keyNames[EK_BKSLASH] = "backslash";
+    keyNames[EK_BKSPACE] = "backspace";
+    keyNames[EK_TAB    ] = "tab";
+    keyNames[EK_Q      ] = "q";
+    keyNames[EK_W      ] = "w";
+    keyNames[EK_E      ] = "e";
+    keyNames[EK_R      ] = "r";
+    keyNames[EK_T      ] = "t";
+    keyNames[EK_Y      ] = "y";
+    keyNames[EK_U      ] = "u";
+    keyNames[EK_I      ] = "i";
+    keyNames[EK_O      ] = "o";
+    keyNames[EK_P      ] = "p";
+    keyNames[EK_AT     ] = "at";
+    keyNames[EK_LBRACK ] = "leftbracket";
+    keyNames[EK_RETURN ] = "return";
+    keyNames[EK_CTRL   ] = "ctrl";
+    keyNames[EK_A      ] = "a";
+    keyNames[EK_S      ] = "s";
+    keyNames[EK_D      ] = "d";
+    keyNames[EK_F      ] = "f";
+    keyNames[EK_G      ] = "g";
+    keyNames[EK_H      ] = "h";
+    keyNames[EK_J      ] = "j";
+    keyNames[EK_K      ] = "k";
+    keyNames[EK_L      ] = "l";
+    keyNames[EK_SEMICOL] = "semicolon";
+    keyNames[EK_COLON  ] = "colon";
+    keyNames[EK_RBRACK ] = "rightbracket";
+    keyNames[EK_LSHIFT ] = "leftshift";
+    keyNames[EK_Z      ] = "z";
+    keyNames[EK_X      ] = "x";
+    keyNames[EK_C      ] = "c";
+    keyNames[EK_V      ] = "v";
+    keyNames[EK_B      ] = "b";
+    keyNames[EK_N      ] = "n";
+    keyNames[EK_M      ] = "m";
+    keyNames[EK_COMMA  ] = "comma";
+    keyNames[EK_PERIOD ] = "period";
+    keyNames[EK_DIV    ] = "div";
+    keyNames[EK_UNDSCRE] = "underscore";
+    keyNames[EK_RSHIFT ] = "rightshift";
+    keyNames[EK_CAPS   ] = "caps";
+    keyNames[EK_GRAPH  ] = "graph";
+    keyNames[EK_TORIKE ] = "torikeshi";
+    keyNames[EK_SPACE  ] = "space";
+    keyNames[EK_JIKKOU ] = "jikkou";
+    keyNames[EK_CODE   ] = "code";
+    keyNames[EK_PAUSE  ] = "pause";
+    keyNames[EK_LEFT   ] = "left";
+    keyNames[EK_UP     ] = "up";
+    keyNames[EK_DOWN   ] = "down";
+    keyNames[EK_RIGHT  ] = "right";
+    keyNames[EK_NUM7   ] = "num7";
+    keyNames[EK_NUM8   ] = "num8";
+    keyNames[EK_NUM9   ] = "num9";
+    keyNames[EK_NUMDIV ] = "numdiv";
+    keyNames[EK_NUM4   ] = "num4";
+    keyNames[EK_NUM5   ] = "num5";
+    keyNames[EK_NUM6   ] = "num6";
+    keyNames[EK_NUMMUL ] = "nummul";
+    keyNames[EK_NUM1   ] = "num1";
+    keyNames[EK_NUM2   ] = "num2";
+    keyNames[EK_NUM3   ] = "num3";
+    keyNames[EK_NUMSUB ] = "numsub";
+    keyNames[EK_NUM0   ] = "num0";
+    keyNames[EK_NUMPER ] = "numperiod";
+    keyNames[EK_NUMCOM ] = "numcomma";
+    keyNames[EK_NUMADD ] = "numadd";
+    keyNames[EK_PRINT  ] = "print";
+}
 
 static void initKeyMapMSX()
 {
@@ -247,6 +346,26 @@ static void initKeyMapSVI()
 
 static UInt8 keyboardState[16];
 
+int keyboardStringToKeyCode(const char* keyName) 
+{
+    int i;
+
+    for (i = 0; i < EK_KEYCOUNT; i++) {
+        if (0 == strcmp(keyName, keyNames[i])) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+const char* keyboardKeyCodeToString(int keyCode) 
+{
+    if (keyCode >= EK_KEYCOUNT) {
+        keyCode = 0;
+    }
+    return keyNames[keyCode];
+}
+
 void keyboardKeyDown(int keyCode)
 {
     int kbdCode = keyMap[keyCode];
@@ -268,6 +387,8 @@ int keyboardGetKeyState(int keyCode)
 void keyboardReset() 
 {
     keyboardSetKeymap(KEYMAP_MSX);
+
+    initKeyNameTable();
 
     memset(keyboardState, 0xff, 16);
 }
