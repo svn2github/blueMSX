@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-01-31 09:53:56 $
+** $Date: 2005-02-01 04:43:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@
 #include "Disk.h"
 #include "IoPort.h"
 #include "MegaromCartridge.h"
+#include "VideoManager.h"
 #include "SlotManager.h"
 #include "ramNormal.h"
 #include "RomLoader.h"
@@ -530,6 +531,7 @@ int sviRun(Machine* machine,
         machineLoadState(sviMachine);
         ay8910LoadState(ay8910);
         tapeLoadState();
+        videoManagerLoadState();
     }
 
     if (success) {
@@ -538,6 +540,8 @@ int sviRun(Machine* machine,
         boardTimerAdd(timer, boardSystemTime() + 1);
 
         r800Execute(r800);
+        
+        boardTimerDestroy(timer);
     }
 
     sviTraceDisable();
@@ -557,6 +561,8 @@ int sviRun(Machine* machine,
     slotManagerDestroy();
 
     deviceManagerDestroy();
+
+    r800Destroy(r800);
 
     sviMachine = NULL;
     sviDevInfo = NULL;
@@ -655,6 +661,7 @@ void sviSaveState()
     saveStateSet(state, "SyncPeriod",      SyncPeriod);
     saveStateSet(state, "pendingInt",      pendingInt);
     saveStateSet(state, "SviFrequency",    SviFrequency);
+    saveStateSet(state, "svi80ColEnabled", svi80ColEnabled);
     
     saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
     saveStateSet(state, "cartType00",     di->cartridge[0].type);
@@ -689,6 +696,7 @@ void sviSaveState()
     deviceManagerSaveState();
     ay8910SaveState(ay8910);
     tapeSaveState();
+    videoManagerSaveState();
 }
 
 void sviLoadState()
@@ -702,6 +710,7 @@ void sviLoadState()
     SyncPeriod          = saveStateGet(state, "SyncPeriod",      0);
     pendingInt          = saveStateGet(state, "pendingInt",      0);
     SviFrequency        = saveStateGet(state, "SviFrequency",    0);
+    svi80ColEnabled     = saveStateGet(state, "svi80ColEnabled", 0);
 
     di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);
     di->cartridge[0].type = saveStateGet(state, "cartType00",     0);

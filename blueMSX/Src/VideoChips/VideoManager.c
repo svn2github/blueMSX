@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-25 04:49:46 $
+** $Date: 2005-02-01 04:43:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "VideoManager.h"
 #include "ArchNotifications.h"
+#include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -179,4 +180,21 @@ void videoManagerUnregister(int handle)
     }
 
     archVideoOutputChange();
+}
+
+
+void videoManagerLoadState()
+{
+    SaveState* state = saveStateOpenForRead("VideoManager");
+    int index = saveStateGet(state, "ActiveFrameBuffer",  0);
+    saveStateClose(state);
+    videoManagerSetActive(index);
+
+}
+
+void videoManagerSaveState()
+{
+    SaveState* state = saveStateOpenForWrite("VideoManager");
+    saveStateSet(state, "ActiveFrameBuffer",  videoManagerGetActive());
+    saveStateClose(state);
 }

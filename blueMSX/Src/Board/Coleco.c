@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-17 08:01:17 $
+** $Date: 2005-02-01 04:43:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -439,6 +439,8 @@ int colecoRun(Machine* machine,
         boardTimerAdd(timer, boardSystemTime() + 1);
 
         r800Execute(r800);
+        
+        boardTimerDestroy(timer);
     }
 
     colecoTraceDisable();
@@ -449,6 +451,8 @@ int colecoRun(Machine* machine,
     sn76489Destroy(sn76489);
 
     deviceManagerDestroy();
+    
+    r800Destroy(r800);
 
     colecoMachine = NULL;
     colecoDevInfo = NULL;

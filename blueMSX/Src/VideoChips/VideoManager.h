@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-19 05:26:35 $
+** $Date: 2005-02-01 04:43:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,9 @@ int videoManagerIsActive(int index);
 char* videoManagerGetName(int index);
 
 void videoManagerReset();
+
+void videoManagerLoadState();
+void videoManagerSaveState();
 
 int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
                         VideoCallbacks* callbacks, void* ref);

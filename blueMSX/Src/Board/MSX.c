@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-31 20:21:06 $
+** $Date: 2005-02-01 04:43:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -828,6 +828,7 @@ int msxRun(Machine* machine,
             ay8910LoadState(ay8910);
         }
         tapeLoadState();
+        videoManagerLoadState();
     }
 
     if (success) {
@@ -1098,6 +1099,7 @@ void msxSaveState()
         ay8910SaveState(ay8910);
     }
     tapeSaveState();
+    videoManagerSaveState();
 }
 
 void msxLoadState()

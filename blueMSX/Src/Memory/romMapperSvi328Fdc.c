@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Fdc.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-28 23:46:07 $
+** $Date: 2005-02-01 04:43:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,6 +68,8 @@ static void loadState(Svi328Fdc* rm)
 
 static void destroy(Svi328Fdc* rm)
 {
+    wd2793Destroy(rm->fdc);
+
     deviceManagerUnregister(rm->deviceHandle);
 
     ioPortUnregister(0x30);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-31 08:10:37 $
+** $Date: 2005-02-01 04:43:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -576,7 +576,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     }
 } 
 
-UInt8 read(VDP* vdp, UInt16 ioPort) 
+static UInt8 read(VDP* vdp, UInt16 ioPort) 
 {
     UInt8 value;
 
@@ -595,7 +595,7 @@ UInt8 read(VDP* vdp, UInt16 ioPort)
     return value;
 }
 
-UInt8 readStatus(VDP* vdp, UInt16 ioPort)
+static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
 {
     UInt8 vdpStatus;
 
@@ -661,7 +661,7 @@ UInt8 readStatus(VDP* vdp, UInt16 ioPort)
     return vdpStatus;
 }
 
-void write(VDP* vdp, UInt16 ioPort, UInt8 value)
+static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     sync(vdp, boardSystemTime());
 
@@ -674,7 +674,7 @@ void write(VDP* vdp, UInt16 ioPort, UInt8 value)
     }
 }
 
-void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
+static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     if (vdp->vdpKey) {
 		if (value & 0x80) {
@@ -695,7 +695,7 @@ void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 	}
 }
 
-void writePaletteLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
+static void writePaletteLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     if (vdp->palKey) {
 		int palEntry = vdp->vdpRegs[16];
@@ -715,7 +715,7 @@ void writePaletteLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 	}
 }
 
-void writeRegister(VDP* vdp, UInt16 ioPort, UInt8 value)
+static void writeRegister(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     int reg;
 
