@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-06 20:15:54 $
+** $Date: 2005-02-06 23:20:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,12 +107,15 @@ void boardChangeCassette(char* name, const char* fileInZipFile);
 
 int  boardGetCassetteInserted();
 
+#define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
 #define boardFrequency() (6 * 3579545)
+#define boardFrequency64() (HIRES_CYCLES_PER_LORES_CYCLE * boardFrequency())
 
 static UInt32 boardSystemTime() {
     extern UInt32* boardSysTime;
     return *boardSysTime;
 }
+UInt64 boardSystemTime64();
 
 typedef void (*BoardTimerCb)(void* ref, UInt32 time);
 

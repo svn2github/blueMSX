@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-02-06 01:41:58 $
+** $Date: 2005-02-06 23:20:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,7 +266,7 @@ static void scheduleScrModeChange(VDP* vdp)
 static void scheduleHint(VDP* vdp)
 {
     vdp->timeHint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
-    boardTimerAdd(vdp->timerHint, vdp->timeHint + 59 + 10);
+    boardTimerAdd(vdp->timerHint, vdp->timeHint + 59);
 }
 
 static void scheduleVint(VDP* vdp)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-06 20:15:54 $
+** $Date: 2005-02-06 23:20:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
 static int (*syncVideo)(int) = NULL;
 UInt32* boardSysTime;
+static UInt64 boardSysTime64;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
@@ -440,6 +441,7 @@ typedef struct BoardTimer {
 };
 
 BoardTimer* timerList = NULL;
+static UInt32 oldTime;
 UInt32 timeAnchor;
 
 #define MAX_TIME  (2 * 1368 * 313)
@@ -513,10 +515,17 @@ void boardTimerRemove(BoardTimer* timer)
     timer->prev = timer;
 }
 
+UInt64 boardSystemTime64() {
+    UInt32 currentTime = boardSystemTime();
+    boardSysTime64 += HIRES_CYCLES_PER_LORES_CYCLE * (currentTime - oldTime);
+    oldTime = currentTime;
+    return boardSysTime64;
+}
+
+
 UInt32 boardTimerCheckTimeout()
 {
     UInt32 currentTime = boardSystemTime();
-
     timerList->timeout = currentTime + MAX_TIME;
 
     for (;;) {
@@ -542,6 +551,8 @@ UInt32 boardTimerCheckTimeout()
 void boardInit(UInt32* systemTime)
 {
     boardSysTime = systemTime;
+    oldTime = *systemTime;
+    boardSysTime64 = oldTime * HIRES_CYCLES_PER_LORES_CYCLE;
 
     timeAnchor = *systemTime;
     if (timerList != NULL) {
