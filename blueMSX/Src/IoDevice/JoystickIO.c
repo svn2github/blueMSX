@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-06 07:54:58 $
+** $Date: 2004-12-26 00:07:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -359,4 +359,28 @@ UInt8 joystickReadTriggerSVI(JoystickIO* joyIO)
 	value |= read(joyIO, 0) & 0x10;
 
 	return value;
+}
+
+JoystickIO* joystickIoCreateColeco(void)
+{
+    JoystickIO* joyIO;
+    int buttons = mouseEmuGetButtonState(1);
+
+    joyIO = calloc(1, sizeof(JoystickIO));
+
+    joyIO->mouseAsJoystick = buttons & 1;
+
+    return joyIO;
+}
+
+void joystickIoDestroyColeco(JoystickIO* joyIO)
+{
+    free(joyIO);
+}
+
+UInt8 joystickReadColeco(JoystickIO* joyIO, int port) 
+{
+    joyIO->registers[1] = port == 0 ? 0x40 : 0x00;
+
+	return read(joyIO, 0) & 0x3f;
 }

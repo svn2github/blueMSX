@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-23 04:44:31 $
+** $Date: 2004-12-26 00:07:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -86,8 +86,7 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 
 static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
 {
-    UInt8 joyState    = joystickReadSVI(joyIO);
-    UInt8 buttonState = joystickReadTriggerSVI(joyIO);
+    UInt8 joyState = joystickReadColeco(joyIO, ioPort >> 1);
     UInt8 value;
 
     if (joyMode != 0) {
@@ -95,11 +94,11 @@ static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
                ((joyState & 0x08) ? 0x02 : 0) |
                ((joyState & 0x02) ? 0x04 : 0) |
                ((joyState & 0x04) ? 0x08 : 0) |
-               ((buttonState & 0x10) ? 0x40 : 0) |
+               ((joyState & 0x10) ? 0x40 : 0) |
                0x30;
     }
 
-    value = 0x30 | ((buttonState & 0x20) ? 0x40 : 0);
+    value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
 
 	if (ioPort & 2) {
 		if      (~KeyMap[ 9] & 0x08) value |= 0x0A; // 0
@@ -373,7 +372,7 @@ int colecoRun(Machine* machine,
     sn76489 = sn76489Create(mixer);
     success = colecoInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
 
-    joyIO = joystickIoCreateSVI();
+    joyIO = joystickIoCreateColeco();
 
     if (devInfo->cartridge[0].inserted) {
         colecoChangeCartridge(0, devInfo->cartridge[0].type, 
@@ -439,7 +438,7 @@ int colecoRun(Machine* machine,
 
     colecoTraceDisable();
 
-    joystickIoDestroySVI(joyIO);
+    joystickIoDestroyColeco(joyIO);
 
     vdpDestroy();
     colecoJoyIoDestroy();
