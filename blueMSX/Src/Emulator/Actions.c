@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-02-13 11:14:58 $
+** $Date: 2005-02-21 09:49:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -297,6 +297,12 @@ void actionPort2SetJoystick() {
 	if (archJoystickGetCount()) {
     	state.properties->joy2.type = P_JOY_HW;
         archUpdateJoystick();
+    }
+}
+
+void actionEmuStep() {
+    if (emulatorGetState() == EMU_PAUSED) {
+        emulatorSetState(EMU_STEP);
     }
 }
 

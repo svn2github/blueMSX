@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-02-12 09:31:27 $
+** $Date: 2005-02-21 09:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,7 @@ extern void PatchReset(BoardType boardType);
 static int boardType;
 static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
-static int (*syncVideo)(int) = NULL;
+static int (*syncToRealClock)(int) = NULL;
 UInt32* boardSysTime;
 static UInt64 boardSysTime64;
 static UInt32 oldTime;
@@ -203,20 +203,20 @@ static void onFdcDone(void* ref, UInt32 time)
 static void onSync(void* ref, UInt32 time)
 {
     BoardTimer* timer = (BoardTimer*)ref;
-    int execTime = 0;
-
-    while (execTime == 0) {
-        execTime = syncVideo(fdcActive);
-
-        if (execTime < 0) {
-            stop();
-            return;
-        }
+    int execTime = syncToRealClock(fdcActive);
+    if (execTime < 0) {
+        stop();
+        return;
     }
 
     mixerSync(boardMixer);
 
-    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFreq / 1000));
+    if (execTime == 0) {
+        boardTimerAdd(timer, boardSystemTime() + 1);
+    }
+    else {
+        boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFreq / 1000));
+    }
 }
 
 int boardRun(Machine* machine, 
@@ -224,13 +224,13 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
-             int (*videoSync)(int))
+             int (*syncCallback)(int))
 {
     int loadState = 0;
     int success;
     boardSetType(machine->board.type);
 
-    syncVideo = videoSync;
+    syncToRealClock = syncCallback;
 
     videoManagerReset();
     debugDeviceManagerReset();

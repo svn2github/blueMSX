@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-02-12 20:18:35 $
+** $Date: 2005-02-21 09:49:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,6 +68,7 @@ int           emuMaxEmuSpeed = 0; // Max speed issued by emulation
 static char   emuStateName[512];
 static volatile int      emuSuspendFlag;
 static volatile EmuState emuState = EMU_STOPPED;
+static volatile int      emuRunOne = 0;
 static Properties* properties;
 static Mixer* mixer;
 static DeviceInfo deviceInfo;
@@ -149,6 +150,10 @@ void emulatorSetState(EmuState state) {
     }
     else {
         archSoundSuspend();
+    }
+    if (state == EMU_STEP) {
+        state = EMU_RUNNING;
+        emuRunOne = 1;
     }
     emuState = state;
 }
@@ -572,7 +577,14 @@ static int WaitForSync(int maxSpeed) {
     QueryPerformanceCounter(&li1);
 
     emuSuspendFlag = 1;
+        
 
+    if (emuRunOne) {
+        debuggerNotifyEmulatorPause();
+        emuRunOne = 0;
+        emuState = EMU_PAUSED;
+    }
+    
     if (emuState != EMU_RUNNING) {
         archEventSet(emuStartEvent);
         emuSysTime = 0;
@@ -600,6 +612,10 @@ static int WaitForSync(int maxSpeed) {
     sysTime = archGetSystemUpTime(1000);
     diffTime = sysTime - emuSysTime;
     emuSysTime = sysTime;
+    
+    if (emuRunOne) {
+        diffTime = 0;
+    }
 
     if ((++cnt & 0x0f) == 0) {
         emuCalcCpuUsage(NULL);

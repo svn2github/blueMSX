@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-21 08:04:51 $
+** $Date: 2005-02-21 09:49:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,8 @@ void dbgStop();
 void dbgPause();
 void dbgStep();
 
+void dbgSetBreakpoint(UInt16 address);
+UInt16** dbgGetBreakpointList();
 
 // Internal structure and interface
 

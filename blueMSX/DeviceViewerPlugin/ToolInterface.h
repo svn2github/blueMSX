@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-13 10:27:20 $
+** $Date: 2005-02-21 09:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,19 +47,27 @@ RegisterBank* DeviceGetRegisterBank(Device* device, int index);
 int DeviceGetIoPortsCount(Device* device);
 IoPorts* DeviceGetIoPorts(Device* device, int index);
 
+void EmulatorRun();
+void EmulatorStop();
+void EmulatorPause();
+void EmulatorStep();
+
+void SetBreakpoint(UInt16 address);
+UInt16** GetBreakpointList();
+
 HINSTANCE GetDllHinstance();
 
 //
 // To be implemented by the user....
 //
-void CreateTool();
-void DestroyTool();
-void ShowTool();
-void EmulatorStart();
-void EmulatorStop();
-void EmulatorPause();
-void EmulatorResume();
+void OnCreateTool();
+void OnDestroyTool();
+void OnShowTool();
+void OnEmulatorStart();
+void OnEmulatorStop();
+void OnEmulatorPause();
+void OnEmulatorResume();
 
-const char* GetName();
+const char* OnGetName();
 
 #endif

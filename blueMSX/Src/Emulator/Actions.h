@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-26 08:15:46 $
+** $Date: 2005-02-21 09:49:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@ void actionQuickSaveState();
 void actionCartInsert1();
 void actionCartInsert2();
 void actionEmuTogglePause();
+void actionEmuStep();
 void actionEmuStop();
 void actionDiskInsertA();
 void actionDiskInsertB();

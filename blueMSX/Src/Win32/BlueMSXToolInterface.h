@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-21 08:04:51 $
+** $Date: 2005-02-21 09:50:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,6 +121,8 @@ typedef RegisterBank* (__stdcall *ToolDeviceGetRegisterBank)(Device* device, int
 typedef int           (__stdcall *ToolDeviceGetIoPortsCount)(Device* device);
 typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPortIndex);
 typedef void          (__stdcall *ToolAction)();
+typedef void          (__stdcall *ToolSetBreakpoint)(UInt16);
+typedef UInt16**      (__stdcall *ToolGetBreakpointList)();
 
 typedef struct {
     ToolSnapshotCreate              create;
@@ -140,6 +142,9 @@ typedef struct {
     ToolAction                      stop;
     ToolAction                      pause;
     ToolAction                      step;
+
+    ToolSetBreakpoint               setBreakpoint;
+    ToolGetBreakpointList           getBreakpointList;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);
@@ -147,10 +152,10 @@ typedef void (__stdcall *NotifyFn)();
 
 __declspec(dllexport) int  __stdcall Create10(Interface*, char* name, int length);
 __declspec(dllexport) void __stdcall Show();
-__declspec(dllexport) void __stdcall OnEmulatorStart();
-__declspec(dllexport) void __stdcall OnEmulatorStop();
-__declspec(dllexport) void __stdcall OnEmulatorPause();
-__declspec(dllexport) void __stdcall OnEmulatorResume();
+__declspec(dllexport) void __stdcall NotifyEmulatorStart();
+__declspec(dllexport) void __stdcall NotifyEmulatorStop();
+__declspec(dllexport) void __stdcall NotifyEmulatorPause();
+__declspec(dllexport) void __stdcall NotifyEmulatorResume();
 
 #ifdef __cplusplus
 }

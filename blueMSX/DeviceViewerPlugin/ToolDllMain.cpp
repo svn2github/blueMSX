@@ -16,6 +16,12 @@ static ToolDeviceGetRegisterBankCount  toolDeviceGetRegisterBankCount;
 static ToolDeviceGetRegisterBank       toolDeviceGetRegisterBank;
 static ToolDeviceGetIoPortsCount       toolDeviceGetIoPortsCount;
 static ToolDeviceGetIoPorts            toolDeviceGetIoPorts;
+static ToolAction                      toolDeviceRun;
+static ToolAction                      toolDeviceStop;
+static ToolAction                      toolDevicePause;
+static ToolAction                      toolDeviceStep;
+static ToolSetBreakpoint               toolSetBreakpoint;
+static ToolGetBreakpointList           toolGetBreakpointList;
 
 static HINSTANCE hInstance;
 
@@ -65,6 +71,30 @@ IoPorts* DeviceGetIoPorts(Device* device, int index) {
     return toolDeviceGetIoPorts(device, index);
 }
 
+void EmulatorRun() {
+    toolDeviceRun();
+}
+
+void EmulatorStop() {
+    toolDeviceStop();
+}
+
+void EmulatorPause() {
+    toolDevicePause();
+}
+
+void EmulatorStep() {
+    toolDeviceStep();
+}
+
+void SetBreakpoint(UInt16 address) {
+    toolSetBreakpoint(address);
+}
+
+UInt16** GetBreakpointList() {
+    return toolGetBreakpointList();
+}
+
 HINSTANCE GetDllHinstance()
 {
     return hInstance;
@@ -72,7 +102,7 @@ HINSTANCE GetDllHinstance()
 
 extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface, char* name, int length)
 {
-    strcpy(name, GetName());
+    strcpy(name, OnGetName());
     
     toolSnapshotCreate              = toolInterface->create;
     toolSnapshotDestroy             = toolInterface->destroy;
@@ -85,38 +115,46 @@ extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface
     toolDeviceGetRegisterBank       = toolInterface->getRegisterBank;
     toolDeviceGetIoPortsCount       = toolInterface->getIoPortsCount;
     toolDeviceGetIoPorts            = toolInterface->getIoPorts;
+    toolDeviceRun                   = toolInterface->run;
+    toolDeviceStop                  = toolInterface->stop;
+    toolDevicePause                 = toolInterface->pause;
+    toolDeviceStep                  = toolInterface->step;
+    toolSetBreakpoint               = toolInterface->setBreakpoint;
+    toolGetBreakpointList           = toolInterface->getBreakpointList;
+
+    OnCreateTool();
 
     return 1;
 }
 
 extern "C"__declspec(dllexport) void __stdcall Destroy()
 {
-    DestroyTool();
+    OnDestroyTool();
 }
 
 extern "C"__declspec(dllexport) void __stdcall Show()
 {
-    ShowTool();
+    OnShowTool();
 }
 
-extern "C"__declspec(dllexport) void __stdcall OnEmulatorStart()
+extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorStart()
 {
-    EmulatorStart();
+    OnEmulatorStart();
 }
 
-extern "C"__declspec(dllexport) void __stdcall OnEmulatorStop()
+extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorStop()
 {
-    EmulatorStop();
+    OnEmulatorStop();
 }
 
-extern "C"__declspec(dllexport) void __stdcall OnEmulatorPause()
+extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorPause()
 {
-    EmulatorPause();
+    OnEmulatorPause();
 }
 
-extern "C"__declspec(dllexport) void __stdcall OnEmulatorResume()
+extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorResume()
 {
-    EmulatorResume();
+    OnEmulatorResume();
 }
 extern "C" int APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)
 {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-18 10:17:17 $
+** $Date: 2005-02-21 09:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 #include "Properties.h"
 #include "AudioMixer.h"
 
-typedef enum { EMU_RUNNING, EMU_PAUSED, EMU_STOPPED, EMU_SUSPENDED } EmuState;
+typedef enum { EMU_RUNNING, EMU_PAUSED, EMU_STOPPED, EMU_SUSPENDED, EMU_STEP } EmuState;
 
 void emulatorInit(Properties* properties, Mixer* mixer);
 

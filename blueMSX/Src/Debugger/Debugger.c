@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-21 08:04:50 $
+** $Date: 2005-02-21 09:49:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,7 +266,17 @@ void dbgPause()
 void dbgStep()
 {
     if (emulatorGetState() == EMU_PAUSED) {
+        actionEmuStep();
     }
 }
 
+void dbgSetBreakpoint(UInt16 address)
+{
+}
+
+UInt16** dbgGetBreakpointList()
+{
+    static UInt16* breakpointList[1] = {NULL};
+    return breakpointList;
+}
 

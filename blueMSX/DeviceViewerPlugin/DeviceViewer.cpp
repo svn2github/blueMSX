@@ -287,6 +287,19 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
             //SetDeviceInfoString(hDlg);
 			SetDeviceInfoString2 ( hDlg );
             return TRUE;
+
+        case ID_RUN:
+            EmulatorRun();
+            return TRUE;
+        case ID_STOP:
+            EmulatorStop();
+            return TRUE;
+        case ID_PAUSE:
+            EmulatorPause();
+            return TRUE;
+        case ID_STEP:
+            EmulatorStep();
+            return TRUE;
         }
         break;
 
@@ -320,10 +333,10 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void CreateTool() {
+void OnCreateTool() {
 }
 
-void DestroyTool() {
+void OnDestroyTool() {
 }
 
 static void ShowError() {
@@ -353,7 +366,7 @@ static void ShowError() {
     LocalFree( lpMsgBuf );
 }
 
-void ShowTool() {
+void OnShowTool() {
     if (deviceViewerHwnd != NULL) {
         return;
     }
@@ -361,30 +374,30 @@ void ShowTool() {
     deviceViewerHwnd = CreateDialog(GetDllHinstance(), MAKEINTRESOURCE(IDD_DEVICEVIEWER), NULL, dlgProc);
 }
 
-void EmulatorStart() {    
+void OnEmulatorStart() {    
     if (deviceViewerHwnd != NULL) {
         SendMessage(deviceViewerHwnd, WM_STATUS, 0, 0);
     }
 }
 
-void EmulatorStop() {
+void OnEmulatorStop() {
     if (deviceViewerHwnd != NULL) {
         SendMessage(deviceViewerHwnd, WM_STATUS, 0, 0);
     }
 }
 
-void EmulatorPause() {
+void OnEmulatorPause() {
     if (deviceViewerHwnd != NULL) {
         SendMessage(deviceViewerHwnd, WM_STATUS, 0, 0);
     }
 }
 
-void EmulatorResume() {
+void OnEmulatorResume() {
     if (deviceViewerHwnd != NULL) {
         SendMessage(deviceViewerHwnd, WM_STATUS, 0, 0);
     }
 }
 
-const char* GetName() {
+const char* OnGetName() {
     return "Device Viewer";
 }
