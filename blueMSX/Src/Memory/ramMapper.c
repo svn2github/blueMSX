@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-11 08:45:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,8 @@ typedef struct {
     int mask;
 } RamMapper;
 
+static void write(RamMapper* rm, UInt16 page, UInt8 value);
+
 static void saveState(RamMapper* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapperRam");
@@ -69,6 +71,9 @@ static void loadState(RamMapper* rm)
     saveStateGetBuffer(state, "ramData", rm->ramData, 0x4000 * (rm->mask + 1));
 
     saveStateClose(state);
+    
+    ramMapperIoRemove(rm->handle);
+    rm->handle  = ramMapperIoAdd(0x4000 * (rm->mask + 1), write, rm);
 
     for (i = 0; i < 4; i++) {
         slotMapPage(rm->slot, rm->sslot, 2 * i, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask), 1, 1);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-11 08:45:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@ typedef struct {
     int deviceHandle;
     UInt8* romData;
     UInt8* sram;
+    UInt8* readBlock;
     int    sramSize;
     char   sramFilename[512];
     int    maxSRAMBank;
@@ -115,12 +116,15 @@ static void changeBank(RomMapperPanasonic* rm, int region, int bank)
 	rm->romMapper[region] = bank;
 	if (rm->sramSize > 0 && bank >= SRAM_BASE && bank < rm->maxSRAMBank) {
 		int offset = (bank - SRAM_BASE) * 0x2000 & (rm->sramSize - 1);
+        if (region == 3) rm->readBlock = rm->sram + offset;
         slotMapPage(rm->slot, rm->sslot, region, rm->sram + offset, region != 3, 0);
 	} 
     else if (bank >= RAM_BASE) {
+        if (region == 3) rm->readBlock = msxGetRamPage(bank - RAM_BASE);
         slotMapPage(rm->slot, rm->sslot, region, boardGetRamPage(bank - RAM_BASE), region != 3, 0);
 	} 
     else {
+        if (region == 3) rm->readBlock = rm->romData + bank * 0x2000;
         slotMapPage(rm->slot, rm->sslot, region, rm->romData + bank * 0x2000, region != 3, 0);
 	}
 }
@@ -148,6 +152,8 @@ static UInt8 read(RomMapperPanasonic* rm, UInt16 address)
     if ((rm->control & 0x08) && address == 0x7ff9) {
 		return rm->control;
 	} 
+
+    return rm->readBlock[address & 0x1fff];
 
 	bank = rm->romMapper[address >> 13];
     if (bank < SRAM_BASE) {
@@ -252,6 +258,7 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
     memset(rm->sram, 0xff, sramSize);
     rm->maxSRAMBank = SRAM_BASE + sramSize / 0x2000;
     memset(rm->romMapper, 0, sizeof(rm->romMapper));
+    rm->readBlock = rm->romData;
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

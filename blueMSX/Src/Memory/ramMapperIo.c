@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapperIo.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-11 08:45:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,16 +56,41 @@ typedef struct {
 RamMapperIo* mapperIo = NULL;
 
 
+static int ramMapperIoGetMask(RamMapperIo* rm)
+{
+    int size = 1;
+    int i;
+
+    for (i = 0; i < rm->count; i++) {
+        while (size < rm->mapperCb[i].size) {
+            size <<= 1;
+        }
+    }
+
+    return (size / 0x4000) - 1;
+}
 
 static void saveState(RamMapperIo* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapperRamIo");
+    saveStateSet(state, "port0", rm->port[0]);
+    saveStateSet(state, "port1", rm->port[1]);
+    saveStateSet(state, "port2", rm->port[2]);
+    saveStateSet(state, "port3", rm->port[3]);
+
     saveStateClose(state);
 }
 
 static void loadState(RamMapperIo* rm)
 {
     SaveState* state = saveStateOpenForRead("mapperRamIo");
+    rm->port[0] = saveStateGet(state, "port0", 3);
+    rm->port[1] = saveStateGet(state, "port1", 2);
+    rm->port[2] = saveStateGet(state, "port2", 1);
+    rm->port[3] = saveStateGet(state, "port3", 0);
+    
+    rm->mask = ramMapperIoGetMask(rm);
+
     saveStateClose(state);
 }
 
@@ -100,20 +125,6 @@ static void write(RamMapperIo* rm, UInt16 ioPort, UInt8 value)
             rm->mapperCb[i].write(rm->mapperCb[i].ref, ioPort, value);
         }
     }
-}
-
-static int ramMapperIoGetMask(RamMapperIo* rm)
-{
-    int size = 1;
-    int i;
-
-    for (i = 0; i < rm->count; i++) {
-        while (size < rm->mapperCb[i].size) {
-            size <<= 1;
-        }
-    }
-
-    return (size / 0x4000) - 1;
 }
 
 
