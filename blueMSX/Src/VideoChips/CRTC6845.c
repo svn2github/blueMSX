@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-20 00:50:18 $
+** $Date: 2005-01-20 08:15:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,16 +36,16 @@
 
 /*
      AR Address Register
-     R0 Horizontal Total (Character)
-     R1 Horizontal Displayed (Character)
-     R2 Horizontal Sync Position (Character)
-     R3 Sync Width (Vertical-Raster, Horizontal-Character)
-     R4 Vertical Total (Line)
-     R5 Vertical Total Adjust (Raster)
-     R6 Vertical Displayed (Line)
-     R7 Vertical Sync Position (Line)
-     R8 Interlace and Skew
-     R9 Maximum Raster Address (Raster)
+     R0 Horizontal Total (Character)                        SVI Default: 107
+     R1 Horizontal Displayed (Character)                    SVI Default: 80
+     R2 Horizontal Sync Position (Character)                SVI Default: 88
+     R3 Sync Width (Vertical-Raster, Horizontal-Character)  SVI Default:  8
+     R4 Vertical Total (Line)                               SVI Default: 38
+     R5 Vertical Total Adjust (Raster)                      SVI Default: 5
+     R6 Vertical Displayed (Line)                           SVI Default: 24
+     R7 Vertical Sync Position (Line)                       SVI Default: 30
+     R8 Interlace and Skew                                   SVI Default: 0
+     R9 Maximum Raster Address (Raster)                     SVI Default: 7
      R10 Cursor Start Raster (Raster)
      R11 Cursor End Raster (Raster)
      R12 Start Address (H)
@@ -55,6 +55,12 @@
      R16 Light Pen (H)
      R17 Light Pen (L)
 */
+
+
+#define CHAR_WIDTH           7
+#define MAX_CHARS_PER_LINE  84
+#define DISPLAY_WIDTH       (CHAR_WIDTH * MAX_CHARS_PER_LINE)
+#define DISPLAY_HEIGHT      240
 
 extern UInt32 videoGetColor(int R, int G, int B); // FIXME: Do something nicer
 
@@ -76,7 +82,6 @@ typedef struct
     UInt8   rasterEnd;
     UInt16  addressStart;
     int     blinkrate;
-    int     blinkcount;
 } TYP_CURSOR;
 
 typedef struct
@@ -89,6 +94,7 @@ typedef struct
 {
     TYP_CURSOR   cursor;
     TYP_REGISTER registers;
+    UInt32       frameCounter;
 } TYP_CRTC;
 
 static TYP_CRTC crtc;
@@ -108,27 +114,12 @@ static BoardTimer* crtcTimerDisplay;
 
 static void crtcRenderVideoBuffer(void) {
     FrameBuffer* crtcFrameBuffer = frameBufferFlipDrawFrame(); // Call once per frame
+    int Nr  = crtc.registers.reg[CRTC_R9] + 1; // Number of rasters per character
     UInt32 color[2];
     int x, y;
     int charWidth, charHeight;
-    int lineChar, lineNumber;
-    int bDrawCusor;
 
-    switch (crtc.cursor.mode ) {
-    case CURSOR_BLINK:
-        if (crtc.cursor.blinkcount <= 0) {
-            bDrawCusor = 1;
-            crtc.cursor.blinkcount = crtc.cursor.blinkrate;
-        }
-        else
-            crtc.cursor.blinkcount--;
-        break;
-    case CURSOR_NOBLINK:
-        bDrawCusor = 1;
-        break;
-    default:
-        bDrawCusor = 0;
-    }
+    crtc.frameCounter++;
 
     charWidth = crtc.registers.reg[CRTC_R1];
     if (charWidth >= crtc.registers.reg[CRTC_R0])
@@ -146,55 +137,46 @@ static void crtcRenderVideoBuffer(void) {
     color[1] = videoGetColor(0, 0, 0);       // must be updated (also for the VDP)
 
     crtcFrameBuffer->interlaceOdd = 0; // These fields could be set once only but 
-    crtcFrameBuffer->lines = 240;      // requires some interface changes
 
-    // Render top border?
+    for (y = 0; y < DISPLAY_HEIGHT; y++) {
+        UInt32* linePtr = crtcFrameBuffer->line[y].buffer;
+        int charRaster = y % Nr;
+        int vadjust = 3; // Fix vertical adjust from regs (the value 4)
+        int hadjust = 2; // Fix horizontal adjust from regs (the value 1)
+        int charLine   = y / Nr - vadjust;                
+        int charAddress = charLine * charWidth - hadjust; 
 
-    lineNumber = 0;
-
-    for (y = 0; y < charHeight; y++) {
-
-        for (lineChar = 0; lineChar < 8; lineChar++) {
-            
-            UInt32* linePtr = crtcFrameBuffer->line[lineNumber].buffer;
-
-            crtcFrameBuffer->line[lineNumber].width = 640; // This could be set once only
-
-            // Render left border?
-
-            for (x = 0; x < charWidth; x++) {
-                UInt8 pattern = crtcROM[crtcMemory[y*charWidth+x]+lineChar]; // FIXME
-
-                linePtr[0] = color[(pattern >> 7) & 1];
-                linePtr[1] = color[(pattern >> 6) & 1];
-                linePtr[2] = color[(pattern >> 5) & 1];
-                linePtr[3] = color[(pattern >> 4) & 1];
-                linePtr[4] = color[(pattern >> 3) & 1];
-                linePtr[5] = color[(pattern >> 2) & 1];
-                linePtr[6] = color[(pattern >> 1) & 1];
-//                linePtr[7] = color[(pattern >> 0) & 1];
-
-                linePtr += 7;
+        if (charLine < 0 || charLine >= charHeight) {
+            for (x = 0; x < DISPLAY_WIDTH; x++) {
+                linePtr[x] = color[0];
             }
-            lineNumber++;
+            continue;
         }
-        // Render right border?
+
+        for (x = 0; x < MAX_CHARS_PER_LINE; x++) {
+            UInt8 pattern = 0;
+
+            if (x >= hadjust && x < charWidth + hadjust) {
+                pattern = crtcROM[16*crtcMemory[charAddress]+charRaster];
+
+                if (charAddress == crtc.cursor.addressStart) {
+                    if (crtc.frameCounter & crtc.cursor.blinkrate) {
+                        pattern = charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
+                    }
+                }
+            }
+
+            linePtr[0] = color[(pattern >> 7) & 1];
+            linePtr[1] = color[(pattern >> 6) & 1];
+            linePtr[2] = color[(pattern >> 5) & 1];
+            linePtr[3] = color[(pattern >> 4) & 1];
+            linePtr[4] = color[(pattern >> 3) & 1];
+            linePtr[5] = color[(pattern >> 2) & 1];
+            linePtr[6] = color[(pattern >> 1) & 1];
+            linePtr += 7;
+            charAddress++;
+        }
     }
-    // Render bootom border?
-}
-
-void crtcScreenDrawCursor(void)
-{
-    UInt8 cursorBmp[8];
-    int i;
-
-    memset(&cursorBmp[8], 0, sizeof(cursorBmp));
-
-    for (i = crtc.cursor.rasterStart; i < crtc.cursor.rasterEnd; i++) {
-        cursorBmp[i] = 0xff;
-    }
-
-//    memcpy(&crtcScreenBuffer[crtc.cursor.addressStart*8], &cursorBmp[0], sizeof(cursorBmp));
 }
 
 static void crtcCursorUpdate(void)
@@ -203,22 +185,18 @@ static void crtcCursorUpdate(void)
     case 32:
         crtc.cursor.mode = CURSOR_DISABLED;
         crtc.cursor.blinkrate = 0;
-        crtc.cursor.blinkcount = 0;
         break;
     case 64:
         crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = 16;    // Get Hz from emu
-        crtc.cursor.blinkcount = 16;
+        crtc.cursor.blinkrate = 16;
         break;
     case 96:
         crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = 32;    // Get Hz from emu
-        crtc.cursor.blinkcount = 32;
+        crtc.cursor.blinkrate = 32;
         break;
     default:
         crtc.cursor.mode = CURSOR_NOBLINK;
         crtc.cursor.blinkrate = 0;
-        crtc.cursor.blinkcount = 0;
     }
     
     crtc.cursor.rasterStart = crtc.registers.reg[CRTC_R10] & 0x1f;
@@ -240,6 +218,8 @@ UInt8 crtcRead(void* dummy, UInt16 ioPort)
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
 {
     if (crtc.registers.address < 18) {
+        printf("\nR%d:\t0x%x (%d)\n", crtc.registers.address, value, value);
+
         value &= crtcRegisterValueMask[crtc.registers.address];
         crtc.registers.reg[crtc.registers.address] = value;
         switch (crtc.registers.address) {
@@ -347,7 +327,7 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
     // Initialize video frame buffer
     {
         VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
-        crtcFrameBufferData = frameBufferDataCreate();
+        crtcFrameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT);
         crtcVideoHandle = videoManagerRegister("CRTC6845", crtcFrameBufferData, &videoCallbacks, NULL);
     }
 

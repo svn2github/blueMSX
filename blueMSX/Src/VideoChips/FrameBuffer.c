@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-19 19:19:25 $
+** $Date: 2005-01-20 08:15:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,12 +31,13 @@
 #include "ArchEvent.h"
 #include <stdlib.h>
 
+#define FRAMES_PER_FRAMEBUFFER 3
 
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
     int currentAge;
-    FrameBuffer frame[3];
+    FrameBuffer frame[FRAMES_PER_FRAMEBUFFER];
 };
 
 static void* semaphore = NULL;
@@ -106,10 +107,21 @@ FrameBuffer* frameBufferFlipDrawFrame()
     return frame;
 }
 
-FrameBufferData* frameBufferDataCreate()
+FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight)
 {
+    int i;
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
     frameData->drawFrame = 1;
+
+    for (i = 0; i < FRAMES_PER_FRAMEBUFFER; i++) {
+        int j;
+
+        frameData->frame[i].maxWidth = maxWidth;
+        for (j = 0; j < FB_MAX_LINES; j++) {
+            frameData->frame[i].lines = maxHeight;
+            frameData->frame[i].line[j].width = maxWidth;
+        }
+    }
 
     return frameData;
 }

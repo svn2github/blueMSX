@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-18 10:17:19 $
+** $Date: 2005-01-20 08:15:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1527,14 +1527,8 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
 void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch)
 {
     static UInt32 rnd = 51;
-    FrameBuffer* frame;
+    FrameBuffer* frame = frameBufferGetViewFrame();
     
-    if (emulatorGetState() == EMU_RUNNING) {
-        frame = frameBufferFlipViewFrame();
-    }
-    else {
-        frame = frameBufferGetViewFrame();
-    }
     if (frame == NULL) {
         return;
     }

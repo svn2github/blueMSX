@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-01-19 05:26:35 $
+** $Date: 2005-01-20 08:15:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -891,8 +891,6 @@ typedef struct {
     int minimized;
     Mixer* mixer;
     int enteringFullscreen;
-    int evenOdd;
-    int interlace;
     Shortcuts* shortcuts;
     DWORD buttonState;
     int normalViedoSize;
@@ -2545,10 +2543,7 @@ void archEmulationStopNotification()
     }
 }
 
-void archUpdateEmuDisplay(int synchronous, int evenOdd, int interlace) {
-    st.evenOdd    = evenOdd;
-    st.interlace  = interlace;
-
+void archUpdateEmuDisplay(int synchronous) {
     if (pProperties->video.driver == P_VIDEO_DRVGDI) {
         if (!synchronous) {
             PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);

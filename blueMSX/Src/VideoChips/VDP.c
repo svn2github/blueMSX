@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-19 05:26:35 $
+** $Date: 2005-01-20 08:15:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -349,7 +349,7 @@ static void onDisplay(VDP* vdp, UInt32 time)
         boardClearInt(INT_IE1);
     }
     vdp->vdpStatus[2] ^= 0x02;
-    RefreshScreen(vdp->screenMode, (~vdp->vdpStatus[2] & 0x02) >> 1, vdpIsInterlaceOn(vdp->vdpRegs) && ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128));
+    RefreshScreen(vdp->screenMode);
 
     vdpBlink(vdp);
 
@@ -1049,7 +1049,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->vdpVersion    = version;
     vdp->vdpConnector  = connector;
 
-    vdp->frameBuffer   = frameBufferDataCreate();
+    vdp->frameBuffer   = frameBufferDataCreate(16 + 512 + 16, 240);
     vdp->videoHandle   = videoManagerRegister(VdpNames[version], vdp->frameBuffer, &videoCallbacks, vdp);
 
     if (sync == VDP_SYNC_AUTO) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-18 10:17:20 $
+** $Date: 2005-01-20 08:15:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
  
 #include "Win32directx.h"
 #include "VideoRender.h"
+#include "FrameBuffer.h"
 
 
 static LPDIRECTDRAW         lpDD = NULL;            // DirectDraw object
@@ -426,9 +427,13 @@ void DirectXUpdateSurface(Video* pVideo,
     LPDIRECTDRAWSURFACE surface = NULL;
     LPDIRECTDRAWSURFACE  lpDDSTemp;
     HRESULT     ddrval;
+    FrameBuffer* frameBuffer;
     POINT pt = {0, 0};
-    RECT destRect = {0, 0, zoom * 320, zoom * 240};
-    RECT rcRect = {0, 0, zoom * 320, zoom * 240};
+    int width  = zoom * 320;
+    int height = zoom * 240;
+    RECT destRect = {0, 0, width, height};
+    RECT rcRect = {0, 0, width, height};
+    void* surfaceBuffer;
 
     if (lpDDSPrimary == NULL) {
         return;
@@ -469,7 +474,43 @@ void DirectXUpdateSurface(Video* pVideo,
         return;
     }
 
-    videoRender(pVideo, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, ddsd.lpSurface, ddsd.lPitch);
+    surfaceBuffer = ddsd.lpSurface;
+    frameBuffer = frameBufferFlipViewFrame();
+
+    if (frameBuffer != NULL) {
+        if (horizontalStretch) {
+            rcRect.right -= (640 - frameBuffer->maxWidth) / (3 - zoom);
+        }
+        else {
+            int borderWidth = (640 - frameBuffer->maxWidth) / (3 - zoom) / 2;
+            if (borderWidth > 0) {
+                int y;
+
+                if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
+                    UInt16* ptr  = surfaceBuffer;
+                    surfaceBuffer = ptr + borderWidth;
+                    for (y = 0; y < height; y++) {
+                        memset(ptr, 0, borderWidth * sizeof(UInt16));
+                        ptr += ddsd.lPitch / sizeof(UInt16);
+                        memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt16));
+                    }
+                }
+                else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
+                    UInt32* ptr  = surfaceBuffer;
+                    surfaceBuffer = ptr + borderWidth;
+                    for (y = 0; y < height; y++) {
+                        memset(ptr, 0, borderWidth * sizeof(UInt32));
+                        ptr += ddsd.lPitch / sizeof(UInt32);
+                        memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt32));
+                    }
+                }
+            }
+        }
+    }
+
+    videoRender(pVideo, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch);
+
+    frameBuffer = frameBufferGetViewFrame();
 
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
@@ -490,11 +531,6 @@ void DirectXUpdateSurface(Video* pVideo,
     destRect.bottom += dstPitchY;
     if (destRect.right  < 64) destRect.right = 64;
     if (destRect.bottom < 64)  destRect.bottom = 64;
-
-    if (horizontalStretch) {
-        rcRect.left   += 47 * zoom / 2;
-        rcRect.right  -= 46 * zoom / 2;
-    }
     
     if (verticalStretch) {
         rcRect.top    += 7 * zoom;

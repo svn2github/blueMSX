@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-18 10:17:17 $
+** $Date: 2005-01-20 08:15:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,8 +72,6 @@ static Mixer* mixer;
 static DeviceInfo deviceInfo;
 static Machine* machine;
 static int lastScreenMode;
-static int lastEvenOdd;
-static int lastInterlace;
 
 static UInt32 emuTimeIdle       = 0;
 static UInt32 emuTimeTotal      = 1;
@@ -187,7 +185,7 @@ void timerCallback(void* timer) {
             refreshRate = boardGetRefreshRate();
 
             if (!emuUseSynchronousUpdate()) {
-                archUpdateEmuDisplay(0, lastEvenOdd, lastInterlace);
+                archUpdateEmuDisplay(0);
             }
         }
     }
@@ -451,7 +449,7 @@ void emulatorResume() {
     if (emuState == EMU_SUSPENDED) {
         archSoundResume();
         emuState = EMU_RUNNING;
-        archUpdateEmuDisplay(0, lastEvenOdd, lastInterlace);
+        archUpdateEmuDisplay(0);
     }
 }
 
@@ -514,17 +512,15 @@ void emulatorResetMixer() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_PCM, 1);
 }
 
-void RefreshScreen(int screenMode, int evenOdd, int interlace) {
+void RefreshScreen(int screenMode) {
     static int emuFrameskipCounter = 0;
 
     lastScreenMode = screenMode;
-    lastEvenOdd    = evenOdd;
-    lastInterlace = interlace;
 
     if (emuUseSynchronousUpdate()) {
         emuFrameskipCounter--;
         if (emuFrameskipCounter < 0) {
-            archUpdateEmuDisplay(1, evenOdd, interlace);
+            archUpdateEmuDisplay(1);
             emuFrameskipCounter = properties->video.frameSkip;
         }
     }

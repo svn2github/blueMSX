@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-18 10:17:17 $
+** $Date: 2005-01-20 08:15:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,8 +29,10 @@
 */
 #include "SpriteLine.h"
 
-#define WIDTH  320
-#define HEIGHT 240
+#define BORDER_WIDTH   8
+#define DISPLAY_WIDTH  256
+#define SCREEN_WIDTH   (2 * BORDER_WIDTH + DISPLAY_WIDTH)
+#define SCREEN_HEIGHT  240
 
 extern UInt32* emuFrameBuffer;
 extern int*    emuLineWidth;
@@ -56,21 +58,21 @@ UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderEx
 
     Y -= vdpIsVideoPal(vdp) ? 27 : 0;
 
-    if (Y < 0 || Y >= HEIGHT) {
+    if (Y < 0 || Y >= SCREEN_HEIGHT) {
         return NULL;
     }
 
     linePtr = frameBuffer->line[Y].buffer;
-    frameBuffer->line[Y].width = 320 * lineSize;
+    frameBuffer->line[Y].width = SCREEN_WIDTH * lineSize;
 
     if (Y > 0) {
-        for (offset = lineSize * ((WIDTH - 256) / 2 + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset--) {
+        for (offset = lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset--) {
             linePtr[offset] = bgColor;
         }
     }
 
     if (!(vdp->screenOn && vdp->drawArea)) {
-        for(offset = lineSize * WIDTH - 1; offset >= 0; offset--) {
+        for(offset = lineSize * SCREEN_WIDTH - 1; offset >= 0; offset--) {
             linePtr[offset] = bgColor;
         }
 
@@ -78,7 +80,7 @@ UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderEx
     }
 
     /* Return pointer to the scanline in emuFrameBuffer */
-    return linePtr + lineSize * ((WIDTH - 256) / 2 + vdp->HAdjust + borderExtra);
+    return linePtr + lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra);
 }
 
 static void RefreshRightBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderExtra) {
@@ -89,14 +91,14 @@ static void RefreshRightBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int
 
     Y -= vdpIsVideoPal(vdp) ? 27 : 0;
 
-    if (Y < 0 || Y >= HEIGHT || !displayEnable) {
+    if (Y < 0 || Y >= SCREEN_HEIGHT || !displayEnable) {
         return;
     }
     
     linePtr = frameBuffer->line[Y].buffer;
 
-    for(offset = lineSize * ((WIDTH - 256) / 2 - vdp->HAdjust + borderExtra); offset >= lineSize; offset--) {
-        linePtr[lineSize * WIDTH - offset] = bgColor;
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset >= lineSize; offset--) {
+        linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor;
     }
 }
 
