@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-11 07:30:50 $
+** $Date: 2005-01-11 09:02:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -360,6 +360,10 @@ int keyboardStringToKeyCode(const char* keyName)
 
 const char* keyboardKeyCodeToString(int keyCode) 
 {
+    if (keyNames[0] == 0) {
+        initKeyNameTable();
+    }
+
     if (keyCode >= EK_KEYCOUNT) {
         keyCode = 0;
     }
@@ -391,7 +395,9 @@ void keyboardReset()
 {
     keyboardSetKeymap(KEYMAP_MSX);
 
-    initKeyNameTable();
+    if (keyNames[0] == 0) {
+        initKeyNameTable();
+    }
 
     memset(keyboardState, 0xff, 16);
 }

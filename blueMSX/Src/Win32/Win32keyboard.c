@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-11 07:59:29 $
+** $Date: 2005-01-11 09:02:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,10 +35,14 @@
 #include <winioctl.h>
 #include <dinput.h>
 
-static char keyboardConfigDir[MAX_PATH];
-static char dik2str[512][32];
+#define KBD_TABLE_LEN 512
 
-#define INIT_DIK(val) strcpy(dik2str[DIK_##val], #val)
+static int kbdTable[KBD_TABLE_LEN];
+static char dikStrings[KBD_TABLE_LEN][32];
+
+static char keyboardConfigDir[MAX_PATH];
+
+#define INIT_DIK(val) strcpy(dikStrings[DIK_##val], #val)
 
 static void initDikStr()
 {
@@ -188,7 +192,24 @@ static void initDikStr()
     INIT_DIK(Z);
 }
 
-static int kbdTable[512];
+char* dik2str(int dikKey) 
+{
+    if (dikKey < 0 || dikKey >= KBD_TABLE_LEN) {
+        return "";
+    }
+    return dikStrings[dikKey];
+}
+
+int str2dik(char* dikString) 
+{
+    int i;
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        if (0 == strcmp(dikString, dikStrings[i])) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // initKbdTable initializes the keyboard table with default keys
 static void initKbdTable()
@@ -292,6 +313,8 @@ static void initKbdTable()
     kbdTable[DIK_CAPITAL    ] = EK_CAPS;
     kbdTable[DIK_NUMPADENTER] = EK_PAUSE;
     kbdTable[DIK_SYSRQ      ] = EK_PRINT;
+
+    keyboardSaveConfig("MSX Default");
 }
 
 
@@ -718,14 +741,48 @@ char** keyboardGetAvailable()
 int keyboardLoadConfig(char* configName)
 {
     char fileName[MAX_PATH];
-    
+    int i;
+
+    memset (kbdTable, 0, sizeof(kbdTable));
+
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+
+    for (i = 0; i < EK_KEYCOUNT; i++) {
+        const char* keyCode = keyboardKeyCodeToString(i);
+        if (*keyCode != 0) {
+            char dikName[32];
+            int dikKey;
+
+            GetPrivateProfileString("Keymapping", keyCode, "", dikName, sizeof(dikName), fileName);
+            dikKey = str2dik(dikName);
+            if (dikKey > 0) {
+                kbdTable[dikKey] = i;
+            }
+        }
+    }
 
     return 1;
 }
 
 void keyboardSaveConfig(char* configName)
 {
+    char fileName[MAX_PATH];
+    int i;
+    
+    sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+    
+    for (i = 0; i < EK_KEYCOUNT; i++) {
+        const char* keyCode = keyboardKeyCodeToString(i);
+        const char* dikName = "";
+        int j;
+        for (j = 0; j < KBD_TABLE_LEN; j++) {
+            if (kbdTable[j] == i) {
+                dikName = dik2str(j);
+                break;
+            }
+        }
+        WritePrivateProfileString("Keymapping", keyCode, dikName, fileName);
+    }
 }
 
 void keyboardSetDirectory(char* directory)
