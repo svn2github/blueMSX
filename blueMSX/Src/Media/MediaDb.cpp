@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-07 05:32:46 $
+** $Date: 2005-03-07 17:50:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -727,7 +727,7 @@ extern "C" const char* mediaDbGetPrettyString(MediaType* mediaType)
 
     if (mediaType != NULL) {
         strcat(prettyString, mediaType->title.c_str());
-        if (mediaType->company.length() || mediaType->year.length()) {
+        if (mediaType->company.length() || mediaType->year.length() || mediaType->country.length()) {
             strcat(prettyString, " -");
         }
             
@@ -744,6 +744,17 @@ extern "C" const char* mediaDbGetPrettyString(MediaType* mediaType)
         if (mediaType->country.length()) {
             strcat(prettyString, " ");
             strcat(prettyString, mediaType->country.c_str());
+        }
+
+        if (mediaType->remark.length()) {
+            std::string remark = " : ";
+            for (int i = 0; mediaType->remark[i] != '\r' || mediaType->remark[i] != '\n' || mediaType->remark[i] != '\0'; i++) {
+                remark += mediaType->remark[i];
+            }
+            if (remark.length() > 20) {
+                remark = remark.substr(0, 20) + "...";
+            }
+            strcat(prettyString, remark.c_str());
         }
     }
 
