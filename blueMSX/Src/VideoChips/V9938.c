@@ -1092,21 +1092,19 @@ static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
 */
 void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
 {
-    reg &= 0x1f;
-
-    switch (reg) {
-	case 0x00: vdpCmd->SX = (vdpCmd->SX & 0xff00) | value;                 break;
-	case 0x01: vdpCmd->SX = (vdpCmd->SX & 0x00ff) | ((value & 0x01) << 8); break;
-	case 0x02: vdpCmd->SY = (vdpCmd->SY & 0xff00) | value;                 break;
-	case 0x03: vdpCmd->SY = (vdpCmd->SY & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x04: vdpCmd->DX = (vdpCmd->DX & 0xff00) | value;                 break;
-	case 0x05: vdpCmd->DX = (vdpCmd->DX & 0x00ff) | ((value & 0x01) << 8); break;
-	case 0x06: vdpCmd->DY = (vdpCmd->DY & 0xff00) | value;                 break;
-	case 0x07: vdpCmd->DY = (vdpCmd->DY & 0x00ff) | ((value & 0x03) << 8); break;
+    switch (reg & 0x1f) {
+	case 0x00: vdpCmd->SX = (vdpCmd->SX & 0xff00) | value;                   break;
+	case 0x01: vdpCmd->SX = (vdpCmd->SX & 0x00ff) | ((value & 0x01) << 8);   break;
+	case 0x02: vdpCmd->SY = (vdpCmd->SY & 0xff00) | value;                   break;
+	case 0x03: vdpCmd->SY = (vdpCmd->SY & 0x00ff) | ((value & 0x03) << 8);   break;
+	case 0x04: vdpCmd->DX = (vdpCmd->DX & 0xff00) | value;                   break;
+	case 0x05: vdpCmd->DX = (vdpCmd->DX & 0x00ff) | ((value & 0x01) << 8);   break;
+	case 0x06: vdpCmd->DY = (vdpCmd->DY & 0xff00) | value;                   break;
+	case 0x07: vdpCmd->DY = (vdpCmd->DY & 0x00ff) | ((value & 0x03) << 8);   break;
 	case 0x08: vdpCmd->kNX = (vdpCmd->kNX & 0xff00) | value;                 break;
 	case 0x09: vdpCmd->kNX = (vdpCmd->kNX & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x0a: vdpCmd->NY = (vdpCmd->NY & 0xff00) | value;                 break;
-	case 0x0b: vdpCmd->NY = (vdpCmd->NY & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x0a: vdpCmd->NY = (vdpCmd->NY & 0xff00) | value;                   break;
+	case 0x0b: vdpCmd->NY = (vdpCmd->NY & 0x00ff) | ((value & 0x03) << 8);   break;
 	case 0x0c: 
         vdpCmd->CL = value;
         vdpCmd->status &= ~VDPSTATUS_TR;
@@ -1128,6 +1126,35 @@ void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
         }
 		break;
     }
+}
+
+/*************************************************************
+** vdpCmdPeek
+**
+** Description:
+**      Returns the current value of a VDP command register
+**************************************************************
+*/
+UInt8 vdpCmdPeek(VdpCmdState* vdpCmd, UInt8 reg, UInt32 systemTime) 
+{
+    switch (reg & 0x1f) {
+	case 0x00: return vdpCmd->SX & 0xff;
+	case 0x01: return vdpCmd->SX >> 8;
+	case 0x02: return vdpCmd->SY & 0xff;
+	case 0x03: return vdpCmd->SY >> 8;
+	case 0x04: return vdpCmd->DX & 0xff;
+	case 0x05: return vdpCmd->DX >> 8;
+	case 0x06: return vdpCmd->DY & 0xff;
+	case 0x07: return vdpCmd->DY >> 8;
+	case 0x08: return vdpCmd->kNX & 0xff;
+	case 0x09: return vdpCmd->kNX >> 8;
+	case 0x0a: return vdpCmd->NY & 0xff;
+	case 0x0b: return vdpCmd->NY >> 8;
+    case 0x0c: return vdpCmd->CL;
+    case 0x0d: return vdpCmd->ARG;
+    case 0x0e: return vdpCmd->LO | vdpCmd->CM;
+    }
+    return 0xff;
 }
 
 /*************************************************************

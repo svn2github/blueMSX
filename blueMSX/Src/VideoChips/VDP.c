@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-02-10 08:59:02 $
+** $Date: 2005-02-14 06:14:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "IoPort.h"
 #include "SaveState.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "VideoManager.h"
 #include "FrameBuffer.h"
 #include <string.h>
@@ -179,6 +180,7 @@ struct VDP {
     int    blinkCnt;
     int    drawArea;
     int    palette[16];
+    int    vramSize;
     int    vramPages;
     int    vram128;
     int    vram192;
@@ -229,6 +231,7 @@ struct VDP {
     UInt8  vram[VRAM_SIZE];
     
     int deviceHandle;
+    int debugHandle;
     int videoHandle;
     int videoEnabled;
 
@@ -931,6 +934,38 @@ static void loadState(VDP* vdp)
     boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
 }
 
+static void setDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+    int cmdRegCount;
+    int regCount;
+    int i;
+
+    sync(vdp, boardSystemTime());
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, vdp->vramSize, vdp->vram);
+   
+    cmdRegCount = vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958 ? 15 : 0;
+
+    if (vdp->vdpVersion == VDP_V9938) regCount = 24;
+    else if (vdp->vdpVersion == VDP_V9958) regCount = 32;
+    else regCount = 8;
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", regCount + cmdRegCount);
+
+    for (i = 0; i < regCount; i++) {
+        char reg[4];
+        sprintf(reg, "R%d", i);
+        dbgRegisterBankAddRegister(regBank, i, reg,  8, vdp->vdpRegs[i]);
+    }
+
+    for (i = 0; i < cmdRegCount; i++) {
+        char reg[4];
+        sprintf(reg, "R%d", 32 + i);
+        dbgRegisterBankAddRegister(regBank,  regCount + i, reg, 8, vdpCmdPeek(vdp->cmdEngine, i, boardSystemTime()));
+    }
+}
+
 static void reset(VDP* vdp)
 {
     int i;
@@ -1007,6 +1042,7 @@ static void destroy(VDP* vdp)
 {
     int i;
 
+    debugDeviceUnregister(vdp->debugHandle);
     deviceManagerUnregister(vdp->deviceHandle);
     videoManagerUnregister(vdp->videoHandle);
 
@@ -1060,6 +1096,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     VideoCallbacks videoCallbacks = { videoEnable, videoDisable };
+    char* vdpVersionString;
     int vramSize;
     int i;
 
@@ -1073,6 +1110,8 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerScrModeChange = boardTimerCreate(onScrModeChange, vdp);
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
+
+    vdp->vramSize       = vramPages << 14;
 
     vdp->vram192        = vramPages == 12;
     vdp->vram16         = vramPages == 1;
@@ -1122,22 +1161,28 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     case VDP_TMS9929A:
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
+        vdpVersionString       = "TMS9929A Video Chip";
         break;
     case VDP_TMS99x8A:
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
         vdp->vdpRegs[9]          &= ~0x02;
+        vdpVersionString       = "TMS99x8A Video Chip";
         break;
     case VDP_V9938:
         vdp->registerValueMask = registerValueMaskMSX2;
         vdp->registerMask      = 0x3f;
+        vdpVersionString       = "V9938 Video Chip";
         break;
     case VDP_V9958:
         vdp->registerValueMask = registerValueMaskMSX2p;
         vdp->registerMask      = 0x3f;
+        vdpVersionString       = "V9958 Video Chip";
         break;
     }
     
+    vdp->debugHandle = debugDeviceRegister(vdpVersionString, setDebugInfo, vdp);
+
     switch (vdp->vdpConnector) {
     case VDP_MSX:
         ioPortRegister(0x98, read,       write,      vdp);

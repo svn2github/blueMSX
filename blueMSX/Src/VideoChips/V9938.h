@@ -41,6 +41,14 @@ void vdpCmdDestroy(VdpCmdState* state);
 */
 void  vdpCmdWrite(VdpCmdState* state, UInt8 reg, UInt8 value, UInt32 systemTime);
 
+/*************************************************************
+** vdpCmdPeek
+**
+** Description:
+**      Returns the current value of a VDP command register
+**************************************************************
+*/
+UInt8 vdpCmdPeek(VdpCmdState* vdpCmd, UInt8 reg, UInt32 systemTime);
 
 void vdpSetScreenMode(VdpCmdState* state, int screenMode, int commandEnable);
 void vdpSetTimingMode(VdpCmdState* state, UInt8 timingMode);
