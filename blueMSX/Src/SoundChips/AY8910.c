@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-15 05:03:51 $
+** $Date: 2005-02-15 05:46:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ struct AY8910 {
     Int32  debugHandle;
 
     AY8910ReadCb    ioPortReadCb;
+    AY8910ReadCb    ioPortPollCb;
     AY8910WriteCb   ioPortWriteCb;
     void*           ioPortArg;
     Ay8910Connector connector;
@@ -251,9 +252,10 @@ void ay8910Destroy(AY8910* ay8910)
     free(ay8910);
 }
 
-void ay8910SetIoPort(AY8910* ay8910, AY8910ReadCb readCb, AY8910WriteCb writeCb, void* arg)
+void ay8910SetIoPort(AY8910* ay8910, AY8910ReadCb readCb, AY8910ReadCb pollCb, AY8910WriteCb writeCb, void* arg)
 {
     ay8910->ioPortReadCb  = readCb;
+    ay8910->ioPortPollCb  = pollCb;
     ay8910->ioPortWriteCb = writeCb;
     ay8910->ioPortArg     = arg;
 }

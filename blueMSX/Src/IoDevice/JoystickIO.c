@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-07 02:27:37 $
+** $Date: 2005-02-15 05:46:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,7 @@ struct JoystickIO {
 static JoystickIoType joyTypeConfigured[2];
 static int joyTypeConfiguredUserData[2];
 static UInt8 joyState[2];
+static int   isPolling = 1;
 
 static void joystickCheckType(JoystickIO* joyIO) {
     int port;
@@ -102,11 +103,14 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
 //            (joyIO->controls[joyId].count == 0 && systemTime - joyIO->mouseClock > boardFrequency() / 120)) 
         if (joyIO->controls[joyId].count == 0 && systemTime - joyIO->mouseClock > boardFrequency() / 120) 
         {
-            int dx;
-            int dy;
+            static int dx;
+            static int dy;
 
-            mouseEmuGetState(&dx, &dy);
-            joyIO->mouseClock = systemTime;
+            if (!isPolling) {
+                mouseEmuGetState(&dx, &dy);
+                joyIO->mouseClock = systemTime;
+            }
+
             joyIO->controls[joyId].dx = (dx > 127 ? 127 : (dx < -127 ? -127 : dx));
             joyIO->controls[joyId].dy = (dy > 127 ? 127 : (dy < -127 ? -127 : dy));
         }
@@ -146,6 +150,14 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
     return 0x7f;
 }
 
+static UInt8 poll(JoystickIO* joyIO, UInt16 address) 
+{
+    UInt8 rv;
+    isPolling = 1;
+    rv = read(joyIO, address);
+    isPolling = 0;
+    return rv;
+}
 
 static void write(JoystickIO* joyIO, UInt16 address, UInt8 value) 
 {
@@ -220,7 +232,7 @@ JoystickIO* joystickIoCreate(AY8910* ay8910)
     joyIO->ay8910 = ay8910;
     joyIO->mouseAsJoystick = buttons & 1;
 
-    ay8910SetIoPort(ay8910, read, write, joyIO);
+    ay8910SetIoPort(ay8910, read, poll, write, joyIO);
 
     ledSetKana(0);
 
@@ -229,7 +241,7 @@ JoystickIO* joystickIoCreate(AY8910* ay8910)
 
 void joystickIoDestroy(JoystickIO* joyIO)
 {
-    ay8910SetIoPort(joyIO->ay8910, NULL, NULL, NULL);
+    ay8910SetIoPort(joyIO->ay8910, NULL, NULL, NULL, NULL);
 
     free(joyIO);
 }
@@ -347,6 +359,15 @@ UInt8 joystickReadSVI(JoystickIO* joyIO)
 	return value;
 }
 
+UInt8 joystickPollSVI(JoystickIO* joyIO) 
+{
+    UInt8 rv;
+    isPolling = 1;
+    rv = joystickReadSVI(joyIO);
+    isPolling = 0;
+    return rv;
+}
+
 UInt8 joystickReadTriggerSVI(JoystickIO* joyIO) 
 {
 	UInt8 value;
@@ -383,4 +404,13 @@ UInt8 joystickReadColeco(JoystickIO* joyIO, int port)
     joyIO->registers[1] = port == 0 ? 0x40 : 0x00;
 
 	return read(joyIO, 0) & 0x3f;
+}
+
+UInt8 joystickPollColeco(JoystickIO* joyIO, int port) 
+{
+    UInt8 rv;
+    isPolling = 1;
+    rv = joystickReadColeco(joyIO, port);
+    isPolling = 0;
+    return rv;
 }

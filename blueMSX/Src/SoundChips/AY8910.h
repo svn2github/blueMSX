@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2005-02-15 05:46:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,7 @@ void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data);
 typedef UInt8 (*AY8910ReadCb)(void*, UInt16);
 typedef void (*AY8910WriteCb)(void*, UInt16, UInt8);
 
-void ay8910SetIoPort(AY8910* ay8910, AY8910ReadCb readCb, AY8910WriteCb writeCb, void* arg);
+void ay8910SetIoPort(AY8910* ay8910, AY8910ReadCb readCb, AY8910ReadCb pollCb, AY8910WriteCb writeCb, void* arg);
 
 void ay8910LoadState(AY8910* ay8910);
 void ay8910SaveState(AY8910* ay8910);

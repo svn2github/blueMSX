@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-02-15 05:03:49 $
+** $Date: 2005-02-15 05:46:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -235,6 +235,21 @@ UInt8 sviPsgReadHandler(void* arg, UInt16 address)
     switch (address) {
         case 0:
             value = joystickReadSVI(joyIO);
+            break;
+        case 1:
+            value = psgAYReg15;
+            break;
+    }
+    return value;
+}
+
+UInt8 sviPsgPollHandler(void* arg, UInt16 address)
+{
+    UInt8 value = 0xff;
+
+    switch (address) {
+        case 0:
+            value = joystickPollSVI(joyIO);
             break;
         case 1:
             value = psgAYReg15;
@@ -504,7 +519,7 @@ int sviCreate(Machine* machine,
     debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", setDebugInfo, NULL);
 
     ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI);
-    ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgWriteHandler, NULL);
+    ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgPollHandler, sviPsgWriteHandler, NULL);
 
     keyClick  = audioKeyClickCreate(boardGetMixer());
 
@@ -565,7 +580,7 @@ void sviDestroy() {
 
     joystickIoDestroySVI(joyIO);
 
-    ay8910SetIoPort(ay8910, NULL, NULL, NULL);
+    ay8910SetIoPort(ay8910, NULL, NULL, NULL, NULL);
     ay8910Destroy(ay8910);
     ay8910 = NULL;
     audioKeyClickDestroy(keyClick);
