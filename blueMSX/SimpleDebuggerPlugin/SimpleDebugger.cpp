@@ -323,7 +323,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 {
     switch (iMsg) {
     case WM_CREATE:
-#if 0
+#if 1
         RegisterHotKey(hwnd, 1, 0, VK_F5);
         RegisterHotKey(hwnd, 2, MOD_CONTROL | MOD_ALT, VK_CANCEL);
         RegisterHotKey(hwnd, 3, MOD_SHIFT, VK_F5);

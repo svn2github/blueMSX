@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-02-27 09:47:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,11 +71,13 @@
 #define WM_OBJECT_UPDATE            (WM_OBJECT_CONTOL_BASE + 1)
 #define WM_OBJECT_SHOW              (WM_OBJECT_CONTOL_BASE + 2)
 #define WM_OBJECT_ENABLE            (WM_OBJECT_CONTOL_BASE + 3)
+#define WM_OBJECT_GET               (WM_OBJECT_CONTOL_BASE + 4)
 
 
 static void objectShow(HWND parent, int notifyId, int show);
 static void objectEnable(HWND parent, int notifyId, int enable);
 static void objectUpdate(HWND parent, int notifyId, int arg);
+static int objectGet(HWND parent, int notifyId);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -366,6 +368,12 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
         KillTimer(hwnd, TIMER_POLL_INPUT);
         keyboardCancelConfig();
         keybardEnableEdit(0);
+        {
+            char* name = (char*)objectGet(hwnd, WM_DROPDOWN_KEYBOARDCONFIG);
+            if (name != NULL) {
+                keyboardLoadConfig(name);
+            }
+        }
         return WM_CLOSE_RESULT_OK;
     }
 
@@ -637,6 +645,17 @@ static void objectUpdate(HWND parent, int notifyId, int arg)
     }
 }
 
+static int objectGet(HWND parent, int notifyId)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == notifyId) {
+            return SendMessage(windowData[i].hwnd, WM_OBJECT_GET, 0, 0);
+        }
+    }
+    return 0;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// Function:
@@ -738,6 +757,20 @@ static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lP
         windowDataSet(hwnd, 0, NULL);
         free(oi);
         break;
+
+    case WM_OBJECT_GET:
+        {
+            static char buffer[512];
+            int idx = SendDlgItemMessage(hwnd, IDC_CONTROL, CB_GETCURSEL, 0, 0);
+            int rv = SendDlgItemMessage(hwnd, IDC_CONTROL, CB_GETLBTEXT, idx, (LPARAM)buffer);
+            if (rv != CB_ERR) {
+                SetWindowLong(hwnd, DWL_MSGRESULT, (LRESULT)buffer);
+                return TRUE;
+            }
+        }
+        SetWindowLong(hwnd, DWL_MSGRESULT, 0);
+        return TRUE;
+
     case WM_OBJECT_UPDATE:
         while (CB_ERR != SendDlgItemMessage(hwnd, IDC_CONTROL, CB_DELETESTRING, 0, 0));
 
