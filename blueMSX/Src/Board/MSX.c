@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-07 02:27:35 $
+** $Date: 2005-02-11 04:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,11 +51,11 @@
 #include "KeyClick.h"
 #include "audioMixer.h"
 #include "Keyboard.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "VDP.h"
 #include "V9938.h"
 #include "VideoManager.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "Casette.h"
 #include "Disk.h"
 #include "MegaromCartridge.h"

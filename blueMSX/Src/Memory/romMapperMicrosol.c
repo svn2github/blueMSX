@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -33,7 +33,7 @@
 #include "WD2793.h"
 #include "Disk.h"
 #include "Led.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"

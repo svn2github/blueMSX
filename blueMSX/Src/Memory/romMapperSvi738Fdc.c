@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-10 07:18:45 $
+** $Date: 2005-02-11 04:38:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #include "romMapperSvi738Fdc.h"
 #include "WD2793.h"
 #include "Led.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "Disk.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-26 11:31:52 $
+** $Date: 2005-02-11 04:38:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperTurboRPcm.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"

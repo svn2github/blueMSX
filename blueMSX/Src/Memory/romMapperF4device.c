@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperF4device.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperF4device.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-19 18:55:44 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperPanasonic.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "Board.h"

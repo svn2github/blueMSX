@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-30 22:53:27 $
+** $Date: 2005-02-11 04:38:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperSonyHBI55.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SlotManager.h"
 #include "sramLoader.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-08 00:48:09 $
+** $Date: 2005-02-11 04:38:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@ extern "C" {
 #include "Board.h"
 #include "SaveState.h"
 #include "IoPort.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 }
 

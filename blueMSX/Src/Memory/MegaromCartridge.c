@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "MegaromCartridge.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "RomLoader.h"
 #include "SlotManager.h"
 

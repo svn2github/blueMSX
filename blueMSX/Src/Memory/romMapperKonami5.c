@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-02 08:32:51 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperKonami5.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SCC.h"

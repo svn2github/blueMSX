@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-16 19:34:03 $
+** $Date: 2005-02-11 04:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperMsxMusic.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SlotManager.h"
 #include "IoPort.h"

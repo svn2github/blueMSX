@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2005-02-11 04:38:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,7 @@
 */
 #include "romMapperTC8566AF.h"
 #include "TC8566AF.h"
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"

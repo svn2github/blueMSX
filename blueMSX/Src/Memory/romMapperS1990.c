@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperS1990.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2005-02-11 04:38:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include "romMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "Switches.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2005-02-11 04:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef LAUNCH_FILE_H
 #define LAUNCH_FILE_H
 
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "Properties.h"
 
 typedef struct {
