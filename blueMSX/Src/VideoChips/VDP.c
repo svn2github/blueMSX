@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-03-06 20:29:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -224,6 +224,8 @@ struct VDP {
     UInt32 timeVStart;
     UInt32 timeDisplay;
 
+    UInt32 screenOffTime;
+
     UInt8* vramPtr;
     int    vramAccMask;
     int vramOffsets[2];
@@ -376,6 +378,36 @@ static void onDisplay(VDP* vdp, UInt32 time)
     scheduleVint(vdp);
 }
 
+static void simulateVramDecay(VDP* vdp) 
+{
+    int time = (boardSystemTime() - vdp->screenOffTime) / 1350000;
+    int i;
+    if (time >= 24) {
+        for (i = 0x0000; i < 0x3000; i += 2) {
+            vdp->vramPtr[i]     = 0x55;
+            vdp->vramPtr[i + 1] = 0xaa;
+        }
+    }
+    else if (time >= 8) {
+        static UInt32 rnd = 0xfffffff3;
+        static UInt8 v[32] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 };
+        UInt8* vPtr = v + time - 8;
+        time -= 8;
+        for (i = 0x0000; i < 0x3000; i += 2) {
+            int j = 8;
+            UInt8 val = 0;
+            while (j--) {
+                val <<= 1;
+                val |= vPtr[(rnd *= 17) >> 28];
+            }
+            vdp->vramPtr[i] |= val & 0x55;
+            vdp->vramPtr[i] &= ~(val & 0xaa);
+            vdp->vramPtr[i + 1] |= val & 0xaa;
+            vdp->vramPtr[i + 1] &= ~(val & 0x55);
+        }
+    }
+}
+
 static void onScrModeChange(VDP* vdp, UInt32 time)
 {
     int scanLine = (boardSystemTime() - vdp->frameStartTime) / HPERIOD;
@@ -402,6 +434,14 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     vdp->sprTabBase = (((int)vdp->vdpRegs[11] << 15) | ((int)vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & vdp->vramMask;
     vdp->sprGenBase = (((int)vdp->vdpRegs[6] << 11) | ~(-1 << 11)) & vdp->vramMask;
 
+    if (~vdp->vdpRegs[1] & 0x80) {
+        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+            if (!vdp->screenOn && (vdp->vdpRegs[1] & 0x40)) {
+               simulateVramDecay(vdp);
+            }
+            vdp->screenOffTime = boardSystemTime();
+        }
+    }
     vdp->screenOn = vdp->vdpRegs[1] & 0x40;
     
     vdpSetScreenMode(vdp->cmdEngine, vdp->screenMode, vdp->vdpRegs[25] & 0x40);
@@ -874,6 +914,8 @@ static void loadState(VDP* vdp)
     vdp->vdpVersion     =         saveStateGet(state, "vdpVersion",      0);
     vdp->leftBorder     =         saveStateGet(state, "leftBorder",      200);
     vdp->hRefresh       =         saveStateGet(state, "hRefresh",        1024);
+
+    vdp->screenOffTime = boardSystemTime();
 
     saveStateGetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateGetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-10 01:41:07 $
+** $Date: 2005-03-06 20:29:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -263,6 +263,7 @@ static void initKbdTable()
     kbdTable[DIK_COMMA      ] = EK_COMMA;
     kbdTable[DIK_PERIOD     ] = EK_PERIOD;
     kbdTable[DIK_SLASH      ] = EK_DIV;
+    kbdTable[DIK_RCONTROL   ] = EK_UNDSCRE;
     
     kbdTable[DIK_A          ] = EK_A;
     kbdTable[DIK_B          ] = EK_B;
@@ -339,7 +340,7 @@ static void initKbdTable()
     kbdTable[DIK_NUMPADENTER] = EK_PAUSE;
     kbdTable[DIK_SYSRQ      ] = EK_PRINT;
 
-    keyboardSaveConfig("MSX Default");
+    keyboardSaveConfig(DefaultConfigName);
 }
 
 

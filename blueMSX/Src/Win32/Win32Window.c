@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-27 09:47:34 $
+** $Date: 2005-03-06 20:29:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -332,7 +332,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
 
     case WM_BUTTON_SAVE:
         if (keyboardConfigIsModified()) {
-            if (IDYES == MessageBox(hwnd, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+            if (IDYES == MessageBox(NULL, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
                 keyboardSaveConfig(keyboardGetCurrentConfig());
             }
         }
@@ -343,7 +343,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
             char* name = openConfigFile(hwnd, langConfSaveAsTitle(), langConfSaveAsName(), keyboardGetConfigs(), keyboardGetCurrentConfig());
             if (name != NULL) {
                 if (0 == strcmp(name, keyboardGetCurrentConfig())) {
-                    if (IDYES == MessageBox(hwnd, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+                    if (IDYES == MessageBox(NULL, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
                         keyboardSaveConfig(keyboardGetCurrentConfig());
                     }
                 }
@@ -361,7 +361,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
 
     case WM_CLOSE:
         if (keyboardConfigIsModified()) {
-            if (IDNO == MessageBox(hwnd, langDiscardChanges(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+            if (IDNO == MessageBox(NULL, langDiscardChanges(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
                 return WM_CLOSE_RESULT_CANCEL;
             }
         }
@@ -567,6 +567,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             free(wi);
             wi = NULL;
             DestroyWindow(hwnd);
+            SetActiveWindow(getMainHwnd());
         }
         rv = 0;
     }

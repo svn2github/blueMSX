@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2005-03-05 03:24:50 $
+** $Date: 2005-03-06 20:29:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -874,6 +874,12 @@ void archUpdateJoystick() {
     JoystickSetKeyStateKey(2, JOY_RIGHT, pProperties->joy2.keyRight);
     JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
     JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
+
+    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, 
+                      pProperties->joy1.type);
+    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, 
+                      pProperties->joy2.type);
+    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 }
 
 typedef struct {
@@ -2741,4 +2747,7 @@ int archGetFramesPerSecond() {
 void archEmulationStartFailure() {
      MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
 }
+
+
+
 

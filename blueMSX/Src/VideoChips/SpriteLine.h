@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-04 07:03:03 $
+** $Date: 2005-03-06 20:29:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     UInt8* attrib;
     UInt8* attribTable[4];
     UInt8 patternMask;
+    int   sprite;
     int idx;
     int size;
     int scale;
@@ -63,7 +64,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
 
-    vdp->vdpStatus[0] &= 0xbf;
+    vdp->vdpStatus[0] &= 0x80;
 
     if (idx == 0) {
         lineBufs[bufIndex] = NULL;
@@ -84,7 +85,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     visibleCnt = 0;
     collision = 0;
     /* Find visible sprites on current line */
-    for (idx = 0; idx < 32; idx++, attrib += 4) {
+    for (sprite = 0; sprite < 32; sprite++, attrib += 4) {
         int spriteLine = attrib[0];
         if (spriteLine == 208) {
             break;
@@ -97,7 +98,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
         
         if (visibleCnt == 4) {
 			if (~vdp->vdpStatus[0] & 0xc0) {
-				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | idx;
+				vdp->vdpStatus[0] |= 0x40 | sprite;
 			}
             break;
         }
@@ -111,7 +112,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     }
 
 	if (~vdp->vdpStatus[0] & 0x40) {
-		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (idx < 32 ? idx : 31);
+		vdp->vdpStatus[0] |= sprite < 32 ? sprite : 31;
 	}
     
     lineBuf = lineBuffer[bufIndex];
@@ -228,7 +229,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
 
     bufIndex = line & 1;
 
-    vdp->vdpStatus[0] &= 0xbf;
+    vdp->vdpStatus[0] &= 0x80;
 
     if (line == 0) {
         nonVisibleLine = -1000;
@@ -275,8 +276,8 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         }
 
         if (visibleCnt == 8) {
-			if ((~vdp->vdpStatus[0] & 0xc0)) {
-				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | sprite;
+			if (~vdp->vdpStatus[0] & 0xc0) {
+				vdp->vdpStatus[0] |= 0x40 | sprite;
 			}
             break;
         }
@@ -306,8 +307,8 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         return lineBufs[bufIndex ^ 1];
     }
 
-    if ((~vdp->vdpStatus[0] & 0x40)) {
-		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
+    if (~vdp->vdpStatus[0] & 0x40) {
+		vdp->vdpStatus[0] |= sprite < 32 ? sprite : 31;
 	}
     
     lineBuf = lineBuffer[bufIndex];

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-03-06 20:29:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -615,3 +615,4 @@ static Int32* sccSync(SCC* scc, UInt32 count)
 
     return scc->buffer;
 }
+

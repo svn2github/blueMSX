@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-03-04 08:02:54 $
+** $Date: 2005-03-06 20:29:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,12 +51,13 @@ struct MediaDb {
 };
 
 struct MediaType {
-    MediaType(RomType rt, const string t, const string c = "", const string y = "", const string r = "") :
-        romType(rt), title(t), company(c), year(y), remark(r) {}
+    MediaType(RomType rt, const string t, const string c = "", const string y = "", const string ct = "", const string r = "") :
+        romType(rt), title(t), company(c), year(y), country(ct), remark(r) {}
 
     string title;
     string company;
     string year;
+    string country;
     string remark;
     RomType romType;
 };
@@ -423,6 +424,10 @@ extern "C" void mediaDbAddFromOldFile(MediaDb* mediaDb,
         if (title.length() == 0 || crc32 == 0) {
             continue;
         }
+        
+        if (title.length() > 10 && title[title.length() - 1] == ']' && title[title.length() - 10] == '[') {
+            title = title.substr(0, title.length() - 10);
+        }
 
         mediaDb->crcMap[crc32] = new MediaType(romType, title);
     }
@@ -454,6 +459,7 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
 
         string  title;
         string  company;
+        string country;
         string  year;
         string  remark;
         string  system;
@@ -477,6 +483,12 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                     company = name->Value();
                 }
             }
+            if (strcmp(item->Value(), "country") == 0) {
+                TiXmlNode* name = item->FirstChild();
+                if (name != NULL) {
+                    country = name->Value();
+                }
+            }
             if (strcmp(item->Value(), "year") == 0) {
                 TiXmlNode* name = item->FirstChild();
                 if (name != NULL) {
@@ -496,7 +508,6 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 continue;
             }
             for (TiXmlElement* dmp = item->FirstChildElement(); dmp != NULL; dmp = dmp->NextSiblingElement()) {
-                printf("%s\n", dmp->Value());
                 if (strcmp(dmp->Value(), "megarom") == 0 || strcmp(dmp->Value(), "systemrom") == 0 || strcmp(dmp->Value(), "rom") == 0) {
                     RomType romType = strcmp(dmp->Value(), "rom") == 0 ? ROM_PLAIN : ROM_UNKNOWN;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
@@ -538,13 +549,13 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                                 if (strcmp(type, "sha1") == 0) {
                                     TiXmlNode* hash = it->FirstChild();
                                     string sha1(hash->Value());
-                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, country, remark);
                                 }
                                 if (strcmp(type, "crc") == 0) {
                                     UInt32 crc32;
                                     TiXmlNode* hash = it->FirstChild();
                                     if (sscanf(hash->Value(), "%x", &crc32) == 1) {
-                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, country, remark);
                                     }
                                 }
                             }
@@ -569,13 +580,13 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                                 if (strcmp(type, "sha1") == 0) {
                                     TiXmlNode* hash = it->FirstChild();
                                     string sha1(hash->Value());
-                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
+                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, country, remark);
                                 }
                                 if (strcmp(type, "crc") == 0) {
                                     UInt32 crc32;
                                     TiXmlNode* hash = it->FirstChild();
                                     if (sscanf(hash->Value(), "%x", &crc32) == 1) {
-                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, country, remark);
                                     }
                                 }
                             }
@@ -629,7 +640,7 @@ extern "C" void mediaDbCreateDiskdb(const char* oldFileName, const char* xmlFile
 
 extern "C" void mediaDbCreateCasdb(const char* oldFileName, const char* xmlFileName)
 {
-    if (diskdb == NULL) {
+    if (casdb == NULL) {
         casdb = mediaDbCreate();
     }
 
@@ -724,6 +735,11 @@ extern "C" const char* mediaDbGetPrettyString(MediaType* mediaType)
         if (mediaType->year.length()) {
             strcat(prettyString, " ");
             strcat(prettyString, mediaType->year.c_str());
+        }
+
+        if (mediaType->country.length()) {
+            strcat(prettyString, " ");
+            strcat(prettyString, mediaType->country.c_str());
         }
     }
 
