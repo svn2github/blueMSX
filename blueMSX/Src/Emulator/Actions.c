@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-02-21 09:49:51 $
+** $Date: 2005-03-05 03:24:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -211,8 +211,8 @@ void actionCartInsert1() {
 
     emulatorSuspend();
     filename = archFileRomOpen(langDlgInsertRom1(), 
-                               "ROM cartridge   (*.rom, *.mx1, *.mx2, *.zip)\0*.rom; *.mx1; *.mx2; *.zip\0All Files   (*.*)\0*.*\0", 
-                               state.properties->cartridge.defDir, ".rom\0.mx1\0.mx2\0.zip\0.*\0",
+                               "ROM cartridge   (*.rom, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.mx1; *.mx2; *.col; *.zip\0All Files   (*.*)\0*.*\0", 
+                               state.properties->cartridge.defDir, ".rom\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotAFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 0, filename, NULL, romType, 0);
@@ -229,8 +229,8 @@ void actionCartInsert2() {
 
     emulatorSuspend();
     filename = archFileRomOpen(langDlgInsertRom2(), 
-                               "ROM cartridge   (*.rom, *.mx1, *.mx2, *.zip)\0*.rom; *.mx1; *.mx2; *.zip\0All Files   (*.*)\0*.*\0", 
-                               state.properties->cartridge.defDir, ".rom\0.mx1\0.mx2\0.zip\0.*\0",
+                               "ROM cartridge   (*.rom, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.mx1; *.mx2; *.col; *.zip\0All Files   (*.*)\0*.*\0", 
+                               state.properties->cartridge.defDir, ".rom\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotBFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 1, filename, NULL, romType, 0);

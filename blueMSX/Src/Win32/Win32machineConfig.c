@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-28 03:56:04 $
+** $Date: 2005-03-05 03:24:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1138,7 +1138,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                fileName = openFile(hDlg, "Open ROM image", "ROM image   (*.rom, *.mx1, *.mx2, *.zip)\0*.rom; *.mx1; *.mx2; *.zip\0", defDir, -1, NULL, NULL);
+                fileName = openFile(hDlg, "Open ROM image", "ROM image   (*.rom, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.mx1; *.mx2; *.col; *.zip\0", defDir, -1, NULL, NULL);
                 SetCurrentDirectory(curDir);
 
                 if (fileName != NULL) {
