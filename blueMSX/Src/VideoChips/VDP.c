@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-05 07:43:05 $
+** $Date: 2005-01-16 19:34:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,10 +185,10 @@ static UInt32 timeDrawAreaStart;
 static UInt32 timeVStart;
 static UInt32 timeDisplay;
 
+static UInt8  VRAM[VRAM_SIZE];
+
 static int spritesEnable = 1;
 static int displayEnable = 1;
-
-static UInt8  VRAM[VRAM_SIZE];
 
 void vdpSetSpritesEnable(int enable) {
     spritesEnable = enable ? 1 : 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-06 07:04:37 $
+** $Date: 2005-01-16 19:34:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,9 +56,6 @@ struct YM_2413 {
     Int32  buffer[BUFFER_SIZE];
     Int32  defaultBuffer[BUFFER_SIZE];
 };
-
-static int refCount = 0;
-static YM_2413* theYm2413 = NULL;
 
 extern "C" {
     
@@ -128,15 +125,8 @@ static Int32* sync(void* ref, UInt32 count)
 YM_2413* ym2413Create(Mixer* mixer)
 {
     YM_2413* ym2413;
-    
-    if (refCount++) {
-        // The device is already initialized. But don't report an error
-        return theYm2413;
-    }
 
     ym2413 = new YM_2413;
-
-    theYm2413 = ym2413;
 
     ym2413->mixer = mixer;
 
@@ -150,10 +140,6 @@ YM_2413* ym2413Create(Mixer* mixer)
 
 void ym2413Destroy(YM_2413* ym2413) 
 {
-    if (--refCount == 0) {
-        theYm2413 = NULL;
-    }
-
     mixerUnregisterChannel(ym2413->mixer, ym2413->handle);
     delete ym2413;
 }

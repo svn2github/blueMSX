@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-05 02:59:28 $
+** $Date: 2005-01-16 19:34:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,9 @@ static void destroy(MsxMusic* rm)
 
 static void reset(MsxMusic* rm) 
 {
-    ym2413Reset(rm->ym2413);
+    if (rm->ym2413 != NULL) {
+        ym2413Reset(rm->ym2413);
+    }
 }
 
 static void loadState(MsxMusic* rm)
@@ -73,8 +75,6 @@ static void loadState(MsxMusic* rm)
     SaveState* state = saveStateOpenForRead("MsxMusic");
 
     saveStateClose(state);
-    
-    ym2413LoadState(rm->ym2413);
     
     if (rm->ym2413 != NULL) {
         ym2413LoadState(rm->ym2413);
@@ -87,8 +87,6 @@ static void saveState(MsxMusic* rm)
 
     saveStateClose(state);
 
-    ym2413SaveState(rm->ym2413);
-    
     if (rm->ym2413 != NULL) {
         ym2413SaveState(rm->ym2413);
     }
