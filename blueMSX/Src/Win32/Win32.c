@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2005-01-29 01:32:17 $
+** $Date: 2005-01-29 09:35:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1078,14 +1078,19 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
 void enterDialogShow() {
     if (pProperties->video.driver != P_VIDEO_DRVGDI) {
-        emulatorSuspend();
-        DirectXSetGDISurface();
-        emulatorResume();
+        if (emulatorGetState() == EMU_RUNNING) {
+            emulatorSuspend();
+            DirectXSetGDISurface();
+            emulatorResume();
+        }
+        else {
+            DirectXSetGDISurface();
+        }
     }
     st.showDialog++;
     if (st.showDialog == 1) {
         emuEnableSynchronousUpdate(0);
-        SetTimer(st.hwnd, TIMER_SCREENUPDATE, 100, NULL);
+        SetTimer(st.hwnd, TIMER_SCREENUPDATE, 20 * (pProperties->video.frameSkip + 1), NULL);
     }
 }
 
@@ -1524,7 +1529,8 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             EndPaint(hwnd, &ps);
             st.frameCount++;
         }
-        else if (pProperties->video.driver != P_VIDEO_DRVGDI  && emulatorGetState() == EMU_PAUSED) {
+        else if (pProperties->video.driver != P_VIDEO_DRVGDI && 
+                 (emulatorGetState() == EMU_PAUSED || emulatorGetState() == EMU_SUSPENDED)) {
             PAINTSTRUCT ps;
             BeginPaint(hwnd, &ps);
             EndPaint(hwnd, &ps);
@@ -1889,7 +1895,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             break;
 
         case TIMER_SCREENUPDATE:
-            {
+            if (emulatorGetState() != EMU_STOPPED) {
                 DWORD rv = WaitForSingleObject(st.ddrawEvent, 0);
                 if (rv == WAIT_OBJECT_0) {
                     if (!st.minimized) {
@@ -1901,8 +1907,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             break;
 
         case TIMER_SCREENSHOT:
-            KillTimer(hwnd, TIMER_SCREENSHOT);
-			ScreenShot(pProperties, st.emuHwnd, WIDTH * getZoom(), HEIGHT * getZoom(), 0, 0);
+            {
+                RECT r;
+                GetWindowRect(st.emuHwnd, &r);
+                KillTimer(hwnd, TIMER_SCREENSHOT);
+			    ScreenShot(pProperties, st.emuHwnd, r.right - r.left, r.bottom - r.top, 0, 0);
+            }
             break;
             
         case TIMER_THEME:        
