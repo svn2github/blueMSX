@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-08 00:48:09 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "SN76489.h"
 #include "IoPort.h"
 #include "SaveState.h"
+#include "DebugDeviceManager.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -49,6 +50,7 @@ static Int32* sn76489Sync(void* ref, UInt32 count);
 struct SN76489 {
     Mixer* mixer;
     Int32  handle;
+    Int32  debugHandle;
 
     UInt16 latch;
     UInt32 noiseRand;
@@ -128,12 +130,28 @@ void sn76489SaveState(SN76489* sn76489)
     saveStateClose(state);
 }
 
+static void setDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+    int i;
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "Registers", 16);
+
+    for (i = 0; i < 16; i++) {
+        char reg[4];
+        sprintf(reg, "R%d", i);
+        dbgRegisterBankAddRegister(regBank,  i, reg, 8, sn76489->regs[i]);
+    }
+}
+
 SN76489* sn76489Create(Mixer* mixer)
 {
     SN76489* sn76489 = (SN76489*)calloc(1, sizeof(SN76489));
     int i;
 
     sn76489->mixer = mixer;
+
+    sn76489->debugHandle = debugDeviceRegister("SN76489 PSG Sound Chip", setDebugInfo, sn76489);
 
     sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
 
@@ -168,6 +186,7 @@ void sn76489Reset(SN76489* sn76489)
 
 void sn76489Destroy(SN76489* sn76489)
 {
+    debugDeviceUnregister(sn76489->debugHandle);
     mixerUnregisterChannel(sn76489->mixer, sn76489->handle);
     free(sn76489);
 }

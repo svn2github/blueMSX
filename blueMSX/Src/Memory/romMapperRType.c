@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperRType.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:34 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,7 +126,7 @@ int romMapperRTypeCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperRType));
 
     rm->deviceHandle = deviceManagerRegister(ROM_RTYPE, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

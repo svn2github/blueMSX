@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNational.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,19 @@ static UInt8 read(RomMapperNational* rm, UInt16 address)
     return rm->romData[(rm->romMapper[(address >> 13) & ~1] << 14) + (address & 0x3fff)];
 }
 
+static UInt8 peek(RomMapperNational* rm, UInt16 address) 
+{
+	if ((rm->control & 0x04) && (address & 0x7ff9) == 0x7ff0) {
+		return rm->romMapper[address & 0x06];
+	}
+	
+    if ((rm->control & 0x02) && ((address & 0x3fff) == 0x3ffd)) {
+		return rm->sram[rm->sramAddr & 0x0fff];
+	}
+    
+    return rm->romData[(rm->romMapper[(address >> 13) & ~1] << 14) + (address & 0x3fff)];
+}
+
 static void write(RomMapperNational* rm, UInt16 address, UInt8 value) 
 {
 	if (address == 0x6000) {
@@ -165,7 +178,7 @@ int romMapperNationalCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperNational));
 
     rm->deviceHandle = deviceManagerRegister(ROM_NATIONAL, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, read, write, destroy, rm);
+    slotRegister(slot, sslot, 0, 8, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,7 @@ typedef struct {
     int           writeEnable;
     int           readEnable;
     SlotRead      read;
+    SlotRead      peek;
     SlotWrite     write;
     SlotEject     eject;
     void*         ref;
@@ -164,7 +165,7 @@ void slotUnregisterWrite0() {
 }
 
 void slotRegister(int slot, int sslot, int startpage, int pages,
-                  SlotRead readCb, SlotWrite writeCb, SlotEject ejectCb, void* ref)
+                  SlotRead readCb, SlotRead peekCb, SlotWrite writeCb, SlotEject ejectCb, void* ref)
 {
     Slot* slotInfo;
     
@@ -179,6 +180,7 @@ void slotRegister(int slot, int sslot, int startpage, int pages,
     while (pages--) {
         slotInfo->startpage = startpage;
         slotInfo->read  = readCb;
+        slotInfo->peek  = peekCb;
         slotInfo->write = writeCb;
         slotInfo->eject = ejectCb;
         slotInfo->ref   = ref;
@@ -274,6 +276,40 @@ void slotManagerCreate()
 void slotManagerDestroy() 
 {
     initialized = 0;
+}
+
+UInt8 slotPeek(void* ref, UInt16 address)
+{
+    Slot* slotInfo;
+    int psl;
+    int ssl;
+
+    if (!initialized) {
+        return 0xff;
+    }
+
+    if (address == 0xffff) {
+        UInt8 sslReg = pslot[3].state;
+        if (pslot[sslReg].subslotted) {
+            return ~pslot[sslReg].sslReg;
+        }
+    }
+
+    if (ramslot[address >> 13].readEnable) {
+        return ramslot[address >> 13].pageData[address & 0x1fff];
+    }
+
+    psl = pslot[address >> 14].state;
+    ssl = pslot[psl].subslotted ? pslot[address >> 14].substate : 0;
+
+    slotInfo = &slotTable[psl][ssl][address >> 13];
+
+    if (slotInfo->peek != NULL) {
+        address -= slotInfo->startpage << 13;
+        return slotInfo->peek(slotInfo->ref, address);
+    }
+
+    return 0xff;
 }
 
 UInt8 slotRead(void* ref, UInt16 address)

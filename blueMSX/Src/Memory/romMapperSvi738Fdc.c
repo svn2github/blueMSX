@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,29 @@ static UInt8 read(RomMapperSvi738Fdc* rm, UInt16 address)
     return address < 0x4000 ? rm->romData[address] : 0xff;
 }
 
+static UInt8 peek(RomMapperSvi738Fdc* rm, UInt16 address) 
+{
+    switch (address & 0x3fff) {
+        case 0x3fb8:
+            return 0xff; // Get from fdc
+        case 0x3fb9:
+            return 0xff; // Get from fdc
+        case 0x3fba:
+            return 0xff; // Get from fdc
+        case 0x3fbb:
+            return 0xff; // Get from fdc
+        case 0x3fbc:
+            return 0xff; // Get from fdc
+        case 0x3fbd:
+            return 0xff;
+        case 0x3fbe:
+            return 0xff;
+        case 0x3fbf:
+            return 0xff;
+    }
+    return address < 0x4000 ? rm->romData[address] : 0xff;
+}
+
 static void write(RomMapperSvi738Fdc* rm, UInt16 address, UInt8 value) 
 {
     switch (address & 0x3fff) {
@@ -161,7 +184,7 @@ int romMapperSvi738FdcCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperSvi738Fdc));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SVI738FDC, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

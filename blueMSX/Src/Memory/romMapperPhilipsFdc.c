@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPhilipsFdc.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:34 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,30 @@ static UInt8 read(RomMapperPhilipsFdc* rm, UInt16 address)
     return address < 0x4000 ? rm->romData[address] : 0xff;
 }
 
+static UInt8 peek(RomMapperPhilipsFdc* rm, UInt16 address) 
+{
+	switch (address & 0x3fff) {
+	case 0x3ff8:
+		return 0xff; // Get from fdc
+	case 0x3ff9:
+		return 0xff; // Get from fdc
+	case 0x3ffa:
+		return 0xff; // Get from fdc
+	case 0x3ffb:
+		return 0xff; // Get from fdc
+	case 0x3ffc:
+        return rm->sideReg;
+	case 0x3ffd:
+        return rm->driveReg;
+	case 0x3ffe:
+        return 0xff;
+	case 0x3fff:
+		return 0xff; // Get from fdc
+    }
+
+    return address < 0x4000 ? rm->romData[address] : 0xff;
+}
+
 static void write(RomMapperPhilipsFdc* rm, UInt16 address, UInt8 value) 
 {
 	switch (address & 0x3fff) {
@@ -172,7 +196,7 @@ int romMapperPhilipsFdcCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperPhilipsFdc));
 
     rm->deviceHandle = deviceManagerRegister(ROM_PHILIPSFDC, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

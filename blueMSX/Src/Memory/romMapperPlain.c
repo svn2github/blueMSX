@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlain.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:34 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -186,7 +186,7 @@ int romMapperPlainCreate(char* filename, UInt8* romData,
     }
 
     rm->deviceHandle = deviceManagerRegister(ROM_PLAIN, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 8, NULL, NULL, destroy, rm);
+    slotRegister(slot, sslot, startPage, 8, NULL, NULL, NULL, destroy, rm);
 
     for (i = 0; i < 8; i++) {
         slotMapPage(slot, sslot, startPage + i, rm->romData + 0x2000 * romMapper[i], 1, 0);

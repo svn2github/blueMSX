@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,9 +48,10 @@ void slotSaveState();
 
 void slotWrite(void* ref, UInt16 address, UInt8 value);
 UInt8 slotRead(void* ref, UInt16 address);
+UInt8 slotPeek(void* ref, UInt16 address);
 
 void slotRegister(int slot, int sslot, int startpage, int pages,
-                  SlotRead readCb, SlotWrite writeCb, SlotEject ejectCb, void* ref);
+                  SlotRead readCb, SlotRead peekCb, SlotWrite writeCb, SlotEject ejectCb, void* ref);
 void slotUnregister(int slot, int sslot, int startpage);
 
 void slotRemove(int slot, int sslot);

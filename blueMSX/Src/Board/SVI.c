@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-02-07 02:27:35 $
+** $Date: 2005-02-13 21:19:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@
 #include "Disk.h"
 #include "IoPort.h"
 #include "MegaromCartridge.h"
+#include "DebugDeviceManager.h"
 #include "VideoManager.h"
 #include "SlotManager.h"
 #include "ramNormal.h"
@@ -82,6 +83,7 @@ static int             traceEnabled;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
 static int             svi80ColEnabled;
+static int             debugHandle;
 
 typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
 typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
@@ -433,6 +435,37 @@ void sviStop() {
     r800StopExecution(r800);
 }
 
+static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
+{
+    static UInt8 mappedRAM[0x10000];
+    DbgRegisterBank* regBank;
+    int i;
+
+    for (i = 0; i < 0x10000; i++) {
+        slotPeek(NULL, i);
+    }
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, mappedRAM);
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
+
+    dbgRegisterBankAddRegister(regBank,  0, "AF",  16, r800->regs.AF.W);
+    dbgRegisterBankAddRegister(regBank,  1, "BC",  16, r800->regs.BC.W);
+    dbgRegisterBankAddRegister(regBank,  2, "DE",  16, r800->regs.DE.W);
+    dbgRegisterBankAddRegister(regBank,  3, "HL",  16, r800->regs.HL.W);
+    dbgRegisterBankAddRegister(regBank,  4, "AF1", 16, r800->regs.AF1.W);
+    dbgRegisterBankAddRegister(regBank,  5, "BC1", 16, r800->regs.BC1.W);
+    dbgRegisterBankAddRegister(regBank,  6, "DE1", 16, r800->regs.DE1.W);
+    dbgRegisterBankAddRegister(regBank,  7, "HL1", 16, r800->regs.HL1.W);
+    dbgRegisterBankAddRegister(regBank,  8, "IX",  16, r800->regs.IX.W);
+    dbgRegisterBankAddRegister(regBank,  9, "IY",  16, r800->regs.IY.W);
+    dbgRegisterBankAddRegister(regBank, 10, "SP",  16, r800->regs.SP.W);
+    dbgRegisterBankAddRegister(regBank, 11, "PC",  16, r800->regs.PC.W);
+    dbgRegisterBankAddRegister(regBank, 12, "I",   8,  r800->regs.I);
+    dbgRegisterBankAddRegister(regBank, 13, "R",   8,  r800->regs.R);
+    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
+}
+
 int sviCreate(Machine* machine, 
               DeviceInfo* devInfo,
               int loadState)
@@ -467,6 +500,8 @@ int sviCreate(Machine* machine,
 
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
+    
+    debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
 
     ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI);
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgWriteHandler, NULL);
@@ -534,6 +569,8 @@ void sviDestroy() {
     ay8910Destroy(ay8910);
     ay8910 = NULL;
     audioKeyClickDestroy(keyClick);
+
+    debugDeviceUnregister(debugHandle);
 
     sviChangeDiskette(0, NULL, NULL);
     sviChangeDiskette(1, NULL, NULL);

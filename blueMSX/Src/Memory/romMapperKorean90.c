@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKorean90.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -136,7 +136,7 @@ int romMapperKorean90Create(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperKorean90));
 
     rm->deviceHandle = deviceManagerRegister(ROM_KOREAN90, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, NULL, NULL, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperHolyQuran.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -123,7 +123,7 @@ int romMapperHolyQuranCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperHolyQuran));
 
     rm->deviceHandle = deviceManagerRegister(ROM_HOLYQURAN, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

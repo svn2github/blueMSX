@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -123,6 +123,17 @@ static UInt8 read(RomMapperKonami5* rm, UInt16 address)
     return rm->romData[rm->romMapper[2] * 0x2000 + (address & 0x1fff)];
 }
 
+static UInt8 peek(RomMapperKonami5* rm, UInt16 address) 
+{
+    address += 0x4000;
+
+    if (address >= 0x9800 && address < 0xa000 && rm->sccEnable) {
+        return sccPeek(rm->scc, (UInt8)(address & 0xff));
+    }
+
+    return rm->romData[rm->romMapper[2] * 0x2000 + (address & 0x1fff)];
+}
+
 static void write(RomMapperKonami5* rm, UInt16 address, UInt8 value) 
 {
     int change = 0;
@@ -176,7 +187,7 @@ int romMapperKonami5Create(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperKonami5));
 
     rm->deviceHandle = deviceManagerRegister(ROM_KONAMI5, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -285,7 +285,7 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperPanasonic));
 
     rm->deviceHandle = deviceManagerRegister(sramSize == 0x4000 ? ROM_PANASONIC16 : ROM_PANASONIC32, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, read, write, destroy, rm);
+    slotRegister(slot, sslot, 0, 8, read, read, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

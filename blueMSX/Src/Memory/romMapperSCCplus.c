@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSCCplus.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -168,6 +168,28 @@ static UInt8 read(RomMapperSCCplus* rm, UInt16 address)
     return 0xff;
 }
 
+static UInt8 peek(RomMapperSCCplus* rm, UInt16 address) 
+{
+    int bank;
+    
+    address += 0x4000;
+
+    if (rm->sccMode == SCC_COMPATIBLE && address >= 0x9800 && address < 0xa000) {
+        return sccPeek(rm->scc, (UInt8)(address & 0xff));
+    }
+    if (rm->sccMode == SCC_PLUS && address >= 0xb800 && address < 0xc000) {
+        return sccPeek(rm->scc, (UInt8)(address & 0xff));
+    }
+
+    bank = (address - 0x4000) >> 13;
+
+    if (rm->isMapped[bank]) {
+    	return rm->romData[0x2000 * (rm->romMapper[bank] & rm->mapperMask) + (address & 0x1fff)];
+    }
+
+    return 0xff;
+}
+
 static void updateEnable(RomMapperSCCplus* rm)
 {
     if ((rm->modeRegister & 0x20) && (rm->romMapper[3] & 0x80)) {
@@ -255,7 +277,7 @@ int romMapperSCCplusCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperSCCplus));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SCCEXTENDED, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
     memset(rm->romData, 0xff, 0x22000);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,7 +150,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
     rm->romData = NULL;
 
     if (size > 0) {
-        slotRegister(slot, sslot, startPage, 8, read, write, destroy, rm);
+        slotRegister(slot, sslot, startPage, 8, read, read, write, destroy, rm);
 
         rm->romData = malloc(size);
         memcpy(rm->romData, romData, size);

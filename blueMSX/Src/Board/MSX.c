@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-02-13 11:14:57 $
+** $Date: 2005-02-13 21:19:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -734,6 +734,11 @@ static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
 {
     static UInt8 mappedRAM[0x10000];
     DbgRegisterBank* regBank;
+    int i;
+
+    for (i = 0; i < 0x10000; i++) {
+        slotPeek(NULL, i);
+    }
 
     dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, mappedRAM);
 
@@ -792,10 +797,10 @@ int msxCreate(Machine* machine,
 
     msxPPICreate();
     slotManagerCreate();
-
-    success = initMachine(machine, devInfo->video.vdpSyncMode);
     
     debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
+
+    success = initMachine(machine, devInfo->video.vdpSyncMode);
 
     for (i = 0; i < 2; i++) {
         if (devInfo->cartridge[i].inserted) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 11:14:59 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,7 +121,7 @@ int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     }
 
     rm->deviceHandle = deviceManagerRegister(RAM_NORMAL, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, NULL, NULL, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, NULL, NULL, NULL, destroy, rm);
 
     if (ramPtr != NULL) {
         *ramPtr = rm->ramData;

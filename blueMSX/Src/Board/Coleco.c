@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-02-07 02:27:35 $
+** $Date: 2005-02-13 21:19:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "R800Dasm.h"
 #include "R800SaveState.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "AudioMixer.h"
 #include "SaveState.h"
 #include "Led.h"
@@ -65,6 +66,7 @@ static UInt32          colecoRamSize;
 static UInt32          colecoVramSize;
 static int             useRom;
 static int             traceEnabled;
+static int             debugHandle;
 
 static UInt8 colecoMemory[0x10000];
 
@@ -356,6 +358,31 @@ void colecoStop() {
     r800StopExecution(r800);
 }
 
+static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, colecoMemory);
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
+
+    dbgRegisterBankAddRegister(regBank,  0, "AF",  16, r800->regs.AF.W);
+    dbgRegisterBankAddRegister(regBank,  1, "BC",  16, r800->regs.BC.W);
+    dbgRegisterBankAddRegister(regBank,  2, "DE",  16, r800->regs.DE.W);
+    dbgRegisterBankAddRegister(regBank,  3, "HL",  16, r800->regs.HL.W);
+    dbgRegisterBankAddRegister(regBank,  4, "AF1", 16, r800->regs.AF1.W);
+    dbgRegisterBankAddRegister(regBank,  5, "BC1", 16, r800->regs.BC1.W);
+    dbgRegisterBankAddRegister(regBank,  6, "DE1", 16, r800->regs.DE1.W);
+    dbgRegisterBankAddRegister(regBank,  7, "HL1", 16, r800->regs.HL1.W);
+    dbgRegisterBankAddRegister(regBank,  8, "IX",  16, r800->regs.IX.W);
+    dbgRegisterBankAddRegister(regBank,  9, "IY",  16, r800->regs.IY.W);
+    dbgRegisterBankAddRegister(regBank, 10, "SP",  16, r800->regs.SP.W);
+    dbgRegisterBankAddRegister(regBank, 11, "PC",  16, r800->regs.PC.W);
+    dbgRegisterBankAddRegister(regBank, 12, "I",   8,  r800->regs.I);
+    dbgRegisterBankAddRegister(regBank, 13, "R",   8,  r800->regs.R);
+    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
+}
+
 int colecoCreate(Machine* machine, 
                  DeviceInfo* devInfo,
                  int loadState)
@@ -388,6 +415,8 @@ int colecoCreate(Machine* machine,
 
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
+    
+    debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
 
     sn76489 = sn76489Create(boardGetMixer());
     success = colecoInitMachine(machine, devInfo->video.vdpSyncMode);
@@ -428,6 +457,8 @@ void colecoDestroy() {
 
     colecoJoyIoDestroy();
     sn76489Destroy(sn76489);
+
+    debugDeviceUnregister(debugHandle);
 
     deviceManagerDestroy();
     

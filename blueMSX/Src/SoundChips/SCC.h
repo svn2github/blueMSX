@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void sccSetMode(SCC* scc, SccMode newMode);
 
 /* Register read/write methods */
 UInt8 sccRead(SCC* scc, UInt8 address);
+UInt8 sccPeek(SCC* scc, UInt8 address);
 void sccWrite(SCC* scc, UInt8 address, UInt8 value);
 
 void sccLoadState(SCC* scc);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNationalFdc.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -102,6 +102,27 @@ static UInt8 read(RomMapperNationalFdc* rm, UInt16 address)
     return address < 0x4000 ? rm->romData[address] : 0xff;
 }
 
+static UInt8 peek(RomMapperNationalFdc* rm, UInt16 address) 
+{
+	switch (address & 0x3fc7) {
+	case 0x3f80:
+		return 0xff; // TODO Get from fdc
+	case 0x3f81:
+		return 0xff; // TODO Get from fdc
+	case 0x3f82:
+		return 0xff; // TODO Get from fdc
+	case 0x3f83:
+		return 0xff; // TODO Get from fdc
+	case 0x3f84:
+	case 0x3f85:
+	case 0x3f86:
+	case 0x3f87:
+		return 0xff; // TODO Get from fdc
+    }
+
+    return address < 0x4000 ? rm->romData[address] : 0xff;
+}
+
 static void write(RomMapperNationalFdc* rm, UInt16 address, UInt8 value) 
 {
 	switch (address & 0x3fc7) {
@@ -162,7 +183,7 @@ int romMapperNationalFdcCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperNationalFdc));
 
     rm->deviceHandle = deviceManagerRegister(ROM_NATIONALFDC, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

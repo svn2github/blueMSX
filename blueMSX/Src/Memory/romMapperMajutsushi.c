@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMajutsushi.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,7 +134,7 @@ int romMapperMajutsushiCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperMajutsushi));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MAJUTSUSHI, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

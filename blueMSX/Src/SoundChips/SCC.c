@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-08 00:48:08 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "SCC.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "DebugDeviceManager.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -50,6 +51,7 @@ struct SCC
 {
     Mixer* mixer;
     Int32  handle;
+    Int32  debugHandle;
     
     SccMode mode;
     UInt8 deformReg;
@@ -317,11 +319,25 @@ void sccSetMode(SCC* scc, SccMode newMode)
     scc->mode = newMode;
 }
 
+static void setDebugInfo(SCC* scc, DbgDevice* dbgDevice)
+{
+    static UInt8 ram[0x100];
+    int i;
+
+    for (i = 0; i < 0x100; i++) {
+        sccPeek(scc, i);
+    }
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "Memory", 0, 0x100, ram);
+}
+
 SCC* sccCreate(Mixer* mixer)
 {
     SCC* scc = (SCC*)calloc(1, sizeof(SCC));
 
     scc->mixer = mixer;
+
+    scc->debugHandle = debugDeviceRegister("SCC Sound Chip", setDebugInfo, scc);
 
     scc->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_SCC, 0, sccSync, scc);
 
@@ -332,6 +348,7 @@ SCC* sccCreate(Mixer* mixer)
 
 void sccDestroy(SCC* scc)
 {
+    debugDeviceUnregister(scc->debugHandle);
     mixerUnregisterChannel(scc->mixer, scc->handle);
     free(scc);
 }
@@ -390,6 +407,65 @@ UInt8 sccRead(SCC* scc, UInt8 address)
         
         if (address < 0xe0) {
             sccUpdateDeformation(scc, 0xff);
+            return 0xff;
+        }
+
+        return 0xff;
+    }
+
+    return 0xff;
+}
+
+UInt8 sccPeek(SCC* scc, UInt8 address)
+{
+    UInt8 result;
+
+    switch (scc->mode) {
+
+    case SCC_REAL:
+        if (address < 0x80) {
+            return sccGetWave(scc, address >> 5, address);
+        } 
+        
+        if (address < 0xa0) {
+            return sccGetFreqAndVol(scc, address);
+        } 
+        
+        if (address < 0xe0) {
+            return 0xff;
+        }
+
+        return 0xff;
+
+    case SCC_COMPATIBLE:
+        if (address < 0x80) {
+            return sccGetWave(scc, address >> 5, address);
+        } 
+        
+        if (address < 0xa0) {
+            return sccGetFreqAndVol(scc, address);
+        }
+        
+        if (address < 0xc0) {
+            result = sccGetWave(scc, 4, address);
+        } 
+
+        if (address < 0xe0) {
+            return 0xff;
+        }
+ 
+        result = 0xff;
+
+    case SCC_PLUS:
+        if (address < 0xa0) {
+            return sccGetWave(scc, address >> 5, address);
+        } 
+        
+        if (address < 0xc0) {
+            return sccGetFreqAndVol(scc, address);
+        } 
+        
+        if (address < 0xe0) {
             return 0xff;
         }
 

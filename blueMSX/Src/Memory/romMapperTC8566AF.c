@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -139,6 +139,32 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
     return 0xff;
 }
 
+static UInt8 peek(RomMapperTC8566AF* rm, UInt16 address) 
+{
+    address += 0x4000;
+
+	if ((address & 0x3fff) >= 0x3ff0) {
+		switch (address & 0x3FFF) {
+		case 0x3ff1:
+            return 0xff; // Get from fdc
+		case 0x3ff4:
+		case 0x3ffa:
+            return 0xff; // Get from fdc
+		case 0x3ff5:
+		case 0x3ffb:
+            return 0xff; // Get from fdc
+		default:
+			return 0xff;
+		}
+	} 
+   
+    if (address >= 0x4000 && address < 0x8000) {
+		return rm->romData[0x4000 * rm->romMapper[0] + (address & 0x3fff)];
+	} 
+
+    return 0xff;
+}
+
 static void write(RomMapperTC8566AF* rm, UInt16 address, UInt8 value) 
 {
     address += 0x4000;
@@ -178,7 +204,7 @@ int romMapperTC8566AFCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperTC8566AF));
 
     rm->deviceHandle = deviceManagerRegister(ROM_TC8566AF, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
     size = (size + 0x3fff) & ~0x3fff;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-08 00:48:08 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "AY8910.h"
 #include "IoPort.h"
 #include "SaveState.h"
+#include "DebugDeviceManager.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -54,6 +55,7 @@ static Int32* ay8910Sync(void* ref, UInt32 count);
 struct AY8910 {
     Mixer* mixer;
     Int32  handle;
+    Int32  debugHandle;
 
     AY8910ReadCb    ioPortReadCb;
     AY8910WriteCb   ioPortWriteCb;
@@ -164,6 +166,20 @@ void ay8910SaveState(AY8910* ay8910)
     saveStateClose(state);
 }
 
+static void setDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+    int i;
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "Registers", 16);
+
+    for (i = 0; i < 16; i++) {
+        char reg[4];
+        sprintf(reg, "R%d", i);
+        dbgRegisterBankAddRegister(regBank,  i, reg, 8, ay8910->regs[i]);
+    }
+}
+
 AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
 {
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
@@ -195,6 +211,8 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
         ioPortRegister(0x90, ay8910ReadData, NULL,               ay8910);
         break;
     }
+    
+    ay8910->debugHandle = debugDeviceRegister("AY8910 PSG Sound Chip", setDebugInfo, ay8910);
 
     return ay8910;
 }
@@ -213,6 +231,8 @@ void ay8910Reset(AY8910* ay8910)
 
 void ay8910Destroy(AY8910* ay8910)
 {
+    debugDeviceUnregister(ay8910->debugHandle);
+
     switch (ay8910->connector) {
     case AY8910_MSX:
         ioPortUnregister(0xa0);

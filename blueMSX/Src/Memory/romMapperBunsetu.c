@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBunsetu.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,19 @@ static UInt8 read(RomMapperBunsetu* rm, UInt16 address)
     return rm->romData[address - 0x4000];
 }
 
+static UInt8 peek(RomMapperBunsetu* rm, UInt16 address) 
+{
+    address += 0x4000;
+    
+    if (address == 0xbfff) {
+        if (rm->jisyoData) {
+            return rm->jisyoData[rm->address];
+        }
+    }
+    
+    return rm->romData[address - 0x4000];
+}
+
 static void write(RomMapperBunsetu* rm, UInt16 address, UInt8 value) 
 {
     address += 0x4000;
@@ -123,7 +136,7 @@ int romMapperBunsetuCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperBunsetu));
 
     rm->deviceHandle = deviceManagerRegister(ROM_BUNSETU, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

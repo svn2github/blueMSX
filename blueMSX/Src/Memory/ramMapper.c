@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-12 09:30:07 $
+** $Date: 2005-02-13 21:20:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -144,7 +144,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm->debugHandle = debugDeviceRegister("Main RAM", setDebugInfo, rm);
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, NULL, NULL, destroy, rm);
+    slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);
 
     for (i = 0; i < 4; i++) {
         slotMapPage(slot, sslot, 2 * i, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask), 1, 1);

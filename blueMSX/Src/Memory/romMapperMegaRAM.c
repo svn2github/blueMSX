@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaRAM.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 21:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -160,7 +160,7 @@ int romMapperMegaRAMCreate(int size, int slot, int sslot, int startPage)
     rm = malloc(sizeof(RomMapperMegaRAM));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MEGARAM, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 8, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 8, NULL, NULL, write, destroy, rm);
 
     rm->ramData = malloc(size);
     memset(rm->ramData, 0xff, size);
