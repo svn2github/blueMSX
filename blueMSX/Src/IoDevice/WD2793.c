@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 09:22:30 $
+** $Date: 2005-02-06 20:15:58 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -105,6 +105,7 @@ static void wd2793ReadSector(WD2793* wd)
 
     if (wd->drive >= 0) {
 		rv = diskReadSector(wd->drive, wd->sectorBuf, wd->regSector, wd->diskSide, wd->diskTrack, wd->diskDensity, &sectorSize);
+        boardSetFdcActive();
     }
     if (!rv || wd->diskTrack != wd->regTrack) {
 	    wd->regStatus |= ST_RECORD_NOT_FOUND;
@@ -123,9 +124,7 @@ static void wd2793ReadSector(WD2793* wd)
 static void sync(WD2793* wd)
 {
     if (wd->step) {
-	    const UInt64 timePerStepEnable[4] = { 200, 100, 66, 50 };
-        const UInt64 timePerStepDisable[4] = { 0, 0, 0, 0 };
-        const UInt64* timePerStep = boardGetFdcTimingEnable() ? timePerStepEnable : timePerStepDisable;
+        const UInt64 timePerStep[4] = { 200, 100, 66, 50 };
 
         UInt32 steps = (UInt32)(timePerStep[wd->regCommand & 3] * (boardSystemTime() - wd->stepTime) / boardFrequency());
 
@@ -316,7 +315,7 @@ int wd2793GetDataRequest(WD2793* wd)
 {
     sync(wd);
 	if (((wd->regCommand & 0xF0) == 0xF0) && ((wd->regStatus & ST_BUSY) || wd->dataReady)) {
-        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 5) + (boardGetFdcTimingEnable() ? 0 : 2);
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 5);
 		if (wd->dataReady) {
 			wd->dataRequest = 1;
 		} 
@@ -333,7 +332,7 @@ int wd2793GetDataRequest(WD2793* wd)
 	}
 
     if ((wd->regCommand & 0xe0) == 0x80 && (wd->regStatus & ST_BUSY)) {
-        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 25) + (boardGetFdcTimingEnable() ? 0 : 2);
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 25);
 		if (wd->dataReady) {
 			wd->dataRequest = 1;
 		}
@@ -413,6 +412,7 @@ void wd2793SetDataReg(WD2793* wd, UInt8 value)
             if (wd->drive >= 0) {
                 wd->dataRequsetTime = boardSystemTime();
                 rv = diskWriteSector(wd->drive, wd->sectorBuf, wd->regSector, wd->diskSide, wd->diskTrack, wd->diskDensity);
+                boardSetFdcActive();
             }
 			wd->sectorOffset  = 0;
             wd->dataAvailable = diskGetSectorSize(wd->drive, wd->diskSide, wd->diskTrack, wd->diskDensity);

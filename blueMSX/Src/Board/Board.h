@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-06 19:33:50 $
+** $Date: 2005-02-06 20:15:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,6 +130,7 @@ void boardSetDirectory(char* dir);
 
 void boardSetFdcTimingEnable(int enable);
 int  boardGetFdcTimingEnable();
+void boardSetFdcActive();
 
 void boardSetYm2413Oversampling(int value);
 int  boardGetYm2413Oversampling();

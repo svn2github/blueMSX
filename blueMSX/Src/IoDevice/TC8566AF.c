@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-13 02:04:47 $
+** $Date: 2005-02-06 20:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -285,6 +285,7 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                 int sectorSize;
         		int rv = diskReadSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
                                         tc->currentTrack, 0, &sectorSize);
+                boardSetFdcActive();
                 if (!rv) {
                     tc->status0 |= ST0_IC0;
                     tc->status1 |= ST1_ND;
@@ -405,6 +406,7 @@ static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
     		if (tc->sectorOffset == 512) {
                 diskWriteSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
                                 tc->currentTrack, 0);
+                boardSetFdcActive();
 
                 tc->phase       = PHASE_RESULT;
                 tc->phaseStep   = 0;
@@ -422,6 +424,7 @@ static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
             memset(tc->sectorBuf, 0, 512);
             diskWrite(tc->drive, tc->sectorBuf, tc->sectorNumber - 1 +
                       diskGetSectorsPerTrack(tc->drive) * (tc->currentTrack * diskGetSides(tc->drive) + value));
+            boardSetFdcActive();
             break;
         case 2:
             tc->sectorNumber = value;
@@ -465,16 +468,11 @@ UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
 {
     switch (reg) {
     case 4: 
-        if (boardGetFdcTimingEnable()) {
-            if (~tc->mainStatus & STM_RQM) {
-                UInt32 elapsed = boardSystemTime() - tc->dataTransferTime;
-                if (elapsed > boardFrequency() * 60 / 1000000) {
-                    tc->mainStatus |= STM_RQM;
-                } 
-            }
-        }
-        else {
-            tc->mainStatus |= STM_RQM;
+        if (~tc->mainStatus & STM_RQM) {
+            UInt32 elapsed = boardSystemTime() - tc->dataTransferTime;
+            if (elapsed > boardFrequency() * 60 / 1000000) {
+                tc->mainStatus |= STM_RQM;
+            } 
         }
         return tc->mainStatus;
 

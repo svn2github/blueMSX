@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-06 19:33:50 $
+** $Date: 2005-02-06 20:15:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,11 +48,10 @@ extern void PatchReset(BoardType boardType);
 static int boardType;
 static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
+static int (*syncVideo)(int) = NULL;
 UInt32* boardSysTime;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
-
-static int    (*sync)(int)                                    = NULL;
 
 static void   (*initStatistics)(Machine*)                     = msxInitStatistics;
 static void   (*softReset)()                                  = msxReset;
@@ -177,13 +176,37 @@ static void boardSetType(BoardType type)
     PatchReset(boardType);
 }
 
+static int fdcTimingEnable = 1;
+static int fdcActive       = 0;
+static BoardTimer* fdcTimer;
+
+int boardGetFdcTimingEnable() {
+    return fdcTimingEnable;
+}
+
+void boardSetFdcTimingEnable(int enable) {
+    fdcTimingEnable = enable;
+}
+
+void boardSetFdcActive() {
+    if (!fdcTimingEnable) {
+        boardTimerAdd(fdcTimer, boardSystemTime() + (UInt32)((UInt64)500 * boardFrequency() / 1000));
+        fdcActive = 1;
+    }
+}
+
+static void onFdcDone(void* ref, UInt32 time)
+{
+    fdcActive = 0;
+}
+
 static void onSync(void* ref, UInt32 time)
 {
     BoardTimer* timer = (BoardTimer*)ref;
     int execTime = 0;
 
     while (execTime == 0) {
-        execTime = sync(0);
+        execTime = syncVideo(fdcActive);
 
         if (execTime < 0) {
             stop();
@@ -207,7 +230,7 @@ int boardRun(Machine* machine,
     int success;
     boardSetType(machine->board.type);
 
-    sync = videoSync;
+    syncVideo = videoSync;
 
     videoManagerReset();
 
@@ -236,11 +259,13 @@ int boardRun(Machine* machine,
     success = create(machine, deviceInfo, loadState, frequency);
     if (success) {
         BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        fdcTimer = boardTimerCreate(onFdcDone, NULL);
         
         boardTimerAdd(timer, boardSystemTime() + 1);
 
         run();
 
+        boardTimerDestroy(fdcTimer);
         boardTimerDestroy(timer);
     }
 
@@ -538,7 +563,6 @@ void boardInit(UInt32* systemTime)
 // Not board specific stuff....
 
 static char baseDirectory[512];
-static int fdcTimingEnable       = 1;
 static int oversamplingYM2413    = 1;
 static int oversamplingY8950     = 1;
 static int oversamplingMoonsound = 1;
@@ -552,14 +576,6 @@ char* boardGetBaseDirectory() {
 
 void boardSetDirectory(char* dir) {
     strcpy(baseDirectory, dir);
-}
-
-int boardGetFdcTimingEnable() {
-    return fdcTimingEnable;
-}
-
-void boardSetFdcTimingEnable(int enable) {
-    fdcTimingEnable = enable;
 }
 
 void boardSetYm2413Oversampling(int value) {
