@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2005-02-11 04:30:26 $
+** $Date: 2005-02-12 03:36:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -302,7 +302,7 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
 
     if (buf != NULL) {
         MediaType* mediaType = mediaDbLookupRom(buf, size);
-        RomType romType = mediaType != NULL ? mediaType->romType : ROM_UNKNOWN;
+        RomType romType = mediaType != NULL ? mediaDbGetRomType(mediaType) : ROM_UNKNOWN;
         int idx = 0;
 
         while (romTypeList[idx] != romType) {

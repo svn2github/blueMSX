@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-11 04:30:27 $
+** $Date: 2005-02-12 03:36:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1033,8 +1033,8 @@ static void setEditProps(HWND hDlg, char* fileName)
 
     if (buf != NULL) {
         MediaType* mediaType = mediaDbLookupRom(buf, size);
-        if (mediaType != NULL && mediaType->romType != ROM_UNKNOWN) {
-            editSlotInfo.romType = mediaType->romType;
+        if (mediaType != NULL && mediaDbGetRomType(mediaType) != ROM_UNKNOWN) {
+            editSlotInfo.romType = mediaDbGetRomType(mediaType);
         }
 
         free(buf);
