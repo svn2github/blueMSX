@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-21 12:42:09 $
+** $Date: 2005-01-27 01:05:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,12 +28,15 @@
 ******************************************************************************
 */
 #include "I8250.h"
+#include "ArchUart.h"
 #include "SaveState.h"
 #include <stdlib.h>
 
 #define LCR_DIVISOR_LATCH_ACCESS_BIT 0x80
 #define LSR_DATA_READY 0x01
+#define LSR_OVERRUN_ERROR 0x02
 #define LSR_TRANSMITTER_HOLDING_REGISTER_EMPTY 0x20
+#define LSR_TRANSMITTER_EMPTY 0x40
 #define MCR_LOOPBACK_TEST 0x10
 
 typedef enum { I8250PORT_RBR_THR_DLL, I8250PORT_IER_DLM, I8250PORT_IIR, I8250PORT_LCR,
@@ -96,7 +99,7 @@ I8250* i8250Create(I8250Read readRBR_DLL, I8250Write writeTHR_DLL,
     i8250->readMSR      = readMSR      ? readMSR      : readDummy;
     i8250->readSCR      = readSCR      ? readSCR      : readDummy;
     i8250->writeSCR     = writeSCR     ? writeSCR     : writeDummy;
-    i8250->ref      = ref;
+    i8250->ref          = ref;
 
     return i8250;
 }
@@ -110,24 +113,48 @@ void i8250Reset(I8250* i8250)
     i8250->reg[I8250REG_LSR] = 0x60;
 }
 
-void i8250Destroy(I8250* i8250) 
+void i8250Destroy(I8250* uart) 
 {
-    free(i8250);
+    free(uart);
 }
 
-void i8250LoadState(I8250* i8250)
+static void saveState(I8250* uart)
 {
+    SaveState* state = saveStateOpenForWrite("i8250");
+
+    saveStateClose(state);
 }
 
-void i8250SaveState(I8250* i8250)
+static void loadState(I8250* uart)
 {
+    SaveState* state = saveStateOpenForRead("i8250");
+
+    saveStateClose(state);
+}
+
+static void i8250Receive(I8250* i8250)
+{
+    if (archUartReady()) {
+        if (archUartReceiveStatus()) {
+    	    i8250->reg[I8250REG_RBR] = archUartReceive();
+            if(i8250->reg[I8250REG_LSR] & LSR_DATA_READY)
+                i8250->reg[I8250REG_LSR] |= LSR_OVERRUN_ERROR;
+            i8250->reg[I8250REG_LSR] |= LSR_DATA_READY;
+        }
+    }
+}
+
+static void i8250Transmit(I8250* i8250, UInt8 value)
+{
+    if (archUartReady()) {
+        archUartTransmit(value);
+        i8250->reg[I8250REG_LSR] &= ~LSR_TRANSMITTER_EMPTY;
+    }
 }
 
 UInt8 i8250Read(I8250* i8250, UInt16 port)
 {
     UInt8 value = 0xff;
-
-    port &= 0x7;
 
     switch (port) {
     case I8250PORT_RBR_THR_DLL:
@@ -137,7 +164,6 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
             value = i8250->reg[I8250REG_RBR];
             if(i8250->reg[I8250REG_LSR] & LSR_DATA_READY)
                 i8250->reg[I8250REG_LSR] &= ~LSR_DATA_READY;
-//          i8250ClearInt(n, COM_INT_PENDING_RECEIVED_DATA_AVAILABLE);
         }
         break;
 
@@ -150,7 +176,6 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
 
     case I8250PORT_IIR:
         value = i8250->reg[I8250REG_IIR];
-//      i8250ClearInt(n, COM_INT_PENDING_TRANSMITTER_HOLDING_REGISTER_EMPTY);
         break;
 
     case I8250PORT_LCR:
@@ -162,11 +187,11 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
         break;
 
     case I8250PORT_LSR:
+        i8250Receive(i8250);
         i8250->reg[I8250REG_LSR] |= LSR_TRANSMITTER_HOLDING_REGISTER_EMPTY;
         value = i8250->reg[I8250REG_LSR];
         if(i8250->reg[I8250REG_LSR] & 0x1f)
             i8250->reg[I8250REG_LSR] &= 0xe1; // Clear FE, PE and OE and BREAK bits
-//      i8250ClearInt(n, COM_INT_PENDING_RECEIVER_LINE_STATUS);
         break;
 
     case I8250PORT_MSR:
@@ -177,7 +202,6 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
         }
         value = i8250->reg[I8250REG_MSR];
         i8250->reg[I8250REG_MSR] &= 0xf0; // Reset delta values
-//      i8250ClearInt(n, COM_INT_PENDING_MODEM_STATUS_REGISTER);
         break;
 
     case I8250PORT_SCR:
@@ -190,15 +214,13 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
 
 void i8250Write(I8250* i8250, UInt16 port, UInt8 value)
 {
-    port &= 0x7;
-
     switch (port) {
     case I8250PORT_RBR_THR_DLL:
         if (i8250->reg[I8250REG_LCR] & LCR_DIVISOR_LATCH_ACCESS_BIT)
             i8250->reg[I8250REG_DLL] = value;
         else {
             i8250->reg[I8250REG_THR] = value;
-//          i8250ClearInt(n, COM_INT_PENDING_TRANSMITTER_HOLDING_REGISTER_EMPTY);
+            i8250Transmit(i8250, value);
         }
         break;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-01-26 22:01:45 $
+** $Date: 2005-01-27 01:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,8 +56,8 @@
 #include "romMapperPlain.h"
 #include "romMapperSvi328Prn.h"
 #include "romMapperSvi80Col.h"
+#include "romMapperSvi328Rs232.h"
 #include "svi328Fdc.h"
-// #include "I8250.h"
 
 /* Hardware */
 static Machine*        sviMachine;
@@ -309,33 +309,6 @@ void sviInitStatistics(Machine* machine)
     }
 }
 
-/*
-typedef struct {
-    int    deviceHandle;
-    I8250* i8250;
-} SviUART;
-
-SviUART* uart;
-
-static UInt8 rs232Read(SviUART* rs232, UInt16 ioPort)
-{
-    return i8250Read(rs232->i8250, ioPort - 0x28);
-}
-
-static void rs232Write(SviUART* rs232, UInt16 ioPort, UInt8 value)
-{
-    i8250Write(rs232->i8250, ioPort - 0x28, value);
-}
-static UInt8 modemRead(SviUART* modem, UInt16 ioPort)
-{
-    return i8250Read(modem->i8250, ioPort - 0x20);
-}
-
-static void modemWrite(SviUART* modem, UInt16 ioPort, UInt8 value)
-{
-    i8250Write(modem->i8250, ioPort - 0x20, value);
-}
-*/
 static int sviInitMachine(Machine* machine, 
                           Mixer* mixer,
                           VdpSyncMode vdpSyncMode)
@@ -418,6 +391,11 @@ static int sviInitMachine(Machine* machine,
             continue;
         }
 
+        if (machine->slotInfo[i].romType == ROM_SVI328RS232) {
+            success &= romMapperSvi328Rs232Create();
+            continue;
+        }
+
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {
@@ -447,38 +425,7 @@ static int sviInitMachine(Machine* machine,
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
     }
-/*
-uart = malloc(sizeof(SviUART));
-uart->i8250 = i8250Create(rs232Read , rs232Write ,
-                          rs232Read , rs232Write ,
-                          rs232Read ,
-                          rs232Read , rs232Write ,
-                          rs232Read , rs232Write ,
-                          rs232Read ,
-                          rs232Read ,
-                          rs232Read , rs232Write ,
-                          uart);
-// Modem
-ioPortRegister(0x20, modemRead, modemWrite, uart);
-ioPortRegister(0x21, modemRead, modemWrite, uart);
-ioPortRegister(0x22, modemRead, NULL,      uart);
-ioPortRegister(0x23, modemRead, modemWrite, uart);
-ioPortRegister(0x24, modemRead, modemWrite,  uart);
-ioPortRegister(0x25, modemRead, NULL,  uart);
-ioPortRegister(0x26, modemRead, NULL,  uart);
 
-// RS-232
-ioPortRegister(0x28, rs232Read, rs232Write, uart);
-ioPortRegister(0x29, rs232Read, rs232Write, uart);
-ioPortRegister(0x2A, rs232Read, NULL,      uart);
-ioPortRegister(0x2B, rs232Read, rs232Write, uart);
-ioPortRegister(0x2C, rs232Read, rs232Write,  uart);
-ioPortRegister(0x2D, rs232Read, NULL,  uart);
-ioPortRegister(0x2E, rs232Read, NULL,  uart);
-
-i8250Reset(uart);
-//i8250Destroy(uart);
-*/
     sviMemSetBank(0xDF);
     ledSetCapslock(0);
 

@@ -252,6 +252,9 @@
 					RelativePath="..\..\Src\Win32\Win32Timer.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32Uart.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32Window.c">
 				</File>
 				<File
@@ -311,6 +314,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32ThemeClassic.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Uart.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Window.h">
@@ -555,6 +561,9 @@
 					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.c">
 				</File>
 				<File
@@ -745,6 +754,9 @@
 					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.h">
 				</File>
 				<File
@@ -883,6 +895,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Disk.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\I8250.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\I8250.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\I8255.c">
@@ -1334,6 +1352,9 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchTimer.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchUart.h">
 			</File>
 		</Filter>
 		<Filter
