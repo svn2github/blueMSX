@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-19 14:31:14 $
+** $Date: 2005-01-19 17:10:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,15 +162,15 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
     if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000)
     {
         crtcMemWrite(address & 0xfff, value);
-//#ifdef _DEBUG
-//        address &= 0xfff;
-//        if (address < 0x800) {
-//            if (value < 0x5f) {
-//                value += 0x20;
-//                putchar(value);
-//            }
-//        }
-//#endif
+#ifdef _DEBUG
+        address &= 0xfff;
+        if (address < 0x800) {
+            if (value < 0x5f) {
+                value += 0x20;
+                putchar(value);
+            }
+        }
+#endif
     }
     else
         slotWrite(&ref, address, value);
