@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-03-07 06:22:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -619,6 +619,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_0x4000:
+        editSlotInfo.startPage = 2;
+        editSlotInfo.pageCount = 4;
+        break;
+
     case ROM_0xC000:
         editSlotInfo.startPage = 6;
         editSlotInfo.pageCount = 2;
@@ -884,6 +889,17 @@ static void setEditControls(HWND hDlg)
     case ROM_BASIC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x8000 - 0xBFFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
+    case ROM_0x4000:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        if (romPages > 6) romPages = 6;
+        {
+            char buffer[32];
+            sprintf(buffer, "%.4X - %.4X", 0x4000, 0x4000 + romPages * 0x2000 - 1);
+            SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), buffer);
+        }
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
