@@ -207,6 +207,9 @@
 #define IDD_SHORTCUTSCONFIG             125
 #define IDD_APEARANCE                   126
 
+#define IDD_BUTTON                      130
+#define IDD_DROPDOWN                    131
+
 #define IDC_JOY1                        1000
 #define IDC_JOY2                        1001
 #define IDC_CHARSET                     1002
@@ -512,6 +515,8 @@
 #define IDC_SCUTHOTKEYTEXT              2710
 #define IDC_SCUTREMOVE                  2711
 #define IDC_SCUTASSIGN                  2712
+
+#define IDC_CONTROL                     2800
 
 #define IDC_STATIC                      -1
 

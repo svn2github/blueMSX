@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-06 09:06:01 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,9 @@ void themeAddMeter(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigge
 
 void themeAddSlider(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
+void themeAddObject(Theme* theme, void* object, ThemeTrigger visible);
+
+void themeActivate(Theme* theme, void* window);
 void themeUpdate(Theme* theme, void* dc);
 void themeDraw(Theme* theme, void* dc);
 void themeMouseMove(Theme* theme, void* dc, int x, int y);

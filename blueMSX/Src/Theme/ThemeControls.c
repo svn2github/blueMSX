@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-07 07:47:27 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -812,3 +812,57 @@ int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y)
 
     return 1;
 }
+
+
+
+struct ActiveObject 
+{
+    char id[64];
+    int x;
+    int y;
+    int width;
+    int height;
+    void* object;
+};
+
+void* archObjectCreate(char* id, void* window, int x, int y, int width, int height);
+void archObjectDestroy(char* id, void* object);
+
+ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id)
+{
+    ActiveObject* activeObject = malloc(sizeof(ActiveObject));
+
+    strcpy(activeObject->id, id);
+    activeObject->x      = x;
+    activeObject->y      = y;
+    activeObject->width  = width;
+    activeObject->height = height;
+    activeObject->object = NULL;
+
+    return activeObject;
+}
+
+void activeObjectDestroy(ActiveObject* activeObject)
+{
+    activeObjectActivate(activeObject, NULL);
+    
+    free(activeObject);
+}
+
+void activeObjectActivate(ActiveObject* activeObject, void* window)
+{
+    if (window != NULL && activeObject->object == NULL) {
+        activeObject->object = archObjectCreate(activeObject->id, 
+                                                window, 
+                                                activeObject->x, 
+                                                activeObject->y, 
+                                                activeObject->width, 
+                                                activeObject->height);
+    }
+
+    if (window == NULL && activeObject->object != NULL) {
+        archObjectDestroy(activeObject->id, activeObject->object);
+        activeObject->object = NULL;
+    }
+}
+

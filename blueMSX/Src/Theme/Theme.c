@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-07 06:38:29 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #include "Theme.h"
 #include "Actions.h"
 
-typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_METER, ITEM_SLIDER } ItemType;
+typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_METER, ITEM_SLIDER, ITEM_OBJECT } ItemType;
 
 struct ThemeItem {
     ThemeItem*   next;
@@ -311,6 +311,11 @@ void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeT
     themeAddLast(theme, ITEM_DUALBUTTON, object, trigger, visible);
 }
 
+void themeAddObject(Theme* theme, void* object, ThemeTrigger visible)
+{
+    themeAddLast(theme, ITEM_OBJECT, object, THEME_TRIGGER_NONE, visible);
+}
+
 void themeMouseMove(Theme* theme, void*  dc, int x, int y)
 {
     ThemeItem* item;
@@ -458,7 +463,17 @@ void themeDraw(Theme* theme, void*  dc)
     }
 }
 
-void themeUpdate(Theme* theme, void*  dc)
+void themeActivate(Theme* theme, void* window)
+{
+    ThemeItem* item;
+    for (item = theme->itemList; item != NULL; item = item->next) {
+        if (item->type == ITEM_OBJECT) {
+            activeObjectActivate(item->object, window);
+        }
+    }
+}
+
+void themeUpdate(Theme* theme, void* dc)
 {
     ThemeItem* item;
     int redraw = 0;
@@ -471,7 +486,6 @@ void themeUpdate(Theme* theme, void*  dc)
 
     for (item = theme->itemList; item != NULL; item = item->next) {
         int   visible = actionTypeToInt(item->visible);
-
         if (visible == -1) {
             continue;
         }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-07 06:38:30 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -480,6 +480,10 @@ void themeSet(char* themeName, int forceMatch) {
         return;
     }
 
+    if (st.themeActive) {
+        themeActivate(st.themeActive, NULL);
+    }
+
     setClipRegion(0);
     st.themeIndex = index;
     strcpy(pProperties->settings.themeName, themeName);
@@ -504,6 +508,10 @@ void themeSet(char* themeName, int forceMatch) {
             break;
         }
         break;
+    }
+
+    if (st.themeActive) {
+        themeActivate(st.themeActive, st.hwnd);
     }
 
     if (st.hBitmap) {
@@ -3301,4 +3309,358 @@ int themeTriggerKeyEdit(int keyCode) {
 
 int themeTriggerKeyConfigured(int keyCode) {
     return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+///
+/// Theme objects
+
+
+//////////////////////////////////////////////////////////////////////////
+// Methods to manage object window data
+//
+#define OBJECT_ID_NONE                      0
+#define OBJECT_ID_BUTTON_OK                 1
+#define OBJECT_ID_BUTTON_CANCEL             2
+#define OBJECT_ID_BUTTON_SAVE               3
+#define OBJECT_ID_BUTTON_SAVEAS             4
+
+#define OBJECT_ID_DROPDOWN_KEYBOARDCONFIG   31
+#define OBJECT_ID_DROPDOWN_KEYBOARDTHEMES   32
+#define OBJECT_ID_DROPDOWN_MACHINECONFIG    33
+
+typedef struct {
+    HWND  hwnd;
+    int   id;
+    void* data;
+} WindowData;
+
+#define WINDOW_DATA_NO 256
+
+WindowData windowData[WINDOW_DATA_NO];
+
+void windowDataSet(HWND hwnd, int id, void* data)
+{
+    if (id != OBJECT_ID_NONE) {
+        int i;
+        for (i = 0; i < WINDOW_DATA_NO - 1; i++) {
+            if (windowData[i].hwnd == hwnd || windowData[i].hwnd == NULL) {
+                windowData[i].hwnd = hwnd;
+                windowData[i].id   = id;
+                windowData[i].data = data;
+                return;
+            }
+        }
+    }
+    else {
+        int i;
+        for (i = 0; windowData[i].hwnd != NULL; i++) {
+            if (windowData[i].hwnd == hwnd) {
+                while (windowData[i + 1].hwnd != NULL) {
+                    windowData[i] = windowData[i + 1];
+                    i++;
+                }
+                return;
+            }
+        }
+    }
+}
+
+void* windowDataGet(HWND hwnd)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (windowData[i].hwnd == hwnd) {
+            return windowData[i].data;
+        }
+    }
+    return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Methods for parent window to control the child object windows
+//
+#define WM_OBJECT_CONTOL_BASE (WM_USER + 1400)
+
+#define WM_OBJECT_UPDATE                    (WM_OBJECT_CONTOL_BASE + 1)
+#define WM_OBJECT_SHOW                      (WM_OBJECT_CONTOL_BASE + 2)
+#define WM_OBJECT_ENABLE                    (WM_OBJECT_CONTOL_BASE + 3)
+
+void objectUpdate(HWND parent, int objectId)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
+            SendMessage(windowData[i].hwnd, WM_OBJECT_UPDATE, 0, 0);
+        }
+    }
+}
+
+void objectShow(HWND parent, int objectId, int show)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
+            SendMessage(windowData[i].hwnd, WM_OBJECT_SHOW, 0, show);
+        }
+    }
+}
+
+void objectEnable(HWND parent, int objectId, int enable)
+{
+    int i;
+    for (i = 0; windowData[i].hwnd != NULL; i++) {
+        if (GetParent(windowData[i].hwnd) == parent && windowData[i].id == objectId) {
+            SendMessage(windowData[i].hwnd, WM_OBJECT_ENABLE, 0, enable);
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+#define WM_OBJECT_BASE              (WM_USER + 1500)
+
+#define WM_BUTTON_OK                (WM_OBJECT_BASE + 1)
+#define WM_BUTTON_CANCEL            (WM_OBJECT_BASE + 2)
+#define WM_BUTTON_SAVE              (WM_OBJECT_BASE + 3)
+#define WM_BUTTON_SAVEAS            (WM_OBJECT_BASE + 4)
+
+#define WM_DROPDOWN_KEYBOARDCONFIG  (WM_OBJECT_BASE + 31)
+#define WM_DROPDOWN_KEYBOARDTHEMES  (WM_OBJECT_BASE + 32)
+#define WM_DROPDOWN_MACHINECONFIG   (WM_OBJECT_BASE + 33)
+
+////////////////////////////////////////////////////////////////////////
+///
+/// Button object windows
+///
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    char* text;
+    int objectId;
+    int notifyId;
+} ButtonInfo;
+
+static BOOL CALLBACK buttonProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static ButtonInfo* oi;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        oi = (ButtonInfo*)lParam;
+        SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
+        SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, oi->height, SWP_NOZORDER);
+        SetWindowText(GetDlgItem(hwnd, IDC_CONTROL), oi->text);
+        windowDataSet(hwnd, oi->objectId, (void*)oi->notifyId);
+        return FALSE;
+    case WM_COMMAND:
+        if (wParam == IDC_CONTROL) {
+            SendMessage(GetParent(hwnd), (UINT)windowDataGet(hwnd), 0, 0);
+        }
+        return TRUE;
+    case WM_CLOSE:
+        windowDataSet(hwnd, 0, NULL);
+        break;
+    case WM_OBJECT_SHOW:
+        ShowWindow(hwnd, lParam);
+        break;
+    case WM_OBJECT_ENABLE:
+        EnableWindow(hwnd, lParam);
+        break;
+    }
+    return FALSE;
+}
+
+void* objectButtonCreate(HWND hwnd, char* id, int x, int y, int width, int height)
+{
+    ButtonInfo oi = { x, y, width, height, NULL, 0, 0};
+    
+    if (0 == strcmp(id, "button-ok")) {
+        oi.text     = langDlgOK();
+        oi.objectId = OBJECT_ID_BUTTON_OK;
+        oi.notifyId = WM_BUTTON_OK;
+    }
+    if (0 == strcmp(id, "button-cancel")) {
+        oi.text = langDlgCancel();
+        oi.objectId = OBJECT_ID_BUTTON_CANCEL;
+        oi.notifyId = WM_BUTTON_CANCEL;
+    }
+    if (0 == strcmp(id, "button-save")) {
+        oi.text = langDlgSave();
+        oi.objectId = OBJECT_ID_BUTTON_SAVE;
+        oi.notifyId = WM_BUTTON_SAVE;
+    }
+    if (0 == strcmp(id, "button-saveas")) {
+        oi.text = langDlgSaveAs();
+        oi.objectId = OBJECT_ID_BUTTON_SAVEAS;
+        oi.notifyId = WM_BUTTON_SAVEAS;
+    }
+    
+    if (oi.objectId == 0) {
+        return NULL;
+    }
+
+    return CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_BUTTON), hwnd, buttonProc, (LPARAM)&oi);
+}
+
+void objectButtonDestroy(void* object) 
+{
+    DestroyWindow((HWND)object);
+}
+
+////////////////////////////////////////////////////////////////////////
+///
+/// Dropdown object windows
+///
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int objectId;
+    int notifyId;
+    char text[64];
+} DropdownInfo;
+
+static void updateMachineConfigs(HWND hDlg, char* text) 
+{
+}
+
+static void updateKeyConfigs(HWND hDlg, char* text) 
+{
+}
+
+static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static DropdownInfo* oi;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        oi = (DropdownInfo*)lParam;
+        SetWindowPos(hwnd, NULL, oi->x, oi->y, oi->width, oi->height, SWP_NOZORDER | SWP_SHOWWINDOW);
+        SetWindowPos(GetDlgItem(hwnd, IDC_CONTROL), NULL, 0, 0, oi->width, 96, SWP_NOZORDER);
+        windowDataSet(hwnd, oi->objectId, oi);
+        SendMessage(hwnd, WM_OBJECT_UPDATE, 0, 0);
+        return FALSE;
+    case WM_COMMAND:
+        if (wParam == IDC_CONTROL) {
+            static int isChanging = 0;
+            if (isChanging == 0 && HIWORD(wParam) == CBN_SELCHANGE) {
+                char sel[64];
+                int idx;
+                int rv;
+
+                isChanging = 1;
+
+                idx = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETCURSEL, 0, 0);
+                rv = SendMessage(GetDlgItem(hwnd, IDC_CONTROL), CB_GETLBTEXT, idx, (LPARAM)sel);
+                if (rv != CB_ERR) {
+                    oi = (DropdownInfo*)windowDataGet(hwnd);
+                    SendMessage(GetParent(hwnd), (UINT)oi->notifyId, 0, (LPARAM)sel);
+                }
+                isChanging = 0;
+            }
+        }
+        return TRUE;
+    case WM_CLOSE:
+        windowDataSet(hwnd, 0, NULL);
+        break;
+    case WM_OBJECT_UPDATE:
+        while (CB_ERR != SendDlgItemMessage(hwnd, IDC_CONTROL, CB_DELETESTRING, 0, 0));
+
+        oi = (DropdownInfo*)windowDataGet(hwnd);
+
+        SendMessage(GetParent(hwnd), (UINT)oi->notifyId, 0, (LPARAM)oi->text);
+
+        {
+            char** items = { NULL };
+            int index = 0;
+
+            switch (oi->objectId) {
+            case OBJECT_ID_DROPDOWN_MACHINECONFIG:
+                items = machineGetAvailable(0);
+                break;
+            case OBJECT_ID_DROPDOWN_KEYBOARDCONFIG:
+                items = keyboardGetAvailable();
+                break;
+            case OBJECT_ID_DROPDOWN_KEYBOARDTHEMES:
+                break;
+            }
+
+            while (*items != NULL) {
+                SendDlgItemMessage(hwnd, IDC_CONTROL, CB_ADDSTRING, 0, (LPARAM)*items);
+
+                if (index == 0 || 0 == strcmp(*items, oi->text)) {
+                    SendDlgItemMessage(hwnd, IDC_CONTROL, CB_SETCURSEL, index, 0);
+                }
+                items++;
+                index++;
+            }
+        }
+        break;
+    case WM_OBJECT_SHOW:
+        ShowWindow(hwnd, lParam);
+        break;
+    case WM_OBJECT_ENABLE:
+        EnableWindow(hwnd, lParam);
+        break;
+    }
+    return FALSE;
+}
+
+void* objectDropdownCreate(HWND hwnd, char* id, int x, int y, int width, int height)
+{
+    DropdownInfo oi = { x, y, width, height, 0, 0 };
+
+    if (0 == strcmp(id, "dropdown-keyconfigs")) {
+        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDCONFIG;
+        oi.notifyId = WM_DROPDOWN_KEYBOARDCONFIG;
+    }
+    if (0 == strcmp(id, "dropdown-keyboardthemes")) {
+        oi.objectId = OBJECT_ID_DROPDOWN_KEYBOARDTHEMES;
+        oi.notifyId = WM_DROPDOWN_KEYBOARDTHEMES;
+    }
+    
+    if (0 == strcmp(id, "dropdown-machineconfigs")) {
+        oi.objectId = OBJECT_ID_DROPDOWN_MACHINECONFIG;
+        oi.notifyId = WM_DROPDOWN_MACHINECONFIG;
+    }
+    
+    if (oi.objectId == 0) {
+        return NULL;
+    }
+
+    return CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DROPDOWN), hwnd, dropdownProc, (LPARAM)&oi);
+}
+
+void objectDropdownDestroy(void* object) 
+{
+    DestroyWindow((HWND)object);
+}
+
+////////////////////////////////////////////////////////////////////////
+
+void* archObjectCreate(char* id, void* window, int x, int y, int width, int height)
+{
+    if (0 == strncmp(id, "button-", 7)) {
+        return objectButtonCreate(window, id, x, y, width, height);
+    }
+    if (0 == strncmp(id, "dropdown-", 9)) {
+        return objectDropdownCreate(window, id, x, y, width, height);
+    }
+    return NULL;
+}
+
+void archObjectDestroy(char* id, void* object)
+{
+    if (0 == strncmp(id, "button-", 7)) {
+        objectButtonDestroy(object);
+    }
+    if (0 == strncmp(id, "dropdown-", 9)) {
+        objectDropdownDestroy(object);
+    }
 }

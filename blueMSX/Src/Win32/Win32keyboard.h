@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-01-09 09:04:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,10 @@
 
 int inputInit(HWND hwnd);
 void inputDestroy(void);
+
+int keyboardLoadConfig(char* configName);
+void keyboardSaveConfig(char* configName);
+char** keyboardGetAvailable();
 
 void keyboardEnable(int enable);
 void keyboardUpdate();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-08 19:56:33 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -579,6 +579,31 @@ static void addKeyButton(Theme* theme, TiXmlElement* el)
 }
 
 
+static void addObject(Theme* theme, TiXmlElement* el)
+{
+    int x = 0;
+    int y = 0;
+    int width = -1;
+    int height = -1;
+
+    el->QueryIntAttribute("x", &x);
+    el->QueryIntAttribute("y", &y);
+    el->QueryIntAttribute("width", &width);
+    el->QueryIntAttribute("height", &height);
+    
+    const char* id = el->Attribute("id");
+    if (id == NULL) {
+        return;
+    }
+
+    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
+    if (visible == -1) {
+        visible = THEME_TRIGGER_NONE;
+    }
+
+    themeAddObject(theme, activeObjectCreate(x, y, width, height, id), visible);
+}
+
 static void addText(Theme* theme, TiXmlElement* el)
 {
     int x, y, cols;
@@ -753,6 +778,9 @@ static Theme* loadTheme(TiXmlElement* root, ThemeInfo themeInfo)
             }
             if (strcmp(infoEl->Value(), "slider") == 0) {
                 addSlider(theme, infoEl);
+            }
+            if (strcmp(infoEl->Value(), "object") == 0) {
+                addObject(theme, infoEl);
             }
         }
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-07 06:38:30 $
+** $Date: 2005-01-09 09:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,5 +106,10 @@ int activeSliderDown(ActiveSlider* activeSlider, int x, int y);
 int activeSliderUp(ActiveSlider* activeSlider, int x, int y);
 int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y);
 
+typedef struct ActiveObject ActiveObject;
+
+ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char* id);
+void activeObjectDestroy(ActiveObject* activeObject);
+void activeObjectActivate(ActiveObject* activeObject, void* window);
 
 #endif

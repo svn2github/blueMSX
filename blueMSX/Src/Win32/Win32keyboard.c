@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-05 00:50:50 $
+** $Date: 2005-01-09 09:04:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -618,42 +618,6 @@ void keyboardHanldeKeypress(int code, int pressed) {
     }
 }
 
-#if 0
-
-void keyboardUpdate()
-{
-#define DINPUT_BUFFERSIZE 256
-    DIDEVICEOBJECTDATA rgod[DINPUT_BUFFERSIZE];
-    DWORD itemcount = DINPUT_BUFFERSIZE;
-    HRESULT rv;
-
-    do {
-        rv = IDirectInputDevice_GetDeviceData(kbdDevice, sizeof(DIDEVICEOBJECTDATA), rgod, &itemcount, 0);
-        if (rv == DIERR_INPUTLOST || rv == DIERR_NOTACQUIRED) {
-            keyboardEnable(1);
-        }
-    } while (rv == DIERR_INPUTLOST);
-
-    if (rv == DI_OK || rv == DI_BUFFEROVERFLOW) {
-        DWORD i = 0;
-        kbdModifiers = 0;
-        for (i = 0; i < itemcount; i++) {
-            int keyCode = rgod[i].dwOfs;
-            
-            if (keyCode == DIK_LSHIFT   || keyCode == DIK_RSHIFT   || 
-                keyCode == DIK_LCONTROL || keyCode == DIK_RCONTROL || 
-                keyCode == DIK_LALT     || keyCode == DIK_RALT     || 
-                keyCode == DIK_LWIN     || keyCode == DIK_RWIN) 
-            {
-                kbdModifiers = 1;
-            }
-            keyboardHanldeKeypress(rgod[i].dwOfs, (rgod[i].dwData & 0x80));
-        }
-    }
-}    
-
-#else
-
 void keyboardUpdate() 
 { 
     if (!GetFocus()) {
@@ -709,4 +673,54 @@ void keyboardUpdate()
                    (GetAsyncKeyState(VK_LWIN)    > 1UL ? KBD_LWIN     : 0) |
                    (GetAsyncKeyState(VK_RWIN)    > 1UL ? KBD_RWIN     : 0);
 } 
-#endif
+
+char** keyboardGetAvailable()
+{
+    static char* keyboardNames[256];
+    static char  names[256][64];
+	HANDLE       handle;
+	WIN32_FIND_DATA wfd;
+    int index = 0;
+    BOOL cont = TRUE;
+
+    handle = FindFirstFile("Keyboard/*", &wfd);
+
+    if (handle == INVALID_HANDLE_VALUE) {
+        keyboardNames[0] = NULL;
+        return keyboardNames;
+    }
+
+    while (cont) {
+        char fileName[128];
+
+		DWORD fa = GetFileAttributes(wfd.cFileName);
+        if (fa & FILE_ATTRIBUTE_DIRECTORY) {
+            FILE* file;
+		    sprintf(fileName, "Keyboard/%s/keymap.config", wfd.cFileName);
+            file = fopen(fileName, "rb");
+            if (file != NULL) {
+                strcpy(names[index], wfd.cFileName);
+                keyboardNames[index] = names[index];
+                index++;
+                fclose(file);
+            }
+            
+        }
+        cont = FindNextFile(handle, &wfd);
+    }
+
+	FindClose(handle);
+    
+    keyboardNames[index] = NULL;
+
+    return keyboardNames;
+}
+
+int keyboardLoadConfig(char* configName)
+{
+    return 1;
+}
+
+void keyboardSaveConfig(char* configName)
+{
+}
