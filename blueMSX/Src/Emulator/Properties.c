@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-13 22:35:01 $
+** $Date: 2004-12-24 08:32:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,7 +214,7 @@ void propInitDefaults(Properties* pProperties)
 
     pProperties->settings.disableScreensaver   = 0;
     if (GetSystemMetrics(SM_CYSCREEN) > 600) {
-        strcpy(pProperties->settings.themeName, "DIGIblue V2.0");
+        strcpy(pProperties->settings.themeName, "DIGIblue V2.1");
     }
     else {
         strcpy(pProperties->settings.themeName, "Classic");

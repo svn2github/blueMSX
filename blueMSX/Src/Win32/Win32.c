@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2004-12-17 18:14:31 $
+** $Date: 2004-12-24 08:32:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2544,6 +2544,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     resetRegistry = emuCheckResetArgument(szLine);
     propertiesInit(emuCheckIniFileArgument(szLine));
     pProperties = propCreate(resetRegistry);
+    pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
        
     if (resetRegistry == 2) {
         propDestroy(pProperties);
