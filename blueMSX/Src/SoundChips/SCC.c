@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-06 10:37:27 $
+** $Date: 2005-02-07 04:32:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -496,7 +496,7 @@ static Int32* sccSync(SCC* scc, UInt32 count)
     UInt32 index;
 
     for (channel = 0; channel < 5; channel++) {
-        newVolume[channel] = 15000 * 60 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
+        newVolume[channel] = 15000 * 72 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
         if (newVolume[channel] > scc->daVolume[channel]) {
             scc->daVolume[channel] = newVolume[channel];
         }
