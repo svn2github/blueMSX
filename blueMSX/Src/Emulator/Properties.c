@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-02-12 09:52:39 $
+** $Date: 2005-03-12 07:48:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,7 +261,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->video.gamma                 = 100;
     pProperties->video.scanlinesEnable       = 0;
     pProperties->video.colorSaturationEnable = 0;
-    pProperties->video.scanlinesPct          = 85;
+    pProperties->video.scanlinesPct          = 92;
     pProperties->video.colorSaturationWidth  = 2;
     pProperties->video.chipAutodetect        = 1;
 
