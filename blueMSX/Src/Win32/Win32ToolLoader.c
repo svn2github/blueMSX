@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-22 03:39:15 $
+** $Date: 2005-02-23 08:48:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -192,12 +192,30 @@ static Interface toolInterface = {
 
 void toolLoadAll(const char* path)
 {
-    int i;
-    for (i = 0; i < 1; i++) {
-        char* libPath = "Tools/DeviceViewer.dll";
+    WIN32_FIND_DATA wfd;
+    char  curDir[MAX_PATH];
+    char  toolDir[MAX_PATH] = "";
+    HANDLE handle;
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+    strcat(toolDir, curDir);
+    strcat(toolDir, "\\Tools");
+
+    if (!SetCurrentDirectory(toolDir)) {
+        return;
+    }
+
+    handle = FindFirstFile("*.dll", &wfd);
+
+    if (handle == INVALID_HANDLE_VALUE) {
+        SetCurrentDirectory(curDir);
+        return;
+    }
+
+    do {
         ToolInfo* toolInfo;
-        HINSTANCE lib;
-        lib = LoadLibrary(libPath);
+        HINSTANCE lib = LoadLibrary(wfd.cFileName);
+
         if (lib != NULL) {
             char description[32] = "Unknown";
             CreateFn create   = (CreateFn)GetProcAddress(lib, (LPCSTR)1);
@@ -231,7 +249,9 @@ void toolLoadAll(const char* path)
 
             toolList[toolListCount++] = toolInfo;
         }
-    }
+    } while (FindNextFile(handle, &wfd));
+
+    SetCurrentDirectory(curDir);
 }
 
 void toolUnLoadAll()

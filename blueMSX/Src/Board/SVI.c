@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-02-23 08:48:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -473,7 +473,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     int i;
 
     for (i = 0; i < 0x10000; i++) {
-        slotPeek(NULL, i);
+        mappedRAM[i] = slotPeek(NULL, i);
     }
 
     dbgDeviceAddMemoryBlock(dbgDevice, "Mapped Memory", 0, 0x10000, mappedRAM);
