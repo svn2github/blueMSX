@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2004-12-30 22:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,6 @@ struct YM_2413 {
     Mixer* mixer;
     Int32  handle;
 
-    Int32  Oversampling;
     Int32  deviceHandle;
     OpenYM2413 ym2413;
     UInt8  address;
@@ -59,6 +58,7 @@ struct YM_2413 {
     Int32  defaultBuffer[BUFFER_SIZE];
 };
 
+static int overSampling = 1;
 static YM_2413* theYm2413 = NULL;
 
 extern "C" {
@@ -143,27 +143,35 @@ static Int32* sync(void* ref, UInt32 count)
 
 void ym2413SetOversampling(int Oversampling)
 {
-    if (theYm2413 && Oversampling > 0) {
-        theYm2413->Oversampling = Oversampling;
-        
-        theYm2413->ym2413.setSampleRate(SAMPLERATE, theYm2413->Oversampling);
+    if (Oversampling > 0) {
+        overSampling = Oversampling;
+    }
+
+    if (theYm2413) {
+        theYm2413->ym2413.setSampleRate(SAMPLERATE, overSampling);
     }
 }
 
 int ym2413Create(Mixer* mixer)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
-    YM_2413* ym2413 = new YM_2413;
+    YM_2413* ym2413;
+    
+    if (theYm2413 != NULL) {
+        // The device is already initialized. But don't report an error
+        return 1;
+    }
+
+    ym2413 = new YM_2413;
 
     theYm2413 = ym2413;
 
     ym2413->mixer = mixer;
-    ym2413->Oversampling = 1;
     ym2413->deviceHandle = deviceManagerRegister(AUDIO_YM2413, &callbacks, ym2413);
 
     ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
 
-    ym2413->ym2413.setSampleRate(SAMPLERATE, ym2413->Oversampling);
+    ym2413->ym2413.setSampleRate(SAMPLERATE, overSampling);
 	ym2413->ym2413.setVolume(32767);
     
     ioPortRegister(0x7c, NULL, (IoPortWrite)ym2413WriteAddress, ym2413);

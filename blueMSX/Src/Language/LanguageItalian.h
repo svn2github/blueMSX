@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 22:48:37 $
+** $Date: 2004-12-30 22:53:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -535,6 +535,9 @@ void langInitItalian(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Cartuccia Sony HBI-55";
+    ls->propSndPcm              = " Turbo-R PCM";
+    ls->propSndAY8910           = " AY8910 PSG";
+    ls->propSndSN76489          = " SN76489 PSG";
 };
 
 #endif

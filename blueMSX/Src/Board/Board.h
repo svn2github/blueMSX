@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2004-12-30 22:53:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,7 +58,6 @@ typedef struct {
         int enableYM2413;
         int enableY8950;
         int enableMoonsound;
-        int moonsoundSRAM;
     } audio;
     struct {
         VdpSyncMode vdpSyncMode;

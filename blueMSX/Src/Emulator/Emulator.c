@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2004-12-30 22:53:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -233,7 +233,6 @@ static void getDeviceInfo(DeviceInfo* deviceInfo)
     properties->sound.chip.enableYM2413    = deviceInfo->audio.enableYM2413;
     properties->sound.chip.enableY8950     = deviceInfo->audio.enableY8950;
     properties->sound.chip.enableMoonsound = deviceInfo->audio.enableMoonsound;
-    properties->sound.chip.moonsoundSRAM   = deviceInfo->audio.moonsoundSRAM;
 
     properties->emulation.vdpSyncMode      = deviceInfo->video.vdpSyncMode;
 
@@ -277,7 +276,6 @@ static void setDeviceInfo(DeviceInfo* deviceInfo)
     deviceInfo->audio.enableYM2413    = properties->sound.chip.enableYM2413;
     deviceInfo->audio.enableY8950     = properties->sound.chip.enableY8950;
     deviceInfo->audio.enableMoonsound = properties->sound.chip.enableMoonsound;
-    deviceInfo->audio.moonsoundSRAM   = properties->sound.chip.moonsoundSRAM;
 
     /* Set video config */
     deviceInfo->video.vdpSyncMode     = properties->emulation.vdpSyncMode;

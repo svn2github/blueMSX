@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-28 05:09:08 $
+** $Date: 2004-12-30 22:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1437,6 +1437,10 @@ static BOOL CALLBACK extrasProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         SetWindowText(GetDlgItem(hDlg, IDC_CPUR800FREQTEXT),  langDlgChipR800FreqText());
         SetWindowText(GetDlgItem(hDlg, IDC_FDCNUMGROUPBOX),   langDlgChipFdcGB());
         SetWindowText(GetDlgItem(hDlg, IDC_FDCNUMDRIVESTEXT), langDlgChipFdcNumDrivesText());
+
+        SetWindowText(GetDlgItem(hDlg, IDC_CMOSGROUPBOX), langDlgCmosGB());
+        SetWindowText(GetDlgItem(hDlg, IDC_CMOSENABLE), langDlgCmosEnableText());
+        SetWindowText(GetDlgItem(hDlg, IDC_CMOSBATTERY), langDlgCmosBatteryText());
         SendMessage(hDlg, WM_UPDATEMAHCINE, 0, 0);
         return FALSE;
 
@@ -1460,6 +1464,13 @@ static BOOL CALLBACK extrasProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             case IDC_FDCNUMDRIVES:
                 change = getFdcCountList(hDlg);
                 break;
+            case IDC_CMOSENABLE:
+                machine->cmos.enable = getBtCheck(hDlg, IDC_CMOSENABLE);
+                EnableWindow(GetDlgItem(hDlg, IDC_CMOSBATTERY), machine->cmos.enable);
+                break;
+            case IDC_CMOSBATTERY:
+                machine->cmos.batteryBacked = getBtCheck(hDlg, IDC_CMOSBATTERY);
+                break;
             }
 
             if (change) {
@@ -1471,6 +1482,10 @@ static BOOL CALLBACK extrasProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_UPDATEMAHCINE:
         updateCpuFreqList(hDlg);
         updateFdcCountList(hDlg);
+        
+        setBtCheck(hDlg, IDC_CMOSENABLE, machine->cmos.enable, 1);
+        setBtCheck(hDlg, IDC_CMOSBATTERY, machine->cmos.batteryBacked, 1);
+        EnableWindow(GetDlgItem(hDlg, IDC_CMOSBATTERY), machine->cmos.enable);
         return TRUE;
     }
 
@@ -1543,11 +1558,9 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXMUSIC), langPropSndMsxMusicText());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXAUDIO), langPropSndMsxAudioText());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMOONSOUND), langPropSndMoonsound());
-
-        SetWindowText(GetDlgItem(hDlg, IDC_CMOSGROUPBOX), langDlgCmosGB());
-        SetWindowText(GetDlgItem(hDlg, IDC_CMOSENABLE), langDlgCmosEnableText());
-        SetWindowText(GetDlgItem(hDlg, IDC_CMOSBATTERY), langDlgCmosBatteryText());
-        
+        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEPCM), langPropSndPcm());
+        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEAY8910), langPropSndAY8910());
+        SetWindowText(GetDlgItem(hDlg, IDC_ENABLESN76489), langPropSndSN76489());
 
         SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"128 kB");
         SendDlgItemMessage(hDlg, IDC_MOONSOUNDSRAM, CB_ADDSTRING, 0, (LPARAM)"256 kB");
@@ -1600,12 +1613,14 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
             case IDC_ENABLEMOONSOUND:
                 machine->audio.enableMoonsound = getBtCheck(hDlg, IDC_ENABLEMOONSOUND);
                 break;
-            case IDC_CMOSENABLE:
-                machine->cmos.enable = getBtCheck(hDlg, IDC_CMOSENABLE);
-                EnableWindow(GetDlgItem(hDlg, IDC_CMOSBATTERY), machine->cmos.enable);
+            case IDC_ENABLEPCM:
+                machine->audio.enablePCM = getBtCheck(hDlg, IDC_ENABLEPCM);
                 break;
-            case IDC_CMOSBATTERY:
-                machine->cmos.batteryBacked = getBtCheck(hDlg, IDC_CMOSBATTERY);
+            case IDC_ENABLEAY8910:
+                machine->audio.enableAY8910 = getBtCheck(hDlg, IDC_ENABLEAY8910);
+                break;
+            case IDC_ENABLESN76489:
+                machine->audio.enableSN76489 = getBtCheck(hDlg, IDC_ENABLESN76489);
                 break;
             case IDC_CONF_VIDEOCHIP:
                 {
@@ -1660,10 +1675,9 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         setBtCheck(hDlg, IDC_ENABLEMSXMUSIC, machine->audio.enableYM2413, 1);
         setBtCheck(hDlg, IDC_ENABLEMSXAUDIO, machine->audio.enableY8950,  1);
         setBtCheck(hDlg, IDC_ENABLEMOONSOUND, machine->audio.enableMoonsound, 1);
-
-        setBtCheck(hDlg, IDC_CMOSENABLE, machine->cmos.enable, 1);
-        setBtCheck(hDlg, IDC_CMOSBATTERY, machine->cmos.batteryBacked, 1);
-        EnableWindow(GetDlgItem(hDlg, IDC_CMOSBATTERY), machine->cmos.enable);
+        setBtCheck(hDlg, IDC_ENABLEPCM, machine->audio.enablePCM, 1);
+        setBtCheck(hDlg, IDC_ENABLEAY8910, machine->audio.enableAY8910, 1);
+        setBtCheck(hDlg, IDC_ENABLESN76489, machine->audio.enableSN76489, 1);
         
         EnableWindow(GetDlgItem(hDlg, IDC_MOONSOUNDSRAM), machine->audio.enableMoonsound);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 22:48:37 $
+** $Date: 2004-12-30 22:53:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -247,6 +247,9 @@ typedef struct {
     _TCHAR* propSndMsxMusicText;
     _TCHAR* propSndMsxAudioText;
     _TCHAR* propSndMoonsound;
+    _TCHAR* propSndPcm;
+    _TCHAR* propSndAY8910;
+    _TCHAR* propSndSN76489;
     _TCHAR* propSndMsxMasterText;
 
     _TCHAR* propJoyPort1GB;

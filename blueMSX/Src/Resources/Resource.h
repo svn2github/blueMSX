@@ -426,13 +426,16 @@
 #define IDC_ENABLEMSXMUSIC              1360
 #define IDC_ENABLEMSXAUDIO              1361
 #define IDC_ENABLEMOONSOUND             1362
-#define IDC_MOONSOUNDSRAM               1363  
-#define IDC_OVERSAMPLETEXT1             1364
-#define IDC_OVERSAMPLETEXT2             1365
-#define IDC_OVERSAMPLETEXT3             1366
-#define IDC_OVERSAMPLEMSXMUSIC          1367
-#define IDC_OVERSAMPLEMSXAUDIO          1368
-#define IDC_OVERSAMPLEMOONSOUND         1369           
+#define IDC_ENABLEPCM                   1363
+#define IDC_ENABLEAY8910                1364
+#define IDC_ENABLESN76489               1365
+#define IDC_MOONSOUNDSRAM               1366  
+#define IDC_OVERSAMPLETEXT1             1367
+#define IDC_OVERSAMPLETEXT2             1368
+#define IDC_OVERSAMPLETEXT3             1369
+#define IDC_OVERSAMPLEMSXMUSIC          1370
+#define IDC_OVERSAMPLEMSXAUDIO          1371
+#define IDC_OVERSAMPLEMOONSOUND         1372           
 
 #define IDC_TAPEPOS                     1400
 #define IDC_TAPECUR                     1401

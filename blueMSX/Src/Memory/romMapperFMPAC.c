@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-30 22:53:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,8 @@
 #include "ioPort.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "YM2413.h"
+#include "Board.h"
 #include "SaveState.h"
 #include "sramLoader.h"
 #include <stdlib.h>
@@ -205,6 +207,8 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
 
     rm->deviceHandle = deviceManagerRegister(ROM_FMPAC, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 2, NULL, write, destroy, rm);
+
+    ym2413Create(boardGetMixer());
 
     memcpy(rm->romData, romData, 0x10000);
     memset(rm->sram, 0xff, 0x2000);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 22:48:36 $
+** $Date: 2004-12-30 22:53:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -498,6 +498,9 @@ _TCHAR* langPropSndStereoText() { return ls->propSndStereoText; }
 _TCHAR* langPropSndMsxMusicText() { return ls->propSndMsxMusicText; }
 _TCHAR* langPropSndMsxAudioText() { return ls->propSndMsxAudioText; }
 _TCHAR* langPropSndMoonsound() { return ls->propSndMoonsound; }
+_TCHAR* langPropSndPcm() { return ls->propSndPcm; }
+_TCHAR* langPropSndAY8910() { return ls->propSndAY8910; }
+_TCHAR* langPropSndSN76489() { return ls->propSndSN76489; }
 _TCHAR* langPropSndMasterText() { return ls->propSndMsxMasterText; }
 
 _TCHAR* langPropJoyPort1GB() { return ls->propJoyPort1GB; }

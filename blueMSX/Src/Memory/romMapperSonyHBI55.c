@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-30 01:20:05 $
+** $Date: 2004-12-30 22:53:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,8 +49,8 @@ typedef struct {
 
     UInt8  sram[0x1000];
     UInt8  mode;
-    int    writeLatch;
-    int    addrLatch;
+    UInt8  writeLatch;
+    UInt8  addrLatch;
     UInt16 readAddr;
     UInt16 writeAddr;
 } SonyHBI55;
@@ -114,12 +114,12 @@ static void saveState(SonyHBI55* rm)
 
 static void writeA(SonyHBI55* rm, UInt8 value)
 {
-	rm->addrLatch = (rm->addrLatch & 0xff00) | value; 
+	rm->addrLatch = value; 
 }
 
 static void writeB(SonyHBI55* rm, UInt8 value)
 {
-	UInt16 address = rm->addrLatch | ((value & 0x0f) << 8); 
+	UInt16 address = (UInt16)rm->addrLatch | ((value & 0x0f) << 8); 
 
     rm->mode = value >> 6;
 

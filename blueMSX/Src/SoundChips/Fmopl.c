@@ -23,8 +23,8 @@
 #define	PI 3.14159265358979323846
 #endif
 
-extern void	y8950TimerSet(int timer, int count);
-extern void	y8950TimerStart(int	timer, int start);
+extern void	y8950TimerSet(void* ref, int timer, int count);
+extern void	y8950TimerStart(void* ref, int timer, int start);
 
 /* --------------------	preliminary	define section --------------------- */
 /* attack/decay	rate time rate */
@@ -733,10 +733,10 @@ void OPLWriteReg(FM_OPL	*OPL, int r, int v)
 			}
 			return;
 		case 0x02:	/* Timer 1 */
-			y8950TimerSet(0, 1 * (256 -	v));
+			y8950TimerSet(OPL->ref, 0, 1 * (256 -	v));
 			break;
 		case 0x03:	/* Timer 2 */
-			y8950TimerSet(1, 4 * (256 -	v));
+			y8950TimerSet(OPL->ref, 1, 4 * (256 -	v));
 			return;
 		case 0x04:	/* IRQ clear / mask	and	Timer enable */
 			if(v&0x80)
@@ -749,8 +749,8 @@ void OPLWriteReg(FM_OPL	*OPL, int r, int v)
 				OPL_STATUS_RESET(OPL,v&0x78);
 				OPL_STATUSMASK_SET(OPL,((~v)&0x78)|0x01);
 
-				y8950TimerStart(0, v & 1);
-				y8950TimerStart(1, v & 2);
+				y8950TimerStart(OPL->ref, 0, v & 1);
+				y8950TimerStart(OPL->ref, 1, v & 2);
 			}
 			return;
 		case 0x06:		/* Key Board OUT */
@@ -1105,7 +1105,7 @@ void OPLSetOversampling(FM_OPL *OPL, int oversampling)
 
 /* ----------  Create one of vietual YM3812	----------		 */
 /* 'rate'  is sampling rate	and	'bufsiz' is	the	size of	the	 */
-FM_OPL *OPLCreate(int type,	int	clock, int rate, int sampleram)
+FM_OPL *OPLCreate(int type,	int	clock, int rate, int sampleram, void* ref)
 {
 	char *ptr;
 	FM_OPL *OPL;
@@ -1136,6 +1136,7 @@ FM_OPL *OPLCreate(int type,	int	clock, int rate, int sampleram)
 	YM_DELTAT_DECODE_PRESET(OPL->deltat);
 
 	/* set channel state pointer */
+    OPL->ref   = ref;
 	OPL->type  = type;
 	OPL->clock = clock;
 	OPL->rate  = rate;

@@ -81,6 +81,7 @@ typedef struct fm_opl_channel {
 
 /* OPL state */
 typedef struct fm_opl_f {
+    void* ref; /* Pointer to user data */
 	/* Delta-T ADPCM unit (Y8950) */
 	YM_DELTAT *deltat;			/* DELTA-T ADPCM       */
 	/* FM channel slots */
@@ -134,7 +135,7 @@ typedef struct fm_opl_f {
 #define OPL_TYPE_YM3812 (OPL_TYPE_WAVESEL)
 #define OPL_TYPE_Y8950  (OPL_TYPE_ADPCM|OPL_TYPE_KEYBOARD|OPL_TYPE_IO)
 
-FM_OPL *OPLCreate(int type, int clock, int rate, int sampleram);
+FM_OPL *OPLCreate(int type, int clock, int rate, int sampleram, void* ref);
 void OPLDestroy(FM_OPL *OPL);
 
 void OPLSetOversampling(FM_OPL *OPL, int oversampling);

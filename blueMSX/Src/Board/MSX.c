@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-28 22:48:33 $
+** $Date: 2004-12-30 22:53:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -301,7 +301,6 @@ static int initMachine(Machine* machine,
                        int enableYM2413,
                        int enableY8950,
                        int enableMoonsound,
-                       int moonsoundSRAM,
                        VdpSyncMode vdpSyncMode)
 {
     char cmosName[128];
@@ -666,7 +665,9 @@ static int initMachine(Machine* machine,
         success &= ym2413Create(mixer);
     }
 
-    success &= romMapperTurboRPcmCreate();
+    if (machine->audio.enablePCM) {
+        success &= romMapperTurboRPcmCreate();
+    }
 
     if (enableMoonsound) {
         buf = romLoad("Machines/Shared Roms/MOONSOUND.rom", NULL, &size);
@@ -674,7 +675,7 @@ static int initMachine(Machine* machine,
             buf = calloc(1, 0x200000);
         }
         if (buf != NULL) {
-            success &= moonsoundCreate(mixer, buf, size, moonsoundSRAM);
+            success &= moonsoundCreate(mixer, buf, size, machine->audio.moonsoundSRAM);
             free(buf);
         }
     }
@@ -759,8 +760,6 @@ int msxRun(Machine* machine,
     currentRomType[0] = ROM_UNKNOWN;
     currentRomType[1] = ROM_UNKNOWN;
 
-    ay8910    = ay8910Create(mixer, AY8910_MSX);
-
     msxPPICreate();
     slotManagerCreate();
 
@@ -768,10 +767,13 @@ int msxRun(Machine* machine,
                           devInfo->audio.enableYM2413, 
                           devInfo->audio.enableY8950, 
                           devInfo->audio.enableMoonsound,
-                          devInfo->audio.moonsoundSRAM,
                           devInfo->video.vdpSyncMode);
 
-    joyIO = joystickIoCreate(ay8910);
+
+    if (machine->audio.enableAY8910) {
+        ay8910 = ay8910Create(mixer, AY8910_MSX);
+        joyIO = joystickIoCreate(ay8910);
+    }
 
     for (i = 0; i < 2; i++) {
         if (devInfo->cartridge[i].inserted) {
@@ -804,9 +806,13 @@ int msxRun(Machine* machine,
         deviceManagerLoadState();
         slotLoadState();
         r800LoadState(r800);
-        joystickIoLoadState(joyIO);
+        if (joyIO != NULL) {
+            joystickIoLoadState(joyIO);
+        }
         rtcLoadState(rtc);
-        ay8910LoadState(ay8910);
+        if (ay8910 != NULL) {
+            ay8910LoadState(ay8910);
+        }
         vdpLoadState();
         tapeLoadState();
     }
@@ -850,9 +856,14 @@ int msxRun(Machine* machine,
 
     rtcDestroy(rtc);
 
-    joystickIoDestroy(joyIO);
-
-    ay8910Destroy(ay8910);
+    if (joyIO != NULL) {
+        joystickIoDestroy(joyIO);
+        joyIO = NULL;
+    }    
+    if (ay8910 != NULL) {
+        ay8910Destroy(ay8910);
+        ay8910 = NULL;
+    }
 
     msxChangeDiskette(0, NULL, NULL);
     msxChangeDiskette(1, NULL, NULL);
@@ -1090,7 +1101,6 @@ void msxSaveState()
     saveStateSet(state, "enableYM2413",    di->audio.enableYM2413);
     saveStateSet(state, "enableY8950",     di->audio.enableY8950);
     saveStateSet(state, "enableMoonsound", di->audio.enableMoonsound);
-    saveStateSet(state, "moonsoundSRAM",   di->audio.moonsoundSRAM);
 
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
@@ -1098,11 +1108,15 @@ void msxSaveState()
 
     machineSaveState(msxMachine);
     r800SaveState(r800);
-    joystickIoSaveState(joyIO);
+    if (joyIO != NULL) {
+        joystickIoSaveState(joyIO);
+    }
     deviceManagerSaveState();
     slotSaveState();
     rtcSaveState(rtc);
-    ay8910SaveState(ay8910);
+    if (ay8910 != NULL) {
+        ay8910SaveState(ay8910);
+    }
     vdpSaveState();
     tapeSaveState();
 }
@@ -1143,7 +1157,6 @@ void msxLoadState()
     di->audio.enableYM2413    = saveStateGet(state, "enableYM2413",    0);
     di->audio.enableY8950     = saveStateGet(state, "enableY8950",     0);
     di->audio.enableMoonsound = saveStateGet(state, "enableMoonsound", 0);
-    di->audio.moonsoundSRAM   = saveStateGet(state, "moonsoundSRAM",   512);
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
 

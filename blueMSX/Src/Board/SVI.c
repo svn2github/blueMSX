@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2004-12-30 22:53:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -496,6 +496,7 @@ int sviRun(Machine* machine,
 
     ay8910SetIoPort(ay8910, NULL, NULL, NULL);
     ay8910Destroy(ay8910);
+    ay8910 = NULL;
     audioKeyClickDestroy(keyClick);
 
     sviChangeDiskette(0, NULL, NULL);
@@ -629,7 +630,6 @@ void sviSaveState()
     saveStateSet(state, "enableYM2413",    di->audio.enableYM2413);
     saveStateSet(state, "enableY8950",     di->audio.enableY8950);
     saveStateSet(state, "enableMoonsound", di->audio.enableMoonsound);
-    saveStateSet(state, "moonsoundSRAM",   di->audio.moonsoundSRAM);
 
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
