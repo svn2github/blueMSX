@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:48 $
+** $Date: 2005-01-06 17:13:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -597,7 +597,7 @@ static Theme* loadTheme(TiXmlElement* root, ThemeInfo themeInfo)
         int emuY           = 0;
         int menuX          = 0;
         int menuY          = -100;
-        int menuWidth      = themeDefaultInfo[themeInfo].width;
+        int menuWidth      = 357;
         int menuColor      = RGB(219, 221, 224);
         int menuFocusColor = RGB(128, 128, 255);
         int menuTextColor  = RGB(0, 0, 0);
