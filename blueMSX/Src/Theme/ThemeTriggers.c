@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-24 08:45:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 #include "build_number.h"
 #include "version.h"
 #include "ArchNotifications.h"
+#include "VideoManager.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {
@@ -492,6 +493,78 @@ int themeTriggerVideoFilter() {
     return propGetGlobalProperties()->video.palEmu * 100 / P_VIDEO_PALCOUNT;
 }
 
+int themeTriggerVideoEnableMon1() {
+    return videoManagerGetActive() == 0;
+}
+
+int themeTriggerVideoEnableMon2() {
+    return videoManagerGetActive() == 1;
+}
+
+int themeTriggerVideoEnableMon3() {
+    return videoManagerGetActive() == 2;
+}
+
+int themeTriggerVideoPresentMon1() {
+    return videoManagerGetCount() >= 1;
+}
+
+int themeTriggerVideoPresentMon2() {
+    return videoManagerGetCount() >= 2;
+}
+
+int themeTriggerVideoPresentMon3() {
+    return videoManagerGetCount() >= 3;
+}
+
+int themeTriggerVideoIsMonitorAmber() {
+    return propGetGlobalProperties()->video.monType == P_VIDEO_AMBER;
+}
+
+int themeTriggerVideoIsMonitorGreen() {
+    return propGetGlobalProperties()->video.monType == P_VIDEO_GREEN;
+}
+
+int themeTriggerVideoIsMonitorWhite() {
+    return propGetGlobalProperties()->video.monType == P_VIDEO_BW;
+}
+
+int themeTriggerVideoIsMonitorColor() {
+    return propGetGlobalProperties()->video.monType == P_VIDEO_COLOR;
+}
+
+int themeTriggerVideoIsMonitorHq2x() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALHQ2X;
+}
+
+int themeTriggerVideoIsMonitorScale2x() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALSCALE2X;
+}
+
+int themeTriggerVideoIsMonitorCompositeNoise() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNCOMP;
+}
+
+int themeTriggerVideoIsMonitorComposite() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALCOMP;
+}
+
+int themeTriggerVideoIsMonitorYcNoise() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNYC;
+}
+
+int themeTriggerVideoIsMonitorYc() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALYC;
+}
+
+int themeTriggerVideoIsMonitorMonitor() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALMON;
+}
+
+int themeTriggerVideoIsMonitorNone() {
+    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNONE;
+}
+
 
 char* themeTriggerVideoScanlinePctText() {
     static char buffer[16];
@@ -527,6 +600,17 @@ char* themeTriggerVideoSaturationText() {
     return buffer;
 }
 
+char* themeTriggerVideoMonName1Text() {
+    return videoManagerGetName(0);
+}
+
+char* themeTriggerVideoMonName2Text() {
+    return videoManagerGetName(1);
+}
+
+char* themeTriggerVideoMonName3Text() {
+    return videoManagerGetName(2);
+}
 
 char* themeTriggerScreenMode() {
     static char* txtScreenMode[14] = {

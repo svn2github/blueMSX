@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-24 08:45:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,6 +108,9 @@ typedef enum {
     THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS,
     THEME_TRIGGER_TEXT_VIDEOCONTRAST,
     THEME_TRIGGER_TEXT_VIDEOSATURATION,
+    THEME_TRIGGER_TEXT_VIDEOMONNAME1,
+    THEME_TRIGGER_TEXT_VIDEOMONNAME2,
+    THEME_TRIGGER_TEXT_VIDEOMONNAME3,
     THEME_TRIGGER_TEXT_FREQ,
     THEME_TRIGGER_TEXT_CPU,
     THEME_TRIGGER_TEXT_FPS,
@@ -155,6 +158,24 @@ typedef enum {
     THEME_TRIGGER_VIDEO_RFMODULATION,
     THEME_TRIGGER_VIDEO_COLORMODE,
     THEME_TRIGGER_VIDEO_FILTER,
+    THEME_TRIGGER_VIDEO_ENABLE_MON1,
+    THEME_TRIGGER_VIDEO_ENABLE_MON2,
+    THEME_TRIGGER_VIDEO_ENABLE_MON3,
+    THEME_TRIGGER_VIDEO_PRESENT_MON1,
+    THEME_TRIGGER_VIDEO_PRESENT_MON2,
+    THEME_TRIGGER_VIDEO_PRESENT_MON3,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_AMBER,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_GREEN,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_WHITE,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_COLOR,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_HQ2X,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_SCALE2X,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_COMPNOISE,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_COMP,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_YCNOISE,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_YC,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_MONITOR,
+    THEME_TRIGGER_VIDEO_ENABLE_MON_NONE,
     
     THEME_TRIGGER_RENSHA,
     THEME_TRIGGER_RENSHALED,
@@ -264,6 +285,25 @@ int themeTriggerVideoScanlines();
 int themeTriggerVideoRfModulation();
 int themeTriggerVideoColorMode();
 int themeTriggerVideoFilter();
+int themeTriggerVideoEnableMon1();
+int themeTriggerVideoEnableMon2();
+int themeTriggerVideoEnableMon3();
+int themeTriggerVideoPresentMon1();
+int themeTriggerVideoPresentMon2();
+int themeTriggerVideoPresentMon3();
+int themeTriggerVideoIsMonitorAmber();
+int themeTriggerVideoIsMonitorGreen();
+int themeTriggerVideoIsMonitorWhite();
+int themeTriggerVideoIsMonitorColor();
+
+int themeTriggerVideoIsMonitorHq2x();
+int themeTriggerVideoIsMonitorScale2x();
+int themeTriggerVideoIsMonitorCompositeNoise();
+int themeTriggerVideoIsMonitorComposite();
+int themeTriggerVideoIsMonitorYcNoise();
+int themeTriggerVideoIsMonitorYc();
+int themeTriggerVideoIsMonitorMonitor();
+int themeTriggerVideoIsMonitorNone();
 
 int themeTriggerLevelMaster();
 int themeTriggerLevelPsg();
@@ -290,6 +330,9 @@ char* themeTriggerVideoGammaText();
 char* themeTriggerVideoContrastText();
 char* themeTriggerVideoBrightnessText();
 char* themeTriggerVideoSaturationText();
+char* themeTriggerVideoMonName1Text();
+char* themeTriggerVideoMonName2Text();
+char* themeTriggerVideoMonName3Text();
 char* themeTriggerScreenMode();
 char* themeTriggerScreenModeShort();
 char* themeTriggerMemoryRam();

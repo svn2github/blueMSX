@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-20 22:04:10 $
+** $Date: 2005-01-24 08:45:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,8 @@
 #include "Board.h"
 #include "IoPort.h"
 #include "VideoManager.h"
+#include "DeviceManager.h"
+#include "SaveState.h"
 #include <memory.h>
 
 /*
@@ -104,6 +106,7 @@ static UInt8 crtcMemory[0x800];
 static UInt8 crtcMemoryBankControl = 0;
 
 // Video frame buffer info
+static int crtcDeviceHandle = 0;
 static int crtcVideoHandle = 0;
 static int crtcVideoEnabled = 0;
 static FrameBufferData* crtcFrameBufferData = NULL;
@@ -260,13 +263,6 @@ UInt8 crtcMemRead(UInt16 address)
         return 0xff;
 }
 
-void crtcReset(void)
-{
-    crtcMemoryBankControl = 0;
-    memset(&crtc, 0, sizeof(crtc));
-    memset(crtcMemory, 0xff, sizeof(crtcMemory));
-}
-
 // Timer callback that is called once every frame
 static void crtcOnDisplay(void* dummy, UInt32 time)
 {
@@ -289,6 +285,45 @@ static void crtcVideoDisable(void* dummy)
     crtcVideoEnabled = 0;
 }
 
+static void reset(void* dummy)
+{
+    crtcMemoryBankControl = 0;
+    memset(&crtc, 0, sizeof(crtc));
+    memset(crtcMemory, 0xff, sizeof(crtcMemory));
+}
+
+static void destroy(void* dummy) 
+{
+    deviceManagerUnregister(crtcDeviceHandle);
+    videoManagerUnregister(crtcVideoHandle);
+    boardTimerDestroy(crtcTimerDisplay);
+
+    switch (crtcConnector) {
+    case CRTC_MSX:
+        ioPortUnregister(0x78);
+        ioPortUnregister(0x79);
+//        ioPortUnregister(0x79);
+        break;
+
+    case CRTC_SVI:
+        ioPortUnregister(0x50);
+        ioPortUnregister(0x51);
+        ioPortUnregister(0x58);
+        break;
+    }
+}
+
+static void saveState(void* dummy)
+{
+    SaveState* state = saveStateOpenForWrite("crtc6845");
+    saveStateClose(state);
+}
+
+static void loadState(void* dummy)
+{
+    SaveState* state = saveStateOpenForRead("vdp");
+}
+
 int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
 {
     crtcConnector  = connector;
@@ -297,7 +332,7 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
     	return 0;
     }
 
-    crtcReset();
+    reset(NULL);
 
     memset(crtcROM, 0xff, sizeof(crtcROM));
     memcpy(&crtcROM[0], romData, size);
@@ -323,6 +358,12 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
     crtcTimerDisplay = boardTimerCreate(crtcOnDisplay, NULL);
     boardTimerAdd(crtcTimerDisplay, boardSystemTime() + REFRESH_PERIOD);
 
+    // Initialize device
+    {
+        DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+        crtcDeviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, NULL);
+    }
+
     // Initialize video frame buffer
     {
         VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
@@ -331,24 +372,4 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
     }
 
     return 1;
-}
-
-void crtcDestroy() 
-{
-    videoManagerUnregister(crtcVideoHandle);
-    boardTimerDestroy(crtcTimerDisplay);
-
-    switch (crtcConnector) {
-    case CRTC_MSX:
-        ioPortUnregister(0x78);
-        ioPortUnregister(0x79);
-//        ioPortUnregister(0x79);
-        break;
-
-    case CRTC_SVI:
-        ioPortUnregister(0x50);
-        ioPortUnregister(0x51);
-        ioPortUnregister(0x58);
-        break;
-    }
 }

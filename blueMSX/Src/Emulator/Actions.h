@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-23 11:37:22 $
+** $Date: 2005-01-24 08:45:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,6 +172,9 @@ void actionVideoSetScanlines(int value);
 void actionVideoSetRfModulation(int value);
 void actionVideoSetColorMode(int value);
 void actionVideoSetFilter(int value);
+void actionVideoEnableMon1(int value);
+void actionVideoEnableMon2(int value);
+void actionVideoEnableMon3(int value);
 
 void actionVolumeSetMaster(int value);
 void actionVolumeSetPsg(int value);

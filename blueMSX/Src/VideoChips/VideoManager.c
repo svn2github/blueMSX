@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-19 19:19:30 $
+** $Date: 2005-01-24 08:45:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,10 +103,14 @@ void videoManagerSetActive(int index)
         }
     }
 
-    frameBufferSetActive(videoManager.di[index].frameBufer);
-
-    if (activeIndex != index) {
-        videoManager.di[index].callbacks.enable(videoManager.di[index].ref);
+    if (index < 0) {
+        frameBufferSetActive(NULL);
+    }
+    else {
+        frameBufferSetActive(videoManager.di[index].frameBufer);
+        if (activeIndex != index) {
+            videoManager.di[index].callbacks.enable(videoManager.di[index].ref);
+        }
     }
 }
 

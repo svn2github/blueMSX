@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-24 08:45:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -100,6 +100,25 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_VIDEO_RFMODULATION:  idx = themeTriggerVideoRfModulation(); break;
     case THEME_TRIGGER_VIDEO_COLORMODE:     idx = themeTriggerVideoColorMode(); break;
     case THEME_TRIGGER_VIDEO_FILTER:        idx = themeTriggerVideoFilter(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON1:   idx = themeTriggerVideoEnableMon1(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON2:   idx = themeTriggerVideoEnableMon2(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON3:   idx = themeTriggerVideoEnableMon3(); break;
+    case THEME_TRIGGER_VIDEO_PRESENT_MON1:  idx = themeTriggerVideoPresentMon1(); break;
+    case THEME_TRIGGER_VIDEO_PRESENT_MON2:  idx = themeTriggerVideoPresentMon2(); break;
+    case THEME_TRIGGER_VIDEO_PRESENT_MON3:  idx = themeTriggerVideoPresentMon3(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_AMBER: idx = themeTriggerVideoIsMonitorAmber(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_GREEN: idx = themeTriggerVideoIsMonitorGreen(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_WHITE: idx = themeTriggerVideoIsMonitorWhite(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_COLOR: idx = themeTriggerVideoIsMonitorColor(); break;
+        
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_HQ2X: idx = themeTriggerVideoIsMonitorHq2x(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_SCALE2X: idx = themeTriggerVideoIsMonitorScale2x(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_COMPNOISE: idx = themeTriggerVideoIsMonitorCompositeNoise(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_COMP: idx = themeTriggerVideoIsMonitorComposite(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_YCNOISE: idx = themeTriggerVideoIsMonitorYcNoise(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_YC: idx = themeTriggerVideoIsMonitorYc(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_MONITOR: idx = themeTriggerVideoIsMonitorMonitor(); break;
+    case THEME_TRIGGER_VIDEO_ENABLE_MON_NONE: idx = themeTriggerVideoIsMonitorNone(); break;
 
     case THEME_TRIGGER_LEVEL_MASTER:    idx = themeTriggerLevelMaster(); break;
     case THEME_TRIGGER_LEVEL_PSG:       idx = themeTriggerLevelPsg(); break;
@@ -188,6 +207,9 @@ static char* actionTypeToStr(ThemeTrigger actionType)
     case THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS: str = themeTriggerVideoBrightnessText(); break;
     case THEME_TRIGGER_TEXT_VIDEOCONTRAST:   str = themeTriggerVideoContrastText(); break;
     case THEME_TRIGGER_TEXT_VIDEOSATURATION: str = themeTriggerVideoSaturationText(); break;
+    case THEME_TRIGGER_TEXT_VIDEOMONNAME1:   str = themeTriggerVideoMonName1Text(); break;
+    case THEME_TRIGGER_TEXT_VIDEOMONNAME2:   str = themeTriggerVideoMonName2Text(); break;
+    case THEME_TRIGGER_TEXT_VIDEOMONNAME3:   str = themeTriggerVideoMonName3Text(); break;
     case THEME_TRIGGER_TEXT_VERSION:         str = themeTriggerVersion(); break;
     case THEME_TRIGGER_TEXT_BUILDNUMBER:     str = themeTriggerBuildNumber(); break;
     case THEME_TRIGGER_TEXT_BUILDANDVER:     str = themeTriggerBuildAndVersion(); break;

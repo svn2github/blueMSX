@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-23 11:37:22 $
+** $Date: 2005-01-24 08:45:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "LaunchFile.h"
 #include "Emulator.h"
 #include "Keyboard.h"
+#include "VideoManager.h"
 #include "VDP.h"
 
 #include "ArchMenu.h"
@@ -108,27 +109,27 @@ void actionToggleFdcTiming() {
 
 void actionToggleHorizontalStretch() {
     state.properties->video.horizontalStretch = !state.properties->video.horizontalStretch;
-    archUpdateEmuDisplay(0);
+    archUpdateEmuDisplayConfig();
 }
 
 void actionToggleVerticalStretch() {
     state.properties->video.verticalStretch = !state.properties->video.verticalStretch;
-    archUpdateEmuDisplay(0);
+    archUpdateEmuDisplayConfig();
 }
 
 void actionToggleScanlinesEnable() {
     state.properties->video.scanlinesEnable = !state.properties->video.scanlinesEnable;
-    archUpdateEmuDisplay(0);
+    archUpdateEmuDisplayConfig();
 }
 
 void actionToggleDeinterlaceEnable() {
     state.properties->video.deInterlace = !state.properties->video.deInterlace;
-    archUpdateEmuDisplay(0);
+    archUpdateEmuDisplayConfig();
 }
 
 void actionToggleRfModulatorEnable() {
     state.properties->video.colorSaturationEnable = !state.properties->video.colorSaturationEnable;
-    archUpdateEmuDisplay(0);
+    archUpdateEmuDisplayConfig();
 }
 
 
@@ -878,6 +879,19 @@ void actionMenuOptions(int x, int y) {
 
 void actionMenuTools(int x, int y) {
     archShowMenuTools(x, y);
+}
+
+
+void actionVideoEnableMon1(int value) {
+    videoManagerSetActive(value ? 0 : -1);
+}
+
+void actionVideoEnableMon2(int value) {
+    videoManagerSetActive(value ? 1 : -1);
+}
+
+void actionVideoEnableMon3(int value) {
+    videoManagerSetActive(value ? 2 : -1);
 }
 
 // Actions controlled by value 0 - 100

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-24 08:45:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,7 +74,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "switch-videovstretch"))    return (ButtonEvent)actionToggleVerticalStretch;
     if (0 == strcmp(action, "switch-videoscanlines"))   return (ButtonEvent)actionToggleScanlinesEnable;
     if (0 == strcmp(action, "switch-videodeinterlace")) return (ButtonEvent)actionToggleDeinterlaceEnable;
-    if (0 == strcmp(action, "switch-videorfmodulator")) return (ButtonEvent)actionToggleRfModulatorEnable;
+    if (0 == strcmp(action, "switch-videorfmodulation"))return (ButtonEvent)actionToggleRfModulatorEnable;
 
     if (0 == strcmp(action, "switch-audioswitch"))      return (ButtonEvent)actionToggleMsxAudioSwitch;
     if (0 == strcmp(action, "switch-frontswitch"))      return (ButtonEvent)actionToggleFrontSwitch;
@@ -197,7 +197,10 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "video-rfmodulation")) return (ButtonEvent)actionVideoSetRfModulation;
     if (0 == strcmp(action, "video-colormode"))    return (ButtonEvent)actionVideoSetColorMode;
     if (0 == strcmp(action, "video-filter"))       return (ButtonEvent)actionVideoSetFilter;
-
+    if (0 == strcmp(action, "video-enable-mon1"))  return (ButtonEvent)actionVideoEnableMon1;
+    if (0 == strcmp(action, "video-enable-mon2"))  return (ButtonEvent)actionVideoEnableMon2;
+    if (0 == strcmp(action, "video-enable-mon3"))  return (ButtonEvent)actionVideoEnableMon3;
+    
     if (0 == strcmp(action, "level-master"))      return (ButtonEvent)actionVolumeSetMaster;
     if (0 == strcmp(action, "level-psg"))         return (ButtonEvent)actionVolumeSetPsg;
     if (0 == strcmp(action, "level-pcm"))         return (ButtonEvent)actionVolumeSetPcm;
@@ -355,6 +358,26 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "video-rfmodulation"))   return t | THEME_TRIGGER_VIDEO_RFMODULATION;
     if (0 == strcmp(s, "video-colormode"))      return t | THEME_TRIGGER_VIDEO_COLORMODE;
     if (0 == strcmp(s, "video-filter"))         return t | THEME_TRIGGER_VIDEO_FILTER;
+    if (0 == strcmp(s, "video-present-mon1"))    return t | THEME_TRIGGER_VIDEO_PRESENT_MON1;
+    if (0 == strcmp(s, "video-present-mon2"))    return t | THEME_TRIGGER_VIDEO_PRESENT_MON2;
+    if (0 == strcmp(s, "video-present-mon3"))    return t | THEME_TRIGGER_VIDEO_PRESENT_MON3;
+    if (0 == strcmp(s, "video-enable-mon1"))    return t | THEME_TRIGGER_VIDEO_ENABLE_MON1;
+    if (0 == strcmp(s, "video-enable-mon2"))    return t | THEME_TRIGGER_VIDEO_ENABLE_MON2;
+    if (0 == strcmp(s, "video-enable-mon3"))    return t | THEME_TRIGGER_VIDEO_ENABLE_MON3;
+
+    if (0 == strcmp(s, "video-enable-mon-amber")) return t | THEME_TRIGGER_VIDEO_ENABLE_MON_AMBER;
+    if (0 == strcmp(s, "video-enable-mon-green")) return t | THEME_TRIGGER_VIDEO_ENABLE_MON_GREEN;
+    if (0 == strcmp(s, "video-enable-mon-white")) return t | THEME_TRIGGER_VIDEO_ENABLE_MON_WHITE;
+    if (0 == strcmp(s, "video-enable-mon-color")) return t | THEME_TRIGGER_VIDEO_ENABLE_MON_COLOR;
+    
+    if (0 == strcmp(s, "video-enable-mon-hq2x"))        return t | THEME_TRIGGER_VIDEO_ENABLE_MON_HQ2X;
+    if (0 == strcmp(s, "video-enable-mon-scale2x"))     return t | THEME_TRIGGER_VIDEO_ENABLE_MON_SCALE2X;
+    if (0 == strcmp(s, "video-enable-mon-compnoise"))   return t | THEME_TRIGGER_VIDEO_ENABLE_MON_COMPNOISE;
+    if (0 == strcmp(s, "video-enable-mon-comp"))        return t | THEME_TRIGGER_VIDEO_ENABLE_MON_COMP;
+    if (0 == strcmp(s, "video-enable-mon-ycnoise"))     return t | THEME_TRIGGER_VIDEO_ENABLE_MON_YCNOISE;
+    if (0 == strcmp(s, "video-enable-mon-yc"))          return t | THEME_TRIGGER_VIDEO_ENABLE_MON_YC;
+    if (0 == strcmp(s, "video-enable-mon-monitor"))     return t | THEME_TRIGGER_VIDEO_ENABLE_MON_MONITOR;
+    if (0 == strcmp(s, "video-enable-mon-none"))        return t | THEME_TRIGGER_VIDEO_ENABLE_MON_NONE;
 
     if (0 == strcmp(s, "level-master"))            return t | THEME_TRIGGER_LEVEL_MASTER;
     if (0 == strcmp(s, "level-psg"))               return t | THEME_TRIGGER_LEVEL_PSG;
@@ -409,6 +432,9 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "text-videobrightness"))     return t | THEME_TRIGGER_TEXT_VIDEOBRIGHTNESS;
     if (0 == strcmp(s, "text-videocontrast"))       return t | THEME_TRIGGER_TEXT_VIDEOCONTRAST;
     if (0 == strcmp(s, "text-videosaturation"))     return t | THEME_TRIGGER_TEXT_VIDEOSATURATION;
+    if (0 == strcmp(s, "text-videomonname1"))       return t | THEME_TRIGGER_TEXT_VIDEOMONNAME1;
+    if (0 == strcmp(s, "text-videomonname2"))       return t | THEME_TRIGGER_TEXT_VIDEOMONNAME2;
+    if (0 == strcmp(s, "text-videomonname3"))       return t | THEME_TRIGGER_TEXT_VIDEOMONNAME3;
     if (0 == strcmp(s, "text-emufrequency"))        return t | THEME_TRIGGER_TEXT_FREQ;
     if (0 == strcmp(s, "text-cpuusage"))            return t | THEME_TRIGGER_TEXT_CPU;
     if (0 == strcmp(s, "text-framespersecond"))     return t | THEME_TRIGGER_TEXT_FPS;
