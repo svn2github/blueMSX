@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-23 11:42:35 $
+** $Date: 2005-01-24 19:37:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
 
 #include "Win32Properties.h"
@@ -2022,7 +2023,8 @@ static BOOL updatePortsLptList(HWND hDlg, int id)
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
-        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
+//        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
+        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pDriverName, lpPrinterInfo[dwItem].pPrinterName))
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
     }
 
