@@ -596,11 +596,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-#if 1
-IDI_BLUEMSX             ICON                    "bluemsx3.ico"
-#else
-IDI_BLUEMSX             ICON                    "bluemsx2.ico"
-#endif 
+IDI_BLUEMSX             ICON                    "bluemsx.ico"
 IDI_DISKIMAGE           ICON                    "diskimage.ico"
 IDI_ROMIMAGE            ICON                    "romimage.ico"
 IDI_CASIMAGE            ICON                    "casimage.ico"
@@ -627,7 +623,7 @@ IDI_FLAG_SPAIN          ICON                    "flagSpain.ico"
 IDI_FLAG_SWEDEN         ICON                    "flagSweden.ico"
 IDI_FLAG_USA            ICON                    "flagUSA.ico"
 IDI_FLAG_BRAZIL         ICON                    "flagBrazil.ico"
-IDI_FLAG_FINLAND        ICON                    "flagFindland.ico"
+IDI_FLAG_FINLAND        ICON                    "flagFinland.ico"
 IDI_FLAG_FRANCE         ICON                    "flagFrance.ico"
 IDI_FLAG_ITALY          ICON                    "flagItaly.ico"
 IDI_FLAG_JAPAN          ICON                    "flagJapan.ico"
