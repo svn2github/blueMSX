@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:14 $
+** $Date: 2004-12-21 21:35:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -125,8 +125,9 @@ UInt8 tapeWrite(UInt8 value)
         if (ramImagePos >= ramImageSize) {
             char* newBuf = realloc(ramImageBuffer, ramImageSize + 1024);
             if (newBuf) {
-                ramImageSize += 1024;
                 ramImageBuffer = newBuf;
+                memset(ramImageBuffer + ramImageSize, 0, 1024);
+                ramImageSize += 1024;
             }
         }
 

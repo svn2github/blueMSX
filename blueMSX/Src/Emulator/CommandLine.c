@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-17 18:14:20 $
+** $Date: 2004-12-21 21:35:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -222,8 +222,9 @@ int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
     return defaultLang;
 }
 
-static int emuStartWithArguments(Properties* properties, char* cmdLine) {
+static int emuStartWithArguments(Properties* properties, char* commandLine) {
     int i;
+    char    cmdLine[512] = "";
     char*   argument;
     char    rom1[512] = "";
     char    rom2[512] = "";
@@ -240,6 +241,20 @@ static int emuStartWithArguments(Properties* properties, char* cmdLine) {
     char    caszip[256] = "";
     int     fullscreen = 0;
     int     startEmu = 0;
+
+    if (commandLine[0] != '/' && commandLine[1] == ':') {
+        char* ptr;
+        strcat(cmdLine, "\"");
+        strcat(cmdLine, commandLine);
+        ptr = cmdLine + strlen(commandLine);
+        while (ptr > cmdLine && *ptr == ' ') {
+            *ptr-- = '\0';
+        }
+        strcat(cmdLine, "\"");
+    }
+    else {
+        strcat(cmdLine, commandLine);
+    }
 
     // If one argument, assume it is a rom or disk to run
     if (!extractToken(cmdLine, 1)) {
