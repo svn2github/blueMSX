@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-09 09:04:58 $
+** $Date: 2005-01-11 07:59:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include <winioctl.h>
 #include <dinput.h>
 
+static char keyboardConfigDir[MAX_PATH];
 static char dik2str[512][32];
 
 #define INIT_DIK(val) strcpy(dik2str[DIK_##val], #val)
@@ -677,13 +678,16 @@ void keyboardUpdate()
 char** keyboardGetAvailable()
 {
     static char* keyboardNames[256];
-    static char  names[256][64];
+    char         fileName[MAX_PATH];
+    static char  keyboardArray[256][64];
 	HANDLE       handle;
 	WIN32_FIND_DATA wfd;
     int index = 0;
     BOOL cont = TRUE;
 
-    handle = FindFirstFile("Keyboard/*", &wfd);
+    sprintf(fileName, "%s/*.config", keyboardConfigDir);
+
+    handle = FindFirstFile(fileName, &wfd);
 
     if (handle == INVALID_HANDLE_VALUE) {
         keyboardNames[0] = NULL;
@@ -691,20 +695,15 @@ char** keyboardGetAvailable()
     }
 
     while (cont) {
-        char fileName[128];
-
 		DWORD fa = GetFileAttributes(wfd.cFileName);
         if (fa & FILE_ATTRIBUTE_DIRECTORY) {
-            FILE* file;
-		    sprintf(fileName, "Keyboard/%s/keymap.config", wfd.cFileName);
-            file = fopen(fileName, "rb");
-            if (file != NULL) {
-                strcpy(names[index], wfd.cFileName);
-                keyboardNames[index] = names[index];
-                index++;
-                fclose(file);
-            }
-            
+            char buffer[128];
+            int length = strlen(wfd.cFileName) - 7;
+            strcpy(buffer, wfd.cFileName);
+            buffer[length] = 0;
+            strcpy(keyboardArray[index], buffer);
+            keyboardNames[index] = keyboardArray[index];
+            index++;
         }
         cont = FindNextFile(handle, &wfd);
     }
@@ -718,9 +717,18 @@ char** keyboardGetAvailable()
 
 int keyboardLoadConfig(char* configName)
 {
+    char fileName[MAX_PATH];
+    
+    sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+
     return 1;
 }
 
 void keyboardSaveConfig(char* configName)
 {
+}
+
+void keyboardSetDirectory(char* directory)
+{
+    strcpy(keyboardConfigDir, directory);
 }

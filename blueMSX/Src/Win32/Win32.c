@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-01-11 02:09:17 $
+** $Date: 2005-01-11 07:59:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2319,6 +2319,10 @@ void setDefaultPath() {
     sprintf(buffer, "%s\\Shortcut Profiles", rootDir);
     mkdir(buffer);
     shortcutsSetDirectory(buffer);
+
+    sprintf(buffer, "%s\\Keyboard Config", rootDir);
+    mkdir(buffer);
+    keyboardSetDirectory(buffer);
 
     sprintf(buffer, "%s\\Screenshots", rootDir);
     mkdir(buffer);
