@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-02-10 07:18:45 $
+** $Date: 2005-02-10 08:59:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -232,7 +232,7 @@ void crtcMemWrite(CRTC6845* crtc, UInt16 address, UInt8 value)
 {
     crtc->vram[address & crtc->vramMask] = value;
     if (!crtc->videoEnabled && boardGetVideoAutodetect()) {
-        videoManagerSetActive(1);
+        videoManagerSetActive(crtc->videoHandle);
     }
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-01 04:43:33 $
+** $Date: 2005-02-10 08:59:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,7 +145,7 @@ int videoManagerRegister(char* name, FrameBufferData* frameBuffer,
     
     archVideoOutputChange();
 
-    return videoManager.lastHandle;
+    return videoManager.lastHandle - 1;
 }
 
 void videoManagerUnregister(int handle)
@@ -158,7 +158,7 @@ void videoManagerUnregister(int handle)
     }
 
     for (i = 0; i < videoManager.count; i++) {
-        if (videoManager.di[i].handle == handle) {
+        if (videoManager.di[i].handle == handle + 1) {
             break;
         }
     }
