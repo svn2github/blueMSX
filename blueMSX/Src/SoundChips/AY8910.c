@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-19 18:55:44 $
+** $Date: 2004-12-26 10:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,7 @@ static Int32* ay8910Sync(void* ref, UInt32 count);
 
 struct AY8910 {
     Mixer* mixer;
-    Int32  buffer[BUFFER_SIZE];
+    Int32  handle;
 
     AY8910ReadCb    ioPortReadCb;
     AY8910WriteCb   ioPortWriteCb;
@@ -80,6 +80,8 @@ struct AY8910 {
     Int32  ctrlVolume;
     Int32  oldSampleVolume;
     Int32  daVolume;
+
+    Int32  buffer[BUFFER_SIZE];
 };
 
 void ay8910LoadState(AY8910* ay8910)
@@ -172,7 +174,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
     ay8910->noiseRand = 1;
     ay8910->noiseVolume = 1;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, ay8910Sync, ay8910);
+    ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, ay8910Sync, ay8910);
 
     ay8910Reset(ay8910);
     for (i = 0; i < 16; i++) {
@@ -225,7 +227,7 @@ void ay8910Destroy(AY8910* ay8910)
         break;
     }
 
-    mixerUnregisterChannel(ay8910->mixer, MIXER_CHANNEL_PSG);
+    mixerUnregisterChannel(ay8910->mixer, ay8910->handle);
     free(ay8910);
 }
 

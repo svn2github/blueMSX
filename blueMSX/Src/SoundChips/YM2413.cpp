@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-21 22:38:45 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,8 @@ struct YM_2413 {
     }
 
     Mixer* mixer;
+    Int32  handle;
+
     Int32  Oversampling;
     Int32  deviceHandle;
     OpenYM2413 ym2413;
@@ -71,7 +73,7 @@ static void destroy(void* ref) {
     ioPortUnregister(0x7c);
     ioPortUnregister(0x7d);
 
-    mixerUnregisterChannel(ym2413->mixer, MIXER_CHANNEL_MSXMUSIC);
+    mixerUnregisterChannel(ym2413->mixer, ym2413->handle);
     delete ym2413;
 }
 
@@ -159,7 +161,7 @@ int ym2413Create(Mixer* mixer)
     ym2413->Oversampling = 1;
     ym2413->deviceHandle = deviceManagerRegister(AUDIO_YM2413, &callbacks, ym2413);
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
+    ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
 
     ym2413->ym2413.setSampleRate(SAMPLERATE, ym2413->Oversampling);
 	ym2413->ym2413.setVolume(32767);

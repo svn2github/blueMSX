@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-11 00:11:58 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,8 @@
 
 struct Y8950 {
     Mixer* mixer;
+    Int32  handle;
+
     FM_OPL* opl;
     int    oversampling;
     int    deviceHandle;
@@ -150,7 +152,7 @@ static void destroy(Y8950* y8950) {
     ioPortUnregister(0xc0);
     ioPortUnregister(0xc1);
 
-    mixerUnregisterChannel(y8950->mixer, MIXER_CHANNEL_MSXAUDIO);
+    mixerUnregisterChannel(y8950->mixer, y8950->handle);
     OPLDestroy(y8950->opl);
 
     theY8950 = NULL;
@@ -188,7 +190,7 @@ int y8950Create(Mixer* mixer)
     y8950->counter2 = -1;
     y8950->oversampling = 1;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, y8950Sync, y8950);
+    y8950->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, y8950Sync, y8950);
 
     y8950->opl = OPLCreate(OPL_TYPE_Y8950, FREQUENCY, SAMPLERATE, 256);
     OPLSetOversampling(y8950->opl, y8950->oversampling);

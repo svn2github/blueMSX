@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-11 00:07:55 $
+** $Date: 2004-12-26 10:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -353,10 +353,10 @@ void emulatorStart(char* stateName) {
     emuFixedSpritePalette[14] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 0 * 255 / 7);
     emuFixedSpritePalette[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_SCC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
     
     properties->emulation.pauseSwitch = 0;
     switchSetPause(properties->emulation.pauseSwitch);
@@ -449,10 +449,10 @@ void emulatorStop() {
     archEventDestroy(emuStartEvent);
     
     // Reset active indicators in mixer
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_SCC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
 
     archEmulationStopNotification();
 }
@@ -534,11 +534,11 @@ int  emulatorGetMaxSpeed() {
 
 void emulatorResetMixer() {
     // Reset active indicators in mixer
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_SCC, 1);
-    mixerIsChannelActive(mixer, MIXER_CHANNEL_PCM, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_PCM, 1);
 }
 
 void RefreshScreen(int screenMode, int evenOdd, int interlace) {

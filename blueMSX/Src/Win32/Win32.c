@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2004-12-24 08:32:29 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -849,10 +849,10 @@ void archShowPropertiesDialog(PropPage  startPane) {
         restart = 1;
     }
 
-    for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
-        mixerSetChannelVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
-        mixerSetChannelPan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
-        mixerEnableChannel(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
+    for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
+        mixerSetChannelTypeVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
+        mixerSetChannelTypePan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
+        mixerEnableChannelType(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
     }
     
     if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
@@ -2003,20 +2003,20 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 statusInfo.audioMoonsound   = pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable ? 1 : 0;
                 statusInfo.audioPcm         = pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable ? 1 : 0;
                 statusInfo.audioKbd         = pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable ? 1 : 0;
-                statusInfo.volPsgLeft       = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_LEFT);
-                statusInfo.volPsgRight      = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_RIGHT);
-                statusInfo.volSccLeft       = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_LEFT);
-                statusInfo.volSccRight      = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMsxMusicLeft  = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_LEFT);
-                statusInfo.volMsxMusicRight = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMsxAudioLeft  = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_LEFT);
-                statusInfo.volMsxAudioRight = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_RIGHT);
-                statusInfo.volMoonsoundLeft = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_LEFT);
-                statusInfo.volMoonsoundRight= mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_RIGHT);
-                statusInfo.volKbdLeft       = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
-                statusInfo.volKbdRight      = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_RIGHT);
-                statusInfo.volPcmLeft       = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_LEFT);
-                statusInfo.volPcmRight      = mixerGetChannelVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_RIGHT);
+                statusInfo.volPsgLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_LEFT);
+                statusInfo.volPsgRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PSG, MIXER_CHANNEL_RIGHT);
+                statusInfo.volSccLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_LEFT);
+                statusInfo.volSccRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_SCC, MIXER_CHANNEL_RIGHT);
+                statusInfo.volMsxMusicLeft  = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_LEFT);
+                statusInfo.volMsxMusicRight = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXMUSIC, MIXER_CHANNEL_RIGHT);
+                statusInfo.volMsxAudioLeft  = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_LEFT);
+                statusInfo.volMsxAudioRight = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MSXAUDIO, MIXER_CHANNEL_RIGHT);
+                statusInfo.volMoonsoundLeft = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_LEFT);
+                statusInfo.volMoonsoundRight= mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_RIGHT);
+                statusInfo.volKbdLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
+                statusInfo.volKbdRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_RIGHT);
+                statusInfo.volPcmLeft       = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_LEFT);
+                statusInfo.volPcmRight      = mixerGetChannelTypeVolume(st.mixer, MIXER_CHANNEL_PCM, MIXER_CHANNEL_RIGHT);
                 statusInfo.volMasterLeft    = mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_LEFT);
                 statusInfo.volMasterRight   = mixerGetMasterVolume(st.mixer, MIXER_CHANNEL_RIGHT);
 
@@ -2055,10 +2055,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 if (emulatorGetState() == EMU_RUNNING) {
                     reset = (resetCnt++ & 0x3f) == 0;
                 }
-                statusInfo.machineMoonsound = mixerIsChannelActive(st.mixer, MIXER_CHANNEL_MOONSOUND, reset);
-                statusInfo.machineMsxAudio  = mixerIsChannelActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, reset);
-                statusInfo.machineMsxMusic  = mixerIsChannelActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, reset);
-                statusInfo.machineScc       = mixerIsChannelActive(st.mixer, MIXER_CHANNEL_SCC, reset);
+                statusInfo.machineMoonsound = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MOONSOUND, reset);
+                statusInfo.machineMsxAudio  = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, reset);
+                statusInfo.machineMsxMusic  = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, reset);
+                statusInfo.machineScc       = mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_SCC, reset);
                 statusInfo.machineRom       = boardUseRom();
                 statusInfo.machineMegaRom   = boardUseMegaRom();
                 statusInfo.machineMegaRam   = boardUseMegaRam();
@@ -2646,10 +2646,10 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     soundDriverConfig(st.hwnd, pProperties->sound.driver);
     emulatorRestartSound();
 
-    for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
-        mixerSetChannelVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
-        mixerSetChannelPan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
-        mixerEnableChannel(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
+    for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
+        mixerSetChannelTypeVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
+        mixerSetChannelTypePan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
+        mixerEnableChannelType(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
     }
     
     mixerSetMasterVolume(st.mixer, pProperties->sound.masterVolume);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/KeyClick.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,13 +39,16 @@ static Int32* audioKeyClickSync(void* ref, UInt32 count);
 struct AudioKeyClick
 {
     Mixer* mixer;
-    Int32  buffer[BUFFER_SIZE];
+    Int32 handle;
+
     Int32 sampleVolume;
     Int32 sampleVolumeSum;
     Int32 oldSampleVolume;
     Int32 ctrlVolume;
     Int32 daVolume;
     Int32 count;
+
+    Int32  buffer[BUFFER_SIZE];
 };
 
 AudioKeyClick* audioKeyClickCreate(Mixer* mixer)
@@ -54,14 +57,14 @@ AudioKeyClick* audioKeyClickCreate(Mixer* mixer)
 
     keyClick->mixer = mixer;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_KEYBOARD, 0, audioKeyClickSync, keyClick);
+    keyClick->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_KEYBOARD, 0, audioKeyClickSync, keyClick);
 
     return keyClick;
 }
 
 void audioKeyClickDestroy(AudioKeyClick* keyClick)
 {
-    mixerUnregisterChannel(keyClick->mixer, MIXER_CHANNEL_KEYBOARD);
+    mixerUnregisterChannel(keyClick->mixer, keyClick->handle);
     free(keyClick);
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-21 19:14:12 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,7 @@ static Int32* sn76489Sync(void* ref, UInt32 count);
 
 struct SN76489 {
     Mixer* mixer;
-    Int32  buffer[BUFFER_SIZE];
+    Int32  handle;
 
     UInt16 latch;
     UInt32 noiseRand;
@@ -62,6 +62,8 @@ struct SN76489 {
     Int32  ctrlVolume;
     Int32  oldSampleVolume;
     Int32  daVolume;
+
+    Int32  buffer[BUFFER_SIZE];
 };
 
 void sn76489LoadState(SN76489* sn76489)
@@ -132,7 +134,7 @@ SN76489* sn76489Create(Mixer* mixer)
 
     sn76489->mixer = mixer;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
+    sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
 
     sn76489Reset(sn76489);
 
@@ -165,7 +167,7 @@ void sn76489Reset(SN76489* sn76489)
 
 void sn76489Destroy(SN76489* sn76489)
 {
-    mixerUnregisterChannel(sn76489->mixer, MIXER_CHANNEL_PSG);
+    mixerUnregisterChannel(sn76489->mixer, sn76489->handle);
     free(sn76489);
 }
 

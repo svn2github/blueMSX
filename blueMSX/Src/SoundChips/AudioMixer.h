@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,13 +43,15 @@ typedef enum {
     MIXER_CHANNEL_MOONSOUND,
     MIXER_CHANNEL_KEYBOARD,
     MIXER_CHANNEL_PCM,
-    MIXER_CHANNEL_COUNT
-} MixerChannelType;
+    MIXER_CHANNEL_TYPE_COUNT
+} MixerAudioType;
 
 typedef enum {
     MIXER_CHANNEL_LEFT = 0,
     MIXER_CHANNEL_RIGHT
 } MixerChannelPan;
+
+#define MAX_CHANNELS 16
 
 typedef Int32* (*MixerUpdateCallback)(void*, UInt32);
 typedef Int32 (*MixerWriteCallback)(void*, Int16*, UInt32);
@@ -63,11 +65,11 @@ void mixerSetMasterVolume(Mixer* mixer, Int32 volume);
 void mixerEnableMaster(Mixer* mixer, Int32 enable);
 void mixerSetStereo(Mixer* mixer, Int32 stereo);
 
-Int32 mixerGetChannelVolume(Mixer* mixer, Int32 channelNumber, int leftRight);
-void mixerSetChannelVolume(Mixer* mixer, Int32 channelNumber, Int32 volume);
-void mixerSetChannelPan(Mixer* mixer, Int32 channelNumber, Int32 pan);
-void mixerEnableChannel(Mixer* mixer, Int32 channelNumber, Int32 enable);
-Int32 mixerIsChannelActive(Mixer* mixer, Int32 channelNumber, Int32 reset);
+Int32 mixerGetChannelTypeVolume(Mixer* mixer, Int32 channelType, int leftRight);
+void mixerSetChannelTypeVolume(Mixer* mixer, Int32 channelType, Int32 volume);
+void mixerSetChannelTypePan(Mixer* mixer, Int32 channelType, Int32 pan);
+void mixerEnableChannelType(Mixer* mixer, Int32 channelType, Int32 enable);
+Int32 mixerIsChannelTypeActive(Mixer* mixer, Int32 channelType, Int32 reset);
 
 /* Write callback registration for audio drivers */
 void mixerSetWriteCallback(Mixer* mixer, MixerWriteCallback callback, void*, int);
@@ -80,10 +82,9 @@ void mixerStopLog(Mixer* mixer);
 /* Internal interface methods */
 void mixerReset(Mixer* mixer);
 void mixerSync(Mixer* mixer);
-void mixerRegisterChannel(Mixer* mixer, Int32 channelNumber, Int32 stereo, 
-                          MixerUpdateCallback callback, void*param);
-void mixerUnregisterChannel(Mixer* mixer, Int32 channelNumber);
-Int32 mixerGetSize();
+Int32 mixerRegisterChannel(Mixer* mixer, MixerAudioType audioType, Int32 stereo, 
+                           MixerUpdateCallback callback, void*param);
+void mixerUnregisterChannel(Mixer* mixer, Int32 handle);
 
 void mixerSetBoardFrequency(int CPUFrequency);
 

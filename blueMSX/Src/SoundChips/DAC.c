@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/DAC.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,8 @@ static Int32* dacSync(DAC* dac, UInt32 count);
 struct DAC
 {
     Mixer* mixer;
-    Int32  defaultBuffer[BUFFER_SIZE];
-    Int32  buffer[BUFFER_SIZE];
+    Int32 handle;
+
     Int32  enabled;
     Int32  sampleVolume;
     Int32  oldSampleVolume;
@@ -51,6 +51,9 @@ struct DAC
     Int32  count;
     Int32  ctrlVolume;
     Int32  daVolume;
+
+    Int32  defaultBuffer[BUFFER_SIZE];
+    Int32  buffer[BUFFER_SIZE];
 };
 
 void dacReset(DAC* dac) {
@@ -68,14 +71,14 @@ DAC* dacCreate(Mixer* mixer)
 
     dacReset(dac);
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, dacSync, dac);
+    dac->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, dacSync, dac);
 
     return dac;
 }
 
 void dacDestroy(DAC* dac)
 {
-    mixerUnregisterChannel(dac->mixer, MIXER_CHANNEL_PCM);
+    mixerUnregisterChannel(dac->mixer, dac->handle);
     free(dac);
 }
 

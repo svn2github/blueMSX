@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-13 02:04:47 $
+** $Date: 2004-12-26 10:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -725,48 +725,48 @@ void actionMuteTogglePsg() {
     int channel = MIXER_CHANNEL_PSG;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionMuteTogglePcm() {
     int channel = MIXER_CHANNEL_PCM;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionMuteToggleScc() {
     int channel = MIXER_CHANNEL_SCC;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionMuteToggleKeyboard() {
     int channel = MIXER_CHANNEL_KEYBOARD;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionMuteToggleMsxMusic() {
     int channel = MIXER_CHANNEL_MSXMUSIC;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionMuteToggleMsxAudio() {
     int channel = MIXER_CHANNEL_MSXAUDIO;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 void actionMuteToggleMoonsound() {
     int channel = MIXER_CHANNEL_MOONSOUND;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
-    mixerEnableChannel(state.mixer, channel, newEnable);
+    mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
 void actionVolumeToggleStereo() {
@@ -860,72 +860,72 @@ void actionVolumeSetMaster(int value) {
 
 void actionVolumeSetPsg(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_PSG, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_PSG, value);
 }
 
 void actionVolumeSetPcm(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_PCM, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_PCM, value);
 }
 
 void actionVolumeSetScc(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_SCC, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_SCC, value);
 }
 
 void actionVolumeSetMsxMusic(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_MSXMUSIC, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_MSXMUSIC, value);
 }
 
 void actionVolumeSetMsxAudio(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_MSXAUDIO, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_MSXAUDIO, value);
 }
 
 void actionVolumeSetMoonsound(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
 }
 
 void actionVolumeSetKeyboard(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = value;
-    mixerSetChannelVolume(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
 }
 
 void actionPanSetPsg(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_PSG, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_PSG, value);
 }
 
 void actionPanSetPcm(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_PCM, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_PCM, value);
 }
 
 void actionPanSetScc(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_SCC, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_SCC, value);
 }
 
 void actionPanSetMsxMusic(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_MSXMUSIC, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_MSXMUSIC, value);
 }
 
 void actionPanSetMsxAudio(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_MSXAUDIO, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_MSXAUDIO, value);
 }
 
 void actionPanSetMoonsound(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
 }
 
 void actionPanSetKeyboard(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = value;
-    mixerSetChannelPan(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
 }
 
 void actionRenshaSetLevel(int value) {

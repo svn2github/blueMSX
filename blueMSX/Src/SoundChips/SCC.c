@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,7 @@ static Int32* sccSync(SCC* scc, UInt32 count);
 struct SCC
 {
     Mixer* mixer;
-    Int32  buffer[BUFFER_SIZE];
+    Int32  handle;
     
     SccMode mode;
     UInt8 deformReg;
@@ -65,6 +65,8 @@ struct SCC
     int readOnly[5];
     UInt8 offset[5];
     Int32  daVolume[5];
+
+    Int32  buffer[BUFFER_SIZE];
 };
 
 void sccLoadState(SCC* scc)
@@ -321,14 +323,14 @@ SCC* sccCreate(Mixer* mixer)
 
     scc->mixer = mixer;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_SCC, 0, sccSync, scc);
+    scc->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_SCC, 0, sccSync, scc);
 
     return scc;
 }
 
 void sccDestroy(SCC* scc)
 {
-    mixerUnregisterChannel(scc->mixer, MIXER_CHANNEL_SCC);
+    mixerUnregisterChannel(scc->mixer, scc->handle);
     free(scc);
 }
 

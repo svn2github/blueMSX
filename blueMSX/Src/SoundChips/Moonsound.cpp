@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-21 22:38:45 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,8 @@ struct Moonsound {
     }
 
     Mixer* mixer;
+    Int32 handle;
+
     Int32  Oversampling;
     Int32  deviceHandle;
     YMF278* ymf278;
@@ -85,7 +87,7 @@ static void destroy(void* rm) {
     ioPortUnregister(0xc6);
     ioPortUnregister(0xc7);
 
-    mixerUnregisterChannel(moonsound->mixer, MIXER_CHANNEL_MOONSOUND);
+    mixerUnregisterChannel(moonsound->mixer, moonsound->handle);
 
     delete moonsound->ymf262;
     delete moonsound->ymf278;
@@ -300,7 +302,7 @@ extern "C" int moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sra
     moonsound->counter2 = (UInt32)-1;
     moonsound->Oversampling = 1;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, sync, moonsound);
+    moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, sync, moonsound);
 
     moonsound->deviceHandle = deviceManagerRegister(AUDIO_MOONSOUND, &callbacks, moonsound);
 

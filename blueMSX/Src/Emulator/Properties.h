@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:47 $
+** $Date: 2004-12-26 10:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,7 +134,7 @@ typedef struct {
     int                 stereo;
     int                 masterVolume;
     int                 masterEnable;
-    MixerChannel        mixerChannel[MIXER_CHANNEL_COUNT];
+    MixerChannel        mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
     char                log[MAX_PATH];
 } SoundProperties;
 

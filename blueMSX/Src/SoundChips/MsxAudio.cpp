@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxAudio.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,6 +54,8 @@ struct MsxAudio {
     }
 
     Mixer* mixer;
+    Int32  handle;
+
     Int32  Oversampling;
     Int32  deviceHandle;
     Y8950* y8950;
@@ -145,7 +147,7 @@ extern "C" void msxaudioDestroy(void* rm) {
     ioPortUnregister(0xc0);
     ioPortUnregister(0xc1);
 
-    mixerUnregisterChannel(msxaudio->mixer, MIXER_CHANNEL_MSXAUDIO);
+    mixerUnregisterChannel(msxaudio->mixer, msxaudio->handle);
 
     delete msxaudio->y8950;
 
@@ -217,7 +219,7 @@ extern "C" int msxaudioCreate(Mixer* mixer)
     msxaudio->Oversampling = 1;
     msxaudio->registerLatch = 0;
 
-    mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, msxaudioSync, msxaudio);
+    msxaudio->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, msxaudioSync, msxaudio);
 
     msxaudio->deviceHandle = deviceManagerRegister(AUDIO_Y8950, &callbacks, msxaudio);
 

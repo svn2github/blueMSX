@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-18 00:30:23 $
+** $Date: 2004-12-26 10:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1321,11 +1321,11 @@ static void UpdatePanToolTip(HWND hCtrl, HWND hwndTT, TOOLINFO* ti)
 }
 
 static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static HWND hwndVolTT[MIXER_CHANNEL_COUNT];
-    static TOOLINFO tiVol[MIXER_CHANNEL_COUNT];
-    static HWND hwndPanTT[MIXER_CHANNEL_COUNT];
-    static TOOLINFO tiPan[MIXER_CHANNEL_COUNT];
-    static int oldEnable[MIXER_CHANNEL_COUNT];
+    static HWND hwndVolTT[MIXER_CHANNEL_TYPE_COUNT];
+    static TOOLINFO tiVol[MIXER_CHANNEL_TYPE_COUNT];
+    static HWND hwndPanTT[MIXER_CHANNEL_TYPE_COUNT];
+    static TOOLINFO tiPan[MIXER_CHANNEL_TYPE_COUNT];
+    static int oldEnable[MIXER_CHANNEL_TYPE_COUNT];
     static int oldMasterEnable;
     static HWND hwndMasterTT[2];
     static TOOLINFO tiMaster[2];
@@ -1378,7 +1378,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             }
         }
 
-        for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
+        for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
             CreateToolTip(GetDlgItem(hDlg, IDC_VOLUME1 + i), &hwndVolTT[i], &tiVol[i]);
             CreateToolTip(GetDlgItem(hDlg, IDC_PAN1 + i), &hwndPanTT[i], &tiPan[i]);
 
@@ -1417,7 +1417,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         return TRUE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) >= IDC_VOLENABLE1 && LOWORD(wParam) < IDC_VOLENABLE1 + MIXER_CHANNEL_COUNT) {
+        if (LOWORD(wParam) >= IDC_VOLENABLE1 && LOWORD(wParam) < IDC_VOLENABLE1 + MIXER_CHANNEL_TYPE_COUNT) {
             updateAudio = TRUE;
         }
 
@@ -1475,7 +1475,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                           (pProperties->sound.chip.enableY8950     ? 2 : 0) |
                           (pProperties->sound.chip.enableMoonsound ? 4 : 0);
 
-            for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
+            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
                 pProperties->sound.mixerChannel[i].volume = 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i),    TBM_GETPOS,   0, 0);
                 pProperties->sound.mixerChannel[i].pan    = SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i),       TBM_GETPOS,   0, 0);
                 pProperties->sound.mixerChannel[i].enable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLE1 + i), BM_GETCHECK, 0, 0) == BST_CHECKED;
@@ -1485,7 +1485,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             pProperties->sound.masterEnable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLEMASTER), BM_GETCHECK, 0, 0) == BST_CHECKED;
             pProperties->sound.stereo = stereo;
 
-            for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
+            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
                 DestroyWindow(hwndVolTT[i]);
                 DestroyWindow(hwndPanTT[i]);
             }
@@ -1503,16 +1503,16 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             boardSetMoonsoundOversampling(pProperties->sound.chip.moonsoundOversampling);
 
             pProperties->sound.masterEnable = oldMasterEnable;
-            for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
+            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
                 pProperties->sound.mixerChannel[i].enable = oldEnable[i];
-                mixerSetChannelVolume(theMixer, i, pProperties->sound.mixerChannel[i].volume);
-                mixerSetChannelPan(theMixer, i, pProperties->sound.mixerChannel[i].pan);
-                mixerEnableChannel(theMixer, i, pProperties->sound.mixerChannel[i].enable);
+                mixerSetChannelTypeVolume(theMixer, i, pProperties->sound.mixerChannel[i].volume);
+                mixerSetChannelTypePan(theMixer, i, pProperties->sound.mixerChannel[i].pan);
+                mixerEnableChannelType(theMixer, i, pProperties->sound.mixerChannel[i].enable);
             }
             mixerSetMasterVolume(theMixer, pProperties->sound.masterVolume);
             mixerEnableMaster(theMixer, pProperties->sound.masterEnable);
 
-            for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
+            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
                 DestroyWindow(hwndVolTT[i]);
                 DestroyWindow(hwndPanTT[i]);
             }
@@ -1533,12 +1533,12 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 updateAudio = TRUE;
             }
 
-            if (wParam >= IDC_VOLUME1 && wParam < IDC_VOLUME1 + MIXER_CHANNEL_COUNT) {  
+            if (wParam >= IDC_VOLUME1 && wParam < IDC_VOLUME1 + MIXER_CHANNEL_TYPE_COUNT) {  
                 UpdateVolumeToolTip(GetDlgItem(hDlg, wParam), hwndVolTT[wParam - IDC_VOLUME1], &tiVol[wParam - IDC_VOLUME1]);
                 updateAudio = TRUE;
             }
 
-            if (wParam >= IDC_PAN1 && wParam < IDC_PAN1 + MIXER_CHANNEL_COUNT) {    
+            if (wParam >= IDC_PAN1 && wParam < IDC_PAN1 + MIXER_CHANNEL_TYPE_COUNT) {    
                 UpdatePanToolTip(GetDlgItem(hDlg, wParam), hwndPanTT[wParam - IDC_PAN1], &tiPan[wParam - IDC_PAN1]);
                 updateAudio = TRUE;
             }
@@ -1550,11 +1550,11 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     }
 
     if (updateAudio) {
-        for (i = 0; i < MIXER_CHANNEL_COUNT; i++) {
-            mixerSetChannelVolume(theMixer, i, 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i), TBM_GETPOS,   0, 0));
-            mixerSetChannelPan(theMixer, i, SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i), TBM_GETPOS,   0, 0));
+        for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
+            mixerSetChannelTypeVolume(theMixer, i, 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i), TBM_GETPOS,   0, 0));
+            mixerSetChannelTypePan(theMixer, i, SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i), TBM_GETPOS,   0, 0));
             pProperties->sound.mixerChannel[i].enable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLE1 + i), BM_GETCHECK, 0, 0) == BST_CHECKED;
-            mixerEnableChannel(theMixer, i, pProperties->sound.mixerChannel[i].enable);
+            mixerEnableChannelType(theMixer, i, pProperties->sound.mixerChannel[i].enable);
         }
         mixerSetMasterVolume(theMixer, 100 - SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_GETPOS,   0, 0));
         pProperties->sound.masterEnable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLEMASTER), BM_GETCHECK, 0, 0) == BST_CHECKED;
