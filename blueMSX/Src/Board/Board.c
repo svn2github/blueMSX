@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-21 09:08:52 $
+** $Date: 2004-12-26 11:31:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@ extern void PatchReset(BoardType boardType);
 static int boardType;
 static int fdcTimingEnable = 1;
 static char baseDirectory[512];
+static Mixer* boardMixer = NULL;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
@@ -168,6 +169,8 @@ int boardRun(Machine* machine,
     int loadState = 0;
     boardSetType(machine->board.type);
 
+    boardMixer = mixer;
+
     if (stateFile != NULL) {
         char* version;
         int   size;
@@ -194,6 +197,11 @@ int boardRun(Machine* machine,
 BoardType boardGetType()
 {
     return boardType;
+}
+
+Mixer* boardGetMixer()
+{
+    return boardMixer;
 }
 
 void boardSetMachine(Machine* machine)

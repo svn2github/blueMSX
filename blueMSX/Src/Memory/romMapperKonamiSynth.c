@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiSynth.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include "romMapper.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DAC.h"
+#include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -50,6 +52,7 @@ static void destroy(RomMapperKonamiSynth* rm)
 {
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    dacDestroy(rm->dac);
 
     free(rm->romData);
     free(rm);
@@ -65,7 +68,7 @@ static void write(RomMapperKonamiSynth* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperKonamiSynthCreate(char* filename, UInt8* romData, 
-                               int size, int slot, int sslot, int startPage, DAC* dac) 
+                               int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
     RomMapperKonamiSynth* rm;
@@ -82,7 +85,7 @@ int romMapperKonamiSynthCreate(char* filename, UInt8* romData,
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
-    rm->dac   = dac;
+    rm->dac   = dacCreate(boardGetMixer());
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

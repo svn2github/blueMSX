@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMajutsushi.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include "romMapper.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "Board.h"
+#include "DAC.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -84,6 +86,7 @@ static void destroy(RomMapperMajutsushi* rm)
 {
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    dacDestroy(rm->dac);
 
     free(rm->romData);
     free(rm);
@@ -118,7 +121,7 @@ static void write(RomMapperMajutsushi* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperMajutsushiCreate(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage, DAC* dac) 
+                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperMajutsushi* rm;
@@ -135,7 +138,7 @@ int romMapperMajutsushiCreate(char* filename, UInt8* romData,
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
-    rm->dac = dac;
+    rm->dac = dacCreate(boardGetMixer());
     rm->size = size;
     rm->slot  = slot;
     rm->sslot = sslot;

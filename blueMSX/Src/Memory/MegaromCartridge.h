@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,11 +32,7 @@
 
 #include "MSXTypes.h"
 #include "RomMapper.h"
-#include "SCC.h"
-#include "DAC.h"
 #include "YM2413.h"
-
-void cartridgeInit(SCC* scc, DAC* dac);
 
 void cartridgeSetSlotInfo(int cartNo, int slot, int sslot);
 

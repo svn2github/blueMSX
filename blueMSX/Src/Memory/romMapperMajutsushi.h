@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMajutsushi.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,9 +31,8 @@
 #define ROMMAPPER_MAJUTSUSHI_H
  
 #include "MSXTypes.h"
-#include "DAC.h"
 
 int romMapperMajutsushiCreate(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage, DAC* dac);
+                           int size, int slot, int sslot, int startPage);
 
 #endif

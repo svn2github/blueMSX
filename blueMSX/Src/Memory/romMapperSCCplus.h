@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSCCplus.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,6 @@
 #define ROMMAPPER_SCCPLUS_H
  
 #include "MSXTypes.h"
-#include "SCC.h"
 
 typedef enum {
     SCC_MIRRORED = 0,
@@ -43,6 +42,6 @@ typedef enum {
 
 int romMapperSCCplusCreate(char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage,
-                           SccType sccType, SCC* scc);
+                           SccType sccType);
 
 #endif

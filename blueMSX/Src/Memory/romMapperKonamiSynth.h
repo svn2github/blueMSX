@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiSynth.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,9 +31,8 @@
 #define ROMMAPPER_KONAMISYNTH_H
 
 #include "MSXTypes.h"
-#include "DAC.h"
 
 int romMapperKonamiSynthCreate(char* filename, UInt8* romData, 
-                               int size, int slot, int sslot, int startPage, DAC* dac);
+                               int size, int slot, int sslot, int startPage);
 
 #endif

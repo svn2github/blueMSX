@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSCCplus.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include "romMapper.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "SCC.h"
+#include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -52,7 +54,6 @@ typedef struct {
     SccMode sccMode;
     SCC* scc;
 } RomMapperSCCplus;
-
 
 static void saveState(RomMapperSCCplus* rm)
 {
@@ -77,6 +78,8 @@ static void saveState(RomMapperSCCplus* rm)
     saveStateSetBuffer(state, "romData", rm->romData, sizeof(rm->romData));
 
     saveStateClose(state);
+
+    sccSaveState(rm->scc);
 }
 
 static void loadState(RomMapperSCCplus* rm)
@@ -103,6 +106,8 @@ static void loadState(RomMapperSCCplus* rm)
     saveStateGetBuffer(state, "romData", rm->romData, sizeof(rm->romData));
 
     saveStateClose(state);
+
+    sccLoadState(rm->scc);
 
     for (bank = 0; bank < 4; bank++) {   
         if (rm->isMapped[bank]) {
@@ -131,8 +136,14 @@ static void destroy(RomMapperSCCplus* rm)
 {
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    sccDestroy(rm->scc);
 
     free(rm);
+}
+
+static void reset(RomMapperSCCplus* rm)
+{
+    sccReset(rm->scc);
 }
 
 static UInt8 read(RomMapperSCCplus* rm, UInt16 address) 
@@ -236,9 +247,9 @@ static void write(RomMapperSCCplus* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperSCCplusCreate(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage, SccType sccType, SCC* scc) 
+                           int size, int slot, int sslot, int startPage, SccType sccType) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperSCCplus* rm;
 
     rm = malloc(sizeof(RomMapperSCCplus));
@@ -268,7 +279,7 @@ int romMapperSCCplusCreate(char* filename, UInt8* romData,
     rm->isMapped[2]     = sccType != SCC_SDSNATCHER;
     rm->isMapped[3]     = sccType != SCC_SDSNATCHER;
     rm->mapperMask      = sccType == SCC_MIRRORED ? 0x07 : 0x0f;
-    rm->scc             = scc;
+    rm->scc             = sccCreate(boardGetMixer());
     rm->sccType         = sccType;
     rm->sccMode         = SCC_NONE;
 

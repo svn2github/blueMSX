@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,8 +79,6 @@
 
 
 typedef struct {
-    SCC* scc;
-    DAC* dac;
     struct {
         int slot;
         int sslot;
@@ -91,18 +89,11 @@ typedef struct {
 CartridgeInfo cartridgeInfo;
 
 
-void cartridgeInit(SCC* scc, DAC* dac)
-{
-    cartridgeInfo.scc    = scc;
-    cartridgeInfo.dac    = dac;
-}
-
 void cartridgeSetSlotInfo(int cartNo, int slot, int sslot) 
 {
     cartridgeInfo.cart[cartNo].slot  = slot;
     cartridgeInfo.cart[cartNo].sslot = sslot;
 }
-
 
 void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip) 
 {
@@ -114,8 +105,6 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
     // Delete old cartridge
     slotRemove(slot, sslot);
-
-    sccReset(cartridgeInfo.scc);
 
     if (cart == NULL) {
         return;
@@ -186,27 +175,27 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         if (buf == NULL) {
             switch (romType) {
             case ROM_SNATCHER:
-                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_SNATCHER, cartridgeInfo.scc);
+                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_SNATCHER);
                 break;
 
             case ROM_SDSNATCHER:
-                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_SDSNATCHER, cartridgeInfo.scc);
+                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_SDSNATCHER);
                 break;
 
             case ROM_SCCMIRRORED:
-                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_MIRRORED, cartridgeInfo.scc);
+                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_MIRRORED);
                 break;
 
             case ROM_SCCEXTENDED:
-                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_EXTENDED, cartridgeInfo.scc);
+                romMapperSCCplusCreate(NULL, NULL, 0, slot, sslot, 2, SCC_EXTENDED);
                 break;
 
             case ROM_SCC:
-                romMapperSCCplusCreate(romName, NULL, 0, slot, sslot, 2, SCC_EXTENDED, cartridgeInfo.scc);
+                romMapperSCCplusCreate(romName, NULL, 0, slot, sslot, 2, SCC_EXTENDED);
                 break;
 
             case ROM_SCCPLUS:
-                romMapperSCCplusCreate(romName, NULL, 0, slot, sslot, 2, SCCP_EXTENDED, cartridgeInfo.scc);
+                romMapperSCCplusCreate(romName, NULL, 0, slot, sslot, 2, SCCP_EXTENDED);
                 break;
             }
             break;
@@ -238,31 +227,31 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
             
         case ROM_KONAMI5:
-            romMapperKonami5Create(romName, buf, size, slot, sslot, 2, cartridgeInfo.scc);
+            romMapperKonami5Create(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_SNATCHER:
-            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_SNATCHER, cartridgeInfo.scc);
+            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_SNATCHER);
             break;
 
         case ROM_SDSNATCHER:
-            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_SDSNATCHER, cartridgeInfo.scc);
+            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_SDSNATCHER);
             break;
 
         case ROM_SCCMIRRORED:
-            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_MIRRORED, cartridgeInfo.scc);
+            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_MIRRORED);
             break;
 
         case ROM_SCCEXTENDED:
-            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_EXTENDED, cartridgeInfo.scc);
+            romMapperSCCplusCreate(NULL, buf, size, slot, sslot, 2, SCC_EXTENDED);
             break;
 
         case ROM_SCC:
-            romMapperSCCplusCreate(romName, buf, size, slot, sslot, 2, SCC_EXTENDED, cartridgeInfo.scc);
+            romMapperSCCplusCreate(romName, buf, size, slot, sslot, 2, SCC_EXTENDED);
             break;
 
         case ROM_SCCPLUS:
-            romMapperSCCplusCreate(romName, buf, size, slot, sslot, 2, SCCP_EXTENDED, cartridgeInfo.scc);
+            romMapperSCCplusCreate(romName, buf, size, slot, sslot, 2, SCCP_EXTENDED);
             break;
             
         case ROM_KONAMI4:
@@ -270,7 +259,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_MAJUTSUSHI:
-            romMapperMajutsushiCreate(romName, buf, size, slot, sslot, 2, cartridgeInfo.dac);
+            romMapperMajutsushiCreate(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_HOLYQURAN:
@@ -278,7 +267,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
 		case ROM_KONAMISYNTH:
-            romMapperKonamiSynthCreate(romName, buf, size, slot, sslot, 2, cartridgeInfo.dac);
+            romMapperKonamiSynthCreate(romName, buf, size, slot, sslot, 2);
             break;
             
         case ROM_ASCII8:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,8 +31,7 @@
 #define ROMMAPPER_TURBORPCM_H
 
 #include "MSXTypes.h"
-#include "DAC.h"
 
-int romMapperTurboRPcmCreate(DAC* dac);
+int romMapperTurboRPcmCreate();
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:05:52 $
+** $Date: 2004-12-26 11:31:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,8 +49,6 @@
 #include "AY8910.h"
 #include "YM2413.h"
 #include "Y8950.h"
-#include "SCC.h"
-#include "DAC.h"
 #include "KeyClick.h"
 #include "Moonsound.h"
 #include "audioMixer.h"
@@ -131,8 +129,6 @@ void msxLoadState();
 static Machine*        msxMachine;
 static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
-static SCC*            scc;
-static DAC*            dac;
 static AudioKeyClick*  keyClick;
 static R800*           r800;
 static RTC*            rtc;
@@ -323,8 +319,6 @@ static int initMachine(Machine* machine,
 
     msxRam = NULL;
 
-    cartridgeInit(scc, dac);
-
     msxVramSize = machine->video.vramSize;
 
     vdpInit(VDP_MSX, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
@@ -397,22 +391,22 @@ static int initMachine(Machine* machine,
         }
 
         if (machine->slotInfo[i].romType == ROM_SNATCHER) {
-            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SNATCHER, scc);
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SNATCHER);
             continue;
         }
 
         if (machine->slotInfo[i].romType == ROM_SDSNATCHER) {
-            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SDSNATCHER, scc);
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SDSNATCHER);
             continue;
         }
 
         if (machine->slotInfo[i].romType == ROM_SCCMIRRORED) {
-            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_MIRRORED, scc);
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_MIRRORED);
             continue;
         }
 
         if (machine->slotInfo[i].romType == ROM_SCCEXTENDED) {
-            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_EXTENDED, scc);
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_EXTENDED);
             continue;
         }
 
@@ -490,15 +484,15 @@ static int initMachine(Machine* machine,
             break;
             
         case ROM_KONAMI5:
-            success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage, scc);
+            success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_SCC:
-            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCC_EXTENDED, scc);
+            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCC_EXTENDED);
             break;
 
         case ROM_SCCPLUS:
-            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCCP_EXTENDED, scc);
+            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCCP_EXTENDED);
             break;
             
         case ROM_KONAMI4:
@@ -506,7 +500,7 @@ static int initMachine(Machine* machine,
             break;
 
         case ROM_MAJUTSUSHI:
-            success &= romMapperMajutsushiCreate(romName, buf, size, slot, subslot, startPage, dac);
+            success &= romMapperMajutsushiCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
         case ROM_HOLYQURAN:
@@ -514,7 +508,7 @@ static int initMachine(Machine* machine,
             break;
 
 		case ROM_KONAMISYNTH:
-            success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage, dac);
+            success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
         case ROM_ASCII8:
@@ -670,7 +664,7 @@ static int initMachine(Machine* machine,
         success &= ym2413Create(mixer);
     }
 
-    success &= romMapperTurboRPcmCreate(dac);
+    success &= romMapperTurboRPcmCreate();
 
     if (enableMoonsound) {
         buf = romLoad("Machines/Shared Roms/MOONSOUND.rom", NULL, &size);
@@ -721,10 +715,6 @@ void msxReset()
         ay8910Reset(ay8910);
     }
     
-    if (scc != NULL) {
-        sccReset(scc);
-    }
-
     deviceManagerReset();
 }
 
@@ -769,8 +759,6 @@ int msxRun(Machine* machine,
     currentRomType[1] = ROM_UNKNOWN;
 
     ay8910    = ay8910Create(mixer, AY8910_MSX);
-    scc       = sccCreate(mixer);
-    dac       = dacCreate(mixer);
     keyClick  = audioKeyClickCreate(mixer);
 
     i8255Create(KeyMap, keyClick);
@@ -822,7 +810,6 @@ int msxRun(Machine* machine,
         i8255LoadState();
         rtcLoadState(rtc);
         ay8910LoadState(ay8910);
-        sccLoadState(scc);
         vdpLoadState();
         tapeLoadState();
     }
@@ -883,8 +870,6 @@ int msxRun(Machine* machine,
     joystickIoDestroy(joyIO);
 
     ay8910Destroy(ay8910);
-    sccDestroy(scc);
-    dacDestroy(dac);
     audioKeyClickDestroy(keyClick);
     i8255Destroy();
 
@@ -1136,7 +1121,6 @@ void msxSaveState()
     slotSaveState();
     rtcSaveState(rtc);
     ay8910SaveState(ay8910);
-    sccSaveState(scc);
     vdpSaveState();
     tapeSaveState();
 }

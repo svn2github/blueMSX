@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-13 16:02:46 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"
+#include "DAC.h"
 #include "IoPort.h"
 #include <stdlib.h>
 #include <string.h>
@@ -76,6 +77,7 @@ static void loadState(RomMapperTurboRPcm* rm)
 static void destroy(RomMapperTurboRPcm* rm)
 {
     deviceManagerUnregister(rm->deviceHandle);
+    dacDestroy(rm->dac);
 
     ioPortUnregister(0xa4);
     ioPortUnregister(0xa5);
@@ -134,14 +136,15 @@ static void reset(RomMapperTurboRPcm* rm)
     rm->refFrag = 0;
     rm->time    = 0;
 }
-int romMapperTurboRPcmCreate(DAC* dac) 
+
+int romMapperTurboRPcmCreate() 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperTurboRPcm* rm = malloc(sizeof(RomMapperTurboRPcm));
 
     rm->deviceHandle = deviceManagerRegister(ROM_TURBORPCM, &callbacks, rm);
 
-    rm->dac    = dac;
+    rm->dac    = dacCreate(boardGetMixer());
 	rm->status = 0;
     rm->time   = 0;
 

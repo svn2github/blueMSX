@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-26 11:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include "romMapper.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "SCC.h"
+#include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -62,6 +64,8 @@ static void saveState(RomMapperKonami5* rm)
     saveStateSet(state, "sccEnable", rm->sccEnable);
 
     saveStateClose(state);
+
+    sccSaveState(rm->scc);
 }
 
 static void loadState(RomMapperKonami5* rm)
@@ -79,6 +83,8 @@ static void loadState(RomMapperKonami5* rm)
 
     saveStateClose(state);
 
+    sccLoadState(rm->scc);
+
     for (i = 0; i < 4; i++) {   
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + rm->romMapper[i] * 0x2000, 1, 0);
     }
@@ -95,9 +101,15 @@ static void destroy(RomMapperKonami5* rm)
 {
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    sccDestroy(rm->scc);
 
     free(rm->romData);
     free(rm);
+}
+
+static void reset(RomMapperKonami5* rm)
+{
+    sccReset(rm->scc);
 }
 
 static UInt8 read(RomMapperKonami5* rm, UInt16 address) 
@@ -151,9 +163,9 @@ static void write(RomMapperKonami5* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperKonami5Create(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage, SCC* scc) 
+                           int size, int slot, int sslot, int startPage) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperKonami5* rm;
     int i;
 
@@ -172,7 +184,7 @@ int romMapperKonami5Create(char* filename, UInt8* romData,
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
-    rm->scc   = scc;
+    rm->scc = sccCreate(boardGetMixer());
     rm->sccEnable = 0;
 
     rm->romMapper[0] = 0;

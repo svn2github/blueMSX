@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 09:22:29 $
+** $Date: 2004-12-26 11:31:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,8 @@ int boardGetFdcTimingEnable();
 void boardSetFdcTimingEnable(int enable);
 
 char* boardGetBaseDirectory();
+
+Mixer* boardGetMixer();
 
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
