@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-17 13:31:46 $
+** $Date: 2005-01-18 00:41:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 
 #include "CRTC6845.h"
-#include "Board.h"
 #include "Board.h"
 #include "IoPort.h"
 #include <memory.h>
@@ -81,6 +80,24 @@ static const UInt8 crtcRegisterValueMask[18] = {
 static UInt8 crtcRegister[18];
 static UInt8 crtcAddressReg; // AR
 
+typedef enum { CURSOR_NOBLINK, CURSOR_DISABLED, CURSOR_BLINK16, CURSOR_BLINK32} crtcCursorStates;
+
+/* Encoded registers */
+typedef struct
+{
+    UInt8    mode;
+    UInt8    rasterStart;
+    UInt8    rasterEnd;
+    UInt16   addressStart;
+} TYP_CRTC_CURSOR;
+
+typedef struct
+{
+    TYP_CRTC_CURSOR    cursor;
+} TYP_CRTC;
+
+static TYP_CRTC crtc;
+
 static UInt8 crtcROM[0x1000];
 static UInt8 crtcMemory[0x800];
 static UInt8 crtcMemoryBankControl = 0;
@@ -108,13 +125,36 @@ void crtcScreenRefresh(void)
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
-    return crtcRegister[crtcAddressReg];
+    if (crtcAddressReg < 18)
+        return crtcRegister[crtcAddressReg];
+    else
+        return 0xff;
 }
 
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
 {
-    if (crtcAddressReg < 18)
-        crtcRegister[crtcAddressReg] = crtcRegisterValueMask[crtcAddressReg] & value;
+    if (crtcAddressReg < 18) {
+        value &= crtcRegisterValueMask[crtcAddressReg];
+        crtcRegister[crtcAddressReg] = value;
+        switch (crtcAddressReg ) {
+        case 10:
+            crtc.cursor.rasterStart = value & 0x1f;
+            value &= 0x60;
+            crtc.cursor.mode = (value&32)?(value&64)?(value&96)?CURSOR_DISABLED:CURSOR_BLINK16:CURSOR_BLINK32:CURSOR_NOBLINK;
+            break;
+        case 11:
+            crtc.cursor.rasterEnd = value;
+            break;
+        case 12:
+            crtc.cursor.addressStart &= 0xff;
+            crtc.cursor.addressStart |= value << 8;
+            break;
+        case 13:
+            crtc.cursor.addressStart &= 0xff00;
+            crtc.cursor.addressStart |= value;
+            break;
+        }
+    }
 }
 
 void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value)
@@ -134,7 +174,7 @@ void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value)
 
 int crtcMemBankStatus(void)
 {
-   return (crtcMemoryBankControl & 1);
+   return (crtcMemoryBankControl);
 }
 
 void crtcMemWrite(UInt16 address, UInt8 value)

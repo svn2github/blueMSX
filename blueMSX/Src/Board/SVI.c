@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-17 11:05:16 $
+** $Date: 2005-01-18 00:41:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,11 +157,9 @@ void sviClearInt(UInt32 irq)
         r800ClearInt(r800);
 }
 
-/* SlotManager.h - Write and Read is not working this way
-
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((crtcMemBankStatus()) && (address & 0xf000))
+    if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000) 
         crtcMemWrite(address & 0xfff, value);
     else
         slotWrite(&ref, address, value);
@@ -169,12 +167,11 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((crtcMemBankStatus) && (address & 0xf000))
+    if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000) 
         return crtcMemRead(address & 0xfff);
     else
         return slotRead(&ref, address);
 }
-*/
 
 static void sviMemReset()
 {
@@ -287,9 +284,13 @@ void sviInitStatistics(Machine* machine)
     sviVramSize = machine->video.vramSize;
 
     for (i = 0; i < machine->slotInfoCount; i++) {
+
         if (machine->slotInfo[i].romType == RAM_NORMAL) {
+
             sviRamSize = 0x2000 * machine->slotInfo[i].pageCount;
+
         }
+
     }
 }
 
@@ -483,8 +484,8 @@ int sviRun(Machine* machine,
 
     deviceManagerCreate();
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
-//    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+//    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
 
     boardInit(&r800->systemTime);
     ioPortReset();
