@@ -158,6 +158,12 @@ struct VdpCmdState {
     int    timingMode;
 };
 
+// Pointer to initialized command engine. This should be a list
+// but since there are only one instance at the time its not
+// a big deal. It is also only used in vdpCmdFlushAll()
+static VdpCmdState* vdpCmdGlobal = NULL;
+
+
 /*************************************************************
 ** Forward declarations
 **************************************************************
@@ -962,12 +968,23 @@ VdpCmdState* vdpCmdCreate(int vramSize, UInt8* vramPtr, UInt32 systemTime)
     vdpCmd->vram = vramPtr;
     vdpCmd->vramMask = vramSize - 1;
 
+    vdpCmdGlobal = vdpCmd; // Ugly fix to make the cmd engine flushable
+
     return vdpCmd;
 }
 
+
+/*************************************************************
+** vdpCmdDestroy
+**
+** Description:
+**      Destroys the command engine
+**************************************************************
+*/
 void vdpCmdDestroy(VdpCmdState* vdpCmd)
 {
     free(vdpCmd);
+    vdpCmdGlobal = 0l;
 }
 
 
@@ -1182,6 +1199,22 @@ void vdpCmdFlush(VdpCmdState* vdpCmd)
         }
     }
 }
+
+
+/*************************************************************
+** vdpCmdFlush
+**
+** Description:
+**      Flushes current VDP command on all created engines.
+**************************************************************
+*/
+void vdpCmdFlushAll() 
+{
+    if (vdpCmdGlobal) {
+        vdpCmdFlush(vdpCmdGlobal);
+    }
+}
+
 
 /*************************************************************
 ** vdpCmdExecute

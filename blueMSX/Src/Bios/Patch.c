@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Bios/Patch.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:44 $
+** $Date: 2005-02-05 01:17:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,7 @@ static void tapoof(void* ref, CpuRegs* cpu);
 static void tapout(void* ref, CpuRegs* cpu);
 static void casout(void* ref, CpuRegs* cpu);
 
-void vdpCmdFlush();
+void vdpCmdFlushAll();
 
 void PatchReset(BoardType boardType) {
     patchEnabled = 0;
@@ -163,7 +163,7 @@ void PatchZ80(void* ref, CpuRegs* cpu)
         break;
     }
 
-    vdpCmdFlush();
+    vdpCmdFlushAll();
 }
 
 static void phydio(void* ref, CpuRegs* cpu) {

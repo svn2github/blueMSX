@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-02 08:32:52 $
+** $Date: 2005-02-05 01:17:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -210,6 +210,7 @@ struct VDP {
     BoardTimer* timerVStart;
     BoardTimer* timerScrModeChange;
     BoardTimer* timerHint;
+    BoardTimer* timerHint2;
     BoardTimer* timerVint;
 
     UInt32 frameStartTime;
@@ -266,6 +267,7 @@ static void scheduleHint(VDP* vdp)
 {
     vdp->timeHint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
     boardTimerAdd(vdp->timerHint, vdp->timeHint);
+    boardTimerAdd(vdp->timerHint2, vdp->timeHint + 130);
 }
 
 static void scheduleVint(VDP* vdp)
@@ -286,8 +288,13 @@ static void scheduleDrawAreaStart(VDP* vdp)
 static void onHint(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
+    vdp->intStartTime = time;
+}
 
-    vdp->intStartTime = boardSystemTime();
+static void onHint2(VDP* vdp, UInt32 time)
+{
+    sync(vdp, time);
+
     if (vdp->vdpRegs[0] & 0x10) {
         boardSetInt(INT_IE1);
     }
@@ -626,7 +633,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
             }
         }
         else {
-            if (boardSystemTime() - vdp->intStartTime < HPERIOD - vdp->hRefresh) {
+            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->hRefresh) {
                 vdpStatus |= 0x01;
             }
         }
@@ -733,7 +740,7 @@ static void sync(VDP* vdp, UInt32 systemTime)
 {
     int frameTime = systemTime - vdp->frameStartTime;
     int scanLine = frameTime / HPERIOD;
-    int lineTime = frameTime % HPERIOD - vdp->leftBorder - 10;
+    int lineTime = frameTime % HPERIOD - vdp->leftBorder + 20;
     int curLineOffset;
 
     if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
@@ -899,6 +906,7 @@ static void loadState(VDP* vdp)
 
     boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
     boardTimerAdd(vdp->timerHint, vdp->timeHint);
+    boardTimerAdd(vdp->timerHint2, vdp->timeHint);
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
     boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
     boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
@@ -1012,6 +1020,7 @@ static void destroy(VDP* vdp)
     boardTimerDestroy(vdp->timerVStart);
     boardTimerDestroy(vdp->timerScrModeChange);
     boardTimerDestroy(vdp->timerHint);
+    boardTimerDestroy(vdp->timerHint2);
     boardTimerDestroy(vdp->timerVint);
 
     vdpCmdDestroy(vdp->cmdEngine);
@@ -1046,6 +1055,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerVStart        = boardTimerCreate(onVStart, vdp);
     vdp->timerScrModeChange = boardTimerCreate(onScrModeChange, vdp);
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
+    vdp->timerHint2         = boardTimerCreate(onHint2, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
 
     vdp->vramPages     = vramPages;
