@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-27 05:31:29 $
+** $Date: 2005-02-27 07:51:37 $
 **
 ** Author: Daniel Vik
 **
@@ -391,10 +391,10 @@ static void SKIP_JP(R800* r800) {
 
 static void CALL(R800* r800) {
     RegisterPair addr;
-    r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
     addr.B.l = readOpcode(r800, r800->regs.PC.W++);
     addr.B.h = readOpcode(r800, r800->regs.PC.W++);
     delayCall(r800);
+    r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
     writeMem(r800, --r800->regs.SP.W, r800->regs.PC.B.h);
     writeMem(r800, --r800->regs.SP.W, r800->regs.PC.B.l);
     r800->regs.PC.W = addr.W;
@@ -410,11 +410,13 @@ static void SKIP_CALL(R800* r800) {
 
 static void RET(R800* r800) { 
     RegisterPair addr;
-    r800->callstackSize--;
     addr.B.l = readMem(r800, r800->regs.SP.W++);
     addr.B.h = readMem(r800, r800->regs.SP.W++);
     r800->regs.PC.W = addr.W;
     r800->regs.SH.W = addr.W;
+    if (r800->callstack[r800->callstackSize - 1] == addr.W) {
+        r800->callstackSize--;
+    }
 }
 
 static void PUSH(R800* r800, UInt16* reg) {
@@ -5839,6 +5841,7 @@ void r800Execute(R800* r800) {
         /* If it is NMI... */
         if (r800->nmiState == INT_EDGE) {
             r800->nmiState = INT_HIGH;
+            r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.iff2 = r800->regs.iff1;
@@ -5865,6 +5868,7 @@ void r800Execute(R800* r800) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+            r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
@@ -5921,6 +5925,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
         /* If it is NMI... */
         if (r800->nmiState == INT_EDGE) {
             r800->nmiState = INT_HIGH;
+            r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.iff2 = r800->regs.iff1;
@@ -5947,6 +5952,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+            r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
@@ -5997,6 +6003,7 @@ void r800ExecuteInstruction(R800* r800) {
     /* If it is NMI... */
     if (r800->nmiState == INT_EDGE) {
         r800->nmiState = INT_HIGH;
+        r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
         r800->regs.iff2 = r800->regs.iff1;
@@ -6023,6 +6030,7 @@ void r800ExecuteInstruction(R800* r800) {
 
     case 2:
         address = r800->dataBus | ((Int16)r800->regs.I << 8);
+        r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
         r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);

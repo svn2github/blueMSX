@@ -4,6 +4,7 @@
 #include "StatusBar.h"
 #include "Toolbar.h"
 #include "Disassembly.h"
+#include "Callstack.h"
 #include "CpuRegisters.h"
 #include "Memory.h"
 #include "resrc1.h"
@@ -19,6 +20,7 @@ static HWND viewHwnd = NULL;
 static StatusBar* statusBar = NULL;
 static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
+static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static Memory* memory = NULL;
 static bool cursorPresent = false;
@@ -130,7 +132,8 @@ static void updateStatusBar()
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
-#define MENU_WINDOW_MEMORY          37302
+#define MENU_WINDOW_CALLSTACK       37302
+#define MENU_WINDOW_MEMORY          37303
 
 #define MENU_HELP_ABOUT             37400
 
@@ -161,6 +164,7 @@ static void updateWindowMenu()
     HMENU hMenuWindow = CreatePopupMenu();
     AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_DISASSEMBLY, "Disassembly");
     AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_CPUREGISTERS, "CPU Registers");
+    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_CALLSTACK, "Callstack");
     AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_MEMORY, "Memory Viewer");
 
     HMENU hMenuHelp = CreatePopupMenu();
@@ -243,6 +247,11 @@ void updateDeviceState()
                     disassembly->updateContent(mem->memory, pc);
                     disassemblyUpdated = true;
                 }
+
+                Callstack* stack = DeviceGetCallstack(device, 0);
+                if (stack != NULL) {
+                    callstack->updateContent(stack->callstack, stack->size);
+                }
             }
         }
 
@@ -258,6 +267,7 @@ void updateDeviceState()
     if (!disassemblyUpdated) {
         disassembly->invalidateContent();
         cpuRegisters->invalidateContent();
+        callstack->invalidateContent();
     }
 }
 
@@ -313,6 +323,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 {
     switch (iMsg) {
     case WM_CREATE:
+#if 0
         RegisterHotKey(hwnd, 1, 0, VK_F5);
         RegisterHotKey(hwnd, 2, MOD_CONTROL | MOD_ALT, VK_CANCEL);
         RegisterHotKey(hwnd, 3, MOD_SHIFT, VK_F5);
@@ -322,6 +333,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         RegisterHotKey(hwnd, 7, 0, VK_F9);
         RegisterHotKey(hwnd, 8, MOD_SHIFT, VK_F9);
         RegisterHotKey(hwnd, 9, MOD_CONTROL | MOD_SHIFT, VK_F9);
+#endif
         return 0;
 
     case WM_HOTKEY:
@@ -378,6 +390,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             return 0;
 
         case MENU_WINDOW_CPUREGISTERS:
+            return 0;
+
+        case MENU_WINDOW_CALLSTACK:
             return 0;
 
         case MENU_WINDOW_MEMORY:
@@ -549,14 +564,19 @@ void OnShowTool() {
     toolBar->show();
 
     disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
-    RECT r = { 3, 3, 507, 400 };
+    RECT r = { 3, 3, 457, 400 };
     disassembly->updatePosition(r);
     disassembly->show();
 
     cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 510, 3, 710, 400 };
+    RECT r2 = { 460, 3, 710, 180 };
     cpuRegisters->updatePosition(r2);
     cpuRegisters->show();
+
+    callstack = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
+    RECT r5 = { 460, 183, 710, 400 };
+    callstack->updatePosition(r5);
+    callstack->show();
 
     memory = new Memory(GetDllHinstance(), viewHwnd);
     RECT r3 = { 3, 403, 710, 630 };
@@ -577,6 +597,7 @@ void OnEmulatorStart() {
         disassembly->updateBreakpoints();
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        callstack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -586,6 +607,7 @@ void OnEmulatorStop() {
     if (dbgHwnd != NULL) {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        callstack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -595,6 +617,7 @@ void OnEmulatorPause() {
     if (dbgHwnd != NULL) {
         disassembly->enableEdit();
         cpuRegisters->enableEdit();
+        callstack->enableEdit();
         memory->enableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -604,6 +627,7 @@ void OnEmulatorResume() {
     if (dbgHwnd != NULL) {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        callstack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }

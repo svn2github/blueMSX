@@ -153,6 +153,12 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
+			RelativePath=".\Callstack.cpp">
+		</File>
+		<File
+			RelativePath=".\Callstack.h">
+		</File>
+		<File
 			RelativePath=".\CpuRegisters.cpp">
 		</File>
 		<File

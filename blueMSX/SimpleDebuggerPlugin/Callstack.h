@@ -22,15 +22,16 @@
 **
 ******************************************************************************
 */
-#ifndef DISASSEMBLY_H
-#define DISASSEMBLY_H
+#ifndef CALLSTACK_H
+#define CALLSTACK_H
 
+#include "Disassembly.h"
 #include <windows.h>
 
-class Disassembly {
+class CallstackWindow {
 public:
-    Disassembly(HINSTANCE hInstance, HWND owner);
-    ~Disassembly();
+    CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* disassembly);
+    ~CallstackWindow();
 
     void show();
     void hide();
@@ -38,21 +39,11 @@ public:
     void enableEdit();
     void disableEdit();
     
-    WORD dasm(WORD PC, char* dest);
-    
     void updatePosition(RECT& rect);
 
-    void updateContent(BYTE* memory, WORD pc);
+    void updateContent(DWORD* callstack, int size);
     void invalidateContent();
-    void updateScroll(int address = -1);
-    void updateBreakpoints();
-    void setRuntoBreakpoint();
-    void clearRuntoBreakpoint();
-    void setCursor(WORD address);
-
-    void toggleBreakpoint(int address = -1);
-    void toggleBreakpointEnable();
-    void clearAllBreakpoints();
+    void updateScroll();
 
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -77,26 +68,20 @@ private:
     int    textHeight;
     int    textWidth;
 
-    enum BpState { BP_NONE = 0, BP_SET = 1, BP_DISABLED = 2 };
-    
     struct LineInfo {
         WORD address;
-        bool haspc;
         char text[48];
         int  textLength;
         char dataText[48];
         int  dataTextLength;
     };
 
-    int      runtoBreakpoint;
-    int      programCounter;
-    int      firstVisibleLine;
     int      lineCount;
     int      currentLine;
-    LineInfo lineInfo[0x10000];
-    int      breakpointCount;
-    BpState  breakpoint[0x10000];
+    LineInfo lineInfo[256];
     int      linePos;
+
+    Disassembly* disassembly;
 };
 
-#endif //DISASSEMBLY_H
+#endif //CALLSTACK_H

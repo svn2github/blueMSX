@@ -638,6 +638,15 @@ void Disassembly::clearRuntoBreakpoint()
     }
 }
 
+void Disassembly::setCursor(WORD address)
+{
+    for (int i = lineCount - 1; i >= 0; i--) {
+        if (address >= lineInfo[i].address) {
+            updateScroll(i);
+            return;
+        }
+    }
+}
 
 void Disassembly::invalidateContent()
 {
@@ -655,6 +664,19 @@ void Disassembly::invalidateContent()
     lineCount++;
     
     InvalidateRect(hwnd, NULL, TRUE);
+}
+
+WORD Disassembly::dasm(WORD pc, char* dest)
+{
+    dest[0] = 0;
+
+    for (int i = lineCount - 1; i >= 0; i--) {
+        if (pc >= lineInfo[i].address) {
+            strcat(dest, lineInfo[i].text + 18);
+            return lineInfo[i].address;
+        }
+    }
+    return 0;
 }
 
 void Disassembly::updateContent(BYTE* memory, WORD pc)
@@ -693,18 +715,25 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
-void Disassembly::updateScroll() 
+void Disassembly::updateScroll(int index) 
 {
     RECT r;
     GetClientRect(hwnd, &r);
     int visibleLines = r.bottom / textHeight;
 
-    if (programCounter < firstVisibleLine + visibleLines / 4) {
-        firstVisibleLine = programCounter - visibleLines / 2;
-    }
+    if (index == -1) {
+        if (programCounter < firstVisibleLine + visibleLines / 4) {
+            firstVisibleLine = programCounter - visibleLines / 2;
+        }
 
-    if (programCounter >= firstVisibleLine + visibleLines - 1) {
-        firstVisibleLine = programCounter - visibleLines / 2;
+        if (programCounter >= firstVisibleLine + visibleLines - 1) {
+            firstVisibleLine = programCounter - visibleLines / 2;
+        }
+    }
+    
+    else {
+        currentLine = index;
+        firstVisibleLine = index - visibleLines / 2;
     }
 
     if (firstVisibleLine >= lineCount) {
