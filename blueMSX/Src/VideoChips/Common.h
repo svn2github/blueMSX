@@ -43,10 +43,6 @@ extern UInt32 YJKtoYCbCrTable[32][64][64];
 
 #define YJKColor(Y, J, K) YJKtoYCbCrTable[(Y)][J][K]
 
-static void SetNewDrawPage() {
-    evenOddPage = 1 - evenOddPage;
-}
-
 UInt32 *RefreshBorder(int Y, UInt32 bgColor, int line512, int borderExtra)
 {
     int lineSize = line512 ? 2 : 1;
@@ -61,7 +57,7 @@ UInt32 *RefreshBorder(int Y, UInt32 bgColor, int line512, int borderExtra)
         return NULL;
     }
 
-    dstBitmap = emuFrameBuffer + evenOddPage * 2 * WIDTH * HEIGHT +  2 * WIDTH * Y;
+    dstBitmap = emuFrameBuffer + (VDPStatus[2] & 0x02) * WIDTH * HEIGHT +  2 * WIDTH * Y;
 
     emuLineWidth[Y] = line512;
 
@@ -91,9 +87,8 @@ static void RefreshRightBorder(int Y, UInt32 bgColor, int line512, int borderExt
     if (Y < 0 || Y >= HEIGHT || !displayEnable) {
         return;
     }
-
     
-    dstBitmap = emuFrameBuffer + evenOddPage * 2 * WIDTH * HEIGHT +  2 * WIDTH * Y;
+    dstBitmap = emuFrameBuffer + (VDPStatus[2] & 0x02) * WIDTH * HEIGHT +  2 * WIDTH * Y;
     for(offset = lineSize * ((WIDTH - 256) / 2 - HAdjust + borderExtra); offset >= lineSize; offset--) {
         dstBitmap[lineSize * WIDTH - offset] = bgColor;
     }
@@ -356,7 +351,7 @@ static void RefreshLine3(int Y, int X)
 
         Y += VScroll;
         charTable   = VRAM + (chrTabBase & ((-1 << 10) | (32 * (Y / 8))));
-        patternBase = chrGenBase & ((-1 << 13) | ((Y >> 2) & 7));
+        patternBase = chrGenBase & ((-1 << 11) | ((Y >> 2) & 7));
     }
 
     if (dstBitmap == NULL) {
@@ -567,13 +562,11 @@ static void RefreshLine5(int Y, int X)
         chrTabO    = chrTabBase;
         scroll     = hScroll / 2;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll;
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (page ^= 1)] + 128;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll;
 
         if (hScroll512) {
             if (scroll & 0x80) charTable += jump[page ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[page ^= 1] + 128;
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
 
 #define UPDATE_T() if ((++scroll & 0x7f) == 0) charTable += jump[page ^= 1];
@@ -615,13 +608,11 @@ static void RefreshLine5(int Y, int X)
         vscroll    = VScroll;
         chrTabO    = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll;
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (page ^= 1)] + 128;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll;
 
         if (hScroll512) {
             if (scroll & 0x80) charTable += jump[page ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[page ^= 1] + 128;
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
     }
 
@@ -682,7 +673,7 @@ static void RefreshLine6(int Y, int X)
     static int*    jump;
     static int     hScroll512;
     static int     scroll;
-    static int     scrPage;
+    static int     page;
     static UInt32* dstBitmap = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
@@ -704,18 +695,16 @@ static void RefreshLine6(int Y, int X)
         hScroll512 = HScroll512;
         scroll     = HScroll;
         jump       = jumpTable + hScroll512 * 2;
-        scrPage    = (chrTabBase / 0x8000) & 1;
+        page    = (chrTabBase / 0x8000) & 1;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[scrPage ^= 1] + 128;
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
 
-#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[scrPage ^= 1];
+#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
         if (vdpIsEdgeMasked(VDP)) {
             UInt32 bgColor = emuPalette[BGColor & 0x03];
@@ -914,7 +903,7 @@ static void RefreshLine7(int Y, int X)
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
     static int     hScroll512;
-    static int     scrPage;
+    static int     page;
     static int*    jump;
     static int     scroll;
     static int     vscroll;
@@ -936,20 +925,18 @@ static void RefreshLine7(int Y, int X)
         
         hScroll512 = HScroll512;
         jump       = jumpTable + hScroll512 * 2;
-        scrPage    = (chrTabBase / 0x8000) & 1;
+        page    = (chrTabBase / 0x8000) & 1;
         scroll     = HScroll;
         vscroll    = VScroll;
         chrTabO    = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
-#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[scrPage ^= 1];
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
+#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[scrPage ^= 1] + 128;
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
 
         if (vdpIsEdgeMasked(VDP)) {
@@ -983,18 +970,16 @@ static void RefreshLine7(int Y, int X)
     if (vscroll != VScroll || chrTabO != chrTabBase) {
         Y -= firstLine - firstLineOffset;
         scroll  = HScroll + X * 8;
-        scrPage = (chrTabBase / 0x8000) & 1;
+        page = (chrTabBase / 0x8000) & 1;
         jump    = jumpTable + hScroll512 * 2;
         vscroll = VScroll;
         chrTabO  = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[scrPage ^= 1] + 128;
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
     }
 
@@ -1174,7 +1159,7 @@ static void RefreshLine8(int Y, int X)
     static int     hScroll;
     static int     hScroll512;
     static int*    jump;
-    static int     scrPage;
+    static int     page;
     static int     scroll;
     static int     vscroll;
     static int     chrTabO;
@@ -1196,20 +1181,19 @@ static void RefreshLine8(int Y, int X)
         hScroll    = HScroll;
         hScroll512 = HScroll512;
         jump       = jumpTable + hScroll512 * 2;
-        scrPage    = (chrTabBase / 0x8000) & 1;
+        page    = (chrTabBase / 0x8000) & 1;
         scroll     = hScroll;
         vscroll    = VScroll;
         chrTabO    = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
-#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[scrPage ^= 1];
+#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
 
         if (vdpIsEdgeMasked(VDP)) {
             UInt32 bgColor = emuFixedPalette[BGColor];
@@ -1246,12 +1230,11 @@ static void RefreshLine8(int Y, int X)
         vscroll = VScroll;
         chrTabO = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
     }
 
@@ -1329,7 +1312,7 @@ static void RefreshLine10(int Y, int X)
     static UInt8* sprLine = emptylineBuf;
     static int hScroll512;
     static int* jump;
-    static int scrPage;
+    static int page;
     static int scroll;
     static int vscroll;
     static int chrTabO;
@@ -1352,21 +1335,19 @@ static void RefreshLine10(int Y, int X)
         
         hScroll512 = HScroll512;
         jump       = jumpTable + hScroll512 * 2;
-        scrPage    = (chrTabBase / 0x8000) & 1;
+        page    = (chrTabBase / 0x8000) & 1;
         scroll     = HScroll & ~3;
         vscroll    = VScroll;
         chrTabO    = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
-#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[scrPage ^= 1];
+#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[scrPage ^= 1] + 128;
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
 
         if (vdpIsEdgeMasked(VDP)) {
             UInt32 bgColor = emuFixedPalette[VDP[7]];
@@ -1446,13 +1427,14 @@ static void RefreshLine10(int Y, int X)
         vscroll = VScroll;
         chrTabO  = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
         charTable += 2; 
 
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
+        if (vdpIsOddPage(VDP)) charTable += jump[2 | (page ^= 1)] + 128;
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
     }
 
@@ -1546,7 +1528,7 @@ static void RefreshLine12(int Y, int X)
     static UInt8* sprLine = emptylineBuf;
     static int hScroll512;
     static int* jump;
-    static int scrPage;
+    static int page;
     static int scroll;
     static int vscroll;
     static int hscroll;
@@ -1570,22 +1552,20 @@ static void RefreshLine12(int Y, int X)
         
         hScroll512 = HScroll512;
         jump       = jumpTable + hScroll512 * 2;
-        scrPage    = (chrTabBase / 0x8000) & 1;
+        page    = (chrTabBase / 0x8000) & 1;
         hscroll    = HScroll;
         scroll     = hscroll & ~3;
         vscroll    = VScroll;
         chrTabO    = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
 
-#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[scrPage ^= 1];
+#define UPDATE_T() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
-            if (VDP[2] & 0x60) charTable += jump[scrPage ^= 1] + 128;
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
-
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
 
         if (vdpIsEdgeMasked(VDP)) {
             UInt32 bgColor = emuFixedPalette[VDP[7]];
@@ -1658,13 +1638,12 @@ static void RefreshLine12(int Y, int X)
         vscroll = VScroll;
         chrTabO  = chrTabBase;
 
-        charTable = VRAM + (chrTabBase & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
+        charTable = VRAM + (chrTabBase & (~vdpIsOddPage(VDP) << 7) & ((-1 << 15) | ((Y + VScroll) << 7))) + scroll / 2;
         charTable += 2; 
 
-        if (vdpIsInterlaceOn(VDP) && !evenOddPage && vdpIsOddPage(VDP)) charTable += jump[2 | (scrPage ^= 1)] + 128;
-
         if (hScroll512) {
-            if (scroll & 0x100) charTable += jump[scrPage ^= 1];
+            if (scroll & 0x100) charTable += jump[page ^= 1];
+            if (chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 128;
         }
     }
 

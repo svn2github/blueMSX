@@ -56,7 +56,7 @@ static int vramAddr;
 #define vdpIsSpritesOff(regs)        (regs[8]  & 0x02)
 #define vdpIsColor0Solid(regs)       (regs[8]  & 0x20)
 #define vdpIsVideoPal(regs)          ((regs[9]  & palMask & 0x02) | palValue)
-#define vdpIsOddPage(regs)           ((regs[9]  & 0x04) && VRAM128)
+#define vdpIsOddPage(regs)           (((~VDPStatus[2] & 0x02) << 7) & ((regs[9]  & 0x04) << 6))
 #define vdpIsInterlaceOn(regs)       (regs[9]  & 0x08)
 #define vdpIsScanLines212(regs)      (regs[9]  & 0x80)
 #define vdpIsEdgeMasked(regs)        (regs[25] & 0x02)
@@ -117,8 +117,6 @@ static void RefreshLine8(int, int);
 static void RefreshLine10(int, int);
 static void RefreshLine12(int, int);
 
-static void SetNewDrawPage();
-
 static void vdpSync(void);
 
 static void (*RefreshLine)(int, int);
@@ -148,7 +146,6 @@ static int    blinkFlag;
 static int    blinkCnt;
 static int    drawArea;
 static int    palette[16];
-static UInt32 evenOddPage;
 static int    VRAMPages;
 static int    VRAM128;
 static int    vramMask;
@@ -576,8 +573,6 @@ int vdpRefreshLine(UInt32 systemTime)
             scr0splitLine = 0;
             scanLine = 0;
 
-            VDPStatus[2] ^= 0x02;
-
             firstLineOffset = isPal ? 27 : 0;
             lastLine = isPal ? 313 : 262;
             firstLine = firstLineOffset + (vdpIsScanLines212(VDP) ? 14 : 24) + VAdjust;
@@ -586,9 +581,9 @@ int vdpRefreshLine(UInt32 systemTime)
                 boardClearInt(INT_IE1);
             }
             drawAreaStart = (drawArea ? 3 + 13 : firstLine) - 1;
-            RefreshScreen(screenMode, evenOddPage, vdpIsInterlaceOn(VDP));
-            
-            SetNewDrawPage();
+            VDPStatus[2] ^= 0x02;
+            RefreshScreen(screenMode, (~VDPStatus[2] & 0x02) >> 1, vdpIsInterlaceOn(VDP) && ((VDP[9]  & 0x04) && VRAM128));
+
 
             vdpBlink();
         }
@@ -687,7 +682,6 @@ void vdpSaveState()
     saveStateSet(state, "drawAreaStart",   drawAreaStart);
     saveStateSet(state, "xfgColor",        XFGColor);
     saveStateSet(state, "xbgColor",        XBGColor);
-    saveStateSet(state, "evenOddPage",     evenOddPage);
     saveStateSet(state, "scanLine",        scanLine);
     saveStateSet(state, "lineTime",        lineTime);
     saveStateSet(state, "phase",           phase);
@@ -736,7 +730,6 @@ void vdpLoadState()
     drawAreaStart  =         saveStateGet(state, "drawAreaStart",   0);
     XFGColor       = (UInt8) saveStateGet(state, "xfgColor",        0);
     XBGColor       = (UInt8) saveStateGet(state, "xbgColor",        0);
-    evenOddPage    =         saveStateGet(state, "evenOddPage",     0);
     scanLine       =         saveStateGet(state, "scanLine",        10000);
     lineTime       =         saveStateGet(state, "lineTime",        0);
     phase          =         saveStateGet(state, "phase",           0);
@@ -830,7 +823,6 @@ void vdpReset()
     blinkFlag       = 0;
     blinkCnt        = 0;
     drawArea        = 0;
-    evenOddPage     = 0;
     lineStartTime   = 0;
     intStartTime    = 0;
     lastLine        = 0;
