@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-21 02:05:44 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -450,19 +450,23 @@ int themeTriggerVideoRfModulatorEn() {
 }
 
 int themeTriggerVideoGamma() {
-    return propGetGlobalProperties()->video.gamma / 2;
+    int value = propGetGlobalProperties()->video.gamma - 50;
+    return value < 0 ? 0 : value > 100 ? 100 : value;
 }
 
 int themeTriggerVideoBrightness() {
-    return propGetGlobalProperties()->video.brightness / 2;
+    int value = propGetGlobalProperties()->video.brightness - 50;
+    return value < 0 ? 0 : value > 100 ? 100 : value;
 }
 
 int themeTriggerVideoContrast() {
-    return propGetGlobalProperties()->video.contrast / 2;
+    int value = propGetGlobalProperties()->video.contrast - 50;
+    return value < 0 ? 0 : value > 100 ? 100 : value;
 }
 
 int themeTriggerVideoSaturation() {
-    return propGetGlobalProperties()->video.saturation / 2;
+    int value = propGetGlobalProperties()->video.saturation - 50;
+    return value < 0 ? 0 : value > 100 ? 100 : value;
 }
 
 int themeTriggerVideoScanlines() {
@@ -471,6 +475,21 @@ int themeTriggerVideoScanlines() {
 
 int themeTriggerVideoRfModulation() {
     return propGetGlobalProperties()->video.colorSaturationWidth * 100 / 4;
+}
+
+int themeTriggerVideoColorMode() {
+    // Ugly fix that only works if P_VIDEO_MONCOUNT is an integer fraction of 100
+    if (propGetGlobalProperties()->video.monType == P_VIDEO_MONCOUNT - 1) {
+        return 100;
+    }
+    return propGetGlobalProperties()->video.monType * 100 / P_VIDEO_MONCOUNT;
+}
+
+int themeTriggerVideoFilter() {
+    if (propGetGlobalProperties()->video.palEmu == P_VIDEO_PALCOUNT - 1) {
+        return 100;
+    }
+    return propGetGlobalProperties()->video.palEmu * 100 / P_VIDEO_PALCOUNT;
 }
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-21 02:05:44 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -195,6 +195,8 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "video-saturation"))   return (ButtonEvent)actionVideoSetSaturation;
     if (0 == strcmp(action, "video-scanlines"))    return (ButtonEvent)actionVideoSetScanlines;
     if (0 == strcmp(action, "video-rfmodulation")) return (ButtonEvent)actionVideoSetRfModulation;
+    if (0 == strcmp(action, "video-colormode"))    return (ButtonEvent)actionVideoSetColorMode;
+    if (0 == strcmp(action, "video-filter"))       return (ButtonEvent)actionVideoSetFilter;
 
     if (0 == strcmp(action, "level-master"))      return (ButtonEvent)actionVolumeSetMaster;
     if (0 == strcmp(action, "level-psg"))         return (ButtonEvent)actionVolumeSetPsg;
@@ -351,6 +353,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "video-saturation"))     return t | THEME_TRIGGER_VIDEO_SATURATION;
     if (0 == strcmp(s, "video-scanlines"))      return t | THEME_TRIGGER_VIDEO_SCANLINES;
     if (0 == strcmp(s, "video-rfmodulation"))   return t | THEME_TRIGGER_VIDEO_RFMODULATION;
+    if (0 == strcmp(s, "video-colormode"))      return t | THEME_TRIGGER_VIDEO_COLORMODE;
+    if (0 == strcmp(s, "video-filter"))         return t | THEME_TRIGGER_VIDEO_FILTER;
 
     if (0 == strcmp(s, "level-master"))            return t | THEME_TRIGGER_LEVEL_MASTER;
     if (0 == strcmp(s, "level-psg"))               return t | THEME_TRIGGER_LEVEL_PSG;
@@ -546,6 +550,11 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     
     int sensitivity = 1;
     el->QueryIntAttribute("sensitivity", &sensitivity);
+
+    const char* mode = el->Attribute("mode");
+    if (mode != 0 && strcmp(mode, "inverted") == 0) {
+        sensitivity *= -1;
+    }
 
     themePageAddSlider(themePage, activeSliderCreate(x, y, cols, bitmap, action, max, direction, sensitivity), trigger, visible);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-20 18:37:45 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1128,7 +1128,7 @@ static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt16* pDst        = (UInt16*)ImgSrc;
     int srcHeight       = frame->lines;
     int srcWidth        = frame->line[0].width;
-	int h;  
+	int h;
 
     if (srcWidth == 0) {
         return;

@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-21 03:36:35 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -558,11 +558,11 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confSaveAsTitle         = "別名で保存...";
     ls->confSaveAsName          = "名前:";
 
-    ls->menuToolsKeyboard       = "キーボード構成編集";
-    ls->shortcutShowKeyboard    = "キーボード構成編集の表示";
+    ls->menuToolsKeyboard       = "キーボード構\成編集";
+    ls->shortcutShowKeyboard    = "キーボード構\成編集の表\示";
 
-    ls->menuVideoSource         = "ビデオソース";
-    ls->menuVideoSourceDefault  = "ビデオソースの接続がありません";
+    ls->menuVideoSource         = "ビデオソ\ース";
+    ls->menuVideoSourceDefault  = "ビデオソ\ースの接続がありません";
 };
 
 

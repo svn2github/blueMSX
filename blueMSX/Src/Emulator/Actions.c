@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-21 02:05:43 $
+** $Date: 2005-01-22 03:20:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -878,24 +878,23 @@ void actionMenuTools(int x, int y) {
 
 // Actions controlled by value 0 - 100
 
-
 void actionVideoSetGamma(int value) {
-    state.properties->video.gamma = 2 * value;
+    state.properties->video.gamma = 50 + value;
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetBrightness(int value) {
-    state.properties->video.brightness = 2 * value;
+    state.properties->video.brightness = 50 + value;
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetContrast(int value) {
-    state.properties->video.colorSaturationEnable = 2 * value;
+    state.properties->video.colorSaturationEnable = 50 + value;
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetSaturation(int value) {
-    state.properties->video.saturation = 2 * value;
+    state.properties->video.saturation = 50 + value;
     archUpdateEmuDisplayConfig();
 }
 
@@ -909,6 +908,21 @@ void actionVideoSetRfModulation(int value) {
     archUpdateEmuDisplayConfig();
 }
 
+void actionVideoSetColorMode(int value) {
+    propGetGlobalProperties()->video.monType = P_VIDEO_MONCOUNT * value / 100;
+    if (state.properties->video.monType >= P_VIDEO_MONCOUNT) {
+        state.properties->video.monType = P_VIDEO_MONCOUNT - 1;
+    }
+    archUpdateEmuDisplayConfig();
+}
+
+void actionVideoSetFilter(int value) {
+    state.properties->video.palEmu = P_VIDEO_PALCOUNT * value / 100;
+    if (state.properties->video.palEmu >= P_VIDEO_PALCOUNT) {
+        state.properties->video.palEmu = P_VIDEO_PALCOUNT - 1;
+    }
+    archUpdateEmuDisplayConfig();
+}
 
 void actionEmuSpeedSet(int value) {
     state.properties->emulation.speed = value;

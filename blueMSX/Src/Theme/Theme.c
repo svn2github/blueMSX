@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-21 02:05:44 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,6 +98,8 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_VIDEO_SATURATION:    idx = themeTriggerVideoSaturation(); break;
     case THEME_TRIGGER_VIDEO_SCANLINES:     idx = themeTriggerVideoScanlines(); break;
     case THEME_TRIGGER_VIDEO_RFMODULATION:  idx = themeTriggerVideoRfModulation(); break;
+    case THEME_TRIGGER_VIDEO_COLORMODE:     idx = themeTriggerVideoColorMode(); break;
+    case THEME_TRIGGER_VIDEO_FILTER:        idx = themeTriggerVideoFilter(); break;
 
     case THEME_TRIGGER_LEVEL_MASTER:    idx = themeTriggerLevelMaster(); break;
     case THEME_TRIGGER_LEVEL_PSG:       idx = themeTriggerLevelPsg(); break;

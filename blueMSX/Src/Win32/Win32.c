@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-01-21 02:05:44 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2571,6 +2571,48 @@ void archUpdateEmuDisplayConfig() {
     videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, pProperties->video.contrast, pProperties->video.gamma);
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
     videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+    switch (pProperties->video.monType) {
+    case P_VIDEO_COLOR:
+        videoSetColorMode(st.pVideo, VIDEO_COLOR);
+        break;
+    case P_VIDEO_BW:
+        videoSetColorMode(st.pVideo, VIDEO_BLACKWHITE);
+        break;
+    case P_VIDEO_GREEN:
+        videoSetColorMode(st.pVideo, VIDEO_GREEN);
+        break;
+    case P_VIDEO_AMBER:
+        videoSetColorMode(st.pVideo, VIDEO_AMBER);
+        break;
+    }
+
+    switch (pProperties->video.palEmu) {
+    case P_VIDEO_PALNONE:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_FAST);
+        break;
+    case P_VIDEO_PALMON:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_MONITOR);
+        break;
+    case P_VIDEO_PALYC:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP);
+        break;
+    case P_VIDEO_PALNYC:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP_NOISE);
+        break;
+    case P_VIDEO_PALCOMP:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR);
+        break;
+    case P_VIDEO_PALNCOMP:
+        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR_NOISE);
+        break;
+	case P_VIDEO_PALSCALE2X:
+		videoSetPalMode(st.pVideo, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(st.pVideo, VIDEO_PAL_HQ2X);
+		break;
+    }
+
     updateEmuWindow();
 }
 

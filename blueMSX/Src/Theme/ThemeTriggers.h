@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-21 02:05:44 $
+** $Date: 2005-01-22 03:20:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,6 +153,8 @@ typedef enum {
     THEME_TRIGGER_VIDEO_SATURATION,
     THEME_TRIGGER_VIDEO_SCANLINES,
     THEME_TRIGGER_VIDEO_RFMODULATION,
+    THEME_TRIGGER_VIDEO_COLORMODE,
+    THEME_TRIGGER_VIDEO_FILTER,
     
     THEME_TRIGGER_RENSHA,
     THEME_TRIGGER_RENSHALED,
@@ -260,6 +262,8 @@ int themeTriggerVideoContrast();
 int themeTriggerVideoSaturation();
 int themeTriggerVideoScanlines();
 int themeTriggerVideoRfModulation();
+int themeTriggerVideoColorMode();
+int themeTriggerVideoFilter();
 
 int themeTriggerLevelMaster();
 int themeTriggerLevelPsg();
