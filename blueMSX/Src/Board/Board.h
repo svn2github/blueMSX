@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-02-06 23:38:57 $
+** $Date: 2005-02-10 07:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,6 +146,8 @@ void boardSetY8950Enable(int value);
 int  boardGetY8950Enable();
 void boardSetMoonsoundEnable(int value);
 int  boardGetMoonsoundEnable();
+void boardSetVideoAutodetect(int value);
+int  boardGetVideoAutodetect();
 
 #endif /* BOARD_H */
 

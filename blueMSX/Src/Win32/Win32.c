@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2005-02-10 01:41:05 $
+** $Date: 2005-02-10 07:18:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2333,6 +2333,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     boardSetY8950Enable(pProperties->sound.chip.enableY8950);
     boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
     boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
+    boardSetVideoAutodetect(pProperties->video.chipAutodetect);
 
     updateMenu(0);
 

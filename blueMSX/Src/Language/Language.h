@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-03 07:33:23 $
+** $Date: 2005-02-10 07:18:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,6 +108,7 @@ _TCHAR* langMenuPropsPorts();
 
 _TCHAR* langMenuVideoSource();
 _TCHAR* langMenuVideoSourceDefault();
+_TCHAR* langMenuVideoChipAutodetect();
 
 _TCHAR* langMenuHelpHelp();
 _TCHAR* langMenuHelpAbout();

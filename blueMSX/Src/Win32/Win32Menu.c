@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-09 20:52:58 $
+** $Date: 2005-02-10 07:18:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "LaunchFile.h"
 #include "Resource.h"
 #include "Language.h"
+#include "Board.h"
 #include "archMenu.h"
 #include "Actions.h"
 #include "Casette.h"
@@ -106,6 +107,7 @@
 #define ID_FILE_CARTB_EXTRAM4MB         40070
 #define ID_FILE_CARTA_SONYHBI55         40071
 #define ID_FILE_CARTB_SONYHBI55         40072
+#define ID_VIDEO_AUTODETECT             40073
 
 #define ID_CARTRIDGEA_HISTORY           30000
 #define ID_CARTRIDGEB_HISTORY           30050
@@ -266,6 +268,12 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
         _stprintf(langBuffer, "%s        ", videoManagerGetName(i));
         AppendMenu(hMenu, MF_STRING | (videoManagerIsActive(i) ? MFS_CHECKED : 0), ID_VIDEO_CONNECTORS + i, langBuffer);
     }
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    
+    _stprintf(langBuffer, "%s", langMenuVideoChipAutodetect());
+    AppendMenu(hMenu, MF_STRING | (pProperties->video.chipAutodetect ? MFS_CHECKED : 0), ID_VIDEO_AUTODETECT, langBuffer);
+
     return hMenu;
 }
 
@@ -1377,6 +1385,11 @@ int menuCommand(Properties* pProperties, int command)
     case ID_FILE_CARTB_SONYHBI55:            
         insertCartridge(pProperties, 1, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
         return 1;
+
+    case ID_VIDEO_AUTODETECT:
+        pProperties->video.chipAutodetect = !pProperties->video.chipAutodetect;
+        boardSetVideoAutodetect(pProperties->video.chipAutodetect);
+        return 0;
 
     case ID_PRT_SCR:                        actionScreenCapture();          return 0;
     case ID_FILE_POSITION_CASSETTE:         actionCasSetPosition();         return 0;

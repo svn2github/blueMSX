@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-27 01:06:27 $
+** $Date: 2005-02-10 07:18:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,8 @@
 #ifndef ROM_MAPPER_H
 #define ROM_MAPPER_H
 
-typedef enum {
+typedef int RomType;
+enum  {
     ROM_UNKNOWN     = 0,
     ROM_STANDARD    = 1,
     ROM_MSXDOS2     = 2,
@@ -118,7 +119,7 @@ typedef enum {
     ROM_MSXPRN      = 84,
     ROM_SVI328RS232 = 85,
     ROM_MAXROMID    = 85
-} RomType;
+};
 
 static char* romTypeToString(RomType romType) {
     switch (romType) {    

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-29 00:28:52 $
+** $Date: 2005-02-10 07:18:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2461,9 +2461,11 @@ void getStrValue(char* keyStr, char* returnValue) {
     else             getIniStrValue(registryKey, keyStr, returnValue);
 }
 
-void getIntValue(char* keyStr, long* returnValue) {
-    if (useRegistry) getRegIntValue(registryKey, keyStr, returnValue);
-    else             getIniIntValue(registryKey, keyStr, returnValue);
+void getIntValue(char* keyStr, int* returnValue) {
+    long retVal;
+    if (useRegistry) getRegIntValue(registryKey, keyStr, &retVal);
+    else             getIniIntValue(registryKey, keyStr, &retVal);
+    *returnValue = retVal;
 }   
     
 int setStrValue(char* keyStr, char* value) {
@@ -2471,7 +2473,7 @@ int setStrValue(char* keyStr, char* value) {
     else             return setIniStrValue(registryKey, keyStr, value);
 }
 
-int setIntValue(char* keyStr, long value) {
+int setIntValue(char* keyStr, int value) {
     if (useRegistry) return setRegIntValue(registryKey, keyStr, value);
     else             return setIniIntValue(registryKey, keyStr, value);
 }

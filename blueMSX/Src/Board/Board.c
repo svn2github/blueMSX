@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-02-07 02:27:34 $
+** $Date: 2005-02-10 07:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -601,6 +601,7 @@ static int oversamplingMoonsound = 1;
 static int enableYM2413          = 1;
 static int enableY8950           = 1;
 static int enableMoonsound       = 1;
+static int videoAutodetect       = 1;
 
 char* boardGetBaseDirectory() {
     return baseDirectory;
@@ -656,4 +657,12 @@ void boardSetMoonsoundEnable(int value) {
 
 int boardGetMoonsoundEnable() {
     return enableMoonsound;
+}
+
+void boardSetVideoAutodetect(int value) {
+    videoAutodetect = value;
+}
+
+int  boardGetVideoAutodetect() {
+    return videoAutodetect;
 }

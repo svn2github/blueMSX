@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-30 09:09:41 $
+** $Date: 2005-02-10 07:18:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,44 +75,45 @@ typedef enum { P_CHAR_EUROPEAN = 0, P_CHAR_RUSSIAN, P_CHAR_JAPANESE, P_CHAR_KORE
 #define MAX_HISTORY 30
 
 typedef struct {
-    char          statsDefDir[MAX_PATH];
-    char          machineName[MAX_PATH];
-    char          shortcutProfile[MAX_PATH];
-    int           enableFdcTiming;
-    int           frontSwitch;
-    int           audioSwitch;
-    int           pauseSwitch;
-    int           speed;
-    int           registerFileTypes;
-    int           disableWinKeys;
-    int           priorityBoost;
-    PropEmuSync   syncMethod;
-    PropVdpSync   vdpSyncMode;
+    char statsDefDir[MAX_PATH];
+    char machineName[MAX_PATH];
+    char shortcutProfile[MAX_PATH];
+    int  enableFdcTiming;
+    int  frontSwitch;
+    int  audioSwitch;
+    int  pauseSwitch;
+    int  speed;
+    int  registerFileTypes;
+    int  disableWinKeys;
+    int  priorityBoost;
+    int  syncMethod;
+    int  vdpSyncMode;
 } EmulationProperties;
 
 typedef struct {
-    PropVideoMon        monType;
-    PropVideoPalEmu     palEmu;
-    PropVideoSize       size;
-    PropVideoDriver     driver;
-    PropVideoFrameSkip  frameSkip;
+    int monType;
+    int palEmu;
+    int size;
+    int driver;
+    int frameSkip;
     struct {
         int width;
         int height;
         int bitDepth;
     } fullscreen;
-    PropVideoFrequency  frequency;
-    int                 deInterlace;
-    int                 horizontalStretch;
-    int                 verticalStretch;
-    int                 contrast;
-    int                 brightness;
-    int                 saturation;
-    int                 scanlinesEnable;
-    int                 scanlinesPct;
-    int                 colorSaturationEnable;
-    int                 colorSaturationWidth;
-    int                 gamma;
+    int frequency;
+    int deInterlace;
+    int horizontalStretch;
+    int verticalStretch;
+    int contrast;
+    int brightness;
+    int saturation;
+    int scanlinesEnable;
+    int scanlinesPct;
+    int colorSaturationEnable;
+    int colorSaturationWidth;
+    int gamma;
+    int chipAutodetect;
 } VideoProperties;
 
 typedef struct {
@@ -132,22 +133,22 @@ typedef struct {
 } SoundChip;
 
 typedef struct {
-    PropSoundDriver     driver;
-    PropSoundFrequency  frequency;
-    int                 bufSize;
-    PropSoundSync       syncMethod;
-    SoundChip           chip;
-    int                 stereo;
-    int                 masterVolume;
-    int                 masterEnable;
-    MixerChannel        mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
-    char                log[MAX_PATH];
+    int  driver;
+    int  frequency;
+    int  bufSize;
+    int  syncMethod;
+    SoundChip chip;
+    int  stereo;
+    int  masterVolume;
+    int  masterEnable;
+    MixerChannel mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
+    int  log[MAX_PATH];
 } SoundProperties;
 
 typedef struct {
-    int id;
-    PropControlsJoy      type;
-    PropControlsAutofire autofire;
+    int  id;
+    int  type;
+    int  autofire;
     int  hwType;
     int  hwButtonA;
     int  hwButtonB;
@@ -162,8 +163,8 @@ typedef struct {
 }  JoystickProperties;
 
 typedef struct {
-    char    configFile[MAX_PATH];
-    PropControlsLanguage keySet;
+    char configFile[MAX_PATH];
+    int  keySet;
 } KeyboardProperties;
 
 typedef struct {
@@ -242,7 +243,7 @@ typedef struct {
     DiskdriveProperties diskdrive;
     CassetteProperties  cassette;
     FileHistory         filehistory;
-    EmuLanguageType     language;
+    int                 language;
     Settings            settings;
 } Properties;
 

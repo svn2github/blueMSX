@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-02-10 00:03:53 $
+** $Date: 2005-02-10 07:18:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,6 +182,7 @@ struct VDP {
     int    vramPages;
     int    vram128;
     int    vram192;
+    int    vram16;
     int    vramEnable;
     int    vramMask;
     int    lineOffset;
@@ -547,9 +548,12 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
         vdp->sprTabBase = ((value << 15) | (vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & ((vdp->vramPages << 14) - 1);
         break;
 
-    case 14: 
+    case 14:
         value &= vdp->vramPages - 1;
-        vdp->vramPage = (int)value << 14;
+        vdp->vramPage = (int)value << 14; 
+        if (vdp->vram16) {
+            vdp->vramEnable = value == 0;
+        }
         break;
 
     case 16: 
@@ -594,16 +598,12 @@ static UInt8 read(VDP* vdp, UInt16 ioPort)
 {
     UInt8 value;
 
-    if (!vdp->vramEnable) {
-        return 0xff;
-    }
-
     if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
         vdpCmdExecute(vdp->cmdEngine, boardSystemTime());
     }
 
 	value = vdp->vdpData;
-	vdp->vdpData = *MAP_VRAM(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress);
+    vdp->vdpData = vdp->vramEnable ? *MAP_VRAM(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress) : 0xff;
 	vdp->vramAddress = (vdp->vramAddress + 1) & 0x3fff;
     if (vdp->vramAddress == 0 && vdp->screenMode > 3) {
         vdp->vdpRegs[14] = (vdp->vdpRegs[14] + 1) & (vdp->vramPages - 1);
@@ -681,21 +681,20 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
 
 static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
-    if (!vdp->vramEnable) {
-        return;
-    }
-
     sync(vdp, boardSystemTime());
 
-    *MAP_VRAM(vdp, ((vdp->vdpRegs[14] << 14) | vdp->vramAddress) & vdp->vramMask) = value;
+    if (vdp->vramEnable) {
+        *MAP_VRAM(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress) = value;
+    }
 	vdp->vdpData = value;
 	vdp->vdpKey = 0;
     vdp->vramAddress = (vdp->vramAddress + 1) & 0x3fff;
     if (vdp->vramAddress == 0 && vdp->screenMode > 3) {
         vdp->vdpRegs[14] = (vdp->vdpRegs[14] + 1 )& (vdp->vramPages - 1);
     }
-    if (!vdp->videoEnabled)
+    if (!vdp->videoEnabled && boardGetVideoAutodetect()) {
         videoManagerSetActive(0);
+    }
 }
 
 static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
@@ -912,6 +911,7 @@ static void loadState(VDP* vdp)
     vdp->vramPtr        = vdp->vram + vdp->vramOffsets[(vdp->vdpRegs[0x2d] >> 6) & 1];
     vdp->vramAccMask    = vdp->vramMasks[(vdp->vdpRegs[0x2d] >> 6) & 1];
     vdp->vramEnable     = vdp->vram192 || !((vdp->vdpRegs[0x2d] >> 6) & 1);
+    vdp->vramEnable    &= !vdp->vram16 || vdp->vdpRegs[14] == 0;
 
     vdpCmdLoadState(vdp->cmdEngine);
 
@@ -1060,7 +1060,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     VideoCallbacks videoCallbacks = { videoEnable, videoDisable };
-    int vramSize = vramPages << 14;
+    int vramSize;
     int i;
 
     VDP* vdp = (VDP*)calloc(1, sizeof(VDP));
@@ -1074,6 +1074,14 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
 
+    vdp->vram192        = vramPages == 12;
+    vdp->vram16         = vramPages == 1;
+    
+    if (vramPages < 4) {
+        vramPages = 4;
+    }
+
+    vramSize            = vramPages << 14;
     vdp->vramOffsets[0] = 0;
     vdp->vramOffsets[1] = vramSize > 0x20000 ? 0x20000 : 0;
     vdp->vramMasks[0]   = vramSize > 0x20000 ? 0x1ffff : vramSize - 1;
@@ -1081,7 +1089,6 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->vramPtr        = vdp->vram + vdp->vramOffsets[0];
     vdp->vramAccMask    = vdp->vramMasks[0];
     vdp->vramEnable     = 1;
-    vdp->vram192        = vramSize > 0x20000;
 
     if (vramPages > 8) {
         vramPages = 8;

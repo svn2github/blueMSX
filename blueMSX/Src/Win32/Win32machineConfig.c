@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-02-08 09:05:41 $
+** $Date: 2005-02-10 07:18:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1605,6 +1605,7 @@ static void updateVramList(HWND hDlg) {
     for (i = 0; vram <= maxVram; i++) {
         _TCHAR buffer[128];
         if (vram == 256) vram = 192;
+        if (vram == 32) vram = 64;
         _stprintf(buffer, "%d kB", vram);
         SendDlgItemMessage(hDlg, IDC_CONF_VRAM, CB_ADDSTRING, 0, (LPARAM)buffer);
         if (machine->video.vramSize >= 1024 * vram) {
