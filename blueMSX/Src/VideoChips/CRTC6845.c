@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-17 02:36:32 $
+** $Date: 2005-01-17 02:49:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,9 +80,12 @@ static const UInt8 crtcRegisterValueMask[18] = {
 
 static UInt8 crtcRegister[18];
 static UInt8 crtcAddressReg; // AR
+
 static UInt8 crtcROM[0x1000];
 static UInt8 crtcMemory[0x800];
 static UInt8 crtcMemoryBankControl = 0;
+
+static int crtcConnector;
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
@@ -138,8 +141,10 @@ void crtcReset(void)
     memset(crtcROM, 0xff, sizeof(crtcROM));
 }
 
-void crtcInit(CrtcConnector crtcConnector)
+void crtcInit(CrtcConnector connector)
 {
+    crtcConnector  = connector;
+
     crtcReset();
 
     switch (crtcConnector) {
@@ -153,6 +158,23 @@ void crtcInit(CrtcConnector crtcConnector)
         ioPortRegister(0x50, NULL,     crtcWriteLatch, NULL); // CRTC Address latch
         ioPortRegister(0x51, crtcRead, crtcWrite,      NULL); // CRTC Controller register 
         ioPortRegister(0x58, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
+        break;
+    }
+}
+
+void crtcDestroy() 
+{
+    switch (crtcConnector) {
+    case CRTC_MSX:
+        ioPortUnregister(0x78);
+        ioPortUnregister(0x79);
+//        ioPortUnregister(0x79);
+        break;
+
+    case CRTC_SVI:
+        ioPortUnregister(0x50);
+        ioPortUnregister(0x51);
+        ioPortUnregister(0x58);
         break;
     }
 }
