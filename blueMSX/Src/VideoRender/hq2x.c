@@ -22,21 +22,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int   LUT16to32[65536];
-static int   RGBtoYUV[65536];
+//#define USE_INLINE_ASSEMBLY
 
+static int   LUT16to32[65536];
+#ifndef USE_INLINE_ASSEMBLY
+static int   Luminance[65536];
+#else
+static int   RGBtoYUV[65536];
+#endif
 const __int64 reg_blank = 0;
 const __int64 const3    = 0x0000000300030003;
 const __int64 const5    = 0x0000000500050005;
 const __int64 const6    = 0x0000000600060006;
 const __int64 const14   = 0x0000000E000E000E;
+#ifndef USE_INLINE_ASSEMBLY
+#define treshold 0x30
+#else
 const __int64 treshold  = 0x0000000000300706;
+#endif
 
-//#define USE_INLINE_ASSEMBLY
 static void Interp1(unsigned char * pc, int c1, int c2)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*3+c2)/4;
+    *((int*)pc) = ((c1*3+c2)>>2)&0xfcfcfc;
 #else
     __asm
     {
@@ -54,7 +62,7 @@ static void Interp1(unsigned char * pc, int c1, int c2)
 static void Interp2(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*2+c2+c3) >> 2;
+    *((int*)pc) = ((c1*2+c2+c3)>>2)&0xfcfcfc;
 #else
     __asm
     {
@@ -72,7 +80,7 @@ static void Interp2(unsigned char * pc, int c1, int c2, int c3)
 static void Interp5(unsigned char * pc, int c1, int c2)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1+c2)/2;
+    *((int*)pc) = ((c1+c2)>>1)&0xfefefe;
 #else
     __asm
     {
@@ -88,7 +96,7 @@ static void Interp5(unsigned char * pc, int c1, int c2)
 static void Interp6(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*5+c2*2+c3)/8;
+    *((int*)pc) = ((c1*5+c2*2+c3)>>3)&0xf8f8f8;
 #else
     __asm
     {
@@ -113,7 +121,7 @@ static void Interp6(unsigned char * pc, int c1, int c2, int c3)
 static void Interp7(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*6+c2+c3)/8;
+    *((int*)pc) = ((c1*6+c2+c3)>>3)&0xf8f8f8;
 #else
     __asm
     {
@@ -137,7 +145,7 @@ static void Interp7(unsigned char * pc, int c1, int c2, int c3)
 static void Interp9(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*2+(c2+c3)*3)/8;
+    *((int*)pc) = ((c1*2+(c2+c3)*3)>>3)&0xf8f8f8;
 #else
     __asm
     {
@@ -162,7 +170,7 @@ static void Interp9(unsigned char * pc, int c1, int c2, int c3)
 static void Interp10(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = (c1*14+c2+c3)/16;
+    *((int*)pc) = ((c1*14+c2+c3)>>4)&0xf0f0f0;
 #else
     __asm
     {
@@ -189,9 +197,7 @@ static void Interp10(unsigned char * pc, int c1, int c2, int c3)
 static int Diff(unsigned int w5, unsigned int w1)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    int tst = RGBtoYUV[w5] - RGBtoYUV[w1];
-    if (tst < 0) tst = -tst;
-    return tst > treshold;
+    return (unsigned int)(Luminance[w5] - Luminance[w1] + treshold) > 2 * treshold;
 #else
     __asm
     {
@@ -2992,7 +2998,7 @@ void hq2x_32(void* pSrc, void* pDest, int Xres, int Yres, int BpL)
 
 void InitLUTs(void)
 {
-    int i, j, k, r, g, b, Y, u, v;
+    int i, j, k;
 
     for (i=0; i<65536; i++)
         LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
@@ -3001,12 +3007,16 @@ void InitLUTs(void)
         for (j=0; j<64; j++)
             for (k=0; k<32; k++)
             {
-                r = i << 3;
-                g = j << 2;
-                b = k << 3;
-                Y = (r + g + b) >> 2;
-                u = 128 + ((r - b) >> 2);
-                v = 128 + ((-r + 2*g -b)>>3);
+                int r = i << 3;
+                int g = j << 2;
+                int b = k << 3;
+#ifndef USE_INLINE_ASSEMBLY
+                Luminance[(i << 11) + (j << 5) + k] = (int)(r *  .299 + g *  .587 + b *  .114);
+#else
+                int Y = (r + g + b) >> 2;
+                int u = 128 + ((r - b) >> 2);
+                int v = 128 + ((-r + 2*g -b)>>3);
                 RGBtoYUV[ (i << 11) + (j << 5) + k ] = (Y<<16) + (u<<8) + v;
+#endif
             }
 }

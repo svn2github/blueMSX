@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-01-29 00:28:50 $
+** $Date: 2005-01-29 20:32:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,7 @@ enum ThemeInfo { THEME_SMALL = 0, THEME_NORMAL = 1, THEME_FULLSCREEN = 2 };
 
 static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, 
                              const char* arg1Tag, const char* arg2Tag, int* arg1, int* arg2, 
-                             ThemeCollection* themeCollection, Theme* theme)
+                             ThemeCollection* themeCollection, Theme* theme, int dx, int dy)
 {
     ButtonEvent buttonEvent = 0;
 
@@ -79,22 +79,22 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "switch-frontswitch"))      return (ButtonEvent)actionToggleFrontSwitch;
     if (0 == strcmp(action, "switch-pauseswitch"))      return (ButtonEvent)actionTogglePauseSwitch;
     
-    if (0 == strcmp(action, "menu-specialcart1"))       return (ButtonEvent)actionMenuSpecialCart1;
-    if (0 == strcmp(action, "menu-specialcart2"))       return (ButtonEvent)actionMenuSpecialCart2;
-    if (0 == strcmp(action, "menu-reset"))              return (ButtonEvent)actionMenuReset;
-    if (0 == strcmp(action, "menu-run"))                return (ButtonEvent)actionMenuRun;
-    if (0 == strcmp(action, "menu-file"))               return (ButtonEvent)actionMenuFile;
-    if (0 == strcmp(action, "menu-cart1"))              return (ButtonEvent)actionMenuCart1;
-    if (0 == strcmp(action, "menu-cart2"))              return (ButtonEvent)actionMenuCart2;
-    if (0 == strcmp(action, "menu-diska"))              return (ButtonEvent)actionMenuDiskA;
-    if (0 == strcmp(action, "menu-diskb"))              return (ButtonEvent)actionMenuDiskB;
-    if (0 == strcmp(action, "menu-cassette"))           return (ButtonEvent)actionMenuCassette;
-    if (0 == strcmp(action, "menu-controlsport1"))      return (ButtonEvent)actionMenuControlsPort1;
-    if (0 == strcmp(action, "menu-controlsport2"))      return (ButtonEvent)actionMenuControlsPort2;
-    if (0 == strcmp(action, "menu-windowsize"))         return (ButtonEvent)actionMenuZoom;
-    if (0 == strcmp(action, "menu-options"))            return (ButtonEvent)actionMenuOptions;
-    if (0 == strcmp(action, "menu-help"))               return (ButtonEvent)actionMenuHelp;
-    if (0 == strcmp(action, "menu-tools"))              return (ButtonEvent)actionMenuTools;
+    if (0 == strcmp(action, "menu-specialcart1"))       { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuSpecialCart1; }
+    if (0 == strcmp(action, "menu-specialcart2"))       { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuSpecialCart2; }
+    if (0 == strcmp(action, "menu-reset"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuReset; }
+    if (0 == strcmp(action, "menu-run"))                { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuRun; }
+    if (0 == strcmp(action, "menu-file"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuFile; }
+    if (0 == strcmp(action, "menu-cart1"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCart1; }
+    if (0 == strcmp(action, "menu-cart2"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCart2; }
+    if (0 == strcmp(action, "menu-diska"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskA; }
+    if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
+    if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }
+    if (0 == strcmp(action, "menu-controlsport1"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort1; }
+    if (0 == strcmp(action, "menu-controlsport2"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort2; }
+    if (0 == strcmp(action, "menu-windowsize"))         { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuZoom; }
+    if (0 == strcmp(action, "menu-options"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuOptions; }
+    if (0 == strcmp(action, "menu-help"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuHelp; }
+    if (0 == strcmp(action, "menu-tools"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuTools; }
     
     if (0 == strcmp(action, "dlg-emulation"))           return (ButtonEvent)actionPropShowEmulation;
     if (0 == strcmp(action, "dlg-video"))               return (ButtonEvent)actionPropShowVideo;
@@ -483,13 +483,16 @@ static ArchBitmap* loadBitmap(TiXmlElement* el, int* x, int* y, int* columns)
 }
 
 
-static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                     TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
     if (visible == -1) {
@@ -499,13 +502,16 @@ static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
 }
 
-static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                   TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -520,13 +526,16 @@ static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* th
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 2), trigger, visible);
 }
 
-static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                     TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -544,13 +553,16 @@ static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     themePageAddMeter(themePage, activeMeterCreate(x, y, cols, bitmap, max), trigger, visible);
 }
 
-static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                      TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -563,7 +575,7 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     }
 
     int arga, argb;
-    SliderEvent action = (SliderEvent)getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
+    SliderEvent action = (SliderEvent)getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme, dx, dy);
 
     int max = 1;
     el->QueryIntAttribute("max", &max);
@@ -588,13 +600,16 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     themePageAddSlider(themePage, activeSliderCreate(x, y, cols, bitmap, action, max, direction, sensitivity), trigger, visible);
 }
 
-static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                      TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -607,18 +622,21 @@ static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     }
 
     int arga, argb;
-    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
+    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme, dx, dy);
 
     themePageAddButton(themePage, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible, THEME_TRIGGER_NONE);
 }
 
-static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                            TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -631,19 +649,22 @@ static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, Them
     }
 
     int arga, argb;
-    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme);
+    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme, dx, dy);
 
     themePageAddToggleButton(themePage, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), 
                          trigger, visible, THEME_TRIGGER_NONE);
 }
 
-static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                          TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -656,10 +677,10 @@ static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemeP
     }
 
     int arg1x, arg1y;
-    ButtonEvent action1 = getAction(el, "action1", "arg1x", "arg1y", &arg1x, &arg1y, themeCollection, theme);
+    ButtonEvent action1 = getAction(el, "action1", "arg1x", "arg1y", &arg1x, &arg1y, themeCollection, theme, dx, dy);
     
     int arg2x, arg2y;
-    ButtonEvent action2 = getAction(el, "action2", "arg2x", "arg2y", &arg2x, &arg2y, themeCollection, theme);
+    ButtonEvent action2 = getAction(el, "action2", "arg2x", "arg2y", &arg2x, &arg2y, themeCollection, theme, dx, dy);
 
     int vertical = 0;
     const char* align = el->Attribute("direction");
@@ -709,25 +730,28 @@ static void addKeyButton(ThemeCollection* themeCollection, Theme* theme, ThemePa
                          trigger, visible, pressed);
 }
 
-static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                        TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
     if (visible == -1) {
         visible = THEME_TRIGGER_NONE;
     }
-#if 1
+
     int srcWidth  = archBitmapGetWidth(bitmap) / 6;
     int srcHeight = archBitmapGetHeight(bitmap);
     ArchBitmap* bgBitmap = archBitmapCreate(srcWidth, srcHeight);
     archBitmapCopy(bgBitmap, 0, 0, bitmap, 0, 0, srcWidth, srcHeight);
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bgBitmap, 1), THEME_TRIGGER_NONE, visible);
-#endif
+
     TiXmlElement* keyEl;
     for (keyEl = el->FirstChildElement(); keyEl != NULL; keyEl = keyEl->NextSiblingElement()) {
         if (strcmp(keyEl->Value(), "key") == 0) {
@@ -739,7 +763,8 @@ static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePag
 }
 
 
-static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                      TiXmlElement* el, int dx, int dy)
 {
     int x = 0;
     int y = 0;
@@ -750,6 +775,9 @@ static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     el->QueryIntAttribute("y", &y);
     el->QueryIntAttribute("width", &width);
     el->QueryIntAttribute("height", &height);
+
+    x += dx;
+    y += dy;
     
     const char* id = el->Attribute("id");
     if (id == NULL) {
@@ -767,13 +795,16 @@ static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     themePageAddObject(themePage, activeObjectCreate(x, y, width, height, id, arg1, 0), visible);
 }
 
-static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el)
+static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                    TiXmlElement* el, int dx, int dy)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
     if (bitmap == NULL) {
         return;
     }
+    x += dx;
+    y += dy;
 
     ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
     if (trigger == -1) {
@@ -813,7 +844,56 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
         visible = THEME_TRIGGER_NONE;
     }
     
-    themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, startChar, charCount, width, type, color, rightAlign), trigger, visible);
+    themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, startChar, charCount, width, type, color, rightAlign), 
+                     trigger, visible);
+}
+
+static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                     TiXmlElement* root, int dx, int dy)
+{
+    int x = 0;
+    root->QueryIntAttribute("x", &x);
+    int y = 0;
+    root->QueryIntAttribute("x", &y);
+
+    dx += x;
+    dy += y;
+
+    for (TiXmlElement* el = root->FirstChildElement(); el != NULL; el = el->NextSiblingElement()) {
+        if (strcmp(el->Value(), "block") == 0) {
+            addBlock(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "image") == 0) {
+            addImage(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "led") == 0) {
+            addLed(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "text") == 0) {
+            addText(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "button") == 0) {
+            addButton(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "dualbutton") == 0) {
+            addDualButton(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "togglebutton") == 0) {
+            addToggleButton(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "keyboard") == 0) {
+            addKeyboard(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "meter") == 0) {
+            addMeter(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "slider") == 0) {
+            addSlider(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "object") == 0) {
+            addObject(themeCollection, theme, themePage, el, dx, dy);
+        }
+    }
 }
 
 static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, TiXmlElement* root, const char* name, int width, int height, int emuWidth, int emuHeight, int fullscreen) 
@@ -903,39 +983,8 @@ static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, 
                         menuTextColor,
                         clipPointCount,
                         clipPointList);
-    
-    for (infoEl = root->FirstChildElement(); infoEl != NULL; infoEl = infoEl->NextSiblingElement()) {
-        if (strcmp(infoEl->Value(), "image") == 0) {
-            addImage(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "led") == 0) {
-            addLed(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "text") == 0) {
-            addText(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "button") == 0) {
-            addButton(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "dualbutton") == 0) {
-            addDualButton(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "togglebutton") == 0) {
-            addToggleButton(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "keyboard") == 0) {
-            addKeyboard(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "meter") == 0) {
-            addMeter(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "slider") == 0) {
-            addSlider(themeCollection, theme, themePage, infoEl);
-        }
-        if (strcmp(infoEl->Value(), "object") == 0) {
-            addObject(themeCollection, theme, themePage, infoEl);
-        }
-    }
+
+    addBlock(themeCollection, theme, themePage, root, 0, 0);
 
     return themePage;
 }
