@@ -225,6 +225,12 @@
 					RelativePath="..\..\Src\Win32\Win32MouseEmu.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32Printer.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Printer.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32properties.c">
 				</File>
 				<File
@@ -546,7 +552,13 @@
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi80Col.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperTC8566AF.c">
@@ -730,7 +742,13 @@
 					RelativePath="..\..\Src\Memory\romMapperStandard.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi80Col.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperTC8566AF.h">
@@ -889,6 +907,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\MsxPPI.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\PrinterIO.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\PrinterIO.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\RTC.c">
@@ -1295,6 +1319,9 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchNotifications.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchPrinter.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchSound.h">
