@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-21 09:32:05 $
+** $Date: 2004-12-21 19:14:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
 		case 0:
 		case 2:
 		case 4:
-			period = sn76489->regs[reg] + 1;
+			period = sn76489->regs[reg];
             sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 
 			if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
@@ -223,7 +223,7 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
 		case 4:
 			sn76489->regs[reg] = (sn76489->regs[reg] & 0x0f) | ((data & 0x3f) << 4);
             
-			period = sn76489->regs[reg] + 1;
+			period = sn76489->regs[reg];
             sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 
             if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
