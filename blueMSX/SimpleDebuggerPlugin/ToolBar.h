@@ -31,7 +31,7 @@
 
 class Toolbar {
 public:
-    Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transparentColor, int backgroundId);
+    Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transparentColor, int backgroundId = -1);
     ~Toolbar();
 
     void show();

@@ -21,6 +21,9 @@ static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static Memory* memory = NULL;
+static bool cursorPresent = false;
+static bool cursorhasBp   = false;
+static bool debuggerHasBp = false;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -31,34 +34,43 @@ static Memory* memory = NULL;
 #define TB_SHOWNEXT 37004
 #define TB_STEPIN   37005
 #define TB_RUNTO    37006
+#define TB_BPTOGGLE 37007
+#define TB_BPENABLE 37008
+#define TB_BPREMALL 37009
 
 static void updateTooltip(int id, char* str)
 {
     switch (id) {
-    case TB_RESUME:   sprintf(str, "Resume");               break;
-    case TB_PAUSE:    sprintf(str, "Break All");            break;
-    case TB_STOP:     sprintf(str, "Stop Debugging");       break;
-    case TB_RUN:      sprintf(str, "Restart");              break;
-    case TB_SHOWNEXT: sprintf(str, "Show Next Statement");  break;
-    case TB_STEPIN:   sprintf(str, "Step Into");            break;
-    case TB_RUNTO:    sprintf(str, "Run To Cursor");        break;
+    case TB_RESUME:   sprintf(str, "Start/Continue");            break;
+    case TB_PAUSE:    sprintf(str, "Break All");                 break;
+    case TB_STOP:     sprintf(str, "Stop Debugging");            break;
+    case TB_RUN:      sprintf(str, "Restart");                   break;
+    case TB_SHOWNEXT: sprintf(str, "Show Next Statement");       break;
+    case TB_STEPIN:   sprintf(str, "Step Into");                 break;
+    case TB_RUNTO:    sprintf(str, "Run To Cursor");             break;
+    case TB_BPTOGGLE: sprintf(str, "Set/Remove Breakpoint");     break;
+    case TB_BPENABLE: sprintf(str, "Enable/Disable Breakpoint"); break;
+    case TB_BPREMALL: sprintf(str, "Remove All Breakpoints");    break;
     }
 }
 
 static Toolbar* initializeToolbar(HWND owner)
 {
-    Toolbar* toolBar = new Toolbar(GetDllHinstance(), owner, IDB_TOOLBAR, RGB(239, 237, 222), IDB_TOOLBARBG);
+    Toolbar* toolBar = new Toolbar(GetDllHinstance(), owner, IDB_TOOLBAR, RGB(239, 237, 222));
 
     toolBar->addSeparator();
-    toolBar->addButton(0, TB_RESUME);
-    toolBar->addButton(1, TB_PAUSE);
-    toolBar->addButton(2, TB_STOP);
-    toolBar->addButton(3, TB_RUN);
+    toolBar->addButton(0,  TB_RESUME);
+    toolBar->addButton(1,  TB_PAUSE);
+    toolBar->addButton(2,  TB_STOP);
+    toolBar->addButton(3,  TB_RUN);
     toolBar->addSeparator();
-    toolBar->addButton(4, TB_SHOWNEXT);
-    toolBar->addButton(5, TB_STEPIN);
-    toolBar->addButton(6, TB_RUNTO);
+    toolBar->addButton(4,  TB_SHOWNEXT);
+    toolBar->addButton(5,  TB_STEPIN);
+    toolBar->addButton(6,  TB_RUNTO);
     toolBar->addSeparator();
+    toolBar->addButton(10, TB_BPTOGGLE);
+    toolBar->addButton(11, TB_BPENABLE);
+    toolBar->addButton(7,  TB_BPREMALL);
 
     return toolBar;
 }
@@ -78,7 +90,11 @@ static void updateToolBar()
     
     toolBar->enableItem(6, state == EMULATOR_PAUSED);
     toolBar->enableItem(7, state == EMULATOR_PAUSED);
-    toolBar->enableItem(8, state == EMULATOR_PAUSED);
+    toolBar->enableItem(8, state == EMULATOR_PAUSED && cursorPresent);
+
+    toolBar->enableItem(10, state != EMULATOR_STOPPED && cursorPresent);
+    toolBar->enableItem(11, state != EMULATOR_STOPPED && cursorhasBp);
+    toolBar->enableItem(12, debuggerHasBp);
 }
 
 static void updateStatusBar()
@@ -99,6 +115,82 @@ static void updateStatusBar()
         break;
     }
 }
+
+#define MENU_FILE_EXIT              37100
+
+#define MENU_DEBUG_CONTINUE         37200
+#define MENU_DEBUG_BREAKALL         37201
+#define MENU_DEBUG_STOP             37202
+#define MENU_DEBUG_RESTART          37203
+#define MENU_DEBUG_STEP             37204
+#define MENU_DEBUG_RUNTO            37205
+#define MENU_DEBUG_BPTOGGLE         37206
+#define MENU_DEBUG_BPENABLE         37207
+#define MENU_DEBUG_BPREMOVEALL      37208
+
+#define MENU_WINDOW_DISASSEMBLY     37300
+#define MENU_WINDOW_CPUREGISTERS    37301
+#define MENU_WINDOW_MEMORY          37302
+
+#define MENU_HELP_ABOUT             37400
+
+static void updateWindowMenu() 
+{
+    EmulatorState state = GetEmulatorState();
+
+    HMENU hMenuFile = CreatePopupMenu();
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, "Exit");
+
+    HMENU hMenuDebug = CreatePopupMenu();
+    if (state == EMULATOR_STOPPED) {
+        AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, "Start");
+    }
+    else {
+        AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, "Continue");
+        AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, "Break All");
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Stop Debugging");
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Restart");
+    }
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into");
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor");
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint");
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint");
+    AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint");
+
+    HMENU hMenuWindow = CreatePopupMenu();
+    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_DISASSEMBLY, "Disassembly");
+    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_CPUREGISTERS, "CPU Registers");
+    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_MEMORY, "Memory Viewer");
+
+    HMENU hMenuHelp = CreatePopupMenu();
+    AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, "About");
+
+    static HMENU hMenu = NULL;
+    if (hMenu != NULL) {
+        DestroyMenu(hMenu);
+    }
+
+    hMenu = CreateMenu();
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFile, "File");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuDebug, "Debug");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuWindow, "Window");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuHelp, "Help");
+    
+    SetMenu(dbgHwnd, hMenu);
+}
+
+
+
+void NotifyCursorPresent(bool cursorIsPresent, bool bpState, bool hasBp)
+{
+    cursorPresent = cursorIsPresent;
+    cursorhasBp   = bpState && cursorIsPresent;
+    debuggerHasBp = hasBp;
+    updateToolBar();
+    updateWindowMenu();
+}
+
 
 static Snapshot* currentSnapshot = NULL;
 
@@ -225,26 +317,73 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case MENU_FILE_EXIT:
+            CloseWindow(hwnd);
+            return 0;
+
+        case MENU_HELP_ABOUT:
+            MessageBox(NULL, "blueMSX debugger\r\n\r\nBuilt: " __DATE__ "\r\n\r\nVisit http://www.bluemsx.com for details    \r\n\r\n\r\n",
+                       "blueMSX - Debugger", MB_ICONINFORMATION | MB_OK);
+            return 0;
+
+        case MENU_WINDOW_DISASSEMBLY:
+            return 0;
+
+        case MENU_WINDOW_CPUREGISTERS:
+            return 0;
+
+        case MENU_WINDOW_MEMORY:
+            return 0;
+
+        case MENU_DEBUG_CONTINUE:
         case TB_RESUME:
             EmulatorRun();
             return 0;
+            
+        case MENU_DEBUG_BREAKALL:
         case TB_PAUSE:
             EmulatorPause();
             return 0;
+            
+        case MENU_DEBUG_STOP:
         case TB_STOP:
             EmulatorStop();
             return 0;
+            
+        case MENU_DEBUG_RESTART:
         case TB_RUN:
             EmulatorStop();
             EmulatorRun();
             return 0;
+            
         case TB_SHOWNEXT:
             disassembly->updateScroll();
             return 0;
+            
+        case MENU_DEBUG_STEP:
         case TB_STEPIN:
             EmulatorStep();
             return 0;
+            
+        case MENU_DEBUG_RUNTO:
         case TB_RUNTO:
+            disassembly->setRuntoBreakpoint();
+            EmulatorRun();
+            return 0;
+            
+        case MENU_DEBUG_BPTOGGLE:
+        case TB_BPTOGGLE:
+            disassembly->toggleBreakpoint();
+            return 0;
+            
+        case MENU_DEBUG_BPENABLE:
+        case TB_BPENABLE:
+            disassembly->toggleBreakpointEnable();
+            return 0;
+            
+        case MENU_DEBUG_BPREMOVEALL:
+        case TB_BPREMALL:
+            disassembly->clearAllBreakpoints();
             return 0;
         }
         break;
@@ -256,6 +395,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         if (toolBar != NULL) {
             updateToolBar();
         }
+        updateWindowMenu();
         updateDeviceState();
         return 0;
 
@@ -338,7 +478,7 @@ void OnShowTool() {
 
     dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
                            WS_OVERLAPPEDWINDOW, 
-                           CW_USEDEFAULT, CW_USEDEFAULT, 720, 800, NULL, NULL, GetDllHinstance(), NULL);
+                           CW_USEDEFAULT, CW_USEDEFAULT, 720, 740, NULL, NULL, GetDllHinstance(), NULL);
 
     viewHwnd = CreateWindow("msxdebuggerview", "", 
                             WS_OVERLAPPED | WS_CHILD | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
@@ -355,23 +495,29 @@ void OnShowTool() {
     statusBar->show();
     toolBar = initializeToolbar(dbgHwnd);
     toolBar->show();
-    updateToolBar();
 
     disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
-    RECT r = { 3, 0, 507, 470 };
+    RECT r = { 3, 3, 507, 400 };
     disassembly->updatePosition(r);
     disassembly->show();
 
     cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 510, 0, 710, 470 };
+    RECT r2 = { 510, 3, 710, 400 };
     cpuRegisters->updatePosition(r2);
     cpuRegisters->show();
 
     memory = new Memory(GetDllHinstance(), viewHwnd);
-    RECT r3 = { 3, 473, 710, 700 };
+    RECT r3 = { 3, 403, 710, 630 };
     memory->updatePosition(r3);
     memory->show();
     updateWindowPositions();
+    
+    if (GetEmulatorState() == EMULATOR_PAUSED) {
+        OnEmulatorPause();
+    }
+
+    updateToolBar();
+    updateWindowMenu();
 }
 
 void OnEmulatorStart() {

@@ -79,7 +79,7 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-        addressInput = new HexInputDialog(hwnd, 300,3,75,22,6);
+        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6);
         return FALSE;
 
     case WM_LBUTTONDOWN:
@@ -410,7 +410,12 @@ void Memory::updateContent(Snapshot* snapshot)
 
             char memName[64];
 
-            sprintf(memName, "%d: %s - %s", device->deviceId, device->name, mem->name);
+            if (mem->writeProtected) {
+                sprintf(memName, "%d: %s - %s (read only)", device->deviceId, device->name, mem->name);
+            }
+            else {
+                sprintf(memName, "%d: %s - %s", device->deviceId, device->name, mem->name);
+            }
 
             for (it = memList.begin(); it != memList.end(); ++it) {
                 MemoryItem* mi = *it;

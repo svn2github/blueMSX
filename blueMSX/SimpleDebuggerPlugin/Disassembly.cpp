@@ -28,7 +28,7 @@
 #include "Resource.h"
 #include <stdio.h>
 
-
+extern void NotifyCursorPresent(bool isPresent, bool bpState, bool hasBp);
 
 static const char* mnemonicXxCb[256] =
 {
@@ -403,7 +403,7 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
         hBrushWhite  = CreateSolidBrush(RGB(255, 255, 255));
         hBrushLtGray = CreateSolidBrush(RGB(239, 237, 222));
-        hBrushDkGray = CreateSolidBrush(RGB(128, 128, 128));
+        hBrushDkGray = CreateSolidBrush(RGB(222, 222, 255));
         
         colorBlack = RGB(0, 0, 0);
         colorGray  = RGB(160, 160, 160);
@@ -432,15 +432,19 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_LBUTTONUP:
-        if (LOWORD(lParam) < 25 && lineCount > 10) {
+        if (lineCount > 10) {
             SCROLLINFO si;
-
             si.cbSize = sizeof (si);
             si.fMask  = SIF_POS;
             GetScrollInfo (hwnd, SB_VERT, &si);
-
-            toggleBreakpoint(lineInfo[si.nPos + HIWORD(lParam) / textHeight].address);
-
+            int row = si.nPos + HIWORD(lParam) / textHeight;
+            if (LOWORD(lParam) < 25) {
+                toggleBreakpoint(lineInfo[row].address);
+            }
+            else {
+                currentLine = row;
+            }
+            NotifyCursorPresent(true, (currentLine >= 0 && breakpoint[lineInfo[currentLine].address] != BP_NONE), breakpointCount > 0);
             InvalidateRect(hwnd, NULL, TRUE);
         }
         return 0;
@@ -486,7 +490,8 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) : 
-    linePos(0), lineCount(0), programCounter(0), firstVisibleLine(0), editEnabled(false)
+    linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
+    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), breakpointCount(0)
 {
     disassembly = this;
 
@@ -550,15 +555,60 @@ void Disassembly::updatePosition(RECT& rect)
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
-void Disassembly::toggleBreakpoint(int address) {
+void Disassembly::toggleBreakpoint(int address) 
+{
+    if (address == -1) {
+        if (currentLine == -1) {
+            return;
+        }
+        address = lineInfo[currentLine].address;
+    }
     if (breakpoint[address] == BP_NONE) {
+        breakpointCount++;
         breakpoint[address] = BP_SET;
         SetBreakpoint(address);
     }
     else {
+        breakpointCount--;
         breakpoint[address] = BP_NONE;
         ClearBreakpoint(address);
     }
+    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::toggleBreakpointEnable()
+{
+    if (currentLine == -1) {
+        return;
+    }
+    int address = lineInfo[currentLine].address;
+
+    if (breakpoint[address] == BP_DISABLED) {
+        breakpointCount--;
+        breakpoint[address] = BP_SET;
+        SetBreakpoint(address);
+    }
+    else if (breakpoint[address] == BP_SET) {
+        breakpointCount++;
+        breakpoint[address] = BP_DISABLED;
+        ClearBreakpoint(address);
+    }
+    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::clearAllBreakpoints()
+{
+    for (int address = 0; address < 0x10000; address++) {
+        if (breakpoint[address] == BP_SET) {
+            ClearBreakpoint(address);
+        }
+        breakpoint[address] = BP_NONE;
+    }
+    breakpointCount = 0;
+    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void Disassembly::updateBreakpoints()
@@ -568,10 +618,32 @@ void Disassembly::updateBreakpoints()
             SetBreakpoint(addr);
         }
     }
+    InvalidateRect(hwnd, NULL, TRUE);
 }
+
+void Disassembly::setRuntoBreakpoint()
+{
+    if (currentLine >= 0) {
+        runtoBreakpoint = lineInfo[currentLine].address;
+        SetBreakpoint(runtoBreakpoint);
+    }
+}
+
+void Disassembly::clearRuntoBreakpoint()
+{
+    if (runtoBreakpoint >= 0) {
+        if (breakpoint[runtoBreakpoint] != BP_SET) {
+            ClearBreakpoint(runtoBreakpoint);
+        }
+    }
+}
+
 
 void Disassembly::invalidateContent()
 {
+    clearRuntoBreakpoint();
+    NotifyCursorPresent(false, false, breakpointCount > 0);
+    currentLine = -1;
     lineCount = 0;
     updateScroll();
 
@@ -587,6 +659,8 @@ void Disassembly::invalidateContent()
 
 void Disassembly::updateContent(BYTE* memory, WORD pc)
 {
+    clearRuntoBreakpoint();
+
     lineCount = 0;
     programCounter = 0;
 
@@ -720,6 +794,13 @@ void Disassembly::drawText(int top, int bottom)
     r.bottom += r.top;
 
     for (int i = FirstLine; i <= LastLine; i++) {
+        if (i == currentLine) {
+            RECT rc;
+            GetClientRect(hwnd, &rc);
+            SelectObject(hMemdc, hBrushDkGray); 
+            PatBlt(hMemdc, 21, r.top, rc.right - 21, r.bottom - r.top, PATCOPY);
+        }
+
         int address = lineInfo[i].address;
         if (lineInfo[i].haspc) {
             if (breakpoint[address] == BP_SET) {

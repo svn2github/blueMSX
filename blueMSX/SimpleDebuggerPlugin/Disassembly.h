@@ -44,6 +44,12 @@ public:
     void invalidateContent();
     void updateScroll();
     void updateBreakpoints();
+    void setRuntoBreakpoint();
+    void clearRuntoBreakpoint();
+
+    void toggleBreakpoint(int address = -1);
+    void toggleBreakpointEnable();
+    void clearAllBreakpoints();
 
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -52,7 +58,6 @@ private:
     int dasm(BYTE* memory, WORD PC, char* dest);
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
-    void toggleBreakpoint(int address);
 
     bool     editEnabled;
 
@@ -80,10 +85,13 @@ private:
         int  dataTextLength;
     };
 
+    int      runtoBreakpoint;
     int      programCounter;
     int      firstVisibleLine;
     int      lineCount;
+    int      currentLine;
     LineInfo lineInfo[0x10000];
+    int      breakpointCount;
     BpState  breakpoint[0x10000];
     int      linePos;
 };
