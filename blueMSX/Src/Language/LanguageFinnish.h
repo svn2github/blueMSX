@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-23 04:41:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -529,6 +529,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgCFdcNumDrivesText    = "Levykeasemien lukumäärä:";
 
     ls->propPriorityBoost        = " Nosta blueMSX:n prioriteettiä";
+
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Disabloi levykeaseman ajoitus";
+    ls->shortcutToggleFdcTiming = "Enabloi/Disabloi levykeaseman ajoitus";
+    ls->propUseRegistry         = "Tallenna konfiguraatio rekisteriin";
 };
 
 #endif
