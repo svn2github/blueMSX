@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-23 08:48:33 $
+** $Date: 2005-02-25 20:01:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,6 +170,21 @@ void __stdcall toolClearBreakpoint(UInt16 address)
     dbgClearBreakpoint(address);
 }
 
+void __stdcall toolWriteMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size)
+{
+    dbgDeviceWriteMemory((DbgMemoryBlock*)memoryBlock, data, startAddr, size);
+}
+
+void __stdcall toolWriteRegister(RegisterBank* regBank, int regIndex, UInt32 value)
+{
+    dbgDeviceWriteRegister((DbgRegisterBank*)regBank, regIndex, value);
+}
+
+void __stdcall toolDeviceWriteIoPort(IoPorts* ioPorts, int portIndex, UInt32 value)
+{
+    dbgDeviceWriteIoPort((DbgIoPorts*)ioPorts, portIndex, value);
+}
+
 static Interface toolInterface = {
     toolSnapshotCreate,
     toolSnapshotDestroy,
@@ -178,10 +193,13 @@ static Interface toolInterface = {
     toolSnapshotGetDevice,
     toolDeviceGetMemoryBlockCount,
     toolDeviceGetMemoryBlock,
+    toolWriteMemory,
     toolDeviceGetRegisterBankCount,
     toolDeviceGetRegisterBank,
+    toolWriteRegister,
     toolDeviceGetIoPortsCount,
     toolDeviceGetIoPorts,
+    toolDeviceWriteIoPort,
     toolRun,
     toolStop,
     toolPause,

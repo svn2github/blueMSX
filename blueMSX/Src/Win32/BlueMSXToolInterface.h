@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-22 03:39:15 $
+** $Date: 2005-02-25 20:01:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -138,10 +138,13 @@ typedef struct {
 
     ToolDeviceGetMemoryBlockCount   getMemoryBlockCount;
     ToolDeviceGetMemoryBlock        getMemoryBlock;
+    ToolDeviceWriteMemory           writeMemoryBlockSement;
     ToolDeviceGetRegisterBankCount  getRegisterBankCount;
     ToolDeviceGetRegisterBank       getRegisterBank;
+    ToolDeviceWriteRegister         writeRegisterBankRegister;
     ToolDeviceGetIoPortsCount       getIoPortsCount;
     ToolDeviceGetIoPorts            getIoPorts;
+    ToolDeviceWriteIoPort           writeIoPortsPort;
 
     ToolAction                      run;
     ToolAction                      stop;

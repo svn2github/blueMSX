@@ -60,6 +60,8 @@ private:
     int    textHeight;
     int    textWidth;
 
+    RegisterBank* currentRegBank;
+
     int    currentEditRegister;
 
     int    registersPerRow;

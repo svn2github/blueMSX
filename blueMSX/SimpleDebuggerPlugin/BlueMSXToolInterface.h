@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-23 08:48:31 $
+** $Date: 2005-02-25 20:01:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -138,10 +138,13 @@ typedef struct {
 
     ToolDeviceGetMemoryBlockCount   getMemoryBlockCount;
     ToolDeviceGetMemoryBlock        getMemoryBlock;
+    ToolDeviceWriteMemory           writeMemoryBlockSement;
     ToolDeviceGetRegisterBankCount  getRegisterBankCount;
     ToolDeviceGetRegisterBank       getRegisterBank;
+    ToolDeviceWriteRegister         writeRegisterBankRegister;
     ToolDeviceGetIoPortsCount       getIoPortsCount;
     ToolDeviceGetIoPorts            getIoPorts;
+    ToolDeviceWriteIoPort           writeIoPortsPort;
 
     ToolAction                      run;
     ToolAction                      stop;

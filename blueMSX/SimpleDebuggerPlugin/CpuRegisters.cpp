@@ -129,16 +129,14 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
         }
         return 0;
 
-
     case HexInputDialog::EC_KILLFOCUS:
     case HexInputDialog::EC_NEWVALUE:
         if (currentEditRegister >= 0) {
-            if ((HexInputDialog*)wParam == dataInput2) {
-                regValue[currentEditRegister] = (UInt8)lParam;
+            UInt32 regVal = (HexInputDialog*)wParam == dataInput2 ? (UInt8)lParam : (UInt16)lParam;
+            if (currentRegBank != NULL && regValue[currentEditRegister] != regVal) {
+                DeviceWriteRegisterBankRegister(currentRegBank, currentEditRegister, regVal);
             }
-            else {
-                regValue[currentEditRegister] = (UInt16)lParam;
-            }
+            regValue[currentEditRegister] = regVal;
             InvalidateRect(hwnd, NULL, TRUE);
         }
         currentEditRegister = -1;
@@ -247,6 +245,8 @@ void CpuRegisters::updatePosition(RECT& rect)
 
 void CpuRegisters::invalidateContent()
 {
+    currentRegBank = NULL;
+
     dataInput2->hide();
     dataInput4->hide();
     for (int i = 0; i < 15; i++) {
@@ -259,6 +259,8 @@ void CpuRegisters::invalidateContent()
 
 void CpuRegisters::updateContent(RegisterBank* regBank)
 {
+    currentRegBank = regBank;
+
     dataInput2->hide();
     dataInput4->hide();
 

@@ -100,6 +100,8 @@ static void updateStatusBar()
     }
 }
 
+static Snapshot* currentSnapshot = NULL;
+
 void updateDeviceState()
 {
     bool disassemblyUpdated = false;
@@ -153,9 +155,13 @@ void updateDeviceState()
         }
 
         memory->updateContent(snapshot);
-
-        SnapshotDestroy(snapshot);
     }
+
+    if (currentSnapshot != NULL) {
+        SnapshotDestroy(currentSnapshot);
+    }
+
+    currentSnapshot = snapshot;
 
     if (!disassemblyUpdated) {
         disassembly->invalidateContent();

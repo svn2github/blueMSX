@@ -12,10 +12,13 @@ static ToolSnapshotGetDevice           toolSnapshotGetDevice;
 
 static ToolDeviceGetMemoryBlockCount   toolDeviceGetMemoryBlockCount;
 static ToolDeviceGetMemoryBlock        toolDeviceGetMemoryBlock;
+static ToolDeviceWriteMemory           toolDeviceWriteMemory;
 static ToolDeviceGetRegisterBankCount  toolDeviceGetRegisterBankCount;
 static ToolDeviceGetRegisterBank       toolDeviceGetRegisterBank;
+static ToolDeviceWriteRegister         toolDeviceWriteRegister;
 static ToolDeviceGetIoPortsCount       toolDeviceGetIoPortsCount;
 static ToolDeviceGetIoPorts            toolDeviceGetIoPorts;
+static ToolDeviceWriteIoPort           toolDeviceWriteIoPort;
 static ToolAction                      toolDeviceRun;
 static ToolAction                      toolDeviceStop;
 static ToolAction                      toolDevicePause;
@@ -55,6 +58,10 @@ MemoryBlock* DeviceGetMemoryBlock(Device* device, int index) {
     return toolDeviceGetMemoryBlock(device, index);
 }
 
+void DeviceWriteMemoryBlockMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size) {
+    toolDeviceWriteMemory(memoryBlock, data, startAddr, size);
+}
+
 int DeviceGetRegisterBankCount(Device* device) {
     return toolDeviceGetRegisterBankCount(device);
 }
@@ -63,12 +70,20 @@ RegisterBank* DeviceGetRegisterBank(Device* device, int index) {
     return toolDeviceGetRegisterBank(device, index);
 }
 
+void DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32 value) {
+    toolDeviceWriteRegister(regBank, regIndex, value);
+}
+
 int DeviceGetIoPortsCount(Device* device) {
     return toolDeviceGetIoPortsCount(device);
 }
 
 IoPorts* DeviceGetIoPorts(Device* device, int index) {
     return toolDeviceGetIoPorts(device, index);
+}
+
+void DeviceWriteIoPortsPort(IoPorts* ioPorts, int portIndex, UInt32 value) {
+    toolDeviceWriteIoPort(ioPorts, portIndex, value);
 }
 
 void EmulatorRun() {
@@ -111,10 +126,13 @@ extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface
     toolSnapshotGetDevice           = toolInterface->getDevice;
     toolDeviceGetMemoryBlockCount   = toolInterface->getMemoryBlockCount;
     toolDeviceGetMemoryBlock        = toolInterface->getMemoryBlock;
+    toolDeviceWriteMemory           = toolInterface->writeMemoryBlockSement;
     toolDeviceGetRegisterBankCount  = toolInterface->getRegisterBankCount;
     toolDeviceGetRegisterBank       = toolInterface->getRegisterBank;
+    toolDeviceWriteRegister         = toolInterface->writeRegisterBankRegister;
     toolDeviceGetIoPortsCount       = toolInterface->getIoPortsCount;
     toolDeviceGetIoPorts            = toolInterface->getIoPorts;
+    toolDeviceWriteIoPort           = toolInterface->writeIoPortsPort;
     toolDeviceRun                   = toolInterface->run;
     toolDeviceStop                  = toolInterface->stop;
     toolDevicePause                 = toolInterface->pause;
