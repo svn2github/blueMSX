@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-03-13 09:28:40 $
+** $Date: 2005-03-18 03:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,10 @@ struct SCC
     int readOnly[5];
     UInt8 offset[5];
     Int32  daVolume[5];
+
+    Int32 in[5];
+    Int32 inHp[3];
+    Int32 outHp[3];
 
     Int32  buffer[BUFFER_SIZE];
 };
@@ -540,29 +544,43 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
         return;
     }
 }
+static Int32 filter2(SCC* scc, Int32 input) {
+    static const Int32 a1 = 997;
+    static const Int32 a2 = -1994;
+    static const Int32 a3 = 997;
+    static const Int32 b1 = -1994;
+    static const Int32 b2 = 994;
+    static Int32 inHp[3], outHp[2];
+    
+    inHp[2] = inHp[1];
+    inHp[1] = inHp[0];
+    inHp[0] = input;
+
+    outHp[2] = outHp[1];
+    outHp[1] = outHp[0];
+
+    outHp[0] = (a1 * inHp[0] + a2 * inHp[1] + a3 * inHp[2] - b1 * outHp[1] - b2 * outHp[2]) / 1000;
+
+    return outHp[0];
+}
 
 
 static Int32 filter(SCC* scc, Int32 input) {
-    static Int32 in[9];
-    static Int32 out[3];
+    scc->in[4] = scc->in[3];
+    scc->in[3] = scc->in[2];
+    scc->in[2] = scc->in[1];
+    scc->in[1] = scc->in[0];
+    scc->in[0] = input;
 
-    in[8] = in[7];
-    in[7] = in[6];
-    in[6] = in[5];
-    in[5] = in[4];
-    in[4] = in[3];
-    in[3] = in[2];
-    in[2] = in[1];
-    in[1] = in[0];
-    in[0] = input;
+    scc->inHp[2] = scc->inHp[1];
+    scc->inHp[1] = scc->inHp[0];
+    scc->inHp[0] = (1 * (scc->in[0] + scc->in[4]) + 12 * (scc->in[1] + scc->in[3]) + 45 * scc->in[2]) / 85;
 
-    out[2] = out[1];
-    out[1] = out[0];
+    scc->outHp[2] = scc->outHp[1];
+    scc->outHp[1] = scc->outHp[0];
+    scc->outHp[0] =(997 * scc->inHp[0] - 1994 * scc->inHp[1] + 997 * scc->inHp[2] + 1994 * scc->outHp[1] - 994 * scc->outHp[2]) / 1000;
 
-    out[0] = (1 * (in[0] + in[8]) + 7 * (in[1] + in[7]) + 25 * (in[2] + in[6]) + 
-              67 * (in[3] + in[5]) + 120 * in[4] - 96 * out[1] - 160 * out[2]) / 320;
-
-    return out[0];
+    return scc->outHp[0];
 }
 
 static Int32* sccSync(SCC* scc, UInt32 count)

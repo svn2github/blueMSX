@@ -1354,9 +1354,7 @@ OpenYM2413::~OpenYM2413()
 {
 }
 
-static int filter(int input) {
-    static int in[3];
-
+int OpenYM2413::filter(int input) {
     in[2] = in[1];
     in[1] = in[0];
     in[0] = input;

@@ -122,6 +122,7 @@ class OpenYM2413 : public SoundDevice
         void saveState();
 
 	private:
+        int filter(int input);
 		void checkMute();
 		bool checkMuteHelper();
 		
@@ -142,6 +143,8 @@ class OpenYM2413 : public SoundDevice
 
         int buffer[MAX_BUFFER_SIZE];
         int oplOversampling;
+
+        int in[3];
 
 		Channel channels[9];	// OPLL chips have 9 channels
 		byte instvol_r[9];		// instrument/volume (or volume/volume in percussive mode)
