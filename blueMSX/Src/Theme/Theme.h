@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-11 03:02:49 $
+** $Date: 2005-01-13 06:16:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "ThemeTriggers.h"
 
 typedef struct Theme Theme;
+typedef struct ThemePage ThemePage;
 typedef struct ThemeItem ThemeItem;
 
 typedef struct {
@@ -49,8 +50,9 @@ typedef struct {
     Theme* fullscreen;
 } ThemeCollection;
 
-struct Theme {
+struct ThemePage {
 // public:
+    char name[64];
     int width;
     int height;
     int emuWinX;
@@ -79,45 +81,63 @@ struct Theme {
     int               btPressed;
 };
 
+#define THEME_MAX_PAGES 64
 
-Theme* themeCreate(int width,
-                   int height,
-                   int emuPosX,
-                   int emuPosY,
-                   int emuWidth,
-                   int emuHeight,
-                   int menuPosX,
-                   int menuPosY,
-                   int menuWidth,
-                   unsigned long menuColor,
-                   unsigned long menuFocusColor,
-                   unsigned long menuTextColor,
-                   int        clipPointCount,
-                   ClipPoint* clipPointList);
+struct Theme {
+    int currentPage;
+    int pageCount;
+    ThemePage* pages[THEME_MAX_PAGES];
+};
 
-void themeDestroy(Theme* theme);
+ThemePage* themePageCreate(const char* name,
+                           int width,
+                           int height,
+                           int emuPosX,
+                           int emuPosY,
+                           int emuWidth,
+                           int emuHeight,
+                           int menuPosX,
+                           int menuPosY,
+                           int menuWidth,
+                           unsigned long menuColor,
+                           unsigned long menuFocusColor,
+                           unsigned long menuTextColor,
+                           int        clipPointCount,
+                           ClipPoint* clipPointList);
 
-void themeAddImage(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+Theme*     themeCreate();
+void       themeDestroy(Theme* theme);
+void       themeAddPage(Theme* theme, ThemePage* page);
+ThemePage* themeGetCurrentPage(Theme* theme);
+int        themeGetCurrentPageIndex(Theme* theme);
+int        themeGetPageCount(Theme* theme);
+void       themeSetPageFromHash(Theme* theme, unsigned long hash);
+unsigned long themeGetNameHash(const char* name);
 
-void themeAddText(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
-void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
+void themePageDestroy(ThemePage* theme);
 
-void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
+void themePageAddImage(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
-void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
+void themePageAddText(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 
-void themeAddMeter(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themePageAddButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
-void themeAddSlider(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themePageAddDualButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
-void themeAddObject(Theme* theme, void* object, ThemeTrigger visible);
+void themePageAddToggleButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 
-void themeActivate(Theme* theme, void* window);
-void themeUpdate(Theme* theme, void* dc);
-void themeDraw(Theme* theme, void* dc);
-void themeMouseMove(Theme* theme, void* dc, int x, int y);
-void themeMouseButtonUp(Theme* theme, void* dc, int x, int y);
-void themeMouseButtonDown(Theme* theme, void* dc, int x, int y);
+void themePageAddMeter(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+
+void themePageAddSlider(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+
+void themePageAddObject(ThemePage* theme, void* object, ThemeTrigger visible);
+
+void themePageActivate(ThemePage* theme, void* window);
+void themePageUpdate(ThemePage* theme, void* dc);
+void themePageDraw(ThemePage* theme, void* dc);
+void themePageMouseMove(ThemePage* theme, void* dc, int x, int y);
+void themePageMouseButtonUp(ThemePage* theme, void* dc, int x, int y);
+void themePageMouseButtonDown(ThemePage* theme, void* dc, int x, int y);
 
 #endif //WIN32_THEME_CLASSIC_H

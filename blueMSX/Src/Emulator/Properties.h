@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-05 00:50:21 $
+** $Date: 2005-01-13 06:16:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,6 +159,7 @@ typedef struct {
 }  JoystickProperties;
 
 typedef struct {
+    char    configFile[MAX_PATH];
     PropControlsLanguage keySet;
 } KeyboardProperties;
 

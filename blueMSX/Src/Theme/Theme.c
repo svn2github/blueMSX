@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 03:02:48 $
+** $Date: 2005-01-13 06:16:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "Theme.h"
 #include "Actions.h"
+#include "ArchNotifications.h"
 
 typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_TOGGLEBUTTON, ITEM_METER, ITEM_SLIDER, ITEM_OBJECT } ItemType;
 
@@ -185,10 +186,10 @@ static char* actionTypeToStr(ThemeTrigger actionType)
     return str;
 }
 
-static void themeAddLast(Theme* theme, ItemType itemType, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
+static void themePageAddLast(ThemePage* themePage, ItemType itemType, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
     ThemeItem* item = malloc(sizeof(ThemeItem));
-    ThemeItem** pItem = &theme->itemList;
+    ThemeItem** pItem = &themePage->itemList;
 
     while (*pItem != NULL) {
         pItem = &((*pItem)->next);
@@ -204,55 +205,58 @@ static void themeAddLast(Theme* theme, ItemType itemType, void* object, ThemeTri
     item->next = NULL;
 }
 
-Theme* themeCreate(int width,
-                   int height,
-                   int emuPosX,
-                   int emuPosY,
-                   int emuWidth,
-                   int emuHeight,
-                   int menuPosX,
-                   int menuPosY,
-                   int menuWidth,
-                   COLORREF menuColor,
-                   COLORREF menuFocusColor,
-                   COLORREF menuTextColor,
-                   int        clipPointCount,
-                   ClipPoint* clipPointList)
+ThemePage* themePageCreate(const char* name,
+                           int width,
+                           int height,
+                           int emuPosX,
+                           int emuPosY,
+                           int emuWidth,
+                           int emuHeight,
+                           int menuPosX,
+                           int menuPosY,
+                           int menuWidth,
+                           COLORREF menuColor,
+                           COLORREF menuFocusColor,
+                           COLORREF menuTextColor,
+                           int        clipPointCount,
+                           ClipPoint* clipPointList)
 {
-    Theme* theme = calloc(1, sizeof(Theme));
+    ThemePage* themePage = calloc(1, sizeof(ThemePage));
 
-    theme->width           = width;
-    theme->height          = height;
-    theme->emuWinX         = emuPosX;
-    theme->emuWinY         = emuPosY;
-    theme->emuWinW         = emuWidth;
-    theme->emuWinH         = emuHeight;
-    theme->menu.x          = menuPosX;
-    theme->menu.y          = menuPosY;
-    theme->menu.width      = menuWidth;
-    theme->menu.color      = menuColor;
-    theme->menu.focusColor = menuFocusColor;
-    theme->menu.textColor  = menuTextColor;
-    theme->clipPoint.count = clipPointCount;
+    strcpy(themePage->name, name);
+
+    themePage->width           = width;
+    themePage->height          = height;
+    themePage->emuWinX         = emuPosX;
+    themePage->emuWinY         = emuPosY;
+    themePage->emuWinW         = emuWidth;
+    themePage->emuWinH         = emuHeight;
+    themePage->menu.x          = menuPosX;
+    themePage->menu.y          = menuPosY;
+    themePage->menu.width      = menuWidth;
+    themePage->menu.color      = menuColor;
+    themePage->menu.focusColor = menuFocusColor;
+    themePage->menu.textColor  = menuTextColor;
+    themePage->clipPoint.count = clipPointCount;
 
     if (clipPointCount > 0) {
         int size = clipPointCount * sizeof(ClipPoint);
-        theme->clipPoint.list = malloc(size);
-        memcpy(theme->clipPoint.list, clipPointList, size);
+        themePage->clipPoint.list = malloc(size);
+        memcpy(themePage->clipPoint.list, clipPointList, size);
     }
 
-    return theme;
+    return themePage;
 }
 
-void themeDestroy(Theme* theme)
+void themePageDestroy(ThemePage* themePage)
 {
     ThemeItem* item;
     
-    if (theme == NULL) {
+    if (themePage == NULL) {
         return;
     }
 
-    item = theme->itemList;
+    item = themePage->itemList;
 
     while (item != NULL) {
         ThemeItem* next = item->next;
@@ -287,55 +291,55 @@ void themeDestroy(Theme* theme)
         item = next;
     }
 
-    free(theme);
+    free(themePage);
 }
 
-void themeAddImage(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themePageAddImage(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_IMAGE, object, trigger, visible, THEME_TRIGGER_NONE);
+    themePageAddLast(themePage, ITEM_IMAGE, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
-void themeAddMeter(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themePageAddMeter(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_METER, object, trigger, visible, THEME_TRIGGER_NONE);
+    themePageAddLast(themePage, ITEM_METER, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
-void themeAddSlider(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themePageAddSlider(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_SLIDER, object, trigger, visible, THEME_TRIGGER_NONE);
+    themePageAddLast(themePage, ITEM_SLIDER, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
-void themeAddText(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+void themePageAddText(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_TEXT, object, trigger, visible, THEME_TRIGGER_NONE);
+    themePageAddLast(themePage, ITEM_TEXT, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
-void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
+void themePageAddButton(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_BUTTON, object, trigger, visible, pressed);
+    themePageAddLast(themePage, ITEM_BUTTON, object, trigger, visible, pressed);
 }
 
-void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
+void themePageAddDualButton(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_DUALBUTTON, object, trigger, visible, pressed);
+    themePageAddLast(themePage, ITEM_DUALBUTTON, object, trigger, visible, pressed);
 }
 
-void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
+void themePageAddToggleButton(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed)
 {
-    themeAddLast(theme, ITEM_TOGGLEBUTTON, object, trigger, visible, pressed);
+    themePageAddLast(themePage, ITEM_TOGGLEBUTTON, object, trigger, visible, pressed);
 }
 
-void themeAddObject(Theme* theme, void* object, ThemeTrigger visible)
+void themePageAddObject(ThemePage* themePage, void* object, ThemeTrigger visible)
 {
-    themeAddLast(theme, ITEM_OBJECT, object, THEME_TRIGGER_NONE, visible, THEME_TRIGGER_NONE);
+    themePageAddLast(themePage, ITEM_OBJECT, object, THEME_TRIGGER_NONE, visible, THEME_TRIGGER_NONE);
 }
 
-void themeMouseMove(Theme* theme, void*  dc, int x, int y)
+void themePageMouseMove(ThemePage* themePage, void*  dc, int x, int y)
 {
     ThemeItem* item;
 
-    if (theme->btPressed) {
-        for (item = theme->itemList; item != NULL; item = item->next) {
+    if (themePage->btPressed) {
+        for (item = themePage->itemList; item != NULL; item = item->next) {
             switch (item->type) {
             case ITEM_SLIDER:
                 if (activeSliderMouseMove(item->object, x, y)) {
@@ -347,7 +351,7 @@ void themeMouseMove(Theme* theme, void*  dc, int x, int y)
         return;
     }
 
-    for (item = theme->itemList; item != NULL; item = item->next) {
+    for (item = themePage->itemList; item != NULL; item = item->next) {
         switch (item->type) {
         case ITEM_IMAGE:
             break;
@@ -374,18 +378,18 @@ void themeMouseMove(Theme* theme, void*  dc, int x, int y)
     }
 }
 
-void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
+void themePageMouseButtonDown(ThemePage* themePage, void*  dc, int x, int y)
 {
     ThemeItem* item;
 
-    themeMouseButtonUp(theme, dc, x, y);
-    if (theme == NULL) {
+    themePageMouseButtonUp(themePage, dc, x, y);
+    if (themePage == NULL) {
         return;
     }
 
-    theme->btPressed  = 1;
+    themePage->btPressed  = 1;
 
-    for (item = theme->itemList; item != NULL; item = item->next) {
+    for (item = themePage->itemList; item != NULL; item = item->next) {
         switch (item->type) {
         case ITEM_IMAGE:
             break;
@@ -393,7 +397,7 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
             break;
         case ITEM_SLIDER:
             if (activeSliderDown(item->object, x, y)) {
-                theme->activeItem = item;
+                themePage->activeItem = item;
                 activeSliderDraw(item->object, dc);
             }
             break;
@@ -401,19 +405,19 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
             break;
         case ITEM_BUTTON:
             if (activeButtonDown(item->object, x, y)) {
-                theme->activeItem = item;
+                themePage->activeItem = item;
                 activeButtonDraw(item->object, dc);
             }
             break;
         case ITEM_DUALBUTTON:
             if (activeDualButtonDown(item->object, x, y)) {
-                theme->activeItem = item;
+                themePage->activeItem = item;
                 activeDualButtonDraw(item->object, dc);
             }
             break;
         case ITEM_TOGGLEBUTTON:
             if (activeToggleButtonDown(item->object, x, y)) {
-                theme->activeItem = item;
+                themePage->activeItem = item;
                 activeToggleButtonDraw(item->object, dc);
             }
             break;
@@ -421,54 +425,54 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
     }
 }
 
-void themeMouseButtonUp(Theme* theme, void*  dc, int x, int y)
+void themePageMouseButtonUp(ThemePage* themePage, void*  dc, int x, int y)
 {
-    theme->btPressed = 0;
+    themePage->btPressed = 0;
 
-    if (theme == NULL) {
+    if (themePage == NULL) {
         return;
     }
 
-    if (!theme->activeItem) {
+    if (!themePage->activeItem) {
         return;
     }
 
-    switch (theme->activeItem->type) {
+    switch (themePage->activeItem->type) {
     case ITEM_IMAGE:
         break;
     case ITEM_METER:
         break;
     case ITEM_SLIDER:
-        activeSliderUp(theme->activeItem->object, x, y);
-        activeSliderDraw(theme->activeItem->object, dc);
+        activeSliderUp(themePage->activeItem->object, x, y);
+        activeSliderDraw(themePage->activeItem->object, dc);
         break;
     case ITEM_TEXT:
         break;
     case ITEM_BUTTON:
-        activeButtonUp(theme->activeItem->object, x, y);
-        activeButtonDraw(theme->activeItem->object, dc);
+        activeButtonUp(themePage->activeItem->object, x, y);
+        activeButtonDraw(themePage->activeItem->object, dc);
         break;
     case ITEM_DUALBUTTON:
-        activeDualButtonUp(theme->activeItem->object, x, y);
-        activeDualButtonDraw(theme->activeItem->object,  dc);
+        activeDualButtonUp(themePage->activeItem->object, x, y);
+        activeDualButtonDraw(themePage->activeItem->object,  dc);
         break;
     case ITEM_TOGGLEBUTTON:
-        activeToggleButtonUp(theme->activeItem->object, x, y);
-        activeToggleButtonDraw(theme->activeItem->object, dc);
+        activeToggleButtonUp(themePage->activeItem->object, x, y);
+        activeToggleButtonDraw(themePage->activeItem->object, dc);
         break;
     }
-    theme->activeItem = NULL;
+    themePage->activeItem = NULL;
 }
 
-void themeDraw(Theme* theme, void*  dc)
+void themePageDraw(ThemePage* themePage, void*  dc)
 {
     ThemeItem* item;
 
-    if (theme == NULL) {
+    if (themePage == NULL) {
         return;
     }
 
-    for (item = theme->itemList; item != NULL; item = item->next) {
+    for (item = themePage->itemList; item != NULL; item = item->next) {
         switch (item->type) {
         case ITEM_IMAGE:
             activeImageDraw(item->object, dc);
@@ -495,27 +499,27 @@ void themeDraw(Theme* theme, void*  dc)
     }
 }
 
-void themeActivate(Theme* theme, void* window)
+void themePageActivate(ThemePage* themePage, void* window)
 {
     ThemeItem* item;
-    for (item = theme->itemList; item != NULL; item = item->next) {
+    for (item = themePage->itemList; item != NULL; item = item->next) {
         if (item->type == ITEM_OBJECT) {
             activeObjectActivate(item->object, window);
         }
     }
 }
 
-void themeUpdate(Theme* theme, void* dc)
+void themePageUpdate(ThemePage* themePage, void* dc)
 {
     ThemeItem* item;
-    int redraw = 0;
+    int redrawAll = 0;
 
-    if (theme == NULL) {
+    if (themePage == NULL) {
         return;
     }
 
     // Update visibility
-    for (item = theme->itemList; item != NULL; item = item->next) {
+    for (item = themePage->itemList; item != NULL; item = item->next) {
         int   visible = actionTypeToInt(item->visible);
         if (visible == -1) {
             continue;
@@ -523,84 +527,144 @@ void themeUpdate(Theme* theme, void* dc)
 
         switch (item->type) {
         case ITEM_IMAGE:
-            redraw |= activeImageShow(item->object, visible);
+            redrawAll |= activeImageShow(item->object, visible);
             break;
         case ITEM_METER:
-            redraw |= activeMeterShow(item->object, visible);
+            redrawAll |= activeMeterShow(item->object, visible);
             break;
         case ITEM_SLIDER:
-            redraw |= activeSliderShow(item->object, visible);
+            redrawAll |= activeSliderShow(item->object, visible);
             break;
         case ITEM_TEXT:
-            redraw |= activeTextShow(item->object, visible);
+            redrawAll |= activeTextShow(item->object, visible);
             break;
         case ITEM_BUTTON:
-            redraw |= activeButtonShow(item->object, visible);
+            redrawAll |= activeButtonShow(item->object, visible);
             break;
         case ITEM_DUALBUTTON:
-            redraw |= activeDualButtonShow(item->object, visible);
+            redrawAll |= activeDualButtonShow(item->object, visible);
             break;
         case ITEM_TOGGLEBUTTON:
-            redraw |= activeToggleButtonShow(item->object, visible);
+            redrawAll |= activeToggleButtonShow(item->object, visible);
             break;
         case ITEM_OBJECT:
-//            redraw |= activeObjectShow(item->object, visible);
-            break;
-        }
-    }
-
-    // Update pressed
-    for (item = theme->itemList; item != NULL; item = item->next) {
-        int   pressed = actionTypeToInt(item->pressed);
-        if (pressed == -1) {
-            continue;
-        }
-
-        switch (item->type) {
-        case ITEM_BUTTON:
-            redraw |= activeButtonForcePushed(item->object, pressed);
-            break;
-        case ITEM_DUALBUTTON:
-            redraw |= activeDualButtonForcePushed(item->object, pressed);
-            break;
-        case ITEM_TOGGLEBUTTON:
-            redraw |= activeToggleButtonForcePushed(item->object, pressed);
+//            redrawAll |= activeObjectShow(item->object, visible);
             break;
         }
     }
 
     // Update items
-    for (item = theme->itemList; item != NULL; item = item->next) {
-        int   idx = actionTypeToInt(item->trigger);
-        char* str = actionTypeToStr(item->trigger);
+    for (item = themePage->itemList; item != NULL; item = item->next) {
+        int   pressed = actionTypeToInt(item->pressed);
+        int   trigger = actionTypeToInt(item->trigger);
+        char* str     = actionTypeToStr(item->trigger);
+        int   redraw  = redrawAll;
 
         switch (item->type) {
         case ITEM_IMAGE:
-            if (idx != -1) redraw |= activeImageSetImage(item->object, idx);
+            if (trigger != -1) redraw |= activeImageSetImage(item->object, trigger);
             if (redraw) activeImageDraw(item->object, dc);
             break;
         case ITEM_METER:
-            if (idx != -1) redraw |= activeMeterSetImage(item->object, idx);
+            if (trigger != -1) redraw |= activeMeterSetImage(item->object, trigger);
             if (redraw) activeMeterDraw(item->object, dc);
             break;
         case ITEM_SLIDER:
-            if (idx != -1) redraw |= activeSliderSetImage(item->object, idx);
+            if (trigger != -1) redraw |= activeSliderSetImage(item->object, trigger);
             if (redraw) activeSliderDraw(item->object, dc);
             break;
         case ITEM_TEXT:
             if (str != NULL) redraw |= activeTextSetText(item->object, str);
             if (redraw) activeTextDraw(item->object, dc);
             break;
-        case ITEM_TOGGLEBUTTON:
-            if (idx != -1) redraw |= activeToggleButtonSetToggled(item->object, idx);
-            if (redraw) activeButtonDraw(item->object, dc);
-            break;
         case ITEM_BUTTON:
+            if (pressed != -1) redraw |= activeButtonForcePushed(item->object, pressed);
             if (redraw) activeButtonDraw(item->object, dc);
             break;
         case ITEM_DUALBUTTON:
+            if (pressed != -1) redraw |= activeDualButtonForcePushed(item->object, pressed);
             if (redraw) activeDualButtonDraw(item->object, dc);
+            break;
+        case ITEM_TOGGLEBUTTON:
+            if (pressed != -1) redraw |= activeToggleButtonForcePushed(item->object, pressed);
+            if (trigger != -1) redraw |= activeToggleButtonSetToggled(item->object, trigger);
+            if (redraw) activeButtonDraw(item->object, dc);
             break;
         }
     }
+}
+
+///////////////////////////////////////////////////////////////
+
+Theme* themeCreate() 
+{
+    Theme* theme = malloc(sizeof(Theme));
+    theme->currentPage = 0;
+    theme->pageCount = 0;
+    theme->pages[0] = NULL;
+    return theme;
+}
+
+void themeDestroy(Theme* theme)
+{
+    while (theme->pageCount--) {
+        themePageDestroy(theme->pages[theme->pageCount]);
+    }
+    free(theme);
+}
+
+void themeAddPage(Theme* theme, ThemePage* themePage) 
+{
+    if (theme->pageCount == THEME_MAX_PAGES) {
+        return;
+    }
+
+    theme->pages[theme->pageCount++] = themePage;
+}
+
+ThemePage* themeGetCurrentPage(Theme* theme)
+{
+    return theme->pages[theme->currentPage];
+}
+
+int themeGetCurrentPageIndex(Theme* theme)
+{
+    return theme->currentPage;
+}
+
+int themeGetPageCount(Theme* theme)
+{
+    return theme->pageCount;
+}
+
+void themeSetPageFromHash(Theme* theme, unsigned long hash)
+{
+    int i;
+    for (i = 0; i < theme->pageCount; i++) {
+        if (themeGetNameHash(theme->pages[i]->name) == hash) {
+            theme->currentPage = i;
+        }
+    }
+    archThemeUpdate();
+}
+
+ThemePage* themeGetPage(Theme* theme, int index)
+{
+    if (index < theme->pageCount) {
+        theme->pages[index];
+    }
+    return NULL;
+}
+
+UInt32 themeGetNameHash(const char* name)
+{
+    UInt32 tag = 0;
+    UInt32 mod = 1;
+
+    while (*name) {
+        mod *= 19219;
+        tag += mod * *name++;
+    }
+
+    return tag;
 }

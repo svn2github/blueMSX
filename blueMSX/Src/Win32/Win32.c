@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-01-11 07:59:28 $
+** $Date: 2005-01-13 06:16:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,7 @@ typedef struct {
     HANDLE ddrawAckEvent;
 
     HBITMAP hBitmap;
-    Theme* themeActive;
+    ThemePage* themePageActive;
     ThemeCollection** themeList;
     int themeIndex;
     int X;
@@ -480,8 +480,8 @@ void themeSet(char* themeName, int forceMatch) {
         return;
     }
 
-    if (st.themeActive) {
-        themeActivate(st.themeActive, NULL);
+    if (st.themePageActive) {
+        themePageActivate(st.themePageActive, NULL);
     }
 
     setClipRegion(0);
@@ -491,45 +491,45 @@ void themeSet(char* themeName, int forceMatch) {
 
     switch (pProperties->video.size) {
     case P_VIDEO_SIZEX1:
-        st.themeActive = st.themeList[st.themeIndex]->little;
+        st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->little);
         break;
     case P_VIDEO_SIZEX2:
-        st.themeActive = st.themeList[st.themeIndex]->normal;
+        st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->normal);
         break;
     case P_VIDEO_SIZEFULLSCREEN:
         switch (pProperties->video.fullRes) {
         case P_VIDEO_FRES320X240_16:
         case P_VIDEO_FRES320X240_32:
-            st.themeActive = st.themeList[st.themeIndex]->smallfullscreen;
+            st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->smallfullscreen);
             break;
         case P_VIDEO_FRES640X480_16:
         case P_VIDEO_FRES640X480_32:
-            st.themeActive = st.themeList[st.themeIndex]->fullscreen;
+            st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->fullscreen);
             break;
         }
         break;
     }
 
-    if (st.themeActive) {
-        themeActivate(st.themeActive, st.hwnd);
+    if (st.themePageActive) {
+        themePageActivate(st.themePageActive, st.hwnd);
     }
 
     if (st.hBitmap) {
         DeleteObject(st.hBitmap);
     }
 
-    menuSetInfo(st.themeActive->menu.color, st.themeActive->menu.focusColor, 
-                st.themeActive->menu.textColor, 
-                st.themeActive->menu.x, st.themeActive->menu.y,
-                st.themeActive->menu.width, 32);
+    menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
+                st.themePageActive->menu.textColor, 
+                st.themePageActive->menu.x, st.themePageActive->menu.y,
+                st.themePageActive->menu.width, 32);
 
     if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
         x = st.X;
         y = st.Y;
-        w = st.themeActive->width + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
-        h = st.themeActive->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
-        ex = st.themeActive->emuWinX;
-        ey = st.themeActive->emuWinY;
+        w = st.themePageActive->width + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
+        h = st.themePageActive->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
+        ex = st.themePageActive->emuWinX;
+        ey = st.themePageActive->emuWinY;
     }
 
     st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), w, h);
@@ -547,20 +547,20 @@ void themeSet(char* themeName, int forceMatch) {
         st.hrgn = NULL;
     }
 
-    if (st.themeActive->clipPoint.count > 0) {
+    if (st.themePageActive->clipPoint.count > 0) {
         int i;
         HRGN hrgn;
         POINT pt[512];
         int dx = GetSystemMetrics(SM_CXFIXEDFRAME);
         int dy = GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
 
-        for (i = 0; i < st.themeActive->clipPoint.count; i++) {
-            ClipPoint cp = st.themeActive->clipPoint.list[i];
+        for (i = 0; i < st.themePageActive->clipPoint.count; i++) {
+            ClipPoint cp = st.themePageActive->clipPoint.list[i];
             pt[i].x = cp.x + dx;
             pt[i].y = cp.y + dy;
         }
 
-        hrgn = CreatePolygonRgn(pt, st.themeActive->clipPoint.count, WINDING);
+        hrgn = CreatePolygonRgn(pt, st.themePageActive->clipPoint.count, WINDING);
         st.rgnSize = 0;
         if (hrgn != NULL) {
             st.rgnSize = GetRegionData(hrgn, 0, NULL);
@@ -583,7 +583,7 @@ void themeSet(char* themeName, int forceMatch) {
         }
     }
 
-    setClipRegion(st.themeActive->clipPoint.count > 0);
+    setClipRegion(st.themePageActive->clipPoint.count > 0);
 
     if (st.rgnData == NULL) {
         KillTimer(st.hwnd, TIMER_CLIP_REGION);
@@ -793,7 +793,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     emulatorSetFrequency(50, NULL);
     enterDialogShow();
     inputDestroy();
-    inputInit(st.hwnd);
+    inputReset(st.hwnd);
     propUpdateJoyinfo(pProperties);
     changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);
     exitDialogShow();
@@ -1939,11 +1939,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         break;
 
     case WM_MOUSEMOVE:
-        if (st.themeActive) {
+        if (st.themePageActive) {
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themeMouseMove(st.themeActive, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseMove(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
             checkClipRegion();
         }
         if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
@@ -1960,11 +1960,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_LBUTTONDOWN:
         SetCapture(hwnd);
     
-        if (st.themeActive) {
+        if (st.themePageActive) {
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themeMouseButtonDown(st.themeActive, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseButtonDown(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
         }
         if (st.showMenu && pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
             updateMenu(0);
@@ -1973,11 +1973,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_LBUTTONUP:
         ReleaseCapture();
-        if (st.themeActive) {
+        if (st.themePageActive) {
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themeMouseButtonUp(st.themeActive, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseButtonUp(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
         }
 
     case WM_ERASEBKGND:
@@ -2006,7 +2006,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 PatchDiskSetBusy(1, 0);
                 tapeSetBusy(0);
 
-                themeUpdate(st.themeActive, GetDC(hwnd));
+                themePageUpdate(st.themePageActive, GetDC(hwnd));
             }
             break;
 
@@ -2147,7 +2147,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 ScreenToClient(hwnd, &pt);
 
                 hdc = GetDC(hwnd);
-                themeMouseMove(st.themeActive, hdc, pt.x, pt.y);
+                themePageMouseMove(st.themePageActive, hdc, pt.x, pt.y);
                 ReleaseDC(hwnd, hdc);
             }
             break;
@@ -2169,9 +2169,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 HDC hMemDC = CreateCompatibleDC(hdc);
                 HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, st.hBitmap);
 
-                themeDraw(st.themeActive, hMemDC);
+                themePageDraw(st.themePageActive, hMemDC);
 
-                BitBlt(hdc, 0, 0, st.themeActive->width, st.themeActive->height, hMemDC, 0, 0, SRCCOPY);
+                BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
 
                 SelectObject(hMemDC, hBitmap);
                 DeleteDC(hMemDC);                
@@ -2514,7 +2514,11 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     st.emuHwnd = CreateWindow("blueMSXemuWindow", "", WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE, 0, 0, 0, 0, st.hwnd, NULL, hInstance, NULL);
     ShowWindow(st.emuHwnd, SW_HIDE);
 
-    inputInit(st.hwnd);
+    inputInit();
+    inputReset(st.hwnd);
+    keyboardLoadConfig(pProperties->keyboard.configFile);
+    sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
+
     propUpdateJoyinfo(pProperties);
     joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
@@ -2579,7 +2583,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         return 0;
     }
 
-    st.themeActive = NULL;
+    st.themePageActive = NULL;
     st.themeList = createThemeList(themeClassicCreate());
     themeSet(emuCheckThemeArgument(szLine), 0);
 
@@ -2838,6 +2842,10 @@ void archThemeSetNext() {
     strcpy(pProperties->settings.themeName, st.themeList[st.themeIndex]->name);
 
     archUpdateWindow();
+}
+
+void archThemeUpdate() {
+    themeSet(pProperties->settings.themeName, 0);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -3609,7 +3617,7 @@ static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lP
                 items = machineGetAvailable(0);
                 break;
             case OBJECT_ID_DROPDOWN_KEYBOARDCONFIG:
-                items = keyboardGetAvailable();
+                items = keyboardGetConfigs();
                 break;
             case OBJECT_ID_DROPDOWN_KEYBOARDTHEMES:
                 break;

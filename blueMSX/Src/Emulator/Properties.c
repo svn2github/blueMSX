@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-05 00:50:19 $
+** $Date: 2005-01-13 06:16:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,6 +159,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->joy2.hwButtonB         = 1;
     
     pProperties->keyboard.keySet        = P_CHAR_EUROPEAN;
+    pProperties->keyboard.configFile[0] = 0;
     
     pProperties->cartridge.defaultType  = ROM_UNKNOWN;
     pProperties->cartridge.defDir[0]    = 0;
@@ -330,7 +331,8 @@ void propInitDefaults(Properties* pProperties)
     pProperties->joy2.hwButtonB         = 1;
     
     pProperties->keyboard.keySet        = P_CHAR_EUROPEAN;
-    
+    pProperties->keyboard.configFile[0] = 0;
+
     pProperties->cartridge.defaultType  = ROM_UNKNOWN;
     pProperties->cartridge.defDir[0]    = 0;
     pProperties->cartridge.slotA[0]     = 0;
@@ -493,6 +495,7 @@ static void propLoad(Properties* pProperties)
     getIntValue("Joy2HwButton2", (long*)&pProperties->joy2.hwButtonB);
     
     getIntValue("KeyBoardKeySet", (long*)&pProperties->keyboard.keySet);
+    getStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
     
     getIntValue("CartDefaultType", (long*)&pProperties->cartridge.defaultType);
     getStrValue("CartDefDir", (char*)pProperties->cartridge.defDir);
@@ -669,6 +672,7 @@ void propSave(Properties* pProperties)
     setIntValue("Joy2HwButton2", pProperties->joy2.hwButtonB);
     
     setIntValue("KeyBoardKeySet", pProperties->keyboard.keySet);
+    setStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
     
     setIntValue("CartDefaultType", pProperties->cartridge.defaultType);
     setStrValue("CartDefDir", (char*)pProperties->cartridge.defDir);

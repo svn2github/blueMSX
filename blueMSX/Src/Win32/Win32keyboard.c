@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-11 09:02:53 $
+** $Date: 2005-01-13 06:16:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,9 @@ static int kbdTable[KBD_TABLE_LEN];
 static char dikStrings[KBD_TABLE_LEN][32];
 
 static char keyboardConfigDir[MAX_PATH];
+
+static char DefaultConfigName[] = "blueMSX Default";
+static char currentConfigFile[MAX_PATH];
 
 #define INIT_DIK(val) strcpy(dikStrings[DIK_##val], #val)
 
@@ -453,17 +456,12 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
     return DIENUM_CONTINUE;
 }
 
-int inputInit(HWND hwnd)
+int inputReset(HWND hwnd)
 {
     DIPROPDWORD dipdw = { { sizeof(DIPROPDWORD), sizeof(DIPROPHEADER), 0, DIPH_DEVICE }, 256 };
     HRESULT rv   = 234;
     joyCount     = 0;
     kbdModifiers = 0;
-
-    initDikStr();
-    initKbdTable();
-
-    keyboardReset();
 
     dinputWindow = hwnd;
     dinputVersion = DIRECTINPUT_VERSION;
@@ -698,7 +696,7 @@ void keyboardUpdate()
                    (GetAsyncKeyState(VK_RWIN)    > 1UL ? KBD_RWIN     : 0);
 } 
 
-char** keyboardGetAvailable()
+char** keyboardGetConfigs()
 {
     static char* keyboardNames[256];
     char         fileName[MAX_PATH];
@@ -741,11 +739,25 @@ char** keyboardGetAvailable()
 int keyboardLoadConfig(char* configName)
 {
     char fileName[MAX_PATH];
+    FILE* file;
     int i;
 
     memset (kbdTable, 0, sizeof(kbdTable));
 
-    sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+    if (configName[0] == 0) {
+        sprintf(fileName, "%s/%s.config", keyboardConfigDir, DefaultConfigName);
+    }
+    else {
+        sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+    }
+
+    file = fopen(fileName, "r");
+    if (file == NULL) {
+        return 0;
+    }
+    fclose(file);
+
+    sprintf(currentConfigFile, *configName ? configName : DefaultConfigName);
 
     for (i = 0; i < EK_KEYCOUNT; i++) {
         const char* keyCode = keyboardKeyCodeToString(i);
@@ -769,6 +781,10 @@ void keyboardSaveConfig(char* configName)
     char fileName[MAX_PATH];
     int i;
     
+    if (configName[0] == 0) {
+        return;
+    }
+
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
     
     for (i = 0; i < EK_KEYCOUNT; i++) {
@@ -783,9 +799,36 @@ void keyboardSaveConfig(char* configName)
         }
         WritePrivateProfileString("Keymapping", keyCode, dikName, fileName);
     }
+    
+    sprintf(currentConfigFile, configName);
 }
 
 void keyboardSetDirectory(char* directory)
 {
     strcpy(keyboardConfigDir, directory);
+}
+
+char* keyboardGetCurrentConfig()
+{
+    return currentConfigFile;
+}
+
+void inputInit()
+{
+    char fileName[MAX_PATH];
+    FILE* file;
+
+    initDikStr();
+    initKbdTable();
+
+    keyboardReset();
+    
+    sprintf(fileName, "%s/%s.config", keyboardConfigDir, DefaultConfigName);
+    file = fopen(fileName, "r");
+    if (file == NULL) {
+        keyboardSaveConfig(DefaultConfigName);
+        return;
+    }
+    sprintf(currentConfigFile, DefaultConfigName);
+    fclose(file);
 }
