@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-06 09:44:42 $
+** $Date: 2005-02-06 10:37:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -465,135 +465,74 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
 }
 
 
-#if 0
-static Int32 filter4(Int32 ch, Int32 input) {
-    static Int32 x0[5], x1[5], x2[5];
-    static Int32 y0[5], y1[5], y2[5];
+static Int32 filter(SCC* scc, Int32 input) {
+    static Int32 in[9];
+    static Int32 out[3];
 
-    x2[ch] = x1[ch];
-	x1[ch] = x0[ch];
-	x0[ch] = input;
+    in[8] = in[7];
+    in[7] = in[6];
+    in[6] = in[5];
+    in[5] = in[4];
+    in[4] = in[3];
+    in[3] = in[2];
+    in[2] = in[1];
+    in[1] = in[0];
+    in[0] = input;
 
-	y2[ch] = y1[ch];
-	y1[ch] = y0[ch];
-    y0[ch] = (4 * x0[ch] + 6 * x1[ch] + 3 * x2[ch] - 3 * y1[ch] - 5 * y2[ch]) / 10;
-	return y0[ch];
+    out[2] = out[1];
+    out[1] = out[0];
+
+    out[0] = (1 * (in[0] + in[8]) + 7 * (in[1] + in[7]) + 25 * (in[2] + in[6]) + 
+              67 * (in[3] + in[5]) + 120 * in[4] - 96 * out[1] - 160 * out[2]) / 320;
+
+    return out[0];
 }
-#else
-static Int32 filter4(Int32 ch, Int32 input) {
-    static Int32 x0[5], x1[5], x2[5], x3[5], x4[5], x5[5], x6[5], x7[5], x8[5];
-    static Int32 y0[5], y1[5], y2[5];
-
-    x8[ch] = x7[ch];
-    x7[ch] = x6[ch];
-    x6[ch] = x5[ch];
-    x5[ch] = x4[ch];
-    x4[ch] = x3[ch];
-    x3[ch] = x2[ch];
-    x2[ch] = x1[ch];
-	x1[ch] = x0[ch];
-	x0[ch] = input;
-
-	y2[ch] = y1[ch];
-	y1[ch] = y0[ch];
-#if 0
-    y0[ch] = (1  * (x0[ch] + x8[ch]) + 
-              8  * (x1[ch] + x7[ch]) + 
-              28 * (x2[ch] + x6[ch]) + 
-              56 * (x3[ch] + x5[ch]) + 
-              70 *  x4[ch]) / (2 * (1 + 8 + 28 + 56) + 70);
-#elif 1
-    y0[ch] = (1  * (x0[ch] + x8[ch]) + 
-              7  * (x1[ch] + x7[ch]) + 
-              25 * (x2[ch] + x6[ch]) + 
-              67 * (x3[ch] + x5[ch]) + 
-              120 *  x4[ch]) / (2 * (1 + 7 + 25 + 67) + 120);
-#elif 0
-    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
-              1  * (x1[ch] + x7[ch]) + 
-              6 * (x2[ch] + x6[ch]) + 
-              15 * (x3[ch] + x5[ch]) + 
-              20 *  x4[ch]) / (2 * (1+6+15)+20);
-#elif 1
-    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
-              1  * (x1[ch] + x7[ch]) + 
-              5 * (x2[ch] + x6[ch]) + 
-              10 * (x3[ch] + x5[ch]) + 
-              0 *  x4[ch]) / (2 * (1+5+10));
-#else
-    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
-              0  * (x1[ch] + x7[ch]) + 
-              1 * (x2[ch] + x6[ch]) + 
-              4 * (x3[ch] + x5[ch]) + 
-              6 *  x4[ch]) / (2 * (1+4)+6);
-#endif
-    y0[ch] = (100 * y0[ch] - 30 * y1[ch] - 50 * y2[ch]) / 100;
-	return y0[ch];
-}
-#endif
 
 static Int32* sccSync(SCC* scc, UInt32 count)
 {
     Int32* buffer  = scc->buffer;
+    Int32  newVolume[5];
     Int32  channel;
+    UInt32 index;
 
-    memset(buffer, 0, sizeof(Int32) * count);
+    for (channel = 0; channel < 5; channel++) {
+        newVolume[channel] = 15000 * 60 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
+        if (newVolume[channel] > scc->daVolume[channel]) {
+            scc->daVolume[channel] = newVolume[channel];
+        }
+    }
 
     if ((scc->deformValue & 0xc0) == 0x00) {
-        /* Add sound channel data to buffer */
-
-        for (channel = 0; channel < 5; channel++) {
-            /* Precalculate values for sample generating loop */
-            Int8*  waveData  = scc->wave[channel];
-            Int32  nvolume   = 15000 * 60 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
-            Int32  phaseStep = scc->phaseStep[channel];
-            Int32  phase     = scc->phase[channel];
-            UInt32 index;
-            Int32  volume = scc->daVolume[channel];
-
-            if (nvolume > volume) {
-                volume = nvolume;
-            }
-
-            /* Add to output buffer using linear interpolation */
-            for (index = 0; index < count; index++) {
-                phase = (phase + phaseStep) & 0xfffffff;
-                buffer[index] += filter4(channel, waveData[phase >> 23] * volume / 15000);
-                if (volume > nvolume) {
-                    volume = 99 * volume / 100;
+        for (index = 0; index < count; index++) {
+            Int32 masterVolume = 0;
+            for (channel = 0; channel < 5; channel++) {
+                if (scc->daVolume[channel] > newVolume[channel]) {
+                    scc->daVolume[channel] = 99 * scc->daVolume[channel] / 100;
                 }
+
+                scc->phase[channel] = (scc->phase[channel] + scc->phaseStep[channel]) & 0xfffffff;
+                masterVolume += scc->wave[channel][scc->phase[channel] >> 23] * scc->daVolume[channel] / 15000;
             }
 
-            /* Save phase */
-            scc->phase[channel] = phase;
-            scc->daVolume[channel] = volume;
+            buffer[index] = filter(scc, masterVolume);
         }
     }
     else {
-        /* Add sound channel data to buffer */
-        
-        for (channel = 0; channel < 5; channel++) {
-            /* Precalculate values for sample generating loop */
-            Int8*  waveData  = scc->wave[channel];
-            Int32  volume    = 20 * (Int32)scc->volume[channel] * scc->period[channel] / (32 + scc->period[channel]);
-            Int32  phaseStep = scc->phaseStep[channel] * ((scc->enable >> channel) & 1);
-            Int32  phase     = scc->phase[channel];
-            UInt8  offset    = scc->offset[channel];
-            Int32  rotShift  = scc->rotate[channel];
-            UInt32 index;
+        for (index = 0; index < count; index++) {
+            Int32 masterVolume = 0;
+            for (channel = 0; channel < 5; channel++) {
+                Int32 phase;
 
-            /* Add to output buffer using linear interpolation */
-            for (index = 0; index < count; index++) {
-                phase = (phase + phaseStep);
-                offset += (UInt8)(phase >> rotShift);
+                if (scc->daVolume[channel] > newVolume[channel]) {
+                    scc->daVolume[channel] = 99 * scc->daVolume[channel] / 100;
+                }
+                phase = scc->phase[channel] + scc->phaseStep[channel];
+                scc->offset[channel] += (UInt8)(phase >> scc->rotate[channel]);
                 phase &= 0xfffffff;
-                scc->daVolume[channel] += 3 * (waveData[((phase >> 23) + offset) & 0x1f] * volume - scc->daVolume[channel]) / 4;
-                buffer[index] += scc->daVolume[channel];
+                scc->phase[channel] = phase;
+                masterVolume += scc->wave[channel][((phase >> 23) + scc->offset[channel]) & 0x1f] * scc->daVolume[channel] / 15000;
             }
-
-            /* Save phase */
-            scc->phase[channel]  = phase;
-            scc->offset[channel] = offset;
+            buffer[index] = filter(scc, masterVolume);
         }
     }
 
