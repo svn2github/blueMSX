@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:48:48 $
+** $Date: 2005-01-17 05:52:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,8 +31,6 @@
 #define VDP_H
 
 #include "MSXTypes.h"
-
-extern UInt8 VDPStatus[16];            /* VDP status reg-ers  */
 
 
 typedef enum { VDP_V9938, VDP_V9958, VDP_TMS9929A, VDP_TMS99x8A } VdpVersion;

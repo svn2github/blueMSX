@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-03 06:12:59 $
+** $Date: 2005-01-17 05:52:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,7 +44,7 @@ static UInt8* lineBufs[2] = { NULL, NULL };
 static UInt8* lineBuf = NULL;
 
 
-UInt8* spritesLine(int line) {
+UInt8* spritesLine(VDP* vdp, int line) {
     int bufIndex;
     UInt8 collisionBuf[384];
     UInt8* attrib;
@@ -58,7 +58,7 @@ UInt8* spritesLine(int line) {
 
     idx = line;
 
-    line -= firstLine;
+    line -= vdp->firstLine;
 
     bufIndex = line & 1;
 
@@ -67,17 +67,17 @@ UInt8* spritesLine(int line) {
         return NULL;
     }
 
-    if (!screenOn || (VDPStatus[2] & 0x40) ||vdpIsSpritesOff(VDP) || !spritesEnable) {
+    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs) || !spritesEnable) {
         lineBufs[bufIndex] = NULL;
         return lineBufs[bufIndex ^ 1];
     }
 
-    attrib = &VRAM[sprTabBase & (-1 << 7)];
-    size   = vdpIsSprites16x16(VDP) ? 16 : 8;
-    scale  = vdpIsSpritesBig(VDP) ? 2 : 1;
-    line   = (line + VScroll) & 0xff;
+    attrib = &vdp->vram[vdp->sprTabBase & (-1 << 7)];
+    size   = vdpIsSprites16x16(vdp->vdpRegs) ? 16 : 8;
+    scale  = vdpIsSpritesBig(vdp->vdpRegs) ? 2 : 1;
+    line   = (line + vdpVScroll(vdp)) & 0xff;
     
-	patternMask = vdpIsSprites16x16(VDP) ? 0xfc : 0xff;
+	patternMask = vdpIsSprites16x16(vdp->vdpRegs) ? 0xfc : 0xff;
     visibleCnt = 0;
     collision = 0;
     /* Find visible sprites on current line */
@@ -93,8 +93,8 @@ UInt8* spritesLine(int line) {
         }
         
         if (visibleCnt == 4) {
-			if (~VDPStatus[0] & 0xc0) {
-				VDPStatus[0] = (VDPStatus[0] & 0xe0) | 0x40 | idx;
+			if (~vdp->vdpStatus[0] & 0xc0) {
+				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | idx;
 			}
             break;
         }
@@ -107,8 +107,8 @@ UInt8* spritesLine(int line) {
         return lineBufs[bufIndex ^ 1];
     }
 
-	if (~VDPStatus[0] & 0x40) {
-		VDPStatus[0] = (VDPStatus[0] & 0xe0) | (idx < 32 ? idx : 31);
+	if (~vdp->vdpStatus[0] & 0x40) {
+		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (idx < 32 ? idx : 31);
 	}
     
     lineBuf = lineBuffer[bufIndex];
@@ -131,9 +131,9 @@ UInt8* spritesLine(int line) {
         colPtr     = collisionBuf + ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
         linePtr    = lineBuf + ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
         color      = attrib[3] & 0x0f;
-        patternPtr = &VRAM[(sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine];
+        patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine];
 
-        if (!vdpIsColor0Solid(VDP) && color == 0) {
+        if (!vdpIsColor0Solid(vdp->vdpRegs) && color == 0) {
             continue;
         }
         if (scale == 1) {
@@ -147,7 +147,7 @@ UInt8* spritesLine(int line) {
             if (pattern & 0x02) { linePtr[6] = color; collision |= colPtr[6]; colPtr[6] = 1; }
             if (pattern & 0x01) { linePtr[7] = color; collision |= colPtr[7]; colPtr[7] = 1; }
 
-            if (vdpIsSprites16x16(VDP)) {
+            if (vdpIsSprites16x16(vdp->vdpRegs)) {
                 pattern = patternPtr[16];
 
                 if (pattern & 0x80) { linePtr[8]  = color; collision |= colPtr[8];  colPtr[8]  = 1; }
@@ -171,7 +171,7 @@ UInt8* spritesLine(int line) {
             if (pattern & 0x02) { linePtr[12] = linePtr[13] = color; collision |= colPtr[12]; colPtr[12] = 1; collision |= colPtr[13]; colPtr[13] = 1; }
             if (pattern & 0x01) { linePtr[14] = linePtr[15] = color; collision |= colPtr[14]; colPtr[14] = 1; collision |= colPtr[15]; colPtr[15] = 1; }
 
-            if (vdpIsSprites16x16(VDP)) {
+            if (vdpIsSprites16x16(vdp->vdpRegs)) {
                 pattern = patternPtr[16];
 
                 if (pattern & 0x80) { linePtr[16] = linePtr[17] = color; collision |= colPtr[16]; colPtr[16] = 1; collision |= colPtr[17]; colPtr[17] = 1; }
@@ -187,14 +187,14 @@ UInt8* spritesLine(int line) {
     }
 
     if (collision) {
-        VDPStatus[0] |= 0x20;
+        vdp->vdpStatus[0] |= 0x20;
     }
 
     lineBufs[bufIndex] = lineBuf + 32;
     return lineBufs[bufIndex ^ 1];
 }
 
-UInt8* colorSpritesLine(int line) {
+UInt8* colorSpritesLine(VDP* vdp, int line) {
     int solidColor;
     int bufIndex;
     UInt8 collisionBuf[384];
@@ -212,7 +212,7 @@ UInt8* colorSpritesLine(int line) {
 
     idx = line;
 
-    line -= firstLine;
+    line -= vdp->firstLine;
 
     bufIndex = line & 1;
     
@@ -229,19 +229,19 @@ UInt8* colorSpritesLine(int line) {
         return NULL;
     }
 
-    if (!screenOn || (VDPStatus[2] & 0x40) ||vdpIsSpritesOff(VDP) || !spritesEnable) {
+    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs) || !spritesEnable) {
         lineBufs[bufIndex] = NULL;
         return lineBufs[bufIndex ^ 1];
     }
 
-    solidColor   = vdpIsColor0Solid(VDP) ? 1 : 0;
-    attribOffset = sprTabBase & 0x1fe00;
-    size         = vdpIsSprites16x16(VDP) ? 16 : 8;
-    scale        = vdpIsSpritesBig(VDP) ? 2 : 1;
-	patternMask  = vdpIsSprites16x16(VDP) ? 0xfc : 0xff;
+    solidColor   = vdpIsColor0Solid(vdp->vdpRegs) ? 1 : 0;
+    attribOffset = vdp->sprTabBase & 0x1fe00;
+    size         = vdpIsSprites16x16(vdp->vdpRegs) ? 16 : 8;
+    scale        = vdpIsSpritesBig(vdp->vdpRegs) ? 2 : 1;
+	patternMask  = vdpIsSprites16x16(vdp->vdpRegs) ? 0xfc : 0xff;
     visibleCnt   = 0;
     collision    = 0;
-    line         = (line + VScroll) & 0xff;
+    line         = (line + vdpVScroll(vdp)) & 0xff;
 
     /* Find visible sprites on current line */
     for (sprite = 0; sprite < 32; sprite++, attribOffset += 4) {
@@ -249,7 +249,7 @@ UInt8* colorSpritesLine(int line) {
         int offset;
         int color;
 
-        spriteLine = *MAP_VRAM(attribOffset);
+        spriteLine = *MAP_VRAM(vdp, attribOffset);
         if (spriteLine == 216) {
             break;
         }
@@ -260,14 +260,14 @@ UInt8* colorSpritesLine(int line) {
         }
 
         if (visibleCnt == 8) {
-			if (~VDPStatus[0] & 0xc0) {
-				VDPStatus[0] = (VDPStatus[0] & 0xe0) | 0x40 | sprite;
+			if (~vdp->vdpStatus[0] & 0xc0) {
+				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | sprite;
 			}
             break;
         }
 
-        offset = (sprGenBase & 0x1f800) + ((int)(*MAP_VRAM(attribOffset + 2) & patternMask) << 3) + spriteLine;
-        color  = *MAP_VRAM(sprTabBase & ((-1 << 10) | (sprite * 16 + spriteLine)));
+        offset = (vdp->sprGenBase & 0x1f800) + ((int)(*MAP_VRAM(vdp, attribOffset + 2) & patternMask) << 3) + spriteLine;
+        color  = *MAP_VRAM(vdp, vdp->sprTabBase & ((-1 << 10) | (sprite * 16 + spriteLine)));
 
         if (color & 0x40) {
             color &= ccColorMask;
@@ -277,10 +277,10 @@ UInt8* colorSpritesLine(int line) {
         }
 
         attribTable[visibleCnt].color         = color;
-        attribTable[visibleCnt].horizontalPos = (int)*MAP_VRAM(attribOffset + 1) + 24 - ((attribTable[visibleCnt].color >> 2) & 0x20);
-        attribTable[visibleCnt].pattern       = *MAP_VRAM(offset);
-        if (vdpIsSprites16x16(VDP)) {
-            attribTable[visibleCnt].pattern = (attribTable[visibleCnt].pattern << 8) | *MAP_VRAM(offset + 16);
+        attribTable[visibleCnt].horizontalPos = (int)*MAP_VRAM(vdp, attribOffset + 1) + 24 - ((attribTable[visibleCnt].color >> 2) & 0x20);
+        attribTable[visibleCnt].pattern       = *MAP_VRAM(vdp, offset);
+        if (vdpIsSprites16x16(vdp->vdpRegs)) {
+            attribTable[visibleCnt].pattern = (attribTable[visibleCnt].pattern << 8) | *MAP_VRAM(vdp, offset + 16);
             attribTable[visibleCnt].horizontalPos += 8;
         }
         visibleCnt++;
@@ -291,8 +291,8 @@ UInt8* colorSpritesLine(int line) {
         return lineBufs[bufIndex ^ 1];
     }
 
-    if (~VDPStatus[0] & 0x40) {
-		VDPStatus[0] = (VDPStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
+    if (~vdp->vdpStatus[0] & 0x40) {
+		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
 	}
     
     lineBuf = lineBuffer[bufIndex];
@@ -410,7 +410,7 @@ UInt8* colorSpritesLine(int line) {
     }
 
     if (collision) {
-        VDPStatus[0] |= 0x20;
+        vdp->vdpStatus[0] |= 0x20;
     }
 
     lineBufs[bufIndex] = lineBuf + 32;

@@ -17,17 +17,20 @@
 #include "MSXTypes.h"
 
 
+typedef struct VdpCmdState VdpCmdState;
+
 /*************************************************************
-** vdpCmdInit
+** vdpCmdCreate
 **
 ** Description:
-**      Initializes the command engine. A timer running at
+**      Creates a V99x8 command engine. A timer running at
 **      21477270 Hz drives the command engine. systemTime
 **      is the initial time of this timer.
 **************************************************************
 */
-void  vdpCmdInit(int vramSize, UInt8* vramPtr, UInt32 systemTime);
+VdpCmdState* vdpCmdCreate(int vramSize, UInt8* vramPtr, UInt32 systemTime);
 
+void vdpCmdDestroy(VdpCmdState* state);
 
 /*************************************************************
 ** vdpCmdWrite
@@ -36,16 +39,16 @@ void  vdpCmdInit(int vramSize, UInt8* vramPtr, UInt32 systemTime);
 **      Writes a new command to the VDP
 **************************************************************
 */
-void  vdpCmdWrite(UInt8 reg, UInt8 value, UInt32 systemTime);
+void  vdpCmdWrite(VdpCmdState* state, UInt8 reg, UInt8 value, UInt32 systemTime);
 
 
-void vdpSetScreenMode(int screenMode, int commandEnable);
-void vdpSetTimingMode(UInt8 timingMode);
+void vdpSetScreenMode(VdpCmdState* state, int screenMode, int commandEnable);
+void vdpSetTimingMode(VdpCmdState* state, UInt8 timingMode);
 
 
-UInt8 vdpGetStatus();
-UInt16 vdpGetBorderX();
-UInt8 vdpGetColor();
+UInt8 vdpGetStatus(VdpCmdState* state);
+UInt16 vdpGetBorderX(VdpCmdState* state);
+UInt8 vdpGetColor(VdpCmdState* state);
 
 /*************************************************************
 ** vdpCmdExecute
@@ -55,7 +58,7 @@ UInt8 vdpGetColor();
 **      (in 3579545 Hz)
 **************************************************************
 */
-void  vdpCmdExecute(UInt32 systemTime);
+void  vdpCmdExecute(VdpCmdState* state, UInt32 systemTime);
 
 
 /*************************************************************
@@ -65,7 +68,7 @@ void  vdpCmdExecute(UInt32 systemTime);
 **      Flushes current VDP command
 **************************************************************
 */
-void  vdpCmdFlush();
+void  vdpCmdFlush(VdpCmdState* state);
 
 
 /*************************************************************
@@ -75,7 +78,7 @@ void  vdpCmdFlush();
 **      Loads the state of the command engine. 
 **************************************************************
 */
-void vdpCmdLoadState();
+void vdpCmdLoadState(VdpCmdState* state);
 
 
 /*************************************************************
@@ -85,6 +88,6 @@ void vdpCmdLoadState();
 **      Saves the state of the command engine.
 **************************************************************
 */
-void vdpCmdSaveState();
+void vdpCmdSaveState(VdpCmdState* state);
 
 #endif /* VDPCMD_H */

@@ -13,6 +13,7 @@
 */
 #include "V9938.h"
 #include <string.h>
+#include <stdlib.h>
 #include "VDP.h"
 #include "Board.h"
 #include "SaveState.h"
@@ -38,10 +39,10 @@
 ** Other useful defines
 **************************************************************
 */
-#define VDP_VRMP5(X, Y) (VRAM + ((Y & 1023) << 7) + (((X & 255) >> 1) & vramMask))
-#define VDP_VRMP6(X, Y) (VRAM + ((Y & 1023) << 7) + (((X & 511) >> 2) & vramMask))
-#define VDP_VRMP7(X, Y) (VRAM + ((Y &  511) << 7) + ((((X & 511) >> 2) + ((X & 2) << 15)) & vramMask))
-#define VDP_VRMP8(X, Y) (VRAM + ((Y &  511) << 7) + ((((X & 255) >> 1) + ((X & 1) << 16)) & vramMask))
+#define VDP_VRMP5(s, X, Y) ((s)->vram + ((Y & 1023) << 7) + (((X & 255) >> 1) & (s)->vramMask))
+#define VDP_VRMP6(s, X, Y) ((s)->vram + ((Y & 1023) << 7) + (((X & 511) >> 2) & (s)->vramMask))
+#define VDP_VRMP7(s, X, Y) ((s)->vram + ((Y &  511) << 7) + ((((X & 511) >> 2) + ((X & 2) << 15)) & (s)->vramMask))
+#define VDP_VRMP8(s, X, Y) ((s)->vram + ((Y &  511) << 7) + ((((X & 255) >> 1) + ((X & 1) << 16)) & (s)->vramMask))
 
 #define CM_ABRT  0x0
 #define CM_NOOP1 0x1
@@ -109,25 +110,27 @@
 
 
 #define pre_loop2 \
-    while (MMC.VdpOpsCnt > 0) {
+    while (vdpCmd->VdpOpsCnt > 0) {
 
 #define post_xxyy2(MX) \
-		MMC.ASX += MMC.TX; MMC.ADX += MMC.TX; \
-		if (--MMC.ANX == 0 || ((MMC.ASX | MMC.ADX) & MX)) { \
-			MMC.SY += MMC.TY; MMC.DY += MMC.TY; \
-			MMC.ASX = MMC.SX; MMC.ADX = MMC.DX; MMC.ANX = MMC.NX; \
-			if ((--MMC.NY & 1023) == 0 || MMC.SY == -1 || MMC.DY == -1) { \
+		vdpCmd->ASX += vdpCmd->TX; vdpCmd->ADX += vdpCmd->TX; \
+		if (--vdpCmd->ANX == 0 || ((vdpCmd->ASX | vdpCmd->ADX) & MX)) { \
+			vdpCmd->SY += vdpCmd->TY; vdpCmd->DY += vdpCmd->TY; \
+			vdpCmd->ASX = vdpCmd->SX; vdpCmd->ADX = vdpCmd->DX; vdpCmd->ANX = vdpCmd->NX; \
+			if ((--vdpCmd->NY & 1023) == 0 || vdpCmd->SY == -1 || vdpCmd->DY == -1) { \
 				break; \
 			} \
 		} \
-        MMC.VdpOpsCnt -= delta; \
+        vdpCmd->VdpOpsCnt -= delta; \
 	}
 
 /*************************************************************
 ** VdpCmd State instance
 **************************************************************
 */
-typedef struct {
+struct VdpCmdState {
+    UInt8* vram;
+    int    vramMask;
     int   SX;
     int   SY;
     int   DX;
@@ -153,42 +156,38 @@ typedef struct {
     UInt32 systemTime;
     int    screenMode;
     int    timingMode;
-} VdpCmdState;
-
-VdpCmdState MMC;
-static UInt8* VRAM;
-static int vramMask;
+};
 
 /*************************************************************
 ** Forward declarations
 **************************************************************
 */
-static UInt8 *getVramPointer(UInt8 M, int X, int Y);
+static UInt8 *getVramPointer(VdpCmdState* vdpCmd, UInt8 M, int X, int Y);
 
-static UInt8 getPixel(UInt8 SM, int SX, int SY);
-static UInt8 getPixel5(int SX, int SY);
-static UInt8 getPixel6(int SX, int SY);
-static UInt8 getPixel7(int SX, int SY);
-static UInt8 getPixel8(int SX, int SY);
+static UInt8 getPixel(VdpCmdState* vdpCmd, UInt8 SM, int SX, int SY);
+static UInt8 getPixel5(VdpCmdState* vdpCmd, int SX, int SY);
+static UInt8 getPixel6(VdpCmdState* vdpCmd, int SX, int SY);
+static UInt8 getPixel7(VdpCmdState* vdpCmd, int SX, int SY);
+static UInt8 getPixel8(VdpCmdState* vdpCmd, int SX, int SY);
 
-static void setPixel(UInt8 SM, int DX, int DY, UInt8 CL, UInt8 OP);
-static void setPixel5(int DX, int DY, UInt8 CL, UInt8 OP);
-static void setPixel6(int DX, int DY, UInt8 CL, UInt8 OP);
-static void setPixel7(int DX, int DY, UInt8 CL, UInt8 OP);
-static void setPixel8(int DX, int DY, UInt8 CL, UInt8 OP);
+static void setPixel(VdpCmdState* vdpCmd, UInt8 SM, int DX, int DY, UInt8 CL, UInt8 OP);
+static void setPixel5(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP);
+static void setPixel6(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP);
+static void setPixel7(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP);
+static void setPixel8(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP);
 
 static void setPixelLow(UInt8 *P, UInt8 CL, UInt8 M, UInt8 OP);
 
-static void SrchEngine(void);
-static void LineEngine(void);
-static void LmmvEngine(void);
-static void LmmmEngine(void);
-static void LmcmEngine(void);
-static void LmmcEngine(void);
-static void HmmvEngine(void);
-static void HmmmEngine(void);
-static void YmmmEngine(void);
-static void HmmcEngine(void);
+static void SrchEngine(VdpCmdState* vdpCmd);
+static void LineEngine(VdpCmdState* vdpCmd);
+static void LmmvEngine(VdpCmdState* vdpCmd);
+static void LmmmEngine(VdpCmdState* vdpCmd);
+static void LmcmEngine(VdpCmdState* vdpCmd);
+static void LmmcEngine(VdpCmdState* vdpCmd);
+static void HmmvEngine(VdpCmdState* vdpCmd);
+static void HmmmEngine(VdpCmdState* vdpCmd);
+static void YmmmEngine(VdpCmdState* vdpCmd);
+static void HmmcEngine(VdpCmdState* vdpCmd);
 
 
 /*************************************************************
@@ -215,20 +214,20 @@ static int lmmm_timing[8] = { 129, 197, 129, 132 };
 **      Calculate addr of a pixel in vram
 **************************************************************
 */
-INLINE UInt8 *getVramPointer(UInt8 M,int X,int Y)
+INLINE UInt8 *getVramPointer(VdpCmdState* vdpCmd, UInt8 M,int X,int Y)
 {
     switch(M) {
     case 0: 
-        return VDP_VRMP5(X,Y);
+        return VDP_VRMP5(vdpCmd, X, Y);
     case 1: 
-        return VDP_VRMP6(X,Y);
+        return VDP_VRMP6(vdpCmd, X, Y);
     case 2: 
-        return VDP_VRMP7(X,Y);
+        return VDP_VRMP7(vdpCmd, X, Y);
     case 3: 
-        return VDP_VRMP8(X,Y);
+        return VDP_VRMP8(vdpCmd, X, Y);
     }
 
-    return(VRAM);
+    return vdpCmd->vram;
 }
 
 
@@ -239,9 +238,9 @@ INLINE UInt8 *getVramPointer(UInt8 M,int X,int Y)
 **      Get a pixel on screen 5
 **************************************************************
 */
-INLINE UInt8 getPixel5(int SX, int SY)
+INLINE UInt8 getPixel5(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP5(SX, SY) >> (((~SX)&1)<<2))&15;
+    return (*VDP_VRMP5(vdpCmd, SX, SY) >> (((~SX)&1)<<2))&15;
 }
 
 /*************************************************************
@@ -251,9 +250,9 @@ INLINE UInt8 getPixel5(int SX, int SY)
 **      Get a pixel on screen 6
 **************************************************************
 */
-INLINE UInt8 getPixel6(int SX, int SY)
+INLINE UInt8 getPixel6(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP6(SX, SY) >>(((~SX)&3)<<1))&3;
+    return (*VDP_VRMP6(vdpCmd, SX, SY) >>(((~SX)&3)<<1))&3;
 }
 
 /*************************************************************
@@ -262,9 +261,9 @@ INLINE UInt8 getPixel6(int SX, int SY)
 **    Get a pixel on screen 7
 **************************************************************
 */
-INLINE UInt8 getPixel7(int SX, int SY)
+INLINE UInt8 getPixel7(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP7(SX, SY) >>(((~SX)&1)<<2))&15;
+    return (*VDP_VRMP7(vdpCmd, SX, SY) >>(((~SX)&1)<<2))&15;
 }
 
 /*************************************************************
@@ -274,9 +273,9 @@ INLINE UInt8 getPixel7(int SX, int SY)
 **      Get a pixel on screen 8
 **************************************************************
 */
-INLINE UInt8 getPixel8(int SX, int SY)
+INLINE UInt8 getPixel8(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return *VDP_VRMP8(SX, SY);
+    return *VDP_VRMP8(vdpCmd, SX, SY);
 }
 
 /*************************************************************
@@ -285,20 +284,20 @@ INLINE UInt8 getPixel8(int SX, int SY)
 **    Get a pixel on a screen
 **************************************************************
 */
-INLINE UInt8 getPixel(UInt8 SM, int SX, int SY)
+INLINE UInt8 getPixel(VdpCmdState* vdpCmd, UInt8 SM, int SX, int SY)
 {
     switch(SM) {
     case 0: 
-        return getPixel5(SX,SY);
+        return getPixel5(vdpCmd, SX, SY);
     case 1: 
-        return getPixel6(SX,SY);
+        return getPixel6(vdpCmd, SX, SY);
     case 2: 
-        return getPixel7(SX,SY);
+        return getPixel7(vdpCmd, SX, SY);
     case 3: 
-        return getPixel8(SX,SY);
+        return getPixel8(vdpCmd, SX, SY);
     }
 
-    return(0);
+    return 0;
 }
 
 /*************************************************************
@@ -357,11 +356,11 @@ INLINE void setPixelLow(UInt8 *P, UInt8 CL, UInt8 M, UInt8 OP)
 **      Set a pixel on screen 5
 **************************************************************
 */
-INLINE void setPixel5(int DX, int DY, UInt8 CL, UInt8 OP)
+INLINE void setPixel5(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&1)<<2;
 
-    setPixelLow(VDP_VRMP5(DX, DY), CL << SH, ~(15<<SH), OP);
+    setPixelLow(VDP_VRMP5(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
 }
  
 /*************************************************************
@@ -370,11 +369,11 @@ INLINE void setPixel5(int DX, int DY, UInt8 CL, UInt8 OP)
 **    Set a pixel on screen 6
 **************************************************************
 */
-INLINE void setPixel6(int DX, int DY, UInt8 CL, UInt8 OP)
+INLINE void setPixel6(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&3)<<1;
 
-    setPixelLow(VDP_VRMP6(DX, DY), CL << SH, ~(3<<SH), OP);
+    setPixelLow(VDP_VRMP6(vdpCmd, DX, DY), CL << SH, ~(3<<SH), OP);
 }
 
 /*************************************************************
@@ -384,11 +383,11 @@ INLINE void setPixel6(int DX, int DY, UInt8 CL, UInt8 OP)
 **      Set a pixel on screen 7
 **************************************************************
 */
-INLINE void setPixel7(int DX, int DY, UInt8 CL, UInt8 OP)
+INLINE void setPixel7(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&1)<<2;
 
-    setPixelLow(VDP_VRMP7(DX, DY), CL << SH, ~(15<<SH), OP);
+    setPixelLow(VDP_VRMP7(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
 }
 
 /*************************************************************
@@ -397,9 +396,9 @@ INLINE void setPixel7(int DX, int DY, UInt8 CL, UInt8 OP)
 **    Set a pixel on screen 8
 **************************************************************
 */
-INLINE void setPixel8(int DX, int DY, UInt8 CL, UInt8 OP)
+INLINE void setPixel8(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
-    setPixelLow(VDP_VRMP8(DX, DY), CL, 0, OP);
+    setPixelLow(VDP_VRMP8(vdpCmd, DX, DY), CL, 0, OP);
 }
 
 /*************************************************************
@@ -409,13 +408,13 @@ INLINE void setPixel8(int DX, int DY, UInt8 CL, UInt8 OP)
 **      Set a pixel on a screen
 **************************************************************
 */
-INLINE void setPixel(UInt8 SM, int DX, int DY, UInt8 CL, UInt8 OP)
+INLINE void setPixel(VdpCmdState* vdpCmd, UInt8 SM, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     switch (SM) {
-    case 0: setPixel5(DX, DY, CL, OP); break;
-    case 1: setPixel6(DX, DY, CL, OP); break;
-    case 2: setPixel7(DX, DY, CL, OP); break;
-    case 3: setPixel8(DX, DY, CL, OP); break;
+    case 0: setPixel5(vdpCmd, DX, DY, CL, OP); break;
+    case 1: setPixel6(vdpCmd, DX, DY, CL, OP); break;
+    case 2: setPixel7(vdpCmd, DX, DY, CL, OP); break;
+    case 3: setPixel8(vdpCmd, DX, DY, CL, OP); break;
     }
 }
 
@@ -426,57 +425,57 @@ INLINE void setPixel(UInt8 SM, int DX, int DY, UInt8 CL, UInt8 OP)
 **      Search a dot
 **************************************************************
 */
-static void SrchEngine(void)
+static void SrchEngine(VdpCmdState* vdpCmd)
 {
-    int SX=MMC.SX;
-    int SY=MMC.SY;
-    int TX=MMC.TX;
-    int ANX=MMC.ANX;
-    UInt8 CL=MMC.CL & Mask[MMC.screenMode];
-    int delta = srch_timing[MMC.timingMode];
+    int SX=vdpCmd->SX;
+    int SY=vdpCmd->SY;
+    int TX=vdpCmd->TX;
+    int ANX=vdpCmd->ANX;
+    UInt8 CL=vdpCmd->CL & Mask[vdpCmd->screenMode];
+    int delta = srch_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
 #define pre_srch \
     pre_loop \
     if ((
 #define post_srch(MX) \
     ==CL) ^ANX) { \
-        MMC.status|=VDPSTATUS_BO; /* Border detected */ \
+        vdpCmd->status|=VDPSTATUS_BO; /* Border detected */ \
         break; \
     } \
     if ((SX+=TX) & MX) { \
-        MMC.status&=~VDPSTATUS_BO; /* Border not detected */ \
+        vdpCmd->status&=~VDPSTATUS_BO; /* Border not detected */ \
         break; \
     } \
     cnt-=delta; \
 } 
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_srch getPixel5(SX, SY) post_srch(256)
+        pre_srch getPixel5(vdpCmd, SX, SY) post_srch(256)
         break;
     case 1: 
-        pre_srch getPixel6(SX, SY) post_srch(512)
+        pre_srch getPixel6(vdpCmd, SX, SY) post_srch(512)
         break;
     case 2: 
-        pre_srch getPixel7(SX, SY) post_srch(512)
+        pre_srch getPixel7(vdpCmd, SX, SY) post_srch(512)
         break;
     case 3: 
-        pre_srch getPixel8(SX, SY) post_srch(256)
+        pre_srch getPixel8(vdpCmd, SX, SY) post_srch(256)
         break;
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM=0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM=0;
         /* Update SX in VDP registers */
-        MMC.borderX = 0xfe00 | SX;
+        vdpCmd->borderX = 0xfe00 | SX;
     }
     else {
-        MMC.SX=SX;
+        vdpCmd->SX=SX;
     }
 }
 
@@ -487,22 +486,22 @@ static void SrchEngine(void)
 **      Draw a line
 **************************************************************
 */
-static void LineEngine(void)
+static void LineEngine(VdpCmdState* vdpCmd)
 {
-    int DX=MMC.DX;
-    int DY=MMC.DY;
-    int TX=MMC.TX;
-    int TY=MMC.TY;
-    int NX=MMC.NX;
-    int NY=MMC.NY;
-    int ASX=MMC.ASX;
-    int ADX=MMC.ADX;
-    UInt8 CL=MMC.CL & Mask[MMC.screenMode];
-    UInt8 LO=MMC.LO;
-    int delta = line_timing[MMC.timingMode];
+    int DX=vdpCmd->DX;
+    int DY=vdpCmd->DY;
+    int TX=vdpCmd->TX;
+    int TY=vdpCmd->TY;
+    int NX=vdpCmd->NX;
+    int NY=vdpCmd->NY;
+    int ASX=vdpCmd->ASX;
+    int ADX=vdpCmd->ADX;
+    UInt8 CL=vdpCmd->CL & Mask[vdpCmd->screenMode];
+    UInt8 LO=vdpCmd->LO;
+    int delta = line_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
 #define post_linexmaj(MX) \
     DX+=TX; \
@@ -527,52 +526,52 @@ static void LineEngine(void)
         cnt-=delta; \
     }
 
-    if ((MMC.ARG&0x01)==0) {
+    if ((vdpCmd->ARG&0x01)==0) {
         /* X-Axis is major direction */
-        switch (MMC.screenMode) {
+        switch (vdpCmd->screenMode) {
         case 0: 
-            pre_loop setPixel5(DX, DY, CL, LO); post_linexmaj(256)
+            pre_loop setPixel5(vdpCmd, DX, DY, CL, LO); post_linexmaj(256)
             break;
         case 1: 
-            pre_loop setPixel6(DX, DY, CL, LO); post_linexmaj(512)
+            pre_loop setPixel6(vdpCmd, DX, DY, CL, LO); post_linexmaj(512)
             break;
         case 2: 
-            pre_loop setPixel7(DX, DY, CL, LO); post_linexmaj(512)
+            pre_loop setPixel7(vdpCmd, DX, DY, CL, LO); post_linexmaj(512)
             break;
         case 3: 
-            pre_loop setPixel8(DX, DY, CL, LO); post_linexmaj(256)
+            pre_loop setPixel8(vdpCmd, DX, DY, CL, LO); post_linexmaj(256)
             break;
         }
     }
     else {
         /* Y-Axis is major direction */
-        switch (MMC.screenMode) {
+        switch (vdpCmd->screenMode) {
         case 0: 
-            pre_loop setPixel5(DX, DY, CL, LO); post_lineymaj(256)
+            pre_loop setPixel5(vdpCmd, DX, DY, CL, LO); post_lineymaj(256)
             break;
         case 1: 
-            pre_loop setPixel6(DX, DY, CL, LO); post_lineymaj(512)
+            pre_loop setPixel6(vdpCmd, DX, DY, CL, LO); post_lineymaj(512)
             break;
         case 2: 
-            pre_loop setPixel7(DX, DY, CL, LO); post_lineymaj(512)
+            pre_loop setPixel7(vdpCmd, DX, DY, CL, LO); post_lineymaj(512)
             break;
         case 3: 
-            pre_loop setPixel8(DX, DY, CL, LO); post_lineymaj(256)
+            pre_loop setPixel8(vdpCmd, DX, DY, CL, LO); post_lineymaj(256)
             break;
         }
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM=0;
-        MMC.DY=DY & 0x03ff;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM=0;
+        vdpCmd->DY=DY & 0x03ff;
     }
     else {
-        MMC.DX=DX;
-        MMC.DY=DY;
-        MMC.ASX=ASX;
-        MMC.ADX=ADX;
+        vdpCmd->DX=DX;
+        vdpCmd->DY=DY;
+        vdpCmd->ASX=ASX;
+        vdpCmd->ADX=ADX;
     }
 }
 
@@ -583,52 +582,52 @@ static void LineEngine(void)
 **      VDP -> Vram
 **************************************************************
 */
-static void LmmvEngine(void)
+static void LmmvEngine(VdpCmdState* vdpCmd)
 {
-    int DX=MMC.DX;
-    int DY=MMC.DY;
-    int TX=MMC.TX;
-    int TY=MMC.TY;
-    int NX=MMC.NX;
-    int NY=MMC.NY;
-    int ADX=MMC.ADX;
-    int ANX=MMC.ANX;
-    UInt8 CL=MMC.CL & Mask[MMC.screenMode];
-    UInt8 LO=MMC.LO;
-    int delta = lmmv_timing[MMC.timingMode];
+    int DX=vdpCmd->DX;
+    int DY=vdpCmd->DY;
+    int TX=vdpCmd->TX;
+    int TY=vdpCmd->TY;
+    int NX=vdpCmd->NX;
+    int NY=vdpCmd->NY;
+    int ADX=vdpCmd->ADX;
+    int ANX=vdpCmd->ANX;
+    UInt8 CL=vdpCmd->CL & Mask[vdpCmd->screenMode];
+    UInt8 LO=vdpCmd->LO;
+    int delta = lmmv_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop setPixel5(ADX, DY, CL, LO); post__x_y(256)
+        pre_loop setPixel5(vdpCmd, ADX, DY, CL, LO); post__x_y(256)
         break;
     case 1: 
-        pre_loop setPixel6(ADX, DY, CL, LO); post__x_y(512)
+        pre_loop setPixel6(vdpCmd, ADX, DY, CL, LO); post__x_y(512)
         break;
     case 2: 
-        pre_loop setPixel7(ADX, DY, CL, LO); post__x_y(512)
+        pre_loop setPixel7(vdpCmd, ADX, DY, CL, LO); post__x_y(512)
         break;
     case 3: 
-        pre_loop setPixel8(ADX, DY, CL, LO); post__x_y(256)
+        pre_loop setPixel8(vdpCmd, ADX, DY, CL, LO); post__x_y(256)
         break;
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM=0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM=0;
         if (!NY)
             DY+=TY;
-        MMC.DY=DY & 0x03ff;
-        MMC.NY=NY & 0x03ff;
+        vdpCmd->DY=DY & 0x03ff;
+        vdpCmd->NY=NY & 0x03ff;
     }
     else {
-        MMC.DY=DY;
-        MMC.NY=NY;
-        MMC.ANX=ANX;
-        MMC.ADX=ADX;
+        vdpCmd->DY=DY;
+        vdpCmd->NY=NY;
+        vdpCmd->ANX=ANX;
+        vdpCmd->ADX=ADX;
     }
 }
 
@@ -639,44 +638,44 @@ static void LmmvEngine(void)
 **      Vram -> Vram
 **************************************************************
 */
-static void LmmmEngine(void)
+static void LmmmEngine(VdpCmdState* vdpCmd)
 {
-    int SX=MMC.SX;
-    int SY=MMC.SY;
-    int DX=MMC.DX;
-    int DY=MMC.DY;
-    int TX=MMC.TX;
-    int TY=MMC.TY;
-    int NX=MMC.NX;
-    int NY=MMC.NY;
-    int ASX=MMC.ASX;
-    int ADX=MMC.ADX;
-    int ANX=MMC.ANX;
-    UInt8 LO=MMC.LO;
-    int delta = lmmm_timing[MMC.timingMode];
+    int SX=vdpCmd->SX;
+    int SY=vdpCmd->SY;
+    int DX=vdpCmd->DX;
+    int DY=vdpCmd->DY;
+    int TX=vdpCmd->TX;
+    int TY=vdpCmd->TY;
+    int NX=vdpCmd->NX;
+    int NY=vdpCmd->NY;
+    int ASX=vdpCmd->ASX;
+    int ADX=vdpCmd->ADX;
+    int ANX=vdpCmd->ANX;
+    UInt8 LO=vdpCmd->LO;
+    int delta = lmmm_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop setPixel5(ADX, DY, getPixel5(ASX, SY), LO); post_xxyy(256)
+        pre_loop setPixel5(vdpCmd, ADX, DY, getPixel5(vdpCmd, ASX, SY), LO); post_xxyy(256)
         break;
     case 1: 
-        pre_loop setPixel6(ADX, DY, getPixel6(ASX, SY), LO); post_xxyy(512)
+        pre_loop setPixel6(vdpCmd, ADX, DY, getPixel6(vdpCmd, ASX, SY), LO); post_xxyy(512)
         break;
     case 2: 
-        pre_loop setPixel7(ADX, DY, getPixel7(ASX, SY), LO); post_xxyy(512)
+        pre_loop setPixel7(vdpCmd, ADX, DY, getPixel7(vdpCmd, ASX, SY), LO); post_xxyy(512)
         break;
     case 3: 
-        pre_loop setPixel8(ADX, DY, getPixel8(ASX, SY), LO); post_xxyy(256)
+        pre_loop setPixel8(vdpCmd, ADX, DY, getPixel8(vdpCmd, ASX, SY), LO); post_xxyy(256)
         break;
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM=0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM=0;
         if (!NY) {
             SY+=TY;
             DY+=TY;
@@ -686,17 +685,17 @@ static void LmmmEngine(void)
                 DY+=TY;
             }
         }
-        MMC.DY=DY & 0x03ff;
-        MMC.SY=SY & 0x03ff;
-        MMC.NY=NY & 0x03ff;
+        vdpCmd->DY=DY & 0x03ff;
+        vdpCmd->SY=SY & 0x03ff;
+        vdpCmd->NY=NY & 0x03ff;
     }
     else {
-        MMC.SY=SY;
-        MMC.DY=DY;
-        MMC.NY=NY;
-        MMC.ANX=ANX;
-        MMC.ASX=ASX;
-        MMC.ADX=ADX;
+        vdpCmd->SY=SY;
+        vdpCmd->DY=DY;
+        vdpCmd->NY=NY;
+        vdpCmd->ANX=ANX;
+        vdpCmd->ASX=ASX;
+        vdpCmd->ADX=ADX;
     }
 }
 
@@ -707,22 +706,22 @@ static void LmmmEngine(void)
 **      Vram -> CPU
 **************************************************************
 */
-static void LmcmEngine()
+static void LmcmEngine(VdpCmdState* vdpCmd)
 {
-    if (!(MMC.status & VDPSTATUS_TR)) {
-        MMC.CL = getPixel(MMC.screenMode, MMC.ASX, MMC.SY);
-        MMC.status |= VDPSTATUS_TR;
+    if (!(vdpCmd->status & VDPSTATUS_TR)) {
+        vdpCmd->CL = getPixel(vdpCmd, vdpCmd->screenMode, vdpCmd->ASX, vdpCmd->SY);
+        vdpCmd->status |= VDPSTATUS_TR;
 
-        if (!--MMC.ANX || ((MMC.ASX+=MMC.TX)&MMC.MX)) {
-            if (!(--MMC.NY & 1023) || (MMC.SY+=MMC.TY)==-1) {
-                MMC.status &= ~VDPSTATUS_CE;
-                MMC.CM = 0;
-                if (!MMC.NY)
-                    MMC.DY+=MMC.TY;
+        if (!--vdpCmd->ANX || ((vdpCmd->ASX+=vdpCmd->TX)&vdpCmd->MX)) {
+            if (!(--vdpCmd->NY & 1023) || (vdpCmd->SY+=vdpCmd->TY)==-1) {
+                vdpCmd->status &= ~VDPSTATUS_CE;
+                vdpCmd->CM = 0;
+                if (!vdpCmd->NY)
+                    vdpCmd->DY+=vdpCmd->TY;
             }
             else {
-                MMC.ASX=MMC.SX;
-                MMC.ANX=MMC.NX;
+                vdpCmd->ASX=vdpCmd->SX;
+                vdpCmd->ANX=vdpCmd->NX;
             }
         }
     }
@@ -735,25 +734,25 @@ static void LmcmEngine()
 **      CPU -> Vram
 **************************************************************
 */
-static void LmmcEngine(void)
+static void LmmcEngine(VdpCmdState* vdpCmd)
 {
-    if (!(MMC.status & VDPSTATUS_TR)) {
-        UInt8 SM=MMC.screenMode;
+    if (!(vdpCmd->status & VDPSTATUS_TR)) {
+        UInt8 SM=vdpCmd->screenMode;
 
-        UInt8 CL=MMC.CL & Mask[SM];
-        setPixel(SM, MMC.ADX, MMC.DY, CL, MMC.LO);
-        MMC.status |= VDPSTATUS_TR;
+        UInt8 CL=vdpCmd->CL & Mask[SM];
+        setPixel(vdpCmd, SM, vdpCmd->ADX, vdpCmd->DY, CL, vdpCmd->LO);
+        vdpCmd->status |= VDPSTATUS_TR;
 
-        if (!--MMC.ANX || ((MMC.ADX+=MMC.TX)&MMC.MX)) {
-            if (!(--MMC.NY&1023) || (MMC.DY+=MMC.TY)==-1) {
-                MMC.status &= ~VDPSTATUS_CE;
-                MMC.CM = 0;
-                if (!MMC.NY)
-                    MMC.DY+=MMC.TY;
+        if (!--vdpCmd->ANX || ((vdpCmd->ADX+=vdpCmd->TX)&vdpCmd->MX)) {
+            if (!(--vdpCmd->NY&1023) || (vdpCmd->DY+=vdpCmd->TY)==-1) {
+                vdpCmd->status &= ~VDPSTATUS_CE;
+                vdpCmd->CM = 0;
+                if (!vdpCmd->NY)
+                    vdpCmd->DY+=vdpCmd->TY;
             }
             else {
-                MMC.ADX=MMC.DX;
-                MMC.ANX=MMC.NX;
+                vdpCmd->ADX=vdpCmd->DX;
+                vdpCmd->ANX=vdpCmd->NX;
             }
         }
     }
@@ -766,52 +765,52 @@ static void LmmcEngine(void)
 **      VDP --> Vram
 **************************************************************
 */
-static void HmmvEngine(void)
+static void HmmvEngine(VdpCmdState* vdpCmd)
 {
-    int DX=MMC.DX;
-    int DY=MMC.DY;
-    int TX=MMC.TX;
-    int TY=MMC.TY;
-    int NX=MMC.NX;
-    int NY=MMC.NY;
-    int ADX=MMC.ADX;
-    int ANX=MMC.ANX;
-    UInt8 CL=MMC.CL;
-    int delta = hmmv_timing[MMC.timingMode];
+    int DX=vdpCmd->DX;
+    int DY=vdpCmd->DY;
+    int TX=vdpCmd->TX;
+    int TY=vdpCmd->TY;
+    int NX=vdpCmd->NX;
+    int NY=vdpCmd->NY;
+    int ADX=vdpCmd->ADX;
+    int ANX=vdpCmd->ANX;
+    UInt8 CL=vdpCmd->CL;
+    int delta = hmmv_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop *VDP_VRMP5(ADX, DY) = CL; post__x_y(256)
+        pre_loop *VDP_VRMP5(vdpCmd, ADX, DY) = CL; post__x_y(256)
         break;
     case 1: 
-        pre_loop *VDP_VRMP6(ADX, DY) = CL; post__x_y(512)
+        pre_loop *VDP_VRMP6(vdpCmd, ADX, DY) = CL; post__x_y(512)
         break;
     case 2: 
-        pre_loop *VDP_VRMP7(ADX, DY) = CL; post__x_y(512)
+        pre_loop *VDP_VRMP7(vdpCmd, ADX, DY) = CL; post__x_y(512)
         break;
     case 3: 
-        pre_loop *VDP_VRMP8(ADX, DY) = CL; post__x_y(256)
+        pre_loop *VDP_VRMP8(vdpCmd, ADX, DY) = CL; post__x_y(256)
         break;
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM = 0;
         if (!NY) {
             DY+=TY;
         }
-        MMC.DY=DY & 0x03ff;
-        MMC.NY=NY & 0x03ff;
+        vdpCmd->DY=DY & 0x03ff;
+        vdpCmd->NY=NY & 0x03ff;
     }
     else {
-        MMC.DY=DY;
-        MMC.NY=NY;
-        MMC.ANX=ANX;
-        MMC.ADX=ADX;
+        vdpCmd->DY=DY;
+        vdpCmd->NY=NY;
+        vdpCmd->ANX=ANX;
+        vdpCmd->ADX=ADX;
     }
 }
 
@@ -822,36 +821,36 @@ static void HmmvEngine(void)
 **      Vram -> Vram
 **************************************************************
 */
-static void HmmmEngine(void)
+static void HmmmEngine(VdpCmdState* vdpCmd)
 {
-    int delta = hmmm_timing[MMC.timingMode];
+    int delta = hmmm_timing[vdpCmd->timingMode];
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop2 *VDP_VRMP5(MMC.ADX, MMC.DY) = *VDP_VRMP5(MMC.ASX, MMC.SY); post_xxyy2(256)
+        pre_loop2 *VDP_VRMP5(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP5(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
         break;
     case 1: 
-        pre_loop2 *VDP_VRMP6(MMC.ADX, MMC.DY) = *VDP_VRMP6(MMC.ASX, MMC.SY); post_xxyy2(512)
+        pre_loop2 *VDP_VRMP6(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP6(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
         break;
     case 2: 
-        pre_loop2 *VDP_VRMP7(MMC.ADX, MMC.DY) = *VDP_VRMP7(MMC.ASX, MMC.SY); post_xxyy2(512)
+        pre_loop2 *VDP_VRMP7(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP7(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
         break;
     case 3: 
-        pre_loop2 *VDP_VRMP8(MMC.ADX, MMC.DY) = *VDP_VRMP8(MMC.ASX, MMC.SY); post_xxyy2(256)
+        pre_loop2 *VDP_VRMP8(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP8(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
         break;
     }
 
-    if (MMC.VdpOpsCnt > 0) { \
+    if (vdpCmd->VdpOpsCnt > 0) { \
         /* Command execution done */
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CM = 0;
-        if (!MMC.NY) {
-            MMC.SY += MMC.TY;
-            MMC.DY += MMC.TY;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CM = 0;
+        if (!vdpCmd->NY) {
+            vdpCmd->SY += vdpCmd->TY;
+            vdpCmd->DY += vdpCmd->TY;
         }
         else {
-            if (MMC.SY == -1) {
-                MMC.DY += MMC.TY;
+            if (vdpCmd->SY == -1) {
+                vdpCmd->DY += vdpCmd->TY;
             }
         }
     }
@@ -864,39 +863,39 @@ static void HmmmEngine(void)
 **      Vram -> Vram 
 **************************************************************
 */
-static void YmmmEngine(void)
+static void YmmmEngine(VdpCmdState* vdpCmd)
 {
-    int SY=MMC.SY;
-    int DX=MMC.DX;
-    int DY=MMC.DY;
-    int TX=MMC.TX;
-    int TY=MMC.TY;
-    int NY=MMC.NY;
-    int ADX=MMC.ADX;
-    int delta = ymmm_timing[MMC.timingMode];
+    int SY=vdpCmd->SY;
+    int DX=vdpCmd->DX;
+    int DY=vdpCmd->DY;
+    int TX=vdpCmd->TX;
+    int TY=vdpCmd->TY;
+    int NY=vdpCmd->NY;
+    int ADX=vdpCmd->ADX;
+    int delta = ymmm_timing[vdpCmd->timingMode];
     int cnt;
 
-    cnt = MMC.VdpOpsCnt;
+    cnt = vdpCmd->VdpOpsCnt;
 
-    switch (MMC.screenMode) {
+    switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop *VDP_VRMP5(ADX, DY) = *VDP_VRMP5(ADX, SY); post__xyy(256)
+        pre_loop *VDP_VRMP5(vdpCmd, ADX, DY) = *VDP_VRMP5(vdpCmd, ADX, SY); post__xyy(256)
         break;
     case 1: 
-        pre_loop *VDP_VRMP6(ADX, DY) = *VDP_VRMP6(ADX, SY); post__xyy(512)
+        pre_loop *VDP_VRMP6(vdpCmd, ADX, DY) = *VDP_VRMP6(vdpCmd, ADX, SY); post__xyy(512)
         break;
     case 2: 
-        pre_loop *VDP_VRMP7(ADX, DY) = *VDP_VRMP7(ADX, SY); post__xyy(512)
+        pre_loop *VDP_VRMP7(vdpCmd, ADX, DY) = *VDP_VRMP7(vdpCmd, ADX, SY); post__xyy(512)
         break;
     case 3: 
-        pre_loop *VDP_VRMP8(ADX, DY) = *VDP_VRMP8(ADX, SY); post__xyy(256)
+        pre_loop *VDP_VRMP8(vdpCmd, ADX, DY) = *VDP_VRMP8(vdpCmd, ADX, SY); post__xyy(256)
         break;
     }
 
-    if ((MMC.VdpOpsCnt=cnt)>0) {
+    if ((vdpCmd->VdpOpsCnt=cnt)>0) {
         /* Command execution done */
-        MMC.status &=~VDPSTATUS_CE;
-        MMC.CM = 0;
+        vdpCmd->status &=~VDPSTATUS_CE;
+        vdpCmd->CM = 0;
         if (!NY) {
             SY+=TY;
             DY+=TY;
@@ -906,15 +905,15 @@ static void YmmmEngine(void)
                 DY+=TY;
             }
         }
-        MMC.DY=DY & 0x03ff;
-        MMC.SY=SY & 0x03ff;
-        MMC.NY=NY & 0x03ff;
+        vdpCmd->DY=DY & 0x03ff;
+        vdpCmd->SY=SY & 0x03ff;
+        vdpCmd->NY=NY & 0x03ff;
     }
     else {
-        MMC.SY=SY;
-        MMC.DY=DY;
-        MMC.NY=NY;
-        MMC.ADX=ADX;
+        vdpCmd->SY=SY;
+        vdpCmd->DY=DY;
+        vdpCmd->NY=NY;
+        vdpCmd->ADX=ADX;
     }
 }
 
@@ -925,24 +924,24 @@ static void YmmmEngine(void)
 **      CPU -> Vram 
 **************************************************************
 */
-static void HmmcEngine(void)
+static void HmmcEngine(VdpCmdState* vdpCmd)
 {
-    if (!(MMC.status & VDPSTATUS_TR)) {
-        *getVramPointer(MMC.screenMode, MMC.ADX, MMC.DY)=MMC.CL;
-        MMC.VdpOpsCnt-=hmmv_timing[MMC.timingMode];
-        MMC.status |= VDPSTATUS_TR;
+    if (!(vdpCmd->status & VDPSTATUS_TR)) {
+        *getVramPointer(vdpCmd, vdpCmd->screenMode, vdpCmd->ADX, vdpCmd->DY)=vdpCmd->CL;
+        vdpCmd->VdpOpsCnt-=hmmv_timing[vdpCmd->timingMode];
+        vdpCmd->status |= VDPSTATUS_TR;
 
-        if (!--MMC.ANX || ((MMC.ADX+=MMC.TX)&MMC.MX)) {
-            if (!(--MMC.NY&1023) || (MMC.DY+=MMC.TY)==-1) {
-                MMC.status &= ~VDPSTATUS_CE;
-                MMC.CM = 0;
-                if (!MMC.NY) {
-                    MMC.DY+=MMC.TY;
+        if (!--vdpCmd->ANX || ((vdpCmd->ADX+=vdpCmd->TX)&vdpCmd->MX)) {
+            if (!(--vdpCmd->NY&1023) || (vdpCmd->DY+=vdpCmd->TY)==-1) {
+                vdpCmd->status &= ~VDPSTATUS_CE;
+                vdpCmd->CM = 0;
+                if (!vdpCmd->NY) {
+                    vdpCmd->DY+=vdpCmd->TY;
                 }
             }
             else {
-                MMC.ADX=MMC.DX;
-                MMC.ANX=MMC.NX;
+                vdpCmd->ADX=vdpCmd->DX;
+                vdpCmd->ANX=vdpCmd->NX;
             }
         }
     }
@@ -956,12 +955,19 @@ static void HmmcEngine(void)
 **      Initializes the command engine.
 **************************************************************
 */
-void vdpCmdInit(int vramSize, UInt8* vramPtr, UInt32 systemTime)
+VdpCmdState* vdpCmdCreate(int vramSize, UInt8* vramPtr, UInt32 systemTime)
 {
-    memset(&MMC, 0, sizeof(MMC));
-    MMC.systemTime = systemTime;
-    VRAM = vramPtr;
-    vramMask = vramSize - 1;
+    VdpCmdState* vdpCmd = calloc(1, sizeof(VdpCmdState));
+    vdpCmd->systemTime = systemTime;
+    vdpCmd->vram = vramPtr;
+    vdpCmd->vramMask = vramSize - 1;
+
+    return vdpCmd;
+}
+
+void vdpCmdDestroy(VdpCmdState* vdpCmd)
+{
+    free(vdpCmd);
 }
 
 
@@ -972,73 +978,73 @@ void vdpCmdInit(int vramSize, UInt8* vramPtr, UInt32 systemTime)
 **      Set VDP command to ececute
 **************************************************************
 */
-static void vdpCmdSetCommand(UInt32 systemTime)
+static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
 {
-    MMC.SX &= 0x1ff;
-    MMC.SY &= 0x3ff;
-    MMC.DX &= 0x1ff;
-    MMC.DY &= 0x3ff;
-    MMC.NX &= 0x3ff;
-    MMC.NY &= 0x3ff;
+    vdpCmd->SX &= 0x1ff;
+    vdpCmd->SY &= 0x3ff;
+    vdpCmd->DX &= 0x1ff;
+    vdpCmd->DY &= 0x3ff;
+    vdpCmd->NX &= 0x3ff;
+    vdpCmd->NY &= 0x3ff;
 
-    switch (MMC.CM) {
+    switch (vdpCmd->CM) {
     case CM_ABRT:
-        MMC.CM = 0;
-        MMC.status &= ~VDPSTATUS_CE;
+        vdpCmd->CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
         return;
 
     case CM_NOOP1:
     case CM_NOOP2:
     case CM_NOOP3:
-        MMC.CM = 0;
+        vdpCmd->CM = 0;
         return;
 
     case CM_POINT:
-        MMC.CM = 0;
-        MMC.status &= ~VDPSTATUS_CE;
-        MMC.CL = getPixel(MMC.screenMode, MMC.SX, MMC.SY);
+        vdpCmd->CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        vdpCmd->CL = getPixel(vdpCmd, vdpCmd->screenMode, vdpCmd->SX, vdpCmd->SY);
         return;
 
     case CM_PSET:
-        MMC.CM = 0;
-        MMC.status &= ~VDPSTATUS_CE;
-        setPixel(MMC.screenMode, MMC.DX, MMC.DY, MMC.CL, MMC.LO);
+        vdpCmd->CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        setPixel(vdpCmd, vdpCmd->screenMode, vdpCmd->DX, vdpCmd->DY, vdpCmd->CL, vdpCmd->LO);
         return;
     }
 
-    MMC.MX  = PPL[MMC.screenMode]; 
-    MMC.TY  = MMC.ARG & 0x08? -1 : 1;
+    vdpCmd->MX  = PPL[vdpCmd->screenMode]; 
+    vdpCmd->TY  = vdpCmd->ARG & 0x08? -1 : 1;
 
     /* Argument depends on UInt8 or dot operation */
-    if ((MMC.CM & 0x0C) == 0x0C) {
-        MMC.TX = MMC.ARG & 0x04 ? -PPB[MMC.screenMode] : PPB[MMC.screenMode];
-        MMC.NX = MMC.kNX/PPB[MMC.screenMode];
+    if ((vdpCmd->CM & 0x0C) == 0x0C) {
+        vdpCmd->TX = vdpCmd->ARG & 0x04 ? -PPB[vdpCmd->screenMode] : PPB[vdpCmd->screenMode];
+        vdpCmd->NX = vdpCmd->kNX/PPB[vdpCmd->screenMode];
     }
     else {
-        MMC.NX = MMC.kNX;
-        MMC.TX = MMC.ARG & 0x04 ? -1 : 1;
+        vdpCmd->NX = vdpCmd->kNX;
+        vdpCmd->TX = vdpCmd->ARG & 0x04 ? -1 : 1;
     }
 
     /* X loop variables are treated specially for LINE command */
-    if (MMC.CM == CM_LINE) {
-        MMC.ASX = (MMC.NX - 1) >> 1;
-        MMC.ADX = 0;
+    if (vdpCmd->CM == CM_LINE) {
+        vdpCmd->ASX = (vdpCmd->NX - 1) >> 1;
+        vdpCmd->ADX = 0;
     }
     else {
-        MMC.ASX = MMC.SX;
-        MMC.ADX = MMC.DX;
+        vdpCmd->ASX = vdpCmd->SX;
+        vdpCmd->ADX = vdpCmd->DX;
     }    
 
     /* NX loop variable is treated specially for SRCH command */
-    if (MMC.CM == CM_SRCH)
-        MMC.ANX=(MMC.ARG&0x02)!=0; /* Do we look for "==" or "!="? */
+    if (vdpCmd->CM == CM_SRCH)
+        vdpCmd->ANX=(vdpCmd->ARG&0x02)!=0; /* Do we look for "==" or "!="? */
     else
-        MMC.ANX = MMC.NX;
+        vdpCmd->ANX = vdpCmd->NX;
 
     /* Command execution started */
-    MMC.status |= VDPSTATUS_CE;
+    vdpCmd->status |= VDPSTATUS_CE;
 
-    MMC.systemTime = systemTime;
+    vdpCmd->systemTime = systemTime;
 }
 
 /*************************************************************
@@ -1048,35 +1054,35 @@ static void vdpCmdSetCommand(UInt32 systemTime)
 **      Writes a new command to the VDP
 **************************************************************
 */
-void vdpCmdWrite(UInt8 reg, UInt8 value, UInt32 systemTime)
+void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
 {
     reg &= 0x1f;
 
     switch (reg) {
-	case 0x00: MMC.SX = (MMC.SX & 0xff00) | value;                 break;
-	case 0x01: MMC.SX = (MMC.SX & 0x00ff) | ((value & 0x01) << 8); break;
-	case 0x02: MMC.SY = (MMC.SY & 0xff00) | value;                 break;
-	case 0x03: MMC.SY = (MMC.SY & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x04: MMC.DX = (MMC.DX & 0xff00) | value;                 break;
-	case 0x05: MMC.DX = (MMC.DX & 0x00ff) | ((value & 0x01) << 8); break;
-	case 0x06: MMC.DY = (MMC.DY & 0xff00) | value;                 break;
-	case 0x07: MMC.DY = (MMC.DY & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x08: MMC.kNX = (MMC.kNX & 0xff00) | value;                 break;
-	case 0x09: MMC.kNX = (MMC.kNX & 0x00ff) | ((value & 0x03) << 8); break;
-	case 0x0a: MMC.NY = (MMC.NY & 0xff00) | value;                 break;
-	case 0x0b: MMC.NY = (MMC.NY & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x00: vdpCmd->SX = (vdpCmd->SX & 0xff00) | value;                 break;
+	case 0x01: vdpCmd->SX = (vdpCmd->SX & 0x00ff) | ((value & 0x01) << 8); break;
+	case 0x02: vdpCmd->SY = (vdpCmd->SY & 0xff00) | value;                 break;
+	case 0x03: vdpCmd->SY = (vdpCmd->SY & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x04: vdpCmd->DX = (vdpCmd->DX & 0xff00) | value;                 break;
+	case 0x05: vdpCmd->DX = (vdpCmd->DX & 0x00ff) | ((value & 0x01) << 8); break;
+	case 0x06: vdpCmd->DY = (vdpCmd->DY & 0xff00) | value;                 break;
+	case 0x07: vdpCmd->DY = (vdpCmd->DY & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x08: vdpCmd->kNX = (vdpCmd->kNX & 0xff00) | value;                 break;
+	case 0x09: vdpCmd->kNX = (vdpCmd->kNX & 0x00ff) | ((value & 0x03) << 8); break;
+	case 0x0a: vdpCmd->NY = (vdpCmd->NY & 0xff00) | value;                 break;
+	case 0x0b: vdpCmd->NY = (vdpCmd->NY & 0x00ff) | ((value & 0x03) << 8); break;
 	case 0x0c: 
-        MMC.CL = value;
-        MMC.status &= ~VDPSTATUS_TR;
+        vdpCmd->CL = value;
+        vdpCmd->status &= ~VDPSTATUS_TR;
         break;
 	case 0x0d: 
-        MMC.ARG = value; 
+        vdpCmd->ARG = value; 
         break;
 	case 0x0e: 
-		MMC.LO = value & 0x0F;
-		MMC.CM = value >> 4;
-        if (MMC.screenMode >= 0) {
-		    vdpCmdSetCommand(systemTime);
+		vdpCmd->LO = value & 0x0F;
+		vdpCmd->CM = value >> 4;
+        if (vdpCmd->screenMode >= 0) {
+		    vdpCmdSetCommand(vdpCmd, systemTime);
         }
 		break;
     }
@@ -1089,7 +1095,7 @@ void vdpCmdWrite(UInt8 reg, UInt8 value, UInt32 systemTime)
 **      Sets the current screen mode
 **************************************************************
 */
-void vdpSetScreenMode(int screenMode, int commandEnable) {
+void vdpSetScreenMode(VdpCmdState* vdpCmd, int screenMode, int commandEnable) {
     if (screenMode > 8 && screenMode <= 12) {
         screenMode = 3;
     }
@@ -1105,11 +1111,11 @@ void vdpSetScreenMode(int screenMode, int commandEnable) {
         screenMode -= 5;
     }
 
-    if (MMC.screenMode != screenMode) {
-        MMC.screenMode = screenMode;
+    if (vdpCmd->screenMode != screenMode) {
+        vdpCmd->screenMode = screenMode;
         if (screenMode == -1) {
-            MMC.CM = 0;
-            MMC.status &= ~VDPSTATUS_CE;
+            vdpCmd->CM = 0;
+            vdpCmd->status &= ~VDPSTATUS_CE;
         }
     }
 }
@@ -1121,8 +1127,8 @@ void vdpSetScreenMode(int screenMode, int commandEnable) {
 **      Sets the timing mode (sprites/nosprites, ...)
 **************************************************************
 */
-void vdpSetTimingMode(UInt8 timingMode) {
-    MMC.timingMode = timingMode;
+void vdpSetTimingMode(VdpCmdState* vdpCmd, UInt8 timingMode) {
+    vdpCmd->timingMode = timingMode;
 }
 
 /*************************************************************
@@ -1132,8 +1138,8 @@ void vdpSetTimingMode(UInt8 timingMode) {
 **      Gets current status
 **************************************************************
 */
-UInt8 vdpGetStatus() {
-    return MMC.status;
+UInt8 vdpGetStatus(VdpCmdState* vdpCmd) {
+    return vdpCmd->status;
 }
 
 /*************************************************************
@@ -1143,8 +1149,8 @@ UInt8 vdpGetStatus() {
 **      Gets the border X value
 **************************************************************
 */
-UInt16 vdpGetBorderX() {
-    return MMC.borderX;
+UInt16 vdpGetBorderX(VdpCmdState* vdpCmd) {
+    return vdpCmd->borderX;
 }
 
 /*************************************************************
@@ -1154,9 +1160,9 @@ UInt16 vdpGetBorderX() {
 **      Gets the color value
 **************************************************************
 */
-UInt8 vdpGetColor() {
-    MMC.status &= ~VDPSTATUS_TR;
-    return MMC.CL;
+UInt8 vdpGetColor(VdpCmdState* vdpCmd) {
+    vdpCmd->status &= ~VDPSTATUS_TR;
+    return vdpCmd->CL;
 }
 
 /*************************************************************
@@ -1166,12 +1172,12 @@ UInt8 vdpGetColor() {
 **      Flushes current VDP command
 **************************************************************
 */
-void vdpCmdFlush() 
+void vdpCmdFlush(VdpCmdState* vdpCmd) 
 {
-    while (MMC.CM != 0 && !(MMC.status & VDPSTATUS_TR)) {
-        int opsCnt = MMC.VdpOpsCnt += 1000000;
-        vdpCmdExecute(MMC.systemTime + opsCnt);
-        if (MMC.VdpOpsCnt == 0 || MMC.VdpOpsCnt == opsCnt) {
+    while (vdpCmd->CM != 0 && !(vdpCmd->status & VDPSTATUS_TR)) {
+        int opsCnt = vdpCmd->VdpOpsCnt += 1000000;
+        vdpCmdExecute(vdpCmd, vdpCmd->systemTime + opsCnt);
+        if (vdpCmd->VdpOpsCnt == 0 || vdpCmd->VdpOpsCnt == opsCnt) {
             break;
         }
     }
@@ -1184,48 +1190,48 @@ void vdpCmdFlush()
 **      Executes command engine until the given time.
 **************************************************************
 */
-void vdpCmdExecute(UInt32 systemTime)
+void vdpCmdExecute(VdpCmdState* vdpCmd, UInt32 systemTime)
 {
-    MMC.VdpOpsCnt += systemTime - MMC.systemTime;
-    MMC.systemTime = systemTime;
+    vdpCmd->VdpOpsCnt += systemTime - vdpCmd->systemTime;
+    vdpCmd->systemTime = systemTime;
     
-    if (MMC.VdpOpsCnt <= 0) {
+    if (vdpCmd->VdpOpsCnt <= 0) {
         return;
     }
 
-    switch (MMC.CM) {
+    switch (vdpCmd->CM) {
     case CM_SRCH:
-        SrchEngine();
+        SrchEngine(vdpCmd);
         break;
     case CM_LINE:
-        LineEngine();
+        LineEngine(vdpCmd);
         break;
     case CM_LMMV:
-        LmmvEngine();
+        LmmvEngine(vdpCmd);
         break;
     case CM_LMMM:
-        LmmmEngine();
+        LmmmEngine(vdpCmd);
         break;
     case CM_LMCM:
-        LmcmEngine();
+        LmcmEngine(vdpCmd);
         break;
     case CM_LMMC:
-        LmmcEngine();
+        LmmcEngine(vdpCmd);
         break;
     case CM_HMMV:
-        HmmvEngine();
+        HmmvEngine(vdpCmd);
         break;
     case CM_HMMM:
-        HmmmEngine();
+        HmmmEngine(vdpCmd);
         break;
     case CM_YMMM:
-        YmmmEngine();
+        YmmmEngine(vdpCmd);
         break;
     case CM_HMMC:
-        HmmcEngine();  
+        HmmcEngine(vdpCmd);  
         break;
     default:
-        MMC.VdpOpsCnt = 0;
+        vdpCmd->VdpOpsCnt = 0;
     }
 }
 
@@ -1233,36 +1239,36 @@ void vdpCmdExecute(UInt32 systemTime)
 ** vdpCmdLoadState
 **
 ** Description:
-**      Loads the state of the command engine. 
+**      Loads the vdpCmd of the command engine. 
 **************************************************************
 */
-void vdpCmdLoadState()
+void vdpCmdLoadState(VdpCmdState* vdpCmd)
 {
     SaveState* state = saveStateOpenForRead("vdpCommandEngine");
 
-    MMC.SX            =         saveStateGet(state, "SX",         0);
-    MMC.SY            =         saveStateGet(state, "SY",         0);
-    MMC.DX            =         saveStateGet(state, "DX",         0);
-    MMC.DY            =         saveStateGet(state, "DY",         0);
-    MMC.NX            =         saveStateGet(state, "NX",         0);
-    MMC.NY            =         saveStateGet(state, "NY",         0);
-    MMC.ASX           =         saveStateGet(state, "ASX",        0);
-    MMC.ADX           =         saveStateGet(state, "ADX",        0);
-    MMC.ANX           =         saveStateGet(state, "ANX",        0);
-    MMC.ARG           = (UInt8) saveStateGet(state, "ARG",        0);
-    MMC.CL            = (UInt8) saveStateGet(state, "CL",         0);
-    MMC.LO            = (UInt8) saveStateGet(state, "LO",         0);
-    MMC.CM            = (UInt8) saveStateGet(state, "CM",         0);
-    MMC.status        = (UInt8) saveStateGet(state, "STATUS",     0);
-    MMC.borderX       = (UInt16)saveStateGet(state, "BORDERX",    0);
-    MMC.TX            =         saveStateGet(state, "TX",         0);
-    MMC.TY            =         saveStateGet(state, "TY",         0);
-    MMC.MX            =         saveStateGet(state, "MX",         0);
-    MMC.VdpOpsCnt     =         saveStateGet(state, "VdpOpsCnt",  0);
-    MMC.systemTime    =         saveStateGet(state, "systemTime", boardSystemTime());
-    MMC.screenMode    =         saveStateGet(state, "screenMode", 0);
-    MMC.timingMode    =         saveStateGet(state, "timingMode", 0);
-    vramMask          =         saveStateGet(state, "vramMask",   8 << 14);
+    vdpCmd->SX            =         saveStateGet(state, "SX",         0);
+    vdpCmd->SY            =         saveStateGet(state, "SY",         0);
+    vdpCmd->DX            =         saveStateGet(state, "DX",         0);
+    vdpCmd->DY            =         saveStateGet(state, "DY",         0);
+    vdpCmd->NX            =         saveStateGet(state, "NX",         0);
+    vdpCmd->NY            =         saveStateGet(state, "NY",         0);
+    vdpCmd->ASX           =         saveStateGet(state, "ASX",        0);
+    vdpCmd->ADX           =         saveStateGet(state, "ADX",        0);
+    vdpCmd->ANX           =         saveStateGet(state, "ANX",        0);
+    vdpCmd->ARG           = (UInt8) saveStateGet(state, "ARG",        0);
+    vdpCmd->CL            = (UInt8) saveStateGet(state, "CL",         0);
+    vdpCmd->LO            = (UInt8) saveStateGet(state, "LO",         0);
+    vdpCmd->CM            = (UInt8) saveStateGet(state, "CM",         0);
+    vdpCmd->status        = (UInt8) saveStateGet(state, "STATUS",     0);
+    vdpCmd->borderX       = (UInt16)saveStateGet(state, "BORDERX",    0);
+    vdpCmd->TX            =         saveStateGet(state, "TX",         0);
+    vdpCmd->TY            =         saveStateGet(state, "TY",         0);
+    vdpCmd->MX            =         saveStateGet(state, "MX",         0);
+    vdpCmd->VdpOpsCnt     =         saveStateGet(state, "VdpOpsCnt",  0);
+    vdpCmd->systemTime    =         saveStateGet(state, "systemTime", boardSystemTime());
+    vdpCmd->screenMode    =         saveStateGet(state, "screenMode", 0);
+    vdpCmd->timingMode    =         saveStateGet(state, "timingMode", 0);
+    vdpCmd->vramMask      =         saveStateGet(state, "vramMask",   8 << 14);
     
     saveStateClose(state);
 }
@@ -1272,36 +1278,36 @@ void vdpCmdLoadState()
 ** vdpCmdSaveState
 **
 ** Description:
-**      Saves the state of the command engine. 
+**      Saves the vdpCmd of the command engine. 
 **************************************************************
 */
-void vdpCmdSaveState()
+void vdpCmdSaveState(VdpCmdState* vdpCmd)
 {
     SaveState* state = saveStateOpenForWrite("vdpCommandEngine");
 
-    saveStateSet(state, "SX",         MMC.SX);
-    saveStateSet(state, "SY",         MMC.SY);
-    saveStateSet(state, "DX",         MMC.DX);
-    saveStateSet(state, "DY",         MMC.DY);
-    saveStateSet(state, "NX",         MMC.NX);
-    saveStateSet(state, "NY",         MMC.NY);
-    saveStateSet(state, "ASX",        MMC.ASX);
-    saveStateSet(state, "ADX",        MMC.ADX);
-    saveStateSet(state, "ANX",        MMC.ANX);
-    saveStateSet(state, "ARG",        MMC.ARG);
-    saveStateSet(state, "CL",         MMC.CL);
-    saveStateSet(state, "LO",         MMC.LO);
-    saveStateSet(state, "CM",         MMC.CM);
-    saveStateSet(state, "STATUS",     MMC.status);
-    saveStateSet(state, "BORDERX",    MMC.borderX);
-    saveStateSet(state, "TX",         MMC.TX);
-    saveStateSet(state, "TY",         MMC.TY);
-    saveStateSet(state, "MX",         MMC.MX);
-    saveStateSet(state, "VdpOpsCnt",  MMC.VdpOpsCnt);
-    saveStateSet(state, "systemTime", MMC.systemTime);
-    saveStateSet(state, "screenMode", MMC.screenMode);
-    saveStateSet(state, "timingMode", MMC.timingMode);
-    saveStateSet(state, "vramMask",   vramMask);
+    saveStateSet(state, "SX",         vdpCmd->SX);
+    saveStateSet(state, "SY",         vdpCmd->SY);
+    saveStateSet(state, "DX",         vdpCmd->DX);
+    saveStateSet(state, "DY",         vdpCmd->DY);
+    saveStateSet(state, "NX",         vdpCmd->NX);
+    saveStateSet(state, "NY",         vdpCmd->NY);
+    saveStateSet(state, "ASX",        vdpCmd->ASX);
+    saveStateSet(state, "ADX",        vdpCmd->ADX);
+    saveStateSet(state, "ANX",        vdpCmd->ANX);
+    saveStateSet(state, "ARG",        vdpCmd->ARG);
+    saveStateSet(state, "CL",         vdpCmd->CL);
+    saveStateSet(state, "LO",         vdpCmd->LO);
+    saveStateSet(state, "CM",         vdpCmd->CM);
+    saveStateSet(state, "STATUS",     vdpCmd->status);
+    saveStateSet(state, "BORDERX",    vdpCmd->borderX);
+    saveStateSet(state, "TX",         vdpCmd->TX);
+    saveStateSet(state, "TY",         vdpCmd->TY);
+    saveStateSet(state, "MX",         vdpCmd->MX);
+    saveStateSet(state, "VdpOpsCnt",  vdpCmd->VdpOpsCnt);
+    saveStateSet(state, "systemTime", vdpCmd->systemTime);
+    saveStateSet(state, "screenMode", vdpCmd->screenMode);
+    saveStateSet(state, "timingMode", vdpCmd->timingMode);
+    saveStateSet(state, "vramMask",   vdpCmd->vramMask);
     
     saveStateClose(state);
 }
