@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-18 15:27:15 $
+** $Date: 2005-01-18 19:04:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,7 @@ static const UInt8 crtcRegisterValueMask[18] = {
 static UInt8 crtcRegister[18];
 static UInt8 crtcAddressReg; // AR
 
-typedef enum { CURSOR_NOBLINK, CURSOR_DISABLED, CURSOR_BLINK16, CURSOR_BLINK32} crtcCursorStates;
+typedef enum { CURSOR_DISABLED, CURSOR_BLINK, CURSOR_NOBLINK} crtcCursorModes;
 
 /* Encoded registers */
 typedef struct
@@ -89,7 +89,7 @@ typedef struct
     UInt8    rasterStart;
     UInt8    rasterEnd;
     UInt16   addressStart;
-    double   blinkrate;
+    float   blinkrate;
 } TYP_CRTC_CURSOR;
 
 typedef struct
@@ -116,6 +116,31 @@ void crtcScreenRefresh(void)
     - Draw cursor
     - Timer for blinking cursor
 */
+    int x, y, Nhd, Nvd;
+    UInt16 address;
+
+    address = 0;
+    memset(crtcScreenBuffer, 0, sizeof(crtcScreenBuffer));
+
+    Nhd = crtcRegister[1];
+    if (Nhd >= crtcRegister[0])
+        Nhd = crtcRegister[0] - 1;
+    if (Nhd > 80)
+        Nhd = 80;
+
+    Nvd = crtcRegister[6];
+    if (Nvd >= crtcRegister[4])
+        Nvd = crtcRegister[4] - 1;
+    if (Nvd > 25)
+        Nvd = 25;
+
+    for (y = 0; y < Nvd; y++) {
+
+        for (x = 0; x < Nhd; x++) {
+            memcpy(&crtcScreenBuffer[address*8], &crtcROM[crtcMemory[address]], 8);
+            address++;
+        }
+    }
 }
 
 static void crtcScreenWrite(UInt16 address, UInt8 value)
@@ -126,10 +151,23 @@ static void crtcScreenWrite(UInt16 address, UInt8 value)
 
 static void crtcCursorUpdate(void)
 {
-    UInt8 value;
-    
-    value = crtcRegister[10] & 0x60;
-    crtc.cursor.mode = (value&32)?(value&64)?(value&96)?CURSOR_DISABLED:CURSOR_BLINK16:CURSOR_BLINK32:CURSOR_NOBLINK;
+    switch (crtcRegister[10] & 0x60 ) {
+    case 32:
+        crtc.cursor.mode = CURSOR_DISABLED;
+        crtc.cursor.blinkrate = 0;
+        break;
+    case 64:
+        crtc.cursor.mode = CURSOR_BLINK;
+        crtc.cursor.blinkrate = (float)50 / 16;    // Get Hz from emu
+        break;
+    case 96:
+        crtc.cursor.mode = CURSOR_BLINK;
+        crtc.cursor.blinkrate = (float)50 / 32;    // Get Hz from emu
+        break;
+    default:
+        crtc.cursor.mode =CURSOR_NOBLINK;
+        crtc.cursor.blinkrate = 0;
+    }
     
     crtc.cursor.rasterStart = crtcRegister[10] & 0x1f;
     crtc.cursor.rasterEnd = crtcRegister[11];
@@ -137,19 +175,8 @@ static void crtcCursorUpdate(void)
     crtc.cursor.addressStart = crtcRegister[14];
     crtc.cursor.addressStart <<= 8;
     crtc.cursor.addressStart |= crtcRegister[15];
-
-    switch (crtc.cursor.mode ) {
-    case CURSOR_BLINK16:
-        crtc.cursor.blinkrate = 50 / 16;    // Get Hz from emu
-        break;
-    case CURSOR_BLINK32:
-        crtc.cursor.blinkrate = 50 / 32;    // Get Hz from emu
-        break;
-    default:
-        crtc.cursor.blinkrate = 0;
-    }
-    	
 }
+
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
     if (crtcAddressReg < 18)
