@@ -109,9 +109,9 @@ void SetDeviceInfoString2 ( HWND hDlg )
 				char buffer [50];
 				
 				HTREEITEM nodeMemoryItem = addChild ( Tree, nodeDeviceName, mem->name, 0 );
-				sprintf ( buffer, "Size: 0x%x", mem->size );
+				sprintf ( buffer, "Size: 0x%X", mem->size );
 				HTREEITEM nodeMemorySize = addChild ( Tree, nodeMemoryItem, buffer, 0 );
-				sprintf ( buffer, "Start: 0x%x", mem->startAddress );
+				sprintf ( buffer, "Start: 0x%X", mem->startAddress );
 				HTREEITEM nodeMemoryAddress = addChild ( Tree, nodeMemoryItem, buffer, 0 );
 				
             }
@@ -126,11 +126,11 @@ void SetDeviceInfoString2 ( HWND hDlg )
                 for (UInt32 k = 0; k < regBank->count; k++) {
 				    char buffer [50];
                     if (regBank->reg[k].width == 8) 
-				        sprintf ( buffer, "%s: 0x%.2x", regBank->reg[k].name, regBank->reg[k].value );
+				        sprintf ( buffer, "%s: 0x%.2X", regBank->reg[k].name, regBank->reg[k].value );
                     else if (regBank->reg[k].width == 16)
-				        sprintf ( buffer, "%s: 0x%.4x", regBank->reg[k].name, regBank->reg[k].value );
+				        sprintf ( buffer, "%s: 0x%.4X", regBank->reg[k].name, regBank->reg[k].value );
                     else
-				        sprintf ( buffer, "%s: 0x%.8x", regBank->reg[k].name, regBank->reg[k].value );
+				        sprintf ( buffer, "%s: 0x%.8X", regBank->reg[k].name, regBank->reg[k].value );
 
 				    HTREEITEM nodeMemorySize = addChild ( Tree, nodeRegsItem, buffer, 0 );
                 }
@@ -145,7 +145,7 @@ void SetDeviceInfoString2 ( HWND hDlg )
 
                 for (UInt32 k = 0; k < ioPorts->count; k++) {
 				    char buffer [50];
-				    sprintf ( buffer, "Port %0x%2x: 0x%.2x", k, ioPorts->port[k].value );
+				    sprintf ( buffer, "Port %0X%2X: 0x%.2x", k, ioPorts->port[k].value );
 
 				    HTREEITEM nodeMemorySize = addChild ( Tree, nodeRegsItem, buffer, 0 );
                 }
@@ -216,6 +216,28 @@ void SetDeviceStatus(HWND hDlg)
     SetWindowText(GetDlgItem(hDlg, IDC_APEARANCETHEMETEXT), statusString.c_str());
 }
 
+static void SizeDialogItems(HWND hDlg)
+{
+    RECT r;
+    int height;
+    int width;
+    HWND hwnd;
+
+    GetClientRect(hDlg, &r);
+    
+    height = r.bottom - r.top;
+    width  = r.right - r.left;
+
+    hwnd = GetDlgItem(hDlg, IDC_DEVICETREE);
+    SetWindowPos(hwnd, NULL, 0, 32, width, height - 32, SWP_NOZORDER);
+
+    hwnd = GetDlgItem(hDlg, IDC_APEARANCETHEMETEXT);
+    SetWindowPos(hwnd, NULL, width - 100, 7, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+    hwnd = GetDlgItem(hDlg, ID_REFRESH);
+    SetWindowPos(hwnd, NULL, 10, 5, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
 static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
@@ -235,6 +257,10 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
         return 0;
 
+    case WM_SIZE:
+        SizeDialogItems(hDlg);
+        return TRUE;
+
     case WM_CLOSE:
         deviceViewerHwnd = NULL;
         EndDialog(hDlg, TRUE);
@@ -246,6 +272,7 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		SetDeviceInfoString2 ( hDlg );
         //SetDeviceInfoString(hDlg);
         SetDeviceStatus(hDlg);
+        SizeDialogItems(hDlg);
         ShowWindow(hDlg, SW_SHOW);
         return FALSE;
     }
