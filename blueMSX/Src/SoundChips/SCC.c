@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-02 08:32:51 $
+** $Date: 2005-02-06 09:44:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -465,6 +465,7 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
 }
 
 
+#if 0
 static Int32 filter4(Int32 ch, Int32 input) {
     static Int32 x0[5], x1[5], x2[5];
     static Int32 y0[5], y1[5], y2[5];
@@ -478,6 +479,58 @@ static Int32 filter4(Int32 ch, Int32 input) {
     y0[ch] = (4 * x0[ch] + 6 * x1[ch] + 3 * x2[ch] - 3 * y1[ch] - 5 * y2[ch]) / 10;
 	return y0[ch];
 }
+#else
+static Int32 filter4(Int32 ch, Int32 input) {
+    static Int32 x0[5], x1[5], x2[5], x3[5], x4[5], x5[5], x6[5], x7[5], x8[5];
+    static Int32 y0[5], y1[5], y2[5];
+
+    x8[ch] = x7[ch];
+    x7[ch] = x6[ch];
+    x6[ch] = x5[ch];
+    x5[ch] = x4[ch];
+    x4[ch] = x3[ch];
+    x3[ch] = x2[ch];
+    x2[ch] = x1[ch];
+	x1[ch] = x0[ch];
+	x0[ch] = input;
+
+	y2[ch] = y1[ch];
+	y1[ch] = y0[ch];
+#if 0
+    y0[ch] = (1  * (x0[ch] + x8[ch]) + 
+              8  * (x1[ch] + x7[ch]) + 
+              28 * (x2[ch] + x6[ch]) + 
+              56 * (x3[ch] + x5[ch]) + 
+              70 *  x4[ch]) / (2 * (1 + 8 + 28 + 56) + 70);
+#elif 1
+    y0[ch] = (1  * (x0[ch] + x8[ch]) + 
+              7  * (x1[ch] + x7[ch]) + 
+              25 * (x2[ch] + x6[ch]) + 
+              67 * (x3[ch] + x5[ch]) + 
+              120 *  x4[ch]) / (2 * (1 + 7 + 25 + 67) + 120);
+#elif 0
+    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
+              1  * (x1[ch] + x7[ch]) + 
+              6 * (x2[ch] + x6[ch]) + 
+              15 * (x3[ch] + x5[ch]) + 
+              20 *  x4[ch]) / (2 * (1+6+15)+20);
+#elif 1
+    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
+              1  * (x1[ch] + x7[ch]) + 
+              5 * (x2[ch] + x6[ch]) + 
+              10 * (x3[ch] + x5[ch]) + 
+              0 *  x4[ch]) / (2 * (1+5+10));
+#else
+    y0[ch] = (0  * (x0[ch] + x8[ch]) + 
+              0  * (x1[ch] + x7[ch]) + 
+              1 * (x2[ch] + x6[ch]) + 
+              4 * (x3[ch] + x5[ch]) + 
+              6 *  x4[ch]) / (2 * (1+4)+6);
+#endif
+    y0[ch] = (100 * y0[ch] - 30 * y1[ch] - 50 * y2[ch]) / 100;
+	return y0[ch];
+}
+#endif
 
 static Int32* sccSync(SCC* scc, UInt32 count)
 {
@@ -492,7 +545,7 @@ static Int32* sccSync(SCC* scc, UInt32 count)
         for (channel = 0; channel < 5; channel++) {
             /* Precalculate values for sample generating loop */
             Int8*  waveData  = scc->wave[channel];
-            Int32  nvolume   = 25600 * 40 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
+            Int32  nvolume   = 15000 * 60 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
             Int32  phaseStep = scc->phaseStep[channel];
             Int32  phase     = scc->phase[channel];
             UInt32 index;
@@ -505,7 +558,7 @@ static Int32* sccSync(SCC* scc, UInt32 count)
             /* Add to output buffer using linear interpolation */
             for (index = 0; index < count; index++) {
                 phase = (phase + phaseStep) & 0xfffffff;
-                buffer[index] += filter4(channel, waveData[phase >> 23] * volume / 25600);
+                buffer[index] += filter4(channel, waveData[phase >> 23] * volume / 15000);
                 if (volume > nvolume) {
                     volume = 99 * volume / 100;
                 }
