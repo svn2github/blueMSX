@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-01-15 23:55:34 $
+** $Date: 2005-01-16 00:49:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <CommCtrl.h>
 
+#include "Win32FileTypes.h"
 #include "Win32ThemeClassic.h"
 #include "Board.h"
 #include "Led.h"
@@ -75,201 +76,6 @@
 
 void vdpSetDisplayEnable(int enable);
 
-typedef void (*KbdLockFun)(); 
-
-KbdLockFun kbdLockEnable = NULL;
-KbdLockFun kbdLockDisable = NULL;
-
-static Properties* pProperties;
-
-typedef struct {
-    HWND emuHwnd;
-    HWND hwnd;
-    HRGN hrgn;
-    int      rgnSize;
-    RGNDATA* rgnData;
-    int      rgnSizeOrig;
-    RGNDATA* rgnDataOrig;
-    int      rgnEnable;
-    HMENU hMenu;
-    int showMenu;
-    int trackMenu;
-    int showDialog;
-    BITMAPINFO bmInfo;
-    HWND dskWnd;
-    
-    //
-    void* bmBitsGDI;
-    int frameCount;
-    int framesPerSecond;
-    char pCurDir[MAX_PATH];
-    Video* pVideo;
-    int minimized;
-    Mixer* mixer;
-    int enteringFullscreen;
-    int evenOdd;
-    int interlace;
-    Shortcuts* shortcuts;
-    DWORD buttonState;
-    int normalViedoSize;
-
-    HANDLE ddrawEvent;
-    HANDLE ddrawAckEvent;
-
-    HBITMAP hBitmap;
-    ThemePage* themePageActive;
-    ThemeCollection** themeList;
-    int themeIndex;
-    int X;
-    int Y;
-} WinState;
-
-void  PatchDiskSetBusy(int driveId, int busy);
-
-
-#define WM_UPDATE            (WM_USER + 1245)
-#define WM_SHOWDSKWIN        (WM_USER + 1248)
-#define WM_LAUNCHFILE        (WM_USER + 1249)
-
-#define TIMER_STATUSBAR_UPDATE              10
-#define TIMER_POLL_INPUT                    11
-#define TIMER_POLL_FRAMECOUNT               12
-#define TIMER_SCREENUPDATE                  13
-#define TIMER_SCREENSHOT                    14
-#define TIMER_SCREENSHOT_UNFILTERED_LARGE   15
-#define TIMER_SCREENSHOT_UNFILTERED_SMALL   16
-#define TIMER_THEME                         17
-#define TIMER_MENUUPDATE                    18
-#define TIMER_CLIP_REGION                   19
-#define TIMER_DSKDIALOGSHOW                 20
-
-#define WIDTH  320
-#define HEIGHT 240
-
-#define LAUNCH_TEMP_FILE "launch.tmp"
-
-static WinState st;
-
-
-static int getZoom() {
-    switch (pProperties->video.size) {
-    case P_VIDEO_SIZEX1:
-        return 1;
-    case P_VIDEO_SIZEX2:
-        return 2;
-    case P_VIDEO_SIZEFULLSCREEN:
-        switch (pProperties->video.fullRes) {
-        case P_VIDEO_FRES320X240_16:
-        case P_VIDEO_FRES320X240_32:
-            return 1;
-        case P_VIDEO_FRES640X480_16:
-        case P_VIDEO_FRES640X480_32:
-            return 2;
-        }
-    }
-    return 1;
-}
-
-
-static void emuWindowDraw()
-{         
-    if (!st.enteringFullscreen && 
-        (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
-        pProperties->video.driver == P_VIDEO_DRVDIRECTX))
-    {
-        DirectXUpdateSurface(st.pVideo, emulatorGetFrameBuffer(), WIDTH, HEIGHT, emulatorGetScrLineWidth(), 
-                             st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
-                             0, 0, getZoom(), 
-                             pProperties->video.horizontalStretch, pProperties->video.verticalStretch, 
-                             st.evenOdd, st.interlace);
-        st.frameCount++;
-    }
-}
-
-static BOOL registerFileType(char* extension, char* appName, char* description, int iconIndex) {
-    char path[MAX_PATH];
-    char fileName[MAX_PATH];
-    char buffer[MAX_PATH + 32];
-    HKEY hKey;
-    DWORD exist;
-    DWORD rv;
-
-    GetModuleFileName(GetModuleHandle(NULL), fileName, MAX_PATH);
-
-    rv = RegCreateKeyEx(HKEY_CLASSES_ROOT, appName, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    rv = RegSetValueEx(hKey, "", 0, REG_SZ, description, strlen(description) + 1);
-    RegCloseKey(hKey);
-
-    rv = RegCreateKeyEx(HKEY_CLASSES_ROOT, extension, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    rv = RegSetValueEx(hKey, "", 0, REG_SZ, appName, strlen(appName) + 1);
-    RegCloseKey(hKey);
-
-    sprintf(buffer, "%s /onearg %%1", fileName);
-    sprintf(path, "%s\\Shell\\Open\\command", appName);
-    rv = RegCreateKeyEx(HKEY_CLASSES_ROOT, path, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    rv = RegSetValueEx(hKey, "", 0, REG_SZ, buffer, strlen(buffer) + 1);
-    RegCloseKey(hKey);
-
-    sprintf(path, "%s\\DefaultIcon", appName);
-    sprintf(buffer, "%s,%d", fileName, iconIndex);
-    rv = RegCreateKeyEx(HKEY_CLASSES_ROOT, path, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    rv = RegSetValueEx(hKey, "", 0, REG_SZ, buffer, strlen(buffer) + 1);
-    RegCloseKey(hKey);
-
-    return TRUE;
-}
-
-static BOOL unregisterFileType(char* extension, char* appName, char* description, int iconIndex) {
-    char path[MAX_PATH];
-    HKEY hKey;
-    DWORD rv;
-
-    rv = RegOpenKeyEx(HKEY_CLASSES_ROOT, extension, 0, KEY_ALL_ACCESS, &hKey);
-    if (rv == ERROR_SUCCESS) {
-        char buffer[MAX_PATH + 32];
-        UInt32 length;
-        UInt32 type;
-        rv = RegQueryValueEx(hKey, "", 0, &type, buffer, &length);
-        RegCloseKey(hKey);
-        if (type == REG_SZ) {
-            if (strcmp(buffer, appName) == 0) {
-                RegDeleteKey(HKEY_CLASSES_ROOT, extension);
-            }
-
-            sprintf(path, "%s\\DefaultIcon", appName);
-            rv = RegOpenKeyEx(HKEY_CLASSES_ROOT, path, 0, KEY_ALL_ACCESS, &hKey);
-            if (rv == ERROR_SUCCESS) {
-                RegCloseKey(hKey);
-                RegDeleteKey(HKEY_CLASSES_ROOT, path);
-            }
-        }
-    }
-
-    return TRUE;
-}
-
-static void registerFileTypes() {
-    registerFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
-    registerFileType(".di1", "blueMSXdsk", "DSK Image", 1);
-    registerFileType(".di2", "blueMSXdsk", "DSK Image", 1);
-    registerFileType(".rom", "blueMSXrom", "ROM Image", 2);
-    registerFileType(".mx1", "blueMSXrom", "ROM Image", 2);
-    registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
-    registerFileType(".cas", "blueMSXcas", "CAS Image", 3);
-    registerFileType(".sta", "blueMSXsta", "blueMSX State", 4);
-}
-
-static void unregisterFileTypes() {
-    unregisterFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
-    unregisterFileType(".di1", "blueMSXdsk", "DSK Image", 1);
-    unregisterFileType(".di2", "blueMSXdsk", "DSK Image", 1);
-    unregisterFileType(".rom", "blueMSXrom", "ROM Image", 2);
-    unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
-    unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
-    unregisterFileType(".cas", "blueMSXcas", "CAS Image", 3);
-    unregisterFileType(".sta", "blueMSXsta", "blueMSX State", 4);
-}
-
 void centerDialog(HWND hwnd, int noActivate) {
     RECT r1;
     RECT r2;
@@ -284,12 +90,10 @@ void centerDialog(HWND hwnd, int noActivate) {
     SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | (noActivate ? SWP_NOACTIVATE : 0));
 }
 
-HWND getMainHwnd()
+void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize) 
 {
-    return st.hwnd;
-}
+    Properties* pProperties = propGetGlobalProperties();
 
-void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize) {
     int screenWidth  = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     RECT r;
@@ -348,6 +152,7 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize) {
 
 void saveDialogPos(HWND hwnd, int dialogID)
 {
+    Properties* pProperties = propGetGlobalProperties();
     RECT r;
 
     if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
@@ -360,10 +165,877 @@ void saveDialogPos(HWND hwnd, int dialogID)
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
-void updateMenu(int show) {
+static RomType romTypeList[] = {
+    ROM_ASCII8,
+    ROM_ASCII8SRAM,
+    ROM_ASCII16,
+    ROM_ASCII16SRAM,
+    ROM_KONAMI4,
+    ROM_KONAMI5,
+    ROM_PLAIN,
+    ROM_BASIC,
+    ROM_0x4000,
+    ROM_KOEI,
+    ROM_RTYPE,
+    ROM_CROSSBLAIM,
+    ROM_HARRYFOX,
+    ROM_LODERUNNER,
+    ROM_HALNOTE,
+	ROM_KONAMISYNTH,
+    ROM_MAJUTSUSHI,
+    ROM_SCC,
+    ROM_SCCPLUS,
+    ROM_KONAMI4NF, 
+    ROM_ASCII16NF,
+    ROM_GAMEMASTER2,
+    ROM_KOREAN80,
+    ROM_KOREAN90,
+    ROM_KOREAN126,
+    ROM_HOLYQURAN,
+    ROM_FMPAC,
+    ROM_MSXAUDIO,
+    ROM_MOONSOUND,
+    ROM_DISKPATCH,
+    ROM_CASPATCH,
+    ROM_TC8566AF,
+    ROM_MICROSOL,
+    ROM_NATIONALFDC,
+    ROM_PHILIPSFDC,
+    ROM_SVI738FDC,
+    ROM_KANJI,
+    ROM_KANJI12,
+    ROM_JISYO,
+    ROM_BUNSETU,
+    ROM_MSXDOS2,
+    ROM_NATIONAL,
+    ROM_PANASONIC16,
+    ROM_PANASONIC32,
+    ROM_UNKNOWN,
+};
+
+static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
+    char fileName[MAX_PATH];
+    int size;
+    char* buf = NULL;
+    int index;
+
+    index = SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETCURSEL, 0, 0);
+    SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETTEXT, index, (LPARAM)fileName);
+    
+    if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2")) {
+        buf = romLoad(dlgInfo->zipFileName, fileName, &size);
+    }
+
+    if (buf != NULL) {
+        RomType romType = romMapperGuessRom(buf, size, 0, NULL);
+        int idx = 0;
+
+        while (romTypeList[idx] != romType) {
+            idx++;
+        }
+
+        SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_SETCURSEL, idx, 0);
+
+        free(buf);
+
+        dlgInfo->openRomType = romType;
+
+        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 1);
+        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 1);
+    }    
+    else {
+        dlgInfo->openRomType = ROM_UNKNOWN;
+        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 0);
+        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 0);
+        SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_SETCURSEL, -1, 0);
+    }
+}
+
+static BOOL CALLBACK dskZipDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    static ZipFileDlgInfo* dlgInfo;
+
+    switch (iMsg) {
+    case WM_DESTROY:
+        saveDialogPos(hDlg, DLG_ID_ZIPOPEN);
+        return 0;
+
+    case WM_INITDIALOG:
+        {
+            char* fileList;
+            int sel = 0;
+            int i;
+            
+            updateDialogPos(hDlg, DLG_ID_ZIPOPEN, 0, 1);
+
+            dlgInfo = (ZipFileDlgInfo*)lParam;
+
+            dlgInfo->openRomType = ROM_UNKNOWN;
+
+            SetWindowText(hDlg, dlgInfo->title);
+
+            SendMessage(GetDlgItem(hDlg, IDC_DSKLOADTXT), WM_SETTEXT, 0, (LPARAM)dlgInfo->description);
+            SetWindowText(GetDlgItem(hDlg, IDC_DSKRESET), langDlgZipReset());
+            SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
+            SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
+            SetWindowText(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), langDlgRomType());
+
+            fileList = dlgInfo->fileList;
+
+            for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
+                SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
+                SendDlgItemMessage(hDlg, IDC_ROMTYPE, CB_SETCURSEL, i, 0);
+            }
+            SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(ROM_UNKNOWN));
+            EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 0);
+
+            if (dlgInfo->selectFileIndex != -1) {
+                sel = dlgInfo->selectFileIndex;
+            }
+
+            for (i = 0; i < dlgInfo->fileListCount; i++) {
+                if (dlgInfo->selectFileIndex != -1 && 0 == strcmp(dlgInfo->selectFile, fileList)) {
+                    sel = i;
+                }
+                SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_ADDSTRING, 0, (LPARAM)fileList);
+                fileList += strlen(fileList) + 1;
+            }
+
+            if (dlgInfo->autoReset == -1) {
+                ShowWindow(GetDlgItem(hDlg, IDC_DSKRESET), SW_HIDE);
+            }
+            else {
+                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, dlgInfo->autoReset ? BST_CHECKED : BST_UNCHECKED, 0);
+            }
+            SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_SETCURSEL, sel, 0);
+        
+            updateRomTypeList(hDlg, dlgInfo);
+
+            return FALSE;
+        }
+
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+        case IDC_OPEN_ROMTYPE:
+            if (HIWORD(wParam) == 1 || HIWORD(wParam) == 2) {
+                int idx = SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_GETCURSEL, 0, 0);
+
+                dlgInfo->openRomType = idx == CB_ERR ? -1 : romTypeList[idx];
+            }
+            return 0;
+        case IDC_DSKRESET:
+            if (dlgInfo->autoReset == 1) {
+                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, BST_UNCHECKED, 0);
+                dlgInfo->autoReset = 0;
+            }
+            else if (dlgInfo->autoReset == 0) {
+                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, BST_CHECKED, 1);
+                dlgInfo->autoReset = 1;
+            }
+            break;
+        case IDC_DSKLIST:
+            switch (HIWORD(wParam)) {
+            case LBN_SELCHANGE:
+                updateRomTypeList(hDlg, dlgInfo);
+                break;
+            }
+
+            if (HIWORD(wParam) != LBN_DBLCLK) {
+                break;
+            }
+            // else, fall through
+        case IDOK:
+            dlgInfo->selectFileIndex = SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_GETCURSEL, 0, 0);
+            SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_GETTEXT, dlgInfo->selectFileIndex, (LPARAM)dlgInfo->selectFile);
+            EndDialog(hDlg, TRUE);
+            return TRUE;
+        case IDCANCEL:
+            dlgInfo->selectFileIndex = -1;
+            dlgInfo->selectFile[0] = '\0';
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+        }
+        break;
+    case WM_CLOSE:
+        dlgInfo->selectFileIndex = -1;
+        dlgInfo->selectFile[0] = '\0';
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////
+
+static char* convertTapePos(int tapePos)
+{
+    static char str[64];
+    int pos = tapePos / 128;
+
+    _stprintf(str, "%dh %02dm %02ds", pos / 3600, (pos / 60) % 60, pos % 60);
+    return str;
+}
+
+static void tapeDlgUpdate(HWND hwnd, TapeContent* tc, int tcCount, int showCustomFiles) 
+{
+    static char* typeNames[] = { "ASCII", "BIN", "BAS", "Custom" };
+    int curPos;
+    int i;
+    int idx = 0;
+
+    ListView_DeleteAllItems(hwnd);
+
+    curPos = tapeGetCurrentPos();
+
+    for (i = 0; i < tcCount; i++) {
+        char buffer[64] = {0};
+        LV_ITEM lvi = {0};
+
+        if (showCustomFiles || tc[i].type != TAPE_CUSTOM) {
+            lvi.mask       = LVIF_TEXT;
+            lvi.iItem      = idx;
+            lvi.pszText    = buffer;
+	        lvi.cchTextMax = 64;
+            
+            sprintf(buffer, convertTapePos(tc[i].pos));
+            ListView_InsertItem(hwnd, &lvi);
+            lvi.iSubItem++;
+            
+            sprintf(buffer, typeNames[tc[i].type]);
+            ListView_SetItem(hwnd, &lvi);
+            lvi.iSubItem++;
+            
+            sprintf(buffer, tc[i].fileName);
+            ListView_SetItem(hwnd, &lvi);
+
+            if (tc[i].pos <= curPos) {
+                SetFocus(hwnd);
+                ListView_SetItemState(hwnd, idx, LVIS_SELECTED, LVIS_SELECTED);
+            }
+            idx++;
+        }
+    }
+}
+
+
+static BOOL CALLBACK tapePosDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static int currIndex;
+    static HWND hwnd;
+    static TapeContent* tc;
+    static int* showCustomFiles;
+    static int tcCount;
+
+    switch (iMsg) {
+    case WM_DESTROY:
+        saveDialogPos(hDlg, DLG_ID_TAPEPOS);
+        return 0;
+
+    case WM_INITDIALOG:
+        {
+            char buffer[32];
+            LV_COLUMN lvc = {0};
+
+            showCustomFiles = (int*)lParam;
+         
+            updateDialogPos(hDlg, DLG_ID_TAPEPOS, 0, 1);
+
+            currIndex = -1;
+
+            SetWindowText(hDlg, langDlgTapeTitle());
+
+            SendMessage(GetDlgItem(hDlg, IDC_SETTAPEPOSTXT), WM_SETTEXT, 0, (LPARAM)langDlgTapeSetPosText());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), langDlgTapeCustom());
+            SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
+            SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
+
+            SendMessage(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), BM_SETCHECK, *showCustomFiles ? BST_CHECKED : BST_UNCHECKED, 0);
+
+            tc = tapeGetContent(&tcCount);
+    
+            hwnd = GetDlgItem(hDlg, IDC_SETTAPELIST);
+
+            EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
+
+            ListView_SetExtendedListViewStyle(hwnd, LVS_EX_FULLROWSELECT);
+
+            lvc.mask       = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            lvc.fmt        = LVCFMT_LEFT;
+            lvc.cx         = 100;
+            lvc.pszText    = buffer;
+	        lvc.cchTextMax = 32;
+
+            sprintf(buffer, langDlgTabPosition());
+            lvc.cx = 95;
+            ListView_InsertColumn(hwnd, 0, &lvc);
+            sprintf(buffer, langDlgTabType());
+            lvc.cx = 65;
+            ListView_InsertColumn(hwnd, 1, &lvc);
+            sprintf(buffer, langDlgTabFilename());
+            lvc.cx = 105;
+            ListView_InsertColumn(hwnd, 2, &lvc);
+        }
+
+        tapeDlgUpdate(hwnd, tc, tcCount, *showCustomFiles);
+        return FALSE;
+
+    case WM_NOTIFY:
+        switch (wParam) {
+        case IDC_SETTAPELIST:
+            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMCHANGED) {
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+
+                    if (currIndex == -1 && index != -1) {
+                        EnableWindow(GetDlgItem(hDlg, IDOK), TRUE);
+                    }
+                    currIndex = index;
+                }
+                else {
+                    if (currIndex != -1) {
+                        EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
+                    }
+                    currIndex = -1;
+                }
+            }
+            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMACTIVATE) {
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+                    SendMessage(hDlg, WM_COMMAND, IDOK, 0);
+                }
+                return TRUE;
+            }
+        }
+        break;
+
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+        case IDC_SETTAPECUSTOM:
+            {
+                *showCustomFiles = BST_CHECKED == SendMessage(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), BM_GETCHECK, 0, 0);
+                tapeDlgUpdate(GetDlgItem(hDlg, IDC_SETTAPELIST), tc, tcCount, *showCustomFiles);
+            }
+            return TRUE;
+
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+
+        case IDOK:
+            {
+                int index = 0;
+                int i;
+
+                if (ListView_GetSelectedCount(hwnd)) {
+                    currIndex = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+                }
+
+                for (i = 0; i < tcCount; i++) {
+                    if (*showCustomFiles || tc[i].type != TAPE_CUSTOM) {
+                        if (currIndex == index) {
+                            tapeSetCurrentPos(tc[i].pos);
+                        }
+                        index++;
+                    }
+                }
+             
+                EndDialog(hDlg, TRUE);
+            }
+            return TRUE;
+        }
+        return FALSE;
+
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void setTapePosition(HWND parent, Properties* pProperties) {
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorSuspend();
+    }
+    else {
+        tapeSetReadOnly(1);
+        boardChangeCassette(strlen(pProperties->cassette.tape) ? pProperties->cassette.tape : NULL, 
+                            strlen(pProperties->cassette.tapeZip) ? pProperties->cassette.tapeZip : NULL);
+    }
+
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_SETTAPEPOS), parent, tapePosDlg, (LPARAM)&pProperties->cassette.showCustomFiles);
+
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorResume();
+    }
+    else {
+        boardChangeCassette(NULL, NULL);
+        tapeSetReadOnly(pProperties->cassette.readOnly);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+#define hotkeyEq(hotkey1, hotkey2) (*(DWORD*)&hotkey1 == *(DWORD*)&hotkey2)
+
+static int maxSpeedIsSet = 0;
+
+static void checkKeyDown(Shortcuts* s, ShotcutHotkey key) {
+    if (hotkeyEq(key, s->emuSpeedFull)) {
+        actionMaxSpeedSet();
+        maxSpeedIsSet = 1;
+
+    }
+}
+
+static void checkKeyUp(Shortcuts* s, ShotcutHotkey key) 
+{
+    if (maxSpeedIsSet) {
+        actionMaxSpeedRelease();
+        maxSpeedIsSet = 0;
+    }
+
+    if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();
+    if (hotkeyEq(key, s->fdcTiming))                    actionToggleFdcTiming();
+    if (hotkeyEq(key, s->msxAudioSwitch))               actionToggleMsxAudioSwitch();
+    if (hotkeyEq(key, s->frontSwitch))                  actionToggleFrontSwitch();
+    if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();
+    if (hotkeyEq(key, s->quit))                         actionQuit();
+    if (hotkeyEq(key, s->wavCapture))                   actionToggleWaveCapture();
+    if (hotkeyEq(key, s->screenCapture))                actionScreenCapture();
+    if (hotkeyEq(key, s->screenCaptureUnfilteredSmall)) actionScreenCaptureUnfilteredSmall();
+    if (hotkeyEq(key, s->screenCaptureUnfilteredLarge)) actionScreenCaptureUnfilteredLarge();
+    if (hotkeyEq(key, s->cpuStateLoad))                 actionLoadState();
+    if (hotkeyEq(key, s->cpuStateSave))                 actionSaveState();
+    if (hotkeyEq(key, s->cpuStateQuickLoad))            actionQuickLoadState();
+    if (hotkeyEq(key, s->cpuStateQuickSave))            actionQuickSaveState();
+    if (hotkeyEq(key, s->cartInsert1))                  actionCartInsert1();
+    if (hotkeyEq(key, s->cartInsert2))                  actionCartInsert2();
+    if (hotkeyEq(key, s->cartSpecialMenu1))             actionMenuSpecialCart1(-1, -1);
+    if (hotkeyEq(key, s->cartSpecialMenu2))             actionMenuSpecialCart2(-1, -1);
+    if (hotkeyEq(key, s->diskInsertA))                  actionDiskInsertA();
+    if (hotkeyEq(key, s->diskInsertB))                  actionDiskInsertB();
+    if (hotkeyEq(key, s->diskDirInsertA))               actionDiskDirInsertA();
+    if (hotkeyEq(key, s->diskDirInsertB))               actionDiskDirInsertB();
+    if (hotkeyEq(key, s->diskChangeA))                  actionDiskQuickChange();
+    if (hotkeyEq(key, s->casInsert))                    actionCasInsert();
+    if (hotkeyEq(key, s->casRewind))                    actionCasRewind();
+    if (hotkeyEq(key, s->casSetPos))                    actionCasSetPosition();
+    if (hotkeyEq(key, s->mouseLockToggle))              actionToggleMouseCapture();
+    if (hotkeyEq(key, s->emulationRunPause))            actionEmuTogglePause();
+    if (hotkeyEq(key, s->emulationStop))                actionEmuStop();
+    if (hotkeyEq(key, s->emuSpeedNormal))               actionEmuSpeedNormal();
+    if (hotkeyEq(key, s->emuSpeedInc))                  actionEmuSpeedDecrease();
+    if (hotkeyEq(key, s->emuSpeedToggle))               actionMaxSpeedToggle();
+    if (hotkeyEq(key, s->emuSpeedDec))                  actionEmuSpeedIncrease();
+    if (hotkeyEq(key, s->windowSizeSmall))              actionWindowSizeSmall();
+    if (hotkeyEq(key, s->windowSizeNormal))             actionWindowSizeNormal();
+    if (hotkeyEq(key, s->windowSizeMinimized))          actionWindowSizeMinimized();
+    if (hotkeyEq(key, s->windowSizeFullscreen))         actionWindowSizeFullscreen();
+    if (hotkeyEq(key, s->windowSizeFullscreenToggle))   actionFullscreenToggle();
+    if (hotkeyEq(key, s->resetSoft))                    actionEmuResetSoft();
+    if (hotkeyEq(key, s->resetHard))                    actionEmuResetHard();
+    if (hotkeyEq(key, s->resetClean))                   actionEmuResetClean();
+    if (hotkeyEq(key, s->volumeIncrease))               actionVolumeIncrease();
+    if (hotkeyEq(key, s->volumeDecrease))               actionVolumeDecrease();
+    if (hotkeyEq(key, s->volumeMute))                   actionMuteToggleMaster();
+    if (hotkeyEq(key, s->volumeStereo))                 actionVolumeToggleStereo();
+    if (hotkeyEq(key, s->cpuTrace))                     actionCpuTraceToggle();
+    if (hotkeyEq(key, s->themeSwitch))                  actionNextTheme();
+    if (hotkeyEq(key, s->casRemove))                    actionCasRemove();
+    if (hotkeyEq(key, s->diskRemoveA))                  actionDiskRemoveA();
+    if (hotkeyEq(key, s->diskRemoveB))                  actionDiskRemoveB();
+    if (hotkeyEq(key, s->cartRemove1))                  actionCartRemove1();
+    if (hotkeyEq(key, s->cartRemove2))                  actionCartRemove2();
+    if (hotkeyEq(key, s->cartAutoReset))                actionToggleCartAutoReset();
+    if (hotkeyEq(key, s->diskAutoResetA))               actionToggleDiskAutoResetA();
+    if (hotkeyEq(key, s->casToggleReadonly))            actionCasToggleReadonly();
+    if (hotkeyEq(key, s->casAutoRewind))                actionToggleCasAutoRewind();
+    if (hotkeyEq(key, s->casSave))                      actionCasSave();
+    if (hotkeyEq(key, s->propShowEmulation))            actionPropShowEmulation();
+    if (hotkeyEq(key, s->propShowVideo))                actionPropShowVideo();
+    if (hotkeyEq(key, s->propShowAudio))                actionPropShowAudio();
+    if (hotkeyEq(key, s->propShowControls))             actionPropShowControls();
+    if (hotkeyEq(key, s->propShowPerformance))          actionPropShowPerformance();
+    if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
+    if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
+    if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
+    if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
+    if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
+    if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
+    if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
+}
+
+static void updateVideoRender(Video* pVideo, Properties* pProperties) {
+    videoSetDeInterlace(pVideo, pProperties->video.deInterlace);
+
+    switch (pProperties->video.monType) {
+    case P_VIDEO_COLOR:
+        videoSetColorMode(pVideo, VIDEO_COLOR);
+        break;
+    case P_VIDEO_BW:
+        videoSetColorMode(pVideo, VIDEO_BLACKWHITE);
+        break;
+    case P_VIDEO_GREEN:
+        videoSetColorMode(pVideo, VIDEO_GREEN);
+        break;
+    }
+
+    switch (pProperties->video.palEmu) {
+    case P_VIDEO_PALNONE:
+        videoSetPalMode(pVideo, VIDEO_PAL_FAST);
+        break;
+    case P_VIDEO_PALMON:
+        videoSetPalMode(pVideo, VIDEO_PAL_MONITOR);
+        break;
+    case P_VIDEO_PALYC:
+        videoSetPalMode(pVideo, VIDEO_PAL_SHARP);
+        break;
+    case P_VIDEO_PALNYC:
+        videoSetPalMode(pVideo, VIDEO_PAL_SHARP_NOISE);
+        break;
+    case P_VIDEO_PALCOMP:
+        videoSetPalMode(pVideo, VIDEO_PAL_BLUR);
+        break;
+    case P_VIDEO_PALNCOMP:
+        videoSetPalMode(pVideo, VIDEO_PAL_BLUR_NOISE);
+        break;
+	case P_VIDEO_PALSCALE2X:
+		videoSetPalMode(pVideo, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(pVideo, VIDEO_PAL_HQ2X);
+		break;
+	case P_VIDEO_PAL_STRETCHED:
+		videoSetPalMode(pVideo, VIDEO_PAL_STRETCHED);
+		break;
+    }
+
+    videoSetFrameSkip(pVideo, pProperties->video.frameSkip);
+}
+
+void updateJoystick(Properties* pProperties) {    
+    switch (pProperties->joy1.type) {
+    case P_JOY_NONE:
+    case P_JOY_MOUSE:
+        JoystickSetType(0, JOY_NONE, 0);
+        break;
+    case P_JOY_NUMPAD:
+        JoystickSetType(0, JOY_NUMPAD, 0);
+        break;
+    case P_JOY_KEYSET:
+        JoystickSetType(0, JOY_KEYSET, 0);
+        break;
+    case P_JOY_HW:
+        JoystickSetType(0, JOY_HW, pProperties->joy1.hwType);
+        JoystickSetHwButtons(0, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
+        break;
+    }
+
+    switchSetRensha(pProperties->joy1.autofire);
+
+    switch (pProperties->joy2.type) {
+    case P_JOY_NONE:
+    case P_JOY_MOUSE:
+        JoystickSetType(1, JOY_NONE, 0);
+        break;
+    case P_JOY_NUMPAD:
+        JoystickSetType(1, JOY_NUMPAD, 0);
+        break;
+    case P_JOY_KEYSET:
+        JoystickSetType(1, JOY_KEYSET, 1);
+        break;
+    case P_JOY_HW:
+        JoystickSetType(1, JOY_HW, pProperties->joy2.hwType);
+        JoystickSetHwButtons(1, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
+        break;
+    }
+
+    JoystickSetKeyStateKey(1, JOY_UP,    pProperties->joy1.keyUp);
+    JoystickSetKeyStateKey(1, JOY_DOWN,  pProperties->joy1.keyDown);
+    JoystickSetKeyStateKey(1, JOY_LEFT,  pProperties->joy1.keyLeft);
+    JoystickSetKeyStateKey(1, JOY_RIGHT, pProperties->joy1.keyRight);
+    JoystickSetKeyStateKey(1, JOY_BT1,   pProperties->joy1.button1);
+    JoystickSetKeyStateKey(1, JOY_BT2,   pProperties->joy1.button2);
+
+    JoystickSetKeyStateKey(2, JOY_UP,    pProperties->joy2.keyUp);
+    JoystickSetKeyStateKey(2, JOY_DOWN,  pProperties->joy2.keyDown);
+    JoystickSetKeyStateKey(2, JOY_LEFT,  pProperties->joy2.keyLeft);
+    JoystickSetKeyStateKey(2, JOY_RIGHT, pProperties->joy2.keyRight);
+    JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
+    JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
+#define WM_UPDATE            (WM_USER + 1245)
+#define WM_SHOWDSKWIN        (WM_USER + 1248)
+#define WM_LAUNCHFILE        (WM_USER + 1249)
+
+#define TIMER_STATUSBAR_UPDATE              10
+#define TIMER_POLL_INPUT                    11
+#define TIMER_POLL_FRAMECOUNT               12
+#define TIMER_SCREENUPDATE                  13
+#define TIMER_SCREENSHOT                    14
+#define TIMER_SCREENSHOT_UNFILTERED_LARGE   15
+#define TIMER_SCREENSHOT_UNFILTERED_SMALL   16
+#define TIMER_THEME                         17
+#define TIMER_MENUUPDATE                    18
+#define TIMER_CLIP_REGION                   19
+#define TIMER_DSKDIALOGSHOW                 20
+
+void  PatchDiskSetBusy(int driveId, int busy);
+
+static void updateMenu(int show);
+
+typedef void (*KbdLockFun)(); 
+
+KbdLockFun kbdLockEnable = NULL;
+KbdLockFun kbdLockDisable = NULL;
+
+static Properties* pProperties;
+
+typedef struct {
+    HWND emuHwnd;
+    HWND hwnd;
+    HRGN hrgn;
+    int      rgnSize;
+    RGNDATA* rgnData;
+    int      rgnSizeOrig;
+    RGNDATA* rgnDataOrig;
+    int      rgnEnable;
+    HMENU hMenu;
+    int showMenu;
+    int trackMenu;
+    int showDialog;
+    BITMAPINFO bmInfo;
+    HWND dskWnd;
+    
+    //
+    void* bmBitsGDI;
+    int frameCount;
+    int framesPerSecond;
+    char pCurDir[MAX_PATH];
+    Video* pVideo;
+    int minimized;
+    Mixer* mixer;
+    int enteringFullscreen;
+    int evenOdd;
+    int interlace;
+    Shortcuts* shortcuts;
+    DWORD buttonState;
+    int normalViedoSize;
+
+    HANDLE ddrawEvent;
+    HANDLE ddrawAckEvent;
+
+    HBITMAP hBitmap;
+    ThemePage* themePageActive;
+    ThemeCollection** themeList;
+    int themeIndex;
+    int X;
+    int Y;
+} WinState;
+
+
+
+#define WIDTH  320
+#define HEIGHT 240
+
+#define LAUNCH_TEMP_FILE "launch.tmp"
+
+static WinState st;
+
+
+static void registerFileTypes() {
+    registerFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".di1", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".di2", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".rom", "blueMSXrom", "ROM Image", 2);
+    registerFileType(".mx1", "blueMSXrom", "ROM Image", 2);
+    registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
+    registerFileType(".cas", "blueMSXcas", "CAS Image", 3);
+    registerFileType(".sta", "blueMSXsta", "blueMSX State", 4);
+}
+
+static void unregisterFileTypes() {
+    unregisterFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".di1", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".di2", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".rom", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".cas", "blueMSXcas", "CAS Image", 3);
+    unregisterFileType(".sta", "blueMSXsta", "blueMSX State", 4);
+}
+
+HWND getMainHwnd()
+{
+    return st.hwnd;
+}
+
+void archShowPropertiesDialog(PropPage  startPane) {
+    Properties oldProp = *pProperties;
+    int restart = 0;
+    int changed;
+    int i;
+
+    emulatorSetFrequency(50, NULL);
+    enterDialogShow();
+    propUpdateJoyinfo(pProperties);
+    changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);
+    exitDialogShow();
+    emulatorSetFrequency(pProperties->emulation.speed, NULL);
+    if (!changed) {
+        return;
+    }
+
+    /* Save properties */
+    propSave(pProperties);
+
+    /* Always update video render */
+    updateVideoRender(st.pVideo, pProperties);
+
+    /* Always update joystick controls */
+    updateJoystick(pProperties);
+
+    /* Update window size only if changed */
+    if (pProperties->video.driver != oldProp.video.driver ||
+        pProperties->video.fullRes != oldProp.video.fullRes ||
+        pProperties->video.size != oldProp.video.size ||
+        pProperties->video.horizontalStretch != oldProp.video.horizontalStretch ||
+        pProperties->video.verticalStretch != oldProp.video.verticalStretch ||
+        strcmp(pProperties->settings.themeName, oldProp.settings.themeName))
+    {
+        archUpdateWindow();
+    }
+
+    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
+    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
+
+    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
+
+    /* Must restart MSX if Machine configuration changed */
+    if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
+        oldProp.emulation.syncMethod != pProperties->emulation.syncMethod ||
+        oldProp.emulation.vdpSyncMode != pProperties->emulation.vdpSyncMode)
+    {
+        restart = 1;
+    }
+
+    /* Update switches */
+    switchSetAudio(pProperties->emulation.audioSwitch);
+    switchSetFront(pProperties->emulation.frontSwitch);
+    switchSetPause(pProperties->emulation.pauseSwitch);
+    emulatorSetFrequency(pProperties->emulation.speed, NULL);
+
+    /* Update sound only if changed, Must restart if changed */
+    if (oldProp.sound.bufSize              != pProperties->sound.bufSize ||
+        oldProp.sound.driver               != pProperties->sound.driver  ||
+        oldProp.sound.frequency            != pProperties->sound.frequency ||
+        oldProp.sound.chip.enableY8950     != pProperties->sound.chip.enableY8950 ||
+        oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
+        oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound ||
+        oldProp.sound.stereo               != pProperties->sound.stereo) 
+    {
+        soundDriverConfig(st.hwnd, pProperties->sound.driver);
+        emulatorRestartSound();
+    }
+
+    if (oldProp.sound.chip.enableY8950     != pProperties->sound.chip.enableY8950 ||
+        oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
+        oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound)
+    {
+        boardSetY8950Enable(pProperties->sound.chip.enableY8950);
+        boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
+        boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
+        restart = 1;
+    }
+
+    for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
+        mixerSetChannelTypeVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
+        mixerSetChannelTypePan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
+        mixerEnableChannelType(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
+    }
+    
+    if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
+        registerFileTypes();
+    }
+    else {
+        unregisterFileTypes();
+    }
+    
+    if (pProperties->emulation.disableWinKeys && !oldProp.emulation.disableWinKeys) {
+        if (kbdLockEnable && emulatorGetState() == EMU_RUNNING && pProperties->emulation.disableWinKeys) {
+            kbdLockEnable();
+        }
+        else if (kbdLockDisable) {
+            kbdLockDisable();
+        }
+    }
+    
+    if (pProperties->emulation.priorityBoost && !oldProp.emulation.priorityBoost) {
+        if (pProperties->emulation.priorityBoost) {
+            SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+        }
+        else {
+            SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+        }
+    }
+
+    mixerSetMasterVolume(st.mixer, pProperties->sound.masterVolume);
+    mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
+
+    if (restart) {
+        emulatorRestart();
+    }
+
+    if (oldProp.settings.disableScreensaver != pProperties->settings.disableScreensaver) {
+        POINT pt;
+        SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, !pProperties->settings.disableScreensaver, 0, SPIF_SENDWININICHANGE); 
+        GetCursorPos(&pt);
+        SetCursorPos(pt.x + 1, pt.y);
+    }
+
+    updateMenu(0);
+
+    InvalidateRect(st.hwnd, NULL, TRUE);
+}
+
+
+void enterDialogShow() {
+    if (pProperties->video.driver != P_VIDEO_DRVGDI) {
+        emulatorSuspend();
+        DirectXSetGDISurface();
+        emulatorResume();
+    }
+    st.showDialog++;
+    if (st.showDialog == 1) {
+        emuEnableSynchronousUpdate(0);
+        SetTimer(st.hwnd, TIMER_SCREENUPDATE, 100, NULL);
+    }
+}
+
+void exitDialogShow() {
+    st.showDialog--;
+    if (st.showDialog == 0) {
+        emuEnableSynchronousUpdate(1);
+        KillTimer(st.hwnd, TIMER_SCREENUPDATE);
+        SetEvent(st.ddrawAckEvent);
+    }
+}
+
+static void updateMenu(int show) {
     int doDelay = show;
     int enableSpecial = 1;
 
@@ -400,29 +1072,7 @@ void updateMenu(int show) {
     }
 }
 
-void enterDialogShow() {
-    if (pProperties->video.driver != P_VIDEO_DRVGDI) {
-        emulatorSuspend();
-        DirectXSetGDISurface();
-        emulatorResume();
-    }
-    st.showDialog++;
-    if (st.showDialog == 1) {
-        emuEnableSynchronousUpdate(0);
-        SetTimer(st.hwnd, TIMER_SCREENUPDATE, 100, NULL);
-    }
-}
-
-void exitDialogShow() {
-    st.showDialog--;
-    if (st.showDialog == 0) {
-        emuEnableSynchronousUpdate(1);
-        KillTimer(st.hwnd, TIMER_SCREENUPDATE);
-        SetEvent(st.ddrawAckEvent);
-    }
-}
-
-void setClipRegion(int enable) {
+static void setClipRegion(int enable) {
     if (st.rgnEnable == enable) {
         return;
     }
@@ -460,6 +1110,26 @@ static void checkClipRegion() {
         }
     }
 }
+
+static int getZoom() {
+    switch (pProperties->video.size) {
+    case P_VIDEO_SIZEX1:
+        return 1;
+    case P_VIDEO_SIZEX2:
+        return 2;
+    case P_VIDEO_SIZEFULLSCREEN:
+        switch (pProperties->video.fullRes) {
+        case P_VIDEO_FRES320X240_16:
+        case P_VIDEO_FRES320X240_32:
+            return 1;
+        case P_VIDEO_FRES640X480_16:
+        case P_VIDEO_FRES640X480_32:
+            return 2;
+        }
+    }
+    return 1;
+}
+
 
 void themeSet(char* themeName, int forceMatch) {
     int x  = 0;
@@ -683,744 +1353,22 @@ void archUpdateWindow() {
     }
 }
 
-void updateVideoRender() {
-    videoSetDeInterlace(st.pVideo, pProperties->video.deInterlace);
 
-    switch (pProperties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(st.pVideo, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(st.pVideo, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(st.pVideo, VIDEO_GREEN);
-        break;
-    }
 
-    switch (pProperties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(st.pVideo, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(st.pVideo, VIDEO_PAL_HQ2X);
-		break;
-	case P_VIDEO_PAL_STRETCHED:
-		videoSetPalMode(st.pVideo, VIDEO_PAL_STRETCHED);
-		break;
-    }
-
-    videoSetFrameSkip(st.pVideo, pProperties->video.frameSkip);
-}
-
-void updateJoystick() {    
-    switch (pProperties->joy1.type) {
-    case P_JOY_NONE:
-    case P_JOY_MOUSE:
-        JoystickSetType(0, JOY_NONE, 0);
-        break;
-    case P_JOY_NUMPAD:
-        JoystickSetType(0, JOY_NUMPAD, 0);
-        break;
-    case P_JOY_KEYSET:
-        JoystickSetType(0, JOY_KEYSET, 0);
-        break;
-    case P_JOY_HW:
-        JoystickSetType(0, JOY_HW, pProperties->joy1.hwType);
-        JoystickSetHwButtons(0, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
-        break;
-    }
-
-    switchSetRensha(pProperties->joy1.autofire);
-
-    switch (pProperties->joy2.type) {
-    case P_JOY_NONE:
-    case P_JOY_MOUSE:
-        JoystickSetType(1, JOY_NONE, 0);
-        break;
-    case P_JOY_NUMPAD:
-        JoystickSetType(1, JOY_NUMPAD, 0);
-        break;
-    case P_JOY_KEYSET:
-        JoystickSetType(1, JOY_KEYSET, 1);
-        break;
-    case P_JOY_HW:
-        JoystickSetType(1, JOY_HW, pProperties->joy2.hwType);
-        JoystickSetHwButtons(1, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
-        break;
-    }
-
-    JoystickSetKeyStateKey(1, JOY_UP,    pProperties->joy1.keyUp);
-    JoystickSetKeyStateKey(1, JOY_DOWN,  pProperties->joy1.keyDown);
-    JoystickSetKeyStateKey(1, JOY_LEFT,  pProperties->joy1.keyLeft);
-    JoystickSetKeyStateKey(1, JOY_RIGHT, pProperties->joy1.keyRight);
-    JoystickSetKeyStateKey(1, JOY_BT1,   pProperties->joy1.button1);
-    JoystickSetKeyStateKey(1, JOY_BT2,   pProperties->joy1.button2);
-
-    JoystickSetKeyStateKey(2, JOY_UP,    pProperties->joy2.keyUp);
-    JoystickSetKeyStateKey(2, JOY_DOWN,  pProperties->joy2.keyDown);
-    JoystickSetKeyStateKey(2, JOY_LEFT,  pProperties->joy2.keyLeft);
-    JoystickSetKeyStateKey(2, JOY_RIGHT, pProperties->joy2.keyRight);
-    JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
-    JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
-}
-
-void archShowPropertiesDialog(PropPage  startPane) {
-    Properties oldProp = *pProperties;
-    int restart = 0;
-    int changed;
-    int i;
-
-    emulatorSetFrequency(50, NULL);
-    enterDialogShow();
-//    inputDestroy();
-//    inputReset(st.hwnd);
-    propUpdateJoyinfo(pProperties);
-    changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);
-    exitDialogShow();
-    emulatorSetFrequency(pProperties->emulation.speed, NULL);
-    if (!changed) {
-        return;
-    }
-
-    /* Save properties */
-    propSave(pProperties);
-
-    /* Always update video render */
-    updateVideoRender();
-
-    /* Always update joystick controls */
-    updateJoystick();
-
-    /* Update window size only if changed */
-    if (pProperties->video.driver != oldProp.video.driver ||
-        pProperties->video.fullRes != oldProp.video.fullRes ||
-        pProperties->video.size != oldProp.video.size ||
-        pProperties->video.horizontalStretch != oldProp.video.horizontalStretch ||
-        pProperties->video.verticalStretch != oldProp.video.verticalStretch ||
-        strcmp(pProperties->settings.themeName, oldProp.settings.themeName))
+static void emuWindowDraw()
+{         
+    if (!st.enteringFullscreen && 
+        (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
+        pProperties->video.driver == P_VIDEO_DRVDIRECTX))
     {
-        archUpdateWindow();
-    }
-
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
-
-    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
-
-    /* Must restart MSX if Machine configuration changed */
-    if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
-        oldProp.emulation.syncMethod != pProperties->emulation.syncMethod ||
-        oldProp.emulation.vdpSyncMode != pProperties->emulation.vdpSyncMode)
-    {
-        restart = 1;
-    }
-
-    /* Update switches */
-    switchSetAudio(pProperties->emulation.audioSwitch);
-    switchSetFront(pProperties->emulation.frontSwitch);
-    switchSetPause(pProperties->emulation.pauseSwitch);
-    emulatorSetFrequency(pProperties->emulation.speed, NULL);
-
-    /* Update sound only if changed, Must restart if changed */
-    if (oldProp.sound.bufSize              != pProperties->sound.bufSize ||
-        oldProp.sound.driver               != pProperties->sound.driver  ||
-        oldProp.sound.frequency            != pProperties->sound.frequency ||
-        oldProp.sound.chip.enableY8950     != pProperties->sound.chip.enableY8950 ||
-        oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
-        oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound ||
-        oldProp.sound.stereo               != pProperties->sound.stereo) 
-    {
-        soundDriverConfig(st.hwnd, pProperties->sound.driver);
-        emulatorRestartSound();
-    }
-
-    if (oldProp.sound.chip.enableY8950     != pProperties->sound.chip.enableY8950 ||
-        oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
-        oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound)
-    {
-        boardSetY8950Enable(pProperties->sound.chip.enableY8950);
-        boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
-        boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
-        restart = 1;
-    }
-
-    for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-        mixerSetChannelTypeVolume(st.mixer, i, pProperties->sound.mixerChannel[i].volume);
-        mixerSetChannelTypePan(st.mixer, i, pProperties->sound.mixerChannel[i].pan);
-        mixerEnableChannelType(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
-    }
-    
-    if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
-        registerFileTypes();
-    }
-    else {
-        unregisterFileTypes();
-    }
-    
-    if (pProperties->emulation.disableWinKeys && !oldProp.emulation.disableWinKeys) {
-        if (kbdLockEnable && emulatorGetState() == EMU_RUNNING && pProperties->emulation.disableWinKeys) {
-            kbdLockEnable();
-        }
-        else if (kbdLockDisable) {
-            kbdLockDisable();
-        }
-    }
-    
-    if (pProperties->emulation.priorityBoost && !oldProp.emulation.priorityBoost) {
-        if (pProperties->emulation.priorityBoost) {
-            SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
-        }
-        else {
-            SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-        }
-    }
-
-    mixerSetMasterVolume(st.mixer, pProperties->sound.masterVolume);
-    mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
-
-    if (restart) {
-        emulatorRestart();
-    }
-
-    if (oldProp.settings.disableScreensaver != pProperties->settings.disableScreensaver) {
-        POINT pt;
-        SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, !pProperties->settings.disableScreensaver, 0, SPIF_SENDWININICHANGE); 
-        GetCursorPos(&pt);
-        SetCursorPos(pt.x + 1, pt.y);
-    }
-
-    updateMenu(0);
-
-    InvalidateRect(st.hwnd, NULL, TRUE);
-}
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-static RomType romTypeList[] = {
-    ROM_ASCII8,
-    ROM_ASCII8SRAM,
-    ROM_ASCII16,
-    ROM_ASCII16SRAM,
-    ROM_KONAMI4,
-    ROM_KONAMI5,
-    ROM_PLAIN,
-    ROM_BASIC,
-    ROM_0x4000,
-    ROM_KOEI,
-    ROM_RTYPE,
-    ROM_CROSSBLAIM,
-    ROM_HARRYFOX,
-    ROM_LODERUNNER,
-    ROM_HALNOTE,
-	ROM_KONAMISYNTH,
-    ROM_MAJUTSUSHI,
-    ROM_SCC,
-    ROM_SCCPLUS,
-    ROM_KONAMI4NF, 
-    ROM_ASCII16NF,
-    ROM_GAMEMASTER2,
-    ROM_KOREAN80,
-    ROM_KOREAN90,
-    ROM_KOREAN126,
-    ROM_HOLYQURAN,
-    ROM_FMPAC,
-    ROM_MSXAUDIO,
-    ROM_MOONSOUND,
-    ROM_DISKPATCH,
-    ROM_CASPATCH,
-    ROM_TC8566AF,
-    ROM_MICROSOL,
-    ROM_NATIONALFDC,
-    ROM_PHILIPSFDC,
-    ROM_SVI738FDC,
-    ROM_KANJI,
-    ROM_KANJI12,
-    ROM_JISYO,
-    ROM_BUNSETU,
-    ROM_MSXDOS2,
-    ROM_NATIONAL,
-    ROM_PANASONIC16,
-    ROM_PANASONIC32,
-    ROM_UNKNOWN,
-};
-
-static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
-    char fileName[MAX_PATH];
-    int size;
-    char* buf = NULL;
-    int index;
-
-    index = SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETCURSEL, 0, 0);
-    SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETTEXT, index, (LPARAM)fileName);
-    
-    if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2")) {
-        buf = romLoad(dlgInfo->zipFileName, fileName, &size);
-    }
-
-    if (buf != NULL) {
-        RomType romType = romMapperGuessRom(buf, size, 0, NULL);
-        int idx = 0;
-
-        while (romTypeList[idx] != romType) {
-            idx++;
-        }
-
-        SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_SETCURSEL, idx, 0);
-
-        free(buf);
-
-        dlgInfo->openRomType = romType;
-
-        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 1);
-        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 1);
-    }    
-    else {
-        dlgInfo->openRomType = ROM_UNKNOWN;
-        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 0);
-        EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 0);
-        SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_SETCURSEL, -1, 0);
+        DirectXUpdateSurface(st.pVideo, emulatorGetFrameBuffer(), WIDTH, HEIGHT, emulatorGetScrLineWidth(), 
+                             st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
+                             0, 0, getZoom(), 
+                             pProperties->video.horizontalStretch, pProperties->video.verticalStretch, 
+                             st.evenOdd, st.interlace);
+        st.frameCount++;
     }
 }
-
-static BOOL CALLBACK dskZipDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static ZipFileDlgInfo* dlgInfo;
-
-    switch (iMsg) {
-    case WM_DESTROY:
-        saveDialogPos(hDlg, DLG_ID_ZIPOPEN);
-        return 0;
-
-    case WM_INITDIALOG:
-        {
-            char* fileList;
-            int sel = 0;
-            int i;
-            
-            updateDialogPos(hDlg, DLG_ID_ZIPOPEN, 0, 1);
-
-            dlgInfo = (ZipFileDlgInfo*)lParam;
-
-            dlgInfo->openRomType = ROM_UNKNOWN;
-
-            SetWindowText(hDlg, dlgInfo->title);
-
-            SendMessage(GetDlgItem(hDlg, IDC_DSKLOADTXT), WM_SETTEXT, 0, (LPARAM)dlgInfo->description);
-            SetWindowText(GetDlgItem(hDlg, IDC_DSKRESET), langDlgZipReset());
-            SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
-            SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
-            SetWindowText(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), langDlgRomType());
-
-            fileList = dlgInfo->fileList;
-
-            for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
-                SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
-                SendDlgItemMessage(hDlg, IDC_ROMTYPE, CB_SETCURSEL, i, 0);
-            }
-            SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(ROM_UNKNOWN));
-            EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 0);
-            EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTEXT), 0);
-
-            if (dlgInfo->selectFileIndex != -1) {
-                sel = dlgInfo->selectFileIndex;
-            }
-
-            for (i = 0; i < dlgInfo->fileListCount; i++) {
-                if (dlgInfo->selectFileIndex != -1 && 0 == strcmp(dlgInfo->selectFile, fileList)) {
-                    sel = i;
-                }
-                SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_ADDSTRING, 0, (LPARAM)fileList);
-                fileList += strlen(fileList) + 1;
-            }
-
-            if (dlgInfo->autoReset == -1) {
-                ShowWindow(GetDlgItem(hDlg, IDC_DSKRESET), SW_HIDE);
-            }
-            else {
-                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, dlgInfo->autoReset ? BST_CHECKED : BST_UNCHECKED, 0);
-            }
-            SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_SETCURSEL, sel, 0);
-        
-            updateRomTypeList(hDlg, dlgInfo);
-
-            return FALSE;
-        }
-
-    case WM_COMMAND:
-        switch(LOWORD(wParam)) {
-        case IDC_OPEN_ROMTYPE:
-            if (HIWORD(wParam) == 1 || HIWORD(wParam) == 2) {
-                int idx = SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_GETCURSEL, 0, 0);
-
-                dlgInfo->openRomType = idx == CB_ERR ? -1 : romTypeList[idx];
-            }
-            return 0;
-        case IDC_DSKRESET:
-            if (dlgInfo->autoReset == 1) {
-                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, BST_UNCHECKED, 0);
-                dlgInfo->autoReset = 0;
-            }
-            else if (dlgInfo->autoReset == 0) {
-                SendMessage(GetDlgItem(hDlg, IDC_DSKRESET), BM_SETCHECK, BST_CHECKED, 1);
-                dlgInfo->autoReset = 1;
-            }
-            break;
-        case IDC_DSKLIST:
-            switch (HIWORD(wParam)) {
-            case LBN_SELCHANGE:
-                updateRomTypeList(hDlg, dlgInfo);
-                break;
-            }
-
-            if (HIWORD(wParam) != LBN_DBLCLK) {
-                break;
-            }
-            // else, fall through
-        case IDOK:
-            dlgInfo->selectFileIndex = SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_GETCURSEL, 0, 0);
-            SendMessage(GetDlgItem(hDlg, IDC_DSKLIST), LB_GETTEXT, dlgInfo->selectFileIndex, (LPARAM)dlgInfo->selectFile);
-            EndDialog(hDlg, TRUE);
-            return TRUE;
-        case IDCANCEL:
-            dlgInfo->selectFileIndex = -1;
-            dlgInfo->selectFile[0] = '\0';
-            EndDialog(hDlg, FALSE);
-            return TRUE;
-        }
-        break;
-    case WM_CLOSE:
-        dlgInfo->selectFileIndex = -1;
-        dlgInfo->selectFile[0] = '\0';
-        EndDialog(hDlg, FALSE);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////
-
-static char* convertTapePos(int tapePos)
-{
-    static char str[64];
-    int pos = tapePos / 128;
-
-    _stprintf(str, "%dh %02dm %02ds", pos / 3600, (pos / 60) % 60, pos % 60);
-    return str;
-}
-
-static BOOL CALLBACK tapePosDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    static int currIndex;
-    static HWND hwnd;
-    static TapeContent* tc;
-    static int tcCount;
-
-    switch (iMsg) {
-    case WM_DESTROY:
-        saveDialogPos(hDlg, DLG_ID_TAPEPOS);
-        return 0;
-
-    case WM_INITDIALOG:
-        {
-            char buffer[32];
-            LV_COLUMN lvc = {0};
-         
-            updateDialogPos(hDlg, DLG_ID_TAPEPOS, 0, 1);
-
-            currIndex = -1;
-
-            SetWindowText(hDlg, langDlgTapeTitle());
-
-            SendMessage(GetDlgItem(hDlg, IDC_SETTAPEPOSTXT), WM_SETTEXT, 0, (LPARAM)langDlgTapeSetPosText());
-            SetWindowText(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), langDlgTapeCustom());
-            SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
-            SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
-
-            SendMessage(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), BM_SETCHECK, pProperties->cassette.showCustomFiles ? BST_CHECKED : BST_UNCHECKED, 0);
-
-            tc = tapeGetContent(&tcCount);
-    
-            hwnd = GetDlgItem(hDlg, IDC_SETTAPELIST);
-
-            EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
-
-            ListView_SetExtendedListViewStyle(hwnd, LVS_EX_FULLROWSELECT);
-
-            lvc.mask       = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            lvc.fmt        = LVCFMT_LEFT;
-            lvc.cx         = 100;
-            lvc.pszText    = buffer;
-	        lvc.cchTextMax = 32;
-
-            sprintf(buffer, langDlgTabPosition());
-            lvc.cx = 95;
-            ListView_InsertColumn(hwnd, 0, &lvc);
-            sprintf(buffer, langDlgTabType());
-            lvc.cx = 65;
-            ListView_InsertColumn(hwnd, 1, &lvc);
-            sprintf(buffer, langDlgTabFilename());
-            lvc.cx = 105;
-            ListView_InsertColumn(hwnd, 2, &lvc);
-        }
-
-        SendMessage(hDlg, WM_UPDATE, 0, 0);
-        return FALSE;
-
-    case WM_UPDATE:
-        {
-            static char* typeNames[] = { "ASCII", "BIN", "BAS", "Custom" };
-            int curPos;
-            int i;
-            int idx = 0;
-
-            ListView_DeleteAllItems(hwnd);
-
-            curPos = tapeGetCurrentPos();
-
-            for (i = 0; i < tcCount; i++) {
-                char buffer[64] = {0};
-                LV_ITEM lvi = {0};
-
-                if (pProperties->cassette.showCustomFiles || tc[i].type != TAPE_CUSTOM) {
-                    lvi.mask       = LVIF_TEXT;
-                    lvi.iItem      = idx;
-                    lvi.pszText    = buffer;
-	                lvi.cchTextMax = 64;
-                    
-                    sprintf(buffer, convertTapePos(tc[i].pos));
-                    ListView_InsertItem(hwnd, &lvi);
-                    lvi.iSubItem++;
-                    
-                    sprintf(buffer, typeNames[tc[i].type]);
-                    ListView_SetItem(hwnd, &lvi);
-                    lvi.iSubItem++;
-                    
-                    sprintf(buffer, tc[i].fileName);
-                    ListView_SetItem(hwnd, &lvi);
-
-                    if (tc[i].pos <= curPos) {
-                        SetFocus(hwnd);
-                        ListView_SetItemState(hwnd, idx, LVIS_SELECTED, LVIS_SELECTED);
-                    }
-                    idx++;
-                }
-            }
-        }
-        return TRUE;
-
-    case WM_NOTIFY:
-        switch (wParam) {
-        case IDC_SETTAPELIST:
-            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMCHANGED) {
-                if (ListView_GetSelectedCount(hwnd)) {
-                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
-
-                    if (currIndex == -1 && index != -1) {
-                        EnableWindow(GetDlgItem(hDlg, IDOK), TRUE);
-                    }
-                    currIndex = index;
-                }
-                else {
-                    if (currIndex != -1) {
-                        EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
-                    }
-                    currIndex = -1;
-                }
-            }
-            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMACTIVATE) {
-                if (ListView_GetSelectedCount(hwnd)) {
-                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
-                    SendMessage(hDlg, WM_COMMAND, IDOK, 0);
-                }
-                return TRUE;
-            }
-        }
-        break;
-
-    case WM_COMMAND:
-        switch(LOWORD(wParam)) {
-        case IDC_SETTAPECUSTOM:
-            pProperties->cassette.showCustomFiles = BST_CHECKED == SendMessage(GetDlgItem(hDlg, IDC_SETTAPECUSTOM), BM_GETCHECK, 0, 0);
-            SendMessage(hDlg, WM_UPDATE, 0, 0);
-            return TRUE;
-
-        case IDCANCEL:
-            EndDialog(hDlg, FALSE);
-            return TRUE;
-
-        case IDOK:
-            {
-                int index = 0;
-                int i;
-
-                if (ListView_GetSelectedCount(hwnd)) {
-                    currIndex = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
-                }
-
-                for (i = 0; i < tcCount; i++) {
-                    if (pProperties->cassette.showCustomFiles || tc[i].type != TAPE_CUSTOM) {
-                        if (currIndex == index) {
-                            tapeSetCurrentPos(tc[i].pos);
-                        }
-                        index++;
-                    }
-                }
-             
-                EndDialog(hDlg, TRUE);
-            }
-            return TRUE;
-        }
-        return FALSE;
-
-    case WM_CLOSE:
-        EndDialog(hDlg, FALSE);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-void setTapePosition() {
-    if (emulatorGetState() != EMU_STOPPED) {
-        emulatorSuspend();
-    }
-    else {
-        tapeSetReadOnly(1);
-        boardChangeCassette(strlen(pProperties->cassette.tape) ? pProperties->cassette.tape : NULL, 
-                            strlen(pProperties->cassette.tapeZip) ? pProperties->cassette.tapeZip : NULL);
-    }
-
-    DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_SETTAPEPOS), st.hwnd, tapePosDlg);
-
-    if (emulatorGetState() != EMU_STOPPED) {
-        emulatorResume();
-    }
-    else {
-        boardChangeCassette(NULL, NULL);
-        tapeSetReadOnly(pProperties->cassette.readOnly);
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-#define hotkeyEq(hotkey1, hotkey2) (*(DWORD*)&hotkey1 == *(DWORD*)&hotkey2)
-
-static int maxSpeedIsSet = 0;
-
-static void checkKeyDown(ShotcutHotkey key) {
-    Shortcuts* s = st.shortcuts;
-
-    if (hotkeyEq(key, s->emuSpeedFull)) {
-        actionMaxSpeedSet();
-        maxSpeedIsSet = 1;
-
-    }
-}
-
-static void checkKeyUp(ShotcutHotkey key) 
-{
-    Shortcuts* s = st.shortcuts;
-
-    if (maxSpeedIsSet) {
-        actionMaxSpeedRelease();
-        maxSpeedIsSet = 0;
-    }
-
-    if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();
-    if (hotkeyEq(key, s->fdcTiming))                    actionToggleFdcTiming();
-    if (hotkeyEq(key, s->msxAudioSwitch))               actionToggleMsxAudioSwitch();
-    if (hotkeyEq(key, s->frontSwitch))                  actionToggleFrontSwitch();
-    if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();
-    if (hotkeyEq(key, s->quit))                         actionQuit();
-    if (hotkeyEq(key, s->wavCapture))                   actionToggleWaveCapture();
-    if (hotkeyEq(key, s->screenCapture))                actionScreenCapture();
-    if (hotkeyEq(key, s->screenCaptureUnfilteredSmall)) actionScreenCaptureUnfilteredSmall();
-    if (hotkeyEq(key, s->screenCaptureUnfilteredLarge)) actionScreenCaptureUnfilteredLarge();
-    if (hotkeyEq(key, s->cpuStateLoad))                 actionLoadState();
-    if (hotkeyEq(key, s->cpuStateSave))                 actionSaveState();
-    if (hotkeyEq(key, s->cpuStateQuickLoad))            actionQuickLoadState();
-    if (hotkeyEq(key, s->cpuStateQuickSave))            actionQuickSaveState();
-    if (hotkeyEq(key, s->cartInsert1))                  actionCartInsert1();
-    if (hotkeyEq(key, s->cartInsert2))                  actionCartInsert2();
-    if (hotkeyEq(key, s->cartSpecialMenu1))             actionMenuSpecialCart1(-1, -1);
-    if (hotkeyEq(key, s->cartSpecialMenu2))             actionMenuSpecialCart2(-1, -1);
-    if (hotkeyEq(key, s->diskInsertA))                  actionDiskInsertA();
-    if (hotkeyEq(key, s->diskInsertB))                  actionDiskInsertB();
-    if (hotkeyEq(key, s->diskDirInsertA))               actionDiskDirInsertA();
-    if (hotkeyEq(key, s->diskDirInsertB))               actionDiskDirInsertB();
-    if (hotkeyEq(key, s->diskChangeA))                  actionDiskQuickChange();
-    if (hotkeyEq(key, s->casInsert))                    actionCasInsert();
-    if (hotkeyEq(key, s->casRewind))                    actionCasRewind();
-    if (hotkeyEq(key, s->casSetPos))                    actionCasSetPosition();
-    if (hotkeyEq(key, s->mouseLockToggle))              actionToggleMouseCapture();
-    if (hotkeyEq(key, s->emulationRunPause))            actionEmuTogglePause();
-    if (hotkeyEq(key, s->emulationStop))                actionEmuStop();
-    if (hotkeyEq(key, s->emuSpeedNormal))               actionEmuSpeedNormal();
-    if (hotkeyEq(key, s->emuSpeedInc))                  actionEmuSpeedDecrease();
-    if (hotkeyEq(key, s->emuSpeedToggle))               actionMaxSpeedToggle();
-    if (hotkeyEq(key, s->emuSpeedDec))                  actionEmuSpeedIncrease();
-    if (hotkeyEq(key, s->windowSizeSmall))              actionWindowSizeSmall();
-    if (hotkeyEq(key, s->windowSizeNormal))             actionWindowSizeNormal();
-    if (hotkeyEq(key, s->windowSizeMinimized))          actionWindowSizeMinimized();
-    if (hotkeyEq(key, s->windowSizeFullscreen))         actionWindowSizeFullscreen();
-    if (hotkeyEq(key, s->windowSizeFullscreenToggle))   actionFullscreenToggle();
-    if (hotkeyEq(key, s->resetSoft))                    actionEmuResetSoft();
-    if (hotkeyEq(key, s->resetHard))                    actionEmuResetHard();
-    if (hotkeyEq(key, s->resetClean))                   actionEmuResetClean();
-    if (hotkeyEq(key, s->volumeIncrease))               actionVolumeIncrease();
-    if (hotkeyEq(key, s->volumeDecrease))               actionVolumeDecrease();
-    if (hotkeyEq(key, s->volumeMute))                   actionMuteToggleMaster();
-    if (hotkeyEq(key, s->volumeStereo))                 actionVolumeToggleStereo();
-    if (hotkeyEq(key, s->cpuTrace))                     actionCpuTraceToggle();
-    if (hotkeyEq(key, s->themeSwitch))                  actionNextTheme();
-    if (hotkeyEq(key, s->casRemove))                    actionCasRemove();
-    if (hotkeyEq(key, s->diskRemoveA))                  actionDiskRemoveA();
-    if (hotkeyEq(key, s->diskRemoveB))                  actionDiskRemoveB();
-    if (hotkeyEq(key, s->cartRemove1))                  actionCartRemove1();
-    if (hotkeyEq(key, s->cartRemove2))                  actionCartRemove2();
-    if (hotkeyEq(key, s->cartAutoReset))                actionToggleCartAutoReset();
-    if (hotkeyEq(key, s->diskAutoResetA))               actionToggleDiskAutoResetA();
-    if (hotkeyEq(key, s->casToggleReadonly))            actionCasToggleReadonly();
-    if (hotkeyEq(key, s->casAutoRewind))                actionToggleCasAutoRewind();
-    if (hotkeyEq(key, s->casSave))                      actionCasSave();
-    if (hotkeyEq(key, s->propShowEmulation))            actionPropShowEmulation();
-    if (hotkeyEq(key, s->propShowVideo))                actionPropShowVideo();
-    if (hotkeyEq(key, s->propShowAudio))                actionPropShowAudio();
-    if (hotkeyEq(key, s->propShowControls))             actionPropShowControls();
-    if (hotkeyEq(key, s->propShowPerformance))          actionPropShowPerformance();
-    if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
-    if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
-    if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
-    if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
-    if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
-    if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
-    if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
-}
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
 
 static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
@@ -1562,7 +1510,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             key.type = HOTKEY_TYPE_KEYBOARD;
             key.mods = keyboardGetModifiers();
             key.key  = wParam & 0xff;
-            checkKeyDown(key);
+            checkKeyDown(st.shortcuts, key);
         }
         return 0;
 
@@ -1573,7 +1521,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             key.type = HOTKEY_TYPE_KEYBOARD;
             key.mods = keyboardGetModifiers();
             key.key  = wParam & 0xff;
-            checkKeyUp(key);
+            checkKeyUp(st.shortcuts, key);
         }
         return 0;
 
@@ -1795,7 +1743,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                         key.type = HOTKEY_TYPE_JOYSTICK;
                         key.mods = 0;
                         key.key  = i;
-                        checkKeyDown(key);
+                        checkKeyDown(st.shortcuts, key);
                     }
                 }
                 
@@ -1805,7 +1753,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                         key.type = HOTKEY_TYPE_JOYSTICK;
                         key.mods = 0;
                         key.key  = i;
-                        checkKeyUp(key);
+                        checkKeyUp(st.shortcuts, key);
                     }
                 }
 
@@ -2319,8 +2267,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     mixerSetMasterVolume(st.mixer, pProperties->sound.masterVolume);
     mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
 
-    updateVideoRender();
-    updateJoystick();
+    updateVideoRender(st.pVideo, pProperties);
+    updateJoystick(pProperties);
     
     romMapperSetDefaultType(pProperties->cartridge.defaultType);
 
@@ -2416,7 +2364,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 void archShowCassettePosDialog()
 {
     enterDialogShow();
-    setTapePosition();
+    setTapePosition(getMainHwnd(), pProperties);
     exitDialogShow();
 }
 
@@ -2424,10 +2372,10 @@ void archShowHelpDialog()
 {
     HINSTANCE rv = 0;
     if (pProperties->language == EMU_LANG_JAPANESE) {
-         rv = ShellExecute(st.hwnd, "open", "blueMSXjp.chm", NULL, NULL, SW_SHOWNORMAL);
+         rv = ShellExecute(getMainHwnd(), "open", "blueMSXjp.chm", NULL, NULL, SW_SHOWNORMAL);
     }
     if (rv <= (HINSTANCE)32) {
-        rv = ShellExecute(st.hwnd, "open", "blueMSX.chm", NULL, NULL, SW_SHOWNORMAL);
+        rv = ShellExecute(getMainHwnd(), "open", "blueMSX.chm", NULL, NULL, SW_SHOWNORMAL);
     }
     if (rv <= (HINSTANCE)32) {
         MessageBox(NULL, langErrorNoHelp(), langErrorTitle(), MB_OK);
@@ -2437,7 +2385,7 @@ void archShowHelpDialog()
 void archShowAboutDialog()
 {
     enterDialogShow();
-    helpShowAbout(st.hwnd);
+    helpShowAbout(getMainHwnd());
     exitDialogShow();
 }
 
@@ -2446,7 +2394,7 @@ void archShowLanguageDialog()
     int lang;
     int success;
     enterDialogShow();
-    lang = langShowDlg(st.hwnd, pProperties->language);
+    lang = langShowDlg(getMainHwnd(), pProperties->language);
     exitDialogShow();
     success = langSetLanguage(lang);
     if (success) {
@@ -2464,7 +2412,7 @@ void archShowShortcutsEditor()
 {
     int apply;
     enterDialogShow();
-    apply = shortcutsShowDialog(st.hwnd, pProperties);
+    apply = shortcutsShowDialog(getMainHwnd(), pProperties);
     shortcutsDestroyProfile(st.shortcuts);
     st.shortcuts = shortcutsCreateProfile(pProperties->emulation.shortcutProfile);
     updateMenu(0);
@@ -2475,7 +2423,7 @@ void archShowMachineEditor()
 {
     int apply;
     enterDialogShow();
-    apply = confShowDialog(st.hwnd, pProperties->emulation.machineName);
+    apply = confShowDialog(getMainHwnd(), pProperties->emulation.machineName);
     exitDialogShow();
     if (apply) {
         actionEmuResetHard();
@@ -2487,19 +2435,19 @@ void archScreenCapture(ScreenCaptureType type)
 {
     switch (type) {
     case SC_NORMAL:
-        SetTimer(st.hwnd, TIMER_SCREENSHOT, 50, NULL);
+        SetTimer(getMainHwnd(), TIMER_SCREENSHOT, 50, NULL);
         break;
     case SC_SMALL:
-        SetTimer(st.hwnd, TIMER_SCREENSHOT_UNFILTERED_SMALL, 50, NULL);
+        SetTimer(getMainHwnd(), TIMER_SCREENSHOT_UNFILTERED_SMALL, 50, NULL);
         break;
     case SC_LARGE:
-        SetTimer(st.hwnd, TIMER_SCREENSHOT_UNFILTERED_LARGE, 50, NULL);
+        SetTimer(getMainHwnd(), TIMER_SCREENSHOT_UNFILTERED_LARGE, 50, NULL);
         break;
     }
 }
 
 void archMinimizeWindow() {
-    ShowWindow(st.hwnd, SW_MINIMIZE);
+    ShowWindow(getMainHwnd(), SW_MINIMIZE);
     updateMenu(0);
 }
 
@@ -2513,7 +2461,7 @@ char* archDirOpen(char* title, char* defaultDir)
     char* filename;
 
     enterDialogShow();
-    filename = openDir(st.hwnd, title, defaultDir);
+    filename = openDir(getMainHwnd(), title, defaultDir);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
@@ -2525,7 +2473,7 @@ char* archFileOpen(char* title, char* extensionList, char* defaultDir, char* ext
     char* fileName;
 
     enterDialogShow();
-    fileName = openFile(st.hwnd, title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
+    fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
@@ -2537,7 +2485,7 @@ char* archFileRomOpen(char* title, char* extensionList, char* defaultDir, char* 
     char* fileName;
 
     enterDialogShow();
-    fileName = openRomFile(st.hwnd, title, extensionList, defaultDir, 1, defautExtension, selectedExtension, romType);
+    fileName = openRomFile(getMainHwnd(), title, extensionList, defaultDir, 1, defautExtension, selectedExtension, romType);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
@@ -2549,7 +2497,7 @@ char* archFileSave(char* title, char* extensionList, char* defaultDir, char* ext
     char* fileName;
 
     enterDialogShow();
-    fileName = saveFile(st.hwnd, title, extensionList, selectedExtension, defaultDir);
+    fileName = saveFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
@@ -2561,12 +2509,12 @@ void archUpdateMenu(int show) {
 }
 
 void archQuit() {
-    DestroyWindow(st.hwnd);
+    DestroyWindow(getMainHwnd());
 }
 
 void archFileFromZipDialog(ZipFileDlgInfo* dlgInfo) {
     enterDialogShow();
-    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), st.hwnd, dskZipDlgProc, (LPARAM)dlgInfo);
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)dlgInfo);
     exitDialogShow();
 }
 
@@ -2594,7 +2542,7 @@ void archUpdateEmuDisplay(int synchronous, int evenOdd, int interlace) {
 
     if (pProperties->video.driver == P_VIDEO_DRVGDI) {
         if (!synchronous) {
-            PostMessage(st.hwnd, WM_UPDATE, 0, 0);
+            PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);
         }
     }
     else {

@@ -204,6 +204,9 @@
 					RelativePath="..\..\Src\Win32\Win32file.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32FileTypes.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32Help.c">
 				</File>
 				<File
@@ -266,6 +269,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32file.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32FileTypes.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Help.h">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Common.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-01-16 00:49:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize);
 void saveDialogPos(HWND hwnd, int dialogID);
 
 HWND getMainHwnd();
+
 
 void enterDialogShow();
 void exitDialogShow();
