@@ -104,6 +104,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ComCtl32.Lib "
 				OutputFile=".\Release/SimpleDebugger.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
