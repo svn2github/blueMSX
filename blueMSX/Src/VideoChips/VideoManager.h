@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-01-17 08:01:20 $
 **
@@ -27,29 +27,31 @@
 **
 ******************************************************************************
 */
-#ifndef VDP_H
-#define VDP_H
+#ifndef VIDEO_MANAGER_H
+#define VIDEO_MANAGER_H
 
 #include "MSXTypes.h"
 
+typedef struct {
+    int currentFrame;
+    struct {
+        int lines;
+        struct {
+            int width;
+            UInt32 buffer[640];
+        } line[480];
+    } frame [2];
+} VideoBuffer;
 
-typedef enum { VDP_V9938, VDP_V9958, VDP_TMS9929A, VDP_TMS99x8A } VdpVersion;
-typedef enum { VDP_SYNC_AUTO, VDP_SYNC_50HZ, VDP_SYNC_60HZ } VdpSyncMode; 
-typedef enum { VDP_MSX, VDP_SVI, VDP_COLECO } VdpConnector;
+typedef struct {
+    VideoBuffer* (*enable)(void*);
+    void  (*disable)(void*);
+} VideoCallbacks;
 
-void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int vramPages);
+void videoManagerCreate();
+void videoManagerDestroy();
 
-int  vdpGetRefreshRate();
-
-void vdpSetSpritesEnable(int enable);
-int  vdpGetSpritesEnable();
-void vdpSetDisplayEnable(int enable);
-int  vdpGetDisplayEnable();
-
-/* The following methods needs target dependent implementation */
-extern void SetColor(int palEntry, UInt32 rgbColor);
-extern void RefreshScreen(int, int, int);
-
+int videoManagerRegister(char* name, VideoCallbacks* callbacks, void* ref);
+void videoManagerUnregister(int handle);
 
 #endif
-

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-17 02:36:07 $
+** $Date: 2005-01-17 08:01:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -304,7 +304,7 @@ static int sviInitMachine(Machine* machine,
 
     /* Initialize VDP */
     sviVramSize = machine->video.vramSize;
-    vdpInit(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
+    vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     /* Initialize memory */
     for (i = 0; i < 4; i++) {
@@ -402,8 +402,6 @@ static int sviInitMachine(Machine* machine,
 void sviReset()
 {
     UInt32 systemTime = boardSystemTime();
-
-    vdpReset();
 
     slotManagerReset();
 
@@ -535,7 +533,6 @@ int sviRun(Machine* machine,
         joystickIoLoadState(joyIO);
         machineLoadState(sviMachine);
         ay8910LoadState(ay8910);
-        vdpLoadState();
         tapeLoadState();
     }
 
@@ -561,8 +558,6 @@ int sviRun(Machine* machine,
 
     sviChangeCassette(0, 0);
 
-    vdpDestroy();
-    
     slotManagerDestroy();
 
     deviceManagerDestroy();
@@ -696,7 +691,6 @@ void sviSaveState()
     r800SaveState(r800);
     deviceManagerSaveState();
     ay8910SaveState(ay8910);
-    vdpSaveState();
     tapeSaveState();
 }
 

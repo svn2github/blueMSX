@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-14 01:22:33 $
+** $Date: 2005-01-17 08:01:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,7 +112,8 @@ typedef enum {
     ROM_MSXMUSIC    = 78,
     ROM_MOONSOUND   = 79,
     ROM_MSXAUDIODEV = 80,
-    ROM_MAXROMID    = 80
+    ROM_V9958       = 81,
+    ROM_MAXROMID    = 81
 } RomType;
 
 static char* romTypeToString(RomType romType) {

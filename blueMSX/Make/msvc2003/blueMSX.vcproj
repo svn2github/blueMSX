@@ -759,6 +759,12 @@
 				RelativePath="..\..\Src\VideoChips\Common.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\VideoChips\CRTC6845.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoChips\CRTC6845.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Memory\romMapperTurboRTimer.h">
 			</File>
 			<File
@@ -775,6 +781,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\VideoChips\VDP.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoChips\VideoManager.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoChips\VideoManager.h">
 			</File>
 		</Filter>
 		<Filter
@@ -1249,43 +1261,6 @@ buildnumber.exe
 			</File>
 		</Filter>
 		<Filter
-			Name="Arch"
-			Filter="">
-			<File
-				RelativePath="..\..\Src\Arch\ArchBitmap.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchControls.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchDialog.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchEvent.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchMenu.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchNotifications.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchSound.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchText.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchThread.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchTimer.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="Board"
 			Filter="">
 			<File
@@ -1318,6 +1293,43 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Board\SVI.h">
 			</File>
+			<Filter
+				Name="Arch"
+				Filter="">
+				<File
+					RelativePath="..\..\Src\Arch\ArchBitmap.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchControls.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchDialog.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchEvent.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchMenu.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchNotifications.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchSound.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchText.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchThread.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Arch\ArchTimer.h">
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

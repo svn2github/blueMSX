@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-16 06:48:15 $
+** $Date: 2005-01-17 08:01:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -304,7 +304,7 @@ static int colecoInitMachine(Machine* machine,
     if (vdpSyncMode == VDP_SYNC_AUTO) {
         vdpSyncMode = VDP_SYNC_60HZ;
     }
-    vdpInit(VDP_COLECO, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
+    vdpCreate(VDP_COLECO, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     colecoJoyIoCreate();
 
@@ -337,8 +337,6 @@ void colecoReset()
     if (sn76489 != NULL) {
         sn76489Reset(sn76489);
     }
-
-    vdpReset();
     
     ledSetCapslock(0);
 
@@ -433,7 +431,6 @@ int colecoRun(Machine* machine,
         joystickIoLoadState(joyIO);
         machineLoadState(colecoMachine);
         sn76489LoadState(sn76489);
-        vdpLoadState();
     }
 
     if (success) {
@@ -448,7 +445,6 @@ int colecoRun(Machine* machine,
 
     joystickIoDestroyColeco(joyIO);
 
-    vdpDestroy();
     colecoJoyIoDestroy();
     sn76489Destroy(sn76489);
 
@@ -544,7 +540,6 @@ void colecoSaveState()
     r800SaveState(r800);
     sn76489SaveState(sn76489);
     deviceManagerSaveState();
-    vdpSaveState();
 }
 
 void colecoLoadState()

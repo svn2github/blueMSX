@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-16 06:48:15 $
+** $Date: 2005-01-17 08:01:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -309,7 +309,7 @@ static int initMachine(Machine* machine,
 
     msxVramSize = machine->video.vramSize;
 
-    vdpInit(VDP_MSX, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
+    vdpCreate(VDP_MSX, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     for (i = 0; i < 4; i++) {
         slotSetSubslotted(i, machine->slot[i].subslotted);
@@ -694,8 +694,6 @@ void msxReset()
 {
     UInt32 systemTime = boardSystemTime();
 
-    vdpReset();
-
     slotManagerReset();
 
     if (r800 != NULL) {
@@ -823,7 +821,6 @@ int msxRun(Machine* machine,
         if (ay8910 != NULL) {
             ay8910LoadState(ay8910);
         }
-        vdpLoadState();
         tapeLoadState();
     }
 
@@ -853,8 +850,6 @@ int msxRun(Machine* machine,
 
     msxChangeCassette(0, 0);
 
-    vdpDestroy();
-    
     slotManagerDestroy();
 
     deviceManagerDestroy();
@@ -1092,7 +1087,6 @@ void msxSaveState()
     if (ay8910 != NULL) {
         ay8910SaveState(ay8910);
     }
-    vdpSaveState();
     tapeSaveState();
 }
 
