@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-03-09 22:10:13 $
+** $Date: 2005-03-12 00:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -965,7 +965,7 @@ void actionVideoSetRfModulation(int value) {
 }
 
 void actionVideoSetColorMode(int value) {
-    propGetGlobalProperties()->video.monType = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
+    state.properties->video.monType = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
     archUpdateEmuDisplayConfig();
 }
 
@@ -1055,7 +1055,7 @@ void actionPanSetKeyboard(int value) {
 }
 
 void actionRenshaSetLevel(int value) {
-    state.properties->joy1.autofire = 11 * value / 100;
+    state.properties->joy1.autofire = (int)ceil((11 - 1) * value / 100.0);
     switchSetRensha(state.properties->joy1.autofire);
 }
 

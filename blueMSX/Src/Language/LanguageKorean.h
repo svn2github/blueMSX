@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.7 $ + additions 2005/03/03
+** $Revision: 1.8 $ + additions 2005/03/03
 **
-** $Date: 2005-03-09 21:43:56 $
+** $Date: 2005-03-12 00:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -561,7 +561,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPortsLptGB          = "패러럴 포트 "; 
     ls->propPortsComGB          = "시리얼 포트 "; 
     ls->propPortsLptText        = "포트:"; 
-	ls->propPortsCom1Text       = "포트 1:";
+    ls->propPortsCom1Text       = "포트 1:";
+
+    ls->shortcutShowDebugger    = "디버거 보기"; 
+    ls->shortcutShowTrainer     = "트레이너 보기"; 
+    ls->shortcutShowPorts       = "포트 속성 보기";
 };
 
 #endif

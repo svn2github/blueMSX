@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-28 03:55:52 $
+** $Date: 2005-03-12 00:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -341,7 +341,7 @@ int themeTriggerPanMoonsound() {
 }
 
 int themeTriggerLevelRensha() {
-    return 100 * propGetGlobalProperties()->joy1.autofire / 11;
+    return propGetGlobalProperties()->joy1.autofire * 100 / (11 - 1);
 }
 
 int themeTriggerLevelEmuSpeed() {
