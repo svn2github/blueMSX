@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-02-13 21:19:58 $
+** $Date: 2005-02-15 05:03:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -501,7 +501,7 @@ int sviCreate(Machine* machine,
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
     
-    debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
+    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", setDebugInfo, NULL);
 
     ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI);
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgWriteHandler, NULL);

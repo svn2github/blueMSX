@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-02-13 21:19:58 $
+** $Date: 2005-02-15 05:03:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -798,7 +798,7 @@ int msxCreate(Machine* machine,
     msxPPICreate();
     slotManagerCreate();
     
-    debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
+    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80/R800", setDebugInfo, NULL);
 
     success = initMachine(machine, devInfo->video.vdpSyncMode);
 

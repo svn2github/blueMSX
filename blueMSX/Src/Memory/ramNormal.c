@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 21:20:00 $
+** $Date: 2005-02-15 05:03:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     memset(rm->ramData, 0xff, sizeof(rm->ramData));
 
-    rm->debugHandle = debugDeviceRegister("Main RAM", setDebugInfo, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Normal", setDebugInfo, rm);
 
     for (i = 0; i < pages; i++) {
         slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 1);

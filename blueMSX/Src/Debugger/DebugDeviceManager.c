@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 11:14:58 $
+** $Date: 2005-02-15 05:03:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@ typedef struct {
     SetDebugInfo setDebugInfo;
     void* ref;
     char  name[32];
+    DbgDeviceType type;
 } DebugDeviceInfo;
 
 typedef struct {
@@ -54,7 +55,7 @@ void debugDeviceManagerReset()
     devManager.lastHandle = 0;
 }
 
-int debugDeviceRegister(const char* name, SetDebugInfo setDebugInfo, void* ref)
+int debugDeviceRegister(DbgDeviceType type, const char* name, SetDebugInfo setDebugInfo, void* ref)
 {
     if (devManager.count >= MAX_DEVICES) {
         return 0;
@@ -63,6 +64,7 @@ int debugDeviceRegister(const char* name, SetDebugInfo setDebugInfo, void* ref)
     devManager.di[devManager.count].handle       = ++devManager.lastHandle;
     devManager.di[devManager.count].setDebugInfo = setDebugInfo;
     devManager.di[devManager.count].ref          = ref;
+    devManager.di[devManager.count].type         = type;
 
     strcpy(devManager.di[devManager.count].name, name);
 
@@ -105,6 +107,7 @@ void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count)
         if (devManager.di[i].handle != 0) {
             dbgDeviceList[index] = calloc(1, sizeof(DbgDevice));
             strcpy(dbgDeviceList[index]->name, devManager.di[i].name);
+            dbgDeviceList[index]->type = devManager.di[i].type;
             dbgDeviceList[index]->deviceHandle = devManager.di[i].handle;
             devManager.di[i].setDebugInfo(devManager.di[i].ref, dbgDeviceList[index++]);
         }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-02-15 05:03:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -212,7 +212,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
         break;
     }
     
-    ay8910->debugHandle = debugDeviceRegister("AY8910 PSG Sound Chip", setDebugInfo, ay8910);
+    ay8910->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "AY8910 PSG", setDebugInfo, ay8910);
 
     return ay8910;
 }

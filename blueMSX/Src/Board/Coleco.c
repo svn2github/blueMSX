@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-02-13 21:19:58 $
+** $Date: 2005-02-15 05:03:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -416,7 +416,7 @@ int colecoCreate(Machine* machine,
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
     
-    debugHandle = debugDeviceRegister("CPU", setDebugInfo, NULL);
+    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", setDebugInfo, NULL);
 
     sn76489 = sn76489Create(boardGetMixer());
     success = colecoInitMachine(machine, devInfo->video.vdpSyncMode);

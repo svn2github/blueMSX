@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-02-15 05:03:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -151,7 +151,7 @@ SN76489* sn76489Create(Mixer* mixer)
 
     sn76489->mixer = mixer;
 
-    sn76489->debugHandle = debugDeviceRegister("SN76489 PSG Sound Chip", setDebugInfo, sn76489);
+    sn76489->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SN76489 PSG", setDebugInfo, sn76489);
 
     sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-02-14 06:14:38 $
+** $Date: 2005-02-15 05:03:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -951,7 +951,7 @@ static void setDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     else if (vdp->vdpVersion == VDP_V9958) regCount = 32;
     else regCount = 8;
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", regCount + cmdRegCount);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", regCount + cmdRegCount);
 
     for (i = 0; i < regCount; i++) {
         char reg[4];
@@ -1161,27 +1161,27 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     case VDP_TMS9929A:
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
-        vdpVersionString       = "TMS9929A Video Chip";
+        vdpVersionString       = "TMS9929A";
         break;
     case VDP_TMS99x8A:
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
         vdp->vdpRegs[9]          &= ~0x02;
-        vdpVersionString       = "TMS99x8A Video Chip";
+        vdpVersionString       = "TMS99x8A";
         break;
     case VDP_V9938:
         vdp->registerValueMask = registerValueMaskMSX2;
         vdp->registerMask      = 0x3f;
-        vdpVersionString       = "V9938 Video Chip";
+        vdpVersionString       = "V9938";
         break;
     case VDP_V9958:
         vdp->registerValueMask = registerValueMaskMSX2p;
         vdp->registerMask      = 0x3f;
-        vdpVersionString       = "V9958 Video Chip";
+        vdpVersionString       = "V9958";
         break;
     }
     
-    vdp->debugHandle = debugDeviceRegister(vdpVersionString, setDebugInfo, vdp);
+    vdp->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, vdpVersionString, setDebugInfo, vdp);
 
     switch (vdp->vdpConnector) {
     case VDP_MSX:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-01 04:43:33 $
+** $Date: 2005-02-15 05:03:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,6 +57,7 @@ typedef struct
     UInt32           frameCounter;
     int              frameRate;
     int              deviceHandle;
+    int              debugHandle;
     int              videoHandle;
     int              videoEnabled;
     BoardTimer*      timerDisplay;   

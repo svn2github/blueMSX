@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-13 11:14:58 $
+** $Date: 2005-02-15 05:03:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,19 @@
 typedef struct Debugger    Debugger;
 typedef struct DbgSnapshot DbgSnapshot;
 typedef struct DbgDevice   DbgDevice;
+
+
+typedef enum { 
+    DBGTYPE_UNKNOWN,
+    DBGTYPE_CPU, 
+    DBGTYPE_CART, 
+    DBGTYPE_BIOS, 
+    DBGTYPE_RAM, 
+    DBGTYPE_AUDIO,
+    DBGTYPE_VIDEO,
+    DBGTYPE_PORT
+} DbgDeviceType;
+
 
 typedef void (*DebuggerEvent)();
 
@@ -93,6 +106,7 @@ const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex
 #define MAX_DBG_COMPONENTS 4
 struct DbgDevice {
     char name[64];
+    DbgDeviceType type;
     int memoryBlockCount;
     int registerBankCount;
     int ioPortsCount;

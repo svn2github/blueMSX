@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-13 11:14:56 $
+** $Date: 2005-02-15 05:03:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,9 +56,22 @@ typedef enum { EMULATOR_STOPPED, EMULATOR_PAUSED, EMULATOR_RUNNING } EmulatorSta
 typedef struct Snapshot Snapshot;
 typedef struct Device   Device;
 
+typedef enum { 
+    DEVTYPE_UNKNOWN,
+    DEVTYPE_CPU, 
+    DEVTYPE_CART, 
+    DEVTYPE_BIOS, 
+    DEVTYPE_RAM, 
+    DEVTYPE_AUDIO,
+    DEVTYPE_VIDEO,
+    DEVTYPE_PORT
+} DeviceType;
+
 struct Device {
     char name[64];
+    DeviceType type;
 };
+
 
 typedef struct {
     char   name[32];

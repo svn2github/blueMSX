@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-02-10 08:59:02 $
+** $Date: 2005-02-15 05:03:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "CRTC6845.h"
 #include "IoPort.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <memory.h>
@@ -251,6 +252,7 @@ static void crtc6845Reset(CRTC6845* crtc)
 
 static void crtc6845Destroy(CRTC6845* crtc)
 {
+    debugDeviceUnregister(crtc->debugHandle);
     deviceManagerUnregister(crtc->deviceHandle);
     videoManagerUnregister(crtc->videoHandle);
     boardTimerDestroy(crtc->timerDisplay);
@@ -261,6 +263,22 @@ static void crtc6845Destroy(CRTC6845* crtc)
     free(crtc->romData);
 
     free(crtc);
+}
+
+static void setDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+    int i;
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, crtc->vramMask, crtc->vram);
+   
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", 16);
+
+    for (i = 0; i < 16; i++) {
+        char reg[4];
+        sprintf(reg, "R%d", i);
+        dbgRegisterBankAddRegister(regBank, i, reg,  8, crtc->registers.reg[i]);
+    }
 }
 
 CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize, 
@@ -311,6 +329,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
     {
         DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
         crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
+        crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "CRTC6845", setDebugInfo, crtc);
     }
 
     // Initialize video frame buffer

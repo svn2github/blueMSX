@@ -1,14 +1,91 @@
 #include <windows.h>
 #include "ToolInterface.h"
 #include "Resource.h"
+#include "resrc1.h"
 #include <string>
+#include <commctrl.h>
 #include <sstream>
 #include <iomanip>
+
 using namespace std;
 
 static HWND deviceViewerHwnd = NULL;
 
 #define WM_STATUS (WM_USER + 0)
+
+HTREEITEM addChild ( HWND hwnd, HTREEITEM parent, char *pszText, int imageIndex )
+{
+	tagTVINSERTSTRUCTA insertStruct;
+	tagTVITEMA treeItem;
+ 
+	treeItem.mask = TVIF_TEXT | TVIF_IMAGE;
+	treeItem.cchTextMax			= strlen ( pszText );
+	treeItem.pszText			= strdup ( pszText );
+	treeItem.iImage				= imageIndex;
+	treeItem.iSelectedImage		= imageIndex;	 
+
+	insertStruct.hParent		= parent;
+	insertStruct.hInsertAfter	= 0;
+	insertStruct.item			= treeItem;
+	
+	// insert the item
+	return TreeView_InsertItem ( hwnd, &insertStruct );
+}
+
+
+void SetDeviceInfoString2 ( HWND hDlg )
+{
+	
+	HTREEITEM cpuRoot;
+	HTREEITEM nodeDeviceName;
+
+	HWND Tree;
+	
+	Tree = GetDlgItem ( hDlg, IDC_DEVICETREE );
+	TreeView_DeleteAllItems ( Tree );
+	
+	Snapshot* snapshot = SnapshotCreate();
+    if (snapshot != NULL) {
+        int deviceCount = SnapshotGetDeviceCount(snapshot);
+
+		for (int i = 0; i < deviceCount; i++) {
+            Device* device = SnapshotGetDevice(snapshot, i);
+            int j;
+
+			//Note to dvik,
+			//At should be possible to query the kind of device
+			//like soundchip of video chip, this way it's easier to
+			//create a "device manager" tree.
+			
+			nodeDeviceName = addChild ( Tree, 0, device->name, 0 );
+
+            int memCount = DeviceGetMemoryBlockCount(device);
+
+			HTREEITEM nodeMemory;
+
+			if ( memCount > 0 )
+				nodeMemory = addChild ( Tree, nodeDeviceName, "Memory", 0 );
+
+            for (j = 0; j < memCount; j++) {
+				
+                MemoryBlock* mem = DeviceGetMemoryBlock(device, j);
+			
+				char buffer [50];
+				
+				HTREEITEM nodeMemoryItem = addChild ( Tree, nodeMemory, mem->name, 0 );
+				sprintf ( buffer, "Size: 0x%x", mem->size );
+				HTREEITEM nodeMemorySize = addChild ( Tree, nodeMemoryItem, buffer, 0 );
+				sprintf ( buffer, "Start: 0x%x", mem->startAddress );
+				HTREEITEM nodeMemoryAddress = addChild ( Tree, nodeMemoryItem, buffer, 0 );
+				
+            }
+
+        }
+
+        SnapshotDestroy(snapshot);
+    }
+
+}
 
 void SetDeviceInfoString(HWND hDlg)
 {
@@ -75,23 +152,29 @@ static BOOL CALLBACK dlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
         case ID_REFRESH:
-            SetDeviceInfoString(hDlg);
+            //SetDeviceInfoString(hDlg);
+			SetDeviceInfoString2 ( hDlg );
             return TRUE;
         }
         break;
 
     case WM_STATUS:
         SetDeviceStatus(hDlg);
-        SetDeviceInfoString(hDlg);
+		SetDeviceInfoString2 ( hDlg );
+        //SetDeviceInfoString(hDlg);
+
         return 0;
 
     case WM_CLOSE:
         deviceViewerHwnd = NULL;
         EndDialog(hDlg, TRUE);
+		
         return TRUE;
 
     case WM_INITDIALOG:
-        SetDeviceInfoString(hDlg);
+
+		SetDeviceInfoString2 ( hDlg );
+        //SetDeviceInfoString(hDlg);
         SetDeviceStatus(hDlg);
         ShowWindow(hDlg, SW_SHOW);
         return FALSE;

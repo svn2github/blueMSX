@@ -77,7 +77,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
+			OutputDirectory="..\Make\msvc2003\Release\Tools"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -148,6 +148,9 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
+			RelativePath=".\images\cpu.bmp">
+		</File>
+		<File
 			RelativePath=".\DebugViewer.rc">
 		</File>
 		<File
@@ -158,6 +161,9 @@
 		</File>
 		<File
 			RelativePath=".\Resource.h">
+		</File>
+		<File
+			RelativePath=".\resrc1.h">
 		</File>
 		<File
 			RelativePath=".\ToolDllMain.cpp">
