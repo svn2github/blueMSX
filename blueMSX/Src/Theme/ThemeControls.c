@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-07 02:27:37 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -643,7 +643,7 @@ void activeNativeTextDestroy(ActiveNativeText* activeText)
     free(activeText);
 }
 
-int activeNativeTextSetText(ActiveNativeText* activeText, char* string)
+int activeNativeTextSetText(ActiveNativeText* activeText, const char* string)
 {
     int diff = strcmp(string, activeText->string);
     strcpy(activeText->string, string);
@@ -710,7 +710,7 @@ void activeTextDestroy(ActiveText* activeText)
     free(activeText);
 }
 
-int activeTextSetText(ActiveText* activeText, char* string)
+int activeTextSetText(ActiveText* activeText, const char* string)
 {
     char tmpString[128];
     int count;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-05 06:40:04 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 #include "romMapperSvi328Rs232.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-28 22:48:35 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #include "CommandLine.h"
 #include "TokenExtract.h"
 #include "IsFileExtension.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "ziphelper.h"
 #include "Machine.h"
 #include "Casette.h"
@@ -46,7 +46,7 @@ static RomType romNameToType(char* name) {
         return ROM_UNKNOWN;
     }
 
-    romType = romMapperTypeFromString(name);
+    romType = mediaDbOldStringToType(name);
 
     if (romType == ROM_UNKNOWN) {
         romType = atoi(name);

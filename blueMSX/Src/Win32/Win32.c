@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2005-02-10 07:18:45 $
+** $Date: 2005-02-11 04:30:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@
 #include "Casette.h"
 #include "JoystickIO.h"
 #include "RomLoader.h"
+#include "MediaDb.h"
 #include "build_number.h"
 #include "FrameBuffer.h"
 
@@ -300,7 +301,8 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
     }
 
     if (buf != NULL) {
-        RomType romType = romMapperGuessRom(buf, size, 0, NULL);
+        MediaType* mediaType = mediaDbLookupRom(buf, size);
+        RomType romType = mediaType != NULL ? mediaType->romType : ROM_UNKNOWN;
         int idx = 0;
 
         while (romTypeList[idx] != romType) {
@@ -2028,7 +2030,8 @@ void updateEmuWindow() {
 }
 
 void setDefaultPath() {   
-    char buffer[512];
+    char buffer[512];  
+    char buffer2[512];
     char rootDir[512];
     FILE* file;
     char* ptr;
@@ -2086,10 +2089,16 @@ void setDefaultPath() {
     tapeSetDirectory(buffer, "");
 
     sprintf(buffer, "%s\\romdb.dat", rootDir);
-    romMapperSetRomdbFilename(buffer);
+    sprintf(buffer2, "%s\\romdb.xml", rootDir);
+    mediaDbCreateRomdb(buffer, buffer2);
 
     sprintf(buffer, "%s\\diskdb.dat", rootDir);
-    romMapperSetDiskdbFilename(buffer);
+    sprintf(buffer2, "%s\\diskdb.xml", rootDir);
+    mediaDbCreateDiskdb(buffer, buffer2);
+
+    sprintf(buffer, "%s\\casdb.dat", rootDir);
+    sprintf(buffer2, "%s\\casdb.xml", rootDir);
+    mediaDbCreateCasdb(buffer, buffer2);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2308,7 +2317,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     updateVideoRender(st.pVideo, pProperties);
     archUpdateJoystick(pProperties);
     
-    romMapperSetDefaultType(pProperties->cartridge.defaultType);
+    mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
     if (pProperties->cartridge.slotA[0]) insertCartridge(pProperties, 0, pProperties->cartridge.slotA, pProperties->cartridge.slotAZip, pProperties->cartridge.slotAType, -1);
     if (pProperties->cartridge.slotB[0]) insertCartridge(pProperties, 1, pProperties->cartridge.slotB, pProperties->cartridge.slotBZip, pProperties->cartridge.slotBType, -1);

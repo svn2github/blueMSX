@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 22:48:35 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,7 +132,9 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
         char prettyRomName[256];
 
         if (buf != NULL) {
-            RomType chkRomType = romMapperGuessRom(buf, size, 1, prettyRomName);
+            MediaType* mediaType  = mediaDbGuessRom(buf, size);
+            RomType    chkRomType = mediaType->romType;
+            strcpy(prettyRomName, mediaDbCreatePrettyString(mediaType));
             free(buf);
             
             if (prettyRomName[0] != 0) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-03 07:33:25 $
+** $Date: 2005-02-11 04:30:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Resource.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "RomLoader.h"
 #include "zipHelper.h"
 #include "Win32Common.h"
@@ -201,7 +201,8 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                     }
             
                     if (buf != NULL) {
-                        RomType romType = romMapperGuessRom(buf, size, 0, NULL);
+                        MediaType* mediaType = mediaDbLookupRom(buf, size);
+                        RomType romType = mediaType != NULL ? mediaType->romType : ROM_UNKNOWN;
                         int idx = 0;
 
                         while (romTypeList[idx] != romType) {

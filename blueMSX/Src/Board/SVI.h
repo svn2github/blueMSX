@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-07 02:27:36 $
+** $Date: 2005-02-11 04:30:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,9 +32,7 @@
  
 #include "MSXTypes.h"
 #include "Board.h"
-//#include "RomMapper.h"
 #include "Machine.h"
-//#include "VDP.h"
 #include "audioMixer.h"
 #include <stdio.h>
 

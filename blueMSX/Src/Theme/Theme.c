@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-01-29 00:28:50 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -184,9 +184,9 @@ static int actionTypeToInt(ThemeTrigger actionType)
     return idx;
 }
 
-static char* actionTypeToStr(ThemeTrigger actionType)
+static const char* actionTypeToStr(ThemeTrigger actionType)
 {
-    char* str = NULL;
+    const char* str = NULL;
 
     switch (actionType & THEME_TRIGGER_MASK) {
     case THEME_TRIGGER_TEXT_FREQ:            str = themeTriggerEmuFrequency(); break;
@@ -595,10 +595,10 @@ void themePageUpdate(ThemePage* themePage, void* dc)
 
     // Update items
     for (item = themePage->itemList; item != NULL; item = item->next) {
-        int   pressed = actionTypeToInt(item->pressed);
-        int   trigger = actionTypeToInt(item->trigger);
-        char* str     = actionTypeToStr(item->trigger);
-        int   redraw  = redrawAll;
+        int   pressed   = actionTypeToInt(item->pressed);
+        int   trigger   = actionTypeToInt(item->trigger);
+        const char* str = actionTypeToStr(item->trigger);
+        int   redraw    = redrawAll;
 
         switch (item->type) {
         case ITEM_IMAGE:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-07 02:27:35 $
+** $Date: 2005-02-11 04:30:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #define MSX_H
  
 #include "MSXTypes.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "Machine.h"
 #include "VDP.h"
 #include "audioMixer.h"

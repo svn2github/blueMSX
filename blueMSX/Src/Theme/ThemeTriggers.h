@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-26 08:15:48 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -342,10 +342,10 @@ char* themeTriggerMemoryVram();
 char* themeTriggerEmuFrequency();
 char* themeTriggerFpsString();
 char* themeTriggerCpuString();
-char* themeTriggerRomMapper1();
-char* themeTriggerRomMapper2();
-char* themeTriggerRomMapper1Short();
-char* themeTriggerRomMapper2Short();
+const char* themeTriggerRomMapper1();
+const char* themeTriggerRomMapper2();
+const char* themeTriggerRomMapper1Short();
+const char* themeTriggerRomMapper2Short();
 char* themeTriggerMachineName();
 char* themeTriggerRunningName();
 char* themeTriggerBuildNumber();

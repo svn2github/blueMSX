@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-06 08:32:38 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -682,19 +682,19 @@ char* themeTriggerCpuString() {
     return buffer;
 }
 
-char* themeTriggerRomMapper1() {
+const char* themeTriggerRomMapper1() {
     return propGetGlobalProperties()->cartridge.slotA[0] ? romTypeToString(propGetGlobalProperties()->cartridge.slotAType) : "";
 }
 
-char* themeTriggerRomMapper2() {
+const char* themeTriggerRomMapper2() {
     return propGetGlobalProperties()->cartridge.slotB[0] ? romTypeToString(propGetGlobalProperties()->cartridge.slotBType) : ""; 
 }
 
-char* themeTriggerRomMapper1Short() {
+const char* themeTriggerRomMapper1Short() {
     return propGetGlobalProperties()->cartridge.slotA[0] ? romTypeToShortString(propGetGlobalProperties()->cartridge.slotAType) : "";
 }
 
-char* themeTriggerRomMapper2Short() {
+const char* themeTriggerRomMapper2Short() {
     return propGetGlobalProperties()->cartridge.slotB[0] ? romTypeToShortString(propGetGlobalProperties()->cartridge.slotBType) : "";
 }
 

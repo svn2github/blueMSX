@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-03 07:33:25 $
+** $Date: 2005-02-11 04:30:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include <windows.h>
 #include <tchar.h>
-#include "RomMapper.h"
+#include "MediaDb.h"
 
 char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
                int newFileSize, char* defExt, int* filterIndex);

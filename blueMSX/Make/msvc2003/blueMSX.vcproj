@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media"
 				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;LSB_FIRST;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -77,7 +77,7 @@
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media"
 				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
@@ -414,9 +414,6 @@
 					RelativePath="..\..\Src\Memory\RomLoader.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\RomMapper.c">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperASCII16.c">
 				</File>
 				<File
@@ -626,9 +623,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\RomLoader.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\RomMapper.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperASCII16.h">
@@ -1398,6 +1392,22 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Utils\TokenExtract.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Media"
+			Filter="">
+			<File
+				RelativePath="..\..\Src\Media\Crc32.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Media\Crc32.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Media\MediaDb.cpp">
+			</File>
+			<File
+				RelativePath="..\..\Src\Media\MediaDb.h">
 			</File>
 		</Filter>
 	</Files>

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-21 01:06:31 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef FILE_HISTORY_H
 #define FILE_HISTORY_H
 
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "Properties.h"
 
 char* stripPath(char* filename);

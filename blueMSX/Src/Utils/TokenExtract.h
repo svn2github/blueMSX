@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/TokenExtract.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:50 $
+** $Date: 2005-02-11 04:30:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,5 +31,6 @@
 #define TOKEN_EXTRACT_H
 
 char* extractToken(char* szLine, int argNo);
+char* extractTokens(char* szLine, int argNo);
 
 #endif

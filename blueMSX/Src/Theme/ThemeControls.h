@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-07 02:27:37 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,7 +89,7 @@ typedef struct ActiveText ActiveText;
 
 ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int startChar, int charCount, int width, int type, int color, int rightAligned);
 void activeTextDestroy(ActiveText* activeText);
-int activeTextSetText(ActiveText* activeText, char* string);
+int activeTextSetText(ActiveText* activeText, const char* string);
 void activeTextDraw(ActiveText* activeText, void* dc);
 int activeTextShow(ActiveText* activeText, int show);
 

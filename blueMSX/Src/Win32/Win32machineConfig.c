@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-10 07:18:48 $
+** $Date: 2005-02-11 04:30:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@
 #include "Language.h"
 #include "Machine.h"
 #include "RomLoader.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "FileHistory.h"
 
 #define WM_UPDATEMAHCINE  (WM_USER + 0)
@@ -1032,10 +1032,9 @@ static void setEditProps(HWND hDlg, char* fileName)
     editSlotInfo.romType = ROM_NORMAL;
 
     if (buf != NULL) {
-        RomType romType = romMapperGuessRom(buf, size, 0, NULL);
-
-        if (romType != ROM_UNKNOWN) {
-            editSlotInfo.romType = romType;
+        MediaType* mediaType = mediaDbLookupRom(buf, size);
+        if (mediaType != NULL && mediaType->romType != ROM_UNKNOWN) {
+            editSlotInfo.romType = mediaType->romType;
         }
 
         free(buf);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-10 07:18:44 $
+** $Date: 2005-02-11 04:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #include "AudioMixer.h"
 #include "VideoRender.h"
 #include "Language.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 
 #define CARTNAME_SNATCHER    "The Snatcher Cartridge"
 #define CARTNAME_SDSNATCHER  "SD-Snatcher Cartridge"

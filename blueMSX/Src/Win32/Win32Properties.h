@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Properties.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-16 08:02:36 $
+** $Date: 2005-02-11 04:30:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 #include "audioMixer.h"
 #include "VideoRender.h"
 #include "Language.h"
-#include "RomMapper.h"
+#include "MediaDb.h"
 #include "Win32Common.h"
 
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video);
