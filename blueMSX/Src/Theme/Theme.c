@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-10 16:07:11 $
+** $Date: 2005-01-11 02:09:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -179,6 +179,12 @@ static char* actionTypeToStr(ThemeTrigger actionType)
     case THEME_TRIGGER_TEXT_VERSION:         str = themeTriggerVersion(); break;
     case THEME_TRIGGER_TEXT_BUILDNUMBER:     str = themeTriggerBuildNumber(); break;
     case THEME_TRIGGER_TEXT_BUILDANDVER:     str = themeTriggerBuildAndVersion(); break;
+    case THEME_TRIGGER_TEXT_SELECTEDKEY:     str = themeTriggerSelectedKey(); break;
+    case THEME_TRIGGER_TEXT_MAPPEDKEY:       str = themeTriggerMappedKey(); break;
+        
+    case THEME_TRIGGER_LANG_KBD_SELKEY:      str = themeTriggerLangKbdSelKey(); break;
+    case THEME_TRIGGER_LANG_KBD_MAPPEDTO:    str = themeTriggerLangKbdMappedTo(); break;
+    case THEME_TRIGGER_LANG_KBD_MAPSCHEME:   str = themeTriggerLangKbdMapSCheme(); break;
     }
     return str;
 }

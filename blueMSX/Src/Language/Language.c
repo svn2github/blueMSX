@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-05 00:50:23 $
+** $Date: 2005-01-11 02:09:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -743,10 +743,13 @@ _TCHAR* langShortcutToggleSpriteEnable() { return ls->shortcutToggleSpriteEnable
 _TCHAR* langShortcutToggleFdcTiming() { return ls->shortcutToggleFdcTiming; }
 _TCHAR* langShortcutToggleCpuTrace() { return ls->shortcutToggleCpuTrace; }
 
-
 _TCHAR* langPropApearance() { return ls->propApearance; }
 _TCHAR* langPropFile()  { return ls->propFile; }
 _TCHAR* langPropThemeGB() { return ls->propThemeGB; }
 _TCHAR* langPropTheme() { return ls->propTheme; }
 _TCHAR* langPropThemeClassic() { return ls->propThemeClassic; }
 _TCHAR* langPropThemeBlue() { return ls->propThemeBlue; }
+
+_TCHAR* langKeyconfigSelectedKey() { return ls->keyconfigSelectedKey; }
+_TCHAR* langKeyconfigMappedTo() { return ls->keyconfigMappedTo; }
+_TCHAR* langKeyconfigMappingScheme() { return ls->keyconfigMappingScheme; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-10 16:07:11 $
+** $Date: 2005-01-11 02:09:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -371,6 +371,12 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "text-version"))             return t | THEME_TRIGGER_TEXT_VERSION;
     if (0 == strcmp(s, "text-buildnumber"))         return t | THEME_TRIGGER_TEXT_BUILDNUMBER;
     if (0 == strcmp(s, "text-buildandversion"))     return t | THEME_TRIGGER_TEXT_BUILDANDVER;
+    if (0 == strcmp(s, "text-selectedkey"))         return t | THEME_TRIGGER_TEXT_SELECTEDKEY;
+    if (0 == strcmp(s, "text-mappedkey"))           return t | THEME_TRIGGER_TEXT_MAPPEDKEY;
+    
+    if (0 == strcmp(s, "lang-kbd-selkey"))          return t | THEME_TRIGGER_LANG_KBD_SELKEY;
+    if (0 == strcmp(s, "lang-kbd-mappedto"))        return t | THEME_TRIGGER_LANG_KBD_MAPPEDTO;
+    if (0 == strcmp(s, "lang-kbd-mapscheme"))       return t | THEME_TRIGGER_LANG_KBD_MAPSCHEME;
 
     return -1;
 }

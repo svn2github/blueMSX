@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-01-09 09:04:57 $
+** $Date: 2005-01-11 02:09:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3309,6 +3309,26 @@ int themeTriggerKeyEdit(int keyCode) {
 
 int themeTriggerKeyConfigured(int keyCode) {
     return 0;
+}
+
+char* themeTriggerLangKbdSelKey() {
+    return langKeyconfigSelectedKey();
+}
+
+char* themeTriggerLangKbdMappedTo() {
+    return langKeyconfigMappedTo();
+}
+
+char* themeTriggerLangKbdMapSCheme() {
+    return langKeyconfigMappingScheme();
+}
+
+char* themeTriggerSelectedKey() {
+    return "";
+}
+
+char* themeTriggerMappedKey() {
+    return "";
 }
 
 

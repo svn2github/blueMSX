@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-05 00:50:26 $
+** $Date: 2005-01-11 02:09:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -529,6 +529,10 @@ _TCHAR* langShortcutShowFiles();
 _TCHAR* langShortcutToggleSpriteEnable();
 _TCHAR* langShortcutToggleFdcTiming();
 _TCHAR* langShortcutToggleCpuTrace();
+
+_TCHAR* langKeyconfigSelectedKey();
+_TCHAR* langKeyconfigMappedTo();
+_TCHAR* langKeyconfigMappingScheme();
 
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-05 00:50:27 $
+** $Date: 2005-01-11 02:09:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -515,6 +515,9 @@ typedef struct {
     _TCHAR* shortcutToggleFdcTiming;
     _TCHAR* shortcutToggleCpuTrace;
 
+    _TCHAR* keyconfigSelectedKey;
+    _TCHAR* keyconfigMappedTo;
+    _TCHAR* keyconfigMappingScheme;
 
 } LanguageStrings;
 

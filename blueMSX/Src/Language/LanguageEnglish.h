@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-05 02:59:27 $
+** $Date: 2005-01-11 02:09:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -538,6 +538,10 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = "RF-Modulator";
+
+    ls->keyconfigSelectedKey    = "Selected Key:";
+    ls->keyconfigMappedTo       = "Mapped To:";
+    ls->keyconfigMappingScheme  = "Mapping Scheme:";
 };
 
 

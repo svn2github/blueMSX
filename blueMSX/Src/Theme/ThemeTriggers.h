@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-07 06:38:30 $
+** $Date: 2005-01-11 02:09:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,6 +116,12 @@ typedef enum {
     THEME_TRIGGER_TEXT_VERSION,
     THEME_TRIGGER_TEXT_BUILDNUMBER,
     THEME_TRIGGER_TEXT_BUILDANDVER,
+    THEME_TRIGGER_TEXT_SELECTEDKEY,
+    THEME_TRIGGER_TEXT_MAPPEDKEY,
+
+    THEME_TRIGGER_LANG_KBD_SELKEY,
+    THEME_TRIGGER_LANG_KBD_MAPPEDTO,
+    THEME_TRIGGER_LANG_KBD_MAPSCHEME,
 
     THEME_TRIGGER_LEVEL_MASTER,
     THEME_TRIGGER_LEVEL_PSG,
@@ -271,6 +277,13 @@ char* themeTriggerRunningName();
 char* themeTriggerBuildNumber();
 char* themeTriggerVersion();
 char* themeTriggerBuildAndVersion();
+
+char* themeTriggerSelectedKey();
+char* themeTriggerMappedKey();
+
+char* themeTriggerLangKbdSelKey();
+char* themeTriggerLangKbdMappedTo();
+char* themeTriggerLangKbdMapSCheme();
 
 int themeTriggerKeyPressed(int keyCode);
 int themeTriggerKeyEdit(int keyCode);
