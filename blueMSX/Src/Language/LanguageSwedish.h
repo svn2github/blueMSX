@@ -1,4 +1,11 @@
 /*****************************************************************************
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
+**
+** $Revision: 1.2 $
+**
+** $Date: 2004-12-06 07:59:12 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

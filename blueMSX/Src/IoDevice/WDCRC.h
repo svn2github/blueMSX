@@ -1,15 +1,13 @@
 /*****************************************************************************
-** File:        WDCRC.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WDCRC.h,v $
 **
-** Author:      Tomas Karlsson
-** 
-** Description: Calculates a 16-bit Cyclic Redundancy Check (CRC) that is
-**              compliant with the CCITT/ITU standard.
-**              Synthetic polynomial = x^16 + x^12 + x^5 + 1
-**              Truncated polynomial = 0x1021
-**              Initial value = 0xFFFF
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 07:57:37 $
+**
+** More info: http://www.bluemsx.com
+**
+** Copyright (C) 2003-2004 Tomas Karlsson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -29,7 +27,6 @@
 **
 ******************************************************************************
 */
-
 #ifndef WDCRC_H
 #define WDCRC_H
 

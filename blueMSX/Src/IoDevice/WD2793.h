@@ -1,17 +1,13 @@
 /*****************************************************************************
-** File:
-**      WD2793.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-**      Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
+** $Date: 2004-12-06 07:57:37 $
 **
-** Description:
-**      WD2793 fdc
+** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

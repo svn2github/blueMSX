@@ -1,15 +1,13 @@
 /*****************************************************************************
-** File:
-**      TC8566AF.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** Author:
-**      Daniel Vik
-** 
-** Description:
-**      TC8566AF fdc
+** $Revision: 1.2 $
 **
-** More info:   
-**      www.bluemsx.com
+** $Date: 2004-12-06 07:57:37 $
+**
+** More info: http://www.bluemsx.com
+**
+** Copyright (C) 2003-2004 Daniel Vik
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
