@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-12 05:57:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2806,12 +2806,12 @@ char* archDirOpen(char* title, char* defaultDir)
     return filename;
 }
 
-char* archFileOpen(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defautExtension)
+char* archFileOpen(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defautExtension, int createFileSize)
 {
     char* fileName;
 
     enterDialogShow();
-    fileName = openFile(st.hwnd, title, extensionList, defaultDir, 1, defautExtension, selectedExtension);
+    fileName = openFile(st.hwnd, title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 

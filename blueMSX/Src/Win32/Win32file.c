@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-12 05:57:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -327,8 +327,8 @@ UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, int mustExist, 
-               char* defExt, int* filterIndex)
+char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+               int newFileSize, char* defExt, int* filterIndex)
 { 
     OPENFILENAME ofn; 
     BOOL rv; 
@@ -350,7 +350,7 @@ char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, int mu
     ofn.nMaxFileTitle = 0; 
     ofn.lpstrInitialDir = pDir; 
     ofn.lpstrTitle = pTitle; 
-    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLEHOOK | OFN_HIDEREADONLY | (mustExist ? OFN_FILEMUSTEXIST : 0); 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLEHOOK | OFN_HIDEREADONLY | (newFileSize < 0 ? OFN_FILEMUSTEXIST : 0); 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
     ofn.lpstrDefExt = NULL; 
@@ -396,11 +396,10 @@ char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, int mu
         }
         file = fopen(pFileName, "a+");
         if (file != NULL) {
-            char data[1024];
-            int i;
-            memset(data, 0, 1024);
-            for (i = 0; i < 720; i++) {
-                fwrite(data, 1, 1024, file);
+            if (newFileSize > 0) {
+                char* data = calloc(1, newFileSize);
+                fwrite(data, 1, newFileSize, file);
+                free(data);
             }
             fclose(file);
         }

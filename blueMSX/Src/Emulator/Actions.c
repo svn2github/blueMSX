@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:48 $
+** $Date: 2004-12-12 05:57:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,7 +119,7 @@ void actionLoadState() {
 
     emulatorSuspend();
     filename = archFileOpen(langDlgLoadState(), "CPU state   (*.sta)\0*.sta\0", 
-                            state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL);
+                            state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
     if (filename != NULL) {
         emulatorStop();
         emulatorStart(filename);
@@ -308,7 +308,7 @@ void actionDiskInsertA() {
     filename = archFileOpen(langDlgInsertDiskA(), 
                             "Disk image   (*.dsk, *.di1, *.di2, *.zip)\0*.dsk; *.di1; *.di2; *.zip\0All Files   (*.*)\0*.*\0",
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.zip\0", 
-                            &state.properties->diskdrive.slotAFilter, ".dsk");
+                            &state.properties->diskdrive.slotAFilter, ".dsk", 720 * 1024);
     if (filename != NULL) {        
         insertDiskette(state.properties, 0, filename, NULL, 0);
     }
@@ -323,7 +323,7 @@ void actionDiskInsertB() {
     filename = archFileOpen(langDlgInsertDiskB(), 
                             "Disk image   (*.dsk, *.di1, *.di2, *.zip)\0*.dsk; *.di1; *.di2; *.zip\0All Files   (*.*)\0*.*\0",
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.zip\0", 
-                            &state.properties->diskdrive.slotBFilter, ".dsk");
+                            &state.properties->diskdrive.slotBFilter, ".dsk", 720 * 1024);
     if (filename != NULL) {
         
         insertDiskette(state.properties, 1, filename, NULL, 0);
@@ -427,7 +427,7 @@ void actionCasInsert() {
     filename = archFileOpen(langDlgInsertCas(),
                             "Tape image   (*.cas, *.zip)\0*.cas; *.zip\0All Files   (*.*)\0*.*\0", 
                             state.properties->cassette.defDir, ".cas\0.zip\0.*\0", 
-                            &state.properties->cassette.filter, ".cas");
+                            &state.properties->cassette.filter, ".cas", 0);
     if (filename != NULL) {        
         insertCassette(state.properties, filename, NULL, 0);
         if (state.properties->cassette.autoRewind) {

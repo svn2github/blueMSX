@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2004-12-12 05:57:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 #include "RomMapper.h"
 
 char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
-               int mustExist, char* defExt, int* filterIndex);
+               int newFileSize, char* defExt, int* filterIndex);
 char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
                   int mustExist, char* defExt, int* filterIndex, RomType* romType);
 char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir);
