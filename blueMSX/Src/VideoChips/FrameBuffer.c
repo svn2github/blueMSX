@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-19 05:26:34 $
+** $Date: 2005-01-19 19:19:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,10 +110,6 @@ FrameBufferData* frameBufferDataCreate()
 {
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
     frameData->drawFrame = 1;
-
-    if (currentBuffer == NULL) {
-        currentBuffer = frameData;
-    }
 
     return frameData;
 }
