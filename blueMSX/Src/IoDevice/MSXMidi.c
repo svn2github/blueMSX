@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-04-06 21:18:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,13 +32,13 @@
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
-#include "I8250.h"
+#include "I8251.h"
 #include <stdlib.h>
 
 
 typedef struct {
     int deviceHandle;
-    I8250* i8250;
+    I8251* i8251;
 } MSXMidi;
 
 
@@ -53,7 +53,7 @@ static void saveState(MSXMidi* msxMidi)
     
     saveStateClose(state);
 
-    i8250SaveState(msxMidi->i8250);
+    i8251SaveState(msxMidi->i8251);
 }
 
 static void loadState(MSXMidi* msxMidi)
@@ -62,20 +62,22 @@ static void loadState(MSXMidi* msxMidi)
 
     saveStateClose(state);
     
-    i8250LoadState(msxMidi->i8250);
+    i8251LoadState(msxMidi->i8251);
 }
 
 static void destroy(MSXMidi* msxMidi)
 {
     ioPortUnregister(0xe8);
     
-    i8250Destroy(msxMidi->i8250);
+    i8251Destroy(msxMidi->i8251);
 
     deviceManagerUnregister(msxMidi->deviceHandle);
     free(msxMidi);
 }
 
-static void reset(MSXMidi* msxMidi) {
+static void reset(MSXMidi* msxMidi) 
+{
+    i8251Reset(msxMidi->i8251);
 }
 
 
@@ -94,7 +96,7 @@ static void writeIo(MSXMidi* msxMidi, UInt16 ioPort, UInt8 value)
 
 
 /*****************************************
-** I8250 callbacks
+** I8251 callbacks
 ******************************************
 */
 static int transmit(MSXMidi* msxMidi, UInt8 value) {
@@ -147,7 +149,7 @@ int MSXMidiCreate()
     
     msxMidi->deviceHandle = deviceManagerRegister(ROM_MSXMIDI, &callbacks, msxMidi);
 
-    msxMidi->i8250 = i8250Create(transmit, signal, setDataBits, setStopBits, setParity, 
+    msxMidi->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 
                                  setRxReady, setDtr, setRts, getDtr, getRts, msxMidi);
 
     ioPortRegister(0xe8, readIo, writeIo, msxMidi);
