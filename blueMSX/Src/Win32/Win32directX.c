@@ -1,13 +1,13 @@
 /*****************************************************************************
-** File:        Win32directX.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** Author:      Daniel Vik, Laurent Halter
+** $Revision: 1.2 $
 **
-** Description: Contains DirectX drawing metods.
+** $Date: 2004-12-06 07:32:02 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2004 Daniel Vik, Laurent Halter
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages

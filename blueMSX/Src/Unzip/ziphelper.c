@@ -1,9 +1,11 @@
 /*****************************************************************************
-** File:        ziphelper.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Unzip/ziphelper.c,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Methods for reading files from a zip archive.
+** $Date: 2004-12-06 07:34:03 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

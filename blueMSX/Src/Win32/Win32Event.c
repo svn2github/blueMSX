@@ -1,9 +1,11 @@
 /*****************************************************************************
-** File:        Win32Event.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Event.c,v $
 **
-** Description: Implements the ArchEvent interface for Win32
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 07:32:02 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

@@ -1,14 +1,11 @@
 /*****************************************************************************
-** File:
-**      Win32wmmSound.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32wmmSound.h,v $
 **
-** More info:   www.bluemsx.com
+** $Revision: 1.2 $
 **
-** Author:
-**      Daniel Vik
+** $Date: 2004-12-06 07:31:42 $
 **
-** Description:
-**      WMM sound driver
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

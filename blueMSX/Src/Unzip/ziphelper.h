@@ -1,12 +1,11 @@
 /*****************************************************************************
-** File:
-**      ziphelper.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Unzip/ziphelper.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description:
-**      Zip file support
+** $Date: 2004-12-06 07:33:42 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

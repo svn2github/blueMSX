@@ -1,8 +1,11 @@
 /*****************************************************************************
-** File:
-**      Patch.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Bios/Patch.c,v $
 **
-** More info:   www.bluemsx.com
+** $Revision: 1.2 $
+**
+** $Date: 2004-12-06 07:32:44 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

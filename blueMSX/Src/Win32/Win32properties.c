@@ -1,21 +1,11 @@
 /*****************************************************************************
-** File:        Win32properties.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: blueMSX properties dialog and save/load methods
+** $Date: 2004-12-06 07:32:02 $
 **
-** More info:   www.bluemsx.com
-**
-** Note:        The following macros can be defined to change the behaviour
-**              of the properties:
-**
-**              PROPERTIES_NO_REGISTRY
-**                  Dont save settings in registry. Uses a windows ini file.
-**
-**              PROPERTIES_LOCAL_INI_FILE
-**                  Stores the windows ini file in same directory as the
-**                  executable.
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

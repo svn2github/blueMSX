@@ -1,13 +1,13 @@
 /*****************************************************************************
-** File:        Win32ScreenShot.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.h,v $
 **
-** Author:      Laurent Halter, Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Screenshot routines
+** $Date: 2004-12-06 07:31:42 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2004 Daniel Vik, Laurent Halter
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -26,7 +26,8 @@
 **  3. This notice may not be removed or altered from any source distribution.
 **
 ******************************************************************************
-*/#ifndef WIN32_SCREENSHOT_H
+*/
+#ifndef WIN32_SCREENSHOT_H
 #define WIN32_SCREENSHOT_H
 
 #include <windows.h>

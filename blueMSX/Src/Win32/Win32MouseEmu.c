@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:
-**      Win32MouseEmu.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.c,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 07:32:02 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
