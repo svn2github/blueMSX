@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMoonsound.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-02 08:22:11 $
+** $Date: 2005-01-05 02:59:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,9 @@ static void destroy(RomMapperMoonsound* rm)
     ioPortUnregister(0xc6);
     ioPortUnregister(0xc7);
 
-    moonsoundDestroy(rm->moonsound);
+    if (rm->moonsound != NULL) {
+        moonsoundDestroy(rm->moonsound);
+    }
 
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -61,7 +63,9 @@ static void destroy(RomMapperMoonsound* rm)
 
 static void reset(RomMapperMoonsound* rm) 
 {
-    moonsoundReset(rm->moonsound);
+    if (rm->moonsound != NULL) {
+        moonsoundReset(rm->moonsound);
+    }
 }
 
 static void loadState(RomMapperMoonsound* rm)
@@ -70,7 +74,9 @@ static void loadState(RomMapperMoonsound* rm)
 
     saveStateClose(state);
     
-    moonsoundLoadState(rm->moonsound);
+    if (rm->moonsound != NULL) {
+        moonsoundLoadState(rm->moonsound);
+    }
 }
 
 static void saveState(RomMapperMoonsound* rm)
@@ -79,7 +85,9 @@ static void saveState(RomMapperMoonsound* rm)
 
     saveStateClose(state);
 
-    moonsoundSaveState(rm->moonsound);
+    if (rm->moonsound != NULL) {
+        moonsoundSaveState(rm->moonsound);
+    }
 }
 
 static UInt8 read(RomMapperMoonsound* rm, UInt16 ioPort)
@@ -98,10 +106,11 @@ int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramS
     RomMapperMoonsound* rm = malloc(sizeof(RomMapperMoonsound));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MOONSOUND, &callbacks, rm);
-
-    rm->moonsound = moonsoundCreate(boardGetMixer(), romData, size, sramSize);
     
+    rm->moonsound = NULL;
+
     if (boardGetMoonsoundEnable()) {
+        rm->moonsound = moonsoundCreate(boardGetMixer(), romData, size, sramSize);
         ioPortRegister(0x7e, read, write, rm);
         ioPortRegister(0x7f, read, write, rm);
         ioPortRegister(0xc4, read, write, rm);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-05 00:50:46 $
+** $Date: 2005-01-05 02:59:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2701,6 +2701,9 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
     }
     boardSetFdcTimingEnable(pProperties->emulation.enableFdcTiming);
+    boardSetY8950Enable(pProperties->sound.chip.enableY8950);
+    boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
+    boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
 
     updateMenu(0);
 

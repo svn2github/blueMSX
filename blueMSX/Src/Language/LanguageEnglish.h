@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-05 00:50:27 $
+** $Date: 2005-01-05 02:59:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -479,7 +479,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "Color Ghosting";
 
     ls->dlgRomType              = "Rom Type:";
     ls->propOpenRomGB           = "Open Rom Dialog ";
@@ -538,6 +537,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->propMonColorGhosting    = "RF-Modulator";
 };
 
 

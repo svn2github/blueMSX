@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-02 08:22:11 $
+** $Date: 2005-01-05 02:59:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,9 @@ static void destroy(MsxMusic* rm)
     ioPortUnregister(0x7c);
     ioPortUnregister(0x7d);
 
-    ym2413Destroy(rm->ym2413);
+    if (rm->ym2413 != NULL) {
+        ym2413Destroy(rm->ym2413);
+    }
 
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
@@ -73,6 +75,10 @@ static void loadState(MsxMusic* rm)
     saveStateClose(state);
     
     ym2413LoadState(rm->ym2413);
+    
+    if (rm->ym2413 != NULL) {
+        ym2413LoadState(rm->ym2413);
+    }
 }
 
 static void saveState(MsxMusic* rm)
@@ -82,6 +88,10 @@ static void saveState(MsxMusic* rm)
     saveStateClose(state);
 
     ym2413SaveState(rm->ym2413);
+    
+    if (rm->ym2413 != NULL) {
+        ym2413SaveState(rm->ym2413);
+    }
 }
 
 static void write(MsxMusic* rm, UInt16 ioPort, UInt8 data)
@@ -109,10 +119,10 @@ int romMapperMsxMusicCreate(char* filename, UInt8* romData,
     }
 
     rm->deviceHandle = deviceManagerRegister(ROM_MSXMUSIC, &callbacks, rm);
-
-    rm->ym2413 = ym2413Create(boardGetMixer());
     
+    rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
+        rm->ym2413 = ym2413Create(boardGetMixer());
         ioPortRegister(0x7c, NULL, write, rm);
         ioPortRegister(0x7d, NULL, write, rm);
     }

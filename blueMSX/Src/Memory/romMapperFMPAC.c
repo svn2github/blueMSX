@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-02 08:22:11 $
+** $Date: 2005-01-05 02:59:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,10 @@ static void saveState(RomMapperFMPAC* rm)
     saveStateSet(state, "reg3ff7",     rm->romData[0x3ff7]);
 
     saveStateClose(state);
+    
+    if (rm->ym2413 != NULL) {
+        ym2413SaveState(rm->ym2413);
+    }
 }
 
 static void loadState(RomMapperFMPAC* rm)
@@ -86,6 +90,10 @@ static void loadState(RomMapperFMPAC* rm)
     reg3ff7         = (UInt8)saveStateGet(state, "reg3ff7", 0);
 
     saveStateClose(state);
+
+    if (rm->ym2413 != NULL) {
+        ym2413LoadState(rm->ym2413);
+    }
 
     rm->romData[0x1FFE] = reg1ffe;
     rm->romData[0x5FFE] = reg1ffe;
@@ -123,7 +131,9 @@ static void destroy(RomMapperFMPAC* rm)
     ioPortUnregister(0x7c);
     ioPortUnregister(0x7d);
     
-    ym2413Destroy(rm->ym2413);
+    if (rm->ym2413 != NULL) {
+        ym2413Destroy(rm->ym2413);
+    }
 
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
@@ -133,7 +143,9 @@ static void destroy(RomMapperFMPAC* rm)
 
 static void reset(RomMapperFMPAC* rm) 
 {
-    ym2413Reset(rm->ym2413);
+    if (rm->ym2413 != NULL) {
+        ym2413Reset(rm->ym2413);
+    }
 }
 
 static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value) 
@@ -233,9 +245,9 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_FMPAC, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 2, NULL, write, destroy, rm);
 
-    rm->ym2413 = ym2413Create(boardGetMixer());
-
+    rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
+        rm->ym2413 = ym2413Create(boardGetMixer());
         ioPortRegister(0x7c, NULL, writeIo, rm);
         ioPortRegister(0x7d, NULL, writeIo, rm);
     }
@@ -270,6 +282,8 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
     rm->romData[0x7ff7] = 0;
     rm->romData[0xbff7] = 0;
     rm->romData[0xfff7] = 0;
+
+    reset(rm);
 
     return 1;
 }

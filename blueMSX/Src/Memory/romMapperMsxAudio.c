@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-02 08:22:11 $
+** $Date: 2005-01-05 02:59:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,7 +64,9 @@ static void saveState(RomMapperMsxAudio* rm)
     
     saveStateClose(state);
 
-    y8950SaveState(rm->y8950);
+    if (rm->y8950 != NULL) {
+        y8950SaveState(rm->y8950);
+    }
 }
 
 static void loadState(RomMapperMsxAudio* rm)
@@ -76,7 +78,9 @@ static void loadState(RomMapperMsxAudio* rm)
 
     saveStateClose(state);
     
-    y8950LoadState(rm->y8950);
+    if (rm->y8950 != NULL) {
+        y8950LoadState(rm->y8950);
+    }
 }
 
 static void destroy(RomMapperMsxAudio* rm)
@@ -86,7 +90,9 @@ static void destroy(RomMapperMsxAudio* rm)
 
     deviceCount--;
 
-    y8950Destroy(rm->y8950);
+    if (rm->y8950 != NULL) {
+        y8950Destroy(rm->y8950);
+    }
 
     if (rm->sizeMask != -1) {
         slotUnregister(rm->slot, rm->sslot, rm->startPage);
@@ -111,7 +117,9 @@ static UInt8 read(RomMapperMsxAudio* rm, UInt16 address)
 
 static void reset(RomMapperMsxAudio* rm) 
 {
-    y8950Reset(rm->y8950);
+    if (rm->y8950 != NULL) {
+        y8950Reset(rm->y8950);
+    }
 }
 
 static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
@@ -157,10 +165,12 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
             rm->romData[0x408e] = 0;
         }
 
-        for (i = 0; i < 8; i++) {   
+        for (i = 0; i < 8; i++) {
             slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
         }
     }
+
+    rm->y8950 = NULL;
 
     if (boardGetY8950Enable()) {
         rm->y8950 = y8950Create(boardGetMixer());
@@ -168,6 +178,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         ioPortRegister(rm->ioBase + 1, y8950Read, y8950Write, rm->y8950);
     }
 
+    reset(rm);
 
     return 1;
 }
