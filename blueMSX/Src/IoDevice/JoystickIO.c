@@ -138,16 +138,12 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
                 ((joyIO->controls[joyId].dy > 0) ? 0x02 : 0x01) : 0x03);
         return 0x40 | value;
     case 1: 
-        printf("1: %d\n", (joyIO->controls[joyId].dx >> 4) & 0x0f);
         return 0x40 | ((joyIO->controls[joyId].dx >> 4) & 0x0f) | joyIO->controls[joyId].buttons;
     case 2: 
-        printf("2: %d\n", joyIO->controls[joyId].dx & 0x0f);
         return 0x40 | (joyIO->controls[joyId].dx & 0x0f) | joyIO->controls[joyId].buttons;
     case 3: 
-        printf("3: %d\n", (joyIO->controls[joyId].dy >> 4) & 0x0f);
         return 0x40 | ((joyIO->controls[joyId].dy >> 4) & 0x0f) | joyIO->controls[joyId].buttons;
     case 4: 
-        printf("4: %d\n", joyIO->controls[joyId].dy & 0x0f);
         return 0x40 | (joyIO->controls[joyId].dy & 0x0f) | joyIO->controls[joyId].buttons;
     }
 
