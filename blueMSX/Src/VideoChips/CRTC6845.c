@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-18 00:41:55 $
+** $Date: 2005-01-18 15:27:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,6 +89,7 @@ typedef struct
     UInt8    rasterStart;
     UInt8    rasterEnd;
     UInt16   addressStart;
+    double   blinkrate;
 } TYP_CRTC_CURSOR;
 
 typedef struct
@@ -107,12 +108,6 @@ static UInt8 crtcScreenBuffer[0x3e80];
 
 static int crtcConnector;
 
-static void crtcScreenWrite(UInt16 address, UInt8 value)
-{
-    if (address < 80 * 25)
-        memcpy(&crtcScreenBuffer[address*8], &crtcROM[value], 8);
-}
-
 void crtcScreenRefresh(void)
 {
 /*
@@ -123,6 +118,38 @@ void crtcScreenRefresh(void)
 */
 }
 
+static void crtcScreenWrite(UInt16 address, UInt8 value)
+{
+    if (address < 80 * 25)
+        memcpy(&crtcScreenBuffer[address*8], &crtcROM[value], 8);
+}
+
+static void crtcCursorUpdate(void)
+{
+    UInt8 value;
+    
+    value = crtcRegister[10] & 0x60;
+    crtc.cursor.mode = (value&32)?(value&64)?(value&96)?CURSOR_DISABLED:CURSOR_BLINK16:CURSOR_BLINK32:CURSOR_NOBLINK;
+    
+    crtc.cursor.rasterStart = crtcRegister[10] & 0x1f;
+    crtc.cursor.rasterEnd = crtcRegister[11];
+
+    crtc.cursor.addressStart = crtcRegister[14];
+    crtc.cursor.addressStart <<= 8;
+    crtc.cursor.addressStart |= crtcRegister[15];
+
+    switch (crtc.cursor.mode ) {
+    case CURSOR_BLINK16:
+        crtc.cursor.blinkrate = 50 / 16;    // Get Hz from emu
+        break;
+    case CURSOR_BLINK32:
+        crtc.cursor.blinkrate = 50 / 32;    // Get Hz from emu
+        break;
+    default:
+        crtc.cursor.blinkrate = 0;
+    }
+    	
+}
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
     if (crtcAddressReg < 18)
@@ -138,20 +165,10 @@ void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
         crtcRegister[crtcAddressReg] = value;
         switch (crtcAddressReg ) {
         case 10:
-            crtc.cursor.rasterStart = value & 0x1f;
-            value &= 0x60;
-            crtc.cursor.mode = (value&32)?(value&64)?(value&96)?CURSOR_DISABLED:CURSOR_BLINK16:CURSOR_BLINK32:CURSOR_NOBLINK;
-            break;
         case 11:
-            crtc.cursor.rasterEnd = value;
-            break;
-        case 12:
-            crtc.cursor.addressStart &= 0xff;
-            crtc.cursor.addressStart |= value << 8;
-            break;
-        case 13:
-            crtc.cursor.addressStart &= 0xff00;
-            crtc.cursor.addressStart |= value;
+        case 14:
+        case 15:
+            crtcCursorUpdate();
             break;
         }
     }
@@ -164,11 +181,6 @@ void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value)
 
 void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value)
 {
-/*
-   The SVI-806 column card for the SVI-328 disables all the Z80
-   memory access from 0xF000 and above when then CRTC memory
-   bank is enabled. The VRAM is 2KB.
-*/
    crtcMemoryBankControl = value & 1;
 }
 
