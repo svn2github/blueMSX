@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-15 03:06:49 $
+** $Date: 2005-01-15 23:23:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -746,7 +746,7 @@ void themeCollectionOpenWindow(ThemeCollection* tc, unsigned long hash)
         return;
     }
 
-    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_NORMAL);
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_NORMAL, 1);
 }
 
 void themeCollectionOpenKbdWindow(ThemeCollection* tc, unsigned long hash)
@@ -764,5 +764,5 @@ void themeCollectionOpenKbdWindow(ThemeCollection* tc, unsigned long hash)
         return;
     }
 
-    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_KBDCONFIG);
+    tc->theme[i]->reference = archWindowCreate(tc->theme[i], WH_KBDCONFIG, 1);
 }

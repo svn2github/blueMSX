@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-01-15 23:23:35 $
 **
@@ -27,19 +27,14 @@
 **
 ******************************************************************************
 */
-#ifndef WIN32_FILE_H
-#define WIN32_FILE_H
+#ifndef WIN32_WINDOW_H
+#define WIN32_WINDOW_H
 
 #include <windows.h>
-#include <tchar.h>
-#include "RomMapper.h"
+#include "Theme.h"
 
-char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
-               int newFileSize, char* defExt, int* filterIndex);
-char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
-                  int mustExist, char* defExt, int* filterIndex, RomType* romType);
-char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir);
-
-char* openConfigFile(HWND parent, char* title, char* description,
-                     char** itemList, char* defaultName);
+void* archWindowCreate(Theme* theme, WindowHandler handler, int childWindow);
+void* archObjectCreate(char* id, void* window, int x, int y, 
+                       int width, int height, int arg1, int arg2);
+void archObjectDestroy(char* id, void* object);
 #endif

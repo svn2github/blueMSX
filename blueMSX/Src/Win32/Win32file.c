@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-14 01:23:16 $
+** $Date: 2005-01-15 23:23:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "RomLoader.h"
 #include "zipHelper.h"
 #include "Win32Common.h"
+#include "Language.h"
 
 static RomType romTypeList[] = {
     ROM_ASCII8,
@@ -458,4 +459,101 @@ char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex,
     return pFileName; 
 } 
 
+///////////////////////////////////////////////////////////////////////////
+
+typedef struct {
+    char*  title;
+    char*  description;
+    char** itemList;
+    char*  defaultName;
+    char*  returnName;
+} SaveAsDlgInfo;
+
+static BOOL CALLBACK saveAsProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static SaveAsDlgInfo* sdi;
+    char buffer[64];
+    int i;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        sdi = (SaveAsDlgInfo*)lParam;
+
+        SetWindowText(hwnd, sdi->title);
+        SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAMETEXT), sdi->description);
+        SetWindowText(GetDlgItem(hwnd, IDOK), langDlgSave());
+        SetWindowText(GetDlgItem(hwnd, IDCANCEL), langDlgCancel());
+
+        for (i = 0; sdi->itemList[i] != NULL; i++) {
+            SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_ADDSTRING, 0, (LPARAM)sdi->itemList[i]);
+            if (0 == strcmpnocase(sdi->itemList[i], sdi->defaultName)) {
+                SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), sdi->defaultName);
+                SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, i, 0);
+                EnableWindow(GetDlgItem(hwnd, IDOK), TRUE);
+            }
+        }
+        return FALSE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDC_MACHINELIST:
+            if (HIWORD(wParam) == 1 || HIWORD(wParam) == 2) {
+                char buffer[64];
+                int index = SendMessage(GetDlgItem(hwnd, IDC_MACHINELIST), LB_GETCURSEL, 0, 0);
+                SendMessage(GetDlgItem(hwnd, IDC_MACHINELIST), LB_GETTEXT, index, (LPARAM)buffer);
+                SetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), buffer);
+                if (HIWORD(wParam) == 2) {
+                    SendMessage(hwnd, WM_COMMAND, IDOK, 0);
+                }
+            }
+            return TRUE;
+
+        case IDC_MACHINENAME:
+            GetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), buffer, 63);
+
+            EnableWindow(GetDlgItem(hwnd, IDOK), strlen(buffer) != 0);      
+
+            SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, -1, 0);
+
+            for (i = 0; sdi->itemList[i] != NULL; i++) {
+                if (0 == strcmpnocase(sdi->itemList[i], buffer)) {
+                    SendDlgItemMessage(hwnd, IDC_MACHINELIST, LB_SETCURSEL, i, 0);
+                }
+            }
+            return TRUE;
+        case IDOK:
+            GetWindowText(GetDlgItem(hwnd, IDC_MACHINENAME), sdi->returnName, 63);
+            EndDialog(hwnd, TRUE);
+            return TRUE;
+        case IDCANCEL:
+            EndDialog(hwnd, FALSE);
+            return TRUE;
+        }
+        break;
+
+    case WM_CLOSE:
+        EndDialog(hwnd, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+char* openConfigFile(HWND parent, char* title, char* description,
+                     char** itemList, char* defaultName)
+{
+    static char returnName[MAX_PATH];
+    SaveAsDlgInfo* sdi = (SaveAsDlgInfo*)calloc(1, sizeof(SaveAsDlgInfo));
+    int rv;
+
+    sdi->title       = title;
+    sdi->description = description;
+    sdi->itemList    = itemList;
+    sdi->defaultName = defaultName;
+    sdi->returnName  = returnName;
+
+    rv = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CONF_SAVEAS), parent, saveAsProc, (LPARAM)sdi);
+    free(sdi);
+    return rv ? returnName : NULL;
+}
 

@@ -243,6 +243,9 @@
 					RelativePath="..\..\Src\Win32\Win32Timer.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32Window.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32wmmSound.c">
 				</File>
 			</Filter>
@@ -296,6 +299,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32ThemeClassic.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Window.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32wmmSound.h">

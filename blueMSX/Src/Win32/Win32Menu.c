@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 22:48:38 $
+** $Date: 2005-01-15 23:23:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,9 +31,12 @@
 #include <stdio.h>
 #include "Win32Menu.h"
 #include "FileHistory.h"
+#include "LaunchFile.h"
 #include "Language.h"
 #include "Resource.h"
 #include "archMenu.h"
+#include "Actions.h"
+#include "Casette.h"
 
 #ifndef MIM_BACKGROUND
 #define MIM_BACKGROUND              0x00000002
@@ -987,3 +990,206 @@ void archShowMenuTools(int x, int y) {
     showPopupMenu(hMenuTools, x, y);
 }
 
+int menuCommand(Properties* pProperties, int command) 
+{
+    int i = command - ID_CARTRIDGEA_HISTORY;
+    if (i >= 0 && i < MAX_HISTORY) {
+        insertCartridge(pProperties, 0, pProperties->filehistory.cartridgeA[i], NULL, pProperties->filehistory.cartridgeTypeA[i], 0);
+        return 1;
+    }
+    i = command - ID_CARTRIDGEB_HISTORY;
+    if (i >= 0 && i < MAX_HISTORY) {
+        insertCartridge(pProperties, 1, pProperties->filehistory.cartridgeB[i], NULL, pProperties->filehistory.cartridgeTypeB[i], 0);
+        return 1;
+    }
+    i = command - ID_DISKDRIVEA_HISTORY;
+    if (i >= 0 && i < MAX_HISTORY) {
+        insertDiskette(pProperties, 0, pProperties->filehistory.diskdriveA[i], NULL, 0);
+        return 1;
+    }
+    i = command - ID_DISKDRIVEB_HISTORY;
+    if (i >= 0 && i < MAX_HISTORY) {
+        insertDiskette(pProperties, 1, pProperties->filehistory.diskdriveB[i], NULL, 0);
+        return 1;
+    }
+    i = command - ID_CASSETTE_HISTORY;
+    if (i >= 0 && i < MAX_HISTORY) {
+        insertCassette(pProperties, pProperties->filehistory.cassette[i], NULL, 0);
+        if (pProperties->cassette.autoRewind) {
+            tapeSetCurrentPos(0);
+        }
+        return 1;
+    }
+    
+    switch (command) {
+    case ID_FILE_CARTA_EXTRAM512KB:
+        insertCartridge(pProperties, 0, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
+        return 1;
+    case ID_FILE_CARTB_EXTRAM512KB:
+        insertCartridge(pProperties, 1, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
+        return 1;
+    case ID_FILE_CARTA_EXTRAM1MB:
+        insertCartridge(pProperties, 0, CARTNAME_EXTRAM1MB, NULL, ROM_EXTRAM1MB, 0);
+        return 1;
+    case ID_FILE_CARTB_EXTRAM1MB:
+        insertCartridge(pProperties, 1, CARTNAME_EXTRAM1MB, NULL, ROM_EXTRAM1MB, 0);
+        return 1;
+    case ID_FILE_CARTA_EXTRAM2MB:
+        insertCartridge(pProperties, 0, CARTNAME_EXTRAM2MB, NULL, ROM_EXTRAM2MB, 0);
+        return 1;
+    case ID_FILE_CARTB_EXTRAM2MB:
+        insertCartridge(pProperties, 1, CARTNAME_EXTRAM2MB, NULL, ROM_EXTRAM2MB, 0);
+        return 1;
+    case ID_FILE_CARTA_EXTRAM4MB:
+        insertCartridge(pProperties, 0, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
+        return 1;
+    case ID_FILE_CARTB_EXTRAM4MB:
+        insertCartridge(pProperties, 1, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
+        return 1;
+    case ID_FILE_CARTA_MEGARAM128:
+        insertCartridge(pProperties, 0, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
+        return 1;
+    case ID_FILE_CARTB_MEGARAM128:
+        insertCartridge(pProperties, 1, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
+        return 1;
+    case ID_FILE_CARTA_MEGARAM256:
+        insertCartridge(pProperties, 0, CARTNAME_MEGARAM256, NULL, ROM_MEGARAM256, 0);
+        return 1;
+    case ID_FILE_CARTB_MEGARAM256:
+        insertCartridge(pProperties, 1, CARTNAME_MEGARAM256, NULL, ROM_MEGARAM256, 0);
+        return 1;
+    case ID_FILE_CARTA_MEGARAM512:
+        insertCartridge(pProperties, 0, CARTNAME_MEGARAM512, NULL, ROM_MEGARAM512, 0);
+        return 1;
+    case ID_FILE_CARTB_MEGARAM512:
+        insertCartridge(pProperties, 1, CARTNAME_MEGARAM512, NULL, ROM_MEGARAM512, 0);
+        return 1;
+    case ID_FILE_CARTA_MEGARAM768:
+        insertCartridge(pProperties, 0, CARTNAME_MEGARAM768, NULL, ROM_MEGARAM768, 0);
+        return 1;
+    case ID_FILE_CARTB_MEGARAM768:
+        insertCartridge(pProperties, 1, CARTNAME_MEGARAM768, NULL, ROM_MEGARAM768, 0);
+        return 1;
+    case ID_FILE_CARTA_MEGARAM2M:
+        insertCartridge(pProperties, 0, CARTNAME_MEGARAM2M, NULL, ROM_MEGARAM2M, 0);
+        return 1;
+    case ID_FILE_CARTB_MEGARAM2M:
+        insertCartridge(pProperties, 1, CARTNAME_MEGARAM2M, NULL, ROM_MEGARAM2M, 0);
+        return 1;
+    case ID_FILE_CARTA_SNATCHER:
+        insertCartridge(pProperties, 0, CARTNAME_SNATCHER, NULL, ROM_SNATCHER, 0);
+        return 1;
+    case ID_FILE_CARTA_SDSNATCHER:
+        insertCartridge(pProperties, 0, CARTNAME_SDSNATCHER, NULL, ROM_SDSNATCHER, 0);
+        return 1;
+    case ID_FILE_CARTA_SCCMIRRORED:
+        insertCartridge(pProperties, 0, CARTNAME_SCCMIRRORED, NULL, ROM_SCCMIRRORED, 0);
+        return 1;
+    case ID_FILE_CARTA_SCCEXPANDED:
+        insertCartridge(pProperties, 0, CARTNAME_SCCEXPANDED, NULL, ROM_SCCEXTENDED, 0);
+        return 1;
+    case ID_FILE_CARTA_SCC:
+        insertCartridge(pProperties, 0, CARTNAME_SCC, NULL, ROM_SCC, 0);
+        return 1;
+    case ID_FILE_CARTA_SCCPLUS:
+        insertCartridge(pProperties, 0, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
+        return 1;
+    case ID_FILE_CARTB_SNATCHER:
+        insertCartridge(pProperties, 1, CARTNAME_SNATCHER, NULL, ROM_SNATCHER, 0);
+        return 1;
+    case ID_FILE_CARTB_SDSNATCHER:
+        insertCartridge(pProperties, 1, CARTNAME_SDSNATCHER, NULL, ROM_SDSNATCHER, 0);
+        return 1;
+    case ID_FILE_CARTB_SCCMIRRORED:
+        insertCartridge(pProperties, 1, CARTNAME_SCCMIRRORED, NULL, ROM_SCCMIRRORED, 0);
+        return 1;
+    case ID_FILE_CARTB_SCCEXPANDED:
+        insertCartridge(pProperties, 1, CARTNAME_SCCEXPANDED, NULL, ROM_SCCEXTENDED, 0);
+        return 1;
+    case ID_FILE_CARTB_SCC:
+        insertCartridge(pProperties, 1, CARTNAME_SCC, NULL, ROM_SCC, 0);
+        return 1;
+    case ID_FILE_CARTB_SCCPLUS:
+        insertCartridge(pProperties, 1, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
+        return 1;
+    case ID_FILE_CARTA_FMPAC:
+        insertCartridge(pProperties, 0, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);
+        return 1;
+    case ID_FILE_CARTA_PAC:
+        insertCartridge(pProperties, 0, CARTNAME_PAC, NULL, ROM_PAC, 0);
+        return 1;
+    case ID_FILE_CARTB_FMPAC:
+        insertCartridge(pProperties, 1, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);
+        return 1;
+    case ID_FILE_CARTB_PAC:            
+        insertCartridge(pProperties, 1, CARTNAME_PAC, NULL, ROM_PAC, 0);
+        return 1;
+    case ID_FILE_CARTA_SONYHBI55:            
+        insertCartridge(pProperties, 0, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
+        return 1;
+    case ID_FILE_CARTB_SONYHBI55:            
+        insertCartridge(pProperties, 1, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
+        return 1;
+
+    case ID_PRT_SCR:                        actionScreenCapture();          return 0;
+    case ID_FILE_POSITION_CASSETTE:         actionCasSetPosition();         return 0;
+    case ID_FILE_REWIND_CASSETTE:           actionCasRewind();              return 0;
+    case ID_TB_DISKA:
+    case ID_FILE_INSERT_DISKETTEA:          actionDiskInsertA();            return 0;
+    case ID_TB_DISKB:
+    case ID_FILE_INSERT_DISKETTEB:          actionDiskInsertB();            return 0;
+    case ID_TB_CAS:
+    case ID_FILE_INSERT_DISKETTEDIRA:       actionDiskDirInsertA();         return 0;
+    case ID_FILE_INSERT_DISKETTEDIRB:       actionDiskDirInsertB();         return 0;
+    case ID_FILE_INSERT_CASSETTE:           actionCasInsert();              return 0;
+    case ID_FILE_SAVE:                      actionSaveState();              return 0;
+    case ID_FILE_LOAD:                      actionLoadState();              return 0;
+    case ID_FILE_QSAVE:                     actionQuickSaveState();         return 0;
+    case ID_FILE_QLOAD:                     actionQuickLoadState();         return 0;
+    case ID_TB_CARTA:
+    case ID_FILE_INSERT_CARTRIDGEA:         actionCartInsert1();            return 0;
+    case ID_TB_CARTB:
+    case ID_FILE_INSERT_CARTRIDGEB:         actionCartInsert2();            return 0;
+    case ID_LOG_WAV:                        actionToggleWaveCapture();      return 0;
+    case ID_FILE_EXIT:                      actionQuit();                   return 0;
+    case ID_SIZE_NORMAL:                    actionWindowSizeSmall();        return 0;
+    case ID_SIZE_X2:                        actionWindowSizeNormal();       return 0;
+    case ID_SIZE_MINIMIZED:                 actionWindowSizeMinimized();    return 0;
+    case ID_SIZE_FULLSCREEN:                actionWindowSizeFullscreen();   return 0;
+    case ID_TB_PLAY:
+    case ID_TB_PAUSE:
+    case ID_TB_PLAYPAUSE:
+    case ID_RUN_RUN:                        actionEmuTogglePause();         return 0;
+    case ID_TB_STOP:
+    case ID_RUN_STOP:                       actionEmuStop();                return 0;
+    case ID_TB_RESET:
+    case ID_RUN_RESET:                      actionEmuResetHard();           return 0;
+    case ID_RUN_SOFTRESET:                  actionEmuResetSoft();           return 0;
+    case ID_RUN_CLEANRESET:                 actionEmuResetClean();          return 0;
+    case ID_FILE_READONLY_CASSETTE:         actionCasToggleReadonly();      return 0;
+    case ID_FILE_AUTOREWNIND_CASSETTE:      actionToggleCasAutoRewind();    return 0;
+    case ID_FILE_SAVE_CASSETTE:             actionCasSave();                return 0;
+    case ID_FILE_CARTRIDGE_AUTORESET:       actionToggleCartAutoReset();    return 0;
+    case ID_FILE_INSERT_DISKETTEA_RESET:    actionToggleDiskAutoResetA();   return 0;
+    case ID_FILE_REMOVE_CARTRIDGEA:         actionCartRemove1();            return 0;
+    case ID_FILE_REMOVE_CARTRIDGEB:         actionCartRemove2();            return 0;
+    case ID_FILE_REMOVE_DISKETTEA:          actionDiskRemoveA();            return 0;
+    case ID_FILE_REMOVE_DISKETTEB:          actionDiskRemoveB();            return 0;
+    case ID_FILE_REMOVE_CASSETTE:           actionCasRemove();              return 0;
+    case ID_OPTIONS_EMULATION:              actionPropShowEmulation();      return 0;
+    case ID_OPTIONS_VIDEO:                  actionPropShowVideo();          return 0;
+    case ID_OPTIONS_AUDIO:                  actionPropShowAudio();          return 0;
+    case ID_TB_PROPERTIES:
+    case ID_OPTIONS_CONTROLS:               actionPropShowControls();       return 0;
+    case ID_OPTIONS_PERFORMANCE:            actionPropShowPerformance();    return 0;
+    case ID_OPTIONS_SETTINGS:               actionPropShowSettings();       return 0;
+    case ID_OPTIONS_APEARANCE:              actionPropShowApearance();      return 0;
+    case ID_OPTIONS_LANGUAGE:               actionOptionsShowLanguage();    return 0;
+    case ID_TOOLS_MACHINEEDITOR:            actionToolsShowMachineEditor(); return 0;
+    case ID_TOOLS_SHORTCUTSEDITOR:          actionToolsShowShorcutEditor(); return 0;
+    case ID_TB_HELP:
+    case ID_HELP_HELP:                      actionHelpShowHelp();           return 0;
+    case ID_HELP_ABOUT:                     actionHelpShowAbout();          return 0;
+    }
+    return 0;
+}

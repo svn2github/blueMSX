@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-01-15 23:23:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,8 @@ void menuUpdate(Properties* pProperties,
                 int logSound,
                 int tempStateExits,
                 int enableSpecial);
+
+int menuCommand(Properties* pProperties, int command);
 
 void menuSetInfo(COLORREF color, COLORREF focusColor, COLORREF textColor, int x, int y, int width, int height);
 
