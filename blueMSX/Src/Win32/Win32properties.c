@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-05 01:01:04 $
+** $Date: 2005-01-20 18:39:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -348,11 +348,12 @@ static _TCHAR* pEmuVRAM[] = {
     NULL
 };
 
-static _TCHAR pVideoMonData[3][64];
+static _TCHAR pVideoMonData[4][64];
 static _TCHAR* pVideoMon[] = {
     pVideoMonData[0],
     pVideoMonData[1],
     pVideoMonData[2],
+    pVideoMonData[3],
     NULL
 };
 
@@ -1034,6 +1035,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         _stprintf(pVideoMon[0], "%s", langEnumVideoMonColor());
         _stprintf(pVideoMon[1], "%s", langEnumVideoMonGrey());
         _stprintf(pVideoMon[2], "%s", langEnumVideoMonGreen());
+        _stprintf(pVideoMon[3], "%s", langEnumVideoMonAmber());
 
         _stprintf(pVideoVideoType[0], "%s", langEnumVideoTypePAL());
         _stprintf(pVideoVideoType[1], "%s", langEnumVideoTypeNTSC());
@@ -1171,6 +1173,9 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             case P_VIDEO_GREEN:
                 videoSetColorMode(theVideo, VIDEO_GREEN);
                 break;
+            case P_VIDEO_AMBER:
+                videoSetColorMode(theVideo, VIDEO_AMBER);
+                break;
             }
             EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), monType == P_VIDEO_COLOR);
             EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONVALUE), monType == P_VIDEO_COLOR);
@@ -1271,6 +1276,9 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 break;
             case P_VIDEO_GREEN:
                 videoSetColorMode(theVideo, VIDEO_GREEN);
+                break;
+            case P_VIDEO_AMBER:
+                videoSetColorMode(theVideo, VIDEO_AMBER);
                 break;
             }
             pProperties->video.horizontalStretch     = oldHoriz;

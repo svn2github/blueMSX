@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-19 05:26:33 $
+** $Date: 2005-01-20 18:37:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -322,6 +322,7 @@ _TCHAR* langPropThemeBlue();
 _TCHAR* langEnumVideoMonColor();
 _TCHAR* langEnumVideoMonGrey();
 _TCHAR* langEnumVideoMonGreen();
+_TCHAR* langEnumVideoMonAmber();
 
 _TCHAR* langEnumVideoTypePAL();
 _TCHAR* langEnumVideoTypeNTSC();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-18 10:17:19 $
+** $Date: 2005-01-20 18:37:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,8 @@
 typedef enum { 
     VIDEO_GREEN, 
     VIDEO_COLOR, 
-    VIDEO_BLACKWHITE 
+    VIDEO_BLACKWHITE,
+    VIDEO_AMBER
 } VideoColorMode;
 
 typedef enum { 

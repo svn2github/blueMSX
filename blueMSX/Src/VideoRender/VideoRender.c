@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-20 08:15:54 $
+** $Date: 2005-01-20 18:37:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,10 +42,11 @@
 static UInt32 pRgbTableColor32[MAX_YCBCR_VALUE];
 static UInt32 pRgbTableGreen32[MAX_YCBCR_VALUE];
 static UInt32 pRgbTableWhite32[MAX_YCBCR_VALUE];
+static UInt32 pRgbTableAmber32[MAX_YCBCR_VALUE];
 static UInt16 pRgbTableColor16[MAX_YCBCR_VALUE];
 static UInt16 pRgbTableGreen16[MAX_YCBCR_VALUE];
 static UInt16 pRgbTableWhite16[MAX_YCBCR_VALUE];
-
+static UInt16 pRgbTableAmber16[MAX_YCBCR_VALUE];
 
 UInt32 YJKtoYCbCrTable[32][64][64];
 
@@ -142,6 +143,9 @@ static void initRGBTable(Video* pVideo)
 
         pRgbTableWhite32[YCbCr] = (L << 16) | (L << 8) | (L << 0);
         pRgbTableWhite16[YCbCr] = (UInt16)(((L >> 3) << 11) | ((L >> 2) << 5) | (L >> 3));
+
+        pRgbTableAmber32[YCbCr] = (L << 16) | ((L * 176 / 255) << 8);
+        pRgbTableAmber16[YCbCr] = ((L >> 3) << 11) | (((L * 176 / 255) >> 2) << 5);
     }
 }
 
@@ -1293,6 +1297,10 @@ void videoSetColorMode(Video* pVideo, VideoColorMode colorMode)
     case VIDEO_BLACKWHITE:
         pVideo->pRgbTable16 = pRgbTableWhite16;
         pVideo->pRgbTable32 = pRgbTableWhite32;
+        break;
+    case VIDEO_AMBER:
+        pVideo->pRgbTable16 = pRgbTableAmber16;
+        pVideo->pRgbTable32 = pRgbTableAmber32;
         break;
     case VIDEO_COLOR:
     default:

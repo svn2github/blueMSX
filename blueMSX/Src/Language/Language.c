@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-19 05:26:33 $
+** $Date: 2005-01-20 18:37:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -538,6 +538,7 @@ _TCHAR* langPropGuessRomType() { return ls->propGuessRomType; }
 _TCHAR* langEnumVideoMonColor() { return ls->enumVideoMonColor; }
 _TCHAR* langEnumVideoMonGrey() { return ls->enumVideoMonGrey; }
 _TCHAR* langEnumVideoMonGreen() { return ls->enumVideoMonGreen; }
+_TCHAR* langEnumVideoMonAmber() { return ls->enumVideoMonAmber; }
 
 _TCHAR* langEnumVideoTypePAL() { return ls->enumVideoTypePAL; }
 _TCHAR* langEnumVideoTypeNTSC() { return ls->enumVideoTypeNTSC; }

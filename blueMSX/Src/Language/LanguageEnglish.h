@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-19 05:26:33 $
+** $Date: 2005-01-20 18:37:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -213,6 +213,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumVideoMonColor       = "Color";
     ls->enumVideoMonGrey        = "Black and white";
     ls->enumVideoMonGreen       = "Green";
+    ls->enumVideoMonAmber       = "Amber";
 
     ls->enumVideoTypePAL        = "PAL";
     ls->enumVideoTypeNTSC       = "NTSC";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-01-20 08:15:54 $
+** $Date: 2005-01-20 18:39:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -751,6 +751,9 @@ static void updateVideoRender(Video* pVideo, Properties* pProperties) {
         break;
     case P_VIDEO_GREEN:
         videoSetColorMode(pVideo, VIDEO_GREEN);
+        break;
+    case P_VIDEO_AMBER:
+        videoSetColorMode(pVideo, VIDEO_AMBER);
         break;
     }
 

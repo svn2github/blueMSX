@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-19 05:26:33 $
+** $Date: 2005-01-20 18:37:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -307,6 +307,7 @@ typedef struct {
     _TCHAR* enumVideoMonColor;
     _TCHAR* enumVideoMonGrey;
     _TCHAR* enumVideoMonGreen;
+    _TCHAR* enumVideoMonAmber;
 
     _TCHAR* enumVideoTypePAL;
     _TCHAR* enumVideoTypeNTSC;

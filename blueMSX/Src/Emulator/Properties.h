@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-18 10:17:17 $
+** $Date: 2005-01-20 18:36:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,7 +58,7 @@ typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_P
 
 typedef enum { P_EMU_SYNC1MS = 0, P_EMU_SYNCAUTO, P_EMU_SYNCNONE } PropEmuSync;
 typedef enum { P_VDP_SYNCAUTO = 0, P_VDP_SYNC50HZ, P_VDP_SYNC60HZ } PropVdpSync; 
-typedef enum { P_VIDEO_COLOR = 0, P_VIDEO_BW, P_VIDEO_GREEN } PropVideoMon;
+typedef enum { P_VIDEO_COLOR = 0, P_VIDEO_BW, P_VIDEO_GREEN, P_VIDEO_AMBER } PropVideoMon;
 typedef enum { P_VIDEO_PALNONE = 0, P_VIDEO_PALMON, P_VIDEO_PALYC, P_VIDEO_PALNYC, P_VIDEO_PALCOMP, P_VIDEO_PALNCOMP, P_VIDEO_PALSCALE2X, P_VIDEO_PALHQ2X } PropVideoPalEmu;
 typedef enum { P_VIDEO_SIZEX1 = 0, P_VIDEO_SIZEX2, P_VIDEO_SIZEFULLSCREEN } PropVideoSize;
 typedef enum { P_VIDEO_DRVDIRECTX_VIDEO = 0, P_VIDEO_DRVDIRECTX, P_VIDEO_DRVGDI } PropVideoDriver;
