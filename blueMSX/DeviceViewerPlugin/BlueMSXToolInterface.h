@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-21 09:49:41 $
+** $Date: 2005-02-22 03:43:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,6 +75,7 @@ struct Device {
 
 
 typedef struct {
+    int    deviceId;
     char   name[32];
     UInt32 startAddress;
     UInt32 size;
@@ -82,6 +83,7 @@ typedef struct {
 } MemoryBlock;
 
 typedef struct {
+    int    deviceId;
     char   name[32];
     UInt32 count;
     struct Register {
@@ -92,7 +94,8 @@ typedef struct {
 } RegisterBank;
 
 typedef struct {
-    char name[32];
+    int    deviceId;
+    char   name[32];
     UInt32 count;
     struct IoPort {
         UInt16 port;
@@ -116,13 +119,15 @@ typedef Device*       (__stdcall *ToolSnapshotGetDevice)(Snapshot* Snapshot, int
 
 typedef int           (__stdcall *ToolDeviceGetMemoryBlockCount)(Device* device);
 typedef MemoryBlock*  (__stdcall *ToolDeviceGetMemoryBlock)(Device* device, int memBlockIndex);
+typedef void          (__stdcall *ToolDeviceWriteMemory)(MemoryBlock* memoryBlock, void* data, int startAddr, int size);
 typedef int           (__stdcall *ToolDeviceGetRegisterBankCount)(Device* device);
 typedef RegisterBank* (__stdcall *ToolDeviceGetRegisterBank)(Device* device, int regBankIndex);
+typedef void          (__stdcall *ToolDeviceWriteRegister)(RegisterBank* regBank, int regIndex, UInt32 value);
 typedef int           (__stdcall *ToolDeviceGetIoPortsCount)(Device* device);
 typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPortIndex);
+typedef void          (__stdcall *ToolDeviceWriteIoPort)(IoPorts* ioPorts, int portIndex, UInt32 value);
 typedef void          (__stdcall *ToolAction)();
-typedef void          (__stdcall *ToolSetBreakpoint)(UInt16);
-typedef UInt16**      (__stdcall *ToolGetBreakpointList)();
+typedef void          (__stdcall *ToolBreakpoint)(UInt16);
 
 typedef struct {
     ToolSnapshotCreate              create;
@@ -143,8 +148,8 @@ typedef struct {
     ToolAction                      pause;
     ToolAction                      step;
 
-    ToolSetBreakpoint               setBreakpoint;
-    ToolGetBreakpointList           getBreakpointList;
+    ToolBreakpoint                  setBreakpoint;
+    ToolBreakpoint                  clearBreakpoint;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);

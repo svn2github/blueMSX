@@ -20,8 +20,8 @@ static ToolAction                      toolDeviceRun;
 static ToolAction                      toolDeviceStop;
 static ToolAction                      toolDevicePause;
 static ToolAction                      toolDeviceStep;
-static ToolSetBreakpoint               toolSetBreakpoint;
-static ToolGetBreakpointList           toolGetBreakpointList;
+static ToolBreakpoint                  toolSetBreakpoint;
+static ToolBreakpoint                  toolClearBreakpoint;
 
 static HINSTANCE hInstance;
 
@@ -91,8 +91,8 @@ void SetBreakpoint(UInt16 address) {
     toolSetBreakpoint(address);
 }
 
-UInt16** GetBreakpointList() {
-    return toolGetBreakpointList();
+void ClearBreakpoint(UInt16 address) {
+    toolClearBreakpoint(address);
 }
 
 HINSTANCE GetDllHinstance()
@@ -120,7 +120,7 @@ extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface
     toolDevicePause                 = toolInterface->pause;
     toolDeviceStep                  = toolInterface->step;
     toolSetBreakpoint               = toolInterface->setBreakpoint;
-    toolGetBreakpointList           = toolInterface->getBreakpointList;
+    toolClearBreakpoint             = toolInterface->clearBreakpoint;
 
     OnCreateTool();
 

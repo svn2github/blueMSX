@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-21 09:49:43 $
+** $Date: 2005-02-22 03:43:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,7 @@ void EmulatorPause();
 void EmulatorStep();
 
 void SetBreakpoint(UInt16 address);
-UInt16** GetBreakpointList();
+void ClearBreakpoint(UInt16 address);
 
 HINSTANCE GetDllHinstance();
 
