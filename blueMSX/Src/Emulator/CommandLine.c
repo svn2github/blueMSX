@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 08:02:48 $
+** $Date: 2004-12-17 18:14:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "RomMapper.h"
 #include "ziphelper.h"
 #include "Machine.h"
+#include "Casette.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
@@ -414,6 +415,10 @@ static int emuStartWithArguments(Properties* properties, char* cmdLine) {
     if (strlen(diskA) && !insertDiskette(properties, 0, diskA, *diskAzip ? diskAzip : NULL, -1)) return 0;
     if (strlen(diskB) && !insertDiskette(properties, 1, diskB, *diskBzip ? diskBzip : NULL, -1)) return 0;
     if (strlen(cas)   && !insertCassette(properties, cas, *caszip ? caszip : NULL, -1)) return 0;
+
+    if (properties->cassette.autoRewind) {
+        tapeSetCurrentPos(0);
+    }
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
 

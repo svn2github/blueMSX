@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-15 18:07:51 $
+** $Date: 2004-12-17 18:14:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -529,6 +529,7 @@ void langInitSwedish(LanguageStrings* ls)
     // New entries in 2.0.1
     ls->propEmuFdcTiming        = "Slå Av Diskettstationstiming";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
+    ls->propUseRegistry         = "Spara konnfigurering i Windows Registry";
 };
 
 #endif

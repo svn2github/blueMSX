@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-16 08:02:36 $
+** $Date: 2004-12-17 18:14:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1557,6 +1557,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         i = LOWORD(wParam) - ID_CASSETTE_HISTORY;
         if (i >= 0 && i < MAX_HISTORY) {
             insertCassette(pProperties, pProperties->filehistory.cassette[i], NULL, 0);
+            if (pProperties->cassette.autoRewind) {
+                tapeSetCurrentPos(0);
+            }
             updateMenu(0);
         }
         
