@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-03-06 20:29:28 $
+** $Date: 2005-03-13 07:23:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -328,7 +328,7 @@ static void getDebugInfo(SCC* scc, DbgDevice* dbgDevice)
         sccPeek(scc, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Memory", 0, 0, 0x100, ram);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Memory", 1, 0, 0x100, ram);
 }
 
 SCC* sccCreate(Mixer* mixer)
@@ -338,7 +338,7 @@ SCC* sccCreate(Mixer* mixer)
 
     scc->mixer = mixer;
 
-    scc->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SCC", &dbgCallbacks, scc);
+//    scc->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SCC", &dbgCallbacks, scc);
 
     scc->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_SCC, 0, sccSync, scc);
 

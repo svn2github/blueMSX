@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.cpp,v 1.1.1.1 2004-12-04 20:25:28 dvik Exp $
+// $Id: OpenMsxY8950.cpp,v 1.2 2005-03-13 07:23:33 dvik Exp $
 
 /*
   * Based on:
@@ -1150,7 +1150,8 @@ byte Y8950::readReg(byte rg, const EmuTime &time)
 			break;
 		
 		case 0x19: // I/O DATA   TODO
-		result =  ~(switchGetAudio() ?	0 :	0x04);
+		    result =  ~(switchGetAudio() ?	0 :	0x04);
+            break;
 		default:
 			result = 255;
 	}
