@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-01-16 09:34:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -441,7 +441,7 @@ void DirectXUpdateSurface(Video* pVideo, void* srcBits, int srcWidth, int srcHei
     if (surface == NULL && lpDDSTemp != NULL) {
         ddsd.dwSize = sizeof(ddsd);
         do {
-            ddrval = IDirectDrawSurface_Lock(lpDDSTemp, NULL, &ddsd, DDLOCK_WAIT, NULL);
+            ddrval = IDirectDrawSurface_Lock(lpDDSTemp, NULL, &ddsd, sysMemBuffering ? 0 : DDLOCK_WAIT, NULL);
             if (ddrval == DDERR_SURFACELOST && IDirectDrawSurface_Restore(lpDDSTemp) != DD_OK) {
                 break;
             }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-01-16 09:34:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -853,8 +853,6 @@ void updateJoystick(Properties* pProperties) {
 #define TIMER_POLL_FRAMECOUNT               12
 #define TIMER_SCREENUPDATE                  13
 #define TIMER_SCREENSHOT                    14
-#define TIMER_SCREENSHOT_UNFILTERED_LARGE   15
-#define TIMER_SCREENSHOT_UNFILTERED_SMALL   16
 #define TIMER_THEME                         17
 #define TIMER_MENUUPDATE                    18
 #define TIMER_CLIP_REGION                   19
@@ -1435,6 +1433,41 @@ static void emuWindowDraw()
     }
 }
 
+void* createScreenShot(int large, int* bitmapSize)
+{
+    void* bitmap = NULL;
+
+    int zoom = large ? 2 : 1;
+
+    DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
+    DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
+    VideoPalMode palMode      = st.pVideo->palMode;
+    int scanLinesEnable       = st.pVideo->scanLinesEnable;
+    int colorSaturationEnable = st.pVideo->colorSaturationEnable;
+
+    st.pVideo->palMode = VIDEO_PAL_FAST;
+    st.pVideo->scanLinesEnable = 0;
+    st.pVideo->colorSaturationEnable = 0;
+    videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
+                emulatorGetScrLineWidth(), bmBitsDst, 
+                -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
+
+    st.pVideo->palMode               = palMode;
+    st.pVideo->scanLinesEnable       = scanLinesEnable;
+    st.pVideo->colorSaturationEnable = colorSaturationEnable;
+
+    if (bitmapSize != NULL) {
+        bitmap = ScreenShot2(bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom, bitmapSize);
+    }
+    else {
+        ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
+    }
+
+    free(bmBitsDst);
+
+    return bitmap;
+}
+
 static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
@@ -1859,62 +1892,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case TIMER_SCREENSHOT:
             KillTimer(hwnd, TIMER_SCREENSHOT);
 			ScreenShot(pProperties, st.emuHwnd, WIDTH * getZoom(), HEIGHT * getZoom(), 0, 0);
-            break;
-
-        case TIMER_SCREENSHOT_UNFILTERED_LARGE:
-            KillTimer(hwnd, TIMER_SCREENSHOT_UNFILTERED_LARGE);
-
-            {
-                int zoom = 2;
-                DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
-                DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
-                VideoPalMode palMode      = st.pVideo->palMode;
-                int scanLinesEnable       = st.pVideo->scanLinesEnable;
-                int colorSaturationEnable = st.pVideo->colorSaturationEnable;
-
-                st.pVideo->palMode = VIDEO_PAL_FAST;
-                st.pVideo->scanLinesEnable = 0;
-                st.pVideo->colorSaturationEnable = 0;
-                videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
-                            emulatorGetScrLineWidth(), bmBitsDst, 
-                            -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
-
-                st.pVideo->palMode               = palMode;
-                st.pVideo->scanLinesEnable       = scanLinesEnable;
-                st.pVideo->colorSaturationEnable = colorSaturationEnable;
-
-                ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
-
-                free(bmBitsDst);
-            }
-            break;
-
-        case TIMER_SCREENSHOT_UNFILTERED_SMALL:
-            KillTimer(hwnd, TIMER_SCREENSHOT_UNFILTERED_SMALL);
-
-            {
-                int zoom = 1;
-                DWORD* bmBitsSrc = (DWORD*)emulatorGetFrameBuffer() + WIDTH * (HEIGHT - 1) * 2;
-                DWORD* bmBitsDst = malloc(zoom * zoom * WIDTH * HEIGHT * sizeof(UInt32));
-                VideoPalMode palMode      = st.pVideo->palMode;
-                int scanLinesEnable       = st.pVideo->scanLinesEnable;
-                int colorSaturationEnable = st.pVideo->colorSaturationEnable;
-
-                st.pVideo->palMode = VIDEO_PAL_FAST;
-                st.pVideo->scanLinesEnable = 0;
-                st.pVideo->colorSaturationEnable = 0;
-                videoRender(st.pVideo, 32, zoom, st.evenOdd, st.interlace, bmBitsSrc, WIDTH, HEIGHT, 
-                            emulatorGetScrLineWidth(), bmBitsDst, 
-                            -1 * (int)sizeof(DWORD) * WIDTH, zoom * WIDTH * sizeof(DWORD));
-
-                st.pVideo->palMode               = palMode;
-                st.pVideo->scanLinesEnable       = scanLinesEnable;
-                st.pVideo->colorSaturationEnable = colorSaturationEnable;
-
-                ScreenShot3(pProperties, bmBitsDst + zoom * 24, 320 * zoom, (320 - 48) * zoom, 240 * zoom);
-
-                free(bmBitsDst);
-            }
             break;
             
         case TIMER_THEME:        
@@ -2446,19 +2423,22 @@ void archShowMachineEditor()
     updateMenu(0);
 }
 
-void archScreenCapture(ScreenCaptureType type)
+void* archScreenCapture(ScreenCaptureType type, int* bitmapSize)
 {
+    if (bitmapSize != NULL) {
+        *bitmapSize = 0;
+    }
     switch (type) {
     case SC_NORMAL:
         SetTimer(getMainHwnd(), TIMER_SCREENSHOT, 50, NULL);
-        break;
+        return NULL;
     case SC_SMALL:
-        SetTimer(getMainHwnd(), TIMER_SCREENSHOT_UNFILTERED_SMALL, 50, NULL);
-        break;
+        return createScreenShot(0, bitmapSize);
     case SC_LARGE:
-        SetTimer(getMainHwnd(), TIMER_SCREENSHOT_UNFILTERED_LARGE, 50, NULL);
-        break;
+        return createScreenShot(1, bitmapSize);
     }
+
+    return NULL;
 }
 
 void archMinimizeWindow() {

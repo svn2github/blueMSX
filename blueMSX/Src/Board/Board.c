@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-16 06:48:15 $
+** $Date: 2005-01-16 09:34:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "Moonsound.h"
 #include "SaveState.h"
 #include "ziphelper.h"
+#include "ArchNotifications.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -219,6 +220,8 @@ void boardReset()
 void boardSaveState(const char* stateFile)
 {
     SaveState* state;
+    int size;
+    void* bitmap;
     int rv;
 
     saveStateCreate(stateFile);
@@ -235,6 +238,9 @@ void boardSaveState(const char* stateFile)
     saveStateClose(state);
 
     saveState(stateFile);
+
+    bitmap = archScreenCapture(SC_SMALL, &size);
+    zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
 }
 
 void boardSetFrequency(int frequency)

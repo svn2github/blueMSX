@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-15 03:06:48 $
+** $Date: 2005-01-16 09:34:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -512,15 +512,15 @@ void actionEmuResetClean() {
 }
 
 void actionScreenCapture() {
-    archScreenCapture(SC_NORMAL);
+    archScreenCapture(SC_NORMAL, NULL);
 }
 
 void actionScreenCaptureUnfilteredSmall() {
-    archScreenCapture(SC_SMALL);
+    archScreenCapture(SC_SMALL, NULL);
 }
 
 void actionScreenCaptureUnfilteredLarge() {
-    archScreenCapture(SC_LARGE);
+    archScreenCapture(SC_LARGE, NULL);
 }
 
 void actionCasRemove() {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-01-16 09:34:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -250,8 +250,7 @@ void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xO
  =======================================================================================================================
  =======================================================================================================================
  */
-
-void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int height)
+void* ScreenShot2(void* src, int srcPitch, int width, int height, int* bitmapSize)
 {
     struct {
 	    DWORD Size, Reserved1, OffRaster, OffBits, Width, Height;
@@ -259,11 +258,16 @@ void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int
 	    DWORD Compression, SizeImage, XPelsPerMeter, YPelsPerMeter, ClrUsed, ClrImportant;
     } BMPHeader;
     
-	FILE* file;
     DWORD* srcPtr = (DWORD*)src;
     int w;
     int h;
-    
+
+    int size = 2 + sizeof(BMPHeader) + 3 * width * height;
+    BYTE* bitmap = (BYTE*)malloc(size);
+    BYTE* dstPtr = bitmap;
+
+    *bitmapSize = size;
+
 	BMPHeader.BitCount      = 24;
 	BMPHeader.Size          = width * height * BMPHeader.BitCount / 8 + 0x36;
 	BMPHeader.Reserved1     = 0;
@@ -278,21 +282,35 @@ void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int
 	BMPHeader.YPelsPerMeter = 0;
 	BMPHeader.ClrUsed       = 0;
     BMPHeader.ClrImportant  = 0;
-    
-	file = fopen(generateSaveFilename(properties, baseDir, basePrefix, ".bmp"), "wb");
-    if (file == NULL) {
-        return;
-    }
-	fwrite("BM", 2, 1, file);
-	fwrite(&BMPHeader, sizeof(BMPHeader), 1, file);
+
+    *dstPtr++ = 'B';
+    *dstPtr++ = 'M';
+
+    memcpy(dstPtr, &BMPHeader, sizeof(BMPHeader));
+    dstPtr += sizeof(BMPHeader);
 
     for (h = 0; h < height; h++) {
         for (w = 0; w < width; w++) {
-			fwrite(&srcPtr[w], 3, 1, file);
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  0);
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  8);
+            *dstPtr++ = (BYTE)(srcPtr[w] >> 16);
         }
         srcPtr += srcPitch;
     }
-    fclose(file);
+
+    return bitmap;
+}
+
+void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int height)
+{
+    int bitmapSize;
+    void* bitmap = ScreenShot2(src, srcPitch, width, height, &bitmapSize);
+	FILE* file = fopen(generateSaveFilename(properties, baseDir, basePrefix, ".bmp"), "wb");
+    if (file != NULL) {
+    	fwrite(bitmap, 1, bitmapSize, file);
+        fclose(file);
+    }
+    free(bitmap);
 }
 
 void screenshotSetDirectory(char* directory, char* prefix) 

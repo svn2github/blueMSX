@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-01-16 09:34:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 
 void screenshotSetDirectory(char* directory, char* prefix);
 void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xOffset, int yOffset);
+void* ScreenShot2(void* src, int srcPitch, int width, int height, int* bitmapSize);
 void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int height);
 
 #endif //WIN32_SCREENSHOT_H
