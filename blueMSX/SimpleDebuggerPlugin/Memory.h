@@ -96,11 +96,14 @@ private:
     COLORREF colorRed;
 
     int currentAddress;
+    int currentEditAddress;
 
     MemList memList;
     MemoryItem* currentMemory;
 
-    HexInputDialog* hexInput;
+    HexInputDialog* addressInput;
+    HexInputDialog* dataInput1;
+    HexInputDialog* dataInput2;
 };
 
 #endif //MEMORY_H

@@ -79,8 +79,12 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-        hexInput = new HexInputDialog(hwnd, 300,3,75,22,6);
+        addressInput = new HexInputDialog(hwnd, 300,3,75,22,6);
         return FALSE;
+
+    case WM_LBUTTONDOWN:
+        SetFocus(hwnd);
+        return 0;
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
@@ -98,11 +102,13 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_CLOSE:
-        delete hexInput;
+        delete addressInput;
         return FALSE;
 
-    case HexInputDialog::WM_NEWVALUE:
-        showAddress(wParam);
+    case HexInputDialog::EC_NEWVALUE:
+        if (addressInput == (HexInputDialog*)wParam) {
+            showAddress(lParam);
+        }
         return FALSE;
     }
     return FALSE;
@@ -123,6 +129,10 @@ LRESULT Memory::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_CREATE:
+        return 0;
+
+    case WM_LBUTTONDOWN:
+        SetFocus(hwnd);
         return 0;
 
     case WM_SIZE:
@@ -165,7 +175,53 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             textHeight = tm.tmHeight;
             textWidth = tm.tmMaxCharWidth;
         }
+        
+        dataInput1 = new HexInputDialog(hwnd, -100,0,23,22,1);
+        dataInput2 = new HexInputDialog(hwnd, -100,0,23,22,2);
+        dataInput1->hide();
+        dataInput2->hide();
         return 0;
+
+    case WM_LBUTTONDOWN:
+        {
+            SetFocus(hwnd);
+            if (currentMemory == NULL) {
+                return 0;
+            }
+
+            SCROLLINFO si;
+
+            si.cbSize = sizeof (si);
+            si.fMask  = SIF_POS;
+            GetScrollInfo (memHwnd, SB_VERT, &si);
+
+            int x = (LOWORD(lParam) - 10) / textWidth - 8;
+            int col;
+            int row = HIWORD(lParam) / textHeight;
+
+            if (x >= 0 && x < 3 * memPerRow && x % 3 != 2) {
+                col = x / 3;
+                int addr = (row + si.nPos) * memPerRow + col;
+                if (addr < currentMemory->size) {
+                    currentEditAddress = addr;
+                    dataInput2->setPosition(10 + (3 * col + 8) * textWidth, row * textHeight - 2);
+                    dataInput2->setValue(currentMemory->memory[addr]);
+                    dataInput2->show();
+                }
+            }
+        }
+        return 0;
+
+    case HexInputDialog::EC_KILLFOCUS:
+    case HexInputDialog::EC_NEWVALUE:
+        if (currentMemory != 0 && currentEditAddress >= 0 && currentEditAddress < currentMemory->size) {
+            currentMemory->memory[currentEditAddress] = (UInt8)lParam;
+            InvalidateRect(memHwnd, NULL, TRUE);
+        }
+        currentEditAddress = -1;
+        dataInput1->hide();
+        dataInput2->hide();
+        return FALSE;
 
     case WM_ERASEBKGND:
         return 1;
@@ -206,6 +262,8 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         DeleteObject(hBrushWhite);
         DeleteObject(hBrushLtGray);
         DeleteObject(hBrushDkGray);
+        delete dataInput1;
+        delete dataInput2;
         DeleteDC(hMemdc);
         break;
     }
@@ -214,7 +272,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 }
 
 Memory::Memory(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentAddress(0), currentMemory(NULL)
+    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1)
 {
     memory = this;
 
@@ -428,13 +486,12 @@ void Memory::updateScroll()
 
 void Memory::scrollWindow(int sbAction)
 {
-    int yPos;
     SCROLLINFO si;
 
     si.cbSize = sizeof (si);
     si.fMask  = SIF_ALL;
     GetScrollInfo (memHwnd, SB_VERT, &si);
-    yPos = si.nPos;
+    int yPos = si.nPos;
     switch (sbAction) {
     case SB_TOP:
         si.nPos = si.nMin;

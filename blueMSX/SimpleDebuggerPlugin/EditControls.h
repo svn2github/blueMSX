@@ -32,12 +32,13 @@
 
 class HexInputDialog {
 public:
-    enum { WM_NEWVALUE = WM_USER + 7029 };
+    enum { EC_NEWVALUE = WM_USER + 7029, EC_KILLFOCUS = WM_USER + 7030 };
 
     HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars);
     ~HexInputDialog();
 
     void setValue(int value);
+    void setPosition(int x, int y);
     void show();
     void hide();
 private:

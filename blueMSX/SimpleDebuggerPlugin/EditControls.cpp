@@ -57,11 +57,13 @@ HexInputDialog::~HexInputDialog()
 
 void HexInputDialog::setValue(int value)
 {
-    char text[16];
-    sprintf(text, "%X", value);
-    text[chars] = 0;
+    char text[16] = "00000000";
+    sprintf(text + 8, "%x", value);
     SETTEXTEX t = { GT_DEFAULT, CP_ACP };
-    SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_SETTEXTEX, (WPARAM)&t, (LPARAM)text);
+    SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_SETTEXTEX, (WPARAM)&t, (LPARAM)(text + strlen(text) - chars));
+    CHARRANGE cr = { 0, chars };
+    SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_EXSETSEL, 0, (LPARAM)&cr);
+    SetFocus(GetDlgItem(hwnd, IDC_ADDRESS));
 }
 
 void HexInputDialog::show() 
@@ -116,6 +118,13 @@ BOOL CALLBACK HexInputDialog::dlgStaticProc(HWND hwnd, UINT iMsg, WPARAM wParam,
     return dialogMap[hwnd]->dlgProc(iMsg, wParam, lParam);
 }
 
+void HexInputDialog::setPosition(int x, int y)
+{
+    wx = x;
+    wy = y;
+    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+}
+
 BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
@@ -128,8 +137,25 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                             SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETEVENTMASK, 0, 0) | ENM_KEYEVENTS); 
         return FALSE;
 
+    case WM_COMMAND:
+        switch(HIWORD(wParam)) {
+        case EN_KILLFOCUS:
+            {
+                GETTEXTEX t = {15, GT_DEFAULT, CP_ACP, NULL, NULL};
+                char text[16];
+                int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
+                text[len] = 0;
+                int addr = 0;
+                sscanf(text, "%X", &addr);
+                SendMessage(GetParent(hwnd), EC_KILLFOCUS, (WPARAM)this, addr);
+            }
+            return FALSE;
+        }
+        return FALSE;
+
     case WM_NOTIFY:  
         switch (LOWORD(wParam)) { 
+        
         case IDC_ADDRESS: 
             {
                 MSGFILTER *keyfilter = (MSGFILTER *)lParam; 
@@ -143,8 +169,12 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                         if (len == E_INVALIDARG) {
                             len = 0;
                         }
+                        
+                        char dummyBuf[32];
+                        int selLen = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETSELTEXT, 0, (LPARAM)dummyBuf);
+
                         keyCode = keyfilter->wParam;
-                        if (len < chars) {
+                        if (len - selLen < chars) {
                             if ((keyCode >= '0' && keyCode <= '9') ||
                                 (keyCode >= 'a' && keyCode <= 'f') ||
                                 (keyCode >= 'A' && keyCode <= 'F'))
@@ -164,7 +194,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                             int addr = 0;
                             sscanf(text, "%X", &addr);
 
-                            SendMessage(GetParent(hwnd), WM_NEWVALUE, addr, 0);
+                            SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, addr);
                         }
 
                         SetWindowLong(hwnd, DWL_MSGRESULT, 1);

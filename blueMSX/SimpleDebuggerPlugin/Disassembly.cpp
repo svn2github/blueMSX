@@ -427,6 +427,10 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         scrollWindow(LOWORD(wParam));
          return 0;
 
+    case WM_LBUTTONDOWN:
+        SetFocus(hwnd);
+        return 0;
+
     case WM_LBUTTONUP:
         if (LOWORD(lParam) < 25 && lineCount > 10) {
             SCROLLINFO si;

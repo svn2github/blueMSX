@@ -87,6 +87,10 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
     case WM_ERASEBKGND:
         return 1;
 
+    case WM_LBUTTONDOWN:
+        SetFocus(hwnd);
+        return 0;
+
     case WM_SIZE:
         updateScroll();
         break;
@@ -315,7 +319,12 @@ void CpuRegisters::drawText(int top, int bottom)
             }
             else {
                 SetTextColor(hMemdc, regModified[reg] ? colorRed : colorGray);
-                sprintf(text, "%X", regValue[reg]);
+                if (reg < 12) {
+                    sprintf(text, "%.4X", regValue[reg]);
+                }
+                else {
+                    sprintf(text, "%.2X", regValue[reg]);
+                }
             }
             DrawText(hMemdc, text, strlen(text), &r, DT_LEFT);
             r.left  += 6 * textWidth;
