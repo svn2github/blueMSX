@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:05:52 $
+** $Date: 2004-12-12 09:22:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,6 +99,9 @@ int boardUseRom();
 int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
+
+int boardGetFdcTimingEnable();
+void boardSetFdcTimingEnable(int enable);
 
 char* boardGetBaseDirectory();
 

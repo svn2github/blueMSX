@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:57:37 $
+** $Date: 2004-12-12 09:22:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -467,7 +467,7 @@ UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
     case 4: 
         if (~tc->mainStatus & STM_RQM) {
             UInt32 elapsed = boardSystemTime() - tc->dataTransferTime;
-            if (elapsed > boardFrequency() * 60 / 1000000) {
+            if (elapsed > boardFrequency() * 60 / 1000000 || !boardGetFdcTimingEnable()) {
                 tc->mainStatus |= STM_RQM;
             } 
         }

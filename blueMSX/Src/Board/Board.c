@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 08:05:50 $
+** $Date: 2004-12-12 09:22:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 extern void PatchReset(BoardType boardType);
 
 static int boardType;
+static int fdcTimingEnable = 1;
 static char baseDirectory[512];
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
@@ -305,6 +306,16 @@ char* boardGetBaseDirectory() {
 void boardSetDirectory(char* dir)
 {
     strcpy(baseDirectory, dir);
+}
+
+int boardGetFdcTimingEnable()
+{
+    return fdcTimingEnable;
+}
+
+void boardSetFdcTimingEnable(int enable)
+{
+    fdcTimingEnable = enable;
 }
 
 void boardSetYm2413Oversampling(int value)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:57:37 $
+** $Date: 2004-12-12 09:22:30 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -123,7 +123,10 @@ static void wd2793ReadSector(WD2793* wd)
 static void sync(WD2793* wd)
 {
     if (wd->step) {
-	    const UInt64 timePerStep[4] = { 200, 100, 66, 50 };
+	    const UInt64 timePerStepEnable[4] = { 200, 100, 66, 50 };
+        const UInt64 timePerStepDisable[4] = { 0, 0, 0, 0 };
+        const UInt64* timePerStep = boardGetFdcTimingEnable() ? timePerStepEnable : timePerStepDisable;
+
         UInt32 steps = (UInt32)(timePerStep[wd->regCommand & 3] * (boardSystemTime() - wd->stepTime) / boardFrequency());
 
         while (wd->curStep < steps) {
@@ -313,7 +316,7 @@ int wd2793GetDataRequest(WD2793* wd)
 {
     sync(wd);
 	if (((wd->regCommand & 0xF0) == 0xF0) && ((wd->regStatus & ST_BUSY) || wd->dataReady)) {
-        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 5);
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 5) + (boardGetFdcTimingEnable() ? 0 : 2);
 		if (wd->dataReady) {
 			wd->dataRequest = 1;
 		} 
@@ -330,7 +333,7 @@ int wd2793GetDataRequest(WD2793* wd)
 	}
 
     if ((wd->regCommand & 0xe0) == 0x80 && (wd->regStatus & ST_BUSY)) {
-        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 25);
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 25) + (boardGetFdcTimingEnable() ? 0 : 2);
 		if (wd->dataReady) {
 			wd->dataRequest = 1;
 		}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-11 08:45:40 $
+** $Date: 2004-12-12 09:22:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,7 +120,7 @@ static void changeBank(RomMapperPanasonic* rm, int region, int bank)
         slotMapPage(rm->slot, rm->sslot, region, rm->sram + offset, region != 3, 0);
 	} 
     else if (bank >= RAM_BASE) {
-        if (region == 3) rm->readBlock = msxGetRamPage(bank - RAM_BASE);
+        if (region == 3) rm->readBlock = boardGetRamPage(bank - RAM_BASE);
         slotMapPage(rm->slot, rm->sslot, region, boardGetRamPage(bank - RAM_BASE), region != 3, 0);
 	} 
     else {
