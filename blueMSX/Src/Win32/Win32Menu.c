@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-13 10:21:12 $
+** $Date: 2005-03-09 21:43:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -274,7 +274,7 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     
     _stprintf(langBuffer, "%s", langMenuVideoChipAutodetect());
-    AppendMenu(hMenu, MF_STRING | (pProperties->video.chipAutodetect ? MFS_CHECKED : 0), ID_VIDEO_AUTODETECT, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (count > 1 ? (pProperties->video.chipAutodetect ? MFS_CHECKED : 0) : MF_GRAYED), ID_VIDEO_AUTODETECT, langBuffer);
 
     return hMenu;
 }

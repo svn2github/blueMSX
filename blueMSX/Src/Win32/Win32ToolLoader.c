@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-03-09 21:43:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,9 @@
 #include "BlueMSXToolInterface.h"
 #include "Debugger.h"
 #include "Actions.h"
+#include "build_number.h"
+#include "version.h"
+
 
 #define MAX_TOOLS 16
 
@@ -48,12 +51,14 @@ struct ToolInfo {
         NotifyFn onEmulatorStop;
         NotifyFn onEmulatorPause;
         NotifyFn onEmulatorResume;
+        NotifyFn onEmulatorReset;
     } callbacks;
 };
 
 static ToolInfo* toolList[MAX_TOOLS];
 static int       toolListCount = 0;
 static volatile int isUpdating = 0;
+static char toolDir[MAX_PATH] = "";
 
 static void onEmulatorStart(ToolInfo* toolInfo) {
     if (!isUpdating && toolInfo->callbacks.onEmulatorStart != NULL) {
@@ -76,6 +81,12 @@ static void onEmulatorPause(ToolInfo* toolInfo) {
 static void onEmulatorResume(ToolInfo* toolInfo) {
     if (!isUpdating && toolInfo->callbacks.onEmulatorResume != NULL) {
         toolInfo->callbacks.onEmulatorResume();
+    }
+}
+
+static void onEmulatorReset(ToolInfo* toolInfo) {
+    if (!isUpdating && toolInfo->callbacks.onEmulatorReset != NULL) {
+        toolInfo->callbacks.onEmulatorReset();
     }
 }
 
@@ -195,6 +206,18 @@ int __stdcall toolDeviceWriteIoPort(IoPorts* ioPorts, int portIndex, UInt32 valu
     return dbgDeviceWriteIoPort((DbgIoPorts*)ioPorts, portIndex, value);
 }
 
+char* __stdcall toolGetPath()
+{
+    return toolDir;
+}
+
+void __stdcall toolGetEmulatorVersion(int* major, int* minor, int* buildNumber)
+{
+    *major = BLUE_MSX_VERSION_MAJOR;
+    *minor = BLUE_MSX_VERSION_MINOR;
+    *buildNumber = BUILD_NUMBER;
+}
+
 static Interface toolInterface = {
     toolSnapshotCreate,
     toolSnapshotDestroy,
@@ -217,14 +240,15 @@ static Interface toolInterface = {
     toolPause,
     toolStep,
     toolSetBreakpoint,
-    toolClearBreakpoint
+    toolClearBreakpoint,
+    toolGetPath,
+    toolGetEmulatorVersion,
 };
 
 void toolLoadAll(const char* path)
 {
     WIN32_FIND_DATA wfd;
     char  curDir[MAX_PATH];
-    char  toolDir[MAX_PATH] = "";
     HANDLE handle;
 
     GetCurrentDirectory(MAX_PATH, curDir);
@@ -255,6 +279,7 @@ void toolLoadAll(const char* path)
             NotifyFn onStop   = (NotifyFn)GetProcAddress(lib, (LPCSTR)5);
             NotifyFn onPause  = (NotifyFn)GetProcAddress(lib, (LPCSTR)6);
             NotifyFn onResume = (NotifyFn)GetProcAddress(lib, (LPCSTR)7);
+            NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
 
             if (create == NULL) {
                 FreeLibrary(lib);
@@ -273,7 +298,8 @@ void toolLoadAll(const char* path)
             toolInfo->callbacks.onEmulatorStop   = onStop;
             toolInfo->callbacks.onEmulatorPause  = onPause;
             toolInfo->callbacks.onEmulatorResume = onResume;
-            toolInfo->debugger = debuggerCreate(onEmulatorStart, onEmulatorStop, onEmulatorPause, onEmulatorResume, toolInfo);
+            toolInfo->callbacks.onEmulatorReset  = onReset;
+            toolInfo->debugger = debuggerCreate(onEmulatorStart, onEmulatorStop, onEmulatorPause, onEmulatorResume, onEmulatorReset, toolInfo);
             toolInfo->library = lib;
             strcpy(toolInfo->description, description);
 

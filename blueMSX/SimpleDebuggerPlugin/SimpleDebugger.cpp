@@ -634,6 +634,9 @@ void OnEmulatorResume() {
     }
 }
 
+void OnEmulatorReset() {
+}
+
 const char* OnGetName() {
     return "Debugger";
 }

@@ -27,6 +27,8 @@ static ToolAction                      toolDevicePause;
 static ToolAction                      toolDeviceStep;
 static ToolBreakpoint                  toolSetBreakpoint;
 static ToolBreakpoint                  toolClearBreakpoint;
+static ToolPath                        toolGetToolDirectory;
+static ToolEmulatorVersion             toolGetEmulatorVersion;
 
 static HINSTANCE hInstance;
 
@@ -120,6 +122,29 @@ void ClearBreakpoint(UInt16 address) {
     toolClearBreakpoint(address);
 }
 
+char* GetToolPath() {
+    return toolGetToolDirectory();
+}
+
+int GetEmulatorMajorVersion() {
+    int major, minor, buildNumber;
+    toolGetEmulatorVersion(&major, &minor, &buildNumber);
+    return major;
+}
+
+int GetEmulatorMinorVersion() {
+    int major, minor, buildNumber;
+    toolGetEmulatorVersion(&major, &minor, &buildNumber);
+    return minor;
+}
+
+int GetEmulatorBuildNumber()
+{
+    int major, minor, buildNumber;
+    toolGetEmulatorVersion(&major, &minor, &buildNumber);
+    return buildNumber;
+}
+
 HINSTANCE GetDllHinstance()
 {
     return hInstance;
@@ -151,6 +176,8 @@ extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface
     toolDeviceStep                  = toolInterface->step;
     toolSetBreakpoint               = toolInterface->setBreakpoint;
     toolClearBreakpoint             = toolInterface->clearBreakpoint;
+    toolGetToolDirectory            = toolInterface->getToolDirectory;
+    toolGetEmulatorVersion          = toolInterface->getEmulatorVersion;
 
     OnCreateTool();
 
@@ -186,6 +213,12 @@ extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorResume()
 {
     OnEmulatorResume();
 }
+
+extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorReset()
+{
+    OnEmulatorReset();
+}
+
 extern "C" int APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)
 {
     if(fdwReason == DLL_PROCESS_ATTACH) {

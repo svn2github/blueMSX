@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $ + additions 2005/03/03
 **
-** $Date: 2005-01-16 06:48:17 $
+** $Date: 2005-03-09 21:43:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -523,9 +523,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
 
     // New entries in 2.1
-    ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
-    ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
-    ls->propUseRegistry         = "Save Configuration in the Registry";
+    ls->propEmuFdcTiming        = "플로피 드라이브 타이밍 사용 않함";
+    ls->shortcutToggleFdcTiming = "플로피 드라이브 타이밍 사용/않함 변환";
+    ls->propUseRegistry         = "레지스트리에 설정 저장";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 카트리지";
@@ -533,6 +533,35 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
+    ls->propMonColorGhosting    = "RF-모듈레이터";
+
+    ls->keyconfigSelectedKey    = "선택된 키:";
+    ls->keyconfigMappedTo       = "대응된 키:";
+    ls->keyconfigMappingScheme  = "매핑 스타일:";
+
+    ls->discardChanges          = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
+    ls->overwriteConfig         = "이미 파일이 있습니다. 기존 파일을 이 파일로 바꾸시겠습니까?";
+
+    ls->confSaveAsTitle         = "다른 이름으로 설정 저장...";
+    ls->confSaveAsName          = "이름:";
+
+    ls->menuToolsKeyboard       = "키보드 편집기";
+    ls->shortcutShowKeyboard    = "키보드 편집기 보기";
+
+    ls->menuVideoSource         = "비디오 소스";
+    ls->menuVideoSourceDefault  = "비디오 소스 연결 않됨";
+    ls->menuVideoChipAutodetect = "비디오 칩 자동감지";
+    ls->propFullscreenResText   = "전체 화면 해상도:";
+    ls->dlgSavePreview          = "미리 보기";
+    ls->dlgSaveDate             = "시간 저장됨:";
+
+    ls->enumVideoMonAmber       = "호박색"; 
+
+    ls->menuPropsPorts          = "포트"; 
+    ls->propPortsLptGB          = "패러럴 포트 "; 
+    ls->propPortsComGB          = "시리얼 포트 "; 
+    ls->propPortsLptText        = "포트:"; 
+	ls->propPortsCom1Text       = "포트 1:";
 };
 
 #endif

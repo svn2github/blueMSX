@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-27 05:06:50 $
+** $Date: 2005-03-09 21:43:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,6 @@ typedef struct {
 /////////////////////////////////
 /// DLL interface
 
-
 typedef Snapshot*     (__stdcall *ToolSnapshotCreate)();
 typedef void          (__stdcall *ToolSnapshotDestroy)(Snapshot* Snapshot);
 typedef EmulatorState (__stdcall *ToolGetEmulatorState)();
@@ -138,7 +137,8 @@ typedef IoPorts*      (__stdcall *ToolDeviceGetIoPorts)(Device* device, int ioPo
 typedef int           (__stdcall *ToolDeviceWriteIoPort)(IoPorts* ioPorts, int portIndex, UInt32 value);
 typedef void          (__stdcall *ToolAction)();
 typedef void          (__stdcall *ToolBreakpoint)(UInt16);
-
+typedef char*         (__stdcall *ToolPath)();
+typedef void          (__stdcall *ToolEmulatorVersion)(int* major, int* minor, int* buildNumber);
 typedef struct {
     ToolSnapshotCreate              create;
     ToolSnapshotDestroy             destroy;
@@ -165,6 +165,9 @@ typedef struct {
 
     ToolBreakpoint                  setBreakpoint;
     ToolBreakpoint                  clearBreakpoint;
+
+    ToolPath                        getToolDirectory;
+    ToolEmulatorVersion             getEmulatorVersion;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);
@@ -176,6 +179,7 @@ __declspec(dllexport) void __stdcall NotifyEmulatorStart();
 __declspec(dllexport) void __stdcall NotifyEmulatorStop();
 __declspec(dllexport) void __stdcall NotifyEmulatorPause();
 __declspec(dllexport) void __stdcall NotifyEmulatorResume();
+__declspec(dllexport) void __stdcall NotifyEmulatorReset();
 
 #ifdef __cplusplus
 }

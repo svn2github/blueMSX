@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-27 05:06:48 $
+** $Date: 2005-03-09 21:43:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,6 +60,11 @@ void EmulatorStep();
 void SetBreakpoint(UInt16 address);
 void ClearBreakpoint(UInt16 address);
 
+char* GetToolPath();
+int GetEmulatorMajorVersion();
+int GetEmulatorMinorVersion();
+int GetEmulatorBuildNumber();
+
 HINSTANCE GetDllHinstance();
 
 //
@@ -72,6 +77,7 @@ void OnEmulatorStart();
 void OnEmulatorStop();
 void OnEmulatorPause();
 void OnEmulatorResume();
+void OnEmulatorReset();
 
 const char* OnGetName();
 

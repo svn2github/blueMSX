@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-03-06 20:29:29 $
+** $Date: 2005-03-09 21:43:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -735,7 +735,7 @@ static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
     if (vdp->vramAddress == 0 && vdp->screenMode > 3) {
         vdp->vdpRegs[14] = (vdp->vdpRegs[14] + 1 )& (vdp->vramPages - 1);
     }
-    if (!vdp->videoEnabled && boardGetVideoAutodetect()) {
+    if (!vdp->videoEnabled && boardGetVideoAutodetect() && videoManagerGetCount() > 1) {
         videoManagerSetActive(vdp->videoHandle);
     }
 }

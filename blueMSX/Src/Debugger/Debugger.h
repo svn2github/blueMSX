@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-02-27 05:06:50 $
+** $Date: 2005-03-09 21:43:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,6 +94,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorStop,
                          DebuggerEvent onEmulatorPause,
                          DebuggerEvent onEmulatorResume,
+                         DebuggerEvent onEmulatorReset,
                          void* ref);
 
 void debuggerDestroy(Debugger* debugger);
@@ -145,5 +146,6 @@ void debuggerNotifyEmulatorStart();
 void debuggerNotifyEmulatorStop();
 void debuggerNotifyEmulatorPause();
 void debuggerNotifyEmulatorResume();
+void debuggerNotifyEmulatorReset();
 
 #endif /*DEBUGGER_H*/

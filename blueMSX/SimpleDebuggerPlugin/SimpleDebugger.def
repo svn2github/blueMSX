@@ -6,3 +6,4 @@ OnEmulatorStart @4 NONAME
 OnEmulatorStop @5 NONAME
 OnEmulatorPause @6 NONAME
 OnEmulatorResume @7 NONAME
+OnEmulatorReset @8 NONAME
