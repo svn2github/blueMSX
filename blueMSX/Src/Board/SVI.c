@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-17 08:01:18 $
+** $Date: 2005-01-17 11:05:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,7 +157,8 @@ void sviClearInt(UInt32 irq)
         r800ClearInt(r800);
 }
 
-// SlotManager.h - Write and Read is not working this way
+/* SlotManager.h - Write and Read is not working this way
+
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
     if ((crtcMemBankStatus()) && (address & 0xf000))
@@ -173,6 +174,7 @@ UInt8 sviMemRead(void* ref, UInt16 address)
     else
         return slotRead(&ref, address);
 }
+*/
 
 static void sviMemReset()
 {
@@ -367,7 +369,7 @@ static int sviInitMachine(Machine* machine,
             success &= svi328FdcCreate();
             continue;
         }
-        
+
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {
@@ -384,6 +386,9 @@ static int sviInitMachine(Machine* machine,
             break;
         case ROM_CASPATCH:
             success &= romMapperCasetteCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+        case ROM_SVI80COL:
+            success &= crtcInit(CRTC_SVI, romName, buf, size);
             break;
         }
         free(buf);
@@ -478,8 +483,8 @@ int sviRun(Machine* machine,
 
     deviceManagerCreate();
 
-//    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
-    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+//    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
 
     boardInit(&r800->systemTime);
     ioPortReset();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-17 02:49:25 $
+** $Date: 2005-01-17 11:06:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,10 +41,10 @@ void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value);
 
 void crtcMemWrite(UInt16 address, UInt8 value);
 UInt8 crtcMemRead(UInt16 address);
-UInt8 crtcMemBankStatus(void);
+int crtcMemBankStatus(void);
 
+int  crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size);
 void crtcReset(void);
-void crtcInit(CrtcConnector connector);
 void crtcDestroy();
 
 #endif

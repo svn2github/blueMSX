@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-17 02:49:25 $
+** $Date: 2005-01-17 11:06:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,9 +113,9 @@ void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value)
    crtcMemoryBankControl = value & 1;
 }
 
-UInt8 crtcMemBankStatus(void)
+int crtcMemBankStatus(void)
 {
-   return crtcMemoryBankControl;
+   return (crtcMemoryBankControl & 1);
 }
 
 void crtcMemWrite(UInt16 address, UInt8 value)
@@ -138,14 +138,18 @@ void crtcReset(void)
     crtcMemoryBankControl = 0;
     memset(crtcRegister, 0, sizeof(crtcRegister));
     memset(crtcMemory, 0xff, sizeof(crtcMemory));
-    memset(crtcROM, 0xff, sizeof(crtcROM));
 }
 
-void crtcInit(CrtcConnector connector)
+int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
 {
     crtcConnector  = connector;
 
+    if (size != 0x1000) {        return 0;    }
+
     crtcReset();
+
+    memset(crtcROM, 0xff, sizeof(crtcROM));
+    memcpy(&crtcROM[0], romData, size);
 
     switch (crtcConnector) {
     case CRTC_MSX:
@@ -159,7 +163,11 @@ void crtcInit(CrtcConnector connector)
         ioPortRegister(0x51, crtcRead, crtcWrite,      NULL); // CRTC Controller register 
         ioPortRegister(0x58, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
         break;
+
+    default:        return 0;
     }
+
+    return 1;
 }
 
 void crtcDestroy() 
