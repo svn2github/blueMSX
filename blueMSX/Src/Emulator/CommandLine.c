@@ -417,6 +417,7 @@ static int emuStartWithArguments(Properties* properties, char* cmdLine) {
     if (strlen(rom2)  && !insertCartridge(properties, 1, rom2, *rom2zip ? rom2zip : NULL, romType2, -1)) return 0;
     if (strlen(diskA) && !insertDiskette(properties, 0, diskA, *diskAzip ? diskAzip : NULL, -1)) return 0;
     if (strlen(diskB) && !insertDiskette(properties, 1, diskB, *diskBzip ? diskBzip : NULL, -1)) return 0;
+    if (strlen(cas)   && !insertCassette(properties, cas, *caszip ? caszip : NULL, -1)) return 0;
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
 
