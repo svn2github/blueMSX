@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-02-11 16:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -244,7 +244,7 @@ void updateExtendedRomName(int drive, char* filename, char* zipFile) {
     char* buf = romLoad(filename, zipFile[0] ? zipFile : NULL, &size);
 
     if (buf != NULL) {
-        strcpy(extendedName[drive], mediaDbCreatePrettyString(mediaDbLookupRom(buf, size)));
+        strcpy(extendedName[drive], mediaDbGetPrettyString(mediaDbLookupRom(buf, size)));
         free(buf);
         if (extendedName[drive][0] == 0) {
             strcpy(extendedName[drive], stripPathExt(zipFile[0] ? zipFile : filename));
@@ -258,7 +258,7 @@ void updateExtendedDiskName(int drive, char* filename, char* zipFile) {
 
     extendedDiskName[drive][0] = 0;
     if (buf != NULL) {
-        strcpy(extendedDiskName[drive], mediaDbCreatePrettyString(mediaDbLookupDisk(buf, size)));
+        strcpy(extendedDiskName[drive], mediaDbGetPrettyString(mediaDbLookupDisk(buf, size)));
         free(buf);
         if (extendedDiskName[drive][0] == 0) {
             strcpy(extendedDiskName[drive], stripPathExt(zipFile[0] ? zipFile : filename));
@@ -272,7 +272,7 @@ void updateExtendedCasName(char* filename, char* zipFile) {
 
     extendedCasName[0] = 0;
     if (buf != NULL) {
-        strcpy(extendedCasName, mediaDbCreatePrettyString(mediaDbLookupCas(buf, size)));
+        strcpy(extendedCasName, mediaDbGetPrettyString(mediaDbLookupCas(buf, size)));
         free(buf);
         if (extendedCasName[0] == 0) {
             strcpy(extendedCasName, stripPathExt(zipFile[0] ? zipFile : filename));

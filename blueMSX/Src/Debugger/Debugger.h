@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-11 05:14:10 $
+** $Date: 2005-02-11 16:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,5 +31,58 @@
 #define DEBUGGER_H
 
 #include "MsxTypes.h"
+
+typedef void (*EmulatorStartCb)();
+typedef void (*EmulatorStopCb)();
+typedef void (*EmulatorPauseCb)();
+typedef void (*EmulatorResumeCb)();
+
+typedef struct Debugger Debugger;
+
+typedef struct {
+    char   name[32];
+    UInt32 startAddress;
+    UInt32 size;
+    UInt8  memory[1];
+} DbgMemoryBlock;
+
+typedef struct {
+    char   name[32];
+    UInt32 count;
+    struct {
+        char name[8];
+        UInt8  bitCount;
+        UInt32 value;
+    } regs[1];
+} DbgRegisterBank;
+
+typedef struct {
+    UInt32 count;
+    struct {
+        char name[8];
+        UInt8  bitCount;
+        UInt32 value;
+    } regs[1];
+} DbgIoPorts;
+
+typedef struct {
+    char name[64];
+    int  memoryBblocks;
+    int  registerBanks;
+    int  ioPortBanks;
+} DbgDevice;
+
+Debugger* debuggerCreate(EmulatorStartCb*  startCb,
+                         EmulatorStopCb*   stopCb,
+                         EmulatorPauseCb*  pauseCb,
+                         EmulatorResumeCb* resumeCb);
+
+int debuggerGetDeviceCount();
+
+DbgDevice* debuggerGetDevice(int index);
+
+DbgMemoryBlock*  dbgDeviceGetMemoryBlock(DbgDevice* dbgDevice, int index);
+DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int index);
+DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int index);
 
 #endif /*DEBUGGER_H*/

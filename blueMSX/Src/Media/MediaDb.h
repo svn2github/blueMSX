@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-02-11 16:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,14 +121,7 @@ enum  {
     ROM_MAXROMID    = 85
 };
 
-typedef struct {
-    char title[64];
-    char company[32];
-    char year[8];
-    char remark[64];
-    RomType romType;
-} MediaType;
-
+typedef struct MediaType MediaType;
 typedef struct MediaDb MediaDb;
 
 typedef enum { FORMAT_ROM, FORMAT_DISK, FORMAT_CAS } OldFormat;
@@ -153,10 +146,16 @@ MediaType* mediaDbGuessRom(const void *buffer, int size);
 MediaType* mediaDbLookupDisk(const void *buffer, int size);
 MediaType* mediaDbLookupCas(const void *buffer, int size);
 
+RomType     mediaDbGetRomType(MediaType* mediaType);
+const char* mediaDbGetTitle(MediaType* mediaType);
+const char* mediaDbGetYear(MediaType* mediaType);
+const char* mediaDbGetCompany(MediaType* mediaType);
+const char* mediaDbGetRemark(MediaType* mediaType);
+const char* mediaDbGetPrettyString(MediaType* mediaType);
+
 void mediaDbSetDefaultRomType(RomType romType);
 RomType mediaDbOldStringToType(const char* romName);
 const char* romTypeToString(RomType romType);
 const char* romTypeToShortString(RomType romType);
-const char* mediaDbCreatePrettyString(MediaType* mediaType);
 
 #endif /*MEDIA_DB_H*/

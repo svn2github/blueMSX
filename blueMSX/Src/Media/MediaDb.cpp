@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-02-11 16:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@ extern "C" {
 }
 
 #include "TinyXml.h"
+#include "Sha1.h"
 #include <string>
 #include <map>
 
@@ -47,6 +48,17 @@ typedef map<string, MediaType*> Sha1Map;
 struct MediaDb {
     Sha1Map sha1Map;
     CrcMap crcMap;
+};
+
+struct MediaType {
+    MediaType(RomType rt, const string t, const string c = "", const string y = "", const string r = "") :
+        romType(rt), title(t), company(c), year(y), remark(r) {}
+
+    string title;
+    string company;
+    string year;
+    string remark;
+    RomType romType;
 };
 
 static MediaDb* romdb;
@@ -339,14 +351,7 @@ extern "C" void mediaDbAddFromOldFile(MediaDb* mediaDb,
             continue;
         }
 
-        MediaType* mediaType = new MediaType;
-        mediaType->company[0] = 0;
-        mediaType->remark[0] = 0;
-        mediaType->year[0] = 0;
-        mediaType->romType = romType;
-        strcpy(mediaType->title, title.substr(0, sizeof(mediaType->title) - 1).c_str());
-
-        mediaDb->crcMap[crc32] = mediaType;
+        mediaDb->crcMap[crc32] = new MediaType(romType, title);
     }
 }
 
@@ -419,14 +424,16 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 if (name != NULL) {
                     UInt32 crc32;
                     if (sscanf(name->Value(), "%x", &crc32) == 1) {
-                        MediaType* mediaType = new MediaType;
-                        strcpy(mediaType->title, title.substr(0, sizeof(mediaType->title) - 1).c_str());
-                        strcpy(mediaType->company, company.substr(0, sizeof(mediaType->company) - 1).c_str());
-                        strcpy(mediaType->remark, remark.substr(0, sizeof(mediaType->remark) - 1).c_str());
-                        strcpy(mediaType->year, year.substr(0, sizeof(mediaType->year) - 1).c_str());
-                        mediaType->romType = romType;
-
-                        mediaDb->crcMap[crc32] = mediaType;
+                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
+                    }
+                }
+            }
+            if (strcmp(item->Value(), "sha1") == 0) {
+                TiXmlNode* name = item->FirstChild();
+                if (name != NULL) {
+                    string sha1(name->Value());
+                    if (sha1.length() == 40) {
+                        mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
                     }
                 }
             }
@@ -436,14 +443,22 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
 
 extern "C" MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
 {
+	SHA1 sha1;
+	sha1.update((const UInt8*)buffer, size);
+    
+    Sha1Map::iterator iterSha1 = mediaDb->sha1Map.find(sha1.hex_digest());
+    if (iterSha1 != mediaDb->sha1Map.end()) {
+        return iterSha1->second;
+    }
+
     UInt32 crc = crc32(buffer, size);
 
-    CrcMap::iterator iter = mediaDb->crcMap.find(crc);
-
-    if (iter == mediaDb->crcMap.end()) {
-        return NULL;
+    CrcMap::iterator iterCrc = mediaDb->crcMap.find(crc);
+    if (iterCrc != mediaDb->crcMap.end()) {
+        return iterCrc->second;
     }
-    return iter->second;
+    
+    return NULL;
 }
 
 extern "C" void mediaDbCreateRomdb(const char* oldFileName, const char* xmlFileName)
@@ -479,8 +494,8 @@ extern "C" void mediaDbCreateCasdb(const char* oldFileName, const char* xmlFileN
 extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size) 
 {
     const char* romData = (const char*)buffer;
-    static MediaType defaultColeco = { "Unknown Coleco rom", "", "", "", ROM_COLECO };
-    static MediaType defaultSvi    = { "Unknown SVI rom", "", "", "", ROM_SVI328 };
+    static MediaType defaultColeco(ROM_COLECO, "Unknown Coleco rom");
+    static MediaType defaultSvi(ROM_SVI328, "Unknown SVI rom");
 
     if (romdb == NULL) {
         return NULL;
@@ -518,26 +533,51 @@ extern "C" MediaType* mediaDbLookupCas(const void *buffer, int size)
     return mediaDbLookup(casdb, buffer, size);
 }
 
-extern "C" const char* mediaDbCreatePrettyString(MediaType* mediaType)
+RomType mediaDbGetRomType(MediaType* mediaType)
+{
+    return mediaType->romType;
+}
+
+extern "C" const char* mediaDbGetTitle(MediaType* mediaType)
+{
+    return mediaType->title.c_str();
+}
+
+extern "C" const char* mediaDbGetYear(MediaType* mediaType)
+{
+    return mediaType->year.c_str();
+}
+
+extern "C" const char* mediaDbGetCompany(MediaType* mediaType)
+{
+    return mediaType->company.c_str();
+}
+
+extern "C" const char* mediaDbGetRemark(MediaType* mediaType)
+{
+    return mediaType->remark.c_str();
+}
+
+extern "C" const char* mediaDbGetPrettyString(MediaType* mediaType)
 {
     static char prettyString[512];
 
     prettyString[0] = 0;
 
     if (mediaType != NULL) {
-        strcat(prettyString, mediaType->title);
-        if (mediaType->company[0] || mediaType->year[0]) {
+        strcat(prettyString, mediaType->title.c_str());
+        if (mediaType->company.length() || mediaType->year.length()) {
             strcat(prettyString, " -");
         }
             
-        if (mediaType->company[0]) {
+        if (mediaType->company.length()) {
             strcat(prettyString, " ");
-            strcat(prettyString, mediaType->company);
+            strcat(prettyString, mediaType->company.c_str());
         }
 
-        if (mediaType->year[0]) {
+        if (mediaType->year.length()) {
             strcat(prettyString, " ");
-            strcat(prettyString, mediaType->year);
+            strcat(prettyString, mediaType->year.c_str());
         }
     }
 
@@ -552,7 +592,7 @@ extern "C" void mediaDbSetDefaultRomType(RomType romType)
 
 extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size) 
 {
-    static MediaType staticMediaType = { "Unknown MSX rom", "", "", "", ROM_UNKNOWN };
+    static MediaType staticMediaType(ROM_UNKNOWN, "Unknown MSX rom");
 
     const UInt8* romData = (const UInt8*)buffer;
     int i;

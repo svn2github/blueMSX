@@ -30,6 +30,11 @@
 #ifndef MSX_TYPES
 #define MSX_TYPES
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #ifdef __GNUC__
 #define __int64 long long
 #endif
@@ -68,5 +73,10 @@ void dbgPrint();
 #define dbgPrint()
 
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

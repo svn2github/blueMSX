@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-11 16:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -209,7 +209,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         
         if (romType == ROM_UNKNOWN) {
             MediaType* mediaType = mediaDbGuessRom(buf, size);
-            romType =  mediaType->romType;
+            romType =  mediaDbGetRomType(mediaType);
         }
 
         switch (romType) {

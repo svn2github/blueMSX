@@ -1409,6 +1409,12 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Media\MediaDb.h">
 			</File>
+			<File
+				RelativePath="..\..\Src\Media\Sha1.cpp">
+			</File>
+			<File
+				RelativePath="..\..\Src\Media\Sha1.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Debugger"
