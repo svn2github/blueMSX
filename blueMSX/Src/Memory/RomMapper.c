@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-23 17:29:24 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,6 +173,7 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "bunsetsu"))     return ROM_BUNSETU;
     if (0 == strcmpnocase(name, "coleco"))       return ROM_COLECO;
     if (0 == strcmpnocase(name, "svi328"))       return ROM_SVI328;
+    if (0 == strcmpnocase(name, "hbi55"))        return ROM_SONYHBI55;
 
     return ROM_UNKNOWN;
 }    

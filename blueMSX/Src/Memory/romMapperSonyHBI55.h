@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchControls.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,18 +27,11 @@
 **
 ******************************************************************************
 */
-#ifndef ARCH_CONTROLS_H
-#define ARCH_CONTROLS_H
+#ifndef ROMMAPPER_SONY_HBI55_H
+#define ROMMAPPER_SONY_HBI55_H
 
-#include "MsxTypes.h"
+#include "MSXTypes.h"
 
-typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
-
-void archKeyboardSetKeymap(KeyboardKeymap keymap);
-UInt8* archKeyboardGetState();
-UInt8 archJoystickGetState(int joystickNo);
-int  archJoystickGetCount();
-void archMouseSetForceLock(int lock);
-
+int romMapperSonyHBI55Create();
 
 #endif

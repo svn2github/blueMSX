@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-28 05:09:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -715,8 +715,8 @@ int keyboardGetModifiers()
     return kbdModifiers;
 }
 
-void archKeyboardGetState(unsigned char* keyboardState) {
-    memcpy(keyboardState, msxKeyMap, 16);
+unsigned char* archKeyboardGetState() {
+    return msxKeyMap;
 }
 
 void keyboardUpdate() 

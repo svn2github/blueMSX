@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 00:07:29 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -485,13 +485,14 @@ void colecoChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZi
     if (cartNo == 0) {
         memset(&colecoMemory[0x8000], 0xff, 0x8000);
         buf = romLoad(cart, cartZip, &size);
-        if (buf != NULL && size <= 0x8000) {
-            memcpy(&colecoMemory[0x8000], buf, size);
-            useRom = 1;
-        }
-        else
-            useRom = 0;
+        useRom = 0;
+        if (buf != NULL) {
+            if (size <= 0x8000) {
+                memcpy(&colecoMemory[0x8000], buf, size);
+                useRom = 1;
+            }
             free(buf);
+        }
     }
 }
 
@@ -499,8 +500,9 @@ void colecoChangeDiskette(int driveId, char* fileName, const char* fileInZipFile
 {
 }
 
-void colecoChangeCassette(char *name, const char *fileInZipFile)
+int colecoChangeCassette(char *name, const char *fileInZipFile)
 {
+    return 0;
 }
 
 void colecoSaveState()

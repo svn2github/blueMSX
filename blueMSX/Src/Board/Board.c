@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-26 11:31:49 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ extern void PatchReset(BoardType boardType);
 
 static int boardType;
 static int fdcTimingEnable = 1;
+static int cassetteInserted = 0;
 static char baseDirectory[512];
 static Mixer* boardMixer = NULL;
 
@@ -71,7 +72,7 @@ static int    (*useMegaRam)()                                 = msxUseMegaRam;
 static int    (*useFmPac)()                                   = msxUseFmPac;
 static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartridge;
 static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
-static void   (*changeCassette)(char*, const char*)           = msxChangeCassette;
+static int    (*changeCassette)(char*, const char*)           = msxChangeCassette;
 
 static void boardSetType(BoardType type)
 {
@@ -331,7 +332,12 @@ void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
 
 void boardChangeCassette(char* name, const char* fileInZipFile)
 {
-    changeCassette(name, fileInZipFile);
+    cassetteInserted = changeCassette(name, fileInZipFile);
+}
+
+int boardGetCassetteInserted()
+{
+    return cassetteInserted;
 }
 
 char* boardGetBaseDirectory() {

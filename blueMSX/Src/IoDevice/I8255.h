@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/i8255.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,14 +31,22 @@
 #define I8255_H
 
 #include "MSXTypes.h"
-#include "KeyClick.h"
 
-void i8255Create(UInt8* keymap, AudioKeyClick* keyClick);
-void i8255Destroy();
+typedef struct I8255 I8255;
 
-void i8255Reset();
+typedef void  (*I8255Write)(void*, UInt8);
+typedef UInt8 (*I8255Read) (void*);
 
-void i8255LoadState();
-void i8255SaveState();
+I8255* i8255Create(I8255Read readA,   I8255Write writeA, 
+                   I8255Read readB,   I8255Write writeB,
+                   I8255Read readCLo, I8255Write writeCLo,
+                   I8255Read readCHi, I8255Write writeCHi,
+                   void* ref);
+void i8255Destroy(I8255* i8255); 
+void i8255Reset(I8255* i8255);
+UInt8 i8255Read(I8255* i8255, UInt16 port);
+void i8255Write(I8255* i8255, UInt16 port, UInt8 value);
+void i8255LoadState(I8255* i8255);
+void i8255SaveState(I8255* i8255);
 
 #endif

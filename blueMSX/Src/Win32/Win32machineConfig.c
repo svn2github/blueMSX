@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-21 09:08:53 $
+** $Date: 2004-12-28 05:09:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -538,6 +538,7 @@ static void endEditControls(HWND hDlg)
     case ROM_KOREAN80:
     case ROM_KOREAN90:
     case ROM_KOREAN126:
+    case ROM_SONYHBI55:
     case ROM_HOLYQURAN:
         editSlotInfo.startPage = 2;
         editSlotInfo.pageCount = 4;
@@ -823,6 +824,7 @@ static void setEditControls(HWND hDlg)
     case ROM_KOREAN80:
     case ROM_KOREAN90:
     case ROM_KOREAN126:
+    case ROM_SONYHBI55:
     case ROM_HOLYQURAN:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
@@ -925,6 +927,7 @@ static RomType romTypeList[] = {
     ROM_SDSNATCHER,
     ROM_SCCMIRRORED,
     ROM_SCCEXTENDED,
+    ROM_SONYHBI55,
     ROM_UNKNOWN,
 };
 

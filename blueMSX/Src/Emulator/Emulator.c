@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-26 10:09:54 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -562,7 +562,7 @@ UInt8 Joystick(UInt8 joystickNo) {
 }
 
 void Keyboard(UInt8* keyboardState) {
-    archKeyboardGetState(keyboardState);
+    memcpy(keyboardState, archKeyboardGetState(), 16);
 }
 
 int WaitForSync(void) {

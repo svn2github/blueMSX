@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 11:31:50 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,7 +39,7 @@
 #include "R800SaveState.h"
 
 #include "SaveState.h"
-#include "I8255.h"
+#include "MsxPPI.h"
 #include "Board.h"
 #include "RTC.h"
 #include "Led.h"
@@ -115,6 +115,7 @@
 #include "romMapperBunsetu.h"
 #include "romMapperTurboRTimer.h"
 #include "romMapperTurboRPCM.h"
+#include "romMapperSonyHBI55.h"
 
 
 extern int  WaitForSync(void);
@@ -124,12 +125,10 @@ void PatchZ80(void* ref, CpuRegs* cpuRegs);
 
 void msxLoadState();
 
-
 // Hardware
 static Machine*        msxMachine;
 static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
-static AudioKeyClick*  keyClick;
 static R800*           r800;
 static RTC*            rtc;
 static JoystickIO*     joyIO;
@@ -137,7 +136,6 @@ static UInt32          nextSyncTime;
 static UInt32          loopTime;
 static int             syncCount;
 static int             SyncPeriod;
-static UInt8           KeyMap[16];
 UInt32                 MsxFrequency;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
@@ -586,6 +584,10 @@ static int initMachine(Machine* machine,
         case ROM_KOREAN90:
             success &= romMapperKorean90Create(romName, buf, size, slot, subslot, startPage);
             break;
+
+        case ROM_SONYHBI55:
+            success &= romMapperSonyHBI55Create();
+            break;
             
         case ROM_KOREAN126:
             success &= romMapperKorean126Create(romName, buf, size, slot, subslot, startPage);
@@ -704,7 +706,6 @@ void msxReset()
 
     vdpReset();
 
-    i8255Reset();
     slotManagerReset();
 
     if (r800 != NULL) {
@@ -759,9 +760,8 @@ int msxRun(Machine* machine,
     currentRomType[1] = ROM_UNKNOWN;
 
     ay8910    = ay8910Create(mixer, AY8910_MSX);
-    keyClick  = audioKeyClickCreate(mixer);
 
-    i8255Create(KeyMap, keyClick);
+    msxPPICreate();
     slotManagerCreate();
 
     success = initMachine(machine, mixer,  
@@ -793,8 +793,6 @@ int msxRun(Machine* machine,
                           devInfo->cassette.inZipName);
     }
 
-    memset(KeyMap, 0xff, 16);
-
     z80Frequency = machine->cpu.freqZ80;
     r800SetFrequency(r800, CPU_Z80,  machine->cpu.freqZ80);
     r800SetFrequency(r800, CPU_R800, machine->cpu.freqR800);
@@ -807,7 +805,6 @@ int msxRun(Machine* machine,
         slotLoadState();
         r800LoadState(r800);
         joystickIoLoadState(joyIO);
-        i8255LoadState();
         rtcLoadState(rtc);
         ay8910LoadState(ay8910);
         vdpLoadState();
@@ -816,9 +813,7 @@ int msxRun(Machine* machine,
 
     if (success) {
         int execTime = 0;
-        while (execTime >= 0) {
-            int renshaSpeed;
-            
+        while (execTime >= 0) {            
             while (syncCount < SyncPeriod) {
                 UInt64 elapsed;
                 UInt32 elapsedTime;
@@ -848,18 +843,6 @@ int msxRun(Machine* machine,
             syncCount -= SyncPeriod;
             SyncPeriod = execTime * MsxFrequency * 6; // FIXME
             mixerSync(mixer);
-
-            Keyboard(KeyMap);
-
-            renshaSpeed = switchGetRensha();
-            if (renshaSpeed) {
-                UInt8 renshaOn = (UInt8)((UInt64)renshaSpeed * nextSyncTime / boardFrequency());
-                ledSetRensha(renshaSpeed > 14 ? 1 : renshaOn & 2);
-                KeyMap[8] |= (renshaOn & 1);
-            }
-            else {
-                ledSetRensha(0);
-            }
         }
     }
 
@@ -870,8 +853,6 @@ int msxRun(Machine* machine,
     joystickIoDestroy(joyIO);
 
     ay8910Destroy(ay8910);
-    audioKeyClickDestroy(keyClick);
-    i8255Destroy();
 
     msxChangeDiskette(0, NULL, NULL);
     msxChangeDiskette(1, NULL, NULL);
@@ -915,7 +896,7 @@ UInt8* msxGetRamPage(int page) {
 	return msxRam + ((page * 0x2000) & (msxRamSize - 1));
 }
 
-void msxChangeCassette(char *name, const char *fileInZipFile)
+int msxChangeCassette(char *name, const char *fileInZipFile)
 {
     if (name && strlen(name) == 0) {
         name = NULL;
@@ -933,6 +914,8 @@ void msxChangeCassette(char *name, const char *fileInZipFile)
     }
 
     tapeInsert(name, fileInZipFile);
+
+    return msxDevInfo ? msxDevInfo->cassette.inserted : 0;
 }
 
 static int romTypeIsRom(RomType romType) {
@@ -986,6 +969,7 @@ static int romTypeIsMegaRom(RomType romType) {
     case ROM_LODERUNNER:  return 1;
     case ROM_MSXAUDIO:    return 1;
     case ROM_KOREAN90:    return 1;
+    case ROM_SONYHBI55:   return 1;
     case ROM_EXTRAM512KB: return 1;
     case ROM_EXTRAM1MB:   return 1;
     case ROM_EXTRAM2MB:   return 1;
@@ -1102,7 +1086,6 @@ void msxSaveState()
     saveStateSet(state, "casInserted", di->cassette.inserted);
     saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
     saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
-    saveStateSetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
 
     saveStateSet(state, "enableYM2413",    di->audio.enableYM2413);
     saveStateSet(state, "enableY8950",     di->audio.enableY8950);
@@ -1116,7 +1099,6 @@ void msxSaveState()
     machineSaveState(msxMachine);
     r800SaveState(r800);
     joystickIoSaveState(joyIO);
-    i8255SaveState();
     deviceManagerSaveState();
     slotSaveState();
     rtcSaveState(rtc);
@@ -1157,7 +1139,6 @@ void msxLoadState()
     di->cassette.inserted = saveStateGet(state, "casInserted", 0);
     saveStateGetBuffer(state, "casName",  di->cassette.name, sizeof(di->cassette.name));
     saveStateGetBuffer(state, "casInZip", di->cassette.inZipName, sizeof(di->cassette.inZipName));
-    saveStateGetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
 
     di->audio.enableYM2413    = saveStateGet(state, "enableYM2413",    0);
     di->audio.enableY8950     = saveStateGet(state, "enableY8950",     0);

@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchControls.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,18 +27,13 @@
 **
 ******************************************************************************
 */
-#ifndef ARCH_CONTROLS_H
-#define ARCH_CONTROLS_H
+#ifndef SVI_PPI_H
+#define SVI_PPI_H
 
-#include "MsxTypes.h"
+#include "msxTypes.h"
+#include "JoystickIO.h"
 
-typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
-
-void archKeyboardSetKeymap(KeyboardKeymap keymap);
-UInt8* archKeyboardGetState();
-UInt8 archJoystickGetState(int joystickNo);
-int  archJoystickGetCount();
-void archMouseSetForceLock(int lock);
-
+void sviPPICreate(JoystickIO* joyIO);
 
 #endif
+

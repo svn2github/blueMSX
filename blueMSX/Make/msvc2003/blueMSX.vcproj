@@ -369,9 +369,6 @@
 					RelativePath="..\..\Src\Memory\DeviceManager.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\i8255.c">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\IoPort.c">
 				</File>
 				<File
@@ -519,6 +516,12 @@
 					RelativePath="..\..\Src\Memory\romMapperSCCplus.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
 				</File>
 				<File
@@ -551,9 +554,6 @@
 				Filter="">
 				<File
 					RelativePath="..\..\Src\Memory\DeviceManager.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\i8255.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\IoPort.h">
@@ -819,6 +819,12 @@
 				RelativePath="..\..\Src\IoDevice\Disk.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\I8255.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\I8255.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\JoystickIO.c">
 			</File>
 			<File
@@ -831,6 +837,12 @@
 				RelativePath="..\..\Src\IoDevice\Led.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\MsxPPI.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\MsxPPI.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\RTC.c">
 			</File>
 			<File
@@ -841,6 +853,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Svi328Fdc.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\SviPPI.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\SviPPI.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Switches.c">

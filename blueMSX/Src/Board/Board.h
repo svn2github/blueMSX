@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-26 11:31:50 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,6 +110,9 @@ Mixer* boardGetMixer();
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
 void boardChangeCassette(char* name, const char* fileInZipFile);
+
+int  boardGetCassetteInserted();
+
 void boardSetDirectory(char* dir);
 void boardSetYm2413Oversampling(int value);
 void boardSetY8950Oversampling(int value);

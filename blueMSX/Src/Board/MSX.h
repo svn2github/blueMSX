@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:05:52 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,7 +72,7 @@ int msxUseFmPac();
 
 void msxChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void msxChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
-void msxChangeCassette(char* name, const char* fileInZipFile);
+int  msxChangeCassette(char* name, const char* fileInZipFile);
 
 #endif /* MSX_H */
 

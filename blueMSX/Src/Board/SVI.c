@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:05:52 $
+** $Date: 2004-12-28 05:09:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include <string.h>
 #include <direct.h>
 #include "SVI.h"
+#include "SviPPI.h"
 #include "R800.h"
 #include "R800Dasm.h"
 #include "R800SaveState.h"
@@ -225,199 +226,6 @@ static void sviPsgWriteHandler(void* arg, UInt16 address, UInt8 value)
     }
 }
 
-/*
-PPI Port A Input (Address 98H)
-Bit Name     Description
- 1  TA       Joystick 1, /SENSE
- 2  TB       Joystick 1, EOC
- 3  TC       Joystick 2, /SENSE
- 4  TD       Joystick 2, EOC
- 5  TRIGGER1 Joystick 1, Trigger
- 6  TRIGGER2 Joystick 2, Trigger
- 7  /READY   Cassette, Ready
- 8  CASR     Cassette, Read data
-
-PPI Port B Input (Address 99H)
-Bit Name Description
- 1  IN0  Keyboard, Column status of selected line
- 2  IN1  Keyboard, Column status of selected line
- 3  IN2  Keyboard, Column status of selected line
- 4  IN3  Keyboard, Column status of selected line
- 5  IN4  Keyboard, Column status of selected line
- 6  IN5  Keyboard, Column status of selected line
- 7  IN6  Keyboard, Column status of selected line
- 8  IN7  Keyboard, Column status of selected line
-
-PPI Port C Output (Address 97H)
-Bit Name   Description
- 1  KB0    Keyboard, Line select 0
- 2  KB1    Keyboard, Line select 1
- 3  KB2    Keyboard, Line select 2
- 4  KB3    Keyboard, Line select 3
- 5  CASON  Cassette, Motor relay control (0=on, 1=off)
- 6  CASW   Cassette, Write data
- 7  CASAUD Cassette, Audio out (pulse)
- 8  SOUND  Keyboard, Click sound bit (pulse)
-*/
-typedef struct {
-    UInt8          reg[4];
-    UInt8          outReg[3]; 
-    UInt8          inReg[3];
-    UInt8          oldOutReg[3];
-    UInt8          mode;
-    UInt8*         keymap;
-    AudioKeyClick* keyClick;
-} I8255;
-
-static I8255 i8255;
-
-static UInt8 i8255read(void* ref, UInt16 ioPort)
-{
-    if (ioPort == 0x9A)
-        return i8255.mode;
-
-    ioPort &= 3;
-
-    /* Read joystick triggers and cassette status*/
-    i8255.inReg[0] = joystickReadTriggerSVI(joyIO);
-    i8255.inReg[0] |= (sviDevInfo->cassette.inserted) ? 0:0x40; 
-
-    /* Read keyboard input */
-    i8255.inReg[1] = i8255.keymap[i8255.outReg[2] & 0x0f];
-
-    switch(ioPort) {
-    case 0: 
-        return i8255.reg[3] & 0x10 ? i8255.inReg[0] : i8255.reg[0];
-    case 1: 
-        return i8255.reg[3] & 0x02? i8255.inReg[1] : i8255.reg[1];
-    case 2: 
-        return ((i8255.reg[3] & 0x01 ? i8255.inReg[2] : i8255.reg[2]) & 0x0f)|
-               ((i8255.reg[3] & 0x08 ? i8255.inReg[2] : i8255.reg[2]) & 0xf0);
-    case 3: 
-        return i8255.reg[3];
-    }
-    return 0xff;
-}
-
-static void i8255write(void* ref, UInt16 ioPort, UInt8 value)
-{
-    if (ioPort == 0x97)
-        i8255.mode = value;
-
-    ioPort &= 3;
-
-    /*  Update registers and ports */
-    switch(ioPort) {
-    case 0:
-    case 1:
-    case 2:
-        /* Data registers */
-        i8255.reg[ioPort] = value;
-        break;
-    case 3:
-        /* Control register */
-        if (value & 0x80) {
-            i8255.reg[ioPort] = value;
-        }
-        else {
-            ioPort = 1 << ((value & 0x0e) >> 1);
-            if (value&0x01) {
-                i8255.reg[2] |= ioPort; 
-            }
-            else {
-                i8255.reg[2] &= ~ioPort;
-            }
-        }
-        break;
-    }
-
-    /* Set output ports */
-    value = i8255.reg[3];
-    i8255.outReg[0] = value & 0x10 ? 0x00 : i8255.reg[0];
-    i8255.outReg[1] = value & 0x02 ? 0x00 : i8255.reg[1];
-    i8255.outReg[2] = ((value & 0x01 ? 0x00 : i8255.reg[2]) & 0x0f) | 
-                    ((value & 0x08 ? 0x00 : i8255.reg[2]) & 0xf0);
-
-    // Do post processing
-    if (i8255.outReg[2] != i8255.oldOutReg[2]) { 
-            audioKeyClick(i8255.keyClick, (i8255.outReg[2] >> 7));
-
-        i8255.oldOutReg[2] = i8255.outReg[2]; 
-    }
-
-    if (i8255.outReg[0] != i8255.oldOutReg[0]) {
-        i8255.oldOutReg[0] = i8255.outReg[0];
-        value  = i8255.outReg[0];
-    }
-}
-
-static void i8255SaveState()
-{
-    SaveState* state = saveStateOpenForWrite("i8255");
-    
-    saveStateSet(state, "reg00",       i8255.reg[0]);
-    saveStateSet(state, "reg01",       i8255.reg[1]);
-    saveStateSet(state, "reg02",       i8255.reg[2]);
-    saveStateSet(state, "reg03",       i8255.reg[3]);
-    saveStateSet(state, "inReg00",     i8255.inReg[0]);
-    saveStateSet(state, "inReg01",     i8255.inReg[1]);
-    saveStateSet(state, "inReg02",     i8255.inReg[2]);
-    saveStateSet(state, "outReg00",    i8255.outReg[0]);
-    saveStateSet(state, "outReg01",    i8255.outReg[1]);
-    saveStateSet(state, "outReg02",    i8255.outReg[2]);
-    saveStateSet(state, "oldOutReg00", i8255.oldOutReg[0]);
-    saveStateSet(state, "oldOutReg01", i8255.oldOutReg[1]);
-    saveStateSet(state, "oldOutReg02", i8255.oldOutReg[2]);
-    saveStateSet(state, "mode",        i8255.mode);
-
-    saveStateClose(state);
-}
-
-static void i8255LoadState()
-{
-    SaveState* state = saveStateOpenForRead("i8255");
-
-    i8255.reg[0]       = (UInt8)saveStateGet(state, "reg00",       0);
-    i8255.reg[1]       = (UInt8)saveStateGet(state, "reg01",       0);
-    i8255.reg[2]       = (UInt8)saveStateGet(state, "reg02",       0);
-    i8255.reg[3]       = (UInt8)saveStateGet(state, "reg03",       0);
-    i8255.inReg[0]     = (UInt8)saveStateGet(state, "inReg00",     0);
-    i8255.inReg[1]     = (UInt8)saveStateGet(state, "inReg01",     0);
-    i8255.inReg[2]     = (UInt8)saveStateGet(state, "inReg02",     0);
-    i8255.outReg[0]    = (UInt8)saveStateGet(state, "outReg00",    0);
-    i8255.outReg[1]    = (UInt8)saveStateGet(state, "outReg01",    0);
-    i8255.outReg[2]    = (UInt8)saveStateGet(state, "outReg02",    0);
-    i8255.oldOutReg[0] = (UInt8)saveStateGet(state, "oldOutReg00", 0);
-    i8255.oldOutReg[1] = (UInt8)saveStateGet(state, "oldOutReg01", 0);
-    i8255.oldOutReg[2] = (UInt8)saveStateGet(state, "oldOutReg02", 0);
-    i8255.mode         = (UInt8)saveStateGet(state, "mode",        0);
-
-    saveStateClose(state);
-}
-
-void ppiCreate(UInt8* keymap, AudioKeyClick* keyClick)
-{
-    memset(&i8255, 0, sizeof(i8255));
-
-    i8255.keymap   = keymap;
-    i8255.keyClick = keyClick;
-    i8255.reg[3]   = 0x9b;
-
-    ioPortRegister(0x98, i8255read, i8255write, NULL); // PPI Port A
-    ioPortRegister(0x99, i8255read, i8255write, NULL); // PPI Port B
-    ioPortRegister(0x96, i8255read, i8255write, NULL); // PPI Port C
-    ioPortRegister(0x97, i8255read, i8255write, NULL); // PPI Mode
-    ioPortRegister(0x9A, i8255read, NULL,       NULL); // PPI Return Mode
-}
-
-void ppiDestroy(void) 
-{
-    ioPortUnregister(0x98);
-    ioPortUnregister(0x99);
-    ioPortUnregister(0x96);
-    ioPortUnregister(0x97);
-    ioPortUnregister(0x9A);
-}
 
 
 void sviTraceEnable(const char* fileName) {
@@ -597,11 +405,12 @@ int sviRun(Machine* machine,
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgWriteHandler, NULL);
 
     keyClick  = audioKeyClickCreate(mixer);
-    ppiCreate(KeyMap, keyClick);
-
-    success = sviInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
 
     joyIO = joystickIoCreateSVI();
+    
+    sviPPICreate(joyIO);
+
+    success = sviInitMachine(machine, mixer, devInfo->video.vdpSyncMode);
 
     if (devInfo->cartridge[0].inserted) {
         sviChangeCartridge(0, devInfo->cartridge[0].type, 
@@ -634,7 +443,6 @@ int sviRun(Machine* machine,
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);
         machineLoadState(sviMachine);
-        i8255LoadState();
         ay8910LoadState(ay8910);
         r800LoadState(r800);
         vdpLoadState();
@@ -765,7 +573,7 @@ void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
     diskChange(driveId, fileName, fileInZipFile);
 }
 
-void sviChangeCassette(char *name, const char *fileInZipFile)
+int sviChangeCassette(char *name, const char *fileInZipFile)
 {
     if (name && strlen(name) == 0)
         name = NULL;
@@ -781,6 +589,8 @@ void sviChangeCassette(char *name, const char *fileInZipFile)
     }
 
     tapeInsert(name, fileInZipFile);
+
+    return sviDevInfo ? sviDevInfo->cassette.inserted : 0;
 }
 
 void sviSaveState()
@@ -833,7 +643,6 @@ void sviSaveState()
     ay8910SaveState(ay8910);
     vdpSaveState();
     tapeSaveState();
-    i8255SaveState();
 }
 
 void sviLoadState()

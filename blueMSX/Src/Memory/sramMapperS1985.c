@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperS1985.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2004-12-28 05:09:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,7 +74,7 @@ static void loadState(SramMapperS1985* rm)
 
 static void destroy(SramMapperS1985* rm)
 {
-    sramSave(sramCreateFilename("Matsushita.SRAM"), rm->sram, 0x10, NULL, 0);
+    sramSave(sramCreateFilename("S1985.SRAM"), rm->sram, 0x10, NULL, 0);
 
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -134,7 +134,7 @@ int sramMapperS1985Create()
     memset(rm->sram, 0xff, 0x10);
     rm->address = 0;
 
-    sramLoad(sramCreateFilename("Matsushita.SRAM"), rm->sram, 0x10, NULL, 0);
+    sramLoad(sramCreateFilename("S1985.SRAM"), rm->sram, 0x10, NULL, 0);
 
     ioPortRegisterSub(0xfe, read, write, rm);
 
