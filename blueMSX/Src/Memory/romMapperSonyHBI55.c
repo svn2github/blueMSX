@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-30 00:43:32 $
+** $Date: 2004-12-30 01:20:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ typedef struct {
     I8255* i8255;
 
     UInt8  sram[0x1000];
+    UInt8  mode;
     int    writeLatch;
     int    addrLatch;
     UInt16 readAddr;
@@ -72,6 +73,7 @@ static void destroy(SonyHBI55* rm)
 
 static void reset(SonyHBI55* rm) 
 {
+    rm->mode       = 0;
     rm->addrLatch  = 0;
     rm->writeLatch = 0;
     rm->writeAddr  = 0;
@@ -84,6 +86,7 @@ static void loadState(SonyHBI55* rm)
 {
     SaveState* state = saveStateOpenForRead("SonyHBI55");
 
+    rm->mode       = (UInt8) saveStateGet(state, "mode",       0);
     rm->addrLatch  = (UInt8) saveStateGet(state, "addrLatch",  0);
     rm->writeLatch = (UInt8) saveStateGet(state, "writeLatch", 0);
     rm->writeAddr  = (UInt16)saveStateGet(state, "writeAddr",  0);
@@ -98,6 +101,7 @@ static void saveState(SonyHBI55* rm)
 {
     SaveState* state = saveStateOpenForWrite("SonyHBI55");
     
+    saveStateSet(state, "mode",       rm->mode);
     saveStateSet(state, "addrLatch",  rm->addrLatch);
     saveStateSet(state, "writeLatch", rm->writeLatch);
     saveStateSet(state, "writeAddr",  rm->writeAddr);
@@ -117,7 +121,9 @@ static void writeB(SonyHBI55* rm, UInt8 value)
 {
 	UInt16 address = rm->addrLatch | ((value & 0x0f) << 8); 
 
-    switch (value >> 6) {
+    rm->mode = value >> 6;
+
+    switch (rm->mode) {
     case 0:
         rm->writeAddr = 0;
         rm->readAddr  = 0;
@@ -144,6 +150,12 @@ static void writeCLo(SonyHBI55* rm, UInt8 value)
 static void writeCHi(SonyHBI55* rm, UInt8 value)
 {
     rm->writeLatch = (rm->writeLatch & 0x0f) | (value << 4);
+
+    if (rm->mode == 1) {
+        if (rm->writeAddr != 0) {
+            rm->sram[rm->writeAddr] = rm->writeLatch;
+        }
+    }
 }
 
 static UInt8 readCLo(SonyHBI55* rm)
