@@ -765,6 +765,12 @@
 				RelativePath="..\..\Src\VideoChips\CRTC6845.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\VideoChips\FrameBuffer.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\VideoChips\FrameBuffer.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Memory\romMapperTurboRTimer.h">
 			</File>
 			<File
@@ -792,12 +798,6 @@
 		<Filter
 			Name="VideoRender"
 			Filter="">
-			<File
-				RelativePath="..\..\Src\VideoChips\FrameBuffer.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\VideoChips\FrameBuffer.h">
-			</File>
 			<File
 				RelativePath="..\..\Src\VideoRender\hq2x.c">
 			</File>

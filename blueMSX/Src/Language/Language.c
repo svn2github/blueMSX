@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-17 20:59:14 $
+** $Date: 2005-01-19 05:26:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -323,6 +323,9 @@ _TCHAR* langMenuPropsSettings() { return ls->menuPropsSettings; }
 _TCHAR* langMenuPropsFile() { return ls->menuPropsFile; }
 _TCHAR* langMenuPropsApearance() { return ls->menuPropsApearance; }
 _TCHAR* langMenuPropsLanguage() { return ls->menuPropsLanguage; }
+
+_TCHAR* langMenuVideoSource()        { return ls->menuVideoSource; }
+_TCHAR* langMenuVideoSourceDefault() { return ls->menuVideoSourceDefault; }
 
 _TCHAR* langMenuHelpHelp() { return ls->menuHelpHelp; }
 _TCHAR* langMenuHelpAbout() { return ls->menuHelpAbout; }

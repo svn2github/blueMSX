@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-16 09:34:33 $
+** $Date: 2005-01-19 05:26:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
 #include "SaveState.h"
 #include "ziphelper.h"
 #include "ArchNotifications.h"
+#include "VideoManager.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -169,6 +170,8 @@ int boardRun(Machine* machine,
 {
     int loadState = 0;
     boardSetType(machine->board.type);
+
+    videoManagerReset();
 
     boardMixer = mixer;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-17 20:59:14 $
+** $Date: 2005-01-19 05:26:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -551,6 +551,9 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuToolsKeyboard       = "Keyboard Editor";
     ls->shortcutShowKeyboard    = "Show Keyboard Editor";
+
+    ls->menuVideoSource         = "Video Source";
+    ls->menuVideoSourceDefault  = "No Video Source Connected";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-17 08:01:20 $
+** $Date: 2005-01-19 05:26:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include "VideoManager.h"
+#include "ArchNotifications.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -37,6 +38,7 @@
 typedef struct {
     int handle;
     VideoCallbacks callbacks;
+    FrameBufferData* frameBufer;
     void* ref;
     char  name[32];
 } VideoInfo;
@@ -49,34 +51,97 @@ typedef struct {
 
 static VideoManager videoManager;
 
-void videoManagerCreate() {
+void videoManagerReset() 
+{
     videoManager.count = 0;
     videoManager.lastHandle = 0;
 }
 
-void videoManagerDestroy()
+int videoManagerGetCount() 
 {
+    return videoManager.count;
 }
 
-int videoManagerRegister(char* name, VideoCallbacks* callbacks, void* ref)
+int videoManagerIsActive(int index) 
+{
+    if (index >= videoManager.count) {
+        return 0;
+    }
+
+    return videoManager.di[index].frameBufer == frameBufferGetActive();
+}
+
+int videoManagerGetActive()
+{
+    int index;
+    for (index = 0; index < videoManager.count; index++) {
+        if (videoManagerIsActive(index)) {
+            return index;
+        }
+    }
+    return 0;
+}
+
+void videoManagerSetActive(int index)
+{
+    int activeIndex = -1;
+    if (index >= videoManager.count) {
+        return;
+    }
+
+    for (activeIndex = 0; activeIndex < videoManager.count; activeIndex++) {
+        if (videoManagerIsActive(index)) {
+            activeIndex = index;
+        }
+    }
+
+    if (activeIndex != index) {
+        videoManager.di[index].callbacks.disable(videoManager.di[index].ref);
+    }
+
+    frameBufferSetActive(videoManager.di[index].frameBufer);
+
+    if (activeIndex != index) {
+        videoManager.di[index].callbacks.enable(videoManager.di[index].ref);
+    }
+}
+
+char* videoManagerGetName(int index)
+{
+    if (index >= videoManager.count) {
+        return index == 0 ? "Default" : NULL;
+    }
+    return videoManager.di[index].name;
+}
+
+int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
+                         VideoCallbacks* callbacks, void* ref)
 {
     if (videoManager.count >= MAX_DEVICES) {
         return 0;
     }
 
-    videoManager.di[videoManager.count].handle    = ++videoManager.lastHandle;
-    videoManager.di[videoManager.count].callbacks = *callbacks;
-    videoManager.di[videoManager.count].ref       = ref;
+    videoManager.di[videoManager.count].handle     = ++videoManager.lastHandle;
+    videoManager.di[videoManager.count].frameBufer = frameBuffer;
+    videoManager.di[videoManager.count].callbacks  = *callbacks;
+    videoManager.di[videoManager.count].ref        = ref;
 
     strcpy(videoManager.di[videoManager.count].name, name);
 
     videoManager.count++;
+
+    if (videoManager.count == 1) {
+        videoManagerSetActive(0);
+    }
+    
+    archVideoOutputChange();
 
     return videoManager.lastHandle;
 }
 
 void videoManagerUnregister(int handle)
 {
+    int isActive;
     int i;
 
     if (videoManager.count == 0) {
@@ -93,9 +158,17 @@ void videoManagerUnregister(int handle)
         return;
     }
 
+    isActive = videoManagerIsActive(i);
+
     videoManager.count--;
     while (i < videoManager.count) {
         videoManager.di[i] = videoManager.di[i + 1];
         i++;
     }
+
+    if (isActive) {
+        videoManagerSetActive(0);
+    }
+
+    archVideoOutputChange();
 }

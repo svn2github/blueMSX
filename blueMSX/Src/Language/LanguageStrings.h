@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-17 20:59:16 $
+** $Date: 2005-01-19 05:26:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -86,6 +86,9 @@ typedef struct {
     _TCHAR* menuPropsApearance;
     _TCHAR* menuTools;
     _TCHAR* menuPropsLanguage;
+
+    _TCHAR* menuVideoSource;
+    _TCHAR* menuVideoSourceDefault;
 
     _TCHAR* menuToolsMachine;
     _TCHAR* menuToolsShortcuts;

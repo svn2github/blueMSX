@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-17 20:59:34 $
+** $Date: 2005-01-19 05:26:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "archMenu.h"
 #include "Actions.h"
 #include "Casette.h"
+#include "VideoManager.h"
 
 #ifndef MIM_BACKGROUND
 #define MIM_BACKGROUND              0x00000002
@@ -68,6 +69,7 @@ static MenuInfo menuInfo[10];
 static HMENU hMenuReset = NULL;
 static HMENU hMenuCartSpecialA = NULL;
 static HMENU hMenuCartSpecialB = NULL;
+static HMENU hMenuVideoConnect = NULL;
 static HMENU hMenuCartA = NULL;
 static HMENU hMenuCartB = NULL;
 static HMENU hMenuRun = NULL;
@@ -133,6 +135,26 @@ static HMENU menuCreateReset(Properties* pProperties, Shortcuts* shortcuts) {
     _stprintf(langBuffer, "%s        \t%hs", langMenuRunCleanReset(), shortcutsToString(shortcuts->resetClean));
     AppendMenu(hMenu, MF_STRING, ID_RUN_CLEANRESET, langBuffer);
 
+    return hMenu;
+}
+
+static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcuts) 
+{
+    _TCHAR langBuffer[560];
+    HMENU hMenu = CreatePopupMenu();
+
+    int count = videoManagerGetCount();
+    int i;
+
+    if (count == 0) {
+        _stprintf(langBuffer, "%s", langMenuVideoSourceDefault());
+        AppendMenu(hMenu, MF_STRING, ID_VIDEO_CONNECTORS + 0, langBuffer);
+    }
+
+    for (i = 0; i < count; i++) {
+        _stprintf(langBuffer, "%s        ", videoManagerGetName(i));
+        AppendMenu(hMenu, MF_STRING, ID_VIDEO_CONNECTORS + i, langBuffer);
+    }
     return hMenu;
 }
 
@@ -520,6 +542,10 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts) {
 
     setMenuColor(hMenu);
 
+    _stprintf(langBuffer, "%s", langMenuVideoSource());
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoConnect(pProperties, shortcuts), langBuffer);
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
     _stprintf(langBuffer, "%s", langMenuPropsEmulation());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langBuffer);
 
@@ -870,6 +896,7 @@ void menuUpdate(Properties* pProperties,
     if (hMenuReset) DestroyMenu(hMenuReset);
     if (hMenuCartSpecialA) DestroyMenu(hMenuCartSpecialA);
     if (hMenuCartSpecialB) DestroyMenu(hMenuCartSpecialB);
+    if (hMenuVideoConnect) DestroyMenu(hMenuVideoConnect);
     if (hMenuCartA) DestroyMenu(hMenuCartA);
     if (hMenuCartB) DestroyMenu(hMenuCartB);
     if (hMenuRun) DestroyMenu(hMenuRun);
@@ -885,6 +912,7 @@ void menuUpdate(Properties* pProperties,
     hMenuReset        = menuCreateReset(pProperties, shortcuts);
     hMenuCartSpecialA = menuCreateCartSpecialA(pProperties, shortcuts);
     hMenuCartSpecialB = menuCreateCartSpecialB(pProperties, shortcuts);
+    hMenuVideoConnect = menuCreateVideoConnect(pProperties, shortcuts);
     hMenuCartA        = menuCreateCartA(pProperties, shortcuts, enableSpecial);
     hMenuCartB        = menuCreateCartB(pProperties, shortcuts, enableSpecial);
     hMenuRun          = menuCreateRun(pProperties, shortcuts, isRunning, isStopped);
@@ -995,7 +1023,13 @@ void archShowMenuTools(int x, int y) {
 
 int menuCommand(Properties* pProperties, int command) 
 {
-    int i = command - ID_CARTRIDGEA_HISTORY;
+    int i = command - ID_VIDEO_CONNECTORS;
+    if (i >= 0 && i < 16) {
+        videoManagerSetActive(i);
+        return 1;
+    }
+
+    i = command - ID_CARTRIDGEA_HISTORY;
     if (i >= 0 && i < MAX_HISTORY) {
         insertCartridge(pProperties, 0, pProperties->filehistory.cartridgeA[i], NULL, pProperties->filehistory.cartridgeTypeA[i], 0);
         return 1;

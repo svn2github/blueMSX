@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-01-18 10:17:19 $
+** $Date: 2005-01-19 05:26:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2506,6 +2506,11 @@ char* archFileSave(char* title, char* extensionList, char* defaultDir, char* ext
     SetCurrentDirectory(st.pCurDir);
 
     return fileName;
+}
+
+void archVideoOutputChange()
+{
+    updateMenu(0);
 }
 
 void archUpdateMenu(int show) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-18 10:17:18 $
+** $Date: 2005-01-19 05:26:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "IoPort.h"
 #include "SaveState.h"
 #include "DeviceManager.h"
+#include "VideoManager.h"
 #include "FrameBuffer.h"
 #include <string.h>
 #include <stdio.h>
@@ -222,6 +223,8 @@ struct VDP {
     UInt8  vram[VRAM_SIZE];
     
     int deviceHandle;
+    int videoHandle;
+    int videoEnabled;
 
     FrameBufferData* frameBuffer;
 };
@@ -324,12 +327,14 @@ static void onDisplay(VDP* vdp, UInt32 time)
 {
     int isPal = vdpIsVideoPal(vdp); 
 
-    FrameBuffer* frameBuffer;
-    frameBuffer = frameBufferFlipDrawFrame();
-    frameBuffer->lines = 240;
-    frameBuffer->interlaceOdd = (~vdp->vdpStatus[2] & 0x02) && 
-                                (vdpIsInterlaceOn(vdp->vdpRegs) &&
-                                ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128));
+    if (vdp->videoEnabled) {
+        FrameBuffer* frameBuffer;
+        frameBuffer = frameBufferFlipDrawFrame();
+        frameBuffer->lines = 240;
+        frameBuffer->interlaceOdd = (~vdp->vdpStatus[2] & 0x02) && 
+                                    (vdpIsInterlaceOn(vdp->vdpRegs) &&
+                                    ((vdp->vdpRegs[9]  & 0x04) && vdp->vram128));
+    }
 
     refreshRate = isPal ? 50 : 60; // Update global refresh rate
 
@@ -731,6 +736,10 @@ static void sync(VDP* vdp, UInt32 systemTime)
         vdpCmdExecute(vdp->cmdEngine, boardSystemTime());
     }
 
+    if (!vdp->videoEnabled) {
+        return;
+    }
+
     if (vdp->curLine < scanLine) {
         if (vdp->lineOffset <= 32) {
             vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, 33);
@@ -971,6 +980,7 @@ static void destroy(VDP* vdp)
     int i;
 
     deviceManagerUnregister(vdp->deviceHandle);
+    videoManagerUnregister(vdp->videoHandle);
 
     switch (vdp->vdpConnector) {
     case VDP_MSX:
@@ -1006,9 +1016,20 @@ static void destroy(VDP* vdp)
     free(vdp);
 }
 
+static void videoEnable(VDP* vdp)
+{
+    vdp->videoEnabled = 1;
+}
+
+static void videoDisable(VDP* vdp)
+{
+    vdp->videoEnabled = 0;
+}
+
 void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int vramPages)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    VideoCallbacks videoCallbacks = { videoEnable, videoDisable };
     int i;
 
     VDP* vdp = (VDP*)calloc(1, sizeof(VDP));
@@ -1029,6 +1050,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->vdpConnector  = connector;
 
     vdp->frameBuffer   = frameBufferDataCreate();
+    vdp->videoHandle   = videoManagerRegister(VdpNames[version], vdp->frameBuffer, &videoCallbacks, vdp);
 
     if (sync == VDP_SYNC_AUTO) {
         vdp->palMask  = ~0;

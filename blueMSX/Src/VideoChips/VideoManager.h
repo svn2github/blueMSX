@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-17 08:01:20 $
+** $Date: 2005-01-19 05:26:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,27 +31,23 @@
 #define VIDEO_MANAGER_H
 
 #include "MSXTypes.h"
+#include "FrameBuffer.h"
 
 typedef struct {
-    int currentFrame;
-    struct {
-        int lines;
-        struct {
-            int width;
-            UInt32 buffer[640];
-        } line[480];
-    } frame [2];
-} VideoBuffer;
-
-typedef struct {
-    VideoBuffer* (*enable)(void*);
-    void  (*disable)(void*);
+    void (*enable)(void*);
+    void (*disable)(void*);
 } VideoCallbacks;
 
-void videoManagerCreate();
-void videoManagerDestroy();
+int videoManagerGetCount();
+int videoManagerGetActive();
+void videoManagerSetActive(int index);
+int videoManagerIsActive(int index);
+char* videoManagerGetName(int index);
 
-int videoManagerRegister(char* name, VideoCallbacks* callbacks, void* ref);
+void videoManagerReset();
+
+int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
+                        VideoCallbacks* callbacks, void* ref);
 void videoManagerUnregister(int handle);
 
 #endif

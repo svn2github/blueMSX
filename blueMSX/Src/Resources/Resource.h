@@ -134,6 +134,7 @@
 #define ID_DISKDRIVEA_HISTORY           30100
 #define ID_DISKDRIVEB_HISTORY           30150
 #define ID_CASSETTE_HISTORY             30200
+#define ID_VIDEO_CONNECTORS             30250
 
 #define ID_RUN_RUN                      40081
 #define ID_RUN_PAUSE                    40082

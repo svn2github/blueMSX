@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-18 16:59:58 $
+** $Date: 2005-01-19 05:26:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,5 +130,11 @@ void frameBufferSetActive(FrameBufferData* frameData)
 {
     currentBuffer = frameData;
 }
+
+FrameBufferData* frameBufferGetActive() 
+{
+    return currentBuffer;
+}
+
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-16 09:34:30 $
+** $Date: 2005-01-19 05:26:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ void* archScreenCapture(ScreenCaptureType type, int* bitmapSize);
 
 void archQuit();
 void archUpdateMenu(int show);
+void archVideoOutputChange();
 void archUpdateWindow();
 int  archGetWindowedSize();
 void archMinimizeWindow();
