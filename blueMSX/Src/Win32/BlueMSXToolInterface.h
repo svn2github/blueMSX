@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-15 05:03:52 $
+** $Date: 2005-02-15 20:28:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,12 +64,13 @@ typedef enum {
     DEVTYPE_RAM, 
     DEVTYPE_AUDIO,
     DEVTYPE_VIDEO,
-    DEVTYPE_PORT
+    DEVTYPE_IOPORT
 } DeviceType;
 
 struct Device {
     char name[64];
     DeviceType type;
+    int  deviceId;
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-15 05:03:50 $
+** $Date: 2005-02-15 20:28:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,13 +107,13 @@ const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex
 struct DbgDevice {
     char name[64];
     DbgDeviceType type;
+    int deviceHandle;
     int memoryBlockCount;
     int registerBankCount;
     int ioPortsCount;
     DbgMemoryBlock*  memoryBlock[MAX_DBG_COMPONENTS];
     DbgRegisterBank* registerBank[MAX_DBG_COMPONENTS];
     DbgIoPorts*      ioPorts[MAX_DBG_COMPONENTS];
-    int              deviceHandle;
 };
 
 void debuggerNotifyEmulatorStart();

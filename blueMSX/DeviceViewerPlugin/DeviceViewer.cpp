@@ -36,13 +36,21 @@ HTREEITEM addChild ( HWND hwnd, HTREEITEM parent, char *pszText, int imageIndex 
 void SetDeviceInfoString2 ( HWND hDlg )
 {
 	
-	HTREEITEM cpuRoot;
 	HTREEITEM nodeDeviceName;
 
 	HWND Tree;
 	
 	Tree = GetDlgItem ( hDlg, IDC_DEVICETREE );
 	TreeView_DeleteAllItems ( Tree );
+
+	HTREEITEM nodeCpu = NULL;
+	HTREEITEM nodeRam = NULL;
+	HTREEITEM nodeBios = NULL;
+	HTREEITEM nodeCart = NULL;
+	HTREEITEM nodeVideo = NULL;
+	HTREEITEM nodeAudio = NULL;
+	HTREEITEM nodeIoPort = NULL;
+	HTREEITEM nodeOther = NULL;
 	
 	Snapshot* snapshot = SnapshotCreate();
     if (snapshot != NULL) {
@@ -52,19 +60,47 @@ void SetDeviceInfoString2 ( HWND hDlg )
             Device* device = SnapshotGetDevice(snapshot, i);
             int j;
 
-			//Note to dvik,
-			//At should be possible to query the kind of device
-			//like soundchip of video chip, this way it's easier to
-			//create a "device manager" tree.
+            HTREEITEM treeItem = NULL;
+
+            switch (device->type) {
+            default:
+            case DEVTYPE_UNKNOWN:
+		        if (nodeOther  == NULL) nodeOther  = addChild ( Tree, 0, "Other", 0 );
+                treeItem = nodeOther;
+                break;
+            case DEVTYPE_CPU:
+		        if (nodeCpu    == NULL) nodeCpu    = addChild ( Tree, 0, "CPU", 0 );
+                treeItem = nodeCpu;
+                break;
+            case DEVTYPE_CART: 
+		        if (nodeCart   == NULL) nodeCart   = addChild ( Tree, 0, "Cartridges", 0 );
+                treeItem = nodeCart;
+                break;
+            case DEVTYPE_BIOS: 
+		        if (nodeBios   == NULL) nodeBios   = addChild ( Tree, 0, "BIOS", 0 );
+                treeItem = nodeBios;
+                break;
+            case DEVTYPE_RAM:
+		        if (nodeRam    == NULL) nodeRam    = addChild ( Tree, 0, "RAM Memory", 0 );
+                treeItem = nodeRam;
+                break;
+            case DEVTYPE_AUDIO:
+		        if (nodeAudio  == NULL) nodeAudio  = addChild ( Tree, 0, "Audio Devices", 0 );
+                treeItem = nodeAudio;
+                break;
+            case DEVTYPE_VIDEO:
+		        if (nodeVideo  == NULL) nodeVideo  = addChild ( Tree, 0, "Video Devices", 0 );
+                treeItem = nodeVideo;
+                break;
+            case DEVTYPE_IOPORT:
+		        if (nodeIoPort == NULL) nodeIoPort = addChild ( Tree, 0, "I/O Ports", 0 );
+                treeItem = nodeIoPort;
+                break;
+            }
 			
-			nodeDeviceName = addChild ( Tree, 0, device->name, 0 );
+			nodeDeviceName = addChild ( Tree, treeItem, device->name, 0 );
 
             int memCount = DeviceGetMemoryBlockCount(device);
-
-			HTREEITEM nodeMemory;
-
-			if ( memCount > 0 )
-				nodeMemory = addChild ( Tree, nodeDeviceName, "Memory", 0 );
 
             for (j = 0; j < memCount; j++) {
 				
@@ -72,14 +108,48 @@ void SetDeviceInfoString2 ( HWND hDlg )
 			
 				char buffer [50];
 				
-				HTREEITEM nodeMemoryItem = addChild ( Tree, nodeMemory, mem->name, 0 );
+				HTREEITEM nodeMemoryItem = addChild ( Tree, nodeDeviceName, mem->name, 0 );
 				sprintf ( buffer, "Size: 0x%x", mem->size );
 				HTREEITEM nodeMemorySize = addChild ( Tree, nodeMemoryItem, buffer, 0 );
 				sprintf ( buffer, "Start: 0x%x", mem->startAddress );
 				HTREEITEM nodeMemoryAddress = addChild ( Tree, nodeMemoryItem, buffer, 0 );
 				
             }
+            
+            int regBankCount = DeviceGetRegisterBankCount(device);
 
+            for (j = 0; j < regBankCount; j++) {
+                RegisterBank* regBank = DeviceGetRegisterBank(device, j);
+                
+				HTREEITEM nodeRegsItem = addChild ( Tree, nodeDeviceName, regBank->name, 0 );
+
+                for (UInt32 k = 0; k < regBank->count; k++) {
+				    char buffer [50];
+                    if (regBank->reg[k].width == 8) 
+				        sprintf ( buffer, "%s: 0x%.2x", regBank->reg[k].name, regBank->reg[k].value );
+                    else if (regBank->reg[k].width == 16)
+				        sprintf ( buffer, "%s: 0x%.4x", regBank->reg[k].name, regBank->reg[k].value );
+                    else
+				        sprintf ( buffer, "%s: 0x%.8x", regBank->reg[k].name, regBank->reg[k].value );
+
+				    HTREEITEM nodeMemorySize = addChild ( Tree, nodeRegsItem, buffer, 0 );
+                }
+            }
+            
+            int ioPortsCount = DeviceGetIoPortsCount(device);
+            
+            for (j = 0; j < ioPortsCount; j++) {
+                IoPorts* ioPorts = DeviceGetIoPorts(device, j);
+                
+				HTREEITEM nodeRegsItem = addChild ( Tree, nodeDeviceName, ioPorts->name, 0 );
+
+                for (UInt32 k = 0; k < ioPorts->count; k++) {
+				    char buffer [50];
+				    sprintf ( buffer, "Port %0x%2x: 0x%.2x", k, ioPorts->port[k].value );
+
+				    HTREEITEM nodeMemorySize = addChild ( Tree, nodeRegsItem, buffer, 0 );
+                }
+            }
         }
 
         SnapshotDestroy(snapshot);
