@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-27 01:10:12 $
+** $Date: 2005-02-08 09:05:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1599,7 +1599,7 @@ static void updateVramList(HWND hDlg) {
 
     if (machine->video.vdpVersion == VDP_V9958) {
         vram    = 128;
-        maxVram = 128;
+        maxVram = 256;
     }
 
     for (i = 0; vram <= maxVram; i++) {

@@ -39,10 +39,15 @@
 ** Other useful defines
 **************************************************************
 */
-#define VDP_VRMP5(s, X, Y) ((s)->vram + ((Y & 1023) << 7) + (((X & 255) >> 1) & (s)->vramMask))
-#define VDP_VRMP6(s, X, Y) ((s)->vram + ((Y & 1023) << 7) + (((X & 511) >> 2) & (s)->vramMask))
-#define VDP_VRMP7(s, X, Y) ((s)->vram + ((Y &  511) << 7) + ((((X & 511) >> 2) + ((X & 2) << 15)) & (s)->vramMask))
-#define VDP_VRMP8(s, X, Y) ((s)->vram + ((Y &  511) << 7) + ((((X & 255) >> 1) + ((X & 1) << 16)) & (s)->vramMask))
+#define VDP_VRMP5R(s, X, Y) ((s)->vramRead + (((Y & 1023) << 7) + (((X & 255) >> 1)) & (s)->maskRead))
+#define VDP_VRMP6R(s, X, Y) ((s)->vramRead + (((Y & 1023) << 7) + (((X & 511) >> 2)) & (s)->maskRead))
+#define VDP_VRMP7R(s, X, Y) ((s)->vramRead + (((Y &  511) << 7) + ((((X & 511) >> 2) + ((X & 2) << 15))) & (s)->maskRead))
+#define VDP_VRMP8R(s, X, Y) ((s)->vramRead + (((Y &  511) << 7) + ((((X & 255) >> 1) + ((X & 1) << 16))) & (s)->maskRead))
+
+#define VDP_VRMP5W(s, X, Y) ((s)->vramWrite + (((Y & 1023) << 7) + (((X & 255) >> 1)) & (s)->maskWrite))
+#define VDP_VRMP6W(s, X, Y) ((s)->vramWrite + (((Y & 1023) << 7) + (((X & 511) >> 2)) & (s)->maskWrite))
+#define VDP_VRMP7W(s, X, Y) ((s)->vramWrite + (((Y &  511) << 7) + ((((X & 511) >> 2) + ((X & 2) << 15))) & (s)->maskWrite))
+#define VDP_VRMP8W(s, X, Y) ((s)->vramWrite + (((Y &  511) << 7) + ((((X & 255) >> 1) + ((X & 1) << 16))) & (s)->maskWrite))
 
 #define CM_ABRT  0x0
 #define CM_NOOP1 0x1
@@ -129,8 +134,13 @@
 **************************************************************
 */
 struct VdpCmdState {
-    UInt8* vram;
-    int    vramMask;
+    UInt8* vramBase;
+    UInt8* vramRead;
+    UInt8* vramWrite;
+    int    maskRead;
+    int    maskWrite;
+    int    vramOffset[2];
+    int    vramMask[2];
     int   SX;
     int   SY;
     int   DX;
@@ -168,7 +178,7 @@ static VdpCmdState* vdpCmdGlobal = NULL;
 ** Forward declarations
 **************************************************************
 */
-static UInt8 *getVramPointer(VdpCmdState* vdpCmd, UInt8 M, int X, int Y);
+static UInt8 *getVramPointerW(VdpCmdState* vdpCmd, UInt8 M, int X, int Y);
 
 static UInt8 getPixel(VdpCmdState* vdpCmd, UInt8 SM, int SX, int SY);
 static UInt8 getPixel5(VdpCmdState* vdpCmd, int SX, int SY);
@@ -214,26 +224,26 @@ static int hmmm_timing[8] = { 92,  136, 92,  97  };
 static int lmmm_timing[8] = { 129, 197, 129, 132 };
 
 /*************************************************************
-** getVramPointer
+** getVramPointerW
 **
 ** Description:
 **      Calculate addr of a pixel in vram
 **************************************************************
 */
-INLINE UInt8 *getVramPointer(VdpCmdState* vdpCmd, UInt8 M,int X,int Y)
+INLINE UInt8 *getVramPointerW(VdpCmdState* vdpCmd, UInt8 M,int X,int Y)
 {
     switch(M) {
     case 0: 
-        return VDP_VRMP5(vdpCmd, X, Y);
+        return VDP_VRMP5W(vdpCmd, X, Y);
     case 1: 
-        return VDP_VRMP6(vdpCmd, X, Y);
+        return VDP_VRMP6W(vdpCmd, X, Y);
     case 2: 
-        return VDP_VRMP7(vdpCmd, X, Y);
+        return VDP_VRMP7W(vdpCmd, X, Y);
     case 3: 
-        return VDP_VRMP8(vdpCmd, X, Y);
+        return VDP_VRMP8W(vdpCmd, X, Y);
     }
 
-    return vdpCmd->vram;
+    return vdpCmd->vramWrite;
 }
 
 
@@ -246,7 +256,7 @@ INLINE UInt8 *getVramPointer(VdpCmdState* vdpCmd, UInt8 M,int X,int Y)
 */
 INLINE UInt8 getPixel5(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP5(vdpCmd, SX, SY) >> (((~SX)&1)<<2))&15;
+    return (*VDP_VRMP5R(vdpCmd, SX, SY) >> (((~SX)&1)<<2))&15;
 }
 
 /*************************************************************
@@ -258,7 +268,7 @@ INLINE UInt8 getPixel5(VdpCmdState* vdpCmd, int SX, int SY)
 */
 INLINE UInt8 getPixel6(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP6(vdpCmd, SX, SY) >>(((~SX)&3)<<1))&3;
+    return (*VDP_VRMP6R(vdpCmd, SX, SY) >>(((~SX)&3)<<1))&3;
 }
 
 /*************************************************************
@@ -269,7 +279,7 @@ INLINE UInt8 getPixel6(VdpCmdState* vdpCmd, int SX, int SY)
 */
 INLINE UInt8 getPixel7(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return (*VDP_VRMP7(vdpCmd, SX, SY) >>(((~SX)&1)<<2))&15;
+    return (*VDP_VRMP7R(vdpCmd, SX, SY) >>(((~SX)&1)<<2))&15;
 }
 
 /*************************************************************
@@ -281,7 +291,7 @@ INLINE UInt8 getPixel7(VdpCmdState* vdpCmd, int SX, int SY)
 */
 INLINE UInt8 getPixel8(VdpCmdState* vdpCmd, int SX, int SY)
 {
-    return *VDP_VRMP8(vdpCmd, SX, SY);
+    return *VDP_VRMP8R(vdpCmd, SX, SY);
 }
 
 /*************************************************************
@@ -366,7 +376,7 @@ INLINE void setPixel5(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&1)<<2;
 
-    setPixelLow(VDP_VRMP5(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
+    setPixelLow(VDP_VRMP5W(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
 }
  
 /*************************************************************
@@ -379,7 +389,7 @@ INLINE void setPixel6(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&3)<<1;
 
-    setPixelLow(VDP_VRMP6(vdpCmd, DX, DY), CL << SH, ~(3<<SH), OP);
+    setPixelLow(VDP_VRMP6W(vdpCmd, DX, DY), CL << SH, ~(3<<SH), OP);
 }
 
 /*************************************************************
@@ -393,7 +403,7 @@ INLINE void setPixel7(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
     UInt8 SH = ((~DX)&1)<<2;
 
-    setPixelLow(VDP_VRMP7(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
+    setPixelLow(VDP_VRMP7W(vdpCmd, DX, DY), CL << SH, ~(15<<SH), OP);
 }
 
 /*************************************************************
@@ -404,7 +414,7 @@ INLINE void setPixel7(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 */
 INLINE void setPixel8(VdpCmdState* vdpCmd, int DX, int DY, UInt8 CL, UInt8 OP)
 {
-    setPixelLow(VDP_VRMP8(vdpCmd, DX, DY), CL, 0, OP);
+    setPixelLow(VDP_VRMP8W(vdpCmd, DX, DY), CL, 0, OP);
 }
 
 /*************************************************************
@@ -789,16 +799,16 @@ static void HmmvEngine(VdpCmdState* vdpCmd)
 
     switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop *VDP_VRMP5(vdpCmd, ADX, DY) = CL; post__x_y(256)
+        pre_loop *VDP_VRMP5W(vdpCmd, ADX, DY) = CL; post__x_y(256)
         break;
     case 1: 
-        pre_loop *VDP_VRMP6(vdpCmd, ADX, DY) = CL; post__x_y(512)
+        pre_loop *VDP_VRMP6W(vdpCmd, ADX, DY) = CL; post__x_y(512)
         break;
     case 2: 
-        pre_loop *VDP_VRMP7(vdpCmd, ADX, DY) = CL; post__x_y(512)
+        pre_loop *VDP_VRMP7W(vdpCmd, ADX, DY) = CL; post__x_y(512)
         break;
     case 3: 
-        pre_loop *VDP_VRMP8(vdpCmd, ADX, DY) = CL; post__x_y(256)
+        pre_loop *VDP_VRMP8W(vdpCmd, ADX, DY) = CL; post__x_y(256)
         break;
     }
 
@@ -833,16 +843,16 @@ static void HmmmEngine(VdpCmdState* vdpCmd)
 
     switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop2 *VDP_VRMP5(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP5(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
+        pre_loop2 *VDP_VRMP5W(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP5R(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
         break;
     case 1: 
-        pre_loop2 *VDP_VRMP6(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP6(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
+        pre_loop2 *VDP_VRMP6W(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP6R(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
         break;
     case 2: 
-        pre_loop2 *VDP_VRMP7(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP7(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
+        pre_loop2 *VDP_VRMP7W(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP7R(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(512)
         break;
     case 3: 
-        pre_loop2 *VDP_VRMP8(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP8(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
+        pre_loop2 *VDP_VRMP8W(vdpCmd, vdpCmd->ADX, vdpCmd->DY) = *VDP_VRMP8R(vdpCmd, vdpCmd->ASX, vdpCmd->SY); post_xxyy2(256)
         break;
     }
 
@@ -885,16 +895,16 @@ static void YmmmEngine(VdpCmdState* vdpCmd)
 
     switch (vdpCmd->screenMode) {
     case 0: 
-        pre_loop *VDP_VRMP5(vdpCmd, ADX, DY) = *VDP_VRMP5(vdpCmd, ADX, SY); post__xyy(256)
+        pre_loop *VDP_VRMP5W(vdpCmd, ADX, DY) = *VDP_VRMP5R(vdpCmd, ADX, SY); post__xyy(256)
         break;
     case 1: 
-        pre_loop *VDP_VRMP6(vdpCmd, ADX, DY) = *VDP_VRMP6(vdpCmd, ADX, SY); post__xyy(512)
+        pre_loop *VDP_VRMP6W(vdpCmd, ADX, DY) = *VDP_VRMP6R(vdpCmd, ADX, SY); post__xyy(512)
         break;
     case 2: 
-        pre_loop *VDP_VRMP7(vdpCmd, ADX, DY) = *VDP_VRMP7(vdpCmd, ADX, SY); post__xyy(512)
+        pre_loop *VDP_VRMP7W(vdpCmd, ADX, DY) = *VDP_VRMP7R(vdpCmd, ADX, SY); post__xyy(512)
         break;
     case 3: 
-        pre_loop *VDP_VRMP8(vdpCmd, ADX, DY) = *VDP_VRMP8(vdpCmd, ADX, SY); post__xyy(256)
+        pre_loop *VDP_VRMP8W(vdpCmd, ADX, DY) = *VDP_VRMP8R(vdpCmd, ADX, SY); post__xyy(256)
         break;
     }
 
@@ -933,7 +943,7 @@ static void YmmmEngine(VdpCmdState* vdpCmd)
 static void HmmcEngine(VdpCmdState* vdpCmd)
 {
     if (!(vdpCmd->status & VDPSTATUS_TR)) {
-        *getVramPointer(vdpCmd, vdpCmd->screenMode, vdpCmd->ADX, vdpCmd->DY)=vdpCmd->CL;
+        *getVramPointerW(vdpCmd, vdpCmd->screenMode, vdpCmd->ADX, vdpCmd->DY)=vdpCmd->CL;
         vdpCmd->VdpOpsCnt-=hmmv_timing[vdpCmd->timingMode];
         vdpCmd->status |= VDPSTATUS_TR;
 
@@ -965,8 +975,17 @@ VdpCmdState* vdpCmdCreate(int vramSize, UInt8* vramPtr, UInt32 systemTime)
 {
     VdpCmdState* vdpCmd = calloc(1, sizeof(VdpCmdState));
     vdpCmd->systemTime = systemTime;
-    vdpCmd->vram = vramPtr;
-    vdpCmd->vramMask = vramSize - 1;
+    vdpCmd->vramBase = vramPtr;
+
+    vdpCmd->vramOffset[0] = 0;
+    vdpCmd->vramOffset[1] = vramSize > 0x20000 ? 0x20000 : 0;
+    vdpCmd->vramMask[0]   = vramSize > 0x20000 ? 0x1ffff : vramSize - 1;
+    vdpCmd->vramMask[1]   = vramSize > 0x20000 ? 0xffff  : vramSize - 1;
+
+    vdpCmd->vramRead  = vdpCmd->vramBase + vdpCmd->vramOffset[0];
+    vdpCmd->vramWrite = vdpCmd->vramBase + vdpCmd->vramOffset[0];
+    vdpCmd->maskRead  = vdpCmd->vramMask[0];
+    vdpCmd->maskWrite = vdpCmd->vramMask[0];
 
     vdpCmdGlobal = vdpCmd; // Ugly fix to make the cmd engine flushable
 
@@ -1094,6 +1113,10 @@ void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
         break;
 	case 0x0d: 
         vdpCmd->ARG = value; 
+        vdpCmd->vramRead  = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 4) & 1];
+        vdpCmd->vramWrite = vdpCmd->vramBase + vdpCmd->vramOffset[(value >> 5) & 1];
+        vdpCmd->maskRead  = vdpCmd->vramMask[(value >> 4) & 1];
+        vdpCmd->maskWrite = vdpCmd->vramMask[(value >> 5) & 1];
         break;
 	case 0x0e: 
 		vdpCmd->LO = value & 0x0F;
@@ -1301,9 +1324,13 @@ void vdpCmdLoadState(VdpCmdState* vdpCmd)
     vdpCmd->systemTime    =         saveStateGet(state, "systemTime", boardSystemTime());
     vdpCmd->screenMode    =         saveStateGet(state, "screenMode", 0);
     vdpCmd->timingMode    =         saveStateGet(state, "timingMode", 0);
-    vdpCmd->vramMask      =         saveStateGet(state, "vramMask",   8 << 14);
     
     saveStateClose(state);
+
+    vdpCmd->vramRead  = vdpCmd->vramBase + vdpCmd->vramOffset[(vdpCmd->ARG >> 4) & 1];
+    vdpCmd->vramWrite = vdpCmd->vramBase + vdpCmd->vramOffset[(vdpCmd->ARG >> 5) & 1];
+    vdpCmd->maskRead  = vdpCmd->vramMask[(vdpCmd->ARG >> 4) & 1];
+    vdpCmd->maskWrite = vdpCmd->vramMask[(vdpCmd->ARG >> 5) & 1];
 }
 
 
@@ -1340,7 +1367,6 @@ void vdpCmdSaveState(VdpCmdState* vdpCmd)
     saveStateSet(state, "systemTime", vdpCmd->systemTime);
     saveStateSet(state, "screenMode", vdpCmd->screenMode);
     saveStateSet(state, "timingMode", vdpCmd->timingMode);
-    saveStateSet(state, "vramMask",   vdpCmd->vramMask);
     
     saveStateClose(state);
 }

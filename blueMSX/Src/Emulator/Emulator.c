@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-06 19:33:53 $
+** $Date: 2005-02-08 09:05:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -336,6 +336,9 @@ void emulatorStart(char* stateName) {
 
     if (machine == NULL) {  
         MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
+        archEmulationStopNotification();
+        emuState = EMU_STOPPED;
+        archEmulationStartFailure();
         return;
     }
 

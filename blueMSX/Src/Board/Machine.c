@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-14 01:22:05 $
+** $Date: 2005-02-08 09:05:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,6 +78,7 @@ int readMachine(Machine* machine, char* machineName, char* file)
     if (0 == strcmp(buffer, "16kB")) machine->video.vramSize = 16 * 1024;
     else if (0 == strcmp(buffer, "64kB")) machine->video.vramSize = 64 * 1024;
     else if (0 == strcmp(buffer, "128kB")) machine->video.vramSize = 128 * 1024;
+    else if (0 == strcmp(buffer, "192kB")) machine->video.vramSize = 192 * 1024;
     else return 0;
 
     // Read CMOS info
@@ -450,7 +451,12 @@ void machineUpdate(Machine* machine)
         }
     }
     else if (machine->video.vdpVersion == VDP_V9958) {
-        machine->video.vramSize = 128 * 1024;
+        if (machine->video.vramSize >= 192 * 1024) {
+            machine->video.vramSize = 192 * 1024;
+        }
+        else {
+            machine->video.vramSize = 128 * 1024;
+        }
     }
     else {
         machine->video.vramSize = 16 * 1024;
