@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-29 00:10:47 $
+** $Date: 2004-12-30 00:43:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,7 +173,7 @@ UInt8 i8255Read(I8255* i8255, UInt16 port)
 void i8255Write(I8255* i8255, UInt16 port, UInt8 value)
 {
     port &= 0x03;
-    
+
     switch (port) {
     case 0:
         switch (i8255->reg[3] & 0x60) {

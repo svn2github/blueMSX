@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-29 00:10:48 $
+** $Date: 2004-12-30 00:43:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,8 +48,10 @@ typedef struct {
     I8255* i8255;
 
     UInt8  sram[0x1000];
-    UInt16 address;
-    int    mode;
+    int    writeLatch;
+    int    addrLatch;
+    UInt16 readAddr;
+    UInt16 writeAddr;
 } SonyHBI55;
 
 static void destroy(SonyHBI55* rm)
@@ -70,6 +72,11 @@ static void destroy(SonyHBI55* rm)
 
 static void reset(SonyHBI55* rm) 
 {
+    rm->addrLatch  = 0;
+    rm->writeLatch = 0;
+    rm->writeAddr  = 0;
+    rm->readAddr   = 0;
+
     i8255Reset(rm->i8255);
 }
 
@@ -77,8 +84,10 @@ static void loadState(SonyHBI55* rm)
 {
     SaveState* state = saveStateOpenForRead("SonyHBI55");
 
-    rm->mode    =         saveStateGet(state, "mode",    0);
-    rm->address = (UInt16)saveStateGet(state, "address", 0);
+    rm->addrLatch  = (UInt8) saveStateGet(state, "addrLatch",  0);
+    rm->writeLatch = (UInt8) saveStateGet(state, "writeLatch", 0);
+    rm->writeAddr  = (UInt16)saveStateGet(state, "writeAddr",  0);
+    rm->readAddr   = (UInt16)saveStateGet(state, "readAddr",   0);
 
     saveStateClose(state);
     
@@ -89,8 +98,10 @@ static void saveState(SonyHBI55* rm)
 {
     SaveState* state = saveStateOpenForWrite("SonyHBI55");
     
-    saveStateSet(state, "mode",    rm->mode);
-    saveStateSet(state, "address", rm->address);
+    saveStateSet(state, "addrLatch",  rm->addrLatch);
+    saveStateSet(state, "writeLatch", rm->writeLatch);
+    saveStateSet(state, "writeAddr",  rm->writeAddr);
+    saveStateSet(state, "readAddr",   rm->readAddr);
 
     saveStateClose(state);
 
@@ -99,50 +110,51 @@ static void saveState(SonyHBI55* rm)
 
 static void writeA(SonyHBI55* rm, UInt8 value)
 {
-	rm->address = (rm->address & 0xff00) | value; 
+	rm->addrLatch = (rm->addrLatch & 0xff00) | value; 
 }
 
 static void writeB(SonyHBI55* rm, UInt8 value)
 {
-	rm->address = (rm->address & 0x00ff) | ((value & 0x0f) << 8); 
-	rm->mode    = value >> 6;
+	UInt16 address = rm->addrLatch | ((value & 0x0f) << 8); 
+
+    switch (value >> 6) {
+    case 0:
+        rm->writeAddr = 0;
+        rm->readAddr  = 0;
+        break;
+    case 1:
+        rm->writeAddr = address;
+        break;
+    case 2:
+        if (rm->writeAddr != 0) {
+            rm->sram[rm->writeAddr] = rm->writeLatch;
+        }
+        break;
+    case 3:
+        rm->readAddr = address;
+        break;
+    }
 }
 
 static void writeCLo(SonyHBI55* rm, UInt8 value)
 {
-    if (rm->mode == 1) {
-        if (rm->address > 0) {
-            rm->sram[rm->address] &= 0xf0;
-            rm->sram[rm->address] |= value;
-        }
-    }
+    rm->writeLatch = (rm->writeLatch & 0xf0) | (value << 0);
 }
 
 static void writeCHi(SonyHBI55* rm, UInt8 value)
 {
-    if (rm->mode == 1) {
-        if (rm->address > 0) {
-            rm->sram[rm->address] &= 0x0f;
-            rm->sram[rm->address] |= value << 4;
-        }
-    }
+    rm->writeLatch = (rm->writeLatch & 0x0f) | (value << 4);
 }
 
 static UInt8 readCLo(SonyHBI55* rm)
 {
-    if (rm->mode == 3) {
-        return rm->sram[rm->address] & 0x0f;
-    }
-    return 0x0f;
+    return rm->sram[rm->readAddr] & 0x0f;
 }
 
 
 static UInt8 readCHi(SonyHBI55* rm)
 {
-    if (rm->mode == 3) {
-        return rm->sram[rm->address] >> 4;
-    }
-    return 0x0f;
+    return rm->sram[rm->readAddr] >> 4;
 }
 
 int romMapperSonyHBI55Create()
