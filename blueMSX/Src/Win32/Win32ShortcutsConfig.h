@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-17 20:59:36 $
+** $Date: 2005-03-07 05:33:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,6 +116,7 @@ typedef struct {
     ShotcutHotkey toolsShowMachineEditor;
     ShotcutHotkey toolsShowShorcutEditor;
     ShotcutHotkey toolsShowKeyboardEditor;
+    ShotcutHotkey toolsShowDebugger;
     ShotcutHotkey helpShowHelp;
     ShotcutHotkey helpShowAbout;
 } Shortcuts;

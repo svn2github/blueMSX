@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-03-03 16:38:27 $
+** $Date: 2005-03-07 05:32:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -567,6 +567,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propPortsComGB          = "Serial ports ";
     ls->propPortsLptText        = "Port:";
     ls->propPortsCom1Text       = "Port 1:";
+
+    ls->shortcutShowDebugger    = "Show Debugger";
 };
 
 

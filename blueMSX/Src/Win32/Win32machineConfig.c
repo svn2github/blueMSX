@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-03-05 03:24:50 $
+** $Date: 2005-03-07 05:33:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -627,6 +627,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
+    case ROM_FMPAK:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
         editSlotInfo.startPage = 0;
@@ -872,6 +873,7 @@ static void setEditControls(HWND hDlg)
     case ROM_PANASONIC32:
     case ROM_NATIONAL:
     case ROM_PLAIN:
+    case ROM_FMPAK:
     case ROM_MSXAUDIO:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xFFFF");
@@ -1025,6 +1027,7 @@ static RomType romTypeList[] = {
     ROM_KOREAN126,
     ROM_HOLYQURAN,
     ROM_FMPAC,
+    ROM_FMPAK,
     ROM_PAC,
     ROM_MSXMUSIC,
     ROM_MSXAUDIO,

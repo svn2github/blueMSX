@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-28 03:55:51 $
+** $Date: 2005-03-07 05:32:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,6 +65,7 @@
 #include "romMapperMajutsushi.h"
 #include "romMapperPAC.h"
 #include "romMapperFMPAC.h"
+#include "romMapperFMPAK.h"
 #include "romMapperSCCplus.h"
 #include "romMapperDisk.h"
 #include "romMapperTC8566AF.h"
@@ -227,6 +228,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_PLAIN:
             romMapperPlainCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_FMPAK:
+            romMapperFMPAKCreate(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_STANDARD:

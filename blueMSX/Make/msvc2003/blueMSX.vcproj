@@ -459,6 +459,12 @@
 					RelativePath="..\..\Src\Memory\romMapperFMPAC.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperFMPAK.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperFMPAK.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.c">
 				</File>
 				<File

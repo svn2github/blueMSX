@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-10 07:18:44 $
+** $Date: 2005-03-07 05:32:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -758,6 +758,7 @@ _TCHAR* langShortcutShowLanguage() { return ls->shortcutShowLanguage; }
 _TCHAR* langShortcutShowMachines() { return ls->shortcutShowMachines; }
 _TCHAR* langShortcutShowShortcuts() { return ls->shortcutShowShortcuts; }
 _TCHAR* langShortcutShowKeyboard() { return ls->shortcutShowKeyboard; }
+_TCHAR* langShortcutShowDebugger() { return ls->shortcutShowDebugger; }
 _TCHAR* langShortcutShowHelp() { return ls->shortcutShowHelp; }
 _TCHAR* langShortcutShowAbout() { return ls->shortcutShowAbout; }
 _TCHAR* langShortcutShowFiles() { return ls->shortcutShowFiles; }

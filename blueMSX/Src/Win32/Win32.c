@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2005-03-06 20:29:30 $
+** $Date: 2005-03-07 05:33:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -269,6 +269,7 @@ static RomType romTypeList[] = {
     ROM_KOREAN126,
     ROM_HOLYQURAN,
     ROM_FMPAC,
+    ROM_FMPAK,
     ROM_MSXAUDIO,
     ROM_MOONSOUND,
     ROM_DISKPATCH,
@@ -741,6 +742,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
     if (hotkeyEq(key, s->toolsShowKeyboardEditor))      actionToolsShowKeyboardEditor();
+    if (hotkeyEq(key, s->toolsShowDebugger))            actionToolsShowDebugger();
     if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
     if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
 }
@@ -2471,6 +2473,7 @@ void archShowLanguageDialog()
     }
     updateMenu(0);
 }
+
 void archShowShortcutsEditor() 
 {
     int apply;
@@ -2495,6 +2498,14 @@ void archShowKeyboardEditor()
     }
     else {
         themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Keyboard Editor"));
+    }
+}
+
+void archShowDebugger()
+{
+    ToolInfo* ti = toolInfoFind("Debugger");
+    if (ti != NULL) {
+        toolInfoShowTool(ti);
     }
 }
 

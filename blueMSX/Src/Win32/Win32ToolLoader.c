@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-27 05:06:50 $
+** $Date: 2005-03-07 05:33:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,6 +308,18 @@ ToolInfo* toolInfoGet(int index)
     }
 
     return toolList[index];
+}
+
+
+ToolInfo* toolInfoFind(char* name)
+{
+    int i;
+    for (i = 0; i < toolListCount; i++) {
+        if (strcmp(toolList[i]->description, name) == 0) {
+            return toolList[i];
+        }
+    }
+    return NULL;
 }
 
 const char* toolInfoGetName(ToolInfo* toolInfo)

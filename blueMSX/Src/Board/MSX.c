@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-02-28 03:55:46 $
+** $Date: 2005-03-07 05:32:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,6 +103,7 @@
 #include "romMapperKorean126.h"
 #include "romMapperPAC.h"
 #include "romMapperFMPAC.h"
+#include "romMapperFMPAK.h"
 #include "romMapperLodeRunner.h"
 #include "romMapperSCCplus.h"
 #include "romMapperPanasonic.h"
@@ -498,6 +499,7 @@ static int initMachine(Machine* machine,
             success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
+
         case ROM_STANDARD:
             success &= romMapperStandardCreate(romName, buf, size, slot, subslot, startPage);
             break;
@@ -617,7 +619,11 @@ static int initMachine(Machine* machine,
         case ROM_KOREAN126:
             success &= romMapperKorean126Create(romName, buf, size, slot, subslot, startPage);
             break;
-            
+
+        case ROM_FMPAK:
+            success &= romMapperFMPAKCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
         case ROM_FMPAC:
             useFmPac++;
             success &= romMapperFMPACCreate(romName, buf, size, slot, subslot, startPage);
@@ -997,6 +1003,7 @@ static int romTypeIsRom(RomType romType) {
     case ROM_SCCMIRRORED: return 1;
     case ROM_SCCEXTENDED: return 1;
     case ROM_PLAIN:       return 1;
+    case ROM_FMPAK:       return 1;
     case ROM_NORMAL:      return 1;
     case ROM_DISKPATCH:   return 1;
     case ROM_CASPATCH:    return 1;

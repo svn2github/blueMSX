@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-06 20:29:27 $
+** $Date: 2005-03-07 05:32:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,6 +101,7 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "CasPatch")     return ROM_CASPATCH;
     if (name == "Coleco")       return ROM_COLECO;
     if (name == "FMPAC")        return ROM_FMPAC;
+    if (name == "FMPAK")        return ROM_FMPAK;
     if (name == "DiskPatch")    return ROM_DISKPATCH;
     if (name == "fsa1fm1")      return ROM_UNKNOWN;
     if (name == "fsa1fm2")      return ROM_UNKNOWN;
@@ -169,6 +170,7 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "scc+")         return ROM_SCCPLUS;
     if (name == "pac")          return ROM_PAC;
     if (name == "fmpac")        return ROM_FMPAC;
+    if (name == "fmpak")        return ROM_FMPAK;
     if (name == "msxaudio")     return ROM_MSXAUDIO;
     if (name == "msxmusic")     return ROM_MSXMUSIC;
     if (name == "moonsound")    return ROM_MOONSOUND;
@@ -223,6 +225,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SCCMIRRORED: return "SCC mirrored";
     case ROM_SCCEXTENDED: return "SCC extended";
     case ROM_FMPAC:       return "FMPAC (SRAM)";
+    case ROM_FMPAK:       return "FMPAK";
     case ROM_KONAMI4NF:   return "Konami Generic";
     case ROM_ASCII16NF:   return "Super Pierrot";
     case ROM_PLAIN:       return "Mirrored ROM";
@@ -317,6 +320,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SCCMIRRORED: return "SCCMIRRORED";
     case ROM_SCCEXTENDED: return "SCCEXTENDED";
     case ROM_FMPAC:       return "FMPAC";
+    case ROM_FMPAK:       return "FMPAK";
     case ROM_KONAMI4NF:   return "KONAMI GEN";
     case ROM_ASCII16NF:   return "SUPERPIERR";
     case ROM_PLAIN:       return "MIRRORED";
@@ -404,8 +408,8 @@ extern "C" void mediaDbAddFromOldFile(MediaDb* mediaDb,
         return;
     }
 
-    char buffer[128];
-    while (fgets(buffer, 128, file)) {
+    char buffer[1024];
+    while (fgets(buffer, 1024, file)) {
         char* tokenStr     = extractToken(buffer, 1);
         if (tokenStr == NULL) {
             continue;
