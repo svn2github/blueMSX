@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:
-**      SpriteLine.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 07:48:48 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

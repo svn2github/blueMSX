@@ -1,17 +1,13 @@
 /*****************************************************************************
-** File:
-**      romMapperMicrosol.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-**      Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
+** $Date: 2004-12-06 07:47:12 $
 **
-** Description:
-**      Rom mapper for Microsol fdc controller
+** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

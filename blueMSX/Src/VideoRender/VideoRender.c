@@ -1,17 +1,11 @@
 /*****************************************************************************
-** File:        videoRender.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Video render methods. 
+** $Date: 2004-12-06 07:48:48 $
 **
-** More info:   www.bluemsx.com
-**
-** History:     1.0 - 10/17 2003 Initial version
-**              1.1 - 11/26 2003 Added delay and glow in pal 32 rendering.
-**              1.2 - 12/01 2003 Added double src width support (for MSX
-**                               screen 6,7 and text80).
-**              1.3 / 12/05 2003 Added support for scale2x (by SLotman)
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

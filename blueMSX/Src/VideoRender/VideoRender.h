@@ -1,17 +1,11 @@
 /*****************************************************************************
-** File:
-**      Video.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description:
-**      Contains methods to render PAL emulated video images.
-**      The source bitmap shall contain 32 bit pixels with
-**      color values that are get from the videoGetColor
-**      method.
+** $Date: 2004-12-06 07:48:48 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

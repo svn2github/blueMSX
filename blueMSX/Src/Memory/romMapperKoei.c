@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:        romMapperKoei.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKoei.c,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Rom mapper for Koei cartridges with SRAM
+** $Date: 2004-12-06 07:47:11 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Notes:       The Koei roms are similar to the ASCII8 roms but they
 **              can have 8kB, 32kB or no SRAM (see the list below).
@@ -34,7 +34,6 @@
 **              Sangokusi 2 (1991)                          32kB SRAM
 **              Suikoden (1989)                              8kB SRAM
 **              Teitoku No Ketsudan (1991)                  32kB SRAM
-**
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

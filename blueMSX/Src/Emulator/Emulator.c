@@ -612,7 +612,7 @@ int WaitForSync(void) {
     }
 
     overflowCount = emulatorGetCpuOverflow() ? 1 : 0;
-    if (diffTime > 50U) {
+    if (diffTime > 2U) {
         diffTime = 0;
     }
 

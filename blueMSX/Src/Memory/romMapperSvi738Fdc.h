@@ -1,17 +1,13 @@
 /*****************************************************************************
-** File:
-**      romMapperSvi738Fdc.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.h,v $
 **
-** Author:
-**      Daniel Vik, Tomas Karlsson
+** $Revision: 1.2 $
 **
-** Description:
-**      Rom mapper for Spectravideo SVI-738 FDC controller
+** $Date: 2004-12-06 07:47:12 $
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik, Tomas Karlsson
+** Copyright (C) 2003-2004 Tomas Karlsson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages

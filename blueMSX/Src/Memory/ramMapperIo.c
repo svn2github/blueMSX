@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:        ramMapperIo.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapperIo.c,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Ram mapper
+** $Date: 2004-12-06 07:47:11 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

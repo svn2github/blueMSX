@@ -1,15 +1,11 @@
 /*****************************************************************************
-** File:
-**      romMapperMsxDos2.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxDos2.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description:
-**      Rom mapper for alternative MsxDos2 cartridges
+** $Date: 2004-12-06 07:47:12 $
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

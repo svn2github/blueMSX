@@ -5749,7 +5749,7 @@ void r800Execute(R800* r800, UInt32 endTime) {
 
     while ((Int32)(endTime - r800->systemTime) > 0) {
         UInt16 address;
-        int iff1;
+        int iff1 = 0;
 
         if (r800->oldCpuMode != -1) {
             r800SwitchCpu(r800);
@@ -5764,8 +5764,10 @@ void r800Execute(R800* r800, UInt32 endTime) {
 
         executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
-        iff1 = r800->regs.iff1 >> 1;
-        r800->regs.iff1 >>= iff1;
+        if (!r800->regs.halt) { 
+            iff1 = r800->regs.iff1 >> 1;
+            r800->regs.iff1 >>= iff1;
+        }
 
         if (iff1 || r800->intState != INT_HIGH || (r800->nmiState != INT_EDGE && !r800->regs.iff1)) {
             continue;
@@ -5819,7 +5821,7 @@ void r800Execute(R800* r800, UInt32 endTime) {
 void r800ExecuteInstruction(R800* r800) {
     static SystemTime lastRefreshTime = 0;
     UInt16 address;
-    int iff1;
+    int iff1 = 0;
 
     if (r800->cpuMode == CPU_R800) {
         if (r800->systemTime - lastRefreshTime > 222 * 3) {
@@ -5830,9 +5832,10 @@ void r800ExecuteInstruction(R800* r800) {
 
     executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
-    iff1 = r800->regs.iff1 >> 1;
-    r800->regs.iff1 >>= iff1;
-
+    if (!r800->regs.halt) { 
+        iff1 = r800->regs.iff1 >> 1;
+        r800->regs.iff1 >>= iff1;
+    }
     if (iff1 || r800->intState != INT_HIGH || (r800->nmiState != INT_EDGE && !r800->regs.iff1)) {
         return;
     }
