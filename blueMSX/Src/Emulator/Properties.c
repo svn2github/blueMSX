@@ -74,7 +74,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->video.deInterlace        = 1;
     pProperties->video.horizontalStretch  = 0;
     pProperties->video.verticalStretch    = 0;
-    pProperties->video.contrast           = 112;
+    pProperties->video.contrast           = 100;
     pProperties->video.brightness         = 100;
     pProperties->video.saturation         = 100;
     pProperties->video.gamma              = 100;
@@ -242,10 +242,10 @@ void propInitDefaults(Properties* pProperties)
     pProperties->video.deInterlace        = 1;
     pProperties->video.horizontalStretch  = 1;
     pProperties->video.verticalStretch    = 0;
-    pProperties->video.contrast           = 108;
-    pProperties->video.brightness         = 104;
+    pProperties->video.contrast           = 100;
+    pProperties->video.brightness         = 100;
     pProperties->video.saturation         = 100;
-    pProperties->video.gamma              = 102;
+    pProperties->video.gamma              = 100;
     pProperties->video.scanlinesEnable    = 0;
     pProperties->video.scanlinesPct       = 80;
 
