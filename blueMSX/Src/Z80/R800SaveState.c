@@ -1,14 +1,17 @@
 /*****************************************************************************
-** File:
-**      R800SaveState.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800SaveState.c,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** More info:   
-**      www.bluemsx.com
+** $Date: 2004-12-06 07:54:15 $
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Author: Daniel Vik
+**
+** Description: Save/load state of an R800 object
+**
+** More info: http://www.bluemsx.com
+**
+** Copyright (C) 2004 Daniel Vik
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -25,6 +28,7 @@
 **  2. Altered source versions must be plainly marked as such, and must not be
 **     misrepresented as being the original software.
 **  3. This notice may not be removed or altered from any source distribution.
+**
 **
 ******************************************************************************
 */

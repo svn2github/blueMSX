@@ -1,15 +1,15 @@
 /*****************************************************************************
-** File:
-**      R800.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.3 $
 **
-** Description:
-**      Emulation of the Z80/R800 processor
+** $Date: 2004-12-06 07:54:14 $
 **
-** More info:   
-**      www.bluemsx.com
+** Author: Daniel Vik
+**
+** Description: Emulation of the Z80/R800 processor
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2004 Daniel Vik
 **
