@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-20 16:21:31 $
+** $Date: 2005-01-20 17:44:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,7 +162,7 @@ static void crtcRenderVideoBuffer(void)
 
                 if (charAddress == crtc.cursor.addressStart) {
                     if (((crtc.frameCounter - crtc.cursor.blinkstart) & crtc.cursor.blinkrate) || (crtc.cursor.mode==CURSOR_NOBLINK)) {
-                        pattern = charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
+                        pattern ^= charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
                     }
                 }
             }
