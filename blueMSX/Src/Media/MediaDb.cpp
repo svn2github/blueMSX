@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-28 03:55:50 $
+** $Date: 2005-02-28 04:37:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -478,7 +478,7 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 continue;
             }
             for (TiXmlElement* dmp = item->FirstChildElement(); dmp != NULL; dmp = dmp->NextSiblingElement()) {
-                if (strcmp(dmp->Value(), "megarom") == 0) {
+                if (strcmp(dmp->Value(), "megarom") == 0 || strcmp(dmp->Value(), "systemrom") == 0) {
                     RomType romType = ROM_UNKNOWN;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
                         if (strcmp(it->Value(), "type") == 0) {
