@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-06 05:47:51 $
+** $Date: 2005-02-06 07:06:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -399,9 +399,6 @@ void keyboardReset()
     KeyboardKeymap keymap;
 
     switch (boardGetType()) {
-    case BOARD_MSX:
-        keymap = KEYMAP_MSX;
-        break;
     case BOARD_SVI:
         keymap = KEYMAP_SVI;
         break;
