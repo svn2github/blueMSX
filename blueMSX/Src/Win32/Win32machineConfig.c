@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-04 07:14:17 $
+** $Date: 2005-01-10 22:31:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,6 +65,8 @@ static int      editRamNormalSize;
 static int      editRamMapperSize;
 static int      editExtRamSize;
 static int      editMegaRamSize;
+
+static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId);
 
 static void updateMachine() {
     machineUpdate(machine);
@@ -130,6 +132,45 @@ static int getBtCheck(HWND hDlg, int id) {
     return BST_CHECKED == SendMessage(hwnd, BM_GETCHECK, 0, 0) ? 1 : 0;
 }
 
+static void setSubSlotsEnable(HWND hDlg, int nEnable) {
+
+    if (nEnable) {
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY1,   !machine->slot[0].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED1, machine->slot[0].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY2,   !machine->slot[1].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED2, machine->slot[1].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY3,   !machine->slot[2].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED3, machine->slot[2].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY4,   !machine->slot[3].subslotted, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED4, machine->slot[3].subslotted, 1);
+        setCartSlotDropdown(hDlg, 0, IDC_CONF_SLOTCART1);
+        setCartSlotDropdown(hDlg, 1, IDC_CONF_SLOTCART2);
+    }
+    else {
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY1,    1, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED1, 0, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY2,    1, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED2, 0, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY3,    1, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED3, 0, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTPRIMARY4,    1, 1);
+        setBtCheck(hDlg, IDC_CONF_SLOTSUBSLOTTED4, 0, 1);
+        machine->slot[0].subslotted = 0;
+        machine->slot[1].subslotted = 0;
+        machine->slot[2].subslotted = 0;
+        machine->slot[3].subslotted = 0;
+        setCartSlotDropdown(hDlg, 0, IDC_CONF_SLOTCART1);
+        setCartSlotDropdown(hDlg, 1, IDC_CONF_SLOTCART2);
+        SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
+        SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
+    }
+    EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED1), nEnable);
+    EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED2), nEnable);
+    EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED3), nEnable);
+    EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED4), nEnable);
+    EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTCART2), nEnable);
+}
+
 static void setBoardDropdown(HWND hDlg) {
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_DELETESTRING, 0, 0));
 
@@ -141,12 +182,15 @@ static void setBoardDropdown(HWND hDlg) {
     default:
     case BOARD_MSX:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 0, 0);
+        setSubSlotsEnable(hDlg, 1);
         break;
     case BOARD_SVI:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 1, 0);
+        setSubSlotsEnable(hDlg, 0);
         break;
     case BOARD_COLECO:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 2, 0);
+        setSubSlotsEnable(hDlg, 0);
         break;
     }
 }
@@ -159,12 +203,15 @@ static int getBoardDropDown(HWND hDlg) {
     default:
     case 0:
         machine->board.type = BOARD_MSX;
+        setSubSlotsEnable(hDlg, 1);
         break;
     case 1:
         machine->board.type = BOARD_SVI;
+        setSubSlotsEnable(hDlg, 0);
         break;
     case 2:
         machine->board.type = BOARD_COLECO;
+        setSubSlotsEnable(hDlg, 0);
         break;
     }
 
