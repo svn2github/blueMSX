@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-02-06 23:38:57 $
+** $Date: 2005-02-07 01:03:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,7 @@ static Mixer* boardMixer = NULL;
 static int (*syncVideo)(int) = NULL;
 UInt32* boardSysTime;
 static UInt64 boardSysTime64;
+static UInt32 oldTime;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
@@ -247,6 +248,9 @@ int boardRun(Machine* machine,
             if (0 == strncmp(version, saveStateVersion, sizeof(saveStateVersion) - 1)) {
                 SaveState* state = saveStateOpenForRead("board");
                 BoardType boardType = saveStateGet(state, "boardType", BOARD_MSX);
+                boardSysTime64  = (UInt64)saveStateGet(state, "boardSysTime64Hi", 0) << 32 |
+                                  (UInt64)saveStateGet(state, "boardSysTime64Lo", 0);
+                oldTime = saveStateGet(state, "oldTime", 0);
                 saveStateClose(state);
 
                 boardSetType(boardType);
@@ -265,6 +269,8 @@ int boardRun(Machine* machine,
         boardTimerAdd(timer, boardSystemTime() + 1);
 
         run();
+
+        destroy();
 
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(timer);
@@ -314,6 +320,9 @@ void boardSaveState(const char* stateFile)
     state = saveStateOpenForWrite("board");
 
     saveStateSet(state, "boardType", boardType);
+    saveStateSet(state, "boardSysTime64Hi", (UInt32)(boardSysTime64 >> 32));
+    saveStateSet(state, "boardSysTime64Lo", (UInt32)boardSysTime64);
+    saveStateSet(state, "oldTime", oldTime);
 
     saveStateClose(state);
 
@@ -455,9 +464,8 @@ typedef struct BoardTimer {
     UInt32       timeout;
 };
 
-BoardTimer* timerList = NULL;
-static UInt32 oldTime;
-UInt32 timeAnchor;
+static BoardTimer* timerList = NULL;
+static UInt32 timeAnchor;
 
 #define MAX_TIME  (2 * 1368 * 313)
 #define TEST_TIME 0x7fffffff

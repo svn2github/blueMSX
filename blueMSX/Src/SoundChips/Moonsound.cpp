@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-06 23:38:59 $
+** $Date: 2005-02-07 01:03:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,8 +82,8 @@ static void onTimeout2(void* ref, UInt32 time)
 {
     Moonsound* moonsound = (Moonsound*)ref;
 
-    moonsoundTimerStart(moonsound, 4, 1, moonsound->timerRef1);
-    moonsound->ymf262->callback(moonsound->timerRef1);
+    moonsoundTimerStart(moonsound, 4, 1, moonsound->timerRef2);
+    moonsound->ymf262->callback(moonsound->timerRef2);
 }
 
 void moonsoundTimerSet(void* ref, int timer, int count)
