@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2004-12-11 00:07:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -608,7 +608,8 @@ int WaitForSync(void) {
     }
 
     overflowCount = emulatorGetCpuOverflow() ? 1 : 0;
-    if (diffTime > 2U) {
+    if (diffTime > 50U) {
+        overflowCount = 1;
         diffTime = 0;
     }
 
