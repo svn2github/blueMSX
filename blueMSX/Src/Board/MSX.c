@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-17 08:01:17 $
+** $Date: 2005-01-24 03:08:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,6 +115,7 @@
 #include "romMapperTurboRPCM.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMsxMusic.h"
+#include "romMapperMsxPrn.h"
 #include "romMapperMoonsound.h"
 
 extern int  WaitForSync(void);
@@ -457,6 +458,11 @@ static int initMachine(Machine* machine,
             success &= romMapperTurboRPcmCreate();
             continue;
         }
+
+        if (machine->slotInfo[i].romType == ROM_MSXPRN) {
+            success &= romMapperMsxPrnCreate();
+            continue;
+        }
         
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
@@ -514,7 +520,7 @@ static int initMachine(Machine* machine,
             success &= romMapperHolyQuranCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
-		case ROM_KONAMISYNTH:
+        case ROM_KONAMISYNTH:
             success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
