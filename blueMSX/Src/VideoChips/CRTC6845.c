@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-20 08:41:22 $
+** $Date: 2005-01-20 09:39:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,7 @@ typedef struct
     UInt8   rasterEnd;
     UInt16  addressStart;
     int     blinkrate;
+    UInt32  blinkstart;
 } TYP_CURSOR;
 
 typedef struct
@@ -161,7 +162,7 @@ static void crtcRenderVideoBuffer(void) {
                 pattern = crtcROM[16*crtcMemory[charAddress]+charRaster];
 
                 if (charAddress == crtc.cursor.addressStart) {
-                    if (crtc.frameCounter & crtc.cursor.blinkrate) {
+                    if ((crtc.frameCounter - crtc.cursor.blinkstart) & crtc.cursor.blinkrate) {
                         pattern = charRaster >= crtc.cursor.rasterStart && charRaster <= crtc.cursor.rasterEnd ? 0xff : 0;
                     }
                 }
@@ -199,7 +200,9 @@ static void crtcCursorUpdate(void)
         crtc.cursor.mode = CURSOR_NOBLINK;
         crtc.cursor.blinkrate = 0;
     }
-    
+
+    crtc.cursor.blinkstart = crtc.frameCounter - crtc.cursor.blinkrate;
+
     crtc.cursor.rasterStart = crtc.registers.reg[CRTC_R10] & 0x1f;
     crtc.cursor.rasterEnd = crtc.registers.reg[CRTC_R11];
 
@@ -219,8 +222,6 @@ UInt8 crtcRead(void* dummy, UInt16 ioPort)
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
 {
     if (crtc.registers.address < 18) {
-        printf("\nR%d:\t0x%x (%d)\n", crtc.registers.address, value, value);
-
         value &= crtcRegisterValueMask[crtc.registers.address];
         crtc.registers.reg[crtc.registers.address] = value;
         switch (crtc.registers.address) {
