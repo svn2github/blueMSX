@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-22 21:13:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,7 @@ void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Maarten ter Huurne,  "
                 "Jussi Pitkänen,  "
                 "Tobias Keizer,  "
+                "Hondarer,  "
                 "Atarulum,  "
                 "Sandy Pleyte,  "
                 "Amer Dugmag,  "
@@ -154,6 +155,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                      "Manuel Bilderbeek\r\n"
                                      "Maarten ter Huurne\r\n"
                                      "Tobias Keizer\r\n"
+                                     "Hondarer\r\n"
                                      "Atarulum\r\n"
                                      "Sandy Pleyte\r\n"
                                      "Amer Dugmag\r\n"
