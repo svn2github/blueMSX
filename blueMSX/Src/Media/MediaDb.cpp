@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-03-01 23:41:03 $
+** $Date: 2005-03-04 08:02:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,8 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "GenericKonami")    return ROM_KONAMI4NF;
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
 
+    if (name == "Normal")           return ROM_STANDARD;
+
     // System roms
     if (name == "Bunsetsu")     return ROM_BUNSETU;
     if (name == "CasPatch")     return ROM_CASPATCH;
@@ -102,14 +104,14 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "fsa1fm1")      return ROM_UNKNOWN;
     if (name == "fsa1fm2")      return ROM_UNKNOWN;
     if (name == "Jisyo")        return ROM_JISYO;
-    if (name == "Kanji")        return ROM_KANJI;
+    if (name == "Kanji1")       return ROM_KANJI;
     if (name == "Kanji12")      return ROM_KANJI12;
     if (name == "MB8877A")      return ROM_NATIONALFDC;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "TC8566AF")     return ROM_TC8566AF;
     if (name == "WD2793")       return ROM_PHILIPSFDC;
     if (name == "Microsol")     return ROM_MICROSOL;
-    if (name == "Moonsound")    return ROM_MOONSOUND;
+    if (name == "MoonSound")    return ROM_MOONSOUND;
 
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
@@ -494,8 +496,9 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 continue;
             }
             for (TiXmlElement* dmp = item->FirstChildElement(); dmp != NULL; dmp = dmp->NextSiblingElement()) {
-                if (strcmp(dmp->Value(), "megarom") == 0 || strcmp(dmp->Value(), "systemrom") == 0) {
-                    RomType romType = ROM_UNKNOWN;
+                printf("%s\n", dmp->Value());
+                if (strcmp(dmp->Value(), "megarom") == 0 || strcmp(dmp->Value(), "systemrom") == 0 || strcmp(dmp->Value(), "rom") == 0) {
+                    RomType romType = strcmp(dmp->Value(), "rom") == 0 ? ROM_PLAIN : ROM_UNKNOWN;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
                         if (strcmp(it->Value(), "type") == 0) {
                             TiXmlNode* name = it->FirstChild();
@@ -504,6 +507,30 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                             }
                         }
                     }
+
+                    // For standard roms, a start tag is used to specify start address
+                    if (romType == ROM_STANDARD) {
+                        for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                            if (strcmp(it->Value(), "start") == 0) {
+                                TiXmlNode* name = it->FirstChild();
+                                if (name != NULL) {
+                                    if (strcmp(name->Value(), "0x0000") == 0) {
+                                        romType = ROM_STANDARD;
+                                    }
+                                    if (strcmp(name->Value(), "0x4000") == 0) {
+                                        romType = ROM_0x4000;
+                                    }
+                                    if (strcmp(name->Value(), "0x8000") == 0) {
+                                        romType = ROM_BASIC;
+                                    }
+                                    if (strcmp(name->Value(), "0xC000") == 0) {
+                                        romType = ROM_0xC000;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
                         if (strcmp(it->Value(), "hash") == 0) {
                             const char* type = it->Attribute("algo");
@@ -532,48 +559,6 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                             TiXmlNode* name = it->FirstChild();
                             if (name != NULL && strcmp(name->Value(), "scc+") == 0) {
                                 romType = ROM_SCCPLUS;
-                            }
-                        }
-                    }
-                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
-                        if (strcmp(it->Value(), "hash") == 0) {
-                            const char* type = it->Attribute("algo");
-                            if (type != NULL) {
-                                if (strcmp(type, "sha1") == 0) {
-                                    TiXmlNode* hash = it->FirstChild();
-                                    string sha1(hash->Value());
-                                    mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, remark);
-                                }
-                                if (strcmp(type, "crc") == 0) {
-                                    UInt32 crc32;
-                                    TiXmlNode* hash = it->FirstChild();
-                                    if (sscanf(hash->Value(), "%x", &crc32) == 1) {
-                                        mediaDb->crcMap[crc32] = new MediaType(romType, title, company, year, remark);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (strcmp(dmp->Value(), "rom") == 0) {
-                    RomType romType = ROM_PLAIN;
-                    for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
-                        if (strcmp(it->Value(), "start") == 0) {
-                            TiXmlNode* name = it->FirstChild();
-                            if (name != NULL) {
-                                if (strcmp(name->Value(), "0x0000") == 0) {
-                                    romType = ROM_STANDARD;
-                                }
-                                if (strcmp(name->Value(), "0x4000") == 0) {
-                                    romType = ROM_0x4000;
-                                }
-                                if (strcmp(name->Value(), "0x8000") == 0) {
-                                    romType = ROM_BASIC;
-                                }
-                                if (strcmp(name->Value(), "0xC000") == 0) {
-                                    romType = ROM_0xC000;
-                                }
                             }
                         }
                     }
