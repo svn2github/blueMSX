@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "R800Dasm.h"
 #include "R800SaveState.h"
 #include "DeviceManager.h"
+#include "AudioMixer.h"
 #include "SaveState.h"
 #include "Led.h"
 #include "Switches.h"
@@ -49,6 +50,7 @@
 /* Hardware */
 static Machine*        colecoMachine;
 static DeviceInfo*     colecoDevInfo;
+static Mixer*          colecoMixer;
 static SN76489*        sn76489;
 static R800*           r800;
 static JoystickIO*     joyIO;
@@ -295,6 +297,9 @@ static int colecoInitMachine(Machine* machine,
 
     /* Initialize VDP */
     colecoVramSize = machine->video.vramSize;
+    if (vdpSyncMode == VDP_SYNC_AUTO) {
+        vdpSyncMode = VDP_SYNC_60HZ;
+    }
     vdpInit(VDP_COLECO, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     colecoJoyIoCreate();
@@ -336,6 +341,37 @@ void colecoReset()
     deviceManagerReset();
 }
 
+void colecoSetCpuTimeout(UInt32 time)
+{
+    r800SetTimeoutAt(r800, time);
+}
+
+static void cpuTimeout(void* ref)
+{
+    boardTimerCheckTimeout();
+}
+
+static void onSync(void* ref, UInt32 time)
+{
+    BoardTimer* timer = (BoardTimer*)ref;
+    int execTime = 0;
+
+    while (execTime == 0) {
+        execTime = WaitForSync();
+
+        if (execTime < 0) {
+            r800StopExecution(r800);
+            return;
+        }
+    }
+
+    mixerSync(colecoMixer);
+
+    Keyboard(KeyMap);
+
+    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+}
+
 int colecoRun(Machine* machine, 
            DeviceInfo* devInfo,
            Mixer* mixer,
@@ -344,6 +380,7 @@ int colecoRun(Machine* machine,
 {
     int success;
 
+    colecoMixer     = mixer;
     colecoMachine   = machine;
     colecoDevInfo   = devInfo;
 
@@ -363,9 +400,10 @@ int colecoRun(Machine* machine,
     }
 
     deviceManagerCreate();
+    boardInit(0);
     ioPortReset();
 
-    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, NULL);
+    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -386,54 +424,22 @@ int colecoRun(Machine* machine,
     r800SetFrequency(r800, CPU_R800, machine->cpu.freqR800);
 
     if (loadState) {
+        r800LoadState(r800);
+        boardInit(boardSystemTime());
         colecoLoadMemory();
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);
         machineLoadState(colecoMachine);
         sn76489LoadState(sn76489);
-        r800LoadState(r800);
         vdpLoadState();
     }
 
     if (success) {
-        /* Start execution of the code */
-        for (;;) {
-            if (syncCount >= SyncPeriod) {
-                int execTime = WaitForSync();
-                int renshaSpeed;
+        BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        
+        boardTimerAdd(timer, boardSystemTime() + 1);
 
-                if (execTime == -1) {
-                    break;
-                }
-                syncCount -= SyncPeriod;
-                SyncPeriod = execTime * colecoFrequency * 6; // FIXME
-                mixerSync(mixer);
-
-                Keyboard(KeyMap);
-
-                renshaSpeed = switchGetRensha();
-                if (renshaSpeed) {
-                    UInt8 renshaOn = (UInt8)((UInt64)renshaSpeed * nextSyncTime / boardFrequency());
-                    ledSetRensha(renshaSpeed > 14 ? 1 : renshaOn & 2);
-                    KeyMap[8] |= (renshaOn & 1);
-                }
-                else {
-                    ledSetRensha(0);
-                }
-            }
-
-            syncCount += 1000 * loopTime;
-            nextSyncTime += loopTime;
-
-            if (traceEnabled) {
-                r800ExecuteTrace(r800, nextSyncTime);
-            }
-            else {
-                r800Execute(r800, nextSyncTime);
-            }
-
-            loopTime = vdpRefreshLine(nextSyncTime);
-        }
+        r800Execute(r800);
     }
 
     colecoTraceDisable();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-26 10:09:55 $
+** $Date: 2005-01-03 06:12:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -191,7 +191,8 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
             sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 
 			if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
-                sn76489->toneStep[3] = sn76489->toneStep[2];
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 			}
             
 			break;
@@ -205,11 +206,12 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
 
 		case 6:
 			if ((sn76489->regs[6] & 0x03) == 0x03) {
-                sn76489->toneStep[3] = sn76489->toneStep[2];
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 			}
             else {
 		        period = 256 << (sn76489->regs[6] & 0x03);
-                sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
             }
 
 			sn76489->noiseRand = 0x0f35;
@@ -229,7 +231,8 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
             sn76489->toneStep[reg >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 
             if (reg == 4 && (sn76489->regs[6] & 0x03) == 0x03) {
-                sn76489->toneStep[3] = sn76489->toneStep[2];
+			    period = sn76489->regs[4] * 16;
+                sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
 			}
 			break;
 		}
@@ -252,8 +255,8 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
         
         while (count--) {
             tonePhase += phaseStep;
-            if (tonePhase >> 28) {
-                tonePhase -= 0x10000000;
+            while (tonePhase >> 28) {
+                tonePhase -= 1 << 28;
                 if (sn76489->noiseRand & 1) {
                     sn76489->noiseRand ^= (sn76489->regs[6] & 0x04) ? 0x14002 : 0x8000;
                 }

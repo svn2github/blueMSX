@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,8 @@ int  msxGetRefreshRate();
 void   msxSetInt(UInt32 irq);
 void   msxClearInt(UInt32 irq);
 UInt32 msxGetInt(UInt32 irq);
+
+void msxSetCpuTimeout(UInt32 time);
 
 void msxTraceEnable(const char* fileName);
 void msxTraceDisable();

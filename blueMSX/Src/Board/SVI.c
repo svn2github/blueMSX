@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-02 08:22:09 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "R800Dasm.h"
 #include "R800SaveState.h"
 #include "DeviceManager.h"
+#include "AudioMixer.h"
 #include "SaveState.h"
 #include "Led.h"
 #include "Switches.h"
@@ -52,6 +53,7 @@
 /* Hardware */
 static Machine*        sviMachine;
 static DeviceInfo*     sviDevInfo;
+static Mixer*          sviMixer;
 static AY8910*         ay8910;
 static AudioKeyClick*  keyClick;
 static R800*           r800;
@@ -367,6 +369,35 @@ void sviReset()
     deviceManagerReset();
 }
 
+void sviSetCpuTimeout(UInt32 time)
+{
+    r800SetTimeoutAt(r800, time);
+}
+
+static void cpuTimeout(void* ref)
+{
+    boardTimerCheckTimeout();
+}
+
+static void onSync(void* ref, UInt32 time)
+{
+    BoardTimer* timer = (BoardTimer*)ref;
+    int execTime = 0;
+
+    while (execTime == 0) {
+        execTime = WaitForSync();
+
+        if (execTime < 0) {
+            r800StopExecution(r800);
+            return;
+        }
+    }
+
+    mixerSync(sviMixer);
+
+    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+}
+
 int sviRun(Machine* machine, 
            DeviceInfo* devInfo,
            Mixer* mixer,
@@ -376,6 +407,7 @@ int sviRun(Machine* machine,
     int success;
     int i;
 
+    sviMixer     = mixer;
     sviMachine   = machine;
     sviDevInfo   = devInfo;
 
@@ -395,9 +427,10 @@ int sviRun(Machine* machine,
     }
 
     deviceManagerCreate();
+    boardInit(0);
     ioPortReset();
 
-    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, NULL);
+    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -439,55 +472,23 @@ int sviRun(Machine* machine,
     diskEnable(1, machine->fdc.count > 1);
 
     if (loadState) {
+        r800LoadState(r800);
+        boardInit(boardSystemTime());
         sviLoadMemory();
         deviceManagerLoadState();
         joystickIoLoadState(joyIO);
         machineLoadState(sviMachine);
         ay8910LoadState(ay8910);
-        r800LoadState(r800);
         vdpLoadState();
         tapeLoadState();
     }
 
     if (success) {
-        /* Start execution of the code */
-        for (;;) {
-            if (syncCount >= SyncPeriod) {
-                int execTime = WaitForSync();
-                int renshaSpeed;
+        BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        
+        boardTimerAdd(timer, boardSystemTime() + 1);
 
-                if (execTime == -1) {
-                    break;
-                }
-                syncCount -= SyncPeriod;
-                SyncPeriod = execTime * SviFrequency * 6; // FIXME
-                mixerSync(mixer);
-
-                Keyboard(KeyMap);
-
-                renshaSpeed = switchGetRensha();
-                if (renshaSpeed) {
-                    UInt8 renshaOn = (UInt8)((UInt64)renshaSpeed * nextSyncTime / boardFrequency());
-                    ledSetRensha(renshaSpeed > 14 ? 1 : renshaOn & 2);
-                    KeyMap[8] |= (renshaOn & 1);
-                }
-                else {
-                    ledSetRensha(0);
-                }
-            }
-
-            syncCount += 1000 * loopTime;
-            nextSyncTime += loopTime;
-
-            if (traceEnabled) {
-                r800ExecuteTrace(r800, nextSyncTime);
-            }
-            else {
-                r800Execute(r800, nextSyncTime);
-            }
-
-            loopTime = vdpRefreshLine(nextSyncTime);
-        }
+        r800Execute(r800);
     }
 
     sviTraceDisable();

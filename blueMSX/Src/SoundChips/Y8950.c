@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2005-01-03 06:12:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,11 +47,15 @@ struct Y8950 {
     Int32  handle;
 
     FM_OPL* opl;
+    BoardTimer* timer1;
+    BoardTimer* timer2;
+    UInt32 timerValue1;
+    UInt32 timerValue2;
+    UInt32 timeout1;
+    UInt32 timeout2;
+    UInt32 timerRunning1;
+    UInt32 timerRunning2;
     UInt8  address;
-    UInt32 timer1;
-    UInt32 counter1;
-    UInt32 timer2;
-    UInt32 counter2;
     Int32  buffer[BUFFER_SIZE];
 };
 
@@ -60,9 +64,63 @@ extern INT32 ams;
 extern INT32 vib;
 extern INT32 feedback2;
 
-#define MAX_DEVICES 8
+void y8950TimerStart(void* ptr, int timer, int start);
 
-static Y8950* theY8950[MAX_DEVICES];
+static void onTimeout1(void* ptr, UInt32 time)
+{
+    Y8950* y8950 = (Y8950*)ptr;
+
+    y8950->timerRunning1 = 0;
+    if (OPLTimerOver(y8950->opl, 0)) {
+        y8950TimerStart(y8950, 0, y8950->timerValue1);
+    }
+}
+
+static void onTimeout2(void* ptr, UInt32 time)
+{
+    Y8950* y8950 = (Y8950*)ptr;
+
+    y8950->timerRunning2 = 0;
+    if (OPLTimerOver(y8950->opl, 1)) {
+        y8950TimerStart(y8950, 1, y8950->timerValue2);
+    }
+}
+
+void y8950TimerStart(void* ptr, int timer, int start)
+{
+    Y8950* y8950 = (Y8950*)ptr;
+
+    if (timer == 0) {
+        if (start != 0) {
+            if (!y8950->timerRunning1) {
+                y8950->timeout1 = boardSystemTime() + boardFrequency() / 12500 * y8950->timerValue1;
+                boardTimerAdd(y8950->timer1, y8950->timeout1);
+                y8950->timerRunning1 = 1;
+            }
+        }
+        else {
+            if (y8950->timerRunning1) {
+                boardTimerRemove(y8950->timer1);
+                y8950->timerRunning1 = 0;
+            }
+        }
+    }
+    else {
+        if (start != 0) {
+            if (!y8950->timerRunning2) {
+                y8950->timeout2 = boardSystemTime() + boardFrequency() / 12500 * y8950->timerValue2;
+                boardTimerAdd(y8950->timer2, y8950->timeout2);
+                y8950->timerRunning2 = 1;
+            }
+        }
+        else {
+            if (y8950->timerRunning2) {
+                boardTimerRemove(y8950->timer2);
+                y8950->timerRunning2 = 0;
+            }
+        }
+    }
+}
 
 UInt8 y8950Read(Y8950* y8950, UInt16 ioPort)
 {
@@ -109,15 +167,15 @@ void y8950SaveState(Y8950* y8950)
 {
     SaveState* state = saveStateOpenForWrite("msxaudio1");
 
-    saveStateSet(state, "address",   y8950->address);
-    saveStateSet(state, "timer1",    y8950->timer1);
-    saveStateSet(state, "counter1",  y8950->counter1);
-    saveStateSet(state, "timer2",    y8950->timer2);
-    saveStateSet(state, "counter2",  y8950->counter2);
-    saveStateSet(state, "outd",      outd);
-    saveStateSet(state, "ams",       ams);
-    saveStateSet(state, "vib",       vib);
-    saveStateSet(state, "feedback2", feedback2);
+    saveStateSet(state, "address",       y8950->address);
+    saveStateSet(state, "timerValue1",   y8950->timerValue1);
+    saveStateSet(state, "timerRunning1", y8950->timerRunning1);
+    saveStateSet(state, "timerValue2",   y8950->timerValue2);
+    saveStateSet(state, "timerRunning2", y8950->timerRunning2);
+    saveStateSet(state, "outd",          outd);
+    saveStateSet(state, "ams",           ams);
+    saveStateSet(state, "vib",           vib);
+    saveStateSet(state, "feedback2",     feedback2);
 
     saveStateClose(state);
 
@@ -129,11 +187,11 @@ void y8950LoadState(Y8950* y8950)
 {
     SaveState* state = saveStateOpenForRead("msxaudio1");
 
-    y8950->address   = (UInt8)saveStateGet(state, "address",   0);
-    y8950->timer1    =        saveStateGet(state, "timer1",    0);
-    y8950->counter1  =        saveStateGet(state, "counter1",  0);
-    y8950->timer2    =        saveStateGet(state, "timer2",    0);
-    y8950->counter2  =        saveStateGet(state, "counter2",  0);
+    y8950->address       = (UInt8)saveStateGet(state, "address",       0);
+    y8950->timerValue1   =        saveStateGet(state, "timerValue1",   0);
+    y8950->timerRunning1 =        saveStateGet(state, "timerRunning1", 0);
+    y8950->timerValue2   =        saveStateGet(state, "timerValue2",   0);
+    y8950->timerRunning2 =        saveStateGet(state, "timerRunning2", 0);
 
     outd      = saveStateGet(state, "outd",      0);
     ams       = saveStateGet(state, "ams",       0);
@@ -144,50 +202,49 @@ void y8950LoadState(Y8950* y8950)
 
     Y8950LoadState(y8950->opl);
     YM_DELTAT_ADPCM_LoadState(y8950->opl->deltat);
+
+    if (y8950->timerRunning1) {
+        boardTimerAdd(y8950->timer1, y8950->timeout1);
+    }
+
+    if (y8950->timerRunning2) {
+        boardTimerAdd(y8950->timer2, y8950->timeout2);
+    }
 }
 
 void y8950Destroy(Y8950* y8950) 
 {
     mixerUnregisterChannel(y8950->mixer, y8950->handle);
+    boardTimerDestroy(y8950->timer1);
+    boardTimerDestroy(y8950->timer2);
     OPLDestroy(y8950->opl);
 }
 
 void y8950Reset(Y8950* y8950)
 {
-    y8950->counter1 = -1;
-    y8950->counter2 = -1;
+    y8950TimerStart(y8950, 0, y8950->timerValue1);
+    y8950TimerStart(y8950, 1, y8950->timerValue2);
     OPLResetChip(y8950->opl);
 }
 
 Y8950* y8950Create(Mixer* mixer)
 {
     Y8950* y8950;
-    int i;
     
-    for (i = 0; i < MAX_DEVICES && theY8950[i] != NULL; i++);
-
-    if (i == MAX_DEVICES) {
-        return NULL;
-    }
-
     y8950 = (Y8950*)calloc(1, sizeof(Y8950));
 
     y8950->mixer = mixer;
-    y8950->counter1 = -1;
-    y8950->counter2 = -1;
+    y8950->timerRunning1 = 0;
+    y8950->timerRunning2 = 0;
+
+    y8950->timer1 = boardTimerCreate(onTimeout1, y8950);
+    y8950->timer2 = boardTimerCreate(onTimeout2, y8950);
 
     y8950->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, y8950Sync, y8950);
 
     y8950->opl = OPLCreate(OPL_TYPE_Y8950, FREQUENCY, SAMPLERATE, 256, y8950);
     OPLSetOversampling(y8950->opl, boardGetY8950Oversampling());
     OPLResetChip(y8950->opl);
-
-    for (i = 0; i < MAX_DEVICES; i++) {
-        if (theY8950[i] != NULL) {
-            theY8950[i] = y8950;
-            break;
-        }
-    }
 
     return y8950;
 }
@@ -197,53 +254,9 @@ void y8950TimerSet(void* ref, int timer, int count)
     Y8950* y8950 = (Y8950*)ref;
 
     if (timer == 0) {
-        y8950->timer1 = count;
+        y8950->timerValue1 = count;
     }
     else {
-        y8950->timer2 = count;
-    }
-}
-
-void y8950TimerStart(void* ptr, int timer, int start, UInt8 ref)
-{
-    Y8950* y8950 = (Y8950*)ptr;
-
-    if (timer == 0) {
-        if ((start != 0) == (y8950->counter1 == -1)) {
-            y8950->counter1  = start ? y8950->timer1 : -1;
-        }
-    }
-    else {
-        if ((start != 0) == (y8950->counter2 == -1)) {
-            y8950->counter2  = start ? y8950->timer2 : -1;
-        }
-    }
-}
-
-void y8950Tick(UInt32 elapsedTime) 
-{
-    int i;
-
-    for (i = 0; i < MAX_DEVICES; i++) {
-        Y8950* y8950 = theY8950[i];
-        if (y8950 != NULL) {
-            while (elapsedTime--) {
-                if (y8950->counter1 != -1) {
-                    if (y8950->counter1-- == 0) {
-                        if (OPLTimerOver(y8950->opl, 0)) {
-                            y8950->counter1 = y8950->timer1;
-                        }
-                    }
-                }
-
-                if (y8950->counter2 != -1) {
-                    if (y8950->counter2-- == 0) {
-                        if (OPLTimerOver(y8950->opl, 1)) {
-                            y8950->counter2 = y8950->timer2;
-                        }
-                    }
-                }
-            }
-        }
+        y8950->timerValue2 = count;
     }
 }

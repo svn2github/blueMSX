@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:15 $
+** $Date: 2005-01-03 06:13:00 $
 **
 ** Author: Daniel Vik
 **
@@ -173,6 +173,7 @@ typedef struct {
 typedef UInt8 (*R800ReadCb)(void*, UInt16);
 typedef void  (*R800WriteCb)(void*, UInt16, UInt8);
 typedef void  (*R800PatchCb)(void* ref, CpuRegs*);
+typedef void  (*R800TimerCb)(void* ref);
 
 
 /*****************************************************
@@ -191,7 +192,6 @@ typedef void  (*R800PatchCb)(void* ref, CpuRegs*);
 #define Z_FLAG      0x40
 #define S_FLAG      0x80
 
-
 /*****************************************************
 ** R800
 **
@@ -200,28 +200,32 @@ typedef void  (*R800PatchCb)(void* ref, CpuRegs*);
 */
 typedef struct
 {
-    SystemTime  systemTime;         /* Current system time             */
-    UInt32      vdpTime;            /* Time of last access to MSX vdp  */
-    UInt16      cachePage;          /* Current page in cache           */
-    CpuRegs     regs;               /* Active register bank            */
-    UInt32      delay[32];          /* Instruction timing table        */
-    UInt8       dataBus;            /* Current value on the data bus   */
-    int         intState;           /* Sate of interrupt line          */
-    int         nmiState;           /* Current NMI state               */
+    SystemTime    systemTime;       /* Current system time             */
+    UInt32        vdpTime;          /* Time of last access to MSX vdp  */
+    UInt16        cachePage;        /* Current page in cache           */
+    CpuRegs       regs;             /* Active register bank            */
+    UInt32        delay[32];        /* Instruction timing table        */
+    UInt8         dataBus;          /* Current value on the data bus   */
+    int           intState;         /* Sate of interrupt line          */
+    int           nmiState;         /* Current NMI state               */
 
-    CpuMode     cpuMode;            /* Current CPU mode                */
-    CpuMode     oldCpuMode;         /* CPU mode before CPU switch      */
-    CpuRegs     regBanks[2];        /* Z80 and R800 register banks     */
+    CpuMode       cpuMode;          /* Current CPU mode                */
+    CpuMode       oldCpuMode;       /* CPU mode before CPU switch      */
+    CpuRegs       regBanks[2];      /* Z80 and R800 register banks     */
 
-    UInt32      frequencyZ80;       /* Frequency of Z80 (in Hz)        */
-    UInt32      frequencyR800;      /* Frequency of R800 (in Hz)       */
+    UInt32        frequencyZ80;     /* Frequency of Z80 (in Hz)        */
+    UInt32        frequencyR800;    /* Frequency of R800 (in Hz)       */
 
-    R800ReadCb  readMemory;         /* Callback functions for reading  */
-    R800WriteCb writeMemory;        /* and writing memory and IO ports */
-    R800ReadCb  readIoPort;
-    R800WriteCb writeIoPort;
-    R800PatchCb patch;
-    void*       ref;                /* User defined pointer which is   */
+    int           terminate;        /* Termination flag                */
+    SystemTime    timeout;          /* User scheduled timeout          */
+
+    R800ReadCb    readMemory;       /* Callback functions for reading  */
+    R800WriteCb   writeMemory;      /* and writing memory and IO ports */
+    R800ReadCb    readIoPort;
+    R800WriteCb   writeIoPort;
+    R800PatchCb   patch;
+    R800TimerCb   timerCb;
+    void*         ref;              /* User defined pointer which is   */
                                     /* passed to the callbacks         */
 } R800;
 
@@ -239,6 +243,7 @@ typedef struct
 **      writeIoPort - Function called on write access to I/O ports
 **      patch       - Function called when the patch instruction ED FE
 **                    is executed. 
+**      timerCb     - Function called on user scheduled timeouts
 **      ref         - User defined reference that will be passed to the
 **                    callbacks.
 **
@@ -248,7 +253,8 @@ typedef struct
 */
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
-                 R800PatchCb patch, void* ref);
+                 R800PatchCb patch,     R800TimerCb timerCb,
+                 void* ref);
 
 /************************************************************************
 ** r800Destroy
@@ -370,6 +376,18 @@ void r800SetDataBus(R800* r800, UInt8 value);
 /************************************************************************
 ** r800Execute
 **
+** Executes CPU instructions until the r800StopExecution function is
+** called.
+**
+** Arguments:
+**      r800        - Pointer to an R800 object
+*************************************************************************
+*/
+void r800Execute(R800* r800);
+
+/************************************************************************
+** r800ExecuteUntil
+**
 ** Executes CPU instructions until endTime has passed.
 **
 ** Arguments:
@@ -378,7 +396,7 @@ void r800SetDataBus(R800* r800, UInt8 value);
 **                    function
 *************************************************************************
 */
-void r800Execute(R800* r800, UInt32 endTime);
+void r800ExecuteUntil(R800* r800, UInt32 endTime);
 
 /************************************************************************
 ** r800ExecuteInstruction
@@ -390,6 +408,9 @@ void r800Execute(R800* r800, UInt32 endTime);
 *************************************************************************
 */
 void r800ExecuteInstruction(R800* r800);
+
+void r800StopExecution(R800* r800);
+void r800SetTimeoutAt(R800* r800, SystemTime time);
 
 /************************************************************************
 ** r800GetSystemTime

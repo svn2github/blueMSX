@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:48:48 $
+** $Date: 2005-01-03 06:12:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,7 +58,7 @@ UInt8* spritesLine(int line) {
 
     idx = line;
 
-    line -= firstLine - firstLineOffset;
+    line -= firstLine;
 
     bufIndex = line & 1;
 
@@ -212,7 +212,7 @@ UInt8* colorSpritesLine(int line) {
 
     idx = line;
 
-    line -= firstLine - firstLineOffset;
+    line -= firstLine;
 
     bufIndex = line & 1;
     

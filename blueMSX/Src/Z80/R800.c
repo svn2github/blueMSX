@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2004-12-21 09:08:54 $
+** $Date: 2005-01-03 06:13:00 $
 **
 ** Author: Daniel Vik
 **
@@ -5451,6 +5451,9 @@ static void writeIoPortDummy(void* ref, UInt16 address, UInt8 value) {
 static void  patchDummy(void* ref, CpuRegs* regs) {
 }
 
+static void  timerCbDummy(void* ref, CpuRegs* regs) {
+}
+
 static void r800InitTables() {
     int i;
 
@@ -5605,7 +5608,8 @@ static void r800SwitchCpu(R800* r800) {
 
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
                 R800ReadCb readIoPort, R800WriteCb writeIoPort, 
-                R800PatchCb patch, void* ref)
+                 R800PatchCb patch,     R800TimerCb timerCb,
+                 void* ref)
 {
     R800* r800 = calloc(1, sizeof(R800));
     r800->readMemory  = readMemory  ? readMemory  : readMemoryDummy;
@@ -5613,11 +5617,13 @@ R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
     r800->readIoPort  = readIoPort  ? readIoPort  : readIoPortDummy;
     r800->writeIoPort = writeIoPort ? writeIoPort : writeIoPortDummy;
     r800->patch       = patch       ? patch       : patchDummy;
+    r800->timerCb     = timerCb     ? timerCb     : timerCbDummy;
     r800->ref         = ref;
 
     r800->frequencyZ80  = 3579545;
     r800->frequencyR800 = 7159090;
 
+    r800->terminate  = 0;
     r800->systemTime = 0;
     r800->cpuMode    = -1;
     r800->oldCpuMode = -1;
@@ -5744,7 +5750,96 @@ void r800SetMode(R800* r800, CpuMode mode) {
     r800->cpuMode    = mode;
 }
 
+void r800StopExecution(R800* r800) {
+    r800->terminate = 1;
+}
+
+void r800SetTimeoutAt(R800* r800, SystemTime time)
+{
+    r800->timeout = time;
+}
+
 void r800Execute(R800* r800, UInt32 endTime) {
+    static SystemTime lastRefreshTime = 0;
+
+    while (!r800->terminate) {
+        UInt16 address;
+        int iff1 = 0;
+
+        if (r800->timerCb != NULL && r800->timeout &&
+            (Int32)(r800->timeout - r800->systemTime) <= 0) 
+        {
+            r800->timerCb(r800->ref);
+        }
+
+        if (r800->oldCpuMode != -1) {
+            r800SwitchCpu(r800);
+        }
+
+        if (r800->cpuMode == CPU_R800) {
+            if (r800->systemTime - lastRefreshTime > 222 * 3) {
+                lastRefreshTime = r800->systemTime;
+                r800->systemTime += 12 * 3;
+            }
+        }
+
+        executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
+
+        if (!r800->regs.halt) { 
+            iff1 = r800->regs.iff1 >> 1;
+            r800->regs.iff1 >>= iff1;
+        }
+
+        if (r800->nmiState != INT_EDGE && (iff1 || r800->intState != INT_HIGH || !r800->regs.iff1)) {
+            continue;
+        }
+
+        if (r800->regs.halt) { 
+            r800->regs.PC.W++;
+            r800->regs.halt = 0; 
+        }
+
+        /* If it is NMI... */
+        if (r800->nmiState == INT_EDGE) {
+            r800->nmiState = INT_HIGH;
+	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
+	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
+            r800->regs.iff2 = r800->regs.iff1;
+            r800->regs.iff1 = 0;
+            r800->regs.PC.W = 0x0066;
+            M1(r800);
+            delayNmi(r800);
+            continue;
+        }
+
+        r800->regs.iff1 = 0;
+        r800->regs.iff2 = 0;
+
+        switch (r800->regs.im) {
+        case 0:
+            delayIm(r800);
+            executeInstruction(r800, r800->dataBus);
+            break;
+
+        case 1:
+            delayIm(r800);
+            executeInstruction(r800, 0xff);
+            break;
+
+        case 2:
+            address = r800->dataBus | ((Int16)r800->regs.I << 8);
+	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
+	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
+            r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
+            r800->regs.PC.B.h = r800->readMemory(r800->ref, address);
+            M1(r800);
+            delayIm2(r800);
+            break;
+        }
+    }
+}
+
+void r800ExecuteUntil(R800* r800, UInt32 endTime) {
     static SystemTime lastRefreshTime = 0;
 
     while ((Int32)(endTime - r800->systemTime) > 0) {
@@ -5836,7 +5931,8 @@ void r800ExecuteInstruction(R800* r800) {
         iff1 = r800->regs.iff1 >> 1;
         r800->regs.iff1 >>= iff1;
     }
-    if (iff1 || r800->intState != INT_HIGH || (r800->nmiState != INT_EDGE && !r800->regs.iff1)) {
+
+    if (r800->nmiState != INT_EDGE && (iff1 || r800->intState != INT_HIGH || !r800->regs.iff1)) {
         return;
     }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2005-01-03 06:12:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,9 +47,6 @@ UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort);
 void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value);
 void moonsoundLoadState(Moonsound* moonsound);
 void moonsoundSaveState(Moonsound* moonsound);
-
-void moonsoundTick(UInt32 elapsedTime);
-void moonsoundSetOversampling(int Oversampling);
 
 #ifdef __cplusplus
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2005-01-03 06:12:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@ extern "C" {
  
 struct Moonsound {
     Moonsound() : opl3latch(0), opl4latch(0),
-        timer1(0), timer2(0), timerRef1(0xff), timerRef2(0xff) {
+        timerValue1(0), timerValue2(0), timerRef1(0xff), timerRef2(0xff) {
         memset(defaultBuffer, 0, sizeof(defaultBuffer));
     }
 
@@ -53,33 +53,54 @@ struct Moonsound {
     YMF262* ymf262;
     Int32  buffer[BUFFER_SIZE];
     Int32  defaultBuffer[BUFFER_SIZE];
-    UInt32 timer1;
-    UInt32 counter1;
+    BoardTimer* timer1;
+    BoardTimer* timer2;
+    UInt32 timeout1;
+    UInt32 timeout2;
+    UInt32 timerValue1;
+    UInt32 timerValue2;
+    UInt32 timerStarted1;
+    UInt32 timerStarted2;
     UInt8  timerRef1;
-    UInt32 timer2;
-    UInt32 counter2;
     UInt8  timerRef2;
     int opl3latch;
     UInt8 opl4latch;
 };
 
-Moonsound* theMoonsound = NULL;
+
+void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef);
+
+static void onTimeout1(void* ref, UInt32 time)
+{
+    Moonsound* moonsound = (Moonsound*)ref;
+
+    moonsoundTimerStart(moonsound, 1, 1, moonsound->timerRef1);
+    moonsound->ymf262->callback(moonsound->timerRef1);
+}
+
+static void onTimeout2(void* ref, UInt32 time)
+{
+    Moonsound* moonsound = (Moonsound*)ref;
+
+    moonsoundTimerStart(moonsound, 4, 1, moonsound->timerRef1);
+    moonsound->ymf262->callback(moonsound->timerRef1);
+}
 
 void moonsoundTimerSet(void* ref, int timer, int count)
 {
     Moonsound* moonsound = (Moonsound*)ref;
 
     if (timer == 1) {
-        if (moonsound->counter1 != -1) {
-            moonsound->counter1 = count;
+        moonsound->timerValue1 = count;
+        if (moonsound->timerStarted1) {
+            moonsoundTimerStart(moonsound, timer, 1, moonsound->timerRef1);
         }
-        moonsound->timer1 = count;
     }
     else {
-        if (moonsound->counter2 != -1) {
-            moonsound->counter2 = count;
+        moonsound->timerValue2 = count;
+        if (moonsound->timerStarted2) {
+            moonsoundTimerStart(moonsound, timer, 1, moonsound->timerRef2);
         }
-        moonsound->timer2 = count;
     }
 }
 
@@ -89,11 +110,25 @@ void moonsoundTimerStart(void* ref, int timer, int start, UInt8 timerRef)
 
     if (timer == 1) {
         moonsound->timerRef1 = timerRef;
-        moonsound->counter1  = start ? moonsound->timer1 : (UInt32)-1;
+        moonsound->timerStarted1 = start;
+        if (start) {
+            moonsound->timeout1 = boardSystemTime() + boardFrequency() / 12435 * moonsound->timerValue1;
+            boardTimerAdd(moonsound->timer1, moonsound->timeout1);
+        }
+        else {
+            boardTimerRemove(moonsound->timer1);
+        }
     }
     else {
         moonsound->timerRef2 = timerRef;
-        moonsound->counter2  = start ? moonsound->timer2 : (UInt32)-1;
+        moonsound->timerStarted2 = start;
+        if (start) {
+            moonsound->timeout2 = boardSystemTime() + boardFrequency() / 12435 * moonsound->timerValue2;
+            boardTimerAdd(moonsound->timer2, moonsound->timeout2);
+        }
+        else {
+            boardTimerRemove(moonsound->timer2);
+        }
     }
 }
 
@@ -105,20 +140,23 @@ void moonsoundDestroy(Moonsound* moonsound)
 
     delete moonsound->ymf262;
     delete moonsound->ymf278;
-
-    theMoonsound = NULL;
+    
+    boardTimerDestroy(moonsound->timer1);
+    boardTimerDestroy(moonsound->timer2);
 }
 
 void moonsoundSaveState(Moonsound* moonsound)
 {
     SaveState* state = saveStateOpenForWrite("moonsound");
 
-    saveStateSet(state, "timer1",    moonsound->timer1);
-    saveStateSet(state, "counter1",  moonsound->counter1);
-    saveStateSet(state, "timerRef1", moonsound->timerRef1);
-    saveStateSet(state, "timer2",    moonsound->timer2);
-    saveStateSet(state, "counter2",  moonsound->counter2);
-    saveStateSet(state, "timerRef2", moonsound->timerRef2);
+    saveStateSet(state, "timerValue1",    moonsound->timerValue1);
+    saveStateSet(state, "timeout1",       moonsound->timeout1);
+    saveStateSet(state, "timerStarted1",  moonsound->timerStarted1);
+    saveStateSet(state, "timerRef1",      moonsound->timerRef1);
+    saveStateSet(state, "timerValue2",    moonsound->timerValue2);
+    saveStateSet(state, "timeout2",       moonsound->timeout2);
+    saveStateSet(state, "timerStarted2",  moonsound->timerStarted2);
+    saveStateSet(state, "timerRef2",      moonsound->timerRef2);
     saveStateSet(state, "opl3latch", moonsound->opl3latch);
     saveStateSet(state, "opl4latch", moonsound->opl4latch);
 
@@ -132,12 +170,14 @@ void moonsoundLoadState(Moonsound* moonsound)
 {
     SaveState* state = saveStateOpenForRead("moonsound");
 
-    moonsound->timer1    =        saveStateGet(state, "timer1",    0);
-    moonsound->counter1  =        saveStateGet(state, "counter1",  0);
-    moonsound->timerRef1 = (UInt8)saveStateGet(state, "timerRef1", 0);
-    moonsound->timer2    =        saveStateGet(state, "timer2",    0);
-    moonsound->counter2  =        saveStateGet(state, "counter2",  0);
-    moonsound->timerRef2 = (UInt8)saveStateGet(state, "timerRef2", 0);
+    moonsound->timerValue1    =        saveStateGet(state, "timerValue1",    0);
+    moonsound->timeout1       =        saveStateGet(state, "timeout1",       0);
+    moonsound->timerStarted1  =        saveStateGet(state, "timerStarted1",  0);
+    moonsound->timerRef1      = (UInt8)saveStateGet(state, "timerRef1",      0);
+    moonsound->timerValue2    =        saveStateGet(state, "timerValue2",    0);
+    moonsound->timeout2       =        saveStateGet(state, "timeout2",       0);
+    moonsound->timerStarted2  =        saveStateGet(state, "timerStarted2",  0);
+    moonsound->timerRef2      = (UInt8)saveStateGet(state, "timerRef2",      0);
     moonsound->opl3latch =        saveStateGet(state, "opl3latch", 0);
     moonsound->opl4latch = (UInt8)saveStateGet(state, "opl4latch", 0);
 
@@ -145,16 +185,27 @@ void moonsoundLoadState(Moonsound* moonsound)
 
     moonsound->ymf262->loadState();
     moonsound->ymf278->loadState();
+    
+    if (moonsound->timerStarted1) {
+        boardTimerAdd(moonsound->timer1, moonsound->timeout1);
+    }
+
+    if (moonsound->timerStarted2) {
+        boardTimerAdd(moonsound->timer2, moonsound->timeout2);
+    }
 }
 
 void moonsoundReset(Moonsound* moonsound)
 {
     UInt32 systemTime = boardSystemTime();
 
-    moonsound->counter1 = (UInt32)-1;
-    moonsound->counter2 = (UInt32)-1;
+    moonsound->timerStarted1 = (UInt32)-1;
+    moonsound->timerStarted2 = (UInt32)-1;
     moonsound->ymf262->reset(systemTime);
     moonsound->ymf278->reset(systemTime);
+
+    moonsoundTimerStart(moonsound, 1, 0, moonsound->timerRef1);
+    moonsoundTimerStart(moonsound, 4, 0, moonsound->timerRef2);
 }
 
 static Int32* sync(void* ref, UInt32 count) 
@@ -179,27 +230,6 @@ static Int32* sync(void* ref, UInt32 count)
     }
 
     return moonsound->buffer;
-}
-
-void moonsoundTick(UInt32 elapsedTime) 
-{
-    if (theMoonsound != NULL) {
-        while (elapsedTime--) {
-            if (theMoonsound->counter1 != -1) {
-                if (theMoonsound->counter1-- == 0) {
-                    theMoonsound->counter1 = theMoonsound->timer1;
-                    theMoonsound->ymf262->callback(theMoonsound->timerRef1);
-                }
-            }
-
-            if (theMoonsound->counter2 != -1) {
-                if (theMoonsound->counter2-- == 0) {
-                    theMoonsound->counter2 = theMoonsound->timer2;
-                    theMoonsound->ymf262->callback(theMoonsound->timerRef2);
-                }
-            }
-        }
-    }
 }
 
 UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
@@ -264,8 +294,11 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
     UInt32 systemTime = boardSystemTime();
 
     moonsound->mixer = mixer;
-    moonsound->counter1 = (UInt32)-1;
-    moonsound->counter2 = (UInt32)-1;
+    moonsound->timerStarted1 = 0;
+    moonsound->timerStarted2 = 0;
+
+    moonsound->timer1 = boardTimerCreate(onTimeout1, moonsound);
+    moonsound->timer2 = boardTimerCreate(onTimeout2, moonsound);
 
     moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, sync, moonsound);
 
@@ -276,8 +309,6 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
     moonsound->ymf278 = new YMF278(0, sramSize, romData, romSize, systemTime);
     moonsound->ymf278->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
     moonsound->ymf278->setVolume(32767);
-    
-    theMoonsound = moonsound;
 
     return moonsound;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-02 08:22:09 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "Switches.h"
 #include "sramLoader.h"
 #include "JoystickIO.h"
+#include "AudioMixer.h"
 #include "AY8910.h"
 #include "KeyClick.h"
 #include "audioMixer.h"
@@ -125,15 +126,12 @@ void msxLoadState();
 
 // Hardware
 static Machine*        msxMachine;
+static Mixer*          msxMixer;
 static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
 static R800*           r800;
 static RTC*            rtc;
 static JoystickIO*     joyIO;
-static UInt32          nextSyncTime;
-static UInt32          loopTime;
-static int             syncCount;
-static int             SyncPeriod;
 UInt32                 MsxFrequency;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
@@ -144,7 +142,6 @@ static int             useMegaRam;
 static int             useFmPac;
 static RomType         currentRomType[2];
 static int			   pendingInt;
-static UInt32          timerRefFrag;
 static UInt32          z80Frequency;
 static int             traceEnabled;
 
@@ -713,6 +710,35 @@ void msxReset()
     deviceManagerReset();
 }
 
+void msxSetCpuTimeout(UInt32 time)
+{
+    r800SetTimeoutAt(r800, time);
+}
+
+static void cpuTimeout(void* ref)
+{
+    boardTimerCheckTimeout();
+}
+
+static void onSync(void* ref, UInt32 time)
+{
+    BoardTimer* timer = (BoardTimer*)ref;
+    int execTime = 0;
+
+    while (execTime == 0) {
+        execTime = WaitForSync();
+
+        if (execTime < 0) {
+            r800StopExecution(r800);
+            return;
+        }
+    }
+
+    mixerSync(msxMixer);
+
+    boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFrequency() / 1000));
+}
+
 int msxRun(Machine* machine, 
            DeviceInfo* devInfo,
            Mixer* mixer,
@@ -722,16 +748,12 @@ int msxRun(Machine* machine,
     int success;
     int i;
 
+    msxMixer     = mixer;
     msxMachine   = machine;
     msxDevInfo   = devInfo;
 
-    SyncPeriod   = 0;
     MsxFrequency = frequency;
 
-    timerRefFrag  = 0;
-    nextSyncTime  = 0;
-    loopTime      = 0;
-    syncCount     = 0;
 	pendingInt	  = 0;
 
     // If we're running from a state file, use its machine
@@ -743,10 +765,12 @@ int msxRun(Machine* machine,
 
     deviceManagerCreate();
 
+    boardInit(0);
+
     ioPortReset();
     ramMapperIoCreate();
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, NULL);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
     r800Reset(r800, 0);
     mixerReset(mixer);
 
@@ -787,9 +811,11 @@ int msxRun(Machine* machine,
     diskEnable(1, machine->fdc.count > 1);
 
     if (loadState) {
+        r800LoadState(r800);
+        boardInit(boardSystemTime());
+
         deviceManagerLoadState();
         slotLoadState();
-        r800LoadState(r800);
         if (joyIO != NULL) {
             joystickIoLoadState(joyIO);
         }
@@ -802,40 +828,13 @@ int msxRun(Machine* machine,
     }
 
     if (success) {
-        int execTime = 0;
-        while (execTime >= 0) {            
-            while (syncCount < SyncPeriod) {
-                UInt64 elapsed;
-                UInt32 elapsedTime;
+        BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        
+        boardTimerAdd(timer, boardSystemTime() + 1);
 
-                syncCount += 1000 * loopTime;
-                nextSyncTime += loopTime;
-
-                // Run 12.5 KHz clocks for MSX-AUDIO and Moonsound
-                elapsed = 12435 * (UInt64)loopTime + timerRefFrag;
-                elapsedTime = (UInt32)(elapsed / boardFrequency());
-                timerRefFrag = (UInt32)(elapsed % boardFrequency());
-                if (elapsedTime) {
-                    moonsoundTick(elapsedTime);
-                    y8950Tick(elapsedTime); 
-                }
-
-                if (traceEnabled) {
-                    r800ExecuteTrace(r800, nextSyncTime);
-                }
-                else {
-                    r800Execute(r800, nextSyncTime);
-                }
-                loopTime = vdpRefreshLine(nextSyncTime);
-            }
-
-            execTime = WaitForSync();
-            syncCount -= SyncPeriod;
-            SyncPeriod = execTime * MsxFrequency * 6; // FIXME
-            mixerSync(mixer);
-        }
+        r800Execute(r800);
     }
-
+        
     msxTraceDisable();
 
     rtcDestroy(rtc);
@@ -1055,12 +1054,7 @@ void msxSaveState()
     SaveState* state = saveStateOpenForWrite("msx");
     DeviceInfo* di = msxDevInfo;
 
-    saveStateSet(state, "nextSyncTime",    nextSyncTime);
-    saveStateSet(state, "loopTime",        loopTime);
-    saveStateSet(state, "syncCount",       syncCount);
-    saveStateSet(state, "SyncPeriod",      SyncPeriod);
     saveStateSet(state, "pendingInt",      pendingInt);
-    saveStateSet(state, "timerRefFrag",    timerRefFrag);
     saveStateSet(state, "z80Frequency",    z80Frequency);
     
     saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
@@ -1107,12 +1101,7 @@ void msxLoadState()
     SaveState* state = saveStateOpenForRead("msx");
     DeviceInfo* di = msxDevInfo;
 
-    nextSyncTime        = saveStateGet(state, "nextSyncTime",    0);
-    loopTime            = saveStateGet(state, "loopTime",        0);
-    syncCount           = saveStateGet(state, "syncCount",       0);
-    SyncPeriod          = saveStateGet(state, "SyncPeriod",      0);
     pendingInt          = saveStateGet(state, "pendingInt",      0);
-    timerRefFrag        = saveStateGet(state, "timerRefFrag",    0);
     z80Frequency        = saveStateGet(state, "z80Frequency",    0);
 
     di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);

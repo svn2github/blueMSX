@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-02 08:22:09 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,6 +71,7 @@ static int    (*useFmPac)()                                   = msxUseFmPac;
 static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartridge;
 static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
 static int    (*changeCassette)(char*, const char*)           = msxChangeCassette;
+static void   (*setCpuTimeout)(UInt32)                        = msxSetCpuTimeout;
 
 static void boardSetType(BoardType type)
 {
@@ -101,6 +102,7 @@ static void boardSetType(BoardType type)
         changeCartridge = msxChangeCartridge;
         changeDiskette  = msxChangeDiskette;
         changeCassette  = msxChangeCassette;
+        setCpuTimeout   = msxSetCpuTimeout;
         break;
 
     case BOARD_SVI:
@@ -127,6 +129,7 @@ static void boardSetType(BoardType type)
         changeCartridge = sviChangeCartridge;
         changeDiskette  = sviChangeDiskette;
         changeCassette  = sviChangeCassette;
+        setCpuTimeout   = sviSetCpuTimeout;
         break;
 
     case BOARD_COLECO:
@@ -153,6 +156,7 @@ static void boardSetType(BoardType type)
         changeCartridge = colecoChangeCartridge;
         changeDiskette  = colecoChangeDiskette;
         changeCassette  = colecoChangeCassette;
+        setCpuTimeout   = colecoSetCpuTimeout;
         break;
     }
     
@@ -337,6 +341,135 @@ int boardGetCassetteInserted()
 {
     return cassetteInserted;
 }
+
+/////////////////////////////////////////////////////////////
+// Board timer
+
+typedef struct BoardTimer {
+    BoardTimer*  next;
+    BoardTimer*  prev;
+    BoardTimerCb callback;
+    void*        ref;
+    UInt32       timeout;
+};
+
+BoardTimer* timerList = NULL;
+UInt32 timeAnchor;
+
+#define MAX_TIME  (2 * 1368 * 313)
+#define TEST_TIME 0x7fffffff
+
+BoardTimer* boardTimerCreate(BoardTimerCb callback, void* ref)
+{
+    BoardTimer* timer = malloc(sizeof(BoardTimer));
+
+    timer->next     = timer;
+    timer->prev     = timer;
+    timer->callback = callback;
+    timer->ref      = ref ? ref : timer;
+    timer->timeout  = 0;
+
+    return timer;
+}
+
+void boardTimerDestroy(BoardTimer* timer)
+{
+    boardTimerRemove(timer);
+
+    free(timer);
+}
+
+void boardTimerAdd(BoardTimer* timer, UInt32 timeout)
+{
+    UInt32 currentTime = boardSystemTime();
+    BoardTimer* refTimer;
+    BoardTimer* next = timer->next;
+    BoardTimer* prev = timer->prev;
+
+    // Remove current timer
+    next->prev = prev;
+    prev->next = next;
+
+    timerList->timeout = currentTime + TEST_TIME;
+
+    refTimer = timerList->next;
+
+    if (timeout - timeAnchor - TEST_TIME < currentTime - timeAnchor - TEST_TIME) {
+        timer->next = timer;
+        timer->prev = timer;
+        
+        // Time has already expired
+        return;
+    }
+
+    while (timeout - timeAnchor > refTimer->timeout - timeAnchor) {
+        refTimer = refTimer->next;
+    }
+
+    timer->timeout       = timeout;
+    timer->next          = refTimer;
+    timer->prev          = refTimer->prev;
+    refTimer->prev->next = timer;
+    refTimer->prev       = timer;
+
+    setCpuTimeout(timerList->next->timeout);
+}
+
+void boardTimerRemove(BoardTimer* timer)
+{
+    BoardTimer* next = timer->next;
+    BoardTimer* prev = timer->prev;
+
+    next->prev = prev;
+    prev->next = next;
+
+    timer->next = timer;
+    timer->prev = timer;
+}
+
+UInt32 boardTimerCheckTimeout()
+{
+    UInt32 currentTime = boardSystemTime();
+
+    timerList->timeout = currentTime + MAX_TIME;
+
+    for (;;) {
+        BoardTimer* timer = timerList->next;
+        if (timer == timerList) {
+            return currentTime + 1000;
+        }
+        if (timer->timeout - timeAnchor > currentTime - timeAnchor) {
+            break;
+        }
+
+        boardTimerRemove(timer);
+        timer->callback(timer->ref, timer->timeout);
+    }
+
+    timeAnchor = currentTime;    
+
+    setCpuTimeout(timerList->next->timeout);
+
+    return timerList->next->timeout - currentTime;
+}
+
+void boardInit(UInt32 systemTime)
+{
+    timeAnchor = systemTime;
+    if (timerList != NULL) {
+        for (;;) {
+            BoardTimer* timer = timerList->next;
+            if (timer == timerList) {
+                break;
+            }
+            boardTimerRemove(timer);
+        }
+
+        free(timerList);
+    }
+    timerList = boardTimerCreate(NULL, NULL);
+}
+
 
 /////////////////////////////////////////////////////////////
 // Not board specific stuff....

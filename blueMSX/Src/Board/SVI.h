@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-28 05:09:06 $
+** $Date: 2005-01-03 06:12:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,8 @@ int  sviGetRefreshRate();
 void sviSetInt(UInt32 irq);
 void sviClearInt(UInt32 irq);
 UInt32 sviGetInt();
+
+void sviSetCpuTimeout(UInt32 time);
 
 void sviTraceEnable(const char* fileName);
 void sviTraceDisable();
