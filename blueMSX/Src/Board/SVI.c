@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-18 11:48:40 $
+** $Date: 2005-01-19 14:31:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,15 +162,15 @@ void sviMemWrite(void* ref, UInt16 address, UInt8 value)
     if ((crtcMemBankStatus()) && (address & 0xf000) == 0xf000)
     {
         crtcMemWrite(address & 0xfff, value);
-#ifdef _DEBUG
-        address &= 0xfff;
-        if (address < 0x800) {
-            if (value < 0x5f) {
-                value += 0x20;
-                putchar(value);
-            }
-        }
-#endif
+//#ifdef _DEBUG
+//        address &= 0xfff;
+//        if (address < 0x800) {
+//            if (value < 0x5f) {
+//                value += 0x20;
+//                putchar(value);
+//            }
+//        }
+//#endif
     }
     else
         slotWrite(&ref, address, value);
@@ -318,7 +318,7 @@ static int sviInitMachine(Machine* machine,
 
     /* Initialize VDP */
     sviVramSize = machine->video.vramSize;
-    vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
+//    vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     /* Initialize memory */
     for (i = 0; i < 4; i++) {
@@ -412,6 +412,8 @@ static int sviInitMachine(Machine* machine,
 
     sviMemSetBank(0xDF);
     ledSetCapslock(0);
+
+vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     return success;
 }
