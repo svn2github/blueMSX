@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-05 06:39:37 $
+** $Date: 2005-04-06 20:47:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,6 @@
 // - Dynamic config of baud rate, data bits, etc.
 // - Receive buffers
 #include "I8250.h"
-#include "DeviceManager.h"
 #include "SaveState.h"
 #include <stdlib.h>
 
@@ -60,10 +59,55 @@ typedef enum
 typedef enum { I8250REG_RBR, I8250REG_THR, I8250REG_DLL, I8250REG_IER, I8250REG_DLM, I8250REG_IIR,
                I8250REG_LCR, I8250REG_MCR, I8250REG_LSR, I8250REG_MSR, I8250REG_SCR } i8250Registers;
 
+
+static int transmitDummy(void* ref, UInt8 value) {
+    return 0;
+}
+
+static int signalDummy(void* ref) {
+    return 0;
+}
+
+static void setDataBitsDummy(void* ref, int value) {
+}
+
+static void setStopBitsDummy(void* ref, int value) {
+}
+
+static void setParityDummy(void* ref, int value) {
+}
+
+static void setRxReadyDummy(void* ref, int status) {
+}
+
+static void setDtrDummy(void* ref, int status) {
+}
+
+static void setRtsDummy(void* ref, int status) {
+}
+
+static int getDtrDummy(void* ref) {
+    return 0;
+}
+
+static int getRtsDummy(void* ref) {
+    return 0;
+}
+
 struct I8250
 {
-    int deviceHandle;
-    int (*transmitCallback)(UInt8 value);
+    I8250Transmit transmit;
+    I8250Signal   signal;
+    I8250Set      setDataBits;
+    I8250Set      setStopBits;
+    I8250Set      setParity;
+    I8250Set      setRxReady;
+    I8250Set      setDtr;
+    I8250Set      setRts;
+    I8250Get      getDtr;
+    I8250Get      getRts;
+    void* ref;
+
     UInt8 reg[11];
 };
 
@@ -77,10 +121,8 @@ void i8250Receive(I8250* i8250, UInt8 value)
 
 static void i8250Transmit(I8250* i8250, UInt8 value)
 {
-    if (i8250->transmitCallback != NULL) {
-        if (i8250->transmitCallback(value))
-            i8250->reg[I8250REG_LSR] &= ~LSR_TRANSMITTER_EMPTY;
-    }
+    if (i8250->transmit(i8250->ref, value))
+        i8250->reg[I8250REG_LSR] &= ~LSR_TRANSMITTER_EMPTY;
 }
 
 UInt8 i8250Read(I8250* i8250, UInt16 port)
@@ -176,21 +218,21 @@ void i8250Write(I8250* i8250, UInt16 port, UInt8 value)
     }
 }
 
-static void i8250SaveState(I8250* uart)
+void i8250SaveState(I8250* uart)
 {
     SaveState* state = saveStateOpenForWrite("i8250");
 
     saveStateClose(state);
 }
 
-static void i8250LoadState(I8250* uart)
+void i8250LoadState(I8250* uart)
 {
     SaveState* state = saveStateOpenForRead("i8250");
 
     saveStateClose(state);
 }
 
-static void i8250Reset(I8250* i8250)
+void i8250Reset(I8250* i8250)
 {
     i8250->reg[I8250REG_IER] = 0;
     i8250->reg[I8250REG_IIR] = 1;
@@ -199,16 +241,30 @@ static void i8250Reset(I8250* i8250)
     i8250->reg[I8250REG_LSR] = 0x60;
 }
 
-static void i8250Destroy(I8250* uart) 
+void i8250Destroy(I8250* uart) 
 {
     free(uart);
 }
 
-I8250* i8250Create(void)
+I8250* i8250Create(I8250Transmit transmit,    I8250Signal   signal,
+                   I8250Set      setDataBits, I8250Set      setStopBits,
+                   I8250Set      setParity,   I8250Set      setRxReady,
+                   I8250Set      setDtr,      I8250Set      setRts,
+                   I8250Get      getDtr,      I8250Get      getRts,
+                   void* ref)
 {
-    DeviceCallbacks callbacks = { i8250Destroy, i8250Reset, i8250SaveState, i8250LoadState };
-
     I8250* i8250 = calloc(1, sizeof(I8250));
+    
+    i8250->transmit    = transmit    ? transmit    : transmitDummy;
+    i8250->signal      = signal      ? signal      : signalDummy;
+    i8250->setDataBits = setDataBits ? setDataBits : setDataBitsDummy;
+    i8250->setStopBits = setStopBits ? setStopBits : setStopBitsDummy;
+    i8250->setParity   = setParity   ? setParity   : setParityDummy;
+    i8250->setRxReady  = setRxReady  ? setRxReady  : setRxReadyDummy;
+    i8250->setDtr      = setDtr      ? setDtr      : setDtrDummy;
+    i8250->setRts      = setRts      ? setRts      : setRtsDummy;
+    i8250->getDtr      = getDtr      ? getDtr      : getDtrDummy;
+    i8250->getRts      = getRts      ? getRts      : getRtsDummy;
 
     return i8250;
 }

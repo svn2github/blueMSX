@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-04-06 20:47:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,8 @@ static void saveState(RomMapperSvi328Rs232* rs232)
     saveStateSet(state, "deviceHandle",  rs232->deviceHandle);
     
     saveStateClose(state);
+    
+    i8250SaveState(rs232->i8250);
 }
 
 static void loadState(RomMapperSvi328Rs232* rs232)
@@ -65,6 +67,8 @@ static void loadState(RomMapperSvi328Rs232* rs232)
     rs232->deviceHandle = (UInt8)saveStateGet(state, "deviceHandle",  0);
 
     saveStateClose(state);
+
+    i8250LoadState(rs232->i8250);
 }
 
 static void destroy(RomMapperSvi328Rs232* rs232)
@@ -92,6 +96,8 @@ static void destroy(RomMapperSvi328Rs232* rs232)
         ioPortUnregister(0x2F);
         break;
     }
+    
+    i8250Destroy(rs232->i8250);
 
     archUartDestroy();
     deviceManagerUnregister(rs232->deviceHandle);
@@ -132,7 +138,7 @@ int romMapperSvi328Rs232Create(Svi328UartConnector connector)
     rs232->deviceHandle = deviceManagerRegister(ROM_SVI328RS232, &callbacks, rs232);
 
     rs232->i8250 = NULL;
-    rs232->i8250 = i8250Create();
+    rs232->i8250 = i8250Create(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, rs232);
 
     rs232->serialLink = archUartCreate(romMapperSvi328Rs232ReceiveCallback);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-03-18 10:09:39 $
+** $Date: 2005-04-06 20:47:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -252,6 +252,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_S1990:       return "S1990";
     case ROM_F4DEVICE:    return "F4 Device Normal";
     case ROM_F4INVERTED:  return "F4 Device Inverted";
+    case ROM_MSXMIDI:     return "MSX-MIDI";
     case ROM_TURBORTIMER: return "Turbo-R Timer";
     case AUDIO_MOONSOUND: return "Moonsound Audio";
     case AUDIO_Y8950:     return "Y8950 Audio";
@@ -347,6 +348,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_S1990:       return "S1990";
     case ROM_F4DEVICE:    return "F4NORMAL";
     case ROM_F4INVERTED:  return "F4INV";
+    case ROM_MSXMIDI:     return "MSX-MIDI";
     case ROM_TURBORTIMER: return "TURBORTMR";
     case AUDIO_MOONSOUND: return "MOONSOUND";
     case AUDIO_Y8950:     return "Y8950";

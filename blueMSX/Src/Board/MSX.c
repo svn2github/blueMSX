@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-03-07 05:32:45 $
+** $Date: 2005-04-06 20:46:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 #include "MsxPPI.h"
 #include "Board.h"
 #include "RTC.h"
+#include "MSXMidi.h"
 #include "Led.h"
 #include "Switches.h"
 #include "sramLoader.h"
@@ -447,6 +448,11 @@ static int initMachine(Machine* machine,
 
         if (machine->slotInfo[i].romType == ROM_F4DEVICE) {
             success &= romMapperF4deviceCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXMIDI) {
+            success &= MSXMidiCreate();
             continue;
         }
 
