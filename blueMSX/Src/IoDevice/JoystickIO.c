@@ -1,15 +1,11 @@
 /*****************************************************************************
-** File:
-**      JoystickIo.c
-** 
-** Author:
-**      Daniel Vik
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** Description:
-**      Joystick emulation
+** $Revision: 1.4 $
 **
-** More info:   
-**      www.bluemsx.com
+** $Date: 2004-12-05 21:59:13 $
+**
+** More info: www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
