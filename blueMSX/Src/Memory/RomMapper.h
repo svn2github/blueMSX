@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-02 08:22:11 $
+** $Date: 2005-01-09 09:40:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -192,7 +192,7 @@ static char* romTypeToString(RomType romType) {
     case ROM_MOONSOUND:   return "Moonsound";
     case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
-    case ROM_COLECO:      return "ColecoVision Cartridge";
+    case ROM_COLECO:      return "Coleco Cartridge";
     case ROM_SONYHBI55:   return "Sony HBI-55";
     case ROM_MSXAUDIODEV: return "MSX Audio Chip";
     case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
