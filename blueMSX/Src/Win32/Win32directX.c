@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-20 08:15:55 $
+** $Date: 2005-01-25 04:49:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,7 @@ static int     isFullscreen = 0;
 #ifndef DDBLTFAST_DONOTWAIT
 #define DDBLTFAST_DONOTWAIT 0x00000020
 #endif
+
 
 BOOL CALLBACK OneMonitorCallback(HMONITOR hMonitor, HDC hdc, LPRECT prc, LPARAM lParam) {
     HMONITOR *phMonitorFound = (HMONITOR *)lParam;
@@ -419,6 +420,7 @@ int DirectXUpdateWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     return DXE_OK;
 }
 
+
 void DirectXUpdateSurface(Video* pVideo, 
                           int noFlip, int dstPitchY, int dstOffset, int zoom, 
                           int horizontalStretch, int verticalStretch) 
@@ -477,40 +479,40 @@ void DirectXUpdateSurface(Video* pVideo,
     surfaceBuffer = ddsd.lpSurface;
     frameBuffer = frameBufferFlipViewFrame();
 
-    if (frameBuffer != NULL) {
-        if (horizontalStretch) {
-            rcRect.right -= (640 - frameBuffer->maxWidth) / (3 - zoom);
-        }
-        else {
-            int borderWidth = (640 - frameBuffer->maxWidth) / (3 - zoom) / 2;
-            if (borderWidth > 0) {
-                int y;
+    if (frameBuffer == NULL) {
+        frameBuffer = frameBufferGetWhiteNoiseFrame();
+    }
 
-                if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
-                    UInt16* ptr  = surfaceBuffer;
-                    surfaceBuffer = ptr + borderWidth;
-                    for (y = 0; y < height; y++) {
-                        memset(ptr, 0, borderWidth * sizeof(UInt16));
-                        ptr += ddsd.lPitch / sizeof(UInt16);
-                        memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt16));
-                    }
+    if (horizontalStretch) {
+        rcRect.right -= (320 - frameBuffer->maxWidth) * zoom;
+    }
+    else {
+        int borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
+        if (borderWidth > 0) {
+            int y;
+
+            if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
+                UInt16* ptr  = surfaceBuffer;
+                surfaceBuffer = ptr + borderWidth;
+                for (y = 0; y < height; y++) {
+                    memset(ptr, 0, borderWidth * sizeof(UInt16));
+                    ptr += ddsd.lPitch / sizeof(UInt16);
+                    memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt16));
                 }
-                else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
-                    UInt32* ptr  = surfaceBuffer;
-                    surfaceBuffer = ptr + borderWidth;
-                    for (y = 0; y < height; y++) {
-                        memset(ptr, 0, borderWidth * sizeof(UInt32));
-                        ptr += ddsd.lPitch / sizeof(UInt32);
-                        memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt32));
-                    }
+            }
+            else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
+                UInt32* ptr  = surfaceBuffer;
+                surfaceBuffer = ptr + borderWidth;
+                for (y = 0; y < height; y++) {
+                    memset(ptr, 0, borderWidth * sizeof(UInt32));
+                    ptr += ddsd.lPitch / sizeof(UInt32);
+                    memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt32));
                 }
             }
         }
     }
 
-    videoRender(pVideo, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch);
-
-    frameBuffer = frameBufferGetViewFrame();
+    videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, surfaceBuffer, ddsd.lPitch);
 
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);

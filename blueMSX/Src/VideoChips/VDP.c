@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-20 08:15:53 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1049,7 +1049,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->vdpVersion    = version;
     vdp->vdpConnector  = connector;
 
-    vdp->frameBuffer   = frameBufferDataCreate(16 + 512 + 16, 240);
+    vdp->frameBuffer   = frameBufferDataCreate(8 + 256 + 8, 240, 1);
     vdp->videoHandle   = videoManagerRegister(VdpNames[version], vdp->frameBuffer, &videoCallbacks, vdp);
 
     if (sync == VDP_SYNC_AUTO) {

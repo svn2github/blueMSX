@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-01-23 22:05:53 $
+** $Date: 2005-01-25 04:49:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1452,7 +1452,7 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->palMode = VIDEO_PAL_FAST;
     st.pVideo->scanLinesEnable = 0;
     st.pVideo->colorSaturationEnable = 0;
-    videoRender(st.pVideo, 32, zoom, 
+    videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
                 bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
                 -1 * zoom * WIDTH * sizeof(DWORD));
 
@@ -1461,10 +1461,10 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->colorSaturationEnable = colorSaturationEnable;
 
     if (bitmapSize != NULL) {
-        bitmap = ScreenShot2(bmBitsDst, 320 * zoom, (frameBuffer->maxWidth / 2) * zoom, 240 * zoom, bitmapSize);
+        bitmap = ScreenShot2(bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom, bitmapSize);
     }
     else {
-        ScreenShot3(pProperties, bmBitsDst, 320 * zoom, (frameBuffer->maxWidth / 2) * zoom, 240 * zoom);
+        ScreenShot3(pProperties, bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom);
     }
 
     free(bmBitsDst);
@@ -1504,7 +1504,7 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             if (st.bmBitsGDI == 0) {
                 st.bmBitsGDI = malloc(4096 * 4096 * sizeof(UInt32));
             }
-            videoRender(st.pVideo, 32, zoom, 
+            videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
                         (char*)st.bmBitsGDI + zoom * (HEIGHT - 1) * zoom * WIDTH * sizeof(DWORD), 
                         -1 * zoom * WIDTH * sizeof(DWORD));
             st.bmInfo.bmiHeader.biWidth    = zoom * WIDTH;

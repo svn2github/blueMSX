@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-20 08:15:53 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderEx
     }
 
     linePtr = frameBuffer->line[Y].buffer;
-    frameBuffer->line[Y].width = SCREEN_WIDTH * lineSize;
+    frameBuffer->line[Y].doubleWidth = line512;
 
     if (Y > 0) {
         for (offset = lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset--) {

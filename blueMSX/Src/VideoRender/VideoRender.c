@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-24 08:57:16 $
+** $Date: 2005-01-25 04:49:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -163,6 +163,7 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt16);
@@ -175,12 +176,12 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext1;
@@ -217,6 +218,7 @@ static void copySharpPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstP
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -256,6 +258,7 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -268,12 +271,12 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext1;
@@ -310,6 +313,7 @@ static void copySharpPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstP
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -349,6 +353,7 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt16);
@@ -361,12 +366,12 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext1;
@@ -405,6 +410,7 @@ static void copyMonitorPAL_2x2_16(FrameBuffer* frame, void* pDestination, int ds
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -446,6 +452,7 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -458,12 +465,12 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext1;
@@ -502,6 +509,7 @@ static void copyMonitorPAL_2x2_32(FrameBuffer* frame, void* pDestination, int ds
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -545,6 +553,7 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     UInt16* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt16);
@@ -557,14 +566,14 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev2 = colCur;
         UInt32 colPrev1 = colCur;
         UInt32 colNext1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext2;
@@ -617,6 +626,7 @@ static void copyPAL_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -666,6 +676,7 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     UInt32* pDst3       = pDst2;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -678,14 +689,14 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
 
     for (h = 0; h < height; h++) {
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev2 = colCur;
         UInt32 colPrev1 = colCur;
         UInt32 colNext1 = colCur;
         int dstIndex = 0;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             int w;
             for (w = 0; w < width;) {
                 UInt32 colNext2;
@@ -738,6 +749,7 @@ static void copyPAL_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
             }
         }
         else {
+            int width = srcWidth;
             int w;
             for (w = 0; w < width; w++) {
                 UInt32 colNext;
@@ -785,6 +797,7 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)pDestination;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
     
     dstPitch /= (int)sizeof(UInt16);
@@ -793,10 +806,10 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
         UInt32* pSrc = frame->line[h].buffer;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev = colCur;
-        int width = frame->line[h].width;
         int w;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             for (w = 0; w < width; w++) {
                 UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
                 UInt32 colTmp;
@@ -812,6 +825,7 @@ static void copyPAL_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch,
             }
         }
         else {
+            int width = srcWidth;
             for (w = 0; w < width; w++) {
                 UInt32 colNext = pSrc[w];
                 UInt32 colTmp;
@@ -836,6 +850,7 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst        = (UInt32*)pDestination;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -844,10 +859,10 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
         UInt32* pSrc = frame->line[h].buffer;
         UInt32 colCur = pSrc[0];
         UInt32 colPrev = colCur;
-        int width = frame->line[h].width;
         int w;
 
-        if (width > 320) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth * 2;
             for (w = 0; w < width; w++) {
                 UInt32 colNext = ((pSrc[2 * w] + pSrc[2 * w + 1]) >> 1) & YCBCR_MASK;
                 UInt32 colTmp;
@@ -863,6 +878,7 @@ static void copyPAL_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch,
             }
         }
         else {
+            int width = srcWidth;
             for (w = 0; w < width; w++) {
                 UInt32 colNext = pSrc[w];
                 UInt32 colTmp;
@@ -893,6 +909,7 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)pDestination;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt16);
@@ -900,9 +917,9 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     for (h = 0; h < height; h++) {
         UInt16* pOldDst = pDst;
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width / 4;
 
-        if (width > 320 / 4) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
             while (width--) {
                 pDst[0] = pRgbTable16[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
                 pDst[1] = pRgbTable16[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
@@ -913,6 +930,7 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
             }
         }
         else {
+            int width = srcWidth / 4;
             while (width--) {
                 pDst[0] = pRgbTable16[pSrc[0]];
                 pDst[1] = pRgbTable16[pSrc[1]];
@@ -932,6 +950,7 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst        = (UInt32*)pDestination;
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -939,9 +958,9 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     for (h = 0; h < height; h++) {
         UInt32* pOldDst = pDst;
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width / 4;
 
-        if (width > 320 / 4) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
             while (width--) {
                 pDst[0] = pRgbTable32[((pSrc[0] + pSrc[1]) >> 1) & YCBCR_MASK];
                 pDst[1] = pRgbTable32[((pSrc[2] + pSrc[3]) >> 1) & YCBCR_MASK];
@@ -952,6 +971,7 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
             }
         }
         else {
+            int width = srcWidth / 4;
             while (width--) {
                 pDst[0] = pRgbTable32[pSrc[0]];
                 pDst[1] = pRgbTable32[pSrc[1]];
@@ -972,6 +992,7 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt16* pDst1       = (UInt16*)pDestination;
     UInt16* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt16);
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt16);
@@ -986,9 +1007,9 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         UInt16* pDst1old = pDst1;
         UInt16* pDst2old = pDst2;
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width / 4;
 
-        if (width > 320 / 4) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
             while (width--) {
                 UInt16 col1 = pRgbTable16[pSrc[0]];
                 UInt16 col2 = pRgbTable16[pSrc[1]];
@@ -1010,6 +1031,7 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
             }
         }
         else {
+            int width = srcWidth / 4;
             while (width--) {
                 UInt16 col1 = pRgbTable16[pSrc[0]];
                 UInt16 col2 = pRgbTable16[pSrc[1]];
@@ -1050,6 +1072,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt32* pDst1       = (UInt32*)pDestination;
     UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
     int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
     int h;
 
     dstPitch /= (int)sizeof(UInt32);
@@ -1064,9 +1087,9 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         UInt32* pDst1old = pDst1;
         UInt32* pDst2old = pDst2;
         UInt32* pSrc = frame->line[h].buffer;
-        int width = frame->line[h].width / 4;
 
-        if (width > 320 / 4) {
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
             while (width--) {
                 UInt32 col1 = pRgbTable32[pSrc[0]];
                 UInt32 col2 = pRgbTable32[pSrc[1]];
@@ -1088,6 +1111,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
             }
         }
         else {
+            int width = srcWidth / 4;
             while (width--) {
                 UInt32 col1 = pRgbTable32[pSrc[0]];
                 UInt32 col2 = pRgbTable32[pSrc[1]];
@@ -1129,7 +1153,7 @@ static void hq2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)ImgSrc;
     int srcHeight       = frame->lines;
-    int srcWidth        = frame->line[0].width;
+    int srcWidth        = frame->maxWidth;
 	int h;
 
     if (srcWidth == 0) {
@@ -1162,7 +1186,7 @@ static void scale2x_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch,
 	UInt32* pRgbTable32 = (UInt32*)pRgbTable;
     UInt32* pDst        = (UInt32*)ImgSrc;
     int srcHeight       = frame->lines;
-    int srcWidth        = frame->line[0].width;
+    int srcWidth        = frame->maxWidth;
 	int h;
 
     if (srcWidth == 0) {
@@ -1195,7 +1219,7 @@ static void scale2x_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch,
 	UInt16* pRgbTable16 = (UInt16*)pRgbTable;
     UInt16* pDst        = (UInt16*)ImgSrc;
     int srcHeight       = frame->lines;
-    int srcWidth        = frame->line[0].width;
+    int srcWidth        = frame->maxWidth;
 	int h;
 
     if (srcWidth == 0) {
@@ -1534,11 +1558,9 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
     }
 }
 
-void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch)
+void videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, void* pDst, int dstPitch)
 {
     static UInt32 rnd = 51;
-    FrameBuffer* frame = frameBufferGetViewFrame();
-    
     if (frame == NULL) {
         return;
     }
@@ -1576,7 +1598,7 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch
 		case VIDEO_PAL_HQ2X: // Can't do 16bit hq2x so just use scale2x instead
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
                     scale2x_2x2_16(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
                 }
                 else {
@@ -1626,7 +1648,7 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch
             break;
 		case VIDEO_PAL_SCALE2X:
             if (zoom==2) {
-                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
                     scale2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable32);
                 }
                 else {
@@ -1639,7 +1661,7 @@ void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch
             break;
 		case VIDEO_PAL_HQ2X:
             if (zoom==2) {
-                if (frame->line[0].width <= 320 && !frame->interlaceOdd) {
+                if (frame->line[0].doubleWidth == 0 && !frame->interlaceOdd) {
                     hq2x_2x2_32(frame, pDst, dstPitch, 0, pVideo->pRgbTable16);
                 }
                 else {

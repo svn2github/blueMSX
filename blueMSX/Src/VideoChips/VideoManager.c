@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-24 08:45:55 $
+** $Date: 2005-01-25 04:49:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,7 +79,7 @@ int videoManagerGetActive()
             return index;
         }
     }
-    return 0;
+    return -1;
 }
 
 void videoManagerSetActive(int index)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-20 08:15:53 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,7 +107,7 @@ FrameBuffer* frameBufferFlipDrawFrame()
     return frame;
 }
 
-FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight)
+FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
 {
     int i;
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
@@ -117,9 +117,9 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight)
         int j;
 
         frameData->frame[i].maxWidth = maxWidth;
+        frameData->frame[i].lines = maxHeight;
         for (j = 0; j < FB_MAX_LINES; j++) {
-            frameData->frame[i].lines = maxHeight;
-            frameData->frame[i].line[j].width = maxWidth;
+            frameData->frame[i].line[j].doubleWidth = defaultHorizZoom - 1;
         }
     }
 
@@ -144,5 +144,35 @@ FrameBufferData* frameBufferGetActive()
     return currentBuffer;
 }
 
+extern UInt32 videoGetColor(int R, int G, int B);
 
+FrameBuffer* frameBufferGetWhiteNoiseFrame() 
+{
+    static FrameBuffer* frameBuffer = NULL;
+    UInt32 colors[32];
+    static UInt32 r = 13;
+    int y;
+
+    for (y = 0; y < 32; y++) {
+        colors[y] = videoGetColor(y << 3, y << 3, y << 3);
+    }
+
+    if (frameBuffer == NULL) {
+        frameBuffer = calloc(1, sizeof(FrameBuffer));
+        frameBuffer->lines = 240;
+        frameBuffer->maxWidth = 320;
+    }
+
+    for (y = 0; y < 240; y++) {
+        int x;
+        UInt32* buffer = frameBuffer->line[y].buffer;
+        frameBuffer->line[y].doubleWidth = 0;
+        for (x = 0; x < 320; x++) {
+            buffer[x] = colors[r >> 27];
+            r *= 7;
+        }
+    }
+
+    return frameBuffer;
+}
 

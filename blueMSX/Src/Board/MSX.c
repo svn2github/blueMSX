@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-24 03:08:33 $
+** $Date: 2005-01-25 04:49:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -460,7 +460,7 @@ static int initMachine(Machine* machine,
         }
 
         if (machine->slotInfo[i].romType == ROM_MSXPRN) {
-            success &= romMapperMsxPrnCreate();
+//            success &= romMapperMsxPrnCreate();
             continue;
         }
         

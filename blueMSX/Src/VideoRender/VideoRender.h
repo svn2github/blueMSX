@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-20 18:37:45 $
+** $Date: 2005-01-25 04:49:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #define VIDEO_RENDER_H
 
 #include "msxTypes.h"
+#include "FrameBuffer.h"
 
 typedef enum { 
     VIDEO_GREEN, 
@@ -78,7 +79,7 @@ void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
 
 void videoSetPalMode(Video* pVideo, VideoPalMode palMode);
 
-void videoRender(Video* pVideo, int bitDepth, int zoom, void* pDst, int dstPitch);
+void videoRender(Video* pVideo, FrameBuffer* frameBuffer, int bitDepth, int zoom, void* pDst, int dstPitch);
 
 void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma);
 

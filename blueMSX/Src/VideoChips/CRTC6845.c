@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-01-24 08:45:55 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,7 +60,7 @@
 
 #define CHAR_WIDTH           7
 #define MAX_CHARS_PER_LINE  84
-#define DISPLAY_WIDTH       (CHAR_WIDTH * MAX_CHARS_PER_LINE) // NOTE: DISPLAY_WIDTH should *never* exceed 640 !!
+#define DISPLAY_WIDTH       ((CHAR_WIDTH * MAX_CHARS_PER_LINE) / 2) // NOTE: DISPLAY_WIDTH should *never* exceed 320 !!
 #define DISPLAY_HEIGHT      240
 
 extern UInt32 videoGetColor(int R, int G, int B); // FIXME: Do something nicer
@@ -367,7 +367,7 @@ int crtcInit(CrtcConnector connector, char* filename, UInt8* romData, int size)
     // Initialize video frame buffer
     {
         VideoCallbacks videoCallbacks = { crtcVideoEnable, crtcVideoDisable };
-        crtcFrameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+        crtcFrameBufferData = frameBufferDataCreate(DISPLAY_WIDTH, DISPLAY_HEIGHT, 2);
         crtcVideoHandle = videoManagerRegister("CRTC6845", crtcFrameBufferData, &videoCallbacks, NULL);
     }
 

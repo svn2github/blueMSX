@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-01-24 08:45:54 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -881,17 +881,16 @@ void actionMenuTools(int x, int y) {
     archShowMenuTools(x, y);
 }
 
-
 void actionVideoEnableMon1(int value) {
-    videoManagerSetActive(value ? 0 : -1);
+    videoManagerSetActive(videoManagerGetActive() != 0 ? 0 : -1);
 }
 
 void actionVideoEnableMon2(int value) {
-    videoManagerSetActive(value ? 1 : -1);
+    videoManagerSetActive(videoManagerGetActive() != 1 ? 1 : -1);
 }
 
 void actionVideoEnableMon3(int value) {
-    videoManagerSetActive(value ? 2 : -1);
+    videoManagerSetActive(videoManagerGetActive() != 2 ? 2 : -1);
 }
 
 // Actions controlled by value 0 - 100

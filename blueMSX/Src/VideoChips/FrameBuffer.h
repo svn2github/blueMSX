@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-20 08:15:53 $
+** $Date: 2005-01-25 04:49:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 #define FB_MAX_LINES      480
 
 typedef struct {
-    int width;    // Width of line in frame buffer
+    int doubleWidth; // 1 when normal, 2 when 2 src pixels per dest pixel
     UInt32 buffer[FB_MAX_LINE_WIDTH];
 } LineBuffer;
 
@@ -56,7 +56,9 @@ FrameBuffer* frameBufferFlipViewFrame();
 FrameBuffer* frameBufferGetDrawFrame();
 FrameBuffer* frameBufferFlipDrawFrame();
 
-FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight);
+FrameBuffer* frameBufferGetWhiteNoiseFrame();
+
+FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom);
 void frameBufferDataDestroy(FrameBufferData* frameData);
 
 void frameBufferSetActive(FrameBufferData* frameData);

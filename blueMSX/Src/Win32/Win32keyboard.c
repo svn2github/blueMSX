@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-01-15 23:55:34 $
+** $Date: 2005-01-25 04:49:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -645,6 +645,16 @@ static void keyboardHanldeKeypress(int code, int pressed) {
     }
 }
 
+static void keyboardResetKbd() 
+{
+    int i;
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        kbdModifiers = 0;
+        keyboardHanldeKeypress(kbdTable[i], 0);
+    }
+    keyboardReset();
+}
+
 DWORD joystickUpdate()
 {
     int i;
@@ -676,7 +686,11 @@ DWORD joystickUpdate()
 
 void keyboardEnable(int enable)
 {
-    memset(keyStatus, 0, sizeof(keyStatus));
+    int i;
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        keyboardHanldeKeypress(kbdTable[i], 0);
+    }
+
     if (kbdDevice != NULL) {
         IDirectInputDevice_Unacquire(kbdDevice);
         if (enable) {
@@ -693,6 +707,7 @@ int keyboardGetModifiers()
 void keyboardUpdate() 
 { 
     if (!GetFocus()) {
+        keyboardResetKbd();
         return;
     }
 
@@ -792,7 +807,7 @@ int keyboardLoadConfig(char* configName)
     FILE* file;
     int i;
 
-    memset (kbdTable, 0, sizeof(kbdTable));
+    keyboardResetKbd();
 
     if (configName[0] == 0) {
         sprintf(fileName, "%s/%s.config", keyboardConfigDir, DefaultConfigName);
