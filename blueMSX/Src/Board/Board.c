@@ -47,29 +47,29 @@ static char baseDirectory[512];
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
-static void   (*initStatistics)(Machine*);
-static void   (*softReset)();
-static int    (*run)(Machine*, DeviceInfo*, Mixer*, int, int);
-static void   (*setFrequency)(UInt32);
-static UInt32 (*systemTime)();
-static void   (*saveState)();
-static int    (*getRefreshRate)();
-static void   (*setInt)(UInt32);
-static void   (*clearInt)(UInt32);
-static UInt32 (*getInt)();
-static void   (*traceEnable)(const char*);
-static void   (*traceDisable)();
-static int    (*traceGetEnable)();
-static UInt8* (*getRamPage)(page);
-static UInt32 (*getRamSize)();
-static UInt32 (*getVramSize)();
-static int    (*useRom)();
-static int    (*useMegaRom)();
-static int    (*useMegaRam)();
-static int    (*useFmPac)();
-static void   (*changeCartridge)(int, RomType, char*, char*);
-static void   (*changeDiskette)(int, char*, const char*);
-static void   (*changeCassette)(char*, const char*);
+static void   (*initStatistics)(Machine*)                     = msxInitStatistics;
+static void   (*softReset)()                                  = msxReset;
+static int    (*run)(Machine*, DeviceInfo*, Mixer*, int, int) = msxRun;
+static void   (*setFrequency)(UInt32)                         = msxSetFrequency;
+static UInt32 (*systemTime)()                                 = msxSystemTime;
+static void   (*saveState)()                                  = msxSaveState;
+static int    (*getRefreshRate)()                             = msxGetRefreshRate;
+static void   (*setInt)(UInt32)                               = msxSetInt;
+static void   (*clearInt)(UInt32)                             = msxClearInt;
+static UInt32 (*getInt)()                                     = msxGetInt;
+static void   (*traceEnable)(const char*)                     = msxTraceEnable;
+static void   (*traceDisable)()                               = msxTraceDisable;
+static int    (*traceGetEnable)()                             = msxTraceGetEnable;
+static UInt8* (*getRamPage)(page)                             = msxGetRamPage;
+static UInt32 (*getRamSize)()                                 = msxGetRamSize;
+static UInt32 (*getVramSize)()                                = msxGetVramSize;
+static int    (*useRom)()                                     = msxUseRom;
+static int    (*useMegaRom)()                                 = msxUseMegaRom;
+static int    (*useMegaRam)()                                 = msxUseMegaRam;
+static int    (*useFmPac)()                                   = msxUseFmPac;
+static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartridge;
+static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
+static void   (*changeCassette)(char*, const char*)           = msxChangeCassette;
 
 static void boardSetType(BoardType type)
 {
