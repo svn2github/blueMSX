@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-01-20 17:44:00 $
+** $Date: 2005-01-20 22:04:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,8 +134,8 @@ static void crtcRenderVideoBuffer(void)
     if (charHeight > 25)
         charHeight = 25;
 
-    color[0] = videoGetColor(255, 255, 255); // Cen be calculated once. The interface
-    color[1] = videoGetColor(0, 0, 0);       // must be updated (also for the VDP)
+    color[0] = videoGetColor(0, 0, 0);       // Cen be calculated once. The interface
+    color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
 
     crtcFrameBuffer->interlaceOdd = 0; // These fields could be set once only but 
 
@@ -225,6 +225,7 @@ void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
         case CRTC_R14:
         case CRTC_R15:
             crtc.cursor.addressStart = (crtc.registers.reg[CRTC_R14] << 8) | crtc.registers.reg[CRTC_R15];
+            crtc.cursor.blinkstart = crtc.frameCounter - crtc.cursor.blinkrate;
             break;
         }
     }
