@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-19 14:30:36 $
+** $Date: 2005-01-19 20:43:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,10 +153,10 @@ static void crtcRenderVideoBuffer(void) {
                 linePtr[3] = color[(pattern >> 4) & 1];
                 linePtr[4] = color[(pattern >> 3) & 1];
                 linePtr[5] = color[(pattern >> 2) & 1];
-                linePtr[6] = color[(pattern >> 1) & 1];
-                linePtr[7] = color[(pattern >> 0) & 1];
+//                linePtr[6] = color[(pattern >> 1) & 1];
+//                linePtr[7] = color[(pattern >> 0) & 1];
 
-                linePtr += 8;
+                linePtr += 6;
             }
             lineNumber++;
         }
