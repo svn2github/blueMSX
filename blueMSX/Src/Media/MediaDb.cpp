@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-03-01 08:37:00 $
+** $Date: 2005-03-01 23:41:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,7 +84,7 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "Zemina80in1")      return ROM_KOREAN80;
     if (name == "Zemina90in1")      return ROM_KOREAN90;
     if (name == "Zemina126in1")     return ROM_KOREAN126;
-    if (name == "Wizardry")         return ROM_ASCII8;
+    if (name == "Wizardry")         return ROM_ASCII8SRAM;
     if (name == "GameMaster2")      return ROM_GAMEMASTER2;
     if (name == "SuperLodeRunner")  return ROM_LODERUNNER;
     if (name == "R-Type")           return ROM_RTYPE;
@@ -119,8 +119,8 @@ RomType mediaDbStringToType(const std::string name)
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "MSX-AUDIO")    return ROM_MSXAUDIO;
     if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
+    if (name == "National")     return ROM_NATIONAL;
     if (name == "CX5M-MUSIC")   return ROM_UNKNOWN; // not implemented
-    if (name == "National")     return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
 
