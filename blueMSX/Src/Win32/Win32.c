@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-23 22:05:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,7 @@
 #include "Win32Properties.h"
 #include "Win32joystick.h"
 #include "Win32keyboard.h"
+#include "Win32Printer.h"
 #include "Win32directx.h"
 #include "FileHistory.h"
 #include "Win32Dir.h"
