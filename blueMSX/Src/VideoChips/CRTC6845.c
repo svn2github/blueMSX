@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-19 20:43:17 $
+** $Date: 2005-01-20 00:39:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,11 +71,12 @@ static const UInt8 crtcRegisterValueMask[18] = {
 
 typedef struct
 {
-    int      mode;
-    UInt8    rasterStart;
-    UInt8    rasterEnd;
-    UInt16   addressStart;
-    float    blinkrate;
+    int     mode;
+    UInt8   rasterStart;
+    UInt8   rasterEnd;
+    UInt16  addressStart;
+    int     blinkrate;
+    int     blinkcount;
 } TYP_CURSOR;
 
 typedef struct
@@ -111,6 +112,23 @@ static void crtcRenderVideoBuffer(void) {
     int x, y;
     int charWidth, charHeight;
     int lineChar, lineNumber;
+    int bDrawCusor;
+
+    switch (crtc.cursor.mode ) {
+    case CURSOR_BLINK:
+        if (crtc.cursor.blinkcount = 0) {
+            bDrawCusor = 1;
+            crtc.cursor.blinkcount = crtc.cursor.blinkrate;
+        }
+        else
+            crtc.cursor.blinkcount--;
+        break;
+    case CURSOR_NOBLINK:
+        bDrawCusor = 1;
+        break;
+    default:
+        bDrawCusor = 0;
+    }
 
     charWidth = crtc.registers.reg[CRTC_R1];
     if (charWidth >= crtc.registers.reg[CRTC_R0])
@@ -153,10 +171,10 @@ static void crtcRenderVideoBuffer(void) {
                 linePtr[3] = color[(pattern >> 4) & 1];
                 linePtr[4] = color[(pattern >> 3) & 1];
                 linePtr[5] = color[(pattern >> 2) & 1];
-//                linePtr[6] = color[(pattern >> 1) & 1];
+                linePtr[6] = color[(pattern >> 1) & 1];
 //                linePtr[7] = color[(pattern >> 0) & 1];
 
-                linePtr += 6;
+                linePtr += 7;
             }
             lineNumber++;
         }
@@ -188,11 +206,11 @@ static void crtcCursorUpdate(void)
         break;
     case 64:
         crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = (float)50 / 16;    // Get Hz from emu
+        crtc.cursor.blinkrate = 16;    // Get Hz from emu
         break;
     case 96:
         crtc.cursor.mode = CURSOR_BLINK;
-        crtc.cursor.blinkrate = (float)50 / 32;    // Get Hz from emu
+        crtc.cursor.blinkrate = 32;    // Get Hz from emu
         break;
     default:
         crtc.cursor.mode = CURSOR_NOBLINK;
