@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-02-15 05:03:49 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,6 +156,17 @@ void msxTraceDisable() {
 
 int msxTraceGetEnable() {
     return traceEnabled;
+}
+
+void msxSetBreakpoint(UInt16 address) {
+    if (r800) {
+        r800SetBreakpoint(r800, address);
+    }
+}
+void msxClearBreakpoint(UInt16 address) {
+    if (r800) {
+        r800ClearBreakpoint(r800, address);
+    }
 }
 
 UInt32 msxGetRamSize()
@@ -722,6 +733,11 @@ static void cpuTimeout(void* ref)
     boardTimerCheckTimeout();
 }
 
+static void breakpointCb(void* ref, UInt16 pc)
+{
+    boardOnBreakpoint(pc);
+}
+
 void msxRun() {
     r800Execute(r800);
 }
@@ -730,7 +746,7 @@ void msxStop() {
     r800StopExecution(r800);
 }
 
-static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
+static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
 {
     static UInt8 mappedRAM[0x10000];
     DbgRegisterBank* regBank;
@@ -761,10 +777,35 @@ static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
 }
 
+static void dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
+{
+    switch (regIndex) {
+    case  0: r800->regs.AF.W = (UInt16)value; break;
+    case  1: r800->regs.BC.W = (UInt16)value; break;
+    case  2: r800->regs.DE.W = (UInt16)value; break;
+    case  3: r800->regs.HL.W = (UInt16)value; break;
+    case  4: r800->regs.AF1.W = (UInt16)value; break;
+    case  5: r800->regs.BC1.W = (UInt16)value; break;
+    case  6: r800->regs.DE1.W = (UInt16)value; break;
+    case  7: r800->regs.HL1.W = (UInt16)value; break;
+    case  8: r800->regs.IX.W = (UInt16)value; break;
+    case  9: r800->regs.IY.W = (UInt16)value; break;
+    case 10: r800->regs.SP.W = (UInt16)value; break;
+    case 11: r800->regs.PC.W = (UInt16)value; break;
+    case 12: r800->regs.I = (UInt8)value; break;
+    case 13: r800->regs.R = (UInt8)value; break;
+    case 14: 
+        r800->regs.iff1 = (UInt8)(value & 1); 
+        r800->regs.iff2 = (UInt8)((value >> 1) & 1); 
+        break;
+    }
+}
+
 int msxCreate(Machine* machine, 
               DeviceInfo* devInfo,
               int loadState)
 {
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     int success;
     int i;
 
@@ -782,7 +823,7 @@ int msxCreate(Machine* machine,
 
     deviceManagerCreate();
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, NULL);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, NULL);
 
     boardInit(&r800->systemTime);
 
@@ -798,7 +839,7 @@ int msxCreate(Machine* machine,
     msxPPICreate();
     slotManagerCreate();
     
-    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80/R800", setDebugInfo, NULL);
+    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80/R800", &dbgCallbacks, NULL);
 
     success = initMachine(machine, devInfo->video.vdpSyncMode);
 

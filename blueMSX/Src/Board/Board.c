@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-02-21 09:49:45 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,11 +49,15 @@ extern void PatchReset(BoardType boardType);
 static int boardType;
 static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
-static int (*syncToRealClock)(int) = NULL;
+static int (*syncToRealClock)(int, int) = NULL;
 UInt32* boardSysTime;
 static UInt64 boardSysTime64;
 static UInt32 oldTime;
 static UInt32 boardFreq = boardFrequency();
+static int fdcTimingEnable = 1;
+static int fdcActive       = 0;
+static BoardTimer* fdcTimer;
+static BoardTimer* syncTimer;
 
 static char saveStateVersion[32] = "blueMSX - state  v 7";
 
@@ -82,6 +86,8 @@ static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartrid
 static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
 static int    (*changeCassette)(char*, const char*)           = msxChangeCassette;
 static void   (*setCpuTimeout)(UInt32)                        = msxSetCpuTimeout;
+static void   (*setBreakpoint)(UInt16)                        = msxSetBreakpoint;
+static void   (*clearBreakpoint)(UInt16)                      = msxClearBreakpoint;
 
 static void boardSetType(BoardType type)
 {
@@ -114,6 +120,8 @@ static void boardSetType(BoardType type)
         changeDiskette  = msxChangeDiskette;
         changeCassette  = msxChangeCassette;
         setCpuTimeout   = msxSetCpuTimeout;
+        setBreakpoint   = msxSetBreakpoint;
+        clearBreakpoint = msxClearBreakpoint;
         break;
 
     case BOARD_SVI:
@@ -142,6 +150,8 @@ static void boardSetType(BoardType type)
         changeDiskette  = sviChangeDiskette;
         changeCassette  = sviChangeCassette;
         setCpuTimeout   = sviSetCpuTimeout;
+        setBreakpoint   = sviSetBreakpoint;
+        clearBreakpoint = sviClearBreakpoint;
         break;
 
     case BOARD_COLECO:
@@ -170,15 +180,13 @@ static void boardSetType(BoardType type)
         changeDiskette  = colecoChangeDiskette;
         changeCassette  = colecoChangeCassette;
         setCpuTimeout   = colecoSetCpuTimeout;
+        setBreakpoint   = colecoSetBreakpoint;
+        clearBreakpoint = colecoClearBreakpoint;
         break;
     }
     
     PatchReset(boardType);
 }
-
-static int fdcTimingEnable = 1;
-static int fdcActive       = 0;
-static BoardTimer* fdcTimer;
 
 int boardGetFdcTimingEnable() {
     return fdcTimingEnable;
@@ -195,15 +203,22 @@ void boardSetFdcActive() {
     }
 }
 
+void boardSetBreakpoint(UInt16 address) {
+    setBreakpoint(address);
+}
+
+void boardClearBreakpoint(UInt16 address) {
+    clearBreakpoint(address);
+}
+
 static void onFdcDone(void* ref, UInt32 time)
 {
     fdcActive = 0;
 }
 
-static void onSync(void* ref, UInt32 time)
+static void doSync(UInt32 time, int breakpointHit)
 {
-    BoardTimer* timer = (BoardTimer*)ref;
-    int execTime = syncToRealClock(fdcActive);
+    int execTime = syncToRealClock(fdcActive, 0);
     if (execTime < 0) {
         stop();
         return;
@@ -212,11 +227,21 @@ static void onSync(void* ref, UInt32 time)
     mixerSync(boardMixer);
 
     if (execTime == 0) {
-        boardTimerAdd(timer, boardSystemTime() + 1);
+        boardTimerAdd(syncTimer, boardSystemTime() + 1);
     }
     else {
-        boardTimerAdd(timer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFreq / 1000));
+        boardTimerAdd(syncTimer, time + (UInt32)((UInt64)execTime * boardFreq / 1000));
     }
+}
+
+static void onSync(void* ref, UInt32 time)
+{
+    doSync(time, 0);
+}
+
+void boardOnBreakpoint(UInt16 pc)
+{
+    doSync(boardSystemTime(), 1);
 }
 
 int boardRun(Machine* machine, 
@@ -224,7 +249,7 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
-             int (*syncCallback)(int))
+             int (*syncCallback)(int, int))
 {
     int loadState = 0;
     int success;
@@ -264,17 +289,17 @@ int boardRun(Machine* machine,
 
     success = create(machine, deviceInfo, loadState);
     if (success) {
-        BoardTimer* timer = boardTimerCreate(onSync, NULL);
+        syncTimer = boardTimerCreate(onSync, NULL);
         fdcTimer = boardTimerCreate(onFdcDone, NULL);
         
-        boardTimerAdd(timer, boardSystemTime() + 1);
+        boardTimerAdd(syncTimer, boardSystemTime() + 1);
 
         run();
 
         destroy();
 
         boardTimerDestroy(fdcTimer);
-        boardTimerDestroy(timer);
+        boardTimerDestroy(syncTimer);
     }
 
     return success;

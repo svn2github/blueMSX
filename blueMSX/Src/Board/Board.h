@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-21 09:49:48 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,7 +66,7 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
-             int (*syncCallback)(int));
+             int (*syncCallback)(int, int));
 
 BoardType boardGetType();
 
@@ -79,6 +79,9 @@ void boardSaveState(const char* stateFile);
 
 void boardSetFrequency(int frequency);
 int  boardGetRefreshRate();
+
+void boardSetBreakpoint(UInt16 address);
+void boardClearBreakpoint(UInt16 address);
 
 void   boardSetInt(UInt32 irq);
 void   boardClearInt(UInt32 irq);
@@ -124,6 +127,8 @@ void boardTimerAdd(BoardTimer* timer, UInt32 timeout);
 void boardTimerRemove(BoardTimer* timer);
 UInt32 boardTimerCheckTimeout();
 UInt32 boardCalcRelativeTimeout(UInt32 timerFrequency, UInt32 nextTimeout);
+
+void   boardOnBreakpoint(UInt16 pc);
 
 // The following methods are more generic config than board specific
 // They should be moved from board.

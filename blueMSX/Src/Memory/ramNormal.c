@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-15 05:03:50 $
+** $Date: 2005-02-22 03:39:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,14 +84,24 @@ static void destroy(RamNormal* rm)
     free(rm);
 }
 
-static void setDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
+static void getDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
 {
     dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->pages * 0x2000, rm->ramData);
+}
+
+static void dbgWriteMemory(RamNormal* rm, char* name, void* data, int start, int size)
+{
+    if (strcmp(name, "RAM") || start + size > rm->pages * 0x2000) {
+        return;
+    }
+
+    memcpy(rm->ramData + start, data, size);
 }
 
 int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, NULL, NULL };
     RamNormal* rm;
     int pages = size / 0x2000;
     int i;
@@ -114,7 +124,7 @@ int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     memset(rm->ramData, 0xff, sizeof(rm->ramData));
 
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Normal", setDebugInfo, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Normal", &dbgCallbacks, rm);
 
     for (i = 0; i < pages; i++) {
         slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 1);

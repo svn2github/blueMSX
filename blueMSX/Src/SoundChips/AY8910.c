@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-15 05:46:10 $
+** $Date: 2005-02-22 03:39:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,7 @@ static const UInt8 regMask[16] = {
 };
 
 static Int32* ay8910Sync(void* ref, UInt32 count);
-
+static void updateRegister(AY8910* ay8910, UInt8 address, UInt8 data);
 
 struct AY8910 {
     Mixer* mixer;
@@ -167,7 +167,7 @@ void ay8910SaveState(AY8910* ay8910)
     saveStateClose(state);
 }
 
-static void setDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
+static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
     int i;
@@ -181,8 +181,14 @@ static void setDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
     }
 }
 
+static void dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 value)
+{
+    updateRegister(ay8910, (UInt8)regIndex, (UInt8)value);
+}
+
 AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
 {
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
     int i;
 
@@ -213,7 +219,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
         break;
     }
     
-    ay8910->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "AY8910 PSG", setDebugInfo, ay8910);
+    ay8910->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "AY8910 PSG", &dbgCallbacks, ay8910);
 
     return ay8910;
 }
@@ -278,30 +284,29 @@ UInt8 ay8910ReadData(AY8910* ay8910, UInt16 ioPort)
     return ay8910->regs[address];
 }
 
-void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
+static void updateRegister(AY8910* ay8910, UInt8 regIndex, UInt8 data)
 {
-    UInt8  address = ay8910->address;
     UInt32 period;
     int port;
 
-    if (address < 14) {
+    if (regIndex < 14) {
         mixerSync(ay8910->mixer);
     }
 
-    data &= regMask[address];
+    data &= regMask[regIndex];
 
-    ay8910->regs[address] = data;
+    ay8910->regs[regIndex] = data;
 
-    switch (address) {
+    switch (regIndex) {
     case 0:
     case 1:
     case 2:
     case 3:
     case 4:
     case 5:
-        period = ay8910->regs[address & 6] | ((Int32)(ay8910->regs[address | 1]) << 8);
+        period = ay8910->regs[regIndex & 6] | ((Int32)(ay8910->regs[regIndex | 1]) << 8);
 //        period *= (~ay8910->enable >> (address >> 1)) & 1;
-        ay8910->toneStep[address >> 1] = period > 4 ? BASE_PHASE_STEP / period : 1 << 31;
+        ay8910->toneStep[regIndex >> 1] = period > 4 ? BASE_PHASE_STEP / period : 1 << 31;
         break;
         
     case 6:
@@ -316,7 +321,7 @@ void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
     case 8:
     case 9:
     case 10:
-        ay8910->ampVolume[address - 8] = data;
+        ay8910->ampVolume[regIndex - 8] = data;
         break;
 
     case 11:
@@ -334,11 +339,16 @@ void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
 
     case 14:
     case 15:
-        port = address - 14;
+        port = regIndex - 14;
         if (ay8910->ioPortWriteCb != NULL){// && (ay8910->regs[7] & (1 << (port + 6)))) {
             ay8910->ioPortWriteCb(ay8910->ioPortArg, port, data);
         }
     }
+}
+
+void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
+{
+    updateRegister(ay8910, ay8910->address, data);
 }
 
 static Int32* ay8910Sync(void* ref, UInt32 count)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-15 05:03:50 $
+** $Date: 2005-02-22 03:39:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,11 +33,16 @@
 #include "MsxTypes.h"
 #include "Debugger.h"
 
-typedef void (*SetDebugInfo)(void* ref, DbgDevice*);
+typedef struct {
+    void (*getDebugInfo)(void* ref, DbgDevice* dbgDevice);
+    void (*writeMemory)(void* ref, char* name, void* data, int start, int size);
+    void (*writeRegister)(void* ref, char* name, int reg, UInt32 value);
+    void (*writeIoPort)(void* ref, char* name, UInt16 port, UInt32 value);
+} DebugCallbacks;
 
 void debugDeviceManagerReset();
 
-int debugDeviceRegister(DbgDeviceType type, const char* name, SetDebugInfo setDebugInfo, void* ref);
+int debugDeviceRegister(DbgDeviceType type, const char* name, DebugCallbacks* callbacks, void* ref);
 void debugDeviceUnregister(int handle);
 
 DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
@@ -64,5 +69,9 @@ void dbgIoPortsAddPort(DbgIoPorts* ioPorts,
                        UInt8 value);
 
 void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count);
+
+void debugDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size);
+void debugDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value);
+void debugDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value);
 
 #endif /*DEBUG_DEVICE_MANAGER_H*/

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:30:24 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,9 @@ void sviSetCpuTimeout(UInt32 time);
 void sviTraceEnable(const char* fileName);
 void sviTraceDisable();
 int  sviTraceGetEnable();
+
+void sviSetBreakpoint(UInt16 address);
+void sviClearBreakpoint(UInt16 address);
 
 UInt8* sviGetRamPage(int page);
 UInt32 sviGetRamSize();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-15 05:03:50 $
+** $Date: 2005-02-22 03:39:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 
 typedef struct {
     int handle;
-    SetDebugInfo setDebugInfo;
+    DebugCallbacks callbacks;
     void* ref;
     char  name[32];
     DbgDeviceType type;
@@ -55,16 +55,16 @@ void debugDeviceManagerReset()
     devManager.lastHandle = 0;
 }
 
-int debugDeviceRegister(DbgDeviceType type, const char* name, SetDebugInfo setDebugInfo, void* ref)
+int debugDeviceRegister(DbgDeviceType type, const char* name, DebugCallbacks* callbacks, void* ref)
 {
     if (devManager.count >= MAX_DEVICES) {
         return 0;
     }
 
-    devManager.di[devManager.count].handle       = ++devManager.lastHandle;
-    devManager.di[devManager.count].setDebugInfo = setDebugInfo;
-    devManager.di[devManager.count].ref          = ref;
-    devManager.di[devManager.count].type         = type;
+    devManager.di[devManager.count].handle    = ++devManager.lastHandle;
+    devManager.di[devManager.count].callbacks = *callbacks;
+    devManager.di[devManager.count].ref       = ref;
+    devManager.di[devManager.count].type      = type;
 
     strcpy(devManager.di[devManager.count].name, name);
 
@@ -109,13 +109,53 @@ void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count)
             strcpy(dbgDeviceList[index]->name, devManager.di[i].name);
             dbgDeviceList[index]->type = devManager.di[i].type;
             dbgDeviceList[index]->deviceHandle = devManager.di[i].handle;
-            devManager.di[i].setDebugInfo(devManager.di[i].ref, dbgDeviceList[index++]);
+            if (devManager.di[i].callbacks.getDebugInfo != NULL) {
+                devManager.di[i].callbacks.getDebugInfo(devManager.di[i].ref, dbgDeviceList[index++]);
+            }
         }
     }
 
     *count = index;
 }
 
+void debugDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
+{
+    int i;
+
+    for (i = 0; i < devManager.count; i++) {
+        if (devManager.di[i].handle == memoryBlock->deviceHandle) {
+            if (devManager.di[i].callbacks.writeMemory != NULL) {
+                devManager.di[i].callbacks.writeMemory(devManager.di[i].ref, memoryBlock->name, data, startAddr, size);
+            }
+        }
+    }
+}
+
+void debugDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
+{
+    int i;
+
+    for (i = 0; i < devManager.count; i++) {
+        if (devManager.di[i].handle == regBank->deviceHandle) {
+            if (devManager.di[i].callbacks.writeRegister != NULL) {
+                devManager.di[i].callbacks.writeRegister(devManager.di[i].ref, regBank->name, regIndex, value);
+            }
+        }
+    }
+}
+
+void debugDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
+{
+    int i;
+
+    for (i = 0; i < devManager.count; i++) {
+        if (devManager.di[i].handle == ioPorts->deviceHandle) {
+            if (devManager.di[i].callbacks.writeIoPort != NULL) {
+                devManager.di[i].callbacks.writeIoPort(devManager.di[i].ref, ioPorts->name, portIndex, value);
+            }
+        }
+    }
+}
 
 DbgDevice* dbgDeviceCreate(int handle)
 {
@@ -149,6 +189,7 @@ DbgMemoryBlock* dbgDeviceAddMemoryBlock(DbgDevice* dbgDevice,
     strcpy(mem->name, name);
     mem->startAddress = startAddress;
     mem->size = size;
+    mem->deviceHandle = dbgDevice->deviceHandle;
     memcpy(mem->memory, memory, size);
 
     dbgDevice->memoryBlock[i] = mem;
@@ -177,6 +218,7 @@ DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
     regBank = calloc(1, sizeof(DbgRegisterBank) + registerCount * sizeof(struct DbgRegister));
     strcpy(regBank->name, name);
     regBank->count = registerCount;
+    regBank->deviceHandle = dbgDevice->deviceHandle;
 
     dbgDevice->registerBank[i] = regBank;
     dbgDevice->registerBankCount = i + 1;
@@ -214,6 +256,7 @@ DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
     ioPorts = calloc(1, sizeof(DbgIoPorts) + ioPortsCount * sizeof(struct DbgIoPort));
     strcpy(ioPorts->name, name);
     ioPorts->count = ioPortsCount;
+    ioPorts->deviceHandle = dbgDevice->deviceHandle;
 
     dbgDevice->ioPorts[i] = ioPorts;
     dbgDevice->ioPortsCount = i + 1;

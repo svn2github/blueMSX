@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-02-17 01:09:40 $
+** $Date: 2005-02-22 03:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -934,7 +934,7 @@ static void loadState(VDP* vdp)
     boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
 }
 
-static void setDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
+static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
     int cmdRegCount;
@@ -964,6 +964,29 @@ static void setDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
         sprintf(reg, "R%d", 32 + i);
         dbgRegisterBankAddRegister(regBank,  regCount + i, reg, 8, vdpCmdPeek(vdp->cmdEngine, i, boardSystemTime()));
     }
+}
+
+static void dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
+{
+    if (strcmp(name, "VRAM") || start + size > vdp->vramSize) {
+        return;
+    }
+
+    memcpy(vdp->vram + start, data, size);
+}
+
+static void dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
+{
+    int regCount;
+    if (vdp->vdpVersion == VDP_V9938) regCount = 24;
+    else if (vdp->vdpVersion == VDP_V9958) regCount = 32;
+    else regCount = 8;
+
+    if (regIndex > regCount) {
+        return;
+    }
+
+    vdpUpdateRegisters(vdp, (UInt8)regIndex, (UInt8)value);
 }
 
 static void reset(VDP* vdp)
@@ -1095,6 +1118,7 @@ static void videoDisable(VDP* vdp)
 void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int vramPages)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
     VideoCallbacks videoCallbacks = { videoEnable, videoDisable };
     char* vdpVersionString;
     int vramSize;
@@ -1181,7 +1205,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
         break;
     }
     
-    vdp->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, vdpVersionString, setDebugInfo, vdp);
+    vdp->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, vdpVersionString, &dbgCallbacks, vdp);
 
     switch (vdp->vdpConnector) {
     case VDP_MSX:

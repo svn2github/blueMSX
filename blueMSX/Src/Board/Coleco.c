@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-15 05:03:49 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,6 +218,17 @@ int colecoTraceGetEnable() {
     return traceEnabled;
 }
 
+void colecoSetBreakpoint(UInt16 address) {
+    if (r800) {
+        r800SetBreakpoint(r800, address);
+    }
+}
+void colecoClearBreakpoint(UInt16 address) {
+    if (r800) {
+        r800ClearBreakpoint(r800, address);
+    }
+}
+
 UInt32 colecoGetRamSize()
 { 
     return colecoRamSize / 1024;
@@ -350,6 +361,11 @@ static void cpuTimeout(void* ref)
     boardTimerCheckTimeout();
 }
 
+static void breakpointCb(void* ref, UInt16 pc)
+{
+    boardOnBreakpoint(pc);
+}
+
 void colecoRun() {
     r800Execute(r800);
 }
@@ -358,7 +374,7 @@ void colecoStop() {
     r800StopExecution(r800);
 }
 
-static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
+static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
 
@@ -383,10 +399,35 @@ static void setDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
 }
 
+static void dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
+{
+    switch (regIndex) {
+    case  0: r800->regs.AF.W = (UInt16)value; break;
+    case  1: r800->regs.BC.W = (UInt16)value; break;
+    case  2: r800->regs.DE.W = (UInt16)value; break;
+    case  3: r800->regs.HL.W = (UInt16)value; break;
+    case  4: r800->regs.AF1.W = (UInt16)value; break;
+    case  5: r800->regs.BC1.W = (UInt16)value; break;
+    case  6: r800->regs.DE1.W = (UInt16)value; break;
+    case  7: r800->regs.HL1.W = (UInt16)value; break;
+    case  8: r800->regs.IX.W = (UInt16)value; break;
+    case  9: r800->regs.IY.W = (UInt16)value; break;
+    case 10: r800->regs.SP.W = (UInt16)value; break;
+    case 11: r800->regs.PC.W = (UInt16)value; break;
+    case 12: r800->regs.I = (UInt8)value; break;
+    case 13: r800->regs.R = (UInt8)value; break;
+    case 14: 
+        r800->regs.iff1 = (UInt8)(value & 1); 
+        r800->regs.iff2 = (UInt8)((value >> 1) & 1); 
+        break;
+    }
+}
+
 int colecoCreate(Machine* machine, 
                  DeviceInfo* devInfo,
                  int loadState)
 {
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     int success;
 
     colecoMachine   = machine;
@@ -408,7 +449,7 @@ int colecoCreate(Machine* machine,
 
     deviceManagerCreate();
     
-    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, NULL);
+    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, breakpointCb, NULL);
 
     boardInit(&r800->systemTime);
     ioPortReset();
@@ -416,7 +457,7 @@ int colecoCreate(Machine* machine,
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
     
-    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", setDebugInfo, NULL);
+    debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", &dbgCallbacks, NULL);
 
     sn76489 = sn76489Create(boardGetMixer());
     success = colecoInitMachine(machine, devInfo->video.vdpSyncMode);

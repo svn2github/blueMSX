@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-21 09:49:48 $
+** $Date: 2005-02-22 03:39:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "DebugDeviceManager.h"
 #include "Emulator.h"
 #include "Actions.h"
+#include "Board.h"
 #include <stdlib.h>
 
 struct Debugger {
@@ -163,6 +164,21 @@ DbgSnapshot* dbgSnapshotCreate()
     return dbgSnapshot;
 }
 
+void dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size)
+{
+    debugDeviceWriteMemory(memoryBlock, data, startAddr, size);
+}
+
+void dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value)
+{
+    debugDeviceWriteRegister(regBank, regIndex, value);
+}
+
+void dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value)
+{
+    debugDeviceWriteIoPort(ioPorts, portIndex, value);
+}
+
 void dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot)
 {
     int i;
@@ -272,11 +288,11 @@ void dbgStep()
 
 void dbgSetBreakpoint(UInt16 address)
 {
+    boardSetBreakpoint(address);
 }
 
-UInt16** dbgGetBreakpointList()
+void dbgClearBreakpoint(UInt16 address)
 {
-    static UInt16* breakpointList[1] = {NULL};
-    return breakpointList;
+    boardClearBreakpoint(address);
 }
 

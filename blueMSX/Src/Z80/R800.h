@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-03 06:13:00 $
+** $Date: 2005-02-22 03:39:16 $
 **
 ** Author: Daniel Vik
 **
@@ -172,8 +172,9 @@ typedef struct {
 */
 typedef UInt8 (*R800ReadCb)(void*, UInt16);
 typedef void  (*R800WriteCb)(void*, UInt16, UInt8);
-typedef void  (*R800PatchCb)(void* ref, CpuRegs*);
-typedef void  (*R800TimerCb)(void* ref);
+typedef void  (*R800PatchCb)(void*, CpuRegs*);
+typedef void  (*R800BreakptCb)(void* ref, UInt16);
+typedef void  (*R800TimerCb)(void*);
 
 
 /*****************************************************
@@ -219,14 +220,19 @@ typedef struct
     int           terminate;        /* Termination flag                */
     SystemTime    timeout;          /* User scheduled timeout          */
 
+    int           breakpointCount;  /* Number of breakpoints set       */
+
     R800ReadCb    readMemory;       /* Callback functions for reading  */
     R800WriteCb   writeMemory;      /* and writing memory and IO ports */
     R800ReadCb    readIoPort;
     R800WriteCb   writeIoPort;
     R800PatchCb   patch;
     R800TimerCb   timerCb;
+    R800BreakptCb breakpointCb;
     void*         ref;              /* User defined pointer which is   */
                                     /* passed to the callbacks         */
+
+    char          breakpoints[0x10000];
 } R800;
 
 
@@ -237,15 +243,16 @@ typedef struct
 ** object. The CPU is started in Z80 mode.
 **
 ** Arguments:
-**      readMemory  - Function called on read access to RAM
-**      writeMemory - Function called on write access to RAM
-**      readIoPort  - Function called on read access to I/O ports
-**      writeIoPort - Function called on write access to I/O ports
-**      patch       - Function called when the patch instruction ED FE
-**                    is executed. 
-**      timerCb     - Function called on user scheduled timeouts
-**      ref         - User defined reference that will be passed to the
-**                    callbacks.
+**      readMemory   - Function called on read access to RAM
+**      writeMemory  - Function called on write access to RAM
+**      readIoPort   - Function called on read access to I/O ports
+**      writeIoPort  - Function called on write access to I/O ports
+**      patch        - Function called when the patch instruction ED FE
+**                     is executed. 
+**      timerCb      - Function called on user scheduled timeouts
+**      breakpointCb - Function called when a breakpoint is hit
+**      ref          - User defined reference that will be passed to the
+**                     callbacks.
 **
 ** Return value:
 **      A pointer to a new R800 object.
@@ -254,7 +261,7 @@ typedef struct
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
-                 void* ref);
+                 R800BreakptCb breakpointCb, void* ref);
 
 /************************************************************************
 ** r800Destroy
@@ -411,6 +418,9 @@ void r800ExecuteInstruction(R800* r800);
 
 void r800StopExecution(R800* r800);
 void r800SetTimeoutAt(R800* r800, SystemTime time);
+
+void r800SetBreakpoint(R800* r800, UInt16 address);
+void r800ClearBreakpoint(R800* r800, UInt16 address);
 
 /************************************************************************
 ** r800GetSystemTime

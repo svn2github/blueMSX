@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-21 09:50:01 $
+** $Date: 2005-02-22 03:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -165,9 +165,9 @@ void __stdcall toolSetBreakpoint(UInt16 address)
     dbgSetBreakpoint(address);
 }
 
-UInt16** __stdcall toolGetBreakpointList()
+void __stdcall toolClearBreakpoint(UInt16 address)
 {
-    return dbgGetBreakpointList();
+    dbgClearBreakpoint(address);
 }
 
 static Interface toolInterface = {
@@ -187,7 +187,7 @@ static Interface toolInterface = {
     toolPause,
     toolStep,
     toolSetBreakpoint,
-    toolGetBreakpointList
+    toolClearBreakpoint
 };
 
 void toolLoadAll(const char* path)

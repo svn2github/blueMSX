@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:30:24 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,9 @@ void msxSetCpuTimeout(UInt32 time);
 void msxTraceEnable(const char* fileName);
 void msxTraceDisable();
 int  msxTraceGetEnable();
+
+void msxSetBreakpoint(UInt16 address);
+void msxClearBreakpoint(UInt16 address);
 
 UInt8* msxGetRamPage(int page);
 UInt32 msxGetRamSize();

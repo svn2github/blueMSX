@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-15 05:03:50 $
+** $Date: 2005-02-22 03:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,14 +103,24 @@ static void destroy(RamMapper* rm)
     free(rm);
 }
 
-static void setDebugInfo(RamMapper* rm, DbgDevice* dbgDevice)
+static void getDebugInfo(RamMapper* rm, DbgDevice* dbgDevice)
 {
     dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->size, rm->ramData);
+}
+
+static void dbgWriteMemory(RamMapper* rm, char* name, void* data, int start, int size)
+{
+    if (strcmp(name, "RAM") || start + size > rm->size) {
+        return;
+    }
+
+    memcpy(rm->ramData + start, data, size);
 }
 
 int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, NULL, NULL };
     RamMapper* rm;
     int pages = size / 0x4000;
     int i;
@@ -141,7 +151,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     rm->handle  = ramMapperIoAdd(pages * 0x4000, write, rm);
     
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Mapped", setDebugInfo, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "Mapped", &dbgCallbacks, rm);
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
     slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);

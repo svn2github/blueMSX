@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-05 08:54:01 $
+** $Date: 2005-02-22 03:39:15 $
 **
 ** Author: Daniel Vik
 **
@@ -5454,6 +5454,9 @@ static void  patchDummy(void* ref, CpuRegs* regs) {
 static void  timerCbDummy(void* ref) {
 }
 
+static void breakpointCbDummy(void* ref, UInt16 pc) {
+}
+
 static void r800InitTables() {
     int i;
 
@@ -5607,9 +5610,9 @@ static void r800SwitchCpu(R800* r800) {
 }
 
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
-                R800ReadCb readIoPort, R800WriteCb writeIoPort, 
+                 R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
-                 void* ref)
+                 R800BreakptCb breakpointCb, void* ref)
 {
     R800* r800 = calloc(1, sizeof(R800));
     r800->readMemory  = readMemory  ? readMemory  : readMemoryDummy;
@@ -5618,15 +5621,17 @@ R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
     r800->writeIoPort = writeIoPort ? writeIoPort : writeIoPortDummy;
     r800->patch       = patch       ? patch       : patchDummy;
     r800->timerCb     = timerCb     ? timerCb     : timerCbDummy;
+    r800->breakpointCb= breakpointCb? breakpointCb: breakpointCbDummy;
     r800->ref         = ref;
 
     r800->frequencyZ80  = 3579545;
     r800->frequencyR800 = 7159090;
 
-    r800->terminate  = 0;
-    r800->systemTime = 0;
-    r800->cpuMode    = -1;
-    r800->oldCpuMode = -1;
+    r800->terminate       = 0;
+    r800->breakpointCount = 0;
+    r800->systemTime      = 0;
+    r800->cpuMode         = -1;
+    r800->oldCpuMode      = -1;
 
     r800Reset(r800, 0);
 
@@ -5759,6 +5764,22 @@ void r800SetTimeoutAt(R800* r800, SystemTime time)
     r800->timeout = time;
 }
 
+void r800SetBreakpoint(R800* r800, UInt16 address)
+{
+    if (r800->breakpoints[address] == 0) {
+        r800->breakpoints[address] = 1;
+        r800->breakpointCount++;
+    }
+}
+
+void r800ClearBreakpoint(R800* r800, UInt16 address)
+{
+    if (r800->breakpoints[address] != 0) {
+        r800->breakpointCount--;
+        r800->breakpoints[address] = 0;
+    }
+}
+
 void r800Execute(R800* r800) {
     static SystemTime lastRefreshTime = 0;
 
@@ -5766,10 +5787,10 @@ void r800Execute(R800* r800) {
         UInt16 address;
         int iff1 = 0;
 
-        if (r800->timerCb != NULL && r800->timeout &&
-            (Int32)(r800->timeout - r800->systemTime) <= 0) 
-        {
-            r800->timerCb(r800->ref);
+        if ((Int32)(r800->timeout - r800->systemTime) <= 0) {
+            if (r800->timerCb != NULL) {
+                r800->timerCb(r800->ref);
+            }
         }
 
         if (r800->oldCpuMode != -1) {
@@ -5780,6 +5801,17 @@ void r800Execute(R800* r800) {
             if (r800->systemTime - lastRefreshTime > 222 * 3) {
                 lastRefreshTime = r800->systemTime;
                 r800->systemTime += 20 * 3;
+            }
+        }
+
+        if (r800->breakpointCount > 0) {
+            if (r800->breakpoints[r800->regs.PC.W]) {
+                if (r800->breakpointCb != NULL) {
+                    r800->breakpointCb(r800->ref, r800->regs.PC.W);
+                    if (r800->terminate) {
+                        break;
+                    }
+                }
             }
         }
 
@@ -5857,6 +5889,14 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
             }
         }
 
+        if (r800->breakpointCount > 0) {
+            if (r800->breakpoints[r800->regs.PC.W]) {
+                if (r800->breakpointCb != NULL) {
+                    r800->breakpointCb(r800->ref, r800->regs.PC.W);
+                }
+            }
+        }
+
         executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
         if (!r800->regs.halt) { 
@@ -5922,6 +5962,14 @@ void r800ExecuteInstruction(R800* r800) {
         if (r800->systemTime - lastRefreshTime > 222 * 3) {
             lastRefreshTime = r800->systemTime;
             r800->systemTime += 12 * 3;
+        }
+    }
+
+    if (r800->breakpointCount > 0) {
+        if (r800->breakpoints[r800->regs.PC.W]) {
+            if (r800->breakpointCb != NULL) {
+                r800->breakpointCb(r800->ref, r800->regs.PC.W);
+            }
         }
     }
 

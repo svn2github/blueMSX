@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-02-21 09:49:49 $
+** $Date: 2005-02-22 03:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,6 +54,7 @@ typedef void (*DebuggerEvent)();
 typedef enum { DBG_STOPPED, DBG_PAUSED, DBG_RUNNING } DbgState;
 
 typedef struct {
+    int    deviceHandle;
     char   name[32];
     UInt32 startAddress;
     UInt32 size;
@@ -61,6 +62,7 @@ typedef struct {
 } DbgMemoryBlock;
 
 typedef struct {
+    int    deviceHandle;
     char   name[32];
     UInt32 count;
     struct DbgRegister {
@@ -71,7 +73,8 @@ typedef struct {
 } DbgRegisterBank;
 
 typedef struct {
-    char name[32];
+    int    deviceHandle;
+    char   name[32];
     UInt32 count;
     struct DbgIoPort {
         UInt16 port;
@@ -100,13 +103,17 @@ const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int regBan
 int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
 const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
 
+void dbgDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size);
+void dbgDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value);
+void dbgDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value);
+
 void dbgRun();
 void dbgStop();
 void dbgPause();
 void dbgStep();
 
 void dbgSetBreakpoint(UInt16 address);
-UInt16** dbgGetBreakpointList();
+void dbgClearBreakpoint(UInt16 address);
 
 // Internal structure and interface
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-02-21 09:49:59 $
+** $Date: 2005-02-22 03:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,7 @@ UInt32  emuPalette[16];
 UInt32* emuFrameBuffer;
 int*    emuLineWidth;
 
-static int WaitForSync(int maxSpeed);
+static int WaitForSync(int maxSpeed, int breakpointHit);
 
 static void*  emuThread;
 static void*  emuSyncEvent;
@@ -68,7 +68,7 @@ int           emuMaxEmuSpeed = 0; // Max speed issued by emulation
 static char   emuStateName[512];
 static volatile int      emuSuspendFlag;
 static volatile EmuState emuState = EMU_STOPPED;
-static volatile int      emuRunOne = 0;
+static volatile int      emuSingleStep = 0;
 static Properties* properties;
 static Mixer* mixer;
 static DeviceInfo deviceInfo;
@@ -153,7 +153,7 @@ void emulatorSetState(EmuState state) {
     }
     if (state == EMU_STEP) {
         state = EMU_RUNNING;
-        emuRunOne = 1;
+        emuSingleStep = 1;
     }
     emuState = state;
 }
@@ -406,7 +406,6 @@ void emulatorStart(char* stateName) {
         archEmulationStartFailure();
     }
     if (emuState != EMU_STOPPED) {
-        emuState = EMU_RUNNING;
         getDeviceInfo(&deviceInfo);
 
         joystickIoGetType(0, (int*)&properties->joy1.type);
@@ -419,6 +418,8 @@ void emulatorStart(char* stateName) {
         strcpy(properties->emulation.machineName, machine->name);
 
         debuggerNotifyEmulatorStart();
+        
+        emuState = EMU_RUNNING;
     }
 } 
 
@@ -560,7 +561,7 @@ void RefreshScreen(int screenMode) {
     }
 }
 
-static int WaitForSync(int maxSpeed) {
+static int WaitForSync(int maxSpeed, int breakpointHit) {
     LARGE_INTEGER li1;
     LARGE_INTEGER li2;
     static UInt32 tmp = 0;
@@ -578,10 +579,14 @@ static int WaitForSync(int maxSpeed) {
 
     emuSuspendFlag = 1;
         
-
-    if (emuRunOne) {
+    if (emuSingleStep) {
         debuggerNotifyEmulatorPause();
-        emuRunOne = 0;
+        emuSingleStep = 0;
+        emuState = EMU_PAUSED;
+    }
+
+    if (breakpointHit) {
+        debuggerNotifyEmulatorPause();
         emuState = EMU_PAUSED;
     }
     
@@ -613,7 +618,7 @@ static int WaitForSync(int maxSpeed) {
     diffTime = sysTime - emuSysTime;
     emuSysTime = sysTime;
     
-    if (emuRunOne) {
+    if (emuSingleStep) {
         diffTime = 0;
     }
 

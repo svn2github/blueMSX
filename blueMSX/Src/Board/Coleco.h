@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-07 02:27:35 $
+** $Date: 2005-02-22 03:39:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,9 @@ void colecoSetCpuTimeout(UInt32 time);
 void colecoTraceEnable(const char* fileName);
 void colecoTraceDisable();
 int  colecoTraceGetEnable();
+
+void colecoSetBreakpoint(UInt16 address);
+void colecoClearBreakpoint(UInt16 address);
 
 UInt8* colecoGetRamPage(int page);
 UInt32 colecoGetRamSize();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-02-15 05:03:51 $
+** $Date: 2005-02-22 03:39:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,12 +203,12 @@ UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort)
     return 0xff;
 }
 
-void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
+static void crtcUpdateRegister(CRTC6845* crtc, UInt8 address, UInt8 value)
 {
-    if (crtc->registers.address < 16) {
-        value &= crtcRegisterValueMask[crtc->registers.address];
-        crtc->registers.reg[crtc->registers.address] = value;
-        switch (crtc->registers.address) {
+    if (address < 16) {
+        value &= crtcRegisterValueMask[address];
+        crtc->registers.reg[address] = value;
+        switch (address) {
         case CRTC_R10:
             crtcCursorUpdate(crtc);
             break;
@@ -222,6 +222,11 @@ void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
             break;
         }
     }
+}
+
+void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
+{
+    crtcUpdateRegister(crtc, crtc->registers.address, value);
 }
 
 void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
@@ -265,12 +270,12 @@ static void crtc6845Destroy(CRTC6845* crtc)
     free(crtc);
 }
 
-static void setDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
+static void getDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
     int i;
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, crtc->vramMask, crtc->vram);
+    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, crtc->vramMask + 1, crtc->vram);
    
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", 16);
 
@@ -279,6 +284,20 @@ static void setDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
         sprintf(reg, "R%d", i);
         dbgRegisterBankAddRegister(regBank, i, reg,  8, crtc->registers.reg[i]);
     }
+}
+
+static void dbgWriteMemory(CRTC6845* crtc, char* name, void* data, int start, int size)
+{
+    if (strcmp(name, "VRAM") || (UInt32)start + size > crtc->vramMask + 1) {
+        return;
+    }
+
+    memcpy(crtc->vram + start, data, size);
+}
+
+static void dbgWriteRegister(CRTC6845* crtc, char* name, int regIndex, UInt32 value)
+{
+    crtcUpdateRegister(crtc, (UInt8)regIndex, (UInt8)value);
 }
 
 CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize, 
@@ -328,8 +347,9 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
     // Initialize device
     {
         DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
+        DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
         crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
-        crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "CRTC6845", setDebugInfo, crtc);
+        crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "CRTC6845", &dbgCallbacks, crtc);
     }
 
     // Initialize video frame buffer
