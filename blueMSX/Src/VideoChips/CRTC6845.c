@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-16 22:53:13 $
+** $Date: 2005-01-17 02:36:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,8 +56,6 @@
      R16 Light Pen (H)
      R17 Light Pen (L)
 */
-static UInt8 crtcRegister[18];
-static UInt8 crtcAddressReg; // AR
 
 static const UInt8 crtcRegisterValueMask[18] = {
     0xff,  // R0
@@ -80,9 +78,11 @@ static const UInt8 crtcRegisterValueMask[18] = {
     0xff   // R17
 };
 
+static UInt8 crtcRegister[18];
+static UInt8 crtcAddressReg; // AR
 static UInt8 crtcROM[0x1000];
 static UInt8 crtcMemory[0x800];
-static UInt8 crtcMemoryBankControl;
+static UInt8 crtcMemoryBankControl = 0;
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort)
 {
@@ -91,7 +91,8 @@ UInt8 crtcRead(void* dummy, UInt16 ioPort)
 
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value)
 {
-    crtcRegister[crtcAddressReg] = crtcRegisterValueMask[crtcAddressReg] & value;
+    if (crtcAddressReg < 18)
+        crtcRegister[crtcAddressReg] = crtcRegisterValueMask[crtcAddressReg] & value;
 }
 
 void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value)
@@ -102,11 +103,30 @@ void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value)
 void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value)
 {
 /*
-   The SVI-806 column card for the SVI-328 disables all the Z80 memory access
-   from 0xF000 and above when then CRTC memory bank is enabled.
-   The VRAM is 2KB.
+   The SVI-806 column card for the SVI-328 disables all the Z80
+   memory access from 0xF000 and above when then CRTC memory
+   bank is enabled. The VRAM is 2KB.
 */
    crtcMemoryBankControl = value & 1;
+}
+
+UInt8 crtcMemBankStatus(void)
+{
+   return crtcMemoryBankControl;
+}
+
+void crtcMemWrite(UInt16 address, UInt8 value)
+{
+    if (address < 0x800)
+        crtcMemory[address] = value;
+}
+
+UInt8 crtcMemRead(UInt16 address)
+{
+    if (address < 0x800)
+        return crtcMemory[address];
+    else
+        return 0xff;
 }
 
 void crtcReset(void)
@@ -126,7 +146,7 @@ void crtcInit(CrtcConnector crtcConnector)
     case CRTC_MSX:
         ioPortRegister(0x78, NULL,     crtcWriteLatch, NULL); // CRTC Address latch
         ioPortRegister(0x79, crtcRead, crtcWrite,      NULL); // CRTC Controller register 
-        ioPortRegister(0x79, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
+//        ioPortRegister(0x79, NULL,     crtcMemEnable,  NULL); // VRAM enable/disable
         break;
 
     case CRTC_SVI:

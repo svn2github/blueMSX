@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-16 22:53:13 $
+** $Date: 2005-01-17 02:36:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,10 +35,13 @@
 typedef enum { CRTC_MSX, CRTC_SVI } CrtcConnector;
 
 UInt8 crtcRead(void* dummy, UInt16 ioPort);
-
 void crtcWrite(void* dummy, UInt16 ioPort, UInt8 value);
 void crtcWriteLatch(void* dummy, UInt16 ioPort, UInt8 value);
 void crtcMemEnable(void* dummy, UInt16 ioPort, UInt8 value);
+
+void crtcMemWrite(UInt16 address, UInt8 value);
+UInt8 crtcMemRead(UInt16 address);
+UInt8 crtcMemBankStatus(void);
 
 void crtcReset(void);
 void crtcInit(CrtcConnector connector);
