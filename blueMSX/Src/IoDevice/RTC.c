@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:        RTC.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/RTC.c,v $
 **
-** Author:      Daniel Vik
-** 
-** Description: Emulation of the Real Time Clock
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 07:54:59 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

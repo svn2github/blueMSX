@@ -1,13 +1,13 @@
 /*****************************************************************************
-** File:        svi328Fdc.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Svi328Fdc.h,v $
 **
-** Author:      Daniel Vik, Tomas Karlsson (modified for SVI-328)
+** $Revision: 1.2 $
 **
-** Description: Spectravideo SVI-328 Floppy Disk Controller
+** $Date: 2004-12-06 07:54:59 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2004 Tomas Karlssson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages

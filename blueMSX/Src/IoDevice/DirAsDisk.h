@@ -1,15 +1,11 @@
 /*****************************************************************************
-** File:
-**      Disk.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.h,v $
 **
-** Author:
-**      Ricardo Bittencourt
+** $Revision: 1.2 $
 **
-** Description:
-**      Dir to disk converter
+** $Date: 2004-12-06 07:54:58 $
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

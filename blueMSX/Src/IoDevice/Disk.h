@@ -1,17 +1,13 @@
 /*****************************************************************************
-** File:
-**      Disk.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description:
-**      Emulation of fdd (normal and zipped dsk files and directories)
+** $Date: 2004-12-06 07:54:58 $
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2004 Daniel Vik, Tomas Karlsson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
