@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-03-15 22:02:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -984,7 +984,7 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         SendDlgItemMessage(hDlg, IDC_PERFSNDBUFSZTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioBufSzText());
         SendDlgItemMessage(hDlg, IDC_PERFEMUGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfEmuGB());
         SendDlgItemMessage(hDlg, IDC_PERFSYNCMODETEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfSyncModeText());
-        SendDlgItemMessage(hDlg, IDC_PERFFULLSCREEN, WM_SETTEXT, 0, (LPARAM)langPropFullscreenResText());
+        SendDlgItemMessage(hDlg, IDC_PERFFULLSCREENTEXT, WM_SETTEXT, 0, (LPARAM)langPropFullscreenResText());
         
 
         initDropList(hDlg, IDC_SNDDRIVER, pSoundDriver, pProperties->sound.driver);
@@ -2068,8 +2068,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id)
         return FALSE;
 
     // Add static members
-//    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumPortsLptNone());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"None");
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
@@ -2126,8 +2125,7 @@ static BOOL updatePortsComList(HWND hDlg, int id)
         return FALSE;
 
     // Add static members
-//    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumPortsComNone());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"None");
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
 
     // Add COM ports 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {

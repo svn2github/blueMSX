@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-10 01:34:55 $
+** $Date: 2005-03-15 22:02:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -575,6 +575,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutShowDebugger    = "Mostre Debugger"; 
     ls->shortcutShowTrainer     = "Mostre Trainer"; 
     ls->shortcutShowPorts       = "Mostre Propriedades das Portas";
+    
+    ls->propPorts               = "Portas";
+    ls->propPortsNone           = "Nenhum";
 };
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-03 16:38:37 $
+** $Date: 2005-03-15 22:02:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,6 +571,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPortsLptText        = "Port:";
     ls->propPortsCom1Text       = "Port 1:";
 
+    ls->propPorts               = "Ports";
+    ls->propPortsNone           = "Ei käytössä";
 
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-03-09 22:10:13 $
+** $Date: 2005-03-15 22:02:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,7 +171,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSound               = "Sound";
     ls->propControls            = "Controls";
     ls->propPerformance         = "Performance";
-    ls->propPorts               = "Ports";
     
     ls->propEmuGeneralGB        = "General ";
     ls->propEmuFamilyText       = "MSX machine:";
@@ -571,6 +570,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowDebugger    = "Show Debugger";
     ls->shortcutShowTrainer     = "Show Trainer";
     ls->shortcutShowPorts       = "Show Ports Properties";
+    
+    ls->propPorts               = "Ports";
+    ls->propPortsNone           = "None";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-10 01:34:55 $
+** $Date: 2005-03-15 22:02:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -572,6 +572,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutShowDebugger    = "Mostri Debugger"; 
     ls->shortcutShowTrainer     = "Mostri Trainer"; 
     ls->shortcutShowPorts       = "Mostri proprietà di Porti";
+    
+    ls->propPorts               = "Porti";
+    ls->propPortsNone           = "Nessuna";
 };
 
 #endif

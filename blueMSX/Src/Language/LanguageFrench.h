@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-10 01:34:54 $
+** $Date: 2005-03-15 22:02:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -576,6 +576,9 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutShowDebugger    = "Accéder au Debugger"; 
     ls->shortcutShowTrainer     = "Accéder au Trainer"; 
     ls->shortcutShowPorts       = "Accéder au menu Ports";
+    
+    ls->propPorts               = "Ports";
+    ls->propPortsNone           = "Aucune";
 };
 
 #endif
