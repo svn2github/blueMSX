@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-03 23:12:40 $
+** $Date: 2005-02-07 02:27:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,7 +122,7 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
             UInt8 state = archJoystickGetState((UInt8)joyId);
             int   renshaSpeed = switchGetRensha();
             if (renshaSpeed) {
-                state &= (((UInt64)renshaSpeed * systemTime / boardFrequency()) & 1) << 4;
+                state &= ~((((UInt64)renshaSpeed * systemTime / boardFrequency()) & 1) << 4);
             }
             return 0x40 | (~state & 0x3f);
         }

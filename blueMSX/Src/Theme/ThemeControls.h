@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-25 05:44:17 $
+** $Date: 2005-02-07 02:27:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,7 +108,8 @@ typedef struct ActiveSlider ActiveSlider;
 typedef enum { AS_HORIZONTAL, AS_VERTICAL, AS_BOTH } AsDirection;
 
 ActiveSlider* activeSliderCreate(int x, int y, int cols, ArchBitmap* bitmap, SliderEvent event, int count,
-                                 AsDirection direction, int sensitivity);
+                                 AsDirection direction, int sensitivity,
+                                 ButtonEvent upEvent, int arg1, int arg2);
 void activeSliderDestroy(ActiveSlider* activeSlider);
 void activeSliderDraw(ActiveSlider* activeSlider, void* dc);
 int activeSliderShow(ActiveSlider* activeSlider, int show);

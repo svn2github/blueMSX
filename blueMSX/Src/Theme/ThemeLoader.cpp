@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-01-30 09:09:42 $
+** $Date: 2005-02-07 02:27:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -597,7 +597,11 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
         sensitivity *= -1;
     }
 
-    themePageAddSlider(themePage, activeSliderCreate(x, y, cols, bitmap, action, max, direction, sensitivity), trigger, visible);
+    int relArga, relArgb;
+    ButtonEvent release = getAction(el, "release", "relarga", "relargb", &relArga, &relArgb, themeCollection, theme, dx, dy);
+
+
+    themePageAddSlider(themePage, activeSliderCreate(x, y, cols, bitmap, action, max, direction, sensitivity, release, relArga, relArgb), trigger, visible);
 }
 
 static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 

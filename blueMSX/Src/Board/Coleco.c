@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-06 19:33:50 $
+** $Date: 2005-02-07 02:27:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,7 +60,6 @@ static UInt32          nextSyncTime;
 static UInt32          loopTime;
 static int             syncCount;
 static int             SyncPeriod;
-static UInt32          colecoFrequency;
 static int             pendingInt;
 static UInt32          colecoRamSize;
 static UInt32          colecoVramSize;
@@ -359,8 +358,7 @@ void colecoStop() {
 
 int colecoCreate(Machine* machine, 
                  DeviceInfo* devInfo,
-                 int loadState,
-                 int frequency)
+                 int loadState)
 {
     int success;
 
@@ -368,7 +366,6 @@ int colecoCreate(Machine* machine,
     colecoDevInfo   = devInfo;
 
     SyncPeriod   = 0;
-    colecoFrequency = frequency;
 
     nextSyncTime  = 0;
     loopTime      = 0;
@@ -442,11 +439,6 @@ void colecoDestroy() {
     useRom     = 0;
 }
 
-void colecoSetFrequency(UInt32 frequency)
-{
-    colecoFrequency = frequency;
-}
-
 int colecoGetRefreshRate()
 {
     return vdpGetRefreshRate();
@@ -503,7 +495,6 @@ void colecoSaveState()
     saveStateSet(state, "syncCount",       syncCount);
     saveStateSet(state, "SyncPeriod",      SyncPeriod);
     saveStateSet(state, "pendingInt",      pendingInt);
-    saveStateSet(state, "colecoFrequency", colecoFrequency);
     
     saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
     saveStateSet(state, "cartType00",     di->cartridge[0].type);
@@ -537,7 +528,6 @@ void colecoLoadState()
     syncCount           = saveStateGet(state, "syncCount",       0);
     SyncPeriod          = saveStateGet(state, "SyncPeriod",      0);
     pendingInt          = saveStateGet(state, "pendingInt",      0);
-    colecoFrequency        = saveStateGet(state, "colecoFrequency",    0);
 
     di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);
     di->cartridge[0].type = saveStateGet(state, "cartType00",     0);

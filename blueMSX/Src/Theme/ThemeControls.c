@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-02-06 08:32:38 $
+** $Date: 2005-02-07 02:27:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -823,6 +823,9 @@ struct ActiveSlider {
     int y;
     UInt32 width;
     UInt32 height;
+    ButtonEvent upEvent;
+    int arg1;
+    int arg2;
     SliderEvent event;
     int index;
     int count;
@@ -834,23 +837,27 @@ struct ActiveSlider {
 };
 
 ActiveSlider* activeSliderCreate(int x, int y, int cols, ArchBitmap* bitmap, SliderEvent event, int count,
-                                 AsDirection direction, int sensitivity)
+                                 AsDirection direction, int sensitivity,
+                                 ButtonEvent upEvent, int arg1, int arg2)
 {
     ActiveSlider* activeSlider = malloc(sizeof(ActiveSlider));
 
-    activeSlider->bitmap = activeImageCreate(x, y, cols, bitmap, count);
-    activeSlider->x      = x;
-    activeSlider->y      = y;
-    activeSlider->width  = activeImageGetWidth(activeSlider->bitmap);
-    activeSlider->height = activeImageGetHeight(activeSlider->bitmap);
-    activeSlider->event  = event;
-    activeSlider->count  = count;
-    activeSlider->index  = 0;
-    activeSlider->downX  = 0;
-    activeSlider->downY  = 0;
-    activeSlider->downI  = -1;
-    activeSlider->ctrl   = direction;
-    activeSlider->sens   = sensitivity;
+    activeSlider->bitmap  = activeImageCreate(x, y, cols, bitmap, count);
+    activeSlider->x       = x;
+    activeSlider->y       = y;
+    activeSlider->width   = activeImageGetWidth(activeSlider->bitmap);
+    activeSlider->height  = activeImageGetHeight(activeSlider->bitmap);
+    activeSlider->upEvent = upEvent;
+    activeSlider->event   = event;
+    activeSlider->arg1    = arg1;
+    activeSlider->arg2    = arg2;
+    activeSlider->count   = count;
+    activeSlider->index   = 0;
+    activeSlider->downX   = 0;
+    activeSlider->downY   = 0;
+    activeSlider->downI   = -1;
+    activeSlider->ctrl    = direction;
+    activeSlider->sens    = sensitivity;
 
     return activeSlider;
 }
@@ -908,7 +915,15 @@ int activeSliderDown(ActiveSlider* activeSlider, int x, int y)
 int activeSliderUp(ActiveSlider* activeSlider, int x, int y)
 {
     activeSlider->downI = -1;
-    
+
+    if (activeSlider->upEvent != NULL) {
+        if (activeSlider->arg2 == -1) {
+            activeSlider->upEvent(activeSlider->arg1, 0);
+        }
+        else {
+            activeSlider->upEvent(activeSlider->arg1, activeSlider->arg2);
+        }
+    }    
     return 0;
 }
 

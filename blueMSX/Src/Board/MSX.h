@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-06 19:33:51 $
+** $Date: 2005-02-07 02:27:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,8 +40,7 @@
 
 int msxCreate(Machine* machine, 
               DeviceInfo* deviceInfo,
-              int loadState,
-              int frequency);
+              int loadState);
 void msxDestroy();
 
 void msxRun();
@@ -53,7 +52,6 @@ void msxInitStatistics(Machine* machine);
 
 void msxSaveState();
 
-void msxSetFrequency(UInt32 frequency);
 int  msxGetRefreshRate();
 
 void   msxSetInt(UInt32 irq);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-06 19:33:51 $
+** $Date: 2005-02-07 02:27:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,8 +38,7 @@
 
 int colecoCreate(Machine* machine, 
                  DeviceInfo* deviceInfo,
-                 int loadState,
-                 int frequency);
+                 int loadState);
 void colecoDestroy();
 
 void colecoRun();
@@ -53,7 +52,6 @@ void colecoSaveState();
 
 UInt32 colecoSystemTime();
 
-void colecoSetFrequency(UInt32 frequency);
 int  colecoGetRefreshRate();
 
 void colecoSetInt(UInt32 irq);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-02-06 19:33:51 $
+** $Date: 2005-02-07 02:27:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,7 +74,6 @@ static UInt32          loopTime;
 static int             syncCount;
 static int             SyncPeriod;
 static UInt8           KeyMap[16];
-static UInt32          SviFrequency;
 static int             pendingInt;
 static UInt32          sviRamSize;
 static UInt32          sviVramSize;
@@ -436,8 +435,7 @@ void sviStop() {
 
 int sviCreate(Machine* machine, 
               DeviceInfo* devInfo,
-              int loadState,
-              int frequency)
+              int loadState)
 {
     int success;
     int i;
@@ -446,7 +444,6 @@ int sviCreate(Machine* machine,
     sviDevInfo   = devInfo;
 
     SyncPeriod   = 0;
-    SviFrequency = frequency;
 
     nextSyncTime  = 0;
     loopTime      = 0;
@@ -555,11 +552,6 @@ void sviDestroy() {
     useRom     = 0;
 }
 
-void sviSetFrequency(UInt32 frequency)
-{
-    SviFrequency = frequency;
-}
-
 int sviGetRefreshRate()
 {
     return vdpGetRefreshRate();
@@ -643,7 +635,6 @@ void sviSaveState()
     saveStateSet(state, "syncCount",       syncCount);
     saveStateSet(state, "SyncPeriod",      SyncPeriod);
     saveStateSet(state, "pendingInt",      pendingInt);
-    saveStateSet(state, "SviFrequency",    SviFrequency);
     saveStateSet(state, "svi80ColEnabled", svi80ColEnabled);
     
     saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
@@ -693,7 +684,6 @@ void sviLoadState()
     syncCount           = saveStateGet(state, "syncCount",       0);
     SyncPeriod          = saveStateGet(state, "SyncPeriod",      0);
     pendingInt          = saveStateGet(state, "pendingInt",      0);
-    SviFrequency        = saveStateGet(state, "SviFrequency",    0);
     svi80ColEnabled     = saveStateGet(state, "svi80ColEnabled", 0);
 
     di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-06 19:33:51 $
+** $Date: 2005-02-07 02:27:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,8 +40,7 @@
 
 int sviCreate(Machine* machine, 
               DeviceInfo* deviceInfo,
-              int loadState,
-              int frequency);
+              int loadState);
 void sviDestroy();
 
 void sviRun();
@@ -55,7 +54,6 @@ void sviSaveState();
 
 UInt32 sviSystemTime();
 
-void sviSetFrequency(UInt32 frequency);
 int  sviGetRefreshRate();
 
 void sviSetInt(UInt32 irq);

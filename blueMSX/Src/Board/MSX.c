@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-06 19:33:51 $
+** $Date: 2005-02-07 02:27:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,7 +131,6 @@ static AY8910*         ay8910;
 static R800*           r800;
 static RTC*            rtc;
 static JoystickIO*     joyIO;
-UInt32                 MsxFrequency;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
 static UInt32          msxVramSize;
@@ -731,16 +730,13 @@ void msxStop() {
 
 int msxCreate(Machine* machine, 
               DeviceInfo* devInfo,
-              int loadState,
-              int frequency)
+              int loadState)
 {
     int success;
     int i;
 
     msxMachine   = machine;
     msxDevInfo   = devInfo;
-
-    MsxFrequency = frequency;
 
 	pendingInt	  = 0;
 
@@ -855,11 +851,6 @@ void msxDestroy() {
     useMegaRom = 0;
     useMegaRam = 0;
     useFmPac   = 0;
-}
-
-void msxSetFrequency(UInt32 frequency)
-{
-    MsxFrequency = frequency;
 }
 
 int msxGetRefreshRate()
