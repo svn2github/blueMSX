@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-27 01:08:11 $
+** $Date: 2005-02-05 06:40:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,13 +33,19 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "I8250.h"
+#include "ArchUart.h"
 #include <stdlib.h>
 
 typedef struct {
     int connector;
     int deviceHandle;
+    int serialLink;
+    UInt8 baseAddress;
     I8250* i8250;
 } RomMapperSvi328Rs232;
+
+static RomMapperSvi328Rs232* rs232;
+
 
 static void saveState(RomMapperSvi328Rs232* rs232)
 {
@@ -63,57 +69,101 @@ static void loadState(RomMapperSvi328Rs232* rs232)
 
 static void destroy(RomMapperSvi328Rs232* rs232)
 {
-    ioPortUnregister(0x28);
-    ioPortUnregister(0x29);
-    ioPortUnregister(0x2A);
-    ioPortUnregister(0x2B);
-    ioPortUnregister(0x2C);
-    ioPortUnregister(0x2A);
-    ioPortUnregister(0x2D);
-    ioPortUnregister(0x2E);
+    switch (rs232->connector) {
+    case SVI328_MODEM:
+        ioPortUnregister(0x20);
+        ioPortUnregister(0x21);
+        ioPortUnregister(0x22);
+        ioPortUnregister(0x23);
+        ioPortUnregister(0x24);
+        ioPortUnregister(0x25);
+        ioPortUnregister(0x26);
+        ioPortUnregister(0x27);
+        break;
 
+    case SVI328_RS232:
+        ioPortUnregister(0x28);
+        ioPortUnregister(0x29);
+        ioPortUnregister(0x2A);
+        ioPortUnregister(0x2B);
+        ioPortUnregister(0x2C);
+        ioPortUnregister(0x2D);
+        ioPortUnregister(0x2E);
+        ioPortUnregister(0x2F);
+        break;
+    }
+
+    archUartDestroy();
     deviceManagerUnregister(rs232->deviceHandle);
-
     free(rs232);
 }
 
 static UInt8 readIo(RomMapperSvi328Rs232* rs232, UInt16 ioPort) 
 {
-    return i8250Read(rs232->i8250, ioPort - 0x28);
+    return i8250Read(rs232->i8250, ioPort - rs232->baseAddress);
 }
 
 static void writeIo(RomMapperSvi328Rs232* rs232, UInt16 ioPort, UInt8 value) 
 {
-    i8250Write(rs232->i8250, ioPort - 0x28, value);
+    i8250Write(rs232->i8250, ioPort - rs232->baseAddress, value);
 }  
 
-int romMapperSvi328Rs232Create(void)
+static int romMapperSvi328Rs232TransmitCallback(UInt8 value)
+{
+    if (rs232->serialLink) {
+        archUartTransmit(value);
+        return 1;
+    }
+    return 0;
+}
+
+static void romMapperSvi328Rs232ReceiveCallback(UInt8 value)
+{
+    i8250Receive(rs232->i8250, value);
+}
+
+int romMapperSvi328Rs232Create(Svi328UartConnector connector)
 {
     DeviceCallbacks callbacks = {destroy, NULL, saveState, loadState};
-    RomMapperSvi328Rs232* rs232;
 
     rs232 = malloc(sizeof(RomMapperSvi328Rs232));
 
+    rs232->connector  = connector;
     rs232->deviceHandle = deviceManagerRegister(ROM_SVI328RS232, &callbacks, rs232);
 
     rs232->i8250 = NULL;
-    rs232->i8250 = i8250Create(readIo, writeIo ,
-                              readIo, writeIo ,
-                              readIo,
-                              readIo, writeIo ,
-                              readIo, writeIo ,
-                              readIo,
-                              readIo,
-                              readIo, writeIo ,
-                              rs232);
+    rs232->i8250 = i8250Create();
 
-    ioPortRegister(0x28, readIo, writeIo, rs232);
-    ioPortRegister(0x29, readIo, writeIo, rs232);
-    ioPortRegister(0x2A, readIo, NULL,    rs232);
-    ioPortRegister(0x2B, readIo, writeIo, rs232);
-    ioPortRegister(0x2C, readIo, writeIo, rs232);
-    ioPortRegister(0x2D, readIo, NULL,    rs232);
-    ioPortRegister(0x2E, readIo, NULL,    rs232);
+    rs232->serialLink = archUartCreate(romMapperSvi328Rs232ReceiveCallback);
+
+    switch (rs232->connector) {
+    case SVI328_MODEM:
+        rs232->baseAddress = 0x20;
+        ioPortRegister(0x20, readIo, writeIo, rs232);
+        ioPortRegister(0x21, readIo, writeIo, rs232);
+        ioPortRegister(0x22, readIo, NULL,    rs232);
+        ioPortRegister(0x23, readIo, writeIo, rs232);
+        ioPortRegister(0x24, readIo, writeIo, rs232);
+        ioPortRegister(0x25, readIo, NULL,    rs232);
+        ioPortRegister(0x26, readIo, NULL,    rs232);
+        ioPortRegister(0x27, readIo, writeIo, rs232);
+        break;
+
+    case SVI328_RS232:
+        rs232->baseAddress = 0x28;
+        ioPortRegister(0x28, readIo, writeIo, rs232);
+        ioPortRegister(0x29, readIo, writeIo, rs232);
+        ioPortRegister(0x2A, readIo, NULL,    rs232);
+        ioPortRegister(0x2B, readIo, writeIo, rs232);
+        ioPortRegister(0x2C, readIo, writeIo, rs232);
+        ioPortRegister(0x2D, readIo, NULL,    rs232);
+        ioPortRegister(0x2E, readIo, NULL,    rs232);
+        ioPortRegister(0x2F, readIo, writeIo, rs232);
+        break;
+
+    default:
+        return 0;
+    }
 
     return 1;
 }

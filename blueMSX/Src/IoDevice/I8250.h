@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-27 01:05:53 $
+** $Date: 2005-02-05 06:39:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,25 +34,16 @@
 
 typedef struct I8250 I8250;
 
-typedef void  (*I8250Write)(void*, UInt8);
-typedef UInt8 (*I8250Read) (void*);
-
-I8250* i8250Create(I8250Read readRBR_DLL, I8250Write writeTHR_DLL,
-                   I8250Read readIER_DLM, I8250Write writeIER_DLM,
-                   I8250Read readIIR,
-                   I8250Read readLCR, I8250Write writeLCR,
-                   I8250Read readMCR, I8250Write writeMCR,
-                   I8250Read readLSR,
-                   I8250Read readMSR,
-                   I8250Read readSCR, I8250Write writeSCR,
-                   void* ref);
-void i8250Destroy(I8250* i8250); 
-void i8250Reset(I8250* i8250);
-
 UInt8 i8250Read(I8250* i8250, UInt16 port);
 void i8250Write(I8250* i8250, UInt16 port, UInt8 value);
 
+void i8250Receive(I8250* i8250, UInt8 value);
+
 void i8250LoadState(I8250* i8250);
 void i8250SaveState(I8250* i8250);
+
+void i8250Reset(I8250* i8250);
+void i8250Destroy(I8250* i8250); 
+I8250* i8250Create(void);
 
 #endif

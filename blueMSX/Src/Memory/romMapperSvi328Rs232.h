@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-27 01:08:50 $
+** $Date: 2005-02-05 06:40:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,8 @@
 
 #include "MSXTypes.h"
 
-int romMapperSvi328Rs232Create(void);
+typedef enum { SVI328_RS232, SVI328_MODEM } Svi328UartConnector;
+
+int romMapperSvi328Rs232Create(Svi328UartConnector connector);
 
 #endif

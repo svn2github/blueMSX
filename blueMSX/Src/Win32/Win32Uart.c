@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Uart.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-27 01:11:12 $
+** $Date: 2005-02-05 06:40:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,26 +33,71 @@
 #include "ArchUart.h"
 
 
-static HANDLE hComPort = NULL; 
+static HANDLE hComPort = INVALID_HANDLE_VALUE; 
+static HANDLE hReadThread;
 static BOOL bUartInitialized = FALSE;
 static BYTE ucReceiveBuf = 0;
+static void (*uartReceiveCallback)(BYTE value);
 
-static BOOL uartReady(void)
+static DWORD PortReadThread (LPVOID lpvoid)
 {
-    COMMTIMEOUTS timeouts;
-    DCB    dcbConfig;
+	BYTE value;
+	DWORD dwCommModemStatus;
+	DWORD dwBytesTransferred;
 
+	// Specify a set of events to be monitored for the port.
+	SetCommMask (hComPort, EV_RXCHAR);
+
+	while (hComPort != INVALID_HANDLE_VALUE) 
+	{
+		// Wait for an event to occur for the port.
+		WaitCommEvent (hComPort, &dwCommModemStatus, 0);
+
+		// Re-specify the set of events to be monitored for the port.
+		SetCommMask (hComPort, EV_RXCHAR);
+
+		if (dwCommModemStatus & EV_RXCHAR) 
+		{
+			// Read the data from the serial port.
+			ReadFile(hComPort, &value, 1, &dwBytesTransferred, 0);
+
+			// Display the data read.
+			if (dwBytesTransferred == 1)
+			{
+                if (uartReceiveCallback != NULL)
+                    (*uartReceiveCallback) (value);
+			}
+		}
+
+		// Retrieve modem control-register values.
+		GetCommModemStatus (hComPort, &dwCommModemStatus);
+	}
+
+	return 0;
+}
+
+static BOOL uartCreate(void)
+{
+    COMMTIMEOUTS commTimeouts;
+    DCB dcbConfig;
+    DWORD dwThreadID;
+
+    // Alread initialized?
     if (bUartInitialized)
         return TRUE;
 
-    hComPort = CreateFile(TEXT("COM1:"), GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    // Open the serial port
+    hComPort = CreateFile(TEXT("COM3:"), GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
+    dcbConfig.DCBlength = sizeof (DCB);
+
+    // Get the default port setting information
     if (GetCommState(hComPort,&dcbConfig) == 0)
         return FALSE;
 		
     SetupComm(hComPort, 32, 32);
 		
-    // We got a port! now lets config it the way we want
+    // Change the DCB structure settings
     dcbConfig.BaudRate = CBR_9600;          // Current baud 
     dcbConfig.fBinary = TRUE;               // Binary mode; no EOF check 
     dcbConfig.fParity = TRUE;               // Enable parity checking 
@@ -71,22 +116,43 @@ static BOOL uartReady(void)
     dcbConfig.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space 
     dcbConfig.StopBits = ONESTOPBIT;        // 0,1,2 = 1, 1.5, 2 
   
+    // Configure the port according to the specifications of the DCB structure
     if (!SetCommState (hComPort, &dcbConfig))
         return FALSE;
 
-    timeouts.ReadIntervalTimeout = MAXDWORD;
-    timeouts.ReadTotalTimeoutMultiplier = 0;
-    timeouts.ReadTotalTimeoutConstant = 0;
-    timeouts.WriteTotalTimeoutMultiplier = 0;
-    timeouts.WriteTotalTimeoutConstant = 0;
-    SetCommTimeouts( hComPort, &timeouts );
+    // Retrieve the time-out parameters for all read and write operations on the port
+	GetCommTimeouts (hComPort, &commTimeouts);
+
+    // Change the COMMTIMEOUTS structure settings
+    commTimeouts.ReadIntervalTimeout = MAXDWORD;
+    commTimeouts.ReadTotalTimeoutMultiplier = 0;
+    commTimeouts.ReadTotalTimeoutConstant = 0;
+    commTimeouts.WriteTotalTimeoutMultiplier = 0;
+    commTimeouts.WriteTotalTimeoutConstant = 0;
+
+    // Set the time-out parameters for all read and write operations on the port
+    if (!SetCommTimeouts(hComPort, &commTimeouts))
+        return FALSE;
+
+    // Create a read thread for reading data from the communication port
+    hReadThread = CreateThread(NULL, 
+                          0,
+                          (LPTHREAD_START_ROUTINE) PortReadThread,
+                          0, 
+                          0, 
+                          &dwThreadID);
+
+    if (hReadThread == NULL)
+		return FALSE;
+
+	CloseHandle(hReadThread);
 
     bUartInitialized = TRUE;
 
     return TRUE;
 }
 
-static void uartClose(void)
+static void uartDestroy(void)
 {
     CloseHandle (hComPort);
     bUartInitialized = FALSE;
@@ -94,49 +160,27 @@ static void uartClose(void)
 
 static void uartTransmit(BYTE value)
 {
-    DWORD dwWritten = 0;
+    DWORD dwNumBytesWritten = 0;
 
-    if (!WriteFile(hComPort, &value, 1, &dwWritten, 0))
-        uartClose();
-}
-
-static int uartReceiveStatus(void)
-{
-	DWORD dwBytesRead;
-	BYTE value;	
-
-	ReadFile(hComPort, &value, 1, &dwBytesRead, 0);
-	if (dwBytesRead != 0) {
-		ucReceiveBuf = value;
-		return TRUE;
-	}
-	else
-		return FALSE;
-}
-
-BYTE archUartReceive(void)
-{
-    if (uartReady())
-        return ucReceiveBuf;
-    else
-        return 0;
-}
-
-int archUartReceiveStatus(void)
-{
-    if (uartReady())
-        return uartReceiveStatus();
-    else
-        return FALSE;
+if (uartReceiveCallback != NULL)
+(*uartReceiveCallback) (value);
+//    if (!WriteFile(hComPort, &value, 1, &dwNumBytesWritten, 0))
+  //      uartDestroy();
 }
 
 void archUartTransmit(BYTE value)
 {
-    if (uartReady())
+    if (bUartInitialized)
         uartTransmit(value);
 }
 
-int archUartReady(void)
+int archUartCreate(void (*archUartReceiveCallback) (BYTE))
 {
-    return uartReady();
+    uartReceiveCallback = archUartReceiveCallback;
+    return uartCreate();
+}
+
+void archUartDestroy(void)
+{
+    uartDestroy();
 }

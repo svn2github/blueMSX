@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-02-01 07:14:43 $
+** $Date: 2005-02-05 06:38:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -358,7 +358,7 @@ static int sviInitMachine(Machine* machine,
         }
 
         if (machine->slotInfo[i].romType == ROM_SVI328RS232) {
-            success &= romMapperSvi328Rs232Create();
+            success &= romMapperSvi328Rs232Create(SVI328_RS232);
             continue;
         }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-27 01:05:29 $
+** $Date: 2005-02-05 06:39:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,8 +27,13 @@
 **
 ******************************************************************************
 */
+// TODO:
+// - Interrupt handling
+// - Handshaking, Flow control
+// - Dynamic config of baud rate, data bits, etc.
+// - Receive buffers
 #include "I8250.h"
-#include "ArchUart.h"
+#include "DeviceManager.h"
 #include "SaveState.h"
 #include <stdlib.h>
 
@@ -39,116 +44,42 @@
 #define LSR_TRANSMITTER_EMPTY 0x40
 #define MCR_LOOPBACK_TEST 0x10
 
-typedef enum { I8250PORT_RBR_THR_DLL, I8250PORT_IER_DLM, I8250PORT_IIR, I8250PORT_LCR,
-               I8250PORT_MCR, I8250PORT_LSR, I8250PORT_MSR, I8250PORT_SCR } i8250Ports;
+typedef enum
+{
+    I8250PORT_RBR_THR_DLL,  // Receiver Buffer Register (read only), Divisor Latch LSB (DLAB)
+                            // Transmitter Holding Register (write only), Divisor Latch LSB (DLAB)
+    I8250PORT_IER_DLM,      // Interrupt Enable Register, Divisor Latch MSB (DLAB)
+    I8250PORT_IIR,          // Interrupt Identification register (read only)
+    I8250PORT_LCR,          // Line Control Register
+    I8250PORT_MCR,          // Modem Control register
+    I8250PORT_LSR,          // Line Status Register (read only)
+    I8250PORT_MSR,          // Modem Status Register (read only)
+    I8250PORT_SCR           // Scratch Register
+} i8250Ports;
 
 typedef enum { I8250REG_RBR, I8250REG_THR, I8250REG_DLL, I8250REG_IER, I8250REG_DLM, I8250REG_IIR,
                I8250REG_LCR, I8250REG_MCR, I8250REG_LSR, I8250REG_MSR, I8250REG_SCR } i8250Registers;
 
 struct I8250
 {
-    I8250Read readRBR_DLL;   // Receiver Buffer Register (read only), Divisor Latch LSB (DLAB)
-    I8250Write writeTHR_DLL; // Transmitter Holding Register (write only), Divisor Latch LSB (DLAB)
-    I8250Read readIER_DLM;   // Interrupt Enable Register, Divisor Latch MSB (DLAB)
-    I8250Write writeIER_DLM;
-    I8250Read readIIR;       // Interrupt Identification register (read only)
-    I8250Read readLCR;       // Line Control Register
-    I8250Write writeLCR;
-    I8250Read readMCR;       // Modem Control register
-    I8250Write writeMCR;
-    I8250Read readLSR;       // Line Status Register (read only)
-    I8250Read readMSR;       // Modem Status Register (read only)
-    I8250Read readSCR;       // Scratch Register
-    I8250Write writeSCR;
-    void* ref;
-
+    int deviceHandle;
+    int (*transmitCallback)(UInt8 value);
     UInt8 reg[11];
 };
 
-static UInt8 readDummy(void* ref)
+void i8250Receive(I8250* i8250, UInt8 value)
 {
-    return 0xff;
-}
-
-static void writeDummy(void* ref, UInt8 value)
-{
-}
-
-I8250* i8250Create(I8250Read readRBR_DLL, I8250Write writeTHR_DLL,
-                   I8250Read readIER_DLM, I8250Write writeIER_DLM,
-                   I8250Read readIIR,
-                   I8250Read readLCR, I8250Write writeLCR,
-                   I8250Read readMCR, I8250Write writeMCR,
-                   I8250Read readLSR,
-                   I8250Read readMSR,
-                   I8250Read readSCR, I8250Write writeSCR,
-                   void* ref)
-{
-    I8250* i8250 = calloc(1, sizeof(I8250));
-
-    i8250->readRBR_DLL  = readRBR_DLL  ? readRBR_DLL  : readDummy;
-    i8250->writeTHR_DLL = writeTHR_DLL ? writeTHR_DLL : writeDummy;
-    i8250->readIER_DLM  = readIER_DLM  ? readIER_DLM  : readDummy;
-    i8250->writeIER_DLM = writeIER_DLM ? writeIER_DLM : writeDummy;
-    i8250->readIIR      = readIIR      ? readIIR      : readDummy;
-    i8250->readLCR      = readLCR      ? readLCR      : readDummy;
-    i8250->writeLCR     = writeLCR     ? writeLCR     : writeDummy;
-    i8250->readMCR      = readMCR      ? readMCR      : readDummy;
-    i8250->writeMCR     = writeMCR     ? writeMCR     : writeDummy;
-    i8250->readLSR      = readLSR      ? readLSR      : readDummy;
-    i8250->readMSR      = readMSR      ? readMSR      : readDummy;
-    i8250->readSCR      = readSCR      ? readSCR      : readDummy;
-    i8250->writeSCR     = writeSCR     ? writeSCR     : writeDummy;
-    i8250->ref          = ref;
-
-    return i8250;
-}
-
-void i8250Reset(I8250* i8250)
-{
-    i8250->reg[I8250REG_IER] = 0;
-    i8250->reg[I8250REG_IIR] = 1;
-    i8250->reg[I8250REG_LCR] = 0;
-    i8250->reg[I8250REG_MCR] = 0;
-    i8250->reg[I8250REG_LSR] = 0x60;
-}
-
-void i8250Destroy(I8250* uart) 
-{
-    free(uart);
-}
-
-static void saveState(I8250* uart)
-{
-    SaveState* state = saveStateOpenForWrite("i8250");
-
-    saveStateClose(state);
-}
-
-static void loadState(I8250* uart)
-{
-    SaveState* state = saveStateOpenForRead("i8250");
-
-    saveStateClose(state);
-}
-
-static void i8250Receive(I8250* i8250)
-{
-    if (archUartReady()) {
-        if (archUartReceiveStatus()) {
-    	    i8250->reg[I8250REG_RBR] = archUartReceive();
-            if(i8250->reg[I8250REG_LSR] & LSR_DATA_READY)
-                i8250->reg[I8250REG_LSR] |= LSR_OVERRUN_ERROR;
-            i8250->reg[I8250REG_LSR] |= LSR_DATA_READY;
-        }
-    }
+    i8250->reg[I8250REG_RBR] = value;
+    if(i8250->reg[I8250REG_LSR] & LSR_DATA_READY)
+        i8250->reg[I8250REG_LSR] |= LSR_OVERRUN_ERROR;
+    i8250->reg[I8250REG_LSR] |= LSR_DATA_READY;
 }
 
 static void i8250Transmit(I8250* i8250, UInt8 value)
 {
-    if (archUartReady()) {
-        archUartTransmit(value);
-        i8250->reg[I8250REG_LSR] &= ~LSR_TRANSMITTER_EMPTY;
+    if (i8250->transmitCallback != NULL) {
+        if (i8250->transmitCallback(value))
+            i8250->reg[I8250REG_LSR] &= ~LSR_TRANSMITTER_EMPTY;
     }
 }
 
@@ -187,7 +118,7 @@ UInt8 i8250Read(I8250* i8250, UInt16 port)
         break;
 
     case I8250PORT_LSR:
-        i8250Receive(i8250);
+//        i8250Receive(i8250);
         i8250->reg[I8250REG_LSR] |= LSR_TRANSMITTER_HOLDING_REGISTER_EMPTY;
         value = i8250->reg[I8250REG_LSR];
         if(i8250->reg[I8250REG_LSR] & 0x1f)
@@ -243,4 +174,41 @@ void i8250Write(I8250* i8250, UInt16 port, UInt8 value)
         i8250->reg[I8250REG_SCR] = value;
         break;
     }
+}
+
+static void i8250SaveState(I8250* uart)
+{
+    SaveState* state = saveStateOpenForWrite("i8250");
+
+    saveStateClose(state);
+}
+
+static void i8250LoadState(I8250* uart)
+{
+    SaveState* state = saveStateOpenForRead("i8250");
+
+    saveStateClose(state);
+}
+
+static void i8250Reset(I8250* i8250)
+{
+    i8250->reg[I8250REG_IER] = 0;
+    i8250->reg[I8250REG_IIR] = 1;
+    i8250->reg[I8250REG_LCR] = 0;
+    i8250->reg[I8250REG_MCR] = 0;
+    i8250->reg[I8250REG_LSR] = 0x60;
+}
+
+static void i8250Destroy(I8250* uart) 
+{
+    free(uart);
+}
+
+I8250* i8250Create(void)
+{
+    DeviceCallbacks callbacks = { i8250Destroy, i8250Reset, i8250SaveState, i8250LoadState };
+
+    I8250* i8250 = calloc(1, sizeof(I8250));
+
+    return i8250;
 }

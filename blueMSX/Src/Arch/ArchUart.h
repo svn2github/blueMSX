@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchUart.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-27 01:04:26 $
+** $Date: 2005-02-05 06:38:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,11 +32,8 @@
 
 #include "MsxTypes.h"
 
-UInt8 archUartReceive(void);
-int archUartReceiveStatus(void);
-
 void archUartTransmit(UInt8 value);
-
-int archUartReady(void);
+int archUartCreate(void (*archUartReceiveCallback) (UInt8));
+void archUartDestroy(void);
 
 #endif
