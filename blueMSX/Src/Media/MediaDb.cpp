@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-07 17:50:36 $
+** $Date: 2005-03-07 20:18:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -465,7 +465,6 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
         string  company;
         string country;
         string  year;
-        string  remark;
         string  system;
         
         for (TiXmlElement* item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
@@ -499,22 +498,32 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                     year = name->Value();
                 }
             }
-            if (strcmp(item->Value(), "remark") == 0) {
-                TiXmlNode* name = item->FirstChild();
-                if (name != NULL) {
-                    remark = name->Value();
-                }
-            }
         }
 
         for (item = sw->FirstChildElement(); item != NULL; item = item->NextSiblingElement()) {
             if (strcmp(item->Value(), "dump") != 0) {
                 continue;
             }
+            
+            string remark;
+
             for (TiXmlElement* dmp = item->FirstChildElement(); dmp != NULL; dmp = dmp->NextSiblingElement()) {
                 if (strcmp(dmp->Value(), "megarom") == 0 || strcmp(dmp->Value(), "systemrom") == 0 || strcmp(dmp->Value(), "rom") == 0) {
                     RomType romType = strcmp(dmp->Value(), "rom") == 0 ? ROM_PLAIN : ROM_UNKNOWN;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "remark") == 0) {
+                            for (TiXmlElement* i = it->FirstChildElement(); i != NULL; i = i->NextSiblingElement()) {
+                                if (strcmp(i->Value(), "text") == 0) {
+                                    TiXmlNode* name = i->FirstChild();
+                                    if (name != NULL) {
+                                        if (remark.length()) {
+                                            remark += "\n";
+                                        }
+                                        remark += name->Value();
+                                    }
+                                }
+                            }
+                        }
                         if (strcmp(it->Value(), "type") == 0) {
                             TiXmlNode* name = it->FirstChild();
                             if (name != NULL) {
@@ -570,6 +579,19 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                 if (strcmp(dmp->Value(), "sccpluscart") == 0) {
                     RomType romType = ROM_SCC;
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
+                        if (strcmp(it->Value(), "remark") == 0) {
+                            for (TiXmlElement* i = it->FirstChildElement(); i != NULL; i = i->NextSiblingElement()) {
+                                if (strcmp(i->Value(), "text") == 0) {
+                                    TiXmlNode* name = i->FirstChild();
+                                    if (name != NULL) {
+                                        if (remark.length()) {
+                                            remark += "\n";
+                                        }
+                                        remark += name->Value();
+                                    }
+                                }
+                            }
+                        }
                         if (strcmp(it->Value(), "boot") == 0) {
                             TiXmlNode* name = it->FirstChild();
                             if (name != NULL && strcmp(name->Value(), "scc+") == 0) {
@@ -577,6 +599,7 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                             }
                         }
                     }
+
                     for (TiXmlElement* it = dmp->FirstChildElement(); it != NULL; it = it->NextSiblingElement()) {
                         if (strcmp(it->Value(), "hash") == 0) {
                             const char* type = it->Attribute("algo");
@@ -748,11 +771,11 @@ extern "C" const char* mediaDbGetPrettyString(MediaType* mediaType)
 
         if (mediaType->remark.length()) {
             std::string remark = " : ";
-            for (int i = 0; mediaType->remark[i] != '\r' || mediaType->remark[i] != '\n' || mediaType->remark[i] != '\0'; i++) {
+            for (int i = 0; mediaType->remark[i] != '\r' && mediaType->remark[i] != '\n' && mediaType->remark[i] != '\0'; i++) {
                 remark += mediaType->remark[i];
             }
-            if (remark.length() > 20) {
-                remark = remark.substr(0, 20) + "...";
+            if (remark.length() > 35) {
+                remark = remark.substr(0, 35) + "...";
             }
             strcat(prettyString, remark.c_str());
         }
