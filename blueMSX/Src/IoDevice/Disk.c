@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2004-12-18 00:30:22 $
+** $Date: 2004-12-20 21:03:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -225,6 +225,12 @@ static void diskUpdateInfo(int driveId)
 	        sides[driveId]           = 2;
             tracks[driveId]          = 80;
 	        sectorsPerTrack[driveId] = 9;
+            // This check is needed to get the SVI dos disks to work
+            // Maybe it should be applied to other cases as well
+            rv = diskReadSector(driveId, buf, 2, 0, 0, 512, &sectorSize);
+            if (rv && buf[0] == 0xf8) {
+	            sides[driveId] = 1;
+            }
             return;
         case 0xfa:
 	        sides[driveId]           = 1;
@@ -262,12 +268,6 @@ static void diskUpdateInfo(int driveId)
     if ((buf[0] == 0xe9) || (buf[0] ==0xeb)) {
 	    sectorsPerTrack[driveId] = buf[0x18] + 256 * buf[0x19];
 	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];
-#if 0
-        if (memcmp(&buf[3], "ASC 2.2", 7)) {
-            sectorsPerTrack[driveId] = 9;
-            sides[driveId]           = 1;
-        }
-#endif
     }
     else {
         rv = diskReadSector(driveId, buf, 2, 0, 0, 512, &sectorSize);
