@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-09 21:43:57 $
+** $Date: 2005-03-24 20:40:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -306,6 +306,8 @@ void toolLoadAll(const char* path)
             toolList[toolListCount++] = toolInfo;
         }
     } while (FindNextFile(handle, &wfd));
+	
+	FindClose( handle );
 
     SetCurrentDirectory(curDir);
 }
