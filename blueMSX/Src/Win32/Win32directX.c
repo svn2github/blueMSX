@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-30 01:05:13 $
+** $Date: 2005-01-30 01:36:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -580,33 +580,31 @@ void DirectXUpdateSurface(Video* pVideo,
     else {
         int bitCount = ddsd.ddpfPixelFormat.dwRGBBitCount;
         int borderWidth = (320 - frameBuffer->maxWidth) / 2;
-        int y;
+        int dstOffset = borderWidth > 0 ? borderWidth * bitCount / 8 : 0;
 
-        if (borderWidth <= 0) {
-            zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
-                               surfaceBuffer, 0, ddsd.lPitch, canChangeZoom);
-        }
-        else {
-            zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
-                               surfaceBuffer, borderWidth * bitCount / 8, ddsd.lPitch, canChangeZoom);
+        zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
+                           surfaceBuffer, dstOffset, ddsd.lPitch, canChangeZoom);
 
+        if (borderWidth > 0) {
             borderWidth *= zoom;
             if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
-                UInt16* ptr  = surfaceBuffer;
+                UInt16* ptr  = surfaceBuffer;                    
+                int h = zoom * 240;
                 surfaceBuffer = ptr + borderWidth;
-                for (y = 0; y < screenHeight; y++) {
+                while (h--) {
                     memset(ptr, 0, borderWidth * sizeof(UInt16));
+                    memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt16));
                     ptr += ddsd.lPitch / sizeof(UInt16);
-                    memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt16));
                 }
             }
             else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
-                UInt32* ptr  = surfaceBuffer;
+                UInt32* ptr  = surfaceBuffer;                 
+                int h = zoom * 240;
                 surfaceBuffer = ptr + borderWidth;
-                for (y = 0; y < screenHeight; y++) {
+                while (h--) {
                     memset(ptr, 0, borderWidth * sizeof(UInt32));
+                    memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt32));
                     ptr += ddsd.lPitch / sizeof(UInt32);
-                    memset(ptr - borderWidth, 0, borderWidth * sizeof(UInt32));
                 }
             }
         }
