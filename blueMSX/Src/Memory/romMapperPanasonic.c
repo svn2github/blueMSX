@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-12 09:22:30 $
+** $Date: 2004-12-12 22:18:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,10 +38,18 @@
 #include <string.h>
 #include <stdio.h>
 
+enum {
+    READ_SRAM,
+    READ_RAM,
+    READ_ROM
+};
+
 typedef struct {
     int deviceHandle;
     UInt8* romData;
     UInt8* sram;
+    int    readSection;
+    int    readOffset;
     UInt8* readBlock;
     int    sramSize;
     char   sramFilename[512];
@@ -70,6 +78,8 @@ static void saveState(RomMapperPanasonic* rm)
         saveStateSet(state, tag, rm->romMapper[i]);
     }
     
+    saveStateGet(state, "readSection", rm->readSection);
+    saveStateGet(state, "readOffset", rm->readOffset);
     saveStateSet(state, "control", rm->control);
 
     saveStateClose(state);
@@ -87,12 +97,26 @@ static void loadState(RomMapperPanasonic* rm)
         romMapper[i] = (UInt8)saveStateGet(state, tag, 0);
     }
     
-    rm->control = (UInt8)saveStateGet(state, "control", 0);
+    rm->readSection = saveStateGet(state, "readSection", 0);
+    rm->readOffset  = saveStateGet(state, "readOffset", 0);
+    rm->control     = (UInt8)saveStateGet(state, "control", 0);
 
     saveStateClose(state);
 
     for (i = 0; i < 8; i++) {
         changeBank(rm, i, romMapper[i]);
+    }
+
+    switch (rm->readSection) {
+    case READ_SRAM:
+        rm->readBlock = rm->sram + rm->readOffset;
+        break;
+    case READ_RAM:
+        rm->readBlock = boardGetRamPage(rm->readOffset);
+        break;
+    case READ_ROM:
+        rm->readBlock = rm->romData + rm->readOffset;
+        break;
     }
 }
 
@@ -116,15 +140,27 @@ static void changeBank(RomMapperPanasonic* rm, int region, int bank)
 	rm->romMapper[region] = bank;
 	if (rm->sramSize > 0 && bank >= SRAM_BASE && bank < rm->maxSRAMBank) {
 		int offset = (bank - SRAM_BASE) * 0x2000 & (rm->sramSize - 1);
-        if (region == 3) rm->readBlock = rm->sram + offset;
+        if (region == 3) {
+            rm->readSection = READ_SRAM;
+            rm->readOffset = offset;
+            rm->readBlock = rm->sram + offset;
+        }
         slotMapPage(rm->slot, rm->sslot, region, rm->sram + offset, region != 3, 0);
 	} 
     else if (bank >= RAM_BASE) {
-        if (region == 3) rm->readBlock = boardGetRamPage(bank - RAM_BASE);
+        if (region == 3) {
+            rm->readSection = READ_RAM;
+            rm->readOffset = bank - RAM_BASE;
+            rm->readBlock = boardGetRamPage(bank - RAM_BASE);
+        }
         slotMapPage(rm->slot, rm->sslot, region, boardGetRamPage(bank - RAM_BASE), region != 3, 0);
 	} 
     else {
-        if (region == 3) rm->readBlock = rm->romData + bank * 0x2000;
+        if (region == 3) {
+            rm->readSection = READ_ROM;
+            rm->readOffset = bank * 0x2000;
+            rm->readBlock = rm->romData + bank * 0x2000;
+        }
         slotMapPage(rm->slot, rm->sslot, region, rm->romData + bank * 0x2000, region != 3, 0);
 	}
 }

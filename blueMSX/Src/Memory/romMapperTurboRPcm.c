@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 09:22:30 $
+** $Date: 2004-12-12 22:18:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,7 +81,7 @@ static UInt8 read(RomMapperTurboRPcm* rm, UInt16 ioPort)
 {
     switch (ioPort & 0x01) {
 	case 0: 
-		return (UInt8)(15750 * (UInt64)(boardSystemTime() - rm->time) / boardFrequency()) & 0x03;
+		return (UInt8)(21000 * (UInt64)(boardSystemTime() - rm->time) / boardFrequency()) & 0x03;
 	case 1:
 		return (~rm->sample & 0x80) | rm->status;
     }
@@ -92,7 +92,7 @@ static void write(RomMapperTurboRPcm* rm, UInt16 ioPort, UInt8 value)
 {
 	switch (ioPort & 0x01) {
 	case 0:
-		rm->time   = boardSystemTime() - boardFrequency() / 15750 / 4;
+		rm->time   = boardSystemTime();// - boardFrequency() / 15750 / 4;
 		rm->sample = value;
 		if (rm->status & 0x02) {
             dacWrite(rm->dac, rm->sample);

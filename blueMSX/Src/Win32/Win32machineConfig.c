@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 05:57:02 $
+** $Date: 2004-12-12 22:18:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1365,6 +1365,7 @@ static void updateCpuFreqList(HWND hDlg) {
     UInt32 selR800 = 7159090;
     
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CPUZ80FREQ, CB_DELETESTRING, 0, 0));
+    while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CPUR800FREQ, CB_DELETESTRING, 0, 0));
 
     for (i = 0; i < sizeof(cpuFreq) / sizeof(cpuFreq[0]); i++) {
        _TCHAR buffer[128];
