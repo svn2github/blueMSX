@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-21 09:08:53 $
+** $Date: 2004-12-21 09:32:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,17 +51,13 @@ struct SN76489 {
     Int32  buffer[BUFFER_SIZE];
 
     UInt16 latch;
+    UInt32 noiseRand;
+
     UInt16 regs[8];
 
     UInt32 tonePhase[4];
     UInt32 toneStep[4];
 
-    UInt32 noisePhase;
-    UInt32 noiseStep;
-    UInt32 noiseRand;
-    Int16  noiseVolume;
-
-    UInt8  enable;
     UInt8  ampVolume[4];
     Int32  ctrlVolume;
     Int32  oldSampleVolume;
@@ -71,27 +67,21 @@ struct SN76489 {
 void sn76489LoadState(SN76489* sn76489)
 {
     SaveState* state = saveStateOpenForRead("sn76489");
-#if 0
     char tag[32];
     int i;
 
-    sn76489->address          = (UInt8) saveStateGet(state, "address",         0);
-    sn76489->noisePhase       =         saveStateGet(state, "noisePhase",      0);
-    sn76489->noiseStep        =         saveStateGet(state, "noiseStep",       0);
-    sn76489->noiseRand        =         saveStateGet(state, "noiseRand",       0);
-    sn76489->noiseVolume      = (Int16) saveStateGet(state, "noiseVolume",     0);
-
-    sn76489->enable           = (UInt8) saveStateGet(state, "enable",          0);
+    sn76489->latch            = (UInt16)saveStateGet(state, "latch",           0);
+    sn76489->noiseRand        =         saveStateGet(state, "noiseRand",       1);
     sn76489->ctrlVolume       =         saveStateGet(state, "ctrlVolume",      0);
     sn76489->oldSampleVolume  =         saveStateGet(state, "oldSampleVolume", 0);
     sn76489->daVolume         =         saveStateGet(state, "daVolume",        0);
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 8; i++) {
         sprintf(tag, "reg%d", i);
-        sn76489->regs[i] = (UInt8)saveStateGet(state, tag, 0);
+        sn76489->regs[i] = (UInt16)saveStateGet(state, tag, 0);
     }
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 4; i++) {
         sprintf(tag, "phase%d", i);
         sn76489->tonePhase[i] = saveStateGet(state, tag, 0);
 
@@ -101,29 +91,22 @@ void sn76489LoadState(SN76489* sn76489)
         sprintf(tag, "ampVol%d", i);
         sn76489->ampVolume[i] = (UInt8)saveStateGet(state, tag, 0);
     }
-#endif
+
     saveStateClose(state);
 }
 
 void sn76489SaveState(SN76489* sn76489)
 {
     SaveState* state = saveStateOpenForWrite("sn76489");
-#if 0
     char tag[32];
     int i;
 
-    saveStateSet(state, "address",         sn76489->address);
-    saveStateSet(state, "noisePhase",      sn76489->noisePhase);
-    saveStateSet(state, "noiseStep",       sn76489->noiseStep);
-    saveStateSet(state, "noiseRand",       sn76489->noiseRand);
-    saveStateSet(state, "noiseVolume",     sn76489->noiseVolume);
-
-    saveStateSet(state, "enable",          sn76489->enable);
+    saveStateSet(state, "latch",           sn76489->latch);
     saveStateSet(state, "ctrlVolume",      sn76489->ctrlVolume);
     saveStateSet(state, "oldSampleVolume", sn76489->oldSampleVolume);
     saveStateSet(state, "daVolume",        sn76489->daVolume);
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 4; i++) {
         sprintf(tag, "reg%d", i);
         saveStateSet(state, tag, sn76489->regs[i]);
     }
@@ -138,7 +121,7 @@ void sn76489SaveState(SN76489* sn76489)
         sprintf(tag, "ampVol%d", i);
         saveStateSet(state, tag, sn76489->ampVolume[i]);
     }
-#endif
+
     saveStateClose(state);
 }
 
@@ -148,8 +131,6 @@ SN76489* sn76489Create(Mixer* mixer)
     int i;
 
     sn76489->mixer = mixer;
-    sn76489->noiseRand = 1;
-    sn76489->noiseVolume = 1;
 
     mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
 
@@ -171,8 +152,13 @@ void sn76489Reset(SN76489* sn76489)
     if (sn76489 != NULL) {
         int i;
     
-        for (i = 0; i < 16; i++) {
-            sn76489WriteData(sn76489, 0, 0);
+        for (i = 0; i < 4; i++) {
+            sn76489->regs[2 * i] = 0;
+            sn76489->regs[2 * i + 1] = 0;
+            sn76489->tonePhase[i] = 0;
+            sn76489->ampVolume[i] = 0;
+            sn76489->toneStep[i]  = 1 << 31;
+
         }
     }
 }
