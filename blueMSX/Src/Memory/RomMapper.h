@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2004-12-23 17:29:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,7 +107,8 @@ typedef enum {
     ROM_EXTRAM4MB   = 73,
     ROM_SVI328      = 74,
     ROM_SVI328FDC   = 75,
-    ROM_MAXROMID    = 75
+    ROM_COLECO      = 76,
+    ROM_MAXROMID    = 76
 } RomType;
 
 static char* romTypeToString(RomType romType) {
@@ -185,6 +186,7 @@ static char* romTypeToString(RomType romType) {
     case ROM_MSXAUDIO:    return "MSX Audio";
     case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
+    case ROM_COLECO:      return "ColecoVision Cartridge";
 
     case ROM_UNKNOWN:     return "Unknown";
     }
@@ -267,6 +269,7 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_MSXAUDIO:    return "MSXAUDIO";
     case ROM_KOREAN90:    return "90IN1";
     case ROM_SVI328:      return "SVI328";
+    case ROM_COLECO:      return "COLECO";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }

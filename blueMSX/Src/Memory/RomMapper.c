@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-23 16:48:50 $
+** $Date: 2004-12-23 17:29:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,7 +131,6 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "konami4"))      return ROM_KONAMI4;
     if (0 == strcmpnocase(name, "ascii8"))       return ROM_ASCII8;
     if (0 == strcmpnocase(name, "halnote"))      return ROM_HALNOTE;
-    if (0 == strcmpnocase(name, "coleco"))       return ROM_BASIC;
     if (0 == strcmpnocase(name, "basic"))        return ROM_BASIC;
     if (0 == strcmpnocase(name, "0x4000"))       return ROM_0x4000;
     if (0 == strcmpnocase(name, "konamisynth"))  return ROM_KONAMISYNTH;
@@ -172,6 +171,8 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "kanji12"))      return ROM_KANJI12;    
     if (0 == strcmpnocase(name, "jisyo"))        return ROM_JISYO;    
     if (0 == strcmpnocase(name, "bunsetsu"))     return ROM_BUNSETU;
+    if (0 == strcmpnocase(name, "coleco"))       return ROM_COLECO;
+    if (0 == strcmpnocase(name, "svi328"))       return ROM_SVI328;
 
     return ROM_UNKNOWN;
 }    
@@ -273,6 +274,11 @@ RomType romMapperGuessRom(const void *buffer, int size, int guess, char* extende
     if (romType == ROM_UNKNOWN &&
         size < 0x8001 && romData[0] == 0xF3 && romData[1] == 0x31) {
             romType = ROM_SVI328;
+    }
+
+    if (romType == ROM_UNKNOWN &&
+        size <= 0x8000 && romData[0] == 0x55 && romData[1] == 0xAA) {
+            romType = ROM_COLECO;
     }
 
     if (romType == ROM_STANDARD &&
