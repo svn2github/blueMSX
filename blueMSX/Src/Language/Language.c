@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-03-07 05:32:46 $
+** $Date: 2005-03-09 22:10:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -753,12 +753,14 @@ _TCHAR* langShortcutShowAudioProp() { return ls->shortcutShowAudioProp; }
 _TCHAR* langShortcutShowCtrlProp() { return ls->shortcutShowCtrlProp; }
 _TCHAR* langShortcutShowPerfProp() { return ls->shortcutShowPerfProp; }
 _TCHAR* langShortcutShowSettProp() { return ls->shortcutShowSettProp; }
+_TCHAR* langShortcutShowPorts() { return ls->shortcutShowPorts; }
 _TCHAR* langShortcutShowApearProp() { return ls->shortcutShowApearProp; }
 _TCHAR* langShortcutShowLanguage() { return ls->shortcutShowLanguage; }
 _TCHAR* langShortcutShowMachines() { return ls->shortcutShowMachines; }
 _TCHAR* langShortcutShowShortcuts() { return ls->shortcutShowShortcuts; }
 _TCHAR* langShortcutShowKeyboard() { return ls->shortcutShowKeyboard; }
 _TCHAR* langShortcutShowDebugger() { return ls->shortcutShowDebugger; }
+_TCHAR* langShortcutShowTrainer() { return ls->shortcutShowTrainer; }
 _TCHAR* langShortcutShowHelp() { return ls->shortcutShowHelp; }
 _TCHAR* langShortcutShowAbout() { return ls->shortcutShowAbout; }
 _TCHAR* langShortcutShowFiles() { return ls->shortcutShowFiles; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-03-07 05:32:46 $
+** $Date: 2005-03-09 22:10:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -524,12 +524,14 @@ typedef struct {
     _TCHAR* shortcutShowCtrlProp;
     _TCHAR* shortcutShowPerfProp;
     _TCHAR* shortcutShowSettProp;
+    _TCHAR* shortcutShowPorts;
     _TCHAR* shortcutShowApearProp;
     _TCHAR* shortcutShowLanguage;
     _TCHAR* shortcutShowMachines;
     _TCHAR* shortcutShowShortcuts;
     _TCHAR* shortcutShowKeyboard;
     _TCHAR* shortcutShowDebugger;
+    _TCHAR* shortcutShowTrainer;
     _TCHAR* shortcutShowHelp;
     _TCHAR* shortcutShowAbout;
     _TCHAR* shortcutShowFiles;

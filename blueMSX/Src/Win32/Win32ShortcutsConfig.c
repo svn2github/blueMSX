@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-03-09 22:10:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -778,11 +778,13 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(propShowPerformance);
     LOAD_SHORTCUT(propShowSettings);
     LOAD_SHORTCUT(propShowApearance);
+    LOAD_SHORTCUT(propShowPorts);
     LOAD_SHORTCUT(optionsShowLanguage);
     LOAD_SHORTCUT(toolsShowMachineEditor);
     LOAD_SHORTCUT(toolsShowShorcutEditor);
     LOAD_SHORTCUT(toolsShowKeyboardEditor);
     LOAD_SHORTCUT(toolsShowDebugger);
+    LOAD_SHORTCUT(toolsShowTrainer);
     LOAD_SHORTCUT(helpShowHelp);
     LOAD_SHORTCUT(helpShowAbout);
     LOAD_SHORTCUT(cpuTrace);
@@ -859,11 +861,13 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(propShowPerformance);
     SAVE_SHORTCUT(propShowSettings);
     SAVE_SHORTCUT(propShowApearance);
+    SAVE_SHORTCUT(propShowPorts);
     SAVE_SHORTCUT(optionsShowLanguage);
     SAVE_SHORTCUT(toolsShowMachineEditor);
     SAVE_SHORTCUT(toolsShowShorcutEditor);
     SAVE_SHORTCUT(toolsShowKeyboardEditor);
     SAVE_SHORTCUT(toolsShowDebugger);
+    SAVE_SHORTCUT(toolsShowTrainer);
     SAVE_SHORTCUT(helpShowHelp);
     SAVE_SHORTCUT(helpShowAbout);
     SAVE_SHORTCUT(cpuTrace);
@@ -1004,6 +1008,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(propShowPerformance, langShortcutShowPerfProp());
     ADD_SHORTCUT(propShowSettings, langShortcutShowFiles());
     ADD_SHORTCUT(propShowApearance, langShortcutShowSettProp());
+    ADD_SHORTCUT(propShowPorts, langShortcutShowPorts());
     ADD_SHORTCUT(optionsShowLanguage, langShortcutShowLanguage());
     
     ADD_SHORTCUTSEPARATOR();
@@ -1012,6 +1017,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(toolsShowShorcutEditor, langShortcutShowShortcuts());
     ADD_SHORTCUT(toolsShowKeyboardEditor, langShortcutShowKeyboard());
     ADD_SHORTCUT(toolsShowDebugger, langShortcutShowDebugger());
+    ADD_SHORTCUT(toolsShowTrainer, langShortcutShowTrainer());
     
     ADD_SHORTCUTSEPARATOR();
 

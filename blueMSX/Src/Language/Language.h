@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-03-07 05:32:46 $
+** $Date: 2005-03-09 22:10:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -539,12 +539,14 @@ _TCHAR* langShortcutShowAudioProp();
 _TCHAR* langShortcutShowCtrlProp();
 _TCHAR* langShortcutShowPerfProp();
 _TCHAR* langShortcutShowSettProp();
+_TCHAR* langShortcutShowPorts();
 _TCHAR* langShortcutShowApearProp();
 _TCHAR* langShortcutShowLanguage();
 _TCHAR* langShortcutShowMachines();
 _TCHAR* langShortcutShowShortcuts();
 _TCHAR* langShortcutShowKeyboard();
 _TCHAR* langShortcutShowDebugger();
+_TCHAR* langShortcutShowTrainer();
 _TCHAR* langShortcutShowHelp();
 _TCHAR* langShortcutShowAbout();
 _TCHAR* langShortcutShowFiles();

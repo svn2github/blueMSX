@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-03-04 01:27:48 $
+** $Date: 2005-03-09 22:10:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -565,7 +565,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuVideoSourceDefault  = "ビデオソ\ースの接続がありません";
     ls->menuVideoChipAutodetect = "ヒデオチップの自動認識";
     ls->propFullscreenResText   = "フルスクリーンの解像度:";
-    ls->dlgSavePreview          = "プレビュー表示";
+    ls->dlgSavePreview          = "プレビュー表\示";
     ls->dlgSaveDate             = "セーブ時刻:";
     
     ls->enumVideoMonAmber       = "アンバー";

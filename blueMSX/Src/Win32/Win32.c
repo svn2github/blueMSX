@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-03-09 22:10:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -738,11 +738,13 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->propShowPerformance))          actionPropShowPerformance();
     if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
     if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
+    if (hotkeyEq(key, s->propShowPorts))                actionPropShowPorts();
     if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
     if (hotkeyEq(key, s->toolsShowKeyboardEditor))      actionToolsShowKeyboardEditor();
     if (hotkeyEq(key, s->toolsShowDebugger))            actionToolsShowDebugger();
+    if (hotkeyEq(key, s->toolsShowTrainer))             actionToolsShowTrainer();
     if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
     if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
 }
@@ -2504,6 +2506,14 @@ void archShowKeyboardEditor()
 void archShowDebugger()
 {
     ToolInfo* ti = toolInfoFind("Debugger");
+    if (ti != NULL) {
+        toolInfoShowTool(ti);
+    }
+}
+
+void archShowTrainer()
+{
+    ToolInfo* ti = toolInfoFind("Trainer");
     if (ti != NULL) {
         toolInfoShowTool(ti);
     }

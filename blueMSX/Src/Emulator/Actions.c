@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-03-09 21:43:56 $
+** $Date: 2005-03-09 22:10:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -751,6 +751,10 @@ void actionToolsShowKeyboardEditor() {
 
 void actionToolsShowDebugger() {
     archShowDebugger();
+}
+
+void actionToolsShowTrainer() {
+    archShowTrainer();
 }
 
 void actionHelpShowHelp() {
