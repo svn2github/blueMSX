@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-12 09:30:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -43,9 +44,11 @@ typedef struct {
     int deviceHandle;
     UInt8* ramData;
     int handle;
+    int debugHandle;
     int slot;
     int sslot;
     int mask;
+    int size;
 } RamMapper;
 
 static void write(RamMapper* rm, UInt16 page, UInt8 value);
@@ -91,12 +94,18 @@ static void write(RamMapper* rm, UInt16 page, UInt8 value)
 
 static void destroy(RamMapper* rm)
 {
+    debugDeviceUnregister(rm->debugHandle);
     ramMapperIoRemove(rm->handle);
     slotUnregister(rm->slot, rm->sslot, 0);
     deviceManagerUnregister(rm->deviceHandle);
     free(rm->ramData);
 
     free(rm);
+}
+
+static void setDebugInfo(RamMapper* rm, DbgDevice* dbgDevice)
+{
+    dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->size, rm->ramData);
 }
 
 int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
@@ -123,6 +132,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm = malloc(sizeof(RamMapper));
 
     rm->ramData = malloc(size);
+    rm->size    = size;
     rm->slot    = slot;
     rm->sslot   = sslot;
     rm->mask    = pages - 1;
@@ -131,6 +141,8 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
 
     rm->handle  = ramMapperIoAdd(pages * 0x4000, write, rm);
     
+    rm->debugHandle = debugDeviceRegister("Main RAM", setDebugInfo, rm);
+
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
     slotRegister(slot, sslot, 0, 8, NULL, NULL, destroy, rm);
 

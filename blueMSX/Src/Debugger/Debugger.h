@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-11 16:49:43 $
+** $Date: 2005-02-12 09:30:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,12 +32,11 @@
 
 #include "MsxTypes.h"
 
-typedef void (*EmulatorStartCb)();
-typedef void (*EmulatorStopCb)();
-typedef void (*EmulatorPauseCb)();
-typedef void (*EmulatorResumeCb)();
+typedef void (*DebuggerEvent)();
 
-typedef struct Debugger Debugger;
+typedef struct Debugger    Debugger;
+typedef struct DbgSnapshot DbgSnapshot;
+typedef struct DbgDevice   DbgDevice;
 
 typedef struct {
     char   name[32];
@@ -49,40 +48,50 @@ typedef struct {
 typedef struct {
     char   name[32];
     UInt32 count;
-    struct {
-        char name[8];
-        UInt8  bitCount;
-        UInt32 value;
-    } regs[1];
+    struct DbgRegister {
+        char  name[7];
+        UInt8 value;
+    } reg[1];
 } DbgRegisterBank;
 
 typedef struct {
+    char name[32];
     UInt32 count;
-    struct {
-        char name[8];
-        UInt8  bitCount;
-        UInt32 value;
-    } regs[1];
+    struct DbgIoPort {
+        UInt16 port;
+        UInt8  value;
+    } port[1];
 } DbgIoPorts;
 
-typedef struct {
+Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
+                         DebuggerEvent onEmulatorStop,
+                         DebuggerEvent onEmulatorPause,
+                         DebuggerEvent onEmulatorResume);
+
+void debuggerDestroy(Debugger* debugger);
+
+DbgSnapshot*     dbgSnapshotCreate(Debugger* debugger);
+void             dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot);
+int              dbgSnapshotGetDeviceCount(DbgSnapshot* dbgSnapshot);
+const DbgDevice* dbgSnapshotGetDevice(DbgSnapshot* dbgSnapshot, int deviceIndex);
+
+int                    dbgDeviceGetMemoryBlockCount(DbgDevice* dbgDevice);
+const DbgMemoryBlock*  dbgDeviceGetMemoryBlock(DbgDevice* dbgDevice, int memBlockIndex);
+int                    dbgDeviceGetRegisterBankCount(DbgDevice* dbgDevice);
+const DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int regBankIndex);
+int                    dbgDeviceGetIoPortsCount(DbgDevice* dbgDevice);
+const DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int ioPortIndex);
+
+
+// Internal structure
+
+struct DbgDevice {
     char name[64];
-    int  memoryBblocks;
-    int  registerBanks;
-    int  ioPortBanks;
-} DbgDevice;
+    DbgMemoryBlock*  memoryBlock[4];
+    DbgRegisterBank* registerBank[4];
+    DbgIoPorts*      ioPorts[4];
+    int              deviceHandle;
+};
 
-Debugger* debuggerCreate(EmulatorStartCb*  startCb,
-                         EmulatorStopCb*   stopCb,
-                         EmulatorPauseCb*  pauseCb,
-                         EmulatorResumeCb* resumeCb);
-
-int debuggerGetDeviceCount();
-
-DbgDevice* debuggerGetDevice(int index);
-
-DbgMemoryBlock*  dbgDeviceGetMemoryBlock(DbgDevice* dbgDevice, int index);
-DbgRegisterBank* dbgDeviceGetRegisterBank(DbgDevice* dbgDevice, int index);
-DbgIoPorts*      dbgDeviceGetIoPorts(DbgDevice* dbgDevice, int index);
 
 #endif /*DEBUGGER_H*/

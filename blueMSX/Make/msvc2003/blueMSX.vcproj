@@ -1420,6 +1420,12 @@ buildnumber.exe
 			Name="Debugger"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Debugger\DebugDeviceManager.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Debugger\DebugDeviceManager.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Debugger\Debugger.c">
 			</File>
 			<File
