@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-01-16 00:49:23 $
+** $Date: 2005-01-16 01:57:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -166,6 +166,74 @@ void saveDialogPos(HWND hwnd, int dialogID)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+
+#define WM_SHOWDSKWIN        (WM_USER + 1248)
+
+#define TIMER_DSKDIALOGSHOW 20
+
+static BOOL CALLBACK dskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    static int show = 0;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        centerDialog(hDlg, 0);
+        return FALSE;
+
+    case WM_SHOWDSKWIN:
+        {
+            Properties* pProperties = propGetGlobalProperties();
+            RECT r1;
+            RECT r2;
+            int x;
+            int y;
+
+            GetWindowRect(GetParent(hDlg), &r1);
+            GetWindowRect(hDlg, &r2);
+
+            x = r1.left + (r1.right - r1.left - r2.right + r2.left) / 2;
+            y = r1.top  + (r1.bottom - r1.top - r2.bottom + r2.top) / 2;
+
+            SetWindowText(GetDlgItem(hDlg, IDC_DISKIMAGE), 
+                          stripPath(*pProperties->diskdrive.slotAZip ? 
+                          pProperties->diskdrive.slotAZip : pProperties->diskdrive.slotA));
+            if (!show) {
+                enterDialogShow();
+                SetWindowPos(hDlg, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                show = 1;
+            }
+            SetTimer(hDlg, TIMER_DSKDIALOGSHOW, 1000, NULL);
+            
+            centerDialog(hDlg, 1);
+        }
+        return TRUE;
+
+    case WM_TIMER:
+        ShowWindow(hDlg, SW_HIDE);
+        KillTimer(hDlg, TIMER_DSKDIALOGSHOW);
+    
+        show = 0;
+        exitDialogShow();
+        return TRUE;
+    }
+    return FALSE;
+}
+
+typedef void* DiskQuickviewWindow;
+
+DiskQuickviewWindow* diskQuickviewWindowCreate(HWND parent) {
+    return (DiskQuickviewWindow*)CreateDialog(GetModuleHandle(0), MAKEINTRESOURCE(IDD_DISKIMAGE), parent, dskProc);
+}
+
+void diskQuickviewWindowDestroy(DiskQuickviewWindow* dqw)
+{
+    DestroyWindow((HWND)dqw);
+}
+
+void diskQuickviewWindowShow(DiskQuickviewWindow* dqw)
+{
+    SendMessage((HWND)dqw, WM_SHOWDSKWIN, 0, 0);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 static RomType romTypeList[] = {
@@ -579,7 +647,6 @@ void setTapePosition(HWND parent, Properties* pProperties) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 
 #define hotkeyEq(hotkey1, hotkey2) (*(DWORD*)&hotkey1 == *(DWORD*)&hotkey2)
 
@@ -779,7 +846,6 @@ void updateJoystick(Properties* pProperties) {
 
 
 #define WM_UPDATE            (WM_USER + 1245)
-#define WM_SHOWDSKWIN        (WM_USER + 1248)
 #define WM_LAUNCHFILE        (WM_USER + 1249)
 
 #define TIMER_STATUSBAR_UPDATE              10
@@ -792,7 +858,6 @@ void updateJoystick(Properties* pProperties) {
 #define TIMER_THEME                         17
 #define TIMER_MENUUPDATE                    18
 #define TIMER_CLIP_REGION                   19
-#define TIMER_DSKDIALOGSHOW                 20
 
 void  PatchDiskSetBusy(int driveId, int busy);
 
@@ -819,7 +884,7 @@ typedef struct {
     int trackMenu;
     int showDialog;
     BITMAPINFO bmInfo;
-    HWND dskWnd;
+    DiskQuickviewWindow dskWnd;
     
     //
     void* bmBitsGDI;
@@ -1920,56 +1985,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-
-static BOOL CALLBACK dskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static int show = 0;
-
-    switch (iMsg) {
-    case WM_INITDIALOG:
-        centerDialog(hDlg, 0);
-        return FALSE;
-
-    case WM_SHOWDSKWIN:
-        {
-            RECT r1;
-            RECT r2;
-            int x;
-            int y;
-
-            GetWindowRect(GetParent(hDlg), &r1);
-            GetWindowRect(hDlg, &r2);
-
-            x = r1.left + (r1.right - r1.left - r2.right + r2.left) / 2;
-            y = r1.top  + (r1.bottom - r1.top - r2.bottom + r2.top) / 2;
-
-            SetWindowText(GetDlgItem(hDlg, IDC_DISKIMAGE), 
-                          stripPath(*pProperties->diskdrive.slotAZip ? 
-                          pProperties->diskdrive.slotAZip : pProperties->diskdrive.slotA));
-            if (!show) {
-                enterDialogShow();
-                SetWindowPos(hDlg, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-                show = 1;
-            }
-            SetTimer(hDlg, TIMER_DSKDIALOGSHOW, 1000, NULL);
-            
-            centerDialog(hDlg, 1);
-        }
-        return TRUE;
-
-    case WM_TIMER:
-        ShowWindow(hDlg, SW_HIDE);
-        KillTimer(hDlg, TIMER_DSKDIALOGSHOW);
-    
-        show = 0;
-        exitDialogShow();
-        return TRUE;
-    }
-    return FALSE;
-}
-
-
-////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
 static int videoTimeAverage = 0;
@@ -2245,7 +2260,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     mouseEmuInit(st.emuHwnd, 1);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
-    st.dskWnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DISKIMAGE), st.hwnd, dskProc);
+    st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 
     GetWindowRect(st.hwnd, &wr);
     st.X  = wr.left;
@@ -2453,7 +2468,7 @@ void archMinimizeWindow() {
 
 void archDiskQuickChangeNotify() 
 {
-    SendMessage(st.dskWnd, WM_SHOWDSKWIN, 0, 0);
+    diskQuickviewWindowShow(st.dskWnd);
 }
 
 char* archDirOpen(char* title, char* defaultDir)
