@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-01-14 01:22:05 $
+** $Date: 2005-01-14 20:47:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,11 +104,42 @@ static void sviMemReset()
 
 static void sviMemSetBank(UInt8 AYReg15)
 {
+    UInt8 value = 0;
+    int i;
+
+    psgAYReg15 = AYReg15;
+
     sviBankLow = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?BANK_01:BANK_31:BANK_21:BANK_11;
     sviBankHigh = (AYReg15&4)?(AYReg15&16)?BANK_02:BANK_32:BANK_22;
     sviLowReadOnly = ((sviBankLow==BANK_01)||(sviBankLow==BANK_11))?1:0;
 
-    psgAYReg15 = AYReg15;
+    switch (sviBankLow) {
+        case BANK_01:
+            value = 0; // 0000
+            break;
+        case BANK_11:
+            value = 5; // 0101
+            break;
+        case BANK_21:
+            value = 10; // 1010
+            break;
+        case BANK_31:
+            value = 15; // 1111
+            break;
+    }
+    switch (sviBankHigh) {
+        case BANK_02:
+            value |= 0; // 00000000
+            break;
+
+        case BANK_22:
+            value |= 160; // 10100000
+            break;
+        case BANK_32:
+            value |= 240; // 11110000
+            break;
+    }
+    for (i = 0; i < 4; i++) {        slotSetRamSlot(i, value & 3);        value >>= 2;    }
 }
 
 void sviMemWrite(void* ref, UInt16 address, UInt8 value)
@@ -294,7 +325,11 @@ UInt8* sviGetRamPage(int page)
 {
     static UInt8 emptyRam[0x2000];
 
-    return emptyRam;
+    if (sviRam == NULL) {
+        return emptyRam;
+    }
+
+    return sviRam + ((page * 0x2000) & (sviRamSize - 1));
 }
 
 void sviSetInt(UInt32 irq)
@@ -439,9 +474,9 @@ static int sviInitMachine(Machine* machine,
         slotMapRamPage(0, 0, i);
     }
 
+    sviMemSetBank(0xDF);
 /*
     sviMemReset();
-    sviMemSetBank(0xDF);
 
     buf = romLoad(machine->slotInfo[0].name, machine->slotInfo[0].inZipName, &size);
     if (buf != NULL) {
