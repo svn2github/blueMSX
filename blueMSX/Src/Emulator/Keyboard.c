@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-04 07:14:16 $
+** $Date: 2005-01-04 20:46:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,7 @@ static void initKeyMapMSX()
     keyMap[EK_NEG    ] = 0x104;
     keyMap[EK_CIRCFLX] = 0x108;
     keyMap[EK_BKSLASH] = 0x110;
-    keyMap[EK_JAP01  ] = 0x120;
+    keyMap[EK_AT     ] = 0x120;
     keyMap[EK_LBRACK ] = 0x140;
     keyMap[EK_SEMICOL] = 0x180;
 
@@ -95,7 +95,7 @@ static void initKeyMapMSX()
     keyMap[EK_CTRL   ] = 0x602;
     keyMap[EK_GRAPH  ] = 0x604;
     keyMap[EK_CAPS   ] = 0x608;
-    keyMap[EK_JAP3   ] = 0x610;
+    keyMap[EK_CODE   ] = 0x610;
     keyMap[EK_F1     ] = 0x620;
     keyMap[EK_F2     ] = 0x640;
     keyMap[EK_F3     ] = 0x680;
@@ -136,8 +136,8 @@ static void initKeyMapMSX()
     keyMap[EK_NUMCOM ] = 0xa40;
     keyMap[EK_NUMPER ] = 0xa80;
 
-    keyMap[EK_JAP2   ] = 0xb02;
-    keyMap[EK_JAP4   ] = 0xb08;
+    keyMap[EK_JIKKOU ] = 0xb02;
+    keyMap[EK_TORIKE ] = 0xb08;
 //    keyMap[EK_PAUSE  ] = 0x780;
 }
 
@@ -193,7 +193,7 @@ static void initKeyMapSVI()
     keyMap[EK_X      ] = 0x501;
     keyMap[EK_Y      ] = 0x502;
     keyMap[EK_Z      ] = 0x504;
-    keyMap[EK_JAP01  ] = 0x508;
+    keyMap[EK_AT     ] = 0x508;
     keyMap[EK_BKSLASH] = 0x510;
     keyMap[EK_LBRACK ] = 0x520;
     keyMap[EK_BKSPACE] = 0x540;
@@ -203,7 +203,7 @@ static void initKeyMapSVI()
     keyMap[EK_RSHIFT ] = 0x601;
     keyMap[EK_CTRL   ] = 0x602;
     keyMap[EK_GRAPH  ] = 0x604;
-    keyMap[EK_JAP3   ] = 0x608;
+    keyMap[EK_CODE   ] = 0x608;
     keyMap[EK_ESC    ] = 0x610;
     keyMap[EK_STOP   ] = 0x620;
     keyMap[EK_RETURN ] = 0x640;

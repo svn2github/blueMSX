@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-04 07:14:16 $
+** $Date: 2005-01-04 20:46:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,7 +77,7 @@ typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
 #define EK_I        34
 #define EK_O        35
 #define EK_P        36
-#define EK_JAP01    37   // Key right of 'P'
+#define EK_AT       37
 #define EK_LBRACK   38
 #define EK_RETURN   39
 
@@ -114,10 +114,10 @@ typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
 // ROW 5
 #define EK_CAPS     66
 #define EK_GRAPH    67
-#define EK_JAP2     68
+#define EK_TORIKE   68
 #define EK_SPACE    69
-#define EK_JAP3     70
-#define EK_JAP4     71
+#define EK_JIKKOU   70
+#define EK_CODE     71
 #define EK_PAUSE    72
 
 // ARROWS

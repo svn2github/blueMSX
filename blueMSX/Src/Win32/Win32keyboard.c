@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-04 07:14:17 $
+** $Date: 2005-01-04 20:46:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -208,7 +208,7 @@ static void initKbdTable()
     kbdTable[DIK_MINUS      ] = EK_NEG;
     kbdTable[DIK_EQUALS     ] = EK_CIRCFLX;
     kbdTable[DIK_BACKSLASH  ] = EK_BKSLASH;
-    kbdTable[DIK_LBRACKET   ] = EK_JAP01;
+    kbdTable[DIK_LBRACKET   ] = EK_AT;
     kbdTable[DIK_RBRACKET   ] = EK_LBRACK;
     kbdTable[DIK_SEMICOLON  ] = EK_SEMICOL;
     kbdTable[DIK_APOSTROPHE ] = EK_COLON;
@@ -281,13 +281,13 @@ static void initKbdTable()
     kbdTable[DIK_NUMPAD8    ] = EK_NUM8;
     kbdTable[DIK_NUMPAD9    ] = EK_NUM9;
 
-    kbdTable[DIK_RWIN       ] = EK_JAP2;
-    kbdTable[DIK_LWIN       ] = EK_JAP3;
+    kbdTable[DIK_RWIN       ] = EK_TORIKE;
+    kbdTable[DIK_LWIN       ] = EK_JIKKOU;
     kbdTable[DIK_LSHIFT     ] = EK_LSHIFT;
     kbdTable[DIK_RSHIFT     ] = EK_RSHIFT;
     kbdTable[DIK_LCONTROL   ] = EK_CTRL;
     kbdTable[DIK_LMENU      ] = EK_GRAPH;
-    kbdTable[DIK_RMENU      ] = EK_JAP4;
+    kbdTable[DIK_RMENU      ] = EK_CODE;
     kbdTable[DIK_CAPITAL    ] = EK_CAPS;
     kbdTable[DIK_NUMPADENTER] = EK_PAUSE;
     kbdTable[DIK_SYSRQ      ] = EK_PRINT;
