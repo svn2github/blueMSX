@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2005-02-03 07:33:25 $
+** $Date: 2005-02-10 01:41:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1554,7 +1554,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     switch (iMsg) {
     case WM_CREATE:
         SetTimer(hwnd, TIMER_STATUSBAR_UPDATE, 100, NULL);
-        SetTimer(hwnd, TIMER_POLL_INPUT, 20, NULL);
+        SetTimer(hwnd, TIMER_POLL_INPUT, 50, NULL);
         SetTimer(hwnd, TIMER_POLL_FRAMECOUNT, 1000, NULL);
         DragAcceptFiles(hwnd, TRUE);
         return 0;
@@ -1850,10 +1850,20 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case TIMER_POLL_INPUT:
             {
-                DWORD buttonState = joystickUpdate();
-                DWORD buttons     = buttonState & ~st.buttonState;
+                DWORD buttonState;
+                DWORD buttons;
                 ShotcutHotkey key;
                 int i;
+
+                keyboardSetFocus(GetFocus() != NULL);
+                
+                if (emulatorGetState() != EMU_RUNNING) {
+                    archPollInput();
+                }
+
+                buttonState = joystickGetButtonState();
+                
+                buttons = buttonState & ~st.buttonState;
 
                 for (i = 1; buttons != 0; i++, buttons >>= 1) {
                     if (buttons & 1) {
@@ -1875,8 +1885,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 }
 
                 st.buttonState = buttonState;
-
-                keyboardUpdate();
 
                 mouseEmuSetRunState(emulatorGetState() == EMU_RUNNING);
             }
@@ -2693,6 +2701,11 @@ void archKeyboardSetSelectedKey(int keyCode) {
     keyboardSetSelectedKey(keyCode);
 }
 
+void archPollInput() {
+    keyboardUpdate();
+    joystickUpdate();
+}
+
 void archThemeUpdate(Theme* theme) {
     if (theme->reference == NULL) {
         themeSet(pProperties->settings.themeName, 0);
@@ -2709,3 +2722,4 @@ int archGetFramesPerSecond() {
 void archEmulationStartFailure() {
      MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
 }
+

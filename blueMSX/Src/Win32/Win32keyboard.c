@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-26 08:15:49 $
+** $Date: 2005-02-10 01:41:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -645,6 +645,13 @@ static void keyboardHanldeKeypress(int code, int pressed) {
     }
 }
 
+static DWORD buttonState = 0;
+static int hasFocus = 0;
+
+void keyboardSetFocus(int focus) {
+    hasFocus = focus;
+}
+
 static void keyboardResetKbd() 
 {
     int i;
@@ -653,23 +660,30 @@ static void keyboardResetKbd()
         keyboardHanldeKeypress(kbdTable[i], 0);
     }
     keyboardReset();
+    buttonState = 0;
 }
 
-DWORD joystickUpdate()
+DWORD joystickGetButtonState()
+{
+    return buttonState;
+}
+
+void joystickUpdate()
 {
     int i;
-    DWORD buttonMask = 0;
     DWORD joyMask = 0;
     DWORD mask;
+
+    buttonState = 0;
 
     for (i = 0; i < joyCount; i++) {
         DWORD mask;
         joyInfo[i].state = joystickUpdateState(i, &mask);
         joyMask |= joyInfo[i].state;
-        buttonMask |= mask;
+        buttonState |= mask;
     }
 
-    mask = buttonMask;
+    mask = buttonState;
     for (i = 0; i < 32; i++) {
         keyboardHanldeKeypress(KEY_CODE_BUTTON1 + i, mask & 1);
         mask >>= 1;
@@ -680,8 +694,6 @@ DWORD joystickUpdate()
         keyboardHanldeKeypress(KEY_CODE_JOYUP + i, mask & 1);
         mask >>= 1;
     }
-
-    return buttonMask;
 }
 
 void keyboardEnable(int enable)
@@ -706,7 +718,7 @@ int keyboardGetModifiers()
 
 void keyboardUpdate() 
 { 
-    if (!GetFocus()) {
+    if (!hasFocus) {
         keyboardResetKbd();
         return;
     }

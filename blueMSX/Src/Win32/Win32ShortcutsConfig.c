@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-17 20:59:34 $
+** $Date: 2005-02-10 01:41:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -551,7 +551,8 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
         keycount = 0;
         joyButton = -1;
         SetTimer(hwnd, 154, 100, NULL);
-        joyButtonState = joystickUpdate();
+        joystickUpdate();
+        joyButtonState = joystickGetButtonState();
         return 0;
 
     case WM_SET_HOTKEY:
@@ -588,7 +589,12 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
     case WM_TIMER:
         if (wParam == 154) {
             int i;
-            DWORD newState = joystickUpdate();
+            DWORD newState;
+            
+            joystickUpdate();
+
+            newState = joystickGetButtonState();
+            
             if (keycount == 0) {
                 for (i = 0; i < 32; i++) {
                     if (newState & ~joyButtonState & (1 << i))  {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-08 09:05:40 $
+** $Date: 2005-02-10 01:41:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -544,6 +544,7 @@ static int WaitForSync(int maxSpeed) {
     UInt32 diffTime;
     UInt32 syncPeriod;
     static int overflowCount = 0;
+    static UInt32 kbdPollCnt = 0;
 
     emuMaxEmuSpeed = maxSpeed;
 
@@ -555,6 +556,10 @@ static int WaitForSync(int maxSpeed) {
     if (emuState != EMU_RUNNING) {
         archEventSet(emuStartEvent);
         emuSysTime = 0;
+    }
+
+    if (((++kbdPollCnt & 0x03) >> syncPeriod) == 0) {
+        archPollInput();
     }
 
     do {

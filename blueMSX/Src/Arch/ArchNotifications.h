@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-02-01 05:20:27 $
+** $Date: 2005-02-10 01:37:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@ int  archGetWindowedSize();
 void archMinimizeWindow();
 void archThemeSetNext();
 void archThemeUpdate(struct Theme* theme);
+void archPollInput();
 void archKeyboardSetSelectedKey(int keyCode);
 char* archGetSelectedKey();
 char* archGetMappedKey();
