@@ -1,15 +1,11 @@
 /*****************************************************************************
-** File:
-**      Cassette.c
-** 
-** Author:
-**      Daniel Vik
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** Description:
-**      Bios patch for cassette support
+** $Revision: 1.2 $
 **
-** More info:   
-**      www.bluemsx.com
+** $Date: 2004-12-06 07:54:14 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
