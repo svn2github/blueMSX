@@ -1071,6 +1071,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\SoundChips\SCC.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\SoundChips\SN76489.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\SN76489.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\SoundChips\Y8950.c">
 			</File>
 			<File
@@ -1224,6 +1230,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Board\Board.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Board\Coleco.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Board\Coleco.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Board\Machine.c">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-12 09:22:29 $
+** $Date: 2004-12-21 09:08:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "Board.h"
 #include "MSX.h"
 #include "SVI.h"
+#include "Coleco.h"
 #include "AudioMixer.h"
 #include "YM2413.h"
 #include "Y8950.h"
@@ -126,6 +127,32 @@ static void boardSetType(BoardType type)
         changeCartridge = sviChangeCartridge;
         changeDiskette  = sviChangeDiskette;
         changeCassette  = sviChangeCassette;
+        break;
+
+    case BOARD_COLECO:
+        initStatistics  = colecoInitStatistics;
+        softReset       = colecoReset;
+        run             = colecoRun;
+        setFrequency    = colecoSetFrequency;
+        systemTime      = colecoSystemTime;
+        saveState       = colecoSaveState;
+        getRefreshRate  = colecoGetRefreshRate;
+        setInt          = colecoSetInt;
+        clearInt        = colecoClearInt;
+        getInt          = colecoGetInt;
+        traceEnable     = colecoTraceEnable;
+        traceDisable    = colecoTraceDisable;
+        traceGetEnable  = colecoTraceGetEnable;
+        getRamPage      = colecoGetRamPage;
+        getRamSize      = colecoGetRamSize;
+        getVramSize     = colecoGetVramSize;
+        useRom          = colecoUseRom;
+        useMegaRom      = colecoUseMegaRom;
+        useMegaRam      = colecoUseMegaRam;
+        useFmPac        = colecoUseFmPac;
+        changeCartridge = colecoChangeCartridge;
+        changeDiskette  = colecoChangeDiskette;
+        changeCassette  = colecoChangeCassette;
         break;
     }
     

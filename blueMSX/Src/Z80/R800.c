@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-13 22:35:03 $
+** $Date: 2004-12-21 09:08:54 $
 **
 ** Author: Daniel Vik
 **
@@ -5709,7 +5709,7 @@ void r800SetNmi(R800* r800) {
         r800->nmiState = INT_EDGE;
     }
     else {
-        r800->nmiState = INT_HIGH;
+//        r800->nmiState = INT_HIGH;
     }
 }
 
@@ -5769,7 +5769,7 @@ void r800Execute(R800* r800, UInt32 endTime) {
             r800->regs.iff1 >>= iff1;
         }
 
-        if (iff1 || r800->intState != INT_HIGH || (r800->nmiState != INT_EDGE && !r800->regs.iff1)) {
+        if (r800->nmiState != INT_EDGE && (iff1 || r800->intState != INT_HIGH || !r800->regs.iff1)) {
             continue;
         }
 
