@@ -1,11 +1,11 @@
 /*****************************************************************************
-** File:        Y8950.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.h,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** Description: Emulation of the Y8950 sound chip
+** $Date: 2004-12-06 08:00:54 $
 **
-** More info:   www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

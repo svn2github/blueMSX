@@ -1,9 +1,11 @@
 /*****************************************************************************
-** File:        ThemeLoader.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** Author:      Daniel Vik
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 08:04:33 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

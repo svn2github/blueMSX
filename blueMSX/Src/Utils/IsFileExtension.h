@@ -1,9 +1,11 @@
 /*****************************************************************************
-** File:
-**      IsFileExtension.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/IsFileExtension.h,v $
 **
-** More info:   
-**      www.bluemsx.com
+** $Revision: 1.2 $
+**
+** $Date: 2004-12-06 08:02:49 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

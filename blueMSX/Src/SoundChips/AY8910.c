@@ -1,17 +1,11 @@
 /*****************************************************************************
-** File:        ay8910.c
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** Author:      Daniel Vik
-** 
-** Description: Emulation of the AY8910 sound chip
+** $Revision: 1.2 $
 **
-** More info:   www.bluemsx.com
+** $Date: 2004-12-06 08:00:53 $
 **
-** History:     1.0 - 10/17 2003 Initial version
-**              1.1 - 11/21 2003 Updated phase handling (bug in Chuckie Egg)
-**              1.2 - 12/6  2003 Fixed problem with playing samples
-**              1.3 - 1/18  2004 Added 16x oversampling to make HF audio sound good
-**              1.4 - 2/29  2004 Fixed bug that made samples not play ok
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

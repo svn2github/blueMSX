@@ -1,15 +1,11 @@
 /*****************************************************************************
-** File:
-**      CommandLine.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.3 $
 **
-** Description:
-**      Command Line helper functions
+** $Date: 2004-12-06 08:02:48 $
 **
-** More info:   
-**      www.bluemsx.com
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **

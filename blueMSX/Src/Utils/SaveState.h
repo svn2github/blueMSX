@@ -1,12 +1,11 @@
 /*****************************************************************************
-** File:
-**      SaveState.h
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.h,v $
 **
-** Author:
-**      Daniel Vik
+** $Revision: 1.2 $
 **
-** More info:   
-**      www.bluemsx.com
+** $Date: 2004-12-06 08:02:50 $
+**
+** More info: http://www.bluemsx.com
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
