@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-04 20:46:22 $
+** $Date: 2005-01-07 06:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -151,6 +151,8 @@ typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
 void keyboardReset();
 void keyboardKeyDown(int keyCode);
 void keyboardKeyUp(int keyCode);
+
+int keyboardGetKeyState(int keyCode);
 
 void keyboardSetKeymap(KeyboardKeymap keymap);
 UInt8* keyboardGetState();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-01-07 06:38:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,11 @@ int activeImageSetImage(ActiveImage* activeImage, int index)
     return indexModified && activeImage->show;
 }
 
+int activeImageGetImage(ActiveImage* activeImage)
+{
+    return activeImage->index;
+}
+
 int activeImageShow(ActiveImage* activeImage, int show)
 {
     if (!show == !activeImage->show) {
@@ -132,6 +137,7 @@ typedef enum { AB_NORMAL = 0, AB_HOOVER = 1, AB_PUSHED = 2, AB_DISABLED = 3 } Bu
 struct ActiveButton {
     ActiveImage* bitmap;
     int state;
+    int pushed;
     int x;
     int y;
     UInt32 width;
@@ -145,15 +151,16 @@ ActiveButton* activeButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, But
 {
     ActiveButton* activeButton = malloc(sizeof(ActiveButton));
 
-    activeButton->bitmap = activeImageCreate(x, y, cols, bitmap, 4);
-    activeButton->x      = x;
-    activeButton->y      = y;
-    activeButton->width  = activeImageGetWidth(activeButton->bitmap);
-    activeButton->height = activeImageGetHeight(activeButton->bitmap);
-    activeButton->state  = AB_NORMAL;
-    activeButton->event  = event;
-    activeButton->arg1   = arg1;
-    activeButton->arg2   = arg2;
+    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 4);
+    activeButton->x       = x;
+    activeButton->y       = y;
+    activeButton->width   = activeImageGetWidth(activeButton->bitmap);
+    activeButton->height  = activeImageGetHeight(activeButton->bitmap);
+    activeButton->state   = AB_NORMAL;
+    activeButton->pushed  = 0;
+    activeButton->event   = event;
+    activeButton->arg1    = arg1;
+    activeButton->arg2    = arg2;
 
     return activeButton;
 }
@@ -169,16 +176,38 @@ void activeButtonDraw(ActiveButton* activeButton, void* dc)
     activeImageDraw(activeButton->bitmap, dc);
 }
 
+static int activeButtonSetImage(ActiveButton* activeButton)
+{
+    int index = activeButton->state;
+    int rv;
+
+    if (activeButton->pushed) {
+        index = AB_PUSHED;
+    }
+
+    rv = index != activeImageGetImage(activeButton->bitmap);
+
+    activeImageSetImage(activeButton->bitmap, index);
+
+    return rv;
+}
+
+int activeButtonForcePushed(ActiveButton* activeButton, int pushed)
+{
+    activeButton->pushed = pushed;
+    return activeButtonSetImage(activeButton);
+}
+
 int activeButtonEnable(ActiveButton* activeButton, int enable)
 {
     if (enable && activeButton->state == AB_DISABLED) {
         activeButton->state = AB_NORMAL;
-        activeImageSetImage(activeButton->bitmap, activeButton->state);
+        activeButtonSetImage(activeButton);
         return 1;
     }
     else if (!enable && activeButton->state != AB_DISABLED) {
         activeButton->state = AB_DISABLED;
-        activeImageSetImage(activeButton->bitmap, activeButton->state);
+        activeButtonSetImage(activeButton);
         return 1;
     }
     return 0;
@@ -206,9 +235,7 @@ int activeButtonMouseMove(ActiveButton* activeButton, int x, int y)
         activeButton->state = AB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeButtonSetImage(activeButton);
 }
 
 int activeButtonDown(ActiveButton* activeButton, int x, int y)
@@ -222,15 +249,16 @@ int activeButtonDown(ActiveButton* activeButton, int x, int y)
     if ((UInt32)(x - activeButton->x) < activeButton->width &&
         (UInt32)(y - activeButton->y) < activeButton->height)
     {
+        if (activeButton->event != NULL && activeButton->arg2 == -1) {
+            activeButton->event(activeButton->arg1, 1);
+        }
         activeButton->state = AB_PUSHED;
     }
     else {
         activeButton->state = AB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeButtonSetImage(activeButton) || activeButton->state != oldState;
 }
 
 int activeButtonUp(ActiveButton* activeButton, int x, int y)
@@ -245,17 +273,23 @@ int activeButtonUp(ActiveButton* activeButton, int x, int y)
         (UInt32)(y - activeButton->y) < activeButton->height)
     {
         if (activeButton->event != NULL) {
-            activeButton->event(activeButton->arg1, activeButton->arg2);
+            if (activeButton->arg2 == -1) {
+                activeButton->event(activeButton->arg1, 0);
+            }
+            else {
+                activeButton->event(activeButton->arg1, activeButton->arg2);
+            }
         }
         activeButton->state = AB_HOOVER;
     }
     else {
+        if (activeButton->arg2 == -1) {
+            activeButton->event(activeButton->arg1, 0);
+        }
         activeButton->state = AB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeButtonSetImage(activeButton) || activeButton->state != oldState;
 }
 
 
@@ -264,6 +298,7 @@ typedef enum { ADB_NORMAL = 0, ADB_HOOVER = 1, ADB_PUSHEDA = 2, ADB_PUSHEDB = 3,
 struct ActiveDualButton {
     ActiveImage* bitmap;
     int state;
+    int pushed;
     int x;
     int y;
     UInt32 width;
@@ -293,6 +328,7 @@ ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bit
     activeButton->widthB   = activeButton->width / 3;
     activeButton->heightB  = activeButton->height / 3;
     activeButton->state    = ADB_NORMAL;
+    activeButton->pushed   = 0;
     activeButton->eventA   = eventA;
     activeButton->argA1    = argA1;
     activeButton->argA2    = argA2;
@@ -315,16 +351,38 @@ void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc)
     activeImageDraw(activeButton->bitmap, dc);
 }
 
+static int activeDualButtonSetImage(ActiveDualButton* activeButton)
+{
+    int index = activeButton->state;
+    int rv;
+
+    if (activeButton->pushed) {
+        index = AB_PUSHED;
+    }
+
+    rv = index != activeImageGetImage(activeButton->bitmap);
+
+    activeImageSetImage(activeButton->bitmap, index);
+
+    return rv;
+}
+
+int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed)
+{
+    activeButton->pushed = pushed;
+    return activeDualButtonSetImage(activeButton);
+}
+
 int activeDualButtonEnable(ActiveDualButton* activeButton, int enable)
 {
     if (enable && activeButton->state == AB_DISABLED) {
         activeButton->state = AB_NORMAL;
-        activeImageSetImage(activeButton->bitmap, activeButton->state);
+        activeDualButtonSetImage(activeButton);
         return 1;
     }
     else if (!enable && activeButton->state != AB_DISABLED) {
         activeButton->state = AB_DISABLED;
-        activeImageSetImage(activeButton->bitmap, activeButton->state);
+        activeDualButtonSetImage(activeButton);
         return 1;
     }
     return 0;
@@ -352,9 +410,7 @@ int activeDualButtonMouseMove(ActiveDualButton* activeButton, int x, int y)
         activeButton->state = ADB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeDualButtonSetImage(activeButton);
 }
 
 int activeDualButtonDown(ActiveDualButton* activeButton, int x, int y)
@@ -381,9 +437,7 @@ int activeDualButtonDown(ActiveDualButton* activeButton, int x, int y)
         activeButton->state = ADB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeDualButtonSetImage(activeButton) || activeButton->state != oldState;
 }
 
 int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y)
@@ -420,9 +474,7 @@ int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y)
         activeButton->state = ADB_NORMAL;
     }
 
-    activeImageSetImage(activeButton->bitmap, activeButton->state);
-
-    return activeButton->state != oldState;
+    return activeDualButtonSetImage(activeButton) || activeButton->state != oldState;
 }
 
 

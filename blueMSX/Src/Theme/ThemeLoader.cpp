@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-06 17:13:45 $
+** $Date: 2005-01-07 06:38:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -215,6 +215,24 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag, const char
 	return NULL;
 }
 
+static int getIndexedTrigger(TiXmlElement* el, char* triggerName, int idx)
+{
+    const char* trigger = el->Attribute(triggerName);
+    if (trigger == NULL) {
+        return THEME_TRIGGER_NONE;
+    }
+
+    int inverted = (strlen(trigger) > 4 && 0 == memcmp(trigger, "not ", 4));
+
+    const char* s = inverted ? trigger + 4 : trigger;
+    int         t = inverted ? THEME_TRIGGER_NOT : 0;
+    
+    if (0 == strcmp(s, "key-edit"))       return t | (THEME_TRIGGER_FIRST_KEY_EDIT + idx);
+    if (0 == strcmp(s, "key-configured")) return t | (THEME_TRIGGER_FIRST_KEY_CONFIG + idx);
+
+    return -1;
+}
+
 static int getTrigger(TiXmlElement* el, char* triggerName)
 {
     const char* trigger = el->Attribute(triggerName);
@@ -226,7 +244,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
 
     const char* s = inverted ? trigger + 4 : trigger;
     int         t = inverted ? THEME_TRIGGER_NOT : 0;
-
+    
     if (0 == strcmp(s, "emu-stopped"))              return t | THEME_TRIGGER_IMG_STOPPED;
     if (0 == strcmp(s, "emu-paused"))               return t | THEME_TRIGGER_IMG_PAUSED;
     if (0 == strcmp(s, "emu-running"))              return t | THEME_TRIGGER_IMG_RUNNING;
@@ -522,6 +540,34 @@ static void addDualButton(Theme* theme, TiXmlElement* el)
                                                       action2, arg2x, arg2y, vertical), trigger, visible);
 }
 
+static void addKeyButton(Theme* theme, TiXmlElement* el)
+{
+    int x, y, cols;
+    ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
+    if (bitmap == NULL) {
+        return;
+    }
+
+    int keycode = -1;
+    el->QueryIntAttribute("keycode", &keycode);
+    if (keycode < 0 || keycode > 255) {
+        return;
+    }
+
+    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
+    if (visible == -1) {
+        visible = (ThemeTrigger)getIndexedTrigger(el, "visible", keycode);
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
+    }
+
+    ThemeTrigger trigger = (ThemeTrigger)(THEME_TRIGGER_FIRST_KEY + keycode);
+    ButtonEvent action = (ButtonEvent)actionKeyPress;
+    themeAddButton(theme, activeButtonCreate(x, y, cols, bitmap, action, keycode, -1), trigger, visible);
+}
+
+
 static void addText(Theme* theme, TiXmlElement* el)
 {
     int x, y, cols;
@@ -687,6 +733,9 @@ static Theme* loadTheme(TiXmlElement* root, ThemeInfo themeInfo)
             }
             if (strcmp(infoEl->Value(), "dualbutton") == 0) {
                 addDualButton(theme, infoEl);
+            }
+            if (strcmp(infoEl->Value(), "keybutton") == 0) {
+                addKeyButton(theme, infoEl);
             }
             if (strcmp(infoEl->Value(), "meter") == 0) {
                 addMeter(theme, infoEl);

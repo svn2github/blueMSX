@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-06 09:06:01 $
+** $Date: 2005-01-07 06:38:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,7 @@
 #include "LaunchFile.h"
 #include "TokenExtract.h"
 #include "Emulator.h"
+#include "Keyboard.h"
 #include "Theme.h"
 #include "ThemeLoader.h"
 #include "Win32ThemeClassic.h"
@@ -3287,4 +3288,17 @@ char* themeTriggerBuildAndVersion() {
     }
     createAboutInfo(buffer, 30, aboutCnt++ / 2);
     return buffer;
+}
+
+
+int themeTriggerKeyPressed(int keyCode) {
+    return keyboardGetKeyState(keyCode);
+}
+
+int themeTriggerKeyEdit(int keyCode) {
+    return 0;
+}
+
+int themeTriggerKeyConfigured(int keyCode) {
+    return 0;
 }

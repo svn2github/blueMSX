@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-06 09:06:01 $
+** $Date: 2005-01-07 06:38:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ struct ThemeItem {
 
 static int actionTypeToInt(ThemeTrigger actionType)
 {
+    int key;
     int idx = -1;
     switch (actionType & THEME_TRIGGER_MASK) {
     case THEME_TRIGGER_IMG_DISKA:       idx = TEST(actionType, themeTriggerLedDiskA()); break;
@@ -137,6 +138,22 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_HSTRETCH:    idx = TEST(actionType, themeTriggerVideoHstretch()); break;
     case THEME_TRIGGER_IMG_VSTRETCH:    idx = TEST(actionType, themeTriggerVideoVstretch()); break;
     }
+
+    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY;
+    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY - THEME_TRIGGER_FIRST_KEY) {
+        idx = TEST(actionType, themeTriggerKeyPressed(key));
+    }
+
+    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_EDIT;
+    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY_EDIT - THEME_TRIGGER_FIRST_KEY_EDIT) {
+        idx = TEST(actionType, themeTriggerKeyEdit(key));
+    }
+
+    key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_CONFIG;
+    if (key >= 0 && key <= THEME_TRIGGER_LAST_KEY_CONFIG - THEME_TRIGGER_FIRST_KEY_CONFIG) {
+        idx = TEST(actionType, themeTriggerKeyConfigured(key));
+    }
+
     return idx;
 }
 
@@ -343,7 +360,6 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
     }
 
     theme->btPressed  = 1;
-    theme->activeItem = NULL;
 
     for (item = theme->itemList; item != NULL; item = item->next) {
         switch (item->type) {
@@ -355,7 +371,6 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
             if (activeSliderDown(item->object, x, y)) {
                 theme->activeItem = item;
                 activeSliderDraw(item->object, dc);
-                return;
             }
             break;
         case ITEM_TEXT:
@@ -364,14 +379,12 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
             if (activeButtonDown(item->object, x, y)) {
                 theme->activeItem = item;
                 activeButtonDraw(item->object, dc);
-                return;
             }
             break;
         case ITEM_DUALBUTTON:
             if (activeDualButtonDown(item->object, x, y)) {
                 theme->activeItem = item;
                 activeDualButtonDraw(item->object, dc);
-                return;
             }
             break;
         }
@@ -410,6 +423,7 @@ void themeMouseButtonUp(Theme* theme, void*  dc, int x, int y)
         activeDualButtonDraw(theme->activeItem->object,  dc);
         break;
     }
+    theme->activeItem = NULL;
 }
 
 void themeDraw(Theme* theme, void*  dc)
@@ -508,15 +522,13 @@ void themeUpdate(Theme* theme, void*  dc)
             if (redraw) activeTextDraw(item->object, dc);
             break;
         case ITEM_BUTTON:
-            if (idx != -1) redraw |= activeButtonEnable(item->object, idx);
+            if (idx != -1) redraw |= activeButtonForcePushed(item->object, idx);
             if (redraw) activeButtonDraw(item->object, dc);
             break;
         case ITEM_DUALBUTTON:
-            if (idx != -1) redraw |= activeDualButtonEnable(item->object, idx);
+            if (idx != -1) redraw |= activeDualButtonForcePushed(item->object, idx);
             if (redraw) activeDualButtonDraw(item->object, dc);
             break;
         }
     }
 }
-
-

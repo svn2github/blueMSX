@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-06 09:06:01 $
+** $Date: 2005-01-07 06:38:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -138,6 +138,15 @@ typedef enum {
 
     THEME_TRIGGER_EMUSPEED,
 
+    THEME_TRIGGER_FIRST_KEY = 0x10000000 + 0,
+    THEME_TRIGGER_LAST_KEY  = THEME_TRIGGER_FIRST_KEY + 255,
+
+    THEME_TRIGGER_FIRST_KEY_EDIT = 0x10000000 + 256,
+    THEME_TRIGGER_LAST_KEY_EDIT  = THEME_TRIGGER_FIRST_KEY_EDIT + 255,
+
+    THEME_TRIGGER_FIRST_KEY_CONFIG = 0x10000000 + 512,
+    THEME_TRIGGER_LAST_KEY_CONFIG  = THEME_TRIGGER_FIRST_KEY_CONFIG + 255,
+
     THEME_TRIGGER_MASK = 0x3fffffff,
     
     THEME_TRIGGER_NOT  = 0x80000000,
@@ -262,5 +271,9 @@ char* themeTriggerRunningName();
 char* themeTriggerBuildNumber();
 char* themeTriggerVersion();
 char* themeTriggerBuildAndVersion();
+
+int themeTriggerKeyPressed(int keyCode);
+int themeTriggerKeyEdit(int keyCode);
+int themeTriggerKeyConfigured(int keyCode);
 
 #endif

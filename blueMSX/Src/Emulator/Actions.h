@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-13 02:04:47 $
+** $Date: 2005-01-07 06:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,6 +174,8 @@ void actionPanSetMoonsound(int value);
 
 void actionRenshaSetLevel(int value);
 void actionEmuSpeedSet(int value);
+
+void actionKeyPress(int keyCode, int pressed);
 
 #endif
 

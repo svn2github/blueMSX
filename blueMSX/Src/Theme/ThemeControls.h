@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-01-07 06:38:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,7 @@ int activeButtonDown(ActiveButton* activeButton, int x, int y);
 int activeButtonUp(ActiveButton* activeButton, int x, int y);
 int activeButtonShow(ActiveButton* activeButton, int show);
 void activeButtonDraw(ActiveButton* activeButton, void* dc);
+int activeButtonForcePushed(ActiveButton* activeButton, int pushed);
 
 
 typedef struct ActiveDualButton ActiveDualButton;
@@ -70,6 +71,7 @@ int activeDualButtonDown(ActiveDualButton* activeButton, int x, int y);
 int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y);
 void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc);
 int activeDualButtonShow(ActiveDualButton* activeButton, int show);
+int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed);
 
 
 typedef struct ActiveText ActiveText;
