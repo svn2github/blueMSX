@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-01 07:14:45 $
+** $Date: 2005-02-06 05:47:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,6 +27,7 @@
 **
 ******************************************************************************
 */
+#include "Board.h"
 #include "Keyboard.h"
 #include "SaveState.h"
 #include <string.h>
@@ -395,7 +396,23 @@ int keyboardGetKeyState(int keyCode)
     
 void keyboardReset() 
 {
-    keyboardSetKeymap(KEYMAP_MSX);
+    KeyboardKeymap keymap;
+
+    switch (boardGetType()) {
+    case BOARD_MSX:
+        keymap = KEYMAP_MSX;
+        break;
+    case BOARD_SVI:
+        keymap = KEYMAP_SVI;
+        break;
+    case BOARD_COLECO:
+        keymap = KEYMAP_COLECO;
+        break;
+    default:
+        keymap = KEYMAP_MSX;
+        break;
+    }
+    keyboardSetKeymap(keymap);
 
     if (keyNames[0] == 0) {
         initKeyNameTable();
