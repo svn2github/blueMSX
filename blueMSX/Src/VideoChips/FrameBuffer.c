@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-18 10:17:18 $
+** $Date: 2005-01-18 16:59:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
+    int currentAge;
     FrameBuffer frame[3];
 };
 
@@ -62,14 +63,19 @@ FrameBuffer* frameBufferGetViewFrame()
 
 FrameBuffer* frameBufferFlipViewFrame() 
 {
+    int index;
+
     if (currentBuffer == NULL) {
         return NULL;
     }
     waitSem();
     switch (currentBuffer->viewFrame) {
-    case 0: currentBuffer->viewFrame = currentBuffer->drawFrame == 1 ? 2 : 1; break;
-    case 1: currentBuffer->viewFrame = currentBuffer->drawFrame == 2 ? 0 : 2; break;
-    case 2: currentBuffer->viewFrame = currentBuffer->drawFrame == 0 ? 1 : 0; break;
+    case 0: index = currentBuffer->drawFrame == 1 ? 2 : 1; break;
+    case 1: index = currentBuffer->drawFrame == 2 ? 0 : 2; break;
+    case 2: index = currentBuffer->drawFrame == 0 ? 1 : 0; break;
+    }
+    if (currentBuffer->frame[index].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
+        currentBuffer->viewFrame = index;
     }
     signalSem();
     return currentBuffer->frame + currentBuffer->viewFrame;
@@ -82,6 +88,8 @@ FrameBuffer* frameBufferGetDrawFrame()
 
 FrameBuffer* frameBufferFlipDrawFrame()
 {
+    FrameBuffer* frame;
+
     if (currentBuffer == NULL) {
         return NULL;
     }
@@ -92,7 +100,10 @@ FrameBuffer* frameBufferFlipDrawFrame()
     case 2: currentBuffer->drawFrame = currentBuffer->viewFrame == 0 ? 1 : 0; break;
     }
     signalSem();
-    return currentBuffer->frame + currentBuffer->drawFrame;
+    frame = currentBuffer->frame + currentBuffer->drawFrame;
+    frame->age = ++currentBuffer->currentAge;
+    signalSem();
+    return frame;
 }
 
 FrameBufferData* frameBufferDataCreate()

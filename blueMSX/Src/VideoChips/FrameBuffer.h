@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-18 10:17:18 $
+** $Date: 2005-01-18 16:59:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@ typedef struct {
 } LineBuffer;
 
 typedef struct {
+    int age;          // Internal use
     int interlaceOdd; // 0 in most cases, 1 if odd interlaced frame
     int lines;        // Number of lines in frame buffer
     LineBuffer line[480];
