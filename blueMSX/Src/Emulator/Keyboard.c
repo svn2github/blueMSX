@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-08 19:56:33 $
+** $Date: 2005-01-11 07:30:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -381,6 +381,9 @@ void keyboardKeyUp(int keyCode)
 int keyboardGetKeyState(int keyCode)
 {
     int kbdCode = keyMap[keyCode];
+    if (kbdCode == 0) {
+        return 0;
+    }
     return (keyboardState[kbdCode >> 8] & (kbdCode & 0xff)) == 0;
 }
     

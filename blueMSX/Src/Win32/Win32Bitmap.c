@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Bitmap.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-21 22:38:45 $
+** $Date: 2005-01-11 07:31:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,12 @@ static ArchBitmap* bitmapCreate(void* bitmap)
     return bm;
 }
 
+ArchBitmap* archBitmapCreate(int width, int height)
+{
+    HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), width, height);
+    return bitmapCreate(hBitmap);
+}
+
 ArchBitmap* archBitmapCreateFromFile(const char* filename)
 {
     HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0,
@@ -139,5 +145,10 @@ int archBitmapGetHeight(ArchBitmap* bm)
 void archBitmapDraw(ArchBitmap* bm, void* dcDest, int xDest, int yDest, int xSrc, int ySrc, int width, int height)
 {
     BitBlt(dcDest, xDest, yDest, width, height, bm->hMemDC, xSrc, ySrc, SRCCOPY);
+}
+
+void archBitmapCopy(ArchBitmap* dst, int xDest, int yDest, ArchBitmap* src, int xSrc, int ySrc, int width, int height)
+{
+    archBitmapDraw(src, dst->hMemDC, xDest, yDest, xSrc, ySrc, width, height);
 }
 

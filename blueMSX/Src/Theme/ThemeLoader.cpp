@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-11 03:02:49 $
+** $Date: 2005-01-11 07:30:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -587,9 +587,29 @@ static void addDualButton(Theme* theme, TiXmlElement* el)
 static void addKeyButton(Theme* theme, TiXmlElement* el)
 {
     int x, y, cols;
-    ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
+    ArchBitmap* fullbitmap = loadBitmap(el, &x, &y, &cols);
+    ArchBitmap* bitmap = fullbitmap;
     if (bitmap == NULL) {
         return;
+    }
+
+    int keyX      = -1;
+    int keyY      = -1;
+    int keyWidth  = -1;
+    int keyHeight = -1;
+    
+    el->QueryIntAttribute("keyx", &keyX);
+    el->QueryIntAttribute("keyy", &keyY);
+    el->QueryIntAttribute("keywidth", &keyWidth);
+    el->QueryIntAttribute("keyheight", &keyHeight);
+
+    if (keyX >= 0 && keyY >= 0 && keyWidth > 0 && keyHeight > 0) { 
+        bitmap = archBitmapCreate(6 * keyWidth, keyHeight);
+        int fullWidth = archBitmapGetWidth(fullbitmap);
+        for (int i = 0; i < 6; i++) {
+            archBitmapCopy(bitmap, i * keyWidth, 0, fullbitmap, keyX + i * fullWidth / 6, keyY, keyWidth, keyHeight);
+        }
+        archBitmapDestroy(fullbitmap);
     }
 
     int keycode = getKeyCode(el, "keycode");

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchBitmap.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-01-11 07:30:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 
 typedef struct ArchBitmap ArchBitmap;
 
+ArchBitmap* archBitmapCreate(int width, int height);
 ArchBitmap* archBitmapCreateFromFile(const char* filename);
 ArchBitmap* archBitmapCreateFromId(int id);
 void archBitmapDestroy(ArchBitmap* bm);
@@ -39,5 +40,8 @@ int archBitmapGetWidth(ArchBitmap* bm);
 int archBitmapGetHeight(ArchBitmap* bm);
 void archBitmapDraw(ArchBitmap* bm, void* dcDest, int xDest, int yDest, 
                     int xSrc, int ySrc, int width, int height);
+void archBitmapCopy(ArchBitmap* dst, int xDest, int yDest, 
+                    ArchBitmap* src, int xSrc, int ySrc, int width, int height);
+
 
 #endif
