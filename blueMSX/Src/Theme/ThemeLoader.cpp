@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-01-09 09:04:57 $
+** $Date: 2005-01-10 16:07:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -518,6 +518,30 @@ static void addButton(Theme* theme, TiXmlElement* el)
     themeAddButton(theme, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible);
 }
 
+static void addToggleButton(Theme* theme, TiXmlElement* el)
+{
+    int x, y, cols;
+    ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
+    if (bitmap == NULL) {
+        return;
+    }
+
+    ThemeTrigger trigger = (ThemeTrigger)getTrigger(el, "trigger");
+    if (trigger == -1) {
+        return;
+    }
+
+    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
+    if (visible == -1) {
+        visible = THEME_TRIGGER_NONE;
+    }
+
+    int arga, argb;
+    ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb);
+
+    themeAddToggleButton(theme, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible);
+}
+
 static void addDualButton(Theme* theme, TiXmlElement* el)
 {
     int x, y, cols;
@@ -769,6 +793,9 @@ static Theme* loadTheme(TiXmlElement* root, ThemeInfo themeInfo)
             }
             if (strcmp(infoEl->Value(), "dualbutton") == 0) {
                 addDualButton(theme, infoEl);
+            }
+            if (strcmp(infoEl->Value(), "togglebutton") == 0) {
+                addToggleButton(theme, infoEl);
             }
             if (strcmp(infoEl->Value(), "keybutton") == 0) {
                 addKeyButton(theme, infoEl);

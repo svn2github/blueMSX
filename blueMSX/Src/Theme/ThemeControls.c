@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-09 09:04:57 $
+** $Date: 2005-01-10 16:07:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,7 +132,7 @@ void activeImageDraw(ActiveImage* activeImage, void* dc)
     }
 }
 
-typedef enum { AB_NORMAL = 0, AB_HOOVER = 1, AB_PUSHED = 2, AB_DISABLED = 3 } ButtonState;
+typedef enum { AB_NORMAL = 0, AB_HOOVER = 1, AB_PUSHED = 2 } ButtonState;
 
 struct ActiveButton {
     ActiveImage* bitmap;
@@ -198,21 +198,6 @@ int activeButtonForcePushed(ActiveButton* activeButton, int pushed)
     return activeButtonSetImage(activeButton);
 }
 
-int activeButtonEnable(ActiveButton* activeButton, int enable)
-{
-    if (enable && activeButton->state == AB_DISABLED) {
-        activeButton->state = AB_NORMAL;
-        activeButtonSetImage(activeButton);
-        return 1;
-    }
-    else if (!enable && activeButton->state != AB_DISABLED) {
-        activeButton->state = AB_DISABLED;
-        activeButtonSetImage(activeButton);
-        return 1;
-    }
-    return 0;
-}
-
 int activeButtonShow(ActiveButton* activeButton, int show)
 {
     return activeImageShow(activeButton->bitmap, show);
@@ -222,7 +207,7 @@ int activeButtonMouseMove(ActiveButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == AB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -242,7 +227,7 @@ int activeButtonDown(ActiveButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == AB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -265,7 +250,7 @@ int activeButtonUp(ActiveButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == AB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -293,7 +278,7 @@ int activeButtonUp(ActiveButton* activeButton, int x, int y)
 }
 
 
-typedef enum { ADB_NORMAL = 0, ADB_HOOVER = 1, ADB_PUSHEDA = 2, ADB_PUSHEDB = 3, ADB_DISABLED = 4 } DualButtonState;
+typedef enum { ADB_NORMAL = 0, ADB_HOOVER = 1, ADB_PUSHEDA = 2, ADB_PUSHEDB = 3 } DualButtonState;
 
 struct ActiveDualButton {
     ActiveImage* bitmap;
@@ -373,21 +358,6 @@ int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed)
     return activeDualButtonSetImage(activeButton);
 }
 
-int activeDualButtonEnable(ActiveDualButton* activeButton, int enable)
-{
-    if (enable && activeButton->state == AB_DISABLED) {
-        activeButton->state = AB_NORMAL;
-        activeDualButtonSetImage(activeButton);
-        return 1;
-    }
-    else if (!enable && activeButton->state != AB_DISABLED) {
-        activeButton->state = AB_DISABLED;
-        activeDualButtonSetImage(activeButton);
-        return 1;
-    }
-    return 0;
-}
-
 int activeDualButtonShow(ActiveDualButton* activeButton, int show)
 {
     return activeImageShow(activeButton->bitmap, show);
@@ -397,7 +367,7 @@ int activeDualButtonMouseMove(ActiveDualButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == ADB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -417,7 +387,7 @@ int activeDualButtonDown(ActiveDualButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == ADB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -444,7 +414,7 @@ int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y)
 {
     int oldState = activeButton->state;
 
-    if (oldState == ADB_DISABLED || !activeImageIsVisible(activeButton->bitmap)) {
+    if (!activeImageIsVisible(activeButton->bitmap)) {
         return 0;
     }
 
@@ -476,6 +446,167 @@ int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y)
 
     return activeDualButtonSetImage(activeButton) || activeButton->state != oldState;
 }
+
+
+
+typedef enum { ATB_NORMAL = 0, ATB_HOOVER = 1, ATB_PUSHED = 2 } ToggleButtonState;
+
+struct ActiveToggleButton {
+    ActiveImage* bitmap;
+    int state;
+    int pushed;
+    int toggled;
+    int x;
+    int y;
+    UInt32 width;
+    UInt32 height;
+    ButtonEvent event;
+    int arg1;
+    int arg2;
+};
+
+ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2)
+{
+    ActiveToggleButton* activeButton = malloc(sizeof(ActiveToggleButton));
+
+    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 6);
+    activeButton->x       = x;
+    activeButton->y       = y;
+    activeButton->width   = activeImageGetWidth(activeButton->bitmap);
+    activeButton->height  = activeImageGetHeight(activeButton->bitmap);
+    activeButton->state   = ATB_NORMAL;
+    activeButton->pushed  = 0;
+    activeButton->toggled = 0;
+    activeButton->event   = event;
+    activeButton->arg1    = arg1;
+    activeButton->arg2    = arg2;
+
+    return activeButton;
+}
+
+void activeToggleButtonDestroy(ActiveToggleButton* activeButton)
+{
+    activeImageDestroy(activeButton->bitmap);
+    free(activeButton);
+}
+
+void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc)
+{
+    activeImageDraw(activeButton->bitmap, dc);
+}
+
+static int activeToggleButtonSetImage(ActiveToggleButton* activeButton)
+{
+    int index = activeButton->state;
+    int rv;
+
+    if (activeButton->pushed) {
+        index = ATB_PUSHED;
+    }
+
+    if (activeButton->toggled) {
+        index += 3;
+    }
+
+    rv = index != activeImageGetImage(activeButton->bitmap);
+
+    activeImageSetImage(activeButton->bitmap, index);
+
+    return rv;
+}
+
+int activeToggleButtonForcePushed(ActiveToggleButton* activeButton, int pushed)
+{
+    activeButton->pushed = pushed;
+    return activeToggleButtonSetImage(activeButton);
+}
+
+int activeToggleButtonSetToggled(ActiveToggleButton* activeButton, int toggled)
+{
+    activeButton->toggled = toggled;
+    return activeToggleButtonSetImage(activeButton);
+}
+
+int activeToggleButtonShow(ActiveToggleButton* activeButton, int show)
+{
+    return activeImageShow(activeButton->bitmap, show);
+}
+
+int activeToggleButtonMouseMove(ActiveToggleButton* activeButton, int x, int y)
+{
+    int oldState = activeButton->state;
+
+    if (!activeImageIsVisible(activeButton->bitmap)) {
+        return 0;
+    }
+
+    if ((UInt32)(x - activeButton->x) < activeButton->width &&
+        (UInt32)(y - activeButton->y) < activeButton->height)
+    {
+        activeButton->state = ATB_HOOVER;
+    }
+    else {
+        activeButton->state = ATB_NORMAL;
+    }
+
+    return activeToggleButtonSetImage(activeButton);
+}
+
+int activeToggleButtonDown(ActiveToggleButton* activeButton, int x, int y)
+{
+    int oldState = activeButton->state;
+
+    if (!activeImageIsVisible(activeButton->bitmap)) {
+        return 0;
+    }
+
+    if ((UInt32)(x - activeButton->x) < activeButton->width &&
+        (UInt32)(y - activeButton->y) < activeButton->height)
+    {
+        if (activeButton->event != NULL && activeButton->arg2 == -1) {
+            activeButton->event(activeButton->arg1, 1);
+        }
+        activeButton->state = ATB_PUSHED;
+    }
+    else {
+        activeButton->state = ATB_NORMAL;
+    }
+
+    return activeToggleButtonSetImage(activeButton) || activeButton->state != oldState;
+}
+
+int activeToggleButtonUp(ActiveToggleButton* activeButton, int x, int y)
+{
+    int oldState = activeButton->state;
+
+    if (!activeImageIsVisible(activeButton->bitmap)) {
+        return 0;
+    }
+
+    if ((UInt32)(x - activeButton->x) < activeButton->width &&
+        (UInt32)(y - activeButton->y) < activeButton->height)
+    {
+        if (activeButton->event != NULL) {
+            if (activeButton->arg2 == -1) {
+                activeButton->event(activeButton->arg1, 0);
+            }
+            else {
+                activeButton->event(activeButton->arg1, activeButton->arg2);
+            }
+        }
+        activeButton->state = ATB_HOOVER;
+    }
+    else {
+        if (activeButton->arg2 == -1) {
+            activeButton->event(activeButton->arg1, 0);
+        }
+        activeButton->state = ATB_NORMAL;
+    }
+
+    return activeToggleButtonSetImage(activeButton) || activeButton->state != oldState;
+}
+
+
 
 
 typedef struct ActiveNativeText {

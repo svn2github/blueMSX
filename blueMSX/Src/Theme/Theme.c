@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-09 09:04:57 $
+** $Date: 2005-01-10 16:07:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #include "Theme.h"
 #include "Actions.h"
 
-typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_METER, ITEM_SLIDER, ITEM_OBJECT } ItemType;
+typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_TOGGLEBUTTON, ITEM_METER, ITEM_SLIDER, ITEM_OBJECT } ItemType;
 
 struct ThemeItem {
     ThemeItem*   next;
@@ -267,11 +267,17 @@ void themeDestroy(Theme* theme)
         case ITEM_DUALBUTTON:
             activeDualButtonDestroy(item->object);
             break;
+        case ITEM_TOGGLEBUTTON:
+            activeToggleButtonDestroy(item->object);
+            break;
         case ITEM_METER:
             activeMeterDestroy(item->object);
             break;
         case ITEM_SLIDER:
             activeSliderDestroy(item->object);
+            break;
+        case ITEM_OBJECT:
+            activeObjectDestroy(item->object);
             break;
         }
 
@@ -309,6 +315,11 @@ void themeAddButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigg
 void themeAddDualButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
     themeAddLast(theme, ITEM_DUALBUTTON, object, trigger, visible);
+}
+
+void themeAddToggleButton(Theme* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+{
+    themeAddLast(theme, ITEM_TOGGLEBUTTON, object, trigger, visible);
 }
 
 void themeAddObject(Theme* theme, void* object, ThemeTrigger visible)
@@ -349,6 +360,11 @@ void themeMouseMove(Theme* theme, void*  dc, int x, int y)
         case ITEM_DUALBUTTON:
             if (activeDualButtonMouseMove(item->object, x, y)) {
                 activeDualButtonDraw(item->object, dc);
+            }
+            break;
+        case ITEM_TOGGLEBUTTON:
+            if (activeToggleButtonMouseMove(item->object, x, y)) {
+                activeToggleButtonDraw(item->object, dc);
             }
             break;
         }
@@ -392,6 +408,12 @@ void themeMouseButtonDown(Theme* theme, void*  dc, int x, int y)
                 activeDualButtonDraw(item->object, dc);
             }
             break;
+        case ITEM_TOGGLEBUTTON:
+            if (activeToggleButtonDown(item->object, x, y)) {
+                theme->activeItem = item;
+                activeToggleButtonDraw(item->object, dc);
+            }
+            break;
         }
     }
 }
@@ -427,6 +449,10 @@ void themeMouseButtonUp(Theme* theme, void*  dc, int x, int y)
         activeDualButtonUp(theme->activeItem->object, x, y);
         activeDualButtonDraw(theme->activeItem->object,  dc);
         break;
+    case ITEM_TOGGLEBUTTON:
+        activeToggleButtonUp(theme->activeItem->object, x, y);
+        activeToggleButtonDraw(theme->activeItem->object, dc);
+        break;
     }
     theme->activeItem = NULL;
 }
@@ -458,6 +484,9 @@ void themeDraw(Theme* theme, void*  dc)
             break;
         case ITEM_DUALBUTTON:
             activeDualButtonDraw(item->object, dc);
+            break;
+        case ITEM_TOGGLEBUTTON:
+            activeToggleButtonDraw(item->object, dc);
             break;
         }
     }
@@ -509,6 +538,12 @@ void themeUpdate(Theme* theme, void* dc)
         case ITEM_DUALBUTTON:
             redraw |= activeDualButtonShow(item->object, visible);
             break;
+        case ITEM_TOGGLEBUTTON:
+            redraw |= activeToggleButtonShow(item->object, visible);
+            break;
+        case ITEM_OBJECT:
+//            redraw |= activeObjectShow(item->object, visible);
+            break;
         }
     }
 
@@ -535,12 +570,16 @@ void themeUpdate(Theme* theme, void* dc)
             if (str != NULL) redraw |= activeTextSetText(item->object, str);
             if (redraw) activeTextDraw(item->object, dc);
             break;
+        case ITEM_TOGGLEBUTTON:
+            if (idx != -1) redraw |= activeToggleButtonSetToggled(item->object, idx);
+            if (redraw) activeButtonDraw(item->object, dc);
+            break;
         case ITEM_BUTTON:
-            if (idx != -1) redraw |= activeButtonForcePushed(item->object, idx);
+//            if (idx != -1) redraw |= activeButtonForcePushed(item->object, idx);
             if (redraw) activeButtonDraw(item->object, dc);
             break;
         case ITEM_DUALBUTTON:
-            if (idx != -1) redraw |= activeDualButtonForcePushed(item->object, idx);
+//            if (idx != -1) redraw |= activeDualButtonForcePushed(item->object, idx);
             if (redraw) activeDualButtonDraw(item->object, dc);
             break;
         }
