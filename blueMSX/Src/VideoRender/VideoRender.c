@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-01-22 03:20:02 $
+** $Date: 2005-01-24 08:57:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -898,6 +898,7 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     dstPitch /= (int)sizeof(UInt16);
 
     for (h = 0; h < height; h++) {
+        UInt16* pOldDst = pDst;
         UInt32* pSrc = frame->line[h].buffer;
         int width = frame->line[h].width / 4;
 
@@ -921,7 +922,7 @@ static void copy_1x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
                 pDst += 4;
             }
         }
-        pDst += dstPitch;
+        pDst = pOldDst + dstPitch; 
     }
 }
 
@@ -933,9 +934,10 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     int height          = frame->lines;
     int h;
 
-    dstPitch /= (int)sizeof(UInt16);
+    dstPitch /= (int)sizeof(UInt32);
 
     for (h = 0; h < height; h++) {
+        UInt32* pOldDst = pDst;
         UInt32* pSrc = frame->line[h].buffer;
         int width = frame->line[h].width / 4;
 
@@ -959,7 +961,7 @@ static void copy_1x1_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
                 pDst += 4;
             }
         }
-        pDst += dstPitch;
+        pDst = pOldDst + dstPitch; 
     }
 }
 
