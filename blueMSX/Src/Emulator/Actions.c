@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-01-26 08:15:46 $
+** $Date: 2005-01-26 08:38:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -917,7 +917,7 @@ void actionVideoSetBrightness(int value) {
 }
 
 void actionVideoSetContrast(int value) {
-    state.properties->video.colorSaturationEnable = 50 + value;
+    state.properties->video.contrast = 50 + value;
     archUpdateEmuDisplayConfig();
 }
 
