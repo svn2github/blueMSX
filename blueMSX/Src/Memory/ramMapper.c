@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-26 08:02:34 $
+** $Date: 2005-03-10 01:34:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,16 @@ static void write(RamMapper* rm, UInt16 page, UInt8 value)
     slotMapPage(rm->slot, rm->sslot, 2 * page + 1, rm->ramData + 0x4000 * value + 0x2000, 1, 1);
 }
 
+
+static void reset(RamMapper* rm)
+{
+    int i;
+    for (i = 0; i < 4; i++) {
+        slotMapPage(rm->slot, rm->sslot, 2 * i, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask), 1, 1);
+        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask) + 0x2000, 1, 1);
+    }
+}
+
 static void destroy(RamMapper* rm)
 {
     debugDeviceUnregister(rm->debugHandle);
@@ -158,10 +168,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
     slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);
 
-    for (i = 0; i < 4; i++) {
-        slotMapPage(slot, sslot, 2 * i, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask), 1, 1);
-        slotMapPage(slot, sslot, 2 * i + 1, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask) + 0x2000, 1, 1);
-    }
+    reset(rm);
 
     if (ramPtr != NULL) {
         *ramPtr = rm->ramData;

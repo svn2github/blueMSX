@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-03-09 21:43:57 $
+** $Date: 2005-03-10 01:34:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1073,11 +1073,8 @@ static void reset(VDP* vdp)
     vdp->lastLine        = -1;
 
     memset(vdp->palette, 0, sizeof(vdp->palette));
-    memset(vdp->vram, 0, VRAM_SIZE);
     memset(vdp->vdpStatus, 0, sizeof(vdp->vdpStatus));
     memset(vdp->vdpRegs, 0, sizeof(vdp->vdpRegs));
-
-    vdp->cmdEngine = vdpCmdCreate(vdp->vramPages << 14, vdp->vram, boardSystemTime());
 
     vdp->vdpStatus[0] = 0x9f;
     vdp->vdpStatus[1] = vdp->vdpVersion == VDP_V9958 ? 0x04 : 0;
@@ -1224,6 +1221,9 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
         vdp->palMask  = ~0x02;
         vdp->palValue = 0x00;
     }
+
+    memset(vdp->vram, 0, VRAM_SIZE);
+    vdp->cmdEngine = vdpCmdCreate(vdp->vramPages << 14, vdp->vram, boardSystemTime());
 
     reset(vdp);
 

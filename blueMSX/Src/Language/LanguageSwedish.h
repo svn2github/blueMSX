@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-03 16:38:38 $
+** $Date: 2005-03-10 01:34:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -567,6 +567,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propPortsComGB          = "Serieportar ";
     ls->propPortsLptText        = "Port:";
     ls->propPortsCom1Text       = "Port 1:";
+
+    ls->shortcutShowDebugger    = "Visa Debugger";
+    ls->shortcutShowTrainer     = "Visa Trainer";
+    ls->shortcutShowPorts       = "Visa Portegenskaper";
 };
 
 #endif

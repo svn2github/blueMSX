@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-03 16:38:38 $
+** $Date: 2005-03-10 01:34:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -567,6 +567,10 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propPortsComGB          = "Puertos seriales "; 
     ls->propPortsLptText        = "Puerto:"; 
     ls->propPortsCom1Text       = "Puerto 1:"; 
+
+    ls->shortcutShowDebugger    = "Mostrar Debugger"; 
+    ls->shortcutShowTrainer     = "Mostrar Trainer"; 
+    ls->shortcutShowPorts       = "Mostrar las propriedades de los puertos";
 };
 
 #endif

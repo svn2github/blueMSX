@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-03 16:38:26 $
+** $Date: 2005-03-10 01:34:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -583,6 +583,10 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPortsComGB          = "Seriele poorten "; 
     ls->propPortsLptText        = "Poort:"; 
     ls->propPortsCom1Text       = "Poort 1:";
+
+    ls->shortcutShowDebugger    = "Debugger weergeven"; 
+    ls->shortcutShowTrainer     = "Trainer weergeven"; 
+    ls->shortcutShowPorts       = "Eigenschappen van poorten weergeven";
 };
 
 #endif

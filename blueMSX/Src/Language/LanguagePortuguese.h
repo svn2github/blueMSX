@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-03 16:38:38 $
+** $Date: 2005-03-10 01:34:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,6 +571,10 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propPortsComGB          = "Portas de série "; 
     ls->propPortsLptText        = "Porta:"; 
     ls->propPortsCom1Text       = "Porta 1:"; 
+
+    ls->shortcutShowDebugger    = "Mostre Debugger"; 
+    ls->shortcutShowTrainer     = "Mostre Trainer"; 
+    ls->shortcutShowPorts       = "Mostre Propriedades das Portas";
 };
 
 #endif
