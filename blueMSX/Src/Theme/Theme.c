@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2004-12-13 02:04:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,8 @@ static int actionTypeToInt(ThemeTrigger actionType, StatusInfo* statusInfo)
     case THEME_TRIGGER_IMG_STOPPED: idx = TEST(actionType, statusInfo->emuStopped); break;
     case THEME_TRIGGER_IMG_PAUSED:  idx = TEST(actionType, statusInfo->emuPaused); break;
     case THEME_TRIGGER_IMG_RUNNING: idx = TEST(actionType, statusInfo->emuRunning); break;
+
+    case THEME_TRIGGER_IMG_FDCTIMING: idx = TEST(actionType, statusInfo->fdcTiming); break;
     case THEME_TRIGGER_IMG_KBD:     idx = TEST(actionType, statusInfo->audioKbd); break;
     case THEME_TRIGGER_IMG_MOON:    idx = TEST(actionType, statusInfo->audioMoonsound); break;
     case THEME_TRIGGER_IMG_MSXA:    idx = TEST(actionType, statusInfo->audioMsxAudio); break;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-13 02:04:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -209,6 +209,7 @@ typedef struct {
     _TCHAR* propEmuSpeedText;
     _TCHAR* propEmuFrontSwitchGB;
     _TCHAR* propEmuFrontSwitch;
+    _TCHAR* propEmuFdcTiming;
     _TCHAR* propEmuPauseSwitch;
     _TCHAR* propEmuAudioSwitch;
     _TCHAR* propVideoFreqText;
@@ -504,6 +505,7 @@ typedef struct {
     _TCHAR* shortcutShowAbout;
     _TCHAR* shortcutShowFiles;
     _TCHAR* shortcutToggleSpriteEnable;
+    _TCHAR* shortcutToggleFdcTiming;
     _TCHAR* shortcutToggleCpuTrace;
 
 

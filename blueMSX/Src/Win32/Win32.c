@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 05:57:01 $
+** $Date: 2004-12-13 02:04:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1289,6 +1289,7 @@ static void checkKeyUp(ShotcutHotkey key)
     }
 
     if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();
+    if (hotkeyEq(key, s->fdcTiming))                    actionToggleFdcTiming();
     if (hotkeyEq(key, s->msxAudioSwitch))               actionToggleMsxAudioSwitch();
     if (hotkeyEq(key, s->frontSwitch))                  actionToggleFrontSwitch();
     if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();
@@ -1945,6 +1946,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 statusInfo.ledPause         = ledGetPause();
                 statusInfo.renshaLed        = ledGetRensha();
                 statusInfo.ledRecord        = mixerIsLogging(st.mixer) ? 1 : 0;
+                statusInfo.fdcTiming        = boardGetFdcTimingEnable();
                 statusInfo.audioMaster      = pProperties->sound.masterEnable ? 1 : 0;
                 statusInfo.audioStereo      = pProperties->sound.stereo ? 1 : 0;
                 statusInfo.audioPsg         = pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable ? 1 : 0;
@@ -2626,6 +2628,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             machineDestroy(machine);
         }
     }
+    boardSetFdcTimingEnable(pProperties->emulation.enableFdcTiming);
 
     updateMenu(0);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2004-12-13 02:04:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ typedef struct {
 
 typedef struct {
     ShotcutHotkey spritesEnable;
+    ShotcutHotkey fdcTiming;
     ShotcutHotkey msxAudioSwitch;
     ShotcutHotkey frontSwitch;
     ShotcutHotkey pauseSwitch;

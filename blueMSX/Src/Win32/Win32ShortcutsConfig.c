@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-13 02:04:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -710,6 +710,7 @@ static Shortcuts* loadShortcuts(char* profileName)
 
     LOAD_SHORTCUT(msxAudioSwitch);
     LOAD_SHORTCUT(spritesEnable);
+    LOAD_SHORTCUT(fdcTiming);
     LOAD_SHORTCUT(frontSwitch);
     LOAD_SHORTCUT(pauseSwitch);
     LOAD_SHORTCUT(quit);
@@ -788,6 +789,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
 
     SAVE_SHORTCUT(msxAudioSwitch);
     SAVE_SHORTCUT(spritesEnable);
+    SAVE_SHORTCUT(fdcTiming);
     SAVE_SHORTCUT(frontSwitch);
     SAVE_SHORTCUT(pauseSwitch);
     SAVE_SHORTCUT(quit);
@@ -1007,6 +1009,8 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUTSEPARATOR();
     
     ADD_SHORTCUT(spritesEnable, langShortcutToggleSpriteEnable());
+    ADD_SHORTCUT(fdcTiming,     langShortcutToggleFdcTiming());
+    
 
     ADD_SHORTCUTSEPARATOR();
     

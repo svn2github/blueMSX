@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-13 02:04:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -229,6 +229,7 @@ _TCHAR* langPropEmuSpeedGB();
 _TCHAR* langPropEmuSpeedText();
 _TCHAR* langPropEmuFrontSwitchGB();
 _TCHAR* langPropEmuFrontSwitch();
+_TCHAR* langPropEmuFdcTiming();
 _TCHAR* langPropEmuPauseSwitch();
 _TCHAR* langPropEmuAudioSwitch();
 _TCHAR* langPropVideoFreqText();
@@ -521,6 +522,7 @@ _TCHAR* langShortcutShowHelp();
 _TCHAR* langShortcutShowAbout();
 _TCHAR* langShortcutShowFiles();
 _TCHAR* langShortcutToggleSpriteEnable();
+_TCHAR* langShortcutToggleFdcTiming();
 _TCHAR* langShortcutToggleCpuTrace();
 
 

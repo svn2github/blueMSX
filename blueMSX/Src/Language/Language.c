@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-13 02:04:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -458,6 +458,7 @@ _TCHAR* langPropEmuVramSizeText() { return ls->propEmuVramSizeText; }
 _TCHAR* langPropEmuSpeedGB() { return ls->propEmuSpeedGB; }
 _TCHAR* langPropEmuSpeedText() { return ls->propEmuSpeedText; }
 _TCHAR* langPropEmuFrontSwitchGB() { return ls->propEmuFrontSwitchGB; }
+_TCHAR* langPropEmuFdcTiming() { return ls->propEmuFdcTiming; }
 _TCHAR* langPropEmuFrontSwitch() { return ls->propEmuFrontSwitch; }
 _TCHAR* langPropEmuPauseSwitch() { return ls->propEmuPauseSwitch; }
 _TCHAR* langPropEmuAudioSwitch() { return ls->propEmuAudioSwitch; }
@@ -732,6 +733,7 @@ _TCHAR* langShortcutShowHelp() { return ls->shortcutShowHelp; }
 _TCHAR* langShortcutShowAbout() { return ls->shortcutShowAbout; }
 _TCHAR* langShortcutShowFiles() { return ls->shortcutShowFiles; }
 _TCHAR* langShortcutToggleSpriteEnable() { return ls->shortcutToggleSpriteEnable; }
+_TCHAR* langShortcutToggleFdcTiming() { return ls->shortcutToggleFdcTiming; }
 _TCHAR* langShortcutToggleCpuTrace() { return ls->shortcutToggleCpuTrace; }
 
 

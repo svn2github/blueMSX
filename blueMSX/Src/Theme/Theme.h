@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2004-12-13 02:04:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,7 @@ typedef enum {
     THEME_TRIGGER_IMG_KANA,
 	THEME_TRIGGER_IMG_TURBOR,
 	THEME_TRIGGER_IMG_PAUSE,
+    THEME_TRIGGER_IMG_FDCTIMING,
     THEME_TRIGGER_IMG_KBD,
     THEME_TRIGGER_IMG_MOON,
     THEME_TRIGGER_IMG_MSXA,
@@ -199,6 +200,7 @@ typedef struct {
     int emuStopped;
     int emuPaused;
     int emuRunning;
+    int fdcTiming;
     int cpuTraceEnable;
     int ledDiskA;
     int ledDiskB;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:59:12 $
+** $Date: 2004-12-13 02:04:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -524,7 +524,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgFdcGB                = "Floppy Disk Controller ";
     ls->dlgCFdcNumDrivesText    = "Number of Drives:";
 
-    ls->propPriorityBoost        = " Boost the priority of blueMSX";
+    ls->propPriorityBoost       = " Boost the priority of blueMSX";
+
+    // New entries in 2.0.1
+    ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
+    ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2004-12-13 02:04:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->emulation.speed             = 50;
     pProperties->emulation.syncMethod        = P_EMU_SYNC1MS;
     pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
+    pProperties->emulation.enableFdcTiming   = 1;
     pProperties->emulation.frontSwitch       = 0;
     pProperties->emulation.pauseSwitch       = 0;
     pProperties->emulation.audioSwitch       = 0;
@@ -226,6 +227,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->emulation.speed             = 50;
     pProperties->emulation.syncMethod        = P_EMU_SYNCAUTO;
     pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
+    pProperties->emulation.enableFdcTiming   = 1;
     pProperties->emulation.frontSwitch       = 0;
     pProperties->emulation.pauseSwitch       = 0;
     pProperties->emulation.audioSwitch       = 0;
@@ -384,6 +386,8 @@ void propLoad(Properties* pProperties)
     getIntValue("EmulationSpeed", (long*)&pProperties->emulation.speed);
     getIntValue("EmulationSyncMethod", (long*)&pProperties->emulation.syncMethod);
     getIntValue("VdpSyncMode", (long*)&pProperties->emulation.vdpSyncMode);
+    
+    getIntValue("EnableFdcTiming", (long*)&pProperties->emulation.enableFdcTiming);
     getIntValue("FrontSwitch", (long*)&pProperties->emulation.frontSwitch);
     getIntValue("PauseSwitch", (long*)&pProperties->emulation.pauseSwitch);
     getIntValue("AudioSwitch", (long*)&pProperties->emulation.audioSwitch);
@@ -558,6 +562,7 @@ void propSave(Properties* pProperties)
     setIntValue("EmulationSpeed", pProperties->emulation.speed);
     setIntValue("EmulationSyncMethod", pProperties->emulation.syncMethod);
     setIntValue("VdpSyncMode", pProperties->emulation.vdpSyncMode);
+    setIntValue("EnableFdcTiming", pProperties->emulation.enableFdcTiming);
     setIntValue("FrontSwitch", pProperties->emulation.frontSwitch);
     setIntValue("PauseSwitch", pProperties->emulation.pauseSwitch);
     setIntValue("AudioSwitch", pProperties->emulation.audioSwitch);

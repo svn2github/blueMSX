@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-12 05:57:01 $
+** $Date: 2004-12-13 02:04:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,6 +97,11 @@ void actionToggleFrontSwitch() {
 void actionTogglePauseSwitch() {
     state.properties->emulation.pauseSwitch = !state.properties->emulation.pauseSwitch;
     switchSetPause(state.properties->emulation.pauseSwitch);
+}
+
+void actionToggleFdcTiming() {
+    state.properties->emulation.enableFdcTiming = !state.properties->emulation.enableFdcTiming;
+    boardSetFdcTimingEnable(state.properties->emulation.enableFdcTiming);
 }
 
 void actionQuit() {
@@ -945,6 +950,11 @@ void actionSetFrontSwitch(int value) {
 void actionSetPauseSwitch(int value) {
     state.properties->emulation.pauseSwitch = value ? 1 : 0;
     switchSetPause(state.properties->emulation.pauseSwitch);
+}
+
+void actionSetFdcTiming(int value) {
+    state.properties->emulation.enableFdcTiming = value ? 1 : 0;
+    boardSetFdcTimingEnable(state.properties->emulation.enableFdcTiming);
 }
 
 void actionSetWaveCapture(int value) {

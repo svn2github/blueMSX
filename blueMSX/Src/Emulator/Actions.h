@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:48 $
+** $Date: 2004-12-13 02:04:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,6 +120,7 @@ void actionToggleCartAutoReset();
 void actionToggleDiskAutoResetA();
 void actionToggleCasAutoRewind();
 void actionToggleSpriteEnable();
+void actionToggleFdcTiming();
 void actionToggleMsxAudioSwitch();
 void actionToggleFrontSwitch();
 void actionTogglePauseSwitch();
@@ -145,6 +146,7 @@ void actionSetDiskAutoResetA(int value);
 void actionSetCasAutoRewind(int value);
 void actionSetSpriteEnable(int value);
 void actionSetMsxAudioSwitch(int value);
+void actionSetFdcTiming(int value);
 void actionSetFrontSwitch(int value);
 void actionSetPauseSwitch(int value);
 void actionSetWaveCapture(int value);

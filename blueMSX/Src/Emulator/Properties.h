@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2004-12-13 02:04:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,6 +78,7 @@ typedef struct {
     char          statsDefDir[MAX_PATH];
     char          machineName[MAX_PATH];
     char          shortcutProfile[MAX_PATH];
+    int           enableFdcTiming;
     int           frontSwitch;
     int           audioSwitch;
     int           pauseSwitch;

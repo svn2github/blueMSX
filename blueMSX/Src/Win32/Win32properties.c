@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2004-12-13 02:04:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -504,10 +504,13 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         SendMessage(GetDlgItem(hDlg, IDC_EMUSPEEDTEXT), WM_SETTEXT, 0, (LPARAM)langPropEmuSpeedText());
         SendMessage(GetDlgItem(hDlg, IDC_EMUSPEEDGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropEmuSpeedGB());
         SendMessage(GetDlgItem(hDlg, IDC_EMUFRONTSWITCHGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropEmuFrontSwitchGB());
+        
+        SetWindowText(GetDlgItem(hDlg, IDC_EMUFDCTIMING),   langPropEmuFdcTiming());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUFRONTSWITCH), langPropEmuFrontSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUPAUSESWITCH), langPropEmuPauseSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUAUDIOSWITCH), langPropEmuAudioSwitch());
 
+        setButtonCheck(hDlg, IDC_EMUFDCTIMING,   !pProperties->emulation.enableFdcTiming, 1);
         setButtonCheck(hDlg, IDC_EMUFRONTSWITCH, pProperties->emulation.frontSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUPAUSESWITCH, pProperties->emulation.pauseSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUAUDIOSWITCH, pProperties->emulation.audioSwitch, 1);
@@ -596,6 +599,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
             int index = 0;
             char buffer[64];
 
+            pProperties->emulation.enableFdcTiming = !getButtonCheck(hDlg, IDC_EMUFDCTIMING);
             pProperties->emulation.frontSwitch = getButtonCheck(hDlg, IDC_EMUFRONTSWITCH);
             pProperties->emulation.pauseSwitch = getButtonCheck(hDlg, IDC_EMUPAUSESWITCH);
             pProperties->emulation.audioSwitch = getButtonCheck(hDlg, IDC_EMUAUDIOSWITCH);
