@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-12 20:18:34 $
+** $Date: 2005-02-13 11:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,8 @@ DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
 void dbgRegisterBankAddRegister(DbgRegisterBank* regBank,
                                 int index,
                                 const char* name,
-                                UInt8 value);
+                                UInt8 width,
+                                UInt32 value);
 
 DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
                                 const char* name,

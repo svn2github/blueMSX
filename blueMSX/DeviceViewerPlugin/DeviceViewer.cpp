@@ -3,6 +3,7 @@
 #include "Resource.h"
 #include <string>
 #include <sstream>
+#include <iomanip>
 using namespace std;
 
 static HWND deviceViewerHwnd = NULL;
@@ -26,7 +27,7 @@ void SetDeviceInfoString(HWND hDlg)
             int memCount = DeviceGetMemoryBlockCount(device);
             for (j = 0; j < memCount; j++) {
                 MemoryBlock* mem = DeviceGetMemoryBlock(device, j);
-                devInfo << "   Memory: " << mem->name << " Size: " << mem->size << "\r\n";
+                devInfo << "   Memory: " << mem->name << " Size: 0x" << hex << mem->size << "\r\n";
             }
 
             int regBankCount = DeviceGetRegisterBankCount(device);
@@ -35,7 +36,7 @@ void SetDeviceInfoString(HWND hDlg)
                 devInfo << "   Registers: " << regBank->name << "\r\n";
 
                 for (UInt32 k = 0; k < regBank->count; k++) {
-                    devInfo << "      " << regBank->reg[k].name << "  " << hex << regBank->reg[k].value << "\r\n";
+                    devInfo << "      " << regBank->reg[k].name << "  " << hex << setw(regBank->reg[k].width / 4) << setfill('0') << regBank->reg[k].value << "\r\n";
                 }
             }
 
@@ -45,7 +46,7 @@ void SetDeviceInfoString(HWND hDlg)
                 devInfo << "   IO Ports: " << ioPorts->name << "\r\n";
 
                 for (UInt32 k = 0; k < ioPorts->count; k++) {
-                    devInfo << "      Port " << hex << ioPorts->port[k].port << "  " << ioPorts->port[k].value << "\r\n";
+                    devInfo << "      Port 0x" << hex << ioPorts->port[k].port << "  0x" << ioPorts->port[k].value << "\r\n";
                 }
             }
         }

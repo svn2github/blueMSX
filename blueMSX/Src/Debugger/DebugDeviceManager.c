@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 10:21:11 $
+** $Date: 2005-02-13 11:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -184,9 +184,11 @@ DbgRegisterBank* dbgDeviceAddRegisterBank(DbgDevice* dbgDevice,
 void dbgRegisterBankAddRegister(DbgRegisterBank* regBank,
                                 int index,
                                 const char* name,
-                                UInt8 value)
+                                UInt8 width,
+                                UInt32 value)
 {
     strcpy(regBank->reg[index].name, name);
+    regBank->reg[index].width = width;
     regBank->reg[index].value = value;
 }
 

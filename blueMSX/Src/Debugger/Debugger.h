@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-13 10:21:11 $
+** $Date: 2005-02-13 11:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,8 +51,9 @@ typedef struct {
     char   name[32];
     UInt32 count;
     struct DbgRegister {
-        char  name[7];
-        UInt8 value;
+        char   name[7];
+        UInt8  width;
+        UInt32 value;
     } reg[1];
 } DbgRegisterBank;
 

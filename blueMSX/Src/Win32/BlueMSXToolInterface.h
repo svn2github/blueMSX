@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-02-13 10:21:11 $
+** $Date: 2005-02-13 11:14:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,7 +72,8 @@ typedef struct {
     UInt32 count;
     struct Register {
         char  name[7];
-        UInt8 value;
+        UInt8 width;
+        UInt32 value;
     } reg[1];
 } RegisterBank;
 

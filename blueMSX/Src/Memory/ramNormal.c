@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramNormal.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-02-13 11:14:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
@@ -39,6 +40,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     int slot;
     int sslot;
     int startPage;
@@ -72,14 +74,19 @@ static void loadState(RamNormal* rm)
     }
 }
 
-static void destroy(void* ref)
+static void destroy(RamNormal* rm)
 {
-    RamNormal* rm = (RamNormal*)ref;
+    debugDeviceUnregister(rm->debugHandle);
 
     slotUnregister(rm->slot, rm->sslot, 0);
     deviceManagerUnregister(rm->deviceHandle);
 
     free(rm);
+}
+
+static void setDebugInfo(RamNormal* rm, DbgDevice* dbgDevice)
+{
+    dbgDeviceAddMemoryBlock(dbgDevice, "RAM", 0, rm->pages * 0x2000, rm->ramData);
 }
 
 int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
@@ -106,6 +113,8 @@ int ramNormalCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm->pages     = pages;
 
     memset(rm->ramData, 0xff, sizeof(rm->ramData));
+
+    rm->debugHandle = debugDeviceRegister("Main RAM", setDebugInfo, rm);
 
     for (i = 0; i < pages; i++) {
         slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 1);
