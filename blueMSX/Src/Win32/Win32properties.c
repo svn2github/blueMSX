@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-01-26 08:15:49 $
+** $Date: 2005-01-28 18:57:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2007,7 +2007,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id)
     while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
 
     // Get buffer size
-    EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 2, NULL, 0, &dwNeeded, &dwReturned);
+    EnumPrinters(PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS, NULL, 2, NULL, 0, &dwNeeded, &dwReturned);
 
     // Allocate memory
     lpPrinterInfo = (LPPRINTER_INFO_2)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
