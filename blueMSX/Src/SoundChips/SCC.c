@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-03-18 03:19:18 $
+** $Date: 2005-03-18 03:50:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -544,26 +544,6 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
         return;
     }
 }
-static Int32 filter2(SCC* scc, Int32 input) {
-    static const Int32 a1 = 997;
-    static const Int32 a2 = -1994;
-    static const Int32 a3 = 997;
-    static const Int32 b1 = -1994;
-    static const Int32 b2 = 994;
-    static Int32 inHp[3], outHp[2];
-    
-    inHp[2] = inHp[1];
-    inHp[1] = inHp[0];
-    inHp[0] = input;
-
-    outHp[2] = outHp[1];
-    outHp[1] = outHp[0];
-
-    outHp[0] = (a1 * inHp[0] + a2 * inHp[1] + a3 * inHp[2] - b1 * outHp[1] - b2 * outHp[2]) / 1000;
-
-    return outHp[0];
-}
-
 
 static Int32 filter(SCC* scc, Int32 input) {
     scc->in[4] = scc->in[3];
@@ -574,7 +554,7 @@ static Int32 filter(SCC* scc, Int32 input) {
 
     scc->inHp[2] = scc->inHp[1];
     scc->inHp[1] = scc->inHp[0];
-    scc->inHp[0] = (1 * (scc->in[0] + scc->in[4]) + 12 * (scc->in[1] + scc->in[3]) + 45 * scc->in[2]) / 85;
+    scc->inHp[0] = (1 * (scc->in[0] + scc->in[4]) + 12 * (scc->in[1] + scc->in[3]) + 45 * scc->in[2]) / 100;
 
     scc->outHp[2] = scc->outHp[1];
     scc->outHp[1] = scc->outHp[0];
