@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-22 03:39:15 $
+** $Date: 2005-02-27 05:31:29 $
 **
 ** Author: Daniel Vik
 **
@@ -391,6 +391,7 @@ static void SKIP_JP(R800* r800) {
 
 static void CALL(R800* r800) {
     RegisterPair addr;
+    r800->callstack[r800->callstackSize++] = r800->regs.PC.W;
     addr.B.l = readOpcode(r800, r800->regs.PC.W++);
     addr.B.h = readOpcode(r800, r800->regs.PC.W++);
     delayCall(r800);
@@ -409,6 +410,7 @@ static void SKIP_CALL(R800* r800) {
 
 static void RET(R800* r800) { 
     RegisterPair addr;
+    r800->callstackSize--;
     addr.B.l = readMem(r800, r800->regs.SP.W++);
     addr.B.h = readMem(r800, r800->regs.SP.W++);
     r800->regs.PC.W = addr.W;
@@ -448,7 +450,8 @@ static void EX_SP(R800* r800, UInt16* reg) {
 }
 
 static void M1(R800* r800) { 
-    r800->regs.R++; 
+    UInt8 value = r800->regs.R;
+    r800->regs.R = (value & 0x80) | ((value + 1) & 0x7f); 
     delayM1(r800);
 }
 
@@ -5701,6 +5704,8 @@ void r800Reset(R800 *r800, UInt32 cpuTime) {
     r800->dataBus   = 0xff;
     r800->intState  = INT_LOW;
     r800->nmiState  = INT_LOW;
+
+    r800->callstackSize = 0;
 }
 
 void r800SetDataBus(R800* r800, UInt8 value) {
