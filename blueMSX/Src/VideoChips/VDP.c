@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-02-15 05:03:51 $
+** $Date: 2005-02-17 01:09:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -660,7 +660,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
             if (vdp->drawArea || (frameTime - ((vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10) < 4 * HPERIOD)) {
                 vdpStatus &= ~0x40;
             }
-            if (frameTime % HPERIOD - vdp->leftBorder < (UInt32)vdp->hRefresh + 57 + 26) {
+            if (frameTime % HPERIOD - vdp->leftBorder < (UInt32)vdp->hRefresh) {
                 vdpStatus &= ~0x20;
             }
         }
