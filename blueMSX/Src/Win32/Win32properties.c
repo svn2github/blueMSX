@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-02-10 07:18:49 $
+** $Date: 2005-02-12 09:52:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2462,7 +2462,7 @@ void getStrValue(char* keyStr, char* returnValue) {
 }
 
 void getIntValue(char* keyStr, int* returnValue) {
-    long retVal;
+    long retVal = *returnValue;
     if (useRegistry) getRegIntValue(registryKey, keyStr, &retVal);
     else             getIniIntValue(registryKey, keyStr, &retVal);
     *returnValue = retVal;

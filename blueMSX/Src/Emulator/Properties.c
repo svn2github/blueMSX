@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-02-10 09:13:11 $
+** $Date: 2005-02-12 09:52:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -223,7 +223,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
     if (GetSystemMetrics(SM_CYSCREEN) > 600) {
-        strcpy(pProperties->settings.themeName, "DIGIblue V2.1");
+        strcpy(pProperties->settings.themeName, "DIGIblue SUITE-X");
     }
     else {
         strcpy(pProperties->settings.themeName, "Classic");
@@ -402,7 +402,7 @@ static void propLoad(Properties* pProperties)
 
     getIntValue("ShowStatePreview", &pProperties->settings.showStatePreview);
     getIntValue("DisableScreensaver", &pProperties->settings.disableScreensaver);
-    getStrValue("ThemeName20", (char*)pProperties->settings.themeName);
+    getStrValue("ThemeName22", (char*)pProperties->settings.themeName);
 
     getStrValue("StateDefDir", (char*)pProperties->emulation.statsDefDir);
     getStrValue("MachineName", (char*)pProperties->emulation.machineName);
@@ -584,7 +584,7 @@ void propSave(Properties* pProperties)
 
     setIntValue("ShowStatePreview", pProperties->settings.showStatePreview);
     setIntValue("DisableScreensaver",   pProperties->settings.disableScreensaver);
-    setStrValue("ThemeName20", (char*)pProperties->settings.themeName);
+    setStrValue("ThemeName22", (char*)pProperties->settings.themeName);
 
     setStrValue("StateDefDir", (char*)pProperties->emulation.statsDefDir);
     setStrValue("MachineName", (char*)pProperties->emulation.machineName);
