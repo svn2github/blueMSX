@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-01-16 09:34:41 $
+** $Date: 2005-01-17 20:59:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -734,6 +734,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
+    if (hotkeyEq(key, s->toolsShowKeyboardEditor))      actionToolsShowKeyboardEditor();
     if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
     if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
 }
@@ -2409,6 +2410,22 @@ void archShowShortcutsEditor()
     st.shortcuts = shortcutsCreateProfile(pProperties->emulation.shortcutProfile);
     updateMenu(0);
     exitDialogShow();
+}
+
+void archShowKeyboardEditor()
+{
+    static ThemeCollection* tc = NULL;
+    
+    if (tc == NULL) {
+        tc = themeLoad("Theme", "Keyboard Config");
+    }
+
+    if (tc == NULL) {
+        MessageBox(NULL, "Could not find the Keyboard Editor Theme", "blueMSX - Error", MB_ICONERROR | MB_OK);
+    }
+    else {
+        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Keyboard Editor"));
+    }
 }
 
 void archShowMachineEditor()

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-16 06:48:16 $
+** $Date: 2005-01-17 20:59:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,6 +130,7 @@ _TCHAR* langMenuRunCleanReset();
 
 _TCHAR* langMenuToolsMachine();
 _TCHAR* langMenuToolsShortcuts();
+_TCHAR* langMenuToolsKeyboard();
 
 _TCHAR* langMenuFile();
 _TCHAR* langMenuRun();
@@ -527,6 +528,7 @@ _TCHAR* langShortcutShowApearProp();
 _TCHAR* langShortcutShowLanguage();
 _TCHAR* langShortcutShowMachines();
 _TCHAR* langShortcutShowShortcuts();
+_TCHAR* langShortcutShowKeyboard();
 _TCHAR* langShortcutShowHelp();
 _TCHAR* langShortcutShowAbout();
 _TCHAR* langShortcutShowFiles();

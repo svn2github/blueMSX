@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-15 23:23:35 $
+** $Date: 2005-01-17 20:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -577,7 +577,10 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts) {
     
     _stprintf(langBuffer, "%s", langMenuToolsShortcuts());
     AppendMenu(hMenu, MF_STRING, ID_TOOLS_SHORTCUTSEDITOR, langBuffer);
-   
+
+    _stprintf(langBuffer, "%s", langMenuToolsKeyboard());
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langBuffer);
+    
     return hMenu;
 }
 
@@ -1187,6 +1190,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_OPTIONS_LANGUAGE:               actionOptionsShowLanguage();    return 0;
     case ID_TOOLS_MACHINEEDITOR:            actionToolsShowMachineEditor(); return 0;
     case ID_TOOLS_SHORTCUTSEDITOR:          actionToolsShowShorcutEditor(); return 0;
+    case ID_TOOLS_KEYBOARDEDITOR:           actionToolsShowKeyboardEditor();return 0;
     case ID_TB_HELP:
     case ID_HELP_HELP:                      actionHelpShowHelp();           return 0;
     case ID_HELP_ABOUT:                     actionHelpShowAbout();          return 0;

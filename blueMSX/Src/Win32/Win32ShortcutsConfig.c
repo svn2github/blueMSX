@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-15 05:40:43 $
+** $Date: 2005-01-17 20:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -775,6 +775,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(optionsShowLanguage);
     LOAD_SHORTCUT(toolsShowMachineEditor);
     LOAD_SHORTCUT(toolsShowShorcutEditor);
+    LOAD_SHORTCUT(toolsShowKeyboardEditor);
     LOAD_SHORTCUT(helpShowHelp);
     LOAD_SHORTCUT(helpShowAbout);
     LOAD_SHORTCUT(cpuTrace);
@@ -854,6 +855,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(optionsShowLanguage);
     SAVE_SHORTCUT(toolsShowMachineEditor);
     SAVE_SHORTCUT(toolsShowShorcutEditor);
+    SAVE_SHORTCUT(toolsShowKeyboardEditor);
     SAVE_SHORTCUT(helpShowHelp);
     SAVE_SHORTCUT(helpShowAbout);
     SAVE_SHORTCUT(cpuTrace);
@@ -1000,6 +1002,7 @@ static void updateShortcutEntries(HWND hDlg)
 
     ADD_SHORTCUT(toolsShowMachineEditor, langShortcutShowMachines());
     ADD_SHORTCUT(toolsShowShorcutEditor, langShortcutShowShortcuts());
+    ADD_SHORTCUT(toolsShowKeyboardEditor, langShortcutShowKeyboard());
     
     ADD_SHORTCUTSEPARATOR();
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-16 06:48:16 $
+** $Date: 2005-01-17 20:59:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -548,6 +548,9 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->confSaveAsTitle         = "Save Configuration As...";
     ls->confSaveAsName          = "Name:";
+
+    ls->menuToolsKeyboard       = "Keyboard Editor";
+    ls->shortcutShowKeyboard    = "Show Keyboard Editor";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-01-17 20:59:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@ extern "C" {
 #include "Theme.h"
 #include "Actions.h"
 
-ThemeCollection* themeLoad(char* themeName);
+ThemeCollection* themeLoad(char* themeName, char* path);
 
 ThemeCollection** createThemeList(ThemeCollection* defaultTheme);
 ThemeCollection** themeGetAvailable();

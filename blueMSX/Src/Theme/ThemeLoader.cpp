@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-01-16 03:23:20 $
+** $Date: 2005-01-17 20:59:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,6 +99,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "dlg-language"))            return (ButtonEvent)actionOptionsShowLanguage;
     if (0 == strcmp(action, "dlg-machineeditor"))       return (ButtonEvent)actionToolsShowMachineEditor;
     if (0 == strcmp(action, "dlg-shortcuteditor"))      return (ButtonEvent)actionToolsShowShorcutEditor;
+    if (0 == strcmp(action, "dlg-keyboardeditor"))      return (ButtonEvent)actionToolsShowKeyboardEditor;
     if (0 == strcmp(action, "dlg-help"))                return (ButtonEvent)actionHelpShowHelp;
     if (0 == strcmp(action, "dlg-about"))               return (ButtonEvent)actionHelpShowAbout;
     
@@ -1010,14 +1011,17 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 }
 
 
-extern "C" ThemeCollection* themeLoad(char* themeName) 
+extern "C" ThemeCollection* themeLoad(char* themeName, char* path) 
 {
     char dirName[512];
     char oldDirName[512];
+    if (path == NULL) {
+        path = "Themes";
+    }
 
     GetCurrentDirectory(512, oldDirName);
 
-    sprintf(dirName, "%s\\Themes\\%s", oldDirName, themeName);
+    sprintf(dirName, "%s\\%s\\%s", oldDirName, path, themeName);
 
     SetCurrentDirectory(dirName);
 
@@ -1084,7 +1088,7 @@ extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
         do {
 		    DWORD fa = GetFileAttributes(wfd.cFileName);
             if (fa & FILE_ATTRIBUTE_DIRECTORY) {
-                ThemeCollection* themeCollection = themeLoad(wfd.cFileName);
+                ThemeCollection* themeCollection = themeLoad(wfd.cFileName, NULL);
                 if (themeCollection != NULL) {
                     if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
                     if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;

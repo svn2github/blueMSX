@@ -1205,34 +1205,6 @@ buildnumber.exe
 			</File>
 		</Filter>
 		<Filter
-			Name="Utils"
-			Filter="">
-			<File
-				RelativePath="..\..\Src\Utils\IsFileExtension.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\IsFileExtension.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\SaveState.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\SaveState.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\TokenExtract.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\TokenExtract.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="Theme"
 			Filter="">
 			<File
@@ -1293,43 +1265,71 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Board\SVI.h">
 			</File>
-			<Filter
-				Name="Arch"
-				Filter="">
-				<File
-					RelativePath="..\..\Src\Arch\ArchBitmap.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchControls.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchDialog.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchEvent.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchMenu.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchNotifications.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchSound.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchText.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchThread.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Arch\ArchTimer.h">
-				</File>
-			</Filter>
+		</Filter>
+		<Filter
+			Name="Arch"
+			Filter="">
+			<File
+				RelativePath="..\..\Src\Arch\ArchBitmap.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchControls.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchDialog.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchEvent.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchNotifications.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchSound.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchText.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchThread.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchTimer.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Utils"
+			Filter="">
+			<File
+				RelativePath="..\..\Src\Utils\IsFileExtension.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\IsFileExtension.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\SaveState.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\SaveState.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\TokenExtract.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\TokenExtract.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -159,8 +159,9 @@
 #define ID_HELP_HELP                    40151
 #define ID_HELP_ABOUT                   40152
 
-#define ID_TOOLS_MACHINEEDITOR          40155
-#define ID_TOOLS_SHORTCUTSEDITOR        40156
+#define ID_TOOLS_MACHINEEDITOR          40154
+#define ID_TOOLS_SHORTCUTSEDITOR        40155
+#define ID_TOOLS_KEYBOARDEDITOR         40156
 
 #define ID_RESTORE                      40061
 
