@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-04-07 19:23:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -265,6 +265,8 @@ I8250* i8250Create(I8250Transmit transmit,    I8250Signal   signal,
     i8250->setRts      = setRts      ? setRts      : setRtsDummy;
     i8250->getDtr      = getDtr      ? getDtr      : getDtrDummy;
     i8250->getRts      = getRts      ? getRts      : getRtsDummy;
+    
+    i8250->ref = ref;
 
     return i8250;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-04-06 21:18:21 $
+** $Date: 2005-04-07 19:23:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,25 @@ static int getDtrDummy(void* ref) {
 static int getRtsDummy(void* ref) {
     return 0;
 }
+
+
+#define CMD_TXEN   0x01
+#define CMD_DTR    0x02
+#define CMD_RXE    0x04
+#define CMD_SBRK   0x08
+#define CMD_RSTERR 0x10
+#define CMD_RTS    0x20
+#define CMD_RESET  0x40
+#define CMD_HUNT   0x80
+
+#define ST_TXRDY   0x01
+#define ST_RXRDY   0x02
+#define ST_TXEMPTY 0x04
+#define ST_PE      0x08
+#define ST_OE      0x10
+#define ST_FE      0x20
+#define ST_SYNBRK  0x40
+#define ST_DSR     0x80
 
 struct I8251
 {
@@ -134,6 +153,8 @@ I8251* i8251Create(I8251Transmit transmit,    I8251Signal   signal,
     i8251->setRts      = setRts      ? setRts      : setRtsDummy;
     i8251->getDtr      = getDtr      ? getDtr      : getDtrDummy;
     i8251->getRts      = getRts      ? getRts      : getRtsDummy;
+    
+    i8251->ref = ref;
 
     return i8251;
 }

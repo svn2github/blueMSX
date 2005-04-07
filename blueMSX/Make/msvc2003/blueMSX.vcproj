@@ -939,6 +939,12 @@
 				RelativePath="..\..\Src\IoDevice\I8251.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\I8254.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\I8254.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\I8255.c">
 			</File>
 			<File
