@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-04-06 20:46:59 $
+** $Date: 2005-04-08 07:30:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -755,6 +755,7 @@ static void breakpointCb(void* ref, UInt16 pc)
 }
 
 void msxRun() {
+//    testI8254();
     r800Execute(r800);
 }
 

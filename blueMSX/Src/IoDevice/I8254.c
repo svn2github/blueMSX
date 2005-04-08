@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-04-08 05:58:51 $
+** $Date: 2005-04-08 07:30:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,11 +84,10 @@ static void counterSetOutput(Counter* counter, int state)
     counter->outputState = state;
 }
 
-static UInt16 counterGetElapsedTime(Counter* counter)
+static UInt16 counterGetElapsedTime(Counter* counter, UInt32 systemTime)
 {
     UInt64 elapsed;
     UInt32 elapsedTime;
-    UInt32 systemTime = boardSystemTime();
 
     elapsed          = counter->frequency * (UInt64)(systemTime - counter->refTime) + counter->refFrag;
     counter->refTime = systemTime;
@@ -98,10 +97,10 @@ static UInt16 counterGetElapsedTime(Counter* counter)
     return (UInt16)elapsedTime;
 }
 
-static void counterSync(Counter* counter)
+static void counterSync(Counter* counter, UInt32 systemTime)
 {
     if (counter->mode == 1 || counter->mode == 5 || counter->gate) {
-        counter->countingElement -= counterGetElapsedTime(counter);
+        counter->countingElement -= counterGetElapsedTime(counter, systemTime);
     }
 
     if (!counter->outputLatched) {
@@ -127,30 +126,9 @@ static void counterSetTimeout(Counter* counter, UInt32 currentTime)
     }
     
     if (nextTimeout != 0) {
-        boardTimerAdd(counter->timer, currentTime + 
+        boardTimerAdd(counter->timer, boardSystemTime() + 
                       (UInt64)boardFrequency() * nextTimeout / counter->frequency);
     }
-}
-
-static void counterOnTimer(Counter* counter, UInt32 time)
-{
-    int mode = counter->mode;
-
-    // If counter is disabled, just return
-    if (mode != 1 && mode != 5 && counter->gate == 0) {
-        return;
-    }
-
-    if (counter->outPhase == 1) {
-        counter->outPhase = (mode == 0 || mode == 1) ? 0 : 2;
-        counterSetOutput(counter, mode == 0 || mode == 1 ? 1 : 0);
-    }
-    else if (counter->outPhase == 2) {
-        counter->outPhase = (mode == 4 || mode == 5) ? 0 : 1;
-        counterSetOutput(counter, 1);
-    }
-
-    counterSetTimeout(counter, time);
 }
 
 static void counterLoad(Counter* counter)
@@ -161,18 +139,18 @@ static void counterLoad(Counter* counter)
 
     switch (counter->mode) {
     case 0:
-        counter->phase1 = counter->countRegister + (counter->countRegister == counter->countingElement ? 1 : 0);
+        counter->phase1 = 0;
         break;
     case 1:
-        counter->phase1 = counter->countRegister;
+        counter->phase1 = 0;
         break;
     case 2:
-        counter->phase1 = counter->countRegister - 1;
-        counter->phase2 = 1;
+        counter->phase1 = 1;
+        counter->phase2 = 0;
         break;
     case 3:
         counter->phase1 = (counter->countRegister + 1) / 2;
-        counter->phase2 = counter->countRegister / 2;
+        counter->phase2 = 0;
         break;
     case 4:
     case 5:
@@ -184,9 +162,42 @@ static void counterLoad(Counter* counter)
     counterSetTimeout(counter, boardSystemTime());
 }
 
+static void counterOnTimer(Counter* counter, UInt32 time)
+{
+    int mode = counter->mode;
+
+    counterSync(counter, time);
+
+    // If counter is disabled, just return
+    if (mode != 1 && mode != 5 && counter->gate == 0) {
+        return;
+    }
+
+    if (counter->outPhase == 1) {
+        if (mode == 0 || mode == 1) {
+            counterSetOutput(counter, 1);
+            counter->outPhase = 0;
+        }
+        else {
+            counterSetOutput(counter, 0);
+            counter->outPhase = 2;
+            counterSetTimeout(counter, time);
+        }
+    }
+    else if (counter->outPhase == 2) {
+        counterSetOutput(counter, 1);
+        if (mode == 2 || mode == 3) {
+            counterLoad(counter);
+        }
+        else {
+            counter->outPhase = 0;
+        }
+    }
+}
+
 static UInt8 counterRead(Counter* counter)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
 
     if (counter->statusLatched) {
         counter->statusLatched = 0;
@@ -218,7 +229,7 @@ static UInt8 counterRead(Counter* counter)
 
 static void counterWrite(Counter* counter, UInt8 value)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
 
     switch ((counter->controlWord & 0x30) >> 4) {
     case 0:
@@ -252,7 +263,7 @@ static void counterWrite(Counter* counter, UInt8 value)
 
 static void counterSetGate(Counter* counter, int state)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
 
     if (counter->gate == state) {
         return;
@@ -284,7 +295,7 @@ static void counterSetGate(Counter* counter, int state)
 
 static void counterLatchOutput(Counter* counter)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
 
     counter->readPhase = PHASE_LOW;
     counter->outputLatch = counter->countingElement;
@@ -293,7 +304,7 @@ static void counterLatchOutput(Counter* counter)
 
 static void counterLatchStatus(Counter* counter)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
     counter->statusLatch = counter->controlWord | (counter->outputState ? 0x80 : 0);
     counter->statusLatched = 1;
 
@@ -301,11 +312,11 @@ static void counterLatchStatus(Counter* counter)
 
 static void counterSetControl(Counter* counter, UInt8 value)
 {
-    counterSync(counter);
+    counterSync(counter, boardSystemTime());
 
     counter->controlWord = value;
 
-    if ((value & 0x30) == 0x30) {
+    if ((value & 0x30) == 0x00) {
         counterLatchOutput(counter);
     }
     else {
@@ -439,13 +450,13 @@ void i8254Destroy(I8254* i8254)
 void i8254SetGate(I8254* i8254, int counter, int state)
 {
 	switch (counter) {
-	case 0:
+	case 1:
 		counterSetGate(i8254->counter1, state);
         break;
-	case 1:
+	case 2:
 		counterSetGate(i8254->counter2, state);
         break;
-	case 2:
+	case 3:
 		counterSetGate(i8254->counter3, state);
         break;
 	}
@@ -461,3 +472,27 @@ I8254* i8254Create(I8254Out out1, I8254Out out2, I8254Out out3, void* ref, UInt3
 
     return i8254;
 }
+
+///////////////////////
+
+I8254* i8254;
+
+
+static void i8254out1(void* ref, int state) {
+    printf("%d - %d\n", state, boardSystemTime());
+}
+static void i8254out2(void* ref, int state) {
+}
+static void i8254out3(void* ref, int state) {
+}
+
+
+void testI8254() {
+    i8254 = i8254Create(i8254out1, i8254out2, i8254out3, 0, 4000000);
+
+    i8254SetGate(i8254, 1, 1);
+    i8254Write(i8254, 3, 0x34);
+    i8254Write(i8254, 0, 0x80);
+    i8254Write(i8254, 0, 0x02);
+}
+
