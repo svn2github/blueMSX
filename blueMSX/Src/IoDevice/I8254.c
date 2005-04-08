@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-08 20:58:32 $
+** $Date: 2005-04-08 23:39:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,6 @@
 #include <stdlib.h>
 
 
-static void outDummy(void* ref, int state) {
-}
-
 typedef struct Counter
 {
     UInt16 countingElement;
@@ -56,21 +53,21 @@ typedef struct Counter
 
     int outputState;
 
+    int outPhase;
+    int endOutPhase1;
+    int endOutPhase2;
+
+    volatile int insideTimerLoop;
+
     UInt32 frequency;
     
-    int outPhase;
-    int phase1;
-    int phase2;
+    I8254Out out;
+    void* ref;
 
     BoardTimer* timer; 
 
     UInt32 refTime;
     UInt32 refFrag;
-
-    int insideTimerCallback;
-
-    I8254Out out;
-    void* ref;
 } Counter;
 
 
@@ -100,20 +97,6 @@ static UInt16 counterGetElapsedTime(Counter* counter)
     return (UInt16)elapsedTime;
 }
 
-static void counterSync(Counter* counter)
-{
-    // Only update counting element if we are not in timer callback
-    if (!counter->insideTimerCallback) {
-        if (counter->mode == 1 || counter->mode == 5 || counter->gate) {
-            counter->countingElement -= counterGetElapsedTime(counter);
-        }
-    }
-
-    if (!counter->outputLatched) {
-        counter->outputLatch = counter->countingElement;
-    }
-}
-
 static void counterSetTimeout(Counter* counter)
 {
     int nextTimeout = 0;
@@ -125,10 +108,10 @@ static void counterSetTimeout(Counter* counter)
     }
 
     if (counter->outPhase == 1) {
-        nextTimeout = counter->countingElement - counter->phase1;
+        nextTimeout = counter->countingElement - counter->endOutPhase1;
     }
     else if (counter->outPhase == 2) {
-        nextTimeout = counter->countingElement - counter->phase2;
+        nextTimeout = counter->countingElement - counter->endOutPhase2;
     }
     
     if (nextTimeout != 0) {
@@ -137,66 +120,85 @@ static void counterSetTimeout(Counter* counter)
     }
 }
 
-static void counterOnTimer(Counter* counter, UInt32 time)
+static void counterSync(Counter* counter)
 {
-    int mode = counter->mode;
+    UInt16 elapsedTime;
+    int mode;
 
-    UInt16 elapsed = counterGetElapsedTime(counter);
+    // If sync is called recursively, return
+    if (counter->insideTimerLoop) {
+        return;
+    }
 
-    // If counter is disabled, just return
+    elapsedTime = counterGetElapsedTime(counter);
+    mode = counter->mode;
+
+    // If timer is disabled, return 
     if (mode != 1 && mode != 5 && counter->gate == 0) {
         return;
     }
 
-    counter->insideTimerCallback = 1;
+    counter->insideTimerLoop = 1;
 
-    for (;;) {
+    while (counter->insideTimerLoop) {
+        if (counter->outPhase == 0) {
+            counter->countingElement -= elapsedTime;
+            break;
+        }
+
         if (counter->outPhase == 1) {
-            if (elapsed < counter->countingElement - counter->phase1) {
-                counter->countingElement -= elapsed;
+            if (elapsedTime < counter->countingElement - counter->endOutPhase1) {
+                counter->countingElement -= elapsedTime;
                 counterSetTimeout(counter);
                 break;
             }
 
             if (mode == 0 || mode == 1) {
                 counter->outPhase = 0;
-                counter->countingElement -= elapsed;
+                counter->countingElement -= elapsedTime;
                 counterSetOutput(counter, 1);
                 break;
             }
 
-            elapsed -= counter->countingElement - counter->phase1;
-            counter->countingElement = counter->phase1;
+            elapsedTime -= counter->countingElement - counter->endOutPhase1;
+            counter->countingElement = counter->endOutPhase1;
             counter->outPhase = 2;
             counterSetOutput(counter, 0);
+            continue;
         }
 
         if (counter->outPhase == 2) {
-            if (elapsed < counter->countingElement - counter->phase2) {
-                counter->countingElement -= elapsed;
+            if (elapsedTime < counter->countingElement - counter->endOutPhase2) {
+                counter->countingElement -= elapsedTime;
                 counterSetTimeout(counter);
                 break;
             }
             
             if (mode == 4 || mode == 5) {
                 counter->outPhase = 0;
-                counter->countingElement -= elapsed;
+                counter->countingElement -= elapsedTime;
                 counterSetOutput(counter, 1);
                 break;
             }
             
-            elapsed -= counter->countingElement - counter->phase2;
-            counter->countingElement = counter->phase2;
+            elapsedTime -= counter->countingElement - counter->endOutPhase2;
+            counter->countingElement = counter->endOutPhase2;
             counter->outPhase = 1;
             counterSetOutput(counter, 1);
             counter->countingElement = counter->countRegister;
             if (mode == 3) {
-                counter->phase1 = (counter->countRegister + 1) / 2;
+                counter->endOutPhase1 = (counter->countRegister + 1) / 2;
             }
+            continue;
         }
     }
 
-    counter->insideTimerCallback = 0;
+    counter->insideTimerLoop = 0;
+}
+
+static void counterOnTimer(Counter* counter, UInt32 time)
+{
+    counterSync(counter);
 }
 
 static void counterLoad(Counter* counter)
@@ -208,33 +210,51 @@ static void counterLoad(Counter* counter)
     switch (counter->mode) {
     case 0:
     case 1:
-        counter->phase1 = 0;
+        counter->endOutPhase1 = 0;
         break;
     case 2:
-        counter->phase1 = 2;
-        counter->phase2 = 1;
+        counter->endOutPhase1 = 2;
+        counter->endOutPhase2 = 1;
         break;
     case 3:
-        counter->phase1 = (counter->countRegister + 1) / 2;
-        counter->phase2 = 0;
+        counter->endOutPhase1 = 1 + (counter->countRegister + 1) / 2;
+        counter->endOutPhase2 = 1;
         break;
     case 4:
     case 5:
-        counter->phase1 = 1;
-        counter->phase2 = 0;
+        counter->endOutPhase1 = 1;
+        counter->endOutPhase2 = 0;
         break;
     }
+
+    // Force exit from timer loop
+    counter->insideTimerLoop = 0;
 
     counterSetTimeout(counter);
 }
 
 static UInt8 counterRead(Counter* counter)
 {
+    UInt16 outputLatch;
+
     counterSync(counter);
+    
+    if (!counter->outputLatched) {
+        counter->outputLatch = counter->countingElement;
+    }
 
     if (counter->statusLatched) {
         counter->statusLatched = 0;
         return counter->statusLatch;
+    }
+
+    // Modify output latch if mode = 3.
+    outputLatch = counter->outputLatch;
+    if (counter->mode == 3) {
+        if (outputLatch > counter->countRegister / 2) {
+            outputLatch = outputLatch - counter->countRegister / 2;
+        }
+        outputLatch *= 2;
     }
 
     switch ((counter->controlWord & 0x30) >> 4) {
@@ -243,18 +263,18 @@ static UInt8 counterRead(Counter* counter)
 
     case 1:
         counter->outputLatched = 0;
-        return counter->outputLatch & 0xff;
+        return outputLatch & 0xff;
     case 2:
         counter->outputLatched = 0;
-        return counter->outputLatch >> 8;
+        return outputLatch >> 8;
     case 3:
         if (counter->readPhase == PHASE_LOW) {
             counter->readPhase = PHASE_HI;
-            return counter->outputLatch & 0xff;
+            return outputLatch & 0xff;
         }
         counter->outputLatched = 0;
         counter->readPhase = PHASE_LOW;
-        return counter->outputLatch >> 8;
+        return outputLatch >> 8;
     }
 
     return 0xff;
@@ -322,6 +342,7 @@ static void counterSetGate(Counter* counter, int state)
     }
 
     if ((counter->mode & 1) == 0 && counter->gate == 1) {
+        counter->insideTimerLoop = 0;
         counterSetTimeout(counter);
     }
 }
@@ -373,7 +394,7 @@ static Counter* counterCreate(I8254Out out, void* ref, UInt32 frequency)
     Counter* counter = calloc(1, sizeof(Counter));
 
     counter->frequency = frequency;
-    counter->out = out ? out : outDummy;
+    counter->out = out;
     counter->ref = ref;
 
     counter->timer = boardTimerCreate(counterOnTimer, counter);
@@ -480,28 +501,32 @@ void i8254Destroy(I8254* i8254)
     free(i8254);
 }
 
-void i8254SetGate(I8254* i8254, int counter, int state)
+void i8254SetGate(I8254* i8254, I8254Counter counter, int state)
 {
 	switch (counter) {
-	case 1:
+	case I8254_COUNTER_1:
 		counterSetGate(i8254->counter1, state);
         break;
-	case 2:
+	case I8254_COUNTER_2:
 		counterSetGate(i8254->counter2, state);
         break;
-	case 3:
+	case I8254_COUNTER_3:
 		counterSetGate(i8254->counter3, state);
         break;
 	}
 }
 
-I8254* i8254Create(I8254Out out1, I8254Out out2, I8254Out out3, void* ref, UInt32 frequency)
+static void outDummy(void* ref, int state) 
+{
+}
+
+I8254* i8254Create(UInt32 frequency, I8254Out out1, I8254Out out2, I8254Out out3, void* ref)
 {
     I8254* i8254 = calloc(1, sizeof(I8254));
     
-    i8254->counter1 = counterCreate(out1, ref, frequency);
-    i8254->counter2 = counterCreate(out2, ref, frequency);
-    i8254->counter3 = counterCreate(out3, ref, frequency);
+    i8254->counter1 = counterCreate(out1 ? out1 : outDummy, ref, frequency);
+    i8254->counter2 = counterCreate(out2 ? out2 : outDummy, ref, frequency);
+    i8254->counter3 = counterCreate(out3 ? out3 : outDummy, ref, frequency);
 
     return i8254;
 }
@@ -518,21 +543,33 @@ static void i8254out1(void* ref, int state) {
 
     cnt = i8254Read(i8254, 0) | (i8254Read(i8254, 0) << 8);
 
-    printf("Counter = %.4x\n", cnt);
+    printf("Counter 1 = %d  %.4x\n", state, cnt);
 }
 
 static void i8254out2(void* ref, int state) {
+    UInt16 cnt;
+
+    i8254Write(i8254, 3, 0xe4);
+
+    cnt = i8254Read(i8254, 1) | (i8254Read(i8254, 1) << 8);
+
+    printf("Counter 2 = %d  %.4x\n", state, cnt);
 }
 static void i8254out3(void* ref, int state) {
 }
 
 
 void testI8254() {
-    i8254 = i8254Create(i8254out1, i8254out2, i8254out3, 0, 4000000);
+    i8254 = i8254Create(4000000, i8254out1, i8254out2, i8254out3, 0);
 
-    i8254SetGate(i8254, 1, 1);
+    i8254SetGate(i8254, I8254_COUNTER_1, 1);
     i8254Write(i8254, 3, 0x34);
     i8254Write(i8254, 0, 0x80);
     i8254Write(i8254, 0, 0x02);
+
+    i8254SetGate(i8254, I8254_COUNTER_2, 1);
+    i8254Write(i8254, 3, 0x76);
+    i8254Write(i8254, 1, 0x80);
+    i8254Write(i8254, 1, 0x01);
 }
 
