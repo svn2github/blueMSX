@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-04-08 05:58:51 $
+** $Date: 2005-04-08 23:39:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,8 @@
 
 typedef void (*I8254Out) (void*, int);
 
+typedef enum { I8254_COUNTER_1, I8254_COUNTER_2, I8254_COUNTER_3 } I8254Counter;
+
 typedef struct I8254 I8254;
 
 UInt8 i8254Read(I8254* i8254, UInt16 port);
@@ -45,8 +47,8 @@ void i8254SaveState(I8254* i8254);
 void i8254Reset(I8254* i8254);
 void i8254Destroy(I8254* i8254); 
 
-void i8254SetGate(I8254* i8254, int timer, int state);
+void i8254SetGate(I8254* i8254, I8254Counter counter, int state);
 
-I8254* i8254Create(I8254Out out1, I8254Out out2, I8254Out out3, void* ref, UInt32 frequency);
+I8254* i8254Create(UInt32 frequency, I8254Out out1, I8254Out out2, I8254Out out3, void* ref);
 
 #endif
