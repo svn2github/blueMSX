@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-04-07 19:23:41 $
+** $Date: 2005-04-08 05:58:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include "MSXTypes.h"
 
-typedef void (*I8254Out) (void*, int, int);
+typedef void (*I8254Out) (void*, int);
 
 typedef struct I8254 I8254;
 
@@ -45,8 +45,8 @@ void i8254SaveState(I8254* i8254);
 void i8254Reset(I8254* i8254);
 void i8254Destroy(I8254* i8254); 
 
-void i8254SetGate(int timer, int state);
+void i8254SetGate(I8254* i8254, int timer, int state);
 
-I8254* i8254Create(I8254Out out, void* ref);
+I8254* i8254Create(I8254Out out1, I8254Out out2, I8254Out out3, void* ref, UInt32 frequency);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-04-08 05:58:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,7 +73,7 @@ BoardType boardGetType();
 void boardSetMachine(Machine* machine);
 void boardReset();
 
-UInt32 msxSystemTime();
+UInt64 boardSystemTime64();
 
 void boardSaveState(const char* stateFile);
 
@@ -116,6 +116,8 @@ static UInt32 boardSystemTime() {
     extern UInt32* boardSysTime;
     return *boardSysTime;
 }
+
+UInt64 boardSystemTime64();
 
 typedef void (*BoardTimerCb)(void* ref, UInt32 time);
 

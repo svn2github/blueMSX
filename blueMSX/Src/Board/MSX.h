@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-04-08 05:58:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,8 @@ void msxReset();
 void msxInitStatistics(Machine* machine);
 
 void msxSaveState();
+
+UInt32 msxSystemTime();
 
 int  msxGetRefreshRate();
 
