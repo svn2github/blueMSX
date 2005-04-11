@@ -540,6 +540,9 @@
 					RelativePath="..\..\Src\Memory\romMapperMsxPrn.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxRs232.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNational.c">
 				</File>
 				<File
@@ -737,6 +740,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxPrn.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxRs232.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNational.h">
