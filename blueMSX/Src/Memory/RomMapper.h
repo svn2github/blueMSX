@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-10 07:18:45 $
+** $Date: 2005-04-11 20:47:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,8 @@ enum  {
     ROM_SVI328PRN   = 83,
     ROM_MSXPRN      = 84,
     ROM_SVI328RS232 = 85,
-    ROM_MAXROMID    = 85
+    ROM_MSXRS232    = 86,
+    ROM_MAXROMID    = 86
 };
 
 static char* romTypeToString(RomType romType) {
@@ -195,6 +196,7 @@ static char* romTypeToString(RomType romType) {
     case ROM_EXTRAM4MB:   return "4MB External RAM";
     case ROM_MSXMUSIC:    return "MSX Music";
     case ROM_MSXAUDIO:    return "MSX Audio";
+    case ROM_MSXRS232:    return "MSX RS-232";
     case ROM_MOONSOUND:   return "Moonsound";
     case ROM_KOREAN90:    return "Korean 90 in 1";
     case ROM_SVI328:      return "SVI-328 Cartridge";
@@ -288,6 +290,7 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_EXTRAM4MB:   return "EXTRAM 4MB";
     case ROM_MSXMUSIC:    return "MSXMUSIC";
     case ROM_MSXAUDIO:    return "MSXAUDIO";
+    case ROM_MSXRS232:    return "MSXRS232";
     case ROM_MOONSOUND:   return "MOONSOUND";
     case ROM_KOREAN90:    return "90IN1";
     case ROM_SVI328:      return "SVI328";

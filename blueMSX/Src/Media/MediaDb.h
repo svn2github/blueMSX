@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-04-11 20:47:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,7 +121,8 @@ enum  {
     ROM_0xC000      = 86,
     ROM_FMPAK       = 87,
     ROM_MSXMIDI     = 88,
-    ROM_MAXROMID    = 88
+    ROM_MSXRS232    = 89,
+    ROM_MAXROMID    = 89
 };
 
 typedef struct MediaType MediaType;
