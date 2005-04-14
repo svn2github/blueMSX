@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-04-13 19:16:14 $
+** $Date: 2005-04-14 21:48:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
+#include "Board.h"
 #include "I8251.h"
 #include "I8254.h"
 #include <stdlib.h>
@@ -158,14 +159,13 @@ static void write(MSXRs232* msxRs232, UInt16 address, UInt8 value)
 */
 static UInt8 readIo(MSXRs232* msxRs232, UInt16 ioPort) 
 {
-    UInt16 baseAdr;
     UInt8 value = 0xff;
 
     switch (ioPort) {
     case 0x80:
     case 0x81:
-        baseAdr = ioPort - 0x80;
-        value = i8251Read(msxRs232->i8251, baseAdr);
+        ioPort &= 0x01;
+        value = i8251Read(msxRs232->i8251, ioPort);
         break;
     case 0x82:
         value = msxRs232->status;
@@ -173,8 +173,8 @@ static UInt8 readIo(MSXRs232* msxRs232, UInt16 ioPort)
     case 0x84:
     case 0x85:
     case 0x86:
-        baseAdr = ioPort - 0x84;
-	    value = i8254Read(msxRs232->i8254, baseAdr);
+        ioPort &= 0x03;
+	    value = i8254Read(msxRs232->i8254, ioPort);
         break;
     }
 
@@ -225,7 +225,14 @@ static void setStopBits(MSXRs232* msxRs232, int value) {
 static void setParity(MSXRs232* msxRs232, int value) {
 }
 
-static void setRxReady(MSXRs232* msxRs232, int status) {
+static void setRxReady(MSXRs232* msxRs232, int status)
+{
+    if (~msxRs232->intmask & INTMASK_RXREADY) {
+        if (status)
+            boardSetInt(1);
+        else
+            boardClearInt(1);
+    }
 }
 
 static void setDtr(MSXRs232* msxRs232, int status) {
@@ -248,10 +255,13 @@ static int getRts(MSXRs232* msxRs232) {
 */
 static void pitOut0(MSXRs232* msxRs232, int state) 
 {
+    //msxRs232->i8251->rxClk(msxRs232, state);
 }
 static void pitOut1(MSXRs232* msxRs232, int state) 
 {
+    //msxRs232->i8251->txClk(msxRs232, state);
 }
+
 static void pitOut2 (MSXRs232* msxRs232, int state) 
 {
     msxRs232->status = (state) ? msxRs232->status|STATUS_OUT2 : msxRs232->status&~STATUS_OUT2;

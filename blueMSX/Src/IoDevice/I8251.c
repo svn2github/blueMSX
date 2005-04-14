@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-04-13 19:15:46 $
+** $Date: 2005-04-14 21:48:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,16 +83,17 @@ static int getRtsDummy(void* ref) {
 
 typedef enum
 {
-    I8251PORT_DATA,     // Data port
-    I8251PORT_CMD_STAT  // Command and Status port
+    I8251_PORT_DATA,
+    I8251_PORT_CMD_STAT
 } i8251Ports;
 
 typedef enum
 {
-    I8251_STATE_IDLE,    // Idle
-    I8251_STATE_DATARX,  // Data Receive
-    I8251_STATE_DATATX   // Data Transmit
-} i8251States;
+    I8251_MODE_CONFIG_WAIT,
+    I8251_MODE_CONFIG_SYNC1,
+    I8251_MODE_CONFIG_SYNC2,
+    I8251_MODE_CONFIG_DONE
+} i8251MStates;
 
 struct I8251
 {
@@ -101,11 +102,7 @@ struct I8251
     I8251Set      setDataBits;
     I8251Set      setStopBits;
     I8251Set      setParity;
-    I8251Set      setRxReady;
-    I8251Set      setDtr;
-    I8251Set      setRts;
-    I8251Get      getDtr;
-    I8251Get      getRts;    UInt8         mode;    UInt8         command;    UInt8         status;    UInt8         data;    int           state;
+    I8251Set      setRxReady;    I8251Set      setDtr;    I8251Set      setRts;    I8251Get      getDtr;    I8251Get      getRts;    UInt8         modeConfig;    UInt8         mode;    UInt8         command;    UInt8         status;    UInt8         data;
     void* ref;
 };
 
@@ -114,10 +111,12 @@ UInt8 i8251Read(I8251* usart, UInt16 port)
     UInt8 value = 0xff;
 
     switch (port) {
-    case I8251PORT_DATA:
+    case I8251_PORT_DATA:
         value = usart->data;
+        usart->status &= ~ST_RXRDY;
+        usart->setRxReady(usart, 0);
         break;
-    case I8251PORT_CMD_STAT:
+    case I8251_PORT_CMD_STAT:
         value = usart->status;
         break;
     }
@@ -127,10 +126,27 @@ UInt8 i8251Read(I8251* usart, UInt16 port)
 void i8251Write(I8251* usart, UInt16 port, UInt8 value)
 {
     switch (port) {
-    case I8251PORT_DATA:
-        usart->data = value;
+    case I8251_PORT_DATA:
+        if (usart->modeConfig != I8251_MODE_CONFIG_DONE) {
+            switch (usart->modeConfig) {
+            case I8251_MODE_CONFIG_WAIT:
+                usart->mode = value;
+                usart->modeConfig = (value & 0x03) ? I8251_MODE_CONFIG_DONE : I8251_MODE_CONFIG_SYNC1;
+                break;
+            case I8251_MODE_CONFIG_SYNC1:
+                usart->modeConfig = (value & 0x80) ? I8251_MODE_CONFIG_DONE : I8251_MODE_CONFIG_SYNC2;
+                break;
+            case I8251_MODE_CONFIG_SYNC2:
+                usart->modeConfig = I8251_MODE_CONFIG_DONE;
+                break;
+            }
+        }
+        else {
+            usart->data = value;
+            usart->status &= ~ST_TXRDY;
+        }
         break;
-    case I8251PORT_CMD_STAT:
+    case I8251_PORT_CMD_STAT:
         usart->command = value;
         break;
     }
@@ -153,7 +169,8 @@ void i8251LoadState(I8251* usart)
 void i8251Reset(I8251* usart)
 {
     usart->status = ST_TXRDY|ST_TXEMPTY;
-    usart->state = I8251_STATE_IDLE;
+    usart->mode = 0;
+    usart->modeConfig = I8251_MODE_CONFIG_WAIT;
 }
 
 void i8251Destroy(I8251* usart) 
