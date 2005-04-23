@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-04-23 20:55:40 $
+** $Date: 2005-04-23 22:20:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -428,7 +428,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x12: vdp->screenMode = 13; break;
     }
 
-    vdp->chrTabBase = (((int)vdp->vdpRegs[2] << 10) | ~(-1 << 10)) & vdp->vramMask;
+    vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
     vdp->chrGenBase = (((int)vdp->vdpRegs[4] << 11) | ~(-1 << 11)) & vdp->vramMask;
     vdp->colTabBase = (((int)vdp->vdpRegs[10] << 14) | ((int)vdp->vdpRegs[3] << 6) | ~(-1 << 6)) & vdp->vramMask;
 
@@ -548,7 +548,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
         break;
 
     case 2: 
-        vdp->chrTabBase = (((int)value << 10) | ~(-1 << 10)) & vdp->vramMask;
+        vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
         break;
 
     case 3: 
