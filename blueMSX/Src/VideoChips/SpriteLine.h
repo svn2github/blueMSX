@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-06 20:29:29 $
+** $Date: 2005-04-23 20:55:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,166 @@ static UInt8* lineBufs[2] = { NULL, NULL };
 static UInt8* lineBuf = NULL;
 static int nonVisibleLine = -1;
 
+
+#if 1
+UInt8* spritesLine(VDP* vdp, int line) {
+    int bufIndex;
+    UInt8 collisionBuf[384];
+    UInt8* attrib;
+    UInt8* attribTable[4];
+    UInt8 patternMask;
+    int idx;
+    int size;
+    int scale;
+    int visibleCnt;
+    int collision;
+
+    idx = line;
+
+    line -= vdp->firstLine;
+
+    bufIndex = line & 1;
+
+    vdp->vdpStatus[0] &= 0xbf;
+
+    if (idx == 0) {
+        lineBufs[bufIndex] = NULL;
+        return NULL;
+    }
+
+    if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs)) {
+        lineBufs[bufIndex] = NULL;
+        return lineBufs[bufIndex ^ 1];
+    }
+
+    attrib = &vdp->vram[vdp->sprTabBase & (-1 << 7)];
+    size   = vdpIsSprites16x16(vdp->vdpRegs) ? 16 : 8;
+    scale  = vdpIsSpritesBig(vdp->vdpRegs) ? 2 : 1;
+    line   = (line + vdpVScroll(vdp)) & 0xff;
+    
+	patternMask = vdpIsSprites16x16(vdp->vdpRegs) ? 0xfc : 0xff;
+    visibleCnt = 0;
+    collision = 0;
+    /* Find visible sprites on current line */
+    for (idx = 0; idx < 32; idx++, attrib += 4) {
+        int spriteLine = attrib[0];
+        if (spriteLine == 208) {
+            break;
+        }
+       
+        spriteLine = ((line - spriteLine) & 0xff) / scale;
+		if (spriteLine >= size) {
+            continue;
+        }
+        
+        if (visibleCnt == 4) {
+			if (~vdp->vdpStatus[0] & 0xc0) {
+				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | idx;
+			}
+            break;
+        }
+
+        attribTable[visibleCnt++] = attrib;
+    }
+
+    if (visibleCnt == 0) {
+        lineBufs[bufIndex] = NULL;
+        return lineBufs[bufIndex ^ 1];
+    }
+
+	if (~vdp->vdpStatus[0] & 0x40) {
+		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (idx < 32 ? idx : 31);
+	}
+    
+    lineBuf = lineBuffer[bufIndex];
+    memset(lineBuf, 0, 384);
+    memset(collisionBuf, 0, 384);
+
+    collision = 0;
+    
+    while (visibleCnt--) {
+        int    spriteLine;
+        UInt8  color;
+        UInt8* patternPtr;
+        UInt8  pattern;
+        UInt8* linePtr;
+        UInt8* colPtr;
+
+        attrib     = attribTable[visibleCnt];
+        spriteLine = ((line - attrib[0]) & 0xff) / scale;
+
+        colPtr     = collisionBuf + ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
+        linePtr    = lineBuf + ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
+        color      = attrib[3] & 0x0f;
+        patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine];
+
+        if (!vdpIsColor0Solid(vdp->vdpRegs) && color == 0) {
+            continue;
+        }
+        if (scale == 1) {
+            pattern = patternPtr[0]; 
+            if (pattern & 0x80) { linePtr[0] = color; collision |= colPtr[0]; colPtr[0] = 1; }
+            if (pattern & 0x40) { linePtr[1] = color; collision |= colPtr[1]; colPtr[1] = 1; }
+            if (pattern & 0x20) { linePtr[2] = color; collision |= colPtr[2]; colPtr[2] = 1; }
+            if (pattern & 0x10) { linePtr[3] = color; collision |= colPtr[3]; colPtr[3] = 1; }
+            if (pattern & 0x08) { linePtr[4] = color; collision |= colPtr[4]; colPtr[4] = 1; }
+            if (pattern & 0x04) { linePtr[5] = color; collision |= colPtr[5]; colPtr[5] = 1; }
+            if (pattern & 0x02) { linePtr[6] = color; collision |= colPtr[6]; colPtr[6] = 1; }
+            if (pattern & 0x01) { linePtr[7] = color; collision |= colPtr[7]; colPtr[7] = 1; }
+
+            if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                pattern = patternPtr[16];
+
+                if (pattern & 0x80) { linePtr[8]  = color; collision |= colPtr[8];  colPtr[8]  = 1; }
+                if (pattern & 0x40) { linePtr[9]  = color; collision |= colPtr[9];  colPtr[9]  = 1; }
+                if (pattern & 0x20) { linePtr[10] = color; collision |= colPtr[10]; colPtr[10] = 1; }
+                if (pattern & 0x10) { linePtr[11] = color; collision |= colPtr[11]; colPtr[11] = 1; }
+                if (pattern & 0x08) { linePtr[12] = color; collision |= colPtr[12]; colPtr[12] = 1; }
+                if (pattern & 0x04) { linePtr[13] = color; collision |= colPtr[13]; colPtr[13] = 1; }
+                if (pattern & 0x02) { linePtr[14] = color; collision |= colPtr[14]; colPtr[14] = 1; }
+                if (pattern & 0x01) { linePtr[15] = color; collision |= colPtr[15]; colPtr[15] = 1; }
+            }
+        }
+        else {
+            pattern = patternPtr[0];
+            if (pattern & 0x80) { linePtr[0]  = linePtr[1]  = color; collision |= colPtr[0];  colPtr[0]  = 1; collision |= colPtr[1];  colPtr[1]  = 1; }
+            if (pattern & 0x40) { linePtr[2]  = linePtr[3]  = color; collision |= colPtr[2];  colPtr[2]  = 1; collision |= colPtr[3];  colPtr[3]  = 1; }
+            if (pattern & 0x20) { linePtr[4]  = linePtr[5]  = color; collision |= colPtr[4];  colPtr[4]  = 1; collision |= colPtr[5];  colPtr[5]  = 1; }
+            if (pattern & 0x10) { linePtr[6]  = linePtr[7]  = color; collision |= colPtr[6];  colPtr[6]  = 1; collision |= colPtr[7];  colPtr[7]  = 1; }
+            if (pattern & 0x08) { linePtr[8]  = linePtr[9]  = color; collision |= colPtr[8];  colPtr[8]  = 1; collision |= colPtr[9];  colPtr[9]  = 1; }
+            if (pattern & 0x04) { linePtr[10] = linePtr[11] = color; collision |= colPtr[10]; colPtr[10] = 1; collision |= colPtr[11]; colPtr[11] = 1; }
+            if (pattern & 0x02) { linePtr[12] = linePtr[13] = color; collision |= colPtr[12]; colPtr[12] = 1; collision |= colPtr[13]; colPtr[13] = 1; }
+            if (pattern & 0x01) { linePtr[14] = linePtr[15] = color; collision |= colPtr[14]; colPtr[14] = 1; collision |= colPtr[15]; colPtr[15] = 1; }
+
+            if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                pattern = patternPtr[16];
+
+                if (pattern & 0x80) { linePtr[16] = linePtr[17] = color; collision |= colPtr[16]; colPtr[16] = 1; collision |= colPtr[17]; colPtr[17] = 1; }
+                if (pattern & 0x40) { linePtr[18] = linePtr[19] = color; collision |= colPtr[18]; colPtr[18] = 1; collision |= colPtr[19]; colPtr[19] = 1; }
+                if (pattern & 0x20) { linePtr[20] = linePtr[21] = color; collision |= colPtr[20]; colPtr[20] = 1; collision |= colPtr[21]; colPtr[21] = 1; }
+                if (pattern & 0x10) { linePtr[22] = linePtr[23] = color; collision |= colPtr[22]; colPtr[22] = 1; collision |= colPtr[23]; colPtr[23] = 1; }
+                if (pattern & 0x08) { linePtr[24] = linePtr[25] = color; collision |= colPtr[24]; colPtr[24] = 1; collision |= colPtr[25]; colPtr[25] = 1; }
+                if (pattern & 0x04) { linePtr[26] = linePtr[27] = color; collision |= colPtr[26]; colPtr[26] = 1; collision |= colPtr[27]; colPtr[27] = 1; }
+                if (pattern & 0x02) { linePtr[28] = linePtr[29] = color; collision |= colPtr[28]; colPtr[28] = 1; collision |= colPtr[29]; colPtr[29] = 1; }
+                if (pattern & 0x01) { linePtr[30] = linePtr[31] = color; collision |= colPtr[30]; colPtr[30] = 1; collision |= colPtr[31]; colPtr[31] = 1; }
+            }
+        }
+    }
+
+    if (collision) {
+        vdp->vdpStatus[0] |= 0x20;
+    }
+
+    lineBufs[bufIndex] = lineBuf + 32;
+
+    if (!spritesEnable) {
+        return NULL;
+    }
+
+    return lineBufs[bufIndex ^ 1];
+}
+
+#else
 
 UInt8* spritesLine(VDP* vdp, int line) {
     int bufIndex;
@@ -202,6 +362,8 @@ UInt8* spritesLine(VDP* vdp, int line) {
 
     return lineBufs[bufIndex ^ 1];
 }
+
+#endif
 
 void spriteLineInvalidate(VDP* vdp, int line) {
     nonVisibleLine = line - vdp->firstLine;

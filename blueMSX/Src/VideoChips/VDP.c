@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-03-10 01:34:55 $
+** $Date: 2005-04-23 20:55:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -382,6 +382,7 @@ static void simulateVramDecay(VDP* vdp)
 {
     int time = (boardSystemTime() - vdp->screenOffTime) / 1350000;
     int i;
+    printf("%d\n",time);
     if (time >= 24) {
         for (i = 0x0000; i < 0x3000; i += 2) {
             vdp->vramPtr[i]     = 0x55;
@@ -434,14 +435,15 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     vdp->sprTabBase = (((int)vdp->vdpRegs[11] << 15) | ((int)vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & vdp->vramMask;
     vdp->sprGenBase = (((int)vdp->vdpRegs[6] << 11) | ~(-1 << 11)) & vdp->vramMask;
 
-    if (~vdp->vdpRegs[1] & 0x80) {
-        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
-            if (!vdp->screenOn && (vdp->vdpRegs[1] & 0x40)) {
+    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+        if ((vdp->screenOn ^ vdp->vdpRegs[1]) & 0x40) {
+            if ((~vdp->vdpRegs[1] & 0x80) && !vdp->screenOn) {
                simulateVramDecay(vdp);
             }
             vdp->screenOffTime = boardSystemTime();
         }
     }
+
     vdp->screenOn = vdp->vdpRegs[1] & 0x40;
     
     vdpSetScreenMode(vdp->cmdEngine, vdp->screenMode, vdp->vdpRegs[25] & 0x40);
