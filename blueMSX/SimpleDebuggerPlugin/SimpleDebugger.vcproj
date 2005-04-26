@@ -210,6 +210,12 @@
 			RelativePath=".\StatusBar.h">
 		</File>
 		<File
+			RelativePath=".\SymbolInfo.cpp">
+		</File>
+		<File
+			RelativePath=".\SymbolInfo.h">
+		</File>
+		<File
 			RelativePath=".\Toolbar.bmp">
 		</File>
 		<File

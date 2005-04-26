@@ -6,6 +6,7 @@
 #include "Disassembly.h"
 #include "Callstack.h"
 #include "CpuRegisters.h"
+#include "SymbolInfo.h"
 #include "Memory.h"
 #include "resrc1.h"
 #include <string>
@@ -22,6 +23,7 @@ static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
 static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
+static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
 static bool cursorPresent = false;
 static bool cursorhasBp   = false;
@@ -119,6 +121,7 @@ static void updateStatusBar()
 }
 
 #define MENU_FILE_EXIT              37100
+#define MENU_FILE_LOADSYM           37101
 
 #define MENU_DEBUG_CONTINUE         37200
 #define MENU_DEBUG_BREAKALL         37201
@@ -126,9 +129,10 @@ static void updateStatusBar()
 #define MENU_DEBUG_RESTART          37203
 #define MENU_DEBUG_STEP             37204
 #define MENU_DEBUG_RUNTO            37205
-#define MENU_DEBUG_BPTOGGLE         37206
-#define MENU_DEBUG_BPENABLE         37207
-#define MENU_DEBUG_BPREMOVEALL      37208
+#define MENU_DEBUG_SHOWSYMBOLS      37206
+#define MENU_DEBUG_BPTOGGLE         37207
+#define MENU_DEBUG_BPENABLE         37208
+#define MENU_DEBUG_BPREMOVEALL      37209
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -142,8 +146,10 @@ static void updateWindowMenu()
     EmulatorState state = GetEmulatorState();
 
     HMENU hMenuFile = CreatePopupMenu();
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOADSYM, "Load Symbol File");
+    AppendMenu(hMenuFile, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, "Exit");
-
+    
     HMENU hMenuDebug = CreatePopupMenu();
     if (state == EMULATOR_STOPPED) {
         AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, "Start\tF5");
@@ -156,7 +162,11 @@ static void updateWindowMenu()
     }
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into\tF10");
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
+
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenuDebug, MF_STRING | symbolInfo->getShowStatus() ? MF_CHECKED : 0, MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tShift+F12");
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
     AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint\tCtrl+Shift+F9");
@@ -184,6 +194,69 @@ static void updateWindowMenu()
     SetMenu(dbgHwnd, hMenu);
 }
 
+
+UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        return 0;
+    }
+    return 0;
+}
+
+void loadSymbolFile(HWND hwndOwner)
+{
+    OPENFILENAME ofn; 
+    static char pFileName[MAX_PATH];
+    static char buffer[0x20000];
+
+    pFileName[0] = 0; 
+
+    char  curDir[MAX_PATH];
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = GetDllHinstance();
+    ofn.lpstrFilter = "*.SYM\0*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0;
+    ofn.nFilterIndex = 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrTitle = "Open Symbol File"; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLEHOOK | OFN_FILEMUSTEXIST; 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = hookProc; 
+    ofn.lpTemplateName = NULL; 
+
+    BOOL rv = GetOpenFileName(&ofn); 
+
+    SetCurrentDirectory(curDir);
+
+    if (!rv) {
+        return; 
+    }
+
+    FILE* file = fopen(pFileName, "r");
+    if (file == NULL) {
+        return;
+    }
+
+    fread(buffer, 1, sizeof(buffer), file);
+    buffer[sizeof(buffer) - 1] = 0;
+    symbolInfo->update(std::string(buffer));
+    disassembly->refresh();
+    callstack->refresh();
+    fclose(file);
+}
 
 
 void NotifyCursorPresent(bool cursorIsPresent, bool bpState, bool hasBp)
@@ -324,15 +397,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     switch (iMsg) {
     case WM_CREATE:
 #if 1
-        RegisterHotKey(hwnd, 1, 0, VK_F5);
-        RegisterHotKey(hwnd, 2, MOD_CONTROL | MOD_ALT, VK_CANCEL);
-        RegisterHotKey(hwnd, 3, MOD_SHIFT, VK_F5);
-        RegisterHotKey(hwnd, 4, MOD_CONTROL | MOD_SHIFT, VK_F5);
-        RegisterHotKey(hwnd, 5, 0, VK_F10);
-        RegisterHotKey(hwnd, 6, MOD_SHIFT, VK_F10);
-        RegisterHotKey(hwnd, 7, 0, VK_F9);
-        RegisterHotKey(hwnd, 8, MOD_SHIFT, VK_F9);
-        RegisterHotKey(hwnd, 9, MOD_CONTROL | MOD_SHIFT, VK_F9);
+        RegisterHotKey(hwnd, 1,  0, VK_F5);
+        RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
+        RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
+        RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
+        RegisterHotKey(hwnd, 5,  0, VK_F10);
+        RegisterHotKey(hwnd, 6,  MOD_SHIFT, VK_F10);
+        RegisterHotKey(hwnd, 7,  0, VK_F9);
+        RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F9);
+        RegisterHotKey(hwnd, 9,  MOD_CONTROL | MOD_SHIFT, VK_F9);        
+        RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F12);
 #endif
         return 0;
 
@@ -373,6 +447,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             if (debuggerHasBp)
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
             break;
+        case 10:
+            SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
+            break;
         }
         return 0;
 
@@ -380,6 +457,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         switch (LOWORD(wParam)) {
         case MENU_FILE_EXIT:
             SendMessage(hwnd, WM_CLOSE, 0, 0);
+            return 0;
+
+        case MENU_FILE_LOADSYM:
+            loadSymbolFile(hwnd);
             return 0;
 
         case MENU_HELP_ABOUT:
@@ -433,6 +514,18 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case TB_RUNTO:
             disassembly->setRuntoBreakpoint();
             EmulatorRun();
+            return 0;
+
+        case MENU_DEBUG_SHOWSYMBOLS:
+            if (symbolInfo->getShowStatus()) {
+                symbolInfo->hide();
+            }
+            else {
+                symbolInfo->show();
+            }
+            disassembly->refresh();
+            callstack->refresh();
+            updateWindowMenu();
             return 0;
             
         case MENU_DEBUG_BPTOGGLE:
@@ -500,6 +593,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         delete toolBar;
         toolBar = NULL;
         viewHwnd = NULL;
+        delete disassembly;
+        disassembly = NULL;
+        delete cpuRegisters;
+        cpuRegisters = NULL;
+        delete callstack;
+        callstack = NULL;
+        delete memory;
+        memory = NULL;
+        delete symbolInfo;
+        symbolInfo = NULL;
         DestroyWindow(hwnd);
 		break;
     }
@@ -554,6 +657,8 @@ void OnShowTool() {
     ShowWindow(dbgHwnd, TRUE);
     ShowWindow(viewHwnd, TRUE);
 
+    symbolInfo = new SymbolInfo;
+
     std::vector<int> fieldVector;
     fieldVector.push_back(0);
     fieldVector.push_back(70);
@@ -564,7 +669,7 @@ void OnShowTool() {
     toolBar = initializeToolbar(dbgHwnd);
     toolBar->show();
 
-    disassembly = new Disassembly(GetDllHinstance(), viewHwnd);
+    disassembly = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
     RECT r = { 3, 3, 457, 420 };
     disassembly->updatePosition(r);
     disassembly->show();

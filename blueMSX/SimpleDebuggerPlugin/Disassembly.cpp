@@ -30,6 +30,41 @@
 
 extern void NotifyCursorPresent(bool isPresent, bool bpState, bool hasBp);
 
+namespace {
+
+class BitmapIcons 
+{
+public:
+    BitmapIcons(HINSTANCE hInstance, int id, int count) {
+        HBITMAP hBitmap = (HBITMAP)LoadBitmap(hInstance, MAKEINTRESOURCE(id));
+        hMemDC  = CreateCompatibleDC(GetWindowDC(NULL));
+        SelectObject(hMemDC, hBitmap);
+        
+        BITMAP bmp; 
+        GetObject(hBitmap, sizeof(BITMAP), (PSTR)&bmp);
+        width  = bmp.bmWidth / count;
+        height = bmp.bmHeight;
+    }
+
+    ~BitmapIcons() {
+        DeleteDC(hMemDC);
+    }
+
+    void drawIcon(HDC hdc, int x, int y, int index) {
+        BitBlt(hdc, x, y, width, height, hMemDC, width * index, 0, SRCCOPY);
+    }
+
+private:
+    HDC hMemDC;
+    int width;
+    int height;
+};
+
+}
+
+static Disassembly* disassembly = NULL;
+static BitmapIcons* bitmapIcons = NULL;
+
 static const char* mnemonicXxCb[256] =
 {
 	"#","#","#","#","#","#","rlc Y"  ,"#",
@@ -112,14 +147,14 @@ static const char* mnemonicEd[256] =
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
-	"in b,(c)","out (c),b","sbc hl,bc","ld (W),bc","neg","retn","im 0","ld i,a",
-	"in c,(c)","out (c),c","adc hl,bc","ld bc,(W)","!"  ,"reti","!"   ,"ld r,a",
-	"in d,(c)","out (c),d","sbc hl,de","ld (W),de","!"  ,"!"   ,"im 1","ld a,i",
-	"in e,(c)","out (c),e","adc hl,de","ld de,(W)","!"  ,"!"   ,"im 2","ld a,r",
-	"in h,(c)","out (c),h","sbc hl,hl","ld (W),hl","!"  ,"!"   ,"!"   ,"rrd"   ,
-	"in l,(c)","out (c),l","adc hl,hl","ld hl,(W)","!"  ,"!"   ,"!"   ,"rld"   ,
-	"in 0,(c)","out (c),0","sbc hl,sp","ld (W),sp","!"  ,"!"   ,"!"   ,"!"     ,
-	"in a,(c)","out (c),a","adc hl,sp","ld sp,(W)","!"  ,"!"   ,"!"   ,"!"     ,
+	"in b,(c)","out (c),b","sbc hl,bc","ld (L),bc","neg","retn","im 0","ld i,a",
+	"in c,(c)","out (c),c","adc hl,bc","ld bc,(L)","!"  ,"reti","!"   ,"ld r,a",
+	"in d,(c)","out (c),d","sbc hl,de","ld (L),de","!"  ,"!"   ,"im 1","ld a,i",
+	"in e,(c)","out (c),e","adc hl,de","ld de,(L)","!"  ,"!"   ,"im 2","ld a,r",
+	"in h,(c)","out (c),h","sbc hl,hl","ld (L),hl","!"  ,"!"   ,"!"   ,"rrd"   ,
+	"in l,(c)","out (c),l","adc hl,hl","ld hl,(L)","!"  ,"!"   ,"!"   ,"rld"   ,
+	"in 0,(c)","out (c),0","sbc hl,sp","ld (L),sp","!"  ,"!"   ,"!"   ,"!"     ,
+	"in a,(c)","out (c),a","adc hl,sp","ld sp,(L)","!"  ,"!"   ,"!"   ,"!"     ,
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
 	"!"       ,"!"        ,"!"        ,"!"        ,"!"  ,"!"   ,"!"   ,"!"     ,
@@ -144,8 +179,8 @@ static const char* mnemonicXx[256] =
 	"@"      ,"add I,bc","@"       ,"@"        ,"@"       ,"@"       ,"@"      ,"@"      ,
 	"@"      ,"@"       ,"@"       ,"@"        ,"@"       ,"@"       ,"@"      ,"@"      ,
 	"@"      ,"add I,de","@"       ,"@"        ,"@"       ,"@"       ,"@"      ,"@"      ,
-	"@"      ,"ld I,W"  ,"ld (W),I","inc I"    ,"inc Ih"  ,"dec Ih"  ,"ld Ih,B","@"      ,
-	"@"      ,"add I,I" ,"ld I,(W)","dec I"    ,"inc Il"  ,"dec Il"  ,"ld Il,B","@"      ,
+	"@"      ,"ld I,W"  ,"ld (L),I","inc I"    ,"inc Ih"  ,"dec Ih"  ,"ld Ih,B","@"      ,
+	"@"      ,"add I,I" ,"ld I,(L)","dec I"    ,"inc Il"  ,"dec Il"  ,"ld Il,B","@"      ,
 	"@"      ,"@"       ,"@"       ,"@"        ,"inc X"   ,"dec X"   ,"ld X,B" ,"@"      ,
 	"@"      ,"add I,sp","@"       ,"@"        ,"@"       ,"@"       ,"@"      ,"@"      ,
 	"@"      ,"@"       ,"@"       ,"@"        ,"ld b,Ih" ,"ld b,Il" ,"ld b,X" ,"@"      ,
@@ -180,10 +215,10 @@ static const char* mnemonicMain[256] =
 	"ex af,af'","add hl,bc","ld a,(bc)","dec bc"    ,"inc c"    ,"dec c"    ,"ld c,B"    ,"rrca"     ,
 	"djnz R"   ,"ld de,W"  ,"ld (de),a","inc de"    ,"inc d"    ,"dec d"    ,"ld d,B"    ,"rla"      ,
 	"jr R"     ,"add hl,de","ld a,(de)","dec de"    ,"inc e"    ,"dec e"    ,"ld e,B"    ,"rra"      ,
-	"jr nz,R"  ,"ld hl,W"  ,"ld (W),hl","inc hl"    ,"inc h"    ,"dec h"    ,"ld h,B"    ,"daa"      ,
-	"jr z,R"   ,"add hl,hl","ld hl,(W)","dec hl"    ,"inc l"    ,"dec l"    ,"ld l,B"    ,"cpl"      ,
-	"jr nc,R"  ,"ld sp,W"  ,"ld (W),a" ,"inc sp"    ,"inc (hl)" ,"dec (hl)" ,"ld (hl),B" ,"scf"      ,
-	"jr c,R"   ,"add hl,sp","ld a,(W)" ,"dec sp"    ,"inc a"    ,"dec a"    ,"ld a,B"    ,"ccf"      ,
+	"jr nz,R"  ,"ld hl,W"  ,"ld (L),hl","inc hl"    ,"inc h"    ,"dec h"    ,"ld h,B"    ,"daa"      ,
+	"jr z,R"   ,"add hl,hl","ld hl,(L)","dec hl"    ,"inc l"    ,"dec l"    ,"ld l,B"    ,"cpl"      ,
+	"jr nc,R"  ,"ld sp,W"  ,"ld (L),a" ,"inc sp"    ,"inc (hl)" ,"dec (hl)" ,"ld (hl),B" ,"scf"      ,
+	"jr c,R"   ,"add hl,sp","ld a,(L)" ,"dec sp"    ,"inc a"    ,"dec a"    ,"ld a,B"    ,"ccf"      ,
 	"ld b,b"   ,"ld b,c"   ,"ld b,d"   ,"ld b,e"    ,"ld b,h"   ,"ld b,l"   ,"ld b,(hl)" ,"ld b,a"   ,
 	"ld c,b"   ,"ld c,c"   ,"ld c,d"   ,"ld c,e"    ,"ld c,h"   ,"ld c,l"   ,"ld c,(hl)" ,"ld c,a"   ,
 	"ld d,b"   ,"ld d,c"   ,"ld d,d"   ,"ld d,e"    ,"ld d,h"   ,"ld d,l"   ,"ld d,(hl)" ,"ld d,a"   ,
@@ -200,14 +235,14 @@ static const char* mnemonicMain[256] =
 	"xor b"    ,"xor c"    ,"xor d"    ,"xor e"     ,"xor h"    ,"xor l"    ,"xor (hl)"  ,"xor a"    ,
 	"or b"     ,"or c"     ,"or d"     ,"or e"      ,"or h"     ,"or l"     ,"or (hl)"   ,"or a"     ,
 	"cp b"     ,"cp c"     ,"cp d"     ,"cp e"      ,"cp h"     ,"cp l"     ,"cp (hl)"   ,"cp a"     ,
-	"ret nz"   ,"pop bc"   ,"jp nz,W"  ,"jp W"      ,"call nz,W","push bc"  ,"add a,B"   ,"rst 00h"  ,
-	"ret z"    ,"ret"      ,"jp z,W"   ,"cb"        ,"call z,W" ,"call W"   ,"adc a,B"   ,"rst 08h"  ,
-	"ret nc"   ,"pop de"   ,"jp nc,W"  ,"out (B),a" ,"call nc,W","push de"  ,"sub B"     ,"rst 10h"  ,
-	"ret c"    ,"exx"      ,"jp c,W"   ,"in a,(B)"  ,"call c,W" ,"dd"       ,"sbc a,B"   ,"rst 18h"  ,
-	"ret po"   ,"pop hl"   ,"jp po,W"  ,"ex (sp),hl","call po,W","push hl"  ,"and B"     ,"rst 20h"  ,
-	"ret pe"   ,"jp (hl)"  ,"jp pe,W"  ,"ex de,hl"  ,"call pe,W","ed"       ,"xor B"     ,"rst 28h"  ,
-	"ret p"    ,"pop af"   ,"jp p,W"   ,"di"        ,"call p,W" ,"push af"  ,"or B"      ,"rst 30h"  ,
-	"ret m"    ,"ld sp,hl" ,"jp m,W"   ,"ei"        ,"call m,W" ,"fd"       ,"cp B"      ,"rst 38h"
+	"ret nz"   ,"pop bc"   ,"jp nz,L"  ,"jp L"      ,"call nz,L","push bc"  ,"add a,B"   ,"rst 00h"  ,
+	"ret z"    ,"ret"      ,"jp z,L"   ,"cb"        ,"call z,L" ,"call L"   ,"adc a,B"   ,"rst 08h"  ,
+	"ret nc"   ,"pop de"   ,"jp nc,L"  ,"out (B),a" ,"call nc,L","push de"  ,"sub B"     ,"rst 10h"  ,
+	"ret c"    ,"exx"      ,"jp c,L"   ,"in a,(B)"  ,"call c,L" ,"dd"       ,"sbc a,B"   ,"rst 18h"  ,
+	"ret po"   ,"pop hl"   ,"jp po,L"  ,"ex (sp),hl","call po,L","push hl"  ,"and B"     ,"rst 20h"  ,
+	"ret pe"   ,"jp (hl)"  ,"jp pe,L"  ,"ex de,hl"  ,"call pe,L","ed"       ,"xor B"     ,"rst 28h"  ,
+	"ret p"    ,"pop af"   ,"jp p,L"   ,"di"        ,"call p,L" ,"push af"  ,"or B"      ,"rst 30h"  ,
+	"ret m"    ,"ld sp,hl" ,"jp m,L"   ,"ei"        ,"call m,L" ,"fd"       ,"cp B"      ,"rst 38h"
 };
 
 #define SIGN(val) (((val) & 128) ? '-' : '+')
@@ -227,6 +262,8 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
     BYTE val1;
     BYTE val2;
     BYTE val;
+    WORD val16;
+    WORD symOffset;
 
 	dest[0] = '\0';
 
@@ -282,6 +319,20 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 			break;
 		case 'R':
 			sprintf (buf, "#%04x", (PC + 2 + (char)memory[pc++]) & 0xFFFF);
+			strcat(dest, buf);
+			break;
+		case 'L':
+            val = memory[pc++];
+            val16 = val + memory[pc++] * 256;
+
+            r = symbolInfo->find(val16, symOffset);
+
+            if (r != NULL) {
+    			sprintf(buf, "%s", r);
+            }
+            else {
+    			sprintf(buf, "#%04x", val16);
+            }
 			strcat(dest, buf);
 			break;
 		case 'W':
@@ -347,43 +398,6 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 	return pc - PC;
 }
 
-
-
-namespace {
-
-class BitmapIcons 
-{
-public:
-    BitmapIcons(HINSTANCE hInstance, int id, int count) {
-        HBITMAP hBitmap = (HBITMAP)LoadBitmap(hInstance, MAKEINTRESOURCE(id));
-        hMemDC  = CreateCompatibleDC(GetWindowDC(NULL));
-        SelectObject(hMemDC, hBitmap);
-        
-        BITMAP bmp; 
-        GetObject(hBitmap, sizeof(BITMAP), (PSTR)&bmp);
-        width  = bmp.bmWidth / count;
-        height = bmp.bmHeight;
-    }
-
-    ~BitmapIcons() {
-        DeleteDC(hMemDC);
-    }
-
-    void drawIcon(HDC hdc, int x, int y, int index) {
-        BitBlt(hdc, x, y, width, height, hMemDC, width * index, 0, SRCCOPY);
-    }
-
-private:
-    HDC hMemDC;
-    int width;
-    int height;
-};
-
-}
-
-static Disassembly* disassembly = NULL;
-static BitmapIcons* bitmapIcons = NULL;
-
 static LRESULT CALLBACK dasmWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     return disassembly->wndProc(hwnd, iMsg, wParam, lParam);
@@ -435,10 +449,10 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             GetClientRect(hwnd, &r);
             int visibleLines = r.bottom / textHeight;
 
-            if (GetAsyncKeyState(VK_UP) > 1UL)    updateScroll(currentLine - 1);
-            if (GetAsyncKeyState(VK_DOWN) > 1UL)  updateScroll(currentLine + 1);
-            if (GetAsyncKeyState(VK_PRIOR) > 1UL) updateScroll(currentLine > visibleLines ? currentLine - visibleLines : 0);
-            if (GetAsyncKeyState(VK_NEXT) > 1UL)  updateScroll(currentLine + VK_NEXT);
+            if (GetAsyncKeyState(VK_UP) > 1UL)    onWmKeyUp(VK_UP);
+            if (GetAsyncKeyState(VK_DOWN) > 1UL)  onWmKeyUp(VK_DOWN);
+            if (GetAsyncKeyState(VK_PRIOR) > 1UL) onWmKeyUp(VK_PRIOR);
+            if (GetAsyncKeyState(VK_NEXT) > 1UL)  onWmKeyUp(VK_NEXT);
         }
         break;
 
@@ -470,6 +484,9 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             }
             else {
                 currentLine = row;
+                if (lineInfo[currentLine].isLabel) {
+                    currentLine++;
+                }
             }
             NotifyCursorPresent(true, (currentLine >= 0 && breakpoint[lineInfo[currentLine].address] != BP_NONE), breakpointCount > 0);
             InvalidateRect(hwnd, NULL, TRUE);
@@ -517,12 +534,15 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-Disassembly::Disassembly(HINSTANCE hInstance, HWND owner) : 
+Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
     linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
     firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), breakpointCount(0),
-    hasKeyboardFocus(false)
+    hasKeyboardFocus(false), symbolInfo(symInfo)
 {
     disassembly = this;
+
+    memset(backupMemory, 0, 0x10000);
+    backupPc = 0;
 
     static WNDCLASSEX wndClass;
 
@@ -703,9 +723,15 @@ void Disassembly::invalidateContent()
     lineInfo[lineCount].haspc = 0;
     lineInfo[lineCount].dataText[0] = 0;
     lineInfo[lineCount].dataTextLength = 0;
+    lineInfo[lineCount].isLabel = 0;
     lineCount++;
     
     InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::refresh()
+{
+    updateContent(backupMemory, backupPc);
 }
 
 void Disassembly::updateContent(BYTE* memory, WORD pc)
@@ -715,7 +741,24 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     lineCount = 0;
     programCounter = 0;
 
+    memcpy(backupMemory, memory, 0x10000);
+    backupPc = pc;
+
     for (int addr = 0; addr < 0x10000; ) {
+        WORD offset;
+        const char* symbolName = symbolInfo->find(addr, offset);
+
+        if (symbolName != NULL) {
+            lineInfo[lineCount].dataText[0] = 0;
+            lineInfo[lineCount].dataTextLength = 0;
+            sprintf(lineInfo[lineCount].text, "%s:", symbolName);
+            lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
+            lineInfo[lineCount].address = addr;
+            lineInfo[lineCount].haspc = 0;
+            lineInfo[lineCount].isLabel = 1;
+            lineCount++;
+        }
+
         sprintf(lineInfo[lineCount].text, "%.4X:               ", addr);
         int len = dasm(memory, addr, lineInfo[lineCount].text + 18);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
@@ -724,6 +767,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
 
         lineInfo[lineCount].dataText[0] = 0;
         lineInfo[lineCount].dataTextLength = 0;
+        lineInfo[lineCount].isLabel = 0;
 
         if (addr == pc) {
             programCounter = lineCount;
@@ -754,21 +798,39 @@ void Disassembly::onWmKeyUp(int keyCode)
     RECT r;
     GetClientRect(hwnd, &r);
     int visibleLines = r.bottom / textHeight;
+    int delta = 0;
 
     switch (keyCode) {
     case VK_UP:
-        updateScroll(currentLine - 1);
+        delta = -1;
         break;
     case VK_DOWN:
-        updateScroll(currentLine + 1);
+        delta = 1;
         break;
     case VK_NEXT:
-        updateScroll(currentLine + visibleLines);
+        delta = visibleLines;
         break;
     case VK_PRIOR:
-        updateScroll(currentLine > visibleLines ? currentLine - visibleLines : 0);
+        delta = -visibleLines;
         break;
     }
+
+    int index = currentLine + delta;
+    if (index < 0) {
+        index = 0;
+    }
+    if (lineInfo[index].isLabel) {
+        index += delta < 0 ? -1 : 1;
+        if (index < 0) {
+            index = 0;
+        }
+    }
+
+    if (index != currentLine) {
+        updateScroll(index);
+    }
+
+
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
@@ -790,6 +852,9 @@ void Disassembly::updateScroll(int index)
     
     else {
         currentLine = index;
+        if (lineInfo[currentLine].isLabel) {
+            currentLine++;
+        }
         if (currentLine < firstVisibleLine + 1) {
             firstVisibleLine = currentLine - visibleLines / 2;
         }
@@ -797,7 +862,6 @@ void Disassembly::updateScroll(int index)
         if (currentLine >= firstVisibleLine + visibleLines - 1) {
             firstVisibleLine = currentLine - visibleLines / 2;
         }
-//        firstVisibleLine = index - visibleLines / 2;
     }
 
     if (firstVisibleLine >= lineCount) {
@@ -822,9 +886,7 @@ void Disassembly::updateScroll(int index)
     
     GetScrollInfo(hwnd, SB_VERT, &si);
     
-    if (si.nPos != oldFirstLine) {
-        InvalidateRect(hwnd, NULL, TRUE);
-    }
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void Disassembly::scrollWindow(int sbAction)
@@ -895,33 +957,41 @@ void Disassembly::drawText(int top, int bottom)
         }
 
         int address = lineInfo[i].address;
-        if (lineInfo[i].haspc) {
-            if (breakpoint[address] == BP_SET) {
-                bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
-            }
-            else if (breakpoint[address] == BP_DISABLED) {
-                bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
-            }
-            else {
-                bitmapIcons->drawIcon(hMemdc, 4, r.top, 0);
-            }
+        if (lineInfo[i].isLabel) {
+            SetTextColor(hMemdc, colorGray);
+            r.left += 14 * textWidth;
+            DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
+            r.left -= 14 * textWidth;
         }
         else {
-            if (breakpoint[address] == BP_SET) {
-                bitmapIcons->drawIcon(hMemdc, 4, r.top, 1);
+            if (lineInfo[i].haspc) {
+                if (breakpoint[address] == BP_SET) {
+                    bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
+                }
+                else if (breakpoint[address] == BP_DISABLED) {
+                    bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
+                }
+                else {
+                    bitmapIcons->drawIcon(hMemdc, 4, r.top, 0);
+                }
             }
-            else if (breakpoint[address] == BP_DISABLED) {
-                bitmapIcons->drawIcon(hMemdc, 4, r.top, 2);
+            else {
+                if (breakpoint[address] == BP_SET) {
+                    bitmapIcons->drawIcon(hMemdc, 4, r.top, 1);
+                }
+                else if (breakpoint[address] == BP_DISABLED) {
+                    bitmapIcons->drawIcon(hMemdc, 4, r.top, 2);
+                }
             }
+
+            SetTextColor(hMemdc, colorGray);
+            r.left += 6 * textWidth;
+            DrawText(hMemdc, lineInfo[i].dataText, lineInfo[i].dataTextLength, &r, DT_LEFT);
+            r.left -= 6 * textWidth;
+            SetTextColor(hMemdc, i == currentLine && hasKeyboardFocus ? colorWhite : colorBlack);
+
+            DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
         }
-
-        SetTextColor(hMemdc, colorGray);
-        r.left += 6 * textWidth;
-        DrawText(hMemdc, lineInfo[i].dataText, lineInfo[i].dataTextLength, &r, DT_LEFT);
-        r.left -= 6 * textWidth;
-        SetTextColor(hMemdc, i == currentLine && hasKeyboardFocus ? colorWhite : colorBlack);
-
-        DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
         r.top += textHeight;
         r.bottom += textHeight;
     }

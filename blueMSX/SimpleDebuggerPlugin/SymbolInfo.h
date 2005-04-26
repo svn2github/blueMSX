@@ -22,70 +22,43 @@
 **
 ******************************************************************************
 */
-#ifndef CALLSTACK_H
-#define CALLSTACK_H
+#ifndef SYMBOL_INFO_H
+#define SYMBOL_INFO_H
 
-#include "Disassembly.h"
 #include <windows.h>
+#include <map>
 
-class CallstackWindow {
+class SymbolInfo {
 public:
-    CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* disassembly);
-    ~CallstackWindow();
+    SymbolInfo();
+    ~SymbolInfo();
 
     void show();
     void hide();
-    
-    void enableEdit();
-    void disableEdit();
-    
-    void updatePosition(RECT& rect);
+    bool getShowStatus();
 
-    void refresh();
+    void clear();
+    void update(std::string& buffer);
 
-    void updateContent(DWORD* callstack, int size);
-    void invalidateContent();
-    void updateScroll();
-
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    const char* find(WORD address, WORD& offset);
 
 private:
 
-    void scrollWindow(int sbAction);
-    void drawText(int top, int bottom);
+    bool showSymbols;
+        
+    class Symbol {
+    public:
+        Symbol() { name[0] = 0; }
+        Symbol(char* label) { strncpy(name, label, 63); name[63] = 0; }
+        ~Symbol() {}
+        Symbol(const Symbol& li) { strcpy(name, li.name); }
+        void operator=(const Symbol& li) { strcpy(name, li.name); }
 
-    bool     editEnabled;
-
-    HWND   hwnd;
-    HDC    hMemdc;
-    HFONT  hFont;
-    HBRUSH hBrushWhite;
-    HBRUSH hBrushLtGray;
-    HBRUSH hBrushDkGray;
-    
-    COLORREF colorBlack;
-    COLORREF colorGray;
-
-    int    textHeight;
-    int    textWidth;
-
-    struct LineInfo {
-        WORD address;
-        char text[48];
-        int  textLength;
-        char dataText[48];
-        int  dataTextLength;
+        char name[64];
     };
 
-    int      lineCount;
-    int      currentLine;
-    LineInfo lineInfo[256];
-    int      linePos;
-    
-    DWORD backupCallstack[0x1000];
-    WORD backupSize;
-
-    Disassembly* disassembly;
+    std::map<DWORD, Symbol> symbolMap;
 };
 
-#endif //CALLSTACK_H
+
+#endif //SYMBOL_INFO_H

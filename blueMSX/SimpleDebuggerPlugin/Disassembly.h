@@ -25,16 +25,20 @@
 #ifndef DISASSEMBLY_H
 #define DISASSEMBLY_H
 
+#include "SymbolInfo.h"
 #include <windows.h>
+#include <map>
 
 class Disassembly {
 public:
-    Disassembly(HINSTANCE hInstance, HWND owner);
+    Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
     ~Disassembly();
 
     void show();
     void hide();
     
+    void refresh();
+
     void enableEdit();
     void disableEdit();
     
@@ -85,6 +89,7 @@ private:
     
     struct LineInfo {
         WORD address;
+        bool isLabel;
         bool haspc;
         char text[48];
         int  textLength;
@@ -97,11 +102,17 @@ private:
     int      firstVisibleLine;
     int      lineCount;
     int      currentLine;
-    LineInfo lineInfo[0x10000];
+    LineInfo lineInfo[0x20000];
     int      breakpointCount;
     BpState  breakpoint[0x10000];
     int      linePos;
     bool     hasKeyboardFocus;
+
+    BYTE backupMemory[0x10000];
+    WORD backupPc;
+
+    SymbolInfo* symbolInfo;
 };
+
 
 #endif //DISASSEMBLY_H

@@ -130,7 +130,8 @@ LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
 
 
 CallstackWindow::CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* disassembly_) : 
-    linePos(0), lineCount(0), currentLine(-1), editEnabled(false), disassembly(disassembly_)
+    linePos(0), lineCount(0), currentLine(-1), editEnabled(false), 
+    disassembly(disassembly_), backupSize(0)
 {
     callstack = this;
 
@@ -202,10 +203,18 @@ void CallstackWindow::invalidateContent()
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
+void CallstackWindow::refresh()
+{
+    updateContent(backupCallstack, backupSize);
+}
+
 void CallstackWindow::updateContent(DWORD* callstack, int size)
 {
     currentLine = -1;
     lineCount = 0;
+
+    memcpy(backupCallstack, callstack, size * sizeof(DWORD));
+    backupSize = size;
 
     for (int index = size - 1; index >= 0; index--) {
         UInt16 addr = (UInt16)callstack[index];
