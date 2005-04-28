@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-04-28 18:32:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ UInt8 i8250Read(I8250* i8250, UInt16 port);
 void i8250Write(I8250* i8250, UInt16 port, UInt8 value);
 
 void i8250Receive(I8250* i8250, UInt8 value);
+void i8250RxData(I8250* uart, UInt8 value);
 
 void i8250LoadState(I8250* i8250);
 void i8250SaveState(I8250* i8250);
@@ -51,7 +52,7 @@ void i8250SaveState(I8250* i8250);
 void i8250Reset(I8250* i8250);
 void i8250Destroy(I8250* i8250); 
 
-I8250* i8250Create(I8250Transmit transmit,    I8250Signal   signal,
+I8250* i8250Create(UInt32 frequency, I8250Transmit transmit,    I8250Signal   signal,
                    I8250Set      setDataBits, I8250Set      setStopBits,
                    I8250Set      setParity,   I8250Set      setRxReady,
                    I8250Set      setDtr,      I8250Set      setRts,

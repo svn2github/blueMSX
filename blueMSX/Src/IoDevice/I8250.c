@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-04-07 19:23:41 $
+** $Date: 2005-04-28 18:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 // - Receive buffers
 #include "I8250.h"
 #include "SaveState.h"
+#include "Board.h"
 #include <stdlib.h>
 
 #define LCR_DIVISOR_LATCH_ACCESS_BIT 0x80
@@ -63,35 +64,73 @@ typedef enum { I8250REG_RBR, I8250REG_THR, I8250REG_DLL, I8250REG_IER, I8250REG_
 static int transmitDummy(void* ref, UInt8 value) {
     return 0;
 }
-
 static int signalDummy(void* ref) {
     return 0;
+}static void setDataBitsDummy(void* ref, int value) {
+}static void setStopBitsDummy(void* ref, int value) {
+}static void setParityDummy(void* ref, int value) {
 }
-
-static void setDataBitsDummy(void* ref, int value) {
-}
-
-static void setStopBitsDummy(void* ref, int value) {
-}
-
-static void setParityDummy(void* ref, int value) {
-}
-
 static void setRxReadyDummy(void* ref, int status) {
 }
-
 static void setDtrDummy(void* ref, int status) {
 }
-
 static void setRtsDummy(void* ref, int status) {
 }
-
 static int getDtrDummy(void* ref) {
     return 0;
 }
-
 static int getRtsDummy(void* ref) {
     return 0;
+}
+
+#define I8250_RX_BUFFER_SIZE 256
+#define I8250_RX_BUFFER_MASK (I8250_RX_BUFFER_SIZE - 1)
+
+static UInt8 i8250RxBuffer[I8250_RX_BUFFER_SIZE];
+static UInt16 i8250RxBufferHead;
+static UInt16 i8250RxBufferTail;
+static short int i8250RxBufferDataAvailable;
+
+void i8250RxData(I8250* uart, UInt8 value)
+{
+    UInt16 unTempRxHead = 0;
+
+    unTempRxHead = (i8250RxBufferHead + 1) & I8250_RX_BUFFER_MASK;
+
+    if(unTempRxHead != i8250RxBufferTail) {
+    	i8250RxBuffer[unTempRxHead] = value;
+    	i8250RxBufferHead = unTempRxHead;
+    	i8250RxBufferDataAvailable = 1;
+    }
+    else {
+    	i8250RxBufferDataAvailable = -1;
+    }
+}
+
+static short int i8250RxBufferGetByte(UInt8* value)
+{
+    UInt16 unTempRxTail = 0;
+
+    if(i8250RxBufferHead == i8250RxBufferTail)
+        return 0;
+
+    unTempRxTail = (i8250RxBufferTail + 1) & I8250_RX_BUFFER_MASK;
+    *value = i8250RxBuffer[unTempRxTail];
+    i8250RxBufferTail = unTempRxTail;
+
+    return 1;
+}
+
+static UInt16 i8250RxBufferGetLength(void)
+{
+    return ((i8250RxBufferHead - i8250RxBufferTail) & I8250_RX_BUFFER_MASK);
+}
+
+static void i8250RxBufferClear(void)
+{
+    i8250RxBufferHead = 0;
+    i8250RxBufferTail = 0;
+    i8250RxBufferDataAvailable = 0;
 }
 
 struct I8250
@@ -218,6 +257,24 @@ void i8250Write(I8250* i8250, UInt16 port, UInt8 value)
     }
 }
 
+/* Counter for the buad rate generator */
+
+BoardTimer* i8250Timer;
+
+static void i8250CounterOnTimer(BoardTimer* i8250Timer, UInt32 time)
+{
+}
+
+static void i8250CounterDestroy(void)
+{
+    boardTimerDestroy(i8250Timer);
+}
+
+static void i8250CounterCreate(UInt32 frequency) 
+{
+    i8250Timer = boardTimerCreate(i8250CounterOnTimer, i8250Timer);
+}
+
 void i8250SaveState(I8250* uart)
 {
     SaveState* state = saveStateOpenForWrite("i8250");
@@ -239,6 +296,8 @@ void i8250Reset(I8250* i8250)
     i8250->reg[I8250REG_LCR] = 0;
     i8250->reg[I8250REG_MCR] = 0;
     i8250->reg[I8250REG_LSR] = 0x60;
+
+    i8250RxBufferClear();
 }
 
 void i8250Destroy(I8250* uart) 
@@ -246,7 +305,7 @@ void i8250Destroy(I8250* uart)
     free(uart);
 }
 
-I8250* i8250Create(I8250Transmit transmit,    I8250Signal   signal,
+I8250* i8250Create(UInt32 frequency, I8250Transmit transmit,    I8250Signal   signal,
                    I8250Set      setDataBits, I8250Set      setStopBits,
                    I8250Set      setParity,   I8250Set      setRxReady,
                    I8250Set      setDtr,      I8250Set      setRts,

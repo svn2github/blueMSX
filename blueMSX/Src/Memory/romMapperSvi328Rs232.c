@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-04-28 18:33:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -125,7 +125,8 @@ static int romMapperSvi328Rs232TransmitCallback(UInt8 value)
 
 static void romMapperSvi328Rs232ReceiveCallback(UInt8 value)
 {
-    i8250Receive(rs232->i8250, value);
+    //i8250Receive(rs232->i8250, value);
+    i8250RxData(rs232->i8250, value);
 }
 
 int romMapperSvi328Rs232Create(Svi328UartConnector connector)
@@ -138,7 +139,7 @@ int romMapperSvi328Rs232Create(Svi328UartConnector connector)
     rs232->deviceHandle = deviceManagerRegister(ROM_SVI328RS232, &callbacks, rs232);
 
     rs232->i8250 = NULL;
-    rs232->i8250 = i8250Create(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, rs232);
+    rs232->i8250 = i8250Create(3072000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, rs232);
 
     rs232->serialLink = archUartCreate(romMapperSvi328Rs232ReceiveCallback);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-14 21:48:01 $
+** $Date: 2005-04-28 18:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,6 +150,56 @@ void i8251Write(I8251* usart, UInt16 port, UInt8 value)
         usart->command = value;
         break;
     }
+}
+
+#define I8251_RX_BUFFER_SIZE 256
+#define I8251_RX_BUFFER_MASK (I8251_RX_BUFFER_SIZE - 1)
+
+static UInt8 i8251RxBuffer[I8251_RX_BUFFER_SIZE];
+static UInt16 i8251RxBufferHead;
+static UInt16 i8251RxBufferTail;
+static short int i8251RxBufferDataAvailable;
+
+void i8251RxData(I8251* usart, UInt8 value)
+{
+    UInt16 unTempRxHead = 0;
+
+    unTempRxHead = (i8251RxBufferHead + 1) & I8251_RX_BUFFER_MASK;
+
+    if(unTempRxHead != i8251RxBufferTail) {
+    	i8251RxBuffer[unTempRxHead] = value;
+    	i8251RxBufferHead = unTempRxHead;
+    	i8251RxBufferDataAvailable = 1;
+    }
+    else {
+    	i8251RxBufferDataAvailable = -1;
+    }
+}
+
+static short int i8251RxBufferGetByte(UInt8* value)
+{
+    UInt16 unTempRxTail = 0;
+
+    if(i8251RxBufferHead == i8251RxBufferTail)
+        return 0;
+
+    unTempRxTail = (i8251RxBufferTail + 1) & I8251_RX_BUFFER_MASK;
+    *value = i8251RxBuffer[unTempRxTail];
+    i8251RxBufferTail = unTempRxTail;
+
+    return 1;
+}
+
+static UInt16 i8251RxBufferGetLength(void)
+{
+    return ((i8251RxBufferHead - i8251RxBufferTail) & I8251_RX_BUFFER_MASK);
+}
+
+static void i8251RxBufferClear(void)
+{
+    i8251RxBufferHead = 0;
+    i8251RxBufferTail = 0;
+    i8251RxBufferDataAvailable = 0;
 }
 
 void i8251SaveState(I8251* usart)

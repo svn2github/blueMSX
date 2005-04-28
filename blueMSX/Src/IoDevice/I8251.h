@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-04-06 21:18:21 $
+** $Date: 2005-04-28 18:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,16 +40,16 @@ typedef int  (*I8251Get) (void*);
 
 typedef struct I8251 I8251;
 
-UInt8 i8251Read(I8251* i8251, UInt16 port);
-void i8251Write(I8251* i8251, UInt16 port, UInt8 value);
+UInt8 i8251Read(I8251* usart, UInt16 port);
+void i8251Write(I8251* usart, UInt16 port, UInt8 value);
 
-void i8251Receive(I8251* i8251, UInt8 value);
+void i8251RxData(I8251* usart, UInt8 value);
 
-void i8251LoadState(I8251* i8251);
-void i8251SaveState(I8251* i8251);
+void i8251LoadState(I8251* usart);
+void i8251SaveState(I8251* usart);
 
-void i8251Reset(I8251* i8251);
-void i8251Destroy(I8251* i8251); 
+void i8251Reset(I8251* usart);
+void i8251Destroy(I8251* usart); 
 
 I8251* i8251Create(I8251Transmit transmit,    I8251Signal   signal,
                    I8251Set      setDataBits, I8251Set      setStopBits,

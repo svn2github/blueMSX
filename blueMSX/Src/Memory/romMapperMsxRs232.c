@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-04-14 21:48:27 $
+** $Date: 2005-04-28 18:33:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,12 +70,15 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
+    int serialLink;
     UInt8* romData;
     I8251* i8251;
     I8254* i8254;
     UInt8 status;   // Status for CTS, PIT Timer/Counter 2, RI and CD
     UInt8 intmask;  // Interrupt mask
 } MSXRs232;
+
+static MSXRs232* msxRs232;
 
 /*****************************************
 ** Device Manager callbacks
@@ -268,13 +271,21 @@ static void pitOut2 (MSXRs232* msxRs232, int state)
 }
 
 /*****************************************
+** ARCH UART callbacks
+******************************************
+*/
+static void romMapperMsxRs232ReceiveCallback(UInt8 value)
+{
+    i8251RxData(msxRs232->i8251, value);
+}
+
+/*****************************************
 ** MSX RS-232 Create Method
 ******************************************
 */
 int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
-    MSXRs232* msxRs232;
     int pages = 4;
     int i;
 
@@ -303,6 +314,8 @@ int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, 
                                  setRxReady, setDtr, setRts, getDtr, getRts, msxRs232);
 
     msxRs232->i8254 = i8254Create(1843200, pitOut0, pitOut1, pitOut2, msxRs232);
+
+    msxRs232->serialLink = archUartCreate(romMapperMsxRs232ReceiveCallback);
 
     ioPortRegister(0x80, readIo, writeIo, msxRs232);
     ioPortRegister(0x81, readIo, writeIo, msxRs232);
