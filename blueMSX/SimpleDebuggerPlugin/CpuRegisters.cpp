@@ -53,7 +53,10 @@ static CpuRegisters* cpuRegisters = NULL;
 
 static LRESULT CALLBACK regsWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    return cpuRegisters->wndProc(hwnd, iMsg, wParam, lParam);
+    if (cpuRegisters != NULL) {
+        return cpuRegisters->wndProc(hwnd, iMsg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
@@ -241,6 +244,7 @@ CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) :
 
 CpuRegisters::~CpuRegisters()
 {
+    cpuRegisters = NULL;
 }
 
 void CpuRegisters::show()

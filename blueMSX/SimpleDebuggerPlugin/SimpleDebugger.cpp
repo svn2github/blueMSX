@@ -593,6 +593,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         delete toolBar;
         toolBar = NULL;
         viewHwnd = NULL;
+        DestroyWindow(hwnd);
         delete disassembly;
         disassembly = NULL;
         delete cpuRegisters;
@@ -603,7 +604,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         memory = NULL;
         delete symbolInfo;
         symbolInfo = NULL;
-        DestroyWindow(hwnd);
 		break;
     }
 

@@ -400,7 +400,10 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 
 static LRESULT CALLBACK dasmWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    return disassembly->wndProc(hwnd, iMsg, wParam, lParam);
+    if (disassembly != NULL) {
+        return disassembly->wndProc(hwnd, iMsg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
@@ -577,6 +580,7 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
 
 Disassembly::~Disassembly()
 {
+    disassembly = NULL;
 }
 
 void Disassembly::show()
@@ -944,7 +948,7 @@ void Disassembly::drawText(int top, int bottom)
     int FirstLine = max (0, yPos + top / textHeight);
     int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
 
-    RECT r = { 30, textHeight * (FirstLine - yPos), 300, textHeight };
+    RECT r = { 30, textHeight * (FirstLine - yPos), 450, textHeight };
 
     r.bottom += r.top;
 

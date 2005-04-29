@@ -32,7 +32,10 @@ static CallstackWindow* callstack = NULL;
 
 static LRESULT CALLBACK callstackWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    return callstack->wndProc(hwnd, iMsg, wParam, lParam);
+    if (callstack != NULL) {
+        return callstack->wndProc(hwnd, iMsg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
@@ -160,6 +163,7 @@ CallstackWindow::CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* d
 
 CallstackWindow::~CallstackWindow()
 {
+    callstack = NULL;
 }
 
 void CallstackWindow::show()

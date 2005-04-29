@@ -33,12 +33,18 @@ static Memory* memory = NULL;
 
 static LRESULT CALLBACK memoryWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    return memory->wndProc(hwnd, iMsg, wParam, lParam);
+    if (memory != NULL) {
+        return memory->wndProc(hwnd, iMsg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 static LRESULT CALLBACK memViewWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    return memory->memWndProc(hwnd, iMsg, wParam, lParam);
+    if (memory != NULL) {
+        return memory->memWndProc(hwnd, iMsg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
 static BOOL CALLBACK wndToolProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
@@ -326,6 +332,7 @@ Memory::Memory(HINSTANCE hInstance, HWND owner) :
 
 Memory::~Memory()
 {
+    memory = NULL;
 }
 
 void Memory::show()
