@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-04-23 22:20:25 $
+** $Date: 2005-04-30 20:56:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -358,6 +358,7 @@ static void onDisplay(VDP* vdp, UInt32 time)
 
     vdp->scr0splitLine = 0;
     vdp->curLine = 0;
+    vdp->VAdjust = (-((Int8)(vdp->vdpRegs[18]) >> 4));
 
     vdp->lastLine = isPal ? 313 : 262;
     vdp->firstLine = (isPal ? 27 : 0) + (vdpIsScanLines212(vdp->vdpRegs) ? 14 : 24) + vdp->VAdjust;
@@ -493,8 +494,11 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
         vdp->leftBorder = 102 + 56;
     }
 
-    vdp->VAdjust = (-((Int8)(vdp->vdpRegs[18]) >> 4));
     vdp->HAdjust = (-((Int8)(vdp->vdpRegs[18] << 4) >> 4));
+	if (vdp->vdpRegs[25] & 0x08) {
+		vdp->HAdjust += 4;
+	}
+    vdp->leftBorder += vdp->HAdjust;
 }
 
 static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)

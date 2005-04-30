@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-15 05:46:10 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ struct JoystickIO {
         int dx;
         int dy;
         UInt8 count;
+        UInt8 status;
         UInt32 joyClock;
     } controls[2];
     int mouseAsJoystick;
@@ -60,7 +61,6 @@ struct JoystickIO {
 
 static JoystickIoType joyTypeConfigured[2];
 static int joyTypeConfiguredUserData[2];
-static UInt8 joyState[2];
 static int   isPolling = 1;
 
 static void joystickCheckType(JoystickIO* joyIO) {
@@ -70,6 +70,7 @@ static void joystickCheckType(JoystickIO* joyIO) {
         if (joyIO->controls[port].type != joyTypeConfigured[port]) {
             joyIO->controls[port].type = joyTypeConfigured[port];
             joyIO->controls[port].count = 0;
+            joyIO->controls[port].status = 0x7f;
         }
     }
 }
@@ -93,6 +94,10 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
     if (joyIO->controls[joyId].type == JOYTYPE_NONE) {
         return 0x7f;
     }
+
+    if (joyIO->controls[joyId].type == JOYTYPE_TETRIS2DONGLE) {
+        return joyIO->controls[joyId].status;
+}
 
     if (joyIO->controls[joyId].type == JOYTYPE_MOUSE) {
         int buttons = mouseEmuGetButtonState(0);
@@ -165,7 +170,25 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
 
     if (address & 1) {
         joystickCheckType(joyIO);
-        
+
+        if (joyIO->controls[0].type == JOYTYPE_TETRIS2DONGLE) {
+            if (value & 0x02) {
+        		joyIO->controls[0].status |= 0x08;
+            }
+            else {
+        		joyIO->controls[0].status &= ~0x08;
+            }
+        }
+
+        if (joyIO->controls[1].type == JOYTYPE_TETRIS2DONGLE) {
+            if (value & 0x08) {
+        		joyIO->controls[1].status |= 0x08;
+            }
+            else {
+        		joyIO->controls[1].status &= ~0x08;
+            }
+        }
+
         if (joyIO->controls[1].type == JOYTYPE_MOUSE && !joyIO->mouseAsJoystick) {
             if ((value ^ joyIO->registers[1]) & 0x20) {
                 if (systemTime - joyIO->controls[1].joyClock > boardFrequency() / 3500) {
@@ -254,10 +277,6 @@ void joystickIoSetType(int port, JoystickIoType type, int userData) {
 JoystickIoType joystickIoGetType(int port, int* userData) {
     *userData = joyTypeConfiguredUserData[port];
     return joyTypeConfigured[port];
-}
-
-void joystickIoSetJoyState(int port, UInt8 state) {
-    joyState[port] = state;
 }
 
 void joystickIoSaveState(JoystickIO* joyIO)

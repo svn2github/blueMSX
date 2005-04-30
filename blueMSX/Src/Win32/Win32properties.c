@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-03-18 10:09:40 $
+** $Date: 2005-04-30 20:56:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1759,6 +1759,7 @@ static updateJoystickList(HWND hDlg, int id, int type, int hwType) {
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyMouse());
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyNumpad());
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyKeyset());
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyTetrisDongle());
 
     for (i = 0; i < archJoystickGetCount(); i++) {
         SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)archJoystickGetName(i));
@@ -1787,11 +1788,12 @@ static int getJoystickList(HWND hDlg, int id, int* hwType, char* hwName, int* hw
     case 1: return P_JOY_MOUSE;
     case 2: return P_JOY_NUMPAD;
     case 3: return P_JOY_KEYSET;
+    case 4: return P_JOY_TETRISDONGLE;
     default:
         break;
     }
     
-    *hwType = index - 4;
+    *hwType = index - 5;
 
     if (hwName != NULL && hwIndex != NULL) {
         int i;

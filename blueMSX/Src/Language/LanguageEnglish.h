@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-03-15 22:02:37 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -573,6 +573,9 @@ void langInitEnglish(LanguageStrings* ls)
     
     ls->propPorts               = "Ports";
     ls->propPortsNone           = "None";
+
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-12 00:40:32 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -364,6 +364,10 @@ int themeTriggerPort1Kbd() {
     return propGetGlobalProperties()->joy1.type == P_JOY_KEYSET ? 1 : 0;
 }
 
+int themeTriggerPort1TetrisDongle() {
+    return propGetGlobalProperties()->joy1.type == P_JOY_TETRISDONGLE ? 1 : 0;
+}
+
 int themeTriggerPort1Joy() {
     return propGetGlobalProperties()->joy1.type == P_JOY_HW ? 1 : 0;
 }
@@ -382,6 +386,10 @@ int themeTriggerPort2Num() {
 
 int themeTriggerPort2Kbd() {
     return propGetGlobalProperties()->joy2.type == P_JOY_KEYSET ? 1 : 0;
+}
+
+int themeTriggerPort2TetrisDongle() {
+    return propGetGlobalProperties()->joy2.type == P_JOY_TETRISDONGLE ? 1 : 0;
 }
 
 int themeTriggerPort2Joy() {
@@ -770,6 +778,8 @@ char* themeTriggerControlsPort1() {
         return "numpad";
     case P_JOY_KEYSET:
         return "keyset";
+    case P_JOY_TETRISDONGLE:
+        return "tetris 2 dongle";
     case P_JOY_HW:
         if (hwType < archJoystickGetCount()) {
             return archJoystickGetName(hwType);
@@ -790,6 +800,8 @@ char* themeTriggerControlsPort2() {
         return "numpad";
     case P_JOY_KEYSET:
         return "keyset";
+    case P_JOY_TETRISDONGLE:
+        return "tetris 2 dongle";
     case P_JOY_HW:
         if (hwType < archJoystickGetCount()) {
             return archJoystickGetName(hwType);

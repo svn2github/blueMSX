@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-03-15 22:02:39 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -357,6 +357,7 @@ typedef struct {
     _TCHAR* enumControlsJoyNone;
     _TCHAR* enumControlsJoyNumpad;
     _TCHAR* enumControlsJoyKeyset;
+    _TCHAR* enumControlsJoyTetris2Dongle;
     _TCHAR* enumControlsJoyKeysetA;
     _TCHAR* enumControlsJoyKeysetB;
     _TCHAR* enumControlsJoyPCjoy1;

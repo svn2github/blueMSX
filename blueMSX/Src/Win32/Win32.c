@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2005-03-20 10:45:13 $
+** $Date: 2005-04-30 20:56:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -832,6 +832,7 @@ void archUpdateJoystick() {
     switch (pProperties->joy1.type) {
     case P_JOY_NONE:
     case P_JOY_MOUSE:
+    case P_JOY_TETRISDONGLE:
         JoystickSetType(0, JOY_NONE, 0);
         break;
     case P_JOY_NUMPAD:
@@ -851,6 +852,7 @@ void archUpdateJoystick() {
     switch (pProperties->joy2.type) {
     case P_JOY_NONE:
     case P_JOY_MOUSE:
+    case P_JOY_TETRISDONGLE:
         JoystickSetType(1, JOY_NONE, 0);
         break;
     case P_JOY_NUMPAD:
@@ -879,9 +881,9 @@ void archUpdateJoystick() {
     JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
     JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
 
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, 
+    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, 
                       pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, 
+    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, 
                       pProperties->joy2.type);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 }
@@ -1008,8 +1010,8 @@ void archShowPropertiesDialog(PropPage  startPane) {
         archUpdateWindow();
     }
 
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
+    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
+    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
 
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
@@ -2340,8 +2342,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
 
     propUpdateJoyinfo(pProperties);
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
+    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
+    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
     mouseEmuInit(st.emuHwnd, 1);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 

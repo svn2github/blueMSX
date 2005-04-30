@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-04-23 20:55:32 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -773,7 +773,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
         mappedRAM[i] = slotPeek(NULL, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 1, 0, 0x10000, mappedRAM);
+    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 0, 0, 0x10000, mappedRAM);
 
     if (r800->callstackSize > 255) {
         static UInt16 callstack[0x100];
@@ -807,6 +807,25 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 & 1) && (~r800->regs.iff1 & 2) ?1 : 0);
 }
 
+
+static int dbgWriteMemory(void* dummy, char* name, void* data, int start, int size)
+{
+    UInt8* dataBuffer = data;
+    int i;
+    int rv = 1;
+
+    if (strcmp(name, "Visible Memory") || start + size > 0x10000) {
+        return 0;
+    }
+
+    for (i = 0; i < size; i++) {
+        slotWrite(NULL, start + i, dataBuffer[i]);
+        rv &= dataBuffer[i] == slotPeek(NULL, start + i);
+    }
+
+    return rv;
+}
+
 static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
 {
     switch (regIndex) {
@@ -837,7 +856,7 @@ int msxCreate(Machine* machine,
               DeviceInfo* devInfo,
               int loadState)
 {
-    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
     int success;
     int i;
 

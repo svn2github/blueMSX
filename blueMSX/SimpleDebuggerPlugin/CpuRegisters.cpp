@@ -257,6 +257,11 @@ void CpuRegisters::hide()
     ShowWindow(hwnd, false);
 }
 
+bool CpuRegisters::isVisible()
+{
+    return TRUE == IsWindowVisible(hwnd);
+}
+
 void CpuRegisters::enableEdit()
 {
     editEnabled = true;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-05 08:54:00 $
+** $Date: 2005-04-30 20:56:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1358,14 +1358,15 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     static int page;
     static int scroll;
     static int vscroll;
+    static int hscroll;
     static int chrTabO;
-    UInt8 t0, t1, t2, t3;
-    int y, J,K;
     int col;
+    UInt8 t0, t1, t2, t3;
+    int y, J, K;
     int rightBorder;
 
     if (X == 0) {
-        linePtr = RefreshBorder(vdp, Y,  emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
+        linePtr = RefreshBorder(vdp, Y, emuFixedPalette[vdp->vdpRegs[7]], 0, 0);
         sprLine = colorSpritesLine(vdp, Y);
         if (linePtr == NULL) {
             return;
@@ -1374,7 +1375,8 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable + hScroll512 * 2;
         page    = (vdp->chrTabBase / 0x8000) & 1;
-        scroll     = vdpHScroll(vdp) & ~3;
+        hscroll    = vdpHScroll(vdp);
+        scroll     = hscroll & ~3;
         vscroll    = vdpVScroll(vdp);
         chrTabO    = vdp->chrTabBase;
 
@@ -1399,14 +1401,10 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             linePtr[7] = bgColor;
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
             UPDATE_T(); UPDATE_T(); UPDATE_T(); UPDATE_T();
-            sprLine += sprLine != NULL ? 8 : 0; 
+            sprLine   += sprLine != NULL ? 8 : 0; 
             charTable += 4; 
             linePtr += 8;
             X++; 
-        }
-
-        if (X > 0) {
-            return;
         }
 
         t0 = charTable[0];        UPDATE_T();
@@ -1414,28 +1412,24 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         t2 = charTable[1];        UPDATE_T();
         t3 = charTable[vdp->vram128|1];  UPDATE_T();
 
-        K = (t0 & 0x07) | ((t1 & 0x07) << 3);
-        J = (t2 & 0x07) | ((t3 & 0x07) << 3);
+        K=(t0 & 0x07) | ((t1 & 0x07) << 3);
+        J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
         if (sprLine != NULL) {
-            switch (vdpHScroll(vdp) & 3) {
+            switch (hscroll & 3) {
             case 0:
-                col = sprLine[0]; y = t0 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
-                y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[0]; y = t0 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 1:
-                col = sprLine[1]; y = t1 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
-                y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[1]; y = t1 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 2:
-                col = sprLine[2]; y = t2 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
-                y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[2]; y = t2 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 3:
-                col = sprLine[3]; y = t3 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : 
-                y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[3]; y = t3 >> 3; *linePtr++ = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             }
             sprLine += 4;
         }
         else {
-            switch (vdpHScroll(vdp) & 3) {
+            switch (hscroll & 3) {
             case 0:
                 y = t0 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             case 1:
@@ -1446,7 +1440,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
                 y = t3 >> 3; *linePtr++ = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
             }
         }
-        charTable += 2; 
+        charTable += 2;
     }
 
     if (linePtr == NULL) {
@@ -1460,15 +1454,14 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
     // Update vscroll if needed
     if (vscroll != vdpVScroll(vdp) || chrTabO != vdp->chrTabBase) {
-        scroll = vdpHScroll(vdp) + X * 8;
+        hscroll = vdpHScroll(vdp);
+        scroll = (hscroll & ~3) + X * 8;
         jump   = jumpTable + hScroll512 * 2;
         vscroll = vdpVScroll(vdp);
         chrTabO  = vdp->chrTabBase;
 
         charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((Y - vdp->firstLine + vdpVScroll(vdp)) << 7))) + scroll / 2;
         charTable += 2; 
-
-        if (vdpIsOddPage(vdp)) charTable += jump[2 | (page ^= 1)] + 128;
 
         if (hScroll512) {
             if (scroll & 0x100) charTable += jump[page ^= 1];
@@ -1482,18 +1475,14 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         t2 = charTable[1];         UPDATE_T();
         t3 = charTable[vdp->vram128|1]; UPDATE_T();
 
-        K = (t0 & 0x07) | ((t1 & 0x07) << 3);
-        J = (t2 & 0x07) | ((t3 & 0x07) << 3);
+        K=(t0 & 0x07) | ((t1 & 0x07) << 3);
+        J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
         if (sprLine != NULL) {
-            col = sprLine[0]; y = t0 >> 3; linePtr[0] = col ? emuPalette[col >> 1] : 
-        y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[1]; y = t1 >> 3; linePtr[1] = col ? emuPalette[col >> 1] : 
-        y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[2]; y = t2 >> 3; linePtr[2] = col ? emuPalette[col >> 1] : 
-        y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-            col = sprLine[3]; y = t3 >> 3; linePtr[3] = col ? emuPalette[col >> 1] : 
-        y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            col = sprLine[0]; y = t0 >> 3; linePtr[0] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            col = sprLine[1]; y = t1 >> 3; linePtr[1] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            col = sprLine[2]; y = t2 >> 3; linePtr[2] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+            col = sprLine[3]; y = t3 >> 3; linePtr[3] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
         }
         else {
             y = t0 >> 3; linePtr[0] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
@@ -1502,30 +1491,27 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             y = t3 >> 3; linePtr[3] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
         }
 
-        t0 = charTable[2];         UPDATE_T();
-        t1 = charTable[vdp->vram128|2]; UPDATE_T();
-        t2 = charTable[3];         UPDATE_T();
-        t3 = charTable[vdp->vram128|3]; UPDATE_T();
+        t0 = charTable[2];        UPDATE_T();
+        t1 = charTable[vdp->vram128|2];  UPDATE_T();
+        t2 = charTable[3];        UPDATE_T();
+        t3 = charTable[vdp->vram128|3];  UPDATE_T();
 
-        K = (t0 & 0x07) | ((t1 & 0x07) << 3);
-        J = (t2 & 0x07) | ((t3 & 0x07) << 3);
+        K=(t0 & 0x07) | ((t1 & 0x07) << 3);
+        J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
         if (X == 31) {
             if (sprLine != NULL) {
-                switch (vdpHScroll(vdp) & 3) {
+                switch (hscroll & 3) {
                 case 1:
-                    col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? emuPalette[col >> 1] : 
-                    y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t2 >> 3; col = sprLine[6]; linePtr[6] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 2:
-                    col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? emuPalette[col >> 1] : 
-                    y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t1 >> 3; col = sprLine[5]; linePtr[5] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 3:
-                    col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? emuPalette[col >> 1] : 
-                    y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                    y = t0 >> 3; col = sprLine[4]; linePtr[4] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 }
             }
             else {
-                switch (vdpHScroll(vdp) & 3) {
+                switch (hscroll & 3) {
                 case 1:
                     y = t2 >> 3; linePtr[6] = y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 case 2:
@@ -1537,14 +1523,10 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         }
         else {
             if (sprLine != NULL) {
-                col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? 
-                    emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? 
-                    emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? 
-                    emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
-                col = sprLine[7]; y = t3 >> 3; linePtr[7] = col ? 
-                    emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
+                col = sprLine[7]; y = t3 >> 3; linePtr[7] = col ? emuPalette[col >> 1] : y & 1 ? emuPalette[y >> 1] : YJKColor(y, J, K);
                 sprLine += 8; 
             }
             else {
@@ -1556,7 +1538,8 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         }
     #undef UPDATE_T
 
-        charTable += 4; linePtr += 8; X++;
+        charTable += 4; linePtr += 8;
+        X++;
     }
 
     if (rightBorder) {

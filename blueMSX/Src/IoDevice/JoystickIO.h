@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-15 05:46:10 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,8 @@
 typedef enum { 
     JOYTYPE_NONE = 0, 
     JOYTYPE_JOYSTICK, 
-    JOYTYPE_MOUSE
+    JOYTYPE_MOUSE,
+    JOYTYPE_TETRIS2DONGLE
 } JoystickIoType;
 
 typedef struct JoystickIO JoystickIO;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-03-09 22:10:13 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,11 +99,13 @@ void actionPort1SetNone();
 void actionPort1SetMouse();
 void actionPort1SetNumpad();
 void actionPort1SetKeyset();
+void actionPort1SetTetrisDongle();
 void actionPort1SetJoystick();
 void actionPort2SetNone();
 void actionPort2SetMouse();
 void actionPort2SetNumpad();
 void actionPort2SetKeyset();
+void actionPort2SetTetrisDongle();
 void actionPort2SetJoystick();
 
 void actionMenuSpecialCart1(int x, int y);

@@ -204,6 +204,12 @@
 			RelativePath=".\SimpleDebugger.rc">
 		</File>
 		<File
+			RelativePath=".\Stack.cpp">
+		</File>
+		<File
+			RelativePath=".\Stack.h">
+		</File>
+		<File
 			RelativePath=".\StatusBar.cpp">
 		</File>
 		<File

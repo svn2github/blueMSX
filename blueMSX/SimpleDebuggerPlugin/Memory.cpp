@@ -345,6 +345,11 @@ void Memory::hide()
     ShowWindow(hwnd, false);
 }
 
+bool Memory::isVisible()
+{
+    return TRUE == IsWindowVisible(hwnd);
+}
+
 void Memory::enableEdit()
 {
     editEnabled = true;

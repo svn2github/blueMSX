@@ -36,6 +36,7 @@ public:
 
     void show();
     void hide();
+    bool isVisible();
     
     void refresh();
 

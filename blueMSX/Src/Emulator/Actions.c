@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-03-12 00:40:32 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,6 +266,11 @@ void actionPort1SetKeyset() {
     archUpdateJoystick();
 }
 
+void actionPort1SetTetrisDongle() {
+	state.properties->joy1.type = P_JOY_TETRISDONGLE;
+    archUpdateJoystick();
+}
+
 void actionPort1SetJoystick() {
 	if (archJoystickGetCount()) {
 		state.properties->joy1.type = P_JOY_HW;
@@ -290,6 +295,11 @@ void actionPort2SetNumpad() {
 
 void actionPort2SetKeyset() {
 	state.properties->joy2.type = P_JOY_KEYSET;
+    archUpdateJoystick();
+}
+
+void actionPort2SetTetrisDongle() {
+	state.properties->joy2.type = P_JOY_TETRISDONGLE;
     archUpdateJoystick();
 }
 

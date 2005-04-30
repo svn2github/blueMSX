@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,12 +146,14 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_PORT1_MOUSE: idx = TEST(actionType, themeTriggerPort1Mouse()); break;
     case THEME_TRIGGER_IMG_PORT1_NUM:   idx = TEST(actionType, themeTriggerPort1Num()); break;
     case THEME_TRIGGER_IMG_PORT1_KBD:   idx = TEST(actionType, themeTriggerPort1Kbd()); break;
+    case THEME_TRIGGER_IMG_PORT1_TETDNG:idx = TEST(actionType, themeTriggerPort1TetrisDongle()); break;
     case THEME_TRIGGER_IMG_PORT1_JOY:   idx = TEST(actionType, themeTriggerPort1Joy()); break;
     case THEME_TRIGGER_IMG_PORT2_EN:    idx = TEST(actionType, themeTriggerPort2None() ^ 0xffff); break;
     case THEME_TRIGGER_IMG_PORT2_NONE:  idx = TEST(actionType, themeTriggerPort2None()); break;
     case THEME_TRIGGER_IMG_PORT2_MOUSE: idx = TEST(actionType, themeTriggerPort2Mouse()); break;
     case THEME_TRIGGER_IMG_PORT2_NUM:   idx = TEST(actionType, themeTriggerPort2Num()); break;
     case THEME_TRIGGER_IMG_PORT2_KBD:   idx = TEST(actionType, themeTriggerPort2Kbd()); break;
+    case THEME_TRIGGER_IMG_PORT2_TETDNG:idx = TEST(actionType, themeTriggerPort2TetrisDongle()); break;
     case THEME_TRIGGER_IMG_PORT2_JOY:   idx = TEST(actionType, themeTriggerPort2Joy()); break;
     case THEME_TRIGGER_IMG_M_MOON:      idx = TEST(actionType, themeTriggerMachineMoonsound()); break;
     case THEME_TRIGGER_IMG_M_MSXM:      idx = TEST(actionType, themeTriggerMachineMsxMusic()); break;

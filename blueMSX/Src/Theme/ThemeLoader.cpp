@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-02-07 02:27:37 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -183,11 +183,13 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "port1-setmouse"))          return (ButtonEvent)actionPort1SetMouse;
     if (0 == strcmp(action, "port1-setnumpad"))         return (ButtonEvent)actionPort1SetNumpad;
     if (0 == strcmp(action, "port1-setkeyset"))         return (ButtonEvent)actionPort1SetKeyset;
+    if (0 == strcmp(action, "port1-tetris2dongle"))     return (ButtonEvent)actionPort1SetTetrisDongle;
     if (0 == strcmp(action, "port1-setjoystick"))       return (ButtonEvent)actionPort1SetJoystick;
     if (0 == strcmp(action, "port2-setnone"))           return (ButtonEvent)actionPort2SetNone;
     if (0 == strcmp(action, "port2-setmouse"))          return (ButtonEvent)actionPort2SetMouse;
     if (0 == strcmp(action, "port2-setnumpad"))         return (ButtonEvent)actionPort2SetNumpad;
     if (0 == strcmp(action, "port2-setkeyset"))         return (ButtonEvent)actionPort2SetKeyset;
+    if (0 == strcmp(action, "port2-tetris2dongle"))     return (ButtonEvent)actionPort2SetTetrisDongle;
     if (0 == strcmp(action, "port2-setjoystick"))       return (ButtonEvent)actionPort2SetJoystick;
 
     if (0 == strcmp(action, "video-gamma"))        return (ButtonEvent)actionVideoSetGamma;
@@ -401,12 +403,14 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "port1-mouse"))              return t | THEME_TRIGGER_IMG_PORT1_MOUSE;
     if (0 == strcmp(s, "port1-numpad"))             return t | THEME_TRIGGER_IMG_PORT1_NUM;
     if (0 == strcmp(s, "port1-keyboard"))           return t | THEME_TRIGGER_IMG_PORT1_KBD;
+    if (0 == strcmp(s, "port1-tetris2dongle"))      return t | THEME_TRIGGER_IMG_PORT1_TETDNG;
     if (0 == strcmp(s, "port1-joystick"))           return t | THEME_TRIGGER_IMG_PORT1_JOY;
     if (0 == strcmp(s, "port2-enable"))             return t | THEME_TRIGGER_IMG_PORT2_EN;
     if (0 == strcmp(s, "port2-none"))               return t | THEME_TRIGGER_IMG_PORT2_NONE;
     if (0 == strcmp(s, "port2-mouse"))              return t | THEME_TRIGGER_IMG_PORT2_MOUSE;
     if (0 == strcmp(s, "port2-numpad"))             return t | THEME_TRIGGER_IMG_PORT2_NUM;
     if (0 == strcmp(s, "port2-keyboard"))           return t | THEME_TRIGGER_IMG_PORT2_KBD;
+    if (0 == strcmp(s, "port2-tetris2dongle"))      return t | THEME_TRIGGER_IMG_PORT2_TETDNG;
     if (0 == strcmp(s, "port2-joystick"))           return t | THEME_TRIGGER_IMG_PORT2_JOY;
 
     if (0 == strcmp(s, "using-moonsound"))          return t | THEME_TRIGGER_IMG_M_MOON;

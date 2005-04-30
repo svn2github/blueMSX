@@ -5,6 +5,7 @@
 #include "Toolbar.h"
 #include "Disassembly.h"
 #include "Callstack.h"
+#include "Stack.h"
 #include "CpuRegisters.h"
 #include "SymbolInfo.h"
 #include "Memory.h"
@@ -21,6 +22,7 @@ static HWND viewHwnd = NULL;
 static StatusBar* statusBar = NULL;
 static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
+static StackWindow* stack = NULL;
 static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static SymbolInfo* symbolInfo = NULL;
@@ -136,8 +138,9 @@ static void updateStatusBar()
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
-#define MENU_WINDOW_CALLSTACK       37302
-#define MENU_WINDOW_MEMORY          37303
+#define MENU_WINDOW_STACK           37302
+#define MENU_WINDOW_CALLSTACK       37303
+#define MENU_WINDOW_MEMORY          37304
 
 #define MENU_HELP_ABOUT             37400
 
@@ -172,10 +175,11 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint\tCtrl+Shift+F9");
 
     HMENU hMenuWindow = CreatePopupMenu();
-    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_DISASSEMBLY, "Disassembly");
-    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_CPUREGISTERS, "CPU Registers");
-    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_CALLSTACK, "Callstack");
-    AppendMenu(hMenuWindow, MF_STRING | MFS_CHECKED, MENU_WINDOW_MEMORY, "Memory Viewer");
+    AppendMenu(hMenuWindow, MF_STRING | (disassembly  && disassembly->isVisible()  ? MFS_CHECKED : 0), MENU_WINDOW_DISASSEMBLY, "Disassembly");
+    AppendMenu(hMenuWindow, MF_STRING | (cpuRegisters && cpuRegisters->isVisible() ? MFS_CHECKED : 0), MENU_WINDOW_CPUREGISTERS, "CPU Registers");
+    AppendMenu(hMenuWindow, MF_STRING | (stack        && stack->isVisible()        ? MFS_CHECKED : 0), MENU_WINDOW_STACK, "Stack");
+    AppendMenu(hMenuWindow, MF_STRING | (callstack    && callstack->isVisible()    ? MFS_CHECKED : 0), MENU_WINDOW_CALLSTACK, "Callstack");
+    AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, "Memory Viewer");
 
     HMENU hMenuHelp = CreatePopupMenu();
     AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, "About");
@@ -255,6 +259,7 @@ void loadSymbolFile(HWND hwndOwner)
     symbolInfo->update(std::string(buffer));
     disassembly->refresh();
     callstack->refresh();
+    stack->refresh();
     fclose(file);
 }
 
@@ -305,11 +310,15 @@ void updateDeviceState()
 
             if (device->type == DEVTYPE_CPU && memCount > 0) {
                 UInt16 pc = 0;
+                UInt16 sp = 0;
 
                 RegisterBank* regBank = DeviceGetRegisterBank(device, 0);
                 for (UInt32 k = 0; k < regBank->count; k++) {
                     if (0 == strcmp("PC", regBank->reg[k].name)) {
                         pc = (UInt16)regBank->reg[k].value;
+                    }
+                    if (0 == strcmp("SP", regBank->reg[k].name)) {
+                        sp = (UInt16)regBank->reg[k].value;
                     }
                 }
 
@@ -318,6 +327,7 @@ void updateDeviceState()
                 MemoryBlock* mem = DeviceGetMemoryBlock(device, 0);
                 if (mem->size == 0x10000) {
                     disassembly->updateContent(mem->memory, pc);
+                    stack->updateContent(mem->memory, sp);
                     disassemblyUpdated = true;
                 }
 
@@ -341,6 +351,7 @@ void updateDeviceState()
         disassembly->invalidateContent();
         cpuRegisters->invalidateContent();
         callstack->invalidateContent();
+        stack->invalidateContent();
     }
 }
 
@@ -469,15 +480,53 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             return 0;
 
         case MENU_WINDOW_DISASSEMBLY:
+            if (disassembly->isVisible()) {
+                disassembly->hide(); 
+            }
+            else {
+                disassembly->show();
+            }
+            updateWindowMenu();
             return 0;
 
         case MENU_WINDOW_CPUREGISTERS:
+            if (cpuRegisters->isVisible()) {
+                cpuRegisters->hide(); 
+            }
+            else {
+                cpuRegisters->show();
+            }
+            updateWindowMenu();
+            return 0;
+
+        case MENU_WINDOW_STACK:
+            if (stack->isVisible()) {
+                stack->hide(); 
+            }
+            else {
+                stack->show();
+            }
+            updateWindowMenu();
             return 0;
 
         case MENU_WINDOW_CALLSTACK:
+            if (callstack->isVisible()) {
+                callstack->hide(); 
+            }
+            else {
+                callstack->show();
+            }
+            updateWindowMenu();
             return 0;
 
         case MENU_WINDOW_MEMORY:
+            if (memory->isVisible()) {
+                memory->hide(); 
+            }
+            else {
+                memory->show();
+            }
+            updateWindowMenu();
             return 0;
 
         case MENU_DEBUG_CONTINUE:
@@ -525,6 +574,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             disassembly->refresh();
             callstack->refresh();
+            stack->refresh();
             updateWindowMenu();
             return 0;
             
@@ -600,6 +650,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         cpuRegisters = NULL;
         delete callstack;
         callstack = NULL;
+        delete stack;
+        stack = NULL;
         delete memory;
         memory = NULL;
         delete symbolInfo;
@@ -649,7 +701,7 @@ void OnShowTool() {
 
     dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
                            WS_OVERLAPPEDWINDOW, 
-                           CW_USEDEFAULT, CW_USEDEFAULT, 720, 740, NULL, NULL, GetDllHinstance(), NULL);
+                           CW_USEDEFAULT, CW_USEDEFAULT, 800, 740, NULL, NULL, GetDllHinstance(), NULL);
 
     viewHwnd = CreateWindow("msxdebuggerview", "", 
                             WS_OVERLAPPED | WS_CHILD | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
@@ -670,19 +722,24 @@ void OnShowTool() {
     toolBar->show();
 
     disassembly = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
-    RECT r = { 3, 3, 457, 420 };
+    RECT r = { 3, 3, 437, 420 };
     disassembly->updatePosition(r);
     disassembly->show();
 
     cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 460, 3, 710, 190 };
+    RECT r2 = { 440, 3, 650, 190 };
     cpuRegisters->updatePosition(r2);
     cpuRegisters->show();
 
     callstack = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
-    RECT r5 = { 460, 193, 710, 420 };
+    RECT r5 = { 440, 193, 650, 420 };
     callstack->updatePosition(r5);
     callstack->show();
+
+    stack = new StackWindow(GetDllHinstance(), viewHwnd);
+    RECT r6 = { 653, 3, 790, 420 };
+    stack->updatePosition(r6);
+    stack->show();
 
     memory = new Memory(GetDllHinstance(), viewHwnd);
     RECT r3 = { 3, 423, 710, 630 };
@@ -704,6 +761,7 @@ void OnEmulatorStart() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         callstack->disableEdit();
+        stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -714,6 +772,7 @@ void OnEmulatorStop() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         callstack->disableEdit();
+        stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -724,6 +783,7 @@ void OnEmulatorPause() {
         disassembly->enableEdit();
         cpuRegisters->enableEdit();
         callstack->enableEdit();
+        stack->enableEdit();
         memory->enableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
@@ -734,6 +794,7 @@ void OnEmulatorResume() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         callstack->disableEdit();
+        stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }

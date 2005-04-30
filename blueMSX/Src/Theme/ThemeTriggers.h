@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,12 +77,14 @@ typedef enum {
     THEME_TRIGGER_IMG_PORT1_MOUSE,
     THEME_TRIGGER_IMG_PORT1_NUM,
     THEME_TRIGGER_IMG_PORT1_KBD,
+    THEME_TRIGGER_IMG_PORT1_TETDNG,
     THEME_TRIGGER_IMG_PORT1_JOY,
     THEME_TRIGGER_IMG_PORT2_EN,
     THEME_TRIGGER_IMG_PORT2_NONE,
     THEME_TRIGGER_IMG_PORT2_MOUSE,
     THEME_TRIGGER_IMG_PORT2_NUM,
     THEME_TRIGGER_IMG_PORT2_KBD,
+    THEME_TRIGGER_IMG_PORT2_TETDNG,
     THEME_TRIGGER_IMG_PORT2_JOY,
     THEME_TRIGGER_IMG_M_MOON,
     THEME_TRIGGER_IMG_M_MSXM,
@@ -236,11 +238,13 @@ int themeTriggerPort1None();
 int themeTriggerPort1Mouse();
 int themeTriggerPort1Num();
 int themeTriggerPort1Kbd();
+int themeTriggerPort1TetrisDongle();
 int themeTriggerPort1Joy();
 int themeTriggerPort2None();
 int themeTriggerPort2Mouse();
 int themeTriggerPort2Num();
 int themeTriggerPort2Kbd();
+int themeTriggerPort2TetrisDongle();
 int themeTriggerPort2Joy();
 
 int themeTriggerMachineMoonsound();

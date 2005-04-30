@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-03-09 21:43:57 $
+** $Date: 2005-04-30 20:56:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -655,10 +655,12 @@ static HMENU menuCreateControlsPort1(Properties* pProperties, Shortcuts* shortcu
                ID_CTRLPORT1_BASE + 2, langEnumControlsJoyNumpad());
     AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 3, langEnumControlsJoyKeyset());
-
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_TETRISDONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyTetrisDongle());
+    
     for (i = 0; i < archJoystickGetCount(); i++) {
         AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
-                ID_CTRLPORT1_BASE + 4 + i, archJoystickGetName(i));
+                ID_CTRLPORT1_BASE + 5 + i, archJoystickGetName(i));
     }
     
     return hMenu;
@@ -680,10 +682,12 @@ static HMENU menuCreateControlsPort2(Properties* pProperties, Shortcuts* shortcu
                ID_CTRLPORT2_BASE + 2, langEnumControlsJoyNumpad());
     AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 3, langEnumControlsJoyKeyset());
+    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_TETRISDONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 4, langEnumControlsJoyTetrisDongle());
 
     for (i = 0; i < archJoystickGetCount(); i++) {
         AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
-                ID_CTRLPORT2_BASE + 4 + i, archJoystickGetName(i));
+                ID_CTRLPORT2_BASE + 5 + i, archJoystickGetName(i));
     }
     
     return hMenu;
@@ -1247,9 +1251,9 @@ int menuCommand(Properties* pProperties, int command)
     
     i = command - ID_CTRLPORT1_BASE;
     if (i >= 0 && i < 16) {
-        if (i >= 4) {
-            pProperties->joy1.hwType = i - 4;
-            i = 4;
+        if (i >= 5) {
+            pProperties->joy1.hwType = i - 5;
+            i = 5;
         }
         pProperties->joy1.type = i;
 
@@ -1259,9 +1263,9 @@ int menuCommand(Properties* pProperties, int command)
 
     i = command - ID_CTRLPORT2_BASE;
     if (i >= 0 && i < 16) {
-        if (i >= 4) {
-            pProperties->joy2.hwType = i - 4;
-            i = 4;
+        if (i >= 5) {
+            pProperties->joy2.hwType = i - 5;
+            i = 5;
         }
         pProperties->joy2.type = i;
         

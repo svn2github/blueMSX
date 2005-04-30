@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-04-30 20:56:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,7 +67,7 @@ typedef enum { P_VIDEO_FREQ_AUTO, P_VIDEO_FREQ_50HZ, P_VIDEO_FREQ_60HZ } PropVid
 typedef enum { P_SOUND_DRVNONE = 0, P_SOUND_DRVWMM, P_SOUND_DRVDIRECTX } PropSoundDriver;
 typedef enum { P_SOUND_FREQ11 = 0, P_SOUND_FREQ22, P_SOUND_FREQ44 } PropSoundFrequency;
 typedef enum { P_SOUND_SYNCFAST = 0, P_SOUND_SYNCQADJUST, P_SOUND_SYNCEADJUST } PropSoundSync;
-typedef enum { P_JOY_NONE = 0, P_JOY_MOUSE, P_JOY_NUMPAD, P_JOY_KEYSET, P_JOY_HW } PropControlsJoy;
+typedef enum { P_JOY_NONE = 0, P_JOY_MOUSE, P_JOY_NUMPAD, P_JOY_KEYSET, P_JOY_TETRISDONGLE, P_JOY_HW } PropControlsJoy;
 typedef enum { P_JOY_AFOFF = 0, P_JOY_AFSLOW, P_JOY_AFMEDIUM, P_JOY_AFFAST } PropControlsAutofire;
 typedef enum { P_CHAR_EUROPEAN = 0, P_CHAR_RUSSIAN, P_CHAR_JAPANESE, P_CHAR_KOREAN } PropControlsLanguage;
 

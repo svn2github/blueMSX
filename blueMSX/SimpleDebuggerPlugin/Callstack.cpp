@@ -176,6 +176,11 @@ void CallstackWindow::hide()
     ShowWindow(hwnd, false);
 }
 
+bool CallstackWindow::isVisible()
+{
+    return TRUE == IsWindowVisible(hwnd);
+}
+
 void CallstackWindow::enableEdit()
 {
     editEnabled = true;

@@ -593,6 +593,11 @@ void Disassembly::hide()
     ShowWindow(hwnd, false);
 }
 
+bool Disassembly::isVisible()
+{
+    return TRUE == IsWindowVisible(hwnd);
+}
+
 void Disassembly::enableEdit()
 {
     editEnabled = true;
