@@ -44,7 +44,9 @@ const __int64 treshold  = 0x0000000000300706;
 static void Interp1(unsigned char * pc, int c1, int c2)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*3+c2)>>2)&0xfcfcfc;
+    c1 &= 0xfcfcfc;
+    c2 &= 0xfcfcfc;
+    *((int*)pc) = (c1*3+c2)>>2;
 #else
     __asm
     {
@@ -62,7 +64,10 @@ static void Interp1(unsigned char * pc, int c1, int c2)
 static void Interp2(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*2+c2+c3)>>2)&0xfcfcfc;
+    c1 &= 0xfcfcfc;
+    c2 &= 0xfcfcfc;
+    c3 &= 0xfcfcfc;
+    *((int*)pc) = (c1*2+c2+c3)>>2;
 #else
     __asm
     {
@@ -80,7 +85,9 @@ static void Interp2(unsigned char * pc, int c1, int c2, int c3)
 static void Interp5(unsigned char * pc, int c1, int c2)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1+c2)>>1)&0xfefefe;
+    c1 &= 0xfefefe;
+    c2 &= 0xfefefe;
+    *((int*)pc) = (c1+c2)>>1;
 #else
     __asm
     {
@@ -96,7 +103,10 @@ static void Interp5(unsigned char * pc, int c1, int c2)
 static void Interp6(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*5+c2*2+c3)>>3)&0xf8f8f8;
+    c1 &= 0xf8f8f8;
+    c2 &= 0xf8f8f8;
+    c3 &= 0xf8f8f8;
+    *((int*)pc) = (c1*5+c2*2+c3)>>3;
 #else
     __asm
     {
@@ -121,7 +131,10 @@ static void Interp6(unsigned char * pc, int c1, int c2, int c3)
 static void Interp7(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*6+c2+c3)>>3)&0xf8f8f8;
+    c1 &= 0xf8f8f8;
+    c2 &= 0xf8f8f8;
+    c3 &= 0xf8f8f8;
+    *((int*)pc) = (c1*6+c2+c3)>>3;
 #else
     __asm
     {
@@ -145,7 +158,10 @@ static void Interp7(unsigned char * pc, int c1, int c2, int c3)
 static void Interp9(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*2+(c2+c3)*3)>>3)&0xf8f8f8;
+    c1 &= 0xf8f8f8;
+    c2 &= 0xf8f8f8;
+    c3 &= 0xf8f8f8;
+    *((int*)pc) = (c1*2+(c2+c3)*3)>>3;
 #else
     __asm
     {
@@ -170,7 +186,10 @@ static void Interp9(unsigned char * pc, int c1, int c2, int c3)
 static void Interp10(unsigned char * pc, int c1, int c2, int c3)
 {
 #ifndef USE_INLINE_ASSEMBLY
-    *((int*)pc) = ((c1*14+c2+c3)>>4)&0xf0f0f0;
+    c1 &= 0xf0f0f0;
+    c2 &= 0xf0f0f0;
+    c3 &= 0xf0f0f0;
+    *((int*)pc) = (c1*14+c2+c3)>>4;
 #else
     __asm
     {
