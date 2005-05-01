@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-01 00:05:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -810,6 +810,13 @@ void actionMuteTogglePcm() {
     mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
+void actionMuteToggleIo() {
+    int channel = MIXER_CHANNEL_IO;
+    int newEnable = !state.properties->sound.mixerChannel[channel].enable;
+    state.properties->sound.mixerChannel[channel].enable = newEnable;
+    mixerEnableChannelType(state.mixer, channel, newEnable);
+}
+
 void actionMuteToggleScc() {
     int channel = MIXER_CHANNEL_SCC;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
@@ -1004,6 +1011,11 @@ void actionVolumeSetPcm(int value) {
     mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_PCM, value);
 }
 
+void actionVolumeSetIo(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = value;
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_IO, value);
+}
+
 void actionVolumeSetScc(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = value;
     mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_SCC, value);
@@ -1037,6 +1049,11 @@ void actionPanSetPsg(int value) {
 void actionPanSetPcm(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = value;
     mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_PCM, value);
+}
+
+void actionPanSetIo(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = value;
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_IO, value);
 }
 
 void actionPanSetScc(int value) {

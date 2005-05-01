@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-02-22 03:39:13 $
+** $Date: 2005-05-01 00:05:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -545,6 +545,7 @@ void emulatorResetMixer() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_PCM, 1);
+    mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_IO, 1);
 }
 
 void RefreshScreen(int screenMode) {

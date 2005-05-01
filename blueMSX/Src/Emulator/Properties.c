@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-03-12 07:48:25 $
+** $Date: 2005-05-01 00:05:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -133,7 +133,11 @@ void propInitDefaults(Properties* pProperties)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 50;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 100;
-    
+
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
     pProperties->joy1.type              = P_JOY_NUMPAD;
     pProperties->joy1.autofire          = P_JOY_AFOFF;
     pProperties->joy1.keyUp             = 0xff;
@@ -306,6 +310,10 @@ void propInitDefaults(Properties* pProperties)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 95;
 
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
@@ -477,6 +485,9 @@ static void propLoad(Properties* pProperties)
     getIntValue("PCMEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable);
     getIntValue("PCMPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan);
     getIntValue("PCMVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume);
+    getIntValue("IOEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
+    getIntValue("IOPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
+    getIntValue("IOVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
     
     getIntValue("Joy1Control", &pProperties->joy1.type);
     getIntValue("JoyAutoFire", &pProperties->joy1.autofire);
@@ -658,6 +669,9 @@ void propSave(Properties* pProperties)
     setIntValue("PCMEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable);
     setIntValue("PCMPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan);
     setIntValue("PCMVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume);
+    setIntValue("IOEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
+    setIntValue("IOPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
+    setIntValue("IOVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
 
     setIntValue("Joy1Control", pProperties->joy1.type);
     setIntValue("JoyAutoFire", pProperties->joy1.autofire);

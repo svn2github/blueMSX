@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-01 00:05:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,6 +173,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-togglemutemaster"))    return (ButtonEvent)actionMuteToggleMaster;
     if (0 == strcmp(action, "audio-togglemutepsg"))       return (ButtonEvent)actionMuteTogglePsg;
     if (0 == strcmp(action, "audio-togglemutepcm"))       return (ButtonEvent)actionMuteTogglePcm;
+    if (0 == strcmp(action, "audio-togglemuteio"))        return (ButtonEvent)actionMuteToggleIo;
     if (0 == strcmp(action, "audio-togglemutescc"))       return (ButtonEvent)actionMuteToggleScc;
     if (0 == strcmp(action, "audio-togglemutekeyboard"))  return (ButtonEvent)actionMuteToggleKeyboard;
     if (0 == strcmp(action, "audio-togglemutemsxmusic"))  return (ButtonEvent)actionMuteToggleMsxMusic;
@@ -207,6 +208,8 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "level-master"))      return (ButtonEvent)actionVolumeSetMaster;
     if (0 == strcmp(action, "level-psg"))         return (ButtonEvent)actionVolumeSetPsg;
     if (0 == strcmp(action, "level-pcm"))         return (ButtonEvent)actionVolumeSetPcm;
+    if (0 == strcmp(action, "level-io"))          return (ButtonEvent)actionVolumeSetIo;
+    if (0 == strcmp(action, "level-io"))          return (ButtonEvent)actionVolumeSetIo;
     if (0 == strcmp(action, "level-scc"))         return (ButtonEvent)actionVolumeSetScc;
     if (0 == strcmp(action, "level-keyboard"))    return (ButtonEvent)actionVolumeSetKeyboard;
     if (0 == strcmp(action, "level-msxmusic"))    return (ButtonEvent)actionVolumeSetMsxMusic;
@@ -214,6 +217,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "level-moonsound"))   return (ButtonEvent)actionVolumeSetMoonsound;
     if (0 == strcmp(action, "pan-psg"))           return (ButtonEvent)actionPanSetPsg;
     if (0 == strcmp(action, "pan-pcm"))           return (ButtonEvent)actionPanSetPcm;
+    if (0 == strcmp(action, "pan-io"))            return (ButtonEvent)actionPanSetIo;
     if (0 == strcmp(action, "pan-scc"))           return (ButtonEvent)actionPanSetScc;
     if (0 == strcmp(action, "pan-keyboard"))      return (ButtonEvent)actionPanSetKeyboard;
     if (0 == strcmp(action, "pan-msxmusic"))      return (ButtonEvent)actionPanSetMsxMusic;

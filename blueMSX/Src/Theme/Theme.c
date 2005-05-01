@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-01 00:05:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_PSG:         idx = TEST(actionType, themeTriggerAudioPsg()); break;
     case THEME_TRIGGER_IMG_SCC:         idx = TEST(actionType, themeTriggerAudioScc()); break;
     case THEME_TRIGGER_IMG_PCM:         idx = TEST(actionType, themeTriggerAudioPcm()); break;
+    case THEME_TRIGGER_IMG_IO:          idx = TEST(actionType, themeTriggerAudioIo()); break;
     case THEME_TRIGGER_IMG_MASTER:      idx = TEST(actionType, themeTriggerAudioMaster()); break;
     case THEME_TRIGGER_IMG_STEREO:      idx = TEST(actionType, themeTriggerAudioStereo()); break;
     case THEME_TRIGGER_IMG_L_KBD:       idx = themeTriggerVolKbdLeft(); break;
@@ -89,6 +90,8 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_R_SCC:       idx = themeTriggerVolSccRight(); break;
     case THEME_TRIGGER_IMG_L_PCM:       idx = themeTriggerVolPcmLeft(); break;
     case THEME_TRIGGER_IMG_R_PCM:       idx = themeTriggerVolPcmRight(); break;
+    case THEME_TRIGGER_IMG_L_IO:        idx = themeTriggerVolIoLeft(); break;
+    case THEME_TRIGGER_IMG_R_IO:        idx = themeTriggerVolIoRight(); break;
     case THEME_TRIGGER_IMG_L_MASTER:    idx = themeTriggerVolMasterLeft(); break;
     case THEME_TRIGGER_IMG_R_MASTER:    idx = themeTriggerVolMasterRight(); break;
 
@@ -123,6 +126,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_LEVEL_MASTER:    idx = themeTriggerLevelMaster(); break;
     case THEME_TRIGGER_LEVEL_PSG:       idx = themeTriggerLevelPsg(); break;
     case THEME_TRIGGER_LEVEL_PCM:       idx = themeTriggerLevelPcm(); break;
+    case THEME_TRIGGER_LEVEL_IO:        idx = themeTriggerLevelIo(); break;
     case THEME_TRIGGER_LEVEL_SCC:       idx = themeTriggerLevelScc(); break;
     case THEME_TRIGGER_LEVEL_KEYBOARD:  idx = themeTriggerLevelKeyboard(); break;
     case THEME_TRIGGER_LEVEL_MSXMUSIC:  idx = themeTriggerLevelMsxMusic(); break;
@@ -130,6 +134,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_LEVEL_MOONSOUND: idx = themeTriggerLevelMoonsound(); break;
     case THEME_TRIGGER_PAN_PSG:         idx = themeTriggerPanPsg(); break;
     case THEME_TRIGGER_PAN_PCM:         idx = themeTriggerPanPcm(); break;
+    case THEME_TRIGGER_PAN_IO:          idx = themeTriggerPanIo(); break;
     case THEME_TRIGGER_PAN_SCC:         idx = themeTriggerPanScc(); break;
     case THEME_TRIGGER_PAN_KEYBOARD:    idx = themeTriggerPanKeyboard(); break;
     case THEME_TRIGGER_PAN_MSXMUSIC:    idx = themeTriggerPanMsxMusic(); break;

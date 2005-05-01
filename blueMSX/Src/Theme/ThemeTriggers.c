@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-01 00:05:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -216,6 +216,10 @@ int themeTriggerAudioPcm() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_PCM].enable ? 1 : 0;
 }
 
+int themeTriggerAudioIo() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_IO].enable ? 1 : 0;
+}
+
 int themeTriggerVolKbdLeft() {
     return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
 }
@@ -272,6 +276,14 @@ int themeTriggerVolPcmRight() {
     return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_PCM, MIXER_CHANNEL_RIGHT);
 }
 
+int themeTriggerVolIoLeft() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_IO, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolIoRight() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_IO, MIXER_CHANNEL_RIGHT);
+}
+
 int themeTriggerVolMasterLeft() {
     return mixerGetMasterVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_LEFT);
 }
@@ -290,6 +302,10 @@ int themeTriggerLevelPsg() {
 
 int themeTriggerLevelPcm() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_PCM].volume;
+}
+
+int themeTriggerLevelIo() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_IO].volume;
 }
 
 int themeTriggerLevelScc() {
@@ -318,6 +334,10 @@ int themeTriggerPanPsg() {
 
 int themeTriggerPanPcm() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_PCM].pan;
+}
+
+int themeTriggerPanIo() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_IO].pan;
 }
 
 int themeTriggerPanScc() {

@@ -1224,6 +1224,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\SoundChips\OpenMsxYMF278.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\SoundChips\SamplePlayer.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\SamplePlayer.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\SoundChips\SCC.c">
 			</File>
 			<File
