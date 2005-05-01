@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-02-28 00:53:35 $
+** $Date: 2005-05-01 20:30:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -366,6 +366,9 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
+static void debugCb(void* ref, const char* message) {
+}
+
 void colecoRun() {
     r800Execute(r800);
 }
@@ -464,7 +467,7 @@ int colecoCreate(Machine* machine,
 
     deviceManagerCreate();
     
-    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, breakpointCb, NULL);
+    r800 = r800Create(colecoMemRead, colecoMemWrite, ioPortRead, ioPortWrite, NULL, cpuTimeout, breakpointCb, debugCb, NULL);
 
     boardInit(&r800->systemTime);
     ioPortReset();

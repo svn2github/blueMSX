@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-27 10:40:40 $
+** $Date: 2005-05-01 20:30:49 $
 **
 ** Author: Daniel Vik
 **
@@ -83,6 +83,13 @@
 #define R800_H
 
 #include "MSXtypes.h"
+
+/*****************************************************
+** Configuration options
+*/
+#define ENABLE_BREAKPOINTS
+#define ENABLE_CALLSTACK
+#define ENABLE_ASMSX_DEBUG_COMMAND
 
 
 /*****************************************************
@@ -174,6 +181,7 @@ typedef UInt8 (*R800ReadCb)(void*, UInt16);
 typedef void  (*R800WriteCb)(void*, UInt16, UInt8);
 typedef void  (*R800PatchCb)(void*, CpuRegs*);
 typedef void  (*R800BreakptCb)(void* ref, UInt16);
+typedef void  (*R800DebugCb)(void* ref, const char* message);
 typedef void  (*R800TimerCb)(void*);
 
 
@@ -220,8 +228,6 @@ typedef struct
     int           terminate;        /* Termination flag                */
     SystemTime    timeout;          /* User scheduled timeout          */
 
-    int           breakpointCount;  /* Number of breakpoints set       */
-
     R800ReadCb    readMemory;       /* Callback functions for reading  */
     R800WriteCb   writeMemory;      /* and writing memory and IO ports */
     R800ReadCb    readIoPort;
@@ -229,13 +235,20 @@ typedef struct
     R800PatchCb   patch;
     R800TimerCb   timerCb;
     R800BreakptCb breakpointCb;
+    R800DebugCb   debugCb;
     void*         ref;              /* User defined pointer which is   */
                                     /* passed to the callbacks         */
 
+#ifdef ENABLE_CALLSTACK
     UInt32        callstackSize;    /* Nr of entries in the callstack  */
                                     /* only last 256 entries are stored*/
     UInt16        callstack[256];   /* Callstack buffer                */
+#endif
+
+#ifdef ENABLE_BREAKPOINTS
+    int           breakpointCount;  /* Number of breakpoints set       */
     char          breakpoints[0x10000];
+#endif
 } R800;
 
 
@@ -264,7 +277,8 @@ typedef struct
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
-                 R800BreakptCb breakpointCb, void* ref);
+                 R800BreakptCb bpCb,    R800DebugCb debugCb,
+                 void* ref);
 
 /************************************************************************
 ** r800Destroy

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-02-28 00:53:35 $
+** $Date: 2005-05-01 20:30:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -458,6 +458,9 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
+static void debugCb(void* ref, const char* message) {
+}
+
 void sviRun() {
     r800Execute(r800);
 }
@@ -564,7 +567,7 @@ int sviCreate(Machine* machine,
     deviceManagerCreate();
 
 //    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, NULL);
-    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, NULL);
+    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, debugCb, NULL);
 
     boardInit(&r800->systemTime);
     ioPortReset();

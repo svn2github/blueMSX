@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-27 10:40:40 $
+** $Date: 2005-05-01 20:30:49 $
 **
 ** Author: Daniel Vik
 **
@@ -394,7 +394,9 @@ static void CALL(R800* r800) {
     addr.B.l = readOpcode(r800, r800->regs.PC.W++);
     addr.B.h = readOpcode(r800, r800->regs.PC.W++);
     delayCall(r800);
+#ifdef ENABLE_CALLSTACK
     r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
     writeMem(r800, --r800->regs.SP.W, r800->regs.PC.B.h);
     writeMem(r800, --r800->regs.SP.W, r800->regs.PC.B.l);
     r800->regs.PC.W = addr.W;
@@ -414,9 +416,11 @@ static void RET(R800* r800) {
     addr.B.h = readMem(r800, r800->regs.SP.W++);
     r800->regs.PC.W = addr.W;
     r800->regs.SH.W = addr.W;
+#ifdef ENABLE_CALLSTACK
     if (r800->callstack[(r800->callstackSize - 1) & 0xff] == addr.W) {
         r800->callstackSize--;
     }
+#endif
 }
 
 static void PUSH(R800* r800, UInt16* reg) {
@@ -433,7 +437,9 @@ static void POP(R800* r800, UInt16* reg) {
 }
 
 static void RST(R800* r800, UInt16 vector) {
+#ifdef ENABLE_CALLSTACK
     r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
     PUSH(r800, &r800->regs.PC.W);
     r800->regs.PC.W = vector;
     r800->regs.SH.W = vector;
@@ -826,6 +832,37 @@ static void ld_b_a(R800* r800) {
 }
 
 static void ld_b_b(R800* r800) { 
+#ifdef ENABLE_ASMSX_DEBUG_COMMAND
+    char debugString[256];
+    UInt16 addr = r800->regs.PC.W;
+    UInt16 end;
+    char* ptr = debugString;
+
+    if (r800->readMemory(r800->ref, addr++) != 24) {
+        return;
+    }
+    end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
+    if (end < addr + 6 || end - addr > 255) {
+        return;
+    }
+    addr++;
+
+    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
+        r800->readMemory(r800->ref, addr + 1) != 100 || 
+        r800->readMemory(r800->ref, addr + 2) != 0   || 
+        r800->readMemory(r800->ref, addr + 3) != 0) 
+    {
+        return;
+    }
+    addr += 4;
+    
+    while (addr < end) {
+        *ptr = (char)r800->readMemory(r800->ref, addr++);
+    }
+    *ptr = 0;
+
+    r800->debugCb(r800->ref, debugString);
+#endif
 }
 
 static void ld_b_c(R800* r800) { 
@@ -5463,6 +5500,9 @@ static void  timerCbDummy(void* ref) {
 static void breakpointCbDummy(void* ref, UInt16 pc) {
 }
 
+static void debugCbDummy(void* ref, const char* message) {
+}
+
 static void r800InitTables() {
     int i;
 
@@ -5618,7 +5658,8 @@ static void r800SwitchCpu(R800* r800) {
 R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
-                 R800BreakptCb breakpointCb, void* ref)
+                 R800BreakptCb bpCb,    R800DebugCb debugCb,
+                 void* ref)
 {
     R800* r800 = calloc(1, sizeof(R800));
     r800->readMemory  = readMemory  ? readMemory  : readMemoryDummy;
@@ -5627,7 +5668,8 @@ R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
     r800->writeIoPort = writeIoPort ? writeIoPort : writeIoPortDummy;
     r800->patch       = patch       ? patch       : patchDummy;
     r800->timerCb     = timerCb     ? timerCb     : timerCbDummy;
-    r800->breakpointCb= breakpointCb? breakpointCb: breakpointCbDummy;
+    r800->breakpointCb= bpCb        ? bpCb        : breakpointCbDummy;
+    r800->debugCb     = debugCb     ? debugCb     : debugCbDummy;
     r800->ref         = ref;
 
     r800->frequencyZ80  = 3579545;
@@ -5774,18 +5816,22 @@ void r800SetTimeoutAt(R800* r800, SystemTime time)
 
 void r800SetBreakpoint(R800* r800, UInt16 address)
 {
+#ifdef ENABLE_BREAKPOINTS
     if (r800->breakpoints[address] == 0) {
         r800->breakpoints[address] = 1;
         r800->breakpointCount++;
     }
+#endif
 }
 
 void r800ClearBreakpoint(R800* r800, UInt16 address)
 {
+#ifdef ENABLE_BREAKPOINTS
     if (r800->breakpoints[address] != 0) {
         r800->breakpointCount--;
         r800->breakpoints[address] = 0;
     }
+#endif
 }
 
 void r800Execute(R800* r800) {
@@ -5812,6 +5858,7 @@ void r800Execute(R800* r800) {
             }
         }
 
+#ifdef ENABLE_BREAKPOINTS
         if (r800->breakpointCount > 0) {
             if (r800->breakpoints[r800->regs.PC.W]) {
                 if (r800->breakpointCb != NULL) {
@@ -5822,7 +5869,7 @@ void r800Execute(R800* r800) {
                 }
             }
         }
-
+#endif
         executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
         if (!r800->regs.halt) { 
@@ -5842,7 +5889,9 @@ void r800Execute(R800* r800) {
         /* If it is NMI... */
         if (r800->nmiState == INT_EDGE) {
             r800->nmiState = INT_HIGH;
+#ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.iff2 = r800->regs.iff1;
@@ -5869,7 +5918,9 @@ void r800Execute(R800* r800) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+#ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
@@ -5899,6 +5950,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
             }
         }
 
+#ifdef ENABLE_BREAKPOINTS
         if (r800->breakpointCount > 0) {
             if (r800->breakpoints[r800->regs.PC.W]) {
                 if (r800->breakpointCb != NULL) {
@@ -5906,6 +5958,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
                 }
             }
         }
+#endif
 
         executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
@@ -5926,7 +5979,9 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
         /* If it is NMI... */
         if (r800->nmiState == INT_EDGE) {
             r800->nmiState = INT_HIGH;
+#ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.iff2 = r800->regs.iff1;
@@ -5953,7 +6008,9 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+#ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
@@ -5977,6 +6034,7 @@ void r800ExecuteInstruction(R800* r800) {
         }
     }
 
+#ifdef ENABLE_BREAKPOINTS
     if (r800->breakpointCount > 0) {
         if (r800->breakpoints[r800->regs.PC.W]) {
             if (r800->breakpointCb != NULL) {
@@ -5984,6 +6042,7 @@ void r800ExecuteInstruction(R800* r800) {
             }
         }
     }
+#endif
 
     executeInstruction(r800, readOpcode(r800, r800->regs.PC.W++));
 
@@ -6004,7 +6063,9 @@ void r800ExecuteInstruction(R800* r800) {
     /* If it is NMI... */
     if (r800->nmiState == INT_EDGE) {
         r800->nmiState = INT_HIGH;
+#ifdef ENABLE_CALLSTACK
         r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
         r800->regs.iff2 = r800->regs.iff1;
@@ -6031,7 +6092,9 @@ void r800ExecuteInstruction(R800* r800) {
 
     case 2:
         address = r800->dataBus | ((Int16)r800->regs.I << 8);
+#ifdef ENABLE_CALLSTACK
         r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
+#endif
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
         r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);

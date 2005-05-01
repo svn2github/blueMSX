@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-01 20:30:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -754,6 +754,9 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
+static void debugCb(void* ref, const char* message) {
+}
+
 void msxRun() {
 //    testI8254();
     r800Execute(r800);
@@ -874,7 +877,7 @@ int msxCreate(Machine* machine,
 
     deviceManagerCreate();
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, NULL);
+    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, debugCb, NULL);
 
     boardInit(&r800->systemTime);
 
