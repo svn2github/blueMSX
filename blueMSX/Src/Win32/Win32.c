@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2005-04-30 20:56:42 $
+** $Date: 2005-05-01 19:10:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <CommCtrl.h>
+#include <shlobj.h> 
 
 #include "Win32FileTypes.h"
 #include "Win32ThemeClassic.h"
@@ -2082,6 +2083,8 @@ void setDefaultPath() {
     char buffer[512];  
     char buffer2[512];
     char rootDir[512];
+    int readOnlyDir;
+    DWORD dirattr; 
     FILE* file;
     char* ptr;
 
@@ -2096,16 +2099,38 @@ void setDefaultPath() {
     sprintf(buffer, "%s\\Tools", st.pCurDir);
     toolLoadAll(buffer);
 
-    // Get Root directory
-    file = fopen("wrtest", "w");
-    if (file != NULL) {
+    readOnlyDir = 0;
+
+    // attribute check first 
+    // ( check blueMSX run on the CD-ROM ) 
+    dirattr = GetFileAttributes(buffer); 
+    if((dirattr == -1) || (dirattr & FILE_ATTRIBUTE_READONLY)){ 
+        readOnlyDir = 1; 
+    }else{ 
+        // Test if current directory is read only 
+        // ( check removable disk write protected ) 
+        // note: this check with Dialog warning 
+        file = fopen("wrtest", "w"); 
+        readOnlyDir = file == NULL; 
+        if (file != NULL) { 
+            fclose(file); 
+            DeleteFile("wrtest"); // Delete test file 
+        } 
+    }
+
+    if (!readOnlyDir) {
         GetCurrentDirectory(MAX_PATH - 1, rootDir); 
-        fclose(file);
     }
     else {
-        chdir("C:\\");
-        mkdir("C:\\blueMSX Temporary Files");
-        chdir("C:\\blueMSX Temporary Files");
+        // Get user's My Documents folder 
+        LPITEMIDLIST Root; 
+        SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &Root); 
+        SHGetPathFromIDList(Root, buffer2); 
+
+        chdir(buffer2); 
+        sprintf(buffer, "%s\\blueMSX Temporary Files", buffer2); 
+        mkdir(buffer); 
+        chdir(buffer); 
 
         GetCurrentDirectory(MAX_PATH - 1, rootDir); 
         SetCurrentDirectory(st.pCurDir);
@@ -2175,7 +2200,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     MSG msg;
     int i;
     HINSTANCE kbdLockInst;
-
+    
 #ifdef _CONSOLE
     for (i = 1; i < argc; i++) {
         strcat(szLine, argv[i]);
