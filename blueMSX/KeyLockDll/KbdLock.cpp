@@ -15,6 +15,8 @@ const int KILL_WINKEY =  0x0001;
 const int KILL_CTRLESC = 0x0002;
 const int KILL_COMBOS =  0x0004;
 const int KILL_CONTEXT = 0x0008;
+const int KILL_CONVERT = 0x0010; // Add JAPANESE special key remove function 
+
 
 
 LRESULT CALLBACK Msg_HookProc(int iCode, WPARAM wParam, LPARAM lParam);
@@ -70,6 +72,15 @@ LRESULT CALLBACK Key_HookProc(int iCode, WPARAM wParam, LPARAM lParam)
         }
     }
 
+    // Add JAPANESE special key remove function 
+    if((wParam == VK_NONCONVERT || // Henkan 
+        wParam == VK_CONVERT || // MuHenkan 
+        wParam == VK_OEM_COPY) // katakana/Hiragana 
+        && (g_iFlags & KILL_CONVERT)) 
+    { 
+        return 1; 
+    } 
+
     return CallNextHookEx(g_hKeyHook, iCode, wParam, lParam);
 }
 
@@ -104,8 +115,8 @@ extern "C" __declspec(dllexport) void Kill(int iFlags)
 
 extern "C" __declspec(dllexport) void enable()
 {
-    g_iFlags = 0x0f;
-
+    g_iFlags = 0x1f; // Add JAPANESE special key remove function
+    
     if (!initialized) {
         HINSTANCE hInst = GetModuleHandle("kbdlock.dll");
         g_hMsgHook = SetWindowsHookEx(WH_GETMESSAGE, (HOOKPROC)Msg_HookProc, hInst, 0);
