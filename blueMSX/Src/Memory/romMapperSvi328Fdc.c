@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Fdc.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-05-01 09:26:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 #include "romMapperSvi328Fdc.h"
 #include "WD2793.h"
-#include "Led.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
@@ -116,17 +115,18 @@ static void writeIo(Svi328Fdc* rm, UInt16 ioPort, UInt8 value)
             break;
         case 0x34:
             rm->drvSelect = value & 0x3f;
-            ledSetFdd1(value & 0x01 ? 1 : 0);
-            ledSetFdd2(value & 0x02 ? 1 : 0);
             switch (value & 3) {
                 case 1:
                     wd2793SetDrive(rm->fdc, 0);
+                    wd2793SetMotor(rm->fdc, 1);
                     break;
                 case 2:
                     wd2793SetDrive(rm->fdc, 1);
+                    wd2793SetMotor(rm->fdc, 1);
                     break;
                 default:
                     wd2793SetDrive(rm->fdc, -1);
+                    wd2793SetMotor(rm->fdc, 0);
             }
             break;
         case 0x38:

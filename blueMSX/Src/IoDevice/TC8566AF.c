@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-06 20:15:57 $
+** $Date: 2005-05-01 09:26:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,9 +32,13 @@
 #include "SaveState.h"
 #include "Disk.h"
 #include "Led.h"
+#include "FdcAudio.h"
 #include <stdlib.h>
 #include <string.h>
+
+
 extern int diskOffset;
+
 struct TC8566AF {
     UInt8 drive;
 
@@ -60,6 +64,8 @@ struct TC8566AF {
     UInt32 dataTransferTime;
 
     UInt8 sectorBuf[512];
+
+    FdcAudio* fdcAudio;
 };
 
 #define CMD_UNKNOWN                 0
@@ -285,6 +291,7 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                 int sectorSize;
         		int rv = diskReadSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
                                         tc->currentTrack, 0, &sectorSize);
+                fdcAudioSetReadWrite(tc->fdcAudio);
                 boardSetFdcActive();
                 if (!rv) {
                     tc->status0 |= ST0_IC0;
@@ -406,6 +413,9 @@ static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
     		if (tc->sectorOffset == 512) {
                 diskWriteSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
                                 tc->currentTrack, 0);
+
+                fdcAudioSetReadWrite(tc->fdcAudio);
+
                 boardSetFdcActive();
 
                 tc->phase       = PHASE_RESULT;
@@ -444,6 +454,8 @@ TC8566AF* tc8566afCreate()
 {
     TC8566AF* tc = malloc(sizeof(TC8566AF));
 
+    tc->fdcAudio = fdcAudioCreate(FA_PANASONIC);
+
     tc8566afReset(tc);
 
     return tc;
@@ -451,17 +463,22 @@ TC8566AF* tc8566afCreate()
 
 void tc8566afDestroy(TC8566AF* tc)
 {
+    fdcAudioDestroy(tc->fdcAudio);
     free(tc);
 }
 
 void tc8566afReset(TC8566AF* tc)
 {
+    FdcAudio* fdcAudio = tc->fdcAudio;
     memset(tc, 0, sizeof(TC8566AF));
+    tc->fdcAudio = fdcAudio;
 
     tc->mainStatus = STM_NDM | STM_RQM;
 
     ledSetFdd1(0); /* 10:10 2004/10/09 FDD LED PATCH */ 
     ledSetFdd2(0); /* 10:10 2004/10/09 FDD LED PATCH */ 
+
+    fdcAudioReset(tc->fdcAudio);
 }
 
 UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
@@ -496,8 +513,11 @@ void tc8566afWriteRegister(TC8566AF* tc, UInt8 reg, UInt8 value)
 {
     switch (reg) {
 	case 2:
+        fdcAudioSetMotor(tc->fdcAudio, ((value & 0x10) && diskEnabled(0)) || ((value & 0x20) && diskEnabled(1)));
+
         ledSetFdd1((value & 0x10) && diskEnabled(0)); /* 10:10 2004/10/09 FDD LED PATCH */ 
         ledSetFdd2((value & 0x20) && diskEnabled(1)); /* 10:10 2004/10/09 FDD LED PATCH */ 
+
         tc->drive = value & 0x03;
         break;
 

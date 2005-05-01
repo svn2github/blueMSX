@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-01 00:05:18 $
+** $Date: 2005-05-01 09:26:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,10 +45,13 @@ struct SamplePlayer
     Int32 handle;
 
     Int32  enabled;
-    const Int16* sampleBuffer;
-    UInt32 sampleCount;
+    const Int16* attackBuffer;
+    UInt32 attackBufferSize;
+    const Int16* loopBuffer;
+    UInt32 loopBufferSize;
     int index;
-    int loop;
+    int playAttack;
+    int stopCount;
     Int32  ctrlVolume;
     Int32  daVolume;
 
@@ -82,17 +85,41 @@ void samplePlayerDestroy(SamplePlayer* samplePlayer)
 }
 
 
+void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops)
+{
+    samplePlayer->stopCount = loops;
+}
+
+int samplePlayerIsIdle(SamplePlayer* samplePlayer)
+{
+    return !samplePlayer->enabled;
+}
+
+int samplePlayerIsLooping(SamplePlayer* samplePlayer)
+{
+    return !samplePlayer->playAttack;
+}
+
 void samplePlayerWrite(SamplePlayer* samplePlayer, 
-                       const Int16* sampleBuffer, UInt32 sampleCount, int loop)
+                       const Int16* attackBuffer, UInt32 attackBufferSize, 
+                       const Int16* loopBuffer, UInt32 loopBufferSize)
 {
     mixerSync(samplePlayer->mixer);
 
-    samplePlayer->enabled = sampleBuffer != NULL && sampleCount > 0;
+    if (attackBuffer == NULL) {
+        attackBuffer = loopBuffer;
+        attackBufferSize = loopBufferSize;
+    }
+
+    samplePlayer->enabled = attackBuffer != NULL && attackBufferSize > 0;
     if (samplePlayer->enabled) {
-        samplePlayer->sampleBuffer = sampleBuffer;
-        samplePlayer->sampleCount = sampleCount;
-        samplePlayer->loop = loop;
+        samplePlayer->attackBuffer = attackBuffer;
+        samplePlayer->attackBufferSize = attackBufferSize;
+        samplePlayer->loopBuffer = loopBuffer;
+        samplePlayer->loopBufferSize = loopBufferSize;
+        samplePlayer->playAttack = 1;
         samplePlayer->index = 0;
+        samplePlayer->stopCount = loopBuffer != NULL ? 1 << 30 : 0;
     }
 }
 
@@ -105,13 +132,21 @@ static Int32* samplePlayerSync(SamplePlayer* samplePlayer, UInt32 count)
     }
 
     for (index = 0; index < count; index++) {
-        Int32 sample = samplePlayer->enabled * samplePlayer->sampleBuffer[samplePlayer->index];
-        if (++samplePlayer->index == samplePlayer->sampleCount) {
-            if (samplePlayer->loop) {
+        Int32 sample = 0;
+        if (samplePlayer->playAttack) {
+            sample = samplePlayer->attackBuffer[samplePlayer->index];
+            if (++samplePlayer->index == samplePlayer->attackBufferSize) {
                 samplePlayer->index = 0;
+                samplePlayer->playAttack = 0;
             }
-            else {
-                samplePlayer->enabled = 0;
+        }
+        else if (samplePlayer->stopCount > 0) {
+            sample = samplePlayer->loopBuffer[samplePlayer->index];
+            if (++samplePlayer->index == samplePlayer->loopBufferSize) {
+                samplePlayer->index = 0;
+                if (--samplePlayer->stopCount <= 0) {
+                    samplePlayer->enabled = 0;
+                }
             }
         }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-05-01 00:05:18 $
+** $Date: 2005-05-01 09:26:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -332,6 +332,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "enable-psg"))               return t | THEME_TRIGGER_IMG_PSG;
     if (0 == strcmp(s, "enable-scc"))               return t | THEME_TRIGGER_IMG_SCC;
     if (0 == strcmp(s, "enable-pcm"))               return t | THEME_TRIGGER_IMG_PCM;
+    if (0 == strcmp(s, "enable-io"))                return t | THEME_TRIGGER_IMG_IO;
     if (0 == strcmp(s, "enable-master"))            return t | THEME_TRIGGER_IMG_MASTER;
     if (0 == strcmp(s, "enable-stereo"))            return t | THEME_TRIGGER_IMG_STEREO;
     
@@ -389,6 +390,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "level-master"))            return t | THEME_TRIGGER_LEVEL_MASTER;
     if (0 == strcmp(s, "level-psg"))               return t | THEME_TRIGGER_LEVEL_PSG;
     if (0 == strcmp(s, "level-pcm"))               return t | THEME_TRIGGER_LEVEL_PCM;
+    if (0 == strcmp(s, "level-io"))                return t | THEME_TRIGGER_LEVEL_IO;
     if (0 == strcmp(s, "level-scc"))               return t | THEME_TRIGGER_LEVEL_SCC;
     if (0 == strcmp(s, "level-keyboard"))          return t | THEME_TRIGGER_LEVEL_KEYBOARD;
     if (0 == strcmp(s, "level-msxmusic"))          return t | THEME_TRIGGER_LEVEL_MSXMUSIC;
@@ -396,6 +398,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "level-moonsound"))         return t | THEME_TRIGGER_LEVEL_MOONSOUND;
     if (0 == strcmp(s, "pan-psg"))                 return t | THEME_TRIGGER_PAN_PSG;
     if (0 == strcmp(s, "pan-pcm"))                 return t | THEME_TRIGGER_PAN_PCM;
+    if (0 == strcmp(s, "pan-io"))                  return t | THEME_TRIGGER_PAN_IO;
     if (0 == strcmp(s, "pan-scc"))                 return t | THEME_TRIGGER_PAN_SCC;
     if (0 == strcmp(s, "pan-keyboard"))            return t | THEME_TRIGGER_PAN_KEYBOARD;
     if (0 == strcmp(s, "pan-msxmusic"))            return t | THEME_TRIGGER_PAN_MSXMUSIC;

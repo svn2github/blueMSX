@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-06 20:15:58 $
+** $Date: 2005-05-01 09:26:27 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -34,6 +34,8 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "Disk.h"
+#include "Led.h"
+#include "FdcAudio.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -60,6 +62,7 @@ struct WD2793 {
     UInt8  diskTracks[4];
     int    diskSide;
 	int    diskDensity;
+    FdcAudio* fdcAudio;
     UInt8  sectorBuf[512];
 };
 
@@ -105,6 +108,7 @@ static void wd2793ReadSector(WD2793* wd)
 
     if (wd->drive >= 0) {
 		rv = diskReadSector(wd->drive, wd->sectorBuf, wd->regSector, wd->diskSide, wd->diskTrack, wd->diskDensity, &sectorSize);
+        fdcAudioSetReadWrite(wd->fdcAudio);
         boardSetFdcActive();
     }
     if (!rv || wd->diskTrack != wd->regTrack) {
@@ -306,6 +310,26 @@ void wd2793SetDrive(WD2793* wd, int drive)
     wd->drive = drive;
 }
 
+void wd2793SetMotor(WD2793* wd, int motorOn)
+{
+    switch (wd->drive) {
+    case 0:
+        ledSetFdd1(motorOn);
+        ledSetFdd2(0);
+        break;
+    case 1:
+        ledSetFdd1(0);
+        ledSetFdd2(motorOn);
+        break;
+    default:
+        ledSetFdd1(0);
+        ledSetFdd2(0);
+        break;
+    }
+
+    fdcAudioSetMotor(wd->fdcAudio, diskEnabled(wd->drive));
+}
+
 int wd2793DiskChanged(WD2793* wd, int drive)
 {
     return diskChanged(drive);
@@ -412,6 +436,7 @@ void wd2793SetDataReg(WD2793* wd, UInt8 value)
             if (wd->drive >= 0) {
                 wd->dataRequsetTime = boardSystemTime();
                 rv = diskWriteSector(wd->drive, wd->sectorBuf, wd->regSector, wd->diskSide, wd->diskTrack, wd->diskDensity);
+                fdcAudioSetReadWrite(wd->fdcAudio);
                 boardSetFdcActive();
             }
 			wd->sectorOffset  = 0;
@@ -538,12 +563,18 @@ void wd2793Reset(WD2793* wd)
     wd->diskTracks[3]   = 0;
     wd->diskSide        = 0;
     memset(wd->sectorBuf, 0, sizeof(wd->sectorBuf));
+
+    ledSetFdd1(0);
+    ledSetFdd2(0);
+
+    fdcAudioReset(wd->fdcAudio);
 }
 
 WD2793* wd2793Create()
 {
     WD2793* wd = malloc(sizeof(WD2793));
 
+    wd->fdcAudio = fdcAudioCreate(FA_WESTERN_DIGITAL);
     wd2793Reset(wd);
 
     return wd;
@@ -551,6 +582,7 @@ WD2793* wd2793Create()
 
 void wd2793Destroy(WD2793* wd)
 {
+    fdcAudioDestroy(wd->fdcAudio);
     free(wd);
 }
 

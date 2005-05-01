@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPhilipsFdc.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-05-01 09:26:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 #include "romMapperPhilipsFdc.h"
 #include "WD2793.h"
-#include "Led.h"
 #include "MediaDb.h"
 #include "Disk.h"
 #include "SlotManager.h"
@@ -157,18 +156,15 @@ static void write(RomMapperPhilipsFdc* rm, UInt16 address, UInt8 value)
         case 0:
 		case 2:
 			wd2793SetDrive(rm->fdc, 0);
-            if (diskEnabled(0)) ledSetFdd1(value & 0x04);
-            ledSetFdd2(0);
+            wd2793SetMotor(rm->fdc, value & 0x04);
 			break;
 		case 1:
 			wd2793SetDrive(rm->fdc, 1);
-            ledSetFdd1(0);
-            if (diskEnabled(1)) ledSetFdd2(value & 0x04);
+            wd2793SetMotor(rm->fdc, value & 0x04);
 			break;
 		default:
 			wd2793SetDrive(rm->fdc, -1);
-            ledSetFdd1(0);
-            ledSetFdd2(0);
+            wd2793SetMotor(rm->fdc, 0);
 		}
 		break;
 	}
