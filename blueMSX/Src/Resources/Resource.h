@@ -310,6 +310,7 @@
 #define IDC_VOLUME5                     1315
 #define IDC_VOLUME6                     1316
 #define IDC_VOLUME7                     1317
+#define IDC_VOLUME8                     1318
 
 #define IDC_PAN1                        1331
 #define IDC_PAN2                        1332
@@ -318,6 +319,7 @@
 #define IDC_PAN5                        1335
 #define IDC_PAN6                        1336
 #define IDC_PAN7                        1337
+#define IDC_PAN8                        1338
 
 #define IDC_VOLENABLE1                  1351
 #define IDC_VOLENABLE2                  1352
@@ -326,7 +328,8 @@
 #define IDC_VOLENABLE5                  1355
 #define IDC_VOLENABLE6                  1356
 #define IDC_VOLENABLE7                  1357
-#define IDC_VOLENABLEMASTER             1358
+#define IDC_VOLENABLE8                  1358
+#define IDC_VOLENABLEMASTER             1359
 
 #define IDC_ENABLEMSXMUSIC              1360
 #define IDC_ENABLEMSXAUDIO              1361
