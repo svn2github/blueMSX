@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-05-01 20:30:46 $
+** $Date: 2005-05-02 21:42:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -754,7 +754,11 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
-static void debugCb(void* ref, const char* message) {
+
+extern void debuggerTrace(const char* str);
+static void debugCb(void* ref, const char* message) 
+{
+    debuggerTrace(message);
 }
 
 void msxRun() {

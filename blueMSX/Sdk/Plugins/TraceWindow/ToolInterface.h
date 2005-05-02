@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/ToolInterface.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-05-02 21:42:34 $
 **

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-03-09 21:43:55 $
+** $Date: 2005-05-02 21:42:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ struct Debugger {
     DebuggerEvent onEmulatorPause;
     DebuggerEvent onEmulatorResume;
     DebuggerEvent onEmulatorReset;
+    DebuggerTrace onDebugTrace;
     void* ref;
 };
 
@@ -63,6 +64,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorPause,
                          DebuggerEvent onEmulatorResume,
                          DebuggerEvent onEmulatorReset,
+                         DebuggerTrace onDebugTrace,
                          void* ref)
 {
     Debugger* debugger = malloc(sizeof(Debugger));
@@ -73,6 +75,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
     debugger->onEmulatorPause  = onEmulatorPause  ? onEmulatorPause  : onDefault;
     debugger->onEmulatorResume = onEmulatorResume ? onEmulatorResume : onDefault;
     debugger->onEmulatorReset  = onEmulatorReset  ? onEmulatorReset  : onDefault;
+    debugger->onDebugTrace     = onDebugTrace     ? onDebugTrace     : onDefault;
     debugger->ref = ref;
 
     for (i = 0; i < MAX_DEBUGGERS; i++) {
@@ -161,6 +164,17 @@ void debuggerNotifyEmulatorReset()
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
             debuggerList[i]->onEmulatorReset(debuggerList[i]->ref);
+        }
+    }
+}
+
+void debuggerTrace(const char* str)
+{
+    int i;
+
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onDebugTrace(debuggerList[i]->ref);
         }
     }
 }

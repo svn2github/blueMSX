@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-05-01 20:30:49 $
+** $Date: 2005-05-02 21:42:37 $
 **
 ** Author: Daniel Vik
 **
@@ -857,8 +857,13 @@ static void ld_b_b(R800* r800) {
     addr += 4;
     
     while (addr < end) {
-        *ptr = (char)r800->readMemory(r800->ref, addr++);
+        *ptr++ = (char)r800->readMemory(r800->ref, addr++);
     }
+
+    if (ptr > debugString && ptr[-1] != 'n') {
+        *ptr++ = '\n';
+    }
+
     *ptr = 0;
 
     r800->debugCb(r800->ref, debugString);

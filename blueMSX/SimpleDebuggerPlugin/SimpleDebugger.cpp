@@ -803,6 +803,10 @@ void OnEmulatorResume() {
 void OnEmulatorReset() {
 }
 
+void OnEmulatorTrace(const char* message)
+{
+}
+
 const char* OnGetName() {
     return "Debugger";
 }

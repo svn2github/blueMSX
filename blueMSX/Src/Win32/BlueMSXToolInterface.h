@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-03-09 21:43:57 $
+** $Date: 2005-05-02 21:42:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,6 +172,7 @@ typedef struct {
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);
 typedef void (__stdcall *NotifyFn)();
+typedef void (__stdcall *TraceFn)(const char*);
 
 __declspec(dllexport) int  __stdcall Create10(Interface*, char* name, int length);
 __declspec(dllexport) void __stdcall Show();
@@ -180,6 +181,7 @@ __declspec(dllexport) void __stdcall NotifyEmulatorStop();
 __declspec(dllexport) void __stdcall NotifyEmulatorPause();
 __declspec(dllexport) void __stdcall NotifyEmulatorResume();
 __declspec(dllexport) void __stdcall NotifyEmulatorReset();
+__declspec(dllexport) void __stdcall EmulatorTrace(const char* message);
 
 #ifdef __cplusplus
 }

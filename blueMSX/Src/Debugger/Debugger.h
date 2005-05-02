@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-03-09 21:43:55 $
+** $Date: 2005-05-02 21:42:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ typedef enum {
 
 
 typedef void (*DebuggerEvent)();
+typedef void (*DebuggerTrace)();
 
 typedef enum { DBG_STOPPED, DBG_PAUSED, DBG_RUNNING } DbgState;
 
@@ -95,6 +96,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorPause,
                          DebuggerEvent onEmulatorResume,
                          DebuggerEvent onEmulatorReset,
+                         DebuggerTrace onDebugTrace,
                          void* ref);
 
 void debuggerDestroy(Debugger* debugger);
@@ -147,5 +149,6 @@ void debuggerNotifyEmulatorStop();
 void debuggerNotifyEmulatorPause();
 void debuggerNotifyEmulatorResume();
 void debuggerNotifyEmulatorReset();
+void debuggerTrace(const char* str);
 
 #endif /*DEBUGGER_H*/

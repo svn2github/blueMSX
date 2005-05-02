@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-03-24 20:40:10 $
+** $Date: 2005-05-02 21:42:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ struct ToolInfo {
         NotifyFn onEmulatorPause;
         NotifyFn onEmulatorResume;
         NotifyFn onEmulatorReset;
+        TraceFn  onEmulatorTrace;
     } callbacks;
 };
 
@@ -87,6 +88,12 @@ static void onEmulatorResume(ToolInfo* toolInfo) {
 static void onEmulatorReset(ToolInfo* toolInfo) {
     if (!isUpdating && toolInfo->callbacks.onEmulatorReset != NULL) {
         toolInfo->callbacks.onEmulatorReset();
+    }
+}
+
+static void onEmulatorTrace(ToolInfo* toolInfo, const char* str) {
+    if (toolInfo->callbacks.onEmulatorTrace != NULL) {
+        toolInfo->callbacks.onEmulatorTrace(str);
     }
 }
 
@@ -280,6 +287,7 @@ void toolLoadAll(const char* path)
             NotifyFn onPause  = (NotifyFn)GetProcAddress(lib, (LPCSTR)6);
             NotifyFn onResume = (NotifyFn)GetProcAddress(lib, (LPCSTR)7);
             NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
+            TraceFn  onTrace  = (TraceFn) GetProcAddress(lib, (LPCSTR)9);
 
             if (create == NULL) {
                 FreeLibrary(lib);
@@ -299,7 +307,14 @@ void toolLoadAll(const char* path)
             toolInfo->callbacks.onEmulatorPause  = onPause;
             toolInfo->callbacks.onEmulatorResume = onResume;
             toolInfo->callbacks.onEmulatorReset  = onReset;
-            toolInfo->debugger = debuggerCreate(onEmulatorStart, onEmulatorStop, onEmulatorPause, onEmulatorResume, onEmulatorReset, toolInfo);
+            toolInfo->callbacks.onEmulatorTrace  = onTrace;
+            toolInfo->debugger = debuggerCreate(onStart  ? onEmulatorStart  : NULL, 
+                                                onStop   ? onEmulatorStop   : NULL, 
+                                                onPause  ? onEmulatorPause  : NULL, 
+                                                onResume ? onEmulatorResume : NULL, 
+                                                onReset  ? onEmulatorReset  : NULL, 
+                                                onTrace  ? onEmulatorTrace  : NULL, 
+                                                toolInfo);
             toolInfo->library = lib;
             strcpy(toolInfo->description, description);
 

@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Debugger"
-	ProjectGUID="{D8558D74-5C35-4D3E-8CD0-9477ACEDBC32}"
+	Name="TraceWindow"
+	ProjectGUID="{D8558D74-5C35-4D3E-8CD0-9477ACEDBC34}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -24,7 +24,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;WINDOWS"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\Debug/SimpleDebugger.pch"
+				PrecompiledHeaderFile=".\Debug/TraceWindow.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -36,16 +36,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ComCtl32.Lib "
-				OutputFile=".\Debug/SimpleDebugger.dll"
+				OutputFile=".\Debug/TraceWindow.dll"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				IgnoreAllDefaultLibraries="FALSE"
 				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\SimpleDebugger.def"
+				ModuleDefinitionFile=".\TraceWindow.def"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/SimpleDebugger.pdb"
+				ProgramDatabaseFile=".\Debug/TraceWindow.pdb"
 				SubSystem="2"
-				ImportLibrary=".\Debug/SimpleDebugger.lib"
+				ImportLibrary=".\Debug/TraceWindow.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -53,7 +53,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/KbdLock.tlb"
+				TypeLibraryName=".\Debug/TraceWindow.tlb"
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -93,7 +93,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\Release/SimpleDebugger.pch"
+				PrecompiledHeaderFile=".\Release/TraceWindow.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -109,9 +109,9 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreAllDefaultLibraries="FALSE"
-				ModuleDefinitionFile=".\SimpleDebugger.def"
+				ModuleDefinitionFile=".\TraceWindow.def"
 				SubSystem="2"
-				ImportLibrary=".\Release/SimpleDebugger.lib"
+				ImportLibrary=".\Release/TraceWindow.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -119,7 +119,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/KbdLock.tlb"
+				TypeLibraryName=".\Release/TraceWindow.tlb"
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -153,85 +153,19 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
-			RelativePath=".\Callstack.cpp">
-		</File>
-		<File
-			RelativePath=".\Callstack.h">
-		</File>
-		<File
-			RelativePath=".\CpuRegisters.cpp">
-		</File>
-		<File
-			RelativePath=".\CpuRegisters.h">
-		</File>
-		<File
-			RelativePath=".\DasmIcons.bmp">
-		</File>
-		<File
-			RelativePath=".\debugger.manifest">
-		</File>
-		<File
-			RelativePath=".\Disassembly.cpp">
-		</File>
-		<File
-			RelativePath=".\Disassembly.h">
-		</File>
-		<File
-			RelativePath=".\EditControls.cpp">
-		</File>
-		<File
-			RelativePath=".\EditControls.h">
-		</File>
-		<File
-			RelativePath=".\Memory.cpp">
-		</File>
-		<File
-			RelativePath=".\Memory.h">
+			RelativePath=".\TraceWindow.manifest">
 		</File>
 		<File
 			RelativePath=".\Resource.h">
 		</File>
 		<File
-			RelativePath=".\resrc1.h">
+			RelativePath=".\TraceWindow.cpp">
 		</File>
 		<File
-			RelativePath=".\SimpleDebugger.cpp">
+			RelativePath=".\TraceWindow.def">
 		</File>
 		<File
-			RelativePath=".\SimpleDebugger.def">
-		</File>
-		<File
-			RelativePath=".\SimpleDebugger.rc">
-		</File>
-		<File
-			RelativePath=".\Stack.cpp">
-		</File>
-		<File
-			RelativePath=".\Stack.h">
-		</File>
-		<File
-			RelativePath=".\StatusBar.cpp">
-		</File>
-		<File
-			RelativePath=".\StatusBar.h">
-		</File>
-		<File
-			RelativePath=".\SymbolInfo.cpp">
-		</File>
-		<File
-			RelativePath=".\SymbolInfo.h">
-		</File>
-		<File
-			RelativePath=".\Toolbar.bmp">
-		</File>
-		<File
-			RelativePath=".\ToolBar.cpp">
-		</File>
-		<File
-			RelativePath=".\ToolBar.h">
-		</File>
-		<File
-			RelativePath=".\ToolbarBg.bmp">
+			RelativePath=".\TraceWindow.rc">
 		</File>
 		<File
 			RelativePath=".\ToolDllMain.cpp">

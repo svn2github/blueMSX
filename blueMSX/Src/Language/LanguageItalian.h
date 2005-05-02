@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-15 22:02:38 $
+** $Date: 2005-05-02 21:42:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -575,6 +575,9 @@ void langInitItalian(LanguageStrings* ls)
     
     ls->propPorts               = "Porti";
     ls->propPortsNone           = "Nessuna";
+    
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
 };
 
 #endif
