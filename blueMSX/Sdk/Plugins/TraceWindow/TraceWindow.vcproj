@@ -105,7 +105,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ComCtl32.Lib "
-				OutputFile=".\Release/SimpleDebugger.dll"
+				OutputFile=".\Release/TraceWindow.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreAllDefaultLibraries="FALSE"
@@ -153,10 +153,13 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
-			RelativePath=".\TraceWindow.manifest">
+			RelativePath=".\Resource.h">
 		</File>
 		<File
-			RelativePath=".\Resource.h">
+			RelativePath=".\ToolDllMain.cpp">
+		</File>
+		<File
+			RelativePath=".\ToolInterface.h">
 		</File>
 		<File
 			RelativePath=".\TraceWindow.cpp">
@@ -165,13 +168,10 @@
 			RelativePath=".\TraceWindow.def">
 		</File>
 		<File
+			RelativePath=".\TraceWindow.manifest">
+		</File>
+		<File
 			RelativePath=".\TraceWindow.rc">
-		</File>
-		<File
-			RelativePath=".\ToolDllMain.cpp">
-		</File>
-		<File
-			RelativePath=".\ToolInterface.h">
 		</File>
 	</Files>
 	<Globals>

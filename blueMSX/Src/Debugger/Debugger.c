@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-05-02 21:42:36 $
+** $Date: 2005-05-03 05:23:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,7 +174,7 @@ void debuggerTrace(const char* str)
 
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onDebugTrace(debuggerList[i]->ref);
+            debuggerList[i]->onDebugTrace(debuggerList[i]->ref, str);
         }
     }
 }
