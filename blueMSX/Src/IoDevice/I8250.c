@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-04-28 18:31:52 $
+** $Date: 2005-05-04 18:00:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,15 +60,37 @@ typedef enum
 typedef enum { I8250REG_RBR, I8250REG_THR, I8250REG_DLL, I8250REG_IER, I8250REG_DLM, I8250REG_IIR,
                I8250REG_LCR, I8250REG_MCR, I8250REG_LSR, I8250REG_MSR, I8250REG_SCR } i8250Registers;
 
+struct I8250
+{
+    I8250Transmit transmit;
+    I8250Signal   signal;
+    I8250Set      setDataBits;
+    I8250Set      setStopBits;
+    I8250Set      setParity;
+    I8250Set      setRxReady;
+    I8250Set      setDtr;
+    I8250Set      setRts;
+    I8250Get      getDtr;
+    I8250Get      getRts;
+    void* ref;
+
+    UInt8 reg[11];
+
+    BoardTimer*      timerBaudRate;   
+    UInt32           timeBaudRate;
+};
 
 static int transmitDummy(void* ref, UInt8 value) {
     return 0;
 }
 static int signalDummy(void* ref) {
     return 0;
-}static void setDataBitsDummy(void* ref, int value) {
-}static void setStopBitsDummy(void* ref, int value) {
-}static void setParityDummy(void* ref, int value) {
+}
+static void setDataBitsDummy(void* ref, int value) {
+}
+static void setStopBitsDummy(void* ref, int value) {
+}
+static void setParityDummy(void* ref, int value) {
 }
 static void setRxReadyDummy(void* ref, int status) {
 }
@@ -85,7 +107,6 @@ static int getRtsDummy(void* ref) {
 
 #define I8250_RX_BUFFER_SIZE 256
 #define I8250_RX_BUFFER_MASK (I8250_RX_BUFFER_SIZE - 1)
-
 static UInt8 i8250RxBuffer[I8250_RX_BUFFER_SIZE];
 static UInt16 i8250RxBufferHead;
 static UInt16 i8250RxBufferTail;
@@ -132,23 +153,6 @@ static void i8250RxBufferClear(void)
     i8250RxBufferTail = 0;
     i8250RxBufferDataAvailable = 0;
 }
-
-struct I8250
-{
-    I8250Transmit transmit;
-    I8250Signal   signal;
-    I8250Set      setDataBits;
-    I8250Set      setStopBits;
-    I8250Set      setParity;
-    I8250Set      setRxReady;
-    I8250Set      setDtr;
-    I8250Set      setRts;
-    I8250Get      getDtr;
-    I8250Get      getRts;
-    void* ref;
-
-    UInt8 reg[11];
-};
 
 void i8250Receive(I8250* i8250, UInt8 value)
 {
@@ -259,20 +263,34 @@ void i8250Write(I8250* i8250, UInt16 port, UInt8 value)
 
 /* Counter for the buad rate generator */
 
-BoardTimer* i8250Timer;
-
-static void i8250CounterOnTimer(BoardTimer* i8250Timer, UInt32 time)
+static void i8250CounterOnTimer(I8250* i8250, UInt32 time)
 {
+    if (i8250RxBufferDataAvailable)
+    {
+        UInt8 value;
+
+        if (i8250RxBufferGetByte(&value))
+            i8250Receive(i8250, value);
+    }
+    boardTimerAdd(i8250->timerBaudRate, i8250->timeBaudRate);
 }
 
-static void i8250CounterDestroy(void)
+static void i8250CounterDestroy(I8250* i8250)
 {
-    boardTimerDestroy(i8250Timer);
+    boardTimerDestroy(i8250->timerBaudRate);
 }
 
-static void i8250CounterCreate(UInt32 frequency) 
+static void i8250CounterCreate(I8250* i8250, UInt32 frequency) 
 {
-    i8250Timer = boardTimerCreate(i8250CounterOnTimer, i8250Timer);
+    UInt16 divisor;
+
+    divisor = i8250->reg[I8250REG_DLM]<<8 | i8250->reg[I8250REG_DLL];
+    divisor = (divisor != 0) ? divisor : 1;
+
+    i8250->timerBaudRate = boardTimerCreate(i8250CounterOnTimer, i8250);
+    // Fixme: start + stop + parity bit
+    i8250->timeBaudRate = (frequency/16/divisor/10)*1000;
+    boardTimerAdd(i8250->timerBaudRate, i8250->timeBaudRate);
 }
 
 void i8250SaveState(I8250* uart)
@@ -302,6 +320,7 @@ void i8250Reset(I8250* i8250)
 
 void i8250Destroy(I8250* uart) 
 {
+    i8250CounterDestroy(uart);
     free(uart);
 }
 
@@ -326,6 +345,8 @@ I8250* i8250Create(UInt32 frequency, I8250Transmit transmit,    I8250Signal   si
     i8250->getRts      = getRts      ? getRts      : getRtsDummy;
     
     i8250->ref = ref;
+    
+    i8250CounterCreate(i8250, frequency);
 
     return i8250;
 }
