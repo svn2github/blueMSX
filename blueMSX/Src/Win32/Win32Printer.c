@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-09 20:35:26 $
+** $Date: 2005-05-09 20:58:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -143,7 +143,7 @@ static void printerWrite(BYTE value)
         memset(szLineBuffer, 0, sizeof(szLineBuffer));
         nRow++;
         nLinePos = 0;
-        if (nRow == 80) { // Fix correct row number
+        if (nRow == 70) { // Fix correct row number
             EndPage(hdcPrn);
             nRow = 0;
             if (!(StartPage(hdcPrn) > 0))
@@ -172,7 +172,7 @@ static void printerWrite(BYTE value)
         memset(szLineBuffer, 0, sizeof(szLineBuffer));
         nRow++;
         nLinePos = 0;
-        if (nRow == 80) { // Fix correct row number
+        if (nRow == 70) { // Fix correct row number
             EndPage(hdcPrn);
             nRow = 0;
             if (!(StartPage(hdcPrn) > 0))
