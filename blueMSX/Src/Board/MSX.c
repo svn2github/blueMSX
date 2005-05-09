@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-05-02 21:42:34 $
+** $Date: 2005-05-09 20:35:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -269,9 +269,6 @@ static UInt8 readMisc(void* ref, UInt16 ioPort)
 
     case 0x05: 
         return 0;
-
-    case 0x90:
-        return 0xfd;
 
     case 0xa7:
         return switchGetPause() ? 1 : 0;
@@ -708,7 +705,6 @@ static int initMachine(Machine* machine,
     /* Register misc io ports */
     ioPortRegister(0x04, readMisc, NULL, NULL);
     ioPortRegister(0x05, readMisc, NULL, NULL);
-    ioPortRegister(0x90, readMisc, NULL, NULL);
     ioPortRegister(0xa7, readMisc, writeMisc, NULL); // FIXME - Turbo R pause
     ioPortRegister(0xe8, readMisc, NULL, NULL);
     ioPortRegister(0xe9, readMisc, NULL, NULL);

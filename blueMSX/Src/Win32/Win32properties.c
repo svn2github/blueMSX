@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-05-09 18:01:25 $
+** $Date: 2005-05-09 20:35:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2095,7 +2095,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
     if (lpPrinterInfo == NULL)
         return FALSE;
 
-    if (!EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 2, (LPBYTE)lpPrinterInfo, dwNeeded, &dwNeeded, &dwReturned))
+    if (!EnumPrinters(PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS, NULL, 2, (LPBYTE)lpPrinterInfo, dwNeeded, &dwNeeded, &dwReturned))
         return FALSE;
 
     // Add static members
@@ -2110,8 +2110,8 @@ static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
         if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName)) {
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
-            if (pProperties->ports.Lpt.type == P_LPT_HOST && 0 == strcmp(pProperties->ports.Lpt.name, sBuf)) 
-                SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
+            if (pProperties->ports.Lpt.type == P_LPT_HOST && 0 == strcmp(pProperties->ports.Lpt.name, lpPrinterInfo[dwItem].pPrinterName)) 
+                SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + dwItem, 0);
         }
     }
 

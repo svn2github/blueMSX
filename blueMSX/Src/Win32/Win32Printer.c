@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-05-09 18:01:23 $
+** $Date: 2005-05-09 20:35:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,7 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 static HDC hdcPrn;
 static TEXTMETRIC tm;
 static BOOL bPrinterInitialized = FALSE;
-static TCHAR szLineBuffer[80];
+static TCHAR szLineBuffer[81];
 static BYTE nLinePos;
 static UINT nRow;
 
@@ -134,11 +134,27 @@ static void printerWrite(BYTE value)
     case 0x7e:
         value = prnCharTilde[PRINT_US];
         break;
+    case 0x0d:
+        nLinePos = 0;
+        return;
+    case 0x0a:
+        dwLength = strlen(szLineBuffer);
+        TextOut(hdcPrn, 0, tm.tmHeight*nRow, szLineBuffer, dwLength);
+        memset(szLineBuffer, 0, sizeof(szLineBuffer));
+        nRow++;
+        nLinePos = 0;
+        if (nRow == 80) { // Fix correct row number
+            EndPage(hdcPrn);
+            nRow = 0;
+            if (!(StartPage(hdcPrn) > 0))
+                printerDestroy();
+        }
+        return;
     case 0x0c:  // Form feed
-        StringCchLength(szLineBuffer, 80, &dwLength);
+        dwLength = strlen(szLineBuffer);
         if (dwLength > 0) {
             TextOut(hdcPrn, 0, tm.tmHeight*nRow, szLineBuffer, dwLength);
-            StringCchCopy(szLineBuffer, 80, TEXT(""));
+            memset(szLineBuffer, 0, sizeof(szLineBuffer));
         }
         EndPage(hdcPrn);
         nRow = 0;
@@ -151,11 +167,17 @@ static void printerWrite(BYTE value)
     szLineBuffer[nLinePos] = value;
     nLinePos++;
     if (nLinePos == 80) {
-        StringCchLength(szLineBuffer, 80, &dwLength);
+        dwLength = strlen(szLineBuffer);
         TextOut(hdcPrn, 0, tm.tmHeight*nRow, szLineBuffer, dwLength);
+        memset(szLineBuffer, 0, sizeof(szLineBuffer));
         nRow++;
         nLinePos = 0;
-        StringCchCopy(szLineBuffer, 80, TEXT(""));
+        if (nRow == 80) { // Fix correct row number
+            EndPage(hdcPrn);
+            nRow = 0;
+            if (!(StartPage(hdcPrn) > 0))
+                printerDestroy();
+        }
     }
 }
 
