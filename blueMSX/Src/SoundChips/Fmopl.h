@@ -89,6 +89,7 @@ typedef struct fm_opl_f {
     
 	int clock;			/* master clock  (Hz)                */
 	int rate;			/* sampling rate (Hz)                */
+    int baseRate;       /* sampling rate (Hz)                */
 	double freqbase;	/* frequency base                    */
 	double TimerBase;	/* Timer base time (==sampling time) */
 

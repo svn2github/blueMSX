@@ -204,7 +204,6 @@ INT32 outd;
 INT32 ams;
 INT32 vib;
 INT32 feedback2;		/* connect for SLOT	2 */
-static FM_OPL* theOPL =	NULL;
 
 /* --------------------- subroutines  ---------------------	*/
 
@@ -246,14 +245,6 @@ void OPL_STATUS_RESET(FM_OPL *OPL,int flag)
 			boardClearInt(0x10);
 		}
 	}
-}
-
-void oplSetStatus(int flag)	{
-	OPL_STATUS_SET(theOPL, flag);
-}
-
-void oplResetStatus(int	flag) {
-	OPL_STATUS_RESET(theOPL, flag);
 }
 
 /* IRQ mask	set	*/
@@ -687,10 +678,21 @@ static void	OPL_initalize(FM_OPL *OPL)
 {
 	int	fn;
 
+#if 0
 	/* frequency base */
 	OPL->freqbase =	(OPL->rate)	? ((double)OPL->clock /	OPL->rate) / 72	 : 0;
 	/* Timer base time */
 	OPL->TimerBase = 1.0/((double)OPL->clock / 72.0	);
+#else
+    if (OPL->baseRate == OPL->clock / 72) {
+	    OPL->freqbase =	OPL->baseRate / OPL->rate;
+	    OPL->TimerBase = 1.0 / OPL->baseRate;
+    }
+    else {
+	    OPL->freqbase =	(OPL->rate)	? ((double)OPL->clock /	OPL->rate) / 72	 : 0;
+	    OPL->TimerBase = 1.0/((double)OPL->clock / 72.0	);
+    }
+#endif
 	/* make	time tables	*/
 	init_timetables( OPL , OPL_ARRATE ,	OPL_DRRATE );
 	/* make	fnumber	-> increment counter table */
@@ -1007,7 +1009,7 @@ int	Y8950UpdateOne(FM_OPL *OPL)
 	vib	= vib_table[(vibCnt+=vibIncr)>>VIB_SHIFT];
 	/* FM part */
 	outd = 0;
-    count = OPL->rate / 44100;
+    count = OPL->rate / OPL->baseRate;
     while (count--) {
 	    for(CH=S_CH	; CH < R_CH	; CH++)
 		    OPL_CALC_CH(CH);
@@ -1015,7 +1017,7 @@ int	Y8950UpdateOne(FM_OPL *OPL)
 	    if(rythm)
 		    OPL_CALC_RH(S_CH);
     }
-    outd /= OPL->rate / 44100;
+    outd /= OPL->rate / OPL->baseRate;
 
     OPL->dacCtrlVolume = OPL->dacSampleVolume - OPL->dacOldSampleVolume + 0x3fe7 * OPL->dacCtrlVolume / 0x4000;
     OPL->dacOldSampleVolume = OPL->dacSampleVolume;
@@ -1098,7 +1100,7 @@ void OPLResetChip(FM_OPL *OPL)
 
 void OPLSetOversampling(FM_OPL *OPL, int oversampling)
 {
-    OPL->rate = 44100 * oversampling;
+    OPL->rate = OPL->baseRate * oversampling;
 	OPL_initalize(OPL);
 }
 
@@ -1122,7 +1124,6 @@ FM_OPL *OPLCreate(int type,	int	clock, int rate, int sampleram, void* ref)
 	if(ptr==NULL) return NULL;
 	/* clear */
 	memset(ptr,0,state_size);
-	theOPL	   = (FM_OPL *)ptr;
 	OPL		   = (FM_OPL *)ptr;	ptr+=sizeof(FM_OPL);
 	OPL->P_CH  = (OPL_CH *)ptr;	ptr+=sizeof(OPL_CH)*max_ch;
 	if(type&OPL_TYPE_ADPCM)	{
@@ -1136,10 +1137,14 @@ FM_OPL *OPLCreate(int type,	int	clock, int rate, int sampleram, void* ref)
 	YM_DELTAT_DECODE_PRESET(OPL->deltat);
 
 	/* set channel state pointer */
+
+    OPL->deltat->OPL = OPL;
+
     OPL->ref   = ref;
 	OPL->type  = type;
 	OPL->clock = clock;
 	OPL->rate  = rate;
+    OPL->baseRate = rate;
 	OPL->max_ch	= max_ch;
 	/* init	grobal tables */
 	OPL_initalize(OPL);
@@ -1527,3 +1532,4 @@ void Y8950SaveState(FM_OPL *OPL)
 
     saveStateClose(state);
 }
+

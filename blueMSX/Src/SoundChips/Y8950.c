@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-05-09 05:04:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,8 +38,10 @@
 #include <string.h>
 
 #define FREQUENCY        3579545
-#define SAMPLERATE       44100
+#define SAMPLERATE       (FREQUENCY / 72)
+#define SAMPLERATE_OUT   44100
 #define BUFFER_SIZE      10000
+#define TIMER_FREQUENCY  (4 * boardFrequency() / SAMPLERATE)
 
 
 struct Y8950 {
@@ -56,6 +58,10 @@ struct Y8950 {
     UInt32 timerRunning1;
     UInt32 timerRunning2;
     UInt8  address;
+    // Variables used for resampling
+    Int32  off;
+    Int32  s1;
+    Int32  s2;
     Int32  buffer[BUFFER_SIZE];
 };
 
@@ -93,7 +99,9 @@ void y8950TimerStart(void* ptr, int timer, int start)
     if (timer == 0) {
         if (start != 0) {
             if (!y8950->timerRunning1) {
-                y8950->timeout1 = boardSystemTime() + boardFrequency() / 12500 * y8950->timerValue1;
+                UInt32 systemTime = boardSystemTime();
+                UInt32 adjust = systemTime % TIMER_FREQUENCY;
+                y8950->timeout1 = systemTime + TIMER_FREQUENCY * y8950->timerValue1 - adjust;
                 boardTimerAdd(y8950->timer1, y8950->timeout1);
                 y8950->timerRunning1 = 1;
             }
@@ -108,7 +116,9 @@ void y8950TimerStart(void* ptr, int timer, int start)
     else {
         if (start != 0) {
             if (!y8950->timerRunning2) {
-                y8950->timeout2 = boardSystemTime() + boardFrequency() / 12500 * y8950->timerValue2;
+                UInt32 systemTime = boardSystemTime();
+                UInt32 adjust = systemTime % (4 * TIMER_FREQUENCY);
+                y8950->timeout2 = systemTime + TIMER_FREQUENCY * y8950->timerValue2 - adjust;
                 boardTimerAdd(y8950->timer2, y8950->timeout2);
                 y8950->timerRunning2 = 1;
             }
@@ -149,14 +159,26 @@ void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value)
         break;
     }
 }
-
+    
 static Int32* y8950Sync(void* ref, UInt32 count) 
 {
     Y8950* y8950 = (Y8950*)ref;
     UInt32 i;
 
     for (i = 0; i < count; i++) {
+#if SAMPLERATE > SAMPLERATE_OUT
+        y8950->off -= SAMPLERATE - SAMPLERATE_OUT;
+        y8950->s1 = y8950->s2;
+        y8950->s2 = Y8950UpdateOne(y8950->opl);
+        if (y8950->off < 0) {
+            y8950->off += SAMPLERATE_OUT;
+            y8950->s1 = y8950->s2;
+            y8950->s2 = Y8950UpdateOne(y8950->opl);
+        }
+        y8950->buffer[i] = (y8950->s1 * (y8950->off / 256) + y8950->s2 * ((SAMPLERATE - y8950->off) / 256)) / (SAMPLERATE / 256);
+#else
         y8950->buffer[i] = Y8950UpdateOne(y8950->opl);
+#endif
     }
 
     return y8950->buffer;
@@ -227,6 +249,9 @@ void y8950Reset(Y8950* y8950)
     y8950TimerStart(y8950, 0, y8950->timerValue1);
     y8950TimerStart(y8950, 1, y8950->timerValue2);
     OPLResetChip(y8950->opl);
+    y8950->off = 0;
+    y8950->s1 = 0;
+    y8950->s2 = 0;
 }
 
 Y8950* y8950Create(Mixer* mixer)

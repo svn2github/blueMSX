@@ -17,6 +17,7 @@ typedef signed int	INT32;   /* signed 32bit   */
 typedef struct deltat_adpcm_state {
 	UINT8 *memory;
 	UINT32 memory_size;
+    void* OPL;
 	double freqbase;
 	INT32 *output_pointer; /* pointer of output pointers */
 	int output_range;
