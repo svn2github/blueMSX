@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-05-09 05:52:14 $
+** $Date: 2005-05-09 18:01:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2056,7 +2056,7 @@ static BOOL CALLBACK controlsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
 }
 
 static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
-    char buffer[64];
+    char buffer[256];
     int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
     int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
 
@@ -2064,8 +2064,16 @@ static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
         pProperties->ports.Lpt.type = idx;
     }
     else {
+        char* prnName = buffer;
+        // Find the printer name from string
+        while (*prnName && *prnName != '-') {
+            prnName++;
+        }
+        if (*prnName) prnName++;
+        if (*prnName) prnName++;
+
         pProperties->ports.Lpt.type = P_LPT_HOST;
-        strcpy(pProperties->ports.Lpt.name, buffer);
+        strcpy(pProperties->ports.Lpt.name, prnName);
     }
 }
 

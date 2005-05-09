@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-03-18 10:09:40 $
+** $Date: 2005-05-09 18:01:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include <windows.h>
 #include <tchar.h>
+#include "Properties.h"
 
 
 
@@ -163,10 +164,12 @@ static int printerCreate(void)
     LOGFONT lf;
     DOCINFO dc;
 
+    Properties* pProperties = propGetGlobalProperties();
+
     if (bPrinterInitialized)
         return TRUE;
 
-    if ((hdcPrn = CreateDC(NULL, TEXT("hp photosmart 7700 series"), NULL, NULL)) == NULL)
+    if ((hdcPrn = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL)) == NULL)
         return FALSE;
 
     ZeroMemory(&lf, sizeof(LOGFONT));
