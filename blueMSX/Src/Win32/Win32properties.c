@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-04-30 20:56:42 $
+** $Date: 2005-05-09 05:52:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2055,7 +2055,21 @@ static BOOL CALLBACK controlsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
     return FALSE;
 }
 
-static BOOL updatePortsLptList(HWND hDlg, int id)
+static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
+    char buffer[64];
+    int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
+    int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
+
+    if (idx < P_LPT_HOST) {
+        pProperties->ports.Lpt.type = idx;
+    }
+    else {
+        pProperties->ports.Lpt.type = P_LPT_HOST;
+        strcpy(pProperties->ports.Lpt.name, buffer);
+    }
+}
+
+static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
 {
     LPPRINTER_INFO_2 lpPrinterInfo = NULL;
     TCHAR sBuf[MAX_PATH];
@@ -2078,14 +2092,20 @@ static BOOL updatePortsLptList(HWND hDlg, int id)
 
     // Add static members
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
+
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsSimplCovox());
+    if (pProperties->ports.Lpt.type == P_LPT_SIMPL) 
+        SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
-        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName))
+        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName)) {
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
+            if (pProperties->ports.Lpt.type == P_LPT_HOST && 0 == strcmp(pProperties->ports.Lpt.name, sBuf)) 
+                SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
+        }
     }
-
-    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
 
     // Free memory
     HeapFree(GetProcessHeap(), 0, lpPrinterInfo);
@@ -2112,7 +2132,7 @@ static BOOL IsNumeric(LPCTSTR pszString, BOOL bIgnoreColon)
     return bNumeric;
 }
 
-static BOOL updatePortsComList(HWND hDlg, int id)
+static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
 {
     PORT_INFO_2 *lpPortInfo = NULL;
     TCHAR sBuf[MAX_PATH];
@@ -2172,10 +2192,10 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
 
-        updatePortsLptList(hDlg, IDC_PORTSLPT);
-        updatePortsComList(hDlg, IDC_PORTSCOM1);
-
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
+
+        updatePortsLptList(hDlg, IDC_PORTSLPT, pProperties);
+        updatePortsComList(hDlg, IDC_PORTSCOM1, pProperties);
 
         return FALSE;
         
@@ -2197,6 +2217,8 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         if ((((NMHDR FAR *)lParam)->code) != PSN_APPLY) {
             return FALSE;
         }
+
+        getPortsLptList(hDlg, IDC_PORTSLPT, pProperties);
 
         return TRUE;
     }

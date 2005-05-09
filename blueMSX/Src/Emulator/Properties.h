@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-09 05:52:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,8 @@
 #define CARTNAME_MEGARAM2M   "2MB MegaRAM"
 
 typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
+
+typedef enum { P_LPT_NONE = 0, P_LPT_SIMPL, P_LPT_HOST } PropLptType;
 
 typedef enum { P_EMU_SYNC1MS = 0, P_EMU_SYNCAUTO, P_EMU_SYNCNONE } PropEmuSync;
 typedef enum { P_VDP_SYNCAUTO = 0, P_VDP_SYNC50HZ, P_VDP_SYNC60HZ } PropVdpSync; 
@@ -218,6 +220,16 @@ typedef struct {
     char    quicksave[MAX_PATH];
 } FileHistory;
 
+typedef struct {
+    struct {
+        int  type;
+        char name[256];
+    } Lpt;
+    struct {
+        int todo;
+    } Com;
+} PortProperties;
+
 #define DLG_MAX_ID 32
 
 typedef struct {
@@ -243,6 +255,7 @@ typedef struct {
     DiskdriveProperties diskdrive;
     CassetteProperties  cassette;
     FileHistory         filehistory;
+    PortProperties      ports;
     int                 language;
     Settings            settings;
 } Properties;

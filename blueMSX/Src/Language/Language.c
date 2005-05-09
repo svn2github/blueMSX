@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-09 05:52:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -532,6 +532,7 @@ _TCHAR* langPropPortsComGB() { return ls->propPortsComGB; }
 _TCHAR* langPropPortsLptText() { return ls->propPortsLptText; }
 _TCHAR* langPropPortsCom1Text() { return ls->propPortsCom1Text; }
 _TCHAR* langPropPortsNone() { return ls->propPortsNone; }
+_TCHAR* langPropPortsSimplCovox() { return ls->propPortsSimplCovox; }
 
 _TCHAR* langPropSettDefSlotGB() { return ls->propSettDefSlotGB; }
 _TCHAR* langPropSettDefSlots() { return ls->propSettDefSlots; }

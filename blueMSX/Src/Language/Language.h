@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-05-09 05:52:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -299,6 +299,7 @@ _TCHAR* langPropPortsComGB();
 _TCHAR* langPropPortsLptText();
 _TCHAR* langPropPortsCom1Text();
 _TCHAR* langPropPortsNone();
+_TCHAR* langPropPortsSimplCovox();
 
 _TCHAR* langPropSetFileHistoryGB();
 _TCHAR* langPropSetFileHistorySize();
