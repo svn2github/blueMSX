@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-31 20:21:49 $
+** $Date: 2005-05-09 17:31:54 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vikl, Tomas Karlsson
+** Copyright (C) 2003-2004 Daniel Vik, Tomas Karlsson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -29,18 +29,98 @@
 */
 #include "PrinterIO.h"
 #include "ArchPrinter.h"
+#include "DAC.h"
+#include "Board.h"
 
-void printerIOWrite(UInt8 value)
+typedef struct PrinterIO {
+    PrinterType type;
+    DAC* dac;
+    int  printerReady;
+};
+
+static PrinterType thePrinterType = PRN_NONE;
+static PrinterIO* thePrinterIO = NULL;
+
+
+static void setType(PrinterIO* printerIO)
 {
-    archPrinterWrite(value);
+    printerIO->type = thePrinterType;
+
+    switch (printerIO->type) {
+    case PRN_HOST:
+        printerIO->printerReady = archPrinterCreate();
+        break;
+    case PRN_SIMPL:
+        printerIO->dac = dacCreate(boardGetMixer());
+        break;
+    }
 }
 
-int printerIOCreate(void)
+static void removeType(PrinterIO* printerIO)
 {
-    return archPrinterCreate();
+    switch (printerIO->type) {
+    case PRN_HOST:
+        archPrinterDestroy();
+        printerIO->printerReady = 0;
+        break;
+    case PRN_SIMPL:
+        dacDestroy(printerIO->dac);
+        break;
+    }
 }
 
-void printerIODestroy(void)
+void printerIOWrite(PrinterIO* printerIO, UInt8 value)
 {
-    archPrinterDestroy();
+    switch (printerIO->type) {
+    case PRN_HOST:
+        archPrinterWrite(value);
+        break;
+    case PRN_SIMPL:
+        dacWrite(printerIO->dac, value);
+        break;
+    }
+}
+
+int printerIOGetStatus(PrinterIO* printerIO) 
+{
+    switch (printerIO->type) {
+    case PRN_HOST:
+        return printerIO->printerReady;
+        break;
+    case PRN_SIMPL:
+        return 1;
+        break;
+    }
+    return 0;
+}
+
+PrinterIO* printerIOCreate(void)
+{
+    PrinterIO* printerIO = calloc(1, sizeof(PrinterIO));
+
+    setType(printerIO);
+
+    thePrinterIO = printerIO;
+
+    return printerIO;
+}
+
+void printerIODestroy(PrinterIO* printerIO)
+{
+    removeType(printerIO);
+
+    free(printerIO);
+
+    thePrinterIO = NULL;
+}
+
+void printerIoSetType(PrinterType type)
+{   
+    thePrinterType = type;
+    
+    if (thePrinterIO == NULL) {
+        return;
+    }
+
+    setType(thePrinterIO);
 }

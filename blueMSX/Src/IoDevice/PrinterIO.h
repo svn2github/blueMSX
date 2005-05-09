@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-31 20:22:25 $
+** $Date: 2005-05-09 17:31:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,8 +32,16 @@
 
 #include "MsxTypes.h"
 
-void printerIOWrite(UInt8 value);
-int printerIOCreate(void);
-void printerIODestroy(void);
+typedef struct PrinterIO PrinterIO;
+
+typedef enum {PRN_NONE, PRN_SIMPL, PRN_HOST } PrinterType;
+
+PrinterIO* printerIOCreate(void);
+void printerIODestroy(PrinterIO* printerIO);
+
+void printerIOWrite(PrinterIO* printerIO, UInt8 value);
+int  printerIOGetStatus(PrinterIO* printerIO);
+
+void printerIoSetType(PrinterType type);
 
 #endif

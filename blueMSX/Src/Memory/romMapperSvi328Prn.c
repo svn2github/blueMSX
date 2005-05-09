@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Prn.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-05-09 17:31:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,7 +39,7 @@ typedef struct {
     int deviceHandle;
     UInt8 prnData;
     UInt8 prnStrobe;
-    int prnReady;
+    PrinterIO* printerIO;
 } RomMapperSvi328Prn;
 
 static void saveState(RomMapperSvi328Prn* prn)
@@ -70,16 +70,16 @@ static void destroy(RomMapperSvi328Prn* prn)
     ioPortUnregister(0x11);
     ioPortUnregister(0x12);
 
-    printerIODestroy();
+    printerIODestroy(prn->printerIO);
 
     free(prn);
 }
 
 static UInt8 readIo(RomMapperSvi328Prn* prn, UInt16 ioPort) 
 {
-    if (prn->prnReady)
+    if (printerIOGetStatus(prn->printerIO)) 
         return 0xfe;
-	    
+
     return 0xff;
 }
 
@@ -91,7 +91,7 @@ static void writeIo(RomMapperSvi328Prn* prn, UInt16 ioPort, UInt8 value)
             break;
         case 0x11:
             if ((prn->prnStrobe & 1) && !(value & 1))
-                printerIOWrite(prn->prnData);
+                printerIOWrite(prn->printerIO, prn->prnData);
 
             prn->prnStrobe = value;
             break;
@@ -111,7 +111,7 @@ int romMapperSvi328PrnCreate(void)
 
     prn = malloc(sizeof(RomMapperSvi328Prn));
 
-    prn->prnReady = printerIOCreate();
+    prn->printerIO = printerIOCreate();
 
     prn->deviceHandle = deviceManagerRegister(ROM_SVI328PRN, &callbacks, prn);
 
