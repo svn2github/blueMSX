@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-05-09 17:31:54 $
+** $Date: 2005-05-10 07:58:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 typedef struct PrinterIO {
     PrinterType type;
     DAC* dac;
+    FILE* file;
     int  printerReady;
 };
 
@@ -50,6 +51,9 @@ static void setType(PrinterIO* printerIO)
     case PRN_HOST:
         printerIO->printerReady = archPrinterCreate();
         break;
+    case PRN_FILE:
+        printerIO->file = fopen("printer.dat", "w+");
+        break;
     case PRN_SIMPL:
         printerIO->dac = dacCreate(boardGetMixer());
         break;
@@ -63,6 +67,9 @@ static void removeType(PrinterIO* printerIO)
         archPrinterDestroy();
         printerIO->printerReady = 0;
         break;
+    case PRN_FILE:
+        fclose(printerIO->file);
+        break;
     case PRN_SIMPL:
         dacDestroy(printerIO->dac);
         break;
@@ -75,6 +82,9 @@ void printerIOWrite(PrinterIO* printerIO, UInt8 value)
     case PRN_HOST:
         archPrinterWrite(value);
         break;
+    case PRN_FILE:
+        fwrite(&value, 1, 1, printerIO->file);
+        break;
     case PRN_SIMPL:
         dacWrite(printerIO->dac, value);
         break;
@@ -86,10 +96,10 @@ int printerIOGetStatus(PrinterIO* printerIO)
     switch (printerIO->type) {
     case PRN_HOST:
         return printerIO->printerReady;
-        break;
+    case PRN_FILE:
+        return printerIO->file != NULL;
     case PRN_SIMPL:
         return 1;
-        break;
     }
     return 0;
 }

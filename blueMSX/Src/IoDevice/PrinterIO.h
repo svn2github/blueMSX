@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-05-09 17:31:54 $
+** $Date: 2005-05-10 07:58:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 
 typedef struct PrinterIO PrinterIO;
 
-typedef enum {PRN_NONE, PRN_SIMPL, PRN_HOST } PrinterType;
+typedef enum {PRN_NONE, PRN_SIMPL, PRN_FILE, PRN_HOST } PrinterType;
 
 PrinterIO* printerIOCreate(void);
 void printerIODestroy(PrinterIO* printerIO);

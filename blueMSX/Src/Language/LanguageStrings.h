@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-05-09 05:52:14 $
+** $Date: 2005-05-10 07:58:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -283,6 +283,7 @@ typedef struct {
     _TCHAR* propPortsCom1Text;
     _TCHAR* propPortsNone;
     _TCHAR* propPortsSimplCovox;
+    _TCHAR* propPortsFile;
 
     _TCHAR* propSetFileHistoryGB;
     _TCHAR* propSetFileHistorySize;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-05-09 20:35:26 $
+** $Date: 2005-05-10 07:58:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2098,20 +2098,26 @@ static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
     if (!EnumPrinters(PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS, NULL, 2, (LPBYTE)lpPrinterInfo, dwNeeded, &dwNeeded, &dwReturned))
         return FALSE;
 
-    // Add static members
+    // Add NONE:
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
     SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
 
+    // Add SiMPL/COVOX
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsSimplCovox());
     if (pProperties->ports.Lpt.type == P_LPT_SIMPL) 
         SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
+
+    // Add FILE
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsFile());
+    if (pProperties->ports.Lpt.type == P_LPT_SIMPL) 
+        SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2, 0);
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
         if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName)) {
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
             if (pProperties->ports.Lpt.type == P_LPT_HOST && 0 == strcmp(pProperties->ports.Lpt.name, lpPrinterInfo[dwItem].pPrinterName)) 
-                SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + dwItem, 0);
+                SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 3 + dwItem, 0);
         }
     }
 
