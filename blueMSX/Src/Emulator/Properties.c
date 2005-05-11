@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-05-11 03:18:02 $
+** $Date: 2005-05-11 16:47:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,7 +203,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->cassette.autoRewind      = 0;
     
     pProperties->ports.Lpt.type           = P_LPT_NONE;
-    pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
+    pProperties->ports.Lpt.emulation      = P_LPT_MSXPRN;
     pProperties->ports.Lpt.name[0]        = 0;
     strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
     pProperties->ports.Lpt.portName[0]    = 0;
@@ -386,7 +386,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->cassette.autoRewind      = 0;
 
     pProperties->ports.Lpt.type           = P_LPT_NONE;
-    pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
+    pProperties->ports.Lpt.emulation      = P_LPT_MSXPRN;
     pProperties->ports.Lpt.name[0]        = 0;
     strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
     pProperties->ports.Lpt.portName[0]    = 0;
@@ -566,7 +566,7 @@ static void propLoad(Properties* pProperties)
     getIntValue("CasseteAutoRewind", &pProperties->cassette.autoRewind);
     
     getIntValue("LptType", &pProperties->ports.Lpt.type);
-    getIntValue("LptMode", &pProperties->ports.Lpt.mode);
+    getIntValue("LptMode", &pProperties->ports.Lpt.emulation);
     getStrValue("LptName", (char*)pProperties->ports.Lpt.name);
     getStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
     getStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);
@@ -756,7 +756,7 @@ void propSave(Properties* pProperties)
     setIntValue("CasseteAutoRewind", pProperties->cassette.autoRewind);
 
     setIntValue("LptType", pProperties->ports.Lpt.type);
-    setIntValue("LptMode", pProperties->ports.Lpt.mode);
+    setIntValue("LptMode", pProperties->ports.Lpt.emulation);
     setStrValue("LptName", (char*)pProperties->ports.Lpt.name);
     setStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
     setStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);

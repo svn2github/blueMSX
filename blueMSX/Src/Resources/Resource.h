@@ -132,10 +132,11 @@
 #define IDC_VDPFREQTEXT                 1029
 #define IDC_PORTSLPT                    1030
 #define IDC_PORTSCOM1                   1031
-#define IDC_LPTEMU                      1032
-#define IDC_LPTFILENAME                 1033
-#define IDC_LPTFILENAMEBROWSE           1034
-#define IDC_LPTFILENAMETEXT             1035
+#define IDC_LPTEMULATION                1032
+#define IDC_LPTEMULATIONTEXT            1033
+#define IDC_LPTFILENAME                 1034
+#define IDC_LPTFILENAMEBROWSE           1035
+#define IDC_LPTFILENAMETEXT             1036
 
 #define IDC_EMUGENERALGROUPBOX          1800
 #define IDC_EMUFAMILYTEXT               1801

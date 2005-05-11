@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-05-11 03:18:03 $
+** $Date: 2005-05-11 16:47:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2081,6 +2081,27 @@ static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
     }
 }
 
+static void getPortsLptEmulList(HWND hDlg, int id, Properties* pProperties) 
+{
+    int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
+
+    if (idx >= 0) {
+        pProperties->ports.Lpt.emulation = idx;
+    }
+}
+
+static BOOL updatePortsLptEmulList(HWND hDlg, int id, Properties* pProperties)
+{
+    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
+
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
+    
+    // Add MSX Printer
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"MSX Printer");
+
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, pProperties->ports.Lpt.emulation, 0);
+}
+
 static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
 {
     LPPRINTER_INFO_2 lpPrinterInfo = NULL;
@@ -2255,21 +2276,22 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langPropPortsFilenameText());
-        SetWindowText(GetDlgItem(hDlg, P_LPT_EMULATED), langPropPortsEmulateMsxPrn());
+        SetWindowText(GetDlgItem(hDlg, IDC_LPTEMULATIONTEXT), langPropPortsEmulateMsxPrn());
+        
 
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 
         updatePortsLptList(hDlg, IDC_PORTSLPT, pProperties);
         updatePortsComList(hDlg, IDC_PORTSCOM1, pProperties);
 
+        updatePortsLptEmulList(hDlg, IDC_LPTEMULATION, pProperties);
+
         {
             int idx = SendDlgItemMessage(hDlg, IDC_PORTSLPT, CB_GETCURSEL, 0, 0);
             EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAMEBROWSE), idx == P_LPT_FILE);
             EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAME), idx == P_LPT_FILE);
-            EnableWindow(GetDlgItem(hDlg, IDC_LPTEMU), idx >= P_LPT_HOST);
+            EnableWindow(GetDlgItem(hDlg, IDC_LPTEMULATION), idx >= P_LPT_HOST);
         }
-
-        setButtonCheck(hDlg, IDC_LPTEMU,  pProperties->ports.Lpt.mode == P_LPT_EMULATED, 1);
 
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
 
@@ -2282,7 +2304,7 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 int idx = SendDlgItemMessage(hDlg, IDC_PORTSLPT, CB_GETCURSEL, 0, 0);
                 EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAMEBROWSE), idx == P_LPT_FILE);
                 EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAME), idx == P_LPT_FILE);
-                EnableWindow(GetDlgItem(hDlg, IDC_LPTEMU), idx >= P_LPT_HOST);
+                EnableWindow(GetDlgItem(hDlg, IDC_LPTEMULATION), idx >= P_LPT_HOST);
             }
             return TRUE;
 
@@ -2306,9 +2328,8 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             return FALSE;
         }
 
-        pProperties->ports.Lpt.mode = getButtonCheck(hDlg, IDC_LPTEMU) ? P_LPT_EMULATED : P_LPT_RAW;
         getPortsLptList(hDlg, IDC_PORTSLPT, pProperties);
-
+        getPortsLptEmulList(hDlg, IDC_LPTEMULATION, pProperties);
         GetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName, MAX_PATH - 1);
 
         return TRUE;

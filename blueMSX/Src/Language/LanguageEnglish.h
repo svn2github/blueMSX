@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-05-11 16:47:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -580,8 +580,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Print to File";
     ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename";
-    ls->propPortsEmulateMsxPrn  = " Emulate MSX Printer";
+    ls->propPortsFilenameText   = "Filename:";
+    ls->propPortsEmulateMsxPrn  = "Emulation:";
 
     ls->shortcutPrnFormFeed     = "Printer Form Feed";
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-05-11 16:47:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1064,44 +1064,46 @@ static void printerWrite(BYTE value)
 /// Generic Printer methods
 /////////////////////////////////////////////////////////////////////
 
-static PropLptMode printerType = P_LPT_EMULATED;
+static PropLptEmulation printerType = P_LPT_MSXPRN;
 
 void archPrinterWrite(BYTE value)
 {
-    if (printerType == P_LPT_EMULATED) {
-        printerWrite(value);
+    if (printerType == P_LPT_RAW) {
+        printerRawWrite(value);
     }
     else {
-        printerRawWrite(value);
+        printerWrite(value);
     }
 }
 
 int archPrinterCreate(void)
 {
     Properties* pProperties = propGetGlobalProperties();
-    printerType = pProperties->ports.Lpt.mode;
+    printerType = pProperties->ports.Lpt.emulation;
 
-    if (printerType == P_LPT_EMULATED) {
-        return printerCreate();
+    if (printerType == P_LPT_RAW) {
+        return printerRawCreate();
     }
     else {
-        return printerRawCreate();
+        return printerCreate();
     }
 }
 
 void archPrinterDestroy(void)
 {
-    if (printerType == P_LPT_EMULATED) {
-        printerDestroy();
+    if (printerType == P_LPT_RAW) {
+        printerRawDestroy();
     }
     else {
-        printerRawDestroy();
+        printerDestroy();
     }
 }
 
 void archForceFormFeed(void)
 {
-    if (printerType == P_LPT_EMULATED) {
+    if (printerType == P_LPT_RAW) {
+    }
+    else {
         FlushEmulatedPrinter();
     }
 }
