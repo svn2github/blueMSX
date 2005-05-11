@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-05-11 20:30:24 $
+** $Date: 2005-05-11 23:55:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,7 +78,7 @@ static int printerRawCreate(void)
 /// Emulated printer, from RuMSX
 ///////////////////////////////////////////////////////////////
 
-#define USE_REAL_FONT
+//#define USE_REAL_FONT
 
 static BYTE FontBitmaps[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -363,6 +363,7 @@ typedef struct {
     BOOL    fJapanese;
     BOOL    fNinePinGraphics;
     BOOL    fLeftToRight;
+    BOOL    fGraphicsHiLo;
     UINT    uiEightBit;
     UINT    uiPerforationSkip;
     UINT    uiLeftBorder;
@@ -381,8 +382,8 @@ typedef struct {
     UINT    uiLines;
     UINT    uiLineFeed;
     UINT    uiPageHeight;
-    UINT    uiPixelSizeX;
-    UINT    uiPixelSizeY;
+    double  uiPixelSizeX;
+    double  uiPixelSizeY;
 } PRINTERRAM, *PPRINTERRAM;
 
 PRINTERRAM   stPrtRam;
@@ -615,8 +616,8 @@ void PrintVisibleCharacter(BYTE bChar)
 
     if (hdcPrinter)
     {
-        int iYPos = 0;
-        int iHeight = stPrtRam.uiPixelSizeY;
+        double iYPos = 0;
+        double iHeight = stPrtRam.uiPixelSizeY;
 
         if (stPrtRam.fSubscript)
         {
@@ -630,16 +631,17 @@ void PrintVisibleCharacter(BYTE bChar)
         
 #ifdef USE_REAL_FONT
         TextOut(hdcPrinter, 
-                (UINT)stPrtRam.uiHpos * stPrtRam.uiPixelSizeX, stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
+                (UINT)(stPrtRam.uiHpos * stPrtRam.uiPixelSizeX), stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
                 &bChar, 1);
 #else
         // Print character
         StretchDIBits( hdcPrinter,
-            stPrtRam.uiHpos*stPrtRam.uiPixelSizeX, stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos,
-            stPrtRam.uiPixelSizeX*8, iHeight*8,
+            (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
+            (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos),
+            (UINT)(stPrtRam.uiPixelSizeX*stPrtRam.uiFontWidth), (UINT)(iHeight*8),
             8*(int)bChar, 0, stPrtRam.uiFontWidth, 8,
             abFontImage, (LPBITMAPINFO)&bmiFont,
-            DIB_RGB_COLORS, SRCPAINT );
+            DIB_RGB_COLORS, SRCAND );
 #endif
         // Move print-position...
         SeekPrinterHeadRelative(stPrtRam.uiFontWidth);
@@ -674,12 +676,13 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
         }
 
         // Print bit-mask
-        StretchDIBits( hdcPrinter,
-            (UINT)stPrtRam.uiHpos*stPrtRam.uiPixelSizeX, stPrtRam.uiVpos*stPrtRam.uiPixelSizeY,
-            stPrtRam.uiPixelSizeX, stPrtRam.uiPixelSizeY*8,
+        StretchDIBits(hdcPrinter,
+            (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
+            (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY),
+            (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
             0, 0, 1, 8,
             abGrphImage, (LPBITMAPINFO)&bmiGrph,
-            DIB_RGB_COLORS, SRCCOPY );
+            DIB_RGB_COLORS, SRCAND );
 
         // Move print-position...
         SeekPrinterHeadRelative(100./stPrtRam.uiDensity);
@@ -703,6 +706,7 @@ static void MsxPrnResetSettings(void)
     stPrtRam.uiTotalWidth   = 825;
     stPrtRam.uiTotalHeight  = 825;
     stPrtRam.uiFontWidth    = 8;
+    stPrtRam.fGraphicsHiLo  = TRUE;
 }
 
 static UINT MsxPrnParseNumber(size_t sizeStart, size_t sizeChars)
@@ -1025,38 +1029,14 @@ static void EpsonFx80ResetSettings(void)
     stPrtRam.uiTotalWidth   = 610;
     stPrtRam.uiTotalHeight  = 825;
     stPrtRam.uiFontWidth    = 6;
+    stPrtRam.fGraphicsHiLo  = FALSE;
 }
+
 static size_t EpsonFx80CalcEscSequenceLength(BYTE character) 
 {
     character &= 127;
 
     switch (character) {
-    case '#':
-    case '0':
-    case '1':
-    case '2':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-    case '<':
-    case '=':
-    case '>':
-    case '@':
-    case 'E':
-    case 'F':
-    case 'G':
-    case 'H':
-    case 'I':
-    case 'M':
-    case 'O':
-    case 'P':
-    case 'T':
-    case 'Y': // Args to this one?
-    case 127:
-        return 1;
     case '!':
     case '-':
     case '/':
@@ -1075,17 +1055,17 @@ static size_t EpsonFx80CalcEscSequenceLength(BYTE character)
     case 'l':
     case 'p':
     case 's':
-        return 2;
+        return 1;
     case '%':
     case '?':
     case 'K':
     case 'L':
     case 'Z':
     case '^':
-        return 3;
+        return 2;
     case '*':
     case ':':
-        return 4;
+        return 3;
 
     case '&': // Custom character set, variable length
         return 0;
@@ -1118,7 +1098,29 @@ static void EpsonFx80ProcessEscSequence(void)
 
     case '*':  // Turn Graphics Mode ON
         stPrtRam.fNinePinGraphics = FALSE;
-        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
+        switch(EpsonFx80ParseNumber(1, 1)) {
+        default:
+        case 0:
+            stPrtRam.uiDensity = 100;
+            break;
+        case 1:
+        case 2:
+            stPrtRam.uiDensity = 200;
+            break;
+        case 3:
+            stPrtRam.uiDensity = 400;
+            break;
+        case 4:
+            stPrtRam.uiDensity = 133;
+            break;
+        case 5:
+            stPrtRam.uiDensity = 120;
+            break;
+        case 6:
+            stPrtRam.uiDensity = 150;
+            break;
+        }
+        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(2, 2);
         break;
 
     case '-':  // Turn Underline Mode ON/OFF
@@ -1185,6 +1187,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '@':  // Reset
+        FlushEmulatedPrinter();
         ResetEmulatedPrinter();
         break;
 
@@ -1258,9 +1261,16 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'S':  // Turn Script Mode ON
+        {
+            int script = EpsonFx80ParseNumber(1, 1);
+            stPrtRam.fSuperscript = script == 0;
+            stPrtRam.fSubscript   = script == 1;
+        }
         break;
 
     case 'T':  // Turn Script Mode OFF
+        stPrtRam.fSubscript =   FALSE;
+        stPrtRam.fSuperscript = FALSE;
         break;
 
     case 'U':  // Turn Uni-directional mode ON/OFF
@@ -1449,7 +1459,7 @@ static void ProcessEscSequence(void)
 void PrintToMSX(BYTE bData)
 {
     if (stPrtRam.sizeRemainingDataBytes) {
-        PrintGraphicByte( bData, TRUE );
+        PrintGraphicByte( bData, stPrtRam.fGraphicsHiLo );
         stPrtRam.sizeRemainingDataBytes--;
     }
     else if (stPrtRam.fEscSequence) {
