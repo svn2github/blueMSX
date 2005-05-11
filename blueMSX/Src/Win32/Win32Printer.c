@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-05-11 16:47:41 $
+** $Date: 2005-05-11 17:17:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,10 @@
 #include "Properties.h"
 #include "Win32Printer.h"
 #include "ArchPrinter.h"
+
+
+
+static PropLptEmulation printerType = P_LPT_MSXPRN;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -694,7 +698,26 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
     return;
 }
 
-static size_t CalcEscSequenceLength(BYTE character) 
+static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
+{
+    UINT uiValue = 0;
+    BYTE bChar;
+
+    while (sizeChars--) {
+        uiValue=uiValue*10;
+        bChar=stPrtRam.abEscSeq[sizeStart++];
+        if (bChar>='0' && bChar<='9')
+            uiValue+=(UINT)(bChar-'0');
+    }
+
+    return uiValue;
+}
+
+////////////////////////////////////////////////////
+// MSX Printer specific methods
+////////////////////////////////////////////////////
+
+static size_t MsxPrnCalcEscSequenceLength(BYTE character) 
 {
     switch (character) {
     case 'A':
@@ -716,22 +739,7 @@ static size_t CalcEscSequenceLength(BYTE character)
     return 0;
 }
 
-static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
-{
-    UINT uiValue = 0;
-    BYTE bChar;
-
-    while (sizeChars--) {
-        uiValue=uiValue*10;
-        bChar=stPrtRam.abEscSeq[sizeStart++];
-        if (bChar>='0' && bChar<='9')
-            uiValue+=(UINT)(bChar-'0');
-    }
-
-    return uiValue;
-}
-
-static void ProcessEscSequence(void)
+static void MsxPrnProcessEscSequence(void)
 {
     switch (stPrtRam.abEscSeq[0]) {
     case 13:
@@ -908,7 +916,7 @@ static void ProcessEscSequence(void)
     }
 }
 
-static void ProcessCharacter(BYTE bChar)
+static void MsxPrnProcessCharacter(BYTE bChar)
 {
     if (stPrtRam.fAlternateChar)
     {
@@ -982,6 +990,66 @@ static void ProcessCharacter(BYTE bChar)
             }
             break;
         }
+    }
+}
+
+////////////////////////////////////////////////////
+// Epson FX80 specific methods
+////////////////////////////////////////////////////
+
+static size_t EpsonFx80CalcEscSequenceLength(BYTE character) 
+{
+    return 0;
+}
+
+static void EpsonFx80ProcessCharacter(BYTE bChar)
+{
+}
+
+static void EpsonFx80ProcessEscSequence(void)
+{
+}
+
+////////////////////////////////////////////////////
+// Generic Character processing
+////////////////////////////////////////////////////
+
+static size_t CalcEscSequenceLength(BYTE character) 
+{
+    size_t rv = 0;
+
+    switch (printerType) {
+    case P_LPT_MSXPRN:
+        rv = MsxPrnCalcEscSequenceLength( character );
+        break;
+    case P_LPT_EPSONFX80:
+        rv = EpsonFx80CalcEscSequenceLength( character );
+        break;
+    }
+    return rv;
+}
+
+static void ProcessCharacter(BYTE bChar)
+{
+    switch (printerType) {
+    case P_LPT_MSXPRN:
+        MsxPrnProcessCharacter( bChar );
+        break;
+    case P_LPT_EPSONFX80:
+        EpsonFx80ProcessCharacter( bChar );
+        break;
+    }
+}
+
+static void ProcessEscSequence(void)
+{
+    switch (printerType) {
+    case P_LPT_MSXPRN:
+        MsxPrnProcessEscSequence();
+        break;
+    case P_LPT_EPSONFX80:
+        EpsonFx80ProcessEscSequence();
+        break;
     }
 }
 
@@ -1063,8 +1131,6 @@ static void printerWrite(BYTE value)
 /////////////////////////////////////////////////////////////////////
 /// Generic Printer methods
 /////////////////////////////////////////////////////////////////////
-
-static PropLptEmulation printerType = P_LPT_MSXPRN;
 
 void archPrinterWrite(BYTE value)
 {
