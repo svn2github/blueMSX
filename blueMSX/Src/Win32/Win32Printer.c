@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-05-11 17:17:26 $
+** $Date: 2005-05-11 18:33:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -999,15 +999,307 @@ static void MsxPrnProcessCharacter(BYTE bChar)
 
 static size_t EpsonFx80CalcEscSequenceLength(BYTE character) 
 {
-    return 0;
-}
+    character &= 127;
 
-static void EpsonFx80ProcessCharacter(BYTE bChar)
-{
+    switch (character) {
+    case '#':
+    case '0':
+    case '1':
+    case '2':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case '<':
+    case '=':
+    case '>':
+    case '@':
+    case 'E':
+    case 'F':
+    case 'G':
+    case 'H':
+    case 'I':
+    case 'M':
+    case 'O':
+    case 'P':
+    case 'T':
+    case 'Y': // Args to this one?
+    case 127:
+        return 1;
+    case '!':
+    case '-':
+    case '/':
+    case '3':
+    case 'A':
+    case 'J':
+    case 'N':
+    case 'Q':
+    case 'R':
+    case 'S':
+    case 'U':
+    case 'W':
+    case 'b':
+    case 'i':
+    case 'j':
+    case 'l':
+    case 'p':
+    case 's':
+        return 2;
+    case '%':
+    case '?':
+    case 'K':
+    case 'L':
+    case 'Z':
+    case '^':
+        return 3;
+    case '*':
+    case ':':
+        return 4;
+
+    case '&': // Custom character set, variable length
+        return 0;
+    case 'B': // Set tabs, variable length (up to 16 tabs)
+        return 0;
+    case 'C': // Set form length, variable length (2 or 3)
+        return 0;
+    case 'D': // Set tabs, variable length (up to 32 tabs)
+        return 0;
+    }
+    return 0;
 }
 
 static void EpsonFx80ProcessEscSequence(void)
 {
+    BYTE character = stPrtRam.abEscSeq[0] & 127;
+
+    switch (character) {
+    case '!':  // Master Print Mode Select
+        break;
+
+    case '#':  // Accept Eight Bit as-is
+        break;
+
+    case '%':  // Activates Character Set
+        break;
+
+    case '&': // Custom character set, variable length
+        break;
+
+    case '*':  // Turn Graphics Mode ON
+        break;
+
+    case '-':  // Turn Underline Mode ON/OFF
+        break;
+
+    case '/':  // Selects Vertical Tab Channel
+        break;
+
+    case '0':  // Sets Line Spacing to 1/8 inch
+        break;
+
+    case '1':  // Sets Line Spacing to 7/72 inch
+        break;
+
+    case '2':  // Sets Line Spacing to 1/6 inch
+        break;
+
+    case '3':  // Sets Line Spacing to n/216 inch
+        break;
+
+    case '4':  // Turn Italic Mode ON
+        break;
+
+    case '5':  // Turn Italic Mode OFF
+        break;
+
+    case '6':  // Turn Printing of International Italic characters ON
+        break;
+
+    case '7':  // Turn Printing of International Italic characters OFF
+        break;
+
+    case '8':  // Turn Paper Out Sensor ON
+        break;
+
+    case '9':  // Turn Paper Out Sensor OFF
+        break;
+
+    case ':':  // Copies Rom Character set to RAM
+        break;
+
+    case '<':  // Turn Uni-directional printing ON (left to right)
+        break;
+
+    case '=':  // Sets eight bit to 0
+        break;
+
+    case '>':  // Sets eight bit to 1
+        break;
+
+    case '?':  // Redefines Graphics Codes
+        break;
+
+    case '@':  // Reset
+        break;
+
+    case 'A':  // Sets Line Spacing to n/72 inch
+        break;
+
+    case 'B':  // Set tabs, variable length (up to 16 tabs)
+        break;
+
+    case 'C': // Set form length, variable length (2 or 3)
+        break;
+
+    case 'D': // Set tabs, variable length (up to 32 tabs)
+        break;
+
+    case 'E':  // Turn Emphasized Mode ON
+        break;
+
+    case 'F':  // Turn Emphasized Mode OFF
+        break;
+
+    case 'G':  // Turn Double Strike Mode ON
+        break;
+
+    case 'H':  // Turn Double Strike Mode OFF
+        break;
+
+    case 'I':  // Enables printing of chars 1-31
+        break;
+
+    case 'J':  // Forces Line Feed with n/216 inch
+        break;
+
+    case 'K':  // Turn Single Density Graphics on (480 dot mode)
+        break;
+
+    case 'L':  // Turn Double Density Graphics on (960 dot mode)
+        break;
+
+    case 'M':  // Turn Elite mode ON
+        break;
+
+    case 'N':  // Turn Skip Over Perforation ON
+        break;
+
+    case 'O':  // Turn Skip Over Perforation OFF
+        break;
+
+    case 'P':  // Turn Elite mode OFF
+        break;
+
+    case 'Q':  // Set Right Margin
+        break;
+
+    case 'R':  // Select International Character Set
+        break;
+
+    case 'S':  // Turn Script Mode ON
+        break;
+
+    case 'T':  // Turn Script Mode OFF
+        break;
+
+    case 'U':  // Turn Uni-directional mode ON/OFF
+        break;
+
+    case 'W':  // Turn Expanded Mode ON/OFF
+        break;
+
+    case 'Y':  // Turn High Speed Double Density Graphics ON
+        break;
+
+    case 'Z':  // Turns Quadruple Density Graphics ON
+        break;
+
+    case '^':  // Turn Nine Pin Graphics Mode ON
+        break;
+
+    case 'b':  // Set Vertical Tab
+        break;
+
+    case 'i':  // Turn Immediate Mode ON/OFF
+        break;
+
+    case 'j':  // Immediate Reverse Line Feed
+        break;
+
+    case 'l':  // Set Left Margin
+        break;
+
+    case 'p':  // Turn Proportional Mode ON/OFF
+        break;
+
+    case 's':  // Set Print Speed
+        break;
+
+    case 127: // Deletes Last Character in Buffer
+        break;
+    }
+}
+
+static void EpsonFx80ProcessCharacter(BYTE bChar)
+{
+    switch (bChar) {
+    case 0:  // Terminates horizontal and vertical TAB setting
+        break;
+    case 7:  // Sound beeper
+        break;
+    case 8:  // Backspace
+        // ToDo: fix for other font-sizes ***
+        stPrtRam.uiHpos -= 8;
+        if (stPrtRam.uiHpos < stPrtRam.uiLeftBorder)
+            stPrtRam.uiHpos=stPrtRam.uiLeftBorder;
+        break;
+    case 9:  // Horizontal TAB
+        {
+            // ToDo: fix for other font-sizes ***
+            UINT            uiNewPos;
+            uiNewPos = ((UINT)stPrtRam.uiHpos + 64 - stPrtRam.uiLeftBorder) & ~63;
+            uiNewPos += stPrtRam.uiLeftBorder;
+
+            if (uiNewPos >= stPrtRam.uiHpos)
+                break;
+            // else fall thru: CR/LF
+        }
+        break;
+    case 10: // Line Feed
+    case 11: // Vertical TAB
+        stPrtRam.uiVpos += stPrtRam.uiLineFeed;
+        if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
+            FlushEmulatedPrinter();
+        break;
+    case 12: // Form Feed
+        EnsurePrintPage();
+        FlushEmulatedPrinter();
+        break;
+    case 13: // Carrige return
+        stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
+        break;
+    case 14: // Turns expanded mode ON
+        break;
+    case 15: // Shift in. Emties buffer, turns compressed mode ON (17.16 cpi)
+        stPrtRam.fDoubleWidth = TRUE;
+        break;
+    case 17: // Device Control 1: 
+        break;
+    case 18: // Device Control 2: turns compressed mode OFF
+        stPrtRam.fDoubleWidth = FALSE;
+        break;
+    case 19: // Device Control 3: 
+        break;
+    case 20: // Device Control 4: Turns expanded mode OFF
+        break;
+    case 24: // Cancels all text in the print buffer
+        break;
+    case 27: // Escape
+        stPrtRam.fEscSequence = TRUE;
+        break;
+    }
 }
 
 ////////////////////////////////////////////////////

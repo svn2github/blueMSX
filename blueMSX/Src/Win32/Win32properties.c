@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-05-11 16:47:41 $
+** $Date: 2005-05-11 18:33:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2098,8 +2098,13 @@ static BOOL updatePortsLptEmulList(HWND hDlg, int id, Properties* pProperties)
     
     // Add MSX Printer
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"MSX Printer");
+    
+    // Add Epson FX-80
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"Epson FX-80");
 
     SendDlgItemMessage(hDlg, id, CB_SETCURSEL, pProperties->ports.Lpt.emulation, 0);
+
+    return TRUE;
 }
 
 static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
