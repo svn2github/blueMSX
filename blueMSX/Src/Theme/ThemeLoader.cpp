@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-05-01 09:26:43 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,6 +89,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-diska"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskA; }
     if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
     if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }
+    if (0 == strcmp(action, "menu-printer"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuPrinter; }
     if (0 == strcmp(action, "menu-controlsport1"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort1; }
     if (0 == strcmp(action, "menu-controlsport2"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort2; }
     if (0 == strcmp(action, "menu-windowsize"))         { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuZoom; }
@@ -179,6 +180,8 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-togglemutemsxmusic"))  return (ButtonEvent)actionMuteToggleMsxMusic;
     if (0 == strcmp(action, "audio-togglemutemsxaudio"))  return (ButtonEvent)actionMuteToggleMsxAudio;
     if (0 == strcmp(action, "audio-togglemutemoonsound")) return (ButtonEvent)actionMuteToggleMoonsound;
+    
+    if (0 == strcmp(action, "printer-forceformfeed"))   return (ButtonEvent)actionPrinterForceFormFeed;
 
     if (0 == strcmp(action, "port1-setnone"))           return (ButtonEvent)actionPort1SetNone;
     if (0 == strcmp(action, "port1-setmouse"))          return (ButtonEvent)actionPort1SetMouse;

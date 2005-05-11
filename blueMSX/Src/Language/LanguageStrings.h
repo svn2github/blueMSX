@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-05-11 03:18:03 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,6 +72,8 @@ typedef struct {
     _TCHAR* menuCasRewind;
     _TCHAR* menuCasNoRecentFiles;
 
+    _TCHAR* menuPrnFormfeed;
+
     _TCHAR* menuZoomNormal;
     _TCHAR* menuZoomDouble;
     _TCHAR* menuZoomFullscreen;
@@ -104,6 +106,7 @@ typedef struct {
     _TCHAR* menuFileDiskA;
     _TCHAR* menuFileDiskB;
     _TCHAR* menuFileCas;
+    _TCHAR* menuFilePrn;
     _TCHAR* menuFileLoadState;
     _TCHAR* menuFileSaveState;
     _TCHAR* menuFileQLoadState;
@@ -492,6 +495,7 @@ typedef struct {
     _TCHAR* shortcutCasSetPosition;
     _TCHAR* shortcutCasRewind;
     _TCHAR* shortcutCasSave;
+    _TCHAR* shortcutPrnFormFeed;
     _TCHAR* shortcutCpuStateLoad;
     _TCHAR* shortcutCpuStateSave;
     _TCHAR* shortcutCpuStateQload;

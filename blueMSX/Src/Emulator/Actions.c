@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-05-01 00:05:01 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@
 #include "ArchDialog.h"
 #include "ArchControls.h"
 #include "ArchNotifications.h"
+#include "ArchPrinter.h"
 
 #include <stdio.h>
 #include <direct.h>
@@ -851,6 +852,13 @@ void actionMuteToggleMoonsound() {
     mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
+void actionPrinterForceFormFeed()
+{
+    emulatorSuspend();
+    archForceFormFeed();
+    emulatorResume();
+}
+
 void actionVolumeToggleStereo() {
     state.properties->sound.stereo = !state.properties->sound.stereo;
 
@@ -912,6 +920,10 @@ void actionMenuDiskB(int x, int y) {
 
 void actionMenuCassette(int x, int y) {
     archShowMenuCassette(x, y);
+}
+
+void actionMenuPrinter(int x, int y) {
+    archShowMenuPrinter(x, y);
 }
 
 void actionMenuControlsPort1(int x, int y) {

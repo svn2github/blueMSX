@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2005-05-09 17:31:55 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -700,6 +700,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->diskDirInsertB))               actionDiskDirInsertB();
     if (hotkeyEq(key, s->diskChangeA))                  actionDiskQuickChange();
     if (hotkeyEq(key, s->casInsert))                    actionCasInsert();
+    if (hotkeyEq(key, s->prnFormFeed))                  actionPrinterForceFormFeed();
     if (hotkeyEq(key, s->casRewind))                    actionCasRewind();
     if (hotkeyEq(key, s->casSetPos))                    actionCasSetPosition();
     if (hotkeyEq(key, s->mouseLockToggle))              actionToggleMouseCapture();

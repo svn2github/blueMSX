@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-05-11 03:18:02 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -310,6 +310,8 @@ _TCHAR* langMenuCasSetPosition() { return ls->menuCasSetPosition; }
 _TCHAR* langMenuCasRewind() { return ls->menuCasRewind; }
 _TCHAR* langMenuCasNoRecentFiles() { return ls->menuCasNoRecentFiles; }
 
+_TCHAR* langMenuPrnFormfeed() { return ls->menuPrnFormfeed; }
+
 _TCHAR* langMenuZoomNormal() { return ls->menuZoomNormal; }
 _TCHAR* langMenuZoomDouble() { return ls->menuZoomDouble; }
 _TCHAR* langMenuZoomFullscreen() { return ls->menuZoomFullscreen; }
@@ -337,6 +339,7 @@ _TCHAR* langMenuFileCart2() { return ls->menuFileCart2; }
 _TCHAR* langMenuFileDiskA() { return ls->menuFileDiskA; }
 _TCHAR* langMenuFileDiskB() { return ls->menuFileDiskB; }
 _TCHAR* langMenuFileCas() { return ls->menuFileCas; }
+_TCHAR* langMenuFilePrn() { return ls->menuFilePrn; }
 _TCHAR* langMenuFileLoadState() { return ls->menuFileLoadState; }
 _TCHAR* langMenuFileSaveState() { return ls->menuFileSaveState; }
 _TCHAR* langMenuFileQLoadState() { return ls->menuFileQLoadState; }
@@ -721,6 +724,7 @@ _TCHAR* langShortcutCasReadOnly() { return ls->shortcutCasReadOnly; }
 _TCHAR* langShortcutCasSetPosition() { return ls->shortcutCasSetPosition; }
 _TCHAR* langShortcutCasRewind() { return ls->shortcutCasRewind; }
 _TCHAR* langShortcutCasSave() { return ls->shortcutCasSave; }
+_TCHAR* langShortcutPrnFormFeed() { return ls->shortcutPrnFormFeed; }
 _TCHAR* langShortcutCpuStateLoad() { return ls->shortcutCpuStateLoad; }
 _TCHAR* langShortcutCpuStateSave() { return ls->shortcutCpuStateSave; }
 _TCHAR* langShortcutCpuStateQload() { return ls->shortcutCpuStateQload; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-05-11 03:18:03 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1096,5 +1096,12 @@ void archPrinterDestroy(void)
     }
     else {
         printerRawDestroy();
+    }
+}
+
+void archForceFormFeed(void)
+{
+    if (printerType == P_LPT_EMULATED) {
+        FlushEmulatedPrinter();
     }
 }

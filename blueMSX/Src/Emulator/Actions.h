@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-05-01 00:05:01 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,6 +118,7 @@ void actionMenuCart2(int x, int y);
 void actionMenuDiskA(int x, int y);
 void actionMenuDiskB(int x, int y);
 void actionMenuCassette(int x, int y);
+void actionMenuPrinter(int x, int y);
 void actionMenuControlsPort1(int x, int y);
 void actionMenuControlsPort2(int x, int y);
 void actionMenuZoom(int x, int y);
@@ -156,6 +157,8 @@ void actionMuteToggleKeyboard();
 void actionMuteToggleMsxMusic();
 void actionMuteToggleMsxAudio();
 void actionMuteToggleMoonsound();
+
+void actionPrinterForceFormFeed();
 
 void actionSetCartAutoReset(int value);
 void actionSetDiskAutoResetA(int value);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchMenu.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-26 08:15:45 $
+** $Date: 2005-05-11 04:54:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ void archShowMenuCart2(int x, int y);
 void archShowMenuDiskA(int x, int y);
 void archShowMenuDiskB(int x, int y);
 void archShowMenuCassette(int x, int y);
+void archShowMenuPrinter(int x, int y);
 void archShowMenuZoom(int x, int y);
 void archShowMenuOptions(int x, int y);
 void archShowMenuTools(int x, int y);

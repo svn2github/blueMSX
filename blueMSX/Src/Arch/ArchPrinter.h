@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchPrinter.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-01-31 20:20:19 $
+** $Date: 2005-05-11 04:54:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,5 +35,7 @@
 void archPrinterWrite(UInt8 value);
 int archPrinterCreate(void);
 void archPrinterDestroy(void);
+
+void archForceFormFeed(void);
 
 #endif

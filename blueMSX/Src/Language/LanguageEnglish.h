@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-05-11 03:18:02 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -582,6 +582,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propPortsOpenLogFile    = "Open Log File";
     ls->propPortsFilenameText   = "Filename";
     ls->propPortsEmulateMsxPrn  = " Emulate MSX Printer";
+
+    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+
+    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuFilePrn             = "Printer";
 };
 
 

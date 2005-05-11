@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-09 22:10:14 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -740,6 +740,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(casInsert);
     LOAD_SHORTCUT(casRewind);
     LOAD_SHORTCUT(casSetPos);
+    LOAD_SHORTCUT(prnFormFeed);
     LOAD_SHORTCUT(mouseLockToggle);
     LOAD_SHORTCUT(emulationRunPause);
     LOAD_SHORTCUT(emulationStop);
@@ -823,6 +824,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(casInsert);
     SAVE_SHORTCUT(casRewind);
     SAVE_SHORTCUT(casSetPos);
+    SAVE_SHORTCUT(prnFormFeed);
     SAVE_SHORTCUT(mouseLockToggle);
     SAVE_SHORTCUT(emulationRunPause);
     SAVE_SHORTCUT(emulationStop);
@@ -941,6 +943,10 @@ static void updateShortcutEntries(HWND hDlg)
     
     ADD_SHORTCUTSEPARATOR();
 
+    ADD_SHORTCUT(prnFormFeed, langShortcutPrnFormFeed());
+    
+    ADD_SHORTCUTSEPARATOR();
+    
     ADD_SHORTCUT(cpuStateLoad, langShortcutCpuStateLoad());
     ADD_SHORTCUT(cpuStateSave, langShortcutCpuStateSave());
     ADD_SHORTCUT(cpuStateQuickLoad, langShortcutCpuStateQload());
@@ -1143,6 +1149,14 @@ static BOOL CALLBACK shortcutsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
                                     memcmp(shortcutsRef, shortcuts, sizeof(Shortcuts)));
         }
         return FALSE;
+
+    case WM_ACTIVATE:
+        keyboardSetFocus(4, LOWORD(wParam) != WA_INACTIVE);
+        break;
+
+    case WM_DESTROY:
+        keyboardSetFocus(4, 0);
+        break;
 
     case WM_COMMAND:
         switch(LOWORD(wParam)) {

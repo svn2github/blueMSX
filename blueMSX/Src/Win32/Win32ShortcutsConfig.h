@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-03-09 22:10:14 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,7 @@ typedef struct {
     ShotcutHotkey casInsert;
     ShotcutHotkey casRewind;
     ShotcutHotkey casSetPos;
+    ShotcutHotkey prnFormFeed;
     ShotcutHotkey mouseLockToggle;
     ShotcutHotkey emulationRunPause;
     ShotcutHotkey emulationStop;

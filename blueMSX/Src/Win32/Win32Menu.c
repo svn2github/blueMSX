@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-04-30 20:56:42 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,7 @@
 #define ID_FILE_CARTA_SONYHBI55         40071
 #define ID_FILE_CARTB_SONYHBI55         40072
 #define ID_VIDEO_AUTODETECT             40073
+#define ID_FILE_PRINTER_FORMFEED        40074
 
 #define ID_CARTRIDGEA_HISTORY           30000
 #define ID_CARTRIDGEB_HISTORY           30050
@@ -189,6 +190,7 @@ static HMENU hMenuRun = NULL;
 static HMENU hMenuDiskA = NULL;
 static HMENU hMenuDiskB = NULL;
 static HMENU hMenuCasette = NULL;
+static HMENU hMenuPrinter = NULL;
 static HMENU hMenuControlsPort1 = NULL;
 static HMENU hMenuControlsPort2 = NULL;
 static HMENU hMenuZoom = NULL;
@@ -588,6 +590,18 @@ static HMENU menuCreateDiskB(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
+static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) {
+    _TCHAR langBuffer[560];
+    HMENU hMenu = CreatePopupMenu();
+
+    setMenuColor(hMenu);
+
+    _stprintf(langBuffer, "%s      \t%hs", langMenuPrnFormfeed(), shortcutsToString(shortcuts->prnFormFeed));
+    AppendMenu(hMenu, MF_STRING, ID_FILE_PRINTER_FORMFEED, langBuffer);
+
+    return hMenu;
+}
+
 static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
@@ -826,6 +840,11 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
     _stprintf(menuBuffer, "%s", langMenuFileCas());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), menuBuffer);
+
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+    _stprintf(menuBuffer, "%s", langMenuFilePrn());
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreatePrinter(pProperties, shortcuts), menuBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -1095,6 +1114,7 @@ void menuUpdate(Properties* pProperties,
     if (hMenuDiskA) DestroyMenu(hMenuDiskA);
     if (hMenuDiskB) DestroyMenu(hMenuDiskB);
     if (hMenuCasette) DestroyMenu(hMenuCasette);
+    if (hMenuPrinter) DestroyMenu(hMenuPrinter);
     if (hMenuControlsPort1) DestroyMenu(hMenuControlsPort1);
     if (hMenuControlsPort2) DestroyMenu(hMenuControlsPort2);
     if (hMenuZoom) DestroyMenu(hMenuZoom);
@@ -1113,6 +1133,7 @@ void menuUpdate(Properties* pProperties,
     hMenuDiskA         = menuCreateDiskA(pProperties, shortcuts);
     hMenuDiskB         = menuCreateDiskB(pProperties, shortcuts);
     hMenuCasette       = menuCreateCassette(pProperties, shortcuts);
+    hMenuPrinter       = menuCreatePrinter(pProperties, shortcuts);
     hMenuControlsPort1 = menuCreateControlsPort1(pProperties, shortcuts);
     hMenuControlsPort2 = menuCreateControlsPort2(pProperties, shortcuts);
     hMenuZoom          = menuCreateZoom(pProperties, shortcuts);
@@ -1203,6 +1224,10 @@ void archShowMenuDiskB(int x, int y) {
 
 void archShowMenuCassette(int x, int y) {
     showPopupMenu(hMenuCasette, x, y);
+}
+
+void archShowMenuPrinter(int x, int y) {
+    showPopupMenu(hMenuPrinter, x, y);
 }
 
 void archShowMenuControlsPort1(int x, int y) {
@@ -1452,6 +1477,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_FILE_REMOVE_DISKETTEA:          actionDiskRemoveA();            return 0;
     case ID_FILE_REMOVE_DISKETTEB:          actionDiskRemoveB();            return 0;
     case ID_FILE_REMOVE_CASSETTE:           actionCasRemove();              return 0;
+    case ID_FILE_PRINTER_FORMFEED:          actionPrinterForceFormFeed();   return 0;
     case ID_OPTIONS_EMULATION:              actionPropShowEmulation();      return 0;
     case ID_OPTIONS_VIDEO:                  actionPropShowVideo();          return 0;
     case ID_OPTIONS_AUDIO:                  actionPropShowAudio();          return 0;

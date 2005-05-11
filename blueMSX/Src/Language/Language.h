@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-05-11 03:18:02 $
+** $Date: 2005-05-11 04:54:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,6 +91,8 @@ _TCHAR* langMenuCasSetPosition();
 _TCHAR* langMenuCasRewind();
 _TCHAR* langMenuCasNoRecentFiles();
 
+_TCHAR* langMenuPrnFormfeed();
+
 _TCHAR* langMenuZoomNormal();
 _TCHAR* langMenuZoomDouble();
 _TCHAR* langMenuZoomFullscreen();
@@ -118,6 +120,7 @@ _TCHAR* langMenuFileCart2();
 _TCHAR* langMenuFileDiskA();
 _TCHAR* langMenuFileDiskB();
 _TCHAR* langMenuFileCas();
+_TCHAR* langMenuFilePrn();
 _TCHAR* langMenuFileLoadState();
 _TCHAR* langMenuFileSaveState();
 _TCHAR* langMenuFileQLoadState();
@@ -507,6 +510,7 @@ _TCHAR* langShortcutCasReadOnly();
 _TCHAR* langShortcutCasSetPosition();
 _TCHAR* langShortcutCasRewind();
 _TCHAR* langShortcutCasSave();
+_TCHAR* langShortcutPrnFormFeed();
 _TCHAR* langShortcutCpuStateLoad();
 _TCHAR* langShortcutCpuStateSave();
 _TCHAR* langShortcutCpuStateQload();
