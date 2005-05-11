@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-05-09 05:52:14 $
+** $Date: 2005-05-11 01:35:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,7 +203,9 @@ void propInitDefaults(Properties* pProperties)
     pProperties->cassette.autoRewind      = 0;
     
     pProperties->ports.Lpt.type           = P_LPT_NONE;
+    pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
     pProperties->ports.Lpt.name[0]        = 0;
+    strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
 
     for (i = 0; i < MAX_HISTORY; i++) {
         pProperties->filehistory.cartridgeA[i][0] = 0;
@@ -383,7 +385,9 @@ void propInitDefaults(Properties* pProperties)
     pProperties->cassette.autoRewind      = 0;
 
     pProperties->ports.Lpt.type           = P_LPT_NONE;
+    pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
     pProperties->ports.Lpt.name[0]        = 0;
+    strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
 
     for (i = 0; i < MAX_HISTORY; i++) {
         pProperties->filehistory.cartridgeA[i][0] = 0;
@@ -560,7 +564,9 @@ static void propLoad(Properties* pProperties)
     getIntValue("CasseteAutoRewind", &pProperties->cassette.autoRewind);
     
     getIntValue("LptType", &pProperties->ports.Lpt.type);
+    getIntValue("LptMode", &pProperties->ports.Lpt.mode);
     getStrValue("LptName", (char*)pProperties->ports.Lpt.name);
+    getStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
     
     for (i = 0; i < MAX_HISTORY; i++) {
         char str[32];
@@ -747,7 +753,9 @@ void propSave(Properties* pProperties)
     setIntValue("CasseteAutoRewind", pProperties->cassette.autoRewind);
 
     setIntValue("LptType", pProperties->ports.Lpt.type);
+    setIntValue("LptMode", pProperties->ports.Lpt.mode);
     setStrValue("LptName", (char*)pProperties->ports.Lpt.name);
+    setStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
 
     for (i = 0; i < MAX_HISTORY; i++) {
         char str[32];

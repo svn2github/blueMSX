@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-05-10 07:58:33 $
+** $Date: 2005-05-11 01:36:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2188,6 +2188,51 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
     return TRUE;
 }
 
+static int openLogFile(HWND hwndOwner, char* fileName)
+{
+    OPENFILENAME ofn; 
+    static char pFileName[MAX_PATH];
+    char  curDir[MAX_PATH];
+    BOOL rv;
+
+    pFileName[0] = 0; 
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = GetModuleHandle(NULL);
+    ofn.lpstrFilter = "*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0;
+    ofn.nFilterIndex = 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrTitle = "Open Log File"; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT; 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = NULL; 
+    ofn.lpTemplateName = NULL; 
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+
+    rv = GetSaveFileName(&ofn); 
+
+    SetCurrentDirectory(curDir);
+
+    if (rv) {
+        strcpy(fileName, pFileName);
+    }
+
+    return rv;
+}
+
+
+
 static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     static Properties* pProperties;
@@ -2211,11 +2256,34 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         updatePortsLptList(hDlg, IDC_PORTSLPT, pProperties);
         updatePortsComList(hDlg, IDC_PORTSCOM1, pProperties);
 
+        {
+            int idx = SendDlgItemMessage(hDlg, IDC_PORTSLPT, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAMEBROWSE), idx == P_LPT_FILE);
+            EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAME), idx == P_LPT_FILE);
+            EnableWindow(GetDlgItem(hDlg, IDC_LPTEMU), idx >= P_LPT_HOST);
+        }
+
+        setButtonCheck(hDlg, IDC_LPTEMU,  pProperties->ports.Lpt.mode == P_LPT_EMULATED, 1);
+
+        SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
+
         return FALSE;
         
     case WM_COMMAND:
         switch(LOWORD(wParam)) {
         case IDC_PORTSLPT:
+            {
+                int idx = SendDlgItemMessage(hDlg, IDC_PORTSLPT, CB_GETCURSEL, 0, 0);
+                EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAMEBROWSE), idx == P_LPT_FILE);
+                EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAME), idx == P_LPT_FILE);
+                EnableWindow(GetDlgItem(hDlg, IDC_LPTEMU), idx >= P_LPT_HOST);
+            }
+            return TRUE;
+
+        case IDC_LPTFILENAMEBROWSE:
+            if (openLogFile(hDlg, pProperties->ports.Lpt.fileName)) {
+                SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
+            }
             return TRUE;
 
         case IDC_PORTSCOM1:
@@ -2232,7 +2300,10 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             return FALSE;
         }
 
+        pProperties->ports.Lpt.mode = getButtonCheck(hDlg, IDC_LPTEMU) ? P_LPT_EMULATED : P_LPT_RAW;
         getPortsLptList(hDlg, IDC_PORTSLPT, pProperties);
+
+        GetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName, MAX_PATH - 1);
 
         return TRUE;
     }

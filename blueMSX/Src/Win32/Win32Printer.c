@@ -1,13 +1,16 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-05-10 07:58:33 $
+** $Date: 2005-05-11 01:36:03 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik, Tomas Karlsson
+** Copyright (C) 2003-2004 Rudolf Lechleitner, Daniel Vik, Tomas Karlsson
+**
+** This code is ported from RuMSX and modified to fit into the blueMSX
+** framework.
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -33,8 +36,6 @@
 #include "Win32Printer.h"
 #include "ArchPrinter.h"
 
-#if 0
-
 #ifdef __GNUC__ // FIXME: Include is not available in gnu c
 #include <string.h>
 static HRESULT StringCchCopy(LPTSTR d, size_t l, LPCTSTR s) { strncpy(d, s, l); d[l-1]=0; return S_OK; }
@@ -43,6 +44,12 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
 #endif
+
+
+//////////////////////////////////////////////////////////////////////////////////
+/// Raw printer emulation
+//////////////////////////////////////////////////////////////////////////////////
+
 
 static HDC hdcPrn;
 static TEXTMETRIC tm;
@@ -80,7 +87,7 @@ static const UInt8 prnCharMapVerticalLine[8] = {0x7C,0xF9,0xF6,0x7C,0xF8,0xF6,0x
 static const UInt8 prnCharMapRightCurlyBracket[8] = {0x7D,0xE8,0xFC,0x7D,0xE5,0xE5,0xE8,0x7D};
 static const UInt8 prnCharTilde[8] = {0x7E,0xA8,0xDF,0x7E,0x7E,0xFC,0xEC,0x7E};
 
-static void printerDestroy(void)
+static void printerRawDestroy(void)
 {
     if (EndPage(hdcPrn) > 0)
         EndDoc(hdcPrn);
@@ -91,7 +98,7 @@ static void printerDestroy(void)
     nLinePos = 0;
 }
 
-static void printerWrite(BYTE value)
+static void printerRawWrite(BYTE value)
 {
     DWORD dwWritten = 0;
     DWORD dwLength = 0;
@@ -150,7 +157,7 @@ static void printerWrite(BYTE value)
             EndPage(hdcPrn);
             nRow = 0;
             if (!(StartPage(hdcPrn) > 0))
-                printerDestroy();
+                printerRawDestroy();
         }
         return;
     case 0x0c:  // Form feed
@@ -163,7 +170,7 @@ static void printerWrite(BYTE value)
         nRow = 0;
         nLinePos = 0;
         if (!(StartPage(hdcPrn) > 0))
-            printerDestroy();
+            printerRawDestroy();
         return;
     }
 
@@ -179,12 +186,12 @@ static void printerWrite(BYTE value)
             EndPage(hdcPrn);
             nRow = 0;
             if (!(StartPage(hdcPrn) > 0))
-                printerDestroy();
+                printerRawDestroy();
         }
     }
 }
 
-static int printerCreate(void)
+static int printerRawCreate(void)
 {
     LOGFONT lf;
     DOCINFO dc;
@@ -223,10 +230,11 @@ static int printerCreate(void)
 }
 
 
-#else 
-
+///////////////////////////////////////////////////////////////
+/// Emulated printer, from RuMSX
 ///////////////////////////////////////////////////////////////
 
+#define USE_REAL_FONT
 
 static BYTE FontBitmaps[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -495,9 +503,6 @@ static BYTE FontBitmaps[] = {
 #define PRTFONT_CONDENSED    2      // Courier 1/17" (Condensed)
 #define PRTFONT_PROPORTIONAL 3      // Proportional
 
-#define PIXELSIZEX      3
-#define PIXELSIZEY      4
-
 typedef struct {
     int     iFont;
     BOOL    fLetterQuality;
@@ -519,7 +524,8 @@ typedef struct {
     size_t  sizeEscPos;
     BYTE    abEscSeq[MAX_ESC_CMDSIZE];
     size_t  sizeRemainingDataBytes;
-    UINT    uiHpos;
+    UINT    uiDensity;
+    double  uiHpos;
     UINT    uiVpos;
     UINT    uiPageTop;
     UINT    uiLineFeed;
@@ -529,28 +535,54 @@ typedef struct {
 PRINTERRAM   stPrtRam;
 BOOL         fPrintDataOnPage;
 ULONG        ulPrintPage = 1;
-HDC          hdcOpenPrinter = NULL;
+HDC          hdcPrinter = NULL;
+
+static char  printDir[MAX_PATH];
+static int   pixelSizeX;
+static int   pixelSizeY;
 static BYTE  abFontImage[256 * 8];
 static int   aiCharStart[256];
 static int   aiCharWidth[256];
 static BYTE  abGrphImage[sizeof(DWORD) * 8];
 static TCHAR szDocTitle[MAX_PATH];
+static TEXTMETRIC tm;
 
 static struct {
     BITMAPINFOHEADER bmiHeader;
     RGBQUAD bmiColors[2];
 } bmiFont, bmiGrph;
 
-VOID FlushEmulatedPrinter(VOID)
+void UpdateFont(void)
 {
-    if (hdcOpenPrinter) {
+    int fontSize[] = { 10, 12, 17, 10 };
+    LOGFONT lf;
+
+    ZeroMemory(&lf, sizeof(LOGFONT));
+    lf.lfHeight = -MulDiv(fontSize[stPrtRam.iFont] / (stPrtRam.fSuperscript || stPrtRam.fSubscript ? 2 : 1), 
+                          GetDeviceCaps(hdcPrinter, LOGPIXELSY), 72);
+    lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
+
+    lf.lfItalic = stPrtRam.fItalic;
+    lf.lfStrikeOut = stPrtRam.fDoubleStrike;
+    lf.lfUnderline = stPrtRam.fUnderline;
+    lf.lfWeight = stPrtRam.fBold ? FW_BOLD : FW_NORMAL;
+
+    strcpy(lf.lfFaceName, "DotMatrix");
+    DeleteObject(SelectObject(hdcPrinter, CreateFontIndirect(&lf))); 
+    
+    GetTextMetrics(hdcPrinter, &tm);
+}
+
+void FlushEmulatedPrinter(void)
+{
+    if (hdcPrinter) {
         if (fPrintDataOnPage) {
-            EndPage( hdcOpenPrinter );
-            EndDoc( hdcOpenPrinter );
+            EndPage( hdcPrinter );
+            EndDoc( hdcPrinter );
             ulPrintPage++;
         }
         else
-            AbortDoc( hdcOpenPrinter );
+            AbortDoc( hdcPrinter );
     }
 
     stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
@@ -559,11 +591,11 @@ VOID FlushEmulatedPrinter(VOID)
     fPrintDataOnPage=FALSE;
 }
 
-static VOID SeekPrinterHeadRelative(int iOffset)
+static void SeekPrinterHeadRelative(double iOffset)
 {
-    stPrtRam.uiHpos += (UINT)iOffset;
+    stPrtRam.uiHpos += iOffset;
 
-    if (stPrtRam.uiHpos >= stPrtRam.uiRightBorder) {
+    if ((UINT)stPrtRam.uiHpos > stPrtRam.uiRightBorder) {
         stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
 
         stPrtRam.uiVpos += stPrtRam.uiLineFeed;
@@ -572,7 +604,7 @@ static VOID SeekPrinterHeadRelative(int iOffset)
     }
 }
 
-VOID SetPrintTitle(LPTSTR lpszDocTitle)
+void SetPrintTitle(LPTSTR lpszDocTitle)
 {
     if (lpszDocTitle)
         lstrcpy( szDocTitle, lpszDocTitle );
@@ -582,7 +614,7 @@ VOID SetPrintTitle(LPTSTR lpszDocTitle)
     return;
 }
 
-VOID SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
+void SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
 {
     LPBYTE lpCurByte;
     int    iChar;
@@ -689,12 +721,13 @@ VOID SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
     bmiGrph.bmiColors[1].rgbReserved = 0x00;
 }
 
-VOID ResetEmulatedPrinter(VOID)
+void ResetEmulatedPrinter(void)
 {
     ZeroMemory( &stPrtRam, sizeof(stPrtRam) );
     stPrtRam.uiLineFeed=11;
     stPrtRam.uiLeftBorder=48;
     stPrtRam.uiRightBorder=800;
+    stPrtRam.uiDensity=100;
     stPrtRam.uiPageHeight=48+72*stPrtRam.uiLineFeed;
     stPrtRam.uiPageTop = 48;
 
@@ -706,13 +739,15 @@ VOID ResetEmulatedPrinter(VOID)
     return;
 }
 
-VOID EnsurePrintPage(VOID)
+void EnsurePrintPage(void)
 {
     DOCINFO di;
     TCHAR   szDocName[MAX_PATH];
 
     if (!fPrintDataOnPage) {
-        if (hdcOpenPrinter) {
+        if (hdcPrinter) {
+            char originalDir[MAX_PATH];
+
             ZeroMemory( &di, sizeof(di) );
             di.cbSize = sizeof(di);
             di.lpszDocName = szDocName;
@@ -720,22 +755,35 @@ VOID EnsurePrintPage(VOID)
             wsprintf( szDocName, TEXT("%s (%lu)"),
                 szDocTitle, ulPrintPage );
 
-            StartDoc( hdcOpenPrinter, &di );
-            StartPage( hdcOpenPrinter );
+            // We need to restore the current directory after
+            // StartDoc is called in case we use a virtual
+            // printer that writes to file and open a dialog
+            // box. Also set current dir to the dir of last
+            // access to this method before calling StartPage
+
+            GetCurrentDirectory(MAX_PATH - 1, originalDir);
+            if (*printDir) {
+                SetCurrentDirectory(printDir);
+            }
+            StartDoc( hdcPrinter, &di );
+            StartPage( hdcPrinter );
+            
+            GetCurrentDirectory(MAX_PATH - 1, printDir);
+            SetCurrentDirectory(originalDir);
         }
 
         fPrintDataOnPage=TRUE;
     }
 }
 
-VOID PrintVisibleCharacter(BYTE bChar)
+void PrintVisibleCharacter(BYTE bChar)
 {
     EnsurePrintPage();
 
-    if (hdcOpenPrinter)
+    if (hdcPrinter)
     {
         int iYPos = 0;
-        int iHeight = PIXELSIZEY;
+        int iHeight = pixelSizeY;
 
         if (stPrtRam.fSubscript)
         {
@@ -746,28 +794,33 @@ VOID PrintVisibleCharacter(BYTE bChar)
         {
             iHeight /= 2;
         }
-
+        
+#ifdef USE_REAL_FONT
+        TextOut(hdcPrinter, 
+                (UINT)stPrtRam.uiHpos * pixelSizeX, stPrtRam.uiVpos * pixelSizeY + iYPos,
+                &bChar, 1);
+#else
         // Print character
-        StretchDIBits( hdcOpenPrinter,
-            stPrtRam.uiHpos*PIXELSIZEX, stPrtRam.uiVpos*PIXELSIZEY+iYPos,
-            PIXELSIZEX*8, iHeight*8,
+        StretchDIBits( hdcPrinter,
+            stPrtRam.uiHpos*pixelSizeX, stPrtRam.uiVpos*pixelSizeY+iYPos,
+            pixelSizeX*8, iHeight*8,
             8*(int)bChar, 0, 8, 8,
             abFontImage, (LPBITMAPINFO)&bmiFont,
-            DIB_RGB_COLORS, SRCCOPY );
-
+            DIB_RGB_COLORS, SRCPAINT );
+#endif
         // Move print-position...
         SeekPrinterHeadRelative(8);
     }
 }
 
-VOID PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
+void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 {
     int  iPixel;
     BYTE bMask;
 
     EnsurePrintPage();
 
-    if (hdcOpenPrinter)
+    if (hdcPrinter)
     {
         ZeroMemory( abGrphImage, sizeof(abGrphImage) );
 
@@ -788,51 +841,40 @@ VOID PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
         }
 
         // Print bit-mask
-        StretchDIBits( hdcOpenPrinter,
-            stPrtRam.uiHpos*PIXELSIZEX, stPrtRam.uiVpos*PIXELSIZEY,
-            PIXELSIZEX, PIXELSIZEY*8,
+        StretchDIBits( hdcPrinter,
+            (UINT)stPrtRam.uiHpos*pixelSizeX, stPrtRam.uiVpos*pixelSizeY,
+            pixelSizeX, pixelSizeY*8,
             0, 0, 1, 8,
             abGrphImage, (LPBITMAPINFO)&bmiGrph,
             DIB_RGB_COLORS, SRCCOPY );
 
         // Move print-position...
-        SeekPrinterHeadRelative(1);
+        SeekPrinterHeadRelative(100./stPrtRam.uiDensity);
     }
 
     return;
 }
 
-static size_t CalcEscSequenceLength(BYTE bStart) 
+static size_t CalcEscSequenceLength(BYTE character) 
 {
-    size_t size = 0;
-
-    switch (bStart)
-    {
+    switch (character) {
+    case 'A':
     case 'C':
-        size = 1;
-        break;
-
+        return 1;
     case 'T':
     case 'Z':
-        size = 2;
-        break;
-
+        return 2;
     case 'O':
     case '\\':
     case 'L':
-        size = 3;
-        break;
-
+        return 3;
     case 'S':
-        size = 4;
-        break;
-
+        return 4;
     case 'G':
-        size = 7;
-        break;
+        return 7;
     }
 
-    return size;
+    return 0;
 }
 
 static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
@@ -850,7 +892,7 @@ static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
     return uiValue;
 }
 
-static VOID ProcessEscSequence(VOID)
+static void ProcessEscSequence(void)
 {
     switch (stPrtRam.abEscSeq[0]) {
     case 13:
@@ -874,10 +916,6 @@ static VOID ProcessEscSequence(VOID)
         // ???: Partially delete a horizontal tab position
         break;
 
-    case '2':
-        // ???: Delete all horizontal tab positions
-        break;
-
     case '\"':
         stPrtRam.fLetterQuality=FALSE;
         break;
@@ -891,11 +929,13 @@ static VOID ProcessEscSequence(VOID)
         break;
 
     case 'A':
-        // ???: Line-feed 1/6"
+      // ???: Line-feed 1/6"
+        stPrtRam.uiLineFeed=12;
         break;
 
     case 'B':
         // ???: Line-feed 1/9"
+        stPrtRam.uiLineFeed=8;
         break;
 
     case 'C':
@@ -933,14 +973,19 @@ static VOID ProcessEscSequence(VOID)
             stPrtRam.fSubscript=FALSE;
             break;
         }
+        UpdateFont();
         break;
 
     case 'E':
         stPrtRam.iFont=PRTFONT_ELITE;
+        UpdateFont();
         break;
 
     case 'G':
-        // Print graphics, ignore density (1-3) for now...
+        stPrtRam.uiDensity=GetMsxPrinterNumber( 1, 3 );
+        if (stPrtRam.uiDensity == 0) {
+            stPrtRam.uiDensity = 1;
+        }
         stPrtRam.sizeRemainingDataBytes=GetMsxPrinterNumber( 4, 4 );
         break;
 
@@ -950,6 +995,7 @@ static VOID ProcessEscSequence(VOID)
 
     case 'N':
         stPrtRam.iFont=PRTFONT_PICA;
+        UpdateFont();
         break;
 
     case 'O':
@@ -971,6 +1017,7 @@ static VOID ProcessEscSequence(VOID)
 
     case 'Q':
         stPrtRam.iFont=PRTFONT_CONDENSED;
+        UpdateFont();
         break;
 
     case 'S':
@@ -1022,7 +1069,7 @@ static VOID ProcessEscSequence(VOID)
     }
 }
 
-static VOID ProcessCharacter(BYTE bChar)
+static void ProcessCharacter(BYTE bChar)
 {
     if (stPrtRam.fAlternateChar)
     {
@@ -1050,7 +1097,7 @@ static VOID ProcessCharacter(BYTE bChar)
             {
                 // ToDo: fix for other font-sizes ***
                 UINT            uiNewPos;
-                uiNewPos = (stPrtRam.uiHpos + 64
+                uiNewPos = ((UINT)stPrtRam.uiHpos + 64
                     - stPrtRam.uiLeftBorder) & ~63;
                 uiNewPos += stPrtRam.uiLeftBorder;
 
@@ -1061,7 +1108,7 @@ static VOID ProcessCharacter(BYTE bChar)
 
         case 10:                                // LF: Carriage return + Line feed
         case 11:                                // VT: Vertical tabulator (like LF)
-            stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
+//            stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
             stPrtRam.uiVpos += stPrtRam.uiLineFeed;
             if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
                 FlushEmulatedPrinter();
@@ -1099,7 +1146,7 @@ static VOID ProcessCharacter(BYTE bChar)
     }
 }
 
-VOID PrintToMSX(BYTE bData)
+void PrintToMSX(BYTE bData)
 {
     if (stPrtRam.sizeRemainingDataBytes) {
         PrintGraphicByte( bData, TRUE );
@@ -1138,46 +1185,78 @@ static int printerCreate(void)
 
     SetPrinterFont(FontBitmaps, sizeof(FontBitmaps));
 
-    hdcOpenPrinter = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL);
+    hdcPrinter = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL);
+
+    SetBkMode(hdcPrinter, TRANSPARENT);
+
+    if (hdcPrinter != NULL) {
+        pixelSizeX = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH) / 800;
+        pixelSizeY = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT) / 800;
+    }
+
+    UpdateFont();
 
     ResetEmulatedPrinter();
 
-    return hdcOpenPrinter != NULL;
+    return hdcPrinter != NULL;
 }
 
 static void printerDestroy(void)
 {
-    if (hdcOpenPrinter != NULL) {
+    if (hdcPrinter != NULL) {
         FlushEmulatedPrinter();
         ResetEmulatedPrinter();
-        DeleteDC(hdcOpenPrinter);
-        hdcOpenPrinter = NULL;
+
+        DeleteObject(SelectObject(hdcPrinter, GetStockObject(SYSTEM_FONT)));
+
+        DeleteDC(hdcPrinter);
+        hdcPrinter = NULL;
     }
 }
 
 static void printerWrite(BYTE value)
 {
-    if (hdcOpenPrinter != NULL) {
+    if (hdcPrinter != NULL) {
         PrintToMSX(value);
     }
 }
 
+/////////////////////////////////////////////////////////////////////
+/// Generic Printer methods
+/////////////////////////////////////////////////////////////////////
 
-
-#endif
+static PropLptMode printerType = P_LPT_EMULATED;
 
 void archPrinterWrite(BYTE value)
 {
-    printerWrite(value);
+    if (printerType == P_LPT_EMULATED) {
+        printerWrite(value);
+    }
+    else {
+        printerRawWrite(value);
+    }
 }
 
 int archPrinterCreate(void)
 {
-    return printerCreate();
+    Properties* pProperties = propGetGlobalProperties();
+    printerType = pProperties->ports.Lpt.mode;
+
+    if (printerType == P_LPT_EMULATED) {
+        return printerCreate();
+    }
+    else {
+        return printerRawCreate();
+    }
 }
 
 void archPrinterDestroy(void)
 {
-    printerDestroy();
+    if (printerType == P_LPT_EMULATED) {
+        printerDestroy();
+    }
+    else {
+        printerRawDestroy();
+    }
 }
 
