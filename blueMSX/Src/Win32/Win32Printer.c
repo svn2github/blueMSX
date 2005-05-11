@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-05-11 18:33:29 $
+** $Date: 2005-05-11 20:30:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 
 static PropLptEmulation printerType = P_LPT_MSXPRN;
 
+static void ResetEmulatedPrinter(void);
 
 //////////////////////////////////////////////////////////////////////////////////
 /// Raw printer emulation
@@ -360,9 +361,15 @@ typedef struct {
     BOOL    fAlternateChar;
     BOOL    fDetectPaperOut;
     BOOL    fJapanese;
+    BOOL    fNinePinGraphics;
+    BOOL    fLeftToRight;
+    UINT    uiEightBit;
     UINT    uiPerforationSkip;
     UINT    uiLeftBorder;
     UINT    uiRightBorder;
+    UINT    uiTotalWidth;
+    UINT    uiTotalHeight;
+    UINT    uiFontWidth;
     UINT    uiRemainingCommandBytes;
     size_t  sizeEscPos;
     BYTE    abEscSeq[MAX_ESC_CMDSIZE];
@@ -371,8 +378,11 @@ typedef struct {
     double  uiHpos;
     UINT    uiVpos;
     UINT    uiPageTop;
+    UINT    uiLines;
     UINT    uiLineFeed;
     UINT    uiPageHeight;
+    UINT    uiPixelSizeX;
+    UINT    uiPixelSizeY;
 } PRINTERRAM, *PPRINTERRAM;
 
 PRINTERRAM   stPrtRam;
@@ -381,8 +391,6 @@ ULONG        ulPrintPage = 1;
 HDC          hdcPrinter = NULL;
 
 static char  printDir[MAX_PATH];
-static int   pixelSizeX;
-static int   pixelSizeY;
 static BYTE  abFontImage[256 * 8];
 static int   aiCharStart[256];
 static int   aiCharWidth[256];
@@ -564,24 +572,6 @@ void SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
     bmiGrph.bmiColors[1].rgbReserved = 0x00;
 }
 
-void ResetEmulatedPrinter(void)
-{
-    ZeroMemory( &stPrtRam, sizeof(stPrtRam) );
-    stPrtRam.uiLineFeed=11;
-    stPrtRam.uiLeftBorder=48;
-    stPrtRam.uiRightBorder=800;
-    stPrtRam.uiDensity=100;
-    stPrtRam.uiPageHeight=48+72*stPrtRam.uiLineFeed;
-    stPrtRam.uiPageTop = 48;
-
-    stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
-    stPrtRam.uiVpos = stPrtRam.uiPageTop;
-
-    fPrintDataOnPage=FALSE;
-
-    return;
-}
-
 void EnsurePrintPage(void)
 {
     DOCINFO di;
@@ -626,7 +616,7 @@ void PrintVisibleCharacter(BYTE bChar)
     if (hdcPrinter)
     {
         int iYPos = 0;
-        int iHeight = pixelSizeY;
+        int iHeight = stPrtRam.uiPixelSizeY;
 
         if (stPrtRam.fSubscript)
         {
@@ -640,19 +630,19 @@ void PrintVisibleCharacter(BYTE bChar)
         
 #ifdef USE_REAL_FONT
         TextOut(hdcPrinter, 
-                (UINT)stPrtRam.uiHpos * pixelSizeX, stPrtRam.uiVpos * pixelSizeY + iYPos,
+                (UINT)stPrtRam.uiHpos * stPrtRam.uiPixelSizeX, stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
                 &bChar, 1);
 #else
         // Print character
         StretchDIBits( hdcPrinter,
-            stPrtRam.uiHpos*pixelSizeX, stPrtRam.uiVpos*pixelSizeY+iYPos,
-            pixelSizeX*8, iHeight*8,
-            8*(int)bChar, 0, 8, 8,
+            stPrtRam.uiHpos*stPrtRam.uiPixelSizeX, stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos,
+            stPrtRam.uiPixelSizeX*8, iHeight*8,
+            8*(int)bChar, 0, stPrtRam.uiFontWidth, 8,
             abFontImage, (LPBITMAPINFO)&bmiFont,
             DIB_RGB_COLORS, SRCPAINT );
 #endif
         // Move print-position...
-        SeekPrinterHeadRelative(8);
+        SeekPrinterHeadRelative(stPrtRam.uiFontWidth);
     }
 }
 
@@ -685,8 +675,8 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 
         // Print bit-mask
         StretchDIBits( hdcPrinter,
-            (UINT)stPrtRam.uiHpos*pixelSizeX, stPrtRam.uiVpos*pixelSizeY,
-            pixelSizeX, pixelSizeY*8,
+            (UINT)stPrtRam.uiHpos*stPrtRam.uiPixelSizeX, stPrtRam.uiVpos*stPrtRam.uiPixelSizeY,
+            stPrtRam.uiPixelSizeX, stPrtRam.uiPixelSizeY*8,
             0, 0, 1, 8,
             abGrphImage, (LPBITMAPINFO)&bmiGrph,
             DIB_RGB_COLORS, SRCCOPY );
@@ -698,7 +688,24 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
     return;
 }
 
-static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
+////////////////////////////////////////////////////
+// MSX Printer specific methods
+////////////////////////////////////////////////////
+
+static void MsxPrnResetSettings(void)
+{
+    stPrtRam.uiLineFeed     = 11;
+    stPrtRam.uiLeftBorder   = 48;
+    stPrtRam.uiRightBorder  = 800;
+    stPrtRam.uiDensity      = 100;
+    stPrtRam.uiPageTop      = 48;
+    stPrtRam.uiLines        = 72;
+    stPrtRam.uiTotalWidth   = 825;
+    stPrtRam.uiTotalHeight  = 825;
+    stPrtRam.uiFontWidth    = 8;
+}
+
+static UINT MsxPrnParseNumber(size_t sizeStart, size_t sizeChars)
 {
     UINT uiValue = 0;
     BYTE bChar;
@@ -712,10 +719,6 @@ static UINT GetMsxPrinterNumber(size_t sizeStart, size_t sizeChars)
 
     return uiValue;
 }
-
-////////////////////////////////////////////////////
-// MSX Printer specific methods
-////////////////////////////////////////////////////
 
 static size_t MsxPrnCalcEscSequenceLength(BYTE character) 
 {
@@ -768,7 +771,7 @@ static void MsxPrnProcessEscSequence(void)
         break;
 
     case '\\':
-        stPrtRam.uiRightBorder=GetMsxPrinterNumber( 1, 3 );
+        stPrtRam.uiRightBorder=MsxPrnParseNumber( 1, 3 );
         break;
 
     case '@':
@@ -829,15 +832,15 @@ static void MsxPrnProcessEscSequence(void)
         break;
 
     case 'G':
-        stPrtRam.uiDensity=GetMsxPrinterNumber( 1, 3 );
+        stPrtRam.uiDensity=MsxPrnParseNumber( 1, 3 );
         if (stPrtRam.uiDensity == 0) {
             stPrtRam.uiDensity = 1;
         }
-        stPrtRam.sizeRemainingDataBytes=GetMsxPrinterNumber( 4, 4 );
+        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 4, 4 );
         break;
 
     case 'L':
-        stPrtRam.uiLeftBorder=GetMsxPrinterNumber( 1, 3 );
+        stPrtRam.uiLeftBorder=MsxPrnParseNumber( 1, 3 );
         break;
 
     case 'N':
@@ -849,7 +852,7 @@ static void MsxPrnProcessEscSequence(void)
         switch (stPrtRam.abEscSeq[1])
         {
         case 'S':
-            stPrtRam.uiPerforationSkip=GetMsxPrinterNumber( 2, 2 );
+            stPrtRam.uiPerforationSkip=MsxPrnParseNumber( 2, 2 );
             break;
 
         case 'I':
@@ -869,12 +872,12 @@ static void MsxPrnProcessEscSequence(void)
 
     case 'S':
         // Print graphics, density depending on font
-        stPrtRam.sizeRemainingDataBytes=GetMsxPrinterNumber( 1, 3 );
+        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 1, 3 );
         break;
 
     case 'T':
         // ???: Line-feed nn/144"
-        stPrtRam.uiLineFeed=(UINT)(GetMsxPrinterNumber( 1, 2 )/4.875);
+        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/4.875);
         break;
 
     case 'X':
@@ -887,7 +890,7 @@ static void MsxPrnProcessEscSequence(void)
 
     case 'Z':
         // ???: Line-feed nn/216"
-        stPrtRam.uiLineFeed=(UINT)(GetMsxPrinterNumber( 1, 2 )/3.25);
+        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/3.25);
         break;
 
     case '[':
@@ -997,6 +1000,32 @@ static void MsxPrnProcessCharacter(BYTE bChar)
 // Epson FX80 specific methods
 ////////////////////////////////////////////////////
 
+static UINT EpsonFx80ParseNumber(size_t sizeStart, size_t sizeChars)
+{
+    UINT uiValue = 0;
+
+    sizeStart += sizeChars;
+
+    while (sizeChars--) {
+        uiValue = uiValue * 256;
+        uiValue += stPrtRam.abEscSeq[--sizeStart];
+    }
+
+    return uiValue;
+}
+
+static void EpsonFx80ResetSettings(void)
+{
+    stPrtRam.uiLineFeed     = 12;
+    stPrtRam.uiLeftBorder   = 48;
+    stPrtRam.uiRightBorder  = stPrtRam.uiLeftBorder + 480;
+    stPrtRam.uiDensity      = 100;
+    stPrtRam.uiPageTop      = 48;
+    stPrtRam.uiLines        = 72;
+    stPrtRam.uiTotalWidth   = 610;
+    stPrtRam.uiTotalHeight  = 825;
+    stPrtRam.uiFontWidth    = 6;
+}
 static size_t EpsonFx80CalcEscSequenceLength(BYTE character) 
 {
     character &= 127;
@@ -1088,30 +1117,39 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '*':  // Turn Graphics Mode ON
+        stPrtRam.fNinePinGraphics = FALSE;
+        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case '-':  // Turn Underline Mode ON/OFF
+        stPrtRam.fUnderline = EpsonFx80ParseNumber(1, 1);
         break;
 
     case '/':  // Selects Vertical Tab Channel
         break;
 
     case '0':  // Sets Line Spacing to 1/8 inch
+        stPrtRam.uiLineFeed = 9;
         break;
 
     case '1':  // Sets Line Spacing to 7/72 inch
+        stPrtRam.uiLineFeed = 7;
         break;
 
     case '2':  // Sets Line Spacing to 1/6 inch
+        stPrtRam.uiLineFeed = 12;
         break;
 
     case '3':  // Sets Line Spacing to n/216 inch
+        stPrtRam.uiLineFeed = (EpsonFx80ParseNumber(1, 1) & 127) / 4; //FIXME!!
         break;
 
     case '4':  // Turn Italic Mode ON
+        stPrtRam.fItalic = TRUE;
         break;
 
     case '5':  // Turn Italic Mode OFF
+        stPrtRam.fItalic = FALSE;
         break;
 
     case '6':  // Turn Printing of International Italic characters ON
@@ -1121,30 +1159,37 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '8':  // Turn Paper Out Sensor ON
+        stPrtRam.fDetectPaperOut = TRUE;
         break;
 
     case '9':  // Turn Paper Out Sensor OFF
+        stPrtRam.fDetectPaperOut = FALSE;
         break;
 
     case ':':  // Copies Rom Character set to RAM
         break;
 
     case '<':  // Turn Uni-directional printing ON (left to right)
+        stPrtRam.fLeftToRight = TRUE;
         break;
 
     case '=':  // Sets eight bit to 0
+        stPrtRam.uiEightBit = 0;
         break;
 
     case '>':  // Sets eight bit to 1
+        stPrtRam.uiEightBit = 1;
         break;
 
     case '?':  // Redefines Graphics Codes
         break;
 
     case '@':  // Reset
+        ResetEmulatedPrinter();
         break;
 
     case 'A':  // Sets Line Spacing to n/72 inch
+        stPrtRam.uiLineFeed = EpsonFx80ParseNumber(1, 1) & 127;
         break;
 
     case 'B':  // Set tabs, variable length (up to 16 tabs)
@@ -1172,12 +1217,21 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'J':  // Forces Line Feed with n/216 inch
+        stPrtRam.uiVpos += (EpsonFx80ParseNumber(1, 1) & 127) / 4; // FIXME!!
+        if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
+            FlushEmulatedPrinter();
         break;
 
     case 'K':  // Turn Single Density Graphics on (480 dot mode)
+        stPrtRam.uiDensity = 100;
+        stPrtRam.fNinePinGraphics = FALSE;
+        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case 'L':  // Turn Double Density Graphics on (960 dot mode)
+        stPrtRam.uiDensity = 200;
+        stPrtRam.fNinePinGraphics = FALSE;
+        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case 'M':  // Turn Elite mode ON
@@ -1193,6 +1247,11 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'Q':  // Set Right Margin
+        {
+            int width = EpsonFx80ParseNumber(1, 2);
+            if (width > 78) width = 78; // FIXME Font dependent !!
+            stPrtRam.uiRightBorder = 6 * width;
+        }
         break;
 
     case 'R':  // Select International Character Set
@@ -1205,6 +1264,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'U':  // Turn Uni-directional mode ON/OFF
+        stPrtRam.fLeftToRight = EpsonFx80ParseNumber(1, 1);
         break;
 
     case 'W':  // Turn Expanded Mode ON/OFF
@@ -1214,9 +1274,15 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'Z':  // Turns Quadruple Density Graphics ON
+        stPrtRam.uiDensity = 400;
+        stPrtRam.fNinePinGraphics = FALSE;
+        stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case '^':  // Turn Nine Pin Graphics Mode ON
+        stPrtRam.uiDensity = EpsonFx80ParseNumber(1, 1) ? 200 : 100;
+        stPrtRam.fNinePinGraphics = TRUE;
+        stPrtRam.sizeRemainingDataBytes = 2 * EpsonFx80ParseNumber(2, 2);
         break;
 
     case 'b':  // Set Vertical Tab
@@ -1226,6 +1292,9 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'j':  // Immediate Reverse Line Feed
+        stPrtRam.uiVpos -= (EpsonFx80ParseNumber(1, 1) & 127) / 4; // FIXME!!
+        if (stPrtRam.uiVpos < stPrtRam.uiPageTop)
+            stPrtRam.uiVpos = stPrtRam.uiPageTop;
         break;
 
     case 'l':  // Set Left Margin
@@ -1299,12 +1368,44 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
     case 27: // Escape
         stPrtRam.fEscSequence = TRUE;
         break;
+    default:
+        if (bChar >= 32) {
+            PrintVisibleCharacter(bChar);
+        }
+        break;
     }
 }
 
 ////////////////////////////////////////////////////
 // Generic Character processing
 ////////////////////////////////////////////////////
+
+static void ResetEmulatedPrinter(void)
+{
+    ZeroMemory(&stPrtRam, sizeof(stPrtRam));
+
+    switch (printerType) {
+    case P_LPT_MSXPRN:
+        MsxPrnResetSettings();
+        break;
+    case P_LPT_EPSONFX80:
+        EpsonFx80ResetSettings();
+        break;
+    }
+
+    stPrtRam.uiPageHeight   = stPrtRam.uiPageTop + stPrtRam.uiLines * stPrtRam.uiLineFeed;
+    stPrtRam.uiHpos         = stPrtRam.uiLeftBorder;
+    stPrtRam.uiVpos         = stPrtRam.uiPageTop;
+
+    fPrintDataOnPage = FALSE;
+
+    if (hdcPrinter != NULL) {
+        stPrtRam.uiPixelSizeX = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH) / stPrtRam.uiTotalWidth;
+        stPrtRam.uiPixelSizeY = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT) / stPrtRam.uiTotalHeight;
+    }
+
+    return;
+}
 
 static size_t CalcEscSequenceLength(BYTE character) 
 {
@@ -1387,11 +1488,6 @@ static int printerCreate(void)
     hdcPrinter = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL);
 
     SetBkMode(hdcPrinter, TRANSPARENT);
-
-    if (hdcPrinter != NULL) {
-        pixelSizeX = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH) / 800;
-        pixelSizeY = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT) / 800;
-    }
 
     UpdateFont();
 
