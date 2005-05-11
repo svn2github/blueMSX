@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-05-11 01:35:57 $
+** $Date: 2005-05-11 03:18:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ typedef struct {
         int  type;
         int  mode;
         char name[256];
+        char portName[MAX_PATH];
         char fileName[MAX_PATH];
     } Lpt;
     struct {

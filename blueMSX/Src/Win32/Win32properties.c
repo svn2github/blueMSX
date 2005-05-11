@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-05-11 01:36:03 $
+** $Date: 2005-05-11 03:18:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2069,6 +2069,10 @@ static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
         while (*prnName && *prnName != '-') {
             prnName++;
         }
+        
+        strcpy(pProperties->ports.Lpt.portName, buffer);
+        pProperties->ports.Lpt.portName[prnName - buffer - 2] = 0;
+
         if (*prnName) prnName++;
         if (*prnName) prnName++;
 
@@ -2209,7 +2213,7 @@ static int openLogFile(HWND hwndOwner, char* fileName)
     ofn.lpstrFileTitle = NULL; 
     ofn.nMaxFileTitle = 0; 
     ofn.lpstrInitialDir = NULL; 
-    ofn.lpstrTitle = "Open Log File"; 
+    ofn.lpstrTitle = langPropPortsOpenLogFile(); 
     ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT; 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
@@ -2238,7 +2242,7 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     static Properties* pProperties;
 
     switch (iMsg) {
-    case WM_INITDIALOG:  
+    case WM_INITDIALOG:
         if (!centered) {
             updateDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES, 0, 1);
             centered = 1;
@@ -2250,6 +2254,8 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SendMessage(GetDlgItem(hDlg, IDC_PORTSCOM1TEXT), WM_SETTEXT, 0, (LPARAM)langPropPortsCom1Text());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
+        SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langPropPortsFilenameText());
+        SetWindowText(GetDlgItem(hDlg, P_LPT_EMULATED), langPropPortsEmulateMsxPrn());
 
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-05-10 07:58:32 $
+** $Date: 2005-05-11 03:18:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -576,8 +576,12 @@ void langInitEnglish(LanguageStrings* ls)
 
     // New entries in 2.3
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Print to File";
+    ls->propPortsOpenLogFile    = "Open Log File";
+    ls->propPortsFilenameText   = "Filename";
+    ls->propPortsEmulateMsxPrn  = " Emulate MSX Printer";
 };
 
 

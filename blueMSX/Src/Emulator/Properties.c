@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-05-11 01:35:57 $
+** $Date: 2005-05-11 03:18:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -206,6 +206,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
     pProperties->ports.Lpt.name[0]        = 0;
     strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
+    pProperties->ports.Lpt.portName[0]    = 0;
 
     for (i = 0; i < MAX_HISTORY; i++) {
         pProperties->filehistory.cartridgeA[i][0] = 0;
@@ -388,6 +389,7 @@ void propInitDefaults(Properties* pProperties)
     pProperties->ports.Lpt.mode           = P_LPT_EMULATED;
     pProperties->ports.Lpt.name[0]        = 0;
     strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
+    pProperties->ports.Lpt.portName[0]    = 0;
 
     for (i = 0; i < MAX_HISTORY; i++) {
         pProperties->filehistory.cartridgeA[i][0] = 0;
@@ -567,6 +569,7 @@ static void propLoad(Properties* pProperties)
     getIntValue("LptMode", &pProperties->ports.Lpt.mode);
     getStrValue("LptName", (char*)pProperties->ports.Lpt.name);
     getStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
+    getStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);
     
     for (i = 0; i < MAX_HISTORY; i++) {
         char str[32];
@@ -756,6 +759,7 @@ void propSave(Properties* pProperties)
     setIntValue("LptMode", pProperties->ports.Lpt.mode);
     setStrValue("LptName", (char*)pProperties->ports.Lpt.name);
     setStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
+    setStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);
 
     for (i = 0; i < MAX_HISTORY; i++) {
         char str[32];
