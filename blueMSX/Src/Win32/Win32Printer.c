@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-05-12 08:53:53 $
+** $Date: 2005-05-12 09:08:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -976,7 +976,7 @@ void PrintVisibleCharacter(BYTE bChar)
     }
 }
 
-#define SWAP_BITS_8(v) (((v&0x80)>>7)|((v&0x40)>>5)|((v&0x20)>>3)|((v&0x10)>>1)|((v&0x08)<<1)|((v&0x02)<<3)|((v&0x04)<<5)|((v&0x01)<<7))
+#define SWAP_BITS_8(v) (((v&0x80)>>7)|((v&0x40)>>5)|((v&0x20)>>3)|((v&0x10)>>1)|((v&0x08)<<1)|((v&0x04)<<3)|((v&0x02)<<5)|((v&0x01)<<7))
 
 void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 {
