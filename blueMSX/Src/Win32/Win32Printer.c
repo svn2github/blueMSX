@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-05-12 21:47:32 $
+** $Date: 2005-05-12 21:56:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -663,11 +663,11 @@ typedef struct {
     double  uiGraphDensity;
     double  uiFontDensity;
     double  uiHpos;
-    UINT    uiVpos;
-    UINT    uiPageTop;
+    double  uiVpos;
+    double  uiPageTop;
+    double  uiLineFeed;
+    double  uiPageHeight;
     UINT    uiLines;
-    UINT    uiLineFeed;
-    UINT    uiPageHeight;
     UINT    uiPrintAreaTop;
     UINT    uiPrintAreaBottom;
     double  uiPixelSizeX;
@@ -921,10 +921,10 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 
 static void MsxPrnResetSettings(void)
 {
-    stPrtRam.uiLineFeed     = 11;
+    stPrtRam.uiLineFeed     = 12.0;
     stPrtRam.uiLeftBorder   = 48;
     stPrtRam.uiRightBorder  = 800;
-    stPrtRam.uiGraphDensity      = 1.0;
+    stPrtRam.uiGraphDensity = 1.0;
     stPrtRam.uiFontDensity  = 1.0;
     stPrtRam.uiPageTop      = 48;
     stPrtRam.uiLines        = 72;
@@ -1078,22 +1078,22 @@ static void MsxPrnProcessEscSequence(void)
 
     case 'A':
       // ???: Line-feed 1/6"
-        stPrtRam.uiLineFeed=12;
+        stPrtRam.uiLineFeed = 12.0;
         break;
 
     case 'B':
         // ???: Line-feed 1/9"
-        stPrtRam.uiLineFeed=8;
+        stPrtRam.uiLineFeed = 8.0;
         break;
 
     case 'T':
         // ???: Line-feed nn/144"
-        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/2);
+        stPrtRam.uiLineFeed = MsxPrnParseNumber( 1, 2 ) / 2.0;
         break;
 
     case 'Z':
         // ???: Line-feed nn/216"
-        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/3);
+        stPrtRam.uiLineFeed = MsxPrnParseNumber( 1, 2 ) / 3.0;
         break;
 
     case '[':
@@ -1257,10 +1257,10 @@ static UINT EpsonFx80ParseNumber(size_t sizeStart, size_t sizeChars)
 
 static void EpsonFx80ResetSettings(void)
 {
-    stPrtRam.uiLineFeed     = 12;
+    stPrtRam.uiLineFeed     = 12.0;
     stPrtRam.uiLeftBorder   = 48;
     stPrtRam.uiRightBorder  = stPrtRam.uiLeftBorder + 480;
-    stPrtRam.uiGraphDensity      = 1.0;
+    stPrtRam.uiGraphDensity = 1.0;
     stPrtRam.uiFontDensity  = 1.0;
     stPrtRam.uiPageTop      = 48;
     stPrtRam.uiLines        = 72;
@@ -1369,19 +1369,19 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '0':  // Sets Line Spacing to 1/8 inch
-        stPrtRam.uiLineFeed = 9;
+        stPrtRam.uiLineFeed = 9.0;
         break;
 
     case '1':  // Sets Line Spacing to 7/72 inch
-        stPrtRam.uiLineFeed = 7;
+        stPrtRam.uiLineFeed = 7.0;
         break;
 
     case '2':  // Sets Line Spacing to 1/6 inch
-        stPrtRam.uiLineFeed = 12;
+        stPrtRam.uiLineFeed = 12.0;
         break;
 
     case '3':  // Sets Line Spacing to n/216 inch
-        stPrtRam.uiLineFeed = (EpsonFx80ParseNumber(1, 1) & 127) / 3; //FIXME!!
+        stPrtRam.uiLineFeed = (EpsonFx80ParseNumber(1, 1) & 127) / 3.0;
         break;
 
     case '4':  // Turn Italic Mode ON
@@ -1430,7 +1430,7 @@ static void EpsonFx80ProcessEscSequence(void)
         stPrtRam.uiGraphDensity = 1.0;
         stPrtRam.uiFontDensity  = 1.0;
         stPrtRam.fUnderline = FALSE;
-        stPrtRam.uiLineFeed = 12;
+        stPrtRam.uiLineFeed = 12.0;
         stPrtRam.fUnderline = FALSE;
         stPrtRam.fItalic = FALSE;
         stPrtRam.fDetectPaperOut = FALSE;
@@ -1480,7 +1480,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'J':  // Forces Line Feed with n/216 inch
-        stPrtRam.uiVpos += (EpsonFx80ParseNumber(1, 1) & 127) / 3; // FIXME!!
+        stPrtRam.uiVpos += (EpsonFx80ParseNumber(1, 1) & 127) / 3.0;
         if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
             FlushEmulatedPrinter();
         break;
@@ -1573,7 +1573,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'j':  // Immediate Reverse Line Feed
-        stPrtRam.uiVpos -= (EpsonFx80ParseNumber(1, 1) & 127) / 4; // FIXME!!
+        stPrtRam.uiVpos -= (EpsonFx80ParseNumber(1, 1) & 127) / 3.0;
         if (stPrtRam.uiVpos < stPrtRam.uiPageTop)
             stPrtRam.uiVpos = stPrtRam.uiPageTop;
         break;
