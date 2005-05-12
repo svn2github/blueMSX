@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-05-12 08:27:37 $
+** $Date: 2005-05-12 08:53:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -665,7 +665,7 @@ static char  printDir[MAX_PATH];
 static BYTE  abFontImage[256 * 8];
 static int   aiCharStart[256];
 static int   aiCharWidth[256];
-static BYTE  abGrphImage[256*2][sizeof(DWORD) * PIXEL_WIDTH * 8];
+static BYTE  abGrphImage[256*4][sizeof(DWORD) * PIXEL_WIDTH * 8];
 static TCHAR szDocTitle[MAX_PATH];
 static TEXTMETRIC tm;
 
@@ -896,6 +896,7 @@ void PrintVisibleCharacter(BYTE bChar)
             UINT topBits     = attribute >> 7;
             double headRelative;
             double xPos;
+            UINT script = stPrtRam.fSuperscript || stPrtRam.fSubscript ? 1 : 0;
             UINT i;
 
             if (!stPrtRam.fProportional) {
@@ -906,13 +907,12 @@ void PrintVisibleCharacter(BYTE bChar)
             if (!topBits) {
                 iYPos += stPrtRam.uiPixelSizeY;
             }
-
             if (stPrtRam.fSubscript) {
-                iHeight /= 2;
-                iYPos += iHeight;
+                iYPos /=2;
+                iYPos += stPrtRam.uiPixelSizeY * 4.5;
             }
-            else if (stPrtRam.fSuperscript) {
-                iHeight /= 2;
+            if (script) {
+                iYPos -= stPrtRam.uiPixelSizeY * 4.5;
             }
 
             xPos = stPrtRam.uiHpos;
@@ -926,12 +926,16 @@ void PrintVisibleCharacter(BYTE bChar)
                 if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
                     charBits |= charBitmap[i];
                 }
+                if (stPrtRam.fUnderline) {
+                    charBits |= 2 >> topBits;
+                }
+
                 StretchDIBits(hdcPrinter,
                     (UINT)(xPos*stPrtRam.uiPixelSizeX), 
                     (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos),
                     (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
                     0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
-                    abGrphImage[256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
+                    abGrphImage[512 * script + 256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
                     DIB_RGB_COLORS, SRCAND );
                 xPos += headRelative;
             }
@@ -1604,7 +1608,7 @@ static void EpsonFx80ProcessEscSequence(void)
 
     case 'S':  // Turn Script Mode ON
         {
-            int script = EpsonFx80ParseNumber(1, 1);
+            int script = EpsonFx80ParseNumber(1, 1) & 1;
             stPrtRam.fSuperscript = script == 0;
             stPrtRam.fSubscript   = script == 1;
         }
@@ -1860,6 +1864,8 @@ static void initPixelBitmaps(void)
                 for (j = 0; j < PIXEL_WIDTH; j++) {
                     abGrphImage[bByte][(PIXEL_WIDTH * iPixel + j) << 2] = singleStrikeBitmap[j];
                     abGrphImage[256+bByte][(PIXEL_WIDTH * iPixel + j) << 2] = doubleStrikeBitmap[j];
+                    abGrphImage[512+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= singleStrikeBitmap[j];
+                    abGrphImage[768+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= doubleStrikeBitmap[j];
                 }
 #endif
             }
