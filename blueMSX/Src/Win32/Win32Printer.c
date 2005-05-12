@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-05-12 21:32:10 $
+** $Date: 2005-05-12 21:47:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -660,8 +660,8 @@ typedef struct {
     size_t  sizeEscPos;
     BYTE    abEscSeq[MAX_ESC_CMDSIZE];
     size_t  sizeRemainingDataBytes;
-    UINT    uiDensity;
-    UINT    uiFontDensity;
+    double  uiGraphDensity;
+    double  uiFontDensity;
     double  uiHpos;
     UINT    uiVpos;
     UINT    uiPageTop;
@@ -845,7 +845,7 @@ void PrintVisibleCharacter(BYTE bChar)
 
         hPos = stPrtRam.uiHpos;
 
-        headRelative = stPrtRam.fontInfo.pixelDelta * 100. / stPrtRam.uiFontDensity;
+        headRelative = stPrtRam.fontInfo.pixelDelta / stPrtRam.uiFontDensity;
         if (stPrtRam.fDoubleWidth) {
             headRelative *= 2;
         }
@@ -909,7 +909,7 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
             DIB_RGB_COLORS, SRCAND );
 
         // Move print-position...
-        SeekPrinterHeadRelative(100./stPrtRam.uiDensity);
+        SeekPrinterHeadRelative(1./stPrtRam.uiGraphDensity);
     }
 
     return;
@@ -924,8 +924,8 @@ static void MsxPrnResetSettings(void)
     stPrtRam.uiLineFeed     = 11;
     stPrtRam.uiLeftBorder   = 48;
     stPrtRam.uiRightBorder  = 800;
-    stPrtRam.uiDensity      = 100;
-    stPrtRam.uiFontDensity  = 100;
+    stPrtRam.uiGraphDensity      = 1.0;
+    stPrtRam.uiFontDensity  = 1.0;
     stPrtRam.uiPageTop      = 48;
     stPrtRam.uiLines        = 72;
     stPrtRam.uiTotalWidth   = 825;
@@ -977,22 +977,22 @@ static void MsxPrnProcessEscSequence(void)
     switch (stPrtRam.abEscSeq[0]) {
     case 'N':
         stPrtRam.fProportional = FALSE; 
-        stPrtRam.uiFontDensity = 100;
+        stPrtRam.uiFontDensity = 1.0;
         break;
 
     case 'E':
         stPrtRam.fProportional = FALSE; 
-        stPrtRam.uiFontDensity = 140;
+        stPrtRam.uiFontDensity = 1.40;
         break;
 
     case 'Q':
         stPrtRam.fProportional = FALSE; 
-        stPrtRam.uiFontDensity = 172;
+        stPrtRam.uiFontDensity = 1.72;
         break;
 
     case 'P':
         stPrtRam.fProportional = TRUE;
-        stPrtRam.uiFontDensity = 90;
+        stPrtRam.uiFontDensity = 0.90;
         break;
 
     case '!':
@@ -1125,9 +1125,9 @@ static void MsxPrnProcessEscSequence(void)
         break;
 
     case 'G':
-        stPrtRam.uiDensity=MsxPrnParseNumber( 1, 3 );
-        if (stPrtRam.uiDensity == 0) {
-            stPrtRam.uiDensity = 1;
+        stPrtRam.uiGraphDensity=MsxPrnParseNumber( 1, 3 ) / 100.0;
+        if (stPrtRam.uiGraphDensity < 0.1) {
+            stPrtRam.uiGraphDensity = 0.1;
         }
         stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 4, 4 );
         break;
@@ -1260,8 +1260,8 @@ static void EpsonFx80ResetSettings(void)
     stPrtRam.uiLineFeed     = 12;
     stPrtRam.uiLeftBorder   = 48;
     stPrtRam.uiRightBorder  = stPrtRam.uiLeftBorder + 480;
-    stPrtRam.uiDensity      = 100;
-    stPrtRam.uiFontDensity  = 100;
+    stPrtRam.uiGraphDensity      = 1.0;
+    stPrtRam.uiFontDensity  = 1.0;
     stPrtRam.uiPageTop      = 48;
     stPrtRam.uiLines        = 72;
     stPrtRam.uiTotalWidth   = 610;
@@ -1339,23 +1339,23 @@ static void EpsonFx80ProcessEscSequence(void)
         switch(EpsonFx80ParseNumber(1, 1)) {
         default:
         case 0:
-            stPrtRam.uiDensity = 100;
+            stPrtRam.uiGraphDensity = 1.0;
             break;
         case 1:
         case 2:
-            stPrtRam.uiDensity = 200;
+            stPrtRam.uiGraphDensity = 2.0;
             break;
         case 3:
-            stPrtRam.uiDensity = 400;
+            stPrtRam.uiGraphDensity = 4.0;
             break;
         case 4:
-            stPrtRam.uiDensity = 133;
+            stPrtRam.uiGraphDensity = 1.33;
             break;
         case 5:
-            stPrtRam.uiDensity = 120;
+            stPrtRam.uiGraphDensity = 1.2;
             break;
         case 6:
-            stPrtRam.uiDensity = 150;
+            stPrtRam.uiGraphDensity = 1.5;
             break;
         }
         stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(2, 2);
@@ -1427,8 +1427,8 @@ static void EpsonFx80ProcessEscSequence(void)
     case '@':  // Reset
         stPrtRam.uiEightBit = 0;
         stPrtRam.fNinePinGraphics = FALSE;
-        stPrtRam.uiDensity = 200;
-        stPrtRam.uiFontDensity = 100;
+        stPrtRam.uiGraphDensity = 1.0;
+        stPrtRam.uiFontDensity  = 1.0;
         stPrtRam.fUnderline = FALSE;
         stPrtRam.uiLineFeed = 12;
         stPrtRam.fUnderline = FALSE;
@@ -1486,20 +1486,20 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'K':  // Turn Single Density Graphics on (480 dot mode)
-        stPrtRam.uiDensity = 100;
+        stPrtRam.uiGraphDensity = 1.0;
         stPrtRam.fNinePinGraphics = FALSE;
         stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case 'L':  // Turn Double Density Graphics on (960 dot mode)
-        stPrtRam.uiDensity = 200;
+        stPrtRam.uiGraphDensity = 2.0;
         stPrtRam.fNinePinGraphics = FALSE;
         stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case 'M':  // Turn Elite mode ON
         stPrtRam.fElite = TRUE;        
-        stPrtRam.uiFontDensity = 140;
+        stPrtRam.uiFontDensity = 1.40;
         break;
 
     case 'N':  // Turn Skip Over Perforation ON
@@ -1511,10 +1511,10 @@ static void EpsonFx80ProcessEscSequence(void)
     case 'P':  // Turn Elite mode OFF
         stPrtRam.fElite = FALSE;
         if (stPrtRam.fCompressed) {
-            stPrtRam.uiFontDensity = 172;
+            stPrtRam.uiFontDensity = 1.72;
         }
         else {
-            stPrtRam.uiFontDensity = 100;
+            stPrtRam.uiFontDensity = 1.00;
         }
         break;
 
@@ -1555,13 +1555,13 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'Z':  // Turns Quadruple Density Graphics ON
-        stPrtRam.uiDensity = 400;
+        stPrtRam.uiGraphDensity = 4.0;
         stPrtRam.fNinePinGraphics = FALSE;
         stPrtRam.sizeRemainingDataBytes = EpsonFx80ParseNumber(1, 2);
         break;
 
     case '^':  // Turn Nine Pin Graphics Mode ON
-        stPrtRam.uiDensity = EpsonFx80ParseNumber(1, 1) ? 200 : 100;
+        stPrtRam.uiGraphDensity = EpsonFx80ParseNumber(1, 1) ? 2.0 : 1.0;
         stPrtRam.fNinePinGraphics = TRUE;
         stPrtRam.sizeRemainingDataBytes = 2 * EpsonFx80ParseNumber(2, 2);
         break;
@@ -1638,14 +1638,14 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
     case 15: // Shift in. Emties buffer, turns compressed mode ON (17.16 cpi)
         stPrtRam.fCompressed = TRUE;
         if (!stPrtRam.fElite) {
-            stPrtRam.uiFontDensity = 172;
+            stPrtRam.uiFontDensity = 1.72;
         }
         break;
     case 17: // Device Control 1: 
         break;
     case 18: // Device Control 2: turns compressed mode OFF
         stPrtRam.fCompressed = FALSE;
-        stPrtRam.uiFontDensity = 100;
+        stPrtRam.uiFontDensity = 1.00;
         break;
     case 19: // Device Control 3: 
         break;
