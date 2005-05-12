@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-05-12 08:26:18 $
+** $Date: 2005-05-12 08:27:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -884,90 +884,92 @@ void PrintVisibleCharacter(BYTE bChar)
 {
     EnsurePrintPage();
 
-#if 1
-    if (hdcPrinter) {
-        double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
-        double iYPos = 0;
-        BYTE *charBitmap = EpsonFont + 12 * (UINT)bChar;
-        BYTE attribute   = charBitmap[0];
-        UINT start       = (attribute >> 4) & 0x07;
-        UINT end         = attribute & 0x0f;
-        UINT topBits     = attribute >> 7;
-        double headRelative;
-        double xPos;
-        UINT i;
+    
+    if (printerType == P_LPT_EPSONFX80) {
+        if (hdcPrinter) {
+            double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
+            double iYPos = 0;
+            BYTE *charBitmap = EpsonFont + 12 * (UINT)bChar;
+            BYTE attribute   = charBitmap[0];
+            UINT start       = (attribute >> 4) & 0x07;
+            UINT end         = attribute & 0x0f;
+            UINT topBits     = attribute >> 7;
+            double headRelative;
+            double xPos;
+            UINT i;
 
-        if (!stPrtRam.fProportional) {
-            start = 0;  // Fixed width font
-            end   = 11;
-        }
-
-        if (!topBits) {
-            iYPos += stPrtRam.uiPixelSizeY;
-        }
-
-        if (stPrtRam.fSubscript) {
-            iHeight /= 2;
-            iYPos += iHeight;
-        }
-        else if (stPrtRam.fSuperscript) {
-            iHeight /= 2;
-        }
-
-        xPos = stPrtRam.uiHpos;
-
-        headRelative = 100. / stPrtRam.uiFontDensity;
-        if (stPrtRam.fDoubleWidth) {
-            headRelative *= 2;
-        }
-        for (i = start; i < end; i++) {
-            BYTE charBits = charBitmap[i + 1];
-            if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
-                charBits |= charBitmap[i];
+            if (!stPrtRam.fProportional) {
+                start = 0;  // Fixed width font
+                end   = 11;
             }
-            StretchDIBits(hdcPrinter,
-                (UINT)(xPos*stPrtRam.uiPixelSizeX), 
-                (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos),
-                (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
-                0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
-                abGrphImage[256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
+
+            if (!topBits) {
+                iYPos += stPrtRam.uiPixelSizeY;
+            }
+
+            if (stPrtRam.fSubscript) {
+                iHeight /= 2;
+                iYPos += iHeight;
+            }
+            else if (stPrtRam.fSuperscript) {
+                iHeight /= 2;
+            }
+
+            xPos = stPrtRam.uiHpos;
+
+            headRelative = 100. / stPrtRam.uiFontDensity;
+            if (stPrtRam.fDoubleWidth) {
+                headRelative *= 2;
+            }
+            for (i = start; i < end; i++) {
+                BYTE charBits = charBitmap[i + 1];
+                if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
+                    charBits |= charBitmap[i];
+                }
+                StretchDIBits(hdcPrinter,
+                    (UINT)(xPos*stPrtRam.uiPixelSizeX), 
+                    (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos),
+                    (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
+                    0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
+                    abGrphImage[256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
+                    DIB_RGB_COLORS, SRCAND );
+                xPos += headRelative;
+            }
+
+            SeekPrinterHeadRelative((end - start) * headRelative);
+        }
+    }
+    else {
+        if (hdcPrinter) {
+            double iYPos = 0;
+            double iHeight = stPrtRam.uiPixelSizeY;
+
+            if (stPrtRam.fSubscript) {
+                iHeight /= 2;
+                iYPos = iHeight;
+            }
+            else if (stPrtRam.fSuperscript) {
+                iHeight /= 2;
+            }
+
+    #ifdef USE_REAL_FONT
+            TextOut(hdcPrinter, 
+                    (UINT)(stPrtRam.uiHpos * stPrtRam.uiPixelSizeX), stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
+                    &bChar, 1);
+    #else
+            // Print character
+            StretchDIBits( hdcPrinter,
+                (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
+                (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos),
+                (UINT)(stPrtRam.uiPixelSizeX*stPrtRam.uiFontWidth), (UINT)(iHeight*8),
+                8*(int)bChar, 0, stPrtRam.uiFontWidth, 8,
+                abFontImage, (LPBITMAPINFO)&bmiFont,
                 DIB_RGB_COLORS, SRCAND );
-            xPos += headRelative;
+    #endif
+            // Move print-position...
+            SeekPrinterHeadRelative(stPrtRam.uiFontWidth);
         }
-
-        SeekPrinterHeadRelative((end - start) * headRelative);
     }
-#else
-    if (hdcPrinter) {
-        double iYPos = 0;
-        double iHeight = stPrtRam.uiPixelSizeY;
-
-        if (stPrtRam.fSubscript) {
-            iHeight /= 2;
-            iYPos = iHeight;
-        }
-        else if (stPrtRam.fSuperscript) {
-            iHeight /= 2;
-        }
-
-#ifdef USE_REAL_FONT
-        TextOut(hdcPrinter, 
-                (UINT)(stPrtRam.uiHpos * stPrtRam.uiPixelSizeX), stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
-                &bChar, 1);
-#else
-        // Print character
-        StretchDIBits( hdcPrinter,
-            (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
-            (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos),
-            (UINT)(stPrtRam.uiPixelSizeX*stPrtRam.uiFontWidth), (UINT)(iHeight*8),
-            8*(int)bChar, 0, stPrtRam.uiFontWidth, 8,
-            abFontImage, (LPBITMAPINFO)&bmiFont,
-            DIB_RGB_COLORS, SRCAND );
-#endif
-        // Move print-position...
-        SeekPrinterHeadRelative(stPrtRam.uiFontWidth);
-    }
-#endif
 }
 
 #define SWAP_BITS_8(v) (((v&0x80)>>7)|((v&0x40)>>5)|((v&0x20)>>3)|((v&0x10)>>1)|((v&0x08)<<1)|((v&0x02)<<3)|((v&0x04)<<5)|((v&0x01)<<7))
