@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-05-12 09:08:14 $
+** $Date: 2005-05-12 18:08:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,19 @@ static PropLptEmulation printerType = P_LPT_MSXPRN;
 static void ResetEmulatedPrinter(void);
 
 #define PIXEL_WIDTH 8
+
+#define MIN(x, y)  ((x) < (y) ? (x) : (y))
+#define MAX(x, y)  ((x) > (y) ? (x) : (y))
+
+static void eraseBackground(HDC hdc)
+{
+    int  w = GetDeviceCaps(hdc, PHYSICALWIDTH);
+    int  h = GetDeviceCaps(hdc, PHYSICALHEIGHT);
+    RECT r = { 0, 0, w, h };
+
+    FillRect(hdc, &r, GetStockObject(WHITE_BRUSH)); 
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 /// Raw printer emulation
@@ -628,6 +641,7 @@ typedef struct {
     BOOL    fAlternateChar;
     BOOL    fDetectPaperOut;
     BOOL    fJapanese;
+    BOOL    fNormalAfterLine;
     BOOL    fNinePinGraphics;
     BOOL    fLeftToRight;
     BOOL    fGraphicsHiLo;
@@ -652,6 +666,8 @@ typedef struct {
     UINT    uiLines;
     UINT    uiLineFeed;
     UINT    uiPageHeight;
+    UINT    uiPrintAreaTop;
+    UINT    uiPrintAreaBottom;
     double  uiPixelSizeX;
     double  uiPixelSizeY;
 } PRINTERRAM, *PPRINTERRAM;
@@ -660,6 +676,8 @@ PRINTERRAM   stPrtRam;
 BOOL         fPrintDataOnPage;
 ULONG        ulPrintPage = 1;
 HDC          hdcPrinter = NULL;
+HDC          hdcMem = NULL;
+HBITMAP      hBitmap = NULL;
 
 static char  printDir[MAX_PATH];
 static BYTE  abFontImage[256 * 8];
@@ -681,7 +699,7 @@ void UpdateFont(void)
 
     ZeroMemory(&lf, sizeof(LOGFONT));
     lf.lfHeight = -MulDiv(fontSize[stPrtRam.iFont] / (stPrtRam.fSuperscript || stPrtRam.fSubscript ? 2 : 1), 
-                          GetDeviceCaps(hdcPrinter, LOGPIXELSY), 72);
+                          GetDeviceCaps(hdcMem, LOGPIXELSY), 72);
     lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 
     lf.lfItalic = stPrtRam.fItalic;
@@ -690,17 +708,23 @@ void UpdateFont(void)
     lf.lfWeight = stPrtRam.fBold ? FW_BOLD : FW_NORMAL;
 
     strcpy(lf.lfFaceName, "DotMatrix");
-    DeleteObject(SelectObject(hdcPrinter, CreateFontIndirect(&lf))); 
+    DeleteObject(SelectObject(hdcMem, CreateFontIndirect(&lf))); 
     
-    GetTextMetrics(hdcPrinter, &tm);
+    GetTextMetrics(hdcMem, &tm);
 }
 
 void FlushEmulatedPrinter(void)
 {
-    if (hdcPrinter) {
-        if (fPrintDataOnPage) {
+    if (hdcPrinter && hdcMem) {
+        if (fPrintDataOnPage && stPrtRam.uiPrintAreaBottom > stPrtRam.uiPrintAreaTop) {
+            int w = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH);
+            int h = (int)(stPrtRam.uiPrintAreaBottom - stPrtRam.uiPrintAreaTop);
+            BitBlt(hdcPrinter, 0, stPrtRam.uiPrintAreaTop, w, h, hdcMem, 0, 0, SRCCOPY);
             EndPage( hdcPrinter );
             EndDoc( hdcPrinter );
+            eraseBackground(hdcMem);
+            stPrtRam.uiPrintAreaTop    = (UINT)-1;
+            stPrtRam.uiPrintAreaBottom = 0;
             ulPrintPage++;
         }
         else
@@ -721,8 +745,10 @@ static void SeekPrinterHeadRelative(double iOffset)
         stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
 
         stPrtRam.uiVpos += stPrtRam.uiLineFeed;
-        if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
+        if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight) {
+            stPrtRam.fDoubleWidth ^= stPrtRam.fNormalAfterLine;
             FlushEmulatedPrinter();
+        }
     }
 }
 
@@ -886,7 +912,7 @@ void PrintVisibleCharacter(BYTE bChar)
 
     
     if (printerType == P_LPT_EPSONFX80) {
-        if (hdcPrinter) {
+        if (hdcMem) {
             double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
             double iYPos = 0;
             BYTE *charBitmap = EpsonFont + 12 * (UINT)bChar;
@@ -895,7 +921,7 @@ void PrintVisibleCharacter(BYTE bChar)
             UINT end         = attribute & 0x0f;
             UINT topBits     = attribute >> 7;
             double headRelative;
-            double xPos;
+            double hPos;
             UINT script = stPrtRam.fSuperscript || stPrtRam.fSubscript ? 1 : 0;
             UINT i;
 
@@ -915,13 +941,14 @@ void PrintVisibleCharacter(BYTE bChar)
                 iYPos -= stPrtRam.uiPixelSizeY * 4.5;
             }
 
-            xPos = stPrtRam.uiHpos;
+            hPos = stPrtRam.uiHpos;
 
             headRelative = 100. / stPrtRam.uiFontDensity;
             if (stPrtRam.fDoubleWidth) {
                 headRelative *= 2;
             }
             for (i = start; i < end; i++) {
+                UINT yDest;
                 BYTE charBits = charBitmap[i + 1];
                 if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
                     charBits |= charBitmap[i];
@@ -930,21 +957,25 @@ void PrintVisibleCharacter(BYTE bChar)
                     charBits |= 2 >> topBits;
                 }
 
-                StretchDIBits(hdcPrinter,
-                    (UINT)(xPos*stPrtRam.uiPixelSizeX), 
-                    (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos),
+                yDest = (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos);
+                stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, yDest);
+                stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, yDest + (UINT)(stPrtRam.uiPixelSizeY*8));
+
+                StretchDIBits(hdcMem,
+                    (UINT)(hPos*stPrtRam.uiPixelSizeX), 
+                    yDest,
                     (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
                     0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
                     abGrphImage[512 * script + 256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
                     DIB_RGB_COLORS, SRCAND );
-                xPos += headRelative;
+                hPos += headRelative;
             }
 
-            SeekPrinterHeadRelative((end - start) * headRelative);
+            SeekPrinterHeadRelative((1 + end - start) * headRelative);
         }
     }
     else {
-        if (hdcPrinter) {
+        if (hdcMem) {
             double iYPos = 0;
             double iHeight = stPrtRam.uiPixelSizeY;
 
@@ -957,12 +988,12 @@ void PrintVisibleCharacter(BYTE bChar)
             }
 
     #ifdef USE_REAL_FONT
-            TextOut(hdcPrinter, 
+            TextOut(hdcMem, 
                     (UINT)(stPrtRam.uiHpos * stPrtRam.uiPixelSizeX), stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
                     &bChar, 1);
     #else
             // Print character
-            StretchDIBits( hdcPrinter,
+            StretchDIBits( hdcMem,
                 (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
                 (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos),
                 (UINT)(stPrtRam.uiPixelSizeX*stPrtRam.uiFontWidth), (UINT)(iHeight*8),
@@ -982,14 +1013,14 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 {
     EnsurePrintPage();
 
-    if (hdcPrinter)
+    if (hdcMem)
     {
         if (fMsxPrinter) {
             bByte = SWAP_BITS_8(bByte);
         }
 
         // Print bit-mask
-        StretchDIBits(hdcPrinter,
+        StretchDIBits(hdcMem,
             (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
             (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY),
             (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
@@ -1624,6 +1655,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'W':  // Turn Expanded Mode ON/OFF
+        stPrtRam.fNormalAfterLine = FALSE;
         stPrtRam.fDoubleWidth = EpsonFx80ParseNumber(1, 1);
         break;
 
@@ -1708,6 +1740,8 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
         stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
         break;
     case 14: // Turns expanded mode ON
+        stPrtRam.fDoubleWidth = TRUE;
+        stPrtRam.fNormalAfterLine = TRUE;
         break;
     case 15: // Shift in. Emties buffer, turns compressed mode ON (17.16 cpi)
         stPrtRam.fCompressed = TRUE;
@@ -1724,6 +1758,7 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
     case 19: // Device Control 3: 
         break;
     case 20: // Device Control 4: Turns expanded mode OFF
+        stPrtRam.fDoubleWidth = FALSE;
         break;
     case 24: // Cancels all text in the print buffer
         break;
@@ -1877,6 +1912,8 @@ static void initPixelBitmaps(void)
 static int printerCreate(void)
 {
     Properties* pProperties = propGetGlobalProperties();
+    int width;
+    int height;
 
     initPixelBitmaps();
 
@@ -1885,8 +1922,17 @@ static int printerCreate(void)
     SetPrinterFont(FontBitmaps, sizeof(FontBitmaps));
 
     hdcPrinter = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL);
+    width  = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH);
+    height = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT);
+    hdcMem  = CreateCompatibleDC(hdcPrinter);
+    hBitmap = CreateCompatibleBitmap(hdcPrinter, width, height);
+    DeleteObject(SelectObject(hdcMem, hBitmap));
 
-    SetBkMode(hdcPrinter, TRANSPARENT);
+    SetBkMode(hdcMem, TRANSPARENT);
+
+    eraseBackground(hdcMem);
+    stPrtRam.uiPrintAreaTop    = (UINT)-1;
+    stPrtRam.uiPrintAreaBottom = 0;
 
     UpdateFont();
 
@@ -1904,7 +1950,11 @@ static void printerDestroy(void)
         DeleteObject(SelectObject(hdcPrinter, GetStockObject(SYSTEM_FONT)));
 
         DeleteDC(hdcPrinter);
+        DeleteDC(hdcMem);
+        DeleteObject(hBitmap);
+
         hdcPrinter = NULL;
+        hdcMem     = NULL;
     }
 }
 
