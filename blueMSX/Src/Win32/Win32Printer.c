@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-05-12 18:08:31 $
+** $Date: 2005-05-12 19:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -683,7 +683,7 @@ static char  printDir[MAX_PATH];
 static BYTE  abFontImage[256 * 8];
 static int   aiCharStart[256];
 static int   aiCharWidth[256];
-static BYTE  abGrphImage[256*4][sizeof(DWORD) * PIXEL_WIDTH * 8];
+static BYTE  abGrphImage[512*4][sizeof(DWORD) * PIXEL_WIDTH * 9];
 static TCHAR szDocTitle[MAX_PATH];
 static TEXTMETRIC tm;
 
@@ -855,7 +855,7 @@ void SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
     ZeroMemory( &bmiGrph, sizeof(bmiGrph) );
     bmiGrph.bmiHeader.biSize         = sizeof(bmiGrph.bmiHeader);
     bmiGrph.bmiHeader.biWidth        = PIXEL_WIDTH * 1;
-    bmiGrph.bmiHeader.biHeight       = PIXEL_WIDTH * 8;
+    bmiGrph.bmiHeader.biHeight       = PIXEL_WIDTH * 9;
     bmiGrph.bmiHeader.biPlanes       = 1;
     bmiGrph.bmiHeader.biBitCount     = 1;
     bmiGrph.bmiHeader.biCompression  = BI_RGB;
@@ -923,6 +923,8 @@ void PrintVisibleCharacter(BYTE bChar)
             double headRelative;
             double hPos;
             UINT script = stPrtRam.fSuperscript || stPrtRam.fSubscript ? 1 : 0;
+            UINT destY;
+            UINT destHeight;
             UINT i;
 
             if (!stPrtRam.fProportional) {
@@ -930,9 +932,6 @@ void PrintVisibleCharacter(BYTE bChar)
                 end   = 11;
             }
 
-            if (!topBits) {
-                iYPos += stPrtRam.uiPixelSizeY;
-            }
             if (stPrtRam.fSubscript) {
                 iYPos /=2;
                 iYPos += stPrtRam.uiPixelSizeY * 4.5;
@@ -947,26 +946,28 @@ void PrintVisibleCharacter(BYTE bChar)
             if (stPrtRam.fDoubleWidth) {
                 headRelative *= 2;
             }
+            
+            destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
+            destHeight = (UINT)(stPrtRam.uiPixelSizeY * 9);
+
+            stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
+            stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
+
             for (i = start; i < end; i++) {
-                UINT yDest;
-                BYTE charBits = charBitmap[i + 1];
+                UINT charBits = (UINT)charBitmap[i + 1] << topBits;
+                
                 if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
-                    charBits |= charBitmap[i];
+                    charBits |= (UINT)charBitmap[i] << topBits;
                 }
                 if (stPrtRam.fUnderline) {
-                    charBits |= 2 >> topBits;
+                    charBits |= 2;
                 }
 
-                yDest = (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY + iYPos);
-                stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, yDest);
-                stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, yDest + (UINT)(stPrtRam.uiPixelSizeY*8));
-
                 StretchDIBits(hdcMem,
-                    (UINT)(hPos*stPrtRam.uiPixelSizeX), 
-                    yDest,
-                    (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
-                    0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
-                    abGrphImage[512 * script + 256 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
+                    (UINT)(hPos * stPrtRam.uiPixelSizeX), destY,
+                    (UINT)(stPrtRam.uiPixelSizeX),        destHeight,
+                    0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
+                    abGrphImage[1024 * script + 512 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
                     DIB_RGB_COLORS, SRCAND );
                 hPos += headRelative;
             }
@@ -978,6 +979,8 @@ void PrintVisibleCharacter(BYTE bChar)
         if (hdcMem) {
             double iYPos = 0;
             double iHeight = stPrtRam.uiPixelSizeY;
+            UINT destY;
+            UINT destHeight;
 
             if (stPrtRam.fSubscript) {
                 iHeight /= 2;
@@ -986,6 +989,12 @@ void PrintVisibleCharacter(BYTE bChar)
             else if (stPrtRam.fSuperscript) {
                 iHeight /= 2;
             }
+            
+            destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
+            destHeight = (UINT)(UINT)(iHeight * 8);
+
+            stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
+            stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
 
     #ifdef USE_REAL_FONT
             TextOut(hdcMem, 
@@ -1013,19 +1022,27 @@ void PrintGraphicByte(BYTE bByte, BOOL fMsxPrinter)
 {
     EnsurePrintPage();
 
-    if (hdcMem)
-    {
+    if (hdcMem) {
+        UINT destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY);
+        UINT destHeight = (UINT)(stPrtRam.uiPixelSizeY * 9);
+        UINT charBits;
+
         if (fMsxPrinter) {
             bByte = SWAP_BITS_8(bByte);
         }
 
+        // Print Data to high 8 bits
+        charBits = (UINT)bByte << 1;
+
+        stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
+        stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
+
         // Print bit-mask
         StretchDIBits(hdcMem,
-            (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
-            (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY),
-            (UINT)(stPrtRam.uiPixelSizeX), (UINT)(stPrtRam.uiPixelSizeY*8),
-            0, 0, 1 * PIXEL_WIDTH, 8 * PIXEL_WIDTH,
-            abGrphImage[bByte], (LPBITMAPINFO)&bmiGrph,
+            (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), destY,
+            (UINT)(stPrtRam.uiPixelSizeX),                 destHeight,
+            0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
+            abGrphImage[charBits], (LPBITMAPINFO)&bmiGrph,
             DIB_RGB_COLORS, SRCAND );
 
         // Move print-position...
@@ -1880,11 +1897,11 @@ static void initPixelBitmaps(void)
 
     ZeroMemory(abGrphImage, sizeof(abGrphImage));
 
-    for (bByte = 0; bByte < 256; bByte++) {
+    for (bByte = 0; bByte < 512; bByte++) {
         int  iPixel;
         UINT bMask = 0x01;
 
-        for (iPixel=0; iPixel<8; iPixel++) {
+        for (iPixel=0; iPixel<9; iPixel++) {
             if (bByte & bMask) {
 #if PIXEL_WIDTH == 1
                 abGrphImage[iPixel<<2] = 0x80;
@@ -1898,9 +1915,9 @@ static void initPixelBitmaps(void)
                 int j;
                 for (j = 0; j < PIXEL_WIDTH; j++) {
                     abGrphImage[bByte][(PIXEL_WIDTH * iPixel + j) << 2] = singleStrikeBitmap[j];
-                    abGrphImage[256+bByte][(PIXEL_WIDTH * iPixel + j) << 2] = doubleStrikeBitmap[j];
-                    abGrphImage[512+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= singleStrikeBitmap[j];
-                    abGrphImage[768+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= doubleStrikeBitmap[j];
+                    abGrphImage[512+bByte][(PIXEL_WIDTH * iPixel + j) << 2] = doubleStrikeBitmap[j];
+                    abGrphImage[1024+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= singleStrikeBitmap[j];
+                    abGrphImage[1536+bByte][(PIXEL_WIDTH * iPixel / 2 + j) << 2] |= doubleStrikeBitmap[j];
                 }
 #endif
             }
