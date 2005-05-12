@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-05-12 19:21:40 $
+** $Date: 2005-05-12 21:32:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -95,7 +95,7 @@ static int printerRawCreate(void)
 
 //#define USE_REAL_FONT
 
-static BYTE EpsonFont[] = {
+static BYTE EpsonFontRom[] = {
     0x8b, 0x04, 0x0a, 0x20, 0x8a, 0x60, 0x0a, 0x20, 0x1c, 0x02, 0x00, 0x00, /*   0 */
     0x8b, 0x1c, 0x22, 0x08, 0xa2, 0x48, 0x22, 0x08, 0x22, 0x18, 0x00, 0x00, /*   1 */
     0x9b, 0x00, 0x3c, 0x00, 0x82, 0x40, 0x02, 0x00, 0x3c, 0x02, 0x00, 0x00, /*   2 */
@@ -228,7 +228,7 @@ static BYTE EpsonFont[] = {
 
     /* Duplicate non-italic fonts for now.... */
 
-        0x8b, 0x04, 0x0a, 0x20, 0x8a, 0x60, 0x0a, 0x20, 0x1c, 0x02, 0x00, 0x00, /*   0 */
+    0x8b, 0x04, 0x0a, 0x20, 0x8a, 0x60, 0x0a, 0x20, 0x1c, 0x02, 0x00, 0x00, /*   0 */
     0x8b, 0x1c, 0x22, 0x08, 0xa2, 0x48, 0x22, 0x08, 0x22, 0x18, 0x00, 0x00, /*   1 */
     0x9b, 0x00, 0x3c, 0x00, 0x82, 0x40, 0x02, 0x00, 0x3c, 0x02, 0x00, 0x00, /*   2 */
     0x9a, 0x00, 0x1c, 0x22, 0x80, 0x62, 0x00, 0x22, 0x1c, 0x00, 0x00, 0x00, /*   3 */
@@ -358,8 +358,9 @@ static BYTE EpsonFont[] = {
     0x8b, 0x7c, 0x82, 0x04, 0x8a, 0x10, 0xa2, 0x40, 0x82, 0x7c, 0x00, 0x00  /* 127 */
 };
 
+static BYTE MSXFont[256 * 12];
 
-static BYTE FontBitmaps[] = {
+static BYTE MSXFontOrig[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x3c, 0x42, 0xa5, 0x81, 0xa5, 0x99, 0x42, 0x3c,
     0x3c, 0x7e, 0xdb, 0xff, 0xff, 0xdb, 0x66, 0x3c,
@@ -619,15 +620,16 @@ static BYTE FontBitmaps[] = {
 };
 
 
-#define MAX_ESC_CMDSIZE      8      // Maximum size of ESC-command
-
-#define PRTFONT_PICA         0      // Courier 1/10" (Pica)
-#define PRTFONT_ELITE        1      // Courier 1/12" (Elite)
-#define PRTFONT_CONDENSED    2      // Courier 1/17" (Condensed)
-#define PRTFONT_PROPORTIONAL 3      // Proportional
+#define MAX_ESC_CMDSIZE  8 
+#define MAX_FONT_WIDTH   12
 
 typedef struct {
-    int     iFont;
+    BYTE ram[256 * MAX_FONT_WIDTH];
+    UINT charWidth;
+    double pixelDelta;
+} FontInfo;
+
+typedef struct {
     BOOL    fLetterQuality;
     BOOL    fBold;
     BOOL    fProportional;
@@ -670,7 +672,8 @@ typedef struct {
     UINT    uiPrintAreaBottom;
     double  uiPixelSizeX;
     double  uiPixelSizeY;
-} PRINTERRAM, *PPRINTERRAM;
+    FontInfo fontInfo;
+} PRINTERRAM;
 
 PRINTERRAM   stPrtRam;
 BOOL         fPrintDataOnPage;
@@ -680,38 +683,13 @@ HDC          hdcMem = NULL;
 HBITMAP      hBitmap = NULL;
 
 static char  printDir[MAX_PATH];
-static BYTE  abFontImage[256 * 8];
-static int   aiCharStart[256];
-static int   aiCharWidth[256];
 static BYTE  abGrphImage[512*4][sizeof(DWORD) * PIXEL_WIDTH * 9];
 static TCHAR szDocTitle[MAX_PATH];
-static TEXTMETRIC tm;
 
 static struct {
     BITMAPINFOHEADER bmiHeader;
     RGBQUAD bmiColors[2];
-} bmiFont, bmiGrph;
-
-void UpdateFont(void)
-{
-    int fontSize[] = { 10, 12, 17, 10 };
-    LOGFONT lf;
-
-    ZeroMemory(&lf, sizeof(LOGFONT));
-    lf.lfHeight = -MulDiv(fontSize[stPrtRam.iFont] / (stPrtRam.fSuperscript || stPrtRam.fSubscript ? 2 : 1), 
-                          GetDeviceCaps(hdcMem, LOGPIXELSY), 72);
-    lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
-
-    lf.lfItalic = stPrtRam.fItalic;
-    lf.lfStrikeOut = stPrtRam.fDoubleStrike;
-    lf.lfUnderline = stPrtRam.fUnderline;
-    lf.lfWeight = stPrtRam.fBold ? FW_BOLD : FW_NORMAL;
-
-    strcpy(lf.lfFaceName, "DotMatrix");
-    DeleteObject(SelectObject(hdcMem, CreateFontIndirect(&lf))); 
-    
-    GetTextMetrics(hdcMem, &tm);
-}
+} bmiGrph;
 
 void FlushEmulatedPrinter(void)
 {
@@ -752,121 +730,48 @@ static void SeekPrinterHeadRelative(double iOffset)
     }
 }
 
-void SetPrintTitle(LPTSTR lpszDocTitle)
+void MsxPrnSetFont(BYTE* msxBits)
 {
-    if (lpszDocTitle)
-        lstrcpy( szDocTitle, lpszDocTitle );
-    else
-        ZeroMemory( szDocTitle, sizeof(szDocTitle) );
+    // Convert MSX printer font to Epson printer font
+    BYTE* font = MSXFont;
+    int i;
 
-    return;
-}
+    if (printerType != P_LPT_MSXPRN) {
+        return;
+    }
 
-void SetPrinterFont(LPBYTE lpCharacters, size_t sizeBytes)
-{
-    LPBYTE lpCurByte;
-    int    iChar;
-    int    iByte;
-    BYTE   bCharMask;
-    BYTE   bCurrBit;
-    int    iBit;
-    BOOL   fFound;
+    for (i = 0; i < 256; i++) {
+        BYTE oneBits = 0;
+        int start = -1;
+        int end = 0;
+        int j;
 
-    // Reset previous settings
-    ZeroMemory( aiCharStart, sizeof(aiCharStart) );
-    ZeroMemory( aiCharWidth, sizeof(aiCharWidth) );
-    ZeroMemory( abFontImage, sizeof(abFontImage) );
-
-    // Apply new settings...
-    if (lpCharacters)
-    {
-        lpCurByte=lpCharacters;
-        for (iChar=0; iChar<256; iChar++)
-        {
-            bCharMask=0;
-            for (iByte=0; iByte<8; iByte++)
-            {
-                bCharMask |= *lpCurByte;
-                abFontImage[((7*256)-(iByte<<8)) | iChar] = *lpCurByte;
-
-                lpCurByte++;
+        // Rotate MSX character
+        for (j = 0; j < 8; j++) {
+            BYTE charBits = 0;
+            int k;
+            
+            for (k = 0; k < 8; k++) {
+                charBits |= ((msxBits[7 - k] >> (7 - j)) & 1) << k;
             }
+            
+            oneBits |= charBits;
+            if (oneBits  != 0 && start < 0) start = j;
+            if (charBits != 0) end = j;
 
-            // Calculate start-position of proportional characters
-            bCurrBit=0x80;
-            fFound=FALSE;
-            for (iBit=0; iBit<8 && !fFound; iBit++)
-            {
-                if (bCharMask & bCurrBit)
-                {
-                    fFound=TRUE;
+            font[j + 1] = charBits;
+        }
 
-                    // Characters without pixels (like SPACE) are starting
-                    // at position 0, which is the already initialized value.
-                    aiCharStart[iChar]=iBit;
-                }
+        end = end + 1;
+        if (start < 0 || start >= 7) start = 0;
+        if (end   == 1) end   = 5;
+        if (end   >= 7) end   = 7;
 
-                bCurrBit>>=1;
-            }
+        font[0] = (start << 4) | end;
 
-            // Calculate width of proportional characters
-            //
-            // (if the right seven bits are 0 we assume a character-size
-            // of 1 pixel on the left, which is also valid for the
-            // SPACE character)
-            aiCharWidth[iChar]=1;
-
-            bCurrBit=0x01;
-            fFound=FALSE;
-            for (iBit=8; iBit>0 && !fFound; iBit--)
-            {
-                if (bCharMask & bCurrBit)
-                {
-                    fFound=TRUE;
-                    aiCharWidth[iChar] = iBit - aiCharStart[iChar];
-                }
-
-                bCurrBit<<=1;
-            }
-        } // next character
-
-        ZeroMemory( &bmiFont, sizeof(bmiFont) );
-        bmiFont.bmiHeader.biSize          = sizeof(bmiFont.bmiHeader);
-        bmiFont.bmiHeader.biWidth         = 256*8;
-        bmiFont.bmiHeader.biHeight        = 8;
-        bmiFont.bmiHeader.biPlanes        = 1;
-        bmiFont.bmiHeader.biBitCount      = 1;
-        bmiFont.bmiHeader.biCompression   = BI_RGB;
-        //  bmiFont.bmiHeader.biSizeImage     = 0; //sizeof(abFontImage)
-        //  bmiFont.bmiHeader.biXPelsPerMeter = 0;
-        //  bmiFont.bmiHeader.biYPelsPerMeter = 0;
-        //  bmiFont.bmiHeader.biClrUsed       = 0;
-        //  bmiFont.bmiHeader.biClrImportant  = 0;
-        bmiFont.bmiColors[0].rgbBlue     = 0xFF;
-        bmiFont.bmiColors[0].rgbGreen    = 0xFF;
-        bmiFont.bmiColors[0].rgbRed      = 0xFF;
-        bmiFont.bmiColors[0].rgbReserved = 0x00;
-        bmiFont.bmiColors[1].rgbBlue     = 0x00;
-        bmiFont.bmiColors[1].rgbGreen    = 0x00;
-        bmiFont.bmiColors[1].rgbRed      = 0x00;
-        bmiFont.bmiColors[1].rgbReserved = 0x00;
-    } // endif lpCharacters
-
-    ZeroMemory( &bmiGrph, sizeof(bmiGrph) );
-    bmiGrph.bmiHeader.biSize         = sizeof(bmiGrph.bmiHeader);
-    bmiGrph.bmiHeader.biWidth        = PIXEL_WIDTH * 1;
-    bmiGrph.bmiHeader.biHeight       = PIXEL_WIDTH * 9;
-    bmiGrph.bmiHeader.biPlanes       = 1;
-    bmiGrph.bmiHeader.biBitCount     = 1;
-    bmiGrph.bmiHeader.biCompression  = BI_RGB;
-    bmiGrph.bmiColors[0].rgbBlue     = 0xFF;
-    bmiGrph.bmiColors[0].rgbGreen    = 0xFF;
-    bmiGrph.bmiColors[0].rgbRed      = 0xFF;
-    bmiGrph.bmiColors[0].rgbReserved = 0x00;
-    bmiGrph.bmiColors[1].rgbBlue     = 0x00;
-    bmiGrph.bmiColors[1].rgbGreen    = 0x00;
-    bmiGrph.bmiColors[1].rgbRed      = 0x00;
-    bmiGrph.bmiColors[1].rgbReserved = 0x00;
+        font    += 9;
+        msxBits += 8;
+    }
 }
 
 void EnsurePrintPage(void)
@@ -910,109 +815,67 @@ void PrintVisibleCharacter(BYTE bChar)
 {
     EnsurePrintPage();
 
-    
-    if (printerType == P_LPT_EPSONFX80) {
-        if (hdcMem) {
-            double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
-            double iYPos = 0;
-            BYTE *charBitmap = EpsonFont + 12 * (UINT)bChar;
-            BYTE attribute   = charBitmap[0];
-            UINT start       = (attribute >> 4) & 0x07;
-            UINT end         = attribute & 0x0f;
-            UINT topBits     = attribute >> 7;
-            double headRelative;
-            double hPos;
-            UINT script = stPrtRam.fSuperscript || stPrtRam.fSubscript ? 1 : 0;
-            UINT destY;
-            UINT destHeight;
-            UINT i;
+    if (hdcMem) {
+        double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
+        double iYPos = 0;
+        BYTE *charBitmap = stPrtRam.fontInfo.ram + stPrtRam.fontInfo.charWidth * (UINT)bChar;
+        BYTE attribute   = charBitmap[0];
+        UINT start       = (attribute >> 4) & 0x07;
+        UINT end         = attribute & 0x0f;
+        UINT topBits     = attribute >> 7;
+        double headRelative;
+        double hPos;
+        UINT script = stPrtRam.fSuperscript || stPrtRam.fSubscript ? 1 : 0;
+        UINT destY;
+        UINT destHeight;
+        UINT i;
 
-            if (!stPrtRam.fProportional) {
-                start = 0;  // Fixed width font
-                end   = 11;
-            }
-
-            if (stPrtRam.fSubscript) {
-                iYPos /=2;
-                iYPos += stPrtRam.uiPixelSizeY * 4.5;
-            }
-            if (script) {
-                iYPos -= stPrtRam.uiPixelSizeY * 4.5;
-            }
-
-            hPos = stPrtRam.uiHpos;
-
-            headRelative = 100. / stPrtRam.uiFontDensity;
-            if (stPrtRam.fDoubleWidth) {
-                headRelative *= 2;
-            }
-            
-            destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
-            destHeight = (UINT)(stPrtRam.uiPixelSizeY * 9);
-
-            stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
-            stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
-
-            for (i = start; i < end; i++) {
-                UINT charBits = (UINT)charBitmap[i + 1] << topBits;
-                
-                if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
-                    charBits |= (UINT)charBitmap[i] << topBits;
-                }
-                if (stPrtRam.fUnderline) {
-                    charBits |= 2;
-                }
-
-                StretchDIBits(hdcMem,
-                    (UINT)(hPos * stPrtRam.uiPixelSizeX), destY,
-                    (UINT)(stPrtRam.uiPixelSizeX),        destHeight,
-                    0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
-                    abGrphImage[1024 * script + 512 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
-                    DIB_RGB_COLORS, SRCAND );
-                hPos += headRelative;
-            }
-
-            SeekPrinterHeadRelative((1 + end - start) * headRelative);
+        if (!stPrtRam.fProportional) {
+            start = 0;  // Fixed width font
+            end   = stPrtRam.fontInfo.charWidth - 1;
         }
-    }
-    else {
-        if (hdcMem) {
-            double iYPos = 0;
-            double iHeight = stPrtRam.uiPixelSizeY;
-            UINT destY;
-            UINT destHeight;
 
-            if (stPrtRam.fSubscript) {
-                iHeight /= 2;
-                iYPos = iHeight;
-            }
-            else if (stPrtRam.fSuperscript) {
-                iHeight /= 2;
-            }
+        if (stPrtRam.fSubscript) {
+            iYPos /=2;
+            iYPos += stPrtRam.uiPixelSizeY * 4.5;
+        }
+        if (script) {
+            iYPos -= stPrtRam.uiPixelSizeY * 4.5;
+        }
+
+        hPos = stPrtRam.uiHpos;
+
+        headRelative = stPrtRam.fontInfo.pixelDelta * 100. / stPrtRam.uiFontDensity;
+        if (stPrtRam.fDoubleWidth) {
+            headRelative *= 2;
+        }
+        
+        destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
+        destHeight = (UINT)(stPrtRam.uiPixelSizeY * 9);
+
+        stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
+        stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
+
+        for (i = start; i < end; i++) {
+            UINT charBits = (UINT)charBitmap[i + 1] << topBits;
             
-            destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
-            destHeight = (UINT)(UINT)(iHeight * 8);
+            if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
+                charBits |= (UINT)charBitmap[i] << topBits;
+            }
+            if (stPrtRam.fUnderline) {
+                charBits |= 2;
+            }
 
-            stPrtRam.uiPrintAreaTop    = MIN(stPrtRam.uiPrintAreaTop, destY);
-            stPrtRam.uiPrintAreaBottom = MAX(stPrtRam.uiPrintAreaBottom, destY + destHeight);
-
-    #ifdef USE_REAL_FONT
-            TextOut(hdcMem, 
-                    (UINT)(stPrtRam.uiHpos * stPrtRam.uiPixelSizeX), stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos,
-                    &bChar, 1);
-    #else
-            // Print character
-            StretchDIBits( hdcMem,
-                (UINT)(stPrtRam.uiHpos*stPrtRam.uiPixelSizeX), 
-                (UINT)(stPrtRam.uiVpos*stPrtRam.uiPixelSizeY+iYPos),
-                (UINT)(stPrtRam.uiPixelSizeX*stPrtRam.uiFontWidth), (UINT)(iHeight*8),
-                8*(int)bChar, 0, stPrtRam.uiFontWidth, 8,
-                abFontImage, (LPBITMAPINFO)&bmiFont,
+            StretchDIBits(hdcMem,
+                (UINT)(hPos * stPrtRam.uiPixelSizeX), destY,
+                (UINT)(stPrtRam.uiPixelSizeX),        destHeight,
+                0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
+                abGrphImage[1024 * script + 512 * stPrtRam.fDoubleStrike + charBits], (LPBITMAPINFO)&bmiGrph,
                 DIB_RGB_COLORS, SRCAND );
-    #endif
-            // Move print-position...
-            SeekPrinterHeadRelative(stPrtRam.uiFontWidth);
+            hPos += headRelative;
         }
+
+        SeekPrinterHeadRelative((1 + end - start) * headRelative);
     }
 }
 
@@ -1098,6 +961,7 @@ static size_t MsxPrnCalcEscSequenceLength(BYTE character)
     case 'O':
     case '\\':
     case 'L':
+    case '/':
         return 3;
     case 'S':
         return 4;
@@ -1111,47 +975,32 @@ static size_t MsxPrnCalcEscSequenceLength(BYTE character)
 static void MsxPrnProcessEscSequence(void)
 {
     switch (stPrtRam.abEscSeq[0]) {
-    case 13:
-        // (ESC, CR) Move printer-head to end-position
+    case 'N':
+        stPrtRam.fProportional = FALSE; 
+        stPrtRam.uiFontDensity = 100;
+        break;
+
+    case 'E':
+        stPrtRam.fProportional = FALSE; 
+        stPrtRam.uiFontDensity = 140;
+        break;
+
+    case 'Q':
+        stPrtRam.fProportional = FALSE; 
+        stPrtRam.uiFontDensity = 172;
+        break;
+
+    case 'P':
+        stPrtRam.fProportional = TRUE;
+        stPrtRam.uiFontDensity = 90;
         break;
 
     case '!':
         stPrtRam.fLetterQuality=TRUE;
         break;
 
-    case '&':
-    case '$':
-        stPrtRam.fJapanese=!stPrtRam.fJapanese;
-        break;
-
-    case '(':
-        // ???: Set a horizontal tab position
-        break;
-
-    case ')':
-        // ???: Partially delete a horizontal tab position
-        break;
-
     case '\"':
         stPrtRam.fLetterQuality=FALSE;
-        break;
-
-    case '\\':
-        stPrtRam.uiRightBorder=MsxPrnParseNumber( 1, 3 );
-        break;
-
-    case '@':
-        ResetEmulatedPrinter();
-        break;
-
-    case 'A':
-      // ???: Line-feed 1/6"
-        stPrtRam.uiLineFeed=12;
-        break;
-
-    case 'B':
-        // ???: Line-feed 1/9"
-        stPrtRam.uiLineFeed=8;
         break;
 
     case 'C':
@@ -1189,29 +1038,18 @@ static void MsxPrnProcessEscSequence(void)
             stPrtRam.fSubscript=FALSE;
             break;
         }
-        UpdateFont();
         break;
 
-    case 'E':
-        stPrtRam.iFont=PRTFONT_ELITE;
-        UpdateFont();
+    case '(':
+        // ???: Set a horizontal tab position
         break;
 
-    case 'G':
-        stPrtRam.uiDensity=MsxPrnParseNumber( 1, 3 );
-        if (stPrtRam.uiDensity == 0) {
-            stPrtRam.uiDensity = 1;
-        }
-        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 4, 4 );
+    case ')':
+        // ???: Partially delete a horizontal tab position
         break;
 
-    case 'L':
-        stPrtRam.uiLeftBorder=MsxPrnParseNumber( 1, 3 );
-        break;
-
-    case 'N':
-        stPrtRam.iFont=PRTFONT_PICA;
-        UpdateFont();
+    case '2':
+        // ???: Clear horizontal tabs
         break;
 
     case 'O':
@@ -1231,32 +1069,31 @@ static void MsxPrnProcessEscSequence(void)
         }
         break;
 
-    case 'Q':
-        stPrtRam.iFont=PRTFONT_CONDENSED;
-        UpdateFont();
+    case '/':  //Right margin
         break;
 
-    case 'S':
-        // Print graphics, density depending on font
-        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 1, 3 );
+    case 'L':
+        stPrtRam.uiLeftBorder=MsxPrnParseNumber( 1, 3 );
+        break;
+
+    case 'A':
+      // ???: Line-feed 1/6"
+        stPrtRam.uiLineFeed=12;
+        break;
+
+    case 'B':
+        // ???: Line-feed 1/9"
+        stPrtRam.uiLineFeed=8;
         break;
 
     case 'T':
         // ???: Line-feed nn/144"
-        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/4.875);
-        break;
-
-    case 'X':
-        stPrtRam.fUnderline=TRUE;
-        break;
-
-    case 'Y':
-        stPrtRam.fUnderline=FALSE;
+        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/2);
         break;
 
     case 'Z':
         // ???: Line-feed nn/216"
-        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/3.25);
+        stPrtRam.uiLineFeed=(UINT)(MsxPrnParseNumber( 1, 2 )/3);
         break;
 
     case '[':
@@ -1267,16 +1104,54 @@ static void MsxPrnProcessEscSequence(void)
         // ???: Bi-directional printing
         break;
 
-    case 'f':
-        // ???: Scroll paper forward
-        break;
-
     case 'p':
         stPrtRam.fDetectPaperOut=TRUE;
         break;
 
     case 'q':
         stPrtRam.fDetectPaperOut=FALSE;
+        break;
+
+    case 13:
+        // (ESC, CR) Move printer-head to end-position
+        break;
+
+    case '@':
+        ResetEmulatedPrinter();
+        break;
+
+    case '\\':
+        stPrtRam.uiRightBorder=MsxPrnParseNumber( 1, 3 );
+        break;
+
+    case 'G':
+        stPrtRam.uiDensity=MsxPrnParseNumber( 1, 3 );
+        if (stPrtRam.uiDensity == 0) {
+            stPrtRam.uiDensity = 1;
+        }
+        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 4, 4 );
+        break;
+
+    case 'S':
+        // Print graphics, density depending on font
+        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 1, 3 );
+        break;
+
+    case 'X':
+        stPrtRam.fUnderline=TRUE;
+        break;
+
+    case 'Y':
+        stPrtRam.fUnderline=FALSE;
+        break;
+
+    case '&':
+    case '$':
+        stPrtRam.fJapanese=!stPrtRam.fJapanese;
+        break;
+
+    case 'f':
+        // ???: Scroll paper forward
         break;
 
     case 'r':
@@ -1386,7 +1261,7 @@ static void EpsonFx80ResetSettings(void)
     stPrtRam.uiLeftBorder   = 48;
     stPrtRam.uiRightBorder  = stPrtRam.uiLeftBorder + 480;
     stPrtRam.uiDensity      = 100;
-    stPrtRam.uiFontDensity  = 200;
+    stPrtRam.uiFontDensity  = 100;
     stPrtRam.uiPageTop      = 48;
     stPrtRam.uiLines        = 72;
     stPrtRam.uiTotalWidth   = 610;
@@ -1506,7 +1381,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '3':  // Sets Line Spacing to n/216 inch
-        stPrtRam.uiLineFeed = (EpsonFx80ParseNumber(1, 1) & 127) / 4; //FIXME!!
+        stPrtRam.uiLineFeed = (EpsonFx80ParseNumber(1, 1) & 127) / 3; //FIXME!!
         break;
 
     case '4':  // Turn Italic Mode ON
@@ -1553,7 +1428,7 @@ static void EpsonFx80ProcessEscSequence(void)
         stPrtRam.uiEightBit = 0;
         stPrtRam.fNinePinGraphics = FALSE;
         stPrtRam.uiDensity = 200;
-        stPrtRam.uiFontDensity = 200;
+        stPrtRam.uiFontDensity = 100;
         stPrtRam.fUnderline = FALSE;
         stPrtRam.uiLineFeed = 12;
         stPrtRam.fUnderline = FALSE;
@@ -1605,7 +1480,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'J':  // Forces Line Feed with n/216 inch
-        stPrtRam.uiVpos += (EpsonFx80ParseNumber(1, 1) & 127) / 4; // FIXME!!
+        stPrtRam.uiVpos += (EpsonFx80ParseNumber(1, 1) & 127) / 3; // FIXME!!
         if (stPrtRam.uiVpos >= stPrtRam.uiPageHeight)
             FlushEmulatedPrinter();
         break;
@@ -1624,7 +1499,7 @@ static void EpsonFx80ProcessEscSequence(void)
 
     case 'M':  // Turn Elite mode ON
         stPrtRam.fElite = TRUE;        
-        stPrtRam.uiFontDensity = 240;
+        stPrtRam.uiFontDensity = 140;
         break;
 
     case 'N':  // Turn Skip Over Perforation ON
@@ -1636,10 +1511,10 @@ static void EpsonFx80ProcessEscSequence(void)
     case 'P':  // Turn Elite mode OFF
         stPrtRam.fElite = FALSE;
         if (stPrtRam.fCompressed) {
-            stPrtRam.uiFontDensity = 343;
+            stPrtRam.uiFontDensity = 172;
         }
         else {
-            stPrtRam.uiFontDensity = 200;
+            stPrtRam.uiFontDensity = 100;
         }
         break;
 
@@ -1763,14 +1638,14 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
     case 15: // Shift in. Emties buffer, turns compressed mode ON (17.16 cpi)
         stPrtRam.fCompressed = TRUE;
         if (!stPrtRam.fElite) {
-            stPrtRam.uiFontDensity = 343;
+            stPrtRam.uiFontDensity = 172;
         }
         break;
     case 17: // Device Control 1: 
         break;
     case 18: // Device Control 2: turns compressed mode OFF
         stPrtRam.fCompressed = FALSE;
-        stPrtRam.uiFontDensity = 200;
+        stPrtRam.uiFontDensity = 100;
         break;
     case 19: // Device Control 3: 
         break;
@@ -1793,6 +1668,22 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
 ////////////////////////////////////////////////////
 // Generic Character processing
 ////////////////////////////////////////////////////
+
+static void SetDefaultFont(void)
+{
+    switch (printerType) {
+    case P_LPT_MSXPRN:
+        memcpy(stPrtRam.fontInfo.ram, MSXFont, sizeof(stPrtRam.fontInfo.ram));
+        stPrtRam.fontInfo.charWidth = 9;
+        stPrtRam.fontInfo.pixelDelta = 1.0;
+        break;
+    case P_LPT_EPSONFX80:
+        memcpy(stPrtRam.fontInfo.ram, EpsonFontRom, sizeof(stPrtRam.fontInfo.ram));
+        stPrtRam.fontInfo.charWidth = 12;
+        stPrtRam.fontInfo.pixelDelta = 0.5;
+        break;
+    }
+}
 
 static void ResetEmulatedPrinter(void)
 {
@@ -1817,6 +1708,8 @@ static void ResetEmulatedPrinter(void)
         stPrtRam.uiPixelSizeX = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH) / stPrtRam.uiTotalWidth;
         stPrtRam.uiPixelSizeY = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT) / stPrtRam.uiTotalHeight;
     }
+    
+    SetDefaultFont();
 
     return;
 }
@@ -1894,6 +1787,22 @@ void PrintToMSX(BYTE bData)
 static void initPixelBitmaps(void)
 {
     UINT bByte;
+    
+    ZeroMemory( &bmiGrph, sizeof(bmiGrph) );
+    bmiGrph.bmiHeader.biSize         = sizeof(bmiGrph.bmiHeader);
+    bmiGrph.bmiHeader.biWidth        = PIXEL_WIDTH * 1;
+    bmiGrph.bmiHeader.biHeight       = PIXEL_WIDTH * 9;
+    bmiGrph.bmiHeader.biPlanes       = 1;
+    bmiGrph.bmiHeader.biBitCount     = 1;
+    bmiGrph.bmiHeader.biCompression  = BI_RGB;
+    bmiGrph.bmiColors[0].rgbBlue     = 0xFF;
+    bmiGrph.bmiColors[0].rgbGreen    = 0xFF;
+    bmiGrph.bmiColors[0].rgbRed      = 0xFF;
+    bmiGrph.bmiColors[0].rgbReserved = 0x00;
+    bmiGrph.bmiColors[1].rgbBlue     = 0x00;
+    bmiGrph.bmiColors[1].rgbGreen    = 0x00;
+    bmiGrph.bmiColors[1].rgbRed      = 0x00;
+    bmiGrph.bmiColors[1].rgbReserved = 0x00;
 
     ZeroMemory(abGrphImage, sizeof(abGrphImage));
 
@@ -1934,11 +1843,15 @@ static int printerCreate(void)
 
     initPixelBitmaps();
 
-    SetPrintTitle("blueMSX");
+    lstrcpy(szDocTitle, "blueMSX");
 
-    SetPrinterFont(FontBitmaps, sizeof(FontBitmaps));
+    MsxPrnSetFont(MSXFontOrig);
 
     hdcPrinter = CreateDC(NULL, TEXT(pProperties->ports.Lpt.name), NULL, NULL);
+    if (hdcPrinter == NULL) {
+        return 0;
+    }
+
     width  = GetDeviceCaps(hdcPrinter, PHYSICALWIDTH);
     height = GetDeviceCaps(hdcPrinter, PHYSICALHEIGHT);
     hdcMem  = CreateCompatibleDC(hdcPrinter);
@@ -1951,11 +1864,9 @@ static int printerCreate(void)
     stPrtRam.uiPrintAreaTop    = (UINT)-1;
     stPrtRam.uiPrintAreaBottom = 0;
 
-    UpdateFont();
-
     ResetEmulatedPrinter();
 
-    return hdcPrinter != NULL;
+    return 1;
 }
 
 static void printerDestroy(void)
