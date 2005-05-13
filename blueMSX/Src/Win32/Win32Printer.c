@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-05-13 08:52:26 $
+** $Date: 2005-05-13 09:26:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -616,6 +616,18 @@ static BYTE MSXFontOrig[] = {
 };
 
 
+typedef enum { 
+    CC_USA              = 0,
+    CC_FRANCE           = 1,
+    CC_GERMANY          = 2,
+    CC_UNITED_KINGDOM   = 3,
+    CC_DENMARK          = 4,
+    CC_SWEDEN           = 5,
+    CC_ITALY            = 6,
+    CC_SPAIN            = 7,
+    CC_JAPAN            = 8
+} CountryCodes;
+
 #define MAX_ESC_CMDSIZE  8 
 #define MAX_FONT_WIDTH   12
 
@@ -673,6 +685,7 @@ typedef struct {
     UINT    uiPrintAreaBottom;
     double  uiPixelSizeX;
     double  uiPixelSizeY;
+    CountryCodes countryCode;
     FontInfo fontInfo;
 } PRINTERRAM;
 
@@ -1478,6 +1491,7 @@ static void EpsonFx80ProcessEscSequence(void)
         stPrtRam.fontInfo.useRam = FALSE;
         stPrtRam.fNoHighEscapeCodes = FALSE;
         stPrtRam.fAlternateChar = FALSE;
+        stPrtRam.countryCode = CC_USA;
         break;
 
     case 'A':  // Sets Line Spacing to n/72 inch
@@ -1561,6 +1575,10 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'R':  // Select International Character Set
+        stPrtRam.countryCode = EpsonFx80ParseNumber(1, 1);
+        if (stPrtRam.countryCode > CC_JAPAN) {
+            stPrtRam.countryCode = CC_USA;
+        }
         break;
 
     case 'S':  // Turn Script Mode ON
@@ -1627,6 +1645,21 @@ static void EpsonFx80ProcessEscSequence(void)
     }
 }
 
+// International character code translation for the Epson FX-80 printer
+//                              US   FR   DE   GB   DK   SE   IT   SP   JP
+static BYTE intlChar35[9]  = {  35,  35,  35,   6,  35,  35,  35,  12,  35 };
+static BYTE intlChar36[9]  = {  36,  36,  36,  36,  36,  11,  36,  36,  36 };
+static BYTE intlChar64[9]  = {  64,   0,  16,  64,  64,  29,  64,  64,  64 };
+static BYTE intlChar91[9]  = {  91,   5,  23,  91,  18,  23,   5,   7,  91 };
+static BYTE intlChar92[9]  = {  92,  15,  24,  92,  20,  24,  92,   9,  31 };
+static BYTE intlChar93[9]  = {  93,  16,  25,  93,  13,  13,  30,   8,  93 };
+static BYTE intlChar94[9]  = {  94,  94,  94,  94,  94,  25,  94,  94,  94 };
+static BYTE intlChar96[9]  = {  96,  96,  96,  96,  96,  30,   2,  96,  96 };
+static BYTE intlChar123[9] = { 123,  30,  26, 123,  19,  26,   0,  22, 123 };
+static BYTE intlChar124[9] = { 124,   2,  27, 124,  21,  27,   3,  10, 124 };
+static BYTE intlChar125[9] = { 125,   1,  28, 125,  14,  14,   1, 125, 125 };
+static BYTE intlChar126[9] = { 126,  22,  17, 126, 126,  28,   4, 126, 126 };
+
 static void EpsonFx80ProcessCharacter(BYTE bChar)
 {
     if (bChar >= 32) {
@@ -1640,6 +1673,22 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
 
     if (!stPrtRam.fNoHighEscapeCodes && bChar >= 128 && bChar < 160) {
         bChar &= 31;
+    }
+
+    // Convert international characters
+    switch (bChar & 0x7f) {
+        case 35:  bChar = (bChar & 0x80) | intlChar35 [stPrtRam.countryCode]; break;
+        case 36:  bChar = (bChar & 0x80) | intlChar36 [stPrtRam.countryCode]; break;
+        case 64:  bChar = (bChar & 0x80) | intlChar64 [stPrtRam.countryCode]; break;
+        case 91:  bChar = (bChar & 0x80) | intlChar91 [stPrtRam.countryCode]; break;
+        case 92:  bChar = (bChar & 0x80) | intlChar92 [stPrtRam.countryCode]; break;
+        case 93:  bChar = (bChar & 0x80) | intlChar93 [stPrtRam.countryCode]; break;
+        case 94:  bChar = (bChar & 0x80) | intlChar94 [stPrtRam.countryCode]; break;
+        case 96:  bChar = (bChar & 0x80) | intlChar96 [stPrtRam.countryCode]; break;
+        case 123: bChar = (bChar & 0x80) | intlChar123[stPrtRam.countryCode]; break;
+        case 124: bChar = (bChar & 0x80) | intlChar124[stPrtRam.countryCode]; break;
+        case 125: bChar = (bChar & 0x80) | intlChar125[stPrtRam.countryCode]; break;
+        case 126: bChar = (bChar & 0x80) | intlChar126[stPrtRam.countryCode]; break;
     }
 
     if (bChar >= 32) {
