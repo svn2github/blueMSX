@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperCasette.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 21:20:00 $
+** $Date: 2005-05-13 19:57:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"
+#include "ArchPrinter.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -80,6 +81,10 @@ int romMapperCasetteCreate(char* filename, UInt8* romData,
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
+
+    if (slot == 0 && sslot == 0 && startPage == 0) {
+        archPrinterSetMsxFont(romData, size);
+    }
 
     if (boardGetType() == BOARD_SVI) {
         // Patch the SVI-328 BIOS and BASIC for cassette handling
