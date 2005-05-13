@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-05-13 19:57:17 $
+** $Date: 2005-05-13 23:58:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -605,10 +605,7 @@ void PrintVisibleCharacter(BYTE bChar)
 
         hPos = stPrtRam.uiHpos;
 
-        headRelative = stPrtRam.fontInfo.pixelDelta / stPrtRam.uiFontDensity;
-        if (stPrtRam.fDoubleWidth) {
-            headRelative *= 2;
-        }
+        headRelative = (stPrtRam.fDoubleWidth ? 2 : 1) * stPrtRam.fontInfo.pixelDelta / stPrtRam.uiFontDensity;
         
         destY      = (UINT)(stPrtRam.uiVpos * stPrtRam.uiPixelSizeY + iYPos);
         destHeight = (UINT)(stPrtRam.uiPixelSizeY * 9);
@@ -618,24 +615,23 @@ void PrintVisibleCharacter(BYTE bChar)
 
         for (i = start; i < end; i++) {
             UINT charBits = (UINT)charBitmap[i + 1] << topBits;
-            UINT offset;
-
-            if (i > 0 && (stPrtRam.fDoubleWidth || stPrtRam.fBold)) {
-                charBits |= (UINT)charBitmap[i] << topBits;
-            }
+            int y, b, d;
 
             if (stPrtRam.fUnderline) {
                 charBits |= 2;
             }
             
-            for (offset = 0; ; offset += dblStrikeOffset) {
-                StretchDIBits(hdcMem,
-                    (UINT)(hPos * stPrtRam.uiPixelSizeX), destY + offset,
-                    (UINT)(stPrtRam.uiPixelSizeX),        destHeight,
-                    0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
-                    abGrphImage[512 * script + charBits], (LPBITMAPINFO)&bmiGrph, DIB_RGB_COLORS, SRCAND);
-                if (offset >= dblStrikeOffset) {
-                    break;
+            for (d = 0; d <= stPrtRam.fDoubleWidth; d++) {
+                for (b = 0; b <= stPrtRam.fBold; b++) {
+                    for (y = 0; y <= stPrtRam.fDoubleStrike; y++) {
+                        UINT destX = (UINT)((hPos + (d + b / 2.) / stPrtRam.uiFontDensity) * stPrtRam.uiPixelSizeX);
+                        StretchDIBits(hdcMem,
+                            destX, destY + y * dblStrikeOffset,
+                            (UINT)(stPrtRam.uiPixelSizeX),  destHeight,
+                            0, 0, 1 * PIXEL_WIDTH, 9 * PIXEL_WIDTH,
+                            abGrphImage[512 * script + charBits], 
+                            (LPBITMAPINFO)&bmiGrph, DIB_RGB_COLORS, SRCAND);
+                    }
                 }
             }
 
@@ -788,6 +784,14 @@ static void MsxPrnProcessEscSequence(void)
 
         case 'i':
             stPrtRam.fItalic=FALSE;
+            break;
+
+        case 'B':
+            stPrtRam.fBold=TRUE;
+            break;
+
+        case 'b':
+            stPrtRam.fBold=FALSE;
             break;
 
         case 'S':
