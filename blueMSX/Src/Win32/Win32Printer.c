@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-05-12 21:56:53 $
+** $Date: 2005-05-13 00:45:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -624,7 +624,9 @@ static BYTE MSXFontOrig[] = {
 #define MAX_FONT_WIDTH   12
 
 typedef struct {
+    BYTE rom[256 * MAX_FONT_WIDTH];
     BYTE ram[256 * MAX_FONT_WIDTH];
+    BOOL useRam;
     UINT charWidth;
     double pixelDelta;
 } FontInfo;
@@ -649,7 +651,8 @@ typedef struct {
     BOOL    fGraphicsHiLo;
     BOOL    fElite;
     BOOL    fCompressed;
-    UINT    uiEightBit;
+    BOOL    fNoHighEscapeCodes;
+    int     uiEightBit;
     UINT    uiPerforationSkip;
     UINT    uiLeftBorder;
     UINT    uiRightBorder;
@@ -660,6 +663,8 @@ typedef struct {
     size_t  sizeEscPos;
     BYTE    abEscSeq[MAX_ESC_CMDSIZE];
     size_t  sizeRemainingDataBytes;
+    UINT    ramLoadOffset;
+    UINT    ramLoadEnd;
     double  uiGraphDensity;
     double  uiFontDensity;
     double  uiHpos;
@@ -818,7 +823,8 @@ void PrintVisibleCharacter(BYTE bChar)
     if (hdcMem) {
         double iHeight = stPrtRam.uiPixelSizeY * 9; // Font Height
         double iYPos = 0;
-        BYTE *charBitmap = stPrtRam.fontInfo.ram + stPrtRam.fontInfo.charWidth * (UINT)bChar;
+        BYTE *charBitmap = (stPrtRam.fontInfo.useRam ? stPrtRam.fontInfo.ram : stPrtRam.fontInfo.rom) 
+                           + stPrtRam.fontInfo.charWidth * (UINT)bChar;
         BYTE attribute   = charBitmap[0];
         UINT start       = (attribute >> 4) & 0x07;
         UINT end         = attribute & 0x0f;
@@ -932,6 +938,7 @@ static void MsxPrnResetSettings(void)
     stPrtRam.uiTotalHeight  = 825;
     stPrtRam.uiFontWidth    = 8;
     stPrtRam.fGraphicsHiLo  = TRUE;
+    stPrtRam.uiEightBit     = -1;
 }
 
 static UINT MsxPrnParseNumber(size_t sizeStart, size_t sizeChars)
@@ -1268,6 +1275,7 @@ static void EpsonFx80ResetSettings(void)
     stPrtRam.uiTotalHeight  = 825;
     stPrtRam.uiFontWidth    = 6;
     stPrtRam.fGraphicsHiLo  = FALSE;
+    stPrtRam.uiEightBit     = -1;
 }
 
 static size_t EpsonFx80CalcEscSequenceLength(BYTE character) 
@@ -1303,10 +1311,9 @@ static size_t EpsonFx80CalcEscSequenceLength(BYTE character)
         return 2;
     case '*':
     case ':':
+    case '&':
         return 3;
 
-    case '&': // Custom character set, variable length
-        return 0;
     case 'B': // Set tabs, variable length (up to 16 tabs)
         return 0;
     case 'C': // Set form length, variable length (2 or 3)
@@ -1323,15 +1330,39 @@ static void EpsonFx80ProcessEscSequence(void)
 
     switch (character) {
     case '!':  // Master Print Mode Select
+        {
+            UINT masterSelect      = EpsonFx80ParseNumber(1, 1);
+            stPrtRam.fElite        = (masterSelect & 1) != 0;
+            stPrtRam.fCompressed   = (masterSelect & 4) != 0;
+            stPrtRam.fBold         = (masterSelect & 8) != 0;
+            stPrtRam.fDoubleStrike = (masterSelect & 16) != 0;
+            stPrtRam.fDoubleWidth  = (masterSelect & 32) != 0;
+
+            if (stPrtRam.fElite) {
+                stPrtRam.uiFontDensity = 1.20;
+            }
+            else if (stPrtRam.fCompressed) {
+                stPrtRam.uiFontDensity = 1.72;
+            }
+            else {
+                stPrtRam.uiFontDensity = 1.00;
+            }
+        }
         break;
 
     case '#':  // Accept Eight Bit as-is
         break;
 
     case '%':  // Activates Character Set
+        stPrtRam.fontInfo.useRam = EpsonFx80ParseNumber(1, 1) & 1;
         break;
 
     case '&': // Custom character set, variable length
+        stPrtRam.ramLoadOffset = 12 * (UINT)EpsonFx80ParseNumber(2, 1);
+        stPrtRam.ramLoadEnd    = 12 * (UINT)EpsonFx80ParseNumber(3, 1) + 12;
+        if (stPrtRam.ramLoadEnd <= stPrtRam.ramLoadOffset) {
+            stPrtRam.ramLoadEnd = stPrtRam.ramLoadOffset;
+        }
         break;
 
     case '*':  // Turn Graphics Mode ON
@@ -1393,9 +1424,11 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '6':  // Turn Printing of International Italic characters ON
+        stPrtRam.fNoHighEscapeCodes = TRUE;
         break;
 
     case '7':  // Turn Printing of International Italic characters OFF
+        stPrtRam.fNoHighEscapeCodes = FALSE;
         break;
 
     case '8':  // Turn Paper Out Sensor ON
@@ -1407,6 +1440,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case ':':  // Copies Rom Character set to RAM
+        memcpy(stPrtRam.fontInfo.ram, stPrtRam.fontInfo.rom, sizeof(stPrtRam.fontInfo.ram));
         break;
 
     case '<':  // Turn Uni-directional printing ON (left to right)
@@ -1425,7 +1459,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case '@':  // Reset
-        stPrtRam.uiEightBit = 0;
+        stPrtRam.uiEightBit = -1;
         stPrtRam.fNinePinGraphics = FALSE;
         stPrtRam.uiGraphDensity = 1.0;
         stPrtRam.uiFontDensity  = 1.0;
@@ -1445,6 +1479,9 @@ static void EpsonFx80ProcessEscSequence(void)
         stPrtRam.fDoubleWidth = FALSE;
         stPrtRam.fBold = FALSE;
         stPrtRam.fProportional = FALSE;
+        stPrtRam.fontInfo.useRam = FALSE;
+        stPrtRam.fNoHighEscapeCodes = FALSE;
+        stPrtRam.fAlternateChar = FALSE;
         break;
 
     case 'A':  // Sets Line Spacing to n/72 inch
@@ -1477,6 +1514,7 @@ static void EpsonFx80ProcessEscSequence(void)
         break;
 
     case 'I':  // Enables printing of chars 1-31
+        stPrtRam.fAlternateChar = EpsonFx80ParseNumber(1, 1) & 1;
         break;
 
     case 'J':  // Forces Line Feed with n/216 inch
@@ -1499,7 +1537,7 @@ static void EpsonFx80ProcessEscSequence(void)
 
     case 'M':  // Turn Elite mode ON
         stPrtRam.fElite = TRUE;        
-        stPrtRam.uiFontDensity = 1.40;
+        stPrtRam.uiFontDensity = 1.20;
         break;
 
     case 'N':  // Turn Skip Over Perforation ON
@@ -1595,6 +1633,24 @@ static void EpsonFx80ProcessEscSequence(void)
 
 static void EpsonFx80ProcessCharacter(BYTE bChar)
 {
+    if (bChar >= 32) {
+        if (stPrtRam.fItalic) {
+            bChar |= 128;
+        }
+        else {
+            bChar &= 127;
+        }
+    }
+
+    if (!stPrtRam.fNoHighEscapeCodes && bChar >= 128 && bChar < 160) {
+        bChar &= 31;
+    }
+
+    if (bChar >= 32) {
+        PrintVisibleCharacter(bChar);
+        return;
+    }
+
     switch (bChar) {
     case 0:  // Terminates horizontal and vertical TAB setting
         break;
@@ -1658,7 +1714,7 @@ static void EpsonFx80ProcessCharacter(BYTE bChar)
         stPrtRam.fEscSequence = TRUE;
         break;
     default:
-        if (bChar >= 32) {
+        if (stPrtRam.fAlternateChar) {
             PrintVisibleCharacter(bChar);
         }
         break;
@@ -1673,14 +1729,16 @@ static void SetDefaultFont(void)
 {
     switch (printerType) {
     case P_LPT_MSXPRN:
-        memcpy(stPrtRam.fontInfo.ram, MSXFont, sizeof(stPrtRam.fontInfo.ram));
+        memcpy(stPrtRam.fontInfo.rom, MSXFont, sizeof(stPrtRam.fontInfo.rom));
         stPrtRam.fontInfo.charWidth = 9;
         stPrtRam.fontInfo.pixelDelta = 1.0;
+        stPrtRam.fontInfo.useRam = FALSE;
         break;
     case P_LPT_EPSONFX80:
-        memcpy(stPrtRam.fontInfo.ram, EpsonFontRom, sizeof(stPrtRam.fontInfo.ram));
+        memcpy(stPrtRam.fontInfo.rom, EpsonFontRom, sizeof(stPrtRam.fontInfo.rom));
         stPrtRam.fontInfo.charWidth = 12;
         stPrtRam.fontInfo.pixelDelta = 0.5;
+        stPrtRam.fontInfo.useRam = FALSE;
         break;
     }
 }
@@ -1755,8 +1813,17 @@ static void ProcessEscSequence(void)
 
 void PrintToMSX(BYTE bData)
 {
-    if (stPrtRam.sizeRemainingDataBytes) {
-        PrintGraphicByte( bData, stPrtRam.fGraphicsHiLo );
+    if (stPrtRam.ramLoadOffset < stPrtRam.ramLoadEnd) {
+        stPrtRam.fontInfo.ram[stPrtRam.ramLoadOffset++] = bData;
+    }
+    else if (stPrtRam.sizeRemainingDataBytes) {
+        if (stPrtRam.uiEightBit == 0) {
+            bData &= 0x80;
+        }
+        if (stPrtRam.uiEightBit == 1) {
+            bData |= 0x80;
+        }
+        PrintGraphicByte(bData, stPrtRam.fGraphicsHiLo);
         stPrtRam.sizeRemainingDataBytes--;
     }
     else if (stPrtRam.fEscSequence) {
