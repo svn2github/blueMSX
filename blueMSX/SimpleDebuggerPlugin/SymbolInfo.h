@@ -38,7 +38,7 @@ public:
     bool getShowStatus();
 
     void clear();
-    void update(std::string& buffer);
+    void append(std::string& buffer);
 
     const char* find(WORD address);
     const char* toString(WORD address);

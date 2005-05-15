@@ -91,10 +91,8 @@ static int isHexNumber(const char* t)
     return isHexNum ? strlen(t) : 0;
 }
 
-void SymbolInfo::update(std::string& buffer)
+void SymbolInfo::append(std::string& buffer)
 {
-    clear();
-
     int index = 0;
     bool lastLine = false;
     while (!lastLine) {

@@ -1,4 +1,5 @@
 #define IDD_MEMORYTOOLBAR         100
+#define IDD_OPEN_SYMBOLSDIALOG    101
 
 #define IDD_RICHEDITCTRL1         201
 #define IDD_RICHEDITCTRL2         202
@@ -9,6 +10,8 @@
 
 #define IDC_ADDRESS             10004
 #define IDC_MEMORY              10005
+
+#define IDC_SYMBOLSAPPEND       10006
 
 #define IDI_BLUEMSX              2001
 

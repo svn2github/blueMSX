@@ -199,11 +199,43 @@ static void updateWindowMenu()
 }
 
 
+static BOOL replaceSymbols = TRUE;
+
 UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
+        SendDlgItemMessage(hDlg, IDC_SYMBOLSAPPEND, BM_SETCHECK, replaceSymbols ? BST_CHECKED : BST_UNCHECKED, 0);
         return 0;
+
+    case WM_SIZE:
+        {
+            RECT r;
+            int height;
+            int width;
+            HWND hwnd;
+
+            GetClientRect(GetParent(hDlg), &r);
+            
+            height = r.bottom - r.top;
+            width  = r.right - r.left;
+
+            hwnd = GetDlgItem(hDlg, IDC_SYMBOLSAPPEND);
+            SetWindowPos(hwnd, NULL, 81, height - 26, 0, 0, SWP_NOSIZE | SWP_NOZORDER);            
+        }
+        return 0;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDC_SYMBOLSAPPEND) {
+            int newChecked = BST_CHECKED == SendDlgItemMessage(hDlg, IDC_SYMBOLSAPPEND, BM_GETCHECK, 0, 0);
+            if (newChecked != replaceSymbols) {
+                replaceSymbols = newChecked;
+                InvalidateRect(hDlg, NULL, TRUE);
+            }
+        }
+        return 0;
+
+        
     }
     return 0;
 }
@@ -233,13 +265,13 @@ void loadSymbolFile(HWND hwndOwner)
     ofn.nMaxFileTitle = 0; 
     ofn.lpstrInitialDir = NULL; 
     ofn.lpstrTitle = "Open Symbol File"; 
-    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLEHOOK | OFN_FILEMUSTEXIST; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLETEMPLATE | OFN_HIDEREADONLY | OFN_ENABLEHOOK | OFN_FILEMUSTEXIST; 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
     ofn.lpstrDefExt = NULL; 
     ofn.lCustData = 0; 
     ofn.lpfnHook = hookProc; 
-    ofn.lpTemplateName = NULL; 
+    ofn.lpTemplateName = MAKEINTRESOURCE(IDD_OPEN_SYMBOLSDIALOG); 
 
     BOOL rv = GetOpenFileName(&ofn); 
 
@@ -256,7 +288,10 @@ void loadSymbolFile(HWND hwndOwner)
 
     fread(buffer, 1, sizeof(buffer), file);
     buffer[sizeof(buffer) - 1] = 0;
-    symbolInfo->update(std::string(buffer));
+    if (replaceSymbols) {
+        symbolInfo->clear();
+    }
+    symbolInfo->append(std::string(buffer));
     disassembly->refresh();
     callstack->refresh();
     stack->refresh();
@@ -409,18 +444,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     switch (iMsg) {
     case WM_CREATE:
-#if 1
-        RegisterHotKey(hwnd, 1,  0, VK_F5);
-        RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
-        RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
-        RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
-        RegisterHotKey(hwnd, 5,  0, VK_F10);
-        RegisterHotKey(hwnd, 6,  MOD_SHIFT, VK_F10);
-        RegisterHotKey(hwnd, 7,  0, VK_F9);
-        RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F9);
-        RegisterHotKey(hwnd, 9,  MOD_CONTROL | MOD_SHIFT, VK_F9);        
-        RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F12);
-#endif
         return 0;
 
     case WM_HOTKEY:
@@ -612,6 +635,26 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_ACTIVATE:
         isActive = wParam != WA_INACTIVE;
+        if (isActive) {
+#if 1
+            RegisterHotKey(hwnd, 1,  0, VK_F5);
+            RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
+            RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
+            RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
+            RegisterHotKey(hwnd, 5,  0, VK_F10);
+            RegisterHotKey(hwnd, 6,  MOD_SHIFT, VK_F10);
+            RegisterHotKey(hwnd, 7,  0, VK_F9);
+            RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F9);
+            RegisterHotKey(hwnd, 9,  MOD_CONTROL | MOD_SHIFT, VK_F9);        
+            RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F12);
+        }
+        else {
+            int i;
+            for (i = 1; i <= 10; i++) {
+                UnregisterHotKey(hwnd, i);
+            }
+        }
+#endif
         break;
 
     case WM_SIZE:
