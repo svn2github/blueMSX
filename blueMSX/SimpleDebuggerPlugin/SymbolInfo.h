@@ -40,7 +40,8 @@ public:
     void clear();
     void update(std::string& buffer);
 
-    const char* find(WORD address, WORD& offset);
+    const char* find(WORD address);
+    const char* toString(WORD address);
 
 private:
 

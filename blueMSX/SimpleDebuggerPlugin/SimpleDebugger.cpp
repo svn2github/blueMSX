@@ -405,6 +405,8 @@ static void updateWindowPositions()
 
 static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
+    static BOOL isActive = FALSE;
+
     switch (iMsg) {
     case WM_CREATE:
 #if 1
@@ -422,45 +424,47 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_HOTKEY:
-        switch (wParam) {
-        case 1:
-            SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_CONTINUE, 0);
-            break;
-        case 2:
-            if (GetEmulatorState() == EMULATOR_RUNNING)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BREAKALL, 0);
-            break;
-        case 3:
-            if (GetEmulatorState() != EMULATOR_STOPPED)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STOP, 0);
-            break;
-        case 4:
-            if (GetEmulatorState() == EMULATOR_PAUSED)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RESTART, 0);
-            break;
-        case 5:
-            if (GetEmulatorState() == EMULATOR_PAUSED)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP, 0);
-            break;
-        case 6:
-            if (GetEmulatorState() == EMULATOR_PAUSED && cursorPresent)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RUNTO, 0);
-            break;
-        case 7:
-            if (GetEmulatorState() != EMULATOR_STOPPED && cursorPresent)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPTOGGLE, 0);
-            break;
-        case 8:
-            if (GetEmulatorState() != EMULATOR_STOPPED && cursorhasBp)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
-            break;
-        case 9:
-            if (debuggerHasBp)
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
-            break;
-        case 10:
-            SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
-            break;
+        if (isActive) {
+            switch (wParam) {
+            case 1:
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_CONTINUE, 0);
+                break;
+            case 2:
+                if (GetEmulatorState() == EMULATOR_RUNNING)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BREAKALL, 0);
+                break;
+            case 3:
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STOP, 0);
+                break;
+            case 4:
+                if (GetEmulatorState() == EMULATOR_PAUSED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RESTART, 0);
+                break;
+            case 5:
+                if (GetEmulatorState() == EMULATOR_PAUSED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP, 0);
+                break;
+            case 6:
+                if (GetEmulatorState() == EMULATOR_PAUSED && cursorPresent)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RUNTO, 0);
+                break;
+            case 7:
+                if (GetEmulatorState() != EMULATOR_STOPPED && cursorPresent)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPTOGGLE, 0);
+                break;
+            case 8:
+                if (GetEmulatorState() != EMULATOR_STOPPED && cursorhasBp)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
+                break;
+            case 9:
+                if (debuggerHasBp)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
+                break;
+            case 10:
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
+                break;
+            }
         }
         return 0;
 
@@ -605,6 +609,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         updateWindowMenu();
         updateDeviceState();
         return 0;
+
+    case WM_ACTIVATE:
+        isActive = wParam != WA_INACTIVE;
+        break;
 
     case WM_SIZE:
         updateWindowPositions();

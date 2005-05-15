@@ -262,8 +262,6 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
     BYTE val1;
     BYTE val2;
     BYTE val;
-    WORD val16;
-    WORD symOffset;
 
 	dest[0] = '\0';
 
@@ -318,27 +316,15 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 			strcat(dest, buf);
 			break;
 		case 'R':
-			sprintf (buf, "#%04x", (PC + 2 + (char)memory[pc++]) & 0xFFFF);
-			strcat(dest, buf);
+			strcat(dest, symbolInfo->toString((PC + 2 + (char)memory[pc++]) & 0xFFFF));
 			break;
 		case 'L':
             val = memory[pc++];
-            val16 = val + memory[pc++] * 256;
-
-            r = symbolInfo->find(val16, symOffset);
-
-            if (r != NULL) {
-    			sprintf(buf, "%s", r);
-            }
-            else {
-    			sprintf(buf, "#%04x", val16);
-            }
-			strcat(dest, buf);
+			strcat(dest, symbolInfo->toString(val + memory[pc++] * 256));
 			break;
 		case 'W':
             val = memory[pc++];
-			sprintf(buf, "#%04x", val + memory[pc++] * 256);
-			strcat(dest, buf);
+			strcat(dest, symbolInfo->toString(val + memory[pc++] * 256));
 			break;
 		case 'X':
             val = memory[pc++];
@@ -754,8 +740,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     backupPc = pc;
 
     for (int addr = 0; addr < 0x10000; ) {
-        WORD offset;
-        const char* symbolName = symbolInfo->find(addr, offset);
+        const char* symbolName = symbolInfo->find(addr);
 
         if (symbolName != NULL) {
             lineInfo[lineCount].dataText[0] = 0;

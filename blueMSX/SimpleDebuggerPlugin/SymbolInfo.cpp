@@ -33,15 +33,62 @@ void SymbolInfo::clear()
     symbolMap.erase(symbolMap.begin(), symbolMap.end());
 }
 
-const char* SymbolInfo::find(WORD address, WORD& offset)
+const char* SymbolInfo::find(WORD address)
 {
-    offset = 0; // Not implemented yet
     std::map<DWORD, Symbol>::const_iterator i = symbolMap.find(address);
     if (i == symbolMap.end()) {
         return NULL;
     }
 
     return (i->second).name;
+}
+
+#if 0
+const WORD SymbolInfo::rfind(const char* symbolName)
+{
+    std::map<DWORD, Symbol>::const_iterator i = symbolMap.find(address);
+    if (i == symbolMap.end()) {
+        return NULL;
+    }
+
+    return (i->second).name;
+}
+#endif
+const char* SymbolInfo::toString(WORD address)
+{
+    static char buf[256];
+
+    const char* r = find(address);
+
+    if (r != NULL) {
+    	sprintf(buf, "%s", r);
+    }
+    else {
+    	sprintf(buf, "#%04x", address);
+    }
+    return buf;
+}
+
+static int isHexNumber(const char* t)
+{
+    int isHexNum;
+    int l = strlen(t);
+    if (l == 0) {
+        return 0;
+    }
+
+    if (t[l - 1] == 'h') {
+        l--;
+    }
+
+    isHexNum = l > 0;
+
+    while (--l >= 0) {
+        isHexNum &= (t[l] >= '0' && t[l] <= '9') || 
+                    (t[l] >= 'A' && t[l] <= 'F') || 
+                    (t[l] >= 'a' && t[l] <= 'f');
+    }
+    return isHexNum ? strlen(t) : 0;
 }
 
 void SymbolInfo::update(std::string& buffer)
@@ -60,12 +107,22 @@ void SymbolInfo::update(std::string& buffer)
         if (line.length() > 0) {
             char lineBuffer[512];
             strcpy(lineBuffer, line.c_str());
-            char* label = strtok(lineBuffer, "\r\n\t ");
-            char* addr  = strtok(NULL, "\r\n\t ");
-            if (addr && 0 == strcmp(addr, "equ")) {
-                addr  = strtok(NULL, "\r\n\t ");
+            char* t1 = strtok(lineBuffer, "\r\n\t ");
+            char* t2  = strtok(NULL, "\r\n\t ");
+            if (t2 && 0 == strcmp(t2, "equ")) {
+                t2  = strtok(NULL, "\r\n\t ");
             }
-            if (label && addr) {
+            if (t1 && t2) {
+                char* label;
+                char* addr;
+                if (isHexNumber(t1) > isHexNumber(t2)) {
+                    addr  = t1;
+                    label = t2;
+                }
+                else {
+                    addr  = t2;
+                    label = t1;
+                }
                 int labelLen = strlen(label);
                 if (label[labelLen - 1] == ':') {
                     label[labelLen - 1] = 0;
@@ -74,7 +131,6 @@ void SymbolInfo::update(std::string& buffer)
                 int count = sscanf(addr, "%xh", &address);
                 if (count == 1 && labelLen) {
                     symbolMap[address] = Symbol(label);
-//                    printf("%.4x: %s\n", address, label);
                 }
             }
         }
