@@ -51,7 +51,7 @@ typedef signed   long    Int32;
 
 
 // Debug replacement for malloc and free to easier find memory leaks.
-#if 1
+#if 0
 
 #define malloc dbgMalloc
 #define calloc dbgCalloc

@@ -205,6 +205,10 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                             }
                             SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, addr);
                         }
+                        else if (symbolInfo != NULL) {
+                            SetWindowLong(hwnd, DWL_MSGRESULT, 0);
+                            return TRUE;
+                        }
 
                         SetWindowLong(hwnd, DWL_MSGRESULT, 1);
                         return TRUE;

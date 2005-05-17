@@ -59,7 +59,7 @@ private:
         char name[64];
     };
 
-    std::map<DWORD, Symbol> symbolMap;
+    std::map<WORD, Symbol> symbolMap;
 };
 
 

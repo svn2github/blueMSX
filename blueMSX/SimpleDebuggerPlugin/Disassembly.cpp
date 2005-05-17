@@ -359,7 +359,7 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 			        strcat(dest, symbol);
                 }
             }
-            return 0;
+            return 1;
 		case ' ': {
 			int k = strlen(dest);
             if (k < 6) {

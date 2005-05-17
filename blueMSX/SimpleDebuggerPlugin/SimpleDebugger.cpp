@@ -167,7 +167,7 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
 
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuDebug, MF_STRING | symbolInfo->getShowStatus() ? MF_CHECKED : 0, MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tShift+F12");
+    AppendMenu(hMenuDebug, MF_STRING | symbolInfo->getShowStatus() ? MF_CHECKED : 0, MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tF8");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
@@ -292,6 +292,7 @@ void loadSymbolFile(HWND hwndOwner)
         symbolInfo->clear();
     }
     symbolInfo->append(std::string(buffer));
+    symbolInfo->show();
     disassembly->refresh();
     callstack->refresh();
     stack->refresh();
@@ -646,7 +647,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 7,  0, VK_F9);
             RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F9);
             RegisterHotKey(hwnd, 9,  MOD_CONTROL | MOD_SHIFT, VK_F9);        
-            RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F12);
+            RegisterHotKey(hwnd, 10, 0, VK_F8);
         }
         else {
             int i;

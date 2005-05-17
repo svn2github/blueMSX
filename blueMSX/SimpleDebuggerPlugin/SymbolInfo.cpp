@@ -35,7 +35,10 @@ void SymbolInfo::clear()
 
 const char* SymbolInfo::find(WORD address)
 {
-    std::map<DWORD, Symbol>::const_iterator i = symbolMap.find(address);
+    if (!showSymbols) {
+        return NULL;
+    }
+    std::map<WORD, Symbol>::const_iterator i = symbolMap.find(address);
     if (i == symbolMap.end()) {
         return NULL;
     }
@@ -45,11 +48,14 @@ const char* SymbolInfo::find(WORD address)
 
 BOOL SymbolInfo::rfind(const char* symbolName, WORD* addr)
 {
-    std::map<DWORD, Symbol>::const_iterator i;
+    if (!showSymbols) {
+        return FALSE;
+    }
+    std::map<WORD, Symbol>::const_iterator i;
     
-    for (i = 0; i != symbolMap.end(); ++i) {
-        if ((i->second).name == symbolName) {
-            *addr = (WORD)(i->first);
+    for (i = symbolMap.begin(); i != symbolMap.end(); ++i) {
+        if (0 == strncmp((i->second).name, symbolName, 64)) {
+            *addr = i->first;
             return TRUE;
         }
     }
@@ -127,10 +133,11 @@ void SymbolInfo::append(std::string& buffer)
                 if (label[labelLen - 1] == ':') {
                     label[labelLen - 1] = 0;
                 }
-                DWORD address;
+                int address;
                 int count = sscanf(addr, "%xh", &address);
                 if (count == 1 && labelLen) {
-                    symbolMap[address] = Symbol(label);
+                    WORD addr = address;
+                    symbolMap[addr] = Symbol(label);
                 }
             }
         }
