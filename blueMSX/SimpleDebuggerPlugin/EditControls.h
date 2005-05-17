@@ -25,6 +25,7 @@
 #ifndef EDIT_CONTROLS_H
 #define EDIT_CONTROLS_H
 
+#include "SymbolInfo.h"
 #include <windows.h>
 #include <string>
 #include <list>
@@ -34,7 +35,7 @@ class HexInputDialog {
 public:
     enum { EC_NEWVALUE = WM_USER + 7029, EC_KILLFOCUS = WM_USER + 7030 };
 
-    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars);
+    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, SymbolInfo* symInfo = NULL);
     ~HexInputDialog();
 
     void setValue(int value);
@@ -48,6 +49,7 @@ private:
     int wheight;
     int chars;
     HWND hwnd;
+    SymbolInfo* symbolInfo;
 
     static std::map<HWND, HexInputDialog*> dialogMap;
     static int  richeditVersion;

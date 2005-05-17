@@ -792,7 +792,7 @@ void OnShowTool() {
     stack->updatePosition(r6);
     stack->show();
 
-    memory = new Memory(GetDllHinstance(), viewHwnd);
+    memory = new Memory(GetDllHinstance(), viewHwnd, symbolInfo);
     RECT r3 = { 3, 423, 710, 630 };
     memory->updatePosition(r3);
     memory->show();

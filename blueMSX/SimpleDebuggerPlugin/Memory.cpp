@@ -85,7 +85,7 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6);
+        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, symbolInfo);
         return FALSE;
 
     case WM_LBUTTONDOWN:
@@ -284,8 +284,8 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
-Memory::Memory(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), editEnabled(false)
+Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
+    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), editEnabled(false), symbolInfo(symInfo)
 {
     memory = this;
 

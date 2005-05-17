@@ -31,8 +31,8 @@
 #include <RichEdit.h>
 
 
-HexInputDialog::HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars) :
-    wx(x), wy(y), wwidth(width), wheight(height), chars(numChars)
+HexInputDialog::HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, SymbolInfo* symInfo) :
+    wx(x), wy(y), wwidth(width), wheight(height), chars(numChars), symbolInfo(symInfo)
 {
     initRichEditControlDll();
 
@@ -145,8 +145,12 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                 char text[16];
                 int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
                 text[len] = 0;
-                int addr = 0;
-                sscanf(text, "%X", &addr);
+                WORD addr = 0;
+                if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
+                    int address = 0;
+                    sscanf(text, "%X", &address);
+                    addr = (WORD)address;
+                }
                 SendMessage(GetParent(hwnd), EC_KILLFOCUS, (WPARAM)this, addr);
             }
             return FALSE;
@@ -174,7 +178,8 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                         int selLen = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETSELTEXT, 0, (LPARAM)dummyBuf);
 
                         keyCode = keyfilter->wParam;
-                        if (len - selLen < chars) {
+                        // Only check chars if symbolInfo is not available
+                        if (symbolInfo == NULL && len - selLen < chars) {
                             if ((keyCode >= '0' && keyCode <= '9') ||
                                 (keyCode >= 'a' && keyCode <= 'f') ||
                                 (keyCode >= 'A' && keyCode <= 'F'))
@@ -191,9 +196,13 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                             char text[16];
                             int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
                             text[len] = 0;
-                            int addr = 0;
-                            sscanf(text, "%X", &addr);
 
+                            WORD addr = 0;
+                            if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
+                                int address = 0;
+                                sscanf(text, "%X", &address);
+                                addr = (WORD)address;
+                            }
                             SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, addr);
                         }
 

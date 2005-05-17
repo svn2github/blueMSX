@@ -33,7 +33,7 @@
 
 class Memory {
 public:
-    Memory(HINSTANCE hInstance, HWND owner);
+    Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
     ~Memory();
 
     void show();
@@ -111,6 +111,7 @@ private:
     HexInputDialog* addressInput;
     HexInputDialog* dataInput1;
     HexInputDialog* dataInput2;
+    SymbolInfo* symbolInfo;
 };
 
 #endif //MEMORY_H
