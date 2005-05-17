@@ -43,17 +43,18 @@ const char* SymbolInfo::find(WORD address)
     return (i->second).name;
 }
 
-#if 0
-const WORD SymbolInfo::rfind(const char* symbolName)
+WORD SymbolInfo::rfind(const char* symbolName)
 {
-    std::map<DWORD, Symbol>::const_iterator i = symbolMap.find(address);
-    if (i == symbolMap.end()) {
-        return NULL;
+    std::map<DWORD, Symbol>::const_iterator i;
+    
+    for (i = 0; i != symbolMap.end(); ++i) {
+        if ((i->second).name == symbolName) {
+            return (WORD)(i->first);
+        }
     }
-
-    return (i->second).name;
+    return 0;
 }
-#endif
+
 const char* SymbolInfo::toString(WORD address)
 {
     static char buf[256];

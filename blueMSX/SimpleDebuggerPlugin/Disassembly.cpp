@@ -235,14 +235,14 @@ static const char* mnemonicMain[256] =
 	"xor b"    ,"xor c"    ,"xor d"    ,"xor e"     ,"xor h"    ,"xor l"    ,"xor (hl)"  ,"xor a"    ,
 	"or b"     ,"or c"     ,"or d"     ,"or e"      ,"or h"     ,"or l"     ,"or (hl)"   ,"or a"     ,
 	"cp b"     ,"cp c"     ,"cp d"     ,"cp e"      ,"cp h"     ,"cp l"     ,"cp (hl)"   ,"cp a"     ,
-	"ret nz"   ,"pop bc"   ,"jp nz,L"  ,"jp L"      ,"call nz,L","push bc"  ,"add a,B"   ,"rst 00h"  ,
-	"ret z"    ,"ret"      ,"jp z,L"   ,"cb"        ,"call z,L" ,"call L"   ,"adc a,B"   ,"rst 08h"  ,
-	"ret nc"   ,"pop de"   ,"jp nc,L"  ,"out (B),a" ,"call nc,L","push de"  ,"sub B"     ,"rst 10h"  ,
-	"ret c"    ,"exx"      ,"jp c,L"   ,"in a,(B)"  ,"call c,L" ,"dd"       ,"sbc a,B"   ,"rst 18h"  ,
-	"ret po"   ,"pop hl"   ,"jp po,L"  ,"ex (sp),hl","call po,L","push hl"  ,"and B"     ,"rst 20h"  ,
-	"ret pe"   ,"jp (hl)"  ,"jp pe,L"  ,"ex de,hl"  ,"call pe,L","ed"       ,"xor B"     ,"rst 28h"  ,
-	"ret p"    ,"pop af"   ,"jp p,L"   ,"di"        ,"call p,L" ,"push af"  ,"or B"      ,"rst 30h"  ,
-	"ret m"    ,"ld sp,hl" ,"jp m,L"   ,"ei"        ,"call m,L" ,"fd"       ,"cp B"      ,"rst 38h"
+	"ret nz"   ,"pop bc"   ,"jp nz,L"  ,"jp L"      ,"call nz,L","push bc"  ,"add a,B"   ,"rst $"    ,
+	"ret z"    ,"ret"      ,"jp z,L"   ,"cb"        ,"call z,L" ,"call L"   ,"adc a,B"   ,"rst $"    ,
+	"ret nc"   ,"pop de"   ,"jp nc,L"  ,"out (B),a" ,"call nc,L","push de"  ,"sub B"     ,"rst $"    ,
+	"ret c"    ,"exx"      ,"jp c,L"   ,"in a,(B)"  ,"call c,L" ,"dd"       ,"sbc a,B"   ,"rst $"    ,
+	"ret po"   ,"pop hl"   ,"jp po,L"  ,"ex (sp),hl","call po,L","push hl"  ,"and B"     ,"rst $"    ,
+	"ret pe"   ,"jp (hl)"  ,"jp pe,L"  ,"ex de,hl"  ,"call pe,L","ed"       ,"xor B"     ,"rst $"    ,
+	"ret p"    ,"pop af"   ,"jp p,L"   ,"di"        ,"call p,L" ,"push af"  ,"or B"      ,"rst $"    ,
+	"ret m"    ,"ld sp,hl" ,"jp m,L"   ,"ei"        ,"call m,L" ,"fd"       ,"cp B"      ,"rst $"
 };
 
 #define SIGN(val) (((val) & 128) ? '-' : '+')
@@ -347,6 +347,19 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 		case '#':
 			sprintf(dest, "db     #%02x,#CB,#%02x", val0, val2);
 			return 2;
+        case '$':
+            {
+                WORD addr = val0 - 199;
+                const char* symbol = symbolInfo->find(addr);
+                if (symbol == NULL) {
+			        sprintf(buf, "%02xh", addr);
+			        strcat(dest, buf);
+                }
+                else {
+			        strcat(dest, symbol);
+                }
+            }
+            return 0;
 		case ' ': {
 			int k = strlen(dest);
             if (k < 6) {

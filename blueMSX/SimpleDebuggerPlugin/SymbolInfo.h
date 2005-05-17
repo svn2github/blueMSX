@@ -41,6 +41,7 @@ public:
     void append(std::string& buffer);
 
     const char* find(WORD address);
+    WORD rfind(const char* symbolName);
     const char* toString(WORD address);
 
 private:

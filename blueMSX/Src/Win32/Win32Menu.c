@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-05-17 04:50:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1278,6 +1278,7 @@ int menuCommand(Properties* pProperties, int command)
     if (i >= 0 && i < 16) {
         if (i >= 5) {
             pProperties->joy1.hwType = i - 5;
+            strcpy(pProperties->joy1.hwName, archJoystickGetName(pProperties->joy1.hwType));
             i = 5;
         }
         pProperties->joy1.type = i;
@@ -1290,6 +1291,7 @@ int menuCommand(Properties* pProperties, int command)
     if (i >= 0 && i < 16) {
         if (i >= 5) {
             pProperties->joy2.hwType = i - 5;
+            strcpy(pProperties->joy2.hwName, archJoystickGetName(pProperties->joy2.hwType));
             i = 5;
         }
         pProperties->joy2.type = i;
