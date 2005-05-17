@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-05-17 05:53:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1000,7 +1000,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     /* Always update joystick controls */
     archUpdateJoystick(pProperties);
 
-    printerIoSetType(pProperties->ports.Lpt.type);
+    printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -1018,7 +1018,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
 
-    printerIoSetType(pProperties->ports.Lpt.type);
+    printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
 
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
@@ -2376,7 +2376,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
     
-    printerIoSetType(pProperties->ports.Lpt.type);
+    printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
 
     mouseEmuInit(st.emuHwnd, 1);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-05-10 07:58:32 $
+** $Date: 2005-05-17 05:53:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ typedef struct PrinterIO {
 
 static PrinterType thePrinterType = PRN_NONE;
 static PrinterIO* thePrinterIO = NULL;
+static char theFileName[512] = { 0 };
 
 
 static void setType(PrinterIO* printerIO)
@@ -52,7 +53,7 @@ static void setType(PrinterIO* printerIO)
         printerIO->printerReady = archPrinterCreate();
         break;
     case PRN_FILE:
-        printerIO->file = fopen("printer.dat", "w+");
+        printerIO->file = fopen(theFileName, "w+");
         break;
     case PRN_SIMPL:
         printerIO->dac = dacCreate(boardGetMixer());
@@ -124,9 +125,11 @@ void printerIODestroy(PrinterIO* printerIO)
     thePrinterIO = NULL;
 }
 
-void printerIoSetType(PrinterType type)
+void printerIoSetType(PrinterType type, const char* fileName)
 {   
     thePrinterType = type;
+
+    strcpy(theFileName, fileName);
     
     if (thePrinterIO == NULL) {
         return;
