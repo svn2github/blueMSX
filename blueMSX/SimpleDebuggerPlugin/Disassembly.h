@@ -42,7 +42,7 @@ public:
 
     void enableEdit();
     void disableEdit();
-    
+
     WORD dasm(WORD PC, char* dest);
     
     void updatePosition(RECT& rect);
@@ -57,7 +57,7 @@ public:
     void clearRuntoBreakpoint();
     void setCursor(WORD address);
 
-    void toggleBreakpoint(int address = -1);
+    void toggleBreakpoint(int address = -1, bool setAlways = false);
     void toggleBreakpointEnable();
     void clearAllBreakpoints();
 

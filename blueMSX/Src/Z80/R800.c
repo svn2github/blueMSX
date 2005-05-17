@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-05-02 21:42:37 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** Author: Daniel Vik
 **
@@ -34,6 +34,7 @@
 */
 #include "R800.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef void (*Opcode)(R800*);
 typedef void (*OpcodeNn)(R800*, UInt16);
@@ -753,6 +754,37 @@ static void dec_xiy(R800* r800) {
 }
 
 static void ld_a_a(R800* r800) { 
+#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
+    char debugString[256];
+    UInt16 addr = r800->regs.PC.W;
+    UInt16 end;
+    UInt16 bpAddr = 0;
+
+    if (r800->readMemory(r800->ref, addr++) != 24) {
+        return;
+    }
+    end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
+    if (end < addr + 6 || end - addr > 255) {
+        return;
+    }
+    addr++;
+
+    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
+        r800->readMemory(r800->ref, addr + 1) != 100 || 
+        r800->readMemory(r800->ref, addr + 2) != 0   || 
+        r800->readMemory(r800->ref, addr + 3) != 0) 
+    {
+        return;
+    }
+    addr += 4;
+    
+    bpAddr = r800->readMemory(r800->ref, addr++) << 8;
+    bpAddr |= r800->readMemory(r800->ref, addr++);
+
+    sprintf(debugString, "%.4x", bpAddr);
+
+    r800->debugCb(r800->ref, ASDBG_TRACE, debugString);
+#endif
 }
 
 static void ld_a_b(R800* r800) { 
@@ -832,7 +864,7 @@ static void ld_b_a(R800* r800) {
 }
 
 static void ld_b_b(R800* r800) { 
-#ifdef ENABLE_ASMSX_DEBUG_COMMAND
+#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
     char debugString[256];
     UInt16 addr = r800->regs.PC.W;
     UInt16 end;
@@ -866,7 +898,7 @@ static void ld_b_b(R800* r800) {
 
     *ptr = 0;
 
-    r800->debugCb(r800->ref, debugString);
+    r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
 #endif
 }
 
@@ -5505,7 +5537,7 @@ static void  timerCbDummy(void* ref) {
 static void breakpointCbDummy(void* ref, UInt16 pc) {
 }
 
-static void debugCbDummy(void* ref, const char* message) {
+static void debugCbDummy(void* ref, int command, const char* data) {
 }
 
 static void r800InitTables() {

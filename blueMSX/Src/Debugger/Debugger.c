@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-05-03 05:23:03 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@ struct Debugger {
     DebuggerEvent onEmulatorResume;
     DebuggerEvent onEmulatorReset;
     DebuggerTrace onDebugTrace;
+    DebuggerSetBp onDebugSetBp;
     void* ref;
 };
 
@@ -56,7 +57,13 @@ struct DbgSnapshot {
 static Debugger* debuggerList[MAX_DEBUGGERS];
 static DbgState  dbgState = DBG_STOPPED;
 
-static void onDefault() {
+static void onDefault(void* ref) {
+}
+
+static void onDefTrace(void* ref, const char* dummy) {
+}
+
+static void onDefSetBp(void* ref, UInt16 dummy) {
 }
 
 Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
@@ -65,6 +72,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorResume,
                          DebuggerEvent onEmulatorReset,
                          DebuggerTrace onDebugTrace,
+                         DebuggerSetBp onDebugSetBp,
                          void* ref)
 {
     Debugger* debugger = malloc(sizeof(Debugger));
@@ -75,7 +83,8 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
     debugger->onEmulatorPause  = onEmulatorPause  ? onEmulatorPause  : onDefault;
     debugger->onEmulatorResume = onEmulatorResume ? onEmulatorResume : onDefault;
     debugger->onEmulatorReset  = onEmulatorReset  ? onEmulatorReset  : onDefault;
-    debugger->onDebugTrace     = onDebugTrace     ? onDebugTrace     : onDefault;
+    debugger->onDebugTrace     = onDebugTrace     ? onDebugTrace     : onDefTrace;
+    debugger->onDebugSetBp     = onDebugSetBp     ? onDebugSetBp     : onDefSetBp;
     debugger->ref = ref;
 
     for (i = 0; i < MAX_DEBUGGERS; i++) {
@@ -175,6 +184,17 @@ void debuggerTrace(const char* str)
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
             debuggerList[i]->onDebugTrace(debuggerList[i]->ref, str);
+        }
+    }
+}
+
+void debuggerSetBreakpoint(UInt16 address)
+{
+    int i;
+
+    for (i = 0; i < MAX_DEBUGGERS; i++) {
+        if (debuggerList[i] != NULL) {
+            debuggerList[i]->onDebugSetBp(debuggerList[i]->ref, address);
         }
     }
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2005-05-09 20:35:24 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -752,9 +752,18 @@ static void breakpointCb(void* ref, UInt16 pc)
 
 
 extern void debuggerTrace(const char* str);
-static void debugCb(void* ref, const char* message) 
+static void debugCb(void* ref, int command, const char* data) 
 {
-    debuggerTrace(message);
+    int addr;
+    switch (command) {
+    case ASDBG_TRACE:
+        debuggerTrace(data);
+        break;
+    case ASDBG_SETBP:
+        sscanf(data, "%x", &addr);
+        debuggerSetBreakpoint((UInt16)addr);
+        break;
+    }
 }
 
 void msxRun() {

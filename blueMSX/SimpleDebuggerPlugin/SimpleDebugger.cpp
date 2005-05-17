@@ -132,9 +132,10 @@ static void updateStatusBar()
 #define MENU_DEBUG_STEP             37204
 #define MENU_DEBUG_RUNTO            37205
 #define MENU_DEBUG_SHOWSYMBOLS      37206
-#define MENU_DEBUG_BPTOGGLE         37207
-#define MENU_DEBUG_BPENABLE         37208
-#define MENU_DEBUG_BPREMOVEALL      37209
+#define MENU_DEBUG_GOTO             37207
+#define MENU_DEBUG_BPTOGGLE         37208
+#define MENU_DEBUG_BPENABLE         37209
+#define MENU_DEBUG_BPREMOVEALL      37210
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -165,11 +166,14 @@ static void updateWindowMenu()
     }
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into\tF10");
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
-
-    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuDebug, MF_STRING | symbolInfo->getShowStatus() ? MF_CHECKED : 0, MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tF8");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
+    AppendMenu(hMenuDebug, MF_STRING | (symbolInfo->getShowStatus() ? MF_CHECKED : 0), MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tF8");
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_GOTO, "Go To\tCtrl+G");
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+    
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
     AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint\tCtrl+Shift+F9");
@@ -439,6 +443,47 @@ static void updateWindowPositions()
     }
 }
 
+
+static BOOL CALLBACK gotoProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static HexInputDialog* addressInput = NULL;
+    static WORD* address = NULL;
+
+    switch (iMsg) {        
+    case WM_INITDIALOG:
+        if (addressInput) {
+            delete addressInput;
+        }
+        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, symbolInfo);
+        addressInput->setFocus();
+        address = (WORD*)lParam;
+        return FALSE;
+
+    case WM_COMMAND:
+        switch (wParam) {
+        case IDOK:
+            *address = (WORD)addressInput->getValue();
+            EndDialog(hDlg, TRUE);
+            return TRUE;
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+        }
+        break;
+        
+    case HexInputDialog::EC_NEWVALUE:
+        *address = (WORD)addressInput->getValue();
+        EndDialog(hDlg, TRUE);
+        return FALSE;
+
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     static BOOL isActive = FALSE;
@@ -487,6 +532,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 break;
             case 10:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
+                break;
+            case 11:
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_GOTO, 0);
                 break;
             }
         }
@@ -593,6 +641,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             EmulatorRun();
             return 0;
 
+        case MENU_DEBUG_GOTO:
+             {
+                WORD address = 0;
+                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_GOTO), hwnd, gotoProc, (LPARAM)&address);
+                if (rv) {
+                    disassembly->setCursor(address);
+                }
+            }
+            return 0;
+
         case MENU_DEBUG_SHOWSYMBOLS:
             if (symbolInfo->getShowStatus()) {
                 symbolInfo->hide();
@@ -647,11 +705,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 7,  0, VK_F9);
             RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F9);
             RegisterHotKey(hwnd, 9,  MOD_CONTROL | MOD_SHIFT, VK_F9);        
-            RegisterHotKey(hwnd, 10, 0, VK_F8);
+            RegisterHotKey(hwnd, 10, 0, VK_F8);     
+            RegisterHotKey(hwnd, 11, MOD_CONTROL, 'G');
         }
         else {
             int i;
-            for (i = 1; i <= 10; i++) {
+            for (i = 1; i <= 11; i++) {
                 UnregisterHotKey(hwnd, i);
             }
         }
@@ -857,6 +916,13 @@ void OnEmulatorReset() {
 
 void OnEmulatorTrace(const char* message)
 {
+}
+
+void OnEmulatorSetBreakpoint(UInt16 address)
+{
+    if (disassembly != NULL) {
+        disassembly->toggleBreakpoint(address, true);
+    }
 }
 
 const char* OnGetName() {

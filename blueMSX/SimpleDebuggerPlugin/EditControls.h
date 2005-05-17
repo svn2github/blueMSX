@@ -42,6 +42,10 @@ public:
     void setPosition(int x, int y);
     void show();
     void hide();
+    void setFocus();
+
+    WORD getValue();
+
 private:
     int wx;
     int wy;

@@ -150,7 +150,7 @@ HINSTANCE GetDllHinstance()
     return hInstance;
 }
 
-extern "C" __declspec(dllexport) int __stdcall Create10(Interface* toolInterface, char* name, int length)
+extern "C" __declspec(dllexport) int __stdcall Create11(Interface* toolInterface, char* name, int length)
 {
     strcpy(name, OnGetName());
     
@@ -222,6 +222,11 @@ extern "C"__declspec(dllexport) void __stdcall NotifyEmulatorReset()
 extern "C"__declspec(dllexport) void __stdcall EmulatorTrace(const char* message)
 {
     OnEmulatorTrace(message);
+}
+
+extern "C"__declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 address)
+{
+    OnEmulatorSetBreakpoint(address);
 }
 
 extern "C" int APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)

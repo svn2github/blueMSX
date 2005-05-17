@@ -612,7 +612,7 @@ void Disassembly::updatePosition(RECT& rect)
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
-void Disassembly::toggleBreakpoint(int address) 
+void Disassembly::toggleBreakpoint(int address, bool setAlways) 
 {
     if (address == -1) {
         if (currentLine == -1) {
@@ -625,7 +625,7 @@ void Disassembly::toggleBreakpoint(int address)
         breakpoint[address] = BP_SET;
         SetBreakpoint(address);
     }
-    else {
+    else if (!setAlways) {
         breakpointCount--;
         breakpoint[address] = BP_NONE;
         ClearBreakpoint(address);

@@ -76,6 +76,28 @@ void HexInputDialog::hide()
     ShowWindow(hwnd, FALSE);
 }
 
+void HexInputDialog::setFocus() 
+{
+    SetFocus(hwnd);
+}
+
+WORD HexInputDialog::getValue() 
+{
+    GETTEXTEX t = {15, GT_DEFAULT, CP_ACP, NULL, NULL};
+    char text[16];
+    int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
+    text[len] = 0;
+
+    WORD addr = 0;
+    if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
+        int address = 0;
+        sscanf(text, "%X", &address);
+        addr = (WORD)address;
+    }
+
+    return addr;
+}
+
 void HexInputDialog::initRichEditControlDll()
 {
     static bool richeditinitialized = false;
@@ -192,18 +214,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                             }
                         }
                         if (keyCode == '\r' || keyCode == '\n') {
-                            GETTEXTEX t = {15, GT_DEFAULT, CP_ACP, NULL, NULL};
-                            char text[16];
-                            int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
-                            text[len] = 0;
-
-                            WORD addr = 0;
-                            if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
-                                int address = 0;
-                                sscanf(text, "%X", &address);
-                                addr = (WORD)address;
-                            }
-                            SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, addr);
+                            SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, getValue());
                         }
                         else if (symbolInfo != NULL) {
                             SetWindowLong(hwnd, DWL_MSGRESULT, 0);

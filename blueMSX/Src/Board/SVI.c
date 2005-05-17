@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-05-01 20:30:46 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -458,7 +458,17 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
-static void debugCb(void* ref, const char* message) {
+
+extern void debuggerTrace(const char* str);
+static void debugCb(void* ref, int command, const char* data) 
+{
+    switch (command) {
+    case ASDBG_TRACE:
+        debuggerTrace(data);
+        break;
+    case ASDBG_SETBP:
+        break;
+    }
 }
 
 void sviRun() {

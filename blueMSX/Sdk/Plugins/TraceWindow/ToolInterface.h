@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/ToolInterface.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-02 21:42:34 $
+** $Date: 2005-05-17 19:28:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,7 @@ void OnEmulatorPause();
 void OnEmulatorResume();
 void OnEmulatorReset();
 void OnEmulatorTrace(const char* message);
+void OnEmulatorSetBreakpoint(UInt16 address);
 
 const char* OnGetName();
 

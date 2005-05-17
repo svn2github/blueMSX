@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-02 21:42:34 $
+** $Date: 2005-05-17 19:28:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,8 +173,9 @@ typedef struct {
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);
 typedef void (__stdcall *NotifyFn)();
 typedef void (__stdcall *TraceFn)(const char*);
+typedef void (__stdcall *SetBpFn)(UInt16);
 
-__declspec(dllexport) int  __stdcall Create10(Interface*, char* name, int length);
+__declspec(dllexport) int  __stdcall Create11(Interface*, char* name, int length);
 __declspec(dllexport) void __stdcall Show();
 __declspec(dllexport) void __stdcall NotifyEmulatorStart();
 __declspec(dllexport) void __stdcall NotifyEmulatorStop();
@@ -182,6 +183,7 @@ __declspec(dllexport) void __stdcall NotifyEmulatorPause();
 __declspec(dllexport) void __stdcall NotifyEmulatorResume();
 __declspec(dllexport) void __stdcall NotifyEmulatorReset();
 __declspec(dllexport) void __stdcall EmulatorTrace(const char* message);
+__declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 address);
 
 #ifdef __cplusplus
 }

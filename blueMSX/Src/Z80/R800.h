@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-05-01 20:30:49 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** Author: Daniel Vik
 **
@@ -89,7 +89,7 @@
 */
 #define ENABLE_BREAKPOINTS
 #define ENABLE_CALLSTACK
-#define ENABLE_ASMSX_DEBUG_COMMAND
+#define ENABLE_ASMSX_DEBUG_COMMANDS
 
 
 /*****************************************************
@@ -108,6 +108,16 @@ typedef enum { CPU_Z80 = 0, CPU_R800 = 1 } CpuMode;
 ******************************************************
 */
 #define R800_MASTER_FREQUENCY  21477270
+
+
+/*****************************************************
+** ASDBG_*
+**
+** asmsx debug commands
+******************************************************
+*/
+#define ASDBG_TRACE 1
+#define ASDBG_SETBP 2
 
 
 /*****************************************************
@@ -181,7 +191,7 @@ typedef UInt8 (*R800ReadCb)(void*, UInt16);
 typedef void  (*R800WriteCb)(void*, UInt16, UInt8);
 typedef void  (*R800PatchCb)(void*, CpuRegs*);
 typedef void  (*R800BreakptCb)(void* ref, UInt16);
-typedef void  (*R800DebugCb)(void* ref, const char* message);
+typedef void  (*R800DebugCb)(void* ref, int command, const char* data);
 typedef void  (*R800TimerCb)(void*);
 
 

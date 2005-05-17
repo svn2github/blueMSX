@@ -283,6 +283,10 @@ void OnEmulatorTrace(const char* message)
     }
 }
 
+void OnEmulatorSetBreakpoint(UInt16 address)
+{
+}
+
 const char* OnGetName() {
     return "Trace Logger";
 }

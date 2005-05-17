@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-05-02 21:42:37 $
+** $Date: 2005-05-17 19:28:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,6 +53,7 @@ struct ToolInfo {
         NotifyFn onEmulatorResume;
         NotifyFn onEmulatorReset;
         TraceFn  onEmulatorTrace;
+        SetBpFn  onEmulatorSetBp;
     } callbacks;
 };
 
@@ -94,6 +95,12 @@ static void onEmulatorReset(ToolInfo* toolInfo) {
 static void onEmulatorTrace(ToolInfo* toolInfo, const char* str) {
     if (toolInfo->callbacks.onEmulatorTrace != NULL) {
         toolInfo->callbacks.onEmulatorTrace(str);
+    }
+}
+
+static void onEmulatorSetBp(ToolInfo* toolInfo, UInt16 address) {
+    if (toolInfo->callbacks.onEmulatorSetBp != NULL) {
+        toolInfo->callbacks.onEmulatorSetBp(address);
     }
 }
 
@@ -279,19 +286,32 @@ void toolLoadAll(const char* path)
 
         if (lib != NULL) {
             char description[32] = "Unknown";
-            CreateFn create   = (CreateFn)GetProcAddress(lib, (LPCSTR)1);
-            NotifyFn destroy  = (NotifyFn)GetProcAddress(lib, (LPCSTR)2);
-            NotifyFn show     = (NotifyFn)GetProcAddress(lib, (LPCSTR)3);
-            NotifyFn onStart  = (NotifyFn)GetProcAddress(lib, (LPCSTR)4);
-            NotifyFn onStop   = (NotifyFn)GetProcAddress(lib, (LPCSTR)5);
-            NotifyFn onPause  = (NotifyFn)GetProcAddress(lib, (LPCSTR)6);
-            NotifyFn onResume = (NotifyFn)GetProcAddress(lib, (LPCSTR)7);
-            NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
-            TraceFn  onTrace  = (TraceFn) GetProcAddress(lib, (LPCSTR)9);
+            CreateFn create   = (CreateFn)GetProcAddress(lib, "Create11");
+            NotifyFn destroy  = (NotifyFn)GetProcAddress(lib, "Destroy");
+            NotifyFn show     = (NotifyFn)GetProcAddress(lib, "Show");
+            NotifyFn onStart  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorStart");
+            NotifyFn onStop   = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorStop");
+            NotifyFn onPause  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorPause");
+            NotifyFn onResume = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorResume");
+            NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorReset");
+            TraceFn  onTrace  = (TraceFn) GetProcAddress(lib, "EmulatorTrace");
+            SetBpFn  onSetBp  = (SetBpFn) GetProcAddress(lib, "EmulatorSetBreakpoint");
 
             if (create == NULL) {
-                FreeLibrary(lib);
-                continue;
+                // Check old style dll exports (of blueMSX 2.2)
+                create   = (CreateFn)GetProcAddress(lib, (LPCSTR)1);
+                destroy  = (NotifyFn)GetProcAddress(lib, (LPCSTR)2);
+                show     = (NotifyFn)GetProcAddress(lib, (LPCSTR)3);
+                onStart  = (NotifyFn)GetProcAddress(lib, (LPCSTR)4);
+                onStop   = (NotifyFn)GetProcAddress(lib, (LPCSTR)5);
+                onPause  = (NotifyFn)GetProcAddress(lib, (LPCSTR)6);
+                onResume = (NotifyFn)GetProcAddress(lib, (LPCSTR)7);
+                onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
+
+                if (create == NULL) {
+                    FreeLibrary(lib);
+                    continue;
+                }
             }
 
             if (create(&toolInterface, description, 31) == 0) {
@@ -314,6 +334,7 @@ void toolLoadAll(const char* path)
                                                 onResume ? onEmulatorResume : NULL, 
                                                 onReset  ? onEmulatorReset  : NULL, 
                                                 onTrace  ? onEmulatorTrace  : NULL, 
+                                                onSetBp  ? onEmulatorSetBp  : NULL,
                                                 toolInfo);
             toolInfo->library = lib;
             strcpy(toolInfo->description, description);
