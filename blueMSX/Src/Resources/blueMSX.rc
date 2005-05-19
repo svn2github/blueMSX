@@ -679,4 +679,5 @@ IDI_FLAG_FRANCE         ICON                    "flagFrance.ico"
 IDI_FLAG_ITALY          ICON                    "flagItaly.ico"
 IDI_FLAG_JAPAN          ICON                    "flagJapan.ico"
 IDI_FLAG_KOREA          ICON                    "flagKorea.ico"
+IDI_FLAG_GERMANY        ICON                    "flagGermany.ico"
 

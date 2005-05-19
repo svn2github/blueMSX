@@ -64,6 +64,7 @@
 #define IDI_FLAG_JAPAN                  30157
 #define IDI_FLAG_FINLAND                30158
 #define IDI_FLAG_KOREA                  30159
+#define IDI_FLAG_GERMANY                30160
 
 
 
