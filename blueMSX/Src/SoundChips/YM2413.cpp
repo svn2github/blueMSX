@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-04-08 05:58:52 $
+** $Date: 2005-05-20 23:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "YM2413.h"
 #include "openMsxYM2413.h"
+#include "openMsxYM2413_2.h"
 extern "C" {
 #include "Board.h"
 #include "SaveState.h"
@@ -43,14 +44,24 @@ extern "C" {
 #define BUFFER_SIZE      10000
  
 struct YM_2413 {
-    YM_2413() : ym2413("ym2413", 100, 0), address(0) {
+    YM_2413() : address(0) {
+        if (0) {
+             ym2413 = new OpenYM2413("ym2413", 100, 0);
+        }
+        else {
+             ym2413 = new OpenYM2413_2("ym2413", 100, 0);
+        }
         memset(defaultBuffer, 0, sizeof(defaultBuffer));
+    }
+
+    ~YM_2413() {
+        delete ym2413;
     }
 
     Mixer* mixer;
     Int32  handle;
 
-    OpenYM2413 ym2413;
+    OpenYM2413Base* ym2413;
     UInt8  address;
     UInt8  registers[256];
     Int32  buffer[BUFFER_SIZE];
@@ -68,7 +79,7 @@ void ym2413SaveState(YM_2413* ref)
 
     saveStateClose(state);
 
-    ym2413->ym2413.saveState();
+    ym2413->ym2413->saveState();
 }
 
 void ym2413LoadState(YM_2413* ref)
@@ -80,14 +91,14 @@ void ym2413LoadState(YM_2413* ref)
 
     saveStateClose(state);
 
-    ym2413->ym2413.loadState();
+    ym2413->ym2413->loadState();
 }
 
 void ym2413Reset(YM_2413* ref)
 {
     YM_2413* ym2413 = (YM_2413*)ref;
 
-    ym2413->ym2413.reset(boardSystemTime());
+    ym2413->ym2413->reset(boardSystemTime());
 }
 
 void ym2413WriteAddress(YM_2413* ym2413, UInt8 address)
@@ -100,7 +111,7 @@ void ym2413WriteData(YM_2413* ym2413, UInt8 data)
     UInt32 systemTime = boardSystemTime();
     mixerSync(ym2413->mixer);
     ym2413->registers[ym2413->address & 0xff] = data;
-    ym2413->ym2413.writeReg(ym2413->address, data, systemTime);
+    ym2413->ym2413->writeReg(ym2413->address, data, systemTime);
 }
 
 static Int32* sync(void* ref, UInt32 count) 
@@ -109,7 +120,7 @@ static Int32* sync(void* ref, UInt32 count)
     int* genBuf;
     UInt32 i;
 
-    genBuf = ym2413->ym2413.updateBuffer(count);
+    genBuf = ym2413->ym2413->updateBuffer(count);
 
     if (genBuf == NULL) {
         return ym2413->defaultBuffer;
@@ -132,8 +143,8 @@ YM_2413* ym2413Create(Mixer* mixer)
 
     ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
 
-    ym2413->ym2413.setSampleRate(SAMPLERATE, boardGetYm2413Oversampling());
-	ym2413->ym2413.setVolume(32767 * 9 / 10);
+    ym2413->ym2413->setSampleRate(SAMPLERATE, boardGetYm2413Oversampling());
+	ym2413->ym2413->setVolume(32767 * 9 / 10);
 
     return ym2413;
 }

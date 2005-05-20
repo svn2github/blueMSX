@@ -17,6 +17,9 @@ typedef unsigned short word;
 
 
 
+#ifndef OPENMSX_SOUNDDEVICE
+#define OPENMSX_SOUNDDEVICE
+
 class SoundDevice
 {
 	public:
@@ -37,6 +40,28 @@ class SoundDevice
 		bool internalMuted;
 };
 
+#endif
+
+#ifndef OPENMSX_YM2413BASE
+#define OPENMSX_YM2413BASE
+
+class OpenYM2413Base : public SoundDevice
+{
+public:
+    OpenYM2413Base() {}
+    virtual ~OpenYM2413Base() {}
+		
+	virtual void reset(const EmuTime &time) = 0;
+	virtual void writeReg(byte r, byte v, const EmuTime &time) = 0;
+	
+	virtual int* updateBuffer(int length) = 0;
+	virtual void setSampleRate(int sampleRate, int Oversampling) = 0;
+
+    virtual void loadState() = 0;
+    virtual void saveState() = 0;
+};
+
+#endif
 
 class Slot
 {
@@ -105,21 +130,21 @@ class Channel
 		byte sus;	// sus on/off (release speed in percussive mode)
 };
 
-class OpenYM2413 : public SoundDevice
+class OpenYM2413 : public OpenYM2413Base
 {
 	public:
 		OpenYM2413(const string &name, short volume, const EmuTime &time);
 		virtual ~OpenYM2413();
 		
-		void reset(const EmuTime &time);
-		void writeReg(byte r, byte v, const EmuTime &time);
+		virtual void reset(const EmuTime &time);
+		virtual void writeReg(byte r, byte v, const EmuTime &time);
 		
 		virtual void setInternalVolume(short newVolume);
 		virtual int* updateBuffer(int length);
 		virtual void setSampleRate(int sampleRate, int Oversampling);
 
-        void loadState();
-        void saveState();
+        virtual void loadState();
+        virtual void saveState();
 
 	private:
         int filter(int input);
