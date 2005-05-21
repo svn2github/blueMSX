@@ -934,6 +934,17 @@ int OpenYM2413_2::Slot::calc_slot_hat(int pgout_cym, bool noise)
 	return dB2LinTab[dbout + egout];
 }
 
+
+int OpenYM2413_2::filter(int input) {
+    in[4] = in[3];
+    in[3] = in[2];
+    in[2] = in[1];
+    in[1] = in[0];
+    in[0] = input;
+
+    return (0 * (in[0] + in[4]) + 1 * (in[3] + in[1]) + 2 * in[2]) / 4;
+}
+
 inline int OpenYM2413_2::calcSample()
 {
 	// while muted updated_ampm() and update_noise() aren't called, probably ok
@@ -986,7 +997,7 @@ inline int OpenYM2413_2::calcSample()
 			mix += cp->car.calc_slot_car(cp->mod.calc_slot_mod());
 		}
 	}
-	return (maxVolume * mix) >> DB2LIN_AMP_BITS;
+	return filter((maxVolume * mix) >> (DB2LIN_AMP_BITS - 1)); 
 }
 
 void OpenYM2413_2::checkMute()
@@ -1231,8 +1242,6 @@ void OpenYM2413_2::loadState()
     char tag[32];
     int i;
 
-    saveStateClose(state);
-
     for (i = 0; i < sizeof(reg) / sizeof(reg[0]); i++) {
         sprintf(tag, "reg%.4d", i);
         reg[i] = (byte)saveStateGet(state, tag, 0);
@@ -1289,6 +1298,8 @@ void OpenYM2413_2::loadState()
     for (i = 0; i < sizeof(ch) / sizeof(ch[0]); i++) {
         sprintf(tag, "patch_number%d", i);
         ch[i].patch_number = saveStateGet(state, tag, 0);
+
+        ch[i].setPatch(ch[i].patch_number);
 
         sprintf(tag, "mod.output0%d", i);
         ch[i].mod.output[0] = saveStateGet(state, tag, 0);
@@ -1420,6 +1431,7 @@ void OpenYM2413_2::loadState()
         ch[i].car.egout = saveStateGet(state, tag, 0);
     }
 
+    saveStateClose(state);
 }
 
 

@@ -282,6 +282,7 @@ private:
 	virtual byte read(unsigned address);
 	virtual void write(unsigned address, byte value);
 
+    int filter(int input);
 private:
 	int maxVolume;
 
@@ -298,6 +299,8 @@ private:
 
 	// Noise Generator
 	int noise_seed;
+
+        int in[5];
 
 	// CHECK check with orig code header file line 98-104
 	

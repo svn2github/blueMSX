@@ -1355,11 +1355,13 @@ OpenYM2413::~OpenYM2413()
 }
 
 int OpenYM2413::filter(int input) {
+    in[4] = in[3];
+    in[3] = in[2];
     in[2] = in[1];
     in[1] = in[0];
     in[0] = input;
 
-    return (in[0] + in[2] + 2 * in[1]) / 4;
+    return (in[0] + in[4] + 2 * (in[3] + in[1]) + 4 * in[2]) / 8;
 }
 
 

@@ -169,7 +169,7 @@ class OpenYM2413 : public OpenYM2413Base
         int buffer[MAX_BUFFER_SIZE];
         int oplOversampling;
 
-        int in[3];
+        int in[5];
 
 		Channel channels[9];	// OPLL chips have 9 channels
 		byte instvol_r[9];		// instrument/volume (or volume/volume in percussive mode)
