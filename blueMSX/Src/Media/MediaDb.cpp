@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-04-06 20:47:01 $
+** $Date: 2005-05-22 20:10:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -568,7 +568,7 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
                                     string sha1(hash->Value());
                                     mediaDb->sha1Map[sha1] = new MediaType(romType, title, company, year, country, remark);
                                 }
-                                if (strcmp(type, "crc") == 0) {
+                                if (strcmp(type, "crc32") == 0) {
                                     UInt32 crc32;
                                     TiXmlNode* hash = it->FirstChild();
                                     if (sscanf(hash->Value(), "%x", &crc32) == 1) {
