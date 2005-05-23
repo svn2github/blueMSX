@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Uart.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-05 06:40:55 $
+** $Date: 2005-05-23 00:08:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #include <tchar.h>
 #include "Win32Uart.h"
 #include "ArchUart.h"
-
+#include "Properties.h"
 
 static HANDLE hComPort = INVALID_HANDLE_VALUE; 
 static HANDLE hReadThread;
@@ -78,6 +78,8 @@ static DWORD PortReadThread (LPVOID lpvoid)
 
 static BOOL uartCreate(void)
 {
+    Properties* pProperties = propGetGlobalProperties();
+
     COMMTIMEOUTS commTimeouts;
     DCB dcbConfig;
     DWORD dwThreadID;
@@ -87,7 +89,7 @@ static BOOL uartCreate(void)
         return TRUE;
 
     // Open the serial port
-    hComPort = CreateFile(TEXT("COM3:"), GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    hComPort = CreateFile(pProperties->ports.Com.portName, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
     dcbConfig.DCBlength = sizeof (DCB);
 

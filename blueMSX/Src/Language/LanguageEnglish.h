@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-05-11 16:47:35 $
+** $Date: 2005-05-23 00:08:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -587,6 +587,7 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Printer";
+    ls->propPortsComFile        = "Send to File";
 };
 
 

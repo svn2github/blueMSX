@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2005-05-17 05:53:16 $
+** $Date: 2005-05-23 00:08:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@
 #include "Casette.h"
 #include "JoystickIO.h"
 #include "PrinterIO.h"
+#include "UartIO.h"
 #include "RomLoader.h"
 #include "MediaDb.h"
 #include "build_number.h"
@@ -1001,6 +1002,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     archUpdateJoystick(pProperties);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
+    uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -1019,6 +1021,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
+    uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
 
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
@@ -2377,6 +2380,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
     
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
+    uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
 
     mouseEmuInit(st.emuHwnd, 1);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-05-11 18:33:29 $
+** $Date: 2005-05-23 00:08:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2139,7 +2139,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
 
     // Add FILE
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsFile());
-    if (pProperties->ports.Lpt.type == P_LPT_SIMPL) 
+    if (pProperties->ports.Lpt.type == P_LPT_FILE) 
         SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2, 0);
 
     // Add printers 
@@ -2176,6 +2176,32 @@ static BOOL IsNumeric(LPCTSTR pszString, BOOL bIgnoreColon)
     return bNumeric;
 }
 
+static void getPortsComList(HWND hDlg, int id, Properties* pProperties) {
+    char buffer[256];
+    int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
+    int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
+
+    if (idx < P_COM_HOST) {
+        pProperties->ports.Com.type = idx;
+    }
+    else {
+        char* portName = buffer;
+        // Find the printer name from string
+        while (*portName && *portName != '-') {
+            portName++;
+        }
+        
+        strcpy(pProperties->ports.Com.portName, buffer);
+        pProperties->ports.Com.portName[portName - buffer - 2] = 0;
+
+        if (*portName) portName++;
+        if (*portName) portName++;
+
+        pProperties->ports.Com.type = P_COM_HOST;
+        strcpy(pProperties->ports.Com.name, portName);
+    }
+}
+
 static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
 {
     PORT_INFO_2 *lpPortInfo = NULL;
@@ -2197,8 +2223,15 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
     if (!EnumPorts(NULL, 2, (LPBYTE)lpPortInfo, dwNeeded, &dwNeeded, &dwReturned))
         return FALSE;
 
-    // Add static members
+    // Add NONE:
     SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsNone());
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
+
+    // Add FILE
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropPortsComFile());
+    if (pProperties->ports.Com.type == P_COM_FILE) 
+        SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
+
 
     // Add COM ports 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
@@ -2206,11 +2239,12 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
         if SUCCEEDED(StringCchLength(lpPortInfo[dwItem].pPortName, MAX_PATH-1, &cch))
             if (cch > 3)
                 if ((_tcsnicmp(lpPortInfo[dwItem].pPortName, _T("COM"), 3) == 0) && IsNumeric(&lpPortInfo[dwItem].pPortName[3], TRUE))
-                    if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPortInfo[dwItem].pPortName, lpPortInfo[dwItem].pDescription))
+                    if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPortInfo[dwItem].pPortName, lpPortInfo[dwItem].pDescription)) {
                         SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
+                        if (pProperties->ports.Com.type == P_COM_HOST && 0 == strcmp(pProperties->ports.Com.name, lpPortInfo[dwItem].pPortName)) 
+                            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + dwItem, 0);
+                    }
     }
-
-    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0);
 
     // Free memory
     HeapFree(GetProcessHeap(), 0, lpPortInfo);
@@ -2281,6 +2315,7 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langPropPortsFilenameText());
+        SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMETEXT), langPropPortsFilenameText());
         SetWindowText(GetDlgItem(hDlg, IDC_LPTEMULATIONTEXT), langPropPortsEmulateMsxPrn());
         
 
@@ -2296,9 +2331,14 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAMEBROWSE), idx == P_LPT_FILE);
             EnableWindow(GetDlgItem(hDlg, IDC_LPTFILENAME), idx == P_LPT_FILE);
             EnableWindow(GetDlgItem(hDlg, IDC_LPTEMULATION), idx >= P_LPT_HOST);
+
+            idx = SendDlgItemMessage(hDlg, IDC_PORTSCOM1, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_COM1FILENAMEBROWSE), idx == P_COM_FILE);
+            EnableWindow(GetDlgItem(hDlg, IDC_COM1FILENAME), idx == P_COM_FILE);
         }
 
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
+        SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAME), pProperties->ports.Com.fileName);
 
         return FALSE;
         
@@ -2313,13 +2353,24 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             }
             return TRUE;
 
+        case IDC_PORTSCOM1:
+            {
+                int idx = SendDlgItemMessage(hDlg, IDC_PORTSCOM1, CB_GETCURSEL, 0, 0);
+                EnableWindow(GetDlgItem(hDlg, IDC_COM1FILENAMEBROWSE), idx == P_COM_FILE);
+                EnableWindow(GetDlgItem(hDlg, IDC_COM1FILENAME), idx == P_COM_FILE);
+            }
+            return TRUE;
+
         case IDC_LPTFILENAMEBROWSE:
             if (openLogFile(hDlg, pProperties->ports.Lpt.fileName)) {
                 SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
             }
             return TRUE;
 
-        case IDC_PORTSCOM1:
+        case IDC_COM1FILENAMEBROWSE:
+            if (openLogFile(hDlg, pProperties->ports.Com.fileName)) {
+                SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMEBROWSE), pProperties->ports.Com.fileName);
+            }
             return TRUE;
         }
         return FALSE;
@@ -2336,6 +2387,9 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         getPortsLptList(hDlg, IDC_PORTSLPT, pProperties);
         getPortsLptEmulList(hDlg, IDC_LPTEMULATION, pProperties);
         GetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName, MAX_PATH - 1);
+
+        getPortsComList(hDlg, IDC_PORTSCOM1, pProperties);
+        GetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAME), pProperties->ports.Com.fileName, MAX_PATH - 1);
 
         return TRUE;
     }

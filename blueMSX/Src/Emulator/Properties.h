@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-05-11 17:17:26 $
+** $Date: 2005-05-23 00:08:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,6 +57,7 @@
 typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
 
 typedef enum { P_LPT_NONE = 0, P_LPT_SIMPL, P_LPT_FILE, P_LPT_HOST } PropLptType;
+typedef enum { P_COM_NONE = 0, P_COM_FILE, P_COM_HOST } PropComType;
 typedef enum { P_LPT_RAW, P_LPT_MSXPRN, P_LPT_EPSONFX80 } PropLptEmulation;
 
 typedef enum { P_EMU_SYNC1MS = 0, P_EMU_SYNCAUTO, P_EMU_SYNCNONE } PropEmuSync;
@@ -230,7 +231,10 @@ typedef struct {
         char fileName[MAX_PATH];
     } Lpt;
     struct {
-        int todo;
+        int  type;
+        char name[256];
+        char portName[MAX_PATH];
+        char fileName[MAX_PATH];
     } Com;
 } PortProperties;
 
