@@ -88,6 +88,10 @@ static int isHexNumber(const char* t)
     if (t[l - 1] == 'h') {
         l--;
     }
+    else if (t[0] == '$') {
+        t++;
+        l--;
+    }
 
     isHexNum = l > 0;
 
@@ -135,6 +139,9 @@ void SymbolInfo::append(std::string& buffer)
                 }
                 int address;
                 int count = sscanf(addr, "%xh", &address);
+                if (count == 0) {
+                    count = sscanf(addr, "$%x", &address);
+                }
                 if (count == 1 && labelLen) {
                     WORD addr = address;
                     symbolMap[addr] = Symbol(label);

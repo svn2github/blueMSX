@@ -162,6 +162,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_CLOSE:
+        DestroyWindow(hwnd);
+        return 0;
+
+    case WM_DESTROY:
         if (logFile != NULL) {
             fclose(logFile);
         }
@@ -194,7 +198,7 @@ void OnCreateTool() {
 
 void OnDestroyTool() {
     if (dbgHwnd != NULL) {
-        CloseWindow(dbgHwnd);
+        DestroyWindow(dbgHwnd);
     }
 }
 

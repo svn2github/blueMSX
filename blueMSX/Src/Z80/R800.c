@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-05-17 19:28:37 $
+** $Date: 2005-05-24 07:52:47 $
 **
 ** Author: Daniel Vik
 **
@@ -754,37 +754,6 @@ static void dec_xiy(R800* r800) {
 }
 
 static void ld_a_a(R800* r800) { 
-#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
-    char debugString[256];
-    UInt16 addr = r800->regs.PC.W;
-    UInt16 end;
-    UInt16 bpAddr = 0;
-
-    if (r800->readMemory(r800->ref, addr++) != 24) {
-        return;
-    }
-    end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
-    if (end < addr + 6 || end - addr > 255) {
-        return;
-    }
-    addr++;
-
-    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
-        r800->readMemory(r800->ref, addr + 1) != 100 || 
-        r800->readMemory(r800->ref, addr + 2) != 0   || 
-        r800->readMemory(r800->ref, addr + 3) != 0) 
-    {
-        return;
-    }
-    addr += 4;
-    
-    bpAddr = r800->readMemory(r800->ref, addr++) << 8;
-    bpAddr |= r800->readMemory(r800->ref, addr++);
-
-    sprintf(debugString, "%.4x", bpAddr);
-
-    r800->debugCb(r800->ref, ASDBG_TRACE, debugString);
-#endif
 }
 
 static void ld_a_b(R800* r800) { 
@@ -868,7 +837,7 @@ static void ld_b_b(R800* r800) {
     char debugString[256];
     UInt16 addr = r800->regs.PC.W;
     UInt16 end;
-    char* ptr = debugString;
+    UInt16 bpAddr = 0;
 
     if (r800->readMemory(r800->ref, addr++) != 24) {
         return;
@@ -888,15 +857,10 @@ static void ld_b_b(R800* r800) {
     }
     addr += 4;
     
-    while (addr < end) {
-        *ptr++ = (char)r800->readMemory(r800->ref, addr++);
-    }
+    bpAddr = r800->readMemory(r800->ref, addr++) << 8;
+    bpAddr |= r800->readMemory(r800->ref, addr++);
 
-    if (ptr > debugString && ptr[-1] != 'n') {
-        *ptr++ = '\n';
-    }
-
-    *ptr = 0;
+    sprintf(debugString, "%.4x", bpAddr);
 
     r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
 #endif
@@ -1058,6 +1022,42 @@ static void ld_d_c(R800* r800) {
 }
 
 static void ld_d_d(R800* r800) { 
+#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
+    char debugString[256];
+    UInt16 addr = r800->regs.PC.W;
+    UInt16 end;
+    char* ptr = debugString;
+
+    if (r800->readMemory(r800->ref, addr++) != 24) {
+        return;
+    }
+    end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
+    if (end < addr + 6 || end - addr > 255) {
+        return;
+    }
+    addr++;
+
+    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
+        r800->readMemory(r800->ref, addr + 1) != 100 || 
+        r800->readMemory(r800->ref, addr + 2) != 0   || 
+        r800->readMemory(r800->ref, addr + 3) != 0) 
+    {
+        return;
+    }
+    addr += 4;
+    
+    while (addr < end) {
+        *ptr++ = (char)r800->readMemory(r800->ref, addr++);
+    }
+
+    if (ptr > debugString && ptr[-1] != 'n') {
+        *ptr++ = '\n';
+    }
+
+    *ptr = 0;
+
+    r800->debugCb(r800->ref, ASDBG_TRACE, debugString);
+#endif
 }
 
 static void ld_d_e(R800* r800) { 

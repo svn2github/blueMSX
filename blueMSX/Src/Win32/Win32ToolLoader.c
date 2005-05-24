@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-05-17 19:28:37 $
+** $Date: 2005-05-24 07:52:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -307,6 +307,8 @@ void toolLoadAll(const char* path)
                 onPause  = (NotifyFn)GetProcAddress(lib, (LPCSTR)6);
                 onResume = (NotifyFn)GetProcAddress(lib, (LPCSTR)7);
                 onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
+                onTrace  = NULL;
+                onSetBp  = NULL;
 
                 if (create == NULL) {
                     FreeLibrary(lib);
@@ -328,6 +330,7 @@ void toolLoadAll(const char* path)
             toolInfo->callbacks.onEmulatorResume = onResume;
             toolInfo->callbacks.onEmulatorReset  = onReset;
             toolInfo->callbacks.onEmulatorTrace  = onTrace;
+            toolInfo->callbacks.onEmulatorSetBp  = onSetBp;
             toolInfo->debugger = debuggerCreate(onStart  ? onEmulatorStart  : NULL, 
                                                 onStop   ? onEmulatorStop   : NULL, 
                                                 onPause  ? onEmulatorPause  : NULL, 

@@ -399,6 +399,7 @@ void updateDeviceState()
         cpuRegisters->invalidateContent();
         callstack->invalidateContent();
         stack->invalidateContent();
+        DebuggerUpdate();
     }
 }
 
@@ -711,8 +712,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_ACTIVATE:
         isActive = wParam != WA_INACTIVE;
+#ifndef _DEBUG
         if (isActive) {
-#if 1
             RegisterHotKey(hwnd, 1,  0, VK_F5);
             RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
             RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
@@ -764,6 +765,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_CLOSE:
+        DestroyWindow(hwnd);
+        return 0;
+
+    case WM_DESTROY:
         disassembly->clearAllBreakpoints();
         dbgHwnd = NULL;
         delete statusBar;
@@ -818,7 +823,7 @@ void OnCreateTool() {
 
 void OnDestroyTool() {
     if (dbgHwnd != NULL) {
-        CloseWindow(dbgHwnd);
+        DestroyWindow(dbgHwnd);
     }
 }
 

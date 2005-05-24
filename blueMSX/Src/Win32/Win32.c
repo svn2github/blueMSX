@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2005-05-23 00:08:26 $
+** $Date: 2005-05-24 07:52:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2044,8 +2044,13 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         }
         return 0;
         
+    case WM_CLOSE:
+        DestroyWindow(hwnd);
+        return 0;
+
     case WM_DESTROY:         
         emulatorStop();
+        toolUnLoadAll();
         if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
             RECT r;
             
@@ -2473,8 +2478,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             SetEvent(st.ddrawAckEvent);
         }
     }
-
-    toolUnLoadAll();
 
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     shortcutsDestroyProfile(st.shortcuts);

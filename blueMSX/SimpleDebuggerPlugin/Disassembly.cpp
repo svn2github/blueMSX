@@ -759,7 +759,6 @@ WORD Disassembly::dasm(WORD pc, char* dest)
 void Disassembly::invalidateContent()
 {
     clearRuntoBreakpoint();
-    DebuggerUpdate();
     currentLine = -1;
     lineCount = 0;
     updateScroll();
