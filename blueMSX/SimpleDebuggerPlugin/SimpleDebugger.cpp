@@ -27,9 +27,6 @@ static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
-static bool cursorPresent = false;
-static bool cursorhasBp   = false;
-static bool debuggerHasBp = false;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -42,7 +39,9 @@ static bool debuggerHasBp = false;
 #define TB_RUNTO    37006
 #define TB_BPTOGGLE 37007
 #define TB_BPENABLE 37008
-#define TB_BPREMALL 37009
+#define TB_BPENALL  37009
+#define TB_BPDISALL 37010
+#define TB_BPREMALL 37011
 
 static void updateTooltip(int id, char* str)
 {
@@ -56,6 +55,8 @@ static void updateTooltip(int id, char* str)
     case TB_RUNTO:    sprintf(str, "Run To Cursor");             break;
     case TB_BPTOGGLE: sprintf(str, "Set/Remove Breakpoint");     break;
     case TB_BPENABLE: sprintf(str, "Enable/Disable Breakpoint"); break;
+    case TB_BPENALL:  sprintf(str, "Enable All Breakpoints");    break;
+    case TB_BPDISALL: sprintf(str, "Disable All Breakpoints");   break;
     case TB_BPREMALL: sprintf(str, "Remove All Breakpoints");    break;
     }
 }
@@ -76,6 +77,8 @@ static Toolbar* initializeToolbar(HWND owner)
     toolBar->addSeparator();
     toolBar->addButton(10, TB_BPTOGGLE);
     toolBar->addButton(11, TB_BPENABLE);
+    toolBar->addButton(9,  TB_BPENALL);
+    toolBar->addButton(8,  TB_BPDISALL);
     toolBar->addButton(7,  TB_BPREMALL);
 
     return toolBar;
@@ -96,11 +99,13 @@ static void updateToolBar()
     
     toolBar->enableItem(6, state == EMULATOR_PAUSED);
     toolBar->enableItem(7, state == EMULATOR_PAUSED);
-    toolBar->enableItem(8, state == EMULATOR_PAUSED && cursorPresent);
+    toolBar->enableItem(8, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
 
-    toolBar->enableItem(10, state != EMULATOR_STOPPED && cursorPresent);
-    toolBar->enableItem(11, state != EMULATOR_STOPPED && cursorhasBp);
-    toolBar->enableItem(12, debuggerHasBp);
+    toolBar->enableItem(10, state != EMULATOR_STOPPED && disassembly->isCursorPresent());
+    toolBar->enableItem(11, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
+    toolBar->enableItem(12, disassembly->getDisabledBpCount() > 0);
+    toolBar->enableItem(13, disassembly->getEnabledBpCount() > 0);
+    toolBar->enableItem(14, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
 }
 
 static void updateStatusBar()
@@ -136,6 +141,8 @@ static void updateStatusBar()
 #define MENU_DEBUG_BPTOGGLE         37208
 #define MENU_DEBUG_BPENABLE         37209
 #define MENU_DEBUG_BPREMOVEALL      37210
+#define MENU_DEBUG_BPENABLEALL      37211
+#define MENU_DEBUG_BPDISABLEALL     37212
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -165,7 +172,7 @@ static void updateWindowMenu()
         AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_RESTART,  "Restart\tCtrl+Shift+F5");
     }
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, "Step Into\tF10");
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
     AppendMenu(hMenuDebug, MF_STRING | (symbolInfo->getShowStatus() ? MF_CHECKED : 0), MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tF8");
@@ -174,9 +181,12 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_GOTO, "Go To\tCtrl+G");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
     
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorPresent ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && cursorhasBp   ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
-    AppendMenu(hMenuDebug, MF_STRING | (debuggerHasBp                              ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoint\tCtrl+Shift+F9");
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isBpOnCcursor() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoints\tCtrl+Shift+F9");
+
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, "Enable All Breakpoints");
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, "Disable All Breakpoints");
 
     HMENU hMenuWindow = CreatePopupMenu();
     AppendMenu(hMenuWindow, MF_STRING | (disassembly  && disassembly->isVisible()  ? MFS_CHECKED : 0), MENU_WINDOW_DISASSEMBLY, "Disassembly");
@@ -304,11 +314,8 @@ void loadSymbolFile(HWND hwndOwner)
 }
 
 
-void NotifyCursorPresent(bool cursorIsPresent, bool bpState, bool hasBp)
+void DebuggerUpdate()
 {
-    cursorPresent = cursorIsPresent;
-    cursorhasBp   = bpState && cursorIsPresent;
-    debuggerHasBp = hasBp;
     updateToolBar();
     updateWindowMenu();
 }
@@ -515,19 +522,19 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP, 0);
                 break;
             case 6:
-                if (GetEmulatorState() == EMULATOR_PAUSED && cursorPresent)
+                if (GetEmulatorState() == EMULATOR_PAUSED && disassembly->isCursorPresent())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RUNTO, 0);
                 break;
             case 7:
-                if (GetEmulatorState() != EMULATOR_STOPPED && cursorPresent)
+                if (GetEmulatorState() != EMULATOR_STOPPED && disassembly->isCursorPresent())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPTOGGLE, 0);
                 break;
             case 8:
-                if (GetEmulatorState() != EMULATOR_STOPPED && cursorhasBp)
+                if (GetEmulatorState() != EMULATOR_STOPPED && disassembly->isBpOnCcursor())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
                 break;
             case 9:
-                if (debuggerHasBp)
+                if (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
                 break;
             case 10:
@@ -677,6 +684,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case MENU_DEBUG_BPREMOVEALL:
         case TB_BPREMALL:
             disassembly->clearAllBreakpoints();
+            return 0;
+
+        case MENU_DEBUG_BPENABLEALL:
+        case TB_BPENALL:
+            disassembly->enableAllBreakpoints();
+            return 0;
+
+        case MENU_DEBUG_BPDISABLEALL:
+        case TB_BPDISALL:
+            disassembly->disableAllBreakpoints();
             return 0;
         }
         break;

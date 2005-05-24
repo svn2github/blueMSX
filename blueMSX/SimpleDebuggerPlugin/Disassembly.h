@@ -56,9 +56,16 @@ public:
     void setRuntoBreakpoint();
     void clearRuntoBreakpoint();
     void setCursor(WORD address);
+    int  getEnabledBpCount()  { return bpEnabledCount; }
+    int  getDisabledBpCount() { return bpDisabledCount; }
+
+    bool isBpOnCcursor() { return currentLine >= 0 && breakpoint[lineInfo[currentLine].address] != BP_NONE; }
+    bool isCursorPresent()    { return currentLine >= 0; }
 
     void toggleBreakpoint(int address = -1, bool setAlways = false);
     void toggleBreakpointEnable();
+    void enableAllBreakpoints();
+    void disableAllBreakpoints();
     void clearAllBreakpoints();
 
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
@@ -106,7 +113,8 @@ private:
     int      lineCount;
     int      currentLine;
     LineInfo lineInfo[0x20000];
-    int      breakpointCount;
+    int      bpEnabledCount;
+    int      bpDisabledCount;
     BpState  breakpoint[0x10000];
     int      linePos;
     bool     hasKeyboardFocus;

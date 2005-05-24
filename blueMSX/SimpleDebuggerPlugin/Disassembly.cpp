@@ -28,7 +28,7 @@
 #include "Resource.h"
 #include <stdio.h>
 
-extern void NotifyCursorPresent(bool isPresent, bool bpState, bool hasBp);
+extern void DebuggerUpdate();
 
 namespace {
 
@@ -490,7 +490,7 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
                     currentLine++;
                 }
             }
-            NotifyCursorPresent(true, (currentLine >= 0 && breakpoint[lineInfo[currentLine].address] != BP_NONE), breakpointCount > 0);
+            DebuggerUpdate();
             InvalidateRect(hwnd, NULL, TRUE);
         }
         return 0;
@@ -538,7 +538,8 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
     linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
-    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), breakpointCount(0),
+    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), 
+    bpEnabledCount(0), bpDisabledCount(0),
     hasKeyboardFocus(false), symbolInfo(symInfo)
 {
     disassembly = this;
@@ -621,16 +622,22 @@ void Disassembly::toggleBreakpoint(int address, bool setAlways)
         address = lineInfo[currentLine].address;
     }
     if (breakpoint[address] == BP_NONE) {
-        breakpointCount++;
+        bpEnabledCount++;
         breakpoint[address] = BP_SET;
         SetBreakpoint(address);
     }
     else if (!setAlways) {
-        breakpointCount--;
+        if (breakpoint[address] == BP_DISABLED) {
+            bpDisabledCount--;
+        }
+        if (breakpoint[address] == BP_SET) {
+            bpEnabledCount--;
+        }
         breakpoint[address] = BP_NONE;
         ClearBreakpoint(address);
     }
-    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+
+    DebuggerUpdate();
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
@@ -642,16 +649,18 @@ void Disassembly::toggleBreakpointEnable()
     int address = lineInfo[currentLine].address;
 
     if (breakpoint[address] == BP_DISABLED) {
-        breakpointCount--;
+        bpEnabledCount++;
+        bpDisabledCount--;
         breakpoint[address] = BP_SET;
         SetBreakpoint(address);
     }
     else if (breakpoint[address] == BP_SET) {
-        breakpointCount++;
+        bpEnabledCount--;
+        bpDisabledCount++;
         breakpoint[address] = BP_DISABLED;
         ClearBreakpoint(address);
     }
-    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+    DebuggerUpdate();
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
@@ -663,8 +672,37 @@ void Disassembly::clearAllBreakpoints()
         }
         breakpoint[address] = BP_NONE;
     }
-    breakpointCount = 0;
-    NotifyCursorPresent(true, breakpoint[address] != BP_NONE, breakpointCount > 0);
+    bpDisabledCount = 0;
+    bpEnabledCount = 0;
+    DebuggerUpdate();
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::enableAllBreakpoints()
+{
+    for (int address = 0; address < 0x10000; address++) {
+        if (breakpoint[address] == BP_DISABLED) {
+            bpDisabledCount--;
+            bpEnabledCount++;
+            breakpoint[address] = BP_SET;
+            SetBreakpoint(address);
+        }
+    }
+    DebuggerUpdate();
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+void Disassembly::disableAllBreakpoints()
+{
+    for (int address = 0; address < 0x10000; address++) {
+        if (breakpoint[address] == BP_SET) {
+            bpDisabledCount++;
+            bpEnabledCount--;
+            breakpoint[address] = BP_DISABLED;
+            ClearBreakpoint(address);
+        }
+    }
+    DebuggerUpdate();
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
@@ -721,7 +759,7 @@ WORD Disassembly::dasm(WORD pc, char* dest)
 void Disassembly::invalidateContent()
 {
     clearRuntoBreakpoint();
-    NotifyCursorPresent(false, false, breakpointCount > 0);
+    DebuggerUpdate();
     currentLine = -1;
     lineCount = 0;
     updateScroll();
@@ -801,7 +839,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     }
     updateScroll();
 
-    NotifyCursorPresent(true, breakpoint[lineInfo[currentLine].address] != BP_NONE, breakpointCount > 0);
+    DebuggerUpdate();
 
     SetFocus(hwnd);
     InvalidateRect(hwnd, NULL, TRUE);
