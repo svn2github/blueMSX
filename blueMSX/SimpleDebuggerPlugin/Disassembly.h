@@ -94,6 +94,8 @@ private:
         bool haspc;
         char text[48];
         int  textLength;
+        char addr[48];
+        int  addrLength;
         char dataText[48];
         int  dataTextLength;
     };

@@ -430,7 +430,7 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         TEXTMETRIC tm;
         if (GetTextMetrics(hMemdc, &tm)) {
             textHeight = tm.tmHeight;
-            textWidth = tm.tmMaxCharWidth;
+            textWidth = tm.tmAveCharWidth;
         }
         return 0;
 
@@ -711,7 +711,7 @@ WORD Disassembly::dasm(WORD pc, char* dest)
 
     for (int i = lineCount - 1; i >= 0; i--) {
         if (pc >= lineInfo[i].address) {
-            strcat(dest, lineInfo[i].text + 18);
+            strcat(dest, lineInfo[i].text);
             return lineInfo[i].address;
         }
     }
@@ -726,9 +726,11 @@ void Disassembly::invalidateContent()
     lineCount = 0;
     updateScroll();
 
-    sprintf(lineInfo[lineCount].text, "Disassembly unavailable.");
-    lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
+    sprintf(lineInfo[lineCount].addr, "Disassembly unavailable.");
+    lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
     lineInfo[lineCount].haspc = 0;
+    lineInfo[lineCount].text[0] = 0;
+    lineInfo[lineCount].textLength = 0;
     lineInfo[lineCount].dataText[0] = 0;
     lineInfo[lineCount].dataTextLength = 0;
     lineInfo[lineCount].isLabel = 0;
@@ -758,6 +760,8 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         if (symbolName != NULL) {
             lineInfo[lineCount].dataText[0] = 0;
             lineInfo[lineCount].dataTextLength = 0;
+            lineInfo[lineCount].addr[0] = 0;
+            lineInfo[lineCount].addrLength = 0;
             sprintf(lineInfo[lineCount].text, "%s:", symbolName);
             lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
             lineInfo[lineCount].address = addr;
@@ -766,8 +770,9 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
             lineCount++;
         }
 
-        sprintf(lineInfo[lineCount].text, "%.4X:               ", addr);
-        int len = dasm(memory, addr, lineInfo[lineCount].text + 18);
+        sprintf(lineInfo[lineCount].addr, "%.4X:", addr);
+        lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
+        int len = dasm(memory, addr, lineInfo[lineCount].text);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
         lineInfo[lineCount].address = addr;
         lineInfo[lineCount].haspc = addr == pc;
@@ -795,6 +800,8 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         currentLine = programCounter;
     }
     updateScroll();
+
+    NotifyCursorPresent(true, breakpoint[lineInfo[currentLine].address] != BP_NONE, breakpointCount > 0);
 
     SetFocus(hwnd);
     InvalidateRect(hwnd, NULL, TRUE);
@@ -997,7 +1004,10 @@ void Disassembly::drawText(int top, int bottom)
             r.left -= 6 * textWidth;
             SetTextColor(hMemdc, i == currentLine && hasKeyboardFocus ? colorWhite : colorBlack);
 
+            DrawText(hMemdc, lineInfo[i].addr, lineInfo[i].addrLength, &r, DT_LEFT);
+            r.left += 16 * textWidth;
             DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
+            r.left -= 16 * textWidth;
         }
         r.top += textHeight;
         r.bottom += textHeight;
