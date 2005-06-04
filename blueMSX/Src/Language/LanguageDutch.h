@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-15 22:02:36 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -590,6 +590,22 @@ void langInitDutch(LanguageStrings* ls)
     
     ls->propPorts               = "Poorten";
     ls->propPortsNone           = "Geen";
+
+    // New entries in 2.3 
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
+
+    ls->propPortsSimplCovox = "SiMPL / Covox DAC"; 
+    ls->propPortsFile = "Afdrukken naar bestand"; 
+    ls->propPortsOpenLogFile = "Log bestand openen"; 
+    ls->propPortsFilenameText = "Bestandsnaam:"; 
+    ls->propPortsEmulateMsxPrn = "Emulatie:"; 
+
+    ls->shortcutPrnFormFeed = "Printer pagina doorvoer"; 
+
+    ls->menuPrnFormfeed = "Pagina doorvoer"; 
+    ls->menuFilePrn = "Printer"; 
+    ls->propPortsComFile = "Stuur naar bestand"; 
+
 };
 
 #endif

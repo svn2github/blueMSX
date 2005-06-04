@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperASCII8sram.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:00 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,8 +134,11 @@ int romMapperASCII8sramCreate(char* filename, UInt8* romData,
     RomMapperASCII8sram* rm;
     int i;
 
-    if (size < 0x8000) {
-        return 0;
+    int origSize = size;
+    
+    size = 0x8000;
+    while (size <= origSize) {
+        size *= 2;
     }
 
     rm = malloc(sizeof(RomMapperASCII8sram));
@@ -143,8 +146,8 @@ int romMapperASCII8sramCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_ASCII8SRAM, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
 
-    rm->romData = malloc(size);
-    memcpy(rm->romData, romData, size);
+    rm->romData = calloc(1, size);
+    memcpy(rm->romData, romData, origSize);
     memset(rm->sram, 0, 0x2000);
     rm->romMask = size / 0x2000 - 1;
     rm->slot  = slot;

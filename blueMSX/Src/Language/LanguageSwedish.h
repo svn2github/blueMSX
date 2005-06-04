@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-03-15 22:02:39 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -574,6 +574,21 @@ void langInitSwedish(LanguageStrings* ls)
     
     ls->propPorts               = "Portar";
     ls->propPortsNone           = "Ingen";
+
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
+    ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
+    ls->propPortsFile           = "Skriv till Fil";
+    ls->propPortsOpenLogFile    = "Öppna Logfil";
+    ls->propPortsFilenameText   = "Filenamn:";
+    ls->propPortsEmulateMsxPrn  = "Emulering:";
+
+    ls->shortcutPrnFormFeed     = "Form Feed på Skrivare";
+
+    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuFilePrn             = "Skrivare";
+    ls->propPortsComFile        = "Skicka till Fil";
 };
 
 #endif

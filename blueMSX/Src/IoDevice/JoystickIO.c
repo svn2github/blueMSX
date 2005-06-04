@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-06-04 08:47:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -191,7 +191,7 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
 
         if (joyIO->controls[1].type == JOYTYPE_MOUSE && !joyIO->mouseAsJoystick) {
             if ((value ^ joyIO->registers[1]) & 0x20) {
-                if (systemTime - joyIO->controls[1].joyClock > boardFrequency() / 3500) {
+                if (systemTime - joyIO->controls[1].joyClock > boardFrequency() / 2500) {
                     joyIO->controls[1].count = 0;
                 }
                 joyIO->controls[1].joyClock = systemTime;
@@ -216,7 +216,7 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
 
         if (joyIO->controls[0].type == JOYTYPE_MOUSE && !joyIO->mouseAsJoystick) {
             if ((value ^ joyIO->registers[1]) & 0x10) {
-                if (systemTime - joyIO->controls[0].joyClock > boardFrequency() / 3500) {
+                if (systemTime - joyIO->controls[0].joyClock > boardFrequency() / 2500) {
                     joyIO->controls[0].count = 0;
                 }
                 joyIO->controls[0].joyClock = systemTime;

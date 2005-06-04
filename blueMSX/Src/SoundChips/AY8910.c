@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-25 22:18:04 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,10 +39,17 @@
 #define BASE_PHASE_STEP 0x28959becUL  /* = (1 << 28) * 3579545 / 32 / 44100 */
 #define BUFFER_SIZE     10000
 
+#if 0
 static const Int16 voltTable[16] = {
     0x0000, 0x004f, 0x00b4, 0x0133, 0x01d4, 0x029f, 0x03a1, 0x04e7, 
     0x0683, 0x088c, 0x0b1f, 0x0e62, 0x1281, 0x17b8, 0x1e50, 0x26a9
 };
+#else
+static const Int16 voltTable[16] = {
+    0x0000, 0x003e, 0x004d, 0x0074, 0x009d, 0x00ed, 0x0145, 0x01d8, 
+    0x02ee, 0x0449, 0x0664, 0x0988, 0x0d05, 0x13cd, 0x1bb0, 0x26a9
+};
+#endif
 
 static const UInt8 regMask[16] = {
     0xff, 0x0f, 0xff, 0x0f, 0xff, 0x0f, 0x1f, 0x3f, 

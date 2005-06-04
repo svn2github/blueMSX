@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperASCII16.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:00 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,6 +120,12 @@ int romMapperASCII16Create(char* filename, UInt8* romData,
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperASCII16* rm;
     int i;
+    int origSize = size;
+    
+    size = 0x8000;
+    while (size <= origSize) {
+        size *= 2;
+    }
 
     rm = malloc(sizeof(RomMapperASCII16));
 
@@ -128,8 +134,8 @@ int romMapperASCII16Create(char* filename, UInt8* romData,
 
     size = (size + 0x3fff) & ~0x3fff;
 
-    rm->romData = malloc(size);
-    memcpy(rm->romData, romData, size);
+    rm->romData = calloc(1, size);
+    memcpy(rm->romData, romData, origSize);
     rm->romMask = size / 0x4000 - 1;
     rm->slot  = slot;
     rm->sslot = sslot;

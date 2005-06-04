@@ -38,7 +38,7 @@
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/fMSXwin.pdb"
+				ProgramDatabaseFile="$(OutDir)/blueMSX.pdb"
 				GenerateMapFile="TRUE"
 				SubSystem="1"
 				TargetMachine="1"/>

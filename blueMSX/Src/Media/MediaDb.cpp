@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-05-22 20:10:34 $
+** $Date: 2005-06-04 08:47:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -841,7 +841,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 
     /* Count occurences of characteristic addresses */
     for (i = 0; i < size - 2; i++) {
-        UInt8 value = romData[i] + ((int)romData[i + 1] << 8) + ((int)romData[i + 2] << 16);
+        int value = romData[i] + ((int)romData[i + 1] << 8) + ((int)romData[i + 2] << 16);
 
         switch(value) {
         case 0x400032: 

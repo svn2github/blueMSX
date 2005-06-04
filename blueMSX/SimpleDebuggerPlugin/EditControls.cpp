@@ -83,8 +83,8 @@ void HexInputDialog::setFocus()
 
 WORD HexInputDialog::getValue() 
 {
-    GETTEXTEX t = {15, GT_DEFAULT, CP_ACP, NULL, NULL};
-    char text[16];
+    GETTEXTEX t = {63, GT_DEFAULT, CP_ACP, NULL, NULL};
+    char text[63];
     int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
     text[len] = 0;
 
