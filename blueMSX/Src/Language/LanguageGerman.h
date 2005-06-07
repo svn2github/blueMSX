@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.1 $ 
+** $Revision: 1.2 $ 
 **
-** $Date: 2005-05-19 23:39:27 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -578,6 +578,7 @@ void langInitGerman(LanguageStrings* ls)
     // New entries in 2.3
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
+    ls->propPortsFile           = "Print to File";
     ls->propPortsOpenLogFile    = "Open Log File";
     ls->propPortsFilenameText   = "Filename:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
@@ -586,8 +587,9 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Printer";
-
+    ls->propPortsComFile        = "Send to File";
 };
+
 
 
 #endif

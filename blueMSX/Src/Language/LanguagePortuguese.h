@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-03-15 22:02:39 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -578,6 +578,21 @@ void langInitPortuguese(LanguageStrings* ls)
     
     ls->propPorts               = "Portas";
     ls->propPortsNone           = "Nenhum";
+
+    // New entries in 2.3 
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
+
+    ls->propPortsSimplCovox     = "SiMPL / Covox DAC"; 
+    ls->propPortsFile           = "Imprimir em arquivo"; 
+    ls->propPortsOpenLogFile    = "Abrir um arquivo de dados"; 
+    ls->propPortsFilenameText   = "Nome:"; 
+    ls->propPortsEmulateMsxPrn  = "Emulação:"; 
+
+    ls->shortcutPrnFormFeed     = "Passagem para a página seguinte"; 
+
+    ls->menuPrnFormfeed         = "Página seguinte"; 
+    ls->menuFilePrn             = "Impressora"; 
+    ls->propPortsComFile        = "Enviar para arquivo";
 };
 
 #endif

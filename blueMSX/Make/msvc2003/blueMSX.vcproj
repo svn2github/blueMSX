@@ -1076,6 +1076,9 @@
 					RelativePath="..\..\Src\Language\LanguageKorean.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Language\LanguagePolish.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Language\LanguagePortuguese.h">
 				</File>
 				<File

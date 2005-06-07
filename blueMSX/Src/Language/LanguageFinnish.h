@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-03-15 22:02:38 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -573,6 +573,21 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->propPorts               = "Ports";
     ls->propPortsNone           = "Ei käytössä";
+
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
+    ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
+    ls->propPortsFile           = "Print to File";
+    ls->propPortsOpenLogFile    = "Open Log File";
+    ls->propPortsFilenameText   = "Filename:";
+    ls->propPortsEmulateMsxPrn  = "Emulation:";
+
+    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+
+    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuFilePrn             = "Printer";
+    ls->propPortsComFile        = "Send to File";
 
 };
 

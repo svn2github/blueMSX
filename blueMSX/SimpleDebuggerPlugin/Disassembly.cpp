@@ -716,6 +716,19 @@ void Disassembly::updateBreakpoints()
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
+bool Disassembly::setStepOverBreakpoint()
+{
+    char str[64];
+    runtoBreakpoint = (backupPc + dasm(backupMemory, backupPc, str)) & 0xffff;
+    // If call or rst instruction we need to set a runto breakpoint
+    // otherwise its just a regular single step
+    bool step = strncmp(str, "call", 4) != 0 && strncmp(str, "call", 4) != 0;
+    if (!step) {
+        SetBreakpoint(runtoBreakpoint);
+    }
+    return step;
+}
+
 void Disassembly::setRuntoBreakpoint()
 {
     if (currentLine >= 0) {

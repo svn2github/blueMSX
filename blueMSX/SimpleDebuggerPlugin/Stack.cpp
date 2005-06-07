@@ -226,8 +226,8 @@ void StackWindow::updateContent(BYTE* memory, WORD sp)
     lineCount = 0;
 
     for (int addr = sp; addr < 0x10000 && addr < sp + MAX_LINES; ) {
-        WORD newValue = ((int)memory[addr] << 8) | memory[addr + 1];
-        WORD oldValue = ((int)backupMemory[addr] << 8) | backupMemory[addr + 1];
+        WORD newValue = ((int)memory[addr + 1] << 8) | memory[addr];
+        WORD oldValue = ((int)backupMemory[addr + 1] << 8) | backupMemory[addr];
         sprintf(lineInfo[lineCount].text, "%.4X: ", addr);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
         sprintf(lineInfo[lineCount].dataText, "%.4X", newValue);

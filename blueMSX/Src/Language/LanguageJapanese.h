@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-03-15 22:02:38 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -582,6 +582,21 @@ void langInitJapanese(LanguageStrings* ls)
     
     ls->propPorts               = "ƒ|[ƒg";
     ls->propPortsNone           = "‚È‚µ";
+
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
+    ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
+    ls->propPortsFile           = "Print to File";
+    ls->propPortsOpenLogFile    = "Open Log File";
+    ls->propPortsFilenameText   = "Filename:";
+    ls->propPortsEmulateMsxPrn  = "Emulation:";
+
+    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+
+    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuFilePrn             = "Printer";
+    ls->propPortsComFile        = "Send to File";
 };
 
 

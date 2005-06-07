@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-05-23 00:08:26 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,8 @@ typedef enum {
     EMU_LANG_FINNISH    = 8,
     EMU_LANG_KOREAN     = 9,
     EMU_LANG_GERMAN     = 10,
-    EMU_LANG_COUNT      = 11,
+    EMU_LANG_POLISH     = 11,
+    EMU_LANG_COUNT      = 12,
     EMU_LANG_UNKNOWN    = -1 
 } EmuLanguageType;
 

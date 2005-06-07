@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.9 $ + additions 2005/03/03
+** $Revision: 1.10 $ + additions 2005/03/03
 **
-** $Date: 2005-03-15 22:02:39 $
+** $Date: 2005-06-07 02:41:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -569,6 +569,21 @@ void langInitKorean(LanguageStrings* ls)
     
     ls->propPorts               = "포트";
     ls->propPortsNone           = "없음";
+
+    // New entries in 2.3
+    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
+    ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
+    ls->propPortsFile           = "Print to File";
+    ls->propPortsOpenLogFile    = "Open Log File";
+    ls->propPortsFilenameText   = "Filename:";
+    ls->propPortsEmulateMsxPrn  = "Emulation:";
+
+    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+
+    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuFilePrn             = "Printer";
+    ls->propPortsComFile        = "Send to File";
 };
 
 #endif
