@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2005-05-24 07:52:46 $
+** $Date: 2005-06-10 02:09:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -708,9 +708,9 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->emulationRunPause))            actionEmuTogglePause();
     if (hotkeyEq(key, s->emulationStop))                actionEmuStop();
     if (hotkeyEq(key, s->emuSpeedNormal))               actionEmuSpeedNormal();
-    if (hotkeyEq(key, s->emuSpeedInc))                  actionEmuSpeedDecrease();
+    if (hotkeyEq(key, s->emuSpeedInc))                  actionEmuSpeedIncrease();
     if (hotkeyEq(key, s->emuSpeedToggle))               actionMaxSpeedToggle();
-    if (hotkeyEq(key, s->emuSpeedDec))                  actionEmuSpeedIncrease();
+    if (hotkeyEq(key, s->emuSpeedDec))                  actionEmuSpeedDecrease();
     if (hotkeyEq(key, s->windowSizeSmall))              actionWindowSizeSmall();
     if (hotkeyEq(key, s->windowSizeNormal))             actionWindowSizeNormal();
     if (hotkeyEq(key, s->windowSizeMinimized))          actionWindowSizeMinimized();

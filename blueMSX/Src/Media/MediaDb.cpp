@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-06-04 08:47:57 $
+** $Date: 2005-06-10 02:09:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -917,3 +917,13 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     return mediaType;
 }
 
+#if 0
+// COUNTRY CODES:<Vampier> UPDATE benoit set country ='JP' WHERE country =  "Japan";
+<Vampier> UPDATE benoit set country ='KR' WHERE country =  "Korea";
+<Vampier> UPDATE benoit set country ='NL' WHERE country =  "The Netherlands";
+<Vampier> UPDATE benoit set country ='GB' WHERE country =  "England";
+<Vampier> UPDATE benoit set country ='FR' WHERE country =  "France";
+<Vampier> UPDATE benoit set country ='ES' WHERE country =  "Spain";
+<Vampier> UPDATE benoit set country ='BR' WHERE country =  "Brazil";
+<Vampier> UPDATE benoit set country ='MA' WHERE country =  "Arabic";
+#endif
