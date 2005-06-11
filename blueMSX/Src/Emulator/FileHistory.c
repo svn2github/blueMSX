@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-11 16:49:43 $
+** $Date: 2005-06-11 21:15:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "Properties.h"
 #include "ziphelper.h"
 #include "RomLoader.h"
+#include "ArchNotifications.h"
 #include <stdio.h>
 #include <sys/stat.h>
 #include <direct.h>
@@ -109,15 +110,14 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_MEGARAM2M)) 
         {
             struct stat s;
-            int rv = stat(fname, &s);
-            if (rv == 0 && (s.st_mode & S_IFDIR)) {
+            int rv = archFileExists(fname);
+            if (rv) {
+                rv = stat(fname, &s) == 0;
+            }
+            if (rv && (s.st_mode & S_IFDIR)) {
             }
             else {
-                FILE* file = fopen(fname, "r");
-                if (file != NULL) {
-                    fclose(file);
-                }
-                else {
+                if (!archFileExists(fname)) {
                     if (i == MAX_HISTORY - 1) {
                         *(history + MAX_PATH * i) = 0;
                     }
@@ -141,19 +141,17 @@ int fileExist(char* fileName, char* zipFile) {
     }
 
     if (zipFile == NULL || *zipFile == 0) {
-        FILE* file = fopen(fileName, "r");
-        if (file != NULL) {
-            fclose(file);
-            return 1;
-        }
+        return archFileExists(fileName);
         return 0;
     }
     else {
-        int size;
-        char* buf = zipLoadFile(zipFile, fileName, &size);
-        if (buf != NULL) {
-            free(buf);
-            return 1;
+        if (archFileExists(fileName)) {
+            int size;
+            char* buf = zipLoadFile(zipFile, fileName, &size);
+            if (buf != NULL) {
+                free(buf);
+                return 1;
+            }
         }
         return 0;
     }

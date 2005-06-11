@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-06-10 02:09:02 $
+** $Date: 2005-06-11 21:15:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,22 @@ static MediaDb* romdb;
 static MediaDb* diskdb;
 static MediaDb* casdb;
 static RomType  romdbDefaultType = ROM_UNKNOWN;
+
+
+static string parseCountryCode(const string& code)
+{
+    if (code == "SE" || code == "se") return "Sweden";
+    if (code == "JP" || code == "jp") return "Japan";
+    if (code == "KR" || code == "kr") return "Korea";
+    if (code == "NL" || code == "nl") return "The Netherlands";
+    if (code == "GB" || code == "gb") return "England";
+    if (code == "FR" || code == "fr") return "France";
+    if (code == "ES" || code == "es") return "Spain";
+    if (code == "BR" || code == "br") return "Brazil";
+    if (code == "MA" || code == "ma") return "Arabic";
+
+    return code;
+}
 
 RomType mediaDbStringToType(const std::string name)
 {
@@ -493,7 +509,7 @@ extern "C" void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
             if (strcmp(item->Value(), "country") == 0) {
                 TiXmlNode* name = item->FirstChild();
                 if (name != NULL) {
-                    country = name->Value();
+                    country = parseCountryCode(name->Value());
                 }
             }
             if (strcmp(item->Value(), "year") == 0) {
@@ -916,14 +932,3 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     
     return mediaType;
 }
-
-#if 0
-// COUNTRY CODES:<Vampier> UPDATE benoit set country ='JP' WHERE country =  "Japan";
-<Vampier> UPDATE benoit set country ='KR' WHERE country =  "Korea";
-<Vampier> UPDATE benoit set country ='NL' WHERE country =  "The Netherlands";
-<Vampier> UPDATE benoit set country ='GB' WHERE country =  "England";
-<Vampier> UPDATE benoit set country ='FR' WHERE country =  "France";
-<Vampier> UPDATE benoit set country ='ES' WHERE country =  "Spain";
-<Vampier> UPDATE benoit set country ='BR' WHERE country =  "Brazil";
-<Vampier> UPDATE benoit set country ='MA' WHERE country =  "Arabic";
-#endif

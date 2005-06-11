@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-06-04 08:47:57 $
+** $Date: 2005-06-11 21:15:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,7 @@ static const Int16 voltTable[16] = {
     0x0683, 0x088c, 0x0b1f, 0x0e62, 0x1281, 0x17b8, 0x1e50, 0x26a9
 };
 #else
-static const Int16 voltTable[16] = {
+static Int16 voltTable[16] = {
     0x0000, 0x003e, 0x004d, 0x0074, 0x009d, 0x00ed, 0x0145, 0x01d8, 
     0x02ee, 0x0449, 0x0664, 0x0988, 0x0d05, 0x13cd, 0x1bb0, 0x26a9
 };
@@ -200,6 +200,18 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
     int i;
+
+#if 0
+    {
+        int i;
+        double v = voltTable[15];
+        for (i = 15; i > 0; i--) {
+            voltTable[i] = (Int16)v;
+            v *= 0.70710678118654752440084436210485;
+        }
+        voltTable[0] = 0;
+    }
+#endif
 
     ay8910->mixer = mixer;
     ay8910->connector = connector;

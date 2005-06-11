@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-02-10 01:37:38 $
+** $Date: 2005-06-11 21:15:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,4 +63,5 @@ void archEmulationStartNotification();
 void archEmulationStopNotification();
 void archEmulationStartFailure();
 
+int archFileExists(const char* fileName);
 #endif

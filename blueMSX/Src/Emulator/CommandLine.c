@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-05 03:24:49 $
+** $Date: 2005-06-11 21:15:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,6 +72,13 @@ static int isRomFileType(char* filename, char* inZip) {
             return 1;
         }
         
+        fileList = zipGetFileList(filename, ".ri", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
+        
         fileList = zipGetFileList(filename, ".mx1", &count);
         if (fileList) {
             strcpy(inZip, fileList);
@@ -97,6 +104,7 @@ static int isRomFileType(char* filename, char* inZip) {
     }
 
     return isFileExtension(filename, ".rom") ||
+           isFileExtension(filename, ".ri")  ||
            isFileExtension(filename, ".mx1") ||
            isFileExtension(filename, ".mx2") ||
            isFileExtension(filename, ".col");
@@ -129,13 +137,29 @@ static int isDskFileType(char* filename, char* inZip) {
             free(fileList);
             return 1;
         }
+        
+        fileList = zipGetFileList(filename, ".360", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
+        
+        fileList = zipGetFileList(filename, ".720", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
 
         return 0;
     }
 
     return isFileExtension(filename, ".dsk") ||
            isFileExtension(filename, ".di1") ||
-           isFileExtension(filename, ".di2");
+           isFileExtension(filename, ".di2") ||
+           isFileExtension(filename, ".360") ||
+           isFileExtension(filename, ".720");
 }
 
 static int isCasFileType(char* filename, char* inZip) {

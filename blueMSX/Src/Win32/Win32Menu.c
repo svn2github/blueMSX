@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-05-17 04:50:31 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -364,6 +364,9 @@ static HMENU menuCreateCartA(Properties* pProperties, Shortcuts* shortcuts, int 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert1));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEA, langBuffer);
 
+    verifyFileHistory(pProperties->cartridge.slotA,
+                      &pProperties->cartridge.slotAType);
+
     _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->cartridge.slotA ? ": " : ""), stripPath(pProperties->cartridge.slotA));
     AppendMenu(hMenu, MF_STRING | (*pProperties->cartridge.slotA ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEA, langBuffer);
 
@@ -482,6 +485,9 @@ static HMENU menuCreateCartB(Properties* pProperties, Shortcuts* shortcuts, int 
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert2));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEB, langBuffer);
+
+    verifyFileHistory(pProperties->cartridge.slotB,
+                      &pProperties->cartridge.slotBType);
 
     _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->cartridge.slotB ? ": " : ""), stripPath(pProperties->cartridge.slotB));
     AppendMenu(hMenu, MF_STRING | (*pProperties->cartridge.slotB ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEB, langBuffer);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-03-04 07:03:03 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -232,7 +232,8 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
                 sn76489->toneStep[3] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
             }
 
-			sn76489->noiseRand = 0x0f35;
+//			sn76489->noiseRand = 0x0f35;
+			sn76489->noiseRand = 0x4000;
 			break;
 		}
 	}
@@ -275,10 +276,14 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
             tonePhase += phaseStep;
             while (tonePhase >> 28) {
                 tonePhase -= 1 << 28;
-                if (sn76489->noiseRand & 1) {
-                    sn76489->noiseRand ^= (sn76489->regs[6] & 0x04) ? 0x14002 : 0x8000;
-                }
-                sn76489->noiseRand >>= 1;
+//                if (sn76489->noiseRand & 1) {
+//                    sn76489->noiseRand ^= (sn76489->regs[6] & 0x04) ? 0x14002 : 0x8000;
+//                }
+//                sn76489->noiseRand >>= 1;
+                sn76489->noiseRand = (sn76489->noiseRand >> 1) | 
+                    ((sn76489->regs[6] & 0x04) ? 
+                        ((sn76489->noiseRand ^ (sn76489->noiseRand >> 1)) & 1) << 14 : 
+                        (sn76489->noiseRand & 1) << 14);
             }
             tone += sn76489->noiseRand & 1;
         }

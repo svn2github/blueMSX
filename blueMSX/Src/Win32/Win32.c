@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2005-06-10 02:09:03 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <CommCtrl.h>
 #include <shlobj.h> 
-
+#include <shlwapi.h>
 #include "Win32FileTypes.h"
 #include "Win32ThemeClassic.h"
 #include "Board.h"
@@ -302,7 +302,9 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
     index = SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETCURSEL, 0, 0);
     SendDlgItemMessage(hDlg, IDC_DSKLIST, LB_GETTEXT, index, (LPARAM)fileName);
     
-    if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || isFileExtension(fileName, ".col")) {
+    if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".ri") ||
+        isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || 
+        isFileExtension(fileName, ".col")) {
         buf = romLoad(dlgInfo->zipFileName, fileName, &size);
     }
 
@@ -951,7 +953,10 @@ static void registerFileTypes() {
     registerFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".di1", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".di2", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".360", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".720", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".rom", "blueMSXrom", "ROM Image", 2);
+    registerFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     registerFileType(".mx1", "blueMSXrom", "ROM Image", 2);
     registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
     registerFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
@@ -963,7 +968,10 @@ static void unregisterFileTypes() {
     unregisterFileType(".dsk", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".di1", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".di2", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".360", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".720", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".rom", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
@@ -2848,6 +2856,9 @@ void archEmulationStartFailure() {
      MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
 }
 
-
+int archFileExists(const char* fileName)
+{
+    return PathFileExists(fileName);
+}
 
 

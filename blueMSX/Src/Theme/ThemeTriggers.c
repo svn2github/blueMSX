@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-05-09 05:04:16 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Martijn van Tienen,  "
                 "Víctor Fernández Sánchez,  "
                 "William Ouwehand,  "
+                "Jacek Bogucki (Gucek),  "
                 "Miikka \"MP83\" Poikela,  "
                 "Davide Platania a.k.a. Kruznak,  "
                 "Wouter Vermaelen,  "

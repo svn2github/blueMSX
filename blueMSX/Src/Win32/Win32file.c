@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-03-07 05:33:03 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -175,18 +175,23 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
 
                     if (isFileExtension(fileName, ".zip")) {
                         int countRom;
+                        int countRi;
                         int countMx1;
                         int countMx2;
                         int countCol;
                         char* fileListRom = zipGetFileList(fileName, ".rom", &countRom);
+                        char* fileListRi  = zipGetFileList(fileName, ".ri",  &countRi);
                         char* fileListMx1 = zipGetFileList(fileName, ".mx1", &countMx1);
                         char* fileListMx2 = zipGetFileList(fileName, ".mx2", &countMx2);
                         char* fileListCol = zipGetFileList(fileName, ".col", &countCol);
-                        int count = countRom + countMx1 + countMx2 + countCol;
+                        int count = countRom + countRi + countMx1 + countMx2 + countCol;
 
                         if (count == 1) {
                             if (countRom == 1) {
                                 buf = romLoad(fileName, fileListRom, &size);
+                            }
+                            if (countRi == 1) {
+                                buf = romLoad(fileName, fileListRi, &size);
                             }
                             if (countMx1 == 1) {
                                 buf = romLoad(fileName, fileListMx1, &size);
@@ -200,6 +205,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         }
 
                         if (fileListRom) free(fileListRom);
+                        if (fileListRi)  free(fileListRi);
                         if (fileListMx1) free(fileListMx1);
                         if (fileListMx2) free(fileListMx2);
                         if (fileListCol) free(fileListCol);

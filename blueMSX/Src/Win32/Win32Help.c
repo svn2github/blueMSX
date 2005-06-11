@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-05-09 05:04:16 $
+** $Date: 2005-06-11 21:15:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,6 +89,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                      "Martijn van Tienen\r\n"
                                      "Víctor Fernández Sánchez\r\n"
                                      "William Ouwehand\r\n"
+                                     "Jacek Bogucki (Gucek)\r\n"
                                      "Miikka \"MP83\" Poikela\r\n"
                                      "Davide Platania a.k.a. Kruznak\r\n"
                                      "Wouter Vermaelen\r\n"

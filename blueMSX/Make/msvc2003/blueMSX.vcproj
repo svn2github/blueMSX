@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
