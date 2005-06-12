@@ -217,6 +217,14 @@ void CallstackWindow::refresh()
     updateContent(backupCallstack, backupSize);
 }
 
+int CallstackWindow::getMostRecent()
+{
+    if (backupSize > 0) {
+        return (backupCallstack[backupSize - 1] - 1) & 0xffff;
+    }
+    return -1;
+}
+
 void CallstackWindow::updateContent(DWORD* callstack, int size)
 {
     currentLine = -1;

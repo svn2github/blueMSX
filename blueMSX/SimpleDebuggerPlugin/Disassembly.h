@@ -54,6 +54,7 @@ public:
     void updateScroll(int address = -1);
     void updateBreakpoints();
     bool setStepOverBreakpoint();
+    void setStepOutBreakpoint(WORD address);
     void setRuntoBreakpoint();
     void clearRuntoBreakpoint();
     void setCursor(WORD address);

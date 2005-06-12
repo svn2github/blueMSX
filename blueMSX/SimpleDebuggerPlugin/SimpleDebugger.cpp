@@ -36,13 +36,14 @@ static Memory* memory = NULL;
 #define TB_RUN       37003
 #define TB_SHOWNEXT  37004
 #define TB_STEPIN    37005
-#define TB_STEPOVER  37006
-#define TB_RUNTO     37007
-#define TB_BPTOGGLE  37008
-#define TB_BPENABLE  37009
-#define TB_BPENALL   37010
-#define TB_BPDISALL  37011
-#define TB_BPREMALL  37012
+#define TB_STEPOUT   37006
+#define TB_STEPOVER  37007
+#define TB_RUNTO     37008
+#define TB_BPTOGGLE  37009
+#define TB_BPENABLE  37010
+#define TB_BPENALL   37011
+#define TB_BPDISALL  37012
+#define TB_BPREMALL  37013
 
 static void updateTooltip(int id, char* str)
 {
@@ -54,6 +55,7 @@ static void updateTooltip(int id, char* str)
     case TB_SHOWNEXT: sprintf(str, "Show Next Statement");       break;
     case TB_STEPIN:   sprintf(str, "Step Into");                 break;
     case TB_STEPOVER: sprintf(str, "Step Over");                 break;
+    case TB_STEPOUT:  sprintf(str, "Step Out");                  break;
     case TB_RUNTO:    sprintf(str, "Run To Cursor");             break;
     case TB_BPTOGGLE: sprintf(str, "Set/Remove Breakpoint");     break;
     case TB_BPENABLE: sprintf(str, "Enable/Disable Breakpoint"); break;
@@ -76,13 +78,14 @@ static Toolbar* initializeToolbar(HWND owner)
     toolBar->addButton(4,  TB_SHOWNEXT);
     toolBar->addButton(5,  TB_STEPIN);
     toolBar->addButton(6,  TB_STEPOVER);
+    toolBar->addButton(8,  TB_STEPOUT);
     toolBar->addButton(7,  TB_RUNTO);
     toolBar->addSeparator();
-    toolBar->addButton(11, TB_BPTOGGLE);
-    toolBar->addButton(12, TB_BPENABLE);
-    toolBar->addButton(10, TB_BPENALL);
-    toolBar->addButton(9,  TB_BPDISALL);
-    toolBar->addButton(8,  TB_BPREMALL);
+    toolBar->addButton(12, TB_BPTOGGLE);
+    toolBar->addButton(13, TB_BPENABLE);
+    toolBar->addButton(11, TB_BPENALL);
+    toolBar->addButton(10, TB_BPDISALL);
+    toolBar->addButton(9,  TB_BPREMALL);
 
     return toolBar;
 }
@@ -103,12 +106,13 @@ static void updateToolBar()
     toolBar->enableItem(6, state == EMULATOR_PAUSED);
     toolBar->enableItem(7, state == EMULATOR_PAUSED);
     toolBar->enableItem(8, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
+    toolBar->enableItem(9, state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0);
 
-    toolBar->enableItem(10, state != EMULATOR_STOPPED && disassembly->isCursorPresent());
-    toolBar->enableItem(11, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
-    toolBar->enableItem(12, disassembly->getDisabledBpCount() > 0);
-    toolBar->enableItem(13, disassembly->getEnabledBpCount() > 0);
-    toolBar->enableItem(14, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
+    toolBar->enableItem(11, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
+    toolBar->enableItem(12, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
+    toolBar->enableItem(13, disassembly->getDisabledBpCount() > 0);
+    toolBar->enableItem(14, disassembly->getEnabledBpCount() > 0);
+    toolBar->enableItem(15, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
 }
 
 static void updateStatusBar()
@@ -139,14 +143,15 @@ static void updateStatusBar()
 #define MENU_DEBUG_RESTART          37203
 #define MENU_DEBUG_STEP             37204
 #define MENU_DEBUG_STEP_OVER        37205
-#define MENU_DEBUG_RUNTO            37206
-#define MENU_DEBUG_SHOWSYMBOLS      37207
-#define MENU_DEBUG_GOTO             37208
-#define MENU_DEBUG_BPTOGGLE         37209
-#define MENU_DEBUG_BPENABLE         37210
-#define MENU_DEBUG_BPREMOVEALL      37211
-#define MENU_DEBUG_BPENABLEALL      37212
-#define MENU_DEBUG_BPDISABLEALL     37213
+#define MENU_DEBUG_STEP_OUT         37206
+#define MENU_DEBUG_RUNTO            37207
+#define MENU_DEBUG_SHOWSYMBOLS      37208
+#define MENU_DEBUG_GOTO             37209
+#define MENU_DEBUG_BPTOGGLE         37210
+#define MENU_DEBUG_BPENABLE         37211
+#define MENU_DEBUG_BPREMOVEALL      37212
+#define MENU_DEBUG_BPENABLEALL      37213
+#define MENU_DEBUG_BPDISABLEALL     37214
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -177,6 +182,7 @@ static void updateWindowMenu()
     }
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP,      "Step Into\tF11");
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP_OVER, "Step Over\tF10");
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0? 0 : MF_GRAYED), MENU_DEBUG_STEP_OUT,  "Step Out\tShift+F11");
 
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
@@ -405,8 +411,8 @@ void updateDeviceState()
         cpuRegisters->invalidateContent();
         callstack->invalidateContent();
         stack->invalidateContent();
-        DebuggerUpdate();
     }
+    DebuggerUpdate();
 }
 
 
@@ -533,25 +539,29 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP_OVER, 0);
                 break;
             case 7:
+                if (GetEmulatorState() == EMULATOR_PAUSED && callstack->getMostRecent() >= 0)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP_OUT, 0);
+                break;
+            case 8:
                 if (GetEmulatorState() == EMULATOR_PAUSED && disassembly->isCursorPresent())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_RUNTO, 0);
                 break;
-            case 8:
+            case 9:
                 if (GetEmulatorState() != EMULATOR_STOPPED && disassembly->isCursorPresent())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPTOGGLE, 0);
                 break;
-            case 9:
+            case 10:
                 if (GetEmulatorState() != EMULATOR_STOPPED && disassembly->isBpOnCcursor())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
                 break;
-            case 10:
+            case 11:
                 if (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
                 break;
-            case 11:
+            case 12:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
                 break;
-            case 12:
+            case 13:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_GOTO, 0);
                 break;
             }
@@ -665,6 +675,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 }
             }
             return 0;
+
+        case MENU_DEBUG_STEP_OUT:
+        case TB_STEPOUT:
+            disassembly->setStepOutBreakpoint((WORD)callstack->getMostRecent());
+            EmulatorRun();
+            return 0;
             
         case MENU_DEBUG_RUNTO:
         case TB_RUNTO:
@@ -743,12 +759,13 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
             RegisterHotKey(hwnd, 5,  0, VK_F11);
             RegisterHotKey(hwnd, 6,  0, VK_F10);
-            RegisterHotKey(hwnd, 7,  MOD_SHIFT, VK_F10);
-            RegisterHotKey(hwnd, 8,  0, VK_F9);
-            RegisterHotKey(hwnd, 9,  MOD_SHIFT, VK_F9);
-            RegisterHotKey(hwnd, 10, MOD_CONTROL | MOD_SHIFT, VK_F9);        
-            RegisterHotKey(hwnd, 11, 0, VK_F8);     
-            RegisterHotKey(hwnd, 12, MOD_CONTROL, 'G');
+            RegisterHotKey(hwnd, 7,  MOD_SHIFT, VK_F11);
+            RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F10);
+            RegisterHotKey(hwnd, 9,  0, VK_F9);
+            RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F9);
+            RegisterHotKey(hwnd, 11, MOD_CONTROL | MOD_SHIFT, VK_F9);        
+            RegisterHotKey(hwnd, 12, 0, VK_F8);     
+            RegisterHotKey(hwnd, 13, MOD_CONTROL, 'G');
         }
         else {
             int i;

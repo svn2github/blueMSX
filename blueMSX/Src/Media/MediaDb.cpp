@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-06-12 09:47:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -817,7 +817,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     const UInt8* romData = (const UInt8*)buffer;
     int i;
     int mapper;
-    int counters[6] = { 0, 0, 0, 0, 0, 0 };
+    UInt32 counters[6] = { 0, 0, 0, 0, 0, 0 };
 
     staticMediaType.romType = romdbDefaultType;
 
@@ -852,72 +852,62 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 		return mediaType;
 	}
 
-    counters[0]++; /* Mapper #0 is default */
-    counters[4]--; /* #5 preferred over #4 */
-
     /* Count occurences of characteristic addresses */
-    for (i = 0; i < size - 2; i++) {
-        int value = romData[i] + ((int)romData[i + 1] << 8) + ((int)romData[i + 2] << 16);
+    for (i = 0; i < size - 3; i++) {
+        if (romData[i] == 0x32) {
+            UInt32 value = romData[i + 1] + ((UInt32)romData[i + 2] << 8);
 
-        switch(value) {
-        case 0x400032: 
-            counters[3]++;
-            break;
+            switch(value) {
+            case 0x4000: 
+            case 0x8000: 
+            case 0xa000: 
+                counters[3]++;
+                break;
 
-        case 0x500032: 
-            counters[2]++;
-            break;
+            case 0x5000: 
+            case 0x9000: 
+            case 0xb000: 
+                counters[2]++;
+                break;
 
-        case 0x600032: 
-            counters[3]++;
-            counters[4]++;
-            counters[5]++;
-            break;
+            case 0x6000: 
+                counters[3]++;
+                counters[4]++;
+                counters[5]++;
+                break;
 
-        case 0x680032: 
-            counters[4]++;
-            break;
+            case 0x6800: 
+            case 0x7800: 
+                counters[4]++;
+                break;
 
-        case 0x700032: 
-            counters[2]++;
-            counters[4]++;
-            counters[5]++;
-            break;
+            case 0x7000: 
+                counters[2]++;
+                counters[4]++;
+                counters[5]++;
+                break;
 
-        case 0x780032: 
-            counters[4]++;
-            break;
-
-        case 0x77ff32: 
-            counters[5]++;
-            break;
-
-        case 0x800032: 
-            counters[3]++;
-            break;
-
-        case 0x900032: 
-            counters[2]++;
-            break;
-
-        case 0xa00032: 
-            counters[3]++;
-            break;
-
-        case 0xb00032: 
-            counters[2]++;
-            break;
+            case 0x77ff: 
+                counters[5]++;
+                break;
+            }
         }
     }
 
     /* Find which mapper type got more hits */
     mapper = 0;
 
-    for (i = 0; i < 6; i++) {
-        if (counters[i] > counters[mapper]) {
-            mapper = i;
-        }
-    }
+    counters[4] -= counters[4] ? 1 : 0;
+
+	for (i = 0; i <= 5; i++) {
+		if (counters[i] > 0 && counters[i] >= counters[mapper]) {
+			mapper = i;
+		}
+	}
+
+    if (mapper == 5 && counters[0] == counters[5]) {
+		mapper = 0;
+	}
 
     switch (mapper) {
     default:
@@ -927,7 +917,6 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     case 3: mediaType->romType = ROM_KONAMI4; break;
     case 4: mediaType->romType = ROM_ASCII8; break;
     case 5: mediaType->romType = ROM_ASCII16; break;
-    case 6: mediaType->romType = ROM_GAMEMASTER2; break;
     }
     
     return mediaType;

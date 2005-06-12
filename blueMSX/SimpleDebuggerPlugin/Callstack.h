@@ -43,6 +43,8 @@ public:
     void updatePosition(RECT& rect);
 
     void refresh();
+    
+    int  getMostRecent();
 
     void updateContent(DWORD* callstack, int size);
     void invalidateContent();

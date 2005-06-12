@@ -716,6 +716,13 @@ void Disassembly::updateBreakpoints()
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
+void Disassembly::setStepOutBreakpoint(WORD address)
+{
+    char str[64];
+    runtoBreakpoint = (address + dasm(backupMemory, address, str)) & 0xffff;
+    SetBreakpoint(runtoBreakpoint);
+}
+
 bool Disassembly::setStepOverBreakpoint()
 {
     char str[64];

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-05-24 07:52:47 $
+** $Date: 2005-06-12 09:47:51 $
 **
 ** Author: Daniel Vik
 **
@@ -145,6 +145,9 @@ static void writePort(R800* r800, UInt16 port, UInt8 value) {
     delayVdpS1990(r800, port);
     r800->writeIoPort(r800->ref, port, value);
     delayPostIo(r800);
+//    if ((port & 0xf8) == 0x98) {
+//        r800->systemTime += 6;
+//    }
 }
 
 static UInt8 readMem(R800* r800, UInt16 address) {
