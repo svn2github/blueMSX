@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-06-12 20:30:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,37 +71,40 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
    
                                      "%s\r\n\r\n"
 
-                                     "Patrick van Arkel\r\n"
-                                     "Shimanuki Koshi\r\n"
-                                     "Roger Filipe\r\n"
-                                     "Ricardo Bittencourt\r\n"
-                                     "Rudolf Lechleitner\r\n"
                                      "Albert Beevendorp\r\n"
-                                     "marco casali\r\n"
-                                     "MkII\r\n"
-                                     "Kobayashi Michiko\r\n"
+                                     "Rudolf Lechleitner\r\n"
+                                     "Ricardo Bittencourt\r\n"
+                                     "BouKiCHi\r\n"
+                                     "Tobias Keizer\r\n"
+                                     "Sandy Pleyte\r\n"
+                                     "Marco Casali\r\n"
+                                     "Fabio Albergaria Dias\r\n"
+                                     "SLotman\r\n"
+                                     "Tanni\r\n"
+                                     "Jon Cortázar Abraido\r\n"
+                                     "Hondarer\r\n"
+                                     "Wouter Vermaelen\r\n"
+                                     "Manuel Bilderbeek\r\n"
+                                     "Maarten ter Huurne\r\n"
+                                     "Patrick van Arkel\r\n"
+                                     "Martijn van Tienen\r\n"
+                                     "Laurent Halter\r\n"
+                                     "Glafouk\r\n"
                                      "Ulver\r\n"
                                      "Nicolas Beyaert\r\n"
-                                     "SLotman\r\n"
-                                     "Laurent Halter\r\n"
-                                     "Fabio Albergaria Dias\r\n"
-                                     "Glafouk\r\n"
-                                     "Martijn van Tienen\r\n"
                                      "Víctor Fernández Sánchez\r\n"
                                      "William Ouwehand\r\n"
                                      "Jacek Bogucki (Gucek)\r\n"
                                      "Miikka \"MP83\" Poikela\r\n"
-                                     "Davide Platania a.k.a. Kruznak\r\n"
-                                     "Wouter Vermaelen\r\n"
-                                     "Manuel Bilderbeek\r\n"
-                                     "Maarten ter Huurne\r\n"
-                                     "Tobias Keizer\r\n"
-                                     "Hondarer\r\n"
+                                     "Jussi Pitkänen\r\n"
                                      "Atarulum\r\n"
-                                     "Sandy Pleyte\r\n"
+                                     "MkII\r\n"
+                                     "Kobayashi Michiko\r\n"
+                                     "Davide Platania a.k.a. Kruznak\r\n"
+                                     "Shimanuki Koshi\r\n"
+                                     "Roger Filipe\r\n"
                                      "Amer Dugmag\r\n"
                                      "Alex Wulms\r\n"
-                                     "BouKiCHi\r\n"
                                      "Marat Fayzullin\r\n"
                                      "Jarek Burczynski\r\n"
                                      "R. Belmont\r\n"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-06-12 20:30:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,38 +55,40 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
         sprintf(text, 
                 "                                 "
                 "Special thanks to: "
-                "Patrick van Arkel,  "
-                "Ricardo Bittencourt,  "
-                "Rudolf Lechleitner,  "
-                "MkII,  "
                 "Albert Beevendorp,  "
-                "marco casali,  "
-                "Shimanuki Koshi,  "
-                "Roger Filipe,  "
-                "Kobayashi Michiko,  "
+                "Rudolf Lechleitner,  "
+                "Ricardo Bittencourt,  "
+                "BouKiCHi,  "
+                "Tobias Keizer,  "
+                "Sandy Pleyte,  "
+                "Marco Casali,  "
+                "Fabio Albergaria Dias,  "
+                "SLotman,  "
+                "Tanni,  "
+                "Jon Cortázar Abraido,  "
+                "Hondarer,  "
+                "Wouter Vermaelen,  "
+                "Manuel Bilderbeek,  "
+                "Maarten ter Huurne,  "
+                "Patrick van Arkel,  "
+                "Martijn van Tienen,  "
+                "Laurent Halter,  "
+                "Glafouk,  "
                 "Ulver,  "
                 "Nicolas Beyaert,  "
-                "SLotman,  "
-                "Laurent Halter,  "
-                "Fabio Albergaria Dias,  "
-                "Glafouk,  "
-                "Martijn van Tienen,  "
                 "Víctor Fernández Sánchez,  "
                 "William Ouwehand,  "
                 "Jacek Bogucki (Gucek),  "
                 "Miikka \"MP83\" Poikela,  "
-                "Davide Platania a.k.a. Kruznak,  "
-                "Wouter Vermaelen,  "
-                "Manuel Bilderbeek,  "
-                "Maarten ter Huurne,  "
                 "Jussi Pitkänen,  "
-                "Tobias Keizer,  "
-                "Hondarer,  "
                 "Atarulum,  "
-                "Sandy Pleyte,  "
+                "MkII,  "
+                "Kobayashi Michiko,  "
+                "Davide Platania a.k.a. Kruznak,  "
+                "Shimanuki Koshi,  "
+                "Roger Filipe,  "
                 "Amer Dugmag,  "
                 "Alex Wulms,  "
-                "BouKiCHi,  "
                 "Marat Fayzullin,  "
                 "Jarek Burczynski,  "
                 "R. Belmont,  "
