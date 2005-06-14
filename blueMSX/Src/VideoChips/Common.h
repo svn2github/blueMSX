@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-04-30 20:56:42 $
+** $Date: 2005-06-14 04:24:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,9 +271,9 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
     static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
-    static UInt8*  charTable;
-    static int     patternBase;
-    static int     colorBase;
+    static UInt8*  charTable = NULL;
+    static int     patternBase = 0;
+    static int     base = 0;
     UInt8  charPattern;
     UInt8  colPattern;
     UInt8  col;
@@ -283,8 +283,6 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     int    rightBorder;
 
     if (X == 0) {
-        int mask;
-
         linePtr = RefreshBorder(vdp, Y,  emuPalette[vdp->BGColor], 0, 0);
         sprLine = spritesLine(vdp, Y);
         if (linePtr == NULL) {
@@ -293,9 +291,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
  
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
-        mask        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
-        patternBase = vdp->chrGenBase & mask;
-        colorBase   = vdp->colTabBase & mask;
+        base        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
     }
 
     if (linePtr == NULL) {
@@ -308,11 +304,11 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     }
 
     while (X < X2) {
-        index      = ((int)*charTable * 8);
-        colPattern = vdp->vram[colorBase | index];
+        index      = base | ((int)*charTable * 8);
+        colPattern = vdp->vram[vdp->colTabBase & index];
         color[0]   = emuPalette[colPattern & 0x0f];
         color[1]   = emuPalette[colPattern >> 4];
-        charPattern = vdp->vram[patternBase | index];
+        charPattern = vdp->vram[vdp->chrGenBase & index];
 
         if (sprLine != NULL) {
             col = sprLine[0]; linePtr[0] = col ? emuPalette[col] : color[(charPattern >> 7) & 1]; 

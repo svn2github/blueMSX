@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-04-30 20:56:42 $
+** $Date: 2005-06-14 04:24:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -416,6 +416,23 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     int screenMode = vdp->screenMode;
     sync(vdp, time);
 
+#if 0
+    switch (((vdp->vdpRegs[0] & 0x0e) << 1) | 
+            ((vdp->vdpRegs[1] & 0x08) >> 2) | 
+            ((vdp->vdpRegs[1] & 0x10) >> 4)) 
+    {
+    case 0x01: vdp->screenMode = 0; break;
+    case 0x00: vdp->screenMode = 1; break;
+    case 0x04: vdp->screenMode = 2; break;
+    case 0x02: vdp->screenMode = 3; break;
+    case 0x08: vdp->screenMode = 4; break;
+    case 0x0c: vdp->screenMode = 5; break;
+    case 0x10: vdp->screenMode = 6; break;
+    case 0x14: vdp->screenMode = 7; break;
+    case 0x1c: vdp->screenMode = 8; break;
+    case 0x09: vdp->screenMode = 13; break;
+    }
+#else
     switch (((vdp->vdpRegs[0] & 0x0e) >> 1) | (vdp->vdpRegs[1] & 0x18)) {
     case 0x10: vdp->screenMode = 0; break;
     case 0x00: vdp->screenMode = 1; break;
@@ -428,7 +445,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x07: vdp->screenMode = 8; break;
     case 0x12: vdp->screenMode = 13; break;
     }
-
+#endif
     vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
     vdp->chrGenBase = (((int)vdp->vdpRegs[4] << 11) | ~(-1 << 11)) & vdp->vramMask;
     vdp->colTabBase = (((int)vdp->vdpRegs[10] << 14) | ((int)vdp->vdpRegs[3] << 6) | ~(-1 << 6)) & vdp->vramMask;
