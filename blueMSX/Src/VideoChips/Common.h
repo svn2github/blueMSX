@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-14 04:24:16 $
+** $Date: 2005-06-14 04:46:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -420,8 +420,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     static UInt32* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
-    static int     patternBase;
-    static int     colorBase;
+    static int     base = 0;
     static int     hScroll;
     static int     hScroll512;
     static int*    jump;
@@ -435,7 +434,6 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     int    rightBorder;
 
     if (X == 0) {
-        int mask;
         int y;
 
         linePtr = RefreshBorder(vdp, Y, emuPalette[vdp->BGColor], 0, 0);
@@ -451,9 +449,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8)))) + scroll;
-        mask        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
-        patternBase = vdp->chrGenBase & mask;
-        colorBase   = vdp->colTabBase & mask;
+        base        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
             UInt32 bgColor = emuPalette[vdp->BGColor];
@@ -477,11 +473,11 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             }
         }
 
-        index       = ((int)*charTable * 8);
-        colPattern  = vdp->vram[colorBase | index];
-        color[0]    = emuPalette[colPattern & 0x0f];
-        color[1]    = emuPalette[colPattern >> 4];
-        charPattern = vdp->vram[patternBase | index];
+        index       = base | ((int)*charTable * 8);
+        colPattern = vdp->vram[vdp->colTabBase & index];
+        color[0]   = emuPalette[colPattern & 0x0f];
+        color[1]   = emuPalette[colPattern >> 4];
+        charPattern = vdp->vram[vdp->chrGenBase & index];
 
         if (sprLine != NULL) {
             switch (hScroll & 7) {
@@ -517,11 +513,11 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     }
 
     while (X < X2) {
-        index       = ((int)*charTable * 8);
-        colPattern  = vdp->vram[colorBase | index];
-        color[0]    = emuPalette[colPattern & 0x0f];
-        color[1]    = emuPalette[colPattern >> 4];
-        charPattern = vdp->vram[patternBase | index];
+        index       = base | ((int)*charTable * 8);
+        colPattern = vdp->vram[vdp->colTabBase & index];
+        color[0]   = emuPalette[colPattern & 0x0f];
+        color[1]   = emuPalette[colPattern >> 4];
+        charPattern = vdp->vram[vdp->chrGenBase & index];
 
         if (sprLine != NULL) {
             col = sprLine[0]; linePtr[0] = col ? emuPalette[col >> 1] : color[(charPattern >> 7) & 1]; 
