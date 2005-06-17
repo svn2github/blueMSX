@@ -216,7 +216,8 @@ static int   PPL[4]  = { 256, 512, 512, 256 };
 
 
 static int srch_timing[8] = { 92,  125, 92,  92  };
-static int line_timing[8] = { 120, 147, 120, 132 };
+static int line_timing[8] = { 120, 147, 120, 120 };
+//static int line_timing[8] = { 120, 147, 120, 132 };
 static int hmmv_timing[8] = { 49,  65,  49,  62  };
 static int lmmv_timing[8] = { 98,  137, 98,  124 };
 static int ymmm_timing[8] = { 65,  125, 65,  68  };
