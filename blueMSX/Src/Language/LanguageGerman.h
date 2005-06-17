@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.2 $ 
+** $Revision: 1.3 $ 
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-06-17 19:29:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,8 +36,8 @@ void langInitGerman(LanguageStrings* ls)
 {
     ls->statusBarStopped        = "  Gestoppt";
     ls->statusBarPaused         = "  Unterbrochen";
-    ls->statusBarRunning        = "  Running";
-    
+    ls->statusBarRunning        = "  Läuft";
+
     ls->menuHardReset           = "Hard Reset";
     ls->menuSoftReset           = "Soft Reset";
     
@@ -47,7 +47,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuCartNoRecentFiles   = "- keine neuen Files -";
     ls->menuCartFMPac           = "FM-PAC-Cartridge";
     ls->menuCartPac             = "PAC-Cartridge";
-    ls->menuCartSpecial         = "Special";
+    ls->menuCartSpecial         = "Spezial";
 
     ls->menuDiskInsert          = "Einfügen";
     ls->menuDiskEject           = "Auswurf";
@@ -141,8 +141,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgInsertCas            = "Cassette einfügen";
 
     ls->dlgOK                   = "OK";
-    ls->dlgOpen                 = "Open";
-    ls->dlgCancel               = "Cancel";
+    ls->dlgOpen                 = "Öffnen";
+    ls->dlgCancel               = "Abbrechen";
 
     ls->dlgTapeTitle            = "blueMSX - Bandposition";
     ls->dlgTapeFrameText        = "Bandposition";
@@ -155,10 +155,10 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->dlgJoyTitle1            = "blueMSX - Joystick-Keyset A";
     ls->dlgJoyTitle2            = "blueMSX - Joystick-Keyset B";
-    ls->dlgJoyUpText            = "Up";
-    ls->dlgJoyDownText          = "Down";
-    ls->dlgJoyLeftText          = "Left";
-    ls->dlgJoyRightText         = "Right";
+    ls->dlgJoyUpText            = "hoch";
+    ls->dlgJoyDownText          = "runter";
+    ls->dlgJoyLeftText          = "links";
+    ls->dlgJoyRightText         = "rechts";
     ls->dlgJoyButton1Text       = "Button 1";
     ls->dlgJoyButton2Text       = "Button 2";
     ls->dlgJoyGB                = "Keyset Configuration ";
@@ -179,14 +179,14 @@ void langInitGerman(LanguageStrings* ls)
     ls->propEmuMemoryGB         = "Memory ";
     ls->propEmuRamSizeText      = "RAM size:";
     ls->propEmuVramSizeText     = "VRAM size:";
-    ls->propEmuSpeedGB          = "Emulation Speed ";
-    ls->propEmuSpeedText        = "Emulation Speed:";
+    ls->propEmuSpeedGB          = "Emulationsgeschwindigkeit ";
+    ls->propEmuSpeedText        = "Emulationsgeschwindigkeit:";
 
     ls->propMonMonGB            = "Monitor ";
-    ls->propMonTypeText         = "Monitor type:";
-    ls->propMonEmuText          = "Monitor emulation:";
-    ls->propVideoYypeText       = "Video type:";
-    ls->propWindowSizeText      = "Window size:";
+    ls->propMonTypeText         = "Typ des Monitors:";
+    ls->propMonEmuText          = "Monitoremulation:";
+    ls->propVideoYypeText       = "Videotyp:";
+    ls->propWindowSizeText      = "Fenstergröße:";
 
     ls->propPerfVideoDrvGB      = "Video-Treiber ";
     ls->propPerfVideoDispDrvText= "Display-Treiber:";
@@ -226,10 +226,10 @@ void langInitGerman(LanguageStrings* ls)
     ls->enumVideoTypeNTSC       = "NTSC";
 
     ls->enumVideoEmuNone        = "Nichts";
-    ls->enumVideoEmuYc          = "Y/C cable (sharp)";
-    ls->enumVideoEmuYcBlur      = "Noisy Y/C cable (sharp)";
-    ls->enumVideoEmuComp        = "Composite (blurry)";
-    ls->enumVideoEmuCompBlur    = "Noisy Composite (blurry)";
+    ls->enumVideoEmuYc          = "Y/C-Kabel (scharf)";
+    ls->enumVideoEmuYcBlur      = "Verrauschtes Y/C-Kabel (scharf)";
+    ls->enumVideoEmuComp        = "Composit-Signal (verwaschen)";
+    ls->enumVideoEmuCompBlur    = "Verrauschtes Composit-Signal (verwaschen)";
     ls->enumVideoEmuScale2x     = "Scale 2x";
 
     ls->enumVideoSize1x         = "Normal - 320x200";
@@ -254,7 +254,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (schnell)";
 
     ls->enumControlsJoyNone     = "Nichts";
-    ls->enumControlsJoyNumpad   = "Numpad";
+    ls->enumControlsJoyNumpad   = "Zehnerblock";
     ls->enumControlsJoyKeysetA  = "Keyset A";
     ls->enumControlsJoyKeysetB  = "Keyset B";
     ls->enumControlsJoyPCjoy1   = "PC-Joystick #1";
@@ -266,23 +266,23 @@ void langInitGerman(LanguageStrings* ls)
     ls->enumControlsAfMedium    = "Mittel";
     ls->enumControlsAfFast      = "Schnell";
 
-    ls->dlgAboutAbout           = "ABOUT\r\n====";
+    ls->dlgAboutAbout           = "ÜBER\r\n====";
     ls->dlgAboutVersion         = "Version:";
-    ls->dlgAboutBuildNumber     = "Build:";
-    ls->dlgAboutBuildDate       = "Date:";
-    ls->dlgAboutCreat           = "Created by Daniel Vik";
-    ls->dlgAboutDevel           = "DEVELOPERS\r\n========";
-    ls->dlgAboutThanks          = "SPECIAL THANKS TO\r\n============";
-    ls->dlgAboutLisence         = "LICENSE\r\n"
+    ls->dlgAboutBuildNumber     = "Hergestellt:";
+    ls->dlgAboutBuildDate       = "Datum:";
+    ls->dlgAboutCreat           = "von Daniel Vik";
+    ls->dlgAboutDevel           = "ENTWICKLER\r\n========";
+    ls->dlgAboutThanks          = "BESONDEREN DANK AN\r\n============";
+    ls->dlgAboutLisence         = "LIZENZ\r\n"
                                   "======\r\n\r\n"
                                   "Diese Software wird ''wie sie ist'' zur Verfügung gestellt, ohne jegliche Garantie."
-                                  "In keinem Fall wird der Autor/werden die Autoren haftpflichtig für irgendwelchen Schaden,"
-                                  "der aus dem Gebrauch dieser Software entstehen könnte.\r\n\r\n"
+                                  "In keinem Fall wird der Autor/werden die Autoren haftpflichtig für irgendwelche Schäden,"
+                                  "die aus dem Gebrauch dieser Software entstehen könnten.\r\n\r\n"
                                   "Besuchen Sie www.bluemsx.com, um nähere Details zu erfahren.";
 
     // New entries
     ls->menuTools                = "Tools";
-    ls->menuToolsMachine         = "Machine Editor";
+    ls->menuToolsMachine         = "Maschineneditor";
     ls->menuPropsSettings        = "Einstellungen";
     ls->menuCasRewindAfterInsert = "Zurück nach Einfügen";
     ls->menuCasUseReadOnly       = "Cassetten-Image nur lesend benutzen";
@@ -303,7 +303,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propSetScreenSaverGB     = "Bildschirmschoner ";
     ls->propSetScreenSaver       = " Schalte den Bildschirmschoner ab, wenn blueMSX läuft";
 
-    ls->confTitle                = "blueMSX - Konfigurationseditor";
+    ls->confTitle                = "blueMSX - Editor für die Maschinenkonfiguration";
     ls->confSave                 = "Speichern";
     ls->confSaveAs               = "Speichern als ...";
     ls->confRun                  = "Start";
@@ -333,7 +333,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->confMemRomImage          = "ROM-Image";
     
     ls->confSaveTitle            = "blueMSX - Speichere Konfiguration";
-    ls->confSaveText             = "Möchten Sie die Konfiguration überschreiben?";
+    ls->confSaveText             = "Möchten Sie die Maschinenkonfiguration überschreiben?";
 
     ls->confChipVideoGB          = "Video ";
     ls->confChipVideoChip        = "Video-Chip:";
@@ -352,8 +352,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Konfigurationseditor verlassen";
     ls->confExitSaveText         = "Möchten Sie die aktuellen Änderungen der Konfiguration verwerfen?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Speichere Konfiguration als ...";
-    ls->confSaveAsMachineName    = "Konfigurationsname:";
+    ls->confSaveAsMachineTitle   = "blueMSX - Speichere Maschinenkonfiguration als ...";
+    ls->confSaveAsMachineName    = "Name der Maschine:";
 
     ls->confEditMemInternalRoms  = "blueMSX - Interne ROMs";
     ls->propSndMoonsound         = " Moonsound";
@@ -372,10 +372,9 @@ void langInitGerman(LanguageStrings* ls)
     ls->propEmuFrontSwitch       = " Front Switch";
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
 
-
     ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Enable CMOS";
-    ls->dlgCmosBattery           = " Use Charged Battery";
+    ls->dlgCmosEnable            = " CMOS einschalten";
+    ls->dlgCmosBattery           = " Verwende geladene Batterie";
 
     ls->menuCartSnatcher        = "The Snatcher Cartridge";
     ls->menuCartSdSnatcher      = "SD-Snatcher Cartridge";
@@ -462,8 +461,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->shortcutShowCtrlProp    = "Zeige Control-Eigenschaften";
     ls->shortcutShowPerfProp    = "Zeige Leistungseigenschaften";
     ls->shortcutShowSettProp    = "Zeige Einstellungseigenschaften";
-    ls->shortcutShowLanguage    = "Zeige Sprach-Dialog";
-    ls->shortcutShowMachines    = "Zeige Emulator-Editor";
+    ls->shortcutShowLanguage    = "Zeige Sprachdialog";
+    ls->shortcutShowMachines    = "Zeige Maschineneditor";
     ls->shortcutShowShortcuts   = "Zeige Shortcuts-Editor";
     ls->shortcutShowHelp        = "Zeige Hilfe-Dialog";
     ls->shortcutShowAbout       = "Zeige ''About''-Dialog";
@@ -477,8 +476,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->shortcutShowApearProp   = "Zeige Appearance-Eigenschaften";
     ls->menuPropsApearance      = "Appearance";
     ls->propApearance           = "Appearance";
-    ls->propThemeGB             = "Thema ";
-    ls->propTheme               = "Thema:";
+    ls->propThemeGB             = "Theme ";
+    ls->propTheme               = "Theme:";
     ls->propThemeClassic        = "Classic";
     ls->propThemeBlue           = "DIGIDIGIblue";
 
@@ -577,17 +576,18 @@ void langInitGerman(LanguageStrings* ls)
 
     // New entries in 2.3
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
-    ls->propPortsFile           = "Print to File";
-    ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename:";
+    ls->propPortsFile           = "In Datei schreiben";
+    ls->propPortsOpenLogFile    = "Öffne Log-Datei";
+    ls->propPortsFilenameText   = "Dateiname:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
 
-    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+    ls->shortcutPrnFormFeed     = "Seitenvorschub des Druckers";
 
-    ls->menuPrnFormfeed         = "Form Feed";
-    ls->menuFilePrn             = "Printer";
-    ls->propPortsComFile        = "Send to File";
+    ls->menuPrnFormfeed         = "Seitenvorschub";
+    ls->menuFilePrn             = "Drucker";
+    ls->propPortsComFile        = "Zu Datei senden";
 };
 
 

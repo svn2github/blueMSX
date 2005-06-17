@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-06-17 19:29:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -353,6 +353,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "volume-scc-right"))         return t | THEME_TRIGGER_IMG_R_SCC;
     if (0 == strcmp(s, "volume-pcm-left"))          return t | THEME_TRIGGER_IMG_L_PCM;
     if (0 == strcmp(s, "volume-pcm-right"))         return t | THEME_TRIGGER_IMG_R_PCM;
+    if (0 == strcmp(s, "volume-io-left"))           return t | THEME_TRIGGER_IMG_L_IO;
+    if (0 == strcmp(s, "volume-io-right"))          return t | THEME_TRIGGER_IMG_R_IO;
     if (0 == strcmp(s, "volume-master-left"))       return t | THEME_TRIGGER_IMG_L_MASTER;
     if (0 == strcmp(s, "volume-master-right"))      return t | THEME_TRIGGER_IMG_R_MASTER;
 

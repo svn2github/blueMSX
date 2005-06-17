@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-06-17 19:29:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2292,17 +2292,27 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     wndClass.hIconSm        = NULL;
     RegisterClassEx(&wndClass);
 
-    resetRegistry = emuCheckResetArgument(szLine);
-    propertiesInit(emuCheckIniFileArgument(szLine));
-    pProperties = propCreate(resetRegistry);
-    pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
-       
-    if (resetRegistry == 2) {
-        propDestroy(pProperties);
-        FreeLibrary(kbdLockInst);
+    {
+        /* Modify scan code map if nessecary */
+        PropKeyboardLanguage kbdLang = P_KBD_EUROPEAN;
+        char klId[KL_NAMELENGTH];
+        if (GetKeyboardLayoutName(klId)) {
+            if (0 == strcmp(klId + 4, "0411")) {
+                kbdLang = P_KBD_JAPANESE;
+            }
+        }
+        resetRegistry = emuCheckResetArgument(szLine);
+        propertiesInit(emuCheckIniFileArgument(szLine));
+        pProperties = propCreate(resetRegistry, kbdLang);
+        pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
+           
+        if (resetRegistry == 2) {
+            propDestroy(pProperties);
+            FreeLibrary(kbdLockInst);
 
-        exit(0);
-        return 0;
+            exit(0);
+            return 0;
+        }
     }
 
     setDefaultPath();

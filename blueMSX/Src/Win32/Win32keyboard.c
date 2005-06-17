@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-03-17 07:24:13 $
+** $Date: 2005-06-17 19:29:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ static int editEnabled;
 static char keyboardConfigDir[MAX_PATH];
 
 static char DefaultConfigName[] = "blueMSX Default";
+
 static char currentConfigFile[MAX_PATH];
 
 #define KEY_CODE_BUTTON1 256

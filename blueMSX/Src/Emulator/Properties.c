@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-05-23 00:08:25 $
+** $Date: 2005-06-17 19:29:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@
 /* Alternative property default settings */
 #ifdef PROPERTIES_DEFAULTS_ALT_1
 
-void propInitDefaults(Properties* pProperties) 
+void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang) 
 {
     int i;
     pProperties->language = EMU_LANG_ENGLISH;
@@ -166,7 +166,6 @@ void propInitDefaults(Properties* pProperties)
     pProperties->joy2.hwButtonA         = 0;
     pProperties->joy2.hwButtonB         = 1;
     
-    pProperties->keyboard.keySet        = P_CHAR_EUROPEAN;
     pProperties->keyboard.configFile[0] = 0;
     
     pProperties->cartridge.defaultType  = ROM_UNKNOWN;
@@ -230,7 +229,7 @@ void propInitDefaults(Properties* pProperties)
 #else
 
 /* Default property settings */
-void propInitDefaults(Properties* pProperties) 
+void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang) 
 {
     int i;
     pProperties->language                 = EMU_LANG_ENGLISH;
@@ -357,8 +356,11 @@ void propInitDefaults(Properties* pProperties)
     pProperties->joy2.hwButtonA         = 0;
     pProperties->joy2.hwButtonB         = 1;
     
-    pProperties->keyboard.keySet        = P_CHAR_EUROPEAN;
     pProperties->keyboard.configFile[0] = 0;
+
+    if (kbdLang == P_KBD_JAPANESE) {
+        strcpy(pProperties->keyboard.configFile, "blueMSX Japanese Default");
+    }
 
     pProperties->cartridge.defaultType  = ROM_UNKNOWN;
     pProperties->cartridge.defDir[0]    = 0;
@@ -539,7 +541,6 @@ static void propLoad(Properties* pProperties)
     getIntValue("Joy2HwButton1", &pProperties->joy2.hwButtonA);
     getIntValue("Joy2HwButton2", &pProperties->joy2.hwButtonB);
     
-    getIntValue("KeyBoardKeySet", &pProperties->keyboard.keySet);
     getStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
     
     getIntValue("CartDefaultType", &pProperties->cartridge.defaultType);
@@ -734,7 +735,6 @@ void propSave(Properties* pProperties)
     setIntValue("Joy2HwButton1", pProperties->joy2.hwButtonA);
     setIntValue("Joy2HwButton2", pProperties->joy2.hwButtonB);
     
-    setIntValue("KeyBoardKeySet", pProperties->keyboard.keySet);
     setStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
     
     setIntValue("CartDefaultType", pProperties->cartridge.defaultType);
@@ -823,7 +823,7 @@ Properties* propGetGlobalProperties()
     return globalProperties;
 }
 
-Properties* propCreate(int useDefault) 
+Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang) 
 {
     Properties* pProperties;
 
@@ -835,7 +835,7 @@ Properties* propCreate(int useDefault)
 
     pProperties->joy1.id = 1;
     pProperties->joy2.id = 2;
-    propInitDefaults(pProperties);
+    propInitDefaults(pProperties, kbdLang);
 
     if (!useDefault) {
         propLoad(pProperties);

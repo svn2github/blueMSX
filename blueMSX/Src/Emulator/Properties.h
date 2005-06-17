@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-05-23 00:08:25 $
+** $Date: 2005-06-17 19:29:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,7 +73,7 @@ typedef enum { P_SOUND_FREQ11 = 0, P_SOUND_FREQ22, P_SOUND_FREQ44 } PropSoundFre
 typedef enum { P_SOUND_SYNCFAST = 0, P_SOUND_SYNCQADJUST, P_SOUND_SYNCEADJUST } PropSoundSync;
 typedef enum { P_JOY_NONE = 0, P_JOY_MOUSE, P_JOY_NUMPAD, P_JOY_KEYSET, P_JOY_TETRISDONGLE, P_JOY_HW } PropControlsJoy;
 typedef enum { P_JOY_AFOFF = 0, P_JOY_AFSLOW, P_JOY_AFMEDIUM, P_JOY_AFFAST } PropControlsAutofire;
-typedef enum { P_CHAR_EUROPEAN = 0, P_CHAR_RUSSIAN, P_CHAR_JAPANESE, P_CHAR_KOREAN } PropControlsLanguage;
+typedef enum { P_KBD_EUROPEAN = 0, P_KBD_RUSSIAN, P_KBD_JAPANESE, P_KBD_KOREAN } PropKeyboardLanguage;
 
 
 #define MAX_HISTORY 30
@@ -168,7 +168,6 @@ typedef struct {
 
 typedef struct {
     char configFile[MAX_PATH];
-    int  keySet;
 } KeyboardProperties;
 
 typedef struct {
@@ -268,7 +267,7 @@ typedef struct {
     Settings            settings;
 } Properties;
 
-Properties* propCreate(int useDefault);
+Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang);
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
 

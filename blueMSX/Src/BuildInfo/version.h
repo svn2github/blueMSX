@@ -5,4 +5,5 @@
 #define BLUE_MSX_VERSION_MINOR 3
 
 #define BLUE_MSX_VERSION "2.3"
+
 #endif

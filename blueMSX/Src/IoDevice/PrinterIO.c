@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-17 05:53:16 $
+** $Date: 2005-06-17 19:29:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "ArchPrinter.h"
 #include "DAC.h"
 #include "Board.h"
+#include <stdlib.h>
 
 typedef struct PrinterIO {
     PrinterType type;
