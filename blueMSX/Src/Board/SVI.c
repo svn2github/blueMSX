@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-06-20 00:31:20 $
+** $Date: 2005-06-20 00:32:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -462,14 +462,16 @@ static void breakpointCb(void* ref, UInt16 pc)
 extern void debuggerTrace(const char* str);
 static void debugCb(void* ref, int command, const char* data) 
 {
-    int slot, page, addr;
+    int slot, page, addr, rv;
     switch (command) {
     case ASDBG_TRACE:
         debuggerTrace(data);
         break;
     case ASDBG_SETBP:
-        sscanf(data, "%x", &slot, &page, &addr);
-        debuggerSetBreakpoint((UInt16)slot, (UInt16)page, (UInt16)addr);
+        rv = sscanf(data, "%x %x %x", &slot, &page, &addr);
+        if (rv == 3) {
+            debuggerSetBreakpoint((UInt16)slot, (UInt16)page, (UInt16)addr);
+        }
         break;
     }
 }
