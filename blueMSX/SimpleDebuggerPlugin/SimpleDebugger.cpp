@@ -988,6 +988,15 @@ void OnEmulatorSetBreakpoint(UInt16 address)
     }
 }
 
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address) {
+    OnEmulatorSetBreakpoint(address);
+}
+
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address)
+{
+    OnEmulatorSetBreakpoint(address);
+}
+
 const char* OnGetName() {
     return "Debugger";
 }

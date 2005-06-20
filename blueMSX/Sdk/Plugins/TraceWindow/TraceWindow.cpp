@@ -287,8 +287,13 @@ void OnEmulatorTrace(const char* message)
     }
 }
 
-void OnEmulatorSetBreakpoint(UInt16 address)
-{
+void OnEmulatorSetBreakpoint(UInt16 address) {
+}
+
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address) {
+}
+
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address) {
 }
 
 const char* OnGetName() {

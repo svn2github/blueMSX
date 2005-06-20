@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-05-17 19:28:37 $
+** $Date: 2005-06-20 00:31:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ static void onDefault(void* ref) {
 static void onDefTrace(void* ref, const char* dummy) {
 }
 
-static void onDefSetBp(void* ref, UInt16 dummy) {
+static void onDefSetBp(void* ref, UInt16 d1, UInt16 d2, UInt16 d3) {
 }
 
 Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
@@ -188,13 +188,13 @@ void debuggerTrace(const char* str)
     }
 }
 
-void debuggerSetBreakpoint(UInt16 address)
+void debuggerSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address)
 {
     int i;
 
     for (i = 0; i < MAX_DEBUGGERS; i++) {
         if (debuggerList[i] != NULL) {
-            debuggerList[i]->onDebugSetBp(debuggerList[i]->ref, address);
+            debuggerList[i]->onDebugSetBp(debuggerList[i]->ref, slot, page, address);
         }
     }
 }

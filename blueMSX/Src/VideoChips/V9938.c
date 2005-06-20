@@ -165,6 +165,7 @@ struct VdpCmdState {
     int   VdpOpsCnt;
     UInt32 systemTime;
     int    screenMode;
+    int    newScrMode;
     int    timingMode;
 };
 
@@ -1024,6 +1025,12 @@ static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
     vdpCmd->NX &= 0x3ff;
     vdpCmd->NY &= 0x3ff;
 
+    vdpCmd->screenMode = vdpCmd->newScrMode;
+    if (vdpCmd->screenMode < 0) {
+        vdpCmd->CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        return;
+    }
     switch (vdpCmd->CM) {
     case CM_ABRT:
         vdpCmd->CM = 0;
@@ -1045,7 +1052,7 @@ static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
     case CM_PSET:
         vdpCmd->CM = 0;
         vdpCmd->status &= ~VDPSTATUS_CE;
-        setPixel(vdpCmd, vdpCmd->screenMode, vdpCmd->DX, vdpCmd->DY, vdpCmd->CL, vdpCmd->LO);
+        setPixel(vdpCmd, vdpCmd->screenMode, vdpCmd->DX, vdpCmd->DY, vdpCmd->CL & Mask[vdpCmd->screenMode], vdpCmd->LO);
         return;
     }
 
@@ -1180,9 +1187,8 @@ void vdpSetScreenMode(VdpCmdState* vdpCmd, int screenMode, int commandEnable) {
     else {
         screenMode -= 5;
     }
-
-    if (vdpCmd->screenMode != screenMode) {
-        vdpCmd->screenMode = screenMode;
+    if (vdpCmd->newScrMode != screenMode) {
+        vdpCmd->newScrMode = screenMode;
         if (screenMode == -1) {
             vdpCmd->CM = 0;
             vdpCmd->status &= ~VDPSTATUS_CE;
@@ -1352,6 +1358,7 @@ void vdpCmdLoadState(VdpCmdState* vdpCmd)
     vdpCmd->MX            =         saveStateGet(state, "MX",         0);
     vdpCmd->VdpOpsCnt     =         saveStateGet(state, "VdpOpsCnt",  0);
     vdpCmd->systemTime    =         saveStateGet(state, "systemTime", boardSystemTime());
+    vdpCmd->newScrMode    =         saveStateGet(state, "newScrMode", 0);
     vdpCmd->screenMode    =         saveStateGet(state, "screenMode", 0);
     vdpCmd->timingMode    =         saveStateGet(state, "timingMode", 0);
     

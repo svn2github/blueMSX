@@ -89,7 +89,7 @@ WORD HexInputDialog::getValue()
     text[len] = 0;
 
     WORD addr = 0;
-    if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
+    if (symbolInfo == NULL || !symbolInfo->rfind(text, &addr)) {
         int address = 0;
         sscanf(text, "%X", &address);
         addr = (WORD)address;
@@ -168,7 +168,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                 int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
                 text[len] = 0;
                 WORD addr = 0;
-                if (symbolInfo != NULL && !symbolInfo->rfind(text, &addr)) {
+                if (symbolInfo == NULL || !symbolInfo->rfind(text, &addr)) {
                     int address = 0;
                     sscanf(text, "%X", &address);
                     addr = (WORD)address;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-05-24 07:52:47 $
+** $Date: 2005-06-20 00:31:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,9 +98,9 @@ static void onEmulatorTrace(ToolInfo* toolInfo, const char* str) {
     }
 }
 
-static void onEmulatorSetBp(ToolInfo* toolInfo, UInt16 address) {
+static void onEmulatorSetBp(ToolInfo* toolInfo, UInt16 slot, UInt16 page, UInt16 address) {
     if (toolInfo->callbacks.onEmulatorSetBp != NULL) {
-        toolInfo->callbacks.onEmulatorSetBp(address);
+        toolInfo->callbacks.onEmulatorSetBp(slot, page, address);
     }
 }
 

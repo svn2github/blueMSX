@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-06-12 09:47:51 $
+** $Date: 2005-06-20 00:31:20 $
 **
 ** Author: Daniel Vik
 **
@@ -837,6 +837,46 @@ static void ld_b_a(R800* r800) {
 
 static void ld_b_b(R800* r800) { 
 #ifdef ENABLE_ASMSX_DEBUG_COMMANDS
+#if 1
+    char debugString[256];
+    UInt16 addr = r800->regs.PC.W;
+    UInt16 bpAddr = 0;
+    UInt8  size;
+    UInt16 page = 0xffff;
+    UInt16 slot = 0xffff;
+
+    if (r800->readMemory(r800->ref, addr++) != 24) {
+        return;
+    }
+    size = r800->readMemory(r800->ref, addr++);
+    switch (size) {
+    case 0:
+        bpAddr = addr;
+        break;
+    case 2:
+        bpAddr = r800->readMemory(r800->ref, addr++);
+        bpAddr |= r800->readMemory(r800->ref, addr++) << 8;
+        break;
+    case 3:
+        slot = r800->readMemory(r800->ref, addr++);
+        bpAddr = r800->readMemory(r800->ref, addr++);
+        bpAddr |= r800->readMemory(r800->ref, addr++) << 8;
+        break;
+    case 4:
+        slot = r800->readMemory(r800->ref, addr++);
+        page = r800->readMemory(r800->ref, addr++);
+        bpAddr = r800->readMemory(r800->ref, addr++);
+        bpAddr |= r800->readMemory(r800->ref, addr++) << 8;
+        break;
+    default:
+        return;
+    }
+
+    sprintf(debugString, "%.4x %.4x %.4x", slot, page, bpAddr);
+
+    r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
+
+#else
     char debugString[256];
     UInt16 addr = r800->regs.PC.W;
     UInt16 end;
@@ -860,12 +900,13 @@ static void ld_b_b(R800* r800) {
     }
     addr += 4;
     
-    bpAddr = r800->readMemory(r800->ref, addr++) << 8;
-    bpAddr |= r800->readMemory(r800->ref, addr++);
+    bpAddr = r800->readMemory(r800->ref, addr++);
+    bpAddr |= r800->readMemory(r800->ref, addr++) << 8;
 
     sprintf(debugString, "%.4x", bpAddr);
 
     r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
+#endif
 #endif
 }
 
@@ -1035,19 +1076,20 @@ static void ld_d_d(R800* r800) {
         return;
     }
     end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
-    if (end < addr + 6 || end - addr > 255) {
-        return;
-    }
     addr++;
 
-    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
-        r800->readMemory(r800->ref, addr + 1) != 100 || 
-        r800->readMemory(r800->ref, addr + 2) != 0   || 
-        r800->readMemory(r800->ref, addr + 3) != 0) 
-    {
+    if (end - addr > 127) {
         return;
     }
-    addr += 4;
+
+    else if (end - addr > 4 &&
+             r800->readMemory(r800->ref, addr + 0) == 100 && 
+             r800->readMemory(r800->ref, addr + 1) == 100 && 
+             r800->readMemory(r800->ref, addr + 2) == 0   &&
+             r800->readMemory(r800->ref, addr + 3) == 0) 
+    {
+        addr += 4;
+    }
     
     while (addr < end) {
         *ptr++ = (char)r800->readMemory(r800->ref, addr++);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-06-14 04:24:16 $
+** $Date: 2005-06-20 00:31:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -383,7 +383,6 @@ static void simulateVramDecay(VDP* vdp)
 {
     int time = (boardSystemTime() - vdp->screenOffTime) / 1350000;
     int i;
-    printf("%d\n",time);
     if (time >= 24) {
         for (i = 0x0000; i < 0x3000; i += 2) {
             vdp->vramPtr[i]     = 0x55;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperASCII16.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-06-04 08:47:57 $
+** $Date: 2005-06-20 00:31:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -123,7 +123,7 @@ int romMapperASCII16Create(char* filename, UInt8* romData,
     int origSize = size;
     
     size = 0x8000;
-    while (size <= origSize) {
+    while (size < origSize) {
         size *= 2;
     }
 

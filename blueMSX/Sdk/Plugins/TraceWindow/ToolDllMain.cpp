@@ -224,9 +224,24 @@ extern "C"__declspec(dllexport) void __stdcall EmulatorTrace(const char* message
     OnEmulatorTrace(message);
 }
 
-extern "C"__declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 address)
+extern "C"__declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address)
 {
-    OnEmulatorSetBreakpoint(address);
+    if (page == 0xffff) {
+        if (slot == 0xffff) {
+            OnEmulatorSetBreakpoint(address);
+        }
+        else {
+            OnEmulatorSetBreakpoint(slot, address);
+        }
+    }
+    else {
+        if (slot = 0xffff) {
+            OnEmulatorSetBreakpoint(address);
+        }
+        else {
+            OnEmulatorSetBreakpoint(slot, page, address);
+        }
+    }
 }
 
 extern "C" int APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)
