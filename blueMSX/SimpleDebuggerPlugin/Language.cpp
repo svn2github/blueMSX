@@ -64,6 +64,7 @@ public:
         menuDebugRunTo              = "Run To Cursor";
         menuDebugShowSymbols        = "Show Symbol Information";
         menuDebugGoto               = "Go To";
+        menuDebugBpAdd              = "Add New Breakpoint";
         menuDebugBpToggle           = "Set/Remove Breakpoint";
         menuDebugEnable             = "Enable/Disable Breakpoint";
         menuDebugRemoveAll          = "Remove All Breakpoints";
@@ -89,6 +90,7 @@ public:
         memWindowMemory             = "Memory:";
         memWindowAddress            = "Address:";
 
+        setBpWindowCaption          = "Add New Breakpoint";
         gotoWindowCaption           = "Go To Address";
         gotoWindowText              = "Address or Label:";
 
@@ -139,6 +141,7 @@ public:
         menuDebugRunTo              = "カーソ\ルで実行";
         menuDebugShowSymbols        = "シンボル情報表\示";
         menuDebugGoto               = "移動";
+        menuDebugBpAdd              = "Add New Breakpoint";
         menuDebugBpToggle           = "ブレイクポイントのセット/除去";
         menuDebugEnable             = "ブレイクポイント有/無";
         menuDebugRemoveAll          = "ブレイクポイント全消去";
@@ -164,6 +167,7 @@ public:
         memWindowMemory             = "メモリ:";
         memWindowAddress            = "アドレス:";
 
+        setBpWindowCaption          = "Add New Breakpoint";
         gotoWindowCaption           = "アドレスに移動";
         gotoWindowText              = "アドレスまたはラベル:";
 
@@ -231,6 +235,7 @@ const char* Language::menuDebugStepOut;
 const char* Language::menuDebugRunTo;
 const char* Language::menuDebugShowSymbols;
 const char* Language::menuDebugGoto;
+const char* Language::menuDebugBpAdd;
 const char* Language::menuDebugBpToggle;
 const char* Language::menuDebugEnable;
 const char* Language::menuDebugRemoveAll;
@@ -255,6 +260,7 @@ const char* Language::windowMemory;
 const char* Language::memWindowMemory;
 const char* Language::memWindowAddress;
 
+const char* Language::setBpWindowCaption;
 const char* Language::gotoWindowCaption;
 const char* Language::gotoWindowText;
 

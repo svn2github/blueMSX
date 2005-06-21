@@ -154,6 +154,7 @@ static void updateStatusBar()
 #define MENU_DEBUG_BPENABLEALL      37213
 #define MENU_DEBUG_BPDISABLEALL     37214
 #define MENU_DEBUG_FLAGMODE         37215
+#define MENU_DEBUG_SETBP            37216
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -215,6 +216,9 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_GOTO, buf);
 
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+    
+    sprintf(buf, "%s\tCtrl+B", Language::menuDebugBpAdd);
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_SETBP, buf);
     
     sprintf(buf, "%s\tF9", Language::menuDebugBpToggle);
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, buf);
@@ -507,14 +511,21 @@ static void updateWindowPositions()
 }
 
 
-static BOOL CALLBACK gotoProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+struct AddrProcData {
+    AddrProcData(const char* c) : caption(c), address(0) {}
+    const char* caption;
+    WORD address;
+};
+
+static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     static HexInputDialog* addressInput = NULL;
-    static WORD* address = NULL;
+    static AddrProcData * procData = NULL;
 
     switch (iMsg) {        
     case WM_INITDIALOG:
-        SetWindowText(hDlg, Language::gotoWindowCaption);
+        procData = (AddrProcData*)lParam;
+        SetWindowText(hDlg, procData->caption);
         SendDlgItemMessage(hDlg, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::gotoWindowText);
         SetWindowText(GetDlgItem(hDlg, IDOK), Language::genericOk);
         SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::genericCancel);
@@ -523,13 +534,13 @@ static BOOL CALLBACK gotoProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
         }
         addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, symbolInfo);
         addressInput->setFocus();
-        address = (WORD*)lParam;
+        
         return FALSE;
 
     case WM_COMMAND:
         switch (wParam) {
         case IDOK:
-            *address = (WORD)addressInput->getValue();
+            procData->address = (WORD)addressInput->getValue();
             EndDialog(hDlg, TRUE);
             return TRUE;
         case IDCANCEL:
@@ -539,7 +550,7 @@ static BOOL CALLBACK gotoProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
         break;
         
     case HexInputDialog::EC_NEWVALUE:
-        *address = (WORD)addressInput->getValue();
+        procData->address = (WORD)addressInput->getValue();
         EndDialog(hDlg, TRUE);
         return FALSE;
 
@@ -609,11 +620,15 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SHOWSYMBOLS, 0);
                 break;
             case 13:
-                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_GOTO, 0);
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_GOTO, 0);
                 break;
             case 14:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_FLAGMODE, 0);
                 break;
+            case 15:
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SETBP, 0);
             }
         }
         return 0;
@@ -742,12 +757,22 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             EmulatorRun();
             return 0;
 
+        case MENU_DEBUG_SETBP:
+            {
+                AddrProcData procData(Language::setBpWindowCaption);
+                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_SETBP), hwnd, addrProc, (LPARAM)&procData);
+                if (rv) {
+                    disassembly->toggleBreakpoint(procData.address, true);
+                }
+            }
+            return 0;
+
         case MENU_DEBUG_GOTO:
              {
-                WORD address = 0;
-                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_GOTO), hwnd, gotoProc, (LPARAM)&address);
+                AddrProcData procData(Language::gotoWindowCaption);
+                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_GOTO), hwnd, addrProc, (LPARAM)&procData);
                 if (rv) {
-                    disassembly->setCursor(address);
+                    disassembly->setCursor(procData.address);
                 }
             }
             return 0;
@@ -831,10 +856,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 12, 0, VK_F8);     
             RegisterHotKey(hwnd, 13, MOD_CONTROL, 'G');
             RegisterHotKey(hwnd, 14, MOD_CONTROL, 'M');
+            RegisterHotKey(hwnd, 15, MOD_CONTROL, 'B');
         }
         else {
             int i;
-            for (i = 1; i <= 14; i++) {
+            for (i = 1; i <= 15; i++) {
                 UnregisterHotKey(hwnd, i);
             }
         }

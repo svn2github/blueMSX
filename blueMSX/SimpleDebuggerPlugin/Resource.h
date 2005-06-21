@@ -1,6 +1,7 @@
 #define IDD_MEMORYTOOLBAR         100
 #define IDD_OPEN_SYMBOLSDIALOG    101
 #define IDD_GOTO                  102
+#define IDD_SETBP                 103
 
 #define IDD_RICHEDITCTRL1         201
 #define IDD_RICHEDITCTRL2         202
