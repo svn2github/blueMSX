@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2005-06-17 19:29:33 $
+** $Date: 2005-06-21 03:22:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2119,7 +2119,7 @@ void setDefaultPath() {
     GetCurrentDirectory(MAX_PATH - 1, st.pCurDir);
     
     sprintf(buffer, "%s\\Tools", st.pCurDir);
-    toolLoadAll(buffer);
+    toolLoadAll(buffer, pProperties->language);
 
     readOnlyDir = 0;
 
@@ -2557,6 +2557,8 @@ void archShowLanguageDialog()
 {
     int lang;
     int success;
+    int i;
+
     enterDialogShow();
     lang = langShowDlg(getMainHwnd(), pProperties->language);
     exitDialogShow();
@@ -2570,6 +2572,11 @@ void archShowLanguageDialog()
         addMenuItem(langMenuTools(), actionMenuTools, 1);
         addMenuItem(langMenuHelp(), actionMenuHelp, 1);
     }
+    
+    for (i = 0; i < toolGetCount(); i++) {
+        toolInfoSetLanguage(toolInfoGet(i), pProperties->language);
+    }
+
     updateMenu(0);
 }
 

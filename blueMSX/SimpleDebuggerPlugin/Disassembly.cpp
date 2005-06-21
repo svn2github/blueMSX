@@ -26,6 +26,7 @@
 #include "Disassembly.h"
 #include "ToolInterface.h"
 #include "Resource.h"
+#include "Language.h"
 #include <stdio.h>
 
 extern void DebuggerUpdate();
@@ -572,7 +573,7 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
         breakpoint[i] = BP_NONE;
     }
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxdasm", "Disassembly", 
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxdasm", Language::windowDisassembly, 
                           WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
                           CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
     invalidateContent();
@@ -783,7 +784,7 @@ void Disassembly::invalidateContent()
     lineCount = 0;
     updateScroll();
 
-    sprintf(lineInfo[lineCount].addr, "Disassembly unavailable.");
+    sprintf(lineInfo[lineCount].addr, Language::windowDisassemblyUnavail);
     lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
     lineInfo[lineCount].haspc = 0;
     lineInfo[lineCount].text[0] = 0;

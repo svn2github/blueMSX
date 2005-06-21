@@ -183,6 +183,12 @@
 			RelativePath=".\EditControls.h">
 		</File>
 		<File
+			RelativePath=".\Language.cpp">
+		</File>
+		<File
+			RelativePath=".\Language.h">
+		</File>
+		<File
 			RelativePath=".\Memory.cpp">
 		</File>
 		<File

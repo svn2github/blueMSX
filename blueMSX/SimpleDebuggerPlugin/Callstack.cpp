@@ -26,6 +26,7 @@
 #include "Callstack.h"
 #include "ToolInterface.h"
 #include "Resource.h"
+#include "Language.h"
 #include <stdio.h>
 
 static CallstackWindow* callstack = NULL;
@@ -155,7 +156,7 @@ CallstackWindow::CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* d
 
     RegisterClassEx(&wndClass);
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxcallstack", "Callstack", 
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxcallstack", Language::windowCallstack, 
                           WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
                           CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
     invalidateContent();
@@ -203,7 +204,7 @@ void CallstackWindow::invalidateContent()
     lineCount = 0;
     updateScroll();
 
-    sprintf(lineInfo[lineCount].text, "Callstack unavailable.");
+    sprintf(lineInfo[lineCount].text, Language::windowCallstackUnavail);
     lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
     lineInfo[lineCount].dataText[0] = 0;
     lineInfo[lineCount].dataTextLength = 0;

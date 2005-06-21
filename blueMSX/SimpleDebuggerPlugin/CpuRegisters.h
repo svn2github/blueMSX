@@ -31,12 +31,17 @@
 
 class CpuRegisters {
 public:
+    enum FlagMode { FM_CPU, FM_ASM };
+
     CpuRegisters(HINSTANCE hInstance, HWND owner);
     ~CpuRegisters();
 
     void show();
     void hide();
     bool isVisible();
+
+    void setFlagMode(FlagMode mode);
+    FlagMode getFlagMode();
     
     void enableEdit();
     void disableEdit();
@@ -73,13 +78,15 @@ private:
     int    registersPerRow;
     int    lineCount;
 
+    FlagMode flagMode;
+
     COLORREF colorBlack;
     COLORREF colorLtGray;
     COLORREF colorGray;
     COLORREF colorRed;
 
-    int regValue[15];
-    int refRegValue[15];
+    int regValue[32];
+    int refRegValue[32];
     
     HexInputDialog* dataInput2;
     HexInputDialog* dataInput4;

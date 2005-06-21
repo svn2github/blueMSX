@@ -9,6 +9,7 @@
 #include "CpuRegisters.h"
 #include "SymbolInfo.h"
 #include "Memory.h"
+#include "Language.h"
 #include "resrc1.h"
 #include <string>
 #include <commctrl.h>
@@ -27,6 +28,7 @@ static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
+static LanguageId langId = LID_ENGLISH;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -48,21 +50,20 @@ static Memory* memory = NULL;
 static void updateTooltip(int id, char* str)
 {
     switch (id) {
-    case TB_RESUME:   sprintf(str, "Start/Continue");            break;
-    case TB_PAUSE:    sprintf(str, "Break All");                 break;
-    case TB_STOP:     sprintf(str, "Stop Debugging");            break;
-    case TB_RUN:      sprintf(str, "Restart");                   break;
-    case TB_SHOWNEXT: sprintf(str, "Show Next Statement");       break;
-    case TB_STEPIN:   sprintf(str, "Step Into");                 break;
-    case TB_STEPOVER: sprintf(str, "Step Over");                 break;
-    case TB_STEPOUT:  sprintf(str, "Step Out");                  break;
-    case TB_RUNTO:    sprintf(str, "Run To Cursor");             break;
-    case TB_BPTOGGLE: sprintf(str, "Set/Remove Breakpoint");     break;
-    case TB_BPENABLE: sprintf(str, "Enable/Disable Breakpoint"); break;
-    case TB_BPENALL:  sprintf(str, "Enable All Breakpoints");    break;
-    case TB_BPDISALL: sprintf(str, "Disable All Breakpoints");   break;
-    case TB_BPREMALL: sprintf(str, "Remove All Breakpoints");    break;
-    }
+    case TB_RESUME:   sprintf(str, Language::toolbarResume);        break;
+    case TB_PAUSE:    sprintf(str, Language::toolbarPause);         break;
+    case TB_STOP:     sprintf(str, Language::toolbarStop);          break;
+    case TB_RUN:      sprintf(str, Language::toolbarRun);           break;
+    case TB_SHOWNEXT: sprintf(str, Language::toolbarShowNext);      break;
+    case TB_STEPIN:   sprintf(str, Language::toolbarStepIn);        break;
+    case TB_STEPOVER: sprintf(str, Language::toolbarStepOver);      break;
+    case TB_STEPOUT:  sprintf(str, Language::toolbarStepOut);       break;
+    case TB_RUNTO:    sprintf(str, Language::toolbarRunTo);         break;
+    case TB_BPTOGGLE: sprintf(str, Language::toolbarBpToggle);      break;
+    case TB_BPENABLE: sprintf(str, Language::toolbarBpEnable);      break;
+    case TB_BPENALL:  sprintf(str, Language::toolbarBpEnableAll);   break;
+    case TB_BPDISALL: sprintf(str, Language::toolbarBpDisableAll);  break;
+    case TB_BPREMALL: sprintf(str, Language::toolbarBpRemoveAll);   break;    }
 }
 
 static Toolbar* initializeToolbar(HWND owner)
@@ -152,6 +153,7 @@ static void updateStatusBar()
 #define MENU_DEBUG_BPREMOVEALL      37212
 #define MENU_DEBUG_BPENABLEALL      37213
 #define MENU_DEBUG_BPDISABLEALL     37214
+#define MENU_DEBUG_FLAGMODE         37215
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -163,52 +165,92 @@ static void updateStatusBar()
 
 static void updateWindowMenu() 
 {
+    static char buf[128];
+
     EmulatorState state = GetEmulatorState();
 
     HMENU hMenuFile = CreatePopupMenu();
-    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOADSYM, "Load Symbol File");
+
+    sprintf(buf, "%s", Language::menuFileLoadSymbolFile);
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOADSYM, buf);
+
     AppendMenu(hMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, "Exit");
-    
+
+    sprintf(buf, "%s", Language::menuFileExit);
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, buf);
+
     HMENU hMenuDebug = CreatePopupMenu();
     if (state == EMULATOR_STOPPED) {
-        AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, "Start\tF5");
+        sprintf(buf, "%s\tF5", Language::menuDebugStart);
+        AppendMenu(hMenuDebug, MF_STRING, MENU_DEBUG_CONTINUE, buf);
     }
     else {
-        AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, "Continue\tF5");
-        AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, "Break All\tCtrl+Alt+Break");
-        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     "Stop Debugging\tShift+F5");
-        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_RESTART,  "Restart\tCtrl+Shift+F5");
+        sprintf(buf, "%s\tF5", Language::menuDebugContinue);
+        AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_CONTINUE, buf);
+        sprintf(buf, "%s\tCtrl+Alt+Break", Language::menuDebugBreakAll);
+        AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_RUNNING ? 0 : MF_GRAYED), MENU_DEBUG_BREAKALL, buf);
+        sprintf(buf, "%s\tShift+F5", Language::menuDebugStop);
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_STOP,     buf);
+        sprintf(buf, "%s\tCtrl+Shift+F5", Language::menuDebugRestart);
+        AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_RESTART,  buf);
     }
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP,      "Step Into\tF11");
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP_OVER, "Step Over\tF10");
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0? 0 : MF_GRAYED), MENU_DEBUG_STEP_OUT,  "Step Out\tShift+F11");
+    sprintf(buf, "%s\tF11", Language::menuDebugStepIn);
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, buf);
+    sprintf(buf, "%s\tF10", Language::menuDebugStepOver);
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP_OVER, buf);
+    sprintf(buf, "%s\tShift+F11", Language::menuDebugStepOut);
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0? 0 : MF_GRAYED), MENU_DEBUG_STEP_OUT, buf);
 
-    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, "Run To Cursor\tShift+F10");
+    sprintf(buf, "%s\tShift+F10", Language::menuDebugRunTo);
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_RUNTO, buf);
+
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
-    AppendMenu(hMenuDebug, MF_STRING | (symbolInfo->getShowStatus() ? MF_CHECKED : 0), MENU_DEBUG_SHOWSYMBOLS, "Show Symbol Information\tF8");
+    sprintf(buf, "%s\tF8", Language::menuDebugShowSymbols);
+    AppendMenu(hMenuDebug, MF_STRING | (symbolInfo->getShowStatus() ? MF_CHECKED : 0), MENU_DEBUG_SHOWSYMBOLS, buf);
+
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
-    AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_GOTO, "Go To\tCtrl+G");
+    sprintf(buf, "%s\tCtrl+G", Language::menuDebugGoto);
+    AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_GOTO, buf);
+
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
     
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, "Set/Remove Breakpoint\tF9");
-    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isBpOnCcursor() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, "Enable/Disable Breakpoint\tShift+F9");
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, "Remove All Breakpoints\tCtrl+Shift+F9");
+    sprintf(buf, "%s\tF9", Language::menuDebugBpToggle);
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, buf);
+    sprintf(buf, "%s\tShift+F9", Language::menuDebugEnable);
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isBpOnCcursor() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, buf);
+    sprintf(buf, "%s\tCtrl+Shift+F9", Language::menuDebugRemoveAll);
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, buf);
 
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, "Enable All Breakpoints");
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, "Disable All Breakpoints");
+    sprintf(buf, "%s", Language::menuDebugEnableAll);
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, buf);
+    sprintf(buf, "%s", Language::menuDebugDisableAll);
+    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, buf);
 
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    sprintf(buf, "%s\tCtrl+M", Language::menuDebugShowAssemblyFlags);
+    AppendMenu(hMenuDebug, MF_STRING | (cpuRegisters->getFlagMode() == CpuRegisters::FM_CPU ? 0 : MF_CHECKED), MENU_DEBUG_FLAGMODE, buf);
+
+    
     HMENU hMenuWindow = CreatePopupMenu();
-    AppendMenu(hMenuWindow, MF_STRING | (disassembly  && disassembly->isVisible()  ? MFS_CHECKED : 0), MENU_WINDOW_DISASSEMBLY, "Disassembly");
-    AppendMenu(hMenuWindow, MF_STRING | (cpuRegisters && cpuRegisters->isVisible() ? MFS_CHECKED : 0), MENU_WINDOW_CPUREGISTERS, "CPU Registers");
-    AppendMenu(hMenuWindow, MF_STRING | (stack        && stack->isVisible()        ? MFS_CHECKED : 0), MENU_WINDOW_STACK, "Stack");
-    AppendMenu(hMenuWindow, MF_STRING | (callstack    && callstack->isVisible()    ? MFS_CHECKED : 0), MENU_WINDOW_CALLSTACK, "Callstack");
-    AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, "Memory Viewer");
+
+    sprintf(buf, "%s", Language::windowDisassembly);
+    AppendMenu(hMenuWindow, MF_STRING | (disassembly  && disassembly->isVisible()  ? MFS_CHECKED : 0), MENU_WINDOW_DISASSEMBLY, buf);
+    sprintf(buf, "%s", Language::windowCpuRegisters);
+    AppendMenu(hMenuWindow, MF_STRING | (cpuRegisters && cpuRegisters->isVisible() ? MFS_CHECKED : 0), MENU_WINDOW_CPUREGISTERS, buf);
+    sprintf(buf, "%s", Language::windowStack);
+    AppendMenu(hMenuWindow, MF_STRING | (stack        && stack->isVisible()        ? MFS_CHECKED : 0), MENU_WINDOW_STACK, buf);
+    sprintf(buf, "%s", Language::windowCallstack);
+    AppendMenu(hMenuWindow, MF_STRING | (callstack    && callstack->isVisible()    ? MFS_CHECKED : 0), MENU_WINDOW_CALLSTACK, buf);
+    sprintf(buf, "%s", Language::windowMemory);
+    AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, buf);
 
     HMENU hMenuHelp = CreatePopupMenu();
-    AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, "About");
+
+    sprintf(buf, "%s", Language::menuHelpAbout);
+    AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, buf);
 
     static HMENU hMenu = NULL;
     if (hMenu != NULL) {
@@ -216,10 +258,10 @@ static void updateWindowMenu()
     }
 
     hMenu = CreateMenu();
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFile, "File");
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuDebug, "Debug");
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuWindow, "Window");
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuHelp, "Help");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFile, Language::menuFile);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuDebug, Language::menuDebug);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuWindow, Language::menuWindow);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuHelp, Language::menuHelp);
     
     SetMenu(dbgHwnd, hMenu);
 }
@@ -231,6 +273,7 @@ UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
+        SetWindowText(GetDlgItem(hDlg, IDC_SYMBOLSAPPEND), Language::symbolWindowText);
         SendDlgItemMessage(hDlg, IDC_SYMBOLSAPPEND, BM_SETCHECK, replaceSymbols ? BST_CHECKED : BST_UNCHECKED, 0);
         return 0;
 
@@ -290,7 +333,7 @@ void loadSymbolFile(HWND hwndOwner)
     ofn.lpstrFileTitle = NULL; 
     ofn.nMaxFileTitle = 0; 
     ofn.lpstrInitialDir = NULL; 
-    ofn.lpstrTitle = "Open Symbol File"; 
+    ofn.lpstrTitle = Language::symbolWindowCaption; 
     ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLETEMPLATE | OFN_HIDEREADONLY | OFN_ENABLEHOOK | OFN_FILEMUSTEXIST; 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
@@ -471,6 +514,10 @@ static BOOL CALLBACK gotoProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
 
     switch (iMsg) {        
     case WM_INITDIALOG:
+        SetWindowText(hDlg, Language::gotoWindowCaption);
+        SendDlgItemMessage(hDlg, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::gotoWindowText);
+        SetWindowText(GetDlgItem(hDlg, IDOK), Language::genericOk);
+        SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::genericCancel);
         if (addressInput) {
             delete addressInput;
         }
@@ -564,6 +611,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             case 13:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_GOTO, 0);
                 break;
+            case 14:
+                SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_FLAGMODE, 0);
+                break;
             }
         }
         return 0;
@@ -579,8 +629,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             return 0;
 
         case MENU_HELP_ABOUT:
-            MessageBox(NULL, "blueMSX debugger\r\n\r\nBuilt: " __DATE__ "\r\n\r\nVisit http://www.bluemsx.com for details    \r\n\r\n\r\n",
-                       "blueMSX - Debugger", MB_ICONINFORMATION | MB_OK);
+            {
+                char text[256];
+                sprintf(text, "%s\r\n\r\n%s: " __DATE__ "\r\n\r\n%s    \r\n\r\n\r\n",
+                    Language::windowDebugger, Language::aboutBuilt, Language::aboutVisit);
+                MessageBox(NULL, text, Language::windowDebugger, MB_ICONINFORMATION | MB_OK);
+            }
             return 0;
 
         case MENU_WINDOW_DISASSEMBLY:
@@ -735,6 +789,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case TB_BPDISALL:
             disassembly->disableAllBreakpoints();
             return 0;
+
+        case MENU_DEBUG_FLAGMODE:
+            if (cpuRegisters->getFlagMode() == CpuRegisters::FM_ASM) {
+                cpuRegisters->setFlagMode(CpuRegisters::FM_CPU);
+            }
+            else {
+                cpuRegisters->setFlagMode(CpuRegisters::FM_ASM);
+            }
+            updateWindowMenu();
+            return 0;
         }
         break;
 
@@ -766,10 +830,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 11, MOD_CONTROL | MOD_SHIFT, VK_F9);        
             RegisterHotKey(hwnd, 12, 0, VK_F8);     
             RegisterHotKey(hwnd, 13, MOD_CONTROL, 'G');
+            RegisterHotKey(hwnd, 14, MOD_CONTROL, 'M');
         }
         else {
             int i;
-            for (i = 1; i <= 11; i++) {
+            for (i = 1; i <= 14; i++) {
                 UnregisterHotKey(hwnd, i);
             }
         }
@@ -873,7 +938,9 @@ void OnShowTool() {
         return;
     }
 
-    dbgHwnd = CreateWindow("msxdebugger", "blueMSX - Debugger", 
+    Language::SetLanguage(langId);
+
+    dbgHwnd = CreateWindow("msxdebugger", Language::windowDebugger, 
                            WS_OVERLAPPEDWINDOW, 
                            CW_USEDEFAULT, CW_USEDEFAULT, 800, 740, NULL, NULL, GetDllHinstance(), NULL);
 
@@ -995,6 +1062,11 @@ void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address) {
 void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address)
 {
     OnEmulatorSetBreakpoint(address);
+}
+
+void OnSetLanguage(LanguageId languageId)
+{
+    langId = languageId;
 }
 
 const char* OnGetName() {

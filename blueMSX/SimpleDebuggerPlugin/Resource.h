@@ -14,6 +14,9 @@
 
 #define IDC_SYMBOLSAPPEND       10006
 
+#define IDC_TEXT_ADDRESS        10007
+#define IDC_TEXT_MEMORY         10008
+
 #define IDI_BLUEMSX              2001
 
 #define ID_REFRESH              40000

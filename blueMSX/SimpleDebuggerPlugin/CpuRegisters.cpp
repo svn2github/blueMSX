@@ -25,11 +25,12 @@
 */
 #include "CpuRegisters.h"
 #include "Resource.h"
+#include "Language.h"
 #include <stdio.h>
 
 namespace {
 
-const char regName[15][8] = {
+const char regName[20][8] = {
     "AF ",
     "BC ",
     "DE ",
@@ -44,7 +45,9 @@ const char regName[15][8] = {
     "PC ",
     "I  ",
     "R  ",
-    "IFF"
+    "IM ",
+    "IF1",
+    "IF2"
 };
 
 }
@@ -113,11 +116,42 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
             int row = HIWORD(lParam) / textHeight;
 
             if (row == 0) {
-                int flag = (LOWORD(lParam) - 12 - textWidth * 6) / (textWidth + 4);
-                if (flag >= 0 && flag < 8) {
-                    if (currentRegBank != NULL) {
-                        regValue[0] ^= (1 << (7 - flag));
+                if (flagMode == FM_CPU) {
+                    int flag = (LOWORD(lParam) - 12 - textWidth * 6) / (textWidth + 4);
+                    if (flag >= 0 && flag < 8) {
+                        if (currentRegBank != NULL) {
+                            regValue[0] ^= (1 << (7 - flag));
+                            DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                        }
+                        InvalidateRect(hwnd, NULL, TRUE);
+                    }
+                }
+                
+                if (flagMode == FM_ASM) {
+                    int flag = (LOWORD(lParam) - 12 - textWidth * 6) / (2 * textWidth + 7);
+                    switch (flag) {
+                    case 0: 
+                        regValue[0] ^= 0x40; 
                         DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                        break;
+                    case 1: 
+                        regValue[0] ^= 0x01; 
+                        DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                        break;
+                    case 2: 
+                        regValue[0] ^= 0x04; 
+                        DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                        break;
+                    case 3: 
+                        regValue[0] ^= 0x80;
+                        DeviceWriteRegisterBankRegister(currentRegBank, 0, regValue[0]);
+                        break;
+                    case 4:
+                        regValue[15] = regValue[15] > 0 ? 0 : 2;
+                        regValue[16] = regValue[15] > 0 ? 1 : 0;
+                        DeviceWriteRegisterBankRegister(currentRegBank, 15, regValue[15]);
+                        DeviceWriteRegisterBankRegister(currentRegBank, 16, regValue[16]);
+                        break;
                     }
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
@@ -211,7 +245,7 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
 
 
 CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentEditRegister(-1), editEnabled(false)
+    lineCount(0), flagMode(FM_ASM), currentEditRegister(-1), editEnabled(false)
 {
     cpuRegisters = this;
 
@@ -232,11 +266,11 @@ CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) :
 
     RegisterClassEx(&wndClass);
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 17; i++) {
         regValue[i] = -1;
     }
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxregs", "CPU Registers", 
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxregs", Language::windowCpuRegisters, 
                           WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
                           CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
     invalidateContent();
@@ -274,6 +308,17 @@ void CpuRegisters::disableEdit()
     dataInput4->hide();
 }
 
+void CpuRegisters::setFlagMode(CpuRegisters::FlagMode mode)
+{
+    flagMode = mode;
+    InvalidateRect(hwnd, NULL, TRUE);
+}
+
+CpuRegisters::FlagMode CpuRegisters::getFlagMode()
+{
+    return flagMode;
+}
+
 void CpuRegisters::updatePosition(RECT& rect)
 {
     dataInput2->hide();
@@ -287,7 +332,7 @@ void CpuRegisters::invalidateContent()
 
     dataInput2->hide();
     dataInput4->hide();
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 17; i++) {
         refRegValue[i] = -1;
         regValue[i] = -1;
     }
@@ -302,7 +347,7 @@ void CpuRegisters::updateContent(RegisterBank* regBank)
     dataInput2->hide();
     dataInput4->hide();
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 17; i++) {
         int val = regBank->reg[i].value;
         refRegValue[i] = regValue[i];
         regValue[i] = val;
@@ -407,20 +452,42 @@ void CpuRegisters::drawText(int top, int bottom)
 
             SelectObject(hMemdc, hBrushWhite); 
             WORD regVal = regValue[0];
-            for (int j = 0; j < 8; j++) {
-                SelectObject(hMemdc, hFontBold);
-                SetTextColor(hMemdc, colorBlack);
-                RECT r = { 10, 1, textWidth * 8, textHeight };
-                DrawText(hMemdc, "Flags", 5, &r, DT_LEFT);
-                SelectObject(hMemdc, hFont);
 
-                int x = 12 + textWidth * 6 + j * (textWidth + 4);
-                PatBlt(hMemdc, x, 3, textWidth + 1, textHeight - 5, PATCOPY);
-                if (regValue[0] >= 0) {
-                    RECT r = { x + 1, 1, x + textWidth + 2, textHeight };
-                    SetTextColor(hMemdc, (regVal & 0x80) ? colorBlack : colorLtGray);
-                    DrawText(hMemdc, "SZYHXPNC" + j, 1, &r, DT_LEFT);
-                    regVal <<= 1;
+            SelectObject(hMemdc, hFontBold);
+            SetTextColor(hMemdc, colorBlack);
+            RECT r = { 10, 1, textWidth * 8, textHeight };
+            DrawText(hMemdc, "Flags", 5, &r, DT_LEFT);
+            SelectObject(hMemdc, hFont);
+
+            if (flagMode == FM_CPU) {
+                for (int j = 0; j < 8; j++) {
+                    int x = 12 + textWidth * 6 + j * (textWidth + 4);
+                    PatBlt(hMemdc, x, 3, textWidth + 1, textHeight - 5, PATCOPY);
+                    if (regValue[0] >= 0) {
+                        RECT r = { x + 1, 1, x + textWidth + 2, textHeight };
+                        SetTextColor(hMemdc, (regVal & 0x80) ? colorBlack : colorLtGray);
+                        DrawText(hMemdc, "SZYHXPNC" + j, 1, &r, DT_LEFT);
+                        regVal <<= 1;
+                    }
+                }
+            }
+            if (flagMode == FM_ASM) {
+                SetTextColor(hMemdc, colorBlack);
+                for (int j = 0; j < 5; j++) {
+                    int x = 12 + textWidth * 6 + j * (2 * textWidth + 7);
+                    PatBlt(hMemdc, x, 3, 2 * textWidth + 1, textHeight - 5, PATCOPY);
+                    if (regValue[0] >= 0) {
+                        RECT r = { x + 1, 1, x + 2 * textWidth + 2, textHeight };
+                        char* txt = "";
+                        switch (j) {
+                        case 0: txt = (regVal & 0x40) ? " Z" : "NZ"; break;
+                        case 1: txt = (regVal & 0x01) ? " C" : "NC"; break;
+                        case 2: txt = (regVal & 0x04) ? "PE" : "PO"; break;
+                        case 3: txt = (regVal & 0x80) ? " M" : " P"; break;
+                        case 4: txt = regValue[15] > 0 ? "EI" : "DI"; break;
+                        }
+                        DrawText(hMemdc, txt, 2, &r, DT_LEFT);
+                    }
                 }
             }
             continue;

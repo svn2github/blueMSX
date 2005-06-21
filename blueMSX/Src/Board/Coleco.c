@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-06-20 00:32:34 $
+** $Date: 2005-06-21 03:22:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -410,7 +410,7 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
         dbgDeviceAddCallstack(dbgDevice, "Callstack", r800->callstack, r800->callstackSize);
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 14);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 17);
 
     dbgRegisterBankAddRegister(regBank,  0, "AF",  16, r800->regs.AF.W);
     dbgRegisterBankAddRegister(regBank,  1, "BC",  16, r800->regs.BC.W);
@@ -426,8 +426,9 @@ static void getDebugInfo(void* dummy, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 11, "PC",  16, r800->regs.PC.W);
     dbgRegisterBankAddRegister(regBank, 12, "I",   8,  r800->regs.I);
     dbgRegisterBankAddRegister(regBank, 13, "R",   8,  r800->regs.R);
-//    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 != 0 ? 1 : 0)  + 2 * (r800->regs.iff2 != 0 ? 1 : 0));
-    dbgRegisterBankAddRegister(regBank, 14, "IFF", 8,  (r800->regs.iff1 & 1) && (~r800->regs.iff1 & 2) ?1 : 0);
+    dbgRegisterBankAddRegister(regBank, 14, "IM",  8,  r800->regs.im);
+    dbgRegisterBankAddRegister(regBank, 15, "IFF1",8,  r800->regs.iff1);
+    dbgRegisterBankAddRegister(regBank, 16, "IFF2",8,  r800->regs.iff2);
 }
 
 static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
@@ -447,10 +448,9 @@ static int dbgWriteRegister(void* dummy, char* name, int regIndex, UInt32 value)
     case 11: r800->regs.PC.W = (UInt16)value; break;
     case 12: r800->regs.I = (UInt8)value; break;
     case 13: r800->regs.R = (UInt8)value; break;
-    case 14: 
-        r800->regs.iff1 = 2;//(UInt8)(value & 1); 
-        r800->regs.iff2 = 1;//(UInt8)((value >> 1) & 1); 
-        break;
+    case 14: r800->regs.im = value > 2 ? 2 : (UInt8)value; break;
+    case 15: r800->regs.iff1 = value > 2 ? 2 : (UInt8)value; break; 
+    case 16: r800->regs.iff2 = value > 2 ? 2 : (UInt8)value; break; 
     }
 
     return 1;

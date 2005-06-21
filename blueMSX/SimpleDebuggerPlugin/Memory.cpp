@@ -25,6 +25,7 @@
 */
 #include "Memory.h"
 #include "Resource.h"
+#include "Language.h"
 #include <stdio.h>
 #include <string>
 
@@ -86,6 +87,8 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     switch (iMsg) {
     case WM_INITDIALOG:
         addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, symbolInfo);
+        SendDlgItemMessage(hwnd, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::memWindowAddress);
+        SendDlgItemMessage(hwnd, IDC_TEXT_MEMORY, WM_SETTEXT, 0, (LPARAM)Language::memWindowMemory);
         return FALSE;
 
     case WM_LBUTTONDOWN:
@@ -313,7 +316,7 @@ Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
 
     RegisterClassEx(&wndClass);
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxmemory", "Memory", 
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxmemory", Language::windowMemory, 
                           WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
                           CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
 

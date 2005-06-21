@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-06-20 00:31:20 $
+** $Date: 2005-06-21 03:22:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,6 +54,7 @@ struct ToolInfo {
         NotifyFn onEmulatorReset;
         TraceFn  onEmulatorTrace;
         SetBpFn  onEmulatorSetBp;
+        SetLgFn  onEmulatorSetLg;
     } callbacks;
 };
 
@@ -259,7 +260,7 @@ static Interface toolInterface = {
     toolGetEmulatorVersion,
 };
 
-void toolLoadAll(const char* path)
+void toolLoadAll(const char* path, int languageId)
 {
     WIN32_FIND_DATA wfd;
     char  curDir[MAX_PATH];
@@ -296,6 +297,7 @@ void toolLoadAll(const char* path)
             NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorReset");
             TraceFn  onTrace  = (TraceFn) GetProcAddress(lib, "EmulatorTrace");
             SetBpFn  onSetBp  = (SetBpFn) GetProcAddress(lib, "EmulatorSetBreakpoint");
+            SetLgFn  onSetLg  = (SetLgFn) GetProcAddress(lib, "SetLanguage");
 
             if (create == NULL) {
                 // Check old style dll exports (of blueMSX 2.2)
@@ -309,6 +311,7 @@ void toolLoadAll(const char* path)
                 onReset  = (NotifyFn)GetProcAddress(lib, (LPCSTR)8);
                 onTrace  = NULL;
                 onSetBp  = NULL;
+                onSetLg  = NULL;
 
                 if (create == NULL) {
                     FreeLibrary(lib);
@@ -331,6 +334,7 @@ void toolLoadAll(const char* path)
             toolInfo->callbacks.onEmulatorReset  = onReset;
             toolInfo->callbacks.onEmulatorTrace  = onTrace;
             toolInfo->callbacks.onEmulatorSetBp  = onSetBp;
+            toolInfo->callbacks.onEmulatorSetLg  = onSetLg;
             toolInfo->debugger = debuggerCreate(onStart  ? onEmulatorStart  : NULL, 
                                                 onStop   ? onEmulatorStop   : NULL, 
                                                 onPause  ? onEmulatorPause  : NULL, 
@@ -343,6 +347,8 @@ void toolLoadAll(const char* path)
             strcpy(toolInfo->description, description);
 
             toolList[toolListCount++] = toolInfo;
+
+            toolInfoSetLanguage(toolInfo, languageId);
         }
     } while (FindNextFile(handle, &wfd));
 	
@@ -398,6 +404,13 @@ void toolInfoShowTool(ToolInfo* toolInfo)
 {
     if (toolInfo->callbacks.show != NULL) {
         toolInfo->callbacks.show();
+    }
+}
+
+void toolInfoSetLanguage(ToolInfo* toolInfo, int langId) 
+{
+    if (toolInfo->callbacks.onEmulatorSetLg != NULL) {
+        toolInfo->callbacks.onEmulatorSetLg(langId);
     }
 }
 

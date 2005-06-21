@@ -73,9 +73,9 @@ IDD_MEMORYTOOLBAR DIALOGEX 0, 0, 236, 17
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    LTEXT           "Memory:",IDC_STATIC,7,4,30,10
+    LTEXT           ":",IDC_TEXT_MEMORY,7,4,30,10
     COMBOBOX        IDC_MEMORY,41,2,132,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Address:",IDC_STATIC,183,4,30,10
+    LTEXT           ":",IDC_TEXT_ADDRESS,183,4,30,10
 END
 
 
@@ -86,9 +86,9 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP |
 CAPTION "Go To Address"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "Address or Label:",IDC_STATIC,7,6,180,8
-    PUSHBUTTON      "OK",IDOK,37,37,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,93,37,50,14
+    LTEXT           ":",IDC_TEXT_ADDRESS,7,6,180,8
+    PUSHBUTTON      "",IDOK,37,37,50,14
+    PUSHBUTTON      "",IDCANCEL,93,37,50,14
 END
 
 
@@ -97,7 +97,7 @@ STYLE WS_CHILD | WS_CLIPSIBLINGS | DS_CONTROL | DS_3DLOOK
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "", stc32, 0, 0, 0, 0
-    CONTROL         "Replace old symbols",IDC_SYMBOLSAPPEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,150,120,11
+    CONTROL         "",IDC_SYMBOLSAPPEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,150,120,11
 END
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
