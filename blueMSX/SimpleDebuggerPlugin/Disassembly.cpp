@@ -730,7 +730,15 @@ bool Disassembly::setStepOverBreakpoint()
     runtoBreakpoint = (backupPc + dasm(backupMemory, backupPc, str)) & 0xffff;
     // If call or rst instruction we need to set a runto breakpoint
     // otherwise its just a regular single step
-    bool step = strncmp(str, "call", 4) != 0 && strncmp(str, "call", 4) != 0;
+    bool step = strncmp(str, "call", 4) != 0 && 
+                strncmp(str, "ldir", 4) != 0 && 
+                strncmp(str, "lddr", 4) != 0 && 
+                strncmp(str, "cpir", 4) != 0 && 
+                strncmp(str, "inir", 4) != 0 && 
+                strncmp(str, "indr", 4) != 0 && 
+                strncmp(str, "otir", 4) != 0 && 
+                strncmp(str, "otdr", 4) != 0 && 
+                strncmp(str, "rst",  3) != 0;
     if (!step) {
         SetBreakpoint(runtoBreakpoint);
     }

@@ -81,21 +81,22 @@ void HexInputDialog::setFocus()
     SetFocus(hwnd);
 }
 
-WORD HexInputDialog::getValue() 
+int HexInputDialog::getValue() 
 {
     GETTEXTEX t = {63, GT_DEFAULT, CP_ACP, NULL, NULL};
     char text[63];
     int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
     text[len] = 0;
 
+    int address = 0;
+    sscanf(text, "%X", &address);
+
     WORD addr = 0;
-    if (symbolInfo == NULL || !symbolInfo->rfind(text, &addr)) {
-        int address = 0;
-        sscanf(text, "%X", &address);
-        addr = (WORD)address;
+    if (symbolInfo != NULL && symbolInfo->rfind(text, &addr)) {
+        address = addr;
     }
 
-    return addr;
+    return address;
 }
 
 void HexInputDialog::initRichEditControlDll()

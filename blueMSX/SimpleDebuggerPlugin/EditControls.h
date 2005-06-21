@@ -44,7 +44,7 @@ public:
     void hide();
     void setFocus();
 
-    WORD getValue();
+    int getValue();
 
 private:
     int wx;
