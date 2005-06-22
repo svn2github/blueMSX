@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-06-22 07:18:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -555,7 +555,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuVideoSource         = "ród³o obrazu";
     ls->menuVideoSourceDefault  = "Nie pod³¹czono Ÿród³a obrazu";
     ls->menuVideoChipAutodetect = "Autodetekcja ok³adu obrazu";
-    ls->propFullscreenResText   = "Roz. dla pe³nego ekranu:";
+    ls->propFullscreenResText   = "Pe³ny ekran:";
     ls->dlgSavePreview          = "Poka¿ podgl¹d";
     ls->dlgSaveDate             = "Czas zapisu:";
     

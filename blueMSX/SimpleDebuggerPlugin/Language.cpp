@@ -118,7 +118,7 @@ public:
         toolbarStepIn               = "ステップ イン";
         toolbarStepOver             = "ステップ オーバー";
         toolbarStepOut              = "ステップ アウト";
-        toolbarRunTo                = "カーソ\ルで実行";
+        toolbarRunTo                = "カーソ\ルまで実行";
         toolbarBpToggle             = "ブレイクポイント/除去";
         toolbarBpEnable             = "ブレイクポイント有/無";
         toolbarBpEnableAll          = "ブレイクポイント全有効化";
@@ -138,44 +138,44 @@ public:
         menuDebugStepIn             = "ステップ イン";
         menuDebugStepOver           = "ステップ オーバー";
         menuDebugStepOut            = "ステップ アウト";
-        menuDebugRunTo              = "カーソ\ルで実行";
+        menuDebugRunTo              = "カーソ\ルまで実行";
         menuDebugShowSymbols        = "シンボル情報表\示";
         menuDebugGoto               = "移動";
-        menuDebugBpAdd              = "Add New Breakpoint";
-        menuDebugBpToggle           = "ブレイクポイントのセット/除去";
+        menuDebugBpAdd              = "ブレイクポイントを追加";
+        menuDebugBpToggle           = "ブレイクポイントのセット/消去";
         menuDebugEnable             = "ブレイクポイント有/無";
         menuDebugRemoveAll          = "ブレイクポイント全消去";
         menuDebugEnableAll          = "ブレイクポイント全有効化";
         menuDebugDisableAll         = "ブレイクポイント全無効化";
-        menuDebugShowAssemblyFlags  = "Show Assembly Flags";
+        menuDebugShowAssemblyFlags  = "アセンブリフラッグ表\示";
 
         menuWindow                  = "ウィンドウ";
 
         menuHelp                    = "ヘルプ";
-        menuHelpAbout               = "デバッガーについて";
+        menuHelpAbout               = "デバッガについて";
 
-        windowDebugger              = "blueMSX - Debugger";
+        windowDebugger              = "blueMSX - デバッガ";
         windowDisassembly           = "逆アセンブル";
-        windowDisassemblyUnavail    = "Disassembly unavailable.";
+        windowDisassemblyUnavail    = "逆アセンブル 利用不可";
         windowCpuRegisters          = "CPU レジスタ";
         windowStack                 = "スタック";
-        windowStackUnavail          = "Stack unavailable.";
+        windowStackUnavail          = "スタック 利用不可";
         windowCallstack             = "コールスタック";
-        windowCallstackUnavail      = "Callstack unavailable.";
+        windowCallstackUnavail      = "コールスタック 利用不可";
         windowMemory                = "メモリ";
 
         memWindowMemory             = "メモリ:";
         memWindowAddress            = "アドレス:";
 
-        setBpWindowCaption          = "Add New Breakpoint";
+        setBpWindowCaption          = "ブレイクポイントを追加";
         gotoWindowCaption           = "アドレスに移動";
         gotoWindowText              = "アドレスまたはラベル:";
 
-        symbolWindowCaption         = "Open Symbol File";
+        symbolWindowCaption         = "シンボルファイルのロード";
         symbolWindowText            = "シンボルの入れ替え";
         
-        aboutBuilt                  = "Built:";
-        aboutVisit                  = "Visit http://www.bluemsx.com for details";
+        aboutBuilt                  = "ビルド:";
+        aboutVisit                  = "詳しい情報は http://www.bluemsx.com まで";
     }
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-06-22 07:18:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -527,6 +527,7 @@ void actionCasSetPosition() {
 }
 
 void actionEmuResetSoft() {
+    archUpdateMenu(0);
     if (emulatorGetState() == EMU_RUNNING) {
         emulatorSuspend();
         boardReset();
@@ -540,6 +541,7 @@ void actionEmuResetSoft() {
 }
 
 void actionEmuResetHard() {
+    archUpdateMenu(0);
     emulatorStop();
     emulatorStart(NULL);
     archUpdateMenu(0);
