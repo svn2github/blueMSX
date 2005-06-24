@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-05-11 04:54:53 $
+** $Date: 2005-06-24 17:33:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -788,7 +788,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(toolsShowTrainer);
     LOAD_SHORTCUT(helpShowHelp);
     LOAD_SHORTCUT(helpShowAbout);
-    LOAD_SHORTCUT(cpuTrace);
+//    LOAD_SHORTCUT(cpuTrace);
     return shortcuts;
 }
 
@@ -872,7 +872,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(toolsShowTrainer);
     SAVE_SHORTCUT(helpShowHelp);
     SAVE_SHORTCUT(helpShowAbout);
-    SAVE_SHORTCUT(cpuTrace);
+//    SAVE_SHORTCUT(cpuTrace);
 }
 
 static void addShortcutEntry(HWND hwnd, int entry, char* description, ShotcutHotkey hotkey) {
@@ -1036,9 +1036,9 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(fdcTiming,     langShortcutToggleFdcTiming());
     
 
-    ADD_SHORTCUTSEPARATOR();
+//    ADD_SHORTCUTSEPARATOR();
     
-    ADD_SHORTCUT(cpuTrace, langShortcutToggleCpuTrace());
+//    ADD_SHORTCUT(cpuTrace, langShortcutToggleCpuTrace());
 }
 
 

@@ -1018,6 +1018,14 @@ void vdpCmdDestroy(VdpCmdState* vdpCmd)
 */
 static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
 {
+    vdpCmd->screenMode = vdpCmd->newScrMode;
+
+    if (vdpCmd->screenMode < 0) {
+        vdpCmd->CM = 0;
+        vdpCmd->status &= ~VDPSTATUS_CE;
+        return;
+    }
+    
     vdpCmd->SX &= 0x1ff;
     vdpCmd->SY &= 0x3ff;
     vdpCmd->DX &= 0x1ff;
@@ -1025,12 +1033,6 @@ static void vdpCmdSetCommand(VdpCmdState* vdpCmd, UInt32 systemTime)
     vdpCmd->NX &= 0x3ff;
     vdpCmd->NY &= 0x3ff;
 
-    vdpCmd->screenMode = vdpCmd->newScrMode;
-    if (vdpCmd->screenMode < 0) {
-        vdpCmd->CM = 0;
-        vdpCmd->status &= ~VDPSTATUS_CE;
-        return;
-    }
     switch (vdpCmd->CM) {
     case CM_ABRT:
         vdpCmd->CM = 0;
@@ -1129,9 +1131,7 @@ void vdpCmdWrite(VdpCmdState* vdpCmd, UInt8 reg, UInt8 value, UInt32 systemTime)
 	case 0x0e: 
 		vdpCmd->LO = value & 0x0F;
 		vdpCmd->CM = value >> 4;
-        if (vdpCmd->screenMode >= 0) {
-		    vdpCmdSetCommand(vdpCmd, systemTime);
-        }
+		vdpCmdSetCommand(vdpCmd, systemTime);
 		break;
     }
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-06-12 20:30:28 $
+** $Date: 2005-06-24 17:33:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,13 +88,6 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Shimanuki Koshi,  "
                 "Roger Filipe,  "
                 "Amer Dugmag,  "
-                "Alex Wulms,  "
-                "Marat Fayzullin,  "
-                "Jarek Burczynski,  "
-                "R. Belmont,  "
-                "O. Galibert,  "
-                "Tatsuyuki Satoh,  "
-                "Gilles Vollant"
                 "......          ......"
                 "and YOU !!!!"
                 "                                     ");

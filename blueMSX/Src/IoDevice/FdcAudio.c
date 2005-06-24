@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/FdcAudio.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-01 09:26:27 $
+** $Date: 2005-06-24 17:33:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "SamplePlayer.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 
 static Int32 PanasonicReadCount = 17733;
@@ -3445,6 +3446,38 @@ struct FdcAudio {
     Int32  motorCount;
 };
 
+static void loadSample(char* filename, Int16** samples, Int32* count, 
+                       Int16* defSamples, Int32 defCount)
+{
+    FILE* f = fopen(filename, "rb"); // Try read 16 bit 44.1kHz mono sample
+    if (f != NULL) {
+        while (!feof(f)) {
+            UInt32 data = 0;
+            if (fread(&data, 4, 1, f) == 1) {
+                if (data == 0x61746164) {
+                    UInt32 size = 0;
+                    if (fread(&size, 4, 1, f) == 1) {
+                        if (size < 131072) {
+                            *samples = malloc(size);
+                            *count = fread(*samples, 2, size / 2, f);
+                            if (*count == size / 2) {
+                                fclose(f);
+                                return;
+                            }
+                            free(*samples);
+                        }
+                    }
+                }
+            }
+        }
+        fclose(f);
+    }
+
+    *samples = malloc(defCount * sizeof(Int16));
+    memcpy(*samples, defSamples, defCount * sizeof(Int16));
+    *count = defCount;
+}
+
 FdcAudio* fdcAudioCreate(FdcAudioType type)
 {
     FdcAudio* fdcAudio = malloc(sizeof(FdcAudio));
@@ -3454,16 +3487,20 @@ FdcAudio* fdcAudioCreate(FdcAudioType type)
     switch (type) {
     default:
     case FA_PANASONIC:
-        fdcAudio->readSamples  = PanasonicReadSamples;
-        fdcAudio->readCount    = PanasonicReadCount;
-        fdcAudio->motorSamples = PanasonicMotorSamples;
-        fdcAudio->motorCount   = PanasonicMotorCount;
+        loadSample("FdcRead.wav",  
+                   &fdcAudio->readSamples,  &fdcAudio->readCount,  
+                   PanasonicReadSamples, PanasonicReadCount);
+        loadSample("FdcMotor.wav", 
+                   &fdcAudio->motorSamples, &fdcAudio->motorCount, 
+                   PanasonicMotorSamples, PanasonicMotorCount);
         break;
     case FA_WESTERN_DIGITAL:
-        fdcAudio->readSamples  = PanasonicReadSamples;
-        fdcAudio->readCount    = PanasonicReadCount;
-        fdcAudio->motorSamples = PanasonicMotorSamples;
-        fdcAudio->motorCount   = PanasonicMotorCount;
+        loadSample("FdcRead.wav",  
+                   &fdcAudio->readSamples,  &fdcAudio->readCount,  
+                   PanasonicReadSamples, PanasonicReadCount);
+        loadSample("FdcMotor.wav", 
+                   &fdcAudio->motorSamples, &fdcAudio->motorCount, 
+                   PanasonicMotorSamples, PanasonicMotorCount);
         break;
     }
 
@@ -3475,6 +3512,8 @@ FdcAudio* fdcAudioCreate(FdcAudioType type)
 void fdcAudioDestroy(FdcAudio* fdcAudio)
 {
     samplePlayerDestroy(fdcAudio->samplePlayer);
+    free(fdcAudio->readSamples);
+    free(fdcAudio->motorSamples);
     free(fdcAudio);
 }
 

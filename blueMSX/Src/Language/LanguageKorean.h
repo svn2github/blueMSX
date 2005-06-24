@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.10 $ + additions 2005/03/03
+** $Revision: 1.11 $ + additions 2005/03/03
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-06-24 17:33:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -533,7 +533,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSndAY8910           = " AY8910 PSG";
     ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
-    ls->propMonColorGhosting    = "RF-모듈레이터";
+    ls->propMonColorGhosting    = "RF모듈레이터";
 
     ls->keyconfigSelectedKey    = "선택된 키:";
     ls->keyconfigMappedTo       = "대응된 키:";
@@ -571,19 +571,19 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPortsNone           = "없음";
 
     // New entries in 2.3
-    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+    ls->enumControlsJoyTetris2Dongle = "테트리스 2 동글";
 
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
-    ls->propPortsFile           = "Print to File";
-    ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename:";
-    ls->propPortsEmulateMsxPrn  = "Emulation:";
+    ls->propPortsFile           = "파일에 출력하기";
+    ls->propPortsOpenLogFile    = "로그파일 열기";
+    ls->propPortsFilenameText   = "파일명:";
+    ls->propPortsEmulateMsxPrn  = "에뮬레이션:";
 
-    ls->shortcutPrnFormFeed     = "Printer Form Feed";
+    ls->shortcutPrnFormFeed     = "프린터 폼피드";
 
-    ls->menuPrnFormfeed         = "Form Feed";
-    ls->menuFilePrn             = "Printer";
-    ls->propPortsComFile        = "Send to File";
+    ls->menuPrnFormfeed         = "폼피드";
+    ls->menuFilePrn             = "프린터";
+    ls->propPortsComFile        = "파일에 보내기";
 };
 
 #endif
