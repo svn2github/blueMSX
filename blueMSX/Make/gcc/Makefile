@@ -34,7 +34,7 @@ ECHO  = @echo
 CFLAGS   = -g -w -O2 -D_MBCS -D__WINCRYPT_H__ -DWIN32 -D_WINDOWS -DWINDOWS -DLSB_FIRST -DNARROW -DSOUND -DDISK -DFMSX -D_WIN32_IE=0x0500 -DPROPERTIES_DEFAULTS_ALT_1 -DPROPERTIES_NO_REGISTRY -DPROPERTIES_LOCAL_INI_FILE
 LDFLAGS  = -Wl,--subsystem,windows
 TARGET   = blueMSX.exe
-LIBS     = -L$(ROOT_DIR)/Src/Unzip -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -ldxguid -lwinmm -lComCtl32 -lddraw -ldsound -ldinput -lmsvcrt -lzlibstat
+LIBS     = -L$(ROOT_DIR)/Src/Unzip -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -l shlwapi -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -ldxguid -lwinmm -lComCtl32 -lddraw -ldsound -ldinput -lmsvcrt -lzlibstat
 
 SRCS        = $(SOURCE_FILES)
 OBJS        = $(patsubst %.rc,%.res,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(filter %.c %.cc %.cpp %.cxx %.rc,$(SRCS)))))))
@@ -225,6 +225,11 @@ SOURCE_FILES += TC8566AF.c
 SOURCE_FILES += WD2793.c 
 SOURCE_FILES += WDCRC.c
 SOURCE_FILES += I8250.c
+SOURCE_FILES += I8251.c
+SOURCE_FILES += I8254.c
+SOURCE_FILES += FdcAudio.c
+SOURCE_FILES += UartIO.c
+SOURCE_FILES += MSXMidi.c
 
 SOURCE_FILES += Language.c
 
@@ -240,8 +245,10 @@ SOURCE_FILES += Fmopl.c
 SOURCE_FILES += KeyClick.c 
 SOURCE_FILES += Moonsound.c 
 SOURCE_FILES += OpenMsxYM2413.cpp 
+SOURCE_FILES += OpenMsxYM2413_2.cpp 
 SOURCE_FILES += OpenMsxYMF262.cpp 
 SOURCE_FILES += OpenMsxYMF278.cpp 
+SOURCE_FILES += SamplePlayer.c
 SOURCE_FILES += SCC.c 
 SOURCE_FILES += Y8950.c 
 SOURCE_FILES += YM2413.cpp 
