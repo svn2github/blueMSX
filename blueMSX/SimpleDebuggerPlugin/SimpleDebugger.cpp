@@ -839,7 +839,18 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_ACTIVATE:
-        isActive = wParam != WA_INACTIVE;
+        isActive = LOWORD(wParam) != WA_INACTIVE;
+
+        if (toolBar != NULL) {
+            static int minimizedState = 0;
+            if (minimizedState && HIWORD(wParam) == 0) {
+                delete toolBar;
+                toolBar = initializeToolbar(hwnd);
+                toolBar->show();
+            }
+            minimizedState = HIWORD(wParam);
+        }
+
 #ifndef _DEBUG
         if (isActive) {
             RegisterHotKey(hwnd, 1,  0, VK_F5);

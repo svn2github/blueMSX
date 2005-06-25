@@ -156,12 +156,12 @@ public:
 
         windowDebugger              = "blueMSX - デバッガ";
         windowDisassembly           = "逆アセンブル";
-        windowDisassemblyUnavail    = "逆アセンブル 利用不可";
+        windowDisassemblyUnavail    = "Disassembly unavailable.";
         windowCpuRegisters          = "CPU レジスタ";
         windowStack                 = "スタック";
-        windowStackUnavail          = "スタック 利用不可";
+        windowStackUnavail          = "Stack unavailable.";
         windowCallstack             = "コールスタック";
-        windowCallstackUnavail      = "コールスタック 利用不可";
+        windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "メモリ";
 
         memWindowMemory             = "メモリ:";

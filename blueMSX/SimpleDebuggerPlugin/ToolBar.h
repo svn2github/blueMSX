@@ -51,6 +51,7 @@ public:
 private:
     std::vector<TBBUTTON> buttons;
     HBITMAP hBackground;
+    HIMAGELIST hImglBtn;
     HWND hwnd;
 };
 

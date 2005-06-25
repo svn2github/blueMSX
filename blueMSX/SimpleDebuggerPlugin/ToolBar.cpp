@@ -40,7 +40,6 @@ Toolbar::Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transpa
 {
     INITCOMMONCONTROLSEX icex;
     HBITMAP   hBtn;
-    HIMAGELIST  hImglBtn;
  
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC  = ICC_BAR_CLASSES;
@@ -49,6 +48,11 @@ Toolbar::Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transpa
     if (backgroundId != -1) {
         hBackground = (HBITMAP)LoadImage(hInstance, MAKEINTRESOURCE(backgroundId), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
     }
+
+    hImglBtn = ImageList_Create(18, 18, ILC_COLOR24 | ILC_MASK , 3, 1);
+    hBtn = (HBITMAP)LoadImage(hInstance, MAKEINTRESOURCE(bitmapId), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
+    ImageList_AddMasked(hImglBtn, hBtn, transparentColor);
+    DeleteObject(hBtn);
 
     hwnd = CreateWindowEx(0, TOOLBARCLASSNAME, (LPSTR) NULL, 
         WS_CHILD | TBSTYLE_TOOLTIPS | WS_BORDER | TBSTYLE_FLAT | CCS_ADJUSTABLE, 
@@ -60,11 +64,6 @@ Toolbar::Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transpa
     SendMessage(hwnd, TB_SETBITMAPSIZE, 0, MAKELONG(18,18));
     SendMessage(hwnd, TB_SETBUTTONSIZE, 0, MAKELONG(18,18));
     SendMessage(hwnd, TB_AUTOSIZE, 0, 0L);
-
-    hImglBtn = ImageList_Create(18, 18, ILC_COLOR24 | ILC_MASK , 3, 1);
-    hBtn = (HBITMAP)LoadImage(hInstance, MAKEINTRESOURCE(bitmapId), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
-    ImageList_AddMasked(hImglBtn, hBtn, transparentColor);
-    DeleteObject(hBtn);
     
     SendMessage(hwnd, TB_SETIMAGELIST, (WPARAM)0, (LPARAM)hImglBtn);
     SendMessage(hwnd, TB_SETEXTENDEDSTYLE, (WPARAM)0, TBSTYLE_EX_DRAWDDARROWS );
@@ -72,6 +71,10 @@ Toolbar::Toolbar(HINSTANCE hInstance, HWND owner, int bitmapId, COLORREF transpa
 
 Toolbar::~Toolbar()
 {
+    if (hBackground != NULL) {
+        DeleteObject(hBackground);
+    }
+    ImageList_Destroy(hImglBtn);
     DestroyWindow(hwnd);
 }
 
