@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:58 $
+** $Date: 2005-06-28 07:28:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ typedef struct {
 
 void   tapeSetDirectory(char* baseDir, char* prefix);
 int    tapeInsert(char *name, const char *fileInZipFile);
+int    tapeIsInserted();
 int    tapeSave(char *name, TapeFormat format);
 void tapeLoadState();
 void tapeSaveState();

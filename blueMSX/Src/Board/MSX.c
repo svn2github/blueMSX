@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-06-28 05:18:25 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1029,9 +1029,14 @@ int msxChangeCassette(char *name, const char *fileInZipFile)
         strcpy(msxDevInfo->cassette.inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
-    tapeInsert(name, fileInZipFile);
+    return tapeInsert(name, fileInZipFile);
 
-    return msxDevInfo ? msxDevInfo->cassette.inserted : 0;
+//    return msxDevInfo ? msxDevInfo->cassette.inserted : 0;
+}
+
+int  msxCassetteInserted()
+{
+    return tapeIsInserted();
 }
 
 static int romTypeIsRom(RomType romType) {

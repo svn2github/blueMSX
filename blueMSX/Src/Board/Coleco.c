@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-06-21 03:22:34 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -586,6 +586,11 @@ void colecoChangeDiskette(int driveId, char* fileName, const char* fileInZipFile
 }
 
 int colecoChangeCassette(char *name, const char *fileInZipFile)
+{
+    return 0;
+}
+
+int colecoCassetteInserted()
 {
     return 0;
 }

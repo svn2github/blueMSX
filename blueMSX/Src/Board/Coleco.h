@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,7 @@ int colecoUseFmPac();
 void colecoChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void colecoChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
 int  colecoChangeCassette(char* name, const char* fileInZipFile);
+int  colecoCassetteInserted();
 
 #endif /* SVI_H */
 

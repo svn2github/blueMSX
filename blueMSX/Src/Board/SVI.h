@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-22 03:39:10 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,7 @@ int sviUseFmPac();
 void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
 int  sviChangeCassette(char* name, const char* fileInZipFile);
+int  sviCassetteInserted();
 
 #endif /* SVI_H */
 

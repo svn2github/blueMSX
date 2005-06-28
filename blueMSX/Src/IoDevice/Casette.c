@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-14 11:12:22 $
+** $Date: 2005-06-28 07:28:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -302,6 +302,11 @@ int tapeInsert(char *name, const char *fileInZipFile)
         ramImagePos = ramImageSize;
     }
 
+    return ramImageBuffer != NULL;
+}
+
+int tapeIsInserted()
+{
     return ramImageBuffer != NULL;
 }
 

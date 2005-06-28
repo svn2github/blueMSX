@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-06-21 03:22:34 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -709,9 +709,14 @@ int sviChangeCassette(char *name, const char *fileInZipFile)
         strcpy(sviDevInfo->cassette.inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
-    tapeInsert(name, fileInZipFile);
+    return tapeInsert(name, fileInZipFile);
 
-    return sviDevInfo ? sviDevInfo->cassette.inserted : 0;
+//    return sviDevInfo ? sviDevInfo->cassette.inserted : 0;
+}
+
+int  sviCassetteInserted()
+{
+    return tapeIsInserted();
 }
 
 void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)

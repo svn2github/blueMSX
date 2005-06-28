@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-04-08 05:58:46 $
+** $Date: 2005-06-28 07:28:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,6 @@
 extern void PatchReset(BoardType boardType);
 
 static int boardType;
-static int cassetteInserted = 0;
 static Mixer* boardMixer = NULL;
 static int (*syncToRealClock)(int, int) = NULL;
 UInt32* boardSysTime;
@@ -85,10 +84,10 @@ static int    (*useFmPac)()                                   = msxUseFmPac;
 static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartridge;
 static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
 static int    (*changeCassette)(char*, const char*)           = msxChangeCassette;
+static int    (*cassetteInserted)()                           = msxCassetteInserted;
 static void   (*setCpuTimeout)(UInt32)                        = msxSetCpuTimeout;
 static void   (*setBreakpoint)(UInt16)                        = msxSetBreakpoint;
 static void   (*clearBreakpoint)(UInt16)                      = msxClearBreakpoint;
-
 static void boardSetType(BoardType type)
 {
     boardType = type;
@@ -119,6 +118,7 @@ static void boardSetType(BoardType type)
         changeCartridge = msxChangeCartridge;
         changeDiskette  = msxChangeDiskette;
         changeCassette  = msxChangeCassette;
+        cassetteInserted= msxCassetteInserted;
         setCpuTimeout   = msxSetCpuTimeout;
         setBreakpoint   = msxSetBreakpoint;
         clearBreakpoint = msxClearBreakpoint;
@@ -149,6 +149,7 @@ static void boardSetType(BoardType type)
         changeCartridge = sviChangeCartridge;
         changeDiskette  = sviChangeDiskette;
         changeCassette  = sviChangeCassette;
+        cassetteInserted= sviCassetteInserted;
         setCpuTimeout   = sviSetCpuTimeout;
         setBreakpoint   = sviSetBreakpoint;
         clearBreakpoint = sviClearBreakpoint;
@@ -179,6 +180,7 @@ static void boardSetType(BoardType type)
         changeCartridge = colecoChangeCartridge;
         changeDiskette  = colecoChangeDiskette;
         changeCassette  = colecoChangeCassette;
+        cassetteInserted= colecoCassetteInserted;
         setCpuTimeout   = colecoSetCpuTimeout;
         setBreakpoint   = colecoSetBreakpoint;
         clearBreakpoint = colecoClearBreakpoint;
@@ -456,12 +458,12 @@ void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
 
 void boardChangeCassette(char* name, const char* fileInZipFile)
 {
-    cassetteInserted = changeCassette(name, fileInZipFile);
+    changeCassette(name, fileInZipFile);
 }
 
 int boardGetCassetteInserted()
 {
-    return cassetteInserted;
+    return cassetteInserted();
 }
 
 #define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
