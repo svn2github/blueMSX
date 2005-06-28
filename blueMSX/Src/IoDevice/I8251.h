@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-04-28 18:32:43 $
+** $Date: 2005-06-28 05:18:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,18 @@ typedef int  (*I8251Signal) (void*);
 typedef void (*I8251Set) (void*, int);
 typedef int  (*I8251Get) (void*);
 
+typedef enum {
+    I8251_STOP_INV = 0,
+    I8251_STOP_1 = 2,
+    I8251_STOP_15 = 3,
+    I8251_STOP_2 = 4
+} I8251StopBits;
+
+typedef enum {
+    I8251_PARITY_NONE,
+    I8251_PARITY_EVEN,
+    I8251_PARITY_ODD
+} I8251Parity;
 
 typedef struct I8251 I8251;
 

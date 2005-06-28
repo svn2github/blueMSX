@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-04-09 06:35:37 $
+** $Date: 2005-06-28 05:18:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -514,6 +514,22 @@ void i8254SetGate(I8254* i8254, I8254Counter counter, int state)
 		counterSetGate(i8254->counter3, state);
         break;
 	}
+}
+
+UInt32 i8254GetFrequency(I8254* i8254, I8254Counter counter)
+{
+	switch (counter) {
+	case I8254_COUNTER_1:
+		return i8254->counter1->frequency;
+        break;
+	case I8254_COUNTER_2:
+		return i8254->counter2->frequency;
+        break;
+	case I8254_COUNTER_3:
+		return i8254->counter3->frequency;
+        break;
+	}
+    return 0;
 }
 
 static void outDummy(void* ref, int state) 

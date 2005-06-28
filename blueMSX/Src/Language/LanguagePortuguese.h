@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-06-28 05:18:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCartAutoReset       = "Reset apos inserir/remover";
     ls->menuCartNoRecentFiles   = "- Sem Arquivos Recentes -";
     ls->menuCartFMPac           = "Cartucho FM-PAC";
-    ls->menuCartPac           = "Cartucho PAC";
+    ls->menuCartPac             = "Cartucho PAC";
     ls->menuCartSpecial         = "Especial";
 
     ls->menuDiskInsert          = "Inserir";
@@ -177,7 +177,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propEmuMemoryGB         = "Memoria ";
     ls->propEmuRamSizeText      = "Tamanho RAM :";
     ls->propEmuVramSizeText     = "Tamanho VRAM :";
-    ls->propEmuSpeedGB          = "Velocidade da Emulação ";
+    ls->propEmuSpeedGB          = "Velocidade da Emulação:";
     ls->propEmuSpeedText        = "Velocidade da Emulação:";
 
     ls->propMonMonGB            = "Monitor:";
@@ -243,7 +243,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumSoundDrvDirectX     = "Driver DirectX";
 
     ls->enumEmuSync1ms          = "1ms (Melhor)";
-    ls->enumEmuSyncAuto         = "Auto (Rapido)";
+    ls->enumEmuSyncAuto         = "Auto (Rápido)";
 
     ls->enumControlsJoyNone     = "Nenhum";
     ls->enumControlsJoyNumpad   = "Teclado Numerico";
@@ -256,14 +256,14 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumControlsAfOff       = "Desligado";
     ls->enumControlsAfSlow      = "Lento";
     ls->enumControlsAfMedium    = "Medio";
-    ls->enumControlsAfFast      = "Rapido";
+    ls->enumControlsAfFast      = "Rápido";
 
     ls->dlgAboutAbout           = "Sobre\r\n====";
     ls->dlgAboutVersion         = "Versão:";
     ls->dlgAboutBuildNumber     = "Compilação:";
     ls->dlgAboutBuildDate       = "Data:";
     ls->dlgAboutDevel           = "Desenvolvido por Daniel Vik";
-    ls->dlgAboutThanks          = "MOITO OBRIGADO PARA\r\n============";
+    ls->dlgAboutThanks          = "MUITO OBRIGADO PARA\r\n============";
     ls->dlgAboutLisence         = "LICENÇA\r\n"
                                   "======\r\n\r\n"
                                   "Este software é provido 'como-está', sem Garantia expressa ou implicada."
@@ -364,14 +364,14 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW acel.";
     ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " Estiramento Horizontal"; 
-    ls->propClearHistory         = "Désirez realmente limpar historico ?";
-    ls->propEmuFrontSwitchGB     = "Botaoes Panasonic "; 
+    ls->propClearHistory         = "Deseja realmente limpar historico ?";
+    ls->propEmuFrontSwitchGB     = "Botoes Panasonic "; 
     ls->propEmuFrontSwitch       = " Botao Frontal"; 
     ls->propEmuAudioSwitch       = " Botao cartucho MSX-AUDIO"; 
     ls->propMonVertStretch       = " Estiramento Vertical"; 
 
     ls->dlgCmosGB                = "CMOS "; 
-    ls->dlgCmosEnable            = " Activar CMOS"; 
+    ls->dlgCmosEnable            = " Ativar CMOS"; 
     ls->dlgCmosBattery           = " Utilizar uma Bateria Carregada";
 
     ls->menuCartSnatcher        = "Cartucho The Snatcher";
@@ -388,7 +388,7 @@ void langInitPortuguese(LanguageStrings* ls)
     // New entries in 1.5.1
     ls->enumControlsJoyKeyset   = "Keyset";    
     ls->propJoyConfigKeyset     = "Config Keyset";
-    ls->propJoyControlText      = "Controlo:";
+    ls->propJoyControlText      = "Controle:";
     ls->propJoyButtonText       = "Botao";
     ls->propJoyButtonAText      = "Botao A:";
     ls->propJoyButtonBText      = "Botao B:";
@@ -448,7 +448,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutVolumeMute      = "Parar Som";
     ls->shortcutSwitchMsxAudio  = "Impulsionar Botao cartucho MSX-AUDIO";
     ls->shortcutSwitchFront     = "Impulsionar Botao frontal Panasonic";
-    ls->shortcutToggleMouseLock = "Activar/Desativar Bloqueio do Rato";
+    ls->shortcutToggleMouseLock = "Ativar/Desativar Bloqueio do Mouse";
     ls->shortcutEmuSpeedMax     = "Velocidade Máxima da Emulação";
     ls->shortcutEmuSpeedNormal  = "Velocidade Normal da Emulação";
     ls->shortcutEmuSpeedInc     = "Aumentar Velocidade da Emulação";
@@ -468,12 +468,12 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutSpecialMenu1    = "Mostre Menu Especial para Cartucho no Slot 1";
     ls->shortcutSpecialMenu2    = "Mostre Menu Especial para Cartucho no Slot 2";
     ls->shortcutVolumeStereo    = "Balança mono/estereo";
-    ls->shortcutThemeSwitch     = "Comute o tema";
+    ls->shortcutThemeSwitch     = "Mudança de tema";
     ls->shortcutToggleSpriteEnable = "Mostrar/esconder os sprites";
     
-    ls->shortcutShowApearProp   = "Show Appearance Properties";
-    ls->menuPropsApearance      = "Appearance";
-    ls->propApearance           = "Appearance";
+    ls->shortcutShowApearProp   = "Mostrar Propriedades Aparencia";
+    ls->menuPropsApearance      = "Aparencia ";
+    ls->propApearance           = "Aparencia ";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
     ls->propThemeClassic        = "Clássico";
@@ -502,16 +502,16 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Mostre Propriedades de Arquivos";
 
     // New entries in 1.6.1
-    ls->menuDiskDirInsert       = "Inserir directório"; 
-    ls->shortcutDiskDirInsertA  = "Inserir um directório como disco A"; 
-    ls->shortcutDiskDirInsertB  = "Inserir um directório como disco B"; 
+    ls->menuDiskDirInsert       = "Inserir diretório"; 
+    ls->shortcutDiskDirInsertA  = "Inserir um diretório como disco A"; 
+    ls->shortcutDiskDirInsertB  = "Inserir um diretório como disco B"; 
     ls->propMonDeInterlace      = " De-entrelace";
 
     // New entries in 2.0
     ls->shortcutSwitchPause     = "Impulsionar Botao Pause"; 
     ls->shortcutSizeMinimized   = "Reduzir a Janela"; 
     ls->shortcutEmuSpeedToggle  = "Balança Velocidade Máxima da Emulação"; 
-    ls->shortcutToggleCpuTrace  = "Activar/Desativar Traço da CPU"; 
+    ls->shortcutToggleCpuTrace  = "Ativar/Desativar Traço da CPU"; 
 
     ls->enumVideoEmuMonitor     = "Monitor"; 
 
@@ -529,7 +529,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgFdcGB                = "Controlador da Drive "; 
     ls->dlgCFdcNumDrivesText    = "Número das Drives:"; 
 
-    ls->propPriorityBoost       = " Dar à blueMSX uma prioridade elevada";
+    ls->propPriorityBoost       = " Dar ao blueMSX uma prioridade elevada";
 
     // New entries in 2.1
     ls->propEmuFdcTiming        = "Não synchroniser disco drive"; 
@@ -544,7 +544,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumVideoEmuHq2x        = "Hq2x"; 
     ls->propMonColorGhosting    = "Modulador RF"; 
 
-    ls->keyconfigSelectedKey    = "Tecla MSX seleccionada:"; 
+    ls->keyconfigSelectedKey    = "Tecla MSX selecionada:"; 
     ls->keyconfigMappedTo       = "Atribuída à tecla PC :"; 
     ls->keyconfigMappingScheme  = "Configuração do teclado:"; 
 

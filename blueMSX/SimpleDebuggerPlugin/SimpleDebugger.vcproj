@@ -195,6 +195,12 @@
 			RelativePath=".\Memory.h">
 		</File>
 		<File
+			RelativePath=".\PeripheralRegs.cpp">
+		</File>
+		<File
+			RelativePath=".\PeripheralRegs.h">
+		</File>
+		<File
 			RelativePath=".\Resource.h">
 		</File>
 		<File

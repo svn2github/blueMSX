@@ -88,9 +88,12 @@ public:
     static const char* windowCallstack;
     static const char* windowCallstackUnavail;
     static const char* windowMemory;
+    static const char* windowPeripheralRegisters;
 
     static const char* memWindowMemory;
     static const char* memWindowAddress;
+
+    static const char* memWindowRegisters;
 
     static const char* setBpWindowCaption;
     static const char* gotoWindowCaption;

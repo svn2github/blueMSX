@@ -284,6 +284,7 @@ CpuRegisters::~CpuRegisters()
 void CpuRegisters::show()
 {
     ShowWindow(hwnd, true);
+    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
 
 void CpuRegisters::hide()

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-06-21 03:22:34 $
+** $Date: 2005-06-28 05:18:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -706,6 +706,7 @@ static int initMachine(Machine* machine,
     ioPortRegister(0x04, readMisc, NULL, NULL);
     ioPortRegister(0x05, readMisc, NULL, NULL);
     ioPortRegister(0xa7, readMisc, writeMisc, NULL); // FIXME - Turbo R pause
+#if 0
     ioPortRegister(0xe8, readMisc, NULL, NULL);
     ioPortRegister(0xe9, readMisc, NULL, NULL);
     ioPortRegister(0xea, readMisc, NULL, NULL);
@@ -714,7 +715,7 @@ static int initMachine(Machine* machine,
     ioPortRegister(0xed, readMisc, NULL, NULL);
     ioPortRegister(0xee, readMisc, NULL, NULL);
     ioPortRegister(0xef, readMisc, NULL, NULL);
-
+#endif
     return success;
 }
 

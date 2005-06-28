@@ -70,6 +70,7 @@ void StatusBar::updatePosition()
 void StatusBar::show()
 {
     ShowWindow(hwnd, true);
+    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
 
 void StatusBar::hide()

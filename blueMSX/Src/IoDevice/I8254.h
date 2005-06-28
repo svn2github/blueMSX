@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-04-08 23:39:46 $
+** $Date: 2005-06-28 05:18:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,8 @@ void i8254Reset(I8254* i8254);
 void i8254Destroy(I8254* i8254); 
 
 void i8254SetGate(I8254* i8254, I8254Counter counter, int state);
+
+UInt32 i8254GetFrequency(I8254* i8254, I8254Counter counter);
 
 I8254* i8254Create(UInt32 frequency, I8254Out out1, I8254Out out2, I8254Out out3, void* ref);
 

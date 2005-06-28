@@ -86,6 +86,9 @@ public:
         windowCallstack             = "Callstack";
         windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "Memory";
+        windowPeripheralRegisters   = "Peripheral Registers";
+
+        memWindowRegisters          = "Registers:";
 
         memWindowMemory             = "Memory:";
         memWindowAddress            = "Address:";
@@ -163,6 +166,9 @@ public:
         windowCallstack             = "コールスタック";
         windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "メモリ";
+        windowPeripheralRegisters   = "Peripheral Registers";
+
+        memWindowRegisters          = "Registers:";
 
         memWindowMemory             = "メモリ:";
         memWindowAddress            = "アドレス:";
@@ -256,6 +262,9 @@ const char* Language::windowStackUnavail;
 const char* Language::windowCallstack;
 const char* Language::windowCallstackUnavail;
 const char* Language::windowMemory;
+const char* Language::windowPeripheralRegisters;
+
+const char* Language::memWindowRegisters;
 
 const char* Language::memWindowMemory;
 const char* Language::memWindowAddress;

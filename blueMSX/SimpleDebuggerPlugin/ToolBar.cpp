@@ -107,6 +107,7 @@ void Toolbar::addSeparator(int insertBefore)
 void Toolbar::show()
 {
     ShowWindow(hwnd, true);
+    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
 
 void Toolbar::hide()

@@ -181,6 +181,12 @@
 		<Filter
 			Name="Win32"
 			Filter="">
+			<File
+				RelativePath="..\..\Src\Win32\Midi_w32.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Win32\Midi_w32.h">
+			</File>
 			<Filter
 				Name="Source"
 				Filter="">

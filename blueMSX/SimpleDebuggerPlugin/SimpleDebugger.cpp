@@ -9,6 +9,7 @@
 #include "CpuRegisters.h"
 #include "SymbolInfo.h"
 #include "Memory.h"
+#include "PeripheralRegs.h"
 #include "Language.h"
 #include "resrc1.h"
 #include <string>
@@ -26,6 +27,7 @@ static Disassembly* disassembly = NULL;
 static StackWindow* stack = NULL;
 static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
+static PeripheralRegs* periRegisters = NULL;
 static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
 static LanguageId langId = LID_ENGLISH;
@@ -161,6 +163,7 @@ static void updateStatusBar()
 #define MENU_WINDOW_STACK           37302
 #define MENU_WINDOW_CALLSTACK       37303
 #define MENU_WINDOW_MEMORY          37304
+#define MENU_WINDOW_PERIREGISTERS   37305
 
 #define MENU_HELP_ABOUT             37400
 
@@ -250,7 +253,9 @@ static void updateWindowMenu()
     AppendMenu(hMenuWindow, MF_STRING | (callstack    && callstack->isVisible()    ? MFS_CHECKED : 0), MENU_WINDOW_CALLSTACK, buf);
     sprintf(buf, "%s", Language::windowMemory);
     AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, buf);
-
+    sprintf(buf, "%s", Language::windowPeripheralRegisters);
+    AppendMenu(hMenuWindow, MF_STRING | (memory       && periRegisters->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_PERIREGISTERS, buf);
+    
     HMENU hMenuHelp = CreatePopupMenu();
 
     sprintf(buf, "%s", Language::menuHelpAbout);
@@ -445,6 +450,7 @@ void updateDeviceState()
         }
 
         memory->updateContent(snapshot);
+        periRegisters->updateContent(snapshot);
     }
 
     if (currentSnapshot != NULL) {
@@ -668,6 +674,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             else {
                 cpuRegisters->show();
+            }
+            updateWindowMenu();
+            return 0;
+
+        case MENU_WINDOW_PERIREGISTERS:
+            if (periRegisters->isVisible()) {
+                periRegisters->hide(); 
+            }
+            else {
+                periRegisters->show();
             }
             updateWindowMenu();
             return 0;
@@ -924,6 +940,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         disassembly = NULL;
         delete cpuRegisters;
         cpuRegisters = NULL;
+        delete periRegisters;
+        periRegisters = NULL;
         delete callstack;
         callstack = NULL;
         delete stack;
@@ -1023,6 +1041,12 @@ void OnShowTool() {
     RECT r3 = { 3, 423, 710, 630 };
     memory->updatePosition(r3);
     memory->show();
+
+    periRegisters = new PeripheralRegs(GetDllHinstance(), viewHwnd);
+    RECT r7 = { 23, 413, 530, 620 };
+    periRegisters->updatePosition(r7);
+//    periRegisters->show();
+    
     updateWindowPositions();
     
     if (GetEmulatorState() == EMULATOR_PAUSED) {
@@ -1038,6 +1062,7 @@ void OnEmulatorStart() {
         disassembly->updateBreakpoints();
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        periRegisters->disableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
@@ -1049,6 +1074,7 @@ void OnEmulatorStop() {
     if (dbgHwnd != NULL) {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        periRegisters->disableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
@@ -1060,6 +1086,7 @@ void OnEmulatorPause() {
     if (dbgHwnd != NULL) {
         disassembly->enableEdit();
         cpuRegisters->enableEdit();
+        periRegisters->enableEdit();
         callstack->enableEdit();
         stack->enableEdit();
         memory->enableEdit();
@@ -1071,9 +1098,11 @@ void OnEmulatorResume() {
     if (dbgHwnd != NULL) {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
+        periRegisters->disableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
+        periRegisters->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }
