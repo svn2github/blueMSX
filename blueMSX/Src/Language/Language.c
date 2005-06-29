@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-06-29 03:53:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -378,6 +378,7 @@ _TCHAR* langMenuRunCleanReset() { return ls->menuRunCleanReset; }
 _TCHAR* langMenuToolsMachine() { return ls->menuToolsMachine; }
 _TCHAR* langMenuToolsShortcuts() { return ls->menuToolsShortcuts; }
 _TCHAR* langMenuToolsKeyboard() { return ls->menuToolsKeyboard; }
+_TCHAR* langMenuToolsMixer() { return ls->menuToolsMixer; }
 
 _TCHAR* langMenuFile() { return ls->menuFile; }
 _TCHAR* langMenuRun() { return ls->menuRun; }
@@ -791,6 +792,7 @@ _TCHAR* langShortcutShowLanguage() { return ls->shortcutShowLanguage; }
 _TCHAR* langShortcutShowMachines() { return ls->shortcutShowMachines; }
 _TCHAR* langShortcutShowShortcuts() { return ls->shortcutShowShortcuts; }
 _TCHAR* langShortcutShowKeyboard() { return ls->shortcutShowKeyboard; }
+_TCHAR* langShortcutShowMixer() { return ls->shortcutShowMixer; }
 _TCHAR* langShortcutShowDebugger() { return ls->shortcutShowDebugger; }
 _TCHAR* langShortcutShowTrainer() { return ls->shortcutShowTrainer; }
 _TCHAR* langShortcutShowHelp() { return ls->shortcutShowHelp; }

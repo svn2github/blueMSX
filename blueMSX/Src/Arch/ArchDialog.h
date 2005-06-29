@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchDialog.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-09 22:10:11 $
+** $Date: 2005-06-29 03:53:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ void archShowAboutDialog();
 void archShowCassettePosDialog();
 void archShowShortcutsEditor();
 void archShowKeyboardEditor();
+void archShowMixer();
 void archShowDebugger();
 void archShowTrainer();
 void archShowMachineEditor();

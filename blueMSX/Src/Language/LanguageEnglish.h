@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-05-23 00:08:26 $
+** $Date: 2005-06-29 03:53:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -588,6 +588,10 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Printer";
     ls->propPortsComFile        = "Send to File";
+
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "Show Mixer";
+    ls->menuToolsMixer          = "Mixer";
 };
 
 

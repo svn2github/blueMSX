@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-06-24 17:33:26 $
+** $Date: 2005-06-29 03:53:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -784,6 +784,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(toolsShowMachineEditor);
     LOAD_SHORTCUT(toolsShowShorcutEditor);
     LOAD_SHORTCUT(toolsShowKeyboardEditor);
+    LOAD_SHORTCUT(toolsShowMixer);
     LOAD_SHORTCUT(toolsShowDebugger);
     LOAD_SHORTCUT(toolsShowTrainer);
     LOAD_SHORTCUT(helpShowHelp);
@@ -868,6 +869,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(toolsShowMachineEditor);
     SAVE_SHORTCUT(toolsShowShorcutEditor);
     SAVE_SHORTCUT(toolsShowKeyboardEditor);
+    SAVE_SHORTCUT(toolsShowMixer);
     SAVE_SHORTCUT(toolsShowDebugger);
     SAVE_SHORTCUT(toolsShowTrainer);
     SAVE_SHORTCUT(helpShowHelp);
@@ -1022,6 +1024,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(toolsShowMachineEditor, langShortcutShowMachines());
     ADD_SHORTCUT(toolsShowShorcutEditor, langShortcutShowShortcuts());
     ADD_SHORTCUT(toolsShowKeyboardEditor, langShortcutShowKeyboard());
+    ADD_SHORTCUT(toolsShowMixer, langShortcutShowMixer());
     ADD_SHORTCUT(toolsShowDebugger, langShortcutShowDebugger());
     ADD_SHORTCUT(toolsShowTrainer, langShortcutShowTrainer());
     

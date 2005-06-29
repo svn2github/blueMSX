@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2005-06-21 03:22:35 $
+** $Date: 2005-06-29 03:53:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -749,6 +749,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
     if (hotkeyEq(key, s->toolsShowKeyboardEditor))      actionToolsShowKeyboardEditor();
+    if (hotkeyEq(key, s->toolsShowMixer))               actionToolsShowMixer();
     if (hotkeyEq(key, s->toolsShowDebugger))            actionToolsShowDebugger();
     if (hotkeyEq(key, s->toolsShowTrainer))             actionToolsShowTrainer();
     if (hotkeyEq(key, s->helpShowHelp))                 actionHelpShowHelp();
@@ -2604,6 +2605,22 @@ void archShowKeyboardEditor()
     }
     else {
         themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Keyboard Editor"));
+    }
+}
+
+void archShowMixer()
+{
+    static ThemeCollection* tc = NULL;
+    
+    if (tc == NULL) {
+        tc = themeLoad("Mixer", "Properties");
+    }
+
+    if (tc == NULL) {
+        MessageBox(NULL, "Could not find the Mixer Theme", "blueMSX - Error", MB_ICONERROR | MB_OK);
+    }
+    else {
+        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Mixer"));
     }
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-06-28 07:28:01 $
+** $Date: 2005-06-29 03:53:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -200,7 +200,24 @@ static void sviMemSetBank(UInt8 AYReg15)
 {
     UInt8 pages;
     int i;
+#if 0
+    int sviBankLow = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?0:3:2:1;
+    int sviBankHigh = (AYReg15&4)?(AYReg15&16)?0:3:2;
+    int sviLowReadOnly = ((sviBankLow==0)||(sviBankLow==1))?1:0;
 
+    slotMapPage(sviBankLow , 0, 0, NULL, 1, !sviLowReadOnly);
+    slotMapPage(sviBankLow , 0, 1, NULL, 1, !sviLowReadOnly);
+    slotMapPage(sviBankLow , 0, 2, NULL, 1, !sviLowReadOnly);
+    slotMapPage(sviBankLow , 0, 3, NULL, 1, !sviLowReadOnly);
+    slotMapPage(sviBankHigh, 0, 4, NULL, 1, 1);
+    slotMapPage(sviBankHigh, 0, 5, NULL, 1, 1);
+    slotMapPage(sviBankHigh, 0, 6, NULL, 1, 1);
+    slotMapPage(sviBankHigh, 0, 7, NULL, 1, 1);
+
+    psgAYReg15 = AYReg15;
+
+    return;
+#else
     psgAYReg15 = AYReg15;
 
     /* Map the SVI-328 bank to pages */
@@ -211,6 +228,7 @@ static void sviMemSetBank(UInt8 AYReg15)
         slotSetRamSlot(i, pages & 3);
         pages >>= 2;
     }
+#endif
 }
 
 /*

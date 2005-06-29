@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-06-17 19:29:33 $
+** $Date: 2005-06-29 03:53:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,6 +108,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "dlg-machineeditor"))       return (ButtonEvent)actionToolsShowMachineEditor;
     if (0 == strcmp(action, "dlg-shortcuteditor"))      return (ButtonEvent)actionToolsShowShorcutEditor;
     if (0 == strcmp(action, "dlg-keyboardeditor"))      return (ButtonEvent)actionToolsShowKeyboardEditor;
+    if (0 == strcmp(action, "dlg-mixer"))               return (ButtonEvent)actionToolsShowMixer;
     if (0 == strcmp(action, "dlg-help"))                return (ButtonEvent)actionHelpShowHelp;
     if (0 == strcmp(action, "dlg-about"))               return (ButtonEvent)actionHelpShowAbout;
     
