@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-07-02 17:56:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -592,6 +592,13 @@ void langInitEnglish(LanguageStrings* ls)
     // New entries in 2.4
     ls->shortcutShowMixer       = "Show Mixer";
     ls->menuToolsMixer          = "Mixer";
+    
+    ls->propSndMidiInGB         = "MIDI In ";
+    ls->propSndMidiOutGB        = "MIDI Out ";
+    ls->textDevice              = "Device:";
+    ls->textFilename            = "Filename:";
+    ls->textFile                = "File";
+    ls->textNone                = "None";
 };
 
 

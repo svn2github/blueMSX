@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include "MSXMidi.h"
+#include "MidiIO.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
@@ -37,16 +38,11 @@
 #include "I8254.h"
 #include <stdlib.h>
 
-int archMidiCreate(void);
-void archMidiDestroy(void);
-int archMidiTransmit(UInt8 value);
-void archMidiSetDataBits(int value);
-void archMidiSetStopBits(int value);
-void archMidiSetParity(int value);
 
 
 typedef struct {
     int deviceHandle;
+    MidiIO* midiIo;
     I8251* i8251;
     I8254* i8254;
     
@@ -97,6 +93,8 @@ static void destroy(MSXMidi* msxMidi)
     ioPortUnregister(0xed);
     ioPortUnregister(0xee);
     ioPortUnregister(0xef);
+
+    midiIoDestroy(msxMidi->midiIo);
     
     i8251Destroy(msxMidi->i8251);
     i8254Destroy(msxMidi->i8254);
@@ -229,9 +227,7 @@ static void writeIo(MSXMidi* msxMidi, UInt16 ioPort, UInt8 value)
 */
 static int transmit(MSXMidi* msxMidi, UInt8 value) 
 {
-    if (msxMidi->ready) {
-        return archMidiTransmit(value);
-    }
+    midiIoTransmit(msxMidi->midiIo, value);
     return 1;
 }
 
@@ -242,23 +238,14 @@ static int signal(MSXMidi* msxMidi)
 
 static void setDataBits(MSXMidi* msxMidi, int value) 
 {
-    if (msxMidi->ready) {
-        archMidiSetDataBits(value);
-    }
 }
 
 static void setStopBits(MSXMidi* msxMidi, int value) 
 {
-    if (msxMidi->ready) {
-        archMidiSetStopBits(value);
-    }
 }
 
 static void setParity(MSXMidi* msxMidi, int value) 
 {
-    if (msxMidi->ready) {
-        archMidiSetParity(value);
-    }
 }
 
 static void setRxReady(MSXMidi* msxMidi, int status)
@@ -332,7 +319,7 @@ int MSXMidiCreate()
     ioPortRegister(0xee, readIo, writeIo, msxMidi);
     ioPortRegister(0xef, readIo, writeIo, msxMidi);
 
-    msxMidi->ready = archMidiCreate();
+    msxMidi->midiIo = midiIoCreate();
 
     reset(msxMidi);
 

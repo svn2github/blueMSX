@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-07-02 17:56:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,11 +51,12 @@
 #include "JoystickIO.h"
 #include "PrinterIO.h"
 #include "UartIO.h"
+#include "MidiIO.h"
 #include "RomLoader.h"
 #include "MediaDb.h"
 #include "build_number.h"
 #include "FrameBuffer.h"
-
+#include "Win32Midi.h"
 #include "Win32Sound.h"
 #include "Win32Properties.h"
 #include "Win32ToolLoader.h"
@@ -1012,6 +1013,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
+    midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -1031,6 +1033,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
+    midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
 
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
@@ -2270,6 +2273,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     InitCommonControls(); 
 
+    midiInitialize();
+
     DirectDrawInitDisplayModes();
 
     wndClass.cbSize         = sizeof(wndClass);
@@ -2405,6 +2410,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
+    midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
 
     mouseEmuInit(st.emuHwnd, 1);
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);

@@ -194,12 +194,23 @@
 #define IDC_PERFFULLSCREENTEXT          2009
 
 #define IDC_SNDCHIPEMUGROUPBOX          2100
-#define IDC_SNDMIXERGROUPBOX            2101
-#define IDC_SNDMIXERMASTERTEXT          2102
 
-#define IDC_CMOSGROUPBOX                2105
-#define IDC_CMOSENABLE                  2106
-#define IDC_CMOSBATTERY                 2107
+#define IDC_MIDIOUTGROUPBOX             2101
+#define IDC_MIDIOUT                     2102
+#define IDC_MIDIOUTTEXT                 2103
+#define IDI_MIDIOUTFILENAMETEXT         2104
+#define IDI_MIDIOUTFILENAME             2105
+#define IDC_MIDIOUTFILENAMEBROWSE       2106
+#define IDC_MIDIINGROUPBOX              2107
+#define IDC_MIDIIN                      2108
+#define IDC_MIDIINTEXT                  2109
+#define IDI_MIDIINFILENAMETEXT          2110
+#define IDI_MIDIINFILENAME              2111
+#define IDC_MIDIINFILENAMEBROWSE        2112
+
+#define IDC_CMOSGROUPBOX                2117
+#define IDC_CMOSENABLE                  2118
+#define IDC_CMOSBATTERY                 2119
 
 #define IDC_VIDEOCHIP                   2120
 #define IDC_VIDEORAM                    2121
@@ -308,38 +319,6 @@
 
 #define IDC_LANGLIST                    1250
 #define IDC_LANGTXT                     1251
-
-#define IDC_STEREO                      1301
-#define IDC_MASTERL                     1302
-#define IDC_MASTERR                     1303
-
-#define IDC_VOLUME1                     1311
-#define IDC_VOLUME2                     1312
-#define IDC_VOLUME3                     1313
-#define IDC_VOLUME4                     1314
-#define IDC_VOLUME5                     1315
-#define IDC_VOLUME6                     1316
-#define IDC_VOLUME7                     1317
-#define IDC_VOLUME8                     1318
-
-#define IDC_PAN1                        1331
-#define IDC_PAN2                        1332
-#define IDC_PAN3                        1333
-#define IDC_PAN4                        1334
-#define IDC_PAN5                        1335
-#define IDC_PAN6                        1336
-#define IDC_PAN7                        1337
-#define IDC_PAN8                        1338
-
-#define IDC_VOLENABLE1                  1351
-#define IDC_VOLENABLE2                  1352
-#define IDC_VOLENABLE3                  1353
-#define IDC_VOLENABLE4                  1354
-#define IDC_VOLENABLE5                  1355
-#define IDC_VOLENABLE6                  1356
-#define IDC_VOLENABLE7                  1357
-#define IDC_VOLENABLE8                  1358
-#define IDC_VOLENABLEMASTER             1359
 
 #define IDC_ENABLEMSXMUSIC              1360
 #define IDC_ENABLEMSXAUDIO              1361

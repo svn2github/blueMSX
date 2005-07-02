@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-06-17 19:29:32 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -137,6 +137,15 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
+    pProperties->sound.MidiIn.type             = P_MIDI_NONE;
+    pProperties->sound.MidiIn.name[0]          = 0;
+    strcpy(pProperties->sound.MidiIn.fileName, "midiin.dat");
+    pProperties->sound.MidiIn.desc[0]          = 0;
+    pProperties->sound.MidiOut.type            = P_MIDI_NONE;
+    pProperties->sound.MidiOut.name[0]         = 0;
+    strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
+    pProperties->sound.MidiOut.desc[0]         = 0;
 
     pProperties->joy1.type              = P_JOY_NUMPAD;
     pProperties->joy1.autofire          = P_JOY_AFOFF;
@@ -328,6 +337,15 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
     
+    pProperties->sound.MidiIn.type             = P_MIDI_NONE;
+    pProperties->sound.MidiIn.name[0]          = 0;
+    strcpy(pProperties->sound.MidiIn.fileName, "midiin.dat");
+    pProperties->sound.MidiIn.desc[0]          = 0;
+    pProperties->sound.MidiOut.type            = P_MIDI_NONE;
+    pProperties->sound.MidiOut.name[0]         = 0;
+    strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
+    pProperties->sound.MidiOut.desc[0]         = 0;
+    
     pProperties->joy1.type              = P_JOY_NONE;
     pProperties->joy1.autofire          = P_JOY_AFOFF;
     pProperties->joy1.keyUp             = 0xff;
@@ -512,6 +530,15 @@ static void propLoad(Properties* pProperties)
     getIntValue("IOEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
     getIntValue("IOPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
     getIntValue("IOVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
+    
+    getIntValue("MidiInType", &pProperties->sound.MidiIn.type);
+    getStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);
+    getStrValue("MidiInFileName", (char*)pProperties->sound.MidiIn.fileName);
+    getStrValue("MidiInDesc", (char*)pProperties->sound.MidiIn.desc);
+    getIntValue("MidiOutType", &pProperties->sound.MidiOut.type);
+    getStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
+    getStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
+    getStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
     
     getIntValue("Joy1Control", &pProperties->joy1.type);
     getIntValue("JoyAutoFire", &pProperties->joy1.autofire);
@@ -706,6 +733,15 @@ void propSave(Properties* pProperties)
     setIntValue("IOEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
     setIntValue("IOPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
     setIntValue("IOVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
+    
+    setIntValue("MidiInType", pProperties->sound.MidiIn.type);
+    setStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);
+    setStrValue("MidiInFileName", (char*)pProperties->sound.MidiIn.fileName);
+    setStrValue("MidiInDesc", (char*)pProperties->sound.MidiIn.desc);
+    setIntValue("MidiOutType", pProperties->sound.MidiOut.type);
+    setStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
+    setStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
+    setStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
 
     setIntValue("Joy1Control", pProperties->joy1.type);
     setIntValue("JoyAutoFire", pProperties->joy1.autofire);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/UartIO.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-23 00:08:26 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,5 +128,6 @@ void uartIoSetType(UartType type, const char* fileName)
         return;
     }
 
+    removeType(theUartIO);
     setType(theUartIO);
 }

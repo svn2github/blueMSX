@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-06-29 03:53:41 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -500,6 +500,13 @@ _TCHAR* langPropEmuAudioSwitch() { return ls->propEmuAudioSwitch; }
 _TCHAR* langPropVideoFreqText() { return ls->propVideoFreqText; }
 _TCHAR* langPropVideoFreqAuto() { return ls->propVideoFreqAuto; }
 _TCHAR* langPropSndOversampleText() { return ls->propSndOversampleText; }
+_TCHAR* langPropSndMidiInGB() { return ls->propSndMidiInGB; }
+_TCHAR* langPropSndMidiOutGB() { return ls->propSndMidiOutGB; }
+
+_TCHAR* langTextDevice() { return ls->textDevice; }
+_TCHAR* langTextFilename() { return ls->textFilename; }
+_TCHAR* langTextFile() { return ls->textFile; }
+_TCHAR* langTextNone() { return ls->textNone; }
 
 _TCHAR* langPropMonMonGB() { return ls->propMonMonGB; }
 _TCHAR* langPropMonTypeText() { return ls->propMonTypeText; }

@@ -187,6 +187,12 @@
 			<File
 				RelativePath="..\..\Src\Win32\Midi_w32.h">
 			</File>
+			<File
+				RelativePath="..\..\Src\Win32\Win32Midi.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Win32\Win32Midi.h">
+			</File>
 			<Filter
 				Name="Source"
 				Filter="">
@@ -981,6 +987,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Led.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\MidiIO.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\MidiIO.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\MSXMidi.c">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-06-17 19:29:32 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -136,5 +136,6 @@ void printerIoSetType(PrinterType type, const char* fileName)
         return;
     }
 
+    removeType(thePrinterIO);
     setType(thePrinterIO);
 }

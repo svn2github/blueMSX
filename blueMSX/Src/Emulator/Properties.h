@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-06-17 19:29:32 $
+** $Date: 2005-07-02 17:56:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_P
 
 typedef enum { P_LPT_NONE = 0, P_LPT_SIMPL, P_LPT_FILE, P_LPT_HOST } PropLptType;
 typedef enum { P_COM_NONE = 0, P_COM_FILE, P_COM_HOST } PropComType;
+typedef enum { P_MIDI_NONE = 0, P_MIDI_FILE, P_MIDI_HOST } PropMidiType;
 typedef enum { P_LPT_RAW, P_LPT_MSXPRN, P_LPT_EPSONFX80 } PropLptEmulation;
 
 typedef enum { P_EMU_SYNC1MS = 0, P_EMU_SYNCAUTO, P_EMU_SYNCNONE } PropEmuSync;
@@ -147,6 +148,18 @@ typedef struct {
     int  masterEnable;
     MixerChannel mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
     int  log[MAX_PATH];
+    struct {
+        int  type;
+        char name[256];
+        char desc[256];
+        char fileName[MAX_PATH];
+    } MidiIn;
+    struct {
+        int  type;
+        char name[256];
+        char desc[256];
+        char fileName[MAX_PATH];
+    } MidiOut;
 } SoundProperties;
 
 typedef struct {

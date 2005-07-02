@@ -24,10 +24,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
-// maintain in openMSX: $Id:
-
-
 #include "Midi_w32.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -410,51 +406,4 @@ int w32_midiInClose(unsigned idx)
 	} else {
 		return -1;
 	}
-}
-
-
-
-
-static int devId = -1;
-
-int archMidiCreate(void) 
-{
-    int num = 0;
-	w32_midiOutInit();
-
-	num = w32_midiOutGetVFNsNum() - 1;
-
-    devId = -1;
-    if (num >= 0) {
-	    const char* name = w32_midiOutGetVFN(num);
-	    const char* desc = w32_midiOutGetRDN(num);
-
-        devId = w32_midiOutOpen(name);
-    }
-    return devId != -1;
-}
-
-void archMidiDestroy(void)
-{
-    if (devId != -1) {
-	    w32_midiOutClose(devId);
-    }
-
-    devId = -1;
-}
-
-int archMidiTransmit(unsigned char value) {
-    if (devId != -1) {
-    	w32_midiOutPut(value, devId);
-    }
-    return 1;
-}
-
-void archMidiSetDataBits(int value) {
-}
-
-void archMidiSetStopBits(int value) {
-}
-
-void archMidiSetParity(int value) {
 }

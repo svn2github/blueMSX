@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-07-02 17:56:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -251,6 +251,13 @@ _TCHAR* langPropEmuAudioSwitch();
 _TCHAR* langPropVideoFreqText();
 _TCHAR* langPropVideoFreqAuto();
 _TCHAR* langPropSndOversampleText();
+_TCHAR* langPropSndMidiInGB();
+_TCHAR* langPropSndMidiOutGB();
+
+_TCHAR* langTextDevice();
+_TCHAR* langTextFilename();
+_TCHAR* langTextFile();
+_TCHAR* langTextNone();
 
 _TCHAR* langPropMonMonGB();
 _TCHAR* langPropMonTypeText();

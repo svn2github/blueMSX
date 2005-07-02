@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-05-23 00:08:27 $
+** $Date: 2005-07-02 17:56:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 #include "Language.h"
 #include "Machine.h"
 #include "Board.h"
+#include "Midi_w32.h"
 
 static HWND hDlgSound = NULL;
 static int propModified = 0;
@@ -65,6 +66,50 @@ static int useRegistry = 0;
 static char* keyPath = NULL;
 static char* keyFile = NULL;
 static char registryKey[] = "blueMSX";
+
+static int openLogFile(HWND hwndOwner, char* fileName)
+{
+    OPENFILENAME ofn; 
+    static char pFileName[MAX_PATH];
+    char  curDir[MAX_PATH];
+    BOOL rv;
+
+    pFileName[0] = 0; 
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = GetModuleHandle(NULL);
+    ofn.lpstrFilter = "*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0;
+    ofn.nFilterIndex = 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrTitle = langPropPortsOpenLogFile(); 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT; 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = NULL; 
+    ofn.lpTemplateName = NULL; 
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+
+    rv = GetSaveFileName(&ofn); 
+
+    SetCurrentDirectory(curDir);
+
+    if (rv) {
+        strcpy(fileName, pFileName);
+    }
+
+    return rv;
+}
+
 
 static char virtualKeys[256][32] = {
     "",
@@ -1360,7 +1405,6 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         pProperties->video.monType           = monType;
         pProperties->video.palEmu            = palEmu;
-//        pProperties->video.size              = getDropListIndex(hDlg, IDC_MONSIZE, pVideoMonSize);
         pProperties->video.contrast          = contrast;
         pProperties->video.brightness        = brightness;
         pProperties->video.saturation        = saturation;
@@ -1373,69 +1417,74 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     return FALSE;
 }
 
-static void CreateToolTip(HWND hwndCtrl, HWND* hwndTT, TOOLINFO* ti)
-{
-    *hwndTT = CreateWindow(TOOLTIPS_CLASS, TEXT(""), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                          NULL, (HMENU)NULL, GetModuleHandle(NULL), NULL);
+static void getMidiList(HWND hDlg, int id, Properties* pProperties) {
+    int*  midiType = id == IDC_MIDIOUT ? &pProperties->sound.MidiOut.type : &pProperties->sound.MidiIn.type;
+    char* drvName  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.name : pProperties->sound.MidiIn.name;
+    char* drvDesc  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.desc : pProperties->sound.MidiIn.desc;
 
-    ti->cbSize = sizeof(TOOLINFO);
-    ti->uFlags = TTF_IDISHWND | TTF_CENTERTIP | TTF_ABSOLUTE;
-    ti->hwnd   = hwndCtrl;
-    ti->uId    = (UINT)hwndCtrl;
-    ti->hinst  = GetModuleHandle(NULL);
-    ti->lpszText  = "";
-    ti->rect.left = ti->rect.top = ti->rect.bottom = ti->rect.right = 60; 
+    char buffer[256];
+    int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
+    int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
 
-    SendMessage(*hwndTT, TTM_ADDTOOL, 0, (LPARAM)ti);
-    SendMessage(*hwndTT, TTM_TRACKACTIVATE, (WPARAM)TRUE, (LPARAM)ti);
-    SendMessage(hwndCtrl, TBM_SETTOOLTIPS, (WPARAM)*hwndTT, 0);
-}
-
-static void UpdateVolumeToolTip(HWND hCtrl, HWND hwndTT, TOOLINFO* ti)
-{
-    static char str[32];
-    int val = SendMessage(hCtrl, TBM_GETPOS,   0, 0);
-    if (val == 100) {
-        sprintf(str, "-inf.");
+    if (idx < P_MIDI_HOST) {
+        *midiType = idx;
     }
     else {
-        sprintf(str, "%.1f dB", -30. * val / 100);
+        char* name = buffer;
+        // Find the printer name from string
+        while (*name && (*name != '-' || name[1] != ' ')) {
+            name++;
+        }
+        
+        strcpy(drvName, buffer);
+        drvName[name - buffer - 1] = 0;
+
+        if (*name) name++;
+        if (*name) name++;
+
+        *midiType = P_COM_HOST;
+        strcpy(drvDesc, name);
     }
-    ti->lpszText  = str;
-    SendMessage(hwndTT, TTM_UPDATETIPTEXT, 0, (LPARAM)ti);  
 }
 
-static void UpdatePanToolTip(HWND hCtrl, HWND hwndTT, TOOLINFO* ti)
+static void updateMidiList(HWND hDlg, int id, Properties* pProperties)
 {
-    static char str[32];
-    int val = SendMessage(hCtrl, TBM_GETPOS,   0, 0);
-    if (val == 50) {
-        sprintf(str, "    C    ");
+    int   midiType = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.type : pProperties->sound.MidiIn.type;
+    char* drvName  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.name : pProperties->sound.MidiIn.name;
+    char* drvDesc  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.desc : pProperties->sound.MidiIn.desc;
+    int   devNum;
+    int   i;
+
+    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
+
+    // Add NONE:
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langTextNone());
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
+
+    // Add FILE
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langTextFile());
+    if (midiType == P_MIDI_FILE) {
+        SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
     }
-    else if (val < 50) {
-        sprintf(str, "L: %d", 2 * (50 - val));
+
+    devNum = id == IDC_MIDIOUT ? (int)w32_midiOutGetVFNsNum() : (int)w32_midiInGetVFNsNum();
+    for (i = 0; i < devNum; i++) {
+        char buf[512];
+        const char* name = id == IDC_MIDIOUT ? w32_midiOutGetVFN(i) : w32_midiInGetVFN(i);
+        const char* desc = id == IDC_MIDIOUT ? w32_midiOutGetRDN(i) : w32_midiInGetRDN(i);
+
+        sprintf(buf, "%s - %s", name, desc);
+
+        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)buf);
+        if (midiType == P_MIDI_HOST && 0 == strcmp(drvName, name)) {
+            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + i, 0);
+        }
     }
-    else {
-        sprintf(str, "R: %d", 2 * (val - 50));
-    }
-    ti->lpszText  = str;
-    SendMessage(hwndTT, TTM_UPDATETIPTEXT, 0, (LPARAM)ti);  
 }
 
 static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static HWND hwndVolTT[MIXER_CHANNEL_TYPE_COUNT];
-    static TOOLINFO tiVol[MIXER_CHANNEL_TYPE_COUNT];
-    static HWND hwndPanTT[MIXER_CHANNEL_TYPE_COUNT];
-    static TOOLINFO tiPan[MIXER_CHANNEL_TYPE_COUNT];
-    static int oldEnable[MIXER_CHANNEL_TYPE_COUNT];
-    static int oldMasterEnable;
-    static HWND hwndMasterTT[2];
-    static TOOLINFO tiMaster[2];
     static Properties* pProperties;
-    static int stereo;
-    int updateAudio = FALSE;
     int index;
-    int i;
 
     switch (iMsg) {
     case WM_INITDIALOG:
@@ -1447,16 +1496,21 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 
-        SendMessage(GetDlgItem(hDlg, IDC_SNDMIXERMASTERTEXT), WM_SETTEXT, 0, (LPARAM)langPropSndMasterText());
-
         SendMessage(GetDlgItem(hDlg, IDC_SNDCHIPEMUGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSndChipEmuGB());
-        SendMessage(GetDlgItem(hDlg, IDC_SNDMIXERGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSndMixerGB());
-        SendMessage(GetDlgItem(hDlg, IDC_OVERSAMPLETEXT1), WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
-        SendMessage(GetDlgItem(hDlg, IDC_OVERSAMPLETEXT2), WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
-        SendMessage(GetDlgItem(hDlg, IDC_OVERSAMPLETEXT3), WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
+
+        SendDlgItemMessage(hDlg, IDC_OVERSAMPLETEXT1, WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
+        SendDlgItemMessage(hDlg, IDC_OVERSAMPLETEXT2, WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
+        SendDlgItemMessage(hDlg, IDC_OVERSAMPLETEXT3, WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXMUSIC), langPropSndMsxMusicText());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXAUDIO), langPropSndMsxAudioText());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMOONSOUND), langPropSndMoonsound());
+
+        SendDlgItemMessage(hDlg, IDC_MIDIINGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndMidiInGB());
+        SendDlgItemMessage(hDlg, IDC_MIDIINTEXT, WM_SETTEXT, 0, (LPARAM)langTextDevice());
+        SendDlgItemMessage(hDlg, IDI_MIDIINFILENAMETEXT, WM_SETTEXT, 0, (LPARAM)langTextFilename());
+        SendDlgItemMessage(hDlg, IDC_MIDIOUTGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndMidiOutGB());
+        SendDlgItemMessage(hDlg, IDC_MIDIOUTTEXT, WM_SETTEXT, 0, (LPARAM)langTextDevice());
+        SendDlgItemMessage(hDlg, IDI_MIDIOUTFILENAMETEXT, WM_SETTEXT, 0, (LPARAM)langTextFilename());
 
         {
             int index = 0;
@@ -1480,62 +1534,58 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             }
         }
 
-        for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-            CreateToolTip(GetDlgItem(hDlg, IDC_VOLUME1 + i), &hwndVolTT[i], &tiVol[i]);
-            CreateToolTip(GetDlgItem(hDlg, IDC_PAN1 + i), &hwndPanTT[i], &tiPan[i]);
+        updateMidiList(hDlg, IDC_MIDIOUT, pProperties);
+        updateMidiList(hDlg, IDC_MIDIIN,  pProperties);
 
-            SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i),    TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
-            SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i),    TBM_SETPOS,   1, (LPARAM)(100 - pProperties->sound.mixerChannel[i].volume));
-            SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i),       TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
-            SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i),       TBM_SETPOS,   1, (LPARAM)pProperties->sound.mixerChannel[i].pan);
-            SendMessage(GetDlgItem(hDlg, IDC_VOLENABLE1 + i), BM_SETCHECK, pProperties->sound.mixerChannel[i].enable ? BST_CHECKED : BST_UNCHECKED, 0);
-            oldEnable[i] = pProperties->sound.mixerChannel[i].enable;
+        {
+            int idx = SendDlgItemMessage(hDlg, IDC_MIDIOUT, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTFILENAMEBROWSE), idx == P_MIDI_FILE);
+            EnableWindow(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), idx == P_MIDI_FILE);
+
+            idx = SendDlgItemMessage(hDlg, IDC_MIDIIN, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_MIDIINFILENAMEBROWSE), idx == P_MIDI_FILE);
+            EnableWindow(GetDlgItem(hDlg, IDI_MIDIINFILENAME), idx == P_MIDI_FILE);
         }
 
-        oldMasterEnable = pProperties->sound.masterEnable;
-
-        SendMessage(GetDlgItem(hDlg, IDC_VOLENABLEMASTER), BM_SETCHECK, pProperties->sound.masterEnable ? BST_CHECKED : BST_UNCHECKED, 0);
-        
-        CreateToolTip(GetDlgItem(hDlg, IDC_MASTERL), &hwndMasterTT[0], &tiMaster[0]);
-        CreateToolTip(GetDlgItem(hDlg, IDC_MASTERR), &hwndMasterTT[1], &tiMaster[1]);
-
-        SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
-        SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_SETPOS,   1, (LPARAM)(100 - pProperties->sound.masterVolume));
-        SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
-        SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETPOS,   1, (LPARAM)(100 - pProperties->sound.masterVolume));
-
-        setButtonCheck(hDlg, IDC_ENABLEMSXMUSIC,  pProperties->sound.chip.enableYM2413, 1);
-        setButtonCheck(hDlg, IDC_ENABLEMSXAUDIO,  pProperties->sound.chip.enableY8950, 1);
-        setButtonCheck(hDlg, IDC_ENABLEMOONSOUND, pProperties->sound.chip.enableMoonsound, 1);
-
-        stereo = pProperties->sound.stereo;
-        SetWindowText(GetDlgItem(hDlg, IDC_STEREO), stereo ? langPropSndStereoText() : langPropSndMonoText());
+        SetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), pProperties->sound.MidiOut.fileName);
+        SetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME),  pProperties->sound.MidiIn.fileName);
 
         return FALSE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) >= IDC_VOLENABLE1 && LOWORD(wParam) < IDC_VOLENABLE1 + MIXER_CHANNEL_TYPE_COUNT) {
-            updateAudio = TRUE;
-        }
-
         switch(LOWORD(wParam)) {
-        case IDC_STEREO:
-            stereo = !stereo;
-            SetWindowText(GetDlgItem(hDlg, IDC_STEREO), stereo ? langPropSndStereoText() : langPropSndMonoText());
-            emulatorRestartSound();
-            updateAudio = TRUE;
-            break;
-        case IDC_MASTERL:
-            SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETPOS,   1, (LPARAM)SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_GETPOS,   0, 0));
-            updateAudio = TRUE;
-            break;
-        case IDC_MASTERR:
-            SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_SETPOS,   1, (LPARAM)SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_GETPOS,   0, 0));
-            updateAudio = TRUE;
-            break;
-        case IDC_VOLENABLEMASTER:
-            updateAudio = TRUE;
-            break;
+        case IDC_MIDIOUT:
+            {
+                int idx = SendDlgItemMessage(hDlg, IDC_MIDIOUT, CB_GETCURSEL, 0, 0);
+                EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTFILENAMEBROWSE), idx == P_MIDI_FILE);
+                EnableWindow(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), idx == P_MIDI_FILE);
+            }
+            return TRUE;
+        case IDC_MIDIIN:
+            {
+                int idx = SendDlgItemMessage(hDlg, IDC_MIDIIN, CB_GETCURSEL, 0, 0);
+                EnableWindow(GetDlgItem(hDlg, IDC_MIDIINFILENAMEBROWSE), idx == P_MIDI_FILE);
+                EnableWindow(GetDlgItem(hDlg, IDI_MIDIINFILENAME), idx == P_MIDI_FILE);
+            }
+            return TRUE;
+        case IDC_MIDIOUTFILENAMEBROWSE:
+            {
+                char fileName[MAX_PATH];
+                GetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), fileName, MAX_PATH - 1);
+                if (openLogFile(hDlg, fileName)) {
+                    SetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), fileName);
+                }
+            }
+            return TRUE;
+        case IDC_MIDIINFILENAMEBROWSE:
+            {
+                char fileName[MAX_PATH];
+                GetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME), fileName, MAX_PATH - 1);
+                if (openLogFile(hDlg, pProperties->sound.MidiIn.fileName)) {
+                    SetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME), fileName);
+                }
+            }
+            return TRUE;
         case IDC_OVERSAMPLEMSXMUSIC:
             index = SendDlgItemMessage(hDlg, IDC_OVERSAMPLEMSXMUSIC, CB_GETCURSEL, 0, 0);
             boardSetYm2413Oversampling(1 << index);
@@ -1568,22 +1618,11 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             index = SendDlgItemMessage(hDlg, IDC_OVERSAMPLEMOONSOUND, CB_GETCURSEL, 0, 0);
             pProperties->sound.chip.moonsoundOversampling = 1 << index;
 
-            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-                pProperties->sound.mixerChannel[i].volume = 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i),    TBM_GETPOS,   0, 0);
-                pProperties->sound.mixerChannel[i].pan    = SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i),       TBM_GETPOS,   0, 0);
-                pProperties->sound.mixerChannel[i].enable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLE1 + i), BM_GETCHECK, 0, 0) == BST_CHECKED;
-            }
+            getMidiList(hDlg, IDC_MIDIOUT, pProperties);
+            GetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), pProperties->sound.MidiOut.fileName, MAX_PATH - 1);
 
-            pProperties->sound.masterVolume = 100 - SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_GETPOS,   0, 0);
-            pProperties->sound.masterEnable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLEMASTER), BM_GETCHECK, 0, 0) == BST_CHECKED;
-            pProperties->sound.stereo = stereo;
-
-            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-                DestroyWindow(hwndVolTT[i]);
-                DestroyWindow(hwndPanTT[i]);
-            }
-            DestroyWindow(hwndMasterTT[0]);
-            DestroyWindow(hwndMasterTT[1]);
+            getMidiList(hDlg, IDC_MIDIIN, pProperties);
+            GetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME), pProperties->sound.MidiIn.fileName, MAX_PATH - 1);
 
             propModified = 1;
             return TRUE;
@@ -1595,63 +1634,9 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             boardSetY8950Oversampling(pProperties->sound.chip.y8950Oversampling);
             boardSetMoonsoundOversampling(pProperties->sound.chip.moonsoundOversampling);
 
-            pProperties->sound.masterEnable = oldMasterEnable;
-            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-                pProperties->sound.mixerChannel[i].enable = oldEnable[i];
-                mixerSetChannelTypeVolume(theMixer, i, pProperties->sound.mixerChannel[i].volume);
-                mixerSetChannelTypePan(theMixer, i, pProperties->sound.mixerChannel[i].pan);
-                mixerEnableChannelType(theMixer, i, pProperties->sound.mixerChannel[i].enable);
-            }
-            mixerSetMasterVolume(theMixer, pProperties->sound.masterVolume);
-            mixerEnableMaster(theMixer, pProperties->sound.masterEnable);
-
-            for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-                DestroyWindow(hwndVolTT[i]);
-                DestroyWindow(hwndPanTT[i]);
-            }
-            DestroyWindow(hwndMasterTT[0]);
-            DestroyWindow(hwndMasterTT[1]);
-
             return FALSE;
-
-        default:
-            if (wParam == IDC_MASTERL) {
-                SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_SETPOS,   1, (LPARAM)SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_GETPOS,   0, 0));
-                UpdateVolumeToolTip(GetDlgItem(hDlg, IDC_MASTERL), hwndMasterTT[0], &tiMaster[0]);
-                updateAudio = TRUE;
-            }
-            if (wParam == IDC_MASTERR) {
-                SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_SETPOS,   1, (LPARAM)SendMessage(GetDlgItem(hDlg, IDC_MASTERR), TBM_GETPOS,   0, 0));
-                UpdateVolumeToolTip(GetDlgItem(hDlg, IDC_MASTERR), hwndMasterTT[1], &tiMaster[1]);
-                updateAudio = TRUE;
-            }
-
-            if (wParam >= IDC_VOLUME1 && wParam < IDC_VOLUME1 + MIXER_CHANNEL_TYPE_COUNT) {  
-                UpdateVolumeToolTip(GetDlgItem(hDlg, wParam), hwndVolTT[wParam - IDC_VOLUME1], &tiVol[wParam - IDC_VOLUME1]);
-                updateAudio = TRUE;
-            }
-
-            if (wParam >= IDC_PAN1 && wParam < IDC_PAN1 + MIXER_CHANNEL_TYPE_COUNT) {    
-                UpdatePanToolTip(GetDlgItem(hDlg, wParam), hwndPanTT[wParam - IDC_PAN1], &tiPan[wParam - IDC_PAN1]);
-                updateAudio = TRUE;
-            }
-
-            break;
         }
-
         break;
-    }
-
-    if (updateAudio) {
-        for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
-            mixerSetChannelTypeVolume(theMixer, i, 100 - SendMessage(GetDlgItem(hDlg, IDC_VOLUME1 + i), TBM_GETPOS,   0, 0));
-            mixerSetChannelTypePan(theMixer, i, SendMessage(GetDlgItem(hDlg, IDC_PAN1 + i), TBM_GETPOS,   0, 0));
-            pProperties->sound.mixerChannel[i].enable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLE1 + i), BM_GETCHECK, 0, 0) == BST_CHECKED;
-            mixerEnableChannelType(theMixer, i, pProperties->sound.mixerChannel[i].enable);
-        }
-        mixerSetMasterVolume(theMixer, 100 - SendMessage(GetDlgItem(hDlg, IDC_MASTERL), TBM_GETPOS,   0, 0));
-        pProperties->sound.masterEnable = SendMessage(GetDlgItem(hDlg, IDC_VOLENABLEMASTER), BM_GETCHECK, 0, 0) == BST_CHECKED;
-        mixerEnableMaster(theMixer, pProperties->sound.masterEnable);
     }
 
     return FALSE;
@@ -2251,50 +2236,6 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
 
     return TRUE;
 }
-
-static int openLogFile(HWND hwndOwner, char* fileName)
-{
-    OPENFILENAME ofn; 
-    static char pFileName[MAX_PATH];
-    char  curDir[MAX_PATH];
-    BOOL rv;
-
-    pFileName[0] = 0; 
-
-    ofn.lStructSize = sizeof(OPENFILENAME); 
-    ofn.hwndOwner = hwndOwner; 
-    ofn.hInstance = GetModuleHandle(NULL);
-    ofn.lpstrFilter = "*.*\0\0"; 
-    ofn.lpstrCustomFilter = NULL; 
-    ofn.nMaxCustFilter = 0;
-    ofn.nFilterIndex = 0; 
-    ofn.lpstrFile = pFileName; 
-    ofn.nMaxFile = 1024; 
-    ofn.lpstrFileTitle = NULL; 
-    ofn.nMaxFileTitle = 0; 
-    ofn.lpstrInitialDir = NULL; 
-    ofn.lpstrTitle = langPropPortsOpenLogFile(); 
-    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT; 
-    ofn.nFileOffset = 0; 
-    ofn.nFileExtension = 0; 
-    ofn.lpstrDefExt = NULL; 
-    ofn.lCustData = 0; 
-    ofn.lpfnHook = NULL; 
-    ofn.lpTemplateName = NULL; 
-
-    GetCurrentDirectory(MAX_PATH, curDir);
-
-    rv = GetSaveFileName(&ofn); 
-
-    SetCurrentDirectory(curDir);
-
-    if (rv) {
-        strcpy(fileName, pFileName);
-    }
-
-    return rv;
-}
-
 
 
 static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)

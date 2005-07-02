@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-07-02 17:56:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -229,6 +229,14 @@ typedef struct {
     _TCHAR* propVideoFreqText;
     _TCHAR* propVideoFreqAuto;
     _TCHAR* propSndOversampleText;
+
+    _TCHAR* propSndMidiInGB;
+    _TCHAR* propSndMidiOutGB;
+
+    _TCHAR* textDevice;
+    _TCHAR* textFilename;
+    _TCHAR* textFile;
+    _TCHAR* textNone;
 
     _TCHAR* propMonMonGB;
     _TCHAR* propMonTypeText;
