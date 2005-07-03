@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.81 $
+** $Revision: 1.82 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-03 09:34:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2512,6 +2512,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     archSoundDestroy();
     Sleep(300);
     mixerDestroy(st.mixer);
+    midiShutdown();
 
     SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, screensaverActive, 0, SPIF_SENDWININICHANGE); 
 

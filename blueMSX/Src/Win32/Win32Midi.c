@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-07-03 09:17:41 $
+** $Date: 2005-07-03 09:34:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,4 +131,14 @@ void midiInitialize()
     w32_midiInInit();
 
     archMidiUpdateDriver();
+}
+
+void midiShutdown()
+{
+    if (devId != -1) {
+        w32_midiOutSetVolume(devId, origVolume);
+	    w32_midiOutClose(devId);
+    }
+    w32_midiOutClean();
+    w32_midiInClean();
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-07-02 17:56:52 $
+** $Date: 2005-07-03 09:34:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,5 +33,6 @@
 #include "MsxTypes.h"
 
 void midiInitialize();
+void midiShutdown();
 
 #endif
