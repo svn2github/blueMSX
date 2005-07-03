@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.80 $
+** $Revision: 1.81 $
 **
-** $Date: 2005-07-02 17:56:52 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2273,8 +2273,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     InitCommonControls(); 
 
-    midiInitialize();
-
     DirectDrawInitDisplayModes();
 
     wndClass.cbSize         = sizeof(wndClass);
@@ -2320,6 +2318,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             return 0;
         }
     }
+
+    midiInitialize();
 
     setDefaultPath();
 

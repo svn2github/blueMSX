@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-05-01 00:05:18 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ typedef enum {
     MIXER_CHANNEL_KEYBOARD,
     MIXER_CHANNEL_PCM,
     MIXER_CHANNEL_IO,
+    MIXER_CHANNEL_MIDI,
     MIXER_CHANNEL_TYPE_COUNT
 } MixerAudioType;
 

@@ -67,6 +67,7 @@ static unsigned vfnt_midiout_num, vfnt_midiin_num;
 
 static int *state_out;
 static struct outbuf *buf_out;
+static int noteOn = 0;
 
 static MIDIHDR inhdr;
 static char inlongmes[OPENMSX_W32_MIDI_SYSMES_MAXLEN];
@@ -246,8 +247,9 @@ int w32_midiOutPut(unsigned char value, unsigned idx)
 		switch (state_out[idx]) {
 		case 0x0000:
 			switch (value & 0x0f0) {
-			case 0x080:	// Note Off
 			case 0x090:	// Note On
+                noteOn = 1;
+			case 0x080:	// Note Off
 			case 0x0a0:	// Key Pressure
 			case 0x0b0:	// Control Change
 			case 0x0e0:	// Pitch Wheel
@@ -308,6 +310,25 @@ int w32_midiOutPut(unsigned char value, unsigned idx)
 	return 0;
 }
 
+unsigned int w32_midiOutGetVolume(unsigned idx)
+{
+    DWORD volume;
+    midiOutGetVolume((HMIDIOUT)vfnt_midiout[idx].handle, &volume);
+
+    return volume;
+}
+
+void w32_midiOutSetVolume(unsigned idx, unsigned int volume)
+{
+    int rv = midiOutSetVolume((HMIDIOUT)vfnt_midiout[idx].handle, volume);
+}
+
+int w32_midiOutNoteOn(unsigned idx)
+{
+    int on = noteOn;
+    noteOn = 0;
+    return on;
+}
 
 // MIDI-IN
 static int w32_midiInFindDev(unsigned *idx, unsigned *dev, const char *vfn)
@@ -407,3 +428,4 @@ int w32_midiInClose(unsigned idx)
 		return -1;
 	}
 }
+

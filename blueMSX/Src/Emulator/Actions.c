@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-06-29 03:53:41 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "ArchControls.h"
 #include "ArchNotifications.h"
 #include "ArchPrinter.h"
+#include "ArchMidi.h"
 
 #include <stdio.h>
 #include <direct.h>
@@ -851,8 +852,16 @@ void actionMuteToggleMsxAudio() {
     state.properties->sound.mixerChannel[channel].enable = newEnable;
     mixerEnableChannelType(state.mixer, channel, newEnable);
 }
+
 void actionMuteToggleMoonsound() {
     int channel = MIXER_CHANNEL_MOONSOUND;
+    int newEnable = !state.properties->sound.mixerChannel[channel].enable;
+    state.properties->sound.mixerChannel[channel].enable = newEnable;
+    mixerEnableChannelType(state.mixer, channel, newEnable);
+}
+
+void actionMuteToggleMidi() {
+    int channel = MIXER_CHANNEL_MIDI;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
     state.properties->sound.mixerChannel[channel].enable = newEnable;
     mixerEnableChannelType(state.mixer, channel, newEnable);
@@ -1059,6 +1068,11 @@ void actionVolumeSetKeyboard(int value) {
     mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
 }
 
+void actionVolumeSetMidi(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = value;
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_MIDI, value);
+}
+
 void actionPanSetPsg(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = value;
     mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_PSG, value);
@@ -1097,6 +1111,11 @@ void actionPanSetMoonsound(int value) {
 void actionPanSetKeyboard(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = value;
     mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
+}
+
+void actionPanSetMidi(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = value;
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_MIDI, value);
 }
 
 void actionRenshaSetLevel(int value) {

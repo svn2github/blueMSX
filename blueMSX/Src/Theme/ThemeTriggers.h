@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-05-01 00:05:18 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,6 +57,7 @@ typedef enum {
     THEME_TRIGGER_IMG_SCC,
     THEME_TRIGGER_IMG_PCM,
     THEME_TRIGGER_IMG_IO,
+    THEME_TRIGGER_IMG_MIDI,
     THEME_TRIGGER_IMG_L_KBD,
     THEME_TRIGGER_IMG_R_KBD,
     THEME_TRIGGER_IMG_L_MOON,
@@ -73,6 +74,8 @@ typedef enum {
     THEME_TRIGGER_IMG_R_PCM,
     THEME_TRIGGER_IMG_L_IO,
     THEME_TRIGGER_IMG_R_IO,
+    THEME_TRIGGER_IMG_L_MIDI,
+    THEME_TRIGGER_IMG_R_MIDI,
     THEME_TRIGGER_IMG_L_MASTER,
     THEME_TRIGGER_IMG_R_MASTER,
     THEME_TRIGGER_IMG_PORT1_EN,
@@ -150,6 +153,7 @@ typedef enum {
     THEME_TRIGGER_LEVEL_MSXMUSIC,
     THEME_TRIGGER_LEVEL_MSXAUDIO,
     THEME_TRIGGER_LEVEL_MOONSOUND,
+    THEME_TRIGGER_LEVEL_MIDI,
     THEME_TRIGGER_PAN_PSG,
     THEME_TRIGGER_PAN_PCM,
     THEME_TRIGGER_PAN_IO,
@@ -158,6 +162,7 @@ typedef enum {
     THEME_TRIGGER_PAN_MSXMUSIC,
     THEME_TRIGGER_PAN_MSXAUDIO,
     THEME_TRIGGER_PAN_MOONSOUND,
+    THEME_TRIGGER_PAN_MIDI,
 
     THEME_TRIGGER_VIDEO_GAMMA,
     THEME_TRIGGER_VIDEO_BRIGHTNESS,
@@ -239,6 +244,7 @@ int themeTriggerAudioPsg();
 int themeTriggerAudioScc();
 int themeTriggerAudioPcm();
 int themeTriggerAudioIo();
+int themeTriggerAudioMidi();
 
 int themeTriggerPort1None();
 int themeTriggerPort1Mouse();
@@ -288,6 +294,8 @@ int themeTriggerVolPcmLeft();
 int themeTriggerVolPcmRight();
 int themeTriggerVolIoLeft();
 int themeTriggerVolIoRight();
+int themeTriggerVolMidiLeft();
+int themeTriggerVolMidiRight();
 int themeTriggerVolMasterLeft();
 int themeTriggerVolMasterRight();
 
@@ -328,6 +336,7 @@ int themeTriggerLevelKeyboard();
 int themeTriggerLevelMsxMusic();
 int themeTriggerLevelMsxAudio();
 int themeTriggerLevelMoonsound();
+int themeTriggerLevelMidi();
 int themeTriggerPanPsg();
 int themeTriggerPanPcm();
 int themeTriggerPanIo();
@@ -336,6 +345,7 @@ int themeTriggerPanKeyboard();
 int themeTriggerPanMsxMusic();
 int themeTriggerPanMsxAudio();
 int themeTriggerPanMoonsound();
+int themeTriggerPanMidi();
 
 int themeTriggerLevelRensha();
 int themeTriggerLevelEmuSpeed();

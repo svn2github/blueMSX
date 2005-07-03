@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-07-02 17:59:21 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,10 +32,7 @@
 #include "ArchUart.h"
 #include "DAC.h"
 #include "Board.h"
-
-int archMidiCreate(void);
-void archMidiDestroy(void);
-int archMidiTransmit(UInt8 value);
+#include "ArchMidi.h"
 
 typedef struct MidiIO {
     MidiType type;
@@ -116,6 +113,8 @@ void midiIoSetMidiOutType(MidiType type, const char* fileName)
     if (theMidiIO == NULL) {
         return;
     }
+
+    archMidiUpdateDriver();
 
     removeType(theMidiIO);
     setType(theMidiIO);

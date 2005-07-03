@@ -37,16 +37,19 @@ int w32_midiOutClean();
 unsigned w32_midiOutGetVFNsNum();
 const char* w32_midiOutGetVFN(unsigned nmb);
 const char* w32_midiOutGetRDN(unsigned nmb);
-extern unsigned w32_midiOutOpen(const char* vfn);
-extern int w32_midiOutClose(unsigned idx);
-extern int w32_midiOutPut(unsigned char value, unsigned idx);
+unsigned w32_midiOutOpen(const char* vfn);
+int w32_midiOutClose(unsigned idx);
+int w32_midiOutPut(unsigned char value, unsigned idx);
+unsigned int w32_midiOutGetVolume(unsigned idx);
+void w32_midiOutSetVolume(unsigned idx, unsigned int volume);
+int w32_midiOutNoteOn(unsigned idx);
 
-extern int w32_midiInInit();
-extern int w32_midiInClean();
-extern unsigned w32_midiInGetVFNsNum();
+int w32_midiInInit();
+int w32_midiInClean();
+unsigned w32_midiInGetVFNsNum();
 const char* w32_midiInGetVFN(unsigned nmb);
 const char* w32_midiInGetRDN(unsigned nmb);
-extern unsigned w32_midiInOpen(const char* vfn, unsigned thrdid);
-extern int w32_midiInClose(unsigned idx);
+unsigned w32_midiInOpen(const char* vfn, unsigned thrdid);
+int w32_midiInClose(unsigned idx);
 
 #endif // MIDI_W32

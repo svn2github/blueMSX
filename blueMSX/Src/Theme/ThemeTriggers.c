@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-06-24 17:33:25 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,6 +218,10 @@ int themeTriggerAudioIo() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_IO].enable ? 1 : 0;
 }
 
+int themeTriggerAudioMidi() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable ? 1 : 0;
+}
+
 int themeTriggerVolKbdLeft() {
     return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_KEYBOARD, MIXER_CHANNEL_LEFT);
 }
@@ -282,6 +286,14 @@ int themeTriggerVolIoRight() {
     return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_IO, MIXER_CHANNEL_RIGHT);
 }
 
+int themeTriggerVolMidiLeft() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_MIDI, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolMidiRight() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_MIDI, MIXER_CHANNEL_RIGHT);
+}
+
 int themeTriggerVolMasterLeft() {
     return mixerGetMasterVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_LEFT);
 }
@@ -326,6 +338,10 @@ int themeTriggerLevelMoonsound() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume;
 }
 
+int themeTriggerLevelMidi() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume;
+}
+
 int themeTriggerPanPsg() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_PSG].pan;
 }
@@ -356,6 +372,10 @@ int themeTriggerPanMsxAudio() {
 
 int themeTriggerPanMoonsound() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan;
+}
+
+int themeTriggerPanMidi() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan;
 }
 
 int themeTriggerLevelRensha() {

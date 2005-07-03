@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-07-02 17:56:51 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -137,6 +137,10 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = 50;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
 
     pProperties->sound.MidiIn.type             = P_MIDI_NONE;
     pProperties->sound.MidiIn.name[0]          = 0;
@@ -332,6 +336,10 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = 50;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
 
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
@@ -530,6 +538,9 @@ static void propLoad(Properties* pProperties)
     getIntValue("IOEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
     getIntValue("IOPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
     getIntValue("IOVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
+    getIntValue("MIDIEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable);
+    getIntValue("MIDIPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan);
+    getIntValue("MIDIVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume);
     
     getIntValue("MidiInType", &pProperties->sound.MidiIn.type);
     getStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);
@@ -733,6 +744,9 @@ void propSave(Properties* pProperties)
     setIntValue("IOEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
     setIntValue("IOPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
     setIntValue("IOVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
+    setIntValue("MIDIEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable);
+    setIntValue("MIDIPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan);
+    setIntValue("MIDIVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume);
     
     setIntValue("MidiInType", pProperties->sound.MidiIn.type);
     setStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);

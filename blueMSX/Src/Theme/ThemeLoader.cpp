@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,6 +181,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-togglemutemsxmusic"))  return (ButtonEvent)actionMuteToggleMsxMusic;
     if (0 == strcmp(action, "audio-togglemutemsxaudio"))  return (ButtonEvent)actionMuteToggleMsxAudio;
     if (0 == strcmp(action, "audio-togglemutemoonsound")) return (ButtonEvent)actionMuteToggleMoonsound;
+    if (0 == strcmp(action, "audio-togglemutemidi"))      return (ButtonEvent)actionMuteToggleMidi;
     
     if (0 == strcmp(action, "printer-forceformfeed"))   return (ButtonEvent)actionPrinterForceFormFeed;
 
@@ -219,6 +220,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "level-msxmusic"))    return (ButtonEvent)actionVolumeSetMsxMusic;
     if (0 == strcmp(action, "level-msxaudio"))    return (ButtonEvent)actionVolumeSetMsxAudio;
     if (0 == strcmp(action, "level-moonsound"))   return (ButtonEvent)actionVolumeSetMoonsound;
+    if (0 == strcmp(action, "level-midi"))        return (ButtonEvent)actionVolumeSetMidi;
     if (0 == strcmp(action, "pan-psg"))           return (ButtonEvent)actionPanSetPsg;
     if (0 == strcmp(action, "pan-pcm"))           return (ButtonEvent)actionPanSetPcm;
     if (0 == strcmp(action, "pan-io"))            return (ButtonEvent)actionPanSetIo;
@@ -227,6 +229,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "pan-msxmusic"))      return (ButtonEvent)actionPanSetMsxMusic;
     if (0 == strcmp(action, "pan-msxaudio"))      return (ButtonEvent)actionPanSetMsxAudio;
     if (0 == strcmp(action, "pan-moonsound"))     return (ButtonEvent)actionPanSetMoonsound;
+    if (0 == strcmp(action, "pan-midi"))          return (ButtonEvent)actionPanSetMidi;
 
     if (0 == strcmp(action, "slider-rensha"))       return (ButtonEvent)actionRenshaSetLevel;
 
@@ -337,6 +340,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "enable-scc"))               return t | THEME_TRIGGER_IMG_SCC;
     if (0 == strcmp(s, "enable-pcm"))               return t | THEME_TRIGGER_IMG_PCM;
     if (0 == strcmp(s, "enable-io"))                return t | THEME_TRIGGER_IMG_IO;
+    if (0 == strcmp(s, "enable-midi"))              return t | THEME_TRIGGER_IMG_MIDI;
     if (0 == strcmp(s, "enable-master"))            return t | THEME_TRIGGER_IMG_MASTER;
     if (0 == strcmp(s, "enable-stereo"))            return t | THEME_TRIGGER_IMG_STEREO;
     
@@ -356,6 +360,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "volume-pcm-right"))         return t | THEME_TRIGGER_IMG_R_PCM;
     if (0 == strcmp(s, "volume-io-left"))           return t | THEME_TRIGGER_IMG_L_IO;
     if (0 == strcmp(s, "volume-io-right"))          return t | THEME_TRIGGER_IMG_R_IO;
+    if (0 == strcmp(s, "volume-midi-left"))         return t | THEME_TRIGGER_IMG_L_MIDI;
+    if (0 == strcmp(s, "volume-midi-right"))        return t | THEME_TRIGGER_IMG_R_MIDI;
     if (0 == strcmp(s, "volume-master-left"))       return t | THEME_TRIGGER_IMG_L_MASTER;
     if (0 == strcmp(s, "volume-master-right"))      return t | THEME_TRIGGER_IMG_R_MASTER;
 
@@ -402,11 +408,13 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "level-msxmusic"))          return t | THEME_TRIGGER_LEVEL_MSXMUSIC;
     if (0 == strcmp(s, "level-msxaudio"))          return t | THEME_TRIGGER_LEVEL_MSXAUDIO;
     if (0 == strcmp(s, "level-moonsound"))         return t | THEME_TRIGGER_LEVEL_MOONSOUND;
+    if (0 == strcmp(s, "level-midi"))              return t | THEME_TRIGGER_LEVEL_MIDI;
     if (0 == strcmp(s, "pan-psg"))                 return t | THEME_TRIGGER_PAN_PSG;
     if (0 == strcmp(s, "pan-pcm"))                 return t | THEME_TRIGGER_PAN_PCM;
     if (0 == strcmp(s, "pan-io"))                  return t | THEME_TRIGGER_PAN_IO;
     if (0 == strcmp(s, "pan-scc"))                 return t | THEME_TRIGGER_PAN_SCC;
     if (0 == strcmp(s, "pan-keyboard"))            return t | THEME_TRIGGER_PAN_KEYBOARD;
+    if (0 == strcmp(s, "pan-midi"))                return t | THEME_TRIGGER_PAN_MIDI;
     if (0 == strcmp(s, "pan-msxmusic"))            return t | THEME_TRIGGER_PAN_MSXMUSIC;
     if (0 == strcmp(s, "pan-msxaudio"))            return t | THEME_TRIGGER_PAN_MSXAUDIO;
     if (0 == strcmp(s, "pan-moonsound"))           return t | THEME_TRIGGER_PAN_MOONSOUND;

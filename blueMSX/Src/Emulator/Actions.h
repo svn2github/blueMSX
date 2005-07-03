@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-06-29 03:53:41 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,7 @@ void actionMuteToggleKeyboard();
 void actionMuteToggleMsxMusic();
 void actionMuteToggleMsxAudio();
 void actionMuteToggleMoonsound();
+void actionMuteToggleMidi();
 
 void actionPrinterForceFormFeed();
 
@@ -198,6 +199,7 @@ void actionVolumeSetKeyboard(int value);
 void actionVolumeSetMsxMusic(int value);
 void actionVolumeSetMsxAudio(int value);
 void actionVolumeSetMoonsound(int value);
+void actionVolumeSetMidi(int value);
 void actionPanSetPsg(int value);
 void actionPanSetPcm(int value);
 void actionPanSetIo(int value);
@@ -206,6 +208,7 @@ void actionPanSetKeyboard(int value);
 void actionPanSetMsxMusic(int value);
 void actionPanSetMsxAudio(int value);
 void actionPanSetMoonsound(int value);
+void actionPanSetMidi(int value);
 
 void actionRenshaSetLevel(int value);
 void actionEmuSpeedSet(int value);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-07-02 17:56:52 $
+** $Date: 2005-07-03 09:17:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,15 +31,25 @@
 #include "Midi_w32.h"
 #include "Properties.h"
 #include "MsxTypes.h"
+#include "ArchMidi.h"
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 static int devId = -1;
+static UInt32 enabled = 1;
+static UInt32 currVolume;
+static UInt32 origVolume;
 
-int archMidiCreate(void) 
+void archMidiUpdateDriver()
 {
     Properties* pProperties = propGetGlobalProperties();
-
     int num = 0;
     int i;
+
+    if (devId != -1) {
+        w32_midiOutSetVolume(devId, origVolume);
+	    w32_midiOutClose(devId);
+    }
 
 	num = w32_midiOutGetVFNsNum();
 
@@ -53,17 +63,58 @@ int archMidiCreate(void)
             }
         }
     }
+    if (devId == -1 && num > 0) {
+	    const char* name = w32_midiOutGetVFN(i);
+	    const char* desc = w32_midiOutGetRDN(i);
+        if (name != NULL) {
+            devId = w32_midiOutOpen(name);
+            strcpy(pProperties->sound.MidiOut.name, name);
+            if (desc != NULL) {
+                strcpy(pProperties->sound.MidiOut.desc, desc);
+            }
+            else {
+                pProperties->sound.MidiOut.desc[0] = 0;
+            }
+        }
+    }
 
+    if (devId != -1) {
+        origVolume = w32_midiOutGetVolume(devId);
+        w32_midiOutSetVolume(devId, currVolume * enabled);
+    }
+}
+
+int archMidiCreate(void) 
+{
     return devId != -1;
 }
 
 void archMidiDestroy(void)
 {
-    if (devId != -1) {
-	    w32_midiOutClose(devId);
-    }
+}
 
-    devId = -1;
+void archMidiEnable(int enable)
+{
+    enabled = enable;
+    if (devId != -1) {
+        w32_midiOutSetVolume(devId, currVolume * enabled);
+    }
+}
+
+void archMidiUpdateVolume(int left, int right)
+{
+    currVolume = MIN(left * 100, 0xffff) | (MIN(right * 100, 0xffff) << 16);
+    if (devId != -1) {
+        w32_midiOutSetVolume(devId, currVolume * enabled);
+    }
+}
+
+int archMidiGetNoteOn()
+{
+    if (devId != -1) {
+        return w32_midiOutNoteOn(devId);
+    }
+    return 0;
 }
 
 int archMidiTransmit(unsigned char value) {
@@ -73,8 +124,11 @@ int archMidiTransmit(unsigned char value) {
     return 1;
 }
 
+
 void midiInitialize()
 {
 	w32_midiOutInit();
     w32_midiInInit();
+
+    archMidiUpdateDriver();
 }

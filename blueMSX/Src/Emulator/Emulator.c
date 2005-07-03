@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-05-01 00:05:01 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@
 #include "ArchEvent.h"
 #include "ArchTimer.h"
 #include "ArchSound.h"
+#include "ArchMidi.h"
 #include "ArchControls.h"
 #include "ArchNotifications.h"
 #include "Keyboard.h"
@@ -147,9 +148,11 @@ EmuState emulatorGetState() {
 void emulatorSetState(EmuState state) {
     if (state == EMU_RUNNING) {
         archSoundResume();
+        archMidiEnable(1);
     }
     else {
         archSoundSuspend();
+        archMidiEnable(0);
     }
     if (state == EMU_STEP) {
         state = EMU_RUNNING;
@@ -293,26 +296,9 @@ static void emulatorThread() {
     archEventSet(emuStartEvent);
 }
 
-#if 0
-// Test code for debugger interface
-static Debugger* debugger;
-
-void onEmuPause()
-{
-    DbgSnapshot* snapshot = dbgSnapshotCreate(debugger);
-
-    dbgSnapshotDestroy(snapshot);
-}
-#endif
 void emulatorStart(char* stateName) {
     UInt32 color = videoGetColor(0, 0, 0);
     int i;
-
-#if 0
-    if (debugger == NULL) {
-        debugger = debuggerCreate(NULL, NULL, onEmuPause, NULL, NULL);
-    }
-#endif
 
     dbgEnable();
 
@@ -391,6 +377,7 @@ void emulatorStart(char* stateName) {
     }
 
     archSoundResume();
+    archMidiEnable(1);
 
     emuState = EMU_PAUSED;
     emulationStartFailure = 0;
@@ -440,6 +427,7 @@ void emulatorStop() {
     archEventSet(emuSyncEvent);
     archThreadJoin(emuThread, 400);
     archSoundSuspend();
+    archMidiEnable(0);
     machineDestroy(machine);
     archThreadDestroy(emuThread);
     archEventDestroy(emuSyncEvent);
@@ -450,6 +438,8 @@ void emulatorStop() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
+
+    archMidiUpdateDriver();
 
     archEmulationStopNotification();
     
@@ -474,6 +464,7 @@ void emulatorSuspend() {
             Sleep(10);
         } while (!emuSuspendFlag);
         archSoundSuspend();
+        archMidiEnable(0);
     }
 }
 
@@ -483,6 +474,7 @@ void emulatorResume() {
 
     if (emuState == EMU_SUSPENDED) {
         archSoundResume();
+        archMidiEnable(1);
         emuState = EMU_RUNNING;
         archUpdateEmuDisplay(0);
     }

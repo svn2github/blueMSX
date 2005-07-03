@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-15 23:55:32 $
+** $Date: 2005-07-03 09:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "audioMixer.h"
 #include "Board.h"
 #include "ArchTimer.h"
+#include "ArchMidi.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -109,6 +110,7 @@ struct Mixer
     Int16   buffer[BUFFER_SIZE];
     AudioTypeInfo audioTypeInfo[MIXER_CHANNEL_TYPE_COUNT];
     MixerChannel channels[MAX_CHANNELS];
+    MixerChannel midi; // This channel is only used for meter output
     Int32   channelCount;
     Int32   handleCount;
     UInt32  oldTick;
@@ -135,6 +137,15 @@ static void mixerRecalculateType(Mixer* mixer, int audioType)
 {
     AudioTypeInfo* type    = mixer->audioTypeInfo + audioType;
     int i;
+
+    if (audioType == MIXER_CHANNEL_MIDI) {
+        MixerChannel* channel = mixer->channels + MIXER_CHANNEL_MIDI;
+        channel->enable         = type->enable;
+        channel->volume         = type->volume;
+        channel->pan            = type->pan;
+        recalculateChannelVolume(mixer, channel);
+        archMidiUpdateVolume(channel->volumeLeft, channel->volumeRight);
+    }
 
     for (i = 0; i < mixer->channelCount; i++) {
         MixerChannel* channel = mixer->channels + i;
@@ -209,6 +220,10 @@ Int32 mixerGetChannelTypeVolume(Mixer* mixer, Int32 type, int leftRight)
     Int32 volume = 0;
 
     updateVolumes(mixer);
+
+    if (type == MIXER_CHANNEL_MIDI) {
+        return leftRight ? mixer->midi.volIntRight : mixer->midi.volIntLeft;
+    }
 
     for (i = 0; i < mixer->channelCount; i++) {
         if (mixer->channels[i].type == type) {
@@ -287,6 +302,20 @@ static void updateVolumes(Mixer* mixer)
             mixer->channels[i].volIntRight = newVol;
         }
         
+        if (archMidiGetNoteOn()) {
+            mixer->midi.volIntLeft  = MIN(100, mixer->channels[MIXER_CHANNEL_MIDI].volumeLeft / 7);
+            mixer->midi.volIntRight = MIN(100, mixer->channels[MIXER_CHANNEL_MIDI].volumeRight/ 7);
+        }
+        {
+            int newVol = mixer->midi.volIntLeft - diff;
+            if (newVol < 0) newVol = 0;
+            mixer->midi.volIntLeft = newVol;
+
+            newVol = mixer->midi.volIntRight - diff;
+            if (newVol < 0) newVol = 0;
+            mixer->midi.volIntRight = newVol;
+        }
+
         mixer->oldTick += diff;
     }
 }
@@ -403,7 +432,12 @@ void mixerSync(Mixer* mixer)
     }
 
     for (i = 0; i < mixer->channelCount; i++) {
-        chBuff[i] = mixer->channels[i].updateCallback(mixer->channels[i].ref, count);
+        if (mixer->channels[i].updateCallback != NULL) {
+            chBuff[i] = mixer->channels[i].updateCallback(mixer->channels[i].ref, count);
+        }
+        else {
+            chBuff[i] = NULL;
+        }
     }
 
     if (mixer->stereo) {
@@ -414,6 +448,10 @@ void mixerSync(Mixer* mixer)
             for (i = 0; i < mixer->channelCount; i++) {
                 Int32 chanLeft;
                 Int32 chanRight;
+
+                if (chBuff[i] == NULL) {
+                    continue;
+                }
 
                 if (mixer->channels[i].stereo) {
                     chanLeft = mixer->channels[i].volumeLeft * *chBuff[i]++;
@@ -465,6 +503,10 @@ void mixerSync(Mixer* mixer)
 
             for (i = 0; i < mixer->channelCount; i++) {
                 Int32 chanLeft;
+
+                if (chBuff[i] == NULL) {
+                    continue;
+                }
 
                 if (mixer->channels[i].stereo) {
                     Int32 tmp = *chBuff[i]++;
@@ -545,7 +587,7 @@ void mixerSync(Mixer* mixer)
             mixer->channels[i].volCntLeft  = 0;
             mixer->channels[i].volCntRight = 0;
 
-            if (chBuff[i][0]) {
+            if (chBuff[i] && chBuff[i][0]) {
                 mixer->channels[i].active++;
             }
         }
