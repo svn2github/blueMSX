@@ -42,7 +42,15 @@ int w32_midiOutClose(unsigned idx);
 int w32_midiOutPut(unsigned char value, unsigned idx);
 unsigned int w32_midiOutGetVolume(unsigned idx);
 void w32_midiOutSetVolume(unsigned idx, unsigned int volume);
+
 int w32_midiOutNoteOn(unsigned idx);
+
+void w32_resetHistory();
+void w32_midiOutLoadState(unsigned idx);
+void w32_midiOutSaveState(unsigned idx);
+
+void w32_midiOutEnableMt32ToGmMapping(unsigned idx, int enable);
+
 
 int w32_midiInInit();
 int w32_midiInClean();

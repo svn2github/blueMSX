@@ -34,44 +34,70 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "SaveState.h"
+
 #define MAXPATHLEN MAX_PATH
 
 #define assert(x)
 
 
+#define MIDI_SYSMES_MAXLEN 4096
+
+
 /*
  * MIDI I/O helper functions for Win32.
  */
-// MIDI SYSTEM MESSAGES max length is not defined...
-// TODO: support variable length.
-#define OPENMSX_W32_MIDI_SYSMES_MAXLEN 4096
 
-
-struct vfn_midi {
+typedef struct VfnMidi {
 	unsigned idx;
 	unsigned devid;
 	HMIDI    handle;
 	char     vfname[MAXPATHLEN + 1];
 	char     devname[MAXPNAMELEN];
-};
+} VfnMidi;
 
-struct outbuf {
+typedef struct Outbuf {
 	DWORD    shortmes;
 	unsigned longmes_cnt;
-	char     longmes[OPENMSX_W32_MIDI_SYSMES_MAXLEN];
+	char     longmes[MIDI_SYSMES_MAXLEN];
 	MIDIHDR  header;
+} Outbuf;
+
+typedef struct MidiOut {
+    int state;
+    VfnMidi vfn;
+    Outbuf buf;
+    int noteOn;
+    int mt32ToGm;
+} MidiOut;
+
+static unsigned int midiOutHistory[256];
+
+static MidiOut* midiOut;
+static unsigned midiOutNum;
+
+int MT32toGM[128] = {
+    0,   1,   2,   4,   4,   5,   5,   3,   16,  16,
+    16,  16,  19,  19,  19,  21,  6,   6,   6,   7,
+    7,   7,   8,   8,   62,  57,  63,  58,  38,  38,
+    39,  39,  88,  33,  52,  35,  97,  100, 38,  39,
+    14,  102, 68,  103, 44,  92,  46,  80,  48,  49,
+    51,  45,  40,  40,  42,  42,  43,  46,  46,  24,
+    25,  28,  27,  104, 32,  32,  34,  33,  36,  37,
+    39,  35,  79,  73,  76,  72,  74,  75,  64,  65,
+    66,  67,  71,  71,  69,  70,  60,  22,  56,  59,
+    57,  63,  60,  60,  58,  61,  61,  11,  11,  99,
+    100, 9,   14,  13,  12,  107, 106, 77,  78,  78,
+    76,  111, 47,  117, 127, 115, 118, 116, 118, 126,
+    121, 121, 55,  124, 120, 125, 126, 127
 };
 
-static struct vfn_midi *vfnt_midiout, *vfnt_midiin;
-static unsigned vfnt_midiout_num, vfnt_midiin_num;
 
-static int *state_out;
-static struct outbuf *buf_out;
-static int noteOn = 0;
 
-static MIDIHDR inhdr;
-static char inlongmes[OPENMSX_W32_MIDI_SYSMES_MAXLEN];
-
+void w32_resetHistory()
+{
+    memset(midiOutHistory, 0, sizeof(midiOutHistory));
+}
 
 static void w32_midiDevNameConv(char *dst, char *src)
 {
@@ -94,10 +120,10 @@ static void w32_midiDevNameConv(char *dst, char *src)
 static int w32_midiOutFindDev(unsigned *idx, unsigned *dev, const char *vfn)
 {
     unsigned i;
-	for (i = 0; i < vfnt_midiout_num; ++i) {
-		if (!strcmp(vfnt_midiout[i].vfname, vfn)) {
+	for (i = 0; i < midiOutNum; ++i) {
+		if (!strcmp(midiOut[i].vfn.vfname, vfn)) {
 			*idx = i;
-			*dev = vfnt_midiout[i].devid;
+			*dev = midiOut[i].vfn.devid;
 			return 0;
 		}
 	}
@@ -111,70 +137,60 @@ int w32_midiOutInit()
     unsigned num;
     unsigned i;
 
-	vfnt_midiout_num = 0;
+	midiOutNum = 0;
 	num = midiOutGetNumDevs();
 	if (!num) {
 		return 0;
 	}
-	if ((state_out = (int*)malloc((num + 1) * sizeof(int))) == NULL) {
-		return 1;
-	}
-	memset(state_out, 0, (num + 1) * sizeof(int));
 
-	if ((buf_out = (struct outbuf*)malloc((num + 1) * sizeof(struct outbuf))) == NULL) {
+	if ((midiOut = (MidiOut*)malloc((num + 1) * sizeof(MidiOut))) == NULL) {
 		return 1;
 	}
-	memset(buf_out, 0, (num + 1) * sizeof(struct outbuf));
-
-	if ((vfnt_midiout = (struct vfn_midi*)malloc((num + 1) * sizeof(struct vfn_midi))) == NULL) {
-		return 1;
-	}
+	memset(midiOut, 0, (num + 1) * sizeof(MidiOut));
 
 	if (midiOutGetDevCapsA(MIDI_MAPPER, &cap, sizeof(cap)) != MMSYSERR_NOERROR) {
 		return 2;
 	}
-	vfnt_midiout[0].devid = MIDI_MAPPER;
-	w32_midiDevNameConv(vfnt_midiout[0].devname, cap.szPname);
-	strncpy(vfnt_midiout[0].vfname, "midi-out", MAXPATHLEN + 1);
-	vfnt_midiout_num ++;
+	midiOut[0].vfn.devid = MIDI_MAPPER;
+	w32_midiDevNameConv(midiOut[0].vfn.devname, cap.szPname);
+	strncpy(midiOut[0].vfn.vfname, "midi-out", MAXPATHLEN + 1);
+	midiOutNum++;
 
 	for (i = 0; i < num; ++i) {
 		if (midiOutGetDevCapsA(i, &cap, sizeof(cap)) != MMSYSERR_NOERROR) {
 			return 0;	// atleast MIDI-MAPPER is available...
 		}
-		vfnt_midiout[i + 1].devid = i;
-		w32_midiDevNameConv(vfnt_midiout[i + 1].devname, cap.szPname);
-		sprintf(vfnt_midiout[i + 1].vfname, "midi-out-%u", i);
-		vfnt_midiout_num++;
+		midiOut[i + 1].vfn.devid = i;
+		w32_midiDevNameConv(midiOut[i + 1].vfn.devname, cap.szPname);
+		sprintf(midiOut[i + 1].vfn.vfname, "midi-out-%u", i);
+		midiOutNum++;
 	}
 	return 0;
 }
 
 int w32_midiOutClean()
 {
-	vfnt_midiout_num = 0;
-	free(vfnt_midiout);
-	free(buf_out);
-	free(state_out);
+	midiOutNum = 0;
+	free(midiOut);
 	return 0;
 }
 
 
 unsigned w32_midiOutGetVFNsNum()
 {
-	return vfnt_midiout_num;
+	return midiOutNum;
 }
 
 const char* w32_midiOutGetVFN(unsigned nmb)
 {
-	assert(nmb < vfnt_midiout_num);
-	return vfnt_midiout[nmb].vfname;
+	assert(nmb < midiOutNum);
+	return midiOut[nmb].vfn.vfname;
 }
 
 const char* w32_midiOutGetRDN(unsigned nmb)
 {
-	assert(nmb < vfnt_midiout_num);
-	return vfnt_midiout[nmb].devname;
+	assert(nmb < midiOutNum);
+	return midiOut[nmb].vfn.devname;
 }
 
 
@@ -184,7 +200,7 @@ unsigned w32_midiOutOpen(const char *vfn)
 	if (w32_midiOutFindDev(&idx, &devid,vfn)) {
 		return (unsigned)-1;
 	}
-	if (midiOutOpen((HMIDIOUT*)&vfnt_midiout[idx].handle, devid, 0, 0 ,0) != MMSYSERR_NOERROR) {
+	if (midiOutOpen((HMIDIOUT*)&midiOut[idx].vfn.handle, devid, 0, 0 ,0) != MMSYSERR_NOERROR) {
 		return (unsigned)-1;
 	}
 	return idx;
@@ -192,8 +208,8 @@ unsigned w32_midiOutOpen(const char *vfn)
 
 int w32_midiOutClose(unsigned idx)
 {
-	midiOutReset((HMIDIOUT)vfnt_midiout[idx].handle);
-	if (midiOutClose((HMIDIOUT)vfnt_midiout[idx].handle) == MMSYSERR_NOERROR) {
+	midiOutReset((HMIDIOUT)midiOut[idx].vfn.handle);
+	if (midiOutClose((HMIDIOUT)midiOut[idx].vfn.handle) == MMSYSERR_NOERROR) {
 		return 0;
 	} else {
 		return -1;
@@ -204,106 +220,112 @@ int w32_midiOutClose(unsigned idx)
 static int w32_midiOutFlushExclusiveMsg(unsigned idx)
 {
 	int i;
-	buf_out[idx].header.lpData = buf_out[idx].longmes;
-	buf_out[idx].header.dwBufferLength = buf_out[idx].longmes_cnt;
-	buf_out[idx].header.dwFlags = 0;
-	if ((i = midiOutPrepareHeader((HMIDIOUT)vfnt_midiout[idx].handle, &buf_out[idx].header, sizeof(buf_out[idx].header))) != MMSYSERR_NOERROR) {
+	midiOut[idx].buf.header.lpData = midiOut[idx].buf.longmes;
+	midiOut[idx].buf.header.dwBufferLength = midiOut[idx].buf.longmes_cnt;
+	midiOut[idx].buf.header.dwFlags = 0;
+	if ((i = midiOutPrepareHeader((HMIDIOUT)midiOut[idx].vfn.handle, &midiOut[idx].buf.header, sizeof(midiOut[idx].buf.header))) != MMSYSERR_NOERROR) {
         return -1;
 	}
-	if ((i = midiOutLongMsg((HMIDIOUT)vfnt_midiout[idx].handle, &buf_out[idx].header, sizeof(buf_out[idx].header))) != MMSYSERR_NOERROR) {
+	if ((i = midiOutLongMsg((HMIDIOUT)midiOut[idx].vfn.handle, &midiOut[idx].buf.header, sizeof(midiOut[idx].buf.header))) != MMSYSERR_NOERROR) {
         return -1;
 	}
 	// Wait sending in driver.
 	// This may take long...
-	while (!(buf_out[idx].header.dwFlags & MHDR_DONE)) {
+	while (!(midiOut[idx].buf.header.dwFlags & MHDR_DONE)) {
 		Sleep(1);
 	}
 	// Sending Exclusive done.
-	if ((i = midiOutUnprepareHeader((HMIDIOUT)vfnt_midiout[idx].handle, &buf_out[idx].header, sizeof(buf_out[idx].header))) != MMSYSERR_NOERROR) {
+	if ((i = midiOutUnprepareHeader((HMIDIOUT)midiOut[idx].vfn.handle, &midiOut[idx].buf.header, sizeof(midiOut[idx].buf.header))) != MMSYSERR_NOERROR) {
         return -1;
 	}
-	buf_out[idx].longmes_cnt = 0;
+	midiOut[idx].buf.longmes_cnt = 0;
 	return 0;
 }
 
 int w32_midiOutPut(unsigned char value, unsigned idx)
 {
-	if ((state_out[idx] & 0x1000) || ((value & 0x0ff) == 0x0f0)) {
-		if (!(state_out[idx] & 0x1000)) {
+	if ((midiOut[idx].state & 0x1000) || ((value & 0x0ff) == 0x0f0)) {
+		if (!(midiOut[idx].state & 0x1000)) {
 			// SYSTEM MESSAGE Exclusive start
-			state_out[idx] |= 0x1000;
+			midiOut[idx].state |= 0x1000;
 		}
-		if (buf_out[idx].longmes_cnt >= OPENMSX_W32_MIDI_SYSMES_MAXLEN) {
+		if (midiOut[idx].buf.longmes_cnt >= MIDI_SYSMES_MAXLEN) {
 			return -1;
 		}
-		buf_out[idx].longmes[buf_out[idx].longmes_cnt++] = value;
+		midiOut[idx].buf.longmes[midiOut[idx].buf.longmes_cnt++] = value;
 
 		if (value == 0x0f7) {
 			// SYSTEM MESSAGES Exclusive end
 			w32_midiOutFlushExclusiveMsg(idx);
-			state_out[idx] &= ~0x1000;
+			midiOut[idx].state &= ~0x1000;
 		}
 	} else {
-		switch (state_out[idx]) {
+		switch (midiOut[idx].state) {
 		case 0x0000:
 			switch (value & 0x0f0) {
 			case 0x090:	// Note On
-                noteOn = 1;
+                midiOut[idx].noteOn = 1;
 			case 0x080:	// Note Off
 			case 0x0a0:	// Key Pressure
 			case 0x0b0:	// Control Change
 			case 0x0e0:	// Pitch Wheel
-				state_out[idx] = 0x0082;
-				buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
+				midiOut[idx].state = 0x0082;
+				midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
 				break;
 			case 0x0c0:	// Program Change
 			case 0x0d0:	// After Touch
-				state_out[idx] = 0x0041;
-				buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
+				midiOut[idx].state = 0x0041;
+				midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
 				break;
 			case 0x0f0:	// SYSTEM MESSAGE (other than "EXCLUSIVE")
 				switch (value &0x0f) {
 					case 0x02:	// Song Position Pointer
-						state_out[idx] = 0x0082;
-						buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
+						midiOut[idx].state = 0x0082;
+						midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
 						break;
 					case 0x01:	// Time Code
 					case 0x03:	// Song Select
-						state_out[idx] = 0x0041;
-						buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
+						midiOut[idx].state = 0x0041;
+						midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
 						break;
 					default:	// Timing Clock, Sequencer Start, Sequencer Continue,
 							// Sequencer Stop, Cable Check, System Reset, and Unknown...
-						state_out[idx] = 0;
-						buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
-						midiOutShortMsg((HMIDIOUT)vfnt_midiout[idx].handle,buf_out[idx].shortmes);
+						midiOut[idx].state = 0;
+						midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
+						midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOut[idx].buf.shortmes);
+                        midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = midiOut[idx].buf.shortmes;
 						break;
 				}
 				break;
 			default:
-				state_out[idx] = 0;
-				buf_out[idx].shortmes = ((DWORD)value) & 0x0ff;
-				midiOutShortMsg((HMIDIOUT)vfnt_midiout[idx].handle,buf_out[idx].shortmes);
+				midiOut[idx].state = 0;
+				midiOut[idx].buf.shortmes = ((DWORD)value) & 0x0ff;
+				midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOut[idx].buf.shortmes);
 				break;
 			}
 			break;
 		case 0x0041:
-			buf_out[idx].shortmes |= ((((DWORD)value) & 0x0ff) << 8);
-			midiOutShortMsg((HMIDIOUT)vfnt_midiout[idx].handle,buf_out[idx].shortmes);
-			state_out[idx] = 0;
+            if (midiOut[idx].mt32ToGm && (midiOut[idx].buf.shortmes & 0xf0) == 0xc0) {
+                value = MT32toGM[value & 0x7f];
+            }
+			midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 8);
+			midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOut[idx].buf.shortmes);
+            midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = midiOut[idx].buf.shortmes;
+			midiOut[idx].state = 0;
 			break;
 		case 0x0082:
-			buf_out[idx].shortmes |= ((((DWORD)value) & 0x0ff) << 8);
-			state_out[idx] = 0x0081;
+			midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 8);
+			midiOut[idx].state = 0x0081;
 			break;
 		case 0x0081:
-			buf_out[idx].shortmes |= ((((DWORD)value) & 0x0ff) << 16);
-			midiOutShortMsg((HMIDIOUT)vfnt_midiout[idx].handle,buf_out[idx].shortmes);
-			state_out[idx] = 0;
+			midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 16);
+			midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOut[idx].buf.shortmes);
+            midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = midiOut[idx].buf.shortmes;
+			midiOut[idx].state = 0;
 			break;
 		default:
 			// not reach...
-			midiOutShortMsg((HMIDIOUT)vfnt_midiout[idx].handle,((DWORD)value) & 0x0ff);
+			midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,((DWORD)value) & 0x0ff);
 			break;
 		}
 	}
@@ -313,24 +335,81 @@ int w32_midiOutPut(unsigned char value, unsigned idx)
 unsigned int w32_midiOutGetVolume(unsigned idx)
 {
     DWORD volume;
-    midiOutGetVolume((HMIDIOUT)vfnt_midiout[idx].handle, &volume);
+    midiOutGetVolume((HMIDIOUT)midiOut[idx].vfn.handle, &volume);
 
     return volume;
 }
 
 void w32_midiOutSetVolume(unsigned idx, unsigned int volume)
 {
-    int rv = midiOutSetVolume((HMIDIOUT)vfnt_midiout[idx].handle, volume);
+    int rv = midiOutSetVolume((HMIDIOUT)midiOut[idx].vfn.handle, volume);
 }
 
 int w32_midiOutNoteOn(unsigned idx)
 {
-    int on = noteOn;
-    noteOn = 0;
+    int on = midiOut[idx].noteOn;
+    midiOut[idx].noteOn = 0;
     return on;
 }
 
+void w32_midiOutEnableMt32ToGmMapping(unsigned idx, int enable)
+{
+    midiOut[idx].mt32ToGm = enable;
+}
+
+void w32_midiOutLoadState(unsigned idx)
+{
+    SaveState* state = saveStateOpenForRead("MidiOut");
+    int i;
+
+    for (i = 0; i < 256; i++) {
+        char buf[32];
+        sprintf(buf, "_%d", i);
+        midiOutHistory[i] = saveStateGet(state, buf, 0);
+    }
+
+    midiOut[idx].state = saveStateGet(state, "state", 0);
+    midiOut[idx].buf.shortmes = saveStateGet(state, "shortmes", 0);
+    
+    saveStateClose(state);
+
+    for (i = 0; i < 0xf0; i++) {
+        if (midiOutHistory[i]) {
+		    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOutHistory[i]);
+        }
+    }
+}
+
+void w32_midiOutSaveState(unsigned idx)
+{
+    SaveState* state = saveStateOpenForWrite("MidiOut");
+    int i;
+
+    for (i = 0; i < 256; i++) {
+        char buf[32];
+        sprintf(buf, "_%d", i);
+        saveStateSet(state, buf, midiOutHistory[i]);
+    }
+
+    saveStateSet(state, "state", midiOut[idx].state);
+    saveStateSet(state, "shortmes", midiOut[idx].buf.shortmes);
+
+    saveStateClose(state);
+}
+
+
+
+//////////////////////////////////////////////////////
+//
 // MIDI-IN
+//
+//////////////////////////////////////////////////////
+
+static struct VfnMidi *vfnt_midiin;
+static unsigned vfnt_midiin_num;
+static MIDIHDR inhdr;
+static char inlongmes[MIDI_SYSMES_MAXLEN];
+
 static int w32_midiInFindDev(unsigned *idx, unsigned *dev, const char *vfn)
 {
     unsigned i;
@@ -355,7 +434,7 @@ int w32_midiInInit()
 	if (!num) {
 		return 0;
 	}
-	if ((vfnt_midiin = (struct vfn_midi*)malloc((num + 1) * sizeof(struct vfn_midi))) == NULL) {
+	if ((vfnt_midiin = (struct VfnMidi*)malloc((num + 1) * sizeof(struct VfnMidi))) == NULL) {
 		return	1;
 	}
 	for (i = 0; i < num; ++i) {
@@ -374,7 +453,7 @@ int w32_midiInInit()
 int w32_midiInClean()
 {
 	vfnt_midiin_num = 0;
-	free(vfnt_midiout);
+	free(vfnt_midiin);
 	return 0;
 }
 
@@ -407,7 +486,7 @@ unsigned w32_midiInOpen(const char *vfn, unsigned thrdid)
 	}
 	memset(&inhdr, 0, sizeof(MIDIHDR));
 	inhdr.lpData = inlongmes;
-	inhdr.dwBufferLength = OPENMSX_W32_MIDI_SYSMES_MAXLEN;
+	inhdr.dwBufferLength = MIDI_SYSMES_MAXLEN;
 	if (midiInPrepareHeader((HMIDIIN)vfnt_midiin[idx].handle, (LPMIDIHDR)&inhdr, sizeof(MIDIHDR)) != MMSYSERR_NOERROR) {
 		return (unsigned)-1;
 	}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-07-02 17:56:52 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -293,6 +293,7 @@ _TCHAR* langPropSndMsxAudioText();
 _TCHAR* langPropSndMoonsound();
 _TCHAR* langPropSndPcm();
 _TCHAR* langPropSndMasterText();
+_TCHAR* langPropSndMt32ToGm();
 
 _TCHAR* langPropJoyPort1GB();
 _TCHAR* langPropJoyPort2GB();

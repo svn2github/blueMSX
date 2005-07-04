@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchMidi.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-07-03 09:17:39 $
+** $Date: 2005-07-04 01:54:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,12 +32,14 @@
 
 #include "MsxTypes.h"
 
-int archMidiCreate(void);
+int  archMidiCreate(void);
 void archMidiDestroy(void);
-int archMidiTransmit(UInt8 value);
+int  archMidiTransmit(UInt8 value);
 void archMidiUpdateDriver();
 void archMidiUpdateVolume(int left, int right);
 void archMidiEnable(int enable);
-int archMidiGetNoteOn();
+int  archMidiGetNoteOn();
+void archMidiLoadState(void);
+void archMidiSaveState(void);
 
 #endif

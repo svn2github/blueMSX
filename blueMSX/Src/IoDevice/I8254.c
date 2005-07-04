@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,12 @@
 
 typedef struct Counter
 {
+    I8254Out out;
+    void* ref;
+
+    BoardTimer* timer; 
+    UInt32      time;
+
     UInt16 countingElement;
     UInt16 outputLatch;
     UInt16 countRegister;
@@ -61,11 +67,6 @@ typedef struct Counter
 
     UInt32 frequency;
     
-    I8254Out out;
-    void* ref;
-
-    BoardTimer* timer; 
-
     UInt32 refTime;
     UInt32 refFrag;
 } Counter;
@@ -115,8 +116,9 @@ static void counterSetTimeout(Counter* counter)
     }
     
     if (nextTimeout != 0) {
-        boardTimerAdd(counter->timer, boardSystemTime() + 
-                      (UInt64)boardFrequency() * nextTimeout / counter->frequency);
+        counter->time = boardSystemTime() + 
+                      (UInt64)boardFrequency() * nextTimeout / counter->frequency;
+        boardTimerAdd(counter->timer, counter->time);
     }
 }
 
@@ -198,6 +200,7 @@ static void counterSync(Counter* counter)
 
 static void counterOnTimer(Counter* counter, UInt32 time)
 {
+    counter->time = 0;
     counterSync(counter);
 }
 
@@ -475,16 +478,158 @@ void i8254Write(I8254* i8254, UInt16 port, UInt8 value)
 	}
 }
 
-void i8254SaveState(I8254* i8254)
+void i8254LoadState(I8254* i8254)
 {
-    SaveState* state = saveStateOpenForWrite("i8254");
+    SaveState* state = saveStateOpenForRead("i8254");
+
+    i8254->counter1->time               = saveStateGet(state, "c1_time",              0);
+    i8254->counter1->countingElement    = saveStateGet(state, "c1_countingElement",   0);
+    i8254->counter1->outputLatch        = saveStateGet(state, "c1_outputLatch",       0);
+    i8254->counter1->countRegister      = saveStateGet(state, "c1_countRegister",     0);
+    i8254->counter1->controlWord        = saveStateGet(state, "c1_controlWord",       0);
+    i8254->counter1->statusLatch        = saveStateGet(state, "c1_statusLatch",       0);
+    i8254->counter1->outputLatched      = saveStateGet(state, "c1_outputLatched",     0);
+    i8254->counter1->statusLatched      = saveStateGet(state, "c1_statusLatched",     0);
+    i8254->counter1->readPhase          = saveStateGet(state, "c1_readPhase",         0);
+    i8254->counter1->writePhase         = saveStateGet(state, "c1_writePhase",        0);
+    i8254->counter1->mode               = saveStateGet(state, "c1_mode",              0);
+    i8254->counter1->gate               = saveStateGet(state, "c1_gate",              0);
+    i8254->counter1->counterLatched     = saveStateGet(state, "c1_counterLatched",    0);
+    i8254->counter1->outputState        = saveStateGet(state, "c1_outputState",       0);
+    i8254->counter1->outPhase           = saveStateGet(state, "c1_outPhase",          0);
+    i8254->counter1->endOutPhase1       = saveStateGet(state, "c1_endOutPhase1",      0);
+    i8254->counter1->endOutPhase2       = saveStateGet(state, "c1_endOutPhase2",      0);
+    i8254->counter1->insideTimerLoop    = saveStateGet(state, "c1_insideTimerLoop",   0);
+    i8254->counter1->frequency          = saveStateGet(state, "c1_frequency",         0);
+    i8254->counter1->refTime            = saveStateGet(state, "c1_refTime",           0);
+    i8254->counter1->refFrag            = saveStateGet(state, "c1_refFrag",           0);
+
+    i8254->counter2->time               = saveStateGet(state, "c2_time",              0);
+    i8254->counter2->countingElement    = saveStateGet(state, "c2_countingElement",   0);
+    i8254->counter2->outputLatch        = saveStateGet(state, "c2_outputLatch",       0);
+    i8254->counter2->countRegister      = saveStateGet(state, "c2_countRegister",     0);
+    i8254->counter2->controlWord        = saveStateGet(state, "c2_controlWord",       0);
+    i8254->counter2->statusLatch        = saveStateGet(state, "c2_statusLatch",       0);
+    i8254->counter2->outputLatched      = saveStateGet(state, "c2_outputLatched",     0);
+    i8254->counter2->statusLatched      = saveStateGet(state, "c2_statusLatched",     0);
+    i8254->counter2->readPhase          = saveStateGet(state, "c2_readPhase",         0);
+    i8254->counter2->writePhase         = saveStateGet(state, "c2_writePhase",        0);
+    i8254->counter2->mode               = saveStateGet(state, "c2_mode",              0);
+    i8254->counter2->gate               = saveStateGet(state, "c2_gate",              0);
+    i8254->counter2->counterLatched     = saveStateGet(state, "c2_counterLatched",    0);
+    i8254->counter2->outputState        = saveStateGet(state, "c2_outputState",       0);
+    i8254->counter2->outPhase           = saveStateGet(state, "c2_outPhase",          0);
+    i8254->counter2->endOutPhase1       = saveStateGet(state, "c2_endOutPhase1",      0);
+    i8254->counter2->endOutPhase2       = saveStateGet(state, "c2_endOutPhase2",      0);
+    i8254->counter2->insideTimerLoop    = saveStateGet(state, "c2_insideTimerLoop",   0);
+    i8254->counter2->frequency          = saveStateGet(state, "c2_frequency",         0);
+    i8254->counter2->refTime            = saveStateGet(state, "c2_refTime",           0);
+    i8254->counter2->refFrag            = saveStateGet(state, "c2_refFrag",           0);
+
+    i8254->counter3->time               = saveStateGet(state, "c3_time",              0);
+    i8254->counter3->countingElement    = saveStateGet(state, "c3_countingElement",   0);
+    i8254->counter3->outputLatch        = saveStateGet(state, "c3_outputLatch",       0);
+    i8254->counter3->countRegister      = saveStateGet(state, "c3_countRegister",     0);
+    i8254->counter3->controlWord        = saveStateGet(state, "c3_controlWord",       0);
+    i8254->counter3->statusLatch        = saveStateGet(state, "c3_statusLatch",       0);
+    i8254->counter3->outputLatched      = saveStateGet(state, "c3_outputLatched",     0);
+    i8254->counter3->statusLatched      = saveStateGet(state, "c3_statusLatched",     0);
+    i8254->counter3->readPhase          = saveStateGet(state, "c3_readPhase",         0);
+    i8254->counter3->writePhase         = saveStateGet(state, "c3_writePhase",        0);
+    i8254->counter3->mode               = saveStateGet(state, "c3_mode",              0);
+    i8254->counter3->gate               = saveStateGet(state, "c3_gate",              0);
+    i8254->counter3->counterLatched     = saveStateGet(state, "c3_counterLatched",    0);
+    i8254->counter3->outputState        = saveStateGet(state, "c3_outputState",       0);
+    i8254->counter3->outPhase           = saveStateGet(state, "c3_outPhase",          0);
+    i8254->counter3->endOutPhase1       = saveStateGet(state, "c3_endOutPhase1",      0);
+    i8254->counter3->endOutPhase2       = saveStateGet(state, "c3_endOutPhase2",      0);
+    i8254->counter3->insideTimerLoop    = saveStateGet(state, "c3_insideTimerLoop",   0);
+    i8254->counter3->frequency          = saveStateGet(state, "c3_frequency",         0);
+    i8254->counter3->refTime            = saveStateGet(state, "c3_refTime",           0);
+    i8254->counter3->refFrag            = saveStateGet(state, "c3_refFrag",           0);
+
+    if (i8254->counter1->time != 0) {
+        boardTimerAdd(i8254->counter1->timer, i8254->counter1->time);
+    }
+    if (i8254->counter2->time != 0) {
+        boardTimerAdd(i8254->counter2->timer, i8254->counter2->time);
+    }
+    if (i8254->counter3->time != 0) {
+        boardTimerAdd(i8254->counter3->timer, i8254->counter3->time);
+    }
 
     saveStateClose(state);
 }
 
-void i8254LoadState(I8254* i8254)
+void i8254SaveState(I8254* i8254)
 {
-    SaveState* state = saveStateOpenForRead("i8254");
+    SaveState* state = saveStateOpenForWrite("i8254");
+
+    saveStateSet(state, "c1_time",              i8254->counter1->time);
+    saveStateSet(state, "c1_countingElement",   i8254->counter1->countingElement);
+    saveStateSet(state, "c1_outputLatch",       i8254->counter1->outputLatch);
+    saveStateSet(state, "c1_countRegister",     i8254->counter1->countRegister);
+    saveStateSet(state, "c1_controlWord",       i8254->counter1->controlWord);
+    saveStateSet(state, "c1_statusLatch",       i8254->counter1->statusLatch);
+    saveStateSet(state, "c1_outputLatched",     i8254->counter1->outputLatched);
+    saveStateSet(state, "c1_statusLatched",     i8254->counter1->statusLatched);
+    saveStateSet(state, "c1_readPhase",         i8254->counter1->readPhase);
+    saveStateSet(state, "c1_writePhase",        i8254->counter1->writePhase);
+    saveStateSet(state, "c1_mode",              i8254->counter1->mode);
+    saveStateSet(state, "c1_gate",              i8254->counter1->gate);
+    saveStateSet(state, "c1_counterLatched",    i8254->counter1->counterLatched);
+    saveStateSet(state, "c1_outputState",       i8254->counter1->outputState);
+    saveStateSet(state, "c1_outPhase",          i8254->counter1->outPhase);
+    saveStateSet(state, "c1_endOutPhase1",      i8254->counter1->endOutPhase1);
+    saveStateSet(state, "c1_endOutPhase2",      i8254->counter1->endOutPhase2);
+    saveStateSet(state, "c1_insideTimerLoop",   i8254->counter1->insideTimerLoop);
+    saveStateSet(state, "c1_frequency",         i8254->counter1->frequency);
+    saveStateSet(state, "c1_refTime",           i8254->counter1->refTime);
+    saveStateSet(state, "c1_refFrag",           i8254->counter1->refFrag);
+
+    saveStateSet(state, "c2_time",              i8254->counter2->time);
+    saveStateSet(state, "c2_countingElement",   i8254->counter2->countingElement);
+    saveStateSet(state, "c2_outputLatch",       i8254->counter2->outputLatch);
+    saveStateSet(state, "c2_countRegister",     i8254->counter2->countRegister);
+    saveStateSet(state, "c2_controlWord",       i8254->counter2->controlWord);
+    saveStateSet(state, "c2_statusLatch",       i8254->counter2->statusLatch);
+    saveStateSet(state, "c2_outputLatched",     i8254->counter2->outputLatched);
+    saveStateSet(state, "c2_statusLatched",     i8254->counter2->statusLatched);
+    saveStateSet(state, "c2_readPhase",         i8254->counter2->readPhase);
+    saveStateSet(state, "c2_writePhase",        i8254->counter2->writePhase);
+    saveStateSet(state, "c2_mode",              i8254->counter2->mode);
+    saveStateSet(state, "c2_gate",              i8254->counter2->gate);
+    saveStateSet(state, "c2_counterLatched",    i8254->counter2->counterLatched);
+    saveStateSet(state, "c2_outputState",       i8254->counter2->outputState);
+    saveStateSet(state, "c2_outPhase",          i8254->counter2->outPhase);
+    saveStateSet(state, "c2_endOutPhase1",      i8254->counter2->endOutPhase1);
+    saveStateSet(state, "c2_endOutPhase2",      i8254->counter2->endOutPhase2);
+    saveStateSet(state, "c2_insideTimerLoop",   i8254->counter2->insideTimerLoop);
+    saveStateSet(state, "c2_frequency",         i8254->counter2->frequency);
+    saveStateSet(state, "c2_refTime",           i8254->counter2->refTime);
+    saveStateSet(state, "c2_refFrag",           i8254->counter2->refFrag);
+
+    saveStateSet(state, "c3_time",              i8254->counter3->time);
+    saveStateSet(state, "c3_countingElement",   i8254->counter3->countingElement);
+    saveStateSet(state, "c3_outputLatch",       i8254->counter3->outputLatch);
+    saveStateSet(state, "c3_countRegister",     i8254->counter3->countRegister);
+    saveStateSet(state, "c3_controlWord",       i8254->counter3->controlWord);
+    saveStateSet(state, "c3_statusLatch",       i8254->counter3->statusLatch);
+    saveStateSet(state, "c3_outputLatched",     i8254->counter3->outputLatched);
+    saveStateSet(state, "c3_statusLatched",     i8254->counter3->statusLatched);
+    saveStateSet(state, "c3_readPhase",         i8254->counter3->readPhase);
+    saveStateSet(state, "c3_writePhase",        i8254->counter3->writePhase);
+    saveStateSet(state, "c3_mode",              i8254->counter3->mode);
+    saveStateSet(state, "c3_gate",              i8254->counter3->gate);
+    saveStateSet(state, "c3_counterLatched",    i8254->counter3->counterLatched);
+    saveStateSet(state, "c3_outputState",       i8254->counter3->outputState);
+    saveStateSet(state, "c3_outPhase",          i8254->counter3->outPhase);
+    saveStateSet(state, "c3_endOutPhase1",      i8254->counter3->endOutPhase1);
+    saveStateSet(state, "c3_endOutPhase2",      i8254->counter3->endOutPhase2);
+    saveStateSet(state, "c3_insideTimerLoop",   i8254->counter3->insideTimerLoop);
+    saveStateSet(state, "c3_frequency",         i8254->counter3->frequency);
+    saveStateSet(state, "c3_refTime",           i8254->counter3->refTime);
+    saveStateSet(state, "c3_refFrag",           i8254->counter3->refFrag);
 
     saveStateClose(state);
 }

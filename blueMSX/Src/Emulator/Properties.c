@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,6 +150,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.MidiOut.name[0]         = 0;
     strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
     pProperties->sound.MidiOut.desc[0]         = 0;
+    pProperties->sound.MidiOut.mt32ToGm        = 0;
 
     pProperties->joy1.type              = P_JOY_NUMPAD;
     pProperties->joy1.autofire          = P_JOY_AFOFF;
@@ -353,6 +354,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->sound.MidiOut.name[0]         = 0;
     strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
     pProperties->sound.MidiOut.desc[0]         = 0;
+    pProperties->sound.MidiOut.mt32ToGm        = 0;
     
     pProperties->joy1.type              = P_JOY_NONE;
     pProperties->joy1.autofire          = P_JOY_AFOFF;
@@ -550,6 +552,7 @@ static void propLoad(Properties* pProperties)
     getStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
     getStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
     getStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
+    getIntValue("MidiOutMt32ToGm", &pProperties->sound.MidiOut.mt32ToGm);
     
     getIntValue("Joy1Control", &pProperties->joy1.type);
     getIntValue("JoyAutoFire", &pProperties->joy1.autofire);
@@ -756,6 +759,7 @@ void propSave(Properties* pProperties)
     setStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
     setStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
     setStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
+    setIntValue("MidiOutMt32ToGm", pProperties->sound.MidiOut.mt32ToGm);
 
     setIntValue("Joy1Control", pProperties->joy1.type);
     setIntValue("JoyAutoFire", pProperties->joy1.autofire);

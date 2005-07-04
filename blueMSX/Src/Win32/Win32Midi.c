@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-07-03 09:34:13 $
+** $Date: 2005-07-04 01:54:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,16 +81,32 @@ void archMidiUpdateDriver()
     if (devId != -1) {
         origVolume = w32_midiOutGetVolume(devId);
         w32_midiOutSetVolume(devId, currVolume * enabled);
+        w32_midiOutEnableMt32ToGmMapping(devId, pProperties->sound.MidiOut.mt32ToGm);
     }
 }
 
 int archMidiCreate(void) 
 {
+    w32_resetHistory();
     return devId != -1;
 }
 
 void archMidiDestroy(void)
 {
+}
+
+void archMidiLoadState(void)
+{
+    if (devId != -1) {
+        w32_midiOutLoadState(devId);
+    }
+}
+
+void archMidiSaveState(void)
+{
+    if (devId != -1) {
+        w32_midiOutSaveState(devId);
+    }
 }
 
 void archMidiEnable(int enable)

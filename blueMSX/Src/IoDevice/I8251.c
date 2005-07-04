@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -287,12 +287,15 @@ static void writeTrans(I8251* i8251, UInt8 value)
 
 static void onRecv(I8251* i8251, UInt32 time)
 {
+    i8251->timeRecv  = 0;
 	i8251->recvReady = 1;
 	i8251->signal(i8251->ref);
 }
 
 static void onTrans(I8251* i8251, UInt32 time)
 {
+    i8251->timeTrans  = 0;
+
 	i8251->transmit(i8251->ref, i8251->sendByte);
 	if (i8251->status & STAT_TXRDY) {
 		i8251->status |= STAT_TXEMPTY;
@@ -361,16 +364,60 @@ void i8251Write(I8251* i8251, UInt16 port, UInt8 value)
     }
 }
 
+void i8251LoadState(I8251* i8251)
+{
+    SaveState* state = saveStateOpenForRead("i8251");
+    
+    i8251->timeRecv      = saveStateGet(state, "timeRecv",        0);
+    i8251->timeTrans     = saveStateGet(state, "timeTrans",       0);
+    i8251->status        = saveStateGet(state, "status",          0);
+    i8251->command       = saveStateGet(state, "command",         0);
+    i8251->mode          = saveStateGet(state, "mode",            0);
+    i8251->sync1         = saveStateGet(state, "sync1",           0);
+    i8251->sync2         = saveStateGet(state, "sync2",           0);
+    i8251->charLength    = saveStateGet(state, "charLength",      0);
+    i8251->cmdFaze       = saveStateGet(state, "cmdFaze",         0);
+    i8251->dataBits      = saveStateGet(state, "dataBits",        0);
+    i8251->stopBits      = saveStateGet(state, "stopBits",        0);
+    i8251->parityEnabled = saveStateGet(state, "parityEnabled",   0);
+    i8251->parity        = saveStateGet(state, "parity",          0);
+    i8251->recvBuf       = saveStateGet(state, "recvBuf",         0);
+    i8251->recvReady     = saveStateGet(state, "recvReady",       0);
+    i8251->sendByte      = saveStateGet(state, "sendByte",        0);
+    i8251->sendBuffer    = saveStateGet(state, "sendBuffer",      0);
+    i8251->sendBuffered  = saveStateGet(state, "sendBuffered",    0);
+
+    if (i8251->timeRecv != 0) {
+        boardTimerAdd(i8251->timerRecv, i8251->timeRecv);
+    }
+    if (i8251->timeTrans != 0) {
+        boardTimerAdd(i8251->timerTrans, i8251->timeTrans);
+    }
+    saveStateClose(state);
+}
+
 void i8251SaveState(I8251* i8251)
 {
     SaveState* state = saveStateOpenForWrite("i8251");
 
-    saveStateClose(state);
-}
-
-void i8251LoadState(I8251* i8251)
-{
-    SaveState* state = saveStateOpenForRead("i8251");
+    saveStateSet(state, "timeRecv",        i8251->timeRecv);
+    saveStateSet(state, "timeTrans",       i8251->timeTrans);
+    saveStateSet(state, "status",          i8251->status);
+    saveStateSet(state, "command",         i8251->command);
+    saveStateSet(state, "mode",            i8251->mode);
+    saveStateSet(state, "sync1",           i8251->sync1);
+    saveStateSet(state, "sync2",           i8251->sync2);
+    saveStateSet(state, "charLength",      i8251->charLength);
+    saveStateSet(state, "cmdFaze",         i8251->cmdFaze);
+    saveStateSet(state, "dataBits",        i8251->dataBits);
+    saveStateSet(state, "stopBits",        i8251->stopBits);
+    saveStateSet(state, "parityEnabled",   i8251->parityEnabled);
+    saveStateSet(state, "parity",          i8251->parity);
+    saveStateSet(state, "recvBuf",         i8251->recvBuf);
+    saveStateSet(state, "recvReady",       i8251->recvReady);
+    saveStateSet(state, "sendByte",        i8251->sendByte);
+    saveStateSet(state, "sendBuffer",      i8251->sendBuffer);
+    saveStateSet(state, "sendBuffered",    i8251->sendBuffered);
 
     saveStateClose(state);
 }
@@ -443,9 +490,9 @@ I8251* i8251Create(I8251Transmit transmit,    I8251Signal   signal,
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -655,16 +702,16 @@ static void i8251RxBufferClear(void)
     i8251RxBufferDataAvailable = 0;
 }
 
-void i8251SaveState(I8251* usart)
+void i8251LoadState(I8251* usart)
 {
-    SaveState* state = saveStateOpenForWrite("i8251");
+    SaveState* state = saveStateOpenForRead("i8251");
 
     saveStateClose(state);
 }
 
-void i8251LoadState(I8251* usart)
+void i8251SaveState(I8251* usart)
 {
-    SaveState* state = saveStateOpenForRead("i8251");
+    SaveState* state = saveStateOpenForWrite("i8251");
 
     saveStateClose(state);
 }

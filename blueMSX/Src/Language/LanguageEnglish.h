@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-07-02 17:56:52 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -595,6 +595,8 @@ void langInitEnglish(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Out ";
+    ls->propSndMt32ToGmText     = " Map MT-32 instruments to General MIDI";
+
     ls->textDevice              = "Device:";
     ls->textFilename            = "Filename:";
     ls->textFile                = "File";

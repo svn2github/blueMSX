@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-07-02 17:56:51 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,6 +159,7 @@ typedef struct {
         char name[256];
         char desc[256];
         char fileName[MAX_PATH];
+        int  mt32ToGm;
     } MidiOut;
 } SoundProperties;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-07-02 17:56:51 $
+** $Date: 2005-07-04 01:54:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,13 +51,10 @@ typedef struct {
 	int rxrdyIRQlatch;
 	int rxrdyIRQenabled;
 
-    int ready;
 } MSXMidi;
 
 #define INT_TMR   0x100
 #define INT_RXRDY 0x200
-
-
 
 /*****************************************
 ** Device Manager callbacks
@@ -67,20 +64,34 @@ static void saveState(MSXMidi* msxMidi)
 {
     SaveState* state = saveStateOpenForWrite("MSXMidi");
     
+    saveStateSet(state, "timerIRQlatch",    msxMidi->timerIRQlatch);
+    saveStateSet(state, "timerIRQenabled",  msxMidi->timerIRQenabled);
+    saveStateSet(state, "rxrdyIRQlatch",    msxMidi->rxrdyIRQlatch);
+    saveStateSet(state, "rxrdyIRQenabled",  msxMidi->rxrdyIRQenabled);
+
     saveStateClose(state);
 
     i8251SaveState(msxMidi->i8251);
     i8254SaveState(msxMidi->i8254);
+
+    archMidiSaveState();
 }
 
 static void loadState(MSXMidi* msxMidi)
 {
     SaveState* state = saveStateOpenForRead("MSXMidi");
 
+    msxMidi->timerIRQlatch   = saveStateGet(state, "timerIRQlatch",    0);
+    msxMidi->timerIRQenabled = saveStateGet(state, "timerIRQenabled",  0);
+    msxMidi->rxrdyIRQlatch   = saveStateGet(state, "rxrdyIRQlatch",    0);
+    msxMidi->rxrdyIRQenabled = saveStateGet(state, "rxrdyIRQenabled",  0);
+
     saveStateClose(state);
     
     i8251LoadState(msxMidi->i8251);
     i8254LoadState(msxMidi->i8254);
+    
+    archMidiLoadState();
 }
 
 static void destroy(MSXMidi* msxMidi)

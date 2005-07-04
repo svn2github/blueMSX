@@ -207,6 +207,7 @@
 #define IDI_MIDIINFILENAMETEXT          2110
 #define IDI_MIDIINFILENAME              2111
 #define IDC_MIDIINFILENAMEBROWSE        2112
+#define IDC_MIDIOUTMT32TOGM             2113
 
 #define IDC_CMOSGROUPBOX                2117
 #define IDC_CMOSENABLE                  2118
