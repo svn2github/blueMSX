@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:49 $
+** $Date: 2005-07-05 22:41:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 int emuCheckResetArgument(char* szLine);
 char* emuCheckIniFileArgument(char* szLine);
 char* emuCheckThemeArgument(char* szLine);
+void emuCheckFullscreenArgument(Properties* properties, char* szLine);
 int emuCheckLanguageArgument(char* szLine, int defaultLang);
 int emuTryStartWithArguments(Properties* properties, char* cmdLine);
 

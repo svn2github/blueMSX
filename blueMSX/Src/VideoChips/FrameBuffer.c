@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-10 07:41:34 $
+** $Date: 2005-07-05 22:41:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,7 +101,6 @@ FrameBuffer* frameBufferFlipDrawFrame()
     case 1: currentBuffer->drawFrame = currentBuffer->viewFrame == 2 ? 0 : 2; break;
     case 2: currentBuffer->drawFrame = currentBuffer->viewFrame == 0 ? 1 : 0; break;
     }
-    signalSem();
     frame = currentBuffer->frame + currentBuffer->drawFrame;
     frame->age = ++currentBuffer->currentAge;
     signalSem();

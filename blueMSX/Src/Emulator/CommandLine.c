@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-07-05 22:41:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -254,6 +254,23 @@ int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
     return defaultLang;
 }
 
+void emuCheckFullscreenArgument(Properties* properties, char* cmdLine){
+    int i;
+    char* argument;
+
+    if (NULL == extractToken(cmdLine, 0)) {
+        return;
+    }
+
+    properties->video.size = P_VIDEO_SIZEX2;
+
+    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+        if (strcmp(argument, "/fullscreen") == 0) {
+            properties->video.size = P_VIDEO_SIZEFULLSCREEN;
+        }
+    }
+}
+
 static int emuStartWithArguments(Properties* properties, char* commandLine) {
     int i;
     char    cmdLine[512] = "";
@@ -470,8 +487,6 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     }
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
-
-    properties->video.size = fullscreen ? P_VIDEO_SIZEFULLSCREEN : P_VIDEO_SIZEX2;
 
     emulatorStop();
     emulatorStart(NULL);
