@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,7 +57,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->emulation.shortcutProfile[0] = 0;
     strcpy(pProperties->emulation.machineName, "MSX2 - Brazilian");
     pProperties->emulation.speed             = 50;
-    pProperties->emulation.syncMethod        = P_EMU_SYNC1MS;
+    pProperties->emulation.syncMethod        = P_EMU_SYNCTOVBLANK;
     pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
     pProperties->emulation.enableFdcTiming   = 1;
     pProperties->emulation.frontSwitch       = 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-06-11 21:15:47 $
+** $Date: 2005-07-07 18:32:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,7 +56,7 @@ int archGetFramesPerSecond();
 void* archWindowCreate(struct Theme* theme, int childWindow);
 
 void archUpdateEmuDisplayConfig();
-void archUpdateEmuDisplay(int synchronous);
+int  archUpdateEmuDisplay(int synchronous);
 
 void archDiskQuickChangeNotify();
 void archEmulationStartNotification();

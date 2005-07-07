@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,6 +76,8 @@ static DeviceInfo deviceInfo;
 static Machine* machine;
 static int lastScreenMode;
 
+static int emuFrameskipCounter = 0;
+
 static UInt32 emuTimeIdle       = 0;
 static UInt32 emuTimeTotal      = 1;
 static UInt32 emuTimeOverflow   = 0;
@@ -88,8 +90,14 @@ static void emuCalcCpuUsage() {
     static UInt32 oldSysTime = 0;
     static UInt32 oldAverage = 0;
     static UInt32 cnt = 0;
-    UInt32 newSysTime = archGetSystemUpTime(1000);
-    UInt32 emuTimeAverage = 100 * (emuTimeTotal - emuTimeIdle) / (emuTimeTotal / 10);
+    UInt32 newSysTime;
+    UInt32 emuTimeAverage;
+
+    if (emuTimeTotal < 10) {
+        return;
+    }
+    newSysTime = archGetSystemUpTime(1000);
+    emuTimeAverage = 100 * (emuTimeTotal - emuTimeIdle) / (emuTimeTotal / 10);
     
     emuTimeOverflow = emuTimeAverage > 940;
 
@@ -115,10 +123,13 @@ static void emuCalcCpuUsage() {
 
 static int emuUseSynchronousUpdate()
 {
-    return properties->emulation.syncMethod == P_EMU_SYNC1MS && 
-           properties->emulation.speed == 50 &&
-           enableSynchronousUpdate &&
-           emulatorGetMaxSpeed() == 0;
+    if (properties->emulation.speed == 50 &&
+        enableSynchronousUpdate &&
+        emulatorGetMaxSpeed() == 0)
+    {
+        return properties->emulation.syncMethod;
+    }
+    return P_EMU_SYNCAUTO;
 }
 
 UInt32 emulatorGetCpuSpeed() {
@@ -179,7 +190,7 @@ void timerCallback(void* timer) {
     UInt32 syncPeriod = emulatorGetSyncPeriod();
     UInt32 sysTime = archGetSystemUpTime(1000);
     UInt32 diffTime = sysTime - oldSysTime;
-    
+
     if (diffTime == 0) {
         return;
     }
@@ -193,7 +204,7 @@ void timerCallback(void* timer) {
         if (emuState == EMU_RUNNING) {
             refreshRate = boardGetRefreshRate();
 
-            if (!emuUseSynchronousUpdate()) {
+            if (emuUseSynchronousUpdate() == P_EMU_SYNCAUTO) {
                 archUpdateEmuDisplay(0);
             }
         }
@@ -355,8 +366,9 @@ void emulatorStart(char* stateName) {
     emuStartEvent = CreateEvent(NULL, 0, 0, NULL);
     emuTimer      = 0;
 
-    if (properties->emulation.syncMethod == P_EMU_SYNC1MS ||
-        properties->emulation.syncMethod == P_EMU_SYNCAUTO)
+    if (properties->emulation.syncMethod == P_EMU_SYNCTOVBLANK ||
+        properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
+        properties->emulation.syncMethod == P_EMU_SYNCFRAMES)
     {
         emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
     }
@@ -540,17 +552,25 @@ void emulatorResetMixer() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_IO, 1);
 }
 
+int emulatorSyncScreen()
+{
+    int rv = 0;
+    emuFrameskipCounter--;
+    if (emuFrameskipCounter < 0) {
+        rv = archUpdateEmuDisplay(properties->emulation.syncMethod);
+        if (rv) {
+            emuFrameskipCounter = properties->video.frameSkip;
+        }
+    }
+    return rv;
+}
+
 void RefreshScreen(int screenMode) {
-    static int emuFrameskipCounter = 0;
 
     lastScreenMode = screenMode;
 
-    if (emuUseSynchronousUpdate()) {
-        emuFrameskipCounter--;
-        if (emuFrameskipCounter < 0) {
-            archUpdateEmuDisplay(1);
-            emuFrameskipCounter = properties->video.frameSkip;
-        }
+    if (emuUseSynchronousUpdate() != P_EMU_SYNCAUTO) {
+        emulatorSyncScreen();
     }
 }
 
@@ -592,13 +612,22 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         archPollInput();
     }
 
-    do {
-        WaitForSingleObject(emuSyncEvent, INFINITE);
-        if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
+    if (emuUseSynchronousUpdate() == P_EMU_SYNCTOVBLANK) {
+        overflowCount += emulatorSyncScreen() ? 0 : 1;
+        while ((!emuExitFlag && emuState != EMU_RUNNING) || overflowCount > 0) {
             WaitForSingleObject(emuSyncEvent, INFINITE);
+            overflowCount--;
         }
-        overflowCount = 0;
-    } while (!emuExitFlag && emuState != EMU_RUNNING);
+    }
+    else {
+        do {
+            WaitForSingleObject(emuSyncEvent, INFINITE);
+            if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
+                WaitForSingleObject(emuSyncEvent, INFINITE);
+            }
+            overflowCount = 0;
+        } while (!emuExitFlag && emuState != EMU_RUNNING);
+    }
 
     emuSuspendFlag = 0;
     QueryPerformanceCounter(&li2);

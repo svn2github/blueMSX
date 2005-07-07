@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-07-05 22:41:17 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,53 @@ FrameBuffer* frameBufferGetViewFrame()
     return currentBuffer ? currentBuffer->frame + currentBuffer->viewFrame : NULL;
 }
 
+#if FRAMES_PER_FRAMEBUFFER == 4
+FrameBuffer* frameBufferFlipViewFrame() 
+{
+    int i1,i2;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    waitSem();
+    switch (currentBuffer->viewFrame) {
+    case 0: 
+        switch (currentBuffer->drawFrame) {
+        case 1: i1 = 2; i2 = 3; break;
+        case 2: i1 = 3; i2 = 1; break;
+        case 3: i1 = 1; i2 = 2; break;
+        }
+        break;
+    case 1: 
+        switch (currentBuffer->drawFrame) {
+        case 0: i1 = 2; i2 = 3; break;
+        case 2: i1 = 3; i2 = 0; break;
+        case 3: i1 = 0; i2 = 2; break;
+        }
+        break;
+    case 2:
+        switch (currentBuffer->drawFrame) {
+        case 0: i1 = 1; i2 = 3; break;
+        case 1: i1 = 3; i2 = 0; break;
+        case 3: i1 = 0; i2 = 1; break;
+        }
+        break;
+    case 3: 
+        switch (currentBuffer->drawFrame) {
+        case 0: i1 = 1; i2 = 2; break;
+        case 1: i1 = 2; i2 = 0; break;
+        case 2: i1 = 0; i2 = 1; break;
+        }
+        break;
+    }
+    i1 = currentBuffer->frame[i1].age > currentBuffer->frame[i2].age ? i1 : i2;
+    if (currentBuffer->frame[i1].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
+        currentBuffer->viewFrame = i1;
+    }
+    signalSem();
+    return currentBuffer->frame + currentBuffer->viewFrame;
+}
+#else
 FrameBuffer* frameBufferFlipViewFrame() 
 {
     int index;
@@ -83,11 +130,61 @@ FrameBuffer* frameBufferFlipViewFrame()
     return currentBuffer->frame + currentBuffer->viewFrame;
 }
 
+#endif
+
+
 FrameBuffer* frameBufferGetDrawFrame()
 {
     return currentBuffer ? currentBuffer->frame + currentBuffer->drawFrame : NULL;
 }
 
+#if FRAMES_PER_FRAMEBUFFER == 4
+FrameBuffer* frameBufferFlipDrawFrame()
+{
+    FrameBuffer* frame;
+    int i1,i2;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    waitSem();
+    switch (currentBuffer->drawFrame) {
+    case 0: 
+        switch (currentBuffer->viewFrame) {
+        case 1: i1 = 2; i2 = 3; break;
+        case 2: i1 = 3; i2 = 1; break;
+        case 3: i1 = 1; i2 = 2; break;
+        }
+        break;
+    case 1: 
+        switch (currentBuffer->viewFrame) {
+        case 0: i1 = 2; i2 = 3; break;
+        case 2: i1 = 3; i2 = 0; break;
+        case 3: i1 = 0; i2 = 2; break;
+        }
+        break;
+    case 2:
+        switch (currentBuffer->viewFrame) {
+        case 0: i1 = 1; i2 = 3; break;
+        case 1: i1 = 3; i2 = 0; break;
+        case 3: i1 = 0; i2 = 1; break;
+        }
+        break;
+    case 3: 
+        switch (currentBuffer->viewFrame) {
+        case 0: i1 = 1; i2 = 2; break;
+        case 1: i1 = 2; i2 = 0; break;
+        case 2: i1 = 0; i2 = 1; break;
+        }
+        break;
+    }
+    currentBuffer->drawFrame = currentBuffer->frame[i1].age < currentBuffer->frame[i2].age ? i1 : i2;
+    signalSem();
+    frame = currentBuffer->frame + currentBuffer->drawFrame;
+    frame->age = ++currentBuffer->currentAge;
+    return frame;
+}
+#else
 FrameBuffer* frameBufferFlipDrawFrame()
 {
     FrameBuffer* frame;
@@ -106,6 +203,7 @@ FrameBuffer* frameBufferFlipDrawFrame()
     signalSem();
     return frame;
 }
+#endif
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
 {

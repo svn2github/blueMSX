@@ -43,6 +43,7 @@
 
 #define MIDI_SYSMES_MAXLEN 4096
 
+static void w32_setHistory(unsigned idx);
 
 /*
  * MIDI I/O helper functions for Win32.
@@ -93,11 +94,6 @@ int MT32toGM[128] = {
 };
 
 
-
-void w32_resetHistory()
-{
-    memset(midiOutHistory, 0, sizeof(midiOutHistory));
-}
 
 static void w32_midiDevNameConv(char *dst, char *src)
 {
@@ -203,6 +199,9 @@ unsigned w32_midiOutOpen(const char *vfn)
 	if (midiOutOpen((HMIDIOUT*)&midiOut[idx].vfn.handle, devid, 0, 0 ,0) != MMSYSERR_NOERROR) {
 		return (unsigned)-1;
 	}
+    
+    w32_setHistory(idx);
+
 	return idx;
 }
 
@@ -305,13 +304,16 @@ int w32_midiOutPut(unsigned char value, unsigned idx)
 			}
 			break;
 		case 0x0041:
-            if (midiOut[idx].mt32ToGm && (midiOut[idx].buf.shortmes & 0xf0) == 0xc0) {
-                value = MT32toGM[value & 0x7f];
+            {
+                DWORD shortmes = midiOut[idx].buf.shortmes = ((((DWORD)value) & 0x0ff) << 8);
+                midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = shortmes;
+
+                if (midiOut[idx].mt32ToGm && (midiOut[idx].buf.shortmes & 0xf0) == 0xc0) {
+                    shortmes = (shortmes & 0x80ff) | (MT32toGM[value & 0x7f] << 8);
+                }
+			    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle, shortmes);
+			    midiOut[idx].state = 0;
             }
-			midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 8);
-			midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOut[idx].buf.shortmes);
-            midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = midiOut[idx].buf.shortmes;
-			midiOut[idx].state = 0;
 			break;
 		case 0x0082:
 			midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 8);
@@ -354,7 +356,37 @@ int w32_midiOutNoteOn(unsigned idx)
 
 void w32_midiOutEnableMt32ToGmMapping(unsigned idx, int enable)
 {
+    int i;
     midiOut[idx].mt32ToGm = enable;
+
+    for (i = 0xc0; i < 0xd0; i++) {
+        if (midiOutHistory[i]) {
+            DWORD value = midiOutHistory[i];
+            if (midiOut[idx].mt32ToGm) {
+                value = (value & 0x80ff) | (MT32toGM[(value >> 8) & 0x7f] << 8);
+            }
+		    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,value);
+        }
+    }
+}
+
+void w32_resetHistory()
+{
+    memset(midiOutHistory, 0, sizeof(midiOutHistory));
+}
+
+static void w32_setHistory(unsigned idx)
+{
+    int i;
+    for (i = 0; i < 0xf0; i++) {
+        if (midiOutHistory[i]) {
+            DWORD value = midiOutHistory[i];
+            if (midiOut[idx].mt32ToGm && (value & 0xf0) == 0xc0) {
+                value = (value & 0x80ff) | (MT32toGM[(value >> 8) & 0x7f] << 8);
+            }
+		    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,value);
+        }
+    }
 }
 
 void w32_midiOutLoadState(unsigned idx)
@@ -375,7 +407,11 @@ void w32_midiOutLoadState(unsigned idx)
 
     for (i = 0; i < 0xf0; i++) {
         if (midiOutHistory[i]) {
-		    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,midiOutHistory[i]);
+            DWORD value = midiOutHistory[i];
+            if ((value & 0xf0) == 0xc0) {
+                value = (value & 0x80ff) | (MT32toGM[(value >> 8) & 0x7f] << 8);
+            }
+		    midiOutShortMsg((HMIDIOUT)midiOut[idx].vfn.handle,value);
         }
     }
 }

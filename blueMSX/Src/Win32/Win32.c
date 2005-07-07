@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.82 $
+** $Revision: 1.83 $
 **
-** $Date: 2005-07-03 09:34:13 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -927,6 +927,8 @@ typedef struct {
 
     HANDLE ddrawEvent;
     HANDLE ddrawAckEvent;
+    int    diplayUpdated;
+    int    diplaySync;
 
     HBITMAP hBitmap;
     ThemePage* themePageActive;
@@ -1464,16 +1466,24 @@ void archUpdateWindow() {
 
 
 static void emuWindowDraw()
-{         
+{      
+    int rv = 0;
     if (!st.enteringFullscreen && 
         (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
         pProperties->video.driver == P_VIDEO_DRVDIRECTX))
     {
-        DirectXUpdateSurface(st.pVideo, st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
-                             0, 0, getZoom(), 
-                             pProperties->video.horizontalStretch, pProperties->video.verticalStretch);
-        st.frameCount++;
+        rv = DirectXUpdateSurface(st.pVideo, 
+                                  st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
+                                  0, 0, getZoom(), 
+                                  pProperties->video.horizontalStretch, 
+                                  pProperties->video.verticalStretch,
+                                  st.diplaySync);
+        st.diplaySync = 0;
+        if (rv) {
+            st.frameCount++;
+        }
     }
+    st.diplayUpdated = rv;
 }
 
 void* createScreenShot(int large, int* bitmapSize)
@@ -2309,7 +2319,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         propertiesInit(emuCheckIniFileArgument(szLine));
         pProperties = propCreate(resetRegistry, kbdLang);
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
-           
+        
         if (resetRegistry == 2) {
             propDestroy(pProperties);
             FreeLibrary(kbdLockInst);
@@ -2317,6 +2327,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             exit(0);
             return 0;
         }
+
+        emuCheckFullscreenArgument(pProperties, szLine);
     }
 
     midiInitialize();
@@ -2796,18 +2808,21 @@ void archEmulationStopNotification()
     }
 }
 
-void archUpdateEmuDisplay(int synchronous) {
+int archUpdateEmuDisplay(int syncMode) {
     if (pProperties->video.driver == P_VIDEO_DRVGDI) {
-        if (!synchronous) {
+        if (syncMode == 0) {
             PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);
         }
     }
     else {
         SetEvent(st.ddrawEvent);
-        if (synchronous) {
+        if (syncMode > 0) {
+            st.diplaySync = syncMode == 2;
             WaitForSingleObject(st.ddrawAckEvent, 500);
+            return st.diplayUpdated;
         }
     }
+    return 0;
 }
 
 void archUpdateEmuDisplayConfig() {

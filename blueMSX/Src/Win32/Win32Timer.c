@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-07-07 18:32:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,10 +38,14 @@ typedef struct {
 static void (*timerCb)(void*) = NULL;
 static void* timerId = NULL;
 
+extern void DirectXSyncSignal();
+
 static void syncCallback() {
     if (timerCb) {
         timerCb(timerId);
     }
+    
+    DirectXSyncSignal();
 }
 
 UInt32 archGetSystemUpTime(UInt32 frequency)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directx.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-30 01:05:13 $
+** $Date: 2005-07-07 18:32:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,9 +59,10 @@ DxDisplayMode* DirectDrawGetDisplayMode();
 int DirectDrawGetAvailableDisplayModeCount();
 DxDisplayMode* DirectDrawGetAvailableDisplayMode(int index);
 
-void DirectXUpdateSurface(Video* pVideo, int noFlip, 
-                          int dstPitchY, int dstOffset, int zoom, 
-                          int horizontalStretch, int verticalStretch);
+int DirectXUpdateSurface(Video* pVideo, int noFlip, 
+                         int dstPitchY, int dstOffset, int zoom, 
+                         int horizontalStretch, int verticalStretch,
+                         int syncVblank);
 void DirectXExitFullscreenMode();
 int DirectXEnterFullscreenMode(HWND hwnd, int useVideoBackBuffer, int useSysMemBuffering);
 int DirectXEnterWindowedMode(HWND hwnd, int width, int height, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -622,6 +622,7 @@ _TCHAR* langEnumSoundDrvDirectX() { return ls->enumSoundDrvDirectX; }
 
 _TCHAR* langEnumEmuSync1ms() { return ls->enumEmuSync1ms; }
 _TCHAR* langEnumEmuSyncAuto() { return ls->enumEmuSyncAuto; }
+_TCHAR* langEnumEmuSyncVblank() { return ls->enumEmuSyncVblank; }
 
 _TCHAR* langEnumControlsJoyNone() { return ls->enumControlsJoyNone; }
 _TCHAR* langEnumControlsJoyNumpad() { return ls->enumControlsJoyNumpad; }

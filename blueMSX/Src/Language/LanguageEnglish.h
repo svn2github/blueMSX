@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-07-07 18:32:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -241,9 +241,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumSoundDrvNone        = "No Sound";
     ls->enumSoundDrvWMM         = "WMM driver";
     ls->enumSoundDrvDirectX     = "DirectX driver";
-
-    ls->enumEmuSync1ms          = "1ms (best)";
-    ls->enumEmuSyncAuto         = "Auto (fast)";
 
     ls->enumControlsJoyNone     = "None";
     ls->enumControlsJoyNumpad   = "Numpad";
@@ -601,6 +598,10 @@ void langInitEnglish(LanguageStrings* ls)
     ls->textFilename            = "Filename:";
     ls->textFile                = "File";
     ls->textNone                = "None";
+
+    ls->enumEmuSyncAuto         = "Auto (fast)";
+    ls->enumEmuSync1ms          = "Sync on MSX refresh";
+    ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
 };
 
 

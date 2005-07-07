@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-01-30 01:36:37 $
+** $Date: 2005-07-07 18:32:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -507,9 +507,88 @@ int DirectXUpdateWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     return DXE_OK;
 }
 
-void DirectXUpdateSurface(Video* pVideo, 
+static HANDLE hSync = NULL;
+
+void DirectXSyncSignal() {
+    if (hSync == NULL) {
+        hSync = CreateEvent(NULL, 0, 0, NULL);
+    }
+    SetEvent(hSync);
+}
+
+int DirectXWaitForVBlank()
+{
+#if 1
+    DWORD screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    if (lpDD == NULL) {
+        return FALSE;
+    }
+
+    for (;;) {
+        static int f = 0;
+        static DWORD o = 0;
+        DWORD s;
+        HRESULT rv = IDirectDraw_GetScanLine(lpDD, &s);
+        if (rv != DD_OK) {
+            return FALSE;
+        }
+
+        if (s < o) {
+            if (f == 0) {
+                o = s;
+                break;
+            }
+            f = 0;
+        }
+
+        o = s;
+
+        if (f == 1) {
+            continue;
+        }
+
+        if (s > screenHeight - 10) {
+            f = 1;
+            break;
+        }
+        WaitForSingleObject(hSync, 100);
+    }
+    return TRUE;
+#else
+    if (lpDD != NULL) {
+        IDirectDraw_WaitForVerticalBlank(lpDD, DDWAITVB_BLOCKBEGIN, NULL);
+    }
+    return lpDD != NULL;
+#endif
+}
+
+int DirectXGetVBlankStatus() {
+    BOOL s = TRUE;
+    if (lpDD != NULL) {
+        HRESULT rv = IDirectDraw_GetVerticalBlankStatus(lpDD, &s);
+        if (rv != DD_OK) {
+            s = TRUE;
+        }
+    }
+    return s;
+}
+
+int DirectXGetScanline() {
+    DWORD s = 0;
+    if (lpDD != NULL) {
+        HRESULT rv = IDirectDraw_GetScanLine(lpDD, &s);
+        if (rv != DD_OK) {
+            s = 0;
+        }
+    }
+    return s;
+}
+
+int DirectXUpdateSurface(Video* pVideo, 
                           int noFlip, int dstPitchY, int dstOffset, int zoom, 
-                          int horizontalStretch, int verticalStretch) 
+                          int horizontalStretch, int verticalStretch, 
+                          int syncVblank) 
 {
     DDSURFACEDESC ddsd;
     LPDIRECTDRAWSURFACE surface = NULL;
@@ -521,9 +600,20 @@ void DirectXUpdateSurface(Video* pVideo,
     RECT destRect = { 0, 0, screenWidth, screenHeight };
     RECT rcRect;
     void* surfaceBuffer;
+    static int   oldAge = 0;
 
     if (lpDDSPrimary == NULL) {
-        return;
+        return 0;
+    }
+
+    frameBuffer = frameBufferFlipViewFrame();
+    if (syncVblank) {
+        if (frameBuffer != NULL) {
+            if (frameBuffer->age == oldAge) {
+                return 0;
+            }
+            oldAge = frameBuffer->age;
+        }
     }
 
     ClientToScreen( hwndThis, &pt );
@@ -558,11 +648,10 @@ void DirectXUpdateSurface(Video* pVideo,
     }
 
     if (surface == NULL) {
-        return;
+        return 0;
     }
 
     surfaceBuffer = ddsd.lpSurface;
-    frameBuffer = frameBufferFlipViewFrame();
 
     if (frameBuffer == NULL) {
         frameBuffer = frameBufferGetWhiteNoiseFrame();
@@ -613,6 +702,10 @@ void DirectXUpdateSurface(Video* pVideo,
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
         IDirectDrawSurface_Unlock(surface, NULL);
+    }
+
+    if (syncVblank) {
+        DirectXWaitForVBlank();
     }
 
     if (sysMemBuffering) {
@@ -678,4 +771,6 @@ void DirectXUpdateSurface(Video* pVideo,
             ddrval = IDirectDrawSurface_Restore(lpDDSPrimary);
         }
     }    
+
+    return 1;
 }
