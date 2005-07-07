@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-07-07 19:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -260,8 +260,8 @@ typedef struct {
     struct {  
         long left; 
         long top; 
-        long right; 
-        long bottom; 
+        long width; 
+        long height; 
     } windowPos[DLG_MAX_ID];
 } Settings;
 

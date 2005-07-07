@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-07-07 19:39:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -656,10 +656,10 @@ static void propLoad(Properties* pProperties)
         getIntValue(str, &pProperties->settings.windowPos[i].left);
         sprintf(str, "WindowPosTop%x",i);
         getIntValue(str, &pProperties->settings.windowPos[i].top);
-        sprintf(str, "WindowPosRight%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].right);
-        sprintf(str, "WindowPosBottom%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].bottom);
+        sprintf(str, "WindowPosWidth%x",i);
+        getIntValue(str, &pProperties->settings.windowPos[i].width);
+        sprintf(str, "WindowPosHeight%x",i);
+        getIntValue(str, &pProperties->settings.windowPos[i].height);
     }
 }
 
@@ -863,10 +863,10 @@ void propSave(Properties* pProperties)
         setIntValue(str, pProperties->settings.windowPos[i].left);
         sprintf(str, "WindowPosTop%x",i);
         setIntValue(str, pProperties->settings.windowPos[i].top);
-        sprintf(str, "WindowPosRight%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].right);
-        sprintf(str, "WindowPosBottom%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].bottom);
+        sprintf(str, "WindowPosWidth%x",i);
+        setIntValue(str, pProperties->settings.windowPos[i].width);
+        sprintf(str, "WindowPosHeight%x",i);
+        setIntValue(str, pProperties->settings.windowPos[i].height);
     }
 }
 

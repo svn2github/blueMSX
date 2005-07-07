@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.83 $
+** $Revision: 1.84 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-07-07 19:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,7 +104,7 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize)
 
     int screenWidth  = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-    RECT r;
+	RECT r1;
     int x;
     int y;
     int w;
@@ -115,32 +115,27 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize)
         noSize = 1;
     }
 
-    r.left   = pProperties->settings.windowPos[dialogID].left; 
-    r.top    = pProperties->settings.windowPos[dialogID].top; 
-    r.right  = pProperties->settings.windowPos[dialogID].right; 
-    r.bottom = pProperties->settings.windowPos[dialogID].bottom; 
+    GetWindowRect(GetParent(hwnd), &r1);
 
-    x = r.left;
-    y = r.top;
-    w = r.right - r.left;
-    h = r.bottom - r.top;
+	x = r1.left + pProperties->settings.windowPos[dialogID].left; 
+    y = r1.top  + pProperties->settings.windowPos[dialogID].top; 
+    w =           pProperties->settings.windowPos[dialogID].width; 
+    h =           pProperties->settings.windowPos[dialogID].height; 
 
-    if (noMove || (x == 0 && y == 0)) {
-        RECT r1;
+    if (noMove || 
+	   (pProperties->settings.windowPos[dialogID].left == 0 && 
+	    pProperties->settings.windowPos[dialogID].top == 0)) {
         RECT r2;
-
-        GetWindowRect(GetParent(hwnd), &r1);
         GetWindowRect(hwnd, &r2);
-
         x = r1.left + (r1.right - r1.left - r2.right + r2.left) / 2;
         y  = r1.top  + (r1.bottom - r1.top - r2.bottom + r2.top) / 2;
     }
     
-    if (r.right == 0 || r.bottom == 0) {
-        RECT r1;
-        GetWindowRect(hwnd, &r1);
-        w = r1.right - r1.left;
-        h = r1.bottom - r1.top;
+    if (w == 0 || h == 0) {
+        RECT r2;
+        GetWindowRect(hwnd, &r2);
+        w = r2.right - r2.left;
+        h = r2.bottom - r2.top;
     }
 
     if (x + w > screenWidth) {
@@ -162,14 +157,15 @@ void saveDialogPos(HWND hwnd, int dialogID)
 {
     Properties* pProperties = propGetGlobalProperties();
     RECT r;
+    RECT r1;
 
     if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
         GetWindowRect(hwnd, &r);
-
-        pProperties->settings.windowPos[dialogID].left   = r.left;
-        pProperties->settings.windowPos[dialogID].top    = r.top;
-        pProperties->settings.windowPos[dialogID].right  = r.right;
-        pProperties->settings.windowPos[dialogID].bottom = r.bottom;
+        GetWindowRect(GetParent(hwnd), &r1);
+        pProperties->settings.windowPos[dialogID].left   = r.left   - r1.left;
+        pProperties->settings.windowPos[dialogID].top    = r.top    - r1.top;
+        pProperties->settings.windowPos[dialogID].width  = r.right  - r.left;
+        pProperties->settings.windowPos[dialogID].height = r.bottom - r.top;
     }
 }
 

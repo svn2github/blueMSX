@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-07-07 19:39:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,8 @@
 #include "Win32Common.h"
 #include "Win32ScreenShot.h"
 #include "Language.h"
+
+#define WM_DIALOGRESIZE (WM_USER + 1500)
 
 static RomType romTypeList[] = {
     ROM_ASCII8,
@@ -100,25 +102,16 @@ static RomType openRomType;
 UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
-    case WM_TIMER:
-        if (wParam == 13) {
-            updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 0);
-            ShowWindow(GetParent(hDlg), SW_NORMAL);
-            KillTimer(hDlg, 13);
-        }
+	case WM_DIALOGRESIZE:
+        updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 0);
         return 0;
-        
+
     case WM_INITDIALOG:
         {
             int i;
 
-            ShowWindow(GetParent(hDlg), SW_HIDE);
-            updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
-            SetTimer(hDlg, 13, 250, 0);
-
             for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
                 SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
-//                SendDlgItemMessage(hDlg, IDC_ROMTYPE, CB_SETCURSEL, i, 0);
             }
             SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(ROM_UNKNOWN));
             EnableWindow(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), 0);
@@ -166,6 +159,12 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
         {
             OFNOTIFY* ofn = (OFNOTIFY*)lParam;
             switch (ofn->hdr.code) {
+			case CDN_INITDONE:
+				//It is not effective since the second times why. 
+				updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
+				PostMessage(hDlg, WM_DIALOGRESIZE, 0, 0);
+				break;
+
             case CDN_SELCHANGE:
                 {
                     char fileName[MAX_PATH];
@@ -215,6 +214,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                     }
             
                     if (buf != NULL) {
+
                         MediaType* mediaType = mediaDbLookupRom(buf, size);
                         RomType romType = mediaType != NULL ? mediaDbGetRomType(mediaType) : ROM_UNKNOWN;
                         int idx = 0;
@@ -334,27 +334,17 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     static HBITMAP hBmp = INVALID_HANDLE_VALUE;
 
     switch (iMsg) {
-    case WM_TIMER:
-        if (wParam == 13) {
-            updateDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE, 0, 0);
-            ShowWindow(GetParent(hDlg), SW_NORMAL);
-            KillTimer(hDlg, 13);
-        }
+	case WM_DIALOGRESIZE:
+        updateDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE, 0, 0);
         return 0;
-        
+
     case WM_INITDIALOG:
-        {
-            SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWBUTTON), langDlgSavePreview());
-            SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATETEXT), langDlgSaveDate());
-            ShowWindow(GetParent(hDlg), SW_HIDE);
-            updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
-            SetTimer(hDlg, 13, 250, 0);
-
-            SendDlgItemMessage(hDlg, IDC_PREVIEWBUTTON, BM_SETCHECK, doShowPreview ? BST_CHECKED : BST_UNCHECKED, 0);
-        }
+        SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWBUTTON), langDlgSavePreview());
+        SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATETEXT), langDlgSaveDate());
+        SendDlgItemMessage(hDlg, IDC_PREVIEWBUTTON, BM_SETCHECK, doShowPreview ? BST_CHECKED : BST_UNCHECKED, 0);
         return 0;
 
-    case WM_COMMAND:
+	case WM_COMMAND:
         if (LOWORD(wParam) == IDC_PREVIEWBUTTON) {
             int newChecked = BST_CHECKED == SendDlgItemMessage(hDlg, IDC_PREVIEWBUTTON, BM_GETCHECK, 0, 0);
             if (newChecked != doShowPreview) {
@@ -399,11 +389,18 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         {
             OFNOTIFY* ofn = (OFNOTIFY*)lParam;
             switch (ofn->hdr.code) {
+			case CDN_INITDONE:
+				//It is not effective since the second times why. 
+				updateDialogPos(GetParent(hDlg), DLG_ID_OPENSTATE, 0, 1);
+				PostMessage(hDlg, WM_DIALOGRESIZE, 0, 0);
+				break;
+
             case CDN_SELCHANGE:
                 {
                     char fileName[MAX_PATH];
                     void* buffer;
                     Int32 size;
+
                     int fileSize = SendMessage(GetParent(hDlg), CDM_GETFILEPATH, MAX_PATH, (LPARAM)fileName);
 
                     if (hBmp != INVALID_HANDLE_VALUE) {
@@ -413,17 +410,26 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                     SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATE), "");                     
                     buffer = zipLoadFile(fileName, "date.txt", &size);
+
                     if (buffer != 0) {
                         SetWindowText(GetDlgItem(hDlg, IDC_PREVIEWDATE), buffer);     
+
                         free(buffer);
+
                     }
 
                     if (isFileExtension(fileName, ".sta")) {
+
                         buffer = zipLoadFile(fileName, "screenshot.bmp", &size);
+
                         if (buffer != 0) {
+
                             hBmp = BitmapFromData(buffer);
+
                             free(buffer);
+
                         }
+
 
                         InvalidateRect(hDlg, NULL, TRUE);
                     }
@@ -440,6 +446,7 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
             if (hBmp != INVALID_HANDLE_VALUE && doShowPreview) {
                 BITMAP bmp;
+
                 if(GetObject(hBmp, sizeof(BITMAP), (LPSTR)&bmp)) {
                     HDC hMemDC = CreateCompatibleDC(hdc);
                     HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, hBmp);
@@ -618,20 +625,22 @@ char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterI
 
 UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
+
     switch (iMsg) {
-    case WM_TIMER:
-        if (wParam == 13) {
-            updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 0);
-            KillTimer(hDlg, 13);
-            ShowWindow(GetParent(hDlg), SW_NORMAL);
-        }
+	case WM_DIALOGRESIZE:
+        updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 0);
         return 0;
 
-    case WM_INITDIALOG:
-        ShowWindow(GetParent(hDlg), SW_HIDE);
-        updateDialogPos(hDlg, DLG_ID_OPEN, 0, 1);
-        SetTimer(hDlg, 13, 250, 0);
-        return 0;
+	case WM_NOTIFY:
+		{
+			OFNOTIFY* ofn = (OFNOTIFY*)lParam;
+			if(ofn->hdr.code == CDN_INITDONE){
+				//It is not effective since the second times why. 
+				updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
+				PostMessage(hDlg, WM_DIALOGRESIZE, 0, 0);
+			}
+			return 0;
+		}
 
     case WM_DESTROY:
         saveDialogPos(GetParent(hDlg), DLG_ID_OPEN);
@@ -770,15 +779,24 @@ char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex,
 ///////////////////////////////////////////////////////////////////////////
 
 typedef struct {
+
     char*  title;
+
     char*  description;
+
     char** itemList;
+
     char*  defaultName;
+
     char*  returnName;
+
 } SaveAsDlgInfo;
+
+
 
 static BOOL CALLBACK saveAsProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
+
     static SaveAsDlgInfo* sdi;
     char buffer[64];
     int i;
@@ -862,6 +880,9 @@ char* openConfigFile(HWND parent, char* title, char* description,
 
     rv = DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CONF_SAVEAS), parent, saveAsProc, (LPARAM)sdi);
     free(sdi);
+
     return rv ? returnName : NULL;
+
 }
+
 
