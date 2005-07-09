@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-07-09 12:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -569,7 +569,7 @@ void RefreshScreen(int screenMode) {
 
     lastScreenMode = screenMode;
 
-    if (emuUseSynchronousUpdate() != P_EMU_SYNCAUTO) {
+    if (emuUseSynchronousUpdate() == P_EMU_SYNCFRAMES) {
         emulatorSyncScreen();
     }
 }

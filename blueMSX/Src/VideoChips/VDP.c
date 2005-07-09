@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-06-20 00:31:20 $
+** $Date: 2005-07-09 12:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -335,6 +335,14 @@ static void onDrawAreaStart(VDP* vdp, UInt32 time)
     vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (vdp->vdpRegs[8] & 2));
 }
 
+static UInt32 frameStartTime;
+static int    timeDisplay;
+
+int getScreenCompletePercent() 
+{
+    return 100 * (boardSystemTime() - frameStartTime) / timeDisplay;
+}
+
 static void onDisplay(VDP* vdp, UInt32 time)
 {
     int isPal = vdpIsVideoPal(vdp); 
@@ -377,6 +385,9 @@ static void onDisplay(VDP* vdp, UInt32 time)
     scheduleDrawAreaStart(vdp);
     scheduleHint(vdp);
     scheduleVint(vdp);
+
+    frameStartTime = vdp->frameStartTime;
+    timeDisplay    = HPERIOD * vdp->lastLine;
 }
 
 static void simulateVramDecay(VDP* vdp) 

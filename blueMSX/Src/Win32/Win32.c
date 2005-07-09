@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2005-07-07 19:39:13 $
+** $Date: 2005-07-09 12:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,6 +81,7 @@
 #include "ThemeLoader.h"
 #include "Win32ThemeClassic.h"
 #include "ArchNotifications.h"
+#include "ArchEvent.h"
 
 void vdpSetDisplayEnable(int enable);
 
@@ -1463,7 +1464,15 @@ void archUpdateWindow() {
 
 static void emuWindowDraw()
 {      
+    static void* lock = NULL;
     int rv = 0;
+
+    if (lock == NULL) {
+        lock = archSemaphoreCreate(1);
+    }
+
+    archSemaphoreWait(lock, -1);
+
     if (!st.enteringFullscreen && 
         (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
         pProperties->video.driver == P_VIDEO_DRVDIRECTX))
@@ -1480,6 +1489,8 @@ static void emuWindowDraw()
         }
     }
     st.diplayUpdated = rv;
+
+    archSemaphoreSignal(lock);
 }
 
 void* createScreenShot(int large, int* bitmapSize)
@@ -2028,7 +2039,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_UPDATE:
-        frameBufferFlipViewFrame();
+        frameBufferFlipViewFrame(0);
         InvalidateRect(st.emuHwnd, NULL, TRUE);
         return 0;
 
@@ -2809,6 +2820,11 @@ int archUpdateEmuDisplay(int syncMode) {
         if (syncMode == 0) {
             PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);
         }
+    }
+    else if (syncMode == 2) {
+        st.diplaySync = 1;
+        emuWindowDraw();
+        return st.diplayUpdated;
     }
     else {
         SetEvent(st.ddrawEvent);

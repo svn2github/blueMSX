@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-07-07 18:32:53 $
+** $Date: 2005-07-09 12:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 
 
 static LPDIRECTDRAW         lpDD = NULL;            // DirectDraw object
+static LPDIRECTDRAW         lpTheDD = NULL;            // DirectDraw object
 static LPDIRECTDRAW         lpDDinit = NULL;
 static LPDIRECTDRAWSURFACE  lpDDSPrimary = NULL;    // DirectDraw primary surface
 static LPDIRECTDRAWSURFACE  lpDDSBack = NULL;       // DirectDraw back surface
@@ -57,6 +58,7 @@ static int     screenHeight = 240;
 static char    MyDeviceName[128];
 static RECT    MyDeviceRect;
 static int     isFullscreen = 0;
+static DWORD   allScreenHeight;
 
 #ifndef DDBLTFAST_DONOTWAIT
 #define DDBLTFAST_DONOTWAIT 0x00000020
@@ -197,6 +199,7 @@ void DirectDrawSetDisplayMode(int width, int height, int bitCount) {
             break;
         }
     }
+    allScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 }
 
 void DirectDrawInitDisplayModes() {
@@ -264,6 +267,8 @@ IDirectDraw* DirectDrawCreateFromWindow(HWND hwnd) {
 
 void DirectXExitFullscreenMode()
 {
+    lpTheDD = NULL;
+
     if( lpDDSPrimary != NULL ) {
         IDirectDrawSurface_Release(lpDDSPrimary);
         lpDDSPrimary = NULL;
@@ -309,6 +314,8 @@ int DirectXEnterFullscreenMode(HWND hwnd, int useVideoBackBuffer, int useSysMemB
 
     screenWidth  = width;
     screenHeight = height;
+
+    allScreenHeight = height;
 
     DirectXExitFullscreenMode();
     
@@ -399,6 +406,8 @@ int DirectXEnterFullscreenMode(HWND hwnd, int useVideoBackBuffer, int useSysMemB
         }
     }
 
+    lpTheDD = lpDD;
+
     return DXE_OK;
 }
 
@@ -417,6 +426,8 @@ BOOL DirectXEnterWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     screenHeight = height;
 
     DirectXExitFullscreenMode();
+
+    allScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
     MyDevice = DirectDrawDeviceFromWindow(hwnd, MyDeviceName, &MyDeviceRect);
 
@@ -488,6 +499,8 @@ BOOL DirectXEnterWindowedMode(HWND hwnd, int width, int height, int useVideoBack
         }
     }
 
+    lpTheDD = lpDD;
+
     return DXE_OK;
 }
 
@@ -507,82 +520,32 @@ int DirectXUpdateWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     return DXE_OK;
 }
 
-static HANDLE hSync = NULL;
-
-void DirectXSyncSignal() {
-    if (hSync == NULL) {
-        hSync = CreateEvent(NULL, 0, 0, NULL);
-    }
-    SetEvent(hSync);
-}
-
-int DirectXWaitForVBlank()
+int DirectXCheckVBlank()
 {
-#if 1
-    DWORD screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-    if (lpDD == NULL) {
+    if (lpTheDD == NULL) {
         return FALSE;
     }
 
-    for (;;) {
+    {
         static int f = 0;
         static DWORD o = 0;
         DWORD s;
-        HRESULT rv = IDirectDraw_GetScanLine(lpDD, &s);
+        HRESULT rv = IDirectDraw_GetScanLine(lpTheDD, &s);
         if (rv != DD_OK) {
             return FALSE;
         }
 
         if (s < o) {
-            if (f == 0) {
-                o = s;
-                break;
-            }
             f = 0;
         }
-
         o = s;
 
-        if (f == 1) {
-            continue;
-        }
-
-        if (s > screenHeight - 10) {
+        if (f == 0 && s > allScreenHeight - 240) {
             f = 1;
-            break;
-        }
-        WaitForSingleObject(hSync, 100);
-    }
-    return TRUE;
-#else
-    if (lpDD != NULL) {
-        IDirectDraw_WaitForVerticalBlank(lpDD, DDWAITVB_BLOCKBEGIN, NULL);
-    }
-    return lpDD != NULL;
-#endif
-}
-
-int DirectXGetVBlankStatus() {
-    BOOL s = TRUE;
-    if (lpDD != NULL) {
-        HRESULT rv = IDirectDraw_GetVerticalBlankStatus(lpDD, &s);
-        if (rv != DD_OK) {
-            s = TRUE;
+            return TRUE;
         }
     }
-    return s;
-}
-
-int DirectXGetScanline() {
-    DWORD s = 0;
-    if (lpDD != NULL) {
-        HRESULT rv = IDirectDraw_GetScanLine(lpDD, &s);
-        if (rv != DD_OK) {
-            s = 0;
-        }
-    }
-    return s;
+    return FALSE;
 }
 
 int DirectXUpdateSurface(Video* pVideo, 
@@ -600,20 +563,17 @@ int DirectXUpdateSurface(Video* pVideo,
     RECT destRect = { 0, 0, screenWidth, screenHeight };
     RECT rcRect;
     void* surfaceBuffer;
-    static int   oldAge = 0;
+
+    if (lpTheDD == NULL) {
+        return 0;
+    }
 
     if (lpDDSPrimary == NULL) {
         return 0;
     }
 
-    frameBuffer = frameBufferFlipViewFrame();
-    if (syncVblank) {
-        if (frameBuffer != NULL) {
-            if (frameBuffer->age == oldAge) {
-                return 0;
-            }
-            oldAge = frameBuffer->age;
-        }
+    if (syncVblank && !DirectXCheckVBlank()) {
+        return 0;
     }
 
     ClientToScreen( hwndThis, &pt );
@@ -653,6 +613,7 @@ int DirectXUpdateSurface(Video* pVideo,
 
     surfaceBuffer = ddsd.lpSurface;
 
+    frameBuffer = frameBufferFlipViewFrame(syncVblank);
     if (frameBuffer == NULL) {
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
@@ -702,10 +663,6 @@ int DirectXUpdateSurface(Video* pVideo,
     if (IDirectDrawSurface_Unlock(surface, NULL) == DDERR_SURFACELOST) {
         IDirectDrawSurface_Restore(surface);
         IDirectDrawSurface_Unlock(surface, NULL);
-    }
-
-    if (syncVblank) {
-        DirectXWaitForVBlank();
     }
 
     if (sysMemBuffering) {

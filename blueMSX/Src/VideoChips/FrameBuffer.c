@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-07-09 12:11:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #include "ArchEvent.h"
 #include <stdlib.h>
 
-#define FRAMES_PER_FRAMEBUFFER 3
+#define FRAMES_PER_FRAMEBUFFER 4
 
 struct FrameBufferData {
     int viewFrame;
@@ -42,6 +42,9 @@ struct FrameBufferData {
 
 static void* semaphore = NULL;
 static FrameBuffer* deintBuffer = NULL;
+
+static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
+extern int getScreenCompletePercent();
 
 static void waitSem() {
     if (semaphore == NULL) {
@@ -55,6 +58,7 @@ static void signalSem() {
 }
 
 
+
 static FrameBufferData* currentBuffer = NULL;
 
 
@@ -64,7 +68,7 @@ FrameBuffer* frameBufferGetViewFrame()
 }
 
 #if FRAMES_PER_FRAMEBUFFER == 4
-FrameBuffer* frameBufferFlipViewFrame() 
+FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
 {
     int i1,i2;
 
@@ -102,6 +106,26 @@ FrameBuffer* frameBufferFlipViewFrame()
         }
         break;
     }
+    if (mixFrames) {
+        int i3 = currentBuffer->viewFrame;
+        
+        if (currentBuffer->frame[i3].age > currentBuffer->frame[i2].age) {
+            int tmp = i3; i3 = i2; i2 = tmp;
+        }
+        if (currentBuffer->frame[i2].age > currentBuffer->frame[i1].age) {
+            int tmp = i2; i2 = i1; i1 = tmp;
+        }
+        if (currentBuffer->frame[i3].age > currentBuffer->frame[i2].age) {
+            int tmp = i3; i3 = i2; i2 = tmp;
+        }
+
+        currentBuffer->viewFrame = i1;
+
+        signalSem();
+
+        return mixFrame(currentBuffer->frame + i1, currentBuffer->frame + i2, getScreenCompletePercent());
+    }
+
     i1 = currentBuffer->frame[i1].age > currentBuffer->frame[i2].age ? i1 : i2;
     if (currentBuffer->frame[i1].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
         currentBuffer->viewFrame = i1;
@@ -110,7 +134,7 @@ FrameBuffer* frameBufferFlipViewFrame()
     return currentBuffer->frame + currentBuffer->viewFrame;
 }
 #else
-FrameBuffer* frameBufferFlipViewFrame() 
+FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
 {
     int index;
 
@@ -297,4 +321,53 @@ FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer)
         deintBuffer->line[y] = frameBuffer->line[y / 2];
     }
     return deintBuffer;
+}
+
+
+#define M1 0x1F01F
+#define M2 0x007C0
+
+static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
+{
+    static FrameBuffer* d = NULL;
+    int p = 0x40 * pct / 100;
+    int n = 0x40 - p;
+    int x;
+    int y;
+
+    if (d == NULL) {
+        d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+    }
+
+    if (p == 0x40) {
+        return a;
+    }
+    if (n == 0x40) {
+        return b;
+    }
+
+    d->lines = a->lines;
+    d->interlace = a->interlace;
+    d->maxWidth = a->maxWidth;
+
+    for (y = 0; y < a->lines; y++) {
+        int width = a->line[y].doubleWidth ? a->maxWidth * 2: a->maxWidth;
+        UInt32* ap = a->line[y].buffer;
+        UInt32* bp = b->line[y].buffer;
+        UInt32* dp = d->line[y].buffer;
+
+        d->line[y].doubleWidth = a->line[y].doubleWidth;
+        for (x = 0; x < width; x++) {
+            UInt32 av = ap[x];
+            UInt32 bv = bp[x];
+            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 6) & M1) |
+                    ((((av & M2) * p + (bv & M2) * n) >> 6) & M2);
+
+            if (dp[x] & ~0x1F7DF) {
+                exit(0);
+            }
+        }
+    }
+
+    return d;
 }
