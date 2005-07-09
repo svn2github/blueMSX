@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-07-09 20:15:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ static void* semaphore = NULL;
 static FrameBuffer* deintBuffer = NULL;
 
 static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
+static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct);
 extern int getScreenCompletePercent();
 
 static void waitSem() {
@@ -339,6 +340,10 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
         d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
     }
 
+    if (a->interlace != INTERLACE_NONE) {
+        return mixFrameInterlace(a, b, pct);
+    }
+
     if (p == 0x40) {
         return a;
     }
@@ -362,10 +367,72 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
             UInt32 bv = bp[x];
             dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 6) & M1) |
                     ((((av & M2) * p + (bv & M2) * n) >> 6) & M2);
+        }
+    }
 
-            if (dp[x] & ~0x1F7DF) {
-                exit(0);
+    return d;
+}
+
+
+static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
+{
+    static FrameBuffer* d = NULL;
+    int p = 0x40 * pct / 100;
+    int n = 0x40 - p;
+    int x;
+    int y;
+    UInt32* dp;
+    int     width;
+    UInt32* ap;
+    UInt32* bp;
+
+    if (d == NULL) {
+        d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+    }
+
+    d->lines     = a->lines * 2;
+    d->interlace = INTERLACE_NONE;
+    d->maxWidth  = a->maxWidth;
+
+    if (p == 0x40) { p = 0x39; n = 1; }
+    if (n == 0x40) { n = 0x39; p = 1; }
+
+    if (a->interlace == INTERLACE_ODD) {
+        FrameBuffer* t;
+        int t2;
+
+        t = a;
+        a = b;
+        b = t;
+
+        t2 = n;
+        n = p;
+        p = t2;
+    }
+
+    for (y = 0; y < a->lines * 2; y++) {
+        width = a->line[y / 2].doubleWidth ? a->maxWidth * 2: a->maxWidth;
+        if (y & 1) {
+            ap = a->line[y / 2].buffer;
+            bp = b->line[y / 2].buffer;
+        }
+        else {
+            ap = a->line[y / 2].buffer;
+            if (y == 0) {
+                bp = b->line[a->lines - 1].buffer;
             }
+            else {
+                bp = b->line[y / 2 - 1].buffer;
+            }
+        }
+        dp = d->line[y].buffer;
+        d->line[y].doubleWidth = a->line[y / 2].doubleWidth;
+
+        for (x = 0; x < width; x++) {
+            UInt32 av = ap[x];
+            UInt32 bv = bp[x];
+            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 6) & M1) |
+                    ((((av & M2) * p + (bv & M2) * n) >> 6) & M2);
         }
     }
 
