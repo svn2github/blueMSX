@@ -212,6 +212,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
                 col = x / 3;
                 int addr = (row + si.nPos) * memPerRow + col;
                 if (addr < currentMemory->size) {
+                    addressInput->setValue(addr, false);
                     currentEditAddress = addr;
                     dataInput2->setPosition(10 + (3 * col + 8) * textWidth, row * textHeight - 2);
                     dataInput2->setValue(currentMemory->memory[addr]);

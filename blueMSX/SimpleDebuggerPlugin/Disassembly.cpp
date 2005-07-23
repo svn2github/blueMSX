@@ -851,7 +851,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         if (addr == pc) {
             programCounter = lineCount;
         }
-        int i = min(3, len);
+        int i = min(4, len);
         while (i--) {
             char text[16];
             sprintf(text, "%.2x ", memory[addr]);
@@ -1072,9 +1072,9 @@ void Disassembly::drawText(int top, int bottom)
             SetTextColor(hMemdc, i == currentLine && hasKeyboardFocus ? colorWhite : colorBlack);
 
             DrawText(hMemdc, lineInfo[i].addr, lineInfo[i].addrLength, &r, DT_LEFT);
-            r.left += 16 * textWidth;
+            r.left += 18 * textWidth;
             DrawText(hMemdc, lineInfo[i].text, lineInfo[i].textLength, &r, DT_LEFT);
-            r.left -= 16 * textWidth;
+            r.left -= 18 * textWidth;
         }
         r.top += textHeight;
         r.bottom += textHeight;

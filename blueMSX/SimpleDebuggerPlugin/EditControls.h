@@ -38,7 +38,7 @@ public:
     HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, SymbolInfo* symInfo = NULL);
     ~HexInputDialog();
 
-    void setValue(int value);
+    void setValue(int value, bool setFocus = true);
     void setPosition(int x, int y);
     void show();
     void hide();

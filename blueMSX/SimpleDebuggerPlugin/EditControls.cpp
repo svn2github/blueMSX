@@ -55,7 +55,7 @@ HexInputDialog::~HexInputDialog()
     DestroyWindow(hwnd);
 }
 
-void HexInputDialog::setValue(int value)
+void HexInputDialog::setValue(int value, bool setFocus)
 {
     char text[16] = "00000000";
     sprintf(text + 8, "%x", value);
@@ -63,7 +63,9 @@ void HexInputDialog::setValue(int value)
     SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_SETTEXTEX, (WPARAM)&t, (LPARAM)(text + strlen(text) - chars));
     CHARRANGE cr = { 0, chars };
     SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_EXSETSEL, 0, (LPARAM)&cr);
-    SetFocus(GetDlgItem(hwnd, IDC_ADDRESS));
+    if (setFocus) {
+        SetFocus(GetDlgItem(hwnd, IDC_ADDRESS));
+    }
 }
 
 void HexInputDialog::show() 
