@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-07-23 07:55:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -506,9 +506,6 @@ void emulatorRestart() {
         boardSetMachine(machine);
         machineDestroy(machine);
     }
-    if (emuState == EMU_RUNNING) {
-        emulatorStart(NULL);
-    }
 }
 
 void emulatorRestartSound() {
@@ -525,6 +522,9 @@ void SetColor(int palEntry, UInt32 rgbColor) {
     }
     else {
         emuPalette[palEntry] = color;
+    }
+    if (emuState == EMU_PAUSED) {
+        archUpdateEmuDisplay(0);
     }
 }
 

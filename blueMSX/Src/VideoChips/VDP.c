@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-07-23 07:55:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -137,6 +137,11 @@ static UInt32 defaultPalette[16] = {
     0xff2424, 0xff6868, 0xdada24, 0xdada91, 0x249124, 0xda48b6, 0xb6b6b6, 0xffffff
 };
 
+static UInt16 defaultPaletteRegs[16] = {
+    0x0000, 0x0000, 0x0611, 0x0733, 0x0117, 0x0327, 0x0151, 0x0627,
+    0x0171, 0x0373, 0x0661, 0x0664, 0x0411, 0x0265, 0x0555, 0x0777
+};
+
 typedef struct VDP VDP;
 
 static void RefreshLineTx80(VDP*, int, int, int);
@@ -180,6 +185,7 @@ struct VDP {
     int    blinkCnt;
     int    drawArea;
     int    palette[16];
+    UInt16 paletteReg[16];
     int    vramSize;
     int    vramPages;
     int    vram128;
@@ -799,6 +805,7 @@ static void writePaletteLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
     if (vdp->palKey) {
 		int palEntry = vdp->vdpRegs[16];
         sync(vdp, boardSystemTime());
+        vdp->paletteReg[palEntry] = 256 * (value & 0x07) | (vdp->vdpDataLatch & 0x77);
         vdp->palette[palEntry] = (((UInt32)(vdp->vdpDataLatch & 0x70) * 255 / 112) << 16) |
                             (((UInt32)(value & 0x07) * 255 / 7) << 8) |
                             ((UInt32)(vdp->vdpDataLatch & 0x07) * 255 / 7);
@@ -1015,30 +1022,74 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     int cmdRegCount;
     int regCount;
     int i;
+    int extraRegCount = 2;
+    int statusRegCount;
+    int paletteCount;
+    int scanLine;
+    int lineTime;
+    int frameTime;
+    int regOffset = 0;
 
     sync(vdp, boardSystemTime());
 
     dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, 0, vdp->vramSize, vdp->vram);
-   
-    cmdRegCount = vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958 ? 15 : 0;
 
-    if (vdp->vdpVersion == VDP_V9938) regCount = 24;
-    else if (vdp->vdpVersion == VDP_V9958) regCount = 32;
-    else regCount = 8;
+    if (vdp->vdpVersion == VDP_V9938) {
+        regCount = 24;
+        statusRegCount = 9;
+        paletteCount = 16;
+        cmdRegCount = 15;
+    }
+    else if (vdp->vdpVersion == VDP_V9958) {
+        regCount = 32;
+        statusRegCount = 9;
+        paletteCount = 16;
+        cmdRegCount = 15;
+    }
+    else {
+        regCount = 8;
+        statusRegCount = 1;
+        paletteCount = 0;
+        cmdRegCount = 0;
+    }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", regCount + cmdRegCount);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", 
+                                       regCount + 
+                                       cmdRegCount + 
+                                       paletteCount +
+                                       statusRegCount + 
+                                       extraRegCount);
 
     for (i = 0; i < regCount; i++) {
         char reg[4];
         sprintf(reg, "R%d", i);
-        dbgRegisterBankAddRegister(regBank, i, reg,  8, vdp->vdpRegs[i]);
+        dbgRegisterBankAddRegister(regBank, regOffset++, reg,  8, vdp->vdpRegs[i]);
     }
 
     for (i = 0; i < cmdRegCount; i++) {
         char reg[4];
         sprintf(reg, "R%d", 32 + i);
-        dbgRegisterBankAddRegister(regBank,  regCount + i, reg, 8, vdpCmdPeek(vdp->cmdEngine, i, boardSystemTime()));
+        dbgRegisterBankAddRegister(regBank, regOffset++, reg, 8, vdpCmdPeek(vdp->cmdEngine, i, boardSystemTime()));
     }
+
+    for (i = 0; i < paletteCount; i++) {
+        char reg[4];
+        sprintf(reg, "P%d", i);
+        dbgRegisterBankAddRegister(regBank, regOffset++, reg, 16, vdp->paletteReg[i]);
+    }
+
+    for (i = 0; i < statusRegCount; i++) {
+        char reg[4];
+        sprintf(reg, "S%d", i);
+        dbgRegisterBankAddRegister(regBank, regOffset++, reg, 8, vdp->vdpStatus[i]);
+    }
+
+    frameTime = boardSystemTime() - vdp->frameStartTime;
+    scanLine = frameTime / HPERIOD;
+    lineTime = frameTime % HPERIOD;
+    if (scanLine < 0) scanLine += vdpIsVideoPal(vdp) ? 313 : 262;
+    dbgRegisterBankAddRegister(regBank, regOffset++, "SCAN", 8, scanLine);
+    dbgRegisterBankAddRegister(regBank, regOffset++, "LNTM", 16, lineTime);
 }
 
 static int dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
@@ -1055,17 +1106,53 @@ static int dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
 static int dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
 {
     int regCount;
-    if (vdp->vdpVersion == VDP_V9938) regCount = 24;
-    else if (vdp->vdpVersion == VDP_V9958) regCount = 32;
-    else regCount = 8;
+    int cmdRegCount;
+    int paletteCount;
 
-    if (regIndex > regCount) {
+    if (vdp->vdpVersion == VDP_V9938) {
+        regCount = 24;
+        paletteCount = 16;
+        cmdRegCount = 15;
+    }
+    else if (vdp->vdpVersion == VDP_V9958) {
+        regCount = 32;
+        paletteCount = 16;
+        cmdRegCount = 15;
+    }
+    else {
+        regCount = 8;
+        paletteCount = 0;
+        cmdRegCount = 0;
+    }
+
+    if (regIndex < 0) {
         return 0;
     }
 
-    vdpUpdateRegisters(vdp, (UInt8)regIndex, (UInt8)value);
+    if (regIndex < regCount) {
+        vdpUpdateRegisters(vdp, (UInt8)regIndex, (UInt8)value);
+        return 1;
+    }
 
-    return 1;
+    regIndex -= regCount;
+
+    if (regIndex < cmdRegCount) {
+        return 0;
+    }
+
+    regIndex -= cmdRegCount;
+
+    if (regIndex < paletteCount) {
+        value &= 0x0777;
+        vdp->paletteReg[regIndex] = (UInt16)value;
+        vdp->palette[regIndex] = (((UInt32)(value & 0x70) * 255 / 112) << 16) |
+                                 (((UInt32)((value >> 8) & 0x07) * 255 / 7) << 8) |
+                                 ((UInt32)(value & 0x07) * 255 / 7);
+        SetColor(regIndex, vdp->palette[regIndex]);
+        return 1;
+    }
+
+    return 0;
 }
 
 static void reset(VDP* vdp)
@@ -1126,6 +1213,8 @@ static void reset(VDP* vdp)
     else {
         memcpy(vdp->palette, defaultPalette, sizeof(vdp->palette));
     }
+
+    memcpy(vdp->paletteReg, defaultPaletteRegs, sizeof(vdp->paletteReg));
 
     for (i = 0; i < 16; i++) {
         SetColor(i, vdp->palette[i]);
