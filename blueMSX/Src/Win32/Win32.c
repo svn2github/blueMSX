@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-07-23 06:10:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -931,8 +931,13 @@ typedef struct {
     ThemePage* themePageActive;
     ThemeCollection** themeList;
     int themeIndex;
+    HWND currentHwnd; // Used for arch specific theme events
+    POINT currentHwndMouse;
+    RECT currentHwndRect;
+
     int X;
     int Y;
+
 
 	//Precalc vars
 	int clientWidth;
@@ -1887,6 +1892,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_LBUTTONDOWN:
         SetCapture(hwnd);
     
+        st.currentHwnd = hwnd;
+
         if (st.themePageActive) {
             POINT pt;
             GetCursorPos(&pt);
@@ -1905,6 +1912,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
             themePageMouseButtonUp(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
+            st.currentHwnd = NULL;
         }
 
     case WM_ERASEBKGND:
@@ -2208,17 +2216,18 @@ void setDefaultPath() {
     mkdir(buffer);
     tapeSetDirectory(buffer, "");
 
+    sprintf(buffer, "%s\\Databases", rootDir);
+    mkdir(buffer);
+    mediaDbLoad(buffer);
+
     sprintf(buffer, "%s\\romdb.dat", rootDir);
-    sprintf(buffer2, "%s\\softwaredb.xml", rootDir);
-    mediaDbCreateRomdb(buffer, buffer2);
+    mediaDbCreateRomdb(buffer);
 
     sprintf(buffer, "%s\\diskdb.dat", rootDir);
-    sprintf(buffer2, "%s\\diskdb.xml", rootDir);
-    mediaDbCreateDiskdb(buffer, buffer2);
+    mediaDbCreateDiskdb(buffer);
 
     sprintf(buffer, "%s\\casdb.dat", rootDir);
-    sprintf(buffer2, "%s\\casdb.xml", rootDir);
-    mediaDbCreateCasdb(buffer, buffer2);
+    mediaDbCreateCasdb(buffer);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2696,7 +2705,7 @@ void* archScreenCapture(ScreenCaptureType type, int* bitmapSize)
     return NULL;
 }
 
-void archMinimizeWindow() {
+void archMinimizeMainWindow() {
     ShowWindow(getMainHwnd(), SW_MINIMIZE);
     updateMenu(0);
 }
@@ -2929,4 +2938,51 @@ int archFileExists(const char* fileName)
     return PathFileExists(fileName);
 }
 
+void archMaximizeWindow() {
+    if (st.currentHwnd != NULL) {
+//        ShowWindow(st.currentHwnd, SW_MAXIMIZE);
+        SendMessage(st.currentHwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+    }
+}
 
+void archMinimizeWindow() {
+    if (st.currentHwnd != NULL) {
+//        ShowWindow(st.currentHwnd, SW_MINIMIZE);
+        SendMessage(st.currentHwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+    }
+}
+
+void archCloseWindow() {
+    if (st.currentHwnd != NULL) {
+        SendMessage(st.currentHwnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+//        CloseWindow(st.currentHwnd);
+    }
+}
+
+void archWindowStartMove() {
+    if (st.currentHwnd != NULL) {
+        GetCursorPos(&st.currentHwndMouse);
+        GetWindowRect(st.currentHwnd, &st.currentHwndRect);
+        st.currentHwndRect.right = 1; // Used flag to detect window move
+    }
+}
+
+void archWindowMove() {
+    if (st.currentHwnd != NULL && st.currentHwndRect.right) {
+        POINT pt;
+        int x;
+        int y;
+        GetCursorPos(&pt);
+        x = st.currentHwndRect.left + pt.x - st.currentHwndMouse.x;
+        y = st.currentHwndRect.top  + pt.y - st.currentHwndMouse.y;
+        SetWindowPos(st.currentHwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    }
+}
+
+void archWindowEndMove() {
+    st.currentHwndRect.right = 0;
+}
+
+void SetCurrentWindow(HWND hwnd) {
+    st.currentHwnd = hwnd;
+}

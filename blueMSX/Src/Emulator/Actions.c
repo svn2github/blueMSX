@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-23 06:10:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -444,7 +444,7 @@ void actionWindowSizeFullscreen() {
 }
 
 void actionWindowSizeMinimized() {
-    archMinimizeWindow();
+    archMinimizeMainWindow();
 }
 
 void actionMaxSpeedToggle() {
@@ -781,6 +781,18 @@ void actionHelpShowHelp() {
 
 void actionHelpShowAbout() {
     archShowAboutDialog();
+}
+
+void actionMaximizeWindow() {
+    archMaximizeWindow();
+}
+
+void actionMinimizeWindow() {
+    archMinimizeWindow();
+}
+
+void actionCloseWindow() {
+    archCloseWindow();
 }
 
 void actionVolumeIncrease() {

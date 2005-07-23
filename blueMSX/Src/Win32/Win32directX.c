@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-07-23 06:10:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -520,6 +520,14 @@ int DirectXUpdateWindowedMode(HWND hwnd, int width, int height, int useVideoBack
     return DXE_OK;
 }
 
+static DWORD vblankRefOffset = 0;
+static DWORD vblankAdjust = 240;
+void DirectXAdjustVBlankOffset() {
+    DWORD s = 0;
+    HRESULT rv = IDirectDraw_GetScanLine(lpTheDD, &s);
+    vblankAdjust = (s + allScreenHeight - 10 - vblankRefOffset) % allScreenHeight;
+}
+
 int DirectXCheckVBlank()
 {
     if (lpTheDD == NULL) {
@@ -534,13 +542,23 @@ int DirectXCheckVBlank()
         if (rv != DD_OK) {
             return FALSE;
         }
-
+#if 0
+        vblankRefOffset = s;
+        s += vblankAdjust;
+        if (s > allScreenHeight) {
+            s -= allScreenHeight; 
+        }
+#endif
         if (s < o) {
             f = 0;
         }
         o = s;
 
+#if 0
+        if (f == 0) {
+#else
         if (f == 0 && s > allScreenHeight - 240) {
+#endif
             f = 1;
             return TRUE;
         }
@@ -704,6 +722,10 @@ int DirectXUpdateSurface(Video* pVideo,
         }
     } while (0);
 
+    if (syncVblank) {
+        DirectXAdjustVBlankOffset();
+    }
+
     if (lpDDSBack != NULL && !noFlip) {
 	    DDSCAPS ddscaps = { DDSCAPS_BACKBUFFER };
         do {
@@ -727,7 +749,7 @@ int DirectXUpdateSurface(Video* pVideo,
         if (ddrval == DDERR_SURFACELOST) {
             ddrval = IDirectDrawSurface_Restore(lpDDSPrimary);
         }
-    }    
+    }
 
     return 1;
 }

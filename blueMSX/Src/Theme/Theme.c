@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,17 @@
 #include "Actions.h"
 #include "ArchNotifications.h"
 
-typedef enum { ITEM_IMAGE, ITEM_TEXT, ITEM_BUTTON, ITEM_DUALBUTTON, ITEM_TOGGLEBUTTON, ITEM_METER, ITEM_SLIDER, ITEM_OBJECT } ItemType;
+typedef enum { 
+    ITEM_IMAGE, 
+    ITEM_GRABIMAGE, 
+    ITEM_TEXT, 
+    ITEM_BUTTON, 
+    ITEM_DUALBUTTON, 
+    ITEM_TOGGLEBUTTON, 
+    ITEM_METER, 
+    ITEM_SLIDER, 
+    ITEM_OBJECT 
+} ItemType;
 
 struct ThemeItem {
     ThemeItem*   next;
@@ -316,6 +326,9 @@ void themePageDestroy(ThemePage* themePage)
         case ITEM_IMAGE:
             activeImageDestroy(item->object);
             break;
+        case ITEM_GRABIMAGE:
+            activeGrabImageDestroy(item->object);
+            break;
         case ITEM_TEXT:
             activeTextDestroy(item->object);
             break;
@@ -348,6 +361,11 @@ void themePageDestroy(ThemePage* themePage)
 void themePageAddImage(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
 {
     themePageAddLast(themePage, ITEM_IMAGE, object, trigger, visible, THEME_TRIGGER_NONE);
+}
+
+void themePageAddGrabImage(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
+{
+    themePageAddLast(themePage, ITEM_GRABIMAGE, object, trigger, visible, THEME_TRIGGER_NONE);
 }
 
 void themePageAddMeter(ThemePage* themePage, void* object, ThemeTrigger trigger, ThemeTrigger visible)
@@ -410,6 +428,11 @@ void themePageMouseMove(ThemePage* themePage, void*  dc, int x, int y)
             break;
         case ITEM_TEXT:
             break;
+        case ITEM_GRABIMAGE:
+            if (activeGrabImageMouseMove(item->object, x, y)) {
+                activeGrabImageDraw(item->object, dc);
+            }
+            break;
         case ITEM_BUTTON:
             if (activeButtonMouseMove(item->object, x, y)) {
                 activeButtonDraw(item->object, dc);
@@ -445,6 +468,12 @@ void themePageMouseButtonDown(ThemePage* themePage, void*  dc, int x, int y)
         case ITEM_IMAGE:
             break;
         case ITEM_METER:
+            break;
+        case ITEM_GRABIMAGE:
+            if (activeGrabImageDown(item->object, x, y)) {
+                themePage->activeItem = item;
+                activeGrabImageDraw(item->object, dc);
+            }
             break;
         case ITEM_SLIDER:
             if (activeSliderDown(item->object, x, y)) {
@@ -493,6 +522,10 @@ void themePageMouseButtonUp(ThemePage* themePage, void*  dc, int x, int y)
         break;
     case ITEM_METER:
         break;
+    case ITEM_GRABIMAGE:
+        activeGrabImageUp(themePage->activeItem->object, x, y);
+        activeGrabImageDraw(themePage->activeItem->object, dc);
+        break;
     case ITEM_SLIDER:
         activeSliderUp(themePage->activeItem->object, x, y);
         activeSliderDraw(themePage->activeItem->object, dc);
@@ -527,6 +560,9 @@ void themePageDraw(ThemePage* themePage, void*  dc)
         switch (item->type) {
         case ITEM_IMAGE:
             activeImageDraw(item->object, dc);
+            break;
+        case ITEM_GRABIMAGE:
+            activeGrabImageDraw(item->object, dc);
             break;
         case ITEM_METER:
             activeMeterDraw(item->object, dc);
@@ -581,6 +617,9 @@ void themePageUpdate(ThemePage* themePage, void* dc)
         case ITEM_IMAGE:
             redrawAll |= activeImageShow(item->object, visible);
             break;
+        case ITEM_GRABIMAGE:
+            redrawAll |= activeGrabImageShow(item->object, visible);
+            break;
         case ITEM_METER:
             redrawAll |= activeMeterShow(item->object, visible);
             break;
@@ -616,6 +655,10 @@ void themePageUpdate(ThemePage* themePage, void* dc)
         case ITEM_IMAGE:
             if (trigger != -1) redraw |= activeImageSetImage(item->object, trigger);
             if (redraw) activeImageDraw(item->object, dc);
+            break;
+        case ITEM_GRABIMAGE:
+            if (trigger != -1) redraw |= activeGrabImageSetImage(item->object, trigger);
+            if (redraw) activeGrabImageDraw(item->object, dc);
             break;
         case ITEM_METER:
             if (trigger != -1) redraw |= activeMeterSetImage(item->object, trigger);

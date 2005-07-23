@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-01-29 00:28:50 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,6 +132,7 @@ char**     themeGetPageNames(Theme* theme);
 
 void themePageDestroy(ThemePage* theme);
 void themePageAddImage(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
+void themePageAddGrabImage(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 void themePageAddText(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible);
 void themePageAddButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);
 void themePageAddDualButton(ThemePage* theme, void* object, ThemeTrigger trigger, ThemeTrigger visible, ThemeTrigger pressed);

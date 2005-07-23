@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-04-11 20:47:02 $
+** $Date: 2005-07-23 06:10:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -140,9 +140,11 @@ void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName,
 MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size);
 
 
-void mediaDbCreateRomdb(const char* oldFileName, const char* xmlFileName);
-void mediaDbCreateDiskdb(const char* oldFileName, const char* xmlFileName);
-void mediaDbCreateCasdb(const char* oldFileName, const char* xmlFileName);
+void mediaDbLoad(const char* directory);
+
+void mediaDbCreateRomdb(const char* oldFileName);
+void mediaDbCreateDiskdb(const char* oldFileName);
+void mediaDbCreateCasdb(const char* oldFileName);
 
 
 MediaType* mediaDbLookupRom(const void *buffer, int size);

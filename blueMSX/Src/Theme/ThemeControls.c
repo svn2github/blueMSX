@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "ThemeControls.h"
 #include "ArchBitmap.h"
+#include "ArchNotifications.h"
 #include "ArchText.h"
 #include "MsxTypes.h"
 #include <stdlib.h>
@@ -764,7 +765,6 @@ int activeTextShow(ActiveText* activeText, int show)
     return activeImageShow(activeText->font, show);
 }
 
-
 struct ActiveMeter {
     ActiveImage* bitmap;
     int x;
@@ -964,6 +964,92 @@ int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y)
 }
 
 
+
+struct ActiveGrabImage {
+    ActiveImage* bitmap;
+    int x;
+    int y;
+    UInt32 width;
+    UInt32 height;
+    int downX;
+    int downY;
+    int downI;
+};
+
+ActiveGrabImage* activeGrabImageCreate(int x, int y, int cols, ArchBitmap* bitmap, int count)
+{
+    ActiveGrabImage* activeImage = malloc(sizeof(ActiveImage));
+
+    activeImage->bitmap  = activeImageCreate(x, y, cols, bitmap, count);
+
+    activeImage->x       = x;
+    activeImage->y       = y;
+    activeImage->width   = activeImageGetWidth(activeImage->bitmap);
+    activeImage->height  = activeImageGetHeight(activeImage->bitmap);
+    activeImage->downX   = 0;
+    activeImage->downY   = 0;
+    activeImage->downI   = 0;
+    return activeImage;
+}
+
+void activeGrabImageDestroy(ActiveGrabImage* activeImage)
+{
+    activeImageDestroy(activeImage->bitmap);
+    free(activeImage);
+}
+
+int activeGrabImageSetImage(ActiveGrabImage* activeImage, int index)
+{
+    return activeImageSetImage(activeImage->bitmap, index);
+}
+
+int activeGrabImageShow(ActiveGrabImage* activeImage, int show)
+{
+    return activeImageShow(activeImage->bitmap, show);
+}
+
+void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc)
+{
+    activeImageDraw(activeImage->bitmap, dc);
+}
+
+int activeGrabImageMouseMove(ActiveGrabImage* activeImage, int x, int y)
+{
+    return 0;
+}
+
+int activeGrabImageDown(ActiveGrabImage* activeImage, int x, int y)
+{
+    if (!activeImageIsVisible(activeImage->bitmap)) {
+        return 0;
+    }
+
+    if ((UInt32)(x - activeImage->x) >= activeImage->width ||
+        (UInt32)(y - activeImage->y) >= activeImage->height)
+    {
+        return 0;
+    }
+    
+    activeImage->downX = x;
+    activeImage->downY = y;
+    activeImage->downI = 1;
+
+    archWindowStartMove();
+    return 0;
+}
+
+int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y)
+{
+    if (!activeImage->downI) {
+        return 0;
+    }
+    
+    activeImage->downI = 0;
+
+    archWindowEndMove();
+
+    return 0;
+}
 
 struct ActiveObject 
 {

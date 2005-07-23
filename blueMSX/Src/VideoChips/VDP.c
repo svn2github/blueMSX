@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1313,3 +1313,11 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
 }
 
 #include "common.h"
+
+
+#if 0
+in SCREEN6, you have 4 bits to set the border and background colour, 
+but there are only 2 bits needed to select a colour
+so they made the highest 2 select the even pixels' colour and the 
+lowest 2 the odd pixels' colour
+#endif

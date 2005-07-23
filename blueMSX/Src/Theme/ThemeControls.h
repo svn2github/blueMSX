@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,7 +44,6 @@ int activeImageGetHeight(ActiveImage* activeImage);
 int activeImageSetImage(ActiveImage* activeImage, int index);
 int activeImageShow(ActiveImage* activeImage, int show);
 void activeImageDraw(ActiveImage* activeImage, void* dc);
-
 
 typedef struct ActiveButton ActiveButton;
 
@@ -92,6 +91,18 @@ void activeTextDestroy(ActiveText* activeText);
 int activeTextSetText(ActiveText* activeText, const char* string);
 void activeTextDraw(ActiveText* activeText, void* dc);
 int activeTextShow(ActiveText* activeText, int show);
+
+
+typedef struct ActiveGrabImage ActiveGrabImage;
+
+ActiveGrabImage* activeGrabImageCreate(int x, int y, int cols, ArchBitmap* bitmap, int count);
+void activeGrabImageDestroy(ActiveGrabImage* activeImage);
+int activeGrabImageMouseMove(ActiveGrabImage* activeImage, int x, int y);
+int activeGrabImageDown(ActiveGrabImage* activeImage, int x, int y);
+int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y);
+int activeGrabImageSetImage(ActiveGrabImage* activeImage, int index);
+int activeGrabImageShow(ActiveGrabImage* activeImage, int show);
+void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc);
 
 
 typedef struct ActiveMeter ActiveMeter;

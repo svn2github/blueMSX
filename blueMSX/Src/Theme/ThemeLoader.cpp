@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-07-23 06:10:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -250,8 +250,13 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-setmute"))        return (ButtonEvent)actionSetVolumeMute;
     if (0 == strcmp(action, "audio-setstereo"))      return (ButtonEvent)actionSetVolumeStereo;
 
+    if (0 == strcmp(action, "theme-maximize"))       return (ButtonEvent)actionMaximizeWindow;
+    if (0 == strcmp(action, "theme-minimize"))       return (ButtonEvent)actionMinimizeWindow;
+    if (0 == strcmp(action, "theme-close"))          return (ButtonEvent)actionCloseWindow;
+
     if (0 == strcmp(action, "theme-setpage"))        buttonEvent = (ButtonEvent)themeSetPageFromHash;
     if (0 == strcmp(action, "theme-openwindow"))     buttonEvent = (ButtonEvent)themeCollectionOpenWindow;
+
 
     if (buttonEvent != NULL) {
         const char* argaStr = el->Attribute(arg1Tag);
@@ -525,6 +530,25 @@ static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     }
 
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
+}
+
+static void addGrabImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
+                     TiXmlElement* el, int dx, int dy)
+{
+    int x, y, cols;
+    ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
+    if (bitmap == NULL) {
+        return;
+    }
+    x += dx;
+    y += dy;
+
+    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
+    if (visible == -1) {
+        visible = THEME_TRIGGER_NONE;
+    }
+
+    themePageAddGrabImage(themePage, activeGrabImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
 }
 
 static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
@@ -894,6 +918,9 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
         }
         if (strcmp(el->Value(), "image") == 0) {
             addImage(themeCollection, theme, themePage, el, dx, dy);
+        }
+        if (strcmp(el->Value(), "grabimage") == 0) {
+            addGrabImage(themeCollection, theme, themePage, el, dx, dy);
         }
         if (strcmp(el->Value(), "led") == 0) {
             addLed(themeCollection, theme, themePage, el, dx, dy);

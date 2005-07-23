@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-17 07:24:13 $
+** $Date: 2005-07-23 06:10:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,9 @@
 #include "ArchNotifications.h"
 #include "Language.h"
 #include "Resource.h"
+
+// Set current window for handling of minimize events, close events, ...
+extern void SetCurrentWindow(HWND hwnd);
 
 // Timer ID's
 #define TIMER_STATUSBAR_UPDATE              10
@@ -504,6 +507,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         break;
         
     case WM_MOUSEMOVE:
+        archWindowMove();
         {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             POINT pt;
@@ -521,6 +525,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             POINT pt;
             SetCapture(hwnd);
+            SetCurrentWindow(hwnd);
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
             themePageMouseButtonDown(themePage, GetDC(hwnd), pt.x, pt.y);
@@ -536,6 +541,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
             themePageMouseButtonUp(themePage, GetDC(hwnd), pt.x, pt.y);
+            SetCurrentWindow(NULL);
         }
 
     case WM_ERASEBKGND:
