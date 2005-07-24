@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2005-07-24 03:50:15 $
+** $Date: 2005-07-24 06:14:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2079,6 +2079,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 else {
                     RECT r;
                     GetClientRect(hwnd, &r);
+					themePageDraw(st.themePageActive, hMemDC);
                     StretchBlt(hdc, 0, 0, r.right, r.bottom, 
                                hMemDC, 0, 0, st.themePageActive->width, st.themePageActive->height, SRCCOPY);
                 }
