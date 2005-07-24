@@ -170,6 +170,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         ReleaseDC(hwnd, hdc);
         colorBlack = RGB(0, 0, 0);
         colorGray  = RGB(128, 128, 128);
+        colorLtGray  = RGB(192, 192, 192);
         colorRed   = RGB(255, 0, 0);
         SetBkMode(hMemdc, TRANSPARENT);
         hFont = CreateFont(-MulDiv(10, GetDeviceCaps(hMemdc, LOGPIXELSY), 72), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Courier New");
@@ -208,15 +209,17 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             int col;
             int row = HIWORD(lParam) / textHeight;
 
-            if (x >= 0 && x < 3 * memPerRow && x % 3 != 2) {
-                col = x / 3;
-                int addr = (row + si.nPos) * memPerRow + col;
-                if (addr < currentMemory->size) {
-                    addressInput->setValue(addr, false);
-                    currentEditAddress = addr;
-                    dataInput2->setPosition(10 + (3 * col + 8) * textWidth, row * textHeight - 2);
-                    dataInput2->setValue(currentMemory->memory[addr]);
-                    dataInput2->show();
+            if (row > 0) {
+                if (x >= 0 && x < 3 * memPerRow && x % 3 != 2) {
+                    col = x / 3;
+                    int addr = (row - 1 + si.nPos) * memPerRow + col;
+                    if (addr < currentMemory->size) {
+                        addressInput->setValue(addr, false);
+                        currentEditAddress = addr;
+                        dataInput2->setPosition(10 + (3 * col + 8) * textWidth, row * textHeight - 2);
+                        dataInput2->setValue(currentMemory->memory[addr]);
+                        dataInput2->show();
+                    }
                 }
             }
         }
@@ -514,7 +517,7 @@ void Memory::updateScroll()
     }
 
     int memSize = currentMemory != NULL ? currentMemory->size : 0;
-    lineCount = (memSize + memPerRow - 1) / memPerRow;
+    lineCount = 1 + (memSize + memPerRow - 1) / memPerRow;
 
     SCROLLINFO si;
     si.cbSize    = sizeof(SCROLLINFO);
@@ -593,9 +596,36 @@ void Memory::drawText(int top, int bottom)
     int memSize = currentMemory != NULL ? currentMemory->size : 0;
 
     for (int i = FirstLine; i <= LastLine; i++) {
+        if  (i == FirstLine) {
+            SelectObject(hMemdc, hBrushWhite); 
+            PatBlt(hMemdc, 0, 0, 1024, textHeight + 1, PATCOPY);
+            SetTextColor(hMemdc, colorLtGray);
+
+            RECT r = { 10 + textWidth * 8, 0, 100 + textWidth * 8, textHeight };
+            int j;
+            char addrText[16];
+            for (j = 0; j < memPerRow; j++) {
+                sprintf(addrText, "+%.1X", j & 15);
+                DrawText(hMemdc, addrText, strlen(addrText), &r, DT_LEFT);
+                
+                r.left  += textWidth * 3;
+                r.right += textWidth * 3;
+            }
+
+            r.left  += textWidth * 1;
+            r.right += textWidth * 1;
+
+            for (j = 0; j < memPerRow; j++) {
+                sprintf(addrText, "%.1X", j & 15);
+                DrawText(hMemdc, addrText, strlen(addrText), &r, DT_LEFT);
+                r.left  += textWidth * 1;
+                r.right += textWidth * 1;
+            }
+            continue;
+        }
         RECT r = { 10, textHeight * (i - yPos), 100, textHeight * (i + 1 - yPos) };
         
-        int addr = i * memPerRow;
+        int addr = (i - 1) * memPerRow;
 
         char addrText[16];
         sprintf(addrText, "%.6X", addr);

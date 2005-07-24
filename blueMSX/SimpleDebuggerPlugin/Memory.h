@@ -100,6 +100,7 @@ private:
 
     COLORREF colorBlack;
     COLORREF colorGray;
+    COLORREF colorLtGray;
     COLORREF colorRed;
 
     int currentAddress;
