@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-07-07 19:39:12 $
+** $Date: 2005-07-24 09:31:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@
 /* Alternative property default settings */
 #ifdef PROPERTIES_DEFAULTS_ALT_1
 
-void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang) 
+void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     int i;
     pProperties->language = EMU_LANG_ENGLISH;
@@ -57,7 +57,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->emulation.shortcutProfile[0] = 0;
     strcpy(pProperties->emulation.machineName, "MSX2 - Brazilian");
     pProperties->emulation.speed             = 50;
-    pProperties->emulation.syncMethod        = P_EMU_SYNCTOVBLANK;
+    pProperties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
     pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
     pProperties->emulation.enableFdcTiming   = 1;
     pProperties->emulation.frontSwitch       = 0;
@@ -243,7 +243,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
 #else
 
 /* Default property settings */
-void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang) 
+void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     int i;
     pProperties->language                 = EMU_LANG_ENGLISH;
@@ -262,7 +262,7 @@ void propInitDefaults(Properties* pProperties, PropKeyboardLanguage kbdLang)
     pProperties->emulation.shortcutProfile[0] = 0;
     strcpy(pProperties->emulation.machineName, "MSX2");
     pProperties->emulation.speed             = 50;
-    pProperties->emulation.syncMethod        = P_EMU_SYNCAUTO;
+    pProperties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
     pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
     pProperties->emulation.enableFdcTiming   = 1;
     pProperties->emulation.frontSwitch       = 0;
@@ -877,7 +877,7 @@ Properties* propGetGlobalProperties()
     return globalProperties;
 }
 
-Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang) 
+Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     Properties* pProperties;
 
@@ -889,7 +889,7 @@ Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang)
 
     pProperties->joy1.id = 1;
     pProperties->joy2.id = 2;
-    propInitDefaults(pProperties, kbdLang);
+    propInitDefaults(pProperties, kbdLang, syncMode);
 
     if (!useDefault) {
         propLoad(pProperties);

@@ -1,8 +1,8 @@
 #ifndef BUILD_NUMBER_H
 #define BUILD_NUMBER_H
 
-#define BUILD_NUMBER 20917
+#define BUILD_NUMBER 20943
 
-#define BUILD_DATE "7/23 2005 11:9pm"
+#define BUILD_DATE "7/24 2005 2:16am"
 
 #endif
