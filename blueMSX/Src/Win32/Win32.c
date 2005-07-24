@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2005-07-24 06:14:37 $
+** $Date: 2005-07-24 09:31:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,8 +82,34 @@
 #include "Win32ThemeClassic.h"
 #include "ArchNotifications.h"
 #include "ArchEvent.h"
+#include "ArchTimer.h"
 
 void vdpSetDisplayEnable(int enable);
+
+int canHandleVblankSyncMode() {
+    DWORD t1;
+    DWORD t2;
+    DWORD cnt = 0;
+    int currPri;
+    
+    currPri= GetThreadPriority(GetCurrentThread());
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+
+    t1 = t2 = archGetSystemUpTime(100);
+    while (t2 == t1) {
+        t1 = t2;
+        t2 = archGetSystemUpTime(100);
+    }
+    t1 = t2;
+    while (t2 == t1) {
+        t1 = t2;
+        t2 = archGetSystemUpTime(100);
+        cnt++;
+    }
+    SetThreadPriority(GetCurrentThread(), currPri);
+
+    return cnt > 6000;
+}
 
 void centerDialog(HWND hwnd, int noActivate) {
     RECT r1;
@@ -2335,15 +2361,20 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     {
         /* Modify scan code map if nessecary */
         PropKeyboardLanguage kbdLang = P_KBD_EUROPEAN;
+        int syncMode = 0;
         char klId[KL_NAMELENGTH];
         if (GetKeyboardLayoutName(klId)) {
             if (0 == strcmp(klId + 4, "0411")) {
                 kbdLang = P_KBD_JAPANESE;
             }
         }
+
         resetRegistry = emuCheckResetArgument(szLine);
+        if (resetRegistry) {
+            syncMode = canHandleVblankSyncMode() ? 1 : 0;
+        }
         propertiesInit(emuCheckIniFileArgument(szLine));
-        pProperties = propCreate(resetRegistry, kbdLang);
+        pProperties = propCreate(resetRegistry, kbdLang, syncMode);
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
         
         if (resetRegistry == 2) {

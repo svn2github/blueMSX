@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-07-24 09:31:14 $
+** $Date: 2005-07-24 09:32:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -468,7 +468,7 @@ static void propLoad(Properties* pProperties)
     getStrValue("MachineName", (char*)pProperties->emulation.machineName);
     getStrValue("ShortcutProfile", (char*)pProperties->emulation.shortcutProfile);
     getIntValue("EmulationSpeed", &pProperties->emulation.speed);
-    getIntValue("EmulationSyncMethod", &pProperties->emulation.syncMethod);
+    getIntValue("EmuSyncMethod", &pProperties->emulation.syncMethod);
     getIntValue("VdpSyncMode", &pProperties->emulation.vdpSyncMode);
     
     getIntValue("EnableFdcTiming", &pProperties->emulation.enableFdcTiming);
@@ -676,7 +676,7 @@ void propSave(Properties* pProperties)
     setStrValue("MachineName", (char*)pProperties->emulation.machineName);
     setStrValue("ShortcutProfile", (char*)pProperties->emulation.shortcutProfile);
     setIntValue("EmulationSpeed", pProperties->emulation.speed);
-    setIntValue("EmulationSyncMethod", pProperties->emulation.syncMethod);
+    setIntValue("EmuSyncMethod", pProperties->emulation.syncMethod);
     setIntValue("VdpSyncMode", pProperties->emulation.vdpSyncMode);
     setIntValue("EnableFdcTiming", pProperties->emulation.enableFdcTiming);
     setIntValue("FrontSwitch", pProperties->emulation.frontSwitch);

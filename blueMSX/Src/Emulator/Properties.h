@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-07-07 19:39:13 $
+** $Date: 2005-07-24 09:31:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -281,7 +281,7 @@ typedef struct {
     Settings            settings;
 } Properties;
 
-Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang);
+Properties* propCreate(int useDefault, PropKeyboardLanguage kbdLang, int syncMode);
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
 
