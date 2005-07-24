@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-07-24 03:50:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -469,12 +469,6 @@ void themePageMouseButtonDown(ThemePage* themePage, void*  dc, int x, int y)
             break;
         case ITEM_METER:
             break;
-        case ITEM_GRABIMAGE:
-            if (activeGrabImageDown(item->object, x, y)) {
-                themePage->activeItem = item;
-                activeGrabImageDraw(item->object, dc);
-            }
-            break;
         case ITEM_SLIDER:
             if (activeSliderDown(item->object, x, y)) {
                 themePage->activeItem = item;
@@ -503,6 +497,21 @@ void themePageMouseButtonDown(ThemePage* themePage, void*  dc, int x, int y)
             break;
         }
     }
+
+    if (themePage->activeItem) {
+        return;
+    }
+
+    // Check items with lower priority
+    for (item = themePage->itemList; item != NULL; item = item->next) {
+        switch (item->type) {
+        case ITEM_GRABIMAGE:
+            if (activeGrabImageDown(item->object, x, y)) {
+                themePage->activeItem = item;
+            }
+            break;
+        }
+    }
 }
 
 void themePageMouseButtonUp(ThemePage* themePage, void*  dc, int x, int y)
@@ -524,7 +533,6 @@ void themePageMouseButtonUp(ThemePage* themePage, void*  dc, int x, int y)
         break;
     case ITEM_GRABIMAGE:
         activeGrabImageUp(themePage->activeItem->object, x, y);
-        activeGrabImageDraw(themePage->activeItem->object, dc);
         break;
     case ITEM_SLIDER:
         activeSliderUp(themePage->activeItem->object, x, y);

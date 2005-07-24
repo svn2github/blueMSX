@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2005-07-23 07:55:04 $
+** $Date: 2005-07-24 03:50:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1891,18 +1891,26 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         break;
 
     case WM_LBUTTONDOWN:
-        SetCapture(hwnd);
-    
-        st.currentHwnd = hwnd;
-
-        if (st.themePageActive) {
+        {
             POINT pt;
+            RECT r;
+
             GetCursorPos(&pt);
-            ScreenToClient(hwnd, &pt);
-            themePageMouseButtonDown(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
-        }
-        if (st.showMenu && pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
-            updateMenu(0);
+            GetWindowRect(st.emuHwnd, &r);
+            if (!IsWindowVisible(st.emuHwnd) || !PtInRect(&r, pt)) {
+                SetCapture(hwnd);
+                st.currentHwnd = hwnd;
+
+                if (st.themePageActive) {
+                    POINT pt;
+                    GetCursorPos(&pt);
+                    ScreenToClient(hwnd, &pt);
+                    themePageMouseButtonDown(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
+                }
+                if (st.showMenu && pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+                    updateMenu(0);
+                }
+            }
         }
         break;
 
@@ -2221,13 +2229,13 @@ void setDefaultPath() {
     mkdir(buffer);
     mediaDbLoad(buffer);
 
-    sprintf(buffer, "%s\\romdb.dat", rootDir);
+    sprintf(buffer, "%s\\Databases\\romdb.dat", rootDir);
     mediaDbCreateRomdb(buffer);
 
-    sprintf(buffer, "%s\\diskdb.dat", rootDir);
+    sprintf(buffer, "%s\\Databases\\diskdb.dat", rootDir);
     mediaDbCreateDiskdb(buffer);
 
-    sprintf(buffer, "%s\\casdb.dat", rootDir);
+    sprintf(buffer, "%s\\Databases\\casdb.dat", rootDir);
     mediaDbCreateCasdb(buffer);
 }
 

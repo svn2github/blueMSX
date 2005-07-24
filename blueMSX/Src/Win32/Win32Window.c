@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-07-23 06:10:51 $
+** $Date: 2005-07-24 03:50:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,10 +122,10 @@ static void windowDataSet(HWND hwnd, int id, void* data)
         int i;
         for (i = 0; windowData[i].hwnd != NULL; i++) {
             if (windowData[i].hwnd == hwnd) {
-                while (windowData[i + 1].hwnd != NULL) {
+                do {
                     windowData[i] = windowData[i + 1];
                     i++;
-                }
+                } while (windowData[i].hwnd != NULL);
                 return;
             }
         }
@@ -568,6 +568,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         return 0;
     }
 
+    wi = windowDataGet(hwnd);
     if (wi && wi->theme->themeHandler == TH_KBDCONFIG) {
         rv = keyboardDlgProc(hwnd, iMsg, wParam, lParam);
     }

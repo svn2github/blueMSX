@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-07-23 07:55:04 $
+** $Date: 2005-07-24 03:50:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1022,7 +1022,7 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     int cmdRegCount;
     int regCount;
     int i;
-    int extraRegCount = 2;
+    int extraRegCount = 3;
     int statusRegCount;
     int paletteCount;
     int scanLine;
@@ -1088,6 +1088,7 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     scanLine = frameTime / HPERIOD;
     lineTime = frameTime % HPERIOD;
     if (scanLine < 0) scanLine += vdpIsVideoPal(vdp) ? 313 : 262;
+    dbgRegisterBankAddRegister(regBank, regOffset++, "VRMP", 16, vdp->vramAddress);
     dbgRegisterBankAddRegister(regBank, regOffset++, "SCAN", 8, scanLine);
     dbgRegisterBankAddRegister(regBank, regOffset++, "LNTM", 16, lineTime);
 }
@@ -1150,6 +1151,12 @@ static int dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
                                  ((UInt32)(value & 0x07) * 255 / 7);
         SetColor(regIndex, vdp->palette[regIndex]);
         return 1;
+    }
+
+    regIndex -= paletteCount;
+
+    if (regIndex == 0) { // VRMP
+        vdp->vramAddress = (UInt16)value & 0x3fff;
     }
 
     return 0;

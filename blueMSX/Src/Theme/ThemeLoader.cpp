@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-07-24 03:50:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -919,7 +919,7 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
         if (strcmp(el->Value(), "image") == 0) {
             addImage(themeCollection, theme, themePage, el, dx, dy);
         }
-        if (strcmp(el->Value(), "grabimage") == 0) {
+        if (strcmp(el->Value(), "dragimage") == 0) {
             addGrabImage(themeCollection, theme, themePage, el, dx, dy);
         }
         if (strcmp(el->Value(), "led") == 0) {

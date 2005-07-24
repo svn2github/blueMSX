@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-07-23 06:10:49 $
+** $Date: 2005-07-24 03:50:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@ extern "C" {
 #include "MediaDb.h"
 #include "Crc32.h"
 #include "TokenExtract.h"
+#include "StrcmpNoCase.h"
 }
 
 #include "TinyXml.h"
@@ -246,6 +247,14 @@ static void mediaDbAddDump(TiXmlElement* dmp,
                     romType = mediaDbStringToType(name->Value());
                 }
             }
+        }
+
+        if (strcmpnocase(system.c_str(), "coleco") == 0) {
+            romType = ROM_COLECO;
+        }
+
+        if (strcmpnocase(system.c_str(), "svi") == 0) {
+            romType = ROM_SVI328;
         }
 
         // For standard roms, a start tag is used to specify start address
@@ -975,7 +984,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 
 
 static void mediaDbAddFromOldFile(MediaDb* mediaDb, 
-                                      const char* fileName, OldFormat format) 
+                                  const char* fileName, OldFormat format) 
 {
     FILE* file = fopen(fileName, "r");
     if (file == NULL) {
@@ -1007,7 +1016,9 @@ static void mediaDbAddFromOldFile(MediaDb* mediaDb,
             title = title.substr(0, title.length() - 10);
         }
 
-        mediaDb->crcMap[crc32] = new MediaType(romType, title);
+        if (mediaDb->crcMap.find(crc32) == mediaDb->crcMap.end()) {
+            mediaDb->crcMap[crc32] = new MediaType(romType, title);
+        }
     }
 }
 
@@ -1018,7 +1029,7 @@ extern "C" void mediaDbCreateRomdb(const char* oldFileName)
         romdb = new MediaDb;
     }
 
-//    mediaDbAddFromOldFile(romdb, oldFileName, FORMAT_ROM);
+    mediaDbAddFromOldFile(romdb, oldFileName, FORMAT_ROM);
 }
 
 extern "C" void mediaDbCreateDiskdb(const char* oldFileName)
@@ -1027,7 +1038,7 @@ extern "C" void mediaDbCreateDiskdb(const char* oldFileName)
         diskdb = new MediaDb;
     }
 
-//    mediaDbAddFromOldFile(diskdb, oldFileName, FORMAT_DISK);
+    mediaDbAddFromOldFile(diskdb, oldFileName, FORMAT_DISK);
 }
 
 extern "C" void mediaDbCreateCasdb(const char* oldFileName)
@@ -1036,6 +1047,5 @@ extern "C" void mediaDbCreateCasdb(const char* oldFileName)
         casdb = new MediaDb;
     }
 
-//    mediaDbAddFromOldFile(casdb, oldFileName, FORMAT_CAS);
+    mediaDbAddFromOldFile(casdb, oldFileName, FORMAT_CAS);
 }
-

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-07-24 03:50:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1035,7 +1035,7 @@ int activeGrabImageDown(ActiveGrabImage* activeImage, int x, int y)
     activeImage->downI = 1;
 
     archWindowStartMove();
-    return 0;
+    return 1;
 }
 
 int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y)
