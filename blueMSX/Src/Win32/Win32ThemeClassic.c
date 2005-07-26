@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-29 00:28:52 $
+** $Date: 2005-07-26 05:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@ static ThemePage* themeCreateSmall()
                                RGB(219, 221, 224),
                                RGB(128, 128, 255),
                                RGB(0, 0, 0),
+                               0,
                                0,
                                NULL);
 
@@ -115,6 +116,7 @@ static ThemePage* themeCreateNormal()
                                RGB(219, 221, 224),
                                RGB(128, 128, 255),
                                RGB(0, 0, 0),
+                               0,
                                0,
                                NULL);
 
@@ -189,6 +191,7 @@ static ThemePage* themeCreateFullscreen()
                                RGB(219, 221, 224),
                                RGB(128, 128, 255),
                                RGB(0, 0, 0),
+                               0,
                                0,
                                NULL);
 

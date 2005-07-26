@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-07-26 05:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,6 +75,7 @@ struct ThemePage {
         int count;
         ClipPoint* list;
     } clipPoint;
+    int noFrame;
 
 // private:
     ThemeItem*        itemList;
@@ -108,6 +109,7 @@ ThemePage* themePageCreate(const char* name,
                            unsigned long menuColor,
                            unsigned long menuFocusColor,
                            unsigned long menuTextColor,
+                           int        noFrame,
                            int        clipPointCount,
                            ClipPoint* clipPointList);
 

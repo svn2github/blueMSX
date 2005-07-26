@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2005-07-24 09:31:15 $
+** $Date: 2005-07-26 05:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -923,6 +923,7 @@ typedef struct {
     HWND emuHwnd;
     HWND hwnd;
     HRGN hrgn;
+    int      clipAlways;
     int      rgnSize;
     RGNDATA* rgnData;
     int      rgnSizeOrig;
@@ -1225,7 +1226,7 @@ static void setClipRegion(int enable) {
     if (st.rgnEnable == enable) {
         return;
     }
-    if (!enable || st.rgnData == NULL || st.showDialog) {
+    if ((!enable || st.rgnData == NULL || st.showDialog) && !st.clipAlways) {
         SetWindowRgn(st.hwnd, NULL, TRUE);
         st.rgnEnable = 0;
     }
@@ -1248,7 +1249,7 @@ static void updateClipRegion() {
 }
 
 static void checkClipRegion() {
-    if (st.rgnData != NULL && st.hrgn != NULL) {
+    if (st.rgnData != NULL && st.hrgn != NULL && !st.clipAlways) {
         POINT pt;
         RECT r;
 
@@ -1360,20 +1361,36 @@ void themeSet(char* themeName, int forceMatch) {
         setClipRegion(0);
     } 
     else {
-        if (st.themePageActive->clipPoint.count > 0) {
+        int clipCount = st.themePageActive->clipPoint.count;
+        st.clipAlways = st.themePageActive->noFrame;
+
+        if (clipCount > 0 || st.clipAlways) {
             int i;
             HRGN hrgn;
             POINT pt[512];
             int dx = GetSystemMetrics(SM_CXFIXEDFRAME);
             int dy = GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
 
-            for (i = 0; i < st.themePageActive->clipPoint.count; i++) {
-                ClipPoint cp = st.themePageActive->clipPoint.list[i];
-                pt[i].x = cp.x + dx;
-                pt[i].y = cp.y + dy;
+            if (clipCount == 0) {
+                pt[0].x = 0 + dx;
+                pt[0].y = 0 + dy;
+                pt[1].x = st.themePageActive->width + dx;
+                pt[1].y = 0 + dy;
+                pt[2].x = st.themePageActive->width + dx;
+                pt[2].y = st.themePageActive->height + dy;
+                pt[3].x = 0 + dx;
+                pt[3].y = st.themePageActive->height + dy;
+                clipCount = 4;
+            }
+            else {
+                for (i = 0; i < clipCount; i++) {
+                    ClipPoint cp = st.themePageActive->clipPoint.list[i];
+                    pt[i].x = cp.x + dx;
+                    pt[i].y = cp.y + dy;
+                }
             }
 
-            hrgn = CreatePolygonRgn(pt, st.themePageActive->clipPoint.count, WINDING);
+            hrgn = CreatePolygonRgn(pt, clipCount, WINDING);
             st.rgnSize = 0;
             if (hrgn != NULL) {
                 st.rgnSize = GetRegionData(hrgn, 0, NULL);
@@ -1396,7 +1413,7 @@ void themeSet(char* themeName, int forceMatch) {
             }
         }
 
-        setClipRegion(st.themePageActive->clipPoint.count > 0);
+        setClipRegion(clipCount > 0);
 
         if (st.rgnData == NULL) {
             KillTimer(st.hwnd, TIMER_CLIP_REGION);

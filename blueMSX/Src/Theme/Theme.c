@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-07-24 03:50:14 $
+** $Date: 2005-07-26 05:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -279,6 +279,7 @@ ThemePage* themePageCreate(const char* name,
                            COLORREF menuColor,
                            COLORREF menuFocusColor,
                            COLORREF menuTextColor,
+                           int        noFrame,
                            int        clipPointCount,
                            ClipPoint* clipPointList)
 {
@@ -299,6 +300,7 @@ ThemePage* themePageCreate(const char* name,
     themePage->menu.focusColor = menuFocusColor;
     themePage->menu.textColor  = menuTextColor;
     themePage->clipPoint.count = clipPointCount;
+    themePage->noFrame         = noFrame;
 
     if (clipPointCount > 0) {
         int size = clipPointCount * sizeof(ClipPoint);

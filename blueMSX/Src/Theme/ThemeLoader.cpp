@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-07-24 03:50:14 $
+** $Date: 2005-07-26 05:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -952,7 +952,10 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     }
 }
 
-static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, TiXmlElement* root, const char* name, int width, int height, int emuWidth, int emuHeight, int fullscreen) 
+static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, 
+                                TiXmlElement* root, const char* name, 
+                                int width, int height, int frame, 
+                                int emuWidth, int emuHeight, int fullscreen) 
 {
     ThemePage* themePage = NULL;
 
@@ -968,6 +971,7 @@ static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, 
     int menuFocusColor = RGB(128, 128, 255);
     int menuTextColor  = RGB(0, 0, 0);
     int color;
+    int noFrame        = frame ? 0 : 1;
 
     // First, get info about emu window and menu
     for (infoEl = root->FirstChildElement(); infoEl != NULL; infoEl = infoEl->NextSiblingElement()) {
@@ -1037,6 +1041,7 @@ static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme, 
                         menuColor,
                         menuFocusColor,
                         menuTextColor,
+                        noFrame,
                         clipPointCount,
                         clipPointList);
 
@@ -1061,6 +1066,9 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
         if (name == NULL) {
             name = "window";
         }
+
+        int frame = 1;
+        modeEl->QueryIntAttribute("frame", &frame);
 
         ThemeHandler themeHandler = TH_NORMAL;
         
@@ -1090,7 +1098,7 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
                     themeSetHandler(theme, themeHandler);
                 }
 
-                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, 0, 0, 0);
+                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, frame, 0, 0, 0);
                 themeAddPage(theme, themePage);
             }
         }
@@ -1105,7 +1113,7 @@ static int loadThemeWindows(ThemeCollection* themeCollection, TiXmlElement* root
                 theme = themeCreate(name);
                 themeSetHandler(theme, themeHandler);
             }
-            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, 0, 0, 0);
+            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, frame, 0, 0, 0);
             themeAddPage(theme, themePage);
         }
 
@@ -1140,6 +1148,9 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 
         const char* name = themeDefaultInfo[themeInfo].mode;
 
+        int frame  = 1;
+        modeEl->QueryIntAttribute("frame", &frame);
+
         const char* type = modeEl->Attribute("type");
         if (type != NULL && 0 == strcmp(type, "multipage")) {
             TiXmlElement* pageEl;
@@ -1160,7 +1171,7 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
                     pageName = name;
                 }
 
-                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, emuWidth, emuHeight, fullscreen);
+                ThemePage* themePage = loadThemePage(themeCollection, theme, pageEl, pageName, width, height, frame, emuWidth, emuHeight, fullscreen);
                 themeAddPage(theme, themePage);
             }
         }
@@ -1177,7 +1188,7 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
             if (theme == NULL) {
                 theme = themeCreate(name);
             }
-            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, emuWidth, emuHeight, fullscreen);
+            ThemePage* themePage = loadThemePage(themeCollection, theme, modeEl, name, width, height, frame, emuWidth, emuHeight, fullscreen);
             themeAddPage(theme, themePage);
         }
     }
