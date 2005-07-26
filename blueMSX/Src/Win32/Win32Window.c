@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-07-26 05:27:11 $
+** $Date: 2005-07-26 06:37:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -645,7 +645,7 @@ void* archWindowCreate(Theme* theme, int childWindow)
 
     wi = calloc(1, sizeof(WindowInfo));
     wi->theme = theme;
-
+#define childWindow 0
     if (childWindow) {
         return CreateWindowEx(WS_EX_TOOLWINDOW, "blueMSX Popup", theme->name, 
                             WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
