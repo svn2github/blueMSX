@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-08-09 08:16:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,20 +34,22 @@
 #include <tchar.h>
 
 typedef enum { 
-    EMU_LANG_ENGLISH    = 0, 
-    EMU_LANG_SWEDISH    = 1, 
-    EMU_LANG_JAPANESE   = 2, 
-    EMU_LANG_PORTUGUESE = 3, 
-    EMU_LANG_FRENCH     = 4, 
-    EMU_LANG_DUTCH      = 5,
-    EMU_LANG_SPANISH    = 6,
-    EMU_LANG_ITALIAN    = 7,
-    EMU_LANG_FINNISH    = 8,
-    EMU_LANG_KOREAN     = 9,
-    EMU_LANG_GERMAN     = 10,
-    EMU_LANG_POLISH     = 11,
-    EMU_LANG_COUNT      = 12,
-    EMU_LANG_UNKNOWN    = -1 
+    EMU_LANG_ENGLISH     = 0, 
+    EMU_LANG_SWEDISH     = 1, 
+    EMU_LANG_JAPANESE    = 2, 
+    EMU_LANG_PORTUGUESE  = 3, 
+    EMU_LANG_FRENCH      = 4, 
+    EMU_LANG_DUTCH       = 5,
+    EMU_LANG_SPANISH     = 6,
+    EMU_LANG_ITALIAN     = 7,
+    EMU_LANG_FINNISH     = 8,
+    EMU_LANG_KOREAN      = 9,
+    EMU_LANG_GERMAN      = 10,
+    EMU_LANG_POLISH      = 11,
+    EMU_LANG_CHINESESIMP = 12,
+    EMU_LANG_CHINESETRAD = 13,
+    EMU_LANG_COUNT       = 14,
+    EMU_LANG_UNKNOWN     = -1 
 } EmuLanguageType;
 
 void langInit();

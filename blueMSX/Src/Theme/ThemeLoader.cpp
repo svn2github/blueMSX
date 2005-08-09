@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-07-26 05:27:11 $
+** $Date: 2005-08-09 08:16:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -548,7 +548,11 @@ static void addGrabImage(ThemeCollection* themeCollection, Theme* theme, ThemePa
         visible = THEME_TRIGGER_NONE;
     }
 
-    themePageAddGrabImage(themePage, activeGrabImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
+    int activenotify = 0;
+    el->QueryIntAttribute("activenotify", &activenotify);
+    int count = activenotify ? 2 : 1;
+
+    themePageAddGrabImage(themePage, activeGrabImageCreate(x, y, cols, bitmap, count), THEME_TRIGGER_NONE, visible);
 }
 
 static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
@@ -908,7 +912,6 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     root->QueryIntAttribute("x", &x);
     int y = 0;
     root->QueryIntAttribute("y", &y);
-
     dx += x;
     dy += y;
 

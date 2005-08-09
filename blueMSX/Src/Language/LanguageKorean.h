@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.11 $ + additions 2005/03/03
+** $Revision: 1.12 $ + additions 2005/03/03
 **
-** $Date: 2005-06-24 17:33:25 $
+** $Date: 2005-08-09 08:16:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -584,6 +584,23 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "폼피드";
     ls->menuFilePrn             = "프린터";
     ls->propPortsComFile        = "파일에 보내기";
+
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "믹서 보기";
+    ls->menuToolsMixer          = "믹서";
+    
+    ls->propSndMidiInGB         = "MIDI 입력 ";
+    ls->propSndMidiOutGB        = "MIDI 출력 ";
+    ls->propSndMt32ToGmText     = " GM에 MT-32 악기배열";
+
+    ls->textDevice              = "장치:";
+    ls->textFilename            = "파일 이름:";
+    ls->textFile                = "파일";
+    ls->textNone                = "없음";
+
+    ls->enumEmuSyncAuto         = "자동 (빠름)";
+    ls->enumEmuSync1ms          = "MSX 리프레쉬 동기";
+    ls->enumEmuSyncVblank       = "PC 버티컬 블링크에 동기";
 };
 
 #endif

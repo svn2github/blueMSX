@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-07-24 03:50:14 $
+** $Date: 2005-08-09 08:16:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,27 @@
 #include <string.h>
 #include <math.h>
 
+
+static int PointInRect(ActiveRect* rect, int x, int y) {
+    x -= rect->x;
+    y -= rect->y;
+    return (unsigned int)x < (unsigned int)rect->width && 
+           (unsigned int)y < (unsigned int)rect->height;
+}
+
+struct ActiveItem {
+    ActiveRect rect;
+};
+
+void activeItemGetRect(void* activeItem, ActiveRect* rect)
+{
+    ActiveItem* ai = (ActiveItem*)activeItem;
+
+    *rect = ai->rect;
+}
+
 struct ActiveImage {
+    ActiveItem  activeItem;
     ArchBitmap* bitmap;
     int width;
     int height;
@@ -61,6 +81,11 @@ ActiveImage* activeImageCreate(int x, int y, int cols, ArchBitmap* bitmap, int c
     activeImage->width   = archBitmapGetWidth(activeImage->bitmap) / (count < cols ? count : cols);
     activeImage->height  = archBitmapGetHeight(activeImage->bitmap) / (1 + (count - 1) / cols);
     activeImage->show    = 1;
+
+    activeImage->activeItem.rect.x      = x;
+    activeImage->activeItem.rect.y      = y;
+    activeImage->activeItem.rect.width  = archBitmapGetWidth(activeImage->bitmap) / (count < cols ? count : cols);
+    activeImage->activeItem.rect.height = archBitmapGetHeight(activeImage->bitmap) / (1 + (count - 1) / cols);
 
     return activeImage;
 }
@@ -123,8 +148,13 @@ int activeImageShow(ActiveImage* activeImage, int show)
     return 1;
 }
 
-void activeImageDraw(ActiveImage* activeImage, void* dc)
+void activeImageDraw(ActiveImage* activeImage, void* dc, ActiveRect* rect)
 {
+    if (!PointInRect(rect, activeImage->x, activeImage->y) && 
+        !PointInRect(rect, activeImage->x + activeImage->width, activeImage->y + activeImage->height)) 
+    {
+        return;
+    }
     if (activeImage->show && activeImage->count > 0) {
         archBitmapDraw(activeImage->bitmap, dc, 
                      activeImage->x, activeImage->y, 
@@ -137,6 +167,7 @@ void activeImageDraw(ActiveImage* activeImage, void* dc)
 typedef enum { AB_NORMAL = 0, AB_HOOVER = 1, AB_PUSHED = 2 } ButtonState;
 
 struct ActiveButton {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int state;
     int pushed;
@@ -164,6 +195,8 @@ ActiveButton* activeButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, But
     activeButton->arg1    = arg1;
     activeButton->arg2    = arg2;
 
+    activeButton->activeItem = activeButton->bitmap->activeItem;
+
     return activeButton;
 }
 
@@ -173,9 +206,9 @@ void activeButtonDestroy(ActiveButton* activeButton)
     free(activeButton);
 }
 
-void activeButtonDraw(ActiveButton* activeButton, void* dc)
+void activeButtonDraw(ActiveButton* activeButton, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeButton->bitmap, dc);
+    activeImageDraw(activeButton->bitmap, dc, rect);
 }
 
 static int activeButtonSetImage(ActiveButton* activeButton)
@@ -283,6 +316,7 @@ int activeButtonUp(ActiveButton* activeButton, int x, int y)
 typedef enum { ADB_NORMAL = 0, ADB_HOOVER = 1, ADB_PUSHEDA = 2, ADB_PUSHEDB = 3 } DualButtonState;
 
 struct ActiveDualButton {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int state;
     int pushed;
@@ -324,6 +358,8 @@ ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bit
     activeButton->argB2    = argB2;
     activeButton->vertical = vertical;
 
+    activeButton->activeItem = activeButton->bitmap->activeItem;
+
     return activeButton;
 }
 
@@ -333,9 +369,9 @@ void activeDualButtonDestroy(ActiveDualButton* activeButton)
     free(activeButton);
 }
 
-void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc)
+void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeButton->bitmap, dc);
+    activeImageDraw(activeButton->bitmap, dc, rect);
 }
 
 static int activeDualButtonSetImage(ActiveDualButton* activeButton)
@@ -454,6 +490,7 @@ int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y)
 typedef enum { ATB_NORMAL = 0, ATB_HOOVER = 1, ATB_PUSHED = 2 } ToggleButtonState;
 
 struct ActiveToggleButton {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int state;
     int pushed;
@@ -483,6 +520,8 @@ ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, ArchBitmap*
     activeButton->arg1    = arg1;
     activeButton->arg2    = arg2;
 
+    activeButton->activeItem = activeButton->bitmap->activeItem;
+
     return activeButton;
 }
 
@@ -492,9 +531,9 @@ void activeToggleButtonDestroy(ActiveToggleButton* activeButton)
     free(activeButton);
 }
 
-void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc)
+void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeButton->bitmap, dc);
+    activeImageDraw(activeButton->bitmap, dc, rect);
 }
 
 static int activeToggleButtonSetImage(ActiveToggleButton* activeButton)
@@ -612,6 +651,7 @@ int activeToggleButtonUp(ActiveToggleButton* activeButton, int x, int y)
 
 
 typedef struct ActiveNativeText {
+    ActiveItem  activeItem;
     ActiveImage* background;
     int width;
     int height;
@@ -634,6 +674,8 @@ ActiveNativeText* activeNativeTextCreate(int x, int y, ArchBitmap* bitmap, int c
 
     activeText->archText = archTextCreate(activeText->height, color, rightAligned);
 
+    activeText->activeItem = activeText->background->activeItem;
+
     return activeText;
 }
 
@@ -651,9 +693,15 @@ int activeNativeTextSetText(ActiveNativeText* activeText, const char* string)
     return diff;
 }
 
-void activeNativeTextDraw(ActiveNativeText* activeText, void* dc)
+void activeNativeTextDraw(ActiveNativeText* activeText, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeText->background, dc);
+    if (!PointInRect(rect, activeText->x, activeText->y) && 
+        !PointInRect(rect, activeText->x + activeText->width, activeText->y + activeText->height)) 
+    {
+        return;
+    }
+
+    activeImageDraw(activeText->background, dc, rect);
 
     archTextDraw(activeText->archText, dc, activeText->x, activeText->y, 
                  activeText->width - 4, activeText->height, activeText->string); 
@@ -665,6 +713,7 @@ int activeNativeTextShow(ActiveNativeText* activeText, int show)
 }
 
 struct ActiveText{
+    ActiveItem  activeItem;
     ActiveImage* font;
     int startChar;
     int charCount;
@@ -672,7 +721,7 @@ struct ActiveText{
     int size;
     int x;
     int y;
-    int width;
+    int charWidth;
     int right;
     ActiveNativeText* nativeText;
 };
@@ -693,8 +742,13 @@ ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int sta
     activeText->size       = width;
     activeText->x          = x;
     activeText->y          = y;
-    activeText->width      = activeImageGetWidth(activeText->font);
+    activeText->charWidth  = activeImageGetWidth(activeText->font);
     activeText->right      = rightAligned;
+
+    activeText->activeItem.rect.x      = x;
+    activeText->activeItem.rect.y      = y;
+    activeText->activeItem.rect.width  = width * activeText->font->activeItem.rect.width;
+    activeText->activeItem.rect.height = activeText->font->activeItem.rect.height;
 
     return activeText;
 }
@@ -740,19 +794,19 @@ int activeTextSetText(ActiveText* activeText, const char* string)
     return 0;
 }
 
-void activeTextDraw(ActiveText* activeText, void* dc)
+void activeTextDraw(ActiveText* activeText, void* dc, ActiveRect* rect)
 {
     int i;
 
     if (activeText->nativeText) {
-        activeNativeTextDraw(activeText->nativeText, dc);
+        activeNativeTextDraw(activeText->nativeText, dc, rect);
         return;
     }
 
     for (i = 0; i < activeText->size; i++) {
         activeImageSetImage(activeText->font, ((UInt8)activeText->string[i]) - activeText->startChar);
-        activeImageSetPosition(activeText->font, activeText->x + i * activeText->width, activeText->y);
-        activeImageDraw(activeText->font, dc);
+        activeImageSetPosition(activeText->font, activeText->x + i * activeText->charWidth, activeText->y);
+        activeImageDraw(activeText->font, dc, rect);
     }
 }
 
@@ -766,6 +820,7 @@ int activeTextShow(ActiveText* activeText, int show)
 }
 
 struct ActiveMeter {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int x;
     int y;
@@ -786,7 +841,9 @@ ActiveMeter* activeMeterCreate(int x, int y, int cols, ArchBitmap* bitmap, int c
     activeMeter->index  = 0;
     activeMeter->width  = activeImageGetWidth(activeMeter->bitmap);
     activeMeter->height = activeImageGetHeight(activeMeter->bitmap);
-    
+
+    activeMeter->activeItem = activeMeter->bitmap->activeItem;
+
     return activeMeter;
 }
 
@@ -812,12 +869,13 @@ int activeMeterShow(ActiveMeter* activeMeter, int show)
     return activeImageShow(activeMeter->bitmap, show);
 }
 
-void activeMeterDraw(ActiveMeter* activeMeter, void* dc)
+void activeMeterDraw(ActiveMeter* activeMeter, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeMeter->bitmap, dc);
+    activeImageDraw(activeMeter->bitmap, dc, rect);
 }
 
 struct ActiveSlider {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int x;
     int y;
@@ -859,6 +917,8 @@ ActiveSlider* activeSliderCreate(int x, int y, int cols, ArchBitmap* bitmap, Sli
     activeSlider->ctrl    = direction;
     activeSlider->sens    = sensitivity;
 
+    activeSlider->activeItem = activeSlider->bitmap->activeItem;
+
     return activeSlider;
 }
 
@@ -868,9 +928,9 @@ void activeSliderDestroy(ActiveSlider* activeSlider)
     free(activeSlider);
 }
 
-void activeSliderDraw(ActiveSlider* activeSlider, void* dc)
+void activeSliderDraw(ActiveSlider* activeSlider, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeSlider->bitmap, dc);
+    activeImageDraw(activeSlider->bitmap, dc, rect);
 }
 
 int activeSliderShow(ActiveSlider* activeSlider, int show)
@@ -966,9 +1026,11 @@ int activeSliderMouseMove(ActiveSlider* activeSlider, int x, int y)
 
 
 struct ActiveGrabImage {
+    ActiveItem  activeItem;
     ActiveImage* bitmap;
     int x;
     int y;
+    int count;
     UInt32 width;
     UInt32 height;
     int downX;
@@ -984,11 +1046,15 @@ ActiveGrabImage* activeGrabImageCreate(int x, int y, int cols, ArchBitmap* bitma
 
     activeImage->x       = x;
     activeImage->y       = y;
+    activeImage->count   = count;
     activeImage->width   = activeImageGetWidth(activeImage->bitmap);
     activeImage->height  = activeImageGetHeight(activeImage->bitmap);
     activeImage->downX   = 0;
     activeImage->downY   = 0;
     activeImage->downI   = 0;
+
+    activeImage->activeItem = activeImage->bitmap->activeItem;
+
     return activeImage;
 }
 
@@ -1008,9 +1074,9 @@ int activeGrabImageShow(ActiveGrabImage* activeImage, int show)
     return activeImageShow(activeImage->bitmap, show);
 }
 
-void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc)
+void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc, ActiveRect* rect)
 {
-    activeImageDraw(activeImage->bitmap, dc);
+    activeImageDraw(activeImage->bitmap, dc, rect);
 }
 
 int activeGrabImageMouseMove(ActiveGrabImage* activeImage, int x, int y)
@@ -1038,6 +1104,21 @@ int activeGrabImageDown(ActiveGrabImage* activeImage, int x, int y)
     return 1;
 }
 
+int activeGrabImageActivate(ActiveGrabImage* activeImage, int active)
+{
+    if (!activeImageIsVisible(activeImage->bitmap)) {
+        return 0;
+    }
+
+    if (activeImage->count < 2) {
+        return 0;
+    }
+    
+    activeImageSetImage(activeImage->bitmap, active ? 1 : 0);
+
+    return 1;
+}
+
 int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y)
 {
     if (!activeImage->downI) {
@@ -1053,6 +1134,7 @@ int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y)
 
 struct ActiveObject 
 {
+    ActiveItem  activeItem;
     char id[64];
     void* handle;
     int x;
@@ -1079,6 +1161,11 @@ ActiveObject* activeObjectCreate(int x, int y, int width, int height, const char
     activeObject->width  = width;
     activeObject->height = height;
     activeObject->object = NULL;
+
+    activeObject->activeItem.rect.x      = x;
+    activeObject->activeItem.rect.y      = y;
+    activeObject->activeItem.rect.width  = width;
+    activeObject->activeItem.rect.height = height;
 
     return activeObject;
 }

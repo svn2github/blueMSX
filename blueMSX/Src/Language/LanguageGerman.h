@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.3 $ 
+** $Revision: 1.4 $ 
 **
-** $Date: 2005-06-17 19:29:32 $
+** $Date: 2005-08-09 08:16:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -588,6 +588,11 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Seitenvorschub";
     ls->menuFilePrn             = "Drucker";
     ls->propPortsComFile        = "Zu Datei senden";
+
+    ls->enumEmuSyncAuto         = "Auto (schnell)";
+    ls->enumEmuSync1ms          = "Sync on MSX refresh";
+    ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
+
 };
 
 

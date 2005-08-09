@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-07-26 05:27:11 $
+** $Date: 2005-08-09 08:16:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,7 @@ struct ThemePage {
     ActiveButton*     btDown;
     ActiveDualButton* btDualDown;
     int               btPressed;
+    int               active;
 };
 
 typedef enum { TH_NORMAL, TH_KBDCONFIG, TH_PROPERTIES } ThemeHandler;
@@ -144,9 +145,10 @@ void themePageAddSlider(ThemePage* theme, void* object, ThemeTrigger trigger, Th
 void themePageAddObject(ThemePage* theme, void* object, ThemeTrigger visible);
 void themePageActivate(ThemePage* theme, void* window);
 void themePageUpdate(ThemePage* theme, void* dc);
-void themePageDraw(ThemePage* theme, void* dc);
+void themePageDraw(ThemePage* theme, void* dc, ThemeItem* startItem);
 void themePageMouseMove(ThemePage* theme, void* dc, int x, int y);
 void themePageMouseButtonUp(ThemePage* theme, void* dc, int x, int y);
 void themePageMouseButtonDown(ThemePage* theme, void* dc, int x, int y);
+void themePageSetActive(ThemePage* theme, void* dc, int active);
 
 #endif //WIN32_THEME_CLASSIC_H

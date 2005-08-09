@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.91 $
+** $Revision: 1.92 $
 **
-** $Date: 2005-07-26 05:27:11 $
+** $Date: 2005-08-09 08:16:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -936,6 +936,7 @@ typedef struct {
     BITMAPINFO bmInfo;
     DiskQuickviewWindow dskWnd;
     
+    int active;
     //
     void* bmBitsGDI;
     int frameCount;
@@ -1291,6 +1292,7 @@ void themeSet(char* themeName, int forceMatch) {
         themePageActivate(st.themePageActive, NULL);
     }
 
+    st.rgnEnable = -1;
     setClipRegion(0);
     st.themeIndex = index;
     strcpy(pProperties->settings.themeName, themeName);
@@ -1310,6 +1312,7 @@ void themeSet(char* themeName, int forceMatch) {
 
     if (st.themePageActive) {
         themePageActivate(st.themePageActive, st.hwnd);
+        themePageSetActive(st.themePageActive, NULL, st.active);
     }
 
     if (st.hBitmap) {
@@ -1358,6 +1361,7 @@ void themeSet(char* themeName, int forceMatch) {
     }
 
     if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+        st.rgnEnable = -1;
         setClipRegion(0);
     } 
     else {
@@ -1413,6 +1417,7 @@ void themeSet(char* themeName, int forceMatch) {
             }
         }
 
+        st.rgnEnable = -1;
         setClipRegion(clipCount > 0);
 
         if (st.rgnData == NULL) {
@@ -1487,6 +1492,7 @@ void archUpdateWindow() {
         free(st.rgnData);
         st.rgnData = NULL;
     }
+    st.rgnEnable = -1;
     setClipRegion(0);
     themeSet(pProperties->settings.themeName, 1);
     updateMenu(0);
@@ -1905,6 +1911,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             mouseEmuActivate(1);
         }
+        if (st.themePageActive) {
+            st.active = LOWORD(wParam) != WA_INACTIVE;
+            themePageSetActive(st.themePageActive, GetDC(hwnd), st.active);
+        }
         break;
 
     case WM_NCMOUSEMOVE:
@@ -2116,13 +2126,13 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                  if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
 					// the theme is only drawn when not in fullscreen mode
-					themePageDraw(st.themePageActive, hMemDC);
+					themePageDraw(st.themePageActive, hMemDC, NULL);
                     BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
                 }
                 else {
                     RECT r;
                     GetClientRect(hwnd, &r);
-					themePageDraw(st.themePageActive, hMemDC);
+					themePageDraw(st.themePageActive, hMemDC, NULL);
                     StretchBlt(hdc, 0, 0, r.right, r.bottom, 
                                hMemDC, 0, 0, st.themePageActive->width, st.themePageActive->height, SRCCOPY);
                 }

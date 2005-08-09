@@ -105,6 +105,164 @@ public:
     }
 };
 
+class LanguageChineseSimplified : public Language
+{
+public:
+    LanguageChineseSimplified() {
+        genericOk                   = "OK";
+        genericCancel               = "Cancel";
+
+        toolbarResume               = "Start/Continue";
+        toolbarPause                = "Break All";
+        toolbarStop                 = "Stop Debugging";
+        toolbarRun                  = "Restart";
+        toolbarShowNext             = "Show Next Statement";
+        toolbarStepIn               = "Step Into";
+        toolbarStepOver             = "Step Over";
+        toolbarStepOut              = "Step Out";
+        toolbarRunTo                = "Run To Cursor";
+        toolbarBpToggle             = "Set/Remove Breakpoint";
+        toolbarBpEnable             = "Enable/Disable Breakpoint";
+        toolbarBpEnableAll          = "Enable All Breakpoints";
+        toolbarBpDisableAll         = "Disable All Breakpoints";
+        toolbarBpRemoveAll          = "Remove All Breakpoints";
+
+        menuFile                    = "File";
+        menuFileLoadSymbolFile      = "Load Symbol File";
+        menuFileExit                = "Exit";
+
+        menuDebug                   = "Debug";
+        menuDebugStart              = "Start";
+        menuDebugContinue           = "Continue";
+        menuDebugBreakAll           = "Break All";
+        menuDebugStop               = "Stop Debugging";
+        menuDebugRestart            = "Restart";
+        menuDebugStepIn             = "Step Into";
+        menuDebugStepOver           = "Step Over";
+        menuDebugStepOut            = "Step Out";
+        menuDebugRunTo              = "Run To Cursor";
+        menuDebugShowSymbols        = "Show Symbol Information";
+        menuDebugGoto               = "Go To";
+        menuDebugBpAdd              = "Add New Breakpoint";
+        menuDebugBpToggle           = "Set/Remove Breakpoint";
+        menuDebugEnable             = "Enable/Disable Breakpoint";
+        menuDebugRemoveAll          = "Remove All Breakpoints";
+        menuDebugEnableAll          = "Enable All Breakpoints";
+        menuDebugDisableAll         = "Disable All Breakpoints";
+        menuDebugShowAssemblyFlags  = "Show Assembly Flags";
+
+        menuWindow                  = "Window";
+
+        menuHelp                    = "Help";
+        menuHelpAbout               = "About";
+
+        windowDebugger              = "blueMSX - Debugger";
+        windowDisassembly           = "Disassembly";
+        windowDisassemblyUnavail    = "Disassembly unavailable.";
+        windowCpuRegisters          = "CPU Registers";
+        windowStack                 = "Stack";
+        windowStackUnavail          = "Stack unavailable.";
+        windowCallstack             = "Callstack";
+        windowCallstackUnavail      = "Callstack unavailable.";
+        windowMemory                = "Memory";
+        windowPeripheralRegisters   = "Peripheral Registers";
+
+        memWindowRegisters          = "Registers:";
+
+        memWindowMemory             = "Memory:";
+        memWindowAddress            = "Address:";
+
+        setBpWindowCaption          = "Add New Breakpoint";
+        gotoWindowCaption           = "Go To Address";
+        gotoWindowText              = "Address or Label:";
+
+        symbolWindowCaption         = "Open Symbol File";
+        symbolWindowText            = "Replace old symbols";
+        
+        aboutBuilt                  = "Built:";
+        aboutVisit                  = "Visit http://www.bluemsx.com for details";
+    }
+};
+
+class LanguageChineseTraditional : public Language
+{
+public:
+    LanguageChineseTraditional() {
+        genericOk                   = "OK";
+        genericCancel               = "Cancel";
+
+        toolbarResume               = "Start/Continue";
+        toolbarPause                = "Break All";
+        toolbarStop                 = "Stop Debugging";
+        toolbarRun                  = "Restart";
+        toolbarShowNext             = "Show Next Statement";
+        toolbarStepIn               = "Step Into";
+        toolbarStepOver             = "Step Over";
+        toolbarStepOut              = "Step Out";
+        toolbarRunTo                = "Run To Cursor";
+        toolbarBpToggle             = "Set/Remove Breakpoint";
+        toolbarBpEnable             = "Enable/Disable Breakpoint";
+        toolbarBpEnableAll          = "Enable All Breakpoints";
+        toolbarBpDisableAll         = "Disable All Breakpoints";
+        toolbarBpRemoveAll          = "Remove All Breakpoints";
+
+        menuFile                    = "File";
+        menuFileLoadSymbolFile      = "Load Symbol File";
+        menuFileExit                = "Exit";
+
+        menuDebug                   = "Debug";
+        menuDebugStart              = "Start";
+        menuDebugContinue           = "Continue";
+        menuDebugBreakAll           = "Break All";
+        menuDebugStop               = "Stop Debugging";
+        menuDebugRestart            = "Restart";
+        menuDebugStepIn             = "Step Into";
+        menuDebugStepOver           = "Step Over";
+        menuDebugStepOut            = "Step Out";
+        menuDebugRunTo              = "Run To Cursor";
+        menuDebugShowSymbols        = "Show Symbol Information";
+        menuDebugGoto               = "Go To";
+        menuDebugBpAdd              = "Add New Breakpoint";
+        menuDebugBpToggle           = "Set/Remove Breakpoint";
+        menuDebugEnable             = "Enable/Disable Breakpoint";
+        menuDebugRemoveAll          = "Remove All Breakpoints";
+        menuDebugEnableAll          = "Enable All Breakpoints";
+        menuDebugDisableAll         = "Disable All Breakpoints";
+        menuDebugShowAssemblyFlags  = "Show Assembly Flags";
+
+        menuWindow                  = "Window";
+
+        menuHelp                    = "Help";
+        menuHelpAbout               = "About";
+
+        windowDebugger              = "blueMSX - Debugger";
+        windowDisassembly           = "Disassembly";
+        windowDisassemblyUnavail    = "Disassembly unavailable.";
+        windowCpuRegisters          = "CPU Registers";
+        windowStack                 = "Stack";
+        windowStackUnavail          = "Stack unavailable.";
+        windowCallstack             = "Callstack";
+        windowCallstackUnavail      = "Callstack unavailable.";
+        windowMemory                = "Memory";
+        windowPeripheralRegisters   = "Peripheral Registers";
+
+        memWindowRegisters          = "Registers:";
+
+        memWindowMemory             = "Memory:";
+        memWindowAddress            = "Address:";
+
+        setBpWindowCaption          = "Add New Breakpoint";
+        gotoWindowCaption           = "Go To Address";
+        gotoWindowText              = "Address or Label:";
+
+        symbolWindowCaption         = "Open Symbol File";
+        symbolWindowText            = "Replace old symbols";
+        
+        aboutBuilt                  = "Built:";
+        aboutVisit                  = "Visit http://www.bluemsx.com for details";
+    }
+};
+
 
 class LanguageJapanese : public Language
 {
@@ -197,6 +355,12 @@ void Language::SetLanguage(LanguageId langId)
 {
     delete ls;
     switch (langId) {
+    case LID_CHINESETRAD:
+        ls  = new LanguageChineseTraditional;
+        break;
+    case LID_CHINESESIMP:
+        ls  = new LanguageChineseSimplified;
+        break;
     case LID_JAPANESE:
         ls = new LanguageJapanese;
         break;

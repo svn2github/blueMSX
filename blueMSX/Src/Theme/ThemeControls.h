@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-07-23 06:10:50 $
+** $Date: 2005-08-09 08:16:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,20 @@
 
 typedef void (*ButtonEvent)(int, int);
 
+typedef struct ActiveRect {
+    int x;
+    int y;
+    int width;
+    int height;
+} ActiveRect;
+
+//ActiveItem is the base class for all active objects
+typedef struct ActiveItem ActiveItem;
+
+void activeItemGetRect(void* activeItem, ActiveRect* rect);
+
+
+
 typedef struct ActiveImage ActiveImage;
 
 ActiveImage* activeImageCreate(int x, int y, int cols, ArchBitmap* bitmap, int count);
@@ -43,7 +57,7 @@ int activeImageGetWidth(ActiveImage* activeImage);
 int activeImageGetHeight(ActiveImage* activeImage);
 int activeImageSetImage(ActiveImage* activeImage, int index);
 int activeImageShow(ActiveImage* activeImage, int show);
-void activeImageDraw(ActiveImage* activeImage, void* dc);
+void activeImageDraw(ActiveImage* activeImage, void* dc, ActiveRect* rect);
 
 typedef struct ActiveButton ActiveButton;
 
@@ -53,7 +67,7 @@ int activeButtonMouseMove(ActiveButton* activeButton, int x, int y);
 int activeButtonDown(ActiveButton* activeButton, int x, int y);
 int activeButtonUp(ActiveButton* activeButton, int x, int y);
 int activeButtonShow(ActiveButton* activeButton, int show);
-void activeButtonDraw(ActiveButton* activeButton, void* dc);
+void activeButtonDraw(ActiveButton* activeButton, void* dc, ActiveRect* rect);
 int activeButtonForcePushed(ActiveButton* activeButton, int pushed);
 
 
@@ -65,7 +79,7 @@ int activeToggleButtonMouseMove(ActiveToggleButton* activeButton, int x, int y);
 int activeToggleButtonDown(ActiveToggleButton* activeButton, int x, int y);
 int activeToggleButtonUp(ActiveToggleButton* activeButton, int x, int y);
 int activeToggleButtonShow(ActiveToggleButton* activeButton, int show);
-void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc);
+void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc, ActiveRect* rect);
 int activeToggleButtonForcePushed(ActiveToggleButton* activeButton, int pushed);
 int activeToggleButtonSetToggled(ActiveToggleButton* activeButton, int toggled);
 
@@ -79,7 +93,7 @@ void activeDualButtonDestroy(ActiveDualButton* activeButton);
 int activeDualButtonMouseMove(ActiveDualButton* activeButton, int x, int y);
 int activeDualButtonDown(ActiveDualButton* activeButton, int x, int y);
 int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y);
-void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc);
+void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc, ActiveRect* rect);
 int activeDualButtonShow(ActiveDualButton* activeButton, int show);
 int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed);
 
@@ -89,7 +103,7 @@ typedef struct ActiveText ActiveText;
 ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int startChar, int charCount, int width, int type, int color, int rightAligned);
 void activeTextDestroy(ActiveText* activeText);
 int activeTextSetText(ActiveText* activeText, const char* string);
-void activeTextDraw(ActiveText* activeText, void* dc);
+void activeTextDraw(ActiveText* activeText, void* dc, ActiveRect* rect);
 int activeTextShow(ActiveText* activeText, int show);
 
 
@@ -102,7 +116,8 @@ int activeGrabImageDown(ActiveGrabImage* activeImage, int x, int y);
 int activeGrabImageUp(ActiveGrabImage* activeImage, int x, int y);
 int activeGrabImageSetImage(ActiveGrabImage* activeImage, int index);
 int activeGrabImageShow(ActiveGrabImage* activeImage, int show);
-void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc);
+void activeGrabImageDraw(ActiveGrabImage* activeImage, void* dc, ActiveRect* rect);
+int activeGrabImageActivate(ActiveGrabImage* activeImage, int active);
 
 
 typedef struct ActiveMeter ActiveMeter;
@@ -110,7 +125,7 @@ typedef struct ActiveMeter ActiveMeter;
 ActiveMeter* activeMeterCreate(int x, int y, int cols, ArchBitmap* bitmap, int count);
 void activeMeterDestroy(ActiveMeter* activeMeter);
 int activeMeterSetImage(ActiveMeter* activeMeter, int index);
-void activeMeterDraw(ActiveMeter* activeMeter, void* dc);
+void activeMeterDraw(ActiveMeter* activeMeter, void* dc, ActiveRect* rect);
 int activeMeterShow(ActiveMeter* activeMeter, int show);
 
 
@@ -122,7 +137,7 @@ ActiveSlider* activeSliderCreate(int x, int y, int cols, ArchBitmap* bitmap, Sli
                                  AsDirection direction, int sensitivity,
                                  ButtonEvent upEvent, int arg1, int arg2);
 void activeSliderDestroy(ActiveSlider* activeSlider);
-void activeSliderDraw(ActiveSlider* activeSlider, void* dc);
+void activeSliderDraw(ActiveSlider* activeSlider, void* dc, ActiveRect* rect);
 int activeSliderShow(ActiveSlider* activeSlider, int show);
 int activeSliderSetImage(ActiveSlider* activeSlider, int index);
 int activeSliderDown(ActiveSlider* activeSlider, int x, int y);

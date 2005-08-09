@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-08-09 08:16:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,8 @@
 #include "LanguageFinnish.h"
 #include "LanguageGerman.h"
 #include "LanguagePolish.h"
+#include "LanguageChineseSimplified.h"
+#include "LanguageChineseTraditional.h"
  
 static LanguageStrings langEnglish;
 static LanguageStrings langSwedish;
@@ -59,6 +61,8 @@ static LanguageStrings langItalian;
 static LanguageStrings langFinnish;
 static LanguageStrings langGerman;
 static LanguageStrings langPolish;
+static LanguageStrings langChineseSimplified;
+static LanguageStrings langChineseTraditional;
 
 static LanguageStrings* ls;
 
@@ -68,6 +72,8 @@ typedef struct {
 } LanguageInfo;
 
 static LanguageInfo languageInfo[] = {
+    { EMU_LANG_CHINESESIMP, "Chinese Simplified" },
+    { EMU_LANG_CHINESETRAD, "Chinese Traditional" },
     { EMU_LANG_DUTCH,       "Dutch" },
     { EMU_LANG_ENGLISH,     "English" },
     { EMU_LANG_FINNISH,     "Finnish" },
@@ -117,6 +123,8 @@ static BOOL CALLBACK langDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
 
             himlSmall = ImageList_Create(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), TRUE, 1, 1); 
 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINASIMP))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINATRAD))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_NETHERLANDS))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_USA))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_FINLAND))); 
@@ -238,6 +246,12 @@ void langInit() {
 
     langInitEnglish(&langPolish);
     langInitPolish(&langPolish);
+
+    langInitEnglish(&langChineseSimplified);
+    langInitChineseSimplified(&langChineseSimplified);
+
+    langInitEnglish(&langChineseTraditional);
+    langInitChineseTraditional(&langChineseTraditional);
     
     ls = &langEnglish;
 }
@@ -277,8 +291,17 @@ int langSetLanguage(EmuLanguageType languageType) {
     case EMU_LANG_GERMAN:
         ls = &langGerman;
         break;
+
     case EMU_LANG_POLISH:
         ls = &langPolish;
+        break;
+
+    case EMU_LANG_CHINESESIMP:
+        ls = &langChineseSimplified;
+        break;
+
+    case EMU_LANG_CHINESETRAD:
+        ls = &langChineseTraditional;
         break;
     default:
         return 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-06-21 03:22:33 $
+** $Date: 2005-08-09 08:16:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,18 +54,20 @@ typedef signed   long    Int32;
 typedef enum { EMULATOR_STOPPED, EMULATOR_PAUSED, EMULATOR_RUNNING } EmulatorState;
 
 typedef enum {
-    LID_ENGLISH    = 0, 
-    LID_SWEDISH    = 1, 
-    LID_JAPANESE   = 2, 
-    LID_PORTUGUESE = 3, 
-    LID_FRENCH     = 4, 
-    LID_DUTCH      = 5,
-    LID_SPANISH    = 6,
-    LID_ITALIAN    = 7,
-    LID_FINNISH    = 8,
-    LID_KOREAN     = 9,
-    LID_GERMAN     = 10,
-    LID_POLISH     = 11
+    LID_ENGLISH     = 0, 
+    LID_SWEDISH     = 1, 
+    LID_JAPANESE    = 2, 
+    LID_PORTUGUESE  = 3, 
+    LID_FRENCH      = 4, 
+    LID_DUTCH       = 5,
+    LID_SPANISH     = 6,
+    LID_ITALIAN     = 7,
+    LID_FINNISH     = 8,
+    LID_KOREAN      = 9,
+    LID_GERMAN      = 10,
+    LID_POLISH      = 11,
+    LID_CHINESESIMP = 12,
+    LID_CHINESETRAD = 13,
 } LanguageId;
 
 typedef struct Snapshot Snapshot;

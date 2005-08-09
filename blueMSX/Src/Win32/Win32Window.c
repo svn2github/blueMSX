@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-07-26 06:37:11 $
+** $Date: 2005-08-09 08:16:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,6 +308,7 @@ static void windowCreateClipRegion(WindowInfo* wi)
         }
     }
 
+    wi->rgnEnable = -1;
     windowSetClipRegion(wi, clipCount > 0);
 
     if (wi->rgnData == NULL) {
@@ -445,8 +446,10 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_DROPDOWN_THEMEPAGES:
-        themeSetPageFromHash(wi->theme, themeGetNameHash((char*)lParam));
-        SendMessage(hwnd, WM_UPDATE, 0, 0);
+        if (wi != NULL) {
+            themeSetPageFromHash(wi->theme, themeGetNameHash((char*)lParam));
+            SendMessage(hwnd, WM_UPDATE, 0, 0);
+        }
         return 0;
 
     case WM_CLOSE:
@@ -454,47 +457,60 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_ENTERSIZEMOVE:
-        wi->isMoving = 1;
+        if (wi != NULL) {
+            wi->isMoving = 1;
+        }
         break;
 
     case WM_EXITSIZEMOVE:
-        wi->isMoving = 0;
-        windowUpdateClipRegion(wi);
+        if (wi != NULL) {
+            wi->isMoving = 0;
+            windowUpdateClipRegion(wi);
+        }
         break;
 
     case WM_TIMER:
-        switch(wParam) {
-        case TIMER_STATUSBAR_UPDATE:
-            themePageUpdate(themeGetCurrentPage(wi->theme), GetDC(hwnd));
-            break;
-        case TIMER_CLIP_REGION:
-            windowUpdateClipRegion(wi);
-            break;
-        case TIMER_THEME:
-            if (!wi->isMinimized) {
-                POINT pt;
-                RECT r;
-                HDC hdc;
+        if (wi != NULL) {
+            switch(wParam) {
+            case TIMER_STATUSBAR_UPDATE:
+                themePageUpdate(themeGetCurrentPage(wi->theme), GetDC(hwnd));
+                break;
+            case TIMER_CLIP_REGION:
+                windowUpdateClipRegion(wi);
+                break;
+            case TIMER_THEME:
+                if (!wi->isMinimized) {
+                    POINT pt;
+                    RECT r;
+                    HDC hdc;
 
-                GetCursorPos(&pt);
-                GetWindowRect(hwnd, &r);
+                    GetCursorPos(&pt);
+                    GetWindowRect(hwnd, &r);
 
-                if (!PtInRect(&r, pt)) {
-                    KillTimer(hwnd, TIMER_THEME);
+                    if (!PtInRect(&r, pt)) {
+                        KillTimer(hwnd, TIMER_THEME);
+                    }
+
+                    ScreenToClient(hwnd, &pt);
+
+                    hdc = GetDC(hwnd);
+                    themePageMouseMove(themeGetCurrentPage(wi->theme), hdc, pt.x, pt.y);
+                    ReleaseDC(hwnd, hdc);
                 }
-
-                ScreenToClient(hwnd, &pt);
-
-                hdc = GetDC(hwnd);
-                themePageMouseMove(themeGetCurrentPage(wi->theme), hdc, pt.x, pt.y);
-                ReleaseDC(hwnd, hdc);
+                break;
             }
-            break;
+        }
+        break;
+
+    case WM_ACTIVATE:
+        if (wi != NULL) {
+            ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            themePageSetActive(themePage, GetDC(hwnd), LOWORD(wParam) != WA_INACTIVE);
         }
         break;
 
     case WM_UPDATE:
-        {
+        if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             int width;
             int height;
@@ -519,12 +535,14 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         return 0;
 
     case WM_NCMOUSEMOVE:
-        windowCheckClipRegion(wi);
+        if (wi != NULL) {
+            windowCheckClipRegion(wi);
+        }
         break;
         
     case WM_MOUSEMOVE:
         archWindowMove();
-        {
+        if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             POINT pt;
             GetCursorPos(&pt);
@@ -537,7 +555,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_LBUTTONDOWN:
-        {
+        if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             POINT pt;
             SetCapture(hwnd);
@@ -549,7 +567,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_LBUTTONUP:
-        {
+        if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             POINT pt;
             
@@ -567,17 +585,17 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps); 
-            HDC hMemDC = CreateCompatibleDC(hdc);
-            HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, wi->hBitmap);
-            ThemePage* themePage = themeGetCurrentPage(wi->theme);
-            
-            themePageUpdate(themePage, hMemDC); //OWN DC
-            themePageDraw(themePage, hMemDC);
+            if (wi != NULL) {
+                HDC hMemDC = CreateCompatibleDC(hdc);
+                HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, wi->hBitmap);
+                ThemePage* themePage = themeGetCurrentPage(wi->theme);
+                themePageUpdate(themePage, hMemDC); //OWN DC
+                themePageDraw(themePage, hMemDC, NULL);
 
-            BitBlt(hdc, 0, 0, themePage->width, themePage->height, hMemDC, 0, 0, SRCCOPY);
-
-            SelectObject(hMemDC, hBitmap);
-            DeleteDC(hMemDC);                
+                BitBlt(hdc, 0, 0, themePage->width, themePage->height, hMemDC, 0, 0, SRCCOPY);
+                SelectObject(hMemDC, hBitmap);
+                DeleteDC(hMemDC);                
+            }            
 
             EndPaint(hwnd, &ps);
         }
