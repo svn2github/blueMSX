@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-08-09 08:37:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,8 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Tobias Keizer,  "
                 "Sandy Pleyte,  "
                 "Marco Casali,  "
+                "UC_ARS,  "
+                "nhlay,  "
                 "Fabio Albergaria Dias,  "
                 "SLotman,  "
                 "Tanni,  "
