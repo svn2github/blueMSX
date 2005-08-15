@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -372,6 +372,7 @@ typedef struct {
 
     _TCHAR* enumEmuSync1ms;
     _TCHAR* enumEmuSyncAuto;
+    _TCHAR* enumEmuSyncNone;
     _TCHAR* enumEmuSyncVblank;
 
     _TCHAR* enumControlsJoyNone;

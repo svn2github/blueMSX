@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-07-23 07:55:04 $
+** $Date: 2005-08-15 05:37:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,7 +177,8 @@ void emulatorRunOne() {
 }
 
 int emulatorGetSyncPeriod() {
-    return properties->emulation.syncMethod == P_EMU_SYNCAUTO ? 2 : 1;
+    return properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
+           properties->emulation.syncMethod == P_EMU_SYNCNONE ? 2 : 1;
 }
 
 void timerCallback(void* timer) {
@@ -202,9 +203,10 @@ void timerCallback(void* timer) {
     if (frameCount >= framePeriod) {
         frameCount %= framePeriod;
         if (emuState == EMU_RUNNING) {
+            int syncMethod = emuUseSynchronousUpdate();
             refreshRate = boardGetRefreshRate();
 
-            if (emuUseSynchronousUpdate() == P_EMU_SYNCAUTO) {
+            if (syncMethod == P_EMU_SYNCAUTO || syncMethod == P_EMU_SYNCNONE) {
                 archUpdateEmuDisplay(0);
             }
         }
@@ -368,6 +370,7 @@ void emulatorStart(char* stateName) {
 
     if (properties->emulation.syncMethod == P_EMU_SYNCTOVBLANK ||
         properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
+        properties->emulation.syncMethod == P_EMU_SYNCNONE ||
         properties->emulation.syncMethod == P_EMU_SYNCFRAMES)
     {
         emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);

@@ -29,6 +29,13 @@
 #include "Language.h"
 #include <stdio.h>
 
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 extern void DebuggerUpdate();
 
 namespace {
@@ -260,8 +267,8 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
     int j;
     int k;
     BYTE val0;
-    BYTE val1;
-    BYTE val2;
+    BYTE val1 = 0;
+    BYTE val2 = 0;
     BYTE val;
 
 	dest[0] = '\0';

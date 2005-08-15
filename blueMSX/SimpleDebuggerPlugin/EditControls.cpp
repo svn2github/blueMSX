@@ -26,7 +26,11 @@
 #include "EditControls.h"
 #include "Resource.h"
 #include "ToolInterface.h"
+#include <windows.h>
 #include <stdio.h>
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0500
+#endif
 #include <CommCtrl.h>
 #include <RichEdit.h>
 
@@ -159,7 +163,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hwnd, &r);
         SetWindowPos(GetDlgItem(hwnd, IDC_ADDRESS), NULL, 0, 0, r.right, r.bottom, SWP_NOZORDER);
         SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_SETEVENTMASK, 0, 
-                            SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETEVENTMASK, 0, 0) | ENM_KEYEVENTS); 
+                           SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETEVENTMASK, 0, 0) | ENM_KEYEVENTS); 
         return FALSE;
 
     case WM_COMMAND:

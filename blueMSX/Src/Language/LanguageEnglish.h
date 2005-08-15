@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-07-07 18:32:52 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -599,6 +599,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->textFile                = "File";
     ls->textNone                = "None";
 
+    ls->enumEmuSyncNone         = "None";
     ls->enumEmuSyncAuto         = "Auto (fast)";
     ls->enumEmuSync1ms          = "Sync on MSX refresh";
     ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";

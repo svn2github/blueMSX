@@ -81,7 +81,7 @@ Toolbar::~Toolbar()
 void Toolbar::addButton(int bitmap, int command, int dropdown, int insertBefore)
 {
     if (insertBefore == -1) {
-        TBBUTTON button = {0};
+        TBBUTTON button;
         button.iBitmap = bitmap; 
         button.idCommand = command; 
         button.fsState = TBSTATE_ENABLED; 
@@ -94,7 +94,7 @@ void Toolbar::addButton(int bitmap, int command, int dropdown, int insertBefore)
 void Toolbar::addSeparator(int insertBefore)
 {
     if (insertBefore == -1) {
-        TBBUTTON button = {0};
+        TBBUTTON button;
         button.iBitmap = 0; 
         button.idCommand = 0; 
         button.fsState = TBSTATE_ENABLED; 

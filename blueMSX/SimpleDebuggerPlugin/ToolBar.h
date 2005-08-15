@@ -26,6 +26,9 @@
 #define TOOLBAR_H
 
 #include <windows.h>
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0500
+#endif
 #include <CommCtrl.h>
 #include <vector>
 

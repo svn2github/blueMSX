@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-04 08:47:57 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -605,7 +605,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPrnFormfeed = "Pagina doorvoer"; 
     ls->menuFilePrn = "Printer"; 
     ls->propPortsComFile = "Stuur naar bestand"; 
-
 };
 
 #endif

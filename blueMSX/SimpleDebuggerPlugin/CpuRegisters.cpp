@@ -28,6 +28,13 @@
 #include "Language.h"
 #include <stdio.h>
 
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 namespace {
 
 const char regName[20][8] = {
@@ -479,7 +486,7 @@ void CpuRegisters::drawText(int top, int bottom)
                     PatBlt(hMemdc, x, 3, 2 * textWidth + 1, textHeight - 5, PATCOPY);
                     if (regValue[0] >= 0) {
                         RECT r = { x + 1, 1, x + 2 * textWidth + 2, textHeight };
-                        char* txt = "";
+                        const char* txt = "";
                         switch (j) {
                         case 0: txt = (regVal & 0x40) ? " Z" : "NZ"; break;
                         case 1: txt = (regVal & 0x01) ? " C" : "NC"; break;

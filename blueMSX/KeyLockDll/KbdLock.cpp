@@ -17,7 +17,9 @@ const int KILL_COMBOS =  0x0004;
 const int KILL_CONTEXT = 0x0008;
 const int KILL_CONVERT = 0x0010; // Add JAPANESE special key remove function 
 
-
+#ifndef VK_OEM_COPY
+#define VK_OEM_COPY 0xf2
+#endif
 
 LRESULT CALLBACK Msg_HookProc(int iCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK Key_HookProc(int iCode, WPARAM wParam, LPARAM lParam);

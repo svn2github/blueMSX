@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-09 08:37:20 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -599,6 +599,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->textFile                = "檔案";
     ls->textNone                = "無";
 
+    ls->enumEmuSyncNone         = "無";
     ls->enumEmuSyncAuto         = "自動 (快速)";
     ls->enumEmuSync1ms          = "同步於 MSX 重新整理";
     ls->enumEmuSyncVblank       = "同步到 PC 垂直空白";

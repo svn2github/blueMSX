@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-09 08:37:20 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -599,6 +599,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->textFile                = "文件";
     ls->textNone                = "无";
 
+    ls->enumEmuSyncNone         = "无";
     ls->enumEmuSyncAuto         = "自动 (快速)";
     ls->enumEmuSync1ms          = "同步于 MSX 的刷新";
     ls->enumEmuSyncVblank       = "同步于 PC 的垂直空白";

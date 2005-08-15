@@ -25,8 +25,9 @@
 */
 #include "SymbolInfo.h"
 #include <stdio.h>
+#include <string>
 
-
+using namespace std;
 
 void SymbolInfo::clear()
 {
@@ -38,7 +39,7 @@ const char* SymbolInfo::find(WORD address)
     if (!showSymbols) {
         return NULL;
     }
-    std::map<WORD, Symbol>::const_iterator i = symbolMap.find(address);
+    map<WORD, Symbol>::const_iterator i = symbolMap.find(address);
     if (i == symbolMap.end()) {
         return NULL;
     }
@@ -51,7 +52,7 @@ BOOL SymbolInfo::rfind(const char* symbolName, WORD* addr)
     if (!showSymbols) {
         return FALSE;
     }
-    std::map<WORD, Symbol>::const_iterator i;
+    map<WORD, Symbol>::const_iterator i;
     
     for (i = symbolMap.begin(); i != symbolMap.end(); ++i) {
         if (0 == strncmp((i->second).name, symbolName, 64)) {
@@ -103,16 +104,16 @@ static int isHexNumber(const char* t)
     return isHexNum ? strlen(t) : 0;
 }
 
-void SymbolInfo::append(std::string& buffer)
+void SymbolInfo::append(string& buffer)
 {
     int index = 0;
     bool lastLine = false;
     while (!lastLine) {
         int nextIndex = buffer.find('\n', index);
 
-        lastLine = nextIndex == std::string::npos;
+        lastLine = nextIndex == string::npos;
 
-        std::string line = lastLine ? buffer.substr(index) : buffer.substr(index, nextIndex - index);
+        string line = lastLine ? buffer.substr(index) : buffer.substr(index, nextIndex - index);
 
         if (line.length() > 0) {
             char lineBuffer[512];

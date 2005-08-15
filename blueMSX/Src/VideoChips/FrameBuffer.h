@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,8 @@ typedef struct {
 
 typedef struct FrameBufferData FrameBufferData;
 
+
+void frameBufferSetFrameCount(int frameCount);
 
 FrameBuffer* frameBufferGetViewFrame();
 FrameBuffer* frameBufferFlipViewFrame(int mixFrames);

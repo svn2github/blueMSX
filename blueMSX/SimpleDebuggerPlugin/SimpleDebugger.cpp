@@ -369,7 +369,9 @@ void loadSymbolFile(HWND hwndOwner)
     if (replaceSymbols) {
         symbolInfo->clear();
     }
-    symbolInfo->append(std::string(buffer));
+    
+    std::string strBuffer(buffer);
+    symbolInfo->append(strBuffer);
     symbolInfo->show();
     disassembly->refresh();
     callstack->refresh();

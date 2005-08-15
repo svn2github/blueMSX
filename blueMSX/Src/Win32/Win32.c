@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.92 $
+** $Revision: 1.93 $
 **
-** $Date: 2005-08-09 08:16:41 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1106,6 +1106,19 @@ void archShowPropertiesDialog(PropPage  startPane) {
         boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
         boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
         restart = 1;
+    }
+
+    if (oldProp.emulation.syncMethod != pProperties->emulation.syncMethod) {
+        switch(pProperties->emulation.syncMethod) {
+        case P_EMU_SYNCNONE:
+            frameBufferSetFrameCount(1);
+            break;
+        case P_EMU_SYNCTOVBLANK:
+            frameBufferSetFrameCount(4);
+            break;
+        default:
+            frameBufferSetFrameCount(3);
+        }
     }
 
     for (i = 0; i < MIXER_CHANNEL_TYPE_COUNT; i++) {
@@ -2415,6 +2428,17 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         emuCheckFullscreenArgument(pProperties, szLine);
     }
 
+    switch(pProperties->emulation.syncMethod) {
+    case P_EMU_SYNCNONE:
+        frameBufferSetFrameCount(1);
+        break;
+    case P_EMU_SYNCTOVBLANK:
+        frameBufferSetFrameCount(4);
+        break;
+    default:
+        frameBufferSetFrameCount(3);
+    }
+
     midiInitialize();
 
     setDefaultPath();
@@ -2898,15 +2922,14 @@ int archUpdateEmuDisplay(int syncMode) {
             PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);
         }
     }
-    else if (syncMode == 2) {
+    else if (syncMode == 3) { // VBlank sync
         st.diplaySync = 1;
         emuWindowDraw();
         return st.diplayUpdated;
     }
     else {
         SetEvent(st.ddrawEvent);
-        if (syncMode > 0) {
-            st.diplaySync = syncMode == 2;
+        if (syncMode > 1) {
             WaitForSingleObject(st.ddrawAckEvent, 500);
             return st.diplayUpdated;
         }

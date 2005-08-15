@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-07-09 20:15:46 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,13 +31,13 @@
 #include "ArchEvent.h"
 #include <stdlib.h>
 
-#define FRAMES_PER_FRAMEBUFFER 4
+#define MAX_FRAMES_PER_FRAMEBUFFER 4
 
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
     int currentAge;
-    FrameBuffer frame[FRAMES_PER_FRAMEBUFFER];
+    FrameBuffer frame[MAX_FRAMES_PER_FRAMEBUFFER];
 };
 
 static void* semaphore = NULL;
@@ -61,15 +61,39 @@ static void signalSem() {
 
 
 static FrameBufferData* currentBuffer = NULL;
+static int frameBufferCount = MAX_FRAMES_PER_FRAMEBUFFER;
 
 
-FrameBuffer* frameBufferGetViewFrame()
+static FrameBuffer* frameBufferFlipViewFrame1(int mixFrames) 
 {
-    return currentBuffer ? currentBuffer->frame + currentBuffer->viewFrame : NULL;
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    currentBuffer->frame->age = ++currentBuffer->currentAge;
+    return currentBuffer->frame;
 }
 
-#if FRAMES_PER_FRAMEBUFFER == 4
-FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
+static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames) 
+{
+    int index;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    waitSem();
+    switch (currentBuffer->viewFrame) {
+    case 0: index = currentBuffer->drawFrame == 1 ? 2 : 1; break;
+    case 1: index = currentBuffer->drawFrame == 2 ? 0 : 2; break;
+    case 2: index = currentBuffer->drawFrame == 0 ? 1 : 0; break;
+    }
+    if (currentBuffer->frame[index].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
+        currentBuffer->viewFrame = index;
+    }
+    signalSem();
+    return currentBuffer->frame + currentBuffer->viewFrame;
+}
+
+static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames) 
 {
     int i1,i2;
 
@@ -107,6 +131,7 @@ FrameBuffer* frameBufferFlipViewFrame(int mixFrames)
         }
         break;
     }
+
     if (mixFrames) {
         int i3 = currentBuffer->viewFrame;
         
@@ -134,37 +159,36 @@ FrameBuffer* frameBufferFlipViewFrame(int mixFrames)
     signalSem();
     return currentBuffer->frame + currentBuffer->viewFrame;
 }
-#else
-FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
+
+
+static FrameBuffer* frameBufferFlipDrawFrame1()
 {
-    int index;
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    return currentBuffer->frame; 
+}
+
+static FrameBuffer* frameBufferFlipDrawFrame3()
+{
+    FrameBuffer* frame;
 
     if (currentBuffer == NULL) {
         return NULL;
     }
     waitSem();
-    switch (currentBuffer->viewFrame) {
-    case 0: index = currentBuffer->drawFrame == 1 ? 2 : 1; break;
-    case 1: index = currentBuffer->drawFrame == 2 ? 0 : 2; break;
-    case 2: index = currentBuffer->drawFrame == 0 ? 1 : 0; break;
+    switch (currentBuffer->drawFrame) {
+    case 0: currentBuffer->drawFrame = currentBuffer->viewFrame == 1 ? 2 : 1; break;
+    case 1: currentBuffer->drawFrame = currentBuffer->viewFrame == 2 ? 0 : 2; break;
+    case 2: currentBuffer->drawFrame = currentBuffer->viewFrame == 0 ? 1 : 0; break;
     }
-    if (currentBuffer->frame[index].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
-        currentBuffer->viewFrame = index;
-    }
+    frame = currentBuffer->frame + currentBuffer->drawFrame;
+    frame->age = ++currentBuffer->currentAge;
     signalSem();
-    return currentBuffer->frame + currentBuffer->viewFrame;
+    return frame;
 }
 
-#endif
-
-
-FrameBuffer* frameBufferGetDrawFrame()
-{
-    return currentBuffer ? currentBuffer->frame + currentBuffer->drawFrame : NULL;
-}
-
-#if FRAMES_PER_FRAMEBUFFER == 4
-FrameBuffer* frameBufferFlipDrawFrame()
+static FrameBuffer* frameBufferFlipDrawFrame4()
 {
     FrameBuffer* frame;
     int i1,i2;
@@ -209,34 +233,63 @@ FrameBuffer* frameBufferFlipDrawFrame()
     frame->age = ++currentBuffer->currentAge;
     return frame;
 }
-#else
-FrameBuffer* frameBufferFlipDrawFrame()
-{
-    FrameBuffer* frame;
 
-    if (currentBuffer == NULL) {
-        return NULL;
-    }
-    waitSem();
-    switch (currentBuffer->drawFrame) {
-    case 0: currentBuffer->drawFrame = currentBuffer->viewFrame == 1 ? 2 : 1; break;
-    case 1: currentBuffer->drawFrame = currentBuffer->viewFrame == 2 ? 0 : 2; break;
-    case 2: currentBuffer->drawFrame = currentBuffer->viewFrame == 0 ? 1 : 0; break;
-    }
-    frame = currentBuffer->frame + currentBuffer->drawFrame;
-    frame->age = ++currentBuffer->currentAge;
-    signalSem();
-    return frame;
+
+
+FrameBuffer* frameBufferGetViewFrame()
+{
+    return currentBuffer ? currentBuffer->frame + currentBuffer->viewFrame : NULL;
 }
-#endif
+
+FrameBuffer* frameBufferGetDrawFrame()
+{
+    return currentBuffer ? currentBuffer->frame + currentBuffer->drawFrame : NULL;
+}
+
+void frameBufferSetFrameCount(int frameCount)
+{
+    waitSem();
+    frameBufferCount = frameCount;
+    if (currentBuffer != NULL) {
+        int i;
+        currentBuffer->viewFrame = 0;
+        currentBuffer->drawFrame = 0;
+
+        for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
+            currentBuffer->frame[i].age = 0;
+        }
+    }
+    signalSem();
+}
+
+FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
+{
+    switch (frameBufferCount) {
+    case 3:
+        return frameBufferFlipViewFrame3(mixFrames);
+    case 4:
+        return frameBufferFlipViewFrame4(mixFrames);
+    }
+    return frameBufferFlipViewFrame1(mixFrames);
+}
+
+FrameBuffer* frameBufferFlipDrawFrame() {
+    switch (frameBufferCount) {
+    case 3:
+        return frameBufferFlipDrawFrame3();
+    case 4:
+        return frameBufferFlipDrawFrame4();
+    }
+    return frameBufferFlipDrawFrame1();
+}
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
 {
     int i;
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
-    frameData->drawFrame = 1;
+    frameData->drawFrame = frameBufferCount > 1 ? 1 : 0;
 
-    for (i = 0; i < FRAMES_PER_FRAMEBUFFER; i++) {
+    for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
         int j;
 
         frameData->frame[i].maxWidth = maxWidth;

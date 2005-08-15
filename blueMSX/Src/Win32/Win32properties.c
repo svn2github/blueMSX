@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-07-07 18:32:53 $
+** $Date: 2005-08-15 05:37:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -467,11 +467,12 @@ static _TCHAR* pSoundDriver[] = {
     NULL
 };
 
-static _TCHAR pEmuSyncData[3][64];
+static _TCHAR pEmuSyncData[4][64];
 static _TCHAR* pEmuSync[] = {
     pEmuSyncData[0],
     pEmuSyncData[1],
     pEmuSyncData[2],
+    pEmuSyncData[3],
     NULL
 };
 
@@ -1025,9 +1026,10 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         _stprintf(pSoundDriver[1], "%s", langEnumSoundDrvWMM());
         _stprintf(pSoundDriver[2], "%s", langEnumSoundDrvDirectX());
 
-        _stprintf(pEmuSync[0], "%s", langEnumEmuSyncAuto());
-        _stprintf(pEmuSync[1], "%s", langEnumEmuSync1ms());
-        _stprintf(pEmuSync[2], "%s", langEnumEmuSyncVblank());
+        _stprintf(pEmuSync[0], "%s", langEnumEmuSyncNone());
+        _stprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
+        _stprintf(pEmuSync[2], "%s", langEnumEmuSync1ms());
+        _stprintf(pEmuSync[3], "%s", langEnumEmuSyncVblank());
 
         /* Init language specific dialog items */
         SendDlgItemMessage(hDlg, IDC_PERFVIDEODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());

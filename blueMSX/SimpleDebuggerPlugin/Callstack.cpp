@@ -29,6 +29,13 @@
 #include "Language.h"
 #include <stdio.h>
 
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 static CallstackWindow* callstack = NULL;
 
 static LRESULT CALLBACK callstackWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
