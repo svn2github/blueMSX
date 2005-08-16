@@ -189,6 +189,18 @@
 			RelativePath=".\Language.h">
 		</File>
 		<File
+			RelativePath=".\LanguageChineseSimplified.h">
+		</File>
+		<File
+			RelativePath=".\LanguageChineseTraditional.h">
+		</File>
+		<File
+			RelativePath=".\LanguageEnglish.h">
+		</File>
+		<File
+			RelativePath=".\LanguageJapanese.h">
+		</File>
+		<File
 			RelativePath=".\Memory.cpp">
 		</File>
 		<File
