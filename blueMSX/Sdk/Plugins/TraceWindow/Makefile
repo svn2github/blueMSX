@@ -36,6 +36,7 @@ SRCS= \
 	bluemsx.ico \
 	BlueMSXToolInterface.h \
 	Resource.h \
+	Language.cpp \
 	ToolDllMain.cpp \
 	ToolInterface.h \
 	TraceWindow.cpp \
