@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-20 00:31:07 $
+** $Date: 2005-08-16 04:14:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,23 @@ typedef signed   long    Int32;
 #endif
 
 typedef enum { EMULATOR_STOPPED, EMULATOR_PAUSED, EMULATOR_RUNNING } EmulatorState;
+
+typedef enum {
+    LID_ENGLISH     = 0, 
+    LID_SWEDISH     = 1, 
+    LID_JAPANESE    = 2, 
+    LID_PORTUGUESE  = 3, 
+    LID_FRENCH      = 4, 
+    LID_DUTCH       = 5,
+    LID_SPANISH     = 6,
+    LID_ITALIAN     = 7,
+    LID_FINNISH     = 8,
+    LID_KOREAN      = 9,
+    LID_GERMAN      = 10,
+    LID_POLISH      = 11,
+    LID_CHINESESIMP = 12,
+    LID_CHINESETRAD = 13,
+} LanguageId;
 
 typedef struct Snapshot Snapshot;
 typedef struct Device   Device;
@@ -174,8 +191,10 @@ typedef int  (__stdcall *CreateFn)(Interface*, char*, int);
 typedef void (__stdcall *NotifyFn)();
 typedef void (__stdcall *TraceFn)(const char*);
 typedef void (__stdcall *SetBpFn)(UInt16, UInt16, UInt16);
+typedef void (__stdcall *SetLgFn)(int);
+typedef const char* (__stdcall *GetNameFn)();
 
-__declspec(dllexport) int  __stdcall Create11(Interface*, char* name, int length);
+__declspec(dllexport) int  __stdcall Create11(Interface*, char* name, int maxLength);
 __declspec(dllexport) void __stdcall Show();
 __declspec(dllexport) void __stdcall NotifyEmulatorStart();
 __declspec(dllexport) void __stdcall NotifyEmulatorStop();
@@ -184,6 +203,8 @@ __declspec(dllexport) void __stdcall NotifyEmulatorResume();
 __declspec(dllexport) void __stdcall NotifyEmulatorReset();
 __declspec(dllexport) void __stdcall EmulatorTrace(const char* message);
 __declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address);
+__declspec(dllexport) void __stdcall SetLanguage(int languageId);
+__declspec(dllexport) const char* __stdcall GetName();
 
 #ifdef __cplusplus
 }

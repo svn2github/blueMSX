@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "ToolInterface.h"
 #include "Resource.h"
+#include "Language.h"
 #include <string>
 #include <commctrl.h>
 #include <sstream>
@@ -12,6 +13,8 @@ static HWND dbgHwnd = NULL;
 static HWND hwndEdit = NULL;
 static FILE* logFile = NULL;
 static DWORD charCount = 0;
+static LanguageId langId = LID_ENGLISH;
+
 #define IDEDITCTL           100
 
 #define MENU_FILE_EXIT              37100
@@ -25,18 +28,18 @@ static void updateWindowMenu()
 {
     HMENU hMenuFile = CreatePopupMenu();
     
-    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOG, logFile == NULL ? "Log to File" : "Stop Log to File");
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOG, logFile == NULL ? Language::menuFileLogToFile : Language::menuFileStopLogToFile);
     AppendMenu(hMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, "Exit");
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_EXIT, Language::menuFileExit);
     
     HMENU hMenuEdit = CreatePopupMenu();
-    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_SELECTALL, "Select All");
-    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_COPY, "Copy");
+    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_SELECTALL, Language::menuEditSelectAll);
+    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_COPY, Language::menuEditCopy);
     AppendMenu(hMenuEdit, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_CLEAR, "Clear Window");
+    AppendMenu(hMenuEdit, MF_STRING, MENU_EDIT_CLEAR, Language::menuEditClearWindow);
 
     HMENU hMenuHelp = CreatePopupMenu();
-    AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, "About");
+    AppendMenu(hMenuHelp, MF_STRING, MENU_HELP_ABOUT, Language::menuHelpAbout);
 
     static HMENU hMenu = NULL;
     if (hMenu != NULL) {
@@ -44,9 +47,9 @@ static void updateWindowMenu()
     }
 
     hMenu = CreateMenu();
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFile, "File");
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEdit, "Edit");
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuHelp, "Help");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFile, Language::menuFile);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEdit, Language::menuEdit);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuHelp, Language::menuHelp);
     
     SetMenu(dbgHwnd, hMenu);
 }
@@ -71,7 +74,7 @@ void openLogFile(HWND hwndOwner)
     ofn.lpstrFileTitle = NULL; 
     ofn.nMaxFileTitle = 0; 
     ofn.lpstrInitialDir = NULL; 
-    ofn.lpstrTitle = "Open Log File"; 
+    ofn.lpstrTitle = Language::openWindowCaption; 
     ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT; 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
@@ -112,8 +115,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             return 0;
 
         case MENU_HELP_ABOUT:
-            MessageBox(NULL, "blueMSX Trace Logger\r\n\r\nBuilt: " __DATE__ "\r\n\r\nVisit http://www.bluemsx.com for details    \r\n\r\n\r\n",
-                       "blueMSX - Trace Logger", MB_ICONINFORMATION | MB_OK);
+            {
+                char text[256];
+                sprintf(text, "%s\r\n\r\n%s: " __DATE__ "\r\n\r\n%s    \r\n\r\n\r\n",
+                    Language::traceWindowCaption, Language::aboutBuilt, Language::aboutVisit);
+                MessageBox(NULL, text, Language::traceWindowCaption, MB_ICONINFORMATION | MB_OK);
+            }
             return 0;
 
         case MENU_EDIT_CLEAR:
@@ -207,9 +214,11 @@ void OnShowTool() {
         return;
     }
 
+    Language::SetLanguage(langId);
+
     charCount = 0;
 
-    dbgHwnd = CreateWindow("TraceWindow", "blueMSX - Trace Logger", 
+    dbgHwnd = CreateWindow("TraceWindow", Language::traceWindowCaption, 
                            WS_OVERLAPPEDWINDOW, 
                            CW_USEDEFAULT, CW_USEDEFAULT, 600, 440, NULL, NULL, GetDllHinstance(), NULL);
 
@@ -297,5 +306,11 @@ void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address) {
 }
 
 const char* OnGetName() {
-    return "Trace Logger";
+    return Language::traceWindowName;
+}
+
+void OnSetLanguage(LanguageId languageId)
+{
+    langId = languageId;
+    Language::SetLanguage(langId);
 }

@@ -79,6 +79,7 @@ public:
     static const char* menuHelp;
     static const char* menuHelpAbout;
 
+    static const char* debuggerName;
     static const char* windowDebugger;
     static const char* windowDisassembly;
     static const char* windowDisassemblyUnavail;

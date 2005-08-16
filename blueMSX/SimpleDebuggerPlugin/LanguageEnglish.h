@@ -1,6 +1,6 @@
 /*****************************************************************************
 ** File:
-**      Language.h
+**      LanguageEnglish.h
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
@@ -78,6 +78,7 @@ public:
         menuHelp                    = "Help";
         menuHelpAbout               = "About";
 
+        debuggerName                = "Debugger";
         windowDebugger              = "blueMSX - Debugger";
         windowDisassembly           = "Disassembly";
         windowDisassemblyUnavail    = "Disassembly unavailable.";

@@ -30,8 +30,6 @@
 #include "LanguageJapanese.h"
 #include <stdlib.h>
 
-
-
 namespace {
     Language* ls = new LanguageEnglish;
 }
@@ -103,6 +101,7 @@ const char* Language::menuWindow;
 const char* Language::menuHelp;
 const char* Language::menuHelpAbout;
 
+const char* Language::debuggerName;
 const char* Language::windowDebugger;
 const char* Language::windowDisassembly;
 const char* Language::windowDisassemblyUnavail;

@@ -10,3 +10,4 @@ NotifyEmulatorReset
 EmulatorTrace
 EmulatorSetBreakpoint
 SetLanguage
+GetName

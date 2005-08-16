@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-06-21 03:22:35 $
+** $Date: 2005-08-16 04:14:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,16 +45,17 @@ struct ToolInfo {
     Debugger* debugger;
 
     struct {
-        NotifyFn show;
-        NotifyFn destroy;
-        NotifyFn onEmulatorStart;
-        NotifyFn onEmulatorStop;
-        NotifyFn onEmulatorPause;
-        NotifyFn onEmulatorResume;
-        NotifyFn onEmulatorReset;
-        TraceFn  onEmulatorTrace;
-        SetBpFn  onEmulatorSetBp;
-        SetLgFn  onEmulatorSetLg;
+        NotifyFn  show;
+        NotifyFn  destroy;
+        NotifyFn  onEmulatorStart;
+        NotifyFn  onEmulatorStop;
+        NotifyFn  onEmulatorPause;
+        NotifyFn  onEmulatorResume;
+        NotifyFn  onEmulatorReset;
+        TraceFn   onEmulatorTrace;
+        SetBpFn   onEmulatorSetBp;
+        SetLgFn   onEmulatorSetLg;
+        GetNameFn getName;
     } callbacks;
 };
 
@@ -287,17 +288,18 @@ void toolLoadAll(const char* path, int languageId)
 
         if (lib != NULL) {
             char description[32] = "Unknown";
-            CreateFn create   = (CreateFn)GetProcAddress(lib, "Create11");
-            NotifyFn destroy  = (NotifyFn)GetProcAddress(lib, "Destroy");
-            NotifyFn show     = (NotifyFn)GetProcAddress(lib, "Show");
-            NotifyFn onStart  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorStart");
-            NotifyFn onStop   = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorStop");
-            NotifyFn onPause  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorPause");
-            NotifyFn onResume = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorResume");
-            NotifyFn onReset  = (NotifyFn)GetProcAddress(lib, "NotifyEmulatorReset");
-            TraceFn  onTrace  = (TraceFn) GetProcAddress(lib, "EmulatorTrace");
-            SetBpFn  onSetBp  = (SetBpFn) GetProcAddress(lib, "EmulatorSetBreakpoint");
-            SetLgFn  onSetLg  = (SetLgFn) GetProcAddress(lib, "SetLanguage");
+            CreateFn  create   = (CreateFn) GetProcAddress(lib, "Create11");
+            NotifyFn  destroy  = (NotifyFn) GetProcAddress(lib, "Destroy");
+            NotifyFn  show     = (NotifyFn) GetProcAddress(lib, "Show");
+            NotifyFn  onStart  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorStart");
+            NotifyFn  onStop   = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorStop");
+            NotifyFn  onPause  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorPause");
+            NotifyFn  onResume = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorResume");
+            NotifyFn  onReset  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorReset");
+            TraceFn   onTrace  = (TraceFn)  GetProcAddress(lib, "EmulatorTrace");
+            SetBpFn   onSetBp  = (SetBpFn)  GetProcAddress(lib, "EmulatorSetBreakpoint");
+            SetLgFn   onSetLg  = (SetLgFn)  GetProcAddress(lib, "SetLanguage");
+            GetNameFn onGetNm  = (GetNameFn)GetProcAddress(lib, "GetName");
 
             if (create == NULL) {
                 // Check old style dll exports (of blueMSX 2.2)
@@ -312,6 +314,8 @@ void toolLoadAll(const char* path, int languageId)
                 onTrace  = NULL;
                 onSetBp  = NULL;
                 onSetLg  = NULL;
+                onGetNm  = NULL;
+
 
                 if (create == NULL) {
                     FreeLibrary(lib);
@@ -325,16 +329,17 @@ void toolLoadAll(const char* path, int languageId)
             }
 
             toolInfo = malloc(sizeof(ToolInfo));
-            toolInfo->callbacks.destroy          = destroy;
-            toolInfo->callbacks.show             = show;
-            toolInfo->callbacks.onEmulatorStart  = onStart;
-            toolInfo->callbacks.onEmulatorStop   = onStop;
-            toolInfo->callbacks.onEmulatorPause  = onPause;
-            toolInfo->callbacks.onEmulatorResume = onResume;
-            toolInfo->callbacks.onEmulatorReset  = onReset;
-            toolInfo->callbacks.onEmulatorTrace  = onTrace;
-            toolInfo->callbacks.onEmulatorSetBp  = onSetBp;
-            toolInfo->callbacks.onEmulatorSetLg  = onSetLg;
+            toolInfo->callbacks.destroy           = destroy;
+            toolInfo->callbacks.show              = show;
+            toolInfo->callbacks.onEmulatorStart   = onStart;
+            toolInfo->callbacks.onEmulatorStop    = onStop;
+            toolInfo->callbacks.onEmulatorPause   = onPause;
+            toolInfo->callbacks.onEmulatorResume  = onResume;
+            toolInfo->callbacks.onEmulatorReset   = onReset;
+            toolInfo->callbacks.onEmulatorTrace   = onTrace;
+            toolInfo->callbacks.onEmulatorSetBp   = onSetBp;
+            toolInfo->callbacks.onEmulatorSetLg   = onSetLg;
+            toolInfo->callbacks.getName           = onGetNm;
             toolInfo->debugger = debuggerCreate(onStart  ? onEmulatorStart  : NULL, 
                                                 onStop   ? onEmulatorStop   : NULL, 
                                                 onPause  ? onEmulatorPause  : NULL, 
@@ -397,6 +402,9 @@ ToolInfo* toolInfoFind(char* name)
 
 const char* toolInfoGetName(ToolInfo* toolInfo)
 {
+    if (toolInfo->callbacks.getName != NULL) {
+        return toolInfo->callbacks.getName();
+    }
     return toolInfo->description;
 }
 

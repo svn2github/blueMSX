@@ -249,6 +249,11 @@ __declspec(dllexport) void __stdcall SetLanguage(int languageId)
     OnSetLanguage((LanguageId)languageId);
 }
 
+__declspec(dllexport) const char* __stdcall GetName()
+{
+    return OnGetName();
+}
+
 
 extern "C" int APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID /*lpvReserved*/)
 {

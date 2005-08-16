@@ -153,6 +153,24 @@
 			RelativePath=".\BlueMSXToolInterface.h">
 		</File>
 		<File
+			RelativePath=".\Language.cpp">
+		</File>
+		<File
+			RelativePath=".\Language.h">
+		</File>
+		<File
+			RelativePath=".\LanguageChineseSimplified.h">
+		</File>
+		<File
+			RelativePath=".\LanguageChineseTraditional.h">
+		</File>
+		<File
+			RelativePath=".\LanguageEnglish.h">
+		</File>
+		<File
+			RelativePath=".\LanguageJapanese.h">
+		</File>
+		<File
 			RelativePath=".\Resource.h">
 		</File>
 		<File

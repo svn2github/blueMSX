@@ -1135,8 +1135,9 @@ void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address)
 void OnSetLanguage(LanguageId languageId)
 {
     langId = languageId;
+    Language::SetLanguage(langId);
 }
 
 const char* OnGetName() {
-    return "Debugger";
+    return Language::debuggerName;
 }

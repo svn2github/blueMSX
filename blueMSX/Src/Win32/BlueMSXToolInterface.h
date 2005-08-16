@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-06-21 03:22:35 $
+** $Date: 2005-08-16 04:14:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,8 +190,9 @@ typedef void (__stdcall *NotifyFn)();
 typedef void (__stdcall *TraceFn)(const char*);
 typedef void (__stdcall *SetBpFn)(UInt16, UInt16, UInt16);
 typedef void (__stdcall *SetLgFn)(int);
+typedef const char* (__stdcall *GetNameFn)();
 
-__declspec(dllexport) int  __stdcall Create11(Interface*, char* name, int length);
+__declspec(dllexport) int  __stdcall Create11(Interface*, char* name, int maxLength);
 __declspec(dllexport) void __stdcall Show();
 __declspec(dllexport) void __stdcall NotifyEmulatorStart();
 __declspec(dllexport) void __stdcall NotifyEmulatorStop();
@@ -201,6 +202,7 @@ __declspec(dllexport) void __stdcall NotifyEmulatorReset();
 __declspec(dllexport) void __stdcall EmulatorTrace(const char* message);
 __declspec(dllexport) void __stdcall EmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address);
 __declspec(dllexport) void __stdcall SetLanguage(int languageId);
+__declspec(dllexport) const char* __stdcall GetName();
 
 #ifdef __cplusplus
 }

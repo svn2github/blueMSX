@@ -78,6 +78,7 @@ public:
         menuHelp                    = "ヘルプ";
         menuHelpAbout               = "デバッガについて";
 
+        debuggerName                = "デバッガ";
         windowDebugger              = "blueMSX - デバッガ";
         windowDisassembly           = "逆アセンブル";
         windowDisassemblyUnavail    = "Disassembly unavailable.";

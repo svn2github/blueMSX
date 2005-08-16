@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/ToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-20 00:31:07 $
+** $Date: 2005-08-16 04:14:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,8 @@
 */
 #ifndef TOOL_INTERFACE_H
 #define TOOL_INTERFACE_H
+
+#include <windows.h>
 
 //
 // See the include file below for the datastructures used in the interface
@@ -82,6 +84,7 @@ void OnEmulatorTrace(const char* message);
 void OnEmulatorSetBreakpoint(UInt16 address);
 void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address);
 void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address);
+void OnSetLanguage(LanguageId languageId);
 
 const char* OnGetName();
 

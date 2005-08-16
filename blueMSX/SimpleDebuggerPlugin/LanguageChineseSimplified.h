@@ -78,6 +78,7 @@ public:
         menuHelp                    = "帮助";
         menuHelpAbout               = "关于";
 
+        debuggerName                = "调试工具";
         windowDebugger              = "blueMSX - 调试工具";
         windowDisassembly           = "反汇编";
         windowDisassemblyUnavail    = "反汇编不可用。";

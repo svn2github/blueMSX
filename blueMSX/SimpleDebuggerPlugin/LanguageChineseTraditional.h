@@ -78,6 +78,7 @@ public:
         menuHelp                    = "說明";
         menuHelpAbout               = "關於";
 
+        debuggerName                = "偵錯工具";
         windowDebugger              = "blueMSX - 偵錯工具";
         windowDisassembly           = "反組譯碼";
         windowDisassemblyUnavail    = "反組譯碼不可使用。";
