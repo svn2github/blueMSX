@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-06-20 00:31:20 $
+** $Date: 2005-08-17 07:03:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,7 @@ typedef struct {
     UInt32 count;
     struct DbgIoPort {
         UInt16 port;
+        UInt8  direction;
         UInt8  value;
     } port[1];
 } DbgIoPorts;

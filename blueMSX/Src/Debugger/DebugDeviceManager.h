@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-27 05:06:50 $
+** $Date: 2005-08-17 07:03:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,12 +66,20 @@ void dbgRegisterBankAddRegister(DbgRegisterBank* regBank,
                                 UInt8 width,
                                 UInt32 value);
 
+typedef enum {
+    DBG_IO_NONE      = 0,
+    DBG_IO_READ      = 1,
+    DBG_IO_WRITE     = 2,
+    DBG_IO_READWRITE = 3
+} DbgIoPortDirection;
+
 DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
                                 const char* name,
                                 UInt32 ioPortsCount);
 void dbgIoPortsAddPort(DbgIoPorts* ioPorts,
                        int index,
                        UInt16 port,
+                       DbgIoPortDirection direction,
                        UInt8 value);
 
 void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count);

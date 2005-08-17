@@ -183,6 +183,12 @@
 			RelativePath=".\EditControls.h">
 		</File>
 		<File
+			RelativePath=".\IoPorts.cpp">
+		</File>
+		<File
+			RelativePath=".\IoPorts.h">
+		</File>
+		<File
 			RelativePath=".\Language.cpp">
 		</File>
 		<File

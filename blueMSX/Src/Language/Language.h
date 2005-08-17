@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-17 07:03:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -275,6 +275,7 @@ _TCHAR* langPropMonSaturation();
 _TCHAR* langPropMonGamma();
 _TCHAR* langPropMonScanlines();
 _TCHAR* langPropMonColorGhosting();
+_TCHAR* langPropMonEffectsGB();
 
 _TCHAR* langPropPerfVideoDrvGB();
 _TCHAR* langPropPerfVideoDispDrvText();

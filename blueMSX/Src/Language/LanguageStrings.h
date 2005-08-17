@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-17 07:03:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -252,6 +252,7 @@ typedef struct {
     _TCHAR* propMonGamma;
     _TCHAR* propMonScanlines;
     _TCHAR* propMonColorGhosting;
+    _TCHAR* propMonEffectsGB;
 
     _TCHAR* propPerfVideoDrvGB;
     _TCHAR* propPerfVideoDispDrvText;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-16 04:14:27 $
+** $Date: 2005-08-17 07:03:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,12 +118,20 @@ typedef struct {
     UInt32 callstack[1];
 } Callstack;
 
+typedef enum {
+    IO_PORT_NONE      = 0,
+    IO_PORT_READ      = 1,
+    IO_PORT_WRITE     = 2,
+    IO_PORT_READWRITE = 3
+} IoPortDirection;
+
 typedef struct {
     int    deviceId;
     char   name[32];
     UInt32 count;
     struct IoPort {
         UInt16 port;
+        UInt8  direction;
         UInt8  value;
     } port[1];
 } IoPorts;

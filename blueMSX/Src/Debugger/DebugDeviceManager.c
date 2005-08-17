@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-27 05:06:50 $
+** $Date: 2005-08-17 07:03:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -295,9 +295,11 @@ DbgIoPorts* dbgDeviceAddIoPorts(DbgDevice* dbgDevice,
 void dbgIoPortsAddPort(DbgIoPorts* ioPorts,
                        int index,
                        UInt16 port,
+                       DbgIoPortDirection direction,
                        UInt8 value)
 {
-    ioPorts->port[index].port = port;    
-    ioPorts->port[index].value = value;
+    ioPorts->port[index].port       = port;  
+    ioPorts->port[index].direction  = direction;    
+    ioPorts->port[index].value      = value;
 }
 

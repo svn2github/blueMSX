@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-17 07:03:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1162,14 +1162,15 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         _stprintf(pVideoMonSize[2], "%s", langEnumVideoSizeFullscreen());
 
         /* Init language specific dialog items */
-        SendMessage(GetDlgItem(hDlg, IDC_MONGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropMonMonGB());
-        SendMessage(GetDlgItem(hDlg, IDC_MONTYPETEXT), WM_SETTEXT, 0, (LPARAM)langPropMonTypeText());
-        SendMessage(GetDlgItem(hDlg, IDC_MONEMUTEXT), WM_SETTEXT, 0, (LPARAM)langPropMonEmuText());
-        SendMessage(GetDlgItem(hDlg, IDC_MONVIDEOTYPETEXT), WM_SETTEXT, 0, (LPARAM)langPropVideoYypeText());
-        SendMessage(GetDlgItem(hDlg, IDC_MONWINDOWSIZETEXT), WM_SETTEXT, 0, (LPARAM)langPropWindowSizeText());
-        SendMessage(GetDlgItem(hDlg, IDC_MONHORIZSTRETCH), WM_SETTEXT, 0, (LPARAM)langPropMonHorizStretch());
-        SendMessage(GetDlgItem(hDlg, IDC_MONVERTSTRETCH), WM_SETTEXT, 0, (LPARAM)langPropMonVertStretch());
-        SendMessage(GetDlgItem(hDlg, IDC_MONDEINTERLACE), WM_SETTEXT, 0, (LPARAM)langPropMonDeInterlace());
+        SendDlgItemMessage(hDlg, IDC_MONGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropMonMonGB());
+        SendDlgItemMessage(hDlg, IDC_MONTYPETEXT, WM_SETTEXT, 0, (LPARAM)langPropMonTypeText());
+        SendDlgItemMessage(hDlg, IDC_MONEMUTEXT, WM_SETTEXT, 0, (LPARAM)langPropMonEmuText());
+        SendDlgItemMessage(hDlg, IDC_MONVIDEOTYPETEXT, WM_SETTEXT, 0, (LPARAM)langPropVideoYypeText());
+        SendDlgItemMessage(hDlg, IDC_MONWINDOWSIZETEXT, WM_SETTEXT, 0, (LPARAM)langPropWindowSizeText());
+        SendDlgItemMessage(hDlg, IDC_MONHORIZSTRETCH, WM_SETTEXT, 0, (LPARAM)langPropMonHorizStretch());
+        SendDlgItemMessage(hDlg, IDC_MONVERTSTRETCH, WM_SETTEXT, 0, (LPARAM)langPropMonVertStretch());
+        SendDlgItemMessage(hDlg, IDC_MONDEINTERLACE, WM_SETTEXT, 0, (LPARAM)langPropMonDeInterlace());
+        SendDlgItemMessage(hDlg, IDC_EFFECTSGB, WM_SETTEXT, 0, (LPARAM)langPropMonEffectsGB());
 
         setButtonCheck(hDlg, IDC_MONHORIZSTRETCH, pProperties->video.horizontalStretch, 1);
         setButtonCheck(hDlg, IDC_MONVERTSTRETCH, pProperties->video.verticalStretch, 1);

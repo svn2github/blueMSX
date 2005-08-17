@@ -112,6 +112,7 @@ const char* Language::windowCallstack;
 const char* Language::windowCallstackUnavail;
 const char* Language::windowMemory;
 const char* Language::windowPeripheralRegisters;
+const char* Language::windowIoPorts;
 
 const char* Language::memWindowRegisters;
 

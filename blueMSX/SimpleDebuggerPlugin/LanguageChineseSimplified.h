@@ -89,6 +89,7 @@ public:
         windowCallstackUnavail      = "调用栈不可用。";
         windowMemory                = "内存";
         windowPeripheralRegisters   = "外围寄存器";
+        windowIoPorts               = "I/O Ports";
 
         memWindowRegisters          = "寄存器:";
 

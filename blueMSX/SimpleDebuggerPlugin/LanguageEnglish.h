@@ -89,6 +89,7 @@ public:
         windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "Memory";
         windowPeripheralRegisters   = "Peripheral Registers";
+        windowIoPorts               = "I/O Ports";
 
         memWindowRegisters          = "Registers:";
 

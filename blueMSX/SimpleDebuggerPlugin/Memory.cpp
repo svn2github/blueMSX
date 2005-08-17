@@ -579,8 +579,11 @@ void Memory::scrollWindow(int sbAction)
     si.fMask = SIF_POS;
     SetScrollInfo (memHwnd, SB_VERT, &si, TRUE);
     GetScrollInfo (memHwnd, SB_VERT, &si);
-    if (si.nPos != yPos) {                    
-        ScrollWindow(memHwnd, 0, textHeight * (yPos - si.nPos), NULL, NULL);
+    if (si.nPos != yPos) {
+        RECT r;
+        GetClientRect(memHwnd, &r);
+        r.top = textHeight;
+        ScrollWindow(memHwnd, 0, textHeight * (yPos - si.nPos), &r, &r);
         UpdateWindow (memHwnd);
     }
 }
@@ -602,7 +605,7 @@ void Memory::drawText(int top, int bottom)
     int memSize = currentMemory != NULL ? currentMemory->size : 0;
 
     for (int i = FirstLine; i <= LastLine; i++) {
-        if  (i == FirstLine) {
+        if  (i == yPos) {
             SelectObject(hMemdc, hBrushWhite); 
             PatBlt(hMemdc, 0, 0, 1024, textHeight + 1, PATCOPY);
             SetTextColor(hMemdc, colorLtGray);

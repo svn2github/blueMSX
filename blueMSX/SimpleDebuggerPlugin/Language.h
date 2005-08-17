@@ -90,6 +90,7 @@ public:
     static const char* windowCallstackUnavail;
     static const char* windowMemory;
     static const char* windowPeripheralRegisters;
+    static const char* windowIoPorts;
 
     static const char* memWindowMemory;
     static const char* memWindowAddress;

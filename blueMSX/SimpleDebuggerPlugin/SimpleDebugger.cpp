@@ -10,6 +10,7 @@
 #include "SymbolInfo.h"
 #include "Memory.h"
 #include "PeripheralRegs.h"
+#include "IoPorts.h"
 #include "Language.h"
 #include "resrc1.h"
 #include <string>
@@ -28,6 +29,7 @@ static StackWindow* stack = NULL;
 static CallstackWindow* callstack = NULL;
 static CpuRegisters* cpuRegisters = NULL;
 static PeripheralRegs* periRegisters = NULL;
+static IoPortWindow* ioPorts = NULL;
 static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
 static LanguageId langId = LID_ENGLISH;
@@ -164,6 +166,7 @@ static void updateStatusBar()
 #define MENU_WINDOW_CALLSTACK       37303
 #define MENU_WINDOW_MEMORY          37304
 #define MENU_WINDOW_PERIREGISTERS   37305
+#define MENU_WINDOW_IOPORTS         37306
 
 #define MENU_HELP_ABOUT             37400
 
@@ -254,7 +257,9 @@ static void updateWindowMenu()
     sprintf(buf, "%s", Language::windowMemory);
     AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, buf);
     sprintf(buf, "%s", Language::windowPeripheralRegisters);
-    AppendMenu(hMenuWindow, MF_STRING | (memory       && periRegisters->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_PERIREGISTERS, buf);
+    AppendMenu(hMenuWindow, MF_STRING | (periRegisters&& periRegisters->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_PERIREGISTERS, buf);
+    sprintf(buf, "%s", Language::windowIoPorts);
+    AppendMenu(hMenuWindow, MF_STRING | (ioPorts      && ioPorts->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_IOPORTS, buf);
     
     HMENU hMenuHelp = CreatePopupMenu();
 
@@ -453,6 +458,7 @@ void updateDeviceState()
 
         memory->updateContent(snapshot);
         periRegisters->updateContent(snapshot);
+        ioPorts->updateContent(snapshot);
     }
 
     if (currentSnapshot != NULL) {
@@ -686,6 +692,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             else {
                 periRegisters->show();
+            }
+            updateWindowMenu();
+            return 0;
+
+        case MENU_WINDOW_IOPORTS:
+            if (ioPorts->isVisible()) {
+                ioPorts->hide(); 
+            }
+            else {
+                ioPorts->show();
             }
             updateWindowMenu();
             return 0;
@@ -944,6 +960,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         cpuRegisters = NULL;
         delete periRegisters;
         periRegisters = NULL;
+        delete ioPorts;
+        ioPorts = NULL;
         delete callstack;
         callstack = NULL;
         delete stack;
@@ -1048,6 +1066,10 @@ void OnShowTool() {
     RECT r7 = { 23, 413, 530, 620 };
     periRegisters->updatePosition(r7);
 //    periRegisters->show();
+
+    ioPorts = new IoPortWindow(GetDllHinstance(), viewHwnd);
+    RECT r8 = { 253, 113, 530, 620 };
+    ioPorts->updatePosition(r8);
     
     updateWindowPositions();
     
@@ -1065,6 +1087,7 @@ void OnEmulatorStart() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         periRegisters->disableEdit();
+        ioPorts->disableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
@@ -1077,6 +1100,7 @@ void OnEmulatorStop() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         periRegisters->disableEdit();
+        ioPorts->disableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
@@ -1089,6 +1113,7 @@ void OnEmulatorPause() {
         disassembly->enableEdit();
         cpuRegisters->enableEdit();
         periRegisters->enableEdit();
+        ioPorts->enableEdit();
         callstack->enableEdit();
         stack->enableEdit();
         memory->enableEdit();
@@ -1101,10 +1126,10 @@ void OnEmulatorResume() {
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         periRegisters->disableEdit();
+        ioPorts->enableEdit();
         callstack->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
-        periRegisters->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
     }
 }

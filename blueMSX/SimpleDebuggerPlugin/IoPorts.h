@@ -1,6 +1,6 @@
 /*****************************************************************************
 ** File:
-**      Callstack.h
+**      IoPorts.h
 **
 ** Copyright (C) 2003-2004 Daniel Vik
 **
@@ -22,16 +22,16 @@
 **
 ******************************************************************************
 */
-#ifndef CALLSTACK_H
-#define CALLSTACK_H
+#ifndef IOPORTS_H
+#define IOPORTS_H
 
-#include "Disassembly.h"
+#include "BlueMSXToolInterface.h"
 #include <windows.h>
 
-class CallstackWindow {
+class IoPortWindow {
 public:
-    CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* disassembly);
-    ~CallstackWindow();
+    IoPortWindow(HINSTANCE hInstance, HWND owner);
+    ~IoPortWindow();
 
     void show();
     void hide();
@@ -43,10 +43,8 @@ public:
     void updatePosition(RECT& rect);
 
     void refresh();
-    
-    int  getMostRecent();
 
-    void updateContent(DWORD* callstack, int size);
+    void updateContent(Snapshot* snapshot);
     void invalidateContent();
     void updateScroll();
 
@@ -68,27 +66,29 @@ private:
     
     COLORREF colorBlack;
     COLORREF colorGray;
+    COLORREF colorRed;
 
     int    textHeight;
     int    textWidth;
 
     struct LineInfo {
-        WORD address;
-        char text[48];
-        int  textLength;
-        char dataText[48];
-        int  dataTextLength;
+        char port[4];
+        int  portLength;
+        char name[32];
+        int  nameLength;
+        char value[4];
+        int  valueLength;
+        char readWrite[4];
+        int  readWriteLength;
     };
 
     int      lineCount;
     int      currentLine;
     LineInfo lineInfo[256];
     int      linePos;
-    
-    DWORD backupCallstack[0x1000];
-    WORD backupSize;
 
-    Disassembly* disassembly;
+    BYTE     ioPortValues[256];
+    BYTE     backupIoPortValues[256];
 };
 
-#endif //CALLSTACK_H
+#endif //IOPORTS_H

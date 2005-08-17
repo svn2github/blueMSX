@@ -89,6 +89,7 @@ public:
         windowCallstackUnavail      = "呼叫堆疊不可使用。";
         windowMemory                = "記憶體";
         windowPeripheralRegisters   = "周邊暫存器";
+        windowIoPorts               = "I/O Ports";
 
         memWindowRegisters          = "暫存器:";
 

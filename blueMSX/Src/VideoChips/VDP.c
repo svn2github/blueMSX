@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-07-24 03:50:15 $
+** $Date: 2005-08-17 07:03:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -676,6 +676,15 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     }
 } 
 
+static UInt8 peek(VDP* vdp, UInt16 ioPort) 
+{
+    if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
+        vdpCmdExecute(vdp->cmdEngine, boardSystemTime());
+    }
+
+	return vdp->vdpData;
+}
+
 static UInt8 read(VDP* vdp, UInt16 ioPort) 
 {
     UInt8 value;
@@ -693,6 +702,59 @@ static UInt8 read(VDP* vdp, UInt16 ioPort)
 	vdp->vdpKey = 0;
 
     return value;
+}
+
+static UInt8 peekStatus(VDP* vdp, UInt16 ioPort)
+{
+    UInt8 vdpStatus;
+
+    sync(vdp, boardSystemTime());
+    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+        return vdp->vdpStatus[0];
+    }
+    vdpStatus = vdp->vdpStatus[vdp->vdpRegs[15]];
+
+    switch(vdp->vdpRegs[15]) {
+    case 1: 
+        if (vdp->vdpRegs[0] & 0x10) {
+            if (boardGetInt(INT_IE1)) {
+                vdpStatus |=  0x01;
+            }
+        }
+        else {
+            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->hRefresh) {
+                vdpStatus |= 0x01;
+            }
+        }
+        break;
+
+    case 2:
+        {
+            UInt32 frameTime = boardSystemTime() - vdp->frameStartTime;
+            vdpStatus |= 0x40 | 0x20 | vdpGetStatus(vdp->cmdEngine);
+            if (vdp->drawArea || (frameTime - ((vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10) < 4 * HPERIOD)) {
+                vdpStatus &= ~0x40;
+            }
+            if (frameTime % HPERIOD - vdp->leftBorder < (UInt32)vdp->hRefresh) {
+                vdpStatus &= ~0x20;
+            }
+        }
+        break;
+
+    case 7: 
+        vdpStatus = vdpGetColor(vdp->cmdEngine);
+        break;
+
+    case 8: 
+        vdpStatus = (UInt8)vdpGetBorderX(vdp->cmdEngine);
+        break;
+
+    case 9: 
+        vdpStatus = (UInt8)(vdpGetBorderX(vdp->cmdEngine) >> 8);
+        break;
+    }
+
+    return vdpStatus;
 }
 
 static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
@@ -1019,6 +1081,7 @@ static void loadState(VDP* vdp)
 static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
+    DbgIoPorts* ioPorts;
     int cmdRegCount;
     int regCount;
     int i;
@@ -1029,6 +1092,25 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     int lineTime;
     int frameTime;
     int regOffset = 0;
+    char* vdpVersionName;
+
+    switch (vdp->vdpVersion) {
+    case VDP_TMS9929A:
+        vdpVersionName = "TMS9929A";
+        break;
+    case VDP_TMS99x8A:
+        vdpVersionName = "TMS99x8A";
+        break;
+    case VDP_V9938:
+        vdpVersionName = "V9938";
+        break;
+    case VDP_V9958:
+        vdpVersionName = "V9958";
+        break;
+    default:
+        vdpVersionName = "VDP";
+        break;
+    }
 
     sync(vdp, boardSystemTime());
 
@@ -1091,6 +1173,40 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, regOffset++, "VRMP", 16, vdp->vramAddress);
     dbgRegisterBankAddRegister(regBank, regOffset++, "SCAN", 8, scanLine);
     dbgRegisterBankAddRegister(regBank, regOffset++, "LNTM", 16, lineTime);
+
+    // Add IO Ports
+    switch (vdp->vdpConnector) {
+    case VDP_MSX:
+        if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
+            ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 4);
+            dbgIoPortsAddPort(ioPorts, 0, 0x98, DBG_IO_READWRITE,  peek(vdp, 0x98));
+            dbgIoPortsAddPort(ioPorts, 1, 0x99, DBG_IO_READWRITE,  peekStatus(vdp, 0x99));
+            dbgIoPortsAddPort(ioPorts, 2, 0x9a, DBG_IO_WRITE, 0);
+            dbgIoPortsAddPort(ioPorts, 3, 0x9b, DBG_IO_WRITE, 0);
+        }
+        else {
+            ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 2);
+            dbgIoPortsAddPort(ioPorts, 0, 0x98, DBG_IO_READWRITE,  peek(vdp, 0x98));
+            dbgIoPortsAddPort(ioPorts, 1, 0x99, DBG_IO_READWRITE,  peekStatus(vdp, 0x99));
+        }
+        break;
+
+    case VDP_SVI:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 4);
+        dbgIoPortsAddPort(ioPorts, 0, 0x80, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 1, 0x81, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 2, 0x84, DBG_IO_READ,  peek(vdp, 0x84));
+        dbgIoPortsAddPort(ioPorts, 3, 0x85, DBG_IO_READ,  peekStatus(vdp, 0x85));
+        break;
+
+    case VDP_COLECO:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 32);
+        for (i = 0; i < 32; i += 2) {
+            dbgIoPortsAddPort(ioPorts, 0,     i + 0xa0, DBG_IO_READWRITE, peek(vdp, i + 0xa0));
+            dbgIoPortsAddPort(ioPorts, i + 1, i + 0xa1, DBG_IO_READWRITE, peekStatus(vdp, i + 0xa1));
+        }
+        break;
+    }
 }
 
 static int dbgWriteMemory(VDP* vdp, char* name, void* data, int start, int size)
