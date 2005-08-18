@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperSonyHBI55.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "sramLoader.h"
 #include "IoPort.h"
@@ -45,6 +46,7 @@
 
 typedef struct {
     int    deviceHandle;
+    int    debugHandle;
     I8255* i8255;
 
     UInt8  sram[0x1000];
@@ -65,6 +67,7 @@ static void destroy(SonyHBI55* rm)
     sramSave(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x1000, NULL, 0);
 
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     i8255Destroy(rm->i8255);
 
@@ -169,22 +172,35 @@ static UInt8 readCHi(SonyHBI55* rm)
     return rm->sram[rm->readAddr] >> 4;
 }
 
+static void getDebugInfo(SonyHBI55* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "HBI-55", 4);
+    dbgIoPortsAddPort(ioPorts, 0, 0xb0, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb0));
+    dbgIoPortsAddPort(ioPorts, 1, 0xb1, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb1));
+    dbgIoPortsAddPort(ioPorts, 2, 0xb2, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb2));
+    dbgIoPortsAddPort(ioPorts, 3, 0xb3, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb3));
+}
+
 int romMapperSonyHBI55Create()
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     SonyHBI55* rm = malloc(sizeof(SonyHBI55));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SONYHBI55, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "HBI-55", &dbgCallbacks, rm);
 
     memset(rm->sram, 0xff, sizeof(rm->sram));
     sramLoad(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x1000, NULL, 0);
 
     rm->sram[0] = 0x53;
 
-    rm->i8255 = i8255Create(NULL,    writeA,
-                            NULL,    writeB,
-                            readCLo, writeCLo,
-                            readCHi, writeCHi,
+    rm->i8255 = i8255Create(NULL,    NULL,    writeA,
+                            NULL,    NULL,    writeB,
+                            readCLo, readCLo, writeCLo,
+                            readCHi, readCHi, writeCHi,
                             rm);
 
     ioPortRegister(0xb0, i8255Read, i8255Write, rm->i8255);

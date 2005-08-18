@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-02-08 00:48:08 $
+** $Date: 2005-08-18 05:21:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -230,6 +230,34 @@ static Int32* sync(void* ref, UInt32 count)
     }
 
     return moonsound->buffer;
+}
+
+UInt8 moonsoundPeek(Moonsound* moonsound, UInt16 ioPort)
+{
+	UInt8 result = 0xff;
+    UInt32 systemTime = boardSystemTime();
+
+	if (ioPort < 0xC0) {
+		switch (ioPort & 0x01) {
+		case 1: // read wave register
+			result = moonsound->ymf278->peekRegOPL4(moonsound->opl4latch, systemTime);
+			break;
+		}
+	} else {
+		switch (ioPort & 0x03) {
+		case 0: // read status
+		case 2:
+			result = moonsound->ymf262->peekStatus() | 
+                     moonsound->ymf278->peekStatus(systemTime);
+			break;
+		case 1:
+		case 3: // read fm register
+			result = moonsound->ymf262->peekReg(moonsound->opl3latch);
+			break;
+		}
+	}
+
+    return result;
 }
 
 UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)

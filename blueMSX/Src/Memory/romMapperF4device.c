@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperF4device.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperF4device.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -38,6 +39,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     int inverted;
     int status;
 } RomMapperF4device;
@@ -63,6 +65,7 @@ static void loadState(RomMapperF4device* rm)
 static void destroy(RomMapperF4device* rm)
 {
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     ioPortUnregister(0xf4);
 
@@ -89,14 +92,23 @@ static void reset(RomMapperF4device* rm)
     rm->status = rm->inverted ? 0xff : 0;
 }
 
+static void getDebugInfo(RomMapperF4device* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "F4 Device", 1);
+    dbgIoPortsAddPort(ioPorts, 0, 0xf4, DBG_IO_READWRITE, read(rm, 0xe4));
+}
+
 int romMapperF4deviceCreate(int inverted) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperF4device* rm = malloc(sizeof(RomMapperF4device));
-
 
     rm->inverted   = inverted;
     rm->deviceHandle = deviceManagerRegister(inverted ? ROM_F4INVERTED : ROM_F4DEVICE, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "F4 Device", &dbgCallbacks, rm);
 
     ioPortRegister(0xf4, read, write, rm);
 

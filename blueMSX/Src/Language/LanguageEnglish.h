@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-08-17 07:03:29 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -605,6 +605,20 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
 
     ls->propMonEffectsGB        = "Effects ";
+    
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Subslot";
+
+    ls->shortcut                = "Shortcut";
+    ls->hotkey                  = "Hotkey";
+    ls->unknown                 = "Unknown";
+    ls->romImage                = "ROM image";
+    ls->romImageOpen            = "Open ROM image";
+    ls->romCartridge            = "ROM cartridge";
+    ls->allFiles                = "All Files";
+    ls->cpuState                = "CPU state";
+    ls->diskImage               = "Disk Image";
+    ls->casImage                = "Tape Image";
 };
 
 

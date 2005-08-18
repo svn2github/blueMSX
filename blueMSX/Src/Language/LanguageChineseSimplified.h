@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -348,7 +348,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSndMoonsound         = " Moonsound";
 
     ls->propFileTypesGB          = "文件类型 ";
-    ls->propFileTypes            = " 用 blueMSX 关联文件 (.rom, .dsk, .cas, .sta)";
+    ls->propFileTypes            = " 用 blueMSX 关联文件 ( .rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " MSX 使用中周围的 Windows 按键无效"; 
     ls->propWindowsEnvGB         = "Windows 环境设定 "; 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW 加速"; 
@@ -503,7 +503,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "切换暂停开关";
     ls->shortcutSizeMinimized   = "最小化窗口";
     ls->shortcutEmuSpeedToggle  = "锁定最高速模拟";
-    ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 追踪";
+    ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 跟踪";
 
     ls->enumVideoEmuMonitor     = "显示器";
 
@@ -564,8 +564,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propPortsLptText        = "端口:";
     ls->propPortsCom1Text       = "端口 1:";
 
-    ls->shortcutShowDebugger    = "显示调试器";
-    ls->shortcutShowTrainer     = "显示修改器";
+    ls->shortcutShowDebugger    = "显示调试工具";
+    ls->shortcutShowTrainer     = "显示修改工具";
     ls->shortcutShowPorts       = "显示端口设定";
     
     ls->propPorts               = "端口";
@@ -603,6 +603,22 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自动 (快速)";
     ls->enumEmuSync1ms          = "同步于 MSX 的刷新";
     ls->enumEmuSyncVblank       = "同步于 PC 的垂直空白";
+
+    ls->propMonEffectsGB        = "特效";
+
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Subslot";
+
+    ls->shortcut                = "Shortcut";
+    ls->hotkey                  = "Hotkey";
+    ls->unknown                 = "Unknown";
+    ls->romImage                = "ROM image";
+    ls->romImageOpen            = "Open ROM image";
+    ls->romCartridge            = "ROM cartridge";
+    ls->allFiles                = "All Files";
+    ls->cpuState                = "CPU state";
+    ls->diskImage               = "Disk Image";
+    ls->casImage                = "Tape Image";
 };
 
 

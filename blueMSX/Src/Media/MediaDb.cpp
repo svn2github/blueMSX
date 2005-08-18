@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-07-24 03:50:14 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@ extern "C" {
 #include "Crc32.h"
 #include "TokenExtract.h"
 #include "StrcmpNoCase.h"
+#include "Language.h"
 }
 
 #include "TinyXml.h"
@@ -591,10 +592,10 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MSXPRN:      return "MSX Printer";
     case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
 
-    case ROM_UNKNOWN:     return "Unknown";
+    case ROM_UNKNOWN:     return langUnknown();
     }
 
-    return "unknown";
+    return langUnknown();
 }
 
 extern "C" const char* romTypeToShortString(RomType romType) 

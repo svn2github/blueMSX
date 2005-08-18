@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-01 09:26:27 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -335,6 +335,30 @@ int wd2793DiskChanged(WD2793* wd, int drive)
     return diskChanged(drive);
 }
 
+int wd2793PeekDataRequest(WD2793* wd)
+{
+    int dataRequest = wd->dataRequest;
+
+	if (((wd->regCommand & 0xF0) == 0xF0) && ((wd->regStatus & ST_BUSY) || wd->dataReady)) {
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 5);
+		if (wd->dataReady) {
+			dataRequest = 1;
+		} 
+		if (pulses > 1) {
+			dataRequest   = 0;
+		}
+	}
+
+    if ((wd->regCommand & 0xe0) == 0x80 && (wd->regStatus & ST_BUSY)) {
+        UInt32 pulses = (boardSystemTime() - wd->dataRequsetTime) / (boardFrequency() / 25);
+		if (wd->dataReady) {
+			dataRequest = 1;
+		}
+    }
+
+    return dataRequest;
+}
+
 int wd2793GetDataRequest(WD2793* wd)
 {
     sync(wd);
@@ -380,6 +404,12 @@ void wd2793SetTrackReg(WD2793* wd, UInt8 value)
 	wd->regTrack = value;
 }
 
+UInt8 wd2793PeekTrackReg(WD2793* wd)
+{
+    sync(wd);
+	return wd->regTrack;
+}
+
 UInt8 wd2793GetTrackReg(WD2793* wd)
 {
     sync(wd);
@@ -392,10 +422,27 @@ void wd2793SetSectorReg(WD2793* wd, UInt8 value)
 	wd->regSector = value;
 }
 
+UInt8 wd2793PeekSectorReg(WD2793* wd)
+{
+    sync(wd);
+	return wd->regSector;
+}
+
 UInt8 wd2793GetSectorReg(WD2793* wd)
 {
     sync(wd);
 	return wd->regSector;
+}
+
+UInt8 wd2793PeekDataReg(WD2793* wd)
+{
+    UInt8 regData;
+
+    sync(wd);
+	if (((wd->regCommand & 0xe0) == 0x80) && (wd->regStatus & ST_BUSY)) {
+		regData = wd->sectorBuf[wd->sectorOffset];
+	}
+	return wd->regData;
 }
 
 UInt8 wd2793GetDataReg(WD2793* wd)
@@ -454,6 +501,52 @@ void wd2793SetDataReg(WD2793* wd, UInt8 value)
 			}
 		}
 	}
+}
+
+UInt8 wd2793PeekStatusReg(WD2793* wd)
+{
+    UInt8 regStatus;
+
+    sync(wd);
+
+    regStatus = wd->regStatus;
+
+	if (((wd->regCommand & 0x80) == 0) || ((wd->regCommand & 0xf0) == 0xd0)) {
+		regStatus &= ~(ST_INDEX | ST_TRACK00 | ST_HEAD_LOADED | ST_WRITE_PROTECTED);
+    	if (diskEnabled(wd->drive)) {
+            if (diskPresent(wd->drive)) {
+                if ((UInt64)160 * boardSystemTime() / boardFrequency() & 0x1e) {
+			        regStatus |= ST_INDEX;
+		        }
+            }
+		    if (wd->diskTrack == 0) {
+			    regStatus |=  ST_TRACK00;
+		    }
+            if (wd->headLoaded) {
+    		    regStatus |=  ST_HEAD_LOADED;
+            }
+        }
+        else {
+    		regStatus |= ST_WRITE_PROTECTED;
+        }
+	} 
+    else {
+		if (wd2793PeekDataRequest(wd)) {
+			regStatus |=  ST_DATA_REQUEST;
+		} 
+        else {
+			regStatus &= ~ST_DATA_REQUEST;
+		}
+	}
+
+	if (diskPresent(wd->drive)) {
+		regStatus &= ~ST_NOT_READY;
+	} 
+    else {
+		regStatus |=  ST_NOT_READY;
+	}
+
+	return regStatus;
 }
 
 UInt8 wd2793GetStatusReg(WD2793* wd)

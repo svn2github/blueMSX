@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "MidiIO.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"
 #include "IoPort.h"
@@ -42,6 +43,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     MidiIO* midiIo;
     I8251* i8251;
     I8254* i8254;
@@ -111,6 +113,8 @@ static void destroy(MSXMidi* msxMidi)
     i8254Destroy(msxMidi->i8254);
 
     deviceManagerUnregister(msxMidi->deviceHandle);
+    debugDeviceUnregister(msxMidi->debugHandle);
+
     free(msxMidi);
 }
 
@@ -191,6 +195,25 @@ static void enableRxRDYIRQ(MSXMidi* msxMidi, int enabled)
 ** IO Port callbacks
 ******************************************
 */
+static UInt8 peekIo(MSXMidi* msxMidi, UInt16 ioPort) 
+{
+	switch (ioPort & 7) {
+		case 0: // UART data register
+		case 1: // UART status register
+			return i8251Peek(msxMidi->i8251, ioPort & 3);
+			break;
+		case 2: // timer interrupt flag off
+		case 3: // no function
+			return 0xff;
+		case 4: // counter 0 data port
+		case 5: // counter 1 data port
+		case 6: // counter 2 data port
+		case 7: // timer command register
+			return i8254Peek(msxMidi->i8254, ioPort & 3);
+	}
+	return 0xff;
+}
+
 static UInt8 readIo(MSXMidi* msxMidi, UInt16 ioPort) 
 {
 	switch (ioPort & 7) {
@@ -305,17 +328,35 @@ static void pitOut2(MSXMidi* msxMidi, int state)
 }
 
 /*****************************************
+** MSX MIDI Debug callbacks
+******************************************
+*/
+
+static void getDebugInfo(MSXMidi* msxMidi, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+    int i;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX MIDI", 8);
+    for (i = 0; i < 8; i++) {
+        dbgIoPortsAddPort(ioPorts, i, 0xe8 + i, DBG_IO_READWRITE, peekIo(msxMidi, 0xe8 + i));
+    }
+}
+
+/*****************************************
 ** MSX MIDI Create Method
 ******************************************
 */
 int MSXMidiCreate()
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     MSXMidi* msxMidi;
 
     msxMidi = malloc(sizeof(MSXMidi));
     
     msxMidi->deviceHandle = deviceManagerRegister(ROM_MSXMIDI, &callbacks, msxMidi);
+    msxMidi->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX MIDI", &dbgCallbacks, msxMidi);
 
     msxMidi->i8254 = i8254Create(4000000, pitOut0, pitOut1, pitOut2, msxMidi);
     msxMidi->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 

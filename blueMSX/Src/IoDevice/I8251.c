@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -310,6 +310,17 @@ static void onTrans(I8251* i8251, UInt32 time)
 	}
 }
 
+UInt8 i8251Peek(I8251* i8251, UInt16 port)
+{
+	switch (port & 1) {
+	case 0:
+		return i8251->recvBuf;
+	case 1:
+		return readStatus(i8251);
+    }
+    return 0xff;
+}
+
 UInt8 i8251Read(I8251* i8251, UInt16 port)
 {
 	switch (port & 1) {
@@ -490,9 +501,9 @@ I8251* i8251Create(I8251Transmit transmit,    I8251Signal   signal,
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **

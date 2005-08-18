@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-08-17 07:03:29 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -698,6 +698,20 @@ _TCHAR* langDlgSlotCart1() { return ls->confSlotCart1; }
 _TCHAR* langDlgSlotCart2() { return ls->confSlotCart2; }
 _TCHAR* langDlgSlotPrimary() { return ls->confSlotPrimary; }
 _TCHAR* langDlgSlotExpanded() { return ls->confSlotExpanded; }
+
+_TCHAR* langSlot() { return ls->confSlot; }
+_TCHAR* langSubslot() { return ls->confSubslot; }
+
+_TCHAR* langShortcut() { return ls->hotkey; }
+_TCHAR* langHotkey() { return ls->shortcut; }
+_TCHAR* langUnknown() { return ls->unknown; }
+_TCHAR* langRomImage() { return ls->romImage; }
+_TCHAR* langRomImageOpen() { return ls->romImageOpen; }
+_TCHAR* langRomCartridge() { return ls->romCartridge; }
+_TCHAR* langAllFiles() { return ls->allFiles; }
+_TCHAR* langCpuState() { return ls->cpuState; }
+_TCHAR* langDiskImage() { return ls->diskImage; }
+_TCHAR* langCasImage() { return ls->casImage; }
 
 _TCHAR* langDlgMemAdd() { return ls->confMemAdd; }
 _TCHAR* langDlgMemEdit() { return ls->confMemEdit; }

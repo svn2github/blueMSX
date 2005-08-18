@@ -186,7 +186,9 @@ class YMF262 : public SoundDevice, public TimerCallback
 		
 		virtual void reset(const EmuTime &time);
 		void writeReg(int r, byte v, const EmuTime &time);
+		byte peekReg(int reg);
 		byte readReg(int reg);
+		byte peekStatus();
 		byte readStatus();
 		
 		virtual void setInternalVolume(short volume);

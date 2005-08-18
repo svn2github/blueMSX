@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF278.cpp,v 1.1.1.1 2004-12-04 20:25:33 dvik Exp $
+// $Id: OpenMsxYMF278.cpp,v 1.2 2005-08-18 05:21:52 dvik Exp $
 
 #include "OpenMsxYMF278.h"
 #include <cmath>
@@ -690,6 +690,27 @@ void YMF278::writeRegOPL4(byte reg, byte data, const EmuTime &time)
 	regs[reg] = data;
 }
 
+byte YMF278::peekRegOPL4(byte reg, const EmuTime &time)
+{
+	BUSY_Time = time;
+	
+	byte result;
+	switch(reg) {
+		case 2: // 3 upper bits are device ID
+			result = (regs[2] & 0x1F) | 0x20;
+			break;
+			
+		case 6: // Memory Data Register
+			result = readMem(memadr);
+			break;
+
+		default:
+			result = regs[reg];
+			break;
+	}
+	return result;
+}
+
 byte YMF278::readRegOPL4(byte reg, const EmuTime &time)
 {
 	BUSY_Time = time;
@@ -709,6 +730,18 @@ byte YMF278::readRegOPL4(byte reg, const EmuTime &time)
 		default:
 			result = regs[reg];
 			break;
+	}
+	return result;
+}
+
+byte YMF278::peekStatus(const EmuTime &time)
+{
+	byte result = 0;
+	if (time - BUSY_Time < 88 * 6 / 9) {
+		result |= 0x01;
+	}
+	if (time - LD_Time < 10000 * 6 / 9) {
+		result |= 0x02;
 	}
 	return result;
 }

@@ -84,6 +84,7 @@ public:
     static const char* windowDisassembly;
     static const char* windowDisassemblyUnavail;
     static const char* windowCpuRegisters;
+    static const char* windowCpuRegistersFlags;
     static const char* windowStack;
     static const char* windowStackUnavail;
     static const char* windowCallstack;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperMsxMusic.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "IoPort.h"
 #include "YM2413.h"
@@ -40,6 +41,7 @@
 
 typedef struct {
     int      deviceHandle;
+    int      debugHandle;
     YM_2413* ym2413;
     UInt8* romData;
     int slot;
@@ -58,6 +60,7 @@ static void destroy(MsxMusic* rm)
 
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     free(rm->romData);
     free(rm);
@@ -104,10 +107,20 @@ static void write(MsxMusic* rm, UInt16 ioPort, UInt8 data)
     }
 }
 
+static void getDebugInfo(MsxMusic* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX Music", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
+}
+
 int romMapperMsxMusicCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     MsxMusic* rm = malloc(sizeof(MsxMusic));
     int pages = size / 0x2000 + ((size & 0x1fff) ? 1 : 0);
     int i;
@@ -121,6 +134,7 @@ int romMapperMsxMusicCreate(char* filename, UInt8* romData,
     rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
         rm->ym2413 = ym2413Create(boardGetMixer());
+        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX Music", &dbgCallbacks, rm);
         ioPortRegister(0x7c, NULL, write, rm);
         ioPortRegister(0x7d, NULL, write, rm);
     }

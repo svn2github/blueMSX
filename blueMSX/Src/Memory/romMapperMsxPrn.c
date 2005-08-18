@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxPrn.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-09 17:31:54 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperMsxPrn.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "PrinterIO.h"
@@ -37,6 +38,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     UInt8 prnData;
     UInt8 prnStrobe;
     PrinterIO* printerIO;
@@ -65,6 +67,7 @@ static void loadState(RomMapperMsxPrn* prn)
 static void destroy(RomMapperMsxPrn* prn)
 {
     deviceManagerUnregister(prn->deviceHandle);
+    debugDeviceUnregister(prn->debugHandle);
 
     ioPortUnregister(0x90);
     ioPortUnregister(0x91);
@@ -103,9 +106,19 @@ static void reset(RomMapperMsxPrn* prn)
     prn->prnData = 0;
 }
 
+static void getDebugInfo(RomMapperMsxPrn* prn, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Printer", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0x90, DBG_IO_READWRITE, readIo(prn, 0x90));
+    dbgIoPortsAddPort(ioPorts, 1, 0x91, DBG_IO_READWRITE, readIo(prn, 0x91));
+}
+
 int romMapperMsxPrnCreate(void) 
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperMsxPrn* prn;
 
     prn = malloc(sizeof(RomMapperMsxPrn));
@@ -113,6 +126,7 @@ int romMapperMsxPrnCreate(void)
     prn->printerIO = printerIOCreate();
 
     prn->deviceHandle = deviceManagerRegister(ROM_MSXPRN, &callbacks, prn);
+    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Printer", &dbgCallbacks, prn);
 
     ioPortRegister(0x90, readIo, writeIo, prn);
     ioPortRegister(0x91, readIo, writeIo, prn);

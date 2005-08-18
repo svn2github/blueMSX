@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-07-04 01:54:37 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -236,6 +236,41 @@ static void counterLoad(Counter* counter)
     counterSetTimeout(counter);
 }
 
+static UInt8 counterPeek(Counter* counter)
+{
+    UInt16 outputLatch;
+
+    if (counter->statusLatched) {
+        return counter->statusLatch;
+    }
+
+    // Modify output latch if mode = 3.
+    outputLatch = counter->outputLatch;
+    if (counter->mode == 3) {
+        if (outputLatch > counter->countRegister / 2) {
+            outputLatch = outputLatch - counter->countRegister / 2;
+        }
+        outputLatch *= 2;
+    }
+
+    switch ((counter->controlWord & 0x30) >> 4) {
+    case 0:
+        return 0xff;
+
+    case 1:
+        return outputLatch & 0xff;
+    case 2:
+        return outputLatch >> 8;
+    case 3:
+        if (counter->readPhase == PHASE_LOW) {
+            return outputLatch & 0xff;
+        }
+        return outputLatch >> 8;
+    }
+
+    return 0xff;
+}
+
 static UInt8 counterRead(Counter* counter)
 {
     UInt16 outputLatch;
@@ -419,6 +454,19 @@ struct I8254
     Counter* counter2;
     Counter* counter3;
 };
+
+UInt8 i8254Peek(I8254* i8254, UInt16 port)
+{
+	switch (port & 3) {
+	case 0:
+		return counterPeek(i8254->counter1);
+	case 1:
+		return counterPeek(i8254->counter2);
+	case 2:
+		return counterPeek(i8254->counter3);
+	}
+    return 0xff;
+}
 
 UInt8 i8254Read(I8254* i8254, UInt16 port)
 {

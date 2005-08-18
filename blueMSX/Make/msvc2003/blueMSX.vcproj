@@ -1037,6 +1037,12 @@
 				RelativePath="..\..\Src\IoDevice\TC8566AF.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\TurboRIO.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\TurboRIO.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\UartIO.c">
 			</File>
 			<File

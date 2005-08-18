@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -603,6 +603,22 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自動 (快速)";
     ls->enumEmuSync1ms          = "同步於 MSX 重新整理";
     ls->enumEmuSyncVblank       = "同步到 PC 垂直空白";
+
+    ls->propMonEffectsGB        = "效果";
+
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Subslot";
+
+    ls->shortcut                = "Shortcut";
+    ls->hotkey                  = "Hotkey";
+    ls->unknown                 = "Unknown";
+    ls->romImage                = "ROM image";
+    ls->romImageOpen            = "Open ROM image";
+    ls->romCartridge            = "ROM cartridge";
+    ls->allFiles                = "All Files";
+    ls->cpuState                = "CPU state";
+    ls->diskImage               = "Disk Image";
+    ls->casImage                = "Tape Image";
 };
 
 

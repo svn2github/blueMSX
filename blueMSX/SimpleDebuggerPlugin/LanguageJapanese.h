@@ -83,6 +83,7 @@ public:
         windowDisassembly           = "逆アセンブル";
         windowDisassemblyUnavail    = "Disassembly unavailable.";
         windowCpuRegisters          = "CPU レジスタ";
+        windowCpuRegistersFlags     = "Flags";
         windowStack                 = "スタック";
         windowStackUnavail          = "Stack unavailable.";
         windowCallstack             = "コールスタック";

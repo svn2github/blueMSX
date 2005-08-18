@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "Switches.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "IoPort.h"
 #include "Board.h"
 #include "Y8950.h"
@@ -42,6 +43,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     Y8950* y8950;
     int ioBase;
     UInt8* romData;
@@ -85,6 +87,11 @@ static void loadState(RomMapperMsxAudio* rm)
 
 static void destroy(RomMapperMsxAudio* rm)
 {
+    ioPortUnregister(0x00);
+    ioPortUnregister(0x01);
+    ioPortUnregister(0x04);
+    ioPortUnregister(0x05);
+
     ioPortUnregister(rm->ioBase + 0);
     ioPortUnregister(rm->ioBase + 1);
 
@@ -98,6 +105,7 @@ static void destroy(RomMapperMsxAudio* rm)
         slotUnregister(rm->slot, rm->sslot, rm->startPage);
     }
 
+    debugDeviceUnregister(rm->debugHandle);
     deviceManagerUnregister(rm->deviceHandle);
 
     if (rm->romData != NULL) {
@@ -134,16 +142,51 @@ static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value)
 	}
 }
 
+
+static void midiWrite(RomMapperMsxAudio* rm, UInt16 ioPort, UInt8 value)
+{
+}
+
+static UInt8 midiRead(RomMapperMsxAudio* rm, UInt16 ioPort)
+{
+    switch (ioPort & 1) {
+    case 0x00: 
+        return 2;
+
+    case 0x01: 
+        return 0;
+    }
+
+    return 0xff;
+}
+
+static void getDebugInfo(RomMapperMsxAudio* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX Audio", 2);
+    dbgIoPortsAddPort(ioPorts, 0, rm->ioBase + 0, DBG_IO_READWRITE, y8950Peek(rm->y8950, 0));
+    dbgIoPortsAddPort(ioPorts, 1, rm->ioBase + 1, DBG_IO_READWRITE, y8950Peek(rm->y8950, 1));
+    
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX-A MIDI", 4);
+    dbgIoPortsAddPort(ioPorts, 0, 0x00, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 1, 0x01, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 2, 0x04, DBG_IO_READ, midiRead(rm, 0x04));
+    dbgIoPortsAddPort(ioPorts, 3, 0x05, DBG_IO_READ, midiRead(rm, 0x05));
+}
+
 int romMapperMsxAudioCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperMsxAudio* rm;
     int i;
 
     rm = malloc(sizeof(RomMapperMsxAudio));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MSXAUDIO, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX Audio", &dbgCallbacks, rm);
 
     rm->ioBase = 0xc0 + deviceCount++ * 2;
 
@@ -176,6 +219,11 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         rm->y8950 = y8950Create(boardGetMixer());
         ioPortRegister(rm->ioBase + 0, y8950Read, y8950Write, rm->y8950);
         ioPortRegister(rm->ioBase + 1, y8950Read, y8950Write, rm->y8950);
+
+        ioPortRegister(0x00, NULL, midiWrite, rm);
+        ioPortRegister(0x01, NULL, midiWrite, rm);
+        ioPortRegister(0x04, midiRead, NULL, rm);
+        ioPortRegister(0x05, midiRead, NULL, rm);
     }
 
     reset(rm);

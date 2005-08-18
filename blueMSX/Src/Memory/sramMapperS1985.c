@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperS1985.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "sramMapperMatsuchita.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "sramLoader.h"
@@ -41,6 +42,7 @@ extern int frontSwitchEnabled();
 
 typedef struct {
     int    deviceHandle;
+    int    debugHandle;
     UInt8  sram[0x10];
     UInt32 address;
 	UInt8  color1;
@@ -77,10 +79,31 @@ static void destroy(SramMapperS1985* rm)
     sramSave(sramCreateFilename("S1985.SRAM"), rm->sram, 0x10, NULL, 0);
 
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     ioPortUnregisterSub(0x08);
 
     free(rm);
+}
+
+static UInt8 peek(SramMapperS1985* rm, UInt16 ioPort)
+{
+	UInt8 result;
+	switch (ioPort & 0x0f) {
+	case 0:
+		result = ~0xfe;
+		break;
+	case 2:
+		result = rm->sram[rm->address];
+		break;
+	case 7:
+		result = (rm->pattern & 0x80) ? rm->color2 : rm->color1;
+		break;
+	default:
+		result = 0xff;
+	}
+
+	return result;
 }
 
 static UInt8 read(SramMapperS1985* rm, UInt16 ioPort)
@@ -123,14 +146,31 @@ static void write(SramMapperS1985* rm, UInt16 ioPort, UInt8 value)
 	}
 }
 
+static void getDebugInfo(SramMapperS1985* rm, DbgDevice* dbgDevice)
+{
+    if (ioPortCheckSub(0xfe)) {
+        DbgIoPorts* ioPorts;
+        int i;
+
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji 12", 2);
+
+        for (i = 0; i < 16; i++) {
+            dbgIoPortsAddPort(ioPorts, i, 0x40 + i, DBG_IO_READWRITE, peek(rm, i));
+        }
+    }
+}
+
 int sramMapperS1985Create() 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     SramMapperS1985* rm;
 
     rm = malloc(sizeof(SramMapperS1985));
 
     rm->deviceHandle = deviceManagerRegister(SRAM_S1985, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "S1985", &dbgCallbacks, rm);
+
     memset(rm->sram, 0xff, 0x10);
     rm->address = 0;
 

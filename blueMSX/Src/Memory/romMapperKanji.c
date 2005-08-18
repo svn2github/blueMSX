@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKanji.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperKanji.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -40,6 +41,7 @@
 typedef struct {
     UInt8* romData;
     int deviceHandle;
+    int debugHandle;
     int size;
     UInt32 address[2];
 } RomMapperKanji;
@@ -67,6 +69,7 @@ static void loadState(RomMapperKanji* rm)
 static void destroy(RomMapperKanji* rm)
 {
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     ioPortUnregister(0xd9);
     ioPortUnregister(0xd8);
@@ -75,6 +78,20 @@ static void destroy(RomMapperKanji* rm)
 
     free(rm->romData);
     free(rm);
+}
+
+static UInt8 peek(RomMapperKanji* rm, UInt16 ioPort)
+{
+    UInt32* reg = &rm->address[(ioPort & 2) >> 1];
+    UInt8 value;
+
+	if (reg == &rm->address[1] && rm->size != 0x40000) {
+        return 0xff;
+    }
+
+    value = rm->romData[*reg];
+
+    return value;
 }
 
 static UInt8 read(RomMapperKanji* rm, UInt16 ioPort)
@@ -111,9 +128,21 @@ static void write(RomMapperKanji* rm, UInt16 ioPort, UInt8 value)
 	}
 }
 
+static void getDebugInfo(RomMapperKanji* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji", 4);
+    dbgIoPortsAddPort(ioPorts, 0, 0xd8, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 1, 0xd9, DBG_IO_READWRITE, peek(rm, 0xd9));
+    dbgIoPortsAddPort(ioPorts, 2, 0xda, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 3, 0xdb, DBG_IO_READWRITE, peek(rm, 0xdb));
+}
+
 int romMapperKanjiCreate(UInt8* romData, int size) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperKanji* rm;
 
 	if (size != 0x20000 && size != 0x40000) {
@@ -127,6 +156,7 @@ int romMapperKanjiCreate(UInt8* romData, int size)
     rm->address[1] = 0x20000;
 
     rm->deviceHandle = deviceManagerRegister(ROM_KANJI, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Kanji", &dbgCallbacks, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

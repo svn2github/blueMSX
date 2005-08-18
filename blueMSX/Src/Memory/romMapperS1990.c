@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperS1990.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:34 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "Switches.h"
 #include "IoPort.h"
@@ -40,6 +41,7 @@ extern void msxSetCpu(int mode);
 
 typedef struct {
     int   deviceHandle;
+    int   debugHandle;
 	UInt8 registerSelect;
 	UInt8 cpuStatus;
 } RomMapperS1990;
@@ -67,6 +69,7 @@ static void loadState(RomMapperS1990* rm)
 static void destroy(RomMapperS1990* rm)
 {
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     ioPortUnregister(0xe4);
     ioPortUnregister(0xe5);
@@ -127,14 +130,25 @@ static void reset(RomMapperS1990* rm)
     updateStatus(rm, 96);
 }
 
+static void getDebugInfo(RomMapperS1990* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "S1990", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0xe4, DBG_IO_READWRITE, read(rm, 0xe4));
+    dbgIoPortsAddPort(ioPorts, 1, 0xe5, DBG_IO_READWRITE, read(rm, 0xe5));
+}
+
 int romMapperS1990Create() 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperS1990* rm;
 
     rm = malloc(sizeof(RomMapperS1990));
 
     rm->deviceHandle = deviceManagerRegister(ROM_S1990, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "S1990", &dbgCallbacks, rm);
 
     ioPortRegister(0xe4, read, write, rm);
     ioPortRegister(0xe5, read, write, rm);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMoonsound.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperMoonsound.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "IoPort.h"
 #include "Moonsound.h"
@@ -40,6 +41,7 @@
 
 typedef struct {
     int      deviceHandle;
+    int      debugHandle;
     Moonsound* moonsound;
 } RomMapperMoonsound;
 
@@ -57,6 +59,7 @@ static void destroy(RomMapperMoonsound* rm)
     }
 
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     free(rm);
 }
@@ -95,17 +98,37 @@ static UInt8 read(RomMapperMoonsound* rm, UInt16 ioPort)
     return moonsoundRead(rm->moonsound, ioPort);
 }
 
+static UInt8 peek(RomMapperMoonsound* rm, UInt16 ioPort)
+{
+    return moonsoundPeek(rm->moonsound, ioPort);
+}
+
 static void write(RomMapperMoonsound* rm, UInt16 ioPort, UInt8 data)
 {
     moonsoundWrite(rm->moonsound, ioPort, data);
 }
 
+static void getDebugInfo(RomMapperMoonsound* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Moonsound", 6);
+    dbgIoPortsAddPort(ioPorts, 0, 0x7e, DBG_IO_READWRITE, peek(rm, 0x7e));
+    dbgIoPortsAddPort(ioPorts, 1, 0x7f, DBG_IO_READWRITE, peek(rm, 0x7f));
+    dbgIoPortsAddPort(ioPorts, 2, 0xc4, DBG_IO_READWRITE, peek(rm, 0xc4));
+    dbgIoPortsAddPort(ioPorts, 3, 0xc5, DBG_IO_READWRITE, peek(rm, 0xc5));
+    dbgIoPortsAddPort(ioPorts, 4, 0xc6, DBG_IO_READWRITE, peek(rm, 0xc6));
+    dbgIoPortsAddPort(ioPorts, 5, 0xc7, DBG_IO_READWRITE, peek(rm, 0xc7));
+}
+
 int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramSize)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperMoonsound* rm = malloc(sizeof(RomMapperMoonsound));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MOONSOUND, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "Moonsound", &dbgCallbacks, rm);
     
     rm->moonsound = NULL;
 

@@ -104,7 +104,9 @@ class YMF278 : public SoundDevice
 		virtual ~YMF278();
 		void reset(const EmuTime &time);
 		void writeRegOPL4(byte reg, byte data, const EmuTime &time);
+		byte peekRegOPL4(byte reg, const EmuTime &time);
 		byte readRegOPL4(byte reg, const EmuTime &time);
+		byte peekStatus(const EmuTime &time);
 		byte readStatus(const EmuTime &time);
         void* getRam() { return ram; }		
 		virtual void setSampleRate(int sampleRate, int Oversampling);

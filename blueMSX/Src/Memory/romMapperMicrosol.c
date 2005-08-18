@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-01 09:26:43 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -35,6 +35,7 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -44,6 +45,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     WD2793* fdc;
     UInt8* romData;
     int slot;
@@ -62,6 +64,7 @@ static void destroy(Microsol* rm)
 
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     wd2793Destroy(rm->fdc);
 
@@ -91,6 +94,23 @@ static void loadState(Microsol* rm)
     wd2793LoadState(rm->fdc);
 }
 
+
+static UInt8 peekIo(Microsol* rm, UInt16 ioPort)
+{	
+    switch (ioPort) {
+	case 0xd0:
+		return wd2793PeekStatusReg(rm->fdc);
+	case 0xd1:
+		return wd2793PeekTrackReg(rm->fdc);
+	case 0xd2:
+		return wd2793PeekSectorReg(rm->fdc);
+	case 0xd3:
+		return wd2793PeekDataReg(rm->fdc);
+	case 0xd4:
+		return rm->regD4;
+    }
+    return 0xff;
+}
 
 static UInt8 readIo(Microsol* rm, UInt16 ioPort)
 {	
@@ -159,10 +179,22 @@ static void reset(Microsol* rm)
     wd2793Reset(rm->fdc);
 }
 
+static void getDebugInfo(Microsol* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+    int i;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "FDC", 2);
+    for (i = 0; i < 5; i++) {
+        dbgIoPortsAddPort(ioPorts, i, 0xd0, DBG_IO_READWRITE, peekIo(rm, 0xd0 + i));
+    }
+}
+
 int romMapperMicrosolCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     Microsol* rm;
     int pages = size / 0x2000;
     int i;
@@ -170,6 +202,8 @@ int romMapperMicrosolCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(Microsol));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Microsol FDC", &dbgCallbacks, rm);
+
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
 
     size = (size + 0x3fff) & ~0x3fff;

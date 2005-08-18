@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.2 2005-01-02 08:22:12 dvik Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.3 2005-08-18 05:21:52 dvik Exp $
 
 /*
  *
@@ -1223,6 +1223,11 @@ void YMF262::update_channels(YMF262Channel &ch)
 	}
 }
 
+byte YMF262::peekReg(int r)
+{
+	return reg[r];
+}
+
 byte YMF262::readReg(int r)
 {
 	return reg[r];
@@ -1836,6 +1841,11 @@ YMF262::YMF262(short volume, const EmuTime &time, void* ref)
 
 YMF262::~YMF262()
 {
+}
+
+byte YMF262::peekStatus()
+{
+	return status | status2;
 }
 
 byte YMF262::readStatus()

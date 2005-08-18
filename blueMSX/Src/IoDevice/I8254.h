@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@ typedef enum { I8254_COUNTER_1, I8254_COUNTER_2, I8254_COUNTER_3 } I8254Counter;
 
 typedef struct I8254 I8254;
 
+UInt8 i8254Peek(I8254* i8254, UInt16 port);
 UInt8 i8254Read(I8254* i8254, UInt16 port);
 void i8254Write(I8254* i8254, UInt16 port, UInt8 value);
 

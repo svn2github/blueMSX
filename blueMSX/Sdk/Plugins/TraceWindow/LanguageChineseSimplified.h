@@ -31,24 +31,24 @@ class LanguageChineseSimplified : public LanguageEnglish
 {
 public:
     LanguageChineseSimplified() {
-        traceWindowName         = "Trace Logger";
-        traceWindowCaption      = "blueMSX - Trace Logger";
-        openWindowCaption       = "Open Log File";
+        traceWindowName         = "跟踪记录工具";
+        traceWindowCaption      = "blueMSX - 跟踪记录工具";
+        openWindowCaption       = "打开日志文件";
 
         menuFile                = "文件";
-        menuFileLogToFile       = "Log to File";
+        menuFileLogToFile       = "保存日志到文本";
         menuFileExit            = "退出";
         
-        menuEdit                = "Edit";
-        menuEditSelectAll       = "Select All";
-        menuEditCopy            = "Copy";
-        menuEditClearWindow     = "Clear Window";
+        menuEdit                = "编辑";
+        menuEditSelectAll       = "全选";
+        menuEditCopy            = "复制";
+        menuEditClearWindow     = "清空窗口";
 
         menuHelp                = "帮助";
         menuHelpAbout           = "关于";
 
         aboutBuilt              = "创建:";
-        aboutVisit              = "更多详情请登陆 http://www.bluemsx.com";
+        aboutVisit              = "更多详情请登陆：www.bluemsx.com ";
     }
 };
 

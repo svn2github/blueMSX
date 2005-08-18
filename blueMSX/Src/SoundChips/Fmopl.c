@@ -1214,6 +1214,29 @@ unsigned char OPLRead(FM_OPL *OPL,int a)
 	return 0xff;
 }
 
+unsigned char OPLPeek(FM_OPL *OPL,int a)
+{
+	if(!(a & 1)) {	
+		return (OPL->status	& (0x80	| OPL->statusmask))	| 6;
+	}
+
+	/* data	port */
+	switch(OPL->address) {
+	case 0x05: /* KeyBoard IN */
+		return 0xff;
+	case 0x14:
+		return YM_DELTAT_ADPCM_Peek2(OPL->deltat);
+	case 0x0f: /* ADPCM-DATA  */
+		return YM_DELTAT_ADPCM_Peek(OPL->deltat);
+	case 0x13:
+	case 0x1a:
+		return 0;
+	case 0x19: /* I/O DATA	  */
+		return ~(switchGetAudio() ?	0 :	0x04);
+	}
+	return 0xff;
+}
+
 int	OPLTimerOver(FM_OPL	*OPL,int c)
 {
 	if(	c )

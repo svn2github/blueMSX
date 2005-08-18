@@ -83,6 +83,7 @@ public:
         windowDisassembly           = "反組譯碼";
         windowDisassemblyUnavail    = "反組譯碼不可使用。";
         windowCpuRegisters          = "CPU 暫存器";
+        windowCpuRegistersFlags     = "Flags";
         windowStack                 = "堆疊";
         windowStackUnavail          = "堆疊不可使用。";
         windowCallstack             = "呼叫堆疊";

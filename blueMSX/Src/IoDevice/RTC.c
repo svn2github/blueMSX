@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/RTC.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-31 08:10:36 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "IoPort.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "DebugDeviceManager.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,6 +68,8 @@ static const int daysInMonth[4][12] = {
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
 
 struct RTC {
+    int debugHandle;
+
     char cmosName[512];
     UInt8 modeReg;
     UInt8 testReg;
@@ -240,6 +243,24 @@ static UInt8 rtcReadData(RTC* rtc, UInt16 ioPort)
     return (rtc->registers[block][rtc->latch] & mask[block][rtc->latch]) | 0xf0;
 }
 
+static UInt8 rtcPeekData(RTC* rtc, UInt16 ioPort)
+{
+    int block;
+
+    switch (rtc->latch) {
+    case 0x0d:
+        return rtc->modeReg | 0xf0;
+
+    case 0x0e:
+    case 0x0f:
+        return 0xff;
+    }
+
+    block = rtc->modeReg & MODE_BLOCKSELECT;
+
+    return (rtc->registers[block][rtc->latch] & mask[block][rtc->latch]) | 0xf0;
+}
+
 static void rtcWriteData(RTC* rtc, UInt16 ioPort, UInt8 value)
 {
     int block;
@@ -289,8 +310,18 @@ static void rtcWriteLatch(RTC* rtc, UInt16 ioPort, UInt8 value)
     rtc->latch = value & 0x0f;
 }
 
+static void getDebugInfo(RTC* rtc, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RTC", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0xb4, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 1, 0xb5, DBG_IO_READWRITE, rtcPeekData(rtc, 0xb5));
+}
+
 RTC* rtcCreate(int enable, char* cmosName)
 {
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RTC* rtc = (RTC*)calloc(1, sizeof(RTC));
 
     rtc->modeReg = MODE_TIMERENABLE;
@@ -324,6 +355,8 @@ RTC* rtcCreate(int enable, char* cmosName)
     }
 
     if (enable) {
+        rtc->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RTC", &dbgCallbacks, rtc);
+        
         ioPortRegister(0xb4, NULL,        rtcWriteLatch, rtc);
         ioPortRegister(0xb5, rtcReadData, rtcWriteData,  rtc);
     }
@@ -335,6 +368,8 @@ RTC* rtcCreate(int enable, char* cmosName)
 
 void rtcDestroy(RTC* rtc)
 {
+    debugDeviceUnregister(rtc->debugHandle);
+
     ioPortUnregister(0xb4);
     ioPortUnregister(0xb5);
 

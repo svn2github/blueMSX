@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "SviPPI.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "IoPort.h"
 #include "I8255.h"
@@ -80,6 +81,7 @@ Bit Name   Description
 
 typedef struct {
     int    deviceHandle;
+    int    debugHandle;
     I8255* i8255;
 
     JoystickIO* joyIO;
@@ -100,6 +102,7 @@ static void destroy(SviPPI* ppi)
 
     audioKeyClickDestroy(ppi->keyClick);
     deviceManagerUnregister(ppi->deviceHandle);
+    debugDeviceUnregister(ppi->debugHandle);
 
     i8255Destroy(ppi->i8255);
 
@@ -150,6 +153,15 @@ static UInt8 read(SviPPI* ppi, UInt16 ioPort)
     return i8255Read(ppi->i8255, ioPort);
 }
 
+static UInt8 peek(SviPPI* ppi, UInt16 ioPort)
+{
+    if (ioPort == 0x9A) {
+        return ppi->mode;
+    }
+
+    return i8255Peek(ppi->i8255, ioPort);
+}
+
 static void write(SviPPI* ppi, UInt16 ioPort, UInt8 value)
 {
     if (ioPort == 0x97) {
@@ -185,18 +197,32 @@ static UInt8 readB(SviPPI* ppi)
     return keymap[ppi->row];
 }
 
+static void getDebugInfo(SviPPI* ppi, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PPI", 5);
+    dbgIoPortsAddPort(ioPorts, 0, 0x98, DBG_IO_READWRITE, peek(ppi, 0x98));
+    dbgIoPortsAddPort(ioPorts, 1, 0x99, DBG_IO_READWRITE, peek(ppi, 0x99));
+    dbgIoPortsAddPort(ioPorts, 2, 0x96, DBG_IO_READWRITE, peek(ppi, 0x96));
+    dbgIoPortsAddPort(ioPorts, 3, 0x97, DBG_IO_READWRITE, peek(ppi, 0x97));
+    dbgIoPortsAddPort(ioPorts, 4, 0x9A, DBG_IO_READ,      peek(ppi, 0x9A));
+}
+
 void sviPPICreate(JoystickIO* joyIO)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     SviPPI* ppi = malloc(sizeof(SviPPI));
 
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
+    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "PPI", &dbgCallbacks, ppi);
 
     ppi->joyIO = joyIO;
-    ppi->i8255 = i8255Create(readA, NULL,
-                             readB, NULL,
-                             NULL,  writeCLo,
-                             NULL,  writeCHi,
+    ppi->i8255 = i8255Create(readA, readA, NULL,
+                             readB, readB, NULL,
+                             NULL,  NULL,  writeCLo,
+                             NULL,  NULL,  writeCHi,
                              ppi);
 
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());

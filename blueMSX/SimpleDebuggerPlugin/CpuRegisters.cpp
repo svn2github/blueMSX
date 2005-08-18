@@ -464,7 +464,7 @@ void CpuRegisters::drawText(int top, int bottom)
             SelectObject(hMemdc, hFontBold);
             SetTextColor(hMemdc, colorBlack);
             RECT r = { 10, 1, textWidth * 8, textHeight };
-            DrawText(hMemdc, "Flags", 5, &r, DT_LEFT);
+            DrawText(hMemdc, Language::windowCpuRegistersFlags, 5, &r, DT_LEFT);
             SelectObject(hMemdc, hFont);
 
             if (flagMode == FM_CPU) {

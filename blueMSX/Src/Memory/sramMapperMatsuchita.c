@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMatsuchita.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "sramMapperMatsuchita.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "sramLoader.h"
@@ -42,6 +43,7 @@ extern void msxEnableCpuFreq_1_5(int enable);
 
 typedef struct {
     int    deviceHandle;
+    int    debugHandle;
     UInt8  sram[0x800];
     UInt32 address;
 	UInt8  color1;
@@ -83,10 +85,38 @@ static void destroy(SramMapperMatsushita* rm)
     sramSave(sramCreateFilename("Matsushita.SRAM"), rm->sram, 0x800, NULL, 0);
 
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     ioPortUnregisterSub(0x08);
 
     free(rm);
+}
+
+static UInt8 peek(SramMapperMatsushita* rm, UInt16 ioPort)
+{
+	UInt8 result;
+	switch (ioPort & 0x0f) {
+	case 0:
+		result = ~0x08;
+		break;
+	case 1:
+        result = switchGetFront() ? 0x7f : 0xff;
+		break;
+	case 3:
+		result = (((rm->pattern & 0x80) ? rm->color2 : rm->color1) << 4)
+		        | ((rm->pattern & 0x40) ? rm->color2 : rm->color1);
+		break;
+	case 9:
+		if (rm->address < 0x800) {
+			result = rm->sram[rm->address];
+		} else {
+			result = 0xff;
+		}
+		break;
+	default:
+		result = 0xff;
+	}
+	return result;
 }
 
 static UInt8 read(SramMapperMatsushita* rm, UInt16 ioPort)
@@ -147,14 +177,31 @@ static void write(SramMapperMatsushita* rm, UInt16 ioPort, UInt8 value)
 	}	
 }
 
+static void getDebugInfo(SramMapperMatsushita* rm, DbgDevice* dbgDevice)
+{
+    if (ioPortCheckSub(0x08)) {
+        DbgIoPorts* ioPorts;
+        int i;
+
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji 12", 2);
+
+        for (i = 0; i < 16; i++) {
+            dbgIoPortsAddPort(ioPorts, i, 0x40 + i, DBG_IO_READWRITE, peek(rm, i));
+        }
+    }
+}
+
 int sramMapperMatsushitaCreate() 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     SramMapperMatsushita* rm;
 
     rm = malloc(sizeof(SramMapperMatsushita));
 
     rm->deviceHandle = deviceManagerRegister(SRAM_MATSUCHITA, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "MATSUSHITA", &dbgCallbacks, rm);
+
     memset(rm->sram, 0xff, 0x800);
     rm->address = 0;
 

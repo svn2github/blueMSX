@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-08-17 07:03:29 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -444,6 +444,20 @@ _TCHAR* langDlgSlotCart1();
 _TCHAR* langDlgSlotCart2();
 _TCHAR* langDlgSlotPrimary();
 _TCHAR* langDlgSlotExpanded();
+
+_TCHAR* langSlot();
+_TCHAR* langSubslot();
+
+_TCHAR* langShortcut();
+_TCHAR* langHotkey();
+_TCHAR* langUnknown();
+_TCHAR* langRomImage();
+_TCHAR* langRomImageOpen();
+_TCHAR* langRomCartridge();
+_TCHAR* langAllFiles();
+_TCHAR* langCpuState();
+_TCHAR* langDiskImage();
+_TCHAR* langCasImage();
 
 _TCHAR* langDlgConfSaveTitle();
 _TCHAR* langDlgConfSaveText();

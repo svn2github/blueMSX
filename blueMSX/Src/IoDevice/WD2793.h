@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-05-01 09:26:27 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -50,11 +50,15 @@ void    wd2793SetDrive(WD2793* wd, int drive);
 void    wd2793SetMotor(WD2793* wd, int drive);
 int     wd2793DiskChanged(WD2793* wd, int drive);
 void    wd2793SetCommandReg(WD2793* wd, UInt8 value);
+UInt8   wd2793PeekStatusReg(WD2793* wd);
 UInt8   wd2793GetStatusReg(WD2793* wd);
 void    wd2793SetDataReg(WD2793* wd, UInt8 value);
+UInt8   wd2793PeekDataReg(WD2793* wd);
 UInt8   wd2793GetDataReg(WD2793* wd);
+UInt8   wd2793PeekSectorReg(WD2793* wd);
 UInt8   wd2793GetSectorReg(WD2793* wd);
 void    wd2793SetSectorReg(WD2793* wd, UInt8 value);
+UInt8   wd2793PeekTrackReg(WD2793* wd);
 UInt8   wd2793GetTrackReg(WD2793* wd);
 void    wd2793SetTrackReg(WD2793* wd, UInt8 value);
 int     wd2793GetIrq(WD2793* wd);

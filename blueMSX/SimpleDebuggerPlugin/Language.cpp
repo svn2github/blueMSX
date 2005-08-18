@@ -106,6 +106,7 @@ const char* Language::windowDebugger;
 const char* Language::windowDisassembly;
 const char* Language::windowDisassemblyUnavail;
 const char* Language::windowCpuRegisters;
+const char* Language::windowCpuRegistersFlags;
 const char* Language::windowStack;
 const char* Language::windowStackUnavail;
 const char* Language::windowCallstack;

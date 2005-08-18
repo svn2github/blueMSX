@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaRAM.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -40,6 +41,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     UInt8* ramData;
     int slot;
     int sslot;
@@ -97,6 +99,7 @@ static void destroy(RomMapperMegaRAM* rm)
     ioPortUnregister(0x8e);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     free(rm->ramData);
     free(rm);
@@ -147,9 +150,19 @@ static UInt8 readIo(RomMapperMegaRAM* rm, UInt16 ioPort)
     return 0xff;
 }
 
+static void getDebugInfo(RomMapperMegaRAM* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Mega RAM", 1);
+    dbgIoPortsAddPort(ioPorts, 0, 0x77, DBG_IO_READWRITE, 0xff);
+}
+
+
 int romMapperMegaRAMCreate(int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperMegaRAM* rm;
     int i;
 
@@ -160,6 +173,8 @@ int romMapperMegaRAMCreate(int size, int slot, int sslot, int startPage)
     rm = malloc(sizeof(RomMapperMegaRAM));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MEGARAM, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "Mega RAM", &dbgCallbacks, rm);
+
     slotRegister(slot, sslot, startPage, 8, NULL, NULL, write, destroy, rm);
 
     rm->ramData = malloc(size);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAK.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-03-07 05:34:44 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "Board.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "YM2413.h"
 #include "SaveState.h"
 #include <stdlib.h>
@@ -42,6 +43,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     YM_2413* ym2413;
     UInt8* romData;
     int slot;
@@ -139,10 +141,20 @@ static void writeIo(RomMapperFMPAK* rm, UInt16 port, UInt8 data)
     }
 }
 
+static void getDebugInfo(RomMapperFMPAK* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "FMPAK", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
+    dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
+}
+
 int romMapperFMPAKCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperFMPAK* rm;
     int romMapper[8];
     int i;
@@ -229,6 +241,7 @@ int romMapperFMPAKCreate(char* filename, UInt8* romData,
     rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
         rm->ym2413 = ym2413Create(boardGetMixer());
+        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "FMPAK", &dbgCallbacks, rm);
         ioPortRegister(0x7c, NULL, writeIo, rm);
         ioPortRegister(0x7d, NULL, writeIo, rm);
     }

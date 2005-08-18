@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,13 +37,14 @@ typedef struct I8255 I8255;
 typedef void  (*I8255Write)(void*, UInt8);
 typedef UInt8 (*I8255Read) (void*);
 
-I8255* i8255Create(I8255Read readA,   I8255Write writeA, 
-                   I8255Read readB,   I8255Write writeB,
-                   I8255Read readCLo, I8255Write writeCLo,
-                   I8255Read readCHi, I8255Write writeCHi,
+I8255* i8255Create(I8255Read peekA,   I8255Read readA,   I8255Write writeA, 
+                   I8255Read peekB,   I8255Read readB,   I8255Write writeB,
+                   I8255Read peekCLo, I8255Read readCLo, I8255Write writeCLo,
+                   I8255Read peekCHi, I8255Read readCHi, I8255Write writeCHi,
                    void* ref);
 void i8255Destroy(I8255* i8255); 
 void i8255Reset(I8255* i8255);
+UInt8 i8255Peek(I8255* i8255, UInt16 port);
 UInt8 i8255Read(I8255* i8255, UInt16 port);
 void i8255Write(I8255* i8255, UInt16 port, UInt8 value);
 void i8255LoadState(I8255* i8255);

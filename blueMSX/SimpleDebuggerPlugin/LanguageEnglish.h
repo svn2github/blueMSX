@@ -83,6 +83,7 @@ public:
         windowDisassembly           = "Disassembly";
         windowDisassemblyUnavail    = "Disassembly unavailable.";
         windowCpuRegisters          = "CPU Registers";
+        windowCpuRegistersFlags     = "Flags";
         windowStack                 = "Stack";
         windowStackUnavail          = "Stack unavailable.";
         windowCallstack             = "Callstack";

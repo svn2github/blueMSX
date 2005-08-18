@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-04-28 18:33:09 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "IoPort.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"
 #include "I8251.h"
@@ -67,6 +68,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     int slot;
     int sslot;
     int startPage;
@@ -125,6 +127,7 @@ static void destroy(MSXRs232* msxRs232)
 
     slotUnregister(msxRs232->slot, msxRs232->sslot, msxRs232->startPage);
     deviceManagerUnregister(msxRs232->deviceHandle);
+    debugDeviceUnregister(msxRs232->debugHandle);
 
     free(msxRs232->romData);
     free(msxRs232);
@@ -160,6 +163,30 @@ static void write(MSXRs232* msxRs232, UInt16 address, UInt8 value)
 ** IO Port callbacks
 ******************************************
 */
+static UInt8 peekIo(MSXRs232* msxRs232, UInt16 ioPort) 
+{
+    UInt8 value = 0xff;
+
+    switch (ioPort) {
+    case 0x80:
+    case 0x81:
+        ioPort &= 0x01;
+        value = i8251Peek(msxRs232->i8251, ioPort);
+        break;
+    case 0x82:
+        value = msxRs232->status;
+        break;
+    case 0x84:
+    case 0x85:
+    case 0x86:
+        ioPort &= 0x03;
+	    value = i8254Peek(msxRs232->i8254, ioPort);
+        break;
+    }
+
+    return value;
+}
+
 static UInt8 readIo(MSXRs232* msxRs232, UInt16 ioPort) 
 {
     UInt8 value = 0xff;
@@ -280,12 +307,30 @@ static void romMapperMsxRs232ReceiveCallback(UInt8 value)
 }
 
 /*****************************************
+** Debug callbacks
+******************************************
+*/
+
+static void getDebugInfo(MSXRs232* msxRs232, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+    int i;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RS232", 8);
+    for (i = 0; i < 7; i++) {
+        dbgIoPortsAddPort(ioPorts, i, 0x80 + i, DBG_IO_READWRITE, peekIo(msxRs232, 0x80 + i));
+    }
+    dbgIoPortsAddPort(ioPorts, 1, 0x87, DBG_IO_WRITE, 0);
+}
+
+/*****************************************
 ** MSX RS-232 Create Method
 ******************************************
 */
 int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     int pages = 4;
     int i;
 
@@ -296,6 +341,7 @@ int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, 
     msxRs232 = malloc(sizeof(MSXRs232));
     
     msxRs232->deviceHandle = deviceManagerRegister(ROM_MSXRS232, &callbacks, msxRs232);
+    msxRs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RS232", &dbgCallbacks, msxRs232);
 
     slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, msxRs232);
 

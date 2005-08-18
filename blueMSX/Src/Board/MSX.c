@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2005-06-28 07:28:01 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 #include "MsxPPI.h"
 #include "Board.h"
 #include "RTC.h"
+#include "TurboRIO.h"
 #include "MSXMidi.h"
 #include "Led.h"
 #include "Switches.h"
@@ -133,6 +134,7 @@ static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
 static R800*           r800;
 static RTC*            rtc;
+static TurboRIO*       trio;
 static JoystickIO*     joyIO;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
@@ -251,42 +253,6 @@ void msxClearInt(UInt32 irq)
 	}
 }
 
-static void writeMisc(void* ref, UInt16 ioPort, UInt8 value)
-{
-    switch (ioPort & 0xff) {
-    case 0xa7:
-		ledSetPause(value & 0x01);
-		ledSetTurboR(value & 0x80);
-		break;
-	}
-}
-
-static UInt8 readMisc(void* ref, UInt16 ioPort)
-{
-    switch (ioPort & 0xff) {
-    case 0x04: 
-        return 2;
-
-    case 0x05: 
-        return 0;
-
-    case 0xa7:
-        return switchGetPause() ? 1 : 0;
-
-    case 0xe8:
-    case 0xe9:
-    case 0xea:
-    case 0xeb:
-    case 0xec:
-    case 0xed:
-    case 0xee:
-    case 0xef:
-        return 0;
-    }
-
-    return 0xff;
-}
-
 void msxInitStatistics(Machine* machine)
 {
     int i;
@@ -314,6 +280,7 @@ static int initMachine(Machine* machine,
 
     sprintf(cmosName, "%s\\%s.cmos", boardGetBaseDirectory(), machine->name);
     rtc = rtcCreate(machine->cmos.enable, machine->cmos.batteryBacked ? cmosName : 0);
+    trio = turboRIOCreate();
 
     msxRam = NULL;
 
@@ -702,20 +669,6 @@ static int initMachine(Machine* machine,
         slotMapRamPage(0, 0, i);
     }
 
-    /* Register misc io ports */
-    ioPortRegister(0x04, readMisc, NULL, NULL);
-    ioPortRegister(0x05, readMisc, NULL, NULL);
-    ioPortRegister(0xa7, readMisc, writeMisc, NULL); // FIXME - Turbo R pause
-#if 0
-    ioPortRegister(0xe8, readMisc, NULL, NULL);
-    ioPortRegister(0xe9, readMisc, NULL, NULL);
-    ioPortRegister(0xea, readMisc, NULL, NULL);
-    ioPortRegister(0xeb, readMisc, NULL, NULL);
-    ioPortRegister(0xec, readMisc, NULL, NULL);
-    ioPortRegister(0xed, readMisc, NULL, NULL);
-    ioPortRegister(0xee, readMisc, NULL, NULL);
-    ioPortRegister(0xef, readMisc, NULL, NULL);
-#endif
     return success;
 }
 

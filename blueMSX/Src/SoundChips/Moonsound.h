@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-03 06:12:59 $
+** $Date: 2005-08-18 05:21:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
 void moonsoundDestroy(Moonsound* moonsound);
 void moonsoundReset(Moonsound* moonsound);
 UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort);
+UInt8 moonsoundPeek(Moonsound* moonsound, UInt16 ioPort);
 void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value);
 void moonsoundLoadState(Moonsound* moonsound);
 void moonsoundSaveState(Moonsound* moonsound);

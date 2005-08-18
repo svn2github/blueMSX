@@ -228,7 +228,7 @@ void IoPortWindow::refresh()
 
 void IoPortWindow::updateContent(Snapshot* snapshot)
 {
-    static char* readWrite[4] = { "", "I", "O", "IO" };
+    static char* readWrite[4] = { "", "In", "Out", "I/O" };
 
     currentLine = -1;
     for (int i = 0; i < 256; i++) {
@@ -245,10 +245,6 @@ void IoPortWindow::updateContent(Snapshot* snapshot)
         Device* device = SnapshotGetDevice(snapshot, i);
         int j;
 
-        if (device->type == DEVTYPE_CPU) {
-            continue;
-        }
-
         int ioCount = DeviceGetIoPortsCount(device);
 
         for (j = 0; j < ioCount; j++) {
@@ -264,7 +260,14 @@ void IoPortWindow::updateContent(Snapshot* snapshot)
                 sprintf(lineInfo[port].name, ioPorts->name);
                 lineInfo[port].nameLength = strlen(lineInfo[port].name);
 
-                sprintf(lineInfo[port].value, "%.2x", ioPorts->port[k].value);
+                if (ioPorts->port[k].direction == IO_PORT_READ ||
+                    ioPorts->port[k].direction == IO_PORT_READWRITE)
+                {
+                    sprintf(lineInfo[port].value, "%.2x", ioPorts->port[k].value);
+                }
+                else {
+                    sprintf(lineInfo[port].value, "n/a");
+                }
                 lineInfo[port].valueLength = strlen(lineInfo[port].value);
 
                 strcpy(lineInfo[port].readWrite, readWrite[ioPorts->port[k].direction]);
@@ -359,7 +362,7 @@ void IoPortWindow::drawText(int top, int bottom)
     int FirstLine = max (0, yPos + top / textHeight);
     int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
 
-    RECT r = { 10, textHeight * (FirstLine - yPos), 400, textHeight };
+    RECT r = { 4, textHeight * (FirstLine - yPos), 400, textHeight };
 
     r.bottom += r.top;
 
@@ -376,7 +379,7 @@ void IoPortWindow::drawText(int top, int bottom)
         SetTextColor(hMemdc, colorGray);
         DrawText(hMemdc, lineInfo[i].name, lineInfo[i].nameLength, &r, DT_LEFT);
 
-        r.left += 12 * textWidth;
+        r.left += 15 * textWidth;
         SetTextColor(hMemdc, backupIoPortValues[i] == ioPortValues[i] ? colorBlack : colorRed);
         DrawText(hMemdc, lineInfo[i].value, lineInfo[i].valueLength, &r, DT_LEFT);
 
@@ -384,7 +387,7 @@ void IoPortWindow::drawText(int top, int bottom)
         SetTextColor(hMemdc, colorBlack);
         DrawText(hMemdc, lineInfo[i].readWrite, lineInfo[i].readWriteLength, &r, DT_LEFT);
 
-        r.left -= 20 * textWidth;
+        r.left -= 23 * textWidth;
         r.top += textHeight;
         r.bottom += textHeight;
     }

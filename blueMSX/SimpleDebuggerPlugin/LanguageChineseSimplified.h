@@ -83,6 +83,7 @@ public:
         windowDisassembly           = "反汇编";
         windowDisassemblyUnavail    = "反汇编不可用。";
         windowCpuRegisters          = "CPU寄存器。";
+        windowCpuRegistersFlags     = "Flags";
         windowStack                 = "栈";
         windowStackUnavail          = "栈不可用。";
         windowCallstack             = "调用栈";
@@ -104,7 +105,7 @@ public:
         symbolWindowText            = "覆盖旧的符号";
         
         aboutBuilt                  = "创建:";
-        aboutVisit                  = "更多详情请登陆 http://www.bluemsx.com";
+        aboutVisit                  = "更多详情请登陆：www.bluemsx.com ";
     }
 };
 

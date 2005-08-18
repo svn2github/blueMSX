@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TurboRIO.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,23 +27,16 @@
 **
 ******************************************************************************
 */
-#ifndef Y8950_H
-#define Y8950_H
+#ifndef TURBO_R_IO_H
+#define TURBO_R_IO_H
 
 #include "msxTypes.h"
-#include "audioMixer.h"
 
 /* Type definitions */
-typedef struct Y8950 Y8950;
+typedef struct TurboRIO TurboRIO;
 
 /* Constructor and destructor */
-Y8950* y8950Create(Mixer* mixer);
-void y8950Destroy(Y8950* y8950);
-void y8950Reset(Y8950* y8950);
-void y8950LoadState(Y8950* y8950);
-void y8950SaveState(Y8950* y8950);
-UInt8 y8950Peek(Y8950* y8950, UInt16 ioPort);
-UInt8 y8950Read(Y8950* y8950, UInt16 ioPort);
-void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value);
+TurboRIO* turboRIOCreate();
 
 #endif
+

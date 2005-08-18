@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-07-23 06:10:49 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,9 +153,11 @@ void actionToggleWaveCapture() {
 
 void actionLoadState() {
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileStateOpen(langDlgLoadState(), "CPU state   (*.sta)\0*.sta\0", 
+    sprintf(text, "%s   (*.sta)\0*.sta\0", langCpuState());
+    filename = archFileStateOpen(langDlgLoadState(), text, 
                                  state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
     if (filename != NULL) {
         emulatorStop();
@@ -171,8 +173,10 @@ void actionSaveState() {
     char* filename;
 
     if (emulatorGetState() != EMU_STOPPED) {
+        char text[128];
         emulatorSuspend();
-        filename = archFileStateSave(langDlgSaveState(), "CPU state   (*.sta)\0*.sta\0", 
+        sprintf(text, "%s   (*.sta)\0*.sta\0", langCpuState());
+        filename = archFileStateSave(langDlgSaveState(), text, 
                                      state.properties->emulation.statsDefDir, ".sta\0", NULL);
         if (filename != NULL && strlen(filename) != 0) {
             char *ptr = filename + strlen(filename) - 1;
@@ -210,10 +214,11 @@ void actionQuickSaveState() {
 void actionCartInsert1() {
     RomType romType;
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileRomOpen(langDlgInsertRom1(), 
-                               "ROM cartridge   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0All Files   (*.*)\0*.*\0", 
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0%s   (*.*)\0*.*\0", langRomCartridge(), langAllFiles());
+    filename = archFileRomOpen(langDlgInsertRom1(), text, 
                                state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotAFilter, ".rom", &romType);
     if (filename != NULL) {        
@@ -228,10 +233,11 @@ void actionCartInsert1() {
 void actionCartInsert2() {
     RomType romType;
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileRomOpen(langDlgInsertRom2(), 
-                               "ROM cartridge   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0All Files   (*.*)\0*.*\0", 
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0%s   (*.*)\0*.*\0", langRomCartridge(), langAllFiles());
+    filename = archFileRomOpen(langDlgInsertRom2(), text, 
                                state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotBFilter, ".rom", &romType);
     if (filename != NULL) {        
@@ -368,10 +374,11 @@ void actionDiskDirInsertB() {
 
 void actionDiskInsertA() {
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileOpen(langDlgInsertDiskA(), 
-                            "Disk image   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0All Files   (*.*)\0*.*\0",
+    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0%s   (*.*)\0*.*\0", langDiskImage(), langAllFiles());
+    filename = archFileOpen(langDlgInsertDiskA(), text,
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
                             &state.properties->diskdrive.slotAFilter, ".dsk", 720 * 1024);
     if (filename != NULL) {        
@@ -383,10 +390,11 @@ void actionDiskInsertA() {
 
 void actionDiskInsertB() {
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileOpen(langDlgInsertDiskB(), 
-                            "Disk image   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0All Files   (*.*)\0*.*\0",
+    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0%s   (*.*)\0*.*\0", langDiskImage(), langAllFiles());
+    filename = archFileOpen(langDlgInsertDiskB(), text,
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
                             &state.properties->diskdrive.slotBFilter, ".dsk", 720 * 1024);
     if (filename != NULL) {
@@ -487,10 +495,11 @@ void actionEmuSpeedIncrease() {
 
 void actionCasInsert() {
     char* filename;
+    char text[128];
 
     emulatorSuspend();
-    filename = archFileOpen(langDlgInsertCas(),
-                            "Tape image   (*.cas, *.zip)\0*.cas; *.zip\0All Files   (*.*)\0*.*\0", 
+    sprintf(text, "%s   (*.cas, *.zip)\0*.cas; *.zip\0%s   (*.*)\0*.*\0", langCasImage(), langAllFiles());
+    filename = archFileOpen(langDlgInsertCas(), text, 
                             state.properties->cassette.defDir, ".cas\0.zip\0.*\0", 
                             &state.properties->cassette.filter, ".cas", 0);
     if (filename != NULL) {        

@@ -31,18 +31,18 @@ class LanguageChineseTraditional : public LanguageEnglish
 {
 public:
     LanguageChineseTraditional() {
-        traceWindowName         = "Trace Logger";
-        traceWindowCaption      = "blueMSX - Trace Logger";
-        openWindowCaption       = "Open Log File";
+        traceWindowName         = "追蹤記錄器";
+        traceWindowCaption      = "blueMSX - 追蹤記錄器";
+        openWindowCaption       = "開啟記錄檔";
 
         menuFile                = "檔案";
-        menuFileLogToFile       = "Log to File";
+        menuFileLogToFile       = "記錄到檔案";
         menuFileExit            = "結束";
         
-        menuEdit                = "Edit";
-        menuEditSelectAll       = "Select All";
-        menuEditCopy            = "Copy";
-        menuEditClearWindow     = "Clear Window";
+        menuEdit                = "編輯";
+        menuEditSelectAll       = "全選";
+        menuEditCopy            = "複製";
+        menuEditClearWindow     = "清除視窗";
 
         menuHelp                = "說明";
         menuHelpAbout           = "關於";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "MsxPPI.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "IoPort.h"
 #include "I8255.h"
@@ -44,6 +45,7 @@
 
 typedef struct {
     int    deviceHandle;
+    int    debugHandle;
     I8255* i8255;
 
     AudioKeyClick* keyClick;
@@ -62,6 +64,7 @@ static void destroy(MsxPPI* ppi)
 
     audioKeyClickDestroy(ppi->keyClick);
     deviceManagerUnregister(ppi->deviceHandle);
+    debugDeviceUnregister(ppi->debugHandle);
 
     i8255Destroy(ppi->i8255);
 
@@ -132,6 +135,22 @@ static void writeCHi(MsxPPI* ppi, UInt8 value)
     }
 }
 
+static UInt8 peekB(MsxPPI* ppi)
+{
+    UInt8* keymap = keyboardGetState();
+    UInt8 value = keymap[ppi->row];
+
+    if (ppi->row == 8) {
+        int renshaSpeed = switchGetRensha();
+        if (renshaSpeed) {
+            UInt8 renshaOn = (UInt8)((UInt64)renshaSpeed * boardSystemTime() / boardFrequency());
+            value |= (renshaOn & 1);
+        }
+    }
+
+    return value;
+}
+
 static UInt8 readB(MsxPPI* ppi)
 {
     UInt8* keymap = keyboardGetState();
@@ -152,17 +171,30 @@ static UInt8 readB(MsxPPI* ppi)
     return value;
 }
 
+static void getDebugInfo(MsxPPI* ppi, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PPI", 4);
+    dbgIoPortsAddPort(ioPorts, 0, 0xa8, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xa8));
+    dbgIoPortsAddPort(ioPorts, 1, 0xa9, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xa9));
+    dbgIoPortsAddPort(ioPorts, 2, 0xaa, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xaa));
+    dbgIoPortsAddPort(ioPorts, 3, 0xab, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xab));
+}
+
 void msxPPICreate()
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     MsxPPI* ppi = malloc(sizeof(MsxPPI));
 
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
+    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "PPI", &dbgCallbacks, ppi);
 
-    ppi->i8255 = i8255Create(NULL,  writeA,
-                             readB, NULL,
-                             NULL,  writeCLo,
-                             NULL,  writeCHi,
+    ppi->i8255 = i8255Create(NULL,  NULL,  writeA,
+                             peekB, readB, NULL,
+                             NULL,  NULL,  writeCLo,
+                             NULL,  NULL,  writeCHi,
                              ppi);
 
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());

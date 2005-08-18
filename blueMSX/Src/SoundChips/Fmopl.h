@@ -144,6 +144,7 @@ void OPLResetChip(FM_OPL *OPL);
 int OPLWrite(FM_OPL *OPL,int a,int v);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
 unsigned char OPLRead(FM_OPL *OPL,int a);
+unsigned char OPLPeek(FM_OPL *OPL,int a);
 int OPLTimerOver(FM_OPL *OPL,int c);
 
 int Y8950UpdateOne(FM_OPL *OPL);

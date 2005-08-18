@@ -180,7 +180,23 @@ UINT8 YM_DELTAT_ADPCM_Read(YM_DELTAT *DELTAT)
 	return v;
 }
 
+UINT8 YM_DELTAT_ADPCM_Peek(YM_DELTAT *DELTAT)
+{
+	if (DELTAT->memread >= 2 &&
+        (DELTAT->start+DELTAT->read_pointer) <  DELTAT->memory_size &&
+	 (DELTAT->start+DELTAT->read_pointer) <= DELTAT->end ) 
+	{
+        return DELTAT->memory[DELTAT->start+DELTAT->read_pointer];
+    }
+	return 0;
+}
+
 UINT8 YM_DELTAT_ADPCM_Read2(YM_DELTAT *DELTAT)
+{
+    return DELTAT->adpcmx / 256;
+}
+
+UINT8 YM_DELTAT_ADPCM_Peek2(YM_DELTAT *DELTAT)
 {
     return DELTAT->adpcmx / 256;
 }

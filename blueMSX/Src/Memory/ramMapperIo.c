@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapperIo.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:38:28 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "ramMapperIo.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include <stdlib.h>
@@ -46,6 +47,7 @@ typedef struct {
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     int handleCount;
     RamMapperCb mapperCb[32];
     int count;
@@ -102,6 +104,7 @@ static void destroy(RamMapperIo* rm)
     ioPortUnregister(0xff);
 
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
 
     free(mapperIo);
     mapperIo = NULL;
@@ -127,11 +130,22 @@ static void write(RamMapperIo* rm, UInt16 ioPort, UInt8 value)
     }
 }
 
+static void getDebugInfo(RamMapperIo* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+    int i;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RAM Mapper", 4);
+    for (i = 0; i < 4; i++) {
+        dbgIoPortsAddPort(ioPorts, i, 0xfc + i, DBG_IO_READWRITE, read(rm, 0xfc + i));
+    }
+}
 
 int ramMapperIoCreate() 
 {
     RamMapperIo* rm;
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
 
     rm = malloc(sizeof(RamMapperIo));
     rm->count = 0;
@@ -144,6 +158,7 @@ int ramMapperIoCreate()
     rm->port[3] = 0;
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RAM Mapper", &dbgCallbacks, rm);
 
     ioPortRegister(0xfc, read, write, rm);
     ioPortRegister(0xfd, read, write, rm);

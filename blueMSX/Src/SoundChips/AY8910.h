@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-15 05:46:10 $
+** $Date: 2005-08-18 05:21:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,7 @@ void ay8910Reset(AY8910* ay8910);
 
 /* Register read/write methods */
 void ay8910WriteAddress(AY8910* ay8910, UInt16 ioPort, UInt8 address);
+UInt8 ay8910PeekData(AY8910* ay8910, UInt16 ioPort);
 UInt8 ay8910ReadData(AY8910* ay8910, UInt16 ioPort);
 void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data);
 

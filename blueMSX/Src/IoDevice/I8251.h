@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-28 05:18:26 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ typedef enum {
 
 typedef struct I8251 I8251;
 
+UInt8 i8251Peek(I8251* usart, UInt16 port);
 UInt8 i8251Read(I8251* usart, UInt16 port);
 void i8251Write(I8251* usart, UInt16 port, UInt8 value);
 

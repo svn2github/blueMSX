@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-08-18 05:21:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -246,7 +246,7 @@ static int getCartSlotDropDown(HWND hDlg, int cart, int dropdownId) {
 
             for (j = 0; j < 4; j++) {
                 char buffer[128];
-                sprintf(buffer, "Slot %d, Subslot %d", i, j);
+                sprintf(buffer, "%s %d, %s %d", langSlot(), i, langSubslot(), j);
 
                 if (0 == strcmp(buffer, selection)) {
                     machine->cart[cart].slot = i;
@@ -256,7 +256,7 @@ static int getCartSlotDropDown(HWND hDlg, int cart, int dropdownId) {
         }
         else {
             char buffer[128];
-            sprintf(buffer, "Slot %d", i);
+            sprintf(buffer, "%s %d", langSlot(), i);
             if (0 == strcmp(buffer, selection)) {
                 machine->cart[cart].slot = i;
                 machine->cart[cart].subslot = 0;
@@ -279,7 +279,7 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
 
             for (j = 0; j < 4; j++) {
                 _TCHAR buffer[128];
-                _stprintf(buffer, "Slot %d, Subslot %d", i, j);
+                _stprintf(buffer, "%s %d, %s %d", langSlot(), i, langSubslot(), j);
                 SendDlgItemMessage(hDlg, dropdownId, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (machine->cart[cart].slot == i && machine->cart[cart].subslot == j) {
                     SendDlgItemMessage(hDlg, dropdownId, CB_SETCURSEL, index, 0);
@@ -289,7 +289,7 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
         }
         else {
             _TCHAR buffer[128];
-            _stprintf(buffer, "Slot %d", i);
+            _stprintf(buffer, "%s %d", langSlot(), i);
             SendDlgItemMessage(hDlg, dropdownId, CB_ADDSTRING, 0, (LPARAM)buffer);
             if (machine->cart[cart].slot == i) {
                 SendDlgItemMessage(hDlg, dropdownId, CB_SETCURSEL, index, 0);
@@ -689,7 +689,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_MSXPRN && romType != ROM_SVI328RS232)
     {
         if (romSize == 0) {
-            sprintf(buffer, "Unknown");
+            sprintf(buffer, langUnknown());
         }
         else if (romSize / 1024 < 1024) {
             sprintf(buffer, "%d kB", romSize / 1024);
@@ -722,7 +722,7 @@ static void setEditControls(HWND hDlg)
 
                 for (j = 0; j < 4; j++) {
                     _TCHAR buffer[128];
-                    _stprintf(buffer, "Slot %d, Subslot %d", i, j);
+                    _stprintf(buffer, "%s %d, %s %d", langSlot(), i, langSubslot(), j);
                     SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_ADDSTRING, 0, (LPARAM)buffer);
                     if (editSlotInfo.slot == i && editSlotInfo.subslot == j) {
                         SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_SETCURSEL, index, 0);
@@ -732,7 +732,7 @@ static void setEditControls(HWND hDlg)
             }
             else {
                 _TCHAR buffer[128];
-                _stprintf(buffer, "Slot %d", i);
+                _stprintf(buffer, "%s %d", langSlot(), i);
                 SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (editSlotInfo.slot == i) {
                     SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_SETCURSEL, index, 0);
@@ -1156,12 +1156,14 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 static char  defDir[MAX_PATH] = { 0 };
                 char  curDir[MAX_PATH];
                 char* fileName;
+                char text[128];
 
                 GetCurrentDirectory(MAX_PATH, curDir);
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                fileName = openFile(hDlg, "Open ROM image", "ROM image   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0", defDir, -1, NULL, NULL);
+                sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0", langRomImage());
+                fileName = openFile(hDlg, langRomImageOpen(), text, defDir, -1, NULL, NULL);
                 SetCurrentDirectory(curDir);
 
                 if (fileName != NULL) {

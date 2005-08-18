@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2004-12-30 00:43:32 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,12 +33,16 @@
 
 struct I8255
 {
+    I8255Read peekA;
     I8255Read readA;
     I8255Write writeA;
+    I8255Read peekB;
     I8255Read readB;
     I8255Write writeB;
+    I8255Read peekCLo;
     I8255Read readCLo;
     I8255Write writeCLo;
+    I8255Read peekCHi;
     I8255Read readCHi;
     I8255Write writeCHi;
     void* ref;
@@ -55,20 +59,24 @@ static void writeDummy(void* ref, UInt8 value)
 {
 }
 
-I8255* i8255Create(I8255Read readA,   I8255Write writeA, 
-                   I8255Read readB,   I8255Write writeB,
-                   I8255Read readCLo, I8255Write writeCLo,
-                   I8255Read readCHi, I8255Write writeCHi,
+I8255* i8255Create(I8255Read peekA,   I8255Read readA,   I8255Write writeA, 
+                   I8255Read peekB,   I8255Read readB,   I8255Write writeB,
+                   I8255Read peekCLo, I8255Read readCLo, I8255Write writeCLo,
+                   I8255Read peekCHi, I8255Read readCHi, I8255Write writeCHi,
                    void* ref)
 {
     I8255* i8255 = calloc(1, sizeof(I8255));
 
+    i8255->peekA    = peekA    ? peekA    : readDummy;
     i8255->readA    = readA    ? readA    : readDummy;
     i8255->writeA   = writeA   ? writeA   : writeDummy;
+    i8255->peekB    = peekB    ? peekB    : readDummy;
     i8255->readB    = readB    ? readB    : readDummy;
     i8255->writeB   = writeB   ? writeB   : writeDummy;
+    i8255->peekCLo  = peekCLo  ? peekCLo  : readDummy;
     i8255->readCLo  = readCLo  ? readCLo  : readDummy;
     i8255->writeCLo = writeCLo ? writeCLo : writeDummy;
+    i8255->peekCHi  = peekCHi  ? peekCHi  : readDummy;
     i8255->readCHi  = readCHi  ? readCHi  : readDummy;
     i8255->writeCHi = writeCHi ? writeCHi : writeDummy;
     i8255->ref      = ref;
@@ -112,6 +120,60 @@ void i8255SaveState(I8255* i8255)
     saveStateSet(state, "reg03", i8255->reg[3]);
 
     saveStateClose(state);
+}
+
+UInt8 i8255Peek(I8255* i8255, UInt16 port)
+{
+    UInt8 value;
+
+    port &= 0x03;
+
+    switch (port) {
+    case 0:
+        switch (i8255->reg[3] & 0x60) {
+        case 0x00: // MODE 0
+            if (i8255->reg[3] & 0x10) {
+                return i8255->peekA(i8255->ref);
+            }
+            return i8255->reg[0];
+
+        case 0x20: // MODE 1
+            return 0xff;
+
+        default: // MODE 2
+            return 0xff;
+        }
+        break;
+
+    case 1:
+        switch (i8255->reg[3] & 0x04) {
+        case 0x00: // MODE 0
+            if (i8255->reg[3] & 0x02) {
+                return i8255->peekA(i8255->ref);
+            }
+            return i8255->reg[1];
+
+        default: // MODE 1
+            return 0xff;
+        }
+        break;
+
+    case 2:
+        value = i8255->reg[2];
+
+        if (i8255->reg[3] & 0x01) {
+            value = (value & 0xf0) | (i8255->peekCLo(i8255->ref) & 0x0f);
+        }
+        if (i8255->reg[3] & 0x08) {
+            value = (value & 0x0f) | (i8255->peekCHi(i8255->ref) << 4);
+        }
+        return value;
+
+    case 3:
+        return i8255->reg[3];
+    }
+
+    return 0xff;
 }
 
 UInt8 i8255Read(I8255* i8255, UInt16 port)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-08-17 07:03:29 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -440,6 +440,20 @@ typedef struct {
     _TCHAR* confSlotCart2;
     _TCHAR* confSlotPrimary;
     _TCHAR* confSlotExpanded;
+
+    _TCHAR* confSlot;
+    _TCHAR* confSubslot;
+
+    _TCHAR* shortcut;
+    _TCHAR* hotkey;
+    _TCHAR* unknown;
+    _TCHAR* romImage;
+    _TCHAR* romImageOpen;
+    _TCHAR* romCartridge;
+    _TCHAR* allFiles;
+    _TCHAR* cpuState;
+    _TCHAR* diskImage;
+    _TCHAR* casImage;
 
     _TCHAR* confMemAdd;
     _TCHAR* confMemEdit;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-08-18 05:21:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,6 +177,7 @@ void ay8910SaveState(AY8910* ay8910)
 static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
+    DbgIoPorts* ioPorts;
     int i;
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, "Registers", 16);
@@ -185,6 +186,22 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
         char reg[4];
         sprintf(reg, "R%d", i);
         dbgRegisterBankAddRegister(regBank,  i, reg, 8, ay8910->regs[i]);
+    }
+
+    switch (ay8910->connector) {
+    case AY8910_MSX:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
+        dbgIoPortsAddPort(ioPorts, 0, 0xa0, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 1, 0xa1, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 2, 0xa2, DBG_IO_READ, ay8910PeekData(ay8910, 0xa2));
+        break;
+
+    case AY8910_SVI:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
+        dbgIoPortsAddPort(ioPorts, 0, 0x88, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 0, 0x8c, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 0, 0x90, DBG_IO_READ, ay8910PeekData(ay8910, 0x90));
+        break;
     }
 }
 
@@ -290,6 +307,19 @@ void ay8910SetIoPort(AY8910* ay8910, AY8910ReadCb readCb, AY8910ReadCb pollCb, A
 void ay8910WriteAddress(AY8910* ay8910, UInt16 ioPort, UInt8 address)
 {
     ay8910->address = address & 0xf;
+}
+
+UInt8 ay8910PeekData(AY8910* ay8910, UInt16 ioPort)
+{
+    UInt8  address = ay8910->address;
+
+    if (address >= 14) {
+        int port = address - 14;
+        if (ay8910->ioPortPollCb != NULL){// && !(ay8910->regs[7] & (1 << (port + 6)))) {
+            ay8910->regs[address] = ay8910->ioPortPollCb(ay8910->ioPortArg, port);
+        }
+    }
+    return ay8910->regs[address];
 }
 
 UInt8 ay8910ReadData(AY8910* ay8910, UInt16 ioPort)

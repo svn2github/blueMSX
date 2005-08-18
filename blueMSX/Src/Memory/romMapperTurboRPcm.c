@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperTurboRPcm.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "Board.h"
 #include "DAC.h"
@@ -41,6 +42,7 @@
 typedef struct {
     DAC*   dac;
     int    deviceHandle;
+    int    debugHandle;
     UInt8  sample;
     UInt8  status;
     UInt8  time;
@@ -77,6 +79,7 @@ static void loadState(RomMapperTurboRPcm* rm)
 static void destroy(RomMapperTurboRPcm* rm)
 {
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
     dacDestroy(rm->dac);
 
     ioPortUnregister(0xa4);
@@ -103,6 +106,17 @@ static UInt8 read(RomMapperTurboRPcm* rm, UInt16 ioPort)
     switch (ioPort & 0x01) {
 	case 0: 
 		return getTimerCounter(rm);
+	case 1:
+		return (~rm->sample & 0x80) | rm->status;
+    }
+    return 0xff;
+}
+
+static UInt8 peek(RomMapperTurboRPcm* rm, UInt16 ioPort)
+{
+    switch (ioPort & 0x01) {
+	case 0: 
+        return rm->time & 0x03;
 	case 1:
 		return (~rm->sample & 0x80) | rm->status;
     }
@@ -137,12 +151,23 @@ static void reset(RomMapperTurboRPcm* rm)
     rm->time    = 0;
 }
 
+static void getDebugInfo(RomMapperTurboRPcm* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PCM", 2);
+    dbgIoPortsAddPort(ioPorts, 0, 0xa4, DBG_IO_READWRITE, peek(rm, 0xa4));
+    dbgIoPortsAddPort(ioPorts, 1, 0xa5, DBG_IO_READWRITE, peek(rm, 0xa5));
+}
+
 int romMapperTurboRPcmCreate() 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperTurboRPcm* rm = malloc(sizeof(RomMapperTurboRPcm));
 
     rm->deviceHandle = deviceManagerRegister(ROM_TURBORPCM, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "PCM", &dbgCallbacks, rm);
 
     rm->dac    = dacCreate(boardGetMixer());
 	rm->status = 0;

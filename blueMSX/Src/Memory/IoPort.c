@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2005-08-18 05:21:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,6 +78,11 @@ void ioPortUnregisterSub(int subport)
     ioSubTable[subport].read  = NULL;
     ioSubTable[subport].write = NULL;
     ioSubTable[subport].ref   = NULL;
+}
+
+int ioPortCheckSub(int subport)
+{
+    return currentSubport = subport;
 }
 
 UInt8 ioPortRead(void* ref, UInt16 port)
