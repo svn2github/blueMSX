@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -419,7 +419,7 @@ static void mediaDbAddFromXmlFile(const char* fileName)
     }
 }
 
-static MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
+extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
 {
 	SHA1 sha1;
 	sha1.update((const UInt8*)buffer, size);
@@ -552,6 +552,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_NATIONAL:    return "National (SRAM)";
     case SRAM_S1985:      return "S1985";
     case ROM_S1990:       return "S1990";
+    case ROM_TURBORIO:    return "Turbo-R Pause";
     case ROM_F4DEVICE:    return "F4 Device Normal";
     case ROM_F4INVERTED:  return "F4 Device Inverted";
     case ROM_MSXMIDI:     return "MSX-MIDI";
@@ -648,6 +649,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_NATIONAL:    return "NATIONAL";
     case SRAM_S1985:      return "S1985";
     case ROM_S1990:       return "S1990";
+    case ROM_TURBORIO:    return "TR PAUSE";
     case ROM_F4DEVICE:    return "F4NORMAL";
     case ROM_F4INVERTED:  return "F4INV";
     case ROM_MSXMIDI:     return "MSX-MIDI";
@@ -881,7 +883,8 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
         if (size <= 0x4000 && romData[0] == 'A' && romData[1] == 'B') {
 			UInt16 init = romData[2] + 256 * romData[3];
 			UInt16 text = romData[8] + 256 * romData[9];
-			if (init == 0 && (text & 0xc000) == 0x8000) {
+//			if (init == 0 && (text & 0xc000) == 0x8000) {
+			if ((text & 0xc000) == 0x8000) {
                 mediaType->romType = ROM_BASIC;
 			    return mediaType;
 			}
@@ -983,9 +986,8 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
-
-static void mediaDbAddFromOldFile(MediaDb* mediaDb, 
-                                  const char* fileName, OldFormat format) 
+void mediaDbAddFromOldFile(MediaDb* mediaDb, 
+                           const char* fileName, OldFormat format) 
 {
     FILE* file = fopen(fileName, "r");
     if (file == NULL) {

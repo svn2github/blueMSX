@@ -83,14 +83,14 @@ public:
         windowDisassembly           = "反汇编";
         windowDisassemblyUnavail    = "反汇编不可用。";
         windowCpuRegisters          = "CPU寄存器。";
-        windowCpuRegistersFlags     = "Flags";
+        windowCpuRegistersFlags     = "旗标";
         windowStack                 = "栈";
         windowStackUnavail          = "栈不可用。";
         windowCallstack             = "调用栈";
         windowCallstackUnavail      = "调用栈不可用。";
         windowMemory                = "内存";
         windowPeripheralRegisters   = "外围寄存器";
-        windowIoPorts               = "I/O Ports";
+        windowIoPorts               = "I/O 端口";
 
         memWindowRegisters          = "寄存器:";
 

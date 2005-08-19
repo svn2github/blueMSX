@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -606,19 +606,21 @@ void langInitChineseTraditional(LanguageStrings* ls)
 
     ls->propMonEffectsGB        = "效果";
 
-    ls->confSlot                = "Slot";
-    ls->confSubslot             = "Subslot";
+    ls->confSlot                = "插槽";
+    ls->confSubslot             = "子插槽";
 
-    ls->shortcut                = "Shortcut";
-    ls->hotkey                  = "Hotkey";
-    ls->unknown                 = "Unknown";
-    ls->romImage                = "ROM image";
-    ls->romImageOpen            = "Open ROM image";
-    ls->romCartridge            = "ROM cartridge";
-    ls->allFiles                = "All Files";
-    ls->cpuState                = "CPU state";
-    ls->diskImage               = "Disk Image";
-    ls->casImage                = "Tape Image";
+    ls->shortcut                = "捷徑";
+    ls->hotkey                  = "快速鍵";
+    ls->unknown                 = "未知的";
+    ls->romImage                = "ROM 映像檔";
+    ls->romImageOpen            = "開啟 ROM 映像檔";
+    ls->romCartridge            = "ROM 卡匣";
+    ls->allFiles                = "所有檔案";
+    ls->cpuState                = "CPU 狀態";
+    ls->diskImage               = "磁碟映像檔";
+    ls->casImage                = "磁帶映像檔";
+    
+    ls->menuCartExternalRam     = "External RAM";
 };
 
 

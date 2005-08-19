@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -606,19 +606,21 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->propMonEffectsGB        = "ÌØÐ§";
 
-    ls->confSlot                = "Slot";
-    ls->confSubslot             = "Subslot";
+    ls->confSlot                = "²å²Û";
+    ls->confSubslot             = "×Ó²å²Û";
 
-    ls->shortcut                = "Shortcut";
-    ls->hotkey                  = "Hotkey";
-    ls->unknown                 = "Unknown";
-    ls->romImage                = "ROM image";
-    ls->romImageOpen            = "Open ROM image";
-    ls->romCartridge            = "ROM cartridge";
-    ls->allFiles                = "All Files";
-    ls->cpuState                = "CPU state";
-    ls->diskImage               = "Disk Image";
-    ls->casImage                = "Tape Image";
+    ls->shortcut                = "¿ì½Ý¼ü";
+    ls->hotkey                  = "ÈÈ¼ü";
+    ls->unknown                 = "Î´Öª";
+    ls->romImage                = "ROM Ó³Ïñ";
+    ls->romImageOpen            = "´ò¿ª ROM Ó³Ïñ";
+    ls->romCartridge            = "ROM ¿¨´ø";
+    ls->allFiles                = "ËùÓÐÎÄ¼þ";
+    ls->cpuState                = "CPU ×´Ì¬";
+    ls->diskImage               = "ÈíÅÌÓ³Ïñ";
+    ls->casImage                = "´Å´øÓ³Ïñ";
+
+    ls->menuCartExternalRam     = "External RAM";
 };
 
 

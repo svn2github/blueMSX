@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TurboRIO.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,10 +40,10 @@
 #include <stdio.h>
 
 
-struct TurboRIO {
+typedef struct TurboRIO {
     int deviceHandle;
     int debugHandle;
-};
+} TurboRIO;
 
 static void write(TurboRIO* turboRIO, UInt16 ioPort, UInt8 value)
 {
@@ -74,7 +74,7 @@ static void getDebugInfo(TurboRIO* turboRIO, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 0, 0xa7, DBG_IO_READWRITE, read(turboRIO, 0xa7));
 }
 
-TurboRIO* turboRIOCreate()
+int romMapperTurboRIOCreate()
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -86,5 +86,5 @@ TurboRIO* turboRIOCreate()
 
     ioPortRegister(0xa7, read, write, turboRIO);
 
-    return turboRIO;
+    return 1;
 }

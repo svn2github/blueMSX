@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,7 @@ _TCHAR* langMenuCartFMPac();
 _TCHAR* langMenuCartPac();
 _TCHAR* langMenuCartHBI55();
 _TCHAR* langMenuCartSpecial();
+_TCHAR* langMenuCartExternalRam();
 
 _TCHAR* langMenuDiskInsert();
 _TCHAR* langMenuDiskDirInsert();

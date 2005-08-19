@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-19 06:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -454,7 +454,8 @@ static void getSlotControl(HWND hDlg)
     int i;
     int j;
 
-    if (editSlotInfo.romType == SRAM_MATSUCHITA || editSlotInfo.romType == ROM_TURBORTIMER ||
+    if (editSlotInfo.romType == SRAM_MATSUCHITA || 
+        editSlotInfo.romType == ROM_TURBORTIMER || editSlotInfo.romType == ROM_TURBORIO ||
         editSlotInfo.romType == SRAM_S1985 || editSlotInfo.romType == ROM_S1990 ||
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
         editSlotInfo.romType == ROM_MOONSOUND || editSlotInfo.romType == ROM_MSXMIDI ||
@@ -567,6 +568,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
     case ROM_TURBORTIMER:
+    case ROM_TURBORIO:
     case ROM_SVI328FDC:
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
@@ -681,9 +683,11 @@ static void setEditControls(HWND hDlg)
     }
     romPages = romSize / 0x2000;
 
-    if (romType != RAM_NORMAL && romType != RAM_MAPPER && romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
+    if (romType != RAM_NORMAL && romType != RAM_MAPPER && 
+        romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
-        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_TURBORTIMER && 
+        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && 
+        romType != ROM_TURBORTIMER && romType != ROM_TURBORIO &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
         romType != ROM_MSXMIDI &&
         romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_MSXPRN && romType != ROM_SVI328RS232)
@@ -703,7 +707,8 @@ static void setEditControls(HWND hDlg)
 
     // Set ram slot
     if (romType == SRAM_MATSUCHITA || romType == SRAM_S1985 || 
-        romType == ROM_S1990 || romType == ROM_KANJI || romType == ROM_TURBORTIMER ||
+        romType == ROM_S1990 || romType == ROM_KANJI || 
+        romType == ROM_TURBORTIMER || romType == ROM_TURBORIO ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
@@ -972,6 +977,7 @@ static void setEditControls(HWND hDlg)
     case ROM_F4DEVICE:
     case ROM_MSXMIDI:
     case ROM_TURBORTIMER:
+    case ROM_TURBORIO:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
     case ROM_SVI328FDC:
@@ -1014,6 +1020,7 @@ static RomType romTypeList[] = {
     ROM_F4DEVICE,
     ROM_F4INVERTED,
     ROM_TURBORTIMER,
+    ROM_TURBORIO,
     ROM_NATIONAL,
     ROM_BUNSETU,
     ROM_JISYO,

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.93 $
+** $Revision: 1.94 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-08-19 06:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1719,11 +1719,19 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         {
             char fname[MAX_PATH];
             HDROP hDrop;
+            DWORD fa;
+
             hDrop = (HDROP)wParam;
             DragQueryFile(hDrop, 0, fname, 512);
             DragFinish(hDrop);
-
-            tryLaunchUnknownFile(pProperties, fname, 0);
+            
+		    fa = GetFileAttributes(fname);
+            if (fa & FILE_ATTRIBUTE_DIRECTORY) {
+                insertDiskette(pProperties, 0, fname, NULL, 0);
+            }
+            else {
+                tryLaunchUnknownFile(pProperties, fname, 0);
+            }
         }
         return 0;
 

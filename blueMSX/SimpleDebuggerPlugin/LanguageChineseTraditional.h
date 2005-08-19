@@ -83,14 +83,14 @@ public:
         windowDisassembly           = "反組譯碼";
         windowDisassemblyUnavail    = "反組譯碼不可使用。";
         windowCpuRegisters          = "CPU 暫存器";
-        windowCpuRegistersFlags     = "Flags";
+        windowCpuRegistersFlags     = "旗標";
         windowStack                 = "堆疊";
         windowStackUnavail          = "堆疊不可使用。";
         windowCallstack             = "呼叫堆疊";
         windowCallstackUnavail      = "呼叫堆疊不可使用。";
         windowMemory                = "記憶體";
         windowPeripheralRegisters   = "周邊暫存器";
-        windowIoPorts               = "I/O Ports";
+        windowIoPorts               = "I/O 連接埠";
 
         memWindowRegisters          = "暫存器:";
 

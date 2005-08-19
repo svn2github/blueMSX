@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-06-04 08:47:57 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -589,6 +589,43 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Skrivare";
     ls->propPortsComFile        = "Skicka till Fil";
+
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "Show Mixer";
+    ls->menuToolsMixer          = "Mixer";
+    
+    ls->propSndMidiInGB         = "MIDI In ";
+    ls->propSndMidiOutGB        = "MIDI Ut ";
+    ls->propSndMt32ToGmText     = " Konvertera MT-32 instrument till General MIDI";
+
+    ls->textDevice              = "Device:";
+    ls->textFilename            = "Filenamn:";
+    ls->textFile                = "Fil";
+    ls->textNone                = "Ingen";
+
+    ls->enumEmuSyncNone         = "Ingen";
+    ls->enumEmuSyncAuto         = "Automatisk (snabb)";
+    ls->enumEmuSync1ms          = "Synkronisera till MSX refresh";
+    ls->enumEmuSyncVblank       = "Synkronisera till PC Vertikal Blank";
+
+    ls->propMonEffectsGB        = "Effekter ";
+    
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Subslot";
+
+    ls->shortcut                = "Kortkommando";
+    ls->hotkey                  = "Hotkey";
+    ls->unknown                 = "Okänd";
+    ls->romImage                = "Rom fil";
+    ls->romImageOpen            = "Öppna Rom fil";
+    ls->romCartridge            = "Rom fil";
+    ls->allFiles                = "Alla Filer";
+    ls->cpuState                = "CPU-tillstand";
+    ls->diskImage               = "Diskettfil";
+    ls->casImage                = "Kasettfil";
+
+    ls->menuCartExternalRam     = "Externt RAM";
+
 };
 
 #endif

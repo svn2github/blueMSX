@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -619,6 +619,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->cpuState                = "CPU state";
     ls->diskImage               = "Disk Image";
     ls->casImage                = "Tape Image";
+
+    ls->menuCartExternalRam     = "External RAM";
 };
 
 

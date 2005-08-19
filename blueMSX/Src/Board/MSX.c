@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,6 +119,7 @@
 #include "romMapperBunsetu.h"
 #include "romMapperTurboRTimer.h"
 #include "romMapperTurboRPCM.h"
+#include "turboRIO.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMsxMusic.h"
 #include "romMapperMsxPrn.h"
@@ -134,7 +135,6 @@ static DeviceInfo*     msxDevInfo;
 static AY8910*         ay8910;
 static R800*           r800;
 static RTC*            rtc;
-static TurboRIO*       trio;
 static JoystickIO*     joyIO;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
@@ -280,7 +280,6 @@ static int initMachine(Machine* machine,
 
     sprintf(cmosName, "%s\\%s.cmos", boardGetBaseDirectory(), machine->name);
     rtc = rtcCreate(machine->cmos.enable, machine->cmos.batteryBacked ? cmosName : 0);
-    trio = turboRIOCreate();
 
     msxRam = NULL;
 
@@ -407,6 +406,11 @@ static int initMachine(Machine* machine,
 
         if (machine->slotInfo[i].romType == ROM_TURBORTIMER) {
             success &= romMapperTurboRTimerCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_TURBORIO) {
+            success &= romMapperTurboRIOCreate();
             continue;
         }
 

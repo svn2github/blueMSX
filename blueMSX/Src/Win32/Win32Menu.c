@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-08-19 06:38:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -323,16 +323,16 @@ static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcut
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s", "External RAM 512 kB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "512 kB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM512KB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 1 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "1 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM1MB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 2 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "2 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM2MB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 4 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "4 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM4MB, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -442,16 +442,16 @@ static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcut
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s", "External RAM 512 kB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "512 kB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM512KB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 1 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "1 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM1MB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 2 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "2 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM2MB, langBuffer);
 
-    _stprintf(langBuffer, "%s", "External RAM 4 MB");
+    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "4 MB");
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM4MB, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);

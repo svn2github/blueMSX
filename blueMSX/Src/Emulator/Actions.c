@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,17 @@ static char audioDir[MAX_PATH]  = "";
 static char audioPrefix[64]     = "";
 static char stateDir[MAX_PATH]  = "";
 static char statePrefix[64]     = "";
+
+
+static void replaceCharInString(char* str, char oldChar, char newChar) 
+{
+    while (*str) {
+        if (*str == oldChar) {
+            *str = newChar;
+        }
+        str++;
+    }
+}
 
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix)
 {
@@ -156,7 +167,8 @@ void actionLoadState() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.sta)\0*.sta\0", langCpuState());
+    sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
+    replaceCharInString(text, '#', 0);
     filename = archFileStateOpen(langDlgLoadState(), text, 
                                  state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
     if (filename != NULL) {
@@ -175,7 +187,8 @@ void actionSaveState() {
     if (emulatorGetState() != EMU_STOPPED) {
         char text[128];
         emulatorSuspend();
-        sprintf(text, "%s   (*.sta)\0*.sta\0", langCpuState());
+        sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
+        replaceCharInString(text, '#', 0);
         filename = archFileStateSave(langDlgSaveState(), text, 
                                      state.properties->emulation.statsDefDir, ".sta\0", NULL);
         if (filename != NULL && strlen(filename) != 0) {
@@ -217,7 +230,8 @@ void actionCartInsert1() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0%s   (*.*)\0*.*\0", langRomCartridge(), langAllFiles());
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom1(), text, 
                                state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotAFilter, ".rom", &romType);
@@ -236,7 +250,8 @@ void actionCartInsert2() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0%s   (*.*)\0*.*\0", langRomCartridge(), langAllFiles());
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom2(), text, 
                                state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
                                &state.properties->cartridge.slotBFilter, ".rom", &romType);
@@ -377,7 +392,8 @@ void actionDiskInsertA() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0%s   (*.*)\0*.*\0", langDiskImage(), langAllFiles());
+    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    replaceCharInString(text, '#', 0);
     filename = archFileOpen(langDlgInsertDiskA(), text,
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
                             &state.properties->diskdrive.slotAFilter, ".dsk", 720 * 1024);
@@ -393,7 +409,8 @@ void actionDiskInsertB() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)\0*.dsk; *.di1; *.di2; *.360; *.720; *.zip\0%s   (*.*)\0*.*\0", langDiskImage(), langAllFiles());
+    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    replaceCharInString(text, '#', 0);
     filename = archFileOpen(langDlgInsertDiskB(), text,
                             state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
                             &state.properties->diskdrive.slotBFilter, ".dsk", 720 * 1024);
@@ -498,7 +515,8 @@ void actionCasInsert() {
     char text[128];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.cas, *.zip)\0*.cas; *.zip\0%s   (*.*)\0*.*\0", langCasImage(), langAllFiles());
+    sprintf(text, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langCasImage(), langAllFiles());
+    replaceCharInString(text, '#', 0);
     filename = archFileOpen(langDlgInsertCas(), text, 
                             state.properties->cassette.defDir, ".cas\0.zip\0.*\0", 
                             &state.properties->cassette.filter, ".cas", 0);
@@ -691,6 +709,7 @@ void actionCasSave() {
     char* filename;
 
     if (*state.properties->cassette.tape) {
+        char text[128];
         int type;
 
         if (emulatorGetState() == EMU_STOPPED) {
@@ -704,8 +723,10 @@ void actionCasSave() {
         
         type = tapeGetFormat();
 
-        filename = archFileSave(langDlgSaveCassette(), 
-                                "Tape Image - fMSX-DOS     (*.cas)\0*.cas\0Tape Image - fMSX98/AT   (*.cas)\0*.cas\0Tape Image - SVI-328         (*.cas)\0*.cas\0", 
+        sprintf(text, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langCasImage(), langCasImage(), langCasImage());
+        replaceCharInString(text, '#', 0);
+
+        filename = archFileSave(langDlgSaveCassette(), text, 
                                 state.properties->cassette.defDir, ".cas\0", &type);
         if (filename != NULL && strlen(filename) != 0) {
             if (type == 1 || type == 2 || type == 3) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TurboRIO.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-19 06:38:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,11 +32,8 @@
 
 #include "msxTypes.h"
 
-/* Type definitions */
-typedef struct TurboRIO TurboRIO;
-
 /* Constructor and destructor */
-TurboRIO* turboRIOCreate();
+int romMapperTurboRIOCreate();
 
 #endif
 
