@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-08-09 08:16:42 $
+** $Date: 2005-08-20 05:33:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -387,6 +387,9 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
     case WM_ACTIVATE:
         keyboardSetFocus(2, LOWORD(wParam) != WA_INACTIVE);
         keybardEnableEdit(LOWORD(wParam) != WA_INACTIVE);
+        if (LOWORD(wParam) != WA_INACTIVE) {
+            inputReset(hwnd);
+        }
         break;
 
     case WM_CLOSE:
@@ -506,6 +509,9 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
             themePageSetActive(themePage, GetDC(hwnd), LOWORD(wParam) != WA_INACTIVE);
+        }
+        if (LOWORD(wParam) != WA_INACTIVE) {
+            inputReset(hwnd);
         }
         break;
 

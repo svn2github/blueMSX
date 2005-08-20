@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-06-14 04:46:12 $
+** $Date: 2005-08-20 05:33:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,13 @@ UInt32 *RefreshBorder(VDP* vdp, int Y, UInt32 bgColor, int line512, int borderEx
     }
 
     linePtr = frameBuffer->line[Y].buffer;
+
+    if (frameBuffer->line[Y].doubleWidth != line512 && line512 == 0) {
+        for(offset = 256 + 16; offset < 512 + 16; offset++) {
+            linePtr[offset] = 0;
+        }
+    }
+
     frameBuffer->line[Y].doubleWidth = line512;
 
     if (Y > 0) {

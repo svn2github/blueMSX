@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-20 05:33:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1155,6 +1155,9 @@ static BOOL CALLBACK shortcutsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
 
     case WM_ACTIVATE:
         keyboardSetFocus(4, LOWORD(wParam) != WA_INACTIVE);
+        if (LOWORD(wParam) != WA_INACTIVE) {
+            inputReset(hwnd);
+        }
         break;
 
     case WM_DESTROY:

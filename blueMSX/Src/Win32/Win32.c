@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.94 $
+** $Revision: 1.95 $
 **
-** $Date: 2005-08-19 06:38:28 $
+** $Date: 2005-08-20 05:33:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1919,9 +1919,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         break;
         
     case WM_ACTIVATE:
-        if (wParam == WA_INACTIVE) {
+        if (LOWORD(wParam) == WA_INACTIVE) {
             if (kbdLockDisable != NULL) {
                 kbdLockDisable(0);
+            }
+            else {
+                inputReset(hwnd);
             }
             mouseEmuActivate(0);
             actionMaxSpeedRelease();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-06-17 19:29:33 $
+** $Date: 2005-08-20 05:33:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,9 @@ static int joyCount;
 
 #define STRUCTSIZE(x) ((dinputVersion == 0x0300) ? sizeof(x##_DX3) : sizeof(x))
 
+static int foundInputDevices = 0;
+static int tryBackground = 1;
+static int useBackgroundInput = 0;
 
 static BOOL CALLBACK enumKeyboards(LPCDIDEVICEINSTANCE devInst, LPVOID ref)
 {
@@ -396,7 +399,7 @@ static BOOL CALLBACK enumKeyboards(LPCDIDEVICEINSTANCE devInst, LPVOID ref)
         rv = IDirectInputDevice_SetDataFormat(kbdDevice, &c_dfDIKeyboard);
         if (rv == DI_OK) {
             rv = IDirectInputDevice_SetCooperativeLevel(kbdDevice, dinputWindow,
-                DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+                (tryBackground ? DISCL_BACKGROUND : DISCL_FOREGROUND) | DISCL_NONEXCLUSIVE);
             if (rv != DI_OK) {
                 if (kbdDevice2 != NULL) {
                     IDirectInputDevice_Release(kbdDevice2);
@@ -407,6 +410,8 @@ static BOOL CALLBACK enumKeyboards(LPCDIDEVICEINSTANCE devInst, LPVOID ref)
             }
         }
     }
+
+    foundInputDevices = 1;
 
     return DIENUM_CONTINUE;
 }
@@ -453,7 +458,8 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
         return DIENUM_CONTINUE;
     }
     
-    rv = IDirectInputDevice_SetCooperativeLevel(joyInfo[joyCount].diDevice, dinputWindow, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+    rv = IDirectInputDevice_SetCooperativeLevel(joyInfo[joyCount].diDevice, dinputWindow, 
+            DISCL_NONEXCLUSIVE | (tryBackground ? DISCL_BACKGROUND : DISCL_FOREGROUND));
     if (rv != DI_OK) {
         IDirectInputDevice_Release(joyInfo[joyCount].diDevice);
         return DIENUM_CONTINUE;
@@ -473,6 +479,8 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
     }
     joyInfo[joyCount].numButtons = diDevCaps.dwButtons;
 
+    foundInputDevices = 1;
+
     if (++joyCount == MAX_JOYSTICKS) {
         return DIENUM_STOP;
     }
@@ -484,36 +492,55 @@ int inputReset(HWND hwnd)
 {
     DIPROPDWORD dipdw = { { sizeof(DIPROPDWORD), sizeof(DIPROPHEADER), 0, DIPH_DEVICE }, 256 };
     HRESULT rv   = 234;
+    int i;
+
+    if (useBackgroundInput) {
+        return 1;
+    }
+
     joyCount     = 0;
     kbdModifiers = 0;
 
-    dinputWindow = hwnd;
-    dinputVersion = DIRECTINPUT_VERSION;
-	rv = DirectInputCreate(GetModuleHandle(NULL), dinputVersion, &dinput, NULL);
-    if (rv != DI_OK) {
-        dinputVersion = 0x0300;
-    	rv = DirectInputCreate(GetModuleHandle(NULL), dinputVersion, &dinput, NULL);
+    foundInputDevices = 0;
+    tryBackground = 1;
+
+    for (i = 0; i < 2; i++) {
+        dinputWindow = hwnd;
+        dinputVersion = DIRECTINPUT_VERSION;
+	    rv = DirectInputCreate(GetModuleHandle(NULL), dinputVersion, &dinput, NULL);
         if (rv != DI_OK) {
-            printf("Failed to initialize DirectInput\n");
+            dinputVersion = 0x0300;
+    	    rv = DirectInputCreate(GetModuleHandle(NULL), dinputVersion, &dinput, NULL);
+            if (rv != DI_OK) {
+                printf("Failed to initialize DirectInput\n");
+                return 0;
+            }
+        }
+
+	    rv = IDirectInput_EnumDevices(dinput, DIDEVTYPE_KEYBOARD, enumKeyboards, 0, DIEDFL_ATTACHEDONLY);
+        if (rv != DI_OK) {
+            IDirectInput_Release(dinput);
+            printf("Failed to find DirectInput device\n");
             return 0;
         }
+
+        if (kbdDevice == NULL) {
+            printf("Failed to create DirectInput device\n");
+            return 0;
+        }
+
+	    rv = IDirectInputDevice_SetProperty(kbdDevice, DIPROP_BUFFERSIZE,&dipdw.diph);
+
+        rv = IDirectInput_EnumDevices(dinput, DIDEVTYPE_JOYSTICK, enumJoysticksCallback, 0, DIEDFL_ATTACHEDONLY);
+
+        if (foundInputDevices) {
+            // We found input devices that supports background input so lets not
+            // do anymore tests in the future
+            useBackgroundInput = 1;
+            break;
+        }
+        tryBackground = 0;
     }
-
-	rv = IDirectInput_EnumDevices(dinput, DIDEVTYPE_KEYBOARD, enumKeyboards, 0, DIEDFL_ATTACHEDONLY);
-    if (rv != DI_OK) {
-        IDirectInput_Release(dinput);
-        printf("Failed to find DirectInput device\n");
-        return 0;
-    }
-
-    if (kbdDevice == NULL) {
-        printf("Failed to create DirectInput device\n");
-        return 0;
-    }
-
-	rv = IDirectInputDevice_SetProperty(kbdDevice, DIPROP_BUFFERSIZE,&dipdw.diph);
-
-    rv = IDirectInput_EnumDevices(dinput, DIDEVTYPE_JOYSTICK, enumJoysticksCallback, 0, DIEDFL_ATTACHEDONLY);
 
     return 1;
 }
