@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-08-20 08:09:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -619,8 +619,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->cpuState                = "CPU 狀態";
     ls->diskImage               = "磁碟映像檔";
     ls->casImage                = "磁帶映像檔";
-    
-    ls->menuCartExternalRam     = "External RAM";
+    ls->menuCartExternalRam     = "外部 RAM";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-08-20 08:09:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -259,7 +259,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgAboutVersion         = "版本:";
     ls->dlgAboutBuildNumber     = "创建:";
     ls->dlgAboutBuildDate       = "日期:";
-    ls->dlgAboutCreat           = "制作: Daniel Vik";
+    ls->dlgAboutCreat           = "制作:	Daniel Vik";
     ls->dlgAboutDevel           = "各位协力的开发者们\r\n========";
     ls->dlgAboutThanks          = "特别鸣谢\r\n============";
     ls->dlgAboutLisence         = "授权\r\n"
@@ -267,7 +267,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
                                   "本软件是根据目前状况而发布的，没有任何明确或默许的授权。 "
                                   "在任何情况下，使用本软件所造成的后果需由用户自己承担， "
                                   "作者将不承担任何责任。\r\n\r\n"
-                                  "更多详情请登陆：www.bluemsx.com ";
+                                  "更多详情请登陆: www.bluemsx.com ";
 
     // New entries
     ls->menuTools                = "工具";
@@ -620,7 +620,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->diskImage               = "软盘映像";
     ls->casImage                = "磁带映像";
 
-    ls->menuCartExternalRam     = "External RAM";
+    ls->menuCartExternalRam     = "扩展内存";
 };
 
 
