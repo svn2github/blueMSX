@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.95 $
+** $Revision: 1.96 $
 **
-** $Date: 2005-08-20 05:33:41 $
+** $Date: 2005-08-21 21:31:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,6 +85,38 @@
 #include "ArchTimer.h"
 
 void vdpSetDisplayEnable(int enable);
+
+
+static EmuLanguageType getLangType()
+{
+    LANGID langId = GetSystemDefaultLangID();
+
+    switch (langId) {
+        case 0x0404: return EMU_LANG_CHINESETRAD;
+        case 0x0408: return EMU_LANG_CHINESESIMP;
+        case 0x040c: return EMU_LANG_CHINESETRAD;
+        case 0x0410: return EMU_LANG_CHINESESIMP;
+        case 0x0414: return EMU_LANG_CHINESETRAD;
+    }
+
+    switch (langId & 0xff) {
+        case 0x04: return EMU_LANG_CHINESESIMP;
+        case 0x13: return EMU_LANG_DUTCH;
+        case 0x09: return EMU_LANG_ENGLISH;
+        case 0x0b: return EMU_LANG_FINNISH;
+        case 0x0c: return EMU_LANG_FRENCH;
+        case 0x07: return EMU_LANG_GERMAN;
+        case 0x10: return EMU_LANG_ITALIAN;
+        case 0x11: return EMU_LANG_JAPANESE;
+        case 0x12: return EMU_LANG_KOREAN;
+        case 0x15: return EMU_LANG_POLISH;
+        case 0x16: return EMU_LANG_PORTUGUESE;
+        case 0x0a: return EMU_LANG_SPANISH;
+        case 0x1d: return EMU_LANG_SWEDISH;
+    }
+
+    return EMU_LANG_ENGLISH;
+}
 
 int canHandleVblankSyncMode() {
     DWORD t1;
@@ -2425,7 +2457,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
             syncMode = canHandleVblankSyncMode() ? 1 : 0;
         }
         propertiesInit(emuCheckIniFileArgument(szLine));
-        pProperties = propCreate(resetRegistry, kbdLang, syncMode);
+        pProperties = propCreate(resetRegistry, getLangType(), kbdLang, syncMode);
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
         
         if (resetRegistry == 2) {

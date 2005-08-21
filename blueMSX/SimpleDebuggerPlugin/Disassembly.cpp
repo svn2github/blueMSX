@@ -820,6 +820,7 @@ void Disassembly::refresh()
 
 void Disassembly::updateContent(BYTE* memory, WORD pc)
 {
+    int addr = 0;
     clearRuntoBreakpoint();
 
     lineCount = 0;
@@ -828,7 +829,76 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     memcpy(backupMemory, memory, 0x10000);
     backupPc = pc;
 
-    for (int addr = 0; addr < 0x10000; ) {
+    for (; addr < pc; ) {
+        const char* symbolName = symbolInfo->find(addr);
+
+        if (symbolName != NULL) {
+            lineInfo[lineCount].dataText[0] = 0;
+            lineInfo[lineCount].dataTextLength = 0;
+            lineInfo[lineCount].addr[0] = 0;
+            lineInfo[lineCount].addrLength = 0;
+            sprintf(lineInfo[lineCount].text, "%s:", symbolName);
+            lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
+            lineInfo[lineCount].address = addr;
+            lineInfo[lineCount].haspc = 0;
+            lineInfo[lineCount].isLabel = 1;
+            lineCount++;
+        }
+
+        sprintf(lineInfo[lineCount].addr, "%.4X:", addr);
+        lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
+        int len = dasm(memory, addr, lineInfo[lineCount].text);
+        lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
+        lineInfo[lineCount].address = addr;
+        lineInfo[lineCount].haspc = addr == pc;
+
+        lineInfo[lineCount].dataText[0] = 0;
+        lineInfo[lineCount].dataTextLength = 0;
+        lineInfo[lineCount].isLabel = 0;
+
+        int i = min(4, len);
+        while (i-- && addr < pc) {
+            char text[16];
+            sprintf(text, "%.2x ", memory[addr]);
+            strcat(lineInfo[lineCount].dataText, text);
+            lineInfo[lineCount].dataTextLength += 3;
+            len--;
+            addr++;
+        }
+        addr += len;
+        lineCount++;
+    }
+#if 0
+    if (addr > pc) {
+        int found = 0;
+        addr = pc;
+
+        while (!found && addr > 0) {
+            int curr = addr;
+            addr = addr - 16;
+            if (addr < 0) addr = 0;
+            for (; addr < curr; addr++) {
+                char dummy[32];
+                int len;
+                len = dasm(memory, addr, dummy);
+                if (addr + len == curr) {
+                    break;
+                }
+            }
+            for (int line = lineCount - 1; line >= 0; line--) {
+                if (lineInfo[line].address == addr) {
+                    lineCount = line + 1;
+                    found = 1;
+                    break;
+                }
+            }
+        }
+    }
+#endif
+    if (addr > pc) addr = pc;
+    if (addr < 0) addr = 0;
+
+    for (; addr < 0x10000; ) {
         const char* symbolName = symbolInfo->find(addr);
 
         if (symbolName != NULL) {
@@ -870,6 +940,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
         addr += len;
         lineCount++;
     }
+
     if (currentLine == -1) {
         currentLine = programCounter;
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-21 21:31:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -236,6 +236,10 @@ UInt8 moonsoundPeek(Moonsound* moonsound, UInt16 ioPort)
 {
 	UInt8 result = 0xff;
     UInt32 systemTime = boardSystemTime();
+
+    if (moonsound == NULL) {
+        return 0xff;
+    }
 
 	if (ioPort < 0xC0) {
 		switch (ioPort & 0x01) {

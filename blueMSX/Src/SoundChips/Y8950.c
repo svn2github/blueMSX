@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-21 21:31:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,12 +134,14 @@ void y8950TimerStart(void* ptr, int timer, int start)
 
 UInt8 y8950Peek(Y8950* y8950, UInt16 ioPort)
 {
-    switch (ioPort & 1) {
-    case 0:
-        return (UInt8)OPLPeek(y8950->opl, 0);
-    case 1:
-        return (UInt8)OPLPeek(y8950->opl, 1);
-        break;
+    if (y8950 != NULL) {
+        switch (ioPort & 1) {
+        case 0:
+            return (UInt8)OPLPeek(y8950->opl, 0);
+        case 1:
+            return (UInt8)OPLPeek(y8950->opl, 1);
+            break;
+        }
     }
     return  0xff;
 }
