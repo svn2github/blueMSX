@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-08-09 08:16:41 $
+** $Date: 2005-08-24 04:35:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,7 +61,7 @@ void activeImageDraw(ActiveImage* activeImage, void* dc, ActiveRect* rect);
 
 typedef struct ActiveButton ActiveButton;
 
-ActiveButton* activeButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2);
+ActiveButton* activeButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2);
 void activeButtonDestroy(ActiveButton* activeButton);
 int activeButtonMouseMove(ActiveButton* activeButton, int x, int y);
 int activeButtonDown(ActiveButton* activeButton, int x, int y);
@@ -69,11 +69,12 @@ int activeButtonUp(ActiveButton* activeButton, int x, int y);
 int activeButtonShow(ActiveButton* activeButton, int show);
 void activeButtonDraw(ActiveButton* activeButton, void* dc, ActiveRect* rect);
 int activeButtonForcePushed(ActiveButton* activeButton, int pushed);
+int activeButtonActivate(ActiveButton* activeButton, int active);
 
 
 typedef struct ActiveToggleButton ActiveToggleButton;
 
-ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2);
+ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2);
 void activeToggleButtonDestroy(ActiveToggleButton* activeButton);
 int activeToggleButtonMouseMove(ActiveToggleButton* activeButton, int x, int y);
 int activeToggleButtonDown(ActiveToggleButton* activeButton, int x, int y);
@@ -82,11 +83,12 @@ int activeToggleButtonShow(ActiveToggleButton* activeButton, int show);
 void activeToggleButtonDraw(ActiveToggleButton* activeButton, void* dc, ActiveRect* rect);
 int activeToggleButtonForcePushed(ActiveToggleButton* activeButton, int pushed);
 int activeToggleButtonSetToggled(ActiveToggleButton* activeButton, int toggled);
+int activeToggleButtonActivate(ActiveToggleButton* activeButton, int active);
 
 
 typedef struct ActiveDualButton ActiveDualButton;
 
-ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, 
+ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, 
                                           ButtonEvent eventA, int argA1, int argA2, 
                                           ButtonEvent eventB, int argB1, int argB2, int vertical);
 void activeDualButtonDestroy(ActiveDualButton* activeButton);
@@ -96,6 +98,8 @@ int activeDualButtonUp(ActiveDualButton* activeButton, int x, int y);
 void activeDualButtonDraw(ActiveDualButton* activeButton, void* dc, ActiveRect* rect);
 int activeDualButtonShow(ActiveDualButton* activeButton, int show);
 int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed);
+int activeDualButtonActivate(ActiveDualButton* activeButton, int active);
+
 
 
 typedef struct ActiveText ActiveText;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-08-09 08:16:41 $
+** $Date: 2005-08-24 04:35:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,6 +171,7 @@ struct ActiveButton {
     ActiveImage* bitmap;
     int state;
     int pushed;
+    int active;
     int x;
     int y;
     UInt32 width;
@@ -180,17 +181,18 @@ struct ActiveButton {
     int arg2;
 };
 
-ActiveButton* activeButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2)
+ActiveButton* activeButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2)
 {
     ActiveButton* activeButton = malloc(sizeof(ActiveButton));
 
-    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 3);
+    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, activeNotify ? 6 : 3);
     activeButton->x       = x;
     activeButton->y       = y;
     activeButton->width   = activeImageGetWidth(activeButton->bitmap);
     activeButton->height  = activeImageGetHeight(activeButton->bitmap);
     activeButton->state   = AB_NORMAL;
     activeButton->pushed  = 0;
+    activeButton->active  = 0;
     activeButton->event   = event;
     activeButton->arg1    = arg1;
     activeButton->arg2    = arg2;
@@ -220,11 +222,21 @@ static int activeButtonSetImage(ActiveButton* activeButton)
         index = AB_PUSHED;
     }
 
+    if (activeButton->active) {
+        index += 3;
+    }
+
     rv = index != activeImageGetImage(activeButton->bitmap);
 
     activeImageSetImage(activeButton->bitmap, index);
 
     return rv;
+}
+
+int activeButtonActivate(ActiveButton* activeButton, int active)
+{
+    activeButton->active = activeButton->bitmap->count > 3 ? active : 0;
+    return activeButtonSetImage(activeButton);
 }
 
 int activeButtonForcePushed(ActiveButton* activeButton, int pushed)
@@ -320,6 +332,7 @@ struct ActiveDualButton {
     ActiveImage* bitmap;
     int state;
     int pushed;
+    int active;
     int x;
     int y;
     UInt32 width;
@@ -335,13 +348,13 @@ struct ActiveDualButton {
     int vertical;
 };
 
-ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, 
+ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, 
                                           ButtonEvent eventA, int argA1, int argA2, 
                                           ButtonEvent eventB, int argB1, int argB2, int vertical)
 {
     ActiveDualButton* activeButton = malloc(sizeof(ActiveDualButton));
 
-    activeButton->bitmap   = activeImageCreate(x, y, cols, bitmap, 4);
+    activeButton->bitmap   = activeImageCreate(x, y, cols, bitmap, activeNotify ? 8 : 4);
     activeButton->x        = x;
     activeButton->y        = y;
     activeButton->width    = activeImageGetWidth(activeButton->bitmap);
@@ -350,6 +363,7 @@ ActiveDualButton* activeDualButtonCreate(int x, int y, int cols, ArchBitmap* bit
     activeButton->heightB  = activeButton->height / 3;
     activeButton->state    = ADB_NORMAL;
     activeButton->pushed   = 0;
+    activeButton->active   = 0;
     activeButton->eventA   = eventA;
     activeButton->argA1    = argA1;
     activeButton->argA2    = argA2;
@@ -383,11 +397,21 @@ static int activeDualButtonSetImage(ActiveDualButton* activeButton)
         index = AB_PUSHED;
     }
 
+    if (activeButton->active) {
+        index += 4;
+    }
+
     rv = index != activeImageGetImage(activeButton->bitmap);
 
     activeImageSetImage(activeButton->bitmap, index);
 
     return rv;
+}
+
+int activeDualButtonActivate(ActiveDualButton* activeButton, int active)
+{
+    activeButton->active = activeButton->bitmap->count > 4 ? active : 0;
+    return activeDualButtonSetImage(activeButton);
 }
 
 int activeDualButtonForcePushed(ActiveDualButton* activeButton, int pushed)
@@ -494,6 +518,7 @@ struct ActiveToggleButton {
     ActiveImage* bitmap;
     int state;
     int pushed;
+    int active;
     int toggled;
     int x;
     int y;
@@ -504,17 +529,18 @@ struct ActiveToggleButton {
     int arg2;
 };
 
-ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2)
+ActiveToggleButton* activeToggleButtonCreate(int x, int y, int cols, int activeNotify, ArchBitmap* bitmap, ButtonEvent event, int arg1, int arg2)
 {
     ActiveToggleButton* activeButton = malloc(sizeof(ActiveToggleButton));
 
-    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, 6);
+    activeButton->bitmap  = activeImageCreate(x, y, cols, bitmap, activeNotify ? 12 : 6);
     activeButton->x       = x;
     activeButton->y       = y;
     activeButton->width   = activeImageGetWidth(activeButton->bitmap);
     activeButton->height  = activeImageGetHeight(activeButton->bitmap);
     activeButton->state   = ATB_NORMAL;
     activeButton->pushed  = 0;
+    activeButton->active  = 0;
     activeButton->toggled = 0;
     activeButton->event   = event;
     activeButton->arg1    = arg1;
@@ -549,11 +575,21 @@ static int activeToggleButtonSetImage(ActiveToggleButton* activeButton)
         index += 3;
     }
 
+    if (activeButton->active) {
+        index += 6;
+    }
+
     rv = index != activeImageGetImage(activeButton->bitmap);
 
     activeImageSetImage(activeButton->bitmap, index);
 
     return rv;
+}
+
+int activeToggleButtonActivate(ActiveToggleButton* activeButton, int active)
+{
+    activeButton->active = activeButton->bitmap->count > 6 ? active : 0;
+    return activeToggleButtonSetImage(activeButton);
 }
 
 int activeToggleButtonForcePushed(ActiveToggleButton* activeButton, int pushed)

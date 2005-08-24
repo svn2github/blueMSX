@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-07-26 05:27:11 $
+** $Date: 2005-08-24 04:35:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,28 +72,28 @@ static ThemePage* themeCreateSmall()
     themePageAddText(theme, activeTextCreate(55,  299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
     themePageAddText(theme, activeTextCreate(96, 299, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 0),   THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
 
-    themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_RESET),
+    themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_RESET),
                                               (ButtonEvent)actionEmuResetHard, 0, 0, 
                                               (ButtonEvent)actionMenuReset, 8, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(52, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_CART1),
+    themePageAddDualButton(theme, activeDualButtonCreate(52, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_CART1),
                                               (ButtonEvent)actionCartInsert1, 0, 0, 
                                               (ButtonEvent)actionMenuCart1, 52, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(90, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_CART2),
+    themePageAddDualButton(theme, activeDualButtonCreate(90, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_CART2),
                                               (ButtonEvent)actionCartInsert2, 0, 0, 
                                               (ButtonEvent)actionMenuCart2, 90, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(128, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTDISKA),
+    themePageAddDualButton(theme, activeDualButtonCreate(128, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTDISKA),
                                               (ButtonEvent)actionDiskInsertA, 0, 0, 
                                               (ButtonEvent)actionMenuDiskA, 128, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(166, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTDISKB),
+    themePageAddDualButton(theme, activeDualButtonCreate(166, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTDISKB),
                                               (ButtonEvent)actionDiskInsertB, 0, 0, 
                                               (ButtonEvent)actionMenuDiskB, 166, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(204, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTCAS),
+    themePageAddDualButton(theme, activeDualButtonCreate(204, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTCAS),
                                               (ButtonEvent)actionCasInsert, 0, 0, 
                                               (ButtonEvent)actionMenuCassette, 204, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(251, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTSIZE),
+    themePageAddDualButton(theme, activeDualButtonCreate(251, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTSIZE),
                                               (ButtonEvent)actionWindowSizeNormal, 0, 0, 
                                               (ButtonEvent)actionMenuZoom, 251, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(289, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
+    themePageAddDualButton(theme, activeDualButtonCreate(289, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
                                               (ButtonEvent)actionPropShowControls, 0, 0, 
                                               (ButtonEvent)actionMenuOptions, 289, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
@@ -140,37 +140,37 @@ static ThemePage* themeCreateNormal()
     themePageAddText(theme, activeTextCreate(225, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 2, 0, 0, 1),  THEME_TRIGGER_TEXT_FPS, THEME_TRIGGER_NONE);
     themePageAddText(theme, activeTextCreate(268, 539, 256, archBitmapCreateFromId(IDB_CLASSIC_FONT), 0, 256, 5, 0, 0, 0),  THEME_TRIGGER_TEXT_CPU, THEME_TRIGGER_NONE);
 
-    themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_RESET),
+    themePageAddDualButton(theme, activeDualButtonCreate(8, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_RESET),
                                           (ButtonEvent)actionEmuResetHard, 0, 0, 
                                           (ButtonEvent)actionMenuReset, 8, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddButton(theme, activeButtonCreate(52, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_PLAY),
+    themePageAddButton(theme, activeButtonCreate(52, 22, 4, 0, archBitmapCreateFromId(IDB_CLASSIC_PLAY),
                                           (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_NOT_RUNNING, THEME_TRIGGER_NONE);
-    themePageAddButton(theme, activeButtonCreate(78, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_PAUSE),
+    themePageAddButton(theme, activeButtonCreate(78, 22, 4, 0, archBitmapCreateFromId(IDB_CLASSIC_PAUSE),
                                           (ButtonEvent)actionEmuTogglePause, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_RUNNING, THEME_TRIGGER_NONE);
-    themePageAddButton(theme, activeButtonCreate(104, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_STOP),
+    themePageAddButton(theme, activeButtonCreate(104, 22, 4, 0, archBitmapCreateFromId(IDB_CLASSIC_STOP),
                                           (ButtonEvent)actionEmuStop, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_IMG_NOT_STOPPED, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(136, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_CART1),
+    themePageAddDualButton(theme, activeDualButtonCreate(136, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_CART1),
                                           (ButtonEvent)actionCartInsert1, 0, 0, 
                                           (ButtonEvent)actionMenuCart1, 136, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(174, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_CART2),
+    themePageAddDualButton(theme, activeDualButtonCreate(174, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_CART2),
                                           (ButtonEvent)actionCartInsert2, 0, 0, 
                                           (ButtonEvent)actionMenuCart2, 174, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(212, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTDISKA),
+    themePageAddDualButton(theme, activeDualButtonCreate(212, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTDISKA),
                                           (ButtonEvent)actionDiskInsertA, 0, 0, 
                                           (ButtonEvent)actionMenuDiskA, 212, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(250, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTDISKB),
+    themePageAddDualButton(theme, activeDualButtonCreate(250, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTDISKB),
                                           (ButtonEvent)actionDiskInsertB, 0, 0, 
                                           (ButtonEvent)actionMenuDiskB, 250, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(288, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTCAS),
+    themePageAddDualButton(theme, activeDualButtonCreate(288, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTCAS),
                                           (ButtonEvent)actionCasInsert, 0, 0, 
                                           (ButtonEvent)actionMenuCassette, 288, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(335, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTSIZE),
+    themePageAddDualButton(theme, activeDualButtonCreate(335, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTSIZE),
                                           (ButtonEvent)actionWindowSizeSmall, 0, 0, 
                                           (ButtonEvent)actionMenuZoom, 335, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddDualButton(theme, activeDualButtonCreate(373, 22, 5, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
+    themePageAddDualButton(theme, activeDualButtonCreate(373, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
                                           (ButtonEvent)actionPropShowControls, 0, 0, 
                                           (ButtonEvent)actionMenuOptions, 373, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
-    themePageAddButton(theme, activeButtonCreate(420, 22, 4, archBitmapCreateFromId(IDB_CLASSIC_BTHELP),
+    themePageAddButton(theme, activeButtonCreate(420, 22, 4, 0, archBitmapCreateFromId(IDB_CLASSIC_BTHELP),
                                           (ButtonEvent)actionHelpShowHelp, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
     return theme;

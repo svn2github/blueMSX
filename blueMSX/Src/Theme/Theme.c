@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-08-09 08:16:41 $
+** $Date: 2005-08-24 04:35:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -582,6 +582,30 @@ void themePageSetActive(ThemePage* themePage, void* dc, int active)
                 }
             }
             break;
+
+        case ITEM_BUTTON:
+            if (activeButtonActivate(item->object, active)) {
+                if (dc != NULL) {
+                    themePageDraw(themePage, dc, item);
+                }
+            }
+            break;
+
+        case ITEM_DUALBUTTON:
+            if (activeDualButtonActivate(item->object, active)) {
+                if (dc != NULL) {
+                    themePageDraw(themePage, dc, item);
+                }
+            }
+            break;
+
+        case ITEM_TOGGLEBUTTON:
+            if (activeToggleButtonActivate(item->object, active)) {
+                if (dc != NULL) {
+                    themePageDraw(themePage, dc, item);
+                }
+            }
+            break;
         }
     }
 }
@@ -646,6 +670,10 @@ void themePageActivate(ThemePage* themePage, void* window)
 void themePageUpdate(ThemePage* themePage, void* dc)
 {
     ThemeItem* item;
+    ThemeItem* redrawItems[1024];
+    int        redrawCount = 0;
+    int        redrawAll = 0;
+    int i;
 
     if (themePage == NULL) {
         return;
@@ -694,8 +722,18 @@ void themePageUpdate(ThemePage* themePage, void* dc)
             break;
         }
 
+        redrawAll |= redraw && !visible;
         if (redraw) {
-            themePageDraw(themePage, dc, item);
+            redrawItems[redrawCount++] = item;
+        }
+    }
+
+    if (redrawAll) {
+        themePageDraw(themePage, dc, NULL);
+    }
+    else {
+        for (i = 0; i < redrawCount; i++) {
+            themePageDraw(themePage, dc, redrawItems[i]);
         }
     }
 }

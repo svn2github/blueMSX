@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-08-09 08:16:41 $
+** $Date: 2005-08-24 04:35:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -681,7 +681,11 @@ static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage*
     int arga, argb;
     ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme, dx, dy);
 
-    themePageAddButton(themePage, activeButtonCreate(x, y, cols, bitmap, action, arga, argb), trigger, visible, THEME_TRIGGER_NONE);
+    int activeNotify = 0;
+    el->QueryIntAttribute("activenotify", &activeNotify);
+    activeNotify = activeNotify ? 1 : 0;
+
+    themePageAddButton(themePage, activeButtonCreate(x, y, cols, activeNotify, bitmap, action, arga, argb), trigger, visible, THEME_TRIGGER_NONE);
 }
 
 static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
@@ -708,7 +712,11 @@ static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, Them
     int arga, argb;
     ButtonEvent action = getAction(el, "action", "arga", "argb", &arga, &argb, themeCollection, theme, dx, dy);
 
-    themePageAddToggleButton(themePage, activeToggleButtonCreate(x, y, cols, bitmap, action, arga, argb), 
+    int activeNotify = 0;
+    el->QueryIntAttribute("activenotify", &activeNotify);
+    activeNotify = activeNotify ? 1 : 0;
+
+    themePageAddToggleButton(themePage, activeToggleButtonCreate(x, y, cols, activeNotify, bitmap, action, arga, argb), 
                          trigger, visible, THEME_TRIGGER_NONE);
 }
 
@@ -745,7 +753,11 @@ static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemeP
         vertical = 1;
     }
 
-    themePageAddDualButton(themePage, activeDualButtonCreate(x, y, cols, bitmap, action1, arg1x, arg1y,
+    int activeNotify = 0;
+    el->QueryIntAttribute("activenotify", &activeNotify);
+    activeNotify = activeNotify ? 1 : 0;
+
+    themePageAddDualButton(themePage, activeDualButtonCreate(x, y, cols, activeNotify, bitmap, action1, arg1x, arg1y,
                                                       action2, arg2x, arg2y, vertical), 
                        trigger, visible, THEME_TRIGGER_NONE);
 }
@@ -783,7 +795,7 @@ static void addKeyButton(ThemeCollection* themeCollection, Theme* theme, ThemePa
     ThemeTrigger pressed = (ThemeTrigger)(THEME_TRIGGER_FIRST_KEY_PRESSED + keycode);
     ButtonEvent action   = (ButtonEvent)actionKeyPress;
 
-    themePageAddToggleButton(themePage, activeToggleButtonCreate(srcX + x, srcY + y, 999, bitmap, action, keycode, -1), 
+    themePageAddToggleButton(themePage, activeToggleButtonCreate(srcX + x, srcY + y, 999, 0, bitmap, action, keycode, -1), 
                          trigger, visible, pressed);
 }
 
