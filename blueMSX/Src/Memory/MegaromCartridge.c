@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-03-07 05:32:46 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -380,6 +380,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SVI738FDC:
             romMapperSvi738FdcCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_SVI328:
+            romMapperNormalCreate(romName, buf, size, 1, 0, 0);
             break;
 
         case ROM_KANJI:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,7 +201,7 @@ static void getDebugInfo(SviPPI* ppi, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PPI", 5);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "I8255 PPI", 5);
     dbgIoPortsAddPort(ioPorts, 0, 0x98, DBG_IO_READWRITE, peek(ppi, 0x98));
     dbgIoPortsAddPort(ioPorts, 1, 0x99, DBG_IO_READWRITE, peek(ppi, 0x99));
     dbgIoPortsAddPort(ioPorts, 2, 0x96, DBG_IO_READWRITE, peek(ppi, 0x96));
@@ -216,7 +216,7 @@ void sviPPICreate(JoystickIO* joyIO)
     SviPPI* ppi = malloc(sizeof(SviPPI));
 
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
-    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "PPI", &dbgCallbacks, ppi);
+    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "I8255 PPI", &dbgCallbacks, ppi);
 
     ppi->joyIO = joyIO;
     ppi->i8255 = i8255Create(readA, readA, NULL,

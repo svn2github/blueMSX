@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,7 +76,7 @@ static void destroy(RomMapperSvi738Fdc* rm)
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
-    wd2793Create(rm->fdc);
+    wd2793Destroy(rm->fdc);
 
     free(rm->romData);
     free(rm);

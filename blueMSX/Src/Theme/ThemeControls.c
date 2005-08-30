@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-08-24 04:35:33 $
+** $Date: 2005-08-30 00:57:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -710,7 +710,10 @@ ActiveNativeText* activeNativeTextCreate(int x, int y, ArchBitmap* bitmap, int c
 
     activeText->archText = archTextCreate(activeText->height, color, rightAligned);
 
-    activeText->activeItem = activeText->background->activeItem;
+    activeText->activeItem.rect.x      = activeText->background->activeItem.rect.x;
+    activeText->activeItem.rect.y      = activeText->background->activeItem.rect.y;
+    activeText->activeItem.rect.width  = activeText->width + 3;
+    activeText->activeItem.rect.height = activeText->height;
 
     return activeText;
 }
@@ -768,6 +771,10 @@ ActiveText* activeTextCreate(int x, int y, int cols, ArchBitmap* bitmap, int sta
 
     if (type == 1) {
         activeText->nativeText = activeNativeTextCreate(x, y, bitmap, color, rightAligned);
+        activeText->activeItem.rect.x      = activeText->nativeText->activeItem.rect.x;
+        activeText->activeItem.rect.y      = activeText->nativeText->activeItem.rect.y;
+        activeText->activeItem.rect.width  = activeText->nativeText->activeItem.rect.width;
+        activeText->activeItem.rect.height = activeText->nativeText->activeItem.rect.height;
         return activeText;
     }
     activeText->nativeText = NULL;

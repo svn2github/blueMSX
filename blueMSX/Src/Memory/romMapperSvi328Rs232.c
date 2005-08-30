@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-04-28 18:33:27 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperSvi328Rs232.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "I8250.h"
@@ -39,6 +40,7 @@
 typedef struct {
     int connector;
     int deviceHandle;
+    int debugHandle;
     int serialLink;
     UInt8 baseAddress;
     I8250* i8250;
@@ -51,8 +53,8 @@ static void saveState(RomMapperSvi328Rs232* rs232)
 {
     SaveState* state = saveStateOpenForWrite("Svi328Rs232");
 
-    saveStateSet(state, "connector",  rs232->connector);
-    saveStateSet(state, "deviceHandle",  rs232->deviceHandle);
+    saveStateSet(state, "connector", rs232->connector);
+    saveStateSet(state, "deviceHandle", rs232->deviceHandle);
     
     saveStateClose(state);
     
@@ -63,7 +65,7 @@ static void loadState(RomMapperSvi328Rs232* rs232)
 {
     SaveState* state = saveStateOpenForRead("Svi328Rs232");
 
-    rs232->connector   =        saveStateGet(state, "connector",  0);
+    rs232->connector = saveStateGet(state, "connector",  0);
     rs232->deviceHandle = (UInt8)saveStateGet(state, "deviceHandle",  0);
 
     saveStateClose(state);
@@ -100,10 +102,18 @@ static void destroy(RomMapperSvi328Rs232* rs232)
     i8250Destroy(rs232->i8250);
 
     archUartDestroy();
+
     deviceManagerUnregister(rs232->deviceHandle);
+    debugDeviceUnregister(rs232->debugHandle);
+
     free(rs232);
 }
 
+static UInt8 peekIo(RomMapperSvi328Rs232* rs232, UInt16 ioPort) 
+{
+    return 0xff;
+}
+	
 static UInt8 readIo(RomMapperSvi328Rs232* rs232, UInt16 ioPort) 
 {
     return i8250Read(rs232->i8250, ioPort - rs232->baseAddress);
@@ -129,14 +139,28 @@ static void romMapperSvi328Rs232ReceiveCallback(UInt8 value)
     i8250RxData(rs232->i8250, value);
 }
 
+static void getDebugInfo(RomMapperSvi328Rs232* rs232, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+    int i;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI RS-232", 8);
+
+    for (i = 0; i < 8; i++) {
+        dbgIoPortsAddPort(ioPorts, i, rs232->baseAddress + i, DBG_IO_READWRITE, peekIo(rs232, rs232->baseAddress + i));
+    }
+}
+
 int romMapperSvi328Rs232Create(Svi328UartConnector connector)
 {
     DeviceCallbacks callbacks = {destroy, NULL, saveState, loadState};
+    DebugCallbacks dbgCallbacks = {getDebugInfo, NULL, NULL, NULL};
 
     rs232 = malloc(sizeof(RomMapperSvi328Rs232));
 
     rs232->connector  = connector;
     rs232->deviceHandle = deviceManagerRegister(ROM_SVI328RS232, &callbacks, rs232);
+    rs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "SVI RS-232", &dbgCallbacks, rs232);
 
     rs232->i8250 = NULL;
     rs232->i8250 = i8250Create(3072000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, rs232);

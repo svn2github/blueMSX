@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-01-10 13:09:27 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 #include "Disk.h"
 #include "DirAsDisk.h"
-#include "Board.h"
 #include "ziphelper.h"
 #include <stdlib.h>
 #include <string.h>
@@ -48,7 +47,8 @@ static int   fileSize[2];
 static int   sides[2];
 static int   tracks[2];
 static int   changed[2];
-
+static int   diskType[2];
+enum { MSX_DISK, SVI328_DISK } diskTypes;
 
 UInt8 diskEnabled(int driveId)
 {
@@ -90,7 +90,8 @@ int diskGetSectorSize(int driveId, int side, int track, int density)
     if (driveId >= MAXDRIVES)
         return 0;
 
-    if (boardGetType() == BOARD_SVI) {
+//    if (boardGetType() == BOARD_SVI) {
+    if (diskType[driveId] == SVI328_DISK) {
         secSize = (track==0 && side==0 && density==1) ? 128 : 256;
     }
     else {
@@ -110,7 +111,8 @@ static int diskGetSectorOffset(int driveId, int sector, int side, int track, int
 
     secSize = diskGetSectorSize(driveId, side, track, density);
 
-    if (boardGetType() == BOARD_SVI) {
+//    if (boardGetType() == BOARD_SVI) {
+    if (diskType[driveId] == SVI328_DISK) {
         if (track==0 && side==0 && density==1)
             offset = (sector-1)*128; 
         else
@@ -204,10 +206,26 @@ static void diskUpdateInfo(int driveId)
     sides[driveId]           = 2;
     tracks[driveId]          = 80;
     changed[driveId]         = 1;
+    diskType[driveId]        = MSX_DISK;
 
     if (fileSize[driveId] / 512 == 1440) {
         return;
     }
+
+    switch (fileSize[driveId]) {
+        case 172032:	/* Single sided */
+            sides[driveId] = 1;
+            tracks[driveId] = 40;
+            sectorsPerTrack[driveId] = 17;
+            diskType[driveId] = SVI328_DISK;
+            return;
+        case 346112:	/* Double sided */
+            sides[driveId] = 2;
+            tracks[driveId] = 40;
+            sectorsPerTrack[driveId] = 17;
+            diskType[driveId] = SVI328_DISK;
+            return;
+	}
 
     rv = diskReadSector(driveId, buf, 1, 0, 0, 512, &sectorSize);
     if (!rv) {
@@ -427,74 +445,6 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     fileSize[driveId] = ftell(drives[driveId]);
 
     diskUpdateInfo(driveId);
-
-    return 1;
-}
-
-static int diskUpdateInfoSVI(int driveId, int dskImageSize)
-{
-    tracks[driveId] = 40;
-    changed[driveId] = 1;
-    fileSize[driveId] = dskImageSize;
-
-    switch (dskImageSize) {
-        case 172032:	/* Single sided */
-            sides[driveId] = 1;
-            return 1;
-        case 346112:	/* Double sided */
-            sides[driveId] = 2;
-            return 1;
-        default:
-            sides[driveId] = 0;
-            return 0;
-	}
-}
-
-UInt8 diskChangeSVI(int driveId, char* fileName, const char* fileInZipFile)
-{
-    if (driveId >= MAXDRIVES)
-        return 0;
-
-    /* Close previous disk image */
-    if(drives[driveId] != NULL) { 
-        fclose(drives[driveId]);
-        drives[driveId] = NULL; 
-    }
-
-    if (ramImageBuffer[driveId] != NULL) {
-        // Flush to file??
-        free(ramImageBuffer[driveId]);
-        ramImageBuffer[driveId] = NULL;
-    }
-
-    if(!fileName) {
-        return 0;
-    }
-
-    if (fileInZipFile != NULL) {
-        ramImageBuffer[driveId] = zipLoadFile(fileName, fileInZipFile, &ramImageSize[driveId]);
-        diskUpdateInfoSVI(driveId, ramImageSize[driveId]);
-        return ramImageBuffer[driveId] != NULL;
-    }
-
-    drives[driveId] = fopen(fileName, "r+b");
-    RdOnly[driveId] = 0;
-
-    if (drives[driveId] == NULL) {
-        drives[driveId] = fopen(fileName, "rb");
-        RdOnly[driveId] = 1;
-    }
-
-    if (drives[driveId] == NULL) {
-        return 0;
-    }
-
-    fseek(drives[driveId],0,SEEK_END);
-    if (!diskUpdateInfoSVI(driveId, ftell(drives[driveId]))) {
-        fclose(drives[driveId]);
-        drives[driveId] = NULL;
-        return 0;
-    }
 
     return 1;
 }

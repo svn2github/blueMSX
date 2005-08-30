@@ -3,16 +3,19 @@
 #
 #
 
-CC=gcc
-CFLAGSCXX=g++
-CXXFLAGS=$(CFLAGS)
-RC=windres -O COFF
+CC    = $(SILENT)gcc
+CXX   = $(SILENT)g++
+RC    = $(SILENT)windres -O COFF
+LD    = $(SILENT)dllwrap
+RM    = $(SILENT)-rm -f
+RMDIR = $(SILENT)-rm -rf
+MKDIR = $(SILENT)-mkdir
+ECHO  = @echo
 
 CFLAGS+=-W -O2 -finline-functions -march=pentiumpro -D_M_IX86=600 -DWIN32 -DNDEBUG -D_WINDOWS
-LD=dllwrap
 LDFLAGSTARGET=SimpleDebugger.dll
 LDFLAGS+=-Wl,--subsystem,windows --implib libSimpleDebugger.a
-LIBS+=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 ComCtl32.Lib
+LIBS+=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lcomctl32
 
 ifndef TARGET
 TARGET=SimpleDebugger.dll
@@ -37,6 +40,9 @@ all: $(TARGET)
 	$(RC) $(CPPFLAGS) -o $@ -i $<
 
 SRCS= \
+	SimpleDebugger.cpp \
+	SimpleDebugger.def \
+	SimpleDebugger.rc \
 	bluemsx.ico \
 	BlueMSXToolInterface.h \
 	Callstack.cpp \
@@ -53,9 +59,6 @@ SRCS= \
 	Memory.h \
 	Resource.h \
 	resrc1.h \
-	SimpleDebugger.cpp \
-	SimpleDebugger.def \
-	SimpleDebugger.rc \
 	Stack.cpp \
 	Stack.h \
 	StatusBar.cpp \
@@ -69,7 +72,16 @@ SRCS= \
 	ToolDllMain.cpp \
 	ToolInterface.h \
 	EditControls.cpp \
-	EditControls.h
+	EditControls.h \
+	IoPorts.cpp \
+	IoPorts.h \
+	PeripheralRegs.cpp \
+	PeripheralRegs.h \
+	LanguageChineseSimplified.h \
+	LanguageChineseTraditional.h \
+	LanguageEnglish.h \
+	LanguageJapanese.h
+
 
 OBJS=$(patsubst %.rc,%.res,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(filter %.c %.cc %.cpp %.cxx %.rc,$(SRCS)))))))
 

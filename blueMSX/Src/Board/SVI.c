@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-06-29 03:53:41 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,33 +85,36 @@ static UInt8           psgAYReg15;
 static int             svi80ColEnabled;
 static int             debugHandle;
 
-typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
-typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
-
 extern void PatchZ80(void* ref, CpuRegs* cpu);
 
 void sviLoadState();
 void sviSaveState();
 
-void sviTraceEnable(const char* fileName) {
+void sviTraceEnable(const char* fileName)
+{
     traceEnabled = r800OpenTrace(fileName);
 }
 
-void sviTraceDisable() {
+void sviTraceDisable()
+{
     r800CloseTrace();
     traceEnabled = 0;
 }
 
-int sviTraceGetEnable() {
+int sviTraceGetEnable()
+{
     return traceEnabled;
 }
 
-void sviSetBreakpoint(UInt16 address) {
+void sviSetBreakpoint(UInt16 address)
+{
     if (r800) {
         r800SetBreakpoint(r800, address);
     }
 }
-void sviClearBreakpoint(UInt16 address) {
+
+void sviClearBreakpoint(UInt16 address)
+{
     if (r800) {
         r800ClearBreakpoint(r800, address);
     }
@@ -195,40 +198,36 @@ static void sviMemReset()
 {
     slotManagerReset();
 }
+/*
+       SLOT 0    SLOT 1    SLOT 2    SLOT 3
+FFFF +---------+---------+---------+---------+
+     | BANK 02 | BANK 12 | BANK 22 | BANK 32 | PAGE 3
+     |   RAM   |ROM CART |   RAM   |   RAM   |
+8000 |00000000 |00000000 |10100000 |11110000 | PAGE 2
+     +---------+---------+---------+---------+
+7FFF | BANK 01 | BANK 11 | BANK 21 | BANK 31 | PAGE 1
+     |ROM BASIC|ROM CART |   RAM   |   RAM   |
+     |00000000 |00000101 |00001010 |00001111 | PAGE 0
+0000 +---------+---------+---------+---------+
+*/
 
-static void sviMemSetBank(UInt8 AYReg15)
+typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
+typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
+
+static void sviMemSetBank(UInt8 value)
 {
     UInt8 pages;
     int i;
-#if 0
-    int sviBankLow = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?0:3:2:1;
-    int sviBankHigh = (AYReg15&4)?(AYReg15&16)?0:3:2;
-    int sviLowReadOnly = ((sviBankLow==0)||(sviBankLow==1))?1:0;
-
-    slotMapPage(sviBankLow , 0, 0, NULL, 1, !sviLowReadOnly);
-    slotMapPage(sviBankLow , 0, 1, NULL, 1, !sviLowReadOnly);
-    slotMapPage(sviBankLow , 0, 2, NULL, 1, !sviLowReadOnly);
-    slotMapPage(sviBankLow , 0, 3, NULL, 1, !sviLowReadOnly);
-    slotMapPage(sviBankHigh, 0, 4, NULL, 1, 1);
-    slotMapPage(sviBankHigh, 0, 5, NULL, 1, 1);
-    slotMapPage(sviBankHigh, 0, 6, NULL, 1, 1);
-    slotMapPage(sviBankHigh, 0, 7, NULL, 1, 1);
-
-    psgAYReg15 = AYReg15;
-
-    return;
-#else
-    psgAYReg15 = AYReg15;
+    psgAYReg15 = value;
 
     /* Map the SVI-328 bank to pages */
-    pages = (AYReg15&1)?(AYReg15&2)?(AYReg15&8)?BANK_01:BANK_31:BANK_21:BANK_11;
-    pages |= (AYReg15&4)?(AYReg15&16)?BANK_02:BANK_32:BANK_22;
+    pages = (value&1)?(value&2)?(value&8)?BANK_01:BANK_31:BANK_21:BANK_11;
+    pages |= (value&4)?(value&16)?BANK_02:BANK_32:BANK_22;
 
     for (i = 0; i < 4; i++) {
         slotSetRamSlot(i, pages & 3);
         pages >>= 2;
     }
-#endif
 }
 
 /*
@@ -317,8 +316,7 @@ void sviInitStatistics(Machine* machine)
     }
 }
 
-static int sviInitMachine(Machine* machine, 
-                          VdpSyncMode vdpSyncMode)
+static int sviInitMachine(Machine* machine, VdpSyncMode vdpSyncMode)
 {
     UInt8* buf;
     int success = 1;
@@ -476,8 +474,8 @@ static void breakpointCb(void* ref, UInt16 pc)
     boardOnBreakpoint(pc);
 }
 
-
 extern void debuggerTrace(const char* str);
+
 static void debugCb(void* ref, int command, const char* data) 
 {
     int slot, page, addr, rv;
@@ -494,11 +492,13 @@ static void debugCb(void* ref, int command, const char* data)
     }
 }
 
-void sviRun() {
+void sviRun()
+{
     r800Execute(r800);
 }
 
-void sviStop() {
+void sviStop()
+{
     r800StopExecution(r800);
 }
 
@@ -599,7 +599,6 @@ int sviCreate(Machine* machine,
 
     deviceManagerCreate();
 
-//    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, NULL);
     r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, cpuTimeout, breakpointCb, debugCb, NULL);
 
     boardInit(&r800->systemTime);
@@ -667,7 +666,8 @@ int sviCreate(Machine* machine,
     return success;
 }
 
-void sviDestroy() {    
+void sviDestroy()
+{
     sviTraceDisable();
 
     joystickIoDestroySVI(joyIO);
@@ -753,7 +753,7 @@ void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
     }
 
     if (cartNo == 0) {
-        cartridgeInsert(cartNo, ROM_PLAIN, cart, cartZip); 
+        cartridgeInsert(cartNo, ROM_SVI328, cart, cartZip); 
     }
 }
 
@@ -771,7 +771,7 @@ void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
         strcpy(sviDevInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
-    diskChangeSVI(driveId, fileName, fileInZipFile);
+    diskChange(driveId, fileName, fileInZipFile);
 }
 
 void sviSaveState()
@@ -786,30 +786,30 @@ void sviSaveState()
     saveStateSet(state, "pendingInt",      pendingInt);
     saveStateSet(state, "svi80ColEnabled", svi80ColEnabled);
     
-    saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
-    saveStateSet(state, "cartType00",     di->cartridge[0].type);
+    saveStateSet(state, "cartInserted00",    di->cartridge[0].inserted);
+    saveStateSet(state, "cartType00",        di->cartridge[0].type);
     saveStateSetBuffer(state, "cartName00",  di->cartridge[0].name, strlen(di->cartridge[0].name) + 1);
     saveStateSetBuffer(state, "cartInZip00", di->cartridge[0].inZipName, strlen(di->cartridge[0].inZipName) + 1);
-    saveStateSet(state, "cartInserted01", di->cartridge[1].inserted);
-    saveStateSet(state, "cartType01",     di->cartridge[1].type);
+    saveStateSet(state, "cartInserted01",    di->cartridge[1].inserted);
+    saveStateSet(state, "cartType01",        di->cartridge[1].type);
     saveStateSetBuffer(state, "cartName01",  di->cartridge[1].name, strlen(di->cartridge[1].name) + 1);
     saveStateSetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, strlen(di->cartridge[1].inZipName) + 1);
 
-    saveStateSet(state, "diskInserted00", di->diskette[0].inserted);
+    saveStateSet(state, "diskInserted00",    di->diskette[0].inserted);
     saveStateSetBuffer(state, "diskName00",  di->diskette[0].name, strlen(di->diskette[0].name) + 1);
     saveStateSetBuffer(state, "diskInZip00", di->diskette[0].inZipName, strlen(di->diskette[0].inZipName) + 1);
-    saveStateSet(state, "diskInserted01", di->diskette[1].inserted);
+    saveStateSet(state, "diskInserted01",    di->diskette[1].inserted);
     saveStateSetBuffer(state, "diskName01",  di->diskette[1].name, strlen(di->diskette[1].name) + 1);
     saveStateSetBuffer(state, "diskInZip01", di->diskette[1].inZipName, strlen(di->diskette[1].inZipName) + 1);
 
-    saveStateSet(state, "casInserted", di->cassette.inserted);
+    saveStateSet(state, "casInserted",    di->cassette.inserted);
     saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
     saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
-    saveStateSetBuffer(state, "keyMap",   KeyMap, sizeof(KeyMap));
+    saveStateSetBuffer(state, "keyMap", KeyMap, sizeof(KeyMap));
 
-    saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
+    saveStateSet(state, "vdpSyncMode", di->video.vdpSyncMode);
 
-    saveStateSet(state, "psgAYReg15",     psgAYReg15);
+    saveStateSet(state, "psgAYReg15", psgAYReg15);
 
     saveStateClose(state);
 
@@ -858,7 +858,7 @@ void sviLoadState()
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
 
-    psgAYReg15     = (UInt8)saveStateGet(state, "psgAYReg15",     0);
+    psgAYReg15 = (UInt8)saveStateGet(state, "psgAYReg15", 0);
 
     saveStateClose(state);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Prn.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-05-09 17:31:54 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperSvi328Prn.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "PrinterIO.h"
@@ -37,6 +38,7 @@
 
 typedef struct {
     int deviceHandle;
+    int debugHandle;
     UInt8 prnData;
     UInt8 prnStrobe;
     PrinterIO* printerIO;
@@ -46,9 +48,9 @@ static void saveState(RomMapperSvi328Prn* prn)
 {
     SaveState* state = saveStateOpenForWrite("Svi328Prn");
 
-    saveStateSet(state, "prnData",  prn->prnData);
-    saveStateSet(state, "prnStrobe",  prn->prnStrobe);
-    
+    saveStateSet(state, "prnData", prn->prnData);
+    saveStateSet(state, "prnStrobe", prn->prnStrobe);
+
     saveStateClose(state);
 }
 
@@ -64,15 +66,30 @@ static void loadState(RomMapperSvi328Prn* prn)
 
 static void destroy(RomMapperSvi328Prn* prn)
 {
-    deviceManagerUnregister(prn->deviceHandle);
-
     ioPortUnregister(0x10);
     ioPortUnregister(0x11);
     ioPortUnregister(0x12);
 
+    deviceManagerUnregister(prn->deviceHandle);
+    debugDeviceUnregister(prn->debugHandle);
+
     printerIODestroy(prn->printerIO);
 
     free(prn);
+}
+
+static UInt8 peekIo(RomMapperSvi328Prn* prn, UInt16 ioPort) 
+{
+    switch (ioPort) {
+        case 0x10:
+            return prn->prnData;
+        case 0x11:
+            return prn->prnStrobe;
+        case 0x12:
+            if (printerIOGetStatus(prn->printerIO)) 
+                return 0xfe;
+    }
+    return 0xff;
 }
 
 static UInt8 readIo(RomMapperSvi328Prn* prn, UInt16 ioPort) 
@@ -104,9 +121,20 @@ static void reset(RomMapperSvi328Prn* prn)
     prn->prnData = 0;
 }
 
+static void getDebugInfo(RomMapperSvi328Prn* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI Printer", 3);
+    dbgIoPortsAddPort(ioPorts, 0, 0x10, DBG_IO_READWRITE, peekIo(rm, 0x10));
+    dbgIoPortsAddPort(ioPorts, 1, 0x11, DBG_IO_READWRITE, peekIo(rm, 0x11));
+    dbgIoPortsAddPort(ioPorts, 2, 0x12, DBG_IO_READWRITE, peekIo(rm, 0x12));
+}
+
 int romMapperSvi328PrnCreate(void) 
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
+    DebugCallbacks dbgCallbacks = {getDebugInfo, NULL, NULL, NULL};
     RomMapperSvi328Prn* prn;
 
     prn = malloc(sizeof(RomMapperSvi328Prn));
@@ -114,6 +142,7 @@ int romMapperSvi328PrnCreate(void)
     prn->printerIO = printerIOCreate();
 
     prn->deviceHandle = deviceManagerRegister(ROM_SVI328PRN, &callbacks, prn);
+    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "SVI Printer", &dbgCallbacks, prn);
 
     ioPortRegister(0x10, NULL, writeIo, prn);
     ioPortRegister(0x11, NULL, writeIo, prn);

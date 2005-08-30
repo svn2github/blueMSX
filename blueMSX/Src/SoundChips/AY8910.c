@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2005-08-30 00:57:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,17 +190,17 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
 
     switch (ay8910->connector) {
     case AY8910_MSX:
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910 PSG", 3);
         dbgIoPortsAddPort(ioPorts, 0, 0xa0, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 1, 0xa1, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 2, 0xa2, DBG_IO_READ, ay8910PeekData(ay8910, 0xa2));
         break;
 
     case AY8910_SVI:
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910 PSG", 3);
         dbgIoPortsAddPort(ioPorts, 0, 0x88, DBG_IO_WRITE, 0);
-        dbgIoPortsAddPort(ioPorts, 0, 0x8c, DBG_IO_WRITE, 0);
-        dbgIoPortsAddPort(ioPorts, 0, 0x90, DBG_IO_READ, ay8910PeekData(ay8910, 0x90));
+        dbgIoPortsAddPort(ioPorts, 1, 0x8c, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 2, 0x90, DBG_IO_READ, ay8910PeekData(ay8910, 0x90));
         break;
     }
 }

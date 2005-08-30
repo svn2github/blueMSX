@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2005-08-30 00:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperSvi80Col.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
 #include "CRTC6845.h"
@@ -38,6 +39,7 @@
 typedef struct {
     int connector;
     int deviceHandle;
+    int debugHandle;
     UInt8 memBankCtrl;
     CRTC6845* crtc6845;
 } RomMapperSvi80Col;
@@ -48,8 +50,8 @@ static void saveState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForWrite("Svi80Col");
 
-    saveStateSet(state, "connector",  svi80col->connector);
-    saveStateSet(state, "memBankCtrl",  svi80col->memBankCtrl);
+    saveStateSet(state, "connector", svi80col->connector);
+    saveStateSet(state, "memBankCtrl", svi80col->memBankCtrl);
     
     saveStateClose(state);
 }
@@ -58,8 +60,8 @@ static void loadState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForRead("Svi80Col");
 
-    svi80col->connector   =        saveStateGet(state, "connector",  0);
-    svi80col->memBankCtrl = (UInt8)saveStateGet(state, "memBankCtrl",  0);
+    svi80col->connector = saveStateGet(state, "connector", 0);
+    svi80col->memBankCtrl = (UInt8)saveStateGet(state, "memBankCtrl", 0);
 
     saveStateClose(state);
 }
@@ -70,7 +72,7 @@ static void destroy(RomMapperSvi80Col* svi80col)
     case SVI80COL_MSX:
         ioPortUnregister(0x78);
         ioPortUnregister(0x79);
-//      ioPortUnregister(0x79); // FIX ME
+//      ioPortUnregister(0x79); // FIX ME or mem mapped
         break;
 
     case SVI80COL_SVI:
@@ -81,10 +83,23 @@ static void destroy(RomMapperSvi80Col* svi80col)
     }
 
     deviceManagerUnregister(svi80col->deviceHandle);
+    debugDeviceUnregister(svi80col->debugHandle);
 
     free(svi80col);
 }
 
+static UInt8 peekIo(RomMapperSvi80Col* svi80col, UInt16 ioPort) 
+{
+    switch (ioPort) {
+        case 0x50:
+            return svi80col->crtc6845->registers.address;
+        case 0x51:
+            return 0xff;
+        case 0x58:
+            return svi80col->memBankCtrl;
+    }
+    return 0xff;
+}
 static UInt8 readIo(RomMapperSvi80Col* svi80col, UInt16 ioPort) 
 {
     return crtcRead(svi80col->crtc6845, ioPort);
@@ -125,9 +140,20 @@ static void reset(RomMapperSvi80Col* svi80col)
     svi80col->memBankCtrl = 0;
 }
 
+static void getDebugInfo(RomMapperSvi80Col* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI 80 Column", 3);
+    dbgIoPortsAddPort(ioPorts, 0, 0x50, DBG_IO_READWRITE, peekIo(rm, 0x50));
+    dbgIoPortsAddPort(ioPorts, 1, 0x51, DBG_IO_READWRITE, peekIo(rm, 0x51));
+    dbgIoPortsAddPort(ioPorts, 2, 0x58, DBG_IO_READWRITE, peekIo(rm, 0x58));
+}
+
 int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* romData, int size)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
+    DebugCallbacks dbgCallbacks = {getDebugInfo, NULL, NULL, NULL};
     RomMapperSvi80Col* svi80col;
 
     if (size != 0x1000)
@@ -146,10 +172,11 @@ int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* r
     case SVI80COL_MSX:
         ioPortRegister(0x78, NULL,   writeIoLatch,       svi80col);
         ioPortRegister(0x79, readIo, writeIo,            svi80col);
-//      ioPortRegister(0x79, NULL,   writeIoMemBankCtrl, svi80col); // FIX ME
+//      ioPortRegister(0x79, NULL,   writeIoMemBankCtrl, svi80col); // FIX ME or mem mapped
         break;
 
     case SVI80COL_SVI:
+        svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "SVI 80 Column", &dbgCallbacks, svi80col);
         ioPortRegister(0x50, NULL,   writeIoLatch,       svi80col);
         ioPortRegister(0x51, readIo, writeIo,            svi80col);
         ioPortRegister(0x58, NULL,   writeIoMemBankCtrl, svi80col);
