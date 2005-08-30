@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-08-09 08:37:20 $
+** $Date: 2005-08-30 05:14:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,7 +57,6 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Special thanks to: "
                 "Albert Beevendorp,  "
                 "Rudolf Lechleitner,  "
-                "Ricardo Bittencourt,  "
                 "BouKiCHi,  "
                 "Tobias Keizer,  "
                 "Sandy Pleyte,  "
