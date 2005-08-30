@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-06-28 07:28:01 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "Board.h"
 #include "MSX.h"
 #include "SVI.h"
+#include "SG1000.h"
 #include "Coleco.h"
 #include "AudioMixer.h"
 #include "YM2413.h"
@@ -184,6 +185,38 @@ static void boardSetType(BoardType type)
         setCpuTimeout   = colecoSetCpuTimeout;
         setBreakpoint   = colecoSetBreakpoint;
         clearBreakpoint = colecoClearBreakpoint;
+        break;
+
+    case BOARD_SG1000:
+        initStatistics  = sg1000InitStatistics;
+        softReset       = sg1000Reset;
+        create          = sg1000Create;
+        destroy         = sg1000Destroy;
+        run             = sg1000Run;
+        stop            = sg1000Stop;
+        saveState       = sg1000SaveState;
+        getRefreshRate  = sg1000GetRefreshRate;
+        setInt          = sg1000SetInt;
+        clearInt        = sg1000ClearInt;
+        getInt          = sg1000GetInt;
+        traceEnable     = sg1000TraceEnable;
+        traceDisable    = sg1000TraceDisable;
+        traceGetEnable  = sg1000TraceGetEnable;
+        getRamPage      = sg1000GetRamPage;
+        getRamSize      = sg1000GetRamSize;
+        getVramSize     = sg1000GetVramSize;
+        useRom          = sg1000UseRom;
+        useMegaRom      = sg1000UseMegaRom;
+        useMegaRam      = sg1000UseMegaRam;
+        useFmPac        = sg1000UseFmPac;
+        changeCartridge = sg1000ChangeCartridge;
+        changeDiskette  = sg1000ChangeDiskette;
+        changeCassette  = sg1000ChangeCassette;
+        setCpuTimeout   = sg1000SetCpuTimeout;
+        setBreakpoint   = sg1000SetBreakpoint;
+        clearBreakpoint = sg1000ClearBreakpoint;
+        break;
+
         break;
     }
     

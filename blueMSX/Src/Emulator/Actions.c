@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -227,13 +227,13 @@ void actionQuickSaveState() {
 void actionCartInsert1() {
     RomType romType;
     char* filename;
-    char text[128];
+    char text[256];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
     replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom1(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
+                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.zip\0.*\0",
                                &state.properties->cartridge.slotAFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 0, filename, NULL, romType, 0);
@@ -247,13 +247,13 @@ void actionCartInsert1() {
 void actionCartInsert2() {
     RomType romType;
     char* filename;
-    char text[128];
+    char text[256];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
     replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom2(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.zip\0.*\0",
+                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.zip\0.*\0",
                                &state.properties->cartridge.slotBFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 1, filename, NULL, romType, 0);

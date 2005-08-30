@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-01-20 08:15:53 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 
 typedef enum { VDP_V9938, VDP_V9958, VDP_TMS9929A, VDP_TMS99x8A } VdpVersion;
 typedef enum { VDP_SYNC_AUTO, VDP_SYNC_50HZ, VDP_SYNC_60HZ } VdpSyncMode; 
-typedef enum { VDP_MSX, VDP_SVI, VDP_COLECO } VdpConnector;
+typedef enum { VDP_MSX, VDP_SVI, VDP_COLECO, VDP_SG1000 } VdpConnector;
 
 static char* VdpNames[] = { "V9938", "V9958", "TMS9929A", "TMS99x8A" };
 

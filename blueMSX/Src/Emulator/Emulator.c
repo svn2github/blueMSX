@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-08-15 05:37:52 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -388,6 +388,9 @@ void emulatorStart(char* stateName) {
         break;
     case BOARD_COLECO:
         keyboardSetKeymap(KEYMAP_COLECO);
+        break;
+    case BOARD_SG1000:
+        keyboardSetKeymap(KEYMAP_SG1000);
         break;
     }
 

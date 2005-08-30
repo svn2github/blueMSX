@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-04-30 20:56:41 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,11 @@ JoystickIO* joystickIoCreateColeco(void);
 void joystickIoDestroyColeco(JoystickIO* joyIO);
 UInt8 joystickReadColeco(JoystickIO* joyIO, int port);
 UInt8 joystickPollColeco(JoystickIO* joyIO, int port);
+
+JoystickIO* joystickIoCreateSG1000(void);
+void joystickIoDestroySG1000(JoystickIO* joyIO);
+UInt8 joystickReadSG1000(JoystickIO* joyIO, int port);
+UInt8 joystickPollSG1000(JoystickIO* joyIO, int port);
 
 #endif
 

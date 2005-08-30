@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,17 +66,20 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
             int countMx1;
             int countMx2;
             int countCol;
+            int countSg;
             char* fileListRom = zipGetFileList(filename, ".rom", &countRom);
             char* fileListRi  = zipGetFileList(filename, ".ri",  &countRi);
             char* fileListMx1 = zipGetFileList(filename, ".mx1", &countMx1);
             char* fileListMx2 = zipGetFileList(filename, ".mx2", &countMx2);
             char* fileListCol = zipGetFileList(filename, ".col", &countCol);
-            int count = countRom + countRi + countMx1 + countMx2 + countCol;
+            char* fileListSg  = zipGetFileList(filename, ".sg",  &countSg);
+            int count = countRom + countRi + countMx1 + countMx2 + countCol + countSg;
             int sizeRom = 0;
             int sizeRi  = 0;
             int sizeMx1 = 0;
             int sizeMx2 = 0;
             int sizeCol = 0;
+            int sizeSg = 0;
 
             for (i = 0; i < countRom; i++) {
                 sizeRom += strlen(fileListRom + sizeRom) + 1;
@@ -93,13 +96,17 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
             for (i = 0; i < countCol; i++) {
                 sizeCol += strlen(fileListCol + sizeCol) + 1;
             }
+            for (i = 0; i < countSg; i++) {
+                sizeSg += strlen(fileListSg + sizeSg) + 1;
+            }
 
-            fileList = malloc(sizeRom + sizeMx1 + sizeMx2 + sizeCol);
+            fileList = malloc(sizeRom + sizeMx1 + sizeMx2 + sizeCol + sizeSg);
             memcpy(fileList, fileListRom, sizeRom);
             memcpy(fileList + sizeRom, fileListMx1, sizeMx1);
             memcpy(fileList + sizeRom + sizeMx1, fileListMx2, sizeMx2);
             memcpy(fileList + sizeRom + sizeMx1 + sizeMx2, fileListCol, sizeCol);
             memcpy(fileList + sizeRom + sizeMx1 + sizeMx2 + sizeCol, fileListRi, sizeRi);
+            memcpy(fileList + sizeRom + sizeMx1 + sizeMx2 + sizeCol + sizeRi, fileListSg, sizeSg);
 
             if (count == 0) {
                 MessageBox(NULL, langErrorNoRomInZip(), langErrorTitle(), MB_OK);
@@ -139,6 +146,7 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
             if(fileListMx1) free(fileListMx1);
             if(fileListMx2) free(fileListMx2);
             if(fileListCol) free(fileListCol);
+            if(fileListSg)  free(fileListSg);
             free(fileList);
         }
     }
@@ -422,6 +430,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     int countMx1;
     int countMx2;
     int countCol;
+    int countSg;
     int countCas;
     char* fileListDsk = NULL;
     char* fileListRom = NULL;
@@ -435,8 +444,9 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     char* fileListMx1 = zipGetFileList(filename, ".mx1", &countMx1);
     char* fileListMx2 = zipGetFileList(filename, ".mx2", &countMx2);
     char* fileListCol = zipGetFileList(filename, ".col", &countCol);
+    char* fileListSg  = zipGetFileList(filename, ".sg",  &countSg);
     char* fileListCas = zipGetFileList(filename, ".cas", &countCas);
-    int countRom = countRox + countRi + countMx1 + countMx2 + countCol;
+    int countRom = countRox + countRi + countMx1 + countMx2 + countCol + countSg;
     int countDsk = countDsx + countDi1 + countDi2 + count360 + count720;
     char* fileList;
     int sizeDsk = 0;
@@ -451,6 +461,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     int sizeMx1 = 0;
     int sizeMx2 = 0;
     int sizeCol = 0;
+    int sizeSg  = 0;
     int sizeCas = 0;
     int success = 0;
     int i;
@@ -495,7 +506,10 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
         sizeMx2 += strlen(fileListMx2 + sizeMx2) + 1;
     }
     for (i = 0; i < countCol; i++) {
-        sizeCol += strlen(fileListCol+ sizeCol) + 1;
+        sizeCol += strlen(fileListCol + sizeCol) + 1;
+    }
+    for (i = 0; i < countSg; i++) {
+        sizeSg += strlen(fileListSg + sizeSg) + 1;
     }
 
     if (countRom > 0) {
@@ -504,7 +518,8 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
         memcpy(fileListRom + sizeRox, fileListMx1, sizeMx1);
         memcpy(fileListRom + sizeRox + sizeMx1, fileListMx2, sizeMx2);
         memcpy(fileListRom + sizeRox + sizeMx1 + sizeMx2, fileListCol, sizeCol);
-        memcpy(fileListRom + sizeRox + sizeMx1 + sizeMx2 + sizeRi, fileListRi, sizeRi);
+        memcpy(fileListRom + sizeRox + sizeMx1 + sizeMx2 + sizeCol, fileListRi, sizeRi);
+        memcpy(fileListRom + sizeRox + sizeMx1 + sizeMx2 + sizeCol + sizeRi, fileListSg, sizeSg);
     }
 
     // Finally check different types...
@@ -557,7 +572,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
 
     if (isFileExtension(dlgInfo.selectFile, ".rom") || isFileExtension(dlgInfo.selectFile, ".ri") || 
         isFileExtension(dlgInfo.selectFile, ".mx1") || isFileExtension(dlgInfo.selectFile, ".mx2") || 
-        isFileExtension(dlgInfo.selectFile, ".col")) {
+        isFileExtension(dlgInfo.selectFile, ".col") || isFileExtension(dlgInfo.selectFile, ".sg")) {
         success = insertCartridge(properties, drive, filename, dlgInfo.selectFile, dlgInfo.openRomType, dlgInfo.autoReset);
     }
     else if (isFileExtension(dlgInfo.selectFile, ".dsk") || 
@@ -576,10 +591,11 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     if(fileList720) free(fileList720);
     if(fileListRom) free(fileListRom);
     if(fileListRox) free(fileListRox);
-    if(fileListRi) free(fileListRi);
+    if(fileListRi)  free(fileListRi);
     if(fileListMx1) free(fileListMx1);
     if(fileListMx2) free(fileListMx2);
     if(fileListCol) free(fileListCol);
+    if(fileListSg)  free(fileListSg);
     if(fileListCas) free(fileListCas);
     if(fileList) free(fileList);
 
@@ -597,7 +613,7 @@ int tryLaunchUnknownFile(Properties* properties, char* fileName, int forceAutost
 
     if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".ri") || 
         isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || 
-        isFileExtension(fileName, ".col")) {
+        isFileExtension(fileName, ".col") || isFileExtension(fileName, ".sg")) {
         rv = insertCartridge(properties, properties->cartridge.quickStartDrive, fileName, NULL, ROM_UNKNOWN, forceAutostart);
     }
     else if (isFileExtension(fileName, ".dsk") || 

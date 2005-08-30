@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-04 08:47:56 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -430,6 +430,39 @@ UInt8 joystickPollColeco(JoystickIO* joyIO, int port)
     UInt8 rv;
     isPolling = 1;
     rv = joystickReadColeco(joyIO, port);
+    isPolling = 0;
+    return rv;
+}
+
+JoystickIO* joystickIoCreateSG1000(void)
+{
+    JoystickIO* joyIO;
+    int buttons = mouseEmuGetButtonState(1);
+
+    joyIO = calloc(1, sizeof(JoystickIO));
+
+    joyIO->mouseAsJoystick = buttons & 1;
+
+    return joyIO;
+}
+
+void joystickIoDestroySG1000(JoystickIO* joyIO)
+{
+    free(joyIO);
+}
+
+UInt8 joystickReadSG1000(JoystickIO* joyIO, int port) 
+{
+    joyIO->registers[1] = port == 0 ? 0x00 : 0x40;
+
+	return read(joyIO, 0) & 0x3f;
+}
+
+UInt8 joystickPollSG1000(JoystickIO* joyIO, int port) 
+{
+    UInt8 rv;
+    isPolling = 1;
+    rv = joystickReadSG1000(joyIO, port);
     isPolling = 0;
     return rv;
 }

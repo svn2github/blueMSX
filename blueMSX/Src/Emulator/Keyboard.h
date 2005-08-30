@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-01 07:14:45 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include "MsxTypes.h"
 
-typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO } KeyboardKeymap;
+typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO, KEYMAP_SG1000 } KeyboardKeymap;
 
 // Emulator Keys (Based on MSX Turbo-R keyboard layout)
 

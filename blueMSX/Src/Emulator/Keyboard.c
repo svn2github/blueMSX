@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-06 07:06:37 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -405,6 +405,9 @@ void keyboardReset()
     case BOARD_COLECO:
         keymap = KEYMAP_COLECO;
         break;
+    case BOARD_SG1000:
+        keymap = KEYMAP_SG1000;
+        break;
     default:
         keymap = KEYMAP_MSX;
         break;
@@ -432,6 +435,10 @@ void keyboardSetKeymap(KeyboardKeymap keymap)
         break;
 
     case KEYMAP_COLECO:
+        initKeyMapMSX();
+        break;
+
+    case KEYMAP_SG1000:
         initKeyMapMSX();
         break;
     }

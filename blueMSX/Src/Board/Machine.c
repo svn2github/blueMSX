@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-09 01:46:36 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,7 @@ int readMachine(Machine* machine, char* machineName, char* file)
     if      (0 == strcmp(buffer, "MSX"))          machine->board.type = BOARD_MSX;
     else if (0 == strcmp(buffer, "SVI"))          machine->board.type = BOARD_SVI;
     else if (0 == strcmp(buffer, "ColecoVision")) machine->board.type = BOARD_COLECO;
+    else if (0 == strcmp(buffer, "SG-1000"))      machine->board.type = BOARD_SG1000;
     else                                          machine->board.type = BOARD_MSX;
 
     // Read video info
@@ -227,6 +228,7 @@ void machineSave(Machine* machine)
     case BOARD_MSX:     WritePrivateProfileString("Board", "type", "MSX", file); break;
     case BOARD_SVI:     WritePrivateProfileString("Board", "type", "SVI", file); break;
     case BOARD_COLECO:  WritePrivateProfileString("Board", "type", "ColecoVision", file); break;
+    case BOARD_SG1000:  WritePrivateProfileString("Board", "type", "SG-1000", file); break;
     }
 
     // Write video info

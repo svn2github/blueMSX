@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-08-19 06:38:28 $
+** $Date: 2005-08-30 04:57:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1206,6 +1206,12 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
             dbgIoPortsAddPort(ioPorts, i + 1, i + 0xa1, DBG_IO_READWRITE, peekStatus(vdp, i + 0xa1));
         }
         break;
+
+    case VDP_SG1000:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 2);
+        dbgIoPortsAddPort(ioPorts, 0, 0xbe, DBG_IO_READWRITE,  peek(vdp, 0xbe));
+        dbgIoPortsAddPort(ioPorts, 1, 0xbf, DBG_IO_READWRITE,  peekStatus(vdp, 0xbf));
+        break;
     }
 }
 
@@ -1377,6 +1383,11 @@ static void destroy(VDP* vdp)
             ioPortUnregister(i);
         }
         break;
+
+    case VDP_SG1000:
+        ioPortUnregister(0xbe);
+        ioPortUnregister(0xbf);
+        break;
     }
 
     boardTimerDestroy(vdp->timerDisplay);
@@ -1520,6 +1531,11 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
             ioPortRegister(i,     read,       write,      vdp);
             ioPortRegister(i + 1, readStatus, writeLatch, vdp);
         }
+        break;
+        
+    case VDP_SG1000:
+        ioPortRegister(0xbe, read,       write,      vdp);
+        ioPortRegister(0xbf, readStatus, writeLatch, vdp);
         break;
     }
 }

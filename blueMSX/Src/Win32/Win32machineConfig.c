@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-08-19 06:38:28 $
+** $Date: 2005-08-30 04:57:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,6 +170,10 @@ static void setSubSlotsEnable(HWND hDlg, int nEnable) {
             SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
             SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
             break;
+        case BOARD_SG1000:
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
+            SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
+            break;
         }
     }
     EnableWindow(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED1), nEnable);
@@ -185,6 +189,7 @@ static void setBoardDropdown(HWND hDlg) {
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SVI");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoVision");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SG-1000");
 
     switch (machine->board.type) {
     default:
@@ -198,6 +203,10 @@ static void setBoardDropdown(HWND hDlg) {
         break;
     case BOARD_COLECO:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 2, 0);
+        setSubSlotsEnable(hDlg, 0);
+        break;
+    case BOARD_SG1000:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 3, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     }
@@ -219,6 +228,10 @@ static int getBoardDropDown(HWND hDlg) {
         break;
     case 2:
         machine->board.type = BOARD_COLECO;
+        setSubSlotsEnable(hDlg, 0);
+        break;
+    case 3:
+        machine->board.type = BOARD_SG1000;
         setSubSlotsEnable(hDlg, 0);
         break;
     }
@@ -1169,7 +1182,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.zip\0", langRomImage());
+                sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.zip\0", langRomImage());
                 fileName = openFile(hDlg, langRomImageOpen(), text, defDir, -1, NULL, NULL);
                 SetCurrentDirectory(curDir);
 
