@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2005-08-19 06:38:26 $
+** $Date: 2005-08-31 06:51:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,6 +112,7 @@
 #include "romMapperNational.h"
 #include "sramMapperMatsuchita.h"
 #include "romMapperKonamiSynth.h"
+#include "romMapperKonamiKeyboardMaster.h"
 #include "romMapperMajutsushi.h"
 #include "sramMapperS1985.h"
 #include "romMapperS1990.h"
@@ -512,6 +513,10 @@ static int initMachine(Machine* machine,
 
         case ROM_KONAMISYNTH:
             success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KONAMKBDMAS:
+            success &= romMapperKonamiKeyboardMasterCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
         case ROM_ASCII8:
@@ -1020,6 +1025,7 @@ static int romTypeIsRom(RomType romType) {
     case ROM_0x4000:      return 1;
     case ROM_0xC000:      return 1;
 	case ROM_KONAMISYNTH: return 1;
+    case ROM_KONAMKBDMAS: return 1;
     }
     return 0;
 }

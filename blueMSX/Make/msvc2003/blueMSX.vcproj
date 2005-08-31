@@ -509,6 +509,12 @@
 					RelativePath="..\..\Src\Memory\romMapperKonami5.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiKeyboardMaster.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiKeyboardMaster.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperKonamiSynth.c">
 				</File>
 				<File
@@ -1232,6 +1238,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\SoundChips\KeyClick.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\SoundChips\MameVLM5030.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\MameVLM5030.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\SoundChips\Moonsound.cpp">
 			</File>
 			<File
@@ -1296,6 +1308,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\SN76489.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\VLM5030.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\VLM5030.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\Y8950.c">

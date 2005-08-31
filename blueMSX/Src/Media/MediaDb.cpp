@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-08-31 06:51:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,6 +115,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "R-Type")           return ROM_RTYPE;
     if (name == "Majutsushi")       return ROM_MAJUTSUSHI;
     if (name == "Synthesizer")      return ROM_KONAMISYNTH;
+    if (name == "KeyboardMaster")   return ROM_KONAMKBDMAS;
     if (name == "GenericKonami")    return ROM_KONAMI4NF;
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
 
@@ -455,6 +456,7 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "0x4000")       return ROM_0x4000;
     if (name == "0xC000")       return ROM_0xC000;
     if (name == "konamisynth")  return ROM_KONAMISYNTH;
+    if (name == "kbdmaster")    return ROM_KONAMKBDMAS;
     if (name == "majutsushi")   return ROM_MAJUTSUSHI;
     if (name == "ascii16")      return ROM_ASCII16;
     if (name == "gamemaster2")  return ROM_GAMEMASTER2;
@@ -567,6 +569,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_0x4000:      return "Normal 0x4000";
     case ROM_0xC000:      return "Normal 0xC000";
     case ROM_KONAMISYNTH: return "Konami Synthesizer";
+    case ROM_KONAMKBDMAS: return "Konami Keyboard Master";
     case ROM_PAC:         return "PAC (SRAM)";
     case ROM_MEGARAM:     return "MegaRAM";
     case ROM_MEGARAM128:  return "128kB MegaRAM";
@@ -664,6 +667,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_0x4000:      return "0x4000";
     case ROM_0xC000:      return "0xC000";
     case ROM_KONAMISYNTH: return "KONSYNTH";
+    case ROM_KONAMKBDMAS: return "KBDMASTER";
     case ROM_MAJUTSUSHI:  return "MAJUTSUSHI";
     case ROM_PAC:         return "PAC";
     case ROM_MEGARAM:     return "MEGARAM";

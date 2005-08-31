@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2005-08-31 06:51:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,7 @@
 #include "romMapperKorean90.h"
 #include "romMapperKorean126.h"
 #include "romMapperKonamiSynth.h"
+#include "romMapperKonamiKeyboardMaster.h"
 #include "romMapperMajutsushi.h"
 #include "romMapperPAC.h"
 #include "romMapperFMPAC.h"
@@ -288,6 +289,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
 		case ROM_KONAMISYNTH:
             romMapperKonamiSynthCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
+		case ROM_KONAMKBDMAS:
+            romMapperKonamiKeyboardMasterCreate(romName, buf, size, slot, sslot, 2);
             break;
             
         case ROM_ASCII8:

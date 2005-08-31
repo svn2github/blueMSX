@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.97 $
+** $Revision: 1.98 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-08-31 06:51:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -317,6 +317,7 @@ static RomType romTypeList[] = {
     ROM_LODERUNNER,
     ROM_HALNOTE,
 	ROM_KONAMISYNTH,
+    ROM_KONAMKBDMAS,
     ROM_MAJUTSUSHI,
     ROM_SCC,
     ROM_SCCPLUS,
@@ -2380,7 +2381,20 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         strcat(szLine, " ");
     }
 #endif
-
+#if 0
+    {
+        FILE* f = fopen("C:\\KONAVOIC.ROM", "rb");
+        int i = 0;
+        while (!feof(f)) {
+            UInt8 c;
+            fread(&c, 1, 1, f);
+            printf("0x%.2x, ", c);
+            if (++i % 16 == 0) printf("\n");
+        }
+        fclose(f);
+        exit(0);
+    }
+#endif
     hwnd = FindWindow("blueMSX", "  blueMSX");
     if (hwnd != NULL && *szLine) {
         char args[2048];
