@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.99 $
+** $Revision: 1.100 $
 **
-** $Date: 2005-08-31 21:07:40 $
+** $Date: 2005-08-31 21:35:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2384,20 +2384,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         strcat(szLine, " ");
     }
 #endif
-#if 0
-    {
-        FILE* f = fopen("C:\\KONAVOIC.ROM", "rb");
-        int i = 0;
-        while (!feof(f)) {
-            UInt8 c;
-            fread(&c, 1, 1, f);
-            printf("0x%.2x, ", c);
-            if (++i % 16 == 0) printf("\n");
-        }
-        fclose(f);
-        exit(0);
-    }
-#endif
+
     hwnd = FindWindow("blueMSX", "  blueMSX");
     if (hwnd != NULL && *szLine) {
         char args[2048];
