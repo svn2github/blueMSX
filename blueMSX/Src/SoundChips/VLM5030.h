@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/VLM5030.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-08-31 21:35:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 typedef struct VLM5030 VLM5030;
 
 /* Constructor and destructor */
-VLM5030* vlm5030Create(Mixer* mixer);
+VLM5030* vlm5030Create(Mixer* mixer, UInt8* voiceData, int length);
 void vlm5030Destroy(VLM5030* vlm5030);
 void vlm5030Reset(VLM5030* vlm5030);
 void vlm5030LoadState(VLM5030* vlm5030);

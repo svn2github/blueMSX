@@ -11,6 +11,9 @@ void vlm5030_update_callback(stream_sample_t *_buffer, int length);
 
 void *vlm5030_start(int clock);
 
+void vlm5030_LoadState();
+void vlm5030_SaveState();
+
 
 struct VLM5030interface
 {
@@ -19,7 +22,7 @@ struct VLM5030interface
 };
 
 /* set speech rom address */
-void VLM5030_set_rom(void *speech_rom);
+void VLM5030_set_rom(void *speech_rom, int length);
 
 /* get BSY pin level */
 int VLM5030_BSY(void);

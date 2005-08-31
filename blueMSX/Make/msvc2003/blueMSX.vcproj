@@ -512,9 +512,6 @@
 					RelativePath="..\..\Src\Memory\romMapperKonamiKeyboardMaster.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperKonamiKeyboardMaster.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperKonamiSynth.c">
 				</File>
 				<File
@@ -727,6 +724,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperKonami5.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiKeyboardMaster.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperKonamiSynth.h">

@@ -86,6 +86,8 @@ typedef   signed short INT16;
 typedef   signed long  INT32;
 #include "MameVLM5030.h"
 #include <stdlib.h>
+#include <stdio.h>
+#include "SaveState.h"
 #endif
 
 /* interpolator per frame   */
@@ -542,7 +544,7 @@ static void VLM5030_reset(struct vlm5030_info *chip)
 }
 
 /* set speech rom address */
-void VLM5030_set_rom(void *speech_rom)
+void VLM5030_set_rom(void *speech_rom, int length)
 {
 	struct vlm5030_info *chip = sndti_token(SOUND_VLM5030, 0);
     memcpy(chip->rom, speech_rom, 0x4000);
@@ -722,6 +724,81 @@ void *vlm5030_start(int clock)
 	return chip;
 }
 
+void vlm5030_LoadState()
+{
+	struct vlm5030_info *chip = sndti_token(SOUND_VLM5030, 0);
+    int i;
+    SaveState* state = saveStateOpenForWrite("vlm_5030");
+    
+    saveStateSet(state, "address",       chip->address);
+    saveStateSet(state, "pin_ST",        chip->pin_ST);
+    saveStateSet(state, "pin_BSY",       chip->pin_BSY);
+    saveStateSet(state, "pin_VCU",       chip->pin_VCU);
+    saveStateSet(state, "pin_RST",       chip->pin_RST);
+    saveStateSet(state, "latch_data",    chip->latch_data);
+    saveStateSet(state, "vcu_addr_h",    chip->vcu_addr_h);
+    saveStateSet(state, "parameter",     chip->parameter);
+    saveStateSet(state, "phase",         chip->phase);
+    saveStateSet(state, "interp_count",  chip->interp_count);
+    saveStateSet(state, "sample_count",  chip->sample_count);
+    saveStateSet(state, "pitch_count",   chip->pitch_count);
+    saveStateSet(state, "old_energy",    chip->old_energy);
+    saveStateSet(state, "old_pitch",     chip->old_pitch);
+    saveStateSet(state, "target_energy", chip->target_energy);
+    saveStateSet(state, "target_pitch",  chip->target_pitch);
+
+    for (i = 0; i < 10; i++) {
+        char txt[32];
+        sprintf(txt, "old_k%d", i);
+        saveStateSet(state, txt, chip->old_k[i]);
+        
+        sprintf(txt, "target_k%d", i);
+        saveStateSet(state, txt, chip->target_k[i]);
+        
+        sprintf(txt, "x%d", i);
+        saveStateSet(state, txt, chip->x[i]);
+    }
+
+    saveStateClose(state);
+}
+
+void vlm5030_SaveState()
+{
+	struct vlm5030_info *chip = sndti_token(SOUND_VLM5030, 0);
+    int i;
+    SaveState* state = saveStateOpenForRead("vlm_5030");
+    
+    chip->address       = saveStateGet(state, "address",       0);
+    chip->pin_ST        = saveStateGet(state, "pin_ST",        0);
+    chip->pin_BSY       = saveStateGet(state, "pin_BSY",       0);
+    chip->pin_VCU       = saveStateGet(state, "pin_VCU",       0);
+    chip->pin_RST       = saveStateGet(state, "pin_RST",       0);
+    chip->latch_data    = saveStateGet(state, "latch_data",    0);
+    chip->vcu_addr_h    = saveStateGet(state, "vcu_addr_h",    0);
+    chip->parameter     = saveStateGet(state, "parameter",     0);
+    chip->phase         = saveStateGet(state, "phase",         0);
+    chip->interp_count  = saveStateGet(state, "interp_count",  0);
+    chip->sample_count  = saveStateGet(state, "sample_count",  0);
+    chip->pitch_count   = saveStateGet(state, "pitch_count",   0);
+    chip->old_energy    = saveStateGet(state, "old_energy",    0);
+    chip->old_pitch     = saveStateGet(state, "old_pitch",     0);
+    chip->target_energy = saveStateGet(state, "target_energy", 0);
+    chip->target_pitch  = saveStateGet(state, "target_pitch",  0);
+
+    for (i = 0; i < 10; i++) {
+        char txt[32];
+        sprintf(txt, "old_k%d", i);
+        chip->old_k[i] = saveStateGet(state, txt, 0);
+        
+        sprintf(txt, "target_k%d", i);
+        chip->target_k[i] = saveStateGet(state, txt, 0);
+        
+        sprintf(txt, "x%d", i);
+        chip->x[i] = saveStateGet(state, txt, 0);
+    }
+
+    saveStateClose(state);
+}
 
 /**************************************************************************
  * Generic get_info

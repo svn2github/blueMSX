@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/VLM5030.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-08-31 21:35:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 #include "VLM5030.h"
 #include "MameVLM5030.h"
-#include "VLM5030VoiceData.h"
 #include "Board.h"
 #include "SaveState.h"
 #include "MediaDb.h"
@@ -129,6 +128,12 @@ static Int32* vlm5030Sync(VLM5030* vlm5030, UInt32 count)
 void vlm5030SaveState(VLM5030* vlm5030)
 {
     SaveState* state = saveStateOpenForWrite("vlm5030");
+    
+    saveStateSet(state, "timer",           vlm5030->timer);
+    saveStateSet(state, "ctrlVolume",      vlm5030->ctrlVolume);
+    saveStateSet(state, "oldSampleVolume", vlm5030->oldSampleVolume);
+    saveStateSet(state, "sampleVolume",    vlm5030->sampleVolume);
+    saveStateSet(state, "daVolume",        vlm5030->daVolume);
 
     saveStateClose(state);
 }
@@ -136,6 +141,12 @@ void vlm5030SaveState(VLM5030* vlm5030)
 void vlm5030LoadState(VLM5030* vlm5030)
 {
     SaveState* state = saveStateOpenForRead("vlm5030");
+    
+    vlm5030->timer            = saveStateGet(state, "timer",           0);
+    vlm5030->ctrlVolume       = saveStateGet(state, "ctrlVolume",      0);
+    vlm5030->oldSampleVolume  = saveStateGet(state, "oldSampleVolume", 0);
+    vlm5030->sampleVolume     = saveStateGet(state, "sampleVolume",    0);
+    vlm5030->daVolume         = saveStateGet(state, "daVolume",        0);
 
     saveStateClose(state);
 }
@@ -154,7 +165,7 @@ void vlm5030Reset(VLM5030* vlm5030)
     VLM5030_RST(0);
 }
 
-VLM5030* vlm5030Create(Mixer* mixer)
+VLM5030* vlm5030Create(Mixer* mixer, UInt8* voiceData, int length)
 {
     VLM5030* vlm5030;
     
@@ -165,7 +176,7 @@ VLM5030* vlm5030Create(Mixer* mixer)
     vlm5030->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, vlm5030Sync, vlm5030);
 
     vlm5030_start(FREQUENCY);
-    VLM5030_set_rom(voiceData);
+    VLM5030_set_rom(voiceData, length);
 
     theVlm5030 = vlm5030;
 
