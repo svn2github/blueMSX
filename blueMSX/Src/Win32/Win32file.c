@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-08-31 21:07:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,12 +181,14 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         int countMx2;
                         int countCol;
                         int countSg;
+                        int countSc;
                         char* fileListRom = zipGetFileList(fileName, ".rom", &countRom);
                         char* fileListRi  = zipGetFileList(fileName, ".ri",  &countRi);
                         char* fileListMx1 = zipGetFileList(fileName, ".mx1", &countMx1);
                         char* fileListMx2 = zipGetFileList(fileName, ".mx2", &countMx2);
                         char* fileListCol = zipGetFileList(fileName, ".col", &countCol);
                         char* fileListSg  = zipGetFileList(fileName, ".sg", &countSg);
+                        char* fileListSc  = zipGetFileList(fileName, ".sc", &countSc);
                         int count = countRom + countRi + countMx1 + countMx2 + countCol + countSg;
 
                         if (count == 1) {
@@ -208,6 +210,9 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                             if (countSg == 1) {
                                 buf = romLoad(fileName, fileListSg, &size);
                             }
+                            if (countSc == 1) {
+                                buf = romLoad(fileName, fileListSc, &size);
+                            }
                         }
 
                         if (fileListRom) free(fileListRom);
@@ -216,6 +221,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         if (fileListMx2) free(fileListMx2);
                         if (fileListCol) free(fileListCol);
                         if (fileListSg)  free(fileListSg);
+                        if (fileListSc)  free(fileListSc);
                     }
                     else {
                         buf = romLoad(fileName, NULL, &size);

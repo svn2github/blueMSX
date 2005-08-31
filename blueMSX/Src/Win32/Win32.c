@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.98 $
+** $Revision: 1.99 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-08-31 21:07:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -361,7 +361,8 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
     
     if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".ri") ||
         isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || 
-        isFileExtension(fileName, ".col") || isFileExtension(fileName, ".sg")) {
+        isFileExtension(fileName, ".col") ||
+        isFileExtension(fileName, ".sg") || isFileExtension(fileName, ".sc")) {
         buf = romLoad(dlgInfo->zipFileName, fileName, &size);
     }
 
@@ -1028,6 +1029,7 @@ static void registerFileTypes() {
     registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
     registerFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
     registerFileType(".sg",  "blueMSXrom", "Sega ROM Image", 2);
+    registerFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
     registerFileType(".cas", "blueMSXcas", "CAS Image", 3);
     registerFileType(".sta", "blueMSXsta", "blueMSX State", 4);
 }
@@ -1044,6 +1046,7 @@ static void unregisterFileTypes() {
     unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
     unregisterFileType(".sg",  "blueMSXrom", "Sega ROM Image", 2);
+    unregisterFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
     unregisterFileType(".cas", "blueMSXcas", "CAS Image", 3);
     unregisterFileType(".sta", "blueMSXsta", "blueMSX State", 4);
 }

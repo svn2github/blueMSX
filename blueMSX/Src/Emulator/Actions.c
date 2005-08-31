@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-08-31 21:07:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -233,7 +233,7 @@ void actionCartInsert1() {
     sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
     replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom1(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.zip\0.*\0",
+                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0",
                                &state.properties->cartridge.slotAFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 0, filename, NULL, romType, 0);
@@ -250,10 +250,10 @@ void actionCartInsert2() {
     char text[256];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
     replaceCharInString(text, '#', 0);
     filename = archFileRomOpen(langDlgInsertRom2(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.zip\0.*\0",
+                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0",
                                &state.properties->cartridge.slotBFilter, ".rom", &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 1, filename, NULL, romType, 0);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-08-31 21:07:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,6 +106,13 @@ static int isRomFileType(char* filename, char* inZip) {
             free(fileList);
             return 1;
         }
+        
+        fileList = zipGetFileList(filename, ".sc", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
 
         return 0;
     }
@@ -115,7 +122,8 @@ static int isRomFileType(char* filename, char* inZip) {
            isFileExtension(filename, ".mx1") ||
            isFileExtension(filename, ".mx2") ||
            isFileExtension(filename, ".col") ||
-           isFileExtension(filename, ".sg");
+           isFileExtension(filename, ".sg") ||
+           isFileExtension(filename, ".sc");
 }
 
 static int isDskFileType(char* filename, char* inZip) {
