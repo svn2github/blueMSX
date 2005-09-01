@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-01 18:48:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -516,11 +516,11 @@ void sg1000ChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZi
     }
 
     if (cartNo == 0) {
-        memset(sg1000Memory, 0xff, 0x8000);
+        memset(sg1000Memory, 0xff, 0xA000);
         buf = romLoad(cart, cartZip, &size);
         useRom = 0;
         if (buf != NULL) {
-            if (size <= 0x8000) {
+            if (size <= 0xA000) {
                 memcpy(sg1000Memory, buf, size);
                 useRom = 1;
             }

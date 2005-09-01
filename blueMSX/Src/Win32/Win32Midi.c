@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-07-04 01:54:38 $
+** $Date: 2005-09-01 18:48:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,8 +64,8 @@ void archMidiUpdateDriver()
         }
     }
     if (devId == -1 && num > 0) {
-	    const char* name = w32_midiOutGetVFN(i);
-	    const char* desc = w32_midiOutGetRDN(i);
+	    const char* name = w32_midiOutGetVFN(0); //was i
+	    const char* desc = w32_midiOutGetRDN(0); //was i
         if (name != NULL) {
             devId = w32_midiOutOpen(name);
             strcpy(pProperties->sound.MidiOut.name, name);
