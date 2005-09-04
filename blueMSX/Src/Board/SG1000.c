@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-01 18:48:27 $
+** $Date: 2005-09-04 04:25:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -95,8 +95,8 @@ static UInt8 sg1000JoyIoRead(void* dummy, UInt16 ioPort)
 
 static void sg1000JoyIoCreate()
 {
-  ioPortRegister(0x7E, NULL , sg1000SN76489Write, NULL);
-  ioPortRegister(0x7F, NULL , sg1000SN76489Write, NULL);
+  ioPortRegister(0x7E, sg1000JoyIoRead, sg1000SN76489Write, NULL);
+  ioPortRegister(0x7F, sg1000JoyIoRead, sg1000SN76489Write, NULL);
 
   ioPortRegister(0xDC, sg1000JoyIoRead, NULL, NULL);
   ioPortRegister(0xC0, sg1000JoyIoRead, NULL, NULL);

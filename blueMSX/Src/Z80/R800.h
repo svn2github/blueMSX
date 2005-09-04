@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-05-17 19:28:37 $
+** $Date: 2005-09-04 04:25:24 $
 **
 ** Author: Daniel Vik
 **
@@ -177,7 +177,7 @@ typedef struct {
     UInt8 iff1;
     UInt8 iff2;
     UInt8 im;
-    UInt8 halt;
+    UInt8 halt;	UInt8 ei_mode;
 } CpuRegs;
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-08-09 08:16:40 $
+** $Date: 2005-09-04 04:25:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -148,7 +148,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgTapeCurrentPos       = "Posição Atual";
     ls->dlgTapeTotalTime        = "Tempo Total";
 
-    ls->dlgZipReset             = "Reset apos inserir";
+    ls->dlgZipReset             = "Reset após inserir";
 
     ls->dlgAboutTitle           = "blueMSX - Sobre";
 
@@ -246,7 +246,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (Rápido)";
 
     ls->enumControlsJoyNone     = "Nenhum";
-    ls->enumControlsJoyNumpad   = "Teclado Numerico";
+    ls->enumControlsJoyNumpad   = "Teclado Numérico";
     ls->enumControlsJoyKeysetA  = "Teclas A";
     ls->enumControlsJoyKeysetB  = "Teclas B";
     ls->enumControlsJoyPCjoy1   = "PC joystick #1";
@@ -278,15 +278,15 @@ void langInitPortuguese(LanguageStrings* ls)
 
     // New entries
     ls->menuTools                = "Ferramentas";
-    ls->menuToolsMachine         = "Configuração da Maquina";
+    ls->menuToolsMachine         = "Configuração da Máquina";
     ls->menuPropsSettings        = "Ajustes";
     ls->menuCasRewindAfterInsert = "Rebobinar Apos Inserir";
-    ls->menuCasUseReadOnly       = "Usar Cassette Como Somente Leitura";
-    ls->lmenuCasSaveAs           = "Salvar Imagem do Cassette Como...";
+    ls->menuCasUseReadOnly       = "Usar Cassete Como Somente Leitura";
+    ls->lmenuCasSaveAs           = "Salvar Imagem do Cassete Como...";
 
     ls->dlgSaveCassette          = "blueMSX - Salvar Imagem Tape";
     ls->dlgTapeCustom            = "Mostrar Arquivos Personalizados";
-    ls->dlgTapeSetPosText        = "Posição do Tape:";
+    ls->dlgTapeSetPosText        = "Posição do Cassete:";
     ls->dlgTabPosition           = "Posição";
     ls->dlgTabType               = "Tipo";
     ls->dlgTabFilename           = "Nome do Arquivo";
@@ -294,7 +294,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSettings             = "Ajustes";
     
     ls->propSetFileHistoryGB     = "Histórico ";
-    ls->propSetFileHistorySize   = "Numero de items no Histórico:";
+    ls->propSetFileHistorySize   = "Numero de itens no Histórico:";
     ls->propSetFileHistoryClear  = "Limpar Histórico";
     ls->propSetScreenSaverGB     = "Proteção de Tela";
     ls->propSetScreenSaver       = " Desabilitar Proteção de Tela Quando blueMSX estiver ativo";
@@ -317,7 +317,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->confSlotSlot3            = "Slot 3";
     ls->confSlotCart1            = "Cartucho 1:";
     ls->confSlotCart2            = "Cartucho 2:";
-    ls->confSlotPrimary          = "Primario";
+    ls->confSlotPrimary          = "Primário";
     ls->confSlotExpanded         = "Expandido (Quatro sub-slots)";
 
     ls->confMemAdd               = "Adicionar...";
@@ -334,7 +334,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->confChipSoundGB          = "Som ";
 
     ls->confSaveTitle            = "blueMSX - Salvar Configuração";
-    ls->confSaveText             = "Você quer  substituir esta configuração da máquina? :";
+    ls->confSaveText             = "Você quer substituir esta configuração da máquina? :";
 
     ls->slotEditMemTitle         = "blueMSX - Editar Mapper";
     ls->slotEditMemGB            = "Detalhes do Mapper ";
@@ -365,9 +365,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " Estiramento Horizontal"; 
     ls->propClearHistory         = "Deseja realmente limpar histórico ?";
-    ls->propEmuFrontSwitchGB     = "Botao Panasonic "; 
-    ls->propEmuFrontSwitch       = " Botao Frontal"; 
-    ls->propEmuAudioSwitch       = " Botao Cartucho MSX-AUDIO"; 
+    ls->propEmuFrontSwitchGB     = "Botão Panasonic "; 
+    ls->propEmuFrontSwitch       = " Botão Frontal"; 
+    ls->propEmuAudioSwitch       = " Botão Cartucho MSX-AUDIO"; 
     ls->propMonVertStretch       = " Estiramento Vertical"; 
 
     ls->dlgCmosGB                = "CMOS "; 
@@ -389,9 +389,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumControlsJoyKeyset   = "Keyset";    
     ls->propJoyConfigKeyset     = "Configurar Keyset";
     ls->propJoyControlText      = "Controle:";
-    ls->propJoyButtonText       = "Botao";
-    ls->propJoyButtonAText      = "Botao A:";
-    ls->propJoyButtonBText      = "Botao B:";
+    ls->propJoyButtonText       = "Botão";
+    ls->propJoyButtonAText      = "Botão A:";
+    ls->propJoyButtonBText      = "Botão B:";
 
     ls->menuToolsShortcuts      = "Configuração de Atalhos";
 
@@ -411,16 +411,16 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutCartRemove1     = "Remover Cartucho no Slot 1";
     ls->shortcutCartInsert2     = "Inserir Cartucho no Slot 2";
     ls->shortcutCartRemove2     = "Remover Cartucho no Slot 2";
-    ls->shortcutCartAutoReset   = "Reset apos inserir cartucho";
+    ls->shortcutCartAutoReset   = "Reset após inserir cartucho";
     ls->shortcutDiskInsertA     = "Inserir Disco no Drive A";
     ls->shortcutDiskRemoveA     = "Ejetar  Disco no Drive A ";
     ls->shortcutDiskChangeA     = "Alterar rapidamente Disco no Drive A";
-    ls->shortcutDiskAutoResetA  = "Reset apos inserir Disco no Drive A ";
+    ls->shortcutDiskAutoResetA  = "Reset após inserir Disco no Drive A ";
     ls->shortcutDiskInsertB     = "Insira Disco no Drive B";
     ls->shortcutDiskRemoveB     = "Ejetar Disco no Drive B";
     ls->shortcutCasInsert       = "Inserir Cassette";
     ls->shortcutCasEject        = "Ejetar Cassette";
-    ls->shortcutCasAutorewind   = "Rebobinação automático ou não da cassete";
+    ls->shortcutCasAutorewind   = "Rebobinação automática ou não do cassete";
     ls->shortcutCasReadOnly     = "Cassete em modo leitura somente ou não";
     ls->shortcutCasSetPosition  = "Ajustar Posição";
     ls->shortcutCasRewind       = "Rebobinar Cassette";
@@ -429,7 +429,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutCpuStateSave    = "Salvar Status da CPU";
     ls->shortcutCpuStateQload   = "Carregar rapido Status da CPU";
     ls->shortcutCpuStateQsave   = "Salvar rapido Status da CPU";
-    ls->shortcutAudioCapture    = "Começar/parar a captura audio";
+    ls->shortcutAudioCapture    = "Começar/parar a captura áudio";
     ls->shortcutScreenshotOrig  = "Salvar Tela";
     ls->shortcutScreenshotSmall = "Pequena captura da tela sem filtro";
     ls->shortcutScreenshotLarge = "Grande captura da tela sem filtro";
@@ -446,8 +446,8 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutVolumeIncrease  = "Aumentar Volume sonoro";
     ls->shortcutVolumeDecrease  = "Diminuir Volume sonoro";
     ls->shortcutVolumeMute      = "Parar Som";
-    ls->shortcutSwitchMsxAudio  = "Impulsionar Botao cartucho MSX-AUDIO";
-    ls->shortcutSwitchFront     = "Impulsionar Botao frontal Panasonic";
+    ls->shortcutSwitchMsxAudio  = "Impulsionar Botão cartucho MSX-AUDIO";
+    ls->shortcutSwitchFront     = "Impulsionar Botão frontal Panasonic";
     ls->shortcutToggleMouseLock = "Ativar/Desativar Bloqueio do Mouse";
     ls->shortcutEmuSpeedMax     = "Velocidade Máxima da Emulação";
     ls->shortcutEmuSpeedNormal  = "Velocidade Normal da Emulação";
@@ -472,8 +472,8 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostrar/esconder os sprites";
     
     ls->shortcutShowApearProp   = "Mostrar Propriedades";
-    ls->menuPropsApearance      = "Aparencia";
-    ls->propApearance           = "Aparencia";
+    ls->menuPropsApearance      = "Aparência";
+    ls->propApearance           = "Aparência";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
     ls->propThemeClassic        = "Clássico";
@@ -482,7 +482,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propMonBrightness       = "Brilho:";
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturação:";
-    ls->propMonGamma            = "Gamma:";
+    ls->propMonGamma            = "Gama:";
     ls->propMonScanlines        = " Scanlines:";
 
     ls->dlgRomType              = "Tipo rom:"; 
@@ -503,8 +503,8 @@ void langInitPortuguese(LanguageStrings* ls)
 
     // New entries in 1.6.1
     ls->menuDiskDirInsert       = "Inserir diretório"; 
-    ls->shortcutDiskDirInsertA  = "Inserir um directório como disco A"; 
-    ls->shortcutDiskDirInsertB  = "Inserir um directório como disco B"; 
+    ls->shortcutDiskDirInsertA  = "Inserir um diretório como disco A"; 
+    ls->shortcutDiskDirInsertB  = "Inserir um diretório como disco B"; 
     ls->propMonDeInterlace      = " De-entrelaçar";
 
     // New entries in 2.0
@@ -515,7 +515,7 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->enumVideoEmuMonitor     = "Monitor"; 
 
-    ls->propEmuPauseSwitch      = " Botao Pause "; 
+    ls->propEmuPauseSwitch      = " Botão Pause "; 
     ls->propVideoFreqText       = "Freqüência video:"; 
     ls->propVideoFreqAuto       = "Auto"; 
     ls->propSndOversampleText   = "Oversample:"; 
@@ -564,11 +564,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgSavePreview          = "Visualizar"; 
     ls->dlgSaveDate             = "Data:"; 
 
-    ls->enumVideoMonAmber       = "Ambarino"; 
+    ls->enumVideoMonAmber       = "Âmbar"; 
 
     ls->menuPropsPorts          = "Portas"; 
     ls->propPortsLptGB          = "Porta paralela "; 
-    ls->propPortsComGB          = "Portas de série "; 
+    ls->propPortsComGB          = "Portas seriais "; 
     ls->propPortsLptText        = "Porta:"; 
     ls->propPortsCom1Text       = "Porta 1:"; 
 
