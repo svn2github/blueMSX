@@ -107,6 +107,8 @@ public:
     static const char* symbolWindowCaption;
     static const char* symbolWindowText;
 
+    static const char* popupOverwrite;
+
     static const char* aboutBuilt;
     static const char* aboutVisit;
 

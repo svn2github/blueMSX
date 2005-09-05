@@ -106,6 +106,8 @@ public:
         symbolWindowCaption         = "Open Symbol File";
         symbolWindowText            = "Replace old symbols";
         
+        popupOverwrite              = "File already exists. Do you want to overwrite it?";
+        
         aboutBuilt                  = "Built:";
         aboutVisit                  = "Visit http://www.bluemsx.com for details";
     }

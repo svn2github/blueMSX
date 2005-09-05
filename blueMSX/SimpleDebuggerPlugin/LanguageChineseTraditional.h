@@ -105,6 +105,8 @@ public:
 
         symbolWindowCaption         = "開啟符號檔案";
         symbolWindowText            = "取代舊的符號";
+
+        popupOverwrite              = "File already exists. Do you want to overwrite it?";
         
         aboutBuilt                  = "組建:";
         aboutVisit                  = "請訪問 http://www.bluemsx.com 取得更多細節";

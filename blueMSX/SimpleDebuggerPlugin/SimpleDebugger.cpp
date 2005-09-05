@@ -438,6 +438,15 @@ void saveDisassembly(HWND hwndOwner)
         strcat(pFileName, ".asm");
     }
 
+    FILE* f = fopen(pFileName, "r");
+    if (f != NULL) {
+        fclose(f);
+        int rv = MessageBox(NULL, Language::popupOverwrite, Language::windowDebugger, MB_YESNO | MB_ICONWARNING);
+        if (rv != IDYES) {
+            return;
+        }
+    }
+
     disassembly->writeToFile(pFileName);
 }
 
@@ -485,6 +494,15 @@ void saveMemory(HWND hwndOwner)
     int len = strlen(pFileName);
     if (len < 4 || (pFileName[len - 2] != '.' && pFileName[len - 3] != '.' && pFileName[len - 4] != '.')) {
         strcat(pFileName, ".bin");
+    }
+
+    FILE* f = fopen(pFileName, "r");
+    if (f != NULL) {
+        fclose(f);
+        int rv = MessageBox(NULL, Language::popupOverwrite, Language::windowDebugger, MB_YESNO | MB_ICONWARNING);
+        if (rv != IDYES) {
+            return;
+        }
     }
     
     memory->writeToFile(pFileName);

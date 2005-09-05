@@ -129,5 +129,7 @@ const char* Language::gotoWindowText;
 const char* Language::symbolWindowCaption;
 const char* Language::symbolWindowText;
 
+const char* Language::popupOverwrite;
+
 const char* Language::aboutBuilt;
 const char* Language::aboutVisit;

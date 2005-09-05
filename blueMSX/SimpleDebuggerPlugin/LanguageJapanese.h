@@ -106,6 +106,8 @@ public:
         symbolWindowCaption         = "シンボルファイルのロード";
         symbolWindowText            = "シンボルの入れ替え";
         
+        popupOverwrite              = "File already exists. Do you want to overwrite it?";
+        
         aboutBuilt                  = "ビルド:";
         aboutVisit                  = "詳しい情報は http://www.bluemsx.com まで";
     }
