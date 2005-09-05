@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-05 03:17:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1208,9 +1208,11 @@ static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
         break;
 
     case VDP_SG1000:
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 2);
-        dbgIoPortsAddPort(ioPorts, 0, 0xbe, DBG_IO_READWRITE,  peek(vdp, 0xbe));
-        dbgIoPortsAddPort(ioPorts, 1, 0xbf, DBG_IO_READWRITE,  peekStatus(vdp, 0xbf));
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, vdpVersionName, 64);
+		for (i=0; i<64; i+=2) {
+			dbgIoPortsAddPort(ioPorts, 0, i+0x80, DBG_IO_READWRITE,  peek(vdp, i+0x80));
+			dbgIoPortsAddPort(ioPorts, 1, i+0x81, DBG_IO_READWRITE,  peekStatus(vdp, i+0x81));
+		}
         break;
     }
 }
@@ -1385,8 +1387,9 @@ static void destroy(VDP* vdp)
         break;
 
     case VDP_SG1000:
-        ioPortUnregister(0xbe);
-        ioPortUnregister(0xbf);
+        for (i = 0x80; i < 0xc0; i++) {
+            ioPortUnregister(i);
+        }
         break;
     }
 

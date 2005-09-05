@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-04 04:25:23 $
+** $Date: 2005-09-05 03:17:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,10 +81,6 @@ void sg1000SN76489Write(void* dummy, UInt16 ioPort, UInt8 value)
     sn76489WriteData(sn76489, ioPort, value);
 }
 
-/*static void sg1000JoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
-{
-	joyMode = (ioPort >> 6) & 1;
-}*/
 
 static UInt8 sg1000JoyIoRead(void* dummy, UInt16 ioPort)
 {
@@ -95,19 +91,24 @@ static UInt8 sg1000JoyIoRead(void* dummy, UInt16 ioPort)
 
 static void sg1000JoyIoCreate()
 {
-  ioPortRegister(0x7E, sg1000JoyIoRead, sg1000SN76489Write, NULL);
-  ioPortRegister(0x7F, sg1000JoyIoRead, sg1000SN76489Write, NULL);
+	int i;
 
-  ioPortRegister(0xDC, sg1000JoyIoRead, NULL, NULL);
-  ioPortRegister(0xC0, sg1000JoyIoRead, NULL, NULL);
+	for (i=0x40; i<0x80; i++)
+		ioPortRegister(i, NULL, sg1000SN76489Write, NULL);
+
+	for (i=0xC0; i<0x100; i+=2)
+		ioPortRegister(i, sg1000JoyIoRead, NULL, NULL);
 }
 
 static void sg1000JoyIoDestroy()
 {
-  ioPortUnregister(0x7E);
-  ioPortUnregister(0x7F);
-  ioPortUnregister(0xDC);
-  ioPortUnregister(0xC0);
+	int i;
+
+	for (i=0x40; i<0x80; i++)
+		ioPortUnregister(i);
+
+	for (i=0xC0; i<0x100; i+=2)
+		ioPortUnregister(i);
 }
 
 static void sg1000MemReset()
@@ -118,15 +119,16 @@ static void sg1000MemReset()
 void sg1000MemWrite(void* ref, UInt16 address, UInt8 value)
 {
     UInt8* memPtr;
+	int i;
 
     if (address < 0xA000) {
         return;
     }
 
-    memPtr = sg1000Memory + 0xA000 + (address & 0x1fff);
+    memPtr = sg1000Memory + 0xA000 + (address & 0x3ff);
 
-    memPtr[0] = value;
-    memPtr[0x2000] = value;
+	for (i=0; i<0x10000-0xA000; i+=0x400)
+		memPtr[i] = value;
 }
 
 UInt8 sg1000MemRead(void* ref, UInt16 address)
@@ -266,19 +268,8 @@ static int sg1000InitMachine(Machine* machine,
 
     /* Initialize memory */
     sg1000MemReset();
-    /* Load system rom */
-    /*buf = romLoad(machine->slotInfo[0].name, machine->slotInfo[0].inZipName, &size);
-    if (buf != NULL) {
-        if (size == 0x2000)
-            memcpy(sg1000Memory, buf, size);
-        else
-            success = 0;
-        free(buf);
-    }
-    else
-        success = 0;*/
 
-    ledSetCapslock(0);
+	ledSetCapslock(0);
 
     return success;
 }
