@@ -818,6 +818,30 @@ void Disassembly::refresh()
     updateContent(backupMemory, backupPc);
 }
 
+bool Disassembly::writeToFile(const char* fileName)
+{
+    FILE* f = fopen(fileName, "w+");
+    if (f == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < lineCount; i++) {
+        if (lineInfo[i].textLength > 0) {
+            char buffer[128];
+            int offset = lineInfo[i].isLabel ? 0 : 8;
+            memset(buffer, 32, offset);
+            memcpy(buffer + offset, lineInfo[i].text, lineInfo[i].textLength);
+            buffer[lineInfo[i].textLength + offset]     = '\n';
+            buffer[lineInfo[i].textLength + offset + 1] = '\0';
+            fwrite(buffer, 1, strlen(buffer), f);
+        }
+    }
+
+    fclose(f);
+
+    return true;
+}
+
 void Disassembly::updateContent(BYTE* memory, WORD pc)
 {
     int addr = 0;

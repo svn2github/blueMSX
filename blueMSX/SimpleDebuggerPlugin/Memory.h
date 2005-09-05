@@ -48,6 +48,8 @@ public:
     void updateContent(Snapshot* snapshot);
     void invalidateContent();
 
+    bool writeToFile(const char* fileName);
+
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
     LRESULT memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
     BOOL toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);

@@ -75,6 +75,8 @@ const char* Language::toolbarBpRemoveAll;
 
 const char* Language::menuFile;
 const char* Language::menuFileLoadSymbolFile;
+const char* Language::menuFileSaveDisassembly;
+const char* Language::menuFileSaveMemory;
 const char* Language::menuFileExit;
 
 const char* Language::menuDebug;

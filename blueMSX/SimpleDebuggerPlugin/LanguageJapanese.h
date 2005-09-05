@@ -51,6 +51,8 @@ public:
 
         menuFile                    = "ファイル";
         menuFileLoadSymbolFile      = "シンボルファイルのロード";
+        menuFileSaveDisassembly     = "Save Disassembly";
+        menuFileSaveMemory          = "Save Memory";
         menuFileExit                = "終了";
 
         menuDebug                   = "デバッグ";

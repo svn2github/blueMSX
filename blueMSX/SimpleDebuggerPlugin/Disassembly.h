@@ -70,6 +70,8 @@ public:
     void disableAllBreakpoints();
     void clearAllBreakpoints();
 
+    bool writeToFile(const char* fileName);
+
     LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:

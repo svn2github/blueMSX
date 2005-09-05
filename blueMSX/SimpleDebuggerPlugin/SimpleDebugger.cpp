@@ -141,6 +141,8 @@ static void updateStatusBar()
 
 #define MENU_FILE_EXIT              37100
 #define MENU_FILE_LOADSYM           37101
+#define MENU_FILE_SAVEDASM          37102
+#define MENU_FILE_SAVEMEM           37103
 
 #define MENU_DEBUG_CONTINUE         37200
 #define MENU_DEBUG_BREAKALL         37201
@@ -181,6 +183,12 @@ static void updateWindowMenu()
     sprintf(buf, "%s", Language::menuFileLoadSymbolFile);
     AppendMenu(hMenuFile, MF_STRING, MENU_FILE_LOADSYM, buf);
 
+    sprintf(buf, "%s", Language::menuFileSaveDisassembly);
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_SAVEDASM, buf);
+
+    sprintf(buf, "%s", Language::menuFileSaveMemory);
+    AppendMenu(hMenuFile, MF_STRING, MENU_FILE_SAVEMEM, buf);
+    
     AppendMenu(hMenuFile, MF_SEPARATOR, 0, NULL);
 
     sprintf(buf, "%s", Language::menuFileExit);
@@ -384,6 +392,103 @@ void loadSymbolFile(HWND hwndOwner)
     fclose(file);
 }
 
+void saveDisassembly(HWND hwndOwner)
+{
+    OPENFILENAME ofn; 
+    static char pFileName[MAX_PATH];
+    static char buffer[0x20000];
+
+    pFileName[0] = 0; 
+
+    char  curDir[MAX_PATH];
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = GetDllHinstance();
+    ofn.lpstrFilter = "*.ASM\0*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0;
+    ofn.nFilterIndex = 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrTitle = Language::menuFileSaveDisassembly; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_HIDEREADONLY; 
+    ofn.nFileOffset = 0;
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = NULL; 
+    ofn.lpTemplateName = NULL; 
+
+    BOOL rv = GetSaveFileName(&ofn); 
+
+    SetCurrentDirectory(curDir);
+
+    if (!rv) {
+        return;
+    }
+
+    int len = strlen(pFileName);
+    if (len < 4 || (pFileName[len - 2] != '.' && pFileName[len - 3] != '.' && pFileName[len - 4] != '.')) {
+        strcat(pFileName, ".asm");
+    }
+
+    disassembly->writeToFile(pFileName);
+}
+
+void saveMemory(HWND hwndOwner)
+{
+    OPENFILENAME ofn; 
+    static char pFileName[MAX_PATH];
+    static char buffer[0x20000];
+
+    pFileName[0] = 0; 
+
+    char  curDir[MAX_PATH];
+
+    GetCurrentDirectory(MAX_PATH, curDir);
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = GetDllHinstance();
+    ofn.lpstrFilter = "*.BIN\0*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0;
+    ofn.nFilterIndex = 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrTitle = Language::menuFileSaveMemory; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_HIDEREADONLY; 
+    ofn.nFileOffset = 0;
+    ofn.nFileExtension = 0;
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = NULL; 
+    ofn.lpTemplateName = NULL; 
+
+    BOOL rv = GetSaveFileName(&ofn); 
+
+    SetCurrentDirectory(curDir);
+
+    if (!rv) {
+        return; 
+    }
+
+    int len = strlen(pFileName);
+    if (len < 4 || (pFileName[len - 2] != '.' && pFileName[len - 3] != '.' && pFileName[len - 4] != '.')) {
+        strcat(pFileName, ".bin");
+    }
+    
+    memory->writeToFile(pFileName);
+}
 
 void DebuggerUpdate()
 {
@@ -655,6 +760,14 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case MENU_FILE_LOADSYM:
             loadSymbolFile(hwnd);
+            return 0;
+
+        case MENU_FILE_SAVEDASM:
+            saveDisassembly(hwnd);
+            return 0;
+
+        case MENU_FILE_SAVEMEM:
+            saveMemory(hwnd);
             return 0;
 
         case MENU_HELP_ABOUT:

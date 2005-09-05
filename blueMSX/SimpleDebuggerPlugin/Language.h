@@ -53,6 +53,8 @@ public:
 
     static const char* menuFile;
     static const char* menuFileLoadSymbolFile;
+    static const char* menuFileSaveDisassembly;
+    static const char* menuFileSaveMemory;
     static const char* menuFileExit;
 
     static const char* menuDebug;

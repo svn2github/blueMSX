@@ -51,6 +51,8 @@ public:
 
         menuFile                    = "檔案";
         menuFileLoadSymbolFile      = "載入符號檔案";
+        menuFileSaveDisassembly     = "Save Disassembly";
+        menuFileSaveMemory          = "Save Memory";
         menuFileExit                = "結束";
 
         menuDebug                   = "偵錯";

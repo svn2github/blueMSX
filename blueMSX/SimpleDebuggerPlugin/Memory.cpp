@@ -383,6 +383,22 @@ void Memory::updatePosition(RECT& rect)
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
+bool Memory::writeToFile(const char* fileName)
+{
+    FILE* f = fopen(fileName, "wb+");
+    if (f == NULL) {
+        return false;
+    }
+
+    if (currentMemory != NULL) {
+        fwrite(currentMemory->memory, 1, currentMemory->size, f);
+    }
+
+    fclose(f);
+
+    return true;
+}
+
 void Memory::invalidateContent()
 {
     dataInput1->hide();

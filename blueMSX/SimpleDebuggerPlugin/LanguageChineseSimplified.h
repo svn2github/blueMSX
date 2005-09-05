@@ -51,6 +51,8 @@ public:
 
         menuFile                    = "文件";
         menuFileLoadSymbolFile      = "读取符号文件";
+        menuFileSaveDisassembly     = "Save Disassembly";
+        menuFileSaveMemory          = "Save Memory";
         menuFileExit                = "退出";
 
         menuDebug                   = "调试";
