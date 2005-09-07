@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiKeyboardMaster.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-08-31 21:35:18 $
+** $Date: 2005-09-07 20:55:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,7 @@ typedef struct {
     int debugHandle;
 
     UInt8* romData;
+    UInt8* voiceData;
 	VLM5030* vlm5030;
     int slot;
     int sslot;
@@ -82,6 +83,7 @@ static void destroy(RomMapperKonamiKeyboardMaster* rm)
     vlm5030Destroy(rm->vlm5030);
 
     free(rm->romData);
+    free(rm->voiceData);
     free(rm);
 }
 
@@ -120,7 +122,8 @@ static void getDebugInfo(RomMapperKonamiKeyboardMaster* rm, DbgDevice* dbgDevice
 
 int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData, 
                                         int size, int slot, int sslot, 
-                                        int startPage) 
+                                        int startPage,
+                                       void* voiceRom, int voiceSize) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -140,6 +143,18 @@ int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData,
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
+
+    rm->voiceData = calloc(1, 0x4000);
+    if (voiceRom != NULL) {
+        if (voiceSize > 0x4000) {
+            voiceSize = 0x4000;
+        }
+        memcpy(rm->voiceData, voiceRom, voiceSize);
+    }
+    else {
+        memcpy(rm->voiceData, voiceData, 0x4000);
+    }
+
     rm->vlm5030 = vlm5030Create(boardGetMixer(), voiceData, 0x4000);
     rm->slot  = slot;
     rm->sslot = sslot;

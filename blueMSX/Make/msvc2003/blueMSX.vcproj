@@ -599,9 +599,6 @@
 					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.c">
 				</File>
 				<File
@@ -799,6 +796,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328Prn.h">

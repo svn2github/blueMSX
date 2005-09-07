@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiKeyboardMaster.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-09-07 20:55:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 
 int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData, 
                                        int size, int slot, int sslot, 
-                                       int startPage);
+                                       int startPage,
+                                       void* voiceRom, int voiceSize);
 
 #endif

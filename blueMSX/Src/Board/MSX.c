@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2005-08-31 06:51:51 $
+** $Date: 2005-09-07 20:55:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -297,7 +297,7 @@ static int initMachine(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, machine->cart[i].subslot);
     }
 
-    /* Initialize RAM */
+    /* Initialize RAM and 'imlicit' rom types */
     for (i = 0; i < machine->slotInfoCount; i++) {
         int slot;
         int subslot;
@@ -322,6 +322,18 @@ static int initMachine(Machine* machine,
 
         if (machine->slotInfo[i].romType == RAM_MAPPER) {
             success &= ramMapperCreate(size, slot, subslot, startPage, &msxRam, &msxRamSize);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_JISYO) {
+            if (jisyoRom == NULL) {
+                jisyoRom = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &jisyoRomSize);
+
+                if (jisyoRom == NULL) {
+                    success = 0;
+                    continue;
+                }
+            }
             continue;
         }
     }
@@ -352,6 +364,10 @@ static int initMachine(Machine* machine,
         }
         
         if (machine->slotInfo[i].romType == RAM_MAPPER) {
+            continue;
+        }
+        
+        if (machine->slotInfo[i].romType == ROM_JISYO) {
             continue;
         }
 
@@ -516,7 +532,25 @@ static int initMachine(Machine* machine,
             break;
             
         case ROM_KONAMKBDMAS:
-            success &= romMapperKonamiKeyboardMasterCreate(romName, buf, size, slot, subslot, startPage);
+            {
+                char voiceName[512];
+                int voiceSize = 0;
+                UInt8* voiceData;
+                int j;
+
+                strcpy(voiceName, machine->slotInfo[i].name);
+                for (j = strlen(voiceName); j > 0 && voiceName[j] != '.'; j--);
+                voiceName[j] = 0;
+                strcat(voiceName, "_voice.rom");
+                    
+                voiceData = romLoad(voiceName, NULL, &voiceSize);
+                success &= romMapperKonamiKeyboardMasterCreate(romName, buf, size, 
+                                                               slot, subslot, startPage,
+                                                               voiceData, voiceSize);
+                if (voiceData != NULL) {
+                    free(voiceData);
+                }
+            }
             break;
             
         case ROM_ASCII8:
@@ -650,14 +684,6 @@ static int initMachine(Machine* machine,
 
         case ROM_KANJI12:
             success &= romMapperKanji12Create(buf, size);
-            break;
-
-        case ROM_JISYO:
-            if (jisyoRom == NULL) {
-                jisyoRom = malloc(size);
-                memcpy(jisyoRom, buf, size);
-                jisyoRomSize = size;
-            }
             break;
 
         case ROM_BUNSETU:

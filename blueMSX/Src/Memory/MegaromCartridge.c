@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-09-07 20:55:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -292,7 +292,24 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
 		case ROM_KONAMKBDMAS:
-            romMapperKonamiKeyboardMasterCreate(romName, buf, size, slot, sslot, 2);
+            {
+                // Try to load voice rom before creating the rom mapper
+                char voiceName[512];
+                int voiceSize = 0;
+                UInt8* voiceData;
+                int i;
+
+                strcpy(voiceName, cart);
+                for (i = strlen(voiceName); i > 0 && voiceName[i] != '.'; i--);
+                voiceName[i] = 0;
+                strcat(voiceName, "_voice.rom");
+                    
+                voiceData = romLoad(voiceName, NULL, &voiceSize);
+                romMapperKonamiKeyboardMasterCreate(romName, buf, size, slot, sslot, 2, voiceData, voiceSize);
+                if (voiceData != NULL) {
+                    free(voiceData);
+                }
+            }
             break;
             
         case ROM_ASCII8:
