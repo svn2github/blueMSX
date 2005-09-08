@@ -1,18 +1,25 @@
 # Makefile - TraceWindow.dsp
 # Created at 01/AGO/2005 by Roger Filipe
-#
+# v1.1
 #
 
-CC=gcc
-CFLAGSCXX=g++
-CXXFLAGS=$(CFLAGS)
-RC=windres -O COFF
+CC    = $(SILENT)gcc
+CXX   = $(SILENT)g++
+RC    = $(SILENT)windres -O COFF
+LD    = $(SILENT)dllwrap
+RM    = $(SILENT)-rm -f
+RMDIR = $(SILENT)-rm -rf
+MKDIR = $(SILENT)-mkdir
+ECHO  = @echo
 
 CFLAGS+=-W -O2 -finline-functions -march=pentiumpro -D_M_IX86=600 -DWIN32 -DNDEBUG -D_WINDOWS
-LD=dllwrap
 LDFLAGSTARGET=TraceWindow.dll
 LDFLAGS+=-Wl,--subsystem,windows --implib libTraceWindow.a
 LIBS+=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lComCtl32
+
+ifndef TARGET
+TARGET=TraceWindow.dll
+endif
 
 .PHONY: all
 all: $(TARGET)
@@ -33,7 +40,6 @@ all: $(TARGET)
 	$(RC) $(CPPFLAGS) -o $@ -i $<
 
 SRCS= \
-	bluemsx.ico \
 	BlueMSXToolInterface.h \
 	Resource.h \
 	Language.cpp \
@@ -42,7 +48,13 @@ SRCS= \
 	TraceWindow.cpp \
 	TraceWindow.def \
 	TraceWindow.manifest \
-	TraceWindow.rc
+	TraceWindow.rc \
+	Language.h \
+	LanguageChineseSimplified.h \
+	LanguageChineseTraditional.h \
+	LanguageEnglish.h \
+	LanguageJapanese.h \
+	bluemsx.ico
 
 OBJS=$(patsubst %.rc,%.res,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(filter %.c %.cc %.cpp %.cxx %.rc,$(SRCS)))))))
 
@@ -58,4 +70,5 @@ depends:
 	-$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $(filter %.c %.cc %.cpp %.cxx,$(SRCS)) > TraceWindow.dep
 
 -include TraceWindow.dep
+
 

@@ -9,6 +9,9 @@ extern "C" {
 #include "SaveState.h"
 }
 
+#ifdef assert
+#undef assert
+#endif
 #define assert(x)
 
 

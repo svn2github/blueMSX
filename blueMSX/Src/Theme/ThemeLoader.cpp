@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-08-24 04:35:33 $
+** $Date: 2005-09-08 18:22:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -262,7 +262,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
         const char* argaStr = el->Attribute(arg1Tag);
         if (argaStr != NULL) {
             const char* argaStr = el->Attribute(arg1Tag);
-            *arg1 = NULL;
+            *arg1 = 0;
             *arg2 = themeGetNameHash(argaStr);
 
             if (buttonEvent == (ButtonEvent)themeSetPageFromHash) {

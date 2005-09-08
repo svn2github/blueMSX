@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-09-08 18:22:14 $
 **
 ** More info: http://www.bluemsx.com
 **
