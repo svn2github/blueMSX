@@ -28,6 +28,7 @@
 #include "LanguageChineseTraditional.h"
 #include "LanguageEnglish.h"
 #include "LanguageJapanese.h"
+#include "LanguageKorean.h"
 #include <stdlib.h>
 
 namespace {
@@ -48,6 +49,8 @@ void Language::SetLanguage(LanguageId langId)
     case LID_JAPANESE:
         ls = new LanguageJapanese;
         break;
+    case LID_KOREAN:
+        ls = new LanguageKorean;
     case LID_ENGLISH:
     default:
         ls = new LanguageEnglish;

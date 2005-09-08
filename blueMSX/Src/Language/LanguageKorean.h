@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.12 $ + additions 2005/03/03
+** $Revision: 1.13 $ + additions 2005/03/03
 **
-** $Date: 2005-08-09 08:16:40 $
+** $Date: 2005-09-08 17:24:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -577,7 +577,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPortsFile           = "파일에 출력하기";
     ls->propPortsOpenLogFile    = "로그파일 열기";
     ls->propPortsFilenameText   = "파일명:";
-    ls->propPortsEmulateMsxPrn  = "에뮬레이션:";
+    ls->propPortsEmulateMsxPrn  = "흉내내기:";
 
     ls->shortcutPrnFormFeed     = "프린터 폼피드";
 
@@ -601,6 +601,24 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "자동 (빠름)";
     ls->enumEmuSync1ms          = "MSX 리프레쉬 동기";
     ls->enumEmuSyncVblank       = "PC 버티컬 블링크에 동기";
+
+    ls->propMonEffectsGB        = "효과";
+ 
+    ls->confSlot                = "슬롯";
+    ls->confSubslot             = "서브 슬롯";
+
+    ls->shortcut                = "단축키";
+	ls->hotkey                  = "핫키";
+    ls->unknown                 = "Unknown";
+    ls->romImage                = "롬 이미지";
+    ls->romImageOpen            = "롬 이미지 열기";
+    ls->romCartridge            = "롬 카트리지";
+    ls->allFiles                = "모든 파일";
+    ls->cpuState                = "CPU 상태";
+    ls->diskImage               = "디스크 이미지";
+    ls->casImage                = "테이프 이미지";
+
+    ls->menuCartExternalRam     = "외장 램";
 };
 
 #endif

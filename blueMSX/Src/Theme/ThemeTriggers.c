@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-08-30 05:14:59 $
+** $Date: 2005-09-08 17:24:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Albert Beevendorp,  "
                 "Rudolf Lechleitner,  "
                 "BouKiCHi,  "
+                "SaebaRYO,  "
                 "Tobias Keizer,  "
                 "Sandy Pleyte,  "
                 "Marco Casali,  "
