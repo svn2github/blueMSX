@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-07-02 17:56:51 $
+** $Date: 2005-09-09 18:14:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,11 @@ int printerIOGetStatus(PrinterIO* printerIO)
         return 1;
     }
     return 0;
+}
+
+int  printerIODoStrobe(PrinterIO* printerIO)
+{
+    return printerIO->type != PRN_SIMPL;
 }
 
 PrinterIO* printerIOCreate(void)

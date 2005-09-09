@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-05-17 05:53:16 $
+** $Date: 2005-09-09 18:14:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ void printerIODestroy(PrinterIO* printerIO);
 
 void printerIOWrite(PrinterIO* printerIO, UInt8 value);
 int  printerIOGetStatus(PrinterIO* printerIO);
+int  printerIODoStrobe(PrinterIO* printerIO);
 
 void printerIoSetType(PrinterType type, const char* fileName);
 

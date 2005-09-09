@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxPrn.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-09 18:14:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,13 +89,19 @@ static void writeIo(RomMapperMsxPrn* prn, UInt16 ioPort, UInt8 value)
 {
     switch (ioPort) {
         case 0x90:
-            if ((prn->prnStrobe & 2) && !(value & 2))
-                printerIOWrite(prn->printerIO, prn->prnData);
-
+            if (printerIODoStrobe(prn->printerIO)) {
+                if ((prn->prnStrobe & 2) && !(value & 2)) {
+                    printerIOWrite(prn->printerIO, prn->prnData);
+                }
+            }
             prn->prnStrobe = value;
             break;
         case 0x91:
             prn->prnData = value;
+
+            if (!printerIODoStrobe(prn->printerIO)) {
+                printerIOWrite(prn->printerIO, prn->prnData);
+            }
             break;
     }
 }  
