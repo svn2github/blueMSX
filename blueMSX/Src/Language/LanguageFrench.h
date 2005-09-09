@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -338,7 +338,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->slotEditMemGB            = "Details du Mapper ";
     ls->slotEditMemType          = "Type:";
     ls->slotEditMemFile          = "Fichier:";
-    ls->slotEditMemAddress       = "Addresse";
+    ls->slotEditMemAddress       = "Adresse";
     ls->slotEditMemSize          = "Taille";
     ls->slotEditMemSlot          = "Port";
 
@@ -471,9 +471,9 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Changer de thème";
     ls->shortcutToggleSpriteEnable = "Montrer/Cacher les sprites";
     
-    ls->shortcutShowApearProp   = "Show Appearance Properties";
-    ls->menuPropsApearance      = "Appearance";
-    ls->propApearance           = "Appearance";
+    ls->shortcutShowApearProp   = "Accéder au menu Apparence";
+    ls->menuPropsApearance      = "Apparence";
+    ls->propApearance           = "Apparence";
     ls->propThemeGB             = "Thème ";
     ls->propTheme               = "Thème";
     ls->propThemeClassic        = "Classique";
@@ -563,7 +563,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "Détection automatique"; 
     ls->propFullscreenResText   = "Résolution plein écran:"; 
     ls->dlgSavePreview          = "Prévisualiser"; 
-    ls->dlgSaveDate             = "Date de sauvegarde:";
+    ls->dlgSaveDate             = "Date:";
     
     ls->enumVideoMonAmber       = "Ambre";
 
@@ -578,7 +578,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutShowPorts       = "Accéder au menu Ports";
     
     ls->propPorts               = "Ports";
-    ls->propPortsNone           = "Aucune";
+    ls->propPortsNone           = "Aucun";
 
     // New entries in 2.3 
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
@@ -586,7 +586,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC"; 
     ls->propPortsFile           = "Imprimer dans fichier"; 
     ls->propPortsOpenLogFile    = "Ouvrir un fichier de données"; 
-    ls->propPortsFilenameText   = "Nom du fichier:"; 
+    ls->propPortsFilenameText   = "Fichier:"; 
     ls->propPortsEmulateMsxPrn  = "Emulation:"; 
 
     ls->shortcutPrnFormFeed     = "Passage à la page suivante"; 
@@ -594,6 +594,43 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Page suivante"; 
     ls->menuFilePrn             = "Imprimante"; 
     ls->propPortsComFile        = "Envoyer vers fichier";
+
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "Accéder au Mélangeur audio";
+    ls->menuToolsMixer          = "Mélangeur audio";
+    
+    ls->propSndMidiInGB         = "Entrée MIDI ";
+    ls->propSndMidiOutGB        = "Sortie MIDI ";
+    ls->propSndMt32ToGmText     = " Accorder les instruments MT-32 à General MIDI";
+
+    ls->textDevice              = "Type:";
+    ls->textFilename            = "Fichier:";
+    ls->textFile                = "Fichier";
+    ls->textNone                = "Aucun";
+
+    ls->enumEmuSyncNone         = "Aucune";
+    ls->enumEmuSyncAuto         = "Auto (rapide)";
+    ls->enumEmuSync1ms          = "Sync sur MSX refresh";
+    ls->enumEmuSyncVblank       = "Sync sur PC Vertical Blank";
+
+    ls->propMonEffectsGB        = "Effets ";
+    
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Sous-slot";
+
+    ls->shortcut                = "Raccourci";
+    ls->hotkey                  = "Touche rapide";
+    ls->unknown                 = "Inconnu";
+    ls->romImage                = "Image-ROM";
+    ls->romImageOpen            = "Ouvrir une image-ROM";
+    ls->romCartridge            = "Cartouche ROM";
+    ls->allFiles                = "Tous les fichiers";
+    ls->cpuState                = "Image du CPU";
+    ls->diskImage               = "Image-disque";
+    ls->casImage                = "Image-cassette";
+
+    ls->menuCartExternalRam     = "RAM externe";
 };
 
 #endif
+

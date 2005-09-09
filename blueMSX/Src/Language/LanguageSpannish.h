@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -589,6 +589,42 @@ void langInitSpanish(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Página siguiente"; 
     ls->menuFilePrn             = "Impresora"; 
     ls->propPortsComFile        = "Enviar hacia archivo";
+
+    // New entries in 2.4 
+    ls->shortcutShowMixer       = "Mostrar Mezclador de Audio"; 
+    ls->menuToolsMixer          = "Mezclador de Audio"; 
+    
+    ls->propSndMidiInGB         = "MIDI In "; 
+    ls->propSndMidiOutGB        = "MIDI Out "; 
+    ls->propSndMt32ToGmText     = " Mapa instrumentos MT-32 a General MIDI"; 
+
+    ls->textDevice              = "Tipo:"; 
+    ls->textFilename            = "Nombre:"; 
+    ls->textFile                = "Archivo"; 
+    ls->textNone                = "Ninguno"; 
+
+    ls->enumEmuSyncNone         = "Ninguno"; 
+    ls->enumEmuSyncAuto         = "Auto (rápido)"; 
+    ls->enumEmuSync1ms          = "Sinc sobre MSX refresh"; 
+    ls->enumEmuSyncVblank       = "Sinc sobre PC Vertical Blank"; 
+
+    ls->propMonEffectsGB        = "Efectos  "; 
+    
+    ls->confSlot                = "Slot"; 
+    ls->confSubslot             = "Subslot"; 
+
+    ls->shortcut                = "Atajo"; 
+    ls->hotkey                  = "Tecla rápida"; 
+    ls->unknown                 = "Desconocido"; 
+    ls->romImage                = "ROM image"; 
+    ls->romImageOpen            = "Abrirse ROM image"; 
+    ls->romCartridge            = "Cartucho ROM"; 
+    ls->allFiles                = "Todos los archivos"; 
+    ls->cpuState                = "Carga CPU"; 
+    ls->diskImage               = "Disk Image"; 
+    ls->casImage                = "Tape Image"; 
+
+    ls->menuCartExternalRam     = "RAM externo"; 
 };
 
 #endif

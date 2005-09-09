@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-04 04:25:24 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -593,6 +593,42 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Página seguinte"; 
     ls->menuFilePrn             = "Impressora"; 
     ls->propPortsComFile        = "Enviar para arquivo";
+
+    // New entries in 2.4 
+    ls->shortcutShowMixer       = "Mostre Mixer de Audio"; 
+    ls->menuToolsMixer          = "Mixer de Audio"; 
+    
+    ls->propSndMidiInGB         = "MIDI In "; 
+    ls->propSndMidiOutGB        = "MIDI Out "; 
+    ls->propSndMt32ToGmText     = " Mapa instrumentos MT-32 a General MIDI"; 
+
+    ls->textDevice              = "Tipo:"; 
+    ls->textFilename            = "Nome:"; 
+    ls->textFile                = "Arquivo"; 
+    ls->textNone                = "Nenhum"; 
+
+    ls->enumEmuSyncNone         = "Nenhum"; 
+    ls->enumEmuSyncAuto         = "Auto (rapido)"; 
+    ls->enumEmuSync1ms          = "Sinc sobre MSX refresh"; 
+    ls->enumEmuSyncVblank       = "Sinc sobre PC Vertical Blank"; 
+
+    ls->propMonEffectsGB        = "Efeitos "; 
+    
+    ls->confSlot                = "Slot"; 
+    ls->confSubslot             = "Sub-slot"; 
+
+    ls->shortcut                = "Shortcut"; 
+    ls->hotkey                  = "Hotkey"; 
+    ls->unknown                 = "Desconhecido"; 
+    ls->romImage                = "ROM image"; 
+    ls->romImageOpen            = "Abrir ROM image"; 
+    ls->romCartridge            = "Cartucho ROM"; 
+    ls->allFiles                = "Todos os arquivos"; 
+    ls->cpuState                = "Status da CPU"; 
+    ls->diskImage               = "Disk Image"; 
+    ls->casImage                = "Tape Image"; 
+
+    ls->menuCartExternalRam     = "RAM esterno";
 };
 
 #endif

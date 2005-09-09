@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -591,6 +591,41 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuFilePrn             = "Stampante"; 
     ls->propPortsComFile        = "Inviare verso archivio"; 
 
+    // New entries in 2.4 
+    ls->shortcutShowMixer       = "Mostri Mixer"; 
+    ls->menuToolsMixer          = "Mixer"; 
+    
+    ls->propSndMidiInGB         = "MIDI In "; 
+    ls->propSndMidiOutGB        = "MIDI Out "; 
+    ls->propSndMt32ToGmText     = " Accordare strumenti MT-32 a General MIDI"; 
+
+    ls->textDevice              = "Tipo:"; 
+    ls->textFilename            = "Nome:"; 
+    ls->textFile                = "File"; 
+    ls->textNone                = "Nessuno"; 
+
+    ls->enumEmuSyncNone         = "Nessuno"; 
+    ls->enumEmuSyncAuto         = "Automatico (veloce)"; 
+    ls->enumEmuSync1ms          = "Sinc su MSX refresh"; 
+    ls->enumEmuSyncVblank       = "Sinc su PC Vertical Blank"; 
+
+    ls->propMonEffectsGB        = "Effeti "; 
+    
+    ls->confSlot                = "Slot"; 
+    ls->confSubslot             = "Subslot"; 
+
+    ls->shortcut                = "Shortcut"; 
+    ls->hotkey                  = "Hotkey"; 
+    ls->unknown                 = "Sconosciuto"; 
+    ls->romImage                = "ROM image"; 
+    ls->romImageOpen            = "Aprire ROM image"; 
+    ls->romCartridge            = "ROM cartuccia"; 
+    ls->allFiles                = "Tutti gli archivi"; 
+    ls->cpuState                = "Stato della CPU"; 
+    ls->diskImage               = "Disk Image"; 
+    ls->casImage                = "Tape Image"; 
+
+    ls->menuCartExternalRam     = "RAM esterno"; 
 };
 
 #endif

@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-06-10 02:09:02 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -612,6 +612,43 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "フォームフィード"; 
     ls->menuFilePrn             = "プリンター"; 
     ls->propPortsComFile        = "ファイルへ送る"; 
+
+
+        // New entries in 2.4 
+    ls->shortcutShowMixer       = "ミキサーの表\示"; 
+    ls->menuToolsMixer          = "ミキサー"; 
+    
+    ls->propSndMidiInGB         = "MIDI イン "; 
+    ls->propSndMidiOutGB        = "MIDI アウト "; 
+    ls->propSndMt32ToGmText     = " MT-32 楽器をジェネラルMIDIにマッピング"; 
+
+    ls->textDevice              = "デバイス:"; 
+    ls->textFilename            = "ファイル名:"; 
+    ls->textFile                = "ファイル"; 
+    ls->textNone                = "無し"; 
+
+    ls->enumEmuSyncNone         = "無し"; 
+    ls->enumEmuSyncAuto         = "オート (高速)"; 
+    ls->enumEmuSync1ms          = "MSXの速度に同期"; 
+    ls->enumEmuSyncVblank       = "PCの書換えに同期"; 
+
+    ls->propMonEffectsGB        = "エフェクト "; 
+    
+    ls->confSlot                = "スロット"; 
+    ls->confSubslot             = "サブスロット"; 
+
+    ls->shortcut                = "ショートカット"; 
+    ls->hotkey                  = "ホットキー"; 
+    ls->unknown                 = "不明"; 
+    ls->romImage                = "ロム イメージ"; 
+    ls->romImageOpen            = "ロム イメージを開く"; 
+    ls->romCartridge            = "ロム カートリッジ"; 
+    ls->allFiles                = "全てのファイル"; 
+    ls->cpuState                = "CPU ステート"; 
+    ls->diskImage               = "ディスク イメージ"; 
+    ls->casImage                = "テープ イメージ"; 
+
+    ls->menuCartExternalRam     = "外部 ラム"; 
 
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.5 $ 
+** $Revision: 1.6 $ 
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2005-09-09 03:31:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -402,7 +402,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->shortcutDiscardConfig   = "Möchten Sie die Änderungen an der aktuellen Konfiguration verwerfen?";
     ls->shortcutSaveConfigAs    = "blueMSX - Speichere Shortcut-Konfiguration als ...";
     ls->shortcutConfigName      = "Konfigurationsname:";
-    ls->shortcutNewProfile      = "< Neues Profile >";
+    ls->shortcutNewProfile      = "< Neues Profil >";
     ls->shortcutConfigTitle     = "blueMSX - Shortcut Mapping Editor";
     ls->shortcutAssign          = "Zuweisen";
     ls->shortcutPressText       = "Drücke Shortcut-Taste(n):";
@@ -574,6 +574,13 @@ void langInitGerman(LanguageStrings* ls)
     ls->propPortsLptText        = "Port:"; 
     ls->propPortsCom1Text       = "Port 1:";
 
+    ls->shortcutShowDebugger    = "Zeige Debugger";
+    ls->shortcutShowTrainer     = "Zeige Trainer";
+    ls->shortcutShowPorts       = "Zeige Ports-Eigenschaften";
+
+    ls->propPorts               = "Ports";
+    ls->propPortsNone           = "Nichts";
+
     // New entries in 2.3
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
 
@@ -589,15 +596,47 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuFilePrn             = "Drucker";
     ls->propPortsComFile        = "Zu Datei senden";
 
-    ls->enumEmuSyncNone         = "Nichts";
-    ls->enumEmuSyncAuto         = "Auto (schnell)";
-    ls->enumEmuSync1ms          = "Sync on MSX refresh";
-    ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "Zeige Audio-Mixer";
+    ls->menuToolsMixer          = "Audio-Mixer";
+    
+    ls->propSndMidiInGB         = "MIDI In ";
+    ls->propSndMidiOutGB        = "MIDI Out ";
+    ls->propSndMt32ToGmText     = " Map MT-32 instruments to General MIDI";
 
+    ls->textDevice              = "Typ:";
+    ls->textFilename            = "Filename:";
+    ls->textFile                = "File";
+    ls->textNone                = "Nichts";    
+
+    ls->enumEmuSyncNone         = "Nichts";
+    ls->enumEmuSyncAuto         = "Automatisch (schnell)";
+    ls->enumEmuSync1ms          = "Sync am MSX refresh";
+    ls->enumEmuSyncVblank       = "Sync am PC Vertical Blank";
+
+    ls->propMonEffectsGB        = "Effects ";
+    
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Subslot";
+
+    ls->shortcut                = "Shortcut";
+    ls->hotkey                  = "Kontrollsequenz";
+    ls->unknown                 = "Unbekannt";
+
+    ls->romImage                = "ROM-Image";
+    ls->romImageOpen            = "Öffnen ROM-Image";
+    ls->romCartridge            = "ROM-Cartridge";
+    ls->allFiles                = "All Files";
+    ls->cpuState                = "CPU-Status";
+    ls->diskImage               = "Diskette-Image";
+    ls->casImage                = "Cassette-Image";
+
+    ls->menuCartExternalRam     = "Externes RAM";
 };
 
 
 
 #endif
+
 
 
