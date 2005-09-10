@@ -51,8 +51,8 @@ public:
 
         menuFile                    = "文件";
         menuFileLoadSymbolFile      = "读取符号文件";
-        menuFileSaveDisassembly     = "Save Disassembly";
-        menuFileSaveMemory          = "Save Memory";
+        menuFileSaveDisassembly     = "保存反汇编";
+        menuFileSaveMemory          = "保存内存";
         menuFileExit                = "退出";
 
         menuDebug                   = "调试";
@@ -106,7 +106,7 @@ public:
         symbolWindowCaption         = "打开符号文件";
         symbolWindowText            = "覆盖旧的符号";
 
-        popupOverwrite              = "File already exists. Do you want to overwrite it?";
+        popupOverwrite              = "文件已存在。要覆盖原有文件吗？";
         
         aboutBuilt                  = "创建:";
         aboutVisit                  = "更多详情请登陆：www.bluemsx.com ";

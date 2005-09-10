@@ -51,8 +51,8 @@ public:
 
         menuFile                    = "檔案";
         menuFileLoadSymbolFile      = "載入符號檔案";
-        menuFileSaveDisassembly     = "Save Disassembly";
-        menuFileSaveMemory          = "Save Memory";
+        menuFileSaveDisassembly     = "儲存反組譯";
+        menuFileSaveMemory          = "儲存記憶體";
         menuFileExit                = "結束";
 
         menuDebug                   = "偵錯";
@@ -106,7 +106,7 @@ public:
         symbolWindowCaption         = "開啟符號檔案";
         symbolWindowText            = "取代舊的符號";
 
-        popupOverwrite              = "File already exists. Do you want to overwrite it?";
+        popupOverwrite              = "檔案已經存在。 您確定要覆寫它嗎？";
         
         aboutBuilt                  = "組建:";
         aboutVisit                  = "請訪問 http://www.bluemsx.com 取得更多細節";
