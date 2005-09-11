@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-22 07:18:52 $
+** $Date: 2005-09-11 09:20:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,7 +68,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuPropsVideo          = "Obraz";
     ls->menuPropsSound          = "DŸwiêk";
     ls->menuPropsControls       = "Sterowanie";
-    ls->menuPropsPerformance    = "Osi¹gi";
+    ls->menuPropsPerformance    = "Wydajnoœæ";
     ls->menuPropsLanguage       = "Jêzyk";
     
     ls->menuHelpHelp            = "Tematy pomocy";
@@ -92,7 +92,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuRunStop             = "Zatrzymaj";
     ls->menuRunSoftReset        = "Miêkki reset";
     ls->menuRunHardReset        = "Twardy reset";
-    ls->menuRunCleanReset       = "Ogólny reset";
+    ls->menuRunCleanReset       = "Pe³ny reset";
 
     ls->menuFile                = "Plik";
     ls->menuRun                 = "Uruchamianie";
@@ -284,7 +284,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgTapeCustom            = "Poka¿ dowolne pliki";
     ls->dlgTapeSetPosText        = "Pozycja taœmy:";
     ls->dlgTabPosition           = "Pozycja";
-    ls->dlgTabType               = "Type";
+    ls->dlgTabType               = "Typ";
     ls->dlgTabFilename           = "Nazwa pliku";
 
     ls->propSettings             = "Ustawienia";
@@ -354,7 +354,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propFileTypes            = " Skoja¿ pliki z blueMSX (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " Automatyczna konfiguracja klawiszy Windows w MSX"; 
     ls->propWindowsEnvGB         = "Otoczenie Windows "; 
-    ls->enumVideoDrvDirectDrawHW = "DirectDraw (sprzêtowe)"; 
+    ls->enumVideoDrvDirectDrawHW = "DirectDraw (sprzêtowy)"; 
     ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " Rozci¹gaj w poziomie";
     ls->propMonVertStretch       = " Rozci¹gaj w pionie";
@@ -497,7 +497,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Poka¿ w³aœciwoœci pliku";
 
     // New entries in 1.6.1
-    ls->menuDiskDirInsert       = "Pod³¹cz folder";
+    ls->menuDiskDirInsert       = "Podepnij folder";
     ls->shortcutDiskDirInsertA  = "Pod³¹cz folder jako dyskietkê A";
     ls->shortcutDiskDirInsertB  = "Pod³¹cz folder jako dyskietkê B";
     ls->propMonDeInterlace      = " Usuwaj przeplot";
@@ -513,7 +513,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propEmuPauseSwitch      = " Prze³¹cznik pauzy";
     ls->propVideoFreqText       = "Czêstotliwoœæ obrazu:";
     ls->propVideoFreqAuto       = "Auto";
-    ls->propSndOversampleText   = "Oversample:";
+    ls->propSndOversampleText   = "Oversampling:";
 
     ls->confChipExtras          = "Extras";
     ls->confBoardGB             = "Board ";
@@ -554,7 +554,7 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->menuVideoSource         = "ród³o obrazu";
     ls->menuVideoSourceDefault  = "Nie pod³¹czono Ÿród³a obrazu";
-    ls->menuVideoChipAutodetect = "Autodetekcja ok³adu obrazu";
+    ls->menuVideoChipAutodetect = "Autodetekcja koœci obrazu";
     ls->propFullscreenResText   = "Pe³ny ekran:";
     ls->dlgSavePreview          = "Poka¿ podgl¹d";
     ls->dlgSaveDate             = "Czas zapisu:";
@@ -571,11 +571,11 @@ void langInitPolish(LanguageStrings* ls)
     ls->shortcutShowTrainer     = "Wyœwietl Trainer";
     ls->shortcutShowPorts       = "Wyœwietl w³aœciwoœci portów";
     
-    ls->propPorts               = "Ports";
+    ls->propPorts               = "Porty";
     ls->propPortsNone           = "Brak";
 
     // New entries in 2.3
-    ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
+    ls->enumControlsJoyTetris2Dongle = "Dongle Tetris 2";
 
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Drukuj do pliku";
@@ -587,6 +587,41 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->menuPrnFormfeed         = "Wysuñ papier";
     ls->menuFilePrn             = "Drukarka";
+
+    // New entries in 2.4
+    ls->shortcutShowMixer       = "Poka¿ mikser";
+    ls->menuToolsMixer          = "Mikser";
+    
+    ls->propSndMidiInGB         = "MIDI In ";
+    ls->propSndMidiOutGB        = "MIDI Out ";
+    ls->propSndMt32ToGmText     = " Mapuj instrumenty MT-32 na General MIDI";
+
+    ls->textDevice              = "Urz¹dzenie:";
+    ls->textFilename            = "Nazwa pliku:";
+    ls->textFile                = "Plik";
+    ls->textNone                = "Brak";
+
+    ls->enumEmuSyncAuto         = "Auto (szybkie)";
+    ls->enumEmuSync1ms          = "Synchronizuj z odœwie¿aniem MSX";
+    ls->enumEmuSyncVblank       = "Synchronizuj z synchronizacj¹ pionow¹ PC";
+
+    ls->propMonEffectsGB        = "Efekty ";
+    
+    ls->confSlot                = "Slot";
+    ls->confSubslot             = "Podslot";
+
+    ls->shortcut                = "Skrót";
+    ls->hotkey                  = "Hotkey";
+    ls->unknown                 = "Nieznany";
+    ls->romImage                = "ROM image";
+    ls->romImageOpen            = "Otwórz ROM";
+    ls->romCartridge            = "Kartrid¿ ROM";
+    ls->allFiles                = "Wszystkie pliki";
+    ls->cpuState                = "Stan CPU";
+    ls->diskImage               = "Obraz dysku";
+    ls->casImage                = "Obraz taœmy";
+
+    ls->menuCartExternalRam     = "Zewnêtrzny RAM";
 };
 
 
