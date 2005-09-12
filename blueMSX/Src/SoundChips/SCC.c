@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-09-10 21:23:09 $
+** $Date: 2005-09-12 04:29:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,7 @@ struct SCC
     int rotate[5];
     int readOnly[5];
     UInt8 offset[5];
+    Int32 oldSample[5];
     Int32  daVolume[5];
 
     Int32 in[5];
@@ -118,6 +119,9 @@ void sccLoadState(SCC* scc)
         
         sprintf(tag, "daVolume%d", i);
         scc->daVolume[i] = saveStateGet(state, tag, 0);
+
+        sprintf(tag, "oldSample%d", i);
+        scc->oldSample[i] = saveStateGet(state, tag, 0);
     }
 
     saveStateClose(state);
@@ -165,6 +169,9 @@ void sccSaveState(SCC* scc)
         
         sprintf(tag, "daVolume%d", i);
         saveStateSet(state, tag, scc->daVolume[i]);
+
+        sprintf(tag, "oldSample%d", i);
+        saveStateSet(state, tag, scc->oldSample[i]);
     }
 
     saveStateClose(state);
@@ -231,7 +238,7 @@ static void sccUpdateFreqAndVol(SCC* scc, UInt8 address, UInt8 value)
             scc->period[channel] = (scc->period[channel] & 0xf00) | (value & 0xff);
         }
         if (scc->deformValue & 0x20) {
-            scc->phaseStep[channel] = 0;
+            scc->phase[channel] = 0;
         }
         period = scc->period[channel];
 
@@ -245,7 +252,8 @@ static void sccUpdateFreqAndVol(SCC* scc, UInt8 address, UInt8 value)
         scc->phaseStep[channel] = period > 8 ? BASE_PHASE_STEP / (1 + period) : 0;
         
         scc->volume[channel] = scc->nextVolume[channel];
-        scc->phase[channel] &= (UInt32)-1 << 23;
+        scc->phase[channel] &= 0x1f << 23;
+        scc->oldSample[channel] = 0xff;
     } 
     else if (address < 0x0f) {
         scc->nextVolume[address - 0x0a] = value & 0x0f;
@@ -323,6 +331,7 @@ void sccReset(SCC* scc) {
         scc->readOnly[channel]   = 0;
         scc->offset[channel]     = 0;
         scc->daVolume[channel]   = 0;
+        scc->oldSample[channel]  = 0xff;
     }
 
     scc->deformValue = 0;
@@ -371,8 +380,6 @@ void sccDestroy(SCC* scc)
 
 UInt8 sccRead(SCC* scc, UInt8 address)
 {
-    UInt8 result;
-
     switch (scc->mode) {
 
     case SCC_REAL:
@@ -402,7 +409,7 @@ UInt8 sccRead(SCC* scc, UInt8 address)
         }
         
         if (address < 0xc0) {
-            result = sccGetWave(scc, 4, address);
+            return sccGetWave(scc, 4, address);
         } 
 
         if (address < 0xe0) {
@@ -410,7 +417,7 @@ UInt8 sccRead(SCC* scc, UInt8 address)
             return 0xff;
         }
  
-        result = 0xff;
+        return 0xff;
 
     case SCC_PLUS:
         if (address < 0xa0) {
@@ -574,87 +581,45 @@ static Int32 filter(SCC* scc, Int32 input) {
     return scc->outHp[0];
 }
 
-static Int32 sccUpdateSampleVolume(SCC* scc, int channel)
-{
-    Int32 volume = 15000 * 65 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
-    if (volume > scc->daVolume[channel]) {
-        scc->daVolume[channel] = volume;
-    }
-    return volume;
-}
-
 static Int32* sccSync(SCC* scc, UInt32 count)
 {
     Int32* buffer  = scc->buffer;
-    Int32  newVolume[5];
     Int32  channel;
     UInt32 index;
 
-    for (channel = 0; channel < 5; channel++) {
-        newVolume[channel] = sccUpdateSampleVolume(scc, channel);
-    }
+    for (index = 0; index < count; index++) {
+        Int32 masterVolume = 0;
+        for (channel = 0; channel < 5; channel++) {
+            Int32 refVolume;
+            Int32 phase;
+            Int32 sample;
 
-    if ((scc->deformValue & 0xc0) == 0x00) {
-        for (index = 0; index < count; index++) {
-            Int32 masterVolume = 0;
-            for (channel = 0; channel < 5; channel++) {
-                Int32 oldSample;
-                Int32 sample;
-
-                oldSample = scc->phase[channel] >> 23;
-                scc->phase[channel] = (scc->phase[channel] + scc->phaseStep[channel]) & 0xfffffff;
-                sample = scc->phase[channel] >> 23;
-
-                if (sample != oldSample) {
-                    scc->volume[channel] = scc->nextVolume[channel];
-                    newVolume[channel] = sccUpdateSampleVolume(scc, channel);
-                }
-
-                if (scc->daVolume[channel] > newVolume[channel]) {
-                    scc->daVolume[channel] = 90 * scc->daVolume[channel] / 100;
-                    if (scc->daVolume[channel] < newVolume[channel]) {
-                        scc->daVolume[channel] = newVolume[channel];
-                    }
-                }
-
-                masterVolume += scc->wave[channel][sample] * scc->daVolume[channel] / 15000;
-            }
-
-            buffer[index] = filter(scc, masterVolume);
-        }
-    }
-    else {
-        for (index = 0; index < count; index++) {
-            Int32 masterVolume = 0;
-            for (channel = 0; channel < 5; channel++) {
-                Int32 phase;
-                Int32 oldSample;
-                Int32 sample;
-
-                oldSample = scc->phase[channel] >> 23;
-
-                phase = scc->phase[channel] + scc->phaseStep[channel];
+            phase = scc->phase[channel] + scc->phaseStep[channel];
+            if (scc->rotate[channel] == ROTATE_ON) {
                 scc->offset[channel] += (UInt8)(phase >> scc->rotate[channel]);
-                phase &= 0xfffffff;
-                scc->phase[channel] = phase;
-                sample = phase >> 23;
-
-                if (sample != oldSample) {
-                    scc->volume[channel] = scc->nextVolume[channel];
-                    newVolume[channel] = sccUpdateSampleVolume(scc, channel);
-                }
-                
-                if (scc->daVolume[channel] > newVolume[channel]) {
-                    scc->daVolume[channel] = 90 * scc->daVolume[channel] / 100;
-                    if (scc->daVolume[channel] < newVolume[channel]) {
-                        scc->daVolume[channel] = newVolume[channel];
-                    }
-                }
-
-                masterVolume += scc->wave[channel][((phase >> 23) + scc->offset[channel]) & 0x1f] * scc->daVolume[channel] / 15000;
             }
-            buffer[index] = filter(scc, masterVolume);
+            phase &= 0xfffffff;
+            scc->phase[channel] = phase;
+
+            sample = ((phase >> 23) + scc->offset[channel]) & 0x1f;
+
+            if (sample != scc->oldSample[channel]) {
+                scc->volume[channel] = scc->nextVolume[channel];
+            }
+            scc->oldSample[channel] = sample;
+
+            refVolume = 65 * ((scc->enable >> channel) & 1) * (Int32)scc->volume[channel];
+            if (scc->daVolume[channel] < refVolume) {
+                scc->daVolume[channel] = refVolume;
+            }
+
+            masterVolume += scc->wave[channel][sample] * scc->daVolume[channel];
+            
+            if (scc->daVolume[channel] > refVolume) {
+                scc->daVolume[channel] = scc->daVolume[channel] * 9 / 10;
+            }
         }
+        buffer[index] = filter(scc, masterVolume);
     }
 
     return scc->buffer;
