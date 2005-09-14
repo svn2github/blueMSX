@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-08-21 21:31:37 $
+** $Date: 2005-09-14 04:12:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,7 +134,7 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 50;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 100;
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
 
@@ -251,7 +251,7 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
     pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
     if (GetSystemMetrics(SM_CYSCREEN) > 600) {
-        strcpy(pProperties->settings.themeName, "DIGIblue SUITE-X");
+        strcpy(pProperties->settings.themeName, "DIGIblue SUITE-X2");
     }
     else {
         strcpy(pProperties->settings.themeName, "Classic");
@@ -334,7 +334,7 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 95;
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 1;
+    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
     pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
 

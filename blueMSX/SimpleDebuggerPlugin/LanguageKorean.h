@@ -78,26 +78,26 @@ public:
         menuWindow                  = "윈도우";
 
         menuHelp                    = "도움말";
-        menuHelpAbout               = "디버거에 대하여";
+        menuHelpAbout               = "Debugger에 대하여";
 
-        debuggerName                = "디버거";
-        windowDebugger              = "blueMSX - 디버거";
+        debuggerName                = "Debugger";
+        windowDebugger              = "blueMSX - Debugger";
         windowDisassembly           = "디스어셈블리";
         windowDisassemblyUnavail    = "Disassembly unavailable.";
         windowCpuRegisters          = "CPU 레지스터";
-        windowCpuRegistersFlags     = "플래그";
+        windowCpuRegistersFlags     = "Flags";
         windowStack                 = "스택";
         windowStackUnavail          = "Stack unavailable.";
         windowCallstack             = "호출 스택";
         windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "메모리";
-        windowPeripheralRegisters   = "주변 레지스터";
+        windowPeripheralRegisters   = "주변장치 레지스터";
         windowIoPorts               = "입출력 포트";
 
-        memWindowRegisters          = "레지스터";
+		memWindowRegisters          = "Registers:";
 
-        memWindowMemory             = "메모리:";
-        memWindowAddress            = "주소:";
+        memWindowMemory             = "Memory:";
+        memWindowAddress            = "Address:";
 
         setBpWindowCaption          = "새로운 중단점 추가";
         gotoWindowCaption           = "주소로 가기";

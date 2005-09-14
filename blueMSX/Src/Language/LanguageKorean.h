@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.13 $ + additions 2005/03/03
+** $Revision: 1.14 $ + additions 2005/03/03
 **
-** $Date: 2005-09-08 17:24:35 $
+** $Date: 2005-09-14 04:12:07 $
 **
 ** More info: http://www.bluemsx.com
 **
