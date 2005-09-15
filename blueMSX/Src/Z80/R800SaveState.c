@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800SaveState.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:15 $
+** $Date: 2005-09-15 03:33:14 $
 **
 ** Author: Daniel Vik
 **
@@ -58,6 +58,7 @@
     regs.iff2  = (UInt8) saveStateGet(state, "iff2" #index, 0); \
     regs.im    = (UInt8) saveStateGet(state, "im"   #index, 0); \
     regs.halt  = (UInt8) saveStateGet(state, "halt" #index, 0); \
+    regs.ei_mode = (UInt8) saveStateGet(state, "ei_mode" #index, 0); \
 }
 
 #define r800SaveRegisterState(state, regs, index) {             \
@@ -81,6 +82,7 @@
     saveStateSet(state, "iff2" #index, regs.iff2);              \
     saveStateSet(state, "im"   #index, regs.im);                \
     saveStateSet(state, "halt" #index, regs.halt);              \
+    saveStateSet(state, "ei_mode" #index, regs.ei_mode);        \
 }
 
 void r800LoadState(R800* r800)
