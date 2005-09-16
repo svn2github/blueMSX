@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-08-20 05:33:41 $
+** $Date: 2005-09-16 16:28:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -865,6 +865,9 @@ int keyboardLoadConfig(char* configName)
 
     file = fopen(fileName, "r");
     if (file == NULL) {
+        if (kbdTable[DIK_NUMPADENTER] == 0) {
+            kbdTable[DIK_NUMPADENTER] = kbdTable[DIK_RETURN];
+        }
         return 0;
     }
     fclose(file);
@@ -889,6 +892,10 @@ int keyboardLoadConfig(char* configName)
                 kbdTable[dikKey] = i;
             }
         }
+    }
+
+    if (kbdTable[DIK_NUMPADENTER] == 0) {
+        kbdTable[DIK_NUMPADENTER] = kbdTable[DIK_RETURN];
     }
 
     return 1;
@@ -1013,6 +1020,17 @@ int archKeyboardIsKeyConfigured(int msxKeyCode)
 
 void keybardEnableEdit(int enable)
 {
+    if (enable) {
+        if (kbdTable[DIK_NUMPADENTER] == kbdTable[DIK_RETURN]) {
+            kbdTable[DIK_NUMPADENTER] = 0;
+        }
+    }
+    else {
+        if (kbdTable[DIK_NUMPADENTER] == 0) {
+            kbdTable[DIK_NUMPADENTER] = kbdTable[DIK_RETURN];
+        }
+    }
+
     editEnabled = enable;
     selectedKey = 0;
     selectedDikKey = 0;
