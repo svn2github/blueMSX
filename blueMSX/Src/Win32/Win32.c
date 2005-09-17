@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.100 $
+** $Revision: 1.101 $
 **
-** $Date: 2005-08-31 21:35:42 $
+** $Date: 2005-09-17 07:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,10 +93,10 @@ static EmuLanguageType getLangType()
 
     switch (langId) {
         case 0x0404: return EMU_LANG_CHINESETRAD;
-        case 0x0408: return EMU_LANG_CHINESESIMP;
-        case 0x040c: return EMU_LANG_CHINESETRAD;
-        case 0x0410: return EMU_LANG_CHINESESIMP;
-        case 0x0414: return EMU_LANG_CHINESETRAD;
+        case 0x0804: return EMU_LANG_CHINESESIMP;
+        case 0x0c04: return EMU_LANG_CHINESETRAD;
+        case 0x1004: return EMU_LANG_CHINESESIMP;
+        case 0x1404: return EMU_LANG_CHINESETRAD;
     }
 
     switch (langId & 0xff) {
@@ -1401,7 +1401,7 @@ void themeSet(char* themeName, int forceMatch) {
     SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
 
     if (st.rgnData != NULL) {
-        SetWindowRgn(st.hwnd, NULL, TRUE);
+//        SetWindowRgn(st.hwnd, NULL, TRUE);
         free(st.rgnData);
         st.rgnData = NULL;
     }
@@ -1465,6 +1465,9 @@ void themeSet(char* themeName, int forceMatch) {
                     CombineRgn(st.hrgn, st.hrgn, hrgn, RGN_XOR);
                 }
                 DeleteObject(hrgn);
+            }
+            else {
+                SetWindowRgn(st.hwnd, NULL, TRUE);
             }
         }
 
@@ -1539,7 +1542,7 @@ void archUpdateWindow() {
     }
 
     if (st.rgnData != NULL) {
-        SetWindowRgn(st.hwnd, NULL, TRUE);
+//        SetWindowRgn(st.hwnd, NULL, TRUE);
         free(st.rgnData);
         st.rgnData = NULL;
     }
@@ -2493,6 +2496,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     setDefaultPath();
 
     st.normalViedoSize = P_VIDEO_SIZEX2;
+    st.active = 1;
     st.buttonState = 0;
     st.showDialog = 0;
     st.enteringFullscreen = 1;
