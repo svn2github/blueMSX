@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-17 03:53:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -196,8 +196,8 @@ int readMachine(Machine* machine, char* machineName, char* file)
 
 void machineSave(Machine* machine)
 {
-    char dir[128];
-    char file[128];
+    char dir[512];
+    char file[512];
     char buffer[10000];
     int size = 0;
     int i;
@@ -353,7 +353,7 @@ char** machineGetAvailable(int checkRoms)
     }
 
     while (cont) {
-        char fileName[128];
+        char fileName[512];
 
 		DWORD fa = GetFileAttributes(wfd.cFileName);
         if (fa & FILE_ATTRIBUTE_DIRECTORY) {

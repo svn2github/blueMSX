@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-09-14 04:12:07 $
+** $Date: 2005-09-17 03:53:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -164,7 +164,7 @@ void actionToggleWaveCapture() {
 
 void actionLoadState() {
     char* filename;
-    char text[128];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
@@ -185,7 +185,7 @@ void actionSaveState() {
     char* filename;
 
     if (emulatorGetState() != EMU_STOPPED) {
-        char text[128];
+        char text[512];
         emulatorSuspend();
         sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
         replaceCharInString(text, '#', 0);
@@ -227,7 +227,7 @@ void actionQuickSaveState() {
 void actionCartInsert1() {
     RomType romType;
     char* filename;
-    char text[256];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
@@ -247,7 +247,7 @@ void actionCartInsert1() {
 void actionCartInsert2() {
     RomType romType;
     char* filename;
-    char text[256];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
@@ -389,7 +389,7 @@ void actionDiskDirInsertB() {
 
 void actionDiskInsertA() {
     char* filename;
-    char text[128];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
@@ -406,7 +406,7 @@ void actionDiskInsertA() {
 
 void actionDiskInsertB() {
     char* filename;
-    char text[128];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
@@ -512,7 +512,7 @@ void actionEmuSpeedIncrease() {
 
 void actionCasInsert() {
     char* filename;
-    char text[128];
+    char text[512];
 
     emulatorSuspend();
     sprintf(text, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langCasImage(), langAllFiles());
@@ -709,7 +709,7 @@ void actionCasSave() {
     char* filename;
 
     if (*state.properties->cassette.tape) {
-        char text[128];
+        char text[512];
         int type;
 
         if (emulatorGetState() == EMU_STOPPED) {

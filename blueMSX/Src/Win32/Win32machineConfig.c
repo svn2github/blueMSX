@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-08-31 21:07:40 $
+** $Date: 2005-09-17 03:53:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1177,7 +1177,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 static char  defDir[MAX_PATH] = { 0 };
                 char  curDir[MAX_PATH];
                 char* fileName;
-                char text[128];
+                char text[512];
 
                 GetCurrentDirectory(MAX_PATH, curDir);
                 if (strlen(defDir) == 0) {

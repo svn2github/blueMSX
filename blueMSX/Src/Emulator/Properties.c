@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-09-14 04:12:07 $
+** $Date: 2005-09-17 03:53:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,7 @@
 void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     int i;
-    pProperties->language = EMU_LANG_ENGLISH;
+    pProperties->language                      = langType;
     
     pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
@@ -246,7 +246,7 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
 void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     int i;
-    pProperties->language                 = EMU_LANG_ENGLISH;
+    pProperties->language                      = langType;
 
     pProperties->settings.showStatePreview     = 1;
     pProperties->settings.disableScreensaver   = 0;
