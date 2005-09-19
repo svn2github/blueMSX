@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-09-19 23:40:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,9 +30,12 @@
 #ifndef LANGUAGE_STRINGS_H
 #define LANGUAGE_STRINGS_H
 
+#ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
-
+#else
+typedef char _TCHAR;
+#endif
 
 typedef struct {
     _TCHAR* statusBarStopped;

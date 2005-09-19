@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-06-11 21:15:48 $
+** $Date: 2005-09-19 23:40:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,9 @@
 #include "ziphelper.h"
 #include "RomLoader.h"
 #include "ArchNotifications.h"
+#ifdef ARCH_GLOB
+#include "ArchGlob.h"
+#endif
 #include <stdio.h>
 #include <sys/stat.h>
 #include <direct.h>
@@ -422,6 +425,76 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 
 
 
+#ifdef ARCH_GLOB
+static UInt32 fileWriteTime(const char* filename)
+{
+  struct stat s;
+  struct tm *tm;
+  int rv;
+  
+  rv = stat(filename, &s);
+
+  return rv < 0 ? 0 : s.st_mtime;
+}
+
+char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension, int digits)
+{
+    ArchGlob* glob;
+    static char filename[512];
+    char baseName[128];
+    int fileIndex = 0;
+    int extensionLen = strlen(extension);
+    int i;
+    int numMod = 1;
+    char filenameFormat[32] = "%s\\%s%s_";
+    char destfileFormat[32];
+
+    for (i = 0; i < digits; i++) {
+        strcat(filenameFormat, "?");
+        numMod *= 10;
+    }
+    strcat(filenameFormat, "%s");
+    sprintf(destfileFormat, "%%s\\%%s%%s_%%0%di%%s", digits);
+    
+    strcpy(baseName, createSaveFileBaseName(properties, 0));
+
+	mkdir(directory);
+
+    sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
+
+    glob = archGlob("Machines/*", ARCH_GLOB_FILES);
+
+    if (globHandle) {
+        if (glob->count > 0) {
+            UInt32 writeTime = fileWriteTime(glob->pathVector[0]);
+	        char lastfile[512];
+            int filenameLen;
+		    strcpy(lastfile, glob->pathVector[0]);
+
+            for (i = 1; i < glob->count; i++) {
+                UInt32 thisWriteTime = fileWriteTime(glob->pathVector[i]);
+                if (thisWriteTime > 0 && thisWriteTime < writeTime) {
+                    break;
+                }
+                writeTime = thisWriteTime;
+		        strcpy(lastfile, glob->pathVector[i]);
+            }
+            
+            filenameLen = strlen(lastfile);
+
+            if (filenameLen > extensionLen + digits) {
+                lastfile[filenameLen - extensionLen] = 0;
+                fileIndex = (atoi(&lastfile[filenameLen - extensionLen - digits]) + 1) % numMod;
+            }
+        }
+        archGlobFree(glob);
+    }
+
+    sprintf(filename, destfileFormat, directory, prefix, baseName, fileIndex, extension);
+
+    return filename;
+}
+#else
 char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension, int digits)
 {
 	WIN32_FIND_DATA fileData;
@@ -471,11 +544,11 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
             lastfile[filenameLen - extensionLen] = 0;
             fileIndex = (atoi(&lastfile[filenameLen - extensionLen - digits]) + 1) % numMod;
         }
+        FindClose(hFile);
     }
-
-    FindClose(hFile);
 
     sprintf(filename, destfileFormat, directory, prefix, baseName, fileIndex, extension);
 
     return filename;
 }
+#endif

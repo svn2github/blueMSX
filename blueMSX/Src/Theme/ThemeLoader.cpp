@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-09-08 18:22:14 $
+** $Date: 2005-09-19 23:40:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,9 @@ extern "C" {
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "Keyboard.h"
+#ifdef ARCH_GLOB
+#include "ArchGlob.h"
+#endif
 }
 
 #define MAX_CLIP_POINTS 512
@@ -1270,6 +1273,38 @@ extern "C" ThemeCollection* themeLoad(char* themeName, char* path)
 
 static ThemeCollection** currentWin32Theme = NULL;
 
+#ifdef ARCH_GLOB
+extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
+{
+    ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
+    int index = 0;
+
+    // Set default theme
+    if (defaultTheme != NULL) {
+        themeList[index++] = defaultTheme;
+    }
+
+    ArchGlob* glob = archGlob("Themes/*", ARCH_GLOB_DIRS);
+
+    if (globHandle != NULL) {
+        for (int i = 0; i < glob->count; i++) {
+            ThemeCollection* themeCollection = themeLoad(glob->pathVector[i], NULL);
+            if (themeCollection != NULL) {
+                if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
+                if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
+                if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
+                themeList[index++] = themeCollection;
+            }
+        }
+        archGlobFree(glob);
+    }
+    themeList[index] = NULL;
+
+    currentWin32Theme = themeList;
+
+    return themeList;
+}
+#else
 extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 {
     ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
@@ -1307,6 +1342,7 @@ extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 
     return themeList;
 }
+#endif
 
 extern "C" ThemeCollection** themeGetAvailable()
 {

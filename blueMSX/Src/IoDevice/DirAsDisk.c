@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:58 $
+** $Date: 2005-09-19 23:40:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#ifdef ARCH_GLOB
+#include "ArchGlob.h"
+#endif
 
 static const unsigned char msxboot[] = { 
 	0xeb,0xfe,0x90,0x44,0x53,0x4b,0x54,0x4f,
@@ -401,6 +404,38 @@ int add_single_file (char *name, char *pathname) {
 }
 
 
+#ifdef ARCH_GLOB
+void* dirLoadFile(char* directory, int* size)
+{
+    ArchGlob* glob;
+    static char filename[512];
+    int success;
+
+    load_dsk();
+
+    sprintf(filename, "%s\\*.*", directory);
+
+    glob = archGlob(filename, ARCH_GLOB_FILES);
+
+    if (globHandle != NULL) {
+        int i;
+        for (int i = 0; i < glob->count; i++) {
+            int rv = add_single_file(glob->pathVector[i], directory);
+            if (rv) {
+                free(dskimage);
+                dskimage = NULL;
+                break;
+            }
+        }
+
+        archGlobFree(glob);
+    }
+
+    *size = 720 * 1024;
+
+    return dskimage;
+}
+#else
 void* dirLoadFile(char* directory, int* size)
 {
 	WIN32_FIND_DATA fileData;
@@ -434,3 +469,5 @@ void* dirLoadFile(char* directory, int* size)
 
     return dskimage;
 }
+#endif
+

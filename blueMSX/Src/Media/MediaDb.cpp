@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-09-19 23:40:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,9 @@ extern "C" {
 #include "TokenExtract.h"
 #include "StrcmpNoCase.h"
 #include "Language.h"
+#ifdef ARCH_GLOB
+#include "ArchGlob.h"
+#endif
 }
 
 #include "TinyXml.h"
@@ -701,6 +704,34 @@ extern "C" const char* romTypeToShortString(RomType romType)
     return "UNKNOWN";
 }
 
+#ifdef ARCH_GLOB
+extern "C" void mediaDbLoad(const char* directory)
+{
+    if (romdb == NULL) {
+        romdb = new MediaDb;
+    }
+    if (diskdb == NULL) {
+        diskdb = new MediaDb;
+    }
+    if (casdb == NULL) {
+        casdb = new MediaDb;
+    }
+
+    string path = directory;
+    path += "\\";
+
+    string searchPath = path + "*.xml";
+
+    ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_FILES);
+
+    if (globHandle != NULL) {
+        for (int i = 0; i < glob->count; i++) {
+            mediaDbAddFromXmlFile(glob->pathVector[i]);
+        }
+        archGlobFree(glob);
+    }
+}
+#else
 extern "C" void mediaDbLoad(const char* directory)
 {
     if (romdb == NULL) {
@@ -729,6 +760,7 @@ extern "C" void mediaDbLoad(const char* directory)
     	FindClose(handle);
     }
 }
+#endif
 
 extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size) 
 {

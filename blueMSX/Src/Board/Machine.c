@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-09-17 03:53:37 $
+** $Date: 2005-09-19 23:40:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,9 @@
 */
 #include "Machine.h"
 #include "SaveState.h"
+#ifdef ARCH_GLOB
+#include "ArchGlob.h"
+#endif
 #include <stdlib.h>
 #include <windows.h>
 #include <direct.h>
@@ -336,6 +339,40 @@ int machineIsValid(char* machineName, int checkRoms)
     return success;
 }
 
+#ifdef ARCH_GLOB
+char** machineGetAvailable(int checkRoms)
+{
+    static char* machineNames[256];
+    static char  names[256][64];
+    ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
+
+    if (glob == NULL) {
+        machineNames[0] = NULL;
+        return machineNames;
+    }
+
+    for (i = 0; i < glob->count; i++) {
+        FILE* file;
+		sprintf(fileName, "Machines/%s/config.ini", glob->pathVector[i]);
+        file = fopen(fileName, "rb");
+        if (file != NULL) {
+            if (machineIsValid(glob->pathVector[i], checkRoms)) {
+                strcpy(names[index], wfd.cFileName);
+                machineNames[index] = names[index];
+                index++;
+            }
+            fclose(file);
+        }
+    }
+
+    archGlobFree(glob);
+    
+    machineNames[index] = NULL;
+
+    return machineNames;
+}
+#else
+
 char** machineGetAvailable(int checkRoms)
 {
     static char* machineNames[256];
@@ -379,6 +416,7 @@ char** machineGetAvailable(int checkRoms)
 
     return machineNames;
 }
+#endif
 
 void machineUpdate(Machine* machine)
 {
