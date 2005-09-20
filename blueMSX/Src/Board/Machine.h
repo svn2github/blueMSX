@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,12 +83,12 @@ typedef struct {
 } Machine;
 
 
-Machine* machineCreate(char* machineName);
+Machine* machineCreate(const char* machineName);
 void machineDestroy(Machine* machine);
 
 char** machineGetAvailable(int checkRoms);
 
-int machineIsValid(char* machineName, int checkRoms);
+int machineIsValid(const char* machineName, int checkRoms);
 
 void machineUpdate(Machine* machine);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-09-19 23:40:49 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,6 +27,8 @@
 **
 ******************************************************************************
 */
+#define USE_ARCH_GLOB
+
 #include "TinyXml.h"
 #include "ThemeLoader.h"
 extern "C" {
@@ -34,7 +36,7 @@ extern "C" {
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "Keyboard.h"
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #endif
 }
@@ -1215,19 +1217,13 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 }
 
 
-extern "C" ThemeCollection* themeLoad(char* themeName, char* path) 
+extern "C" ThemeCollection* themeLoad(const char* themePath) 
 {
-    char dirName[512];
     char oldDirName[512];
-    if (path == NULL) {
-        path = "Themes";
-    }
 
     GetCurrentDirectory(512, oldDirName);
 
-    sprintf(dirName, "%s\\%s\\%s", oldDirName, path, themeName);
-
-    SetCurrentDirectory(dirName);
+    SetCurrentDirectory(themePath);
 
     TiXmlDocument doc("Theme.xml");
 
@@ -1247,6 +1243,14 @@ extern "C" ThemeCollection* themeLoad(char* themeName, char* path)
 
     const char* name = root->Attribute( "name" );
     if (name == NULL) {
+        const char* themeName = strrchr(themePath, '/');
+        if (themeName == NULL) {
+            themeName = strrchr(themePath, '\\');
+        }
+        if (themeName == NULL) {
+            themeName = themePath - 1;
+        }
+        themeName++;
         name = themeName;
     }
 
@@ -1273,7 +1277,7 @@ extern "C" ThemeCollection* themeLoad(char* themeName, char* path)
 
 static ThemeCollection** currentWin32Theme = NULL;
 
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 {
     ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
@@ -1286,9 +1290,9 @@ extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 
     ArchGlob* glob = archGlob("Themes/*", ARCH_GLOB_DIRS);
 
-    if (globHandle != NULL) {
+    if (glob != NULL) {
         for (int i = 0; i < glob->count; i++) {
-            ThemeCollection* themeCollection = themeLoad(glob->pathVector[i], NULL);
+            ThemeCollection* themeCollection = themeLoad(glob->pathVector[i]);
             if (themeCollection != NULL) {
                 if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
                 if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;

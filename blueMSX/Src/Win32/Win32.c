@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.101 $
+** $Revision: 1.102 $
 **
-** $Date: 2005-09-17 07:44:25 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2777,7 +2777,10 @@ void archShowKeyboardEditor()
     static ThemeCollection* tc = NULL;
     
     if (tc == NULL) {
-        tc = themeLoad("Theme", "Keyboard Config");
+        char themePath[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, themePath);
+        strcat(themePath, "\\Keyboard Config\\Theme");
+        tc = themeLoad(themePath);
     }
 
     if (tc == NULL) {
@@ -2793,7 +2796,10 @@ void archShowMixer()
     static ThemeCollection* tc = NULL;
     
     if (tc == NULL) {
-        tc = themeLoad("Mixer", "Properties");
+        char themePath[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, themePath);
+        strcat(themePath, "\\Properties\\Mixer");
+        tc = themeLoad(themePath);
     }
 
     if (tc == NULL) {

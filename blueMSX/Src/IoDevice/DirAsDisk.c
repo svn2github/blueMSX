@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-19 23:40:48 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include <windows.h>
+#define USE_ARCH_GLOB
 #include <fcntl.h>
 #include <io.h>
 #include <sys/types.h>
@@ -36,8 +36,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
+#else
+#include <windows.h>
 #endif
 
 static const unsigned char msxboot[] = { 
@@ -322,7 +324,7 @@ int add_single_file (char *name, char *pathname) {
   int result;
 
   strcpy (fullname,pathname);
-  strcat (fullname,"\\");
+  strcat (fullname,"/");
   strcat (fullname,name);
   fileid=open (fullname,O_BINARY|O_RDONLY);
   
@@ -404,23 +406,31 @@ int add_single_file (char *name, char *pathname) {
 }
 
 
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 void* dirLoadFile(char* directory, int* size)
 {
     ArchGlob* glob;
     static char filename[512];
-    int success;
 
     load_dsk();
 
-    sprintf(filename, "%s\\*.*", directory);
+    sprintf(filename, "%s/*", directory);
 
     glob = archGlob(filename, ARCH_GLOB_FILES);
 
-    if (globHandle != NULL) {
+    if (glob != NULL) {
+        int rv;
         int i;
-        for (int i = 0; i < glob->count; i++) {
-            int rv = add_single_file(glob->pathVector[i], directory);
+        for (i = 0; i < glob->count; i++) {
+            char* fileName = strrchr(glob->pathVector[i], '/');
+            if (fileName == NULL) {
+                fileName = strrchr(glob->pathVector[i], '\\');
+            }
+            if (fileName == NULL) {
+                continue;
+            }
+            fileName++;
+            rv = add_single_file(fileName, directory);
             if (rv) {
                 free(dskimage);
                 dskimage = NULL;

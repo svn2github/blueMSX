@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Glob.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-19 23:40:50 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,26 +31,53 @@
 #include <stdlib.h>
 #include "ArchGlob.h"
 
+// This glob only support very basic globbing, dirs in the patterns are only 
+// supported without any wildcards
+
 ArchGlob* archGlob(const char* pattern, int flags)
 {
+    char oldPath[MAX_PATH];
+    const char* filePattern;
     ArchGlob* glob;
     WIN32_FIND_DATA wfd;
-    HANDLE handle = FindFirstFile(pattern, &wfd);
+    HANDLE handle;
 
-    if (handle != INVALID_HANDLE_VALUE) {
+    GetCurrentDirectory(MAX_PATH, oldPath);
+
+    filePattern = strrchr(pattern, '/');
+    if (filePattern == NULL) {
+        filePattern = pattern;
+    }
+    else {
+        char relPath[MAX_PATH];
+        strcpy(relPath, pattern);
+        relPath[filePattern - pattern] = '\0';
+        pattern = filePattern + 1;
+        SetCurrentDirectory(relPath);
+    }
+
+    handle = FindFirstFile(pattern, &wfd);
+    if (handle == INVALID_HANDLE_VALUE) {
+        SetCurrentDirectory(oldPath);
         return NULL;
     }
 
     glob = (ArchGlob*)calloc(1, sizeof(ArchGlob));
 
     do {
-		DWORD fa = GetFileAttributes(wfd.cFileName);
+        DWORD fa;
+        if (0 == strcmp(wfd.cFileName, ".") || 0 == strcmp(wfd.cFileName, "..")) {
+            continue;
+        }
+		fa = GetFileAttributes(wfd.cFileName);
         if (((flags & ARCH_GLOB_DIRS) && (fa & FILE_ATTRIBUTE_DIRECTORY) != 0) ||
             ((flags & ARCH_GLOB_FILES) && (fa & FILE_ATTRIBUTE_DIRECTORY) == 0))
         {
             char* path = (char*)malloc(MAX_PATH);
-            char* offset;
-            GetFullPathName(wfd.cFileName, MAX_PATH, path, &offset);
+            GetCurrentDirectory(MAX_PATH, path);
+            strcat(path, "\\");
+            strcat(path, wfd.cFileName);
+
             glob->count++;
             glob->pathVector = realloc(glob->pathVector, sizeof(char*) * glob->count);
             glob->pathVector[glob->count - 1] = path;
@@ -58,6 +85,8 @@ ArchGlob* archGlob(const char* pattern, int flags)
     } while (FindNextFile(handle, &wfd));
 
     FindClose(handle);
+
+    SetCurrentDirectory(oldPath);
 
     return glob;
 }

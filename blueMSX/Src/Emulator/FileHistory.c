@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-09-19 23:40:48 $
+** $Date: 2005-09-20 01:36:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,12 +27,13 @@
 **
 ******************************************************************************
 */
+#define USE_ARCH_GLOB
 #include "FileHistory.h"
 #include "Properties.h"
 #include "ziphelper.h"
 #include "RomLoader.h"
 #include "ArchNotifications.h"
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #endif
 #include <stdio.h>
@@ -425,11 +426,10 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 
 
 
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 static UInt32 fileWriteTime(const char* filename)
 {
   struct stat s;
-  struct tm *tm;
   int rv;
   
   rv = stat(filename, &s);
@@ -446,7 +446,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     int extensionLen = strlen(extension);
     int i;
     int numMod = 1;
-    char filenameFormat[32] = "%s\\%s%s_";
+    char filenameFormat[32] = "%s/%s%s_";
     char destfileFormat[32];
 
     for (i = 0; i < digits; i++) {
@@ -454,7 +454,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
         numMod *= 10;
     }
     strcat(filenameFormat, "%s");
-    sprintf(destfileFormat, "%%s\\%%s%%s_%%0%di%%s", digits);
+    sprintf(destfileFormat, "%%s/%%s%%s_%%0%di%%s", digits);
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 
@@ -462,9 +462,9 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
-    glob = archGlob("Machines/*", ARCH_GLOB_FILES);
+    glob = archGlob(filename, ARCH_GLOB_FILES);
 
-    if (globHandle) {
+    if (glob) {
         if (glob->count > 0) {
             UInt32 writeTime = fileWriteTime(glob->pathVector[0]);
 	        char lastfile[512];

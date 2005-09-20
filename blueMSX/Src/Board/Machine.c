@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-09-19 23:40:48 $
+** $Date: 2005-09-20 01:36:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,13 +27,18 @@
 **
 ******************************************************************************
 */
+#define USE_ARCH_GLOB
 #include "Machine.h"
 #include "SaveState.h"
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
+#include <string.h>
+#include <ctype.h>
+#include <windows.h>
+#else
+#include <windows.h>
 #endif
 #include <stdlib.h>
-#include <windows.h>
 #include <direct.h>
 
 #include "TokenExtract.h"
@@ -53,7 +58,7 @@ int toint(char* buffer)
     return atoi(buffer);
 }
 
-int readMachine(Machine* machine, char* machineName, char* file)
+static int readMachine(Machine* machine, const char* machineName, const char* file)
 {
     static char buffer[10000];
     char* slotBuf;
@@ -277,7 +282,7 @@ void machineSave(Machine* machine)
     WritePrivateProfileSection("Slots", buffer, file);
 }
 
-Machine* machineCreate(char* machineName)
+Machine* machineCreate(const char* machineName)
 {
     char fileName[512];
     Machine* machine;
@@ -303,7 +308,7 @@ void machineDestroy(Machine* machine)
 }
 
 
-int machineIsValid(char* machineName, int checkRoms)
+int machineIsValid(const char* machineName, int checkRoms)
 {
     Machine* machine = machineCreate(machineName);
     int i;
@@ -339,12 +344,14 @@ int machineIsValid(char* machineName, int checkRoms)
     return success;
 }
 
-#ifdef ARCH_GLOB
+#ifdef USE_ARCH_GLOB
 char** machineGetAvailable(int checkRoms)
 {
     static char* machineNames[256];
     static char  names[256][64];
     ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
+    int index = 0;
+    int i;
 
     if (glob == NULL) {
         machineNames[0] = NULL;
@@ -352,12 +359,21 @@ char** machineGetAvailable(int checkRoms)
     }
 
     for (i = 0; i < glob->count; i++) {
+        char fileName[512];
         FILE* file;
-		sprintf(fileName, "Machines/%s/config.ini", glob->pathVector[i]);
+		sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
         file = fopen(fileName, "rb");
         if (file != NULL) {
-            if (machineIsValid(glob->pathVector[i], checkRoms)) {
-                strcpy(names[index], wfd.cFileName);
+            const char* name = strrchr(glob->pathVector[i], '/');
+            if (name == NULL) {
+                name = strrchr(glob->pathVector[i], '\\');
+            }
+            if (name == NULL) {
+                name = glob->pathVector[i] - 1;
+            }
+            name++;
+            if (machineIsValid(name, checkRoms)) {
+                strcpy(names[index], name);
                 machineNames[index] = names[index];
                 index++;
             }
