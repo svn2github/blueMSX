@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Properties.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:30:27 $
+** $Date: 2005-09-22 23:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,7 +40,6 @@
 
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video);
 
-void propertiesInit(char* iniFile);
 void propUpdateJoyinfo(Properties* pProperties);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchKeyStorage.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/VeryTinyXpath.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-09-22 23:04:28 $
+** $Date: 2005-09-22 23:04:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,12 +27,29 @@
 **
 ******************************************************************************
 */
-#ifndef ARCH_KEY_STORAGE_H
-#define ARCH_KEY_STORAGE_H
+#ifndef VERY_TINY_XPATH_H
+#define VERY_TINY_XPATH_H
 
-void getIntValue(char* keyFile, char* keyDir, char* keyStr, int* returnValue);
-int  setIntValue(char* keyFile, char* keyDir, char* keyStr, int value);
-void getStrValue(char* keyFile, char* keyDir, char* keyStr, char* returnValue);
-int  setStrValue(char* keyFile, char* keyDir, char* keyStr, char* value);
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+typedef struct VtXpath VtXpath;
+
+#define VTXPATH_INT_NOT_FOUND 0x789abcde
+
+VtXpath* vtXpathOpenForRead(const char* fileName);
+VtXpath* vtXpathOpenForWrite(const char* fileName);
+void vtXpathClose(VtXpath* xpath);
+
+int vtXpathGetInt(VtXpath* xpath, int numLevels, const char* first, ...);
+const char* vtXpathGetString(VtXpath* xpath, int numLevels, const char* first, ...);
+
+void vtXpathSetInt(VtXpath* xpath, int value, int numLevels, const char* first, ...);
+void vtXpathSetString(VtXpath* xpath, const char* value, int numLevels, const char* first, ...);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // VERY_TINY_XPATH_H

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-09-22 23:04:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1215,7 +1215,6 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 
     return theme;
 }
-
 
 extern "C" ThemeCollection* themeLoad(const char* themePath) 
 {

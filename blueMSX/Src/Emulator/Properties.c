@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-09-17 03:53:37 $
+** $Date: 2005-09-22 23:04:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,216 +31,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#ifdef USE_XMLFORMAT
+#include "VeryTinyXpath.h"
+#else
 #include "ArchKeyStorage.h"
-
+#endif
 #include "Properties.h"
 #include "Machine.h"
 #include "Board.h"
 
-
-/* Alternative property default settings */
-#ifdef PROPERTIES_DEFAULTS_ALT_1
-
-void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
-{
-    int i;
-    pProperties->language                      = langType;
-    
-    pProperties->settings.showStatePreview     = 1;
-    pProperties->settings.disableScreensaver   = 0;
-    strcpy(pProperties->settings.themeName, "Classic");
-
-    memset(pProperties->settings.windowPos, 0, sizeof(pProperties->settings.windowPos));
-
-    pProperties->emulation.statsDefDir[0]     = 0;
-    pProperties->emulation.shortcutProfile[0] = 0;
-    strcpy(pProperties->emulation.machineName, "MSX2 - Brazilian");
-    pProperties->emulation.speed             = 50;
-    pProperties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
-    pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
-    pProperties->emulation.enableFdcTiming   = 1;
-    pProperties->emulation.frontSwitch       = 0;
-    pProperties->emulation.pauseSwitch       = 0;
-    pProperties->emulation.audioSwitch       = 0;
-    pProperties->emulation.registerFileTypes = 0;
-    pProperties->emulation.disableWinKeys    = 0;
-    pProperties->emulation.priorityBoost     = 0;
-    
-    pProperties->video.monType               = P_VIDEO_COLOR;
-    pProperties->video.palEmu                = P_VIDEO_PALNONE;
-    pProperties->video.size                  = P_VIDEO_SIZEX2;
-    pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
-    pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
-    pProperties->video.fullscreen.width      = 640;
-    pProperties->video.fullscreen.height     = 480;
-    pProperties->video.fullscreen.bitDepth   = 32;
-    pProperties->video.deInterlace           = 1;
-    pProperties->video.horizontalStretch     = 0;
-    pProperties->video.verticalStretch       = 0;
-    pProperties->video.contrast              = 100;
-    pProperties->video.brightness            = 100;
-    pProperties->video.saturation            = 100;
-    pProperties->video.gamma                 = 100;
-    pProperties->video.scanlinesEnable       = 0;
-    pProperties->video.colorSaturationEnable = 0;
-    pProperties->video.scanlinesPct          = 85;
-    pProperties->video.colorSaturationWidth  = 2;
-    pProperties->video.chipAutodetect        = 1;
-    
-
-    pProperties->sound.driver             = P_SOUND_DRVDIRECTX;
-    pProperties->sound.frequency          = P_SOUND_FREQ44;
-    pProperties->sound.bufSize            = 150;
-    pProperties->sound.syncMethod         = P_SOUND_SYNCQADJUST;
-
-    pProperties->sound.stereo = 1;
-    pProperties->sound.masterVolume = 100;
-    pProperties->sound.masterEnable = 1;
-    pProperties->sound.chip.enableYM2413 = 1;
-    pProperties->sound.chip.enableY8950 = 1;
-    pProperties->sound.chip.enableMoonsound = 1;
-    pProperties->sound.chip.moonsoundSRAM = 640;
-
-    pProperties->sound.chip.ym2413Oversampling = 1;
-    pProperties->sound.chip.y8950Oversampling = 1;
-    pProperties->sound.chip.moonsoundOversampling = 1;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 100;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
-
-    pProperties->sound.MidiIn.type             = P_MIDI_NONE;
-    pProperties->sound.MidiIn.name[0]          = 0;
-    strcpy(pProperties->sound.MidiIn.fileName, "midiin.dat");
-    pProperties->sound.MidiIn.desc[0]          = 0;
-    pProperties->sound.MidiOut.type            = P_MIDI_NONE;
-    pProperties->sound.MidiOut.name[0]         = 0;
-    strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
-    pProperties->sound.MidiOut.desc[0]         = 0;
-    pProperties->sound.MidiOut.mt32ToGm        = 0;
-
-    pProperties->joy1.type              = P_JOY_NUMPAD;
-    pProperties->joy1.autofire          = P_JOY_AFOFF;
-    pProperties->joy1.keyUp             = 0xff;
-    pProperties->joy1.keyDown           = 0xff;
-    pProperties->joy1.keyLeft           = 0xff;
-    pProperties->joy1.keyRight          = 0xff;
-    pProperties->joy1.button1           = 0xff;
-    pProperties->joy1.button2           = 0xff;
-    pProperties->joy1.hwType            = 0;
-    pProperties->joy1.hwName[0]         = 0;
-    pProperties->joy1.hwIndex           = 0;
-    pProperties->joy1.hwButtonA         = 0;
-    pProperties->joy1.hwButtonB         = 1;
-    
-    pProperties->joy2.type              = P_JOY_NONE;
-    pProperties->joy2.autofire          = P_JOY_AFOFF;
-    pProperties->joy2.keyUp             = 0xff;
-    pProperties->joy2.keyDown           = 0xff;
-    pProperties->joy2.keyLeft           = 0xff;
-    pProperties->joy2.keyRight          = 0xff;
-    pProperties->joy2.button1           = 0xff;
-    pProperties->joy2.button2           = 0xff;
-    pProperties->joy2.hwType            = 0;
-    pProperties->joy2.hwName[0]         = 0;
-    pProperties->joy2.hwIndex           = 0;
-    pProperties->joy2.hwButtonA         = 0;
-    pProperties->joy2.hwButtonB         = 1;
-    
-    pProperties->keyboard.configFile[0] = 0;
-    
-    pProperties->cartridge.defaultType  = ROM_UNKNOWN;
-    pProperties->cartridge.defDir[0]    = 0;
-    pProperties->cartridge.slotA[0]     = 0;
-    pProperties->cartridge.slotAType    = ROM_UNKNOWN;
-    pProperties->cartridge.slotB[0]     = 0;
-    pProperties->cartridge.slotBType    = ROM_UNKNOWN;
-    pProperties->cartridge.slotAZip[0]  = 0;
-    pProperties->cartridge.slotBZip[0]  = 0;
-    pProperties->cartridge.slotAFilter  = 1;
-    pProperties->cartridge.slotBFilter  = 1;
-    pProperties->cartridge.autoReset    = 1;
-    pProperties->cartridge.quickStartDrive = 0;
-
-    pProperties->diskdrive.defDir[0]    = 0;
-    pProperties->diskdrive.slotA[0]     = 0;
-    pProperties->diskdrive.slotB[0]     = 0;
-    pProperties->diskdrive.slotAZip[0]  = 0;
-    pProperties->diskdrive.slotBZip[0]  = 0;
-    pProperties->diskdrive.slotADir[0]  = 0;
-    pProperties->diskdrive.slotBDir[0]  = 0;
-    pProperties->diskdrive.slotAFilter  = 1;
-    pProperties->diskdrive.slotBFilter  = 1;
-    pProperties->diskdrive.autostartA   = 0;
-    pProperties->diskdrive.quickStartDrive = 0;
-    
-    pProperties->cassette.defDir[0]       = 0;
-    pProperties->cassette.tape[0]         = 0;
-    pProperties->cassette.tapeZip[0]      = 0;
-    pProperties->cassette.filter          = 1;
-    pProperties->cassette.showCustomFiles = 1;
-    pProperties->cassette.readOnly        = 1;
-    pProperties->cassette.autoRewind      = 0;
-    
-    pProperties->ports.Lpt.type           = P_LPT_NONE;
-    pProperties->ports.Lpt.emulation      = P_LPT_MSXPRN;
-    pProperties->ports.Lpt.name[0]        = 0;
-    strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
-    pProperties->ports.Lpt.portName[0]    = 0;
-    
-    pProperties->ports.Com.type           = P_COM_NONE;
-    pProperties->ports.Com.name[0]        = 0;
-    strcpy(pProperties->ports.Com.fileName, "uart.dat");
-    pProperties->ports.Com.portName[0]    = 0;
-
-    for (i = 0; i < MAX_HISTORY; i++) {
-        pProperties->filehistory.cartridgeA[i][0] = 0;
-        pProperties->filehistory.cartridgeTypeA[i] = ROM_UNKNOWN;
-        pProperties->filehistory.cartridgeB[i][0] = 0;
-        pProperties->filehistory.cartridgeTypeB[i] = ROM_UNKNOWN;
-        pProperties->filehistory.diskdriveA[i][0] = 0;
-        pProperties->filehistory.diskdriveB[i][0] = 0;
-        pProperties->filehistory.cassette[i][0] = 0;
-    }
-
-    pProperties->filehistory.quicksave[0] = 0;
-    pProperties->filehistory.count        = 10;
-}
-
-#else
 
 /* Default property settings */
 void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
@@ -304,7 +103,7 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
     pProperties->sound.chip.enableYM2413 = 1;
     pProperties->sound.chip.enableY8950 = 1;
     pProperties->sound.chip.enableMoonsound = 1;
-    pProperties->sound.chip.moonsoundSRAM = 640;
+    pProperties->sound.chip.moonsoundSRAMSize = 640;
     
     pProperties->sound.chip.ym2413Oversampling = 1;
     pProperties->sound.chip.y8950Oversampling = 1;
@@ -445,429 +244,554 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
     pProperties->filehistory.count        = 10;
 }
 
-#endif
+#define ROOT_ELEMENT "bluemsx"
 
-// propLoadDefault loads registry settings that can not be reset
-static void propLoadDefault(Properties* pProperties) 
-{
-    getIntValue("DisableScreensaver", &pProperties->settings.disableScreensaver);
-    getIntValue("RegisterTypes", &pProperties->emulation.registerFileTypes);
-    getIntValue("DisableWinKeys", &pProperties->emulation.disableWinKeys);
+#ifdef USE_XMLFORMAT
+
+#define GET_INT_VALUE_1(v1) {                                                           \
+    int val = vtXpathGetInt(xpath, 2, ROOT_ELEMENT, #v1);                               \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1 = val;                            \
 }
+
+#define GET_INT_VALUE_2(v1, v2) {                                                       \
+    int val = vtXpathGetInt(xpath, 3, ROOT_ELEMENT, #v1, #v2);                          \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2 = val;                         \
+}
+
+#define GET_INT_VALUE_3(v1, v2, v3) {                                                   \
+    int val = vtXpathGetInt(xpath, 4, ROOT_ELEMENT, #v1, #v2, #v3);                     \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2.v3 = val;                      \
+}
+
+#define GET_INT_VALUE_2s1(v1, v2, s, a1) {                                              \
+    int val = vtXpathGetInt(xpath, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1);                 \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[s].a1 = val;                   \
+}
+
+#define GET_INT_VALUE_2i(v1, v2, i) {                                                   \
+    int val; char s[64]; sprintf(s, "idx_%d", i);                                       \
+    val = vtXpathGetInt(xpath, 4, ROOT_ELEMENT, #v1, #v2, s);                           \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[i] = val;                      \
+}
+
+#define GET_INT_VALUE_2i1(v1, v2, i, a1) {                                              \
+    int val; char s[64]; sprintf(s, "idx_%d", i);                                       \
+    val = vtXpathGetInt(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);                      \
+    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[i].a1 = val;                   \
+}
+
+#define GET_STR_VALUE_1(v1) {                                                           \
+    const char* val = vtXpathGetString(xpath, 2, ROOT_ELEMENT, #v1);                    \
+    if (val != NULL) strcpy(pProperties->v1, val);                                      \
+}
+
+#define GET_STR_VALUE_2(v1, v2) {                                                       \
+    const char* val = vtXpathGetString(xpath, 3, ROOT_ELEMENT, #v1, #v2);               \
+    if (val != NULL) strcpy(pProperties->v1.v2, val);                                   \
+}
+
+#define GET_STR_VALUE_3(v1, v2, v3) {                                                   \
+    const char* val = vtXpathGetString(xpath, 4, ROOT_ELEMENT, #v1, #v2, #v3);          \
+    if (val != NULL) strcpy(pProperties->v1.v2.v3, val);                                \
+}
+
+#define GET_STR_VALUE_2s1(v1, v2, s, a1) {                                              \
+    const char* val = vtXpathGetString(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);       \
+    if (val != NULL) strcpy(pProperties->v1.v2[s].a1, val);                             \
+}
+
+#define GET_STR_VALUE_2i(v1, v2, i) {                                                   \
+    const char* val; char s[64]; sprintf(s, "idx_%d", i);                               \
+    val = vtXpathGetString(xpath, 4, ROOT_ELEMENT, #v1, #v2, s);                        \
+    if (val != NULL) strcpy(pProperties->v1.v2[i], val);                                \
+}
+
+#define GET_STR_VALUE_2i1(v1, v2, i, a1) {                                              \
+    const char* val; char s[64]; sprintf(s, "idx_%d", i);                               \
+    val = vtXpathGetString(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);                   \
+    if (val != NULL) strcpy(pProperties->v1.v2[i].a1, val);                             \
+}
+
+#define SET_INT_VALUE_1(v1) {                                                           \
+    vtXpathSetInt(xpath, pProperties->v1, 2, ROOT_ELEMENT, #v1);                        \
+}
+
+#define SET_INT_VALUE_2(v1, v2) {                                                       \
+    vtXpathSetInt(xpath, pProperties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                \
+}
+
+#define SET_INT_VALUE_3(v1, v2, v3) {                                                   \
+    vtXpathSetInt(xpath, pProperties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);        \
+}
+
+#define SET_INT_VALUE_2s1(v1, v2, s, a1) {                                              \
+    vtXpathSetInt(xpath, pProperties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1); \
+}
+
+#define SET_INT_VALUE_2i(v1, v2, i) {                                                   \
+    char s[64]; sprintf(s, "idx_%d", i);                                                \
+    vtXpathSetInt(xpath, pProperties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);          \
+}
+
+#define SET_INT_VALUE_2i1(v1, v2, i, a1) {                                              \
+    char s[64]; sprintf(s, "idx_%d", i);                                                \
+    vtXpathSetInt(xpath, pProperties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);  \
+}
+
+#define SET_STR_VALUE_1(v1) {                                                               \
+    vtXpathSetString(xpath, pProperties->v1, 2, ROOT_ELEMENT, #v1);                         \
+}
+
+#define SET_STR_VALUE_2(v1, v2) {                                                           \
+    vtXpathSetString(xpath, pProperties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                 \
+}
+
+#define SET_STR_VALUE_3(v1, v2, v3) {                                                       \
+    vtXpathSetString(xpath, pProperties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);         \
+}
+
+#define SET_STR_VALUE_2s1(v1, v2, s, a1) {                                                  \
+    vtXpathSetString(xpath, pProperties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1);  \
+}
+
+#define SET_STR_VALUE_2i(v1, v2, i) {                                                       \
+    char s[64]; sprintf(s, "idx_%d", i);                                                    \
+    vtXpathSetString(xpath, pProperties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);           \
+}
+
+#define SET_STR_VALUE_2i1(v1, v2, i, a1) {                                                  \
+    char s[64]; sprintf(s, "idx_%d", i);                                                    \
+    vtXpathSetString(xpath, pProperties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);   \
+}
+
+#else
+
+#define GET_INT_VALUE_1(v1)         getIntValue(pProperties->filename, ROOT_ELEMENT, #v1, &pProperties->v1)
+#define GET_INT_VALUE_2(v1,v2)      getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, &pProperties->v1.v2)
+#define GET_INT_VALUE_3(v1,v2,v3)   getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, &pProperties->v1.v2.v3)
+#define GET_INT_VALUE_2s1(v1,v2,v3,v4) getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, &pProperties->v1.v2[v3].v4)
+#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getIntValue(pProperties->filename, ROOT_ELEMENT, s, &pProperties->v1.v2[i]); }
+#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getIntValue(pProperties->filename, ROOT_ELEMENT, s, &pProperties->v1.v2[i].a1); }
+
+#define GET_STR_VALUE_1(v1)           getStrValue(pProperties->filename, ROOT_ELEMENT, v1, (char*)pProperties->v1)
+#define GET_STR_VALUE_2(v1,v2)        getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)pProperties->v1.v2)
+#define GET_STR_VALUE_3(v1,v2,v3)     getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)pProperties->v1.v2.v3)
+#define GET_STR_VALUE_2s1(v1,v2,s,v3) getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)pProperties->v1.v2[s].v3)
+#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i]); }
+#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i].a1); }
+
+#define SET_INT_VALUE_1(v1)         setIntValue(pProperties->filename, ROOT_ELEMENT, #v1, pProperties->v1)
+#define SET_INT_VALUE_2(v1,v2)      setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2)
+#define SET_INT_VALUE_3(v1,v2,v3)   setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3)
+#define SET_INT_VALUE_2s1(v1,v2,v3,v4) setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4)
+#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setIntValue(pProperties->filename, ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
+#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setIntValue(pProperties->filename, ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+
+#define SET_STR_VALUE_1(v1)           setStrValue(pProperties->filename, ROOT_ELEMENT, v1, (char*)pProperties->v1)
+#define SET_STR_VALUE_2(v1,v2)        setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)pProperties->v1.v2)
+#define SET_STR_VALUE_3(v1,v2,v3)     setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)pProperties->v1.v2.v3)
+#define SET_STR_VALUE_2s1(v1,v2,s,v3) setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)pProperties->v1.v2[s].v3)
+#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i]); }
+#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i].a1); }
+
+#endif
 
 static void propLoad(Properties* pProperties) 
 {
     int i;
-    getIntValue("EmuLanguage", &pProperties->language);
+    
+#ifdef USE_XMLFORMAT
+    VtXpath* xpath = vtXpathOpenForRead(pProperties->filename);
+#endif
 
-    getIntValue("ShowStatePreview", &pProperties->settings.showStatePreview);
-    getIntValue("DisableScreensaver", &pProperties->settings.disableScreensaver);
-    getStrValue("ThemeName22", (char*)pProperties->settings.themeName);
+    GET_INT_VALUE_1(language);
+    
+    GET_INT_VALUE_2(settings, disableScreensaver);    
+    GET_INT_VALUE_2(settings, showStatePreview);
+    GET_STR_VALUE_2(settings, themeName);
 
-    getStrValue("StateDefDir", (char*)pProperties->emulation.statsDefDir);
-    getStrValue("MachineName", (char*)pProperties->emulation.machineName);
-    getStrValue("ShortcutProfile", (char*)pProperties->emulation.shortcutProfile);
-    getIntValue("EmulationSpeed", &pProperties->emulation.speed);
-    getIntValue("EmuSyncMethod", &pProperties->emulation.syncMethod);
-    getIntValue("VdpSyncMode", &pProperties->emulation.vdpSyncMode);
+    GET_INT_VALUE_2(emulation, registerFileTypes);
+    GET_INT_VALUE_2(emulation, disableWinKeys);
+    GET_STR_VALUE_2(emulation, statsDefDir);
+    GET_STR_VALUE_2(emulation, machineName);
+    GET_STR_VALUE_2(emulation, shortcutProfile);
+    GET_INT_VALUE_2(emulation, speed);
+    GET_INT_VALUE_2(emulation, syncMethod);
+    GET_INT_VALUE_2(emulation, vdpSyncMode);
+    GET_INT_VALUE_2(emulation, enableFdcTiming);
+    GET_INT_VALUE_2(emulation, frontSwitch);
+    GET_INT_VALUE_2(emulation, pauseSwitch);
+    GET_INT_VALUE_2(emulation, audioSwitch);
+    GET_INT_VALUE_2(emulation, priorityBoost);
     
-    getIntValue("EnableFdcTiming", &pProperties->emulation.enableFdcTiming);
-    getIntValue("FrontSwitch", &pProperties->emulation.frontSwitch);
-    getIntValue("PauseSwitch", &pProperties->emulation.pauseSwitch);
-    getIntValue("AudioSwitch", &pProperties->emulation.audioSwitch);
-    getIntValue("RegisterTypes", &pProperties->emulation.registerFileTypes);
-    getIntValue("DisableWinKeys", &pProperties->emulation.disableWinKeys);
-    getIntValue("PriorityBoost", &pProperties->emulation.priorityBoost);
-    
-    getIntValue("Monitor", &pProperties->video.monType);
-    getIntValue("VideoEmu", &pProperties->video.palEmu);
-    getIntValue("VideoSize", &pProperties->video.size);
-    getIntValue("Video Drvr", &pProperties->video.driver);
-    getIntValue("FrameSkip", &pProperties->video.frameSkip);
-    getIntValue("FullscreenWidth", &pProperties->video.fullscreen.width);
-    getIntValue("FullscreenHeight", &pProperties->video.fullscreen.height);
-    getIntValue("FullscreenBitDepth", &pProperties->video.fullscreen.bitDepth);
-    getIntValue("DeInterlace", &pProperties->video.deInterlace);
-    getIntValue("HorizontalStretch", &pProperties->video.horizontalStretch);
-    getIntValue("VerticalStretch", &pProperties->video.verticalStretch);
-    getIntValue("VideoContrast", &pProperties->video.contrast);
-    getIntValue("VideoBrightness", &pProperties->video.brightness);
-    getIntValue("VideoSaturation", &pProperties->video.saturation);
-    getIntValue("VideoGamma", &pProperties->video.gamma);
-    getIntValue("ScanlinesEnable", &pProperties->video.scanlinesEnable);
-    getIntValue("ScanlinesPct", &pProperties->video.scanlinesPct);
-    getIntValue("ColorGhostingEnable", &pProperties->video.colorSaturationEnable);
-    getIntValue("ColorGhostingWidth", &pProperties->video.colorSaturationWidth);
-    getIntValue("ChipAutodetect", &pProperties->video.chipAutodetect);
+    GET_INT_VALUE_2(video, monType);
+    GET_INT_VALUE_2(video, palEmu);
+    GET_INT_VALUE_2(video, size);
+    GET_INT_VALUE_2(video, driver);
+    GET_INT_VALUE_2(video, frameSkip);
+    GET_INT_VALUE_3(video, fullscreen, width);
+    GET_INT_VALUE_3(video, fullscreen, height);
+    GET_INT_VALUE_3(video, fullscreen, bitDepth);
+    GET_INT_VALUE_2(video, deInterlace);
+    GET_INT_VALUE_2(video, horizontalStretch);
+    GET_INT_VALUE_2(video, verticalStretch);
+    GET_INT_VALUE_2(video, contrast);
+    GET_INT_VALUE_2(video, brightness);
+    GET_INT_VALUE_2(video, saturation);
+    GET_INT_VALUE_2(video, gamma);
+    GET_INT_VALUE_2(video, scanlinesEnable);
+    GET_INT_VALUE_2(video, scanlinesPct);
+    GET_INT_VALUE_2(video, colorSaturationEnable);
+    GET_INT_VALUE_2(video, colorSaturationWidth);
+    GET_INT_VALUE_2(video, chipAutodetect);
 
-    getIntValue("Sound-Out", &pProperties->sound.driver);
-    getIntValue("Frequency", &pProperties->sound.frequency);
-    getIntValue("SoundBufferSize", &pProperties->sound.bufSize);
-    getIntValue("SyncMethod", &pProperties->sound.syncMethod);
+    GET_INT_VALUE_2(sound, driver);
+    GET_INT_VALUE_2(sound, frequency);
+    GET_INT_VALUE_2(sound, bufSize);
+    GET_INT_VALUE_2(sound, syncMethod);
+    GET_INT_VALUE_2(sound, stereo);
+    GET_INT_VALUE_2(sound, masterVolume);
+    GET_INT_VALUE_2(sound, masterEnable);
+    
+    GET_INT_VALUE_3(sound, chip, enableYM2413);
+    GET_INT_VALUE_3(sound, chip, enableY8950);
+    GET_INT_VALUE_3(sound, chip, enableMoonsound);
+    GET_INT_VALUE_3(sound, chip, moonsoundSRAMSize);
+    GET_INT_VALUE_3(sound, chip, ym2413Oversampling);
+    GET_INT_VALUE_3(sound, chip, y8950Oversampling);
+    GET_INT_VALUE_3(sound, chip, moonsoundOversampling);
+    GET_INT_VALUE_3(sound, MidiIn, type);
+    GET_STR_VALUE_3(sound, MidiIn, name);
+    GET_STR_VALUE_3(sound, MidiIn, fileName);
+    GET_STR_VALUE_3(sound, MidiIn, desc);
+    GET_INT_VALUE_3(sound, MidiOut, type);
+    GET_STR_VALUE_3(sound, MidiOut, name);
+    GET_STR_VALUE_3(sound, MidiOut, fileName);
+    GET_STR_VALUE_3(sound, MidiOut, desc);
+    GET_INT_VALUE_3(sound, MidiOut, mt32ToGm);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, volume);
+    
+    
+    GET_INT_VALUE_2(joy1, type);
+    GET_INT_VALUE_2(joy1, autofire);
+    GET_INT_VALUE_2(joy1, keyUp);
+    GET_INT_VALUE_2(joy1, keyDown);
+    GET_INT_VALUE_2(joy1, keyLeft);
+    GET_INT_VALUE_2(joy1, keyRight);
+    GET_INT_VALUE_2(joy1, button1);
+    GET_INT_VALUE_2(joy1, button2);
+    GET_INT_VALUE_2(joy1, hwType);
+    GET_STR_VALUE_2(joy1, hwName);
+    GET_INT_VALUE_2(joy1, hwIndex);
+    GET_INT_VALUE_2(joy1, hwButtonA);
+    GET_INT_VALUE_2(joy1, hwButtonB);
+    
+    GET_INT_VALUE_2(joy2, type);
+    GET_INT_VALUE_2(joy2, autofire);
+    GET_INT_VALUE_2(joy2, keyUp);
+    GET_INT_VALUE_2(joy2, keyDown);
+    GET_INT_VALUE_2(joy2, keyLeft);
+    GET_INT_VALUE_2(joy2, keyRight);
+    GET_INT_VALUE_2(joy2, button1);
+    GET_INT_VALUE_2(joy2, button2);
+    GET_INT_VALUE_2(joy2, hwType);
+    GET_STR_VALUE_2(joy2, hwName);
+    GET_INT_VALUE_2(joy2, hwIndex);
+    GET_INT_VALUE_2(joy2, hwButtonA);
+    GET_INT_VALUE_2(joy2, hwButtonB);
+    
+    GET_STR_VALUE_2(keyboard, configFile);
+    
+    GET_STR_VALUE_2(cartridge, defDir);
+    GET_INT_VALUE_2(cartridge, autoReset);
+    GET_INT_VALUE_2(cartridge, quickStartDrive);
+    GET_STR_VALUE_2(cartridge, slotA);
+    GET_INT_VALUE_2(cartridge, slotAType);
+    GET_STR_VALUE_2(cartridge, slotAZip);
+    GET_INT_VALUE_2(cartridge, slotAFilter);
+    GET_STR_VALUE_2(cartridge, slotB);
+    GET_INT_VALUE_2(cartridge, slotBType);
+    GET_STR_VALUE_2(cartridge, slotBZip);
+    GET_INT_VALUE_2(cartridge, slotBFilter);
 
-    getIntValue("StereoMono", &pProperties->sound.stereo);
-    getIntValue("MasterVolume", &pProperties->sound.masterVolume);
-    getIntValue("MasterEnable", &pProperties->sound.masterEnable);
-    getIntValue("EnableMSXMusic", &pProperties->sound.chip.enableYM2413);
-    getIntValue("EnableMSXAudio", &pProperties->sound.chip.enableY8950);
-    getIntValue("EnableMoonsound", &pProperties->sound.chip.enableMoonsound);
-    getIntValue("MoonsoundSRAMsize", &pProperties->sound.chip.moonsoundSRAM);
-    getIntValue("YM2413Oversampling", &pProperties->sound.chip.ym2413Oversampling);
-    getIntValue("Y8950Oversampling", &pProperties->sound.chip.y8950Oversampling);
-    getIntValue("MoonsoundOversampling", &pProperties->sound.chip.moonsoundOversampling);
+    GET_STR_VALUE_2(diskdrive, defDir);
+    GET_INT_VALUE_2(diskdrive, autostartA);
+    GET_INT_VALUE_2(diskdrive, quickStartDrive);
+    GET_STR_VALUE_2(diskdrive, slotA);
+    GET_STR_VALUE_2(diskdrive, slotAZip);
+    GET_STR_VALUE_2(diskdrive, slotADir);
+    GET_INT_VALUE_2(diskdrive, slotAFilter);
+    GET_STR_VALUE_2(diskdrive, slotB);
+    GET_STR_VALUE_2(diskdrive, slotBZip);
+    GET_STR_VALUE_2(diskdrive, slotBDir);
+    GET_INT_VALUE_2(diskdrive, slotBFilter);
     
-    getIntValue("PSGEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable);
-    getIntValue("PSGPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan);
-    getIntValue("PSGVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume);
-    getIntValue("SCCEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable);
-    getIntValue("SCCPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan);
-    getIntValue("SCCVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume);
-    getIntValue("MSXMUSICEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable);
-    getIntValue("MSXMUSICPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan);
-    getIntValue("MSXMUSICVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume);
-    getIntValue("MSXAUDIOEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable);
-    getIntValue("MSXAUDIOPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan);
-    getIntValue("MSXAUDIOVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume);
-    getIntValue("KEYBOARDEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable);
-    getIntValue("KEYBOARDPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan);
-    getIntValue("KEYBOARDVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume);
-    getIntValue("MOONSOUNDEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable);
-    getIntValue("MOONSOUNDPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan);
-    getIntValue("MOONSOUNDVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume);
-    getIntValue("PCMEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable);
-    getIntValue("PCMPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan);
-    getIntValue("PCMVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume);
-    getIntValue("IOEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
-    getIntValue("IOPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
-    getIntValue("IOVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
-    getIntValue("MIDIEnable", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable);
-    getIntValue("MIDIPAN", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan);
-    getIntValue("MIDIVOL", &pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume);
-    
-    getIntValue("MidiInType", &pProperties->sound.MidiIn.type);
-    getStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);
-    getStrValue("MidiInFileName", (char*)pProperties->sound.MidiIn.fileName);
-    getStrValue("MidiInDesc", (char*)pProperties->sound.MidiIn.desc);
-    getIntValue("MidiOutType", &pProperties->sound.MidiOut.type);
-    getStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
-    getStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
-    getStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
-    getIntValue("MidiOutMt32ToGm", &pProperties->sound.MidiOut.mt32ToGm);
-    
-    getIntValue("Joy1Control", &pProperties->joy1.type);
-    getIntValue("JoyAutoFire", &pProperties->joy1.autofire);
-    getIntValue("JoyKeyUp", &pProperties->joy1.keyUp);
-    getIntValue("JoyKeyDown", &pProperties->joy1.keyDown);
-    getIntValue("JoyKeyLeft", &pProperties->joy1.keyLeft);
-    getIntValue("JoyKeyRight", &pProperties->joy1.keyRight);
-    getIntValue("JoyButton1", &pProperties->joy1.button1);
-    getIntValue("JoyButton2", &pProperties->joy1.button2);
-    getIntValue("JoyHwType", &pProperties->joy1.hwType);
-    getStrValue("JoyHwName", (char*)pProperties->joy1.hwName);
-    getIntValue("JoyHwIndex", &pProperties->joy1.hwIndex);
-    getIntValue("JoyHwButton1", &pProperties->joy1.hwButtonA);
-    getIntValue("JoyHwButton2", &pProperties->joy1.hwButtonB);
-    
-    getIntValue("Joy2Control", &pProperties->joy2.type);
-    getIntValue("Joy2AutoFire", &pProperties->joy2.autofire);
-    getIntValue("Joy2KeyUp", &pProperties->joy2.keyUp);
-    getIntValue("Joy2KeyDown", &pProperties->joy2.keyDown);
-    getIntValue("Joy2KeyLeft", &pProperties->joy2.keyLeft);
-    getIntValue("Joy2KeyRight", &pProperties->joy2.keyRight);
-    getIntValue("Joy2Button1", &pProperties->joy2.button1);
-    getIntValue("Joy2Button2", &pProperties->joy2.button2);
-    getIntValue("Joy2HwType", &pProperties->joy2.hwType);
-    getStrValue("Joy2HwName", (char*)pProperties->joy2.hwName);
-    getIntValue("Joy2HwIndex", &pProperties->joy2.hwIndex);
-    getIntValue("Joy2HwButton1", &pProperties->joy2.hwButtonA);
-    getIntValue("Joy2HwButton2", &pProperties->joy2.hwButtonB);
-    
-    getStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
-    
-    getIntValue("CartDefaultType", &pProperties->cartridge.defaultType);
-    getStrValue("CartDefDir", (char*)pProperties->cartridge.defDir);
-    getStrValue("CartSlotA", (char*)pProperties->cartridge.slotA);
-    getIntValue("CartSlotAType", &pProperties->cartridge.slotAType);
-    getStrValue("CartSlotB", (char*)pProperties->cartridge.slotB);
-    getIntValue("CartSlotBType", &pProperties->cartridge.slotBType);
-    getStrValue("CartSlotA-ZIP", (char*)pProperties->cartridge.slotAZip);
-    getStrValue("CartSlotB-ZIP", (char*)pProperties->cartridge.slotBZip);
-    getIntValue("CartSlotA-Filter", &pProperties->cartridge.slotAFilter);
-    getIntValue("CartSlotB-Filter", &pProperties->cartridge.slotBFilter);
-    getIntValue("CartAutoReset", &pProperties->cartridge.autoReset);
-    getIntValue("CartQuickStartUnit", &pProperties->cartridge.quickStartDrive);
+    GET_STR_VALUE_2(cassette, defDir);
+    GET_STR_VALUE_2(cassette, tape);
+    GET_STR_VALUE_2(cassette, tapeZip);
+    GET_INT_VALUE_2(cassette, filter);
+    GET_INT_VALUE_2(cassette, showCustomFiles);
+    GET_INT_VALUE_2(cassette, readOnly);
+    GET_INT_VALUE_2(cassette, autoRewind);
 
-    getStrValue("DriveDefDir", (char*)pProperties->diskdrive.defDir);
-    getStrValue("DriveSlotA", (char*)pProperties->diskdrive.slotA);
-    getStrValue("DriveSlotB", (char*)pProperties->diskdrive.slotB);
-    getStrValue("DriveSlotA-ZIP", (char*)pProperties->diskdrive.slotAZip);
-    getStrValue("DriveSlotB-ZIP", (char*)pProperties->diskdrive.slotBZip);
-    getStrValue("DriveSlotA-Dir", (char*)pProperties->diskdrive.slotADir);
-    getStrValue("DriveSlotB-Dir", (char*)pProperties->diskdrive.slotBDir);
-    getIntValue("DriveSlotA-Filter", &pProperties->diskdrive.slotAFilter);
-    getIntValue("DriveSlotB-Filter", &pProperties->diskdrive.slotBFilter);
-    getIntValue("DriveAutoStart", &pProperties->diskdrive.autostartA);
-    getIntValue("DriveQuickStartUnit", &pProperties->diskdrive.quickStartDrive);
-
-    getStrValue("CasseteDefDir", (char*)pProperties->cassette.defDir);
-    getStrValue("Cassete", (char*)pProperties->cassette.tape);
-    getStrValue("Cassete-ZIP", (char*)pProperties->cassette.tapeZip);
-    getIntValue("Cassete-Filter", &pProperties->cassette.filter);
-    getIntValue("CasseteShowCustom", &pProperties->cassette.showCustomFiles);
-    getIntValue("CasseteShowCustom", &pProperties->cassette.readOnly);
-    getIntValue("CasseteAutoRewind", &pProperties->cassette.autoRewind);
-    
-    getIntValue("LptType", &pProperties->ports.Lpt.type);
-    getIntValue("LptMode", &pProperties->ports.Lpt.emulation);
-    getStrValue("LptName", (char*)pProperties->ports.Lpt.name);
-    getStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
-    getStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);
-    
-    getIntValue("ComType", &pProperties->ports.Com.type);
-    getStrValue("ComName", (char*)pProperties->ports.Com.name);
-    getStrValue("ComFileName", (char*)pProperties->ports.Com.fileName);
-    getStrValue("ComPortName", (char*)pProperties->ports.Com.portName);
+    GET_INT_VALUE_3(ports, Lpt, type);
+    GET_INT_VALUE_3(ports, Lpt, emulation);
+    GET_STR_VALUE_3(ports, Lpt, name);
+    GET_STR_VALUE_3(ports, Lpt, fileName);
+    GET_STR_VALUE_3(ports, Lpt, portName);
+    GET_INT_VALUE_3(ports, Com, type);
+    GET_STR_VALUE_3(ports, Com, name);
+    GET_STR_VALUE_3(ports, Com, fileName);
+    GET_STR_VALUE_3(ports, Com, portName);
     
     for (i = 0; i < MAX_HISTORY; i++) {
-        char str[32];
-        sprintf(str, "CartA-History%x",i);
-        getStrValue(str, (char*)pProperties->filehistory.cartridgeA[i]);
-        sprintf(str, "CartTypeA-History%x",i);
-        getIntValue(str, &pProperties->filehistory.cartridgeTypeA[i]);
-        sprintf(str, "CartB-History%x",i);
-        getStrValue(str, (char*)pProperties->filehistory.cartridgeB[i]);
-        sprintf(str, "CartTypeB-History%x",i);
-        getIntValue(str, &pProperties->filehistory.cartridgeTypeB[i]);
-        sprintf(str, "DiskDriveA-History%x",i);
-        getStrValue(str, (char*)pProperties->filehistory.diskdriveA[i]);
-        sprintf(str, "DiskDriveB-History%x",i);
-        getStrValue(str, (char*)pProperties->filehistory.diskdriveB[i]);
-        sprintf(str, "Cassete-History%x",i);
-        getStrValue(str, (char*)pProperties->filehistory.cassette[i]);
+        GET_STR_VALUE_2i(filehistory, cartridgeA, i);
+        GET_INT_VALUE_2i(filehistory, cartridgeTypeA, i);
+        GET_STR_VALUE_2i(filehistory, cartridgeB, i);
+        GET_INT_VALUE_2i(filehistory, cartridgeTypeB, i);
+        GET_STR_VALUE_2i(filehistory, diskdriveA, i);
+        GET_STR_VALUE_2i(filehistory, diskdriveB, i);
+        GET_STR_VALUE_2i(filehistory, cassette, i);
     }
 
-    getStrValue("QuickSave-History", (char*)pProperties->filehistory.quicksave);
-
-    getIntValue("History-Count", &pProperties->filehistory.count);
+    GET_STR_VALUE_2(filehistory, quicksave);
+    GET_INT_VALUE_2(filehistory, count);
 
     for (i = 0; i < DLG_MAX_ID; i++) {
-        char str[32];
-        sprintf(str, "WindowPosLeft%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].left);
-        sprintf(str, "WindowPosTop%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].top);
-        sprintf(str, "WindowPosWidth%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].width);
-        sprintf(str, "WindowPosHeight%x",i);
-        getIntValue(str, &pProperties->settings.windowPos[i].height);
+        GET_INT_VALUE_2i1(settings, windowPos, i, left);
+        GET_INT_VALUE_2i1(settings, windowPos, i, top);
+        GET_INT_VALUE_2i1(settings, windowPos, i, width);
+        GET_INT_VALUE_2i1(settings, windowPos, i, height);
     }
+    
+#ifdef USE_XMLFORMAT
+    vtXpathClose(xpath);
+#endif
 }
 
 void propSave(Properties* pProperties) 
 {
     int i;
-    setIntValue("EmuLanguage", pProperties->language);
-
-    setIntValue("ShowStatePreview", pProperties->settings.showStatePreview);
-    setIntValue("DisableScreensaver",   pProperties->settings.disableScreensaver);
-    setStrValue("ThemeName22", (char*)pProperties->settings.themeName);
-
-    setStrValue("StateDefDir", (char*)pProperties->emulation.statsDefDir);
-    setStrValue("MachineName", (char*)pProperties->emulation.machineName);
-    setStrValue("ShortcutProfile", (char*)pProperties->emulation.shortcutProfile);
-    setIntValue("EmulationSpeed", pProperties->emulation.speed);
-    setIntValue("EmuSyncMethod", pProperties->emulation.syncMethod);
-    setIntValue("VdpSyncMode", pProperties->emulation.vdpSyncMode);
-    setIntValue("EnableFdcTiming", pProperties->emulation.enableFdcTiming);
-    setIntValue("FrontSwitch", pProperties->emulation.frontSwitch);
-    setIntValue("PauseSwitch", pProperties->emulation.pauseSwitch);
-    setIntValue("AudioSwitch", pProperties->emulation.audioSwitch);
-    setIntValue("RegisterTypes", pProperties->emulation.registerFileTypes);
-    setIntValue("DisableWinKeys", pProperties->emulation.disableWinKeys);
-    setIntValue("PriorityBoost", pProperties->emulation.priorityBoost);
-
-    setIntValue("Monitor", pProperties->video.monType);
-    setIntValue("VideoEmu", pProperties->video.palEmu);
-    setIntValue("VideoSize", pProperties->video.size);
-    setIntValue("Video Drvr", pProperties->video.driver);
-    setIntValue("FrameSkip", pProperties->video.frameSkip);
-    setIntValue("FullscreenWidth", pProperties->video.fullscreen.width);
-    setIntValue("FullscreenHeight", pProperties->video.fullscreen.height);
-    setIntValue("FullscreenBitDepth", pProperties->video.fullscreen.bitDepth);
-    setIntValue("DeInterlace", pProperties->video.deInterlace);
-    setIntValue("HorizontalStretch", pProperties->video.horizontalStretch);
-    setIntValue("VerticalStretch", pProperties->video.verticalStretch);
-    setIntValue("VideoContrast", pProperties->video.contrast);
-    setIntValue("VideoBrightness", pProperties->video.brightness);
-    setIntValue("VideoSaturation", pProperties->video.saturation);
-    setIntValue("VideoGamma", pProperties->video.gamma);
-    setIntValue("ScanlinesEnable", pProperties->video.scanlinesEnable);
-    setIntValue("ScanlinesPct", pProperties->video.scanlinesPct);
-    setIntValue("ColorGhostingEnable", pProperties->video.colorSaturationEnable);
-    setIntValue("ColorGhostingWidth", pProperties->video.colorSaturationWidth);
-    setIntValue("ChipAutodetect", pProperties->video.chipAutodetect);
-
-    setIntValue("Sound-Out", pProperties->sound.driver);
-    setIntValue("Frequency", pProperties->sound.frequency);
-    setIntValue("SoundBufferSize", pProperties->sound.bufSize);
-    setIntValue("SyncMethod", pProperties->sound.syncMethod);
-
-    setIntValue("StereoMono", pProperties->sound.stereo);
-    setIntValue("MasterVolume", pProperties->sound.masterVolume);
-    setIntValue("MasterEnable", pProperties->sound.masterEnable);
-    setIntValue("EnableMSXAudio", pProperties->sound.chip.enableY8950);
-    setIntValue("EnableMSXMusic", pProperties->sound.chip.enableYM2413);
-    setIntValue("EnableMoonsound", pProperties->sound.chip.enableMoonsound);
-    setIntValue("MoonsoundSRAMsize", pProperties->sound.chip.moonsoundSRAM);
-    setIntValue("YM2413Oversampling", pProperties->sound.chip.ym2413Oversampling);
-    setIntValue("Y8950Oversampling", pProperties->sound.chip.y8950Oversampling);
-    setIntValue("MoonsoundOversampling", pProperties->sound.chip.moonsoundOversampling);
     
-    setIntValue("PSGEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable);
-    setIntValue("PSGPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan);
-    setIntValue("PSGVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume);
-    setIntValue("SCCEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable);
-    setIntValue("SCCPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan);
-    setIntValue("SCCVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume);
-    setIntValue("MSXMUSICEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable);
-    setIntValue("MSXMUSICPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan);
-    setIntValue("MSXMUSICVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume);
-    setIntValue("MSXAUDIOEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable);
-    setIntValue("MSXAUDIOPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan);
-    setIntValue("MSXAUDIOVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume);
-    setIntValue("KEYBOARDEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable);
-    setIntValue("KEYBOARDPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan);
-    setIntValue("KEYBOARDVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume);
-    setIntValue("MOONSOUNDEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable);
-    setIntValue("MOONSOUNDPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan);
-    setIntValue("MOONSOUNDVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume);
-    setIntValue("PCMEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable);
-    setIntValue("PCMPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan);
-    setIntValue("PCMVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume);
-    setIntValue("IOEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable);
-    setIntValue("IOPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan);
-    setIntValue("IOVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume);
-    setIntValue("MIDIEnable", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable);
-    setIntValue("MIDIPAN", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan);
-    setIntValue("MIDIVOL", pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume);
+#ifdef USE_XMLFORMAT
+    VtXpath* xpath = vtXpathOpenForWrite(pProperties->filename);
+#endif
+
+    SET_INT_VALUE_1(language);
     
-    setIntValue("MidiInType", pProperties->sound.MidiIn.type);
-    setStrValue("MidiInName", (char*)pProperties->sound.MidiIn.name);
-    setStrValue("MidiInFileName", (char*)pProperties->sound.MidiIn.fileName);
-    setStrValue("MidiInDesc", (char*)pProperties->sound.MidiIn.desc);
-    setIntValue("MidiOutType", pProperties->sound.MidiOut.type);
-    setStrValue("MidiOutName", (char*)pProperties->sound.MidiOut.name);
-    setStrValue("MidiOutFileName", (char*)pProperties->sound.MidiOut.fileName);
-    setStrValue("MidiOutDesc", (char*)pProperties->sound.MidiOut.desc);
-    setIntValue("MidiOutMt32ToGm", pProperties->sound.MidiOut.mt32ToGm);
+    SET_INT_VALUE_2(settings, disableScreensaver);    
+    SET_INT_VALUE_2(settings, showStatePreview);
+    SET_STR_VALUE_2(settings, themeName);
 
-    setIntValue("Joy1Control", pProperties->joy1.type);
-    setIntValue("JoyAutoFire", pProperties->joy1.autofire);
-    setIntValue("JoyKeyUp", pProperties->joy1.keyUp);
-    setIntValue("JoyKeyDown", pProperties->joy1.keyDown);
-    setIntValue("JoyKeyLeft", pProperties->joy1.keyLeft);
-    setIntValue("JoyKeyRight", pProperties->joy1.keyRight);
-    setIntValue("JoyButton1", pProperties->joy1.button1);
-    setIntValue("JoyButton2", pProperties->joy1.button2);
-    setIntValue("JoyHwType", pProperties->joy1.hwType);
-    setStrValue("JoyHwName", (char*)pProperties->joy1.hwName);
-    setIntValue("JoyHwIndex", pProperties->joy1.hwIndex);
-    setIntValue("JoyHwButton1", pProperties->joy1.hwButtonA);
-    setIntValue("JoyHwButton2", pProperties->joy1.hwButtonB);
-
-    setIntValue("Joy2Control", pProperties->joy2.type);
-    setIntValue("Joy2AutoFire", pProperties->joy2.autofire);
-    setIntValue("Joy2KeyUp", pProperties->joy2.keyUp);
-    setIntValue("Joy2KeyDown", pProperties->joy2.keyDown);
-    setIntValue("Joy2KeyLeft", pProperties->joy2.keyLeft);
-    setIntValue("Joy2KeyRight", pProperties->joy2.keyRight);
-    setIntValue("Joy2Button1", pProperties->joy2.button1);
-    setIntValue("Joy2Button2", pProperties->joy2.button2);
-    setIntValue("Joy2HwType", pProperties->joy2.hwType);
-    setStrValue("Joy2HwName", (char*)pProperties->joy2.hwName);
-    setIntValue("Joy2HwIndex", pProperties->joy2.hwIndex);
-    setIntValue("Joy2HwButton1", pProperties->joy2.hwButtonA);
-    setIntValue("Joy2HwButton2", pProperties->joy2.hwButtonB);
+    SET_INT_VALUE_2(emulation, registerFileTypes);
+    SET_INT_VALUE_2(emulation, disableWinKeys);
+    SET_STR_VALUE_2(emulation, statsDefDir);
+    SET_STR_VALUE_2(emulation, machineName);
+    SET_STR_VALUE_2(emulation, shortcutProfile);
+    SET_INT_VALUE_2(emulation, speed);
+    SET_INT_VALUE_2(emulation, syncMethod);
+    SET_INT_VALUE_2(emulation, vdpSyncMode);
+    SET_INT_VALUE_2(emulation, enableFdcTiming);
+    SET_INT_VALUE_2(emulation, frontSwitch);
+    SET_INT_VALUE_2(emulation, pauseSwitch);
+    SET_INT_VALUE_2(emulation, audioSwitch);
+    SET_INT_VALUE_2(emulation, priorityBoost);
     
-    setStrValue("KeyBoardConfigFile", pProperties->keyboard.configFile);
+    SET_INT_VALUE_2(video, monType);
+    SET_INT_VALUE_2(video, palEmu);
+    SET_INT_VALUE_2(video, size);
+    SET_INT_VALUE_2(video, driver);
+    SET_INT_VALUE_2(video, frameSkip);
+    SET_INT_VALUE_3(video, fullscreen, width);
+    SET_INT_VALUE_3(video, fullscreen, height);
+    SET_INT_VALUE_3(video, fullscreen, bitDepth);
+    SET_INT_VALUE_2(video, deInterlace);
+    SET_INT_VALUE_2(video, horizontalStretch);
+    SET_INT_VALUE_2(video, verticalStretch);
+    SET_INT_VALUE_2(video, contrast);
+    SET_INT_VALUE_2(video, brightness);
+    SET_INT_VALUE_2(video, saturation);
+    SET_INT_VALUE_2(video, gamma);
+    SET_INT_VALUE_2(video, scanlinesEnable);
+    SET_INT_VALUE_2(video, scanlinesPct);
+    SET_INT_VALUE_2(video, colorSaturationEnable);
+    SET_INT_VALUE_2(video, colorSaturationWidth);
+    SET_INT_VALUE_2(video, chipAutodetect);
+
+    SET_INT_VALUE_2(sound, driver);
+    SET_INT_VALUE_2(sound, frequency);
+    SET_INT_VALUE_2(sound, bufSize);
+    SET_INT_VALUE_2(sound, syncMethod);
+    SET_INT_VALUE_2(sound, stereo);
+    SET_INT_VALUE_2(sound, masterVolume);
+    SET_INT_VALUE_2(sound, masterEnable);
     
-    setIntValue("CartDefaultType", pProperties->cartridge.defaultType);
-    setStrValue("CartDefDir", (char*)pProperties->cartridge.defDir);
-    setStrValue("CartSlotA", (char*)pProperties->cartridge.slotA);
-    setIntValue("CartSlotAType", pProperties->cartridge.slotAType);
-    setStrValue("CartSlotB", (char*)pProperties->cartridge.slotB);
-    setIntValue("CartSlotBType", pProperties->cartridge.slotBType);
-    setStrValue("CartSlotA-ZIP", (char*)pProperties->cartridge.slotAZip);
-    setStrValue("CartSlotB-ZIP", (char*)pProperties->cartridge.slotBZip);
-    setIntValue("CartSlotA-Filter", pProperties->cartridge.slotAFilter);
-    setIntValue("CartSlotB-Filter", pProperties->cartridge.slotBFilter);
-    setIntValue("CartAutoReset", pProperties->cartridge.autoReset);
-    setIntValue("CartQuickStartUnit", pProperties->cartridge.quickStartDrive);
+    SET_INT_VALUE_3(sound, chip, enableYM2413);
+    SET_INT_VALUE_3(sound, chip, enableY8950);
+    SET_INT_VALUE_3(sound, chip, enableMoonsound);
+    SET_INT_VALUE_3(sound, chip, moonsoundSRAMSize);
+    SET_INT_VALUE_3(sound, chip, ym2413Oversampling);
+    SET_INT_VALUE_3(sound, chip, y8950Oversampling);
+    SET_INT_VALUE_3(sound, chip, moonsoundOversampling);
+    SET_INT_VALUE_3(sound, MidiIn, type);
+    SET_STR_VALUE_3(sound, MidiIn, name);
+    SET_STR_VALUE_3(sound, MidiIn, fileName);
+    SET_STR_VALUE_3(sound, MidiIn, desc);
+    SET_INT_VALUE_3(sound, MidiOut, type);
+    SET_STR_VALUE_3(sound, MidiOut, name);
+    SET_STR_VALUE_3(sound, MidiOut, fileName);
+    SET_STR_VALUE_3(sound, MidiOut, desc);
+    SET_INT_VALUE_3(sound, MidiOut, mt32ToGm);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PSG, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_SCC, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXMUSIC, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MSXAUDIO, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_KEYBOARD, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_IO, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, volume);
+    
+    
+    SET_INT_VALUE_2(joy1, type);
+    SET_INT_VALUE_2(joy1, autofire);
+    SET_INT_VALUE_2(joy1, keyUp);
+    SET_INT_VALUE_2(joy1, keyDown);
+    SET_INT_VALUE_2(joy1, keyLeft);
+    SET_INT_VALUE_2(joy1, keyRight);
+    SET_INT_VALUE_2(joy1, button1);
+    SET_INT_VALUE_2(joy1, button2);
+    SET_INT_VALUE_2(joy1, hwType);
+    SET_STR_VALUE_2(joy1, hwName);
+    SET_INT_VALUE_2(joy1, hwIndex);
+    SET_INT_VALUE_2(joy1, hwButtonA);
+    SET_INT_VALUE_2(joy1, hwButtonB);
+    
+    SET_INT_VALUE_2(joy2, type);
+    SET_INT_VALUE_2(joy2, autofire);
+    SET_INT_VALUE_2(joy2, keyUp);
+    SET_INT_VALUE_2(joy2, keyDown);
+    SET_INT_VALUE_2(joy2, keyLeft);
+    SET_INT_VALUE_2(joy2, keyRight);
+    SET_INT_VALUE_2(joy2, button1);
+    SET_INT_VALUE_2(joy2, button2);
+    SET_INT_VALUE_2(joy2, hwType);
+    SET_STR_VALUE_2(joy2, hwName);
+    SET_INT_VALUE_2(joy2, hwIndex);
+    SET_INT_VALUE_2(joy2, hwButtonA);
+    SET_INT_VALUE_2(joy2, hwButtonB);
+    
+    SET_STR_VALUE_2(keyboard, configFile);
+    
+    SET_STR_VALUE_2(cartridge, defDir);
+    SET_INT_VALUE_2(cartridge, autoReset);
+    SET_INT_VALUE_2(cartridge, quickStartDrive);
+    SET_STR_VALUE_2(cartridge, slotA);
+    SET_INT_VALUE_2(cartridge, slotAType);
+    SET_STR_VALUE_2(cartridge, slotAZip);
+    SET_INT_VALUE_2(cartridge, slotAFilter);
+    SET_STR_VALUE_2(cartridge, slotB);
+    SET_INT_VALUE_2(cartridge, slotBType);
+    SET_STR_VALUE_2(cartridge, slotBZip);
+    SET_INT_VALUE_2(cartridge, slotBFilter);
 
-    setStrValue("DriveDefDir", (char*)pProperties->diskdrive.defDir);
-    setStrValue("DriveSlotA", (char*)pProperties->diskdrive.slotA);
-    setStrValue("DriveSlotB", (char*)pProperties->diskdrive.slotB);
-    setStrValue("DriveSlotA-ZIP", (char*)pProperties->diskdrive.slotAZip);
-    setStrValue("DriveSlotB-ZIP", (char*)pProperties->diskdrive.slotBZip);
-    setStrValue("DriveSlotA-Dir", (char*)pProperties->diskdrive.slotADir);
-    setStrValue("DriveSlotB-Dir", (char*)pProperties->diskdrive.slotBDir);
-    setIntValue("DriveSlotA-Filter", pProperties->diskdrive.slotAFilter);
-    setIntValue("DriveSlotB-Filter", pProperties->diskdrive.slotBFilter);
-    setIntValue("DriveAutoStart", pProperties->diskdrive.autostartA);
-    setIntValue("DriveQuickStartUnit", pProperties->diskdrive.quickStartDrive);
+    SET_STR_VALUE_2(diskdrive, defDir);
+    SET_INT_VALUE_2(diskdrive, autostartA);
+    SET_INT_VALUE_2(diskdrive, quickStartDrive);
+    SET_STR_VALUE_2(diskdrive, slotA);
+    SET_STR_VALUE_2(diskdrive, slotAZip);
+    SET_STR_VALUE_2(diskdrive, slotADir);
+    SET_INT_VALUE_2(diskdrive, slotAFilter);
+    SET_STR_VALUE_2(diskdrive, slotB);
+    SET_STR_VALUE_2(diskdrive, slotBZip);
+    SET_STR_VALUE_2(diskdrive, slotBDir);
+    SET_INT_VALUE_2(diskdrive, slotBFilter);
+    
+    SET_STR_VALUE_2(cassette, defDir);
+    SET_STR_VALUE_2(cassette, tape);
+    SET_STR_VALUE_2(cassette, tapeZip);
+    SET_INT_VALUE_2(cassette, filter);
+    SET_INT_VALUE_2(cassette, showCustomFiles);
+    SET_INT_VALUE_2(cassette, readOnly);
+    SET_INT_VALUE_2(cassette, autoRewind);
 
-    setStrValue("CasseteDefDir", (char*)pProperties->cassette.defDir);
-    setStrValue("Cassete", (char*)pProperties->cassette.tape);
-    setStrValue("Cassete-ZIP", (char*)pProperties->cassette.tapeZip);
-    setIntValue("Cassete-Filter", pProperties->cassette.filter);
-    setIntValue("CasseteShowCustom", pProperties->cassette.showCustomFiles);
-    setIntValue("CasseteShowCustom", pProperties->cassette.readOnly);
-    setIntValue("CasseteAutoRewind", pProperties->cassette.autoRewind);
-
-    setIntValue("LptType", pProperties->ports.Lpt.type);
-    setIntValue("LptMode", pProperties->ports.Lpt.emulation);
-    setStrValue("LptName", (char*)pProperties->ports.Lpt.name);
-    setStrValue("LptFileName", (char*)pProperties->ports.Lpt.fileName);
-    setStrValue("LptPortName", (char*)pProperties->ports.Lpt.portName);
-
-    setIntValue("ComType", pProperties->ports.Com.type);
-    setStrValue("ComName", (char*)pProperties->ports.Com.name);
-    setStrValue("ComFileName", (char*)pProperties->ports.Com.fileName);
-    setStrValue("ComPortName", (char*)pProperties->ports.Com.portName);
-
+    SET_INT_VALUE_3(ports, Lpt, type);
+    SET_INT_VALUE_3(ports, Lpt, emulation);
+    SET_STR_VALUE_3(ports, Lpt, name);
+    SET_STR_VALUE_3(ports, Lpt, fileName);
+    SET_STR_VALUE_3(ports, Lpt, portName);
+    SET_INT_VALUE_3(ports, Com, type);
+    SET_STR_VALUE_3(ports, Com, name);
+    SET_STR_VALUE_3(ports, Com, fileName);
+    SET_STR_VALUE_3(ports, Com, portName);
+    
     for (i = 0; i < MAX_HISTORY; i++) {
-        char str[32];
-        sprintf(str, "CartA-History%x",i);
-        setStrValue(str, (char*)pProperties->filehistory.cartridgeA[i]);
-        sprintf(str, "CartTypeA-History%x",i);
-        setIntValue(str, pProperties->filehistory.cartridgeTypeA[i]);
-        sprintf(str, "CartB-History%x",i);
-        setStrValue(str, (char*)pProperties->filehistory.cartridgeB[i]);
-        sprintf(str, "CartTypeB-History%x",i);
-        setIntValue(str, pProperties->filehistory.cartridgeTypeB[i]);
-        sprintf(str, "DiskDriveA-History%x",i);
-        setStrValue(str, (char*)pProperties->filehistory.diskdriveA[i]);
-        sprintf(str, "DiskDriveB-History%x",i);
-        setStrValue(str, (char*)pProperties->filehistory.diskdriveB[i]);
-        sprintf(str, "Cassete-History%x",i);
-        setStrValue(str, (char*)pProperties->filehistory.cassette[i]);
+        SET_STR_VALUE_2i(filehistory, cartridgeA, i);
+        SET_INT_VALUE_2i(filehistory, cartridgeTypeA, i);
+        SET_STR_VALUE_2i(filehistory, cartridgeB, i);
+        SET_INT_VALUE_2i(filehistory, cartridgeTypeB, i);
+        SET_STR_VALUE_2i(filehistory, diskdriveA, i);
+        SET_STR_VALUE_2i(filehistory, diskdriveB, i);
+        SET_STR_VALUE_2i(filehistory, cassette, i);
     }
 
-    setStrValue("QuickSave-History", (char*)pProperties->filehistory.quicksave);
-    
-    setIntValue("History-Count", pProperties->filehistory.count);
+    SET_STR_VALUE_2(filehistory, quicksave);
+    SET_INT_VALUE_2(filehistory, count);
 
     for (i = 0; i < DLG_MAX_ID; i++) {
-        char str[32];
-        sprintf(str, "WindowPosLeft%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].left);
-        sprintf(str, "WindowPosTop%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].top);
-        sprintf(str, "WindowPosWidth%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].width);
-        sprintf(str, "WindowPosHeight%x",i);
-        setIntValue(str, pProperties->settings.windowPos[i].height);
+        SET_INT_VALUE_2i1(settings, windowPos, i, left);
+        SET_INT_VALUE_2i1(settings, windowPos, i, top);
+        SET_INT_VALUE_2i1(settings, windowPos, i, width);
+        SET_INT_VALUE_2i1(settings, windowPos, i, height);
     }
+    
+#ifdef USE_XMLFORMAT
+    vtXpathClose(xpath);
+#endif
 }
 
 static Properties* globalProperties = NULL;
@@ -877,7 +801,7 @@ Properties* propGetGlobalProperties()
     return globalProperties;
 }
 
-Properties* propCreate(int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
+Properties* propCreate(const char* filename, int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
 {
     Properties* pProperties;
 
@@ -891,11 +815,9 @@ Properties* propCreate(int useDefault, EmuLanguageType langType, PropKeyboardLan
     pProperties->joy2.id = 2;
     propInitDefaults(pProperties, langType, kbdLang, syncMode);
 
+    strcpy(pProperties->filename, filename);
     if (!useDefault) {
         propLoad(pProperties);
-    }
-    else {
-        propLoadDefault(pProperties);
     }
 
     // Verify machine name

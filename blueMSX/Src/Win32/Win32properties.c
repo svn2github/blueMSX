@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-09-22 23:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,12 +60,6 @@ static Mixer* theMixer;
 static Video* theVideo;
 static int centered = 0;
 extern void emulatorRestartSound();
-
-static int canUseRegistry = 0;
-static int useRegistry = 0;
-static char* keyPath = NULL;
-static char* keyFile = NULL;
-static char registryKey[] = "blueMSX";
 
 static int openLogFile(HWND hwndOwner, char* fileName)
 {
@@ -906,14 +900,11 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSFILETYPES), langPropFileTypes());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDISABLEWINKEYS), langPropDisableWinKeys());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSPRIORITYBOOST), langPropPriorityBoost());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSUSEREGISTRY), langPropUseRegistry());
 
         setButtonCheck(hDlg, IDC_SETTINGSFILETYPES, pProperties->emulation.registerFileTypes, 1);
         setButtonCheck(hDlg, IDC_SETTINGSDISABLEWINKEYS, pProperties->emulation.disableWinKeys, 1);
         setButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST, pProperties->emulation.priorityBoost, 1);
         setButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER, pProperties->settings.disableScreensaver, 1);
-        setButtonCheck(hDlg, IDC_SETTINGSUSEREGISTRY, useRegistry && canUseRegistry, 1);
-        EnableWindow(GetDlgItem(hDlg, IDC_SETTINGSUSEREGISTRY), canUseRegistry);
 
         return FALSE;
 
@@ -953,9 +944,6 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         pProperties->emulation.disableWinKeys    = getButtonCheck(hDlg, IDC_SETTINGSDISABLEWINKEYS);
         pProperties->settings.disableScreensaver = getButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER);
         pProperties->emulation.priorityBoost     = getButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST);
-        if (canUseRegistry) {
-            useRegistry = getButtonCheck(hDlg, IDC_SETTINGSUSEREGISTRY);
-        }
 
         propModified = 1;
         
@@ -2475,218 +2463,24 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
 //////////////////////////////////////////////////////////////////////////////
 // Host dependent load/save methods, Can be moved to its own file
 
-static void getRegStrValue(char* keyDir, char* keyStr, char* returnValue) {  
-    char value[1024];
-    LONG rv;
-    HKEY hKey;
-    DWORD length = 1024;
-    DWORD type;
-    char directory[64];
-
-    sprintf(directory, "Software\\%s", keyDir);
-
-    rv = RegOpenKeyEx(HKEY_CURRENT_USER, directory, 0, KEY_QUERY_VALUE, &hKey);    
-    if (rv != ERROR_SUCCESS) {
-        return;
-    }
-
-    length = sizeof(value);
-    rv = RegQueryValueEx(hKey, keyStr, NULL, &type, (BYTE*)value, &length);
-    RegCloseKey(hKey);
-    if (rv != ERROR_SUCCESS) {
-        return;
-    }
-
-    strcpy(returnValue, value);
-}
-
-static void getRegIntValue(char* keyDir, char* keyStr, DWORD* returnValue) {  
-    LONG rv;
-    HKEY hKey;
-    DWORD length;
-    DWORD type;
-    DWORD value;
-    char directory[32];
-
-    sprintf(directory, "Software\\%s", keyDir);
-
-    rv = RegOpenKeyEx(HKEY_CURRENT_USER, directory, 0, KEY_QUERY_VALUE, &hKey);  
-    if (rv != ERROR_SUCCESS) {
-        return;
-    }
-
-    length = sizeof(value);
-    rv = RegQueryValueEx(hKey, keyStr, NULL, &type, (BYTE *)&value, &length);
-
-    RegCloseKey(hKey);
-
-    if (rv != ERROR_SUCCESS) {
-        return;
-    }
-
-    *returnValue = value;
-}
-
-static BOOL setRegIntValue(char* keyDir, char* keyStr, DWORD value) {
-    HKEY hKey;
-    DWORD exist;
-    DWORD rv;
-    DWORD dwValue = (DWORD)value;
-    char directory[64];
-
-    sprintf(directory, "Software\\%s", keyDir);
-
-    rv = RegCreateKeyEx(HKEY_CURRENT_USER, directory, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    if (rv != ERROR_SUCCESS) {
-        return FALSE;
-    }
-
-    rv = RegSetValueEx(hKey, keyStr, 0, REG_DWORD, (BYTE *)&dwValue, sizeof(DWORD));
-
-    RegCloseKey(hKey);
-
-    return TRUE;
-}
-
-static BOOL setRegStrValue(char* keyDir, char* keyStr, char* value) {
-    HKEY hKey;
-    DWORD exist;
-    DWORD rv;
-    DWORD dwValue = (DWORD)value;
-    char directory[64];
-
-    sprintf(directory, "Software\\%s", keyDir);
-
-    rv = RegCreateKeyEx(HKEY_CURRENT_USER, directory, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &exist);
-    if (rv != ERROR_SUCCESS) {
-        return FALSE;
-    }
-
-    rv = RegSetValueEx(hKey, keyStr, 0, REG_SZ, (BYTE *)value, strlen(value) + 1);
-
-    RegCloseKey(hKey);
-
-    return TRUE;
-}
-
-static void getIniStrValue(char* keyDir, char* keyStr, char* returnValue) {  
-    char file[1024];
+void getStrValue(char* keyFile, char* keyDir, char* keyStr, char* returnValue) {  
     char defStr[512];
-
-    if (keyFile != NULL)      sprintf(file, "%s", keyFile);
-    else if (keyPath != NULL) sprintf(file, "%s\\%s.ini", keyPath, keyDir);
-    else                      sprintf(file, "%s.ini", keyDir);
-
     strcpy(defStr, returnValue);
-
-    GetPrivateProfileString("General", keyStr, defStr, returnValue, 512, file);      
+    GetPrivateProfileString("General", keyStr, defStr, returnValue, 512, keyFile);      
 }
 
-static void getIniIntValue(char* keyDir, char* keyStr, DWORD* returnValue) {  
-    char file[1024];
+void getIntValue(char* keyFile, char* keyDir, char* keyStr, DWORD* returnValue) {  
     DWORD def = *returnValue;
-
-    if (keyFile != NULL)      sprintf(file, "%s", keyFile);
-    else if (keyPath != NULL) sprintf(file, "%s\\%s.ini", keyPath, keyDir);
-    else                      sprintf(file, "%s.ini", keyDir);
-
-    *returnValue = GetPrivateProfileInt("General", keyStr, def, file);                           
+    *returnValue = GetPrivateProfileInt("General", keyStr, def, keyFile);                           
 }
 
-static BOOL setIniIntValue(char* keyDir, char* keyStr, DWORD value) {
-    char file[1024];
+void setIntValue(char* keyFile, char* keyDir, char* keyStr, DWORD value) {
     char buf[30];
 
     sprintf(buf, "%d", value);
-
-    if (keyFile != NULL)      sprintf(file, "%s", keyFile);
-    else if (keyPath != NULL) sprintf(file, "%s\\%s.ini", keyPath, keyDir);
-    else                      sprintf(file, "%s.ini", keyDir);
-
-    return WritePrivateProfileString("General", keyStr, buf, file);
+    WritePrivateProfileString("General", keyStr, buf, keyFile);
 }
 
-static BOOL setIniStrValue(char* keyDir, char* keyStr, char* value) {
-    char file[1024];
-
-    if (keyFile != NULL)      sprintf(file, "%s", keyFile);
-    else if (keyPath != NULL) sprintf(file, "%s\\%s.ini", keyPath, keyDir);
-    else                      sprintf(file, "%s.ini", keyDir);
-
-    return WritePrivateProfileString("General", keyStr, value, file);
-}
-  
-void getStrValue(char* keyStr, char* returnValue) {
-    if (useRegistry) getRegStrValue(registryKey, keyStr, returnValue);
-    else             getIniStrValue(registryKey, keyStr, returnValue);
-}
-
-void getIntValue(char* keyStr, int* returnValue) {
-    long retVal = *returnValue;
-    if (useRegistry) getRegIntValue(registryKey, keyStr, &retVal);
-    else             getIniIntValue(registryKey, keyStr, &retVal);
-    *returnValue = retVal;
-}   
-    
-int setStrValue(char* keyStr, char* value) {
-    if (useRegistry) return setRegStrValue(registryKey, keyStr, value);
-    else             return setIniStrValue(registryKey, keyStr, value);
-}
-
-int setIntValue(char* keyStr, int value) {
-    if (useRegistry) return setRegIntValue(registryKey, keyStr, value);
-    else             return setIniIntValue(registryKey, keyStr, value);
-}
-
-char* getLocalDirectory() {
-    static char dir[1024];
-    char* ptr;
-    DWORD size;
-
-    size = GetModuleFileName(NULL, dir, 1024);
-
-    if (size == 0) {
-        return NULL;
-    }
-
-    ptr = dir + size;
-
-    while (ptr > dir && *ptr != '\\') {
-        ptr--;
-    }
-    *ptr = 0;
-
-    if (ptr == dir) {
-        return NULL;
-    }
-
-    return dir;
-}
-
-void propertiesUseRegistry(int enable)
-{
-    useRegistry = enable && canUseRegistry;
-}
-
-void propertiesInit(char* iniFile) 
-{
-    DWORD test = 0;
-
-    setRegIntValue(registryKey, "Test", 42);
-    getRegIntValue(registryKey, "Test", &test);
-
-    canUseRegistry = test == 42;
-    useRegistry = 0;
-
-    keyPath = getLocalDirectory();
-
-    if (iniFile != NULL && *iniFile != 0) {
-        canUseRegistry = 0;
-        keyFile = malloc(MAX_PATH);
-        strcpy(keyFile, iniFile);
-    }
-
-    if (canUseRegistry) {
-        getRegIntValue(registryKey, "UseRegistry", &useRegistry);
-    }
+void setStrValue(char* keyFile, char* keyDir, char* keyStr, char* value) {
+    WritePrivateProfileString("General", keyStr, value, keyFile);
 }

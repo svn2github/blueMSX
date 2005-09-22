@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-08-21 21:31:37 $
+** $Date: 2005-09-22 23:04:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,7 +131,7 @@ typedef struct {
     int enableY8950;
     int enableYM2413;
     int enableMoonsound;
-    int moonsoundSRAM;
+    int moonsoundSRAMSize;
     int ym2413Oversampling;
     int y8950Oversampling;
     int moonsoundOversampling;
@@ -266,6 +266,8 @@ typedef struct {
 } Settings;
 
 typedef struct {
+    char filename[512]; // Name of the properties file
+
     EmulationProperties emulation;
     VideoProperties     video;
     SoundProperties     sound;
@@ -281,7 +283,7 @@ typedef struct {
     Settings            settings;
 } Properties;
 
-Properties* propCreate(int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode);
+Properties* propCreate(const char* filename, int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode);
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
 

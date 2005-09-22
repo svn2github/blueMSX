@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.102 $
+** $Revision: 1.103 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-09-22 23:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2451,6 +2451,16 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     RegisterClassEx(&wndClass);
 
     {
+        // Set current directory to where the exe is located
+        char buffer[512];  
+        char* ptr;
+        GetModuleFileName((HINSTANCE)GetModuleHandle(NULL), buffer, 512);
+        ptr = stripPath(buffer);
+        *ptr = 0;
+        SetCurrentDirectory(buffer);
+    }
+
+    {
         /* Modify scan code map if nessecary */
         PropKeyboardLanguage kbdLang = P_KBD_EUROPEAN;
         int syncMode = 0;
@@ -2465,8 +2475,14 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         if (resetRegistry) {
             syncMode = canHandleVblankSyncMode() ? 1 : 0;
         }
-        propertiesInit(emuCheckIniFileArgument(szLine));
-        pProperties = propCreate(resetRegistry, getLangType(), kbdLang, syncMode);
+
+        {
+            char path[MAX_PATH];
+            GetCurrentDirectory(MAX_PATH, path);
+            strcat(path, "\\bluemsx.ini");
+            pProperties = propCreate(path, resetRegistry, getLangType(), kbdLang, syncMode);
+        }
+//        pProperties = propCreate("Properties/settings.xml", resetRegistry, getLangType(), kbdLang, syncMode);
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
         
         if (resetRegistry == 2) {
@@ -2680,6 +2696,9 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     shortcutsDestroyProfile(st.shortcuts);
     videoDestroy(st.pVideo);
+    
+    SetCurrentDirectory(st.pCurDir);
+
     propDestroy(pProperties);
 
     archSoundDestroy();
