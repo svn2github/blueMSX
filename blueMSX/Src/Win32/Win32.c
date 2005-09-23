@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.103 $
+** $Revision: 1.104 $
 **
-** $Date: 2005-09-22 23:04:30 $
+** $Date: 2005-09-23 19:13:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2885,8 +2885,35 @@ void archDiskQuickChangeNotify()
     diskQuickviewWindowShow(st.dskWnd);
 }
 
-char* archDirOpen(char* title, char* defaultDir)
+////////////////////////////////////////////////////////////////////
+// File open/save stuff
+
+static void replaceCharInString(char* str, char oldChar, char newChar) 
 {
+    while (*str) {
+        if (*str == oldChar) {
+            *str = newChar;
+        }
+        str++;
+    }
+}
+
+static char* archFileSave(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension)
+{
+    char* fileName;
+
+    enterDialogShow();
+    fileName = saveFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir);
+    exitDialogShow();
+    SetCurrentDirectory(st.pCurDir);
+
+    return fileName;
+}
+
+char* archDirnameGetOpenDisk(Properties* properties, int drive)
+{
+    char* title = drive == 2 ? langDlgInsertDiskB() : langDlgInsertDiskA();
+    char* defaultDir = drive == 2 ? properties->diskdrive.slotBDir : properties->diskdrive.slotADir;
     char* filename;
 
     enterDialogShow();
@@ -2909,9 +2936,19 @@ char* archFileOpen(char* title, char* extensionList, char* defaultDir, char* ext
     return fileName;
 }
 
-char* archFileStateOpen(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defautExtension, int createFileSize)
+char* archFilenameGetOpenState(Properties* properties)
 {
+    char* title = langDlgLoadState();
+    char extensionList[512];
+    char* defaultDir = properties->emulation.statsDefDir;
+    char* extensions = ".sta\0";
+    int* selectedExtension = NULL;
+    char* defautExtension = NULL;
+    int createFileSize = -1;
     char* fileName;
+
+    sprintf(extensionList, "%s   (*.sta)#*.sta#", langCpuState());
+    replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
     fileName = openStateFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension, &pProperties->settings.showStatePreview);
@@ -2921,9 +2958,17 @@ char* archFileStateOpen(char* title, char* extensionList, char* defaultDir, char
     return fileName;
 }
 
-char* archFileRomOpen(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defautExtension, RomType* romType) 
+char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType) 
 {
+    char* defaultDir = properties->cartridge.defDir;
+    int* selectedExtension = &properties->cartridge.slotAFilter;
+    char* defautExtension = ".rom";
+    char* extensions = ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0";
+    char* title = cartSlot == 2 ? langDlgInsertRom2() : langDlgInsertRom1();
     char* fileName;
+    char extensionList[512];
+    sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
     fileName = openRomFile(getMainHwnd(), title, extensionList, defaultDir, 1, defautExtension, selectedExtension, romType);
@@ -2933,21 +2978,75 @@ char* archFileRomOpen(char* title, char* extensionList, char* defaultDir, char* 
     return fileName;
 }
 
-char* archFileSave(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension)
+char* archFilenameGetOpenCas(Properties* properties)
 {
+    char* title = langDlgInsertCas();
+    char  extensionList[512];
+    char* defaultDir = properties->cassette.defDir;
+    char* extensions = ".cas\0.zip\0.*\0";
+    int* selectedExtension = &properties->cassette.filter;
+    char* defautExtension = ".cas";
+    int createFileSize = 0;
     char* fileName;
 
+    sprintf(extensionList, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langCasImage(), langAllFiles());
+    replaceCharInString(extensionList, '#', 0);
+
     enterDialogShow();
-    fileName = saveFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir);
+    fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
     return fileName;
 }
 
-char* archFileStateSave(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension)
+char* archFilenameGetOpenDisk(Properties* properties, int drive)
 {
+    char* title = drive == 2 ? langDlgInsertDiskB() : langDlgInsertDiskA();
+    char  extensionList[512];
+    char* defaultDir = properties->diskdrive.defDir;
+    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
+    int* selectedExtension = drive == 2 ? &properties->diskdrive.slotBFilter : &properties->diskdrive.slotAFilter;
+    char* defautExtension = ".dsk";
+    int createFileSize = 720 * 1024;
     char* fileName;
+
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    replaceCharInString(extensionList, '#', 0);
+
+    enterDialogShow();
+    fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
+    exitDialogShow();
+    SetCurrentDirectory(st.pCurDir);
+
+    return fileName;
+}
+
+char* archFilenameGetSaveCas(Properties* properties, int* type)
+{
+    char* title = langDlgSaveCassette();
+    char  extensionList[512];
+    char* defaultDir = properties->cassette.defDir;
+    char* extensions = ".cas\0";
+    int* selectedExtension = type;
+
+    sprintf(extensionList, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langCasImage(), langCasImage(), langCasImage());
+    replaceCharInString(extensionList, '#', 0);
+
+    return archFileSave(title, extensionList, defaultDir, extensions, selectedExtension);
+}
+
+char* archFilenameGetSaveState(Properties* properties)
+{
+    char* title = langDlgSaveState();
+    char  extensionList[512];
+    char* defaultDir = properties->emulation.statsDefDir;
+    char* extensions = ".sta\0";
+    int* selectedExtension = NULL;
+    char* fileName;
+
+    sprintf(extensionList, "%s   (*.sta)#*.sta#", langCpuState());
+    replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
     fileName = saveStateFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir, &pProperties->settings.showStatePreview);

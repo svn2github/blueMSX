@@ -1566,6 +1566,12 @@ buildnumber.exe
 			Name="Utils"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Utils\IniFileParser.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\IniFileParser.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Utils\IsFileExtension.c">
 			</File>
 			<File

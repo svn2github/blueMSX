@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-09-22 23:04:29 $
+** $Date: 2005-09-23 19:13:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,11 @@
 #ifdef USE_XMLFORMAT
 #include "VeryTinyXpath.h"
 #else
+#ifdef USE_NATIVEINI
 #include "ArchKeyStorage.h"
+#else
+#include "IniFileParser.h"
+#endif
 #endif
 #include "Properties.h"
 #include "Machine.h"
@@ -366,6 +370,38 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
 
 #else
 
+#ifndef USE_NATIVEINI
+
+#define GET_INT_VALUE_1(v1)         pProperties->v1 = iniFileGetInt(ROOT_ELEMENT, #v1, pProperties->v1);
+#define GET_INT_VALUE_2(v1,v2)      pProperties->v1.v2 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2);
+#define GET_INT_VALUE_3(v1,v2,v3)   pProperties->v1.v2.v3 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3);
+#define GET_INT_VALUE_2s1(v1,v2,v3,v4) pProperties->v1.v2[v3].v4 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4);
+#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); pProperties->v1.v2[i] = iniFileGetInt(ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
+#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); pProperties->v1.v2[i].a1 = iniFileGetInt(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+
+#define GET_STR_VALUE_1(v1)         iniFileGetString(ROOT_ELEMENT, #v1, pProperties->v1, pProperties->v1, sizeof(pProperties->v1));
+#define GET_STR_VALUE_2(v1,v2)      iniFileGetString(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2, pProperties->v1.v2, sizeof(pProperties->v1.v2));
+#define GET_STR_VALUE_3(v1,v2,v3)   iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3, pProperties->v1.v2.v3, sizeof(pProperties->v1.v2.v3));
+#define GET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4, pProperties->v1.v2[v3].v4, sizeof(pProperties->v1.v2[v3].v4));
+#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileGetString(ROOT_ELEMENT, s, pProperties->v1.v2[i], pProperties->v1.v2[i], sizeof(pProperties->v1.v2[i])); }
+#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileGetString(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1, pProperties->v1.v2[i].a1, sizeof(pProperties->v1.v2[i].a1)); }
+
+#define SET_INT_VALUE_1(v1)         { char v[64]; sprintf(v, "%d", pProperties->v1); iniFileWriteString(ROOT_ELEMENT, #v1, v); }
+#define SET_INT_VALUE_2(v1,v2)      { char v[64]; sprintf(v, "%d", pProperties->v1.v2); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, v); }
+#define SET_INT_VALUE_3(v1,v2,v3)   { char v[64]; sprintf(v, "%d", pProperties->v1.v2.v3); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, v); }
+#define SET_INT_VALUE_2s1(v1,v2,v3,v4) { char v[64]; sprintf(v, "%d", pProperties->v1.v2[v3].v4); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, v); }
+#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64], v[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); sprintf(v, "%d", pProperties->v1.v2[i]); iniFileWriteString(ROOT_ELEMENT, s, v); }
+#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64], v[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); sprintf(v, "%d", pProperties->v1.v2[i].a1); iniFileWriteString(ROOT_ELEMENT, s, v); }
+
+#define SET_STR_VALUE_1(v1)         iniFileWriteString(ROOT_ELEMENT, #v1, pProperties->v1);
+#define SET_STR_VALUE_2(v1,v2)      iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2);
+#define SET_STR_VALUE_3(v1,v2,v3)   iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3);
+#define SET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4);
+#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileWriteString(ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
+#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileWriteString(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+
+#else
+
 #define GET_INT_VALUE_1(v1)         getIntValue(pProperties->filename, ROOT_ELEMENT, #v1, &pProperties->v1)
 #define GET_INT_VALUE_2(v1,v2)      getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, &pProperties->v1.v2)
 #define GET_INT_VALUE_3(v1,v2,v3)   getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, &pProperties->v1.v2.v3)
@@ -396,12 +432,18 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
 
 #endif
 
+#endif
+
 static void propLoad(Properties* pProperties) 
 {
     int i;
     
 #ifdef USE_XMLFORMAT
     VtXpath* xpath = vtXpathOpenForRead(pProperties->filename);
+#else
+#ifndef USE_NATIVEINI
+    iniFileOpen(pProperties->filename);
+#endif
 #endif
 
     GET_INT_VALUE_1(language);
@@ -592,6 +634,10 @@ static void propLoad(Properties* pProperties)
     
 #ifdef USE_XMLFORMAT
     vtXpathClose(xpath);
+#else
+#ifndef USE_NATIVEINI
+    iniFileClose();
+#endif
 #endif
 }
 
@@ -601,6 +647,10 @@ void propSave(Properties* pProperties)
     
 #ifdef USE_XMLFORMAT
     VtXpath* xpath = vtXpathOpenForWrite(pProperties->filename);
+#else
+#ifndef USE_NATIVEINI
+    iniFileOpen(pProperties->filename);
+#endif
 #endif
 
     SET_INT_VALUE_1(language);
@@ -791,6 +841,10 @@ void propSave(Properties* pProperties)
     
 #ifdef USE_XMLFORMAT
     vtXpathClose(xpath);
+#else
+#ifndef USE_NATIVEINI
+    iniFileClose();
+#endif
 #endif
 }
 

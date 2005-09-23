@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchDialog.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-07-23 06:10:44 $
+** $Date: 2005-09-23 19:13:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,19 +30,23 @@
 #ifndef ARCH_DIALOG_H
 #define ARCH_DIALOG_H
 
-char* archDirOpen(char* title, char* defaultDir);
-char* archFileOpen(char* title, char* fileDescription, char* defaultDir, 
-                   char* extensions, int* selectedExtension, char* defautExtension, 
-                   int createFileSize);
-char* archFileStateOpen(char* title, char* fileDescription, char* defaultDir, 
-                   char* extensions, int* selectedExtension, char* defautExtension, 
-                   int createFileSize);
-char* archFileRomOpen(char* title, char* fileDescription, char* defaultDir, 
-                      char* extensions, int* selectedExtension, char* defautExtension, RomType* romType);
-char* archFileSave(char* title, char* fileDescription, char* defaultDir, 
-                   char* extensions, int* selectedExtension);
-char* archFileStateSave(char* title, char* extensionList, char* defaultDir, 
-                        char* extensions, int* selectedExtension);
+#include "Properties.h"
+
+char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType);
+
+char* archFilenameGetOpenDisk(Properties* properties, int drive);
+
+char* archFilenameGetOpenCas(Properties* properties);
+
+char* archFilenameGetSaveCas(Properties* properties, int* type);
+
+char* archFilenameGetOpenState(Properties* properties);
+
+char* archFilenameGetSaveState(Properties* properties);
+
+
+char* archDirnameGetOpenDisk(Properties* properties, int drive);
+
 void archFileFromZipDialog(ZipFileDlgInfo* dlgInfo);
 
 void archShowPropertiesDialog(PropPage page);

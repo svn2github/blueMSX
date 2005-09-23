@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2005-09-17 03:53:37 $
+** $Date: 2005-09-23 19:13:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,17 +64,6 @@ static char audioDir[MAX_PATH]  = "";
 static char audioPrefix[64]     = "";
 static char stateDir[MAX_PATH]  = "";
 static char statePrefix[64]     = "";
-
-
-static void replaceCharInString(char* str, char oldChar, char newChar) 
-{
-    while (*str) {
-        if (*str == oldChar) {
-            *str = newChar;
-        }
-        str++;
-    }
-}
 
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix)
 {
@@ -164,13 +153,9 @@ void actionToggleWaveCapture() {
 
 void actionLoadState() {
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
-    replaceCharInString(text, '#', 0);
-    filename = archFileStateOpen(langDlgLoadState(), text, 
-                                 state.properties->emulation.statsDefDir, ".sta\0", NULL, NULL, -1);
+    filename = archFilenameGetOpenState(state.properties);
     if (filename != NULL) {
         emulatorStop();
         emulatorStart(filename);
@@ -185,12 +170,8 @@ void actionSaveState() {
     char* filename;
 
     if (emulatorGetState() != EMU_STOPPED) {
-        char text[512];
         emulatorSuspend();
-        sprintf(text, "%s   (*.sta)#*.sta#", langCpuState());
-        replaceCharInString(text, '#', 0);
-        filename = archFileStateSave(langDlgSaveState(), text, 
-                                     state.properties->emulation.statsDefDir, ".sta\0", NULL);
+        filename = archFilenameGetSaveState(state.properties);
         if (filename != NULL && strlen(filename) != 0) {
             char *ptr = filename + strlen(filename) - 1;
             while(*ptr != '.' && ptr > filename) {
@@ -227,14 +208,9 @@ void actionQuickSaveState() {
 void actionCartInsert1() {
     RomType romType;
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
-    replaceCharInString(text, '#', 0);
-    filename = archFileRomOpen(langDlgInsertRom1(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0",
-                               &state.properties->cartridge.slotAFilter, ".rom", &romType);
+    filename = archFilenameGetOpenRom(state.properties, 1, &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 0, filename, NULL, romType, 0);
     }
@@ -247,14 +223,9 @@ void actionCartInsert1() {
 void actionCartInsert2() {
     RomType romType;
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
-    replaceCharInString(text, '#', 0);
-    filename = archFileRomOpen(langDlgInsertRom2(), text, 
-                               state.properties->cartridge.defDir, ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0",
-                               &state.properties->cartridge.slotBFilter, ".rom", &romType);
+    filename = archFilenameGetOpenRom(state.properties, 2, &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, 1, filename, NULL, romType, 0);
     }
@@ -365,7 +336,7 @@ void actionDiskDirInsertA() {
     char* filename;
 
     emulatorSuspend();
-    filename = archDirOpen(langDlgInsertDiskA(), state.properties->diskdrive.slotADir);
+    filename = archDirnameGetOpenDisk(state.properties, 1);
     if (filename != NULL) {        
         strcpy(state.properties->diskdrive.slotADir, filename);
         insertDiskette(state.properties, 0, filename, NULL, 0);
@@ -378,7 +349,7 @@ void actionDiskDirInsertB() {
     char* filename;
 
     emulatorSuspend();
-    filename = archDirOpen(langDlgInsertDiskB(), state.properties->diskdrive.slotBDir);
+    filename = archDirnameGetOpenDisk(state.properties, 1);
     if (filename != NULL) {        
         strcpy(state.properties->diskdrive.slotBDir, filename);
         insertDiskette(state.properties, 1, filename, NULL, 0);
@@ -389,14 +360,9 @@ void actionDiskDirInsertB() {
 
 void actionDiskInsertA() {
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
-    replaceCharInString(text, '#', 0);
-    filename = archFileOpen(langDlgInsertDiskA(), text,
-                            state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
-                            &state.properties->diskdrive.slotAFilter, ".dsk", 720 * 1024);
+    filename = archFilenameGetOpenDisk(state.properties, 1);
     if (filename != NULL) {        
         insertDiskette(state.properties, 0, filename, NULL, 0);
     }
@@ -406,16 +372,10 @@ void actionDiskInsertA() {
 
 void actionDiskInsertB() {
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
-    replaceCharInString(text, '#', 0);
-    filename = archFileOpen(langDlgInsertDiskB(), text,
-                            state.properties->diskdrive.defDir, ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0", 
-                            &state.properties->diskdrive.slotBFilter, ".dsk", 720 * 1024);
+    filename = archFilenameGetOpenDisk(state.properties, 2);
     if (filename != NULL) {
-        
         insertDiskette(state.properties, 1, filename, NULL, 0);
     }
     emulatorResume();
@@ -512,14 +472,9 @@ void actionEmuSpeedIncrease() {
 
 void actionCasInsert() {
     char* filename;
-    char text[512];
 
     emulatorSuspend();
-    sprintf(text, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langCasImage(), langAllFiles());
-    replaceCharInString(text, '#', 0);
-    filename = archFileOpen(langDlgInsertCas(), text, 
-                            state.properties->cassette.defDir, ".cas\0.zip\0.*\0", 
-                            &state.properties->cassette.filter, ".cas", 0);
+    filename = archFilenameGetOpenCas(state.properties);
     if (filename != NULL) {        
         insertCassette(state.properties, filename, NULL, 0);
         if (state.properties->cassette.autoRewind) {
@@ -709,7 +664,6 @@ void actionCasSave() {
     char* filename;
 
     if (*state.properties->cassette.tape) {
-        char text[512];
         int type;
 
         if (emulatorGetState() == EMU_STOPPED) {
@@ -723,11 +677,8 @@ void actionCasSave() {
         
         type = tapeGetFormat();
 
-        sprintf(text, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langCasImage(), langCasImage(), langCasImage());
-        replaceCharInString(text, '#', 0);
+        filename = archFilenameGetSaveCas(state.properties, &type);
 
-        filename = archFileSave(langDlgSaveCassette(), text, 
-                                state.properties->cassette.defDir, ".cas\0", &type);
         if (filename != NULL && strlen(filename) != 0) {
             if (type == 1 || type == 2 || type == 3) {
                 tapeSave(filename, type);

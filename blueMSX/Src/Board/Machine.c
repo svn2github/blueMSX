@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-09-20 01:36:42 $
+** $Date: 2005-09-23 19:13:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,11 +30,11 @@
 #define USE_ARCH_GLOB
 #include "Machine.h"
 #include "SaveState.h"
+#include "IniFileParser.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #include <string.h>
 #include <ctype.h>
-#include <windows.h>
 #else
 #include <windows.h>
 #endif
@@ -67,8 +67,10 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
 
     strcpy(machine->name, machineName);
 
+    iniFileOpen(file);
+
     // Read board info
-    GetPrivateProfileString("Board", "type", "none", buffer, 10000, file);
+    iniFileGetString("Board", "type", "none", buffer, 10000);
     if      (0 == strcmp(buffer, "MSX"))          machine->board.type = BOARD_MSX;
     else if (0 == strcmp(buffer, "SVI"))          machine->board.type = BOARD_SVI;
     else if (0 == strcmp(buffer, "ColecoVision")) machine->board.type = BOARD_COLECO;
@@ -76,93 +78,93 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else                                          machine->board.type = BOARD_MSX;
 
     // Read video info
-    GetPrivateProfileString("Video", "version", "none", buffer, 10000, file);
+    iniFileGetString("Video", "version", "none", buffer, 10000);
     if      (0 == strcmp(buffer, "V9938"))    machine->video.vdpVersion = VDP_V9938;
     else if (0 == strcmp(buffer, "V9958"))    machine->video.vdpVersion = VDP_V9958;
     else if (0 == strcmp(buffer, "TMS9929A")) machine->video.vdpVersion = VDP_TMS9929A;
     else if (0 == strcmp(buffer, "TMS99x8A")) machine->video.vdpVersion = VDP_TMS99x8A;
-    else return 0;
+    else { iniFileClose(); return 0; }
 
-    GetPrivateProfileString("Video", "vram size", "none", buffer, 10000, file);
+    iniFileGetString("Video", "vram size", "none", buffer, 10000);
     if (0 == strcmp(buffer, "16kB")) machine->video.vramSize = 16 * 1024;
     else if (0 == strcmp(buffer, "64kB")) machine->video.vramSize = 64 * 1024;
     else if (0 == strcmp(buffer, "128kB")) machine->video.vramSize = 128 * 1024;
     else if (0 == strcmp(buffer, "192kB")) machine->video.vramSize = 192 * 1024;
-    else return 0;
+    else { iniFileClose(); return 0; }
 
     // Read CMOS info
-    GetPrivateProfileString("CMOS", "Enable CMOS", "none", buffer, 10000, file);
+    iniFileGetString("CMOS", "Enable CMOS", "none", buffer, 10000);
     if (0 == strcmp(buffer, "none")) machine->cmos.enable = 1;
     else if (0 == strcmp(buffer, "0")) machine->cmos.enable = 0;
     else if (0 == strcmp(buffer, "1")) machine->cmos.enable = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
 
     // Read CPU info
-    GetPrivateProfileString("CPU", "Z80 Frequency", "none", buffer, 10000, file);
+    iniFileGetString("CPU", "Z80 Frequency", "none", buffer, 10000);
     if (0 == sscanf(buffer, "%dHz", &value)) {
         value = 3579545;
     }
     machine->cpu.freqZ80 = value;
 
     // Read CPU info
-    GetPrivateProfileString("CPU", "R800 Frequency", "none", buffer, 10000, file);
+    iniFileGetString("CPU", "R800 Frequency", "none", buffer, 10000);
     if (0 == sscanf(buffer, "%dHz", &value)) {
         value = 7159090;
     }
     machine->cpu.freqR800 = value;
 
     // Read FDC info
-    GetPrivateProfileString("FDC", "Count", "none", buffer, 10000, file);
+    iniFileGetString("FDC", "Count", "none", buffer, 10000);
     if (0 == strcmp(buffer, "none")) machine->fdc.count = 2;
     else if (0 == strcmp(buffer, "0")) machine->fdc.count = 0;
     else if (0 == strcmp(buffer, "1")) machine->fdc.count = 1;
     else if (0 == strcmp(buffer, "2")) machine->fdc.count = 2;
     else if (0 == strcmp(buffer, "3")) machine->fdc.count = 3;
     else if (0 == strcmp(buffer, "4")) machine->fdc.count = 4;
-    else return 0;
+    else { iniFileClose(); return 0; }
     
-    GetPrivateProfileString("CMOS", "Battery Backed", "none", buffer, 10000, file);
+    iniFileGetString("CMOS", "Battery Backed", "none", buffer, 10000);
     if (0 == strcmp(buffer, "none")) machine->cmos.batteryBacked = 1;
     else if (0 == strcmp(buffer, "0")) machine->cmos.batteryBacked = 0;
     else if (0 == strcmp(buffer, "1")) machine->cmos.batteryBacked = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
 
     // Read subslot info
-    GetPrivateProfileString("Subslotted Slots", "slot 0", "none", buffer, 10000, file);
+    iniFileGetString("Subslotted Slots", "slot 0", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[0].subslotted = 0;
     else if (0 == strcmp(buffer, "1")) machine->slot[0].subslotted = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
     
-    GetPrivateProfileString("Subslotted Slots", "slot 1", "none", buffer, 10000, file);
+    iniFileGetString("Subslotted Slots", "slot 1", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[1].subslotted = 0;
     else if (0 == strcmp(buffer, "1")) machine->slot[1].subslotted = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
     
-    GetPrivateProfileString("Subslotted Slots", "slot 2", "none", buffer, 10000, file);
+    iniFileGetString("Subslotted Slots", "slot 2", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[2].subslotted = 0;
     else if (0 == strcmp(buffer, "1")) machine->slot[2].subslotted = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
     
-    GetPrivateProfileString("Subslotted Slots", "slot 3", "none", buffer, 10000, file);
+    iniFileGetString("Subslotted Slots", "slot 3", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[3].subslotted = 0;
     else if (0 == strcmp(buffer, "1")) machine->slot[3].subslotted = 1;
-    else return 0;
+    else { iniFileClose(); return 0; }
 
     // Read external slot info
-    GetPrivateProfileString("External Slots", "slot A", "none", buffer, 10000, file);
+    iniFileGetString("External Slots", "slot A", "none", buffer, 10000);
     machine->cart[0].slot = toint(extractToken(buffer, 0));        
     machine->cart[0].subslot = toint(extractToken(buffer, 1));    
-    if (machine->cart[0].slot < 0 || machine->cart[0].slot >= 4) return 0;
-    if (machine->cart[0].subslot < 0 || machine->cart[0].subslot >= 4) return 0;    
+    if (machine->cart[0].slot < 0 || machine->cart[0].slot >= 4) { iniFileClose(); return 0; }
+    if (machine->cart[0].subslot < 0 || machine->cart[0].subslot >= 4) { iniFileClose(); return 0; }  
 
-    GetPrivateProfileString("External Slots", "slot B", "none", buffer, 10000, file);
+    iniFileGetString("External Slots", "slot B", "none", buffer, 10000);
     machine->cart[1].slot = toint(extractToken(buffer, 0));        
     machine->cart[1].subslot = toint(extractToken(buffer, 1));    
-    if (machine->cart[1].slot < 0 || machine->cart[1].slot >= 4) return 0;
-    if (machine->cart[1].subslot < 0 || machine->cart[1].subslot >= 4) return 0;    
+    if (machine->cart[1].slot < 0 || machine->cart[1].slot >= 4) { iniFileClose(); return 0; }
+    if (machine->cart[1].subslot < 0 || machine->cart[1].subslot >= 4) { iniFileClose(); return 0; }   
 
     // Read slots
-    GetPrivateProfileSection("Slots", buffer, 10000, file);
+    iniFileGetSection("Slots", buffer, 10000);
 
     slotBuf = buffer;
     machine->cpu.hasR800 = 0;
@@ -188,16 +190,18 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
         arg = extractToken(slotBuf, 6);
         strcpy(machine->slotInfo[i].inZipName, arg ? arg : "");
 
-        if (machine->slotInfo[i].slot < 0 || machine->slotInfo[i].slot >= 4) return 0;
-        if (machine->slotInfo[i].subslot < 0 || machine->slotInfo[i].subslot >= 4) return 0;
-        if (machine->slotInfo[i].startPage < 0 || machine->slotInfo[i].startPage >= 8) return 0;
-        if (machine->slotInfo[i].pageCount == -1) return 0;
-        if (machine->slotInfo[i].romType < 1 || machine->slotInfo[i].romType > ROM_MAXROMID) return 0;
+        if (machine->slotInfo[i].slot < 0 || machine->slotInfo[i].slot >= 4) { iniFileClose(); return 0; }
+        if (machine->slotInfo[i].subslot < 0 || machine->slotInfo[i].subslot >= 4) { iniFileClose(); return 0; }
+        if (machine->slotInfo[i].startPage < 0 || machine->slotInfo[i].startPage >= 8) { iniFileClose(); return 0; }
+        if (machine->slotInfo[i].pageCount == -1) { iniFileClose(); return 0; }
+        if (machine->slotInfo[i].romType < 1 || machine->slotInfo[i].romType > ROM_MAXROMID) { iniFileClose(); return 0; }
 
         slotBuf += strlen(slotBuf) + 1;
     }
 
     machine->slotInfoCount = i;
+ 
+    iniFileClose();
 
     return 1;
 }
@@ -215,52 +219,54 @@ void machineSave(Machine* machine)
 
     sprintf(file, "Machines/%s/config.ini", machine->name);
 
+    iniFileOpen(file);
+
     // Write CMOS info
-    WritePrivateProfileString("CMOS", "Enable CMOS", machine->cmos.enable ? "1" : "0", file);
-    WritePrivateProfileString("CMOS", "Battery Backed", machine->cmos.batteryBacked ? "1" : "0", file);
+    iniFileWriteString("CMOS", "Enable CMOS", machine->cmos.enable ? "1" : "0");
+    iniFileWriteString("CMOS", "Battery Backed", machine->cmos.batteryBacked ? "1" : "0");
 
     // Write FDC info
     sprintf(buffer, "%d", machine->fdc.count);
-    WritePrivateProfileString("FDC", "Count", buffer, file);
+    iniFileWriteString("FDC", "Count", buffer);
 
     // Write CPU info
     sprintf(buffer, "%dHz", machine->cpu.freqZ80);
-    WritePrivateProfileString("CPU", "Z80 Frequency", buffer, file);
+    iniFileWriteString("CPU", "Z80 Frequency", buffer);
     if (machine->cpu.hasR800) {
         sprintf(buffer, "%dHz", machine->cpu.freqR800);
-        WritePrivateProfileString("CPU", "R800 Frequency", buffer, file);
+        iniFileWriteString("CPU", "R800 Frequency", buffer);
     }
 
     // Write Board info
     switch (machine->board.type) {
-    case BOARD_MSX:     WritePrivateProfileString("Board", "type", "MSX", file); break;
-    case BOARD_SVI:     WritePrivateProfileString("Board", "type", "SVI", file); break;
-    case BOARD_COLECO:  WritePrivateProfileString("Board", "type", "ColecoVision", file); break;
-    case BOARD_SG1000:  WritePrivateProfileString("Board", "type", "SG-1000", file); break;
+    case BOARD_MSX:     iniFileWriteString("Board", "type", "MSX"); break;
+    case BOARD_SVI:     iniFileWriteString("Board", "type", "SVI"); break;
+    case BOARD_COLECO:  iniFileWriteString("Board", "type", "ColecoVision"); break;
+    case BOARD_SG1000:  iniFileWriteString("Board", "type", "SG-1000"); break;
     }
 
     // Write video info
     switch (machine->video.vdpVersion) {
-        case VDP_V9958:     WritePrivateProfileString("Video", "version", "V9958", file); break;
-        case VDP_V9938:     WritePrivateProfileString("Video", "version", "V9938", file); break;
-        case VDP_TMS9929A:  WritePrivateProfileString("Video", "version", "TMS9929A", file); break;
-        case VDP_TMS99x8A:  WritePrivateProfileString("Video", "version", "TMS99x8A", file); break;
+        case VDP_V9958:     iniFileWriteString("Video", "version", "V9958"); break;
+        case VDP_V9938:     iniFileWriteString("Video", "version", "V9938"); break;
+        case VDP_TMS9929A:  iniFileWriteString("Video", "version", "TMS9929A"); break;
+        case VDP_TMS99x8A:  iniFileWriteString("Video", "version", "TMS99x8A"); break;
     }
 
     sprintf(buffer, "%dkB", machine->video.vramSize / 0x400);
-    WritePrivateProfileString("Video", "vram size", buffer, file);
+    iniFileWriteString("Video", "vram size", buffer);
 
     // Write subslot info
-    WritePrivateProfileString("Subslotted Slots", "slot 0", machine->slot[0].subslotted ? "1" : "0", file);
-    WritePrivateProfileString("Subslotted Slots", "slot 1", machine->slot[1].subslotted ? "1" : "0", file);
-    WritePrivateProfileString("Subslotted Slots", "slot 2", machine->slot[2].subslotted ? "1" : "0", file);
-    WritePrivateProfileString("Subslotted Slots", "slot 3", machine->slot[3].subslotted ? "1" : "0", file);
+    iniFileWriteString("Subslotted Slots", "slot 0", machine->slot[0].subslotted ? "1" : "0");
+    iniFileWriteString("Subslotted Slots", "slot 1", machine->slot[1].subslotted ? "1" : "0");
+    iniFileWriteString("Subslotted Slots", "slot 2", machine->slot[2].subslotted ? "1" : "0");
+    iniFileWriteString("Subslotted Slots", "slot 3", machine->slot[3].subslotted ? "1" : "0");
 
     // Write external slot info
     sprintf(buffer, "%d %d", machine->cart[0].slot, machine->cart[0].subslot);
-    WritePrivateProfileString("External Slots", "slot A", buffer, file);
+    iniFileWriteString("External Slots", "slot A", buffer);
     sprintf(buffer, "%d %d", machine->cart[1].slot, machine->cart[1].subslot);
-    WritePrivateProfileString("External Slots", "slot B", buffer, file);
+    iniFileWriteString("External Slots", "slot B", buffer);
 
     // Write slots
     for (i = 0; i < machine->slotInfoCount; i++) {
@@ -278,8 +284,10 @@ void machineSave(Machine* machine)
     buffer[size++] = 0;
     buffer[size++] = 0;
 
-    WritePrivateProfileString("Slots", NULL, NULL, file);
-    WritePrivateProfileSection("Slots", buffer, file);
+//    iniFileWriteString("Slots", NULL, NULL);
+    iniFileWriteSection("Slots", buffer);
+
+    iniFileClose();
 }
 
 Machine* machineCreate(const char* machineName)
