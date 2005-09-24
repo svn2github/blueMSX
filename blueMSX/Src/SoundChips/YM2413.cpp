@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-05-20 23:56:59 $
+** $Date: 2005-09-24 00:50:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void ym2413WriteData(YM_2413* ym2413, UInt8 data)
     ym2413->ym2413->writeReg(ym2413->address, data, systemTime);
 }
 
-static Int32* sync(void* ref, UInt32 count) 
+static Int32* ym2413Sync(void* ref, UInt32 count) 
 {
     YM_2413* ym2413 = (YM_2413*)ref;
     int* genBuf;
@@ -141,7 +141,7 @@ YM_2413* ym2413Create(Mixer* mixer)
 
     ym2413->mixer = mixer;
 
-    ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, sync, ym2413);
+    ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, ym2413Sync, ym2413);
 
     ym2413->ym2413->setSampleRate(SAMPLERATE, boardGetYm2413Oversampling());
 	ym2413->ym2413->setVolume(32767 * 9 / 10);

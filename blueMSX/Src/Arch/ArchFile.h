@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchFile.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-24 00:10:49 $
+** $Date: 2005-09-24 00:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,9 @@ typedef struct {
     RomType     openRomType;
 } ZipFileDlgInfo;
 
+int archCreateDirectory(const char* pathname);
+const char* archGetCurrentDirectory();
+void archSetCurrentDirectory(const char* pathname);
 
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType);
 
@@ -68,7 +71,5 @@ char* archFilenameGetOpenCasZip(Properties* properties, const char* fname, const
 
 char* archFilenameGetOpenAnyZip(Properties* properties, const char* fname, const char* fileList, int count, int* autostart, int* romType);
 
-const char* archGetCurrentDirectory();
-void archSetCurrentDirectory(const char* pathname);
 
 #endif

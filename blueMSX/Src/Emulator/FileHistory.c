@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-24 00:50:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,10 +35,10 @@
 #include "ArchNotifications.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
+#include "ArchFile.h"
 #endif
 #include <stdio.h>
 #include <sys/stat.h>
-#include <direct.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -460,7 +460,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 
-	mkdir(directory);
+	archCreateDirectory(directory);
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
@@ -521,7 +521,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 
-	mkdir(directory);
+	archCreateDirectory(directory);
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 

@@ -1569,46 +1569,6 @@ buildnumber.exe
 			</File>
 		</Filter>
 		<Filter
-			Name="Utils"
-			Filter="">
-			<File
-				RelativePath="..\..\Src\Utils\IniFileParser.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\IniFileParser.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\IsFileExtension.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\IsFileExtension.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\SaveState.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\SaveState.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\TokenExtract.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\TokenExtract.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\VeryTinyXpath.cpp">
-			</File>
-			<File
-				RelativePath="..\..\Src\Utils\VeryTinyXpath.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="Media"
 			Filter="">
 			<File
@@ -1629,6 +1589,46 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Media\Sha1.h">
 			</File>
+			<Filter
+				Name="Utils"
+				Filter="">
+				<File
+					RelativePath="..\..\Src\Utils\IniFileParser.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\IniFileParser.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\IsFileExtension.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\IsFileExtension.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\SaveState.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\SaveState.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\TokenExtract.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\TokenExtract.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\VeryTinyXpath.cpp">
+				</File>
+				<File
+					RelativePath="..\..\Src\Utils\VeryTinyXpath.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Debugger"

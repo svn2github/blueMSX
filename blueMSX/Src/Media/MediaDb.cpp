@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-24 00:50:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,6 @@ extern "C" {
 #include "Crc32.h"
 #include "TokenExtract.h"
 #include "StrcmpNoCase.h"
-#include "Language.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #else

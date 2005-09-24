@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2005-09-24 00:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <direct.h>
 #include "SVI.h"
 #include "SviPPI.h"
 #include "R800.h"

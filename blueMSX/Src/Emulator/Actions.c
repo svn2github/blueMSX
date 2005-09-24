@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-24 00:50:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,6 @@
 #include "ArchMidi.h"
 
 #include <stdio.h>
-#include <direct.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

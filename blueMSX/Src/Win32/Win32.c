@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.105 $
+** $Revision: 1.106 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-09-24 00:50:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2966,6 +2966,11 @@ const char* archGetCurrentDirectory()
     static char pathname[512];
     GetCurrentDirectory(512, pathname);
     return pathname;
+}
+
+int archCreateDirectory(const char* pathname)
+{
+    return mkdir(pathname);
 }
 
 void archSetCurrentDirectory(const char* pathname)

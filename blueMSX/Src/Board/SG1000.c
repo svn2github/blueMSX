@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-09-05 03:17:11 $
+** $Date: 2005-09-24 00:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <direct.h>
 #include "SG1000.h"
 #include "SN76489.h"
 #include "R800.h"

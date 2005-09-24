@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-06-28 07:28:01 $
+** $Date: 2005-09-24 00:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <direct.h>
 #include "Coleco.h"
 #include "SN76489.h"
 #include "R800.h"

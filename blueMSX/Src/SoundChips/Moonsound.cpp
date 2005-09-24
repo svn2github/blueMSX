@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-08-21 21:31:37 $
+** $Date: 2005-09-24 00:50:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -208,7 +208,7 @@ void moonsoundReset(Moonsound* moonsound)
     moonsoundTimerStart(moonsound, 4, 0, moonsound->timerRef2);
 }
 
-static Int32* sync(void* ref, UInt32 count) 
+static Int32* moonsoundSync(void* ref, UInt32 count) 
 {
     Moonsound* moonsound = (Moonsound*)ref;
     int* genBuf1 = NULL;
@@ -332,7 +332,7 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
     moonsound->timer1 = boardTimerCreate(onTimeout1, moonsound);
     moonsound->timer2 = boardTimerCreate(onTimeout2, moonsound);
 
-    moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, sync, moonsound);
+    moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, moonsoundSync, moonsound);
 
     moonsound->ymf262 = new YMF262(0, systemTime, moonsound);
     moonsound->ymf262->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());

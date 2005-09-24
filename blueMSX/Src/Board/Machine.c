@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-09-23 19:13:50 $
+** $Date: 2005-09-24 00:50:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,7 +39,7 @@
 #include <windows.h>
 #endif
 #include <stdlib.h>
-#include <direct.h>
+#include "ArchFile.h"
 
 #include "TokenExtract.h"
 
@@ -215,7 +215,7 @@ void machineSave(Machine* machine)
     int i;
 
     sprintf(dir, "Machines/%s", machine->name);
-    mkdir(dir);
+    archCreateDirectory(dir);
 
     sprintf(file, "Machines/%s/config.ini", machine->name);
 
