@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "SaveState.h"
 #include "Board.h"
 #include "IoPort.h"
+#include "ArchMidi.h"
 #include "I8251.h"
 #include "I8254.h"
 #include <stdlib.h>

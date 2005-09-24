@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,10 +43,12 @@
 #include "ArchSound.h"
 #include "ArchMidi.h"
 #include "ArchControls.h"
+#include "ArchDialog.h"
 #include "ArchNotifications.h"
 #include "Keyboard.h"
 
 #include <math.h>
+#include <string.h>
 
 UInt32  emuFixedPalette[256];
 UInt32  emuFixedSpritePalette[16];
@@ -283,7 +285,7 @@ static void emulatorThread() {
     int frequency;
     int success = 0;
 
-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+    archThreadBoostPriority();
 
     emulatorSetFrequency(properties->emulation.speed, &frequency);
 
@@ -309,7 +311,7 @@ static void emulatorThread() {
     archEventSet(emuStartEvent);
 }
 
-void emulatorStart(char* stateName) {
+void emulatorStart(const char* stateName) {
     UInt32 color = videoGetColor(0, 0, 0);
     int i;
 
@@ -355,7 +357,7 @@ void emulatorStart(char* stateName) {
     machine = machineCreate(properties->emulation.machineName);
 
     if (machine == NULL) {  
-        MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
+        archShowStartEmuFailDialog();
         archEmulationStopNotification();
         emuState = EMU_STOPPED;
         archEmulationStartFailure();
@@ -364,8 +366,8 @@ void emulatorStart(char* stateName) {
 
     boardSetMachine(machine);
 
-    emuSyncEvent  = CreateEvent(NULL, 0, 0, NULL);
-    emuStartEvent = CreateEvent(NULL, 0, 0, NULL);
+    emuSyncEvent  = archEventCreate(0);
+    emuStartEvent = archEventCreate(0);
     emuTimer      = 0;
 
     if (properties->emulation.syncMethod == P_EMU_SYNCTOVBLANK ||
@@ -438,7 +440,7 @@ void emulatorStop() {
     emuState = EMU_STOPPED;
 
     do {
-        Sleep(10);
+        archThreadSleep(10);
     } while (!emuSuspendFlag);
 
     emuExitFlag = 1;
@@ -479,7 +481,7 @@ void emulatorSuspend() {
     if (emuState == EMU_RUNNING) {
         emuState = EMU_SUSPENDED;
         do {
-            Sleep(10);
+            archThreadSleep(10);
         } while (!emuSuspendFlag);
         archSoundSuspend();
         archMidiEnable(0);
@@ -581,8 +583,8 @@ void RefreshScreen(int screenMode) {
 }
 
 static int WaitForSync(int maxSpeed, int breakpointHit) {
-    LARGE_INTEGER li1;
-    LARGE_INTEGER li2;
+    UInt32 li1;
+    UInt32 li2;
     static UInt32 tmp = 0;
     static UInt32 cnt = 0;
     UInt32 sysTime;
@@ -594,7 +596,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     emuMaxEmuSpeed = maxSpeed;
 
     syncPeriod = emulatorGetSyncPeriod();
-    QueryPerformanceCounter(&li1);
+    li1 = archGetHiresTimer();
 
     emuSuspendFlag = 1;
         
@@ -621,26 +623,26 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     if (emuUseSynchronousUpdate() == P_EMU_SYNCTOVBLANK) {
         overflowCount += emulatorSyncScreen() ? 0 : 1;
         while ((!emuExitFlag && emuState != EMU_RUNNING) || overflowCount > 0) {
-            WaitForSingleObject(emuSyncEvent, INFINITE);
+            archEventWait(emuSyncEvent, -1);
             overflowCount--;
         }
     }
     else {
         do {
-            WaitForSingleObject(emuSyncEvent, INFINITE);
+            archEventWait(emuSyncEvent, -1);
             if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
-                WaitForSingleObject(emuSyncEvent, INFINITE);
+                archEventWait(emuSyncEvent, -1);
             }
             overflowCount = 0;
         } while (!emuExitFlag && emuState != EMU_RUNNING);
     }
 
     emuSuspendFlag = 0;
-    QueryPerformanceCounter(&li2);
+    li2 = archGetHiresTimer();
 
-    emuTimeIdle  += li2.LowPart - li1.LowPart;
-    emuTimeTotal += li2.LowPart - tmp;
-    tmp = li2.LowPart;
+    emuTimeIdle  += li2 - li1;
+    emuTimeTotal += li2 - tmp;
+    tmp = li2;
     
     sysTime = archGetSystemUpTime(1000);
     diffTime = sysTime - emuSysTime;

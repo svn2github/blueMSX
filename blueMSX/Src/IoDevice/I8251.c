@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -381,21 +381,21 @@ void i8251LoadState(I8251* i8251)
     
     i8251->timeRecv      = saveStateGet(state, "timeRecv",        0);
     i8251->timeTrans     = saveStateGet(state, "timeTrans",       0);
-    i8251->status        = saveStateGet(state, "status",          0);
-    i8251->command       = saveStateGet(state, "command",         0);
-    i8251->mode          = saveStateGet(state, "mode",            0);
-    i8251->sync1         = saveStateGet(state, "sync1",           0);
-    i8251->sync2         = saveStateGet(state, "sync2",           0);
+    i8251->status        = (UInt8)saveStateGet(state, "status",          0);
+    i8251->command       = (UInt8)saveStateGet(state, "command",         0);
+    i8251->mode          = (UInt8)saveStateGet(state, "mode",            0);
+    i8251->sync1         = (UInt8)saveStateGet(state, "sync1",           0);
+    i8251->sync2         = (UInt8)saveStateGet(state, "sync2",           0);
     i8251->charLength    = saveStateGet(state, "charLength",      0);
     i8251->cmdFaze       = saveStateGet(state, "cmdFaze",         0);
     i8251->dataBits      = saveStateGet(state, "dataBits",        0);
     i8251->stopBits      = saveStateGet(state, "stopBits",        0);
     i8251->parityEnabled = saveStateGet(state, "parityEnabled",   0);
     i8251->parity        = saveStateGet(state, "parity",          0);
-    i8251->recvBuf       = saveStateGet(state, "recvBuf",         0);
+    i8251->recvBuf       = (UInt8)saveStateGet(state, "recvBuf",         0);
     i8251->recvReady     = saveStateGet(state, "recvReady",       0);
-    i8251->sendByte      = saveStateGet(state, "sendByte",        0);
-    i8251->sendBuffer    = saveStateGet(state, "sendBuffer",      0);
+    i8251->sendByte      = (UInt8)saveStateGet(state, "sendByte",        0);
+    i8251->sendBuffer    = (UInt8)saveStateGet(state, "sendBuffer",      0);
     i8251->sendBuffered  = saveStateGet(state, "sendBuffered",    0);
 
     if (i8251->timeRecv != 0) {
@@ -501,9 +501,9 @@ I8251* i8251Create(I8251Transmit transmit,    I8251Signal   signal,
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **

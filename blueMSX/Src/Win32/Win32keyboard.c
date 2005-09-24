@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-09-16 16:28:00 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #define DIRECTINPUT_VERSION     0x0500
 #include "Win32keyboard.h"
+#include "Language.h"
 #include "Keyboard.h"
 #include <windows.h>
 #include <stdio.h>
@@ -1050,3 +1051,18 @@ int  keyboardConfigIsModified()
 {
     return memcmp(kbdTable, kbdTableBackup, sizeof(kbdTableBackup));
 }
+
+
+
+char* archKeyconfigSelectedKeyTitle() {
+    return langKeyconfigSelectedKey();
+}
+
+char* archKeyconfigMappedToTitle() {
+    return langKeyconfigMappedTo();
+}
+
+char* archKeyconfigMappingSchemeTitle() {
+    return langKeyconfigMappingScheme();
+}
+

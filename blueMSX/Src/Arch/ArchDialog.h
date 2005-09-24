@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchDialog.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-09-23 19:13:50 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,23 +32,6 @@
 
 #include "Properties.h"
 
-char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType);
-
-char* archFilenameGetOpenDisk(Properties* properties, int drive);
-
-char* archFilenameGetOpenCas(Properties* properties);
-
-char* archFilenameGetSaveCas(Properties* properties, int* type);
-
-char* archFilenameGetOpenState(Properties* properties);
-
-char* archFilenameGetSaveState(Properties* properties);
-
-
-char* archDirnameGetOpenDisk(Properties* properties, int drive);
-
-void archFileFromZipDialog(ZipFileDlgInfo* dlgInfo);
-
 void archShowPropertiesDialog(PropPage page);
 void archShowLanguageDialog();
 void archShowHelpDialog();
@@ -61,6 +44,10 @@ void archShowDebugger();
 void archShowTrainer();
 void archShowMachineEditor();
 
+void archShowNoRomInZipDialog();
+void archShowNoDiskInZipDialog();
+void archShowNoCasInZipDialog();
+void archShowStartEmuFailDialog();
 
 void archMaximizeWindow();
 void archMinimizeWindow();

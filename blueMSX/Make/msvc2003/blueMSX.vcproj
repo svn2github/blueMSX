@@ -1535,10 +1535,16 @@ buildnumber.exe
 				RelativePath="..\..\Src\Arch\ArchEvent.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Arch\ArchFile.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchMidi.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchNotifications.h">

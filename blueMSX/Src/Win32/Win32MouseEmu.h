@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,8 +36,6 @@ void mouseEmuInit(HWND hwnd, int timerId);
 void mouseEmuSetCaptureInfo(RECT* captureRect);
 void mouseEmuActivate(int activate);
 void mouseEmuEnable(int enable);
-void mouseEmuGetState(int* dx, int* dy);
-int  mouseEmuGetButtonState(int checkAlways);
 void mouseEmuSetRunState(int isRunning);
 void archMouseSetForceLock(int lock);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-09-23 19:13:50 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,206 +46,203 @@
 
 
 /* Default property settings */
-void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
+void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage kbdLang, int syncMode, const char* themeName) 
 {
     int i;
-    pProperties->language                      = langType;
+    properties->language                      = langType;
 
-    pProperties->settings.showStatePreview     = 1;
-    pProperties->settings.disableScreensaver   = 0;
-    if (GetSystemMetrics(SM_CYSCREEN) > 600) {
-        strcpy(pProperties->settings.themeName, "DIGIblue SUITE-X2");
-    }
-    else {
-        strcpy(pProperties->settings.themeName, "Classic");
-    }
-    memset(pProperties->settings.windowPos, 0, sizeof(pProperties->settings.windowPos));
-
-    pProperties->emulation.statsDefDir[0]     = 0;
-    pProperties->emulation.shortcutProfile[0] = 0;
-    strcpy(pProperties->emulation.machineName, "MSX2");
-    pProperties->emulation.speed             = 50;
-    pProperties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
-    pProperties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
-    pProperties->emulation.enableFdcTiming   = 1;
-    pProperties->emulation.frontSwitch       = 0;
-    pProperties->emulation.pauseSwitch       = 0;
-    pProperties->emulation.audioSwitch       = 0;
-    pProperties->emulation.registerFileTypes = 0;
-    pProperties->emulation.disableWinKeys    = 0;
-    pProperties->emulation.priorityBoost     = 0;
-
-    pProperties->video.monType               = P_VIDEO_COLOR;
-    pProperties->video.palEmu                = P_VIDEO_PALMON;
-    pProperties->video.size                  = P_VIDEO_SIZEX2;
-    pProperties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
-    pProperties->video.frameSkip             = P_VIDEO_FSKIP0;
-    pProperties->video.fullscreen.width      = 640;
-    pProperties->video.fullscreen.height     = 480;
-    pProperties->video.fullscreen.bitDepth   = 32;
-    pProperties->video.deInterlace           = 1;
-    pProperties->video.horizontalStretch     = 1;
-    pProperties->video.verticalStretch       = 0;
-    pProperties->video.contrast              = 100;
-    pProperties->video.brightness            = 100;
-    pProperties->video.saturation            = 100;
-    pProperties->video.gamma                 = 100;
-    pProperties->video.scanlinesEnable       = 0;
-    pProperties->video.colorSaturationEnable = 0;
-    pProperties->video.scanlinesPct          = 92;
-    pProperties->video.colorSaturationWidth  = 2;
-    pProperties->video.chipAutodetect        = 1;
-
-    pProperties->sound.driver           = P_SOUND_DRVDIRECTX;
-    pProperties->sound.frequency        = P_SOUND_FREQ44;
-    pProperties->sound.bufSize          = 100;
-    pProperties->sound.syncMethod       = P_SOUND_SYNCQADJUST;
-
-    pProperties->sound.stereo = 1;
-    pProperties->sound.masterVolume = 75;
-    pProperties->sound.masterEnable = 1;
-    pProperties->sound.chip.enableYM2413 = 1;
-    pProperties->sound.chip.enableY8950 = 1;
-    pProperties->sound.chip.enableMoonsound = 1;
-    pProperties->sound.chip.moonsoundSRAMSize = 640;
+    properties->settings.showStatePreview     = 1;
+    properties->settings.disableScreensaver   = 0;
     
-    pProperties->sound.chip.ym2413Oversampling = 1;
-    pProperties->sound.chip.y8950Oversampling = 1;
-    pProperties->sound.chip.moonsoundOversampling = 1;
+    strcpy(properties->settings.themeName, themeName);
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = 42;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume = 100;
+    memset(properties->settings.windowPos, 0, sizeof(properties->settings.windowPos));
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = 58;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = 100;
+    properties->emulation.statsDefDir[0]     = 0;
+    properties->emulation.shortcutProfile[0] = 0;
+    strcpy(properties->emulation.machineName, "MSX2");
+    properties->emulation.speed             = 50;
+    properties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
+    properties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
+    properties->emulation.enableFdcTiming   = 1;
+    properties->emulation.frontSwitch       = 0;
+    properties->emulation.pauseSwitch       = 0;
+    properties->emulation.audioSwitch       = 0;
+    properties->emulation.registerFileTypes = 0;
+    properties->emulation.disableWinKeys    = 0;
+    properties->emulation.priorityBoost     = 0;
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = 58;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume = 95;
+    properties->video.monType               = P_VIDEO_COLOR;
+    properties->video.palEmu                = P_VIDEO_PALMON;
+    properties->video.size                  = P_VIDEO_SIZEX2;
+    properties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
+    properties->video.frameSkip             = P_VIDEO_FSKIP0;
+    properties->video.fullscreen.width      = 640;
+    properties->video.fullscreen.height     = 480;
+    properties->video.fullscreen.bitDepth   = 32;
+    properties->video.deInterlace           = 1;
+    properties->video.horizontalStretch     = 1;
+    properties->video.verticalStretch       = 0;
+    properties->video.contrast              = 100;
+    properties->video.brightness            = 100;
+    properties->video.saturation            = 100;
+    properties->video.gamma                 = 100;
+    properties->video.scanlinesEnable       = 0;
+    properties->video.colorSaturationEnable = 0;
+    properties->video.scanlinesPct          = 92;
+    properties->video.colorSaturationWidth  = 2;
+    properties->video.chipAutodetect        = 1;
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume = 95;
+    properties->sound.driver           = P_SOUND_DRVDIRECTX;
+    properties->sound.frequency        = P_SOUND_FREQ44;
+    properties->sound.bufSize          = 100;
+    properties->sound.syncMethod       = P_SOUND_SYNCQADJUST;
 
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume = 95;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 95;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = 50;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
-
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
-    pProperties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
+    properties->sound.stereo = 1;
+    properties->sound.masterVolume = 75;
+    properties->sound.masterEnable = 1;
+    properties->sound.chip.enableYM2413 = 1;
+    properties->sound.chip.enableY8950 = 1;
+    properties->sound.chip.enableMoonsound = 1;
+    properties->sound.chip.moonsoundSRAMSize = 640;
     
-    pProperties->sound.MidiIn.type             = P_MIDI_NONE;
-    pProperties->sound.MidiIn.name[0]          = 0;
-    strcpy(pProperties->sound.MidiIn.fileName, "midiin.dat");
-    pProperties->sound.MidiIn.desc[0]          = 0;
-    pProperties->sound.MidiOut.type            = P_MIDI_NONE;
-    pProperties->sound.MidiOut.name[0]         = 0;
-    strcpy(pProperties->sound.MidiOut.fileName, "midiout.dat");
-    pProperties->sound.MidiOut.desc[0]         = 0;
-    pProperties->sound.MidiOut.mt32ToGm        = 0;
+    properties->sound.chip.ym2413Oversampling = 1;
+    properties->sound.chip.y8950Oversampling = 1;
+    properties->sound.chip.moonsoundOversampling = 1;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = 42;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume = 100;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = 58;
+    properties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = 100;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = 58;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume = 95;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].pan = 50;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].volume = 95;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = 50;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume = 95;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 95;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
+    properties->sound.mixerChannel[MIXER_CHANNEL_IO].pan = 70;
+    properties->sound.mixerChannel[MIXER_CHANNEL_IO].volume = 50;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan = 50;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
+    properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
     
-    pProperties->joy1.type              = P_JOY_NONE;
-    pProperties->joy1.autofire          = P_JOY_AFOFF;
-    pProperties->joy1.keyUp             = 0xff;
-    pProperties->joy1.keyDown           = 0xff;
-    pProperties->joy1.keyLeft           = 0xff;
-    pProperties->joy1.keyRight          = 0xff;
-    pProperties->joy1.button1           = 0xff;
-    pProperties->joy1.button2           = 0xff;
-    pProperties->joy1.hwType            = 0;
-    pProperties->joy1.hwName[0]         = 0;
-    pProperties->joy1.hwIndex           = 0;
-    pProperties->joy1.hwButtonA         = 0;
-    pProperties->joy1.hwButtonB         = 1;
+    properties->sound.MidiIn.type             = P_MIDI_NONE;
+    properties->sound.MidiIn.name[0]          = 0;
+    strcpy(properties->sound.MidiIn.fileName, "midiin.dat");
+    properties->sound.MidiIn.desc[0]          = 0;
+    properties->sound.MidiOut.type            = P_MIDI_NONE;
+    properties->sound.MidiOut.name[0]         = 0;
+    strcpy(properties->sound.MidiOut.fileName, "midiout.dat");
+    properties->sound.MidiOut.desc[0]         = 0;
+    properties->sound.MidiOut.mt32ToGm        = 0;
     
-    pProperties->joy2.type              = P_JOY_NONE;
-    pProperties->joy2.autofire          = P_JOY_AFOFF;
-    pProperties->joy2.keyUp             = 0xff;
-    pProperties->joy2.keyDown           = 0xff;
-    pProperties->joy2.keyLeft           = 0xff;
-    pProperties->joy2.keyRight          = 0xff;
-    pProperties->joy2.button1           = 0xff;
-    pProperties->joy2.button2           = 0xff;
-    pProperties->joy2.hwType            = 0;
-    pProperties->joy2.hwName[0]         = 0;
-    pProperties->joy2.hwIndex           = 0;
-    pProperties->joy2.hwButtonA         = 0;
-    pProperties->joy2.hwButtonB         = 1;
+    properties->joy1.type              = P_JOY_NONE;
+    properties->joy1.autofire          = P_JOY_AFOFF;
+    properties->joy1.keyUp             = 0xff;
+    properties->joy1.keyDown           = 0xff;
+    properties->joy1.keyLeft           = 0xff;
+    properties->joy1.keyRight          = 0xff;
+    properties->joy1.button1           = 0xff;
+    properties->joy1.button2           = 0xff;
+    properties->joy1.hwType            = 0;
+    properties->joy1.hwName[0]         = 0;
+    properties->joy1.hwIndex           = 0;
+    properties->joy1.hwButtonA         = 0;
+    properties->joy1.hwButtonB         = 1;
     
-    pProperties->keyboard.configFile[0] = 0;
+    properties->joy2.type              = P_JOY_NONE;
+    properties->joy2.autofire          = P_JOY_AFOFF;
+    properties->joy2.keyUp             = 0xff;
+    properties->joy2.keyDown           = 0xff;
+    properties->joy2.keyLeft           = 0xff;
+    properties->joy2.keyRight          = 0xff;
+    properties->joy2.button1           = 0xff;
+    properties->joy2.button2           = 0xff;
+    properties->joy2.hwType            = 0;
+    properties->joy2.hwName[0]         = 0;
+    properties->joy2.hwIndex           = 0;
+    properties->joy2.hwButtonA         = 0;
+    properties->joy2.hwButtonB         = 1;
+    
+    properties->keyboard.configFile[0] = 0;
 
     if (kbdLang == P_KBD_JAPANESE) {
-        strcpy(pProperties->keyboard.configFile, "blueMSX Japanese Default");
+        strcpy(properties->keyboard.configFile, "blueMSX Japanese Default");
     }
 
-    pProperties->cartridge.defaultType  = ROM_UNKNOWN;
-    pProperties->cartridge.defDir[0]    = 0;
-    pProperties->cartridge.slotA[0]     = 0;
-    pProperties->cartridge.slotAType    = ROM_UNKNOWN;
-    pProperties->cartridge.slotB[0]     = 0;
-    pProperties->cartridge.slotBType    = ROM_UNKNOWN;
-    pProperties->cartridge.slotAZip[0]  = 0;
-    pProperties->cartridge.slotBZip[0]  = 0;
-    pProperties->cartridge.autoReset    = 1;
-    pProperties->cartridge.quickStartDrive = 0;
+    properties->cartridge.defaultType  = ROM_UNKNOWN;
+    properties->cartridge.defDir[0]    = 0;
+    properties->cartridge.slotA[0]     = 0;
+    properties->cartridge.slotAType    = ROM_UNKNOWN;
+    properties->cartridge.slotB[0]     = 0;
+    properties->cartridge.slotBType    = ROM_UNKNOWN;
+    properties->cartridge.slotAZip[0]  = 0;
+    properties->cartridge.slotBZip[0]  = 0;
+    properties->cartridge.autoReset    = 1;
+    properties->cartridge.quickStartDrive = 0;
 
     
-    pProperties->diskdrive.defDir[0]    = 0;
-    pProperties->diskdrive.slotA[0]     = 0;
-    pProperties->diskdrive.slotB[0]     = 0;
-    pProperties->diskdrive.slotAZip[0]  = 0;
-    pProperties->diskdrive.slotBZip[0]  = 0;
-    pProperties->diskdrive.slotADir[0]  = 0;
-    pProperties->diskdrive.slotBDir[0]  = 0;
-    pProperties->diskdrive.autostartA   = 0;
-    pProperties->diskdrive.quickStartDrive = 0;
+    properties->diskdrive.defDir[0]    = 0;
+    properties->diskdrive.slotA[0]     = 0;
+    properties->diskdrive.slotB[0]     = 0;
+    properties->diskdrive.slotAZip[0]  = 0;
+    properties->diskdrive.slotBZip[0]  = 0;
+    properties->diskdrive.slotADir[0]  = 0;
+    properties->diskdrive.slotBDir[0]  = 0;
+    properties->diskdrive.autostartA   = 0;
+    properties->diskdrive.quickStartDrive = 0;
 
 
-    pProperties->cassette.defDir[0]       = 0;
-    pProperties->cassette.tape[0]         = 0;
-    pProperties->cassette.tapeZip[0]      = 0;
-    pProperties->cassette.showCustomFiles = 1;
-    pProperties->cassette.readOnly        = 1;
-    pProperties->cassette.autoRewind      = 0;
+    properties->cassette.defDir[0]       = 0;
+    properties->cassette.tape[0]         = 0;
+    properties->cassette.tapeZip[0]      = 0;
+    properties->cassette.showCustomFiles = 1;
+    properties->cassette.readOnly        = 1;
+    properties->cassette.autoRewind      = 0;
 
-    pProperties->ports.Lpt.type           = P_LPT_NONE;
-    pProperties->ports.Lpt.emulation      = P_LPT_MSXPRN;
-    pProperties->ports.Lpt.name[0]        = 0;
-    strcpy(pProperties->ports.Lpt.fileName, "printer.dat");
-    pProperties->ports.Lpt.portName[0]    = 0;
+    properties->ports.Lpt.type           = P_LPT_NONE;
+    properties->ports.Lpt.emulation      = P_LPT_MSXPRN;
+    properties->ports.Lpt.name[0]        = 0;
+    strcpy(properties->ports.Lpt.fileName, "printer.dat");
+    properties->ports.Lpt.portName[0]    = 0;
     
-    pProperties->ports.Com.type           = P_COM_NONE;
-    pProperties->ports.Com.name[0]        = 0;
-    strcpy(pProperties->ports.Com.fileName, "uart.dat");
-    pProperties->ports.Com.portName[0]    = 0;
+    properties->ports.Com.type           = P_COM_NONE;
+    properties->ports.Com.name[0]        = 0;
+    strcpy(properties->ports.Com.fileName, "uart.dat");
+    properties->ports.Com.portName[0]    = 0;
 
     for (i = 0; i < MAX_HISTORY; i++) {
-        pProperties->filehistory.cartridgeA[i][0] = 0;
-        pProperties->filehistory.cartridgeTypeA[i] = ROM_UNKNOWN;
-        pProperties->filehistory.cartridgeB[i][0] = 0;
-        pProperties->filehistory.cartridgeTypeB[i] = ROM_UNKNOWN;
-        pProperties->filehistory.diskdriveA[i][0] = 0;
-        pProperties->filehistory.diskdriveB[i][0] = 0;
-        pProperties->filehistory.cassette[i][0] = 0;
+        properties->filehistory.cartridgeA[i][0] = 0;
+        properties->filehistory.cartridgeTypeA[i] = ROM_UNKNOWN;
+        properties->filehistory.cartridgeB[i][0] = 0;
+        properties->filehistory.cartridgeTypeB[i] = ROM_UNKNOWN;
+        properties->filehistory.diskdriveA[i][0] = 0;
+        properties->filehistory.diskdriveB[i][0] = 0;
+        properties->filehistory.cassette[i][0] = 0;
     }
 
-    pProperties->filehistory.quicksave[0] = 0;
-    pProperties->filehistory.count        = 10;
+    properties->filehistory.quicksave[0] = 0;
+    properties->filehistory.count        = 10;
 }
 
 #define ROOT_ELEMENT "bluemsx"
@@ -254,195 +251,195 @@ void propInitDefaults(Properties* pProperties, EmuLanguageType langType, PropKey
 
 #define GET_INT_VALUE_1(v1) {                                                           \
     int val = vtXpathGetInt(xpath, 2, ROOT_ELEMENT, #v1);                               \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1 = val;                            \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1 = val;                            \
 }
 
 #define GET_INT_VALUE_2(v1, v2) {                                                       \
     int val = vtXpathGetInt(xpath, 3, ROOT_ELEMENT, #v1, #v2);                          \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2 = val;                         \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1.v2 = val;                         \
 }
 
 #define GET_INT_VALUE_3(v1, v2, v3) {                                                   \
     int val = vtXpathGetInt(xpath, 4, ROOT_ELEMENT, #v1, #v2, #v3);                     \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2.v3 = val;                      \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1.v2.v3 = val;                      \
 }
 
 #define GET_INT_VALUE_2s1(v1, v2, s, a1) {                                              \
     int val = vtXpathGetInt(xpath, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1);                 \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[s].a1 = val;                   \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1.v2[s].a1 = val;                   \
 }
 
 #define GET_INT_VALUE_2i(v1, v2, i) {                                                   \
     int val; char s[64]; sprintf(s, "idx_%d", i);                                       \
     val = vtXpathGetInt(xpath, 4, ROOT_ELEMENT, #v1, #v2, s);                           \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[i] = val;                      \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1.v2[i] = val;                      \
 }
 
 #define GET_INT_VALUE_2i1(v1, v2, i, a1) {                                              \
     int val; char s[64]; sprintf(s, "idx_%d", i);                                       \
     val = vtXpathGetInt(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);                      \
-    if (val != VTXPATH_INT_NOT_FOUND) pProperties->v1.v2[i].a1 = val;                   \
+    if (val != VTXPATH_INT_NOT_FOUND) properties->v1.v2[i].a1 = val;                   \
 }
 
 #define GET_STR_VALUE_1(v1) {                                                           \
     const char* val = vtXpathGetString(xpath, 2, ROOT_ELEMENT, #v1);                    \
-    if (val != NULL) strcpy(pProperties->v1, val);                                      \
+    if (val != NULL) strcpy(properties->v1, val);                                      \
 }
 
 #define GET_STR_VALUE_2(v1, v2) {                                                       \
     const char* val = vtXpathGetString(xpath, 3, ROOT_ELEMENT, #v1, #v2);               \
-    if (val != NULL) strcpy(pProperties->v1.v2, val);                                   \
+    if (val != NULL) strcpy(properties->v1.v2, val);                                   \
 }
 
 #define GET_STR_VALUE_3(v1, v2, v3) {                                                   \
     const char* val = vtXpathGetString(xpath, 4, ROOT_ELEMENT, #v1, #v2, #v3);          \
-    if (val != NULL) strcpy(pProperties->v1.v2.v3, val);                                \
+    if (val != NULL) strcpy(properties->v1.v2.v3, val);                                \
 }
 
 #define GET_STR_VALUE_2s1(v1, v2, s, a1) {                                              \
     const char* val = vtXpathGetString(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);       \
-    if (val != NULL) strcpy(pProperties->v1.v2[s].a1, val);                             \
+    if (val != NULL) strcpy(properties->v1.v2[s].a1, val);                             \
 }
 
 #define GET_STR_VALUE_2i(v1, v2, i) {                                                   \
     const char* val; char s[64]; sprintf(s, "idx_%d", i);                               \
     val = vtXpathGetString(xpath, 4, ROOT_ELEMENT, #v1, #v2, s);                        \
-    if (val != NULL) strcpy(pProperties->v1.v2[i], val);                                \
+    if (val != NULL) strcpy(properties->v1.v2[i], val);                                \
 }
 
 #define GET_STR_VALUE_2i1(v1, v2, i, a1) {                                              \
     const char* val; char s[64]; sprintf(s, "idx_%d", i);                               \
     val = vtXpathGetString(xpath, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);                   \
-    if (val != NULL) strcpy(pProperties->v1.v2[i].a1, val);                             \
+    if (val != NULL) strcpy(properties->v1.v2[i].a1, val);                             \
 }
 
 #define SET_INT_VALUE_1(v1) {                                                           \
-    vtXpathSetInt(xpath, pProperties->v1, 2, ROOT_ELEMENT, #v1);                        \
+    vtXpathSetInt(xpath, properties->v1, 2, ROOT_ELEMENT, #v1);                        \
 }
 
 #define SET_INT_VALUE_2(v1, v2) {                                                       \
-    vtXpathSetInt(xpath, pProperties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                \
+    vtXpathSetInt(xpath, properties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                \
 }
 
 #define SET_INT_VALUE_3(v1, v2, v3) {                                                   \
-    vtXpathSetInt(xpath, pProperties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);        \
+    vtXpathSetInt(xpath, properties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);        \
 }
 
 #define SET_INT_VALUE_2s1(v1, v2, s, a1) {                                              \
-    vtXpathSetInt(xpath, pProperties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1); \
+    vtXpathSetInt(xpath, properties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1); \
 }
 
 #define SET_INT_VALUE_2i(v1, v2, i) {                                                   \
     char s[64]; sprintf(s, "idx_%d", i);                                                \
-    vtXpathSetInt(xpath, pProperties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);          \
+    vtXpathSetInt(xpath, properties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);          \
 }
 
 #define SET_INT_VALUE_2i1(v1, v2, i, a1) {                                              \
     char s[64]; sprintf(s, "idx_%d", i);                                                \
-    vtXpathSetInt(xpath, pProperties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);  \
+    vtXpathSetInt(xpath, properties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);  \
 }
 
 #define SET_STR_VALUE_1(v1) {                                                               \
-    vtXpathSetString(xpath, pProperties->v1, 2, ROOT_ELEMENT, #v1);                         \
+    vtXpathSetString(xpath, properties->v1, 2, ROOT_ELEMENT, #v1);                         \
 }
 
 #define SET_STR_VALUE_2(v1, v2) {                                                           \
-    vtXpathSetString(xpath, pProperties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                 \
+    vtXpathSetString(xpath, properties->v1.v2, 3, ROOT_ELEMENT, #v1, #v2);                 \
 }
 
 #define SET_STR_VALUE_3(v1, v2, v3) {                                                       \
-    vtXpathSetString(xpath, pProperties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);         \
+    vtXpathSetString(xpath, properties->v1.v2.v3, 4, ROOT_ELEMENT, #v1, #v2, #v3);         \
 }
 
 #define SET_STR_VALUE_2s1(v1, v2, s, a1) {                                                  \
-    vtXpathSetString(xpath, pProperties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1);  \
+    vtXpathSetString(xpath, properties->v1.v2[s].a1, 5, ROOT_ELEMENT, #v1, #v2, #s, #a1);  \
 }
 
 #define SET_STR_VALUE_2i(v1, v2, i) {                                                       \
     char s[64]; sprintf(s, "idx_%d", i);                                                    \
-    vtXpathSetString(xpath, pProperties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);           \
+    vtXpathSetString(xpath, properties->v1.v2[i], 4, ROOT_ELEMENT, #v1, #v2, s);           \
 }
 
 #define SET_STR_VALUE_2i1(v1, v2, i, a1) {                                                  \
     char s[64]; sprintf(s, "idx_%d", i);                                                    \
-    vtXpathSetString(xpath, pProperties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);   \
+    vtXpathSetString(xpath, properties->v1.v2[i].a1, 5, ROOT_ELEMENT, #v1, #v2, s, #a1);   \
 }
 
 #else
 
 #ifndef USE_NATIVEINI
 
-#define GET_INT_VALUE_1(v1)         pProperties->v1 = iniFileGetInt(ROOT_ELEMENT, #v1, pProperties->v1);
-#define GET_INT_VALUE_2(v1,v2)      pProperties->v1.v2 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2);
-#define GET_INT_VALUE_3(v1,v2,v3)   pProperties->v1.v2.v3 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3);
-#define GET_INT_VALUE_2s1(v1,v2,v3,v4) pProperties->v1.v2[v3].v4 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4);
-#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); pProperties->v1.v2[i] = iniFileGetInt(ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
-#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); pProperties->v1.v2[i].a1 = iniFileGetInt(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+#define GET_INT_VALUE_1(v1)         properties->v1 = iniFileGetInt(ROOT_ELEMENT, #v1, properties->v1);
+#define GET_INT_VALUE_2(v1,v2)      properties->v1.v2 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2, properties->v1.v2);
+#define GET_INT_VALUE_3(v1,v2,v3)   properties->v1.v2.v3 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3, properties->v1.v2.v3);
+#define GET_INT_VALUE_2s1(v1,v2,v3,v4) properties->v1.v2[v3].v4 = iniFileGetInt(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, properties->v1.v2[v3].v4);
+#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); properties->v1.v2[i] = iniFileGetInt(ROOT_ELEMENT, s, properties->v1.v2[i]); }
+#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); properties->v1.v2[i].a1 = iniFileGetInt(ROOT_ELEMENT, s, properties->v1.v2[i].a1); }
 
-#define GET_STR_VALUE_1(v1)         iniFileGetString(ROOT_ELEMENT, #v1, pProperties->v1, pProperties->v1, sizeof(pProperties->v1));
-#define GET_STR_VALUE_2(v1,v2)      iniFileGetString(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2, pProperties->v1.v2, sizeof(pProperties->v1.v2));
-#define GET_STR_VALUE_3(v1,v2,v3)   iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3, pProperties->v1.v2.v3, sizeof(pProperties->v1.v2.v3));
-#define GET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4, pProperties->v1.v2[v3].v4, sizeof(pProperties->v1.v2[v3].v4));
-#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileGetString(ROOT_ELEMENT, s, pProperties->v1.v2[i], pProperties->v1.v2[i], sizeof(pProperties->v1.v2[i])); }
-#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileGetString(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1, pProperties->v1.v2[i].a1, sizeof(pProperties->v1.v2[i].a1)); }
+#define GET_STR_VALUE_1(v1)         iniFileGetString(ROOT_ELEMENT, #v1, properties->v1, properties->v1, sizeof(properties->v1));
+#define GET_STR_VALUE_2(v1,v2)      iniFileGetString(ROOT_ELEMENT, #v1 "." #v2, properties->v1.v2, properties->v1.v2, sizeof(properties->v1.v2));
+#define GET_STR_VALUE_3(v1,v2,v3)   iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, properties->v1.v2.v3, properties->v1.v2.v3, sizeof(properties->v1.v2.v3));
+#define GET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileGetString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, properties->v1.v2[v3].v4, properties->v1.v2[v3].v4, sizeof(properties->v1.v2[v3].v4));
+#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileGetString(ROOT_ELEMENT, s, properties->v1.v2[i], properties->v1.v2[i], sizeof(properties->v1.v2[i])); }
+#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileGetString(ROOT_ELEMENT, s, properties->v1.v2[i].a1, properties->v1.v2[i].a1, sizeof(properties->v1.v2[i].a1)); }
 
-#define SET_INT_VALUE_1(v1)         { char v[64]; sprintf(v, "%d", pProperties->v1); iniFileWriteString(ROOT_ELEMENT, #v1, v); }
-#define SET_INT_VALUE_2(v1,v2)      { char v[64]; sprintf(v, "%d", pProperties->v1.v2); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, v); }
-#define SET_INT_VALUE_3(v1,v2,v3)   { char v[64]; sprintf(v, "%d", pProperties->v1.v2.v3); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, v); }
-#define SET_INT_VALUE_2s1(v1,v2,v3,v4) { char v[64]; sprintf(v, "%d", pProperties->v1.v2[v3].v4); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, v); }
-#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64], v[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); sprintf(v, "%d", pProperties->v1.v2[i]); iniFileWriteString(ROOT_ELEMENT, s, v); }
-#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64], v[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); sprintf(v, "%d", pProperties->v1.v2[i].a1); iniFileWriteString(ROOT_ELEMENT, s, v); }
+#define SET_INT_VALUE_1(v1)         { char v[64]; sprintf(v, "%d", properties->v1); iniFileWriteString(ROOT_ELEMENT, #v1, v); }
+#define SET_INT_VALUE_2(v1,v2)      { char v[64]; sprintf(v, "%d", properties->v1.v2); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, v); }
+#define SET_INT_VALUE_3(v1,v2,v3)   { char v[64]; sprintf(v, "%d", properties->v1.v2.v3); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, v); }
+#define SET_INT_VALUE_2s1(v1,v2,v3,v4) { char v[64]; sprintf(v, "%d", properties->v1.v2[v3].v4); iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, v); }
+#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64], v[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); sprintf(v, "%d", properties->v1.v2[i]); iniFileWriteString(ROOT_ELEMENT, s, v); }
+#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64], v[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); sprintf(v, "%d", properties->v1.v2[i].a1); iniFileWriteString(ROOT_ELEMENT, s, v); }
 
-#define SET_STR_VALUE_1(v1)         iniFileWriteString(ROOT_ELEMENT, #v1, pProperties->v1);
-#define SET_STR_VALUE_2(v1,v2)      iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2);
-#define SET_STR_VALUE_3(v1,v2,v3)   iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3);
-#define SET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4);
-#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileWriteString(ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
-#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileWriteString(ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+#define SET_STR_VALUE_1(v1)         iniFileWriteString(ROOT_ELEMENT, #v1, properties->v1);
+#define SET_STR_VALUE_2(v1,v2)      iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2, properties->v1.v2);
+#define SET_STR_VALUE_3(v1,v2,v3)   iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3, properties->v1.v2.v3);
+#define SET_STR_VALUE_2s1(v1,v2,v3,v4) iniFileWriteString(ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, properties->v1.v2[v3].v4);
+#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); iniFileWriteString(ROOT_ELEMENT, s, properties->v1.v2[i]); }
+#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); iniFileWriteString(ROOT_ELEMENT, s, properties->v1.v2[i].a1); }
 
 #else
 
-#define GET_INT_VALUE_1(v1)         getIntValue(pProperties->filename, ROOT_ELEMENT, #v1, &pProperties->v1)
-#define GET_INT_VALUE_2(v1,v2)      getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, &pProperties->v1.v2)
-#define GET_INT_VALUE_3(v1,v2,v3)   getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, &pProperties->v1.v2.v3)
-#define GET_INT_VALUE_2s1(v1,v2,v3,v4) getIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, &pProperties->v1.v2[v3].v4)
-#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getIntValue(pProperties->filename, ROOT_ELEMENT, s, &pProperties->v1.v2[i]); }
-#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getIntValue(pProperties->filename, ROOT_ELEMENT, s, &pProperties->v1.v2[i].a1); }
+#define GET_INT_VALUE_1(v1)         getIntValue(properties->filename, ROOT_ELEMENT, #v1, &properties->v1)
+#define GET_INT_VALUE_2(v1,v2)      getIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2, &properties->v1.v2)
+#define GET_INT_VALUE_3(v1,v2,v3)   getIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, &properties->v1.v2.v3)
+#define GET_INT_VALUE_2s1(v1,v2,v3,v4) getIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, &properties->v1.v2[v3].v4)
+#define GET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getIntValue(properties->filename, ROOT_ELEMENT, s, &properties->v1.v2[i]); }
+#define GET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getIntValue(properties->filename, ROOT_ELEMENT, s, &properties->v1.v2[i].a1); }
 
-#define GET_STR_VALUE_1(v1)           getStrValue(pProperties->filename, ROOT_ELEMENT, v1, (char*)pProperties->v1)
-#define GET_STR_VALUE_2(v1,v2)        getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)pProperties->v1.v2)
-#define GET_STR_VALUE_3(v1,v2,v3)     getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)pProperties->v1.v2.v3)
-#define GET_STR_VALUE_2s1(v1,v2,s,v3) getStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)pProperties->v1.v2[s].v3)
-#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i]); }
-#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i].a1); }
+#define GET_STR_VALUE_1(v1)           getStrValue(properties->filename, ROOT_ELEMENT, v1, (char*)properties->v1)
+#define GET_STR_VALUE_2(v1,v2)        getStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)properties->v1.v2)
+#define GET_STR_VALUE_3(v1,v2,v3)     getStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)properties->v1.v2.v3)
+#define GET_STR_VALUE_2s1(v1,v2,s,v3) getStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)properties->v1.v2[s].v3)
+#define GET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); getStrValue(properties->filename, ROOT_ELEMENT, s, (char*)properties->v1.v2[i]); }
+#define GET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); getStrValue(properties->filename, ROOT_ELEMENT, s, (char*)properties->v1.v2[i].a1); }
 
-#define SET_INT_VALUE_1(v1)         setIntValue(pProperties->filename, ROOT_ELEMENT, #v1, pProperties->v1)
-#define SET_INT_VALUE_2(v1,v2)      setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, pProperties->v1.v2)
-#define SET_INT_VALUE_3(v1,v2,v3)   setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, pProperties->v1.v2.v3)
-#define SET_INT_VALUE_2s1(v1,v2,v3,v4) setIntValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, pProperties->v1.v2[v3].v4)
-#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setIntValue(pProperties->filename, ROOT_ELEMENT, s, pProperties->v1.v2[i]); }
-#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setIntValue(pProperties->filename, ROOT_ELEMENT, s, pProperties->v1.v2[i].a1); }
+#define SET_INT_VALUE_1(v1)         setIntValue(properties->filename, ROOT_ELEMENT, #v1, properties->v1)
+#define SET_INT_VALUE_2(v1,v2)      setIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2, properties->v1.v2)
+#define SET_INT_VALUE_3(v1,v2,v3)   setIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, properties->v1.v2.v3)
+#define SET_INT_VALUE_2s1(v1,v2,v3,v4) setIntValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3 "." #v4, properties->v1.v2[v3].v4)
+#define SET_INT_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setIntValue(properties->filename, ROOT_ELEMENT, s, properties->v1.v2[i]); }
+#define SET_INT_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setIntValue(properties->filename, ROOT_ELEMENT, s, properties->v1.v2[i].a1); }
 
-#define SET_STR_VALUE_1(v1)           setStrValue(pProperties->filename, ROOT_ELEMENT, v1, (char*)pProperties->v1)
-#define SET_STR_VALUE_2(v1,v2)        setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)pProperties->v1.v2)
-#define SET_STR_VALUE_3(v1,v2,v3)     setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)pProperties->v1.v2.v3)
-#define SET_STR_VALUE_2s1(v1,v2,s,v3) setStrValue(pProperties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)pProperties->v1.v2[s].v3)
-#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i]); }
-#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setStrValue(pProperties->filename, ROOT_ELEMENT, s, (char*)pProperties->v1.v2[i].a1); }
-
-#endif
+#define SET_STR_VALUE_1(v1)           setStrValue(properties->filename, ROOT_ELEMENT, v1, (char*)properties->v1)
+#define SET_STR_VALUE_2(v1,v2)        setStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2, (char*)properties->v1.v2)
+#define SET_STR_VALUE_3(v1,v2,v3)     setStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #v3, (char*)properties->v1.v2.v3)
+#define SET_STR_VALUE_2s1(v1,v2,s,v3) setStrValue(properties->filename, ROOT_ELEMENT, #v1 "." #v2 "." #s "." #v3, (char*)properties->v1.v2[s].v3)
+#define SET_STR_VALUE_2i(v1, v2, i)      { char s[64]; sprintf(s, "%s.%s.i%d",#v1,#v2,i); setStrValue(properties->filename, ROOT_ELEMENT, s, (char*)properties->v1.v2[i]); }
+#define SET_STR_VALUE_2i1(v1, v2, i, a1) { char s[64]; sprintf(s, "%s.%s.i%d.%s",#v1,#v2,i,#a1); setStrValue(properties->filename, ROOT_ELEMENT, s, (char*)properties->v1.v2[i].a1); }
 
 #endif
 
-static void propLoad(Properties* pProperties) 
+#endif
+
+static void propLoad(Properties* properties) 
 {
     int i;
     
 #ifdef USE_XMLFORMAT
-    VtXpath* xpath = vtXpathOpenForRead(pProperties->filename);
+    VtXpath* xpath = vtXpathOpenForRead(properties->filename);
 #else
 #ifndef USE_NATIVEINI
-    iniFileOpen(pProperties->filename);
+    iniFileOpen(properties->filename);
 #endif
 #endif
 
@@ -641,15 +638,15 @@ static void propLoad(Properties* pProperties)
 #endif
 }
 
-void propSave(Properties* pProperties) 
+void propSave(Properties* properties) 
 {
     int i;
     
 #ifdef USE_XMLFORMAT
-    VtXpath* xpath = vtXpathOpenForWrite(pProperties->filename);
+    VtXpath* xpath = vtXpathOpenForWrite(properties->filename);
 #else
 #ifndef USE_NATIVEINI
-    iniFileOpen(pProperties->filename);
+    iniFileOpen(properties->filename);
 #endif
 #endif
 
@@ -855,23 +852,23 @@ Properties* propGetGlobalProperties()
     return globalProperties;
 }
 
-Properties* propCreate(const char* filename, int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode) 
+Properties* propCreate(const char* filename, int useDefault, int langType, PropKeyboardLanguage kbdLang, int syncMode, const char* themeName) 
 {
-    Properties* pProperties;
+    Properties* properties;
 
-    pProperties = malloc(sizeof(Properties));
+    properties = malloc(sizeof(Properties));
 
     if (globalProperties == NULL) {
-        globalProperties = pProperties;
+        globalProperties = properties;
     }
 
-    pProperties->joy1.id = 1;
-    pProperties->joy2.id = 2;
-    propInitDefaults(pProperties, langType, kbdLang, syncMode);
+    properties->joy1.id = 1;
+    properties->joy2.id = 2;
+    propInitDefaults(properties, langType, kbdLang, syncMode, themeName);
 
-    strcpy(pProperties->filename, filename);
+    strcpy(properties->filename, filename);
     if (!useDefault) {
-        propLoad(pProperties);
+        propLoad(properties);
     }
 
     // Verify machine name
@@ -879,7 +876,7 @@ Properties* propCreate(const char* filename, int useDefault, EmuLanguageType lan
         char** machineNames = machineGetAvailable(1);
         
         while (*machineNames != NULL) {
-            if (0 == strcmp(*machineNames, pProperties->emulation.machineName)) {
+            if (0 == strcmp(*machineNames, properties->emulation.machineName)) {
                 break;
             }
             machineNames++;
@@ -890,16 +887,16 @@ Properties* propCreate(const char* filename, int useDefault, EmuLanguageType lan
             int foundMSX2 = 0;
 
             if (*machineNames != NULL) {
-                strcpy(pProperties->emulation.machineName, *machineNames);
+                strcpy(properties->emulation.machineName, *machineNames);
             }
 
             while (*machineNames != NULL) {
                 if (0 == strcmp(*machineNames, "MSX2")) {
-                    strcpy(pProperties->emulation.machineName, *machineNames);
+                    strcpy(properties->emulation.machineName, *machineNames);
                     foundMSX2 = 1;
                 }
                 if (!foundMSX2 && 0 == strncmp(*machineNames, "MSX2", 4)) {
-                    strcpy(pProperties->emulation.machineName, *machineNames);
+                    strcpy(properties->emulation.machineName, *machineNames);
                     foundMSX2 = 1;
                 }
                 machineNames++;
@@ -907,14 +904,14 @@ Properties* propCreate(const char* filename, int useDefault, EmuLanguageType lan
         }
     }
 
-    return pProperties;
+    return properties;
 }
 
 
-void propDestroy(Properties* pProperties) {
-    propSave(pProperties);
+void propDestroy(Properties* properties) {
+    propSave(properties);
 
-    free(pProperties);
+    free(properties);
 }
 
  

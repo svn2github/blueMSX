@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchThread.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,5 +33,9 @@
 void* archThreadCreate(void (*entryPoint)());
 void  archThreadJoin(void* thread, int timeout);
 void  archThreadDestroy(void* thread);
+
+void  archThreadBoostPriority();
+
+void archThreadSleep(int milliseconds);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-08-31 21:07:40 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -22,7 +22,7 @@
 **     in a product, an acknowledgment in the product documentation would be
 **     appreciated but is not required.
 **  2. Altered source versions must be plainly marked as such, and must not be
-**     misrepresented as being the original software.
+La**     misrepresented as being the original software.
 **  3. This notice may not be removed or altered from any source distribution.
 **
 ******************************************************************************
@@ -37,7 +37,8 @@
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
-
+#include <stdlib.h>
+#include <string.h>
 
 static RomType romNameToType(char* name) {
     RomType romType = ROM_UNKNOWN;
@@ -214,7 +215,7 @@ int emuCheckResetArgument(char* cmdLine) {
 }
 
 char* emuCheckIniFileArgument(char* cmdLine){
-    static char iniFile[MAX_PATH];
+    static char iniFile[PROP_MAXPATH];
     int i;
     char* argument;
     
@@ -234,7 +235,7 @@ char* emuCheckIniFileArgument(char* cmdLine){
 }
 
 char* emuCheckThemeArgument(char* cmdLine){
-    static char themeName[MAX_PATH];
+    static char themeName[PROP_MAXPATH];
     int i;
     char* argument;
     
@@ -251,23 +252,6 @@ char* emuCheckThemeArgument(char* cmdLine){
     }
 
     return NULL;
-}
-
-int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
-    int i;
-    int lang;
-    char* argument;
-    
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/language") == 0) {
-            argument = extractToken(cmdLine, ++i);
-            if (argument == NULL) return defaultLang;
-            lang = langFromName(argument);
-            return lang == EMU_LANG_UNKNOWN ? defaultLang : lang;
-        }
-    }
-
-    return defaultLang;
 }
 
 void emuCheckFullscreenArgument(Properties* properties, char* cmdLine){

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-09-23 19:13:50 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@
 #include "ArchMenu.h"
 #include "ArchDialog.h"
 #include "ArchControls.h"
+#include "ArchFile.h"
 #include "ArchNotifications.h"
 #include "ArchPrinter.h"
 #include "ArchMidi.h"
@@ -51,6 +52,7 @@
 #include <stdio.h>
 #include <direct.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 
@@ -60,9 +62,9 @@ static struct {
     int mouseLock;
 } state;
 
-static char audioDir[MAX_PATH]  = "";
+static char audioDir[PROP_MAXPATH]  = "";
 static char audioPrefix[64]     = "";
-static char stateDir[MAX_PATH]  = "";
+static char stateDir[PROP_MAXPATH]  = "";
 static char statePrefix[64]     = "";
 
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix)

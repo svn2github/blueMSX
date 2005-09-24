@@ -720,18 +720,18 @@ inline int OpenYM2413::rhythm_calc(bool noise)
 		// phase = 34 or 2D0 (based on noise)
 
 		// base frequency derived from operator 1 in channel 7
-		bool bit7 = (SLOT7_1.phase >> FREQ_SH) & 0x80;
-		bool bit3 = (SLOT7_1.phase >> FREQ_SH) & 0x08;
-		bool bit2 = (SLOT7_1.phase >> FREQ_SH) & 0x04;
-		bool res1 = (bit2 ^ bit7) | bit3;
+		bool bit7 = ((SLOT7_1.phase >> FREQ_SH) & 0x80) != 0;
+		bool bit3 = ((SLOT7_1.phase >> FREQ_SH) & 0x08) != 0;
+		bool bit2 = ((SLOT7_1.phase >> FREQ_SH) & 0x04) != 0;
+		bool res1 = ((bit2 ^ bit7) | bit3) != 0;
 		// when res1 = 0 phase = 0x000 |  0xD0;
 		// when res1 = 1 phase = 0x200 | (0xD0 >> 2);
 		unsigned phase = res1 ? (0x200 | (0xD0 >> 2)) : 0xD0;
 
 		// enable gate based on frequency of operator 2 in channel 8
-		bool bit5e= (SLOT8_2.phase >> FREQ_SH) & 0x20;
-		bool bit3e= (SLOT8_2.phase >> FREQ_SH) & 0x08;
-		bool res2 = (bit3e | bit5e);
+		bool bit5e= ((SLOT8_2.phase >> FREQ_SH) & 0x20) != 0;
+		bool bit3e= ((SLOT8_2.phase >> FREQ_SH) & 0x08) != 0;
+		bool res2 = (bit3e | bit5e) != 0;
 		// when res2 = 0 pass the phase from calculation above (res1);
 		// when res2 = 1 phase = 0x200 | (0xd0>>2);
 		if (res2) {
@@ -758,7 +758,7 @@ inline int OpenYM2413::rhythm_calc(bool noise)
 	env = SLOT7_2.volume_calc(LFO_AM);
 	if (env < ENV_QUIET) {
 		// base frequency derived from operator 1 in channel 7
-		bool bit8 = (SLOT7_1.phase >> FREQ_SH) & 0x100;
+		bool bit8 = ((SLOT7_1.phase >> FREQ_SH) & 0x100) != 0;
 
 		// when bit8 = 0 phase = 0x100;
 		// when bit8 = 1 phase = 0x200;
@@ -784,18 +784,18 @@ inline int OpenYM2413::rhythm_calc(bool noise)
 	env = SLOT8_2.volume_calc(LFO_AM);
 	if (env < ENV_QUIET) {
 		// base frequency derived from operator 1 in channel 7
-		bool bit7 = (SLOT7_1.phase >> FREQ_SH) & 0x80;
-		bool bit3 = (SLOT7_1.phase >> FREQ_SH) & 0x08;
-		bool bit2 = (SLOT7_1.phase >> FREQ_SH) & 0x04;
-		bool res1 = (bit2 ^ bit7) | bit3;
+		bool bit7 = ((SLOT7_1.phase >> FREQ_SH) & 0x80) != 0;
+		bool bit3 = ((SLOT7_1.phase >> FREQ_SH) & 0x08) != 0;
+		bool bit2 = ((SLOT7_1.phase >> FREQ_SH) & 0x04) != 0;
+		bool res1 = ((bit2 ^ bit7) | bit3) != 0;
 		// when res1 = 0 phase = 0x000 | 0x100;
 		// when res1 = 1 phase = 0x200 | 0x100;
 		unsigned phase = res1 ? 0x300 : 0x100;
 
 		// enable gate based on frequency of operator 2 in channel 8
-		bool bit5e= (SLOT8_2.phase >> FREQ_SH) & 0x20;
-		bool bit3e= (SLOT8_2.phase >> FREQ_SH) & 0x08;
-		bool res2 = bit3e | bit5e;
+		bool bit5e= ((SLOT8_2.phase >> FREQ_SH) & 0x20) != 0;
+		bool bit3e= ((SLOT8_2.phase >> FREQ_SH) & 0x08) != 0;
+		bool res2 = (bit3e | bit5e) != 0;
 		// when res2 = 0 pass the phase from calculation above (res1);
 		// when res2 = 1 phase = 0x200 | 0x100;
 		if (res2) {
@@ -1178,7 +1178,7 @@ void OpenYM2413::writeReg(byte r, byte v, const EmuTime &time)
 
 		case 0x0E: {
 			// x, x, r,bd,sd,tom,tc,hh 
-			setRhythmMode(v & 0x20);
+			setRhythmMode((v & 0x20) != 0);
 			if (rhythm) {
 				// BD key on/off 
 				if (v & 0x10) {
@@ -1438,13 +1438,13 @@ void OpenYM2413::loadState()
     char tag[32];
     int i;
 
-    maxVolume    = saveStateGet(state, "maxVolume",    0);
+    maxVolume    = (short)saveStateGet(state, "maxVolume",    0);
 
     eg_cnt       = saveStateGet(state, "eg_cnt",       0);
     eg_timer     = saveStateGet(state, "eg_timer",     0);
     eg_timer_add = saveStateGet(state, "eg_timer_add", 0);
 
-    rhythm       = saveStateGet(state, "rhythm",       0);
+    rhythm       = saveStateGet(state, "rhythm",       0) != 0;
 
     lfo_am_cnt   = saveStateGet(state, "lfo_am_cnt",   0);
     lfo_am_inc   = saveStateGet(state, "lfo_am_inc",   0);

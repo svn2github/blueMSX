@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-21 09:50:00 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@ void emulatorSuspend();
 void emulatorResume();
 void emulatorDoResume();
 void emulatorRestart();
-void emulatorStart(char* stateName);
+void emulatorStart(const char* stateName);
 void emulatorStop();
 void emulatorSetMaxSpeed(int enable);
 int  emulatorGetMaxSpeed();

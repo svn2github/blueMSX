@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,10 @@ using namespace std;
 typedef map<UInt32, MediaType*> CrcMap;
 typedef map<string, MediaType*> Sha1Map;
 
+
+#if 1
+#define langUnknown() "Unknown";
+#endif
 
 struct MediaDb {
     Sha1Map sha1Map;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-31 21:07:40 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,13 +34,17 @@
 #include "FileHistory.h"
 #include "Emulator.h"
 #include "Board.h"
+#include "ArchFile.h"
+#include "ArchDialog.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "ArchDialog.h"
 
 void archUpdateMenu(int show);
 
-int insertCartridge(Properties* properties, int drive, char* fname, char* inZipFile, RomType romType, int forceAutostart) {
+int insertCartridge(Properties* properties, int drive, const char* fname, const char* inZipFile, RomType romType, int forceAutostart) {
     int autostart = forceAutostart == 1 || properties->cartridge.autoReset;
     int noautostart = forceAutostart == -1;
     char romName[512] = "";
@@ -116,7 +120,7 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
             memcpy(fileList + sizeRom + sizeMx1 + sizeMx2 + sizeCol + sizeRi + sizeSg, fileListSc, sizeSc);
 
             if (count == 0) {
-                MessageBox(NULL, langErrorNoRomInZip(), langErrorTitle(), MB_OK);
+                archShowNoRomInZipDialog();
                 return 0;
             }
 
@@ -124,28 +128,12 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
                 strcpy(romName, fileList);
             }
             else {
-                ZipFileDlgInfo dlgInfo;
-
-                _stprintf(dlgInfo.title, "%s", langDlgLoadRom());
-                _stprintf(dlgInfo.description, "%s", langDlgLoadRomDesc());
-                strcpy(dlgInfo.zipFileName, fname);
-                dlgInfo.fileList = fileList;
-                dlgInfo.fileListCount = count;
-                dlgInfo.autoReset = autostart;
-
-                dlgInfo.selectFileIndex = -1;
-                strcpy(dlgInfo.selectFile, drive == 0 ? properties->cartridge.slotAZip : properties->cartridge.slotBZip);
-
-                archFileFromZipDialog(&dlgInfo);
-
-                romType = dlgInfo.openRomType;
-
-                if (dlgInfo.selectFile[0] == '\0') {
+                char* filename = archFilenameGetOpenRomZip(properties, drive, fname, fileList, count, &autostart, &romType);
+                if (filename == NULL) {
                     free(fileList);
                     return 0;
                 }
-                autostart = dlgInfo.autoReset;
-                strcpy(romName, dlgInfo.selectFile);
+                strcpy(romName, filename);
             }
 
             if(fileListRom) free(fileListRom);
@@ -232,7 +220,7 @@ int insertCartridge(Properties* properties, int drive, char* fname, char* inZipF
     return 1;
 }
 
-int insertDiskette(Properties* properties, int drive, char* fname, char* inZipFile, int forceAutostart) {
+int insertDiskette(Properties* properties, int drive, const char* fname, const char* inZipFile, int forceAutostart) {
     char diskName[512] = "";
     char filename[512] = "";
     int autostart = forceAutostart == 1 || (drive == 0 ? properties->diskdrive.autostartA : 0);
@@ -294,7 +282,7 @@ int insertDiskette(Properties* properties, int drive, char* fname, char* inZipFi
             memcpy(fileList + sizeDsk + sizeDi1 + sizeDi2 + size360, fileList720, size720);
 
             if (count == 0) {
-                MessageBox(NULL, langErrorNoDskInZip(), langErrorTitle(), MB_OK);
+                archShowNoDiskInZipDialog();
                 return 0;
             }
 
@@ -302,27 +290,14 @@ int insertDiskette(Properties* properties, int drive, char* fname, char* inZipFi
                 strcpy(diskName, fileList);
             }
             else {
-                ZipFileDlgInfo dlgInfo;
-
-                _stprintf(dlgInfo.title, "%s", langDlgLoadDsk());
-                _stprintf(dlgInfo.description, "%s", langDlgLoadDskDesc());
-                strcpy(dlgInfo.zipFileName, fname);
-                dlgInfo.fileList = fileList;
-                dlgInfo.fileListCount = count;
-                dlgInfo.autoReset = autostart;
-
-                dlgInfo.selectFileIndex = -1;
-                strcpy(dlgInfo.selectFile, drive == 0 ? properties->diskdrive.slotAZip : properties->diskdrive.slotBZip);
-
-                archFileFromZipDialog(&dlgInfo);
-
-                if (dlgInfo.selectFile[0] == '\0') {
+                char* filename = archFilenameGetOpenDiskZip(properties, drive, fname, fileList, count, &autostart);
+                if (filename == NULL) {
                     free(fileList);
                     return 0;
                 }
-                strcpy(diskName, dlgInfo.selectFile);
-                autostart = dlgInfo.autoReset;
+                strcpy(diskName, filename);
             }
+
             if(fileListDsk) free(fileListDsk);
             if(fileListDi1) free(fileListDi1);
             if(fileListDi2) free(fileListDi2);
@@ -358,7 +333,7 @@ int insertDiskette(Properties* properties, int drive, char* fname, char* inZipFi
     return 1;
 }
 
-int insertCassette(Properties* properties, char* fname, char* inZipFile, int forceAutostart) {
+int insertCassette(Properties* properties, const char* fname, const char* inZipFile, int forceAutostart) {
     int autostart = forceAutostart == 1;
     int noautostart = forceAutostart == -1;
     char tapeName[512] = "";
@@ -376,7 +351,7 @@ int insertCassette(Properties* properties, char* fname, char* inZipFile, int for
             char* fileList = zipGetFileList(filename, ".cas", &count);
 
             if (fileList == NULL) {
-                MessageBox(NULL, langErrorNoCasInZip(), langErrorTitle(), MB_OK);
+                archShowNoCasInZipDialog();
                 return 0;
             }
 
@@ -384,26 +359,12 @@ int insertCassette(Properties* properties, char* fname, char* inZipFile, int for
                 strcpy(tapeName, fileList);
             }
             else {
-                ZipFileDlgInfo dlgInfo;
-
-                _stprintf(dlgInfo.title, "%s", langDlgLoadCas());
-                _stprintf(dlgInfo.description, "%s", langDlgLoadCasDesc());
-                strcpy(dlgInfo.zipFileName, fname);
-                dlgInfo.fileList = fileList;
-                dlgInfo.fileListCount = count;
-                dlgInfo.autoReset = autostart;
-
-                dlgInfo.selectFileIndex = -1;
-                strcpy(dlgInfo.selectFile, properties->cassette.tapeZip);
-
-                archFileFromZipDialog(&dlgInfo);
-
-                autostart = dlgInfo.autoReset;
-                if (dlgInfo.selectFile[0] == '\0') {
+                char* filename = archFilenameGetOpenCasZip(properties, fname, fileList, count, &autostart);
+                if (filename == NULL) {
                     free(fileList);
                     return 0;
                 }
-                strcpy(tapeName, dlgInfo.selectFile);
+                strcpy(tapeName, filename);
             }
             free(fileList);
         }
@@ -426,8 +387,8 @@ int insertCassette(Properties* properties, char* fname, char* inZipFile, int for
     return 1;
 }
 
-static int insertDisketteOrCartridge(Properties* properties, int drive, char* filename, int forceAutostart) {
-    ZipFileDlgInfo dlgInfo;
+static int insertDisketteOrCartridge(Properties* properties, int drive, const char* fname, int forceAutostart) 
+{
     int countDsx;
     int countDi1;
     int countDi2;
@@ -443,19 +404,19 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     int countCas;
     char* fileListDsk = NULL;
     char* fileListRom = NULL;
-    char* fileListDsx = zipGetFileList(filename, ".dsk", &countDsx);
-    char* fileListDi1 = zipGetFileList(filename, ".di1", &countDi1);
-    char* fileListDi2 = zipGetFileList(filename, ".di2", &countDi2);
-    char* fileList360 = zipGetFileList(filename, ".360", &count360);
-    char* fileList720 = zipGetFileList(filename, ".720", &count720);
-    char* fileListRox = zipGetFileList(filename, ".rom", &countRox);
-    char* fileListRi  = zipGetFileList(filename, ".ri",  &countRi);
-    char* fileListMx1 = zipGetFileList(filename, ".mx1", &countMx1);
-    char* fileListMx2 = zipGetFileList(filename, ".mx2", &countMx2);
-    char* fileListCol = zipGetFileList(filename, ".col", &countCol);
-    char* fileListSg  = zipGetFileList(filename, ".sg",  &countSg);
-    char* fileListSc  = zipGetFileList(filename, ".sc",  &countSc);
-    char* fileListCas = zipGetFileList(filename, ".cas", &countCas);
+    char* fileListDsx = zipGetFileList(fname, ".dsk", &countDsx);
+    char* fileListDi1 = zipGetFileList(fname, ".di1", &countDi1);
+    char* fileListDi2 = zipGetFileList(fname, ".di2", &countDi2);
+    char* fileList360 = zipGetFileList(fname, ".360", &count360);
+    char* fileList720 = zipGetFileList(fname, ".720", &count720);
+    char* fileListRox = zipGetFileList(fname, ".rom", &countRox);
+    char* fileListRi  = zipGetFileList(fname, ".ri",  &countRi);
+    char* fileListMx1 = zipGetFileList(fname, ".mx1", &countMx1);
+    char* fileListMx2 = zipGetFileList(fname, ".mx2", &countMx2);
+    char* fileListCol = zipGetFileList(fname, ".col", &countCol);
+    char* fileListSg  = zipGetFileList(fname, ".sg",  &countSg);
+    char* fileListSc  = zipGetFileList(fname, ".sc",  &countSc);
+    char* fileListCas = zipGetFileList(fname, ".cas", &countCas);
     int countRom = countRox + countRi + countMx1 + countMx2 + countCol + countSg + countSc;
     int countDsk = countDsx + countDi1 + countDi2 + count360 + count720;
     char* fileList;
@@ -475,6 +436,9 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     int sizeSc  = 0;
     int sizeCas = 0;
     int success = 0;
+    const char* filename;
+    int autostart;
+    int romType;
     int i;
 
     // First merge different dsk formats into one list
@@ -541,17 +505,17 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
 
     if (fileListDsk == NULL && fileListCas == NULL) {
         free(fileListRom);
-        return insertCartridge(properties, drive, filename, NULL, ROM_UNKNOWN, 0);
+        return insertCartridge(properties, drive, fname, NULL, ROM_UNKNOWN, 0);
     }
 
     if (fileListRom == NULL && fileListCas == NULL) {
         free(fileListDsk);
-        return insertDiskette(properties, drive, filename, NULL, 0);
+        return insertDiskette(properties, drive, fname, NULL, 0);
     }
 
     if (fileListRom == NULL && fileListDsk == NULL) {
         free(fileListCas);
-        return insertCassette(properties, filename, NULL, 0);
+        return insertCassette(properties, fname, NULL, 0);
     }
 
     for (i = 0; i < countRom; i++) {
@@ -571,30 +535,24 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     memcpy(fileList + sizeRom, fileListDsk, sizeDsk);
     memcpy(fileList + sizeRom + sizeDsk, fileListCas, sizeCas);
 
-    _stprintf(dlgInfo.title, "%s", langDlgLoadRomDskCas());
-    _stprintf(dlgInfo.description, "%s", langDlgLoadRomDskCasDesc());
-    strcpy(dlgInfo.zipFileName, filename);
-    dlgInfo.fileList = fileList;
-    dlgInfo.fileListCount = countDsk + countRom + countCas;
-    dlgInfo.autoReset = properties->diskdrive.autostartA || properties->cartridge.autoReset || forceAutostart;
-    dlgInfo.selectFileIndex = -1;
-    dlgInfo.selectFile[0] = 0;
+    autostart = forceAutostart;
 
-    archFileFromZipDialog(&dlgInfo);
-
-    if (isFileExtension(dlgInfo.selectFile, ".rom") || isFileExtension(dlgInfo.selectFile, ".ri") || 
-        isFileExtension(dlgInfo.selectFile, ".mx1") || isFileExtension(dlgInfo.selectFile, ".mx2") || 
-        isFileExtension(dlgInfo.selectFile, ".col") || 
-        isFileExtension(dlgInfo.selectFile, ".sg") || isFileExtension(dlgInfo.selectFile, ".sc")) {
-        success = insertCartridge(properties, drive, filename, dlgInfo.selectFile, dlgInfo.openRomType, dlgInfo.autoReset);
-    }
-    else if (isFileExtension(dlgInfo.selectFile, ".dsk") || 
-             isFileExtension(dlgInfo.selectFile, ".di1") || isFileExtension(dlgInfo.selectFile, ".di2") || 
-             isFileExtension(dlgInfo.selectFile, ".360") || isFileExtension(dlgInfo.selectFile, ".720")) {
-        success = insertDiskette(properties, drive, filename, dlgInfo.selectFile, dlgInfo.autoReset);
-    }
-    else if (isFileExtension(dlgInfo.selectFile, ".cas")) {
-        success = insertCassette(properties, filename, dlgInfo.selectFile, dlgInfo.autoReset);
+    filename = archFilenameGetOpenAnyZip(properties, fname, fileList, countDsk + countRom + countCas, &autostart, &romType);
+    if (filename != NULL) {
+        if (isFileExtension(filename, ".rom") || isFileExtension(filename, ".ri") || 
+            isFileExtension(filename, ".mx1") || isFileExtension(filename, ".mx2") || 
+            isFileExtension(filename, ".col") || 
+            isFileExtension(filename, ".sg") || isFileExtension(filename, ".sc")) {
+            success = insertCartridge(properties, drive, fname, filename, romType, autostart);
+        }
+        else if (isFileExtension(filename, ".dsk") || 
+                isFileExtension(filename, ".di1") || isFileExtension(filename, ".di2") || 
+                isFileExtension(filename, ".360") || isFileExtension(filename, ".720")) {
+            success = insertDiskette(properties, drive, fname, filename, autostart);
+        }
+        else if (isFileExtension(filename, ".cas")) {
+            success = insertCassette(properties, fname, filename, autostart);
+        }
     }
 
     if(fileListDsk) free(fileListDsk);
@@ -616,7 +574,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, char* fi
     return success;
 }
 
-int tryLaunchUnknownFile(Properties* properties, char* fileName, int forceAutostart) 
+int tryLaunchUnknownFile(Properties* properties, const char* fileName, int forceAutostart) 
 {
     int rv = 0;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include <stdlib.h>
+#include <string.h>
 #include "MidiIO.h"
 #include "ArchUart.h"
 #include "DAC.h"

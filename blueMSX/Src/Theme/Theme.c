@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-08-24 04:35:33 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,8 @@
 #include "Theme.h"
 #include "Actions.h"
 #include "ArchNotifications.h"
+#include <stdlib.h>
+#include <string.h>
 
 typedef enum { 
     ITEM_IMAGE, 
@@ -276,9 +278,9 @@ ThemePage* themePageCreate(const char* name,
                            int menuPosX,
                            int menuPosY,
                            int menuWidth,
-                           COLORREF menuColor,
-                           COLORREF menuFocusColor,
-                           COLORREF menuTextColor,
+                           unsigned long  menuColor,
+                           unsigned long  menuFocusColor,
+                           unsigned long  menuTextColor,
                            int        noFrame,
                            int        clipPointCount,
                            ClipPoint* clipPointList)

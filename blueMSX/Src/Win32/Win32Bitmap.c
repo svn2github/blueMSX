@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Bitmap.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-11 07:31:04 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,11 @@ struct ArchText {
     int right;
     int color;
 };
+
+int archRGB(int r, int g, int b)
+{
+    return RGB(r, g, b);
+}
 
 ArchText* archTextCreate(int height, int color, int rightAligned)
 {

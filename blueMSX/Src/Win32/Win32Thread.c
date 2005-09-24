@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Thread.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,4 +49,16 @@ void archThreadJoin(void* thread, int timeout)
     }
 
     WaitForSingleObject(thread, timeout);
+}
+
+
+void  archThreadBoostPriority()
+{
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+}
+
+
+void archThreadSleep(int milliseconds) 
+{
+    Sleep(milliseconds);
 }

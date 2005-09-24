@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-03-09 21:43:56 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -408,16 +408,16 @@ static void loadState(CRTC6845* crtc)
     SaveState* state = saveStateOpenForRead("crtc6845");
 
     crtc->cursor.mode         = saveStateGet(state, "crtc->cursor.mode",         0);
-    crtc->cursor.rasterStart  = saveStateGet(state, "crtc->cursor.rasterStart",  0);
-    crtc->cursor.rasterEnd    = saveStateGet(state, "crtc->cursor.rasterEnd",    0);
-    crtc->cursor.addressStart = saveStateGet(state, "crtc->cursor.addressStart", 0);
+    crtc->cursor.rasterStart  = (UInt8)saveStateGet(state, "crtc->cursor.rasterStart",  0);
+    crtc->cursor.rasterEnd    = (UInt8)saveStateGet(state, "crtc->cursor.rasterEnd",    0);
+    crtc->cursor.addressStart = (UInt16)saveStateGet(state, "crtc->cursor.addressStart", 0);
     crtc->cursor.blinkrate    = saveStateGet(state, "crtc->cursor.blinkrate",    0);
     crtc->cursor.blinkstart   = saveStateGet(state, "crtc->cursor.blinkstart",   0);
     
     for (index = 0; index < 18; index++) {
         char tag[32];
     	sprintf(tag, "crtc->registers.reg[%d]", index);
-        crtc->registers.reg[index] = saveStateGet(state, tag, 0);
+        crtc->registers.reg[index] = (UInt8)saveStateGet(state, tag, 0);
     }
 
     crtc->frameCounter    = saveStateGet(state, "crtc->frameCounter",   0);

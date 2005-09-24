@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-09-22 23:04:29 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,8 +32,9 @@
 
 #include "AudioMixer.h"
 #include "VideoRender.h"
-#include "Language.h"
 #include "MediaDb.h"
+
+#define PROP_MAXPATH 512
 
 #define CARTNAME_SNATCHER    "The Snatcher Cartridge"
 #define CARTNAME_SDSNATCHER  "SD-Snatcher Cartridge"
@@ -53,6 +54,7 @@
 #define CARTNAME_MEGARAM512  "512kB MegaRAM"
 #define CARTNAME_MEGARAM768  "768kB MegaRAM"
 #define CARTNAME_MEGARAM2M   "2MB MegaRAM"
+
 
 typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
 
@@ -80,9 +82,9 @@ typedef enum { P_KBD_EUROPEAN = 0, P_KBD_RUSSIAN, P_KBD_JAPANESE, P_KBD_KOREAN }
 #define MAX_HISTORY 30
 
 typedef struct {
-    char statsDefDir[MAX_PATH];
-    char machineName[MAX_PATH];
-    char shortcutProfile[MAX_PATH];
+    char statsDefDir[PROP_MAXPATH];
+    char machineName[PROP_MAXPATH];
+    char shortcutProfile[PROP_MAXPATH];
     int  enableFdcTiming;
     int  frontSwitch;
     int  audioSwitch;
@@ -147,18 +149,18 @@ typedef struct {
     int  masterVolume;
     int  masterEnable;
     MixerChannel mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
-    int  log[MAX_PATH];
+    int  log[PROP_MAXPATH];
     struct {
         int  type;
         char name[256];
         char desc[256];
-        char fileName[MAX_PATH];
+        char fileName[PROP_MAXPATH];
     } MidiIn;
     struct {
         int  type;
         char name[256];
         char desc[256];
-        char fileName[MAX_PATH];
+        char fileName[PROP_MAXPATH];
         int  mt32ToGm;
     } MidiOut;
 } SoundProperties;
@@ -181,16 +183,16 @@ typedef struct {
 }  JoystickProperties;
 
 typedef struct {
-    char configFile[MAX_PATH];
+    char configFile[PROP_MAXPATH];
 } KeyboardProperties;
 
 typedef struct {
     RomType defaultType;
-    char    defDir[MAX_PATH];
-    char    slotA[MAX_PATH];
-    char    slotB[MAX_PATH];
-    char    slotAZip[MAX_PATH];
-    char    slotBZip[MAX_PATH];
+    char    defDir[PROP_MAXPATH];
+    char    slotA[PROP_MAXPATH];
+    char    slotB[PROP_MAXPATH];
+    char    slotAZip[PROP_MAXPATH];
+    char    slotBZip[PROP_MAXPATH];
     int     slotAFilter;
     int     slotBFilter;
     RomType slotAType;
@@ -200,13 +202,13 @@ typedef struct {
 } CartridgeProperties;
 
 typedef struct {
-    char defDir[MAX_PATH];
-    char slotA[MAX_PATH];
-    char slotB[MAX_PATH];
-    char slotAZip[MAX_PATH];
-    char slotBZip[MAX_PATH];
-    char slotADir[MAX_PATH];
-    char slotBDir[MAX_PATH];
+    char defDir[PROP_MAXPATH];
+    char slotA[PROP_MAXPATH];
+    char slotB[PROP_MAXPATH];
+    char slotAZip[PROP_MAXPATH];
+    char slotBZip[PROP_MAXPATH];
+    char slotADir[PROP_MAXPATH];
+    char slotBDir[PROP_MAXPATH];
     int  slotAFilter;
     int  slotBFilter;
     int  autostartA;
@@ -214,9 +216,9 @@ typedef struct {
 } DiskdriveProperties;
 
 typedef struct {
-    char defDir[MAX_PATH];
-    char tape[MAX_PATH];
-    char tapeZip[MAX_PATH];
+    char defDir[PROP_MAXPATH];
+    char tape[PROP_MAXPATH];
+    char tapeZip[PROP_MAXPATH];
     int  filter;
     int showCustomFiles;
     int readOnly;
@@ -225,14 +227,14 @@ typedef struct {
 
 typedef struct {
     int     count;
-    char    cartridgeA[MAX_HISTORY][MAX_PATH];
+    char    cartridgeA[MAX_HISTORY][PROP_MAXPATH];
     RomType cartridgeTypeA[MAX_HISTORY];
-    char    cartridgeB[MAX_HISTORY][MAX_PATH];
+    char    cartridgeB[MAX_HISTORY][PROP_MAXPATH];
     RomType cartridgeTypeB[MAX_HISTORY];
-    char    diskdriveA[MAX_HISTORY][MAX_PATH];
-    char    diskdriveB[MAX_HISTORY][MAX_PATH];
-    char    cassette[MAX_HISTORY][MAX_PATH];
-    char    quicksave[MAX_PATH];
+    char    diskdriveA[MAX_HISTORY][PROP_MAXPATH];
+    char    diskdriveB[MAX_HISTORY][PROP_MAXPATH];
+    char    cassette[MAX_HISTORY][PROP_MAXPATH];
+    char    quicksave[PROP_MAXPATH];
 } FileHistory;
 
 typedef struct {
@@ -240,14 +242,14 @@ typedef struct {
         int  type;
         int  emulation;
         char name[256];
-        char portName[MAX_PATH];
-        char fileName[MAX_PATH];
+        char portName[PROP_MAXPATH];
+        char fileName[PROP_MAXPATH];
     } Lpt;
     struct {
         int  type;
         char name[256];
-        char portName[MAX_PATH];
-        char fileName[MAX_PATH];
+        char portName[PROP_MAXPATH];
+        char fileName[PROP_MAXPATH];
     } Com;
 } PortProperties;
 
@@ -283,7 +285,12 @@ typedef struct {
     Settings            settings;
 } Properties;
 
-Properties* propCreate(const char* filename, int useDefault, EmuLanguageType langType, PropKeyboardLanguage kbdLang, int syncMode);
+Properties* propCreate(const char* filename, 
+                       int useDefault, 
+                       int langType, 
+                       PropKeyboardLanguage kbdLang, 
+                       int syncMode, 
+                       const char* themeName);
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
 

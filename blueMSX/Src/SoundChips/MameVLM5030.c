@@ -87,6 +87,7 @@ typedef   signed long  INT32;
 #include "MameVLM5030.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "SaveState.h"
 #endif
 
@@ -397,7 +398,7 @@ void vlm5030_update_callback(stream_sample_t *_buffer, int length)
 			}
 			else if (chip->old_pitch <= 1)
 			{	/* generate unvoiced samples here */
-				current_val = (rand()&1) ? chip->current_energy : -chip->current_energy;
+				current_val = (rand()&1) ? (int)chip->current_energy : -(int)chip->current_energy;
 			}
 			else
 			{
@@ -768,30 +769,30 @@ void vlm5030_SaveState()
     int i;
     SaveState* state = saveStateOpenForRead("vlm_5030");
     
-    chip->address       = saveStateGet(state, "address",       0);
-    chip->pin_ST        = saveStateGet(state, "pin_ST",        0);
-    chip->pin_BSY       = saveStateGet(state, "pin_BSY",       0);
-    chip->pin_VCU       = saveStateGet(state, "pin_VCU",       0);
-    chip->pin_RST       = saveStateGet(state, "pin_RST",       0);
-    chip->latch_data    = saveStateGet(state, "latch_data",    0);
-    chip->vcu_addr_h    = saveStateGet(state, "vcu_addr_h",    0);
-    chip->parameter     = saveStateGet(state, "parameter",     0);
-    chip->phase         = saveStateGet(state, "phase",         0);
-    chip->interp_count  = saveStateGet(state, "interp_count",  0);
-    chip->sample_count  = saveStateGet(state, "sample_count",  0);
-    chip->pitch_count   = saveStateGet(state, "pitch_count",   0);
-    chip->old_energy    = saveStateGet(state, "old_energy",    0);
-    chip->old_pitch     = saveStateGet(state, "old_pitch",     0);
-    chip->target_energy = saveStateGet(state, "target_energy", 0);
-    chip->target_pitch  = saveStateGet(state, "target_pitch",  0);
+    chip->address       = (UInt16)saveStateGet(state, "address",       0);
+    chip->pin_ST        = (UInt8)saveStateGet(state, "pin_ST",        0);
+    chip->pin_BSY       = (UInt8)saveStateGet(state, "pin_BSY",       0);
+    chip->pin_VCU       = (UInt8)saveStateGet(state, "pin_VCU",       0);
+    chip->pin_RST       = (UInt8)saveStateGet(state, "pin_RST",       0);
+    chip->latch_data    = (UInt8)saveStateGet(state, "latch_data",    0);
+    chip->vcu_addr_h    = (UInt16)saveStateGet(state, "vcu_addr_h",    0);
+    chip->parameter     = (UInt8)saveStateGet(state, "parameter",     0);
+    chip->phase         = (UInt8)saveStateGet(state, "phase",         0);
+    chip->interp_count  = (UInt8)saveStateGet(state, "interp_count",  0);
+    chip->sample_count  = (UInt8)saveStateGet(state, "sample_count",  0);
+    chip->pitch_count   = (UInt8)saveStateGet(state, "pitch_count",   0);
+    chip->old_energy    = (UInt16)saveStateGet(state, "old_energy",    0);
+    chip->old_pitch     = (UInt8)saveStateGet(state, "old_pitch",     0);
+    chip->target_energy = (UInt16)saveStateGet(state, "target_energy", 0);
+    chip->target_pitch  = (UInt8)saveStateGet(state, "target_pitch",  0);
 
     for (i = 0; i < 10; i++) {
         char txt[32];
         sprintf(txt, "old_k%d", i);
-        chip->old_k[i] = saveStateGet(state, txt, 0);
+        chip->old_k[i] = (Int16)saveStateGet(state, txt, 0);
         
         sprintf(txt, "target_k%d", i);
-        chip->target_k[i] = saveStateGet(state, txt, 0);
+        chip->target_k[i] = (Int16)saveStateGet(state, txt, 0);
         
         sprintf(txt, "x%d", i);
         chip->x[i] = saveStateGet(state, txt, 0);

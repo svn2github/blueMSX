@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchBitmap.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-11 07:30:48 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,5 +43,6 @@ void archBitmapDraw(ArchBitmap* bm, void* dcDest, int xDest, int yDest,
 void archBitmapCopy(ArchBitmap* dst, int xDest, int yDest, 
                     ArchBitmap* src, int xSrc, int ySrc, int width, int height);
 
+int archRGB(int r, int g, int b);
 
 #endif

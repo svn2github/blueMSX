@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-09-22 23:04:29 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@ extern "C" {
 #include "StrcmpNoCase.h"
 #include "ArchBitmap.h"
 #include "ArchText.h"
+#include "ArchFile.h"
 #include "Keyboard.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
@@ -904,7 +905,7 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
     const char* colStr = el->Attribute("fgcolor");
     if (colStr != NULL) {
         sscanf(colStr, "%x", &color);
-        color = RGB((color>>16), ((color>>8)&0xff), (color&0xff));
+        color = archRGB((color>>16), ((color>>8)&0xff), (color&0xff));
     }    
 
     int rightAlign = 0;
@@ -987,9 +988,9 @@ static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme,
     int menuX          = 0;
     int menuY          = -100;
     int menuWidth      = 357;
-    int menuColor      = RGB(219, 221, 224);
-    int menuFocusColor = RGB(128, 128, 255);
-    int menuTextColor  = RGB(0, 0, 0);
+    int menuColor      = archRGB(219, 221, 224);
+    int menuFocusColor = archRGB(128, 128, 255);
+    int menuTextColor  = archRGB(0, 0, 0);
     int color;
     int noFrame        = frame ? 0 : 1;
 
@@ -1014,19 +1015,19 @@ static ThemePage* loadThemePage(ThemeCollection* themeCollection, Theme* theme,
             const char* colStr = infoEl->Attribute("bgcolor");
             if (colStr != NULL) {
                 sscanf(colStr, "%x", &color);
-                menuColor = RGB((color>>16), ((color>>8)&0xff), (color&0xff));
+                menuColor = archRGB((color>>16), ((color>>8)&0xff), (color&0xff));
             }
             
             colStr = infoEl->Attribute("fgcolor");
             if (colStr != NULL) {
                 sscanf(colStr, "%x", &color);
-                menuTextColor = RGB((color>>16), ((color>>8)&0xff), (color&0xff));
+                menuTextColor = archRGB((color>>16), ((color>>8)&0xff), (color&0xff));
             }
             
             colStr = infoEl->Attribute("focuscolor");
             if (colStr != NULL) {
                 sscanf(colStr, "%x", &color);
-                menuFocusColor = RGB((color>>16), ((color>>8)&0xff), (color&0xff));
+                menuFocusColor = archRGB((color>>16), ((color>>8)&0xff), (color&0xff));
             }
         }
 
@@ -1220,23 +1221,23 @@ extern "C" ThemeCollection* themeLoad(const char* themePath)
 {
     char oldDirName[512];
 
-    GetCurrentDirectory(512, oldDirName);
+    strcpy(oldDirName, archGetCurrentDirectory());
 
-    SetCurrentDirectory(themePath);
+    archSetCurrentDirectory(themePath);
 
     TiXmlDocument doc("Theme.xml");
 
     doc.LoadFile();
 
     if (doc.Error()) {
-        SetCurrentDirectory(oldDirName);
+        archSetCurrentDirectory(oldDirName);
         return NULL;
     }
 
     TiXmlElement* root = doc.RootElement();
 
     if (root == NULL || strcmp(root->Value(), "bluemsxtheme") != 0) {
-        SetCurrentDirectory(oldDirName);
+        archSetCurrentDirectory(oldDirName);
         return NULL;
     }
 
@@ -1270,7 +1271,7 @@ extern "C" ThemeCollection* themeLoad(const char* themePath)
         themeCollection = NULL;
     }
 
-    SetCurrentDirectory(oldDirName);
+    archSetCurrentDirectory(oldDirName);
     return themeCollection;
 }
 

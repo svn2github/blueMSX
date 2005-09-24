@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF278.cpp,v 1.2 2005-08-18 05:21:52 dvik Exp $
+// $Id: OpenMsxYMF278.cpp,v 1.3 2005-09-24 00:09:50 dvik Exp $
 
 #include "OpenMsxYMF278.h"
 #include <cmath>
@@ -858,8 +858,8 @@ void YMF278::loadState()
     eg_timer_add      = saveStateGet(state, "eg_timer_add",      0);
     eg_timer_overflow = saveStateGet(state, "eg_timer_overflow", 0);
     
-    wavetblhdr        = saveStateGet(state, "wavetblhdr",        0);
-    memmode           = saveStateGet(state, "memmode",           0);
+    wavetblhdr        = (char)saveStateGet(state, "wavetblhdr",        0);
+    memmode           = (char)saveStateGet(state, "memmode",           0);
     memadr            = saveStateGet(state, "memadr",            0);
     
     fm_l              = saveStateGet(state, "fm_l",              0);
@@ -880,52 +880,52 @@ void YMF278::loadState()
         char tag[32];
 
         sprintf(tag, "wave%d", i);
-        slots[i].wave = saveStateGet(state, tag, 0);
+        slots[i].wave = (short)saveStateGet(state, tag, 0);
 
         sprintf(tag, "FN%d", i);
-        slots[i].FN = saveStateGet(state, tag, 0);
+        slots[i].FN = (short)saveStateGet(state, tag, 0);
 
         sprintf(tag, "OCT%d", i);
-        slots[i].OCT = saveStateGet(state, tag, 0);
+        slots[i].OCT = (char)saveStateGet(state, tag, 0);
 
         sprintf(tag, "PRVB%d", i);
-        slots[i].PRVB = saveStateGet(state, tag, 0);
+        slots[i].PRVB = (char)saveStateGet(state, tag, 0);
 
         sprintf(tag, "LD%d", i);
-        slots[i].LD = saveStateGet(state, tag, 0);
+        slots[i].LD = (char)saveStateGet(state, tag, 0);
 
         sprintf(tag, "TL%d", i);
-        slots[i].TL = saveStateGet(state, tag, 0);
+        slots[i].TL = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "pan%d", i);
-        slots[i].pan = saveStateGet(state, tag, 0);
+        slots[i].pan = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "lfo%d", i);
-        slots[i].lfo = saveStateGet(state, tag, 0);
+        slots[i].lfo = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "vib%d", i);
-        slots[i].vib = saveStateGet(state, tag, 0);
+        slots[i].vib = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "AM%d", i);
-        slots[i].AM = saveStateGet(state, tag, 0);
+        slots[i].AM = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "AR%d", i);
-        slots[i].AR = saveStateGet(state, tag, 0);
+        slots[i].AR = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "D1R%d", i);
-        slots[i].D1R = saveStateGet(state, tag, 0);
+        slots[i].D1R = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "DL%d", i);
         slots[i].DL = saveStateGet(state, tag, 0);
         
         sprintf(tag, "D2R%d", i);
-        slots[i].D2R = saveStateGet(state, tag, 0);
+        slots[i].D2R = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "RC%d", i);
-        slots[i].RC = saveStateGet(state, tag, 0);
+        slots[i].RC = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "RR%d", i);
-        slots[i].RR = saveStateGet(state, tag, 0);
+        slots[i].RR = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "step%d", i);
         slots[i].step = saveStateGet(state, tag, 0);
@@ -937,16 +937,16 @@ void YMF278::loadState()
         slots[i].pos = saveStateGet(state, tag, 0);
         
         sprintf(tag, "sample1%d", i);
-        slots[i].sample1 = saveStateGet(state, tag, 0);
+        slots[i].sample1 = (short)saveStateGet(state, tag, 0);
         
         sprintf(tag, "sample2%d", i);
-        slots[i].sample2 = saveStateGet(state, tag, 0);
+        slots[i].sample2 = (short)saveStateGet(state, tag, 0);
         
         sprintf(tag, "active%d", i);
-        slots[i].active = saveStateGet(state, tag, 0);
+        slots[i].active = saveStateGet(state, tag, 0) != 0;
         
         sprintf(tag, "bits%d", i);
-        slots[i].bits = saveStateGet(state, tag, 0);
+        slots[i].bits = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "startaddr%d", i);
         slots[i].startaddr = saveStateGet(state, tag, 0);
@@ -958,7 +958,7 @@ void YMF278::loadState()
         slots[i].endaddr = saveStateGet(state, tag, 0);
         
         sprintf(tag, "state%d", i);
-        slots[i].state = saveStateGet(state, tag, 0);
+        slots[i].state = (char)saveStateGet(state, tag, 0);
         
         sprintf(tag, "env_vol%d", i);
         slots[i].env_vol = saveStateGet(state, tag, 0);
@@ -970,7 +970,7 @@ void YMF278::loadState()
         slots[i].env_vol_lim = saveStateGet(state, tag, 0);
         
         sprintf(tag, "lfo_active%d", i);
-        slots[i].lfo_active = saveStateGet(state, tag, 0);
+        slots[i].lfo_active = saveStateGet(state, tag, 0) != 0;
         
         sprintf(tag, "lfo_cnt%d", i);
         slots[i].lfo_cnt = saveStateGet(state, tag, 0);

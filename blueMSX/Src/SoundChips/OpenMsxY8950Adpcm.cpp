@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950Adpcm.cpp,v 1.1.1.1 2004-12-04 20:25:29 dvik Exp $
+// $Id: OpenMsxY8950Adpcm.cpp,v 1.2 2005-09-24 00:09:50 dvik Exp $
 
 #include "OpenMsxY8950Adpcm.h"
 #include "OpenMsxY8950.h"
@@ -67,8 +67,8 @@ Y8950Adpcm::Y8950Adpcm(Y8950& y8950_, const string& name_, int sampleRam)
 {
 	ramBank = new byte[ramSize];
 	memset(ramBank, 0xFF, ramSize);
-    oldTime = sysTime = boardSystemTime();
-    unschedule(sysTime);
+    sysTime = oldTime = boardSystemTime();
+    unschedule(oldTime);
 
 //	Debugger::instance().registerDebuggable(name, *this);
 }

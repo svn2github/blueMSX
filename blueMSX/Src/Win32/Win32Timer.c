@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-07-09 12:11:29 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,12 @@ static void syncCallback() {
     if (timerCb) {
         timerCb(timerId);
     }
+}
+
+UInt32 archGetHiresTimer() {
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    return li.LowPart;
 }
 
 UInt32 archGetSystemUpTime(UInt32 frequency)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,9 +35,6 @@
 #include "ArchControls.h"
 #include <stdlib.h>
 #include <string.h>
-
-extern void mouseEmuGetState(int* dx, int* dy);
-extern int  mouseEmuGetButtonState(int checkAlways);
 
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
 
@@ -100,7 +97,7 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
 }
 
     if (joyIO->controls[joyId].type == JOYTYPE_MOUSE) {
-        int buttons = mouseEmuGetButtonState(0);
+        int buttons = archMouseGetButtonState(0);
     
         joyIO->controls[joyId].buttons = (~buttons << 4) & 0x30;
 
@@ -112,7 +109,7 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
             static int dy;
 
             if (!isPolling) {
-                mouseEmuGetState(&dx, &dy);
+                archMouseGetState(&dx, &dy);
                 joyIO->mouseClock = systemTime;
             }
 
@@ -201,7 +198,7 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
                 if (joyIO->controls[1].count == 1) {
                     int dx;
                     int dy;
-                    mouseEmuGetState(&dx, &dy);
+                    archMouseGetState(&dx, &dy);
                     joyIO->mouseClock = systemTime;
                     joyIO->controls[1].dx = (dx > 127 ? 127 : (dx < -127 ? -127 : dx));
                     joyIO->controls[1].dy = (dy > 127 ? 127 : (dy < -127 ? -127 : dy));
@@ -226,7 +223,7 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
                 if (joyIO->controls[0].count == 1) {
                     int dx;
                     int dy;
-                    mouseEmuGetState(&dx, &dy);
+                    archMouseGetState(&dx, &dy);
                     joyIO->mouseClock = systemTime;
                     joyIO->controls[0].dx = (dx > 127 ? 127 : (dx < -127 ? -127 : dx));
                     joyIO->controls[0].dy = (dy > 127 ? 127 : (dy < -127 ? -127 : dy));
@@ -248,7 +245,7 @@ static void write(JoystickIO* joyIO, UInt16 address, UInt8 value)
 JoystickIO* joystickIoCreate(AY8910* ay8910)
 {
     JoystickIO* joyIO;
-    int buttons = mouseEmuGetButtonState(1);
+    int buttons = archMouseGetButtonState(1);
 
     joyIO = calloc(1, sizeof(JoystickIO));
 
@@ -350,7 +347,7 @@ void joystickIoLoadState(JoystickIO* joyIO)
 JoystickIO* joystickIoCreateSVI(void)
 {
     JoystickIO* joyIO;
-    int buttons = mouseEmuGetButtonState(1);
+    int buttons = archMouseGetButtonState(1);
 
     joyIO = calloc(1, sizeof(JoystickIO));
 
@@ -404,7 +401,7 @@ UInt8 joystickReadTriggerSVI(JoystickIO* joyIO)
 JoystickIO* joystickIoCreateColeco(void)
 {
     JoystickIO* joyIO;
-    int buttons = mouseEmuGetButtonState(1);
+    int buttons = archMouseGetButtonState(1);
 
     joyIO = calloc(1, sizeof(JoystickIO));
 
@@ -437,7 +434,7 @@ UInt8 joystickPollColeco(JoystickIO* joyIO, int port)
 JoystickIO* joystickIoCreateSG1000(void)
 {
     JoystickIO* joyIO;
-    int buttons = mouseEmuGetButtonState(1);
+    int buttons = archMouseGetButtonState(1);
 
     joyIO = calloc(1, sizeof(JoystickIO));
 

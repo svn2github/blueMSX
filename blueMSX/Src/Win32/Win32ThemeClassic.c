@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-08-24 04:35:33 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,8 @@
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "Resource.h"
+#include <stdlib.h>
+#include <string.h>
 
 static ThemePage* themeCreateSmall() 
 {
@@ -46,9 +48,9 @@ static ThemePage* themeCreateSmall()
                                0, 
                                0, 
                                320,
-                               RGB(219, 221, 224),
-                               RGB(128, 128, 255),
-                               RGB(0, 0, 0),
+                               archRGB(219, 221, 224),
+                               archRGB(128, 128, 255),
+                               archRGB(0, 0, 0),
                                0,
                                0,
                                NULL);
@@ -113,9 +115,9 @@ static ThemePage* themeCreateNormal()
                                0, 
                                0, 
                                640,
-                               RGB(219, 221, 224),
-                               RGB(128, 128, 255),
-                               RGB(0, 0, 0),
+                               archRGB(219, 221, 224),
+                               archRGB(128, 128, 255),
+                               archRGB(0, 0, 0),
                                0,
                                0,
                                NULL);
@@ -188,9 +190,9 @@ static ThemePage* themeCreateFullscreen()
                                0, 
                                0, 
                                640,
-                               RGB(219, 221, 224),
-                               RGB(128, 128, 255),
-                               RGB(0, 0, 0),
+                               archRGB(219, 221, 224),
+                               archRGB(128, 128, 255),
+                               archRGB(0, 0, 0),
                                0,
                                0,
                                NULL);

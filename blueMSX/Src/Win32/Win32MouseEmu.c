@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,7 +162,7 @@ void mouseEmuActivate(int activate) {
     mouseActive = activate;
 }
 
-void mouseEmuGetState(int* dx, int* dy) {
+void archMouseGetState(int* dx, int* dy) {
     *dx = 0;
     *dy = 0;
 
@@ -175,7 +175,7 @@ void mouseEmuGetState(int* dx, int* dy) {
     }
 }
 
-int  mouseEmuGetButtonState(int checkAlways) {
+int  archMouseGetButtonState(int checkAlways) {
     int buttons = 0;
 
     if (hasMouseLock || checkAlways) {

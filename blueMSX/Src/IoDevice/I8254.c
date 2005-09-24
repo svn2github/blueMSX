@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -531,11 +531,11 @@ void i8254LoadState(I8254* i8254)
     SaveState* state = saveStateOpenForRead("i8254");
 
     i8254->counter1->time               = saveStateGet(state, "c1_time",              0);
-    i8254->counter1->countingElement    = saveStateGet(state, "c1_countingElement",   0);
-    i8254->counter1->outputLatch        = saveStateGet(state, "c1_outputLatch",       0);
-    i8254->counter1->countRegister      = saveStateGet(state, "c1_countRegister",     0);
-    i8254->counter1->controlWord        = saveStateGet(state, "c1_controlWord",       0);
-    i8254->counter1->statusLatch        = saveStateGet(state, "c1_statusLatch",       0);
+    i8254->counter1->countingElement    = (UInt16)saveStateGet(state, "c1_countingElement",   0);
+    i8254->counter1->outputLatch        = (UInt16)saveStateGet(state, "c1_outputLatch",       0);
+    i8254->counter1->countRegister      = (UInt16)saveStateGet(state, "c1_countRegister",     0);
+    i8254->counter1->controlWord        = (UInt8)saveStateGet(state, "c1_controlWord",       0);
+    i8254->counter1->statusLatch        = (UInt8)saveStateGet(state, "c1_statusLatch",       0);
     i8254->counter1->outputLatched      = saveStateGet(state, "c1_outputLatched",     0);
     i8254->counter1->statusLatched      = saveStateGet(state, "c1_statusLatched",     0);
     i8254->counter1->readPhase          = saveStateGet(state, "c1_readPhase",         0);
@@ -553,11 +553,11 @@ void i8254LoadState(I8254* i8254)
     i8254->counter1->refFrag            = saveStateGet(state, "c1_refFrag",           0);
 
     i8254->counter2->time               = saveStateGet(state, "c2_time",              0);
-    i8254->counter2->countingElement    = saveStateGet(state, "c2_countingElement",   0);
-    i8254->counter2->outputLatch        = saveStateGet(state, "c2_outputLatch",       0);
-    i8254->counter2->countRegister      = saveStateGet(state, "c2_countRegister",     0);
-    i8254->counter2->controlWord        = saveStateGet(state, "c2_controlWord",       0);
-    i8254->counter2->statusLatch        = saveStateGet(state, "c2_statusLatch",       0);
+    i8254->counter2->countingElement    = (UInt16)saveStateGet(state, "c2_countingElement",   0);
+    i8254->counter2->outputLatch        = (UInt16)saveStateGet(state, "c2_outputLatch",       0);
+    i8254->counter2->countRegister      = (UInt16)saveStateGet(state, "c2_countRegister",     0);
+    i8254->counter2->controlWord        = (UInt8)saveStateGet(state, "c2_controlWord",       0);
+    i8254->counter2->statusLatch        = (UInt8)saveStateGet(state, "c2_statusLatch",       0);
     i8254->counter2->outputLatched      = saveStateGet(state, "c2_outputLatched",     0);
     i8254->counter2->statusLatched      = saveStateGet(state, "c2_statusLatched",     0);
     i8254->counter2->readPhase          = saveStateGet(state, "c2_readPhase",         0);
@@ -575,11 +575,11 @@ void i8254LoadState(I8254* i8254)
     i8254->counter2->refFrag            = saveStateGet(state, "c2_refFrag",           0);
 
     i8254->counter3->time               = saveStateGet(state, "c3_time",              0);
-    i8254->counter3->countingElement    = saveStateGet(state, "c3_countingElement",   0);
-    i8254->counter3->outputLatch        = saveStateGet(state, "c3_outputLatch",       0);
-    i8254->counter3->countRegister      = saveStateGet(state, "c3_countRegister",     0);
-    i8254->counter3->controlWord        = saveStateGet(state, "c3_controlWord",       0);
-    i8254->counter3->statusLatch        = saveStateGet(state, "c3_statusLatch",       0);
+    i8254->counter3->countingElement    = (UInt16)saveStateGet(state, "c3_countingElement",   0);
+    i8254->counter3->outputLatch        = (UInt16)saveStateGet(state, "c3_outputLatch",       0);
+    i8254->counter3->countRegister      = (UInt16)saveStateGet(state, "c3_countRegister",     0);
+    i8254->counter3->controlWord        = (UInt8)saveStateGet(state, "c3_controlWord",       0);
+    i8254->counter3->statusLatch        = (UInt8)saveStateGet(state, "c3_statusLatch",       0);
     i8254->counter3->outputLatched      = saveStateGet(state, "c3_outputLatched",     0);
     i8254->counter3->statusLatched      = saveStateGet(state, "c3_statusLatched",     0);
     i8254->counter3->readPhase          = saveStateGet(state, "c3_readPhase",         0);

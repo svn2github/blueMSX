@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <direct.h>
+#include <stdlib.h>
+#include <string.h>
 
 static char extendedName[2][256];
 static char extendedDiskName[2][256];
@@ -69,18 +71,18 @@ char* stripPath(char* filename) {
 }
 
 void updateFileHistory(char* history, RomType* historyType, char* filename, RomType romType) {
-    char fname[MAX_PATH];
+    char fname[PROP_MAXPATH];
     int i = 0;
 
     strcpy(fname, filename);
 
     for (i = 0; i < MAX_HISTORY - 1; i++) {
-        if (*(history + MAX_PATH * i) == 0 || 0 == strcmp(history + MAX_PATH * i, fname)) {
+        if (*(history + PROP_MAXPATH * i) == 0 || 0 == strcmp(history + PROP_MAXPATH * i, fname)) {
             break;
         }
     }
     while (i > 0) {
-        strcpy(history + MAX_PATH * i, history + MAX_PATH * (i - 1));
+        strcpy(history + PROP_MAXPATH * i, history + PROP_MAXPATH * (i - 1));
         if (historyType) historyType[i] = historyType[i - 1];
         i--;
     }
@@ -92,7 +94,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
     int i, j;
 
     for (i = 0; i < MAX_HISTORY; i++) {
-        char *fname = history + MAX_PATH * i;
+        char *fname = history + PROP_MAXPATH * i;
         if (fname[0] != '\0' && 
             strcmp(fname, CARTNAME_SNATCHER)    && 
             strcmp(fname, CARTNAME_SDSNATCHER)  && 
@@ -123,13 +125,13 @@ void verifyFileHistory(char* history, RomType* historyType) {
             else {
                 if (!archFileExists(fname)) {
                     if (i == MAX_HISTORY - 1) {
-                        *(history + MAX_PATH * i) = 0;
+                        *(history + PROP_MAXPATH * i) = 0;
                     }
                     else {
                         for (j = i + 1; j < MAX_HISTORY; j++) {
-                            strcpy(history + MAX_PATH * (j - 1), history + MAX_PATH * j);
+                            strcpy(history + PROP_MAXPATH * (j - 1), history + PROP_MAXPATH * j);
                             if (historyType) historyType[j - 1] = historyType[j];
-                            *(history + MAX_PATH * j) = 0;
+                            *(history + PROP_MAXPATH * j) = 0;
                         }
                         i--;
                     }

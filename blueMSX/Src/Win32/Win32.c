@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.104 $
+** $Revision: 1.105 $
 **
-** $Date: 2005-09-23 19:13:51 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,7 @@
 #include "ArchNotifications.h"
 #include "ArchEvent.h"
 #include "ArchTimer.h"
+#include "ArchFile.h"
 
 void vdpSetDisplayEnable(int enable);
 
@@ -402,7 +403,7 @@ static BOOL CALLBACK dskZipDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
 
     case WM_INITDIALOG:
         {
-            char* fileList;
+            const char* fileList;
             int sel = 0;
             int i;
             
@@ -2361,6 +2362,26 @@ void setDefaultPath() {
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
+int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
+    int i;
+    int lang;
+    char* argument;
+    
+    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+        if (strcmp(argument, "/language") == 0) {
+            argument = extractToken(cmdLine, ++i);
+            if (argument == NULL) return defaultLang;
+            lang = langFromName(argument);
+            return lang == EMU_LANG_UNKNOWN ? defaultLang : lang;
+        }
+    }
+
+    return defaultLang;
+}
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
 #ifdef _CONSOLE
 int main(int argc, char **argv)
 #else
@@ -2478,11 +2499,19 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
         {
             char path[MAX_PATH];
+            char themeName[64];
             GetCurrentDirectory(MAX_PATH, path);
             strcat(path, "\\bluemsx.ini");
-            pProperties = propCreate(path, resetRegistry, getLangType(), kbdLang, syncMode);
+            if (GetSystemMetrics(SM_CYSCREEN) > 600) {
+                strcpy(themeName, "DIGIblue SUITE-X2");
+            }
+            else {
+                strcpy(themeName, "Classic");
+            }
+            pProperties = propCreate(path, resetRegistry, getLangType(), kbdLang, syncMode, themeName);
         }
-//        pProperties = propCreate("Properties/settings.xml", resetRegistry, getLangType(), kbdLang, syncMode);
+
+
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
         
         if (resetRegistry == 2) {
@@ -2753,6 +2782,28 @@ void archShowAboutDialog()
     exitDialogShow();
 }
 
+void archShowNoRomInZipDialog() {
+    enterDialogShow();
+    MessageBox(NULL, langErrorNoRomInZip(), langErrorTitle(), MB_OK);
+    exitDialogShow();
+}
+
+void archShowNoDiskInZipDialog() {
+    enterDialogShow();
+    MessageBox(NULL, langErrorNoDskInZip(), langErrorTitle(), MB_OK);
+    enterDialogShow();
+}
+
+void archShowNoCasInZipDialog() {
+    enterDialogShow();
+    MessageBox(NULL, langErrorNoCasInZip(), langErrorTitle(), MB_OK);
+    enterDialogShow();
+}
+
+void archShowStartEmuFailDialog() {
+    MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
+}
+
 void archShowLanguageDialog()
 {
     int lang;
@@ -2908,6 +2959,18 @@ static char* archFileSave(char* title, char* extensionList, char* defaultDir, ch
     SetCurrentDirectory(st.pCurDir);
 
     return fileName;
+}
+
+const char* archGetCurrentDirectory()
+{
+    static char pathname[512];
+    GetCurrentDirectory(512, pathname);
+    return pathname;
+}
+
+void archSetCurrentDirectory(const char* pathname)
+{
+    SetCurrentDirectory(pathname);
 }
 
 char* archDirnameGetOpenDisk(Properties* properties, int drive)
@@ -3069,11 +3132,115 @@ void archQuit() {
     DestroyWindow(getMainHwnd());
 }
 
-void archFileFromZipDialog(ZipFileDlgInfo* dlgInfo) {
+char* archFilenameGetOpenAnyZip(Properties* properties, const char* fname, const char* fileList, int count, int* autostart, int* romType)
+{
+    static char filename[512];
+    ZipFileDlgInfo dlgInfo;
+
+    sprintf(dlgInfo.title, "%s", langDlgLoadRomDskCas());
+    sprintf(dlgInfo.description, "%s", langDlgLoadRomDskCasDesc());
+    strcpy(dlgInfo.zipFileName, filename);
+    dlgInfo.fileList = fileList;
+    dlgInfo.fileListCount = count;
+    dlgInfo.autoReset = properties->diskdrive.autostartA || properties->cartridge.autoReset || *autostart;
+    dlgInfo.selectFileIndex = -1;
+    dlgInfo.selectFile[0] = 0;
+
     enterDialogShow();
-    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)dlgInfo);
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
     exitDialogShow();
+
+    if (dlgInfo.selectFile[0] == '\0') {
+        return NULL;
+    }
+    *romType = dlgInfo.openRomType;
+    *autostart = dlgInfo.autoReset;
+    strcpy(filename, dlgInfo.selectFile);
+    return filename;
 }
+
+char* archFilenameGetOpenDiskZip(Properties* properties, int drive, const char* fname, const char* fileList, int count, int* autostart)
+{
+    static char filename[512];
+    ZipFileDlgInfo dlgInfo;
+
+    sprintf(dlgInfo.title, "%s", langDlgLoadDsk());
+    sprintf(dlgInfo.description, "%s", langDlgLoadDskDesc());
+    strcpy(dlgInfo.zipFileName, fname);
+    dlgInfo.fileList = fileList;
+    dlgInfo.fileListCount = count;
+    dlgInfo.autoReset = *autostart;
+
+    dlgInfo.selectFileIndex = -1;
+    strcpy(dlgInfo.selectFile, drive == 0 ? properties->diskdrive.slotAZip : properties->diskdrive.slotBZip);
+
+    enterDialogShow();
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
+    exitDialogShow();
+
+    if (dlgInfo.selectFile[0] == '\0') {
+        return NULL;
+    }
+    *autostart = dlgInfo.autoReset;
+    strcpy(filename, dlgInfo.selectFile);
+    return filename;
+}
+
+char* archFilenameGetOpenCasZip(Properties* properties, const char* fname, const char* fileList, int count, int* autostart)
+{
+    static char filename[512];
+    ZipFileDlgInfo dlgInfo;
+
+    sprintf(dlgInfo.title, "%s", langDlgLoadCas());
+    sprintf(dlgInfo.description, "%s", langDlgLoadCasDesc());
+    strcpy(dlgInfo.zipFileName, fname);
+    dlgInfo.fileList = fileList;
+    dlgInfo.fileListCount = count;
+    dlgInfo.autoReset = *autostart;
+
+    dlgInfo.selectFileIndex = -1;
+    strcpy(dlgInfo.selectFile, properties->cassette.tapeZip);
+
+    enterDialogShow();
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
+    exitDialogShow();
+
+    if (dlgInfo.selectFile[0] == '\0') {
+        return NULL;
+    }
+    *autostart = dlgInfo.autoReset;
+    strcpy(filename, dlgInfo.selectFile);
+    return filename;
+}
+
+char* archFilenameGetOpenRomZip(Properties* properties, int cartSlot, const char* fname, const char* fileList, int count, int* autostart, int* romType)
+{
+    static char filename[512];
+    ZipFileDlgInfo dlgInfo;
+
+    sprintf(dlgInfo.title, "%s", langDlgLoadRom());
+    sprintf(dlgInfo.description, "%s", langDlgLoadRomDesc());
+    strcpy(dlgInfo.zipFileName, fname);
+    dlgInfo.fileList = fileList;
+    dlgInfo.fileListCount = count;
+    dlgInfo.autoReset = *autostart;
+
+    dlgInfo.selectFileIndex = -1;
+    strcpy(dlgInfo.selectFile, cartSlot == 0 ? properties->cartridge.slotAZip : properties->cartridge.slotBZip);
+
+    enterDialogShow();
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
+    exitDialogShow();
+
+    if (dlgInfo.selectFile[0] == '\0') {
+        return NULL;
+    }
+    *romType = dlgInfo.openRomType;
+    *autostart = dlgInfo.autoReset;
+    strcpy(filename, dlgInfo.selectFile);
+    return filename;
+}
+
 
 void archEmulationStartNotification() {
     ShowWindow(st.emuHwnd, SW_NORMAL);

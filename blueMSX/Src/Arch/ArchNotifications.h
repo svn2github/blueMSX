@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-07-23 06:10:44 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,11 @@ int archKeyboardIsKeyConfigured(int msxKeyCode);
 int archKeyboardIsKeySelected(int msxKeyCode);
 
 int archGetFramesPerSecond();
+
+
+char* archKeyconfigSelectedKeyTitle();
+char* archKeyconfigMappedToTitle();
+char* archKeyconfigMappingSchemeTitle();
 
 
 void* archWindowCreate(struct Theme* theme, int childWindow);

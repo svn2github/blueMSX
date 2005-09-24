@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Dir.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:15 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,9 @@
 **
 ******************************************************************************
 */
+#ifndef __WINCRYPT_H__
 #define __WINCRYPT_H__
+#endif
 
 #include <windows.h> 
 #include <shlobj.h> 

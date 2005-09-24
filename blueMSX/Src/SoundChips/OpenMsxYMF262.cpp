@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.3 2005-08-18 05:21:52 dvik Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.4 2005-09-24 00:09:50 dvik Exp $
 
 /*
  *
@@ -49,6 +49,10 @@
 extern "C" {
 #include "SaveState.h"
 }
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4355 )
+#endif
 
 const double PI = 3.14159265358979323846;
 
@@ -773,18 +777,18 @@ void YMF262::chan_calc_rhythm(bool noise)
 		// phase = 34 or 2d0 (based on noise)
 
 		// base frequency derived from operator 1 in channel 7 
-		bool bit7 = (SLOT7_1.Cnt >> FREQ_SH) & 0x80;
-		bool bit3 = (SLOT7_1.Cnt >> FREQ_SH) & 0x08;
-		bool bit2 = (SLOT7_1.Cnt >> FREQ_SH) & 0x04;
-		bool res1 = (bit2 ^ bit7) | bit3;
+		bool bit7 = ((SLOT7_1.Cnt >> FREQ_SH) & 0x80) != 0;
+		bool bit3 = ((SLOT7_1.Cnt >> FREQ_SH) & 0x08) != 0;
+		bool bit2 = ((SLOT7_1.Cnt >> FREQ_SH) & 0x04) != 0;
+		bool res1 = ((bit2 ^ bit7) | bit3) != 0;
 		// when res1 = 0 phase = 0x000 | 0xd0; 
 		// when res1 = 1 phase = 0x200 | (0xd0>>2); 
 		unsigned phase = res1 ? (0x200|(0xd0>>2)) : 0xd0;
 
 		// enable gate based on frequency of operator 2 in channel 8 
-		bool bit5e= (SLOT8_2.Cnt>>FREQ_SH) & 0x20;
-		bool bit3e= (SLOT8_2.Cnt>>FREQ_SH) & 0x08;
-		bool res2 = (bit3e ^ bit5e);
+		bool bit5e= ((SLOT8_2.Cnt>>FREQ_SH) & 0x20) != 0;
+		bool bit3e= ((SLOT8_2.Cnt>>FREQ_SH) & 0x08) != 0;
+		bool res2 = (bit3e ^ bit5e) != 0;
 		// when res2 = 0 pass the phase from calculation above (res1); 
 		// when res2 = 1 phase = 0x200 | (0xd0>>2); 
 		if (res2) {
@@ -811,7 +815,7 @@ void YMF262::chan_calc_rhythm(bool noise)
 	env = SLOT7_2.volume_calc(LFO_AM);
 	if (env < ENV_QUIET) {
 		// base frequency derived from operator 1 in channel 7 
-		bool bit8 = (SLOT7_1.Cnt>>FREQ_SH) & 0x100;
+		bool bit8 = ((SLOT7_1.Cnt>>FREQ_SH) & 0x100) != 0;
 		// when bit8 = 0 phase = 0x100; 
 		// when bit8 = 1 phase = 0x200; 
 		unsigned phase = bit8 ? 0x200 : 0x100;
@@ -836,18 +840,18 @@ void YMF262::chan_calc_rhythm(bool noise)
 	env = SLOT8_2.volume_calc(LFO_AM);
 	if (env < ENV_QUIET) {
 		// base frequency derived from operator 1 in channel 7 
-		bool bit7 = (SLOT7_1.Cnt>>FREQ_SH) & 0x80;
-		bool bit3 = (SLOT7_1.Cnt>>FREQ_SH) & 0x08;
-		bool bit2 = (SLOT7_1.Cnt>>FREQ_SH) & 0x04;
-		bool res1 = (bit2 ^ bit7) | bit3;
+		bool bit7 = ((SLOT7_1.Cnt>>FREQ_SH) & 0x80) != 0;
+		bool bit3 = ((SLOT7_1.Cnt>>FREQ_SH) & 0x08) != 0;
+		bool bit2 = ((SLOT7_1.Cnt>>FREQ_SH) & 0x04) != 0;
+		bool res1 = ((bit2 ^ bit7) | bit3) != 0;
 		// when res1 = 0 phase = 0x000 | 0x100; 
 		// when res1 = 1 phase = 0x200 | 0x100; 
 		unsigned phase = res1 ? 0x300 : 0x100;
 
 		// enable gate based on frequency of operator 2 in channel 8 
-		bool bit5e= (SLOT8_2.Cnt>>FREQ_SH) & 0x20;
-		bool bit3e= (SLOT8_2.Cnt>>FREQ_SH) & 0x08;
-		bool res2 = bit3e ^ bit5e;
+		bool bit5e= ((SLOT8_2.Cnt>>FREQ_SH) & 0x20) != 0;
+		bool bit3e= ((SLOT8_2.Cnt>>FREQ_SH) & 0x08) != 0;
+		bool res2 = (bit3e ^ bit5e) != 0;
 		// when res2 = 0 pass the phase from calculation above (res1);
 		// when res2 = 1 phase = 0x200 | 0x100; 
 		if (res2) {
@@ -1336,8 +1340,8 @@ void YMF262::writeRegForce(int r, byte v, const EmuTime &time)
 				resetStatus(0x60);
 			} else {
 				changeStatusMask((~v) & 0x60);
-				timer1.setStart(v & R04_ST1, time);
-				timer2.setStart(v & R04_ST2, time);
+				timer1.setStart((v & R04_ST1) != 0, time);
+				timer2.setStart((v & R04_ST2) != 0, time);
 			}
 			break;
 			
@@ -1883,7 +1887,7 @@ int* YMF262::updateBuffer(int length)
 		return NULL;
 	}
 	
-	bool rhythmEnabled = rhythm & 0x20;
+	bool rhythmEnabled = (rhythm & 0x20) != 0;
 
 	int* buf = buffer;
 	while (length--) {
@@ -2029,7 +2033,7 @@ void YMF262::loadState()
     noise_p            = saveStateGet(state, "noise_p",            0);
     noise_f            = saveStateGet(state, "noise_f",            0);
     
-    OPL3_mode          = saveStateGet(state, "OPL3_mode",          0);
+    OPL3_mode          = saveStateGet(state, "OPL3_mode",          0) != 0;
     rhythm             = (byte)saveStateGet(state, "rhythm",             0);
     nts                = (byte)saveStateGet(state, "nts",                0);
     

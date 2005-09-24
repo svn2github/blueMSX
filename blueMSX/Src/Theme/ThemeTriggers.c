@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-09-08 17:24:35 $
+** $Date: 2005-09-24 00:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -788,15 +788,15 @@ int themeTriggerKeyConfigured(int keyCode) {
 }
 
 char* themeTriggerLangKbdSelKey() {
-    return langKeyconfigSelectedKey();
+    return archKeyconfigSelectedKeyTitle();
 }
 
 char* themeTriggerLangKbdMappedTo() {
-    return langKeyconfigMappedTo();
+    return archKeyconfigMappedToTitle();
 }
 
 char* themeTriggerLangKbdMapSCheme() {
-    return langKeyconfigMappingScheme();
+    return archKeyconfigMappingSchemeTitle();
 }
 
 char* themeTriggerSelectedKey() {

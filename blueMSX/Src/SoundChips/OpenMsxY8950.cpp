@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.cpp,v 1.2 2005-03-13 07:23:33 dvik Exp $
+// $Id: OpenMsxY8950.cpp,v 1.3 2005-09-24 00:09:50 dvik Exp $
 
 /*
   * Based on:
@@ -12,6 +12,10 @@
 extern "C" {
 #include "SaveState.h"
 }
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4355 )
+#endif
 
 short Y8950::dB2LinTab[(2*DB_MUTE)*2];
 int   Y8950::Slot::sintable[PG_WIDTH];
@@ -949,8 +953,8 @@ void Y8950::writeReg(byte rg, byte data, const EmuTime& time)
 				resetStatus(0x78);	// reset all flags
 			} else {
 				changeStatusMask((~data) & 0x78);
-				timer1.setStart(data & R04_ST1, time);
-				timer2.setStart(data & R04_ST2, time);
+				timer1.setStart((data & R04_ST1) != 0, time);
+				timer2.setStart((data & R04_ST2) != 0, time);
 				reg[rg] = data;
 			}
 			break;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-09-24 00:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,22 +33,10 @@
 #include "MediaDb.h"
 #include "Properties.h"
 
-typedef struct {
-    char    title[128];
-    char    description[128];
-    char*   fileList;
-    int     fileListCount;
-    int     autoReset;
-    char    selectFile[512];
-    char    zipFileName[512];
-    int     selectFileIndex;
-    RomType openRomType;
-} ZipFileDlgInfo;
-
-int tryLaunchUnknownFile(Properties* properties, char* fileName, int forceAutostart);
-int insertCartridge(Properties* properties, int drive, char* fname, char* inZipFile, RomType romType, int forceAutostart);
-int insertDiskette(Properties* properties, int drive, char* fname, char* inZipFile, int forceAutostart);
-int insertCassette(Properties* properties, char* fname, char* inZipFile, int forceAutostart);
+int tryLaunchUnknownFile(Properties* properties, const char* fileName, int forceAutostart);
+int insertCartridge(Properties* properties, int drive, const char* fname, const char* inZipFile, RomType romType, int forceAutostart);
+int insertDiskette(Properties* properties, int drive, const char* fname, const char* inZipFile, int forceAutostart);
+int insertCassette(Properties* properties, const char* fname, const char* inZipFile, int forceAutostart);
 
 #endif
 
