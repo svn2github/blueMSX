@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Unzip/ziphelper.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-09-24 00:50:08 $
+** $Date: 2005-09-24 07:36:09 $
 **
 ** More info: http://www.bluemsx.com
 **

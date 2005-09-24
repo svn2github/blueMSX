@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -90,7 +90,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -200,7 +200,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -418,10 +418,55 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Unzip"
+			Name="Gzip"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Unzip\adler32.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\compress.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\crc32.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\crc32.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Unzip\crypt.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\deflate.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\deflate.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\gzio.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\infback.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inffast.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inffast.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inffixed.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inflate.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inflate.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inftrees.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\inftrees.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Unzip\ioapi.c">
@@ -434,6 +479,15 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Unzip\iowin32.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\trees.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\trees.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\uncompr.c">
 			</File>
 			<File
 				RelativePath="..\..\Src\Unzip\unzip.c">
@@ -451,13 +505,13 @@
 				RelativePath="..\..\Src\Unzip\zip.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\Unzip\ziphelper.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Unzip\ziphelper.h">
-			</File>
-			<File
 				RelativePath="..\..\Src\Unzip\zlib.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\zutil.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Unzip\zutil.h">
 			</File>
 		</Filter>
 		<Filter
@@ -1572,10 +1626,10 @@ buildnumber.exe
 			Name="Media"
 			Filter="">
 			<File
-				RelativePath="..\..\Src\Media\Crc32.c">
+				RelativePath="..\..\Src\Media\Crc32Calc.c">
 			</File>
 			<File
-				RelativePath="..\..\Src\Media\Crc32.h">
+				RelativePath="..\..\Src\Media\Crc32Calc.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Media\MediaDb.cpp">
@@ -1589,46 +1643,6 @@ buildnumber.exe
 			<File
 				RelativePath="..\..\Src\Media\Sha1.h">
 			</File>
-			<Filter
-				Name="Utils"
-				Filter="">
-				<File
-					RelativePath="..\..\Src\Utils\IniFileParser.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\IniFileParser.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\IsFileExtension.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\IsFileExtension.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\SaveState.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\SaveState.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\TokenExtract.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\TokenExtract.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\VeryTinyXpath.cpp">
-				</File>
-				<File
-					RelativePath="..\..\Src\Utils\VeryTinyXpath.h">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Debugger"
@@ -1644,6 +1658,52 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Debugger\Debugger.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Utils"
+			Filter="">
+			<File
+				RelativePath="..\..\Src\Utils\IniFileParser.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\IniFileParser.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\IsFileExtension.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\IsFileExtension.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\SaveState.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\SaveState.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\StrcmpNoCase.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\StrcmpNoCase.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\TokenExtract.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\TokenExtract.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\VeryTinyXpath.cpp">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\VeryTinyXpath.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\ziphelper.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\ziphelper.h">
 			</File>
 		</Filter>
 	</Files>

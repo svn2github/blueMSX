@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/Crc32.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/Crc32Calc.h,v $
 **
 ** $Revision: 1.1 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-09-24 07:36:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,6 @@
 
 #include "MsxTypes.h"
 
-UInt32 crc32(const void* buffer, int size);
+UInt32 calcCrc32(const void* buffer, int size);
 
 #endif /*CRC_H*/

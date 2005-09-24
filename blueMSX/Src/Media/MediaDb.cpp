@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-09-24 00:50:07 $
+** $Date: 2005-09-24 07:36:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 extern "C" {
 #include "MsxTypes.h"
 #include "MediaDb.h"
-#include "Crc32.h"
+#include "Crc32Calc.h"
 #include "TokenExtract.h"
 #include "StrcmpNoCase.h"
 #ifdef USE_ARCH_GLOB
@@ -439,7 +439,7 @@ extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
         return iterSha1->second;
     }
 
-    UInt32 crc = crc32(buffer, size);
+    UInt32 crc = calcCrc32(buffer, size);
 
     CrcMap::iterator iterCrc = mediaDb->crcMap.find(crc);
     if (iterCrc != mediaDb->crcMap.end()) {

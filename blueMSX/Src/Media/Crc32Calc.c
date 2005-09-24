@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/Crc32.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/Crc32Calc.c,v $
 **
 ** $Revision: 1.1 $
 **
-** $Date: 2005-02-11 04:38:27 $
+** $Date: 2005-09-24 07:36:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,7 @@
 ******************************************************************************
 */
 
-#include "Crc32.h"
+#include "Crc32Calc.h"
 
 // Static CRC table
 static UInt32 crc32Table[256] = {
@@ -101,7 +101,7 @@ static UInt32 crc32Table[256] = {
 	0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
 
-UInt32 crc32(const void* buffer, int size) {
+UInt32 calcCrc32(const void* buffer, int size) {
     const UInt8* ptr = (const UInt8*)buffer;
     UInt32 crc = 0xffffffff;
 
