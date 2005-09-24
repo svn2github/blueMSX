@@ -34,7 +34,7 @@ ECHO  = @echo
 CFLAGS   = -g -w -O2 -D_MBCS -D__WINCRYPT_H__ -DWIN32 -D_WINDOWS -DWINDOWS -DLSB_FIRST -DNARROW -DSOUND -DDISK -DFMSX -D_WIN32_IE=0x0500 -DPROPERTIES_DEFAULTS_ALT_1 -DPROPERTIES_NO_REGISTRY -DPROPERTIES_LOCAL_INI_FILE
 LDFLAGS  = -Wl,--subsystem,windows
 TARGET   = blueMSX.exe
-LIBS     = -L$(ROOT_DIR)/Src/Unzip -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -l shlwapi -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -ldxguid -lwinmm -lComCtl32 -lddraw -ldsound -ldinput -lmsvcrt -lzlibstat
+LIBS     = -L$(ROOT_DIR)/Src/Unzip -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -l shlwapi -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -ldxguid -lwinmm -lComCtl32 -lddraw -ldsound -ldinput -lmsvcrt
 
 SRCS        = $(SOURCE_FILES)
 OBJS        = $(patsubst %.rc,%.res,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(filter %.c %.cc %.cpp %.cxx %.rc,$(SRCS)))))))
@@ -120,12 +120,29 @@ SOURCE_FILES += Win32Window.c
 SOURCE_FILES += Win32wmmSound.c 
 SOURCE_FILES += Win32Midi.c
 SOURCE_FILES += Midi_w32.c
+SOURCE_FILES += Win32Glob.c
 
 SOURCE_FILES += DebugMemory.c
 
 SOURCE_FILES += Patch.c 
 
-SOURCE_FILES += ziphelper.c 
+SOURCE_FILES += adler32.c
+SOURCE_FILES += compress.c
+SOURCE_FILES += crc32.c
+SOURCE_FILES += gzio.c
+SOURCE_FILES += uncompr.c
+SOURCE_FILES += deflate.c
+SOURCE_FILES += trees.c
+SOURCE_FILES += zutil.c
+SOURCE_FILES += inflate.c
+SOURCE_FILES += infback.c
+SOURCE_FILES += inftrees.c
+SOURCE_FILES += inffast.c
+
+SOURCE_FILES += unzip.c
+SOURCE_FILES += ioapi.c
+SOURCE_FILES += zip.c
+SOURCE_FILES += iowin32.c
 
 SOURCE_FILES += ramMapper.c
 SOURCE_FILES += ramMapperIo.c
@@ -195,7 +212,7 @@ SOURCE_FILES += sramLoader.c
 SOURCE_FILES += DebugDevicemanager.c
 SOURCE_FILES += Debugger.c 
 
-SOURCE_FILES += Crc32.c
+SOURCE_FILES += Crc32Calc.c
 SOURCE_FILES += MediaDb.cpp
 SOURCE_FILES += Sha1.cpp 
 
@@ -274,6 +291,8 @@ SOURCE_FILES += IsFileExtension.c
 SOURCE_FILES += SaveState.c 
 SOURCE_FILES += StrcmpNoCase.c 
 SOURCE_FILES += TokenExtract.c 
+SOURCE_FILES += IniFileParser.c
+SOURCE_FILES += ziphelper.c 
 
 SOURCE_FILES += Theme.c 
 SOURCE_FILES += ThemeTriggers.c

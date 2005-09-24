@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-24 07:36:09 $
+** $Date: 2005-09-24 07:54:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "zip.h"
 #include "unzip.h"
 #include <stdlib.h>
+#include <string.h>
 
 static void toLower(char* str) {
     while (*str) {
