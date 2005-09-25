@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchMenu.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-05-11 04:54:52 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,8 @@
 */
 #ifndef ARCH_MENU_H
 #define ARCH_MENU_H
+
+void archUpdateMenu(int show);
 
 void archShowMenuSpecialCart1(int x, int y);
 void archShowMenuSpecialCart2(int x, int y);

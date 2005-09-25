@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@
 #include "ArchTimer.h"
 #include "ArchSound.h"
 #include "ArchMidi.h"
-#include "ArchControls.h"
+#include "ArchInput.h"
 #include "ArchDialog.h"
 #include "ArchNotifications.h"
 #include "Keyboard.h"

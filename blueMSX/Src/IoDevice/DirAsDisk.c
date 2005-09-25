@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -186,6 +186,13 @@ fileinfo *getfileinfo (int pos) {
   return file;
 }
 
+int getfilelength(int fd) {
+    int cur = lseek(fd, 0, SEEK_CUR);
+    int length = lseek(fd, 0, SEEK_END);
+    lseek(fd, cur, SEEK_SET);
+    return length;
+}
+
 int match (fileinfo *file, char *name) {
   char *p=file->name;
   int status=0,i;
@@ -341,7 +348,7 @@ int add_single_file (char *name, char *pathname) {
     }
   }
 
-  if ((size=filelength(fileid))>bytes_free())
+  if ((size=getfilelength(fileid))>bytes_free())
     return 1;
 
   for (i=0; i<direlements; i++)

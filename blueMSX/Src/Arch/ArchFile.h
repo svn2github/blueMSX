@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchFile.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-24 00:50:00 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,24 +31,14 @@
 #define ARCH_FILE_H
 
 #include "Properties.h"
-
-
-typedef struct {
-    char        title[128];
-    char        description[128];
-    const char* fileList;
-    int         fileListCount;
-    int         autoReset;
-    char        selectFile[512];
-    char        zipFileName[512];
-    int         selectFileIndex;
-    RomType     openRomType;
-} ZipFileDlgInfo;
+#include "MediaDb.h"
 
 int archCreateDirectory(const char* pathname);
 const char* archGetCurrentDirectory();
 void archSetCurrentDirectory(const char* pathname);
+int archFileExists(const char* fileName);
 
+// File dialogs:
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType);
 
 char* archFilenameGetOpenDisk(Properties* properties, int drive);

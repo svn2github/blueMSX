@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchSound.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:04:33 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,8 @@
 */
 #ifndef ARCH_SOUND_H
 #define ARCH_SOUND_H
+
+#include "AudioMixer.h"
 
 void archSoundCreate(Mixer* mixer, UInt32 sampleRate, UInt32 bufferSize, Int16 channels);
 void archSoundDestroy(void);

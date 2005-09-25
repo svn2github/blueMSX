@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-09-24 00:50:00 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@
 #include "KeyClick.h"
 #include "IoPort.h"
 #include "RomLoader.h"
-#include "ArchControls.h"
+#include "ArchInput.h"
 #include "Keyboard.h"
 
 

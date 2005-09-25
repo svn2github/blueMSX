@@ -1580,9 +1580,6 @@ buildnumber.exe
 				RelativePath="..\..\Src\Arch\ArchBitmap.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\Arch\ArchControls.h">
-			</File>
-			<File
 				RelativePath="..\..\Src\Arch\ArchDialog.h">
 			</File>
 			<File
@@ -1590,6 +1587,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchFile.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchGlob.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchInput.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchKeyStorage.h">

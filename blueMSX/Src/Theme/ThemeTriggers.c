@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,7 +43,7 @@
 #include "build_number.h"
 #include "version.h"
 #include "ArchNotifications.h"
-#include "ArchControls.h"
+#include "ArchInput.h"
 #include "VideoManager.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)

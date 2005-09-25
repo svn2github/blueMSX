@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-09-24 00:50:05 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,11 +43,11 @@
 
 #include "ArchMenu.h"
 #include "ArchDialog.h"
-#include "ArchControls.h"
 #include "ArchFile.h"
 #include "ArchNotifications.h"
 #include "ArchPrinter.h"
 #include "ArchMidi.h"
+#include "ArchInput.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchControls.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,13 +32,6 @@
 
 #include "MsxTypes.h"
 
-UInt8 archJoystickGetState(int joystickNo);
-int  archJoystickGetCount();
-char* archJoystickGetName(int index);
-void archMouseSetForceLock(int lock);
-
-void archMouseGetState(int* dx, int* dy);
-int  archMouseGetButtonState(int checkAlways);
 
 
 #endif

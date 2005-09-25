@@ -63,7 +63,7 @@ INCLUDE += -I$(ROOT_DIR)/Src/Unzip
 INCLUDE += -I$(ROOT_DIR)/Src/Utils
 INCLUDE += -I$(ROOT_DIR)/Src/VideoChips
 INCLUDE += -I$(ROOT_DIR)/Src/VideoRender
-INCLUDE += -I$(ROOT_DIR)/Src/Win32
+INCLUDE += -I$(ROOT_DIR)/Src/Linux/blueMSXlite
 INCLUDE += -I$(ROOT_DIR)/Src/Z80
 
 vpath % $(ROOT_DIR)/Src/Arch
@@ -82,12 +82,28 @@ vpath % $(ROOT_DIR)/Src/Unzip
 vpath % $(ROOT_DIR)/Src/Utils
 vpath % $(ROOT_DIR)/Src/VideoChips
 vpath % $(ROOT_DIR)/Src/VideoRender
+vpath % $(ROOT_DIR)/Src/Linux/blueMSXlite
 vpath % $(ROOT_DIR)/Src/Z80
 
 #
 # Source files
 #
 SOURCE_FILES  =
+
+SOURCE_FILES += blueMSXlite.c
+SOURCE_FILES += LinuxPrinter.c
+SOURCE_FILES += LinuxUart.c
+SOURCE_FILES += LinuxDialog.c
+SOURCE_FILES += LinuxMidi.c
+SOURCE_FILES += LinuxMenu.c
+SOURCE_FILES += LinuxInput.c
+SOURCE_FILES += LinuxFile.c
+SOURCE_FILES += LinuxGlob.c
+SOURCE_FILES += LinuxEvent.c
+SOURCE_FILES += LinuxTimer.c
+SOURCE_FILES += LinuxSound.c
+SOURCE_FILES += LinuxThread.c
+SOURCE_FILES += LinuxNotifications.c
 
 SOURCE_FILES += Patch.c 
 

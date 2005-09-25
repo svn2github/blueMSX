@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.106 $
+** $Revision: 1.107 $
 **
-** $Date: 2005-09-24 00:50:08 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,6 +84,7 @@
 #include "ArchEvent.h"
 #include "ArchTimer.h"
 #include "ArchFile.h"
+#include "ArchInput.h"
 
 void vdpSetDisplayEnable(int enable);
 
@@ -350,6 +351,20 @@ static RomType romTypeList[] = {
     ROM_PANASONIC32,
     ROM_UNKNOWN,
 };
+
+
+typedef struct {
+    char        title[128];
+    char        description[128];
+    const char* fileList;
+    int         fileListCount;
+    int         autoReset;
+    char        selectFile[512];
+    char        zipFileName[512];
+    int         selectFileIndex;
+    RomType     openRomType;
+} ZipFileDlgInfo;
+
 
 static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
     char fileName[MAX_PATH];

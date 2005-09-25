@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 #include "SaveState.h"
 #include "Led.h"
 #include "Switches.h"
-#include "ArchControls.h"
+#include "ArchInput.h"
 #include <stdlib.h>
 #include <string.h>
 

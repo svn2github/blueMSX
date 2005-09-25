@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchNotifications.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-25 07:39:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,37 +31,7 @@
 #define ARCH_NOTIFICATIONS_H
 
 typedef enum { SC_NORMAL, SC_SMALL, SC_LARGE } ScreenCaptureType;
-
 void* archScreenCapture(ScreenCaptureType type, int* bitmapSize);
-
-void archQuit();
-void archUpdateJoystick();
-void archUpdateMenu(int show);
-void archVideoOutputChange();
-void archUpdateWindow();
-int  archGetWindowedSize();
-void archMinimizeMainWindow();
-void archThemeSetNext();
-void archThemeUpdate(struct Theme* theme);
-void archPollInput();
-void archKeyboardSetSelectedKey(int keyCode);
-char* archGetSelectedKey();
-char* archGetMappedKey();
-int archKeyboardIsKeyConfigured(int msxKeyCode);
-int archKeyboardIsKeySelected(int msxKeyCode);
-
-int archGetFramesPerSecond();
-
-
-char* archKeyconfigSelectedKeyTitle();
-char* archKeyconfigMappedToTitle();
-char* archKeyconfigMappingSchemeTitle();
-
-
-void* archWindowCreate(struct Theme* theme, int childWindow);
-void archWindowStartMove();
-void archWindowMove();
-void archWindowEndMove();
 
 void archUpdateEmuDisplayConfig();
 int  archUpdateEmuDisplay(int synchronous);
@@ -71,5 +41,22 @@ void archEmulationStartNotification();
 void archEmulationStopNotification();
 void archEmulationStartFailure();
 
-int archFileExists(const char* fileName);
+void archQuit();
+
+struct Theme;
+void archThemeSetNext();
+void archThemeUpdate(struct Theme* theme);
+
+void archVideoOutputChange();
+void archUpdateWindow();
+int  archGetWindowedSize();
+void archMinimizeMainWindow();
+
+int archGetFramesPerSecond();
+
+void* archWindowCreate(struct Theme* theme, int childWindow);
+void archWindowStartMove();
+void archWindowMove();
+void archWindowEndMove();
+
 #endif

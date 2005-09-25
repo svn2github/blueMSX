@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-08-19 06:38:28 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,8 +40,8 @@
 #include "Actions.h"
 #include "Casette.h"
 #include "VideoManager.h"
-#include "ArchControls.h"
 #include "ArchNotifications.h"
+#include "ArchInput.h"
 
 
 #define ID_FILE                         40010

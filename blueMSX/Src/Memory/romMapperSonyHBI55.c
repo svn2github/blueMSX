@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-09-25 07:39:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,7 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "KeyClick.h"
-#include "ArchControls.h"
+#include "ArchInput.h"
 #include "Switches.h"
 #include "Led.h"
 #include <stdlib.h>
