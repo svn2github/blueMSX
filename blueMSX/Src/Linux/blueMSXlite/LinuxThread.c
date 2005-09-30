@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxThread.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-09-30 05:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,12 +28,75 @@
 ******************************************************************************
 */
 #include "ArchThread.h"
+#include <pthread.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/time.h>
 #include <stdlib.h>
 
-void* archThreadCreate(void (*entryPoint)()) { return NULL; }
-void  archThreadJoin(void* thread, int timeout) {}
-void  archThreadDestroy(void* thread) {}
 
-void  archThreadBoostPriority() {}
 
-void archThreadSleep(int milliseconds) {}
+static void* threadEntry(void* data) 
+{
+    void (*entryPoint)() = data;
+
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
+    pthread_kill((pthread_t)pthread_self(), SIGUSR1);
+
+    entryPoint();
+    
+    return NULL;
+}
+
+
+void* archThreadCreate(void (*entryPoint)(), int priority) { 
+    int rv;
+    pthread_t tid;
+    pthread_attr_t attr;
+    static int threadsCreated = 0;
+
+    pthread_attr_init(&attr);
+
+    // TODO: Fix priorities
+
+    do {
+	    rv = pthread_create(&tid, &attr , threadEntry, entryPoint);
+    } while (rv == EAGAIN);
+
+	if(rv != 0) {
+        return NULL;
+    }
+
+    pthread_attr_destroy(&attr);
+}
+
+void archThreadJoin(void* thread, int timeout) 
+{
+    int rv;
+
+    do {
+        void* threadRet;
+        rv = pthread_join((pthread_t)thread, &threadRet);
+    } while(rv != 0);
+}
+
+void  archThreadDestroy(void* thread) 
+{
+    if((pthread_t)thread == pthread_self()) {
+        pthread_exit(NULL);
+    }
+    else {
+        pthread_cancel((pthread_t)thread);
+    }
+}
+
+void archThreadSleep(int milliseconds) 
+{
+    struct timeval tv;
+
+    tv.tv_sec = 0;
+    tv.tv_usec = milliseconds * 1000;
+    select(0, NULL, NULL, NULL, &tv);
+}

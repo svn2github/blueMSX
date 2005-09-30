@@ -33,7 +33,8 @@ ECHO  = @echo
 # Flags
 #
 CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM
-LDFLAGS  =  -lXext -lX11 -lz
+LDFLAGS  = 
+LIBS     =  -lXext -lX11 -lz
 TARGET   = blueMSXlite
 
 SRCS        = $(SOURCE_FILES)

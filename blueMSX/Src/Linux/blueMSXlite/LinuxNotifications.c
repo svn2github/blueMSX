@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxNotifications.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-09-30 05:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,8 +32,8 @@
 
 void* archScreenCapture(ScreenCaptureType type, int* bitmapSize) { return NULL; }
 
-void archUpdateEmuDisplayConfig() {}
-int  archUpdateEmuDisplay(int synchronous) { return 0; }
+//void archUpdateEmuDisplayConfig() {}
+//int  archUpdateEmuDisplay(int synchronous) { return 0; }
 
 void archDiskQuickChangeNotify() {}
 void archEmulationStartNotification() {}

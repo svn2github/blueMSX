@@ -163,6 +163,9 @@ int iniFileGetInt(char* section,
     } while(strncmp(buff, entry, len)); 
 
     ep = strrchr(buff, '=');
+    if (ep == NULL) {
+        return def;
+    }
     ep++;
     if (!strlen(ep)) {
         return def; 
@@ -263,20 +266,22 @@ int iniFileWriteString(char* section,
 {
     char buff[MAX_LINE_LENGTH]; 
     char t_section[MAX_LINE_LENGTH]; 
-    int len = strlen(entry); 
+    char t_entry[MAX_LINE_LENGTH]; 
+    int len;
 
     rewindBuffer();
 
     createWriteBuffer();
 
     sprintf(t_section, "[%s]", section);
+    sprintf(t_entry, "%s=", entry);
+    len = strlen(t_entry);
 
     do {  
         if (readLine(buff) < 0) {  
             writeLine(t_section);
             writeLine("\n");
-            writeLine(entry);
-            writeLine("=");
+            writeLine(t_entry);
             writeLine(buffer);
             writeLine("\n");
             destroyWriteBuffer();
@@ -288,29 +293,32 @@ int iniFileWriteString(char* section,
 
     for (;;) {   
         if (readLine(buff) < 0) { 
-            writeLine(entry);
-            writeLine("=");
+            writeLine(t_entry);
             writeLine(buffer);
             writeLine("\n");
             destroyWriteBuffer();
             return 1; 
         } 
 
-        if (!strncmp(buff, entry, len) || buff[0] == '[') {
+        if (!strncmp(buff, t_entry, len) || buff[0] == '[') {
             break; 
         }
         writeLine(buff);
         writeLine("\n");
     } 
 
-    writeLine(entry);
-    writeLine("=");
+    writeLine(t_entry);
     writeLine(buffer);
     writeLine("\n");
-    do { 
+
+    if (strncmp(buff, t_entry, len)) {
         writeLine(buff);
         writeLine("\n");
-    } while (readLine(buff) >= 0); 
+    }
+    while (readLine(buff) >= 0) {
+        writeLine(buff);
+        writeLine("\n");
+    }
 
     destroyWriteBuffer();
 

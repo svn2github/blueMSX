@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-09-30 05:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -407,13 +407,6 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(caszip, argument);
-        }
-        if (strcmp(argument, "/family") == 0) {
-            argument = extractToken(cmdLine, ++i);
-            if (argument == NULL) return 0; // Invaid argument
-            strcpy(machineName, argument); // FIXME verify arg
-            if (!machineIsValid(machineName, 1)) return 0;
-            startEmu = 1;
         }
         if (strcmp(argument, "/machine") == 0) {
             argument = extractToken(cmdLine, ++i);

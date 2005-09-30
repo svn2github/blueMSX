@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-09-30 05:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -285,8 +285,6 @@ static void emulatorThread() {
     int frequency;
     int success = 0;
 
-    archThreadBoostPriority();
-
     emulatorSetFrequency(properties->emulation.speed, &frequency);
 
     switchSetFront(properties->emulation.frontSwitch);
@@ -403,7 +401,7 @@ void emulatorStart(const char* stateName) {
     emulationStartFailure = 0;
     strcpy(emuStateName, stateName ? stateName : "");
 
-    emuThread = archThreadCreate(emulatorThread);
+    emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
     
     archEventWait(emuStartEvent, 3000);
     

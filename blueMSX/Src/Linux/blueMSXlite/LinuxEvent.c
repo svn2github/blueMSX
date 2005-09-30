@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxEvent.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-09-30 05:50:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,15 +28,71 @@
 ******************************************************************************
 */
 #include "ArchEvent.h"
+#include <semaphore.h>
 #include <stdlib.h>
 
+typedef struct {
+    void* eventSem;
+    void* lockSem;
+    int   state;
+} Event;
 
-void* archEventCreate(int initState) { return NULL; }
-void archEventDestroy(void* event) {}
-void archEventSet(void* event) {}
-void archEventWait(void* event, int timeout) {}
+void* archEventCreate(int initState) 
+{ 
+    Event* e = calloc(1, sizeof(Event));
+    e->state = initState ? 1 : 0;
+    e->lockSem  = archSemaphoreCreate(1);
+    e->eventSem  = archSemaphoreCreate(e->state);
+    return e; 
+}
 
-void* archSemaphoreCreate(int initCount) { return NULL; }
-void archSemaphoreDestroy(void* semaphore) {}
-void archSemaphoreSignal(void* semaphore) {}
-void archSemaphoreWait(void* semaphore, int timeout) {}
+void archEventDestroy(void* event) 
+{
+    Event* e = (Event*)event;
+    archSemaphoreDestroy(e->lockSem);
+    archSemaphoreDestroy(e->eventSem);
+    free(e);
+}
+
+void archEventSet(void* event) 
+{
+    Event* e = (Event*)event;
+    archSemaphoreWait(e->lockSem, -1);
+    if (e->state == 0) {
+        e->state = 1;
+        archSemaphoreSignal(e->eventSem);
+    }
+    archSemaphoreSignal(e->lockSem);
+}
+
+void archEventWait(void* event, int timeout) 
+{
+    Event* e = (Event*)event;
+    archSemaphoreWait(e->eventSem, timeout);
+    e->state = 0;
+}
+
+void* archSemaphoreCreate(int initCount) 
+{ 
+    void* semaphore = malloc(sizeof(sem_t));
+
+    sem_init((sem_t*)semaphore, 0, initCount);
+
+    return semaphore;
+}
+
+void archSemaphoreDestroy(void* semaphore) 
+{
+    sem_destroy((sem_t*)semaphore);
+    free(semaphore);
+}
+
+void archSemaphoreSignal(void* semaphore) 
+{
+    sem_post((sem_t*)semaphore);
+}
+
+void archSemaphoreWait(void* semaphore, int timeout) 
+{
+    sem_wait((sem_t*)semaphore);
+}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Thread.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-09-30 05:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,10 +30,14 @@
 #include "ArchThread.h"
 #include <windows.h>
 
-void* archThreadCreate(void (*entryPoint)())
+void* archThreadCreate(void (*entryPoint)(), int priority)
 {
     DWORD id;
-    return CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)entryPoint, NULL, 0, &id);
+    HANDLE h = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)entryPoint, NULL, 0, &id);
+    if (priority == THREAD_PRIO_HIGH) {
+        SetThreadPriority(h, THREAD_PRIORITY_ABOVE_NORMAL);
+    }
+    return h;
 }
 
 void archThreadDestroy(void* thread)
@@ -50,13 +54,6 @@ void archThreadJoin(void* thread, int timeout)
 
     WaitForSingleObject(thread, timeout);
 }
-
-
-void  archThreadBoostPriority()
-{
-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-}
-
 
 void archThreadSleep(int milliseconds) 
 {
