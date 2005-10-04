@@ -1,0 +1,32 @@
+/* Emulation by the MESS team (www.mess.org)
+ * wd33c93.h
+ *
+ */
+
+#ifndef _WD33C93_H_
+#define _WD33C93_H_
+
+#define SCSI_MAX_DEVICES	(16)
+
+#include "MSXTypes.h"
+#include "scsidev.h"
+
+struct WD33C93interface
+{
+	SCSIConfigTable *scsidevs;		/* SCSI devices */
+	void (*irq_callback)(int state);	/* irq callback */
+};
+
+extern void wd33c93_init( struct WD33C93interface *interface );
+extern void wd33c93_read_data(int bytes, UInt8 *pData);
+extern void wd33c93_write_data(int bytes, UInt8 *pData);
+extern void *wd33c93_get_device(int id);
+extern void wd33c93_set_device(int id, void *);
+extern void wd33c93_clear_dma(void);
+extern int wd33c93_get_dma_count(void);
+//extern READ8_HANDLER(wd33c93_r);
+//extern WRITE8_HANDLER(wd33c93_w);
+extern UInt8 wd33c93_r(int offset);
+extern void wd33c93_w(int offset, unsigned char data);
+
+#endif
