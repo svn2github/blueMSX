@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -474,6 +474,13 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "text-videomonname3"))       return t | THEME_TRIGGER_TEXT_VIDEOMONNAME3;
     if (0 == strcmp(s, "text-emufrequency"))        return t | THEME_TRIGGER_TEXT_FREQ;
     if (0 == strcmp(s, "text-cpuusage"))            return t | THEME_TRIGGER_TEXT_CPU;
+    
+    if (0 == strcmp(s, "text-perftimer0"))          return t | THEME_TRIGGER_TEXT_PERFTIMER0;
+    if (0 == strcmp(s, "text-perftimer1"))          return t | THEME_TRIGGER_TEXT_PERFTIMER1;
+    if (0 == strcmp(s, "text-perftimer2"))          return t | THEME_TRIGGER_TEXT_PERFTIMER2;
+    if (0 == strcmp(s, "text-perftimer3"))          return t | THEME_TRIGGER_TEXT_PERFTIMER3;
+    if (0 == strcmp(s, "text-perftimer4"))          return t | THEME_TRIGGER_TEXT_PERFTIMER4;
+
     if (0 == strcmp(s, "text-framespersecond"))     return t | THEME_TRIGGER_TEXT_FPS;
     if (0 == strcmp(s, "text-ramsize"))             return t | THEME_TRIGGER_TEXT_RAM;
     if (0 == strcmp(s, "text-vramsize"))            return t | THEME_TRIGGER_TEXT_VRAM;

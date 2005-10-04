@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,3 +119,44 @@ void archTimerDestroy(void* timer)
 }
 
 
+
+static unsigned long long last[RDTSC_MAX_TIMERS];
+
+void rdtsc_start_timer (int timer) {
+	unsigned int a,b; 
+	__asm { 
+		rdtsc
+		mov a,edx
+		mov b,eax
+	}
+	last[timer]=(((unsigned long long int)a)<<32)+((unsigned long long int)b);
+}
+
+static unsigned long long int rdtsc_queue[RDTSC_MAX_TIMERS][30]={
+    0,0,0,0, 0,0,0,0, 0,0,
+    0,0,0,0, 0,0,0,0, 0,0,
+    0,0,0,0, 0,0,0,0, 0,0
+};
+
+void rdtsc_end_timer (int timer) {
+	unsigned int a,b,i; 
+	unsigned long long int c;
+	__asm { 
+		rdtsc
+		mov a,edx
+		mov b,eax
+	}
+	c=((((unsigned long long int)a)<<32)+((unsigned long long int)b))-last[timer];
+	for (i=0; i<29; i++)
+	  rdtsc_queue[timer][i]=rdtsc_queue[timer][i+1];
+    rdtsc_queue[timer][29]=c;
+}
+
+unsigned long long int rdtsc_get_timer (int timer) {
+  unsigned long long int average=0;
+  int i;
+
+  for (i=0; i<30; i++)
+	 average+=rdtsc_queue[timer][i];
+  return average;
+}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-06-11 21:15:49 $
+** $Date: 2005-10-04 23:03:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,7 +158,6 @@ SN76489* sn76489Create(Mixer* mixer)
     {
         double v = 0x26a9;
         for (i = 0; i < 15; i++) {
-            printf("%.4x\n", (UInt32)v);
             v /= 1.258925412;
         }
     }

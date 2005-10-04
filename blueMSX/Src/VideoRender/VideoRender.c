@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-10-04 19:14:10 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "videoRender.h"
 #include "FrameBuffer.h"
+#include "ArchTimer.h"
 #include "Emulator.h"
 #include "scalebit.h"
 #include "hq2x.h"
@@ -2046,7 +2047,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 	core1=hasSSE? copy_2x2_32_core1_SSE: copy_2x2_32_core1;
 	core2=hasSSE? copy_2x2_32_core2_SSE: copy_2x2_32_core2;
 
-	rdtsc_start_timer();
+	rdtsc_start_timer(0);
     dstPitch /= (int)sizeof(UInt32);
 
     if (frame->interlace == INTERLACE_ODD) {
@@ -2065,7 +2066,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
         pDst1 += dstPitch * 2;
         pDst2 += dstPitch * 2;
     }
-	rdtsc_end_timer();
+	rdtsc_end_timer(0);
 }
 
 static void copy_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)

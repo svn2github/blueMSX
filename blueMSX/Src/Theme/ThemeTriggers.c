@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-10-04 19:14:10 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@
 #include "version.h"
 #include "ArchNotifications.h"
 #include "ArchInput.h"
+#include "ArchTimer.h"
 #include "VideoManager.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
@@ -726,9 +727,17 @@ char* themeTriggerCpuString() {
     if (emulatorGetState() == EMU_STOPPED) {
         return "";
     }
-/*    sprintf(buffer, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
-            emulatorGetCpuUsage() % 10);*/
-	sprintf(buffer,"%Ld",rdtsc_get_timer()/(unsigned long long int)20000);
+    sprintf(buffer, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
+            emulatorGetCpuUsage() % 10);
+    return buffer;
+}
+
+char* themeTriggerPerfTimerString(int timer) {
+    static char buffer[16];
+    if (emulatorGetState() == EMU_STOPPED || timer >= RDTSC_MAX_TIMERS) {
+        return "";
+    }
+	sprintf(buffer,"%Ld",rdtsc_get_timer(timer)/(unsigned long long int)20000);
     return buffer;
 }
 

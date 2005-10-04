@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchTimer.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-10-04 23:03:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,5 +36,11 @@ UInt32 archGetSystemUpTime(UInt32 frequency);
 void* archCreateTimer(int period, void (*timerCallback)(void*));
 void archTimerDestroy(void* timer);
 UInt32 archGetHiresTimer();
+
+#define RDTSC_MAX_TIMERS 5
+
+void rdtsc_start_timer (int timer) ;
+void rdtsc_end_timer (int timer);
+unsigned long long int rdtsc_get_timer (int timer) ;
 
 #endif

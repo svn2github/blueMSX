@@ -305,7 +305,7 @@ int w32_midiOutPut(unsigned char value, unsigned idx)
 			break;
 		case 0x0041:
             {
-                DWORD shortmes = midiOut[idx].buf.shortmes = ((((DWORD)value) & 0x0ff) << 8);
+                DWORD shortmes = midiOut[idx].buf.shortmes |= ((((DWORD)value) & 0x0ff) << 8);
                 midiOutHistory[midiOut[idx].buf.shortmes & 0xff] = shortmes;
 
                 if (midiOut[idx].mt32ToGm && (midiOut[idx].buf.shortmes & 0xf0) == 0xc0) {

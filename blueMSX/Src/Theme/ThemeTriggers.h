@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,6 +121,11 @@ typedef enum {
     THEME_TRIGGER_TEXT_VIDEOMONNAME3,
     THEME_TRIGGER_TEXT_FREQ,
     THEME_TRIGGER_TEXT_CPU,
+    THEME_TRIGGER_TEXT_PERFTIMER0,
+    THEME_TRIGGER_TEXT_PERFTIMER1,
+    THEME_TRIGGER_TEXT_PERFTIMER2,
+    THEME_TRIGGER_TEXT_PERFTIMER3,
+    THEME_TRIGGER_TEXT_PERFTIMER4,
     THEME_TRIGGER_TEXT_FPS,
     THEME_TRIGGER_TEXT_RAM,
     THEME_TRIGGER_TEXT_VRAM,
@@ -365,6 +370,7 @@ char* themeTriggerMemoryRam();
 char* themeTriggerMemoryVram();
 char* themeTriggerEmuFrequency();
 char* themeTriggerFpsString();
+char* themeTriggerPerfTimerString(int timer);
 char* themeTriggerCpuString();
 const char* themeTriggerRomMapper1();
 const char* themeTriggerRomMapper2();

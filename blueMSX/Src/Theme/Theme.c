@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-10-04 23:03:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -213,6 +213,11 @@ static const char* actionTypeToStr(ThemeTrigger actionType)
     const char* str = NULL;
 
     switch (actionType & THEME_TRIGGER_MASK) {
+    case THEME_TRIGGER_TEXT_PERFTIMER0:      str = themeTriggerPerfTimerString(0); break;
+    case THEME_TRIGGER_TEXT_PERFTIMER1:      str = themeTriggerPerfTimerString(1); break;
+    case THEME_TRIGGER_TEXT_PERFTIMER2:      str = themeTriggerPerfTimerString(2); break;
+    case THEME_TRIGGER_TEXT_PERFTIMER3:      str = themeTriggerPerfTimerString(3); break;
+    case THEME_TRIGGER_TEXT_PERFTIMER4:      str = themeTriggerPerfTimerString(4); break;
     case THEME_TRIGGER_TEXT_FREQ:            str = themeTriggerEmuFrequency(); break;
     case THEME_TRIGGER_TEXT_CPU:             str = themeTriggerCpuString(); break;
     case THEME_TRIGGER_TEXT_FPS:             str = themeTriggerFpsString(); break;

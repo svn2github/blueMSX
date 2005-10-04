@@ -2,9 +2,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-10-04 19:14:10 $
+** $Date: 2005-10-04 23:03:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -887,44 +887,4 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 
     return emuExitFlag ? -1 : diffTime;
 
-}
-
-unsigned long long last;
-
-void rdtsc_start_timer () {
-	unsigned int a,b; 
-	__asm { 
-		rdtsc
-		mov a,edx
-		mov b,eax
-	}
-	last=(((unsigned long long int)a)<<32)+((unsigned long long int)b);
-}
-
-unsigned long long int rdtsc_queue[30]={0,0,0,0, 0,0,0,0, 0,0,
-0,0,0,0, 0,0,0,0, 0,0,
-0,0,0,0, 0,0,0,0, 0,0,};
-
-
-void rdtsc_end_timer () {
-	unsigned int a,b,i; 
-	unsigned long long int c;
-	__asm { 
-		rdtsc
-		mov a,edx
-		mov b,eax
-	}
-	c=((((unsigned long long int)a)<<32)+((unsigned long long int)b))-last;
-	for (i=0; i<29; i++)
-	  rdtsc_queue[i]=rdtsc_queue[i+1];
-    rdtsc_queue[29]=c;
-}
-
-unsigned long long int rdtsc_get_timer () {
-  unsigned long long int average=0;
-  int i;
-
-  for (i=0; i<30; i++)
-	 average+=rdtsc_queue[i];
-  return average;
 }
