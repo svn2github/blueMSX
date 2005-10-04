@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-09-25 07:39:06 $
+** $Date: 2005-10-04 19:14:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -163,6 +163,12 @@ static void colecoMemReset()
 void colecoMemWrite(void* ref, UInt16 address, UInt8 value)
 {
     UInt8* memPtr;
+
+	/* Edu Mello Memory Expansion Module */
+	if (address >= 0x2000 && address <=0x5FFF) {
+	  colecoMemory[address]=value;
+	  return;
+	}
 
     if (address < 0x6000 || address >= 0x8000) {
         return;

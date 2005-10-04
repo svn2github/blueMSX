@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-02-09 20:52:57 $
+** $Date: 2005-10-04 19:14:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1831,7 +1831,7 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
                 pDst2[6] = col4;
                 pDst2[7] = col4;
                 pDst2 += 8;
-            }
+            }  
         }
 
         pDst1 = pDst1old + dstPitch * 2;
@@ -1839,29 +1839,66 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     }
 }
 
-static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
-{
-    UInt32* pDst1       = (UInt32*)pDestination;
-    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
-    int height          = frame->lines;
-    int srcWidth        = frame->maxWidth;
-    int h;
+/* 7500 units -> 4100 units */
+static void copy_2x2_32_core1_SSE(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
-    dstPitch /= (int)sizeof(UInt32);
+	__asm{
+		mov		ecx,width
+		mov		eax,pSrc
+		mov		ebx,pDst1
+		mov		edi,rgbTable
+inner_loop1:
+		mov		esi,[eax]
+		movd	mm0,[edi+esi*4]
+		mov		esi,[eax+4]
+		movd	mm1,[edi+esi*4]
+		mov		esi,[eax+12]
+		punpckldq mm0,mm1
+		movd	mm3,[edi+esi*4]
+		mov		esi,[eax+8]
+		movntq	[ebx+0],mm0
+		add		eax,16
+		movd	mm2,[edi+esi*4]
+		add		ebx,16
+		punpckldq mm2,mm3
+		dec		ecx
+		movntq	[ebx-8],mm2
+		jnz		inner_loop1
 
-    if (frame->interlace == INTERLACE_ODD) {
-        pDst1 += dstPitch;
-        pDst2 += dstPitch;
-        height--;
-    }
+		;-- second line
 
-    for (h = 0; h < height; h++) {
-        UInt32* pDst1old = pDst1;
-        UInt32* pDst2old = pDst2;
-        UInt32* pSrc = frame->line[h].buffer;
+		mov		ecx,width
+		mov		eax,pSrc
+		mov		ebx,hint
+		mov		edx,pDst2
+		mov		edi,rgbTable
+inner_loop2:
+		mov		esi,[eax]
+		movd	mm0,[edi+esi*4]
+		mov		esi,[eax+4]
+		movd	mm1,[edi+esi*4]
+		mov		esi,[eax+12]
+		punpckldq mm0,mm1
+		movd	mm3,[edi+esi*4]
+		mov		esi,[eax+8]
+		prefetcht0 [eax+ebx]
+		movntq	[edx+0],mm0
+		add		eax,16
+		movd	mm2,[edi+esi*4]
+		add		edx,16
+		punpckldq mm2,mm3
+		dec		ecx
+		movntq	[edx-8],mm2
+		jnz		inner_loop2
 
-        if (frame->line[h].doubleWidth) {
-            int width = srcWidth / 4 * 2;
+		emms 
+
+	}
+}
+
+
+void copy_2x2_32_core1(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
+
             while (width--) {
                 UInt32 col1 = rgbTable[pSrc[0]];
                 UInt32 col2 = rgbTable[pSrc[1]];
@@ -1881,10 +1918,84 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
                 pDst2[3] = col4;
                 pDst2 += 4;
             }
-        }
-        else {
-            int width = srcWidth / 4;
-            while (width--) {
+}
+/* 6000 units -> 3500 units */
+void copy_2x2_32_core2_SSE(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
+
+	__asm{
+		mov		ecx,width
+		mov		eax,pSrc
+		mov		ebx,pDst1
+		mov		edi,rgbTable
+inner_loop1:
+		mov		esi,[eax]
+		movd	mm0,[edi+esi*4]
+		mov		esi,[eax+4]
+		punpckldq mm0,mm0
+		movd	mm1,[edi+esi*4]
+		movntq	[ebx+0],mm0
+
+		punpckldq mm1,mm1
+		mov		esi,[eax+8]
+		movntq	[ebx+8],mm1
+
+		movd	mm0,[edi+esi*4]
+		punpckldq mm0,mm0
+		mov		esi,[eax+12]
+		movntq	[ebx+16],mm0
+
+		add		ebx,32
+		movd	mm0,[edi+esi*4]
+		add		eax,16
+		punpckldq mm0,mm0
+		dec		ecx
+		movntq	[ebx+24-32],mm0
+
+		jnz		inner_loop1
+
+		;-- second line
+
+		mov		ecx,width
+		mov		eax,pSrc
+		mov		edx,hint
+		mov		ebx,pDst2
+		mov		edi,rgbTable
+inner_loop2:
+		mov		esi,[eax]
+		movd	mm0,[edi+esi*4]
+		punpckldq mm0,mm0
+		mov		esi,[eax+4]
+		movntq	[ebx+0],mm0
+
+		movd	mm0,[edi+esi*4]
+		punpckldq mm0,mm0
+		mov		esi,[eax+8]
+		movntq	[ebx+8],mm0
+
+		movd	mm0,[edi+esi*4]
+		prefetcht0 [eax+edx]
+		punpckldq mm0,mm0
+		mov		esi,[eax+12]
+		movntq	[ebx+16],mm0
+
+		add		ebx,32
+		movd	mm0,[edi+esi*4]
+		add		eax,16
+		punpckldq mm0,mm0
+		dec		ecx
+		movntq	[ebx+24-32],mm0
+
+		jnz		inner_loop2
+
+		emms 
+
+	}
+
+}
+
+void copy_2x2_32_core2(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
+
+	while (width--) {
                 UInt32 col1 = rgbTable[pSrc[0]];
                 UInt32 col2 = rgbTable[pSrc[1]];
                 UInt32 col3 = rgbTable[pSrc[2]];
@@ -1911,11 +2022,50 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
                 pDst2[7] = col4;
                 pDst2 += 8;
             }
-        }
+}
 
-        pDst1 = pDst1old + dstPitch * 2;
-        pDst2 = pDst2old +  dstPitch * 2;
+static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UInt32* rgbTable)
+{
+    UInt32* pDst1       = (UInt32*)pDestination;
+    UInt32* pDst2       = pDst1 + dstPitch / (int)sizeof(UInt32);
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+    void (*core1) (UInt32*, UInt32*, UInt32*, UInt32* , int , int );
+    void (*core2) (UInt32*, UInt32*, UInt32*, UInt32* , int , int );
+	int hasSSE=0;
+	const int SSEbit=1<<25;
+
+	__asm {
+		mov eax,1
+		cpuid
+		and edx,SSEbit
+		mov hasSSE,edx
+	}
+    
+	core1=hasSSE? copy_2x2_32_core1_SSE: copy_2x2_32_core1;
+	core2=hasSSE? copy_2x2_32_core2_SSE: copy_2x2_32_core2;
+
+	rdtsc_start_timer();
+    dstPitch /= (int)sizeof(UInt32);
+
+    if (frame->interlace == INTERLACE_ODD) {
+        pDst1 += dstPitch;
+        pDst2 += dstPitch;
+        height--;
     }
+
+    for (h = 0; h < height; h++) {
+
+        if (frame->line[h].doubleWidth) 
+			core1(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4 * 2,dstPitch * 2);
+        else 
+			core2(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4,dstPitch * 2);
+
+        pDst1 += dstPitch * 2;
+        pDst2 += dstPitch * 2;
+    }
+	rdtsc_end_timer();
 }
 
 static void copy_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)

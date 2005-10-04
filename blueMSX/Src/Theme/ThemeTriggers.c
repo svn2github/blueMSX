@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-10-04 19:14:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -726,8 +726,9 @@ char* themeTriggerCpuString() {
     if (emulatorGetState() == EMU_STOPPED) {
         return "";
     }
-    sprintf(buffer, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
-            emulatorGetCpuUsage() % 10);
+/*    sprintf(buffer, "%2d.%d%%", emulatorGetCpuUsage() / 10, 
+            emulatorGetCpuUsage() % 10);*/
+	sprintf(buffer,"%Ld",rdtsc_get_timer()/(unsigned long long int)20000);
     return buffer;
 }
 

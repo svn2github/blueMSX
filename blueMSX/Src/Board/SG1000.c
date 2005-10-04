@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-09-25 07:39:06 $
+** $Date: 2005-10-04 19:14:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,6 +119,12 @@ void sg1000MemWrite(void* ref, UInt16 address, UInt8 value)
 {
     UInt8* memPtr;
 	int i;
+
+	/* this is for sram of The Castle */
+	if (address>=0x8000 && address<0xA000) {
+		sg1000Memory[address]=value;
+		return;
+	}
 
     if (address < 0xA000) {
         return;
