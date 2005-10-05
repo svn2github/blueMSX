@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-10-04 23:03:34 $
+** $Date: 2005-10-05 18:56:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1920,7 +1920,7 @@ void copy_2x2_32_core1(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pD
                 pDst2 += 4;
             }
 }
-/* 6000 units -> 3500 units */
+/* 6000 units -> 2500 units */
 void copy_2x2_32_core2_SSE(UInt32* rgbTable, UInt32* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
 	__asm{
@@ -2047,7 +2047,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 	core1=hasSSE? copy_2x2_32_core1_SSE: copy_2x2_32_core1;
 	core2=hasSSE? copy_2x2_32_core2_SSE: copy_2x2_32_core2;
 
-	rdtsc_start_timer(0);
+	/*rdtsc_start_timer(0);*/
     dstPitch /= (int)sizeof(UInt32);
 
     if (frame->interlace == INTERLACE_ODD) {
@@ -2059,14 +2059,14 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     for (h = 0; h < height; h++) {
 
         if (frame->line[h].doubleWidth) 
-			core1(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4 * 2,dstPitch * 2);
+			core1(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4 * 2,dstPitch * 2*4);
         else 
-			core2(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4,dstPitch * 2);
+			core2(rgbTable,frame->line[h].buffer,pDst1,pDst2,srcWidth / 4,dstPitch * 2*4);
 
         pDst1 += dstPitch * 2;
         pDst2 += dstPitch * 2;
     }
-	rdtsc_end_timer(0);
+	/*rdtsc_end_timer(0);*/
 }
 
 static void copy_2x1_16(FrameBuffer* frame, void* pDestination, int dstPitch, UInt16* rgbTable)
@@ -2588,12 +2588,74 @@ void scanLines_16(void* pBuffer, int width, int height, int pitch, int scanLines
     }
 }
 
+void scanLines_32_core(UInt32* pBuf, int width, int scanLinesPct, int hint) {
+	int w;
+        for (w = 0; w < width; w++) {
+            UInt32 pixel = pBuf[w];
+            UInt32 a = (((pixel & 0xff00ff) * scanLinesPct) & 0xff00ff00) >> 8;
+            UInt32 b  = (((pixel >> 8)& 0xff00ff) * scanLinesPct) & 0xff00ff00;
+            pBuf[w] = a | b;
+        }
+}
+
+void scanLines_32_core_SSE(UInt32* pBuf, int width, int scanLinesPct, int hint) {
+	__asm {
+		mov		ecx,width
+		shr		ecx,2
+		mov		eax,pBuf
+		mov		ebx,hint
+		pxor	mm0,mm0
+		movd	mm1,scanLinesPct
+		punpcklwd mm1,mm1
+		punpckldq mm1,mm1
+		psllw	mm1,8
+inner_loop:
+		movq	mm2,[eax]
+		movq	mm4,[eax+8]
+		movq	mm3,mm2
+		punpcklbw mm2,mm0
+		movq	mm5,mm4
+		pmulhuw	mm2,mm1
+		punpcklbw mm4,mm0
+		punpckhbw mm3,mm0
+		prefetcht1 [eax+ebx]
+		pmulhuw	mm4,mm1
+		punpckhbw mm5,mm0
+		add		eax,16
+		pmulhuw	mm3,mm1
+		pmulhuw	mm5,mm1
+		packuswb mm2,mm3
+		packuswb mm4,mm5
+		movq	[eax-16],mm2
+		dec		ecx
+		movq	[eax-8],mm4
+
+		jnz		inner_loop
+		emms
+	}
+}
+
+/* 5500 units -> 2500 units */
 void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLinesPct)
 {
     UInt32* pBuf = (UInt32*)pBuffer;
-    int w, h;
+    int h;
+    void (*core) (UInt32* , int , int , int ) ;
+	int hasSSE=0;
+	const int SSEbit=1<<25;
 
+	__asm {
+		mov eax,1
+		cpuid
+		and edx,SSEbit
+		mov hasSSE,edx
+	}
+
+	core=hasSSE? scanLines_32_core_SSE: scanLines_32_core;
+
+	rdtsc_start_timer(0);
     if (scanLinesPct == 100) {
+  	    rdtsc_end_timer(0);
         return;
     }
 
@@ -2606,18 +2668,15 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
             memset(pBuf, 0, width * sizeof(UInt32));
             pBuf += pitch;
         }
-        return;
+        rdtsc_end_timer(0);
+		return;
     }
 
     for (h = 0; h < height; h++) {
-        for (w = 0; w < width; w++) {
-            UInt32 pixel = pBuf[w];
-            UInt32 a = (((pixel & 0xff00ff) * scanLinesPct) & 0xff00ff00) >> 8;
-            UInt32 b  = (((pixel >> 8)& 0xff00ff) * scanLinesPct) & 0xff00ff00;
-            pBuf[w] = a | b;
-        }
+		core (pBuf,width,scanLinesPct,pitch*4);
         pBuf += pitch;
     }
+	rdtsc_end_timer(0);
 }
 
 static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, 
