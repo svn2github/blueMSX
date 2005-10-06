@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.107 $
+** $Revision: 1.108 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-10-06 00:37:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1004,6 +1004,7 @@ typedef struct {
     HANDLE ddrawAckEvent;
     int    diplayUpdated;
     int    diplaySync;
+    int    diplayUpdateOnVblank;
 
     HBITMAP hBitmap;
     ThemePage* themePageActive;
@@ -1586,7 +1587,7 @@ void archUpdateWindow() {
 
 
 
-static void emuWindowDraw()
+static void emuWindowDraw(int onlyOnVblank)
 {      
     static void* lock = NULL;
     int rv = 0;
@@ -1601,6 +1602,9 @@ static void emuWindowDraw()
         (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
         pProperties->video.driver == P_VIDEO_DRVDIRECTX))
     {
+        
+        st.diplaySync |= onlyOnVblank;
+
         rv = DirectXUpdateSurface(st.pVideo, 
                                   st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
                                   0, 0, getZoom(), 
@@ -1924,7 +1928,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             int moreMenu;
             
             if (!st.minimized) {
-                emuWindowDraw();
+                emuWindowDraw(0);
             }
             moreMenu = menuExitMenuLoop();
             if (!moreMenu) {
@@ -2138,7 +2142,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case TIMER_MENUUPDATE:
             if (!st.minimized) {
-                emuWindowDraw();
+                emuWindowDraw(0);
             }
             if (!st.trackMenu) {
                 KillTimer(st.hwnd, TIMER_MENUUPDATE);
@@ -2150,7 +2154,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 DWORD rv = WaitForSingleObject(st.ddrawEvent, 0);
                 if (rv == WAIT_OBJECT_0) {
                     if (!st.minimized) {
-                        emuWindowDraw();
+                        emuWindowDraw(0);
                     }
                     SetEvent(st.ddrawAckEvent);
                 }
@@ -2731,7 +2735,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
         if (rv == WAIT_OBJECT_0) {
             if (!st.minimized) {
-                emuWindowDraw();
+                emuWindowDraw(st.diplayUpdateOnVblank);
             }
             SetEvent(st.ddrawAckEvent);
         }
@@ -3281,14 +3285,18 @@ void archEmulationStopNotification()
 }
 
 int archUpdateEmuDisplay(int syncMode) {
+    st.diplayUpdateOnVblank = syncMode == 4;
     if (pProperties->video.driver == P_VIDEO_DRVGDI) {
         if (syncMode == 0) {
             PostMessage(getMainHwnd(), WM_UPDATE, 0, 0);
         }
     }
+    else if (syncMode == 4) { // VBlank async
+        SetEvent(st.ddrawEvent);
+    }
     else if (syncMode == 3) { // VBlank sync
         st.diplaySync = 1;
-        emuWindowDraw();
+        emuWindowDraw(0);
         return st.diplayUpdated;
     }
     else {

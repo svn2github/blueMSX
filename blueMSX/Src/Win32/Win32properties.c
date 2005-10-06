@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-09-22 23:04:30 $
+** $Date: 2005-10-06 00:37:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -461,12 +461,13 @@ static _TCHAR* pSoundDriver[] = {
     NULL
 };
 
-static _TCHAR pEmuSyncData[4][64];
+static _TCHAR pEmuSyncData[5][64];
 static _TCHAR* pEmuSync[] = {
     pEmuSyncData[0],
     pEmuSyncData[1],
     pEmuSyncData[2],
     pEmuSyncData[3],
+    pEmuSyncData[4],
     NULL
 };
 
@@ -1019,6 +1020,7 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         _stprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
         _stprintf(pEmuSync[2], "%s", langEnumEmuSync1ms());
         _stprintf(pEmuSync[3], "%s", langEnumEmuSyncVblank());
+        _stprintf(pEmuSync[4], "%s", "Asynchronous PC Vblank");
 
         /* Init language specific dialog items */
         SendDlgItemMessage(hDlg, IDC_PERFVIDEODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());

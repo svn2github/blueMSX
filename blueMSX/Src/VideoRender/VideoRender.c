@@ -1,9 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-10-05 18:56:38 $
+** $Date: 2005-10-06 00:37:09 $
+** $Date: 2005-10-06 00:37:09 $
 **
 ** More info: http://www.bluemsx.com
 **

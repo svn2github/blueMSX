@@ -1,10 +1,9 @@
-
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-10-04 23:03:33 $
+** $Date: 2005-10-06 00:37:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,19 +30,12 @@
 #include "Emulator.h"
 #include "MsxTypes.h"
 #include "Debugger.h"
-
 #include "Board.h"
-
 #include "FileHistory.h"
-
 #include "Switches.h"
-
 #include "Led.h"
-
 #include "Machine.h"
 #include "JoystickIO.h"
-
-
 
 #include "ArchThread.h"
 #include "ArchEvent.h"
@@ -53,10 +45,8 @@
 
 #include "ArchInput.h"
 #include "ArchDialog.h"
-
 #include "ArchNotifications.h"
 #include "Keyboard.h"
-
 #include <math.h>
 #include <string.h>
 
@@ -203,6 +193,7 @@ void timerCallback(void* timer) {
     UInt32 syncPeriod = emulatorGetSyncPeriod();
     UInt32 sysTime = archGetSystemUpTime(1000);
     UInt32 diffTime = sysTime - oldSysTime;
+    int syncMethod = emuUseSynchronousUpdate();
 
     if (diffTime == 0) {
         return;
@@ -215,13 +206,16 @@ void timerCallback(void* timer) {
     if (frameCount >= framePeriod) {
         frameCount %= framePeriod;
         if (emuState == EMU_RUNNING) {
-            int syncMethod = emuUseSynchronousUpdate();
             refreshRate = boardGetRefreshRate();
 
             if (syncMethod == P_EMU_SYNCAUTO || syncMethod == P_EMU_SYNCNONE) {
                 archUpdateEmuDisplay(0);
             }
         }
+    }
+
+    if (syncMethod == P_EMU_SYNCTOVBLANKASYNC) {
+        archUpdateEmuDisplay(syncMethod);
     }
 
     // Update emulation
@@ -381,7 +375,8 @@ void emulatorStart(const char* stateName) {
     if (properties->emulation.syncMethod == P_EMU_SYNCTOVBLANK ||
         properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
         properties->emulation.syncMethod == P_EMU_SYNCNONE ||
-        properties->emulation.syncMethod == P_EMU_SYNCFRAMES)
+        properties->emulation.syncMethod == P_EMU_SYNCFRAMES ||
+        properties->emulation.syncMethod == P_EMU_SYNCTOVBLANKASYNC)
     {
         emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
     }
@@ -479,43 +474,26 @@ void emulatorStop() {
 
 
 void emulatorSetFrequency(int logFrequency, int* frequency) {
-
     emuFrequency = (int)(3579545 * pow(2.0, (logFrequency - 50) / 15.0515));
 
-
-
     if (frequency != NULL) {
-
         *frequency  = emuFrequency;
-
     }
 
-
-
     boardSetFrequency(emuFrequency);
-
 }
 
 
 
 void emulatorSuspend() {
-
     if (emuState == EMU_RUNNING) {
-
         emuState = EMU_SUSPENDED;
-
         do {
-
             archThreadSleep(10);
-
         } while (!emuSuspendFlag);
-
         archSoundSuspend();
-
         archMidiEnable(0);
-
     }
-
 }
 
 
@@ -523,368 +501,186 @@ void emulatorSuspend() {
 
 
 void emulatorResume() {
-
     emuSysTime = 0;
 
-
-
     if (emuState == EMU_SUSPENDED) {
-
         archSoundResume();
-
         archMidiEnable(1);
-
         emuState = EMU_RUNNING;
-
         archUpdateEmuDisplay(0);
-
     }
-
 }
-
-
-
 
 
 int emulatorGetCurrentScreenMode()
-
 {
-
     return lastScreenMode;
-
 }
-
-
 
 void emulatorRestart() {
-
     Machine* machine = machineCreate(properties->emulation.machineName);
 
-
-
     emulatorStop();
-
     if (machine != NULL) {
-
         boardSetMachine(machine);
-
         machineDestroy(machine);
-
     }
-
 }
-
-
 
 void emulatorRestartSound() {
-
     emulatorSuspend();
-
     archSoundDestroy();
-
     archSoundCreate(mixer, 44100, properties->sound.bufSize, properties->sound.stereo ? 2 : 1);
-
     emulatorResume();
-
 }
-
-
 
 void SetColor(int palEntry, UInt32 rgbColor) {
-
     UInt32 color = videoGetColor(((rgbColor >> 16) & 0xff), ((rgbColor >> 8) & 0xff), rgbColor & 0xff);
-
     if (palEntry == 0) {
-
         emuPalette0 = color;
-
     }
-
     else {
-
         emuPalette[palEntry] = color;
-
     }
-
     if (emuState == EMU_PAUSED) {
-
         archUpdateEmuDisplay(0);
-
     }
-
 }
-
-
 
 int emulatorGetCpuOverflow() {
-
     int overflow = emuTimeOverflow;
-
     emuTimeOverflow = 0;
-
     return overflow;
-
 }
-
-
 
 void emulatorSetMaxSpeed(int enable) {
-
     emuMaxSpeed = enable;
-
 }
-
-
 
 int  emulatorGetMaxSpeed() {
-
     return emuMaxSpeed;
-
 }
-
-
 
 void emulatorResetMixer() {
-
     // Reset active indicators in mixer
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_PCM, 1);
-
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_IO, 1);
-
 }
-
-
 
 int emulatorSyncScreen()
-
 {
-
     int rv = 0;
-
     emuFrameskipCounter--;
-
     if (emuFrameskipCounter < 0) {
-
         rv = archUpdateEmuDisplay(properties->emulation.syncMethod);
-
         if (rv) {
-
             emuFrameskipCounter = properties->video.frameSkip;
-
         }
-
     }
-
     return rv;
-
 }
-
-
 
 void RefreshScreen(int screenMode) {
 
-
-
     lastScreenMode = screenMode;
 
-
-
     if (emuUseSynchronousUpdate() == P_EMU_SYNCFRAMES) {
-
         emulatorSyncScreen();
-
     }
-
 }
 
-
-
 static int WaitForSync(int maxSpeed, int breakpointHit) {
-
     UInt32 li1;
-
     UInt32 li2;
-
     static UInt32 tmp = 0;
-
     static UInt32 cnt = 0;
-
     UInt32 sysTime;
-
     UInt32 diffTime;
-
     UInt32 syncPeriod;
-
     static int overflowCount = 0;
-
     static UInt32 kbdPollCnt = 0;
-
-
 
     emuMaxEmuSpeed = maxSpeed;
 
-
-
     syncPeriod = emulatorGetSyncPeriod();
-
     li1 = archGetHiresTimer();
 
-
-
     emuSuspendFlag = 1;
-
         
-
     if (emuSingleStep) {
-
         debuggerNotifyEmulatorPause();
-
         emuSingleStep = 0;
-
         emuState = EMU_PAUSED;
-
     }
-
-
 
     if (breakpointHit) {
-
         debuggerNotifyEmulatorPause();
-
         emuState = EMU_PAUSED;
-
     }
-
     
-
     if (emuState != EMU_RUNNING) {
-
         archEventSet(emuStartEvent);
-
         emuSysTime = 0;
-
     }
-
-
 
     if (((++kbdPollCnt & 0x03) >> syncPeriod) == 0) {
-        archPollInput();
-
+       archPollInput();
     }
-
-
 
     if (emuUseSynchronousUpdate() == P_EMU_SYNCTOVBLANK) {
-
         overflowCount += emulatorSyncScreen() ? 0 : 1;
-
         while ((!emuExitFlag && emuState != EMU_RUNNING) || overflowCount > 0) {
-
             archEventWait(emuSyncEvent, -1);
-
             overflowCount--;
-
         }
-
     }
-
     else {
-
         do {
-
             archEventWait(emuSyncEvent, -1);
-
             if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
-
                 archEventWait(emuSyncEvent, -1);
-
             }
-
             overflowCount = 0;
-
         } while (!emuExitFlag && emuState != EMU_RUNNING);
-
     }
-
-
 
     emuSuspendFlag = 0;
-
     li2 = archGetHiresTimer();
 
-
-
     emuTimeIdle  += li2 - li1;
-
     emuTimeTotal += li2 - tmp;
-
     tmp = li2;
-
     
-
     sysTime = archGetSystemUpTime(1000);
-
     diffTime = sysTime - emuSysTime;
-
     emuSysTime = sysTime;
-
     
-
     if (emuSingleStep) {
-
         diffTime = 0;
-
     }
-
-
 
     if ((++cnt & 0x0f) == 0) {
-
         emuCalcCpuUsage(NULL);
-
     }
-
-
 
     overflowCount = emulatorGetCpuOverflow() ? 1 : 0;
-
     if (diffTime > 50U) {
-
         overflowCount = 1;
-
         diffTime = 0;
-
     }
-
-
 
     if (emuMaxSpeed || emuMaxEmuSpeed) {
-
         diffTime *= 10;
-
         if (diffTime > 20 * syncPeriod) {
-
             diffTime =  20 * syncPeriod;
-
         }
-
     }
-
-
 
     emuUsageCurrent += diffTime;
 
-
-
     return emuExitFlag ? -1 : diffTime;
-
 }
