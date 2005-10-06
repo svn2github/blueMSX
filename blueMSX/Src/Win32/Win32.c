@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.108 $
+** $Revision: 1.109 $
 **
-** $Date: 2005-10-06 00:37:09 $
+** $Date: 2005-10-06 06:36:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1169,6 +1169,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
             frameBufferSetFrameCount(1);
             break;
         case P_EMU_SYNCTOVBLANK:
+        case P_EMU_SYNCTOVBLANKASYNC:
             frameBufferSetFrameCount(4);
             break;
         default:
@@ -2549,6 +2550,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         frameBufferSetFrameCount(1);
         break;
     case P_EMU_SYNCTOVBLANK:
+    case P_EMU_SYNCTOVBLANKASYNC:
         frameBufferSetFrameCount(4);
         break;
     default:
