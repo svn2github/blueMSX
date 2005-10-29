@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-07-23 06:10:49 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -144,7 +144,6 @@ void actionMaxSpeedToggle();
 void actionFullscreenToggle();
 void actionCasToggleReadonly();
 void actionVolumeToggleStereo();
-void actionCpuTraceToggle();
 
 void actionToggleHorizontalStretch();
 void actionToggleVerticalStretch();

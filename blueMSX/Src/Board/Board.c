@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,12 +41,18 @@
 #include "ArchNotifications.h"
 #include "VideoManager.h"
 #include "DebugDeviceManager.h"
+#include "MegaromCartridge.h"
+#include "Disk.h"
+#include "VideoManager.h"
+#include "Keyboard.h"
+#include "Casette.h"
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 
 extern void PatchReset(BoardType boardType);
 
+static int pendingInt;
 static int boardType;
 static Mixer* boardMixer = NULL;
 static int (*syncToRealClock)(int, int) = NULL;
@@ -58,170 +64,24 @@ static int fdcTimingEnable = 1;
 static int fdcActive       = 0;
 static BoardTimer* fdcTimer;
 static BoardTimer* syncTimer;
+static DeviceInfo* boardDeviceInfo;
+static Machine* boardMachine;
+static BoardInfo boardInfo;
+static UInt32 boardRamSize;
+static UInt32 boardVramSize;
+static int boardRunning = 0;
 
-static char saveStateVersion[32] = "blueMSX - state  v 7";
+static int     useRom;
+static int     useMegaRom;
+static int     useMegaRam;
+static int     useFmPac;
+static RomType currentRomType[2];
 
-static void   (*initStatistics)(Machine*)                     = msxInitStatistics;
-static void   (*softReset)()                                  = msxReset;
-static int    (*create)(Machine*, DeviceInfo*, int)           = msxCreate;
-static void   (*destroy)()                                    = msxDestroy;
-static void   (*run)()                                        = msxRun;
-static void   (*stop)()                                       = msxStop;
-static void   (*saveState)()                                  = msxSaveState;
-static int    (*getRefreshRate)()                             = msxGetRefreshRate;
-static void   (*setInt)(UInt32)                               = msxSetInt;
-static void   (*clearInt)(UInt32)                             = msxClearInt;
-static UInt32 (*getInt)()                                     = msxGetInt;
-static void   (*traceEnable)(const char*)                     = msxTraceEnable;
-static void   (*traceDisable)()                               = msxTraceDisable;
-static int    (*traceGetEnable)()                             = msxTraceGetEnable;
-static UInt8* (*getRamPage)(page)                             = msxGetRamPage;
-static UInt32 (*getRamSize)()                                 = msxGetRamSize;
-static UInt32 (*getVramSize)()                                = msxGetVramSize;
-static int    (*useRom)()                                     = msxUseRom;
-static int    (*useMegaRom)()                                 = msxUseMegaRom;
-static int    (*useMegaRam)()                                 = msxUseMegaRam;
-static int    (*useFmPac)()                                   = msxUseFmPac;
-static void   (*changeCartridge)(int, RomType, char*, char*)  = msxChangeCartridge;
-static void   (*changeDiskette)(int, char*, const char*)      = msxChangeDiskette;
-static int    (*changeCassette)(char*, const char*)           = msxChangeCassette;
-static int    (*cassetteInserted)()                           = msxCassetteInserted;
-static void   (*setCpuTimeout)(UInt32)                        = msxSetCpuTimeout;
-static void   (*setBreakpoint)(UInt16)                        = msxSetBreakpoint;
-static void   (*clearBreakpoint)(UInt16)                      = msxClearBreakpoint;
-static void boardSetType(BoardType type)
-{
-    boardType = type;
-    switch (type) {
-    default:
-    case BOARD_MSX:
-        initStatistics  = msxInitStatistics;
-        softReset       = msxReset;
-        create          = msxCreate;
-        destroy         = msxDestroy;
-        run             = msxRun;
-        stop            = msxStop;
-        saveState       = msxSaveState;
-        getRefreshRate  = msxGetRefreshRate;
-        setInt          = msxSetInt;
-        clearInt        = msxClearInt;
-        getInt          = msxGetInt;
-        traceEnable     = msxTraceEnable;
-        traceDisable    = msxTraceDisable;
-        traceGetEnable  = msxTraceGetEnable;
-        getRamPage      = msxGetRamPage;
-        getRamSize      = msxGetRamSize;
-        getVramSize     = msxGetVramSize;
-        useRom          = msxUseRom;
-        useMegaRom      = msxUseMegaRom;
-        useMegaRam      = msxUseMegaRam;
-        useFmPac        = msxUseFmPac;
-        changeCartridge = msxChangeCartridge;
-        changeDiskette  = msxChangeDiskette;
-        changeCassette  = msxChangeCassette;
-        cassetteInserted= msxCassetteInserted;
-        setCpuTimeout   = msxSetCpuTimeout;
-        setBreakpoint   = msxSetBreakpoint;
-        clearBreakpoint = msxClearBreakpoint;
-        break;
+static UInt8 emptyRam[0x2000];
 
-    case BOARD_SVI:
-        initStatistics  = sviInitStatistics;
-        softReset       = sviReset;
-        create          = sviCreate;
-        destroy         = sviDestroy;
-        run             = sviRun;
-        stop            = sviStop;
-        saveState       = sviSaveState;
-        getRefreshRate  = sviGetRefreshRate;
-        setInt          = sviSetInt;
-        clearInt        = sviClearInt;
-        getInt          = sviGetInt;
-        traceEnable     = sviTraceEnable;
-        traceDisable    = sviTraceDisable;
-        traceGetEnable  = sviTraceGetEnable;
-        getRamPage      = sviGetRamPage;
-        getRamSize      = sviGetRamSize;
-        getVramSize     = sviGetVramSize;
-        useRom          = sviUseRom;
-        useMegaRom      = sviUseMegaRom;
-        useMegaRam      = sviUseMegaRam;
-        useFmPac        = sviUseFmPac;
-        changeCartridge = sviChangeCartridge;
-        changeDiskette  = sviChangeDiskette;
-        changeCassette  = sviChangeCassette;
-        cassetteInserted= sviCassetteInserted;
-        setCpuTimeout   = sviSetCpuTimeout;
-        setBreakpoint   = sviSetBreakpoint;
-        clearBreakpoint = sviClearBreakpoint;
-        break;
+static BoardType boardLoadState(const char* stateFile);
 
-    case BOARD_COLECO:
-        initStatistics  = colecoInitStatistics;
-        softReset       = colecoReset;
-        create          = colecoCreate;
-        destroy         = colecoDestroy;
-        run             = colecoRun;
-        stop            = colecoStop;
-        saveState       = colecoSaveState;
-        getRefreshRate  = colecoGetRefreshRate;
-        setInt          = colecoSetInt;
-        clearInt        = colecoClearInt;
-        getInt          = colecoGetInt;
-        traceEnable     = colecoTraceEnable;
-        traceDisable    = colecoTraceDisable;
-        traceGetEnable  = colecoTraceGetEnable;
-        getRamPage      = colecoGetRamPage;
-        getRamSize      = colecoGetRamSize;
-        getVramSize     = colecoGetVramSize;
-        useRom          = colecoUseRom;
-        useMegaRom      = colecoUseMegaRom;
-        useMegaRam      = colecoUseMegaRam;
-        useFmPac        = colecoUseFmPac;
-        changeCartridge = colecoChangeCartridge;
-        changeDiskette  = colecoChangeDiskette;
-        changeCassette  = colecoChangeCassette;
-        cassetteInserted= colecoCassetteInserted;
-        setCpuTimeout   = colecoSetCpuTimeout;
-        setBreakpoint   = colecoSetBreakpoint;
-        clearBreakpoint = colecoClearBreakpoint;
-        break;
-
-    case BOARD_SG1000:
-        initStatistics  = sg1000InitStatistics;
-        softReset       = sg1000Reset;
-        create          = sg1000Create;
-        destroy         = sg1000Destroy;
-        run             = sg1000Run;
-        stop            = sg1000Stop;
-        saveState       = sg1000SaveState;
-        getRefreshRate  = sg1000GetRefreshRate;
-        setInt          = sg1000SetInt;
-        clearInt        = sg1000ClearInt;
-        getInt          = sg1000GetInt;
-        traceEnable     = sg1000TraceEnable;
-        traceDisable    = sg1000TraceDisable;
-        traceGetEnable  = sg1000TraceGetEnable;
-        getRamPage      = sg1000GetRamPage;
-        getRamSize      = sg1000GetRamSize;
-        getVramSize     = sg1000GetVramSize;
-        useRom          = sg1000UseRom;
-        useMegaRom      = sg1000UseMegaRom;
-        useMegaRam      = sg1000UseMegaRam;
-        useFmPac        = sg1000UseFmPac;
-        changeCartridge = sg1000ChangeCartridge;
-        changeDiskette  = sg1000ChangeDiskette;
-        changeCassette  = sg1000ChangeCassette;
-        setCpuTimeout   = sg1000SetCpuTimeout;
-        setBreakpoint   = sg1000SetBreakpoint;
-        clearBreakpoint = sg1000ClearBreakpoint;
-        break;
-
-        break;
-    }
-    
-    PatchReset(boardType);
-}
+static char saveStateVersion[32] = "blueMSX - state  v 8";
 
 int boardGetFdcTimingEnable() {
     return fdcTimingEnable;
@@ -239,11 +99,15 @@ void boardSetFdcActive() {
 }
 
 void boardSetBreakpoint(UInt16 address) {
-    setBreakpoint(address);
+    if (boardRunning) {
+        boardInfo.setBreakpoint(boardInfo.cpuRef, address);
+    }
 }
 
 void boardClearBreakpoint(UInt16 address) {
-    clearBreakpoint(address);
+    if (boardRunning) {
+        boardInfo.clearBreakpoint(boardInfo.cpuRef, address);
+    }
 }
 
 static void onFdcDone(void* ref, UInt32 time)
@@ -255,7 +119,7 @@ static void doSync(UInt32 time, int breakpointHit)
 {
     int execTime = syncToRealClock(fdcActive, breakpointHit);
     if (execTime < 0) {
-        stop();
+        boardInfo.stop(boardInfo.cpuRef);
         return;
     }
 
@@ -279,6 +143,41 @@ void boardOnBreakpoint(UInt16 pc)
     doSync(boardSystemTime(), 1);
 }
 
+int boardInsertExternalDevices()
+{
+    int i;
+    for (i = 0; i < 2; i++) {
+        if (boardDeviceInfo->cartridge[i].inserted) {
+            boardChangeCartridge(i, boardDeviceInfo->cartridge[i].type, 
+                                 boardDeviceInfo->cartridge[i].name,
+                                 boardDeviceInfo->cartridge[i].inZipName);
+        }
+    }
+
+    for (i = 0; i < 2; i++) {
+        if (boardDeviceInfo->diskette[i].inserted) {
+            boardChangeDiskette(i, boardDeviceInfo->diskette[i].name,
+                                boardDeviceInfo->diskette[i].inZipName);
+        }
+    }
+
+    if (boardDeviceInfo->cassette.inserted) {
+        boardChangeCassette(boardDeviceInfo->cassette.name,
+                            boardDeviceInfo->cassette.inZipName);
+    }
+    return 1;
+}
+
+int boardRemoveExternalDevices()
+{
+     boardChangeDiskette(0, NULL, NULL);
+     boardChangeDiskette(1, NULL, NULL);
+
+     boardChangeCassette(0, 0);
+
+     return 1;
+}
+
 int boardRun(Machine* machine, 
              DeviceInfo* deviceInfo,
              Mixer* mixer,
@@ -287,51 +186,72 @@ int boardRun(Machine* machine,
              int (*syncCallback)(int, int))
 {
     int loadState = 0;
-    int success;
-    boardSetType(machine->board.type);
+    int success = 0;
 
     syncToRealClock = syncCallback;
 
     videoManagerReset();
     debugDeviceManagerReset();
 
-    boardMixer = mixer;
+    boardMixer      = mixer;
+    boardDeviceInfo = deviceInfo;
+    boardMachine    = machine;
 
     if (stateFile != NULL) {
-        char* version;
-        int   size;
-    
-        saveStateCreate(stateFile);
-        version = zipLoadFile(stateFile, "version", &size);
-        if (version != NULL) {
-            if (0 == strncmp(version, saveStateVersion, sizeof(saveStateVersion) - 1)) {
-                SaveState* state = saveStateOpenForRead("board");
-                BoardType boardType = saveStateGet(state, "boardType", BOARD_MSX);
-                boardSysTime64  = (UInt64)saveStateGet(state, "boardSysTime64Hi", 0) << 32 |
-                                  (UInt64)saveStateGet(state, "boardSysTime64Lo", 0);
-                oldTime = saveStateGet(state, "oldTime", 0);
-                saveStateClose(state);
-
-                boardSetType(boardType);
-
-                loadState = 1;
-            }
-            free(version);
+        BoardType loadBoardType = boardLoadState(stateFile);
+        if (loadBoardType != BOARD_UNKNOWN) {
+            boardType = loadBoardType;
+            machineLoadState(boardMachine);
+            loadState = 1;
         }
     }
 
+    boardType = machine->board.type;
+    PatchReset(boardType);
+
+    useRom     = 0;
+    useMegaRom = 0;
+    useMegaRam = 0;
+    useFmPac   = 0;
+    currentRomType[0] = ROM_UNKNOWN;
+    currentRomType[1] = ROM_UNKNOWN;
+
+    pendingInt = 0;
+
     boardSetFrequency(frequency);
 
-    success = create(machine, deviceInfo, loadState);
+    switch (boardType) {
+    case BOARD_MSX:
+        success = msxCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
+        break;
+    case BOARD_SVI:
+        success = sviCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
+        break;
+    case BOARD_COLECO:
+        success = colecoCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
+        break;
+    case BOARD_SG1000:
+        success = sg1000Create(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
+        break;
+    default:
+        success = 0;
+    }
+
+    if (success && loadState) {
+        boardInfo.loadState();
+    }
+
     if (success) {
         syncTimer = boardTimerCreate(onSync, NULL);
         fdcTimer = boardTimerCreate(onFdcDone, NULL);
         
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
 
-        run();
+        boardRunning = 1;
+        boardInfo.run(boardInfo.cpuRef);
+        boardRunning = 0;
 
-        destroy();
+        boardInfo.destroy();
 
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(syncTimer);
@@ -352,24 +272,112 @@ Mixer* boardGetMixer()
 
 void boardSetMachine(Machine* machine)
 {
-    boardSetType(machine->board.type);
+    int i;
 
-    initStatistics(machine);
+    boardRamSize  = 0;
+    boardVramSize = machine->video.vramSize;
+
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
+            boardRamSize = 0x400;
+        }
+    }
+
+    if (boardRamSize == 0) {
+        for (i = 0; i < machine->slotInfoCount; i++) {
+            if (machine->slotInfo[i].romType == RAM_NORMAL || machine->slotInfo[i].romType == RAM_MAPPER) {
+                boardRamSize = 0x2000 * machine->slotInfo[i].pageCount;
+            }
+        }
+    }
+
+    boardType = machine->board.type;
+    PatchReset(boardType);
 }
 
 void boardReset()
 {
-    softReset();
+    if (boardRunning) {
+        boardInfo.softReset();
+    }
 }
+
+static BoardType boardLoadState(const char* stateFile)
+{
+    DeviceInfo* di = boardDeviceInfo;
+    SaveState* state;
+    BoardType boardType;
+    char* version;
+    int   size;
+
+    saveStateCreate(stateFile);
+    version = zipLoadFile(stateFile, "version", &size);
+    if (version == NULL) {
+        return BOARD_UNKNOWN;
+    }
+
+    if (0 != strncmp(version, saveStateVersion, sizeof(saveStateVersion) - 1)) {
+        free(version);
+        return BOARD_UNKNOWN;
+    }
+
+    free(version);
+            
+    state = saveStateOpenForRead("board");
+
+    boardType      = saveStateGet(state, "boardType", BOARD_MSX);
+    boardSysTime64 = (UInt64)saveStateGet(state, "boardSysTime64Hi", 0) << 32 |
+                     (UInt64)saveStateGet(state, "boardSysTime64Lo", 0);
+    oldTime        = saveStateGet(state, "oldTime", 0);
+    pendingInt     = saveStateGet(state, "pendingInt", 0);
+    
+    di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);
+    di->cartridge[0].type     = saveStateGet(state, "cartType00",     0);
+    saveStateGetBuffer(state, "cartName00",  di->cartridge[0].name, sizeof(di->cartridge[0].name));
+    saveStateGetBuffer(state, "cartInZip00", di->cartridge[0].inZipName, sizeof(di->cartridge[0].inZipName));
+
+    di->cartridge[1].inserted = saveStateGet(state, "cartInserted01", 0);
+    di->cartridge[1].type     = saveStateGet(state, "cartType01",     0);
+    saveStateGetBuffer(state, "cartName01",  di->cartridge[1].name, sizeof(di->cartridge[1].name));
+    saveStateGetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, sizeof(di->cartridge[1].inZipName));
+
+    di->diskette[0].inserted = saveStateGet(state, "diskInserted00", 0);
+    saveStateGetBuffer(state, "diskName00",  di->diskette[0].name, sizeof(di->diskette[0].name));
+    saveStateGetBuffer(state, "diskInZip00", di->diskette[0].inZipName, sizeof(di->diskette[0].inZipName));
+
+    di->diskette[1].inserted = saveStateGet(state, "diskInserted01", 0);
+    saveStateGetBuffer(state, "diskName01",  di->diskette[1].name, sizeof(di->diskette[1].name));
+    saveStateGetBuffer(state, "diskInZip01", di->diskette[1].inZipName, sizeof(di->diskette[1].inZipName));
+
+    di->cassette.inserted = saveStateGet(state, "casInserted", 0);
+    saveStateGetBuffer(state, "casName",  di->cassette.name, sizeof(di->cassette.name));
+    saveStateGetBuffer(state, "casInZip", di->cassette.inZipName, sizeof(di->cassette.inZipName));
+
+    di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
+
+    saveStateClose(state);
+
+    videoManagerLoadState();
+    tapeLoadState();
+    keyboardLoadState();
+
+    return boardType;
+}
+
 
 void boardSaveState(const char* stateFile)
 {
+    DeviceInfo* di = boardDeviceInfo;
     char buf[128];
     time_t ltime;
     SaveState* state;
     int size;
     void* bitmap;
     int rv;
+
+    if (!boardRunning) {
+        return;
+    }
 
     saveStateCreate(stateFile);
     
@@ -380,14 +388,45 @@ void boardSaveState(const char* stateFile)
     
     state = saveStateOpenForWrite("board");
 
+    saveStateSet(state, "pendingInt", pendingInt);
     saveStateSet(state, "boardType", boardType);
     saveStateSet(state, "boardSysTime64Hi", (UInt32)(boardSysTime64 >> 32));
     saveStateSet(state, "boardSysTime64Lo", (UInt32)boardSysTime64);
     saveStateSet(state, "oldTime", oldTime);
 
+    saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
+    saveStateSet(state, "cartType00",     di->cartridge[0].type);
+    saveStateSetBuffer(state, "cartName00",  di->cartridge[0].name, strlen(di->cartridge[0].name) + 1);
+    saveStateSetBuffer(state, "cartInZip00", di->cartridge[0].inZipName, strlen(di->cartridge[0].inZipName) + 1);
+    saveStateSet(state, "cartInserted01", di->cartridge[1].inserted);
+    saveStateSet(state, "cartType01",     di->cartridge[1].type);
+    saveStateSetBuffer(state, "cartName01",  di->cartridge[1].name, strlen(di->cartridge[1].name) + 1);
+    saveStateSetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, strlen(di->cartridge[1].inZipName) + 1);
+
+    saveStateSet(state, "diskInserted00", di->diskette[0].inserted);
+    saveStateSetBuffer(state, "diskName00",  di->diskette[0].name, strlen(di->diskette[0].name) + 1);
+    saveStateSetBuffer(state, "diskInZip00", di->diskette[0].inZipName, strlen(di->diskette[0].inZipName) + 1);
+    saveStateSet(state, "diskInserted01", di->diskette[1].inserted);
+    saveStateSetBuffer(state, "diskName01",  di->diskette[1].name, strlen(di->diskette[1].name) + 1);
+    saveStateSetBuffer(state, "diskInZip01", di->diskette[1].inZipName, strlen(di->diskette[1].inZipName) + 1);
+
+    saveStateSet(state, "casInserted", di->cassette.inserted);
+    saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
+    saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
+
+    saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
+
     saveStateClose(state);
 
-    saveState(stateFile);
+    videoManagerSaveState();
+    tapeSaveState();
+    keyboardSaveState();
+
+    // Save machine state
+    machineSaveState(boardMachine);
+
+    // Call board dependent save state
+    boardInfo.saveState(stateFile);
 
     bitmap = archScreenCapture(SC_SMALL, &size);
     if (size > 0) {
@@ -409,94 +448,151 @@ void boardSetFrequency(int frequency)
 	mixerSetBoardFrequency(frequency);
 }
 
-int  boardGetRefreshRate()
+int boardGetRefreshRate()
 {
-    return getRefreshRate();
+    if (boardRunning) {
+        return boardInfo.getRefreshRate();
+    }
+    return 0;
 }
 
-void   boardSetInt(UInt32 irq)
+void  boardSetInt(UInt32 irq)
 {
-    setInt(irq);
+    pendingInt |= irq;
+    boardInfo.setInt(boardInfo.cpuRef);
 }
 
 void   boardClearInt(UInt32 irq)
 {
-    clearInt(irq);
+    pendingInt &= ~irq;
+    if (pendingInt == 0) {
+        boardInfo.clearInt(boardInfo.cpuRef);
+    }
 }
 
 UInt32 boardGetInt(UInt32 irq)
 {
-    return getInt(irq);
-}
-
-void boardTraceEnable(const char* fileName)
-{
-    traceEnable(fileName);
-}
-
-void boardTraceDisable()
-{
-    traceDisable();
-}
-
-int  boardTraceGetEnable()
-{
-    return traceGetEnable();
+    return pendingInt & irq;
 }
 
 UInt8* boardGetRamPage(int page)
 {
-    return getRamPage(page);
+    if (boardInfo.getRamPage == NULL) {
+        return emptyRam;
+    }
+    return boardInfo.getRamPage(page);
 }
 
 UInt32 boardGetRamSize()
 {
-    return getRamSize();
+    return boardRamSize;
 }
 
 UInt32 boardGetVramSize()
 {
-    return getVramSize();
+    return boardVramSize;
 }
 
 int boardUseRom()
 {
-    return useRom();
+    return useRom;
 }
 
 int boardUseMegaRom()
 {
-    return useMegaRom();
+    return useMegaRom;
 }
 
 int boardUseMegaRam()
 {
-    return useMegaRam();
+    return useMegaRam;
 }
 
 int boardUseFmPac()
 {
-    return useFmPac();
+    return useFmPac;
 }
 
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
 {
-    changeCartridge(cartNo, romType, cart, cartZip);
+    if (cart && strlen(cart) == 0) {
+        cart = NULL;
+    }
+
+    if (cartZip && strlen(cartZip) == 0) {
+        cartZip = NULL;
+    }
+
+    if (boardDeviceInfo != NULL) {
+        boardDeviceInfo->cartridge[cartNo].inserted = cart != NULL;
+        boardDeviceInfo->cartridge[cartNo].type = romType;
+
+        strcpy(boardDeviceInfo->cartridge[cartNo].name, cart ? cart : "");
+        strcpy(boardDeviceInfo->cartridge[cartNo].inZipName, cartZip ? cartZip : "");
+    }
+
+    if (cart == NULL) {
+        romType = currentRomType[cartNo];
+        currentRomType[cartNo] = ROM_UNKNOWN;
+        useRom     -= romTypeIsRom(romType);
+        useMegaRom -= romTypeIsMegaRom(romType);
+        useMegaRam -= romTypeIsMegaRam(romType);
+        useFmPac   -= romTypeIsFmPac(romType);
+    }
+    else {
+        currentRomType[cartNo] = romType;
+        useRom     += romTypeIsRom(romType);
+        useMegaRom += romTypeIsMegaRom(romType);
+        useMegaRam += romTypeIsMegaRam(romType);
+        useFmPac   += romTypeIsFmPac(romType);
+    }
+
+    cartridgeInsert(cartNo, romType, cart, cartZip);
 }
 
 void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
 {
-    changeDiskette(driveId, fileName, fileInZipFile);
+    if (fileName && strlen(fileName) == 0) {
+        fileName = NULL;
+    }
+
+    if (fileInZipFile && strlen(fileInZipFile) == 0) {
+        fileInZipFile = NULL;
+    }
+
+    if (boardDeviceInfo != NULL) {
+        boardDeviceInfo->diskette[driveId].inserted = fileName != NULL;
+
+        strcpy(boardDeviceInfo->diskette[driveId].name, fileName ? fileName : "");
+        strcpy(boardDeviceInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
+    }
+
+    diskChange(driveId ,fileName, fileInZipFile);
 }
 
 void boardChangeCassette(char* name, const char* fileInZipFile)
 {
-    changeCassette(name, fileInZipFile);
+    if (name && strlen(name) == 0) {
+        name = NULL;
+    }
+
+    if (fileInZipFile && strlen(fileInZipFile) == 0) {
+        fileInZipFile = NULL;
+    }
+
+    if (boardDeviceInfo != NULL) {
+        boardDeviceInfo->cassette.inserted = name != NULL;
+
+        strcpy(boardDeviceInfo->cassette.name, name ? name : "");
+        strcpy(boardDeviceInfo->cassette.inZipName, fileInZipFile ? fileInZipFile : "");
+    }
+
+//    return tapeInsert(name, fileInZipFile);
 }
 
 int boardGetCassetteInserted()
 {
-    return cassetteInserted();
+    return tapeIsInserted();
 }
 
 #define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
@@ -582,7 +678,7 @@ void boardTimerAdd(BoardTimer* timer, UInt32 timeout)
     refTimer->prev->next = timer;
     refTimer->prev       = timer;
 
-    setCpuTimeout(timerList->next->timeout);
+    boardInfo.setCpuTimeout(boardInfo.cpuRef, timerList->next->timeout);
 }
 
 void boardTimerRemove(BoardTimer* timer)
@@ -597,7 +693,7 @@ void boardTimerRemove(BoardTimer* timer)
     timer->prev = timer;
 }
 
-UInt32 boardTimerCheckTimeout()
+UInt32 boardTimerCheckTimeout(void* dummy)
 {
     UInt32 currentTime = boardSystemTime();
     timerList->timeout = currentTime + MAX_TIME;
@@ -617,7 +713,7 @@ UInt32 boardTimerCheckTimeout()
 
     timeAnchor = currentTime;    
 
-    setCpuTimeout(timerList->next->timeout);
+    boardInfo.setCpuTimeout(boardInfo.cpuRef, timerList->next->timeout);
 
     return timerList->next->timeout - currentTime;
 }

@@ -541,6 +541,12 @@
 					RelativePath="..\..\Src\Memory\MegaromCartridge.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\ram1kBMirrored.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\ram1kBMirrored.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\ramMapper.c">
 				</File>
 				<File
@@ -596,6 +602,12 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperGameReader.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperGameReader.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperHalnote.c">
@@ -704,6 +716,12 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSCCplus.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
@@ -1041,6 +1059,12 @@
 				RelativePath="..\..\Src\Z80\R800Dasm.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Z80\R800Debug.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Z80\R800Debug.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Z80\R800SaveState.c">
 			</File>
 			<File
@@ -1073,6 +1097,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\FdcAudio.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\GameReader.cpp">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\GameReader.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\I8250.c">
@@ -1115,6 +1145,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\MidiIO.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\msxgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\msxgr.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\MSXMidi.c">

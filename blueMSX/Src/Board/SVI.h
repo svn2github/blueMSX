@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-06-28 07:28:01 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,56 +30,11 @@
 #ifndef SVI_H
 #define SVI_H
  
-#include "MSXTypes.h"
 #include "Board.h"
-#include "Machine.h"
-#include "audioMixer.h"
-#include <stdio.h>
 
 int sviCreate(Machine* machine, 
-              DeviceInfo* deviceInfo,
-              int loadState);
-void sviDestroy();
-
-void sviRun();
-void sviStop();
-
-void sviReset();
-
-void sviInitStatistics(Machine* machine);
-
-void sviSaveState();
-
-UInt32 sviSystemTime();
-
-int  sviGetRefreshRate();
-
-void sviSetInt(UInt32 irq);
-void sviClearInt(UInt32 irq);
-UInt32 sviGetInt();
-
-void sviSetCpuTimeout(UInt32 time);
-
-void sviTraceEnable(const char* fileName);
-void sviTraceDisable();
-int  sviTraceGetEnable();
-
-void sviSetBreakpoint(UInt16 address);
-void sviClearBreakpoint(UInt16 address);
-
-UInt8* sviGetRamPage(int page);
-UInt32 sviGetRamSize();
-UInt32 sviGetVramSize();
-
-int sviUseRom();
-int sviUseMegaRom();
-int sviUseMegaRam();
-int sviUseFmPac();
-
-void sviChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
-void sviChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
-int  sviChangeCassette(char* name, const char* fileInZipFile);
-int  sviCassetteInserted();
+              VdpSyncMode vdpSyncMode,
+              BoardInfo* boardInfo);
 
 #endif /* SVI_H */
 

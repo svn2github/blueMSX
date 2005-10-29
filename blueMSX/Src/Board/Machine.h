@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-09-20 01:36:43 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 #include <stdio.h>
 
 
-typedef enum { BOARD_MSX, BOARD_SVI, BOARD_COLECO, BOARD_SG1000 } BoardType;
+typedef enum { BOARD_UNKNOWN = -1, BOARD_MSX, BOARD_SVI, BOARD_COLECO, BOARD_SG1000 } BoardType;
 
 typedef struct {
     RomType romType;
@@ -93,6 +93,8 @@ int machineIsValid(const char* machineName, int checkRoms);
 void machineUpdate(Machine* machine);
 
 void machineSave(Machine* machine);
+
+int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize);
 
 void machineLoadState(Machine* machine);
 void machineSaveState(Machine* machine);

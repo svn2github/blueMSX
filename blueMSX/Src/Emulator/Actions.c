@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -872,15 +872,6 @@ void actionVolumeToggleStereo() {
     state.properties->sound.stereo = !state.properties->sound.stereo;
 
     emulatorRestartSound();
-}
-
-void actionCpuTraceToggle() {
-    if (boardTraceGetEnable()) {
-        boardTraceDisable();
-    }
-    else {
-        boardTraceEnable("CpuTrace.txt");
-    }
 }
 
 void actionNextTheme() {

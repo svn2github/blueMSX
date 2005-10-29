@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-24 00:50:00 $
+** $Date: 2005-10-29 22:53:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,21 +27,84 @@
 **
 ******************************************************************************
 */
-#define USE_ARCH_GLOB
 #include "Machine.h"
 #include "SaveState.h"
 #include "IniFileParser.h"
-#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #include <string.h>
 #include <ctype.h>
-#else
-#include <windows.h>
-#endif
 #include <stdlib.h>
 #include "ArchFile.h"
-
+#include "MediaDb.h"
 #include "TokenExtract.h"
+
+#include "RomLoader.h"
+#include "MSXMidi.h"
+#include "ramMapper.h"
+#include "ramMapperIo.h"
+#include "ramNormal.h"
+#include "romMapperNormal.h"
+#include "romMapperKanji.h"
+#include "romMapperKanji12.h"
+#include "romMapperBasic.h"
+#include "romMapperCasette.h"
+#include "romMapperStandard.h"
+#include "romMapperMsxDos2.h"
+#include "romMapperKonami5.h"
+#include "romMapperKonami4.h"
+#include "romMapperKoei.h"
+#include "romMapperHolyQuran.h"
+#include "romMapperMegaRam.h"
+#include "romMapperASCII8.h"
+#include "romMapperASCII16.h"
+#include "romMapperDisk.h"
+#include "romMapperTC8566AF.h"
+#include "romMapperMicrosol.h"
+#include "romMapperNationalFdc.h"
+#include "romMapperPhilipsFdc.h"
+#include "romMapperSvi738Fdc.h"
+#include "romMapperGameMaster2.h"
+#include "romMapperASCII8sram.h"
+#include "romMapperASCII16sram.h"
+#include "romMapperASCII16nf.h"
+#include "romMapperKonami4nf.h"
+#include "romMapperPlain.h"
+#include "romMapperHarryFox.h"
+#include "romMapperHalnote.h"
+#include "romMapperMsxAudio.h"
+#include "romMapperRType.h"
+#include "romMapperCrossBlaim.h"
+#include "romMapperKorean80.h"
+#include "romMapperKorean90.h"
+#include "romMapperKorean126.h"
+#include "romMapperPAC.h"
+#include "romMapperFMPAC.h"
+#include "romMapperFMPAK.h"
+#include "romMapperLodeRunner.h"
+#include "romMapperSCCplus.h"
+#include "romMapperPanasonic.h"
+#include "romMapperNational.h"
+#include "sramMapperMatsuchita.h"
+#include "romMapperKonamiSynth.h"
+#include "romMapperKonamiKeyboardMaster.h"
+#include "romMapperMajutsushi.h"
+#include "sramMapperS1985.h"
+#include "romMapperS1990.h"
+#include "romMapperF4device.h"
+#include "romMapperBunsetu.h"
+#include "romMapperTurboRTimer.h"
+#include "romMapperTurboRPCM.h"
+#include "turboRIO.h"
+#include "romMapperSonyHBI55.h"
+#include "romMapperMsxMusic.h"
+#include "romMapperMsxPrn.h"
+#include "romMapperMoonsound.h"
+#include "romMapperGameReader.h"
+#include "romMapperSvi328Prn.h"
+#include "romMapperSvi328Rs232.h"
+#include "romMapperSvi328Fdc.h"
+#include "ram1kBMirrored.h"
+
 
 int toint(char* buffer) 
 {
@@ -352,7 +415,6 @@ int machineIsValid(const char* machineName, int checkRoms)
     return success;
 }
 
-#ifdef USE_ARCH_GLOB
 char** machineGetAvailable(int checkRoms)
 {
     static char* machineNames[256];
@@ -395,52 +457,6 @@ char** machineGetAvailable(int checkRoms)
 
     return machineNames;
 }
-#else
-
-char** machineGetAvailable(int checkRoms)
-{
-    static char* machineNames[256];
-    static char  names[256][64];
-	HANDLE          handle;
-	WIN32_FIND_DATA wfd;
-    int index = 0;
-    BOOL cont = TRUE;
-
-    handle = FindFirstFile("Machines/*", &wfd);
-
-    if (handle == INVALID_HANDLE_VALUE) {
-        machineNames[0] = NULL;
-        return machineNames;
-    }
-
-    while (cont) {
-        char fileName[512];
-
-		DWORD fa = GetFileAttributes(wfd.cFileName);
-        if (fa & FILE_ATTRIBUTE_DIRECTORY) {
-            FILE* file;
-		    sprintf(fileName, "Machines/%s/config.ini", wfd.cFileName);
-            file = fopen(fileName, "rb");
-            if (file != NULL) {
-                if (machineIsValid(wfd.cFileName, checkRoms)) {
-                    strcpy(names[index], wfd.cFileName);
-                    machineNames[index] = names[index];
-                    index++;
-                }
-                fclose(file);
-            }
-            
-        }
-        cont = FindNextFile(handle, &wfd);
-    }
-
-	FindClose(handle);
-    
-    machineNames[index] = NULL;
-
-    return machineNames;
-}
-#endif
 
 void machineUpdate(Machine* machine)
 {
@@ -665,3 +681,485 @@ void machineSaveState(Machine* machine)
 
     saveStateClose(state);
 }
+
+int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
+{
+    UInt8* ram     = NULL;
+    UInt32 ramSize = 0;
+    void* jisyoRom = NULL;
+    int jisyoRomSize = 0;
+    int success = 1;
+    UInt8* buf;
+    int size;
+    int i;
+
+    // Prioritize 1kB Mirrored ram as main ram (works good with coleco style
+    // systems with expansion ram but maybe main ram type should be an arg instead?).
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        int slot;
+        int subslot;
+        int startPage;
+        char* romName;
+        
+        // Don't map slots with error
+        if (machine->slotInfo[i].error) {
+            continue;
+        }
+
+        romName   = strlen(machine->slotInfo[i].inZipName) ? machine->slotInfo[i].inZipName : machine->slotInfo[i].name;
+        slot      = machine->slotInfo[i].slot;
+        subslot   = machine->slotInfo[i].subslot;
+        startPage = machine->slotInfo[i].startPage;
+        size      = 0x2000 * machine->slotInfo[i].pageCount;
+
+        if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
+            success &= ram1kBMirroredCreate(size, slot, subslot, startPage, &ram, &ramSize);
+            continue;
+        }
+    }
+
+    /* Initialize RAM and 'imlicit' rom types */
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        int slot;
+        int subslot;
+        int startPage;
+        char* romName;
+        
+        // Don't map slots with error
+        if (machine->slotInfo[i].error) {
+            continue;
+        }
+
+        romName   = strlen(machine->slotInfo[i].inZipName) ? machine->slotInfo[i].inZipName : machine->slotInfo[i].name;
+        slot      = machine->slotInfo[i].slot;
+        subslot   = machine->slotInfo[i].subslot;
+        startPage = machine->slotInfo[i].startPage;
+        size      = 0x2000 * machine->slotInfo[i].pageCount;
+
+        if (machine->slotInfo[i].romType == RAM_NORMAL) {
+            if (ram == NULL) {
+                success &= ramNormalCreate(size, slot, subslot, startPage, &ram, &ramSize);
+            }
+            else {
+                success &= ramNormalCreate(size, slot, subslot, startPage, NULL, NULL);
+            }
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == RAM_MAPPER) {
+            if (ram == NULL) {
+                success &= ramMapperCreate(size, slot, subslot, startPage, &ram, &ramSize);
+            }
+            else {
+                success &= ramMapperCreate(size, slot, subslot, startPage, NULL, NULL);
+            }
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_JISYO) {
+            if (jisyoRom == NULL) {
+                jisyoRom = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &jisyoRomSize);
+
+                if (jisyoRom == NULL) {
+                    success = 0;
+                    continue;
+                }
+            }
+            continue;
+        }
+    }
+
+    if (ram == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        int slot;
+        int subslot;
+        int startPage;
+        char* romName;
+        
+        // Don't map slots with error
+        if (machine->slotInfo[i].error) {
+            continue;
+        }
+
+        romName   = strlen(machine->slotInfo[i].inZipName) ? machine->slotInfo[i].inZipName : machine->slotInfo[i].name;
+        slot      = machine->slotInfo[i].slot;
+        subslot   = machine->slotInfo[i].subslot;
+        startPage = machine->slotInfo[i].startPage;
+        size      = 0x2000 * machine->slotInfo[i].pageCount;
+        
+        if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == RAM_NORMAL) {
+            continue;
+        }
+        
+        if (machine->slotInfo[i].romType == RAM_MAPPER) {
+            continue;
+        }
+        
+        if (machine->slotInfo[i].romType == ROM_JISYO) {
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SNATCHER) {
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SNATCHER);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SDSNATCHER) {
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_SDSNATCHER);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SCCMIRRORED) {
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_MIRRORED);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SCCEXTENDED) {
+            success &= romMapperSCCplusCreate(NULL, NULL, 0, slot, subslot, startPage, SCC_EXTENDED);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_PAC) {
+            success &= romMapperPACCreate("Pac.rom", NULL, 0, slot, subslot, startPage);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_EXTRAM) {
+            success &= ramMapperCreate(size, slot, subslot, startPage, NULL, NULL);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MEGARAM) {
+            success &= romMapperMegaRAMCreate(size, slot, subslot, startPage);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == SRAM_MATSUCHITA) {
+            success &= sramMapperMatsushitaCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == SRAM_S1985) {
+            success &= sramMapperS1985Create();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_S1990) {
+            success &= romMapperS1990Create();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_TURBORTIMER) {
+            success &= romMapperTurboRTimerCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_TURBORIO) {
+            success &= romMapperTurboRIOCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_F4DEVICE) {
+            success &= romMapperF4deviceCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXMIDI) {
+            success &= MSXMidiCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_F4INVERTED) {
+            success &= romMapperF4deviceCreate(1);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SONYHBI55) {
+            success &= romMapperSonyHBI55Create();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXAUDIODEV) {
+            success &= romMapperMsxAudioCreate(NULL, NULL, 0, 0, 0, 0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_TURBORPCM) {
+            success &= romMapperTurboRPcmCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXPRN) {
+            success &= romMapperMsxPrnCreate();
+            continue;
+        }
+
+        // --------- SVI specific mappers
+        if (machine->slotInfo[i].romType == ROM_SVI328FDC) {
+            success &= svi328FdcCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SVI328PRN) {
+            success &= romMapperSvi328PrnCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_SVI328RS232) {
+            success &= romMapperSvi328Rs232Create(SVI328_RS232);
+            continue;
+        }
+        // -------------------------------
+        
+        buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
+
+        if (buf == NULL) {
+            success = 0;
+            continue;
+        }
+
+        switch (machine->slotInfo[i].romType) {
+        case ROM_0x4000:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_0xC000:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_BASIC:
+            success &= romMapperBasicCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_PLAIN:
+            success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+
+        case ROM_STANDARD:
+            success &= romMapperStandardCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_MSXDOS2:
+            success &= romMapperMsxDos2Create(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KONAMI5:
+            success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_MOONSOUND:
+            success &= romMapperMoonsoundCreate(romName, buf, size, 640);
+            break;
+
+        case ROM_SCC:
+            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCC_EXTENDED);
+            break;
+
+        case ROM_SCCPLUS:
+            success &= romMapperSCCplusCreate(romName, buf, size, slot, subslot, startPage, SCCP_EXTENDED);
+            break;
+            
+        case ROM_KONAMI4:
+            success &= romMapperKonami4Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_GAMEREADER:
+            success &= romMapperGameReaderCreate(0, slot, subslot);
+            break;
+
+        case ROM_MAJUTSUSHI:
+            success &= romMapperMajutsushiCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_HOLYQURAN:
+            success &= romMapperHolyQuranCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_KONAMISYNTH:
+            success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KONAMKBDMAS:
+            {
+                char voiceName[512];
+                int voiceSize = 0;
+                UInt8* voiceData;
+                int j;
+
+                strcpy(voiceName, machine->slotInfo[i].name);
+                for (j = strlen(voiceName); j > 0 && voiceName[j] != '.'; j--);
+                voiceName[j] = 0;
+                strcat(voiceName, "_voice.rom");
+                    
+                voiceData = romLoad(voiceName, NULL, &voiceSize);
+                success &= romMapperKonamiKeyboardMasterCreate(romName, buf, size, 
+                                                               slot, subslot, startPage,
+                                                               voiceData, voiceSize);
+                if (voiceData != NULL) {
+                    free(voiceData);
+                }
+            }
+            break;
+            
+        case ROM_ASCII8:
+            success &= romMapperASCII8Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_ASCII16:
+            success &= romMapperASCII16Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_PANASONIC16:
+            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x4000);
+            break;
+
+        case ROM_PANASONIC32:
+            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x8000);
+            break;
+            
+        case ROM_ASCII8SRAM:
+            success &= romMapperASCII8sramCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_ASCII16SRAM:
+            success &= romMapperASCII16sramCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_MSXAUDIO:
+            success &= romMapperMsxAudioCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_KOEI:
+            success &= romMapperKoeiCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_NATIONAL:
+            success &= romMapperNationalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_KONAMI4NF:
+            success &= romMapperKonami4nfCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_ASCII16NF:
+            success &= romMapperASCII16nfCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_GAMEMASTER2:
+            success &= romMapperGameMaster2Create(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_HARRYFOX:
+            success &= romMapperHarryFoxCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_HALNOTE:
+            success &= romMapperHalnoteCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_RTYPE:
+            success &= romMapperRTypeCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_CROSSBLAIM:
+            success &= romMapperCrossBlaimCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_LODERUNNER:
+            success &= romMapperLodeRunnerCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KOREAN80:
+            success &= romMapperKorean80Create(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KOREAN90:
+            success &= romMapperKorean90Create(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_KOREAN126:
+            success &= romMapperKorean126Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_FMPAK:
+            success &= romMapperFMPAKCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_FMPAC:
+            success &= romMapperFMPACCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_MSXMUSIC:
+            success &= romMapperMsxMusicCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_NORMAL:
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_CASPATCH:
+            success &= romMapperCasetteCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_DISKPATCH:
+            success &= romMapperDiskCreate(romName, buf, size, slot, subslot, startPage);
+           break;
+
+        case ROM_TC8566AF:
+            success &= romMapperTC8566AFCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_MICROSOL:
+            success &= romMapperMicrosolCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_NATIONALFDC:
+            success &= romMapperNationalFdcCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_PHILIPSFDC:
+            success &= romMapperPhilipsFdcCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_SVI738FDC:
+            success &= romMapperSvi738FdcCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_KANJI:
+            success &= romMapperKanjiCreate(buf, size);
+            break;
+
+        case ROM_KANJI12:
+            success &= romMapperKanji12Create(buf, size);
+            break;
+
+        case ROM_BUNSETU:
+            success &= romMapperBunsetuCreate(romName, buf, size, slot, subslot, startPage, jisyoRom, jisyoRomSize);
+            break;
+        }
+        free(buf);
+    }
+
+    if (jisyoRom != NULL) {
+        free(jisyoRom);
+    }
+
+    if (mainRam != NULL) {
+        *mainRam = ram;
+    }
+    
+    if (mainRamSize != NULL) {
+        *mainRamSize = ramSize;
+    }
+
+    return success;
+}
+
