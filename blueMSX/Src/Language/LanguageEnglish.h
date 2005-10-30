@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -621,6 +621,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->casImage                = "Tape Image";
 
     ls->menuCartExternalRam     = "External RAM";
+
+    // New entries in 2.5
+    ls->menuCartGameReader      = "Game Reader";
 };
 
 

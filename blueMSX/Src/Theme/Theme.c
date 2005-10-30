@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-10-04 23:03:34 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,6 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_DISKB:       idx = TEST(actionType, themeTriggerLedDiskB()); break;
     case THEME_TRIGGER_IMG_CAS:         idx = TEST(actionType, themeTriggerLedCas()); break;
     case THEME_TRIGGER_IMG_AS:          idx = TEST(actionType, themeTriggerLedAudioSwitch()); break;
-    case THEME_TRIGGER_IMG_TRACE:       idx = TEST(actionType, themeTriggerCpuTraceEnable()); break;
     case THEME_TRIGGER_IMG_FS:          idx = TEST(actionType, themeTriggerLedFrontSwitch()); break;
     case THEME_TRIGGER_IMG_PS:          idx = TEST(actionType, themeTriggerLedPauseSwitch()); break;
     case THEME_TRIGGER_IMG_CAPS:        idx = TEST(actionType, themeTriggerLedCaps()); break;

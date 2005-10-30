@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000Castle.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-10-30 01:49:54 $
 **
@@ -27,26 +27,12 @@
 **
 ******************************************************************************
 */
-#ifndef IO_PORT_H
-#define IO_PORT_H
+#ifndef ROMMAPPER_SG1000_CASTLE_H
+#define ROMMAPPER_SG1000_CASTLE_H
 
 #include "MSXTypes.h"
 
-typedef UInt8 (*IoPortRead)(void*, UInt16);
-typedef void  (*IoPortWrite)(void*, UInt16, UInt8);
-
-void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregister(int port);
-
-void ioPortRegisterUnused(int idx, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterUnused(int idx);
-
-void ioPortRegisterSub(int subport, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterSub(int subport);
-int ioPortCheckSub(int subport);
-
-void  ioPortReset();
-UInt8 ioPortRead(void* ref, UInt16 port);
-void  ioPortWrite(void* ref, UInt16 port, UInt8 value);
+int romMapperSg1000CastleCreate(char* filename, UInt8* romData, 
+                                int size, int slot, int sslot, int startPage);
 
 #endif

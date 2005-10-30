@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-09-17 03:53:37 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,7 @@ static HWND hDlgMain;
 static SlotInfo editSlotInfo;
 static int      editRamNormalSize;
 static int      editRamMapperSize;
+static int      editRamMirroredSize;
 static int      editExtRamSize;
 static int      editMegaRamSize;
 
@@ -429,6 +430,15 @@ static void getSizeControl(HWND hDlg)
     if (editSlotInfo.romType == RAM_NORMAL) {
         if (value == 8 || value == 16 || value == 32 || value == 64) {
             editRamNormalSize = 1024 * value;
+            editSlotInfo.startPage = 8 - editRamNormalSize / 0x2000;
+        }
+    }
+
+    if (editSlotInfo.romType == RAM_1KB_MIRRORED) {
+        if (value ==  8 || value == 16 || value == 24 || value == 32 || 
+            value == 40 || value == 48 || value == 56 || value == 64) {
+            editRamMirroredSize = 1024 * value;
+            editSlotInfo.startPage = 8 - editRamMirroredSize / 0x2000;
         }
     }
 
@@ -498,15 +508,17 @@ static void getSlotControl(HWND hDlg)
 
 static void getAddressControl(HWND hDlg)
 {
-    if (editSlotInfo.romType == ROM_NORMAL      || 
-        editSlotInfo.romType == ROM_MSXMUSIC    ||
-        editSlotInfo.romType == ROM_DISKPATCH   || 
-        editSlotInfo.romType == ROM_CASPATCH    ||
-        editSlotInfo.romType == ROM_MICROSOL    ||
-        editSlotInfo.romType == ROM_NATIONALFDC ||
-        editSlotInfo.romType == ROM_PHILIPSFDC  ||
-        editSlotInfo.romType == ROM_SVI738FDC   ||
-        editSlotInfo.romType == ROM_FMPAC       ||
+    if (editSlotInfo.romType == RAM_NORMAL       || 
+        editSlotInfo.romType == RAM_1KB_MIRRORED || 
+        editSlotInfo.romType == ROM_NORMAL       || 
+        editSlotInfo.romType == ROM_MSXMUSIC     ||
+        editSlotInfo.romType == ROM_DISKPATCH    || 
+        editSlotInfo.romType == ROM_CASPATCH     ||
+        editSlotInfo.romType == ROM_MICROSOL     ||
+        editSlotInfo.romType == ROM_NATIONALFDC  ||
+        editSlotInfo.romType == ROM_PHILIPSFDC   ||
+        editSlotInfo.romType == ROM_SVI738FDC    ||
+        editSlotInfo.romType == ROM_FMPAC        ||
         editSlotInfo.romType == ROM_BUNSETU) 
     {
         char selection[64];
@@ -529,10 +541,14 @@ static void getAddressControl(HWND hDlg)
 static void endEditControls(HWND hDlg)
 {
     switch (editSlotInfo.romType) {
+    case RAM_1KB_MIRRORED:
+        strcpy(editSlotInfo.name, "");
+        editSlotInfo.pageCount = editRamMirroredSize / 0x2000;
+        break;
+        
     case RAM_NORMAL:
         strcpy(editSlotInfo.name, "");
         editSlotInfo.pageCount = editRamNormalSize / 0x2000;
-        editSlotInfo.startPage = 8 - editSlotInfo.pageCount;
         break;
         
     case RAM_MAPPER:
@@ -651,6 +667,7 @@ static void endEditControls(HWND hDlg)
     case ROM_FMPAK:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
+    case ROM_GAMEREADER:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 8;
         break;
@@ -696,7 +713,7 @@ static void setEditControls(HWND hDlg)
     }
     romPages = romSize / 0x2000;
 
-    if (romType != RAM_NORMAL && romType != RAM_MAPPER && 
+    if (romType != RAM_1KB_MIRRORED && romType != RAM_NORMAL && romType != RAM_MAPPER && 
         romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && 
@@ -761,12 +778,15 @@ static void setEditControls(HWND hDlg)
     }
 
     // Set address
-    if (romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
+    if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED ||
+        romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
         romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC ||
         romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU)
     {
-        int size = (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
+        int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
+                   romType == RAM_1KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
+                   (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
                    romType == ROM_FMPAC || romType == ROM_PAC ? 2 : 
                    romPages > 8 ? 8 : romPages < 1 ? 1 : romPages;
         int end = 8 - size;
@@ -782,8 +802,24 @@ static void setEditControls(HWND hDlg)
         }
     }
 
-
     switch (romType) {
+    case RAM_1KB_MIRRORED:
+        {
+            int index = 0;
+            for (i = 8; i <= 64; i += 8) {
+                sprintf(buffer, "%d kB", i);
+                SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_ADDSTRING, 0, (LPARAM)buffer);
+                if (index == 0 || i == editRamMirroredSize / 1024) {
+                    SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_SETCURSEL, index, 0);
+                }
+                index++;
+            }
+
+            SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
+            EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
+        }
+        break;
+
     case RAM_NORMAL:
         {
             int index = 0;
@@ -796,9 +832,6 @@ static void setEditControls(HWND hDlg)
                 index++;
             }
 
-            EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
-            sprintf(buffer, "%.4X - FFFF", 0x10000 - editRamNormalSize);
-            SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), buffer);
             SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
             EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
         }
@@ -954,6 +987,12 @@ static void setEditControls(HWND hDlg)
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
+
+    case ROM_GAMEREADER:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xFFFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
         
     case ROM_PAC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0x7FFF");
@@ -1009,7 +1048,9 @@ static void setEditControls(HWND hDlg)
 }
 
 static RomType romTypeList[] = {
+    ROM_GAMEREADER,
     RAM_NORMAL,
+    RAM_1KB_MIRRORED,
     RAM_MAPPER,
     ROM_EXTRAM,
     ROM_MEGARAM,
@@ -1140,10 +1181,11 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             }
         }
 
-        editRamNormalSize = editSlotInfo.romType == RAM_NORMAL  ? editSlotInfo.pageCount * 0x2000 : 0x10000;
-        editRamMapperSize = editSlotInfo.romType == RAM_MAPPER  ? editSlotInfo.pageCount * 0x2000 : 0x10000;
-        editMegaRamSize   = editSlotInfo.romType == ROM_MEGARAM ? editSlotInfo.pageCount * 0x2000 : 0xc0000;
-        editExtRamSize    = editSlotInfo.romType == ROM_EXTRAM  ? editSlotInfo.pageCount * 0x2000 : 0x400000;
+        editRamNormalSize   = editSlotInfo.romType == RAM_NORMAL       ? editSlotInfo.pageCount * 0x2000 : 0x10000;
+        editRamMirroredSize = editSlotInfo.romType == RAM_1KB_MIRRORED ? editSlotInfo.pageCount * 0x2000 : 0x2000;
+        editRamMapperSize   = editSlotInfo.romType == RAM_MAPPER       ? editSlotInfo.pageCount * 0x2000 : 0x10000;
+        editMegaRamSize     = editSlotInfo.romType == ROM_MEGARAM      ? editSlotInfo.pageCount * 0x2000 : 0xc0000;
+        editExtRamSize      = editSlotInfo.romType == ROM_EXTRAM       ? editSlotInfo.pageCount * 0x2000 : 0x400000;
 
         setEditControls(hDlg);
 

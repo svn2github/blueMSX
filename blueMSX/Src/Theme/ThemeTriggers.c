@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-10-04 23:03:34 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -127,10 +127,6 @@ int themeTriggerEmuRunning() {
 
 int themeTriggerFdcTiming() {
     return boardGetFdcTimingEnable();
-}
-
-int themeTriggerCpuTraceEnable() {
-    return boardTraceGetEnable();
 }
 
 int themeTriggerLedDiskA() {

@@ -1,13 +1,17 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-10-30 01:49:54 $
 **
+** Author: Daniel Vik
+**
+** Description: Debugger support for an R800 object
+**
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2005 Daniel Vik
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -25,28 +29,18 @@
 **     misrepresented as being the original software.
 **  3. This notice may not be removed or altered from any source distribution.
 **
+**
 ******************************************************************************
 */
-#ifndef IO_PORT_H
-#define IO_PORT_H
-
+#ifndef R800_DEBUG_H
+#define R800_DEBUG_H
+ 
 #include "MSXTypes.h"
+#include "R800.h"
 
-typedef UInt8 (*IoPortRead)(void*, UInt16);
-typedef void  (*IoPortWrite)(void*, UInt16, UInt8);
+typedef struct R800Debug R800Debug;
 
-void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregister(int port);
-
-void ioPortRegisterUnused(int idx, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterUnused(int idx);
-
-void ioPortRegisterSub(int subport, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterSub(int subport);
-int ioPortCheckSub(int subport);
-
-void  ioPortReset();
-UInt8 ioPortRead(void* ref, UInt16 port);
-void  ioPortWrite(void* ref, UInt16 port, UInt8 value);
+void r800DebugCreate(R800* r800);
+void r800DebugDestroy();
 
 #endif

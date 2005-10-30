@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-10-04 23:03:34 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,6 @@ typedef enum {
     THEME_TRIGGER_IMG_STOPPED,
     THEME_TRIGGER_IMG_PAUSED,
     THEME_TRIGGER_IMG_RUNNING,
-    THEME_TRIGGER_IMG_TRACE,
     THEME_TRIGGER_IMG_DISKA,
     THEME_TRIGGER_IMG_DISKB,
     THEME_TRIGGER_IMG_CAS,
@@ -225,7 +224,6 @@ int themeTriggerEmuStopped();
 int themeTriggerEmuPaused();
 int themeTriggerEmuRunning();
 int themeTriggerFdcTiming();
-int themeTriggerCpuTraceEnable();
 int themeTriggerLedDiskA();
 int themeTriggerLedDiskB();
 int themeTriggerLedCas();

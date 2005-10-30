@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-10-04 23:03:34 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -163,7 +163,6 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "emu-togglepause"))         return (ButtonEvent)actionEmuTogglePause;
     if (0 == strcmp(action, "emu-stop"))                return (ButtonEvent)actionEmuStop;
     if (0 == strcmp(action, "emu-togglemousecapture"))  return (ButtonEvent)actionToggleMouseCapture;
-    if (0 == strcmp(action, "emu-togglecputrace"))      return (ButtonEvent)actionCpuTraceToggle;
     
     if (0 == strcmp(action, "emu-setmaxspeed"))         return (ButtonEvent)actionMaxSpeedSet;
     if (0 == strcmp(action, "emu-releasemaxspeed"))     return (ButtonEvent)actionMaxSpeedRelease;
@@ -328,8 +327,6 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "emu-paused"))               return t | THEME_TRIGGER_IMG_PAUSED;
     if (0 == strcmp(s, "emu-running"))              return t | THEME_TRIGGER_IMG_RUNNING;
     
-    if (0 == strcmp(s, "cpu-trace"))                return t | THEME_TRIGGER_IMG_TRACE;
-
     if (0 == strcmp(s, "led-diska"))                return t | THEME_TRIGGER_IMG_DISKA;
     if (0 == strcmp(s, "led-diskb"))                return t | THEME_TRIGGER_IMG_DISKB;
     if (0 == strcmp(s, "led-cassette"))             return t | THEME_TRIGGER_IMG_CAS;

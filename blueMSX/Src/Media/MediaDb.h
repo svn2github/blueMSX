@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-31 06:51:52 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,11 @@ enum  {
     ROM_MSXRS232    = 89,
     ROM_TURBORIO    = 90,
     ROM_KONAMKBDMAS = 91,
-    ROM_MAXROMID    = 91
+    ROM_GAMEREADER  = 92,
+    RAM_1KB_MIRRORED= 93,
+    ROM_SG1000      = 94,
+    ROM_SG1000CASTLE= 95,
+    ROM_MAXROMID    = 95
 };
 
 typedef struct MediaType MediaType;
@@ -165,5 +169,10 @@ void mediaDbSetDefaultRomType(RomType romType);
 RomType mediaDbOldStringToType(const char* romName);
 const char* romTypeToString(RomType romType);
 const char* romTypeToShortString(RomType romType);
+
+int romTypeIsRom(RomType romType);
+int romTypeIsMegaRom(RomType romType);
+int romTypeIsMegaRam(RomType romType);
+int romTypeIsFmPac(RomType romType);
 
 #endif /*MEDIA_DB_H*/

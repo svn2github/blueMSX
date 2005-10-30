@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-09-24 07:36:09 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,18 +27,14 @@
 **
 ******************************************************************************
 */
-#define USE_ARCH_GLOB
 extern "C" {
 #include "MsxTypes.h"
 #include "MediaDb.h"
 #include "Crc32Calc.h"
 #include "TokenExtract.h"
 #include "StrcmpNoCase.h"
-#ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
-#else
-#include <windows.h>
-#endif
+#include "Board.h"
 }
 
 #include "TinyXml.h"
@@ -133,6 +129,8 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "Bunsetsu")     return ROM_BUNSETU;
     if (name == "CasPatch")     return ROM_CASPATCH;
     if (name == "Coleco")       return ROM_COLECO;
+    if (name == "SG1000")       return ROM_SG1000;
+    if (name == "SG1000Castle") return ROM_SG1000CASTLE;
     if (name == "FMPAC")        return ROM_FMPAC;
     if (name == "FMPAK")        return ROM_FMPAK;
     if (name == "DiskPatch")    return ROM_DISKPATCH;
@@ -166,6 +164,9 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "0xC000")       return ROM_0xC000;
     if (name == "auto")         return ROM_PLAIN;
     if (name == "basic")        return ROM_BASIC;
+
+    // SG-1000 roms
+    if (name == "sg1000castle") return ROM_SG1000CASTLE;
 
     return ROM_UNKNOWN;
 }
@@ -265,6 +266,10 @@ static void mediaDbAddDump(TiXmlElement* dmp,
 
         if (strcmpnocase(system.c_str(), "svi") == 0) {
             romType = ROM_SVI328;
+        }
+
+        if (strcmpnocase(system.c_str(), "sg1000") == 0 && romType != ROM_SG1000CASTLE) {
+            romType = ROM_SG1000;
         }
 
         // For standard roms, a start tag is used to specify start address
@@ -506,7 +511,10 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "jisyo")        return ROM_JISYO;    
     if (name == "bunsetsu")     return ROM_BUNSETU;
     if (name == "coleco")       return ROM_COLECO;
+    if (name == "sg1000")       return ROM_SG1000;
+    if (name == "castle")       return ROM_SG1000CASTLE;
     if (name == "svi328")       return ROM_SVI328;
+    if (name == "gamereader")   return ROM_GAMEREADER;
 
     return ROM_UNKNOWN;
 }
@@ -550,6 +558,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_PHILIPSFDC:  return "Philips Disk Controller";
     case ROM_SVI738FDC:   return "SVI-738 Disk Controller";
     case RAM_MAPPER:      return "Mapped RAM";
+    case RAM_1KB_MIRRORED:return "1kB Mirrored RAM";
     case RAM_NORMAL:      return "Normal RAM";
     case ROM_KANJI:       return "Kanji";
     case ROM_HOLYQURAN:   return "Holy Quran";
@@ -599,10 +608,13 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI328RS232: return "SVI-328 Serial Port";
     case ROM_SVI80COL:    return "SVI 80 Column Card";
     case ROM_COLECO:      return "Coleco Cartridge";
+    case ROM_SG1000:      return "SG-1000 Cartridge";
+    case ROM_SG1000CASTLE:return "The Castle";
     case ROM_SONYHBI55:   return "Sony HBI-55";
     case ROM_MSXAUDIODEV: return "MSX Audio Chip";
     case ROM_MSXPRN:      return "MSX Printer";
     case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
+    case ROM_GAMEREADER:  return "Sunrise GameReader";
 
     case ROM_UNKNOWN:     return langUnknown();
     }
@@ -648,6 +660,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_PHILIPSFDC:  return "PHILIPSFDC";
     case ROM_SVI738FDC:   return "SVI738 FDC";
     case RAM_MAPPER:      return "MAPPED RAM";
+    case RAM_1KB_MIRRORED:return "1K MIR RAM";
     case RAM_NORMAL:      return "NORMAL RAM";
     case ROM_KANJI:       return "KANJI";
     case ROM_HOLYQURAN:   return "HOLYQURAN";
@@ -698,10 +711,13 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI328RS232: return "SVI328RS232";
     case ROM_SVI80COL:    return "SVI80COL";
     case ROM_COLECO:      return "COLECO";
+    case ROM_SG1000:      return "SG1000";
+    case ROM_SG1000CASTLE:return "THECASTLE";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";
     case ROM_MSXPRN:      return "MSXPRN";
     case ROM_TURBORPCM:   return "TURBOR PCM";
+    case ROM_GAMEREADER:  return "GAMEREADER";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -709,7 +725,90 @@ extern "C" const char* romTypeToShortString(RomType romType)
     return "UNKNOWN";
 }
 
-#ifdef USE_ARCH_GLOB
+int romTypeIsRom(RomType romType) {
+    switch (romType) {
+    case ROM_SCC:         return 1;
+    case ROM_SCCPLUS:     return 1;
+    case ROM_MOONSOUND:   return 1;
+    case ROM_SNATCHER:    return 1;
+    case ROM_SDSNATCHER:  return 1;
+    case ROM_SCCMIRRORED: return 1;
+    case ROM_SCCEXTENDED: return 1;
+    case ROM_PLAIN:       return 1;
+    case ROM_FMPAK:       return 1;
+    case ROM_NORMAL:      return 1;
+    case ROM_DISKPATCH:   return 1;
+    case ROM_CASPATCH:    return 1;
+    case ROM_MICROSOL:    return 1;
+    case ROM_NATIONALFDC: return 1;
+    case ROM_PHILIPSFDC:  return 1;
+    case ROM_SVI738FDC:   return 1;
+    case ROM_HOLYQURAN:   return 1;
+    case SRAM_MATSUCHITA: return 1;
+    case ROM_BASIC:       return 1;
+    case ROM_0x4000:      return 1;
+    case ROM_0xC000:      return 1;
+	case ROM_KONAMISYNTH: return 1;
+    case ROM_KONAMKBDMAS: return 1;
+    }
+    return 0;
+}
+
+int romTypeIsMegaRom(RomType romType) {
+    switch (romType) {
+    case ROM_STANDARD:    return 1;
+    case ROM_MSXDOS2:     return 1;
+    case ROM_KONAMI5:     return 1;
+    case ROM_KONAMI4:     return 1;
+    case ROM_ASCII8:      return 1;
+    case ROM_ASCII16:     return 1;
+    case ROM_GAMEMASTER2: return 1;
+    case ROM_ASCII8SRAM:  return 1;
+    case ROM_TC8566AF:    return 1;
+    case ROM_ASCII16SRAM: return 1;
+    case ROM_RTYPE:       return 1;
+    case ROM_CROSSBLAIM:  return 1;
+    case ROM_HARRYFOX:    return 1;
+    case ROM_KOREAN80:    return 1;
+    case ROM_KOREAN126:   return 1;
+    case ROM_KONAMI4NF:   return 1;
+    case ROM_ASCII16NF:   return 1;
+    case ROM_HOLYQURAN:   return 1;
+    case ROM_MAJUTSUSHI:  return 1;
+    case ROM_KOEI:        return 1;
+    case ROM_HALNOTE:     return 1;
+    case ROM_LODERUNNER:  return 1;
+    case ROM_MSXAUDIO:    return 1;
+    case ROM_KOREAN90:    return 1;
+    case ROM_SONYHBI55:   return 1;
+    case ROM_EXTRAM512KB: return 1;
+    case ROM_EXTRAM1MB:   return 1;
+    case ROM_EXTRAM2MB:   return 1;
+    case ROM_EXTRAM4MB:   return 1;
+    case ROM_GAMEREADER:  return 1;
+    }
+    return 0;
+}
+
+int romTypeIsMegaRam(RomType romType) {
+    switch (romType) {
+    case ROM_MEGARAM:     return 1;
+    case ROM_MEGARAM128:  return 1;
+    case ROM_MEGARAM256:  return 1;
+    case ROM_MEGARAM512:  return 1;
+    case ROM_MEGARAM768:  return 1;
+    case ROM_MEGARAM2M:   return 1;
+    }
+    return 0;
+}
+
+int romTypeIsFmPac(RomType romType) {
+    switch (romType) {
+    case ROM_FMPAC:       return 1;
+    }
+    return 0;
+}
+
 extern "C" void mediaDbLoad(const char* directory)
 {
     if (romdb == NULL) {
@@ -736,42 +835,13 @@ extern "C" void mediaDbLoad(const char* directory)
         archGlobFree(glob);
     }
 }
-#else
-extern "C" void mediaDbLoad(const char* directory)
-{
-    if (romdb == NULL) {
-        romdb = new MediaDb;
-    }
-    if (diskdb == NULL) {
-        diskdb = new MediaDb;
-    }
-    if (casdb == NULL) {
-        casdb = new MediaDb;
-    }
-
-    string path = directory;
-    path += "\\";
-
-    string searchPath = path + "*.xml";
-    WIN32_FIND_DATA wfd;
-    HANDLE handle = FindFirstFile(searchPath.c_str(), &wfd);
-
-    if (handle != INVALID_HANDLE_VALUE) {
-        do {
-            string filename = path + wfd.cFileName;
-            mediaDbAddFromXmlFile(filename.c_str());
-        } while (FindNextFile(handle, &wfd));
-
-    	FindClose(handle);
-    }
-}
-#endif
 
 extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size) 
 {
     const char* romData = (const char*)buffer;
     static MediaType defaultColeco(ROM_COLECO, "Unknown Coleco rom");
     static MediaType defaultSvi(ROM_SVI328, "Unknown SVI rom");
+    static MediaType defaultSg1000(ROM_SG1000, "Unknown SG-1000 rom");
 
     if (romdb == NULL) {
         return NULL;
@@ -789,7 +859,13 @@ extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size)
     {
         mediaType = &defaultColeco;
     }
-
+#if 0
+    if (mediaType == NULL &&
+        size <= 0x8000 && (unsigned char)romData[0] == 0x55 && (unsigned char)romData[1] == 0xAA) 
+    {
+        mediaType = &defaultSg1000;
+    }
+#endif
     return mediaType;
 }
 
@@ -914,6 +990,23 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     if (mediaType->romType != ROM_UNKNOWN) {
         return mediaType;
     }
+
+    BoardType boardType = boardGetType();
+
+    switch (boardType) {
+    case BOARD_SVI:
+        staticMediaType.romType = ROM_SVI328;
+        return &staticMediaType;
+    case BOARD_COLECO:
+        staticMediaType.romType = ROM_COLECO;
+        return &staticMediaType;
+    case BOARD_SG1000:
+        staticMediaType.romType = ROM_SG1000;
+        return &staticMediaType;
+    case BOARD_MSX:
+        break;
+    }
+
 
 	if (size <= 0x10000) {
 		if (size == 0x10000) {

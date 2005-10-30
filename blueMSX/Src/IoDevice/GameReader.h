@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-10-30 01:49:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,26 +27,20 @@
 **
 ******************************************************************************
 */
-#ifndef IO_PORT_H
-#define IO_PORT_H
+#ifndef GAMER_READER_H
+#define GAMER_READER_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
-typedef UInt8 (*IoPortRead)(void*, UInt16);
-typedef void  (*IoPortWrite)(void*, UInt16, UInt8);
+typedef void* GrHandle;
 
-void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregister(int port);
+GrHandle* gameReaderCreate(int slot);
+void gameReaderDestroy(GrHandle* grHandle);
 
-void ioPortRegisterUnused(int idx, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterUnused(int idx);
+int gameReaderRead(GrHandle* grHandle, UInt16 address, void* buffer, int length);
+int gameReaderWrite(GrHandle* grHandle, UInt16 address, void* buffer, int length);
 
-void ioPortRegisterSub(int subport, IoPortRead read, IoPortWrite write, void* ref);
-void ioPortUnregisterSub(int subport);
-int ioPortCheckSub(int subport);
-
-void  ioPortReset();
-UInt8 ioPortRead(void* ref, UInt16 port);
-void  ioPortWrite(void* ref, UInt16 port, UInt8 value);
+int gameReaderReadIo(GrHandle* grHandle, UInt16 port, UInt8* value);
+int gameReaderWriteIo(GrHandle* grHandle, UInt16 port, UInt8 value);
 
 #endif

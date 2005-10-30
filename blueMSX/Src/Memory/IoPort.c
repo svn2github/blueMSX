@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@ typedef struct IoPortInfo {
 
 static IoPortInfo ioTable[256];
 static IoPortInfo ioSubTable[256];
+static IoPortInfo ioUnused[2];
 static int currentSubport;
 
 void ioPortReset()
@@ -63,6 +64,20 @@ void ioPortUnregister(int port)
     ioTable[port].read  = NULL;
     ioTable[port].write = NULL;
     ioTable[port].ref   = NULL;
+}
+
+void ioPortRegisterUnused(int idx, IoPortRead read, IoPortWrite write, void* ref)
+{
+    ioUnused[idx].read  = read;
+    ioUnused[idx].write = write;
+    ioUnused[idx].ref   = ref;
+}
+
+void ioPortUnregisterUnused(int idx)
+{
+    ioUnused[idx].read  = NULL;
+    ioUnused[idx].write = NULL;
+    ioUnused[idx].ref   = NULL;
 }
 
 void ioPortRegisterSub(int subport, IoPortRead read, IoPortWrite write, void* ref)
@@ -98,6 +113,12 @@ UInt8 ioPortRead(void* ref, UInt16 port)
     }
 
     if (ioTable[port].read == NULL) {
+        if (ioUnused[0].read != NULL) {
+            return ioUnused[0].read(ioUnused[0].ref, port);
+        }
+        if (ioUnused[1].read != NULL) {
+            return ioUnused[1].read(ioUnused[1].ref, port);
+        }
         return 0xff;
     }
 
@@ -122,6 +143,12 @@ void  ioPortWrite(void* ref, UInt16 port, UInt8 value)
 
     if (ioTable[port].write != NULL) {
         ioTable[port].write(ioTable[port].ref, port, value);
+    }
+    else if (ioUnused[0].write != NULL) {
+        ioUnused[0].write(ioUnused[0].ref, port, value);
+    }
+    else if (ioUnused[1].write != NULL) {
+        ioUnused[1].write(ioUnused[1].ref, port, value);
     }
 }
 

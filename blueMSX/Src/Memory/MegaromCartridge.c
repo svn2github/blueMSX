@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-07 20:55:29 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,6 +76,8 @@
 #include "romMapperSvi738Fdc.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMoonsound.h"
+#include "romMapperGameReader.h"
+#include "romMapperSg1000Castle.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -153,6 +155,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
     case ROM_PAC:
         romMapperPACCreate("PacA.rom", NULL, 0, slot, sslot, 2);
+        break;
+
+    case ROM_GAMEREADER:
+        romMapperGameReaderCreate(cartNo, slot, sslot);
         break;
 
     case ROM_FMPAC:
@@ -406,6 +412,18 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SVI328:
             romMapperNormalCreate(romName, buf, size, 1, 0, 0);
+            break;
+
+        case ROM_COLECO:
+            romMapperNormalCreate(romName, buf, size, 0, 0, 4);
+            break;
+
+        case ROM_SG1000:
+            romMapperNormalCreate(romName, buf, size, 0, 0, 0);
+            break;
+
+        case ROM_SG1000CASTLE:
+            romMapperSg1000CastleCreate(romName, buf, size, 0, 0, 0);
             break;
 
         case ROM_KANJI:

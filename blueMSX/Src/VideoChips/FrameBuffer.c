@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-10-06 06:36:15 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,7 +101,7 @@ static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames)
         return NULL;
     }
     waitSem();
-#if 1
+#if 0
     switch (currentBuffer->viewFrame) {
     case 0: 
         switch (currentBuffer->drawFrame) {
@@ -223,7 +223,7 @@ static FrameBuffer* frameBufferFlipDrawFrame4()
         return NULL;
     }
     waitSem();
-#if 1
+#if 0
     switch (currentBuffer->drawFrame) {
     case 0: 
         switch (currentBuffer->viewFrame) {

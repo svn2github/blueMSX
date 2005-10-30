@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-06-29 03:53:42 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,7 +94,6 @@ typedef struct {
     ShotcutHotkey volumeDecrease;
     ShotcutHotkey volumeMute;
     ShotcutHotkey volumeStereo;
-    ShotcutHotkey cpuTrace;
     ShotcutHotkey themeSwitch;
     ShotcutHotkey casRemove;
     ShotcutHotkey diskRemoveA;

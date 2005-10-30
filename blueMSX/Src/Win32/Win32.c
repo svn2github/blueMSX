@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.109 $
+** $Revision: 1.110 $
 **
-** $Date: 2005-10-06 06:36:15 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -799,7 +799,6 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->volumeDecrease))               actionVolumeDecrease();
     if (hotkeyEq(key, s->volumeMute))                   actionMuteToggleMaster();
     if (hotkeyEq(key, s->volumeStereo))                 actionVolumeToggleStereo();
-    if (hotkeyEq(key, s->cpuTrace))                     actionCpuTraceToggle();
     if (hotkeyEq(key, s->themeSwitch))                  actionNextTheme();
     if (hotkeyEq(key, s->casRemove))                    actionCasRemove();
     if (hotkeyEq(key, s->diskRemoveA))                  actionDiskRemoveA();

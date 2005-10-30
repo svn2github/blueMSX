@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-10-30 01:49:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,6 +110,8 @@
 #define ID_FILE_CARTB_SONYHBI55         40072
 #define ID_VIDEO_AUTODETECT             40073
 #define ID_FILE_PRINTER_FORMFEED        40074
+#define ID_FILE_CARTA_GAMEREADER        40075
+#define ID_FILE_CARTB_GAMEREADER        40076
 
 #define ID_CARTRIDGEA_HISTORY           30000
 #define ID_CARTRIDGEB_HISTORY           30050
@@ -301,6 +303,12 @@ static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcut
     _stprintf(langBuffer, "%s", langMenuCartSCCExpanded());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCCEXPANDED, langBuffer);
 #endif
+    
+
+    _stprintf(langBuffer, "%s", langMenuCartGameReader());
+    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(langBuffer, "%s", langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCC, langBuffer);
@@ -420,6 +428,11 @@ static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcut
     _stprintf(langBuffer, "%s", langMenuCartSCCExpanded());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCCEXPANDED, langBuffer);
 #endif
+
+    _stprintf(langBuffer, "%s", langMenuCartGameReader());
+    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(langBuffer, "%s", langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCC, langBuffer);
@@ -1360,6 +1373,12 @@ int menuCommand(Properties* pProperties, int command)
         return 1;
     case ID_FILE_CARTB_EXTRAM4MB:
         insertCartridge(pProperties, 1, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
+        return 1;
+    case ID_FILE_CARTA_GAMEREADER:
+        insertCartridge(pProperties, 0, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
+        return 1;
+    case ID_FILE_CARTB_GAMEREADER:
+        insertCartridge(pProperties, 1, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
         return 1;
     case ID_FILE_CARTA_MEGARAM128:
         insertCartridge(pProperties, 0, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
