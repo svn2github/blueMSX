@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,18 +45,21 @@
 #include "SlotManager.h"
 #include "Led.h"
 #include "Switches.h"
-#include "JoystickIO.h"
 #include "IoPort.h"
 #include "MegaromCartridge.h"
+#include "JoystickPort.h"
+#include "Sg1000Joystick.h"
 
 
 /* Hardware */
 static SN76489*    sn76489;
 static R800*       r800;
-static JoystickIO* joyIO;
-static UInt32      sg1000RamSize;
-static UInt8*      sg1000Ram;
-static int         joyMode = 0;
+
+// ---------------------------------------------
+// SG-1000 Joystick and PSG handler
+
+static Sg1000JoystickDevice* joyDevice;
+static int joyDeviceHandle;
 
 static void sg1000Sn76489Write(void* dummy, UInt16 ioPort, UInt8 value) 
 {
@@ -65,32 +68,94 @@ static void sg1000Sn76489Write(void* dummy, UInt16 ioPort, UInt8 value)
 
 static UInt8 sg1000JoyIoRead(void* dummy, UInt16 ioPort)
 {
-    UInt8 joyState = joystickReadSG1000(joyIO, 0);
+    UInt8 joyState = 0x3f;
 
-    return (joyState & 0x3F) | 0xC0;
+    if (joyDevice != NULL && joyDevice->read != NULL) {
+        joyState = joyDevice->read(joyDevice);
+    }
+
+    return joyState | 0xC0;
+}
+
+static void sg1000JoyIoHandler(void* dummy, int port, JoystickPortType type)
+{
+    if (port >= 1) {
+        return;
+    }
+
+    if (joyDevice != NULL && joyDevice->destroy != NULL) {
+        joyDevice->destroy(joyDevice);
+    }
+    
+    switch (type) {
+    default:
+    case JOYSTICK_PORT_NONE:
+        joyDevice = NULL;
+        break;
+    case JOYSTICK_PORT_JOYSTICK:
+        joyDevice = sg1000JoystickCreate();
+        break;
+    }
+}
+
+static void sg1000JoyIoLoadState(void* dummy)
+{
+    if (joyDevice != NULL && joyDevice->loadState != NULL) {
+        joyDevice->loadState(joyDevice);
+    }
+}
+
+static void sg1000JoyIoSaveState(void* dummy)
+{
+    if (joyDevice != NULL && joyDevice->saveState != NULL) {
+        joyDevice->saveState(joyDevice);
+    }
+}
+
+static void sg1000JoyIoReset(void* dummy)
+{
+    if (joyDevice != NULL && joyDevice->reset != NULL) {
+        joyDevice->reset(joyDevice);
+    }
+}
+
+static void sg1000JoyIoDestroy(void* dummy)
+{
+	int i;
+
+	for (i=0x40; i<0x80; i++)
+		ioPortUnregister(i);
+
+	for (i=0xC0; i<0x100; i+=2)
+		ioPortUnregister(i);
+    
+    if (joyDevice != NULL && joyDevice->destroy != NULL) {
+        joyDevice->destroy(joyDevice);
+    }
+
+    deviceManagerUnregister(joyDeviceHandle);
+
+    joystickPortUpdateHandlerUnregister();
 }
 
 static void sg1000JoyIoCreate()
 {
+    DeviceCallbacks callbacks = { sg1000JoyIoDestroy, sg1000JoyIoReset, 
+                                  sg1000JoyIoSaveState, sg1000JoyIoLoadState };
 	int i;
-
+   
 	for (i=0x40; i<0x80; i++)
 		ioPortRegister(i, NULL, sg1000Sn76489Write, NULL);
 
 	for (i=0xC0; i<0x100; i+=2)
 		ioPortRegister(i, sg1000JoyIoRead, NULL, NULL);
+    
+    joystickPortUpdateHandlerRegister(sg1000JoyIoHandler, NULL);
+
+    joyDeviceHandle = deviceManagerRegister(ROM_UNKNOWN, &callbacks, NULL);
 }
 
-static void sg1000JoyIoDestroy()
-{
-	int i;
-
-	for (i=0x40; i<0x80; i++)
-		ioPortUnregister(i);
-
-	for (i=0xC0; i<0x100; i+=2)
-		ioPortUnregister(i);
-}
+// -----------------------------------------------------
 
 static void reset()
 {
@@ -114,9 +179,6 @@ static void reset()
 static void destroy() 
 {    
     boardRemoveExternalDevices();
-    joystickIoDestroySG1000(joyIO);
-
-    sg1000JoyIoDestroy();
     sn76489Destroy(sn76489);
     r800DebugDestroy();
     slotManagerDestroy();
@@ -134,7 +196,6 @@ static void saveState()
     r800SaveState(r800);
     deviceManagerSaveState();
     slotSaveState();
-    joystickIoSaveState(joyIO);
     sn76489SaveState(sn76489);
 }
 
@@ -144,7 +205,6 @@ static void loadState()
     boardInit(&r800->systemTime);
     deviceManagerLoadState();
     slotLoadState();
-    joystickIoLoadState(joyIO);
     sn76489LoadState(sn76489);
 }
 
@@ -212,8 +272,6 @@ int sg1000Create(Machine* machine,
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
     }
-
-    joyIO = joystickIoCreateSG1000();
 
     if (success) {
         success = boardInsertExternalDevices();

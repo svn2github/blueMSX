@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/InputEvent.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-01 21:19:31 $
 **
@@ -27,13 +27,15 @@
 **
 ******************************************************************************
 */
-#ifndef SVI_PPI_H
-#define SVI_PPI_H
+#ifndef INPUT_EVENT_H
+#define INPUT_EVENT_H
 
-#include "msxTypes.h"
-#include "SviJoyIo.h"
+#include "MsxTypes.h"
 
-void sviPPICreate(SviJoyIo* joyIO);
+// Patched to use old input structure for now
 
-#endif
+#include "Keyboard.h"
 
+int inputEventGetState(int event);
+
+#endif 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -149,7 +149,29 @@ typedef enum { KEYMAP_MSX, KEYMAP_SVI, KEYMAP_COLECO, KEYMAP_SG1000 } KeyboardKe
 // SVI SPECIFIC KEYS
 #define EK_PRINT    93
 
-#define EK_KEYCOUNT 94
+#define EK_KEYCOUNT 94   // Remove
+
+#define EK_JOY1_UP      100
+#define EK_JOY1_DOWN    101
+#define EK_JOY1_LEFT    102
+#define EK_JOY1_RIGHT   103
+#define EK_JOY1_BUTTON1 104
+#define EK_JOY1_BUTTON2 105
+#define EK_JOY1_BUTTON3 106
+#define EK_JOY1_BUTTON4 107
+#define EK_JOY1_BUTTON5 108
+#define EK_JOY1_BUTTON6 109
+
+#define EK_JOY2_UP      110
+#define EK_JOY2_DOWN    111
+#define EK_JOY2_LEFT    112
+#define EK_JOY2_RIGHT   113
+#define EK_JOY2_BUTTON1 114
+#define EK_JOY2_BUTTON2 115
+#define EK_JOY2_BUTTON3 116
+#define EK_JOY2_BUTTON4 117
+#define EK_JOY2_BUTTON5 118
+#define EK_JOY2_BUTTON6 119
 
 
 void keyboardReset();

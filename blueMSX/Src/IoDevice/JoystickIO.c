@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/JoystickIO.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,42 @@
 #include <string.h>
 
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
+
+
+#if 0
+
+UInt8 sviJoystickRead() {
+    return ~((inputEventGetState(EK_JOY1_UP)    << 0) |
+             (inputEventGetState(EK_JOY1_DOWN)  << 1) |
+             (inputEventGetState(EK_JOY1_LEFT)  << 2) |
+             (inputEventGetState(EK_JOY1_RIGHT) << 3) |
+             (inputEventGetState(EK_JOY2_UP)    << 4) |
+             (inputEventGetState(EK_JOY2_DOWN)  << 5) |
+             (inputEventGetState(EK_JOY2_LEFT)  << 6) |
+             (inputEventGetState(EK_JOY2_RIGHT) << 7));
+}
+
+UInt8 colecoJoystickRead(ColecoJoystick* colecoJoystick)
+{
+    if (colecoJoystick->port == 0) {
+        return ~((inputEventGetState(EK_JOY1_UP)      << 0) |
+                 (inputEventGetState(EK_JOY1_DOWN)    << 1) |
+                 (inputEventGetState(EK_JOY1_LEFT)    << 2) |
+                 (inputEventGetState(EK_JOY1_RIGHT)   << 3) |
+                 (inputEventGetState(EK_JOY1_BUTTON1) << 4) |
+                 (inputEventGetState(EK_JOY1_BUTTON2) << 5);
+    }
+    else {
+        return ~((inputEventGetState(EK_JOY2_UP)      << 0) |
+                 (inputEventGetState(EK_JOY2_DOWN)    << 1) |
+                 (inputEventGetState(EK_JOY2_LEFT)    << 2) |
+                 (inputEventGetState(EK_JOY2_RIGHT)   << 3) |
+                 (inputEventGetState(EK_JOY2_BUTTON1) << 4) |
+                 (inputEventGetState(EK_JOY2_BUTTON2) << 5);
+    }
+}
+
+#endif
 
 
 struct JoystickIO {
@@ -94,15 +130,13 @@ static UInt8 read(JoystickIO* joyIO, UInt16 address)
 
     if (joyIO->controls[joyId].type == JOYTYPE_TETRIS2DONGLE) {
         return joyIO->controls[joyId].status;
-}
+    }
 
     if (joyIO->controls[joyId].type == JOYTYPE_MOUSE) {
         int buttons = archMouseGetButtonState(0);
     
         joyIO->controls[joyId].buttons = (~buttons << 4) & 0x30;
 
-//        if (joyIO->controls[joyId].count == 1 || 
-//            (joyIO->controls[joyId].count == 0 && systemTime - joyIO->mouseClock > boardFrequency() / 120)) 
         if (joyIO->controls[joyId].count == 0 && systemTime - joyIO->mouseClock > boardFrequency() / 120) 
         {
             static int dx;

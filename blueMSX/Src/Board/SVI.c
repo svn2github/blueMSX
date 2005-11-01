@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,11 +37,11 @@
 #include "R800SaveState.h"
 #include "R800Debug.h"
 
+#include "AY8910.h"
 #include "SviPPI.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "Led.h"
-#include "JoystickIO.h"
 #include "KeyClick.h"
 #include "Casette.h"
 #include "Disk.h"
@@ -50,17 +50,19 @@
 #include "SlotManager.h"
 #include "RomLoader.h"
 #include "romMapperSvi80Col.h"
+#include "SviJoyIo.h"
 
 /* Hardware */
 static AY8910*         ay8910;
 static AudioKeyClick*  keyClick;
 static R800*           r800;
-static JoystickIO*     joyIO;
+static SviJoyIo*       joyIO;
 static UInt8           KeyMap[16];
 static UInt32          sviRamSize;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
 static int             svi80ColEnabled;
+static UInt8           lastJoystickValue;
 
 extern void PatchZ80(void* ref, CpuRegs* cpu);
 
@@ -146,7 +148,8 @@ static UInt8 sviPsgReadHandler(void* arg, UInt16 address)
 
     switch (address) {
         case 0:
-            value = joystickReadSVI(joyIO);
+            value = sviJoyIoRead(joyIO);
+            lastJoystickValue = value;
             break;
         case 1:
             value = psgAYReg15;
@@ -161,7 +164,7 @@ static UInt8 sviPsgPollHandler(void* arg, UInt16 address)
 
     switch (address) {
         case 0:
-            value = joystickPollSVI(joyIO);
+            value = lastJoystickValue;
             break;
         case 1:
             value = psgAYReg15;
@@ -234,7 +237,6 @@ static void reset()
 static void destroy()
 {
     boardRemoveExternalDevices();
-    joystickIoDestroySVI(joyIO);
     ay8910SetIoPort(ay8910, NULL, NULL, NULL, NULL);
     ay8910Destroy(ay8910);
     ay8910 = NULL;
@@ -259,7 +261,6 @@ static void saveState()
 
     saveStateClose(state);
 
-    joystickIoSaveState(joyIO);
     r800SaveState(r800);
     deviceManagerSaveState();
     slotSaveState();
@@ -279,7 +280,6 @@ static void loadState()
     boardInit(&r800->systemTime);
     deviceManagerLoadState();
     slotLoadState();
-    joystickIoLoadState(joyIO);
     ay8910LoadState(ay8910);
 }
 
@@ -325,7 +325,7 @@ int sviCreate(Machine* machine,
 
     keyClick  = audioKeyClickCreate(boardGetMixer());
 
-    joyIO = joystickIoCreateSVI();
+    joyIO = sviJoyIoCreate();
     
     sviPPICreate(joyIO);
     slotManagerCreate();

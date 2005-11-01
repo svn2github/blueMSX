@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,7 +84,7 @@ typedef struct {
     int    debugHandle;
     I8255* i8255;
 
-    JoystickIO* joyIO;
+    SviJoyIo* joyIO;
     AudioKeyClick* keyClick;
 
     UInt8 row;
@@ -187,7 +187,7 @@ static void writeCHi(SviPPI* ppi, UInt8 value)
 
 static UInt8 readA(SviPPI* ppi)
 {
-    return joystickReadTriggerSVI(ppi->joyIO) | 
+    return sviJoyIoReadTrigger(ppi->joyIO) | 
            (boardGetCassetteInserted() ? 0:0x40);
 }
 
@@ -209,7 +209,7 @@ static void getDebugInfo(SviPPI* ppi, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 4, 0x9A, DBG_IO_READ,      peek(ppi, 0x9A));
 }
 
-void sviPPICreate(JoystickIO* joyIO)
+void sviPPICreate(SviJoyIo* joyIO)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };

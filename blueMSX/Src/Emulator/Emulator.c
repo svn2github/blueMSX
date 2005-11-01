@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-10-06 00:37:08 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,6 @@
 #include "Switches.h"
 #include "Led.h"
 #include "Machine.h"
-#include "JoystickIO.h"
 
 #include "ArchThread.h"
 #include "ArchEvent.h"
@@ -43,6 +42,7 @@
 #include "ArchSound.h"
 #include "ArchMidi.h"
 
+#include "JoystickPort.h"
 #include "ArchInput.h"
 #include "ArchDialog.h"
 #include "ArchNotifications.h"
@@ -418,8 +418,8 @@ void emulatorStart(const char* stateName) {
     if (emuState != EMU_STOPPED) {
         getDeviceInfo(&deviceInfo);
 
-        joystickIoGetType(0, (int*)&properties->joy1.type);
-        joystickIoGetType(1, (int*)&properties->joy2.type);
+        properties->joy1.type = joystickPortGetType(0);
+        properties->joy2.type = joystickPortGetType(1);
 
         boardSetYm2413Oversampling(properties->sound.chip.ym2413Oversampling);
         boardSetY8950Oversampling(properties->sound.chip.y8950Oversampling);

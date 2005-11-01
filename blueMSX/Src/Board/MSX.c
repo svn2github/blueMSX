@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,7 @@
 #include "MsxPPI.h"
 #include "Board.h"
 #include "RTC.h"
-#include "JoystickIO.h"
-#include "AY8910.h"
+#include "MsxPsg.h"
 #include "Keyboard.h"
 #include "VDP.h"
 #include "Casette.h"
@@ -57,10 +56,9 @@
 void PatchZ80(void* ref, CpuRegs* cpuRegs);
 
 // Hardware
-static AY8910*         ay8910;
+static MsxPsg*         msxPsg;
 static R800*           r800;
 static RTC*            rtc;
-static JoystickIO*     joyIO;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
 static UInt32          z80Frequency;
@@ -97,24 +95,11 @@ static void reset()
         r800Reset(r800, systemTime);
     }
     
-    if (ay8910 != NULL) {
-        ay8910Reset(ay8910);
-    }
-    
     deviceManagerReset();
 }
 
 static void destroy() {        
     rtcDestroy(rtc);
-
-    if (joyIO != NULL) {
-        joystickIoDestroy(joyIO);
-        joyIO = NULL;
-    }    
-    if (ay8910 != NULL) {
-        ay8910Destroy(ay8910);
-        ay8910 = NULL;
-    }
 
     boardRemoveExternalDevices();
 
@@ -151,15 +136,9 @@ static void saveState()
     saveStateClose(state);
 
     r800SaveState(r800);
-    if (joyIO != NULL) {
-        joystickIoSaveState(joyIO);
-    }
     deviceManagerSaveState();
     slotSaveState();
     rtcSaveState(rtc);
-    if (ay8910 != NULL) {
-        ay8910SaveState(ay8910);
-    }
 }
 
 static void loadState()
@@ -175,13 +154,7 @@ static void loadState()
 
     deviceManagerLoadState();
     slotLoadState();
-    if (joyIO != NULL) {
-        joystickIoLoadState(joyIO);
-    }
     rtcLoadState(rtc);
-    if (ay8910 != NULL) {
-        ay8910LoadState(ay8910);
-    }
 }
 
 int msxCreate(Machine* machine, 
@@ -245,8 +218,7 @@ int msxCreate(Machine* machine,
 
     success = machineInitialize(machine, &msxRam, &msxRamSize);
 
-    ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX);
-    joyIO = joystickIoCreate(ay8910);
+    msxPsg = msxPsgCreate();
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

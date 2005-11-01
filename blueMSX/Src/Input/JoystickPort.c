@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-01 21:19:31 $
 **
@@ -27,13 +27,41 @@
 **
 ******************************************************************************
 */
-#ifndef SVI_PPI_H
-#define SVI_PPI_H
+#include "JoystickPort.h"
+#include <stdlib.h>
 
-#include "msxTypes.h"
-#include "SviJoyIo.h"
 
-void sviPPICreate(SviJoyIo* joyIO);
+static JoystickPortUpdateHandler updateHandler = NULL;
+static void* updateHandlerRef;
+static JoystickPortType inputType[JOYSTICK_MAX_PORTS];
 
-#endif
 
+void joystickPortSetType(int port, JoystickPortType type) 
+{
+    if (updateHandler != NULL && inputType[port] != type) {
+        updateHandler(updateHandlerRef, port, type);
+    }
+
+    inputType[port] = type;
+}
+
+JoystickPortType joystickPortGetType(int port)
+{
+    return inputType[port];
+}
+
+void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref)
+{
+    int port;
+    updateHandler = fn;
+    updateHandlerRef = ref;
+
+    for (port = 0; port < JOYSTICK_MAX_PORTS; port++) {
+        updateHandler(updateHandlerRef, port, inputType[port]);
+    }
+}
+
+void joystickPortUpdateHandlerUnregister()
+{
+    updateHandler = NULL;
+}

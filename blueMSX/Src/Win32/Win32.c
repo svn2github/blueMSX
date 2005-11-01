@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.110 $
+** $Revision: 1.111 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-01 21:19:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,6 @@
 #include "Language.h"   
 #include "resource.h"
 #include "Casette.h"
-#include "JoystickIO.h"
 #include "PrinterIO.h"
 #include "UartIO.h"
 #include "MidiIO.h"
@@ -77,6 +76,7 @@
 #include "TokenExtract.h"
 #include "Emulator.h"
 #include "Keyboard.h"
+#include "JoystickPort.h"
 #include "Theme.h"
 #include "ThemeLoader.h"
 #include "Win32ThemeClassic.h"
@@ -961,10 +961,15 @@ void archUpdateJoystick() {
     JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
     JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
 
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, 
-                      pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, 
-                      pProperties->joy2.type);
+    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
+    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
+
     mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 }
 
@@ -1114,8 +1119,14 @@ void archShowPropertiesDialog(PropPage  startPane) {
         archUpdateWindow();
     }
 
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
+    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
+    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
@@ -2643,9 +2654,16 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
 
     propUpdateJoyinfo(pProperties);
-    joystickIoSetType(0, pProperties->joy1.type == P_JOY_NONE  ? 0 : pProperties->joy1.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy1.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy1.type);
-    joystickIoSetType(1, pProperties->joy2.type == P_JOY_NONE  ? 0 : pProperties->joy2.type == P_JOY_TETRISDONGLE  ? 3 : pProperties->joy2.type == P_JOY_MOUSE ? 2 : 1, pProperties->joy2.type);
     
+    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
+    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
+                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
+                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
+                                                                           JOYSTICK_PORT_JOYSTICK);
+
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-01 21:19:31 $
 **
@@ -27,13 +27,27 @@
 **
 ******************************************************************************
 */
-#ifndef SVI_PPI_H
-#define SVI_PPI_H
+#ifndef JOYSTICK_PORT_H
+#define JOYSTICK_PORT_H
 
-#include "msxTypes.h"
-#include "SviJoyIo.h"
+#include "MsxTypes.h"
 
-void sviPPICreate(SviJoyIo* joyIO);
+#define JOYSTICK_MAX_PORTS 2
 
-#endif
+typedef enum {
+    JOYSTICK_PORT_NONE,
+    JOYSTICK_PORT_JOYSTICK,
+    JOYSTICK_PORT_MOUSE,
+    JOYSTICK_PORT_TETRIS2DONGLE,
+    JOYSTICK_PORT_LIGHTGUN
+} JoystickPortType;
 
+typedef void (*JoystickPortUpdateHandler)(void*, int, JoystickPortType);
+
+void joystickPortSetType(int port, JoystickPortType type);
+JoystickPortType joystickPortGetType(int port);
+
+void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref);
+void joystickPortUpdateHandlerUnregister();
+
+#endif // JOYSTICK_PORT_H

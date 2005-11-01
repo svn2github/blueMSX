@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,17 +44,24 @@
 #include "SlotManager.h"
 #include "Led.h"
 #include "Switches.h"
-#include "JoystickIO.h"
 #include "IoPort.h"
 #include "Keyboard.h"
 #include "MegaromCartridge.h"
+#include "JoystickPort.h"
+#include "ColecoJoystick.h"
 
 
 /* Hardware */
 static SN76489*    sn76489;
 static R800*       r800;
-static JoystickIO* joyIO;
-static int         joyMode = 0;
+
+
+// ---------------------------------------------
+// SG-1000 Joystick and PSG handler
+
+static ColecoJoystickDevice* joyDevice[2];
+static int joyDeviceHandle;
+static int joyMode;
 
 static void colecoSN76489Write(void* dummy, UInt16 ioPort, UInt8 value) 
 {
@@ -66,11 +73,16 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 	joyMode = (ioPort >> 6) & 1;
 }
 
-static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
+static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 {
-    UInt8 joyState = joystickReadColeco(joyIO, ioPort >> 1);
+    ColecoJoystickDevice* device = joyDevice[(ioPort >> 1) & 1];
     UInt8* keyMap = keyboardGetState();
+    UInt8 joyState = 0x3f;
     UInt8 value;
+
+    if (device != NULL && device->read != NULL) {
+        joyState = device->read(device);
+    }
 
     if (joyMode != 0) {
         return ((joyState & 0x01) ? 0x01 : 0) |
@@ -115,11 +127,84 @@ static UInt8 colecorJoyIoRead(void* dummy, UInt16 ioPort)
     return value;
 }
 
-static void colecoJoyIoCreate()
+static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
+{
+    if (port >= 2) {
+        return;
+    }
+
+    if (joyDevice[port] != NULL && joyDevice[port]->destroy != NULL) {
+        joyDevice[port]->destroy(joyDevice[port]);
+    }
+    
+    switch (type) {
+    default:
+    case JOYSTICK_PORT_NONE:
+        joyDevice[port] = NULL;
+        break;
+    case JOYSTICK_PORT_JOYSTICK:
+        joyDevice[port] = colecoJoystickCreate(port);
+        break;
+    }
+}
+
+static void colecoJoyIoLoadState(void* dummy)
+{
+    if (joyDevice[0] != NULL && joyDevice[0]->loadState != NULL) {
+        joyDevice[0]->loadState(joyDevice[0]);
+    }
+    if (joyDevice[1] != NULL && joyDevice[1]->loadState != NULL) {
+        joyDevice[1]->loadState(joyDevice[1]);
+    }
+}
+
+static void colecoJoyIoSaveState(void* dummy)
+{
+    if (joyDevice[0] != NULL && joyDevice[0]->saveState != NULL) {
+        joyDevice[0]->saveState(joyDevice[0]);
+    }
+    if (joyDevice[1] != NULL && joyDevice[1]->saveState != NULL) {
+        joyDevice[1]->saveState(joyDevice[1]);
+    }
+}
+
+static void colecoJoyIoReset(void* dummy)
+{
+    if (joyDevice[0] != NULL && joyDevice[0]->reset != NULL) {
+        joyDevice[0]->reset(joyDevice[0]);
+    }
+    if (joyDevice[1] != NULL && joyDevice[1]->reset != NULL) {
+        joyDevice[1]->reset(joyDevice[1]);
+    }
+}
+
+static void colecoJoyIoDestroy(void* dummy)
 {
     int i;
     for (i = 0xe0; i <= 0xff; i++) {
-        ioPortRegister(i, colecorJoyIoRead, colecoSN76489Write, NULL);
+        ioPortUnregister(i);
+    }
+    
+    if (joyDevice[0] != NULL && joyDevice[0]->destroy != NULL) {
+        joyDevice[0]->destroy(joyDevice[0]);
+    }
+    if (joyDevice[1] != NULL && joyDevice[1]->destroy != NULL) {
+        joyDevice[1]->destroy(joyDevice[1]);
+    }
+    
+    joystickPortUpdateHandlerUnregister();
+
+    deviceManagerUnregister(joyDeviceHandle);
+}
+
+static void colecoJoyIoCreate()
+{
+    DeviceCallbacks callbacks = { colecoJoyIoDestroy,   colecoJoyIoReset, 
+                                  colecoJoyIoSaveState, colecoJoyIoLoadState };
+
+    int i;
+    for (i = 0xe0; i <= 0xff; i++) {
+        ioPortRegister(i, colecoJoyIoRead, colecoSN76489Write, NULL);
     }
     for (i = 0x80; i <= 0x9f; i++) {
         ioPortRegister(i, NULL, colecoJoyIoWrite, NULL);
@@ -127,14 +212,9 @@ static void colecoJoyIoCreate()
     for (i = 0xc0; i <= 0xdf; i++) {
         ioPortRegister(i, NULL, colecoJoyIoWrite, NULL);
     }
-}
-
-static void colecoJoyIoDestroy()
-{
-    int i;
-    for (i = 0xe0; i <= 0xff; i++) {
-        ioPortUnregister(i);
-    }
+    
+    joystickPortUpdateHandlerRegister(colecoJoyIoHandler, NULL);
+    joyDeviceHandle = deviceManagerRegister(ROM_UNKNOWN, &callbacks, NULL);
 }
 
 static void reset()
@@ -159,9 +239,7 @@ static void reset()
 static void destroy() 
 {
     boardRemoveExternalDevices();
-    joystickIoDestroyColeco(joyIO);
 
-    colecoJoyIoDestroy();
     sn76489Destroy(sn76489);
     r800DebugDestroy();
     slotManagerDestroy();
@@ -176,7 +254,6 @@ static int getRefreshRate()
 
 static void saveState()
 {    
-    joystickIoSaveState(joyIO);
     r800SaveState(r800);
     sn76489SaveState(sn76489);
     deviceManagerSaveState();
@@ -189,7 +266,6 @@ static void loadState()
     boardInit(&r800->systemTime);
     deviceManagerLoadState();
     slotLoadState();
-    joystickIoLoadState(joyIO);
     sn76489LoadState(sn76489);
 }
 
@@ -257,8 +333,6 @@ int colecoCreate(Machine* machine,
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
     }
-
-    joyIO = joystickIoCreateColeco();
 
     if (success) {
         success = boardInsertExternalDevices();

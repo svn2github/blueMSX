@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2005-11-01 21:19:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 #include "SaveState.h"
 #include <string.h>
 
-static char* keyNames[EK_KEYCOUNT];
+static char* keyNames[256];
 static UInt16 keyMap[EK_KEYCOUNT];
 static KeyboardKeymap keymapType = KEYMAP_MSX;
 
@@ -132,6 +132,28 @@ static void initKeyNameTable()
     keyNames[EK_NUMCOM ] = "numcomma";
     keyNames[EK_NUMADD ] = "numadd";
     keyNames[EK_PRINT  ] = "print";
+
+    keyNames[EK_JOY1_UP     ] = "J1 up";
+    keyNames[EK_JOY1_DOWN   ] = "J1 down";
+    keyNames[EK_JOY1_LEFT   ] = "J1 left";
+    keyNames[EK_JOY1_RIGHT  ] = "J1 right";
+    keyNames[EK_JOY1_BUTTON1] = "J1 button 1";
+    keyNames[EK_JOY1_BUTTON2] = "J1 button 2";
+    keyNames[EK_JOY1_BUTTON3] = "J1 button 3";
+    keyNames[EK_JOY1_BUTTON4] = "J1 button 4";
+    keyNames[EK_JOY1_BUTTON5] = "J1 button 5";
+    keyNames[EK_JOY1_BUTTON6] = "J1 button 6";
+    
+    keyNames[EK_JOY2_UP     ] = "J2 up";
+    keyNames[EK_JOY2_DOWN   ] = "J2 down";
+    keyNames[EK_JOY2_LEFT   ] = "J2 left";
+    keyNames[EK_JOY2_RIGHT  ] = "J2 right";
+    keyNames[EK_JOY2_BUTTON1] = "J2 button 1";
+    keyNames[EK_JOY2_BUTTON2] = "J2 button 2";
+    keyNames[EK_JOY2_BUTTON3] = "J2 button 3";
+    keyNames[EK_JOY2_BUTTON4] = "J2 button 4";
+    keyNames[EK_JOY2_BUTTON5] = "J2 button 5";
+    keyNames[EK_JOY2_BUTTON6] = "J2 button 6";
 }
 
 static void initKeyMapMSX()

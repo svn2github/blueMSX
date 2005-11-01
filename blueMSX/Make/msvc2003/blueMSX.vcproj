@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input"
 				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;LSB_FIRST;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -78,7 +78,7 @@
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input"
 				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
@@ -131,7 +131,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\Input"
 				PreprocessorDefinitions="_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;FMSX;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -189,7 +189,7 @@
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input"
 				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_CONSOLE;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
@@ -1129,12 +1129,6 @@
 				RelativePath="..\..\Src\IoDevice\I8255.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\IoDevice\JoystickIO.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\IoDevice\JoystickIO.h">
-			</File>
-			<File
 				RelativePath="..\..\Src\IoDevice\Led.c">
 			</File>
 			<File
@@ -1416,6 +1410,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\MsxAudio.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\MsxPsg.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\MsxPsg.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\OpenMsxY8950.cpp">
@@ -1744,6 +1744,76 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Utils\ziphelper.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Input"
+			Filter="">
+			<File
+				RelativePath="..\..\Src\Input\ColecoJoystick.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\ColecoJoystick.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\ColecoJoystickDevice.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\InputEvent.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\InputEvent.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\JoystickPort.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\JoystickPort.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxJoystick.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxJoystick.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxJoystickDevice.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxMouse.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxMouse.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxTetrisDongle.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxTetrisDongle.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\Sg1000Joystick.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\Sg1000Joystick.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\Sg1000JoystickDevice.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\SviJoyIo.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\SviJoyIo.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\SviJoystick.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\SviJoystick.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\SviJoystickDevice.h">
 			</File>
 		</Filter>
 	</Files>

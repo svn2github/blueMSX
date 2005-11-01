@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/Sg1000Joystick.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-01 21:19:31 $
 **
@@ -27,13 +27,14 @@
 **
 ******************************************************************************
 */
-#ifndef SVI_PPI_H
-#define SVI_PPI_H
+#ifndef SG1000_JOYSTICK_H
+#define SG1000_JOYSTICK_H
 
-#include "msxTypes.h"
-#include "SviJoyIo.h"
+#include "MsxTypes.h"
+#include "Sg1000JoystickDevice.h"
 
-void sviPPICreate(SviJoyIo* joyIO);
+typedef struct Sg1000Joystick Sg1000Joystick;
 
-#endif
+Sg1000JoystickDevice* sg1000JoystickCreate();
 
+#endif 

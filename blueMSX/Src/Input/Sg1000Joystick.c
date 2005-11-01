@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/Sg1000Joystick.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-01 21:19:31 $
 **
@@ -27,13 +27,30 @@
 **
 ******************************************************************************
 */
-#ifndef SVI_PPI_H
-#define SVI_PPI_H
+#include "Sg1000Joystick.h"
+#include "InputEvent.h"
 
-#include "msxTypes.h"
-#include "SviJoyIo.h"
+#include <stdlib.h>
 
-void sviPPICreate(SviJoyIo* joyIO);
+struct Sg1000Joystick {
+    Sg1000JoystickDevice joyDevice;
+};
 
-#endif
+static UInt8 read(Sg1000Joystick* joystick) {
+    UInt8 state = (inputEventGetState(EK_JOY1_UP)      << 0) |
+                  (inputEventGetState(EK_JOY1_DOWN)    << 1) |
+                  (inputEventGetState(EK_JOY1_LEFT)    << 2) |
+                  (inputEventGetState(EK_JOY1_RIGHT)   << 3) |
+                  (inputEventGetState(EK_JOY1_BUTTON1) << 4) |
+                  (inputEventGetState(EK_JOY1_BUTTON2) << 5);
 
+    return ~state & 0x3f;
+}
+
+Sg1000JoystickDevice* sg1000JoystickCreate()
+{
+    Sg1000Joystick* joystick = (Sg1000Joystick*)calloc(1, sizeof(Sg1000Joystick));
+    joystick->joyDevice.read   = read;
+    
+    return (Sg1000JoystickDevice*)joystick;
+}
