@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
-#include "Keyboard.h"
+#include "InputEvent.h"
 #include "VideoManager.h"
 #include "VDP.h"
 
@@ -1202,11 +1202,11 @@ void actionSetVolumeStereo(int value) {
 void actionKeyPress(int keyCode, int pressed)
 {
     if (pressed) {
-        keyboardKeyDown(keyCode);
+        inputEventSet(keyCode);
         archKeyboardSetSelectedKey(keyCode);
     }
     else {
-        keyboardKeyUp(keyCode);
+        inputEventUnset(keyCode);
     }
 }
 

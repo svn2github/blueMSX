@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxJoystick.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,20 +41,20 @@ static UInt8 read(MsxJoystick* joystick) {
     UInt8 state;
 
     if (joystick->controller == 0) {
-        state = (inputEventGetState(EK_JOY1_UP)      << 0) |
-                (inputEventGetState(EK_JOY1_DOWN)    << 1) |
-                (inputEventGetState(EK_JOY1_LEFT)    << 2) |
-                (inputEventGetState(EK_JOY1_RIGHT)   << 3) |
-                (inputEventGetState(EK_JOY1_BUTTON1) << 4) |
-                (inputEventGetState(EK_JOY1_BUTTON2) << 5);
+        state = (inputEventGetState(EC_JOY1_UP)      << 0) |
+                (inputEventGetState(EC_JOY1_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY1_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY1_RIGHT)   << 3) |
+                (inputEventGetState(EC_JOY1_BUTTON1) << 4) |
+                (inputEventGetState(EC_JOY1_BUTTON2) << 5);
     }
     else {
-        state = (inputEventGetState(EK_JOY2_UP)      << 0) |
-                (inputEventGetState(EK_JOY2_DOWN)    << 1) |
-                (inputEventGetState(EK_JOY2_LEFT)    << 2) |
-                (inputEventGetState(EK_JOY2_RIGHT)   << 3) |
-                (inputEventGetState(EK_JOY2_BUTTON1) << 4) |
-                (inputEventGetState(EK_JOY2_BUTTON2) << 5);
+        state = (inputEventGetState(EC_JOY2_UP)      << 0) |
+                (inputEventGetState(EC_JOY2_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY2_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY2_RIGHT)   << 3) |
+                (inputEventGetState(EC_JOY2_BUTTON1) << 4) |
+                (inputEventGetState(EC_JOY2_BUTTON2) << 5);
     }
 
     return ~state & 0x3f;

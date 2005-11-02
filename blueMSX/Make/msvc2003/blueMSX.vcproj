@@ -1524,12 +1524,6 @@ buildnumber.exe
 				RelativePath="..\..\Src\Emulator\FileHistory.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\Emulator\Keyboard.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Emulator\Keyboard.h">
-			</File>
-			<File
 				RelativePath="..\..\Src\Emulator\LaunchFile.c">
 			</File>
 			<File

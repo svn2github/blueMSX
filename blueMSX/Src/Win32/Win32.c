@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.111 $
+** $Revision: 1.112 $
 **
-** $Date: 2005-11-01 21:19:32 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,7 +75,6 @@
 #include "LaunchFile.h"
 #include "TokenExtract.h"
 #include "Emulator.h"
-#include "Keyboard.h"
 #include "JoystickPort.h"
 #include "Theme.h"
 #include "ThemeLoader.h"

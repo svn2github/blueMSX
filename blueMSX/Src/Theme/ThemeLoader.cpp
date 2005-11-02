@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,11 +32,11 @@
 #include "TinyXml.h"
 #include "ThemeLoader.h"
 extern "C" {
+#include "InputEvent.h"
 #include "StrcmpNoCase.h"
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "ArchFile.h"
-#include "Keyboard.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #endif
@@ -289,7 +289,7 @@ static int getKeyCode(TiXmlElement* el, char* triggerName)
         return -1;
     }
     
-    return keyboardStringToKeyCode(keycode);
+    return inputEventStringToCode(keycode);
 }
 
 

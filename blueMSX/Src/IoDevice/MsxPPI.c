@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,8 +40,12 @@
 #include "ArchInput.h"
 #include "Switches.h"
 #include "Led.h"
-#include "Keyboard.h"
+#include "InputEvent.h"
 #include <stdlib.h>
+
+
+static UInt8 getKeyState(int row);
+
 
 typedef struct {
     int    deviceHandle;
@@ -137,8 +141,7 @@ static void writeCHi(MsxPPI* ppi, UInt8 value)
 
 static UInt8 peekB(MsxPPI* ppi)
 {
-    UInt8* keymap = keyboardGetState();
-    UInt8 value = keymap[ppi->row];
+    UInt8 value = getKeyState(ppi->row);
 
     if (ppi->row == 8) {
         int renshaSpeed = switchGetRensha();
@@ -153,8 +156,7 @@ static UInt8 peekB(MsxPPI* ppi)
 
 static UInt8 readB(MsxPPI* ppi)
 {
-    UInt8* keymap = keyboardGetState();
-    UInt8 value = keymap[ppi->row];
+    UInt8 value = getKeyState(ppi->row);
 
     if (ppi->row == 8) {
         int renshaSpeed = switchGetRensha();
@@ -206,3 +208,139 @@ void msxPPICreate()
 
     reset(ppi);
 }
+
+
+
+static UInt8 getKeyState(int row)
+{
+    UInt8 keyState = 0;
+    switch (row) {
+    case 0:
+        keyState = (inputEventGetState(EC_0      ) << 0) |
+                   (inputEventGetState(EC_1      ) << 1) |
+                   (inputEventGetState(EC_2      ) << 2) |
+                   (inputEventGetState(EC_3      ) << 3) |
+                   (inputEventGetState(EC_4      ) << 4) |
+                   (inputEventGetState(EC_5      ) << 5) |
+                   (inputEventGetState(EC_6      ) << 6) |
+                   (inputEventGetState(EC_7      ) << 7);
+        break;
+        
+    case 1:
+        keyState = (inputEventGetState(EC_8      ) << 0) |
+                   (inputEventGetState(EC_9      ) << 1) |
+                   (inputEventGetState(EC_NEG    ) << 2) |
+                   (inputEventGetState(EC_CIRCFLX) << 3) |
+                   (inputEventGetState(EC_BKSLASH) << 4) |
+                   (inputEventGetState(EC_AT     ) << 5) |
+                   (inputEventGetState(EC_LBRACK ) << 6) |
+                   (inputEventGetState(EC_SEMICOL) << 7);
+        break;
+        
+    case 2:
+        keyState = (inputEventGetState(EC_COLON  ) << 0) |
+                   (inputEventGetState(EC_RBRACK ) << 1) |
+                   (inputEventGetState(EC_COMMA  ) << 2) |
+                   (inputEventGetState(EC_PERIOD ) << 3) |
+                   (inputEventGetState(EC_DIV    ) << 4) |
+                   (inputEventGetState(EC_UNDSCRE) << 5) |
+                   (inputEventGetState(EC_A      ) << 6) |
+                   (inputEventGetState(EC_B      ) << 7);
+        break;
+        
+    case 3:
+        keyState = (inputEventGetState(EC_C      ) << 0) |
+                   (inputEventGetState(EC_D      ) << 1) |
+                   (inputEventGetState(EC_E      ) << 2) |
+                   (inputEventGetState(EC_F      ) << 3) |
+                   (inputEventGetState(EC_G      ) << 4) |
+                   (inputEventGetState(EC_H      ) << 5) |
+                   (inputEventGetState(EC_I      ) << 6) |
+                   (inputEventGetState(EC_J      ) << 7);
+        break;
+        
+    case 4:
+        keyState = (inputEventGetState(EC_K      ) << 0) |
+                   (inputEventGetState(EC_L      ) << 1) |
+                   (inputEventGetState(EC_M      ) << 2) |
+                   (inputEventGetState(EC_N      ) << 3) |
+                   (inputEventGetState(EC_O      ) << 4) |
+                   (inputEventGetState(EC_P      ) << 5) |
+                   (inputEventGetState(EC_Q      ) << 6) |
+                   (inputEventGetState(EC_R      ) << 7);
+        break;
+        
+    case 5:
+        keyState = (inputEventGetState(EC_S      ) << 0) |
+                   (inputEventGetState(EC_T      ) << 1) |
+                   (inputEventGetState(EC_U      ) << 2) |
+                   (inputEventGetState(EC_V      ) << 3) |
+                   (inputEventGetState(EC_W      ) << 4) |
+                   (inputEventGetState(EC_X      ) << 5) |
+                   (inputEventGetState(EC_Y      ) << 6) |
+                   (inputEventGetState(EC_Z      ) << 7);
+        break;
+        
+    case 6:
+        keyState = (inputEventGetState(EC_LSHIFT ) << 0) |
+                   (inputEventGetState(EC_RSHIFT ) << 1) |
+                   (inputEventGetState(EC_CTRL   ) << 2) |
+                   (inputEventGetState(EC_CAPS   ) << 3) |
+                   (inputEventGetState(EC_CODE   ) << 4) |
+                   (inputEventGetState(EC_F1     ) << 5) |
+                   (inputEventGetState(EC_F2     ) << 6) |
+                   (inputEventGetState(EC_F3     ) << 7);
+        break;
+        
+    case 7:
+        keyState = (inputEventGetState(EC_F4     ) << 0) |
+                   (inputEventGetState(EC_F5     ) << 1) |
+                   (inputEventGetState(EC_ESC    ) << 2) |
+                   (inputEventGetState(EC_TAB    ) << 3) |
+                   (inputEventGetState(EC_STOP   ) << 4) |
+                   (inputEventGetState(EC_BKSPACE) << 5) |
+                   (inputEventGetState(EC_SELECT ) << 6) |
+                   (inputEventGetState(EC_RETURN ) << 7);
+        break;
+        
+    case 8:
+        keyState = (inputEventGetState(EC_SPACE  ) << 0) |
+                   (inputEventGetState(EC_CLS    ) << 1) |
+                   (inputEventGetState(EC_INS    ) << 2) |
+                   (inputEventGetState(EC_DEL    ) << 3) |
+                   (inputEventGetState(EC_LEFT   ) << 4) |
+                   (inputEventGetState(EC_UP     ) << 5) |
+                   (inputEventGetState(EC_DOWN   ) << 6) |
+                   (inputEventGetState(EC_RIGHT  ) << 7);
+        break;
+        
+    case 9:
+        keyState = (inputEventGetState(EC_NUMMUL ) << 0) |
+                   (inputEventGetState(EC_NUMADD ) << 1) |
+                   (inputEventGetState(EC_NUMDIV ) << 2) |
+                   (inputEventGetState(EC_NUM0   ) << 3) |
+                   (inputEventGetState(EC_NUM1   ) << 4) |
+                   (inputEventGetState(EC_NUM2   ) << 5) |
+                   (inputEventGetState(EC_NUM3   ) << 6) |
+                   (inputEventGetState(EC_NUM4   ) << 7);
+        break;
+        
+    case 10:
+        keyState = (inputEventGetState(EC_NUM5   ) << 0) |
+                   (inputEventGetState(EC_NUM6   ) << 1) |
+                   (inputEventGetState(EC_NUM7   ) << 2) |
+                   (inputEventGetState(EC_NUM8   ) << 3) |
+                   (inputEventGetState(EC_NUM9   ) << 4) |
+                   (inputEventGetState(EC_NUMSUB ) << 5) |
+                   (inputEventGetState(EC_NUMCOM ) << 6) |
+                   (inputEventGetState(EC_NUMPER ) << 7);
+        break;
+        
+    case 11:
+        keyState = (inputEventGetState(EC_JIKKOU ) << 1) |
+                   (inputEventGetState(EC_TORIKE ) << 3);
+    }
+
+    return ~keyState;
+}
+

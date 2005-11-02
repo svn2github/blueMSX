@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,7 +43,6 @@
 #include "Board.h"
 #include "RTC.h"
 #include "MsxPsg.h"
-#include "Keyboard.h"
 #include "VDP.h"
 #include "Casette.h"
 #include "Disk.h"

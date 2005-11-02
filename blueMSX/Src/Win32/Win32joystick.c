@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32joystick.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:02 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,20 +80,3 @@ void JoystickSetHwButtons(int joyId, int buttonA, int buttonB)
     joystickSetButtons(joySubType[joyId], buttonA, buttonB);
 }
 
-BYTE archJoystickGetState(int joyId) {
-    BYTE value = 0;
-
-    switch (joyType[joyId]) {
-    case JOY_NUMPAD:
-        value = joystickNumpad();
-        break;
-    case JOY_HW:
-        value = joystickGetState(joySubType[joyId]);
-        break;
-    case JOY_KEYSET:
-        value = joystickKeyset(joySubType[joyId] + 1);
-        break;
-    }
-
-    return value;
-}

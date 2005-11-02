@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Keyboard.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,6 +27,8 @@
 **
 ******************************************************************************
 */
+#error "Deprecated"
+
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 

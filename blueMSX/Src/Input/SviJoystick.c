@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/SviJoystick.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,16 +42,16 @@ static UInt8 read(SviJoystick* joystick)
     UInt8 state;
 
     if (joystick->controller == 0) {
-        state = (inputEventGetState(EK_JOY1_UP)      << 0) |
-                (inputEventGetState(EK_JOY1_DOWN)    << 1) |
-                (inputEventGetState(EK_JOY1_LEFT)    << 2) |
-                (inputEventGetState(EK_JOY1_RIGHT)   << 3);
+        state = (inputEventGetState(EC_JOY1_UP)      << 0) |
+                (inputEventGetState(EC_JOY1_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY1_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY1_RIGHT)   << 3);
     }
     else {
-        state = (inputEventGetState(EK_JOY2_UP)      << 0) |
-                (inputEventGetState(EK_JOY2_DOWN)    << 1) |
-                (inputEventGetState(EK_JOY2_LEFT)    << 2) |
-                (inputEventGetState(EK_JOY2_RIGHT)   << 3);
+        state = (inputEventGetState(EC_JOY2_UP)      << 0) |
+                (inputEventGetState(EC_JOY2_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY2_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY2_RIGHT)   << 3);
     }
 
     return ~state & 0x3f;
@@ -62,10 +62,10 @@ static UInt8 readTrigger(SviJoystick* joystick)
     UInt8 state;
 
     if (joystick->controller == 0) {
-        state = inputEventGetState(EK_JOY1_BUTTON1);
+        state = inputEventGetState(EC_JOY1_BUTTON1);
     }
     else {
-        state = inputEventGetState(EK_JOY2_BUTTON1);
+        state = inputEventGetState(EC_JOY2_BUTTON1);
     }
 
     return state;

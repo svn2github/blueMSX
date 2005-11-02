@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,7 +44,6 @@
 #include "MegaromCartridge.h"
 #include "Disk.h"
 #include "VideoManager.h"
-#include "Keyboard.h"
 #include "Casette.h"
 #include <string.h>
 #include <stdlib.h>
@@ -359,7 +358,6 @@ static BoardType boardLoadState(const char* stateFile)
 
     videoManagerLoadState();
     tapeLoadState();
-    keyboardLoadState();
 
     return boardType;
 }
@@ -420,7 +418,6 @@ void boardSaveState(const char* stateFile)
 
     videoManagerSaveState();
     tapeSaveState();
-    keyboardSaveState();
 
     // Save machine state
     machineSaveState(boardMachine);

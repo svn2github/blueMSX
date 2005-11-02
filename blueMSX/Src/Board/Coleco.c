@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
 #include "R800SaveState.h"
 #include "R800Debug.h"
 
+#include "InputEvent.h"
 #include "SN76489.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
@@ -45,7 +46,6 @@
 #include "Led.h"
 #include "Switches.h"
 #include "IoPort.h"
-#include "Keyboard.h"
 #include "MegaromCartridge.h"
 #include "JoystickPort.h"
 #include "ColecoJoystick.h"
@@ -76,7 +76,6 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 {
     ColecoJoystickDevice* device = joyDevice[(ioPort >> 1) & 1];
-    UInt8* keyMap = keyboardGetState();
     UInt8 joyState = 0x3f;
     UInt8 value;
 
@@ -96,32 +95,32 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
     value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
 
 	if (ioPort & 2) {
-		if      (~keyMap[ 9] & 0x08) value |= 0x0A; // 0
-		else if (~keyMap[ 9] & 0x10) value |= 0x0D; // 1
-		else if (~keyMap[ 9] & 0x20) value |= 0x07; // 2
-		else if (~keyMap[ 9] & 0x40) value |= 0x0C; // 3
-		else if (~keyMap[ 9] & 0x80) value |= 0x02; // 4
-		else if (~keyMap[10] & 0x01) value |= 0x03; // 5
-		else if (~keyMap[10] & 0x02) value |= 0x0E; // 6
-		else if (~keyMap[10] & 0x04) value |= 0x05; // 7
-		else if (~keyMap[10] & 0x08) value |= 0x01; // 8
-		else if (~keyMap[10] & 0x10) value |= 0x0B; // 9
-		else if (~keyMap[ 9] & 0x01) value |= 0x09; // *
-		else if (~keyMap[ 9] & 0x04) value |= 0x06; // / to #
+		if      (inputEventGetState(EC_NUM0))    value |= 0x0A; // 0
+		else if (inputEventGetState(EC_NUM1))    value |= 0x0D; // 1
+		else if (inputEventGetState(EC_NUM2))    value |= 0x07; // 2
+		else if (inputEventGetState(EC_NUM3))    value |= 0x0C; // 3
+		else if (inputEventGetState(EC_NUM4))    value |= 0x02; // 4
+		else if (inputEventGetState(EC_NUM5))    value |= 0x03; // 5
+		else if (inputEventGetState(EC_NUM6))    value |= 0x0E; // 6
+		else if (inputEventGetState(EC_NUM7))    value |= 0x05; // 7
+		else if (inputEventGetState(EC_NUM8))    value |= 0x01; // 8
+		else if (inputEventGetState(EC_NUM9))    value |= 0x0B; // 9
+		else if (inputEventGetState(EC_NUMMUL))  value |= 0x09; // *
+		else if (inputEventGetState(EC_NUMDIV))  value |= 0x06; // / to #
     }
     else {
-		if      (~keyMap[0] & 0x01) value |= 0x0A; // 0
-		else if (~keyMap[0] & 0x02) value |= 0x0D; // 1
-		else if (~keyMap[0] & 0x04) value |= 0x07; // 2
-		else if (~keyMap[0] & 0x08) value |= 0x0C; // 3
-		else if (~keyMap[0] & 0x10) value |= 0x02; // 4
-		else if (~keyMap[0] & 0x20) value |= 0x03; // 5
-		else if (~keyMap[0] & 0x40) value |= 0x0E; // 6
-		else if (~keyMap[0] & 0x80) value |= 0x05; // 7
-		else if (~keyMap[1] & 0x01) value |= 0x01; // 8
-		else if (~keyMap[1] & 0x02) value |= 0x0B; // 9
-		else if (~keyMap[1] & 0x04) value |= 0x09; // - to *
-		else if (~keyMap[1] & 0x08) value |= 0x06; // = to #
+		if      (inputEventGetState(EC_0))       value |= 0x0A; // 0
+		else if (inputEventGetState(EC_1))       value |= 0x0D; // 1
+		else if (inputEventGetState(EC_2))       value |= 0x07; // 2
+		else if (inputEventGetState(EC_3))       value |= 0x0C; // 3
+		else if (inputEventGetState(EC_4))       value |= 0x02; // 4
+		else if (inputEventGetState(EC_5))       value |= 0x03; // 5
+		else if (inputEventGetState(EC_6))       value |= 0x0E; // 6
+		else if (inputEventGetState(EC_7))       value |= 0x05; // 7
+		else if (inputEventGetState(EC_8))       value |= 0x01; // 8
+		else if (inputEventGetState(EC_9))       value |= 0x0B; // 9
+		else if (inputEventGetState(EC_NEG))     value |= 0x09; // - to *
+		else if (inputEventGetState(EC_CIRCFLX)) value |= 0x06; // = to #
 	}
 
     return value;

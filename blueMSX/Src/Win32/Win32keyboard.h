@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,7 +73,6 @@ void joystickUpdate();
 DWORD joystickGetButtonState();
 void keyboardSetFocus(int handle, int focus);
 int archJoystickGetCount();
-int joystickGetState(int index);
 int joystickNumButtons(int index);
 char* archJoystickGetName(int index);
 void joystickSetButtons(int index, int buttonA, int buttonB);

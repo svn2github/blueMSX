@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-08-20 05:33:41 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,13 +32,14 @@
 #include <windows.h>
 #include "MsxTypes.h"
 #include "Win32Common.h"
-#include "Win32File.h"
 #include "Win32Keyboard.h"
+#include "Win32File.h"
 #include "Theme.h"
 #include "Machine.h"
 #include "ArchNotifications.h"
 #include "Language.h"
 #include "Resource.h"
+#include "InputEvent.h"
 
 // Set current window for handling of minimize events, close events, ...
 extern void SetCurrentWindow(HWND hwnd);

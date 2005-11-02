@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,11 +30,15 @@
 #define DIRECTINPUT_VERSION     0x0500
 #include "Win32keyboard.h"
 #include "Language.h"
-#include "Keyboard.h"
+#include "InputEvent.h"
 #include <windows.h>
 #include <stdio.h>
 #include <winioctl.h>
 #include <dinput.h>
+
+
+#define MAX_JOYSTICKS 8
+
 
 #define KBD_TABLE_LEN 512
 
@@ -52,17 +56,17 @@ static char DefaultConfigName[] = "blueMSX Default";
 
 static char currentConfigFile[MAX_PATH];
 
-#define KEY_CODE_BUTTON1 256
-#define KEY_CODE_JOYUP    (256 + 32 + 0)
-#define KEY_CODE_JOYDOWN  (256 + 32 + 1)
-#define KEY_CODE_JOYLEFT  (256 + 32 + 2)
-#define KEY_CODE_JOYRIGHT (256 + 32 + 3)
+#define KEY_CODE_BUTTON1  256
+#define KEY_CODE_JOYUP    (256 + 28)
+#define KEY_CODE_JOYDOWN  (256 + 29)
+#define KEY_CODE_JOYLEFT  (256 + 30)
+#define KEY_CODE_JOYRIGHT (256 + 31)
 
 #define INIT_DIK(val) strcpy(dikStrings[DIK_##val], #val)
 
 static void initDikStr()
 {
-    int i;
+    int i, j;
 
     INIT_DIK(0);
     INIT_DIK(1);
@@ -209,14 +213,16 @@ static void initDikStr()
     INIT_DIK(YEN);
     INIT_DIK(Z);
 
-    for (i = 0; i < 32; i++) {
-        sprintf(dikStrings[KEY_CODE_BUTTON1 + i], "BUTTON%d", i + 1);
-    }
+    for (j = 0; j < MAX_JOYSTICKS; j++) {
+        for (i = 0; i < 28; i++) {
+            sprintf(dikStrings[KEY_CODE_BUTTON1 + i + 32 * j], "J%d BT %d", j + 1, i + 1);
+        }
 
-    strcpy(dikStrings[KEY_CODE_JOYLEFT],  "JOYLEFT");
-    strcpy(dikStrings[KEY_CODE_JOYRIGHT], "JOYRIGHT");
-    strcpy(dikStrings[KEY_CODE_JOYUP],    "JOYUP");
-    strcpy(dikStrings[KEY_CODE_JOYDOWN],  "JOYDOWN");
+        sprintf(dikStrings[KEY_CODE_JOYLEFT  + 32 * j], "J%d LEFT", j + 1);
+        sprintf(dikStrings[KEY_CODE_JOYRIGHT + 32 * j], "J%d RIGHT", j + 1);
+        sprintf(dikStrings[KEY_CODE_JOYUP    + 32 * j], "J%d UP", j + 1);
+        sprintf(dikStrings[KEY_CODE_JOYDOWN  + 32 * j], "J%d DOWN", j + 1);
+    }
 }
 
 char* dik2str(int dikKey) 
@@ -243,104 +249,104 @@ static void initKbdTable()
 {
     memset (kbdTable, 0, sizeof(kbdTable));
 
-    kbdTable[DIK_0          ] = EK_0;
-    kbdTable[DIK_1          ] = EK_1;
-    kbdTable[DIK_2          ] = EK_2;
-    kbdTable[DIK_3          ] = EK_3;
-    kbdTable[DIK_4          ] = EK_4;
-    kbdTable[DIK_5          ] = EK_5;
-    kbdTable[DIK_6          ] = EK_6;
-    kbdTable[DIK_7          ] = EK_7;
-    kbdTable[DIK_8          ] = EK_8;
-    kbdTable[DIK_9          ] = EK_9;
+    kbdTable[DIK_0          ] = EC_0;
+    kbdTable[DIK_1          ] = EC_1;
+    kbdTable[DIK_2          ] = EC_2;
+    kbdTable[DIK_3          ] = EC_3;
+    kbdTable[DIK_4          ] = EC_4;
+    kbdTable[DIK_5          ] = EC_5;
+    kbdTable[DIK_6          ] = EC_6;
+    kbdTable[DIK_7          ] = EC_7;
+    kbdTable[DIK_8          ] = EC_8;
+    kbdTable[DIK_9          ] = EC_9;
     
-    kbdTable[DIK_MINUS      ] = EK_NEG;
-    kbdTable[DIK_EQUALS     ] = EK_CIRCFLX;
-    kbdTable[DIK_BACKSLASH  ] = EK_BKSLASH;
-    kbdTable[DIK_LBRACKET   ] = EK_AT;
-    kbdTable[DIK_RBRACKET   ] = EK_LBRACK;
-    kbdTable[DIK_SEMICOLON  ] = EK_SEMICOL;
-    kbdTable[DIK_APOSTROPHE ] = EK_COLON;
-    kbdTable[DIK_GRAVE      ] = EK_RBRACK;
-    kbdTable[DIK_COMMA      ] = EK_COMMA;
-    kbdTable[DIK_PERIOD     ] = EK_PERIOD;
-    kbdTable[DIK_SLASH      ] = EK_DIV;
-    kbdTable[DIK_RCONTROL   ] = EK_UNDSCRE;
+    kbdTable[DIK_MINUS      ] = EC_NEG;
+    kbdTable[DIK_EQUALS     ] = EC_CIRCFLX;
+    kbdTable[DIK_BACKSLASH  ] = EC_BKSLASH;
+    kbdTable[DIK_LBRACKET   ] = EC_AT;
+    kbdTable[DIK_RBRACKET   ] = EC_LBRACK;
+    kbdTable[DIK_SEMICOLON  ] = EC_SEMICOL;
+    kbdTable[DIK_APOSTROPHE ] = EC_COLON;
+    kbdTable[DIK_GRAVE      ] = EC_RBRACK;
+    kbdTable[DIK_COMMA      ] = EC_COMMA;
+    kbdTable[DIK_PERIOD     ] = EC_PERIOD;
+    kbdTable[DIK_SLASH      ] = EC_DIV;
+    kbdTable[DIK_RCONTROL   ] = EC_UNDSCRE;
     
-    kbdTable[DIK_A          ] = EK_A;
-    kbdTable[DIK_B          ] = EK_B;
-    kbdTable[DIK_C          ] = EK_C;
-    kbdTable[DIK_D          ] = EK_D;
-    kbdTable[DIK_E          ] = EK_E;
-    kbdTable[DIK_F          ] = EK_F;
-    kbdTable[DIK_G          ] = EK_G;
-    kbdTable[DIK_H          ] = EK_H;
-    kbdTable[DIK_I          ] = EK_I;
-    kbdTable[DIK_J          ] = EK_J;
-    kbdTable[DIK_K          ] = EK_K;
-    kbdTable[DIK_L          ] = EK_L;
-    kbdTable[DIK_M          ] = EK_M;
-    kbdTable[DIK_N          ] = EK_N;
-    kbdTable[DIK_O          ] = EK_O;
-    kbdTable[DIK_P          ] = EK_P;
-    kbdTable[DIK_Q          ] = EK_Q;
-    kbdTable[DIK_R          ] = EK_R;
-    kbdTable[DIK_S          ] = EK_S;
-    kbdTable[DIK_T          ] = EK_T;
-    kbdTable[DIK_U          ] = EK_U;
-    kbdTable[DIK_V          ] = EK_V;
-    kbdTable[DIK_W          ] = EK_W;
-    kbdTable[DIK_X          ] = EK_X;
-    kbdTable[DIK_Y          ] = EK_Y;
-    kbdTable[DIK_Z          ] = EK_Z;
+    kbdTable[DIK_A          ] = EC_A;
+    kbdTable[DIK_B          ] = EC_B;
+    kbdTable[DIK_C          ] = EC_C;
+    kbdTable[DIK_D          ] = EC_D;
+    kbdTable[DIK_E          ] = EC_E;
+    kbdTable[DIK_F          ] = EC_F;
+    kbdTable[DIK_G          ] = EC_G;
+    kbdTable[DIK_H          ] = EC_H;
+    kbdTable[DIK_I          ] = EC_I;
+    kbdTable[DIK_J          ] = EC_J;
+    kbdTable[DIK_K          ] = EC_K;
+    kbdTable[DIK_L          ] = EC_L;
+    kbdTable[DIK_M          ] = EC_M;
+    kbdTable[DIK_N          ] = EC_N;
+    kbdTable[DIK_O          ] = EC_O;
+    kbdTable[DIK_P          ] = EC_P;
+    kbdTable[DIK_Q          ] = EC_Q;
+    kbdTable[DIK_R          ] = EC_R;
+    kbdTable[DIK_S          ] = EC_S;
+    kbdTable[DIK_T          ] = EC_T;
+    kbdTable[DIK_U          ] = EC_U;
+    kbdTable[DIK_V          ] = EC_V;
+    kbdTable[DIK_W          ] = EC_W;
+    kbdTable[DIK_X          ] = EC_X;
+    kbdTable[DIK_Y          ] = EC_Y;
+    kbdTable[DIK_Z          ] = EC_Z;
 
-    kbdTable[DIK_F1         ] = EK_F1;
-    kbdTable[DIK_F2         ] = EK_F2;
-    kbdTable[DIK_F3         ] = EK_F3;
-    kbdTable[DIK_F4         ] = EK_F4;
-    kbdTable[DIK_F5         ] = EK_F5;
-    kbdTable[DIK_ESCAPE     ] = EK_ESC;
-    kbdTable[DIK_TAB        ] = EK_TAB;
-    kbdTable[DIK_PRIOR      ] = EK_STOP;
-    kbdTable[DIK_BACK       ] = EK_BKSPACE;
-    kbdTable[DIK_END        ] = EK_SELECT;
-    kbdTable[DIK_RETURN     ] = EK_RETURN;
-    kbdTable[DIK_SPACE      ] = EK_SPACE;
-    kbdTable[DIK_HOME       ] = EK_CLS;
-    kbdTable[DIK_INSERT     ] = EK_INS;
-    kbdTable[DIK_DELETE     ] = EK_DEL;
-    kbdTable[DIK_LEFT       ] = EK_LEFT;
-    kbdTable[DIK_UP         ] = EK_UP;
-    kbdTable[DIK_RIGHT      ] = EK_RIGHT;
-    kbdTable[DIK_DOWN       ] = EK_DOWN;
+    kbdTable[DIK_F1         ] = EC_F1;
+    kbdTable[DIK_F2         ] = EC_F2;
+    kbdTable[DIK_F3         ] = EC_F3;
+    kbdTable[DIK_F4         ] = EC_F4;
+    kbdTable[DIK_F5         ] = EC_F5;
+    kbdTable[DIK_ESCAPE     ] = EC_ESC;
+    kbdTable[DIK_TAB        ] = EC_TAB;
+    kbdTable[DIK_PRIOR      ] = EC_STOP;
+    kbdTable[DIK_BACK       ] = EC_BKSPACE;
+    kbdTable[DIK_END        ] = EC_SELECT;
+    kbdTable[DIK_RETURN     ] = EC_RETURN;
+    kbdTable[DIK_SPACE      ] = EC_SPACE;
+    kbdTable[DIK_HOME       ] = EC_CLS;
+    kbdTable[DIK_INSERT     ] = EC_INS;
+    kbdTable[DIK_DELETE     ] = EC_DEL;
+    kbdTable[DIK_LEFT       ] = EC_LEFT;
+    kbdTable[DIK_UP         ] = EC_UP;
+    kbdTable[DIK_RIGHT      ] = EC_RIGHT;
+    kbdTable[DIK_DOWN       ] = EC_DOWN;
 
-    kbdTable[DIK_MULTIPLY   ] = EK_NUMMUL;
-    kbdTable[DIK_ADD        ] = EK_NUMADD;
-    kbdTable[DIK_DIVIDE     ] = EK_NUMDIV;
-    kbdTable[DIK_SUBTRACT   ] = EK_NUMSUB;
-    kbdTable[DIK_DECIMAL    ] = EK_NUMPER;
-    kbdTable[DIK_NEXT       ] = EK_NUMCOM;
-    kbdTable[DIK_NUMPAD0    ] = EK_NUM0;
-    kbdTable[DIK_NUMPAD1    ] = EK_NUM1;
-    kbdTable[DIK_NUMPAD2    ] = EK_NUM2;
-    kbdTable[DIK_NUMPAD3    ] = EK_NUM3;
-    kbdTable[DIK_NUMPAD4    ] = EK_NUM4;
-    kbdTable[DIK_NUMPAD5    ] = EK_NUM5;
-    kbdTable[DIK_NUMPAD6    ] = EK_NUM6;
-    kbdTable[DIK_NUMPAD7    ] = EK_NUM7;
-    kbdTable[DIK_NUMPAD8    ] = EK_NUM8;
-    kbdTable[DIK_NUMPAD9    ] = EK_NUM9;
+    kbdTable[DIK_MULTIPLY   ] = EC_NUMMUL;
+    kbdTable[DIK_ADD        ] = EC_NUMADD;
+    kbdTable[DIK_DIVIDE     ] = EC_NUMDIV;
+    kbdTable[DIK_SUBTRACT   ] = EC_NUMSUB;
+    kbdTable[DIK_DECIMAL    ] = EC_NUMPER;
+    kbdTable[DIK_NEXT       ] = EC_NUMCOM;
+    kbdTable[DIK_NUMPAD0    ] = EC_NUM0;
+    kbdTable[DIK_NUMPAD1    ] = EC_NUM1;
+    kbdTable[DIK_NUMPAD2    ] = EC_NUM2;
+    kbdTable[DIK_NUMPAD3    ] = EC_NUM3;
+    kbdTable[DIK_NUMPAD4    ] = EC_NUM4;
+    kbdTable[DIK_NUMPAD5    ] = EC_NUM5;
+    kbdTable[DIK_NUMPAD6    ] = EC_NUM6;
+    kbdTable[DIK_NUMPAD7    ] = EC_NUM7;
+    kbdTable[DIK_NUMPAD8    ] = EC_NUM8;
+    kbdTable[DIK_NUMPAD9    ] = EC_NUM9;
 
-    kbdTable[DIK_LWIN       ] = EK_TORIKE;
-    kbdTable[DIK_RWIN       ] = EK_JIKKOU;
-    kbdTable[DIK_LSHIFT     ] = EK_LSHIFT;
-    kbdTable[DIK_RSHIFT     ] = EK_RSHIFT;
-    kbdTable[DIK_LCONTROL   ] = EK_CTRL;
-    kbdTable[DIK_LMENU      ] = EK_GRAPH;
-    kbdTable[DIK_RMENU      ] = EK_CODE;
-    kbdTable[DIK_CAPITAL    ] = EK_CAPS;
-    kbdTable[DIK_NUMPADENTER] = EK_PAUSE;
-    kbdTable[DIK_SYSRQ      ] = EK_PRINT;
+    kbdTable[DIK_LWIN       ] = EC_TORIKE;
+    kbdTable[DIK_RWIN       ] = EC_JIKKOU;
+    kbdTable[DIK_LSHIFT     ] = EC_LSHIFT;
+    kbdTable[DIK_RSHIFT     ] = EC_RSHIFT;
+    kbdTable[DIK_LCONTROL   ] = EC_CTRL;
+    kbdTable[DIK_LMENU      ] = EC_GRAPH;
+    kbdTable[DIK_RMENU      ] = EC_CODE;
+    kbdTable[DIK_CAPITAL    ] = EC_CAPS;
+    kbdTable[DIK_NUMPADENTER] = EC_PAUSE;
+    kbdTable[DIK_SYSRQ      ] = EC_PRINT;
 
     keyboardSaveConfig(DefaultConfigName);
 }
@@ -348,8 +354,6 @@ static void initKbdTable()
 
 
 
-
-#define MAX_JOYSTICKS 8
 
 static LPDIRECTINPUT        dinput;
 static int                  dinputVersion;
@@ -364,7 +368,6 @@ struct JoyInfo {
     int                  numButtons;
     int                  buttonA;
     int                  buttonB;
-    int                  state;  
 };
 static struct JoyInfo joyInfo[MAX_JOYSTICKS];
 
@@ -627,10 +630,6 @@ char* archJoystickGetName(int index) {
 }
 
 
-int joystickGetState(int index) {
-    return joyInfo[index].state;
-}
-
 int joystickNumButtons(int index) {
     return joyInfo[index].numButtons;
 }
@@ -664,14 +663,14 @@ static void keyboardHanldeKeypress(int code, int pressed) {
             selectedKey    = 0;
             selectedDikKey = 0;
 
-            keyboardKeyUp(keyCode);
+            inputEventUnset(keyCode);
         }
         else {
-            keyboardKeyDown(keyCode);
+            inputEventSet(keyCode);
         }
     }
     else {
-        keyboardKeyUp(keyCode);
+        inputEventUnset(keyCode);
     }
 }
 
@@ -695,7 +694,7 @@ static void keyboardResetKbd()
         kbdModifiers = 0;
         keyboardHanldeKeypress(kbdTable[i], 0);
     }
-    keyboardReset();
+    inputEventReset();
     buttonState = 0;
 }
 
@@ -706,29 +705,26 @@ DWORD joystickGetButtonState()
 
 void joystickUpdate()
 {
-    int i;
+    int i, j;
     DWORD joyMask = 0;
-    DWORD mask;
 
     buttonState = 0;
 
     for (i = 0; i < joyCount; i++) {
         DWORD mask;
-        joyInfo[i].state = joystickUpdateState(i, &mask);
-        joyMask |= joyInfo[i].state;
+        int state = joystickUpdateState(i, &mask);
+        joyMask |= state;
         buttonState |= mask;
-    }
-
-    mask = buttonState;
-    for (i = 0; i < 32; i++) {
-        keyboardHanldeKeypress(KEY_CODE_BUTTON1 + i, mask & 1);
-        mask >>= 1;
-    }
-    
-    mask = joyMask;
-    for (i = 0; i < 4; i++) {
-        keyboardHanldeKeypress(KEY_CODE_JOYUP + i, mask & 1);
-        mask >>= 1;
+        
+        for (j = 0; j < 28; j++) {
+            keyboardHanldeKeypress(KEY_CODE_BUTTON1 + j + i * 32, mask & 1);
+            mask >>= 1;
+        }
+        
+        for (j = 0; j < 4; j++) {
+            keyboardHanldeKeypress(KEY_CODE_JOYUP + j + i * 32, state & 1);
+            state >>= 1;
+        }
     }
 }
 
@@ -875,9 +871,9 @@ int keyboardLoadConfig(char* configName)
 
     sprintf(currentConfigFile, *configName ? configName : DefaultConfigName);
 
-    for (i = 0; i < EK_KEYCOUNT; i++) {
-        const char* keyCode = keyboardKeyCodeToString(i);
-        if (*keyCode != 0) {
+    for (i = 0; i < EC_KEYCOUNT; i++) {
+        const char* keyCode = inputEventCodeToString(i);
+        if (keyCode != NULL && *keyCode != 0) {
             char dikName[32];
             int dikKey;
 
@@ -913,8 +909,8 @@ void keyboardSaveConfig(char* configName)
 
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
     
-    for (i = 0; i < EK_KEYCOUNT; i++) {
-        const char* keyCode = keyboardKeyCodeToString(i);
+    for (i = 0; i < EC_KEYCOUNT; i++) {
+        const char* keyCode = inputEventCodeToString(i);
         const char* dikName = "";
         int j;
         for (j = 0; j < KBD_TABLE_LEN; j++) {
@@ -954,7 +950,7 @@ void inputInit()
     initDikStr();
     initKbdTable();
 
-    keyboardReset();
+    inputEventReset();
     
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, DefaultConfigName);
     file = fopen(fileName, "r");
@@ -969,7 +965,7 @@ void inputInit()
 char* archGetSelectedKey()
 {
     if (selectedKey != 0) {
-        char* keyCode = (char*)keyboardKeyCodeToString(selectedKey);
+        char* keyCode = (char*)inputEventCodeToString(selectedKey);
         if (keyCode != NULL) {
             return keyCode;
         }

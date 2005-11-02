@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-02 06:58:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,6 @@
 #include "Properties.h"
 #include "Emulator.h"
 #include "Board.h"
-#include "Keyboard.h"
 #include "Led.h"
 #include "Casette.h"
 #include "AudioMixer.h"
@@ -46,6 +45,7 @@
 #include "ArchInput.h"
 #include "ArchTimer.h"
 #include "VideoManager.h"
+#include "InputEvent.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {
@@ -782,7 +782,7 @@ char* themeTriggerBuildAndVersion() {
 }
 
 int themeTriggerKeyPressed(int keyCode) {
-    return keyboardGetKeyState(keyCode) || themeTriggerKeyEdit(keyCode);
+    return inputEventGetState(keyCode) || themeTriggerKeyEdit(keyCode);
 }
 
 int themeTriggerKeyEdit(int keyCode) {
