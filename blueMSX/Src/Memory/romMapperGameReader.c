@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-07 04:46:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,11 +38,18 @@
 #include <string.h>
 #include <stdio.h>
 
-#define HISTORY_LENGTH 0x40
+#define MAPPER_ADDRESS_UNKNOWN 0x0100
+#define MAPPER_ADDRESS_MAPPER  0x0101
+#define MAPPER_ADDRESS_PORT    0x0102
 
-#define CACHE_LINE_BITS 10
-#define CACHE_LINES     (0x10000 >> CACHE_LINE_BITS)
-#define CACHE_LINE_SIZE (1 << CACHE_LINE_BITS)
+typedef struct {
+	UInt16 address;
+	UInt8  value;
+	UInt16 start;
+	UInt16 length;
+	UInt8* data;
+	void*  next;
+} MapperList;
 
 typedef struct {
     int deviceHandle;
@@ -50,8 +57,9 @@ typedef struct {
     int slot;
     int sslot;
     int cartSlot;
-    int cacheLineEnabled[CACHE_LINES];
-    UInt8 cacheLineData[CACHE_LINES][1 << CACHE_LINE_BITS];
+	MapperList* mapperList;
+	UInt16 mapperStatus[0x10000];
+	UInt8 romData[0x10000];
 } RomMapperGameReader;
 
 static void saveState(RomMapperGameReader* rm)
@@ -75,6 +83,8 @@ static void destroy(RomMapperGameReader* rm)
         slotUnregister(rm->slot, rm->sslot, 0);
     }
     deviceManagerUnregister(rm->deviceHandle);
+
+	// TODO: clear mapperList!
 
     free(rm);
 }
@@ -112,28 +122,144 @@ static void writeIo(RomMapperGameReader* rm, UInt16 port, UInt8 value)
 
 static UInt8 read(RomMapperGameReader* rm, UInt16 address) 
 {
-    int bank = address >> CACHE_LINE_BITS;
-    if (!rm->cacheLineEnabled[bank]) {
-        if (!gameReaderRead(rm->gameReader, bank << CACHE_LINE_BITS, rm->cacheLineData[bank], CACHE_LINE_SIZE)) {
-            memset(rm->cacheLineData[bank], 0xff, CACHE_LINE_SIZE);
-        }
-        rm->cacheLineEnabled[bank] = 1;
-    }
-
-    return rm->cacheLineData[bank][address & (CACHE_LINE_SIZE - 1)];
+	if (address <  0x4000)
+		if (!gameReaderRead(rm->gameReader, 0x0000, rm->romData + 0x0000, 0x4000))
+			memset(rm->romData + 0x0000, 0xff, 0x4000);
+	if (address >= 0xc000)
+		if (!gameReaderRead(rm->gameReader, 0xc000, rm->romData + 0xc000, 0x4000))
+			memset(rm->romData + 0xc000, 0xff, 0x4000);
+	return rm->romData[address];
 }
 
 
+int isWellKnownPort(int address)
+{
+	if (
+//		 (address==0x9000)                    || // scc
+		 (address>=0x9800 && address<=0x988f) || // scc
+		 (address>=0xb800 && address<=0xb88f) || // scc
+		 (address==0xbffe)                    || // scc
+		 (address==0xffff)                       // secondary slot mapper
+	   )
+	 {
+		 return 1;
+	 }
+	 return 0;
+}
+
 static void write(RomMapperGameReader* rm, UInt16 address, UInt8 value) 
 {
-    int bank = address >> 13;
     int i;
+	UInt8 newBuffer[0x10000];
+	UInt16 start = 0xffff;
+	UInt16 length = 0;
+	MapperList* mapperList;
 
-    for (i = 0; i < CACHE_LINES; i++) {
-        rm->cacheLineEnabled[i] = 0;
-    }
-    
-    gameReaderWrite(rm->gameReader, address, &value, 1);
+	// address has been classified as a port, do nothing
+	if (rm->mapperStatus[address] == MAPPER_ADDRESS_PORT) {
+		return;
+	}
+
+	// this value was already written to address and nothing happend, do nothing again.
+	if (rm->mapperStatus[address] == value) {
+		return;
+	}
+
+	// address has been classified as a mapper, restore cache
+	if (rm->mapperStatus[address] == MAPPER_ADDRESS_MAPPER) {
+		mapperList = rm->mapperList;
+		while (1) {
+			if (mapperList->address == address) {
+				length = mapperList->length;
+				start = mapperList->start;
+				if (mapperList->value == value ) {
+					memcpy(rm->romData+start, mapperList->data, length);
+					return;
+				}
+			}
+			if (mapperList->next == NULL) {
+				break;
+			} else {
+				mapperList = mapperList->next;
+			}
+		}
+		// new block
+		mapperList->next = malloc(sizeof(mapperList));
+		mapperList = mapperList->next;
+		// init entry
+		mapperList->address = address;
+		mapperList->start = start;
+		mapperList->value = value;
+		mapperList->length = length;
+		mapperList->data = malloc(length);
+		mapperList->next = NULL;
+		// read data
+		gameReaderWrite(rm->gameReader, address, &value, 1);
+		gameReaderRead(rm->gameReader, start, mapperList->data, length);
+		// copy to romdata
+		memcpy(rm->romData+start, mapperList->data, length);
+		return;
+	}
+
+	// address has an unknown or read-once status, examine.
+	gameReaderWrite(rm->gameReader, address, &value, 1);
+	gameReaderRead(rm->gameReader, 0x4000, newBuffer + 0x4000, 0x4000);
+	gameReaderRead(rm->gameReader, 0x8000, newBuffer + 0x8000, 0x4000);
+
+	// search for changed area
+	for(i=0x4000; i<0xc000; i++) {
+		if (i == address || isWellKnownPort(i)) {
+			continue; // skip write address!
+		}
+		if (rm->romData[i] != newBuffer[i]) {
+			if (start == 0xffff) {
+				start = i;
+			}
+			length = i-start+1;
+		}
+	}
+
+	// check for port (second write with a different value, but still no change)
+	if (!length) {
+		if (rm->mapperStatus[address] != value && rm->mapperStatus[address] <= 0xff ) {
+			rm->mapperStatus[address] = MAPPER_ADDRESS_PORT;
+		} else {
+			rm->mapperStatus[address] = value;
+		}
+		return;
+	}
+	
+	// round length
+	for(i=0;i<0x8000;i+=0x1000) {
+		if (length<i) {
+			length = i;
+			break;
+		}
+	}
+
+	// we found a mapper!
+	rm->mapperStatus[address] = MAPPER_ADDRESS_MAPPER;
+	mapperList = rm->mapperList;
+	if (mapperList == NULL) {
+		mapperList = malloc(sizeof(mapperList));
+		rm->mapperList = mapperList;
+	} else {
+		while (mapperList->next != NULL) {
+			mapperList = mapperList->next;
+		}
+		mapperList->next = malloc(sizeof(mapperList));
+		mapperList = mapperList->next;
+	}
+	mapperList->next = NULL;
+	mapperList->start = start;
+	mapperList->length = length;
+	mapperList->address = address;
+	mapperList->value = value;
+	mapperList->data = (UInt8*)malloc(length);
+	memcpy(mapperList->data,newBuffer+start,length);
+	memcpy(rm->romData+start,newBuffer+start,length);
+	
+	return;
 }
 
 int romMapperGameReaderCreate(int cartSlot, int slot, int sslot) 
@@ -152,8 +278,12 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
 
     rm->gameReader = gameReaderCreate(cartSlot);
 
-    for (i = 0; i < CACHE_LINES; i++) {
-        rm->cacheLineEnabled[i] = 0;
+	// read initial buffer
+	if (!gameReaderRead(rm->gameReader, 0x4000, rm->romData + 0x4000, 0x4000)) {
+        memset(rm->romData, 0xff, 0x10000);
+    }
+	if (!gameReaderRead(rm->gameReader, 0x8000, rm->romData + 0x8000, 0x4000)) {
+        memset(rm->romData, 0xff, 0x10000);
     }
 
     if (rm->gameReader != NULL) {
@@ -164,6 +294,16 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
         }
     }
 
+	for(i = 0; i <= 0xffff; i++) {
+		// mark scc as known port
+		if (isWellKnownPort(i))	{
+			rm->mapperStatus[i]= MAPPER_ADDRESS_PORT;
+		} else {
+			rm->mapperStatus[i]= MAPPER_ADDRESS_UNKNOWN;
+		}
+	}
+
+	rm->mapperList = NULL;
+
     return 1;
 }
-

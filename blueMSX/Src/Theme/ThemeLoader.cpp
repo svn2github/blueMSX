@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-07 04:46:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -524,7 +524,8 @@ static ArchBitmap* loadBitmap(TiXmlElement* el, int* x, int* y, int* columns)
 
 
 static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                     TiXmlElement* el, int dx, int dy)
+                     TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -534,16 +535,19 @@ static void addImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     x += dx;
     y += dy;
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 1), THEME_TRIGGER_NONE, visible);
 }
 
 static void addGrabImage(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                     TiXmlElement* el, int dx, int dy)
+                     TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -553,9 +557,11 @@ static void addGrabImage(ThemeCollection* themeCollection, Theme* theme, ThemePa
     x += dx;
     y += dy;
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int activenotify = 0;
@@ -566,7 +572,8 @@ static void addGrabImage(ThemeCollection* themeCollection, Theme* theme, ThemePa
 }
 
 static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                   TiXmlElement* el, int dx, int dy)
+                   TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -581,16 +588,19 @@ static void addLed(ThemeCollection* themeCollection, Theme* theme, ThemePage* th
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     themePageAddImage(themePage, activeImageCreate(x, y, cols, bitmap, 2), trigger, visible);
 }
 
 static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                     TiXmlElement* el, int dx, int dy)
+                     TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -605,9 +615,11 @@ static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int max = 1;
@@ -617,7 +629,8 @@ static void addMeter(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
 }
 
 static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                      TiXmlElement* el, int dx, int dy)
+                      TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -632,9 +645,11 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int arga, argb;
@@ -668,7 +683,8 @@ static void addSlider(ThemeCollection* themeCollection, Theme* theme, ThemePage*
 }
 
 static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                      TiXmlElement* el, int dx, int dy)
+                      TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -683,9 +699,11 @@ static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage*
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int arga, argb;
@@ -699,7 +717,8 @@ static void addButton(ThemeCollection* themeCollection, Theme* theme, ThemePage*
 }
 
 static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                            TiXmlElement* el, int dx, int dy)
+                            TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -714,9 +733,11 @@ static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, Them
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int arga, argb;
@@ -731,7 +752,8 @@ static void addToggleButton(ThemeCollection* themeCollection, Theme* theme, Them
 }
 
 static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                          TiXmlElement* el, int dx, int dy)
+                          TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -746,9 +768,11 @@ static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemeP
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int arg1x, arg1y;
@@ -773,7 +797,8 @@ static void addDualButton(ThemeCollection* themeCollection, Theme* theme, ThemeP
 }
 
 static void addKeyButton(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, TiXmlElement* el, ArchBitmap* srcBitmap, 
-                         int srcX, int srcY, ThemeTrigger visible)
+                         int srcX, int srcY, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x      = -1;
     int y      = -1;
@@ -810,7 +835,8 @@ static void addKeyButton(ThemeCollection* themeCollection, Theme* theme, ThemePa
 }
 
 static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                        TiXmlElement* el, int dx, int dy)
+                        TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -820,9 +846,11 @@ static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePag
     x += dx;
     y += dy;
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int srcWidth  = archBitmapGetWidth(bitmap) / 6;
@@ -843,7 +871,8 @@ static void addKeyboard(ThemeCollection* themeCollection, Theme* theme, ThemePag
 
 
 static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                      TiXmlElement* el, int dx, int dy)
+                      TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x = 0;
     int y = 0;
@@ -863,9 +892,11 @@ static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage*
         return;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
 
     int arg1 = 0;
@@ -875,7 +906,8 @@ static void addObject(ThemeCollection* themeCollection, Theme* theme, ThemePage*
 }
 
 static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                    TiXmlElement* el, int dx, int dy)
+                    TiXmlElement* el, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x, y, cols;
     ArchBitmap* bitmap = loadBitmap(el, &x, &y, &cols);
@@ -918,9 +950,11 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
         rightAlign = 1;
     }
 
-    ThemeTrigger visible = (ThemeTrigger)getTrigger(el, "visible");
-    if (visible == -1) {
-        visible = THEME_TRIGGER_NONE;
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(el, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
     }
     
     themePageAddText(themePage, activeTextCreate(x, y, cols, bitmap, startChar, charCount, width, type, color, rightAlign), 
@@ -928,7 +962,8 @@ static void addText(ThemeCollection* themeCollection, Theme* theme, ThemePage* t
 }
 
 static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* themePage, 
-                     TiXmlElement* root, int dx, int dy)
+                     TiXmlElement* root, int dx, int dy, 
+                     ThemeTrigger visible = THEME_TRIGGER_NONE)
 {
     int x = 0;
     root->QueryIntAttribute("x", &x);
@@ -937,42 +972,49 @@ static void addBlock(ThemeCollection* themeCollection, Theme* theme, ThemePage* 
     dx += x;
     dy += y;
 
+    if (visible == THEME_TRIGGER_NONE) {
+        visible = (ThemeTrigger)getTrigger(root, "visible");
+        if (visible == -1) {
+            visible = THEME_TRIGGER_NONE;
+        }
+    }
+
     for (TiXmlElement* el = root->FirstChildElement(); el != NULL; el = el->NextSiblingElement()) {
         if (strcmp(el->Value(), "block") == 0) {
-            addBlock(themeCollection, theme, themePage, el, dx, dy);
+            addBlock(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "image") == 0) {
-            addImage(themeCollection, theme, themePage, el, dx, dy);
+            addImage(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "dragimage") == 0) {
-            addGrabImage(themeCollection, theme, themePage, el, dx, dy);
+            addGrabImage(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "led") == 0) {
-            addLed(themeCollection, theme, themePage, el, dx, dy);
+            addLed(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "text") == 0) {
-            addText(themeCollection, theme, themePage, el, dx, dy);
+            addText(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "button") == 0) {
-            addButton(themeCollection, theme, themePage, el, dx, dy);
+            addButton(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "dualbutton") == 0) {
-            addDualButton(themeCollection, theme, themePage, el, dx, dy);
+            addDualButton(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "togglebutton") == 0) {
-            addToggleButton(themeCollection, theme, themePage, el, dx, dy);
+            addToggleButton(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "keyboard") == 0) {
-            addKeyboard(themeCollection, theme, themePage, el, dx, dy);
+            addKeyboard(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "meter") == 0) {
-            addMeter(themeCollection, theme, themePage, el, dx, dy);
+            addMeter(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "slider") == 0) {
-            addSlider(themeCollection, theme, themePage, el, dx, dy);
+            addSlider(themeCollection, theme, themePage, el, dx, dy, visible);
         }
         if (strcmp(el->Value(), "object") == 0) {
-            addObject(themeCollection, theme, themePage, el, dx, dy);
+            addObject(themeCollection, theme, themePage, el, dx, dy, visible);
         }
     }
 }

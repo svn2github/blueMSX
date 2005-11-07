@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2005-11-07 04:46:14 $
 **
@@ -27,11 +27,14 @@
 **
 ******************************************************************************
 */
-#ifndef ROMMAPPER_GAME_READER_H
-#define ROMMAPPER_GAME_READER_H
- 
-#include "MSXTypes.h"
+#ifndef MSX_PSG_H
+#define MSX_PSG_H
 
-int romMapperGameReaderCreate(int cartSlot, int slot, int sslot);
+#include "MsxTypes.h"
 
-#endif
+typedef struct MsxPsg MsxPsg;
+
+MsxPsg* msxPsgCreate();
+
+#endif // MSX_PSG_H
+
