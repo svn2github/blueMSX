@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-07 04:46:14 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,6 +174,7 @@ static void reset(MsxPsg* msxPsg)
 static void destroy(MsxPsg* msxPsg) 
 {
     ay8910SetIoPort(msxPsg->ay8910, NULL, NULL, NULL, NULL);
+    ay8910Destroy(msxPsg->ay8910);
     joystickPortUpdateHandlerUnregister();
     deviceManagerUnregister(msxPsg->deviceHandle);
 }

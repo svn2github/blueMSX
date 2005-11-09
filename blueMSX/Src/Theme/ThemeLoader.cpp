@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-11-07 04:46:14 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,8 +96,8 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
     if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }
     if (0 == strcmp(action, "menu-printer"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuPrinter; }
-    if (0 == strcmp(action, "menu-controlsport1"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort1; }
-    if (0 == strcmp(action, "menu-controlsport2"))      { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuControlsPort2; }
+    if (0 == strcmp(action, "menu-joyport1"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort1; }
+    if (0 == strcmp(action, "menu-joyport2"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort2; }
     if (0 == strcmp(action, "menu-windowsize"))         { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuZoom; }
     if (0 == strcmp(action, "menu-options"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuOptions; }
     if (0 == strcmp(action, "menu-help"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuHelp; }
@@ -427,21 +427,6 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "pan-msxaudio"))            return t | THEME_TRIGGER_PAN_MSXAUDIO;
     if (0 == strcmp(s, "pan-moonsound"))           return t | THEME_TRIGGER_PAN_MOONSOUND;
 
-    if (0 == strcmp(s, "port1-enable"))             return t | THEME_TRIGGER_IMG_PORT1_EN;
-    if (0 == strcmp(s, "port1-none"))               return t | THEME_TRIGGER_IMG_PORT1_NONE;
-    if (0 == strcmp(s, "port1-mouse"))              return t | THEME_TRIGGER_IMG_PORT1_MOUSE;
-    if (0 == strcmp(s, "port1-numpad"))             return t | THEME_TRIGGER_IMG_PORT1_NUM;
-    if (0 == strcmp(s, "port1-keyboard"))           return t | THEME_TRIGGER_IMG_PORT1_KBD;
-    if (0 == strcmp(s, "port1-tetris2dongle"))      return t | THEME_TRIGGER_IMG_PORT1_TETDNG;
-    if (0 == strcmp(s, "port1-joystick"))           return t | THEME_TRIGGER_IMG_PORT1_JOY;
-    if (0 == strcmp(s, "port2-enable"))             return t | THEME_TRIGGER_IMG_PORT2_EN;
-    if (0 == strcmp(s, "port2-none"))               return t | THEME_TRIGGER_IMG_PORT2_NONE;
-    if (0 == strcmp(s, "port2-mouse"))              return t | THEME_TRIGGER_IMG_PORT2_MOUSE;
-    if (0 == strcmp(s, "port2-numpad"))             return t | THEME_TRIGGER_IMG_PORT2_NUM;
-    if (0 == strcmp(s, "port2-keyboard"))           return t | THEME_TRIGGER_IMG_PORT2_KBD;
-    if (0 == strcmp(s, "port2-tetris2dongle"))      return t | THEME_TRIGGER_IMG_PORT2_TETDNG;
-    if (0 == strcmp(s, "port2-joystick"))           return t | THEME_TRIGGER_IMG_PORT2_JOY;
-
     if (0 == strcmp(s, "using-moonsound"))          return t | THEME_TRIGGER_IMG_M_MOON;
     if (0 == strcmp(s, "using-msxmusic"))           return t | THEME_TRIGGER_IMG_M_MSXM;
     if (0 == strcmp(s, "using-msxaudio"))           return t | THEME_TRIGGER_IMG_M_MSXA;
@@ -460,6 +445,21 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "status-rfmodulation"))      return t | THEME_TRIGGER_VIDEO_RFMODULATION_EN;
     if (0 == strcmp(s, "status-hstretch"))          return t | THEME_TRIGGER_VIDEO_HSTRETCH_EN;
     if (0 == strcmp(s, "status-vstretch"))          return t | THEME_TRIGGER_VIDEO_VSTRETCH_EN;
+
+    if (0 == strcmp(s, "port1-enable"))          return t | THEME_TRIGGER_JOY1_ENABLE;
+    if (0 == strcmp(s, "port1-none"))            return t | THEME_TRIGGER_JOY1_NONE;
+    if (0 == strcmp(s, "port1-joystick"))        return t | THEME_TRIGGER_JOY1_JOYSTICK;
+    if (0 == strcmp(s, "port1-mouse"))           return t | THEME_TRIGGER_JOY1_MOUSE;
+    if (0 == strcmp(s, "port1-tetris2dongle"))   return t | THEME_TRIGGER_JOY1_TETRIS;
+    if (0 == strcmp(s, "port1-lightgun"))        return t | THEME_TRIGGER_JOY1_LIGHTGUN;
+    if (0 == strcmp(s, "port1-colecojoystick"))  return t | THEME_TRIGGER_JOY1_COLECOJOY;
+    if (0 == strcmp(s, "port2-enable"))          return t | THEME_TRIGGER_JOY2_ENABLE;
+    if (0 == strcmp(s, "port2-none"))            return t | THEME_TRIGGER_JOY2_NONE;
+    if (0 == strcmp(s, "port2-joystick"))        return t | THEME_TRIGGER_JOY2_JOYSTICK;
+    if (0 == strcmp(s, "port2-mouse"))           return t | THEME_TRIGGER_JOY2_MOUSE;
+    if (0 == strcmp(s, "port2-tetris2dongle"))   return t | THEME_TRIGGER_JOY2_TETRIS;
+    if (0 == strcmp(s, "port2-lightgun"))        return t | THEME_TRIGGER_JOY2_LIGHTGUN;
+    if (0 == strcmp(s, "port2-colecojoystick"))  return t | THEME_TRIGGER_JOY2_COLECOJOY;
 
     if (0 == strcmp(s, "text-scanlinespct"))        return t | THEME_TRIGGER_TEXT_SCANLINESPCT;
     if (0 == strcmp(s, "text-videogamma"))          return t | THEME_TRIGGER_TEXT_VIDEOGAMMA;
@@ -494,8 +494,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "text-buildandversion"))     return t | THEME_TRIGGER_TEXT_BUILDANDVER;
     if (0 == strcmp(s, "text-selectedkey"))         return t | THEME_TRIGGER_TEXT_SELECTEDKEY;
     if (0 == strcmp(s, "text-mappedkey"))           return t | THEME_TRIGGER_TEXT_MAPPEDKEY;
-    if (0 == strcmp(s, "text-controlsport1"))       return t | THEME_TRIGGER_TEXT_CONTROLSPORT1;
-    if (0 == strcmp(s, "text-controlsport2"))       return t | THEME_TRIGGER_TEXT_CONTROLSPORT2;
+    if (0 == strcmp(s, "text-joyport1"))            return t | THEME_TRIGGER_TEXT_JOYPORT1;
+    if (0 == strcmp(s, "text-joyport2"))            return t | THEME_TRIGGER_TEXT_JOYPORT2;
     
     if (0 == strcmp(s, "lang-kbd-selkey"))          return t | THEME_TRIGGER_LANG_KBD_SELKEY;
     if (0 == strcmp(s, "lang-kbd-mappedto"))        return t | THEME_TRIGGER_LANG_KBD_MAPPEDTO;

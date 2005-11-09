@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,20 +162,6 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_RENSHA:          idx = themeTriggerLevelRensha(); break;
     case THEME_TRIGGER_RENSHALED:       idx = TEST(actionType, themeTriggerLedRensha()); break;
 
-    case THEME_TRIGGER_IMG_PORT1_EN:    idx = TEST(actionType, themeTriggerPort1None() ^ 0xffff); break;
-    case THEME_TRIGGER_IMG_PORT1_NONE:  idx = TEST(actionType, themeTriggerPort1None()); break;
-    case THEME_TRIGGER_IMG_PORT1_MOUSE: idx = TEST(actionType, themeTriggerPort1Mouse()); break;
-    case THEME_TRIGGER_IMG_PORT1_NUM:   idx = TEST(actionType, themeTriggerPort1Num()); break;
-    case THEME_TRIGGER_IMG_PORT1_KBD:   idx = TEST(actionType, themeTriggerPort1Kbd()); break;
-    case THEME_TRIGGER_IMG_PORT1_TETDNG:idx = TEST(actionType, themeTriggerPort1TetrisDongle()); break;
-    case THEME_TRIGGER_IMG_PORT1_JOY:   idx = TEST(actionType, themeTriggerPort1Joy()); break;
-    case THEME_TRIGGER_IMG_PORT2_EN:    idx = TEST(actionType, themeTriggerPort2None() ^ 0xffff); break;
-    case THEME_TRIGGER_IMG_PORT2_NONE:  idx = TEST(actionType, themeTriggerPort2None()); break;
-    case THEME_TRIGGER_IMG_PORT2_MOUSE: idx = TEST(actionType, themeTriggerPort2Mouse()); break;
-    case THEME_TRIGGER_IMG_PORT2_NUM:   idx = TEST(actionType, themeTriggerPort2Num()); break;
-    case THEME_TRIGGER_IMG_PORT2_KBD:   idx = TEST(actionType, themeTriggerPort2Kbd()); break;
-    case THEME_TRIGGER_IMG_PORT2_TETDNG:idx = TEST(actionType, themeTriggerPort2TetrisDongle()); break;
-    case THEME_TRIGGER_IMG_PORT2_JOY:   idx = TEST(actionType, themeTriggerPort2Joy()); break;
     case THEME_TRIGGER_IMG_M_MOON:      idx = TEST(actionType, themeTriggerMachineMoonsound()); break;
     case THEME_TRIGGER_IMG_M_MSXM:      idx = TEST(actionType, themeTriggerMachineMsxMusic()); break;
     case THEME_TRIGGER_IMG_M_MSXA:      idx = TEST(actionType, themeTriggerMachineMsxAudio()); break;
@@ -192,6 +178,22 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_VIDEO_RFMODULATION_EN: idx = TEST(actionType, themeTriggerVideoRfModulatorEn()); break;
     case THEME_TRIGGER_VIDEO_HSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoHstretchEn()); break;
     case THEME_TRIGGER_VIDEO_VSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoVstretchEn()); break;
+
+    case THEME_TRIGGER_JOY1_ENABLE:    idx = TEST(actionType, themeTriggerJoyPort1Enabled()); break;
+    case THEME_TRIGGER_JOY1_NONE:      idx = TEST(actionType, themeTriggerJoyPort1IsNone()); break;
+    case THEME_TRIGGER_JOY1_JOYSTICK:  idx = TEST(actionType, themeTriggerJoyPort1IsJoystick()); break;
+    case THEME_TRIGGER_JOY1_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort1IsMouse()); break;
+    case THEME_TRIGGER_JOY1_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort1IsTetris2Dongle()); break;
+    case THEME_TRIGGER_JOY1_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort1IsLightgun()); break;
+    case THEME_TRIGGER_JOY1_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort1IsColecoJoystick()); break;
+
+    case THEME_TRIGGER_JOY2_ENABLE:    idx = TEST(actionType, themeTriggerJoyPort2Enabled()); break;
+    case THEME_TRIGGER_JOY2_NONE:      idx = TEST(actionType, themeTriggerJoyPort2IsNone()); break;
+    case THEME_TRIGGER_JOY2_JOYSTICK:  idx = TEST(actionType, themeTriggerJoyPort2IsJoystick()); break;
+    case THEME_TRIGGER_JOY2_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort2IsMouse()); break;
+    case THEME_TRIGGER_JOY2_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort2IsTetris2Dongle()); break;
+    case THEME_TRIGGER_JOY2_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort2IsLightgun()); break;
+    case THEME_TRIGGER_JOY2_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort2IsColecoJoystick()); break;
     }
 
     key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_PRESSED;
@@ -243,8 +245,8 @@ static const char* actionTypeToStr(ThemeTrigger actionType)
     case THEME_TRIGGER_TEXT_BUILDANDVER:     str = themeTriggerBuildAndVersion(); break;
     case THEME_TRIGGER_TEXT_SELECTEDKEY:     str = themeTriggerSelectedKey(); break;
     case THEME_TRIGGER_TEXT_MAPPEDKEY:       str = themeTriggerMappedKey(); break;
-    case THEME_TRIGGER_TEXT_CONTROLSPORT1:   str = themeTriggerControlsPort1(); break;
-    case THEME_TRIGGER_TEXT_CONTROLSPORT2:   str = themeTriggerControlsPort2(); break;
+    case THEME_TRIGGER_TEXT_JOYPORT1:        str = themeTriggerJoyPort1(); break;
+    case THEME_TRIGGER_TEXT_JOYPORT2:        str = themeTriggerJoyPort2(); break;
         
     case THEME_TRIGGER_LANG_KBD_SELKEY:      str = themeTriggerLangKbdSelKey(); break;
     case THEME_TRIGGER_LANG_KBD_MAPPEDTO:    str = themeTriggerLangKbdMappedTo(); break;

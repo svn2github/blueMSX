@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "ArchTimer.h"
 #include "VideoManager.h"
 #include "InputEvent.h"
+#include "JoystickPort.h"
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {
@@ -477,6 +478,63 @@ int themeTriggerConfCasRO() {
     return propGetGlobalProperties()->cassette.readOnly;
 }
 
+int themeTriggerJoyPort1Enabled() {
+    return joystickPortGetType(0) != JOYSTICK_PORT_NONE ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsNone() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_NONE ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsJoystick() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_JOYSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsMouse() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_MOUSE ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsTetris2Dongle() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_TETRIS2DONGLE ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsLightgun() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_LIGHTGUN ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsColecoJoystick() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_COLECOJOYSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort2Enabled() {
+    return joystickPortGetType(1) != JOYSTICK_PORT_NONE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsNone() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_NONE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsJoystick() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_JOYSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsMouse() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_MOUSE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsTetris2Dongle() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_TETRIS2DONGLE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsLightgun() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_LIGHTGUN ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsColecoJoystick() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_COLECOJOYSTICK ? 1 : 0;
+}
+
+
 int themeTriggerVideoScanlinesEn() {
     return propGetGlobalProperties()->video.scanlinesEnable;
 }
@@ -813,46 +871,26 @@ char* themeTriggerMappedKey() {
     return archGetMappedKey();
 }
 
-char* themeTriggerControlsPort1() {
-    int hwType = propGetGlobalProperties()->joy1.hwType;
-    switch (propGetGlobalProperties()->joy1.type) {
-    case P_JOY_NONE:
-        return "none";
-    case P_JOY_MOUSE:
-        return "mouse";
-    case P_JOY_NUMPAD:
-        return "numpad";
-    case P_JOY_KEYSET:
-        return "keyset";
-    case P_JOY_TETRISDONGLE:
-        return "tetris 2 dongle";
-    case P_JOY_HW:
-        if (hwType < archJoystickGetCount()) {
-            return archJoystickGetName(hwType);
-        }
-        break;
+char* themeTriggerJoyPort1() {
+    switch (joystickPortGetType(0)) {
+    case JOYSTICK_PORT_NONE:            return "None";
+    case JOYSTICK_PORT_JOYSTICK:        return "2-Button Joystick";
+    case JOYSTICK_PORT_MOUSE:           return "Mouse";
+    case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
+    case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
+    case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
     }
-    return "unknown";
+    return "Unknown";
 }
 
-char* themeTriggerControlsPort2() {
-    int hwType = propGetGlobalProperties()->joy2.hwType;
-    switch (propGetGlobalProperties()->joy2.type) {
-    case P_JOY_NONE:
-        return "none";
-    case P_JOY_MOUSE:
-        return "mouse";
-    case P_JOY_NUMPAD:
-        return "numpad";
-    case P_JOY_KEYSET:
-        return "keyset";
-    case P_JOY_TETRISDONGLE:
-        return "tetris 2 dongle";
-    case P_JOY_HW:
-        if (hwType < archJoystickGetCount()) {
-            return archJoystickGetName(hwType);
-        }
-        break;
+char* themeTriggerJoyPort2() {
+    switch (joystickPortGetType(1)) {
+    case JOYSTICK_PORT_NONE:            return "None";
+    case JOYSTICK_PORT_JOYSTICK:        return "2-Button Joystick";
+    case JOYSTICK_PORT_MOUSE:           return "Mouse";
+    case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
+    case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
+    case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
     }
-    return "unknown";
+    return "Unknown";
 }

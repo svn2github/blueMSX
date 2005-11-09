@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 #include "VideoManager.h"
 #include "ArchNotifications.h"
 #include "ArchInput.h"
+#include "JoystickPort.h"
 
 
 #define ID_FILE                         40010
@@ -194,8 +195,8 @@ static HMENU hMenuDiskA = NULL;
 static HMENU hMenuDiskB = NULL;
 static HMENU hMenuCasette = NULL;
 static HMENU hMenuPrinter = NULL;
-static HMENU hMenuControlsPort1 = NULL;
-static HMENU hMenuControlsPort2 = NULL;
+static HMENU hMenuJoyPort1 = NULL;
+static HMENU hMenuJoyPort2 = NULL;
 static HMENU hMenuZoom = NULL;
 static HMENU hMenuOptions = NULL;
 static HMENU hMenuHelp = NULL;
@@ -670,56 +671,46 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateControlsPort1(Properties* pProperties, Shortcuts* shortcuts) {
-    HMENU           hMenu = CreatePopupMenu();
-    PropControlsJoy joyType = pProperties->joy1.type;
-    int             hwType  = joyType == P_JOY_HW ? pProperties->joy1.hwType : -1;
-    int i;
+static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts) {
+    HMENU            hMenu = CreatePopupMenu();
+    JoystickPortType joyType = joystickPortGetType(0);
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NONE ? MFS_CHECKED : 0), 
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 0, langEnumControlsJoyNone());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_MOUSE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 1, langEnumControlsJoyMouse());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NUMPAD ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 2, langEnumControlsJoyNumpad());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 3, langEnumControlsJoyKeyset());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_TETRISDONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyTetrisDongle());
-    
-    for (i = 0; i < archJoystickGetCount(); i++) {
-        AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
-                ID_CTRLPORT1_BASE + 5 + i, archJoystickGetName(i));
-    }
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 1, "2-button Joystick");
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 2, langEnumControlsJoyMouse());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 3, langEnumControlsJoyTetrisDongle());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 4, "Light Gun");
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 5, "ColecoVision Joystick");
     
     return hMenu;
 }
 
-static HMENU menuCreateControlsPort2(Properties* pProperties, Shortcuts* shortcuts) {
-    HMENU           hMenu = CreatePopupMenu();
-    PropControlsJoy joyType = pProperties->joy2.type;
-    int             hwType  = joyType == P_JOY_HW ? pProperties->joy2.hwType : -1;
-    int i;
+static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts) {
+    HMENU            hMenu = CreatePopupMenu();
+    JoystickPortType joyType = joystickPortGetType(1);
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NONE ? MFS_CHECKED : 0), 
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 0, langEnumControlsJoyNone());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_MOUSE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 1, langEnumControlsJoyMouse());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_NUMPAD ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 2, langEnumControlsJoyNumpad());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_KEYSET ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 3, langEnumControlsJoyKeyset());
-    AppendMenu(hMenu, MF_STRING | (joyType == P_JOY_TETRISDONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 4, langEnumControlsJoyTetrisDongle());
-
-    for (i = 0; i < archJoystickGetCount(); i++) {
-        AppendMenu(hMenu, MF_STRING | (hwType == i ? MFS_CHECKED : 0), 
-                ID_CTRLPORT2_BASE + 5 + i, archJoystickGetName(i));
-    }
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 1, "2-button Joystick");
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 2, langEnumControlsJoyMouse());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 3, langEnumControlsJoyTetrisDongle());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 4, "Light Gun");
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 5, "ColecoVision Joystick");
     
     return hMenu;
 }
@@ -1135,8 +1126,8 @@ void menuUpdate(Properties* pProperties,
     if (hMenuDiskB) DestroyMenu(hMenuDiskB);
     if (hMenuCasette) DestroyMenu(hMenuCasette);
     if (hMenuPrinter) DestroyMenu(hMenuPrinter);
-    if (hMenuControlsPort1) DestroyMenu(hMenuControlsPort1);
-    if (hMenuControlsPort2) DestroyMenu(hMenuControlsPort2);
+    if (hMenuJoyPort1) DestroyMenu(hMenuJoyPort1);
+    if (hMenuJoyPort2) DestroyMenu(hMenuJoyPort2);
     if (hMenuZoom) DestroyMenu(hMenuZoom);
     if (hMenuOptions) DestroyMenu(hMenuOptions);
     if (hMenuHelp) DestroyMenu(hMenuHelp);
@@ -1154,8 +1145,8 @@ void menuUpdate(Properties* pProperties,
     hMenuDiskB         = menuCreateDiskB(pProperties, shortcuts);
     hMenuCasette       = menuCreateCassette(pProperties, shortcuts);
     hMenuPrinter       = menuCreatePrinter(pProperties, shortcuts);
-    hMenuControlsPort1 = menuCreateControlsPort1(pProperties, shortcuts);
-    hMenuControlsPort2 = menuCreateControlsPort2(pProperties, shortcuts);
+    hMenuJoyPort1      = menuCreateJoyPort1(pProperties, shortcuts);
+    hMenuJoyPort2      = menuCreateJoyPort2(pProperties, shortcuts);
     hMenuZoom          = menuCreateZoom(pProperties, shortcuts);
     hMenuOptions       = menuCreateOptions(pProperties, shortcuts);
     hMenuHelp          = menuCreateHelp(pProperties, shortcuts);
@@ -1250,14 +1241,14 @@ void archShowMenuPrinter(int x, int y) {
     showPopupMenu(hMenuPrinter, x, y);
 }
 
-void archShowMenuControlsPort1(int x, int y) {
+void archShowMenuJoyPort1(int x, int y) {
     archUpdateMenu(0);
-    showPopupMenu(hMenuControlsPort1, x, y);
+    showPopupMenu(hMenuJoyPort1, x, y);
 }
 
-void archShowMenuControlsPort2(int x, int y) {
+void archShowMenuJoyPort2(int x, int y) {
     archUpdateMenu(0);
-    showPopupMenu(hMenuControlsPort2, x, y);
+    showPopupMenu(hMenuJoyPort2, x, y);
 }
 
 void archShowMenuZoom(int x, int y) {
@@ -1296,27 +1287,13 @@ int menuCommand(Properties* pProperties, int command)
     
     i = command - ID_CTRLPORT1_BASE;
     if (i >= 0 && i < 16) {
-        if (i >= 5) {
-            pProperties->joy1.hwType = i - 5;
-            strcpy(pProperties->joy1.hwName, archJoystickGetName(pProperties->joy1.hwType));
-            i = 5;
-        }
-        pProperties->joy1.type = i;
-
-        archUpdateJoystick();
+        joystickPortSetType(0, i);
         return 1;
     }
 
     i = command - ID_CTRLPORT2_BASE;
     if (i >= 0 && i < 16) {
-        if (i >= 5) {
-            pProperties->joy2.hwType = i - 5;
-            strcpy(pProperties->joy2.hwName, archJoystickGetName(pProperties->joy2.hwType));
-            i = 5;
-        }
-        pProperties->joy2.type = i;
-        
-        archUpdateJoystick();
+        joystickPortSetType(0, i);
         return 1;
     }
 

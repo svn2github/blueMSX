@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-09 17:03:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,7 +39,8 @@ typedef enum {
     JOYSTICK_PORT_JOYSTICK,
     JOYSTICK_PORT_MOUSE,
     JOYSTICK_PORT_TETRIS2DONGLE,
-    JOYSTICK_PORT_LIGHTGUN
+    JOYSTICK_PORT_LIGHTGUN,
+    JOYSTICK_PORT_COLECOJOYSTICK
 } JoystickPortType;
 
 typedef void (*JoystickPortUpdateHandler)(void*, int, JoystickPortType);

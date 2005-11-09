@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-09 17:03:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -926,12 +926,12 @@ void actionMenuPrinter(int x, int y) {
     archShowMenuPrinter(x, y);
 }
 
-void actionMenuControlsPort1(int x, int y) {
-    archShowMenuControlsPort1(x, y);
+void actionMenuJoyPort1(int x, int y) {
+    archShowMenuJoyPort1(x, y);
 }
 
-void actionMenuControlsPort2(int x, int y) {
-    archShowMenuControlsPort2(x, y);
+void actionMenuJoyPort2(int x, int y) {
+    archShowMenuJoyPort2(x, y);
 }
 
 void actionMenuZoom(int x, int y) {

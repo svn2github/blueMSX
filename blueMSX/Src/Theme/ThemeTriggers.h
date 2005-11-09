@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,20 +77,6 @@ typedef enum {
     THEME_TRIGGER_IMG_R_MIDI,
     THEME_TRIGGER_IMG_L_MASTER,
     THEME_TRIGGER_IMG_R_MASTER,
-    THEME_TRIGGER_IMG_PORT1_EN,
-	THEME_TRIGGER_IMG_PORT1_NONE,
-    THEME_TRIGGER_IMG_PORT1_MOUSE,
-    THEME_TRIGGER_IMG_PORT1_NUM,
-    THEME_TRIGGER_IMG_PORT1_KBD,
-    THEME_TRIGGER_IMG_PORT1_TETDNG,
-    THEME_TRIGGER_IMG_PORT1_JOY,
-    THEME_TRIGGER_IMG_PORT2_EN,
-    THEME_TRIGGER_IMG_PORT2_NONE,
-    THEME_TRIGGER_IMG_PORT2_MOUSE,
-    THEME_TRIGGER_IMG_PORT2_NUM,
-    THEME_TRIGGER_IMG_PORT2_KBD,
-    THEME_TRIGGER_IMG_PORT2_TETDNG,
-    THEME_TRIGGER_IMG_PORT2_JOY,
     THEME_TRIGGER_IMG_M_MOON,
     THEME_TRIGGER_IMG_M_MSXM,
     THEME_TRIGGER_IMG_M_MSXA,
@@ -109,6 +95,21 @@ typedef enum {
     THEME_TRIGGER_VIDEO_SCANLINES_EN,
     THEME_TRIGGER_VIDEO_DEINTERLACE_EN,
     THEME_TRIGGER_VIDEO_RFMODULATION_EN,
+    
+    THEME_TRIGGER_JOY1_ENABLE,
+    THEME_TRIGGER_JOY1_NONE,
+    THEME_TRIGGER_JOY1_JOYSTICK,
+    THEME_TRIGGER_JOY1_MOUSE,
+    THEME_TRIGGER_JOY1_TETRIS,
+    THEME_TRIGGER_JOY1_LIGHTGUN,
+    THEME_TRIGGER_JOY1_COLECOJOY,
+    THEME_TRIGGER_JOY2_ENABLE,
+    THEME_TRIGGER_JOY2_NONE,
+    THEME_TRIGGER_JOY2_JOYSTICK,
+    THEME_TRIGGER_JOY2_MOUSE,
+    THEME_TRIGGER_JOY2_TETRIS,
+    THEME_TRIGGER_JOY2_LIGHTGUN,
+    THEME_TRIGGER_JOY2_COLECOJOY,
 
     THEME_TRIGGER_TEXT_SCANLINESPCT,
     THEME_TRIGGER_TEXT_VIDEOGAMMA,
@@ -141,8 +142,8 @@ typedef enum {
     THEME_TRIGGER_TEXT_BUILDANDVER,
     THEME_TRIGGER_TEXT_SELECTEDKEY,
     THEME_TRIGGER_TEXT_MAPPEDKEY,
-    THEME_TRIGGER_TEXT_CONTROLSPORT1,
-    THEME_TRIGGER_TEXT_CONTROLSPORT2,
+    THEME_TRIGGER_TEXT_JOYPORT1,
+    THEME_TRIGGER_TEXT_JOYPORT2,
 
     THEME_TRIGGER_LANG_KBD_SELKEY,
     THEME_TRIGGER_LANG_KBD_MAPPEDTO,
@@ -271,6 +272,21 @@ int themeTriggerMachineMegaRom();
 int themeTriggerMachineMegaRam();
 int themeTriggerMachineFmPac();
 
+int themeTriggerJoyPort1Enabled();
+int themeTriggerJoyPort1IsNone();
+int themeTriggerJoyPort1IsJoystick();
+int themeTriggerJoyPort1IsMouse();
+int themeTriggerJoyPort1IsTetris2Dongle();
+int themeTriggerJoyPort1IsLightgun();
+int themeTriggerJoyPort1IsColecoJoystick();
+int themeTriggerJoyPort2Enabled();
+int themeTriggerJoyPort2IsNone();
+int themeTriggerJoyPort2IsJoystick();
+int themeTriggerJoyPort2IsMouse();
+int themeTriggerJoyPort2IsTetris2Dongle();
+int themeTriggerJoyPort2IsLightgun();
+int themeTriggerJoyPort2IsColecoJoystick();
+
 int themeTriggerConfDiskRI();
 int themeTriggerConfCartRI();
 int themeTriggerConfCasRO();
@@ -387,8 +403,8 @@ char* themeTriggerLangKbdSelKey();
 char* themeTriggerLangKbdMappedTo();
 char* themeTriggerLangKbdMapSCheme();
 
-char* themeTriggerControlsPort1();
-char* themeTriggerControlsPort2();
+char* themeTriggerJoyPort1();
+char* themeTriggerJoyPort2();
 
 int themeTriggerKeyPressed(int keyCode);
 int themeTriggerKeyEdit(int keyCode);

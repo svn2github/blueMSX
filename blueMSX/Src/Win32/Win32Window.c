@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-09 17:03:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 #include "Language.h"
 #include "Resource.h"
 #include "InputEvent.h"
+#include "JoystickPort.h"
 
 // Set current window for handling of minimize events, close events, ...
 extern void SetCurrentWindow(HWND hwnd);
@@ -360,29 +361,12 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
         }
         break;
 
-    case WM_BUTTON_SAVE:
+    case WM_BUTTON_OK:
         if (keyboardConfigIsModified()) {
-            if (IDYES == MessageBox(NULL, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
-                keyboardSaveConfig(keyboardGetCurrentConfig());
-            }
+            keyboardSaveConfig(keyboardGetCurrentConfig());
         }
-        break;
-
-    case WM_BUTTON_SAVEAS:
-        {
-            char* name = openConfigFile(hwnd, langConfSaveAsTitle(), langConfSaveAsName(), keyboardGetConfigs(), keyboardGetCurrentConfig());
-            if (name != NULL) {
-                if (0 == strcmp(name, keyboardGetCurrentConfig())) {
-                    if (IDYES == MessageBox(NULL, langOverwriteConfig(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
-                        keyboardSaveConfig(keyboardGetCurrentConfig());
-                    }
-                }
-                else {
-                    keyboardSaveConfig(name);
-                    objectUpdate(hwnd, WM_DROPDOWN_KEYBOARDCONFIG, (int)keyboardGetCurrentConfig());
-                }
-            }
-        }
+        
+        SendMessage(hwnd, WM_CLOSE, 0, 0);
         break;
 
     case WM_ACTIVATE:
@@ -391,6 +375,10 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
         if (LOWORD(wParam) != WA_INACTIVE) {
             inputReset(hwnd);
         }
+        break;
+
+    case WM_BUTTON_CANCEL:
+        SendMessage(hwnd, WM_CLOSE, 0, 0);
         break;
 
     case WM_CLOSE:
