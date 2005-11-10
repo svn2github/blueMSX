@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-10 08:21:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1293,7 +1293,7 @@ int menuCommand(Properties* pProperties, int command)
 
     i = command - ID_CTRLPORT2_BASE;
     if (i >= 0 && i < 16) {
-        joystickPortSetType(0, i);
+        joystickPortSetType(1, i);
         return 1;
     }
 

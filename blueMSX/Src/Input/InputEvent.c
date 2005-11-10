@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/InputEvent.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-10 08:21:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "InputEvent.h"
 #include "ArchInput.h"
+#include <stdlib.h>
 
 static char* eventNames[256];
 int   eventMap[256];
@@ -130,27 +131,27 @@ static void initKeyNameTable()
     eventNames[EC_NUMADD ] = "numadd";
     eventNames[EC_PRINT  ] = "print";
 
-    eventNames[EC_JOY1_UP     ] = "joy1_up";
-    eventNames[EC_JOY1_DOWN   ] = "joy1_down";
-    eventNames[EC_JOY1_LEFT   ] = "joy1_left";
-    eventNames[EC_JOY1_RIGHT  ] = "joy1_right";
-    eventNames[EC_JOY1_BUTTON1] = "joy1_button1";
-    eventNames[EC_JOY1_BUTTON2] = "joy1_button2";
-    eventNames[EC_JOY1_BUTTON3] = "joy1_button3";
-    eventNames[EC_JOY1_BUTTON4] = "joy1_button4";
-    eventNames[EC_JOY1_BUTTON5] = "joy1_button5";
-    eventNames[EC_JOY1_BUTTON6] = "joy1_button6";
+    eventNames[EC_JOY1_UP     ] = "joy1-up";
+    eventNames[EC_JOY1_DOWN   ] = "joy1-down";
+    eventNames[EC_JOY1_LEFT   ] = "joy1-left";
+    eventNames[EC_JOY1_RIGHT  ] = "joy1-right";
+    eventNames[EC_JOY1_BUTTON1] = "joy1-button1";
+    eventNames[EC_JOY1_BUTTON2] = "joy1-button2";
+    eventNames[EC_JOY1_BUTTON3] = "joy1-button3";
+    eventNames[EC_JOY1_BUTTON4] = "joy1-button4";
+    eventNames[EC_JOY1_BUTTON5] = "joy1-button5";
+    eventNames[EC_JOY1_BUTTON6] = "joy1-button6";
     
-    eventNames[EC_JOY2_UP     ] = "joy2_up";
-    eventNames[EC_JOY2_DOWN   ] = "joy2_down";
-    eventNames[EC_JOY2_LEFT   ] = "joy2_left";
-    eventNames[EC_JOY2_RIGHT  ] = "joy2_right";
-    eventNames[EC_JOY2_BUTTON1] = "joy2_button1";
-    eventNames[EC_JOY2_BUTTON2] = "joy2_button2";
-    eventNames[EC_JOY2_BUTTON3] = "joy2_button3";
-    eventNames[EC_JOY2_BUTTON4] = "joy2_button4";
-    eventNames[EC_JOY2_BUTTON5] = "joy2_button5";
-    eventNames[EC_JOY2_BUTTON6] = "joy2_button6";
+    eventNames[EC_JOY2_UP     ] = "joy2-up";
+    eventNames[EC_JOY2_DOWN   ] = "joy2-down";
+    eventNames[EC_JOY2_LEFT   ] = "joy2-left";
+    eventNames[EC_JOY2_RIGHT  ] = "joy2-right";
+    eventNames[EC_JOY2_BUTTON1] = "joy2-button1";
+    eventNames[EC_JOY2_BUTTON2] = "joy2-button2";
+    eventNames[EC_JOY2_BUTTON3] = "joy2-button3";
+    eventNames[EC_JOY2_BUTTON4] = "joy2-button4";
+    eventNames[EC_JOY2_BUTTON5] = "joy2-button5";
+    eventNames[EC_JOY2_BUTTON6] = "joy2-button6";
 }
 
 int inputEventStringToCode(const char* eventName) 
@@ -158,7 +159,7 @@ int inputEventStringToCode(const char* eventName)
     int i;
 
     for (i = 0; i < EC_KEYCOUNT; i++) {
-        if (0 == strcmp(eventName, eventNames[i])) {
+        if (eventNames[i] != NULL && 0 == strcmp(eventName, eventNames[i])) {
             return i;
         }
     }

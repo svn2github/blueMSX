@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeControls.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-08-30 00:57:00 $
+** $Date: 2005-11-10 08:21:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -742,8 +742,10 @@ void activeNativeTextDraw(ActiveNativeText* activeText, void* dc, ActiveRect* re
 
     activeImageDraw(activeText->background, dc, rect);
 
-    archTextDraw(activeText->archText, dc, activeText->x, activeText->y, 
-                 activeText->width - 4, activeText->height, activeText->string); 
+    if (activeText->background->show) {
+        archTextDraw(activeText->archText, dc, activeText->x, activeText->y, 
+                    activeText->width - 4, activeText->height, activeText->string); 
+    }
 }
 
 int activeNativeTextShow(ActiveNativeText* activeText, int show)
