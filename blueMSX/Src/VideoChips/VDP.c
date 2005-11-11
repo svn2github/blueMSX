@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-09-05 03:17:14 $
+** $Date: 2005-11-11 20:45:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1482,7 +1482,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     }
 
     memset(vdp->vram, 0, VRAM_SIZE);
-    vdp->cmdEngine = vdpCmdCreate(vdp->vramPages << 14, vdp->vram, boardSystemTime());
+    vdp->cmdEngine = vdpCmdCreate(vramSize, vdp->vram, boardSystemTime());
 
     reset(vdp);
 
