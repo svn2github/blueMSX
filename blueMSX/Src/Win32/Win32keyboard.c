@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-11-07 04:46:14 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -263,6 +263,8 @@ int str2dik(char* dikString)
 static void initKbdTable()
 {
     memset (kbdTable[0], 0, sizeof(kbdTable));
+    memset (kbdTable[1], 0, sizeof(kbdTable));
+    memset (kbdTable[2], 0, sizeof(kbdTable));
 
     kbdTable[0][DIK_0          ] = EC_0;
     kbdTable[0][DIK_1          ] = EC_1;
@@ -363,7 +365,6 @@ static void initKbdTable()
     kbdTable[0][DIK_NUMPADENTER] = EC_PAUSE;
     kbdTable[0][DIK_SYSRQ      ] = EC_PRINT;
 
-    memset (kbdTable[1], 0, sizeof(kbdTable));
 
     kbdTable[1][DIK_JOY1_BUTTON1] = EC_JOY1_BUTTON1;
     kbdTable[1][DIK_JOY1_BUTTON2] = EC_JOY1_BUTTON2;
@@ -371,8 +372,19 @@ static void initKbdTable()
     kbdTable[1][DIK_JOY1_DOWN   ] = EC_JOY1_DOWN;
     kbdTable[1][DIK_JOY1_LEFT   ] = EC_JOY1_LEFT;
     kbdTable[1][DIK_JOY1_RIGHT  ] = EC_JOY1_RIGHT;
-
-    memset (kbdTable[2], 0, sizeof(kbdTable));
+    kbdTable[1][DIK_0           ] = EC_COLECO1_0;
+    kbdTable[1][DIK_1           ] = EC_COLECO1_1;
+    kbdTable[1][DIK_2           ] = EC_COLECO1_2;
+    kbdTable[1][DIK_3           ] = EC_COLECO1_3;
+    kbdTable[1][DIK_4           ] = EC_COLECO1_4;
+    kbdTable[1][DIK_5           ] = EC_COLECO1_5;
+    kbdTable[1][DIK_6           ] = EC_COLECO1_6;
+    kbdTable[1][DIK_7           ] = EC_COLECO1_7;
+    kbdTable[1][DIK_8           ] = EC_COLECO1_8;
+    kbdTable[1][DIK_9           ] = EC_COLECO1_9;
+    kbdTable[1][DIK_MINUS       ] = EC_COLECO1_STAR;
+    kbdTable[1][DIK_EQUALS      ] = EC_COLECO1_HASH;
+    
 
     kbdTable[2][DIK_JOY2_BUTTON1] = EC_JOY2_BUTTON1;
     kbdTable[2][DIK_JOY2_BUTTON2] = EC_JOY2_BUTTON2;
@@ -380,6 +392,18 @@ static void initKbdTable()
     kbdTable[2][DIK_JOY2_DOWN   ] = EC_JOY2_DOWN;
     kbdTable[2][DIK_JOY2_LEFT   ] = EC_JOY2_LEFT;
     kbdTable[2][DIK_JOY2_RIGHT  ] = EC_JOY2_RIGHT;
+    kbdTable[2][DIK_NUMPAD0     ] = EC_COLECO2_0;
+    kbdTable[2][DIK_NUMPAD1     ] = EC_COLECO2_1;
+    kbdTable[2][DIK_NUMPAD2     ] = EC_COLECO2_2;
+    kbdTable[2][DIK_NUMPAD3     ] = EC_COLECO2_3;
+    kbdTable[2][DIK_NUMPAD4     ] = EC_COLECO2_4;
+    kbdTable[2][DIK_NUMPAD5     ] = EC_COLECO2_5;
+    kbdTable[2][DIK_NUMPAD6     ] = EC_COLECO2_6;
+    kbdTable[2][DIK_NUMPAD7     ] = EC_COLECO2_7;
+    kbdTable[2][DIK_NUMPAD8     ] = EC_COLECO2_8;
+    kbdTable[2][DIK_NUMPAD9     ] = EC_COLECO2_9;
+    kbdTable[2][DIK_MULTIPLY    ] = EC_COLECO2_STAR;
+    kbdTable[2][DIK_DIVIDE      ] = EC_COLECO2_HASH;
 
     keyboardSaveConfig(DefaultConfigName);
 }
@@ -654,11 +678,7 @@ static int joystickUpdateState(int index,  DWORD* buttonMask) {
     return state;
 }
 
-int archJoystickGetCount() {
-    return joyCount;
-}
-
-char* archJoystickGetName(int index) {
+char* joystickGetName(int index) {
     return joyInfo[index].name;
 }
 

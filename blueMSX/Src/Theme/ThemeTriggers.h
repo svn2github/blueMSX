@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -249,19 +249,6 @@ int themeTriggerAudioScc();
 int themeTriggerAudioPcm();
 int themeTriggerAudioIo();
 int themeTriggerAudioMidi();
-
-int themeTriggerPort1None();
-int themeTriggerPort1Mouse();
-int themeTriggerPort1Num();
-int themeTriggerPort1Kbd();
-int themeTriggerPort1TetrisDongle();
-int themeTriggerPort1Joy();
-int themeTriggerPort2None();
-int themeTriggerPort2Mouse();
-int themeTriggerPort2Num();
-int themeTriggerPort2Kbd();
-int themeTriggerPort2TetrisDongle();
-int themeTriggerPort2Joy();
 
 int themeTriggerMachineMoonsound();
 int themeTriggerMachineMsxAudio();

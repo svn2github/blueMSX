@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/InputEvent.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-11-10 08:21:53 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,6 +152,33 @@ static void initKeyNameTable()
     eventNames[EC_JOY2_BUTTON4] = "joy2-button4";
     eventNames[EC_JOY2_BUTTON5] = "joy2-button5";
     eventNames[EC_JOY2_BUTTON6] = "joy2-button6";
+    
+    eventNames[EC_COLECO1_0]    = "coleco1-0";
+    eventNames[EC_COLECO1_1]    = "coleco1-1";
+    eventNames[EC_COLECO1_2]    = "coleco1-2";
+    eventNames[EC_COLECO1_3]    = "coleco1-3";
+    eventNames[EC_COLECO1_4]    = "coleco1-4";
+    eventNames[EC_COLECO1_5]    = "coleco1-5";
+    eventNames[EC_COLECO1_6]    = "coleco1-6";
+    eventNames[EC_COLECO1_7]    = "coleco1-7";
+    eventNames[EC_COLECO1_8]    = "coleco1-8";
+    eventNames[EC_COLECO1_9]    = "coleco1-9";
+    eventNames[EC_COLECO1_STAR] = "coleco1-star";
+    eventNames[EC_COLECO1_HASH] = "coleco1-hashmark";
+    
+    eventNames[EC_COLECO2_0]    = "coleco2-0";
+    eventNames[EC_COLECO2_1]    = "coleco2-1";
+    eventNames[EC_COLECO2_2]    = "coleco2-2";
+    eventNames[EC_COLECO2_3]    = "coleco2-3";
+    eventNames[EC_COLECO2_4]    = "coleco2-4";
+    eventNames[EC_COLECO2_5]    = "coleco2-5";
+    eventNames[EC_COLECO2_6]    = "coleco2-6";
+    eventNames[EC_COLECO2_7]    = "coleco2-7";
+    eventNames[EC_COLECO2_8]    = "coleco2-8";
+    eventNames[EC_COLECO2_9]    = "coleco2-9";
+    eventNames[EC_COLECO2_STAR] = "coleco2-star";
+    eventNames[EC_COLECO2_HASH] = "coleco2-hashmark";
+    
 }
 
 int inputEventStringToCode(const char* eventName) 

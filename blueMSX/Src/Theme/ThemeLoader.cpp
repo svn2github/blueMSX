@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,7 +106,6 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "dlg-emulation"))           return (ButtonEvent)actionPropShowEmulation;
     if (0 == strcmp(action, "dlg-video"))               return (ButtonEvent)actionPropShowVideo;
     if (0 == strcmp(action, "dlg-audio"))               return (ButtonEvent)actionPropShowAudio;
-    if (0 == strcmp(action, "dlg-controls"))            return (ButtonEvent)actionPropShowControls;
     if (0 == strcmp(action, "dlg-performance"))         return (ButtonEvent)actionPropShowPerformance;
     if (0 == strcmp(action, "dlg-settings"))            return (ButtonEvent)actionPropShowSettings;
     if (0 == strcmp(action, "dlg-apearance"))           return (ButtonEvent)actionPropShowApearance;
@@ -189,19 +188,6 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-togglemutemidi"))      return (ButtonEvent)actionMuteToggleMidi;
     
     if (0 == strcmp(action, "printer-forceformfeed"))   return (ButtonEvent)actionPrinterForceFormFeed;
-
-    if (0 == strcmp(action, "port1-setnone"))           return (ButtonEvent)actionPort1SetNone;
-    if (0 == strcmp(action, "port1-setmouse"))          return (ButtonEvent)actionPort1SetMouse;
-    if (0 == strcmp(action, "port1-setnumpad"))         return (ButtonEvent)actionPort1SetNumpad;
-    if (0 == strcmp(action, "port1-setkeyset"))         return (ButtonEvent)actionPort1SetKeyset;
-    if (0 == strcmp(action, "port1-tetris2dongle"))     return (ButtonEvent)actionPort1SetTetrisDongle;
-    if (0 == strcmp(action, "port1-setjoystick"))       return (ButtonEvent)actionPort1SetJoystick;
-    if (0 == strcmp(action, "port2-setnone"))           return (ButtonEvent)actionPort2SetNone;
-    if (0 == strcmp(action, "port2-setmouse"))          return (ButtonEvent)actionPort2SetMouse;
-    if (0 == strcmp(action, "port2-setnumpad"))         return (ButtonEvent)actionPort2SetNumpad;
-    if (0 == strcmp(action, "port2-setkeyset"))         return (ButtonEvent)actionPort2SetKeyset;
-    if (0 == strcmp(action, "port2-tetris2dongle"))     return (ButtonEvent)actionPort2SetTetrisDongle;
-    if (0 == strcmp(action, "port2-setjoystick"))       return (ButtonEvent)actionPort2SetJoystick;
 
     if (0 == strcmp(action, "video-gamma"))        return (ButtonEvent)actionVideoSetGamma;
     if (0 == strcmp(action, "video-brightness"))   return (ButtonEvent)actionVideoSetBrightness;

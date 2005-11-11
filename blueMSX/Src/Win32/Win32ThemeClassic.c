@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,7 +96,7 @@ static ThemePage* themeCreateSmall()
                                               (ButtonEvent)actionWindowSizeNormal, 0, 0, 
                                               (ButtonEvent)actionMenuZoom, 251, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
     themePageAddDualButton(theme, activeDualButtonCreate(289, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
-                                              (ButtonEvent)actionPropShowControls, 0, 0, 
+                                              (ButtonEvent)actionPropShowEmulation, 0, 0, 
                                               (ButtonEvent)actionMenuOptions, 289, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
 
     return theme;
@@ -170,7 +170,7 @@ static ThemePage* themeCreateNormal()
                                           (ButtonEvent)actionWindowSizeSmall, 0, 0, 
                                           (ButtonEvent)actionMenuZoom, 335, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
     themePageAddDualButton(theme, activeDualButtonCreate(373, 22, 5, 0, archBitmapCreateFromId(IDB_CLASSIC_BTOPTIONS),
-                                          (ButtonEvent)actionPropShowControls, 0, 0, 
+                                          (ButtonEvent)actionPropShowEmulation, 0, 0, 
                                           (ButtonEvent)actionMenuOptions, 373, 47, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);
     themePageAddButton(theme, activeButtonCreate(420, 22, 4, 0, archBitmapCreateFromId(IDB_CLASSIC_BTHELP),
                                           (ButtonEvent)actionHelpShowHelp, 0, 0), THEME_TRIGGER_NONE, THEME_TRIGGER_NONE, THEME_TRIGGER_NONE);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,33 +156,11 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.MidiOut.desc[0]         = 0;
     properties->sound.MidiOut.mt32ToGm        = 0;
     
-    properties->joy1.type              = P_JOY_NONE;
-    properties->joy1.autofire          = P_JOY_AFOFF;
-    properties->joy1.keyUp             = 0xff;
-    properties->joy1.keyDown           = 0xff;
-    properties->joy1.keyLeft           = 0xff;
-    properties->joy1.keyRight          = 0xff;
-    properties->joy1.button1           = 0xff;
-    properties->joy1.button2           = 0xff;
-    properties->joy1.hwType            = 0;
-    properties->joy1.hwName[0]         = 0;
-    properties->joy1.hwIndex           = 0;
-    properties->joy1.hwButtonA         = 0;
-    properties->joy1.hwButtonB         = 1;
+    properties->joy1.type              = 0;
+    properties->joy1.autofire          = 0;
     
-    properties->joy2.type              = P_JOY_NONE;
-    properties->joy2.autofire          = P_JOY_AFOFF;
-    properties->joy2.keyUp             = 0xff;
-    properties->joy2.keyDown           = 0xff;
-    properties->joy2.keyLeft           = 0xff;
-    properties->joy2.keyRight          = 0xff;
-    properties->joy2.button1           = 0xff;
-    properties->joy2.button2           = 0xff;
-    properties->joy2.hwType            = 0;
-    properties->joy2.hwName[0]         = 0;
-    properties->joy2.hwIndex           = 0;
-    properties->joy2.hwButtonA         = 0;
-    properties->joy2.hwButtonB         = 1;
+    properties->joy2.type              = 0;
+    properties->joy2.autofire          = 0;
     
     properties->keyboard.configFile[0] = 0;
 
@@ -539,31 +517,9 @@ static void propLoad(Properties* properties)
     
     GET_INT_VALUE_2(joy1, type);
     GET_INT_VALUE_2(joy1, autofire);
-    GET_INT_VALUE_2(joy1, keyUp);
-    GET_INT_VALUE_2(joy1, keyDown);
-    GET_INT_VALUE_2(joy1, keyLeft);
-    GET_INT_VALUE_2(joy1, keyRight);
-    GET_INT_VALUE_2(joy1, button1);
-    GET_INT_VALUE_2(joy1, button2);
-    GET_INT_VALUE_2(joy1, hwType);
-    GET_STR_VALUE_2(joy1, hwName);
-    GET_INT_VALUE_2(joy1, hwIndex);
-    GET_INT_VALUE_2(joy1, hwButtonA);
-    GET_INT_VALUE_2(joy1, hwButtonB);
     
     GET_INT_VALUE_2(joy2, type);
     GET_INT_VALUE_2(joy2, autofire);
-    GET_INT_VALUE_2(joy2, keyUp);
-    GET_INT_VALUE_2(joy2, keyDown);
-    GET_INT_VALUE_2(joy2, keyLeft);
-    GET_INT_VALUE_2(joy2, keyRight);
-    GET_INT_VALUE_2(joy2, button1);
-    GET_INT_VALUE_2(joy2, button2);
-    GET_INT_VALUE_2(joy2, hwType);
-    GET_STR_VALUE_2(joy2, hwName);
-    GET_INT_VALUE_2(joy2, hwIndex);
-    GET_INT_VALUE_2(joy2, hwButtonA);
-    GET_INT_VALUE_2(joy2, hwButtonB);
     
     GET_STR_VALUE_2(keyboard, configFile);
     
@@ -746,31 +702,9 @@ void propSave(Properties* properties)
     
     SET_INT_VALUE_2(joy1, type);
     SET_INT_VALUE_2(joy1, autofire);
-    SET_INT_VALUE_2(joy1, keyUp);
-    SET_INT_VALUE_2(joy1, keyDown);
-    SET_INT_VALUE_2(joy1, keyLeft);
-    SET_INT_VALUE_2(joy1, keyRight);
-    SET_INT_VALUE_2(joy1, button1);
-    SET_INT_VALUE_2(joy1, button2);
-    SET_INT_VALUE_2(joy1, hwType);
-    SET_STR_VALUE_2(joy1, hwName);
-    SET_INT_VALUE_2(joy1, hwIndex);
-    SET_INT_VALUE_2(joy1, hwButtonA);
-    SET_INT_VALUE_2(joy1, hwButtonB);
     
     SET_INT_VALUE_2(joy2, type);
     SET_INT_VALUE_2(joy2, autofire);
-    SET_INT_VALUE_2(joy2, keyUp);
-    SET_INT_VALUE_2(joy2, keyDown);
-    SET_INT_VALUE_2(joy2, keyLeft);
-    SET_INT_VALUE_2(joy2, keyRight);
-    SET_INT_VALUE_2(joy2, button1);
-    SET_INT_VALUE_2(joy2, button2);
-    SET_INT_VALUE_2(joy2, hwType);
-    SET_STR_VALUE_2(joy2, hwName);
-    SET_INT_VALUE_2(joy2, hwIndex);
-    SET_INT_VALUE_2(joy2, hwButtonA);
-    SET_INT_VALUE_2(joy2, hwButtonB);
     
     SET_STR_VALUE_2(keyboard, configFile);
     
@@ -862,8 +796,6 @@ Properties* propCreate(const char* filename, int useDefault, int langType, PropK
         globalProperties = properties;
     }
 
-    properties->joy1.id = 1;
-    properties->joy2.id = 2;
     propInitDefaults(properties, langType, kbdLang, syncMode, themeName);
 
     strcpy(properties->filename, filename);

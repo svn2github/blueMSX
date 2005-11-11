@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -528,6 +528,13 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             InvalidateRect(hwnd, NULL, TRUE);
         }
         return 0;
+
+    case WM_COMMAND:
+        if (menuCommand(propGetGlobalProperties(), LOWORD(wParam))) {
+            updateMenu(0);
+            InvalidateRect(hwnd, NULL, TRUE);
+        }
+        break;
 
     case WM_NCMOUSEMOVE:
         if (wi != NULL) {

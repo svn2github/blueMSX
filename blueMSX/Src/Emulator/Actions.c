@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2005-11-09 17:03:37 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -239,70 +239,6 @@ void actionCartInsert2() {
 void actionToggleMouseCapture() {
     state.mouseLock ^= 1;
     archMouseSetForceLock(state.mouseLock);
-}
-
-void actionPort1SetNone() {
-	state.properties->joy1.type = P_JOY_NONE;
-    archUpdateJoystick();
-}
-
-void actionPort1SetMouse() {
-	state.properties->joy1.type = P_JOY_MOUSE;
-    archUpdateJoystick();
-}
-
-void actionPort1SetNumpad() {
-	state.properties->joy1.type = P_JOY_NUMPAD;
-    archUpdateJoystick();
-}
-
-void actionPort1SetKeyset() {
-	state.properties->joy1.type = P_JOY_KEYSET;
-    archUpdateJoystick();
-}
-
-void actionPort1SetTetrisDongle() {
-	state.properties->joy1.type = P_JOY_TETRISDONGLE;
-    archUpdateJoystick();
-}
-
-void actionPort1SetJoystick() {
-	if (archJoystickGetCount()) {
-		state.properties->joy1.type = P_JOY_HW;
-        archUpdateJoystick();
-	}
-}
-
-void actionPort2SetNone() {
-	state.properties->joy2.type = P_JOY_NONE;
-    archUpdateJoystick();
-}
-
-void actionPort2SetMouse() {
-	state.properties->joy2.type = P_JOY_MOUSE;
-    archUpdateJoystick();
-}
-
-void actionPort2SetNumpad() {
-	state.properties->joy2.type = P_JOY_NUMPAD;
-    archUpdateJoystick();
-}
-
-void actionPort2SetKeyset() {
-	state.properties->joy2.type = P_JOY_KEYSET;
-    archUpdateJoystick();
-}
-
-void actionPort2SetTetrisDongle() {
-	state.properties->joy2.type = P_JOY_TETRISDONGLE;
-    archUpdateJoystick();
-}
-
-void actionPort2SetJoystick() {
-	if (archJoystickGetCount()) {
-    	state.properties->joy2.type = P_JOY_HW;
-        archUpdateJoystick();
-    }
 }
 
 void actionEmuStep() {
@@ -707,10 +643,6 @@ void actionPropShowVideo() {
 
 void actionPropShowAudio() {
     archShowPropertiesDialog(PROP_SOUND);
-}
-
-void actionPropShowControls() {
-    archShowPropertiesDialog(PROP_CONTROLS);
 }
 
 void actionPropShowPerformance() {

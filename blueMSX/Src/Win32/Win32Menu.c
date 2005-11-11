@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-11-10 08:21:54 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -139,12 +139,11 @@
 #define ID_OPTIONS_EMULATION            40121
 #define ID_OPTIONS_AUDIO                40122
 #define ID_OPTIONS_VIDEO                40123
-#define ID_OPTIONS_CONTROLS             40124
-#define ID_OPTIONS_PERFORMANCE          40125
-#define ID_OPTIONS_SETTINGS             40126
-#define ID_OPTIONS_LANGUAGE             40127
-#define ID_OPTIONS_APEARANCE            40128
-#define ID_OPTIONS_PORTS                40129
+#define ID_OPTIONS_PERFORMANCE          40124
+#define ID_OPTIONS_SETTINGS             40125
+#define ID_OPTIONS_LANGUAGE             40126
+#define ID_OPTIONS_APEARANCE            40127
+#define ID_OPTIONS_PORTS                40128
 
 #define ID_HELP_HELP                    40151
 #define ID_HELP_ABOUT                   40152
@@ -212,23 +211,27 @@ HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
 
 static void showPopupMenu(HMENU hMenu, int x, int y)
 {
+    HWND hwnd = GetForegroundWindow();
     int flags = 0;
     if (x == -1 && y == -1) {
         RECT r;
-        GetWindowRect(parentHwnd, &r);
+        if (GetParent(hwnd) == parentHwnd) {
+            hwnd = parentHwnd;
+        }
+        GetWindowRect(hwnd, &r);
         x = (r.left + r.right) / 2;
         y =  (r.top + r.bottom) / 2;
         flags = TPM_CENTERALIGN;
     }
     else {
         POINT pt = {x, y};
-        ClientToScreen(parentHwnd, &pt);
+        ClientToScreen(hwnd, &pt);
         x = pt.x;
         y = pt.y;
     }
 
     enterDialogShow();
-    TrackPopupMenu(hMenu, 0, x, y, flags, parentHwnd, NULL);
+    TrackPopupMenu(hMenu, 0, x, y, flags, hwnd, NULL);
     exitDialogShow();
 }
 
@@ -751,9 +754,6 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts) {
 
     _stprintf(langBuffer, "%s", langMenuPropsSound());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsControls());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_CONTROLS, langBuffer);
 
     _stprintf(langBuffer, "%s", langMenuPropsPerformance());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PERFORMANCE, langBuffer);
@@ -1486,7 +1486,6 @@ int menuCommand(Properties* pProperties, int command)
     case ID_OPTIONS_EMULATION:              actionPropShowEmulation();      return 0;
     case ID_OPTIONS_VIDEO:                  actionPropShowVideo();          return 0;
     case ID_OPTIONS_AUDIO:                  actionPropShowAudio();          return 0;
-    case ID_OPTIONS_CONTROLS:               actionPropShowControls();       return 0;
     case ID_OPTIONS_PERFORMANCE:            actionPropShowPerformance();    return 0;
     case ID_OPTIONS_SETTINGS:               actionPropShowSettings();       return 0;
     case ID_OPTIONS_APEARANCE:              actionPropShowApearance();      return 0;

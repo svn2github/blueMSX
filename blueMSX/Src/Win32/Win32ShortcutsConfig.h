@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,7 +108,6 @@ typedef struct {
     ShotcutHotkey propShowEmulation;
     ShotcutHotkey propShowVideo;
     ShotcutHotkey propShowAudio;
-    ShotcutHotkey propShowControls;
     ShotcutHotkey propShowPerformance;
     ShotcutHotkey propShowSettings;
     ShotcutHotkey propShowApearance;

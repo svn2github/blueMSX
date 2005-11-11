@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1654,399 +1654,6 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-static BOOL CALLBACK joykeyDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static JoystickProperties* joyCtrl;
-    static JoystickProperties tmpJoyCtrl;
-    static int id = 0;
-
-    switch (iMsg) {
-    case WM_COMMAND:
-        switch(LOWORD(wParam)) {
-        case IDOK:
-            KillTimer(hDlg, 0);
-            *joyCtrl = tmpJoyCtrl;
-            EndDialog(hDlg, TRUE);
-            return TRUE;
-        case IDCANCEL:
-            KillTimer(hDlg, 0);
-            EndDialog(hDlg, FALSE);
-            return TRUE;
-        case IDC_KEYUP:
-            break;
-        }
-        switch (HIWORD(wParam)) {
-        case EN_KILLFOCUS:
-            id = 0;
-            break;
-        case EN_SETFOCUS:
-            id = LOWORD(wParam);
-            break;
-        }
-        break;
-
-    case WM_TIMER:
-        if (id != 0) {
-            int i;
-            for (i = 0; i < 256; i++) {
-                if (virtualKeys[i][0]) {
-                    SHORT state = GetAsyncKeyState(i);
-                    if (state & 1) {
-                        SendMessage(GetDlgItem(hDlg, id), WM_SETTEXT, 0, (LPARAM)virtualKeys[i]);
-                        switch (id) {
-                        case IDC_KEYUP:      tmpJoyCtrl.keyUp    = i; break;
-                        case IDC_KEYDOWN:    tmpJoyCtrl.keyDown  = i; break;
-                        case IDC_KEYLEFT:    tmpJoyCtrl.keyLeft  = i; break;
-                        case IDC_KEYRIGHT:   tmpJoyCtrl.keyRight = i; break;
-                        case IDC_KEYBUTTON1: tmpJoyCtrl.button1  = i; break;
-                        case IDC_KEYBUTTON2: tmpJoyCtrl.button2  = i; break;
-                        }
-                    }
-                }
-            }
-        }
-        break;
-
-    case WM_INITDIALOG:
-        updateDialogPos(hDlg, DLG_ID_JOYKEYS, 0, 1);
-        joyCtrl = (JoystickProperties*)lParam;
-
-        SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
-        SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
-
-        SendMessage(GetDlgItem(hDlg, IDC_JOYUPTEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyUpText());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYDOWNTEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyDownText());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYLEFTTEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyLeftText());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYRIGHTTEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyRightText());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYBUTTON1TEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyButton1Text());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYBUTTON2TEXT), WM_SETTEXT, 0, (LPARAM)langDlgJoyButton2Text());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYGROUPBOX), WM_SETTEXT, 0, (LPARAM)langDlgJoyGB());
-
-        SetWindowText(hDlg, joyCtrl->id == 1 ? langDlgJoyTitle1() : langDlgJoyTitle2());
-
-        tmpJoyCtrl = *joyCtrl;
-        SendMessage(GetDlgItem(hDlg, IDC_KEYUP),      WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.keyUp]);
-        SendMessage(GetDlgItem(hDlg, IDC_KEYDOWN),    WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.keyDown]);
-        SendMessage(GetDlgItem(hDlg, IDC_KEYLEFT),    WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.keyLeft]);
-        SendMessage(GetDlgItem(hDlg, IDC_KEYRIGHT),   WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.keyRight]);
-        SendMessage(GetDlgItem(hDlg, IDC_KEYBUTTON1), WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.button1]);
-        SendMessage(GetDlgItem(hDlg, IDC_KEYBUTTON2), WM_SETTEXT, 0, (LPARAM)virtualKeys[tmpJoyCtrl.button2]);
-
-        SetTimer(hDlg, 0, 1, NULL);
-        return FALSE;
-
-    case WM_DESTROY:
-        saveDialogPos(hDlg, DLG_ID_JOYKEYS);
-        return 0;
-    }
-
-    return FALSE;
-}
-
-static updateJoystickList(HWND hDlg, int id, int type, int hwType) {
-    int i;
-
-    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
-
-    // Add static members
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyNone());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyMouse());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyNumpad());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyKeyset());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsJoyTetrisDongle());
-
-    for (i = 0; i < archJoystickGetCount(); i++) {
-        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)archJoystickGetName(i));
-    }
-
-    if (type == P_JOY_HW) {
-        type += hwType;
-    }
-    
-    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, type, 0);
-}
-
-static int getJoystickList(HWND hDlg, int id, int* hwType, char* hwName, int* hwIndex) 
-{
-    char selection[128];
-    int index = SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0);
-    int rv = SendMessage(GetDlgItem(hDlg, id), CB_GETLBTEXT, index, (LPARAM)selection);
-
-    if (rv == CB_ERR || index < 0) {
-        return P_JOY_NONE;
-    }
-
-    *hwType = 0;
-    switch (index) {
-    case 0: return P_JOY_NONE;
-    case 1: return P_JOY_MOUSE;
-    case 2: return P_JOY_NUMPAD;
-    case 3: return P_JOY_KEYSET;
-    case 4: return P_JOY_TETRISDONGLE;
-    default:
-        break;
-    }
-    
-    *hwType = index - 5;
-
-    if (hwName != NULL && hwIndex != NULL) {
-        int i;
-
-        strcpy(hwName, selection);
-        *hwIndex = 0;
-
-        for (i = 0; i < *hwType; i++) {
-            if (0 == strcpy(selection, archJoystickGetName(i))) {
-                *hwIndex++;
-            }
-        }
-    }
-
-    return P_JOY_HW;
-}
-
-static updateJoystickButtonList(HWND hDlg, int id, int joyIndex, int button) 
-{
-    int buttons;
-    int i;
-
-    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
-
-    buttons = joystickNumButtons(joyIndex);
-
-    if (buttons < 2) {
-        buttons = 2;
-    }
-
-    for (i = 0; i < buttons; i++) {
-        _TCHAR buffer[32];
-        _stprintf(buffer, "%s %d", langPropJoyButtonText(), i + 1);
-
-        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)buffer);
-    }
-
-    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, button, 0);
-}
-
-static int getJoystickButtonList(HWND hDlg, int id) 
-{
-    return SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0);
-}
-
-static updateJoystickAutofireList(HWND hDlg, int id, int autofire) 
-{
-    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
-
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langEnumControlsAfOff());
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"1");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"2");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"3");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"4");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"5");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"6");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"7");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"8");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"9");
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)"10");
-
-    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, autofire, 0);
-}
-
-static int getJoystickAutofireList(HWND hDlg, int id) 
-{
-    return SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0);
-}
-
-void propUpdateJoyinfo(Properties* pProperties)
-{
-    int joyCount = archJoystickGetCount();
-
-    if (pProperties->joy1.type == P_JOY_HW) {
-        int subindex = 0;
-        int i;
-
-        for (i = 0; i < joyCount; i++) {
-            if (0 == strcmp(pProperties->joy1.hwName, archJoystickGetName(i))) {
-                if (subindex == pProperties->joy1.hwIndex) {
-                    pProperties->joy1.hwType = i;
-                    return;
-                }
-                subindex++;
-            }
-        }
-        // If joystick was not found, set it to none
-        pProperties->joy1.type = P_JOY_NONE;
-    }
-
-    if (pProperties->joy2.type == P_JOY_HW) {
-        int subindex = 0;
-        int i;
-
-        for (i = 0; i < joyCount; i++) {
-            if (0 == strcmp(pProperties->joy2.hwName, archJoystickGetName(i))) {
-                if (subindex == pProperties->joy2.hwIndex) {
-                    pProperties->joy2.hwType = i;
-                    return;
-                }
-                subindex++;
-            }
-        }
-        // If joystick was not found, set it to none
-        pProperties->joy2.type = P_JOY_NONE;
-    }
-}
-
-static BOOL CALLBACK controlsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static Properties* pProperties;
-    static int oldHwIndex1;
-    static int oldHwIndex2;
-
-    switch (iMsg) {
-    case WM_INITDIALOG:  
-        if (!centered) {
-            updateDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES, 0, 1);
-            centered = 1;
-        }
-
-        SendMessage(GetDlgItem(hDlg, IDC_JOYPORT1GROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropJoyPort1GB());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYPORT2GROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropJoyPort2GB());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYAUTOFIRETEXT1), WM_SETTEXT, 0, (LPARAM)langPropJoyAutofireText());
-//        SendMessage(GetDlgItem(hDlg, IDC_JOYAUTOFIRETEXT2), WM_SETTEXT, 0, (LPARAM)langPropJoyAutofireText());
-        
-        SendMessage(GetDlgItem(hDlg, IDC_JOYCONTROLTEXT1), WM_SETTEXT, 0, (LPARAM)langPropJoyControlText());
-        SendMessage(GetDlgItem(hDlg, IDC_JOYCONTROLTEXT2), WM_SETTEXT, 0, (LPARAM)langPropJoyControlText());
-
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYKEYSET1), langPropJoyConfigKeyset());
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYKEYSET2), langPropJoyConfigKeyset());
-
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONATEXT1), langPropJoyButtonAText());
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONBTEXT1), langPropJoyButtonBText());
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONATEXT2), langPropJoyButtonAText());
-        SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONBTEXT2), langPropJoyButtonBText());
-
-        SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
-        SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
-
-        pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
-
-        updateJoystickList(hDlg, IDC_JOY1, pProperties->joy1.type, pProperties->joy1.hwType);
-        updateJoystickList(hDlg, IDC_JOY2, pProperties->joy2.type, pProperties->joy2.hwType);
-
-        updateJoystickAutofireList(hDlg, IDC_AUTOFIRE1, pProperties->joy1.autofire);
-//        updateJoystickAutofireList(hDlg, IDC_AUTOFIRE2, pProperties->joy2.autofire);
-
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYKEYSET1), pProperties->joy1.type == P_JOY_KEYSET);
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYKEYSET2), pProperties->joy2.type == P_JOY_KEYSET);
-        
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONA1), pProperties->joy1.type == P_JOY_HW);
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONB1), pProperties->joy1.type == P_JOY_HW);
-        
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONA2), pProperties->joy2.type == P_JOY_HW);
-        EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONB2), pProperties->joy2.type == P_JOY_HW);
-
-        oldHwIndex1 = -1;
-        oldHwIndex2 = -1;
-
-        if (pProperties->joy1.type == P_JOY_HW) {
-            oldHwIndex1 = pProperties->joy1.hwType;
-            updateJoystickButtonList(hDlg, IDC_JOYBUTTONA1, pProperties->joy1.hwType, pProperties->joy1.hwButtonA);
-            updateJoystickButtonList(hDlg, IDC_JOYBUTTONB1, pProperties->joy1.hwType, pProperties->joy1.hwButtonB);
-        }
-
-        if (pProperties->joy2.hwType == P_JOY_HW) {
-            oldHwIndex2 = pProperties->joy2.hwType;
-            updateJoystickButtonList(hDlg, IDC_JOYBUTTONA1, pProperties->joy2.hwType, pProperties->joy2.hwButtonA);
-            updateJoystickButtonList(hDlg, IDC_JOYBUTTONB1, pProperties->joy2.hwType, pProperties->joy2.hwButtonB);
-        }
-
-        return FALSE;
-        
-    case WM_COMMAND:
-        switch(LOWORD(wParam)) {
-        case IDC_JOYKEYSET1:
-            DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JOYKEYS), hDlg, joykeyDlgProc, (LPARAM)&pProperties->joy1);
-            return TRUE;
-
-        case IDC_JOYKEYSET2:
-            DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JOYKEYS), hDlg, joykeyDlgProc, (LPARAM)&pProperties->joy2);
-            return TRUE;
-
-        case IDC_JOY1:
-            {
-                int index;
-                int type = getJoystickList(hDlg, IDC_JOY1, &index, NULL, NULL);
-                
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYKEYSET1), type == P_JOY_KEYSET);
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONA1), type == P_JOY_HW);
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONB1), type == P_JOY_HW);
-
-                if (type == P_JOY_HW && oldHwIndex1 != index) {
-                    updateJoystickButtonList(hDlg, IDC_JOYBUTTONA1, index, 0);
-                    updateJoystickButtonList(hDlg, IDC_JOYBUTTONB1, index, 1);
-                }
-                else {
-                    SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONA1), "");
-                    SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONB1), "");
-                }
-                oldHwIndex1 = type == P_JOY_HW ? index : -1;
-            }
-            return TRUE;
-
-        case IDC_JOY2:
-            {
-                int index;
-                int type = getJoystickList(hDlg, IDC_JOY2, &index, NULL, NULL);
-                
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYKEYSET2), type == P_JOY_KEYSET);
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONA2), type == P_JOY_HW);
-                EnableWindow(GetDlgItem(hDlg, IDC_JOYBUTTONB2), type == P_JOY_HW);
-
-                if (type == P_JOY_HW && oldHwIndex2 != index) {
-                    updateJoystickButtonList(hDlg, IDC_JOYBUTTONA2, index, 0);
-                    updateJoystickButtonList(hDlg, IDC_JOYBUTTONB2, index, 1);
-                }
-                else {
-                    SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONA2), "");
-                    SetWindowText(GetDlgItem(hDlg, IDC_JOYBUTTONB2), "");
-                }
-                oldHwIndex2 = type == P_JOY_HW ? index : -1;
-            }
-            return TRUE;
-        }
-        return FALSE;
-
-    case WM_NOTIFY:
-        if (((NMHDR FAR*)lParam)->code == PSN_APPLY || ((NMHDR FAR*)lParam)->code == PSN_QUERYCANCEL) {
-            saveDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES);
-        }
-
-        if ((((NMHDR FAR *)lParam)->code) != PSN_APPLY) {
-            return FALSE;
-        }
-        pProperties->joy1.autofire = getJoystickAutofireList(hDlg, IDC_AUTOFIRE1);
-//        pProperties->joy2.autofire = getJoystickAutofireList(hDlg, IDC_AUTOFIRE2);
-
-        pProperties->joy1.type = getJoystickList(hDlg, IDC_JOY1, 
-                                                 &pProperties->joy1.hwType, 
-                                                 pProperties->joy1.hwName, 
-                                                 &pProperties->joy1.hwIndex);
-        pProperties->joy2.type = getJoystickList(hDlg, IDC_JOY2, 
-                                                 &pProperties->joy2.hwType, 
-                                                 pProperties->joy2.hwName, 
-                                                 &pProperties->joy2.hwIndex);
-
-        pProperties->joy1.hwButtonA = getJoystickButtonList(hDlg, IDC_JOYBUTTONA1);
-        pProperties->joy1.hwButtonB = getJoystickButtonList(hDlg, IDC_JOYBUTTONB1);
-
-        pProperties->joy2.hwButtonA = getJoystickButtonList(hDlg, IDC_JOYBUTTONA2);
-        pProperties->joy2.hwButtonB = getJoystickButtonList(hDlg, IDC_JOYBUTTONB2);
-
-        propModified = 1;
-        
-        return TRUE;
-    }
-
-    return FALSE;
-}
 
 static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
     char buffer[256];
@@ -2352,7 +1959,7 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video) {
 	HINSTANCE       hInst = (HINSTANCE)GetModuleHandle(NULL);
-    PROPSHEETPAGE   psp[8];
+    PROPSHEETPAGE   psp[7];
     PROPSHEETHEADER psh;
     Properties oldProp = *pProperties;
 
@@ -2394,52 +2001,42 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
     psp[3].dwSize = sizeof(PROPSHEETPAGE);
     psp[3].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[3].hInstance = hInst;
-    psp[3].pszTemplate = MAKEINTRESOURCE(IDD_CONTROLS);
+    psp[3].pszTemplate = MAKEINTRESOURCE(IDD_PERFORMANCE);
     psp[3].pszIcon = NULL;
-    psp[3].pfnDlgProc = controlsDlgProc;
-    psp[3].pszTitle = langPropControls();
+    psp[3].pfnDlgProc = performanceDlgProc;
+    psp[3].pszTitle = langPropPerformance();
     psp[3].lParam = (LPARAM)pProperties;
     psp[3].pfnCallback = NULL;
 
     psp[4].dwSize = sizeof(PROPSHEETPAGE);
     psp[4].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[4].hInstance = hInst;
-    psp[4].pszTemplate = MAKEINTRESOURCE(IDD_PERFORMANCE);
+    psp[4].pszTemplate = MAKEINTRESOURCE(IDD_SETTINGS);
     psp[4].pszIcon = NULL;
-    psp[4].pfnDlgProc = performanceDlgProc;
-    psp[4].pszTitle = langPropPerformance();
+    psp[4].pfnDlgProc = filesDlgProc;
+    psp[4].pszTitle = langPropFile();
     psp[4].lParam = (LPARAM)pProperties;
     psp[4].pfnCallback = NULL;
 
     psp[5].dwSize = sizeof(PROPSHEETPAGE);
     psp[5].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[5].hInstance = hInst;
-    psp[5].pszTemplate = MAKEINTRESOURCE(IDD_SETTINGS);
+    psp[5].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
     psp[5].pszIcon = NULL;
-    psp[5].pfnDlgProc = filesDlgProc;
-    psp[5].pszTitle = langPropFile();
+    psp[5].pfnDlgProc = settingsDlgProc;
+    psp[5].pszTitle = langPropSettings();
     psp[5].lParam = (LPARAM)pProperties;
     psp[5].pfnCallback = NULL;
 
     psp[6].dwSize = sizeof(PROPSHEETPAGE);
     psp[6].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[6].hInstance = hInst;
-    psp[6].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
+    psp[6].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
     psp[6].pszIcon = NULL;
-    psp[6].pfnDlgProc = settingsDlgProc;
-    psp[6].pszTitle = langPropSettings();
+    psp[6].pfnDlgProc = portsDlgProc;
+    psp[6].pszTitle = langPropPorts();
     psp[6].lParam = (LPARAM)pProperties;
     psp[6].pfnCallback = NULL;
-
-    psp[7].dwSize = sizeof(PROPSHEETPAGE);
-    psp[7].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[7].hInstance = hInst;
-    psp[7].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
-    psp[7].pszIcon = NULL;
-    psp[7].pfnDlgProc = portsDlgProc;
-    psp[7].pszTitle = langPropPorts();
-    psp[7].lParam = (LPARAM)pProperties;
-    psp[7].pfnCallback = NULL;
     
     psh.dwSize = sizeof(PROPSHEETHEADER);
     psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE | PSH_NOAPPLYNOW;

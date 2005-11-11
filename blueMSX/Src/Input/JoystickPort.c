@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include "JoystickPort.h"
+#include "ArchInput.h"
 #include <stdlib.h>
 
 
@@ -43,6 +44,11 @@ void joystickPortSetType(int port, JoystickPortType type)
     }
 
     inputType[port] = type;
+
+    archMouseEmuEnable(inputType[0] == JOYSTICK_PORT_MOUSE || 
+                       inputType[0] == JOYSTICK_PORT_LIGHTGUN || 
+                       inputType[0] == JOYSTICK_PORT_MOUSE || 
+                       inputType[0] == JOYSTICK_PORT_LIGHTGUN);
 }
 
 JoystickPortType joystickPortGetType(int port)

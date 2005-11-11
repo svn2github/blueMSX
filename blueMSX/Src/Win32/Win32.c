@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.112 $
+** $Revision: 1.113 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -812,7 +812,6 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->propShowEmulation))            actionPropShowEmulation();
     if (hotkeyEq(key, s->propShowVideo))                actionPropShowVideo();
     if (hotkeyEq(key, s->propShowAudio))                actionPropShowAudio();
-    if (hotkeyEq(key, s->propShowControls))             actionPropShowControls();
     if (hotkeyEq(key, s->propShowPerformance))          actionPropShowPerformance();
     if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
     if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
@@ -897,7 +896,7 @@ static void updateVideoRender(Video* pVideo, Properties* pProperties) {
 
 void  PatchDiskSetBusy(int driveId, int busy);
 
-static void updateMenu(int show);
+void updateMenu(int show);
 
 typedef void (*KbdLockFun)(); 
 
@@ -905,72 +904,6 @@ KbdLockFun kbdLockEnable = NULL;
 KbdLockFun kbdLockDisable = NULL;
 
 static Properties* pProperties;
-
-
-void archUpdateJoystick() {    
-    switch (pProperties->joy1.type) {
-    case P_JOY_NONE:
-    case P_JOY_MOUSE:
-    case P_JOY_TETRISDONGLE:
-        JoystickSetType(0, JOY_NONE, 0);
-        break;
-    case P_JOY_NUMPAD:
-        JoystickSetType(0, JOY_NUMPAD, 0);
-        break;
-    case P_JOY_KEYSET:
-        JoystickSetType(0, JOY_KEYSET, 0);
-        break;
-    case P_JOY_HW:
-        JoystickSetType(0, JOY_HW, pProperties->joy1.hwType);
-        JoystickSetHwButtons(0, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
-        break;
-    }
-
-    switchSetRensha(pProperties->joy1.autofire);
-
-    switch (pProperties->joy2.type) {
-    case P_JOY_NONE:
-    case P_JOY_MOUSE:
-    case P_JOY_TETRISDONGLE:
-        JoystickSetType(1, JOY_NONE, 0);
-        break;
-    case P_JOY_NUMPAD:
-        JoystickSetType(1, JOY_NUMPAD, 0);
-        break;
-    case P_JOY_KEYSET:
-        JoystickSetType(1, JOY_KEYSET, 1);
-        break;
-    case P_JOY_HW:
-        JoystickSetType(1, JOY_HW, pProperties->joy2.hwType);
-        JoystickSetHwButtons(1, pProperties->joy1.hwButtonA, pProperties->joy1.hwButtonB);
-        break;
-    }
-
-    JoystickSetKeyStateKey(1, JOY_UP,    pProperties->joy1.keyUp);
-    JoystickSetKeyStateKey(1, JOY_DOWN,  pProperties->joy1.keyDown);
-    JoystickSetKeyStateKey(1, JOY_LEFT,  pProperties->joy1.keyLeft);
-    JoystickSetKeyStateKey(1, JOY_RIGHT, pProperties->joy1.keyRight);
-    JoystickSetKeyStateKey(1, JOY_BT1,   pProperties->joy1.button1);
-    JoystickSetKeyStateKey(1, JOY_BT2,   pProperties->joy1.button2);
-
-    JoystickSetKeyStateKey(2, JOY_UP,    pProperties->joy2.keyUp);
-    JoystickSetKeyStateKey(2, JOY_DOWN,  pProperties->joy2.keyDown);
-    JoystickSetKeyStateKey(2, JOY_LEFT,  pProperties->joy2.keyLeft);
-    JoystickSetKeyStateKey(2, JOY_RIGHT, pProperties->joy2.keyRight);
-    JoystickSetKeyStateKey(2, JOY_BT1,   pProperties->joy2.button1);
-    JoystickSetKeyStateKey(2, JOY_BT2,   pProperties->joy2.button2);
-
-    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
-    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
-
-    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
-}
 
 typedef struct {
     HWND emuHwnd;
@@ -1084,7 +1017,6 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     emulatorSetFrequency(50, NULL);
     enterDialogShow();
-    propUpdateJoyinfo(pProperties);
     changed = showProperties(pProperties, st.hwnd, startPane, st.mixer, st.pVideo);
     exitDialogShow();
     emulatorSetFrequency(pProperties->emulation.speed, NULL);
@@ -1097,9 +1029,6 @@ void archShowPropertiesDialog(PropPage  startPane) {
 
     /* Always update video render */
     updateVideoRender(st.pVideo, pProperties);
-
-    /* Always update joystick controls */
-    archUpdateJoystick(pProperties);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
@@ -1118,20 +1047,9 @@ void archShowPropertiesDialog(PropPage  startPane) {
         archUpdateWindow();
     }
 
-    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
-    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
-
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
-
-    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
     /* Must restart MSX if Machine configuration changed */
     if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
@@ -1264,7 +1182,7 @@ void exitDialogShow() {
     }
 }
 
-static void updateMenu(int show) {
+void updateMenu(int show) {
     int doDelay = show;
     int enableSpecial = 1;
 
@@ -2651,24 +2569,14 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     inputReset(st.hwnd);
     keyboardLoadConfig(pProperties->keyboard.configFile);
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
-
-    propUpdateJoyinfo(pProperties);
     
-    joystickPortSetType(0, pProperties->joy1.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy1.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy1.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
-    joystickPortSetType(1, pProperties->joy2.type == P_JOY_NONE          ? JOYSTICK_PORT_NONE : 
-                           pProperties->joy2.type == P_JOY_TETRISDONGLE  ? JOYSTICK_PORT_TETRIS2DONGLE : 
-                           pProperties->joy2.type == P_JOY_MOUSE         ? JOYSTICK_PORT_MOUSE : 
-                                                                           JOYSTICK_PORT_JOYSTICK);
+    mouseEmuInit(st.emuHwnd, 1);
+    joystickPortSetType(0, pProperties->joy1.type);
+    joystickPortSetType(1, pProperties->joy2.type);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
-
-    mouseEmuInit(st.emuHwnd, 1);
-    mouseEmuEnable(pProperties->joy1.type == P_JOY_MOUSE || pProperties->joy2.type == P_JOY_MOUSE);
 
     st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 
@@ -2693,7 +2601,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
 
     updateVideoRender(st.pVideo, pProperties);
-    archUpdateJoystick(pProperties);
     
     mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
@@ -2765,6 +2672,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     
     SetCurrentDirectory(st.pCurDir);
 
+    pProperties->joy1.type = joystickPortGetType(0);
+    pProperties->joy2.type = joystickPortGetType(1);
     propDestroy(pProperties);
 
     archSoundDestroy();

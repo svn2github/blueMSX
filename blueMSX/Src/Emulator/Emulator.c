@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -403,9 +403,6 @@ void emulatorStart(const char* stateName) {
     }
     if (emuState != EMU_STOPPED) {
         getDeviceInfo(&deviceInfo);
-
-        properties->joy1.type = joystickPortGetType(0);
-        properties->joy2.type = joystickPortGetType(1);
 
         boardSetYm2413Oversampling(properties->sound.chip.ym2413Oversampling);
         boardSetY8950Oversampling(properties->sound.chip.y8950Oversampling);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/InputEvent.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -176,7 +176,33 @@ const char* inputEventCodeToString(int eventCode);
 #define EC_JOY2_BUTTON5 118
 #define EC_JOY2_BUTTON6 119
 
-#define EC_KEYCOUNT     120
+#define EC_COLECO1_0    120
+#define EC_COLECO1_1    121
+#define EC_COLECO1_2    122
+#define EC_COLECO1_3    123
+#define EC_COLECO1_4    124
+#define EC_COLECO1_5    125
+#define EC_COLECO1_6    126
+#define EC_COLECO1_7    127
+#define EC_COLECO1_8    128
+#define EC_COLECO1_9    129
+#define EC_COLECO1_STAR 130
+#define EC_COLECO1_HASH 131
+
+#define EC_COLECO2_0    140
+#define EC_COLECO2_1    141
+#define EC_COLECO2_2    142
+#define EC_COLECO2_3    143
+#define EC_COLECO2_4    144
+#define EC_COLECO2_5    145
+#define EC_COLECO2_6    146
+#define EC_COLECO2_7    147
+#define EC_COLECO2_8    148
+#define EC_COLECO2_9    149
+#define EC_COLECO2_STAR 150
+#define EC_COLECO2_HASH 151
+
+#define EC_KEYCOUNT     152
 
 
 // Inlines

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,7 +154,7 @@ void mouseEmuSetRunState(int isRunning) {
     mouseIsRunning = isRunning;
 }
 
-void mouseEmuEnable(int enable) {
+void archMouseEmuEnable(int enable) {
     mouseEnable = enable;
 }
 

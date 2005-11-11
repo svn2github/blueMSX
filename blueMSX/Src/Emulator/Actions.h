@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-11-09 17:03:37 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,6 @@ void actionCasSave();
 void actionPropShowEmulation();
 void actionPropShowVideo();
 void actionPropShowAudio();
-void actionPropShowControls();
 void actionPropShowPerformance();
 void actionPropShowSettings();
 void actionPropShowApearance();
@@ -99,18 +98,6 @@ void actionMinimizeWindow();
 void actionCloseWindow();
 void actionVolumeIncrease();
 void actionVolumeDecrease();
-void actionPort1SetNone();
-void actionPort1SetMouse();
-void actionPort1SetNumpad();
-void actionPort1SetKeyset();
-void actionPort1SetTetrisDongle();
-void actionPort1SetJoystick();
-void actionPort2SetNone();
-void actionPort2SetMouse();
-void actionPort2SetNumpad();
-void actionPort2SetKeyset();
-void actionPort2SetTetrisDongle();
-void actionPort2SetJoystick();
 
 void actionMenuSpecialCart1(int x, int y);
 void actionMenuSpecialCart2(int x, int y);

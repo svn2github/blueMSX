@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -384,54 +384,6 @@ int themeTriggerLevelRensha() {
 
 int themeTriggerLevelEmuSpeed() {
     return propGetGlobalProperties()->emulation.speed;
-}
-
-int themeTriggerPort1None() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_NONE ? 1 : 0;
-}
-
-int themeTriggerPort1Mouse() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_MOUSE ? 1 : 0;
-}
-
-int themeTriggerPort1Num() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_NUMPAD ? 1 : 0;
-}
-
-int themeTriggerPort1Kbd() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_KEYSET ? 1 : 0;
-}
-
-int themeTriggerPort1TetrisDongle() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_TETRISDONGLE ? 1 : 0;
-}
-
-int themeTriggerPort1Joy() {
-    return propGetGlobalProperties()->joy1.type == P_JOY_HW ? 1 : 0;
-}
-
-int themeTriggerPort2None() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_NONE ? 1 : 0;
-}
-
-int themeTriggerPort2Mouse() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_MOUSE ? 1 : 0;
-}
-
-int themeTriggerPort2Num() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_NUMPAD ? 1 : 0;
-}
-
-int themeTriggerPort2Kbd() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_KEYSET ? 1 : 0;
-}
-
-int themeTriggerPort2TetrisDongle() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_TETRISDONGLE ? 1 : 0;
-}
-
-int themeTriggerPort2Joy() {
-    return propGetGlobalProperties()->joy2.type == P_JOY_HW ? 1 : 0;
 }
 
 int themeTriggerMachineMoonsound() {

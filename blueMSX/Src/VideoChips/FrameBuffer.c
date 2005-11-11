@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,7 +217,6 @@ static FrameBuffer* frameBufferFlipDrawFrame3()
 static FrameBuffer* frameBufferFlipDrawFrame4()
 {
     FrameBuffer* frame;
-    int i1,i2;
 
     if (currentBuffer == NULL) {
         return NULL;

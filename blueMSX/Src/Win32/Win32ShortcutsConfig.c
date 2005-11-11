@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-11 05:15:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -775,7 +775,6 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(propShowEmulation);
     LOAD_SHORTCUT(propShowVideo);
     LOAD_SHORTCUT(propShowAudio);
-    LOAD_SHORTCUT(propShowControls);
     LOAD_SHORTCUT(propShowPerformance);
     LOAD_SHORTCUT(propShowSettings);
     LOAD_SHORTCUT(propShowApearance);
@@ -859,7 +858,6 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(propShowEmulation);
     SAVE_SHORTCUT(propShowVideo);
     SAVE_SHORTCUT(propShowAudio);
-    SAVE_SHORTCUT(propShowControls);
     SAVE_SHORTCUT(propShowPerformance);
     SAVE_SHORTCUT(propShowSettings);
     SAVE_SHORTCUT(propShowApearance);
@@ -1010,7 +1008,6 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(propShowEmulation, langShortcutShowEmuProp());
     ADD_SHORTCUT(propShowVideo, langShortcutShowVideoProp());
     ADD_SHORTCUT(propShowAudio, langShortcutShowAudioProp());
-    ADD_SHORTCUT(propShowControls, langShortcutShowCtrlProp());
     ADD_SHORTCUT(propShowPerformance, langShortcutShowPerfProp());
     ADD_SHORTCUT(propShowSettings, langShortcutShowFiles());
     ADD_SHORTCUT(propShowApearance, langShortcutShowSettProp());

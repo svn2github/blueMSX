@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-11-11 05:15:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,8 +75,6 @@ typedef enum { P_VIDEO_FREQ_AUTO, P_VIDEO_FREQ_50HZ, P_VIDEO_FREQ_60HZ } PropVid
 typedef enum { P_SOUND_DRVNONE = 0, P_SOUND_DRVWMM, P_SOUND_DRVDIRECTX } PropSoundDriver;
 typedef enum { P_SOUND_FREQ11 = 0, P_SOUND_FREQ22, P_SOUND_FREQ44 } PropSoundFrequency;
 typedef enum { P_SOUND_SYNCFAST = 0, P_SOUND_SYNCQADJUST, P_SOUND_SYNCEADJUST } PropSoundSync;
-typedef enum { P_JOY_NONE = 0, P_JOY_MOUSE, P_JOY_NUMPAD, P_JOY_KEYSET, P_JOY_TETRISDONGLE, P_JOY_HW } PropControlsJoy;
-typedef enum { P_JOY_AFOFF = 0, P_JOY_AFSLOW, P_JOY_AFMEDIUM, P_JOY_AFFAST } PropControlsAutofire;
 typedef enum { P_KBD_EUROPEAN = 0, P_KBD_RUSSIAN, P_KBD_JAPANESE, P_KBD_KOREAN } PropKeyboardLanguage;
 
 
@@ -167,20 +165,8 @@ typedef struct {
 } SoundProperties;
 
 typedef struct {
-    int  id;
     int  type;
     int  autofire;
-    int  hwType;
-    int  hwButtonA;
-    int  hwButtonB;
-    char hwName[128];
-    int  hwIndex;
-    int  keyUp;
-    int  keyDown;
-    int  keyLeft;
-    int  keyRight;
-    int  button1;
-    int  button2;
 }  JoystickProperties;
 
 typedef struct {
