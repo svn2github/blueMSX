@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-11-11 06:26:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,7 @@ int  keyboardConfigIsModified();
 void keybardEnableEdit(int enable);
 int archKeyboardIsKeySelected(int msxKeyCode);
 int archKeyboardIsKeyConfigured(int msxKeyCode);
-void keyboardSetSelectedKey(int msxKeyCode);
+void archKeyboardSetSelectedKey(int msxKeyCode);
 
 void keyboardEnable(int enable);
 void keyboardUpdate();
@@ -72,7 +72,6 @@ int keyboardGetModifiers();
 void joystickUpdate();
 DWORD joystickGetButtonState();
 void keyboardSetFocus(int handle, int focus);
-char* joystickGetName(int index);
 int joystickNumButtons(int index);
 void joystickSetButtons(int index, int buttonA, int buttonB);
 

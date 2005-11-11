@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2005-11-11 06:26:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "Theme.h"
 #include "Actions.h"
 #include "ArchNotifications.h"
+#include "ArchInput.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -807,6 +808,7 @@ void themeSetPageFromHash(Theme* theme, unsigned long hash)
         }
     }
     if (oldPage != theme->currentPage) {
+        archKeyboardSetSelectedKey(0);
         themePageActivate(theme->pages[oldPage], NULL);
         themePageSetActive(theme->pages[theme->currentPage], NULL, theme->pages[oldPage]->active);
     }

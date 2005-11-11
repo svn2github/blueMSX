@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.113 $
+** $Revision: 1.114 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-11-11 06:26:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3295,15 +3295,6 @@ void archThemeSetNext() {
     strcpy(pProperties->settings.themeName, st.themeList[st.themeIndex]->name);
 
     archUpdateWindow();
-}
-
-void archKeyboardSetSelectedKey(int keyCode) {
-    keyboardSetSelectedKey(keyCode);
-}
-
-void archPollInput() {
-    keyboardUpdate();
-    joystickUpdate();
 }
 
 void archThemeUpdate(Theme* theme) {

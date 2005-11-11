@@ -286,9 +286,6 @@
 					RelativePath="..\..\Src\Win32\Win32Help.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Win32\Win32joystick.c">
-				</File>
-				<File
 					RelativePath="..\..\Src\Win32\Win32keyboard.c">
 				</File>
 				<File
@@ -366,9 +363,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Help.h">
-				</File>
-				<File
-					RelativePath="..\..\Src\Win32\Win32joystick.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32keyboard.h">

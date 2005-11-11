@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-11-11 06:26:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@
 static int kbdTable[KBD_TABLE_NUM][KBD_TABLE_LEN];
 static int kbdTableBackup[KBD_TABLE_NUM][KBD_TABLE_LEN];
 static int keyStatus[KBD_TABLE_NUM][KBD_TABLE_LEN];
-static char dikStrings[KBD_TABLE_LEN][32];
+static char dikStrings[KBD_TABLE_LEN][256];
 static int selectedKey;
 static int selectedDikKey;
 static int editEnabled;
@@ -421,7 +421,6 @@ static int                  kbdModifiers;
 struct JoyInfo {
     LPDIRECTINPUTDEVICE  diDevice;
     LPDIRECTINPUTDEVICE2 diDevice2;
-    char                 name[128];
     int                  numButtons;
     int                  buttonA;
     int                  buttonB;
@@ -502,8 +501,7 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
 {
     DIDEVCAPS diDevCaps;
     HRESULT rv;
-
-    strcpy(joyInfo[joyCount].name, pdidInstance->tszInstanceName);
+    int i;
 
     rv = IDirectInput_CreateDevice(dinput, &pdidInstance->guidInstance, &joyInfo[joyCount].diDevice, NULL);
     if (rv != DI_OK) {
@@ -539,6 +537,15 @@ static BOOL CALLBACK enumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
         return DIENUM_CONTINUE;
     }
     joyInfo[joyCount].numButtons = diDevCaps.dwButtons;
+
+    sprintf(dikStrings[KEY_CODE_JOYLEFT  + 32 * joyCount], "%s : left",  pdidInstance->tszInstanceName);
+    sprintf(dikStrings[KEY_CODE_JOYRIGHT + 32 * joyCount], "%s : right", pdidInstance->tszInstanceName);
+    sprintf(dikStrings[KEY_CODE_JOYUP    + 32 * joyCount], "%s : up",    pdidInstance->tszInstanceName);
+    sprintf(dikStrings[KEY_CODE_JOYDOWN  + 32 * joyCount], "%s : down",  pdidInstance->tszInstanceName);
+
+    for (i = diDevCaps.dwButtons - 1; i >= 0; i--) {
+        sprintf(dikStrings[KEY_CODE_BUTTON1 + i + 32 * joyCount], "%s : button %d",  pdidInstance->tszInstanceName, i + 1);
+    }
 
     foundInputDevices = 1;
 
@@ -677,11 +684,6 @@ static int joystickUpdateState(int index,  DWORD* buttonMask) {
 
     return state;
 }
-
-char* joystickGetName(int index) {
-    return joyInfo[index].name;
-}
-
 
 int joystickNumButtons(int index) {
     return joyInfo[index].numButtons;
@@ -1051,8 +1053,7 @@ char* archGetMappedKey()
     return "";
 }
 
-void keyboardSetSelectedKey(int msxKeyCode)
-{
+void archKeyboardSetSelectedKey(int msxKeyCode) {
     int i, n;
     selectedKey = msxKeyCode;
     selectedDikKey = 0;
@@ -1064,6 +1065,11 @@ void keyboardSetSelectedKey(int msxKeyCode)
             }
         }
     }
+}
+
+void archPollInput() {
+    keyboardUpdate();
+    joystickUpdate();
 }
 
 int archKeyboardIsKeySelected(int msxKeyCode)
