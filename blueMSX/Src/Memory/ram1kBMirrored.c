@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-11-12 02:51:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -142,7 +142,7 @@ int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** r
     rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "RAM", &dbgCallbacks, rm);
 
     for (i = 0; i < pages; i++) {
-        slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 1);
+        slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 0);
     }
 
     rm->deviceHandle = deviceManagerRegister(RAM_1KB_MIRRORED, &callbacks, rm);

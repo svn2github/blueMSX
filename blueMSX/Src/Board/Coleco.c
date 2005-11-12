@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-11-12 02:51:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -141,7 +141,7 @@ static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
     case JOYSTICK_PORT_NONE:
         joyDevice[port] = NULL;
         break;
-    case JOYSTICK_PORT_JOYSTICK:
+    case JOYSTICK_PORT_COLECOJOYSTICK:
         joyDevice[port] = colecoJoystickCreate(port);
         break;
     }
