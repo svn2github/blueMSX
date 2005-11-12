@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-11-12 02:51:47 $
+** $Date: 2005-11-12 08:44:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -291,8 +291,8 @@ int colecoCreate(Machine* machine,
 
     boardInfo->run              = r800Execute;
     boardInfo->stop             = r800StopExecution;
-    boardInfo->setInt           = r800SetInt;
-    boardInfo->clearInt         = r800ClearInt;
+    boardInfo->setInt           = r800SetNmi;
+    boardInfo->clearInt         = r800ClearNmi;
     boardInfo->setCpuTimeout    = r800SetTimeoutAt;
     boardInfo->setBreakpoint    = r800SetBreakpoint;
     boardInfo->clearBreakpoint  = r800ClearBreakpoint;

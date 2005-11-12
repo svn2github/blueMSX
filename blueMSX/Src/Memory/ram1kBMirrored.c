@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-12 02:51:47 $
+** $Date: 2005-11-12 08:44:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,7 @@ typedef struct {
     int sslot;
     int startPage;
     int pages;
-    UInt8 ramData[0x10000];
+    UInt8 ramData[0x400];
 } Ram1kBMirrored;
 
 static void saveState(Ram1kBMirrored* rm)
@@ -53,7 +53,7 @@ static void saveState(Ram1kBMirrored* rm)
     SaveState* state = saveStateOpenForWrite("mapper1kBMirroredRam");
 
     saveStateSet(state, "pages", rm->pages);
-    saveStateSetBuffer(state, "ramData", rm->ramData, 0x10000);
+    saveStateSetBuffer(state, "ramData", rm->ramData, 0x400);
 
     saveStateClose(state);
 }
@@ -64,7 +64,7 @@ static void loadState(Ram1kBMirrored* rm)
     int i;
 
     rm->pages = saveStateGet(state, "pages", 0);
-    saveStateGetBuffer(state, "ramData", rm->ramData, 0x10000);
+    saveStateGetBuffer(state, "ramData", rm->ramData, 0x400);
 
     saveStateClose(state);
     
@@ -99,18 +99,14 @@ static int dbgWriteMemory(Ram1kBMirrored* rm, char* name, void* data, int start,
     return 1;
 }
 
+static UInt8 read(Ram1kBMirrored* rm, UInt16 address) 
+{
+    return rm->ramData[address & 0x3ff];
+}
+
 static void write(Ram1kBMirrored* rm, UInt16 address, UInt8 value) 
 {
-    address &= 0x3ff;
-
-    rm->ramData[address + 0x0000] = value;
-    rm->ramData[address + 0x0400] = value;
-    rm->ramData[address + 0x0800] = value;
-    rm->ramData[address + 0x0c00] = value;
-    rm->ramData[address + 0x1000] = value;
-    rm->ramData[address + 0x1400] = value;
-    rm->ramData[address + 0x1800] = value;
-    rm->ramData[address + 0x1c00] = value;
+    rm->ramData[address & 0x3ff] = value;
 }
 
 int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
@@ -142,11 +138,11 @@ int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** r
     rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "RAM", &dbgCallbacks, rm);
 
     for (i = 0; i < pages; i++) {
-        slotMapPage(slot, sslot, i + startPage, rm->ramData + 0x2000 * i, 1, 0);
-    }
+        slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
+    } 
 
     rm->deviceHandle = deviceManagerRegister(RAM_1KB_MIRRORED, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, NULL, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
     if (ramPtr != NULL) {
         *ramPtr = rm->ramData;
