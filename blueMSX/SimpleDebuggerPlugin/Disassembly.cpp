@@ -727,14 +727,14 @@ void Disassembly::updateBreakpoints()
 
 void Disassembly::setStepOutBreakpoint(WORD address)
 {
-    char str[64];
+    char str[128];
     runtoBreakpoint = (address + dasm(backupMemory, address, str)) & 0xffff;
     SetBreakpoint(runtoBreakpoint);
 }
 
 bool Disassembly::setStepOverBreakpoint()
 {
-    char str[64];
+    char str[128];
     runtoBreakpoint = (backupPc + dasm(backupMemory, backupPc, str)) & 0xffff;
     // If call or rst instruction we need to set a runto breakpoint
     // otherwise its just a regular single step
@@ -902,7 +902,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
             addr = addr - 16;
             if (addr < 0) addr = 0;
             for (; addr < curr; addr++) {
-                char dummy[32];
+                char dummy[128];
                 int len;
                 len = dasm(memory, addr, dummy);
                 if (addr + len == curr) {
@@ -1127,7 +1127,7 @@ void Disassembly::drawText(int top, int bottom)
     int FirstLine = max (0, yPos + top / textHeight);
     int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
 
-    RECT r = { 30, textHeight * (FirstLine - yPos), 450, textHeight };
+    RECT r = { 30, textHeight * (FirstLine - yPos), 600, textHeight };
 
     r.bottom += r.top;
 

@@ -1214,6 +1214,14 @@ void OnShowTool() {
 
 void OnEmulatorStart() {
     if (dbgHwnd != NULL) {
+        disassembly->invalidateContent();
+        cpuRegisters->invalidateContent();
+        callstack->invalidateContent();
+        stack->invalidateContent();
+        periRegisters->invalidateContent();
+        memory->invalidateContent();
+        ioPorts->invalidateContent();
+
         disassembly->updateBreakpoints();
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
@@ -1228,6 +1236,14 @@ void OnEmulatorStart() {
 
 void OnEmulatorStop() {
     if (dbgHwnd != NULL) {
+        disassembly->invalidateContent();
+        cpuRegisters->invalidateContent();
+        callstack->invalidateContent();
+        stack->invalidateContent();
+        periRegisters->invalidateContent();
+        memory->invalidateContent();
+        ioPorts->invalidateContent();
+
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         periRegisters->disableEdit();

@@ -244,7 +244,7 @@ void CallstackWindow::updateContent(DWORD* callstack, int size)
 
     for (int index = size - 1; index >= 0; index--) {
         UInt16 addr = (UInt16)callstack[index];
-        char text[32];
+        char text[128];
         addr = disassembly->dasm(addr - 1, text);
         sprintf(lineInfo[lineCount].text, "%.4X: %s", addr, text);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);

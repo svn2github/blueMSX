@@ -103,7 +103,7 @@ private:
         WORD address;
         bool isLabel;
         bool haspc;
-        char text[48];
+        char text[128];
         int  textLength;
         char addr[48];
         int  addrLength;
