@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-24 00:50:05 $
+** $Date: 2005-12-17 06:18:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_SCCPLUS)     && 
             strcmp(fname, CARTNAME_FMPAC)       && 
             strcmp(fname, CARTNAME_PAC)         && 
+            strcmp(fname, CARTNAME_GAMEREADER)  && 
             strcmp(fname, CARTNAME_SONYHBI55)   && 
             strcmp(fname, CARTNAME_EXTRAM512KB) && 
             strcmp(fname, CARTNAME_EXTRAM1MB)   &&
@@ -312,6 +313,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             strcmp(properties->cartridge.slotA, CARTNAME_SCCPLUS)      &&
             strcmp(properties->cartridge.slotA, CARTNAME_FMPAC)        &&
             strcmp(properties->cartridge.slotA, CARTNAME_PAC)          &&
+            strcmp(properties->cartridge.slotA, CARTNAME_GAMEREADER)   &&
             strcmp(properties->cartridge.slotA, CARTNAME_EXTRAM512KB)  &&
             strcmp(properties->cartridge.slotA, CARTNAME_EXTRAM1MB)    &&
             strcmp(properties->cartridge.slotA, CARTNAME_EXTRAM2MB)    &&
@@ -323,6 +325,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             strcmp(properties->cartridge.slotA, CARTNAME_MEGARAM2M)    &&
             properties->cartridge.slotAType != ROM_FMPAC               &&
             properties->cartridge.slotAType != ROM_PAC                 &&
+            properties->cartridge.slotAType != ROM_GAMEREADER          &&
             properties->cartridge.slotAType != ROM_MSXAUDIO            &&
             properties->cartridge.slotAType != ROM_MOONSOUND           &&
             properties->cartridge.slotAType != ROM_SNATCHER            &&
@@ -355,6 +358,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             strcmp(properties->cartridge.slotB, CARTNAME_SCCPLUS)      &&
             strcmp(properties->cartridge.slotB, CARTNAME_FMPAC)        &&
             strcmp(properties->cartridge.slotB, CARTNAME_PAC)          &&
+            strcmp(properties->cartridge.slotB, CARTNAME_GAMEREADER)   &&
             strcmp(properties->cartridge.slotB, CARTNAME_SONYHBI55)    &&
             strcmp(properties->cartridge.slotB, CARTNAME_EXTRAM512KB)  &&
             strcmp(properties->cartridge.slotB, CARTNAME_EXTRAM1MB)    &&
@@ -367,6 +371,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
             strcmp(properties->cartridge.slotB, CARTNAME_MEGARAM2M)    &&
             properties->cartridge.slotBType != ROM_FMPAC               &&
             properties->cartridge.slotBType != ROM_PAC                 &&
+            properties->cartridge.slotBType != ROM_GAMEREADER          &&
             properties->cartridge.slotBType != ROM_MSXAUDIO            &&
             properties->cartridge.slotBType != ROM_MOONSOUND           &&
             properties->cartridge.slotBType != ROM_SNATCHER            &&

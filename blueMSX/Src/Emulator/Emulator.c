@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-17 06:18:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -87,6 +87,72 @@ static UInt32 emuUsageCurrent   = 0;
 static UInt32 emuCpuSpeed       = 0;
 static UInt32 emuCpuUsage       = 0;
 static int    enableSynchronousUpdate = 1;
+
+#if 0
+
+#define LOG_SIZE (10 * 1000000)
+UInt32 logentry[LOG_SIZE];
+
+int logindex;
+int logwrapped;
+
+void dolog(int slot, int sslot, int wr, UInt16 addr, UInt8 val)
+{
+    logentry[logindex++] = (slot << 26) | (sslot << 24) | ((UInt32)val << 16) | addr | (wr ? (1 << 31) : 0);
+    if (logindex == LOG_SIZE) {
+        logindex = 0;
+        logwrapped++;
+    }
+}
+
+void clearlog()
+{
+    logwrapped = 0;
+    logindex = 0;
+}
+
+void savelog()
+{
+    int totalSize = LOG_SIZE;
+    int lastPct = -1;
+    int cnt = 0;
+    FILE * f = fopen("c:\\bluemsxlog.txt", "w+");
+    int i = 0;
+    if (logwrapped == 0 && logindex == 0) {
+        return;
+    }
+
+    if (logwrapped) {
+        i = logindex;
+    }
+    else {
+        totalSize = logindex;
+    }
+
+    printf("Saving log for slot 1\n");
+
+    do {
+        UInt32 v = logentry[i];
+        int newPct = ++cnt * 100 / totalSize;
+        char rw = (v >> 31) ? 'W' : 'R';
+
+        if (newPct != lastPct) {
+            printf("\r%d%%",newPct);
+            lastPct = newPct;
+        }
+        fprintf(f, "%c(%d:%d) %.4x: %.2x\n", rw, (v>>26)&3, (v>>24)&3,v & 0xffff, (v >> 16) & 0xff);
+        
+        if (++i == LOG_SIZE) {
+            i = 0;
+        }
+    } while (i != logindex);
+    printf("\n");
+    fclose(f);
+}
+#else 
+#define clearlog()
+#define savelog()
+#endif
 
 static void emuCalcCpuUsage() {
     static UInt32 oldSysTime = 0;
@@ -392,6 +458,8 @@ void emulatorStart(const char* stateName) {
     emulationStartFailure = 0;
     strcpy(emuStateName, stateName ? stateName : "");
 
+    clearlog();
+
     emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
     
     archEventWait(emuStartEvent, 3000);
@@ -451,7 +519,7 @@ void emulatorStop() {
     
     dbgDisable();
     dbgPrint();
-
+    savelog();
 }
 
 

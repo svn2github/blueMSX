@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-17 06:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -690,18 +690,18 @@ char* themeTriggerScreenModeShort() {
 
 char* themeTriggerMemoryRam() {
     static char buffer[16];
-    if (boardGetRamSize() >= 1024) {
-        sprintf(buffer, "%dMB", boardGetRamSize() / 1024);
+    if (boardGetRamSize() >= 1024 * 1024) {
+        sprintf(buffer, "%dMB", boardGetRamSize() / 1024 * 1024);
     }
     else {
-        sprintf(buffer, "%dkB", boardGetRamSize());
+        sprintf(buffer, "%dkB", boardGetRamSize() / 1024);
     }
     return buffer;
 }
 
 char* themeTriggerMemoryVram() {
     static char buffer[16];
-    sprintf(buffer, "%dkB", boardGetVramSize());
+    sprintf(buffer, "%dkB", boardGetVramSize() / 1024);
     return buffer;
 }
 

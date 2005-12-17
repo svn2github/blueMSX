@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-11-11 20:45:29 $
+** $Date: 2005-12-17 06:19:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+//#define ENABLE_VRAM_DECAY
 // Global configuration (not device specific)
 
 static int spritesEnable = 1;
@@ -469,6 +469,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     vdp->sprTabBase = (((int)vdp->vdpRegs[11] << 15) | ((int)vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & vdp->vramMask;
     vdp->sprGenBase = (((int)vdp->vdpRegs[6] << 11) | ~(-1 << 11)) & vdp->vramMask;
 
+#ifdef ENABLE_VRAM_DECAY
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
         if ((vdp->screenOn ^ vdp->vdpRegs[1]) & 0x40) {
             if ((~vdp->vdpRegs[1] & 0x80) && !vdp->screenOn) {
@@ -477,7 +478,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
             vdp->screenOffTime = boardSystemTime();
         }
     }
-
+#endif
     vdp->screenOn = vdp->vdpRegs[1] & 0x40;
     
     vdpSetScreenMode(vdp->cmdEngine, vdp->screenMode, vdp->vdpRegs[25] & 0x40);
@@ -1322,6 +1323,7 @@ static void reset(VDP* vdp)
     vdp->lineOffset      = 256;
     vdp->firstLine       = 1;
     vdp->lastLine        = -1;
+    vdp->screenOffTime = boardSystemTime();
 
     memset(vdp->palette, 0, sizeof(vdp->palette));
     memset(vdp->vdpStatus, 0, sizeof(vdp->vdpStatus));
