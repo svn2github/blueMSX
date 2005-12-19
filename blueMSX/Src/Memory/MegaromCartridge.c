@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-12-19 07:11:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,6 +77,7 @@
 #include "romMapperSonyHBI55.h"
 #include "romMapperMoonsound.h"
 #include "romMapperGameReader.h"
+#include "romMapperSunriseIDE.h"
 #include "romMapperSg1000Castle.h"
 
 #include <stdlib.h>
@@ -436,6 +437,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             
         case ROM_FMPAC:
             romMapperFMPACCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_SUNRISEIDE:
+            romMapperSunriseIdeCreate(romName, buf, size, slot, sslot, 2);
             break;
         }
 

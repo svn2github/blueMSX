@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-12-19 07:11:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,7 +104,7 @@
 #include "romMapperSvi328Rs232.h"
 #include "romMapperSvi328Fdc.h"
 #include "ram1kBMirrored.h"
-
+#include "romMapperSunriseIDE.h"
 
 int toint(char* buffer) 
 {
@@ -1143,6 +1143,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_BUNSETU:
             success &= romMapperBunsetuCreate(romName, buf, size, slot, subslot, startPage, jisyoRom, jisyoRomSize);
+            break;
+
+        case ROM_SUNRISEIDE:
+            success &= romMapperSunriseIdeCreate(romName, buf, size, slot, subslot, startPage);
             break;
         }
         free(buf);
