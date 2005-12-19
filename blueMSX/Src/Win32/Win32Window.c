@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-12-19 07:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,11 @@
 #include "Win32Common.h"
 #include "Win32Keyboard.h"
 #include "Win32File.h"
+#include "Win32Menu.h"
 #include "Theme.h"
 #include "Machine.h"
 #include "ArchNotifications.h"
+#include "ArchMenu.h"
 #include "Language.h"
 #include "Resource.h"
 #include "InputEvent.h"
@@ -531,7 +533,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
     case WM_COMMAND:
         if (menuCommand(propGetGlobalProperties(), LOWORD(wParam))) {
-            updateMenu(0);
+            archUpdateMenu(0);
             InvalidateRect(hwnd, NULL, TRUE);
         }
         break;

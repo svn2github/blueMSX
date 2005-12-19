@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-12-19 07:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -291,23 +291,10 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
 static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcuts) {
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
+    HMENU hMenuExtRam = CreatePopupMenu();
+    HMENU hMenuMegaRam = CreatePopupMenu();
 
     setMenuColor(hMenu);
-
-#if 0
-    _stprintf(langBuffer, "%s", langMenuCartSnatcher());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SNATCHER, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSdSnatcher());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SDSNATCHER, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCMirrored());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCCMIRRORED, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCExpanded());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCCEXPANDED, langBuffer);
-#endif
-    
 
     _stprintf(langBuffer, "%s", langMenuCartGameReader());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
@@ -335,34 +322,24 @@ static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcut
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "512 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM512KB, langBuffer);
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM512KB, "512 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM1MB, "1 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM2MB, "2 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM4MB, "4 MB");
 
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "1 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM1MB, langBuffer);
-
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "2 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM2MB, langBuffer);
-
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "4 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_EXTRAM4MB, langBuffer);
+    _stprintf(langBuffer, "%s", langMenuCartExternalRam());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s", "MegaRAM 128 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_MEGARAM128, langBuffer);
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM128, "128 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM256, "256 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM512, "512 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM768, "768 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM2M, "2 MB");
 
-    _stprintf(langBuffer, "%s", "MegaRAM 256 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_MEGARAM256, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 512 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_MEGARAM512, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 768 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_MEGARAM768, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 2 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_MEGARAM2M, langBuffer);
+    _stprintf(langBuffer, "%s", langMenuCartMegaRam());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langBuffer);
 
     return hMenu;
 }
@@ -376,6 +353,16 @@ static HMENU menuCreateCartA(Properties* pProperties, Shortcuts* shortcuts, int 
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert1));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEA, langBuffer);
+
+    _stprintf(langBuffer, "%s", langMenuCartInsertSpecial());
+    if (enableSpecial) {
+        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateCartSpecialA(pProperties, shortcuts), langBuffer);
+    }
+    else {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    }
+
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     verifyFileHistory(*pProperties->filehistory.cartridgeA,
                       pProperties->filehistory.cartridgeTypeA);
@@ -400,38 +387,16 @@ static HMENU menuCreateCartA(Properties* pProperties, Shortcuts* shortcuts, int 
         AppendMenu(hMenu, MF_STRING, ID_CARTRIDGEA_HISTORY + i, langBuffer);
     }
 
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartSpecial());
-    if (enableSpecial) {
-        AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCartSpecialA(pProperties, shortcuts), langBuffer);
-    }
-    else {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
-    }
-
     return hMenu;
 }
 
 static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcuts) {
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
+    HMENU hMenuExtRam = CreatePopupMenu();
+    HMENU hMenuMegaRam = CreatePopupMenu();
 
     setMenuColor(hMenu);
-
-#if 0
-    _stprintf(langBuffer, "%s", langMenuCartSnatcher());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SNATCHER, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSdSnatcher());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SDSNATCHER, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCMirrored());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCCMIRRORED, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCExpanded());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCCEXPANDED, langBuffer);
-#endif
 
     _stprintf(langBuffer, "%s", langMenuCartGameReader());
     AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
@@ -459,34 +424,24 @@ static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcut
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "512 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM512KB, langBuffer);
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM512KB, "512 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM1MB, "1 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM2MB, "2 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM4MB, "4 MB");
 
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "1 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM1MB, langBuffer);
-
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "2 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM2MB, langBuffer);
-
-    _stprintf(langBuffer, "%s %s", langMenuCartExternalRam(), "4 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_EXTRAM4MB, langBuffer);
+    _stprintf(langBuffer, "%s", langMenuCartExternalRam());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s", "MegaRAM 128 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_MEGARAM128, langBuffer);
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM128, "128 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM256, "256 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM512, "512 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM768, "768 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM2M, "2 MB");
 
-    _stprintf(langBuffer, "%s", "MegaRAM 256 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_MEGARAM256, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 512 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_MEGARAM512, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 768 kB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_MEGARAM768, langBuffer);
-
-    _stprintf(langBuffer, "%s", "MegaRAM 2 MB");
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_MEGARAM2M, langBuffer);
+    _stprintf(langBuffer, "%s", langMenuCartMegaRam());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langBuffer);
 
     return hMenu;
 }
@@ -500,6 +455,16 @@ static HMENU menuCreateCartB(Properties* pProperties, Shortcuts* shortcuts, int 
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert2));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEB, langBuffer);
+
+    _stprintf(langBuffer, "%s", langMenuCartInsertSpecial());
+    if (enableSpecial) {
+        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateCartSpecialB(pProperties, shortcuts), langBuffer);
+    }
+    else {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    }
+
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     verifyFileHistory(*pProperties->filehistory.cartridgeB,
                       pProperties->filehistory.cartridgeTypeB);
@@ -525,16 +490,6 @@ static HMENU menuCreateCartB(Properties* pProperties, Shortcuts* shortcuts, int 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridgeB[i]; i++) {
         _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cartridgeB[i]));
         AppendMenu(hMenu, MF_STRING, ID_CARTRIDGEB_HISTORY + i, langBuffer);
-    }
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartSpecial());
-    if (enableSpecial) {
-        AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCartSpecialB(pProperties, shortcuts), langBuffer);
-    }
-    else {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
     }
 
     return hMenu;

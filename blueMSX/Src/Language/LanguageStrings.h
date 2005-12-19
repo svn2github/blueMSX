@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-12-19 07:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,7 +60,9 @@ typedef struct {
     _TCHAR* menuCartPac;
     _TCHAR* menuCartHBI55;
     _TCHAR* menuCartSpecial;
+    _TCHAR* menuCartInsertSpecial;
     _TCHAR* menuCartExternalRam;
+    _TCHAR* menuCartMegaRam;
     
     _TCHAR* menuDiskInsert;
     _TCHAR* menuDiskDirInsert;

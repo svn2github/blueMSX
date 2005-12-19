@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-19 07:44:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 
 typedef struct HarddiskIde HarddiskIde;
 
-HarddiskIde* harddiskIdeCreate();
+HarddiskIde* harddiskIdeCreate(const char* fileName);
 void harddiskIdeDestroy(HarddiskIde* hd);
 
 void harddiskIdeReset(HarddiskIde* hd);
