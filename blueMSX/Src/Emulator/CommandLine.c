@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-12-17 06:18:15 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -314,22 +314,22 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
 
             if (*argument) {
                 // Clear cartridge info
-                properties->cartridge.slotA[0] = 0;
-                properties->cartridge.slotAZip[0] = 0;
-                properties->cartridge.slotB[0] = 0;
-                properties->cartridge.slotBZip[0] = 0;
-                properties->cartridge.slotAType = ROM_UNKNOWN;
-                properties->cartridge.slotBType = ROM_UNKNOWN;
-                updateExtendedRomName(0, properties->cartridge.slotA, properties->cartridge.slotAZip);
-                updateExtendedRomName(1, properties->cartridge.slotB, properties->cartridge.slotBZip);
+                properties->media.carts[0].fileName[0] = 0;
+                properties->media.carts[0].fileNameInZip[0] = 0;
+                properties->media.carts[1].fileName[0] = 0;
+                properties->media.carts[1].fileNameInZip[0] = 0;
+                properties->media.carts[0].type = ROM_UNKNOWN;
+                properties->media.carts[1].type = ROM_UNKNOWN;
+                updateExtendedRomName(0, properties->media.carts[0].fileName, properties->media.carts[0].fileNameInZip);
+                updateExtendedRomName(1, properties->media.carts[1].fileName, properties->media.carts[1].fileNameInZip);
 
-                properties->diskdrive.slotA[0] = 0;
-                properties->diskdrive.slotAZip[0] = 0;
-                properties->diskdrive.slotB[0] = 0;
-                properties->diskdrive.slotBZip[0] = 0;
-                updateExtendedDiskName(0, properties->diskdrive.slotA, properties->diskdrive.slotAZip);
-                updateExtendedDiskName(1, properties->diskdrive.slotB, properties->diskdrive.slotBZip);
-                updateExtendedCasName(properties->cassette.tape, properties->cassette.tapeZip);
+                properties->media.disks[0].fileName[0] = 0;
+                properties->media.disks[0].fileNameInZip[0] = 0;
+                properties->media.disks[1].fileName[0] = 0;
+                properties->media.disks[1].fileNameInZip[0] = 0;
+                updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
+                updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
+                updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
 
                 return tryLaunchUnknownFile(properties, argument, 1);
             }
@@ -424,22 +424,22 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         return 1;
     }
 
-    properties->cartridge.slotA[0] = 0;
-    properties->cartridge.slotAZip[0] = 0;
-    properties->cartridge.slotB[0] = 0;
-    properties->cartridge.slotBZip[0] = 0;
-    properties->cartridge.slotAType = ROM_UNKNOWN;
-    properties->cartridge.slotBType = ROM_UNKNOWN;
-    updateExtendedRomName(0, properties->cartridge.slotA, properties->cartridge.slotAZip);
-    updateExtendedRomName(1, properties->cartridge.slotB, properties->cartridge.slotBZip);
+    properties->media.carts[0].fileName[0] = 0;
+    properties->media.carts[0].fileNameInZip[0] = 0;
+    properties->media.carts[1].fileName[0] = 0;
+    properties->media.carts[1].fileNameInZip[0] = 0;
+    properties->media.carts[0].type = ROM_UNKNOWN;
+    properties->media.carts[1].type = ROM_UNKNOWN;
+    updateExtendedRomName(0, properties->media.carts[0].fileName, properties->media.carts[0].fileNameInZip);
+    updateExtendedRomName(1, properties->media.carts[1].fileName, properties->media.carts[1].fileNameInZip);
 
-    properties->diskdrive.slotA[0] = 0;
-    properties->diskdrive.slotAZip[0] = 0;
-    properties->diskdrive.slotB[0] = 0;
-    properties->diskdrive.slotBZip[0] = 0;
-    updateExtendedDiskName(0, properties->diskdrive.slotA, properties->diskdrive.slotAZip);
-    updateExtendedDiskName(1, properties->diskdrive.slotB, properties->diskdrive.slotBZip);
-    updateExtendedCasName(properties->cassette.tape, properties->cassette.tapeZip);
+    properties->media.disks[0].fileName[0] = 0;
+    properties->media.disks[0].fileNameInZip[0] = 0;
+    properties->media.disks[1].fileName[0] = 0;
+    properties->media.disks[1].fileNameInZip[0] = 0;
+    updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
+    updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
+    updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
     
     if (!strlen(rom1)) {
         switch (romType1) {

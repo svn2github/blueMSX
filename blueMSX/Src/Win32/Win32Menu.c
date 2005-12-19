@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2005-12-19 07:44:25 $
+** $Date: 2005-12-19 21:50:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -367,8 +367,8 @@ static HMENU menuCreateCartA(Properties* pProperties, Shortcuts* shortcuts, int 
     verifyFileHistory(*pProperties->filehistory.cartridgeA,
                       pProperties->filehistory.cartridgeTypeA);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->cartridge.slotA ? ": " : ""), stripPath(pProperties->cartridge.slotA));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cartridge.slotA ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEA, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->media.carts[0].fileName ? ": " : ""), stripPath(pProperties->media.carts[0].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEA, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -469,8 +469,8 @@ static HMENU menuCreateCartB(Properties* pProperties, Shortcuts* shortcuts, int 
     verifyFileHistory(*pProperties->filehistory.cartridgeB,
                       pProperties->filehistory.cartridgeTypeB);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->cartridge.slotB ? ": " : ""), stripPath(pProperties->cartridge.slotB));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cartridge.slotB ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEB, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->media.carts[1].fileName ? ": " : ""), stripPath(pProperties->media.carts[1].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[1].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEB, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -508,8 +508,8 @@ static HMENU menuCreateDiskA(Properties* pProperties, Shortcuts* shortcuts) {
     _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsertA));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEDIRA, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->diskdrive.slotA ? ": " : ""), stripPath(pProperties->diskdrive.slotA));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->diskdrive.slotA ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEA, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[0].fileName ? ": " : ""), stripPath(pProperties->media.disks[0].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEA, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -546,8 +546,8 @@ static HMENU menuCreateDiskB(Properties* pProperties, Shortcuts* shortcuts) {
     _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsertB));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEDIRB, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->diskdrive.slotB ? ": " : ""), stripPath(pProperties->diskdrive.slotB));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->diskdrive.slotB ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEB, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[1].fileName ? ": " : ""), stripPath(pProperties->media.disks[1].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[1].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEB, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -588,8 +588,8 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasInsert(), shortcutsToString(shortcuts->casInsert));
     AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CASSETTE, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuCasEject(), (*pProperties->cassette.tape ? ": " : ""), stripPath(pProperties->cassette.tape));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cassette.tape ? 0 : MF_GRAYED), ID_FILE_REMOVE_CASSETTE, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuCasEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), stripPath(pProperties->media.tapes[0].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CASSETTE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -602,15 +602,15 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
     AppendMenu(hMenu, MF_STRING | (pProperties->cassette.readOnly ? MFS_CHECKED : 0), ID_FILE_READONLY_CASSETTE, langBuffer);
 
     _stprintf(langBuffer, "%s", langMenuCasSaveAs());
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cassette.tape ? 0 : MF_GRAYED), ID_FILE_SAVE_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_SAVE_CASSETTE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasSetPosition(), shortcutsToString(shortcuts->casSetPos));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cassette.tape ? 0 : MF_GRAYED), ID_FILE_POSITION_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_POSITION_CASSETTE, langBuffer);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasRewind(), shortcutsToString(shortcuts->casRewind));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->cassette.tape ? 0 : MF_GRAYED), ID_FILE_REWIND_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_REWIND_CASSETTE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 

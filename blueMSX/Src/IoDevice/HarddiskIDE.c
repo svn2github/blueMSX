@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -393,4 +393,3 @@ void harddiskIdeDestroy(HarddiskIde* hd)
     fclose(hd->file);
     free(hd);
 }
-

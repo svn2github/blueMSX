@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,7 @@ static int   sides[2];
 static int   tracks[2];
 static int   changed[2];
 static int   diskType[2];
-enum { MSX_DISK, SVI328_DISK } diskTypes;
+enum { MSX_DISK, SVI328_DISK, IDEHD_DISK } diskTypes;
 
 UInt8 diskEnabled(int driveId)
 {
@@ -139,7 +139,7 @@ int diskChanged(int driveId)
 
 UInt8 diskRead(int driveId, UInt8* buffer, int sector)
 {
-    if (driveId >= MAXDRIVES)
+    if (!diskPresent(driveId))
         return 0;
 
     if (ramImageBuffer[driveId] != NULL) {
@@ -168,7 +168,7 @@ UInt8 diskReadSector(int driveId, UInt8* buffer, int sector, int side, int track
     int secSize;
     int offset;
 
-    if (driveId >= MAXDRIVES)
+    if (!diskPresent(driveId))
         return 0;
 
     offset = diskGetSectorOffset(driveId, sector, side, track, density);
@@ -207,6 +207,16 @@ static void diskUpdateInfo(int driveId)
     tracks[driveId]          = 80;
     changed[driveId]         = 1;
     diskType[driveId]        = MSX_DISK;
+
+    if (fileSize[driveId] > 2 * 1024 * 1024) {
+        // HD image
+        sectorsPerTrack[driveId] = fileSize[driveId] / 512;
+        tracks[driveId]          = 1;
+        changed[driveId]         = 1;
+        sides[driveId]           = 1;
+        diskType[driveId]        = IDEHD_DISK;
+        return;
+    }
 
     if (fileSize[driveId] / 512 == 1440) {
         return;
@@ -323,7 +333,7 @@ static void diskUpdateInfo(int driveId)
 
 UInt8 diskWrite(int driveId, UInt8 *buffer, int sector)
 {
-    if (driveId >= MAXDRIVES) {
+    if (!diskPresent(driveId)) {
         return 0;
     }
 
@@ -360,7 +370,7 @@ UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int trac
     int secSize;
     int offset;
 
-    if (driveId >= MAXDRIVES)
+    if (!diskPresent(driveId))
         return 0;
 
     if (sector >= MAXSECTOR)

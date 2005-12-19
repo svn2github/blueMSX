@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -168,32 +168,39 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
         strcpy(properties->keyboard.configFile, "blueMSX Japanese Default");
     }
 
+
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        properties->media.carts[i].fileName[0] = 0;
+        properties->media.carts[i].fileNameInZip[0] = 0;
+        properties->media.carts[i].directory[0] = 0;
+        properties->media.carts[i].extensionFilter = 0;
+        properties->media.carts[i].type = 0;
+    }
+
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        properties->media.disks[i].fileName[0] = 0;
+        properties->media.disks[i].fileNameInZip[0] = 0;
+        properties->media.disks[i].directory[0] = 0;
+        properties->media.disks[i].extensionFilter = 0;
+        properties->media.disks[i].type = 0;
+    }
+
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        properties->media.tapes[i].fileName[0] = 0;
+        properties->media.tapes[i].fileNameInZip[0] = 0;
+        properties->media.tapes[i].directory[0] = 0;
+        properties->media.tapes[i].extensionFilter = 0;
+        properties->media.tapes[i].type = 0;
+    }
+    
     properties->cartridge.defaultType  = ROM_UNKNOWN;
-    properties->cartridge.defDir[0]    = 0;
-    properties->cartridge.slotA[0]     = 0;
-    properties->cartridge.slotAType    = ROM_UNKNOWN;
-    properties->cartridge.slotB[0]     = 0;
-    properties->cartridge.slotBType    = ROM_UNKNOWN;
-    properties->cartridge.slotAZip[0]  = 0;
-    properties->cartridge.slotBZip[0]  = 0;
     properties->cartridge.autoReset    = 1;
     properties->cartridge.quickStartDrive = 0;
 
-    
     properties->diskdrive.defDir[0]    = 0;
-    properties->diskdrive.slotA[0]     = 0;
-    properties->diskdrive.slotB[0]     = 0;
-    properties->diskdrive.slotAZip[0]  = 0;
-    properties->diskdrive.slotBZip[0]  = 0;
-    properties->diskdrive.slotADir[0]  = 0;
-    properties->diskdrive.slotBDir[0]  = 0;
     properties->diskdrive.autostartA   = 0;
     properties->diskdrive.quickStartDrive = 0;
 
-
-    properties->cassette.defDir[0]       = 0;
-    properties->cassette.tape[0]         = 0;
-    properties->cassette.tapeZip[0]      = 0;
     properties->cassette.showCustomFiles = 1;
     properties->cassette.readOnly        = 1;
     properties->cassette.autoRewind      = 0;
@@ -523,34 +530,39 @@ static void propLoad(Properties* properties)
     
     GET_STR_VALUE_2(keyboard, configFile);
     
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        GET_STR_VALUE_2i1(media, carts, i, fileName);
+        GET_STR_VALUE_2i1(media, carts, i, fileNameInZip);
+        GET_STR_VALUE_2i1(media, carts, i, directory);
+        GET_INT_VALUE_2i1(media, carts, i, extensionFilter);
+        GET_INT_VALUE_2i1(media, carts, i, type);
+    }
+    
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        GET_STR_VALUE_2i1(media, disks, i, fileName);
+        GET_STR_VALUE_2i1(media, disks, i, fileNameInZip);
+        GET_STR_VALUE_2i1(media, disks, i, directory);
+        GET_INT_VALUE_2i1(media, disks, i, extensionFilter);
+        GET_INT_VALUE_2i1(media, disks, i, type);
+    }
+    
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        GET_STR_VALUE_2i1(media, tapes, i, fileName);
+        GET_STR_VALUE_2i1(media, tapes, i, fileNameInZip);
+        GET_STR_VALUE_2i1(media, tapes, i, directory);
+        GET_INT_VALUE_2i1(media, tapes, i, extensionFilter);
+        GET_INT_VALUE_2i1(media, tapes, i, type);
+    }
+
     GET_STR_VALUE_2(cartridge, defDir);
     GET_INT_VALUE_2(cartridge, autoReset);
     GET_INT_VALUE_2(cartridge, quickStartDrive);
-    GET_STR_VALUE_2(cartridge, slotA);
-    GET_INT_VALUE_2(cartridge, slotAType);
-    GET_STR_VALUE_2(cartridge, slotAZip);
-    GET_INT_VALUE_2(cartridge, slotAFilter);
-    GET_STR_VALUE_2(cartridge, slotB);
-    GET_INT_VALUE_2(cartridge, slotBType);
-    GET_STR_VALUE_2(cartridge, slotBZip);
-    GET_INT_VALUE_2(cartridge, slotBFilter);
 
     GET_STR_VALUE_2(diskdrive, defDir);
     GET_INT_VALUE_2(diskdrive, autostartA);
     GET_INT_VALUE_2(diskdrive, quickStartDrive);
-    GET_STR_VALUE_2(diskdrive, slotA);
-    GET_STR_VALUE_2(diskdrive, slotAZip);
-    GET_STR_VALUE_2(diskdrive, slotADir);
-    GET_INT_VALUE_2(diskdrive, slotAFilter);
-    GET_STR_VALUE_2(diskdrive, slotB);
-    GET_STR_VALUE_2(diskdrive, slotBZip);
-    GET_STR_VALUE_2(diskdrive, slotBDir);
-    GET_INT_VALUE_2(diskdrive, slotBFilter);
     
     GET_STR_VALUE_2(cassette, defDir);
-    GET_STR_VALUE_2(cassette, tape);
-    GET_STR_VALUE_2(cassette, tapeZip);
-    GET_INT_VALUE_2(cassette, filter);
     GET_INT_VALUE_2(cassette, showCustomFiles);
     GET_INT_VALUE_2(cassette, readOnly);
     GET_INT_VALUE_2(cassette, autoRewind);
@@ -708,34 +720,39 @@ void propSave(Properties* properties)
     
     SET_STR_VALUE_2(keyboard, configFile);
     
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        SET_STR_VALUE_2i1(media, carts, i, fileName);
+        SET_STR_VALUE_2i1(media, carts, i, fileNameInZip);
+        SET_STR_VALUE_2i1(media, carts, i, directory);
+        SET_INT_VALUE_2i1(media, carts, i, extensionFilter);
+        SET_INT_VALUE_2i1(media, carts, i, type);
+    }
+    
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        SET_STR_VALUE_2i1(media, disks, i, fileName);
+        SET_STR_VALUE_2i1(media, disks, i, fileNameInZip);
+        SET_STR_VALUE_2i1(media, disks, i, directory);
+        SET_INT_VALUE_2i1(media, disks, i, extensionFilter);
+        SET_INT_VALUE_2i1(media, disks, i, type);
+    }
+    
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        SET_STR_VALUE_2i1(media, tapes, i, fileName);
+        SET_STR_VALUE_2i1(media, tapes, i, fileNameInZip);
+        SET_STR_VALUE_2i1(media, tapes, i, directory);
+        SET_INT_VALUE_2i1(media, tapes, i, extensionFilter);
+        SET_INT_VALUE_2i1(media, tapes, i, type);
+    }
+    
     SET_STR_VALUE_2(cartridge, defDir);
     SET_INT_VALUE_2(cartridge, autoReset);
     SET_INT_VALUE_2(cartridge, quickStartDrive);
-    SET_STR_VALUE_2(cartridge, slotA);
-    SET_INT_VALUE_2(cartridge, slotAType);
-    SET_STR_VALUE_2(cartridge, slotAZip);
-    SET_INT_VALUE_2(cartridge, slotAFilter);
-    SET_STR_VALUE_2(cartridge, slotB);
-    SET_INT_VALUE_2(cartridge, slotBType);
-    SET_STR_VALUE_2(cartridge, slotBZip);
-    SET_INT_VALUE_2(cartridge, slotBFilter);
 
     SET_STR_VALUE_2(diskdrive, defDir);
     SET_INT_VALUE_2(diskdrive, autostartA);
     SET_INT_VALUE_2(diskdrive, quickStartDrive);
-    SET_STR_VALUE_2(diskdrive, slotA);
-    SET_STR_VALUE_2(diskdrive, slotAZip);
-    SET_STR_VALUE_2(diskdrive, slotADir);
-    SET_INT_VALUE_2(diskdrive, slotAFilter);
-    SET_STR_VALUE_2(diskdrive, slotB);
-    SET_STR_VALUE_2(diskdrive, slotBZip);
-    SET_STR_VALUE_2(diskdrive, slotBDir);
-    SET_INT_VALUE_2(diskdrive, slotBFilter);
     
     SET_STR_VALUE_2(cassette, defDir);
-    SET_STR_VALUE_2(cassette, tape);
-    SET_STR_VALUE_2(cassette, tapeZip);
-    SET_INT_VALUE_2(cassette, filter);
     SET_INT_VALUE_2(cassette, showCustomFiles);
     SET_INT_VALUE_2(cassette, readOnly);
     SET_INT_VALUE_2(cassette, autoRewind);

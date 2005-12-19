@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -275,7 +275,7 @@ void actionDiskDirInsertA() {
     emulatorSuspend();
     filename = archDirnameGetOpenDisk(state.properties, 1);
     if (filename != NULL) {        
-        strcpy(state.properties->diskdrive.slotADir, filename);
+        strcpy(state.properties->media.disks[0].directory, filename);
         insertDiskette(state.properties, 0, filename, NULL, 0);
     }
     emulatorResume();
@@ -288,7 +288,7 @@ void actionDiskDirInsertB() {
     emulatorSuspend();
     filename = archDirnameGetOpenDisk(state.properties, 1);
     if (filename != NULL) {        
-        strcpy(state.properties->diskdrive.slotBDir, filename);
+        strcpy(state.properties->media.disks[1].directory, filename);
         insertDiskette(state.properties, 1, filename, NULL, 0);
     }
     emulatorResume();
@@ -328,16 +328,16 @@ void actionMaxSpeedRelease() {
 }
 
 void actionDiskQuickChange() {
-    if (*state.properties->diskdrive.slotA) {
-        if (*state.properties->diskdrive.slotAZip) {
-            strcpy(state.properties->diskdrive.slotAZip, fileGetNext(state.properties->diskdrive.slotAZip, state.properties->diskdrive.slotA));
-            boardChangeDiskette(0, state.properties->diskdrive.slotA, state.properties->diskdrive.slotAZip);
-            updateExtendedDiskName(0, state.properties->diskdrive.slotA, state.properties->diskdrive.slotAZip);
+    if (*state.properties->media.disks[0].fileName) {
+        if (*state.properties->media.disks[0].fileNameInZip) {
+            strcpy(state.properties->media.disks[0].fileNameInZip, fileGetNext(state.properties->media.disks[0].fileNameInZip, state.properties->media.disks[0].fileName));
+            boardChangeDiskette(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
+            updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
         }
         else {
-            strcpy(state.properties->diskdrive.slotA, fileGetNext(state.properties->diskdrive.slotA, NULL));
-            boardChangeDiskette(0, state.properties->diskdrive.slotA, NULL);
-            updateExtendedDiskName(0, state.properties->diskdrive.slotA, state.properties->diskdrive.slotAZip);
+            strcpy(state.properties->media.disks[0].fileName, fileGetNext(state.properties->media.disks[0].fileName, NULL));
+            boardChangeDiskette(0, state.properties->media.disks[0].fileName, NULL);
+            updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
         }
         archDiskQuickChangeNotify();
     }
@@ -428,8 +428,8 @@ void actionCasRewind() {
         }
         else {
             tapeSetReadOnly(1);
-            boardChangeCassette(strlen(state.properties->cassette.tape) ? state.properties->cassette.tape : NULL, 
-                                strlen(state.properties->cassette.tapeZip) ? state.properties->cassette.tapeZip : NULL);
+            boardChangeCassette(strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
+                                strlen(state.properties->media.tapes[0].fileNameInZip) ? state.properties->media.tapes[0].fileNameInZip : NULL);
         }
         tapeSetCurrentPos(0);
     if (emulatorGetState() != EMU_STOPPED) {
@@ -469,24 +469,24 @@ void actionEmuResetHard() {
 
 void actionEmuResetClean() {
     emulatorStop();
-    state.properties->diskdrive.slotA[0] = 0;
-    state.properties->diskdrive.slotAZip[0] = 0;
-    state.properties->diskdrive.slotB[0] = 0;
-    state.properties->diskdrive.slotBZip[0] = 0;
-    updateExtendedDiskName(0, state.properties->diskdrive.slotA, state.properties->diskdrive.slotAZip);
-    updateExtendedDiskName(1, state.properties->diskdrive.slotB, state.properties->diskdrive.slotBZip);
+    state.properties->media.disks[0].fileName[0] = 0;
+    state.properties->media.disks[0].fileNameInZip[0] = 0;
+    state.properties->media.disks[1].fileName[0] = 0;
+    state.properties->media.disks[1].fileNameInZip[0] = 0;
+    updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
+    updateExtendedDiskName(1, state.properties->media.disks[1].fileName, state.properties->media.disks[1].fileNameInZip);
 
-    state.properties->cartridge.slotA[0] = 0;
-    state.properties->cartridge.slotAZip[0] = 0;
-    state.properties->cartridge.slotB[0] = 0;
-    state.properties->cartridge.slotBZip[0] = 0;
-    state.properties->cartridge.slotAType = ROM_UNKNOWN;
-    state.properties->cartridge.slotBType = ROM_UNKNOWN;
+    state.properties->media.carts[0].fileName[0] = 0;
+    state.properties->media.carts[0].fileNameInZip[0] = 0;
+    state.properties->media.carts[1].fileName[0] = 0;
+    state.properties->media.carts[1].fileNameInZip[0] = 0;
+    state.properties->media.carts[0].type = ROM_UNKNOWN;
+    state.properties->media.carts[1].type = ROM_UNKNOWN;
 
-    updateExtendedRomName(0, state.properties->cartridge.slotA, state.properties->cartridge.slotAZip);
-    updateExtendedRomName(1, state.properties->cartridge.slotB, state.properties->cartridge.slotBZip);
+    updateExtendedRomName(0, state.properties->media.carts[0].fileName, state.properties->media.carts[0].fileNameInZip);
+    updateExtendedRomName(1, state.properties->media.carts[1].fileName, state.properties->media.carts[1].fileNameInZip);
 
-    updateExtendedCasName(state.properties->cassette.tape, state.properties->cassette.tapeZip);
+    updateExtendedCasName(state.properties->media.tapes[0].fileName, state.properties->media.tapes[0].fileNameInZip);
 
     emulatorStart(NULL);
     archUpdateMenu(0);
@@ -505,21 +505,21 @@ void actionScreenCaptureUnfilteredLarge() {
 }
 
 void actionCasRemove() {
-    state.properties->cassette.tape[0] = 0;
-    state.properties->cassette.tapeZip[0] = 0;
+    state.properties->media.tapes[0].fileName[0] = 0;
+    state.properties->media.tapes[0].fileNameInZip[0] = 0;
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
         boardChangeCassette(NULL, NULL);
         emulatorResume();
     }
-    updateExtendedCasName(state.properties->cassette.tape, state.properties->cassette.tapeZip);
+    updateExtendedCasName(state.properties->media.tapes[0].fileName, state.properties->media.tapes[0].fileNameInZip);
     archUpdateMenu(0);
 }
 
 void actionDiskRemoveA() {
-    state.properties->diskdrive.slotA[0] = 0;
-    state.properties->diskdrive.slotAZip[0] = 0;
-    updateExtendedDiskName(0, state.properties->diskdrive.slotA, state.properties->diskdrive.slotAZip);
+    state.properties->media.disks[0].fileName[0] = 0;
+    state.properties->media.disks[0].fileNameInZip[0] = 0;
+    updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
         boardChangeDiskette(0, NULL, NULL);
@@ -529,9 +529,9 @@ void actionDiskRemoveA() {
 }
 
 void actionDiskRemoveB() {
-    state.properties->diskdrive.slotB[0] = 0;
-    state.properties->diskdrive.slotBZip[0] = 0;
-    updateExtendedDiskName(1, state.properties->diskdrive.slotB, state.properties->diskdrive.slotBZip);
+    state.properties->media.disks[1].fileName[0] = 0;
+    state.properties->media.disks[1].fileNameInZip[0] = 0;
+    updateExtendedDiskName(1, state.properties->media.disks[1].fileName, state.properties->media.disks[1].fileNameInZip);
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
         boardChangeDiskette(1, NULL, NULL);
@@ -541,10 +541,10 @@ void actionDiskRemoveB() {
 }
 
 void actionCartRemove1() {
-    state.properties->cartridge.slotA[0] = 0;
-    state.properties->cartridge.slotAZip[0] = 0;
-    state.properties->cartridge.slotAType = ROM_UNKNOWN;
-    updateExtendedRomName(0, state.properties->cartridge.slotA, state.properties->cartridge.slotAZip);
+    state.properties->media.carts[0].fileName[0] = 0;
+    state.properties->media.carts[0].fileNameInZip[0] = 0;
+    state.properties->media.carts[0].type = ROM_UNKNOWN;
+    updateExtendedRomName(0, state.properties->media.carts[0].fileName, state.properties->media.carts[0].fileNameInZip);
     if (emulatorGetState() != EMU_STOPPED) {
         if (state.properties->cartridge.autoReset) {
             emulatorStop();
@@ -560,9 +560,9 @@ void actionCartRemove1() {
 }
 
 void actionCartRemove2() {
-    state.properties->cartridge.slotB[0] = 0;
-    state.properties->cartridge.slotBZip[0] = 0;
-    updateExtendedRomName(1, state.properties->cartridge.slotB, state.properties->cartridge.slotBZip);
+    state.properties->media.carts[1].fileName[0] = 0;
+    state.properties->media.carts[1].fileNameInZip[0] = 0;
+    updateExtendedRomName(1, state.properties->media.carts[1].fileName, state.properties->media.carts[1].fileNameInZip);
     if (emulatorGetState() != EMU_STOPPED) {
         if (state.properties->cartridge.autoReset) {
             emulatorStop();
@@ -600,13 +600,13 @@ void actionToggleCasAutoRewind() {
 void actionCasSave() {
     char* filename;
 
-    if (*state.properties->cassette.tape) {
+    if (*state.properties->media.tapes[0].fileName) {
         int type;
 
         if (emulatorGetState() == EMU_STOPPED) {
             tapeSetReadOnly(1);
-            boardChangeCassette(strlen(state.properties->cassette.tape) ? state.properties->cassette.tape : NULL, 
-                                strlen(state.properties->cassette.tapeZip) ? state.properties->cassette.tapeZip : NULL);
+            boardChangeCassette(strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
+                                strlen(state.properties->media.tapes[0].fileNameInZip) ? state.properties->media.tapes[0].fileNameInZip : NULL);
         }
         else {
             emulatorSuspend();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.114 $
+** $Revision: 1.115 $
 **
-** $Date: 2005-11-11 06:26:10 $
+** $Date: 2005-12-19 21:50:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -258,8 +258,8 @@ static BOOL CALLBACK dskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
             y = r1.top  + (r1.bottom - r1.top - r2.bottom + r2.top) / 2;
 
             SetWindowText(GetDlgItem(hDlg, IDC_DISKIMAGE), 
-                          stripPath(*pProperties->diskdrive.slotAZip ? 
-                          pProperties->diskdrive.slotAZip : pProperties->diskdrive.slotA));
+                          stripPath(*pProperties->media.disks[0].fileNameInZip ? 
+                          pProperties->media.disks[0].fileNameInZip : pProperties->media.disks[0].fileName));
             if (!show) {
                 enterDialogShow();
                 SetWindowPos(hDlg, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
@@ -716,8 +716,8 @@ void setTapePosition(HWND parent, Properties* pProperties) {
     }
     else {
         tapeSetReadOnly(1);
-        boardChangeCassette(strlen(pProperties->cassette.tape) ? pProperties->cassette.tape : NULL, 
-                            strlen(pProperties->cassette.tapeZip) ? pProperties->cassette.tapeZip : NULL);
+        boardChangeCassette(strlen(pProperties->media.tapes[0].fileName) ? pProperties->media.tapes[0].fileName : NULL, 
+                            strlen(pProperties->media.tapes[0].fileNameInZip) ? pProperties->media.tapes[0].fileNameInZip : NULL);
     }
 
     DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_SETTAPEPOS), parent, tapePosDlg, (LPARAM)&pProperties->cassette.showCustomFiles);
@@ -1740,23 +1740,23 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     if (*argument) {
                         emulatorStop();
                         // Clear cartridge info
-                        pProperties->cartridge.slotA[0] = 0;
-                        pProperties->cartridge.slotAZip[0] = 0;
-                        pProperties->cartridge.slotB[0] = 0;
-                        pProperties->cartridge.slotBZip[0] = 0;
-                        pProperties->cartridge.slotAType = ROM_UNKNOWN;
-                        pProperties->cartridge.slotBType = ROM_UNKNOWN;
-                        updateExtendedRomName(0, pProperties->cartridge.slotA, pProperties->cartridge.slotAZip);
-                        updateExtendedRomName(1, pProperties->cartridge.slotB, pProperties->cartridge.slotBZip);
+                        pProperties->media.carts[0].fileName[0] = 0;
+                        pProperties->media.carts[0].fileNameInZip[0] = 0;
+                        pProperties->media.carts[1].fileName[0] = 0;
+                        pProperties->media.carts[1].fileNameInZip[0] = 0;
+                        pProperties->media.carts[0].type = ROM_UNKNOWN;
+                        pProperties->media.carts[1].type = ROM_UNKNOWN;
+                        updateExtendedRomName(0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip);
+                        updateExtendedRomName(1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip);
 
-                        pProperties->diskdrive.slotA[0] = 0;
-                        pProperties->diskdrive.slotAZip[0] = 0;
-                        pProperties->diskdrive.slotB[0] = 0;
-                        pProperties->diskdrive.slotBZip[0] = 0;
-                        updateExtendedDiskName(0, pProperties->diskdrive.slotA, pProperties->diskdrive.slotAZip);
-                        updateExtendedDiskName(1, pProperties->diskdrive.slotB, pProperties->diskdrive.slotBZip);
+                        pProperties->media.disks[0].fileName[0] = 0;
+                        pProperties->media.disks[0].fileNameInZip[0] = 0;
+                        pProperties->media.disks[1].fileName[0] = 0;
+                        pProperties->media.disks[1].fileNameInZip[0] = 0;
+                        updateExtendedDiskName(0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip);
+                        updateExtendedDiskName(1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip);
                     
-                        updateExtendedCasName(pProperties->cassette.tape, pProperties->cassette.tapeZip);
+                        updateExtendedCasName(pProperties->media.tapes[0].fileName, pProperties->media.tapes[0].fileNameInZip);
 
                         tryLaunchUnknownFile(pProperties, argument, 1);
                     }
@@ -2604,16 +2604,16 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     
     mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
-    if (pProperties->cartridge.slotA[0]) insertCartridge(pProperties, 0, pProperties->cartridge.slotA, pProperties->cartridge.slotAZip, pProperties->cartridge.slotAType, -1);
-    if (pProperties->cartridge.slotB[0]) insertCartridge(pProperties, 1, pProperties->cartridge.slotB, pProperties->cartridge.slotBZip, pProperties->cartridge.slotBType, -1);
-    if (pProperties->diskdrive.slotA[0]) insertDiskette(pProperties, 0, pProperties->diskdrive.slotA, pProperties->diskdrive.slotAZip, -1);
-    if (pProperties->diskdrive.slotB[0]) insertDiskette(pProperties, 1, pProperties->diskdrive.slotB, pProperties->diskdrive.slotBZip, -1);
+    if (pProperties->media.carts[0].fileName[0]) insertCartridge(pProperties, 0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip, pProperties->media.carts[0].type, -1);
+    if (pProperties->media.carts[1].fileName[0]) insertCartridge(pProperties, 1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip, pProperties->media.carts[1].type, -1);
+    if (pProperties->media.disks[0].fileName[0]) insertDiskette(pProperties, 0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip, -1);
+    if (pProperties->media.disks[1].fileName[0]) insertDiskette(pProperties, 1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip, -1);
 
-    updateExtendedRomName(0, pProperties->cartridge.slotA, pProperties->cartridge.slotAZip);
-    updateExtendedRomName(1, pProperties->cartridge.slotB, pProperties->cartridge.slotBZip);
-    updateExtendedDiskName(0, pProperties->diskdrive.slotA, pProperties->diskdrive.slotAZip);
-    updateExtendedDiskName(1, pProperties->diskdrive.slotB, pProperties->diskdrive.slotBZip);
-    updateExtendedCasName(pProperties->cassette.tape, pProperties->cassette.tapeZip);
+    updateExtendedRomName(0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip);
+    updateExtendedRomName(1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip);
+    updateExtendedDiskName(0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip);
+    updateExtendedDiskName(1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip);
+    updateExtendedCasName(pProperties->media.tapes[0].fileName, pProperties->media.tapes[0].fileNameInZip);
 
     // Call initStatistics to get correct ram size and vram size for status bars
     {
@@ -2927,7 +2927,7 @@ void archSetCurrentDirectory(const char* pathname)
 char* archDirnameGetOpenDisk(Properties* properties, int drive)
 {
     char* title = drive == 2 ? langDlgInsertDiskB() : langDlgInsertDiskA();
-    char* defaultDir = drive == 2 ? properties->diskdrive.slotBDir : properties->diskdrive.slotADir;
+    char* defaultDir = drive == 2 ? properties->media.disks[1].directory : properties->media.disks[0].directory;
     char* filename;
 
     enterDialogShow();
@@ -2975,7 +2975,7 @@ char* archFilenameGetOpenState(Properties* properties)
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType) 
 {
     char* defaultDir = properties->cartridge.defDir;
-    int* selectedExtension = &properties->cartridge.slotAFilter;
+    int* selectedExtension = &properties->media.carts[0].extensionFilter;
     char* defautExtension = ".rom";
     char* extensions = ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0";
     char* title = cartSlot == 2 ? langDlgInsertRom2() : langDlgInsertRom1();
@@ -2998,7 +2998,7 @@ char* archFilenameGetOpenCas(Properties* properties)
     char  extensionList[512];
     char* defaultDir = properties->cassette.defDir;
     char* extensions = ".cas\0.zip\0.*\0";
-    int* selectedExtension = &properties->cassette.filter;
+    int* selectedExtension = &properties->media.tapes[0].extensionFilter;
     char* defautExtension = ".cas";
     int createFileSize = 0;
     char* fileName;
@@ -3020,7 +3020,7 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive)
     char  extensionList[512];
     char* defaultDir = properties->diskdrive.defDir;
     char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
-    int* selectedExtension = drive == 2 ? &properties->diskdrive.slotBFilter : &properties->diskdrive.slotAFilter;
+    int* selectedExtension = drive == 2 ? &properties->media.disks[1].extensionFilter : &properties->media.disks[0].extensionFilter;
     char* defautExtension = ".dsk";
     int createFileSize = 720 * 1024;
     char* fileName;
@@ -3123,7 +3123,7 @@ char* archFilenameGetOpenDiskZip(Properties* properties, int drive, const char* 
     dlgInfo.autoReset = *autostart;
 
     dlgInfo.selectFileIndex = -1;
-    strcpy(dlgInfo.selectFile, drive == 0 ? properties->diskdrive.slotAZip : properties->diskdrive.slotBZip);
+    strcpy(dlgInfo.selectFile, drive == 0 ? properties->media.disks[0].fileNameInZip : properties->media.disks[1].fileNameInZip);
 
     enterDialogShow();
     DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
@@ -3150,7 +3150,7 @@ char* archFilenameGetOpenCasZip(Properties* properties, const char* fname, const
     dlgInfo.autoReset = *autostart;
 
     dlgInfo.selectFileIndex = -1;
-    strcpy(dlgInfo.selectFile, properties->cassette.tapeZip);
+    strcpy(dlgInfo.selectFile, properties->media.tapes[0].fileNameInZip);
 
     enterDialogShow();
     DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);
@@ -3177,7 +3177,7 @@ char* archFilenameGetOpenRomZip(Properties* properties, int cartSlot, const char
     dlgInfo.autoReset = *autostart;
 
     dlgInfo.selectFileIndex = -1;
-    strcpy(dlgInfo.selectFile, cartSlot == 0 ? properties->cartridge.slotAZip : properties->cartridge.slotBZip);
+    strcpy(dlgInfo.selectFile, cartSlot == 0 ? properties->media.carts[0].fileNameInZip : properties->media.carts[1].fileNameInZip);
 
     enterDialogShow();
     DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ZIPDSK), getMainHwnd(), dskZipDlgProc, (LPARAM)&dlgInfo);

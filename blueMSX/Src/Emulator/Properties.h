@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,10 @@
 #include "AudioMixer.h"
 #include "VideoRender.h"
 #include "MediaDb.h"
+
+#define PROP_MAX_DISKS  32
+#define PROP_MAX_CARTS  2
+#define PROP_MAX_TAPES  1
 
 #define PROP_MAXPATH 512
 
@@ -174,39 +178,34 @@ typedef struct {
 } KeyboardProperties;
 
 typedef struct {
+    char fileName[PROP_MAXPATH];
+    char fileNameInZip[PROP_MAXPATH];
+    char directory[PROP_MAXPATH];
+    int  extensionFilter;
+    int  type;
+} FileProperties;
+
+typedef struct {
+    FileProperties carts[PROP_MAX_CARTS];
+    FileProperties disks[PROP_MAX_DISKS];
+    FileProperties tapes[PROP_MAX_TAPES];
+} Media;
+
+typedef struct {
     RomType defaultType;
     char    defDir[PROP_MAXPATH];
-    char    slotA[PROP_MAXPATH];
-    char    slotB[PROP_MAXPATH];
-    char    slotAZip[PROP_MAXPATH];
-    char    slotBZip[PROP_MAXPATH];
-    int     slotAFilter;
-    int     slotBFilter;
-    RomType slotAType;
-    RomType slotBType;
     int     autoReset;
     int     quickStartDrive;
 } CartridgeProperties;
 
 typedef struct {
     char defDir[PROP_MAXPATH];
-    char slotA[PROP_MAXPATH];
-    char slotB[PROP_MAXPATH];
-    char slotAZip[PROP_MAXPATH];
-    char slotBZip[PROP_MAXPATH];
-    char slotADir[PROP_MAXPATH];
-    char slotBDir[PROP_MAXPATH];
-    int  slotAFilter;
-    int  slotBFilter;
     int  autostartA;
     int  quickStartDrive;
 } DiskdriveProperties;
 
 typedef struct {
     char defDir[PROP_MAXPATH];
-    char tape[PROP_MAXPATH];
-    char tapeZip[PROP_MAXPATH];
-    int  filter;
     int showCustomFiles;
     int readOnly;
     int autoRewind;
@@ -265,6 +264,7 @@ typedef struct {
     KeyboardProperties  keyboard;
     CartridgeProperties cartridge;
     DiskdriveProperties diskdrive;
+    Media               media;
     CassetteProperties  cassette;
     FileHistory         filehistory;
     PortProperties      ports;

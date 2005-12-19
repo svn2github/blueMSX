@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-12-17 06:18:15 $
+** $Date: 2005-12-19 21:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -192,17 +192,17 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               romType;
 
     if (drive == 0) {
-        strcpy(properties->cartridge.slotA, filename);
-        strcpy(properties->cartridge.slotAZip, romName);
-        properties->cartridge.slotAType = romType;
+        strcpy(properties->media.carts[0].fileName, filename);
+        strcpy(properties->media.carts[0].fileNameInZip, romName);
+        properties->media.carts[0].type = romType;
         updateFileHistory(*properties->filehistory.cartridgeA, 
                           properties->filehistory.cartridgeTypeA, 
                           filename, romType);
     }
     else {
-        strcpy(properties->cartridge.slotB, filename);
-        strcpy(properties->cartridge.slotBZip, romName);
-        properties->cartridge.slotBType = romType;
+        strcpy(properties->media.carts[1].fileName, filename);
+        strcpy(properties->media.carts[1].fileNameInZip, romName);
+        properties->media.carts[1].type = romType;
         updateFileHistory(*properties->filehistory.cartridgeB, 
                           properties->filehistory.cartridgeTypeB, 
                           filename, romType);
@@ -309,15 +309,15 @@ int insertDiskette(Properties* properties, int drive, const char* fname, const c
     }
 
     if (drive == 0) {
-        strcpy(properties->diskdrive.slotA, filename);
-        strcpy(properties->diskdrive.slotAZip, diskName);
-        updateExtendedDiskName(0, properties->diskdrive.slotA, properties->diskdrive.slotAZip);
+        strcpy(properties->media.disks[0].fileName, filename);
+        strcpy(properties->media.disks[0].fileNameInZip, diskName);
+        updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
         updateFileHistory(*properties->filehistory.diskdriveA, NULL, filename, 0);
     }
     else {
-        strcpy(properties->diskdrive.slotB, filename);
-        strcpy(properties->diskdrive.slotBZip, diskName);
-        updateExtendedDiskName(1, properties->diskdrive.slotB, properties->diskdrive.slotBZip);
+        strcpy(properties->media.disks[1].fileName, filename);
+        strcpy(properties->media.disks[1].fileNameInZip, diskName);
+        updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
         updateFileHistory(*properties->filehistory.diskdriveB, NULL, filename, 0);
     }
 
@@ -371,9 +371,9 @@ int insertCassette(Properties* properties, const char* fname, const char* inZipF
         }
     }
 
-    strcpy(properties->cassette.tape, filename);
-    strcpy(properties->cassette.tapeZip, tapeName);
-    updateExtendedCasName(properties->cassette.tape, properties->cassette.tapeZip);
+    strcpy(properties->media.tapes[0].fileName, filename);
+    strcpy(properties->media.tapes[0].fileNameInZip, tapeName);
+    updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
     updateFileHistory(*properties->filehistory.cassette, NULL, filename, 0);
 
     if (autostart && !noautostart) {
