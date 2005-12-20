@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,18 +61,26 @@ typedef struct {
     ShotcutHotkey cpuStateSave;
     ShotcutHotkey cpuStateQuickLoad;
     ShotcutHotkey cpuStateQuickSave;
-    ShotcutHotkey cartInsert1;
-    ShotcutHotkey cartInsert2;
-    ShotcutHotkey cartSpecialMenu1;
-    ShotcutHotkey cartSpecialMenu2;
-    ShotcutHotkey diskInsertA;
-    ShotcutHotkey diskInsertB;
-    ShotcutHotkey diskDirInsertA;
-    ShotcutHotkey diskDirInsertB;
-    ShotcutHotkey diskChangeA;
+
+    ShotcutHotkey cartInsert[2];
+    ShotcutHotkey cartSpecialMenu[2];
+    ShotcutHotkey cartRemove[2];
+    ShotcutHotkey cartAutoReset[2];
+
+    ShotcutHotkey diskInsert[2];
+    ShotcutHotkey diskDirInsert[2];
+    ShotcutHotkey diskChange[2];
+    ShotcutHotkey diskRemove[2];
+    ShotcutHotkey diskAutoReset[2];
+
     ShotcutHotkey casInsert;
     ShotcutHotkey casRewind;
     ShotcutHotkey casSetPos;
+    ShotcutHotkey casRemove;
+    ShotcutHotkey casToggleReadonly;
+    ShotcutHotkey casAutoRewind;
+    ShotcutHotkey casSave;
+
     ShotcutHotkey prnFormFeed;
     ShotcutHotkey mouseLockToggle;
     ShotcutHotkey emulationRunPause;
@@ -95,16 +103,6 @@ typedef struct {
     ShotcutHotkey volumeMute;
     ShotcutHotkey volumeStereo;
     ShotcutHotkey themeSwitch;
-    ShotcutHotkey casRemove;
-    ShotcutHotkey diskRemoveA;
-    ShotcutHotkey diskRemoveB;
-    ShotcutHotkey cartRemove1;
-    ShotcutHotkey cartRemove2;
-    ShotcutHotkey cartAutoReset;
-    ShotcutHotkey diskAutoResetA;
-    ShotcutHotkey casToggleReadonly;
-    ShotcutHotkey casAutoRewind;
-    ShotcutHotkey casSave;
     ShotcutHotkey propShowEmulation;
     ShotcutHotkey propShowVideo;
     ShotcutHotkey propShowAudio;

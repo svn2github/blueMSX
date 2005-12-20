@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -728,18 +728,29 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(cpuStateSave);
     LOAD_SHORTCUT(cpuStateQuickLoad);
     LOAD_SHORTCUT(cpuStateQuickSave);
-    LOAD_SHORTCUT(cartInsert1);
-    LOAD_SHORTCUT(cartInsert2);
-    LOAD_SHORTCUT(cartSpecialMenu1);
-    LOAD_SHORTCUT(cartSpecialMenu2);
-    LOAD_SHORTCUT(diskInsertA);
-    LOAD_SHORTCUT(diskInsertB);
-    LOAD_SHORTCUT(diskDirInsertA);
-    LOAD_SHORTCUT(diskDirInsertB);
-    LOAD_SHORTCUT(diskChangeA);
+    
+    LOAD_SHORTCUT(cartInsert[0]);
+    LOAD_SHORTCUT(cartInsert[1]);
+    LOAD_SHORTCUT(cartSpecialMenu[0]);
+    LOAD_SHORTCUT(cartSpecialMenu[1]);
+    LOAD_SHORTCUT(cartRemove[0]);
+    LOAD_SHORTCUT(cartRemove[1]);
+    LOAD_SHORTCUT(cartAutoReset[0]);
+    
+    LOAD_SHORTCUT(diskInsert[0]);
+    LOAD_SHORTCUT(diskInsert[1]);
+    LOAD_SHORTCUT(diskDirInsert[0]);
+    LOAD_SHORTCUT(diskDirInsert[1]);
+    LOAD_SHORTCUT(diskRemove[0]);
+    LOAD_SHORTCUT(diskRemove[1]);
+    LOAD_SHORTCUT(diskChange[0]);
+    LOAD_SHORTCUT(diskAutoReset[0]);
+
     LOAD_SHORTCUT(casInsert);
     LOAD_SHORTCUT(casRewind);
     LOAD_SHORTCUT(casSetPos);
+    LOAD_SHORTCUT(casRemove);
+    
     LOAD_SHORTCUT(prnFormFeed);
     LOAD_SHORTCUT(mouseLockToggle);
     LOAD_SHORTCUT(emulationRunPause);
@@ -762,13 +773,6 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(volumeMute);
     LOAD_SHORTCUT(volumeStereo);
     LOAD_SHORTCUT(themeSwitch);
-    LOAD_SHORTCUT(casRemove);
-    LOAD_SHORTCUT(diskRemoveA);
-    LOAD_SHORTCUT(diskRemoveB);
-    LOAD_SHORTCUT(cartRemove1);
-    LOAD_SHORTCUT(cartRemove2);
-    LOAD_SHORTCUT(cartAutoReset);
-    LOAD_SHORTCUT(diskAutoResetA);
     LOAD_SHORTCUT(casToggleReadonly);
     LOAD_SHORTCUT(casAutoRewind);
     LOAD_SHORTCUT(casSave);
@@ -811,18 +815,32 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(cpuStateSave);
     SAVE_SHORTCUT(cpuStateQuickLoad);
     SAVE_SHORTCUT(cpuStateQuickSave);
-    SAVE_SHORTCUT(cartInsert1);
-    SAVE_SHORTCUT(cartInsert2);
-    SAVE_SHORTCUT(cartSpecialMenu1);
-    SAVE_SHORTCUT(cartSpecialMenu2);
-    SAVE_SHORTCUT(diskInsertA);
-    SAVE_SHORTCUT(diskInsertB);
-    SAVE_SHORTCUT(diskDirInsertA);
-    SAVE_SHORTCUT(diskDirInsertB);
-    SAVE_SHORTCUT(diskChangeA);
+
+    SAVE_SHORTCUT(cartInsert[0]);
+    SAVE_SHORTCUT(cartInsert[1]);
+    SAVE_SHORTCUT(cartSpecialMenu[0]);
+    SAVE_SHORTCUT(cartSpecialMenu[1]);
+    SAVE_SHORTCUT(cartRemove[0]);
+    SAVE_SHORTCUT(cartRemove[1]);
+    SAVE_SHORTCUT(cartAutoReset[0]);
+    
+    SAVE_SHORTCUT(diskInsert[0]);
+    SAVE_SHORTCUT(diskInsert[1]);
+    SAVE_SHORTCUT(diskDirInsert[0]);
+    SAVE_SHORTCUT(diskDirInsert[1]);
+    SAVE_SHORTCUT(diskRemove[0]);
+    SAVE_SHORTCUT(diskRemove[1]); 
+    SAVE_SHORTCUT(diskChange[0]);   
+    SAVE_SHORTCUT(diskAutoReset[0]);
+
     SAVE_SHORTCUT(casInsert);
     SAVE_SHORTCUT(casRewind);
     SAVE_SHORTCUT(casSetPos);
+    SAVE_SHORTCUT(casToggleReadonly);
+    SAVE_SHORTCUT(casAutoRewind);
+    SAVE_SHORTCUT(casSave);
+    SAVE_SHORTCUT(casRemove);
+
     SAVE_SHORTCUT(prnFormFeed);
     SAVE_SHORTCUT(mouseLockToggle);
     SAVE_SHORTCUT(emulationRunPause);
@@ -845,16 +863,6 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(volumeMute);
     SAVE_SHORTCUT(volumeStereo);
     SAVE_SHORTCUT(themeSwitch);
-    SAVE_SHORTCUT(casRemove);
-    SAVE_SHORTCUT(diskRemoveA);
-    SAVE_SHORTCUT(diskRemoveB);
-    SAVE_SHORTCUT(cartRemove1);
-    SAVE_SHORTCUT(cartRemove2);
-    SAVE_SHORTCUT(cartAutoReset);
-    SAVE_SHORTCUT(diskAutoResetA);
-    SAVE_SHORTCUT(casToggleReadonly);
-    SAVE_SHORTCUT(casAutoRewind);
-    SAVE_SHORTCUT(casSave);
     SAVE_SHORTCUT(propShowEmulation);
     SAVE_SHORTCUT(propShowVideo);
     SAVE_SHORTCUT(propShowAudio);
@@ -910,24 +918,24 @@ static void updateShortcutEntries(HWND hDlg)
 
     ListView_DeleteAllItems(hwnd);
 
-    ADD_SHORTCUT(cartInsert1, langShortcutCartInsert1());
-    ADD_SHORTCUT(cartRemove1, langShortcutCartRemove1());
-    ADD_SHORTCUT(cartSpecialMenu1, langShortcutCartSpecialMenu1());
-    ADD_SHORTCUT(cartInsert2, langShortcutCartInsert2());
-    ADD_SHORTCUT(cartRemove2, langShortcutCartRemove2());
-    ADD_SHORTCUT(cartSpecialMenu2, langShortcutCartSpecialMenu2());
-    ADD_SHORTCUT(cartAutoReset, langShortcutCartAutoReset());
+    ADD_SHORTCUT(cartInsert[0], langShortcutCartInsert1());
+    ADD_SHORTCUT(cartRemove[0], langShortcutCartRemove1());
+    ADD_SHORTCUT(cartSpecialMenu[0], langShortcutCartSpecialMenu1());
+    ADD_SHORTCUT(cartInsert[1], langShortcutCartInsert2());
+    ADD_SHORTCUT(cartRemove[1], langShortcutCartRemove2());
+    ADD_SHORTCUT(cartSpecialMenu[1], langShortcutCartSpecialMenu2());
+    ADD_SHORTCUT(cartAutoReset[0], langShortcutCartAutoReset());
 
     ADD_SHORTCUTSEPARATOR();
     
-    ADD_SHORTCUT(diskInsertA, langShortcutDiskInsertA());
-    ADD_SHORTCUT(diskDirInsertA, langShortcutDiskDirInsertA());
-    ADD_SHORTCUT(diskRemoveA, langShortcutDiskRemoveA());
-    ADD_SHORTCUT(diskChangeA, langShortcutDiskChangeA());
-    ADD_SHORTCUT(diskAutoResetA, langShortcutDiskAutoResetA());
-    ADD_SHORTCUT(diskInsertB, langShortcutDiskInsertB());
-    ADD_SHORTCUT(diskDirInsertB, langShortcutDiskDirInsertB());
-    ADD_SHORTCUT(diskRemoveB, langShortcutDiskRemoveB());
+    ADD_SHORTCUT(diskInsert[0], langShortcutDiskInsertA());
+    ADD_SHORTCUT(diskDirInsert[0], langShortcutDiskDirInsertA());
+    ADD_SHORTCUT(diskRemove[0], langShortcutDiskRemoveA());
+    ADD_SHORTCUT(diskChange[0], langShortcutDiskChangeA());
+    ADD_SHORTCUT(diskAutoReset[0], langShortcutDiskAutoResetA());
+    ADD_SHORTCUT(diskInsert[1], langShortcutDiskInsertB());
+    ADD_SHORTCUT(diskDirInsert[1], langShortcutDiskDirInsertB());
+    ADD_SHORTCUT(diskRemove[1], langShortcutDiskRemoveB());
 
     ADD_SHORTCUTSEPARATOR();
 

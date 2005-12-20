@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-12-20 00:39:40 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,11 @@
 
 #include "MSXTypes.h"
 
-#define MAXDRIVES 2
+#define FDC_COUNT 2
+#define IDE_COUNT 2
+#define SCSI_COUNT 2
+
+#define MAXDRIVES (FDC_COUNT + 2 * IDE_COUNT + 8 * SCSI_COUNT)
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);

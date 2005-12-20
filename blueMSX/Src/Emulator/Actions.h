@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,12 @@
 void actionInit(Properties* properties, Mixer* mixer);
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix);
 void actionSetQuickSaveSetDirectory(char* dir, char* prefix);
+
+void actionCartInsert(int cartNo);
+void actionCartRemove(int cartNo);
+void actionDiskInsert(int diskNo);
+void actionDiskInsertDir(int diskNo);
+void actionDiskRemove(int diskNo);
 
 void actionQuit();
 void actionLoadState();
@@ -118,7 +124,7 @@ void actionMenuHelp(int x, int y);
 void actionMenuTools(int x, int y);
 
 void actionToggleCartAutoReset();
-void actionToggleDiskAutoResetA();
+void actionToggleDiskAutoReset();
 void actionToggleCasAutoRewind();
 void actionToggleSpriteEnable();
 void actionToggleFdcTiming();

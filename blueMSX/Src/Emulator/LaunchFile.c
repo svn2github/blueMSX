@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-12-20 00:39:39 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -195,16 +195,16 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
         strcpy(properties->media.carts[0].fileName, filename);
         strcpy(properties->media.carts[0].fileNameInZip, romName);
         properties->media.carts[0].type = romType;
-        updateFileHistory(*properties->filehistory.cartridgeA, 
-                          properties->filehistory.cartridgeTypeA, 
+        updateFileHistory(*properties->filehistory.cartridge[0], 
+                          properties->filehistory.cartridgeType[0], 
                           filename, romType);
     }
     else {
         strcpy(properties->media.carts[1].fileName, filename);
         strcpy(properties->media.carts[1].fileNameInZip, romName);
         properties->media.carts[1].type = romType;
-        updateFileHistory(*properties->filehistory.cartridgeB, 
-                          properties->filehistory.cartridgeTypeB, 
+        updateFileHistory(*properties->filehistory.cartridge[1], 
+                          properties->filehistory.cartridgeType[1], 
                           filename, romType);
     }
 
@@ -308,18 +308,10 @@ int insertDiskette(Properties* properties, int drive, const char* fname, const c
         }
     }
 
-    if (drive == 0) {
-        strcpy(properties->media.disks[0].fileName, filename);
-        strcpy(properties->media.disks[0].fileNameInZip, diskName);
-        updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
-        updateFileHistory(*properties->filehistory.diskdriveA, NULL, filename, 0);
-    }
-    else {
-        strcpy(properties->media.disks[1].fileName, filename);
-        strcpy(properties->media.disks[1].fileNameInZip, diskName);
-        updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
-        updateFileHistory(*properties->filehistory.diskdriveB, NULL, filename, 0);
-    }
+    strcpy(properties->media.disks[drive].fileName, filename);
+    strcpy(properties->media.disks[drive].fileNameInZip, diskName);
+    updateExtendedDiskName(drive, properties->media.disks[drive].fileName, properties->media.disks[drive].fileNameInZip);
+    updateFileHistory(*properties->filehistory.diskdrive[drive], NULL, filename, 0);
 
     if (autostart && !noautostart) {
         emulatorStop();
@@ -374,7 +366,7 @@ int insertCassette(Properties* properties, int drive, const char* fname, const c
     strcpy(properties->media.tapes[0].fileName, filename);
     strcpy(properties->media.tapes[0].fileNameInZip, tapeName);
     updateExtendedCasName(0, properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
-    updateFileHistory(*properties->filehistory.cassette, NULL, filename, 0);
+    updateFileHistory(*properties->filehistory.cassette[0], NULL, filename, 0);
 
     if (autostart && !noautostart) {
         emulatorStart(NULL);

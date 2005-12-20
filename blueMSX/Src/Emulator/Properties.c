@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,13 +217,13 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->ports.Com.portName[0]    = 0;
 
     for (i = 0; i < MAX_HISTORY; i++) {
-        properties->filehistory.cartridgeA[i][0] = 0;
-        properties->filehistory.cartridgeTypeA[i] = ROM_UNKNOWN;
-        properties->filehistory.cartridgeB[i][0] = 0;
-        properties->filehistory.cartridgeTypeB[i] = ROM_UNKNOWN;
-        properties->filehistory.diskdriveA[i][0] = 0;
-        properties->filehistory.diskdriveB[i][0] = 0;
-        properties->filehistory.cassette[i][0] = 0;
+        properties->filehistory.cartridge[0][i][0] = 0;
+        properties->filehistory.cartridgeType[0][i] = ROM_UNKNOWN;
+        properties->filehistory.cartridge[1][i][0] = 0;
+        properties->filehistory.cartridgeType[1][i] = ROM_UNKNOWN;
+        properties->filehistory.diskdrive[0][i][0] = 0;
+        properties->filehistory.diskdrive[1][i][0] = 0;
+        properties->filehistory.cassette[0][i][0] = 0;
     }
 
     properties->filehistory.quicksave[0] = 0;
@@ -578,13 +578,13 @@ static void propLoad(Properties* properties)
     GET_STR_VALUE_3(ports, Com, portName);
     
     for (i = 0; i < MAX_HISTORY; i++) {
-        GET_STR_VALUE_2i(filehistory, cartridgeA, i);
-        GET_INT_VALUE_2i(filehistory, cartridgeTypeA, i);
-        GET_STR_VALUE_2i(filehistory, cartridgeB, i);
-        GET_INT_VALUE_2i(filehistory, cartridgeTypeB, i);
-        GET_STR_VALUE_2i(filehistory, diskdriveA, i);
-        GET_STR_VALUE_2i(filehistory, diskdriveB, i);
-        GET_STR_VALUE_2i(filehistory, cassette, i);
+        GET_STR_VALUE_2i(filehistory, cartridge[0], i);
+        GET_INT_VALUE_2i(filehistory, cartridgeType[0], i);
+        GET_STR_VALUE_2i(filehistory, cartridge[1], i);
+        GET_INT_VALUE_2i(filehistory, cartridgeType[1], i);
+        GET_STR_VALUE_2i(filehistory, diskdrive[0], i);
+        GET_STR_VALUE_2i(filehistory, diskdrive[1], i);
+        GET_STR_VALUE_2i(filehistory, cassette[0], i);
     }
 
     GET_STR_VALUE_2(filehistory, quicksave);
@@ -768,13 +768,13 @@ void propSave(Properties* properties)
     SET_STR_VALUE_3(ports, Com, portName);
     
     for (i = 0; i < MAX_HISTORY; i++) {
-        SET_STR_VALUE_2i(filehistory, cartridgeA, i);
-        SET_INT_VALUE_2i(filehistory, cartridgeTypeA, i);
-        SET_STR_VALUE_2i(filehistory, cartridgeB, i);
-        SET_INT_VALUE_2i(filehistory, cartridgeTypeB, i);
-        SET_STR_VALUE_2i(filehistory, diskdriveA, i);
-        SET_STR_VALUE_2i(filehistory, diskdriveB, i);
-        SET_STR_VALUE_2i(filehistory, cassette, i);
+        SET_STR_VALUE_2i(filehistory, cartridge[0], i);
+        SET_INT_VALUE_2i(filehistory, cartridgeType[0], i);
+        SET_STR_VALUE_2i(filehistory, cartridge[1], i);
+        SET_INT_VALUE_2i(filehistory, cartridgeType[1], i);
+        SET_STR_VALUE_2i(filehistory, diskdrive[0], i);
+        SET_STR_VALUE_2i(filehistory, diskdrive[1], i);
+        SET_STR_VALUE_2i(filehistory, cassette[0], i);
     }
 
     SET_STR_VALUE_2(filehistory, quicksave);

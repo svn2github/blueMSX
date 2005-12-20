@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,8 +96,6 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
     if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }
     if (0 == strcmp(action, "menu-printer"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuPrinter; }
-    if (0 == strcmp(action, "menu-joyport1"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort1; }
-    if (0 == strcmp(action, "menu-joyport2"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort2; }
     if (0 == strcmp(action, "menu-windowsize"))         { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuZoom; }
     if (0 == strcmp(action, "menu-options"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuOptions; }
     if (0 == strcmp(action, "menu-help"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuHelp; }
@@ -132,7 +130,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "diska-insertdir"))         return (ButtonEvent)actionDiskDirInsertA;
     if (0 == strcmp(action, "diska-remove"))            return (ButtonEvent)actionDiskRemoveA;
     if (0 == strcmp(action, "diska-quickchange"))       return (ButtonEvent)actionDiskQuickChange;
-    if (0 == strcmp(action, "diska-toggleautoreset"))   return (ButtonEvent)actionToggleDiskAutoResetA;
+    if (0 == strcmp(action, "diska-toggleautoreset"))   return (ButtonEvent)actionToggleDiskAutoReset;
     if (0 == strcmp(action, "diskb-insert"))            return (ButtonEvent)actionDiskInsertB;
     if (0 == strcmp(action, "diskb-insertdir"))         return (ButtonEvent)actionDiskDirInsertB;
     if (0 == strcmp(action, "diskb-remove"))            return (ButtonEvent)actionDiskRemoveB;

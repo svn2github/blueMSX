@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2005-12-20 00:39:37 $
+** $Date: 2005-12-20 06:31:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,6 +118,8 @@ int boardUseRom();
 int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
+
+int boardGetIdeCount();
 
 char* boardGetBaseDirectory();
 

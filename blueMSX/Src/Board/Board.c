@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-12-20 00:39:37 $
+** $Date: 2005-12-20 06:31:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,6 +69,9 @@ static BoardInfo boardInfo;
 static UInt32 boardRamSize;
 static UInt32 boardVramSize;
 static int boardRunning = 0;
+
+static int staticIdeCount = 0;    
+static int cartIdeCount = 0;
 
 static int     useRom;
 static int     useMegaRom;
@@ -273,6 +276,15 @@ void boardSetMachine(Machine* machine)
 {
     int i;
 
+    // Update IDE info
+    staticIdeCount = 0;
+    for (i = 0; i < machine->slotInfoCount; i++) {
+        if (machine->slotInfo[i].romType == ROM_SUNRISEIDE) {
+            staticIdeCount++;
+        }
+    }
+
+    // Update RAM info
     boardRamSize  = 0;
     boardVramSize = machine->video.vramSize;
 
@@ -510,6 +522,11 @@ int boardUseFmPac()
     return useFmPac;
 }
 
+int boardGetIdeCount()
+{
+    return cartIdeCount + staticIdeCount;
+}
+
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
 {
     if (cart && strlen(cart) == 0) {
@@ -535,6 +552,7 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         useMegaRom -= romTypeIsMegaRom(romType);
         useMegaRam -= romTypeIsMegaRam(romType);
         useFmPac   -= romTypeIsFmPac(romType);
+        cartIdeCount -= romType == ROM_SUNRISEIDE ? 1 : 0;
     }
     else {
         currentRomType[cartNo] = romType;
@@ -542,6 +560,7 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         useMegaRom += romTypeIsMegaRom(romType);
         useMegaRam += romTypeIsMegaRam(romType);
         useFmPac   += romTypeIsFmPac(romType);
+        cartIdeCount += romType == ROM_SUNRISEIDE ? 1 : 0;
     }
 
     cartridgeInsert(cartNo, romType, cart, cartZip);

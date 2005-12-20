@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-12-20 00:39:40 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,25 +54,51 @@
 #define ID_PRT_SCR                      40016
 #define ID_FILE_EXIT                    40017
 
-#define ID_FILE_INSERT_CARTRIDGEA       40018
-#define ID_FILE_INSERT_CARTRIDGEB       40019
-#define ID_FILE_REMOVE_CARTRIDGEA       40020
-#define ID_FILE_REMOVE_CARTRIDGEB       40021
-#define ID_FILE_CARTRIDGE_AUTORESET     40022
-#define ID_FILE_INSERT_DISKETTEA        40023
-#define ID_FILE_INSERT_DISKETTEDIRA     40024
-#define ID_FILE_INSERT_DISKETTEA_RESET  40025
-#define ID_FILE_INSERT_DISKETTEB        40026
-#define ID_FILE_INSERT_DISKETTEDIRB     40027
-#define ID_FILE_REMOVE_DISKETTEA        40028
-#define ID_FILE_REMOVE_DISKETTEB        40029
-#define ID_FILE_INSERT_CASSETTE         40030
-#define ID_FILE_REMOVE_CASSETTE         40031
-#define ID_FILE_REWIND_CASSETTE         40032
-#define ID_FILE_POSITION_CASSETTE       40033
-#define ID_FILE_SAVE_CASSETTE           40034
-#define ID_FILE_READONLY_CASSETTE       40035
-#define ID_FILE_AUTOREWNIND_CASSETTE    40036
+#define ID_FILE_CART_OFFSET               100
+
+#define ID_FILE_CART_INSERT             41000
+#define ID_FILE_CART_REMOVE             41001
+#define ID_FILE_CART_AUTORESET          41002
+#define ID_FILE_CART_HISTORY            41003
+
+#define ID_FILE_CART_FMPAC              41070
+#define ID_FILE_CART_PAC                41071
+#define ID_FILE_CART_MEGARAM128         41072
+#define ID_FILE_CART_MEGARAM256         41073
+#define ID_FILE_CART_MEGARAM512         41074
+#define ID_FILE_CART_MEGARAM768         41075
+#define ID_FILE_CART_MEGARAM2M          41076
+#define ID_FILE_CART_SNATCHER           41077
+#define ID_FILE_CART_SDSNATCHER         41078
+#define ID_FILE_CART_SCCMIRRORED        41079
+#define ID_FILE_CART_SCCEXPANDED        41080
+#define ID_FILE_CART_SCC                41081
+#define ID_FILE_CART_SCCPLUS            41082
+#define ID_FILE_CART_EXTRAM512KB        41083
+#define ID_FILE_CART_EXTRAM1MB          41084
+#define ID_FILE_CART_EXTRAM2MB          41085
+#define ID_FILE_CART_EXTRAM4MB          41086
+#define ID_FILE_CART_SONYHBI55          41087
+#define ID_FILE_CART_GAMEREADER         41088
+
+#define ID_FILE_DISK_OFFSET               100
+
+#define ID_FILE_DISK_INSERT             41200
+#define ID_FILE_DISK_INSERTDIR          41201
+#define ID_FILE_DISK_REMOVE             41202
+#define ID_FILE_DISK_AUTOSTART          41203
+#define ID_FILE_DISK_HISTORY            41204
+
+#define ID_FILE_TAPE_INSERT             41400
+#define ID_FILE_TAPE_REMOVE             41401
+#define ID_FILE_TAPE_REWIND             41402
+#define ID_FILE_TAPE_POSITION           41403
+#define ID_FILE_TAPE_SAVE               41404
+#define ID_FILE_TAPE_READONLY           41405
+#define ID_FILE_TAPE_AUTOREWNIND        41406
+#define ID_FILE_TAPE_HISTORY            41407
+
+#if 0
 #define ID_FILE_CARTA_FMPAC             40037
 #define ID_FILE_CARTB_FMPAC             40038
 #define ID_FILE_CARTA_PAC               40039
@@ -109,16 +135,40 @@
 #define ID_FILE_CARTB_EXTRAM4MB         40070
 #define ID_FILE_CARTA_SONYHBI55         40071
 #define ID_FILE_CARTB_SONYHBI55         40072
-#define ID_VIDEO_AUTODETECT             40073
-#define ID_FILE_PRINTER_FORMFEED        40074
 #define ID_FILE_CARTA_GAMEREADER        40075
 #define ID_FILE_CARTB_GAMEREADER        40076
 
+#define ID_FILE_INSERT_CARTRIDGEA       40018
+#define ID_FILE_INSERT_CARTRIDGEB       40019
+#define ID_FILE_REMOVE_CARTRIDGEA       40020
+#define ID_FILE_REMOVE_CARTRIDGEB       40021
+#define ID_FILE_CARTRIDGE_AUTORESET     40022
 #define ID_CARTRIDGEA_HISTORY           30000
 #define ID_CARTRIDGEB_HISTORY           30050
+
+#define ID_FILE_INSERT_DISKETTEA        40023
+#define ID_FILE_INSERT_DISKETTEDIRA     40024
+#define ID_FILE_INSERT_DISKETTEA_RESET  40025
+#define ID_FILE_INSERT_DISKETTEB        40026
+#define ID_FILE_INSERT_DISKETTEDIRB     40027
+#define ID_FILE_REMOVE_DISKETTEA        40028
+#define ID_FILE_REMOVE_DISKETTEB        40029
 #define ID_DISKDRIVEA_HISTORY           30100
 #define ID_DISKDRIVEB_HISTORY           30150
-#define ID_CASSETTE_HISTORY             30200
+
+#define ID_FILE_INSERT_CASSETTE         40030
+#define ID_FILE_REMOVE_CASSETTE         40031
+#define ID_FILE_REWIND_CASSETTE         40032
+#define ID_FILE_POSITION_CASSETTE       40033
+#define ID_FILE_SAVE_CASSETTE           40034
+#define ID_FILE_READONLY_CASSETTE       40035
+#define ID_FILE_AUTOREWNIND_CASSETTE    40036
+#endif
+
+
+#define ID_VIDEO_AUTODETECT             40073
+#define ID_FILE_PRINTER_FORMFEED        40074
+
 #define ID_VIDEO_CONNECTORS             30250
 #define ID_CTRLPORT1_BASE               30300
 #define ID_CTRLPORT2_BASE               30350
@@ -288,285 +338,135 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
     return hMenu;
 }
 
-static HMENU menuCreateCartSpecialA(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
+static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcuts* shortcuts) 
+{
+    int idOffset = cartNo * ID_FILE_CART_OFFSET;
+
     HMENU hMenu = CreatePopupMenu();
     HMENU hMenuExtRam = CreatePopupMenu();
     HMENU hMenuMegaRam = CreatePopupMenu();
 
     setMenuColor(hMenu);
+    setMenuColor(hMenuExtRam);
+    setMenuColor(hMenuMegaRam);
 
-    _stprintf(langBuffer, "%s", langMenuCartGameReader());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
-    
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM512KB, "512 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM1MB, "1 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM2MB, "2 MB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM4MB, "4 MB");
+
+    AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM128, "128 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM256, "256 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM512, "512 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM768, "768 kB");
+    AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM2M, "2 MB");
+
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCC());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCC, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCPlus());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SCCPLUS, langBuffer);
-    
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCC, langMenuCartSCC());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCCPLUS, langMenuCartSCCPlus());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartFMPac());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_FMPAC, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartPac());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_PAC, langBuffer);
-    
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_FMPAC, langMenuCartFMPac());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_PAC, langMenuCartPac());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartHBI55());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_SONYHBI55, langBuffer);
-    
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SONYHBI55, langMenuCartHBI55());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM512KB, "512 kB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM1MB, "1 MB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM2MB, "2 MB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTA_EXTRAM4MB, "4 MB");
-
-    _stprintf(langBuffer, "%s", langMenuCartExternalRam());
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langBuffer);
-    
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langMenuCartExternalRam());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM128, "128 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM256, "256 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM512, "512 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM768, "768 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTA_MEGARAM2M, "2 MB");
-
-    _stprintf(langBuffer, "%s", langMenuCartMegaRam());
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langBuffer);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langMenuCartMegaRam());
 
     return hMenu;
 }
 
-static HMENU menuCreateCartA(Properties* pProperties, Shortcuts* shortcuts, int enableSpecial) {
+
+static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shortcuts, int enableSpecial)
+{
+    int idOffset = cartNo * ID_FILE_CART_OFFSET;
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert1));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEA, langBuffer);
+    verifyFileHistory(*pProperties->filehistory.cartridge[cartNo],
+                      pProperties->filehistory.cartridgeType[cartNo]);
 
-    _stprintf(langBuffer, "%s", langMenuCartInsertSpecial());
+    _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_INSERT, langBuffer);
+
     if (enableSpecial) {
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateCartSpecialA(pProperties, shortcuts), langBuffer);
-    }
-    else {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateCartSpecial(cartNo, pProperties, shortcuts), langMenuCartInsertSpecial());
     }
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    verifyFileHistory(*pProperties->filehistory.cartridgeA,
-                      pProperties->filehistory.cartridgeTypeA);
-
-    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->media.carts[0].fileName ? ": " : ""), stripPath(pProperties->media.carts[0].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEA, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), stripPath(pProperties->media.carts[cartNo].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[cartNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_CART_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s", langMenuCartAutoReset());
-    AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), ID_FILE_CARTRIDGE_AUTORESET, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    if (*pProperties->filehistory.cartridgeA[0] == 0) {
-        _stprintf(langBuffer, "%s", langMenuCartNoRecentFiles());
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    if (cartNo == 0) {
+        AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), idOffset + ID_FILE_CART_AUTORESET, langMenuCartAutoReset());
     }
 
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridgeA[i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cartridgeA[i]));
-        AppendMenu(hMenu, MF_STRING, ID_CARTRIDGEA_HISTORY + i, langBuffer);
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+    if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuCartNoRecentFiles());
+    }
+
+    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cartridge[cartNo][i]));
+        AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
     }
 
     return hMenu;
 }
 
-static HMENU menuCreateCartSpecialB(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
-    HMENU hMenu = CreatePopupMenu();
-    HMENU hMenuExtRam = CreatePopupMenu();
-    HMENU hMenuMegaRam = CreatePopupMenu();
 
-    setMenuColor(hMenu);
-
-    _stprintf(langBuffer, "%s", langMenuCartGameReader());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTA_GAMEREADER, langBuffer);
-    
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCC());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCC, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartSCCPlus());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SCCPLUS, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartFMPac());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_FMPAC, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuCartPac());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_PAC, langBuffer);
-    
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartHBI55());
-    AppendMenu(hMenu, MF_STRING, ID_FILE_CARTB_SONYHBI55, langBuffer);
-    
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM512KB, "512 kB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM1MB, "1 MB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM2MB, "2 MB");
-    AppendMenu(hMenuExtRam, MF_STRING, ID_FILE_CARTB_EXTRAM4MB, "4 MB");
-
-    _stprintf(langBuffer, "%s", langMenuCartExternalRam());
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langBuffer);
-    
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM128, "128 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM256, "256 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM512, "512 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM768, "768 kB");
-    AppendMenu(hMenuMegaRam, MF_STRING, ID_FILE_CARTB_MEGARAM2M, "2 MB");
-
-    _stprintf(langBuffer, "%s", langMenuCartMegaRam());
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langBuffer);
-
-    return hMenu;
-}
-
-static HMENU menuCreateCartB(Properties* pProperties, Shortcuts* shortcuts, int enableSpecial) {
+static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shortcuts) 
+{
+    int idOffset = diskNo * ID_FILE_CART_OFFSET;
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
+    verifyFileHistory(*pProperties->filehistory.diskdrive[diskNo], NULL);
+
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuCartInsert(), shortcutsToString(shortcuts->cartInsert2));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CARTRIDGEB, langBuffer);
+    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskInsert(), shortcutsToString(shortcuts->diskInsert[diskNo]));
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERT, langBuffer);
 
-    _stprintf(langBuffer, "%s", langMenuCartInsertSpecial());
-    if (enableSpecial) {
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateCartSpecialB(pProperties, shortcuts), langBuffer);
-    }
-    else {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsert[diskNo]));
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTDIR, langBuffer);
+
+    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_DISK_REMOVE, langBuffer);
+
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+    if (diskNo == 0) {
+        AppendMenu(hMenu, MF_STRING | (pProperties->diskdrive.autostartA ? MFS_CHECKED : 0), idOffset + ID_FILE_DISK_AUTOSTART, langMenuDiskAutoStart());
     }
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    verifyFileHistory(*pProperties->filehistory.cartridgeB,
-                      pProperties->filehistory.cartridgeTypeB);
-
-    _stprintf(langBuffer, "%s%hs%hs", langMenuCartRemove(), (*pProperties->media.carts[1].fileName ? ": " : ""), stripPath(pProperties->media.carts[1].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[1].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CARTRIDGEB, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuCartAutoReset());
-    AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), ID_FILE_CARTRIDGE_AUTORESET, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    if (*pProperties->filehistory.cartridgeB[0] == 0) {
-        _stprintf(langBuffer, "%s", langMenuCartNoRecentFiles());
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    if (*pProperties->filehistory.diskdrive[diskNo][0] == 0) {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuDiskNoRecentFiles());
     }
 
-    verifyFileHistory(*pProperties->filehistory.cartridgeB,
-                      pProperties->filehistory.cartridgeTypeB);
-
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridgeB[i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cartridgeB[i]));
-        AppendMenu(hMenu, MF_STRING, ID_CARTRIDGEB_HISTORY + i, langBuffer);
+    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
+        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.diskdrive[diskNo][i]));
+        AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_HISTORY + i, langBuffer);
     }
 
     return hMenu;
 }
 
-static HMENU menuCreateDiskA(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
-    HMENU hMenu = CreatePopupMenu();
-    int i;
 
-    setMenuColor(hMenu);
-
-    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskInsert(), shortcutsToString(shortcuts->diskInsertA));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEA, langBuffer);
-
-    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsertA));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEDIRA, langBuffer);
-
-    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[0].fileName ? ": " : ""), stripPath(pProperties->media.disks[0].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEA, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuDiskAutoStart());
-    AppendMenu(hMenu, MF_STRING | (pProperties->diskdrive.autostartA ? MFS_CHECKED : 0), ID_FILE_INSERT_DISKETTEA_RESET, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    if (*pProperties->filehistory.diskdriveA[0] == 0) {
-        _stprintf(langBuffer, "%s", langMenuDiskNoRecentFiles());
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
-    }
-
-    verifyFileHistory(*pProperties->filehistory.diskdriveA, NULL);
-
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdriveA[i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.diskdriveA[i]));
-        AppendMenu(hMenu, MF_STRING, ID_DISKDRIVEA_HISTORY + i, langBuffer);
-    }
-
-    return hMenu;
-}
-
-static HMENU menuCreateDiskB(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
-    HMENU hMenu = CreatePopupMenu();
-    int i;
-
-    setMenuColor(hMenu);
-
-    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskInsert(), shortcutsToString(shortcuts->diskInsertB));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEB, langBuffer);
-
-    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsertB));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_DISKETTEDIRB, langBuffer);
-
-    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[1].fileName ? ": " : ""), stripPath(pProperties->media.disks[1].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[1].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_DISKETTEB, langBuffer);
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    if (*pProperties->filehistory.diskdriveB[0] == 0) {
-        _stprintf(langBuffer, "%s", langMenuDiskNoRecentFiles());
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
-    }
-
-    verifyFileHistory(*pProperties->filehistory.diskdriveB, NULL);
-    
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdriveB[i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.diskdriveB[i]));
-        AppendMenu(hMenu, MF_STRING, ID_DISKDRIVEB_HISTORY + i, langBuffer);
-    }
-
-    return hMenu;
-}
-
-static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) {
+static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) 
+{
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
@@ -578,58 +478,56 @@ static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts) {
+static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
+{
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
+    verifyFileHistory(*pProperties->filehistory.cassette[0], NULL);
+
     setMenuColor(hMenu);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasInsert(), shortcutsToString(shortcuts->casInsert));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_INSERT_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_INSERT, langBuffer);
 
     _stprintf(langBuffer, "%s%hs%hs", langMenuCasEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), stripPath(pProperties->media.tapes[0].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_REMOVE_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, langMenuCasRewindAfterInsert());
-    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.autoRewind ? MFS_CHECKED : 0), ID_FILE_AUTOREWNIND_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.autoRewind ? MFS_CHECKED : 0), ID_FILE_TAPE_AUTOREWNIND, langMenuCasRewindAfterInsert());
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, langMenuCasUseReadOnly());
-    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.readOnly ? MFS_CHECKED : 0), ID_FILE_READONLY_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.readOnly ? MFS_CHECKED : 0), ID_FILE_TAPE_READONLY, langMenuCasUseReadOnly());
 
-    _stprintf(langBuffer, "%s", langMenuCasSaveAs());
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_SAVE_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_SAVE, langMenuCasSaveAs());
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasSetPosition(), shortcutsToString(shortcuts->casSetPos));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_POSITION_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_POSITION, langBuffer);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuCasRewind(), shortcutsToString(shortcuts->casRewind));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_REWIND_CASSETTE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REWIND, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    if (*pProperties->filehistory.cassette[0] == 0) {
-        _stprintf(langBuffer, "%s", langMenuCasNoRecentFiles());
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langBuffer);
+    if (*pProperties->filehistory.cassette[0][0] == 0) {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuCasNoRecentFiles());
     }
 
-    verifyFileHistory(*pProperties->filehistory.cassette, NULL);
-
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cassette[i]));
-        AppendMenu(hMenu, MF_STRING, ID_CASSETTE_HISTORY + i, langBuffer);
+    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {
+        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cassette[0][i]));
+        AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
     }
 
     return hMenu;
 }
 
-static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts) {
+static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
+{
     HMENU            hMenu = CreatePopupMenu();
     JoystickPortType joyType = joystickPortGetType(0);
 
@@ -651,7 +549,8 @@ static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts) {
+static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts) 
+{
     HMENU            hMenu = CreatePopupMenu();
     JoystickPortType joyType = joystickPortGetType(1);
 
@@ -673,7 +572,8 @@ static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts) {
+static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts)
+{
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
@@ -691,132 +591,86 @@ static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
+static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts)
+{
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s", langMenuVideoSource());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoConnect(pProperties, shortcuts), langBuffer);
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoConnect(pProperties, shortcuts), langMenuVideoSource());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuPropsEmulation());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsVideo());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_VIDEO, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsSound());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsPerformance());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PERFORMANCE, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsFile());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_SETTINGS, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsSettings());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_APEARANCE, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuPropsPorts());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PORTS, langBuffer);
-
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langMenuPropsEmulation());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_VIDEO, langMenuPropsVideo());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langMenuPropsSound());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PERFORMANCE, langMenuPropsPerformance());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_SETTINGS, langMenuPropsFile());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_APEARANCE, langMenuPropsSettings());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PORTS, langMenuPropsPorts());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuPropsLanguage());
-    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_LANGUAGE, langBuffer);
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_LANGUAGE, langMenuPropsLanguage());
 
     return hMenu;
 }
 
-static HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
+static HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts) 
+{
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s", langMenuHelpHelp());
-    AppendMenu(hMenu, MF_STRING, ID_HELP_HELP, langBuffer);
-
+    AppendMenu(hMenu, MF_STRING, ID_HELP_HELP, langMenuHelpHelp());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(langBuffer, "%s", langMenuHelpAbout());
-    AppendMenu(hMenu, MF_STRING, ID_HELP_ABOUT, langBuffer);
+    AppendMenu(hMenu, MF_STRING, ID_HELP_ABOUT, langMenuHelpAbout());
 
     return hMenu;
 }
 
-static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
+static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts)
+{
     HMENU hMenu = CreatePopupMenu();
     int count;
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s", langMenuToolsMachine());
-    AppendMenu(hMenu, MF_STRING, ID_TOOLS_MACHINEEDITOR, langBuffer);
-    
-    _stprintf(langBuffer, "%s", langMenuToolsShortcuts());
-    AppendMenu(hMenu, MF_STRING, ID_TOOLS_SHORTCUTSEDITOR, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuToolsKeyboard());
-    AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langBuffer);
-
-    _stprintf(langBuffer, "%s", langMenuToolsMixer());
-    AppendMenu(hMenu, MF_STRING, ID_TOOLS_MIXER, langBuffer);
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_MACHINEEDITOR, langMenuToolsMachine());
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_SHORTCUTSEDITOR, langMenuToolsShortcuts());
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langMenuToolsKeyboard());
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_MIXER, langMenuToolsMixer());
 
     count = toolGetCount();
-
     if (count > 0) {
         int i;
 
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
         for (i = 0; i < count; i++) {
-            _stprintf(langBuffer, "%s", toolInfoGetName(toolInfoGet(i)));
-            AppendMenu(hMenu, MF_STRING, ID_TOOLPLUGINS + i, langBuffer);
+            AppendMenu(hMenu, MF_STRING, ID_TOOLPLUGINS + i, toolInfoGetName(toolInfoGet(i)));
         }
     }
     
     return hMenu;
 }
 
-static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int tempStateExits, int enableSpecial) {
+static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int tempStateExits, int enableSpecial) 
+{
     HMENU hMenu = CreatePopupMenu();
     _TCHAR menuBuffer[512];
 
     setMenuColor(hMenu);
 
-    _stprintf(menuBuffer, "%s", langMenuFileCart1());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCartA(pProperties, shortcuts, enableSpecial), menuBuffer);
-
-    _stprintf(menuBuffer, "%s", langMenuFileCart2());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCartB(pProperties, shortcuts, enableSpecial), menuBuffer);
-
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(0, pProperties, shortcuts, enableSpecial), langMenuFileCart1());
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(1, pProperties, shortcuts, enableSpecial), langMenuFileCart2());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(menuBuffer, "%s", langMenuFileDiskA());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDiskA(pProperties, shortcuts), menuBuffer);
-
-    _stprintf(menuBuffer, "%s", langMenuFileDiskB());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDiskB(pProperties, shortcuts), menuBuffer);
-
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(0, pProperties, shortcuts), langMenuFileDiskA());
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(1, pProperties, shortcuts), langMenuFileDiskB());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(menuBuffer, "%s", langMenuFileCas());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), menuBuffer);
-
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), langMenuFileCas());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-
-    _stprintf(menuBuffer, "%s", langMenuFilePrn());
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreatePrinter(pProperties, shortcuts), menuBuffer);
-
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreatePrinter(pProperties, shortcuts), langMenuFilePrn());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileLoadState(), shortcutsToString(shortcuts->cpuStateLoad));
     AppendMenu(hMenu, MF_STRING, ID_FILE_LOAD, menuBuffer);
-
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileSaveState(), shortcutsToString(shortcuts->cpuStateSave));
     AppendMenu(hMenu, MF_STRING | (!isStopped ? 0 : MF_GRAYED), ID_FILE_SAVE, menuBuffer);
 
@@ -824,7 +678,6 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileQLoadState(), shortcutsToString(shortcuts->cpuStateQuickLoad));
     AppendMenu(hMenu, MF_STRING | (tempStateExits ? 0 : MF_GRAYED), ID_FILE_QLOAD, menuBuffer);
-
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileQSaveState(), shortcutsToString(shortcuts->cpuStateQuickSave));
     AppendMenu(hMenu, MF_STRING | (!isStopped ? 0 : MF_GRAYED), ID_FILE_QSAVE, menuBuffer);
 
@@ -844,7 +697,8 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
     return hMenu;
 }
 
-static HMENU menuCreateRun(Properties* pProperties, Shortcuts* shortcuts, int isRunning, int isStopped) {
+static HMENU menuCreateRun(Properties* pProperties, Shortcuts* shortcuts, int isRunning, int isStopped)
+{
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
@@ -1090,14 +944,14 @@ void menuUpdate(Properties* pProperties,
     if (hMenuTools) DestroyMenu(hMenuTools);
 
     hMenuReset         = menuCreateReset(pProperties, shortcuts);
-    hMenuCartSpecialA  = menuCreateCartSpecialA(pProperties, shortcuts);
-    hMenuCartSpecialB  = menuCreateCartSpecialB(pProperties, shortcuts);
+    hMenuCartSpecialA  = menuCreateCartSpecial(0, pProperties, shortcuts);
+    hMenuCartSpecialB  = menuCreateCartSpecial(1, pProperties, shortcuts);
     hMenuVideoConnect  = menuCreateVideoConnect(pProperties, shortcuts);
-    hMenuCartA         = menuCreateCartA(pProperties, shortcuts, enableSpecial);
-    hMenuCartB         = menuCreateCartB(pProperties, shortcuts, enableSpecial);
+    hMenuCartA         = menuCreateCart(0, pProperties, shortcuts, enableSpecial);
+    hMenuCartB         = menuCreateCart(1, pProperties, shortcuts, enableSpecial);
     hMenuRun           = menuCreateRun(pProperties, shortcuts, isRunning, isStopped);
-    hMenuDiskA         = menuCreateDiskA(pProperties, shortcuts);
-    hMenuDiskB         = menuCreateDiskB(pProperties, shortcuts);
+    hMenuDiskA         = menuCreateDisk(0, pProperties, shortcuts);
+    hMenuDiskB         = menuCreateDisk(1, pProperties, shortcuts);
     hMenuCasette       = menuCreateCassette(pProperties, shortcuts);
     hMenuPrinter       = menuCreatePrinter(pProperties, shortcuts);
     hMenuJoyPort1      = menuCreateJoyPort1(pProperties, shortcuts);
@@ -1222,6 +1076,131 @@ void archShowMenuTools(int x, int y) {
 int menuCommand(Properties* pProperties, int command) 
 {
     int i;
+    int h;
+
+    // Parse Cart Menu Items
+    for (i = 0; i < 2; i++) {
+        h = command - i * ID_FILE_CART_OFFSET - ID_FILE_CART_HISTORY;
+        if (h >= 0 && h < MAX_HISTORY) {
+            insertCartridge(pProperties, i, pProperties->filehistory.cartridge[i][h], NULL, pProperties->filehistory.cartridgeType[i][h], 0);
+            return 1;
+        }
+
+        switch (command - i * ID_FILE_CART_OFFSET) {
+        case ID_FILE_CART_EXTRAM512KB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM1MB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM1MB, NULL, ROM_EXTRAM1MB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM2MB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM2MB, NULL, ROM_EXTRAM2MB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM4MB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
+            return 1;
+        case ID_FILE_CART_GAMEREADER:
+            insertCartridge(pProperties, i, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
+            return 1;
+        case ID_FILE_CART_MEGARAM128:
+            insertCartridge(pProperties, i, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
+            return 1;
+        case ID_FILE_CART_MEGARAM256:
+            insertCartridge(pProperties, i, CARTNAME_MEGARAM256, NULL, ROM_MEGARAM256, 0);
+            return 1;
+        case ID_FILE_CART_MEGARAM512:
+            insertCartridge(pProperties, i, CARTNAME_MEGARAM512, NULL, ROM_MEGARAM512, 0);
+            return 1;
+        case ID_FILE_CART_MEGARAM768:
+            insertCartridge(pProperties, i, CARTNAME_MEGARAM768, NULL, ROM_MEGARAM768, 0);
+            return 1;
+        case ID_FILE_CART_MEGARAM2M:
+            insertCartridge(pProperties, i, CARTNAME_MEGARAM2M, NULL, ROM_MEGARAM2M, 0);
+            return 1;
+        case ID_FILE_CART_SNATCHER:
+            insertCartridge(pProperties, i, CARTNAME_SNATCHER, NULL, ROM_SNATCHER, 0);
+            return 1;
+        case ID_FILE_CART_SDSNATCHER:
+            insertCartridge(pProperties, i, CARTNAME_SDSNATCHER, NULL, ROM_SDSNATCHER, 0);
+            return 1;
+        case ID_FILE_CART_SCCMIRRORED:
+            insertCartridge(pProperties, i, CARTNAME_SCCMIRRORED, NULL, ROM_SCCMIRRORED, 0);
+            return 1;
+        case ID_FILE_CART_SCCEXPANDED:
+            insertCartridge(pProperties, i, CARTNAME_SCCEXPANDED, NULL, ROM_SCCEXTENDED, 0);
+            return 1;
+        case ID_FILE_CART_SCC:
+            insertCartridge(pProperties, i, CARTNAME_SCC, NULL, ROM_SCC, 0);
+            return 1;
+        case ID_FILE_CART_SCCPLUS:
+            insertCartridge(pProperties, i, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
+            return 1;
+        case ID_FILE_CART_FMPAC:
+            insertCartridge(pProperties, i, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);
+            return 1;
+        case ID_FILE_CART_PAC:            
+            insertCartridge(pProperties, i, CARTNAME_PAC, NULL, ROM_PAC, 0);
+            return 1;
+        case ID_FILE_CART_SONYHBI55:            
+            insertCartridge(pProperties, i, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
+            return 1;
+        case ID_FILE_CART_INSERT:       
+            actionCartInsert(i);            
+            return 0;
+        case ID_FILE_CART_REMOVE:   
+            actionCartRemove(i);          
+            return 0;
+        case ID_FILE_CART_AUTORESET:    
+            actionToggleCartAutoReset(i);   
+            return 0;
+        }
+    }
+
+    // Parse Disk Menu Items
+    for (i = 0; i < 2; i++) {
+        h = command - i * ID_FILE_DISK_OFFSET - ID_FILE_DISK_HISTORY;
+        if (h >= 0 && h < MAX_HISTORY) {
+            insertDiskette(pProperties, i, pProperties->filehistory.diskdrive[i][h], NULL, 0);
+            return 1;
+        }
+
+        switch (command - i * ID_FILE_DISK_OFFSET) {
+        case ID_FILE_DISK_INSERT: 
+            actionDiskInsert(i);
+            return 0;
+        case ID_FILE_DISK_INSERTDIR:      
+            actionDiskInsertDir(i); 
+            return 0;
+        case ID_FILE_DISK_REMOVE:  
+            actionDiskRemove(i);
+            return 0;
+        case ID_FILE_DISK_AUTOSTART:
+            actionToggleDiskAutoReset();
+            return 0;
+        }
+    }
+    
+    // Parse Tape Menu Items
+    h = command - ID_FILE_TAPE_HISTORY;
+    if (h >= 0 && h < MAX_HISTORY) {
+        insertCassette(pProperties, 0, pProperties->filehistory.cassette[0][h], NULL, 0);
+        if (pProperties->cassette.autoRewind) {
+            tapeSetCurrentPos(0);
+        }
+        return 1;
+    }
+
+    switch (command) {
+    case ID_FILE_TAPE_POSITION:             actionCasSetPosition();         return 0;
+    case ID_FILE_TAPE_REWIND:               actionCasRewind();              return 0;
+    case ID_FILE_TAPE_INSERT:               actionCasInsert();              return 0;
+    case ID_FILE_TAPE_REMOVE:               actionCasRemove();              return 0;
+    case ID_FILE_TAPE_READONLY:             actionCasToggleReadonly();      return 0;
+    case ID_FILE_TAPE_AUTOREWNIND:          actionToggleCasAutoRewind();    return 0;
+    case ID_FILE_TAPE_SAVE:                 actionCasSave();                return 0;
+    }
+
+    // Parse other Menu Items
 
     i = command - ID_TOOLPLUGINS;
     if (i >= 0 && i < 50) {
@@ -1252,170 +1231,16 @@ int menuCommand(Properties* pProperties, int command)
         return 1;
     }
 
-    i = command - ID_CARTRIDGEA_HISTORY;
-    if (i >= 0 && i < MAX_HISTORY) {
-        insertCartridge(pProperties, 0, pProperties->filehistory.cartridgeA[i], NULL, pProperties->filehistory.cartridgeTypeA[i], 0);
-        return 1;
-    }
-    i = command - ID_CARTRIDGEB_HISTORY;
-    if (i >= 0 && i < MAX_HISTORY) {
-        insertCartridge(pProperties, 1, pProperties->filehistory.cartridgeB[i], NULL, pProperties->filehistory.cartridgeTypeB[i], 0);
-        return 1;
-    }
-    i = command - ID_DISKDRIVEA_HISTORY;
-    if (i >= 0 && i < MAX_HISTORY) {
-        insertDiskette(pProperties, 0, pProperties->filehistory.diskdriveA[i], NULL, 0);
-        return 1;
-    }
-    i = command - ID_DISKDRIVEB_HISTORY;
-    if (i >= 0 && i < MAX_HISTORY) {
-        insertDiskette(pProperties, 1, pProperties->filehistory.diskdriveB[i], NULL, 0);
-        return 1;
-    }
-    i = command - ID_CASSETTE_HISTORY;
-    if (i >= 0 && i < MAX_HISTORY) {
-        insertCassette(pProperties, 0, pProperties->filehistory.cassette[i], NULL, 0);
-        if (pProperties->cassette.autoRewind) {
-            tapeSetCurrentPos(0);
-        }
-        return 1;
-    }
-    
     switch (command) {
-    case ID_FILE_CARTA_EXTRAM512KB:
-        insertCartridge(pProperties, 0, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
-        return 1;
-    case ID_FILE_CARTB_EXTRAM512KB:
-        insertCartridge(pProperties, 1, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
-        return 1;
-    case ID_FILE_CARTA_EXTRAM1MB:
-        insertCartridge(pProperties, 0, CARTNAME_EXTRAM1MB, NULL, ROM_EXTRAM1MB, 0);
-        return 1;
-    case ID_FILE_CARTB_EXTRAM1MB:
-        insertCartridge(pProperties, 1, CARTNAME_EXTRAM1MB, NULL, ROM_EXTRAM1MB, 0);
-        return 1;
-    case ID_FILE_CARTA_EXTRAM2MB:
-        insertCartridge(pProperties, 0, CARTNAME_EXTRAM2MB, NULL, ROM_EXTRAM2MB, 0);
-        return 1;
-    case ID_FILE_CARTB_EXTRAM2MB:
-        insertCartridge(pProperties, 1, CARTNAME_EXTRAM2MB, NULL, ROM_EXTRAM2MB, 0);
-        return 1;
-    case ID_FILE_CARTA_EXTRAM4MB:
-        insertCartridge(pProperties, 0, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
-        return 1;
-    case ID_FILE_CARTB_EXTRAM4MB:
-        insertCartridge(pProperties, 1, CARTNAME_EXTRAM4MB, NULL, ROM_EXTRAM4MB, 0);
-        return 1;
-    case ID_FILE_CARTA_GAMEREADER:
-        insertCartridge(pProperties, 0, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
-        return 1;
-    case ID_FILE_CARTB_GAMEREADER:
-        insertCartridge(pProperties, 1, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
-        return 1;
-    case ID_FILE_CARTA_MEGARAM128:
-        insertCartridge(pProperties, 0, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
-        return 1;
-    case ID_FILE_CARTB_MEGARAM128:
-        insertCartridge(pProperties, 1, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
-        return 1;
-    case ID_FILE_CARTA_MEGARAM256:
-        insertCartridge(pProperties, 0, CARTNAME_MEGARAM256, NULL, ROM_MEGARAM256, 0);
-        return 1;
-    case ID_FILE_CARTB_MEGARAM256:
-        insertCartridge(pProperties, 1, CARTNAME_MEGARAM256, NULL, ROM_MEGARAM256, 0);
-        return 1;
-    case ID_FILE_CARTA_MEGARAM512:
-        insertCartridge(pProperties, 0, CARTNAME_MEGARAM512, NULL, ROM_MEGARAM512, 0);
-        return 1;
-    case ID_FILE_CARTB_MEGARAM512:
-        insertCartridge(pProperties, 1, CARTNAME_MEGARAM512, NULL, ROM_MEGARAM512, 0);
-        return 1;
-    case ID_FILE_CARTA_MEGARAM768:
-        insertCartridge(pProperties, 0, CARTNAME_MEGARAM768, NULL, ROM_MEGARAM768, 0);
-        return 1;
-    case ID_FILE_CARTB_MEGARAM768:
-        insertCartridge(pProperties, 1, CARTNAME_MEGARAM768, NULL, ROM_MEGARAM768, 0);
-        return 1;
-    case ID_FILE_CARTA_MEGARAM2M:
-        insertCartridge(pProperties, 0, CARTNAME_MEGARAM2M, NULL, ROM_MEGARAM2M, 0);
-        return 1;
-    case ID_FILE_CARTB_MEGARAM2M:
-        insertCartridge(pProperties, 1, CARTNAME_MEGARAM2M, NULL, ROM_MEGARAM2M, 0);
-        return 1;
-    case ID_FILE_CARTA_SNATCHER:
-        insertCartridge(pProperties, 0, CARTNAME_SNATCHER, NULL, ROM_SNATCHER, 0);
-        return 1;
-    case ID_FILE_CARTA_SDSNATCHER:
-        insertCartridge(pProperties, 0, CARTNAME_SDSNATCHER, NULL, ROM_SDSNATCHER, 0);
-        return 1;
-    case ID_FILE_CARTA_SCCMIRRORED:
-        insertCartridge(pProperties, 0, CARTNAME_SCCMIRRORED, NULL, ROM_SCCMIRRORED, 0);
-        return 1;
-    case ID_FILE_CARTA_SCCEXPANDED:
-        insertCartridge(pProperties, 0, CARTNAME_SCCEXPANDED, NULL, ROM_SCCEXTENDED, 0);
-        return 1;
-    case ID_FILE_CARTA_SCC:
-        insertCartridge(pProperties, 0, CARTNAME_SCC, NULL, ROM_SCC, 0);
-        return 1;
-    case ID_FILE_CARTA_SCCPLUS:
-        insertCartridge(pProperties, 0, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
-        return 1;
-    case ID_FILE_CARTB_SNATCHER:
-        insertCartridge(pProperties, 1, CARTNAME_SNATCHER, NULL, ROM_SNATCHER, 0);
-        return 1;
-    case ID_FILE_CARTB_SDSNATCHER:
-        insertCartridge(pProperties, 1, CARTNAME_SDSNATCHER, NULL, ROM_SDSNATCHER, 0);
-        return 1;
-    case ID_FILE_CARTB_SCCMIRRORED:
-        insertCartridge(pProperties, 1, CARTNAME_SCCMIRRORED, NULL, ROM_SCCMIRRORED, 0);
-        return 1;
-    case ID_FILE_CARTB_SCCEXPANDED:
-        insertCartridge(pProperties, 1, CARTNAME_SCCEXPANDED, NULL, ROM_SCCEXTENDED, 0);
-        return 1;
-    case ID_FILE_CARTB_SCC:
-        insertCartridge(pProperties, 1, CARTNAME_SCC, NULL, ROM_SCC, 0);
-        return 1;
-    case ID_FILE_CARTB_SCCPLUS:
-        insertCartridge(pProperties, 1, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
-        return 1;
-    case ID_FILE_CARTA_FMPAC:
-        insertCartridge(pProperties, 0, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);
-        return 1;
-    case ID_FILE_CARTA_PAC:
-        insertCartridge(pProperties, 0, CARTNAME_PAC, NULL, ROM_PAC, 0);
-        return 1;
-    case ID_FILE_CARTB_FMPAC:
-        insertCartridge(pProperties, 1, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);
-        return 1;
-    case ID_FILE_CARTB_PAC:            
-        insertCartridge(pProperties, 1, CARTNAME_PAC, NULL, ROM_PAC, 0);
-        return 1;
-    case ID_FILE_CARTA_SONYHBI55:            
-        insertCartridge(pProperties, 0, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
-        return 1;
-    case ID_FILE_CARTB_SONYHBI55:            
-        insertCartridge(pProperties, 1, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
-        return 1;
-
     case ID_VIDEO_AUTODETECT:
         pProperties->video.chipAutodetect = !pProperties->video.chipAutodetect;
         boardSetVideoAutodetect(pProperties->video.chipAutodetect);
         return 0;
-
     case ID_PRT_SCR:                        actionScreenCapture();          return 0;
-    case ID_FILE_POSITION_CASSETTE:         actionCasSetPosition();         return 0;
-    case ID_FILE_REWIND_CASSETTE:           actionCasRewind();              return 0;
-    case ID_FILE_INSERT_DISKETTEA:          actionDiskInsertA();            return 0;
-    case ID_FILE_INSERT_DISKETTEB:          actionDiskInsertB();            return 0;
-    case ID_FILE_INSERT_DISKETTEDIRA:       actionDiskDirInsertA();         return 0;
-    case ID_FILE_INSERT_DISKETTEDIRB:       actionDiskDirInsertB();         return 0;
-    case ID_FILE_INSERT_CASSETTE:           actionCasInsert();              return 0;
     case ID_FILE_SAVE:                      actionSaveState();              return 0;
     case ID_FILE_LOAD:                      actionLoadState();              return 0;
     case ID_FILE_QSAVE:                     actionQuickSaveState();         return 0;
     case ID_FILE_QLOAD:                     actionQuickLoadState();         return 0;
-    case ID_FILE_INSERT_CARTRIDGEA:         actionCartInsert1();            return 0;
-    case ID_FILE_INSERT_CARTRIDGEB:         actionCartInsert2();            return 0;
     case ID_LOG_WAV:                        actionToggleWaveCapture();      return 0;
     case ID_FILE_EXIT:                      actionQuit();                   return 0;
     case ID_SIZE_NORMAL:                    actionWindowSizeSmall();        return 0;
@@ -1427,16 +1252,6 @@ int menuCommand(Properties* pProperties, int command)
     case ID_RUN_RESET:                      actionEmuResetHard();           return 0;
     case ID_RUN_SOFTRESET:                  actionEmuResetSoft();           return 0;
     case ID_RUN_CLEANRESET:                 actionEmuResetClean();          return 0;
-    case ID_FILE_READONLY_CASSETTE:         actionCasToggleReadonly();      return 0;
-    case ID_FILE_AUTOREWNIND_CASSETTE:      actionToggleCasAutoRewind();    return 0;
-    case ID_FILE_SAVE_CASSETTE:             actionCasSave();                return 0;
-    case ID_FILE_CARTRIDGE_AUTORESET:       actionToggleCartAutoReset();    return 0;
-    case ID_FILE_INSERT_DISKETTEA_RESET:    actionToggleDiskAutoResetA();   return 0;
-    case ID_FILE_REMOVE_CARTRIDGEA:         actionCartRemove1();            return 0;
-    case ID_FILE_REMOVE_CARTRIDGEB:         actionCartRemove2();            return 0;
-    case ID_FILE_REMOVE_DISKETTEA:          actionDiskRemoveA();            return 0;
-    case ID_FILE_REMOVE_DISKETTEB:          actionDiskRemoveB();            return 0;
-    case ID_FILE_REMOVE_CASSETTE:           actionCasRemove();              return 0;
     case ID_FILE_PRINTER_FORMFEED:          actionPrinterForceFormFeed();   return 0;
     case ID_OPTIONS_EMULATION:              actionPropShowEmulation();      return 0;
     case ID_OPTIONS_VIDEO:                  actionPropShowVideo();          return 0;

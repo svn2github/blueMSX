@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.116 $
+** $Revision: 1.117 $
 **
-** $Date: 2005-12-20 00:39:40 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -766,19 +766,33 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->cpuStateSave))                 actionSaveState();
     if (hotkeyEq(key, s->cpuStateQuickLoad))            actionQuickLoadState();
     if (hotkeyEq(key, s->cpuStateQuickSave))            actionQuickSaveState();
-    if (hotkeyEq(key, s->cartInsert1))                  actionCartInsert1();
-    if (hotkeyEq(key, s->cartInsert2))                  actionCartInsert2();
-    if (hotkeyEq(key, s->cartSpecialMenu1))             actionMenuSpecialCart1(-1, -1);
-    if (hotkeyEq(key, s->cartSpecialMenu2))             actionMenuSpecialCart2(-1, -1);
-    if (hotkeyEq(key, s->diskInsertA))                  actionDiskInsertA();
-    if (hotkeyEq(key, s->diskInsertB))                  actionDiskInsertB();
-    if (hotkeyEq(key, s->diskDirInsertA))               actionDiskDirInsertA();
-    if (hotkeyEq(key, s->diskDirInsertB))               actionDiskDirInsertB();
-    if (hotkeyEq(key, s->diskChangeA))                  actionDiskQuickChange();
+
+    if (hotkeyEq(key, s->cartInsert[0]))                actionCartInsert1();
+    if (hotkeyEq(key, s->cartInsert[1]))                actionCartInsert2();
+    if (hotkeyEq(key, s->cartSpecialMenu[0]))           actionMenuSpecialCart1(-1, -1);
+    if (hotkeyEq(key, s->cartSpecialMenu[1]))           actionMenuSpecialCart2(-1, -1);
+    if (hotkeyEq(key, s->cartRemove[0]))                actionCartRemove1();
+    if (hotkeyEq(key, s->cartRemove[1]))                actionCartRemove2();
+    if (hotkeyEq(key, s->cartAutoReset[0]))             actionToggleCartAutoReset();
+
+    if (hotkeyEq(key, s->diskInsert[0]))                actionDiskInsertA();
+    if (hotkeyEq(key, s->diskInsert[1]))                actionDiskInsertB();
+    if (hotkeyEq(key, s->diskDirInsert[0]))             actionDiskDirInsertA();
+    if (hotkeyEq(key, s->diskDirInsert[1]))             actionDiskDirInsertB();
+    if (hotkeyEq(key, s->diskChange[0]))                actionDiskQuickChange();
+    if (hotkeyEq(key, s->diskRemove[0]))                actionDiskRemoveA();
+    if (hotkeyEq(key, s->diskRemove[1]))                actionDiskRemoveB();
+    if (hotkeyEq(key, s->diskAutoReset[0]))             actionToggleDiskAutoReset();
+
     if (hotkeyEq(key, s->casInsert))                    actionCasInsert();
-    if (hotkeyEq(key, s->prnFormFeed))                  actionPrinterForceFormFeed();
     if (hotkeyEq(key, s->casRewind))                    actionCasRewind();
     if (hotkeyEq(key, s->casSetPos))                    actionCasSetPosition();
+    if (hotkeyEq(key, s->casRemove))                    actionCasRemove();
+    if (hotkeyEq(key, s->casToggleReadonly))            actionCasToggleReadonly();
+    if (hotkeyEq(key, s->casAutoRewind))                actionToggleCasAutoRewind();
+    if (hotkeyEq(key, s->casSave))                      actionCasSave();
+
+    if (hotkeyEq(key, s->prnFormFeed))                  actionPrinterForceFormFeed();
     if (hotkeyEq(key, s->mouseLockToggle))              actionToggleMouseCapture();
     if (hotkeyEq(key, s->emulationRunPause))            actionEmuTogglePause();
     if (hotkeyEq(key, s->emulationStop))                actionEmuStop();
@@ -799,16 +813,6 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->volumeMute))                   actionMuteToggleMaster();
     if (hotkeyEq(key, s->volumeStereo))                 actionVolumeToggleStereo();
     if (hotkeyEq(key, s->themeSwitch))                  actionNextTheme();
-    if (hotkeyEq(key, s->casRemove))                    actionCasRemove();
-    if (hotkeyEq(key, s->diskRemoveA))                  actionDiskRemoveA();
-    if (hotkeyEq(key, s->diskRemoveB))                  actionDiskRemoveB();
-    if (hotkeyEq(key, s->cartRemove1))                  actionCartRemove1();
-    if (hotkeyEq(key, s->cartRemove2))                  actionCartRemove2();
-    if (hotkeyEq(key, s->cartAutoReset))                actionToggleCartAutoReset();
-    if (hotkeyEq(key, s->diskAutoResetA))               actionToggleDiskAutoResetA();
-    if (hotkeyEq(key, s->casToggleReadonly))            actionCasToggleReadonly();
-    if (hotkeyEq(key, s->casAutoRewind))                actionToggleCasAutoRewind();
-    if (hotkeyEq(key, s->casSave))                      actionCasSave();
     if (hotkeyEq(key, s->propShowEmulation))            actionPropShowEmulation();
     if (hotkeyEq(key, s->propShowVideo))                actionPropShowVideo();
     if (hotkeyEq(key, s->propShowAudio))                actionPropShowAudio();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2005-12-20 00:39:39 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,6 +65,50 @@ static char audioDir[PROP_MAXPATH]  = "";
 static char audioPrefix[64]     = "";
 static char stateDir[PROP_MAXPATH]  = "";
 static char statePrefix[64]     = "";
+
+
+void actionCartInsert(int cartNo)
+{
+    RomType romType;
+    char* filename;
+
+    emulatorSuspend();
+    filename = archFilenameGetOpenRom(state.properties, cartNo + 1, &romType);
+    if (filename != NULL) {        
+        insertCartridge(state.properties, cartNo, filename, NULL, romType, 0);
+    }
+    else {
+        emulatorResume();
+    }
+    archUpdateMenu(0);
+}
+
+void actionDiskInsert(int diskNo)
+{
+    char* filename;
+
+    emulatorSuspend();
+    filename = archFilenameGetOpenDisk(state.properties, diskNo + 1);
+    if (filename != NULL) {        
+        insertDiskette(state.properties, diskNo, filename, NULL, 0);
+    }
+    emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionDiskInsertDir(int diskNo)
+{
+    char* filename;
+
+    emulatorSuspend();
+    filename = archDirnameGetOpenDisk(state.properties, diskNo + 1);
+    if (filename != NULL) {        
+        strcpy(state.properties->media.disks[diskNo].directory, filename);
+        insertDiskette(state.properties, diskNo, filename, NULL, 0);
+    }
+    emulatorResume();
+    archUpdateMenu(0);
+}
 
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix)
 {
@@ -207,33 +251,11 @@ void actionQuickSaveState() {
 }
 
 void actionCartInsert1() {
-    RomType romType;
-    char* filename;
-
-    emulatorSuspend();
-    filename = archFilenameGetOpenRom(state.properties, 1, &romType);
-    if (filename != NULL) {        
-        insertCartridge(state.properties, 0, filename, NULL, romType, 0);
-    }
-    else {
-        emulatorResume();
-    }
-    archUpdateMenu(0);
+    actionCartInsert(0);
 }
 
 void actionCartInsert2() {
-    RomType romType;
-    char* filename;
-
-    emulatorSuspend();
-    filename = archFilenameGetOpenRom(state.properties, 2, &romType);
-    if (filename != NULL) {        
-        insertCartridge(state.properties, 1, filename, NULL, romType, 0);
-    }
-    else {
-        emulatorResume();
-    }
-    archUpdateMenu(0);
+    actionCartInsert(1);
 }
 
 void actionToggleMouseCapture() {
@@ -270,53 +292,19 @@ void actionEmuStop() {
 }
 
 void actionDiskDirInsertA() {
-    char* filename;
-
-    emulatorSuspend();
-    filename = archDirnameGetOpenDisk(state.properties, 1);
-    if (filename != NULL) {        
-        strcpy(state.properties->media.disks[0].directory, filename);
-        insertDiskette(state.properties, 0, filename, NULL, 0);
-    }
-    emulatorResume();
-    archUpdateMenu(0);
+    actionDiskInsertDir(0);
 }
 
 void actionDiskDirInsertB() {
-    char* filename;
-
-    emulatorSuspend();
-    filename = archDirnameGetOpenDisk(state.properties, 1);
-    if (filename != NULL) {        
-        strcpy(state.properties->media.disks[1].directory, filename);
-        insertDiskette(state.properties, 1, filename, NULL, 0);
-    }
-    emulatorResume();
-    archUpdateMenu(0);
+    actionDiskInsertDir(1);
 }
 
 void actionDiskInsertA() {
-    char* filename;
-
-    emulatorSuspend();
-    filename = archFilenameGetOpenDisk(state.properties, 1);
-    if (filename != NULL) {        
-        insertDiskette(state.properties, 0, filename, NULL, 0);
-    }
-    emulatorResume();
-    archUpdateMenu(0);
+    actionDiskInsert(0);
 }
 
 void actionDiskInsertB() {
-    char* filename;
-
-    emulatorSuspend();
-    filename = archFilenameGetOpenDisk(state.properties, 2);
-    if (filename != NULL) {
-        insertDiskette(state.properties, 1, filename, NULL, 0);
-    }
-    emulatorResume();
-    archUpdateMenu(0);
+    actionDiskInsert(1);
 }
 
 void actionMaxSpeedSet() {
@@ -519,7 +507,7 @@ void actionTapeRemove(int i) {
     archUpdateMenu(0);
 }
 
-static void actionCartRemove(int i) {
+void actionCartRemove(int i) {
     state.properties->media.carts[i].fileName[0] = 0;
     state.properties->media.carts[i].fileNameInZip[0] = 0;
     state.properties->media.carts[i].type = ROM_UNKNOWN;
@@ -538,7 +526,7 @@ static void actionCartRemove(int i) {
     archUpdateMenu(0);
 }
 
-static void actionDiskRemove(int i) {
+void actionDiskRemove(int i) {
     state.properties->media.disks[i].fileName[0] = 0;
     state.properties->media.disks[i].fileNameInZip[0] = 0;
     updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
@@ -575,7 +563,7 @@ void actionToggleCartAutoReset() {
     archUpdateMenu(0);
 }
 
-void actionToggleDiskAutoResetA() {
+void actionToggleDiskAutoReset() {
     state.properties->diskdrive.autostartA ^= 1;
     archUpdateMenu(0);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2005-12-20 06:31:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -790,11 +790,11 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                     int i;
 
                     for (i = 0; i < MAX_HISTORY; i++) {
-                        pProperties->filehistory.cartridgeA[i][0] = 0;
-                        pProperties->filehistory.cartridgeB[i][0] = 0;
-                        pProperties->filehistory.diskdriveA[i][0] = 0;
-                        pProperties->filehistory.diskdriveB[i][0] = 0;
-                        pProperties->filehistory.cassette[i][0] = 0;
+                        pProperties->filehistory.cartridge[0][i][0] = 0;
+                        pProperties->filehistory.cartridge[1][i][0] = 0;
+                        pProperties->filehistory.diskdrive[0][i][0] = 0;
+                        pProperties->filehistory.diskdrive[1][i][0] = 0;
+                        pProperties->filehistory.cassette[0][i][0] = 0;
                     }
 
                     pProperties->filehistory.quicksave[0] = 0;
