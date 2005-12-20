@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2005-12-20 07:07:10 $
+** $Date: 2005-12-20 08:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -522,6 +522,9 @@ void actionCartRemove(int i) {
             boardChangeCartridge(i, ROM_UNKNOWN, NULL, NULL);
             emulatorResume();
         }
+    }
+    else {
+        boardChangeCartridge(i, ROM_UNKNOWN, NULL, NULL);
     }
     archUpdateMenu(0);
 }

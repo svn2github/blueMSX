@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-20 08:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -179,6 +179,7 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               0 == strcmp(CARTNAME_FMPAC,       filename) ? ROM_FMPAC :
               0 == strcmp(CARTNAME_PAC,         filename) ? ROM_PAC :
               0 == strcmp(CARTNAME_GAMEREADER,  filename) ? ROM_GAMEREADER :
+              0 == strcmp(CARTNAME_SUNRISEIDE,  filename) ? ROM_SUNRISEIDE :
               0 == strcmp(CARTNAME_SONYHBI55,   filename) ? ROM_SONYHBI55 :
               0 == strcmp(CARTNAME_EXTRAM512KB, filename) ? ROM_EXTRAM512KB :
               0 == strcmp(CARTNAME_EXTRAM1MB,   filename) ? ROM_EXTRAM1MB :
@@ -216,6 +217,9 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
         emulatorSuspend();
         boardChangeCartridge(drive, romType, filename, isZip ? romName : NULL);
         emulatorResume();
+    }
+    else {
+        boardChangeCartridge(drive, romType, filename, isZip ? romName : NULL);
     }
 
     return 1;

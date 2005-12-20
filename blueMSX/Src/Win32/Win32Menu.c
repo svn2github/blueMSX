@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-12-20 07:07:11 $
+** $Date: 2005-12-20 08:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,6 +80,7 @@
 #define ID_FILE_CART_EXTRAM4MB          41086
 #define ID_FILE_CART_SONYHBI55          41087
 #define ID_FILE_CART_GAMEREADER         41088
+#define ID_FILE_CART_SUNRISEIDE         41089
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -364,6 +365,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SUNRISEIDE, langMenuCartSunriseIde());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCC, langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCCPLUS, langMenuCartSCCPlus());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -479,13 +482,40 @@ static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
-static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
+static HMENU menuCreateIdeHd(int diskId, Properties* pProperties, Shortcuts* shortcuts)
 {
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
+    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskInsert());
+    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskInsertNew());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskEject());
+
+    return hMenu;
+}
+
+static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
+{
+    HMENU hMenu = CreatePopupMenu();
+    int ideCount = boardGetIdeCount();
+
+    setMenuColor(hMenu);
+
+    if (ideCount == 0) {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
+    }
+    else {
+        _TCHAR langBuffer[560];
+        int i;
+        for (i = 0; i < ideCount; i++) {
+            _stprintf(langBuffer, "IDE%d Primary", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+2+0, pProperties, shortcuts), langBuffer);
+            _stprintf(langBuffer, "IDE%d Secondary", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+2+1, pProperties, shortcuts), langBuffer);
+        }
+    }
 
     return hMenu;
 }
@@ -1121,6 +1151,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_GAMEREADER:
             insertCartridge(pProperties, i, CARTNAME_GAMEREADER, NULL, ROM_GAMEREADER, 0);
+            return 1;
+        case ID_FILE_CART_SUNRISEIDE:
+            insertCartridge(pProperties, i, CARTNAME_SUNRISEIDE, NULL, ROM_SUNRISEIDE, 0);
             return 1;
         case ID_FILE_CART_MEGARAM128:
             insertCartridge(pProperties, i, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);

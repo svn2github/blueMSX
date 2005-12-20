@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-12-20 06:31:07 $
+** $Date: 2005-12-20 08:11:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -563,7 +563,9 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         cartIdeCount += romType == ROM_SUNRISEIDE ? 1 : 0;
     }
 
-    cartridgeInsert(cartNo, romType, cart, cartZip);
+    if (boardRunning) {
+        cartridgeInsert(cartNo, romType, cart, cartZip);
+    }
 }
 
 void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)

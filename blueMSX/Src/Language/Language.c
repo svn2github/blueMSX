@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-12-20 07:07:10 $
+** $Date: 2005-12-20 08:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -333,6 +333,7 @@ _TCHAR* langMenuCartSCCMirrored() { return ls->menuCartSCCMirrored; }
 _TCHAR* langMenuCartSCCExpanded() { return ls->menuCartSCCExpanded; }
 _TCHAR* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
 _TCHAR* langMenuCartGameReader() { return ls->menuCartGameReader; }
+_TCHAR* langMenuCartSunriseIde() { return ls->menuCartSunriseIde; }
 _TCHAR* langMenuCartSCC() { return ls->menuCartSCC; }
 _TCHAR* langMenuCartFMPac()  { return ls->menuCartFMPac; }
 _TCHAR* langMenuCartPac()  { return ls->menuCartPac; }
@@ -343,6 +344,7 @@ _TCHAR* langMenuCartMegaRam() { return ls->menuCartMegaRam; }
 _TCHAR* langMenuCartExternalRam() { return ls->menuCartExternalRam; }
 
 _TCHAR* langMenuDiskInsert() { return ls->menuDiskInsert; }
+_TCHAR* langMenuDiskInsertNew() { return ls->menuDiskInsertNew; }
 _TCHAR* langMenuDiskDirInsert() { return ls->menuDiskDirInsert; }
 _TCHAR* langMenuDiskEject() { return ls->menuDiskEject; }
 _TCHAR* langMenuDiskAutoStart() { return ls->menuDiskAutoStart; }

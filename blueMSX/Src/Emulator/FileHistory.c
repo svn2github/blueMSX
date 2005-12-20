@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-12-20 00:39:39 $
+** $Date: 2005-12-20 08:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_FMPAC)       && 
             strcmp(fname, CARTNAME_PAC)         && 
             strcmp(fname, CARTNAME_GAMEREADER)  && 
+            strcmp(fname, CARTNAME_SUNRISEIDE)  &&
             strcmp(fname, CARTNAME_SONYHBI55)   && 
             strcmp(fname, CARTNAME_EXTRAM512KB) && 
             strcmp(fname, CARTNAME_EXTRAM1MB)   &&
@@ -316,6 +317,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 strcmp(properties->media.carts[i].fileName, CARTNAME_FMPAC)        &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_PAC)          &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_GAMEREADER)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SUNRISEIDE)   &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_SONYHBI55)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM512KB)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM1MB)    &&
@@ -329,6 +331,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 properties->media.carts[i].type != ROM_FMPAC               &&
                 properties->media.carts[i].type != ROM_PAC                 &&
                 properties->media.carts[i].type != ROM_GAMEREADER          &&
+                properties->media.carts[i].type != ROM_SUNRISEIDE          &&
                 properties->media.carts[i].type != ROM_MSXAUDIO            &&
                 properties->media.carts[i].type != ROM_MOONSOUND           &&
                 properties->media.carts[i].type != ROM_SNATCHER            &&
