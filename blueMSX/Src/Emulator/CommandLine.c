@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -313,23 +313,20 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             if (*argument == '\"') argument++;
 
             if (*argument) {
-                // Clear cartridge info
-                properties->media.carts[0].fileName[0] = 0;
-                properties->media.carts[0].fileNameInZip[0] = 0;
-                properties->media.carts[1].fileName[0] = 0;
-                properties->media.carts[1].fileNameInZip[0] = 0;
-                properties->media.carts[0].type = ROM_UNKNOWN;
-                properties->media.carts[1].type = ROM_UNKNOWN;
-                updateExtendedRomName(0, properties->media.carts[0].fileName, properties->media.carts[0].fileNameInZip);
-                updateExtendedRomName(1, properties->media.carts[1].fileName, properties->media.carts[1].fileNameInZip);
+                int i;
+                
+                for (i = 0; i < PROP_MAX_CARTS; i++) {
+                    properties->media.carts[i].fileName[0] = 0;
+                    properties->media.carts[i].fileNameInZip[0] = 0;
+                    properties->media.carts[i].type = ROM_UNKNOWN;
+                    updateExtendedRomName(i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip);
+                }
 
-                properties->media.disks[0].fileName[0] = 0;
-                properties->media.disks[0].fileNameInZip[0] = 0;
-                properties->media.disks[1].fileName[0] = 0;
-                properties->media.disks[1].fileNameInZip[0] = 0;
-                updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
-                updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
-                updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
+                for (i = 0; i < PROP_MAX_DISKS; i++) {
+                    properties->media.disks[i].fileName[0] = 0;
+                    properties->media.disks[i].fileNameInZip[0] = 0;
+                    updateExtendedDiskName(i, properties->media.disks[i].fileName, properties->media.disks[i].fileNameInZip);
+                }
 
                 return tryLaunchUnknownFile(properties, argument, 1);
             }
@@ -424,23 +421,25 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         return 1;
     }
 
-    properties->media.carts[0].fileName[0] = 0;
-    properties->media.carts[0].fileNameInZip[0] = 0;
-    properties->media.carts[1].fileName[0] = 0;
-    properties->media.carts[1].fileNameInZip[0] = 0;
-    properties->media.carts[0].type = ROM_UNKNOWN;
-    properties->media.carts[1].type = ROM_UNKNOWN;
-    updateExtendedRomName(0, properties->media.carts[0].fileName, properties->media.carts[0].fileNameInZip);
-    updateExtendedRomName(1, properties->media.carts[1].fileName, properties->media.carts[1].fileNameInZip);
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        properties->media.carts[i].fileName[0] = 0;
+        properties->media.carts[i].fileNameInZip[0] = 0;
+        properties->media.carts[i].type = ROM_UNKNOWN;
+        updateExtendedRomName(i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip);
+    }
 
-    properties->media.disks[0].fileName[0] = 0;
-    properties->media.disks[0].fileNameInZip[0] = 0;
-    properties->media.disks[1].fileName[0] = 0;
-    properties->media.disks[1].fileNameInZip[0] = 0;
-    updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
-    updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
-    updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
-    
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        properties->media.disks[i].fileName[0] = 0;
+        properties->media.disks[i].fileNameInZip[0] = 0;
+        updateExtendedDiskName(i, properties->media.disks[i].fileName, properties->media.disks[i].fileNameInZip);
+    }
+
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        properties->media.tapes[i].fileName[0] = 0;
+        properties->media.tapes[i].fileNameInZip[0] = 0;
+        updateExtendedCasName(i, properties->media.tapes[i].fileName, properties->media.tapes[i].fileNameInZip);
+    }
+
     if (!strlen(rom1)) {
         switch (romType1) {
         case ROM_SCC:         strcat(rom1, CARTNAME_SCC); romType1 = ROM_SCC; break;
@@ -475,7 +474,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     if (strlen(rom2)  && !insertCartridge(properties, 1, rom2, *rom2zip ? rom2zip : NULL, romType2, -1)) return 0;
     if (strlen(diskA) && !insertDiskette(properties, 0, diskA, *diskAzip ? diskAzip : NULL, -1)) return 0;
     if (strlen(diskB) && !insertDiskette(properties, 1, diskB, *diskBzip ? diskBzip : NULL, -1)) return 0;
-    if (strlen(cas)   && !insertCassette(properties, cas, *caszip ? caszip : NULL, -1)) return 0;
+    if (strlen(cas)   && !insertCassette(properties, 0, cas, *caszip ? caszip : NULL, -1)) return 0;
 
     if (properties->cassette.autoRewind) {
         tapeSetCurrentPos(0);

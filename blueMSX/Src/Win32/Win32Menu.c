@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-12-19 21:50:48 $
+** $Date: 2005-12-20 00:39:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1274,7 +1274,7 @@ int menuCommand(Properties* pProperties, int command)
     }
     i = command - ID_CASSETTE_HISTORY;
     if (i >= 0 && i < MAX_HISTORY) {
-        insertCassette(pProperties, pProperties->filehistory.cassette[i], NULL, 0);
+        insertCassette(pProperties, 0, pProperties->filehistory.cassette[i], NULL, 0);
         if (pProperties->cassette.autoRewind) {
             tapeSetCurrentPos(0);
         }

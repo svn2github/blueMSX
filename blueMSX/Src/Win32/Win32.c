@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.115 $
+** $Revision: 1.116 $
 **
-** $Date: 2005-12-19 21:50:48 $
+** $Date: 2005-12-20 00:39:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -716,7 +716,7 @@ void setTapePosition(HWND parent, Properties* pProperties) {
     }
     else {
         tapeSetReadOnly(1);
-        boardChangeCassette(strlen(pProperties->media.tapes[0].fileName) ? pProperties->media.tapes[0].fileName : NULL, 
+        boardChangeCassette(0, strlen(pProperties->media.tapes[0].fileName) ? pProperties->media.tapes[0].fileName : NULL, 
                             strlen(pProperties->media.tapes[0].fileNameInZip) ? pProperties->media.tapes[0].fileNameInZip : NULL);
     }
 
@@ -726,7 +726,7 @@ void setTapePosition(HWND parent, Properties* pProperties) {
         emulatorResume();
     }
     else {
-        boardChangeCassette(NULL, NULL);
+        boardChangeCassette(0, NULL, NULL);
         tapeSetReadOnly(pProperties->cassette.readOnly);
     }
 }
@@ -1738,25 +1738,28 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                     argument = extractToken(fileName, 0);
                     if (*argument) {
-                        emulatorStop();
-                        // Clear cartridge info
-                        pProperties->media.carts[0].fileName[0] = 0;
-                        pProperties->media.carts[0].fileNameInZip[0] = 0;
-                        pProperties->media.carts[1].fileName[0] = 0;
-                        pProperties->media.carts[1].fileNameInZip[0] = 0;
-                        pProperties->media.carts[0].type = ROM_UNKNOWN;
-                        pProperties->media.carts[1].type = ROM_UNKNOWN;
-                        updateExtendedRomName(0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip);
-                        updateExtendedRomName(1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip);
+                        int i;
 
-                        pProperties->media.disks[0].fileName[0] = 0;
-                        pProperties->media.disks[0].fileNameInZip[0] = 0;
-                        pProperties->media.disks[1].fileName[0] = 0;
-                        pProperties->media.disks[1].fileNameInZip[0] = 0;
-                        updateExtendedDiskName(0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip);
-                        updateExtendedDiskName(1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip);
-                    
-                        updateExtendedCasName(pProperties->media.tapes[0].fileName, pProperties->media.tapes[0].fileNameInZip);
+                        emulatorStop();
+
+                        for (i = 0; i < PROP_MAX_CARTS; i++) {
+                            pProperties->media.carts[i].fileName[0] = 0;
+                            pProperties->media.carts[i].fileNameInZip[0] = 0;
+                            pProperties->media.carts[i].type = ROM_UNKNOWN;
+                            updateExtendedRomName(i, pProperties->media.carts[i].fileName, pProperties->media.carts[i].fileNameInZip);
+                        }
+
+                        for (i = 0; i < PROP_MAX_DISKS; i++) {
+                            pProperties->media.disks[i].fileName[0] = 0;
+                            pProperties->media.disks[i].fileNameInZip[0] = 0;
+                            updateExtendedDiskName(i, pProperties->media.disks[i].fileName, pProperties->media.disks[i].fileNameInZip);
+                        }
+
+                        for (i = 0; i < PROP_MAX_TAPES; i++) {
+                            pProperties->media.tapes[i].fileName[0] = 0;
+                            pProperties->media.tapes[i].fileNameInZip[0] = 0;
+                            updateExtendedCasName(i, pProperties->media.tapes[i].fileName, pProperties->media.tapes[i].fileNameInZip);
+                        }
 
                         tryLaunchUnknownFile(pProperties, argument, 1);
                     }
@@ -2604,16 +2607,20 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     
     mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
-    if (pProperties->media.carts[0].fileName[0]) insertCartridge(pProperties, 0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip, pProperties->media.carts[0].type, -1);
-    if (pProperties->media.carts[1].fileName[0]) insertCartridge(pProperties, 1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip, pProperties->media.carts[1].type, -1);
-    if (pProperties->media.disks[0].fileName[0]) insertDiskette(pProperties, 0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip, -1);
-    if (pProperties->media.disks[1].fileName[0]) insertDiskette(pProperties, 1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip, -1);
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        if (pProperties->media.carts[i].fileName[0]) insertCartridge(pProperties, i, pProperties->media.carts[i].fileName, pProperties->media.carts[i].fileNameInZip, pProperties->media.carts[i].type, -1);
+        updateExtendedRomName(i, pProperties->media.carts[i].fileName, pProperties->media.carts[i].fileNameInZip);
+    }
 
-    updateExtendedRomName(0, pProperties->media.carts[0].fileName, pProperties->media.carts[0].fileNameInZip);
-    updateExtendedRomName(1, pProperties->media.carts[1].fileName, pProperties->media.carts[1].fileNameInZip);
-    updateExtendedDiskName(0, pProperties->media.disks[0].fileName, pProperties->media.disks[0].fileNameInZip);
-    updateExtendedDiskName(1, pProperties->media.disks[1].fileName, pProperties->media.disks[1].fileNameInZip);
-    updateExtendedCasName(pProperties->media.tapes[0].fileName, pProperties->media.tapes[0].fileNameInZip);
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        if (pProperties->media.disks[i].fileName[0]) insertDiskette(pProperties, i, pProperties->media.disks[i].fileName, pProperties->media.disks[i].fileNameInZip, -1);
+        updateExtendedDiskName(i, pProperties->media.disks[i].fileName, pProperties->media.disks[i].fileNameInZip);
+    }
+
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        if (pProperties->media.tapes[i].fileName[0]) insertCassette(pProperties, i, pProperties->media.tapes[i].fileName, pProperties->media.tapes[i].fileNameInZip, 0);
+        updateExtendedCasName(i, pProperties->media.tapes[i].fileName, pProperties->media.tapes[i].fileNameInZip);
+    }
 
     // Call initStatistics to get correct ram size and vram size for status bars
     {

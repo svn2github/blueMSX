@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -413,7 +413,7 @@ void actionCasInsert() {
     emulatorSuspend();
     filename = archFilenameGetOpenCas(state.properties);
     if (filename != NULL) {        
-        insertCassette(state.properties, filename, NULL, 0);
+        insertCassette(state.properties, 0, filename, NULL, 0);
         if (state.properties->cassette.autoRewind) {
             tapeSetCurrentPos(0);
         }
@@ -428,7 +428,7 @@ void actionCasRewind() {
         }
         else {
             tapeSetReadOnly(1);
-            boardChangeCassette(strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
+            boardChangeCassette(0, strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
                                 strlen(state.properties->media.tapes[0].fileNameInZip) ? state.properties->media.tapes[0].fileNameInZip : NULL);
         }
         tapeSetCurrentPos(0);
@@ -436,7 +436,7 @@ void actionCasRewind() {
         emulatorResume();
     }
     else {
-        boardChangeCassette(NULL, NULL);
+        boardChangeCassette(0, NULL, NULL);
         tapeSetReadOnly(state.properties->cassette.readOnly);
     }
     archUpdateMenu(0);
@@ -468,25 +468,28 @@ void actionEmuResetHard() {
 }
 
 void actionEmuResetClean() {
+    int i;
+
     emulatorStop();
-    state.properties->media.disks[0].fileName[0] = 0;
-    state.properties->media.disks[0].fileNameInZip[0] = 0;
-    state.properties->media.disks[1].fileName[0] = 0;
-    state.properties->media.disks[1].fileNameInZip[0] = 0;
-    updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
-    updateExtendedDiskName(1, state.properties->media.disks[1].fileName, state.properties->media.disks[1].fileNameInZip);
 
-    state.properties->media.carts[0].fileName[0] = 0;
-    state.properties->media.carts[0].fileNameInZip[0] = 0;
-    state.properties->media.carts[1].fileName[0] = 0;
-    state.properties->media.carts[1].fileNameInZip[0] = 0;
-    state.properties->media.carts[0].type = ROM_UNKNOWN;
-    state.properties->media.carts[1].type = ROM_UNKNOWN;
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        state.properties->media.carts[i].fileName[0] = 0;
+        state.properties->media.carts[i].fileNameInZip[0] = 0;
+        state.properties->media.carts[i].type = ROM_UNKNOWN;
+        updateExtendedRomName(i, state.properties->media.carts[i].fileName, state.properties->media.carts[i].fileNameInZip);
+    }
+    
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        state.properties->media.disks[i].fileName[0] = 0;
+        state.properties->media.disks[i].fileNameInZip[0] = 0;
+        updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
+    }
 
-    updateExtendedRomName(0, state.properties->media.carts[0].fileName, state.properties->media.carts[0].fileNameInZip);
-    updateExtendedRomName(1, state.properties->media.carts[1].fileName, state.properties->media.carts[1].fileNameInZip);
-
-    updateExtendedCasName(state.properties->media.tapes[0].fileName, state.properties->media.tapes[0].fileNameInZip);
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        state.properties->media.tapes[i].fileName[0] = 0;
+        state.properties->media.tapes[i].fileNameInZip[0] = 0;
+        updateExtendedCasName(i, state.properties->media.tapes[i].fileName, state.properties->media.tapes[i].fileNameInZip);
+    }
 
     emulatorStart(NULL);
     archUpdateMenu(0);
@@ -504,77 +507,67 @@ void actionScreenCaptureUnfilteredLarge() {
     archScreenCapture(SC_LARGE, NULL);
 }
 
-void actionCasRemove() {
-    state.properties->media.tapes[0].fileName[0] = 0;
-    state.properties->media.tapes[0].fileNameInZip[0] = 0;
+void actionTapeRemove(int i) {
+    state.properties->media.tapes[i].fileName[0] = 0;
+    state.properties->media.tapes[i].fileNameInZip[0] = 0;
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
-        boardChangeCassette(NULL, NULL);
+        boardChangeCassette(i, NULL, NULL);
         emulatorResume();
     }
-    updateExtendedCasName(state.properties->media.tapes[0].fileName, state.properties->media.tapes[0].fileNameInZip);
+    updateExtendedCasName(0, state.properties->media.tapes[0].fileName, state.properties->media.tapes[0].fileNameInZip);
     archUpdateMenu(0);
+}
+
+static void actionCartRemove(int i) {
+    state.properties->media.carts[i].fileName[0] = 0;
+    state.properties->media.carts[i].fileNameInZip[0] = 0;
+    state.properties->media.carts[i].type = ROM_UNKNOWN;
+    updateExtendedRomName(i, state.properties->media.carts[i].fileName, state.properties->media.carts[i].fileNameInZip);
+    if (emulatorGetState() != EMU_STOPPED) {
+        if (state.properties->cartridge.autoReset) {
+            emulatorStop();
+            emulatorStart(NULL);
+        }
+        else {
+            emulatorSuspend();
+            boardChangeCartridge(i, ROM_UNKNOWN, NULL, NULL);
+            emulatorResume();
+        }
+    }
+    archUpdateMenu(0);
+}
+
+static void actionDiskRemove(int i) {
+    state.properties->media.disks[i].fileName[0] = 0;
+    state.properties->media.disks[i].fileNameInZip[0] = 0;
+    updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorSuspend();
+        boardChangeDiskette(i, NULL, NULL);
+        emulatorResume();
+    }
+    archUpdateMenu(0);
+}
+
+void actionCasRemove() {
+    actionTapeRemove(0);
 }
 
 void actionDiskRemoveA() {
-    state.properties->media.disks[0].fileName[0] = 0;
-    state.properties->media.disks[0].fileNameInZip[0] = 0;
-    updateExtendedDiskName(0, state.properties->media.disks[0].fileName, state.properties->media.disks[0].fileNameInZip);
-    if (emulatorGetState() != EMU_STOPPED) {
-        emulatorSuspend();
-        boardChangeDiskette(0, NULL, NULL);
-        emulatorResume();
-    }
-    archUpdateMenu(0);
+    actionDiskRemove(0);
 }
 
 void actionDiskRemoveB() {
-    state.properties->media.disks[1].fileName[0] = 0;
-    state.properties->media.disks[1].fileNameInZip[0] = 0;
-    updateExtendedDiskName(1, state.properties->media.disks[1].fileName, state.properties->media.disks[1].fileNameInZip);
-    if (emulatorGetState() != EMU_STOPPED) {
-        emulatorSuspend();
-        boardChangeDiskette(1, NULL, NULL);
-        emulatorResume();
-    }
-    archUpdateMenu(0);
+    actionDiskRemove(1);
 }
 
 void actionCartRemove1() {
-    state.properties->media.carts[0].fileName[0] = 0;
-    state.properties->media.carts[0].fileNameInZip[0] = 0;
-    state.properties->media.carts[0].type = ROM_UNKNOWN;
-    updateExtendedRomName(0, state.properties->media.carts[0].fileName, state.properties->media.carts[0].fileNameInZip);
-    if (emulatorGetState() != EMU_STOPPED) {
-        if (state.properties->cartridge.autoReset) {
-            emulatorStop();
-            emulatorStart(NULL);
-        }
-        else {
-            emulatorSuspend();
-            boardChangeCartridge(0, ROM_UNKNOWN, NULL, NULL);
-            emulatorResume();
-        }
-    }
-    archUpdateMenu(0);
+    actionCartRemove(0);
 }
 
 void actionCartRemove2() {
-    state.properties->media.carts[1].fileName[0] = 0;
-    state.properties->media.carts[1].fileNameInZip[0] = 0;
-    updateExtendedRomName(1, state.properties->media.carts[1].fileName, state.properties->media.carts[1].fileNameInZip);
-    if (emulatorGetState() != EMU_STOPPED) {
-        if (state.properties->cartridge.autoReset) {
-            emulatorStop();
-            emulatorStart(NULL);
-        }
-        else {
-            emulatorSuspend();
-            boardChangeCartridge(1, ROM_UNKNOWN, NULL, NULL);
-            emulatorResume();
-        }
-    }
-    archUpdateMenu(0);
+    actionCartRemove(1);
 }
 
 void actionToggleCartAutoReset() {
@@ -605,7 +598,7 @@ void actionCasSave() {
 
         if (emulatorGetState() == EMU_STOPPED) {
             tapeSetReadOnly(1);
-            boardChangeCassette(strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
+            boardChangeCassette(0, strlen(state.properties->media.tapes[0].fileName) ? state.properties->media.tapes[0].fileName : NULL, 
                                 strlen(state.properties->media.tapes[0].fileNameInZip) ? state.properties->media.tapes[0].fileNameInZip : NULL);
         }
         else {
@@ -623,7 +616,7 @@ void actionCasSave() {
         }
 
         if (emulatorGetState() == EMU_STOPPED) {
-            boardChangeCassette(NULL, NULL);
+            boardChangeCassette(0, NULL, NULL);
             tapeSetReadOnly(state.properties->cassette.readOnly);
         }
         else {

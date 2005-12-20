@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2005-12-20 00:39:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,17 +43,17 @@ typedef struct {
         RomType type;
         char    name[512];
         char    inZipName[512];
-    } cartridge[2];
+    } carts[2];
     struct {
         int  inserted;
         char name[512];
         char inZipName[512];
-    } diskette[2];
+    } disks[64];
     struct {
         int  inserted;
         char name[512];
         char inZipName[512];
-    } cassette;
+    } tapes[1];
     struct {
         VdpSyncMode vdpSyncMode;
     } video;
@@ -125,7 +125,7 @@ Mixer* boardGetMixer();
 
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip);
 void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile);
-void boardChangeCassette(char* name, const char* fileInZipFile);
+void boardChangeCassette(int tapeId, char* name, const char* fileInZipFile);
 
 int  boardGetCassetteInserted();
 

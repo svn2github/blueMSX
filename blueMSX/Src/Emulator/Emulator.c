@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -290,63 +290,55 @@ void timerCallback(void* timer) {
 
 static void getDeviceInfo(DeviceInfo* deviceInfo) 
 {
-    strcpy(properties->media.carts[0].fileName,    deviceInfo->cartridge[0].name);
-    strcpy(properties->media.carts[0].fileNameInZip, deviceInfo->cartridge[0].inZipName);
-    properties->media.carts[0].type = deviceInfo->cartridge[0].type;
+    int i;
 
-    strcpy(properties->media.carts[1].fileName,    deviceInfo->cartridge[1].name);
-    strcpy(properties->media.carts[1].fileNameInZip, deviceInfo->cartridge[1].inZipName);
-    properties->media.carts[1].type = deviceInfo->cartridge[1].type;
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        strcpy(properties->media.carts[i].fileName, deviceInfo->carts[i].name);
+        strcpy(properties->media.carts[i].fileNameInZip, deviceInfo->carts[i].inZipName);
+        properties->media.carts[i].type = deviceInfo->carts[i].type;
+        updateExtendedRomName(i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip);
+    }
 
-    strcpy(properties->media.disks[0].fileName,    deviceInfo->diskette[0].name);
-    strcpy(properties->media.disks[0].fileNameInZip, deviceInfo->diskette[0].inZipName);
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        strcpy(properties->media.disks[i].fileName, deviceInfo->disks[i].name);
+        strcpy(properties->media.disks[i].fileNameInZip, deviceInfo->disks[i].inZipName);
+        updateExtendedDiskName(i, properties->media.disks[i].fileName, properties->media.disks[i].fileNameInZip);
+    }
 
-    strcpy(properties->media.disks[1].fileName,    deviceInfo->diskette[1].name);
-    strcpy(properties->media.disks[1].fileNameInZip, deviceInfo->diskette[1].inZipName);
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        strcpy(properties->media.tapes[i].fileName, deviceInfo->tapes[i].name);
+        strcpy(properties->media.tapes[i].fileNameInZip, deviceInfo->tapes[i].inZipName);
+        updateExtendedCasName(i, properties->media.tapes[i].fileName, properties->media.tapes[i].fileNameInZip);
+    }
 
-    strcpy(properties->media.tapes[0].fileName,      deviceInfo->cassette.name);
-    strcpy(properties->media.tapes[0].fileNameInZip,   deviceInfo->cassette.inZipName);
-    
     properties->emulation.vdpSyncMode      = deviceInfo->video.vdpSyncMode;
 
-    updateExtendedRomName(0, properties->media.carts[0].fileName, properties->media.carts[0].fileNameInZip);
-    updateExtendedRomName(1, properties->media.carts[1].fileName, properties->media.carts[1].fileNameInZip);
-    updateExtendedDiskName(0, properties->media.disks[0].fileName, properties->media.disks[0].fileNameInZip);
-    updateExtendedDiskName(1, properties->media.disks[1].fileName, properties->media.disks[1].fileNameInZip);
-    updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
 }
 
 static void setDeviceInfo(DeviceInfo* deviceInfo) 
 {
-    /* Set cart A */
-    deviceInfo->cartridge[0].inserted =  strlen(properties->media.carts[0].fileName);
-    deviceInfo->cartridge[0].type = properties->media.carts[0].type;
-    strcpy(deviceInfo->cartridge[0].name,      properties->media.carts[0].fileName);
-    strcpy(deviceInfo->cartridge[0].inZipName, properties->media.carts[0].fileNameInZip);
+    int i;
 
-    /* Set cart B */
-    deviceInfo->cartridge[1].inserted =  strlen(properties->media.carts[1].fileName);
-    deviceInfo->cartridge[1].type = properties->media.carts[1].type;
-    strcpy(deviceInfo->cartridge[1].name,      properties->media.carts[1].fileName);
-    strcpy(deviceInfo->cartridge[1].inZipName, properties->media.carts[1].fileNameInZip);
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        deviceInfo->carts[i].inserted =  strlen(properties->media.carts[i].fileName);
+        deviceInfo->carts[i].type = properties->media.carts[i].type;
+        strcpy(deviceInfo->carts[i].name, properties->media.carts[i].fileName);
+        strcpy(deviceInfo->carts[i].inZipName, properties->media.carts[i].fileNameInZip);
+    }
 
-    /* Set disk A */
-    deviceInfo->diskette[0].inserted =  strlen(properties->media.disks[0].fileName);
-    strcpy(deviceInfo->diskette[0].name,      properties->media.disks[0].fileName);
-    strcpy(deviceInfo->diskette[0].inZipName, properties->media.disks[0].fileNameInZip);
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        deviceInfo->disks[i].inserted =  strlen(properties->media.disks[i].fileName);
+        strcpy(deviceInfo->disks[i].name, properties->media.disks[i].fileName);
+        strcpy(deviceInfo->disks[i].inZipName, properties->media.disks[i].fileNameInZip);
+    }
 
-    /* Set disk B */
-    deviceInfo->diskette[1].inserted =  strlen(properties->media.disks[1].fileName);
-    strcpy(deviceInfo->diskette[1].name,      properties->media.disks[1].fileName);
-    strcpy(deviceInfo->diskette[1].inZipName, properties->media.disks[1].fileNameInZip);
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        deviceInfo->tapes[i].inserted =  strlen(properties->media.tapes[i].fileName);
+        strcpy(deviceInfo->tapes[i].name, properties->media.tapes[i].fileName);
+        strcpy(deviceInfo->tapes[i].inZipName, properties->media.tapes[i].fileNameInZip);
+    }
 
-    /* Set tape */
-    deviceInfo->cassette.inserted =  strlen(properties->media.tapes[0].fileName);
-    strcpy(deviceInfo->cassette.name,      properties->media.tapes[0].fileName);
-    strcpy(deviceInfo->cassette.inZipName, properties->media.tapes[0].fileNameInZip);
-    
-    /* Set video config */
-    deviceInfo->video.vdpSyncMode     = properties->emulation.vdpSyncMode;
+    deviceInfo->video.vdpSyncMode = properties->emulation.vdpSyncMode;
 }
 
 static int emulationStartFailure = 0;

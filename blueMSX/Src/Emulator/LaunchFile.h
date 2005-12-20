@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 int tryLaunchUnknownFile(Properties* properties, const char* fileName, int forceAutostart);
 int insertCartridge(Properties* properties, int drive, const char* fname, const char* inZipFile, RomType romType, int forceAutostart);
 int insertDiskette(Properties* properties, int drive, const char* fname, const char* inZipFile, int forceAutostart);
-int insertCassette(Properties* properties, const char* fname, const char* inZipFile, int forceAutostart);
+int insertCassette(Properties* properties, int drive, const char* fname, const char* inZipFile, int forceAutostart);
 
 #endif
 

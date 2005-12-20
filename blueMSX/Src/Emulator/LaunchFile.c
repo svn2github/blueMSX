@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ int insertDiskette(Properties* properties, int drive, const char* fname, const c
     return 1;
 }
 
-int insertCassette(Properties* properties, const char* fname, const char* inZipFile, int forceAutostart) {
+int insertCassette(Properties* properties, int drive, const char* fname, const char* inZipFile, int forceAutostart) {
     int autostart = forceAutostart == 1;
     int noautostart = forceAutostart == -1;
     char tapeName[512] = "";
@@ -373,7 +373,7 @@ int insertCassette(Properties* properties, const char* fname, const char* inZipF
 
     strcpy(properties->media.tapes[0].fileName, filename);
     strcpy(properties->media.tapes[0].fileNameInZip, tapeName);
-    updateExtendedCasName(properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
+    updateExtendedCasName(0, properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
     updateFileHistory(*properties->filehistory.cassette, NULL, filename, 0);
 
     if (autostart && !noautostart) {
@@ -381,7 +381,7 @@ int insertCassette(Properties* properties, const char* fname, const char* inZipF
     }
     else if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
-        boardChangeCassette(filename, isZip ? tapeName : NULL);
+        boardChangeCassette(0, filename, isZip ? tapeName : NULL);
         emulatorResume();
     }
 
@@ -516,7 +516,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, const ch
 
     if (fileListRom == NULL && fileListDsk == NULL) {
         free(fileListCas);
-        return insertCassette(properties, fname, NULL, 0);
+        return insertCassette(properties, 0, fname, NULL, 0);
     }
 
     for (i = 0; i < countRom; i++) {
@@ -552,7 +552,7 @@ static int insertDisketteOrCartridge(Properties* properties, int drive, const ch
             success = insertDiskette(properties, drive, fname, filename, autostart);
         }
         else if (isFileExtension(filename, ".cas")) {
-            success = insertCassette(properties, fname, filename, autostart);
+            success = insertCassette(properties, 0, fname, filename, autostart);
         }
     }
 
@@ -596,7 +596,7 @@ int tryLaunchUnknownFile(Properties* properties, const char* fileName, int force
         rv = insertDiskette(properties, properties->diskdrive.quickStartDrive, fileName, NULL, forceAutostart);
     }
     else if (isFileExtension(fileName, ".cas")) {
-        rv = insertCassette(properties, fileName, NULL, forceAutostart);
+        rv = insertCassette(properties, 0, fileName, NULL, forceAutostart);
     }
     else if (isFileExtension(fileName, ".zip")) {
         rv = insertDisketteOrCartridge(properties, properties->cartridge.quickStartDrive, fileName, forceAutostart);

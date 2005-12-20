@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,9 +42,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char extendedName[2][256];
-static char extendedDiskName[2][256];
-static char extendedCasName[256];
+static char extendedName[PROP_MAX_CARTS][256];
+static char extendedDiskName[PROP_MAX_DISKS][256];
+static char extendedCasName[PROP_MAX_TAPES][256];
 
 char* stripPathExt(char* filename) {
     static char buffer[128];
@@ -271,16 +271,16 @@ void updateExtendedDiskName(int drive, char* filename, char* zipFile) {
     }
 }
 
-void updateExtendedCasName(char* filename, char* zipFile) {
+void updateExtendedCasName(int drive, char* filename, char* zipFile) {
     int size;
     char* buf = romLoad(filename, zipFile[0] ? zipFile : NULL, &size);
 
-    extendedCasName[0] = 0;
+    extendedCasName[drive][0] = 0;
     if (buf != NULL) {
-        strcpy(extendedCasName, mediaDbGetPrettyString(mediaDbLookupCas(buf, size)));
+        strcpy(extendedCasName[drive], mediaDbGetPrettyString(mediaDbLookupCas(buf, size)));
         free(buf);
-        if (extendedCasName[0] == 0) {
-            strcpy(extendedCasName, stripPathExt(zipFile[0] ? zipFile : filename));
+        if (extendedCasName[drive][0] == 0) {
+            strcpy(extendedCasName[drive], stripPathExt(zipFile[0] ? zipFile : filename));
         }
     }
 }
@@ -293,135 +293,84 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 {
     static char fileBase[128] = { 0 };
     int done = 0;
+    int i;
 
-    if (*properties->media.carts[0].fileName) {
-        if (useExtendedName && extendedName[0][0]) {
-            strcpy(fileBase, extendedName[0]);
-        }
-        else if (*properties->media.carts[0].fileNameInZip) {
-            strcpy(fileBase, stripPathExt(properties->media.carts[0].fileNameInZip));
-        }
-        else {
-            strcpy(fileBase, stripPathExt(properties->media.carts[0].fileName));
-        }
+    for (i = 0; !done && i < PROP_MAX_CARTS; i++) {
+        if (properties->media.carts[i].fileName[0]) {
+            if (useExtendedName && extendedName[i][0]) {
+                strcpy(fileBase, extendedName[i]);
+            }
+            else if (*properties->media.carts[i].fileNameInZip) {
+                strcpy(fileBase, stripPathExt(properties->media.carts[i].fileNameInZip));
+            }
+            else {
+                strcpy(fileBase, stripPathExt(properties->media.carts[i].fileName));
+            }
 
-        if (strcmp(properties->media.carts[0].fileName, CARTNAME_SNATCHER)     &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_SDSNATCHER)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_SCCMIRRORED)  &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_SCCEXPANDED)  &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_SCC)          &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_SCCPLUS)      &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_FMPAC)        &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_PAC)          &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_GAMEREADER)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_EXTRAM512KB)  &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_EXTRAM1MB)    &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_EXTRAM2MB)    &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_EXTRAM4MB)    &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_MEGARAM128)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_MEGARAM256)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_MEGARAM512)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_MEGARAM768)   &&
-            strcmp(properties->media.carts[0].fileName, CARTNAME_MEGARAM2M)    &&
-            properties->media.carts[0].type != ROM_FMPAC               &&
-            properties->media.carts[0].type != ROM_PAC                 &&
-            properties->media.carts[0].type != ROM_GAMEREADER          &&
-            properties->media.carts[0].type != ROM_MSXAUDIO            &&
-            properties->media.carts[0].type != ROM_MOONSOUND           &&
-            properties->media.carts[0].type != ROM_SNATCHER            &&
-            properties->media.carts[0].type != ROM_SDSNATCHER          &&
-            properties->media.carts[0].type != ROM_SCCMIRRORED         &&
-            properties->media.carts[0].type != ROM_SCC                 &&
-            properties->media.carts[0].type != ROM_SCCPLUS             &&
-            properties->media.carts[0].type != ROM_SONYHBI55)
-        {
+            if (strcmp(properties->media.carts[i].fileName, CARTNAME_SNATCHER)     &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SDSNATCHER)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SCCMIRRORED)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SCCEXPANDED)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SCC)          &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SCCPLUS)      &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_FMPAC)        &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_PAC)          &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_GAMEREADER)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_SONYHBI55)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM512KB)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM1MB)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM2MB)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM4MB)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM128)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM256)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM512)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM768)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM2M)    &&
+                properties->media.carts[i].type != ROM_FMPAC               &&
+                properties->media.carts[i].type != ROM_PAC                 &&
+                properties->media.carts[i].type != ROM_GAMEREADER          &&
+                properties->media.carts[i].type != ROM_MSXAUDIO            &&
+                properties->media.carts[i].type != ROM_MOONSOUND           &&
+                properties->media.carts[i].type != ROM_SNATCHER            &&
+                properties->media.carts[i].type != ROM_SDSNATCHER          &&
+                properties->media.carts[i].type != ROM_SCCMIRRORED         &&
+                properties->media.carts[i].type != ROM_SCC                 &&
+                properties->media.carts[i].type != ROM_SCCPLUS             &&
+                properties->media.carts[i].type != ROM_SONYHBI55) 
+            {
+                done = 1;
+            }
+        }
+    }
+
+    for (i = 0; !done && i < PROP_MAX_DISKS; i++) {
+        if (properties->media.disks[i].fileName[0]) {
+            if (useExtendedName && extendedDiskName[i][0]) {
+                strcpy(fileBase, extendedDiskName[i]);
+            }
+            else if (*properties->media.disks[i].fileNameInZip) {
+                strcpy(fileBase, stripPathExt(properties->media.disks[i].fileNameInZip));
+            }
+            else {
+                strcpy(fileBase, stripPathExt(properties->media.disks[i].fileName));
+            }
             done = 1;
         }
     }
 
-    if (!done && *properties->media.carts[1].fileName) {
-        if (useExtendedName && extendedName[1][0]) {
-            strcpy(fileBase, extendedName[1]);
-        }
-        else if (*properties->media.carts[1].fileNameInZip) {
-            strcpy(fileBase, stripPathExt(properties->media.carts[1].fileNameInZip));
-        }
-        else {
-            strcpy(fileBase, stripPathExt(properties->media.carts[1].fileName));
-        }
-
-        if (strcmp(properties->media.carts[1].fileName, CARTNAME_SNATCHER)     &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SDSNATCHER)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SCCMIRRORED)  &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SCCEXPANDED)  &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SCC)          &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SCCPLUS)      &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_FMPAC)        &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_PAC)          &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_GAMEREADER)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_SONYHBI55)    &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_EXTRAM512KB)  &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_EXTRAM1MB)    &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_EXTRAM2MB)    &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_EXTRAM4MB)    &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_MEGARAM128)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_MEGARAM256)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_MEGARAM512)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_MEGARAM768)   &&
-            strcmp(properties->media.carts[1].fileName, CARTNAME_MEGARAM2M)    &&
-            properties->media.carts[1].type != ROM_FMPAC               &&
-            properties->media.carts[1].type != ROM_PAC                 &&
-            properties->media.carts[1].type != ROM_GAMEREADER          &&
-            properties->media.carts[1].type != ROM_MSXAUDIO            &&
-            properties->media.carts[1].type != ROM_MOONSOUND           &&
-            properties->media.carts[1].type != ROM_SNATCHER            &&
-            properties->media.carts[1].type != ROM_SDSNATCHER          &&
-            properties->media.carts[1].type != ROM_SCCMIRRORED         &&
-            properties->media.carts[1].type != ROM_SCC                 &&
-            properties->media.carts[1].type != ROM_SCCPLUS             &&
-            properties->media.carts[1].type != ROM_SONYHBI55) 
-        {
+    for (i = 0; !done && i < PROP_MAX_TAPES; i++) {
+        if (properties->media.tapes[0].fileName[0]) {
+            if (useExtendedName && extendedCasName[i][0]) {
+                strcpy(fileBase, extendedCasName[i]);
+            }
+            else if (*properties->media.tapes[i].fileNameInZip) {
+                strcpy(fileBase, stripPathExt(properties->media.tapes[i].fileNameInZip));
+            }
+            else {
+                strcpy(fileBase, stripPathExt(properties->media.tapes[i].fileName));
+            }
             done = 1;
         }
-    }
-    
-    if (!done && *properties->media.disks[0].fileName) {
-        if (useExtendedName && extendedDiskName[0][0]) {
-            strcpy(fileBase, extendedDiskName[0]);
-        }
-        else if (*properties->media.disks[0].fileNameInZip) {
-            strcpy(fileBase, stripPathExt(properties->media.disks[0].fileNameInZip));
-        }
-        else {
-            strcpy(fileBase, stripPathExt(properties->media.disks[0].fileName));
-        }
-        done = 1;
-    }
-    
-    if (!done && *properties->media.disks[1].fileName) {
-        if (useExtendedName && extendedDiskName[1][0]) {
-            strcpy(fileBase, extendedDiskName[1]);
-        }
-        else if (*properties->media.disks[1].fileNameInZip) {
-            strcpy(fileBase, stripPathExt(properties->media.disks[1].fileNameInZip));
-        }
-        else {
-            strcpy(fileBase, stripPathExt(properties->media.disks[1].fileName));
-        }
-        done = 1;
-    }
-    
-    if (!done && *properties->media.tapes[0].fileName) {
-        if (useExtendedName && extendedCasName[0]) {
-            strcpy(fileBase, extendedCasName);
-        }
-        else if (*properties->media.tapes[0].fileNameInZip) {
-            strcpy(fileBase, stripPathExt(properties->media.tapes[0].fileNameInZip));
-        }
-        else {
-            strcpy(fileBase, stripPathExt(properties->media.tapes[0].fileName));
-        }
-        done = 1;
     }
 
     if (fileBase[0] == 0) {

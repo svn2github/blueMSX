@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2005-12-20 00:39:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,13 +33,6 @@
 #include "MSXTypes.h"
 
 #define MAXDRIVES 2
-
-typedef enum {
-    DISK_FDD0,
-    DISK_FDD1,
-    DISK_IDEHD0,
-    DISK_IDEHD1
-} DiskDriveId;
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);

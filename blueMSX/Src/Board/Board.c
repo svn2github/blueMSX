@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-12-20 00:39:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,23 +146,23 @@ int boardInsertExternalDevices()
 {
     int i;
     for (i = 0; i < 2; i++) {
-        if (boardDeviceInfo->cartridge[i].inserted) {
-            boardChangeCartridge(i, boardDeviceInfo->cartridge[i].type, 
-                                 boardDeviceInfo->cartridge[i].name,
-                                 boardDeviceInfo->cartridge[i].inZipName);
+        if (boardDeviceInfo->carts[i].inserted) {
+            boardChangeCartridge(i, boardDeviceInfo->carts[i].type, 
+                                 boardDeviceInfo->carts[i].name,
+                                 boardDeviceInfo->carts[i].inZipName);
         }
     }
 
     for (i = 0; i < 2; i++) {
-        if (boardDeviceInfo->diskette[i].inserted) {
-            boardChangeDiskette(i, boardDeviceInfo->diskette[i].name,
-                                boardDeviceInfo->diskette[i].inZipName);
+        if (boardDeviceInfo->disks[i].inserted) {
+            boardChangeDiskette(i, boardDeviceInfo->disks[i].name,
+                                boardDeviceInfo->disks[i].inZipName);
         }
     }
 
-    if (boardDeviceInfo->cassette.inserted) {
-        boardChangeCassette(boardDeviceInfo->cassette.name,
-                            boardDeviceInfo->cassette.inZipName);
+    if (boardDeviceInfo->tapes[0].inserted) {
+        boardChangeCassette(0, boardDeviceInfo->tapes[0].name,
+                            boardDeviceInfo->tapes[0].inZipName);
     }
     return 1;
 }
@@ -172,7 +172,7 @@ int boardRemoveExternalDevices()
      boardChangeDiskette(0, NULL, NULL);
      boardChangeDiskette(1, NULL, NULL);
 
-     boardChangeCassette(0, 0);
+     boardChangeCassette(0, NULL, NULL);
 
      return 1;
 }
@@ -330,27 +330,27 @@ static BoardType boardLoadState(const char* stateFile)
     oldTime        = saveStateGet(state, "oldTime", 0);
     pendingInt     = saveStateGet(state, "pendingInt", 0);
     
-    di->cartridge[0].inserted = saveStateGet(state, "cartInserted00", 0);
-    di->cartridge[0].type     = saveStateGet(state, "cartType00",     0);
-    saveStateGetBuffer(state, "cartName00",  di->cartridge[0].name, sizeof(di->cartridge[0].name));
-    saveStateGetBuffer(state, "cartInZip00", di->cartridge[0].inZipName, sizeof(di->cartridge[0].inZipName));
+    di->carts[0].inserted = saveStateGet(state, "cartInserted00", 0);
+    di->carts[0].type     = saveStateGet(state, "cartType00",     0);
+    saveStateGetBuffer(state, "cartName00",  di->carts[0].name, sizeof(di->carts[0].name));
+    saveStateGetBuffer(state, "cartInZip00", di->carts[0].inZipName, sizeof(di->carts[0].inZipName));
 
-    di->cartridge[1].inserted = saveStateGet(state, "cartInserted01", 0);
-    di->cartridge[1].type     = saveStateGet(state, "cartType01",     0);
-    saveStateGetBuffer(state, "cartName01",  di->cartridge[1].name, sizeof(di->cartridge[1].name));
-    saveStateGetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, sizeof(di->cartridge[1].inZipName));
+    di->carts[1].inserted = saveStateGet(state, "cartInserted01", 0);
+    di->carts[1].type     = saveStateGet(state, "cartType01",     0);
+    saveStateGetBuffer(state, "cartName01",  di->carts[1].name, sizeof(di->carts[1].name));
+    saveStateGetBuffer(state, "cartInZip01", di->carts[1].inZipName, sizeof(di->carts[1].inZipName));
 
-    di->diskette[0].inserted = saveStateGet(state, "diskInserted00", 0);
-    saveStateGetBuffer(state, "diskName00",  di->diskette[0].name, sizeof(di->diskette[0].name));
-    saveStateGetBuffer(state, "diskInZip00", di->diskette[0].inZipName, sizeof(di->diskette[0].inZipName));
+    di->disks[0].inserted = saveStateGet(state, "diskInserted00", 0);
+    saveStateGetBuffer(state, "diskName00",  di->disks[0].name, sizeof(di->disks[0].name));
+    saveStateGetBuffer(state, "diskInZip00", di->disks[0].inZipName, sizeof(di->disks[0].inZipName));
 
-    di->diskette[1].inserted = saveStateGet(state, "diskInserted01", 0);
-    saveStateGetBuffer(state, "diskName01",  di->diskette[1].name, sizeof(di->diskette[1].name));
-    saveStateGetBuffer(state, "diskInZip01", di->diskette[1].inZipName, sizeof(di->diskette[1].inZipName));
+    di->disks[1].inserted = saveStateGet(state, "diskInserted01", 0);
+    saveStateGetBuffer(state, "diskName01",  di->disks[1].name, sizeof(di->disks[1].name));
+    saveStateGetBuffer(state, "diskInZip01", di->disks[1].inZipName, sizeof(di->disks[1].inZipName));
 
-    di->cassette.inserted = saveStateGet(state, "casInserted", 0);
-    saveStateGetBuffer(state, "casName",  di->cassette.name, sizeof(di->cassette.name));
-    saveStateGetBuffer(state, "casInZip", di->cassette.inZipName, sizeof(di->cassette.inZipName));
+    di->tapes[0].inserted = saveStateGet(state, "casInserted", 0);
+    saveStateGetBuffer(state, "casName",  di->tapes[0].name, sizeof(di->tapes[0].name));
+    saveStateGetBuffer(state, "casInZip", di->tapes[0].inZipName, sizeof(di->tapes[0].inZipName));
 
     di->video.vdpSyncMode = saveStateGet(state, "vdpSyncMode", 0);
 
@@ -392,25 +392,25 @@ void boardSaveState(const char* stateFile)
     saveStateSet(state, "boardSysTime64Lo", (UInt32)boardSysTime64);
     saveStateSet(state, "oldTime", oldTime);
 
-    saveStateSet(state, "cartInserted00", di->cartridge[0].inserted);
-    saveStateSet(state, "cartType00",     di->cartridge[0].type);
-    saveStateSetBuffer(state, "cartName00",  di->cartridge[0].name, strlen(di->cartridge[0].name) + 1);
-    saveStateSetBuffer(state, "cartInZip00", di->cartridge[0].inZipName, strlen(di->cartridge[0].inZipName) + 1);
-    saveStateSet(state, "cartInserted01", di->cartridge[1].inserted);
-    saveStateSet(state, "cartType01",     di->cartridge[1].type);
-    saveStateSetBuffer(state, "cartName01",  di->cartridge[1].name, strlen(di->cartridge[1].name) + 1);
-    saveStateSetBuffer(state, "cartInZip01", di->cartridge[1].inZipName, strlen(di->cartridge[1].inZipName) + 1);
+    saveStateSet(state, "cartInserted00", di->carts[0].inserted);
+    saveStateSet(state, "cartType00",     di->carts[0].type);
+    saveStateSetBuffer(state, "cartName00",  di->carts[0].name, strlen(di->carts[0].name) + 1);
+    saveStateSetBuffer(state, "cartInZip00", di->carts[0].inZipName, strlen(di->carts[0].inZipName) + 1);
+    saveStateSet(state, "cartInserted01", di->carts[1].inserted);
+    saveStateSet(state, "cartType01",     di->carts[1].type);
+    saveStateSetBuffer(state, "cartName01",  di->carts[1].name, strlen(di->carts[1].name) + 1);
+    saveStateSetBuffer(state, "cartInZip01", di->carts[1].inZipName, strlen(di->carts[1].inZipName) + 1);
 
-    saveStateSet(state, "diskInserted00", di->diskette[0].inserted);
-    saveStateSetBuffer(state, "diskName00",  di->diskette[0].name, strlen(di->diskette[0].name) + 1);
-    saveStateSetBuffer(state, "diskInZip00", di->diskette[0].inZipName, strlen(di->diskette[0].inZipName) + 1);
-    saveStateSet(state, "diskInserted01", di->diskette[1].inserted);
-    saveStateSetBuffer(state, "diskName01",  di->diskette[1].name, strlen(di->diskette[1].name) + 1);
-    saveStateSetBuffer(state, "diskInZip01", di->diskette[1].inZipName, strlen(di->diskette[1].inZipName) + 1);
+    saveStateSet(state, "diskInserted00", di->disks[0].inserted);
+    saveStateSetBuffer(state, "diskName00",  di->disks[0].name, strlen(di->disks[0].name) + 1);
+    saveStateSetBuffer(state, "diskInZip00", di->disks[0].inZipName, strlen(di->disks[0].inZipName) + 1);
+    saveStateSet(state, "diskInserted01", di->disks[1].inserted);
+    saveStateSetBuffer(state, "diskName01",  di->disks[1].name, strlen(di->disks[1].name) + 1);
+    saveStateSetBuffer(state, "diskInZip01", di->disks[1].inZipName, strlen(di->disks[1].inZipName) + 1);
 
-    saveStateSet(state, "casInserted", di->cassette.inserted);
-    saveStateSetBuffer(state, "casName",  di->cassette.name, strlen(di->cassette.name) + 1);
-    saveStateSetBuffer(state, "casInZip", di->cassette.inZipName, strlen(di->cassette.inZipName) + 1);
+    saveStateSet(state, "casInserted", di->tapes[0].inserted);
+    saveStateSetBuffer(state, "casName",  di->tapes[0].name, strlen(di->tapes[0].name) + 1);
+    saveStateSetBuffer(state, "casInZip", di->tapes[0].inZipName, strlen(di->tapes[0].inZipName) + 1);
 
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
@@ -521,11 +521,11 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
     }
 
     if (boardDeviceInfo != NULL) {
-        boardDeviceInfo->cartridge[cartNo].inserted = cart != NULL;
-        boardDeviceInfo->cartridge[cartNo].type = romType;
+        boardDeviceInfo->carts[cartNo].inserted = cart != NULL;
+        boardDeviceInfo->carts[cartNo].type = romType;
 
-        strcpy(boardDeviceInfo->cartridge[cartNo].name, cart ? cart : "");
-        strcpy(boardDeviceInfo->cartridge[cartNo].inZipName, cartZip ? cartZip : "");
+        strcpy(boardDeviceInfo->carts[cartNo].name, cart ? cart : "");
+        strcpy(boardDeviceInfo->carts[cartNo].inZipName, cartZip ? cartZip : "");
     }
 
     if (cart == NULL) {
@@ -558,16 +558,16 @@ void boardChangeDiskette(int driveId, char* fileName, const char* fileInZipFile)
     }
 
     if (boardDeviceInfo != NULL) {
-        boardDeviceInfo->diskette[driveId].inserted = fileName != NULL;
+        boardDeviceInfo->disks[driveId].inserted = fileName != NULL;
 
-        strcpy(boardDeviceInfo->diskette[driveId].name, fileName ? fileName : "");
-        strcpy(boardDeviceInfo->diskette[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
+        strcpy(boardDeviceInfo->disks[driveId].name, fileName ? fileName : "");
+        strcpy(boardDeviceInfo->disks[driveId].inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
     diskChange(driveId ,fileName, fileInZipFile);
 }
 
-void boardChangeCassette(char* name, const char* fileInZipFile)
+void boardChangeCassette(int tapeId, char* name, const char* fileInZipFile)
 {
     if (name && strlen(name) == 0) {
         name = NULL;
@@ -578,10 +578,10 @@ void boardChangeCassette(char* name, const char* fileInZipFile)
     }
 
     if (boardDeviceInfo != NULL) {
-        boardDeviceInfo->cassette.inserted = name != NULL;
+        boardDeviceInfo->tapes[tapeId].inserted = name != NULL;
 
-        strcpy(boardDeviceInfo->cassette.name, name ? name : "");
-        strcpy(boardDeviceInfo->cassette.inZipName, fileInZipFile ? fileInZipFile : "");
+        strcpy(boardDeviceInfo->tapes[tapeId].name, name ? name : "");
+        strcpy(boardDeviceInfo->tapes[tapeId].inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
 //    return tapeInsert(name, fileInZipFile);
