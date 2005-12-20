@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-20 07:07:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -821,6 +821,10 @@ void actionMenuCart1(int x, int y) {
 
 void actionMenuCart2(int x, int y) {
     archShowMenuCart2(x, y);
+}
+
+void actionMenuHarddisk(int x, int y) {
+    archShowMenuHarddisk(x, y);
 }
 
 void actionMenuDiskA(int x, int y) {

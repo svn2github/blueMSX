@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-12-19 07:44:25 $
+** $Date: 2005-12-20 07:07:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -626,6 +626,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartGameReader      = "Game Reader";
     ls->menuCartInsertSpecial   = "Insert Special";
     ls->menuCartMegaRam         = "MegaRAM";
+    ls->menuFileHarddisk        = "Hard Disk";
+    ls->menuFileHarddiskNoPesent= "No Controllers present";
 };
 
 

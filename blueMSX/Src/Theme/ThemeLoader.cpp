@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-20 07:07:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-file"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuFile; }
     if (0 == strcmp(action, "menu-cart1"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCart1; }
     if (0 == strcmp(action, "menu-cart2"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCart2; }
+    if (0 == strcmp(action, "menu-harddisk"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuHarddisk; }
     if (0 == strcmp(action, "menu-diska"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskA; }
     if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
     if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }

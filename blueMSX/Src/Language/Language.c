@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-12-19 07:44:25 $
+** $Date: 2005-12-20 07:07:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -394,6 +394,8 @@ _TCHAR* langMenuFileQSaveState() { return ls->menuFileQSaveState; }
 _TCHAR* langMenuFileCaptureAudio() { return ls->menuFileCaptureAudio; }
 _TCHAR* langMenuFileScreenShot() { return ls->menuFileScreenShot; }
 _TCHAR* langMenuFileExit() { return ls->menuFileExit; }
+_TCHAR* langMenuFileHarddisk() { return ls->menuFileHarddisk; }
+_TCHAR* langMenuFileHarddiskNoPresent() { return ls->menuFileHarddiskNoPesent; }
 
 _TCHAR* langMenuRunRun() { return ls->menuRunRun; }
 _TCHAR* langMenuRunPause() { return ls->menuRunPause; }

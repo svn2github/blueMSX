@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-12-19 07:44:25 $
+** $Date: 2005-12-20 07:07:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,6 +122,8 @@ typedef struct {
     _TCHAR* menuFileCaptureAudio;
     _TCHAR* menuFileScreenShot;
     _TCHAR* menuFileExit;
+    _TCHAR* menuFileHarddisk;
+    _TCHAR* menuFileHarddiskNoPesent;
 
     _TCHAR* menuRunRun;
     _TCHAR* menuRunPause;

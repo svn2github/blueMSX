@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-20 07:07:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -239,6 +239,7 @@ static HMENU hMenuCartSpecialB = NULL;
 static HMENU hMenuVideoConnect = NULL;
 static HMENU hMenuCartA = NULL;
 static HMENU hMenuCartB = NULL;
+static HMENU hMenuHarddisk = NULL;
 static HMENU hMenuRun = NULL;
 static HMENU hMenuDiskA = NULL;
 static HMENU hMenuDiskB = NULL;
@@ -478,6 +479,17 @@ static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
+static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
+{
+    HMENU hMenu = CreatePopupMenu();
+
+    setMenuColor(hMenu);
+
+    AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
+
+    return hMenu;
+}
+
 static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 {
     _TCHAR langBuffer[560];
@@ -665,6 +677,8 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(1, pProperties, shortcuts), langMenuFileDiskB());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), langMenuFileCas());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateHarddisk(pProperties, shortcuts), langMenuFileHarddisk());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreatePrinter(pProperties, shortcuts), langMenuFilePrn());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -930,6 +944,7 @@ void menuUpdate(Properties* pProperties,
     if (hMenuVideoConnect) DestroyMenu(hMenuVideoConnect);
     if (hMenuCartA) DestroyMenu(hMenuCartA);
     if (hMenuCartB) DestroyMenu(hMenuCartB);
+    if (hMenuHarddisk) DestroyMenu(hMenuHarddisk);
     if (hMenuRun) DestroyMenu(hMenuRun);
     if (hMenuDiskA) DestroyMenu(hMenuDiskA);
     if (hMenuDiskB) DestroyMenu(hMenuDiskB);
@@ -949,6 +964,7 @@ void menuUpdate(Properties* pProperties,
     hMenuVideoConnect  = menuCreateVideoConnect(pProperties, shortcuts);
     hMenuCartA         = menuCreateCart(0, pProperties, shortcuts, enableSpecial);
     hMenuCartB         = menuCreateCart(1, pProperties, shortcuts, enableSpecial);
+    hMenuHarddisk      = menuCreateHarddisk(pProperties, shortcuts);
     hMenuRun           = menuCreateRun(pProperties, shortcuts, isRunning, isStopped);
     hMenuDiskA         = menuCreateDisk(0, pProperties, shortcuts);
     hMenuDiskB         = menuCreateDisk(1, pProperties, shortcuts);
@@ -1032,6 +1048,10 @@ void archShowMenuCart1(int x, int y) {
 
 void archShowMenuCart2(int x, int y) {
     showPopupMenu(hMenuCartB, x, y);
+}
+
+void archShowMenuHarddisk(int x, int y) {
+    showPopupMenu(hMenuHarddisk, x, y);
 }
 
 void archShowMenuDiskA(int x, int y) {
