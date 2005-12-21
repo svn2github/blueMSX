@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchFile.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-25 07:39:06 $
+** $Date: 2005-12-21 04:04:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,8 @@ char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romT
 char* archFilenameGetOpenDisk(Properties* properties, int drive);
 
 char* archFilenameGetOpenCas(Properties* properties);
+
+char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCreate);
 
 char* archFilenameGetSaveCas(Properties* properties, int* type);
 

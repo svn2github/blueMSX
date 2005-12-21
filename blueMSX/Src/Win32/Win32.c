@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.117 $
+** $Revision: 1.118 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-21 04:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2937,8 +2937,8 @@ void archSetCurrentDirectory(const char* pathname)
 
 char* archDirnameGetOpenDisk(Properties* properties, int drive)
 {
-    char* title = drive == 2 ? langDlgInsertDiskB() : langDlgInsertDiskA();
-    char* defaultDir = drive == 2 ? properties->media.disks[1].directory : properties->media.disks[0].directory;
+    char* title = drive == 1 ? langDlgInsertDiskB() : langDlgInsertDiskA();
+    char* defaultDir = properties->media.disks[drive].directory;
     char* filename;
 
     enterDialogShow();
@@ -2986,10 +2986,10 @@ char* archFilenameGetOpenState(Properties* properties)
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType) 
 {
     char* defaultDir = properties->cartridge.defDir;
-    int* selectedExtension = &properties->media.carts[0].extensionFilter;
+    int* selectedExtension = &properties->media.carts[cartSlot].extensionFilter;
     char* defautExtension = ".rom";
     char* extensions = ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0";
-    char* title = cartSlot == 2 ? langDlgInsertRom2() : langDlgInsertRom1();
+    char* title = cartSlot == 1 ? langDlgInsertRom2() : langDlgInsertRom1();
     char* fileName;
     char extensionList[512];
     sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
@@ -3027,11 +3027,11 @@ char* archFilenameGetOpenCas(Properties* properties)
 
 char* archFilenameGetOpenDisk(Properties* properties, int drive)
 {
-    char* title = drive == 2 ? langDlgInsertDiskB() : langDlgInsertDiskA();
+    char* title = drive == 1 ? langDlgInsertDiskB() : langDlgInsertDiskA();
     char  extensionList[512];
     char* defaultDir = properties->diskdrive.defDir;
     char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
-    int* selectedExtension = drive == 2 ? &properties->media.disks[1].extensionFilter : &properties->media.disks[0].extensionFilter;
+    int* selectedExtension = &properties->media.disks[drive].extensionFilter;
     char* defautExtension = ".dsk";
     int createFileSize = 720 * 1024;
     char* fileName;
@@ -3045,6 +3045,11 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive)
     SetCurrentDirectory(st.pCurDir);
 
     return fileName;
+}
+
+char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCreate)
+{
+    return NULL;
 }
 
 char* archFilenameGetSaveCas(Properties* properties, int* type)

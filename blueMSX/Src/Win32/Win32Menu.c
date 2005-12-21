@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-12-20 08:11:21 $
+** $Date: 2005-12-21 04:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,14 +45,52 @@
 #include "JoystickPort.h"
 
 
-#define ID_FILE                         40010
-#define ID_FILE_LOAD                    40011
-#define ID_FILE_SAVE                    40012
-#define ID_FILE_QLOAD                   40013
-#define ID_FILE_QSAVE                   40014
-#define ID_LOG_WAV                      40015
-#define ID_PRT_SCR                      40016
-#define ID_FILE_EXIT                    40017
+
+#define ID_VIDEO_CONNECTORS             30250
+#define ID_CTRLPORT1_BASE               30300
+#define ID_CTRLPORT2_BASE               30350
+#define ID_TOOLPLUGINS                  30400
+
+#define ID_FILE                         40011
+#define ID_FILE_LOAD                    40012
+#define ID_FILE_SAVE                    40013
+#define ID_FILE_QLOAD                   40014
+#define ID_FILE_QSAVE                   40015
+#define ID_FILE_LOGWAV                  40016
+#define ID_FILE_PTRSCR                  40017
+#define ID_FILE_EXIT                    40018
+#define ID_FILE_PRINTER_FORMFEED        40019
+
+#define ID_RUN_RUN                      40021
+#define ID_RUN_PAUSE                    40022
+#define ID_RUN_STOP                     40023
+#define ID_RUN_RESET                    40024
+#define ID_RUN_SOFTRESET                40025
+#define ID_RUN_CLEANRESET               40026
+
+#define ID_VIDEO_AUTODETECT             40031
+#define ID_SIZE_NORMAL                  40032
+#define ID_SIZE_X2                      40033
+#define ID_SIZE_FULLSCREEN              40034
+#define ID_SIZE_MINIMIZED               40035
+
+#define ID_OPTIONS_EMULATION            40041
+#define ID_OPTIONS_AUDIO                40042
+#define ID_OPTIONS_VIDEO                40043
+#define ID_OPTIONS_PERFORMANCE          40044
+#define ID_OPTIONS_SETTINGS             40045
+#define ID_OPTIONS_LANGUAGE             40046
+#define ID_OPTIONS_APEARANCE            40047
+#define ID_OPTIONS_PORTS                40048
+
+#define ID_HELP_HELP                    40051
+#define ID_HELP_ABOUT                   40052
+
+#define ID_TOOLS_MACHINEEDITOR          40064
+#define ID_TOOLS_SHORTCUTSEDITOR        40065
+#define ID_TOOLS_KEYBOARDEDITOR         40066
+#define ID_TOOLS_MIXER                  40061
+
 
 #define ID_FILE_CART_OFFSET               100
 
@@ -99,110 +137,15 @@
 #define ID_FILE_TAPE_AUTOREWNIND        41406
 #define ID_FILE_TAPE_HISTORY            41407
 
-#if 0
-#define ID_FILE_CARTA_FMPAC             40037
-#define ID_FILE_CARTB_FMPAC             40038
-#define ID_FILE_CARTA_PAC               40039
-#define ID_FILE_CARTB_PAC               40040
-#define ID_FILE_CARTA_MEGARAM128        40041
-#define ID_FILE_CARTB_MEGARAM128        40042
-#define ID_FILE_CARTA_MEGARAM256        40043
-#define ID_FILE_CARTB_MEGARAM256        40044
-#define ID_FILE_CARTA_MEGARAM512        40045
-#define ID_FILE_CARTB_MEGARAM512        40046
-#define ID_FILE_CARTA_MEGARAM768        40047
-#define ID_FILE_CARTB_MEGARAM768        40048
-#define ID_FILE_CARTA_MEGARAM2M         40049
-#define ID_FILE_CARTB_MEGARAM2M         40050
-#define ID_FILE_CARTA_SNATCHER          40051
-#define ID_FILE_CARTB_SNATCHER          40052
-#define ID_FILE_CARTA_SDSNATCHER        40053
-#define ID_FILE_CARTB_SDSNATCHER        40054
-#define ID_FILE_CARTA_SCCMIRRORED       40055
-#define ID_FILE_CARTB_SCCMIRRORED       40056
-#define ID_FILE_CARTA_SCCEXPANDED       40057
-#define ID_FILE_CARTB_SCCEXPANDED       40058
-#define ID_FILE_CARTA_SCC               40059
-#define ID_FILE_CARTB_SCC               40060
-#define ID_FILE_CARTA_SCCPLUS           40061
-#define ID_FILE_CARTB_SCCPLUS           40062
-#define ID_FILE_CARTA_EXTRAM512KB       40063
-#define ID_FILE_CARTB_EXTRAM512KB       40064
-#define ID_FILE_CARTA_EXTRAM1MB         40065
-#define ID_FILE_CARTB_EXTRAM1MB         40066
-#define ID_FILE_CARTA_EXTRAM2MB         40067
-#define ID_FILE_CARTB_EXTRAM2MB         40068
-#define ID_FILE_CARTA_EXTRAM4MB         40069
-#define ID_FILE_CARTB_EXTRAM4MB         40070
-#define ID_FILE_CARTA_SONYHBI55         40071
-#define ID_FILE_CARTB_SONYHBI55         40072
-#define ID_FILE_CARTA_GAMEREADER        40075
-#define ID_FILE_CARTB_GAMEREADER        40076
 
-#define ID_FILE_INSERT_CARTRIDGEA       40018
-#define ID_FILE_INSERT_CARTRIDGEB       40019
-#define ID_FILE_REMOVE_CARTRIDGEA       40020
-#define ID_FILE_REMOVE_CARTRIDGEB       40021
-#define ID_FILE_CARTRIDGE_AUTORESET     40022
-#define ID_CARTRIDGEA_HISTORY           30000
-#define ID_CARTRIDGEB_HISTORY           30050
+#define ID_HARDDISK_OFFSET                 50
+#define ID_HARDDISK_COUNT                  30
 
-#define ID_FILE_INSERT_DISKETTEA        40023
-#define ID_FILE_INSERT_DISKETTEDIRA     40024
-#define ID_FILE_INSERT_DISKETTEA_RESET  40025
-#define ID_FILE_INSERT_DISKETTEB        40026
-#define ID_FILE_INSERT_DISKETTEDIRB     40027
-#define ID_FILE_REMOVE_DISKETTEA        40028
-#define ID_FILE_REMOVE_DISKETTEB        40029
-#define ID_DISKDRIVEA_HISTORY           30100
-#define ID_DISKDRIVEB_HISTORY           30150
-
-#define ID_FILE_INSERT_CASSETTE         40030
-#define ID_FILE_REMOVE_CASSETTE         40031
-#define ID_FILE_REWIND_CASSETTE         40032
-#define ID_FILE_POSITION_CASSETTE       40033
-#define ID_FILE_SAVE_CASSETTE           40034
-#define ID_FILE_READONLY_CASSETTE       40035
-#define ID_FILE_AUTOREWNIND_CASSETTE    40036
-#endif
-
-
-#define ID_VIDEO_AUTODETECT             40073
-#define ID_FILE_PRINTER_FORMFEED        40074
-
-#define ID_VIDEO_CONNECTORS             30250
-#define ID_CTRLPORT1_BASE               30300
-#define ID_CTRLPORT2_BASE               30350
-#define ID_TOOLPLUGINS                  30400
-
-#define ID_RUN_RUN                      40081
-#define ID_RUN_PAUSE                    40082
-#define ID_RUN_STOP                     40083
-#define ID_RUN_RESET                    40084
-#define ID_RUN_SOFTRESET                40085
-#define ID_RUN_CLEANRESET               40086
-
-#define ID_SIZE_NORMAL                  40157
-#define ID_SIZE_X2                      40158
-#define ID_SIZE_FULLSCREEN              40159
-#define ID_SIZE_MINIMIZED               40160
-
-#define ID_OPTIONS_EMULATION            40121
-#define ID_OPTIONS_AUDIO                40122
-#define ID_OPTIONS_VIDEO                40123
-#define ID_OPTIONS_PERFORMANCE          40124
-#define ID_OPTIONS_SETTINGS             40125
-#define ID_OPTIONS_LANGUAGE             40126
-#define ID_OPTIONS_APEARANCE            40127
-#define ID_OPTIONS_PORTS                40128
-
-#define ID_HELP_HELP                    40151
-#define ID_HELP_ABOUT                   40152
-
-#define ID_TOOLS_MACHINEEDITOR          40154
-#define ID_TOOLS_SHORTCUTSEDITOR        40155
-#define ID_TOOLS_KEYBOARDEDITOR         40156
-#define ID_TOOLS_MIXER                  40161
+#define ID_HARDDISK_INSERT              41500
+#define ID_HARDDISK_INSERTNEW           41501
+#define ID_HARDDISK_INSERTDIR           41502
+#define ID_HARDDISK_REMOVE              41503
+#define ID_HARDDISK_HISTORY             41504
 
 
 
@@ -482,16 +425,17 @@ static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
-static HMENU menuCreateIdeHd(int diskId, Properties* pProperties, Shortcuts* shortcuts)
+static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* shortcuts)
 {
+    int idOffset = diskNo * ID_HARDDISK_OFFSET;
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskInsert());
-    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskInsertNew());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuDiskInsert());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenu, MF_STRING, 0, langMenuDiskEject());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_REMOVE, langMenuDiskEject());
 
     return hMenu;
 }
@@ -728,10 +672,10 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileCaptureAudio(), shortcutsToString(shortcuts->wavCapture));
-    AppendMenu(hMenu, MF_STRING | (logSound ? MFS_CHECKED : 0), ID_LOG_WAV, menuBuffer);
+    AppendMenu(hMenu, MF_STRING | (logSound ? MFS_CHECKED : 0), ID_FILE_LOGWAV, menuBuffer);
 
     _stprintf(menuBuffer, "%s        \t%hs", langMenuFileScreenShot(), shortcutsToString(shortcuts->screenCapture));
-    AppendMenu(hMenu, MF_STRING, ID_PRT_SCR, menuBuffer);
+    AppendMenu(hMenu, MF_STRING, ID_FILE_PTRSCR, menuBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);  
 
@@ -1130,13 +1074,15 @@ int menuCommand(Properties* pProperties, int command)
 
     // Parse Cart Menu Items
     for (i = 0; i < 2; i++) {
-        h = command - i * ID_FILE_CART_OFFSET - ID_FILE_CART_HISTORY;
+        int cmd = command - i * ID_FILE_CART_OFFSET;
+        
+        h = cmd - ID_FILE_CART_HISTORY;
         if (h >= 0 && h < MAX_HISTORY) {
             insertCartridge(pProperties, i, pProperties->filehistory.cartridge[i][h], NULL, pProperties->filehistory.cartridgeType[i][h], 0);
             return 1;
         }
 
-        switch (command - i * ID_FILE_CART_OFFSET) {
+        switch (cmd) {
         case ID_FILE_CART_EXTRAM512KB:
             insertCartridge(pProperties, i, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
             return 1;
@@ -1211,13 +1157,15 @@ int menuCommand(Properties* pProperties, int command)
 
     // Parse Disk Menu Items
     for (i = 0; i < 2; i++) {
-        h = command - i * ID_FILE_DISK_OFFSET - ID_FILE_DISK_HISTORY;
+        int cmd = command - i * ID_FILE_DISK_OFFSET;
+        
+        h = cmd - ID_FILE_DISK_HISTORY;
         if (h >= 0 && h < MAX_HISTORY) {
             insertDiskette(pProperties, i, pProperties->filehistory.diskdrive[i][h], NULL, 0);
             return 1;
         }
 
-        switch (command - i * ID_FILE_DISK_OFFSET) {
+        switch (cmd) {
         case ID_FILE_DISK_INSERT: 
             actionDiskInsert(i);
             return 0;
@@ -1241,6 +1189,32 @@ int menuCommand(Properties* pProperties, int command)
             tapeSetCurrentPos(0);
         }
         return 1;
+    }
+
+    // Parse Harddisk Menu Items
+    for (i = 0; i < ID_HARDDISK_COUNT; i++) {
+        int cmd = command - i * ID_HARDDISK_OFFSET;
+        
+        h = command - ID_HARDDISK_HISTORY;
+        if (h >= 0 && h < MAX_HISTORY) {
+            return 1;   
+        }
+
+        switch (cmd) {
+        case ID_HARDDISK_INSERT: 
+            actionHarddiskInsert(i); 
+            return 0;
+        case ID_HARDDISK_INSERTNEW:
+            actionHarddiskInsertNew(i); 
+            return 0;
+        case ID_HARDDISK_INSERTDIR:
+            actionHarddiskInsertDir(i);
+            return 0;
+        case ID_HARDDISK_REMOVE:
+            actionHarddiskRemove(i);
+            return 0;
+        }
+        
     }
 
     switch (command) {
@@ -1289,12 +1263,12 @@ int menuCommand(Properties* pProperties, int command)
         pProperties->video.chipAutodetect = !pProperties->video.chipAutodetect;
         boardSetVideoAutodetect(pProperties->video.chipAutodetect);
         return 0;
-    case ID_PRT_SCR:                        actionScreenCapture();          return 0;
+    case ID_FILE_PTRSCR:                        actionScreenCapture();          return 0;
     case ID_FILE_SAVE:                      actionSaveState();              return 0;
     case ID_FILE_LOAD:                      actionLoadState();              return 0;
     case ID_FILE_QSAVE:                     actionQuickSaveState();         return 0;
     case ID_FILE_QLOAD:                     actionQuickLoadState();         return 0;
-    case ID_LOG_WAV:                        actionToggleWaveCapture();      return 0;
+    case ID_FILE_LOGWAV:                        actionToggleWaveCapture();      return 0;
     case ID_FILE_EXIT:                      actionQuit();                   return 0;
     case ID_SIZE_NORMAL:                    actionWindowSizeSmall();        return 0;
     case ID_SIZE_X2:                        actionWindowSizeNormal();       return 0;

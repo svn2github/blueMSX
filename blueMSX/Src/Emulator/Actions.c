@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2005-12-20 08:11:21 $
+** $Date: 2005-12-21 04:04:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,7 +73,7 @@ void actionCartInsert(int cartNo)
     char* filename;
 
     emulatorSuspend();
-    filename = archFilenameGetOpenRom(state.properties, cartNo + 1, &romType);
+    filename = archFilenameGetOpenRom(state.properties, cartNo, &romType);
     if (filename != NULL) {        
         insertCartridge(state.properties, cartNo, filename, NULL, romType, 0);
     }
@@ -88,7 +88,7 @@ void actionDiskInsert(int diskNo)
     char* filename;
 
     emulatorSuspend();
-    filename = archFilenameGetOpenDisk(state.properties, diskNo + 1);
+    filename = archFilenameGetOpenDisk(state.properties, diskNo);
     if (filename != NULL) {        
         insertDiskette(state.properties, diskNo, filename, NULL, 0);
     }
@@ -101,12 +101,68 @@ void actionDiskInsertDir(int diskNo)
     char* filename;
 
     emulatorSuspend();
-    filename = archDirnameGetOpenDisk(state.properties, diskNo + 1);
+    filename = archDirnameGetOpenDisk(state.properties, diskNo);
     if (filename != NULL) {        
         strcpy(state.properties->media.disks[diskNo].directory, filename);
         insertDiskette(state.properties, diskNo, filename, NULL, 0);
     }
     emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionDiskRemove(int i) {
+    state.properties->media.disks[i].fileName[0] = 0;
+    state.properties->media.disks[i].fileNameInZip[0] = 0;
+    updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorSuspend();
+        boardChangeDiskette(i, NULL, NULL);
+        emulatorResume();
+    }
+    archUpdateMenu(0);
+}
+
+void actionHarddiskInsert(int diskNo)
+{
+    char* filename;
+
+    emulatorSuspend();
+    filename = archFilenameGetOpenHarddisk(state.properties, diskNo + 1, 0);
+    if (filename != NULL) {        
+        insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
+    }
+    emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionHarddiskInsertNew(int diskNo)
+{
+    char* filename;
+
+    emulatorSuspend();
+    filename = archFilenameGetOpenHarddisk(state.properties, diskNo + 1, 1);
+    if (filename != NULL) {        
+        insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
+    }
+    emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionHarddiskInsertDir(int diskNo)
+{
+}
+
+void actionHarddiskRemove(int i)
+{
+    i += 2; // FIXME: Fix Harddisk offset
+    state.properties->media.disks[i].fileName[0] = 0;
+    state.properties->media.disks[i].fileNameInZip[0] = 0;
+    updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorSuspend();
+        boardChangeDiskette(i, NULL, NULL);
+        emulatorResume();
+    }
     archUpdateMenu(0);
 }
 
@@ -525,18 +581,6 @@ void actionCartRemove(int i) {
     }
     else {
         boardChangeCartridge(i, ROM_UNKNOWN, NULL, NULL);
-    }
-    archUpdateMenu(0);
-}
-
-void actionDiskRemove(int i) {
-    state.properties->media.disks[i].fileName[0] = 0;
-    state.properties->media.disks[i].fileNameInZip[0] = 0;
-    updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
-    if (emulatorGetState() != EMU_STOPPED) {
-        emulatorSuspend();
-        boardChangeDiskette(i, NULL, NULL);
-        emulatorResume();
     }
     archUpdateMenu(0);
 }
