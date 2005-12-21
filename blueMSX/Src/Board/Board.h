@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2005-12-20 06:31:08 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,7 +57,7 @@ typedef struct {
     struct {
         VdpSyncMode vdpSyncMode;
     } video;
-} DeviceInfo;
+} BoardDeviceInfo;
 
 typedef struct {
     int  cartridgeCount;
@@ -85,7 +85,7 @@ typedef struct {
 void boardInit(UInt32* systemTime);
 
 int boardRun(Machine* machine, 
-             DeviceInfo* deviceInfo,
+             BoardDeviceInfo* deviceInfo,
              Mixer* mixer,
              char* stateFile,
              int frequency,

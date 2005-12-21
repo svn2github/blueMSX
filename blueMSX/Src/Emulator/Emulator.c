@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-12-20 00:39:39 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,7 +74,7 @@ static volatile EmuState emuState = EMU_STOPPED;
 static volatile int      emuSingleStep = 0;
 static Properties* properties;
 static Mixer* mixer;
-static DeviceInfo deviceInfo;
+static BoardDeviceInfo deviceInfo;
 static Machine* machine;
 static int lastScreenMode;
 
@@ -288,7 +288,7 @@ void timerCallback(void* timer) {
     emulatorRunOne();
 }
 
-static void getDeviceInfo(DeviceInfo* deviceInfo) 
+static void getDeviceInfo(BoardDeviceInfo* deviceInfo) 
 {
     int i;
 
@@ -315,7 +315,7 @@ static void getDeviceInfo(DeviceInfo* deviceInfo)
 
 }
 
-static void setDeviceInfo(DeviceInfo* deviceInfo) 
+static void setDeviceInfo(BoardDeviceInfo* deviceInfo) 
 {
     int i;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-20 21:24:29 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,7 +203,7 @@ int romMapperGIdeCreate(const char* fileName)
 
     rm = malloc(sizeof(RomMapperGIde));
     
-//    rm->deviceHandle = deviceManagerRegister(ROM_GIDE, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_GIDE, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "GIDE", &dbgCallbacks, rm);
 
     ioPortRegister(0x44, readIo, writeIo, rm);

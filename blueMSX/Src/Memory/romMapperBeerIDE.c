@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-21 00:22:02 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ int romMapperBeerIdeCreate(const char* diskFileName, char* fileName, UInt8* romD
 
     rm = malloc(sizeof(RomMapperBeerIde));
     
-//    rm->deviceHandle = deviceManagerRegister(ROM_BEERIDE, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_BEERIDE, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "Beer IDE", &dbgCallbacks, rm);
     rm->i8255 = i8255Create( NULL, readA, writeA,
                              NULL, readB, writeB,

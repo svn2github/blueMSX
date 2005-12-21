@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-12-20 08:11:20 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ static int fdcTimingEnable = 1;
 static int fdcActive       = 0;
 static BoardTimer* fdcTimer;
 static BoardTimer* syncTimer;
-static DeviceInfo* boardDeviceInfo;
+static BoardDeviceInfo* boardDeviceInfo;
 static Machine* boardMachine;
 static BoardInfo boardInfo;
 static UInt32 boardRamSize;
@@ -181,7 +181,7 @@ int boardRemoveExternalDevices()
 }
 
 int boardRun(Machine* machine, 
-             DeviceInfo* deviceInfo,
+             BoardDeviceInfo* deviceInfo,
              Mixer* mixer,
              char* stateFile,
              int frequency,
@@ -222,6 +222,7 @@ int boardRun(Machine* machine,
 
     boardSetFrequency(frequency);
 
+    boardRunning = 1;
     switch (boardType) {
     case BOARD_MSX:
         success = msxCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
@@ -238,6 +239,7 @@ int boardRun(Machine* machine,
     default:
         success = 0;
     }
+    boardRunning = 0;
 
     if (success && loadState) {
         boardInfo.loadState();
@@ -249,7 +251,6 @@ int boardRun(Machine* machine,
         
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
 
-        boardRunning = 1;
         boardInfo.run(boardInfo.cpuRef);
         boardRunning = 0;
 
@@ -315,7 +316,7 @@ void boardReset()
 
 static BoardType boardLoadState(const char* stateFile)
 {
-    DeviceInfo* di = boardDeviceInfo;
+    BoardDeviceInfo* di = boardDeviceInfo;
     SaveState* state;
     BoardType boardType;
     char* version;
@@ -377,7 +378,7 @@ static BoardType boardLoadState(const char* stateFile)
 
 void boardSaveState(const char* stateFile)
 {
-    DeviceInfo* di = boardDeviceInfo;
+    BoardDeviceInfo* di = boardDeviceInfo;
     char buf[128];
     time_t ltime;
     SaveState* state;

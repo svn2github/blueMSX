@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2005-12-21 03:34:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -193,6 +193,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
         properties->media.tapes[i].type = 0;
     }
     
+    properties->cartridge.defDir[0]    = 0;
     properties->cartridge.defaultType  = ROM_UNKNOWN;
     properties->cartridge.autoReset    = 1;
     properties->cartridge.quickStartDrive = 0;
@@ -201,6 +202,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->diskdrive.autostartA   = 0;
     properties->diskdrive.quickStartDrive = 0;
 
+    properties->cassette.defDir[0]       = 0;
     properties->cassette.showCustomFiles = 1;
     properties->cassette.readOnly        = 1;
     properties->cassette.autoRewind      = 0;
