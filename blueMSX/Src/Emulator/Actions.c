@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2005-12-21 04:04:30 $
+** $Date: 2005-12-21 08:02:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -127,7 +127,7 @@ void actionHarddiskInsert(int diskNo)
     char* filename;
 
     emulatorSuspend();
-    filename = archFilenameGetOpenHarddisk(state.properties, diskNo + 1, 0);
+    filename = archFilenameGetOpenHarddisk(state.properties, diskNo, 0);
     if (filename != NULL) {        
         insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
     }
@@ -140,7 +140,7 @@ void actionHarddiskInsertNew(int diskNo)
     char* filename;
 
     emulatorSuspend();
-    filename = archFilenameGetOpenHarddisk(state.properties, diskNo + 1, 1);
+    filename = archFilenameGetOpenHarddisk(state.properties, diskNo, 1);
     if (filename != NULL) {        
         insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2005-12-21 03:34:58 $
+** $Date: 2005-12-21 08:02:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -239,7 +239,6 @@ int boardRun(Machine* machine,
     default:
         success = 0;
     }
-    boardRunning = 0;
 
     if (success && loadState) {
         boardInfo.loadState();
@@ -252,13 +251,14 @@ int boardRun(Machine* machine,
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
 
         boardInfo.run(boardInfo.cpuRef);
-        boardRunning = 0;
 
         boardInfo.destroy();
 
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(syncTimer);
     }
+
+    boardRunning = 0;
 
     return success;
 }

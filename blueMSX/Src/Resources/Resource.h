@@ -99,6 +99,7 @@
 #define IDD_PORTS                       127
 
 #define IDD_OPEN_STATEDIALOG            128
+#define IDD_OPEN_HDSIZEDROPDOWN         129
 
 #define IDD_BUTTON                      130
 #define IDD_DROPDOWN                    131
@@ -393,6 +394,9 @@
 
 #define IDC_OPEN_ROMTEXT                2600
 #define IDC_OPEN_ROMTYPE                2601
+
+#define IDC_OPEN_HDSIZE                 2650
+#define IDC_OPEN_HDSIZETEXT             2651
 
 #define IDC_SCUTSAVE                    2700
 #define IDC_SCUTSAVEAS                  2701

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-12-21 04:04:30 $
+** $Date: 2005-12-21 08:02:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -411,20 +411,6 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     return hMenu;
 }
 
-
-static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) 
-{
-    _TCHAR langBuffer[560];
-    HMENU hMenu = CreatePopupMenu();
-
-    setMenuColor(hMenu);
-
-    _stprintf(langBuffer, "%s      \t%hs", langMenuPrnFormfeed(), shortcutsToString(shortcuts->prnFormFeed));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_PRINTER_FORMFEED, langBuffer);
-
-    return hMenu;
-}
-
 static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* shortcuts)
 {
     int idOffset = diskNo * ID_HARDDISK_OFFSET;
@@ -435,7 +421,7 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuDiskInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_REMOVE, langMenuDiskEject());
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langMenuDiskEject());
 
     return hMenu;
 }
@@ -508,6 +494,19 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
         _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cassette[0][i]));
         AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
     }
+
+    return hMenu;
+}
+
+static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) 
+{
+    _TCHAR langBuffer[560];
+    HMENU hMenu = CreatePopupMenu();
+
+    setMenuColor(hMenu);
+
+    _stprintf(langBuffer, "%s      \t%hs", langMenuPrnFormfeed(), shortcutsToString(shortcuts->prnFormFeed));
+    AppendMenu(hMenu, MF_STRING, ID_FILE_PRINTER_FORMFEED, langBuffer);
 
     return hMenu;
 }
