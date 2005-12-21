@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-12-21 03:34:58 $
+** $Date: 2005-12-21 22:34:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,29 +106,29 @@ static UInt8 readIo(RomMapperGIde* rm, UInt16 ioPort)
 {
 	switch (ioPort)
 	{
-	case 0x44:			/* Reserved for expansion board */
+	case 0x44:		/* Reserved for expansion board */
 		return 0xff;
-	case 0x45:			/* RTC 72421 */
+	case 0x45:		/* RTC 72421 */
 		return 0xff;
-	case 0x46:			/* GIDE alternate status */
+	case 0x46:		/* GIDE alternate status */
 		return rm->altStatus;
-	case 0x47:			/* GIDE drive address register */
+	case 0x47:		/* GIDE drive address register */
 		return rm->drvSelect;
-	case 0x48:			/* IDE data register */
-		return harddiskIdeReadRegister(rm->hdide, 0);
-	case 0x49:			/* IDE error register */
+	case 0x48:		/* IDE data register */
+		return (UInt8)harddiskIdeRead(rm->hdide);
+	case 0x49:		/* IDE error register */
 		return harddiskIdeReadRegister(rm->hdide, 1);
-	case 0x4a:			/* IDE sector count register */
+	case 0x4a:		/* IDE sector count register */
 		return harddiskIdeReadRegister(rm->hdide, 2);
-	case 0x4b:			/* IDE sector number register */
+	case 0x4b:		/* IDE sector number register */
 		return harddiskIdeReadRegister(rm->hdide, 3);
-	case 0x4c:			/* IDE cylinder low register */
+	case 0x4c:		/* IDE cylinder low register */
 		return harddiskIdeReadRegister(rm->hdide, 4);
-	case 0x4d:			/* IDE cylinder high register */
+	case 0x4d:		/* IDE cylinder high register */
 		return harddiskIdeReadRegister(rm->hdide, 5);
-	case 0x4e:			/* IDE drive/head register */
+	case 0x4e:		/* IDE drive/head register */
 		return harddiskIdeReadRegister(rm->hdide, 6);
-	case 0x4f:			/* IDE status register */
+	case 0x4f:		/* IDE status register */
 		rm->altStatus = harddiskIdeReadRegister(rm->hdide, 7);
 		return rm->altStatus;
 
@@ -140,40 +140,40 @@ static void writeIo(RomMapperGIde* rm, UInt16 ioPort, UInt8 value)
 {
 	switch (ioPort)
 	{
-	case 0x44:			/* Reserved for expansion board */
+	case 0x44:		/* Reserved for expansion board */
 		break; 
-	case 0x45:			/* RTC 72421 */
+	case 0x45:		/* RTC 72421 */
 		break; 
-	case 0x46:			/* GIDE digital output register */
+	case 0x46:		/* GIDE digital output register */
 		rm->intEnable = value & 0x01?1:0;
 		if (value & 0x02)
 			harddiskIdeReset(rm->hdide);
 		break; 
-	case 0x47:			/* GIDE drive address register */
+	case 0x47:		/* GIDE drive address register */
 		break; 
-	case 0x48:			/* IDE data register */
-		harddiskIdeWriteRegister(rm->hdide, 0, value);
+	case 0x48:		/* IDE data register */
+		harddiskIdeWrite(rm->hdide, value);
 		break; 
-	case 0x49:			/* IDE write precomp register */
+	case 0x49:		/* IDE write precomp register */
 		harddiskIdeWriteRegister(rm->hdide, 1, value);
 		break; 
-	case 0x4a:			/* IDE sector count register */
+	case 0x4a:		/* IDE sector count register */
 		harddiskIdeWriteRegister(rm->hdide, 2, value);
 		break; 
-	case 0x4b:			/* IDE sector number register */
+	case 0x4b:		/* IDE sector number register */
 		harddiskIdeWriteRegister(rm->hdide, 3, value);
 		break; 
-	case 0x4c:			/* IDE cylinder low register */
+	case 0x4c:		/* IDE cylinder low register */
 		harddiskIdeWriteRegister(rm->hdide, 4, value);
 		break; 
-	case 0x4d:			/* IDE cylinder high register */
+	case 0x4d:		/* IDE cylinder high register */
 		harddiskIdeWriteRegister(rm->hdide, 5, value);
 		break; 
-	case 0x4e:			/* IDE drive/head register */
+	case 0x4e:		/* IDE drive/head register */
 		rm->drvSelect = value;
 		harddiskIdeWriteRegister(rm->hdide, 6, value);
 		break; 
-	case 0x4f:			/* IDE command register */
+	case 0x4f:		/* IDE command register */
 		harddiskIdeWriteRegister(rm->hdide, 7, value);
 		break; 
 	}
