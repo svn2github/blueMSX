@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-12-20 08:11:21 $
+** $Date: 2005-12-21 04:13:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,6 +181,7 @@ typedef struct {
     _TCHAR* dlgInsertRom2;
     _TCHAR* dlgInsertDiskA;
     _TCHAR* dlgInsertDiskB;
+    _TCHAR* dlgInsertHarddisk;
     _TCHAR* dlgInsertCas;
     _TCHAR* dlgRomType;
 

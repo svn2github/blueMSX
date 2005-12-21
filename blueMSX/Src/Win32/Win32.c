@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.118 $
+** $Revision: 1.119 $
 **
-** $Date: 2005-12-21 04:04:30 $
+** $Date: 2005-12-21 04:13:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3049,7 +3049,28 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive)
 
 char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCreate)
 {
-    return NULL;
+    char* title = langDlgInsertHarddisk();
+    char  extensionList[512];
+    char* defaultDir = properties->diskdrive.defDir;
+    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
+    int* selectedExtension = &properties->media.disks[drive].extensionFilter;
+    char* defautExtension = ".dsk";
+    char* fileName;
+
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    replaceCharInString(extensionList, '#', 0);
+
+    enterDialogShow();
+    if (allowCreate) {
+        fileName = openNewHdFile(getMainHwnd(), title, extensionList, defaultDir, defautExtension, selectedExtension);
+    }
+    else {
+        fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, -1, defautExtension, selectedExtension);
+    }
+    exitDialogShow();
+    SetCurrentDirectory(st.pCurDir);
+
+    return fileName;
 }
 
 char* archFilenameGetSaveCas(Properties* properties, int* type)

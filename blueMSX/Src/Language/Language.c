@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2005-12-20 08:11:21 $
+** $Date: 2005-12-21 04:13:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -460,6 +460,7 @@ _TCHAR* langDlgInsertRom1() { return ls->dlgInsertRom1; }
 _TCHAR* langDlgInsertRom2() { return ls->dlgInsertRom2; }
 _TCHAR* langDlgInsertDiskA() { return ls->dlgInsertDiskA; }
 _TCHAR* langDlgInsertDiskB() { return ls->dlgInsertDiskB; }
+_TCHAR* langDlgInsertHarddisk() { return ls->dlgInsertHarddisk; }
 _TCHAR* langDlgInsertCas() { return ls->dlgInsertCas; }
 _TCHAR* langDlgRomType() { return ls->dlgRomType; }
 

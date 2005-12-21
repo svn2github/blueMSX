@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-12-21 04:13:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -664,6 +664,12 @@ UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+                    char* defExt, int* filterIndex)
+{ 
+    return NULL;
 }
 
 char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
