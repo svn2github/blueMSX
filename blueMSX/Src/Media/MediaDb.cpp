@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -147,6 +147,8 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "MoonSound")    return ROM_MOONSOUND;
 
     if (name == "SunriseIDE")   return ROM_SUNRISEIDE;
+    if (name == "BeerIDE")      return ROM_BEERIDE;
+    if (name == "GIDE")         return ROM_GIDE;
 
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
@@ -621,6 +623,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
     case ROM_GAMEREADER:  return "Sunrise GameReader";
     case ROM_SUNRISEIDE:  return "Sunrise IDE";
+    case ROM_BEERIDE:     return "Beer IDE";
+    case ROM_GIDE:        return "GIDE";
 
     case ROM_UNKNOWN:     return langUnknown();
     }
@@ -725,6 +729,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_TURBORPCM:   return "TURBOR PCM";
     case ROM_GAMEREADER:  return "GAMEREADER";
     case ROM_SUNRISEIDE:  return "SUNRISEIDE";
+    case ROM_BEERIDE:     return "BEER IDE";
+    case ROM_GIDE:        return "GIDE";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -794,6 +800,7 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_EXTRAM4MB:   return 1;
     case ROM_GAMEREADER:  return 1;
     case ROM_SUNRISEIDE:  return 1;
+    case ROM_BEERIDE:     return 1;
     }
     return 0;
 }

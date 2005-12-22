@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-20 21:24:52 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,6 @@
  
 #include "MSXTypes.h"
 
-int romMapperGIdeCreate(const char* fileName);
+int romMapperGIdeCreate();
 
 #endif

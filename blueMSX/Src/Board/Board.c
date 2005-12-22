@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-12-22 07:37:58 $
+** $Date: 2005-12-22 09:10:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,8 +70,8 @@ static UInt32 boardRamSize;
 static UInt32 boardVramSize;
 static int boardRunning = 0;
 
-static int staticIdeCount = 0;    
-static int cartIdeCount = 0;
+static int staticIdeCount[5];    
+static int cartIdeCount[5];
 
 static int     useRom;
 static int     useMegaRom;
@@ -280,10 +280,14 @@ void boardSetMachine(Machine* machine)
     int i;
 
     // Update IDE info
-    staticIdeCount = 0;
+    staticIdeCount[IDE_SUNRISE] = 0;
+    staticIdeCount[IDE_GIDE] = 0;
+    staticIdeCount[IDE_BEER] = 0;
     for (i = 0; i < machine->slotInfoCount; i++) {
-        if (machine->slotInfo[i].romType == ROM_SUNRISEIDE) {
-            staticIdeCount++;
+        switch (machine->slotInfo[i].romType) {
+        case ROM_SUNRISEIDE: staticIdeCount[IDE_SUNRISE]++; break;
+        case ROM_GIDE:       staticIdeCount[IDE_GIDE]++;    break;
+        case ROM_BEERIDE:    staticIdeCount[IDE_BEER]++;    break;
         }
     }
 
@@ -525,9 +529,9 @@ int boardUseFmPac()
     return useFmPac;
 }
 
-int boardGetIdeCount()
+int boardGetIdeCount(IdeType ideType)
 {
-    return cartIdeCount + staticIdeCount;
+    return cartIdeCount[ideType] + staticIdeCount[ideType];
 }
 
 void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip)
@@ -552,7 +556,9 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
     useMegaRom -= romTypeIsMegaRom(currentRomType[cartNo]);
     useMegaRam -= romTypeIsMegaRam(currentRomType[cartNo]);
     useFmPac   -= romTypeIsFmPac(currentRomType[cartNo]);
-    cartIdeCount -= currentRomType[cartNo] == ROM_SUNRISEIDE ? 1 : 0;
+    cartIdeCount[IDE_SUNRISE] -= currentRomType[cartNo] == ROM_SUNRISEIDE ? 1 : 0;
+    cartIdeCount[IDE_GIDE]    -= currentRomType[cartNo] == ROM_GIDE       ? 1 : 0;
+    cartIdeCount[IDE_BEER]    -= currentRomType[cartNo] == ROM_BEERIDE    ? 1 : 0;
     currentRomType[cartNo] = ROM_UNKNOWN;
 
     if (cart != NULL) {
@@ -561,7 +567,9 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         useMegaRom += romTypeIsMegaRom(romType);
         useMegaRam += romTypeIsMegaRam(romType);
         useFmPac   += romTypeIsFmPac(romType);
-        cartIdeCount += romType == ROM_SUNRISEIDE ? 1 : 0;
+        cartIdeCount[IDE_SUNRISE] += currentRomType[cartNo] == ROM_SUNRISEIDE ? 1 : 0;
+        cartIdeCount[IDE_GIDE]    += currentRomType[cartNo] == ROM_GIDE       ? 1 : 0;
+        cartIdeCount[IDE_BEER]    += currentRomType[cartNo] == ROM_BEERIDE    ? 1 : 0;
     }
 
     if (boardRunning) {

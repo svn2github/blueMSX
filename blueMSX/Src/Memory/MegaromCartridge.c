@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,6 +78,8 @@
 #include "romMapperMoonsound.h"
 #include "romMapperGameReader.h"
 #include "romMapperSunriseIDE.h"
+#include "romMapperBeerIDE.h"
+#include "romMapperGIDE.h"
 #include "romMapperSg1000Castle.h"
 
 #include <stdlib.h>
@@ -162,6 +164,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         romMapperGameReaderCreate(cartNo, slot, sslot);
         break;
 
+    case ROM_GIDE:
+        romMapperGIdeCreate();
+        break;
+
     case ROM_FMPAC:
         if (cart[strlen(cart) - 4] != '.') {
             buf = romLoad("Machines/Shared Roms/FMPAC.rom", "", &size);
@@ -187,6 +193,14 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             buf = romLoad("Machines/Shared Roms/sunriseide.rom", cartZip, &size);
             if (buf == 0) {
                 romMapperSunriseIdeCreate(romName, NULL, 0, slot, sslot, 0);
+                break;
+            }
+        }
+        // Load roms for Special Carts
+        if (strcmp(cart, "Beer IDE") == 0) {
+            buf = romLoad("Machines/Shared Roms/beeride.rom", cartZip, &size);
+            if (buf == 0) {
+                romMapperBeerIdeCreate(romName, NULL, 0, slot, sslot, 0);
                 break;
             }
         }
@@ -451,6 +465,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SUNRISEIDE:
             romMapperSunriseIdeCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_BEERIDE:
+            romMapperBeerIdeCreate(romName, buf, size, slot, sslot, 0);
             break;
         }
 

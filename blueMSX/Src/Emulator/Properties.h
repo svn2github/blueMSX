@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-12-20 08:11:21 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,6 +60,8 @@
 #define CARTNAME_MEGARAM2M   "2MB MegaRAM"
 #define CARTNAME_GAMEREADER  "Game Reader"
 #define CARTNAME_SUNRISEIDE  "Sunrise IDE"
+#define CARTNAME_BEERIDE     "Beer IDE"
+#define CARTNAME_GIDE        "GIDE"
 
 
 typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-12-21 04:13:44 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,6 +74,9 @@ _TCHAR* langMenuCartSdSnatcher();
 _TCHAR* langMenuCartSCCMirrored();
 _TCHAR* langMenuCartSCCExpanded();
 _TCHAR* langMenuCartGameReader();
+_TCHAR* langMenuCartIde();
+_TCHAR* langMenuCartBeerIde();
+_TCHAR* langMenuCartGIde();
 _TCHAR* langMenuCartSunriseIde();
 _TCHAR* langMenuCartSCC();
 _TCHAR* langMenuCartSCCPlus();

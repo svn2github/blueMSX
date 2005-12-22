@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-22 09:10:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,8 @@
 #include "romMapperSvi328Fdc.h"
 #include "ram1kBMirrored.h"
 #include "romMapperSunriseIDE.h"
+#include "romMapperBeerIDE.h"
+#include "romMapperGIDE.h"
 
 int toint(char* buffer) 
 {
@@ -881,6 +883,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             continue;
         }
 
+        if (machine->slotInfo[i].romType == ROM_GIDE) {
+            success &= romMapperGIdeCreate(1);
+            continue;
+        }
+
         if (machine->slotInfo[i].romType == ROM_SONYHBI55) {
             success &= romMapperSonyHBI55Create();
             continue;
@@ -1147,6 +1154,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_SUNRISEIDE:
             success &= romMapperSunriseIdeCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_BEERIDE:
+            success &= romMapperBeerIdeCreate(romName, buf, size, slot, subslot, startPage);
             break;
         }
         free(buf);

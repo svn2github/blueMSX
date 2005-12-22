@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-21 21:12:12 $
+** $Date: 2005-12-22 09:10:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -222,8 +222,8 @@ static void getDebugInfo(RomMapperBeerIde* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperBeerIdeCreate(const char* diskFileName, char* fileName, UInt8* romData, 
-                              int size, int slot, int sslot, int startPage)
+int romMapperBeerIdeCreate(char* fileName, UInt8* romData, 
+                           int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -244,7 +244,7 @@ int romMapperBeerIdeCreate(const char* diskFileName, char* fileName, UInt8* romD
     ioPortRegister(0x32, i8255Read, i8255Write, rm->i8255); // PPI Port C
     ioPortRegister(0x33, i8255Read, i8255Write, rm->i8255); // PPI Mode
 
-    rm->hdide = harddiskIdeCreate(diskFileName);
+    rm->hdide = harddiskIdeCreate(2);
 
     reset(rm);
 
