@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-22 17:20:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -197,7 +197,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             }
         }
         // Load roms for Special Carts
-        if (strcmp(cart, "Beer IDE") == 0) {
+        else if (strcmp(cart, "Beer IDE") == 0) {
             buf = romLoad("Machines/Shared Roms/beeride.rom", cartZip, &size);
             if (buf == 0) {
                 romMapperBeerIdeCreate(romName, NULL, 0, slot, sslot, 0);
