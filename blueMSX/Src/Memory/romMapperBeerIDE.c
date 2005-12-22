@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-22 21:36:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "romMapperBeerIDE.h"
 #include "HarddiskIDE.h"
 #include "MediaDb.h"
+#include "SlotManager.h"
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
@@ -122,12 +123,14 @@ static void destroy(RomMapperBeerIde* rm)
     ioPortUnregister(0x32);
     ioPortUnregister(0x33);
 
+    slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
     debugDeviceUnregister(rm->debugHandle);
 
     harddiskIdeDestroy(rm->hdide);
     i8255Destroy(rm->i8255);
 
+    free(rm->romData);
     free(rm);
 }
 
@@ -143,7 +146,7 @@ static UInt8 readA(RomMapperBeerIde* rm)
 
 static UInt8 readB(RomMapperBeerIde* rm)
 {
-	return (UInt8)rm->ideData >>8;
+    return (UInt8)rm->ideData >>8;
 }
 
 static void writeA(RomMapperBeerIde* rm, UInt8 value)
@@ -160,48 +163,44 @@ static void writeB(RomMapperBeerIde* rm, UInt8 value)
 
 static void writeCLo(RomMapperBeerIde* rm, UInt8 value)
 {
-	rm->ideAddress = value & 0x07;
+    rm->ideAddress = value & 0x07;
 }
 
 static void writeCHi(RomMapperBeerIde* rm, UInt8 value)
 {
-	rm->ideIoRead = value & 0x08 ? 0:1;
-	rm->ideIoWrite = value & 0x04 ? 0:1;
+    rm->ideIoRead = value & 0x08 ? 0:1;
+    rm->ideIoWrite = value & 0x04 ? 0:1;
 
-	if (rm->ideIoRead)
-	{
-		switch (rm->ideAddress)
-		{
-		case 0:
-			rm->ideData = harddiskIdeRead(rm->hdide);
-			break;
-		default:
-			rm->ideData = harddiskIdeReadRegister(rm->hdide, rm->ideAddress);
-			break;
-		}
-	}
+    if (rm->ideIoRead)
+    {
+        switch (rm->ideAddress)
+        {
+        case 0:
+            rm->ideData = harddiskIdeRead(rm->hdide);
+            break;
+        default:
+            rm->ideData = harddiskIdeReadRegister(rm->hdide, rm->ideAddress);
+            break;
+        }
+    }
 
     if (rm->ideIoWrite)
-	{
-		switch (rm->ideAddress)
-		{
-		case 0:
+    {
+        switch (rm->ideAddress)
+        {
+        case 0:
             harddiskIdeWrite(rm->hdide, rm->ideData);
-			break;
-		default:
-		    harddiskIdeWriteRegister(rm->hdide, rm->ideAddress, (UInt8)rm->ideData);
-			break;
-		}
-	}
+            break;
+        default:
+            harddiskIdeWriteRegister(rm->hdide, rm->ideAddress, (UInt8)rm->ideData);
+            break;
+        }
+    }
 }
 
 static UInt8 read(RomMapperBeerIde* rm, UInt16 address) 
 {
-    return 0xff;
-}
-
-static void write(RomMapperBeerIde* rm, UInt16 address, UInt8 value) 
-{
+    return address < 0x4000 ? rm->romData[address] : 0xff;
 }
 
 static void reset(RomMapperBeerIde* rm)
@@ -228,16 +227,45 @@ int romMapperBeerIdeCreate(char* fileName, UInt8* romData,
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperBeerIde* rm;
+    int i;
+    int origSize = size;
+
+    size = 0x4000;
+    while (size < origSize) {
+        size *= 2;
+    }
+
+    if (romData == NULL) {
+        size = 0x4000;
+    }
 
     rm = malloc(sizeof(RomMapperBeerIde));
     
     rm->deviceHandle = deviceManagerRegister(ROM_BEERIDE, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "Beer IDE", &dbgCallbacks, rm);
+    slotRegister(slot, sslot, startPage, 4, read, read, NULL, destroy, rm);
+
     rm->i8255 = i8255Create( NULL, readA, writeA,
                              NULL, readB, writeB,
                              NULL, NULL,  writeCLo,
                              NULL, NULL,  writeCHi,
                              rm);
+
+    rm->romData = calloc(1, size);
+    if (romData != NULL) {
+        memcpy(rm->romData, romData, origSize);
+    }
+    else {
+        memset(rm->romData, 0xff, size);
+    }
+
+    rm->slot  = slot;
+    rm->sslot = sslot;
+    rm->startPage  = startPage;
+
+    for (i = 0; i < 8; i++) {   
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
+    }
 
     ioPortRegister(0x30, i8255Read, i8255Write, rm->i8255); // PPI Port A
     ioPortRegister(0x31, i8255Read, i8255Write, rm->i8255); // PPI Port B
@@ -250,4 +278,3 @@ int romMapperBeerIdeCreate(char* fileName, UInt8* romData,
 
     return 1;
 }
-
