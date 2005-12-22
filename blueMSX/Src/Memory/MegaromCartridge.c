@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2005-12-22 01:08:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,7 +182,17 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         }
         // Fall through.. 
     default:
-        buf = romLoad(cart, cartZip, &size);
+        // Load roms for Special Carts
+        if (strcmp(cart, "Sunrise IDE") == 0) {
+            buf = romLoad("Machines/Shared Roms/sunriseide.rom", cartZip, &size);
+            if (buf == 0) {
+                romMapperSunriseIdeCreate(romName, NULL, 0, slot, sslot, 2);
+                break;
+            }
+        }
+        else {
+            buf = romLoad(cart, cartZip, &size);
+        }
         if (buf == NULL) {
             switch (romType) {
             case ROM_SNATCHER:

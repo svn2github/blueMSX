@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-12-21 08:02:20 $
+** $Date: 2005-12-22 01:07:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,7 +156,7 @@ int boardInsertExternalDevices()
         }
     }
 
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < 6; i++) {
         if (boardDeviceInfo->disks[i].inserted) {
             boardChangeDiskette(i, boardDeviceInfo->disks[i].name,
                                 boardDeviceInfo->disks[i].inZipName);

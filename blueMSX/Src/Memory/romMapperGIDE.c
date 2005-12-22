@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-21 22:34:06 $
+** $Date: 2005-12-22 01:08:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -219,7 +219,7 @@ int romMapperGIdeCreate(const char* fileName)
     ioPortRegister(0x4e, readIo, writeIo, rm);
     ioPortRegister(0x4f, readIo, writeIo, rm);
 
-    rm->hdide = harddiskIdeCreate(fileName);
+    rm->hdide = harddiskIdeCreate(0);
 
     reset(rm);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-22 01:07:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include "SunriseIde.h"
+#include "HarddiskIde.h"
 #include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
@@ -38,12 +39,16 @@
 struct SunriseIde {
     int softReset;
     int currentDevice;
+    HarddiskIde* hdide[2];
 };
 
 
 SunriseIde* sunriseIdeCreate()
 {
     SunriseIde* ide = malloc(sizeof(SunriseIde));
+
+    ide->hdide[0] = harddiskIdeCreate(2);
+    ide->hdide[1] = harddiskIdeCreate(3);
 
     sunriseIdeReset(ide);
 
@@ -52,6 +57,8 @@ SunriseIde* sunriseIdeCreate()
 
 void sunriseIdeDestroy(SunriseIde* ide)
 {
+    harddiskIdeDestroy(ide->hdide[0]);
+    harddiskIdeDestroy(ide->hdide[1]);
     free(ide);
 }
 
@@ -59,18 +66,18 @@ void sunriseIdeReset(SunriseIde* ide)
 {
     ide->currentDevice = 0;
     ide->softReset = 0;
-//  device[0]->reset(time);
-//  device[1]->reset(time);
+    harddiskIdeReset(ide->hdide[0]);
+    harddiskIdeReset(ide->hdide[1]);
 }
 
 UInt16 sunriseIdeRead(SunriseIde* ide)
 {
-//  return device[ide->currentDevice]->readData();
+    return harddiskIdeRead(ide->hdide[ide->currentDevice]);
 }
 
 void sunriseIdeWrite(SunriseIde* ide, UInt16 value)
 {
-//  device[ide->currentDevice]->writeData(value);
+    harddiskIdeWrite(ide->hdide[ide->currentDevice], value);
 }
 
 UInt8 sunriseIdeReadRegister(SunriseIde* ide, UInt8 reg)
@@ -89,7 +96,7 @@ UInt8 sunriseIdeReadRegister(SunriseIde* ide, UInt8 reg)
         return sunriseIdeRead(ide) & 0xFF;
     } 
 
-//    value = device[ide->currentDevice]->readReg(reg, time);
+    value = harddiskIdeReadRegister(ide->hdide[ide->currentDevice], reg);
     if (reg == 6) {
         value = value & ~0x10 | (ide->currentDevice << 4);
     }
@@ -112,15 +119,15 @@ void sunriseIdeWriteRegister(SunriseIde* ide, UInt8 reg, UInt8 value)
 
     if ((reg == 14) && (value & 0x04)) {
         ide->softReset = 1;
-//        device[0]->reset();
-//        device[1]->reset();
+        harddiskIdeReset(ide->hdide[0]);
+        harddiskIdeReset(ide->hdide[1]);
         return;
     }
 
     if (reg == 6) {
         ide->currentDevice = (value & 0x10) >> 4;
     }
-//    device[ide->currentDevice]->writeReg(reg, value);
+    harddiskIdeWriteRegister(ide->hdide[ide->currentDevice], reg, value);
 }
 
 void sunriseIdeLoadState(SunriseIde* ide)
@@ -128,6 +135,9 @@ void sunriseIdeLoadState(SunriseIde* ide)
     SaveState* state = saveStateOpenForRead("sunriseIde");
 
     saveStateClose(state);
+
+    harddiskIdeLoadState(ide->hdide[0]);
+    harddiskIdeLoadState(ide->hdide[1]);
 }
 
 void sunriseIdeSaveState(SunriseIde* ide)
@@ -135,4 +145,7 @@ void sunriseIdeSaveState(SunriseIde* ide)
     SaveState* state = saveStateOpenForWrite("sunriseIde");
 
     saveStateClose(state);
+    
+    harddiskIdeSaveState(ide->hdide[0]);
+    harddiskIdeSaveState(ide->hdide[1]);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-12-21 08:02:20 $
+** $Date: 2005-12-22 01:08:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -641,16 +641,18 @@ char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterI
 
 static int newHdFileSize;
 
+#define ONEMB (1024 * 1024)
+
 static const struct {
     int size;
     char text[8];
 } hdFileSizes[] = {
-    {   5 * 1024 * 1024, "5 MB" },
-    {  10 * 1024 * 1024, "10 MB" },
-    {  20 * 1024 * 1024, "20 MB" },
-    {  50 * 1024 * 1024, "50 MB" },
-    { 100 * 1024 * 1024, "100 MB" },
-    { 200 * 1024 * 1024, "200 MB" },
+    {   5 * ONEMB, "5 MB" },
+    {  10 * ONEMB, "10 MB" },
+    {  20 * ONEMB, "20 MB" },
+    {  50 * ONEMB, "50 MB" },
+    { 100 * ONEMB, "100 MB" },
+    { 200 * ONEMB, "200 MB" },
     { 0, "" }
 };
 
@@ -728,7 +730,7 @@ char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     static char pFileName[MAX_PATH];
     FILE* file;
     
-    newHdFileSize = 20 * 1024 * 1024;
+    newHdFileSize = 20 * ONEMB;
 
     pFileName[0] = 0; 
 
@@ -794,10 +796,10 @@ char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     }
     file = fopen(pFileName, "w+");
     if (file != NULL) {
-        char* data = calloc(1, 1024 * 1024);
+        char* data = calloc(1, ONEMB);
         while (newHdFileSize > 0) {
-            fwrite(data, 1, 1024 * 1024, file);
-            newHdFileSize -= 1024 * 1024;
+            fwrite(data, 1, ONEMB, file);
+            newHdFileSize -= ONEMB;
         }
         free(data);
         fclose(file);

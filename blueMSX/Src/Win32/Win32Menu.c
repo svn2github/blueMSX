@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-12-21 08:02:20 $
+** $Date: 2005-12-22 01:08:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -441,9 +441,9 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
         int i;
         for (i = 0; i < ideCount; i++) {
             _stprintf(langBuffer, "IDE%d Primary", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+2+0, pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+0, pProperties, shortcuts), langBuffer);
             _stprintf(langBuffer, "IDE%d Secondary", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+2+1, pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(2*i+1, pProperties, shortcuts), langBuffer);
         }
     }
 
