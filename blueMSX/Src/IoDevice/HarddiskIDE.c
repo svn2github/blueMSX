@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-22 01:07:55 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,20 +63,6 @@ struct HarddiskIde {
 };
 
 
-static void setTransferRead(HarddiskIde* hd, int status)
-{
-    if (status != hd->transferRead) {
-        hd->transferRead = status;
-    }
-}
-
-static void setTransferWrite(HarddiskIde* hd, int status)
-{
-    if (status != hd->transferWrite) {
-        hd->transferWrite = status;
-    }
-}
-
 static UInt32 getSectorNumber(HarddiskIde* hd)
 {
     return hd->sectorNumReg | (hd->cylinderLowReg << 8) |
@@ -88,8 +74,8 @@ static void setError(HarddiskIde* hd, UInt8 error)
     hd->errorReg = error;
     hd->statusReg |= STATUS_ERR;
     hd->statusReg &= ~STATUS_DRQ;
-    setTransferWrite(hd, 0);
-    setTransferRead(hd, 0);
+    hd->transferWrite = 0;
+    hd->transferRead = 0;
 }
 
 static UInt32 getNumSectors(HarddiskIde* hd)
@@ -100,8 +86,8 @@ static UInt32 getNumSectors(HarddiskIde* hd)
 static void executeCommand(HarddiskIde* hd, UInt8 cmd)
 {
     hd->statusReg &= ~(STATUS_DRQ | STATUS_ERR);
-    setTransferRead(hd, 0);
-    setTransferWrite(hd, 0);
+    hd->transferRead = 0;
+    hd->transferWrite = 0;
     switch (cmd) {
     case 0xef: // Set Feature
         if (hd->featureReg != 0x03) {
@@ -116,7 +102,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         }
         hd->transferCount = 512/2;
         hd->sectorDataOffset = 0;
-        setTransferRead(hd, 1);
+        hd->transferRead = 1;
         hd->statusReg |= STATUS_DRQ;
         break;
 
@@ -133,7 +119,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         hd->transferSectorNumber = sectorNumber;
         hd->transferCount = 512/2 * numSectors;
         hd->sectorDataOffset = 0;
-        setTransferWrite(hd, 1);
+        hd->transferWrite = 1;
         hd->statusReg |= STATUS_DRQ;
         break;
     }
@@ -148,7 +134,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         }
           
         for (i = 0; i < numSectors; i++) {
-            if (!diskReadSector(hd->diskId, hd->sectorData + i * 512, sectorNumber + i, 0, 0, 0, NULL)) {
+            if (!diskReadSector(hd->diskId, hd->sectorData + i * 512, sectorNumber + i + 1, 0, 0, 0, NULL)) {
                 break;
             }
         }
@@ -159,7 +145,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
 
         hd->transferCount = 512/2 * numSectors;
         hd->sectorDataOffset = 0;
-        setTransferRead(hd, 1);
+        hd->transferRead = 1;
         hd->statusReg |= STATUS_DRQ;
         break;
     }
@@ -178,22 +164,22 @@ void harddiskIdeReset(HarddiskIde* hd)
     hd->devHeadReg = 0x00;
     hd->statusReg = STATUS_DSC | STATUS_DRDY;
     hd->featureReg = 0x00;
-    setTransferRead(hd, 0);
-    setTransferWrite(hd, 0);
+    hd->transferRead = 0;
+    hd->transferWrite = 0;
 }
 
 UInt16 harddiskIdeRead(HarddiskIde* hd)
 {
     UInt16 value;
 
-    if (!hd->transferRead) {
+    if (!hd->transferRead || !diskPresent(hd->diskId)) {
         return 0x7f7f;
     }
 
     value  = hd->sectorData[hd->sectorDataOffset++];
     value |= hd->sectorData[hd->sectorDataOffset++] << 8;
     if (--hd->transferCount == 0) {
-        setTransferRead(hd, 0);
+        hd->transferRead = 0;
         hd->statusReg &= ~STATUS_DRQ;
     }
     return value;
@@ -201,7 +187,7 @@ UInt16 harddiskIdeRead(HarddiskIde* hd)
 
 void harddiskIdeWrite(HarddiskIde* hd, UInt16 value)
 {
-    if (!hd->transferWrite) {
+    if (!hd->transferWrite || !diskPresent(hd->diskId)) {
         return;
     }
 
@@ -209,22 +195,26 @@ void harddiskIdeWrite(HarddiskIde* hd, UInt16 value)
     hd->sectorData[hd->sectorDataOffset++] = value >> 8;
     hd->transferCount--;
     if ((hd->transferCount & 255) == 0) {
-        if (!diskWriteSector(hd->diskId, hd->sectorData, hd->transferSectorNumber, 0, 0, 0)) {
+        if (!diskWriteSector(hd->diskId, hd->sectorData, hd->transferSectorNumber + 1, 0, 0, 0)) {
             setError(hd, 0x44);
-            setTransferWrite(hd, 0);
+            hd->transferWrite = 0;
             return;
         }
         hd->transferSectorNumber++;
         hd->sectorDataOffset = 0;
     }
     if (hd->transferCount == 0) {
-        setTransferWrite(hd, 0);
+        hd->transferWrite = 0;
         hd->statusReg &= ~STATUS_DRQ;
     }
 }
 
 UInt8 harddiskIdeReadRegister(HarddiskIde* hd, UInt8 reg)
 {
+    if (!diskPresent(hd->diskId)) {
+        return 0x7f;
+    }
+
     switch (reg) {
     case 1:
         return hd->errorReg;
@@ -255,6 +245,9 @@ UInt8 harddiskIdeReadRegister(HarddiskIde* hd, UInt8 reg)
 
 void harddiskIdeWriteRegister(HarddiskIde* hd, UInt8 reg, UInt8 value)
 {
+    if (!diskPresent(hd->diskId)) {
+        return;
+    }
     switch (reg) {
     case 1:
         hd->featureReg = value;

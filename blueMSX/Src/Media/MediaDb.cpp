@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -437,10 +437,13 @@ static void mediaDbAddFromXmlFile(const char* fileName)
 
 extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
 {
+    if (size > 2 * 1024 * 1024) {
+        return NULL;
+    }
+
 	SHA1 sha1;
 	sha1.update((const UInt8*)buffer, size);
     
-//    printf("Lookup: %s\n", sha1.hex_digest().c_str());
     Sha1Map::iterator iterSha1 = mediaDb->sha1Map.find(sha1.hex_digest());
     if (iterSha1 != mediaDb->sha1Map.end()) {
         return iterSha1->second;

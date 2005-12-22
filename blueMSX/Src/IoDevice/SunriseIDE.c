@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-12-22 01:07:55 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,7 +98,7 @@ UInt8 sunriseIdeReadRegister(SunriseIde* ide, UInt8 reg)
 
     value = harddiskIdeReadRegister(ide->hdide[ide->currentDevice], reg);
     if (reg == 6) {
-        value = value & ~0x10 | (ide->currentDevice << 4);
+        value = (value & ~0x10) | (ide->currentDevice << 4);
     }
     return value;
 }
@@ -125,7 +125,7 @@ void sunriseIdeWriteRegister(SunriseIde* ide, UInt8 reg, UInt8 value)
     }
 
     if (reg == 6) {
-        ide->currentDevice = (value & 0x10) >> 4;
+        ide->currentDevice = (value >> 4) & 1;
     }
     harddiskIdeWriteRegister(ide->hdide[ide->currentDevice], reg, value);
 }

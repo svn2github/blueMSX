@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-12-22 01:07:54 $
+** $Date: 2005-12-22 07:37:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -211,12 +211,14 @@ int boardRun(Machine* machine,
     boardType = machine->board.type;
     PatchReset(boardType);
 
+#if 0
     useRom     = 0;
     useMegaRom = 0;
     useMegaRam = 0;
     useFmPac   = 0;
     currentRomType[0] = ROM_UNKNOWN;
     currentRomType[1] = ROM_UNKNOWN;
+#endif
 
     pendingInt = 0;
 
@@ -546,16 +548,14 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         strcpy(boardDeviceInfo->carts[cartNo].inZipName, cartZip ? cartZip : "");
     }
 
-    if (cart == NULL) {
-        romType = currentRomType[cartNo];
-        currentRomType[cartNo] = ROM_UNKNOWN;
-        useRom     -= romTypeIsRom(romType);
-        useMegaRom -= romTypeIsMegaRom(romType);
-        useMegaRam -= romTypeIsMegaRam(romType);
-        useFmPac   -= romTypeIsFmPac(romType);
-        cartIdeCount -= romType == ROM_SUNRISEIDE ? 1 : 0;
-    }
-    else {
+    useRom     -= romTypeIsRom(currentRomType[cartNo]);
+    useMegaRom -= romTypeIsMegaRom(currentRomType[cartNo]);
+    useMegaRam -= romTypeIsMegaRam(currentRomType[cartNo]);
+    useFmPac   -= romTypeIsFmPac(currentRomType[cartNo]);
+    cartIdeCount -= currentRomType[cartNo] == ROM_SUNRISEIDE ? 1 : 0;
+    currentRomType[cartNo] = ROM_UNKNOWN;
+
+    if (cart != NULL) {
         currentRomType[cartNo] = romType;
         useRom     += romTypeIsRom(romType);
         useMegaRom += romTypeIsMegaRom(romType);

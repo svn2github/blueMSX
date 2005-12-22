@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2005-12-22 01:08:00 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -415,13 +415,15 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
 {
     int idOffset = diskNo * ID_HARDDISK_OFFSET;
     HMENU hMenu = CreatePopupMenu();
+    _TCHAR langBuffer[560];
 
     setMenuColor(hMenu);
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuDiskInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langMenuDiskEject());
+    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[diskNo + 2].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo + 2].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo + 2].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
 
     return hMenu;
 }

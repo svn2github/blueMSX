@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,6 +68,16 @@ static int      editExtRamSize;
 static int      editMegaRamSize;
 
 static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId);
+
+static void replaceCharInString(char* str, char oldChar, char newChar) 
+{
+    while (*str) {
+        if (*str == oldChar) {
+            *str = newChar;
+        }
+        str++;
+    }
+}
 
 static void updateMachine() {
     machineUpdate(machine);
@@ -1219,14 +1229,16 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 static char  defDir[MAX_PATH] = { 0 };
                 char  curDir[MAX_PATH];
                 char* fileName;
-                char text[512];
+                char extensionList[512];
 
                 GetCurrentDirectory(MAX_PATH, curDir);
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                sprintf(text, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)\0*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip\0", langRomImage());
-                fileName = openFile(hDlg, langRomImageOpen(), text, defDir, -1, NULL, NULL);
+                sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomImage(), langAllFiles());
+                replaceCharInString(extensionList, '#', 0);
+
+                fileName = openFile(hDlg, langRomImageOpen(), extensionList, defDir, -1, NULL, NULL);
                 SetCurrentDirectory(curDir);
 
                 if (fileName != NULL) {

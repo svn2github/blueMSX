@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSunriseIDE.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-12-22 01:08:00 $
+** $Date: 2005-12-22 07:37:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,15 +52,6 @@ typedef struct {
     UInt8  writeLatch;
     int    romMapper;
 } RomMapperSunriseIde;
-
-
-static UInt8 reverse(UInt8 a)
-{
-	a = ((a & 0xF0) >> 4) | ((a & 0x0F) << 4);
-	a = ((a & 0xCC) >> 2) | ((a & 0x33) << 2);
-	a = ((a & 0xAA) >> 1) | ((a & 0x55) << 1);
-	return a;
-}
 
 
 static void saveState(RomMapperSunriseIde* rm)
@@ -116,6 +107,7 @@ static UInt8 read(RomMapperSunriseIde* rm, UInt16 address)
 	if (rm->ideEnabled && (address & 0x3f00) == 0x3e00) {
         return sunriseIdeReadRegister(rm->ide, address & 0x0f);
 	}
+    address -= 0x4000;
 	if (address < 0x4000) {
 		return rm->romData[address + rm->romMapper];
 	}
@@ -125,9 +117,13 @@ static UInt8 read(RomMapperSunriseIde* rm, UInt16 address)
 
 static void write(RomMapperSunriseIde* rm, UInt16 address, UInt8 value) 
 {
-	if ((address & 0x7f04) == 0x0104) {
+	if ((address & 0xbf04) == 0x0104) {
         rm->ideEnabled = value & 1;
-        rm->romMapper = 0x4000 * ((reverse(value & 0xf8) & rm->romMask));
+            
+	    value = ((value & 0xf0) >> 4) | ((value & 0x0f) << 4);
+	    value = ((value & 0xcc) >> 2) | ((value & 0x33) << 2);
+	    value = ((value & 0xaa) >> 1) | ((value & 0x55) << 1);
+        rm->romMapper = 0x4000 * (value & rm->romMask);
 		return;
 	}
 
@@ -148,11 +144,12 @@ static void write(RomMapperSunriseIde* rm, UInt16 address, UInt8 value)
 
 static void reset(RomMapperSunriseIde* rm) 
 {
+#if 0
     rm->ideEnabled = 1;
     rm->romMapper = rm->romMask * 0x4000;
     rm->readLatch = 0;
     rm->writeLatch = 0;
-
+#endif
     sunriseIdeReset(rm->ide);
 }
 
@@ -163,10 +160,14 @@ int romMapperSunriseIdeCreate(char* filename, UInt8* romData,
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperSunriseIde* rm;
     int i;
-
     int origSize = size;
+
+    if (startPage != 0) {
+        return 0;
+    }
+
     
-    size = 0x8000;
+    size = 0x4000;
     while (size < origSize) {
         size *= 2;
     }
@@ -178,7 +179,7 @@ int romMapperSunriseIdeCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperSunriseIde));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SUNRISEIDE, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 8, read, read, write, destroy, rm);
 
     rm->ide = sunriseIdeCreate();
 
@@ -196,9 +197,12 @@ int romMapperSunriseIdeCreate(char* filename, UInt8* romData,
 
     rm->romMapper = 0;
 
-    for (i = 0; i < 4; i++) {   
+    for (i = 0; i < 8; i++) {   
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
     }
+
+    rm->ideEnabled = 1;
+    rm->romMapper = 0;
 
     reset(rm);
 
