@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2005-12-28 06:53:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,11 +34,12 @@
 
 #define FDC_COUNT 2
 #define HD_COUNT  4
+#define MAX_DRIVES_PER_HD 8
 
 #define MAX_HD_COUNT             HD_COUNT
 #define FIRST_INTERNAL_HD_INDEX  FDC_COUNT
 
-#define MAXDRIVES (FDC_COUNT + 8 * HD_COUNT)
+#define MAXDRIVES (FDC_COUNT + MAX_DRIVES_PER_HD * HD_COUNT)
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
@@ -54,7 +55,7 @@ int   diskGetSides(int driveId);
 int   diskChanged(int driveId);
 
 static int diskGetHdDriveId(int hdId, int driveNo) {
-    return FDC_COUNT + 8 * hdId + driveNo;
+    return FDC_COUNT + MAX_DRIVES_PER_HD * hdId + driveNo;
 }
 
 #endif
