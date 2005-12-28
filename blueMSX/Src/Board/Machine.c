@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2005-12-28 23:39:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,7 @@
 #include "sramMapperMatsuchita.h"
 #include "romMapperKonamiSynth.h"
 #include "romMapperKonamiKeyboardMaster.h"
+#include "romMapperKonamiWordPro.h"
 #include "romMapperMajutsushi.h"
 #include "sramMapperS1985.h"
 #include "romMapperS1990.h"
@@ -996,6 +997,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             success &= romMapperKonamiSynthCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
+        case ROM_KONWORDPRO:
+            success &= romMapperKonamiWordProCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
         case ROM_KONAMKBDMAS:
             {
                 char voiceName[512];

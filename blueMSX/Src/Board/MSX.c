@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-12-28 23:39:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,6 +110,8 @@ static void destroy() {
 
     r800Destroy(r800);
 }
+
+int getPC(){return r800->regs.PC.W;}
 
 static int getRefreshRate()
 {

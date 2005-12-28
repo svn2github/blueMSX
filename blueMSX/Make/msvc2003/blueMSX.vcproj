@@ -640,6 +640,12 @@
 					RelativePath="..\..\Src\Memory\romMapperKonamiSynth.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiWordPro.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiWordPro.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperKorean126.c">
 				</File>
 				<File

@@ -2,9 +2,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2005-12-28 23:39:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -129,9 +129,13 @@ static UInt8 read(RomMapperGameReader* rm, UInt16 address)
     return rm->cacheLineData[bank][address & (CACHE_LINE_SIZE - 1)];
 }
 
-
+//#define WRITE_CHECK
 static void write(RomMapperGameReader* rm, UInt16 address, UInt8 value) 
 {
+#ifdef WRITE_CHECK
+    static UInt8 buf1[0x10000];
+    static UInt8 buf2[0x10000];
+#endif
     int bank = address >> 13;
     int i;
 
@@ -141,7 +145,26 @@ static void write(RomMapperGameReader* rm, UInt16 address, UInt8 value)
         rm->cacheLineEnabled[i] = 0;
     }
     
+#ifdef WRITE_CHECK
+    gameReaderRead(rm->gameReader, 0, buf1, 0x10000);
+#endif
+
     gameReaderWrite(rm->gameReader, address, &value, 1);
+
+#ifdef WRITE_CHECK
+    gameReaderRead(rm->gameReader, 0, buf2, 0x10000);
+    printf("WRITE TO GR 0x%.4x : 0x%.2x\n", address, value);
+    for (i = 0; i < 0x10000; i++) {
+        if (buf1[i] != buf2[i]) {
+            printf("Diff from 0x%.4x ", i);
+            while (i < 0x10000 && buf1[i] != buf2[i]) {
+                i++;
+            }
+            printf("to 0x%.4x\n", i - 1);
+        }
+    }
+    printf("\n");
+#endif
 }
 
 int romMapperGameReaderCreate(int cartSlot, int slot, int sslot) 
@@ -181,9 +204,9 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2005-12-28 23:39:02 $
 **
 ** More info: http://www.bluemsx.com
 **

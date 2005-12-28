@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-28 23:39:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,6 +122,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "KeyboardMaster")   return ROM_KONAMKBDMAS;
     if (name == "GenericKonami")    return ROM_KONAMI4NF;
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
+    if (name == "KonamiWordPro")    return ROM_KONWORDPRO;
 
     if (name == "Normal")           return ROM_STANDARD;
 
@@ -594,6 +595,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_0xC000:      return "Normal 0xC000";
     case ROM_KONAMISYNTH: return "Konami Synthesizer";
     case ROM_KONAMKBDMAS: return "Konami Keyboard Master";
+    case ROM_KONWORDPRO:  return "Konami Word Pro";
     case ROM_PAC:         return "PAC (SRAM)";
     case ROM_MEGARAM:     return "MegaRAM";
     case ROM_MEGARAM128:  return "128kB MegaRAM";
@@ -699,6 +701,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_0xC000:      return "0xC000";
     case ROM_KONAMISYNTH: return "KONSYNTH";
     case ROM_KONAMKBDMAS: return "KBDMASTER";
+    case ROM_KONWORDPRO:  return "KONWORDPRO";
     case ROM_MAJUTSUSHI:  return "MAJUTSUSHI";
     case ROM_PAC:         return "PAC";
     case ROM_MEGARAM:     return "MEGARAM";
@@ -763,6 +766,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_0xC000:      return 1;
 	case ROM_KONAMISYNTH: return 1;
     case ROM_KONAMKBDMAS: return 1;
+    case ROM_KONWORDPRO:  return 1;
     }
     return 0;
 }
