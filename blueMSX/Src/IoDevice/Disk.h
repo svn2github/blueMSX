@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-12-28 06:53:51 $
+** $Date: 2005-12-28 06:56:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 #define MAX_DRIVES_PER_HD 8
 
 #define MAX_HD_COUNT             HD_COUNT
-#define FIRST_INTERNAL_HD_INDEX  FDC_COUNT
+#define FIRST_INTERNAL_HD_INDEX  2
 
 #define MAXDRIVES (FDC_COUNT + MAX_DRIVES_PER_HD * HD_COUNT)
 
