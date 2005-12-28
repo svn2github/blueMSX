@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,6 @@
  
 #include "MSXTypes.h"
 
-int romMapperBeerIdeCreate(char* fileName, UInt8* romData, 
+int romMapperBeerIdeCreate(int hdId, char* fileName, UInt8* romData, 
                            int size, int slot, int sslot, int startPage);
 #endif

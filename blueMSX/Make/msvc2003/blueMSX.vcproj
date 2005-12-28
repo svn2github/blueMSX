@@ -571,6 +571,9 @@
 					RelativePath="..\..\Src\Memory\romMapperBasic.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperBeerIDE.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperBunsetu.c">
 				</File>
 				<File
@@ -601,7 +604,7 @@
 					RelativePath="..\..\Src\Memory\romMapperGameReader.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperGameReader.h">
+					RelativePath="..\..\Src\Memory\romMapperGIDE.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperHalnote.c">
@@ -724,6 +727,9 @@
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSunriseIDE.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.c">
 				</File>
 				<File
@@ -803,6 +809,9 @@
 					RelativePath="..\..\Src\Memory\romMapperBasic.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperBeerIDE.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperBunsetu.h">
 				</File>
 				<File
@@ -822,6 +831,12 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperGameReader.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperGIDE.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperHalnote.h">
@@ -924,6 +939,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSunriseIDE.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328Fdc.h">
@@ -1099,6 +1117,12 @@
 				RelativePath="..\..\Src\IoDevice\GameReader.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\HarddiskIDE.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\HarddiskIDE.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\I8250.c">
 			</File>
 			<File
@@ -1163,6 +1187,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\RTC.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\SunriseIDE.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\SunriseIDE.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\SviPPI.c">

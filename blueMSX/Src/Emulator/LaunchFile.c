@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -317,7 +317,9 @@ int insertDiskette(Properties* properties, int drive, const char* fname, const c
     strcpy(properties->media.disks[drive].fileName, filename);
     strcpy(properties->media.disks[drive].fileNameInZip, diskName);
     updateExtendedDiskName(drive, properties->media.disks[drive].fileName, properties->media.disks[drive].fileNameInZip);
-    updateFileHistory(*properties->filehistory.diskdrive[drive], NULL, filename, 0);
+    if (drive < 2) {
+        updateFileHistory(*properties->filehistory.diskdrive[drive], NULL, filename, 0);
+    }
 
     if (autostart && !noautostart) {
         emulatorStop();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-12-22 09:10:31 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "ArchFile.h"
 #include "MediaDb.h"
 #include "TokenExtract.h"
+#include "Disk.h"
 
 #include "RomLoader.h"
 #include "MSXMidi.h"
@@ -691,6 +692,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
     void* jisyoRom = NULL;
     int jisyoRomSize = 0;
     int success = 1;
+    int hdId = FIRST_INTERNAL_HD_INDEX;
     UInt8* buf;
     int size;
     int i;
@@ -884,7 +886,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
         }
 
         if (machine->slotInfo[i].romType == ROM_GIDE) {
-            success &= romMapperGIdeCreate(1);
+            success &= romMapperGIdeCreate(hdId++);
             continue;
         }
 
@@ -1153,11 +1155,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             break;
 
         case ROM_SUNRISEIDE:
-            success &= romMapperSunriseIdeCreate(romName, buf, size, slot, subslot, startPage);
+            success &= romMapperSunriseIdeCreate(hdId++, romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_BEERIDE:
-            success &= romMapperBeerIdeCreate(romName, buf, size, slot, subslot, startPage);
+            success &= romMapperBeerIdeCreate(hdId++, romName, buf, size, slot, subslot, startPage);
             break;
         }
         free(buf);

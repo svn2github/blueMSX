@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSunriseIDE.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,8 +154,8 @@ static void reset(RomMapperSunriseIde* rm)
 }
 
 
-int romMapperSunriseIdeCreate(char* filename, UInt8* romData, 
-                          int size, int slot, int sslot, int startPage) 
+int romMapperSunriseIdeCreate(int hdId, char* filename, UInt8* romData, 
+                              int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperSunriseIde* rm;
@@ -181,7 +181,7 @@ int romMapperSunriseIdeCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_SUNRISEIDE, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 8, read, read, write, destroy, rm);
 
-    rm->ide = sunriseIdeCreate();
+    rm->ide = sunriseIdeCreate(hdId);
 
     rm->romData = calloc(1, size);
     if (romData != NULL) {

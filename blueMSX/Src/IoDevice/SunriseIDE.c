@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "HarddiskIde.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "Disk.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,12 +44,12 @@ struct SunriseIde {
 };
 
 
-SunriseIde* sunriseIdeCreate()
+SunriseIde* sunriseIdeCreate(int hdId)
 {
     SunriseIde* ide = malloc(sizeof(SunriseIde));
 
-    ide->hdide[0] = harddiskIdeCreate(2);
-    ide->hdide[1] = harddiskIdeCreate(3);
+    ide->hdide[0] = harddiskIdeCreate(diskGetHdDriveId(hdId, 0));
+    ide->hdide[1] = harddiskIdeCreate(diskGetHdDriveId(hdId, 1));
 
     sunriseIdeReset(ide);
 

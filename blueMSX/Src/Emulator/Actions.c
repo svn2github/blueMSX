@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2005-12-21 08:02:20 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -129,7 +129,7 @@ void actionHarddiskInsert(int diskNo)
     emulatorSuspend();
     filename = archFilenameGetOpenHarddisk(state.properties, diskNo, 0);
     if (filename != NULL) {        
-        insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
+        insertDiskette(state.properties, diskNo, filename, NULL, 0);
     }
     emulatorResume();
     archUpdateMenu(0);
@@ -142,7 +142,7 @@ void actionHarddiskInsertNew(int diskNo)
     emulatorSuspend();
     filename = archFilenameGetOpenHarddisk(state.properties, diskNo, 1);
     if (filename != NULL) {        
-        insertDiskette(state.properties, diskNo + 2, filename, NULL, 0);
+        insertDiskette(state.properties, diskNo, filename, NULL, 0);
     }
     emulatorResume();
     archUpdateMenu(0);
@@ -152,15 +152,14 @@ void actionHarddiskInsertDir(int diskNo)
 {
 }
 
-void actionHarddiskRemove(int i)
+void actionHarddiskRemove(int diskNo)
 {
-    i += 2; // FIXME: Fix Harddisk offset
-    state.properties->media.disks[i].fileName[0] = 0;
-    state.properties->media.disks[i].fileNameInZip[0] = 0;
-    updateExtendedDiskName(i, state.properties->media.disks[i].fileName, state.properties->media.disks[i].fileNameInZip);
+    state.properties->media.disks[diskNo].fileName[0] = 0;
+    state.properties->media.disks[diskNo].fileNameInZip[0] = 0;
+    updateExtendedDiskName(diskNo, state.properties->media.disks[diskNo].fileName, state.properties->media.disks[diskNo].fileNameInZip);
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
-        boardChangeDiskette(i, NULL, NULL);
+        boardChangeDiskette(diskNo, NULL, NULL);
         emulatorResume();
     }
     archUpdateMenu(0);

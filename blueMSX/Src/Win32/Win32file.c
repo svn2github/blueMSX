@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2005-12-22 01:08:00 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,6 +81,9 @@ static RomType romTypeList[] = {
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
+    ROM_GIDE,
+    ROM_SUNRISEIDE,
+    ROM_BEERIDE,
     ROM_KANJI,
     ROM_KANJI12,
     ROM_JISYO,

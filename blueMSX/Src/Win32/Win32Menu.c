@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include "archMenu.h"
 #include "Actions.h"
 #include "Casette.h"
+#include "Disk.h"
 #include "VideoManager.h"
 #include "ArchNotifications.h"
 #include "ArchInput.h"
@@ -429,8 +430,8 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuDiskInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[diskNo + 2].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo + 2].fileName));
-    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo + 2].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
+    _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
 
     return hMenu;
 }
@@ -438,31 +439,35 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
 static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
 {
     HMENU hMenu = CreatePopupMenu();
-    int hdIndex = 0;
-    int ideIndex = 0;
     _TCHAR langBuffer[560];
+    int hasHd = 0;
     int i;
 
     setMenuColor(hMenu);
 
-    for (i = 0; i < boardGetIdeCount(IDE_SUNRISE); i++) {
-        _stprintf(langBuffer, "IDE%d  - Sunrise Primary", ideIndex);
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(hdIndex++, pProperties, shortcuts), langBuffer);
-        _stprintf(langBuffer, "IDE%d  - Sunrise Secondary", ideIndex++);
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(hdIndex++, pProperties, shortcuts), langBuffer);
+    for (i = 0; i < MAX_HD_COUNT; i++) {
+        switch (boardGetHdType(i)) {
+        case HD_SUNRISEIDE:
+            hasHd = 1;
+            _stprintf(langBuffer, "IDE%d  - Sunrise Primary", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            _stprintf(langBuffer, "IDE%d  - Sunrise Secondary", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 1), pProperties, shortcuts), langBuffer);
+            break;
+        case HD_BEERIDE:
+            hasHd = 1;
+            _stprintf(langBuffer, "IDE%d Beer", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            break;
+        case HD_GIDE:
+            hasHd = 1;
+            _stprintf(langBuffer, "IDE%d GIDE", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            break;
+        }
     }
 
-    for (i = 0; i < boardGetIdeCount(IDE_GIDE); i++) {
-        _stprintf(langBuffer, "IDE%d GIDE", ideIndex++);
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(hdIndex++, pProperties, shortcuts), langBuffer);
-    }
-
-    for (i = 0; i < boardGetIdeCount(IDE_BEER); i++) {
-        _stprintf(langBuffer, "IDE%d Beer", ideIndex++);
-        AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(hdIndex++, pProperties, shortcuts), langBuffer);
-    }
-
-    if (hdIndex == 0) {
+    if (!hasHd) {
         AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
     }
 

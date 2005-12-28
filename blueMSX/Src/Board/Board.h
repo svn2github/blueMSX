@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2005-12-22 09:10:31 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,8 +119,9 @@ int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
 
-typedef enum { IDE_SUNRISE, IDE_BEER, IDE_GIDE } IdeType;
-int boardGetIdeCount(IdeType ide);
+typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE } HdType;
+HdType boardGetHdType(int hdIndex);
+
 
 char* boardGetBaseDirectory();
 

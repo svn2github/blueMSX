@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-19 07:11:55 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 
 typedef struct SunriseIde SunriseIde;
 
-SunriseIde* sunriseIdeCreate();
+SunriseIde* sunriseIdeCreate(int hdId);
 void sunriseIdeDestroy(SunriseIde* ide);
 
 void sunriseIdeReset(SunriseIde* ide);

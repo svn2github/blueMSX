@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Disk.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -195,7 +196,7 @@ static void getDebugInfo(RomMapperGIde* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperGIdeCreate() 
+int romMapperGIdeCreate(int hdId) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -219,7 +220,7 @@ int romMapperGIdeCreate()
     ioPortRegister(0x4e, readIo, writeIo, rm);
     ioPortRegister(0x4f, readIo, writeIo, rm);
 
-    rm->hdide = harddiskIdeCreate(2);
+    rm->hdide = harddiskIdeCreate(diskGetHdDriveId(hdId, 0));
 
     reset(rm);
 

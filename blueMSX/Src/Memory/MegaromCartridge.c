@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-12-22 17:20:35 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -165,7 +165,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         break;
 
     case ROM_GIDE:
-        romMapperGIdeCreate();
+        romMapperGIdeCreate(cartNo);
         break;
 
     case ROM_FMPAC:
@@ -192,7 +192,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         if (strcmp(cart, "Sunrise IDE") == 0) {
             buf = romLoad("Machines/Shared Roms/sunriseide.rom", cartZip, &size);
             if (buf == 0) {
-                romMapperSunriseIdeCreate(romName, NULL, 0, slot, sslot, 0);
+                romMapperSunriseIdeCreate(cartNo, romName, NULL, 0, slot, sslot, 0);
                 break;
             }
         }
@@ -200,7 +200,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         else if (strcmp(cart, "Beer IDE") == 0) {
             buf = romLoad("Machines/Shared Roms/beeride.rom", cartZip, &size);
             if (buf == 0) {
-                romMapperBeerIdeCreate(romName, NULL, 0, slot, sslot, 0);
+                romMapperBeerIdeCreate(cartNo, romName, NULL, 0, slot, sslot, 0);
                 break;
             }
         }
@@ -464,11 +464,11 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_SUNRISEIDE:
-            romMapperSunriseIdeCreate(romName, buf, size, slot, sslot, 0);
+            romMapperSunriseIdeCreate(cartNo, romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_BEERIDE:
-            romMapperBeerIdeCreate(romName, buf, size, slot, sslot, 0);
+            romMapperBeerIdeCreate(cartNo, romName, buf, size, slot, sslot, 0);
             break;
         }
 

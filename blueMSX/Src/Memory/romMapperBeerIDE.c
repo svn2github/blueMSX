@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-12-22 21:36:32 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "I8255.h"
+#include "Disk.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -221,7 +222,7 @@ static void getDebugInfo(RomMapperBeerIde* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperBeerIdeCreate(char* fileName, UInt8* romData, 
+int romMapperBeerIdeCreate(int hdId, char* fileName, UInt8* romData, 
                            int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
@@ -272,7 +273,7 @@ int romMapperBeerIdeCreate(char* fileName, UInt8* romData,
     ioPortRegister(0x32, i8255Read, i8255Write, rm->i8255); // PPI Port C
     ioPortRegister(0x33, i8255Read, i8255Write, rm->i8255); // PPI Mode
 
-    rm->hdide = harddiskIdeCreate(2);
+    rm->hdide = harddiskIdeCreate(diskGetHdDriveId(hdId, 0));
 
     reset(rm);
 

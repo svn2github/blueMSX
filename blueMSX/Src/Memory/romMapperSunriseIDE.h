@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSunriseIDE.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
  
 #include "MSXTypes.h"
 
-int romMapperSunriseIdeCreate(char* filename, UInt8* romData, 
+int romMapperSunriseIdeCreate(int hdId, char* filename, UInt8* romData, 
                               int size, int slot, int sslot, int startPage);
 
 #endif

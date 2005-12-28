@@ -339,7 +339,7 @@ int iniFileWriteSection(char* section,
 
     sprintf(t_section, "[%s]", section);
 
-    while (readLine(buff) >= 0 && strcmp(buff, t_section) == 0) {
+    while (readLine(buff) >= 0 && strcmp(buff, t_section) != 0) {
         writeLine(buff);
         writeLine("\n");
     }

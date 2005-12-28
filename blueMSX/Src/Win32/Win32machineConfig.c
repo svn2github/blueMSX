@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2005-12-28 06:50:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -487,7 +487,7 @@ static void getSlotControl(HWND hDlg)
     int i;
     int j;
 
-    if (editSlotInfo.romType == SRAM_MATSUCHITA || 
+    if (editSlotInfo.romType == SRAM_MATSUCHITA || editSlotInfo.romType == ROM_GIDE ||
         editSlotInfo.romType == ROM_TURBORTIMER || editSlotInfo.romType == ROM_TURBORIO ||
         editSlotInfo.romType == SRAM_S1985 || editSlotInfo.romType == ROM_S1990 ||
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
@@ -528,6 +528,7 @@ static void getAddressControl(HWND hDlg)
         editSlotInfo.romType == ROM_NATIONALFDC  ||
         editSlotInfo.romType == ROM_PHILIPSFDC   ||
         editSlotInfo.romType == ROM_SVI738FDC    ||
+        editSlotInfo.romType == ROM_BEERIDE      ||
         editSlotInfo.romType == ROM_FMPAC        ||
         editSlotInfo.romType == ROM_BUNSETU) 
     {
@@ -589,6 +590,7 @@ static void endEditControls(HWND hDlg)
 
     case ROM_PAC:
     case ROM_FMPAC:
+    case ROM_BEERIDE:
         editSlotInfo.pageCount = 2;
         break;
 
@@ -612,6 +614,7 @@ static void endEditControls(HWND hDlg)
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
     case ROM_MSXPRN:
+    case ROM_GIDE:
         strcpy(editSlotInfo.name, "");
         editSlotInfo.slot      = 0;
         editSlotInfo.subslot   = 0;
@@ -676,6 +679,7 @@ static void endEditControls(HWND hDlg)
     case ROM_PLAIN:
     case ROM_FMPAK:
     case ROM_PANASONIC16:
+    case ROM_SUNRISEIDE:
     case ROM_PANASONIC32:
     case ROM_GAMEREADER:
         editSlotInfo.startPage = 0;
@@ -727,7 +731,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && 
-        romType != ROM_TURBORTIMER && romType != ROM_TURBORIO &&
+        romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
         romType != ROM_MSXMIDI &&
         romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_MSXPRN && romType != ROM_SVI328RS232)
@@ -747,7 +751,7 @@ static void setEditControls(HWND hDlg)
 
     // Set ram slot
     if (romType == SRAM_MATSUCHITA || romType == SRAM_S1985 || 
-        romType == ROM_S1990 || romType == ROM_KANJI || 
+        romType == ROM_S1990 || romType == ROM_KANJI ||  romType == ROM_GIDE ||
         romType == ROM_TURBORTIMER || romType == ROM_TURBORIO ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
@@ -791,7 +795,7 @@ static void setEditControls(HWND hDlg)
     if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED ||
         romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
-        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC ||
+        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || 
         romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU)
     {
         int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
@@ -931,12 +935,14 @@ static void setEditControls(HWND hDlg)
     case ROM_NATIONALFDC:
     case ROM_PHILIPSFDC:
     case ROM_SVI738FDC:
+    case ROM_BEERIDE:
     case ROM_FMPAC:
     case ROM_BUNSETU:
     case ROM_MSXMUSIC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
+    case ROM_SUNRISEIDE:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
     case ROM_NATIONAL:
@@ -1046,6 +1052,7 @@ static void setEditControls(HWND hDlg)
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
     case ROM_MSXPRN:
+    case ROM_GIDE:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), "");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
         EnableWindow(GetDlgItem(hDlg, IDC_ROMBROWSE), FALSE);
@@ -1073,6 +1080,9 @@ static RomType romTypeList[] = {
     ROM_PHILIPSFDC,
     ROM_SVI738FDC,
     ROM_SVI328FDC,
+    ROM_GIDE,
+    ROM_SUNRISEIDE,
+    ROM_BEERIDE,
     ROM_SVI328PRN,
     ROM_SVI328RS232,
     ROM_SVI80COL,
