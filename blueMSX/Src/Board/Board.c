@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2005-12-29 16:45:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -617,7 +617,7 @@ void boardChangeCassette(int tapeId, char* name, const char* fileInZipFile)
         strcpy(boardDeviceInfo->tapes[tapeId].inZipName, fileInZipFile ? fileInZipFile : "");
     }
 
-//    return tapeInsert(name, fileInZipFile);
+    return tapeInsert(name, fileInZipFile);
 }
 
 int boardGetCassetteInserted()
