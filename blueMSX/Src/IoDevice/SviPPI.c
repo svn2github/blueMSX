@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-12-29 14:45:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,38 +47,70 @@
 static UInt8 getKeyState(int row);
 
 /*
-PPI Port A Input (Address 98H)
-Bit Name     Description
- 1  TA       Joystick 1, /SENSE
- 2  TB       Joystick 1, EOC
- 3  TC       Joystick 2, /SENSE
- 4  TD       Joystick 2, EOC
- 5  TRIGGER1 Joystick 1, Trigger
- 6  TRIGGER2 Joystick 2, Trigger
- 7  /READY   Cassette, Ready
- 8  CASR     Cassette, Read data
+  Keyboard Matrix
+  
+    Column:|  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+           |     |     |     |     |     |     |     |     |
+  Line:    |     |     |     |     |     |     |     |     |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   0       | "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   1       | "8" | "9" | ":" | "'" | "," | "=" | "." | "/" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   2       | "-" | "A" | "B" | "C" | "D" | "E" | "F" | "G" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   3       | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   4       | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   5       | "X" | "Y" | "Z" | "[" | "\" | "]" | BS  | UP  |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   6       |SHIFT|CTRL |LGRAP|RGRAP| ESC |STOP |ENTER|LEFT |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   7       | F1  | F2  | F3  | F4  | F5  | CLS | INS |DOWN |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   8       |SPACE| TAB | DEL |CAPS | SEL |PRINT|     |RIGHT|
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+   9*      | "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
+  ---------+-----+-----+-----+-----+-----+-----+-----+-----|
+  10*      | "8" | "9" | "+" | "-" | "*" | "/" | "." | "," |
+  ----------------------------------------------------------
+  * Numcerical keypad (SVI-328 only)
+*/
 
-PPI Port B Input (Address 99H)
-Bit Name Description
- 1  IN0  Keyboard, Column status of selected line
- 2  IN1  Keyboard, Column status of selected line
- 3  IN2  Keyboard, Column status of selected line
- 4  IN3  Keyboard, Column status of selected line
- 5  IN4  Keyboard, Column status of selected line
- 6  IN5  Keyboard, Column status of selected line
- 7  IN6  Keyboard, Column status of selected line
- 8  IN7  Keyboard, Column status of selected line
-
-PPI Port C Output (Address 97H)
-Bit Name   Description
- 1  KB0    Keyboard, Line select 0
- 2  KB1    Keyboard, Line select 1
- 3  KB2    Keyboard, Line select 2
- 4  KB3    Keyboard, Line select 3
- 5  CASON  Cassette, Motor relay control (0=on, 1=off)
- 6  CASW   Cassette, Write data
- 7  CASAUD Cassette, Audio out (pulse)
- 8  SOUND  Keyboard, Click sound bit (pulse)
+/*
+  PPI Port A Input (Address 98H)
+  Bit Name     Description
+   0  TA       Joystick 1, /SENSE
+   1  TB       Joystick 1, EOC
+   2  TC       Joystick 2, /SENSE
+   3  TD       Joystick 2, EOC
+   4  TRIGGER1 Joystick 1, Trigger
+   5  TRIGGER2 Joystick 2, Trigger
+   6  /READY   Cassette, Ready
+   7  CASR     Cassette, Read data
+  
+  PPI Port B Input (Address 99H)
+  Bit Name Description
+   0  IN0  Keyboard, Column status of selected line
+   1  IN1  Keyboard, Column status of selected line
+   2  IN2  Keyboard, Column status of selected line
+   3  IN3  Keyboard, Column status of selected line
+   4  IN4  Keyboard, Column status of selected line
+   5  IN5  Keyboard, Column status of selected line
+   6  IN6  Keyboard, Column status of selected line
+   7  IN7  Keyboard, Column status of selected line
+  
+  PPI Port C Output (Address 97H)
+  Bit Name   Description
+   0  KB0    Keyboard, Line select 0
+   1  KB1    Keyboard, Line select 1
+   2  KB2    Keyboard, Line select 2
+   3  KB3    Keyboard, Line select 3
+   4  CASON  Cassette, Motor relay control (0=on, 1=off)
+   5  CASW   Cassette, Write data
+   6  CASAUD Cassette, Audio out (pulse)
+   7  SOUND  Keyboard, Click sound bit (pulse)
 */
 
 typedef struct {
@@ -317,7 +349,7 @@ static UInt8 getKeyState(int row)
                    (inputEventGetState(EC_ESC    ) << 4) |
                    (inputEventGetState(EC_STOP   ) << 5) |
                    (inputEventGetState(EC_RETURN ) << 6) |
-                   (inputEventGetState(EC_LEFT   ) << 6);
+                   (inputEventGetState(EC_LEFT   ) << 7);
         break;
         
     case 7:
