@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2005-12-20 07:07:10 $
+** $Date: 2005-12-29 04:42:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,12 +97,15 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "menu-diskb"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuDiskB; }
     if (0 == strcmp(action, "menu-cassette"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuCassette; }
     if (0 == strcmp(action, "menu-printer"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuPrinter; }
+    if (0 == strcmp(action, "menu-joyport1"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort1; }   
+    if (0 == strcmp(action, "menu-joyport2"))           { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuJoyPort2; } 
     if (0 == strcmp(action, "menu-windowsize"))         { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuZoom; }
     if (0 == strcmp(action, "menu-options"))            { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuOptions; }
     if (0 == strcmp(action, "menu-help"))               { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuHelp; }
     if (0 == strcmp(action, "menu-tools"))              { *arg1 += dx; *arg2 += dy; return (ButtonEvent)actionMenuTools; }
     
     if (0 == strcmp(action, "dlg-emulation"))           return (ButtonEvent)actionPropShowEmulation;
+    if (0 == strcmp(action, "dlg-controls"))            return (ButtonEvent)actionPropShowEmulation;
     if (0 == strcmp(action, "dlg-video"))               return (ButtonEvent)actionPropShowVideo;
     if (0 == strcmp(action, "dlg-audio"))               return (ButtonEvent)actionPropShowAudio;
     if (0 == strcmp(action, "dlg-performance"))         return (ButtonEvent)actionPropShowPerformance;
