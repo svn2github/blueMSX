@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2005-12-29 17:11:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -283,8 +283,9 @@ static UInt8 getKeyState(int row)
         
     case 6:
         keyState = (inputEventGetState(EC_LSHIFT ) << 0) |
-                   (inputEventGetState(EC_RSHIFT ) << 1) |
-                   (inputEventGetState(EC_CTRL   ) << 2) |
+                   (inputEventGetState(EC_RSHIFT ) << 0) |
+                   (inputEventGetState(EC_CTRL   ) << 1) |
+                   (inputEventGetState(EC_GRAPH  ) << 2) |
                    (inputEventGetState(EC_CAPS   ) << 3) |
                    (inputEventGetState(EC_CODE   ) << 4) |
                    (inputEventGetState(EC_F1     ) << 5) |
