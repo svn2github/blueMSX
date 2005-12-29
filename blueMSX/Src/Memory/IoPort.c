@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2005-12-29 06:35:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #include "IoPort.h"
+#include "Board.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -104,7 +105,7 @@ UInt8 ioPortRead(void* ref, UInt16 port)
 {
     port &= 0xff;
 
-    if (port >= 0x40 && port < 0x50) {
+    if (boardGetType() == BOARD_MSX && port >= 0x40 && port < 0x50) {
         if (ioSubTable[currentSubport].read == NULL) {
             return 0xff;
         }
@@ -129,7 +130,7 @@ void  ioPortWrite(void* ref, UInt16 port, UInt8 value)
 {
     port &= 0xff;
 
-    if (port >= 0x40 && port < 0x50) {
+    if (boardGetType() == BOARD_MSX && port >= 0x40 && port < 0x50) {
         if (port == 0x40) {
             currentSubport = value;
             return;
