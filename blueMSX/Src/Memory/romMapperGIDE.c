@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-12-29 06:54:11 $
+** $Date: 2006-01-01 15:45:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 typedef struct {
     int deviceHandle;
@@ -79,23 +80,20 @@ static void destroy(RomMapperGIde* rm)
 {
     int portBase;
 
-    if (boardGetType() == BOARD_SVI)
-        portBase = 0x40;
-    else
-        portBase = 0x60;
+    portBase = (boardGetType() == BOARD_SVI) ? 0x40:0x60;
 
-    ioPortUnregister(portBase + 0x04);
-    ioPortUnregister(portBase + 0x05);
-    ioPortUnregister(portBase + 0x06);
-    ioPortUnregister(portBase + 0x07);
-    ioPortUnregister(portBase + 0x08);
-    ioPortUnregister(portBase + 0x09);
-    ioPortUnregister(portBase + 0x0a);
-    ioPortUnregister(portBase + 0x0b);
-    ioPortUnregister(portBase + 0x0c);
-    ioPortUnregister(portBase + 0x0d);
-    ioPortUnregister(portBase + 0x0e);
-    ioPortUnregister(portBase + 0x0f);
+    ioPortUnregister(portBase | 0x04);
+    ioPortUnregister(portBase | 0x05);
+    ioPortUnregister(portBase | 0x06);
+    ioPortUnregister(portBase | 0x07);
+    ioPortUnregister(portBase | 0x08);
+    ioPortUnregister(portBase | 0x09);
+    ioPortUnregister(portBase | 0x0a);
+    ioPortUnregister(portBase | 0x0b);
+    ioPortUnregister(portBase | 0x0c);
+    ioPortUnregister(portBase | 0x0d);
+    ioPortUnregister(portBase | 0x0e);
+    ioPortUnregister(portBase | 0x0f);
 
     deviceManagerUnregister(rm->deviceHandle);
     debugDeviceUnregister(rm->debugHandle);
@@ -105,42 +103,116 @@ static void destroy(RomMapperGIde* rm)
     free(rm);
 }
 
+UInt8 rtc72421Read(UInt8 rtcReg)
+{
+    time_t current_time;
+    struct tm* tms;
+
+    time( &current_time );
+    tms = localtime( &current_time );
+
+    switch(rtcReg & 0x0f)
+    {
+    case 0x00:    // 1-second digit
+        return (tms->tm_sec % 10) & 0xf;
+
+    case 0x01:    // 10-seconds digit
+        return (tms->tm_sec / 10) & 0x7;
+
+    case 0x02:    // 1-minute digit
+        return (tms->tm_min % 10) & 0xf;
+
+    case 0x03:    // 10-minute digit
+        return (tms->tm_min / 10) & 0x7;
+
+    case 0x04:    // 1-hour digit
+        return (tms->tm_hour % 10) & 0xf;
+
+    case 0x05:    // 10-hours digit
+        return (tms->tm_hour / 10) & 0x7;
+
+    case 0x06:    // 1-day digit (days in month)
+        return (tms->tm_mday % 10) & 0xf;
+
+    case 0x07:    // 10-days digit
+        return (tms->tm_mday / 10) & 0x3;
+
+    case 0x08:    // 1-month digit
+        return ((tms->tm_mon + 1) % 10) & 0xf;
+
+    case 0x09:    // 10-months digit
+        return ((tms->tm_mon + 1) / 10) & 0x1;
+
+    case 0x0a:    // 1-year digit
+        return (tms->tm_year % 10) & 0xf;
+
+    case 0x0b:    // 10-years digit
+        return ((tms->tm_year % 100) / 10) & 0xf;
+
+    case 0x0c:    // day of the week
+        return tms->tm_wday & 0x7;
+
+    case 0x0d:    // control D
+        return 0;
+
+    case 0x0e:    // control E
+        return 0;
+
+    case 0x0f:    // control F
+        return 0;
+    }
+    return 0xff;
+}
+
+static void rtc72421Write(UInt8 rtcReg, UInt8 value)
+{
+}
+
 static UInt8 peekIo(RomMapperGIde* rm, UInt16 ioPort) 
 {
     return 0xff;
 }
 
-
 static UInt8 readIo(RomMapperGIde* rm, UInt16 ioPort) 
 {
     switch (ioPort & 0x0f)
     {
-    case 0x04:        /* Reserved for expansion board */
+    case 0x04:    // Reserved for expansion board
         return 0xff;
-    case 0x05:        /* RTC 72421 */
-        return 0xff;
-    case 0x06:        /* GIDE alternate status */
-        return rm->altStatus;
-    case 0x07:        /* GIDE drive address register */
-        return rm->drvSelect;
-    case 0x08:        /* IDE data register */
-        return (UInt8)harddiskIdeRead(rm->hdide);
-    case 0x09:        /* IDE error register */
-        return harddiskIdeReadRegister(rm->hdide, 1);
-    case 0x0a:        /* IDE sector count register */
-        return harddiskIdeReadRegister(rm->hdide, 2);
-    case 0x0b:        /* IDE sector number register */
-        return harddiskIdeReadRegister(rm->hdide, 3);
-    case 0x0c:        /* IDE cylinder low register */
-        return harddiskIdeReadRegister(rm->hdide, 4);
-    case 0x0d:        /* IDE cylinder high register */
-        return harddiskIdeReadRegister(rm->hdide, 5);
-    case 0x0e:        /* IDE drive/head register */
-        return harddiskIdeReadRegister(rm->hdide, 6);
-    case 0x0f:        /* IDE status register */
-        rm->altStatus = harddiskIdeReadRegister(rm->hdide, 7);
+
+    case 0x05:    // RTC 72421
+        return rtc72421Read(ioPort >> 8);
+
+    case 0x06:    // GIDE alternate status
         return rm->altStatus;
 
+    case 0x07:    // GIDE drive address register
+        return rm->drvSelect;
+
+    case 0x08:    // IDE data register
+        return (UInt8)harddiskIdeRead(rm->hdide);
+
+    case 0x09:    // IDE error register
+        return harddiskIdeReadRegister(rm->hdide, 1);
+
+    case 0x0a:    // IDE sector count register
+        return harddiskIdeReadRegister(rm->hdide, 2);
+
+    case 0x0b:    // IDE sector number register
+        return harddiskIdeReadRegister(rm->hdide, 3);
+
+    case 0x0c:    // IDE cylinder low register
+        return harddiskIdeReadRegister(rm->hdide, 4);
+
+    case 0x0d:    // IDE cylinder high register
+        return harddiskIdeReadRegister(rm->hdide, 5);
+
+    case 0x0e:    // IDE drive/head register
+        return harddiskIdeReadRegister(rm->hdide, 6);
+
+    case 0x0f:    // IDE status register
+        rm->altStatus = harddiskIdeReadRegister(rm->hdide, 7);
+        return rm->altStatus;
     }
     return 0xff;
 }
@@ -149,40 +221,52 @@ static void writeIo(RomMapperGIde* rm, UInt16 ioPort, UInt8 value)
 {
     switch (ioPort & 0x0f)
     {
-    case 0x04:        /* Reserved for expansion board */
+    case 0x04:    // Reserved for expansion board
         break; 
-    case 0x05:        /* RTC 72421 */
+
+    case 0x05:    // RTC 72421
+        rtc72421Write(ioPort >> 8, value);
         break; 
-    case 0x06:        /* GIDE digital output register */
+
+    case 0x06:    // GIDE digital output register
         rm->intEnable = value & 0x01?1:0;
         if (value & 0x02)
             harddiskIdeReset(rm->hdide);
         break; 
-    case 0x07:        /* GIDE drive address register */
+
+    case 0x07:    // GIDE drive address register
         break; 
-    case 0x08:        /* IDE data register */
+
+    case 0x08:    // IDE data register
         harddiskIdeWrite(rm->hdide, value);
         break; 
-    case 0x09:        /* IDE write precomp register */
+
+    case 0x09:    // IDE write precomp register
         harddiskIdeWriteRegister(rm->hdide, 1, value);
         break; 
-    case 0x0a:        /* IDE sector count register */
+
+    case 0x0a:    // IDE sector count register
         harddiskIdeWriteRegister(rm->hdide, 2, value);
         break; 
-    case 0x0b:        /* IDE sector number register */
+
+    case 0x0b:    // IDE sector number register
         harddiskIdeWriteRegister(rm->hdide, 3, value);
         break; 
-    case 0x0c:        /* IDE cylinder low register */
+
+    case 0x0c:    // IDE cylinder low register
         harddiskIdeWriteRegister(rm->hdide, 4, value);
         break; 
-    case 0x0d:        /* IDE cylinder high register */
+
+    case 0x0d:    // IDE cylinder high register
         harddiskIdeWriteRegister(rm->hdide, 5, value);
         break; 
-    case 0x0e:        /* IDE drive/head register */
+
+    case 0x0e:    // IDE drive/head register
         rm->drvSelect = value;
         harddiskIdeWriteRegister(rm->hdide, 6, value);
         break; 
-    case 0x0f:        /* IDE command register */
+
+    case 0x0f:    // IDE command register
         harddiskIdeWriteRegister(rm->hdide, 7, value);
         break; 
     }
@@ -216,23 +300,20 @@ int romMapperGIdeCreate(int hdId)
     rm->deviceHandle = deviceManagerRegister(ROM_GIDE, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "GIDE", &dbgCallbacks, rm);
 
-    if (boardGetType() == BOARD_SVI)
-        portBase = 0x40;
-    else
-        portBase = 0x60;
+    portBase = (boardGetType() == BOARD_SVI) ? 0x40:0x60;
 
-    ioPortRegister(portBase + 0x04, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x05, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x06, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x07, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x08, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x09, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0a, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0b, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0c, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0d, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0e, readIo, writeIo, rm);
-    ioPortRegister(portBase + 0x0f, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x04, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x05, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x06, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x07, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x08, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x09, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0a, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0b, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0c, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0d, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0e, readIo, writeIo, rm);
+    ioPortRegister(portBase | 0x0f, readIo, writeIo, rm);
 
     rm->hdide = harddiskIdeCreate(diskGetHdDriveId(hdId, 0));
 
