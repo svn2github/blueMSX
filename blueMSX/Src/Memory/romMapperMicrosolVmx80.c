@@ -1,0 +1,140 @@
+/*****************************************************************************
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
+**
+** $Revision: 1.1 $
+**
+** $Date: 2006-01-02 17:15:11 $
+**
+** More info: http://www.bluemsx.com
+**
+** Copyright (C) 2003-2006 Daniel Vik, Tomas Karlsson
+**
+**  This software is provided 'as-is', without any express or implied
+**  warranty.  In no event will the authors be held liable for any damages
+**  arising from the use of this software.
+**
+**  Permission is granted to anyone to use this software for any purpose,
+**  including commercial applications, and to alter it and redistribute it
+**  freely, subject to the following restrictions:
+**
+**  1. The origin of this software must not be misrepresented; you must not
+**     claim that you wrote the original software. If you use this software
+**     in a product, an acknowledgment in the product documentation would be
+**     appreciated but is not required.
+**  2. Altered source versions must be plainly marked as such, and must not be
+**     misrepresented as being the original software.
+**  3. This notice may not be removed or altered from any source distribution.
+**
+******************************************************************************
+*/
+#include "romMapperMicrosolVmx80.h"
+#include "MediaDb.h"
+#include "SlotManager.h"
+#include "DeviceManager.h"
+#include "SaveState.h"
+#include "CRTC6845.h"
+#include "RomLoader.h"
+#include <stdlib.h>
+#include <memory.h>
+
+typedef struct {
+    int deviceHandle;
+    UInt8* romData;
+    int slot;
+    int sslot;
+    int startPage;
+    CRTC6845* crtc6845;
+} RomMapperMicrosolVmx80;
+
+static void saveState(RomMapperMicrosolVmx80* rm)
+{
+    SaveState* state = saveStateOpenForWrite("Vmx80");
+    saveStateClose(state);
+}
+
+static void loadState(RomMapperMicrosolVmx80* rm)
+{
+    SaveState* state = saveStateOpenForRead("Vmx80");
+    saveStateClose(state);
+}
+
+static void destroy(RomMapperMicrosolVmx80* rm)
+{
+    slotUnregister(rm->slot, rm->sslot, rm->startPage);
+    deviceManagerUnregister(rm->deviceHandle);
+
+    free(rm->romData);
+    free(rm);
+}
+
+static UInt8 read(RomMapperMicrosolVmx80* rm, UInt16 address)
+{
+    if (address == 0x7001) {
+        return crtcRead(rm->crtc6845, 0);
+    }
+
+    if (address > 0x5fff  && address < 0x6800) {
+        return crtcMemRead(rm->crtc6845, address & 0x07ff);
+    }
+
+    return address < 0x4000 ? rm->romData[address] : 0xff;
+}
+
+static void write(RomMapperMicrosolVmx80* rm, UInt16 address, UInt8 value) 
+{
+    switch (address)
+    {
+    case 0x7000:
+	crtcWriteLatch(rm->crtc6845, 0, value);
+	break;
+
+    case 0x7001:
+        crtcWrite(rm->crtc6845, 0, value);
+        break;
+
+    default:
+        if (address > 0x5fff  && address < 0x6800) {
+            crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
+        }
+        break;
+    }
+}
+	
+static void reset(RomMapperMicrosolVmx80* rm)
+{
+}
+
+int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, 
+                          int size, int slot, int sslot, int startPage)
+{
+    DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    RomMapperMicrosolVmx80* rm;
+    int pages = 8;
+    int i;
+
+    rm = malloc(sizeof(RomMapperMicrosolVmx80));
+
+    rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL80, &callbacks, rm);
+    slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
+
+    {
+    	int bufSize;
+    	UInt8* buf = romLoad("GCVMX80V11.ROM", NULL, &size);
+        rm->crtc6845 = NULL;
+        rm->crtc6845 = crtc6845Create(50, buf, bufSize, 0x0800, 7, 0, 80, 4);
+    }
+
+    rm->romData = calloc(1, size);
+    memcpy(rm->romData, romData, size);
+    rm->slot  = slot;
+    rm->sslot = sslot;
+    rm->startPage  = startPage;
+
+    for (i = 0; i < pages; i++) {   
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + i * 0x2000, 0, 0);
+    }
+
+    reset(rm);
+
+    return 1;
+}
