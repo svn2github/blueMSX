@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.121 $
+** $Revision: 1.122 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-01-06 18:11:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3029,7 +3029,7 @@ char* archFilenameGetOpenCas(Properties* properties)
     return fileName;
 }
 
-char* archFilenameGetOpenDisk(Properties* properties, int drive)
+char* archFilenameGetOpenDisk(Properties* properties, int drive, int allowCreate)
 {
     char* title = drive == 1 ? langDlgInsertDiskB() : langDlgInsertDiskA();
     char  extensionList[512];
@@ -3044,7 +3044,12 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive)
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
-    fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
+    if (allowCreate) {
+        fileName = openNewDskFile(getMainHwnd(), title, extensionList, defaultDir, defautExtension, selectedExtension);
+    }
+    else {
+        fileName = openFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension);
+    }
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 

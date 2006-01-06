@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-01-06 18:12:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -811,6 +811,180 @@ char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
 
     return pFileName; 
 } 
+//////////////////////////////////////////////////////////////////
+
+static int newDskFileSize;
+
+#define ONEKB 1024
+
+static const struct {
+    int size;
+    char text[34];
+} dskFileSizes[] = {
+    { 720 * ONEKB, "MSX 3.5 Double Sided, 9 Sectors" },
+    { 640 * ONEKB, "MSX 3.5 Double Sided, 8 Sectors" },
+    { 360 * ONEKB, "MSX 3.5 Single Sided, 9 Sectors" },
+    { 320 * ONEKB, "MSX 3.5 Single Sided, 8 Sectors" },
+    { 338 * ONEKB, "SVI-328 5.25 Double Sided" },
+    { 168 * ONEKB, "SVI-328 5.25 Single Sided" },
+    { 0, "" }
+};
+
+UINT_PTR CALLBACK hookDskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (iMsg) {
+	case WM_DIALOGRESIZE:
+        updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 0);
+        return 0;
+
+    case WM_INITDIALOG:
+        {
+            int i;
+
+            for (i = 0; dskFileSizes[i].size; i++) {
+                SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_ADDSTRING, 0, (LPARAM)dskFileSizes[i].text);
+                if (newDskFileSize == dskFileSizes[i].size || i == 0) {
+                    SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_SETCURSEL, i, 0);
+                }
+            }
+        }
+        return 0;
+
+    case WM_SIZE:
+        {
+            RECT r;
+            int height;
+            int width;
+            HWND hwnd;
+
+            GetClientRect(GetParent(hDlg), &r);
+            
+            height = r.bottom - r.top;
+            width  = r.right - r.left;
+
+            hwnd = GetDlgItem(hDlg, IDC_OPEN_HDSIZETEXT);
+            SetWindowPos(hwnd, NULL, 8, height - 29, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+            hwnd = GetDlgItem(hDlg, IDC_OPEN_HDSIZE);
+            SetWindowPos(hwnd, NULL, 81, height - 32, 233, 12, SWP_NOZORDER);
+        }
+        return 0;
+
+    case WM_DESTROY:
+        {
+            int idx = SendMessage(GetDlgItem(hDlg, IDC_OPEN_HDSIZE), CB_GETCURSEL, 0, 0);
+            saveDialogPos(GetParent(hDlg), DLG_ID_OPEN);
+            newDskFileSize = dskFileSizes[idx].size;
+        }
+        return 0;
+        
+    case WM_NOTIFY:
+        {
+            OFNOTIFY* ofn = (OFNOTIFY*)lParam;
+            switch (ofn->hdr.code) {
+			case CDN_INITDONE:
+				//It is not effective since the second times why. 
+				updateDialogPos(GetParent(hDlg), DLG_ID_OPEN, 0, 1);
+				PostMessage(hDlg, WM_DIALOGRESIZE, 0, 0);
+				break;
+            }
+        }
+        return 0;
+    }
+
+    return 0;
+}
+
+char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+                    char* defExt, int* filterIndex)
+{ 
+    OPENFILENAME ofn; 
+    BOOL rv; 
+    static char pFileName[MAX_PATH];
+    FILE* file;
+    
+    newDskFileSize = 720 * ONEKB;
+
+    pFileName[0] = 0; 
+
+    ofn.lStructSize = sizeof(OPENFILENAME); 
+    ofn.hwndOwner = hwndOwner; 
+    ofn.hInstance = (HINSTANCE)GetModuleHandle(NULL); 
+    ofn.lpstrFilter = pFilter ? pFilter : "*.*\0\0"; 
+    ofn.lpstrCustomFilter = NULL; 
+    ofn.nMaxCustFilter = 0; 
+    ofn.nFilterIndex = filterIndex ? *filterIndex : 0; 
+    ofn.lpstrFile = pFileName; 
+    ofn.nMaxFile = 1024; 
+    ofn.lpstrFileTitle = NULL; 
+    ofn.nMaxFileTitle = 0; 
+    ofn.lpstrInitialDir = pDir; 
+    ofn.lpstrTitle = pTitle; 
+    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_HIDEREADONLY; 
+    ofn.nFileOffset = 0; 
+    ofn.nFileExtension = 0; 
+    ofn.lpstrDefExt = NULL; 
+    ofn.lCustData = 0; 
+    ofn.lpfnHook = hookDskProc; 
+    ofn.lpTemplateName = MAKEINTRESOURCE(IDD_OPEN_HDSIZEDROPDOWN); 
+
+    rv = GetOpenFileName(&ofn); 
+
+    if (!rv) {
+        return NULL; 
+    }
+
+    if (filterIndex) {
+        *filterIndex = ofn.nFilterIndex;
+    }
+
+    if (pDir != NULL) {
+        GetCurrentDirectory(MAX_PATH - 1, pDir);
+    }
+
+    file = fopen(pFileName, "r");
+    if (file != NULL) {
+        fclose(file);
+        if (IDOK != MessageBox(NULL, "Do you want to replace the file xxx and replace its contents?", "blueMSX Warning", MB_OKCANCEL)) {
+            return NULL;
+        }
+    }
+
+    if (defExt) {
+        if (strlen(pFileName) <= strlen(defExt)) {
+            strcat(pFileName, defExt);
+        }
+        else {
+            char* pos = pFileName + strlen(pFileName) - strlen(defExt);
+            int  len  = strlen(defExt);
+            while (len--) {
+                if (toupper(pos[len]) != toupper(defExt[len])) {
+                    break;
+                }
+            }
+            if (len >= 0) {
+                strcat(pFileName, defExt);
+            }
+        }
+    }
+    file = fopen(pFileName, "w+");
+    if (file != NULL) {
+        char* data = calloc(1, ONEKB);
+        if (newDskFileSize == 338 * ONEKB || newDskFileSize == 168 * ONEKB) {
+            memset(data, 0xe5, ONEKB);
+        }
+        while (newDskFileSize > 0) {
+            fwrite(data, 1, ONEKB, file);
+            newDskFileSize -= ONEKB;
+        }
+        free(data);
+        fclose(file);
+    }
+
+    return pFileName; 
+} 
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -1077,3 +1251,4 @@ char* openConfigFile(HWND parent, char* title, char* description,
 }
 
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

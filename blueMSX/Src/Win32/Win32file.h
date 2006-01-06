@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-12-21 04:13:45 $
+** $Date: 2006-01-06 18:12:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@ char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
                   int mustExist, char* defExt, int* filterIndex, RomType* romType);
 char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
                     char* defExt, int* filterIndex);
+char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, char* defExt, int* filterIndex);
 char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir);
 char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview);
 char* openConfigFile(HWND parent, char* title, char* description,

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-01-06 18:12:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -129,7 +129,8 @@
 #define ID_FILE_DISK_INSERTDIR          41201
 #define ID_FILE_DISK_REMOVE             41202
 #define ID_FILE_DISK_AUTOSTART          41203
-#define ID_FILE_DISK_HISTORY            41204
+#define ID_FILE_DISK_INSERTNEW          41204
+#define ID_FILE_DISK_HISTORY            41205
 
 #define ID_FILE_TAPE_INSERT             41400
 #define ID_FILE_TAPE_REMOVE             41401
@@ -381,7 +382,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
 static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shortcuts) 
 {
-    int idOffset = diskNo * ID_FILE_CART_OFFSET;
+    int idOffset = diskNo * ID_FILE_DISK_OFFSET;
     _TCHAR langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
@@ -395,6 +396,8 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsert[diskNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTDIR, langBuffer);
+
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTNEW, TEXT("Insert New"));
 
     _stprintf(langBuffer, "%s%hs%hs", langMenuDiskEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_DISK_REMOVE, langBuffer);
@@ -1195,11 +1198,14 @@ int menuCommand(Properties* pProperties, int command)
         }
 
         switch (cmd) {
-        case ID_FILE_DISK_INSERT: 
+        case ID_FILE_DISK_INSERT:
             actionDiskInsert(i);
             return 0;
-        case ID_FILE_DISK_INSERTDIR:      
+        case ID_FILE_DISK_INSERTDIR:
             actionDiskInsertDir(i); 
+            return 0;
+        case ID_FILE_DISK_INSERTNEW:
+            actionDiskInsertNew(i);
             return 0;
         case ID_FILE_DISK_REMOVE:  
             actionDiskRemove(i);
