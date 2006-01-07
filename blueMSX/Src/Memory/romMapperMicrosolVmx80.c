@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-02 17:15:11 $
+** $Date: 2006-01-07 23:20:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,11 +69,11 @@ static void destroy(RomMapperMicrosolVmx80* rm)
 
 static UInt8 read(RomMapperMicrosolVmx80* rm, UInt16 address)
 {
-    if (address == 0x7001) {
+    if (address == 0x3001) {
         return crtcRead(rm->crtc6845, 0);
     }
 
-    if (address > 0x5fff  && address < 0x6800) {
+    if (address > 0x1fff  && address < 0x2800) {
         return crtcMemRead(rm->crtc6845, address & 0x07ff);
     }
 
@@ -84,16 +84,16 @@ static void write(RomMapperMicrosolVmx80* rm, UInt16 address, UInt8 value)
 {
     switch (address)
     {
-    case 0x7000:
+    case 0x3000:
 	crtcWriteLatch(rm->crtc6845, 0, value);
 	break;
 
-    case 0x7001:
+    case 0x3001:
         crtcWrite(rm->crtc6845, 0, value);
         break;
 
     default:
-        if (address > 0x5fff  && address < 0x6800) {
+        if (address > 0x1fff  && address < 0x2800) {
             crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
         }
         break;
@@ -109,17 +109,16 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData,
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMicrosolVmx80* rm;
-    int pages = 8;
     int i;
 
     rm = malloc(sizeof(RomMapperMicrosolVmx80));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL80, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
-
+    slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
     {
-    	int bufSize;
-    	UInt8* buf = romLoad("GCVMX80V11.ROM", NULL, &size);
+    	int bufSize = 0;
+    	UInt8* buf = NULL;
+        buf = romLoad("GCVMX80V11.ROM", NULL, &size);
         rm->crtc6845 = NULL;
         rm->crtc6845 = crtc6845Create(50, buf, bufSize, 0x0800, 7, 0, 80, 4);
     }
@@ -130,8 +129,8 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    for (i = 0; i < pages; i++) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + i * 0x2000, 0, 0);
+    for (i = 0; i < 8; i++) {   
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
     }
 
     reset(rm);
