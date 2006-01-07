@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,8 +61,6 @@
 
 #define DISPLAY_HEIGHT      240
 
-extern UInt32 videoGetColor(int R, int G, int B); // FIXME: Do something nicer
-
 typedef enum { CURSOR_DISABLED, CURSOR_BLINK, CURSOR_NOBLINK} crtcCursorModes;
 typedef enum { CRTC_R0=0,   CRTC_R1=1,   CRTC_R2=2,   CRTC_R3=3,   CRTC_R4=4,   CRTC_R5=5,
                CRTC_R6=6,   CRTC_R7=7,   CRTC_R8=8,   CRTC_R9=9,   CRTC_R10=10, CRTC_R11=11,
@@ -82,7 +80,7 @@ static void loadState(CRTC6845* crtc);
 
 static void crtcRenderVideoBuffer(CRTC6845* crtc)
 {
-    UInt32 color[2];
+    UInt16 color[2];
     int x, y;
     int charWidth, charHeight;
     int Nr  = crtc->registers.reg[CRTC_R9] + 1; // Number of rasters per character
@@ -102,7 +100,7 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
     color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
 
     for (y = 0; y < DISPLAY_HEIGHT; y++) {
-        UInt32* linePtr = crtcFrameBuffer->line[y].buffer;
+        UInt16* linePtr = crtcFrameBuffer->line[y].buffer;
         int charRaster = y % Nr;
         int vadjust = 3; // Fix vertical adjust from regs (the value 4)
         int hadjust = 2; // Fix horizontal adjust from regs (the value 1)

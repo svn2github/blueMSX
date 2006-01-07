@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-09-08 18:22:14 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 
 typedef struct {
     int doubleWidth; // 1 when normal, 2 when 2 src pixels per dest pixel
-    UInt32 buffer[FB_MAX_LINE_WIDTH];
+    UInt16 buffer[FB_MAX_LINE_WIDTH];
 } LineBuffer;
 
 typedef enum { INTERLACE_NONE, INTERLACE_ODD, INTERLACE_EVEN } InterlaceMode;
@@ -68,5 +68,10 @@ void frameBufferDataDestroy(FrameBufferData* frameData);
 
 void frameBufferSetActive(FrameBufferData* frameData);
 FrameBufferData* frameBufferGetActive();
+
+static UInt16 videoGetColor(int R, int G, int B)
+{
+    return ((R >> 3) << 10) | ((G >> 3) << 5) | (B >> 3);
+}
 
 #endif

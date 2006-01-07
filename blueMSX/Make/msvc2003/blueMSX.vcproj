@@ -667,6 +667,9 @@
 					RelativePath="..\..\Src\Memory\romMapperMicrosol.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMicrosolVmx80.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMoonsound.c">
 				</File>
 				<File
@@ -899,6 +902,9 @@
 					RelativePath="..\..\Src\Memory\romMapperMicrosol.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMicrosolVmx80.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxAudio.h">
 				</File>
 				<File
@@ -971,6 +977,9 @@
 					RelativePath="..\..\Src\Memory\romMapperTurboRPcm.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperTurboRTimer.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\SlotManager.h">
 				</File>
 				<File
@@ -1001,9 +1010,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\VideoChips\FrameBuffer.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Memory\romMapperTurboRTimer.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\VideoChips\SpriteLine.h">

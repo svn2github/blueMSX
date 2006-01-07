@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-12-29 17:11:55 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -344,4 +344,5 @@ static UInt8 getKeyState(int row)
 
     return ~keyState;
 }
+
 

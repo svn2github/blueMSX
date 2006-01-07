@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-08-30 04:57:22 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,6 @@ void vdpSetDisplayEnable(int enable);
 int  vdpGetDisplayEnable();
 
 /* The following methods needs target dependent implementation */
-extern void SetColor(int palEntry, UInt32 rgbColor);
 extern void RefreshScreen(int);
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -549,8 +549,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuToolsKeyboard       = "Keyboard Editor";
     ls->shortcutShowKeyboard    = "Show Keyboard Editor";
 
-    ls->menuVideoSource         = "Video Source";
-    ls->menuVideoSourceDefault  = "No Video Source Connected";
     ls->menuVideoChipAutodetect = "Autodetect Video Chip";
     ls->propFullscreenResText   = "Fullscreen Resolution:";
     ls->dlgSavePreview          = "Show Preview";
@@ -634,6 +632,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuFileHarddisk        = "Hard Disk";
     ls->menuFileHarddiskNoPesent= "No Controllers Present";
     ls->dlgInsertHarddisk       = "Insert Hard Disk";
+
+    ls->menuVideoSource         = "Video Out Source";
+    ls->menuVideoSourceDefault  = "No Video Out Source Connected";
 };
 
 

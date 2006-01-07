@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2005-12-21 03:34:58 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,13 +49,6 @@
 #include "ArchNotifications.h"
 #include <math.h>
 #include <string.h>
-
-UInt32  emuFixedPalette[256];
-UInt32  emuFixedSpritePalette[16];
-UInt32  emuPalette0;
-UInt32  emuPalette[16];
-UInt32* emuFrameBuffer;
-int*    emuLineWidth;
 
 static int WaitForSync(int maxSpeed, int breakpointHit);
 
@@ -372,9 +365,6 @@ static void emulatorThread() {
 }
 
 void emulatorStart(const char* stateName) {
-    UInt32 color = videoGetColor(0, 0, 0);
-    int i;
-
 	dbgEnable();
 
     archEmulationStartNotification();
@@ -382,29 +372,6 @@ void emulatorStart(const char* stateName) {
     emulatorResume();
 
     emuExitFlag = 0;
-
-    for (i = 0; i < 256; i++) {
-        emuFixedPalette[i] = videoGetColor(255 * ((i >> 2) & 7) / 7, 
-                                           255 * ((i >> 5) & 7) / 7, 
-                                           255 * ((i & 3) == 3 ? 7 : 2 * (i & 3)) / 7);
-    }
-
-    emuFixedSpritePalette[0]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[1]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 2 * 255 / 7);
-    emuFixedSpritePalette[2]  = videoGetColor(3 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[3]  = videoGetColor(3 * 255 / 7, 0 * 255 / 7, 2 * 255 / 7);
-    emuFixedSpritePalette[4]  = videoGetColor(0 * 255 / 7, 3 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[5]  = videoGetColor(0 * 255 / 7, 3 * 255 / 7, 2 * 255 / 7);
-    emuFixedSpritePalette[6]  = videoGetColor(3 * 255 / 7, 3 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[7]  = videoGetColor(3 * 255 / 7, 3 * 255 / 7, 2 * 255 / 7);
-    emuFixedSpritePalette[8]  = videoGetColor(7 * 255 / 7, 4 * 255 / 7, 2 * 255 / 7);
-    emuFixedSpritePalette[9]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 7 * 255 / 7);
-    emuFixedSpritePalette[10] = videoGetColor(7 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[11] = videoGetColor(7 * 255 / 7, 0 * 255 / 7, 7 * 255 / 7);
-    emuFixedSpritePalette[12] = videoGetColor(0 * 255 / 7, 7 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[13] = videoGetColor(0 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
-    emuFixedSpritePalette[14] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 0 * 255 / 7);
-    emuFixedSpritePalette[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
@@ -575,19 +542,6 @@ void emulatorRestartSound() {
     archSoundDestroy();
     archSoundCreate(mixer, 44100, properties->sound.bufSize, properties->sound.stereo ? 2 : 1);
     emulatorResume();
-}
-
-void SetColor(int palEntry, UInt32 rgbColor) {
-    UInt32 color = videoGetColor(((rgbColor >> 16) & 0xff), ((rgbColor >> 8) & 0xff), rgbColor & 0xff);
-    if (palEntry == 0) {
-        emuPalette0 = color;
-    }
-    else {
-        emuPalette[palEntry] = color;
-    }
-    if (emuState == EMU_PAUSED) {
-        archUpdateEmuDisplay(0);
-    }
 }
 
 int emulatorGetCpuOverflow() {

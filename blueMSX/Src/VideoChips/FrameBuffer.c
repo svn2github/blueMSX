@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -360,12 +360,10 @@ FrameBufferData* frameBufferGetActive()
     return currentBuffer;
 }
 
-extern UInt32 videoGetColor(int R, int G, int B);
-
 FrameBuffer* frameBufferGetWhiteNoiseFrame() 
 {
     static FrameBuffer* frameBuffer = NULL;
-    UInt32 colors[32];
+    UInt16 colors[32];
     static UInt32 r = 13;
     int y;
 
@@ -381,7 +379,7 @@ FrameBuffer* frameBufferGetWhiteNoiseFrame()
 
     for (y = 0; y < 240; y++) {
         int x;
-        UInt32* buffer = frameBuffer->line[y].buffer;
+        UInt16* buffer = frameBuffer->line[y].buffer;
         frameBuffer->line[y].doubleWidth = 0;
         for (x = 0; x < 320; x++) {
             buffer[x] = colors[r >> 27];
@@ -418,14 +416,14 @@ FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer)
 }
 
 
-#define M1 0x1F01F
-#define M2 0x007C0
+#define M1 0x3E07C1F
+#define M2 0x3E0F81F
 
 static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
 {
     static FrameBuffer* d = NULL;
-    int p = 0x40 * pct / 100;
-    int n = 0x40 - p;
+    int p = 0x20 * pct / 100;
+    int n = 0x20 - p;
     int x;
     int y;
 
@@ -437,10 +435,10 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
         return mixFrameInterlace(a, b, pct);
     }
 
-    if (p == 0x40) {
+    if (p == 0x20) {
         return a;
     }
-    if (n == 0x40) {
+    if (n == 0x20) {
         return b;
     }
 
@@ -449,17 +447,17 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
     d->maxWidth = a->maxWidth;
 
     for (y = 0; y < a->lines; y++) {
-        int width = a->line[y].doubleWidth ? a->maxWidth * 2: a->maxWidth;
-        UInt32* ap = a->line[y].buffer;
-        UInt32* bp = b->line[y].buffer;
-        UInt32* dp = d->line[y].buffer;
+        int width = a->line[y].doubleWidth ? a->maxWidth: a->maxWidth / 2;
+        UInt32* ap = (UInt32*)a->line[y].buffer;
+        UInt32* bp = (UInt32*)b->line[y].buffer;
+        UInt32* dp = (UInt32*)d->line[y].buffer;
 
         d->line[y].doubleWidth = a->line[y].doubleWidth;
-        for (x = 0; x < width; x++) {
+        for (x = 0; x < width; x ++) {
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
-            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 6) & M1) |
-                    ((((av & M2) * p + (bv & M2) * n) >> 6) & M2);
+            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
         }
     }
 
@@ -470,14 +468,10 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
 static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
 {
     static FrameBuffer* d = NULL;
-    int p = 0x40 * pct / 100;
-    int n = 0x40 - p;
+    int p = 0x20 * pct / 100;
+    int n = 0x20 - p;
     int x;
     int y;
-    UInt32* dp;
-    int     width;
-    UInt32* ap;
-    UInt32* bp;
 
     if (d == NULL) {
         d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
@@ -487,8 +481,8 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
     d->interlace = INTERLACE_NONE;
     d->maxWidth  = a->maxWidth;
 
-    if (p == 0x40) { p = 0x39; n = 1; }
-    if (n == 0x40) { n = 0x39; p = 1; }
+    if (p == 0x20) { p = 0x1f; n = 1; }
+    if (n == 0x20) { n = 0x1f; p = 1; }
 
     if (a->interlace == INTERLACE_ODD) {
         FrameBuffer* t;
@@ -504,28 +498,32 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
     }
 
     for (y = 0; y < a->lines * 2; y++) {
-        width = a->line[y / 2].doubleWidth ? a->maxWidth * 2: a->maxWidth;
+        int     width = a->line[y / 2].doubleWidth ? a->maxWidth: a->maxWidth / 2;
+        UInt32* ap;
+        UInt32* bp;
+        UInt32* dp;
+        
         if (y & 1) {
-            ap = a->line[y / 2].buffer;
-            bp = b->line[y / 2].buffer;
+            ap = (UInt32*)a->line[y / 2].buffer;
+            bp = (UInt32*)b->line[y / 2].buffer;
         }
         else {
-            ap = a->line[y / 2].buffer;
+            ap = (UInt32*)a->line[y / 2].buffer;
             if (y == 0) {
-                bp = b->line[a->lines - 1].buffer;
+                bp = (UInt32*)b->line[a->lines - 1].buffer;
             }
             else {
-                bp = b->line[y / 2 - 1].buffer;
+                bp = (UInt32*)b->line[y / 2 - 1].buffer;
             }
         }
-        dp = d->line[y].buffer;
+        dp = (UInt32*)d->line[y].buffer;
         d->line[y].doubleWidth = a->line[y / 2].doubleWidth;
 
         for (x = 0; x < width; x++) {
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
-            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 6) & M1) |
-                    ((((av & M2) * p + (bv & M2) * n) >> 6) & M2);
+            dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
         }
     }
 

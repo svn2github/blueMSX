@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2005-12-17 06:19:43 $
+** $Date: 2006-01-07 01:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,9 @@
 //#define ENABLE_VRAM_DECAY
 // Global configuration (not device specific)
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 static int spritesEnable = 1;
 static int displayEnable = 1;
 static int refreshRate   = 0;
@@ -68,11 +71,6 @@ int vdpGetRefreshRate()
 {
     return refreshRate;
 }
-
-// ....
-
-extern UInt32  emuPalette0;
-extern UInt32  emuPalette[300];
 
 
 #define HPERIOD      1368
@@ -127,14 +125,50 @@ static const UInt8 registerValueMaskMSX2p[64] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
-static UInt32 msx1Palette[16] = {
-    0x000000, 0x000000, 0x21c842, 0x5edc78, 0x5455ed, 0x7d76fc, 0xd4524d, 0x42ebf5,
-    0xfc5554, 0xff7978, 0xd4c154, 0xe6ce80, 0x21b03b, 0xc95bba, 0xcccccc, 0xffffff
+static struct {
+    int r;
+    int g;
+    int b;
+} msx1Palette[16] = {
+    { 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0x00 }, 
+    { 0x21, 0xc8, 0x42 }, 
+    { 0x5e, 0xdc, 0x78 }, 
+    { 0x54, 0x55, 0xed }, 
+    { 0x7d, 0x76, 0xfc }, 
+    { 0xd4, 0x52, 0x4d },
+    { 0x42, 0xeb, 0xf5 },
+    { 0xfc, 0x55, 0x54 }, 
+    { 0xff, 0x79, 0x78 }, 
+    { 0xd4, 0xc1, 0x54 }, 
+    { 0xe6, 0xce, 0x80 }, 
+    { 0x21, 0xb0, 0x3b }, 
+    { 0xc9, 0x5b, 0xba }, 
+    { 0xcc, 0xcc, 0xcc }, 
+    { 0xff, 0xff, 0xff }
 };
 
-static UInt32 defaultPalette[16] = {
-    0x000000, 0x000000, 0x24da24, 0x68ff68, 0x2424ff, 0x4868ff, 0xb62424, 0x48daff,
-    0xff2424, 0xff6868, 0xdada24, 0xdada91, 0x249124, 0xda48b6, 0xb6b6b6, 0xffffff
+static struct {
+    int r;
+    int g;
+    int b;
+} msx2Palette[16] = {
+    { 0x00, 0x00, 0x00 }, 
+    { 0x00, 0x00, 0x00 }, 
+    { 0x24, 0xda, 0x24 }, 
+    { 0x68, 0xff, 0x68 }, 
+    { 0x24, 0x24, 0xff }, 
+    { 0x48, 0x68, 0xff },
+    { 0xb6, 0x24, 0x24 },
+    { 0x48, 0xda, 0xff },
+    { 0xff, 0x24, 0x24 }, 
+    { 0xff, 0x68, 0x68 },
+    { 0xda, 0xda, 0x24 }, 
+    { 0xda, 0xda, 0x91 }, 
+    { 0x24, 0x91, 0x24 }, 
+    { 0xda, 0x48, 0xb6 }, 
+    { 0xb6, 0xb6, 0xb6 }, 
+    { 0xff, 0xff, 0xff }
 };
 
 static UInt16 defaultPaletteRegs[16] = {
@@ -184,7 +218,6 @@ struct VDP {
     int    blinkFlag;
     int    blinkCnt;
     int    drawArea;
-    int    palette[16];
     UInt16 paletteReg[16];
     int    vramSize;
     int    vramPages;
@@ -231,6 +264,12 @@ struct VDP {
     UInt32 timeDisplay;
 
     UInt32 screenOffTime;
+    
+    UInt16 paletteFixed[256];
+    UInt16 paletteSprite8[16];
+    UInt16 palette0;
+    UInt16 palette[16];
+    UInt16 yjkColor[32][64][64];
 
     UInt8* vramPtr;
     int    vramAccMask;
@@ -542,7 +581,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     reg   &= vdp->registerMask;
     value &= vdp->registerValueMask[reg];
     sync(vdp, boardSystemTime());
-    
+
     change = vdp->vdpRegs[reg] ^ value;
     vdp->vdpRegs[reg] = value;
 
@@ -608,12 +647,12 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     case 7: 
         vdp->FGColor = value >> 4;
         vdp->BGColor = value & 0x0F;
-        emuPalette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? emuPalette0 : emuPalette[vdp->BGColor];
+        vdp->palette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
         break;
 
     case 8:
         vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (value & 2));
-        emuPalette[0] = (!vdp->BGColor || (value & 0x20)) ? emuPalette0 : emuPalette[vdp->BGColor];
+        vdp->palette[0] = (!vdp->BGColor || (value & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
         break;
 
     case 9:
@@ -863,17 +902,75 @@ static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 	}
 }
 
+static void initPalette(VDP* vdp)
+{
+    int i;
+    int y;
+    int J;
+    int K;
+
+    for (y = 0; y < 32; y++) {
+        for (J = 0; J < 64; J++) {
+            for (K = 0; K < 64; K++) {
+		        int j = (J & 0x1f) - (J & 0x20);
+		        int k = (K & 0x1f) - (K & 0x20);
+			    int r = 255 * (y + j) / 31;
+			    int g = 255 * (y + k) / 31;
+			    int b = 255 * ((5 * y - 2 * j - k) / 4) / 31;
+
+                r = MIN(255, MAX(0, r));
+                g = MIN(255, MAX(0, g));
+                b = MIN(255, MAX(0, b));
+                vdp->yjkColor[y][J][K] = videoGetColor(r, g, b);
+            }
+        }
+    }
+
+    for (i = 0; i < 256; i++) {
+        vdp->paletteFixed[i] = videoGetColor(255 * ((i >> 2) & 7) / 7, 
+                                           255 * ((i >> 5) & 7) / 7, 
+                                           255 * ((i & 3) == 3 ? 7 : 2 * (i & 3)) / 7);
+    }
+
+    vdp->paletteSprite8[0]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[1]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 2 * 255 / 7);
+    vdp->paletteSprite8[2]  = videoGetColor(3 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[3]  = videoGetColor(3 * 255 / 7, 0 * 255 / 7, 2 * 255 / 7);
+    vdp->paletteSprite8[4]  = videoGetColor(0 * 255 / 7, 3 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[5]  = videoGetColor(0 * 255 / 7, 3 * 255 / 7, 2 * 255 / 7);
+    vdp->paletteSprite8[6]  = videoGetColor(3 * 255 / 7, 3 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[7]  = videoGetColor(3 * 255 / 7, 3 * 255 / 7, 2 * 255 / 7);
+    vdp->paletteSprite8[8]  = videoGetColor(7 * 255 / 7, 4 * 255 / 7, 2 * 255 / 7);
+    vdp->paletteSprite8[9]  = videoGetColor(0 * 255 / 7, 0 * 255 / 7, 7 * 255 / 7);
+    vdp->paletteSprite8[10] = videoGetColor(7 * 255 / 7, 0 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[11] = videoGetColor(7 * 255 / 7, 0 * 255 / 7, 7 * 255 / 7);
+    vdp->paletteSprite8[12] = videoGetColor(0 * 255 / 7, 7 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[13] = videoGetColor(0 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
+    vdp->paletteSprite8[14] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 0 * 255 / 7);
+    vdp->paletteSprite8[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
+}
+
+static void updatePalette(VDP* vdp, int palEntry, int r, int g, int b)
+{
+    UInt16 color = videoGetColor(r, g, b);
+    if (palEntry == 0) {
+        vdp->palette0 = color;
+        vdp->palette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
+    }
+    else {
+        vdp->palette[palEntry] = color;
+    }
+}
+
 static void writePaletteLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     if (vdp->palKey) {
 		int palEntry = vdp->vdpRegs[16];
         sync(vdp, boardSystemTime());
         vdp->paletteReg[palEntry] = 256 * (value & 0x07) | (vdp->vdpDataLatch & 0x77);
-        vdp->palette[palEntry] = (((UInt32)(vdp->vdpDataLatch & 0x70) * 255 / 112) << 16) |
-                            (((UInt32)(value & 0x07) * 255 / 7) << 8) |
-                            ((UInt32)(vdp->vdpDataLatch & 0x07) * 255 / 7);
-        SetColor(palEntry, vdp->palette[palEntry]);
-        emuPalette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? emuPalette0 : emuPalette[vdp->BGColor];
+        updatePalette(vdp, palEntry, (vdp->vdpDataLatch & 0x70) * 255 / 112, 
+                                     (value & 0x07) * 255 / 7,
+                                     (vdp->vdpDataLatch & 0x07) * 255 / 7);
 
         vdp->vdpRegs[16] = (palEntry + 1) & 0x0f;
 		vdp->palKey = 0;
@@ -975,7 +1072,7 @@ static void saveState(VDP* vdp)
     saveStateSetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
 
     for (index = 0; index < sizeof(vdp->palette) / sizeof(vdp->palette[0]); index++) {
-        sprintf(tag, "palette%d", index);
+        sprintf(tag, "vdp->palette%d", index);
         saveStateSet(state, tag, vdp->palette[index]);
     }
     
@@ -1024,8 +1121,8 @@ static void loadState(VDP* vdp)
     saveStateGetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
 
     for (index = 0; index < sizeof(vdp->palette) / sizeof(vdp->palette[0]); index++) {
-        sprintf(tag, "palette%d", index);
-        vdp->palette[index] = saveStateGet(state, tag, 0);
+        sprintf(tag, "vdp->palette%d", index);
+        vdp->palette[index] = (UInt16)saveStateGet(state, tag, 0);
     }
 
     saveStateGetBuffer(state, "vram", vdp->vram, 0x4000 * vdp->vramPages);
@@ -1062,12 +1159,6 @@ static void loadState(VDP* vdp)
     vdp->vramEnable    &= !vdp->vram16 || vdp->vdpRegs[14] == 0;
 
     vdpCmdLoadState(vdp->cmdEngine);
-
-    /* Set vdp->palette */
-    for (index = 0; index < 16; index++) {
-        SetColor(index, vdp->palette[index]);
-    }
-    emuPalette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? emuPalette0 : emuPalette[vdp->BGColor];
 
     onScrModeChange(vdp, boardSystemTime());
 
@@ -1271,10 +1362,10 @@ static int dbgWriteRegister(VDP* vdp, char* name, int regIndex, UInt32 value)
     if (regIndex < paletteCount) {
         value &= 0x0777;
         vdp->paletteReg[regIndex] = (UInt16)value;
-        vdp->palette[regIndex] = (((UInt32)(value & 0x70) * 255 / 112) << 16) |
-                                 (((UInt32)((value >> 8) & 0x07) * 255 / 7) << 8) |
-                                 ((UInt32)(value & 0x07) * 255 / 7);
-        SetColor(regIndex, vdp->palette[regIndex]);
+        
+        updatePalette(vdp, regIndex, (value & 0x70) * 255 / 112, 
+                                     (value & 0x07) * 255 / 7,
+                                     (value & 0x07) * 255 / 7);
         return 1;
     }
 
@@ -1325,7 +1416,6 @@ static void reset(VDP* vdp)
     vdp->lastLine        = -1;
     vdp->screenOffTime = boardSystemTime();
 
-    memset(vdp->palette, 0, sizeof(vdp->palette));
     memset(vdp->vdpStatus, 0, sizeof(vdp->vdpStatus));
     memset(vdp->vdpRegs, 0, sizeof(vdp->vdpRegs));
 
@@ -1341,18 +1431,17 @@ static void reset(VDP* vdp)
     vdp->vdpRegs[9] = (0x02 & vdp->palMask) | vdp->palValue;
 
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
-        memcpy(vdp->palette, msx1Palette, sizeof(vdp->palette));
+        for (i = 0; i < 16; i++) {
+            updatePalette(vdp, i, msx1Palette[i].r, msx1Palette[i].g, msx1Palette[i].b);
+        }
     }
     else {
-        memcpy(vdp->palette, defaultPalette, sizeof(vdp->palette));
+        for (i = 0; i < 16; i++) {
+            updatePalette(vdp, i, msx2Palette[i].r, msx2Palette[i].g, msx2Palette[i].b);
+        }
     }
 
     memcpy(vdp->paletteReg, defaultPaletteRegs, sizeof(vdp->paletteReg));
-
-    for (i = 0; i < 16; i++) {
-        SetColor(i, vdp->palette[i]);
-    }
-    emuPalette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? emuPalette0 : emuPalette[vdp->BGColor];
 
     onScrModeChange(vdp, boardSystemTime());
 
@@ -1429,6 +1518,8 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     int i;
 
     VDP* vdp = (VDP*)calloc(1, sizeof(VDP));
+
+    initPalette(vdp);
 
     vdp->deviceHandle = deviceManagerRegister(ROM_V9958, &callbacks, vdp);
 
