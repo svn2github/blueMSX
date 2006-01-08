@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-01-07 23:20:27 $
+** $Date: 2006-01-08 23:26:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,7 +118,7 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData,
     {
     	int bufSize = 0;
     	UInt8* buf = NULL;
-        buf = romLoad("GCVMX80V11.ROM", NULL, &size);
+        buf = romLoad("Machines/Shared Roms/GCVMX80.ROM", NULL, &bufSize);
         rm->crtc6845 = NULL;
         rm->crtc6845 = crtc6845Create(50, buf, bufSize, 0x0800, 7, 0, 80, 4);
     }
