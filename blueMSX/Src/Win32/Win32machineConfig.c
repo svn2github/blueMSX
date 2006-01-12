@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-01-12 00:21:12 $
+** $Date: 2006-01-12 11:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -530,6 +530,7 @@ static void getAddressControl(HWND hDlg)
         editSlotInfo.romType == ROM_SVI738FDC    ||
         editSlotInfo.romType == ROM_BEERIDE      ||
         editSlotInfo.romType == ROM_FMPAC        ||
+        editSlotInfo.romType == ROM_MICROSOL80   ||
         editSlotInfo.romType == ROM_BUNSETU) 
     {
         char selection[64];
@@ -591,6 +592,7 @@ static void endEditControls(HWND hDlg)
     case ROM_PAC:
     case ROM_FMPAC:
     case ROM_BEERIDE:
+    case ROM_MICROSOL80:
         editSlotInfo.pageCount = 2;
         break;
 
@@ -796,7 +798,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
         romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || 
-        romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU)
+        romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU || romType == ROM_MICROSOL80)
     {
         int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
                    romType == RAM_1KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
@@ -939,6 +941,7 @@ static void setEditControls(HWND hDlg)
     case ROM_FMPAC:
     case ROM_BUNSETU:
     case ROM_MSXMUSIC:
+    case ROM_MICROSOL80:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
