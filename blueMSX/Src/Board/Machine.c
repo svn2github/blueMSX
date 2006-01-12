@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-01-12 00:23:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,7 @@
 #include "romMapperSunriseIDE.h"
 #include "romMapperBeerIDE.h"
 #include "romMapperGIDE.h"
+#include "romMapperMicrosolVmx80.h"
 
 int toint(char* buffer) 
 {
@@ -1165,6 +1166,28 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_BEERIDE:
             success &= romMapperBeerIdeCreate(hdId++, romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_MICROSOL80:
+            {
+                char charName[512];
+                int charSize = 0;
+                UInt8* charData;
+                int j;
+
+                strcpy(charName, machine->slotInfo[i].name);
+                for (j = strlen(charName); j > 0 && charName[j] != '.'; j--);
+                charName[j] = 0;
+                strcat(charName, "_char.rom");
+                    
+                charData = romLoad(charName, NULL, &charSize);
+                success &= romMapperMicrosolVmx80Create(romName, buf, size, 
+                                                        slot, subslot, startPage,
+                                                        charData, charSize);
+                if (charData != NULL) {
+                    free(charData);
+                }
+            }
             break;
         }
         free(buf);

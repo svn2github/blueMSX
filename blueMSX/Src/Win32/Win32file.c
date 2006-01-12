@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-01-06 18:12:12 $
+** $Date: 2006-01-12 00:20:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,6 +101,7 @@ static RomType romTypeList[] = {
     ROM_COLECO,
     ROM_SG1000,
     ROM_SG1000CASTLE,
+    ROM_MICROSOL80,
     ROM_UNKNOWN,
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-01-12 00:21:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -729,6 +729,7 @@ static RomType romTypeList[] = {
     ROM_SONYHBI55,
     ROM_MSXAUDIODEV,
     ROM_TURBORPCM,
+    ROM_MICROSOL80,
     ROM_UNKNOWN,
 };
 

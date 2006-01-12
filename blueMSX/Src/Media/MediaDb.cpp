@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-01-12 00:23:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -163,6 +163,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "CX5M-MUSIC")   return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
+    if (name == "Microsol80")   return ROM_MICROSOL80;
 
     // Roms not supproted in this format in the db
     if (name == "0x4000")       return ROM_0x4000;
@@ -523,6 +524,7 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "castle")       return ROM_SG1000CASTLE;
     if (name == "svi328")       return ROM_SVI328;
     if (name == "gamereader")   return ROM_GAMEREADER;
+    if (name == "microsol80")   return ROM_MICROSOL80;
 
     return ROM_UNKNOWN;
 }
@@ -627,6 +629,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SUNRISEIDE:  return "Sunrise IDE";
     case ROM_BEERIDE:     return "Beer IDE";
     case ROM_GIDE:        return "GIDE";
+    case ROM_MICROSOL80:  return "Microsol VMX-80";
 
     case ROM_UNKNOWN:     return langUnknown();
     }
@@ -734,6 +737,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SUNRISEIDE:  return "SUNRISEIDE";
     case ROM_BEERIDE:     return "BEER IDE";
     case ROM_GIDE:        return "GIDE";
+    case ROM_MICROSOL80:  return "MICROSOL80";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -764,9 +768,11 @@ int romTypeIsRom(RomType romType) {
     case ROM_BASIC:       return 1;
     case ROM_0x4000:      return 1;
     case ROM_0xC000:      return 1;
-	case ROM_KONAMISYNTH: return 1;
+    case ROM_KONAMISYNTH: return 1;
     case ROM_KONAMKBDMAS: return 1;
     case ROM_KONWORDPRO:  return 1;
+    case ROM_MICROSOL80:  return 1;
+
     }
     return 0;
 }
