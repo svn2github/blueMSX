@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-01-08 23:26:08 $
+** $Date: 2006-01-12 00:22:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 typedef struct {
     int deviceHandle;
     UInt8* romData;
+    UInt8* charData;
     int slot;
     int sslot;
     int startPage;
@@ -64,6 +65,7 @@ static void destroy(RomMapperMicrosolVmx80* rm)
     deviceManagerUnregister(rm->deviceHandle);
 
     free(rm->romData);
+    free(rm->charData);
     free(rm);
 }
 
@@ -104,8 +106,9 @@ static void reset(RomMapperMicrosolVmx80* rm)
 {
 }
 
-int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, 
-                          int size, int slot, int sslot, int startPage)
+int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, int size,
+                                 int slot, int sslot, int startPage,
+                                 void* charRom, int charSize) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMicrosolVmx80* rm;
@@ -115,13 +118,17 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData,
 
     rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL80, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
-    {
-    	int bufSize = 0;
-    	UInt8* buf = NULL;
-        buf = romLoad("Machines/Shared Roms/GCVMX80.ROM", NULL, &bufSize);
-        rm->crtc6845 = NULL;
-        rm->crtc6845 = crtc6845Create(50, buf, bufSize, 0x0800, 7, 0, 80, 4);
+
+    rm->charData = calloc(1, 0x2000);
+    if (charRom != NULL) {
+        if (charSize > 0x2000) {
+            charSize = 0x2000;
+        }
+        memcpy(rm->charData, charRom, charSize);
     }
+
+    rm->crtc6845 = NULL;
+    rm->crtc6845 = crtc6845Create(50, rm->charData, charSize, 0x0800, 7, 0, 80, 4);
 
     rm->romData = calloc(1, size);
     memcpy(rm->romData, romData, size);
