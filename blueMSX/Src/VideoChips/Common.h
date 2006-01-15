@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-15 07:04:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -265,7 +265,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
     }
 }
 #if 0
-static void RefreshLine1(VDP* vdp, int Y, int X, int X2, int drawArea)
+static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
     static UInt16* linePtr = NULL;
     static UInt8*  sprLine = emptylineBuf;

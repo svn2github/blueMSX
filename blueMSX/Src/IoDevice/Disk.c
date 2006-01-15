@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2005-12-22 01:07:55 $
+** $Date: 2006-01-15 07:04:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,10 +89,10 @@ static const UInt8 hdIdentifyBlock[512] = {
 
 static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 {
-    UInt16 totalSectors = (UInt16)(fileSize[driveId] / 512);
+    UInt32 totalSectors = (UInt16)(fileSize[driveId] / 512);
     UInt16 heads = 16;
     UInt16 sectors = 32;
-    UInt16 cylinders = totalSectors / (heads * sectors);
+    UInt16 cylinders = (UInt16)(totalSectors / (heads * sectors));
     
     memcpy(buffer, hdIdentifyBlock, 512);
 
@@ -102,10 +102,10 @@ static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
     buffer[0x07] = heads >> 8;
     buffer[0x0c] = sectors & 0xff;
     buffer[0x0d] = sectors >> 8;
-    buffer[0x78] = (totalSectors & 0x000000ff) >>  0;
-    buffer[0x79] = (totalSectors & 0x0000ff00) >>  8;
-    buffer[0x7a] = (totalSectors & 0x00ff0000) >> 16;
-    buffer[0x7b] = (totalSectors & 0xff000000) >> 24;
+    buffer[0x78] = (UInt8)((totalSectors & 0x000000ff) >>  0);
+    buffer[0x79] = (UInt8)((totalSectors & 0x0000ff00) >>  8);
+    buffer[0x7a] = (UInt8)((totalSectors & 0x00ff0000) >> 16);
+    buffer[0x7b] = (UInt8)((totalSectors & 0xff000000) >> 24);
 }
 
 

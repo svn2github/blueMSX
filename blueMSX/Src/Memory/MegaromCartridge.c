@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-01-12 00:21:54 $
+** $Date: 2006-01-15 07:04:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -474,7 +474,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_BEERIDE:
-            romMapperBeerIdeCreate(cartNo, romName, buf, size, slot, sslot, 0);
+            romMapperBeerIdeCreate(cartNo, romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_MICROSOL80:
@@ -491,7 +491,7 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
                 strcat(charName, "_char.rom");
                     
                 charData = romLoad(charName, NULL, &charSize);
-                romMapperMicrosolVmx80Create(romName, buf, size, slot, sslot, 0, charData, charSize);
+                romMapperMicrosolVmx80Create(romName, buf, size, slot, sslot, 2, charData, charSize);
                 if (charData != NULL) {
                     free(charData);
                 }

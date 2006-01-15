@@ -4,11 +4,11 @@
 
 **
 
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 
 **
 
-** $Date: 2005-09-04 04:25:24 $
+** $Date: 2006-01-15 07:04:03 $
 
 **
 
@@ -227,7 +227,14 @@ static void fd_cb(R800* r800);
 #define delayRld(r800)      { r800->systemTime += r800->delay[DLY_RLD];      }
 
 
-
+#if 0
+// WSX VDP timing adds 1 t-states to VDP io (same with TR)
+#define delayVdpS1990(r800, port) do {                                       \
+    if ((port & 0xf8) == 0x98) {                                             \
+        r800->systemTime += 6;                                               \
+    }                                                                        \
+} while (0)
+#else
 #define delayVdpS1990(r800, port) do {                                       \
     if (r800->cpuMode == CPU_R800 && (port & 0xf8) == 0x98) {                \
         if (r800->systemTime - r800->vdpTime < r800->delay[DLY_S1990VDP]) {  \
@@ -236,7 +243,7 @@ static void fd_cb(R800* r800);
         r800->vdpTime = r800->systemTime;                                    \
     }                                                                        \
 } while (0)
-
+#endif
 
 
 static UInt8 readPort(R800* r800, UInt16 port) {
