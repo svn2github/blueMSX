@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-01-15 07:04:03 $
+** $Date: 2006-01-17 08:54:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,7 +89,7 @@ static const UInt8 hdIdentifyBlock[512] = {
 
 static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 {
-    UInt32 totalSectors = (UInt16)(fileSize[driveId] / 512);
+    UInt32 totalSectors = fileSize[driveId] / 512;
     UInt16 heads = 16;
     UInt16 sectors = 32;
     UInt16 cylinders = (UInt16)(totalSectors / (heads * sectors));
