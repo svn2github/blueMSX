@@ -331,6 +331,12 @@
 					RelativePath="..\..\Src\Win32\Win32Uart.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32VideoIn.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32VideoIn.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32Window.c">
 				</File>
 				<File
@@ -1690,6 +1696,9 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchUart.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchVideoIn.h">
 			</File>
 		</Filter>
 		<Filter

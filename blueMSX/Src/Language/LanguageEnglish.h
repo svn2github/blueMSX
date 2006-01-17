@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -635,6 +635,11 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuVideoSource         = "Video Out Source";
     ls->menuVideoSourceDefault  = "No Video Out Source Connected";
+    
+    ls->menuVideoInSource       = "Video In Source";
+    ls->menuVideoInBitmap       = "Bitmap File";
+
+    ls->textUnknown             = "Unknown";
 };
 
 

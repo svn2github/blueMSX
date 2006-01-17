@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -382,6 +382,8 @@ _TCHAR* langMenuPropsPorts() { return ls->menuPropsPorts; }
 _TCHAR* langMenuVideoSource()        { return ls->menuVideoSource; }
 _TCHAR* langMenuVideoSourceDefault() { return ls->menuVideoSourceDefault; }
 _TCHAR* langMenuVideoChipAutodetect() { return ls->menuVideoChipAutodetect; }
+_TCHAR* langMenuVideoInSource() { return ls->menuVideoInSource; }
+_TCHAR* langMenuVideoInBitmap() { return ls->menuVideoInBitmap; }
 
 _TCHAR* langMenuHelpHelp() { return ls->menuHelpHelp; }
 _TCHAR* langMenuHelpAbout() { return ls->menuHelpAbout; }
@@ -542,6 +544,7 @@ _TCHAR* langTextDevice() { return ls->textDevice; }
 _TCHAR* langTextFilename() { return ls->textFilename; }
 _TCHAR* langTextFile() { return ls->textFile; }
 _TCHAR* langTextNone() { return ls->textNone; }
+_TCHAR* langTextUnknown() { return ls->textUnknown; }
 
 _TCHAR* langPropMonMonGB() { return ls->propMonMonGB; }
 _TCHAR* langPropMonTypeText() { return ls->propMonTypeText; }

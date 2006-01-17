@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-01-07 02:35:52 $
-** $Date: 2006-01-07 02:35:52 $
+** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@
  
 #define RGB_MASK 0x7fff
 
-#define MAX_RGB_COLORS (1 << 15)
+#define MAX_RGB_COLORS (1 << 16)
 
 static UInt32 pRgbTableColor32[MAX_RGB_COLORS];
 static UInt32 pRgbTableGreen32[MAX_RGB_COLORS];

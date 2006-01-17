@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.123 $
+** $Revision: 1.124 $
 **
-** $Date: 2006-01-12 00:20:44 $
+** $Date: 2006-01-17 08:50:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,7 @@
 #include "Win32Dir.h"
 #include "Win32Help.h"
 #include "Win32Menu.h"
+#include "Win32VideoIn.h"
 #include "Win32ScreenShot.h"
 #include "Win32MouseEmu.h"
 #include "Win32machineConfig.h"
@@ -2484,6 +2485,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         emuCheckFullscreenArgument(pProperties, szLine);
     }
 
+    videoInInitialize(pProperties);
+
     switch(pProperties->emulation.syncMethod) {
     case P_EMU_SYNCNONE:
         frameBufferSetFrameCount(1);
@@ -2687,6 +2690,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     videoDestroy(st.pVideo);
     
     SetCurrentDirectory(st.pCurDir);
+
+    videoInCleanup(pProperties);
 
     pProperties->joy1.type = joystickPortGetType(0);
     pProperties->joy2.type = joystickPortGetType(1);

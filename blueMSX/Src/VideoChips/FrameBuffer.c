@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "FrameBuffer.h"
 #include "ArchEvent.h"
+#include "ArchVideoIn.h"
 #include <stdlib.h>
 
 #define MAX_FRAMES_PER_FRAMEBUFFER 4
@@ -45,6 +46,7 @@ static FrameBuffer* deintBuffer = NULL;
 
 static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
 static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct);
+static void frameBufferSuperimpose(FrameBuffer* s);
 extern int getScreenCompletePercent();
 
 static void waitSem() {
@@ -61,6 +63,7 @@ static void signalSem() {
 
 
 static FrameBufferData* currentBuffer = NULL;
+static int superimpose = 0;
 static int frameBufferCount = MAX_FRAMES_PER_FRAMEBUFFER;
 
 
@@ -95,75 +98,22 @@ static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames)
 
 static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames) 
 {
-    int i1,i2;
+    int i;
 
     if (currentBuffer == NULL) {
         return NULL;
     }
     waitSem();
-#if 0
-    switch (currentBuffer->viewFrame) {
-    case 0: 
-        switch (currentBuffer->drawFrame) {
-        case 1: i1 = 2; i2 = 3; break;
-        case 2: i1 = 3; i2 = 1; break;
-        case 3: i1 = 1; i2 = 2; break;
+    for (i = 0; i < 4; i++) {
+        if (i == currentBuffer->drawFrame) continue;
+        if (currentBuffer->frame[i].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
+            currentBuffer->viewFrame = i;
         }
-        break;
-    case 1: 
-        switch (currentBuffer->drawFrame) {
-        case 0: i1 = 2; i2 = 3; break;
-        case 2: i1 = 3; i2 = 0; break;
-        case 3: i1 = 0; i2 = 2; break;
-        }
-        break;
-    case 2:
-        switch (currentBuffer->drawFrame) {
-        case 0: i1 = 1; i2 = 3; break;
-        case 1: i1 = 3; i2 = 0; break;
-        case 3: i1 = 0; i2 = 1; break;
-        }
-        break;
-    case 3: 
-        switch (currentBuffer->drawFrame) {
-        case 0: i1 = 1; i2 = 2; break;
-        case 1: i1 = 2; i2 = 0; break;
-        case 2: i1 = 0; i2 = 1; break;
-        }
-        break;
     }
-
-    if (mixFrames) {
-        int i3 = currentBuffer->viewFrame;
         
-        if (currentBuffer->frame[i3].age > currentBuffer->frame[i2].age) {
-            int tmp = i3; i3 = i2; i2 = tmp;
-        }
-        if (currentBuffer->frame[i2].age > currentBuffer->frame[i1].age) {
-            int tmp = i2; i2 = i1; i1 = tmp;
-        }
-        if (currentBuffer->frame[i3].age > currentBuffer->frame[i2].age) {
-            int tmp = i3; i3 = i2; i2 = tmp;
-        }
-
-        currentBuffer->viewFrame = i1;
-
-        signalSem();
-
-        return mixFrame(currentBuffer->frame + i1, currentBuffer->frame + i2, getScreenCompletePercent());
-    }
-#else
-    {
+    if (mixFrames) {
         int secondFrame = 0;
-        int viewAge;
-        int i;
-        for (i = 0; i < 4; i++) {
-            if (i == currentBuffer->drawFrame) continue;
-            if (currentBuffer->frame[i].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
-                currentBuffer->viewFrame = i;
-            }
-        }
-        viewAge = 0;
+        int viewAge = 0;
         for (i = 0; i < 4; i++) {
             if (i == currentBuffer->drawFrame) continue;
             if (i == currentBuffer->viewFrame) continue;
@@ -176,12 +126,7 @@ static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames)
 
         return mixFrame(currentBuffer->frame + currentBuffer->viewFrame, currentBuffer->frame + secondFrame, getScreenCompletePercent());
     }
-#endif
 
-    i1 = currentBuffer->frame[i1].age > currentBuffer->frame[i2].age ? i1 : i2;
-    if (currentBuffer->frame[i1].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
-        currentBuffer->viewFrame = i1;
-    }
     signalSem();
     return currentBuffer->frame + currentBuffer->viewFrame;
 }
@@ -217,57 +162,23 @@ static FrameBuffer* frameBufferFlipDrawFrame3()
 static FrameBuffer* frameBufferFlipDrawFrame4()
 {
     FrameBuffer* frame;
+    int drawFrame = currentBuffer->drawFrame;
+    int drawAge = 0x7fffffff;
+    int i;
 
     if (currentBuffer == NULL) {
         return NULL;
     }
     waitSem();
-#if 0
-    switch (currentBuffer->drawFrame) {
-    case 0: 
-        switch (currentBuffer->viewFrame) {
-        case 1: i1 = 2; i2 = 3; break;
-        case 2: i1 = 3; i2 = 1; break;
-        case 3: i1 = 1; i2 = 2; break;
-        }
-        break;
-    case 1: 
-        switch (currentBuffer->viewFrame) {
-        case 0: i1 = 2; i2 = 3; break;
-        case 2: i1 = 3; i2 = 0; break;
-        case 3: i1 = 0; i2 = 2; break;
-        }
-        break;
-    case 2:
-        switch (currentBuffer->viewFrame) {
-        case 0: i1 = 1; i2 = 3; break;
-        case 1: i1 = 3; i2 = 0; break;
-        case 3: i1 = 0; i2 = 1; break;
-        }
-        break;
-    case 3: 
-        switch (currentBuffer->viewFrame) {
-        case 0: i1 = 1; i2 = 2; break;
-        case 1: i1 = 2; i2 = 0; break;
-        case 2: i1 = 0; i2 = 1; break;
-        }
-        break;
-    }
-    currentBuffer->drawFrame = currentBuffer->frame[i1].age < currentBuffer->frame[i2].age ? i1 : i2;
-#else
-    {
-        int drawFrame = currentBuffer->drawFrame;
-        int drawAge = 0x7fffffff;
-        int i;
-        for (i = 0; i < 4; i++) {
-            if (i == drawFrame) continue;
-            if (currentBuffer->frame[i].age < drawAge) {
-                drawAge = currentBuffer->frame[i].age;
-                currentBuffer->drawFrame = i;
-            }
+
+    for (i = 0; i < 4; i++) {
+        if (i == drawFrame) continue;
+        if (currentBuffer->frame[i].age < drawAge) {
+            drawAge = currentBuffer->frame[i].age;
+            currentBuffer->drawFrame = i;
         }
     }
-#endif
+
     signalSem();
     frame = currentBuffer->frame + currentBuffer->drawFrame;
     frame->age = ++currentBuffer->currentAge;
@@ -283,7 +194,14 @@ FrameBuffer* frameBufferGetViewFrame()
 
 FrameBuffer* frameBufferGetDrawFrame()
 {
-    return currentBuffer ? currentBuffer->frame + currentBuffer->drawFrame : NULL;
+    FrameBuffer* frameBuffer;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    frameBuffer = currentBuffer->frame + currentBuffer->drawFrame;
+
+    return frameBuffer;
 }
 
 void frameBufferSetFrameCount(int frameCount)
@@ -304,23 +222,45 @@ void frameBufferSetFrameCount(int frameCount)
 
 FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
 {
+    FrameBuffer* frameBuffer;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+
     switch (frameBufferCount) {
     case 3:
-        return frameBufferFlipViewFrame3(mixFrames);
+        frameBuffer = frameBufferFlipViewFrame3(mixFrames);
+        break;
     case 4:
-        return frameBufferFlipViewFrame4(mixFrames);
+        frameBuffer = frameBufferFlipViewFrame4(mixFrames);
+        break;
+    default:
+        frameBuffer = frameBufferFlipViewFrame1(mixFrames);
+        break;
     }
-    return frameBufferFlipViewFrame1(mixFrames);
+    return frameBuffer;
 }
 
-FrameBuffer* frameBufferFlipDrawFrame() {
+FrameBuffer* frameBufferFlipDrawFrame() 
+{
+    FrameBuffer* frameBuffer;
+
     switch (frameBufferCount) {
     case 3:
-        return frameBufferFlipDrawFrame3();
+        frameBuffer = frameBufferFlipDrawFrame3();
+        break;
     case 4:
-        return frameBufferFlipDrawFrame4();
+        frameBuffer = frameBufferFlipDrawFrame4();
+        break;
+    default:
+        frameBuffer = frameBufferFlipDrawFrame1();
+        break;
     }
-    return frameBufferFlipDrawFrame1();
+    if (superimpose) {
+        frameBufferSuperimpose(frameBuffer);
+    }
+    return frameBuffer;
 }
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
@@ -353,6 +293,14 @@ void frameBufferDataDestroy(FrameBufferData* frameData)
 void frameBufferSetActive(FrameBufferData* frameData)
 {
     currentBuffer = frameData;
+    if (frameData == NULL) {
+        superimpose = 0;
+    }
+}
+
+void frameBufferEnableSuperimpose(int enable)
+{
+    superimpose = enable;
 }
 
 FrameBufferData* frameBufferGetActive() 
@@ -457,7 +405,8 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
             dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
-                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5) |
+                    (av & 0x80008000);
         }
     }
 
@@ -523,9 +472,75 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
             dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
-                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5) |
+                    (av & 0x80008000);
         }
     }
 
     return d;
+}
+
+static void frameBufferSuperimpose(FrameBuffer* a)
+{
+    int x, y;
+    UInt16* pImage;
+    int scaleHeight = 1;
+    int imageHeight = a->lines;
+    int imageWidth  = a->maxWidth;
+
+    if (a->lines <= FB_MAX_LINES / 4) {
+        scaleHeight = 2;
+        imageHeight *= 2;
+    }
+    else if (a->lines <= FB_MAX_LINES / 2) {
+        if (a->interlace == INTERLACE_NONE) {
+            scaleHeight = 2;
+        }
+        imageHeight *= 2;
+    }
+
+    pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    if (pImage == NULL) {
+        return;
+    }
+
+    a->lines *= scaleHeight;
+
+    if (scaleHeight == 1 && a->interlace == INTERLACE_ODD) {
+        pImage += imageWidth;
+    }
+
+    for (y = a->lines - 1; y >= 0; y--) {
+        UInt16* pSrc = a->line[y / scaleHeight].buffer;
+        UInt16* pDst = a->line[y].buffer;
+        UInt16* pImg = pImage + y * a->maxWidth;
+
+        if (a->line[y].doubleWidth) {
+            for (x = a->maxWidth - 1; x >= 0; x--) {
+                UInt16 val = pSrc[x];
+                if (val & 0x8000) {
+                    pDst[x] = pImg[x];
+                }
+                else {
+                    pDst[x] = val;
+                }
+            }
+        }
+        else {
+            for (x = a->maxWidth - 1; x >= 0; x--) {
+                UInt16 val = pSrc[x / 2];
+                if (val & 0x8000) {
+                    pDst[x] = pImg[x];
+                    x--;
+                    pDst[x] = pImg[x];
+                }
+                else {
+                    pDst[x] = val;
+                    x--;
+                    pDst[x] = val;
+                }
+            }
+        }
+        a->line[y].doubleWidth = 1;
+    }
 }

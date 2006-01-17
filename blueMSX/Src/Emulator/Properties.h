@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,6 +128,11 @@ typedef struct {
     int gamma;
     int chipAutodetect;
 } VideoProperties;
+
+typedef struct {
+    int inputIndex;
+    char inputName[256];
+} VideoInProperties;
 
 typedef struct {
     int enable;
@@ -258,6 +263,7 @@ typedef struct {
 
     EmulationProperties emulation;
     VideoProperties     video;
+    VideoInProperties   videoIn;
     SoundProperties     sound;
     JoystickProperties  joy1;
     JoystickProperties  joy2;

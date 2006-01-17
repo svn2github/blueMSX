@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,7 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
 void frameBufferDataDestroy(FrameBufferData* frameData);
 
 void frameBufferSetActive(FrameBufferData* frameData);
+void frameBufferEnableSuperimpose(int enable);
 FrameBufferData* frameBufferGetActive();
 
 static UInt16 videoGetColor(int R, int G, int B)

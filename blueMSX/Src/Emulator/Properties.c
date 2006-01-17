@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2005-12-21 03:34:58 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,9 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.scanlinesPct          = 92;
     properties->video.colorSaturationWidth  = 2;
     properties->video.chipAutodetect        = 1;
+    
+    properties->videoIn.inputIndex          = 0;
+    properties->videoIn.inputName[0]        = 0;
 
     properties->sound.driver           = P_SOUND_DRVDIRECTX;
     properties->sound.frequency        = P_SOUND_FREQ44;
@@ -471,6 +474,9 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(video, colorSaturationWidth);
     GET_INT_VALUE_2(video, chipAutodetect);
 
+    GET_INT_VALUE_2(videoIn, inputIndex);
+    GET_STR_VALUE_2(videoIn, inputName);
+
     GET_INT_VALUE_2(sound, driver);
     GET_INT_VALUE_2(sound, frequency);
     GET_INT_VALUE_2(sound, bufSize);
@@ -660,6 +666,9 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(video, colorSaturationEnable);
     SET_INT_VALUE_2(video, colorSaturationWidth);
     SET_INT_VALUE_2(video, chipAutodetect);
+    
+    SET_INT_VALUE_2(videoIn, inputIndex);
+    SET_STR_VALUE_2(videoIn, inputName);
 
     SET_INT_VALUE_2(sound, driver);
     SET_INT_VALUE_2(sound, frequency);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-03-10 07:41:34 $
+** $Date: 2006-01-17 08:49:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ typedef struct {
     VideoCallbacks callbacks;
     FrameBufferData* frameBufer;
     void* ref;
+    int superimpose;
     char  name[32];
 } VideoInfo;
 
@@ -83,6 +84,14 @@ int videoManagerGetActive()
     return -1;
 }
 
+void videoManagerEnableSuperimpose(int index, int enable)
+{
+    videoManager.di[index].superimpose = enable;
+    if (videoManagerIsActive(index)) {
+        frameBufferEnableSuperimpose(videoManager.di[index].superimpose);
+    }
+}
+
 void videoManagerSetActive(int index)
 {
     int activeIndex;
@@ -109,6 +118,7 @@ void videoManagerSetActive(int index)
     }
     else {
         frameBufferSetActive(videoManager.di[index].frameBufer);
+        frameBufferEnableSuperimpose(videoManager.di[index].superimpose);
         if (activeIndex != index) {
             videoManager.di[index].callbacks.enable(videoManager.di[index].ref);
         }
@@ -130,10 +140,11 @@ int videoManagerRegister(char* name, FrameBufferData* frameBuffer,
         return 0;
     }
 
-    videoManager.di[videoManager.count].handle     = ++videoManager.lastHandle;
-    videoManager.di[videoManager.count].frameBufer = frameBuffer;
-    videoManager.di[videoManager.count].callbacks  = *callbacks;
-    videoManager.di[videoManager.count].ref        = ref;
+    videoManager.di[videoManager.count].handle      = ++videoManager.lastHandle;
+    videoManager.di[videoManager.count].frameBufer  = frameBuffer;
+    videoManager.di[videoManager.count].callbacks   = *callbacks;
+    videoManager.di[videoManager.count].ref         = ref;
+    videoManager.di[videoManager.count].superimpose = 0;
 
     strcpy(videoManager.di[videoManager.count].name, name);
 

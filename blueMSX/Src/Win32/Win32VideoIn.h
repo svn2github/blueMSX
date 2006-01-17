@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-01-17 08:50:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,31 +27,20 @@
 **
 ******************************************************************************
 */
-#ifndef VIDEO_MANAGER_H
-#define VIDEO_MANAGER_H
+#ifndef WIN32_VIDEO_IN_H
+#define WIN32_VIDEO_IN_H
 
-#include "MSXTypes.h"
-#include "FrameBuffer.h"
+#include <windows.h>
+#include <MsxTypes.h>
+#include "Properties.h"
 
-typedef struct {
-    void (*enable)(void*);
-    void (*disable)(void*);
-} VideoCallbacks;
+void videoInInitialize(Properties* properties);
+void videoInCleanup(Properties* properties);
 
-int videoManagerGetCount();
-int videoManagerGetActive();
-void videoManagerSetActive(int index);
-void videoManagerEnableSuperimpose(int index, int enable);
-int videoManagerIsActive(int index);
-char* videoManagerGetName(int index);
-
-void videoManagerReset();
-
-void videoManagerLoadState();
-void videoManagerSaveState();
-
-int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
-                        VideoCallbacks* callbacks, void* ref);
-void videoManagerUnregister(int handle);
+int  videoInGetCount();
+char* videoInGetName(int index);
+int videoInGetActive();
+void videoInSetActive(int index);
+int videoInIsActive(int index);
 
 #endif
