@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-01-18 02:26:03 $
+** $Date: 2006-01-18 07:49:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "DebugDeviceManager.h"
 #include "VideoManager.h"
 #include "FrameBuffer.h"
+#include "ArchVideoIn.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -286,7 +287,8 @@ struct VDP {
 };
 
 
-static void updatePalette0(VDP* vdp);
+static void digitize(VDP* vdp);
+static void updateOutputMode(VDP* vdp);
 
 
 #include "SpriteLine.h"
@@ -437,6 +439,10 @@ static void onDisplay(VDP* vdp, UInt32 time)
 
     frameStartTime = vdp->frameStartTime;
     timeDisplay    = HPERIOD * vdp->lastLine;
+
+    if (vdp->vdpRegs[0] & 0x40) {
+        digitize(vdp);
+    }
 }
 
 static void simulateVramDecay(VDP* vdp) 
@@ -586,8 +592,8 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     value &= vdp->registerValueMask[reg];
     sync(vdp, boardSystemTime());
 
-#if 1
-    if (reg != 0x0f && reg != 0x0e && reg < 0x20)
+#if 0
+    if (reg == 0 || reg == 8 || reg == 9)
         printf("W %.2x: 0x%.2x\n", reg, value);
 #endif
     change = vdp->vdpRegs[reg] ^ value;
@@ -611,6 +617,10 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
 
         if (change & 0x0e) {
             scheduleScrModeChange(vdp);
+        }
+        
+        if (change & 0x40) {
+             updateOutputMode(vdp);
         }
 
         break;
@@ -655,13 +665,13 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     case 7: 
         vdp->FGColor = value >> 4;
         vdp->BGColor = value & 0x0F;
-        updatePalette0(vdp);
+        updateOutputMode(vdp);
         break;
 
     case 8:
         vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (value & 2));
-        if (change & 0x20) {
-            updatePalette0(vdp);
+        if (change & 0xb0) {
+            updateOutputMode(vdp);
         }
         break;
 
@@ -671,7 +681,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
             scheduleVint(vdp);
         }
         if (change & 0x30) {
-            updatePalette0(vdp);
+            updateOutputMode(vdp);
         }
         break;
 
@@ -963,11 +973,43 @@ static void initPalette(VDP* vdp)
     vdp->paletteSprite8[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 }
 
-static void updatePalette0(VDP* vdp)
+static void digitize(VDP* vdp)
+{
+    int imageWidth  = 2*(256+16);
+    int imageHeight = 2*240;
+    UInt16* pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    UInt8 colorMask = vdp->vdpRegs[7];
+    int x, y;
+
+    if (pImage == NULL) {
+        return;
+    }
+    pImage += 2 * 8;
+    if (vdpIsOddPage(vdp)) {
+        pImage += imageWidth;
+    }
+
+    if (vdp->screenMode >=8 && vdp->screenMode <= 12) {
+        for (y = 0; y < 212; y++) {
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((y + vdpVScroll(vdp)) << 7)));
+            for (x = 0; x < 256/2; x++) {
+                UInt16 val = pImage[4*x];
+                charTable[x] = (((val >> 10) & 0x1c) | ((val >> 2) & 0xe0) | ((val >> 3) & 0x03)) & colorMask;
+                val = pImage[4*x + 2];
+                charTable[x + vdp->vram128] = (((val >> 10) & 0x1c) | ((val >> 2) & 0xe0) | ((val >> 3) & 0x03)) & colorMask;
+            }
+            pImage += 2 * imageWidth;
+        }
+    }
+}
+
+static void updateOutputMode(VDP* vdp)
 {
     int mode = (vdp->vdpRegs[9] >> 4) & 3;
     int transparency = (vdp->screenMode < 8 || vdp->screenMode > 12) && (vdp->vdpRegs[8] & 0x20) == 0;
-    if (mode == 2) {
+
+    if (mode == 2 || 
+        (!(vdp->vdpRegs[8] & 0x80) && (vdp->vdpRegs[8] & 0x10) || (vdp->vdpRegs[0] & 0x40))) {
         videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL);
     }
     else if (mode == 1 && transparency) {
@@ -990,7 +1032,7 @@ static void updatePalette(VDP* vdp, int palEntry, int r, int g, int b)
     UInt16 color = videoGetColor(r, g, b);
     if (palEntry == 0) {
         vdp->palette0 = color;
-        updatePalette0(vdp);
+        updateOutputMode(vdp);
     }
     else {
         vdp->palette[palEntry] = color;
