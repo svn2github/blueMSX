@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-01-18 02:26:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,10 +38,16 @@ typedef struct {
     void (*disable)(void*);
 } VideoCallbacks;
 
+typedef enum {
+    VIDEO_INTERNAL,
+    VIDEO_MIX,
+    VIDEO_EXTERNAL
+} VideoMode;
+
 int videoManagerGetCount();
 int videoManagerGetActive();
 void videoManagerSetActive(int index);
-void videoManagerEnableSuperimpose(int index, int enable);
+void videoManagerSetMode(int index, VideoMode videoMode);
 int videoManagerIsActive(int index);
 char* videoManagerGetName(int index);
 

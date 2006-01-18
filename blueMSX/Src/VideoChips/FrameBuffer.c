@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-01-18 00:50:45 $
+** $Date: 2006-01-18 02:26:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,8 @@ static FrameBuffer* deintBuffer = NULL;
 
 static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
 static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct);
-static void frameBufferSuperimpose(FrameBuffer* s);
+static void frameBufferSuperimpose(FrameBuffer* a);
+static void frameBufferExternal(FrameBuffer* a);
 extern int getScreenCompletePercent();
 
 static void waitSem() {
@@ -63,7 +64,7 @@ static void signalSem() {
 
 
 static FrameBufferData* currentBuffer = NULL;
-static int superimpose = 0;
+static FrameBufferMixMode mixMode = 0;
 static int frameBufferCount = MAX_FRAMES_PER_FRAMEBUFFER;
 
 
@@ -250,7 +251,10 @@ FrameBuffer* frameBufferFlipDrawFrame()
         return NULL;
     }
 
-    if (superimpose) {
+    if (mixMode == MIXMODE_EXTERNAL) {
+        frameBufferExternal(currentBuffer->frame + currentBuffer->drawFrame);
+    }
+    else if (mixMode == MIXMODE_BOTH) {
         frameBufferSuperimpose(currentBuffer->frame + currentBuffer->drawFrame);
     }
 
@@ -299,13 +303,13 @@ void frameBufferSetActive(FrameBufferData* frameData)
 {
     currentBuffer = frameData;
     if (frameData == NULL) {
-        superimpose = 0;
+        mixMode = MIXMODE_INTERNAL;
     }
 }
 
-void frameBufferEnableSuperimpose(int enable)
+void frameBufferSetMixMode(FrameBufferMixMode mode)
 {
-    superimpose = enable;
+    mixMode = mode;
 }
 
 FrameBufferData* frameBufferGetActive() 
@@ -485,6 +489,58 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
     return d;
 }
 
+static UInt16* getBlackImage()
+{
+    static UInt16* blackImage = NULL;
+
+    if (blackImage == NULL) {
+        blackImage = calloc(sizeof(UInt16), FB_MAX_LINE_WIDTH * FB_MAX_LINES);
+    }
+    return blackImage;
+}
+
+static void frameBufferExternal(FrameBuffer* a)
+{
+    int y;
+    UInt16* pImage;
+    int scaleHeight = 0;
+    int scaleWidth = 0;
+    int imageHeight = a->lines;
+    int imageWidth  = a->maxWidth;
+
+    if (a->maxWidth <= FB_MAX_LINE_WIDTH / 2) {
+        scaleWidth = 1;
+        imageWidth *= 2;
+    }
+
+    if (a->lines <= FB_MAX_LINES / 4) {
+        scaleHeight = 1;
+        imageHeight *= 2;
+    }
+    else if (a->lines <= FB_MAX_LINES / 2) {
+        if (a->interlace == INTERLACE_NONE) {
+            scaleHeight = 1;
+        }
+        imageHeight *= 2;
+    }
+
+    pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    if (pImage == NULL) {
+        pImage = getBlackImage();
+    }
+    
+    if (scaleHeight) {
+        a->lines *= 2;
+        
+        for (y = 0; y < a->lines; y++) {
+            memcpy(a->line[y].buffer, pImage + y * imageWidth, imageWidth * sizeof(UInt16));
+            if (scaleWidth) {
+                a->line[y].doubleWidth = 1;
+            }
+        }
+    }
+}
+
 static void frameBufferSuperimpose(FrameBuffer* a)
 {
     int x, y;
@@ -512,7 +568,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
 
     pImage = archVideoInBufferGet(imageWidth, imageHeight);
     if (pImage == NULL) {
-        return;
+        pImage = getBlackImage();
     }
 
     if (scaleHeight) {
@@ -555,8 +611,11 @@ static void frameBufferSuperimpose(FrameBuffer* a)
                     }
                 }
             }
-            a->line[2*y+0].doubleWidth = 1;
-            a->line[2*y+1].doubleWidth = 1;
+            
+            if (scaleWidth) {
+                a->line[2*y+0].doubleWidth = 1;
+                a->line[2*y+1].doubleWidth = 1;
+            }
         }
         
         a->lines *= 2;
@@ -597,7 +656,9 @@ static void frameBufferSuperimpose(FrameBuffer* a)
                     }
                 }
             }
-            a->line[y].doubleWidth = 1;
+            if (scaleWidth) {
+                a->line[y].doubleWidth = 1;
+            }
         }
     }
 }

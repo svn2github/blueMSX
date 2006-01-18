@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-01-18 00:50:45 $
+** $Date: 2006-01-18 02:26:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -586,7 +586,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     value &= vdp->registerValueMask[reg];
     sync(vdp, boardSystemTime());
 
-#if 0
+#if 1
     if (reg != 0x0f && reg != 0x0e && reg < 0x20)
         printf("W %.2x: 0x%.2x\n", reg, value);
 #endif
@@ -660,7 +660,9 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
 
     case 8:
         vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (value & 2));
-        updatePalette0(vdp);
+        if (change & 0x20) {
+            updatePalette0(vdp);
+        }
         break;
 
     case 9:
@@ -963,10 +965,14 @@ static void initPalette(VDP* vdp)
 
 static void updatePalette0(VDP* vdp)
 {
+    int mode = (vdp->vdpRegs[9] >> 4) & 3;
     int transparency = (vdp->screenMode < 8 || vdp->screenMode > 12) && (vdp->vdpRegs[8] & 0x20) == 0;
-    if (transparency && ((vdp->vdpRegs[9] >> 4) & 3) == 1) {
+    if (mode == 2) {
+        videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL);
+    }
+    else if (mode == 1 && transparency) {
         vdp->palette[0] = videoGetTransparentColor();
-        videoManagerEnableSuperimpose(vdp->videoHandle, 1);
+        videoManagerSetMode(vdp->videoHandle, VIDEO_MIX);
     }
     else {
         if (vdp->BGColor == 0 || !transparency) {
@@ -975,7 +981,7 @@ static void updatePalette0(VDP* vdp)
         else {
             vdp->palette[0] = vdp->palette[vdp->BGColor];
         }
-        videoManagerEnableSuperimpose(vdp->videoHandle, 0);
+        videoManagerSetMode(vdp->videoHandle, VIDEO_INTERNAL);
     }
 }
 
