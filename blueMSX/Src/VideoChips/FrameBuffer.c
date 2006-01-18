@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-01-18 02:26:03 $
+** $Date: 2006-01-18 02:29:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
 static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct);
 static void frameBufferSuperimpose(FrameBuffer* a);
 static void frameBufferExternal(FrameBuffer* a);
+static void frameBufferBlack(FrameBuffer* a);
 extern int getScreenCompletePercent();
 
 static void waitSem() {
@@ -256,6 +257,9 @@ FrameBuffer* frameBufferFlipDrawFrame()
     }
     else if (mixMode == MIXMODE_BOTH) {
         frameBufferSuperimpose(currentBuffer->frame + currentBuffer->drawFrame);
+    }
+    else if (mixMode == MIXMODE_NONE) {
+        frameBufferBlack(currentBuffer->frame + currentBuffer->drawFrame);
     }
 
     switch (frameBufferCount) {
@@ -497,6 +501,17 @@ static UInt16* getBlackImage()
         blackImage = calloc(sizeof(UInt16), FB_MAX_LINE_WIDTH * FB_MAX_LINES);
     }
     return blackImage;
+}
+
+static void frameBufferBlack(FrameBuffer* a)
+{
+    UInt16* pImage = getBlackImage();
+    int y;
+
+    for (y = 0; y < a->lines; y++) {
+        memcpy(a->line[y].buffer, pImage, a->maxWidth * sizeof(UInt16));
+        a->line[y].doubleWidth = 0;
+    }
 }
 
 static void frameBufferExternal(FrameBuffer* a)

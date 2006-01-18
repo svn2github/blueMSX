@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-01-18 02:26:03 $
+** $Date: 2006-01-18 02:29:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,8 @@ typedef struct FrameBufferData FrameBufferData;
 typedef enum {
     MIXMODE_INTERNAL,
     MIXMODE_BOTH,
-    MIXMODE_EXTERNAL
+    MIXMODE_EXTERNAL,
+    MIXMODE_NONE
 } FrameBufferMixMode;
 
 void frameBufferSetFrameCount(int frameCount);

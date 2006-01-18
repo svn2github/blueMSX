@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-01-18 02:26:03 $
+** $Date: 2006-01-18 02:29:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,8 @@ typedef struct {
 typedef enum {
     VIDEO_INTERNAL,
     VIDEO_MIX,
-    VIDEO_EXTERNAL
+    VIDEO_EXTERNAL,
+    VIDEO_NONE
 } VideoMode;
 
 int videoManagerGetCount();
