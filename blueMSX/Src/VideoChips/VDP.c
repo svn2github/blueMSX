@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-18 00:50:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -284,6 +284,10 @@ struct VDP {
 
     FrameBufferData* frameBuffer;
 };
+
+
+static void updatePalette0(VDP* vdp);
+
 
 #include "SpriteLine.h"
 
@@ -582,6 +586,10 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     value &= vdp->registerValueMask[reg];
     sync(vdp, boardSystemTime());
 
+#if 0
+    if (reg != 0x0f && reg != 0x0e && reg < 0x20)
+        printf("W %.2x: 0x%.2x\n", reg, value);
+#endif
     change = vdp->vdpRegs[reg] ^ value;
     vdp->vdpRegs[reg] = value;
 
@@ -647,18 +655,21 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     case 7: 
         vdp->FGColor = value >> 4;
         vdp->BGColor = value & 0x0F;
-        vdp->palette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
+        updatePalette0(vdp);
         break;
 
     case 8:
         vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (value & 2));
-        vdp->palette[0] = (!vdp->BGColor || (value & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
+        updatePalette0(vdp);
         break;
 
     case 9:
         value = (value & vdp->palMask) | vdp->palValue;
         if (change & 0x80) {
             scheduleVint(vdp);
+        }
+        if (change & 0x30) {
+            updatePalette0(vdp);
         }
         break;
 
@@ -950,12 +961,30 @@ static void initPalette(VDP* vdp)
     vdp->paletteSprite8[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 }
 
+static void updatePalette0(VDP* vdp)
+{
+    int transparency = (vdp->screenMode < 8 || vdp->screenMode > 12) && (vdp->vdpRegs[8] & 0x20) == 0;
+    if (transparency && ((vdp->vdpRegs[9] >> 4) & 3) == 1) {
+        vdp->palette[0] = videoGetTransparentColor();
+        videoManagerEnableSuperimpose(vdp->videoHandle, 1);
+    }
+    else {
+        if (vdp->BGColor == 0 || !transparency) {
+            vdp->palette[0] = vdp->palette0;
+        }
+        else {
+            vdp->palette[0] = vdp->palette[vdp->BGColor];
+        }
+        videoManagerEnableSuperimpose(vdp->videoHandle, 0);
+    }
+}
+
 static void updatePalette(VDP* vdp, int palEntry, int r, int g, int b)
 {
     UInt16 color = videoGetColor(r, g, b);
     if (palEntry == 0) {
         vdp->palette0 = color;
-        vdp->palette[0] = (!vdp->BGColor || (vdp->vdpRegs[8] & 0x20)) ? vdp->palette0 : vdp->palette[vdp->BGColor];
+        updatePalette0(vdp);
     }
     else {
         vdp->palette[palEntry] = color;

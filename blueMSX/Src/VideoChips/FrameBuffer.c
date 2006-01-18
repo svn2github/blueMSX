@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-01-18 00:50:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -246,6 +246,14 @@ FrameBuffer* frameBufferFlipDrawFrame()
 {
     FrameBuffer* frameBuffer;
 
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+
+    if (superimpose) {
+        frameBufferSuperimpose(currentBuffer->frame + currentBuffer->drawFrame);
+    }
+
     switch (frameBufferCount) {
     case 3:
         frameBuffer = frameBufferFlipDrawFrame3();
@@ -256,9 +264,6 @@ FrameBuffer* frameBufferFlipDrawFrame()
     default:
         frameBuffer = frameBufferFlipDrawFrame1();
         break;
-    }
-    if (superimpose) {
-        frameBufferSuperimpose(frameBuffer);
     }
     return frameBuffer;
 }
@@ -484,17 +489,23 @@ static void frameBufferSuperimpose(FrameBuffer* a)
 {
     int x, y;
     UInt16* pImage;
-    int scaleHeight = 1;
+    int scaleHeight = 0;
+    int scaleWidth = 0;
     int imageHeight = a->lines;
     int imageWidth  = a->maxWidth;
 
+    if (a->maxWidth <= FB_MAX_LINE_WIDTH / 2) {
+        scaleWidth = 1;
+        imageWidth *= 2;
+    }
+
     if (a->lines <= FB_MAX_LINES / 4) {
-        scaleHeight = 2;
+        scaleHeight = 1;
         imageHeight *= 2;
     }
     else if (a->lines <= FB_MAX_LINES / 2) {
         if (a->interlace == INTERLACE_NONE) {
-            scaleHeight = 2;
+            scaleHeight = 1;
         }
         imageHeight *= 2;
     }
@@ -504,43 +515,89 @@ static void frameBufferSuperimpose(FrameBuffer* a)
         return;
     }
 
-    a->lines *= scaleHeight;
+    if (scaleHeight) {
+        for (y = a->lines - 1; y >= 0; y--) {
+            UInt16* pSrc = a->line[y].buffer;
+            UInt16* pDst1 = a->line[2*y+0].buffer;
+            UInt16* pDst2 = a->line[2*y+1].buffer;
+            UInt16* pImg1 = pImage+(2*y+0) * imageWidth;
+            UInt16* pImg2 = pImage+(2*y+1) * imageWidth;
 
-    if (scaleHeight == 1 && a->interlace == INTERLACE_ODD) {
-        pImage += imageWidth;
+            if (scaleWidth && a->line[y].doubleWidth) {
+                for (x = imageWidth - 1; x >= 0; x--) {
+                    UInt16 val = pSrc[x];
+                    if (val & 0x8000) {
+                        pDst1[x] = pImg1[x];
+                        pDst2[x] = pImg2[x];
+                    }
+                    else {
+                        pDst1[x] = val;
+                        pDst2[x] = val;
+                    }
+                }
+            }
+            else {
+                for (x = imageWidth - 1; x >= 0; x--) {
+                    UInt16 val = pSrc[x / 2];
+                    if (val & 0x8000) {
+                        pDst1[x] = pImg1[x];
+                        pDst2[x] = pImg2[x];
+                        x--;
+                        pDst1[x] = pImg1[x];
+                        pDst2[x] = pImg2[x];
+                    }
+                    else {
+                        pDst1[x] = val;
+                        pDst2[x] = val;
+                        x--;
+                        pDst1[x] = val;
+                        pDst2[x] = val;
+                    }
+                }
+            }
+            a->line[2*y+0].doubleWidth = 1;
+            a->line[2*y+1].doubleWidth = 1;
+        }
+        
+        a->lines *= 2;
     }
+    else {
+        if (a->interlace == INTERLACE_ODD) {
+            pImage += imageWidth;
+        }
 
-    for (y = a->lines - 1; y >= 0; y--) {
-        UInt16* pSrc = a->line[y / scaleHeight].buffer;
-        UInt16* pDst = a->line[y].buffer;
-        UInt16* pImg = pImage + y * a->maxWidth;
+        for (y = a->lines - 1; y >= 0; y--) {
+            UInt16* pSrc = a->line[y].buffer;
+            UInt16* pDst = a->line[y].buffer;
+            UInt16* pImg = pImage + y * imageWidth;
 
-        if (a->line[y].doubleWidth) {
-            for (x = a->maxWidth - 1; x >= 0; x--) {
-                UInt16 val = pSrc[x];
-                if (val & 0x8000) {
-                    pDst[x] = pImg[x];
-                }
-                else {
-                    pDst[x] = val;
+            if (scaleWidth && a->line[y].doubleWidth) {
+                for (x = imageWidth - 1; x >= 0; x--) {
+                    UInt16 val = pSrc[x];
+                    if (val & 0x8000) {
+                        pDst[x] = pImg[x];
+                    }
+                    else {
+                        pDst[x] = val;
+                    }
                 }
             }
-        }
-        else {
-            for (x = a->maxWidth - 1; x >= 0; x--) {
-                UInt16 val = pSrc[x / 2];
-                if (val & 0x8000) {
-                    pDst[x] = pImg[x];
-                    x--;
-                    pDst[x] = pImg[x];
-                }
-                else {
-                    pDst[x] = val;
-                    x--;
-                    pDst[x] = val;
+            else {
+                for (x = imageWidth - 1; x >= 0; x--) {
+                    UInt16 val = pSrc[x / 2];
+                    if (val & 0x8000) {
+                        pDst[x] = pImg[x];
+                        x--;
+                        pDst[x] = pImg[x];
+                    }
+                    else {
+                        pDst[x] = val;
+                        x--;
+                        pDst[x] = val;
+                    }
                 }
             }
+            a->line[y].doubleWidth = 1;
         }
-        a->line[y].doubleWidth = 1;
     }
 }
