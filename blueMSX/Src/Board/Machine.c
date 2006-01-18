@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-01-12 00:23:43 $
+** $Date: 2006-01-18 19:42:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -884,6 +884,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         if (machine->slotInfo[i].romType == ROM_F4INVERTED) {
             success &= romMapperF4deviceCreate(1);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_NMS8280DIGI) {
             continue;
         }
 

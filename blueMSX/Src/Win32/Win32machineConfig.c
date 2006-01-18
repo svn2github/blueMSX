@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-01-12 11:12:20 $
+** $Date: 2006-01-18 19:42:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -491,6 +491,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_TURBORTIMER || editSlotInfo.romType == ROM_TURBORIO ||
         editSlotInfo.romType == SRAM_S1985 || editSlotInfo.romType == ROM_S1990 ||
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
+        editSlotInfo.romType == ROM_NMS8280DIGI || 
         editSlotInfo.romType == ROM_MOONSOUND || editSlotInfo.romType == ROM_MSXMIDI ||
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
@@ -607,6 +608,7 @@ static void endEditControls(HWND hDlg)
     case SRAM_MATSUCHITA:
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
+    case ROM_NMS8280DIGI:
     case ROM_MSXMIDI:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
@@ -732,7 +734,7 @@ static void setEditControls(HWND hDlg)
     if (romType != RAM_1KB_MIRRORED && romType != RAM_NORMAL && romType != RAM_MAPPER && 
         romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
-        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && 
+        romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
         romType != ROM_MSXMIDI &&
@@ -756,6 +758,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_S1990 || romType == ROM_KANJI ||  romType == ROM_GIDE ||
         romType == ROM_TURBORTIMER || romType == ROM_TURBORIO ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
+        romType == ROM_NMS8280DIGI ||
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
         romType == ROM_KANJI12 || romType == ROM_JISYO ||
@@ -1046,6 +1049,7 @@ static void setEditControls(HWND hDlg)
     case SRAM_MATSUCHITA:
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
+    case ROM_NMS8280DIGI:
     case ROM_MSXMIDI:
     case ROM_TURBORTIMER:
     case ROM_TURBORIO:
@@ -1095,6 +1099,7 @@ static RomType romTypeList[] = {
     SRAM_S1985,
     ROM_S1990,
     ROM_F4DEVICE,
+    ROM_NMS8280DIGI,
     ROM_F4INVERTED,
     ROM_TURBORTIMER,
     ROM_TURBORIO,
