@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-01-18 02:29:51 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,8 @@ static void signalSem() {
 
 
 static FrameBufferData* currentBuffer = NULL;
-static FrameBufferMixMode mixMode = 0;
+static FrameBufferMixMode mixMode = MIXMODE_INTERNAL;
+static FrameBufferMixMode mixMask = MIXMODE_INTERNAL;
 static int frameBufferCount = MAX_FRAMES_PER_FRAMEBUFFER;
 
 
@@ -311,9 +312,10 @@ void frameBufferSetActive(FrameBufferData* frameData)
     }
 }
 
-void frameBufferSetMixMode(FrameBufferMixMode mode)
+void frameBufferSetMixMode(FrameBufferMixMode mode,  FrameBufferMixMode mask)
 {
     mixMode = mode;
+    mixMask = mask;
 }
 
 FrameBufferData* frameBufferGetActive() 
@@ -517,7 +519,7 @@ static void frameBufferBlack(FrameBuffer* a)
 static void frameBufferExternal(FrameBuffer* a)
 {
     int y;
-    UInt16* pImage;
+    UInt16* pImage = NULL;
     int scaleHeight = 0;
     int scaleWidth = 0;
     int imageHeight = a->lines;
@@ -539,7 +541,9 @@ static void frameBufferExternal(FrameBuffer* a)
         imageHeight *= 2;
     }
 
-    pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    if (mixMode & mixMask) {
+        pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    }
     if (pImage == NULL) {
         pImage = getBlackImage();
     }
@@ -559,7 +563,7 @@ static void frameBufferExternal(FrameBuffer* a)
 static void frameBufferSuperimpose(FrameBuffer* a)
 {
     int x, y;
-    UInt16* pImage;
+    UInt16* pImage = NULL;
     int scaleHeight = 0;
     int scaleWidth = 0;
     int imageHeight = a->lines;
@@ -581,7 +585,9 @@ static void frameBufferSuperimpose(FrameBuffer* a)
         imageHeight *= 2;
     }
 
-    pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    if (mixMode & mixMask) {
+        pImage = archVideoInBufferGet(imageWidth, imageHeight);
+    }
     if (pImage == NULL) {
         pImage = getBlackImage();
     }

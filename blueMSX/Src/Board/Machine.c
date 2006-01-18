@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-01-18 19:42:32 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,6 +110,7 @@
 #include "romMapperBeerIDE.h"
 #include "romMapperGIDE.h"
 #include "romMapperMicrosolVmx80.h"
+#include "romMapperNms8280VideoDa.h"
 
 int toint(char* buffer) 
 {
@@ -888,6 +889,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
         }
 
         if (machine->slotInfo[i].romType == ROM_NMS8280DIGI) {
+            success &= romMapperNms8280VideoDaCreate();
             continue;
         }
 

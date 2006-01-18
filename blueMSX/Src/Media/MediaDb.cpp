@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-01-18 19:42:33 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -630,7 +630,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_BEERIDE:     return "Beer IDE";
     case ROM_GIDE:        return "GIDE";
     case ROM_MICROSOL80:  return "Microsol VMX-80";
-    case ROM_NMS8280DIGI: return "NMS-8280 Digitizer";
+    case ROM_NMS8280DIGI: return "Philips NMS-8280 Digitizer";
 
     case ROM_UNKNOWN:     return langUnknown();
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-01-18 19:42:33 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,6 @@
 #include "SaveState.h"
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
-#include "VideoManager.h"
 #include "FrameBuffer.h"
 #include "ArchVideoIn.h"
 #include <string.h>
@@ -73,6 +72,52 @@ int vdpGetRefreshRate()
     return refreshRate;
 }
 
+
+// Video DA management
+
+typedef struct {
+    int handle;
+    VideoMode videoModeMask;
+    VdpDaCallbacks callbacks;
+    void* ref;
+} VdpDaDevice;
+
+static void  daStart(void* ref, int oddPage) {}
+static void  daEnd(void* ref) {}
+static UInt8 daRead(void* ref, int screenMode, int x, int y, UInt16* palette, int count) { return 0x00; }
+
+static VdpDaDevice vdpDaDevice = {
+    0,
+    VIDEO_INTERNAL,
+    { daStart, daEnd, daRead },
+    NULL
+};
+
+int vdpRegisterDaConverter(VdpDaCallbacks* callbacks, void* ref, VideoMode videoModeMask)
+{
+    vdpDaDevice.videoModeMask     = videoModeMask;
+    vdpDaDevice.callbacks.daStart = callbacks->daStart ? callbacks->daStart : daStart;
+    vdpDaDevice.callbacks.daEnd   = callbacks->daEnd   ? callbacks->daEnd   : daEnd;
+    vdpDaDevice.callbacks.daRead  = callbacks->daRead  ? callbacks->daRead  : daRead;
+    vdpDaDevice.ref               = ref;
+    vdpDaDevice.handle++;
+
+    return vdpDaDevice.handle;
+}
+
+void vdpUnregisterDaConverter(int vdpDaHandle)
+{
+    if (vdpDaHandle == vdpDaDevice.handle) {
+        vdpDaDevice.videoModeMask       = VIDEO_INTERNAL;
+        vdpDaDevice.callbacks.daStart   = daStart;
+        vdpDaDevice.callbacks.daEnd     = daEnd;
+        vdpDaDevice.callbacks.daRead    = daRead;
+    }
+}
+
+
+
+// VDP emulation
 
 #define HPERIOD      1368
 
@@ -973,61 +1018,15 @@ static void initPalette(VDP* vdp)
     vdp->paletteSprite8[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 }
 
-static UInt16* videoDaImg;
-
-#define VIDEODA_WIDTH  544
-#define VIDEODA_HEIGHT 480
-
-static void videoDaStart(int oddPage)
-{
-    videoDaImg = 16 + archVideoInBufferGet(VIDEODA_WIDTH, VIDEODA_HEIGHT);
-    if (oddPage) {
-        videoDaImg += VIDEODA_WIDTH;
-    }
-}
-
-static void videoDaEnd()
-{
-}
-
-static UInt8 videoDaGet(int x, int y, UInt16* palette, int paletteCount)
-{
-    UInt16 color;
-    int bestDiff;
-    UInt8 match;
-    int i;
-
-    // If palette is NULL we do 8 bit RGB conversion
-    if (palette == NULL) {
-        UInt16 val = videoDaImg[x + y * VIDEODA_WIDTH * 2];
-        return ((val >> 10) & 0x1c) | ((val >> 2) & 0xe0) | ((val >> 3) & 0x03);
-    }
-
-    color = videoDaImg[x + y * VIDEODA_WIDTH * 2];
-    bestDiff = 0x1000000;
-    match = 0;
-    
-    for (i = 0; i < paletteCount; i++) {
-        int dR = ((palette[i] >> 10) & 0x1f) - ((color >> 10) & 0x1f);
-        int dG = ((palette[i] >>  5) & 0x1f) - ((color >>  5) & 0x1f);
-        int dB = ((palette[i] >>  0) & 0x1f) - ((color >>  0) & 0x1f);
-        int test = dR * dR + dG * dG + dB * dB;
-        if (test < bestDiff) {
-            bestDiff = test;
-            match = (UInt8)i;
-        }
-    }
-    return match;
-
-}
-
 static void digitize(VDP* vdp)
 {
     UInt8 colorMask = vdp->vdpRegs[7];
     int yDelta = 14 + vdp->VAdjust;
     int x, y;
 
-    videoDaStart(vdpIsOddPage(vdp));
+    vdpDaDevice.callbacks.daStart(vdpDaDevice.ref, vdpIsOddPage(vdp));
+
+#define videoDaGet(sm, x, y, pal, cnt) vdpDaDevice.callbacks.daRead(vdpDaDevice.ref, sm, x, y, pal, cnt)
 
     for (y = 0; y < 212; y++) {
         UInt8* charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((y + vdpVScroll(vdp)) << 7)));
@@ -1035,24 +1034,24 @@ static void digitize(VDP* vdp)
         switch (vdp->screenMode) {
         case 5:
             for (x = 0; x < 128; x++) {
-                charTable[x] = ((videoDaGet(4 * x + 0, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
-                               ((videoDaGet(4 * x + 2, y + yDelta, vdp->palette, 16) & colorMask) << 0);
+                charTable[x] = ((videoDaGet(vdp->screenMode, 4 * x + 0, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
+                               ((videoDaGet(vdp->screenMode, 4 * x + 2, y + yDelta, vdp->palette, 16) & colorMask) << 0);
             }
             break;
         case 6:
             for (x = 0; x < 128; x++) {
-                charTable[x] = ((((videoDaGet(4 * x + 0, y + yDelta, vdp->palette, 4) << 2) | 
-                                  (videoDaGet(4 * x + 1, y + yDelta, vdp->palette, 4) << 0)) & colorMask) << 4) |
-                               ((((videoDaGet(4 * x + 2, y + yDelta, vdp->palette, 4) << 2) | 
-                                  (videoDaGet(4 * x + 3, y + yDelta, vdp->palette, 4) << 0)) & colorMask) << 0);
+                charTable[x] = ((((videoDaGet(vdp->screenMode, 4 * x + 0, y + yDelta, vdp->palette, 4) << 2) | 
+                                  (videoDaGet(vdp->screenMode, 4 * x + 1, y + yDelta, vdp->palette, 4) << 0)) & colorMask) << 4) |
+                               ((((videoDaGet(vdp->screenMode, 4 * x + 2, y + yDelta, vdp->palette, 4) << 2) | 
+                                  (videoDaGet(vdp->screenMode, 4 * x + 3, y + yDelta, vdp->palette, 4) << 0)) & colorMask) << 0);
             }
             break;
         case 7:
             for (x = 0; x < 128; x++) {
-                charTable[x] =                ((videoDaGet(4 * x + 0, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
-                                              ((videoDaGet(4 * x + 1, y + yDelta, vdp->palette, 16) & colorMask) << 0);
-                charTable[x + vdp->vram128] = ((videoDaGet(4 * x + 2, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
-                                              ((videoDaGet(4 * x + 3, y + yDelta, vdp->palette, 16) & colorMask) << 0);
+                charTable[x] =                ((videoDaGet(vdp->screenMode, 4 * x + 0, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
+                                              ((videoDaGet(vdp->screenMode, 4 * x + 1, y + yDelta, vdp->palette, 16) & colorMask) << 0);
+                charTable[x + vdp->vram128] = ((videoDaGet(vdp->screenMode, 4 * x + 2, y + yDelta, vdp->palette, 16) & colorMask) << 4) |
+                                              ((videoDaGet(vdp->screenMode, 4 * x + 3, y + yDelta, vdp->palette, 16) & colorMask) << 0);
             }
             break;
         case 8:
@@ -1060,13 +1059,13 @@ static void digitize(VDP* vdp)
         case 11:
         case 12:
             for (x = 0; x < 128; x++) {
-                charTable[x]                = videoDaGet(4 * x + 0, y + yDelta, NULL, 0) & colorMask;
-                charTable[x + vdp->vram128] = videoDaGet(4 * x + 2, y + yDelta, NULL, 0) & colorMask;
+                charTable[x]                = videoDaGet(vdp->screenMode, 4 * x + 0, y + yDelta, NULL, 0) & colorMask;
+                charTable[x + vdp->vram128] = videoDaGet(vdp->screenMode, 4 * x + 2, y + yDelta, NULL, 0) & colorMask;
             }
         }
     }
     
-    videoDaEnd();
+    vdpDaDevice.callbacks.daEnd(vdpDaDevice.ref);
 }
 
 static void updateOutputMode(VDP* vdp)
@@ -1076,11 +1075,11 @@ static void updateOutputMode(VDP* vdp)
 
     if (mode == 2 || 
         (!(vdp->vdpRegs[8] & 0x80) && (vdp->vdpRegs[8] & 0x10) || (vdp->vdpRegs[0] & 0x40))) {
-        videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL);
+        videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL, vdpDaDevice.videoModeMask);
     }
     else if (mode == 1 && transparency) {
         vdp->palette[0] = videoGetTransparentColor();
-        videoManagerSetMode(vdp->videoHandle, VIDEO_MIX);
+        videoManagerSetMode(vdp->videoHandle, VIDEO_MIX, vdpDaDevice.videoModeMask);
     }
     else {
         if (vdp->BGColor == 0 || !transparency) {
@@ -1089,7 +1088,7 @@ static void updateOutputMode(VDP* vdp)
         else {
             vdp->palette[0] = vdp->palette[vdp->BGColor];
         }
-        videoManagerSetMode(vdp->videoHandle, VIDEO_INTERNAL);
+        videoManagerSetMode(vdp->videoHandle, VIDEO_INTERNAL, vdpDaDevice.videoModeMask);
     }
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-01-18 02:26:03 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@ typedef struct {
     FrameBufferData* frameBufer;
     void* ref;
     VideoMode videoMode;
+    VideoMode videoMask;
     char  name[32];
 } VideoInfo;
 
@@ -84,11 +85,12 @@ int videoManagerGetActive()
     return -1;
 }
 
-void videoManagerSetMode(int index, VideoMode videoMode)
+void videoManagerSetMode(int index, VideoMode videoMode, VideoMode modeMask)
 {
     videoManager.di[index].videoMode = videoMode;
+    videoManager.di[index].videoMask = modeMask;
     if (videoManagerIsActive(index)) {
-        frameBufferSetMixMode(videoManager.di[index].videoMode);
+        frameBufferSetMixMode(videoManager.di[index].videoMode, videoManager.di[index].videoMask);
     }
 }
 
@@ -118,7 +120,7 @@ void videoManagerSetActive(int index)
     }
     else {
         frameBufferSetActive(videoManager.di[index].frameBufer);
-        frameBufferSetMixMode(videoManager.di[index].videoMode);
+        frameBufferSetMixMode(videoManager.di[index].videoMode, videoManager.di[index].videoMask);
         if (activeIndex != index) {
             videoManager.di[index].callbacks.enable(videoManager.di[index].ref);
         }
@@ -145,6 +147,7 @@ int videoManagerRegister(char* name, FrameBufferData* frameBuffer,
     videoManager.di[videoManager.count].callbacks   = *callbacks;
     videoManager.di[videoManager.count].ref         = ref;
     videoManager.di[videoManager.count].videoMode   = VIDEO_INTERNAL;
+    videoManager.di[videoManager.count].videoMask   = VIDEO_INTERNAL;
 
     strcpy(videoManager.di[videoManager.count].name, name);
 

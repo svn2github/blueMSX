@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-01-18 02:29:51 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,10 +52,10 @@ typedef struct {
 typedef struct FrameBufferData FrameBufferData;
 
 typedef enum {
-    MIXMODE_INTERNAL,
-    MIXMODE_BOTH,
-    MIXMODE_EXTERNAL,
-    MIXMODE_NONE
+    MIXMODE_INTERNAL = 1,
+    MIXMODE_BOTH     = 2,
+    MIXMODE_EXTERNAL = 4,
+    MIXMODE_NONE     = 8
 } FrameBufferMixMode;
 
 void frameBufferSetFrameCount(int frameCount);
@@ -73,7 +73,8 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
 void frameBufferDataDestroy(FrameBufferData* frameData);
 
 void frameBufferSetActive(FrameBufferData* frameData);
-void frameBufferSetMixMode(FrameBufferMixMode mode);
+void frameBufferSetMixMode(FrameBufferMixMode mode, FrameBufferMixMode mask);
+
 FrameBufferData* frameBufferGetActive();
 
 #define videoGetTransparentColor() 0x8000

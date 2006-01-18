@@ -706,6 +706,12 @@
 					RelativePath="..\..\Src\Memory\romMapperNationalFdc.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNormal.c">
 				</File>
 				<File

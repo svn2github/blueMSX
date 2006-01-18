@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-18 22:27:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #define VDP_H
 
 #include "MSXTypes.h"
+#include "VideoManager.h"
 
 typedef enum { VDP_V9938, VDP_V9958, VDP_TMS9929A, VDP_TMS99x8A } VdpVersion;
 typedef enum { VDP_SYNC_AUTO, VDP_SYNC_50HZ, VDP_SYNC_60HZ } VdpSyncMode; 
@@ -46,6 +47,20 @@ void vdpSetSpritesEnable(int enable);
 int  vdpGetSpritesEnable();
 void vdpSetDisplayEnable(int enable);
 int  vdpGetDisplayEnable();
+
+// Video DA Interface
+
+#define VDP_VIDEODA_WIDTH  544
+#define VDP_VIDEODA_HEIGHT 240
+
+typedef struct {
+    void (*daStart)(void*, int);
+    void (*daEnd)(void*);
+    UInt8 (*daRead)(void*, int, int, int, UInt16*, int);
+} VdpDaCallbacks;
+
+int vdpRegisterDaConverter(VdpDaCallbacks* callbacks, void* ref, VideoMode videoModeMask);
+void vdpUnregisterDaConverter(int vdpDaHandle);
 
 /* The following methods needs target dependent implementation */
 extern void RefreshScreen(int);

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNms8280VideoDa.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-01-18 22:27:45 $
 **
@@ -27,39 +27,11 @@
 **
 ******************************************************************************
 */
-#ifndef VIDEO_MANAGER_H
-#define VIDEO_MANAGER_H
+#ifndef ROMMAPPER_NMS8280_VIDEO_DA_H
+#define ROMMAPPER_NMS8280_VIDEO_DA_H
 
 #include "MSXTypes.h"
-#include "FrameBuffer.h"
 
-typedef struct {
-    void (*enable)(void*);
-    void (*disable)(void*);
-} VideoCallbacks;
-
-typedef enum {
-    VIDEO_INTERNAL = 1,
-    VIDEO_MIX      = 2,
-    VIDEO_EXTERNAL = 4,
-    VIDEO_NONE     = 8,
-    VIDEO_MASK_ALL = VIDEO_INTERNAL | VIDEO_MIX | VIDEO_EXTERNAL | VIDEO_NONE
-} VideoMode;
-
-int videoManagerGetCount();
-int videoManagerGetActive();
-void videoManagerSetActive(int index);
-void videoManagerSetMode(int index, VideoMode videoMode, VideoMode modeMask);
-int videoManagerIsActive(int index);
-char* videoManagerGetName(int index);
-
-void videoManagerReset();
-
-void videoManagerLoadState();
-void videoManagerSaveState();
-
-int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
-                        VideoCallbacks* callbacks, void* ref);
-void videoManagerUnregister(int handle);
+int romMapperNms8280VideoDaCreate();
 
 #endif
