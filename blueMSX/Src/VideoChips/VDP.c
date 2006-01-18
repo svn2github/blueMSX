@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-01-18 07:49:28 $
+** $Date: 2006-01-18 18:30:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -973,6 +973,25 @@ static void initPalette(VDP* vdp)
     vdp->paletteSprite8[15] = videoGetColor(7 * 255 / 7, 7 * 255 / 7, 7 * 255 / 7);
 }
 
+static UInt8 findBestColor(VDP* vdp, UInt16 color, int paletteOffset, int count)
+{
+    UInt16* palette = vdp->palette + paletteOffset;
+    int i;
+    UInt8 match = 0;
+    int bestCost = 0x1000000;
+    for (i = 0; i < count; i++) {
+        int dR = ((palette[i] >> 10) & 0x1f) - ((color >> 10) & 0x1f);
+        int dG = ((palette[i] >>  5) & 0x1f) - ((color >>  5) & 0x1f);
+        int dB = ((palette[i] >>  0) & 0x1f) - ((color >>  0) & 0x1f);
+        int test = dR * dR + dG * dG + dB * dB;
+        if (test < bestCost) {
+            bestCost = test;
+            match = (UInt8)i;
+        }
+    }
+    return match;
+}
+
 static void digitize(VDP* vdp)
 {
     int imageWidth  = 2*(256+16);
@@ -987,6 +1006,48 @@ static void digitize(VDP* vdp)
     pImage += 2 * 8;
     if (vdpIsOddPage(vdp)) {
         pImage += imageWidth;
+    }
+
+    if (vdp->screenMode == 5) {
+        for (y = 0; y < 212; y++) {
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((y + vdpVScroll(vdp)) << 7)));
+
+            for (x = 0; x < 256/2; x++) {
+                charTable[x] = ((findBestColor(vdp, pImage[4*x + 0], 0, 16) & colorMask) << 4) |
+                               ((findBestColor(vdp, pImage[4*x + 2], 0, 16) & colorMask) << 0);
+            }
+            pImage += 2 * imageWidth;
+        }
+    }
+
+    if (vdp->screenMode == 6) {
+        UInt8 colorMask1 = (colorMask >> 2) & 0x03;
+        UInt8 colorMask2 = (colorMask >> 0) & 0x03;
+        for (y = 0; y < 212; y++) {
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((y + vdpVScroll(vdp)) << 7)));
+
+            for (x = 0; x < 512/4; x++) {
+                charTable[x] = ((findBestColor(vdp, pImage[4*x + 0], 0, 4) & colorMask1) << 6) |
+                               ((findBestColor(vdp, pImage[4*x + 1], 0, 4) & colorMask2) << 4) |
+                               ((findBestColor(vdp, pImage[4*x + 2], 0, 4) & colorMask1) << 2) |
+                               ((findBestColor(vdp, pImage[4*x + 3], 0, 4) & colorMask2) << 0);
+            }
+            pImage += 2 * imageWidth;
+        }
+    }
+    
+    if (vdp->screenMode == 7) {
+        for (y = 0; y < 212; y++) {
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & (~vdpIsOddPage(vdp) << 7) & ((-1 << 15) | ((y + vdpVScroll(vdp)) << 7)));
+
+            for (x = 0; x < 512/4; x++) {
+                charTable[x] = ((findBestColor(vdp, pImage[4*x + 0], 0, 16) & colorMask) << 4) |
+                               ((findBestColor(vdp, pImage[4*x + 1], 0, 16) & colorMask) << 0);
+                charTable[x + vdp->vram128] = ((findBestColor(vdp, pImage[4*x + 2], 0, 16) & colorMask) << 4) |
+                                              ((findBestColor(vdp, pImage[4*x + 3], 0, 16) & colorMask) << 0);
+            }
+            pImage += 2 * imageWidth;
+        }
     }
 
     if (vdp->screenMode >=8 && vdp->screenMode <= 12) {
