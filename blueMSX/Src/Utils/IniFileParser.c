@@ -221,7 +221,7 @@ int iniFileGetString(char* section,
     ep++; 
 
     strncpy(buffer, ep, bufferLen); 
-    buffer[bufferLen] = '\0'; 
+    buffer[bufferLen - 1] = '\0'; 
 
     return strlen(buffer); 
 } 

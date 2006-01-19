@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2005-11-11 06:26:10 $
+** $Date: 2006-01-19 01:07:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@ static int keyStatus[KBD_TABLE_NUM][KBD_TABLE_LEN];
 static char dikStrings[KBD_TABLE_LEN][256];
 static int selectedKey;
 static int selectedDikKey;
+static int selectedTable;
 static int editEnabled;
 
 static char keyboardConfigDir[MAX_PATH];
@@ -702,7 +703,7 @@ static void keyboardHanldeKeypress(int code, int pressed)
     for (n = 0; n < KBD_TABLE_NUM; n++) {
         int wasPressed = keyStatus[n][code];
         int keyCode = kbdTable[n][code];
-        int isEditing = editEnabled && selectedKey != 0;
+        int isEditing = selectedTable == n && editEnabled && selectedKey != 0;
         keyStatus[n][code] = pressed;
 
         if (pressed == wasPressed || (keyCode == 0 && !isEditing)) {
@@ -1054,15 +1055,22 @@ char* archGetMappedKey()
 }
 
 void archKeyboardSetSelectedKey(int msxKeyCode) {
-    int i, n;
+    int i;
     selectedKey = msxKeyCode;
     selectedDikKey = 0;
+    selectedTable = 0;
 
-    for (n = 0; n < KBD_TABLE_NUM; n++) {
-        for (i = 0; i < KBD_TABLE_LEN; i++) {
-            if (kbdTable[n][i] == selectedKey) {
-                selectedDikKey = i;
-            }
+    if (inputEventIsJoystick1(msxKeyCode)) {
+        selectedTable = 1;
+    }
+
+    if (inputEventIsJoystick2(msxKeyCode)) {
+        selectedTable = 2;
+    }
+
+    for (i = 0; i < KBD_TABLE_LEN; i++) {
+        if (kbdTable[selectedTable][i] == selectedKey) {
+            selectedDikKey = i;
         }
     }
 }

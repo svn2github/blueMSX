@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/InputEvent.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2006-01-19 01:07:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -204,6 +204,23 @@ const char* inputEventCodeToString(int eventCode);
 
 #define EC_KEYCOUNT     152
 
+
+static int inputEventIsJoystick1(int eventCode)
+{
+    return (eventCode >= EC_JOY1_UP   && eventCode <= EC_JOY1_BUTTON6) ||
+           (eventCode >= EC_COLECO1_0 && eventCode <= EC_COLECO1_HASH);
+}
+
+static int inputEventIsJoystick2(int eventCode)
+{
+    return (eventCode >= EC_JOY2_UP   && eventCode <= EC_JOY2_BUTTON6) ||
+           (eventCode >= EC_COLECO2_0 && eventCode <= EC_COLECO2_HASH);
+}
+
+static int inputEventIsKeyboard(int eventCode)
+{
+    return !inputEventIsJoystick1(eventCode) && !inputEventIsJoystick2(eventCode);
+}
 
 // Inlines
 extern int eventMap[256];
