@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-01-22 10:03:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,8 +122,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "KeyboardMaster")   return ROM_KONAMKBDMAS;
     if (name == "GenericKonami")    return ROM_KONAMI4NF;
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
-    if (name == "KonamiWordPro")    return ROM_KONWORDPRO;
-
+    if (name == "WordPro")          return ROM_KONWORDPRO;
     if (name == "Normal")           return ROM_STANDARD;
 
     // System roms
@@ -163,7 +162,8 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "CX5M-MUSIC")   return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
-    if (name == "Microsol80")   return ROM_MICROSOL80;
+    if (name == "VMX80")        return ROM_MICROSOL80;
+    if (name == "HBI-V1")       return ROM_SONYHBIV1;
 
     // Roms not supproted in this format in the db
     if (name == "0x4000")       return ROM_0x4000;
@@ -523,8 +523,6 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "sg1000")       return ROM_SG1000;
     if (name == "castle")       return ROM_SG1000CASTLE;
     if (name == "svi328")       return ROM_SVI328;
-    if (name == "gamereader")   return ROM_GAMEREADER;
-    if (name == "microsol80")   return ROM_MICROSOL80;
 
     return ROM_UNKNOWN;
 }
@@ -631,6 +629,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_GIDE:        return "GIDE";
     case ROM_MICROSOL80:  return "Microsol VMX-80";
     case ROM_NMS8280DIGI: return "Philips NMS-8280 Digitizer";
+    case ROM_SONYHBIV1:   return "Sony HBI-V1";
 
     case ROM_UNKNOWN:     return langUnknown();
     }
@@ -740,6 +739,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_GIDE:        return "GIDE";
     case ROM_MICROSOL80:  return "MICROSOL80";
     case ROM_NMS8280DIGI: return "8280 DIGI";
+    case ROM_SONYHBIV1:   return "SONY HBI-V1";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -774,6 +774,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_KONAMKBDMAS: return 1;
     case ROM_KONWORDPRO:  return 1;
     case ROM_MICROSOL80:  return 1;
+    case ROM_SONYHBIV1:   return 1;
 
     }
     return 0;

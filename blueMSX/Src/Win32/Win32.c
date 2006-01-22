@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.124 $
+** $Revision: 1.125 $
 **
-** $Date: 2006-01-17 08:50:03 $
+** $Date: 2006-01-22 10:03:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -354,6 +354,7 @@ static RomType romTypeList[] = {
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_MICROSOL80,
+    ROM_SONYHBIV1,
     ROM_UNKNOWN,
 };
 

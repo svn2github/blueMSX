@@ -745,6 +745,12 @@
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSonyHBIV1.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSonyHBIV1.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperStandard.c">
 				</File>
 				<File

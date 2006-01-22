@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-01-15 07:04:03 $
+** $Date: 2006-01-22 10:03:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,12 +107,17 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, int size,
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMicrosolVmx80* rm;
+    int pages = 2;
     int i;
+
+    if ((startPage + pages) > 8) {
+        return 0;
+    }
 
     rm = malloc(sizeof(RomMapperMicrosolVmx80));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL80, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 2, read, read, write, destroy, rm);
 
     rm->charData = calloc(1, 0x2000);
     if (charRom != NULL) {
@@ -131,8 +136,8 @@ int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, int size,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    for (i = 0; i < 8; i++) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
+    for (i = 0; i < pages; i++) {
+        slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     }
 
     reset(rm);
