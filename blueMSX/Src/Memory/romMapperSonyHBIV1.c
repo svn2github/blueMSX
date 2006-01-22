@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-22 10:03:41 $
+** $Date: 2006-01-22 11:02:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,161 @@ static void destroy(RomMapperSonyHbiV1* rm)
     free(rm);
 }
 
+static int calcY(UInt16 c)
+{
+    int r = (c>>10)&0x1f;
+    int g = (c>> 5)&0x1f;
+    int b = (c>> 0)&0x1f;
+
+    int y = b/2 + r / 4 + g / 8;
+
+    if (y > 31) y = 31;
+    return y;
+}
+
+static void calcJK(UInt16* c, int* J, int* K)
+{
+    int r = (((c[0]>>10)&0x1f) + ((c[1]>>10)&0x1f) + ((c[2]>>10)&0x1f) + ((c[3]>>10)&0x1f)) / 4;
+    int g = (((c[0]>> 5)&0x1f) + ((c[1]>> 5)&0x1f) + ((c[2]>> 5)&0x1f) + ((c[3]>> 5)&0x1f)) / 4;
+    int b = (((c[0]>> 0)&0x1f) + ((c[1]>> 0)&0x1f) + ((c[2]>> 0)&0x1f) + ((c[3]>> 0)&0x1f)) / 4;
+
+    int y = b/2 + r / 4 + g / 8;
+    int j = (r - y);
+    int k = (g - y);
+
+    if (j >  31) j = 31;
+    if (j < -32) j = -32;
+    if (j <   0) j = j + 64;
+    if (k >  31) k = 31;
+    if (k < -32) k = -32;
+    if (k <   0) k = k + 64;
+
+    *J = j;
+    *K = k;
+}
+
+static void digitize(RomMapperSonyHbiV1* rm)
+{
+    int x, y;
+    UInt16* img;
+    int width  = 256;
+    int height = 212;
+    int blackWidth  = width;
+    int blackHeight = height;
+    int imgWidth  = 256;
+    int startX = 64 * rm->startBlockX;
+    int startY = 53 * rm->startBlockY;
+
+    switch (rm->blockSizeX) {
+    case 0: width = width * 1 / 1; blackWidth = width; break;
+    case 1: width = width * 1 / 2; blackWidth = width; break;
+    case 3: width = width * 1 / 4; blackWidth = width; break;
+    case 4: width = width * 3 / 4; blackWidth = width; break;
+    case 5: width = width * 2 / 2; blackWidth = width; break;
+    case 7: width = width * 2 / 4; blackWidth = width; break;
+    case 2: blackWidth = width * 1 / 2; width = width * 1 / 3; break;
+    case 6: blackWidth = width * 3 / 4; width = width * 2 / 3; break;
+    }
+
+    switch (rm->blockSizeY) {
+    case 0: height = height * 1 / 1; blackHeight = height; break;
+    case 1: height = height * 1 / 2; blackHeight = height; break;
+    case 3: height = height * 1 / 4; blackHeight = height; break;
+    case 4: height = height * 3 / 4; blackHeight = height; break;
+    case 5: height = height * 2 / 2; blackHeight = height; break;
+    case 7: height = height * 2 / 4; blackHeight = height; break;
+    case 2: blackHeight = height * 1 / 2; height = height * 1 / 3; break;
+    case 6: blackHeight = height * 3 / 4; height = height * 2 / 3; break;
+    }
+
+    imgWidth = (width + 3) & ~3;
+
+    img = archVideoInBufferGet(imgWidth, height);
+
+    if (startX + width > 256) {
+        width = 256 - startX;
+    }
+    if (startY + height > 212) {
+        height = 212 - startY;
+    }
+
+    for (y = 0; y < height; y++) {
+        int destY = startY + y;
+        int j = 0;
+        int k = 0;
+        for (x = 0; x < width; x++) {
+            int destX = startX + x;
+            UInt16 color = img[x];
+            UInt8  val = 0;
+            switch (rm->mode) {
+            case 0:
+                switch (x & 3) {
+                case 0:
+                    calcJK(img + x, &j, &k);
+                    val = (k & 7) | (calcY(color) << 3);
+                    break;
+                case 1:
+                    val = (k >> 3) | (calcY(color) << 3);
+                    break;
+                case 2:
+                    val = (j & 7) | (calcY(color) << 3);
+                    break;
+                case 3:
+                    val = (j >> 3) | (calcY(color) << 3);
+                    break;
+                }
+                break;
+            case 1:
+                switch (x & 3) {
+                case 0:
+                    calcJK(img + x, &j, &k);
+                    val = (k & 7) | ((calcY(color) & 0xfe) << 3);
+                    break;
+                case 1:
+                    val = (k >> 3) | ((calcY(color) & 0xfe) << 3);
+                    break;
+                case 2:
+                    val = (j & 7) | ((calcY(color) & 0xfe) << 3);
+                    break;
+                case 3:
+                    val = (j >> 3) | ((calcY(color) & 0xfe) << 3);
+                    break;
+                }
+                break;
+            case 2:
+                val = (UInt8)(((color >> 10) & 0x1c) | ((color >> 2) & 0xe0) | ((color >> 3) & 0x03));
+                break;
+            case 3:
+                val = 0;
+                break;
+            }
+            rm->vram[destY][destX] = val;
+        }
+        for (; x < blackWidth; x++) {
+            rm->vram[destY][startX + x] = 0;
+        }
+        img += imgWidth; 
+    }
+    for (; y < blackHeight; y++) {
+        for (x = 0; x < blackWidth; x++) {
+            rm->vram[startY + y][startX + x] = 0;
+        }
+    }
+}
+
+static void onTimerBusy(RomMapperSonyHbiV1* rm, UInt32 time)
+{
+    rm->status0 &= 0x7f;
+}
+
+static void onTimerDigitize(RomMapperSonyHbiV1* rm, UInt32 time)
+{
+    printf("INT\n");
+    rm->status0 |= 0x80;
+    digitize(rm);
+    boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
+}
+
 static UInt8 read(RomMapperSonyHbiV1* rm, UInt16 address)
 {
     UInt8 value = 0xff;
@@ -114,81 +269,6 @@ static UInt8 read(RomMapperSonyHbiV1* rm, UInt16 address)
     }
 //    printf("R %.4x : %.2x\n", address, value);
     return value;
-}
-
-static void digitize(RomMapperSonyHbiV1* rm)
-{
-    int x, y;
-    UInt16* img;
-    int width  = 256;
-    int height = 212;
-    int imgWidth  = 256;
-    int startX = 64 * rm->startBlockX;
-    int startY = 53 * rm->startBlockY;
-
-    switch (rm->blockSizeX) {
-    case 0: width = width * 1 / 1; break;
-    case 1: width = width * 1 / 2; break;
-    case 2: width = width * 1 / 3; break;
-    case 3: width = width * 1 / 4; break;
-    case 4: width = width * 3 / 4; break;
-    case 5: width = width * 2 / 2; break;
-    case 6: width = width * 2 / 3; break;
-    case 7: width = width * 2 / 4; break;
-    }
-
-    switch (rm->blockSizeY) {
-    case 0: height = height * 1 / 1; break;
-    case 1: height = height * 1 / 2; break;
-    case 2: height = height * 1 / 3; break;
-    case 3: height = height * 1 / 4; break;
-    case 4: height = height * 3 / 4; break;
-    case 5: height = height * 2 / 2; break;
-    case 6: height = height * 2 / 3; break;
-    case 7: height = height * 2 / 4; break;
-    }
-
-    imgWidth = width;
-
-    img = archVideoInBufferGet(imgWidth, height);
-
-    if (startX + width > 256) {
-        width = 256 - startX;
-    }
-    if (startY + height > 212) {
-        height = 212 - startY;
-    }
-
-    for (y = 0; y < height; y++) {
-        int destY = startY + y;
-        for (x = 0; x < width; x++) {
-            int destX = startX + x;
-            UInt16 color = img[y * imgWidth + x];
-            UInt8  val = 0;
-            switch (rm->mode) {
-            case 2:
-                val = (UInt8)(((color >> 10) & 0x1c) | ((color >> 2) & 0xe0) | ((color >> 3) & 0x03));
-                break;
-            case 3:
-                val = 0;
-                break;
-            }
-            rm->vram[destY][destX] = val;
-        }
-    }
-}
-
-static void onTimerBusy(RomMapperSonyHbiV1* rm, UInt32 time)
-{
-    rm->status0 &= 0x7f;
-}
-
-static void onTimerDigitize(RomMapperSonyHbiV1* rm, UInt32 time)
-{
-    printf("INT\n");
-    rm->status0 |= 0x80;
-    digitize(rm);
-    boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
 }
 
 static void write(RomMapperSonyHbiV1* rm, UInt16 address, UInt8 value) 
