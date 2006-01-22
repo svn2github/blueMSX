@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchVideoIn.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-17 08:50:03 $
+** $Date: 2006-01-22 22:31:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #define ARCH_VIDEO_IN_H
 
 #include "MsxTypes.h"
+
+int archVideoInIsVideoConnected();
 
 // Returns a video in buffer. The buffer is owned by the arch video and
 // can't be freed until a succeeding call to archVideoInBufferGet is called.

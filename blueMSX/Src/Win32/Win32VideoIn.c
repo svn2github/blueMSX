@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-01-18 19:42:33 $
+** $Date: 2006-01-22 22:31:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,11 @@ static int updateVideoInBuffer(int width, int height)
     videoIn.width  = width;
     videoIn.height = height;
     return 1;
+}
+
+int archVideoInIsVideoConnected()
+{
+    return videoIn.inputIndex > 0;
 }
 
 UInt16* archVideoInBufferGet(int width, int height)

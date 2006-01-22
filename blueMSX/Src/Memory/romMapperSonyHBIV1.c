@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-01-22 11:02:18 $
+** $Date: 2006-01-22 22:31:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,6 +153,9 @@ static void digitize(RomMapperSonyHbiV1* rm)
     imgWidth = (width + 3) & ~3;
 
     img = archVideoInBufferGet(imgWidth, height);
+    if (img == NULL) {
+        return;
+    }
 
     if (startX + width > 256) {
         width = 256 - startX;
@@ -264,7 +267,8 @@ static UInt8 read(RomMapperSonyHbiV1* rm, UInt16 address)
         value = rm->status0;
         break;
     case 0x3ffd:
-        value = (UInt8)(((boardSystemTime() / (boardFrequency() / 60)) & 1) << 7);
+        value = (UInt8)(((boardSystemTime() / (boardFrequency() / 60)) & 1) << 7) | 
+                (archVideoInIsVideoConnected() ? 0 : 0x10);
         break;
     }
 //    printf("R %.4x : %.2x\n", address, value);
