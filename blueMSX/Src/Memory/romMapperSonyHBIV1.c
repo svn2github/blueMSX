@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-01-23 06:24:30 $
+** $Date: 2006-01-23 07:26:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -299,10 +299,10 @@ static void write(RomMapperSonyHbiV1* rm, UInt16 address, UInt8 value)
     switch (address & 3) {
     case 0:
         rm->command = (value >> 0) & 3;
+        rm->vramOffset = 0;
+        rm->vramLine   = 0;
         switch (rm->command) {
         case 0:
-            rm->vramOffset = 0;
-            rm->vramLine   = 0;
             break;
         case 1:
             digitize(rm);
