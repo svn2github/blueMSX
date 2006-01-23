@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-01-23 07:26:36 $
+** $Date: 2006-01-23 07:34:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,7 +154,6 @@ static void digitize(RomMapperSonyHbiV1* rm)
 
     img = archVideoInBufferGet(imgWidth, height);
     if (img == NULL) {
-        printf("Failed getting image\n");
         return;
     }
 
@@ -303,6 +302,9 @@ static void write(RomMapperSonyHbiV1* rm, UInt16 address, UInt8 value)
         rm->vramLine   = 0;
         switch (rm->command) {
         case 0:
+            boardTimerRemove(rm->timerBusy);
+            boardTimerRemove(rm->timerDigitize);
+            rm->status0 &= 0x7f;
             break;
         case 1:
             digitize(rm);
