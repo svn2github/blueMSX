@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-01-22 22:31:29 $
+** $Date: 2006-01-23 06:24:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,6 +154,7 @@ static void digitize(RomMapperSonyHbiV1* rm)
 
     img = archVideoInBufferGet(imgWidth, height);
     if (img == NULL) {
+        printf("Failed getting image\n");
         return;
     }
 
@@ -235,10 +236,14 @@ static void onTimerBusy(RomMapperSonyHbiV1* rm, UInt32 time)
 
 static void onTimerDigitize(RomMapperSonyHbiV1* rm, UInt32 time)
 {
-    printf("INT\n");
-    rm->status0 |= 0x80;
-    digitize(rm);
-    boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
+    if (--rm->delay == 0) {
+        rm->status0 |= 0x80;
+        digitize(rm);
+        boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
+    }
+    else {
+        boardTimerAdd(rm->timerDigitize, boardSystemTime() + boardFrequency() / 60);
+    }
 }
 
 static UInt8 read(RomMapperSonyHbiV1* rm, UInt16 address)
@@ -264,14 +269,21 @@ static UInt8 read(RomMapperSonyHbiV1* rm, UInt16 address)
     switch (address) {
     case 0x3ffc:
         rm->status0 ^= 060;
-        value = rm->status0;
+        value = rm->status0 | rm->command;
         break;
     case 0x3ffd:
         value = (UInt8)(((boardSystemTime() / (boardFrequency() / 60)) & 1) << 7) | 
-                (archVideoInIsVideoConnected() ? 0 : 0x10);
+                (archVideoInIsVideoConnected() ? 0 : 0x10) |
+                (rm->startBlockY << 2) | rm->startBlockX;
+        break;
+    case 0x3ffe:
+        value = (rm->mode << 6) | (rm->blockSizeY << 3) | rm->blockSizeX;
+        break;
+    case 0x3fff:
+        value = rm->delay;
         break;
     }
-//    printf("R %.4x : %.2x\n", address, value);
+
     return value;
 }
 
@@ -281,25 +293,33 @@ static void write(RomMapperSonyHbiV1* rm, UInt16 address, UInt8 value)
         return;
     }
     if (address < 0x3ffc || address >= 0x4000) {
-        rm->romData[address] = value;
         return;
     }
-    printf("W %.4x: %.2x\n", address,value);
+
     switch (address & 3) {
     case 0:
-        printf("W Command: %.2x\n", value & 3);
         rm->command = (value >> 0) & 3;
-        if (rm->command == 1) {
+        switch (rm->command) {
+        case 0:
+            rm->vramOffset = 0;
+            rm->vramLine   = 0;
+            break;
+        case 1:
             digitize(rm);
             rm->status0 |= 0x80;
             boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
-        }
-        if (rm->command == 2) {
-            boardTimerAdd(rm->timerDigitize, boardSystemTime() + 1 + rm->delay * (boardFrequency() / 60));
-        }
-        if (rm->command == 0) {
-            rm->vramOffset = 0;
-            rm->vramLine   = 0;
+            break;
+        case 2:
+            if (rm->delay == 0) {
+                rm->status0 |= 0x80;
+                digitize(rm);
+                boardTimerAdd(rm->timerBusy, boardSystemTime() + boardFrequency() / 60);
+            }
+            else
+                boardTimerAdd(rm->timerDigitize, boardSystemTime() + boardFrequency() / 60);
+            break;
+        case 3:
+            printf("HBI-V1 Command = 3\n");
         }
         break;
     case 1:
