@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-01-25 16:58:01 $
+** $Date: 2006-01-25 21:19:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,12 +33,10 @@
 
 #include "MSXTypes.h"
 
-typedef enum { SVI80COL_MSX, SVI80COL_SVI } Svi80ColConnector;
-
 void svi80colMemWrite(UInt16 address, UInt8 value);
 UInt8 svi80colMemRead(UInt16 address);
 int svi80colMemBankCtrlStatus(void);
 
-int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* romData, int size);
+int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-01-25 21:19:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 
 #include "CRTC6845.h"
-#include "IoPort.h"
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
@@ -194,7 +193,7 @@ static void crtcVideoDisable(CRTC6845* crtc)
     crtc->videoEnabled = 0;
 }
 
-UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort)
+UInt8 crtcRead(CRTC6845* crtc)
 {
     if (crtc->registers.address < 18)
         return crtc->registers.reg[crtc->registers.address];
@@ -223,12 +222,12 @@ static void crtcUpdateRegister(CRTC6845* crtc, UInt8 address, UInt8 value)
     }
 }
 
-void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
+void crtcWrite(CRTC6845* crtc, UInt8 value)
 {
     crtcUpdateRegister(crtc, crtc->registers.address, value);
 }
 
-void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value)
+void crtcWriteLatch(CRTC6845* crtc, UInt8 value)
 {
     crtc->registers.address = value & 0x1f;
 }

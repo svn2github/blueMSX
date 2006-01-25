@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-02-15 05:03:51 $
+** $Date: 2006-01-25 21:19:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,9 +73,9 @@ typedef struct
     int              displayWidth;
 } CRTC6845;
 
-UInt8 crtcRead(CRTC6845* crtc, UInt16 ioPort);
-void crtcWrite(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
-void crtcWriteLatch(CRTC6845* crtc, UInt16 ioPort, UInt8 value);
+UInt8 crtcRead(CRTC6845* crtc);
+void crtcWrite(CRTC6845* crtc, UInt8 value);
+void crtcWriteLatch(CRTC6845* crtc, UInt8 value);
 
 void crtcMemWrite(CRTC6845* crtc, UInt16 address, UInt8 value);
 UInt8 crtcMemRead(CRTC6845* crtc, UInt16 address);

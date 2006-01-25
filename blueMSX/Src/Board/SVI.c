@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2006-01-25 21:18:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -203,7 +203,7 @@ static int sviLoad80Col(Machine* machine, VdpSyncMode vdpSyncMode)
             if (buf != NULL) {
                 if (machine->slotInfo[i].romType == ROM_SVI80COL) {
                     int frameRate = (vdpSyncMode == VDP_SYNC_60HZ) ? 60 : 50;
-                    svi80ColEnabled = romMapperSvi80ColCreate(SVI80COL_SVI, frameRate, buf, size);
+                    svi80ColEnabled = romMapperSvi80ColCreate(frameRate, buf, size);
                     success &= svi80ColEnabled;
                 }
                 free(buf);

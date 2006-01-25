@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2006-01-25 21:19:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,6 @@
 #include <stdlib.h>
 
 typedef struct {
-    int connector;
     int deviceHandle;
     int debugHandle;
     UInt8 memBankCtrl;
@@ -50,7 +49,6 @@ static void saveState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForWrite("Svi80Col");
 
-    saveStateSet(state, "connector", svi80col->connector);
     saveStateSet(state, "memBankCtrl", svi80col->memBankCtrl);
     
     saveStateClose(state);
@@ -60,7 +58,6 @@ static void loadState(RomMapperSvi80Col* svi80col)
 {
     SaveState* state = saveStateOpenForRead("Svi80Col");
 
-    svi80col->connector = saveStateGet(state, "connector", 0);
     svi80col->memBankCtrl = (UInt8)saveStateGet(state, "memBankCtrl", 0);
 
     saveStateClose(state);
@@ -68,19 +65,10 @@ static void loadState(RomMapperSvi80Col* svi80col)
 
 static void destroy(RomMapperSvi80Col* svi80col)
 {
-    switch (svi80col->connector) {
-    case SVI80COL_MSX:
-        ioPortUnregister(0x78);
-        ioPortUnregister(0x79);
-//      ioPortUnregister(0x79); // FIX ME or mem mapped
-        break;
 
-    case SVI80COL_SVI:
-        ioPortUnregister(0x50);
-        ioPortUnregister(0x51);
-        ioPortUnregister(0x58);
-        break;
-    }
+    ioPortUnregister(0x50);
+    ioPortUnregister(0x51);
+    ioPortUnregister(0x58);
 
     deviceManagerUnregister(svi80col->deviceHandle);
     debugDeviceUnregister(svi80col->debugHandle);
@@ -102,17 +90,17 @@ static UInt8 peekIo(RomMapperSvi80Col* svi80col, UInt16 ioPort)
 }
 static UInt8 readIo(RomMapperSvi80Col* svi80col, UInt16 ioPort) 
 {
-    return crtcRead(svi80col->crtc6845, ioPort);
+    return crtcRead(svi80col->crtc6845);
 }
 
 static void writeIo(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value) 
 {
-    crtcWrite(svi80col->crtc6845, ioPort, value);
+    crtcWrite(svi80col->crtc6845, value);
 }  
 
 static void writeIoLatch(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value) 
 {
-    crtcWriteLatch(svi80col->crtc6845, ioPort, value);
+    crtcWriteLatch(svi80col->crtc6845, value);
 }  
 
 static void writeIoMemBankCtrl(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value)
@@ -150,7 +138,7 @@ static void getDebugInfo(RomMapperSvi80Col* rm, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 2, 0x58, DBG_IO_READWRITE, peekIo(rm, 0x58));
 }
 
-int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* romData, int size)
+int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
     DebugCallbacks dbgCallbacks = {getDebugInfo, NULL, NULL, NULL};
@@ -162,29 +150,15 @@ int romMapperSvi80ColCreate(Svi80ColConnector connector, int frameRate, UInt8* r
     svi80col = malloc(sizeof(RomMapperSvi80Col));
     svi80colInstance = svi80col;
 
-    svi80col->connector  = connector;
     svi80col->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, svi80col);
 
     svi80col->crtc6845 = NULL;
     svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 80, 4);
 
-    switch (svi80col->connector) {
-    case SVI80COL_MSX:
-        ioPortRegister(0x78, NULL,   writeIoLatch,       svi80col);
-        ioPortRegister(0x79, readIo, writeIo,            svi80col);
-//      ioPortRegister(0x79, NULL,   writeIoMemBankCtrl, svi80col); // FIX ME or mem mapped
-        break;
-
-    case SVI80COL_SVI:
-        svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "SVI 80 Column", &dbgCallbacks, svi80col);
-        ioPortRegister(0x50, NULL,   writeIoLatch,       svi80col);
-        ioPortRegister(0x51, readIo, writeIo,            svi80col);
-        ioPortRegister(0x58, NULL,   writeIoMemBankCtrl, svi80col);
-        break;
-
-    default:
-        return 0;
-    }
+    svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "SVI 80 Column", &dbgCallbacks, svi80col);
+    ioPortRegister(0x50, NULL,   writeIoLatch,       svi80col);
+    ioPortRegister(0x51, readIo, writeIo,            svi80col);
+    ioPortRegister(0x58, NULL,   writeIoMemBankCtrl, svi80col);
 
     reset(svi80col);
 

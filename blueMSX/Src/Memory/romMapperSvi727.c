@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi727.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-25 20:58:13 $
+** $Date: 2006-01-25 21:18:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,17 +89,17 @@ static void write(RomMapperSvi727* rm, UInt16 address, UInt8 value)
 
 static UInt8 readIo(RomMapperSvi727* rm, UInt16 ioPort) 
 {
-    return crtcRead(rm->crtc6845, ioPort);
+    return crtcRead(rm->crtc6845);
 }
 
 static void writeIo(RomMapperSvi727* rm, UInt16 ioPort, UInt8 value) 
 {
     switch (ioPort) {
     case 0x78:
-        crtcWriteLatch(rm->crtc6845, ioPort, value);
+        crtcWriteLatch(rm->crtc6845, value);
         break;
     case 0x79:
-        crtcWrite(rm->crtc6845, ioPort, value);
+        crtcWrite(rm->crtc6845, value);
         break;
     }
 }

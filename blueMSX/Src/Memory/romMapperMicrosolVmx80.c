@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosolVmx80.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-01-22 10:03:41 $
+** $Date: 2006-01-25 21:18:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,7 +72,7 @@ static void destroy(RomMapperMicrosolVmx80* rm)
 static UInt8 read(RomMapperMicrosolVmx80* rm, UInt16 address)
 {
     if (address == 0x3001) {
-        return crtcRead(rm->crtc6845, 0);
+        return crtcRead(rm->crtc6845);
     }
 
     if (address > 0x1fff  && address < 0x2800) {
@@ -89,10 +89,10 @@ static void write(RomMapperMicrosolVmx80* rm, UInt16 address, UInt8 value)
     }
     if (address >= 0x3000 && address < 0x3800) {
         if (address & 1) {
-            crtcWrite(rm->crtc6845, 0, value);
+            crtcWrite(rm->crtc6845, value);
         }
         else {
-	        crtcWriteLatch(rm->crtc6845, 0, value);
+	        crtcWriteLatch(rm->crtc6845, value);
         }
     }
 }
