@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-01-22 10:03:42 $
+** $Date: 2006-01-25 20:59:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -497,6 +497,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
         editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC ||
         editSlotInfo.romType == ROM_SVI80COL || editSlotInfo.romType == ROM_SVI328PRN ||
+        editSlotInfo.romType == ROM_SVI727 ||
         editSlotInfo.romType == ROM_MSXPRN || editSlotInfo.romType == ROM_SVI328RS232) {
         return;
     }
@@ -631,6 +632,7 @@ static void endEditControls(HWND hDlg)
     case ROM_KANJI12:
     case ROM_MOONSOUND:
     case ROM_SVI80COL:
+    case ROM_SVI727:
         editSlotInfo.slot      = 0;
         editSlotInfo.subslot   = 0;
         editSlotInfo.startPage = 0;
@@ -738,8 +740,8 @@ static void setEditControls(HWND hDlg)
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
-        romType != ROM_MSXMIDI &&
-        romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_MSXPRN && romType != ROM_SVI328RS232)
+        romType != ROM_MSXMIDI && romType != ROM_MSXPRN &&
+        romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
         if (romSize == 0) {
             sprintf(buffer, langUnknown());
@@ -763,7 +765,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
         romType == ROM_KANJI12 || romType == ROM_JISYO ||
-        romType == ROM_SVI328FDC || romType == ROM_SVI80COL || 
+        romType == ROM_SVI328FDC || romType == ROM_SVI80COL || romType == ROM_SVI727 ||
         romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232)
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
@@ -1041,6 +1043,7 @@ static void setEditControls(HWND hDlg)
     case ROM_KANJI12:
     case ROM_MOONSOUND:
     case ROM_SVI80COL:
+    case ROM_SVI727:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "n/a");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1087,14 +1090,15 @@ static RomType romTypeList[] = {
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
-    ROM_SVI738FDC,
-    ROM_SVI328FDC,
     ROM_GIDE,
     ROM_SUNRISEIDE,
     ROM_BEERIDE,
+    ROM_SVI738FDC,
+    ROM_SVI328FDC,
     ROM_SVI328PRN,
     ROM_SVI328RS232,
     ROM_SVI80COL,
+    ROM_SVI727,
     ROM_KANJI,
     ROM_KANJI12,
     SRAM_MATSUCHITA,

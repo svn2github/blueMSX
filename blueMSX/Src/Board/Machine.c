@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-01-22 10:03:41 $
+** $Date: 2006-01-25 20:56:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,7 @@
 #include "romMapperSvi328Prn.h"
 #include "romMapperSvi328Rs232.h"
 #include "romMapperSvi328Fdc.h"
+#include "romMapperSvi727.h"
 #include "ram1kBMirrored.h"
 #include "romMapperSunriseIDE.h"
 #include "romMapperBeerIDE.h"
@@ -1199,6 +1200,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
                     free(charData);
                 }
             }
+            break;
+
+        case ROM_SVI727:
+            success &= romMapperSvi727Create(romName, buf, size, slot, subslot, startPage);
             break;
         }
         free(buf);

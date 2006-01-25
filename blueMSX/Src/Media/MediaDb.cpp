@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-01-22 10:03:41 $
+** $Date: 2006-01-25 20:57:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "Standard16K")  return ROM_MSXDOS2;
     if (name == "SVI328CART")   return ROM_SVI328;
     if (name == "SVI80COL")     return ROM_SVI80COL;
+    if (name == "SVI727")       return ROM_SVI727;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "MSX-AUDIO")    return ROM_MSXAUDIO;
     if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
@@ -615,7 +616,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
     case ROM_SVI328PRN:   return "SVI-328 Printer";
     case ROM_SVI328RS232: return "SVI-328 Serial Port";
-    case ROM_SVI80COL:    return "SVI 80 Column Card";
+    case ROM_SVI80COL:    return "SVI-328 80 Column Card";
+    case ROM_SVI727:      return "SVI-727 80 Column Card";
     case ROM_COLECO:      return "Coleco Cartridge";
     case ROM_SG1000:      return "SG-1000 Cartridge";
     case ROM_SG1000CASTLE:return "The Castle";
@@ -726,6 +728,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
     case ROM_SVI80COL:    return "SVI80COL";
+    case ROM_SVI727:      return "SVI727";
     case ROM_COLECO:      return "COLECO";
     case ROM_SG1000:      return "SG1000";
     case ROM_SG1000CASTLE:return "THECASTLE";
