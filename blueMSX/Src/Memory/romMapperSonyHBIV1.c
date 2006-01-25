@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-01-23 07:34:04 $
+** $Date: 2006-01-25 11:07:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -367,7 +367,7 @@ int romMapperSonyHbiV1Create(char* filename, UInt8* romData, int size,
 
     rm = malloc(sizeof(RomMapperSonyHbiV1));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL80, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_SONYHBIV1, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
 
     rm->romData = calloc(1, size);
