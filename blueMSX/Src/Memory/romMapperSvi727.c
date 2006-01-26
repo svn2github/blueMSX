@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi727.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-01-25 21:18:41 $
+** $Date: 2006-01-26 20:18:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,7 @@ static void destroy(RomMapperSvi727* rm)
 
 static UInt8 read(RomMapperSvi727* rm, UInt16 address)
 {
+// b800-bf00 ?
     if (address > 0x1fff  && address < 0x2800) {
         return crtcMemRead(rm->crtc6845, address & 0x07ff);
     }
@@ -82,6 +83,7 @@ static UInt8 read(RomMapperSvi727* rm, UInt16 address)
 
 static void write(RomMapperSvi727* rm, UInt16 address, UInt8 value) 
 {
+// b800-bf00 ?
     if (address >= 0x2000 && address < 0x2800) {
         crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
     }
