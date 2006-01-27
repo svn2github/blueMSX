@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-01-27 23:38:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -275,6 +275,7 @@ struct VDP {
     int    lineOffset;
     int    firstLine;
     int    lastLine;
+    int    displayOffest;
     int    leftBorder;
     UInt32 hRefresh;
 
@@ -330,6 +331,9 @@ struct VDP {
 
     FrameBufferData* frameBuffer;
 };
+
+
+#include "common.h"
 
 
 static void digitize(VDP* vdp);
@@ -465,7 +469,8 @@ static void onDisplay(VDP* vdp, UInt32 time)
     vdp->VAdjust = (-((Int8)(vdp->vdpRegs[18]) >> 4));
 
     vdp->lastLine = isPal ? 313 : 262;
-    vdp->firstLine = (isPal ? 27 : 0) + (vdpIsScanLines212(vdp->vdpRegs) ? 14 : 24) + vdp->VAdjust;
+    vdp->displayOffest = isPal ? 27 : 0;
+    vdp->firstLine = vdp->displayOffest + (vdpIsScanLines212(vdp->vdpRegs) ? 14 : 24) + vdp->VAdjust;
     if (!(vdp->vdpRegs[0] & 0x10)) {
         boardClearInt(INT_IE1);
     }
@@ -1141,40 +1146,46 @@ static void sync(VDP* vdp, UInt32 systemTime)
 {
     int frameTime = systemTime - vdp->frameStartTime;
     int scanLine = frameTime / HPERIOD;
-    int lineTime = frameTime % HPERIOD - vdp->leftBorder + 20;
+    int lineTime = frameTime % HPERIOD - vdp->leftBorder - 12;
     int curLineOffset;
 
     if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
         vdpCmdExecute(vdp->cmdEngine, boardSystemTime());
     }
 
-    if (!vdp->videoEnabled) {
+    if (!vdp->videoEnabled || !displayEnable) {
         return;
     }
 
     if (vdp->curLine < scanLine) {
-        if (vdp->lineOffset <= 32) {
-            vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, 33);
+        if (vdp->lineOffset <= 33) {
+            if (vdp->curLine >= vdp->displayOffest && vdp->curLine < vdp->displayOffest + SCREEN_HEIGHT) {
+                vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, 34);
+            }
         }
         vdp->lineOffset = 0;
         vdp->curLine++;
         while (vdp->curLine < scanLine) {
-            vdp->RefreshLine(vdp, vdp->curLine, 0, 33);
+            if (vdp->curLine >= vdp->displayOffest && vdp->curLine < vdp->displayOffest + SCREEN_HEIGHT) {
+                vdp->RefreshLine(vdp, vdp->curLine, 0, 34);
+            }
             vdp->curLine++;
         }
     }
 
-    if (vdp->lineOffset > 32 || lineTime < 0) {
+    if (vdp->lineOffset > 33 || lineTime < 0) {
         return;
     }
 
     curLineOffset = lineTime / 32;
-    if (curLineOffset > 33) {
-        curLineOffset = 33;
+    if (curLineOffset > 34) {
+        curLineOffset = 34;
     }
 
     if (vdp->lineOffset < curLineOffset) {
-        vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, curLineOffset);
+        if (vdp->curLine >= vdp->displayOffest && vdp->curLine < vdp->displayOffest + SCREEN_HEIGHT) {
+            vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, curLineOffset);
+        }
         vdp->lineOffset = curLineOffset;
     }
 }
@@ -1274,7 +1285,8 @@ static void loadState(VDP* vdp)
     vdp->vramMask        = (vdp->vramPages << 14) - 1;
     vdp->vram128         = vdp->vramPages >= 8 ? 0x10000 : 0;
     vdp->vramPage        = ((int)vdp->vdpRegs[14] << 14) & (vdp->vramPages - 1);
-    vdp->lastLine        = vdpIsVideoPal(vdp) ? 313 : 262;    
+    vdp->lastLine        = vdpIsVideoPal(vdp) ? 313 : 262;  
+    vdp->displayOffest   = vdpIsVideoPal(vdp) ? 27 : 0;  
     vdp->FGColor         = vdp->vdpRegs[7] >> 4;
     vdp->BGColor         = vdp->vdpRegs[7] & 0x0F;
     vdp->lineOffset      = 0;
@@ -1546,6 +1558,7 @@ static void reset(VDP* vdp)
     vdp->blinkCnt        = 0;
     vdp->drawArea        = 0;
     vdp->lastLine        = 0;
+    vdp->displayOffest   = 0;
     vdp->screenOn        = 0;
     vdp->VAdjust         = 0;
     vdp->HAdjust         = 0;
@@ -1778,5 +1791,4 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     }
 }
 
-#include "common.h"
 

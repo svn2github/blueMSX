@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi727.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-01-26 20:18:51 $
+** $Date: 2006-01-27 23:38:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,8 +73,8 @@ static void destroy(RomMapperSvi727* rm)
 
 static UInt8 read(RomMapperSvi727* rm, UInt16 address)
 {
-// b800-bf00 ?
-    if (address > 0x1fff  && address < 0x2800) {
+    printf("R %.4x\n", address);
+    if (address >= 0x7800  && address < 0x800) {
         return crtcMemRead(rm->crtc6845, address & 0x07ff);
     }
 
@@ -83,8 +83,8 @@ static UInt8 read(RomMapperSvi727* rm, UInt16 address)
 
 static void write(RomMapperSvi727* rm, UInt16 address, UInt8 value) 
 {
-// b800-bf00 ?
-    if (address >= 0x2000 && address < 0x2800) {
+    printf("W %.4x\n", address, value);
+    if (address >= 0x7800  && address < 0x800) {
         crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
     }
 }
@@ -124,6 +124,7 @@ int romMapperSvi727Create(char* filename, UInt8* charRom, int charSize,
 
     rm = malloc(sizeof(RomMapperSvi727));
 
+    printf("romMapperSvi727Create\n");
     rm->deviceHandle = deviceManagerRegister(ROM_SVI727, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 2, read, read, write, destroy, rm);
 

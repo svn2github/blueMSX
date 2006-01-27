@@ -763,6 +763,12 @@
 					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi727.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi727.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.c">
 				</File>
 				<File
