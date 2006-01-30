@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-01-27 23:38:29 $
+** $Date: 2006-01-30 08:24:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,6 +201,7 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
     static UInt16* linePtr = NULL;
+    static int     border = 0;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -213,6 +214,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
@@ -226,7 +228,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -283,6 +285,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
     static UInt16* linePtr = NULL;
+    static int     border = 0;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable = NULL;
     static int     patternBase = 0;
@@ -297,8 +300,8 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
- 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
         base        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
@@ -310,7 +313,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -369,6 +372,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 {
     static UInt16* linePtr = NULL;
+    static int     border = 0;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     patternBase;
@@ -381,6 +385,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
@@ -395,7 +400,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
     }
 
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -453,6 +458,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
     static UInt16* linePtr = NULL;
+    static int     border = 0;
     static UInt8*  sprLine = emptylineBuf;
     static UInt8*  charTable;
     static int     base = 0;
@@ -472,6 +478,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         int y;
 
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
         hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
         hScroll512 = vdpHScroll512(vdp);
@@ -541,7 +548,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -599,6 +606,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 {
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
@@ -615,6 +623,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable + hScroll512 * 2;
@@ -658,7 +667,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -752,6 +761,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 {
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static int*    jump;
     static int     hScroll512;
     static int     scroll;
@@ -764,11 +774,8 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor & 0x03], 1, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
-        if (linePtr == NULL) {
-            return;
-        }
-        
         hScroll512 = vdpHScroll512(vdp);
         scroll     = vdpHScroll(vdp);
         jump       = jumpTable + hScroll512 * 2;
@@ -812,7 +819,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor & 0x03];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -1009,6 +1016,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 {
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
@@ -1023,10 +1031,8 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
-        if (linePtr == NULL) {
-            return;
-        }
         
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable + hScroll512 * 2;
@@ -1073,7 +1079,7 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -1291,6 +1297,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         0x49, 0x4B, 0x59, 0x5B, 0xC9, 0xCB, 0xD9, 0xDB 
     };
     static int     jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = emptylineBuf;
@@ -1306,6 +1313,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
         
         hScroll    = vdpHScroll(vdp);
@@ -1350,7 +1358,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -1457,6 +1465,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static UInt16* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = emptylineBuf;
@@ -1474,6 +1483,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable + hScroll512 * 2;
@@ -1553,7 +1563,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
             linePtr[0] = bgColor;
@@ -1668,6 +1678,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 {
     static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+    static int     border = 0;
     static UInt16* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = emptylineBuf;
@@ -1685,6 +1696,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 
     if (X == 0) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable + hScroll512 * 2;
@@ -1763,7 +1775,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
 
-    if (!vdp->screenOn || !vdp->drawArea) {
+    if (border) {
         UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
             linePtr[0] = bgColor;
