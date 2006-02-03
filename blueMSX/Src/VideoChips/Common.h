@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-01-30 08:24:10 $
+** $Date: 2006-02-03 21:47:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,11 +56,10 @@ UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderEx
     frameBuffer->line[Y].doubleWidth = line512;
 
     for (offset = lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset--) {
-        linePtr[offset] = bgColor;
+        *linePtr++ = bgColor;
     }
 
-    /* Return pointer to the scanline in emuFrameBuffer */
-    return linePtr + lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra);
+    return linePtr;
 }
 
 static void RefreshRightBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderExtra) {
@@ -212,7 +211,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
     int    y;
     int    rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
@@ -223,7 +222,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         X++;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -298,7 +297,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     int    y;
     int    rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
@@ -308,7 +307,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         X++;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -383,7 +382,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
     int   y;
     int    rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
@@ -394,7 +393,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         X++;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -474,7 +473,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     int    index;
     int    rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         int y;
 
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
@@ -543,7 +542,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -621,7 +620,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     int col;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
@@ -662,7 +661,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -772,7 +771,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     int col;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor & 0x03], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
@@ -814,7 +813,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -1029,7 +1028,7 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
     int col;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
@@ -1074,7 +1073,7 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -1311,7 +1310,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     int col;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
@@ -1353,7 +1352,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -1481,7 +1480,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     int y, J, K;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
@@ -1558,7 +1557,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         charTable += 2;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }
@@ -1694,7 +1693,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
     int J, K;
     int rightBorder;
 
-    if (X == 0) {
+    if (X == -1) {
         linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
@@ -1770,7 +1769,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         charTable += 2;
     }
 
-    rightBorder = X2 == 34;
+    rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
     }

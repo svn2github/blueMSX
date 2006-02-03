@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-01-30 08:24:10 $
+** $Date: 2006-02-03 21:47:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -410,7 +410,7 @@ static void onVint(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
 
-    vdp->lineOffset = 0;
+    vdp->lineOffset = -1;
     vdp->vdpStatus[0] |= 0x80;
     vdp->vdpStatus[2] |= 0x40;
     if (vdp->vdpRegs[1] & 0x20) {
@@ -423,7 +423,7 @@ static void onVint(VDP* vdp, UInt32 time)
 static void onVStart(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
-    vdp->lineOffset = 0;
+    vdp->lineOffset = -1;
     vdp->vdpStatus[2] &= ~0x40;
 }
 
@@ -1147,7 +1147,7 @@ static void sync(VDP* vdp, UInt32 systemTime)
 {
     int frameTime = systemTime - vdp->frameStartTime;
     int scanLine = frameTime / HPERIOD;
-    int lineTime = frameTime % HPERIOD - vdp->leftBorder - 12;
+    int lineTime = frameTime % HPERIOD - vdp->leftBorder + 20;
     int curLineOffset;
 
     if (vdp->vdpVersion == VDP_V9938 || vdp->vdpVersion == VDP_V9958) {
@@ -1159,28 +1159,28 @@ static void sync(VDP* vdp, UInt32 systemTime)
     }
 
     if (vdp->curLine < scanLine) {
-        if (vdp->lineOffset <= 33) {
+        if (vdp->lineOffset <= 32) {
             if (vdp->curLine >= vdp->displayOffest && vdp->curLine < vdp->displayOffest + SCREEN_HEIGHT) {
-                vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, 34);
+                vdp->RefreshLine(vdp, vdp->curLine, vdp->lineOffset, 33);
             }
         }
-        vdp->lineOffset = 0;
+        vdp->lineOffset = -1;
         vdp->curLine++;
         while (vdp->curLine < scanLine) {
             if (vdp->curLine >= vdp->displayOffest && vdp->curLine < vdp->displayOffest + SCREEN_HEIGHT) {
-                vdp->RefreshLine(vdp, vdp->curLine, 0, 34);
+                vdp->RefreshLine(vdp, vdp->curLine, -1, 33);
             }
             vdp->curLine++;
         }
     }
 
-    if (vdp->lineOffset > 33 || lineTime < 0) {
+    if (vdp->lineOffset > 32 || lineTime < -1) {
         return;
     }
 
-    curLineOffset = lineTime / 32;
-    if (curLineOffset > 34) {
-        curLineOffset = 34;
+    curLineOffset = (lineTime + 32) / 32 - 1;
+    if (curLineOffset > 33) {
+        curLineOffset = 33;
     }
 
     if (vdp->lineOffset < curLineOffset) {
@@ -1286,11 +1286,11 @@ static void loadState(VDP* vdp)
     vdp->vramMask        = (vdp->vramPages << 14) - 1;
     vdp->vram128         = vdp->vramPages >= 8 ? 0x10000 : 0;
     vdp->vramPage        = ((int)vdp->vdpRegs[14] << 14) & (vdp->vramPages - 1);
-    vdp->lastLine        = vdpIsVideoPal(vdp) ? 313 : 262;  
+    vdp->lastLine        = vdpIsVideoPal(vdp) ? 313 : 262;    
     vdp->displayOffest   = vdpIsVideoPal(vdp) ? 27 : 0;  
     vdp->FGColor         = vdp->vdpRegs[7] >> 4;
     vdp->BGColor         = vdp->vdpRegs[7] & 0x0F;
-    vdp->lineOffset      = 0;
+    vdp->lineOffset      = -1;
 
     switch (vdp->vdpVersion) {
     case VDP_TMS9929A:
@@ -1791,5 +1791,3 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
         break;
     }
 }
-
-
