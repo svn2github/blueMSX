@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-02-04 07:22:42 $
+** $Date: 2006-02-18 07:44:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -384,6 +384,7 @@ static void scheduleHint(VDP* vdp)
 static void scheduleVint(VDP* vdp)
 {
     UInt32 tmsDelay = (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) ? 1176 : 0;
+    tmsDelay = 0;
     vdp->timeVint = vdp->frameStartTime + tmsDelay + (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + vdp->leftBorder - 10;
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
 }
