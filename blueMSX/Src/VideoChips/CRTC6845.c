@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-01-25 21:19:43 $
+** $Date: 2006-02-18 10:02:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,7 +101,7 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
     for (y = 0; y < DISPLAY_HEIGHT; y++) {
         UInt16* linePtr = crtcFrameBuffer->line[y].buffer;
         int charRaster = y % Nr;
-        int vadjust = 3; // Fix vertical adjust from regs (the value 4)
+        int vadjust = 2; // Fix vertical adjust from regs (the value 4)
         int hadjust = 2; // Fix horizontal adjust from regs (the value 1)
         int charLine   = y / Nr - vadjust;                
         int charAddress = charLine * charWidth - hadjust; 
