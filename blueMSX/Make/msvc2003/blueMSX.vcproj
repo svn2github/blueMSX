@@ -595,6 +595,12 @@
 					RelativePath="..\..\Src\Memory\romMapperF4device.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperFmDas.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperFmDas.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperFMPAC.c">
 				</File>
 				<File

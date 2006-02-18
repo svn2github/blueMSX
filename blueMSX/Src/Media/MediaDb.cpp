@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-01-25 20:57:20 $
+** $Date: 2006-02-18 09:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -632,6 +632,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MICROSOL80:  return "Microsol VMX-80";
     case ROM_NMS8280DIGI: return "Philips NMS-8280 Digitizer";
     case ROM_SONYHBIV1:   return "Sony HBI-V1";
+    case ROM_FMDAS:       return "F&M Direct Assembler System";
 
     case ROM_UNKNOWN:     return langUnknown();
     }
@@ -743,6 +744,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MICROSOL80:  return "MICROSOL80";
     case ROM_NMS8280DIGI: return "8280 DIGI";
     case ROM_SONYHBIV1:   return "SONY HBI-V1";
+    case ROM_FMDAS:       return "FM-DAS";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -778,7 +780,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_KONWORDPRO:  return 1;
     case ROM_MICROSOL80:  return 1;
     case ROM_SONYHBIV1:   return 1;
-
+    case ROM_FMDAS:       return 1;
     }
     return 0;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-01-27 23:38:30 $
+** $Date: 2006-02-18 09:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -732,6 +732,7 @@ static RomType romTypeList[] = {
     ROM_MICROSOL80,
     ROM_SVI727,
     ROM_SONYHBIV1,
+    ROM_FMDAS,
     ROM_UNKNOWN,
 };
 

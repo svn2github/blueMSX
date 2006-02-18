@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-01-25 20:56:48 $
+** $Date: 2006-02-18 09:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,7 @@
 #include "romMapperMicrosolVmx80.h"
 #include "romMapperNms8280VideoDa.h"
 #include "romMapperSonyHbiV1.h"
+#include "romMapperFmDas.h"
 
 int toint(char* buffer) 
 {
@@ -961,6 +962,9 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
+        case ROM_FMDAS:
+            success &= romMapperFmDasCreate(romName, buf, size, slot, subslot, startPage);
+            break;
 
         case ROM_STANDARD:
             success &= romMapperStandardCreate(romName, buf, size, slot, subslot, startPage);

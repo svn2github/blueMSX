@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-01-25 20:59:02 $
+** $Date: 2006-02-18 09:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -684,6 +684,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
+    case ROM_FMDAS:
     case ROM_FMPAK:
     case ROM_PANASONIC16:
     case ROM_SUNRISEIDE:
@@ -958,6 +959,7 @@ static void setEditControls(HWND hDlg)
     case ROM_PLAIN:
     case ROM_FMPAK:
     case ROM_MSXAUDIO:
+    case ROM_FMDAS:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xFFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1161,6 +1163,7 @@ static RomType romTypeList[] = {
     ROM_TURBORPCM,
     ROM_MICROSOL80,
     ROM_SONYHBIV1,
+    ROM_FMDAS,
     ROM_UNKNOWN,
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi727.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-01-27 23:38:29 $
+** $Date: 2006-02-18 09:32:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,25 +73,25 @@ static void destroy(RomMapperSvi727* rm)
 
 static UInt8 read(RomMapperSvi727* rm, UInt16 address)
 {
-    printf("R %.4x\n", address);
-    if (address >= 0x7800  && address < 0x800) {
-        return crtcMemRead(rm->crtc6845, address & 0x07ff);
+    UInt8 value = 0xff;
+    if (address >= 0xb800 && address < 0xc000) {
+        value = crtcMemRead(rm->crtc6845, address & 0x07ff);
     }
 
-    return 0xff;
+    return value;
 }
 
 static void write(RomMapperSvi727* rm, UInt16 address, UInt8 value) 
 {
-    printf("W %.4x\n", address, value);
-    if (address >= 0x7800  && address < 0x800) {
+    if (address >= 0xb800 && address < 0xc000) {
         crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
     }
 }
 
 static UInt8 readIo(RomMapperSvi727* rm, UInt16 ioPort) 
 {
-    return crtcRead(rm->crtc6845);
+    UInt8 value = crtcRead(rm->crtc6845);
+    return value;
 }
 
 static void writeIo(RomMapperSvi727* rm, UInt16 ioPort, UInt8 value) 
@@ -115,25 +115,23 @@ int romMapperSvi727Create(char* filename, UInt8* charRom, int charSize,
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperSvi727* rm;
-    int pages = 2;
+    int pages = 8;
     int i;
 
-    if ((startPage + pages) > 8) {
-        return 0;
-    }
+    startPage = 0;
 
     rm = malloc(sizeof(RomMapperSvi727));
 
-    printf("romMapperSvi727Create\n");
     rm->deviceHandle = deviceManagerRegister(ROM_SVI727, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 2, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
-    rm->charData = calloc(1, 0x1000);
+    rm->charData = calloc(1, 0x2000);
     if (charRom != NULL) {
-        if (charSize > 0x1000) {
-            charSize = 0x1000;
+        charSize += 0x200;
+        if (charSize > 0x2000) {
+            charSize = 0x2000;
         }
-        memcpy(rm->charData, charRom, charSize);
+        memcpy(rm->charData + 0x200, charRom, charSize - 0x200);
     }
 
     rm->crtc6845 = NULL;
