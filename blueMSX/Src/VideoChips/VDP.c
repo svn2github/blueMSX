@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-02-18 07:44:47 $
+** $Date: 2006-03-11 21:55:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -301,11 +301,13 @@ struct VDP {
     BoardTimer* timerScrModeChange;
     BoardTimer* timerHint;
     BoardTimer* timerVint;
+    BoardTimer* timerTmsVint;
 
     UInt32 frameStartTime;
     UInt32 timeScrMode;
     UInt32 timeHint;
     UInt32 timeVint;
+    UInt32 timeTmsVint;
     UInt32 timeDrawAreaStart;
     UInt32 timeVStart;
     UInt32 timeDisplay;
@@ -383,10 +385,12 @@ static void scheduleHint(VDP* vdp)
 
 static void scheduleVint(VDP* vdp)
 {
-    UInt32 tmsDelay = (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) ? 1176 : 0;
-    tmsDelay = 0;
-    vdp->timeVint = vdp->frameStartTime + tmsDelay + (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + vdp->leftBorder - 10;
+    vdp->timeVint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + vdp->leftBorder - 10;
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
+    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+        vdp->timeTmsVint = vdp->timeVint + 1176;
+        boardTimerAdd(vdp->timerTmsVint, vdp->timeTmsVint);
+    }
 }
 
 static void scheduleDrawAreaStart(VDP* vdp)
@@ -414,11 +418,20 @@ static void onVint(VDP* vdp, UInt32 time)
     vdp->lineOffset = -1;
     vdp->vdpStatus[0] |= 0x80;
     vdp->vdpStatus[2] |= 0x40;
-    if (vdp->vdpRegs[1] & 0x20) {
-        boardSetInt(INT_IE0);
+    if (vdp->vdpVersion != VDP_TMS9929A && vdp->vdpVersion != VDP_TMS99x8A) {
+        if (vdp->vdpRegs[1] & 0x20) {
+            boardSetInt(INT_IE0);
+        }
     }
     vdp->drawArea = 0;
     vdpSetTimingMode(vdp->cmdEngine, vdp->vdpRegs[8] & 2);
+}
+
+static void onTmsVint(VDP* vdp, UInt32 time)
+{
+    if (vdp->vdpRegs[1] & 0x20) {
+        boardSetInt(INT_IE0);
+    }
 }
 
 static void onVStart(VDP* vdp, UInt32 time)
@@ -1202,6 +1215,7 @@ static void saveState(VDP* vdp)
     saveStateGet(state, "timeScrMode",       vdp->timeScrMode);
     saveStateGet(state, "timeHint",          vdp->timeHint);
     saveStateGet(state, "timeVint",          vdp->timeVint);
+    saveStateGet(state, "timeTmsVint",       vdp->timeTmsVint);
     saveStateGet(state, "timeDrawAreaStart", vdp->timeDrawAreaStart);
     saveStateGet(state, "timeVStart",        vdp->timeVStart);
     saveStateGet(state, "timeDisplay",       vdp->timeDisplay);
@@ -1249,6 +1263,7 @@ static void loadState(VDP* vdp)
     vdp->timeScrMode       =      saveStateGet(state, "timeScrMode",       systemTime);
     vdp->timeHint          =      saveStateGet(state, "timeHint",          systemTime);
     vdp->timeVint          =      saveStateGet(state, "timeVint",          systemTime);
+    vdp->timeTmsVint       =      saveStateGet(state, "timeTmsVint",       systemTime);
     vdp->timeDrawAreaStart =      saveStateGet(state, "timeDrawAreaStart", systemTime);
     vdp->timeVStart        =      saveStateGet(state, "timeVStart",        systemTime);
     vdp->timeDisplay       =      saveStateGet(state, "timeDisplay",       systemTime);
@@ -1321,6 +1336,9 @@ static void loadState(VDP* vdp)
     boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
     boardTimerAdd(vdp->timerHint, vdp->timeHint);
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
+    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+        boardTimerAdd(vdp->timerTmsVint, vdp->timeTmsVint);
+    }
     boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
     boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
     boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
@@ -1647,6 +1665,7 @@ static void destroy(VDP* vdp)
     boardTimerDestroy(vdp->timerScrModeChange);
     boardTimerDestroy(vdp->timerHint);
     boardTimerDestroy(vdp->timerVint);
+    boardTimerDestroy(vdp->timerTmsVint);
 
     vdpCmdDestroy(vdp->cmdEngine);
 
@@ -1686,6 +1705,7 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerScrModeChange = boardTimerCreate(onScrModeChange, vdp);
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
+    vdp->timerTmsVint       = boardTimerCreate(onTmsVint, vdp);
 
     vdp->vramSize       = vramPages << 14;
 

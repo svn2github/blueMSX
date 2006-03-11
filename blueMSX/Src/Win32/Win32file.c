@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-03-11 09:15:58 $
+** $Date: 2006-03-11 21:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -722,7 +722,6 @@ UINT_PTR CALLBACK hookHdProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
                 newHdFileSize = hdFileSizes[idx].size;
             }
             saveDialogPos(GetParent(hDlg), DLG_ID_OPEN);
-            printf("Sixe = %d\n", newHdFileSize);
         }
         return 0;
         
