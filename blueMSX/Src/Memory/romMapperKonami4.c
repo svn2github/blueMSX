@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami4.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-03-11 09:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -95,7 +95,7 @@ static void write(RomMapperKonami4* rm, UInt16 address, UInt8 value)
     address += 0x4000;
 
     /* Page at 4000h is fixed */
-    if (address < 0x6000 || address > 0xA000 || (address & 0x1FFF)) {
+    if (address < 0x6000 || address > 0xA000) {
         return;
     }
 
@@ -116,6 +116,7 @@ int romMapperKonami4Create(char* filename, UInt8* romData,
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperKonami4* rm;
+    int romSize;
     int i;
 
     if (size < 0x8000) {
@@ -127,9 +128,15 @@ int romMapperKonami4Create(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_KONAMI4, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
 
-    rm->romData = malloc(size);
+    romSize = size > 0x40000 ? size : 0x40000;
+    rm->romData = malloc(romSize);
     memcpy(rm->romData, romData, size);
-    rm->size = size;
+
+    if (size < 0x40000) {
+        memset(rm->romData + size, 0xff, 0x40000 - size);
+    }
+
+    rm->size = romSize;
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

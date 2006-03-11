@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-02-18 09:32:32 $
+** $Date: 2006-03-11 09:15:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -708,8 +708,21 @@ UINT_PTR CALLBACK hookHdProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         {
             int idx = SendMessage(GetDlgItem(hDlg, IDC_OPEN_HDSIZE), CB_GETCURSEL, 0, 0);
+            if (idx < 0) {
+                char buf[128];
+                int size;
+                GetDlgItemText(hDlg, IDC_OPEN_HDSIZE, buf, 127);
+                size = atoi(buf);
+                if (size <= 0 && size > 1024) {
+                    size = 5;
+                }
+                newHdFileSize = size * 1024 * 1024;
+            }
+            else {
+                newHdFileSize = hdFileSizes[idx].size;
+            }
             saveDialogPos(GetParent(hDlg), DLG_ID_OPEN);
-            newHdFileSize = hdFileSizes[idx].size;
+            printf("Sixe = %d\n", newHdFileSize);
         }
         return 0;
         
@@ -779,8 +792,10 @@ char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
 
     file = fopen(pFileName, "r");
     if (file != NULL) {
+        char langBuffer[200];
         fclose(file);
-        if (IDOK != MessageBox(NULL, "Do you want to replace the file xxx and replace its contents?", "blueMSX Warning", MB_OKCANCEL)) {
+        sprintf(langBuffer, "%s %s", langOverwriteFile(), pFileName);
+        if (IDOK != MessageBox(NULL, langBuffer, langWarningTitle(), MB_OKCANCEL)) {
             return NULL;
         }
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-03-11 09:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -640,6 +640,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuVideoInBitmap       = "Bitmap File";
 
     ls->textUnknown             = "Unknown";
+
+    ls->overwriteFile           = "Do you want to overwrite the file:";
 };
 
 

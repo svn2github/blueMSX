@@ -598,16 +598,10 @@
 					RelativePath="..\..\Src\Memory\romMapperFmDas.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperFmDas.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperFMPAC.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperFMPAK.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperFMPAK.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.c">
@@ -655,9 +649,6 @@
 					RelativePath="..\..\Src\Memory\romMapperKonamiWordPro.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperKonamiWordPro.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperKorean126.c">
 				</File>
 				<File
@@ -685,9 +676,6 @@
 					RelativePath="..\..\Src\Memory\romMapperMoonsound.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperMoonsound.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxAudio.c">
 				</File>
 				<File
@@ -695,9 +683,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxMusic.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperMsxMusic.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxPrn.c">
@@ -713,9 +698,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNormal.c">
@@ -745,9 +727,6 @@
 					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
 				</File>
 				<File
@@ -770,9 +749,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi727.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperSvi727.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.c">
@@ -863,7 +839,13 @@
 					RelativePath="..\..\Src\Memory\romMapperF4device.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperFmDas.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperFMPAC.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperFMPAK.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.h">
@@ -908,6 +890,9 @@
 					RelativePath="..\..\Src\Memory\romMapperKonamiSynth.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperKonamiWordPro.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperKorean126.h">
 				</File>
 				<File
@@ -932,10 +917,16 @@
 					RelativePath="..\..\Src\Memory\romMapperMicrosolVmx80.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMoonsound.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxAudio.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxDos2.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMsxMusic.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMsxPrn.h">
@@ -948,6 +939,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNationalFdc.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNormal.h">
@@ -974,6 +968,9 @@
 					RelativePath="..\..\Src\Memory\romMapperSCCplus.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.h">
 				</File>
 				<File
@@ -993,6 +990,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi727.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi738Fdc.h">

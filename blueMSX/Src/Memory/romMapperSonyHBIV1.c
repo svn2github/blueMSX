@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-01-25 11:07:15 $
+** $Date: 2006-03-11 09:15:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,36 +118,35 @@ static void calcJK(UInt16* c, int* J, int* K)
 
 static void digitize(RomMapperSonyHbiV1* rm)
 {
-    int x, y;
+    int x;
+    int y;
     UInt16* img;
     int width  = 256;
     int height = 212;
-    int blackWidth  = width;
-    int blackHeight = height;
     int imgWidth  = 256;
     int startX = 64 * rm->startBlockX;
     int startY = 53 * rm->startBlockY;
 
     switch (rm->blockSizeX) {
-    case 0: width = width * 1 / 1; blackWidth = width; break;
-    case 1: width = width * 1 / 2; blackWidth = width; break;
-    case 3: width = width * 1 / 4; blackWidth = width; break;
-    case 4: width = width * 3 / 4; blackWidth = width; break;
-    case 5: width = width * 2 / 2; blackWidth = width; break;
-    case 7: width = width * 2 / 4; blackWidth = width; break;
-    case 2: blackWidth = width * 1 / 2; width = width * 1 / 3; break;
-    case 6: blackWidth = width * 3 / 4; width = width * 2 / 3; break;
+    case 0: width = width * 1 / 1; break;
+    case 1: width = width * 1 / 2; break;
+    case 3: width = width * 1 / 4; break;
+    case 4: width = width * 3 / 4; break;
+    case 5: width = width * 2 / 2; break;
+    case 7: width = width * 2 / 4; break;
+    case 2: width = width * 1 / 3; break;
+    case 6: width = width * 2 / 3; break;
     }
 
     switch (rm->blockSizeY) {
-    case 0: height = height * 1 / 1; blackHeight = height; break;
-    case 1: height = height * 1 / 2; blackHeight = height; break;
-    case 3: height = height * 1 / 4; blackHeight = height; break;
-    case 4: height = height * 3 / 4; blackHeight = height; break;
-    case 5: height = height * 2 / 2; blackHeight = height; break;
-    case 7: height = height * 2 / 4; blackHeight = height; break;
-    case 2: blackHeight = height * 1 / 2; height = height * 1 / 3; break;
-    case 6: blackHeight = height * 3 / 4; height = height * 2 / 3; break;
+    case 0: height = height * 1 / 1; break;
+    case 1: height = height * 1 / 2; break;
+    case 3: height = height * 1 / 4; break;
+    case 4: height = height * 3 / 4; break;
+    case 5: height = height * 2 / 2; break;
+    case 7: height = height * 2 / 4; break;
+    case 2: height = height * 1 / 3; break;
+    case 6: height = height * 2 / 3; break;
     }
 
     imgWidth = (width + 3) & ~3;
@@ -170,7 +169,7 @@ static void digitize(RomMapperSonyHbiV1* rm)
         int k = 0;
         for (x = 0; x < width; x++) {
             int destX = startX + x;
-            UInt16 color = img[x];
+            UInt16 color = img[(int)x + imgWidth * (int)y];
             UInt8  val = 0;
             switch (rm->mode) {
             case 0:
@@ -215,15 +214,6 @@ static void digitize(RomMapperSonyHbiV1* rm)
                 break;
             }
             rm->vram[destY][destX] = val;
-        }
-        for (; x < blackWidth; x++) {
-            rm->vram[destY][startX + x] = 0;
-        }
-        img += imgWidth; 
-    }
-    for (; y < blackHeight; y++) {
-        for (x = 0; x < blackWidth; x++) {
-            rm->vram[startY + y][startX + x] = 0;
         }
     }
 }

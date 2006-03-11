@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-03-11 09:15:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,12 +145,14 @@ static void write(RomMapperKonami5* rm, UInt16 address, UInt8 value)
         sccWrite(rm->scc, address & 0xff, value);
         return;
     }
+
+    address -= 0x5000;
     
-    if ((address < 0x5000) || (address >= 0xb800) || ((address & 0x1fff) != 0x1000)) {
+    if (address & 0x1800) {
         return;
     }
 
-    bank = (address - 0x5000) >> 13;
+    bank = address >> 13;
 
     if (bank == 2) {
         int newEnable = (value & 0x3F) == 0x3F;

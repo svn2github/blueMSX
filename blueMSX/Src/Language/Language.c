@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-03-11 09:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -425,6 +425,7 @@ _TCHAR* langMenuHelp() { return ls->menuHelp; }
 
 _TCHAR* langErrorTitle() { return ls->errorTitle; }
 _TCHAR* langWarningTitle() { return ls->warningTitle; }
+_TCHAR* langOverwriteFile() { return ls->overwriteFile; }
 _TCHAR* langErrorEnterFullscreen() { return ls->errorEnterFullscreen; }
 _TCHAR* langErrorDirectXFailed() { return ls->errorDirectXFailed; }
 _TCHAR* langErrorNoRomInZip() { return ls->errorNoRomInZip; }
