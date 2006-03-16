@@ -9,6 +9,8 @@ class CMSXGr
 		CMSXGr() {};
 		~CMSXGr() {};
 
+        static bool IsImplemented() { return false; }
+
         int  Init() { return 0; }
 
         bool IsSlotEnable(int) { return false; }

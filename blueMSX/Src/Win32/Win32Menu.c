@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-01-17 08:50:04 $
+** $Date: 2006-03-16 07:04:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@
 #include "ArchNotifications.h"
 #include "ArchInput.h"
 #include "JoystickPort.h"
+#include "GameReader.h"
 
 
 
@@ -335,8 +336,10 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_BEERIDE, langMenuCartBeerIde());
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_GIDE, langMenuCartGIde());
 
-    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    if (gameReaderSupported()) {
+        AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    }
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCC, langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCCPLUS, langMenuCartSCCPlus());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);

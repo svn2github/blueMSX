@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.cpp,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:53 $
+** $Date: 2006-03-16 07:04:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,4 +214,9 @@ extern "C" int gameReaderReadIo(GrHandle* grHandle, UInt16 port, UInt8* value)
 extern "C" int gameReaderWriteIo(GrHandle* grHandle, UInt16 port, UInt8 value)
 {
     return ((GameReader*)grHandle)->writeIo(port, value) ? 1 : 0;
+}
+
+extern "C" int gameReaderSupported()
+{
+    return CMSXGr::IsImplemented() ? 1 : 0;
 }

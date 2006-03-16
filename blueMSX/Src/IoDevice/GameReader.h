@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:53 $
+** $Date: 2006-03-16 07:04:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,8 @@
 #include "MsxTypes.h"
 
 typedef void* GrHandle;
+
+int gameReaderSupported();
 
 GrHandle* gameReaderCreate(int slot);
 void gameReaderDestroy(GrHandle* grHandle);
