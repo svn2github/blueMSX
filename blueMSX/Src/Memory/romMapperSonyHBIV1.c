@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-03-11 09:15:58 $
+** $Date: 2006-03-26 00:05:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "SaveState.h"
 #include <stdlib.h>
 #include <memory.h>
+
 
 typedef struct {
     int deviceHandle;
@@ -116,104 +117,122 @@ static void calcJK(UInt16* c, int* J, int* K)
     *K = k;
 }
 
-static void digitize(RomMapperSonyHbiV1* rm)
+static void digitizeOne(RomMapperSonyHbiV1* rm, UInt16* img, 
+                        int vramX, int vramY, int vramWidth, int vramHeight,
+                        int scaleDestX, int scaleDestY, 
+                        int scaleSrcX, int scaleSrcY)
 {
     int x;
     int y;
-    UInt16* img;
-    int width  = 256;
-    int height = 212;
-    int imgWidth  = 256;
-    int startX = 64 * rm->startBlockX;
-    int startY = 53 * rm->startBlockY;
+    int mask = 0xfe;
 
-    switch (rm->blockSizeX) {
-    case 0: width = width * 1 / 1; break;
-    case 1: width = width * 1 / 2; break;
-    case 3: width = width * 1 / 4; break;
-    case 4: width = width * 3 / 4; break;
-    case 5: width = width * 2 / 2; break;
-    case 7: width = width * 2 / 4; break;
-    case 2: width = width * 1 / 3; break;
-    case 6: width = width * 2 / 3; break;
+    switch (rm->mode) {
+    case 0:
+        mask = 0xff;
+    case 1:
+        for (y = 0; y < vramHeight; y++) {
+            int j = 0;
+            int k = 0;
+            for (x = 0; x < vramWidth; x++) {
+                int imgOffset = 256 * (y * scaleDestY / scaleSrcY) +
+                                      (x * scaleDestX / scaleSrcX);
+                UInt16 color = img[imgOffset];
+                UInt8  val = 0;
+                switch (x & 3) {
+                case 0:
+                    calcJK(&img[imgOffset], &j, &k);
+                    val = (k & 7) | ((calcY(color) & mask) << 3);
+                    break;
+                case 1:
+                    val = (k >> 3) | ((calcY(color) & mask) << 3);
+                    break;
+                case 2:
+                    val = (j & 7) | ((calcY(color) & mask) << 3);
+                    break;
+                case 3:
+                    val = (j >> 3) | ((calcY(color) & mask) << 3);
+                    break;
+                }
+                rm->vram[vramY + y][vramX + x] = val;
+            }
+        }
+        break;
+    case 2:
+        for (y = 0; y < vramHeight; y++) {
+            for (x = 0; x < vramWidth; x++) {
+                int imgOffset = 256 * (y * scaleDestY / scaleSrcY) +
+                                      (x * scaleDestX / scaleSrcX);
+                UInt16 color = img[imgOffset];
+                rm->vram[vramY + y][vramX + x] = 
+                     (UInt8)(((color >> 10) & 0x1c) | 
+                             ((color >> 2)  & 0xe0) | 
+                             ((color >> 3)  & 0x03));
+            }
+        }
+        break;
+    case 3:
+        for (y = 0; y < vramHeight; y++) {
+            for (x = 0; x < vramWidth; x ++) {
+                rm->vram[vramY + y][vramX + x] = 0;
+            }
+        }
+        break;
     }
+}
 
-    switch (rm->blockSizeY) {
-    case 0: height = height * 1 / 1; break;
-    case 1: height = height * 1 / 2; break;
-    case 3: height = height * 1 / 4; break;
-    case 4: height = height * 3 / 4; break;
-    case 5: height = height * 2 / 2; break;
-    case 7: height = height * 2 / 4; break;
-    case 2: height = height * 1 / 3; break;
-    case 6: height = height * 2 / 3; break;
-    }
 
-    imgWidth = (width + 3) & ~3;
+static int ScaleDest[8] = { 1, 2, 3, 4, 4, 2, 3, 4 };
+static int ScaleSrc[8]  = { 1, 1, 1, 1, 3, 2, 2, 2 };
 
-    img = archVideoInBufferGet(imgWidth, height);
+static int VramStartX[4][5] = {
+    { 0, 256, 256, 256, 256 },
+    { 0, 128, 256, 256, 256 },
+    { 0,  88, 172, 256, 256 },
+    { 0,  64, 128, 192, 256 }
+};
+
+static int VramStartY[4][5] = {
+    { 0, 212, 212, 212, 212 },
+    { 0, 106, 212, 212, 212 },
+    { 0,  71, 142, 212, 212 },
+    { 0,  53, 106, 159, 212 }
+};
+
+static void digitize(RomMapperSonyHbiV1* rm)
+{
+    // Get scaling factors for input and output image
+    int scaleDestX = ScaleDest[rm->blockSizeX];
+    int scaleDestY = ScaleDest[rm->blockSizeY];
+    int scaleSrcX  = ScaleSrc[rm->blockSizeX];
+    int scaleSrcY  = ScaleSrc[rm->blockSizeY];
+
+    // Get destination start image
+    int startX = rm->startBlockX < scaleDestX ? rm->startBlockX : scaleDestX - 1;
+    int startY = rm->startBlockY < scaleDestY ? rm->startBlockY : scaleDestY - 1;
+
+    // Get video in buffer
+    UInt16* img = archVideoInBufferGet(256, 212);
     if (img == NULL) {
         return;
     }
 
-    if (startX + width > 256) {
-        width = 256 - startX;
-    }
-    if (startY + height > 212) {
-        height = 212 - startY;
-    }
+    for (;;)
+    {
+        int vramX      = VramStartX[scaleDestX - 1][startX];
+        int vramY      = VramStartY[scaleDestY - 1][startY];
+        int vramWidth  = VramStartX[scaleDestX - 1][startX + 1] - vramX;
+        int vramHeight = VramStartY[scaleDestY - 1][startY + 1] - vramY;
 
-    for (y = 0; y < height; y++) {
-        int destY = startY + y;
-        int j = 0;
-        int k = 0;
-        for (x = 0; x < width; x++) {
-            int destX = startX + x;
-            UInt16 color = img[(int)x + imgWidth * (int)y];
-            UInt8  val = 0;
-            switch (rm->mode) {
-            case 0:
-                switch (x & 3) {
-                case 0:
-                    calcJK(img + x, &j, &k);
-                    val = (k & 7) | (calcY(color) << 3);
-                    break;
-                case 1:
-                    val = (k >> 3) | (calcY(color) << 3);
-                    break;
-                case 2:
-                    val = (j & 7) | (calcY(color) << 3);
-                    break;
-                case 3:
-                    val = (j >> 3) | (calcY(color) << 3);
-                    break;
-                }
-                break;
-            case 1:
-                switch (x & 3) {
-                case 0:
-                    calcJK(img + x, &j, &k);
-                    val = (k & 7) | ((calcY(color) & 0xfe) << 3);
-                    break;
-                case 1:
-                    val = (k >> 3) | ((calcY(color) & 0xfe) << 3);
-                    break;
-                case 2:
-                    val = (j & 7) | ((calcY(color) & 0xfe) << 3);
-                    break;
-                case 3:
-                    val = (j >> 3) | ((calcY(color) & 0xfe) << 3);
-                    break;
-                }
-                break;
-            case 2:
-                val = (UInt8)(((color >> 10) & 0x1c) | ((color >> 2) & 0xe0) | ((color >> 3) & 0x03));
-                break;
-            case 3:
-                val = 0;
+        digitizeOne(rm, img, vramX, vramY, vramWidth, vramHeight,
+                    scaleDestX, scaleDestY, scaleSrcX, scaleSrcY);
+
+        startX++;
+        if (startX == scaleDestX) {
+            startX = 0;
+            startY++;
+            if (startY == scaleDestY) {
                 break;
             }
-            rm->vram[destY][destX] = val;
         }
     }
 }
