@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-03-11 21:55:00 $
+** $Date: 2006-04-22 01:58:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -891,6 +891,8 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
 
     sync(vdp, boardSystemTime());
 
+    vdp->vdpKey = 0;
+
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
         vdpStatus = vdp->vdpStatus[0];
         vdp->vdpStatus[0] &= 0x1f;
@@ -899,9 +901,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
     }
     
     vdpStatus = vdp->vdpStatus[vdp->vdpRegs[15]];
-    
-    vdp->vdpKey = 0;
-
+   
     switch(vdp->vdpRegs[15]) {
     case 0: 
         vdp->vdpStatus[0] &= 0x1f;
