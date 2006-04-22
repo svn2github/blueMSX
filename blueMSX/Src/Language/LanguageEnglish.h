@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-03-11 09:15:56 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -642,6 +642,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->textUnknown             = "Unknown";
 
     ls->overwriteFile           = "Do you want to overwrite the file:";
+
+    ls->portableReadonly        = "Portable device is readonly";
 };
 
 

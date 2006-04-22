@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.127 $
+** $Revision: 1.128 $
 **
-** $Date: 2006-02-18 09:32:32 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1123,13 +1123,15 @@ void archShowPropertiesDialog(PropPage  startPane) {
         mixerEnableChannelType(st.mixer, i, pProperties->sound.mixerChannel[i].enable);
     }
     
-    if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
-        registerFileTypes();
+    if(!pProperties->settings.portable) {
+        if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
+            registerFileTypes();
+        }
+        else {
+            unregisterFileTypes();
+        }
     }
-    else {
-        unregisterFileTypes();
-    }
-    
+
     if (pProperties->emulation.disableWinKeys && !oldProp.emulation.disableWinKeys) {
         if (kbdLockEnable && emulatorGetState() == EMU_RUNNING && pProperties->emulation.disableWinKeys) {
             kbdLockEnable();
@@ -2222,7 +2224,7 @@ void updateEmuWindow() {
     }
 }
 
-void setDefaultPath() {   
+int setDefaultPath() {   
     char buffer[512];  
     char buffer2[512];
     char rootDir[512];
@@ -2238,9 +2240,6 @@ void setDefaultPath() {
     chdir(buffer);
 
     GetCurrentDirectory(MAX_PATH - 1, st.pCurDir);
-    
-    sprintf(buffer, "%s\\Tools", st.pCurDir);
-    toolLoadAll(buffer, pProperties->language);
 
     readOnlyDir = 0;
 
@@ -2280,6 +2279,8 @@ void setDefaultPath() {
     }
 
     // Set up temp directories
+    propertiesSetDirectory(st.pCurDir, rootDir);
+
     sprintf(buffer, "%s\\Audio Capture", rootDir);
     mkdir(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");
@@ -2320,6 +2321,8 @@ void setDefaultPath() {
 
     sprintf(buffer, "%s\\Databases\\casdb.dat", rootDir);
     mediaDbCreateCasdb(buffer);
+
+    return readOnlyDir;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2356,6 +2359,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 #endif
     static WNDCLASSEX wndClass;
     HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
+    char buffer[512];  
     BOOL screensaverActive;
     int  resetRegistry;
     HWND hwnd;
@@ -2364,6 +2368,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     MSG msg;
     int i;
     HINSTANCE kbdLockInst;
+    int readOnlyDir;
     
 #ifdef _CONSOLE
     for (i = 1; i < argc; i++) {
@@ -2436,13 +2441,14 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     {
         // Set current directory to where the exe is located
-        char buffer[512];  
         char* ptr;
         GetModuleFileName((HINSTANCE)GetModuleHandle(NULL), buffer, 512);
         ptr = stripPath(buffer);
         *ptr = 0;
         SetCurrentDirectory(buffer);
     }
+
+    readOnlyDir = setDefaultPath();
 
     {
         /* Modify scan code map if nessecary */
@@ -2461,19 +2467,15 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
 
         {
-            char path[MAX_PATH];
             char themeName[64];
-            GetCurrentDirectory(MAX_PATH, path);
-            strcat(path, "\\bluemsx.ini");
             if (GetSystemMetrics(SM_CYSCREEN) > 600) {
                 strcpy(themeName, "DIGIblue SUITE-X2");
             }
             else {
                 strcpy(themeName, "Classic");
             }
-            pProperties = propCreate(path, resetRegistry, getLangType(), kbdLang, syncMode, themeName);
+            pProperties = propCreate(resetRegistry, getLangType(), kbdLang, syncMode, themeName);
         }
-
 
         pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
         
@@ -2487,6 +2489,15 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
         emuCheckFullscreenArgument(pProperties, szLine);
     }
+
+    if (readOnlyDir && pProperties->settings.portable) {
+        MessageBox(NULL, langPortableReadonly(), langErrorTitle(), MB_OK);
+        return 0;
+    }
+
+    // Load tools
+    sprintf(buffer, "%s\\Tools", st.pCurDir);
+    toolLoadAll(buffer, pProperties->language);
 
     videoInInitialize(pProperties);
 
@@ -2503,8 +2514,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     }
 
     midiInitialize();
-
-    setDefaultPath();
 
     st.normalViedoSize = P_VIDEO_SIZEX2;
     st.active = 1;
@@ -2556,11 +2565,13 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, &screensaverActive, SPIF_SENDWININICHANGE); 
     SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, !pProperties->settings.disableScreensaver, 0, SPIF_SENDWININICHANGE); 
 
-    if (pProperties->emulation.registerFileTypes) {
-        registerFileTypes();
-    }
-    else {
-        unregisterFileTypes();
+    if(!pProperties->settings.portable) {
+        if (pProperties->emulation.registerFileTypes) {
+            registerFileTypes();
+        }
+        else {
+            unregisterFileTypes();
+        }
     }
 
     pProperties->language = emuCheckLanguageArgument(szLine, pProperties->language);
@@ -2824,7 +2835,7 @@ void archShowKeyboardEditor()
     }
 
     if (tc == NULL) {
-        MessageBox(NULL, "Could not find the Keyboard Editor Theme", "blueMSX - Error", MB_ICONERROR | MB_OK);
+        MessageBox(NULL, "Could not find the Keyboard Editor Theme", langErrorTitle(), MB_ICONERROR | MB_OK);
     }
     else {
         themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Keyboard Editor"));
@@ -2843,7 +2854,7 @@ void archShowMixer()
     }
 
     if (tc == NULL) {
-        MessageBox(NULL, "Could not find the Mixer Theme", "blueMSX - Error", MB_ICONERROR | MB_OK);
+        MessageBox(NULL, "Could not find the Mixer Theme", langErrorTitle(), MB_ICONERROR | MB_OK);
     }
     else {
         themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Mixer"));

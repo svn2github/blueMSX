@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-03-11 09:15:56 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -435,6 +435,7 @@ _TCHAR* langErrorNoHelp() { return ls->errorNoHelp; }
 _TCHAR* langErrorStartEmu() { return ls->errorStartEmu; }
 _TCHAR* langDiscardChanges()  {return ls->discardChanges; }
 _TCHAR* langOverwriteConfig()  {return ls->overwriteConfig; }
+_TCHAR* langPortableReadonly()  {return ls->portableReadonly; }
 
 _TCHAR* langTooltipReset() { return ls->tooltipReset; }
 _TCHAR* langTooltipCart1() { return ls->tooltipCart1; }

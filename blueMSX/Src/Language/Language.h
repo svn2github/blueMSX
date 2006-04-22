@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-03-11 09:15:56 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,6 +177,7 @@ _TCHAR* langErrorNoHelp();
 _TCHAR* langErrorStartEmu();
 _TCHAR* langDiscardChanges();
 _TCHAR* langOverwriteConfig();
+_TCHAR* langPortableReadonly();
 
 _TCHAR* langTooltipReset();
 _TCHAR* langTooltipCart1();

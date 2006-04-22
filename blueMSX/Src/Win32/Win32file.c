@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-03-11 21:55:08 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -962,8 +962,10 @@ char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
 
     file = fopen(pFileName, "r");
     if (file != NULL) {
+        char langBuffer[200];
         fclose(file);
-        if (IDOK != MessageBox(NULL, "Do you want to replace the file xxx and replace its contents?", "blueMSX Warning", MB_OKCANCEL)) {
+        sprintf(langBuffer, "%s %s", langOverwriteFile(), pFileName);
+        if (IDOK != MessageBox(NULL, langBuffer, langWarningTitle(), MB_OKCANCEL)) {
             return NULL;
         }
     }

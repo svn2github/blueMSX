@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-03-11 09:15:56 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,6 +157,7 @@ typedef struct {
     _TCHAR* errorStartEmu;
     _TCHAR* discardChanges;
     _TCHAR* overwriteConfig;
+    _TCHAR* portableReadonly;
 
     _TCHAR* tooltipReset;
     _TCHAR* tooltipCart1;

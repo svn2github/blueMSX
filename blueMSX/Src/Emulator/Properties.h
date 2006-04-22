@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -247,6 +247,7 @@ typedef struct {
 #define DLG_MAX_ID 32
 
 typedef struct {
+    int portable;
     int disableScreensaver;
     int showStatePreview;
     char themeName[128];
@@ -278,8 +279,9 @@ typedef struct {
     Settings            settings;
 } Properties;
 
-Properties* propCreate(const char* filename, 
-                       int useDefault, 
+void propertiesSetDirectory(const char* defDir, const char* altDir);
+
+Properties* propCreate(int useDefault, 
                        int langType, 
                        PropKeyboardLanguage kbdLang, 
                        int syncMode, 

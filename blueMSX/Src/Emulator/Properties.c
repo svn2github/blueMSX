@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-04-22 03:55:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,6 +53,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
 
     properties->settings.showStatePreview     = 1;
     properties->settings.disableScreensaver   = 0;
+    properties->settings.portable             = 0;
     
     strcpy(properties->settings.themeName, themeName);
 
@@ -437,6 +438,7 @@ static void propLoad(Properties* properties)
     
     GET_INT_VALUE_2(settings, disableScreensaver);    
     GET_INT_VALUE_2(settings, showStatePreview);
+    GET_INT_VALUE_2(settings, portable);
     GET_STR_VALUE_2(settings, themeName);
 
     GET_INT_VALUE_2(emulation, registerFileTypes);
@@ -630,6 +632,7 @@ void propSave(Properties* properties)
     
     SET_INT_VALUE_2(settings, disableScreensaver);    
     SET_INT_VALUE_2(settings, showStatePreview);
+    SET_INT_VALUE_2(settings, portable);
     SET_STR_VALUE_2(settings, themeName);
 
     SET_INT_VALUE_2(emulation, registerFileTypes);
@@ -814,7 +817,24 @@ Properties* propGetGlobalProperties()
     return globalProperties;
 }
 
-Properties* propCreate(const char* filename, int useDefault, int langType, PropKeyboardLanguage kbdLang, int syncMode, const char* themeName) 
+static char filename[512];
+
+void propertiesSetDirectory(const char* defDir, const char* altDir)
+{
+    FILE* f;
+
+    sprintf(filename, "%s/bluemsx.ini", defDir);
+    f = fopen(filename, "r");
+    if (f != NULL) {
+        fclose(f);
+    }
+    else {
+        sprintf(filename, "%s/bluemsx.ini", altDir);
+    }
+}
+
+
+Properties* propCreate(int useDefault, int langType, PropKeyboardLanguage kbdLang, int syncMode, const char* themeName) 
 {
     Properties* properties;
 
