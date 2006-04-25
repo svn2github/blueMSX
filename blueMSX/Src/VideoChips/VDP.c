@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-04-22 01:58:37 $
+** $Date: 2006-04-25 07:16:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -277,7 +277,7 @@ struct VDP {
     int    lastLine;
     int    displayOffest;
     int    leftBorder;
-    UInt32 hRefresh;
+    UInt32 displayArea;
 
     int    curLine;
 
@@ -379,13 +379,17 @@ static void scheduleScrModeChange(VDP* vdp)
 
 static void scheduleHint(VDP* vdp)
 {
-    vdp->timeHint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
+    vdp->timeHint = vdp->frameStartTime + 
+        (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + 
+        vdp->leftBorder + vdp->displayArea;
     boardTimerAdd(vdp->timerHint, vdp->timeHint + 20);
 }
 
 static void scheduleVint(VDP* vdp)
 {
-    vdp->timeVint = vdp->frameStartTime + (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + vdp->leftBorder - 10;
+    vdp->timeVint = vdp->frameStartTime + 
+                    (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + 
+                    vdp->leftBorder - 10;
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
         vdp->timeTmsVint = vdp->timeVint + 1176;
@@ -395,7 +399,7 @@ static void scheduleVint(VDP* vdp)
 
 static void scheduleDrawAreaStart(VDP* vdp)
 {
-    vdp->timeDrawAreaStart = vdp->frameStartTime + ((vdp->drawArea ? 3 + 13 : vdp->firstLine) - 1) * HPERIOD + vdp->leftBorder + vdp->hRefresh;
+    vdp->timeDrawAreaStart = vdp->frameStartTime + ((vdp->drawArea ? 3 + 13 : vdp->firstLine) - 1) * HPERIOD + vdp->leftBorder + vdp->displayArea;
     boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
 
     vdp->timeVStart = vdp->frameStartTime + (vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10;
@@ -634,11 +638,11 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     }
 
     if (vdp->screenMode == 0 || vdp->screenMode == 13) {
-        vdp->hRefresh = 960;
+        vdp->displayArea = 960;
         vdp->leftBorder = 102 + 92;
     }
     else {
-        vdp->hRefresh = 1024;
+        vdp->displayArea = 1024;
         vdp->leftBorder = 102 + 56;
     }
 
@@ -850,7 +854,7 @@ static UInt8 peekStatus(VDP* vdp, UInt16 ioPort)
             }
         }
         else {
-            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->hRefresh) {
+            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->displayArea) {
                 vdpStatus |= 0x01;
             }
         }
@@ -863,7 +867,7 @@ static UInt8 peekStatus(VDP* vdp, UInt16 ioPort)
             if (vdp->drawArea || (frameTime - ((vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10) < 4 * HPERIOD)) {
                 vdpStatus &= ~0x40;
             }
-            if (frameTime % HPERIOD - vdp->leftBorder < (UInt32)vdp->hRefresh) {
+            if (frameTime % HPERIOD - vdp->leftBorder - 30 < (UInt32)vdp->displayArea + 30) {
                 vdpStatus &= ~0x20;
             }
         }
@@ -916,7 +920,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
             }
         }
         else {
-            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->hRefresh) {
+            if (boardSystemTime() - vdp->timeHint < HPERIOD - vdp->displayArea) {
                 vdpStatus |= 0x01;
             }
         }
@@ -929,7 +933,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
             if (vdp->drawArea || (frameTime - ((vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10) < 4 * HPERIOD)) {
                 vdpStatus &= ~0x40;
             }
-            if (frameTime % HPERIOD - vdp->leftBorder < (UInt32)vdp->hRefresh) {
+            if (frameTime % HPERIOD - vdp->leftBorder - 30 < (UInt32)vdp->displayArea + 30) {
                 vdpStatus &= ~0x20;
             }
         }
@@ -1235,7 +1239,7 @@ static void saveState(VDP* vdp)
     saveStateSet(state, "vdpConnector",    vdp->vdpConnector);
     saveStateSet(state, "vdpVersion",      vdp->vdpVersion);
     saveStateGet(state, "leftBorder",      vdp->leftBorder);
-    saveStateGet(state, "hRefresh",        vdp->hRefresh);
+    saveStateGet(state, "hRefresh",        vdp->displayArea);
 
     saveStateSetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateSetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
@@ -1283,7 +1287,7 @@ static void loadState(VDP* vdp)
     vdp->vdpConnector   =         saveStateGet(state, "vdpConnector",    VDP_MSX);
     vdp->vdpVersion     =         saveStateGet(state, "vdpVersion",      0);
     vdp->leftBorder     =         saveStateGet(state, "leftBorder",      200);
-    vdp->hRefresh       =         saveStateGet(state, "hRefresh",        1024);
+    vdp->displayArea       =         saveStateGet(state, "hRefresh",        1024);
 
     vdp->screenOffTime = boardSystemTime();
 
@@ -1582,7 +1586,7 @@ static void reset(VDP* vdp)
     vdp->screenOn        = 0;
     vdp->VAdjust         = 0;
     vdp->HAdjust         = 0;
-    vdp->hRefresh        = 0;
+    vdp->displayArea        = 0;
 
     vdp->leftBorder      = 200;
     vdp->screenMode      = 1;
