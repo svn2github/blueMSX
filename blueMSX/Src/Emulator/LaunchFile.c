@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-05-13 17:29:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "Emulator.h"
 #include "Board.h"
 #include "ArchFile.h"
+#include "Disk.h"
 #include "ArchDialog.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -587,13 +588,25 @@ int tryLaunchUnknownFile(Properties* properties, const char* fileName, int force
     if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".ri") || 
         isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || 
         isFileExtension(fileName, ".col") || 
-        isFileExtension(fileName, ".sg") || isFileExtension(fileName, ".sc")) {
+        isFileExtension(fileName, ".sg") || isFileExtension(fileName, ".sc")) 
+    {
         rv = insertCartridge(properties, properties->cartridge.quickStartDrive, fileName, NULL, ROM_UNKNOWN, forceAutostart);
     }
     else if (isFileExtension(fileName, ".dsk") || 
              isFileExtension(fileName, ".di1") || isFileExtension(fileName, ".di2") || 
-             isFileExtension(fileName, ".360") || isFileExtension(fileName, ".720")) {
-        rv = insertDiskette(properties, properties->diskdrive.quickStartDrive, fileName, NULL, forceAutostart);
+             isFileExtension(fileName, ".360") || isFileExtension(fileName, ".720")) 
+    {
+        int drive = properties->diskdrive.quickStartDrive;
+        FILE* f = fopen(fileName, "rb");
+        if (f != NULL) {
+            fseek(f, 0, SEEK_END);
+            if (ftell(f) >= 1024 * 1024) {
+                drive = diskGetHdDriveId(0, 0);
+            }
+            fclose(f);
+        }
+
+        rv = insertDiskette(properties, drive, fileName, NULL, forceAutostart);
     }
     else if (isFileExtension(fileName, ".cas")) {
         rv = insertCassette(properties, 0, fileName, NULL, forceAutostart);
