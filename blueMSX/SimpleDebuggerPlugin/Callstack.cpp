@@ -36,17 +36,8 @@
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
-static CallstackWindow* callstack = NULL;
 
-static LRESULT CALLBACK callstackWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (callstack != NULL) {
-        return callstack->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
-LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT CallstackWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;
 
@@ -141,70 +132,18 @@ LRESULT CallstackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
 
 
 CallstackWindow::CallstackWindow(HINSTANCE hInstance, HWND owner, Disassembly* disassembly_) : 
-    linePos(0), lineCount(0), currentLine(-1), editEnabled(false), 
+    DbgWindow( hInstance, owner, 
+               Language::windowCallstack, "Callstack Window", 437, 195, 213, 225, 1),
+    linePos(0), lineCount(0), currentLine(-1),  
     disassembly(disassembly_), backupSize(0)
 {
-    callstack = this;
-
-    static WNDCLASSEX wndClass;
-
-    wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = callstackWndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = NULL;
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxcallstack";
-
-    RegisterClassEx(&wndClass);
-
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxcallstack", Language::windowCallstack, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
     invalidateContent();
 }
 
 CallstackWindow::~CallstackWindow()
 {
-    callstack = NULL;
 }
-
-void CallstackWindow::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void CallstackWindow::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool CallstackWindow::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void CallstackWindow::enableEdit()
-{
-    editEnabled = true;
-}
-
-void CallstackWindow::disableEdit()
-{
-    editEnabled = false;
-}
-
-void CallstackWindow::updatePosition(RECT& rect)
-{
-    SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
-}
-
 
 void CallstackWindow::invalidateContent()
 {

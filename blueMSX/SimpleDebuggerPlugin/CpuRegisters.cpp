@@ -59,17 +59,8 @@ const char regName[20][8] = {
 
 }
 
-static CpuRegisters* cpuRegisters = NULL;
 
-static LRESULT CALLBACK regsWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (cpuRegisters != NULL) {
-        return cpuRegisters->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
-LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;
 
@@ -252,68 +243,27 @@ LRESULT CpuRegisters::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
 
 
 CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), flagMode(FM_ASM), currentEditRegister(-1), editEnabled(false)
+    DbgWindow( hInstance, owner, 
+               Language::windowCpuRegisters, "CPU Registers Window", 437, 3, 214, 191, 1),
+    lineCount(0), flagMode(FM_ASM), currentEditRegister(-1)
 {
-    cpuRegisters = this;
-
-    static WNDCLASSEX wndClass;
-
-    wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = regsWndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = NULL;
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxregs";
-
-    RegisterClassEx(&wndClass);
-
     for (int i = 0; i < 17; i++) {
         regValue[i] = -1;
     }
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxregs", Language::windowCpuRegisters, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
     invalidateContent();
 }
 
 CpuRegisters::~CpuRegisters()
 {
-    cpuRegisters = NULL;
-}
-
-void CpuRegisters::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void CpuRegisters::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool CpuRegisters::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void CpuRegisters::enableEdit()
-{
-    editEnabled = true;
 }
 
 void CpuRegisters::disableEdit()
 {
-    editEnabled = false;
     dataInput2->hide();
     dataInput4->hide();
+    DbgWindow::disableEdit();
 }
 
 void CpuRegisters::setFlagMode(CpuRegisters::FlagMode mode)
@@ -325,13 +275,6 @@ void CpuRegisters::setFlagMode(CpuRegisters::FlagMode mode)
 CpuRegisters::FlagMode CpuRegisters::getFlagMode()
 {
     return flagMode;
-}
-
-void CpuRegisters::updatePosition(RECT& rect)
-{
-    dataInput2->hide();
-    dataInput4->hide();
-    SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
 void CpuRegisters::invalidateContent()

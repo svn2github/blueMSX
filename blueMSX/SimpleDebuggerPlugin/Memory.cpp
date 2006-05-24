@@ -38,14 +38,6 @@
 
 static Memory* memory = NULL;
 
-static LRESULT CALLBACK memoryWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (memory != NULL) {
-        return memory->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
 static LRESULT CALLBACK memViewWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     if (memory != NULL) {
@@ -92,7 +84,7 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, symbolInfo);
+        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, true, symbolInfo);
         SendDlgItemMessage(hwnd, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::memWindowAddress);
         SendDlgItemMessage(hwnd, IDC_TEXT_MEMORY, WM_SETTEXT, 0, (LPARAM)Language::memWindowMemory);
         return FALSE;
@@ -140,7 +132,7 @@ void Memory::updateWindowPositions()
     SetWindowPos(memHwnd, NULL, 0, toolHeight, r.right - r.left, r.bottom - r.top - toolHeight, SWP_NOZORDER);
 }
 
-LRESULT Memory::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT Memory::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
     case WM_CREATE:
@@ -192,8 +184,8 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             textWidth = tm.tmMaxCharWidth;
         }
         
-        dataInput1 = new HexInputDialog(hwnd, -100,0,23,22,1);
-        dataInput2 = new HexInputDialog(hwnd, -100,0,23,22,2);
+        dataInput1 = new TextInputDialog(hwnd, -100,0,14,22,1);
+        dataInput2 = new HexInputDialog(hwnd, -100,0,22,22,2);
         dataInput1->hide();
         dataInput2->hide();
         return 0;
@@ -211,13 +203,12 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             si.fMask  = SIF_POS;
             GetScrollInfo (memHwnd, SB_VERT, &si);
 
-            int x = (LOWORD(lParam) - 10) / textWidth - 8;
-            int col;
             int row = HIWORD(lParam) / textHeight;
 
             if (row > 0) {
+                int x = (LOWORD(lParam) - 10) / textWidth - 8;
                 if (x >= 0 && x < 3 * memPerRow && x % 3 != 2) {
-                    col = x / 3;
+                    int col = x / 3;
                     int addr = (row - 1 + si.nPos) * memPerRow + col;
                     if (addr < currentMemory->size) {
                         addressInput->setValue(addr, false);
@@ -227,26 +218,75 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
                         dataInput2->show();
                     }
                 }
+
+                if (x >= 3 * memPerRow + 1 && x < 4 * memPerRow + 1) {
+                    int col = x - (3 * memPerRow + 1);
+                    int addr = (row - 1 + si.nPos) * memPerRow + col;
+                    if (addr < currentMemory->size) {
+                        addressInput->setValue(addr, false);
+                        currentEditAddress = addr;
+                        dataInput1->setPosition(9 + (col + 8 + (3 * memPerRow + 1)) * textWidth, row * textHeight - 2);
+                        char text[2] = { currentMemory->memory[addr] , 0 };
+                        dataInput1->setValue(text);
+                        dataInput1->show();
+                    }
+                }
             }
         }
         return 0;
 
     case HexInputDialog::EC_KILLFOCUS:
     case HexInputDialog::EC_NEWVALUE:
-        if (currentMemory != 0 && currentEditAddress >= 0 && currentEditAddress < currentMemory->size) {
-            UInt8 value = (UInt8)lParam;
-            bool success = false;
-            if (currentMemory->memory[currentEditAddress] != value) {
-                success = DeviceWriteMemoryBlockMemory(currentMemory->memBlock, &value, currentEditAddress, 1);
+        if (wParam == (WPARAM)dataInput2) {
+            if (currentMemory != 0 && currentEditAddress >= 0 && currentEditAddress < currentMemory->size) {
+                UInt8 value = (UInt8)lParam;
+                bool success = false;
+                if (currentMemory->memory[currentEditAddress] != value) {
+                    success = DeviceWriteMemoryBlockMemory(currentMemory->memBlock, &value, currentEditAddress, 1);
+                }
+                if (success) {
+                    currentMemory->memory[currentEditAddress] = value;
+                }
+                InvalidateRect(memHwnd, NULL, TRUE);
+
+                currentEditAddress++;
+                
+                if (currentEditAddress < currentMemory->size && iMsg == HexInputDialog::EC_NEWVALUE) {
+                    showEdit(dataInput2, currentEditAddress);
+                    return FALSE;
+                }
             }
-            if (success) {
-                currentMemory->memory[currentEditAddress] = value;
-            }
-            InvalidateRect(memHwnd, NULL, TRUE);
+
+            currentEditAddress = -1;
+            dataInput1->hide();
+            dataInput2->hide();
         }
-        currentEditAddress = -1;
-        dataInput1->hide();
-        dataInput2->hide();
+
+        if (wParam == (WPARAM)dataInput1) {
+            if (currentMemory != 0 && currentEditAddress >= 0 && currentEditAddress < currentMemory->size) {
+                UInt8 value = *(UInt8*)lParam;
+                bool success = false;
+                if (currentMemory->memory[currentEditAddress] != value) {
+                    success = DeviceWriteMemoryBlockMemory(currentMemory->memBlock, &value, currentEditAddress, 1);
+                }
+                if (success) {
+                    currentMemory->memory[currentEditAddress] = value;
+                }
+                InvalidateRect(memHwnd, NULL, TRUE);
+
+                currentEditAddress++;
+                
+                if (currentEditAddress < currentMemory->size && iMsg == HexInputDialog::EC_NEWVALUE) {
+                    showEdit(dataInput1, currentEditAddress);
+                    return FALSE;
+                }
+            }
+
+            currentEditAddress = -1;
+            dataInput1->hide();
+            dataInput2->hide();
+        }
+
         return FALSE;
 
     case WM_ERASEBKGND:
@@ -298,15 +338,17 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 }
 
 Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
-    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), editEnabled(false), symbolInfo(symInfo)
+    DbgWindow( hInstance, owner, 
+        Language::windowMemory, "Memory Window", 3, 422, 787, 210, 1),
+    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), symbolInfo(symInfo)
 {
     memory = this;
 
     static WNDCLASSEX wndClass;
 
     wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = memoryWndProc;
+    wndClass.style          = 0;
+    wndClass.lpfnWndProc    = memViewWndProc;
     wndClass.cbClsExtra     = 0;
     wndClass.cbWndExtra     = 0;
     wndClass.hInstance      = hInstance;
@@ -315,20 +357,11 @@ Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
     wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wndClass.hbrBackground  = NULL;
     wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxmemory";
-
-    RegisterClassEx(&wndClass);
-
-    wndClass.lpfnWndProc    = memViewWndProc;
     wndClass.lpszClassName  = "msxmemoryview";
-    wndClass.style          = 0;
-    wndClass.lpszMenuName   = NULL;
 
     RegisterClassEx(&wndClass);
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxmemory", Language::windowMemory, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
 
     memHwnd = CreateWindow("msxmemoryview", "", 
                              WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD, 
@@ -348,31 +381,12 @@ Memory::~Memory()
     memory = NULL;
 }
 
-void Memory::show()
-{
-    ShowWindow(hwnd, true);
-}
-
-void Memory::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool Memory::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void Memory::enableEdit()
-{
-    editEnabled = true;
-}
-
 void Memory::disableEdit()
 {
-    editEnabled = false;
     dataInput1->hide();
     dataInput2->hide();
+
+    DbgWindow::disableEdit();
 }
 
 void Memory::updatePosition(RECT& rect)
@@ -382,6 +396,46 @@ void Memory::updatePosition(RECT& rect)
 
     SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
+
+void Memory::showEdit(InputDialog* dataInput, DWORD address)
+{
+    currentEditAddress = address;
+
+    SCROLLINFO si;
+    si.cbSize = sizeof (si);
+    si.fMask  = SIF_POS | SIF_PAGE;
+    GetScrollInfo (memHwnd, SB_VERT, &si);
+
+    int col = currentEditAddress % memPerRow;
+    int row = currentEditAddress / memPerRow - si.nPos + 1;
+
+    if (row >= si.nPage ) {        
+        scrollWindow(SB_LINEDOWN);
+
+        SCROLLINFO si;
+        si.cbSize = sizeof (si);
+        si.fMask  = SIF_POS;
+        GetScrollInfo (memHwnd, SB_VERT, &si);
+
+        col = currentEditAddress % memPerRow;
+        row = currentEditAddress / memPerRow - si.nPos + 1;
+    }
+
+    if (dataInput == dataInput1) {
+        addressInput->setValue(currentEditAddress, false);
+        dataInput1->setPosition(9 + (col + 8 + (3 * memPerRow + 1)) * textWidth, row * textHeight - 2);
+        char text[2] = { currentMemory->memory[currentEditAddress], 0 };
+        dataInput1->setValue(text);
+        dataInput1->show();
+    }
+    
+    if (dataInput == dataInput2) {
+        addressInput->setValue(currentEditAddress, false);
+        dataInput2->setPosition(10 + (3 * col + 8) * textWidth, row * textHeight - 2);
+        dataInput2->setValue(currentMemory->memory[currentEditAddress]);
+        dataInput2->show();
+    }
+}                
 
 bool Memory::writeToFile(const char* fileName)
 {
@@ -500,6 +554,40 @@ void Memory::updateContent(Snapshot* snapshot)
     }
 
     InvalidateRect(memHwnd, NULL, TRUE);
+}
+
+void Memory::findData(const char* text)
+{
+    if (currentMemory == NULL ) {
+        return;
+    }
+
+    int len = strlen(text);
+    int startAddr = currentEditAddress >= 0 ? currentEditAddress + 1 : 0;
+    int endAddr = currentMemory->size - len;
+    if (startAddr >= endAddr) {
+        startAddr = 0;
+    }
+
+    for (int i = startAddr; i < endAddr; i++)
+    {
+        if (memcmp(text, currentMemory->memory + i, len) == 0)
+        {
+            showAddress(i);
+            showEdit(dataInput2, i);
+            return;
+        }
+    }
+    
+    for (int i = 0; i < startAddr; i++)
+    {
+        if (memcmp(text, currentMemory->memory + i, len) == 0)
+        {
+            showAddress(i);
+            showEdit(dataInput2, i);
+            return;
+        }
+    }
 }
 
 void Memory::showAddress(int addr)

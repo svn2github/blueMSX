@@ -2,6 +2,7 @@
 #define IDD_OPEN_SYMBOLSDIALOG    101
 #define IDD_GOTO                  102
 #define IDD_SETBP                 103
+#define IDD_FIND                  104
 #define IDD_REGISTERSTOOLBAR      204
 
 #define IDD_RICHEDITCTRL1         201

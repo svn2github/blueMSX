@@ -38,14 +38,6 @@
 
 static PeripheralRegs* periRegs = NULL;
 
-static LRESULT CALLBACK periRegsWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (periRegs != NULL) {
-        return periRegs->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
 static LRESULT CALLBACK regViewWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     if (periRegs != NULL) {
@@ -131,7 +123,7 @@ void PeripheralRegs::updateWindowPositions()
     SetWindowPos(regHwnd, NULL, 0, toolHeight, r.right - r.left, r.bottom - r.top - toolHeight, SWP_NOZORDER);
 }
 
-LRESULT PeripheralRegs::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT PeripheralRegs::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
     case WM_CREATE:
@@ -299,15 +291,17 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 }
 
 PeripheralRegs::PeripheralRegs(HINSTANCE hInstance, HWND owner) : 
-    lineCount(0), currentRegs(NULL), currentEditRegister(-1), editEnabled(false)
+    DbgWindow( hInstance, owner, 
+        Language::windowPeripheralRegisters, "Peripheral Regs Window", 23, 413, 507, 207, 0),
+    lineCount(0), currentRegs(NULL), currentEditRegister(-1)
 {
     periRegs = this;
 
     static WNDCLASSEX wndClass;
 
     wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = periRegsWndProc;
+    wndClass.style          = 0;
+    wndClass.lpfnWndProc    = regViewWndProc;
     wndClass.cbClsExtra     = 0;
     wndClass.cbWndExtra     = 0;
     wndClass.hInstance      = hInstance;
@@ -316,20 +310,11 @@ PeripheralRegs::PeripheralRegs(HINSTANCE hInstance, HWND owner) :
     wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wndClass.hbrBackground  = NULL;
     wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxperiRegs";
-
-    RegisterClassEx(&wndClass);
-
-    wndClass.lpfnWndProc    = regViewWndProc;
     wndClass.lpszClassName  = "msxperiRegsview";
-    wndClass.style          = 0;
-    wndClass.lpszMenuName   = NULL;
 
     RegisterClassEx(&wndClass);
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxperiRegs", Language::windowPeripheralRegisters, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
 
     regHwnd = CreateWindow("msxperiRegsview", "", 
                              WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD, 
@@ -349,32 +334,12 @@ PeripheralRegs::~PeripheralRegs()
     periRegs = NULL;
 }
 
-void PeripheralRegs::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void PeripheralRegs::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool PeripheralRegs::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void PeripheralRegs::enableEdit()
-{
-    editEnabled = true;
-}
-
 void PeripheralRegs::disableEdit()
 {
-    editEnabled = false;
     dataInput2->hide();
     dataInput4->hide();
+
+    DbgWindow::disableEdit();
 }
 
 void PeripheralRegs::updatePosition(RECT& rect)

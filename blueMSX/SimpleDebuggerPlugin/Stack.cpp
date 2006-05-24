@@ -29,17 +29,8 @@
 #include "Language.h"
 #include <stdio.h>
 
-static StackWindow* stack = NULL;
 
-static LRESULT CALLBACK callstackWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (stack != NULL) {
-        return stack->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
-LRESULT StackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT StackWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;
 
@@ -134,65 +125,19 @@ LRESULT StackWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 
 StackWindow::StackWindow(HINSTANCE hInstance, HWND owner) : 
-    linePos(0), lineCount(0), currentLine(-1), editEnabled(false)
+    DbgWindow( hInstance, owner, 
+        Language::windowStack, "Stack Window", 653, 3, 137, 417, 1),
+    linePos(0), lineCount(0), currentLine(-1)
 {
-    stack = this;
-
     memset(backupMemory, 0, 0x10000);
     backupSP = 0;
 
-    static WNDCLASSEX wndClass;
-
-    wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = callstackWndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = NULL;
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxstack";
-
-    RegisterClassEx(&wndClass);
-
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxstack", Language::windowStack, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
     invalidateContent();
 }
 
 StackWindow::~StackWindow()
 {
-    stack = NULL;
-}
-
-void StackWindow::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void StackWindow::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool StackWindow::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void StackWindow::enableEdit()
-{
-    editEnabled = true;
-}
-
-void StackWindow::disableEdit()
-{
-    editEnabled = false;
 }
 
 void StackWindow::updatePosition(RECT& rect)

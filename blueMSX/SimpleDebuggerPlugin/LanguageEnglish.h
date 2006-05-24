@@ -67,6 +67,7 @@ public:
         menuDebugRunTo              = "Run To Cursor";
         menuDebugShowSymbols        = "Show Symbol Information";
         menuDebugGoto               = "Go To";
+        menuDebugFind               = "Find";
         menuDebugBpAdd              = "Add New Breakpoint";
         menuDebugBpToggle           = "Set/Remove Breakpoint";
         menuDebugEnable             = "Enable/Disable Breakpoint";
@@ -102,6 +103,8 @@ public:
         setBpWindowCaption          = "Add New Breakpoint";
         gotoWindowCaption           = "Go To Address";
         gotoWindowText              = "Address or Label:";
+        findWindowCaption           = "Find";
+        findWindowText              = "String or Value:";
 
         symbolWindowCaption         = "Open Symbol File";
         symbolWindowText            = "Replace old symbols";

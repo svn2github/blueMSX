@@ -36,17 +36,8 @@
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
-static IoPortWindow* ioPortWindow = NULL;
 
-static LRESULT CALLBACK ioPortsWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (ioPortWindow != NULL) {
-        return ioPortWindow->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
-LRESULT IoPortWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;
 
@@ -130,67 +121,16 @@ LRESULT IoPortWindow::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam
 
 
 IoPortWindow::IoPortWindow(HINSTANCE hInstance, HWND owner) : 
-    linePos(0), lineCount(256), currentLine(-1), editEnabled(false)
+    DbgWindow( hInstance, owner, 
+               Language::windowIoPorts, "IO Ports Window", 253, 113, 277, 507, 0),
+    linePos(0), lineCount(256), currentLine(-1)
 {
-    ioPortWindow = this;
-
-    static WNDCLASSEX wndClass;
-
-    wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = ioPortsWndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = NULL;
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxioports";
-
-    RegisterClassEx(&wndClass);
-
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxioports", Language::windowIoPorts, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
     invalidateContent();
 }
 
 IoPortWindow::~IoPortWindow()
 {
-    ioPortWindow = NULL;
-}
-
-void IoPortWindow::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void IoPortWindow::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool IoPortWindow::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void IoPortWindow::enableEdit()
-{
-    editEnabled = true;
-}
-
-void IoPortWindow::disableEdit()
-{
-    editEnabled = false;
-}
-
-void IoPortWindow::updatePosition(RECT& rect)
-{
-    SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
 void IoPortWindow::invalidateContent()

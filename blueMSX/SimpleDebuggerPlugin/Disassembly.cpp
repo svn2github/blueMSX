@@ -70,7 +70,6 @@ private:
 
 }
 
-static Disassembly* disassembly = NULL;
 static BitmapIcons* bitmapIcons = NULL;
 
 static const char* mnemonicXxCb[256] =
@@ -405,15 +404,7 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 	return pc - PC;
 }
 
-static LRESULT CALLBACK dasmWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    if (disassembly != NULL) {
-        return disassembly->wndProc(hwnd, iMsg, wParam, lParam);
-    }
-    return DefWindowProc(hwnd, iMsg, wParam, lParam);
-}
-
-LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;
 
@@ -545,32 +536,15 @@ LRESULT Disassembly::wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 
 Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
+    DbgWindow( hInstance, owner, 
+               Language::windowDisassembly, "Disassembly Window", 3, 2, 432, 418, 1),
     linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
-    firstVisibleLine(0), editEnabled(false), runtoBreakpoint(-1), 
+    firstVisibleLine(0), runtoBreakpoint(-1), 
     bpEnabledCount(0), bpDisabledCount(0),
     hasKeyboardFocus(false), symbolInfo(symInfo)
 {
-    disassembly = this;
-
     memset(backupMemory, 0, 0x10000);
     backupPc = 0;
-
-    static WNDCLASSEX wndClass;
-
-    wndClass.cbSize         = sizeof(wndClass);
-    wndClass.style          = CS_VREDRAW;
-    wndClass.lpfnWndProc    = dasmWndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BLUEMSX));
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = NULL;
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = "msxdasm";
-
-    RegisterClassEx(&wndClass);
 
     if (bitmapIcons == NULL) {
         bitmapIcons = new BitmapIcons(hInstance, IDB_DASMICONS, 5);
@@ -580,46 +554,12 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
         breakpoint[i] = BP_NONE;
     }
 
-    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, "msxdasm", Language::windowDisassembly, 
-                          WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CHILD | WS_BORDER | WS_THICKFRAME | WS_DLGFRAME, 
-                          CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, owner, NULL, hInstance, NULL);
+    init();
     invalidateContent();
 }
 
 Disassembly::~Disassembly()
 {
-    disassembly = NULL;
-}
-
-void Disassembly::show()
-{
-    ShowWindow(hwnd, true);
-    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-void Disassembly::hide()
-{
-    ShowWindow(hwnd, false);
-}
-
-bool Disassembly::isVisible()
-{
-    return TRUE == IsWindowVisible(hwnd);
-}
-
-void Disassembly::enableEdit()
-{
-    editEnabled = true;
-}
-
-void Disassembly::disableEdit()
-{
-    editEnabled = false;
-}
-
-void Disassembly::updatePosition(RECT& rect)
-{
-    SetWindowPos(hwnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 }
 
 void Disassembly::toggleBreakpoint(int address, bool setAlways) 

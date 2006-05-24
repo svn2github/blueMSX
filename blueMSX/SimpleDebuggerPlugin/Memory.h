@@ -28,20 +28,16 @@
 #include <windows.h>
 #include <string>
 #include <list>
+#include "DbgWindow.h"
 #include "ToolInterface.h"
 #include "EditControls.h"
 
-class Memory {
+class Memory : public DbgWindow {
 public:
     Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
     ~Memory();
 
-    void show();
-    void hide();
-    bool isVisible();
-    
-    void enableEdit();
-    void disableEdit();
+    virtual void disableEdit();
 
     void updatePosition(RECT& rect);
 
@@ -50,7 +46,9 @@ public:
 
     bool writeToFile(const char* fileName);
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    void findData(const char* text);
+
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
     LRESULT memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
     BOOL toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -81,12 +79,10 @@ private:
     void updateScroll();
     void updateDropdown();
     void updateWindowPositions();
+    void showEdit(InputDialog* dataInput, DWORD address);
     void setNewMemory(const std::string& title);
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HWND   memHwnd;
     HWND   toolHwnd;
     HDC    hMemdc;
@@ -112,7 +108,7 @@ private:
     MemoryItem* currentMemory;
 
     HexInputDialog* addressInput;
-    HexInputDialog* dataInput1;
+    TextInputDialog* dataInput1;
     HexInputDialog* dataInput2;
     SymbolInfo* symbolInfo;
 };

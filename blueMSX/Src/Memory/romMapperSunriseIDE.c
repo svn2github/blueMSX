@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSunriseIDE.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-05-24 22:58:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,6 +115,27 @@ static UInt8 read(RomMapperSunriseIde* rm, UInt16 address)
     return 0xff;
 }
 
+static UInt8 peek(RomMapperSunriseIde* rm, UInt16 address) 
+{
+	if (rm->ideEnabled && (address & 0x3e00) == 0x3c00) {
+		if ((address & 1) == 0) {
+	        UInt16 value = sunriseIdePeek(rm->ide);
+	        return value & 0xff;
+        }
+		return rm->readLatch;
+	}
+
+	if (rm->ideEnabled && (address & 0x3f00) == 0x3e00) {
+        return sunriseIdePeekRegister(rm->ide, address & 0x0f);
+	}
+    address -= 0x4000;
+	if (address < 0x4000) {
+		return rm->romData[address + rm->romMapper];
+	}
+
+    return 0xff;
+}
+
 static void write(RomMapperSunriseIde* rm, UInt16 address, UInt8 value) 
 {
 	if ((address & 0xbf04) == 0x0104) {
@@ -179,7 +200,7 @@ int romMapperSunriseIdeCreate(int hdId, char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperSunriseIde));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SUNRISEIDE, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 8, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 8, read, peek, write, destroy, rm);
 
     rm->ide = sunriseIdeCreate(hdId);
 

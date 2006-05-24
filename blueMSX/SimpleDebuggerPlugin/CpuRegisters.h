@@ -26,32 +26,26 @@
 #define CPU_REGISTERS_H
 
 #include <windows.h>
+#include "DbgWindow.h"
 #include "ToolInterface.h"
 #include "EditControls.h"
 
-class CpuRegisters {
+class CpuRegisters : public DbgWindow {
 public:
     enum FlagMode { FM_CPU, FM_ASM };
 
     CpuRegisters(HINSTANCE hInstance, HWND owner);
     ~CpuRegisters();
 
-    void show();
-    void hide();
-    bool isVisible();
-
     void setFlagMode(FlagMode mode);
     FlagMode getFlagMode();
     
-    void enableEdit();
-    void disableEdit();
+    virtual void disableEdit();
     
-    void updatePosition(RECT& rect);
-
     void updateContent(RegisterBank* regBank);
     void invalidateContent();
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 
@@ -59,9 +53,6 @@ private:
     void updateScroll();
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HDC    hMemdc;
     HFONT  hFont;
     HFONT  hFontBold;

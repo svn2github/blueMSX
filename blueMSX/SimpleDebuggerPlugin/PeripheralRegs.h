@@ -28,27 +28,23 @@
 #include <windows.h>
 #include <string>
 #include <list>
+#include "DbgWindow.h"
 #include "ToolInterface.h"
 #include "EditControls.h"
 
-class PeripheralRegs {
+class PeripheralRegs : public DbgWindow {
 public:
     PeripheralRegs(HINSTANCE hInstance, HWND owner);
     ~PeripheralRegs();
 
-    void show();
-    void hide();
-    bool isVisible();
-    
-    void enableEdit();
-    void disableEdit();
+    virtual void disableEdit();
 
     void updatePosition(RECT& rect);
 
     void updateContent(Snapshot* snapshot);
     void invalidateContent();
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
     LRESULT regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
     BOOL toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -84,9 +80,6 @@ private:
     void setNewRegisters(const std::string& title);
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HWND   regHwnd;
     HWND   toolHwnd;
     HDC    hMemdc;

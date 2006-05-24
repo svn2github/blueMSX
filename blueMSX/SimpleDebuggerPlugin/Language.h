@@ -69,6 +69,7 @@ public:
     static const char* menuDebugRunTo;
     static const char* menuDebugShowSymbols;
     static const char* menuDebugGoto;
+    static const char* menuDebugFind;
     static const char* menuDebugBpAdd;
     static const char* menuDebugBpToggle;
     static const char* menuDebugEnable;
@@ -103,6 +104,8 @@ public:
     static const char* setBpWindowCaption;
     static const char* gotoWindowCaption;
     static const char* gotoWindowText;
+    static const char* findWindowCaption;
+    static const char* findWindowText;
 
     static const char* symbolWindowCaption;
     static const char* symbolWindowText;

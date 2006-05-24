@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-22 07:37:59 $
+** $Date: 2006-05-24 22:58:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,6 +107,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         break;
 
     case 0x91:
+    case 0xf8:
         break;
 
     case 0x30: { // Write Sector
@@ -185,6 +186,20 @@ UInt16 harddiskIdeRead(HarddiskIde* hd)
     return value;
 }
 
+UInt16 harddiskIdePeek(HarddiskIde* hd)
+{
+    UInt16 value;
+
+    if (!hd->transferRead || !diskPresent(hd->diskId)) {
+        return 0x7f7f;
+    }
+
+    value  = hd->sectorData[hd->sectorDataOffset];
+    value |= hd->sectorData[hd->sectorDataOffset + 1] << 8;
+
+    return value;
+}
+
 void harddiskIdeWrite(HarddiskIde* hd, UInt16 value)
 {
     if (!hd->transferWrite || !diskPresent(hd->diskId)) {
@@ -241,6 +256,11 @@ UInt8 harddiskIdeReadRegister(HarddiskIde* hd, UInt8 reg)
     }
 
     return 0x7f;
+}
+
+UInt8 harddiskIdePeekRegister(HarddiskIde* hd, UInt8 reg)
+{
+    return harddiskIdeReadRegister(hd, reg);
 }
 
 void harddiskIdeWriteRegister(HarddiskIde* hd, UInt8 reg, UInt8 value)

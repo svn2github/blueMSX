@@ -31,37 +31,79 @@
 #include <list>
 #include <map>
 
-class HexInputDialog {
+class InputDialog {
 public:
     enum { EC_NEWVALUE = WM_USER + 7029, EC_KILLFOCUS = WM_USER + 7030 };
 
-    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, SymbolInfo* symInfo = NULL);
-    ~HexInputDialog();
+    InputDialog(HWND parent, int x, int y, int width, int height);
+    ~InputDialog();
 
-    void setValue(int value, bool setFocus = true);
     void setPosition(int x, int y);
     void show();
     void hide();
     void setFocus();
 
-    int getValue();
+protected:
+    HWND hwnd;
+
+    void initDialog();
+    
+    virtual BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam) = 0;
 
 private:
     int wx;
     int wy;
     int wwidth;
     int wheight;
-    int chars;
-    HWND hwnd;
-    SymbolInfo* symbolInfo;
+    HWND pparent;
 
-    static std::map<HWND, HexInputDialog*> dialogMap;
+    static std::map<HWND, InputDialog*> dialogMap;
     static int  richeditVersion;
+
+    void initControl(HWND thisHwnd);
 
     static void initRichEditControlDll();
     static BOOL CALLBACK dlgStaticProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+};
 
-    BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+class HexInputDialog : public InputDialog {
+public:
+    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, bool returnNeeded = false, SymbolInfo* symInfo = NULL);
+    ~HexInputDialog();
+
+    void setValue(int value, bool setFocus = true);
+    int  getValue();
+
+protected:
+    virtual BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+private:
+    int chars;
+    bool needReturn;
+    int  charCount;
+    int  fastValue;
+    SymbolInfo* symbolInfo;
+};
+
+
+
+class TextInputDialog : public InputDialog {
+public:
+    TextInputDialog(HWND parent, int x, int y, int width, int height, int numChars, bool returnNeeded = false);
+    ~TextInputDialog();
+
+    void setValue(const char* value, bool setFocus = true);
+    const char* getValue();
+
+protected:
+    virtual BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
+    
+private:
+    int chars;
+    char text[512];
+    int  charCount;
+    bool needReturn;
 };
 
 

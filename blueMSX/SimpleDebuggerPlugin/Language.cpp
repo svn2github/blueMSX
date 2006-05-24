@@ -95,6 +95,7 @@ const char* Language::menuDebugStepOut;
 const char* Language::menuDebugRunTo;
 const char* Language::menuDebugShowSymbols;
 const char* Language::menuDebugGoto;
+const char* Language::menuDebugFind;
 const char* Language::menuDebugBpAdd;
 const char* Language::menuDebugBpToggle;
 const char* Language::menuDebugEnable;
@@ -129,6 +130,8 @@ const char* Language::memWindowAddress;
 const char* Language::setBpWindowCaption;
 const char* Language::gotoWindowCaption;
 const char* Language::gotoWindowText;
+const char* Language::findWindowCaption;
+const char* Language::findWindowText;
 
 const char* Language::symbolWindowCaption;
 const char* Language::symbolWindowText;

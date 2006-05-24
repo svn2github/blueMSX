@@ -168,6 +168,12 @@
 			RelativePath=".\DasmIcons.bmp">
 		</File>
 		<File
+			RelativePath=".\DbgWindow.cpp">
+		</File>
+		<File
+			RelativePath=".\DbgWindow.h">
+		</File>
+		<File
 			RelativePath=".\debugger.manifest">
 		</File>
 		<File
@@ -181,6 +187,12 @@
 		</File>
 		<File
 			RelativePath=".\EditControls.h">
+		</File>
+		<File
+			RelativePath=".\IniFileParser.cpp">
+		</File>
+		<File
+			RelativePath=".\IniFileParser.h">
 		</File>
 		<File
 			RelativePath=".\IoPorts.cpp">

@@ -25,28 +25,20 @@
 #ifndef DISASSEMBLY_H
 #define DISASSEMBLY_H
 
+#include "DbgWindow.h"
 #include "SymbolInfo.h"
 #include <windows.h>
 #include <map>
 
-class Disassembly {
+class Disassembly : public DbgWindow {
 public:
     Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
     ~Disassembly();
 
-    void show();
-    void hide();
-    bool isVisible();
-    
     void refresh();
-
-    void enableEdit();
-    void disableEdit();
 
     WORD dasm(WORD PC, char* dest);
     
-    void updatePosition(RECT& rect);
-
     void onWmKeyUp(int keyCode);
 
     void updateContent(BYTE* memory, WORD pc);
@@ -72,7 +64,7 @@ public:
 
     bool writeToFile(const char* fileName);
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 
@@ -80,9 +72,6 @@ private:
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HDC    hMemdc;
     HFONT  hFont;
     HBRUSH hBrushWhite;

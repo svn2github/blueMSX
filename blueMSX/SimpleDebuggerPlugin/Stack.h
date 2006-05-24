@@ -26,18 +26,12 @@
 #define STACK_H
 
 #include <windows.h>
+#include "DbgWindow.h"
 
-class StackWindow {
+class StackWindow : public DbgWindow {
 public:
     StackWindow(HINSTANCE hInstance, HWND owner);
     ~StackWindow();
-
-    void show();
-    void hide();
-    bool isVisible();
-
-    void enableEdit();
-    void disableEdit();
     
     void updatePosition(RECT& rect);
 
@@ -47,7 +41,7 @@ public:
     void invalidateContent();
     void updateScroll();
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 
@@ -56,9 +50,6 @@ private:
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HDC    hMemdc;
     HFONT  hFont;
     HBRUSH hBrushWhite;

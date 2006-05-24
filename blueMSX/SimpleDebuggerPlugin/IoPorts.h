@@ -25,22 +25,14 @@
 #ifndef IOPORTS_H
 #define IOPORTS_H
 
+#include "DbgWindow.h"
 #include "BlueMSXToolInterface.h"
 #include <windows.h>
 
-class IoPortWindow {
+class IoPortWindow : public DbgWindow {
 public:
     IoPortWindow(HINSTANCE hInstance, HWND owner);
     ~IoPortWindow();
-
-    void show();
-    void hide();
-    bool isVisible();
-    
-    void enableEdit();
-    void disableEdit();
-    
-    void updatePosition(RECT& rect);
 
     void refresh();
 
@@ -48,16 +40,13 @@ public:
     void invalidateContent();
     void updateScroll();
 
-    LRESULT wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
 
-    bool     editEnabled;
-
-    HWND   hwnd;
     HDC    hMemdc;
     HFONT  hFont;
     HBRUSH hBrushWhite;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-05-24 22:58:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,9 +40,11 @@ void sunriseIdeDestroy(SunriseIde* ide);
 void sunriseIdeReset(SunriseIde* ide);
 
 UInt16 sunriseIdeRead(SunriseIde* ide);
+UInt16 sunriseIdePeek(SunriseIde* ide);
 void sunriseIdeWrite(SunriseIde* ide, UInt16 value);
 
 UInt8 sunriseIdeReadRegister(SunriseIde* ide, UInt8 reg);
+UInt8 sunriseIdePeekRegister(SunriseIde* ide, UInt8 reg);
 void sunriseIdeWriteRegister(SunriseIde* ide, UInt8 reg, UInt8 value);
 
 void sunriseIdeSaveState(SunriseIde* ide);

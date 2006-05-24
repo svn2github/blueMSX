@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-12-22 01:07:55 $
+** $Date: 2006-05-24 22:58:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,10 +40,12 @@ void harddiskIdeDestroy(HarddiskIde* hd);
 void harddiskIdeReset(HarddiskIde* hd);
 
 UInt16 harddiskIdeRead(HarddiskIde* hd);
+UInt16 harddiskIdePeek(HarddiskIde* hd);
 void harddiskIdeWrite(HarddiskIde* hd, UInt16 value);
 
 void harddiskIdeWriteRegister(HarddiskIde* hd, UInt8 reg, UInt8 value);
 UInt8 harddiskIdeReadRegister(HarddiskIde* hd, UInt8 reg);
+UInt8 harddiskIdePeekRegister(HarddiskIde* hd, UInt8 reg);
 
 void harddiskIdeSaveState(HarddiskIde* hd);
 void harddiskIdeLoadState(HarddiskIde* hd);

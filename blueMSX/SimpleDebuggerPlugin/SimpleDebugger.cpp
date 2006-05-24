@@ -12,6 +12,7 @@
 #include "PeripheralRegs.h"
 #include "IoPorts.h"
 #include "Language.h"
+#include "IniFileParser.h"
 #include "resrc1.h"
 #include <string>
 #include <commctrl.h>
@@ -67,7 +68,8 @@ static void updateTooltip(int id, char* str)
     case TB_BPENABLE: sprintf(str, Language::toolbarBpEnable);      break;
     case TB_BPENALL:  sprintf(str, Language::toolbarBpEnableAll);   break;
     case TB_BPDISALL: sprintf(str, Language::toolbarBpDisableAll);  break;
-    case TB_BPREMALL: sprintf(str, Language::toolbarBpRemoveAll);   break;    }
+    case TB_BPREMALL: sprintf(str, Language::toolbarBpRemoveAll);   break;    
+    }
 }
 
 static Toolbar* initializeToolbar(HWND owner)
@@ -161,6 +163,8 @@ static void updateStatusBar()
 #define MENU_DEBUG_BPDISABLEALL     37214
 #define MENU_DEBUG_FLAGMODE         37215
 #define MENU_DEBUG_SETBP            37216
+#define MENU_DEBUG_FIND             37217
+#define MENU_DEBUG_FINDNEXT         37218
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -223,6 +227,11 @@ static void updateWindowMenu()
 
     sprintf(buf, "%s\tF8", Language::menuDebugShowSymbols);
     AppendMenu(hMenuDebug, MF_STRING | (symbolInfo->getShowStatus() ? MF_CHECKED : 0), MENU_DEBUG_SHOWSYMBOLS, buf);
+
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    sprintf(buf, "%s\tCtrl+F", Language::menuDebugFind);
+    AppendMenu(hMenuDebug, MF_STRING | (1 ? 0 : MF_GRAYED), MENU_DEBUG_FIND, buf);
 
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
@@ -669,7 +678,7 @@ static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
         if (addressInput) {
             delete addressInput;
         }
-        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, symbolInfo);
+        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, true, symbolInfo);
         addressInput->setFocus();
         
         return FALSE;
@@ -699,13 +708,136 @@ static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     return FALSE;
 }
 
+struct FindProcData {
+    FindProcData(const char* c) : caption(c) { value[0] = 0; }
+    const char* caption;
+    char        value[128];
+};
+
+static BOOL CALLBACK findProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static TextInputDialog* dataInput = NULL;
+    static FindProcData * procData = NULL;
+
+    switch (iMsg) {        
+    case WM_INITDIALOG:
+        procData = (FindProcData*)lParam;
+        SetWindowText(hDlg, procData->caption);
+        SendDlgItemMessage(hDlg, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::findWindowText);
+        SetWindowText(GetDlgItem(hDlg, IDOK), Language::genericOk);
+        SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::genericCancel);
+        if (dataInput) {
+            delete dataInput;
+        }
+        dataInput = new TextInputDialog(hDlg, 10, 30, 249, 22, 128, true);
+        dataInput->setFocus();
+        
+        return FALSE;
+
+    case WM_COMMAND:
+        switch (wParam) {
+        case IDOK:
+            strcpy(procData->value, dataInput->getValue());
+            EndDialog(hDlg, TRUE);
+            return TRUE;
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+        }
+        break;
+        
+    case TextInputDialog::EC_NEWVALUE:
+        strcpy(procData->value, dataInput->getValue());
+        EndDialog(hDlg, TRUE);
+        return FALSE;
+
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
+    static char findData[512];
     static BOOL isActive = FALSE;
 
     switch (iMsg) {
     case WM_CREATE:
         return 0;
+#if 0
+    case WM_SYSKEYUP:
+    case WM_KEYUP:
+        if (isActive) {
+            UInt32 mod = ( GetAsyncKeyState(VK_MENU)    > 1 ? MOD_ALT     : 0 ) | 
+                         ( GetAsyncKeyState(VK_SHIFT)   > 1 ? MOD_SHIFT   : 0 ) | 
+                         ( GetAsyncKeyState(VK_CONTROL) > 1 ? MOD_CONTROL : 0 );
+            UInt32 key = wParam & 0xff;
+            
+            if ( mod ==  0                        && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  1, 0);
+            if ( mod == (MOD_CONTROL | MOD_ALT)   && key == VK_CANCEL) SendMessage(hwnd, WM_HOTKEY,  2, 0);
+            if ( mod ==  MOD_SHIFT                && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  3, 0);
+            if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  4, 0);
+            if ( mod ==  0                        && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  5, 0);
+            if ( mod ==  0                        && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  6, 0);
+            if ( mod ==  MOD_SHIFT                && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  7, 0);
+            if ( mod ==  MOD_SHIFT                && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  8, 0);
+            if ( mod ==  0                        && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY,  9, 0);
+            if ( mod ==  MOD_SHIFT                && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 10, 0);
+            if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 11, 0);
+            if ( mod ==  0                        && key == VK_F8)     SendMessage(hwnd, WM_HOTKEY, 12, 0);
+            if ( mod ==  MOD_CONTROL              && key == 'G')       SendMessage(hwnd, WM_HOTKEY, 13, 0);
+            if ( mod ==  MOD_CONTROL              && key == 'M')       SendMessage(hwnd, WM_HOTKEY, 14, 0);
+            if ( mod ==  MOD_CONTROL              && key == 'B')       SendMessage(hwnd, WM_HOTKEY, 15, 0);
+            if ( mod ==  MOD_CONTROL              && key == 'F')       SendMessage(hwnd, WM_HOTKEY, 16, 0);
+            if ( mod ==  0                        && key == VK_F3)     SendMessage(hwnd, WM_HOTKEY, 17, 0);
+        }
+        return 0;
+#endif
+    case WM_ACTIVATE:
+        isActive = LOWORD(wParam) != WA_INACTIVE;
+
+        if (toolBar != NULL) {
+            static int minimizedState = 0;
+            if (minimizedState && HIWORD(wParam) == 0) {
+                delete toolBar;
+                toolBar = initializeToolbar(hwnd);
+                toolBar->show();
+            }
+            minimizedState = HIWORD(wParam);
+        }
+#if 1
+#ifndef _DEBUG
+        if (isActive) {
+            RegisterHotKey(hwnd, 1,  0, VK_F5);
+            RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
+            RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
+            RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
+            RegisterHotKey(hwnd, 5,  0, VK_F11);
+            RegisterHotKey(hwnd, 6,  0, VK_F10);
+            RegisterHotKey(hwnd, 7,  MOD_SHIFT, VK_F11);
+            RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F10);
+            RegisterHotKey(hwnd, 9,  0, VK_F9);
+            RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F9);
+            RegisterHotKey(hwnd, 11, MOD_CONTROL | MOD_SHIFT, VK_F9);        
+            RegisterHotKey(hwnd, 12, 0, VK_F8);     
+            RegisterHotKey(hwnd, 13, MOD_CONTROL, 'G');
+            RegisterHotKey(hwnd, 14, MOD_CONTROL, 'M');
+            RegisterHotKey(hwnd, 15, MOD_CONTROL, 'B');
+            RegisterHotKey(hwnd, 16, MOD_CONTROL, 'F');
+            RegisterHotKey(hwnd, 17, 0, VK_F3);
+        }
+        else {
+            int i;
+            for (i = 1; i <= 17; i++) {
+                UnregisterHotKey(hwnd, i);
+            }
+        }
+#endif
+#endif
+        break;
 
     case WM_HOTKEY:
         if (isActive) {
@@ -766,6 +898,15 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             case 15:
                 if (GetEmulatorState() != EMULATOR_STOPPED)
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SETBP, 0);
+                break;
+            case 16:
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_FIND, 0);
+                break;
+            case 17:
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_FINDNEXT, 0);
+                break;
             }
         }
         return 0;
@@ -942,6 +1083,21 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             return 0;
 
+        case MENU_DEBUG_FIND:
+             {
+                FindProcData procData(Language::findWindowCaption);
+                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_FIND), hwnd, findProc, (LPARAM)&procData);
+                if (rv) {
+                    strcpy(findData, procData.value);
+                    memory->findData(findData);
+                }
+            }
+            return 0;
+
+        case MENU_DEBUG_FINDNEXT:
+            memory->findData(findData);
+            return 0;
+
         case MENU_DEBUG_SHOWSYMBOLS:
             if (symbolInfo->getShowStatus()) {
                 symbolInfo->hide();
@@ -1003,46 +1159,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         updateDeviceState();
         return 0;
 
-    case WM_ACTIVATE:
-        isActive = LOWORD(wParam) != WA_INACTIVE;
-
-        if (toolBar != NULL) {
-            static int minimizedState = 0;
-            if (minimizedState && HIWORD(wParam) == 0) {
-                delete toolBar;
-                toolBar = initializeToolbar(hwnd);
-                toolBar->show();
-            }
-            minimizedState = HIWORD(wParam);
-        }
-
-#ifndef _DEBUG
-        if (isActive) {
-            RegisterHotKey(hwnd, 1,  0, VK_F5);
-            RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
-            RegisterHotKey(hwnd, 3,  MOD_SHIFT, VK_F5);
-            RegisterHotKey(hwnd, 4,  MOD_CONTROL | MOD_SHIFT, VK_F5);
-            RegisterHotKey(hwnd, 5,  0, VK_F11);
-            RegisterHotKey(hwnd, 6,  0, VK_F10);
-            RegisterHotKey(hwnd, 7,  MOD_SHIFT, VK_F11);
-            RegisterHotKey(hwnd, 8,  MOD_SHIFT, VK_F10);
-            RegisterHotKey(hwnd, 9,  0, VK_F9);
-            RegisterHotKey(hwnd, 10, MOD_SHIFT, VK_F9);
-            RegisterHotKey(hwnd, 11, MOD_CONTROL | MOD_SHIFT, VK_F9);        
-            RegisterHotKey(hwnd, 12, 0, VK_F8);     
-            RegisterHotKey(hwnd, 13, MOD_CONTROL, 'G');
-            RegisterHotKey(hwnd, 14, MOD_CONTROL, 'M');
-            RegisterHotKey(hwnd, 15, MOD_CONTROL, 'B');
-        }
-        else {
-            int i;
-            for (i = 1; i <= 15; i++) {
-                UnregisterHotKey(hwnd, i);
-            }
-        }
-#endif
-        break;
-
     case WM_SIZE:
         updateWindowPositions();
         break;
@@ -1101,6 +1217,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         memory = NULL;
         delete symbolInfo;
         symbolInfo = NULL;
+        
+        iniFileClose();
+
 		break;
     }
 
@@ -1168,39 +1287,15 @@ void OnShowTool() {
     toolBar = initializeToolbar(dbgHwnd);
     toolBar->show();
 
-    disassembly = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
-    RECT r = { 3, 3, 437, 420 };
-    disassembly->updatePosition(r);
-    disassembly->show();
+    iniFileOpen( "debugger.ini" );
 
-    cpuRegisters = new CpuRegisters(GetDllHinstance(), viewHwnd);
-    RECT r2 = { 440, 3, 650, 190 };
-    cpuRegisters->updatePosition(r2);
-    cpuRegisters->show();
-
-    callstack = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
-    RECT r5 = { 440, 193, 650, 420 };
-    callstack->updatePosition(r5);
-    callstack->show();
-
-    stack = new StackWindow(GetDllHinstance(), viewHwnd);
-    RECT r6 = { 653, 3, 790, 420 };
-    stack->updatePosition(r6);
-    stack->show();
-
-    memory = new Memory(GetDllHinstance(), viewHwnd, symbolInfo);
-    RECT r3 = { 3, 423, 710, 630 };
-    memory->updatePosition(r3);
-    memory->show();
-
+    disassembly   = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
+    cpuRegisters  = new CpuRegisters(GetDllHinstance(), viewHwnd);
+    callstack     = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
+    stack         = new StackWindow(GetDllHinstance(), viewHwnd);
+    memory        = new Memory(GetDllHinstance(), viewHwnd, symbolInfo);
     periRegisters = new PeripheralRegs(GetDllHinstance(), viewHwnd);
-    RECT r7 = { 23, 413, 530, 620 };
-    periRegisters->updatePosition(r7);
-//    periRegisters->show();
-
-    ioPorts = new IoPortWindow(GetDllHinstance(), viewHwnd);
-    RECT r8 = { 253, 113, 530, 620 };
-    ioPorts->updatePosition(r8);
+    ioPorts       = new IoPortWindow(GetDllHinstance(), viewHwnd);
     
     updateWindowPositions();
     
