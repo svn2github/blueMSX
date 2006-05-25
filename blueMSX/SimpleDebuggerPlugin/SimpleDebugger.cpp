@@ -21,6 +21,10 @@
 
 using namespace std;
 
+static int x;
+static int y;
+static int width;
+static int height;
 static HWND dbgHwnd = NULL;
 static HWND viewHwnd = NULL;
 static StatusBar* statusBar = NULL;
@@ -51,6 +55,36 @@ static LanguageId langId = LID_ENGLISH;
 #define TB_BPENALL   37011
 #define TB_BPDISALL  37012
 #define TB_BPREMALL  37013
+
+void handleKeyboardInput(WPARAM wParam)
+{
+    HWND hwnd = dbgHwnd;
+    if (hwnd == NULL) {
+        return;
+    }
+    UInt32 mod = ( GetAsyncKeyState(VK_MENU)    > 1 ? MOD_ALT     : 0 ) | 
+                 ( GetAsyncKeyState(VK_SHIFT)   > 1 ? MOD_SHIFT   : 0 ) | 
+                 ( GetAsyncKeyState(VK_CONTROL) > 1 ? MOD_CONTROL : 0 );
+    UInt32 key = wParam & 0xff;
+    
+    if ( mod ==  0                        && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  1, 0);
+    if ( mod == (MOD_CONTROL | MOD_ALT)   && key == VK_CANCEL) SendMessage(hwnd, WM_HOTKEY,  2, 0);
+    if ( mod ==  MOD_SHIFT                && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  3, 0);
+    if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  4, 0);
+    if ( mod ==  0                        && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  5, 0);
+    if ( mod ==  0                        && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  6, 0);
+    if ( mod ==  MOD_SHIFT                && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  7, 0);
+    if ( mod ==  MOD_SHIFT                && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  8, 0);
+    if ( mod ==  0                        && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY,  9, 0);
+    if ( mod ==  MOD_SHIFT                && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 10, 0);
+    if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 11, 0);
+    if ( mod ==  0                        && key == VK_F8)     SendMessage(hwnd, WM_HOTKEY, 12, 0);
+    if ( mod ==  MOD_CONTROL              && key == 'G')       SendMessage(hwnd, WM_HOTKEY, 13, 0);
+    if ( mod ==  MOD_CONTROL              && key == 'M')       SendMessage(hwnd, WM_HOTKEY, 14, 0);
+    if ( mod ==  MOD_CONTROL              && key == 'B')       SendMessage(hwnd, WM_HOTKEY, 15, 0);
+    if ( mod ==  MOD_CONTROL              && key == 'F')       SendMessage(hwnd, WM_HOTKEY, 16, 0);
+    if ( mod ==  0                        && key == VK_F3)     SendMessage(hwnd, WM_HOTKEY, 17, 0);
+}
 
 static void updateTooltip(int id, char* str)
 {
@@ -669,7 +703,7 @@ static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     static HexInputDialog* addressInput = NULL;
     static AddrProcData * procData = NULL;
 
-    switch (iMsg) {        
+    switch (iMsg) {  
     case WM_INITDIALOG:
         procData = (AddrProcData*)lParam;
         SetWindowText(hDlg, procData->caption);
@@ -720,7 +754,7 @@ static BOOL CALLBACK findProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     static TextInputDialog* dataInput = NULL;
     static FindProcData * procData = NULL;
 
-    switch (iMsg) {        
+    switch (iMsg) {  
     case WM_INITDIALOG:
         procData = (FindProcData*)lParam;
         SetWindowText(hDlg, procData->caption);
@@ -768,35 +802,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     switch (iMsg) {
     case WM_CREATE:
         return 0;
-#if 0
-    case WM_SYSKEYUP:
-    case WM_KEYUP:
-        if (isActive) {
-            UInt32 mod = ( GetAsyncKeyState(VK_MENU)    > 1 ? MOD_ALT     : 0 ) | 
-                         ( GetAsyncKeyState(VK_SHIFT)   > 1 ? MOD_SHIFT   : 0 ) | 
-                         ( GetAsyncKeyState(VK_CONTROL) > 1 ? MOD_CONTROL : 0 );
-            UInt32 key = wParam & 0xff;
-            
-            if ( mod ==  0                        && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  1, 0);
-            if ( mod == (MOD_CONTROL | MOD_ALT)   && key == VK_CANCEL) SendMessage(hwnd, WM_HOTKEY,  2, 0);
-            if ( mod ==  MOD_SHIFT                && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  3, 0);
-            if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F5)     SendMessage(hwnd, WM_HOTKEY,  4, 0);
-            if ( mod ==  0                        && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  5, 0);
-            if ( mod ==  0                        && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  6, 0);
-            if ( mod ==  MOD_SHIFT                && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY,  7, 0);
-            if ( mod ==  MOD_SHIFT                && key == VK_F10)    SendMessage(hwnd, WM_HOTKEY,  8, 0);
-            if ( mod ==  0                        && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY,  9, 0);
-            if ( mod ==  MOD_SHIFT                && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 10, 0);
-            if ( mod == (MOD_CONTROL | MOD_SHIFT) && key == VK_F9)     SendMessage(hwnd, WM_HOTKEY, 11, 0);
-            if ( mod ==  0                        && key == VK_F8)     SendMessage(hwnd, WM_HOTKEY, 12, 0);
-            if ( mod ==  MOD_CONTROL              && key == 'G')       SendMessage(hwnd, WM_HOTKEY, 13, 0);
-            if ( mod ==  MOD_CONTROL              && key == 'M')       SendMessage(hwnd, WM_HOTKEY, 14, 0);
-            if ( mod ==  MOD_CONTROL              && key == 'B')       SendMessage(hwnd, WM_HOTKEY, 15, 0);
-            if ( mod ==  MOD_CONTROL              && key == 'F')       SendMessage(hwnd, WM_HOTKEY, 16, 0);
-            if ( mod ==  0                        && key == VK_F3)     SendMessage(hwnd, WM_HOTKEY, 17, 0);
-        }
-        return 0;
-#endif
+
     case WM_ACTIVATE:
         isActive = LOWORD(wParam) != WA_INACTIVE;
 
@@ -809,7 +815,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             minimizedState = HIWORD(wParam);
         }
-#if 1
+
 #ifndef _DEBUG
         if (isActive) {
             RegisterHotKey(hwnd, 1,  0, VK_F5);
@@ -836,7 +842,6 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 UnregisterHotKey(hwnd, i);
             }
         }
-#endif
 #endif
         break;
 
@@ -1181,6 +1186,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         }
         break;
 
+    case WM_WINDOWPOSCHANGED:
+        {
+            WINDOWPOS* windowPos = (WINDOWPOS*)lParam;
+            x       = windowPos->x;
+            y       = windowPos->y;
+            width   = windowPos->cx;
+            height  = windowPos->cy;
+        }
+        break;
+
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -1194,6 +1209,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_DESTROY:
+        iniFileWriteInt( "Main Window", "x",       x);
+        iniFileWriteInt( "Main Window", "y",       y);
+        iniFileWriteInt( "Main Window", "width",   width);
+        iniFileWriteInt( "Main Window", "height",  height);
+
         disassembly->clearAllBreakpoints();
         dbgHwnd = NULL;
         delete statusBar;
@@ -1264,11 +1284,25 @@ void OnShowTool() {
         return;
     }
 
+    iniFileOpen( "debugger.ini" );
+
     Language::SetLanguage(langId);
+
+    x       = iniFileGetInt( "Main Window", "x", CW_USEDEFAULT );
+    y       = iniFileGetInt( "Main Window", "y", CW_USEDEFAULT );
+    width   = iniFileGetInt( "Main Window", "width", 800 );
+    height  = iniFileGetInt( "Main Window", "height", 740 );
+
+    if (x > GetSystemMetrics(SM_CXSCREEN) - 200) {
+        x = GetSystemMetrics(SM_CXSCREEN) - 200;
+    }
+    if (y > GetSystemMetrics(SM_CYSCREEN) - 200) {
+        y = GetSystemMetrics(SM_CYSCREEN) - 200;
+    }
 
     dbgHwnd = CreateWindow("msxdebugger", Language::windowDebugger, 
                            WS_OVERLAPPEDWINDOW, 
-                           CW_USEDEFAULT, CW_USEDEFAULT, 800, 740, NULL, NULL, GetDllHinstance(), NULL);
+                           x, y, width, height, NULL, NULL, GetDllHinstance(), NULL);
 
     viewHwnd = CreateWindow("msxdebuggerview", "", 
                             WS_OVERLAPPED | WS_CHILD | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, dbgHwnd, NULL, GetDllHinstance(), NULL);
@@ -1287,8 +1321,6 @@ void OnShowTool() {
     statusBar->show();
     toolBar = initializeToolbar(dbgHwnd);
     toolBar->show();
-
-    iniFileOpen( "debugger.ini" );
 
     disassembly   = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
     cpuRegisters  = new CpuRegisters(GetDllHinstance(), viewHwnd);

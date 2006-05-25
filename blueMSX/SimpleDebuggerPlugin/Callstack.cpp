@@ -36,7 +36,6 @@
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
-
 LRESULT CallstackWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     HDC hdc;

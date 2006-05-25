@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-01-19 01:07:16 $
+** $Date: 2006-05-25 07:02:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "Win32keyboard.h"
 #include "Language.h"
 #include "InputEvent.h"
+#include "IniFileParser.h"
 #include <windows.h>
 #include <stdio.h>
 #include <winioctl.h>
@@ -406,7 +407,7 @@ static void initKbdTable()
     kbdTable[2][DIK_MULTIPLY    ] = EC_COLECO2_STAR;
     kbdTable[2][DIK_DIVIDE      ] = EC_COLECO2_HASH;
 
-    keyboardSaveConfig(DefaultConfigName);
+//    keyboardSaveConfig(DefaultConfigName);
 }
 
 
@@ -707,7 +708,7 @@ static void keyboardHanldeKeypress(int code, int pressed)
         keyStatus[n][code] = pressed;
 
         if (pressed == wasPressed || (keyCode == 0 && !isEditing)) {
-            return;
+            continue;
         }
 
         if (pressed) {
@@ -938,16 +939,21 @@ int keyboardLoadConfig(char* configName)
 
     sprintf(currentConfigFile, *configName ? configName : DefaultConfigName);
 
+    iniFileOpen(fileName);
+
     for (n = 0; n < KBD_TABLE_NUM; n++) {
         char profString[32];
-        sprintf(profString, "Keymapping%d", n);
+        sprintf(profString, "Keymapping-%d", n);
         for (i = 0; i < EC_KEYCOUNT; i++) {
             const char* keyCode = inputEventCodeToString(i);
             if (keyCode != NULL && *keyCode != 0) {
-                char dikName[32];
+                char dikName[256];
                 int dikKey;
-
-                GetPrivateProfileString(profString, keyCode, "", dikName, sizeof(dikName), fileName);
+                char key[32] = { 0 };
+                strcat(key, keyCode);
+                strcat(key, " ");
+                iniFileGetString(profString, key, "", dikName, sizeof(dikName));
+//                GetPrivateProfileString(profString, keyCode, "", dikName, sizeof(dikName), fileName);
                 dikKey = str2dik(dikName);
                 if (dikKey > 0) {
                     int j;
@@ -961,6 +967,8 @@ int keyboardLoadConfig(char* configName)
             }
         }
     }
+    iniFileClose();
+
     if (kbdTable[0][DIK_NUMPADENTER] == 0) {
         kbdTable[0][DIK_NUMPADENTER] = kbdTable[0][DIK_RETURN];
     }
@@ -979,9 +987,10 @@ void keyboardSaveConfig(char* configName)
 
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
     
+    iniFileOpen(fileName);
     for (n = 0; n < KBD_TABLE_NUM; n++) {
         char profString[32];
-        sprintf(profString, "Keymapping%d", n);
+        sprintf(profString, "Keymapping-%d", n);
         for (i = 0; i < EC_KEYCOUNT; i++) {
             const char* keyCode = inputEventCodeToString(i);
             const char* dikName = "";
@@ -992,12 +1001,19 @@ void keyboardSaveConfig(char* configName)
                     break;
                 }
             }
-            WritePrivateProfileString(profString, keyCode, dikName, fileName);
+            if (keyCode != NULL) {
+                char key[32] = { 0 };
+                strcat(key, keyCode);
+                strcat(key, " ");
+                iniFileWriteString(profString, key, dikName);
+//            WritePrivateProfileString(profString, keyCode, dikName, fileName);
+            }
         }
     
         memcpy(kbdTableBackup[n], kbdTable[n], sizeof(kbdTableBackup[n]));
     }
     sprintf(currentConfigFile, configName);
+    iniFileClose();
 }
 
 void keyboardSetDirectory(char* directory)
