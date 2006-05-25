@@ -297,6 +297,8 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_VSCROLL:
+        dataInput1->hide();
+        dataInput2->hide();
         scrollWindow(LOWORD(wParam));
          return 0;
     case WM_PAINT:

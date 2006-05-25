@@ -112,14 +112,15 @@ static void updateToolBar()
     
     toolBar->enableItem(6, state == EMULATOR_PAUSED);
     toolBar->enableItem(7, state == EMULATOR_PAUSED);
-    toolBar->enableItem(8, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
+    toolBar->enableItem(8, state == EMULATOR_PAUSED);
     toolBar->enableItem(9, state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0);
+    toolBar->enableItem(10, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
 
-    toolBar->enableItem(11, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
-    toolBar->enableItem(12, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
-    toolBar->enableItem(13, disassembly->getDisabledBpCount() > 0);
-    toolBar->enableItem(14, disassembly->getEnabledBpCount() > 0);
-    toolBar->enableItem(15, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
+    toolBar->enableItem(12, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
+    toolBar->enableItem(13, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
+    toolBar->enableItem(14, disassembly->getDisabledBpCount() > 0);
+    toolBar->enableItem(15, disassembly->getEnabledBpCount() > 0);
+    toolBar->enableItem(16, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
 }
 
 static void updateStatusBar()
