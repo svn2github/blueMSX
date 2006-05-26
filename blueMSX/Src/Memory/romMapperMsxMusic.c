@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,6 +114,8 @@ static void getDebugInfo(MsxMusic* rm, DbgDevice* dbgDevice)
     ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX Music", 2);
     dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
+    
+    ym2413GetDebugInfo(rm->ym2413, dbgDevice);
 }
 
 int romMapperMsxMusicCreate(char* filename, UInt8* romData, 

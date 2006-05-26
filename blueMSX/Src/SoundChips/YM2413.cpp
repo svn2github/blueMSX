@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2005-09-24 00:50:07 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,6 +131,38 @@ static Int32* ym2413Sync(void* ref, UInt32 count)
     }
 
     return ym2413->buffer;
+}
+
+static char* regText(int d)
+{
+    static char text[5];
+    sprintf(text, "R%.2x", d);
+    return text;
+}
+
+static char regsAvailYM2413[] = {
+    1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,
+    1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0
+};
+
+void ym2413GetDebugInfo(YM_2413* ym2413, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+
+    // Add YM2413 registers
+    int c = 0;
+    for (int r = 0; r < sizeof(regsAvailYM2413); r++) {
+        c += regsAvailYM2413[r];
+    }
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YM2413 Registers", c);
+    
+    c = 0;
+    for (int r = 0; r < sizeof(regsAvailYM2413); r++) {
+        if (regsAvailYM2413[r]) {
+            dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, ym2413->ym2413->peekReg(r));
+        }
+    }
 }
 
 YM_2413* ym2413Create(Mixer* mixer)

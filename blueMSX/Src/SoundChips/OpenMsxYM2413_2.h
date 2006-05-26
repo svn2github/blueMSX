@@ -52,6 +52,7 @@ public:
 		
 	virtual void reset(const EmuTime &time) = 0;
 	virtual void writeReg(byte r, byte v, const EmuTime &time) = 0;
+	virtual byte peekReg(byte r) = 0;
 	
 	virtual int* updateBuffer(int length) = 0;
 	virtual void setSampleRate(int sampleRate, int Oversampling) = 0;
@@ -228,6 +229,7 @@ public:
 
 	virtual void reset(const EmuTime& time);
 	virtual void writeReg(byte reg, byte value, const EmuTime& time);
+    virtual byte peekReg(byte r) { return reg[r]; }
 
 	// SoundDevice
 	virtual const std::string& getName() const;

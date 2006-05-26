@@ -53,6 +53,7 @@ public:
 		
 	virtual void reset(const EmuTime &time) = 0;
 	virtual void writeReg(byte r, byte v, const EmuTime &time) = 0;
+    virtual byte peekReg(byte r) = 0;
 	
 	virtual int* updateBuffer(int length) = 0;
 	virtual void setSampleRate(int sampleRate, int Oversampling) = 0;
@@ -138,6 +139,7 @@ class OpenYM2413 : public OpenYM2413Base
 		
 		virtual void reset(const EmuTime &time);
 		virtual void writeReg(byte r, byte v, const EmuTime &time);
+        virtual byte peekReg(byte r) { return regs[r]; }
 		
 		virtual void setInternalVolume(short newVolume);
 		virtual int* updateBuffer(int length);
@@ -170,6 +172,8 @@ class OpenYM2413 : public OpenYM2413Base
         int oplOversampling;
 
         int in[5];
+
+        byte regs[0x40];
 
 		Channel channels[9];	// OPLL chips have 9 channels
 		byte instvol_r[9];		// instrument/volume (or volume/volume in percussive mode)

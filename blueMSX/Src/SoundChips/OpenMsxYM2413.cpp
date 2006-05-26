@@ -1160,6 +1160,8 @@ void OpenYM2413::setRhythmMode(bool newMode)
 
 void OpenYM2413::writeReg(byte r, byte v, const EmuTime &time)
 {
+    regs[r] = v;
+
 	switch (r & 0xF0) {
 	case 0x00: {
 		// 00-0F:control 
@@ -1312,6 +1314,8 @@ void OpenYM2413::reset(const EmuTime &time)
 			inst_tab[i][c] = table[i][c];
 		}
 	}
+
+    memset(regs, 0, sizeof(regs));
 
 	// reset with register write 
 	writeReg(0x0F, 0, time); //test reg

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,6 +173,8 @@ static void getDebugInfo(RomMapperMsxAudio* rm, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 1, 0x01, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 2, 0x04, DBG_IO_READ, midiRead(rm, 0x04));
     dbgIoPortsAddPort(ioPorts, 3, 0x05, DBG_IO_READ, midiRead(rm, 0x05));
+
+    y8950GetDebugInfo(rm->y8950, dbgDevice);
 }
 
 int romMapperMsxAudioCreate(char* filename, UInt8* romData, 

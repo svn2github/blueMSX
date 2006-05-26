@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ extern "C" {
 
 #include "msxTypes.h"
 #include "audioMixer.h"
+#include "DebugDeviceManager.h"
 
 /* Type definitions */
 typedef struct YM_2413 YM_2413;
@@ -48,6 +49,7 @@ void ym2413WriteData(YM_2413* ym2413, UInt8 data);
 void ym2413Reset(YM_2413* ref);
 void ym2413SaveState(YM_2413* ref);
 void ym2413LoadState(YM_2413* ref);
+void ym2413GetDebugInfo(YM_2413* ym2413, DbgDevice* dbgDevice);
 
 #ifdef __cplusplus
 }

@@ -712,6 +712,8 @@ void OPLWriteReg(FM_OPL	*OPL, int r, int v)
 	int	slot;
 	int	block_fnum;
 
+    OPL->regs[r&0xff] = v;
+
 	switch(r&0xe0)
 	{
 	case 0x00: /* 00-1f:controll */
@@ -1049,6 +1051,7 @@ void OPLResetChip(FM_OPL *OPL)
 	OPL->mode	= 0;	/* normal mode */
 	OPL_STATUS_RESET(OPL,0x7f);
 	/* reset with register write */
+    memset(OPL->regs, 0, sizeof(OPL->regs));
 	OPLWriteReg(OPL,0x01,0); /*	wabesel	disable	*/
 	OPLWriteReg(OPL,0x02,0); /*	Timer1 */
 	OPLWriteReg(OPL,0x03,0); /*	Timer2 */

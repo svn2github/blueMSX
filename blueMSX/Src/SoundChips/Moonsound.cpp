@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2005-09-24 00:50:07 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -193,6 +193,88 @@ void moonsoundLoadState(Moonsound* moonsound)
     if (moonsound->timerStarted2) {
         boardTimerAdd(moonsound->timer2, moonsound->timeout2);
     }
+}
+
+
+static char* regText(int d)
+{
+    static char text[5];
+    sprintf(text, "R%.2x", d);
+    return text;
+}
+
+static char* slotRegText(int s, int r)
+{
+    static char text[5];
+    sprintf(text, "S%d:%d", s, r);
+    return text;
+}
+
+static char regsAvailYMF262[] = {
+    0,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 0x00
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x20
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x40
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x60
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x80
+    1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0,0, // 0xa0
+    1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 0xc0
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0  // 0xe0
+};
+
+void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
+{
+    UInt32 systemTime = boardSystemTime();
+    DbgRegisterBank* regBank;
+
+    // Add YMF262 registers
+    int c = 1;
+    for (int r = 0; r < sizeof(regsAvailYMF262); r++) {
+        c += regsAvailYMF262[r];
+    }
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YMF262 Registers", c);
+
+    c = 0;
+    dbgRegisterBankAddRegister(regBank, c++, "SR", 8, moonsound->ymf262->peekStatus());
+
+    for (int r = 0; r < sizeof(regsAvailYMF262); r++) {
+        if (regsAvailYMF262[r]) {
+            if (r <= 8) {
+                dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf262->peekReg(r|0x100));
+            }
+            else {
+                dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf262->peekReg(r));
+            }
+        }
+    }
+
+    // Add YMF278 registers
+    c = 1 + 7 + 2 + 10 * 10;
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YMF278 Registers", c);
+
+    c = 0;
+    dbgRegisterBankAddRegister(regBank, c++, "SR", 8, moonsound->ymf278->peekStatus(systemTime));
+    
+    r=0x00; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x01; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x02; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x03; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x04; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x05; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0x06; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0xf8; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+    r=0xf9; dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            int r = 8 + i * 24 + j;
+            dbgRegisterBankAddRegister(regBank, c++, slotRegText(i,j), 8, moonsound->ymf278->peekRegOPL4(r, systemTime));
+        }
+    }
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "YMF278 Sample RAM", 0, 0, 
+                            moonsound->ymf278->getRamSize(), 
+                            (UInt8*)moonsound->ymf278->getRam());
 }
 
 void moonsoundReset(Moonsound* moonsound)

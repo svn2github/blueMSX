@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-08-21 21:31:37 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,6 +172,52 @@ void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value)
         OPLWrite(y8950->opl, 1, value);
         break;
     }
+}
+static char* regText(int d)
+{
+    static char text[5];
+    sprintf(text, "R%.2x", d);
+    return text;
+}
+
+static char regsAvailAY8950[] = {
+    0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,0, // 0x00
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x20
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x40
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x60
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0, // 0x80
+    1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0,0, // 0xa0
+    1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 0xc0
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1  // 0xe0
+};
+
+void y8950GetDebugInfo(Y8950* y8950, DbgDevice* dbgDevice)
+{
+    DbgRegisterBank* regBank;
+
+    // Add YM2413 registers
+    int c = 1;
+    int r;
+
+    for (r = 0; r < sizeof(regsAvailAY8950); r++) {
+        c += regsAvailAY8950[r];
+    }
+
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, "AY8950 Registers", c);
+    
+    c = 0;
+
+    dbgRegisterBankAddRegister(regBank, c++, "SR", 8, (UInt8)OPLRead(y8950->opl, 0));
+
+    for (r = 0; r < sizeof(regsAvailAY8950); r++) {
+        if (regsAvailAY8950[r]) {
+            dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, y8950->opl->regs[r]);
+        }
+    }
+
+    dbgDeviceAddMemoryBlock(dbgDevice, "AY8950 Sample RAM", 0, 0, 
+                            y8950->opl->deltat->memory_size, 
+                            (UInt8*)y8950->opl->deltat->memory);
 }
     
 static Int32* y8950Sync(void* ref, UInt32 count) 

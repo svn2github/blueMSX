@@ -108,7 +108,10 @@ class YMF278 : public SoundDevice
 		byte readRegOPL4(byte reg, const EmuTime &time);
 		byte peekStatus(const EmuTime &time);
 		byte readStatus(const EmuTime &time);
-        void* getRam() { return ram; }		
+        void* getRom() { return rom; }	
+        void* getRam() { return ram; }	
+        int getRomSize() { return endRom; }
+        int getRamSize() { return endRam - endRom; }
 		virtual void setSampleRate(int sampleRate, int Oversampling);
 		virtual void setInternalVolume(short newVolume);
 		virtual int* updateBuffer(int length);

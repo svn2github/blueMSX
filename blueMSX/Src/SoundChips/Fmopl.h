@@ -126,6 +126,7 @@ typedef struct fm_opl_f {
     int dacDaVolume;
     int dacEnabled;
 
+    UINT8 regs[256];
     int reg15;
     int reg16;
     int reg17;

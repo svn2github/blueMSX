@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ extern "C" {
 
 #include "msxTypes.h"
 #include "audioMixer.h"
+#include "DebugDeviceManager.h"
     
 typedef struct Moonsound Moonsound;
 
@@ -48,6 +49,7 @@ UInt8 moonsoundPeek(Moonsound* moonsound, UInt16 ioPort);
 void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value);
 void moonsoundLoadState(Moonsound* moonsound);
 void moonsoundSaveState(Moonsound* moonsound);
+void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice);
 
 #ifdef __cplusplus
 }

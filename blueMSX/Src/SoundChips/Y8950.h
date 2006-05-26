@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2006-05-26 05:30:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 
 #include "msxTypes.h"
 #include "audioMixer.h"
+#include "DebugDeviceManager.h"
 
 /* Type definitions */
 typedef struct Y8950 Y8950;
@@ -45,5 +46,6 @@ void y8950SaveState(Y8950* y8950);
 UInt8 y8950Peek(Y8950* y8950, UInt16 ioPort);
 UInt8 y8950Read(Y8950* y8950, UInt16 ioPort);
 void y8950Write(Y8950* y8950, UInt16 ioPort, UInt8 value);
+void y8950GetDebugInfo(Y8950* y8950, DbgDevice* dbgDevice);
 
 #endif
