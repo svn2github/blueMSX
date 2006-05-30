@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-11 05:15:00 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,11 @@ void joystickPortSetType(int port, JoystickPortType type)
     archMouseEmuEnable(inputType[0] == JOYSTICK_PORT_MOUSE || 
                        inputType[0] == JOYSTICK_PORT_LIGHTGUN || 
                        inputType[0] == JOYSTICK_PORT_MOUSE || 
-                       inputType[0] == JOYSTICK_PORT_LIGHTGUN);
+                       inputType[0] == JOYSTICK_PORT_LIGHTGUN ||
+                       inputType[1] == JOYSTICK_PORT_MOUSE || 
+                       inputType[1] == JOYSTICK_PORT_LIGHTGUN || 
+                       inputType[1] == JOYSTICK_PORT_MOUSE || 
+                       inputType[1] == JOYSTICK_PORT_LIGHTGUN);
 }
 
 JoystickPortType joystickPortGetType(int port)

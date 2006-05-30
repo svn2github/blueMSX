@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-04-22 03:55:35 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,7 +64,7 @@
 #define CARTNAME_GIDE        "GIDE"
 
 
-typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_CONTROLS, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
+typedef enum { PROP_EMULATION = 0, PROP_VIDEO, PROP_SOUND, PROP_PERFORMANCE, PROP_SETTINGS, PROP_APEARANCE, PROP_PORTS } PropPage;
 
 typedef enum { P_LPT_NONE = 0, P_LPT_SIMPL, P_LPT_FILE, P_LPT_HOST } PropLptType;
 typedef enum { P_COM_NONE = 0, P_COM_FILE, P_COM_HOST } PropComType;
@@ -250,6 +250,7 @@ typedef struct {
     int portable;
     int disableScreensaver;
     int showStatePreview;
+    int usePngScreenshots;
     char themeName[128];
     struct {  
         long left; 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:57:37 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@ TC8566AF* tc8566afCreate();
 void tc8566afDestroy(TC8566AF* tc);
 void tc8566afReset(TC8566AF* tc);
 UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg);
+UInt8 tc8566afPeekRegister(TC8566AF* tc, UInt8 reg);
 void tc8566afWriteRegister(TC8566AF* tc, UInt8 reg, UInt8 value);
 int tc8566afDiskChanged(TC8566AF* tc, int drive);
 

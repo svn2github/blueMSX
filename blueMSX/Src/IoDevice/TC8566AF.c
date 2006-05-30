@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-05-01 09:26:27 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,6 +132,18 @@ struct TC8566AF {
 #define ST3_WP     0x40
 #define ST3_FLT    0x80
 
+static UInt8 tc8566afExecutionPhasePeek(TC8566AF* tc)
+{
+	switch (tc->command) {
+	case CMD_READ_DATA:
+		if (tc->sectorOffset < 512) {
+			return tc->sectorBuf[tc->sectorOffset];
+        }
+        break;
+    }
+    return 0xff;
+}
+
 
 static UInt8 tc8566afExecutionPhaseRead(TC8566AF* tc)
 {
@@ -146,6 +158,50 @@ static UInt8 tc8566afExecutionPhaseRead(TC8566AF* tc)
             return value;
         }
         break;
+    }
+
+    return 0xff;
+}
+
+static UInt8 tc8566afResultsPhasePeek(TC8566AF* tc)
+{
+	switch (tc->command) {
+	case CMD_READ_DATA:
+	case CMD_WRITE_DATA:
+    case CMD_FORMAT:
+		switch(tc->phaseStep) {
+		case 0:
+            return tc->status0;
+		case 1:
+            return tc->status1;
+		case 2:
+            return tc->status2;
+		case 3:
+            return tc->cylinderNumber;
+		case 4:
+            return tc->side;
+		case 5:
+            return tc->sectorNumber;
+		case 6:
+            return tc->number;
+		}
+		break;
+
+    case CMD_SENSE_INTERRUPT_STATUS:
+		switch (tc->phaseStep) {
+		case 0:
+            return tc->status0;
+		case 1:
+            return tc->currentTrack;
+		}
+		break;
+
+    case CMD_SENSE_DEVICE_STATUS:
+		switch (tc->phaseStep) {
+		case 0:
+            return tc->status3;
+		}
+		break;
     }
 
     return 0xff;
@@ -506,6 +562,22 @@ UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
         }
     }
 
+    return 0xff;
+}
+
+UInt8 tc8566afPeekRegister(TC8566AF* tc, UInt8 reg)
+{
+    switch (reg) {
+    case 4: 
+        return tc->mainStatus;
+	case 5:
+        switch (tc->phase) {            
+		case PHASE_DATATRANSFER:
+            return tc8566afExecutionPhasePeek(tc);
+		case PHASE_RESULT:
+            return tc8566afResultsPhasePeek(tc);
+        }
+    }
     return 0xff;
 }
 

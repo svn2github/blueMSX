@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-01-07 01:53:16 $
+** $Date: 2006-05-30 04:10:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,7 +446,7 @@ void boardSaveState(const char* stateFile)
     // Call board dependent save state
     boardInfo.saveState(stateFile);
 
-    bitmap = archScreenCapture(SC_SMALL, &size);
+    bitmap = archScreenCapture(SC_SMALL, &size, 1);
     if (size > 0) {
         zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
     }

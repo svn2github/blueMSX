@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.128 $
+** $Revision: 1.129 $
 **
-** $Date: 2006-04-22 03:55:35 $
+** $Date: 2006-05-30 04:10:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1564,7 +1564,7 @@ static void emuWindowDraw(int onlyOnVblank)
     archSemaphoreSignal(lock);
 }
 
-void* createScreenShot(int large, int* bitmapSize)
+void* createScreenShot(int large, int* bitmapSize, int png)
 {
     void* bitmap = NULL;
 
@@ -1585,19 +1585,25 @@ void* createScreenShot(int large, int* bitmapSize)
     st.pVideo->scanLinesEnable = 0;
     st.pVideo->colorSaturationEnable = 0;
 
-    videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
-                bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
-                0, -1 * zoom * WIDTH * sizeof(DWORD), 0);
+    if (png) {
+        videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
+                    bmBitsDst, 0, zoom * WIDTH * sizeof(DWORD), 0);
+    }
+    else {
+        videoRender(st.pVideo, frameBufferGetViewFrame(), 32, zoom, 
+                    bmBitsDst + (zoom * HEIGHT - 1) * zoom * WIDTH, 
+                    0, -1 * zoom * WIDTH * sizeof(DWORD), 0);
+    }
 
     st.pVideo->palMode               = palMode;
     st.pVideo->scanLinesEnable       = scanLinesEnable;
     st.pVideo->colorSaturationEnable = colorSaturationEnable;
 
     if (bitmapSize != NULL) {
-        bitmap = ScreenShot2(bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom, bitmapSize);
+        bitmap = ScreenShot2(bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom, bitmapSize, png);
     }
     else {
-        ScreenShot3(pProperties, bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom);
+        ScreenShot3(pProperties, bmBitsDst, 320 * zoom, frameBuffer->maxWidth * zoom, 240 * zoom, png);
     }
 
     free(bmBitsDst);
@@ -2112,7 +2118,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 RECT r;
                 GetWindowRect(st.emuHwnd, &r);
                 KillTimer(hwnd, TIMER_SCREENSHOT);
-			    ScreenShot(pProperties, st.emuHwnd, r.right - r.left, r.bottom - r.top, 0, 0);
+			    ScreenShot(pProperties, st.emuHwnd, r.right - r.left, r.bottom - r.top, 0, 0, pProperties->settings.usePngScreenshots);
             }
             break;
             
@@ -2889,19 +2895,26 @@ void archShowMachineEditor()
     updateMenu(0);
 }
 
-void* archScreenCapture(ScreenCaptureType type, int* bitmapSize)
+void* archScreenCapture(ScreenCaptureType type, int* bitmapSize, int onlyBmp)
 {
+    int png = onlyBmp ? 0 : pProperties->settings.usePngScreenshots;
+
     if (bitmapSize != NULL) {
         *bitmapSize = 0;
     }
     switch (type) {
     case SC_NORMAL:
-        SetTimer(getMainHwnd(), TIMER_SCREENSHOT, 50, NULL);
+        if (png) {
+            createScreenShot(1, NULL, png);
+        }
+        else {
+            SetTimer(getMainHwnd(), TIMER_SCREENSHOT, 50, NULL);
+        }
         return NULL;
     case SC_SMALL:
-        return createScreenShot(0, bitmapSize);
+        return createScreenShot(0, bitmapSize, png);
     case SC_LARGE:
-        return createScreenShot(1, bitmapSize);
+        return createScreenShot(1, bitmapSize, png);
     }
 
     return NULL;

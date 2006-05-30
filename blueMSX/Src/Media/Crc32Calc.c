@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/Crc32Calc.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-24 07:36:09 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,17 @@ static UInt32 crc32Table[256] = {
 UInt32 calcCrc32(const void* buffer, int size) {
     const UInt8* ptr = (const UInt8*)buffer;
     UInt32 crc = 0xffffffff;
+
+    while (size--) {
+    	crc = (crc >> 8) ^ crc32Table[*ptr++ ^ (crc & 0xff)];
+    }
+
+    return ~crc;
+}
+
+UInt32 calcAddCrc32(const void* buffer, int size, UInt32 crc) {
+    const UInt8* ptr = (const UInt8*)buffer;
+    crc = ~crc;
 
     while (size--) {
     	crc = (crc >> 8) ^ crc32Table[*ptr++ ^ (crc & 0xff)];

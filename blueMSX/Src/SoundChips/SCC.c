@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2005-09-12 04:29:49 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -561,6 +561,10 @@ void sccWrite(SCC* scc, UInt8 address, UInt8 value)
 
         return;
     }
+}
+
+void sccGetDebugInfo(SCC* scc, DbgDevice* dbgDevice)
+{
 }
 
 static Int32 filter(SCC* scc, Int32 input) {

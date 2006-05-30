@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-24 07:54:03 $
+** $Date: 2006-05-30 04:10:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -242,4 +242,19 @@ char* zipGetFileList(char* zipName, char* ext, int* count) {
     unzClose(zip);
 
     return fileArray;
+}
+
+void* zipCompress(void* buffer, int size, int* retSize)
+{
+    void* retBuf;
+
+    *retSize = (size * 1001) / 1000 + 12;
+    retBuf = malloc(*retSize);
+
+    if (compress(retBuf, retSize, buffer, size) != Z_OK) {
+        free(retBuf);
+        retBuf = NULL;
+    }
+
+    return retBuf;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 
 #include "msxTypes.h"
 #include "audioMixer.h"
+#include "DebugDeviceManager.h"
 
 /* Type definitions */
 typedef struct SCC SCC;
@@ -50,6 +51,8 @@ void sccSetMode(SCC* scc, SccMode newMode);
 UInt8 sccRead(SCC* scc, UInt8 address);
 UInt8 sccPeek(SCC* scc, UInt8 address);
 void sccWrite(SCC* scc, UInt8 address, UInt8 value);
+
+void sccGetDebugInfo(SCC* scc, DbgDevice* dbgDevice);
 
 void sccLoadState(SCC* scc);
 void sccSaveState(SCC* scc);

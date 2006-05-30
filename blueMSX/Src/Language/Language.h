@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-04-22 03:55:35 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -350,6 +350,7 @@ _TCHAR* langPropFileTypesGB();
 _TCHAR* langPropFileTypes();
 _TCHAR* langPropDisableWinKeys();
 _TCHAR* langPropPriorityBoost();
+_TCHAR* langPropScreenshotPng();
 _TCHAR* langPropUseRegistry();
 _TCHAR* langPropClearFileHistory();
 _TCHAR* langPropOpenRomGB();

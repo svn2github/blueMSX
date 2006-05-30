@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2006-04-22 03:55:35 $
+** $Date: 2006-05-30 04:10:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->language                      = langType;
 
     properties->settings.showStatePreview     = 1;
+    properties->settings.usePngScreenshots    = 1;
     properties->settings.disableScreensaver   = 0;
     properties->settings.portable             = 0;
     
@@ -438,6 +439,7 @@ static void propLoad(Properties* properties)
     
     GET_INT_VALUE_2(settings, disableScreensaver);    
     GET_INT_VALUE_2(settings, showStatePreview);
+    GET_INT_VALUE_2(settings, usePngScreenshots);
     GET_INT_VALUE_2(settings, portable);
     GET_STR_VALUE_2(settings, themeName);
 
@@ -632,6 +634,7 @@ void propSave(Properties* properties)
     
     SET_INT_VALUE_2(settings, disableScreensaver);    
     SET_INT_VALUE_2(settings, showStatePreview);
+    SET_INT_VALUE_2(settings, usePngScreenshots);
     SET_INT_VALUE_2(settings, portable);
     SET_STR_VALUE_2(settings, themeName);
 

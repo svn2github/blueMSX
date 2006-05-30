@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-01-30 09:09:43 $
+** $Date: 2006-05-30 04:10:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,11 +30,118 @@
 #include "Win32ScreenShot.h"
 #include "Language.h"
 #include "FileHistory.h"
+#include "Crc32Calc.h"
+#include "ziphelper.h"
 #include <stdio.h>
 #include <direct.h>
 
 static char baseDir[512];
 static char basePrefix[512];
+
+
+// =======================================================================================================================
+// PNG Stuff
+// =======================================================================================================================
+#ifdef __BIG_ENDIAN__
+#define ntohul(ul)  (ul)
+#else
+#define ntohul(ul)  (((ul << 24) & 0xff000000) | ((ul << 8) & 0x00ff0000) | ((ul >> 8) & 0x0000ff00) | ((ul >> 24) & 0x000000ff))
+#endif
+
+typedef struct PNGHeader {
+    DWORD dwWidth;
+    DWORD dwHeight;
+    BYTE  bBitDepth;
+    BYTE  bColourType;
+    BYTE  bCompressionType;
+    BYTE  bFilterType;
+    BYTE  bInterlaceType;
+} PNGHeader;
+
+const BYTE PngSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+const char PngName[] = "blueMSX Screenshot";
+
+#define PNG_IHDR 0x49484452
+#define PNG_IDAT 0x49444154
+#define PNG_IEND 0x49454E44
+#define PNG_TEXT 0x74455874
+
+int pngAddChunk(BYTE* dest, int type, const void* data, int length)
+{
+    UInt32 crc = calcCrc32(&type, sizeof(type));
+    if (length > 0) {
+        crc = calcAddCrc32(data, length, crc);
+    }
+
+    *(DWORD*)(dest + 0) = ntohul(length);
+    *(DWORD*)(dest + 4) = ntohul(type);
+    memcpy(dest + 8, data, length);
+    *(DWORD*)(dest + 8 + length) = ntohul(crc);
+
+
+    return length + 12;
+}
+
+void* ScreenShotPng(void* src, int srcPitch, int width, int height, int* bitmapSize)
+{
+    int   compressedSize;
+    BYTE* compressedData;
+    int   pngSize;
+    BYTE* pngData;
+    PNGHeader hdr;
+    DWORD* srcPtr = (DWORD*)src;
+    int w;
+    int h;
+    int rawSize = 3 * (width + 1) * height;
+    BYTE* rawData = (BYTE*)malloc(rawSize);
+    BYTE* dstPtr = rawData;
+    
+    for (h = 0; h < height; h++) {
+        *dstPtr++ = 0; // Default PNG filter
+        for (w = 0; w < width; w++) {
+            *dstPtr++ = (BYTE)(srcPtr[w] >> 16);
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  8);
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  0);
+        }
+        srcPtr += srcPitch;
+    }
+    
+    compressedSize = 0;
+    compressedData = zipCompress(rawData, rawSize, &compressedSize);
+    free(rawData);
+    if (compressedData == NULL) {
+        return NULL;
+    }
+
+    pngData = malloc(compressedSize + 100);
+    
+    hdr.dwWidth          = ntohul(width);
+    hdr.dwHeight         = ntohul(height);
+    hdr.bBitDepth        = 8;
+    hdr.bColourType      = 2; // RGB
+    hdr.bCompressionType = 0;
+    hdr.bFilterType      = 0;
+    hdr.bInterlaceType   = 0;
+
+    pngSize = 0;
+
+    memcpy(pngData, PngSignature, sizeof(PngSignature));
+    pngSize += sizeof(PngSignature);
+    pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &hdr, sizeof(hdr));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_IDAT, compressedData, compressedSize);
+    pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, strlen(PngName));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_IEND, NULL, 0);
+
+    free(compressedData);
+
+    *bitmapSize = pngSize;
+    return pngData;
+}
+
+// =======================================================================================================================
+// BMP Stuff
+// =======================================================================================================================
+
 
 typedef struct {
 	DWORD Size;
@@ -53,9 +160,130 @@ typedef struct {
     DWORD ClrImportant;
 } BMPHeader;
 
+void* ScreenShotBmp(void* src, int srcPitch, int width, int height, int* bitmapSize)
+{
+    DWORD* srcPtr = (DWORD*)src;
+    BMPHeader hdr;
+    int w;
+    int h;
+    int size = 2 + sizeof(hdr) + 3 * width * height;
+    BYTE* bitmap = (BYTE*)malloc(size);
+    BYTE* dstPtr = bitmap;
+
+    *bitmapSize = size;
+
+	hdr.BitCount      = 24;
+	hdr.Size          = width * height * hdr.BitCount / 8 + 0x36;
+	hdr.Reserved1     = 0;
+	hdr.OffRaster     = 0x36;
+	hdr.OffBits       = 0x28;
+	hdr.Width         = width;
+	hdr.Height        = height;
+	hdr.Planes        = 1;
+	hdr.Compression   = 0;
+	hdr.SizeImage     = width * height * hdr.BitCount / 8;
+	hdr.XPelsPerMeter = 0;
+	hdr.YPelsPerMeter = 0;
+	hdr.ClrUsed       = 0;
+    hdr.ClrImportant  = 0;
+
+    *dstPtr++ = 'B';
+    *dstPtr++ = 'M';
+
+    memcpy(dstPtr, &hdr, sizeof(hdr));
+    dstPtr += sizeof(hdr);
+
+    for (h = 0; h < height; h++) {
+        for (w = 0; w < width; w++) {
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  0);
+            *dstPtr++ = (BYTE)(srcPtr[w] >>  8);
+            *dstPtr++ = (BYTE)(srcPtr[w] >> 16);
+        }
+        srcPtr += srcPitch;
+    }
+
+    return bitmap;
+}
+
+
+// =======================================================================================================================
+// Other Stuff
+// =======================================================================================================================
+
+static HRESULT SavePngBitmap(char *strFileName, PBITMAPINFO pbi, HBITMAP hBMP, HDC hDC)
+{
+    PBITMAPINFOHEADER   pbih;       // bitmap info-header
+    LPBYTE              lpBits;     // memorypointer
+    int   compressedSize;
+    BYTE* compressedData;
+    int   pngSize;
+    BYTE* pngData;
+    FILE* file;
+
+    if( pbi == NULL ){
+        return 0;
+    }
+
+    pbih    = ( PBITMAPINFOHEADER ) pbi;
+    if( pbih->biBitCount != 24 ) {
+        return 0;
+    }
+
+    lpBits  = ( LPBYTE ) GlobalAlloc( GMEM_FIXED, pbih->biSizeImage );
+
+    if( !lpBits ){
+        return 0;
+    }
+
+    //
+    // Retrieve the colortable ( RGBQUAD-array ) and the bits
+    // ( array of palette indices ) from the DIB.
+    //
+    if( !GetDIBits( hDC, hBMP, 0, ( WORD )pbih->biHeight, lpBits, pbi, DIB_RGB_COLORS ) ){
+        return 0;
+    }
+
+    compressedSize = 0;
+    compressedData = zipCompress(lpBits, pbih->biSizeImage, &compressedSize);
+    if (compressedData != NULL) {
+        PNGHeader h;
+
+        pngData = malloc(compressedSize + 100);
+        
+        h.dwWidth          = ntohul(pbih->biWidth);
+        h.dwHeight         = ntohul(pbih->biHeight);
+        h.bBitDepth        = 8;
+        h.bColourType      = 2; // RGB
+        h.bCompressionType = 0;
+        h.bFilterType      = 0;
+        h.bInterlaceType   = 0;
+
+        pngSize = 0;
+
+        memcpy(pngData, PngSignature, sizeof(PngSignature));
+        pngSize += sizeof(PngSignature);
+        pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &h, sizeof(h));
+        pngSize += pngAddChunk(pngData + pngSize, PNG_IDAT, compressedData, compressedSize);
+        pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, strlen(PngName));
+        pngSize += pngAddChunk(pngData + pngSize, PNG_IEND, NULL, 0);
+
+        free(compressedData);
+
+        file = fopen(strFileName, "wb");
+        if (file != NULL) {
+            fwrite(pngData, 1, pngSize, file);
+            fclose(file);
+        }
+
+        free(pngData);
+    }
+    GlobalFree( ( HGLOBAL ) lpBits );
+
+    return 1;
+}
+
 static HRESULT SaveBitmap(char *strFileName, PBITMAPINFO pbi, HBITMAP hBMP, HDC hDC)
 {
-    HRESULT             hr = E_FAIL;
     HANDLE              hf;         // file handle
     BITMAPFILEHEADER    hdr;        // bitmap file-header
     PBITMAPINFOHEADER   pbih;       // bitmap info-header
@@ -67,93 +295,56 @@ static HRESULT SaveBitmap(char *strFileName, PBITMAPINFO pbi, HBITMAP hBMP, HDC 
 
 
     if( pbi == NULL ){
-        return E_FAIL;
+        return 0;
     }
 
     pbih    = ( PBITMAPINFOHEADER ) pbi;
     lpBits  = ( LPBYTE ) GlobalAlloc( GMEM_FIXED, pbih->biSizeImage );
 
     if( !lpBits ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Retrieve the colortable ( RGBQUAD-array ) and the bits
-    // ( array of palette indices ) from the DIB.
-    //
     if( !GetDIBits( hDC, hBMP, 0, ( WORD )pbih->biHeight, lpBits, pbi, DIB_RGB_COLORS ) ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Create the .BMP file.
-    //
     hf = CreateFile( strFileName, GENERIC_READ|GENERIC_WRITE, ( DWORD ) 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, ( HANDLE ) NULL );
 
     if( hf == INVALID_HANDLE_VALUE ){
-        return E_FAIL;
+        return 0;
     }
 
     hdr.bfType = 0x4D42;    // 0x42 = "B", 0x4D = "M"
 
-
-    //
-    // Compute the size of the entire file
-    //
     hdr.bfSize = ( DWORD )( sizeof( BITMAPFILEHEADER ) + pbih->biSize + pbih->biClrUsed * sizeof( RGBQUAD ) + pbih->biSizeImage );
     hdr.bfReserved1 = 0;
     hdr.bfReserved2 = 0;
 
-    //
-    // Compute the offset to the array of color indices
-    //
     hdr.bfOffBits = ( DWORD ) sizeof( BITMAPFILEHEADER ) + pbih->biSize + pbih->biClrUsed * sizeof( RGBQUAD );
 
-
-    //
-    // Copy the BITMAPFILEHEADER into the .BMP file
-    //
     if( !WriteFile( hf, ( LPVOID ) &hdr, sizeof( BITMAPFILEHEADER ), ( LPDWORD ) &dwTmp, NULL ) ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file
-    //
     if( !WriteFile( hf, ( LPVOID ) pbih, sizeof( BITMAPINFOHEADER ) + pbih->biClrUsed * sizeof( RGBQUAD ), ( LPDWORD ) &dwTmp, ( NULL ) ) ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Copy the array of color indices into the .BMP file
-    //
     dwTotal = cb = pbih->biSizeImage;
     hp      = lpBits;
 
     if( !WriteFile( hf, ( LPSTR ) hp, ( int ) cb, ( LPDWORD ) &dwTmp, NULL ) ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Now close the .BMP file
-    //
     if( !CloseHandle( hf ) ){
-        return E_FAIL;
+        return 0;
     }
 
-
-    //
-    // Free the memory reserved
-    //
     GlobalFree( ( HGLOBAL ) lpBits );
 
-
-    return S_OK;
+    return 1;
 }
 
 static PBITMAPINFO CreateBitmapInfoStructure(HBITMAP hBmp)
@@ -222,41 +413,37 @@ static PBITMAPINFO CreateBitmapInfoStructure(HBITMAP hBmp)
     return pbmi;
 }
 
-void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xOffset, int yOffset)
+int ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xOffset, int yOffset, int png)
 {
     HDC hdcScreen;
     HDC hdcCompatible;
     HBITMAP  hbmScreen;
     PBITMAPINFO pbi;
     HBITMAP hBitmapOrig;
+    int rv = 0;
 
     hdcScreen=GetDC(hwnd);
     if (hdcScreen==NULL)
     {
-        MessageBox(NULL,"No hDC found!",langErrorTitle(),MB_OK);
-        return;
+        return 0;
     }
     hdcCompatible = CreateCompatibleDC(hdcScreen);
     if (hdcCompatible==NULL)
     {
-        MessageBox(NULL,"Error creating Compatible DC",langErrorTitle(),MB_OK);
-        return;
+        return 0;
     }
 
     hbmScreen = CreateCompatibleBitmap(hdcScreen, width, height);
     if (hbmScreen==NULL)
     {
-        MessageBox(NULL,"Error creating Compatible Bitmap",langErrorTitle(),MB_OK);
-        return;
+        return 0;
     }
 
     hBitmapOrig = (HBITMAP)SelectObject(hdcCompatible, hbmScreen);
     BitBlt(hdcCompatible, 0, 0, width, height, hdcScreen, xOffset, yOffset, SRCCOPY);
 
     pbi = CreateBitmapInfoStructure(hbmScreen);
-    if (SaveBitmap(generateSaveFilename(properties, baseDir, basePrefix, ".bmp", 4), pbi, hbmScreen, hdcCompatible)==E_FAIL) {
-        MessageBox(NULL,"Error saving bitmap!",langErrorTitle(),MB_OK);
-    }
+    rv = SaveBitmap(generateSaveFilename(properties, baseDir, basePrefix, ".bmp", 4), pbi, hbmScreen, hdcCompatible);
     if (pbi != NULL) {
         LocalFree(pbi);
     }
@@ -264,63 +451,29 @@ void ScreenShot(Properties* properties, HWND hwnd, int width, int height, int xO
     DeleteObject(SelectObject(hdcCompatible, hBitmapOrig));
     DeleteDC(hdcCompatible);
     ReleaseDC(hwnd, hdcScreen);
+    return rv;
 }
 
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
-void* ScreenShot2(void* src, int srcPitch, int width, int height, int* bitmapSize)
+void* ScreenShot2(void* src, int srcPitch, int width, int height, int* bitmapSize, int png)
 {
-    DWORD* srcPtr = (DWORD*)src;
-    BMPHeader hdr;
-    int w;
-    int h;
-
-    int size = 2 + sizeof(hdr) + 3 * width * height;
-    BYTE* bitmap = (BYTE*)malloc(size);
-    BYTE* dstPtr = bitmap;
-
-    *bitmapSize = size;
-
-	hdr.BitCount      = 24;
-	hdr.Size          = width * height * hdr.BitCount / 8 + 0x36;
-	hdr.Reserved1     = 0;
-	hdr.OffRaster     = 0x36;
-	hdr.OffBits       = 0x28;
-	hdr.Width         = width;
-	hdr.Height        = height;
-	hdr.Planes        = 1;
-	hdr.Compression   = 0;
-	hdr.SizeImage     = width * height * hdr.BitCount / 8;
-	hdr.XPelsPerMeter = 0;
-	hdr.YPelsPerMeter = 0;
-	hdr.ClrUsed       = 0;
-    hdr.ClrImportant  = 0;
-
-    *dstPtr++ = 'B';
-    *dstPtr++ = 'M';
-
-    memcpy(dstPtr, &hdr, sizeof(hdr));
-    dstPtr += sizeof(hdr);
-
-    for (h = 0; h < height; h++) {
-        for (w = 0; w < width; w++) {
-            *dstPtr++ = (BYTE)(srcPtr[w] >>  0);
-            *dstPtr++ = (BYTE)(srcPtr[w] >>  8);
-            *dstPtr++ = (BYTE)(srcPtr[w] >> 16);
-        }
-        srcPtr += srcPitch;
+    if (png) {
+        return ScreenShotPng(src, srcPitch, width, height, bitmapSize);
     }
-
-    return bitmap;
+    else {
+        return ScreenShotBmp(src, srcPitch, width, height, bitmapSize);
+    }
 }
 
-void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int height)
+void ScreenShot3(Properties* properties, void* src, int srcPitch, int width, int height, int png)
 {
     int bitmapSize;
-    void* bitmap = ScreenShot2(src, srcPitch, width, height, &bitmapSize);
-	FILE* file = fopen(generateSaveFilename(properties, baseDir, basePrefix, ".bmp", 4), "wb");
+    FILE* file;
+
+    void* bitmap = ScreenShot2(src, srcPitch, width, height, &bitmapSize, png);
+    if (bitmap == NULL || bitmapSize <= 0) {
+        return;
+    }
+    file = fopen(generateSaveFilename(properties, baseDir, basePrefix, (png ? ".png" : ".bmp"), 4), "wb");
     if (file != NULL) {
     	fwrite(bitmap, 1, bitmapSize, file);
         fclose(file);
