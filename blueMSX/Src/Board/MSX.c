@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -166,7 +166,15 @@ int msxCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
+    UInt32 cpuFlags = CPU_ENABLE_M1;
+
+    if (machine->board.type == BOARD_MSX_T9769B ||
+        machine->board.type == BOARD_MSX_T9769C)
+    {
+        cpuFlags |= CPU_VDP_IO_DELAY;
+    }
+
+    r800 = r800Create(cpuFlags, slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 2;
     boardInfo->diskdriveCount   = 2;
@@ -219,7 +227,7 @@ int msxCreate(Machine* machine,
 
     success = machineInitialize(machine, &msxRam, &msxRamSize);
 
-    msxPsg = msxPsgCreate();
+    msxPsg = msxPsgCreate(machine->board.type == BOARD_MSX ? PSGTYPE_AY8910 : PSGTYPE_YM2149);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

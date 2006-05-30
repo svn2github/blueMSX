@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Bios/Patch.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-05 01:17:19 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,6 +130,10 @@ void PatchZ80(void* ref, CpuRegs* cpu)
     switch (patchBoardType) {
     default:
     case BOARD_MSX:
+    case BOARD_MSX_S3527:
+    case BOARD_MSX_S1985:
+    case BOARD_MSX_T9769B:
+    case BOARD_MSX_T9769C:
         switch (cpu->PC.W - 2) {
         case 0x4010: phydio(ref, cpu); break;
         case 0x4013: dskchg(ref, cpu); break;

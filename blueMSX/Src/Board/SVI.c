@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-01-25 21:18:12 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -290,7 +290,7 @@ int sviCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(0, sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 2;
@@ -320,7 +320,7 @@ int sviCreate(Machine* machine,
 
     r800DebugCreate(r800);
 
-    ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI);
+    ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI, PSGTYPE_AY8910);
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgPollHandler, sviPsgWriteHandler, NULL);
 
     keyClick  = audioKeyClickCreate(boardGetMixer());

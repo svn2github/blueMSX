@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:52 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,8 +38,10 @@ typedef struct AY8910 AY8910;
 
 typedef enum { AY8910_MSX, AY8910_SVI } Ay8910Connector;
 
+typedef enum { PSGTYPE_AY8910, PSGTYPE_YM2149, PSGTYPE_SN76489 } PsgType;
+
 /* Constructor and destructor */
-AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector);
+AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type);
 void ay8910Destroy(AY8910* ay8910);
 
 /* Reset chip */

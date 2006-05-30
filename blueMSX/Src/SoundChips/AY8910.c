@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2005-08-30 00:57:00 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,17 +39,8 @@
 #define BASE_PHASE_STEP 0x28959becUL  /* = (1 << 28) * 3579545 / 32 / 44100 */
 #define BUFFER_SIZE     10000
 
-#if 0
-static const Int16 voltTable[16] = {
-    0x0000, 0x004f, 0x00b4, 0x0133, 0x01d4, 0x029f, 0x03a1, 0x04e7, 
-    0x0683, 0x088c, 0x0b1f, 0x0e62, 0x1281, 0x17b8, 0x1e50, 0x26a9
-};
-#else
-static Int16 voltTable[16] = {
-    0x0000, 0x003e, 0x004d, 0x0074, 0x009d, 0x00ed, 0x0145, 0x01d8, 
-    0x02ee, 0x0449, 0x0664, 0x0988, 0x0d05, 0x13cd, 0x1bb0, 0x26a9
-};
-#endif
+static Int16 voltTable[16];
+static Int16 voltEnvTable[32];
 
 static const UInt8 regMask[16] = {
     0xff, 0x0f, 0xff, 0x0f, 0xff, 0x0f, 0x1f, 0x3f, 
@@ -212,23 +203,30 @@ static int dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 val
     return 1;
 }
 
-AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector)
+AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
 {
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
     int i;
 
-#if 0
-    {
-        int i;
-        double v = voltTable[15];
-        for (i = 15; i > 0; i--) {
-            voltTable[i] = (Int16)v;
-            v *= 0.70710678118654752440084436210485;
-        }
-        voltTable[0] = 0;
+    double v = 0x26a9;
+    for (i = 15; i > 0; i--) {
+        voltTable[i] = (Int16)v;
+        voltEnvTable[2 * i + 0] = (Int16)v;
+        voltEnvTable[2 * i + 1] = (Int16)v;
+        v *= 0.70794578438413791080221494218943;
     }
-#endif
+
+    if ( type = PSGTYPE_YM2149) {
+        double v = 0x26a9;
+        for (i = 31; i > 0; i--) {
+            voltEnvTable[i] = (Int16)v;
+            v *= 0.84139514164519509115274189380029;
+        }
+    }
+
+    voltTable[0] = 0;
+    voltEnvTable[0] = 0;
 
     ay8910->mixer = mixer;
     ay8910->connector = connector;
@@ -427,9 +425,9 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
         }
  
         /* Calculate envelope volume */
-        envVolume = (Int16)((ay8910->envPhase >> 24) & 0x0f);
+        envVolume = (Int16)((ay8910->envPhase >> 23) & 0x1f);
         if (((ay8910->envPhase >> 27) & (ay8910->envShape + 1) ^ (~ay8910->envShape >> 1)) & 2) {
-            envVolume ^= 0x0f;
+            envVolume ^= 0x1f;
         }
 
         /* Calculate and add channel samples to buffer */
@@ -455,7 +453,7 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
 
             /* Amplify sample using either envelope volume or channel volume */
             if (ay8910->ampVolume[channel] & 0x10) {
-                sampleVolume += (Int16)tone * voltTable[envVolume] / 16;
+                sampleVolume += (Int16)tone * voltEnvTable[envVolume] / 16;
             }
             else {
                 sampleVolume += (Int16)tone * voltTable[ay8910->ampVolume[channel]] / 16;

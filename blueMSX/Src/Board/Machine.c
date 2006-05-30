@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-02-18 09:32:32 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -144,6 +144,10 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     // Read board info
     iniFileGetString("Board", "type", "none", buffer, 10000);
     if      (0 == strcmp(buffer, "MSX"))          machine->board.type = BOARD_MSX;
+    else if (0 == strcmp(buffer, "MSX-S3527"))    machine->board.type = BOARD_MSX_S3527;
+    else if (0 == strcmp(buffer, "MSX-S1985"))    machine->board.type = BOARD_MSX_S1985;
+    else if (0 == strcmp(buffer, "MSX-T9769B"))   machine->board.type = BOARD_MSX_T9769B;
+    else if (0 == strcmp(buffer, "MSX-T9769C"))   machine->board.type = BOARD_MSX_T9769C;
     else if (0 == strcmp(buffer, "SVI"))          machine->board.type = BOARD_SVI;
     else if (0 == strcmp(buffer, "ColecoVision")) machine->board.type = BOARD_COLECO;
     else if (0 == strcmp(buffer, "SG-1000"))      machine->board.type = BOARD_SG1000;
@@ -311,18 +315,22 @@ void machineSave(Machine* machine)
 
     // Write Board info
     switch (machine->board.type) {
-    case BOARD_MSX:     iniFileWriteString("Board", "type", "MSX"); break;
-    case BOARD_SVI:     iniFileWriteString("Board", "type", "SVI"); break;
-    case BOARD_COLECO:  iniFileWriteString("Board", "type", "ColecoVision"); break;
-    case BOARD_SG1000:  iniFileWriteString("Board", "type", "SG-1000"); break;
+    case BOARD_MSX:        iniFileWriteString("Board", "type", "MSX"); break;
+    case BOARD_MSX_S3527:  iniFileWriteString("Board", "type", "MSX-S3527"); break;
+    case BOARD_MSX_S1985:  iniFileWriteString("Board", "type", "MSX-S1985"); break;
+    case BOARD_MSX_T9769B: iniFileWriteString("Board", "type", "MSX-T9769B"); break;
+    case BOARD_MSX_T9769C: iniFileWriteString("Board", "type", "MSX-T9769C"); break;
+    case BOARD_SVI:        iniFileWriteString("Board", "type", "SVI"); break;
+    case BOARD_COLECO:     iniFileWriteString("Board", "type", "ColecoVision"); break;
+    case BOARD_SG1000:     iniFileWriteString("Board", "type", "SG-1000"); break;
     }
 
     // Write video info
     switch (machine->video.vdpVersion) {
-        case VDP_V9958:     iniFileWriteString("Video", "version", "V9958"); break;
-        case VDP_V9938:     iniFileWriteString("Video", "version", "V9938"); break;
-        case VDP_TMS9929A:  iniFileWriteString("Video", "version", "TMS9929A"); break;
-        case VDP_TMS99x8A:  iniFileWriteString("Video", "version", "TMS99x8A"); break;
+    case VDP_V9958:     iniFileWriteString("Video", "version", "V9958"); break;
+    case VDP_V9938:     iniFileWriteString("Video", "version", "V9938"); break;
+    case VDP_TMS9929A:  iniFileWriteString("Video", "version", "TMS9929A"); break;
+    case VDP_TMS99x8A:  iniFileWriteString("Video", "version", "TMS99x8A"); break;
     }
 
     sprintf(buffer, "%dkB", machine->video.vramSize / 0x400);

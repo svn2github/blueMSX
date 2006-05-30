@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-10-29 22:53:10 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,10 +33,22 @@
 #include "MSXTypes.h"
 #include "MediaDb.h"
 #include "VDP.h"
+#include "AY8910.h"
 #include <stdio.h>
 
 
-typedef enum { BOARD_UNKNOWN = -1, BOARD_MSX, BOARD_SVI, BOARD_COLECO, BOARD_SG1000 } BoardType;
+typedef enum { 
+    BOARD_UNKNOWN       = -1, 
+    BOARD_MSX           = 0x0100 + 0x00, 
+    BOARD_MSX_S3527     = 0x0100 + 0x01,
+    BOARD_MSX_S1985     = 0x0100 + 0x02,
+    BOARD_MSX_T9769B    = 0x0100 + 0x03,
+    BOARD_MSX_T9769C    = 0x0100 + 0x04,
+    BOARD_SVI           = 0x0200 + 0x00,
+    BOARD_COLECO        = 0x0300 + 0x00,
+    BOARD_SG1000        = 0x0400 + 0x00,
+    BOARD_MASK          = 0xff00
+} BoardType;
 
 typedef struct {
     RomType romType;

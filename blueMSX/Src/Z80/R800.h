@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-09-04 04:25:24 $
+** $Date: 2006-05-30 20:02:44 $
 **
 ** Author: Daniel Vik
 **
@@ -99,6 +99,18 @@
 ******************************************************
 */
 typedef enum { CPU_Z80 = 0, CPU_R800 = 1 } CpuMode;
+
+
+/*****************************************************
+** CpuFlags
+**
+** CPU configuration
+******************************************************
+*/
+typedef enum { 
+    CPU_VDP_IO_DELAY = 0x0001,
+    CPU_ENABLE_M1    = 0x0002,
+} CpuFlags;
 
 
 /*****************************************************
@@ -231,6 +243,7 @@ typedef struct
     CpuMode       cpuMode;          /* Current CPU mode                */
     CpuMode       oldCpuMode;       /* CPU mode before CPU switch      */
     CpuRegs       regBanks[2];      /* Z80 and R800 register banks     */
+    UInt32        cpuFlags;         /* Current CPU flags               */
 
     UInt32        frequencyZ80;     /* Frequency of Z80 (in Hz)        */
     UInt32        frequencyR800;    /* Frequency of R800 (in Hz)       */
@@ -284,7 +297,8 @@ typedef struct
 **      A pointer to a new R800 object.
 *************************************************************************
 */
-R800* r800Create(R800ReadCb readMemory, R800WriteCb writeMemory,
+R800* r800Create(UInt32 cpuFlags, 
+                 R800ReadCb readMemory, R800WriteCb writeMemory,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
                  R800BreakptCb bpCb,    R800DebugCb debugCb,

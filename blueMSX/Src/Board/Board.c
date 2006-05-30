@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-05-30 04:10:17 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -228,6 +228,10 @@ int boardRun(Machine* machine,
     boardRunning = 1;
     switch (boardType) {
     case BOARD_MSX:
+    case BOARD_MSX_S3527:
+    case BOARD_MSX_S1985:
+    case BOARD_MSX_T9769B:
+    case BOARD_MSX_T9769C:
         success = msxCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     case BOARD_SVI:
@@ -268,7 +272,7 @@ int boardRun(Machine* machine,
 
 BoardType boardGetType()
 {
-    return boardType;
+    return boardType & BOARD_MASK;
 }
 
 Mixer* boardGetMixer()

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-09 17:03:38 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -179,12 +179,12 @@ static void destroy(MsxPsg* msxPsg)
     deviceManagerUnregister(msxPsg->deviceHandle);
 }
 
-MsxPsg* msxPsgCreate()
+MsxPsg* msxPsgCreate(PsgType type)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     MsxPsg* msxPsg = (MsxPsg*)calloc(1, sizeof(MsxPsg));
 
-    msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX);
+    msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, type);
     
     ay8910SetIoPort(msxPsg->ay8910, read, peek, write, msxPsg);
 

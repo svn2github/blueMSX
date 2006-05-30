@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2006-02-18 09:32:32 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -198,6 +198,10 @@ static void setBoardDropdown(HWND hDlg) {
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_DELETESTRING, 0, 0));
 
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX S-3527");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX S-1985");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX T-9769B");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX T-9769C");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SVI");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoVision");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SG-1000");
@@ -208,16 +212,32 @@ static void setBoardDropdown(HWND hDlg) {
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 0, 0);
         setSubSlotsEnable(hDlg, 1);
         break;
-    case BOARD_SVI:
+    case BOARD_MSX_S3527:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 1, 0);
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case BOARD_MSX_S1985:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 2, 0);
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case BOARD_MSX_T9769B:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 3, 0);
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case BOARD_MSX_T9769C:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 4, 0);
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case BOARD_SVI:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 5, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     case BOARD_COLECO:
-        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 2, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 6, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     case BOARD_SG1000:
-        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 3, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 7, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     }
@@ -234,14 +254,30 @@ static int getBoardDropDown(HWND hDlg) {
         setSubSlotsEnable(hDlg, 1);
         break;
     case 1:
+        machine->board.type = BOARD_MSX_S3527;
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case 2:
+        machine->board.type = BOARD_MSX_S1985;
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case 3:
+        machine->board.type = BOARD_MSX_T9769B;
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case 4:
+        machine->board.type = BOARD_MSX_T9769C;
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case 5:
         machine->board.type = BOARD_SVI;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 2:
+    case 6:
         machine->board.type = BOARD_COLECO;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 3:
+    case 7:
         machine->board.type = BOARD_SG1000;
         setSubSlotsEnable(hDlg, 0);
         break;

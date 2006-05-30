@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-07 04:46:14 $
+** $Date: 2006-05-30 20:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,10 +31,11 @@
 #define MSX_PSG_H
 
 #include "MsxTypes.h"
+#include "AY8910.h"
 
 typedef struct MsxPsg MsxPsg;
 
-MsxPsg* msxPsgCreate();
+MsxPsg* msxPsgCreate(PsgType type);
 
 #endif // MSX_PSG_H
 
