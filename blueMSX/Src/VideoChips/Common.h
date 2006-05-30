@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-02-03 23:27:38 $
+** $Date: 2006-05-30 21:10:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,34 @@ UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderEx
     return linePtr;
 }
 
+
+UInt16 *RefreshBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor2, int line512, int borderExtra)
+{
+    FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
+    int lineSize = line512 ? 2 : 1;
+    UInt16 *linePtr;
+    int offset;
+
+    Y -= vdp->displayOffest;
+
+    linePtr = frameBuffer->line[Y].buffer;
+
+    if (frameBuffer->line[Y].doubleWidth != line512 && line512 == 0) {
+        for(offset = 256 + 16; offset < 512 + 16; offset++) {
+            linePtr[offset] = 0;
+        }
+    }
+
+    frameBuffer->line[Y].doubleWidth = line512;
+
+    for (offset = lineSize * (BORDER_WIDTH + vdp->HAdjust + borderExtra) - 1; offset >= 0; offset -= 2) {
+        *linePtr++ = bgColor1;
+        *linePtr++ = bgColor2;
+    }
+
+    return linePtr;
+}
+
 static void RefreshRightBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderExtra) {
     FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
     int lineSize = line512 ? 2 : 1;
@@ -78,6 +106,26 @@ static void RefreshRightBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int
 
     for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset--) {
         linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor;
+    }
+}
+
+static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor2, int line512, int borderExtra) {
+    FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
+    int lineSize = line512 ? 2 : 1;
+    UInt16 *linePtr;
+    int offset;
+
+    Y -= vdp->displayOffest;
+
+    if (!displayEnable) {
+        return;
+    }
+    
+    linePtr = frameBuffer->line[Y].buffer;
+
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset-= 2) {
+        linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor1;
+        linePtr[lineSize * SCREEN_WIDTH - offset - 1] = bgColor2;
     }
 }
 
@@ -786,7 +834,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor & 0x03], 1, 0);
+        linePtr = RefreshBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
         
@@ -831,24 +879,25 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     }
 
     if (border) {
-        UInt16 bgColor = vdp->palette[vdp->BGColor & 0x03];
+        UInt16 bgColor1 = vdp->palette[(vdp->BGColor >> 2) & 0x03];
+        UInt16 bgColor2 = vdp->palette[vdp->BGColor & 0x03];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr[8] = bgColor;
-            linePtr[9] = bgColor;
-            linePtr[10] = bgColor;
-            linePtr[11] = bgColor;
-            linePtr[12] = bgColor;
-            linePtr[13] = bgColor;
-            linePtr[14] = bgColor;
-            linePtr[15] = bgColor;
+            linePtr[0] = bgColor1;
+            linePtr[1] = bgColor2;
+            linePtr[2] = bgColor1;
+            linePtr[3] = bgColor2;
+            linePtr[4] = bgColor1;
+            linePtr[5] = bgColor2;
+            linePtr[6] = bgColor1;
+            linePtr[7] = bgColor2;
+            linePtr[8] = bgColor1;
+            linePtr[9] = bgColor2;
+            linePtr[10] = bgColor1;
+            linePtr[11] = bgColor2;
+            linePtr[12] = bgColor1;
+            linePtr[13] = bgColor2;
+            linePtr[14] = bgColor1;
+            linePtr[15] = bgColor2;
             linePtr += 16; 
             X++;
         }
@@ -1020,7 +1069,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
-        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor & 0x03], 1, 0);
+        RefreshRightBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
     }
 }
 
