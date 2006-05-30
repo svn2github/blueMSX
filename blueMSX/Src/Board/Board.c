@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -239,6 +239,9 @@ int boardRun(Machine* machine,
         break;
     case BOARD_COLECO:
         success = colecoCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
+        break;
+    case BOARD_COLECOADAM:
+        success = adamCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     case BOARD_SG1000:
         success = sg1000Create(machine, deviceInfo->video.vdpSyncMode, &boardInfo);

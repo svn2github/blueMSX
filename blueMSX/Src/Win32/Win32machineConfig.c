@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -178,6 +178,7 @@ static void setSubSlotsEnable(HWND hDlg, int nEnable) {
             SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
             break;
         case BOARD_COLECO:
+        case BOARD_COLECOADAM:
             SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART1, CB_SETCURSEL, 0, 0);
             SendDlgItemMessage(hDlg, IDC_CONF_SLOTCART2, CB_SETCURSEL, 0, 0);
             break;
@@ -204,6 +205,7 @@ static void setBoardDropdown(HWND hDlg) {
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX T-9769C");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SVI");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoVision");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoAdam");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SG-1000");
 
     switch (machine->board.type) {
@@ -236,8 +238,12 @@ static void setBoardDropdown(HWND hDlg) {
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 6, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_SG1000:
+    case BOARD_COLECOADAM:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 7, 0);
+        setSubSlotsEnable(hDlg, 0);
+        break;
+    case BOARD_SG1000:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 8, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     }
@@ -278,6 +284,10 @@ static int getBoardDropDown(HWND hDlg) {
         setSubSlotsEnable(hDlg, 0);
         break;
     case 7:
+        machine->board.type = BOARD_COLECOADAM;
+        setSubSlotsEnable(hDlg, 0);
+        break;
+    case 8:
         machine->board.type = BOARD_SG1000;
         setSubSlotsEnable(hDlg, 0);
         break;

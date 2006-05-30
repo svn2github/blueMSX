@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@ typedef enum {
     BOARD_MSX_T9769C    = 0x0100 + 0x04,
     BOARD_SVI           = 0x0200 + 0x00,
     BOARD_COLECO        = 0x0300 + 0x00,
+    BOARD_COLECOADAM    = 0x3000 + 0x01,
     BOARD_SG1000        = 0x0400 + 0x00,
     BOARD_MASK          = 0xff00
 } BoardType;

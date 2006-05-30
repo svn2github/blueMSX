@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-03-11 09:15:56 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1031,6 +1031,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
         staticMediaType.romType = ROM_SVI328;
         return &staticMediaType;
     case BOARD_COLECO:
+    case BOARD_COLECOADAM:
         staticMediaType.romType = ROM_COLECO;
         return &staticMediaType;
     case BOARD_SG1000:

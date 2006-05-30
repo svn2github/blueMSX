@@ -1634,6 +1634,12 @@ buildnumber.exe
 			Name="Board"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Board\Adam.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Board\Adam.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Board\Board.c">
 			</File>
 			<File

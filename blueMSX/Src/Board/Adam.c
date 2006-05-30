@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Adam.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-14 19:32:52 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,7 +135,7 @@ static UInt8 adamNetRead(void* arg, UInt16 address)
  
  
 // ---------------------------------------------
-// SG-1000 Joystick and PSG handler
+// ColecoAdam Joystick and PSG handler
 
 static ColecoJoystickDevice* joyDevice[2];
 static int joyDeviceHandle;
@@ -353,7 +353,7 @@ int adamCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 2;

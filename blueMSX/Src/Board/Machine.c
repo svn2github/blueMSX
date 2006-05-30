@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-30 21:17:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,6 +150,7 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else if (0 == strcmp(buffer, "MSX-T9769C"))   machine->board.type = BOARD_MSX_T9769C;
     else if (0 == strcmp(buffer, "SVI"))          machine->board.type = BOARD_SVI;
     else if (0 == strcmp(buffer, "ColecoVision")) machine->board.type = BOARD_COLECO;
+    else if (0 == strcmp(buffer, "ColecoAdam"))   machine->board.type = BOARD_COLECOADAM;
     else if (0 == strcmp(buffer, "SG-1000"))      machine->board.type = BOARD_SG1000;
     else                                          machine->board.type = BOARD_MSX;
 
@@ -322,6 +323,7 @@ void machineSave(Machine* machine)
     case BOARD_MSX_T9769C: iniFileWriteString("Board", "type", "MSX-T9769C"); break;
     case BOARD_SVI:        iniFileWriteString("Board", "type", "SVI"); break;
     case BOARD_COLECO:     iniFileWriteString("Board", "type", "ColecoVision"); break;
+    case BOARD_COLECOADAM: iniFileWriteString("Board", "type", "ColecoAdam"); break;
     case BOARD_SG1000:     iniFileWriteString("Board", "type", "SG-1000"); break;
     }
 
