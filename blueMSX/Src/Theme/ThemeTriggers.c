@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2005-12-19 21:50:47 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -450,6 +450,10 @@ int themeTriggerJoyPort1IsTetris2Dongle() {
     return joystickPortGetType(0) == JOYSTICK_PORT_TETRIS2DONGLE ? 1 : 0;
 }
 
+int themeTriggerJoyPort1IsMagicKeyDongle() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_MAGICKEYDONGLE ? 1 : 0;
+}
+
 int themeTriggerJoyPort1IsLightgun() {
     return joystickPortGetType(0) == JOYSTICK_PORT_LIGHTGUN ? 1 : 0;
 }
@@ -476,6 +480,10 @@ int themeTriggerJoyPort2IsMouse() {
 
 int themeTriggerJoyPort2IsTetris2Dongle() {
     return joystickPortGetType(1) == JOYSTICK_PORT_TETRIS2DONGLE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsMagicKeyDongle() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_MAGICKEYDONGLE ? 1 : 0;
 }
 
 int themeTriggerJoyPort2IsLightgun() {
@@ -831,6 +839,7 @@ char* themeTriggerJoyPort1() {
     case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
     case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
     case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
+    case JOYSTICK_PORT_MAGICKEYDONGLE:  return "Magic Key Dongle";
     }
     return "Unknown";
 }
@@ -843,6 +852,7 @@ char* themeTriggerJoyPort2() {
     case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
     case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
     case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
+    case JOYSTICK_PORT_MAGICKEYDONGLE:  return "Magic Key Dongle";
     }
     return "Unknown";
 }

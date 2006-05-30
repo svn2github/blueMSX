@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -646,6 +646,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->portableReadonly        = "Portable device is readonly";
     
     ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
+
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
 };
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -417,6 +417,7 @@ _TCHAR* langEnumControlsJoyNone();
 _TCHAR* langEnumControlsJoyNumpad();
 _TCHAR* langEnumControlsJoyKeyset();
 _TCHAR* langEnumControlsJoyTetrisDongle();
+_TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyKeysetA();
 _TCHAR* langEnumControlsJoyKeysetB();
 _TCHAR* langEnumControlsJoyPCjoy1();

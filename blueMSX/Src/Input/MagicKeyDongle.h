@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MagicKeyDongle.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-05-30 22:32:43 $
 **
@@ -27,29 +27,14 @@
 **
 ******************************************************************************
 */
-#ifndef JOYSTICK_PORT_H
-#define JOYSTICK_PORT_H
+#ifndef MAGIC_KEY_DONGLE_H
+#define MAGIC_KEY_DONGLE_H
 
 #include "MsxTypes.h"
+#include "MsxJoystickDevice.h"
 
-#define JOYSTICK_MAX_PORTS 2
+typedef struct MagicKeyDongle MagicKeyDongle;
 
-typedef enum {
-    JOYSTICK_PORT_NONE,
-    JOYSTICK_PORT_JOYSTICK,
-    JOYSTICK_PORT_MOUSE,
-    JOYSTICK_PORT_TETRIS2DONGLE,
-    JOYSTICK_PORT_LIGHTGUN,
-    JOYSTICK_PORT_COLECOJOYSTICK,
-    JOYSTICK_PORT_MAGICKEYDONGLE
-} JoystickPortType;
+MsxJoystickDevice* magicKeyDongleCreate();
 
-typedef void (*JoystickPortUpdateHandler)(void*, int, JoystickPortType);
-
-void joystickPortSetType(int port, JoystickPortType type);
-JoystickPortType joystickPortGetType(int port);
-
-void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref);
-void joystickPortUpdateHandlerUnregister();
-
-#endif // JOYSTICK_PORT_H
+#endif 

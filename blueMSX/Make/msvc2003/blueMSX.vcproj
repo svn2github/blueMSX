@@ -1840,6 +1840,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Input\JoystickPort.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Input\MagicKeyDongle.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MagicKeyDongle.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Input\MsxJoystick.c">
 			</File>
 			<File

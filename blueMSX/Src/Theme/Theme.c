@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2005-11-11 06:26:10 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,6 +185,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY1_JOYSTICK:  idx = TEST(actionType, themeTriggerJoyPort1IsJoystick()); break;
     case THEME_TRIGGER_JOY1_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort1IsMouse()); break;
     case THEME_TRIGGER_JOY1_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort1IsTetris2Dongle()); break;
+    case THEME_TRIGGER_JOY1_MAGICKEY:  idx = TEST(actionType, themeTriggerJoyPort1IsMagicKeyDongle()); break;
     case THEME_TRIGGER_JOY1_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort1IsLightgun()); break;
     case THEME_TRIGGER_JOY1_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort1IsColecoJoystick()); break;
 
@@ -193,6 +194,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY2_JOYSTICK:  idx = TEST(actionType, themeTriggerJoyPort2IsJoystick()); break;
     case THEME_TRIGGER_JOY2_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort2IsMouse()); break;
     case THEME_TRIGGER_JOY2_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort2IsTetris2Dongle()); break;
+    case THEME_TRIGGER_JOY2_MAGICKEY:  idx = TEST(actionType, themeTriggerJoyPort2IsMagicKeyDongle()); break;
     case THEME_TRIGGER_JOY2_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort2IsLightgun()); break;
     case THEME_TRIGGER_JOY2_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort2IsColecoJoystick()); break;
     }

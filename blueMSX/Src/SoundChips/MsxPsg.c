@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@
 #include "MsxJoystick.h"
 #include "MsxMouse.h"
 #include "MsxTetrisDongle.h"
+#include "MagicKeyDongle.h"
 
 #include <stdlib.h>
 
@@ -75,6 +76,9 @@ static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
         break;
     case JOYSTICK_PORT_TETRIS2DONGLE:
         msxPsg->devFun[port] = msxTetrisDongleCreate();
+        break;
+    case JOYSTICK_PORT_MAGICKEYDONGLE:
+        msxPsg->devFun[port] = magicKeyDongleCreate();
         break;
     }
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2006-03-16 07:04:36 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -576,6 +576,8 @@ static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
                ID_CTRLPORT1_BASE + 2, langEnumControlsJoyMouse());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 3, langEnumControlsJoyTetrisDongle());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 6, langEnumControlsJoyMagicKeyDongle());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 4, "Light Gun");
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
@@ -599,6 +601,8 @@ static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts)
                ID_CTRLPORT2_BASE + 2, langEnumControlsJoyMouse());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 3, langEnumControlsJoyTetrisDongle());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 6, langEnumControlsJoyMagicKeyDongle());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 4, "Light Gun");
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 

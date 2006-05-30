@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-05-30 21:17:16 $
+** $Date: 2006-05-30 22:32:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "SVI.h"
 #include "SG1000.h"
 #include "Coleco.h"
+#include "Adam.h"
 #include "AudioMixer.h"
 #include "YM2413.h"
 #include "Y8950.h"
