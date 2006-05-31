@@ -1472,6 +1472,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\SoundChips\MameVLM5030.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\SoundChips\MameYM2151.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\MameYM2151.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\SoundChips\Moonsound.cpp">
 			</File>
 			<File
@@ -1554,6 +1560,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\Y8950.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\YM2151.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\SoundChips\YM2151.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\SoundChips\YM2413.cpp">
