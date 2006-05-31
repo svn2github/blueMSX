@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-05-31 04:48:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,7 +217,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
         v *= 0.70794578438413791080221494218943;
     }
 
-    if ( type = PSGTYPE_YM2149) {
+    if ( type == PSGTYPE_YM2149) {
         double v = 0x26a9;
         for (i = 31; i > 0; i--) {
             voltEnvTable[i] = (Int16)v;
