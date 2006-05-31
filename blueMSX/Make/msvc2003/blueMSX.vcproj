@@ -1273,6 +1273,12 @@
 				RelativePath="..\..\Src\IoDevice\WD2793.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\wd33c93.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\wd33c93.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\WDCRC.c">
 			</File>
 			<File

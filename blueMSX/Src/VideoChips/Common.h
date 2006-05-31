@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-05-30 21:10:40 $
+** $Date: 2006-05-31 18:05:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,7 +104,7 @@ static void RefreshRightBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int
     
     linePtr = frameBuffer->line[Y].buffer;
 
-    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset--) {
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra + 1) - 1; offset > 0; offset--) {
         linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor;
     }
 }
@@ -123,9 +123,9 @@ static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor
     
     linePtr = frameBuffer->line[Y].buffer;
 
-    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset-= 2) {
-        linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor1;
-        linePtr[lineSize * SCREEN_WIDTH - offset - 1] = bgColor2;
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra + 1) - 1; offset > 0; offset-= 2) {
+        linePtr[lineSize * SCREEN_WIDTH - offset - 1] = bgColor1;
+        linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor2;
     }
 }
 
