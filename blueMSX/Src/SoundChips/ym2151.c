@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@
 #define SAMPLERATE       (FREQUENCY / 64)
 #define SAMPLERATE_OUT   44100
 #define BUFFER_SIZE      10000
-#define TIMER_FREQUENCY  (1 * boardFrequency() / SAMPLERATE)
+#define TIMER_FREQUENCY  (boardFrequency() / FREQUENCY * 64)
 
 
 struct YM2151 {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiSynth.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ static void write(RomMapperKonamiSynth* rm, UInt16 address, UInt8 value)
 	address += 0x4000;
 
 	if ((address & 0xc010) == 0x4000) {
-        dacWrite(rm->dac, value);
+        dacWrite(rm->dac, DAC_CH_MONO, value);
 	}
 }
 
@@ -85,7 +85,7 @@ int romMapperKonamiSynthCreate(char* filename, UInt8* romData,
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
-    rm->dac   = dacCreate(boardGetMixer());
+    rm->dac   = dacCreate(boardGetMixer(), DAC_MONO);
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

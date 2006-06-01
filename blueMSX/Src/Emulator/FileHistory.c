@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-01 00:40:23 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,6 +73,10 @@ char* stripPath(char* filename) {
 void updateFileHistory(char* history, RomType* historyType, char* filename, RomType romType) {
     char fname[PROP_MAXPATH];
     int i = 0;
+
+    if (strcmp(fname, CARTNAME_GAMEREADER) == 0) {
+        return;
+    }
 
     strcpy(fname, filename);
 

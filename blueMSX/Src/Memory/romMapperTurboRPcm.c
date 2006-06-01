@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,13 +131,13 @@ static void write(RomMapperTurboRPcm* rm, UInt16 ioPort, UInt8 value)
         rm->time = 0;
 		rm->sample = value;
 		if (rm->status & 0x02) {
-            dacWrite(rm->dac, rm->sample);
+            dacWrite(rm->dac, DAC_CH_MONO, rm->sample);
 		}
 		break;
 
     case 1:
         if ((value & 0x03) == 0x03 && (~rm->status & 0x01)) {
-            dacWrite(rm->dac, rm->sample);
+            dacWrite(rm->dac, DAC_CH_MONO, rm->sample);
 		}
 		rm->status = value & 0x1f;
         break;
@@ -169,7 +169,7 @@ int romMapperTurboRPcmCreate()
     rm->deviceHandle = deviceManagerRegister(ROM_TURBORPCM, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "PCM", &dbgCallbacks, rm);
 
-    rm->dac    = dacCreate(boardGetMixer());
+    rm->dac    = dacCreate(boardGetMixer(), DAC_MONO);
 	rm->status = 0;
     rm->time   = 0;
 

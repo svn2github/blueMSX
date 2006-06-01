@@ -450,14 +450,6 @@ static signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
 static signed int mem;		/* one sample delay memory */
 
 
-/* save output as raw 16-bit sample */
-/* #define SAVE_SAMPLE */
-/* #define SAVE_SEPARATE_CHANNELS */
-#if defined SAVE_SAMPLE || defined SAVE_SEPARATE_CHANNELS
-static FILE *sample[9];
-#endif
-
-
 /* own PI definition */
 #ifdef PI
 	#undef PI
@@ -698,10 +690,6 @@ void YM2151TimerCallback(MameYm2151 *chip, int timer)
 	    }
     }
 }
-
-
-
-
 
 
 static void set_connect( YM2151Operator *om1, int cha, int v)

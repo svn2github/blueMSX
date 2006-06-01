@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/PrinterIO.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,7 +58,7 @@ static void setType(PrinterIO* printerIO)
         printerIO->file = fopen(theFileName, "w+");
         break;
     case PRN_SIMPL:
-        printerIO->dac = dacCreate(boardGetMixer());
+        printerIO->dac = dacCreate(boardGetMixer(), DAC_MONO);
         break;
     }
 }
@@ -89,7 +89,7 @@ void printerIOWrite(PrinterIO* printerIO, UInt8 value)
         fwrite(&value, 1, 1, printerIO->file);
         break;
     case PRN_SIMPL:
-        dacWrite(printerIO->dac, value);
+        dacWrite(printerIO->dac, DAC_CH_MONO, value);
         break;
     }
 }

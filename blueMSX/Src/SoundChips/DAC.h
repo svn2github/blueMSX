@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/DAC.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:00:54 $
+** $Date: 2006-06-01 20:09:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,13 +38,16 @@
 /* Type definitions */
 typedef struct DAC DAC;
 
+typedef enum { DAC_MONO, DAC_STEREO } DacMode;
+typedef enum { DAC_CH_MONO = 0, DAC_CH_LEFT = 0, DAC_CH_RIGHT = 1 } DacChannel;
+
 /* Constructor and destructor */
-DAC* dacCreate(Mixer* mixer);
+DAC* dacCreate(Mixer* mixer, DacMode mode);
 void dacDestroy(DAC* dac);
 void dacReset(DAC* dac);
 
 /* Register read/write methods */
-void dacWrite(DAC* dac, UInt8 value);
+void dacWrite(DAC* dac, DacChannel channel, UInt8 value);
 
 #endif
 
