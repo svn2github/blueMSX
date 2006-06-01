@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-05-30 21:17:16 $
+** $Date: 2006-06-01 00:40:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -727,6 +727,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_YAMAHASFG05:
+        editSlotInfo.startPage = 0;
+        editSlotInfo.pageCount = 4;
+        break;
+
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
@@ -998,6 +1003,12 @@ static void setEditControls(HWND hDlg)
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
+    case ROM_YAMAHASFG05:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x7FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_SUNRISEIDE:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
@@ -1210,6 +1221,7 @@ static RomType romTypeList[] = {
     ROM_MICROSOL80,
     ROM_SONYHBIV1,
     ROM_FMDAS,
+    ROM_YAMAHASFG05,
     ROM_UNKNOWN,
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-05-30 21:17:16 $
+** $Date: 2006-06-01 00:40:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,6 +114,7 @@
 #include "romMapperNms8280VideoDa.h"
 #include "romMapperSonyHbiV1.h"
 #include "romMapperFmDas.h"
+#include "romMapperSfg05.h"
 
 int toint(char* buffer) 
 {
@@ -1072,6 +1073,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_MSXAUDIO:
             success &= romMapperMsxAudioCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_YAMAHASFG05:
+            success &= romMapperSfg05Create(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_KOEI:

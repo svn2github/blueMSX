@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-12-22 09:10:32 $
+** $Date: 2006-06-01 00:40:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -345,7 +345,8 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 properties->media.carts[i].type != ROM_SCCMIRRORED         &&
                 properties->media.carts[i].type != ROM_SCC                 &&
                 properties->media.carts[i].type != ROM_SCCPLUS             &&
-                properties->media.carts[i].type != ROM_SONYHBI55) 
+                properties->media.carts[i].type != ROM_SONYHBI55           &&
+                properties->media.carts[i].type != ROM_YAMAHASFG05)
             {
                 done = 1;
             }
