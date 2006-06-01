@@ -538,20 +538,6 @@ static void init_tables(void)
 		d1l_tab[i] = (UInt32)(m);
 		/*logerror("d1l_tab[%02x]=%08x\n",i,d1l_tab[i] );*/
 	}
-
-#ifdef SAVE_SAMPLE
-	sample[8]=fopen("sampsum.pcm","wb");
-#endif
-#ifdef SAVE_SEPARATE_CHANNELS
-	sample[0]=fopen("samp0.pcm","wb");
-	sample[1]=fopen("samp1.pcm","wb");
-	sample[2]=fopen("samp2.pcm","wb");
-	sample[3]=fopen("samp3.pcm","wb");
-	sample[4]=fopen("samp4.pcm","wb");
-	sample[5]=fopen("samp5.pcm","wb");
-	sample[6]=fopen("samp6.pcm","wb");
-	sample[7]=fopen("samp7.pcm","wb");
-#endif
 }
 
 
@@ -696,26 +682,19 @@ static void envelope_KONKOFF(YM2151Operator * op, int v)
 void YM2151TimerCallback(MameYm2151 *chip, int timer)
 {
     if (timer == 0) {
-        // FIXME: Shouldn't the timer stop if bit 7 in status reg is set?
-	    ym2151TimerStart(chip->ref, 0, 1);
-    	
         if (chip->irq_enable & 0x04)
 	    {
-		    int oldstate = chip->status & 3;
+            if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 1);
 		    chip->status |= 1;
-            ym2151Irq(chip->ref, 1);
 	    }
 	    if (chip->irq_enable & 0x80)
 		    chip->csm_req = 2;		/* request KEY ON / KEY OFF sequence */
     }
     if (timer == 1) {
-        // FIXME: Shouldn't the timer stop if bit 7 in status reg is set?
-	    ym2151TimerStart(chip->ref, 1, 1);
 	    if (chip->irq_enable & 0x08)
 	    {
-		    int oldstate = chip->status & 3;
+            if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 1);
 		    chip->status |= 2;
-            ym2151Irq(chip->ref, 1);
 	    }
     }
 }
@@ -937,13 +916,13 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
         case 0x10:
             chip->timer_A_val &= 0x03;
             chip->timer_A_val |= v << 2;
-			ym2151TimerSet(chip->ref, 0, 1 * (1024 - v));
+			ym2151TimerSet(chip->ref, 0, 1 * (1024 - chip->timer_A_val));
             break;
 
         case 0x11:
             chip->timer_A_val &= 0x03fc;
             chip->timer_A_val |= v & 3;
-			ym2151TimerSet(chip->ref, 0, 1 * (1024 - v));
+			ym2151TimerSet(chip->ref, 0, 1 * (1024 - chip->timer_A_val));
             break;
 
         case 0x12:
@@ -954,20 +933,16 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
 
 			chip->irq_enable = v;	/* bit 3-timer B, bit 2-timer A, bit 7 - CSM */
 
-			if (v&0x20)	/* reset timer B irq flag */
-			{
-				int oldstate = chip->status & 3;
-				chip->status &= 0xfd;
-
-                ym2151Irq(chip->ref, 0);
-			}
-
 			if (v&0x10)	/* reset timer A irq flag */
 			{
-				int oldstate = chip->status & 3;
-				chip->status &= 0xfe;
+				chip->status &= ~1;
+                if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 0);
+			}
 
-                ym2151Irq(chip->ref, 0);
+			if (v&0x20)	/* reset timer B irq flag */
+			{
+				chip->status &= ~2;
+                if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 0);
 			}
 
 			ym2151TimerStart(chip->ref, 0, v & 1);
@@ -1157,14 +1132,6 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
 	}
 }
 
-
-#ifdef LOG_CYM_FILE
-static void cymfile_callback (int n)
-{
-	if (cymfile)
-		fputc( (unsigned char)0, cymfile );
-}
-#endif
 
 
 int YM2151ReadStatus(MameYm2151 *chip)
@@ -1874,99 +1841,6 @@ static void advance(void)
 	}
 }
 
-#if 0
-static signed int acc_calc(signed int value)
-{
-	if (value>=0)
-	{
-		if (value < 0x0200)
-			return (value & ~0);
-		if (value < 0x0400)
-			return (value & ~1);
-		if (value < 0x0800)
-			return (value & ~3);
-		if (value < 0x1000)
-			return (value & ~7);
-		if (value < 0x2000)
-			return (value & ~15);
-		if (value < 0x4000)
-			return (value & ~31);
-		return (value & ~63);
-	}
-	/*else value < 0*/
-	if (value > -0x0200)
-		return (~abs(value) & ~0);
-	if (value > -0x0400)
-		return (~abs(value) & ~1);
-	if (value > -0x0800)
-		return (~abs(value) & ~3);
-	if (value > -0x1000)
-		return (~abs(value) & ~7);
-	if (value > -0x2000)
-		return (~abs(value) & ~15);
-	if (value > -0x4000)
-		return (~abs(value) & ~31);
-	return (~abs(value) & ~63);
-}
-#endif
-
-/* first macro saves left and right channels to mono file */
-/* second macro saves left and right channels to stereo file */
-#if 0	/*MONO*/
-	#ifdef SAVE_SEPARATE_CHANNELS
-	  #define SAVE_SINGLE_CHANNEL(j) \
-	  {	signed int pom= -(chanout[j] & PSG->pan[j*2]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]);  }
-	#else
-	  #define SAVE_SINGLE_CHANNEL(j)
-	#endif
-#else	/*STEREO*/
-	#ifdef SAVE_SEPARATE_CHANNELS
-	  #define SAVE_SINGLE_CHANNEL(j) \
-	  {	signed int pom = -(chanout[j] & PSG->pan[j*2]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
-		pom = -(chanout[j] & PSG->pan[j*2+1]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
-	  }
-	#else
-	  #define SAVE_SINGLE_CHANNEL(j)
-	#endif
-#endif
-
-/* first macro saves left and right channels to mono file */
-/* second macro saves left and right channels to stereo file */
-#if 1	/*MONO*/
-	#ifdef SAVE_SAMPLE
-	  #define SAVE_ALL_CHANNELS \
-	  {	signed int pom = outl; \
-		/*pom = acc_calc(pom);*/ \
-		/*fprintf(sample[8]," %i\n",pom);*/ \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-	  }
-	#else
-	  #define SAVE_ALL_CHANNELS
-	#endif
-#else	/*STEREO*/
-	#ifdef SAVE_SAMPLE
-	  #define SAVE_ALL_CHANNELS \
-	  {	signed int pom = outl; \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-		pom = outr; \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-	  }
-	#else
-	  #define SAVE_ALL_CHANNELS
-	#endif
-#endif
 
 
 /*	Generate samples for one of the YM2151's
@@ -1996,21 +1870,13 @@ void YM2151UpdateOne(MameYm2151* chip, Int16* bufL, Int16* bufR, int length)
 		chanout[7] = 0;
 
 		chan_calc(0);
-		SAVE_SINGLE_CHANNEL(0)
 		chan_calc(1);
-		SAVE_SINGLE_CHANNEL(1)
 		chan_calc(2);
-		SAVE_SINGLE_CHANNEL(2)
 		chan_calc(3);
-		SAVE_SINGLE_CHANNEL(3)
 		chan_calc(4);
-		SAVE_SINGLE_CHANNEL(4)
 		chan_calc(5);
-		SAVE_SINGLE_CHANNEL(5)
 		chan_calc(6);
-		SAVE_SINGLE_CHANNEL(6)
 		chan7_calc();
-		SAVE_SINGLE_CHANNEL(7)
 
 		outl = chanout[0] & PSG->pan[0];
 		outr = chanout[0] & PSG->pan[1];
@@ -2037,8 +1903,6 @@ void YM2151UpdateOne(MameYm2151* chip, Int16* bufL, Int16* bufR, int length)
 			else if (outr < MINOUT) outr = MINOUT;
 		((Int16*)bufL)[i] = (Int16)outl;
 		((Int16*)bufR)[i] = (Int16)outr;
-
-		SAVE_ALL_CHANNELS
 
 		advance();
 	}

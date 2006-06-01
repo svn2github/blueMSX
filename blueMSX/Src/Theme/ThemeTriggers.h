@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ typedef enum {
     THEME_TRIGGER_IMG_FDCTIMING,
     THEME_TRIGGER_IMG_KBD,
     THEME_TRIGGER_IMG_MOON,
+    THEME_TRIGGER_IMG_SFG,
     THEME_TRIGGER_IMG_MSXA,
     THEME_TRIGGER_IMG_MSXM,
     THEME_TRIGGER_IMG_MASTER,
@@ -61,6 +62,8 @@ typedef enum {
     THEME_TRIGGER_IMG_R_KBD,
     THEME_TRIGGER_IMG_L_MOON,
     THEME_TRIGGER_IMG_R_MOON,
+    THEME_TRIGGER_IMG_L_SFG,
+    THEME_TRIGGER_IMG_R_SFG,
     THEME_TRIGGER_IMG_L_MSXA,
     THEME_TRIGGER_IMG_R_MSXA,
     THEME_TRIGGER_IMG_L_MSXM,
@@ -78,6 +81,7 @@ typedef enum {
     THEME_TRIGGER_IMG_L_MASTER,
     THEME_TRIGGER_IMG_R_MASTER,
     THEME_TRIGGER_IMG_M_MOON,
+    THEME_TRIGGER_IMG_M_SFG,
     THEME_TRIGGER_IMG_M_MSXM,
     THEME_TRIGGER_IMG_M_MSXA,
     THEME_TRIGGER_IMG_M_SCC,
@@ -160,6 +164,7 @@ typedef enum {
     THEME_TRIGGER_LEVEL_MSXMUSIC,
     THEME_TRIGGER_LEVEL_MSXAUDIO,
     THEME_TRIGGER_LEVEL_MOONSOUND,
+    THEME_TRIGGER_LEVEL_SFG,
     THEME_TRIGGER_LEVEL_MIDI,
     THEME_TRIGGER_PAN_PSG,
     THEME_TRIGGER_PAN_PCM,
@@ -169,6 +174,7 @@ typedef enum {
     THEME_TRIGGER_PAN_MSXMUSIC,
     THEME_TRIGGER_PAN_MSXAUDIO,
     THEME_TRIGGER_PAN_MOONSOUND,
+    THEME_TRIGGER_PAN_SFG,
     THEME_TRIGGER_PAN_MIDI,
 
     THEME_TRIGGER_VIDEO_GAMMA,
@@ -244,6 +250,7 @@ int themeTriggerAudioStereo();
 int themeTriggerAudioMaster();
 int themeTriggerAudioKbd();
 int themeTriggerAudioMoonsound();
+int themeTriggerAudioYamahaSfg();
 int themeTriggerAudioMsxAudio();
 int themeTriggerAudioMsxMusic();
 int themeTriggerAudioPsg();
@@ -253,6 +260,7 @@ int themeTriggerAudioIo();
 int themeTriggerAudioMidi();
 
 int themeTriggerMachineMoonsound();
+int themeTriggerMachineYamahaCfg();
 int themeTriggerMachineMsxAudio();
 int themeTriggerMachineMsxMusic();
 int themeTriggerMachineScc();
@@ -292,6 +300,8 @@ int themeTriggerVolKbdLeft();
 int themeTriggerVolKbdRight();
 int themeTriggerVolMoonsoundLeft();
 int themeTriggerVolMoonsoundRight();
+int themeTriggerVolYamahaSfgLeft();
+int themeTriggerVolYamahaSfgRight();
 int themeTriggerVolMsxAudioLeft();
 int themeTriggerVolMsxAudioRight();
 int themeTriggerVolMsxMusicLeft();
@@ -346,6 +356,7 @@ int themeTriggerLevelKeyboard();
 int themeTriggerLevelMsxMusic();
 int themeTriggerLevelMsxAudio();
 int themeTriggerLevelMoonsound();
+int themeTriggerLevelYamahaSfg();
 int themeTriggerLevelMidi();
 int themeTriggerPanPsg();
 int themeTriggerPanPcm();
@@ -355,6 +366,7 @@ int themeTriggerPanKeyboard();
 int themeTriggerPanMsxMusic();
 int themeTriggerPanMsxAudio();
 int themeTriggerPanMoonsound();
+int themeTriggerPanYamahaSfg();
 int themeTriggerPanMidi();
 
 int themeTriggerLevelRensha();

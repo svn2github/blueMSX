@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-01 07:02:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -826,6 +826,13 @@ void actionMuteToggleMoonsound() {
     mixerEnableChannelType(state.mixer, channel, newEnable);
 }
 
+void actionMuteToggleYamahaSfg() {
+    int channel = MIXER_CHANNEL_YAMAHA_SFG;
+    int newEnable = !state.properties->sound.mixerChannel[channel].enable;
+    state.properties->sound.mixerChannel[channel].enable = newEnable;
+    mixerEnableChannelType(state.mixer, channel, newEnable);
+}
+
 void actionMuteToggleMidi() {
     int channel = MIXER_CHANNEL_MIDI;
     int newEnable = !state.properties->sound.mixerChannel[channel].enable;
@@ -1024,6 +1031,11 @@ void actionVolumeSetMoonsound(int value) {
     mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
 }
 
+void actionVolumeSetYamahaSfg(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].volume = value;
+    mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_YAMAHA_SFG, value);
+}
+
 void actionVolumeSetKeyboard(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = value;
     mixerSetChannelTypeVolume(state.mixer, MIXER_CHANNEL_KEYBOARD, value);
@@ -1067,6 +1079,11 @@ void actionPanSetMsxAudio(int value) {
 void actionPanSetMoonsound(int value) {
     state.properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = value;
     mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_MOONSOUND, value);
+}
+
+void actionPanSetYamahaSfg(int value) {
+    state.properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].pan = value;
+    mixerSetChannelTypePan(state.mixer, MIXER_CHANNEL_YAMAHA_SFG, value);
 }
 
 void actionPanSetKeyboard(int value) {

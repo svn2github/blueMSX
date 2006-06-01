@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-05-31 22:21:58 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -87,9 +87,9 @@ void ym2151WritePortCallback(void* ref, UInt32 port, UInt8 value)
 static void onTimeout1(void* ptr, UInt32 time)
 {
     YM2151* ym2151 = (YM2151*)ptr;
-
     ym2151->timerRunning1 = 0;
     YM2151TimerCallback(ym2151->opl, 0);
+    ym2151TimerStart(ptr, 0, 1);
 }
 
 static void onTimeout2(void* ptr, UInt32 time)
@@ -98,6 +98,7 @@ static void onTimeout2(void* ptr, UInt32 time)
 
     ym2151->timerRunning2 = 0;
     YM2151TimerCallback(ym2151->opl, 1);
+    ym2151TimerStart(ptr, 1, 1);
 }
 
 void ym2151TimerStart(void* ptr, int timer, int start)
@@ -142,18 +143,12 @@ void ym2151TimerStart(void* ptr, int timer, int start)
 
 UInt8 ym2151Peek(YM2151* ym2151, UInt16 ioPort)
 {
-    return  0xff;
+    return (UInt8)YM2151ReadStatus(ym2151->opl);
 }
 
 UInt8 ym2151Read(YM2151* ym2151, UInt16 ioPort)
 {
-    switch (ioPort & 1) {
-    case 0:
-        return (UInt8)YM2151ReadStatus(ym2151->opl);
-    case 1:
-        break;
-    }
-    return  0xff;
+    return (UInt8)YM2151ReadStatus(ym2151->opl);
 }
 
 void ym2151Write(YM2151* ym2151, UInt16 ioPort, UInt8 value)
@@ -194,8 +189,8 @@ static Int32* ym2151Sync(void* ref, UInt32 count)
             ym2151->s2l = sl;
             ym2151->s2r = sr;
         }
-        ym2151->buffer[2*i+0] = (ym2151->s1l * (ym2151->off / 256) + ym2151->s2l * ((SAMPLERATE - ym2151->off) / 256)) / (SAMPLERATE / 256);
-        ym2151->buffer[2*i+1] = (ym2151->s1r * (ym2151->off / 256) + ym2151->s2r * ((SAMPLERATE - ym2151->off) / 256)) / (SAMPLERATE / 256);
+        ym2151->buffer[2*i+0] = 11*(Int32)((ym2151->s1l * (ym2151->off / 256) + ym2151->s2l * ((SAMPLERATE - ym2151->off) / 256)) / (SAMPLERATE / 256));
+        ym2151->buffer[2*i+1] = 11*(Int32)((ym2151->s1r * (ym2151->off / 256) + ym2151->s2r * ((SAMPLERATE - ym2151->off) / 256)) / (SAMPLERATE / 256));
     }
 
     return ym2151->buffer;
@@ -278,7 +273,7 @@ YM2151* ym2151Create(Mixer* mixer)
     ym2151->timer1 = boardTimerCreate(onTimeout1, ym2151);
     ym2151->timer2 = boardTimerCreate(onTimeout2, ym2151);
 
-    ym2151->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, ym2151Sync, ym2151);
+    ym2151->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_YAMAHA_SFG, 1, ym2151Sync, ym2151);
 
     ym2151->opl = YM2151Create(ym2151, FREQUENCY, SAMPLERATE);
 

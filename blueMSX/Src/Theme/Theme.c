@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,6 +80,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_FDCTIMING:   idx = TEST(actionType, themeTriggerFdcTiming()); break;
     case THEME_TRIGGER_IMG_KBD:         idx = TEST(actionType, themeTriggerAudioKbd()); break;
     case THEME_TRIGGER_IMG_MOON:        idx = TEST(actionType, themeTriggerAudioMoonsound()); break;
+    case THEME_TRIGGER_IMG_SFG:         idx = TEST(actionType, themeTriggerAudioYamahaSfg()); break;
     case THEME_TRIGGER_IMG_MSXA:        idx = TEST(actionType, themeTriggerAudioMsxAudio()); break;
     case THEME_TRIGGER_IMG_MSXM:        idx = TEST(actionType, themeTriggerAudioMsxMusic()); break;
     case THEME_TRIGGER_IMG_PSG:         idx = TEST(actionType, themeTriggerAudioPsg()); break;
@@ -93,6 +94,8 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_R_KBD:       idx = themeTriggerVolKbdRight(); break;
     case THEME_TRIGGER_IMG_L_MOON:      idx = themeTriggerVolMoonsoundLeft(); break;
     case THEME_TRIGGER_IMG_R_MOON:      idx = themeTriggerVolMoonsoundRight(); break;
+    case THEME_TRIGGER_IMG_L_SFG:       idx = themeTriggerVolYamahaSfgLeft(); break;
+    case THEME_TRIGGER_IMG_R_SFG:       idx = themeTriggerVolYamahaSfgRight(); break;
     case THEME_TRIGGER_IMG_L_MSXA:      idx = themeTriggerVolMsxAudioLeft(); break;
     case THEME_TRIGGER_IMG_R_MSXA:      idx = themeTriggerVolMsxAudioRight(); break;
     case THEME_TRIGGER_IMG_L_MSXM:      idx = themeTriggerVolMsxMusicLeft(); break;
@@ -147,6 +150,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_LEVEL_MSXMUSIC:  idx = themeTriggerLevelMsxMusic(); break;
     case THEME_TRIGGER_LEVEL_MSXAUDIO:  idx = themeTriggerLevelMsxAudio(); break;
     case THEME_TRIGGER_LEVEL_MOONSOUND: idx = themeTriggerLevelMoonsound(); break;
+    case THEME_TRIGGER_LEVEL_SFG:       idx = themeTriggerLevelYamahaSfg(); break;
     case THEME_TRIGGER_LEVEL_MIDI:      idx = themeTriggerLevelMidi(); break;
     case THEME_TRIGGER_PAN_PSG:         idx = themeTriggerPanPsg(); break;
     case THEME_TRIGGER_PAN_PCM:         idx = themeTriggerPanPcm(); break;
@@ -156,6 +160,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_PAN_MSXMUSIC:    idx = themeTriggerPanMsxMusic(); break;
     case THEME_TRIGGER_PAN_MSXAUDIO:    idx = themeTriggerPanMsxAudio(); break;
     case THEME_TRIGGER_PAN_MOONSOUND:   idx = themeTriggerPanMoonsound(); break;
+    case THEME_TRIGGER_PAN_SFG:         idx = themeTriggerPanYamahaSfg(); break;
     case THEME_TRIGGER_PAN_MIDI:        idx = themeTriggerPanMidi(); break;
 
     case THEME_TRIGGER_EMUSPEED:        idx = themeTriggerLevelEmuSpeed(); break;
@@ -164,6 +169,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_RENSHALED:       idx = TEST(actionType, themeTriggerLedRensha()); break;
 
     case THEME_TRIGGER_IMG_M_MOON:      idx = TEST(actionType, themeTriggerMachineMoonsound()); break;
+    case THEME_TRIGGER_IMG_M_SFG:       idx = TEST(actionType, themeTriggerMachineYamahaCfg()); break;
     case THEME_TRIGGER_IMG_M_MSXM:      idx = TEST(actionType, themeTriggerMachineMsxMusic()); break;
     case THEME_TRIGGER_IMG_M_MSXA:      idx = TEST(actionType, themeTriggerMachineMsxAudio()); break;
     case THEME_TRIGGER_IMG_M_SCC:       idx = TEST(actionType, themeTriggerMachineScc()); break;

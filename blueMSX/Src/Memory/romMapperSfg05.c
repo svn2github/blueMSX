@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,11 +92,11 @@ static void destroy(RomMapperSfg05* rm)
 
 static UInt8 read(RomMapperSfg05* rm, UInt16 address) 
 {
-//    printf("R %.2x\n", address);
     if (address < 0x3ff0 || address >= 0x3ff8) {
     	return rm->romData[address & 0x7fff];
     }
 
+//    printf("R %.2x\n", address);
     switch (address & 0x3fff) {
     case 0x3ff0:
         return ym2151Read(rm->ym2151, 0);
@@ -119,6 +119,7 @@ static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value)
     	return;
     }
 
+//    printf("W %.2x: %.2x\n", address, value);
     switch (address & 0x3fff) {
     case 0x3ff0:
         ym2151Write(rm->ym2151, 0, value);

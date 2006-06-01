@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,6 +134,10 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable = 1;
     properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan = 50;
     properties->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume = 95;
+
+    properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].enable = 1;
+    properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].pan = 50;
+    properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].volume = 95;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
     properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
@@ -523,6 +527,9 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, enable);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, pan);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, volume);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, enable);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, pan);
+    GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, volume);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, enable);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, pan);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, volume);
@@ -718,6 +725,9 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, enable);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, pan);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MOONSOUND, volume);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, enable);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, pan);
+    SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_YAMAHA_SFG, volume);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, enable);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, pan);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_PCM, volume);

@@ -41,7 +41,7 @@ void YM2151Destroy(MameYm2151* chip);
 void YM2151ResetChip(MameYm2151* chip);
 void YM2151UpdateOne(MameYm2151* chip,Int16* bufL, Int16* bufR, int length);
 void YM2151WriteReg(MameYm2151* chip, int r, int v);
-int YM2151ReadStatus(MameYm2151* chip);
+int  YM2151ReadStatus(MameYm2151* chip);
 void YM2151TimerCallback(MameYm2151* chip, int timer);
 void YM2151LoadState(MameYm2151* chip);
 void YM2151SaveState(MameYm2151* chip);

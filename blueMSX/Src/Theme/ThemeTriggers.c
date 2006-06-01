@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -194,6 +194,10 @@ int themeTriggerAudioMoonsound() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].enable ? 1 : 0;
 }
 
+int themeTriggerAudioYamahaSfg() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].enable ? 1 : 0;
+}
+
 int themeTriggerAudioMsxAudio() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable ? 1 : 0;
 }
@@ -236,6 +240,14 @@ int themeTriggerVolMoonsoundLeft() {
 
 int themeTriggerVolMoonsoundRight() {
     return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_MOONSOUND, MIXER_CHANNEL_RIGHT);
+}
+
+int themeTriggerVolYamahaSfgLeft() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_YAMAHA_SFG, MIXER_CHANNEL_LEFT);
+}
+
+int themeTriggerVolYamahaSfgRight() {
+    return mixerGetChannelTypeVolume(mixerGetGlobalMixer(), MIXER_CHANNEL_YAMAHA_SFG, MIXER_CHANNEL_RIGHT);
 }
 
 int themeTriggerVolMsxAudioLeft() {
@@ -338,6 +350,10 @@ int themeTriggerLevelMoonsound() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].volume;
 }
 
+int themeTriggerLevelYamahaSfg() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].volume;
+}
+
 int themeTriggerLevelMidi() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume;
 }
@@ -374,6 +390,10 @@ int themeTriggerPanMoonsound() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MOONSOUND].pan;
 }
 
+int themeTriggerPanYamahaSfg() {
+    return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].pan;
+}
+
 int themeTriggerPanMidi() {
     return propGetGlobalProperties()->sound.mixerChannel[MIXER_CHANNEL_MIDI].pan;
 }
@@ -388,6 +408,10 @@ int themeTriggerLevelEmuSpeed() {
 
 int themeTriggerMachineMoonsound() {
     return mixerIsChannelTypeActive(mixerGetGlobalMixer(), MIXER_CHANNEL_MOONSOUND, 0);
+}
+
+int themeTriggerMachineYamahaCfg() {
+    return mixerIsChannelTypeActive(mixerGetGlobalMixer(), MIXER_CHANNEL_YAMAHA_SFG, 0);
 }
 
 int themeTriggerMachineMsxAudio() {

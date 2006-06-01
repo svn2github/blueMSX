@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.130 $
+** $Revision: 1.131 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-01 07:02:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2031,6 +2031,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 if (emulatorGetState() == EMU_RUNNING) {
                     if ((resetCnt++ & 0x3f) == 0) {
                         mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MOONSOUND, 1);
+                        mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_YAMAHA_SFG, 1);
                         mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXAUDIO, 1);
                         mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_MSXMUSIC, 1);
                         mixerIsChannelTypeActive(st.mixer, MIXER_CHANNEL_SCC, 1);
