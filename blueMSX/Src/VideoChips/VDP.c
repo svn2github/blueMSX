@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2006-04-25 07:16:34 $
+** $Date: 2006-06-01 23:18:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1125,6 +1125,9 @@ static void updatePalette(VDP* vdp, int palEntry, int r, int g, int b)
     }
     else {
         vdp->palette[palEntry] = color;
+        if (palEntry == vdp->BGColor) {
+            updateOutputMode(vdp);
+        }
     }
 }
 
@@ -1172,7 +1175,7 @@ static void sync(VDP* vdp, UInt32 systemTime)
         vdpCmdExecute(vdp->cmdEngine, boardSystemTime());
     }
 
-    if (!vdp->videoEnabled || !displayEnable) {
+    if (!vdp->videoEnabled || !displayEnable || frameBufferGetDrawFrame() == NULL) {
         return;
     }
 

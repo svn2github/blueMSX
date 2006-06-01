@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-05-24 22:58:49 $
+** $Date: 2006-06-01 23:18:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,9 +107,16 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         break;
 
     case 0x91:
-    case 0xf8:
         break;
 
+    case 0xf8: {
+        UInt32 sectorCount = diskGetSectorsPerTrack(hd->diskId);
+	    hd->sectorNumReg    = (UInt8)((sectorCount >>  0) & 0xff);
+	    hd->cylinderLowReg  = (UInt8)((sectorCount >>  8) & 0xff);
+	    hd->cylinderHighReg = (UInt8)((sectorCount >> 16) & 0xff);
+	    hd->devHeadReg      = (UInt8)((sectorCount >> 24) & 0x0f);
+        break;
+    }
     case 0x30: { // Write Sector
         int sectorNumber = getSectorNumber(hd);
         int numSectors = getNumSectors(hd);
