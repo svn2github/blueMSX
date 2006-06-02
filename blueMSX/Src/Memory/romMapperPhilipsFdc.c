@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPhilipsFdc.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-05-01 09:26:43 $
+** $Date: 2006-06-02 02:28:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,11 +156,11 @@ static void write(RomMapperPhilipsFdc* rm, UInt16 address, UInt8 value)
         case 0:
 		case 2:
 			wd2793SetDrive(rm->fdc, 0);
-            wd2793SetMotor(rm->fdc, value & 0x04);
+            wd2793SetMotor(rm->fdc, value & 0x80);
 			break;
 		case 1:
 			wd2793SetDrive(rm->fdc, 1);
-            wd2793SetMotor(rm->fdc, value & 0x04);
+            wd2793SetMotor(rm->fdc, value & 0x80);
 			break;
 		default:
 			wd2793SetDrive(rm->fdc, -1);
