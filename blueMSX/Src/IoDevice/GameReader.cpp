@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-03-16 07:04:35 $
+** $Date: 2006-06-02 00:14:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,8 +157,9 @@ bool GameReader::writeIo(UInt16 port, UInt8 value)
     return true;
 }
 
+#define MAX_GAMEREADERS 2
 
-static GameReader* GameReaders[2];
+static GameReader* GameReaders[MAX_GAMEREADERS] = { NULL, NULL };
 
 static void InitializeGameReaders()
 {
@@ -168,7 +169,7 @@ static void InitializeGameReaders()
         int gameReaderCount = 0;
 
         if (MsxGr->Init() == 0) {
-            for (int i = 0; i < 16 && gameReaderCount < 2; i++) {
+            for (int i = 0; i < 16 && gameReaderCount < MAX_GAMEREADERS; i++) {
                 if (MsxGr->IsSlotEnable(i)) {
                     GameReaders[gameReaderCount++] = new GameReader(i);
                 }
@@ -178,6 +179,20 @@ static void InitializeGameReaders()
         for (; gameReaderCount < 2; gameReaderCount++) {
             GameReaders[gameReaderCount] = new GameReader;
         }
+    }
+}
+
+static void DeinitializeGameReaders()
+{
+    if (MsxGr != NULL) {
+        for (int i = 0; i < MAX_GAMEREADERS; i++) {
+            if (GameReaders[i] != NULL) {
+                delete GameReaders[i];
+                GameReaders[i] = NULL;
+            }
+        }
+        delete MsxGr;
+        MsxGr = NULL;
     }
 }
 
@@ -194,6 +209,7 @@ extern "C" GrHandle* gameReaderCreate(int slot)
 
 extern "C" void gameReaderDestroy(GrHandle* grHandle)
 {
+    DeinitializeGameReaders();
 }
 
 extern "C" int gameReaderRead(GrHandle* grHandle, UInt16 address, void* buffer, int length)
