@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -642,8 +642,8 @@ _TCHAR* langConfSubslot() { return ls->confSubslot; }
 
 _TCHAR* langConfOpenRom() { return ls->confOpenRom; }
 
-_TCHAR* langShortcut() { return ls->hotkey; }
-_TCHAR* langHotkey() { return ls->shortcut; }
+_TCHAR* langShortcutKey() { return ls->shortcutKey; }
+_TCHAR* langShortcutDescription() { return ls->shortcutDescription; }
 _TCHAR* langFileRom() { return ls->fileRom; }
 _TCHAR* langFileAll() { return ls->fileAll; }
 _TCHAR* langFileCpuState() { return ls->fileCpuState; }
@@ -676,13 +676,13 @@ _TCHAR* langConfChipFdcNumDrivesText() { return ls->confCFdcNumDrivesText; }
 _TCHAR* langConfSaveTitle() { return ls->confSaveTitle; }
 _TCHAR* langConfSaveText() { return ls->confSaveText; }
 
-_TCHAR* langSlotEditMemTitle() { return ls->slotEditMemTitle; }
-_TCHAR* langSlotEditMemGB() { return ls->slotEditMemGB; }
-_TCHAR* langSlotEditMemType() { return ls->slotEditMemType; }
-_TCHAR* langSlotEditMemFile() { return ls->slotEditMemFile; }
-_TCHAR* langSlotEditMemAddress() { return ls->slotEditMemAddress; }
-_TCHAR* langSlotEditMemSize() { return ls->slotEditMemSize; }
-_TCHAR* langSlotEditMemSlot() { return ls->slotEditMemSlot; }
+_TCHAR* langConfEditMemTitle() { return ls->confEditMemTitle; }
+_TCHAR* langConfEditMemGB() { return ls->confEditMemGB; }
+_TCHAR* langConfEditMemType() { return ls->confEditMemType; }
+_TCHAR* langConfEditMemFile() { return ls->confEditMemFile; }
+_TCHAR* langConfEditMemAddress() { return ls->confEditMemAddress; }
+_TCHAR* langConfEditMemSize() { return ls->confEditMemSize; }
+_TCHAR* langConfEditMemSlot() { return ls->confEditMemSlot; }
 
 _TCHAR* langConfDiscardTitle() { return ls->confDiscardTitle; }
 _TCHAR* langConfExitSaveTitle() { return ls->confExitSaveTitle; }

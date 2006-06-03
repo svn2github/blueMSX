@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,13 +271,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confSaveTitle            = "blueMSX - Spara Konfigurering";
     ls->confSaveText             = "Vill du skriva över maskinkonfigureringen? :";
 
-    ls->slotEditMemTitle         = "blueMSX - Ändra Minnesmap";
-    ls->slotEditMemGB            = "Detailjer ";
-    ls->slotEditMemType          = "Typ:";
-    ls->slotEditMemFile          = "Fil:";
-    ls->slotEditMemAddress       = "Adress";
-    ls->slotEditMemSize          = "Storlek";
-    ls->slotEditMemSlot          = "Slot";
+    ls->confEditMemTitle         = "blueMSX - Ändra Minnesmap";
+    ls->confEditMemGB            = "Detailjer ";
+    ls->confEditMemType          = "Typ:";
+    ls->confEditMemFile          = "Fil:";
+    ls->confEditMemAddress       = "Adress";
+    ls->confEditMemSize          = "Storlek";
+    ls->confEditMemSlot          = "Slot";
 
     ls->confDiscardTitle         = "blueMSX - Konfigurering";
     ls->confExitSaveTitle        = "blueMSX - Avsluta Konfigureringsverktyg";
@@ -528,8 +528,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confSlot                = "Slot";
     ls->confSubslot             = "Subslot";
 
-    ls->shortcut                = "Kortkommando";
-    ls->hotkey                  = "Hotkey";
+    ls->shortcutDescription     = "Kortkommando";
+    ls->shortcutKey             = "Hotkey";
     ls->fileRom                 = "Rom fil";
     ls->confOpenRom             = "Öppna Rom fil";
     ls->fileAll                 = "Alla Filer";

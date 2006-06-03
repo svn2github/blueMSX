@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -241,6 +241,22 @@ _TCHAR* langDlgJoyGB();
 _TCHAR* langDlgLangLangText();
 _TCHAR* langDlgLangTitle();
 
+_TCHAR* langDlgAboutAbout();
+_TCHAR* langDlgAboutVersion();
+_TCHAR* langDlgAboutBuildNumber();
+_TCHAR* langDlgAboutBuildDate();
+_TCHAR* langDlgAboutCreat();
+_TCHAR* langDlgAboutDevel();
+_TCHAR* langDlgAboutThanks();
+_TCHAR* langDlgAboutLisence();
+
+_TCHAR* langDlgSave();
+_TCHAR* langDlgSaveAs();
+_TCHAR* langDlgRun();
+_TCHAR* langDlgClose();
+_TCHAR* langDlgSavePreview();
+_TCHAR* langDlgSaveDate();
+
 //----------------------
 // Properties related lines
 //----------------------
@@ -398,22 +414,6 @@ _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyMouse();
 
-_TCHAR* langDlgAboutAbout();
-_TCHAR* langDlgAboutVersion();
-_TCHAR* langDlgAboutBuildNumber();
-_TCHAR* langDlgAboutBuildDate();
-_TCHAR* langDlgAboutCreat();
-_TCHAR* langDlgAboutDevel();
-_TCHAR* langDlgAboutThanks();
-_TCHAR* langDlgAboutLisence();
-
-_TCHAR* langDlgSave();
-_TCHAR* langDlgSaveAs();
-_TCHAR* langDlgRun();
-_TCHAR* langDlgClose();
-_TCHAR* langDlgSavePreview();
-_TCHAR* langDlgSaveDate();
-
 //----------------------
 // Configuration related lines
 //----------------------
@@ -464,13 +464,13 @@ _TCHAR* langConfChipFdcNumDrivesText();
 
 _TCHAR* langConfOpenRom();
 
-_TCHAR* langSlotEditMemTitle();
-_TCHAR* langSlotEditMemGB();
-_TCHAR* langSlotEditMemType();
-_TCHAR* langSlotEditMemFile();
-_TCHAR* langSlotEditMemAddress();
-_TCHAR* langSlotEditMemSize();
-_TCHAR* langSlotEditMemSlot();
+_TCHAR* langConfEditMemTitle();
+_TCHAR* langConfEditMemGB();
+_TCHAR* langConfEditMemType();
+_TCHAR* langConfEditMemFile();
+_TCHAR* langConfEditMemAddress();
+_TCHAR* langConfEditMemSize();
+_TCHAR* langConfEditMemSlot();
 
 _TCHAR* langConfDiscardTitle();
 _TCHAR* langConfExitSaveTitle();
@@ -488,8 +488,8 @@ _TCHAR* langConfSaveAsName();
 // Shortcut lines
 //----------------------
 
-_TCHAR* langShortcut();
-_TCHAR* langHotkey();
+_TCHAR* langShortcutKey();
+_TCHAR* langShortcutDescription();
 
 _TCHAR* langShortcutSaveConfig();
 _TCHAR* langShortcutOverwriteConfig();

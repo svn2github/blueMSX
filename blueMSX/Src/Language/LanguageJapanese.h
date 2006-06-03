@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -274,13 +274,13 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confChipVideoRam         = "ビデオRAM:";
     ls->confChipSoundGB          = "サウンド ";
 
-    ls->slotEditMemTitle         = "blueMSX - マッパの編集";
-    ls->slotEditMemGB            = "マッパの詳細 ";
-    ls->slotEditMemType          = "タイプ:";
-    ls->slotEditMemFile          = "ファイル:";
-    ls->slotEditMemAddress       = "アドレス:";
-    ls->slotEditMemSize          = "サイズ:";
-    ls->slotEditMemSlot          = "スロット:";
+    ls->confEditMemTitle         = "blueMSX - マッパの編集";
+    ls->confEditMemGB            = "マッパの詳細 ";
+    ls->confEditMemType          = "タイプ:";
+    ls->confEditMemFile          = "ファイル:";
+    ls->confEditMemAddress       = "アドレス:";
+    ls->confEditMemSize          = "サイズ:";
+    ls->confEditMemSlot          = "スロット:";
 
     ls->confSaveAsTitle          = "blueMSX - マシン構\成を別名で保存...";
     ls->confSaveAsMachineName    = "構\成名:";
@@ -553,8 +553,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confSlot                = "スロット"; 
     ls->confSubslot             = "サブスロット"; 
 
-    ls->shortcut                = "ショートカット"; 
-    ls->hotkey                  = "ホットキー"; 
+    ls->shortcutDescription     = "ショートカット"; 
+    ls->shortcutKey             = "ホットキー"; 
     ls->fileRom                 = "ロム イメージ"; 
     ls->confOpenRom             = "ロム イメージを開く"; 
     ls->fileAll                 = "全てのファイル"; 

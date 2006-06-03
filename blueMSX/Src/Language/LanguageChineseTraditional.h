@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -268,13 +268,13 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->confChipVideoRam         = "視訊 RAM:";
     ls->confChipSoundGB          = "音效 ";
 
-    ls->slotEditMemTitle         = "blueMSX - 編輯對應器";
-    ls->slotEditMemGB            = "對應器細節 ";
-    ls->slotEditMemType          = "類型:";
-    ls->slotEditMemFile          = "檔案:";
-    ls->slotEditMemAddress       = "位址";
-    ls->slotEditMemSize          = "大小";
-    ls->slotEditMemSlot          = "插槽";
+    ls->confEditMemTitle         = "blueMSX - 編輯對應器";
+    ls->confEditMemGB            = "對應器細節 ";
+    ls->confEditMemType          = "類型:";
+    ls->confEditMemFile          = "檔案:";
+    ls->confEditMemAddress       = "位址";
+    ls->confEditMemSize          = "大小";
+    ls->confEditMemSlot          = "插槽";
 
     ls->confDiscardTitle         = "blueMSX - 設定";
     ls->confExitSaveTitle        = "blueMSX - 離開設定編輯器";
@@ -526,8 +526,8 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->confSlot                = "插槽";
     ls->confSubslot             = "子插槽";
 
-    ls->shortcut                = "捷徑";
-    ls->hotkey                  = "快速鍵";
+    ls->shortcutDescription     = "捷徑";
+    ls->shortcutKey             = "快速鍵";
     ls->fileRom                 = "ROM 映像檔";
     ls->confOpenRom             = "開啟 ROM 映像檔";
     ls->fileAll                 = "所有檔案";

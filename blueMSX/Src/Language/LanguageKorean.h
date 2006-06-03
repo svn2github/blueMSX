@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.16 $ + additions 2005/03/03
+** $Revision: 1.17 $ + additions 2005/03/03
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,13 +271,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->confChipVideoRam         = "비디오 램:";
     ls->confChipSoundGB          = "사운드 ";
 
-    ls->slotEditMemTitle         = "blueMSX - 맵퍼 편집";
-    ls->slotEditMemGB            = "맵퍼 항목 ";
-    ls->slotEditMemType          = "형식:";
-    ls->slotEditMemFile          = "파일:";
-    ls->slotEditMemAddress       = "주소";
-    ls->slotEditMemSize          = "크기";
-    ls->slotEditMemSlot          = "슬롯";
+    ls->confEditMemTitle         = "blueMSX - 맵퍼 편집";
+    ls->confEditMemGB            = "맵퍼 항목 ";
+    ls->confEditMemType          = "형식:";
+    ls->confEditMemFile          = "파일:";
+    ls->confEditMemAddress       = "주소";
+    ls->confEditMemSize          = "크기";
+    ls->confEditMemSlot          = "슬롯";
     ls->confDiscardTitle         = "blueMSX - 설정";
     ls->confExitSaveTitle        = "blueMSX - 머신 설정 편집기 나가기";
     ls->confExitSaveText         = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
@@ -524,8 +524,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->confSlot                = "슬롯";
     ls->confSubslot             = "서브 슬롯";
 
-    ls->shortcut                = "단축키";
-	ls->hotkey                  = "핫키";
+    ls->shortcutDescription     = "단축키";
+	ls->shortcutKey             = "핫키";
     ls->fileRom                 = "롬 이미지";
     ls->confOpenRom             = "롬 이미지 열기";
     ls->fileAll                 = "모든 파일";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -267,13 +267,13 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confChipVideoRam         = "显示内存:";
     ls->confChipSoundGB          = "声音 ";
 
-    ls->slotEditMemTitle         = "blueMSX - 编辑 Mapper";
-    ls->slotEditMemGB            = "Mapper 详细";
-    ls->slotEditMemType          = "类型:";
-    ls->slotEditMemFile          = "文件:";
-    ls->slotEditMemAddress       = "地址";
-    ls->slotEditMemSize          = "大小";
-    ls->slotEditMemSlot          = "插槽";
+    ls->confEditMemTitle         = "blueMSX - 编辑 Mapper";
+    ls->confEditMemGB            = "Mapper 详细";
+    ls->confEditMemType          = "类型:";
+    ls->confEditMemFile          = "文件:";
+    ls->confEditMemAddress       = "地址";
+    ls->confEditMemSize          = "大小";
+    ls->confEditMemSlot          = "插槽";
 
     ls->confDiscardTitle         = "blueMSX - 设置";
     ls->confExitSaveTitle        = "blueMSX - 退出编辑工具";
@@ -525,8 +525,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confSlot                = "插槽";
     ls->confSubslot             = "子插槽";
 
-    ls->shortcut                = "快捷键";
-    ls->hotkey                  = "热键";
+    ls->shortcutDescription     = "快捷键";
+    ls->shortcutKey             = "热键";
     ls->fileRom                 = "ROM 映像";
     ls->confOpenRom             = "打开 ROM 映像";
     ls->fileAll                 = "所有文件";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,13 +271,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confChipVideoRam         = "Video RAM:";
     ls->confChipSoundGB          = "Ääni ";
 
-    ls->slotEditMemTitle         = "blueMSX - Editoi kartoittaja";
-    ls->slotEditMemGB            = "Kartoittajan yksityiskohdat ";
-    ls->slotEditMemType          = "Tyyppi:";
-    ls->slotEditMemFile          = "Tiedosto:";
-    ls->slotEditMemAddress       = "Osoite";
-    ls->slotEditMemSize          = "Koko";
-    ls->slotEditMemSlot          = "Slot";
+    ls->confEditMemTitle         = "blueMSX - Editoi kartoittaja";
+    ls->confEditMemGB            = "Kartoittajan yksityiskohdat ";
+    ls->confEditMemType          = "Tyyppi:";
+    ls->confEditMemFile          = "Tiedosto:";
+    ls->confEditMemAddress       = "Osoite";
+    ls->confEditMemSize          = "Koko";
+    ls->confEditMemSlot          = "Slot";
 
     ls->confDiscardTitle         = "blueMSX - Kokoonpano";
     ls->confExitSaveTitle        = "blueMSX - Poistu kokoonpano editorista";

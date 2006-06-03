@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-06-03 19:20:49 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1264,13 +1264,13 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
     switch (iMsg) {
     case WM_INITDIALOG:
-        SetWindowText(hDlg, langSlotEditMemTitle());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMGB), langSlotEditMemGB());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMTYPE), langSlotEditMemType());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMFILE), langSlotEditMemFile());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMADDRESS), langSlotEditMemAddress());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMSIZE), langSlotEditMemSize());
-        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMSLOT), langSlotEditMemSlot());
+        SetWindowText(hDlg, langConfEditMemTitle());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMGB), langConfEditMemGB());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMTYPE), langConfEditMemType());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMFILE), langConfEditMemFile());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMADDRESS), langConfEditMemAddress());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMSIZE), langConfEditMemSize());
+        SetWindowText(GetDlgItem(hDlg, IDC_EDITMEMSLOT), langConfEditMemSlot());
         SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
         SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -274,13 +274,13 @@ void langInitDutch(LanguageStrings* ls)
     ls->confSaveTitle            = "blueMSX - Machine configuratie opslaan";
     ls->confSaveText             = "Deze machine configuratie vervangen? :";
 
-    ls->slotEditMemTitle         = "blueMSX - Aanpassen Mapper";
-    ls->slotEditMemGB            = "Mapper Details ";
-    ls->slotEditMemType          = "Type:";
-    ls->slotEditMemFile          = "Bestand:";
-    ls->slotEditMemAddress       = "Address";
-    ls->slotEditMemSize          = "Grootte";
-    ls->slotEditMemSlot          = "Slot";
+    ls->confEditMemTitle         = "blueMSX - Aanpassen Mapper";
+    ls->confEditMemGB            = "Mapper Details ";
+    ls->confEditMemType          = "Type:";
+    ls->confEditMemFile          = "Bestand:";
+    ls->confEditMemAddress       = "Address";
+    ls->confEditMemSize          = "Grootte";
+    ls->confEditMemSlot          = "Slot";
 
     ls->confDiscardTitle         = "blueMSX - Configuratie";
     ls->confExitSaveTitle        = "blueMSX - Machine configuratie afsluiten";

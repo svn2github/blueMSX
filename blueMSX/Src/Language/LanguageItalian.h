@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,13 +271,13 @@ void langInitItalian(LanguageStrings* ls)
     ls->confChipVideoRam         = "RAM video:";
     ls->confChipSoundGB          = "Audio ";
 
-    ls->slotEditMemTitle         = "blueMSX - Modifica il Mapper";
-    ls->slotEditMemGB            = "Dettagli del Mapper ";
-    ls->slotEditMemType          = "Tipo:";
-    ls->slotEditMemFile          = "File:";
-    ls->slotEditMemAddress       = "Indirizzo";
-    ls->slotEditMemSize          = "Dimensioni";
-    ls->slotEditMemSlot          = "Slot";
+    ls->confEditMemTitle         = "blueMSX - Modifica il Mapper";
+    ls->confEditMemGB            = "Dettagli del Mapper ";
+    ls->confEditMemType          = "Tipo:";
+    ls->confEditMemFile          = "File:";
+    ls->confEditMemAddress       = "Indirizzo";
+    ls->confEditMemSize          = "Dimensioni";
+    ls->confEditMemSlot          = "Slot";
 
     ls->confDiscardTitle         = "blueMSX - Configurazione";
     ls->confExitSaveTitle        = "blueMSX - Esci dall'editor di configurazione";
@@ -529,8 +529,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->confSlot                = "Slot"; 
     ls->confSubslot             = "Subslot"; 
 
-    ls->shortcut                = "Shortcut"; 
-    ls->hotkey                  = "Hotkey"; 
+    ls->shortcutDescription     = "Shortcut"; 
+    ls->shortcutKey             = "Hotkey"; 
     ls->fileRom                 = "ROM image"; 
     ls->confOpenRom             = "Aprire ROM image"; 
     ls->fileAll                 = "Tutti gli archivi"; 

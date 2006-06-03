@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-12-20 06:31:10 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1135,10 +1135,10 @@ static BOOL CALLBACK shortcutsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
             lvc.pszText    = buffer;
 	        lvc.cchTextMax = 32;
             
-            sprintf(buffer, langShortcut());
+            sprintf(buffer, langShortcutKey());
             lvc.cx = 244;
             ListView_InsertColumn(hwnd, 0, &lvc);
-            sprintf(buffer, langHotkey());
+            sprintf(buffer, langShortcutDescription());
             lvc.cx = 120;
             ListView_InsertColumn(hwnd, 1, &lvc);
 

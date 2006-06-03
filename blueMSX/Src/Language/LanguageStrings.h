@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-03 20:22:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -382,8 +382,8 @@ typedef struct {
     _TCHAR* confSlot;
     _TCHAR* confSubslot;
 
-    _TCHAR* shortcut;
-    _TCHAR* hotkey;
+    _TCHAR* shortcutDescription;
+    _TCHAR* shortcutKey;
     _TCHAR* fileRom;
     _TCHAR* confOpenRom;
     _TCHAR* fileAll;
@@ -402,13 +402,13 @@ typedef struct {
     _TCHAR* confMemSaveTitle;
     _TCHAR* confMemSaveText;
         
-    _TCHAR* slotEditMemTitle;
-    _TCHAR* slotEditMemGB;
-    _TCHAR* slotEditMemType;
-    _TCHAR* slotEditMemFile;
-    _TCHAR* slotEditMemAddress;
-    _TCHAR* slotEditMemSize;
-    _TCHAR* slotEditMemSlot;
+    _TCHAR* confEditMemTitle;
+    _TCHAR* confEditMemGB;
+    _TCHAR* confEditMemType;
+    _TCHAR* confEditMemFile;
+    _TCHAR* confEditMemAddress;
+    _TCHAR* confEditMemSize;
+    _TCHAR* confEditMemSlot;
 
     _TCHAR* confSaveTitle;
     _TCHAR* confSaveText;
