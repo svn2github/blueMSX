@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitItalian(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- nessun file recente -";
-    ls->insert                  = "Inserisci";
-    ls->eject                   = "Rimuovi";
+    ls->menuNoRecentFiles       = "- nessun file recente -";
+    ls->menuInsert              = "Inserisci";
+    ls->menuEject               = "Rimuovi";
 
     ls->menuCartAutoReset       = "Riavvia dopo aver inserito/rimosso";
     ls->menuCartFMPac           = "Cartuccia FM-PAC";
@@ -300,9 +300,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch"; 
     ls->propMonVertStretch       = " Allungamento Verticale";
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = "Abilita CMOS";
-    ls->dlgCmosBattery           = "Battery charged";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = "Abilita CMOS";
+    ls->confCmosBattery           = "Battery charged";
 
     ls->menuCartSCCPlus         = "Cartuccia SCC+";
     ls->menuCartSCC             = "Cartuccia SCC";
@@ -438,11 +438,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->confChipExtras          = "Extra"; 
     ls->confBoardGB             = "Sistema "; 
     ls->confBoardText           = "Sistema tipo:"; 
-    ls->dlgCpuFreqGB            = "Frequenza CPU "; 
-    ls->dlgZ80FreqText          = "Frequenza Z80:"; 
-    ls->dlgR800FreqText         = "Frequenza R800:"; 
-    ls->dlgFdcGB                = "Controller Floppy Disk "; 
-    ls->dlgCFdcNumDrivesText    = "Numero di unità:"; 
+    ls->confCpuFreqGB            = "Frequenza CPU "; 
+    ls->confZ80FreqText          = "Frequenza Z80:"; 
+    ls->confR800FreqText         = "Frequenza R800:"; 
+    ls->confFdcGB                = "Controller Floppy Disk "; 
+    ls->confCFdcNumDrivesText    = "Numero di unità:"; 
 
     ls->propPriorityBoost       = " Dare a blueMSX una precedenza elevata";
 
@@ -462,8 +462,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Assegnato a:"; 
     ls->keyconfigMappingScheme  = "Configurazione dei Tasti:"; 
 
-    ls->discardChanges          = "Vuoi annullare i cambiamenti apportati a questa configurazione ?"; 
-    ls->overwriteConfig         = "Vuoi sovrascrivere questa configurazione ?"; 
+    ls->warningDiscardChanges   = "Vuoi annullare i cambiamenti apportati a questa configurazione ?"; 
 
     ls->confSaveAsTitle         = "Salva con..."; 
     ls->confSaveAsName          = "Nome:"; 
@@ -499,7 +498,6 @@ void langInitItalian(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC"; 
     ls->propPortsFile           = "Stampare in archivio"; 
     ls->propPortsOpenLogFile    = "Aprire un archivio di dati"; 
-    ls->propPortsFilenameText   = "Nome:"; 
     ls->propPortsEmulateMsxPrn  = "Emulazione:"; 
 
     ls->shortcutPrnFormFeed     = "Passaggio alla pagina seguente"; 
@@ -533,14 +531,12 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->shortcut                = "Shortcut"; 
     ls->hotkey                  = "Hotkey"; 
-    ls->unknown                 = "Sconosciuto"; 
-    ls->romImage                = "ROM image"; 
-    ls->romImageOpen            = "Aprire ROM image"; 
-    ls->romCartridge            = "ROM cartuccia"; 
-    ls->allFiles                = "Tutti gli archivi"; 
-    ls->cpuState                = "Stato della CPU"; 
-    ls->diskImage               = "Disk Image"; 
-    ls->casImage                = "Tape Image"; 
+    ls->fileRom                 = "ROM image"; 
+    ls->confOpenRom             = "Aprire ROM image"; 
+    ls->fileAll                 = "Tutti gli archivi"; 
+    ls->fileCpuState             = "Stato della CPU"; 
+    ls->fileDisk                = "Disk Image"; 
+    ls->fileCas                 = "Tape Image"; 
 
     ls->menuCartExternalRam     = "RAM esterno"; 
 };

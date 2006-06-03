@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.7 $ 
+** $Revision: 1.8 $ 
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitGerman(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- keine neuen Files -";
-    ls->insert                  = "Einfügen";
-    ls->eject                   = "Auswurf";
+    ls->menuNoRecentFiles       = "- keine neuen Files -";
+    ls->menuInsert              = "Einfügen";
+    ls->menuEject               = "Auswurf";
 
     ls->menuCartAutoReset       = "Reset nach Einfügen/Entfernen";
     ls->menuCartFMPac           = "FM-PAC-Cartridge";
@@ -308,9 +308,9 @@ void langInitGerman(LanguageStrings* ls)
     ls->propEmuFrontSwitch       = " Front Switch";
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " CMOS einschalten";
-    ls->dlgCmosBattery           = " Verwende geladene Batterie";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " CMOS einschalten";
+    ls->confCmosBattery           = " Verwende geladene Batterie";
 
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
@@ -445,11 +445,11 @@ void langInitGerman(LanguageStrings* ls)
     ls->confChipExtras          = "Extras";
     ls->confBoardGB             = "Board ";
     ls->confBoardText           = "Board-Typ:";
-    ls->dlgCpuFreqGB            = "CPU-Frequenz ";
-    ls->dlgZ80FreqText          = "Z80-Frequenz:";
-    ls->dlgR800FreqText         = "R800-Frequenz:";
-    ls->dlgFdcGB                = "Floppy-Disk-Controller ";
-    ls->dlgCFdcNumDrivesText    = "Anzahl der Laufwerke:";
+    ls->confCpuFreqGB            = "CPU-Frequenz ";
+    ls->confZ80FreqText          = "Z80-Frequenz:";
+    ls->confR800FreqText         = "R800-Frequenz:";
+    ls->confFdcGB                = "Floppy-Disk-Controller ";
+    ls->confCFdcNumDrivesText    = "Anzahl der Laufwerke:";
 
     ls->propPriorityBoost       = " Die Priorität von blueMSX erhöhen";
 
@@ -469,8 +469,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Mapped To:";
     ls->keyconfigMappingScheme  = "Mapping Scheme:";
 
-    ls->discardChanges          = "Möchten Sie die Änderungen verwerfen?";
-    ls->overwriteConfig         = "Möchten Sie die aktuelle Konfiguration überschreiben?";
+    ls->warningDiscardChanges   = "Möchten Sie die Änderungen verwerfen?";
 
     ls->confSaveAsTitle         = "Speichere Konfiguration als ...";
     ls->confSaveAsName          = "Name:";
@@ -506,7 +505,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "In Datei schreiben";
     ls->propPortsOpenLogFile    = "Öffne Log-Datei";
-    ls->propPortsFilenameText   = "Dateiname:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
 
     ls->shortcutPrnFormFeed     = "Seitenvorschub des Druckers";
@@ -540,15 +538,13 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->shortcut                = "Shortcut";
     ls->hotkey                  = "Kontrollsequenz";
-    ls->unknown                 = "Unbekannt";
 
-    ls->romImage                = "ROM-Image";
-    ls->romImageOpen            = "Öffnen ROM-Image";
-    ls->romCartridge            = "ROM-Cartridge";
-    ls->allFiles                = "All Files";
-    ls->cpuState                = "CPU-Status";
-    ls->diskImage               = "Diskette-Image";
-    ls->casImage                = "Cassette-Image";
+    ls->fileRom                 = "ROM-Image";
+    ls->confOpenRom             = "Öffnen ROM-Image";
+    ls->fileAll                 = "All Files";
+    ls->fileCpuState            = "CPU-Status";
+    ls->fileDisk                = "Diskette-Image";
+    ls->fileCas                 = "Cassette-Image";
 
     ls->menuCartExternalRam     = "Externes RAM";
 };

@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,9 +35,9 @@
 
 void langInitJapanese(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- 使用ファイルなし -";
-    ls->insert                  = "挿入";
-    ls->eject                   = "取り出し";
+    ls->menuNoRecentFiles       = "- 使用ファイルなし -";
+    ls->menuInsert              = "挿入";
+    ls->menuEject               = "取り出し";
 
     ls->menuCartAutoReset       = "挿入/取り出し後リセット";
     ls->menuCartFMPac           = "FMPAC+カートリッジ";
@@ -312,9 +312,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO カートリッジ スイッチ"; 
     ls->propMonVertStretch       = " 垂直 ストレッチ";
 
-    ls->dlgCmosGB                = "CMOS "; 
-    ls->dlgCmosEnable            = " CMOSを有効"; 
-    ls->dlgCmosBattery           = " 内蔵バッテリーを有効化";
+    ls->confCmosGB                = "CMOS "; 
+    ls->confCmosEnable            = " CMOSを有効"; 
+    ls->confCmosBattery           = " 内蔵バッテリーを有効化";
      
     ls->menuCartSCCPlus          = "SCC+  カートリッジ";
     ls->menuCartSCC              = "SCC  カートリッジ";
@@ -447,11 +447,11 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confChipExtras          = "エキストラ";
     ls->confBoardGB             = "基盤 ";
     ls->confBoardText           = "基盤 タイプ:";
-    ls->dlgCpuFreqGB            = "CPU 周波数 ";
-    ls->dlgZ80FreqText          = "Z80 周波数:";
-    ls->dlgR800FreqText         = "R800 周波数:";
-    ls->dlgFdcGB                = "フロッピーディスクコントローラー ";
-    ls->dlgCFdcNumDrivesText    = "ドライブの数:";
+    ls->confCpuFreqGB            = "CPU 周波数 ";
+    ls->confZ80FreqText          = "Z80 周波数:";
+    ls->confR800FreqText         = "R800 周波数:";
+    ls->confFdcGB                = "フロッピーディスクコントローラー ";
+    ls->confCFdcNumDrivesText    = "ドライブの数:";
 
     ls->propPriorityBoost        = " blueMSXに割当てるプライオリティーのブースト";
 
@@ -471,8 +471,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "対象キー:";
     ls->keyconfigMappingScheme  = "マッピングスキーム:";
 
-    ls->discardChanges          = "構\成が失われますが、よろしいですか?";
-    ls->overwriteConfig         = "構\成を上書きしてよろしいですか?";
+    ls->warningDiscardChanges   = "構\成が失われますが、よろしいですか?";
 
     ls->confSaveAsTitle         = "別名で保存...";
     ls->confSaveAsName          = "名前:";
@@ -508,7 +507,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Print to File";
     ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
 
     ls->shortcutPrnFormFeed     = "Printer Form Feed";
@@ -523,7 +521,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC"; 
     ls->propPortsFile           = "ファイルへプリント"; 
     ls->propPortsOpenLogFile    = "ログファイルを開く"; 
-    ls->propPortsFilenameText   = "ファイル名:"; 
     ls->propPortsEmulateMsxPrn  = "エミュレーション:"; 
 
     ls->shortcutPrnFormFeed     = "フォームフィード"; 
@@ -558,14 +555,12 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->shortcut                = "ショートカット"; 
     ls->hotkey                  = "ホットキー"; 
-    ls->unknown                 = "不明"; 
-    ls->romImage                = "ロム イメージ"; 
-    ls->romImageOpen            = "ロム イメージを開く"; 
-    ls->romCartridge            = "ロム カートリッジ"; 
-    ls->allFiles                = "全てのファイル"; 
-    ls->cpuState                = "CPU ステート"; 
-    ls->diskImage               = "ディスク イメージ"; 
-    ls->casImage                = "テープ イメージ"; 
+    ls->fileRom                 = "ロム イメージ"; 
+    ls->confOpenRom             = "ロム イメージを開く"; 
+    ls->fileAll                 = "全てのファイル"; 
+    ls->fileCpuState            = "CPU ステート"; 
+    ls->fileDisk                = "ディスク イメージ"; 
+    ls->fileCas                 = "テープ イメージ"; 
 
     ls->menuCartExternalRam     = "外部 ラム"; 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitChineseSimplified(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- 无最近的文件 -";
-    ls->insert                  = "插入";
-    ls->eject                   = "弹出";
+    ls->menuNoRecentFiles       = "- 无最近的文件 -";
+    ls->menuInsert              = "插入";
+    ls->menuEject               = "弹出";
     
     ls->menuCartAutoReset       = "插入/移除后重置";
     ls->menuCartFMPac           = "FM-PAC 卡带";
@@ -297,9 +297,9 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO 卡开关";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " 启用 CMOS";
-    ls->dlgCmosBattery           = " 启用内置电池";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " 启用 CMOS";
+    ls->confCmosBattery           = " 启用内置电池";
 
     ls->menuCartSCCPlus         = "SCC+ 卡带";
     ls->menuCartSCC             = "SCC 卡带";
@@ -434,11 +434,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confChipExtras          = "附加";
     ls->confBoardGB             = "主版 ";
     ls->confBoardText           = "主版类型:";
-    ls->dlgCpuFreqGB            = "CPU 频率 ";
-    ls->dlgZ80FreqText          = "Z80 频率:";
-    ls->dlgR800FreqText         = "R800 频率:";
-    ls->dlgFdcGB                = "软盘控制器 ";
-    ls->dlgCFdcNumDrivesText    = "驱动器数量:";
+    ls->confCpuFreqGB            = "CPU 频率 ";
+    ls->confZ80FreqText          = "Z80 频率:";
+    ls->confR800FreqText         = "R800 频率:";
+    ls->confFdcGB                = "软盘控制器 ";
+    ls->confCFdcNumDrivesText    = "驱动器数量:";
 
     ls->propPriorityBoost       = " 提升 blueMSX 的优先级";
 
@@ -458,8 +458,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "映射到:";
     ls->keyconfigMappingScheme  = "映射方案:";
 
-    ls->discardChanges          = "要放弃修改吗？";
-    ls->overwriteConfig         = "要覆盖当前的设置吗？";
+    ls->warningDiscardChanges   = "要放弃修改吗？";
 
     ls->confSaveAsTitle         = "配置另存为...";
     ls->confSaveAsName          = "名称:";
@@ -495,7 +494,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL/Covox 数模转化器";
     ls->propPortsFile           = "打印到文件";
     ls->propPortsOpenLogFile    = "打开纪录文件";
-    ls->propPortsFilenameText   = "文件名:";
     ls->propPortsEmulateMsxPrn  = "模拟:";
 
     ls->shortcutPrnFormFeed     = "打印机换页";
@@ -529,14 +527,12 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->shortcut                = "快捷键";
     ls->hotkey                  = "热键";
-    ls->unknown                 = "未知";
-    ls->romImage                = "ROM 映像";
-    ls->romImageOpen            = "打开 ROM 映像";
-    ls->romCartridge            = "ROM 卡带";
-    ls->allFiles                = "所有文件";
-    ls->cpuState                = "CPU 状态";
-    ls->diskImage               = "软盘映像";
-    ls->casImage                = "磁带映像";
+    ls->fileRom                 = "ROM 映像";
+    ls->confOpenRom             = "打开 ROM 映像";
+    ls->fileAll                 = "所有文件";
+    ls->fileCpuState            = "CPU 状态";
+    ls->fileDisk                = "软盘映像";
+    ls->fileCas                 = "磁带映像";
 
     ls->menuCartExternalRam     = "扩展内存";
 };

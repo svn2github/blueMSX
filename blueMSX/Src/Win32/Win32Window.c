@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2005-12-19 07:44:25 $
+** $Date: 2006-06-03 19:20:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -385,7 +385,7 @@ static LRESULT CALLBACK keyboardDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPA
 
     case WM_CLOSE:
         if (keyboardConfigIsModified()) {
-            if (IDNO == MessageBox(NULL, langDiscardChanges(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
+            if (IDNO == MessageBox(NULL, langWarningDiscardChanges(), langWarningTitle(), MB_ICONWARNING | MB_YESNO)) {
                 return WM_CLOSE_RESULT_CANCEL;
             }
         }

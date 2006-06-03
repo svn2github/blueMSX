@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1891,8 +1891,8 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SendMessage(GetDlgItem(hDlg, IDC_PORTSCOM1TEXT), WM_SETTEXT, 0, (LPARAM)langPropPortsCom1Text());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDOK), langDlgOK());
         SetWindowText(GetDlgItem(GetParent(hDlg), IDCANCEL), langDlgCancel());
-        SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langPropPortsFilenameText());
-        SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMETEXT), langPropPortsFilenameText());
+        SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langTextFilename());
+        SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMETEXT), langTextFilename());
         SetWindowText(GetDlgItem(hDlg, IDC_LPTEMULATIONTEXT), langPropPortsEmulateMsxPrn());
         
 

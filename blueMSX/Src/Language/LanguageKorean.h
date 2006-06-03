@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.15 $ + additions 2005/03/03
+** $Revision: 1.16 $ + additions 2005/03/03
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitKorean(LanguageStrings* ls)
 {
-    ls->noRecentFiles           = "- 열어본 파일 없음 -";
-    ls->insert                  = "삽입";
-    ls->eject                   = "꺼내기";
+    ls->menuNoRecentFiles       = "- 열어본 파일 없음 -";
+    ls->menuInsert              = "삽입";
+    ls->menuEject               = "꺼내기";
 
     ls->menuCartAutoReset       = "삽입/제거 후에 재시작";
     ls->menuCartFMPac           = "FM-PAC 카트리지";
@@ -299,9 +299,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO 카트리지 스위치";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " CMOS 사용";
-    ls->dlgCmosBattery           = " 충전지 사용";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " CMOS 사용";
+    ls->confCmosBattery           = " 충전지 사용";
 
     ls->warningTitle             = "blueMSX - 경고";
 
@@ -434,11 +434,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->confChipExtras          = "기타";
     ls->confBoardGB             = "시스템 ";
     ls->confBoardText           = "시스템 형식:";
-    ls->dlgCpuFreqGB            = "CPU 주파수 ";
-    ls->dlgZ80FreqText          = "Z80 주파수:";
-    ls->dlgR800FreqText         = "R800 주파수:";
-    ls->dlgFdcGB                = "플로피 디스크 컨트롤러 ";
-    ls->dlgCFdcNumDrivesText    = "드라이브의 갯수:";
+    ls->confCpuFreqGB            = "CPU 주파수 ";
+    ls->confZ80FreqText          = "Z80 주파수:";
+    ls->confR800FreqText         = "R800 주파수:";
+    ls->confFdcGB                = "플로피 디스크 컨트롤러 ";
+    ls->confCFdcNumDrivesText    = "드라이브의 갯수:";
 
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
 
@@ -458,8 +458,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "대응된 키:";
     ls->keyconfigMappingScheme  = "매핑 스타일:";
 
-    ls->discardChanges          = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
-    ls->overwriteConfig         = "이미 파일이 있습니다. 기존 파일을 이 파일로 바꾸시겠습니까?";
+    ls->warningDiscardChanges   = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
 
     ls->confSaveAsTitle         = "다른 이름으로 설정 저장...";
     ls->confSaveAsName          = "이름:";
@@ -495,7 +494,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "파일에 출력하기";
     ls->propPortsOpenLogFile    = "로그파일 열기";
-    ls->propPortsFilenameText   = "파일명:";
     ls->propPortsEmulateMsxPrn  = "흉내내기:";
 
     ls->shortcutPrnFormFeed     = "프린터 폼피드";
@@ -528,14 +526,12 @@ void langInitKorean(LanguageStrings* ls)
 
     ls->shortcut                = "단축키";
 	ls->hotkey                  = "핫키";
-    ls->unknown                 = "Unknown";
-    ls->romImage                = "롬 이미지";
-    ls->romImageOpen            = "롬 이미지 열기";
-    ls->romCartridge            = "롬 카트리지";
-    ls->allFiles                = "모든 파일";
-    ls->cpuState                = "CPU 상태";
-    ls->diskImage               = "디스크 이미지";
-    ls->casImage                = "테이프 이미지";
+    ls->fileRom                 = "롬 이미지";
+    ls->confOpenRom             = "롬 이미지 열기";
+    ls->fileAll                 = "모든 파일";
+    ls->fileCpuState            = "CPU 상태";
+    ls->fileDisk                = "디스크 이미지";
+    ls->fileCas                 = "테이프 이미지";
 
     ls->menuCartExternalRam     = "외장 램";
 };

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,9 +38,28 @@ typedef char _TCHAR;
 #endif
 
 typedef struct {
-    _TCHAR* noRecentFiles;
-    _TCHAR* insert;
-    _TCHAR* eject;
+    _TCHAR* textDevice;
+    _TCHAR* textFilename;
+    _TCHAR* textFile;
+    _TCHAR* textNone;
+    _TCHAR* textUnknown;
+
+    _TCHAR* warningTitle;
+    _TCHAR* warningOverwriteFile;
+    _TCHAR* warningDiscardChanges;
+    _TCHAR* errorTitle;
+    _TCHAR* errorEnterFullscreen;
+    _TCHAR* errorDirectXFailed;
+    _TCHAR* errorNoRomInZip;
+    _TCHAR* errorNoDskInZip;
+    _TCHAR* errorNoCasInZip;
+    _TCHAR* errorNoHelp;
+    _TCHAR* errorStartEmu;
+    _TCHAR* errorPortableReadonly;
+
+    _TCHAR* menuNoRecentFiles;
+    _TCHAR* menuInsert;
+    _TCHAR* menuEject;
 
     _TCHAR* menuCartAutoReset;
     _TCHAR* menuCartGameReader;
@@ -126,20 +145,6 @@ typedef struct {
     _TCHAR* menuOptions;
     _TCHAR* menuHelp;
 
-    _TCHAR* errorTitle;
-    _TCHAR* warningTitle;
-    _TCHAR* overwriteFile;
-    _TCHAR* errorEnterFullscreen;
-    _TCHAR* errorDirectXFailed;
-    _TCHAR* errorNoRomInZip;
-    _TCHAR* errorNoDskInZip;
-    _TCHAR* errorNoCasInZip;
-    _TCHAR* errorNoHelp;
-    _TCHAR* errorStartEmu;
-    _TCHAR* discardChanges;
-    _TCHAR* overwriteConfig;
-    _TCHAR* portableReadonly;
-
     _TCHAR* dlgLoadRom;
     _TCHAR* dlgLoadDsk;
     _TCHAR* dlgLoadCas;
@@ -208,12 +213,6 @@ typedef struct {
     _TCHAR* propSndMidiInGB;
     _TCHAR* propSndMidiOutGB;
 
-    _TCHAR* textDevice;
-    _TCHAR* textFilename;
-    _TCHAR* textFile;
-    _TCHAR* textNone;
-    _TCHAR* textUnknown;
-
     _TCHAR* propMonMonGB;
     _TCHAR* propMonTypeText;
     _TCHAR* propMonEmuText;
@@ -262,7 +261,6 @@ typedef struct {
     _TCHAR* propPortsFile;
     _TCHAR* propPortsComFile;
     _TCHAR* propPortsOpenLogFile;
-    _TCHAR* propPortsFilenameText;
     _TCHAR* propPortsEmulateMsxPrn;
 
     _TCHAR* propSetFileHistoryGB;
@@ -363,15 +361,15 @@ typedef struct {
     _TCHAR* confChipVideoRam;
     _TCHAR* confChipSoundGB;
 
-    _TCHAR* dlgCmosGB;
-    _TCHAR* dlgCmosEnable;
-    _TCHAR* dlgCmosBattery;
+    _TCHAR* confCmosGB;
+    _TCHAR* confCmosEnable;
+    _TCHAR* confCmosBattery;
         
-    _TCHAR* dlgCpuFreqGB;
-    _TCHAR* dlgZ80FreqText;
-    _TCHAR* dlgR800FreqText;
-    _TCHAR* dlgFdcGB;
-    _TCHAR* dlgCFdcNumDrivesText;
+    _TCHAR* confCpuFreqGB;
+    _TCHAR* confZ80FreqText;
+    _TCHAR* confR800FreqText;
+    _TCHAR* confFdcGB;
+    _TCHAR* confCFdcNumDrivesText;
 
     _TCHAR* confSlotLayoutGB;
     _TCHAR* confSlotExtSlotGB;
@@ -386,14 +384,12 @@ typedef struct {
 
     _TCHAR* shortcut;
     _TCHAR* hotkey;
-    _TCHAR* unknown;
-    _TCHAR* romImage;
-    _TCHAR* romImageOpen;
-    _TCHAR* romCartridge;
-    _TCHAR* allFiles;
-    _TCHAR* cpuState;
-    _TCHAR* diskImage;
-    _TCHAR* casImage;
+    _TCHAR* fileRom;
+    _TCHAR* confOpenRom;
+    _TCHAR* fileAll;
+    _TCHAR* fileCpuState;
+    _TCHAR* fileDisk;
+    _TCHAR* fileCas;
 
     _TCHAR* confMemAdd;
     _TCHAR* confMemEdit;

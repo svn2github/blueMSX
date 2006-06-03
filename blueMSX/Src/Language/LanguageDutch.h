@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
 
 void langInitDutch(LanguageStrings* ls)
 {
-    ls->noRecentFiles           = "- geen recente bestanden -";
-    ls->insert                  = "Toevoegen";
-    ls->eject                   = "Eruit halen";
+    ls->menuNoRecentFiles       = "- geen recente bestanden -";
+    ls->menuInsert              = "Toevoegen";
+    ls->menuEject               = "Eruit halen";
 
     ls->menuCartAutoReset       = "Herstart na toevoegen/verwijderen";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -307,9 +307,9 @@ void langInitDutch(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
     ls->propMonVertStretch       = " Verticaal uitrekken";
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Aanzetten CMOS";
-    ls->dlgCmosBattery           = " Gebruiken Geladen Batterij";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " Aanzetten CMOS";
+    ls->confCmosBattery           = " Gebruiken Geladen Batterij";
 
     ls->menuCartSCCPlus          = "SCC+ Cartridge";
     ls->menuCartSCC              = "SCC Cartridge";
@@ -450,11 +450,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->confChipExtras          = "Extras"; 
     ls->confBoardGB             = "Systeem "; 
     ls->confBoardText           = "Systeem Type:"; 
-    ls->dlgCpuFreqGB            = "CPU frequentie "; 
-    ls->dlgZ80FreqText          = "Z80 frequentie:"; 
-    ls->dlgR800FreqText         = "R800 Frequentie:"; 
-    ls->dlgFdcGB                = "Floppy Disk Controller "; 
-    ls->dlgCFdcNumDrivesText    = "Aantal drives:"; 
+    ls->confCpuFreqGB            = "CPU frequentie "; 
+    ls->confZ80FreqText          = "Z80 frequentie:"; 
+    ls->confR800FreqText         = "R800 Frequentie:"; 
+    ls->confFdcGB                = "Floppy Disk Controller "; 
+    ls->confCFdcNumDrivesText    = "Aantal drives:"; 
 
     ls->propPriorityBoost       = " blueMSX een hogere prioriteit geven";
 
@@ -476,8 +476,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Gekoppeld aan:"; 
     ls->keyconfigMappingScheme  = "Koppel Schema:"; 
 
-    ls->discardChanges          = "Wilt u de wijzigingen ongedaan maken?"; 
-    ls->overwriteConfig         = "Wilt u de huidige configuratie overschrijven?"; 
+    ls->warningDiscardChanges   = "Wilt u de wijzigingen ongedaan maken?"; 
 
     ls->confSaveAsTitle         = "Configuratie opslaan als..."; 
     ls->confSaveAsName          = "Naam:"; 
@@ -513,7 +512,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPortsSimplCovox = "SiMPL / Covox DAC"; 
     ls->propPortsFile = "Afdrukken naar bestand"; 
     ls->propPortsOpenLogFile = "Log bestand openen"; 
-    ls->propPortsFilenameText = "Bestandsnaam:"; 
     ls->propPortsEmulateMsxPrn = "Emulatie:"; 
 
     ls->shortcutPrnFormFeed = "Printer pagina doorvoer"; 

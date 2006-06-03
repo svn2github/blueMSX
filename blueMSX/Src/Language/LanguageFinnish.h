@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitFinnish(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- ei viimeaikaisia tiedostoja -";
-    ls->insert                  = "Lisää...";
-    ls->eject                   = "Poista";
+    ls->menuNoRecentFiles       = "- ei viimeaikaisia tiedostoja -";
+    ls->menuInsert              = "Lisää...";
+    ls->menuEject               = "Poista";
 
     ls->menuCartAutoReset       = "Resetoi lisäämisen/poistamisen jälkeen";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -301,9 +301,9 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge kytkin";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Mahdollista CMOS";
-    ls->dlgCmosBattery           = " Käytä ladattuja pattereita";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " Mahdollista CMOS";
+    ls->confCmosBattery           = " Käytä ladattuja pattereita";
 
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
@@ -439,11 +439,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confChipExtras          = "Ekstrat";
     ls->confBoardGB             = "Board ";
     ls->confBoardText           = "Board Tyyppi:";
-    ls->dlgCpuFreqGB            = "CPU Kellotaajuus ";
-    ls->dlgZ80FreqText          = "Z80 Kellotaajuus:";
-    ls->dlgR800FreqText         = "R800 Kellotaajuus:";
-    ls->dlgFdcGB                = "Levykeasemaohjain ";
-    ls->dlgCFdcNumDrivesText    = "Levykeasemien lukumäärä:";
+    ls->confCpuFreqGB            = "CPU Kellotaajuus ";
+    ls->confZ80FreqText          = "Z80 Kellotaajuus:";
+    ls->confR800FreqText         = "R800 Kellotaajuus:";
+    ls->confFdcGB                = "Levykeasemaohjain ";
+    ls->confCFdcNumDrivesText    = "Levykeasemien lukumäärä:";
 
     ls->propPriorityBoost        = " Nosta blueMSX:n prioriteettiä";
 
@@ -463,8 +463,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Mapattu näppäimeen:";
     ls->keyconfigMappingScheme  = "Näppäimistökartta:";
  
-    ls->discardChanges          = "Haluatko kumota muutokset?";
-    ls->overwriteConfig         = "Haluatko tallettaa muutokset nykyiseen konfiguraatioon?";
+    ls->warningDiscardChanges   = "Haluatko kumota muutokset?";
  
     ls->confSaveAsTitle         = "Tallenna konfiguraatio nimellä...";
     ls->confSaveAsName          = "Nimi:";
@@ -496,7 +495,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Print to File";
     ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
 
     ls->shortcutPrnFormFeed     = "Printer Form Feed";
@@ -504,35 +502,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Printer";
     ls->propPortsComFile        = "Send to File";
-
-    // New entries in 2.5
-    ls->menuCartGameReader      = "Game Reader";
-    ls->menuDiskInsertNew       = "Insert New...";
-    ls->menuCartIde             = "IDE";
-    ls->menuCartSunriseIde      = "Sunrise";
-    ls->menuCartBeerIde         = "Beer";
-    ls->menuCartGIde            = "GIDE";
-    ls->menuCartInsertSpecial   = "Insert Special";
-    ls->menuCartMegaRam         = "MegaRAM";
-    ls->menuFileHarddisk        = "Hard Disk";
-    ls->menuFileHarddiskNoPesent= "No Controllers Present";
-    ls->dlgInsertHarddisk       = "Insert Hard Disk";
-
-    ls->menuVideoSource         = "Video Out Source";
-    ls->menuVideoSourceDefault  = "No Video Out Source Connected";
-    
-    ls->menuVideoInSource       = "Video In Source";
-    ls->menuVideoInBitmap       = "Bitmap File";
-
-    ls->textUnknown             = "Unknown";
-
-    ls->overwriteFile           = "Do you want to overwrite the file:";
-
-    ls->portableReadonly        = "Portable device is readonly";
-    
-    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
-
-    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
 
 };
 

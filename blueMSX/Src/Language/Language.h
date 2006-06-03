@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,12 +58,52 @@ int langSetLanguage(EmuLanguageType languageType);
 int langShowDlg(HWND hwnd, int oldLanguage);
 EmuLanguageType langFromName(_TCHAR* name);
 
-_TCHAR* langNoRecentFiles();
-_TCHAR* langInsert();
-_TCHAR* langInsert();
-_TCHAR* langEject();
 
-_TCHAR* langMenuCartAutoReset();
+//----------------------
+// Generic lines
+//----------------------
+
+_TCHAR* langTextDevice();
+_TCHAR* langTextFilename();
+_TCHAR* langTextFile();
+_TCHAR* langTextNone();
+_TCHAR* langTextUnknown();
+
+//----------------------
+// Warning and Error lines
+//----------------------
+
+_TCHAR* langWarningTitle();
+_TCHAR* langWarningDiscardChanges();
+_TCHAR* langWarningOverwriteFile();
+_TCHAR* langErrorTitle();
+_TCHAR* langErrorEnterFullscreen();
+_TCHAR* langErrorDirectXFailed();
+_TCHAR* langErrorNoRomInZip();
+_TCHAR* langErrorNoDskInZip();
+_TCHAR* langErrorNoCasInZip();
+_TCHAR* langErrorNoHelp();
+_TCHAR* langErrorStartEmu();
+_TCHAR* langErrorPortableReadonly();
+
+//----------------------
+// File related lines
+//----------------------
+
+_TCHAR* langFileRom();
+_TCHAR* langFileAll();
+_TCHAR* langFileCpuState();
+_TCHAR* langFileDisk();
+_TCHAR* langFileCas();
+
+//----------------------
+// Menu related lines
+//----------------------
+
+_TCHAR* langMenuNoRecentFiles();
+_TCHAR* langMenuInsert();
+_TCHAR* langMenuEject();
+
 _TCHAR* langMenuCartGameReader();
 _TCHAR* langMenuCartIde();
 _TCHAR* langMenuCartBeerIde();
@@ -81,6 +121,7 @@ _TCHAR* langMenuCartMegaRam();
 _TCHAR* langMenuDiskDirInsert();
 _TCHAR* langMenuDiskInsertNew();
 _TCHAR* langMenuDiskAutoStart();
+_TCHAR* langMenuCartAutoReset();
 
 _TCHAR* langMenuCasRewindAfterInsert();
 _TCHAR* langMenuCasUseReadOnly();
@@ -147,19 +188,13 @@ _TCHAR* langMenuOptions();
 _TCHAR* langMenuTools();
 _TCHAR* langMenuHelp();
 
-_TCHAR* langErrorTitle();
-_TCHAR* langWarningTitle();
-_TCHAR* langOverwriteFile();
-_TCHAR* langErrorEnterFullscreen();
-_TCHAR* langErrorDirectXFailed();
-_TCHAR* langErrorNoRomInZip();
-_TCHAR* langErrorNoDskInZip();
-_TCHAR* langErrorNoCasInZip();
-_TCHAR* langErrorNoHelp();
-_TCHAR* langErrorStartEmu();
-_TCHAR* langDiscardChanges();
-_TCHAR* langOverwriteConfig();
-_TCHAR* langPortableReadonly();
+//----------------------
+// Dialog related lines
+//----------------------
+
+_TCHAR* langDlgOK();
+_TCHAR* langDlgOpen();
+_TCHAR* langDlgCancel();
 
 _TCHAR* langDlgLoadRom();
 _TCHAR* langDlgLoadDsk();
@@ -179,10 +214,6 @@ _TCHAR* langDlgInsertDiskB();
 _TCHAR* langDlgInsertHarddisk();
 _TCHAR* langDlgInsertCas();
 _TCHAR* langDlgRomType();
-
-_TCHAR* langDlgOK();
-_TCHAR* langDlgOpen();
-_TCHAR* langDlgCancel();
 
 _TCHAR* langDlgTapeTitle();
 _TCHAR* langDlgTapeFrameText();
@@ -209,6 +240,10 @@ _TCHAR* langDlgJoyGB();
 
 _TCHAR* langDlgLangLangText();
 _TCHAR* langDlgLangTitle();
+
+//----------------------
+// Properties related lines
+//----------------------
 
 _TCHAR* langPropTitle();
 _TCHAR* langPropEmulation();
@@ -238,12 +273,6 @@ _TCHAR* langPropVideoFreqAuto();
 _TCHAR* langPropSndOversampleText();
 _TCHAR* langPropSndMidiInGB();
 _TCHAR* langPropSndMidiOutGB();
-
-_TCHAR* langTextDevice();
-_TCHAR* langTextFilename();
-_TCHAR* langTextFile();
-_TCHAR* langTextNone();
-_TCHAR* langTextUnknown();
 
 _TCHAR* langPropMonMonGB();
 _TCHAR* langPropMonTypeText();
@@ -291,7 +320,6 @@ _TCHAR* langPropPortsSimplCovox();
 _TCHAR* langPropPortsFile();
 _TCHAR* langPropPortsComFile();
 _TCHAR* langPropPortsOpenLogFile();
-_TCHAR* langPropPortsFilenameText();
 _TCHAR* langPropPortsEmulateMsxPrn();
 
 _TCHAR* langPropSetFileHistoryGB();
@@ -316,6 +344,10 @@ _TCHAR* langPropSettDefDrive();
 
 _TCHAR* langPropThemeGB();
 _TCHAR* langPropTheme();
+
+//----------------------
+// Dropdown related lines
+//----------------------
 
 _TCHAR* langEnumVideoMonColor();
 _TCHAR* langEnumVideoMonGrey();
@@ -375,66 +407,62 @@ _TCHAR* langDlgAboutDevel();
 _TCHAR* langDlgAboutThanks();
 _TCHAR* langDlgAboutLisence();
 
-_TCHAR* langDlgConfTitle();
 _TCHAR* langDlgSave();
 _TCHAR* langDlgSaveAs();
 _TCHAR* langDlgRun();
 _TCHAR* langDlgClose();
 _TCHAR* langDlgSavePreview();
 _TCHAR* langDlgSaveDate();
-_TCHAR* langDlgConfConfigText();
-_TCHAR* langDlgConfSlotLayout();
-_TCHAR* langDlgConfMemory();
-_TCHAR* langDlgConfChipEmulation();
-_TCHAR* langDlgConfChipExtras();
 
-_TCHAR* langDlgSlotLayoutGB();
-_TCHAR* langDlgSlotExtSlotGB();
-_TCHAR* langDlgBoardGB();
-_TCHAR* langDlgBoardText();
-_TCHAR* langDlgSlotPrimary();
-_TCHAR* langDlgSlotExpanded();
+//----------------------
+// Configuration related lines
+//----------------------
 
-_TCHAR* langCartridge();
-_TCHAR* langSlot();
-_TCHAR* langSubslot();
+_TCHAR* langConfTitle();
+_TCHAR* langConfConfigText();
+_TCHAR* langConfSlotLayout();
+_TCHAR* langConfMemory();
+_TCHAR* langConfChipEmulation();
+_TCHAR* langConfChipExtras();
 
-_TCHAR* langShortcut();
-_TCHAR* langHotkey();
-_TCHAR* langUnknown();
-_TCHAR* langRomImage();
-_TCHAR* langRomImageOpen();
-_TCHAR* langRomCartridge();
-_TCHAR* langAllFiles();
-_TCHAR* langCpuState();
-_TCHAR* langDiskImage();
-_TCHAR* langCasImage();
+_TCHAR* langConfSaveTitle();
+_TCHAR* langConfSaveText();
 
-_TCHAR* langDlgConfSaveTitle();
-_TCHAR* langDlgConfSaveText();
+_TCHAR* langConfSlotLayoutGB();
+_TCHAR* langConfSlotExtSlotGB();
+_TCHAR* langConfBoardGB();
+_TCHAR* langConfBoardText();
+_TCHAR* langConfSlotPrimary();
+_TCHAR* langConfSlotExpanded();
 
-_TCHAR* langDlgMemAdd();
-_TCHAR* langDlgMemEdit();
-_TCHAR* langDlgMemRemove();
-_TCHAR* langDlgMemSlot();
-_TCHAR* langDlgMemAddress();
-_TCHAR* langDlgMemType();
-_TCHAR* langDlgMemRomImage();
+_TCHAR* langConfCartridge();
+_TCHAR* langConfSlot();
+_TCHAR* langConfSubslot();
 
-_TCHAR* langDlgChipVideoGB();
-_TCHAR* langDlgChipVideoChip();
-_TCHAR* langDlgChipVideoRam();
-_TCHAR* langDlgChipSoundGB();
+_TCHAR* langConfMemAdd();
+_TCHAR* langConfMemEdit();
+_TCHAR* langConfMemRemove();
+_TCHAR* langConfMemSlot();
+_TCHAR* langConfMemAddress();
+_TCHAR* langConfMemType();
+_TCHAR* langConfMemRomImage();
 
-_TCHAR* langDlgCmosGB();
-_TCHAR* langDlgCmosEnableText();
-_TCHAR* langDlgCmosBatteryText();
+_TCHAR* langConfChipVideoGB();
+_TCHAR* langConfChipVideoChip();
+_TCHAR* langConfChipVideoRam();
+_TCHAR* langConfChipSoundGB();
 
-_TCHAR* langDlgChipCpuFreqGB();
-_TCHAR* langDlgChipZ80FreqText();
-_TCHAR* langDlgChipR800FreqText();
-_TCHAR* langDlgChipFdcGB();
-_TCHAR* langDlgChipFdcNumDrivesText();
+_TCHAR* langConfCmosGB();
+_TCHAR* langConfCmosEnableText();
+_TCHAR* langConfCmosBatteryText();
+
+_TCHAR* langConfChipCpuFreqGB();
+_TCHAR* langConfChipZ80FreqText();
+_TCHAR* langConfChipR800FreqText();
+_TCHAR* langConfChipFdcGB();
+_TCHAR* langConfChipFdcNumDrivesText();
+
+_TCHAR* langConfOpenRom();
 
 _TCHAR* langSlotEditMemTitle();
 _TCHAR* langSlotEditMemGB();
@@ -449,11 +477,19 @@ _TCHAR* langConfExitSaveTitle();
 _TCHAR* langConfExitSaveText();
 _TCHAR* langConfSaveTitle();
 _TCHAR* langConfSaveText();
-_TCHAR* langDlgConfSaveAsTitle();
-_TCHAR* langDlgConfSaveAsMachineName();
+_TCHAR* langConfSaveAsTitle();
+_TCHAR* langConfSaveAsMachineName();
 
 _TCHAR* langConfSaveAsTitle();
 _TCHAR* langConfSaveAsName();
+
+
+//----------------------
+// Shortcut lines
+//----------------------
+
+_TCHAR* langShortcut();
+_TCHAR* langHotkey();
 
 _TCHAR* langShortcutSaveConfig();
 _TCHAR* langShortcutOverwriteConfig();

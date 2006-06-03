@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitEnglish(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- no recent files -";
-    ls->insert                  = "Insert";
-    ls->eject                   = "Eject";
+    ls->menuNoRecentFiles       = "- no recent files -";
+    ls->menuInsert              = "Insert";
+    ls->menuEject               = "Eject";
 
     ls->menuCartAutoReset       = "Reset After Insert/Remove";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -298,9 +298,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Enable CMOS";
-    ls->dlgCmosBattery           = " Use Charged Battery";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " Enable CMOS";
+    ls->confCmosBattery           = " Use Charged Battery";
 
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
@@ -435,11 +435,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->confChipExtras          = "Extras";
     ls->confBoardGB             = "Board ";
     ls->confBoardText           = "Board Type:";
-    ls->dlgCpuFreqGB            = "CPU Frequency ";
-    ls->dlgZ80FreqText          = "Z80 Frequency:";
-    ls->dlgR800FreqText         = "R800 Frequency:";
-    ls->dlgFdcGB                = "Floppy Disk Controller ";
-    ls->dlgCFdcNumDrivesText    = "Number of Drives:";
+    ls->confCpuFreqGB            = "CPU Frequency ";
+    ls->confZ80FreqText          = "Z80 Frequency:";
+    ls->confR800FreqText         = "R800 Frequency:";
+    ls->confFdcGB                = "Floppy Disk Controller ";
+    ls->confCFdcNumDrivesText    = "Number of Drives:";
 
     ls->propPriorityBoost       = " Boost the priority of blueMSX";
 
@@ -459,8 +459,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Mapped To:";
     ls->keyconfigMappingScheme  = "Mapping Scheme:";
 
-    ls->discardChanges          = "Do you want to discard changes?";
-    ls->overwriteConfig         = "Do you want to overwrite the current configuration?";
+    ls->warningDiscardChanges   = "Do you want to discard changes?";
 
     ls->confSaveAsTitle         = "Save Configuration As...";
     ls->confSaveAsName          = "Name:";
@@ -494,7 +493,6 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Print to File";
     ls->propPortsOpenLogFile    = "Open Log File";
-    ls->propPortsFilenameText   = "Filename:";
     ls->propPortsEmulateMsxPrn  = "Emulation:";
 
     ls->shortcutPrnFormFeed     = "Printer Form Feed";
@@ -528,14 +526,12 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->shortcut                = "Shortcut";
     ls->hotkey                  = "Hotkey";
-    ls->unknown                 = "Unknown";
-    ls->romImage                = "ROM image";
-    ls->romImageOpen            = "Open ROM image";
-    ls->romCartridge            = "ROM cartridge";
-    ls->allFiles                = "All Files";
-    ls->cpuState                = "CPU state";
-    ls->diskImage               = "Disk Image";
-    ls->casImage                = "Tape Image";
+    ls->fileRom                 = "ROM image";
+    ls->confOpenRom             = "Open ROM image";
+    ls->fileAll                 = "All Files";
+    ls->fileCpuState            = "CPU state";
+    ls->fileDisk                = "Disk Image";
+    ls->fileCas                 = "Tape Image";
 
     ls->menuCartExternalRam     = "External RAM";
 
@@ -560,9 +556,9 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->textUnknown             = "Unknown";
 
-    ls->overwriteFile           = "Do you want to overwrite the file:";
+    ls->warningOverwriteFile    = "Do you want to overwrite the file:";
 
-    ls->portableReadonly        = "Portable device is readonly";
+    ls->errorPortableReadonly   = "Portable device is readonly";
     
     ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
  
 void langInitPolish(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- brak ostatnich plików -";
-    ls->insert                  = "Wybierz";
-    ls->eject                   = "Wysuñ";
+    ls->menuNoRecentFiles       = "- brak ostatnich plików -";
+    ls->menuInsert              = "Wybierz";
+    ls->menuEject               = "Wysuñ";
 
     ls->menuCartAutoReset       = "Resetuj po zmianie";
     ls->menuCartFMPac           = "Kartrid¿ FM-PAC";
@@ -300,9 +300,9 @@ void langInitPolish(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " Prze³¹cznik kartrid¿a MSX-AUDIO";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Enable CMOS";
-    ls->dlgCmosBattery           = " Use Charged Battery";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " Enable CMOS";
+    ls->confCmosBattery           = " Use Charged Battery";
 
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
@@ -437,11 +437,11 @@ void langInitPolish(LanguageStrings* ls)
     ls->confChipExtras          = "Extras";
     ls->confBoardGB             = "Board ";
     ls->confBoardText           = "Board Type:";
-    ls->dlgCpuFreqGB            = "CPU Frequency ";
-    ls->dlgZ80FreqText          = "Z80 Frequency:";
-    ls->dlgR800FreqText         = "R800 Frequency:";
-    ls->dlgFdcGB                = "Floppy Disk Controller ";
-    ls->dlgCFdcNumDrivesText    = "Number of Drives:";
+    ls->confCpuFreqGB            = "CPU Frequency ";
+    ls->confZ80FreqText          = "Z80 Frequency:";
+    ls->confR800FreqText         = "R800 Frequency:";
+    ls->confFdcGB                = "Floppy Disk Controller ";
+    ls->confCFdcNumDrivesText    = "Number of Drives:";
 
     ls->propPriorityBoost       = " Podnieœ priorytet blueMSX";
 
@@ -461,8 +461,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Zmapowany na:";
     ls->keyconfigMappingScheme  = "Schemat mapowania:";
 
-    ls->discardChanges          = "Czy chcesz zniszczyæ zmiany?";
-    ls->overwriteConfig         = "Czy chcesz nadpisac bierz¹ca konfiguracjê?";
+    ls->warningDiscardChanges   = "Czy chcesz zniszczyæ zmiany?";
 
     ls->confSaveAsTitle         = "Zapisz konfiguracjê jako...";
     ls->confSaveAsName          = "Nazwa:";
@@ -498,7 +497,6 @@ void langInitPolish(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Drukuj do pliku";
     ls->propPortsOpenLogFile    = "Otwórz plik logu";
-    ls->propPortsFilenameText   = "Nazwa pliku:";
     ls->propPortsEmulateMsxPrn  = "Emulacja:";
 
     ls->shortcutPrnFormFeed     = "Wysuñ kartkê z drukarki";
@@ -530,14 +528,12 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->shortcut                = "Skrót";
     ls->hotkey                  = "Hotkey";
-    ls->unknown                 = "Nieznany";
-    ls->romImage                = "ROM image";
-    ls->romImageOpen            = "Otwórz ROM";
-    ls->romCartridge            = "Kartrid¿ ROM";
-    ls->allFiles                = "Wszystkie pliki";
-    ls->cpuState                = "Stan CPU";
-    ls->diskImage               = "Obraz dysku";
-    ls->casImage                = "Obraz taœmy";
+    ls->fileRom                 = "ROM image";
+    ls->confOpenRom             = "Otwórz ROM";
+    ls->fileAll                 = "Wszystkie pliki";
+    ls->fileCpuState            = "Stan CPU";
+    ls->fileDisk                = "Obraz dysku";
+    ls->fileCas                 = "Obraz taœmy";
 
     ls->menuCartExternalRam     = "Zewnêtrzny RAM";
 };

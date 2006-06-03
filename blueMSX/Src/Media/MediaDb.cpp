@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-06-01 00:40:23 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,7 @@ typedef map<string, MediaType*> Sha1Map;
 
 
 #if 1
-#define langUnknown() "Unknown";
+#define langTextUnknown() "Unknown";
 #endif
 
 struct MediaDb {
@@ -637,10 +637,10 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_FMDAS:       return "F&M Direct Assembler System";
     case ROM_YAMAHASFG05: return "Yamaha SFG-05";
 
-    case ROM_UNKNOWN:     return langUnknown();
+    case ROM_UNKNOWN:     return langTextUnknown();
     }
 
-    return langUnknown();
+    return langTextUnknown();
 }
 
 extern "C" const char* romTypeToShortString(RomType romType) 

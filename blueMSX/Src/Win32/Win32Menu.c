@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -370,7 +370,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     verifyFileHistory(*pProperties->filehistory.cartridge[cartNo],
                       pProperties->filehistory.cartridgeType[cartNo]);
 
-    _stprintf(langBuffer, "%s      \t%hs", langInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
+    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_INSERT, langBuffer);
 
     if (enableSpecial) {
@@ -379,7 +379,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s%hs%hs", langEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), stripPath(pProperties->media.carts[cartNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), stripPath(pProperties->media.carts[cartNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[cartNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_CART_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -391,7 +391,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langNoRecentFiles());
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
@@ -414,7 +414,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langInsert(), shortcutsToString(shortcuts->diskInsert[diskNo]));
+    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->diskInsert[diskNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERT, langBuffer);
 
     _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsert[diskNo]));
@@ -422,7 +422,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTNEW, TEXT("Insert New"));
 
-    _stprintf(langBuffer, "%s%hs%hs", langEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_DISK_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -434,7 +434,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (*pProperties->filehistory.diskdrive[diskNo][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langNoRecentFiles());
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
@@ -453,10 +453,10 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langInsert());
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(langBuffer, "%s%hs%hs", langEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
 
     return hMenu;
@@ -510,10 +510,10 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langInsert(), shortcutsToString(shortcuts->casInsert));
+    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->casInsert));
     AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_INSERT, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), stripPath(pProperties->media.tapes[0].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), stripPath(pProperties->media.tapes[0].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -537,7 +537,7 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (*pProperties->filehistory.cassette[0][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langNoRecentFiles());
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {

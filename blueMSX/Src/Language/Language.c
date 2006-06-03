@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -316,12 +316,10 @@ int langShowDlg(HWND hwnd, int oldLanguage) {
     return lang;
 }
 
-_TCHAR* langNoRecentFiles() { return ls->noRecentFiles; }
-_TCHAR* langInsert() { return ls->insert; }
-_TCHAR* langEject() { return ls->eject; }
-
-_TCHAR* langErrorTitle() { return ls->errorTitle; }
 _TCHAR* langWarningTitle() { return ls->warningTitle; }
+_TCHAR* langWarningDiscardChanges()  {return ls->warningDiscardChanges; }
+_TCHAR* langWarningOverwriteFile() { return ls->warningOverwriteFile; }
+_TCHAR* langErrorTitle() { return ls->errorTitle; }
 _TCHAR* langErrorEnterFullscreen() { return ls->errorEnterFullscreen; }
 _TCHAR* langErrorDirectXFailed() { return ls->errorDirectXFailed; }
 _TCHAR* langErrorNoRomInZip() { return ls->errorNoRomInZip; }
@@ -329,10 +327,11 @@ _TCHAR* langErrorNoDskInZip() { return ls->errorNoDskInZip; }
 _TCHAR* langErrorNoCasInZip() { return ls->errorNoCasInZip; }
 _TCHAR* langErrorNoHelp() { return ls->errorNoHelp; }
 _TCHAR* langErrorStartEmu() { return ls->errorStartEmu; }
-_TCHAR* langDiscardChanges()  {return ls->discardChanges; }
-_TCHAR* langOverwriteConfig()  {return ls->overwriteConfig; }
-_TCHAR* langOverwriteFile() { return ls->overwriteFile; }
-_TCHAR* langPortableReadonly()  {return ls->portableReadonly; }
+_TCHAR* langErrorPortableReadonly()  {return ls->errorPortableReadonly; }
+
+_TCHAR* langMenuNoRecentFiles() { return ls->menuNoRecentFiles; }
+_TCHAR* langMenuInsert() { return ls->menuInsert; }
+_TCHAR* langMenuEject() { return ls->menuEject; }
 
 _TCHAR* langMenuCartAutoReset() { return ls->menuCartAutoReset; }
 _TCHAR* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
@@ -550,7 +549,6 @@ _TCHAR* langPropPortsSimplCovox() { return ls->propPortsSimplCovox; }
 _TCHAR* langPropPortsFile() { return ls->propPortsFile; }
 _TCHAR* langPropPortsComFile()  { return ls->propPortsComFile; }
 _TCHAR* langPropPortsOpenLogFile() { return ls->propPortsOpenLogFile; }
-_TCHAR* langPropPortsFilenameText() { return ls->propPortsFilenameText; }
 _TCHAR* langPropPortsEmulateMsxPrn() { return ls->propPortsEmulateMsxPrn; }
 
 _TCHAR* langPropSettDefSlotGB() { return ls->propSettDefSlotGB; }
@@ -618,66 +616,65 @@ _TCHAR* langDlgAboutDevel() { return ls->dlgAboutDevel; }
 _TCHAR* langDlgAboutThanks() { return ls->dlgAboutThanks; }
 _TCHAR* langDlgAboutLisence() { return ls->dlgAboutLisence; }
 
-_TCHAR* langDlgConfTitle() { return ls->confTitle; }
+_TCHAR* langConfTitle() { return ls->confTitle; }
 _TCHAR* langDlgSave() { return ls->confSave; }
 _TCHAR* langDlgSaveAs() { return ls->confSaveAs; }
 _TCHAR* langDlgRun() { return ls->confRun; }
 _TCHAR* langDlgClose() { return ls->confClose; }
 _TCHAR* langDlgSavePreview() { return ls->dlgSavePreview; }
 _TCHAR* langDlgSaveDate() { return ls->dlgSaveDate; }
-_TCHAR* langDlgConfConfigText() { return ls->confConfigText; }
-_TCHAR* langDlgConfSlotLayout() { return ls->confSlotLayout; }
-_TCHAR* langDlgConfMemory() { return ls->confMemory; }
-_TCHAR* langDlgConfChipEmulation() { return ls->confChipEmulation; }
-_TCHAR* langDlgConfChipExtras() { return ls->confChipExtras; }
+_TCHAR* langConfConfigText() { return ls->confConfigText; }
+_TCHAR* langConfSlotLayout() { return ls->confSlotLayout; }
+_TCHAR* langConfMemory() { return ls->confMemory; }
+_TCHAR* langConfChipEmulation() { return ls->confChipEmulation; }
+_TCHAR* langConfChipExtras() { return ls->confChipExtras; }
 
-_TCHAR* langDlgSlotLayoutGB() { return ls->confSlotLayoutGB; }
-_TCHAR* langDlgSlotExtSlotGB() { return ls->confSlotExtSlotGB; }
-_TCHAR* langDlgBoardGB() { return ls->confBoardGB; }
-_TCHAR* langDlgBoardText() { return ls->confBoardText; }
-_TCHAR* langDlgSlotPrimary() { return ls->confSlotPrimary; }
-_TCHAR* langDlgSlotExpanded() { return ls->confSlotExpanded; }
+_TCHAR* langConfSlotLayoutGB() { return ls->confSlotLayoutGB; }
+_TCHAR* langConfSlotExtSlotGB() { return ls->confSlotExtSlotGB; }
+_TCHAR* langConfBoardGB() { return ls->confBoardGB; }
+_TCHAR* langConfBoardText() { return ls->confBoardText; }
+_TCHAR* langConfSlotPrimary() { return ls->confSlotPrimary; }
+_TCHAR* langConfSlotExpanded() { return ls->confSlotExpanded; }
 
-_TCHAR* langCartridge() { return ls->confSlotCart; }
-_TCHAR* langSlot() { return ls->confSlot; }
-_TCHAR* langSubslot() { return ls->confSubslot; }
+_TCHAR* langConfCartridge() { return ls->confSlotCart; }
+_TCHAR* langConfSlot() { return ls->confSlot; }
+_TCHAR* langConfSubslot() { return ls->confSubslot; }
+
+_TCHAR* langConfOpenRom() { return ls->confOpenRom; }
 
 _TCHAR* langShortcut() { return ls->hotkey; }
 _TCHAR* langHotkey() { return ls->shortcut; }
-_TCHAR* langUnknown() { return ls->unknown; }
-_TCHAR* langRomImage() { return ls->romImage; }
-_TCHAR* langRomImageOpen() { return ls->romImageOpen; }
-_TCHAR* langRomCartridge() { return ls->romCartridge; }
-_TCHAR* langAllFiles() { return ls->allFiles; }
-_TCHAR* langCpuState() { return ls->cpuState; }
-_TCHAR* langDiskImage() { return ls->diskImage; }
-_TCHAR* langCasImage() { return ls->casImage; }
+_TCHAR* langFileRom() { return ls->fileRom; }
+_TCHAR* langFileAll() { return ls->fileAll; }
+_TCHAR* langFileCpuState() { return ls->fileCpuState; }
+_TCHAR* langFileDisk() { return ls->fileDisk; }
+_TCHAR* langFileCas() { return ls->fileCas; }
 
-_TCHAR* langDlgMemAdd() { return ls->confMemAdd; }
-_TCHAR* langDlgMemEdit() { return ls->confMemEdit; }
-_TCHAR* langDlgMemRemove() { return ls->confMemRemove; }
-_TCHAR* langDlgMemSlot() { return ls->confMemSlot; }
-_TCHAR* langDlgMemAddress() { return ls->confMemAddresss; }
-_TCHAR* langDlgMemType() { return ls->confMemType; }
-_TCHAR* langDlgMemRomImage() { return ls->confMemRomImage; }
+_TCHAR* langConfMemAdd() { return ls->confMemAdd; }
+_TCHAR* langConfMemEdit() { return ls->confMemEdit; }
+_TCHAR* langConfMemRemove() { return ls->confMemRemove; }
+_TCHAR* langConfMemSlot() { return ls->confMemSlot; }
+_TCHAR* langConfMemAddress() { return ls->confMemAddresss; }
+_TCHAR* langConfMemType() { return ls->confMemType; }
+_TCHAR* langConfMemRomImage() { return ls->confMemRomImage; }
 
-_TCHAR* langDlgChipVideoGB() { return ls->confChipVideoGB; }
-_TCHAR* langDlgChipVideoChip() { return ls->confChipVideoChip; }
-_TCHAR* langDlgChipVideoRam() { return ls->confChipVideoRam; }
-_TCHAR* langDlgChipSoundGB() { return ls->confChipSoundGB; }
+_TCHAR* langConfChipVideoGB() { return ls->confChipVideoGB; }
+_TCHAR* langConfChipVideoChip() { return ls->confChipVideoChip; }
+_TCHAR* langConfChipVideoRam() { return ls->confChipVideoRam; }
+_TCHAR* langConfChipSoundGB() { return ls->confChipSoundGB; }
 
-_TCHAR* langDlgCmosGB() { return ls->dlgCmosGB; }
-_TCHAR* langDlgCmosEnableText() { return ls->dlgCmosEnable; }
-_TCHAR* langDlgCmosBatteryText() { return ls->dlgCmosBattery; }
+_TCHAR* langConfCmosGB() { return ls->confCmosGB; }
+_TCHAR* langConfCmosEnableText() { return ls->confCmosEnable; }
+_TCHAR* langConfCmosBatteryText() { return ls->confCmosBattery; }
 
-_TCHAR* langDlgChipCpuFreqGB() { return ls->dlgCpuFreqGB; }
-_TCHAR* langDlgChipZ80FreqText() { return ls->dlgZ80FreqText; }
-_TCHAR* langDlgChipR800FreqText() { return ls->dlgR800FreqText; }
-_TCHAR* langDlgChipFdcGB() { return ls->dlgFdcGB; }
-_TCHAR* langDlgChipFdcNumDrivesText() { return ls->dlgCFdcNumDrivesText; }
+_TCHAR* langConfChipCpuFreqGB() { return ls->confCpuFreqGB; }
+_TCHAR* langConfChipZ80FreqText() { return ls->confZ80FreqText; }
+_TCHAR* langConfChipR800FreqText() { return ls->confR800FreqText; }
+_TCHAR* langConfChipFdcGB() { return ls->confFdcGB; }
+_TCHAR* langConfChipFdcNumDrivesText() { return ls->confCFdcNumDrivesText; }
 
-_TCHAR* langDlgConfSaveTitle() { return ls->confSaveTitle; }
-_TCHAR* langDlgConfSaveText() { return ls->confSaveText; }
+_TCHAR* langConfSaveTitle() { return ls->confSaveTitle; }
+_TCHAR* langConfSaveText() { return ls->confSaveText; }
 
 _TCHAR* langSlotEditMemTitle() { return ls->slotEditMemTitle; }
 _TCHAR* langSlotEditMemGB() { return ls->slotEditMemGB; }
@@ -691,10 +688,8 @@ _TCHAR* langConfDiscardTitle() { return ls->confDiscardTitle; }
 _TCHAR* langConfExitSaveTitle() { return ls->confExitSaveTitle; }
 _TCHAR* langConfExitSaveText() { return ls->confExitSaveText; }
 
-_TCHAR* langDlgConfSaveAsTitle() { return ls->confSaveAsTitle; }
-_TCHAR* langDlgConfSaveAsMachineName() { return ls->confSaveAsMachineName; }
-
 _TCHAR* langConfSaveAsTitle() { return ls->confSaveAsTitle; }
+_TCHAR* langConfSaveAsMachineName() { return ls->confSaveAsMachineName; }
 _TCHAR* langConfSaveAsName() { return ls->confSaveAsName; }
 
 

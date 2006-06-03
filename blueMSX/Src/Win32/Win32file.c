@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-03 19:20:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -794,7 +794,7 @@ char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     if (file != NULL) {
         char langBuffer[200];
         fclose(file);
-        sprintf(langBuffer, "%s %s", langOverwriteFile(), pFileName);
+        sprintf(langBuffer, "%s %s", langWarningOverwriteFile(), pFileName);
         if (IDOK != MessageBox(NULL, langBuffer, langWarningTitle(), MB_OKCANCEL)) {
             return NULL;
         }
@@ -965,7 +965,7 @@ char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     if (file != NULL) {
         char langBuffer[200];
         fclose(file);
-        sprintf(langBuffer, "%s %s", langOverwriteFile(), pFileName);
+        sprintf(langBuffer, "%s %s", langWarningOverwriteFile(), pFileName);
         if (IDOK != MessageBox(NULL, langBuffer, langWarningTitle(), MB_OKCANCEL)) {
             return NULL;
         }

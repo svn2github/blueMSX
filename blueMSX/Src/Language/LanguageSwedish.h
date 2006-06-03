@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,9 +34,9 @@
 
 void langInitSwedish(LanguageStrings* ls) 
 {
-    ls->noRecentFiles           = "- ingen filhistoria -";
-    ls->insert                  = "Sätt in";
-    ls->eject                   = "Ta ur";
+    ls->menuNoRecentFiles       = "- ingen filhistoria -";
+    ls->menuInsert              = "Sätt in";
+    ls->menuEject               = "Ta ur";
 
     ls->menuCartAutoReset       = "Starta om efter insättning/urdagning";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -301,9 +301,9 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
 
 
-    ls->dlgCmosGB                = "CMOS ";
-    ls->dlgCmosEnable            = " Använd CMOS";
-    ls->dlgCmosBattery           = " Använd Laddat Batteri";
+    ls->confCmosGB                = "CMOS ";
+    ls->confCmosEnable            = " Använd CMOS";
+    ls->confCmosBattery           = " Använd Laddat Batteri";
 
     ls->menuCartSCCPlus          = "SCC+ Cartridge";
     ls->menuCartSCC              = "SCC Cartridge";
@@ -437,11 +437,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confChipExtras          = "Extra";
     ls->confBoardGB             = "Board ";
     ls->confBoardText           = "Board Typ:";
-    ls->dlgCpuFreqGB            = "CPU Frekvens ";
-    ls->dlgZ80FreqText          = "Z80 Frekvens:";
-    ls->dlgR800FreqText         = "R800 Frekvens:";
-    ls->dlgFdcGB                = "Kontroller för Diskettenhet ";
-    ls->dlgCFdcNumDrivesText    = "Antal Diskettenheter:";
+    ls->confCpuFreqGB            = "CPU Frekvens ";
+    ls->confZ80FreqText          = "Z80 Frekvens:";
+    ls->confR800FreqText         = "R800 Frekvens:";
+    ls->confFdcGB                = "Kontroller för Diskettenhet ";
+    ls->confCFdcNumDrivesText    = "Antal Diskettenheter:";
 
     ls->propPriorityBoost        = " Höj prioriteten på blueMSX";
     
@@ -461,8 +461,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->keyconfigMappedTo       = "Mappad till:";
     ls->keyconfigMappingScheme  = "Mapschema:";
 
-    ls->discardChanges          = "Vill du stänga verktyget utan att spara dina ändringar?";
-    ls->overwriteConfig         = "Vill du skriva över konfigurationen?";
+    ls->warningDiscardChanges   = "Vill du stänga verktyget utan att spara dina ändringar?";
 
     ls->confSaveAsTitle         = "Spara Konfigurering Som...";
     ls->confSaveAsName          = "Namn:";
@@ -498,7 +497,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propPortsSimplCovox     = "SiMPL / Covox DAC";
     ls->propPortsFile           = "Skriv till Fil";
     ls->propPortsOpenLogFile    = "Öppna Logfil";
-    ls->propPortsFilenameText   = "Filenamn:";
     ls->propPortsEmulateMsxPrn  = "Emulering:";
 
     ls->shortcutPrnFormFeed     = "Form Feed på Skrivare";
@@ -532,14 +530,12 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->shortcut                = "Kortkommando";
     ls->hotkey                  = "Hotkey";
-    ls->unknown                 = "Okänd";
-    ls->romImage                = "Rom fil";
-    ls->romImageOpen            = "Öppna Rom fil";
-    ls->romCartridge            = "Rom fil";
-    ls->allFiles                = "Alla Filer";
-    ls->cpuState                = "CPU-tillstand";
-    ls->diskImage               = "Diskettfil";
-    ls->casImage                = "Kasettfil";
+    ls->fileRom                 = "Rom fil";
+    ls->confOpenRom             = "Öppna Rom fil";
+    ls->fileAll                 = "Alla Filer";
+    ls->fileCpuState            = "CPU-tillstand";
+    ls->fileDisk                = "Diskettfil";
+    ls->fileCas                 = "Kasettfil";
 
     ls->menuCartExternalRam     = "Externt RAM";
 

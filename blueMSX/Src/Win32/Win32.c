@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.132 $
+** $Revision: 1.133 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-03 19:20:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2501,7 +2501,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     }
 
     if (readOnlyDir && pProperties->settings.portable) {
-        MessageBox(NULL, langPortableReadonly(), langErrorTitle(), MB_OK);
+        MessageBox(NULL, langErrorPortableReadonly(), langErrorTitle(), MB_OK);
         return 0;
     }
 
@@ -3014,7 +3014,7 @@ char* archFilenameGetOpenState(Properties* properties)
     int createFileSize = -1;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.sta)#*.sta#", langCpuState());
+    sprintf(extensionList, "%s   (*.sta)#*.sta#", langFileCpuState());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3034,7 +3034,7 @@ char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romT
     char* title = cartSlot == 1 ? langDlgInsertRom2() : langDlgInsertRom1();
     char* fileName;
     char extensionList[512];
-    sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langRomCartridge(), langAllFiles());
+    sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3056,7 +3056,7 @@ char* archFilenameGetOpenCas(Properties* properties)
     int createFileSize = 0;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langCasImage(), langAllFiles());
+    sprintf(extensionList, "%s   (*.cas, *.zip)#*.cas; *.zip#%s   (*.*)#*.*#", langFileCas(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3078,7 +3078,7 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive, int allowCreate
     int createFileSize = 720 * 1024;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3104,7 +3104,7 @@ char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCr
     char* defautExtension = ".dsk";
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langDiskImage(), langAllFiles());
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3128,7 +3128,7 @@ char* archFilenameGetSaveCas(Properties* properties, int* type)
     char* extensions = ".cas\0";
     int* selectedExtension = type;
 
-    sprintf(extensionList, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langCasImage(), langCasImage(), langCasImage());
+    sprintf(extensionList, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langFileCas(), langFileCas(), langFileCas());
     replaceCharInString(extensionList, '#', 0);
 
     return archFileSave(title, extensionList, defaultDir, extensions, selectedExtension);
@@ -3143,7 +3143,7 @@ char* archFilenameGetSaveState(Properties* properties)
     int* selectedExtension = NULL;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.sta)#*.sta#", langCpuState());
+    sprintf(extensionList, "%s   (*.sta)#*.sta#", langFileCpuState());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
