@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,6 +146,7 @@ static void write(RomMapperSvi738Fdc* rm, UInt16 address, UInt8 value)
         case 0x3fbc:
             rm->drvSelect = value & 0x3f;
             wd2793SetSide(rm->fdc, value & 4);
+            wd2793SetMotor(rm->fdc, value & 8);
             if (diskEnabled(0)) ledSetFdd1(value & 1);
             if (diskEnabled(1)) ledSetFdd2(value & 2);
             switch (value & 3) {

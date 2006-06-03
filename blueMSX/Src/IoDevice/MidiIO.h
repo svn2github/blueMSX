@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-07-02 17:59:21 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ void midiIoDestroy(MidiIO* midiIo);
 
 void midiIoTransmit(MidiIO* midiIo, UInt8 value);
 
+void midiIoSetMidiInType(MidiType type, const char* fileName);
 void midiIoSetMidiOutType(MidiType type, const char* fileName);
 
 #endif

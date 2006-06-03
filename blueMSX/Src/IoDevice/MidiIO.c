@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,51 +36,92 @@
 #include "ArchMidi.h"
 
 typedef struct MidiIO {
-    MidiType type;
-    FILE* file;
-    int  uartReady;
+    MidiType inType;
+    FILE* inFile;
+    int  uartInReady;
+    MidiType outType;
+    FILE* outFile;
+    int  uartOutReady;
 };
 
+static MidiType theMidiInType = MIDI_NONE;
 static MidiType theMidiOutType = MIDI_NONE;
+static char theInFileName[512] = { 0 };
+static char theOutFileName[512] = { 0 };
+
 static MidiIO* theMidiIO = NULL;
-static char theFileName[512] = { 0 };
 
 
-static void setType(MidiIO* midiIo)
+static void setOutType(MidiIO* midiIo)
 {
-    midiIo->type = theMidiOutType;
+    midiIo->outType = theMidiOutType;
 
-    switch (midiIo->type) {
+    switch (midiIo->outType) {
     case MIDI_HOST:
-        midiIo->uartReady = archMidiCreate();
+        midiIo->uartOutReady = archMidiOutCreate();
         break;
     case MIDI_FILE:
-        midiIo->file = fopen(theFileName, "w+");
+        midiIo->outFile = fopen(theOutFileName, "w+");
         break;
     }
 }
 
-static void removeType(MidiIO* midiIo)
+static void midiInCb(MidiIO* midiIO, UInt8* buffer, UInt32 length)
 {
-    switch (midiIo->type) {
+}
+
+static void setInType(MidiIO* midiIo)
+{
+    midiIo->inType = theMidiInType;
+
+    switch (midiIo->inType) {
     case MIDI_HOST:
-        archMidiDestroy();
-        midiIo->uartReady = 0;
+        midiIo->uartInReady = archMidiInCreate(midiInCb, midiIo);
         break;
     case MIDI_FILE:
-        fclose(midiIo->file);
+        midiIo->inFile = fopen(theInFileName, "w+");
+        break;
+    }
+}
+
+static void removeOutType(MidiIO* midiIo)
+{
+    switch (midiIo->outType) {
+    case MIDI_HOST:
+        if (midiIo->uartOutReady != 0) {
+            archMidiOutDestroy();
+        }
+        midiIo->uartOutReady = 0;
+        break;
+    case MIDI_FILE:
+        fclose(midiIo->outFile);
+        break;
+    }
+}
+
+static void removeInType(MidiIO* midiIo)
+{
+    switch (midiIo->inType) {
+    case MIDI_HOST:
+        if (midiIo->uartInReady != 0) {
+            archMidiInDestroy();
+        }
+        midiIo->uartInReady = 0;
+        break;
+    case MIDI_FILE:
+        fclose(midiIo->inFile);
         break;
     }
 }
 
 void midiIoTransmit(MidiIO* midiIo, UInt8 value)
 {
-    switch (midiIo->type) {
+    switch (midiIo->outType) {
     case MIDI_HOST:
-        archMidiTransmit(value);
+        archMidiOutTransmit(value);
         break;
     case MIDI_FILE:
-        fwrite(&value, 1, 1, midiIo->file);
+        fwrite(&value, 1, 1, midiIo->outFile);
         break;
     }
 }
@@ -89,7 +130,7 @@ MidiIO* midiIoCreate()
 {
     MidiIO* midiIo = calloc(1, sizeof(MidiIO));
 
-    setType(midiIo);
+    setOutType(midiIo);
 
     theMidiIO = midiIo;
 
@@ -98,7 +139,8 @@ MidiIO* midiIoCreate()
 
 void midiIoDestroy(MidiIO* midiIo)
 {
-    removeType(midiIo);
+    removeInType(midiIo);
+    removeOutType(midiIo);
 
     free(midiIo);
 
@@ -109,7 +151,7 @@ void midiIoSetMidiOutType(MidiType type, const char* fileName)
 {   
     theMidiOutType = type;
 
-    strcpy(theFileName, fileName);
+    strcpy(theOutFileName, fileName);
     
     if (theMidiIO == NULL) {
         return;
@@ -117,6 +159,22 @@ void midiIoSetMidiOutType(MidiType type, const char* fileName)
 
     archMidiUpdateDriver();
 
-    removeType(theMidiIO);
-    setType(theMidiIO);
+    removeOutType(theMidiIO);
+    setOutType(theMidiIO);
+}
+
+void midiIoSetMidiInType(MidiType type, const char* fileName)
+{   
+    theMidiInType = type;
+
+    strcpy(theInFileName, fileName);
+    
+    if (theMidiIO == NULL) {
+        return;
+    }
+
+    archMidiUpdateDriver();
+
+    removeInType(theMidiIO);
+    setInType(theMidiIO);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2005-08-15 05:37:53 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,32 +34,18 @@
 
 void langInitDutch(LanguageStrings* ls)
 {
-    ls->statusBarStopped        = "  Gestopt";
-    ls->statusBarPaused         = "  Gepauzeerd";
-    ls->statusBarRunning        = "  Bezig";
+    ls->noRecentFiles           = "- geen recente bestanden -";
+    ls->insert                  = "Toevoegen";
+    ls->eject                   = "Eruit halen";
 
-    ls->menuHardReset           = "Harde Herstart";
-    ls->menuSoftReset           = "Zachte Herstart";
-
-    ls->menuCartInsert          = "Toevoegen";
-    ls->menuCartRemove          = "Verwijderen";
     ls->menuCartAutoReset       = "Herstart na toevoegen/verwijderen";
-    ls->menuCartNoRecentFiles   = "- geen recente bestanden -";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
     
-    ls->menuCartSpecial         = "Speciaal";
-
-    ls->menuDiskInsert          = "Toevoegen";
-    ls->menuDiskEject           = "Eruit halen";
     ls->menuDiskAutoStart       = "Herstart na toevoegen";
-    ls->menuDiskNoRecentFiles   = "- geen recente bestanden -";
 
-    ls->menuCasInsert           = "Toevoegen";
-    ls->menuCasEject            = "Verwijderen";
     ls->menuCasSetPosition      = "Bepaal positie";
     ls->menuCasRewind           = "Spoel terug";
-    ls->menuCasNoRecentFiles    = "- geen recente bestanden -";
 
     ls->menuZoomNormal          = "Normale grootte";
     ls->menuZoomDouble          = "Dubbele grootte";
@@ -75,10 +61,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuHelpHelp            = "Help";
     ls->menuHelpAbout           = "Info blueMSX";
 
-    ls->menuFileCart1           = "Cartridge slot 1";
-    ls->menuFileCart2           = "Cartridge slot 2";
-    ls->menuFileDiskA           = "Diskette station A";
-    ls->menuFileDiskB           = "Diskette station B";
+    ls->menuFileCart            = "Cartridge slot";
+    ls->menuFileDisk            = "Diskette station";
     ls->menuFileCas             = "Cassette";
     ls->menuFileLoadState       = "Laad CPU status";
     ls->menuFileSaveState       = "Opslaan CPU status";
@@ -112,20 +96,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->errorNoHelp             = "Het blueMSX help bestand is niet gevonden.";
     ls->errorStartEmu           = "Het is niet gelukt om de MSX emulator te starten.";
 
-    ls->tooltipReset            = "MSX opnieuw opstarten";
-    ls->tooltipCart1            = "Stop Cartridge in Slot 1";
-    ls->tooltipCart2            = "Stop Cartridge in Slot 2";
-    ls->tooltipDiskA            = "Stop Diskette in Drive A";
-    ls->tooltipDiskB            = "Stop Diskette in Drive B";
-    ls->tooltipCas              = "Stop Tape in Cassette speler";
-    ls->tooltipStart            = "Start emulatie";
-    ls->tooltipResume           = "Emulatie hervatten";
-    ls->tooltipPause            = "Emulatie pauzeren";
-    ls->tooltipWindowSize       = "Bepaal venster Grootte";
-    ls->tooltipProperties       = "Eigenschappen venster openen";
-    ls->tooltipHelp             = "Help venster openen";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - Selecteer een rom om te laden";
     ls->dlgLoadDsk              = "blueMSX - Selecteer een dsk om te laden";
     ls->dlgLoadCas              = "blueMSX - Selecteer een cas om te laden";
@@ -154,17 +125,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgZipReset             = "Herstart na toevoegen";
 
     ls->dlgAboutTitle           = "blueMSX - Info";
-
-    ls->dlgJoyTitle1            = "blueMSX - Joystick toetsenkeuze A";
-    ls->dlgJoyTitle2            = "blueMSX - Joystick toetsenkeuze B";
-    ls->dlgJoyUpText            = "Boven";
-    ls->dlgJoyDownText          = "Beneden";
-    ls->dlgJoyLeftText          = "Links";
-    ls->dlgJoyRightText         = "Rechts";
-    ls->dlgJoyButton1Text       = "Knop 1";
-    ls->dlgJoyButton2Text       = "Knop 2";
-    ls->dlgJoyGB                = "Toetsen configureren";
-				           		
 
     ls->dlgLangLangText         = "Kies de taal die blueMSX moet gebruiken";
     ls->dlgLangLangTitle        = "blueMSX - Taal";
@@ -207,13 +167,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "MASTER";
 
-    ls->propJoyPort1GB          = "Poort #1 ";
-    ls->propJoyPort2GB          = "Poort #2 ";
-    ls->propJoyAutofireText     = "Auto-vuur:";
-    ls->propJoyKeysetGB         = "Joystick toetsenkeuze ";
-    ls->propJoyKeyest1          = "Bepaal toetsenkeuze A";
-    ls->propJoyKeyest2          = "Bepaal toetsenkeuze B";
-
     ls->enumVideoMonColor       = "Kleur";
     ls->enumVideoMonGrey        = "Zwart-Wit";
     ls->enumVideoMonGreen       = "Groen";
@@ -250,17 +203,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatisch (snel)";
 
     ls->enumControlsJoyNone     = "geen";
-    ls->enumControlsJoyNumpad   = "Numpad";
-    ls->enumControlsJoyKeysetA  = "Toetsenkeuze A";
-    ls->enumControlsJoyKeysetB  = "Toetsenkeuze B";
-    ls->enumControlsJoyPCjoy1   = "PC joystick #1";
-    ls->enumControlsJoyPCjoy2   = "PC joystick #2";
     ls->enumControlsJoyMouse    = "Muis";
-
-    ls->enumControlsAfOff       = "Uit";
-    ls->enumControlsAfSlow      = "Langzaam";
-    ls->enumControlsAfMedium    = "Gemiddeld";
-    ls->enumControlsAfFast      = "Snel";
 
     ls->dlgAboutAbout           = "Info\r\n====";
     ls->dlgAboutVersion         = "Versie:";
@@ -298,7 +241,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "Bestand Geschiedenis ";
     ls->propSetFileHistorySize   = "Aantal bestanden in geschiedenis:";
     ls->propSetFileHistoryClear  = "Leegmaken Geschiedenis";
-    ls->propSetScreenSaverGB     = "Scherm beveiliging";
     ls->propSetScreenSaver       = "Scherm Beveiliging uitschakelen als blueMSX draait";
     ls->confTitle                = "blueMSX - Machine configuratie aanpassen";
     ls->confSave                 = "Opslaan";
@@ -312,12 +254,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "Slot instellingen ";
     ls->confSlotExtSlotGB        = "Externe Slots ";
-    ls->confSlotSlot0            = "Slot 0";
-    ls->confSlotSlot1            = "Slot 1";
-    ls->confSlotSlot2            = "Slot 2";
-    ls->confSlotSlot3            = "Slot 3";
-    ls->confSlotCart1            = "Cartridge 1:";
-    ls->confSlotCart2            = "Cartridge 2:";
+    ls->confSlotCart             = "Cartridge";
     ls->confSlotPrimary          = "Primair";
     ls->confSlotExpanded         = "Uitgebreid (vier sub-slots)";
 
@@ -352,11 +289,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - Machine configuratie opslaan als...";
     ls->confSaveAsMachineName    = "Machine Naam:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - Interne roms";
-
     ls->propSndMoonsound         = " Moonsound";
-
-    ls->propFileTypesGB          = "Bestand types ";
 
     ls->propWindowsEnvGB         = "Windows Omgeving";
 
@@ -365,7 +298,6 @@ void langInitDutch(LanguageStrings* ls)
 
 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel.";
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix.";
     ls->propMonHorizStretch      = " Horizontaal uitrekken";
 
     ls->propClearHistory         = "Weet u zeker dat u de bestandsgeschiedenis wilt wissen?";
@@ -379,24 +311,13 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgCmosEnable            = " Aanzetten CMOS";
     ls->dlgCmosBattery           = " Gebruiken Geladen Batterij";
 
-    ls->menuCartSnatcher        = "The Snatcher Cartridge";
-    ls->menuCartSdSnatcher      = "SD-Snatcher Cartridge";
-    ls->menuCartSCCMirrored     = "SCC Gespiegelde Cartridge";
-    ls->menuCartSCCExpanded     = "SCC Uitgebreide Cartridge";
-    ls->menuCartSCCPlus         = "SCC+ Cartridge";
-
+    ls->menuCartSCCPlus          = "SCC+ Cartridge";
+    ls->menuCartSCC              = "SCC Cartridge";
+    
     ls->warningTitle             = "blueMSX - Waarschuwing";
-    ls->tooltipStop              = "Stop emulatie";
 
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "Toetsenkeuze";
-    ls->propJoyConfigKeyset     = "Configuratie Toetsenkeuze";
-    ls->propJoyControlText      = "Besturing:";
-    ls->propJoyButtonText       = "Knop";
-    ls->propJoyButtonAText      = "Knop A:";
-    ls->propJoyButtonBText      = "Knop B:";
-
     ls->menuToolsShortcuts      = "Maken Snelkoppeling";
 
     ls->shortcutSaveConfig      = "blueMSX -  Configuratie opslaan";
@@ -484,8 +405,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->propApearance           = "Uiterlijk";
     ls->propThemeGB             = "Thema ";
     ls->propTheme               = "Thema";
-    ls->propThemeClassic        = "Klassiek";
-    ls->propThemeBlue           = "DIGIblauw";
 
     ls->propMonBrightness       = "Helderheid:";
     ls->propMonContrast         = "Contrast:";
@@ -501,11 +420,9 @@ void langInitDutch(LanguageStrings* ls)
     ls->propFile                = "Bestand";
     ls->propSettDefSlotGB       = "Slepen en neerzetten ";
     ls->propSettDefSlots        = "Toevoegen cartridge in:";
-    ls->propSettDefSlot1        = " Slot 1";
-    ls->propSettDefSlot2        = " Slot 2";
+    ls->propSettDefSlot         = " Slot";
     ls->propSettDefDrives       = "Toevoegen diskette in:";
-    ls->propSettDefDriveA       = " Drive A";
-    ls->propSettDefDriveB       = " Drive B";
+    ls->propSettDefDrive        = " Drive";
     ls->menuPropsFile           = "Bestand";
     ls->shortcutShowFiles       = "Tonen van bestandseigenschappen";
 
@@ -546,7 +463,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->propEmuFdcTiming        = "Diskette station niet synchroniseren"; 
 
     ls->shortcutToggleFdcTiming = "Synchroniseren/Niet synchroniseren"; 
-    ls->propUseRegistry         = "Configuratie in het register opslaan";
     
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge"; 

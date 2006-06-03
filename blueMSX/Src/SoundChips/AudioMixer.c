@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-07-03 09:17:40 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -144,7 +144,7 @@ static void mixerRecalculateType(Mixer* mixer, int audioType)
         channel->volume         = type->volume;
         channel->pan            = type->pan;
         recalculateChannelVolume(mixer, channel);
-        archMidiUpdateVolume(channel->volumeLeft, channel->volumeRight);
+        archMidiOutUpdateVolume(channel->volumeLeft, channel->volumeRight);
     }
 
     for (i = 0; i < mixer->channelCount; i++) {
@@ -302,7 +302,7 @@ static void updateVolumes(Mixer* mixer)
             mixer->channels[i].volIntRight = newVol;
         }
         
-        if (archMidiGetNoteOn()) {
+        if (archMidiOutGetNoteOn()) {
             mixer->midi.volIntLeft  = MIN(100, mixer->channels[MIXER_CHANNEL_MIDI].volumeLeft / 7);
             mixer->midi.volIntRight = MIN(100, mixer->channels[MIXER_CHANNEL_MIDI].volumeRight/ 7);
         }

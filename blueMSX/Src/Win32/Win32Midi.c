@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,10 +37,30 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static int devId = -1;
+static int devIdIn  = -1;
+static int devIdOut = -1;
 static UInt32 enabled = 1;
 static UInt32 currVolume;
 static UInt32 origVolume;
+
+
+ArchMidiInCb midiInCb = NULL;
+void*        midiInRef;
+
+static void midiInCallback(void* ref, const char* buffer, unsigned length)
+{
+    if (devIdIn != -1 && midiInCb != NULL) {
+        midiInCb(midiInRef, buffer, length);
+    }
+}
+
+void archMidiEnable(int enable)
+{
+    enabled = enable;
+    if (devIdOut != -1) {
+        w32_midiOutSetVolume(devIdOut, currVolume * enabled);
+    }
+}
 
 void archMidiUpdateDriver()
 {
@@ -48,28 +68,28 @@ void archMidiUpdateDriver()
     int num = 0;
     int i;
 
-    if (devId != -1) {
-        w32_midiOutSetVolume(devId, origVolume);
-	    w32_midiOutClose(devId);
+    if (devIdOut != -1) {
+        w32_midiOutSetVolume(devIdOut, origVolume);
+	    w32_midiOutClose(devIdOut);
     }
 
 	num = w32_midiOutGetVFNsNum();
 
-    devId = -1;
+    devIdOut = -1;
     for (i = 0; i < num; i++) {
 	    const char* name = w32_midiOutGetVFN(i);
         if (name != NULL) {
             if (strcmp(name, pProperties->sound.MidiOut.name) == 0) {
-                devId = w32_midiOutOpen(name);
+                devIdOut = w32_midiOutOpen(name);
                 break;
             }
         }
     }
-    if (devId == -1 && num > 0) {
+    if (devIdOut == -1 && num > 0) {
 	    const char* name = w32_midiOutGetVFN(0); //was i
 	    const char* desc = w32_midiOutGetRDN(0); //was i
         if (name != NULL) {
-            devId = w32_midiOutOpen(name);
+            devIdOut = w32_midiOutOpen(name);
             strcpy(pProperties->sound.MidiOut.name, name);
             if (desc != NULL) {
                 strcpy(pProperties->sound.MidiOut.desc, desc);
@@ -80,68 +100,92 @@ void archMidiUpdateDriver()
         }
     }
 
-    if (devId != -1) {
-        origVolume = w32_midiOutGetVolume(devId);
-        w32_midiOutSetVolume(devId, currVolume * enabled);
-        w32_midiOutEnableMt32ToGmMapping(devId, pProperties->sound.MidiOut.mt32ToGm);
+    if (devIdOut != -1) {
+        origVolume = w32_midiOutGetVolume(devIdOut);
+        w32_midiOutSetVolume(devIdOut, currVolume * enabled);
+        w32_midiOutEnableMt32ToGmMapping(devIdOut, pProperties->sound.MidiOut.mt32ToGm);
+    }
+
+    if (devIdIn  != -1) {
+	    w32_midiInClose(devIdOut);
+    }
+
+	num = w32_midiInGetVFNsNum();
+
+    devIdIn = -1;
+    for (i = 0; i < num; i++) {
+	    const char* name = w32_midiInGetVFN(i);
+        if (name != NULL) {
+            if (strcmp(name, pProperties->sound.MidiIn.name) == 0) {
+                devIdIn = w32_midiInOpen(name, midiInCallback, NULL);
+                break;
+            }
+        }
+    }
+    if (devIdIn == -1 && num > 0) {
+	    const char* name = w32_midiInGetVFN(0); //was i
+	    const char* desc = w32_midiInGetRDN(0); //was i
+        if (name != NULL) {
+            devIdIn = w32_midiInOpen(name, midiInCallback, NULL);
+            strcpy(pProperties->sound.MidiIn.name, name);
+            if (desc != NULL) {
+                strcpy(pProperties->sound.MidiIn.desc, desc);
+            }
+            else {
+                pProperties->sound.MidiIn.desc[0] = 0;
+            }
+        }
     }
 }
 
-int archMidiCreate(void) 
+int archMidiOutCreate(void) 
 {
     w32_resetHistory();
-    return devId != -1;
+    return devIdOut != -1;
 }
 
-void archMidiDestroy(void)
+void archMidiOutDestroy(void)
 {
+    devIdOut = -1;
 }
 
-void archMidiLoadState(void)
-{
-    if (devId != -1) {
-        w32_midiOutLoadState(devId);
-    }
-}
-
-void archMidiSaveState(void)
-{
-    if (devId != -1) {
-        w32_midiOutSaveState(devId);
-    }
-}
-
-void archMidiEnable(int enable)
-{
-    enabled = enable;
-    if (devId != -1) {
-        w32_midiOutSetVolume(devId, currVolume * enabled);
-    }
-}
-
-void archMidiUpdateVolume(int left, int right)
+void archMidiOutUpdateVolume(int left, int right)
 {
     currVolume = MIN(left * 100, 0xffff) | (MIN(right * 100, 0xffff) << 16);
-    if (devId != -1) {
-        w32_midiOutSetVolume(devId, currVolume * enabled);
+    if (devIdOut != -1) {
+        w32_midiOutSetVolume(devIdOut, currVolume * enabled);
     }
 }
 
-int archMidiGetNoteOn()
+int archMidiOutGetNoteOn()
 {
-    if (devId != -1) {
-        return w32_midiOutNoteOn(devId);
+    if (devIdOut != -1) {
+        return w32_midiOutNoteOn(devIdOut);
     }
     return 0;
 }
 
-int archMidiTransmit(unsigned char value) {
-    if (devId != -1) {
-    	w32_midiOutPut(value, devId);
+int archMidiOutTransmit(unsigned char value) {
+    if (devIdOut != -1) {
+    	w32_midiOutPut(value, devIdOut);
     }
     return 1;
 }
 
+int archMidiInCreate(ArchMidiInCb cb, void* ref) 
+{
+    if (devIdIn == -1) {
+        midiInCb  = cb;
+        midiInRef = ref;
+    }
+    return devIdIn != -1;
+}
+
+void archMidiInDestroy(void)
+{
+    midiInCb = NULL;
+    devIdIn = -1;
+}
 
 void midiInitialize()
 {
@@ -153,10 +197,26 @@ void midiInitialize()
 
 void midiShutdown()
 {
-    if (devId != -1) {
-        w32_midiOutSetVolume(devId, origVolume);
-	    w32_midiOutClose(devId);
+    if (devIdOut != -1) {
+        w32_midiOutSetVolume(devIdOut, origVolume);
+	    w32_midiOutClose(devIdOut);
     }
     w32_midiOutClean();
     w32_midiInClean();
+}
+
+// Shared methods
+
+void archMidiLoadState(void)
+{
+    if (devIdOut != -1) {
+        w32_midiOutLoadState(devIdOut);
+    }
+}
+
+void archMidiSaveState(void)
+{
+    if (devIdOut != -1) {
+        w32_midiOutSaveState(devIdOut);
+    }
 }

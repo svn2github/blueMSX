@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -774,14 +774,22 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_SETCURSEL, i, 0);
         }
 
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDEFSLOTSGB), langPropSettDefSlotGB());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOTS), langPropSettDefSlots());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT1), langPropSettDefSlot1());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT2), langPropSettDefSlot2());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVES), langPropSettDefDrives());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEA), langPropSettDefDriveA());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEB), langPropSettDefDriveB());
+        {
+            char text[64];
 
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDEFSLOTSGB), langPropSettDefSlotGB());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOTS), langPropSettDefSlots());
+
+            sprintf("%s 1", langPropSettDefSlot());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT1), text);
+            sprintf("%s 2", langPropSettDefSlot());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT2), text);
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVES), langPropSettDefDrives());
+            sprintf("%s A", langPropSettDefDrive());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEA), text);
+            sprintf("%s B", langPropSettDefDrive());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEB), text);
+        }
 
         setButtonCheck(hDlg, IDC_SETTINGSSLOT1, pProperties->cartridge.quickStartDrive == 0, 1);
         setButtonCheck(hDlg, IDC_SETTINGSSLOT2, pProperties->cartridge.quickStartDrive == 1, 1);

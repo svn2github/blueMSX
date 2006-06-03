@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.6 $ 
+** $Revision: 1.7 $ 
 **
-** $Date: 2005-09-09 03:31:46 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,31 +34,18 @@
  
 void langInitGerman(LanguageStrings* ls) 
 {
-    ls->statusBarStopped        = "  Gestoppt";
-    ls->statusBarPaused         = "  Unterbrochen";
-    ls->statusBarRunning        = "  Läuft";
+    ls->noRecentFiles           = "- keine neuen Files -";
+    ls->insert                  = "Einfügen";
+    ls->eject                   = "Auswurf";
 
-    ls->menuHardReset           = "Hard Reset";
-    ls->menuSoftReset           = "Soft Reset";
-    
-    ls->menuCartInsert          = "Einfügen";
-    ls->menuCartRemove          = "Entfernen";
     ls->menuCartAutoReset       = "Reset nach Einfügen/Entfernen";
-    ls->menuCartNoRecentFiles   = "- keine neuen Files -";
     ls->menuCartFMPac           = "FM-PAC-Cartridge";
     ls->menuCartPac             = "PAC-Cartridge";
-    ls->menuCartSpecial         = "Spezial";
 
-    ls->menuDiskInsert          = "Einfügen";
-    ls->menuDiskEject           = "Auswurf";
     ls->menuDiskAutoStart       = "Reset nach Einfügen";
-    ls->menuDiskNoRecentFiles   = "- keine neuen Files -";
     
-    ls->menuCasInsert           = "Einfügen";
-    ls->menuCasEject            = "Auswurf";
     ls->menuCasSetPosition      = "Positionieren";
     ls->menuCasRewind           = "Zurück";
-    ls->menuCasNoRecentFiles    = "- keine neuen Files -";
 
     ls->menuZoomNormal          = "Normale Größe";
     ls->menuZoomDouble          = "Doppelte Größe";
@@ -75,10 +62,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuHelpHelp            = "Hilfethemen";
     ls->menuHelpAbout           = "Über blueMSX";
 
-    ls->menuFileCart1           = "Cartridge Slot 1";
-    ls->menuFileCart2           = "Cartridge Slot 2";
-    ls->menuFileDiskA           = "Disk Drive A";
-    ls->menuFileDiskB           = "Disk Drive B";
+    ls->menuFileCart            = "Cartridge Slot";
+    ls->menuFileDisk            = "Disk Drive";
     ls->menuFileCas             = "Cassette";
     ls->menuFileLoadState       = "Lade CPU-Status";
     ls->menuFileSaveState       = "Speichere CPU-Status";
@@ -110,20 +95,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->errorNoHelp             = "Konnte kein blueMSX-Hilfe-File finden.";
     ls->errorStartEmu           = "Der MSX-Emulator konnte nicht gestartet werde.";
 
-    ls->tooltipReset            = "Reset MSX";
-    ls->tooltipCart1            = "Cartridge in Slot 1 einfügen";
-    ls->tooltipCart2            = "Cartridge in Slot 2 einfügen";
-    ls->tooltipDiskA            = "Diskette in Laufwerk A einfügen";
-    ls->tooltipDiskB            = "Diskette in Laufwerk B einfügen";
-    ls->tooltipCas              = "Cassette in den Cassettenrecorder einlegen";
-    ls->tooltipStart            = "Starte Emulation";
-    ls->tooltipResume           = "Emulation fortsetzen";
-    ls->tooltipPause            = "Emulation unterbrechen";
-    ls->tooltipWindowSize       = "Fenstergröße einstellen";
-    ls->tooltipProperties       = "Öffne den Eigenschaften-Dialog";
-    ls->tooltipHelp             = "Öffne das Hilfe-Fenster";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - Wähle ein ROM-Image aus";
     ls->dlgLoadDsk              = "blueMSX - Wähle ein DSK-Image aus";
     ls->dlgLoadCas              = "blueMSX - Wähle ein CAS-Image aus";
@@ -152,16 +124,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgZipReset             = "Reset nach Einfügen";
 
     ls->dlgAboutTitle           = "Über blueMSX";
-
-    ls->dlgJoyTitle1            = "blueMSX - Joystick-Keyset A";
-    ls->dlgJoyTitle2            = "blueMSX - Joystick-Keyset B";
-    ls->dlgJoyUpText            = "hoch";
-    ls->dlgJoyDownText          = "runter";
-    ls->dlgJoyLeftText          = "links";
-    ls->dlgJoyRightText         = "rechts";
-    ls->dlgJoyButton1Text       = "Button 1";
-    ls->dlgJoyButton2Text       = "Button 2";
-    ls->dlgJoyGB                = "Keyset Configuration ";
 
     ls->dlgLangLangText         = "Wähle die Sprache aus, die blueMSX benutzen soll.";
     ls->dlgLangLangTitle        = "blueMSX - Sprache";
@@ -205,13 +167,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "MASTER";
 
-    ls->propJoyPort1GB          = "Port #1 ";
-    ls->propJoyPort2GB          = "Port #2 ";
-    ls->propJoyAutofireText     = "Autofire:";
-    ls->propJoyKeysetGB         = "Joystick-Keysets ";
-    ls->propJoyKeyest1          = "Konfiguriere Keyset A";
-    ls->propJoyKeyest2          = "Konfiguriere Keyset B";
-
     ls->propPortsLptGB          = "Paralleler Port ";
     ls->propPortsComGB          = "Serielle Ports ";
     ls->propPortsLptText        = "Port:";
@@ -254,17 +209,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (schnell)";
 
     ls->enumControlsJoyNone     = "Nichts";
-    ls->enumControlsJoyNumpad   = "Zehnerblock";
-    ls->enumControlsJoyKeysetA  = "Keyset A";
-    ls->enumControlsJoyKeysetB  = "Keyset B";
-    ls->enumControlsJoyPCjoy1   = "PC-Joystick #1";
-    ls->enumControlsJoyPCjoy2   = "PC-Joystick #2";
     ls->enumControlsJoyMouse    = "Maus";
-
-    ls->enumControlsAfOff       = "Aus";
-    ls->enumControlsAfSlow      = "Langsam";
-    ls->enumControlsAfMedium    = "Mittel";
-    ls->enumControlsAfFast      = "Schnell";
 
     ls->dlgAboutAbout           = "ÜBER\r\n====";
     ls->dlgAboutVersion         = "Version:";
@@ -300,7 +245,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "File History ";
     ls->propSetFileHistorySize   = "Anzahl der Elemente in der File-History:";
     ls->propSetFileHistoryClear  = "Lösche History";
-    ls->propSetScreenSaverGB     = "Bildschirmschoner ";
     ls->propSetScreenSaver       = " Schalte den Bildschirmschoner ab, wenn blueMSX läuft";
 
     ls->confTitle                = "blueMSX - Editor für die Maschinenkonfiguration";
@@ -315,12 +259,7 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "Slot-Layout ";
     ls->confSlotExtSlotGB        = "Externe Slots ";
-    ls->confSlotSlot0            = "Slot 0";
-    ls->confSlotSlot1            = "Slot 1";
-    ls->confSlotSlot2            = "Slot 2";
-    ls->confSlotSlot3            = "Slot 3";
-    ls->confSlotCart1            = "Cartridge 1:";
-    ls->confSlotCart2            = "Cartridge 2:";
+    ls->confSlotCart             = "Cartridge";
     ls->confSlotPrimary          = "Primary";
     ls->confSlotExpanded         = "Expanded (vier Subslots)";
 
@@ -355,15 +294,12 @@ void langInitGerman(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - Speichere Maschinenkonfiguration als ...";
     ls->confSaveAsMachineName    = "Name der Maschine:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - Interne ROMs";
     ls->propSndMoonsound         = " Moonsound";
 
-    ls->propFileTypesGB          = "Filetypen ";
     ls->propFileTypes            = " Registriere Filetypen mit blueMSX (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " Automatische MSX-Function für Windows-Menütasten"; 
     ls->propWindowsEnvGB         = "Windows-Environment "; 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel."; 
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " Horizontal Stretch";
     ls->propMonVertStretch       = " Vertical Stretch";
     ls->propClearHistory         = "Sind Sie sicher, daß Sie die File-History löschen wollen?";
@@ -376,24 +312,12 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgCmosEnable            = " CMOS einschalten";
     ls->dlgCmosBattery           = " Verwende geladene Batterie";
 
-    ls->menuCartSnatcher        = "The Snatcher Cartridge";
-    ls->menuCartSdSnatcher      = "SD-Snatcher Cartridge";
-    ls->menuCartSCCMirrored     = "SCC Mirrored Cartridge";
-    ls->menuCartSCCExpanded     = "SCC Expanded Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
     
     ls->warningTitle             = "blueMSX - Warnung";
-    ls->tooltipStop             = "Stoppe Emulation";
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "Keyset";    
-    ls->propJoyConfigKeyset     = "Konfiguriere Keyset";
-    ls->propJoyControlText      = "Control:";
-    ls->propJoyButtonText       = "Button";
-    ls->propJoyButtonAText      = "Button A:";
-    ls->propJoyButtonBText      = "Button B:";
-
     ls->menuToolsShortcuts      = "Shortcuts-Editor";
 
     ls->shortcutSaveConfig      = "blueMSX - Speichere Konfiguration";
@@ -478,8 +402,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->propApearance           = "Appearance";
     ls->propThemeGB             = "Theme ";
     ls->propTheme               = "Theme:";
-    ls->propThemeClassic        = "Classic";
-    ls->propThemeBlue           = "DIGIDIGIblue";
 
     ls->propMonBrightness       = "Helligkeit:";
     ls->propMonContrast         = "Kontrast:";
@@ -495,11 +417,9 @@ void langInitGerman(LanguageStrings* ls)
     ls->propFile                = "Files";
     ls->propSettDefSlotGB       = "Drag and Drop ";
     ls->propSettDefSlots        = "ROM einfügen in:";
-    ls->propSettDefSlot1        = " Slot 1";
-    ls->propSettDefSlot2        = " Slot 2";
+    ls->propSettDefSlot         = " Slot";
     ls->propSettDefDrives       = "Disketten einfügen in:";
-    ls->propSettDefDriveA       = " Drive A";
-    ls->propSettDefDriveB       = " Drive B";
+    ls->propSettDefDrive        = " Drive";
     ls->menuPropsFile           = "Files";
     ls->shortcutShowFiles       = "Zeige Fileeigenschaften";
 
@@ -536,7 +456,6 @@ void langInitGerman(LanguageStrings* ls)
     // New entries in 2.1
     ls->propEmuFdcTiming        = "Floppy-Drive-Timing sperren";
     ls->shortcutToggleFdcTiming = "Freigabe/Sperren des Floppy-Drive-Timings";
-    ls->propUseRegistry         = "Konfiguration in der Registry speichern";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";

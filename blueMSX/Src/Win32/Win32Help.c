@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-09-08 17:24:35 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,12 +75,14 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                      "Albert Beevendorp\r\n"
                                      "Rudolf Lechleitner\r\n"
                                      "BouKiCHi\r\n"
+                                     "Vincent van Dam\r\n"
                                      "SaebaRYO\r\n"
                                      "Tobias Keizer\r\n"
                                      "Sandy Pleyte\r\n"
                                      "Marco Casali\r\n"
                                      "UC_ARS\r\n"
                                      "nhlay\r\n"
+                                     "Rob Hiep\r\n"
                                      "Fabio Albergaria Dias\r\n"
                                      "SLotman\r\n"
                                      "Tanni\r\n"

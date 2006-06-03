@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-01 20:09:00 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,7 +126,7 @@ void ym2151TimerStart(void* ptr, int timer, int start)
         if (start != 0) {
             if (!ym2151->timerRunning2) {
                 UInt32 systemTime = boardSystemTime();
-                UInt32 adjust = systemTime % (4 * TIMER_FREQUENCY);
+                UInt32 adjust = systemTime % (16 * TIMER_FREQUENCY);
                 ym2151->timeout2 = systemTime + TIMER_FREQUENCY * ym2151->timerValue2 - adjust;
                 boardTimerAdd(ym2151->timer2, ym2151->timeout2);
                 ym2151->timerRunning2 = 1;
@@ -285,9 +285,9 @@ void ym2151TimerSet(void* ref, int timer, int count)
     YM2151* ym2151 = (YM2151*)ref;
 
     if (timer == 0) {
-        ym2151->timerValue1 = count;
+        ym2151->timerValue1 = 2 * count;
     }
     else {
-        ym2151->timerValue2 = count;
+        ym2151->timerValue2 = 2 * count;
     }
 }

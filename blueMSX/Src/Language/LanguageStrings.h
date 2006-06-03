@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,51 +38,34 @@ typedef char _TCHAR;
 #endif
 
 typedef struct {
-    _TCHAR* statusBarStopped;
-    _TCHAR* statusBarPaused;
-    _TCHAR* statusBarRunning;
+    _TCHAR* noRecentFiles;
+    _TCHAR* insert;
+    _TCHAR* eject;
 
-    _TCHAR* menuHardReset;
-    _TCHAR* menuSoftReset;
-
-    _TCHAR* menuCartInsert;
-    _TCHAR* menuCartRemove;
     _TCHAR* menuCartAutoReset;
-    _TCHAR* menuCartNoRecentFiles;
-    _TCHAR* menuCartSnatcher;
-    _TCHAR* menuCartSdSnatcher;
     _TCHAR* menuCartGameReader;
     _TCHAR* menuCartIde;
     _TCHAR* menuCartSunriseIde;
     _TCHAR* menuCartBeerIde;
     _TCHAR* menuCartGIde;
-    _TCHAR* menuCartSCCMirrored;
-    _TCHAR* menuCartSCCExpanded;
     _TCHAR* menuCartSCCPlus;
     _TCHAR* menuCartSCC;
     _TCHAR* menuCartFMPac;
     _TCHAR* menuCartPac;
     _TCHAR* menuCartHBI55;
-    _TCHAR* menuCartSpecial;
     _TCHAR* menuCartInsertSpecial;
     _TCHAR* menuCartExternalRam;
     _TCHAR* menuCartMegaRam;
-    
-    _TCHAR* menuDiskInsert;
+
     _TCHAR* menuDiskInsertNew;
     _TCHAR* menuDiskDirInsert;
-    _TCHAR* menuDiskEject;
     _TCHAR* menuDiskAutoStart;
-    _TCHAR* menuDiskNoRecentFiles;
 
-    _TCHAR* menuCasInsert;
-    _TCHAR* menuCasEject;
     _TCHAR* menuCasRewindAfterInsert;
     _TCHAR* menuCasUseReadOnly;
     _TCHAR* lmenuCasSaveAs;
     _TCHAR* menuCasSetPosition;
     _TCHAR* menuCasRewind;
-    _TCHAR* menuCasNoRecentFiles;
 
     _TCHAR* menuPrnFormfeed;
 
@@ -116,10 +99,8 @@ typedef struct {
     _TCHAR* menuHelpHelp;
     _TCHAR* menuHelpAbout;
     
-    _TCHAR* menuFileCart1;
-    _TCHAR* menuFileCart2;
-    _TCHAR* menuFileDiskA;
-    _TCHAR* menuFileDiskB;
+    _TCHAR* menuFileCart;
+    _TCHAR* menuFileDisk;
     _TCHAR* menuFileCas;
     _TCHAR* menuFilePrn;
     _TCHAR* menuFileLoadState;
@@ -159,21 +140,6 @@ typedef struct {
     _TCHAR* overwriteConfig;
     _TCHAR* portableReadonly;
 
-    _TCHAR* tooltipReset;
-    _TCHAR* tooltipCart1;
-    _TCHAR* tooltipCart2;
-    _TCHAR* tooltipDiskA;
-    _TCHAR* tooltipDiskB;
-    _TCHAR* tooltipCas;
-    _TCHAR* tooltipStart;
-    _TCHAR* tooltipResume;
-    _TCHAR* tooltipPause;
-    _TCHAR* tooltipStop;
-    _TCHAR* tooltipWindowSize;
-    _TCHAR* tooltipProperties;
-    _TCHAR* tooltipHelp;
-    
-    _TCHAR* dlgMainWindow;
     _TCHAR* dlgLoadRom;
     _TCHAR* dlgLoadDsk;
     _TCHAR* dlgLoadCas;
@@ -210,16 +176,6 @@ typedef struct {
     _TCHAR* dlgZipReset;
 
     _TCHAR* dlgAboutTitle;
-
-    _TCHAR* dlgJoyTitle1;
-    _TCHAR* dlgJoyTitle2;
-    _TCHAR* dlgJoyUpText;
-    _TCHAR* dlgJoyDownText;
-    _TCHAR* dlgJoyLeftText;
-    _TCHAR* dlgJoyRightText;
-    _TCHAR* dlgJoyButton1Text;
-    _TCHAR* dlgJoyButton2Text;
-    _TCHAR* dlgJoyGB;
 
     _TCHAR* dlgLangLangText;
     _TCHAR* dlgLangLangTitle;
@@ -297,20 +253,6 @@ typedef struct {
     _TCHAR* propSndMsxMasterText;
     _TCHAR* propSndMt32ToGmText;
 
-    _TCHAR* propJoyPort1GB;
-    _TCHAR* propJoyPort2GB;
-    _TCHAR* propJoyAutofireText;
-    _TCHAR* propJoyKeyset;
-    _TCHAR* propJoyConfigKeyset;
-    _TCHAR* propJoyControlText;
-    _TCHAR* propJoyButtonText;
-    _TCHAR* propJoyButtonAText;
-    _TCHAR* propJoyButtonBText;
-
-    _TCHAR* propJoyKeysetGB;
-    _TCHAR* propJoyKeyest1;
-    _TCHAR* propJoyKeyest2;
-
     _TCHAR* propPortsLptGB;
     _TCHAR* propPortsComGB;
     _TCHAR* propPortsLptText;
@@ -326,31 +268,24 @@ typedef struct {
     _TCHAR* propSetFileHistoryGB;
     _TCHAR* propSetFileHistorySize;
     _TCHAR* propSetFileHistoryClear;
-    _TCHAR* propSetScreenSaverGB;
-    _TCHAR* propFileTypesGB;
     _TCHAR* propWindowsEnvGB;
     _TCHAR* propSetScreenSaver;
     _TCHAR* propFileTypes;
     _TCHAR* propDisableWinKeys;
     _TCHAR* propPriorityBoost;
     _TCHAR* propScreenshotPng;
-    _TCHAR* propUseRegistry;
     _TCHAR* propClearHistory;
     _TCHAR* propSettDefSlotGB;
     _TCHAR* propSettDefSlots;
-    _TCHAR* propSettDefSlot1;
-    _TCHAR* propSettDefSlot2;
+    _TCHAR* propSettDefSlot;
     _TCHAR* propSettDefDrives;
-    _TCHAR* propSettDefDriveA;
-    _TCHAR* propSettDefDriveB;
+    _TCHAR* propSettDefDrive;
     
     _TCHAR* propApearance;
     _TCHAR* propFile;
     _TCHAR* propThemeGB;
     _TCHAR* propTheme;
-    _TCHAR* propThemeClassic;
-    _TCHAR* propThemeBlue;
-
+    
     _TCHAR* propOpenRomGB;
     _TCHAR* propDefaultRomType;
     _TCHAR* propGuessRomType;
@@ -377,7 +312,6 @@ typedef struct {
     _TCHAR* enumVideoSizeFullscreen;
 
     _TCHAR* enumVideoDrvDirectDrawHW;
-    _TCHAR* enumVideoDrvDirectDrawHWSys;
     _TCHAR* enumVideoDrvDirectDraw;
     _TCHAR* enumVideoDrvGDI;
 
@@ -398,20 +332,9 @@ typedef struct {
     _TCHAR* enumEmuSyncVblank;
 
     _TCHAR* enumControlsJoyNone;
-    _TCHAR* enumControlsJoyNumpad;
-    _TCHAR* enumControlsJoyKeyset;
     _TCHAR* enumControlsJoyTetris2Dongle;
     _TCHAR* enumControlsJoyTMagicKeyDongle;
-    _TCHAR* enumControlsJoyKeysetA;
-    _TCHAR* enumControlsJoyKeysetB;
-    _TCHAR* enumControlsJoyPCjoy1;
-    _TCHAR* enumControlsJoyPCjoy2;
     _TCHAR* enumControlsJoyMouse;
-
-    _TCHAR* enumControlsAfOff;
-    _TCHAR* enumControlsAfSlow;
-    _TCHAR* enumControlsAfMedium;
-    _TCHAR* enumControlsAfFast;
 
     _TCHAR* dlgAboutAbout;
     _TCHAR* dlgAboutVersion;
@@ -454,15 +377,10 @@ typedef struct {
     _TCHAR* confSlotExtSlotGB;
     _TCHAR* confBoardGB;
     _TCHAR* confBoardText;
-    _TCHAR* confSlotSlot0;
-    _TCHAR* confSlotSlot1;
-    _TCHAR* confSlotSlot2;
-    _TCHAR* confSlotSlot3;
-    _TCHAR* confSlotCart1;
-    _TCHAR* confSlotCart2;
     _TCHAR* confSlotPrimary;
     _TCHAR* confSlotExpanded;
 
+    _TCHAR* confSlotCart;
     _TCHAR* confSlot;
     _TCHAR* confSubslot;
 
@@ -505,8 +423,6 @@ typedef struct {
 
     _TCHAR* confSaveAsMachineTitle;
     _TCHAR* confSaveAsMachineName;
-
-    _TCHAR* confEditMemInternalRoms;
 
     _TCHAR* confSaveAsTitle;
     _TCHAR* confSaveAsName;

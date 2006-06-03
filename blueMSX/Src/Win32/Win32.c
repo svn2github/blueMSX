@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.131 $
+** $Revision: 1.132 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1047,6 +1047,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
+    midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -1064,6 +1065,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
+    midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
 
     /* Must restart MSX if Machine configuration changed */
     if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
@@ -2614,6 +2616,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
+    midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
 
     st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 

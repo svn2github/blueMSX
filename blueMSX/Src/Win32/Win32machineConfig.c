@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -371,18 +371,26 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
 
 static BOOL CALLBACK slotProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
+    char text[32];
+
     switch (iMsg) {
     case WM_INITDIALOG:
         SetWindowText(GetDlgItem(hDlg, IDC_CONFSLOTLAYOUTGB), langDlgSlotLayoutGB());
         SetWindowText(GetDlgItem(hDlg, IDC_CONFBOARDGB), langDlgBoardGB());
         SetWindowText(GetDlgItem(hDlg, IDC_CONFEXTSLOTSGB), langDlgSlotExtSlotGB());
         SetWindowText(GetDlgItem(hDlg, IDC_CONFBOARDTEXT), langDlgBoardText());
-        SetWindowText(GetDlgItem(hDlg, IDC_SLOT0), langDlgSlotSlot0());
-        SetWindowText(GetDlgItem(hDlg, IDC_SLOT1), langDlgSlotSlot1());
-        SetWindowText(GetDlgItem(hDlg, IDC_SLOT2), langDlgSlotSlot2());
-        SetWindowText(GetDlgItem(hDlg, IDC_SLOT3), langDlgSlotSlot3());
-        SetWindowText(GetDlgItem(hDlg, IDC_CARTSLOT1), langDlgSlotCart1());
-        SetWindowText(GetDlgItem(hDlg, IDC_CARTSLOT2), langDlgSlotCart2());
+        sprintf(text, "%s 0", langSlot());
+        SetWindowText(GetDlgItem(hDlg, IDC_SLOT0), text);
+        sprintf(text, "%s 1", langSlot());
+        SetWindowText(GetDlgItem(hDlg, IDC_SLOT1), text);
+        sprintf(text, "%s 2", langSlot());
+        SetWindowText(GetDlgItem(hDlg, IDC_SLOT2), text);
+        sprintf(text, "%s 3", langSlot());
+        SetWindowText(GetDlgItem(hDlg, IDC_SLOT3), text);
+        sprintf(text, "%s 1:", langCartridge());
+        SetWindowText(GetDlgItem(hDlg, IDC_CARTSLOT1), text);
+        sprintf(text, "%s 2:", langCartridge());
+        SetWindowText(GetDlgItem(hDlg, IDC_CARTSLOT2), text);
         SetWindowText(GetDlgItem(hDlg, IDC_CONF_SLOTPRIMARY1), langDlgSlotPrimary());
         SetWindowText(GetDlgItem(hDlg, IDC_CONF_SLOTSUBSLOTTED1), langDlgSlotExpanded());
         SetWindowText(GetDlgItem(hDlg, IDC_CONF_SLOTPRIMARY2), langDlgSlotPrimary());

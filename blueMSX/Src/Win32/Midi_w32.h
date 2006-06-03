@@ -31,6 +31,7 @@
 #ifndef MIDI_W32
 #define MIDI_W32
 
+typedef void (*MidiInCb)(void*, const char*, unsigned);
 
 int w32_midiOutInit();
 int w32_midiOutClean();
@@ -57,7 +58,7 @@ int w32_midiInClean();
 unsigned w32_midiInGetVFNsNum();
 const char* w32_midiInGetVFN(unsigned nmb);
 const char* w32_midiInGetRDN(unsigned nmb);
-unsigned w32_midiInOpen(const char* vfn, unsigned thrdid);
+unsigned w32_midiInOpen(const char* vfn, MidiInCb midiInCb, void* ref);
 int w32_midiInClose(unsigned idx);
 
 #endif // MIDI_W32

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,31 +34,18 @@
 
 void langInitSwedish(LanguageStrings* ls) 
 {
-    ls->statusBarStopped        = "  Stannad";
-    ls->statusBarPaused         = "  Pausad";
-    ls->statusBarRunning        = "  Startad";
-    
-    ls->menuHardReset           = "Hård Omstart";
-    ls->menuSoftReset           = "Mjuk Omstart";
-    
-    ls->menuCartInsert          = "Sätt in";
-    ls->menuCartRemove          = "Ta ur";
+    ls->noRecentFiles           = "- ingen filhistoria -";
+    ls->insert                  = "Sätt in";
+    ls->eject                   = "Ta ur";
+
     ls->menuCartAutoReset       = "Starta om efter insättning/urdagning";
-    ls->menuCartNoRecentFiles   = "- ingen filhistoria -";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
-    ls->menuCartSpecial         = "Special";
 
-    ls->menuDiskInsert          = "Sätt in";
-    ls->menuDiskEject           = "Ta ur";
     ls->menuDiskAutoStart       = "Starta om efter insättning/urdagning";
-    ls->menuDiskNoRecentFiles   = "- ingen filhistoria -";
     
-    ls->menuCasInsert           = "Sätt in";
-    ls->menuCasEject            = "Ta ur";
     ls->menuCasSetPosition      = "Sätt position";
     ls->menuCasRewind           = "Spola tillbaka";
-    ls->menuCasNoRecentFiles    = "- ingen filhistoria -";
 
     ls->menuZoomNormal          = "Normal storlek";
     ls->menuZoomDouble          = "Dubbel storlek";
@@ -74,10 +61,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuHelpHelp            = "Hjälp";
     ls->menuHelpAbout           = "Om blueMSX";
 
-    ls->menuFileCart1           = "Cartridge slot 1";
-    ls->menuFileCart2           = "Cartridge slot 2";
-    ls->menuFileDiskA           = "Diskettstaion A";
-    ls->menuFileDiskB           = "Diskettstaion B";
+    ls->menuFileCart            = "Cartridge slot";
+    ls->menuFileDisk            = "Diskettstaion";
     ls->menuFileCas             = "Kasett";
     ls->menuFileLoadState       = "Läs in CPU-tillstand";
     ls->menuFileSaveState       = "Spara CPU-tillstand";
@@ -109,20 +94,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->errorNoHelp             = "Kunde inte hitta hjälpfilen.";
     ls->errorStartEmu           = "Misslyckades att starta emulatorn.";
 
-    ls->tooltipReset            = "Starta om emulatorn";
-    ls->tooltipCart1            = "Sätt in Cartridge i Slot 1";
-    ls->tooltipCart2            = "Sätt in Cartridge i Slot 2";
-    ls->tooltipDiskA            = "Sätt in diskett i diskettstation A";
-    ls->tooltipDiskB            = "Sätt in diskett i diskettstation B";
-    ls->tooltipCas              = "Sätt in kassettband";
-    ls->tooltipStart            = "Starta emuleringen";
-    ls->tooltipResume           = "Fortsätt emuleringen";
-    ls->tooltipPause            = "Pausa emuleringen";
-    ls->tooltipWindowSize       = "Sätt fönsterstorlek";
-    ls->tooltipProperties       = "Öppna Egenskaper";
-    ls->tooltipHelp             = "Öppna Hjalp fonstret";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - Ladda en rom fil";
     ls->dlgLoadDsk              = "blueMSX - Ladda en dsk fil";
     ls->dlgLoadCas              = "blueMSX - Ladda en cas fil";
@@ -151,16 +123,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgZipReset             = "Starta om efter insättning";
 
     ls->dlgAboutTitle           = "blueMSX - Information";
-
-    ls->dlgJoyTitle1            = "blueMSX - Styrspak tangentgrupp A";
-    ls->dlgJoyTitle2            = "blueMSX - Styrspak tangentgrupp B";
-    ls->dlgJoyUpText            = "Upp";
-    ls->dlgJoyDownText          = "Ner";
-    ls->dlgJoyLeftText          = "Vänster";
-    ls->dlgJoyRightText         = "Höger";
-    ls->dlgJoyButton1Text       = "Knapp 1";
-    ls->dlgJoyButton2Text       = "Knapp 2";
-    ls->dlgJoyGB                = "Konfigurering av tangentgrupp ";
 
     ls->dlgLangLangText         = "Välj språk som blueMSX ska använda";
     ls->dlgLangLangTitle        = "blueMSX - Språk";
@@ -203,13 +165,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "MASTER";
 
-    ls->propJoyPort1GB          = "Port #1 ";
-    ls->propJoyPort2GB          = "Port #2 ";
-    ls->propJoyAutofireText     = "Auto eld:";
-    ls->propJoyKeysetGB         = "Tangentgrupper for styrspak ";
-    ls->propJoyKeyest1          = "Konfigurera grupp A";
-    ls->propJoyKeyest2          = "Konfigurera grupp B";
-
     ls->enumVideoMonColor       = "Färg";
     ls->enumVideoMonGrey        = "Svartvit";
     ls->enumVideoMonGreen       = "Grön";
@@ -247,17 +202,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatisk (snabbast)";
 
     ls->enumControlsJoyNone     = "Ingen";
-    ls->enumControlsJoyNumpad   = "Numeriska tangenter";
-    ls->enumControlsJoyKeysetA  = "Tangentgrupp A";
-    ls->enumControlsJoyKeysetB  = "Tangentgrupp B";
-    ls->enumControlsJoyPCjoy1   = "PC styrspak #1";
-    ls->enumControlsJoyPCjoy2   = "PC styrspak #2";
     ls->enumControlsJoyMouse    = "Mus";
-
-    ls->enumControlsAfOff       = "Av";
-    ls->enumControlsAfSlow      = "Långsam";
-    ls->enumControlsAfMedium    = "Medel";
-    ls->enumControlsAfFast      = "Snabb";
 
     ls->dlgAboutAbout           = "INFORMATION\r\n========";
     ls->dlgAboutVersion         = "Version:";
@@ -292,7 +237,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "Filhistoria ";
     ls->propSetFileHistorySize   = "Antal element i filhistorian:";
     ls->propSetFileHistoryClear  = "Rensa historia";
-    ls->propSetScreenSaverGB     = "Skärmsläckare ";
     ls->propSetScreenSaver       = " Deaktivera skärmsläckare när blueMSX kör";
 
     ls->confTitle                = "blueMSX - Konfigureringsverktyg";
@@ -307,12 +251,7 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "Slot Layout ";
     ls->confSlotExtSlotGB        = "Externa slots ";
-    ls->confSlotSlot0            = "Slot 0";
-    ls->confSlotSlot1            = "Slot 1";
-    ls->confSlotSlot2            = "Slot 2";
-    ls->confSlotSlot3            = "Slot 3";
-    ls->confSlotCart1            = "Cartridge 1:";
-    ls->confSlotCart2            = "Cartridge 2:";
+    ls->confSlotCart             = "Cartridge:";
     ls->confSlotPrimary          = "Primär";
     ls->confSlotExpanded         = "Expanderad (4 subslottar)";
 
@@ -347,17 +286,12 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - Spara Maskinkonfigurering Som...";
     ls->confSaveAsMachineName    = "Maskinnamn:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - Interna Rom Filer";
-
-
     ls->propSndMoonsound         = " Moonsound";
 
-    ls->propFileTypesGB          = "Filtyper ";
     ls->propFileTypes            = " Registrera filtyper med blueMSX (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " Avaktivera WIndows menyer när emulatorn kör";
     ls->propWindowsEnvGB         = "Windows Miljö ";
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel.";
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propClearHistory         = "Vill du verkligen radera filhistorien ?";
 
     ls->propMonHorizStretch      = " Korrekt horizontell vidd";
@@ -371,24 +305,12 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgCmosEnable            = " Använd CMOS";
     ls->dlgCmosBattery           = " Använd Laddat Batteri";
 
-    ls->menuCartSnatcher         = "The Snatcher Cartridge";
-    ls->menuCartSdSnatcher       = "SD-Snatcher Cartridge";
-    ls->menuCartSCCMirrored      = "SCC Speglad Cartridge";
-    ls->menuCartSCCExpanded      = "SCC Expanderad Cartridge";
     ls->menuCartSCCPlus          = "SCC+ Cartridge";
     ls->menuCartSCC              = "SCC Cartridge";
     
     ls->warningTitle             = "blueMSX - Varning";
-    ls->tooltipStop              = "Stanna emuleringen";
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "Keyset";    
-    ls->propJoyConfigKeyset     = "Config Keyset";
-    ls->propJoyControlText      = "Control:";
-    ls->propJoyButtonText       = "Button";
-    ls->propJoyButtonAText      = "Button A:";
-    ls->propJoyButtonBText      = "Button B:";
-
     ls->menuToolsShortcuts      = "Kortkommando Verktyg";
 
     ls->shortcutSaveConfig      = "blueMSX - Spara Konfigurering";
@@ -472,8 +394,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propApearance           = "Utseende";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
-    ls->propThemeClassic        = "Klassisk";
-    ls->propThemeBlue           = "DIGIblue";
 
     ls->propMonBrightness       = "Ljusstyrka:";
     ls->propMonContrast         = "Kontrast:";
@@ -489,11 +409,9 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propFile                = "Filer";
     ls->propSettDefSlotGB       = "Dra och Släpp ";
     ls->propSettDefSlots        = "Sätt in Rom i:";
-    ls->propSettDefSlot1        = " Slot 1";
-    ls->propSettDefSlot2        = " Slot 2";
+    ls->propSettDefSlot         = " Slot";
     ls->propSettDefDrives       = "Sätt in Diskett i:";
-    ls->propSettDefDriveA       = " Drive A";
-    ls->propSettDefDriveB       = " Drive B";
+    ls->propSettDefDrive        = " Drive";
     ls->menuPropsFile           = "Filer";
     ls->shortcutShowFiles       = "Öppna Filerfönstret";
 
@@ -530,7 +448,6 @@ void langInitSwedish(LanguageStrings* ls)
     // New entries in 2.1
     ls->propEmuFdcTiming        = "Slå Av Diskettstationstiming";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
-    ls->propUseRegistry         = "Spara konnfigurering i Windows Registry";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";

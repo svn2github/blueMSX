@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,21 +58,12 @@ int langSetLanguage(EmuLanguageType languageType);
 int langShowDlg(HWND hwnd, int oldLanguage);
 EmuLanguageType langFromName(_TCHAR* name);
 
-_TCHAR* langStatusBarStopped();
-_TCHAR* langStatusBarPaused();
-_TCHAR* langStatusBarRunning();
+_TCHAR* langNoRecentFiles();
+_TCHAR* langInsert();
+_TCHAR* langInsert();
+_TCHAR* langEject();
 
-_TCHAR* langMenuHardReset();
-_TCHAR* langMenuSoftReset();
-
-_TCHAR* langMenuCartInsert();
-_TCHAR* langMenuCartRemove();
 _TCHAR* langMenuCartAutoReset();
-_TCHAR* langMenuCartNoRecentFiles();
-_TCHAR* langMenuCartSnatcher();
-_TCHAR* langMenuCartSdSnatcher();
-_TCHAR* langMenuCartSCCMirrored();
-_TCHAR* langMenuCartSCCExpanded();
 _TCHAR* langMenuCartGameReader();
 _TCHAR* langMenuCartIde();
 _TCHAR* langMenuCartBeerIde();
@@ -83,26 +74,19 @@ _TCHAR* langMenuCartSCCPlus();
 _TCHAR* langMenuCartFMPac();
 _TCHAR* langMenuCartPac();
 _TCHAR* langMenuCartHBI55();
-_TCHAR* langMenuCartSpecial();
 _TCHAR* langMenuCartInsertSpecial();
 _TCHAR* langMenuCartExternalRam();
 _TCHAR* langMenuCartMegaRam();
 
-_TCHAR* langMenuDiskInsert();
-_TCHAR* langMenuDiskInsertNew();
 _TCHAR* langMenuDiskDirInsert();
-_TCHAR* langMenuDiskEject();
+_TCHAR* langMenuDiskInsertNew();
 _TCHAR* langMenuDiskAutoStart();
-_TCHAR* langMenuDiskNoRecentFiles();
 
-_TCHAR* langMenuCasInsert();
-_TCHAR* langMenuCasEject();
 _TCHAR* langMenuCasRewindAfterInsert();
 _TCHAR* langMenuCasUseReadOnly();
 _TCHAR* langMenuCasSaveAs();
 _TCHAR* langMenuCasSetPosition();
 _TCHAR* langMenuCasRewind();
-_TCHAR* langMenuCasNoRecentFiles();
 
 _TCHAR* langMenuPrnFormfeed();
 
@@ -130,10 +114,8 @@ _TCHAR* langMenuVideoInBitmap();
 _TCHAR* langMenuHelpHelp();
 _TCHAR* langMenuHelpAbout();
 
-_TCHAR* langMenuFileCart1();
-_TCHAR* langMenuFileCart2();
-_TCHAR* langMenuFileDiskA();
-_TCHAR* langMenuFileDiskB();
+_TCHAR* langMenuFileCart();
+_TCHAR* langMenuFileDisk();
 _TCHAR* langMenuFileCas();
 _TCHAR* langMenuFilePrn();
 _TCHAR* langMenuFileLoadState();
@@ -179,21 +161,6 @@ _TCHAR* langDiscardChanges();
 _TCHAR* langOverwriteConfig();
 _TCHAR* langPortableReadonly();
 
-_TCHAR* langTooltipReset();
-_TCHAR* langTooltipCart1();
-_TCHAR* langTooltipCart2();
-_TCHAR* langTooltipDiskA();
-_TCHAR* langTooltipDiskB();
-_TCHAR* langTooltipCas();
-_TCHAR* langTooltipStart();
-_TCHAR* langTooltipResume();
-_TCHAR* langTooltipPause();
-_TCHAR* langTooltipStop();
-_TCHAR* langTooltipWindowSize();
-_TCHAR* langTooltipProperties();
-_TCHAR* langTooltipHelp();
-
-_TCHAR* langDlgMainWindow();
 _TCHAR* langDlgLoadRom();
 _TCHAR* langDlgLoadDsk();
 _TCHAR* langDlgLoadCas();
@@ -315,19 +282,6 @@ _TCHAR* langPropSndPcm();
 _TCHAR* langPropSndMasterText();
 _TCHAR* langPropSndMt32ToGm();
 
-_TCHAR* langPropJoyPort1GB();
-_TCHAR* langPropJoyPort2GB();
-_TCHAR* langPropJoyAutofireText();
-_TCHAR* langPropJoyConfigKeyset();
-_TCHAR* langPropJoyControlText();
-_TCHAR* langPropJoyButtonAText();
-_TCHAR* langPropJoyButtonBText();
-_TCHAR* langPropJoyButtonText();
-
-_TCHAR* langPropJoyKeysetGB();
-_TCHAR* langPropJoyKeyest1();
-_TCHAR* langPropJoyKeyest2();
-
 _TCHAR* langPropPortsLptGB();
 _TCHAR* langPropPortsComGB();
 _TCHAR* langPropPortsLptText();
@@ -344,14 +298,11 @@ _TCHAR* langPropSetFileHistoryGB();
 _TCHAR* langPropSetFileHistorySize();
 _TCHAR* langPropSetFileHistoryClear();
 _TCHAR* langPropWindowsEnvGB();
-_TCHAR* langPropScreenSaverGB();
 _TCHAR* langPropScreenSaver();
-_TCHAR* langPropFileTypesGB();
 _TCHAR* langPropFileTypes();
 _TCHAR* langPropDisableWinKeys();
 _TCHAR* langPropPriorityBoost();
 _TCHAR* langPropScreenshotPng();
-_TCHAR* langPropUseRegistry();
 _TCHAR* langPropClearFileHistory();
 _TCHAR* langPropOpenRomGB();
 _TCHAR* langPropDefaultRomType();
@@ -359,16 +310,12 @@ _TCHAR* langPropGuessRomType();
 
 _TCHAR* langPropSettDefSlotGB();
 _TCHAR* langPropSettDefSlots();
-_TCHAR* langPropSettDefSlot1();
-_TCHAR* langPropSettDefSlot2();
+_TCHAR* langPropSettDefSlot();
 _TCHAR* langPropSettDefDrives();
-_TCHAR* langPropSettDefDriveA();
-_TCHAR* langPropSettDefDriveB();
+_TCHAR* langPropSettDefDrive();
 
 _TCHAR* langPropThemeGB();
 _TCHAR* langPropTheme();
-_TCHAR* langPropThemeClassic();
-_TCHAR* langPropThemeBlue();
 
 _TCHAR* langEnumVideoMonColor();
 _TCHAR* langEnumVideoMonGrey();
@@ -393,7 +340,6 @@ _TCHAR* langEnumVideoSize2x();
 _TCHAR* langEnumVideoSizeFullscreen();
 
 _TCHAR* langEnumVideoDrvDirectDrawHW();
-_TCHAR* langEnumVideoDrvDirectDrawHWSys();
 _TCHAR* langEnumVideoDrvDirectDraw();
 _TCHAR* langEnumVideoDrvGDI();
 
@@ -418,16 +364,7 @@ _TCHAR* langEnumControlsJoyNumpad();
 _TCHAR* langEnumControlsJoyKeyset();
 _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
-_TCHAR* langEnumControlsJoyKeysetA();
-_TCHAR* langEnumControlsJoyKeysetB();
-_TCHAR* langEnumControlsJoyPCjoy1();
-_TCHAR* langEnumControlsJoyPCjoy2();
 _TCHAR* langEnumControlsJoyMouse();
-
-_TCHAR* langEnumControlsAfOff();
-_TCHAR* langEnumControlsAfSlow();
-_TCHAR* langEnumControlsAfMedium();
-_TCHAR* langEnumControlsAfFast();
 
 _TCHAR* langDlgAboutAbout();
 _TCHAR* langDlgAboutVersion();
@@ -455,15 +392,10 @@ _TCHAR* langDlgSlotLayoutGB();
 _TCHAR* langDlgSlotExtSlotGB();
 _TCHAR* langDlgBoardGB();
 _TCHAR* langDlgBoardText();
-_TCHAR* langDlgSlotSlot0();
-_TCHAR* langDlgSlotSlot1();
-_TCHAR* langDlgSlotSlot2();
-_TCHAR* langDlgSlotSlot3();
-_TCHAR* langDlgSlotCart1();
-_TCHAR* langDlgSlotCart2();
 _TCHAR* langDlgSlotPrimary();
 _TCHAR* langDlgSlotExpanded();
 
+_TCHAR* langCartridge();
 _TCHAR* langSlot();
 _TCHAR* langSubslot();
 
@@ -517,11 +449,8 @@ _TCHAR* langConfExitSaveTitle();
 _TCHAR* langConfExitSaveText();
 _TCHAR* langConfSaveTitle();
 _TCHAR* langConfSaveText();
-
 _TCHAR* langDlgConfSaveAsTitle();
 _TCHAR* langDlgConfSaveAsMachineName();
-
-_TCHAR* langSlotEditMemInternalRoms();
 
 _TCHAR* langConfSaveAsTitle();
 _TCHAR* langConfSaveAsName();

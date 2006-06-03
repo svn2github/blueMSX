@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,7 +78,7 @@ static void onTimeout1(void* ptr, UInt32 time)
 
     y8950->timerRunning1 = 0;
     if (OPLTimerOver(y8950->opl, 0)) {
-        y8950TimerStart(y8950, 0, y8950->timerValue1);
+        y8950TimerStart(y8950, 0, 1);
     }
 }
 
@@ -88,7 +88,7 @@ static void onTimeout2(void* ptr, UInt32 time)
 
     y8950->timerRunning2 = 0;
     if (OPLTimerOver(y8950->opl, 1)) {
-        y8950TimerStart(y8950, 1, y8950->timerValue2);
+        y8950TimerStart(y8950, 1, 1);
     }
 }
 
@@ -306,8 +306,8 @@ void y8950Destroy(Y8950* y8950)
 
 void y8950Reset(Y8950* y8950)
 {
-    y8950TimerStart(y8950, 0, y8950->timerValue1);
-    y8950TimerStart(y8950, 1, y8950->timerValue2);
+    y8950TimerStart(y8950, 0, 0);
+    y8950TimerStart(y8950, 1, 0);
     OPLResetChip(y8950->opl);
     y8950->off = 0;
     y8950->s1 = 0;

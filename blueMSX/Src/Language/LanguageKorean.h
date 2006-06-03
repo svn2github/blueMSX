@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.14 $ + additions 2005/03/03
+** $Revision: 1.15 $ + additions 2005/03/03
 **
-** $Date: 2005-09-14 04:12:07 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,31 +34,18 @@
  
 void langInitKorean(LanguageStrings* ls)
 {
-    ls->statusBarStopped        = "  중지";
-    ls->statusBarPaused         = "  일시 정지";
-    ls->statusBarRunning        = "  실행중";
-    
-    ls->menuHardReset           = "하드 리셋";
-    ls->menuSoftReset           = "소프트 리셋";
-    
-    ls->menuCartInsert          = "삽입";
-    ls->menuCartRemove          = "제거";
+    ls->noRecentFiles           = "- 열어본 파일 없음 -";
+    ls->insert                  = "삽입";
+    ls->eject                   = "꺼내기";
+
     ls->menuCartAutoReset       = "삽입/제거 후에 재시작";
-    ls->menuCartNoRecentFiles   = "- 열어본 파일 없음 -";
     ls->menuCartFMPac           = "FM-PAC 카트리지";
     ls->menuCartPac             = "PAC 카트리지";
-    ls->menuCartSpecial         = "사용자 지정 카트리지";
 
-    ls->menuDiskInsert          = "삽입";
-    ls->menuDiskEject           = "꺼내기";
     ls->menuDiskAutoStart       = "삽입후에 재시작";
-    ls->menuDiskNoRecentFiles   = "- 열어본 파일 없음 -";
     
-    ls->menuCasInsert           = "삽입";
-    ls->menuCasEject            = "꺼내기";
     ls->menuCasSetPosition      = "위치 설정";
     ls->menuCasRewind           = "되감기";
-    ls->menuCasNoRecentFiles    = "- 열어본 파일 없음 -";
 
     ls->menuZoomNormal          = "보통 크기";
     ls->menuZoomDouble          = "두배 크기";
@@ -74,10 +61,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";
 
-    ls->menuFileCart1           = "카트리지 슬롯 1";
-    ls->menuFileCart2           = "카트리지 슬롯 2";
-    ls->menuFileDiskA           = "디스크 드라이브 A";
-    ls->menuFileDiskB           = "디스크 드라이브 B";
+    ls->menuFileCart            = "카트리지 슬롯";
+    ls->menuFileDisk            = "디스크 드라이브";
     ls->menuFileCas             = "카세트";
     ls->menuFileLoadState       = "CPU 상태 불러오기";
     ls->menuFileSaveState       = "CPU 상태 저장";
@@ -109,20 +94,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->errorNoHelp             = "blueMSX 도움말을 찾을 수 없습니다.";
     ls->errorStartEmu           = "MSX 에뮬레이터를 시작할 수 없습니다.";
 
-    ls->tooltipReset            = "MSX 리셋";
-    ls->tooltipCart1            = "슬롯 1에 카트리지 삽입";
-    ls->tooltipCart2            = "슬롯 2에 카트리지 삽입";
-    ls->tooltipDiskA            = "드라이브 A에 디스크 삽입";
-    ls->tooltipDiskB            = "드라이브 B에 디스크 삽입";
-    ls->tooltipCas              = "카세트 플레이어에 테잎 삽입";
-    ls->tooltipStart            = "에뮬레이션 시작";
-    ls->tooltipResume           = "에뮬레이션 다시 시작";
-    ls->tooltipPause            = "에뮬레이션 일시 정지";
-    ls->tooltipWindowSize       = "윈도우 크기 설정";
-    ls->tooltipProperties       = "옵션 보기";
-    ls->tooltipHelp             = "도움말 보기";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - 카트리지에 삽입할 rom 이미지 선택";
     ls->dlgLoadDsk              = "blueMSX - 드라이브에 삽입할 dsk 이미지 선택";
     ls->dlgLoadCas              = "blueMSX - 카세트 플레이어에 넣을 cas 이미지 선택";
@@ -151,16 +123,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgZipReset             = "삽입후 재시작";
 
     ls->dlgAboutTitle           = "blueMSX에 대하여";
-
-    ls->dlgJoyTitle1            = "blueMSX - 죠이스틱A 키설정";
-    ls->dlgJoyTitle2            = "blueMSX - 죠이스틱B 키설정";
-    ls->dlgJoyUpText            = "위";
-    ls->dlgJoyDownText          = "아래";
-    ls->dlgJoyLeftText          = "왼쪽";
-    ls->dlgJoyRightText         = "오른쪽";
-    ls->dlgJoyButton1Text       = "버튼 1";
-    ls->dlgJoyButton2Text       = "버튼 2";
-    ls->dlgJoyGB                = "키설정 ";
 
     ls->dlgLangLangText         = "blueMSX에 사용할 언어 선택";
     ls->dlgLangLangTitle        = "blueMSX - 언어";
@@ -203,13 +165,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "마스터";
 
-    ls->propJoyPort1GB          = "포트 #1 ";
-    ls->propJoyPort2GB          = "포트 #2 ";
-    ls->propJoyAutofireText     = "자동발사:";
-    ls->propJoyKeysetGB         = "죠이스틱 키설정 ";
-    ls->propJoyKeyest1          = "A 키설정";
-    ls->propJoyKeyest2          = "B 키설정";
-
     ls->enumVideoMonColor       = "컬러";
     ls->enumVideoMonGrey        = "검정과 흰색";
     ls->enumVideoMonGreen       = "녹색";
@@ -246,17 +201,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "자동 (빠름)";
 
     ls->enumControlsJoyNone     = "없음";
-    ls->enumControlsJoyNumpad   = "숫자키";
-    ls->enumControlsJoyKeysetA  = "키 A";
-    ls->enumControlsJoyKeysetB  = "키 B";
-    ls->enumControlsJoyPCjoy1   = "PC 죠이스틱 #1";
-    ls->enumControlsJoyPCjoy2   = "PC 죠이스틱 #2";
     ls->enumControlsJoyMouse    = "마우스";
-
-    ls->enumControlsAfOff       = "끔";
-    ls->enumControlsAfSlow      = "느리게";
-    ls->enumControlsAfMedium    = "중간";
-    ls->enumControlsAfFast      = "빠르게";
 
     ls->dlgAboutAbout           = "대하여\r\n=====";
     ls->dlgAboutVersion         = "버전:";
@@ -292,7 +237,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "열어본 파일 목록 ";
     ls->propSetFileHistorySize   = "파일 보관 크기:";
     ls->propSetFileHistoryClear  = "목록 지우기";
-    ls->propSetScreenSaverGB     = "화면 보호기 ";
     ls->propSetScreenSaver       = " blueMSX 실행중에는 화면 보호기 기능 중지";
 
     ls->confTitle                = "blueMSX - 머신 설정 편집기";
@@ -307,12 +251,7 @@ void langInitKorean(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "슬롯 배치 ";
     ls->confSlotExtSlotGB        = "외부 슬롯 ";
-    ls->confSlotSlot0            = "슬롯 0";
-    ls->confSlotSlot1            = "슬롯 1";
-    ls->confSlotSlot2            = "슬롯 2";
-    ls->confSlotSlot3            = "슬롯 3";
-    ls->confSlotCart1            = "카트리지 1:";
-    ls->confSlotCart2            = "카트리지 2:";
+    ls->confSlotCart            = "카트리지";
     ls->confSlotPrimary          = "기본";
     ls->confSlotExpanded         = "확장 (4개의 서브슬롯)";
 
@@ -346,15 +285,12 @@ void langInitKorean(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - 다른 이름으로 머신 설정 저장...";
     ls->confSaveAsMachineName    = "머신 이름:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - 내부 ROM";
     ls->propSndMoonsound         = " Moonsound";
 
-    ls->propFileTypesGB          = "파일 형식 ";
     ls->propFileTypes            = " blueMSX에 파일형식(.rom .dsk .cas .sta) 연결";
     ls->propDisableWinKeys       = " blueMSX 실행중에는 왼/오른쪽 윈도우 키 사용 않함"; 
     ls->propWindowsEnvGB         = "윈도우즈 환경 "; 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel."; 
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " 수평 스크래치";
     ls->propMonVertStretch       = " 수직 스크래치";
     ls->propClearHistory         = "열어본 파일 목록을 지울까요?";
@@ -367,22 +303,10 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgCmosEnable            = " CMOS 사용";
     ls->dlgCmosBattery           = " 충전지 사용";
 
-    ls->menuCartSnatcher        = "The Snatcher 카트리지";
-    ls->menuCartSdSnatcher      = "SD-Snatcher 카트리지";
-    ls->menuCartSCCMirrored     = "SCC Mirrored 카트리지";
-    ls->menuCartSCCExpanded     = "SCC Expanded 카트리지";
     ls->warningTitle             = "blueMSX - 경고";
-    ls->tooltipStop             = "에뮬레이션 ";
 
 
-        // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "키보드";    
-    ls->propJoyConfigKeyset     = "키설정";
-    ls->propJoyControlText      = "콘트롤:";
-    ls->propJoyButtonText       = "버튼";
-    ls->propJoyButtonAText      = "버튼 A:";
-    ls->propJoyButtonBText      = "버튼 B:";
-
+    // New entries in 1.5.1
     ls->menuToolsShortcuts      = "단축키 편집기";
 
     ls->shortcutSaveConfig      = "blueMSX - 설정 저장";
@@ -466,8 +390,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->propApearance           = "외부";
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
-    ls->propThemeClassic        = "고전";
-    ls->propThemeBlue           = "DIGIDIGI파랑";
 
     ls->propMonBrightness       = "밝기:";
     ls->propMonContrast         = "선명도:";
@@ -483,11 +405,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->propFile                = "파일";
     ls->propSettDefSlotGB       = "마우스로 끌어서 놓을때 ";
     ls->propSettDefSlots        = "현재 슬롯에 롬 삽입:";
-    ls->propSettDefSlot1        = " 슬롯 1";
-    ls->propSettDefSlot2        = " 슬롯 2";
+    ls->propSettDefSlot         = " 슬롯";
     ls->propSettDefDrives       = "현재 드라이브에 디스켓 삽입:";
-    ls->propSettDefDriveA       = " 드라이브 A";
-    ls->propSettDefDriveB       = " 드라이브 B";
+    ls->propSettDefDrive       = " 드라이브";
     ls->menuPropsFile           = "파일";
     ls->shortcutShowFiles       = "파일 속성 보기";
 
@@ -525,7 +445,6 @@ void langInitKorean(LanguageStrings* ls)
     // New entries in 2.1
     ls->propEmuFdcTiming        = "플로피 드라이브 타이밍 사용 않함";
     ls->shortcutToggleFdcTiming = "플로피 드라이브 타이밍 사용/않함 변환";
-    ls->propUseRegistry         = "레지스트리에 설정 저장";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 카트리지";

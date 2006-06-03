@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2005-09-09 03:31:46 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,31 +35,18 @@
 
 void langInitJapanese(LanguageStrings* ls) 
 {
-    ls->statusBarStopped        = " 停止";
-    ls->statusBarPaused         = " 中断";
-    ls->statusBarRunning        = " 実行中";
-    
-    ls->menuHardReset           = "ハードリセット";
-    ls->menuSoftReset           = "ソ\フトリセット";
-    
-    ls->menuCartInsert          = "挿入";
-    ls->menuCartRemove          = "取り出し";
+    ls->noRecentFiles           = "- 使用ファイルなし -";
+    ls->insert                  = "挿入";
+    ls->eject                   = "取り出し";
+
     ls->menuCartAutoReset       = "挿入/取り出し後リセット";
-    ls->menuCartNoRecentFiles   = "- 使用ファイルなし -";
-    ls->menuCartFMPac         = "FMPAC+カートリッジ";
-    ls->menuCartPac           = "PAC+カートリッジ";
-    ls->menuCartSpecial         = "その他";
+    ls->menuCartFMPac           = "FMPAC+カートリッジ";
+    ls->menuCartPac             = "PAC+カートリッジ";
     
-    ls->menuDiskInsert          = "挿入";
-    ls->menuDiskEject           = "取り出し";
     ls->menuDiskAutoStart       = "挿入/取り出し後リセット";
-    ls->menuDiskNoRecentFiles   = "- 使用ファイルなし -";
     
-    ls->menuCasInsert           = "挿入";
-    ls->menuCasEject            = "取り出し";
     ls->menuCasSetPosition      = "テープ位置セット";
     ls->menuCasRewind           = "巻き戻し";
-    ls->menuCasNoRecentFiles   = "- 使用ファイルなし -";
     
     ls->menuZoomNormal          = "標準サイズ";
     ls->menuZoomDouble          = "2倍サイズ";
@@ -76,10 +63,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuHelpHelp            = "ヘルプ目次";
     ls->menuHelpAbout           = "blueMSXについて";
 
-    ls->menuFileCart1           = "ROMスロット 1";
-    ls->menuFileCart2           = "ROMスロット 2";
-    ls->menuFileDiskA           = "ディスクドライブ A";
-    ls->menuFileDiskB           = "ディスクドライブ B";
+    ls->menuFileCart            = "ROMスロット";
+    ls->menuFileDisk            = "ディスクドライブ";
     ls->menuFileCas             = "カセットテープ";
     ls->menuFileLoadState       = "CPUステート 読み込み";
     ls->menuFileSaveState       = "CPUステート 保存";
@@ -115,20 +100,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->errorNoHelp             = "blueMSXのヘルプファイルが見つかりません.";
     ls->errorStartEmu           = "MSXエミュレータの開始に失敗しました.";
 
-    ls->tooltipReset            = "MSXをリセットします";
-    ls->tooltipCart1            = "スロット1にカートリッジを挿入します";
-    ls->tooltipCart2            = "スロット2にカートリッジを挿入します";
-    ls->tooltipDiskA            = "ドライブAにディスクを挿入します";
-    ls->tooltipDiskB            = "ドライブBにディスクを挿入します";
-    ls->tooltipCas              = "カセットテープを挿入します";
-    ls->tooltipStart            = "エミュレーションを開始します";
-    ls->tooltipResume           = "エミュレーションを続行します";
-    ls->tooltipPause            = "エミュレーションを一時停止します";
-    ls->tooltipWindowSize       = "ウィンドウのサイズを変更します";
-    ls->tooltipProperties       = "設定ダイアログを開きます";
-    ls->tooltipHelp             = "ヘルプを開きます";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - romイメージを選択";
     ls->dlgLoadDsk              = "blueMSX - dskイメージを選択";
     ls->dlgLoadCas              = "blueMSX - casイメージを選択";
@@ -156,16 +128,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgZipReset             = "挿入後リセット";
 
     ls->dlgAboutTitle           = "blueMSXについて";
-
-    ls->dlgJoyTitle1            = "blueMSX - ジョイスティック セット A";
-    ls->dlgJoyTitle2            = "blueMSX - ジョイスティック セット B";
-    ls->dlgJoyUpText            = "上";
-    ls->dlgJoyDownText          = "下";
-    ls->dlgJoyLeftText          = "左";
-    ls->dlgJoyRightText         = "右";
-    ls->dlgJoyButton1Text       = "ボタン1";
-    ls->dlgJoyButton2Text       = "ボタン2";
-    ls->dlgJoyGB                = "キー設定";
 
     ls->dlgLangLangText         = "blueMSXで使用する言語を選択してください";
     ls->dlgLangLangTitle        = "blueMSX - 言語";
@@ -209,13 +171,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "MASTER";
 
-    ls->propJoyPort1GB          = "ジョイスティックポート 1 ";
-    ls->propJoyPort2GB          = "ジョイスティックポート 2 ";
-    ls->propJoyAutofireText     = "連射:";
-    ls->propJoyKeysetGB         = "ジョイスティック設定 ";
-    ls->propJoyKeyest1          = "セットAの設定 ";
-    ls->propJoyKeyest2          = "セットBの設定 ";
-
     ls->enumVideoMonColor       = "カラー";
     ls->enumVideoMonGrey        = "モノクロ";
     ls->enumVideoMonGreen       = "グリーン";
@@ -252,17 +207,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自動 (推奨)";
 
     ls->enumControlsJoyNone     = "なし";
-    ls->enumControlsJoyNumpad   = "テンキー";
-    ls->enumControlsJoyKeysetA  = "セットA";
-    ls->enumControlsJoyKeysetB  = "セットB";
-    ls->enumControlsJoyPCjoy1   = "PCジョイスティック#1";
-    ls->enumControlsJoyPCjoy2   = "PCジョイスティック#2";
     ls->enumControlsJoyMouse    = "マウス";
-
-    ls->enumControlsAfOff       = "なし";
-    ls->enumControlsAfSlow      = "低速";
-    ls->enumControlsAfMedium    = "中";
-    ls->enumControlsAfFast      = "高速";
 
     ls->dlgAboutAbout           = "このソ\フトについて\r\n==========";
     ls->dlgAboutVersion         = "バージョン:";
@@ -298,7 +243,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "ファイルヒストリ ";
     ls->propSetFileHistorySize   = "ファイルヒストリの個数:";
     ls->propSetFileHistoryClear  = "ヒストリの消去";
-    ls->propSetScreenSaverGB     = "スクリーンセーバ ";
     ls->propSetScreenSaver       = " blueMSXの動作中はスクリーンセーバを無効にする";
 
     ls->confTitle                = "blueMSX - マシン構\成編集";
@@ -313,12 +257,7 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "スロット構\成 ";
     ls->confSlotExtSlotGB        = "拡張スロット ";
-    ls->confSlotSlot0            = "スロット 0";
-    ls->confSlotSlot1            = "スロット 1";
-    ls->confSlotSlot2            = "スロット 2";
-    ls->confSlotSlot3            = "スロット 3";
-    ls->confSlotCart1            = "カートリッジ 1:";
-    ls->confSlotCart2            = "カートリッジ 2:";
+    ls->confSlotCart             = "カートリッジ";
     ls->confSlotPrimary          = "基本";
     ls->confSlotExpanded         = "拡張 (4つの副スロット)";
 
@@ -350,7 +289,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confSaveText             = "マシン構\成を上書きしてよろしいですか?";
 
     ls->dlgOpen                  = "開く";
-    ls->confEditMemInternalRoms  = "blueMSX - 内蔵ロム";
 
     ls->confSaveTitle            = "blueMSX - マシン構\成編集の終了";
     ls->confSaveText             = "現在の構\成が失われますが、よろしいですか?";
@@ -362,12 +300,10 @@ void langInitJapanese(LanguageStrings* ls)
     
     ls->propSndMoonsound         = " Moonsound";
 
-    ls->propFileTypesGB          = "ファイル種類 ";
     ls->propFileTypes            = " blueMSXに関連付けるファイル種類 (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " blueMSXを使用中に左右のWindowsキーを無効化する"; 
     ls->propWindowsEnvGB         = "ウィンドウズ環境 ";
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel."; 
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " 水平 ストレッチ";  
     ls->propClearHistory         = "ヒストリの消去を実行して、よろしいですか?"; 
 
@@ -380,24 +316,12 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgCmosEnable            = " CMOSを有効"; 
     ls->dlgCmosBattery           = " 内蔵バッテリーを有効化";
      
-    ls->menuCartSnatcher         = "The Snatcher カートリッジ";
-    ls->menuCartSdSnatcher       = "SD-Snatcher カートリッジ";
-    ls->menuCartSCCMirrored      = "SCC Mirrored カートリッジ";
-    ls->menuCartSCCExpanded      = "SCC Expanded カートリッジ";
     ls->menuCartSCCPlus          = "SCC+  カートリッジ";
     ls->menuCartSCC              = "SCC  カートリッジ";
     
     ls->warningTitle             = "blueMSX - Warning";
-    ls->tooltipStop              = "エミュレーションを停止します";
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "キーセット";    
-    ls->propJoyConfigKeyset     = "コンフィグ キーセット";
-    ls->propJoyControlText      = "コントロール:";
-    ls->propJoyButtonText       = "ボタン";
-    ls->propJoyButtonAText      = "ボタン A:";
-    ls->propJoyButtonBText      = "ボタン B:";
-
     ls->menuToolsShortcuts      = "ショートカット構\成編集";
 
     ls->shortcutSaveConfig      = "blueMSX - 構\成の保存";
@@ -481,8 +405,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propApearance           = "外観";
     ls->propThemeGB             = "テーマ ";
     ls->propTheme               = "テーマ";
-    ls->propThemeClassic        = "クラシック";
-    ls->propThemeBlue           = "DIGIblue";
 
     ls->propMonBrightness       = "明るさ:";
     ls->propMonContrast         = "コントラスト:";
@@ -497,11 +419,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propFile                = "ファイル"; 
     ls->propSettDefSlotGB       = "ドラッグ＆ドロップ "; 
     ls->propSettDefSlots        = "ロムを挿入するスロット:"; 
-    ls->propSettDefSlot1        = " スロット 1"; 
-    ls->propSettDefSlot2        = " スロット 2"; 
+    ls->propSettDefSlot         = " スロット"; 
     ls->propSettDefDrives       = "ディスクを挿入するドライブ:"; 
-    ls->propSettDefDriveA       = " ドライブ A"; 
-    ls->propSettDefDriveB       = " ドライブ B"; 
+    ls->propSettDefDrive        = " ドライブ"; 
     ls->menuPropsFile           = "ファイル";
     ls->shortcutShowFiles       = "ファイルダイアログを表\示";
 
@@ -538,7 +458,6 @@ void langInitJapanese(LanguageStrings* ls)
     // New entries in 2.0.1
     ls->propEmuFdcTiming        = "FDDドライブのタイミングを無効化";
     ls->shortcutToggleFdcTiming = "FDDドライブのタイミング 有無";
-    ls->propUseRegistry         = "レジストリに設定を保存する";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 カートリッジ";

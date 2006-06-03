@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-05-25 07:02:58 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1005,7 +1005,7 @@ void keyboardSaveConfig(char* configName)
                 char key[32] = { 0 };
                 strcat(key, keyCode);
                 strcat(key, " ");
-                iniFileWriteString(profString, key, dikName);
+                iniFileWriteString(profString, key, (char*)dikName);
 //            WritePrivateProfileString(profString, keyCode, dikName, fileName);
             }
         }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -316,21 +316,25 @@ int langShowDlg(HWND hwnd, int oldLanguage) {
     return lang;
 }
 
-_TCHAR* langStatusBarStopped() { return ls->statusBarStopped; }
-_TCHAR* langStatusBarPaused()  { return ls->statusBarPaused; }
-_TCHAR* langStatusBarRunning() { return ls->statusBarRunning; }
+_TCHAR* langNoRecentFiles() { return ls->noRecentFiles; }
+_TCHAR* langInsert() { return ls->insert; }
+_TCHAR* langEject() { return ls->eject; }
 
-_TCHAR* langMenuHardReset() { return ls->menuHardReset; }
-_TCHAR* langMenuSoftReset() { return ls->menuSoftReset; }
+_TCHAR* langErrorTitle() { return ls->errorTitle; }
+_TCHAR* langWarningTitle() { return ls->warningTitle; }
+_TCHAR* langErrorEnterFullscreen() { return ls->errorEnterFullscreen; }
+_TCHAR* langErrorDirectXFailed() { return ls->errorDirectXFailed; }
+_TCHAR* langErrorNoRomInZip() { return ls->errorNoRomInZip; }
+_TCHAR* langErrorNoDskInZip() { return ls->errorNoDskInZip; }
+_TCHAR* langErrorNoCasInZip() { return ls->errorNoCasInZip; }
+_TCHAR* langErrorNoHelp() { return ls->errorNoHelp; }
+_TCHAR* langErrorStartEmu() { return ls->errorStartEmu; }
+_TCHAR* langDiscardChanges()  {return ls->discardChanges; }
+_TCHAR* langOverwriteConfig()  {return ls->overwriteConfig; }
+_TCHAR* langOverwriteFile() { return ls->overwriteFile; }
+_TCHAR* langPortableReadonly()  {return ls->portableReadonly; }
 
-_TCHAR* langMenuCartInsert() { return ls->menuCartInsert; }
-_TCHAR* langMenuCartRemove() { return ls->menuCartRemove; }
 _TCHAR* langMenuCartAutoReset() { return ls->menuCartAutoReset; }
-_TCHAR* langMenuCartNoRecentFiles() { return ls->menuCartNoRecentFiles; }
-_TCHAR* langMenuCartSnatcher() { return ls->menuCartSnatcher; }
-_TCHAR* langMenuCartSdSnatcher() { return ls->menuCartSdSnatcher; }
-_TCHAR* langMenuCartSCCMirrored() { return ls->menuCartSCCMirrored; }
-_TCHAR* langMenuCartSCCExpanded() { return ls->menuCartSCCExpanded; }
 _TCHAR* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
 _TCHAR* langMenuCartGameReader() { return ls->menuCartGameReader; }
 _TCHAR* langMenuCartIde() { return ls->menuCartIde; }
@@ -341,26 +345,19 @@ _TCHAR* langMenuCartSCC() { return ls->menuCartSCC; }
 _TCHAR* langMenuCartFMPac()  { return ls->menuCartFMPac; }
 _TCHAR* langMenuCartPac()  { return ls->menuCartPac; }
 _TCHAR* langMenuCartHBI55() { return ls->menuCartHBI55; }
-_TCHAR* langMenuCartSpecial() { return ls->menuCartSpecial; }
 _TCHAR* langMenuCartInsertSpecial() { return ls->menuCartInsertSpecial; }
 _TCHAR* langMenuCartMegaRam() { return ls->menuCartMegaRam; }
 _TCHAR* langMenuCartExternalRam() { return ls->menuCartExternalRam; }
 
-_TCHAR* langMenuDiskInsert() { return ls->menuDiskInsert; }
 _TCHAR* langMenuDiskInsertNew() { return ls->menuDiskInsertNew; }
 _TCHAR* langMenuDiskDirInsert() { return ls->menuDiskDirInsert; }
-_TCHAR* langMenuDiskEject() { return ls->menuDiskEject; }
 _TCHAR* langMenuDiskAutoStart() { return ls->menuDiskAutoStart; }
-_TCHAR* langMenuDiskNoRecentFiles() { return ls->menuDiskNoRecentFiles; }
 
-_TCHAR* langMenuCasInsert() { return ls->menuCasInsert; }
-_TCHAR* langMenuCasEject() { return ls->menuCasEject; }
 _TCHAR* langMenuCasRewindAfterInsert() { return ls->menuCasRewindAfterInsert; }
 _TCHAR* langMenuCasUseReadOnly() { return ls->menuCasUseReadOnly; }
 _TCHAR* langMenuCasSaveAs() { return ls->lmenuCasSaveAs; }
 _TCHAR* langMenuCasSetPosition() { return ls->menuCasSetPosition; }
 _TCHAR* langMenuCasRewind() { return ls->menuCasRewind; }
-_TCHAR* langMenuCasNoRecentFiles() { return ls->menuCasNoRecentFiles; }
 
 _TCHAR* langMenuPrnFormfeed() { return ls->menuPrnFormfeed; }
 
@@ -388,10 +385,8 @@ _TCHAR* langMenuVideoInBitmap() { return ls->menuVideoInBitmap; }
 _TCHAR* langMenuHelpHelp() { return ls->menuHelpHelp; }
 _TCHAR* langMenuHelpAbout() { return ls->menuHelpAbout; }
 
-_TCHAR* langMenuFileCart1() { return ls->menuFileCart1; }
-_TCHAR* langMenuFileCart2() { return ls->menuFileCart2; }
-_TCHAR* langMenuFileDiskA() { return ls->menuFileDiskA; }
-_TCHAR* langMenuFileDiskB() { return ls->menuFileDiskB; }
+_TCHAR* langMenuFileCart() { return ls->menuFileCart; }
+_TCHAR* langMenuFileDisk() { return ls->menuFileDisk; }
 _TCHAR* langMenuFileCas() { return ls->menuFileCas; }
 _TCHAR* langMenuFilePrn() { return ls->menuFilePrn; }
 _TCHAR* langMenuFileLoadState() { return ls->menuFileLoadState; }
@@ -423,35 +418,6 @@ _TCHAR* langMenuOptions() { return ls->menuOptions; }
 _TCHAR* langMenuTools() { return ls->menuTools; }
 _TCHAR* langMenuHelp() { return ls->menuHelp; }
 
-_TCHAR* langErrorTitle() { return ls->errorTitle; }
-_TCHAR* langWarningTitle() { return ls->warningTitle; }
-_TCHAR* langOverwriteFile() { return ls->overwriteFile; }
-_TCHAR* langErrorEnterFullscreen() { return ls->errorEnterFullscreen; }
-_TCHAR* langErrorDirectXFailed() { return ls->errorDirectXFailed; }
-_TCHAR* langErrorNoRomInZip() { return ls->errorNoRomInZip; }
-_TCHAR* langErrorNoDskInZip() { return ls->errorNoDskInZip; }
-_TCHAR* langErrorNoCasInZip() { return ls->errorNoCasInZip; }
-_TCHAR* langErrorNoHelp() { return ls->errorNoHelp; }
-_TCHAR* langErrorStartEmu() { return ls->errorStartEmu; }
-_TCHAR* langDiscardChanges()  {return ls->discardChanges; }
-_TCHAR* langOverwriteConfig()  {return ls->overwriteConfig; }
-_TCHAR* langPortableReadonly()  {return ls->portableReadonly; }
-
-_TCHAR* langTooltipReset() { return ls->tooltipReset; }
-_TCHAR* langTooltipCart1() { return ls->tooltipCart1; }
-_TCHAR* langTooltipCart2() { return ls->tooltipCart2; }
-_TCHAR* langTooltipDiskA() { return ls->tooltipDiskA; }
-_TCHAR* langTooltipDiskB() { return ls->tooltipDiskB; }
-_TCHAR* langTooltipCas() { return ls->tooltipCas; }
-_TCHAR* langTooltipStart() { return ls->tooltipStart; }
-_TCHAR* langTooltipResume() { return ls->tooltipResume; }
-_TCHAR* langTooltipPause() { return ls->tooltipPause; }
-_TCHAR* langTooltipStop() { return ls->tooltipStop; }
-_TCHAR* langTooltipWindowSize() { return ls->tooltipWindowSize; }
-_TCHAR* langTooltipProperties() { return ls->tooltipProperties; }
-_TCHAR* langTooltipHelp() { return ls->tooltipHelp; }
-
-_TCHAR* langDlgMainWindow() { return ls->dlgMainWindow; }
 _TCHAR* langDlgLoadRom() { return ls->dlgLoadRom; }
 _TCHAR* langDlgLoadDsk() { return ls->dlgLoadDsk; }
 _TCHAR* langDlgLoadCas() { return ls->dlgLoadCas; }
@@ -489,16 +455,6 @@ _TCHAR* langDlgZipReset() { return ls->dlgZipReset; }
 
 _TCHAR* langDlgAboutTitle() { return ls->dlgAboutTitle; }
 
-_TCHAR* langDlgJoyTitle1() { return ls->dlgJoyTitle1; }
-_TCHAR* langDlgJoyTitle2() { return ls->dlgJoyTitle2; }
-_TCHAR* langDlgJoyUpText() { return ls->dlgJoyUpText; }
-_TCHAR* langDlgJoyDownText() { return ls->dlgJoyDownText; }
-_TCHAR* langDlgJoyLeftText() { return ls->dlgJoyLeftText; }
-_TCHAR* langDlgJoyRightText() { return ls->dlgJoyRightText; }
-_TCHAR* langDlgJoyButton1Text() { return ls->dlgJoyButton1Text; }
-_TCHAR* langDlgJoyButton2Text() { return ls->dlgJoyButton2Text; }
-_TCHAR* langDlgJoyGB() { return ls->dlgJoyGB; }
-
 _TCHAR* langDlgLangLangText() { return ls->dlgLangLangText; }
 _TCHAR* langDlgLangTitle() { return ls->dlgLangLangTitle; }
 
@@ -514,15 +470,12 @@ _TCHAR* langPropPorts() { return ls->propPorts; }
 _TCHAR* langPropSetFileHistoryGB() { return ls->propSetFileHistoryGB; }
 _TCHAR* langPropSetFileHistorySize() { return ls->propSetFileHistorySize; }
 _TCHAR* langPropSetFileHistoryClear() { return ls->propSetFileHistoryClear; }
-_TCHAR* langPropScreenSaverGB() { return ls->propSetScreenSaverGB; }
+_TCHAR* langPropFileTypes() { return ls->propFileTypes; }
 _TCHAR* langPropWindowsEnvGB() { return ls->propWindowsEnvGB; }
 _TCHAR* langPropScreenSaver() { return ls->propSetScreenSaver; }
-_TCHAR* langPropFileTypesGB() { return ls->propFileTypesGB; }
-_TCHAR* langPropFileTypes() { return ls->propFileTypes; }
 _TCHAR* langPropDisableWinKeys() { return ls->propDisableWinKeys; }
 _TCHAR* langPropPriorityBoost() { return ls->propPriorityBoost; }
 _TCHAR* langPropScreenshotPng() { return ls->propScreenshotPng; }
-_TCHAR* langPropUseRegistry() { return ls->propUseRegistry; }
 _TCHAR* langPropClearFileHistory() { return ls->propClearHistory; }
 
 _TCHAR* langPropEmuGeneralGB() { return ls->propEmuGeneralGB; }
@@ -588,19 +541,6 @@ _TCHAR* langPropSndSN76489() { return ls->propSndSN76489; }
 _TCHAR* langPropSndMasterText() { return ls->propSndMsxMasterText; }
 _TCHAR* langPropSndMt32ToGm() { return ls->propSndMt32ToGmText; }
 
-_TCHAR* langPropJoyPort1GB() { return ls->propJoyPort1GB; }
-_TCHAR* langPropJoyPort2GB() { return ls->propJoyPort2GB; }
-_TCHAR* langPropJoyAutofireText() { return ls->propJoyAutofireText; }
-_TCHAR* langPropJoyConfigKeyset() { return ls->propJoyConfigKeyset; }
-_TCHAR* langPropJoyControlText() { return ls->propJoyControlText; }
-_TCHAR* langPropJoyButtonAText() { return ls->propJoyButtonAText; }
-_TCHAR* langPropJoyButtonBText() { return ls->propJoyButtonBText; }
-_TCHAR* langPropJoyButtonText() { return ls->propJoyButtonText; }
-
-_TCHAR* langPropJoyKeysetGB() { return ls->propJoyKeysetGB; }
-_TCHAR* langPropJoyKeyest1() { return ls->propJoyKeyest1; }
-_TCHAR* langPropJoyKeyest2() { return ls->propJoyKeyest2; }
-
 _TCHAR* langPropPortsLptGB() { return ls->propPortsLptGB; }
 _TCHAR* langPropPortsComGB() { return ls->propPortsComGB; }
 _TCHAR* langPropPortsLptText() { return ls->propPortsLptText; }
@@ -615,11 +555,9 @@ _TCHAR* langPropPortsEmulateMsxPrn() { return ls->propPortsEmulateMsxPrn; }
 
 _TCHAR* langPropSettDefSlotGB() { return ls->propSettDefSlotGB; }
 _TCHAR* langPropSettDefSlots() { return ls->propSettDefSlots; }
-_TCHAR* langPropSettDefSlot1() { return ls->propSettDefSlot1; }
-_TCHAR* langPropSettDefSlot2() { return ls->propSettDefSlot2; }
+_TCHAR* langPropSettDefSlot() { return ls->propSettDefSlot; }
 _TCHAR* langPropSettDefDrives() { return ls->propSettDefDrives; }
-_TCHAR* langPropSettDefDriveA() { return ls->propSettDefDriveA; }
-_TCHAR* langPropSettDefDriveB() { return ls->propSettDefDriveB; }
+_TCHAR* langPropSettDefDrive() { return ls->propSettDefDrive; }
 
 _TCHAR* langPropOpenRomGB() { return ls->propOpenRomGB; }
 _TCHAR* langPropDefaultRomType() { return ls->propDefaultRomType; }
@@ -647,7 +585,6 @@ _TCHAR* langEnumVideoSize2x() { return ls->enumVideoSize2x; }
 _TCHAR* langEnumVideoSizeFullscreen() { return ls->enumVideoSizeFullscreen; }
 
 _TCHAR* langEnumVideoDrvDirectDrawHW() { return ls->enumVideoDrvDirectDrawHW; }
-_TCHAR* langEnumVideoDrvDirectDrawHWSys()  { return ls->enumVideoDrvDirectDrawHWSys; }
 _TCHAR* langEnumVideoDrvDirectDraw() { return ls->enumVideoDrvDirectDraw; }
 _TCHAR* langEnumVideoDrvGDI() { return ls->enumVideoDrvGDI; }
 
@@ -668,20 +605,9 @@ _TCHAR* langEnumEmuSyncNone() { return ls->enumEmuSyncNone; }
 _TCHAR* langEnumEmuSyncVblank() { return ls->enumEmuSyncVblank; }
 
 _TCHAR* langEnumControlsJoyNone() { return ls->enumControlsJoyNone; }
-_TCHAR* langEnumControlsJoyNumpad() { return ls->enumControlsJoyNumpad; }
-_TCHAR* langEnumControlsJoyKeyset() { return ls->enumControlsJoyKeyset; }
+_TCHAR* langEnumControlsJoyMouse() { return ls->enumControlsJoyMouse; }
 _TCHAR* langEnumControlsJoyTetrisDongle() { return ls->enumControlsJoyTetris2Dongle; }
 _TCHAR* langEnumControlsJoyMagicKeyDongle() { return ls->enumControlsJoyTMagicKeyDongle; }
-_TCHAR* langEnumControlsJoyKeysetA() { return ls->enumControlsJoyKeysetA; }
-_TCHAR* langEnumControlsJoyKeysetB() { return ls->enumControlsJoyKeysetB; }
-_TCHAR* langEnumControlsJoyPCjoy1() { return ls->enumControlsJoyPCjoy1; }
-_TCHAR* langEnumControlsJoyPCjoy2() { return ls->enumControlsJoyPCjoy2; }
-_TCHAR* langEnumControlsJoyMouse() { return ls->enumControlsJoyMouse; }
-
-_TCHAR* langEnumControlsAfOff() { return ls->enumControlsAfOff; }
-_TCHAR* langEnumControlsAfSlow() { return ls->enumControlsAfSlow; }
-_TCHAR* langEnumControlsAfMedium() { return ls->enumControlsAfMedium; }
-_TCHAR* langEnumControlsAfFast() { return ls->enumControlsAfFast; }
 
 _TCHAR* langDlgAboutAbout() { return ls->dlgAboutAbout; }
 _TCHAR* langDlgAboutVersion() { return ls->dlgAboutVersion; }
@@ -709,15 +635,10 @@ _TCHAR* langDlgSlotLayoutGB() { return ls->confSlotLayoutGB; }
 _TCHAR* langDlgSlotExtSlotGB() { return ls->confSlotExtSlotGB; }
 _TCHAR* langDlgBoardGB() { return ls->confBoardGB; }
 _TCHAR* langDlgBoardText() { return ls->confBoardText; }
-_TCHAR* langDlgSlotSlot0() { return ls->confSlotSlot0; }
-_TCHAR* langDlgSlotSlot1() { return ls->confSlotSlot1; }
-_TCHAR* langDlgSlotSlot2() { return ls->confSlotSlot2; }
-_TCHAR* langDlgSlotSlot3() { return ls->confSlotSlot3; }
-_TCHAR* langDlgSlotCart1() { return ls->confSlotCart1; }
-_TCHAR* langDlgSlotCart2() { return ls->confSlotCart2; }
 _TCHAR* langDlgSlotPrimary() { return ls->confSlotPrimary; }
 _TCHAR* langDlgSlotExpanded() { return ls->confSlotExpanded; }
 
+_TCHAR* langCartridge() { return ls->confSlotCart; }
 _TCHAR* langSlot() { return ls->confSlot; }
 _TCHAR* langSubslot() { return ls->confSubslot; }
 
@@ -772,8 +693,6 @@ _TCHAR* langConfExitSaveText() { return ls->confExitSaveText; }
 
 _TCHAR* langDlgConfSaveAsTitle() { return ls->confSaveAsTitle; }
 _TCHAR* langDlgConfSaveAsMachineName() { return ls->confSaveAsMachineName; }
-
-_TCHAR* langSlotEditMemInternalRoms() { return ls->confEditMemInternalRoms; }
 
 _TCHAR* langConfSaveAsTitle() { return ls->confSaveAsTitle; }
 _TCHAR* langConfSaveAsName() { return ls->confSaveAsName; }
@@ -873,8 +792,6 @@ _TCHAR* langPropApearance() { return ls->propApearance; }
 _TCHAR* langPropFile()  { return ls->propFile; }
 _TCHAR* langPropThemeGB() { return ls->propThemeGB; }
 _TCHAR* langPropTheme() { return ls->propTheme; }
-_TCHAR* langPropThemeClassic() { return ls->propThemeClassic; }
-_TCHAR* langPropThemeBlue() { return ls->propThemeBlue; }
 
 _TCHAR* langKeyconfigSelectedKey() { return ls->keyconfigSelectedKey; }
 _TCHAR* langKeyconfigMappedTo() { return ls->keyconfigMappedTo; }

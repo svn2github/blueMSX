@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-20 08:09:27 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,31 +34,18 @@
  
 void langInitChineseTraditional(LanguageStrings* ls) 
 {
-    ls->statusBarStopped        = "  已停止";
-    ls->statusBarPaused         = "  暫停";
-    ls->statusBarRunning        = "  執行中";
-    
-    ls->menuHardReset           = "硬體重置";
-    ls->menuSoftReset           = "軟體重置";
-    
-    ls->menuCartInsert          = "插入";
-    ls->menuCartRemove          = "移除";
+    ls->noRecentFiles           = "- 沒有最近的檔案 -";
+    ls->insert                  = "插入";
+    ls->eject                   = "退出";
+
     ls->menuCartAutoReset       = "插入/移除之後重置";
-    ls->menuCartNoRecentFiles   = "- 沒有最近的檔案 -";
     ls->menuCartFMPac           = "FM-PAC 卡匣";
     ls->menuCartPac             = "PAC 卡匣";
-    ls->menuCartSpecial         = "特殊";
 
-    ls->menuDiskInsert          = "插入";
-    ls->menuDiskEject           = "退出";
     ls->menuDiskAutoStart       = "插入之後重置";
-    ls->menuDiskNoRecentFiles   = "- 沒有最近的檔案 -";
     
-    ls->menuCasInsert           = "插入";
-    ls->menuCasEject            = "退出";
     ls->menuCasSetPosition      = "設定位置";
     ls->menuCasRewind           = "迴帶";
-    ls->menuCasNoRecentFiles    = "- 沒有最近的檔案 -";
 
     ls->menuZoomNormal          = "一般大小";
     ls->menuZoomDouble          = "兩倍大小";
@@ -74,10 +61,8 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuHelpHelp            = "說明主題";
     ls->menuHelpAbout           = "關於 blueMSX";
 
-    ls->menuFileCart1           = "卡匣插槽 1";
-    ls->menuFileCart2           = "卡匣插槽 2";
-    ls->menuFileDiskA           = "磁碟機 A";
-    ls->menuFileDiskB           = "磁碟機 B";
+    ls->menuFileCart            = "卡匣插槽";
+    ls->menuFileDisk            = "磁碟機";
     ls->menuFileCas             = "磁帶機";
     ls->menuFileLoadState       = "載入 CPU 狀態";
     ls->menuFileSaveState       = "儲存 CPU 狀態";
@@ -109,20 +94,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->errorNoHelp             = "無法找到 blueMSX 說明檔案。";
     ls->errorStartEmu           = "無法啟動 MSX 模擬器。";
 
-    ls->tooltipReset            = "重置 MSX";
-    ls->tooltipCart1            = "請在插槽 1 插入卡匣";
-    ls->tooltipCart2            = "請在插槽 2 插入卡匣";
-    ls->tooltipDiskA            = "請在磁碟機 A 插入磁碟";
-    ls->tooltipDiskB            = "請在磁碟機 B 插入磁碟";
-    ls->tooltipCas              = "請在磁帶機插入磁帶";
-    ls->tooltipStart            = "開始模擬";
-    ls->tooltipResume           = "繼續模擬";
-    ls->tooltipPause            = "暫停模擬";
-    ls->tooltipWindowSize       = "設定視窗大小";
-    ls->tooltipProperties       = "開啟內容對話方塊";
-    ls->tooltipHelp             = "開啟說明視窗";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - 選擇卡匣映像檔載入";
     ls->dlgLoadDsk              = "blueMSX - 選擇磁碟映像檔載入";
     ls->dlgLoadCas              = "blueMSX - 選擇磁帶映像檔載入";
@@ -151,16 +123,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgZipReset             = "插入之後重置";
 
     ls->dlgAboutTitle           = "blueMSX - 關於";
-
-    ls->dlgJoyTitle1            = "blueMSX - 搖桿 A 按鍵設定";
-    ls->dlgJoyTitle2            = "blueMSX - 搖桿 B 按鍵設定";
-    ls->dlgJoyUpText            = "上";
-    ls->dlgJoyDownText          = "下";
-    ls->dlgJoyLeftText          = "左";
-    ls->dlgJoyRightText         = "右";
-    ls->dlgJoyButton1Text       = "按鈕 1";
-    ls->dlgJoyButton2Text       = "按鈕 2";
-    ls->dlgJoyGB                = "按鍵設定 ";
 
     ls->dlgLangLangText         = "請選擇 blueMSX 要使用的語言";
     ls->dlgLangLangTitle        = "blueMSX - 語言";
@@ -203,13 +165,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX 音效";
     ls->propSndMsxMasterText    = "主要";
 
-    ls->propJoyPort1GB          = "連接埠 #1 ";
-    ls->propJoyPort2GB          = "連接埠 #2 ";
-    ls->propJoyAutofireText     = "連發:";
-    ls->propJoyKeysetGB         = "搖桿按鍵設定 ";
-    ls->propJoyKeyest1          = "設定搖桿 A 的按鍵";
-    ls->propJoyKeyest2          = "設定搖桿 B 的按鍵";
-
     ls->enumVideoMonColor       = "彩色";
     ls->enumVideoMonGrey        = "黑白";
     ls->enumVideoMonGreen       = "綠色";
@@ -243,17 +198,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumSoundDrvDirectX     = "DirectX 驅動程式";
 
     ls->enumControlsJoyNone     = "無";
-    ls->enumControlsJoyNumpad   = "數字鍵台";
-    ls->enumControlsJoyKeysetA  = "按鍵設定 A";
-    ls->enumControlsJoyKeysetB  = "按鍵設定 B";
-    ls->enumControlsJoyPCjoy1   = "PC 搖桿 #1";
-    ls->enumControlsJoyPCjoy2   = "PC 搖桿 #2";
     ls->enumControlsJoyMouse    = "滑鼠";
-
-    ls->enumControlsAfOff       = "關";
-    ls->enumControlsAfSlow      = "慢";
-    ls->enumControlsAfMedium    = "中";
-    ls->enumControlsAfFast      = "快";
 
     ls->dlgAboutAbout           = "關於\r\n====";
     ls->dlgAboutVersion         = "版本:";
@@ -289,7 +234,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "檔案記錄 ";
     ls->propSetFileHistorySize   = "檔案記錄的項目數:";
     ls->propSetFileHistoryClear  = "清除記錄";
-    ls->propSetScreenSaverGB     = "螢幕保護 ";
     ls->propSetScreenSaver       = " 當 blueMSX 執行時停用螢幕保護";
 
     ls->confTitle                = "blueMSX - 機種組態編輯器";
@@ -304,12 +248,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "插槽布局 ";
     ls->confSlotExtSlotGB        = "外部插槽 ";
-    ls->confSlotSlot0            = "插槽 0";
-    ls->confSlotSlot1            = "插槽 1";
-    ls->confSlotSlot2            = "插槽 2";
-    ls->confSlotSlot3            = "插槽 3";
-    ls->confSlotCart1            = "卡匣 1:";
-    ls->confSlotCart2            = "卡匣 2:";
+    ls->confSlotCart             = "卡匣";
     ls->confSlotPrimary          = "主要";
     ls->confSlotExpanded         = "已擴展 (四個子插槽)";
 
@@ -344,15 +283,12 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - 另存機種設定為...";
     ls->confSaveAsMachineName    = "機種名稱:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - 內部 ROM";
     ls->propSndMoonsound         = " MoonSound";
 
-    ls->propFileTypesGB          = "檔案類型 ";
     ls->propFileTypes            = " 註冊 blueMSX 關聯的檔案類型 (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " 使用 MSX 時自動停用 Windows 的左、右鍵功\能表"; 
     ls->propWindowsEnvGB         = "Windows 環境 "; 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW 加速"; 
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw 混合"; 
     ls->propMonHorizStretch      = " 水平拉伸";
     ls->propMonVertStretch       = " 垂直拉伸";
     ls->propClearHistory         = "您是否確定要清除檔案記錄？";
@@ -366,24 +302,12 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgCmosEnable            = " 啟用 CMOS";
     ls->dlgCmosBattery           = " 使用充電電池";
 
-    ls->menuCartSnatcher        = "Snatcher 卡匣";
-    ls->menuCartSdSnatcher      = "SD-Snatcher 卡匣";
-    ls->menuCartSCCMirrored     = "SCC 鏡像卡匣";
-    ls->menuCartSCCExpanded     = "SCC 擴展卡匣";
     ls->menuCartSCCPlus         = "SCC + 卡匣";
     ls->menuCartSCC             = "SCC 卡匣";
     
     ls->warningTitle             = "blueMSX - 警告";
-    ls->tooltipStop             = "停止模擬";
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "按鍵設定";    
-    ls->propJoyConfigKeyset     = "設定按鍵";
-    ls->propJoyControlText      = "控制器:";
-    ls->propJoyButtonText       = "按鈕";
-    ls->propJoyButtonAText      = "按鈕 A:";
-    ls->propJoyButtonBText      = "按鈕 B:";
-
     ls->menuToolsShortcuts      = "快速鍵編輯器";
 
     ls->shortcutSaveConfig      = "blueMSX - 儲存設定";
@@ -468,8 +392,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propApearance           = "外觀";
     ls->propThemeGB             = "佈景主題 ";
     ls->propTheme               = "佈景主題:";
-    ls->propThemeClassic        = "典型";
-    ls->propThemeBlue           = "DIGIDIGIblue";
 
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "對比度:";
@@ -485,11 +407,9 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propFile                = "檔案";
     ls->propSettDefSlotGB       = "拖曳 ";
     ls->propSettDefSlots        = "插入 ROM 到:";
-    ls->propSettDefSlot1        = " 插槽 1";
-    ls->propSettDefSlot2        = " 插槽 2";
+    ls->propSettDefSlot         = " 插槽";
     ls->propSettDefDrives       = "插入磁片到:";
-    ls->propSettDefDriveA       = " 磁碟機 A";
-    ls->propSettDefDriveB       = " 磁碟機 B";
+    ls->propSettDefDrive        = " 磁碟機";
     ls->menuPropsFile           = "檔案";
     ls->shortcutShowFiles       = "顯示檔案內容";
 
@@ -526,7 +446,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     // New entries in 2.1
     ls->propEmuFdcTiming        = "停用軟式磁碟機計時";
     ls->shortcutToggleFdcTiming = "啟用/停用軟式磁碟機計時";
-    ls->propUseRegistry         = "在註冊表中儲存設定";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "SONY HBI-55 卡匣";

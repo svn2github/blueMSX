@@ -511,13 +511,79 @@ const char* w32_midiInGetRDN(unsigned nmb)
 	return vfnt_midiin[nmb].devname;
 }
 
-unsigned w32_midiInOpen(const char *vfn, unsigned thrdid)
+typedef struct MidiInCbInfo {
+    MidiInCb cb;
+    void* ref;
+} MidiInCbInfo;
+
+static MidiInCbInfo cbInfo[32];
+
+static void CALLBACK w32_midiInProc(HMIDIIN hMidiIn,  
+                                    UINT wMsg,        
+                                    DWORD dwInstance, 
+                                    DWORD dwParam1,   
+                                    DWORD dwParam2)
+{
+    char buffer[4];
+    int length = 0;
+    MIDIHDR* hdr;
+
+    switch (wMsg) {
+    case MM_MIM_DATA:
+        buffer[0] = (char)((dwParam2 >>  0) & 0xff);
+        buffer[1] = (char)((dwParam2 >>  8) & 0xff);
+        buffer[2] = (char)((dwParam2 >> 16) & 0xff);
+        buffer[3] = (char)((dwParam2 >> 24) & 0xff);
+		switch (buffer[0] & 0x0f0) {
+		case 0x090:	// Note On
+		case 0x080:	// Note Off
+		case 0x0a0:	// Key Pressure
+		case 0x0b0:	// Control Change
+		case 0x0e0:	// Pitch Wheel
+            length = 3;
+            break;
+		case 0x0c0:	// Program Change
+		case 0x0d0:	// After Touch
+            length = 2;
+            break;
+		case 0x0f0:	// SYSTEM MESSAGE (other than "EXCLUSIVE")
+			switch (buffer[0] & 0x0f) {
+			case 0x02:	// Song Position Pointer
+                length = 3;
+				break;
+			case 0x01:	// Time Code
+			case 0x03:	// Song Select
+                length = 2;
+                break;
+            default:
+                length = 1;
+                break;
+            }
+            break;
+        default:
+            length = 1;
+            break;
+        }
+        cbInfo[dwInstance].cb(cbInfo[dwInstance].ref, buffer, length);
+        break;
+
+    case MM_MIM_LONGDATA:
+        hdr = (MIDIHDR*)dwParam2;
+        cbInfo[dwInstance].cb(cbInfo[dwInstance].ref, hdr->lpData, hdr->dwBytesRecorded);
+        break;
+    }
+}
+
+unsigned w32_midiInOpen(const char *vfn, MidiInCb midiInCb, void* ref)
 {
 	unsigned idx, devid;
 	if (w32_midiInFindDev(&idx, &devid, vfn)) {
 		return (unsigned)-1;
 	}
-	if (midiInOpen((HMIDIIN*)&vfnt_midiin[idx].handle, devid, thrdid, 0, CALLBACK_THREAD) != MMSYSERR_NOERROR) {
+    cbInfo[idx].cb  = midiInCb;
+    cbInfo[idx].ref = ref;
+
+	if (midiInOpen((HMIDIIN*)&vfnt_midiin[idx].handle, devid, (DWORD_PTR)w32_midiInProc, idx, CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
 		return (unsigned)-1;
 	}
 	memset(&inhdr, 0, sizeof(MIDIHDR));

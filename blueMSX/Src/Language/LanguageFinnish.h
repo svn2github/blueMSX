@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2005-06-07 02:41:45 $
+** $Date: 2006-06-03 17:55:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,31 +34,18 @@
  
 void langInitFinnish(LanguageStrings* ls) 
 {
-    ls->statusBarStopped        = "  Pysäytetty";
-    ls->statusBarPaused         = "  Keskeytetty";
-    ls->statusBarRunning        = "  Käynnissä";
-    
-    ls->menuHardReset           = "Hardware resetointi";
-    ls->menuSoftReset           = "Software resetointi";
-    
-    ls->menuCartInsert          = "Lisää...";
-    ls->menuCartRemove          = "Poista";
+    ls->noRecentFiles           = "- ei viimeaikaisia tiedostoja -";
+    ls->insert                  = "Lisää...";
+    ls->eject                   = "Poista";
+
     ls->menuCartAutoReset       = "Resetoi lisäämisen/poistamisen jälkeen";
-    ls->menuCartNoRecentFiles   = "- ei viimeaikaisia tiedostoja -";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
-    ls->menuCartSpecial         = "Special";
 
-    ls->menuDiskInsert          = "Lisää...";
-    ls->menuDiskEject           = "Poista";
     ls->menuDiskAutoStart       = "Resetoi lisäämisen jälkeen";
-    ls->menuDiskNoRecentFiles   = "- ei viimeaikaisia tiedostoja -";
     
-    ls->menuCasInsert           = "Lisää...";
-    ls->menuCasEject            = "Poista";
     ls->menuCasSetPosition      = "Aseta sijainti";
     ls->menuCasRewind           = "Kelaa taaksenpäin";
-    ls->menuCasNoRecentFiles    = "- ei viimeaikaisia tiedostoja -";
 
     ls->menuZoomNormal          = "Normaali koko";
     ls->menuZoomDouble          = "Tupla koko";
@@ -74,10 +61,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuHelpHelp            = "Ohjeen aiheet";
     ls->menuHelpAbout           = "Tietoja blueMSX:stä";
 
-    ls->menuFileCart1           = "Cartridge Slot 1";
-    ls->menuFileCart2           = "Cartridge Slot 2";
-    ls->menuFileDiskA           = "Levykeasema A";
-    ls->menuFileDiskB           = "Levykeasema B";
+    ls->menuFileCart            = "Cartridge Slot";
+    ls->menuFileDisk            = "Levykeasema";
     ls->menuFileCas             = "Kasettiasema";
     ls->menuFileLoadState       = "Lataa CPU-tila";
     ls->menuFileSaveState       = "Tallenna CPU-tila";
@@ -109,20 +94,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->errorNoHelp             = "Ei pystytty paikantamaan blueMSX:n ohjeita.";
     ls->errorStartEmu           = "Epäonnistuminen MSX-emulaattorin käynnistyksessä.";
 
-    ls->tooltipReset            = "Resetoi MSX";
-    ls->tooltipCart1            = "Lisää cartridge slottiin 1";
-    ls->tooltipCart2            = "Lisää cartridge slottiin 2";
-    ls->tooltipDiskA            = "Lisää levyke levykeasemaan A";
-    ls->tooltipDiskB            = "Lisää levyke levykeasemaan B";
-    ls->tooltipCas              = "Lisää kasettinauha kasettiasemaan";
-    ls->tooltipStart            = "Käynnistä emulointi";
-    ls->tooltipResume           = "Palauta emulointi";
-    ls->tooltipPause            = "Keskeytä emulointi";
-    ls->tooltipWindowSize       = "Aseta ikkunan koko";
-    ls->tooltipProperties       = "Avaa Ominaisuudet";
-    ls->tooltipHelp             = "Avaa Ohjeikkuna";
 
-    ls->dlgMainWindow           = "  blueMSX";
     ls->dlgLoadRom              = "blueMSX - Lataa rom tiedosto";
     ls->dlgLoadDsk              = "blueMSX - Lataa dsk tiedosto";
     ls->dlgLoadCas              = "blueMSX - Lataa cas tiedosto";
@@ -151,16 +123,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgZipReset             = "Resetoi lisäämisen jälkeen";
 
     ls->dlgAboutTitle           = "blueMSX - Tiedot";
-
-    ls->dlgJoyTitle1            = "blueMSX - Ohjaussauvan näppäinsetti A";
-    ls->dlgJoyTitle2            = "blueMSX - Ohjaussauvan näppäinsetti B";
-    ls->dlgJoyUpText            = "Ylös";
-    ls->dlgJoyDownText          = "Alas";
-    ls->dlgJoyLeftText          = "Vasen";
-    ls->dlgJoyRightText         = "Oikea";
-    ls->dlgJoyButton1Text       = "Nappi 1";
-    ls->dlgJoyButton2Text       = "Nappi 2";
-    ls->dlgJoyGB                = "Näppäinsetin asetukset ";
 
     ls->dlgLangLangText         = "Valitse blueMSX:ään haluamasi kieli";
     ls->dlgLangLangTitle        = "blueMSX - Kieli";
@@ -203,13 +165,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSndMsxAudioText     = " MSX-AUDIO";
     ls->propSndMsxMasterText    = "MASTER";
 
-    ls->propJoyPort1GB          = "Portti #1 ";
-    ls->propJoyPort2GB          = "Portti #2 ";
-    ls->propJoyAutofireText     = "Autotulitus:";
-    ls->propJoyKeysetGB         = "Ohjaussauvan näppäinsetti ";
-    ls->propJoyKeyest1          = "Määritä näppäinsetti A";
-    ls->propJoyKeyest2          = "Määritä näppäinsetti B";
-
     ls->enumVideoMonColor       = "Värillinen";
     ls->enumVideoMonGrey        = "Mustavalkoinen";
     ls->enumVideoMonGreen       = "Vihertävä";
@@ -248,19 +203,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumEmuSync1ms          = "1ms (paras)";
     ls->enumEmuSyncAuto         = "Auto (nopea)";
 
-    ls->enumControlsJoyNone     = "Ei mitään";
-    ls->enumControlsJoyNumpad   = "Numpädi";
-    ls->enumControlsJoyKeysetA  = "Näppäinsetti A";
-    ls->enumControlsJoyKeysetB  = "Näppäinsetti B";
-    ls->enumControlsJoyPCjoy1   = "PC ohjaussauva #1";
-    ls->enumControlsJoyPCjoy2   = "PC ohjaussauva #2";
-    ls->enumControlsJoyMouse    = "Hiiri";
-
-    ls->enumControlsAfOff       = "Poissa";
-    ls->enumControlsAfSlow      = "Hidas";
-    ls->enumControlsAfMedium    = "Keski-";
-    ls->enumControlsAfFast      = "Nopea";
-
     ls->dlgAboutAbout           = "TIEDOT\r\n=====";
     ls->dlgAboutVersion         = "Versio:";
     ls->dlgAboutBuildNumber     = "Kooste:";
@@ -295,7 +237,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSetFileHistoryGB     = "Tiedostohistoria ";
     ls->propSetFileHistorySize   = "Tiedostojen määrä tiedostohistoriassa:";
     ls->propSetFileHistoryClear  = "Tyhjennä historia";
-    ls->propSetScreenSaverGB     = "Näytönsäästäjä ";
     ls->propSetScreenSaver       = " Poista näytönsäästäjä käytöstä kun blueMSX on käynnissä";
 
     ls->confTitle                = "blueMSX - Laitekokoonpano editori";
@@ -310,12 +251,7 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->confSlotLayoutGB         = "Slot sommite ";
     ls->confSlotExtSlotGB        = "Ulkoiset slotit ";
-    ls->confSlotSlot0            = "Slot 0";
-    ls->confSlotSlot1            = "Slot 1";
-    ls->confSlotSlot2            = "Slot 2";
-    ls->confSlotSlot3            = "Slot 3";
-    ls->confSlotCart1            = "Cartridge 1:";
-    ls->confSlotCart2            = "Cartridge 2:";
+    ls->confSlotCart             = "Cartridge";
     ls->confSlotPrimary          = "Ensisijainen";
     ls->confSlotExpanded         = "Laajennettu (neljä lisäpaikkaa)";
 
@@ -350,15 +286,12 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confSaveAsMachineTitle   = "blueMSX - Tallenna laitekokoonpano nimellä...";
     ls->confSaveAsMachineName    = "Laitekokoonpano:";
 
-    ls->confEditMemInternalRoms  = "blueMSX - Sisäiset rommit";
     ls->propSndMoonsound         = " Moonsound";
 
-    ls->propFileTypesGB          = "Tiedostotyypit ";
     ls->propFileTypes            = " Rekisteröi tiedostotyypit blueMSX:lle (.rom, .dsk, .cas, .sta)";
     ls->propDisableWinKeys       = " Automaattinen MSX toiminto Windowsin menu-näppäimille"; 
     ls->propWindowsEnvGB         = "Windowsin elinympäristö "; 
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW kiihdytys"; 
-    ls->enumVideoDrvDirectDrawHWSys = "DirectDraw mix."; 
     ls->propMonHorizStretch      = " Vaakasuora venytys";
     ls->propMonVertStretch       = " Pystysuora venytys";
     ls->propClearHistory         = "Haluatko varmasti tyhjentää tiedostohistorian ?";
@@ -372,25 +305,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgCmosEnable            = " Mahdollista CMOS";
     ls->dlgCmosBattery           = " Käytä ladattuja pattereita";
 
-    ls->menuCartSnatcher        = "The Snatcher Cartridge";
-    ls->menuCartSdSnatcher      = "SD-Snatcher Cartridge";
-    ls->menuCartSCCMirrored     = "SCC Mirrored Cartridge";
-    ls->menuCartSCCExpanded     = "SCC Expanded Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartSCC             = "SCC Cartridge";
     
     ls->warningTitle             = "blueMSX - Warning";
-    ls->tooltipStop              = "Pysäytä emulointi";
 
 
     // New entries in 1.5.1
-    ls->enumControlsJoyKeyset   = "Näppäinsetti";
-    ls->propJoyConfigKeyset     = "Muokkaa näppäinsetti";
-    ls->propJoyControlText      = "Ohjaus:";
-    ls->propJoyButtonText       = "Nappi";
-    ls->propJoyButtonAText      = "Nappi A:";
-    ls->propJoyButtonBText      = "Nappi B:";
-
     ls->menuToolsShortcuts      = "Pikanäppäin editori";
 
     ls->shortcutSaveConfig      = "blueMSX - Save Configuration";
@@ -475,8 +396,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propApearance           = "Appearance";
     ls->propThemeGB             = "Teema ";
     ls->propTheme               = "Teema";
-    ls->propThemeClassic        = "Classic";
-    ls->propThemeBlue           = "DIGIblue";
 
     ls->propMonBrightness       = "Kirkkaus:";
     ls->propMonContrast         = "Kontrasti:";
@@ -492,11 +411,9 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propFile                = "Tiedostot";
     ls->propSettDefSlotGB       = "Vedä ja pudota ";
     ls->propSettDefSlots        = "Lisää rom:";
-    ls->propSettDefSlot1        = " Slot 1";
-    ls->propSettDefSlot2        = " Slot 2";
+    ls->propSettDefSlot         = " Slot";
     ls->propSettDefDrives       = "Lisää levyke:";
-    ls->propSettDefDriveA       = " Levykeasema A";
-    ls->propSettDefDriveB       = " Levykeasema B";
+    ls->propSettDefDrive        = " Levykeasema";
     ls->menuPropsFile           = "File";
     ls->shortcutShowFiles       = "Show Files Dialog";
 
@@ -533,7 +450,6 @@ void langInitFinnish(LanguageStrings* ls)
     // New entries in 2.1
     ls->propEmuFdcTiming        = "Disabloi levykeaseman ajoitus";
     ls->shortcutToggleFdcTiming = "Enabloi/Disabloi levykeaseman ajoitus";
-    ls->propUseRegistry         = "Tallenna konfiguraatio rekisteriin";
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
@@ -588,6 +504,35 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPrnFormfeed         = "Form Feed";
     ls->menuFilePrn             = "Printer";
     ls->propPortsComFile        = "Send to File";
+
+    // New entries in 2.5
+    ls->menuCartGameReader      = "Game Reader";
+    ls->menuDiskInsertNew       = "Insert New...";
+    ls->menuCartIde             = "IDE";
+    ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartBeerIde         = "Beer";
+    ls->menuCartGIde            = "GIDE";
+    ls->menuCartInsertSpecial   = "Insert Special";
+    ls->menuCartMegaRam         = "MegaRAM";
+    ls->menuFileHarddisk        = "Hard Disk";
+    ls->menuFileHarddiskNoPesent= "No Controllers Present";
+    ls->dlgInsertHarddisk       = "Insert Hard Disk";
+
+    ls->menuVideoSource         = "Video Out Source";
+    ls->menuVideoSourceDefault  = "No Video Out Source Connected";
+    
+    ls->menuVideoInSource       = "Video In Source";
+    ls->menuVideoInBitmap       = "Bitmap File";
+
+    ls->textUnknown             = "Unknown";
+
+    ls->overwriteFile           = "Do you want to overwrite the file:";
+
+    ls->portableReadonly        = "Portable device is readonly";
+    
+    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
+
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
 
 };
 
