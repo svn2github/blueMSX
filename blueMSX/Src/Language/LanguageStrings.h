@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,46 @@ typedef char _TCHAR;
 #endif
 
 typedef struct {
+    //----------------------
+    // Generic lines
+    //----------------------
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
+    //----------------------
+    // Shortcut lines
+    //----------------------
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
+
     _TCHAR* textDevice;
     _TCHAR* textFilename;
     _TCHAR* textFile;

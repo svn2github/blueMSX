@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,46 @@
 
 void langInitJapanese(LanguageStrings* ls) 
 {
+    //----------------------
+    // Generic lines
+    //----------------------
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
+    //----------------------
+    // Shortcut lines
+    //----------------------
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
+
     ls->menuNoRecentFiles       = "- 使用ファイルなし -";
     ls->menuInsert              = "挿入";
     ls->menuEject               = "取り出し";

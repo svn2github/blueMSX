@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.17 $ + additions 2005/03/03
+** $Revision: 1.18 $ + additions 2005/03/03
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,46 @@
  
 void langInitKorean(LanguageStrings* ls)
 {
+    //----------------------
+    // Generic lines
+    //----------------------
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
+    //----------------------
+    // Shortcut lines
+    //----------------------
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
+
     ls->menuNoRecentFiles       = "- 열어본 파일 없음 -";
     ls->menuInsert              = "삽입";
     ls->menuEject               = "꺼내기";

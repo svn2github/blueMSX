@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,46 @@
 
 void langInitSpanish(LanguageStrings* ls)
 {
+    //----------------------
+    // Generic lines
+    //----------------------
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
+    //----------------------
+    // Shortcut lines
+    //----------------------
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
+
     ls->menuNoRecentFiles       = "- No hay archivos recientes -";
     ls->menuInsert              = "Insertar";
     ls->menuEject               = "Sacar";

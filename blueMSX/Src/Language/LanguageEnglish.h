@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,46 @@
  
 void langInitEnglish(LanguageStrings* ls) 
 {
+    //----------------------
+    // Generic lines
+    //----------------------
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
+    //----------------------
+    // Shortcut lines
+    //----------------------
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
+
     ls->menuNoRecentFiles       = "- no recent files -";
     ls->menuInsert              = "Insert";
     ls->menuEject               = "Eject";

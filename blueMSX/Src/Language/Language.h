@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-03 20:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,6 +69,7 @@ _TCHAR* langTextFile();
 _TCHAR* langTextNone();
 _TCHAR* langTextUnknown();
 
+
 //----------------------
 // Warning and Error lines
 //----------------------
@@ -86,6 +87,7 @@ _TCHAR* langErrorNoHelp();
 _TCHAR* langErrorStartEmu();
 _TCHAR* langErrorPortableReadonly();
 
+
 //----------------------
 // File related lines
 //----------------------
@@ -95,6 +97,7 @@ _TCHAR* langFileAll();
 _TCHAR* langFileCpuState();
 _TCHAR* langFileDisk();
 _TCHAR* langFileCas();
+
 
 //----------------------
 // Menu related lines
@@ -188,6 +191,7 @@ _TCHAR* langMenuOptions();
 _TCHAR* langMenuTools();
 _TCHAR* langMenuHelp();
 
+
 //----------------------
 // Dialog related lines
 //----------------------
@@ -256,6 +260,7 @@ _TCHAR* langDlgRun();
 _TCHAR* langDlgClose();
 _TCHAR* langDlgSavePreview();
 _TCHAR* langDlgSaveDate();
+
 
 //----------------------
 // Properties related lines
@@ -361,6 +366,7 @@ _TCHAR* langPropSettDefDrive();
 _TCHAR* langPropThemeGB();
 _TCHAR* langPropTheme();
 
+
 //----------------------
 // Dropdown related lines
 //----------------------
@@ -413,6 +419,7 @@ _TCHAR* langEnumControlsJoyKeyset();
 _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyMouse();
+
 
 //----------------------
 // Configuration related lines
@@ -502,7 +509,6 @@ _TCHAR* langShortcutConfigTitle();
 _TCHAR* langShortcutAssign();
 _TCHAR* langShortcutPressText();
 _TCHAR* langShortcutScheme();
-
 _TCHAR* langShortcutCartInsert1();
 _TCHAR* langShortcutCartRemove1();
 _TCHAR* langShortcutCartInsert2();
@@ -580,6 +586,11 @@ _TCHAR* langShortcutShowFiles();
 _TCHAR* langShortcutToggleSpriteEnable();
 _TCHAR* langShortcutToggleFdcTiming();
 _TCHAR* langShortcutToggleCpuTrace();
+
+
+//----------------------
+// Keyboard config lines
+//----------------------
 
 _TCHAR* langKeyconfigSelectedKey();
 _TCHAR* langKeyconfigMappedTo();
