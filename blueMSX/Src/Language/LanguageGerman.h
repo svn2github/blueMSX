@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.11 $ 
+** $Revision: 1.12 $ 
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -327,7 +327,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Konfigurationseditor verlassen";
     ls->confExitSaveText         = "Möchten Sie die aktuellen Änderungen der Konfiguration verwerfen?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Speichere Maschinenkonfiguration als ...";
     ls->confSaveAsMachineName    = "Name der Maschine:";
 
     ls->propSndMoonsound         = " Moonsound";

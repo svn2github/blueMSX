@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -319,7 +319,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Avsluta Konfigureringsverktyg";
     ls->confExitSaveText         = "Vill du stanga konfigureringsverktyget utan att spara dina ändringar?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Spara Maskinkonfigurering Som...";
     ls->confSaveAsMachineName    = "Maskinnamn:";
 
     ls->propSndMoonsound         = " Moonsound";

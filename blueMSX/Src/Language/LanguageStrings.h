@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,51 +42,20 @@ typedef struct {
     // Generic lines
     //----------------------
 
-    //----------------------
-    // Warning and Error lines
-    //----------------------
-
-    //----------------------
-    // File related lines
-    //----------------------
-
-    //----------------------
-    // Menu related lines
-    //----------------------
-
-    //----------------------
-    // Dialog related lines
-    //----------------------
-
-    //----------------------
-    // Properties related lines
-    //----------------------
-
-    //----------------------
-    // Dropdown related lines
-    //----------------------
-
-    //----------------------
-    // Configuration related lines
-    //----------------------
-
-    //----------------------
-    // Shortcut lines
-    //----------------------
-
-    //----------------------
-    // Keyboard config lines
-    //----------------------
-
     _TCHAR* textDevice;
     _TCHAR* textFilename;
     _TCHAR* textFile;
     _TCHAR* textNone;
     _TCHAR* textUnknown;
 
+
+    //----------------------
+    // Warning and Error lines
+    //----------------------
+
     _TCHAR* warningTitle;
-    _TCHAR* warningOverwriteFile;
     _TCHAR* warningDiscardChanges;
+    _TCHAR* warningOverwriteFile;
     _TCHAR* errorTitle;
     _TCHAR* errorEnterFullscreen;
     _TCHAR* errorDirectXFailed;
@@ -97,28 +66,44 @@ typedef struct {
     _TCHAR* errorStartEmu;
     _TCHAR* errorPortableReadonly;
 
+
+    //----------------------
+    // File related lines
+    //----------------------
+
+    _TCHAR* fileRom;
+    _TCHAR* fileAll;
+    _TCHAR* fileCpuState;
+    _TCHAR* fileDisk;
+    _TCHAR* fileCas;
+
+
+    //----------------------
+    // Menu related lines
+    //----------------------
+
     _TCHAR* menuNoRecentFiles;
     _TCHAR* menuInsert;
     _TCHAR* menuEject;
 
-    _TCHAR* menuCartAutoReset;
     _TCHAR* menuCartGameReader;
     _TCHAR* menuCartIde;
-    _TCHAR* menuCartSunriseIde;
     _TCHAR* menuCartBeerIde;
     _TCHAR* menuCartGIde;
-    _TCHAR* menuCartSCCPlus;
+    _TCHAR* menuCartSunriseIde;
     _TCHAR* menuCartSCC;
+    _TCHAR* menuCartSCCPlus;
     _TCHAR* menuCartFMPac;
     _TCHAR* menuCartPac;
     _TCHAR* menuCartHBI55;
     _TCHAR* menuCartInsertSpecial;
-    _TCHAR* menuCartExternalRam;
     _TCHAR* menuCartMegaRam;
+    _TCHAR* menuCartExternalRam;
 
     _TCHAR* menuDiskInsertNew;
     _TCHAR* menuDiskDirInsert;
     _TCHAR* menuDiskAutoStart;
+    _TCHAR* menuCartAutoReset;
 
     _TCHAR* menuCasRewindAfterInsert;
     _TCHAR* menuCasUseReadOnly;
@@ -137,12 +122,11 @@ typedef struct {
     _TCHAR* menuPropsSound;
     _TCHAR* menuPropsControls;
     _TCHAR* menuPropsPerformance;
-    _TCHAR* menuPropsPorts;
     _TCHAR* menuPropsSettings;
     _TCHAR* menuPropsFile;
     _TCHAR* menuPropsApearance;
-    _TCHAR* menuTools;
     _TCHAR* menuPropsLanguage;
+    _TCHAR* menuPropsPorts;
 
     _TCHAR* menuVideoSource;
     _TCHAR* menuVideoSourceDefault;
@@ -150,14 +134,9 @@ typedef struct {
     _TCHAR* menuVideoInSource;
     _TCHAR* menuVideoInBitmap;
 
-    _TCHAR* menuToolsMachine;
-    _TCHAR* menuToolsShortcuts;
-    _TCHAR* menuToolsKeyboard;
-    _TCHAR* menuToolsMixer;
-
     _TCHAR* menuHelpHelp;
     _TCHAR* menuHelpAbout;
-    
+
     _TCHAR* menuFileCart;
     _TCHAR* menuFileDisk;
     _TCHAR* menuFileCas;
@@ -178,12 +157,27 @@ typedef struct {
     _TCHAR* menuRunSoftReset;
     _TCHAR* menuRunHardReset;
     _TCHAR* menuRunCleanReset;
-    
+
+    _TCHAR* menuToolsMachine;
+    _TCHAR* menuToolsShortcuts;
+    _TCHAR* menuToolsKeyboard;
+    _TCHAR* menuToolsMixer;
+
     _TCHAR* menuFile;
     _TCHAR* menuRun;
     _TCHAR* menuWindow;
     _TCHAR* menuOptions;
+    _TCHAR* menuTools;
     _TCHAR* menuHelp;
+
+
+    //----------------------
+    // Dialog related lines
+    //----------------------
+
+    _TCHAR* dlgOK;
+    _TCHAR* dlgOpen;
+    _TCHAR* dlgCancel;
 
     _TCHAR* dlgLoadRom;
     _TCHAR* dlgLoadDsk;
@@ -195,6 +189,7 @@ typedef struct {
     _TCHAR* dlgLoadRomDskCasDesc;
     _TCHAR* dlgLoadState;
     _TCHAR* dlgSaveState;
+    _TCHAR* dlgSaveCassette;
     _TCHAR* dlgInsertRom1;
     _TCHAR* dlgInsertRom2;
     _TCHAR* dlgInsertDiskA;
@@ -203,21 +198,15 @@ typedef struct {
     _TCHAR* dlgInsertCas;
     _TCHAR* dlgRomType;
 
-    _TCHAR* dlgOK;
-    _TCHAR* dlgOpen;
-    _TCHAR* dlgCancel;
     _TCHAR* dlgTapeTitle;
     _TCHAR* dlgTapeFrameText;
     _TCHAR* dlgTapeCurrentPos;
     _TCHAR* dlgTapeTotalTime;
-    _TCHAR* dlgTapeCustom;
     _TCHAR* dlgTapeSetPosText;
+    _TCHAR* dlgTapeCustom;
     _TCHAR* dlgTabPosition;
     _TCHAR* dlgTabType;
     _TCHAR* dlgTabFilename;
-
-    _TCHAR* dlgSaveCassette;
-
     _TCHAR* dlgZipReset;
 
     _TCHAR* dlgAboutTitle;
@@ -225,14 +214,36 @@ typedef struct {
     _TCHAR* dlgLangLangText;
     _TCHAR* dlgLangLangTitle;
 
+    _TCHAR* dlgAboutAbout;
+    _TCHAR* dlgAboutVersion;
+    _TCHAR* dlgAboutBuildNumber;
+    _TCHAR* dlgAboutBuildDate;
+    _TCHAR* dlgAboutCreat;
+    _TCHAR* dlgAboutDevel;
+    _TCHAR* dlgAboutThanks;
+    _TCHAR* dlgAboutLisence;
+
+    _TCHAR* confSave;
+    _TCHAR* confSaveAs;
+    _TCHAR* confRun;
+    _TCHAR* confClose;
+    _TCHAR* dlgSavePreview;
+    _TCHAR* dlgSaveDate;
+
+
+    //----------------------
+    // Properties related lines
+    //----------------------
+
     _TCHAR* propTitle;
     _TCHAR* propEmulation;
     _TCHAR* propVideo;
     _TCHAR* propSound;
     _TCHAR* propControls;
     _TCHAR* propPerformance;
-    _TCHAR* propPorts;
     _TCHAR* propSettings;
+    _TCHAR* propFile;
+    _TCHAR* propPorts;
 
     _TCHAR* propEmuGeneralGB;
     _TCHAR* propEmuFamilyText;
@@ -249,7 +260,6 @@ typedef struct {
     _TCHAR* propVideoFreqText;
     _TCHAR* propVideoFreqAuto;
     _TCHAR* propSndOversampleText;
-
     _TCHAR* propSndMidiInGB;
     _TCHAR* propSndMidiOutGB;
 
@@ -299,26 +309,30 @@ typedef struct {
     _TCHAR* propSetFileHistoryGB;
     _TCHAR* propSetFileHistorySize;
     _TCHAR* propSetFileHistoryClear;
+    _TCHAR* propFileTypes;
     _TCHAR* propWindowsEnvGB;
     _TCHAR* propSetScreenSaver;
-    _TCHAR* propFileTypes;
     _TCHAR* propDisableWinKeys;
     _TCHAR* propPriorityBoost;
     _TCHAR* propScreenshotPng;
     _TCHAR* propClearHistory;
+    _TCHAR* propOpenRomGB;
+    _TCHAR* propDefaultRomType;
+    _TCHAR* propGuessRomType;
+
     _TCHAR* propSettDefSlotGB;
     _TCHAR* propSettDefSlots;
     _TCHAR* propSettDefSlot;
     _TCHAR* propSettDefDrives;
     _TCHAR* propSettDefDrive;
-    
-    _TCHAR* propFile;
+
     _TCHAR* propThemeGB;
     _TCHAR* propTheme;
-    
-    _TCHAR* propOpenRomGB;
-    _TCHAR* propDefaultRomType;
-    _TCHAR* propGuessRomType;
+
+
+    //----------------------
+    // Dropdown related lines
+    //----------------------
 
     _TCHAR* enumVideoMonColor;
     _TCHAR* enumVideoMonGrey;
@@ -362,46 +376,30 @@ typedef struct {
     _TCHAR* enumEmuSyncVblank;
 
     _TCHAR* enumControlsJoyNone;
+    _TCHAR* enumControlsJoyMouse;
     _TCHAR* enumControlsJoyTetris2Dongle;
     _TCHAR* enumControlsJoyTMagicKeyDongle;
-    _TCHAR* enumControlsJoyMouse;
 
-    _TCHAR* dlgAboutAbout;
-    _TCHAR* dlgAboutVersion;
-    _TCHAR* dlgAboutBuildNumber;
-    _TCHAR* dlgAboutBuildDate;
-    _TCHAR* dlgAboutCreat;
-    _TCHAR* dlgAboutDevel;
-    _TCHAR* dlgAboutThanks;
-    _TCHAR* dlgAboutLisence;
-    _TCHAR* dlgSavePreview;
-    _TCHAR* dlgSaveDate;
-    
+
+    //----------------------
+    // Configuration related lines
+    //----------------------
+
     _TCHAR* confTitle;
-    _TCHAR* confSave;
-    _TCHAR* confSaveAs;
-    _TCHAR* confRun;
-    _TCHAR* confClose;
     _TCHAR* confConfigText;
     _TCHAR* confSlotLayout;
     _TCHAR* confMemory;
     _TCHAR* confChipEmulation;
     _TCHAR* confChipExtras;
-        
-    _TCHAR* confChipVideoGB;
-    _TCHAR* confChipVideoChip;
-    _TCHAR* confChipVideoRam;
-    _TCHAR* confChipSoundGB;
 
-    _TCHAR* confCmosGB;
-    _TCHAR* confCmosEnable;
-    _TCHAR* confCmosBattery;
-        
-    _TCHAR* confCpuFreqGB;
-    _TCHAR* confZ80FreqText;
-    _TCHAR* confR800FreqText;
-    _TCHAR* confFdcGB;
-    _TCHAR* confCFdcNumDrivesText;
+    _TCHAR* confOpenRom;
+    _TCHAR* confSaveTitle;
+    _TCHAR* confSaveText;
+    _TCHAR* confSaveAsTitle;
+    _TCHAR* confSaveAsMachineName;
+    _TCHAR* confDiscardTitle;
+    _TCHAR* confExitSaveTitle;
+    _TCHAR* confExitSaveText;
 
     _TCHAR* confSlotLayoutGB;
     _TCHAR* confSlotExtSlotGB;
@@ -414,15 +412,6 @@ typedef struct {
     _TCHAR* confSlot;
     _TCHAR* confSubslot;
 
-    _TCHAR* shortcutDescription;
-    _TCHAR* shortcutKey;
-    _TCHAR* fileRom;
-    _TCHAR* confOpenRom;
-    _TCHAR* fileAll;
-    _TCHAR* fileCpuState;
-    _TCHAR* fileDisk;
-    _TCHAR* fileCas;
-
     _TCHAR* confMemAdd;
     _TCHAR* confMemEdit;
     _TCHAR* confMemRemove;
@@ -430,10 +419,22 @@ typedef struct {
     _TCHAR* confMemAddresss;
     _TCHAR* confMemType;
     _TCHAR* confMemRomImage;
-    
-    _TCHAR* confMemSaveTitle;
-    _TCHAR* confMemSaveText;
-        
+
+    _TCHAR* confChipVideoGB;
+    _TCHAR* confChipVideoChip;
+    _TCHAR* confChipVideoRam;
+    _TCHAR* confChipSoundGB;
+
+    _TCHAR* confCmosGB;
+    _TCHAR* confCmosEnable;
+    _TCHAR* confCmosBattery;
+
+    _TCHAR* confCpuFreqGB;
+    _TCHAR* confZ80FreqText;
+    _TCHAR* confR800FreqText;
+    _TCHAR* confFdcGB;
+    _TCHAR* confCFdcNumDrivesText;
+
     _TCHAR* confEditMemTitle;
     _TCHAR* confEditMemGB;
     _TCHAR* confEditMemType;
@@ -442,17 +443,13 @@ typedef struct {
     _TCHAR* confEditMemSize;
     _TCHAR* confEditMemSlot;
 
-    _TCHAR* confSaveTitle;
-    _TCHAR* confSaveText;
 
-    _TCHAR* confDiscardTitle;
-    _TCHAR* confExitSaveTitle;
-    _TCHAR* confExitSaveText;
+    //----------------------
+    // Shortcut lines
+    //----------------------
 
-    _TCHAR* confSaveAsMachineTitle;
-    _TCHAR* confSaveAsMachineName;
-
-    _TCHAR* confSaveAsTitle;
+    _TCHAR* shortcutKey;
+    _TCHAR* shortcutDescription;
 
     _TCHAR* shortcutSaveConfig;
     _TCHAR* shortcutOverwriteConfig;
@@ -465,7 +462,6 @@ typedef struct {
     _TCHAR* shortcutAssign;
     _TCHAR* shortcutPressText;
     _TCHAR* shortcutScheme;
-
     _TCHAR* shortcutCartInsert1;
     _TCHAR* shortcutCartRemove1;
     _TCHAR* shortcutCartInsert2;
@@ -543,6 +539,11 @@ typedef struct {
     _TCHAR* shortcutToggleSpriteEnable;
     _TCHAR* shortcutToggleFdcTiming;
     _TCHAR* shortcutToggleCpuTrace;
+
+
+    //----------------------
+    // Keyboard config lines
+    //----------------------
 
     _TCHAR* keyconfigSelectedKey;
     _TCHAR* keyconfigMappedTo;

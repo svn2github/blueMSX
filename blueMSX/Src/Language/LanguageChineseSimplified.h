@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -315,7 +315,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - 退出编辑工具";
     ls->confExitSaveText         = "要放弃对当前文件的修改吗？";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - 机型资料另存为...";
     ls->confSaveAsMachineName    = "机型类型:";
 
     ls->propSndMoonsound         = " Moonsound";

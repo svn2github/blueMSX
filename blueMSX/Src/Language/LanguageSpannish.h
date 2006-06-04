@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -320,7 +320,6 @@ void langInitSpanish(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Salir del Editor de Configuración";
     ls->confExitSaveText         = "Quieres descartar cambios de la configuración actual?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Guardar Configuración de Máquina como...";
     ls->confSaveAsMachineName    = "Nombre de Máquina:";
 
     ls->propSndMoonsound         = " Moonsound";

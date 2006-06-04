@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -319,7 +319,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Poistu kokoonpano editorista";
     ls->confExitSaveText         = "Haluatko hylätä muutokset nykyiseen kokoonpanoon?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Tallenna laitekokoonpano nimellä...";
     ls->confSaveAsMachineName    = "Laitekokoonpano:";
 
     ls->propSndMoonsound         = " Moonsound";

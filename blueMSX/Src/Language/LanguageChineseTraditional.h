@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -316,7 +316,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - 離開設定編輯器";
     ls->confExitSaveText         = "您確定要放棄目前的設定及變更嗎？";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - 另存機種設定為...";
     ls->confSaveAsMachineName    = "機種名稱:";
 
     ls->propSndMoonsound         = " MoonSound";

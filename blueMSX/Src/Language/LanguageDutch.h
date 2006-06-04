@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -322,7 +322,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - Machine configuratie afsluiten";
     ls->confExitSaveText         = "De gemaakte wijzigingen in de huidige configuratie worden niet opgeslagen. Wilt u doorgaan?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Machine configuratie opslaan als...";
     ls->confSaveAsMachineName    = "Machine Naam:";
 
     ls->propSndMoonsound         = " Moonsound";

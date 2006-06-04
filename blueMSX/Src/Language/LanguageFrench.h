@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -322,7 +322,6 @@ void langInitFrench(LanguageStrings* ls)
     ls->confExitSaveText         = "Voulez-vous ignorer les changements apportés à la configuration actuelle ?";
 
 
-    ls->confSaveAsMachineTitle   = "blueMSX - Sauver la configuration comme...";
     ls->confSaveAsMachineName    = "Nom de la machine:";
     
     ls->propSndMoonsound         = " Moonsound";

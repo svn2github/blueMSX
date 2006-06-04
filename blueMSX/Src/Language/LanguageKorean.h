@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.19 $ + additions 2005/03/03
+** $Revision: 1.20 $ + additions 2005/03/03
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 01:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -318,7 +318,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->confExitSaveTitle        = "blueMSX - 머신 설정 편집기 나가기";
     ls->confExitSaveText         = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
 
-    ls->confSaveAsMachineTitle   = "blueMSX - 다른 이름으로 머신 설정 저장...";
     ls->confSaveAsMachineName    = "머신 이름:";
 
     ls->propSndMoonsound         = " Moonsound";
