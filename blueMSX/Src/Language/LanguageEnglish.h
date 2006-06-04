@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-06-04 19:23:17 $
+** $Date: 2006-06-04 21:33:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,9 +101,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuDiskAutoStart       = "Reset After Insert";
     ls->menuCartAutoReset       = "Reset After Insert/Remove";
 
-    ls->menuCasRewindAfterInsert = "Rewind After Insert";
-    ls->menuCasUseReadOnly       = "Use Cassette Image Read Only";
-    ls->lmenuCasSaveAs           = "Save Cassette Image As...";
+    ls->menuCasRewindAfterInsert= "Rewind After Insert";
+    ls->menuCasUseReadOnly      = "Use Cassette Image Read Only";
+    ls->lmenuCasSaveAs          = "Save Cassette Image As...";
     ls->menuCasSetPosition      = "Set Position";
     ls->menuCasRewind           = "Rewind";
 
@@ -143,6 +143,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuFileCaptureAudio    = "Capture Audio";
     ls->menuFileScreenShot      = "Save Screenshot";
     ls->menuFileExit            = "Exit";
+
     ls->menuFileHarddisk        = "Hard Disk";
     ls->menuFileHarddiskNoPesent= "No Controllers Present";
 
@@ -162,7 +163,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuRun                 = "Emulation";
     ls->menuWindow              = "Window";
     ls->menuOptions             = "Options";
-    ls->menuTools                = "Tools";
+    ls->menuTools               = "Tools";
     ls->menuHelp                = "Help";
     
 
@@ -241,7 +242,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSound               = "Sound";
     ls->propControls            = "Controls";
     ls->propPerformance         = "Performance";
-    ls->propSettings             = "Settings";
+    ls->propSettings            = "Settings";
     ls->propFile                = "Files";
     ls->propPorts               = "Ports";
     
@@ -252,11 +253,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propEmuVramSizeText     = "VRAM size:";
     ls->propEmuSpeedGB          = "Emulation Speed ";
     ls->propEmuSpeedText        = "Emulation Speed:";
-    ls->propEmuFrontSwitchGB     = "Panasonic Switches ";
-    ls->propEmuFrontSwitch       = " Front Switch";
+    ls->propEmuFrontSwitchGB    = "Panasonic Switches ";
+    ls->propEmuFrontSwitch      = " Front Switch";
     ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
     ls->propEmuPauseSwitch      = " Pause Switch";
-    ls->propEmuAudioSwitch       = " MSX-AUDIO cartridge switch";
+    ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
     ls->propVideoFreqText       = "Video Frequency:";
     ls->propVideoFreqAuto       = "Auto";
     ls->propSndOversampleText   = "Oversample:";
