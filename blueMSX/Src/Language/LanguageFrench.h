@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propMonMonGB            = "Moniteur ";
     ls->propMonTypeText         = "Type de moniteur:";
     ls->propMonEmuText          = "Emulation du moniteur:";
-    ls->propVideoYypeText       = "Mode:";
+    ls->propVideoTypeText       = "Mode:";
     ls->propWindowSizeText      = "Taille de la fenêtre:";
 
     ls->propPerfVideoDrvGB      = "Video ";
@@ -198,12 +198,8 @@ void langInitFrench(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "Synchronisation:";
 
     ls->propSndChipEmuGB        = "Emulation du son ";
-    ls->propSndMixerGB          = "Mélangeur audio ";
-    ls->propSndMonoText         = "mono";
-    ls->propSndStereoText       = "stéréo";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "MASTER";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "Couleur";
     ls->enumVideoMonGrey        = "Noir et blanc";
@@ -435,7 +431,6 @@ void langInitFrench(LanguageStrings* ls)
     
     ls->shortcutShowApearProp   = "Accéder au menu Apparence";
     ls->menuPropsApearance      = "Apparence";
-    ls->propApearance           = "Apparence";
     ls->propThemeGB             = "Thème ";
     ls->propTheme               = "Thème";
 
@@ -496,9 +491,6 @@ void langInitFrench(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Cartouche Sony HBI-55"; 
-    ls->propSndPcm              = " Turbo-R PCM"; 
-    ls->propSndAY8910           = " AY8910 PSG"; 
-    ls->propSndSN76489          = " SN76489 PSG"; 
     ls->enumVideoEmuHq2x        = "Hq2x"; 
     ls->propMonColorGhosting    = "Modulateur RF"; 
 
@@ -509,7 +501,6 @@ void langInitFrench(LanguageStrings* ls)
     ls->warningDiscardChanges   = "Voulez-vous ignorer les changements apportés à cette configuration ?"; 
 
     ls->confSaveAsTitle         = "Sauver sous..."; 
-    ls->confSaveAsName          = "Nom:"; 
 
     ls->menuToolsKeyboard       = "Editeur de clavier"; 
     ls->shortcutShowKeyboard    = "Accéder à l'éditeur de clavier"; 
@@ -556,7 +547,7 @@ void langInitFrench(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "Entrée MIDI ";
     ls->propSndMidiOutGB        = "Sortie MIDI ";
-    ls->propSndMt32ToGmText     = " Accorder les instruments MT-32 à General MIDI";
+    ls->propSndMt32ToGm         = " Accorder les instruments MT-32 à General MIDI";
 
     ls->textDevice              = "Type:";
     ls->textFilename            = "Fichier:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -187,7 +187,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor type:";
     ls->propMonEmuText          = "Monitor emulatie:";
-    ls->propVideoYypeText       = "Beeld type:";
+    ls->propVideoTypeText       = "Beeld type:";
     ls->propWindowSizeText      = "Scherm grootte:";
 
     ls->propPerfVideoDrvGB      = "Beeld instellingen ";
@@ -200,12 +200,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "Synchronisatie mode";
 
     ls->propSndChipEmuGB        = "Geluid Chip Emulatie ";
-    ls->propSndMixerGB          = "Audio Mixer ";
-    ls->propSndMonoText         = "mono";
-    ls->propSndStereoText       = "stereo";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "MASTER";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "Kleur";
     ls->enumVideoMonGrey        = "Zwart-Wit";
@@ -442,7 +438,6 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->shortcutShowApearProp   = "Uiterlijke eigenschappen weergeven";
     ls->menuPropsApearance      = "Uiterlijk";
-    ls->propApearance           = "Uiterlijk";
     ls->propThemeGB             = "Thema ";
     ls->propTheme               = "Thema";
 
@@ -506,9 +501,6 @@ void langInitDutch(LanguageStrings* ls)
     
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge"; 
-    ls->propSndPcm              = " Turbo-R PCM"; 
-    ls->propSndAY8910           = " AY8910 PSG"; 
-    ls->propSndSN76489          = " SN76489 PSG"; 
     ls->enumVideoEmuHq2x        = "Hq2x"; 
     ls->propMonColorGhosting    = "RF-Modulator"; 
 
@@ -519,7 +511,6 @@ void langInitDutch(LanguageStrings* ls)
     ls->warningDiscardChanges   = "Wilt u de wijzigingen ongedaan maken?"; 
 
     ls->confSaveAsTitle         = "Configuratie opslaan als..."; 
-    ls->confSaveAsName          = "Naam:"; 
 
     ls->menuToolsKeyboard       = "Toetsenbord Editor"; 
     ls->shortcutShowKeyboard    = "Toetsenbord editor weergeven"; 

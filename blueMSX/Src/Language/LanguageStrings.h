@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -256,7 +256,7 @@ typedef struct {
     _TCHAR* propMonMonGB;
     _TCHAR* propMonTypeText;
     _TCHAR* propMonEmuText;
-    _TCHAR* propVideoYypeText;
+    _TCHAR* propVideoTypeText;
     _TCHAR* propWindowSizeText;
     _TCHAR* propMonHorizStretch;
     _TCHAR* propMonVertStretch;
@@ -280,17 +280,10 @@ typedef struct {
     _TCHAR* propFullscreenResText;
 
     _TCHAR* propSndChipEmuGB;
-    _TCHAR* propSndMixerGB;
-    _TCHAR* propSndMonoText;
-    _TCHAR* propSndStereoText;
-    _TCHAR* propSndMsxMusicText;
-    _TCHAR* propSndMsxAudioText;
+    _TCHAR* propSndMsxMusic;
+    _TCHAR* propSndMsxAudio;
     _TCHAR* propSndMoonsound;
-    _TCHAR* propSndPcm;
-    _TCHAR* propSndAY8910;
-    _TCHAR* propSndSN76489;
-    _TCHAR* propSndMsxMasterText;
-    _TCHAR* propSndMt32ToGmText;
+    _TCHAR* propSndMt32ToGm;
 
     _TCHAR* propPortsLptGB;
     _TCHAR* propPortsComGB;
@@ -319,7 +312,6 @@ typedef struct {
     _TCHAR* propSettDefDrives;
     _TCHAR* propSettDefDrive;
     
-    _TCHAR* propApearance;
     _TCHAR* propFile;
     _TCHAR* propThemeGB;
     _TCHAR* propTheme;
@@ -461,7 +453,6 @@ typedef struct {
     _TCHAR* confSaveAsMachineName;
 
     _TCHAR* confSaveAsTitle;
-    _TCHAR* confSaveAsName;
 
     _TCHAR* shortcutSaveConfig;
     _TCHAR* shortcutOverwriteConfig;

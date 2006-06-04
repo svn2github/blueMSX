@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -191,7 +191,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propMonMonGB            = "モニター ";
     ls->propMonTypeText         = "モニターの種類:";
     ls->propMonEmuText          = "モニターエミュレーション:";
-    ls->propVideoYypeText       = "映像方式:";
+    ls->propVideoTypeText       = "映像方式:";
     ls->propWindowSizeText      = "ウィンドウサイズ:";
 
     ls->propPerfVideoDrvGB      = "ビデオドライバ ";
@@ -204,12 +204,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "SYNCモード:";
 
     ls->propSndChipEmuGB        = "サウンドのエミュレーション ";
-    ls->propSndMixerGB          = "ミキサー ";
-    ls->propSndMonoText         = "mono";
-    ls->propSndStereoText       = "stereo";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "MASTER";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "カラー";
     ls->enumVideoMonGrey        = "モノクロ";
@@ -442,7 +438,6 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->shortcutShowApearProp   = "外観設定画面の表\示";
     ls->menuPropsApearance      = "外観";
-    ls->propApearance           = "外観";
     ls->propThemeGB             = "テーマ ";
     ls->propTheme               = "テーマ";
 
@@ -501,9 +496,6 @@ void langInitJapanese(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 カートリッジ";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = "RFモジュレータ";
 
@@ -514,7 +506,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->warningDiscardChanges   = "構\成が失われますが、よろしいですか?";
 
     ls->confSaveAsTitle         = "別名で保存...";
-    ls->confSaveAsName          = "名前:";
 
     ls->menuToolsKeyboard       = "キーボード構\成編集";
     ls->shortcutShowKeyboard    = "キーボード構\成編集の表\示";
@@ -576,7 +567,7 @@ void langInitJapanese(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI イン "; 
     ls->propSndMidiOutGB        = "MIDI アウト "; 
-    ls->propSndMt32ToGmText     = " MT-32 楽器をジェネラルMIDIにマッピング"; 
+    ls->propSndMt32ToGm         = " MT-32 楽器をジェネラルMIDIにマッピング"; 
 
     ls->textDevice              = "デバイス:"; 
     ls->textFilename            = "ファイル名:"; 

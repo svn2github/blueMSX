@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -232,16 +232,6 @@ _TCHAR* langDlgZipReset();
 
 _TCHAR* langDlgAboutTitle();
 
-_TCHAR* langDlgJoyTitle1();
-_TCHAR* langDlgJoyTitle2();
-_TCHAR* langDlgJoyUpText();
-_TCHAR* langDlgJoyDownText();
-_TCHAR* langDlgJoyLeftText();
-_TCHAR* langDlgJoyRightText();
-_TCHAR* langDlgJoyButton1Text();
-_TCHAR* langDlgJoyButton2Text();
-_TCHAR* langDlgJoyGB();
-
 _TCHAR* langDlgLangLangText();
 _TCHAR* langDlgLangTitle();
 
@@ -273,7 +263,6 @@ _TCHAR* langPropSound();
 _TCHAR* langPropControls();
 _TCHAR* langPropPerformance();
 _TCHAR* langPropSettings();
-_TCHAR* langPropApearance();
 _TCHAR* langPropFile();
 _TCHAR* langPropPorts();
 
@@ -298,7 +287,7 @@ _TCHAR* langPropSndMidiOutGB();
 _TCHAR* langPropMonMonGB();
 _TCHAR* langPropMonTypeText();
 _TCHAR* langPropMonEmuText();
-_TCHAR* langPropVideoYypeText();
+_TCHAR* langPropVideoTypeText();
 _TCHAR* langPropWindowSizeText();
 _TCHAR* langPropMonHorizStretch();
 _TCHAR* langPropMonVertStretch();
@@ -322,14 +311,9 @@ _TCHAR* langPropPerfSyncModeText();
 _TCHAR* langPropFullscreenResText();
 
 _TCHAR* langPropSndChipEmuGB();
-_TCHAR* langPropSndMixerGB();
-_TCHAR* langPropSndMonoText();
-_TCHAR* langPropSndStereoText();
-_TCHAR* langPropSndMsxMusicText();
-_TCHAR* langPropSndMsxAudioText();
+_TCHAR* langPropSndMsxMusic();
+_TCHAR* langPropSndMsxAudio();
 _TCHAR* langPropSndMoonsound();
-_TCHAR* langPropSndPcm();
-_TCHAR* langPropSndMasterText();
 _TCHAR* langPropSndMt32ToGm();
 
 _TCHAR* langPropPortsLptGB();
@@ -414,8 +398,6 @@ _TCHAR* langEnumEmuSyncNone();
 _TCHAR* langEnumEmuSyncVblank();
 
 _TCHAR* langEnumControlsJoyNone();
-_TCHAR* langEnumControlsJoyNumpad();
-_TCHAR* langEnumControlsJoyKeyset();
 _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyMouse();
@@ -432,8 +414,14 @@ _TCHAR* langConfMemory();
 _TCHAR* langConfChipEmulation();
 _TCHAR* langConfChipExtras();
 
+_TCHAR* langConfOpenRom();
 _TCHAR* langConfSaveTitle();
+_TCHAR* langConfSaveAsTitle();
 _TCHAR* langConfSaveText();
+_TCHAR* langConfSaveAsMachineName();
+_TCHAR* langConfDiscardTitle();
+_TCHAR* langConfExitSaveTitle();
+_TCHAR* langConfExitSaveText();
 
 _TCHAR* langConfSlotLayoutGB();
 _TCHAR* langConfSlotExtSlotGB();
@@ -469,8 +457,6 @@ _TCHAR* langConfChipR800FreqText();
 _TCHAR* langConfChipFdcGB();
 _TCHAR* langConfChipFdcNumDrivesText();
 
-_TCHAR* langConfOpenRom();
-
 _TCHAR* langConfEditMemTitle();
 _TCHAR* langConfEditMemGB();
 _TCHAR* langConfEditMemType();
@@ -478,17 +464,6 @@ _TCHAR* langConfEditMemFile();
 _TCHAR* langConfEditMemAddress();
 _TCHAR* langConfEditMemSize();
 _TCHAR* langConfEditMemSlot();
-
-_TCHAR* langConfDiscardTitle();
-_TCHAR* langConfExitSaveTitle();
-_TCHAR* langConfExitSaveText();
-_TCHAR* langConfSaveTitle();
-_TCHAR* langConfSaveText();
-_TCHAR* langConfSaveAsTitle();
-_TCHAR* langConfSaveAsMachineName();
-
-_TCHAR* langConfSaveAsTitle();
-_TCHAR* langConfSaveAsName();
 
 
 //----------------------

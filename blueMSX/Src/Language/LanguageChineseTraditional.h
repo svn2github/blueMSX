@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propMonMonGB            = "監視器 ";
     ls->propMonTypeText         = "監視器類型:";
     ls->propMonEmuText          = "監視器模擬:";
-    ls->propVideoYypeText       = "視訊類型:";
+    ls->propVideoTypeText       = "視訊類型:";
     ls->propWindowSizeText      = "視窗大小:";
 
     ls->propPerfVideoDrvGB      = "視訊驅動程式 ";
@@ -198,12 +198,8 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "同步模式:";
 
     ls->propSndChipEmuGB        = "音效晶片模擬 ";
-    ls->propSndMixerGB          = "音效混合器 ";
-    ls->propSndMonoText         = "單音";
-    ls->propSndStereoText       = "立體聲";
-    ls->propSndMsxMusicText     = " MSX 音樂";
-    ls->propSndMsxAudioText     = " MSX 音效";
-    ls->propSndMsxMasterText    = "主要";
+    ls->propSndMsxMusic         = " MSX 音樂";
+    ls->propSndMsxAudio         = " MSX 音效";
 
     ls->enumVideoMonColor       = "彩色";
     ls->enumVideoMonGrey        = "黑白";
@@ -429,7 +425,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     
     ls->shortcutShowApearProp   = "顯示外觀內容";
     ls->menuPropsApearance      = "外觀";
-    ls->propApearance           = "外觀";
     ls->propThemeGB             = "佈景主題 ";
     ls->propTheme               = "佈景主題:";
 
@@ -489,9 +484,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "SONY HBI-55 卡匣";
-    ls->propSndPcm              = " Turbo-R PCM 音訊";
-    ls->propSndAY8910           = " AY8910 PSG 音訊";
-    ls->propSndSN76489          = " SN76489 PSG 音訊";
     ls->enumVideoEmuHq2x        = "兩倍高品質";
     ls->propMonColorGhosting    = "RF 調變器";
 
@@ -502,7 +494,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->warningDiscardChanges   = "您確定要放棄變更嗎？";
 
     ls->confSaveAsTitle         = "另存設定為...";
-    ls->confSaveAsName          = "名稱:";
 
     ls->menuToolsKeyboard       = "鍵盤編輯器";
     ls->shortcutShowKeyboard    = "顯示鍵盤編輯器";
@@ -549,7 +540,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI 輸入 ";
     ls->propSndMidiOutGB        = "MIDI 輸出 ";
-    ls->propSndMt32ToGmText     = " 對應 MT-32 樂器到一般 MIDI 裝置";
+    ls->propSndMt32ToGm         = " 對應 MT-32 樂器到一般 MIDI 裝置";
 
     ls->textDevice              = "裝置:";
     ls->textFilename            = "檔案名稱:";

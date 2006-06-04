@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor typ:";
     ls->propMonEmuText          = "Monitor emulering ";
-    ls->propVideoYypeText       = "Video typ:";
+    ls->propVideoTypeText       = "Video typ:";
     ls->propWindowSizeText      = "Fönsterstorlek:";
 
     ls->propPerfVideoDrvGB      = "Video Driver ";
@@ -198,12 +198,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "Synkronisering:";
 
     ls->propSndChipEmuGB        = "Emulering av ljudchip ";
-    ls->propSndMixerGB          = "Ljudmixer ";
-    ls->propSndMonoText         = "mono";
-    ls->propSndStereoText       = "stereo";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "MASTER";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "Färg";
     ls->enumVideoMonGrey        = "Svartvit";
@@ -431,7 +427,6 @@ void langInitSwedish(LanguageStrings* ls)
     
     ls->shortcutShowApearProp   = "Öppna Utseenedefönstret";
     ls->menuPropsApearance      = "Utseende";
-    ls->propApearance           = "Utseende";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
@@ -491,9 +486,6 @@ void langInitSwedish(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = "RF-Modulering";
 
@@ -504,7 +496,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->warningDiscardChanges   = "Vill du stänga verktyget utan att spara dina ändringar?";
 
     ls->confSaveAsTitle         = "Spara Konfigurering Som...";
-    ls->confSaveAsName          = "Namn:";
 
     ls->menuToolsKeyboard       = "Tangentbordseditor";
     ls->shortcutShowKeyboard    = "Visa Tangentbordseditor";
@@ -551,7 +542,7 @@ void langInitSwedish(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Ut ";
-    ls->propSndMt32ToGmText     = " Konvertera MT-32 instrument till General MIDI";
+    ls->propSndMt32ToGm         = " Konvertera MT-32 instrument till General MIDI";
 
     ls->textDevice              = "Device:";
     ls->textFilename            = "Filenamn:";

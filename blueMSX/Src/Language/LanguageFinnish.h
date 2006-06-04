@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propMonMonGB            = "Näyttö ";
     ls->propMonTypeText         = "Näyttötyyppi:";
     ls->propMonEmuText          = "Näytön emulointi:";
-    ls->propVideoYypeText       = "Näytön koko:";
+    ls->propVideoTypeText       = "Näytön koko:";
     ls->propWindowSizeText      = "Ikkunan koko:";
 
     ls->propPerfVideoDrvGB      = "Video ";
@@ -198,12 +198,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "Synkronointi:";
 
     ls->propSndChipEmuGB        = "Äänipiirin emulointi ";
-    ls->propSndMixerGB          = "Audiomikseri ";
-    ls->propSndMonoText         = "mono";
-    ls->propSndStereoText       = "stereo";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "MASTER";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "Värillinen";
     ls->enumVideoMonGrey        = "Mustavalkoinen";
@@ -433,7 +429,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutShowApearProp   = "Show Appearance Properties";
 
     ls->menuPropsApearance      = "Appearance";
-    ls->propApearance           = "Appearance";
     ls->propThemeGB             = "Teema ";
     ls->propTheme               = "Teema";
 
@@ -493,9 +488,6 @@ void langInitFinnish(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = "RF-modulaattori";
  
@@ -506,7 +498,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->warningDiscardChanges   = "Haluatko kumota muutokset?";
  
     ls->confSaveAsTitle         = "Tallenna konfiguraatio nimellä...";
-    ls->confSaveAsName          = "Nimi:";
  
     ls->menuToolsKeyboard       = "Näppäimistöeditori";
     ls->shortcutShowKeyboard    = "Näytä näppäimistöeditori";

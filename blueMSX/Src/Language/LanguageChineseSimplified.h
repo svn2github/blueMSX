@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -184,7 +184,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonMonGB            = "显示器 ";
     ls->propMonTypeText         = "显示器类型:";
     ls->propMonEmuText          = "显示器模拟:";
-    ls->propVideoYypeText       = "视频类型:";
+    ls->propVideoTypeText       = "视频类型:";
     ls->propWindowSizeText      = "窗口大小:";
 
     ls->propPerfVideoDrvGB      = "视频驱动 ";
@@ -197,12 +197,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "同步模式:";
 
     ls->propSndChipEmuGB        = "声音芯片模拟 ";
-    ls->propSndMixerGB          = "音频混频器 ";
-    ls->propSndMonoText         = "单声道";
-    ls->propSndStereoText       = "立体声";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "主要";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "彩色";
     ls->enumVideoMonGrey        = "黑白";
@@ -428,7 +424,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
     
     ls->shortcutShowApearProp   = "显示外观属性";
     ls->menuPropsApearance      = "外观";
-    ls->propApearance           = "外观";
     ls->propThemeGB             = "布景主题 ";
     ls->propTheme               = "布景主题:";
 
@@ -488,9 +483,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 卡带";
-    ls->propSndPcm              = " Turbo-R PCM 音频";
-    ls->propSndAY8910           = " AY8910 PSG 音频";
-    ls->propSndSN76489          = " SN76489 PSG 音频";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = " RF-调制器";
 
@@ -501,7 +493,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->warningDiscardChanges   = "要放弃修改吗？";
 
     ls->confSaveAsTitle         = "配置另存为...";
-    ls->confSaveAsName          = "名称:";
 
     ls->menuToolsKeyboard       = "键盘编辑工具";
     ls->shortcutShowKeyboard    = "显示键盘编辑工具";
@@ -548,7 +539,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI 输入 ";
     ls->propSndMidiOutGB        = "MIDI 输出 ";
-    ls->propSndMt32ToGmText     = " 映射 MT-32 乐器为一般 MIDI 设备";
+    ls->propSndMt32ToGm         = " 映射 MT-32 乐器为一般 MIDI 设备";
 
     ls->textDevice              = "设备:";
     ls->textFilename            = "文件名:";

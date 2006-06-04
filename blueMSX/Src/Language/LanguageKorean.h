@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.18 $ + additions 2005/03/03
+** $Revision: 1.19 $ + additions 2005/03/03
 **
-** $Date: 2006-06-03 20:38:43 $
+** $Date: 2006-06-04 00:43:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propMonMonGB            = "모니터 ";
     ls->propMonTypeText         = "모니터 유형:";
     ls->propMonEmuText          = "모니터 에뮬레이션:";
-    ls->propVideoYypeText       = "비디오 유형:";
+    ls->propVideoTypeText       = "비디오 유형:";
     ls->propWindowSizeText      = "윈도우 크기:";
 
     ls->propPerfVideoDrvGB      = "비디오 드라이버 ";
@@ -198,12 +198,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "동기화 모드:";
 
     ls->propSndChipEmuGB        = "사운드 칩 에뮬레이션 ";
-    ls->propSndMixerGB          = "오디오 믹서 ";
-    ls->propSndMonoText         = "모노";
-    ls->propSndStereoText       = "스테레오";
-    ls->propSndMsxMusicText     = " MSX-MUSIC";
-    ls->propSndMsxAudioText     = " MSX-AUDIO";
-    ls->propSndMsxMasterText    = "마스터";
+    ls->propSndMsxMusic         = " MSX-MUSIC";
+    ls->propSndMsxAudio         = " MSX-AUDIO";
 
     ls->enumVideoMonColor       = "컬러";
     ls->enumVideoMonGrey        = "검정과 흰색";
@@ -427,7 +423,6 @@ void langInitKorean(LanguageStrings* ls)
     
     ls->shortcutShowApearProp   = "외부 속성 보기";
     ls->menuPropsApearance      = "외부";
-    ls->propApearance           = "외부";
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
 
@@ -488,9 +483,6 @@ void langInitKorean(LanguageStrings* ls)
 
     // New entries in 2.2
     ls->menuCartHBI55           = "Sony HBI-55 카트리지";
-    ls->propSndPcm              = " Turbo-R PCM";
-    ls->propSndAY8910           = " AY8910 PSG";
-    ls->propSndSN76489          = " SN76489 PSG";
     ls->enumVideoEmuHq2x        = "Hq2x";
     ls->propMonColorGhosting    = "RF모듈레이터";
 
@@ -501,7 +493,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->warningDiscardChanges   = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
 
     ls->confSaveAsTitle         = "다른 이름으로 설정 저장...";
-    ls->confSaveAsName          = "이름:";
 
     ls->menuToolsKeyboard       = "키보드 편집기";
     ls->shortcutShowKeyboard    = "키보드 편집기 보기";
@@ -548,7 +539,7 @@ void langInitKorean(LanguageStrings* ls)
     
     ls->propSndMidiInGB         = "MIDI 입력 ";
     ls->propSndMidiOutGB        = "MIDI 출력 ";
-    ls->propSndMt32ToGmText     = " GM에 MT-32 악기배열";
+    ls->propSndMt32ToGm         = " GM에 MT-32 악기배열";
 
     ls->textDevice              = "장치:";
     ls->textFilename            = "파일 이름:";
