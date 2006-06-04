@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.20 $ + additions 2005/03/03
+** $Revision: 1.21 $ + additions 2005/03/03
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -276,10 +276,10 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSX 실행중에는 화면 보호기 기능 중지";
 
     ls->confTitle                = "blueMSX - 머신 설정 편집기";
-    ls->confSave                 = "저장";
-    ls->confSaveAs               = "다른 이름으로...";
-    ls->confRun                  = "실행";
-    ls->confClose                = "닫기";
+    ls->dlgSave                 = "저장";
+    ls->dlgSaveAs               = "다른 이름으로...";
+    ls->dlgRun                  = "실행";
+    ls->dlgClose                = "닫기";
     ls->confConfigText           = "머신 설정";
     ls->confSlotLayout           = "슬롯 배치";
     ls->confMemory               = "메모리";
@@ -420,8 +420,6 @@ void langInitKorean(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "테마 변환";
     ls->shortcutToggleSpriteEnable = "스프라이트 보이기/숨기기 변환";
     
-    ls->shortcutShowApearProp   = "외부 속성 보기";
-    ls->menuPropsApearance      = "외부";
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
 

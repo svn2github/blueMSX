@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -275,10 +275,10 @@ void langInitPolish(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Wy³¹cz wygaszacz podczas pracy blueMSX";
 
     ls->confTitle                = "blueMSX - Edytor Konfiguracji Komputerów";
-    ls->confSave                 = "Zapisz";
-    ls->confSaveAs               = "Zapisz jako...";
-    ls->confRun                  = "Uruchom";
-    ls->confClose                = "Zamknij";
+    ls->dlgSave                 = "Zapisz";
+    ls->dlgSaveAs               = "Zapisz jako...";
+    ls->dlgRun                  = "Uruchom";
+    ls->dlgClose                = "Zamknij";
     ls->confConfigText           = "Konfiguracja";
     ls->confSlotLayout           = "Uk³ad slotów";
     ls->confMemory               = "Pamiêæ";
@@ -424,8 +424,6 @@ void langInitPolish(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Zmieñ temat :)";
     ls->shortcutToggleSpriteEnable = "Poka¿/ukryj sprite'y";
     
-    ls->shortcutShowApearProp   = "Wyœwietl w³aœciwoœci wygl¹du";
-    ls->menuPropsApearance      = "Wygl¹d";
     ls->propThemeGB             = "Temat ";
     ls->propTheme               = "Temat:";
 

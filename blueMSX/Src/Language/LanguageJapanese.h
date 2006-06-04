@@ -2,9 +2,9 @@
 
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -282,10 +282,10 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSXの動作中はスクリーンセーバを無効にする";
 
     ls->confTitle                = "blueMSX - マシン構\成編集";
-    ls->confSave                 = "保存";
-    ls->confSaveAs               = "別名保存...";
-    ls->confRun                  = "起動";
-    ls->confClose                = "閉じる";
+    ls->dlgSave                 = "保存";
+    ls->dlgSaveAs               = "別名保存...";
+    ls->dlgRun                  = "起動";
+    ls->dlgClose                = "閉じる";
     ls->confConfigText           = "マシン構\成";
     ls->confSlotLayout           = "スロット構\成";
     ls->confMemory               = "メモリ";
@@ -436,8 +436,6 @@ void langInitJapanese(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "テーマの切り替え";
     ls->shortcutToggleSpriteEnable = "スプライトの表\示/無効";
 
-    ls->shortcutShowApearProp   = "外観設定画面の表\示";
-    ls->menuPropsApearance      = "外観";
     ls->propThemeGB             = "テーマ ";
     ls->propTheme               = "テーマ";
 

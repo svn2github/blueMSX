@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,6 @@ typedef struct {
     _TCHAR* menuPropsPerformance;
     _TCHAR* menuPropsSettings;
     _TCHAR* menuPropsFile;
-    _TCHAR* menuPropsApearance;
     _TCHAR* menuPropsLanguage;
     _TCHAR* menuPropsPorts;
 
@@ -178,6 +177,10 @@ typedef struct {
     _TCHAR* dlgOK;
     _TCHAR* dlgOpen;
     _TCHAR* dlgCancel;
+    _TCHAR* dlgSave;
+    _TCHAR* dlgSaveAs;
+    _TCHAR* dlgRun;
+    _TCHAR* dlgClose;
 
     _TCHAR* dlgLoadRom;
     _TCHAR* dlgLoadDsk;
@@ -223,10 +226,6 @@ typedef struct {
     _TCHAR* dlgAboutThanks;
     _TCHAR* dlgAboutLisence;
 
-    _TCHAR* confSave;
-    _TCHAR* confSaveAs;
-    _TCHAR* confRun;
-    _TCHAR* confClose;
     _TCHAR* dlgSavePreview;
     _TCHAR* dlgSaveDate;
 
@@ -525,7 +524,6 @@ typedef struct {
     _TCHAR* shortcutShowPerfProp;
     _TCHAR* shortcutShowSettProp;
     _TCHAR* shortcutShowPorts;
-    _TCHAR* shortcutShowApearProp;
     _TCHAR* shortcutShowLanguage;
     _TCHAR* shortcutShowMachines;
     _TCHAR* shortcutShowShortcuts;

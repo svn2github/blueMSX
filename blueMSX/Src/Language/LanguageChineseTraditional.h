@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -273,10 +273,10 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propSetScreenSaver       = " 當 blueMSX 執行時停用螢幕保護";
 
     ls->confTitle                = "blueMSX - 機種組態編輯器";
-    ls->confSave                 = "儲存";
-    ls->confSaveAs               = "另存新檔...";
-    ls->confRun                  = "執行";
-    ls->confClose                = "關閉";
+    ls->dlgSave                 = "儲存";
+    ls->dlgSaveAs               = "另存新檔...";
+    ls->dlgRun                  = "執行";
+    ls->dlgClose                = "關閉";
     ls->confConfigText           = "設定";
     ls->confSlotLayout           = "插槽配置";
     ls->confMemory               = "記憶體";
@@ -422,8 +422,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "切換佈景主題";
     ls->shortcutToggleSpriteEnable = "顯示/隱藏前景圖層";
     
-    ls->shortcutShowApearProp   = "顯示外觀內容";
-    ls->menuPropsApearance      = "外觀";
     ls->propThemeGB             = "佈景主題 ";
     ls->propTheme               = "佈景主題:";
 

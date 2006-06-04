@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -277,10 +277,10 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Deshabilitar Salvapantallas mientras blueMSX esté en ejecución";
 
     ls->confTitle                = "blueMSX - Editor de Configuración de Máquina";
-    ls->confSave                 = "Guardar";
-    ls->confSaveAs               = "Guardar Como...";
-    ls->confRun                  = "Ejecutar";
-    ls->confClose                = "Cerrar";
+    ls->dlgSave                 = "Guardar";
+    ls->dlgSaveAs               = "Guardar Como...";
+    ls->dlgRun                  = "Ejecutar";
+    ls->dlgClose                = "Cerrar";
     ls->confConfigText           = "Configuración";
     ls->confSlotLayout           = "Esquema del Slot";
     ls->confMemory               = "Memoria";
@@ -424,8 +424,6 @@ void langInitSpanish(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Cambiar de tema";
     ls->shortcutToggleSpriteEnable = "Mostrar/ocultar los sprites";
     
-    ls->shortcutShowApearProp   = "Show Appearance Properties";
-    ls->menuPropsApearance      = "Appearance";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 

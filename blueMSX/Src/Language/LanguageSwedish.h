@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -276,10 +276,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Deaktivera skärmsläckare när blueMSX kör";
 
     ls->confTitle                = "blueMSX - Konfigureringsverktyg";
-    ls->confSave                 = "Spara";
-    ls->confSaveAs               = "Spara Som...";
-    ls->confRun                  = "Kör";
-    ls->confClose                = "Stäng";
+    ls->dlgSave                 = "Spara";
+    ls->dlgSaveAs               = "Spara Som...";
+    ls->dlgRun                  = "Kör";
+    ls->dlgClose                = "Stäng";
     ls->confConfigText           = "Konfigurering:";
     ls->confSlotLayout           = "Slot mappning";
     ls->confMemory               = "Minne";
@@ -424,8 +424,6 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Växla fönstretema";
     ls->shortcutToggleSpriteEnable = "Visa/Dölj Sprites";
     
-    ls->shortcutShowApearProp   = "Öppna Utseenedefönstret";
-    ls->menuPropsApearance      = "Utseende";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
@@ -568,6 +566,37 @@ void langInitSwedish(LanguageStrings* ls)
     ls->fileCas                 = "Kasettfil";
 
     ls->menuCartExternalRam     = "Externt RAM";
+
+
+    // New entries in 2.5
+    ls->menuCartGameReader      = "Game Reader";                        // New in 2.5
+    ls->menuDiskInsertNew       = "Insert New Disk Image";              // New in 2.5
+    ls->menuCartIde             = "IDE";                                // New in 2.5
+    ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
+    ls->menuCartBeerIde         = "Beer";                               // New in 2.5
+    ls->menuCartGIde            = "GIDE";                               // New in 2.5
+    ls->menuCartInsertSpecial   = "Insert Special";                     // New in 2.5
+    ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
+    ls->menuFileHarddisk        = "Hard Disk";                          // New in 2.5
+    ls->menuFileHarddiskNoPesent= "No Controllers Present";             // New in 2.5
+    ls->dlgInsertHarddisk       = "Insert Hard Disk";                   // New in 2.5
+
+    ls->menuVideoSource         = "Video Out Source";                   // New in 2.5
+    ls->menuVideoSourceDefault  = "No Video Out Source Connected";      // New in 2.5
+    
+    ls->menuVideoInSource       = "Video In Source";                    // New in 2.5
+    ls->menuVideoInBitmap       = "Bitmap File";                        // New in 2.5
+
+    ls->textUnknown             = "Unknown";                            // New in 2.5
+
+    ls->warningOverwriteFile    = "Do you want to overwrite the file:"; // New in 2.5
+
+    ls->errorPortableReadonly   = "Portable device is readonly";        // New in 2.5
+    
+    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";  // New in 2.5
+
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+
 
 };
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.12 $ 
+** $Revision: 1.13 $ 
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -284,10 +284,10 @@ void langInitGerman(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Schalte den Bildschirmschoner ab, wenn blueMSX läuft";
 
     ls->confTitle                = "blueMSX - Editor für die Maschinenkonfiguration";
-    ls->confSave                 = "Speichern";
-    ls->confSaveAs               = "Speichern als ...";
-    ls->confRun                  = "Start";
-    ls->confClose                = "Schließen";
+    ls->dlgSave                 = "Speichern";
+    ls->dlgSaveAs               = "Speichern als ...";
+    ls->dlgRun                  = "Start";
+    ls->dlgClose                = "Schließen";
     ls->confConfigText           = "Konfiguration";
     ls->confSlotLayout           = "Slot-Layout";
     ls->confMemory               = "Memory";
@@ -432,8 +432,6 @@ void langInitGerman(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Switch theme";
     ls->shortcutToggleSpriteEnable = "Sprites zeigen/verdecken";
     
-    ls->shortcutShowApearProp   = "Zeige Appearance-Eigenschaften";
-    ls->menuPropsApearance      = "Appearance";
     ls->propThemeGB             = "Theme ";
     ls->propTheme               = "Theme:";
 

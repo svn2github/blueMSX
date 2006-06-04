@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,7 +145,6 @@ _TCHAR* langMenuPropsControls();
 _TCHAR* langMenuPropsPerformance();
 _TCHAR* langMenuPropsSettings();
 _TCHAR* langMenuPropsFile();
-_TCHAR* langMenuPropsApearance();
 _TCHAR* langMenuPropsLanguage();
 _TCHAR* langMenuPropsPorts();
 
@@ -199,6 +198,10 @@ _TCHAR* langMenuHelp();
 _TCHAR* langDlgOK();
 _TCHAR* langDlgOpen();
 _TCHAR* langDlgCancel();
+_TCHAR* langDlgSave();
+_TCHAR* langDlgSaveAs();
+_TCHAR* langDlgRun();
+_TCHAR* langDlgClose();
 
 _TCHAR* langDlgLoadRom();
 _TCHAR* langDlgLoadDsk();
@@ -244,10 +247,6 @@ _TCHAR* langDlgAboutDevel();
 _TCHAR* langDlgAboutThanks();
 _TCHAR* langDlgAboutLisence();
 
-_TCHAR* langDlgSave();
-_TCHAR* langDlgSaveAs();
-_TCHAR* langDlgRun();
-_TCHAR* langDlgClose();
 _TCHAR* langDlgSavePreview();
 _TCHAR* langDlgSaveDate();
 
@@ -547,7 +546,6 @@ _TCHAR* langShortcutShowCtrlProp();
 _TCHAR* langShortcutShowPerfProp();
 _TCHAR* langShortcutShowSettProp();
 _TCHAR* langShortcutShowPorts();
-_TCHAR* langShortcutShowApearProp();
 _TCHAR* langShortcutShowLanguage();
 _TCHAR* langShortcutShowMachines();
 _TCHAR* langShortcutShowShortcuts();

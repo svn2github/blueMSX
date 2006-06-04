@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -272,10 +272,10 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSX 运行时关闭屏幕保护";
 
     ls->confTitle                = "blueMSX - 机型资料编辑工具";
-    ls->confSave                 = "保存";
-    ls->confSaveAs               = "另存为...";
-    ls->confRun                  = "运行";
-    ls->confClose                = "关闭";
+    ls->dlgSave                 = "保存";
+    ls->dlgSaveAs               = "另存为...";
+    ls->dlgRun                  = "运行";
+    ls->dlgClose                = "关闭";
     ls->confConfigText           = "设置";
     ls->confSlotLayout           = "插槽配线";
     ls->confMemory               = "内存";
@@ -421,8 +421,6 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "切换布景主题";
     ls->shortcutToggleSpriteEnable = "显示/隐藏活动块";
     
-    ls->shortcutShowApearProp   = "显示外观属性";
-    ls->menuPropsApearance      = "外观";
     ls->propThemeGB             = "布景主题 ";
     ls->propTheme               = "布景主题:";
 

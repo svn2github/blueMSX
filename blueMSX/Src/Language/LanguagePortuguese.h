@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -280,10 +280,10 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Desabilitar Proteção de Tela Quando blueMSX estiver ativo";
 
     ls->confTitle                = "blueMSX - Editor de Configuração da Maquina";
-    ls->confSave                 = "Salvar";
-    ls->confSaveAs               = "Salvar Como";
-    ls->confRun                  = "Executar";
-    ls->confClose                = "Fechar";
+    ls->dlgSave                 = "Salvar";
+    ls->dlgSaveAs               = "Salvar Como";
+    ls->dlgRun                  = "Executar";
+    ls->dlgClose                = "Fechar";
     ls->confConfigText           = "Configuração";
     ls->confSlotLayout           = "Slot Layout";
     ls->confMemory               = "Memória";
@@ -428,8 +428,6 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Troque o tema";
     ls->shortcutToggleSpriteEnable = "Mostrar/esconder os sprites";
     
-    ls->shortcutShowApearProp   = "Mostrar Propriedades";
-    ls->menuPropsApearance      = "Aparência";
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 

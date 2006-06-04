@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,10 +278,10 @@ void langInitFrench(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Désactiver l'économiseur d'écran quand blueMSX est lancé";
 
     ls->confTitle                = "blueMSX - Editeur de machine";
-    ls->confSave                 = "Sauver";
-    ls->confSaveAs               = "Sauver Sous...";
-    ls->confRun                  = "Lancer";
-    ls->confClose                = "Fermer";
+    ls->dlgSave                 = "Sauver";
+    ls->dlgSaveAs               = "Sauver Sous...";
+    ls->dlgRun                  = "Lancer";
+    ls->dlgClose                = "Fermer";
     ls->confConfigText           = "Configuration";
     ls->confSlotLayout           = "Disposition des ports";
     ls->confMemory               = "Mémoire";
@@ -428,8 +428,6 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutThemeSwitch     = "Changer de thème";
     ls->shortcutToggleSpriteEnable = "Montrer/Cacher les sprites";
     
-    ls->shortcutShowApearProp   = "Accéder au menu Apparence";
-    ls->menuPropsApearance      = "Apparence";
     ls->propThemeGB             = "Thème ";
     ls->propTheme               = "Thème";
 

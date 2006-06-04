@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -403,7 +403,6 @@ _TCHAR* langMenuPropsControls() { return ls->menuPropsControls; }
 _TCHAR* langMenuPropsPerformance() { return ls->menuPropsPerformance; }
 _TCHAR* langMenuPropsSettings() { return ls->menuPropsSettings; }
 _TCHAR* langMenuPropsFile() { return ls->menuPropsFile; }
-_TCHAR* langMenuPropsApearance() { return ls->menuPropsApearance; }
 _TCHAR* langMenuPropsLanguage() { return ls->menuPropsLanguage; }
 _TCHAR* langMenuPropsPorts() { return ls->menuPropsPorts; }
 
@@ -457,6 +456,10 @@ _TCHAR* langMenuHelp() { return ls->menuHelp; }
 _TCHAR* langDlgOK() { return ls->dlgOK; }
 _TCHAR* langDlgOpen() { return ls->dlgOpen; }
 _TCHAR* langDlgCancel() { return ls->dlgCancel; }
+_TCHAR* langDlgSave() { return ls->dlgSave; }
+_TCHAR* langDlgSaveAs() { return ls->dlgSaveAs; }
+_TCHAR* langDlgRun() { return ls->dlgRun; }
+_TCHAR* langDlgClose() { return ls->dlgClose; }
 
 _TCHAR* langDlgLoadRom() { return ls->dlgLoadRom; }
 _TCHAR* langDlgLoadDsk() { return ls->dlgLoadDsk; }
@@ -501,13 +504,6 @@ _TCHAR* langDlgAboutCreat() { return ls->dlgAboutCreat; }
 _TCHAR* langDlgAboutDevel() { return ls->dlgAboutDevel; }
 _TCHAR* langDlgAboutThanks() { return ls->dlgAboutThanks; }
 _TCHAR* langDlgAboutLisence() { return ls->dlgAboutLisence; }
-
-_TCHAR* langDlgSave() { return ls->confSave; }
-_TCHAR* langDlgSaveAs() { return ls->confSaveAs; }
-_TCHAR* langDlgRun() { return ls->confRun; }
-_TCHAR* langDlgClose() { return ls->confClose; }
-_TCHAR* langDlgSavePreview() { return ls->dlgSavePreview; }
-_TCHAR* langDlgSaveDate() { return ls->dlgSaveDate; }
 
 
 //----------------------
@@ -664,6 +660,9 @@ _TCHAR* langEnumControlsJoyMagicKeyDongle() { return ls->enumControlsJoyTMagicKe
 // Configuration related lines
 //----------------------
 
+_TCHAR* langDlgSavePreview() { return ls->dlgSavePreview; }
+_TCHAR* langDlgSaveDate() { return ls->dlgSaveDate; }
+
 _TCHAR* langConfTitle() { return ls->confTitle; }
 _TCHAR* langConfConfigText() { return ls->confConfigText; }
 _TCHAR* langConfSlotLayout() { return ls->confSlotLayout; }
@@ -804,7 +803,6 @@ _TCHAR* langShortcutShowCtrlProp() { return ls->shortcutShowCtrlProp; }
 _TCHAR* langShortcutShowPerfProp() { return ls->shortcutShowPerfProp; }
 _TCHAR* langShortcutShowSettProp() { return ls->shortcutShowSettProp; }
 _TCHAR* langShortcutShowPorts() { return ls->shortcutShowPorts; }
-_TCHAR* langShortcutShowApearProp() { return ls->shortcutShowApearProp; }
 _TCHAR* langShortcutShowLanguage() { return ls->shortcutShowLanguage; }
 _TCHAR* langShortcutShowMachines() { return ls->shortcutShowMachines; }
 _TCHAR* langShortcutShowShortcuts() { return ls->shortcutShowShortcuts; }

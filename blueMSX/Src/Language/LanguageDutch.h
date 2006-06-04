@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-04 01:18:57 $
+** $Date: 2006-06-04 19:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -279,10 +279,10 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSetFileHistoryClear  = "Leegmaken Geschiedenis";
     ls->propSetScreenSaver       = "Scherm Beveiliging uitschakelen als blueMSX draait";
     ls->confTitle                = "blueMSX - Machine configuratie aanpassen";
-    ls->confSave                 = "Opslaan";
-    ls->confSaveAs               = "Opslaan als...";
-    ls->confRun                  = "Start";
-    ls->confClose                = "Afsluiten";
+    ls->dlgSave                 = "Opslaan";
+    ls->dlgSaveAs               = "Opslaan als...";
+    ls->dlgRun                  = "Start";
+    ls->dlgClose                = "Afsluiten";
     ls->confConfigText           = "Configuratie";
     ls->confSlotLayout           = "Slot instellingen";
     ls->confMemory               = "Geheugen";
@@ -435,8 +435,6 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->shortcutToggleSpriteEnable = "Tonen/Verbergen sprites";
 
-    ls->shortcutShowApearProp   = "Uiterlijke eigenschappen weergeven";
-    ls->menuPropsApearance      = "Uiterlijk";
     ls->propThemeGB             = "Thema ";
     ls->propTheme               = "Thema";
 
