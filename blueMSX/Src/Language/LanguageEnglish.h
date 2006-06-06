@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-06-04 21:33:21 $
+** $Date: 2006-06-06 04:58:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -387,7 +387,7 @@ void langInitEnglish(LanguageStrings* ls)
     //----------------------
 
     ls->confTitle               = "blueMSX - Machine Configuration Editor";
-    ls->confConfigText          = "Configuration";
+    ls->confConfigText          = "Profile Name";
     ls->confSlotLayout          = "Slot Layout";
     ls->confMemory              = "Memory";
     ls->confChipEmulation       = "Chip Emulation";
@@ -426,8 +426,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->confChipVideoRam         = "Video RAM:";
     ls->confChipSoundGB          = "Sound ";
 
-    ls->confCmosGB               = "CMOS ";
-    ls->confCmosEnable           = " Enable CMOS";
+    ls->confCmosGB               = "Clock Chip ";
+    ls->confCmosEnable           = " Enable Clock Chip";
     ls->confCmosBattery          = " Use Charged Battery";
 
     ls->confCpuFreqGB            = "CPU Frequency ";
@@ -449,7 +449,7 @@ void langInitEnglish(LanguageStrings* ls)
     // Shortcut lines
     //----------------------
 
-    ls->shortcutKey             = "Hotkey";
+    ls->shortcutKey             = "Action";
     ls->shortcutDescription     = "Shortcut";
 
     ls->shortcutSaveConfig      = "blueMSX - Save Configuration";
