@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-03 20:22:18 $
+** $Date: 2006-06-09 20:30:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -316,7 +316,7 @@ static int getCartSlotDropDown(HWND hDlg, int cart, int dropdownId) {
 
             for (j = 0; j < 4; j++) {
                 char buffer[128];
-                sprintf(buffer, "%s %d, %s %d", langConfSlot(), i, langConfSubslot(), j);
+                sprintf(buffer, "%s %d-%d", langConfSlot(), i, j);
 
                 if (0 == strcmp(buffer, selection)) {
                     machine->cart[cart].slot = i;
@@ -349,7 +349,7 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
 
             for (j = 0; j < 4; j++) {
                 _TCHAR buffer[128];
-                _stprintf(buffer, "%s %d, %s %d", langConfSlot(), i, langConfSubslot(), j);
+                _stprintf(buffer, "%s% d-%d", langConfSlot(), i, j);
                 SendDlgItemMessage(hDlg, dropdownId, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (machine->cart[cart].slot == i && machine->cart[cart].subslot == j) {
                     SendDlgItemMessage(hDlg, dropdownId, CB_SETCURSEL, index, 0);
@@ -839,7 +839,7 @@ static void setEditControls(HWND hDlg)
 
                 for (j = 0; j < 4; j++) {
                     _TCHAR buffer[128];
-                    _stprintf(buffer, "%s %d, %s %d", langConfSlot(), i, langConfSubslot(), j);
+                    _stprintf(buffer, "%s %d-%d", langConfSlot(), i, j);
                     SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_ADDSTRING, 0, (LPARAM)buffer);
                     if (editSlotInfo.slot == i && editSlotInfo.subslot == j) {
                         SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_SETCURSEL, index, 0);

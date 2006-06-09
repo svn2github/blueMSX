@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-06-06 04:58:43 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,8 +261,11 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propVideoFreqText       = "視訊頻率:";
     ls->propVideoFreqAuto       = "自動";
     ls->propSndOversampleText   = "超取樣:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI 輸入 ";
     ls->propSndMidiOutGB        = "MIDI 輸出 ";
+    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
+    ls->propSndMidiAll          = "All";                                // New in 2.5
 
     ls->propMonMonGB            = "監視器 ";
     ls->propMonTypeText         = "監視器類型:";
@@ -380,6 +383,9 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumControlsJoyMouse    = "滑鼠";
     ls->enumControlsJoyTetris2Dongle = "俄羅斯方塊 2 介面模組";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

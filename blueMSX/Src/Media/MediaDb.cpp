@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -166,6 +166,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "VMX80")        return ROM_MICROSOL80;
     if (name == "HBI-V1")       return ROM_SONYHBIV1;
     if (name == "SFG-05")       return ROM_YAMAHASFG05;
+    if (name == "FMDAS")        return ROM_FMDAS;
 
     // Roms not supproted in this format in the db
     if (name == "0x4000")       return ROM_0x4000;
@@ -273,7 +274,9 @@ static void mediaDbAddDump(TiXmlElement* dmp,
         }
 
         if (strcmpnocase(system.c_str(), "svi") == 0) {
-            romType = ROM_SVI328;
+            if (romType != ROM_SVI80COL) {
+                romType = ROM_SVI328;
+            }
         }
 
         if (strcmpnocase(system.c_str(), "sg1000") == 0 && romType != ROM_SG1000CASTLE) {

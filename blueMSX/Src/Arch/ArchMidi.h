@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchMidi.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-03 17:55:53 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,21 +32,22 @@
 
 #include "MsxTypes.h"
 
+typedef struct ArchMidi ArchMidi;
+
 typedef void (*ArchMidiInCb)(void*, UInt8*, UInt32);
 
 void archMidiEnable(int enable);
-void archMidiUpdateDriver();
+int  archMidiGetNoteOn();
+void archMidiUpdateVolume(int left, int right);
+
 void archMidiLoadState(void);
 void archMidiSaveState(void);
 
-int  archMidiInCreate(ArchMidiInCb cb, void* ref);
-void archMidiInDestroy(void);
+ArchMidi* archMidiInCreate(int device, ArchMidiInCb cb, void* ref);
+void archMidiInDestroy(ArchMidi* archMidi);
 
-int  archMidiOutCreate(void);
-void archMidiOutDestroy(void);
-int  archMidiOutTransmit(UInt8 value);
-void archMidiOutUpdateVolume(int left, int right);
-void archMidiOutEnable(int enable);
-int  archMidiOutGetNoteOn();
+ArchMidi* archMidiOutCreate(int device);
+void archMidiOutDestroy(ArchMidi* archMidi);
+void archMidiOutTransmit(ArchMidi* archMidi, UInt8 value);
 
 #endif

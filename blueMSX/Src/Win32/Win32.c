@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.133 $
+** $Revision: 1.134 $
 **
-** $Date: 2006-06-03 19:20:48 $
+** $Date: 2006-06-09 20:30:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1048,6 +1048,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
     midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
+    midiEnableMt32ToGmMapping(pProperties->sound.MidiOut.mt32ToGm);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -1061,11 +1062,6 @@ void archShowPropertiesDialog(PropPage  startPane) {
     {
         archUpdateWindow();
     }
-
-    printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
-    uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
-    midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
-    midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
 
     /* Must restart MSX if Machine configuration changed */
     if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
@@ -2617,6 +2613,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
     midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
+    midiEnableMt32ToGmMapping(pProperties->sound.MidiOut.mt32ToGm);
 
     st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 
@@ -2710,6 +2707,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
     }
 
+    emulatorExit();
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     shortcutsDestroyProfile(st.shortcuts);
     videoDestroy(st.pVideo);

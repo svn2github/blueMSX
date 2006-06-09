@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-06-04 19:23:17 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -280,8 +280,11 @@ _TCHAR* langPropEmuAudioSwitch();
 _TCHAR* langPropVideoFreqText();
 _TCHAR* langPropVideoFreqAuto();
 _TCHAR* langPropSndOversampleText();
+_TCHAR* langPropSndYkInGB();
 _TCHAR* langPropSndMidiInGB();
 _TCHAR* langPropSndMidiOutGB();
+_TCHAR* langPropSndMidiChannel();
+_TCHAR* langPropSndMidiAll();
 
 _TCHAR* langPropMonMonGB();
 _TCHAR* langPropMonTypeText();
@@ -395,12 +398,15 @@ _TCHAR* langEnumEmuSync1ms();
 _TCHAR* langEnumEmuSyncAuto();
 _TCHAR* langEnumEmuSyncNone();
 _TCHAR* langEnumEmuSyncVblank();
+_TCHAR* langEnumEmuAsyncVblank();
 
 _TCHAR* langEnumControlsJoyNone();
 _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyMouse();
-
+_TCHAR* langEnumControlsJoy2Button();
+_TCHAR* langEnumControlsJoyLightGun();
+_TCHAR* langEnumControlsJoyColeco();
 
 //----------------------
 // Configuration related lines

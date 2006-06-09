@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-04 22:22:26 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,8 +261,11 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propVideoFreqText       = "ビデオ 周波数:";
     ls->propVideoFreqAuto       = "自動";
     ls->propSndOversampleText   = "サンプリング:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI イン "; 
     ls->propSndMidiOutGB        = "MIDI アウト "; 
+    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
+    ls->propSndMidiAll          = "All";                                // New in 2.5
 
     ls->propMonMonGB            = "モニター ";
     ls->propMonTypeText         = "モニターの種類:";
@@ -375,11 +378,15 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "オート (高速)"; 
     ls->enumEmuSyncNone         = "無し"; 
     ls->enumEmuSyncVblank       = "PCの書換えに同期"; 
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "なし";
     ls->enumControlsJoyMouse    = "マウス";
     ls->enumControlsJoyTetris2Dongle = "テトリス 2 ドングル"; 
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

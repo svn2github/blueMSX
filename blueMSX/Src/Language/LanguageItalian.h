@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-06 04:58:43 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,8 +261,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->propVideoFreqText       = "Frequenza Video:"; 
     ls->propVideoFreqAuto       = "Auto"; 
     ls->propSndOversampleText   = "Oversample:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI In "; 
     ls->propSndMidiOutGB        = "MIDI Out "; 
+    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
+    ls->propSndMidiAll          = "All";                                // New in 2.5
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Tipo monitor:";
@@ -375,11 +378,15 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatico (veloce)"; 
     ls->enumEmuSyncNone         = "Nessuno"; 
     ls->enumEmuSyncVblank       = "Sinc su PC Vertical Blank"; 
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "Nessuno";
     ls->enumControlsJoyMouse    = "Mouse";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

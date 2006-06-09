@@ -530,10 +530,10 @@ static void CALLBACK w32_midiInProc(HMIDIIN hMidiIn,
 
     switch (wMsg) {
     case MM_MIM_DATA:
-        buffer[0] = (char)((dwParam2 >>  0) & 0xff);
-        buffer[1] = (char)((dwParam2 >>  8) & 0xff);
-        buffer[2] = (char)((dwParam2 >> 16) & 0xff);
-        buffer[3] = (char)((dwParam2 >> 24) & 0xff);
+        buffer[0] = (char)((dwParam1 >>  0) & 0xff);
+        buffer[1] = (char)((dwParam1 >>  8) & 0xff);
+        buffer[2] = (char)((dwParam1 >> 16) & 0xff);
+        buffer[3] = (char)((dwParam1 >> 24) & 0xff);
 		switch (buffer[0] & 0x0f0) {
 		case 0x090:	// Note On
 		case 0x080:	// Note Off
@@ -568,7 +568,7 @@ static void CALLBACK w32_midiInProc(HMIDIIN hMidiIn,
         break;
 
     case MM_MIM_LONGDATA:
-        hdr = (MIDIHDR*)dwParam2;
+        hdr = (MIDIHDR*)dwParam1;
         cbInfo[dwInstance].cb(cbInfo[dwInstance].ref, hdr->lpData, hdr->dwBytesRecorded);
         break;
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-09 20:30:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,20 @@
 #include "InputEvent.h"
 #include "JoystickPort.h"
 
+
+#ifdef NO_LANG
+#define langEnumControlsJoyNone()               "None"
+#define langEnumControlsJoyTetrisDongle()       "Tetris 2 Dongle"
+#define langEnumControlsJoyMagicKeyDongle()     "Magic Key Dongle"
+#define langEnumControlsJoyMouse()              "Mouse"
+#define langEnumControlsJoy2Button()            "2-Button Joystick"
+#define langEnumControlsJoyLightGun()           "Light Gun"
+#define langEnumControlsJoyColeco()             "ColecoVision Joystick"
+#define langTextUnknown()                       "Unknown"
+#else
+#include "Language.h"
+#endif
+
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {
     static char text[4096];
@@ -61,6 +75,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Rudolf Lechleitner,  "
                 "BouKiCHi,  "
                 "Vincent van Dam,  "
+                "NYYRIKKI,  "
                 "SaebaRYO,  "
                 "Tobias Keizer,  "
                 "Sandy Pleyte,  "
@@ -859,26 +874,26 @@ char* themeTriggerMappedKey() {
 
 char* themeTriggerJoyPort1() {
     switch (joystickPortGetType(0)) {
-    case JOYSTICK_PORT_NONE:            return "None";
-    case JOYSTICK_PORT_JOYSTICK:        return "2-Button Joystick";
-    case JOYSTICK_PORT_MOUSE:           return "Mouse";
-    case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
-    case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
-    case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
-    case JOYSTICK_PORT_MAGICKEYDONGLE:  return "Magic Key Dongle";
+    case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
+    case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
+    case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
+    case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
+    case JOYSTICK_PORT_LIGHTGUN:        return langEnumControlsJoyLightGun();
+    case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
+    case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
     }
-    return "Unknown";
+    return langTextUnknown();
 }
 
 char* themeTriggerJoyPort2() {
     switch (joystickPortGetType(1)) {
-    case JOYSTICK_PORT_NONE:            return "None";
-    case JOYSTICK_PORT_JOYSTICK:        return "2-Button Joystick";
-    case JOYSTICK_PORT_MOUSE:           return "Mouse";
-    case JOYSTICK_PORT_TETRIS2DONGLE:   return "Tetris 2 Dongle";
-    case JOYSTICK_PORT_LIGHTGUN:        return "Light Gun";
-    case JOYSTICK_PORT_COLECOJOYSTICK:  return "ColecoVision Joystick";
-    case JOYSTICK_PORT_MAGICKEYDONGLE:  return "Magic Key Dongle";
+    case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
+    case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
+    case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
+    case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
+    case JOYSTICK_PORT_LIGHTGUN:        return langEnumControlsJoyLightGun();
+    case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
+    case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
     }
-    return "Unknown";
+    return langTextUnknown();
 }

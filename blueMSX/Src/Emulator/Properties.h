@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -161,6 +161,13 @@ typedef struct {
     int  masterEnable;
     MixerChannel mixerChannel[MIXER_CHANNEL_TYPE_COUNT];
     int  log[PROP_MAXPATH];
+    struct {
+        int  type;
+        char name[256];
+        char desc[256];
+        char fileName[PROP_MAXPATH];
+        int  channel;
+    } YkIn;
     struct {
         int  type;
         char name[256];

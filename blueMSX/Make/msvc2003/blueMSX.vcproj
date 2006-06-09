@@ -240,21 +240,6 @@
 		<Filter
 			Name="Win32"
 			Filter="">
-			<File
-				RelativePath="..\..\Src\Win32\Midi_w32.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Win32\Midi_w32.h">
-			</File>
-			<File
-				RelativePath="..\..\Src\Win32\Win32directX.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Win32\Win32Midi.c">
-			</File>
-			<File
-				RelativePath="..\..\Src\Win32\Win32Midi.h">
-			</File>
 			<Filter
 				Name="Source"
 				Filter="">
@@ -266,6 +251,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Dir.cpp">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32directX.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32directXSound.c">
@@ -293,6 +281,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Menu.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Midi.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32MouseEmu.c">
@@ -378,6 +369,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Menu.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Midi.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32MouseEmu.h">

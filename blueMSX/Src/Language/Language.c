@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-04 19:23:17 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -535,8 +535,11 @@ _TCHAR* langPropEmuAudioSwitch() { return ls->propEmuAudioSwitch; }
 _TCHAR* langPropVideoFreqText() { return ls->propVideoFreqText; }
 _TCHAR* langPropVideoFreqAuto() { return ls->propVideoFreqAuto; }
 _TCHAR* langPropSndOversampleText() { return ls->propSndOversampleText; }
+_TCHAR* langPropSndYkInGB() { return ls->propSndYkInGB; }
 _TCHAR* langPropSndMidiInGB() { return ls->propSndMidiInGB; }
 _TCHAR* langPropSndMidiOutGB() { return ls->propSndMidiOutGB; }
+_TCHAR* langPropSndMidiChannel() { return ls->propSndMidiChannel; }
+_TCHAR* langPropSndMidiAll() { return ls->propSndMidiAll; }
 
 _TCHAR* langPropMonMonGB() { return ls->propMonMonGB; }
 _TCHAR* langPropMonTypeText() { return ls->propMonTypeText; }
@@ -649,11 +652,15 @@ _TCHAR* langEnumEmuSync1ms() { return ls->enumEmuSync1ms; }
 _TCHAR* langEnumEmuSyncAuto() { return ls->enumEmuSyncAuto; }
 _TCHAR* langEnumEmuSyncNone() { return ls->enumEmuSyncNone; }
 _TCHAR* langEnumEmuSyncVblank() { return ls->enumEmuSyncVblank; }
+_TCHAR* langEnumEmuAsyncVblank() { return ls->enumEmuAsyncVblank; }
 
 _TCHAR* langEnumControlsJoyNone() { return ls->enumControlsJoyNone; }
 _TCHAR* langEnumControlsJoyMouse() { return ls->enumControlsJoyMouse; }
 _TCHAR* langEnumControlsJoyTetrisDongle() { return ls->enumControlsJoyTetris2Dongle; }
 _TCHAR* langEnumControlsJoyMagicKeyDongle() { return ls->enumControlsJoyTMagicKeyDongle; }
+_TCHAR* langEnumControlsJoy2Button() { return ls->enumControlsJoy2Button; }
+_TCHAR* langEnumControlsJoyLightGun() { return ls->enumControlsJoyLightGun; }
+_TCHAR* langEnumControlsJoyColeco() { return ls->enumControlsJoyColeco; }
 
 
 //----------------------

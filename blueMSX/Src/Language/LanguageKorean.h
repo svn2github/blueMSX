@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.22 $ + additions 2005/03/03
+** $Revision: 1.23 $ + additions 2005/03/03
 **
-** $Date: 2006-06-06 04:58:43 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,8 +261,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->propVideoFreqText       = "비디오 주파수:";
     ls->propVideoFreqAuto       = "자동";
     ls->propSndOversampleText   = "오버샘플:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI 입력 ";
     ls->propSndMidiOutGB        = "MIDI 출력 ";
+    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
+    ls->propSndMidiAll          = "All";                                // New in 2.5
 
     ls->propMonMonGB            = "모니터 ";
     ls->propMonTypeText         = "모니터 유형:";
@@ -375,11 +378,15 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "자동 (빠름)";
     ls->enumEmuSyncNone         = "None";
     ls->enumEmuSyncVblank       = "PC 버티컬 블링크에 동기";
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "없음";
     ls->enumControlsJoyMouse    = "마우스";
     ls->enumControlsJoyTetris2Dongle = "테트리스 2 동글";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

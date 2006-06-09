@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-06-04 19:23:17 $
+** $Date: 2006-06-09 20:30:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,7 +571,7 @@ static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 0, langEnumControlsJoyNone());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 1, "2-button Joystick");
+               ID_CTRLPORT1_BASE + 1, langEnumControlsJoy2Button());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 2, langEnumControlsJoyMouse());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
@@ -579,9 +579,9 @@ static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 6, langEnumControlsJoyMagicKeyDongle());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 4, "Light Gun");
+               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyLightGun());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 5, "ColecoVision Joystick");
+               ID_CTRLPORT1_BASE + 5, langEnumControlsJoyColeco());
     
     return hMenu;
 }
@@ -698,14 +698,14 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
     setMenuColor(hMenu);
 
-    _stprintf(menuBuffer, "%s A", langMenuFileCart());
+    _stprintf(menuBuffer, "%s 1", langMenuFileCart());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(0, pProperties, shortcuts, enableSpecial), menuBuffer);
-    _stprintf(menuBuffer, "%s B", langMenuFileCart());
+    _stprintf(menuBuffer, "%s 2", langMenuFileCart());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(1, pProperties, shortcuts, enableSpecial), menuBuffer);
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(menuBuffer, "%s 1", langMenuFileDisk());
+    _stprintf(menuBuffer, "%s A", langMenuFileDisk());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(0, pProperties, shortcuts), menuBuffer);
-    _stprintf(menuBuffer, "%s 2", langMenuFileDisk());
+    _stprintf(menuBuffer, "%s B", langMenuFileDisk());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(1, pProperties, shortcuts), menuBuffer);
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), langMenuFileCas());

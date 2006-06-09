@@ -200,24 +200,29 @@
 #define IDC_MIDIOUTGROUPBOX             2101
 #define IDC_MIDIOUT                     2102
 #define IDC_MIDIOUTTEXT                 2103
-#define IDI_MIDIOUTFILENAMETEXT         2104
-#define IDI_MIDIOUTFILENAME             2105
-#define IDC_MIDIOUTFILENAMEBROWSE       2106
+//#define IDI_MIDIOUTFILENAMETEXT         2104
+//#define IDI_MIDIOUTFILENAME             2105
+//#define IDC_MIDIOUTFILENAMEBROWSE       2106
 #define IDC_MIDIINGROUPBOX              2107
 #define IDC_MIDIIN                      2108
 #define IDC_MIDIINTEXT                  2109
-#define IDI_MIDIINFILENAMETEXT          2110
-#define IDI_MIDIINFILENAME              2111
-#define IDC_MIDIINFILENAMEBROWSE        2112
+//#define IDI_MIDIINFILENAMETEXT          2110
+//#define IDI_MIDIINFILENAME              2111
+//#define IDC_MIDIINFILENAMEBROWSE        2112
 #define IDC_MIDIOUTMT32TOGM             2113
+#define IDC_YKIN                        2114
+#define IDC_YKINGROUPBOX                2115
+#define IDC_YKINTEXT                    2116
+#define IDC_YKINCHANTEXT                2117
+#define IDC_YKINCHAN                    2118
 
-#define IDC_CMOSGROUPBOX                2117
-#define IDC_CMOSENABLE                  2118
-#define IDC_CMOSBATTERY                 2119
+#define IDC_CMOSGROUPBOX                2120
+#define IDC_CMOSENABLE                  2121
+#define IDC_CMOSBATTERY                 2122
 
-#define IDC_VIDEOCHIP                   2120
-#define IDC_VIDEORAM                    2121
-#define IDC_VIDEOGROUPBOX               2122
+#define IDC_VIDEOCHIP                   2123
+#define IDC_VIDEORAM                    2124
+#define IDC_VIDEOGROUPBOX               2125
 
 #define IDC_CPUFREQGROUPBOX             2130
 #define IDC_CPUR800FREQTEXT             2131

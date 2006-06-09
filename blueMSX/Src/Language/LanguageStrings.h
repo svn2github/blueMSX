@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-04 19:23:17 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -260,7 +260,10 @@ typedef struct {
     _TCHAR* propVideoFreqAuto;
     _TCHAR* propSndOversampleText;
     _TCHAR* propSndMidiInGB;
+    _TCHAR* propSndYkInGB;
     _TCHAR* propSndMidiOutGB;
+    _TCHAR* propSndMidiChannel;
+    _TCHAR* propSndMidiAll;
 
     _TCHAR* propMonMonGB;
     _TCHAR* propMonTypeText;
@@ -373,11 +376,15 @@ typedef struct {
     _TCHAR* enumEmuSyncAuto;
     _TCHAR* enumEmuSyncNone;
     _TCHAR* enumEmuSyncVblank;
+    _TCHAR* enumEmuAsyncVblank;
 
     _TCHAR* enumControlsJoyNone;
     _TCHAR* enumControlsJoyMouse;
     _TCHAR* enumControlsJoyTetris2Dongle;
     _TCHAR* enumControlsJoyTMagicKeyDongle;
+    _TCHAR* enumControlsJoy2Button;
+    _TCHAR* enumControlsJoyLightGun;
+    _TCHAR* enumControlsJoyColeco;
 
 
     //----------------------

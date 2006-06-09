@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-06-06 04:58:43 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,8 +109,8 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuPrnFormfeed         = "Form Feed";
 
-    ls->menuZoomNormal          = "Normal Size";
-    ls->menuZoomDouble          = "Double Size";
+    ls->menuZoomNormal          = "Small Window";
+    ls->menuZoomDouble          = "Normal Window";
     ls->menuZoomFullscreen      = "Fullscreen";
     
     ls->menuPropsEmulation      = "Emulation";
@@ -261,8 +261,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propVideoFreqText       = "Video Frequency:";
     ls->propVideoFreqAuto       = "Auto";
     ls->propSndOversampleText   = "Oversample:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Out ";
+    ls->propSndMidiChannel      = "MIDI Channel:";
+    ls->propSndMidiAll          = "All";
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor type:";
@@ -375,11 +378,15 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (fast)";
     ls->enumEmuSyncNone         = "None";
     ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "None";
     ls->enumControlsJoyMouse    = "Mouse";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

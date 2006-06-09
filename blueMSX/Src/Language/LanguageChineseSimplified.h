@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-06-06 04:58:43 $
+** $Date: 2006-06-09 20:30:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -261,8 +261,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propVideoFreqText       = "视频频率:";
     ls->propVideoFreqAuto       = "自动";
     ls->propSndOversampleText   = "过采样:";
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI 输入 ";
     ls->propSndMidiOutGB        = "MIDI 输出 ";
+    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
+    ls->propSndMidiAll          = "All";                                // New in 2.5
 
     ls->propMonMonGB            = "显示器 ";
     ls->propMonTypeText         = "显示器类型:";
@@ -375,11 +378,15 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自动 (快速)";
     ls->enumEmuSyncNone         = "无";
     ls->enumEmuSyncVblank       = "同步于 PC 的垂直空白";
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "无";
     ls->enumControlsJoyMouse    = "鼠标";
     ls->enumControlsJoyTetris2Dongle = "俄罗斯方块 2 界面模组";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,11 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
     properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
     
+    properties->sound.YkIn.type               = P_MIDI_NONE;
+    properties->sound.YkIn.name[0]            = 0;
+    strcpy(properties->sound.YkIn.fileName, "midiin.dat");
+    properties->sound.YkIn.desc[0]            = 0;
+    properties->sound.YkIn.channel            = 0;
     properties->sound.MidiIn.type             = P_MIDI_NONE;
     properties->sound.MidiIn.name[0]          = 0;
     strcpy(properties->sound.MidiIn.fileName, "midiin.dat");
@@ -500,6 +505,11 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_3(sound, chip, ym2413Oversampling);
     GET_INT_VALUE_3(sound, chip, y8950Oversampling);
     GET_INT_VALUE_3(sound, chip, moonsoundOversampling);
+    GET_INT_VALUE_3(sound, YkIn, type);
+    GET_STR_VALUE_3(sound, YkIn, name);
+    GET_STR_VALUE_3(sound, YkIn, fileName);
+    GET_STR_VALUE_3(sound, YkIn, desc);
+    GET_INT_VALUE_3(sound, YkIn, channel);
     GET_INT_VALUE_3(sound, MidiIn, type);
     GET_STR_VALUE_3(sound, MidiIn, name);
     GET_STR_VALUE_3(sound, MidiIn, fileName);
@@ -698,6 +708,11 @@ void propSave(Properties* properties)
     SET_INT_VALUE_3(sound, chip, ym2413Oversampling);
     SET_INT_VALUE_3(sound, chip, y8950Oversampling);
     SET_INT_VALUE_3(sound, chip, moonsoundOversampling);
+    SET_INT_VALUE_3(sound, YkIn, type);
+    SET_STR_VALUE_3(sound, YkIn, name);
+    SET_STR_VALUE_3(sound, YkIn, fileName);
+    SET_STR_VALUE_3(sound, YkIn, desc);
+    SET_INT_VALUE_3(sound, YkIn, channel);
     SET_INT_VALUE_3(sound, MidiIn, type);
     SET_STR_VALUE_3(sound, MidiIn, name);
     SET_STR_VALUE_3(sound, MidiIn, fileName);

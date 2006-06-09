@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-09 20:30:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -225,10 +225,11 @@ void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
 {
     UInt32 systemTime = boardSystemTime();
     DbgRegisterBank* regBank;
+    int r;
 
     // Add YMF262 registers
     int c = 1;
-    for (int r = 0; r < sizeof(regsAvailYMF262); r++) {
+    for (r = 0; r < sizeof(regsAvailYMF262); r++) {
         c += regsAvailYMF262[r];
     }
 
@@ -237,7 +238,7 @@ void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
     c = 0;
     dbgRegisterBankAddRegister(regBank, c++, "SR", 8, moonsound->ymf262->peekStatus());
 
-    for (int r = 0; r < sizeof(regsAvailYMF262); r++) {
+    for (r = 0; r < sizeof(regsAvailYMF262); r++) {
         if (regsAvailYMF262[r]) {
             if (r <= 8) {
                 dbgRegisterBankAddRegister(regBank, c++, regText(r), 8, moonsound->ymf262->peekReg(r|0x100));

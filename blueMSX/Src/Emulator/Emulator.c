@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-09 20:30:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -212,6 +212,12 @@ void emulatorInit(Properties* theProperties, Mixer* theMixer)
     mixer      = theMixer;
 }
 
+void emulatorExit()
+{
+    properties = NULL;
+    mixer      = NULL;
+}
+
 
 EmuState emulatorGetState() {
     return emuState;
@@ -243,42 +249,44 @@ int emulatorGetSyncPeriod() {
 }
 
 void timerCallback(void* timer) {
-    static UInt32 frameCount = 0;
-    static UInt32 emuCount = 0;
-    static UInt32 kbdCount = 0;
-    static UInt32 oldSysTime = 0;
-    static UInt32 refreshRate = 50;
-    UInt32 framePeriod = (properties->video.frameSkip + 1) * 1000;
-    UInt32 syncPeriod = emulatorGetSyncPeriod();
-    UInt32 sysTime = archGetSystemUpTime(1000);
-    UInt32 diffTime = sysTime - oldSysTime;
-    int syncMethod = emuUseSynchronousUpdate();
+    if (properties != NULL) {
+        static UInt32 frameCount = 0;
+        static UInt32 emuCount = 0;
+        static UInt32 kbdCount = 0;
+        static UInt32 oldSysTime = 0;
+        static UInt32 refreshRate = 50;
+        UInt32 framePeriod = (properties->video.frameSkip + 1) * 1000;
+        UInt32 syncPeriod = emulatorGetSyncPeriod();
+        UInt32 sysTime = archGetSystemUpTime(1000);
+        UInt32 diffTime = sysTime - oldSysTime;
+        int syncMethod = emuUseSynchronousUpdate();
 
-    if (diffTime == 0) {
-        return;
-    }
+        if (diffTime == 0) {
+            return;
+        }
 
-    oldSysTime = sysTime;
+        oldSysTime = sysTime;
 
-    // Update display
-    frameCount += refreshRate * diffTime;
-    if (frameCount >= framePeriod) {
-        frameCount %= framePeriod;
-        if (emuState == EMU_RUNNING) {
-            refreshRate = boardGetRefreshRate();
+        // Update display
+        frameCount += refreshRate * diffTime;
+        if (frameCount >= framePeriod) {
+            frameCount %= framePeriod;
+            if (emuState == EMU_RUNNING) {
+                refreshRate = boardGetRefreshRate();
 
-            if (syncMethod == P_EMU_SYNCAUTO || syncMethod == P_EMU_SYNCNONE) {
-                archUpdateEmuDisplay(0);
+                if (syncMethod == P_EMU_SYNCAUTO || syncMethod == P_EMU_SYNCNONE) {
+                    archUpdateEmuDisplay(0);
+                }
             }
         }
-    }
 
-    if (syncMethod == P_EMU_SYNCTOVBLANKASYNC) {
-        archUpdateEmuDisplay(syncMethod);
-    }
+        if (syncMethod == P_EMU_SYNCTOVBLANKASYNC) {
+            archUpdateEmuDisplay(syncMethod);
+        }
 
-    // Update emulation
-    emulatorRunOne();
+        // Update emulation
+        emulatorRunOne();
+    }
 }
 
 static void getDeviceInfo(BoardDeviceInfo* deviceInfo) 
@@ -473,8 +481,6 @@ void emulatorStop() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
-
-    archMidiUpdateDriver();
 
     archEmulationStopNotification();
     

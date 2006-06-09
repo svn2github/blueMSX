@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-06-04 00:43:35 $
+** $Date: 2006-06-09 20:30:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,7 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 #include "Language.h"
 #include "Machine.h"
 #include "Board.h"
-#include "Midi_w32.h"
+#include "Win32Midi.h"
 
 static HWND hDlgSound = NULL;
 static int propModified = 0;
@@ -780,14 +780,14 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDEFSLOTSGB), langPropSettDefSlotGB());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOTS), langPropSettDefSlots());
 
-            sprintf("%s 1", langPropSettDefSlot());
+            sprintf(text, "%s 1", langPropSettDefSlot());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT1), text);
-            sprintf("%s 2", langPropSettDefSlot());
+            sprintf(text, "%s 2", langPropSettDefSlot());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSLOT2), text);
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVES), langPropSettDefDrives());
-            sprintf("%s A", langPropSettDefDrive());
+            sprintf(text, "%s A", langPropSettDefDrive());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEA), text);
-            sprintf("%s B", langPropSettDefDrive());
+            sprintf(text, "%s B", langPropSettDefDrive());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDRIVEB), text);
         }
 
@@ -1042,7 +1042,7 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         _stprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
         _stprintf(pEmuSync[2], "%s", langEnumEmuSync1ms());
         _stprintf(pEmuSync[3], "%s", langEnumEmuSyncVblank());
-        _stprintf(pEmuSync[4], "%s", "Asynchronous PC Vblank");
+        _stprintf(pEmuSync[4], "%s", langEnumEmuAsyncVblank());
 
         /* Init language specific dialog items */
         SendDlgItemMessage(hDlg, IDC_PERFVIDEODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());
@@ -1436,15 +1436,37 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 }
 
 static void getMidiList(HWND hDlg, int id, Properties* pProperties) {
-    int*  midiType = id == IDC_MIDIOUT ? &pProperties->sound.MidiOut.type : &pProperties->sound.MidiIn.type;
-    char* drvName  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.name : pProperties->sound.MidiIn.name;
-    char* drvDesc  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.desc : pProperties->sound.MidiIn.desc;
-
     char buffer[256];
     int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
     int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
+    int*  midiType;
+    char* drvName;
+    char* drvDesc;
+    int   noSupportFile;
 
-    if (idx < P_MIDI_HOST) {
+    switch (id) {
+    default:
+    case IDC_MIDIOUT: 
+        midiType = &pProperties->sound.MidiOut.type;
+        drvName  = pProperties->sound.MidiOut.name;
+        drvDesc  = pProperties->sound.MidiOut.desc;
+        noSupportFile = 1;
+        break;
+    case IDC_MIDIIN: 
+        midiType = &pProperties->sound.MidiIn.type;
+        drvName  = pProperties->sound.MidiIn.name;
+        drvDesc  = pProperties->sound.MidiIn.desc;
+        noSupportFile = 1;
+        break;
+    case IDC_YKIN: 
+        midiType = &pProperties->sound.YkIn.type;
+        drvName  = pProperties->sound.YkIn.name;
+        drvDesc  = pProperties->sound.YkIn.desc;
+        noSupportFile = 1;
+        break;
+    }
+
+    if (idx + noSupportFile < P_MIDI_HOST) {
         *midiType = idx;
     }
     else {
@@ -1467,11 +1489,34 @@ static void getMidiList(HWND hDlg, int id, Properties* pProperties) {
 
 static void updateMidiList(HWND hDlg, int id, Properties* pProperties)
 {
-    int   midiType = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.type : pProperties->sound.MidiIn.type;
-    char* drvName  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.name : pProperties->sound.MidiIn.name;
-    char* drvDesc  = id == IDC_MIDIOUT ? pProperties->sound.MidiOut.desc : pProperties->sound.MidiIn.desc;
+    int   midiType;
+    char* drvName;
+    char* drvDesc;
     int   devNum;
+    int   noSupportFile;
     int   i;
+
+    switch (id) {
+    default:
+    case IDC_MIDIOUT: 
+        midiType = pProperties->sound.MidiOut.type;
+        drvName  = pProperties->sound.MidiOut.name;
+        drvDesc  = pProperties->sound.MidiOut.desc;
+        noSupportFile = 1;
+        break;
+    case IDC_MIDIIN: 
+        midiType = pProperties->sound.MidiIn.type;
+        drvName  = pProperties->sound.MidiIn.name;
+        drvDesc  = pProperties->sound.MidiIn.desc;
+        noSupportFile = 1;
+        break;
+    case IDC_YKIN: 
+        midiType = pProperties->sound.YkIn.type;
+        drvName  = pProperties->sound.YkIn.name;
+        drvDesc  = pProperties->sound.YkIn.desc;
+        noSupportFile = 1;
+        break;
+    }
 
     while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
 
@@ -1480,25 +1525,56 @@ static void updateMidiList(HWND hDlg, int id, Properties* pProperties)
     SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
 
     // Add FILE
-    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langTextFile());
-    if (midiType == P_MIDI_FILE) {
-        SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
+    if (!noSupportFile) {
+        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langTextFile());
+        if (midiType == P_MIDI_FILE) {
+            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 1, 0);
+        }
     }
 
-    devNum = id == IDC_MIDIOUT ? (int)w32_midiOutGetVFNsNum() : (int)w32_midiInGetVFNsNum();
+    devNum = id == IDC_MIDIOUT ? midiOutGetDeviceCount() : midiInGetDeviceCount();
     for (i = 0; i < devNum; i++) {
         char buf[512];
-        const char* name = id == IDC_MIDIOUT ? w32_midiOutGetVFN(i) : w32_midiInGetVFN(i);
-        const char* desc = id == IDC_MIDIOUT ? w32_midiOutGetRDN(i) : w32_midiInGetRDN(i);
+        const char* name = id == IDC_MIDIOUT ? midiOutGetDeviceIdString(i) : midiInGetDeviceIdString(i);
+        const char* desc = id == IDC_MIDIOUT ? midiOutGetDeviceName(i)     : midiInGetDeviceName(i);
 
         sprintf(buf, "%s - %s", name, desc);
 
         SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)buf);
         if (midiType == P_MIDI_HOST && 0 == strcmp(drvName, name)) {
-            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + i, 0);
+            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 - noSupportFile + i, 0);
         }
     }
 }
+
+static void getMidiChannelList(HWND hDlg, int id, Properties* pProperties) 
+{
+    int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
+    pProperties->sound.YkIn.channel = idx;
+}
+
+static void updateMidiChannelList(HWND hDlg, int id, Properties* pProperties)
+{
+    int i;
+
+    while (CB_ERR != SendDlgItemMessage(hDlg, id, CB_DELETESTRING, 0, 0));
+
+    // Add ALL:
+    SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)langPropSndMidiAll());
+    SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 0, 0); // Set as default
+
+    for (i = 1; i <= 16; i++) {
+        char buf[32];
+        sprintf(buf, "%d", i);
+
+        SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)buf);
+        if (i == pProperties->sound.YkIn.channel) {
+            SendDlgItemMessage(hDlg, id, CB_SETCURSEL, i, 0);
+        }
+    }
+}
+
+
 
 static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     static Properties* pProperties;
@@ -1523,12 +1599,19 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXAUDIO), langPropSndMsxAudio());
         SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMOONSOUND), langPropSndMoonsound());
 
+        SendDlgItemMessage(hDlg, IDC_YKINGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndYkInGB());
+        SendDlgItemMessage(hDlg, IDC_YKINTEXT, WM_SETTEXT, 0, (LPARAM)langTextDevice());
+        SendDlgItemMessage(hDlg, IDC_YKINCHANTEXT, WM_SETTEXT, 0, (LPARAM)langPropSndMidiChannel());
         SendDlgItemMessage(hDlg, IDC_MIDIINGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndMidiInGB());
         SendDlgItemMessage(hDlg, IDC_MIDIINTEXT, WM_SETTEXT, 0, (LPARAM)langTextDevice());
+#if 0
         SendDlgItemMessage(hDlg, IDI_MIDIINFILENAMETEXT, WM_SETTEXT, 0, (LPARAM)langTextFilename());
+#endif
         SendDlgItemMessage(hDlg, IDC_MIDIOUTGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndMidiOutGB());
         SendDlgItemMessage(hDlg, IDC_MIDIOUTTEXT, WM_SETTEXT, 0, (LPARAM)langTextDevice());
+#if 0
         SendDlgItemMessage(hDlg, IDI_MIDIOUTFILENAMETEXT, WM_SETTEXT, 0, (LPARAM)langTextFilename());
+#endif
         SetWindowText(GetDlgItem(hDlg, IDC_MIDIOUTMT32TOGM), langPropSndMt32ToGm());
 
         setButtonCheck(hDlg, IDC_ENABLEMSXMUSIC, pProperties->sound.chip.enableYM2413, 1);
@@ -1559,23 +1642,34 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         updateMidiList(hDlg, IDC_MIDIOUT, pProperties);
         updateMidiList(hDlg, IDC_MIDIIN,  pProperties);
+        updateMidiList(hDlg, IDC_YKIN,  pProperties);
+        updateMidiChannelList(hDlg, IDC_YKINCHAN, pProperties);
 
         setButtonCheck(hDlg, IDC_MIDIOUTMT32TOGM, pProperties->sound.MidiOut.mt32ToGm, 1);
 
         {
             int idx = SendDlgItemMessage(hDlg, IDC_MIDIOUT, CB_GETCURSEL, 0, 0);
+#if 0
             EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTFILENAMEBROWSE), idx == P_MIDI_FILE);
             EnableWindow(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), idx == P_MIDI_FILE);
+#endif
             EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTMT32TOGM), idx >= P_MIDI_HOST);
 
             idx = SendDlgItemMessage(hDlg, IDC_MIDIIN, CB_GETCURSEL, 0, 0);
+#if 0
             EnableWindow(GetDlgItem(hDlg, IDC_MIDIINFILENAMEBROWSE), idx == P_MIDI_FILE);
             EnableWindow(GetDlgItem(hDlg, IDI_MIDIINFILENAME), idx == P_MIDI_FILE);
+#endif
+
+            idx = SendDlgItemMessage(hDlg, IDC_YKIN, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_YKINCHANTEXT), idx >= P_MIDI_HOST);
+            EnableWindow(GetDlgItem(hDlg, IDC_YKINCHAN), idx >= P_MIDI_HOST);
         }
 
+#if 0
         SetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), pProperties->sound.MidiOut.fileName);
         SetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME),  pProperties->sound.MidiIn.fileName);
-
+#endif
         return FALSE;
 
     case WM_COMMAND:
@@ -1583,18 +1677,30 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         case IDC_MIDIOUT:
             {
                 int idx = SendDlgItemMessage(hDlg, IDC_MIDIOUT, CB_GETCURSEL, 0, 0);
+#if 0
                 EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTFILENAMEBROWSE), idx == P_MIDI_FILE);
                 EnableWindow(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), idx == P_MIDI_FILE);
+#endif
                 EnableWindow(GetDlgItem(hDlg, IDC_MIDIOUTMT32TOGM), idx >= P_MIDI_HOST);
             }
             return TRUE;
         case IDC_MIDIIN:
             {
                 int idx = SendDlgItemMessage(hDlg, IDC_MIDIIN, CB_GETCURSEL, 0, 0);
+#if 0
                 EnableWindow(GetDlgItem(hDlg, IDC_MIDIINFILENAMEBROWSE), idx == P_MIDI_FILE);
                 EnableWindow(GetDlgItem(hDlg, IDI_MIDIINFILENAME), idx == P_MIDI_FILE);
+#endif
             }
             return TRUE;
+        case IDC_YKIN:
+            {
+                int idx = SendDlgItemMessage(hDlg, IDC_YKIN, CB_GETCURSEL, 0, 0);
+                EnableWindow(GetDlgItem(hDlg, IDC_YKINCHANTEXT), idx >= P_MIDI_HOST);
+                EnableWindow(GetDlgItem(hDlg, IDC_YKINCHAN), idx >= P_MIDI_HOST);
+            }
+            return TRUE;
+#if 0
         case IDC_MIDIOUTFILENAMEBROWSE:
             {
                 char fileName[MAX_PATH];
@@ -1613,6 +1719,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 }
             }
             return TRUE;
+#endif
         case IDC_OVERSAMPLEMSXMUSIC:
             index = SendDlgItemMessage(hDlg, IDC_OVERSAMPLEMSXMUSIC, CB_GETCURSEL, 0, 0);
             boardSetYm2413Oversampling(1 << index);
@@ -1646,12 +1753,17 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             pProperties->sound.chip.moonsoundOversampling = 1 << index;
 
             getMidiList(hDlg, IDC_MIDIOUT, pProperties);
+#if 0
             GetWindowText(GetDlgItem(hDlg, IDI_MIDIOUTFILENAME), pProperties->sound.MidiOut.fileName, MAX_PATH - 1);
-
+#endif
             getMidiList(hDlg, IDC_MIDIIN, pProperties);
+#if 0
             GetWindowText(GetDlgItem(hDlg, IDI_MIDIINFILENAME), pProperties->sound.MidiIn.fileName, MAX_PATH - 1);
-
+#endif
             pProperties->sound.MidiOut.mt32ToGm = getButtonCheck(hDlg, IDC_MIDIOUTMT32TOGM);
+
+            getMidiList(hDlg, IDC_YKIN, pProperties);
+            getMidiChannelList(hDlg, IDC_YKINCHAN, pProperties);
 
             propModified = 1;
             return TRUE;
