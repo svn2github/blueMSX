@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchMidi.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-09 20:30:01 $
+** $Date: 2006-06-10 00:55:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@ void archMidiSaveState(void);
 
 ArchMidi* archMidiInCreate(int device, ArchMidiInCb cb, void* ref);
 void archMidiInDestroy(ArchMidi* archMidi);
+int archMidiInGetNoteOn(ArchMidi* archMidi, int note);
 
 ArchMidi* archMidiOutCreate(int device);
 void archMidiOutDestroy(ArchMidi* archMidi);

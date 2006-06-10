@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.134 $
+** $Revision: 1.135 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-10 00:55:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1048,7 +1048,9 @@ void archShowPropertiesDialog(PropPage  startPane) {
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
     midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
+    ykIoSetMidiInType(pProperties->sound.YkIn.type, pProperties->sound.YkIn.fileName);
     midiEnableMt32ToGmMapping(pProperties->sound.MidiOut.mt32ToGm);
+    midiInSetChannelFilter(pProperties->sound.YkIn.channel);
 
     /* Update window size only if changed */
     if (pProperties->video.driver != oldProp.video.driver ||
@@ -2613,7 +2615,9 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
     midiIoSetMidiOutType(pProperties->sound.MidiOut.type, pProperties->sound.MidiOut.fileName);
     midiIoSetMidiInType(pProperties->sound.MidiIn.type, pProperties->sound.MidiIn.fileName);
+    ykIoSetMidiInType(pProperties->sound.YkIn.type, pProperties->sound.YkIn.fileName);
     midiEnableMt32ToGmMapping(pProperties->sound.MidiOut.mt32ToGm);
+    midiInSetChannelFilter(pProperties->sound.YkIn.channel);
 
     st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 

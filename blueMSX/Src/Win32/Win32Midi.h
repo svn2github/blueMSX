@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-09 20:30:04 $
+** $Date: 2006-06-10 00:55:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,9 @@
 
 void midiInitialize();
 void midiShutdown();
+
+void midiEnableMt32ToGmMapping(int enable);
+void midiInSetChannelFilter(int filter);
 
 int         midiInGetDeviceCount();
 const char* midiInGetDeviceName(int idx);

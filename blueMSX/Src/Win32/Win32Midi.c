@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-10 00:55:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,10 +70,13 @@ typedef struct DevInfo {
     char  idString[32];
 	HMIDI handle;
 	char  name[MAX_PATH];
+    int   recording;
     DWORD origVolume;
     int   refCount;
     int   noteOn;
+    ArchMidi* archMidi;
 
+    int   notes[256];
     struct {
         int count;
         int remain;
@@ -87,12 +90,12 @@ typedef struct MidiDevices
         int count;
         DevInfo* dev;
         DevInfo* current[2];
+        int noteFilter;
     } in;
     
     struct {
         int count;
         DevInfo* dev;
-        int enabled;
         int mt32ToGm;
         DWORD volume;
         DevInfo* current[2];
@@ -101,6 +104,8 @@ typedef struct MidiDevices
             UInt32 head;
         } history;
     } out;
+
+    int enabled;
 } MidiDevices;
 
 
@@ -120,7 +125,7 @@ void midiInitialize()
     int num;
 
     memset(&midi, 0, sizeof(midi));
-    midi.out.enabled = 1;
+    midi.enabled = 1;
 
 	num = midiOutGetNumDevs();
     if (num > 0 && midiOutGetDevCapsA(MIDI_MAPPER, &outCap, sizeof(outCap)) == MMSYSERR_NOERROR) {
@@ -216,6 +221,18 @@ void midiEnableMt32ToGmMapping(int enable)
     }
 }
 
+void midiInSetChannelFilter(int filter)
+{
+    int i;
+
+    midi.in.noteFilter = filter;
+    for (i = 0; i < 2; i++) {
+        if (midi.in.current[i] != NULL) {
+            memset(midi.in.current[i]->notes, 0, sizeof(midi.in.current[i]->notes));
+        }
+    }
+
+}
 int  archMidiGetNoteOn()
 {
     int noteOn = 0;
@@ -228,16 +245,30 @@ int  archMidiGetNoteOn()
 
 void archMidiEnable(int enable)
 {
-    midi.out.enabled = enable;
+    int i;
+
+    midi.enabled = enable;
     if (midi.out.current[0] != NULL) {
-        midiOutSetVolume((HMIDIOUT)midi.out.current[0]->handle, midi.out.volume * midi.out.enabled);
+        midiOutSetVolume((HMIDIOUT)midi.out.current[0]->handle, midi.out.volume * midi.enabled);
+    }
+    for (i = 0; i < 2; i++) {
+        if (midi.in.current[i] != NULL) {
+            if (enable && !midi.in.current[i]->recording) {
+                midiInStart((HMIDIIN)midi.in.current[i]->handle);
+                midi.in.current[i]->recording = 1;
+            }
+            else if (!enable && midi.in.current[i]->recording) {
+                midiInStop((HMIDIIN)midi.in.current[i]->handle);
+                midi.in.current[i]->recording = 0;
+            }
+        }
     }
 }
 
 void archMidiUpdateVolume(int left, int right)
 {
     midi.out.volume = MIN(left * 100, 0xffff) | (MIN(right * 100, 0xffff) << 16);
-    archMidiEnable(midi.out.enabled);
+    archMidiEnable(midi.enabled);
 }
 
 void archMidiLoadState(void)
@@ -342,7 +373,7 @@ ArchMidi* archMidiOutCreate(int device)
         if (midi.out.current[device] != NULL) {
             midiOutGetVolume((HMIDIOUT)midi.out.current[device]->handle, &midi.out.current[device]->origVolume);
         }
-        archMidiEnable(midi.out.enabled);
+        archMidiEnable(midi.enabled);
 
         // Clear history
         memset(midi.out.history.data, 0, sizeof(midi.out.history.data));
@@ -459,8 +490,10 @@ void archMidiOutTransmit(ArchMidi* archMidi, UInt8 value)
 	        header.dwFlags        = 0;
 
             if (midiOutPrepareHeader((HMIDIOUT)di->handle, &header, sizeof(header)) == MMSYSERR_NOERROR) {
+                int cnt = 10;
         	    if (midiOutLongMsg((HMIDIOUT)di->handle, &header, sizeof(header)) == MMSYSERR_NOERROR) {
-	                while (!(header.dwFlags & MHDR_DONE)) {
+
+	                while (!(header.dwFlags & MHDR_DONE) && --cnt) {
 		                Sleep(1);
 	                }
                     midiOutUnprepareHeader((HMIDIOUT)di->handle, &header, sizeof(header));
@@ -477,10 +510,11 @@ static void CALLBACK midiInCallback(HMIDIIN hMidiIn,
                                     DWORD dwParam1,   
                                     DWORD dwParam2)
 {
-    ArchMidi* archMidi = (ArchMidi*)dwInstance;
+    DWORD id = dwInstance;
     char buffer[4];
     int length = 0;
     MIDIHDR* hdr;
+    int i;
 
     switch (wMsg) {
     case MM_MIM_DATA:
@@ -491,6 +525,19 @@ static void CALLBACK midiInCallback(HMIDIIN hMidiIn,
 		switch (buffer[0] & 0x0f0) {
 		case 0x090:	// Note On
 		case 0x080:	// Note Off
+            if (midi.in.noteFilter == 0 || midi.in.noteFilter == (buffer[0] & 0x0f) + 1) {
+                for (i = 0; i < 2; i++) {
+                    DevInfo* di = midi.in.current[i];
+                    if (di != NULL && di->id == id) {
+                        if ((buffer[0] & 0x10) && buffer[2] > 0) {
+                            di->notes[buffer[1]]++;
+                        }
+                        else if (di->notes[buffer[1]] > 0) {
+                            di->notes[buffer[1]]--;
+                        }
+                    }
+                }
+            }
 		case 0x0a0:	// Key Pressure
 		case 0x0b0:	// Control Change
 		case 0x0e0:	// Pitch Wheel
@@ -518,15 +565,22 @@ static void CALLBACK midiInCallback(HMIDIIN hMidiIn,
             length = 1;
             break;
         }
-        if (archMidi->callback != NULL) {
-            archMidi->callback(archMidi->ref, buffer, length);
+
+        for (i = 0; i < 2; i++) {
+            DevInfo* di = midi.in.current[i];
+            if (di != NULL && di->id == id && di->archMidi->callback != NULL) {
+                di->archMidi->callback(di->archMidi->ref, buffer, length);
+            }
         }
         break;
 
     case MM_MIM_LONGDATA:
         hdr = (MIDIHDR*)dwParam1;
-        if (archMidi->callback != NULL) {
-            archMidi->callback(archMidi->ref, hdr->lpData, hdr->dwBytesRecorded);
+        for (i = 0; i < 2; i++) {
+            DevInfo* di = midi.in.current[i];
+            if (di != NULL && di->id == id && di->archMidi->callback != NULL) {
+                di->archMidi->callback(di->archMidi->ref, hdr->lpData, hdr->dwBytesRecorded);
+            }
         }
         break;
     }
@@ -549,22 +603,34 @@ ArchMidi* archMidiInCreate(int device, ArchMidiInCb cb, void* ref)
         int i;
         for (i = 0; i < midi.in.count; i++) {
             if (strcmp(midi.in.dev[i].idString, propName) == 0) {
-	            if (midiInOpen((HMIDIIN*)&midi.in.dev[i].handle, midi.in.dev[i].id, (DWORD_PTR)midiInCallback, (DWORD_PTR)archMidi, CALLBACK_FUNCTION) == MMSYSERR_NOERROR) {
+                if (midi.in.dev[i].refCount > 0 ||
+                    midiInOpen((HMIDIIN*)&midi.in.dev[i].handle, midi.in.dev[i].id, 
+                               (DWORD_PTR)midiInCallback, midi.in.dev[i].id, CALLBACK_FUNCTION) == MMSYSERR_NOERROR) 
+                {
 		            midi.in.current[device] = &midi.in.dev[i];
 	            }
                 break;
             }
         }
-        if (midi.in.current[device] && midi.in.count > 0) {
-	        if (midiInOpen((HMIDIIN*)&midi.in.dev[0].handle, midi.in.dev[0].id, (DWORD_PTR)midiInCallback, (DWORD_PTR)archMidi, CALLBACK_FUNCTION) == MMSYSERR_NOERROR) {
+        if (midi.in.current[device] == NULL && midi.in.count > 0) {
+            if (midi.in.dev[0].refCount > 0 ||
+	            midiInOpen((HMIDIIN*)&midi.in.dev[0].handle, midi.in.dev[0].id,
+                           (DWORD_PTR)midiInCallback, midi.in.dev[0].id, CALLBACK_FUNCTION) == MMSYSERR_NOERROR) 
+            {
 		        midi.in.current[device] = &midi.in.dev[0];
 	        }
             strcpy(propName, midi.in.dev[0].idString);
         }
+
+        if (midi.in.current[device] != NULL) {
+            memset(midi.in.current[device]->notes, 0, sizeof(midi.in.current[device]->notes));
+        }
+        archMidiEnable(midi.enabled);
     }
 
     if (midi.in.current[device] != NULL) {
         midi.in.current[device]->refCount++;
+        midi.in.current[device]->archMidi = archMidi;
     }
 
     archMidi->devInfo = midi.in.current[device];
@@ -583,6 +649,11 @@ void archMidiInDestroy(ArchMidi* archMidi)
         free(archMidi);
         return;
     }
+
+    if (archMidi->devInfo->recording) {
+        midiInStop((HMIDIIN)archMidi->devInfo->handle);
+        archMidi->devInfo->recording = 0;
+    }
     
     midiInClose((HMIDIIN)archMidi->devInfo->handle);
 
@@ -590,4 +661,13 @@ void archMidiInDestroy(ArchMidi* archMidi)
     if (archMidi->devInfo == midi.in.current[1]) midi.in.current[1] = NULL;
 
     free(archMidi);
+}
+
+
+int archMidiInGetNoteOn(ArchMidi* archMidi, int note)
+{
+    if (archMidi->devInfo == NULL) {
+        return 0;
+    }
+    return archMidi->devInfo->notes[note];
 }

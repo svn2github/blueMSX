@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-10 00:55:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "romMapperSfg05.h"
 #include "MediaDb.h"
+#include "MidiIO.h"
 #include "Switches.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
@@ -49,6 +50,8 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
+    MidiIO* midiIo; 
+    UInt8 kbdLatch;
 } RomMapperSfg05;
 
 static int deviceCount = 0;
@@ -56,6 +59,8 @@ static int deviceCount = 0;
 static void saveState(RomMapperSfg05* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapperSfg05");
+    
+    saveStateSet(state, "kbdLatch", rm->kbdLatch);
     
     saveStateClose(state);
 
@@ -65,6 +70,8 @@ static void saveState(RomMapperSfg05* rm)
 static void loadState(RomMapperSfg05* rm)
 {
     SaveState* state = saveStateOpenForRead("mapperSfg05");
+
+    rm->kbdLatch = (UInt8)saveStateGet(state, "kbdLatch", 0);
 
     saveStateClose(state);
     
@@ -79,6 +86,10 @@ static void destroy(RomMapperSfg05* rm)
         ym2151Destroy(rm->ym2151);
     }
 
+    if (rm->midiIo != NULL) {
+        ykIoDestroy(rm->midiIo);
+    }
+
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
 
     debugDeviceUnregister(rm->debugHandle);
@@ -88,6 +99,27 @@ static void destroy(RomMapperSfg05* rm)
         free(rm->romData);
     }
     free(rm);
+}
+
+#define YK01_KEY_START 37
+
+static UInt8 getKbdStatus(RomMapperSfg05* rm)
+{
+    UInt8 val = 0xff;
+    int row;
+
+    for (row = 0; row < 8; row++) {
+        if ((1 << row) & rm->kbdLatch) {
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 0) ? ~0x01 : 0xff;
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 1) ? ~0x02 : 0xff;
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 2) ? ~0x04 : 0xff;
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 3) ? ~0x10 : 0xff;
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 4) ? ~0x20 : 0xff;
+            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 5) ? ~0x40 : 0xff;
+        }
+    }
+
+    return val;
 }
 
 static UInt8 read(RomMapperSfg05* rm, UInt16 address) 
@@ -102,6 +134,8 @@ static UInt8 read(RomMapperSfg05* rm, UInt16 address)
         return ym2151Read(rm->ym2151, 0);
     case 0x3ff1:
         return ym2151Read(rm->ym2151, 1);
+    case 0x3ff2:
+        return getKbdStatus(rm);
     }
 
     return 0xff;
@@ -110,6 +144,7 @@ static UInt8 read(RomMapperSfg05* rm, UInt16 address)
 static void reset(RomMapperSfg05* rm) 
 {
     ym2151Reset(rm->ym2151);
+    rm->kbdLatch = 0;
 }
 
 static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value) 
@@ -126,6 +161,9 @@ static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value)
         break;
     case 0x3ff1:
         ym2151Write(rm->ym2151, 1, value);
+        break;
+    case 0x3ff2:
+        rm->kbdLatch = value;
         break;
     }
 }
@@ -162,6 +200,7 @@ int romMapperSfg05Create(char* filename, UInt8* romData,
     }
 
     rm->ym2151 = ym2151Create(boardGetMixer());
+    rm->midiIo = ykIoCreate();
 
     reset(rm);
 
