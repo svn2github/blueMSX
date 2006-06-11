@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-11 20:08:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -558,6 +558,110 @@ typedef struct {
     _TCHAR* keyconfigMappedTo;
     _TCHAR* keyconfigMappingScheme;
 
+    
+    //----------------------
+    // Rom type lines
+    //----------------------
+
+    _TCHAR* romTypeStandard;
+    _TCHAR* romTypeMsxdos2;
+    _TCHAR* romTypeKonamiScc;
+    _TCHAR* romTypeKonami;
+    _TCHAR* romTypeAscii8;
+    _TCHAR* romTypeAscii16;
+    _TCHAR* romTypeGameMaster2;
+    _TCHAR* romTypeAscii8Sram;
+    _TCHAR* romTypeAscii16Sram;
+    _TCHAR* romTypeRtype;
+    _TCHAR* romTypeCrossblaim;
+    _TCHAR* romTypeHarryFox;
+    _TCHAR* romTypeMajutsushi;
+    _TCHAR* romTypeZenima80;
+    _TCHAR* romTypeZenima90;
+    _TCHAR* romTypeZenima126;
+    _TCHAR* romTypeScc;
+    _TCHAR* romTypeSccPlus;
+    _TCHAR* romTypeSnatcher;
+    _TCHAR* romTypeSdSnatcher;
+    _TCHAR* romTypeSccMirrored;
+    _TCHAR* romTypeSccExtended;
+    _TCHAR* romTypeFmpac;
+    _TCHAR* romTypeFmpak;
+    _TCHAR* romTypeKonamiGeneric;
+    _TCHAR* romTypeSuperPierrot;
+    _TCHAR* romTypeMirrored;
+    _TCHAR* romTypeNormal;
+    _TCHAR* romTypeDiskPatch;
+    _TCHAR* romTypeCasPatch;
+    _TCHAR* romTypeTc8566afFdc;
+    _TCHAR* romTypeMicrosolFdc;
+    _TCHAR* romTypeNationalFdc;
+    _TCHAR* romTypePhilipsFdc;
+    _TCHAR* romTypeSvi738Fdc;
+    _TCHAR* romTypeMappedRam;
+    _TCHAR* romTypeMirroredRam1k;
+    _TCHAR* romTypeNormalRam;
+    _TCHAR* romTypeKanji;
+    _TCHAR* romTypeHolyQuran;
+    _TCHAR* romTypeMatsushitaSram;
+    _TCHAR* romTypePanasonic16;
+    _TCHAR* romTypePanasonic32;
+    _TCHAR* romTypeBunsetsu;
+    _TCHAR* romTypeJisyo;
+    _TCHAR* romTypeKanji12;
+    _TCHAR* romTypeNationalSram;
+    _TCHAR* romTypeS1985;
+    _TCHAR* romTypeS1990;
+    _TCHAR* romTypeTurborPause;
+    _TCHAR* romTypeF4deviceNormal;
+    _TCHAR* romTypeF4deviceInvert;
+    _TCHAR* romTypeMsxMidi;
+    _TCHAR* romTypeTurborTimer;
+    _TCHAR* romTypeKoei;
+    _TCHAR* romTypeBasic;
+    _TCHAR* romTypeHalnote;
+    _TCHAR* romTypeLodeRunner;
+    _TCHAR* romTypeNormal4000;
+    _TCHAR* romTypeNormalC000;
+    _TCHAR* romTypeKonamiSynth;
+    _TCHAR* romTypeKonamiKbdMast;
+    _TCHAR* romTypeKonamiWordPro;
+    _TCHAR* romTypePac;
+    _TCHAR* romTypeMegaRam;
+    _TCHAR* romTypeMegaRam128;
+    _TCHAR* romTypeMegaRam256;
+    _TCHAR* romTypeMegaRam512;
+    _TCHAR* romTypeMegaRam768;
+    _TCHAR* romTypeMegaRam2mb;
+    _TCHAR* romTypeExtRam;
+    _TCHAR* romTypeExtRam512;
+    _TCHAR* romTypeExtRam1mb;
+    _TCHAR* romTypeExtRam2mb;
+    _TCHAR* romTypeExtRam4mb;
+    _TCHAR* romTypeMsxMusic;
+    _TCHAR* romTypeMsxAudio;
+    _TCHAR* romTypeMoonsound;
+    _TCHAR* romTypeSvi328Cart;
+    _TCHAR* romTypeSvi328Fdc;
+    _TCHAR* romTypeSvi328Prn;
+    _TCHAR* romTypeSvi328Uart;
+    _TCHAR* romTypeSvi328col80;
+    _TCHAR* romTypeSvi727col80;
+    _TCHAR* romTypeColecoCart;
+    _TCHAR* romTypeSg1000Cart;
+    _TCHAR* romTypeTheCastle;
+    _TCHAR* romTypeSonyHbi55;
+    _TCHAR* romTypeMsxPrinter;
+    _TCHAR* romTypeTurborPcm;
+    _TCHAR* romTypeGameReader;
+    _TCHAR* romTypeSunriseIde;
+    _TCHAR* romTypeBeerIde;
+    _TCHAR* romTypeGide;
+    _TCHAR* romTypeVmx80;
+    _TCHAR* romTypeNms8280Digitiz;
+    _TCHAR* romTypeHbiV1Digitiz;
+    _TCHAR* romTypeFmdas;
+    _TCHAR* romTypeSfg05;
 } LanguageStrings;
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-11 20:08:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -579,6 +579,110 @@ _TCHAR* langKeyconfigSelectedKey();
 _TCHAR* langKeyconfigMappedTo();
 _TCHAR* langKeyconfigMappingScheme();
 
+
+//----------------------
+// Rom type lines
+//----------------------
+
+_TCHAR* langRomTypeStandard();
+_TCHAR* langRomTypeMsxdos2();
+_TCHAR* langRomTypeKonamiScc();
+_TCHAR* langRomTypeKonami();
+_TCHAR* langRomTypeAscii8();
+_TCHAR* langRomTypeAscii16();
+_TCHAR* langRomTypeGameMaster2();
+_TCHAR* langRomTypeAscii8Sram();
+_TCHAR* langRomTypeAscii16Sram();
+_TCHAR* langRomTypeRtype();
+_TCHAR* langRomTypeCrossblaim();
+_TCHAR* langRomTypeHarryFox();
+_TCHAR* langRomTypeMajutsushi();
+_TCHAR* langRomTypeZenima80();
+_TCHAR* langRomTypeZenima90();
+_TCHAR* langRomTypeZenima126();
+_TCHAR* langRomTypeScc();
+_TCHAR* langRomTypeSccPlus();
+_TCHAR* langRomTypeSnatcher();
+_TCHAR* langRomTypeSdSnatcher();
+_TCHAR* langRomTypeSccMirrored();
+_TCHAR* langRomTypeSccExtended();
+_TCHAR* langRomTypeFmpac();
+_TCHAR* langRomTypeFmpak();
+_TCHAR* langRomTypeKonamiGeneric();
+_TCHAR* langRomTypeSuperPierrot();
+_TCHAR* langRomTypeMirrored();
+_TCHAR* langRomTypeNormal();
+_TCHAR* langRomTypeDiskPatch();
+_TCHAR* langRomTypeCasPatch();
+_TCHAR* langRomTypeTc8566afFdc();
+_TCHAR* langRomTypeMicrosolFdc();
+_TCHAR* langRomTypeNationalFdc();
+_TCHAR* langRomTypePhilipsFdc();
+_TCHAR* langRomTypeSvi738Fdc();
+_TCHAR* langRomTypeMappedRam();
+_TCHAR* langRomTypeMirroredRam1k();
+_TCHAR* langRomTypeNormalRam();
+_TCHAR* langRomTypeKanji();
+_TCHAR* langRomTypeHolyQuran();
+_TCHAR* langRomTypeMatsushitaSram();
+_TCHAR* langRomTypePanasonic16();
+_TCHAR* langRomTypePanasonic32();
+_TCHAR* langRomTypeBunsetsu();
+_TCHAR* langRomTypeJisyo();
+_TCHAR* langRomTypeKanji12();
+_TCHAR* langRomTypeNationalSram();
+_TCHAR* langRomTypeS1985();
+_TCHAR* langRomTypeS1990();
+_TCHAR* langRomTypeTurborPause();
+_TCHAR* langRomTypeF4deviceNormal();
+_TCHAR* langRomTypeF4deviceInvert();
+_TCHAR* langRomTypeMsxMidi();
+_TCHAR* langRomTypeTurborTimer();
+_TCHAR* langRomTypeKoei();
+_TCHAR* langRomTypeBasic();
+_TCHAR* langRomTypeHalnote();
+_TCHAR* langRomTypeLodeRunner();
+_TCHAR* langRomTypeNormal4000();
+_TCHAR* langRomTypeNormalC000();
+_TCHAR* langRomTypeKonamiSynth();
+_TCHAR* langRomTypeKonamiKbdMast();
+_TCHAR* langRomTypeKonamiWordPro();
+_TCHAR* langRomTypePac();
+_TCHAR* langRomTypeMegaRam();
+_TCHAR* langRomTypeMegaRam128();
+_TCHAR* langRomTypeMegaRam256();
+_TCHAR* langRomTypeMegaRam512();
+_TCHAR* langRomTypeMegaRam768();
+_TCHAR* langRomTypeMegaRam2mb();
+_TCHAR* langRomTypeExtRam();
+_TCHAR* langRomTypeExtRam512();
+_TCHAR* langRomTypeExtRam1mb();
+_TCHAR* langRomTypeExtRam2mb();
+_TCHAR* langRomTypeExtRam4mb();
+_TCHAR* langRomTypeMsxMusic();
+_TCHAR* langRomTypeMsxAudio();
+_TCHAR* langRomTypeMoonsound();
+_TCHAR* langRomTypeSvi328Cart();
+_TCHAR* langRomTypeSvi328Fdc();
+_TCHAR* langRomTypeSvi328Prn();
+_TCHAR* langRomTypeSvi328Uart();
+_TCHAR* langRomTypeSvi328col80();
+_TCHAR* langRomTypeSvi727col80();
+_TCHAR* langRomTypeColecoCart();
+_TCHAR* langRomTypeSg1000Cart();
+_TCHAR* langRomTypeTheCastle();
+_TCHAR* langRomTypeSonyHbi55();
+_TCHAR* langRomTypeMsxPrinter();
+_TCHAR* langRomTypeTurborPcm();
+_TCHAR* langRomTypeGameReader();
+_TCHAR* langRomTypeSunriseIde();
+_TCHAR* langRomTypeBeerIde();
+_TCHAR* langRomTypeGide();
+_TCHAR* langRomTypeVmx80();
+_TCHAR* langRomTypeNms8280Digitiz();
+_TCHAR* langRomTypeHbiV1Digitiz();
+_TCHAR* langRomTypeFmdas();
+_TCHAR* langRomTypeSfg05();
 
 #endif
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-11 20:08:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -836,3 +836,108 @@ _TCHAR* langShortcutToggleCpuTrace() { return ls->shortcutToggleCpuTrace; }
 _TCHAR* langKeyconfigSelectedKey() { return ls->keyconfigSelectedKey; }
 _TCHAR* langKeyconfigMappedTo() { return ls->keyconfigMappedTo; }
 _TCHAR* langKeyconfigMappingScheme() { return ls->keyconfigMappingScheme; }
+
+
+//----------------------
+// Rom type lines
+//----------------------
+
+_TCHAR* langRomTypeStandard() { return ls->romTypeStandard; }
+_TCHAR* langRomTypeMsxdos2() { return ls->romTypeMsxdos2; }
+_TCHAR* langRomTypeKonamiScc() { return ls->romTypeKonamiScc; }
+_TCHAR* langRomTypeKonami() { return ls->romTypeKonami; }
+_TCHAR* langRomTypeAscii8() { return ls->romTypeAscii8; }
+_TCHAR* langRomTypeAscii16() { return ls->romTypeAscii16; }
+_TCHAR* langRomTypeGameMaster2() { return ls->romTypeGameMaster2; }
+_TCHAR* langRomTypeAscii8Sram() { return ls->romTypeAscii8Sram; }
+_TCHAR* langRomTypeAscii16Sram() { return ls->romTypeAscii16Sram; }
+_TCHAR* langRomTypeRtype() { return ls->romTypeRtype; }
+_TCHAR* langRomTypeCrossblaim() { return ls->romTypeCrossblaim; }
+_TCHAR* langRomTypeHarryFox() { return ls->romTypeHarryFox; }
+_TCHAR* langRomTypeMajutsushi() { return ls->romTypeMajutsushi; }
+_TCHAR* langRomTypeZenima80() { return ls->romTypeZenima80; }
+_TCHAR* langRomTypeZenima90() { return ls->romTypeZenima90; }
+_TCHAR* langRomTypeZenima126() { return ls->romTypeZenima126; }
+_TCHAR* langRomTypeScc() { return ls->romTypeScc; }
+_TCHAR* langRomTypeSccPlus() { return ls->romTypeSccPlus; }
+_TCHAR* langRomTypeSnatcher() { return ls->romTypeSnatcher; }
+_TCHAR* langRomTypeSdSnatcher() { return ls->romTypeSdSnatcher; }
+_TCHAR* langRomTypeSccMirrored() { return ls->romTypeSccMirrored; }
+_TCHAR* langRomTypeSccExtended() { return ls->romTypeSccExtended; }
+_TCHAR* langRomTypeFmpac() { return ls->romTypeFmpac; }
+_TCHAR* langRomTypeFmpak() { return ls->romTypeFmpak; }
+_TCHAR* langRomTypeKonamiGeneric() { return ls->romTypeKonamiGeneric; }
+_TCHAR* langRomTypeSuperPierrot() { return ls->romTypeSuperPierrot; }
+_TCHAR* langRomTypeMirrored() { return ls->romTypeMirrored; }
+_TCHAR* langRomTypeNormal() { return ls->romTypeNormal; }
+_TCHAR* langRomTypeDiskPatch() { return ls->romTypeDiskPatch; }
+_TCHAR* langRomTypeCasPatch() { return ls->romTypeCasPatch; }
+_TCHAR* langRomTypeTc8566afFdc() { return ls->romTypeTc8566afFdc; }
+_TCHAR* langRomTypeMicrosolFdc() { return ls->romTypeMicrosolFdc; }
+_TCHAR* langRomTypeNationalFdc() { return ls->romTypeNationalFdc; }
+_TCHAR* langRomTypePhilipsFdc() { return ls->romTypePhilipsFdc; }
+_TCHAR* langRomTypeSvi738Fdc() { return ls->romTypeSvi738Fdc; }
+_TCHAR* langRomTypeMappedRam() { return ls->romTypeMappedRam; }
+_TCHAR* langRomTypeMirroredRam1k() { return ls->romTypeMirroredRam1k; }
+_TCHAR* langRomTypeNormalRam() { return ls->romTypeNormalRam; }
+_TCHAR* langRomTypeKanji() { return ls->romTypeKanji; }
+_TCHAR* langRomTypeHolyQuran() { return ls->romTypeHolyQuran; }
+_TCHAR* langRomTypeMatsushitaSram() { return ls->romTypeMatsushitaSram; }
+_TCHAR* langRomTypePanasonic16() { return ls->romTypePanasonic16; }
+_TCHAR* langRomTypePanasonic32() { return ls->romTypePanasonic32; }
+_TCHAR* langRomTypeBunsetsu() { return ls->romTypeBunsetsu; }
+_TCHAR* langRomTypeJisyo() { return ls->romTypeJisyo; }
+_TCHAR* langRomTypeKanji12() { return ls->romTypeKanji12; }
+_TCHAR* langRomTypeNationalSram() { return ls->romTypeNationalSram; }
+_TCHAR* langRomTypeS1985() { return ls->romTypeS1985; }
+_TCHAR* langRomTypeS1990() { return ls->romTypeS1990; }
+_TCHAR* langRomTypeTurborPause() { return ls->romTypeTurborPause; }
+_TCHAR* langRomTypeF4deviceNormal() { return ls->romTypeF4deviceNormal; }
+_TCHAR* langRomTypeF4deviceInvert() { return ls->romTypeF4deviceInvert; }
+_TCHAR* langRomTypeMsxMidi() { return ls->romTypeMsxMidi; }
+_TCHAR* langRomTypeTurborTimer() { return ls->romTypeTurborTimer; }
+_TCHAR* langRomTypeKoei() { return ls->romTypeKoei; }
+_TCHAR* langRomTypeBasic() { return ls->romTypeBasic; }
+_TCHAR* langRomTypeHalnote() { return ls->romTypeHalnote; }
+_TCHAR* langRomTypeLodeRunner() { return ls->romTypeLodeRunner; }
+_TCHAR* langRomTypeNormal4000() { return ls->romTypeNormal4000; }
+_TCHAR* langRomTypeNormalC000() { return ls->romTypeNormalC000; }
+_TCHAR* langRomTypeKonamiSynth() { return ls->romTypeKonamiSynth; }
+_TCHAR* langRomTypeKonamiKbdMast() { return ls->romTypeKonamiKbdMast; }
+_TCHAR* langRomTypeKonamiWordPro() { return ls->romTypeKonamiWordPro; }
+_TCHAR* langRomTypePac() { return ls->romTypePac; }
+_TCHAR* langRomTypeMegaRam() { return ls->romTypeMegaRam; }
+_TCHAR* langRomTypeMegaRam128() { return ls->romTypeMegaRam128; }
+_TCHAR* langRomTypeMegaRam256() { return ls->romTypeMegaRam256; }
+_TCHAR* langRomTypeMegaRam512() { return ls->romTypeMegaRam512; }
+_TCHAR* langRomTypeMegaRam768() { return ls->romTypeMegaRam768; }
+_TCHAR* langRomTypeMegaRam2mb() { return ls->romTypeMegaRam2mb; }
+_TCHAR* langRomTypeExtRam() { return ls->romTypeExtRam; }
+_TCHAR* langRomTypeExtRam512() { return ls->romTypeExtRam512; }
+_TCHAR* langRomTypeExtRam1mb() { return ls->romTypeExtRam1mb; }
+_TCHAR* langRomTypeExtRam2mb() { return ls->romTypeExtRam2mb; }
+_TCHAR* langRomTypeExtRam4mb() { return ls->romTypeExtRam4mb; }
+_TCHAR* langRomTypeMsxMusic() { return ls->romTypeMsxMusic; }
+_TCHAR* langRomTypeMsxAudio() { return ls->romTypeMsxAudio; }
+_TCHAR* langRomTypeMoonsound() { return ls->romTypeMoonsound; }
+_TCHAR* langRomTypeSvi328Cart() { return ls->romTypeSvi328Cart; }
+_TCHAR* langRomTypeSvi328Fdc() { return ls->romTypeSvi328Fdc; }
+_TCHAR* langRomTypeSvi328Prn() { return ls->romTypeSvi328Prn; }
+_TCHAR* langRomTypeSvi328Uart() { return ls->romTypeSvi328Uart; }
+_TCHAR* langRomTypeSvi328col80() { return ls->romTypeSvi328col80; }
+_TCHAR* langRomTypeSvi727col80() { return ls->romTypeSvi727col80; }
+_TCHAR* langRomTypeColecoCart() { return ls->romTypeColecoCart; }
+_TCHAR* langRomTypeSg1000Cart() { return ls->romTypeSg1000Cart; }
+_TCHAR* langRomTypeTheCastle() { return ls->romTypeTheCastle; }
+_TCHAR* langRomTypeSonyHbi55() { return ls->romTypeSonyHbi55; }
+_TCHAR* langRomTypeMsxPrinter() { return ls->romTypeMsxPrinter; }
+_TCHAR* langRomTypeTurborPcm() { return ls->romTypeTurborPcm; }
+_TCHAR* langRomTypeGameReader() { return ls->romTypeGameReader; }
+_TCHAR* langRomTypeSunriseIde() { return ls->romTypeSunriseIde; }
+_TCHAR* langRomTypeBeerIde() { return ls->romTypeBeerIde; }
+_TCHAR* langRomTypeGide() { return ls->romTypeGide; }
+_TCHAR* langRomTypeVmx80() { return ls->romTypeVmx80; }
+_TCHAR* langRomTypeNms8280Digitiz() { return ls->romTypeNms8280Digitiz; }
+_TCHAR* langRomTypeHbiV1Digitiz() { return ls->romTypeHbiV1Digitiz; }
+_TCHAR* langRomTypeFmdas() { return ls->romTypeFmdas; }
+_TCHAR* langRomTypeSfg05() { return ls->romTypeSfg05; }

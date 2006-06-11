@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxAudio.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-02-11 04:38:35 $
+** $Date: 2006-06-11 20:08:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -210,7 +210,7 @@ extern "C" int msxaudioCreate(Mixer* mixer)
 
     msxaudio->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, msxaudioSync, msxaudio);
 
-    msxaudio->deviceHandle = deviceManagerRegister(AUDIO_Y8950, &callbacks, msxaudio);
+    msxaudio->deviceHandle = deviceManagerRegister(ROM_MSXAUDIO, &callbacks, msxaudio);
 
     msxaudio->y8950 = new Y8950("MsxAudio", 256*1024, systemTime);
     msxaudio->y8950->setSampleRate(SAMPLERATE, boardGetY8950Oversampling());

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-01 00:40:23 $
+** $Date: 2006-06-11 20:08:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,9 +67,6 @@ enum  {
     SRAM_S1985      = 32,
     ROM_F4DEVICE    = 33,
     ROM_F4INVERTED  = 34,
-    AUDIO_MOONSOUND = 35,
-    AUDIO_Y8950     = 36,
-    AUDIO_YM2413    = 37,
     ROM_KOEI        = 38,
     ROM_BASIC       = 39,
     ROM_HALNOTE     = 40,

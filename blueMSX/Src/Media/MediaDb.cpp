@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-11 20:08:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,106 @@ typedef map<string, MediaType*> Sha1Map;
 
 
 #ifdef NO_LANG
-#define langTextUnknown()                       "Unknown"
+#define langTextUnknown()           "Unknown"
+#define langRomTypeStandard()       "Standard"
+#define langRomTypeMsxdos2()        "MSXDOS 2"
+#define langRomTypeKonamiScc()      "Konami SCC"
+#define langRomTypeKonami()         "Konami"
+#define langRomTypeAscii8()         "ASCII 8"
+#define langRomTypeAscii16()        "ASCII 16"
+#define langRomTypeGameMaster2()    "Game Master 2 (SRAM)"
+#define langRomTypeAscii8Sram()     "ASCII 8 (SRAM)"
+#define langRomTypeAscii16Sram()    "ASCII 16 (SRAM)"
+#define langRomTypeRtype()          "R-Type"
+#define langRomTypeCrossblaim()     "Cross Blaim"
+#define langRomTypeHarryFox()       "Harry Fox"
+#define langRomTypeMajutsushi()     "Konami Majutsushi"
+#define langRomTypeZenima80()       "Zemina 80 in 1"
+#define langRomTypeZenima90()       "Zemina 90 in 1"
+#define langRomTypeZenima126()      "Zemina 126 in 1"
+#define langRomTypeScc()            "SCC"
+#define langRomTypeSccPlus()        "SCC+"
+#define langRomTypeSnatcher()       "The Snatcher"
+#define langRomTypeSdSnatcher()     "SD Snatcher"
+#define langRomTypeSccMirrored()    "SCC mirrored"
+#define langRomTypeSccExtended()    "SCC extended"
+#define langRomTypeFmpac()          "FMPAC (SRAM)"
+#define langRomTypeFmpak()          "FMPAK"
+#define langRomTypeKonamiGeneric()  "Konami Generic"
+#define langRomTypeSuperPierrot()   "Super Pierrot"
+#define langRomTypeMirrored()       "Mirrored ROM"
+#define langRomTypeNormal()         "Normal ROM"
+#define langRomTypeDiskPatch()      "Normal + Disk Patch"
+#define langRomTypeCasPatch()       "Normal + Cassette Patch"
+#define langRomTypeTc8566afFdc()    "TC8566AF Disk Controller"
+#define langRomTypeMicrosolFdc()    "Microsol Disk Controller"
+#define langRomTypeNationalFdc()    "National Disk Controller"
+#define langRomTypePhilipsFdc()     "Philips Disk Controller"
+#define langRomTypeSvi738Fdc()      "SVI-738 Disk Controller"
+#define langRomTypeMappedRam()      "Mapped RAM"
+#define langRomTypeMirroredRam1k()  "1kB Mirrored RAM"
+#define langRomTypeNormalRam()      "Normal RAM"
+#define langRomTypeKanji()          "Kanji"
+#define langRomTypeHolyQuran()      "Holy Quran"
+#define langRomTypeMatsushitaSram() "Matsushita SRAM"
+#define langRomTypePanasonic16()    "Panasonic 16kB SRAM"
+#define langRomTypePanasonic32()    "Panasonic 32kB SRAM"
+#define langRomTypeBunsetsu()       "Bunsetsu"
+#define langRomTypeJisyo()          "Jisyo"
+#define langRomTypeKanji12()        "Kanji12"
+#define langRomTypeNationalSram()   "National (SRAM)"
+#define langRomTypeS1985()          "S1985"
+#define langRomTypeS1990()          "S1990"
+#define langRomTypeTurborPause()    "Turbo-R Pause"
+#define langRomTypeF4deviceNormal() "F4 Device Normal"
+#define langRomTypeF4deviceInvert() "F4 Device Inverted"
+#define langRomTypeMsxMidi()        "MSX-MIDI"
+#define langRomTypeTurborTimer()    "Turbo-R Timer"
+#define langRomTypeKoei()           "Koei (SRAM)"
+#define langRomTypeBasic()          "Basic ROM"
+#define langRomTypeHalnote()        "Halnote"
+#define langRomTypeLodeRunner()     "Lode Runner"
+#define langRomTypeNormal4000()     "Normal 4000h"
+#define langRomTypeNormalC000()     "Normal C000h"
+#define langRomTypeKonamiSynth()    "Konami Synthesizer"
+#define langRomTypeKonamiKbdMast()  "Konami Keyboard Master"
+#define langRomTypeKonamiWordPro()  "Konami Word Pro"
+#define langRomTypePac()            "PAC (SRAM)"
+#define langRomTypeMegaRam()        "MegaRAM"
+#define langRomTypeMegaRam128()     "128kB MegaRAM"
+#define langRomTypeMegaRam256()     "256kB MegaRAM"
+#define langRomTypeMegaRam512()     "512kB MegaRAM"
+#define langRomTypeMegaRam768()     "768kB MegaRAM"
+#define langRomTypeMegaRam2mb()     "2MB MegaRAM"
+#define langRomTypeExtRam()         "External RAM"
+#define langRomTypeExtRam512()      "512kB External RAM"
+#define langRomTypeExtRam1mb()      "1MB External RAM"
+#define langRomTypeExtRam2mb()      "2MB External RAM"
+#define langRomTypeExtRam4mb()      "4MB External RAM"
+#define langRomTypeMsxMusic()       "MSX Music"
+#define langRomTypeMsxAudio()       "MSX Audio"
+#define langRomTypeMoonsound()      "Moonsound"
+#define langRomTypeSvi328Cart()     "SVI-328 Cartridge"
+#define langRomTypeSvi328Fdc()      "SVI-328 Disk Controller"
+#define langRomTypeSvi328Prn()      "SVI-328 Printer"
+#define langRomTypeSvi328Uart()     "SVI-328 Serial Port"
+#define langRomTypeSvi328col80()    "SVI-328 80 Column Card"
+#define langRomTypeSvi727col80()    "SVI-727 80 Column Card"
+#define langRomTypeColecoCart()     "Coleco Cartridge"
+#define langRomTypeSg1000Cart()     "SG-1000 Cartridge"
+#define langRomTypeTheCastle()      "The Castle"
+#define langRomTypeSonyHbi55()      "Sony HBI-55"
+#define langRomTypeMsxPrinter()     "MSX Printer"
+#define langRomTypeTurborPcm()      "Turbo-R PCM Chip"
+#define langRomTypeGameReader()     "Sunrise GameReader"
+#define langRomTypeSunriseIde()     "Sunrise IDE"
+#define langRomTypeBeerIde()        "Beer IDE"
+#define langRomTypeGide()           "GIDE"
+#define langRomTypeVmx80()          "Microsol VMX-80"
+#define langRomTypeNms8280Digitiz() "Philips NMS-8280 Digitizer"
+#define langRomTypeHbiV1Digitiz()   "Sony HBI-V1 Digitizer"
+#define langRomTypeFmdas()          "F&M Direct Assembler System"
+#define langRomTypeSfg05()          "Yamaha SFG-05"
 #else
 extern "C" {
 #include "Language.h"
@@ -541,109 +640,106 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
 extern "C" const char* romTypeToString(RomType romType)
 {
     switch (romType) {    
-    case ROM_STANDARD:    return "Standard";
-    case ROM_MSXDOS2:     return "MSXDOS 2";
-    case ROM_KONAMI5:     return "Konami SCC";
-    case ROM_KONAMI4:     return "Konami";
-    case ROM_ASCII8:      return "ASCII 8";
-    case ROM_ASCII16:     return "ASCII 16";
-    case ROM_GAMEMASTER2: return "Game Master 2 (SRAM)";
-    case ROM_ASCII8SRAM:  return "ASCII 8 (SRAM)";
-    case ROM_ASCII16SRAM: return "ASCII 16 (SRAM)";
-    case ROM_RTYPE:       return "R-Type";
-    case ROM_CROSSBLAIM:  return "Cross Blaim";
-    case ROM_HARRYFOX:    return "Harry Fox";
-    case ROM_MAJUTSUSHI:  return "Konami Majutsushi";
-    case ROM_KOREAN80:    return "Zemina 80 in 1";
-    case ROM_KOREAN90:    return "Zemina 90 in 1";
-    case ROM_KOREAN126:   return "Zemina 126 in 1";
-    case ROM_SCC:         return "SCC";
-    case ROM_SCCPLUS:     return "SCC+";
-    case ROM_SNATCHER:    return "The Snatcher";
-    case ROM_SDSNATCHER:  return "SD Snatcher";
-    case ROM_SCCMIRRORED: return "SCC mirrored";
-    case ROM_SCCEXTENDED: return "SCC extended";
-    case ROM_FMPAC:       return "FMPAC (SRAM)";
-    case ROM_FMPAK:       return "FMPAK";
-    case ROM_KONAMI4NF:   return "Konami Generic";
-    case ROM_ASCII16NF:   return "Super Pierrot";
-    case ROM_PLAIN:       return "Mirrored ROM";
-    case ROM_NORMAL:      return "Normal ROM";
-    case ROM_DISKPATCH:   return "Normal + Disk Patch";
-    case ROM_CASPATCH:    return "Normal + Cassette Patch";
-    case ROM_TC8566AF:    return "TC8566AF Disk Controller";
-    case ROM_MICROSOL:    return "Microsol Disk Controller";
-    case ROM_NATIONALFDC: return "National Disk Controller";
-    case ROM_PHILIPSFDC:  return "Philips Disk Controller";
-    case ROM_SVI738FDC:   return "SVI-738 Disk Controller";
-    case RAM_MAPPER:      return "Mapped RAM";
-    case RAM_1KB_MIRRORED:return "1kB Mirrored RAM";
-    case RAM_NORMAL:      return "Normal RAM";
-    case ROM_KANJI:       return "Kanji";
-    case ROM_HOLYQURAN:   return "Holy Quran";
-    case SRAM_MATSUCHITA: return "Matsushita SRAM";
-    case ROM_PANASONIC16: return "Panasonic 16kB SRAM";
-    case ROM_PANASONIC32: return "Panasonic 32kB SRAM";
-    case ROM_BUNSETU:     return "Bunsetsu";
-    case ROM_JISYO:       return "Jisyo";
-    case ROM_KANJI12:     return "Kanji12";
-    case ROM_NATIONAL:    return "National (SRAM)";
-    case SRAM_S1985:      return "S1985";
-    case ROM_S1990:       return "S1990";
-    case ROM_TURBORIO:    return "Turbo-R Pause";
-    case ROM_F4DEVICE:    return "F4 Device Normal";
-    case ROM_F4INVERTED:  return "F4 Device Inverted";
-    case ROM_MSXMIDI:     return "MSX-MIDI";
-    case ROM_TURBORTIMER: return "Turbo-R Timer";
-    case AUDIO_MOONSOUND: return "Moonsound Audio";
-    case AUDIO_Y8950:     return "Y8950 Audio";
-    case AUDIO_YM2413:    return "YM2413 Audio";
-    case ROM_KOEI:        return "Koei (SRAM)";
-    case ROM_BASIC:       return "Basic ROM";
-    case ROM_HALNOTE:     return "Halnote";
-    case ROM_LODERUNNER:  return "Lode Runner";
-    case ROM_0x4000:      return "Normal 0x4000";
-    case ROM_0xC000:      return "Normal 0xC000";
-    case ROM_KONAMISYNTH: return "Konami Synthesizer";
-    case ROM_KONAMKBDMAS: return "Konami Keyboard Master";
-    case ROM_KONWORDPRO:  return "Konami Word Pro";
-    case ROM_PAC:         return "PAC (SRAM)";
-    case ROM_MEGARAM:     return "MegaRAM";
-    case ROM_MEGARAM128:  return "128kB MegaRAM";
-    case ROM_MEGARAM256:  return "256kB MegaRAM";
-    case ROM_MEGARAM512:  return "512kB MegaRAM";
-    case ROM_MEGARAM768:  return "768kB MegaRAM";
-    case ROM_MEGARAM2M:   return "2MB MegaRAM";
-    case ROM_EXTRAM:      return "External RAM";
-    case ROM_EXTRAM512KB: return "512kB External RAM";
-    case ROM_EXTRAM1MB:   return "1MB External RAM";
-    case ROM_EXTRAM2MB:   return "2MB External RAM";
-    case ROM_EXTRAM4MB:   return "4MB External RAM";
-    case ROM_MSXMUSIC:    return "MSX Music";
-    case ROM_MSXAUDIO:    return "MSX Audio";
-    case ROM_MOONSOUND:   return "Moonsound";
-    case ROM_SVI328:      return "SVI-328 Cartridge";
-    case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
-    case ROM_SVI328PRN:   return "SVI-328 Printer";
-    case ROM_SVI328RS232: return "SVI-328 Serial Port";
-    case ROM_SVI80COL:    return "SVI-328 80 Column Card";
-    case ROM_SVI727:      return "SVI-727 80 Column Card";
-    case ROM_COLECO:      return "Coleco Cartridge";
-    case ROM_SG1000:      return "SG-1000 Cartridge";
-    case ROM_SG1000CASTLE:return "The Castle";
-    case ROM_SONYHBI55:   return "Sony HBI-55";
-    case ROM_MSXAUDIODEV: return "MSX Audio Chip";
-    case ROM_MSXPRN:      return "MSX Printer";
-    case ROM_TURBORPCM:   return "Turbo-R PCM Chip";
-    case ROM_GAMEREADER:  return "Sunrise GameReader";
-    case ROM_SUNRISEIDE:  return "Sunrise IDE";
-    case ROM_BEERIDE:     return "Beer IDE";
-    case ROM_GIDE:        return "GIDE";
-    case ROM_MICROSOL80:  return "Microsol VMX-80";
-    case ROM_NMS8280DIGI: return "Philips NMS-8280 Digitizer";
-    case ROM_SONYHBIV1:   return "Sony HBI-V1 Digitizer";
-    case ROM_FMDAS:       return "F&M Direct Assembler System";
-    case ROM_YAMAHASFG05: return "Yamaha SFG-05";
+    case ROM_STANDARD:    return langRomTypeStandard();
+    case ROM_MSXDOS2:     return langRomTypeMsxdos2();
+    case ROM_KONAMI5:     return langRomTypeKonamiScc();
+    case ROM_KONAMI4:     return langRomTypeKonami();
+    case ROM_ASCII8:      return langRomTypeAscii8();
+    case ROM_ASCII16:     return langRomTypeAscii16();
+    case ROM_GAMEMASTER2: return langRomTypeGameMaster2();
+    case ROM_ASCII8SRAM:  return langRomTypeAscii8Sram();
+    case ROM_ASCII16SRAM: return langRomTypeAscii16Sram();
+    case ROM_RTYPE:       return langRomTypeRtype();
+    case ROM_CROSSBLAIM:  return langRomTypeCrossblaim();
+    case ROM_HARRYFOX:    return langRomTypeHarryFox();
+    case ROM_MAJUTSUSHI:  return langRomTypeMajutsushi();
+    case ROM_KOREAN80:    return langRomTypeZenima80();
+    case ROM_KOREAN90:    return langRomTypeZenima90();
+    case ROM_KOREAN126:   return langRomTypeZenima126();
+    case ROM_SCC:         return langRomTypeScc();
+    case ROM_SCCPLUS:     return langRomTypeSccPlus();
+    case ROM_SNATCHER:    return langRomTypeSnatcher();
+    case ROM_SDSNATCHER:  return langRomTypeSdSnatcher();
+    case ROM_SCCMIRRORED: return langRomTypeSccMirrored();
+    case ROM_SCCEXTENDED: return langRomTypeSccExtended();
+    case ROM_FMPAC:       return langRomTypeFmpac();
+    case ROM_FMPAK:       return langRomTypeFmpak();
+    case ROM_KONAMI4NF:   return langRomTypeKonamiGeneric();
+    case ROM_ASCII16NF:   return langRomTypeSuperPierrot();
+    case ROM_PLAIN:       return langRomTypeMirrored();
+    case ROM_NORMAL:      return langRomTypeNormal();
+    case ROM_DISKPATCH:   return langRomTypeDiskPatch();
+    case ROM_CASPATCH:    return langRomTypeCasPatch();
+    case ROM_TC8566AF:    return langRomTypeTc8566afFdc();
+    case ROM_MICROSOL:    return langRomTypeMicrosolFdc();
+    case ROM_NATIONALFDC: return langRomTypeNationalFdc();
+    case ROM_PHILIPSFDC:  return langRomTypePhilipsFdc();
+    case ROM_SVI738FDC:   return langRomTypeSvi738Fdc();
+    case RAM_MAPPER:      return langRomTypeMappedRam();
+    case RAM_1KB_MIRRORED:return langRomTypeMirroredRam1k();
+    case RAM_NORMAL:      return langRomTypeNormalRam();
+    case ROM_KANJI:       return langRomTypeKanji();
+    case ROM_HOLYQURAN:   return langRomTypeHolyQuran();
+    case SRAM_MATSUCHITA: return langRomTypeMatsushitaSram();
+    case ROM_PANASONIC16: return langRomTypePanasonic16();
+    case ROM_PANASONIC32: return langRomTypePanasonic32();
+    case ROM_BUNSETU:     return langRomTypeBunsetsu();
+    case ROM_JISYO:       return langRomTypeJisyo();
+    case ROM_KANJI12:     return langRomTypeKanji12();
+    case ROM_NATIONAL:    return langRomTypeNationalSram();
+    case SRAM_S1985:      return langRomTypeS1985();
+    case ROM_S1990:       return langRomTypeS1990();
+    case ROM_TURBORIO:    return langRomTypeTurborPause();
+    case ROM_F4DEVICE:    return langRomTypeF4deviceNormal();
+    case ROM_F4INVERTED:  return langRomTypeF4deviceInvert();
+    case ROM_MSXMIDI:     return langRomTypeMsxMidi();
+    case ROM_TURBORTIMER: return langRomTypeTurborTimer();
+    case ROM_KOEI:        return langRomTypeKoei();
+    case ROM_BASIC:       return langRomTypeBasic();
+    case ROM_HALNOTE:     return langRomTypeHalnote();
+    case ROM_LODERUNNER:  return langRomTypeLodeRunner();
+    case ROM_0x4000:      return langRomTypeNormal4000();
+    case ROM_0xC000:      return langRomTypeNormalC000();
+    case ROM_KONAMISYNTH: return langRomTypeKonamiSynth();
+    case ROM_KONAMKBDMAS: return langRomTypeKonamiKbdMast();
+    case ROM_KONWORDPRO:  return langRomTypeKonamiWordPro();
+    case ROM_PAC:         return langRomTypePac();
+    case ROM_MEGARAM:     return langRomTypeMegaRam();
+    case ROM_MEGARAM128:  return langRomTypeMegaRam128();
+    case ROM_MEGARAM256:  return langRomTypeMegaRam256();
+    case ROM_MEGARAM512:  return langRomTypeMegaRam512();
+    case ROM_MEGARAM768:  return langRomTypeMegaRam768();
+    case ROM_MEGARAM2M:   return langRomTypeMegaRam2mb();
+    case ROM_EXTRAM:      return langRomTypeExtRam();
+    case ROM_EXTRAM512KB: return langRomTypeExtRam512();
+    case ROM_EXTRAM1MB:   return langRomTypeExtRam1mb();
+    case ROM_EXTRAM2MB:   return langRomTypeExtRam2mb();
+    case ROM_EXTRAM4MB:   return langRomTypeExtRam4mb();
+    case ROM_MSXMUSIC:    return langRomTypeMsxMusic();
+    case ROM_MSXAUDIO:    return langRomTypeMsxAudio();
+    case ROM_MOONSOUND:   return langRomTypeMoonsound();
+    case ROM_SVI328:      return langRomTypeSvi328Cart();
+    case ROM_SVI328FDC:   return langRomTypeSvi328Fdc();
+    case ROM_SVI328PRN:   return langRomTypeSvi328Prn();
+    case ROM_SVI328RS232: return langRomTypeSvi328Uart();
+    case ROM_SVI80COL:    return langRomTypeSvi328col80();
+    case ROM_SVI727:      return langRomTypeSvi727col80();
+    case ROM_COLECO:      return langRomTypeColecoCart();
+    case ROM_SG1000:      return langRomTypeSg1000Cart();
+    case ROM_SG1000CASTLE:return langRomTypeTheCastle();
+    case ROM_SONYHBI55:   return langRomTypeSonyHbi55();
+    case ROM_MSXAUDIODEV: return langRomTypeMsxAudio();
+    case ROM_MSXPRN:      return langRomTypeMsxPrinter();
+    case ROM_TURBORPCM:   return langRomTypeTurborPcm();
+    case ROM_GAMEREADER:  return langRomTypeGameReader();
+    case ROM_SUNRISEIDE:  return langRomTypeSunriseIde();
+    case ROM_BEERIDE:     return langRomTypeBeerIde();
+    case ROM_GIDE:        return langRomTypeGide();
+    case ROM_MICROSOL80:  return langRomTypeVmx80();
+    case ROM_NMS8280DIGI: return langRomTypeNms8280Digitiz();
+    case ROM_SONYHBIV1:   return langRomTypeHbiV1Digitiz();
+    case ROM_FMDAS:       return langRomTypeFmdas();
+    case ROM_YAMAHASFG05: return langRomTypeSfg05();
 
     case ROM_UNKNOWN:     return langTextUnknown();
     }
@@ -707,15 +803,12 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_F4INVERTED:  return "F4INV";
     case ROM_MSXMIDI:     return "MSX-MIDI";
     case ROM_TURBORTIMER: return "TURBORTMR";
-    case AUDIO_MOONSOUND: return "MOONSOUND";
-    case AUDIO_Y8950:     return "Y8950";
-    case AUDIO_YM2413:    return "YM2413";
     case ROM_KOEI:        return "KOEI";
     case ROM_BASIC:       return "BASIC";
     case ROM_HALNOTE:     return "HALNOTE";
     case ROM_LODERUNNER:  return "LODERUNNER";
-    case ROM_0x4000:      return "0x4000";
-    case ROM_0xC000:      return "0xC000";
+    case ROM_0x4000:      return "4000h";
+    case ROM_0xC000:      return "C000h";
     case ROM_KONAMISYNTH: return "KONSYNTH";
     case ROM_KONAMKBDMAS: return "KBDMASTER";
     case ROM_KONWORDPRO:  return "KONWORDPRO";
