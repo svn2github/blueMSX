@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-10 00:55:59 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -518,6 +518,7 @@ static void CALLBACK midiInCallback(HMIDIIN hMidiIn,
 
     switch (wMsg) {
     case MM_MIM_DATA:
+	case MM_MIM_MOREDATA:
         buffer[0] = (char)((dwParam1 >>  0) & 0xff);
         buffer[1] = (char)((dwParam1 >>  8) & 0xff);
         buffer[2] = (char)((dwParam1 >> 16) & 0xff);

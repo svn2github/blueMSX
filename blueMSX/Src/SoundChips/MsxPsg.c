@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,7 +64,8 @@ static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
 
     switch (type) {
     default:
-    case JOYSTICK_PORT_LIGHTGUN:
+    case JOYSTICK_PORT_GUNSTICK:
+    case JOYSTICK_PORT_ASCIILASER:
     case JOYSTICK_PORT_NONE:
         msxPsg->devFun[port] = NULL;
         break;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-06-09 20:30:01 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -440,6 +440,9 @@ _TCHAR* langMenuToolsMachine() { return ls->menuToolsMachine; }
 _TCHAR* langMenuToolsShortcuts() { return ls->menuToolsShortcuts; }
 _TCHAR* langMenuToolsKeyboard() { return ls->menuToolsKeyboard; }
 _TCHAR* langMenuToolsMixer() { return ls->menuToolsMixer; }
+_TCHAR* langMenuToolsDebugger() { return ls->menuToolsDebugger; }
+_TCHAR* langMenuToolsTrainer() { return ls->menuToolsTrainer; }
+_TCHAR* langMenuToolsTraceLogger() { return ls->menuToolsTraceLogger; }
 
 _TCHAR* langMenuFile() { return ls->menuFile; }
 _TCHAR* langMenuRun() { return ls->menuRun; }
@@ -659,7 +662,8 @@ _TCHAR* langEnumControlsJoyMouse() { return ls->enumControlsJoyMouse; }
 _TCHAR* langEnumControlsJoyTetrisDongle() { return ls->enumControlsJoyTetris2Dongle; }
 _TCHAR* langEnumControlsJoyMagicKeyDongle() { return ls->enumControlsJoyTMagicKeyDongle; }
 _TCHAR* langEnumControlsJoy2Button() { return ls->enumControlsJoy2Button; }
-_TCHAR* langEnumControlsJoyLightGun() { return ls->enumControlsJoyLightGun; }
+_TCHAR* langEnumControlsJoyGunStick() { return ls->enumControlsJoyGunstick; }
+_TCHAR* langEnumControlsJoyAsciiLaser() { return ls->enumControlsJoyAsciiLaser; }
 _TCHAR* langEnumControlsJoyColeco() { return ls->enumControlsJoyColeco; }
 
 

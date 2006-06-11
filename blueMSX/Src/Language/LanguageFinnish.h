@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-09 20:30:02 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,7 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->warningTitle            = "blueMSX - Varoitus";
     ls->warningDiscardChanges   = "Haluatko perua tekemäsi muutokset?";
-    ls->warningOverwriteFile    = "Haluatko ylikirjoittaa tiedoston:";
+    ls->warningOverwriteFile    = "Haluatko korvata tiedoston:";
     ls->errorTitle              = "blueMSX - Virhe";
     ls->errorEnterFullscreen    = "Siirtyminen kokoruututilaan epäonnistui.  \n";
     ls->errorDirectXFailed      = "DirectX objektien luonti epäonnistui.       \nDirectX on korvattu GDI:llä.\nTarkista video asetukset.";
@@ -156,16 +156,19 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuRunCleanReset       = "Täydellinen uudelleenkäynnistys";
 
     ls->menuToolsMachine        = "Tietokone muokkain";
-    ls->menuToolsShortcuts      = "Pikanäppäin valinnat";
+    ls->menuToolsShortcuts      = "Pikanäppäin asetukset";
     ls->menuToolsKeyboard       = "Peliohjaimet / Näppäimistökartta";
     ls->menuToolsMixer          = "Mikseri";
+    ls->menuToolsDebugger       = "Debuggerin";               // New in 2.5
+    ls->menuToolsTrainer        = "Trainerin";                // New in 2.5
+    ls->menuToolsTraceLogger    = "Trace Loggerinna";         // New in 2.5
 
     ls->menuFile                = "Tiedosto";
     ls->menuRun                 = "Emulaatio";
     ls->menuWindow              = "Ikkuna";
     ls->menuOptions             = "Asetukset";
     ls->menuTools                = "Työkalut";
-    ls->menuHelp                = "Ohjeet";
+    ls->menuHelp                = "Ohje";
 
 
     //----------------------
@@ -217,7 +220,7 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->dlgAboutAbout           = "TIEDOT\r\n====";
     ls->dlgAboutVersion         = "Versio:";
-    ls->dlgAboutBuildNumber     = "Kooste:";
+    ls->dlgAboutBuildNumber     = "Käännös:";
     ls->dlgAboutBuildDate       = "Päiväys:";
     ls->dlgAboutCreat           = "Tekijä: Daniel Vik";
     ls->dlgAboutDevel           = "KEHITTÄJÄT\r\n=======";
@@ -265,8 +268,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSndYkInGB           = "YK-01/YK-10/YK-20 Sisään ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI Sisään ";
     ls->propSndMidiOutGB        = "MIDI Ulos ";
-    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "All";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI Kanava:";                      // New in 2.5
+    ls->propSndMidiAll          = "Kaikki";                                // New in 2.5
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitorin tyyppi:";
@@ -289,7 +292,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPerfFrameSkipText   = "Ruudunpäivitysten ohitus:";
     ls->propPerfAudioDrvGB      = "Ääni ajuri ";
     ls->propPerfAudioDrvText    = "Ääni ajuri:";
-    ls->propPerfAudioBufSzText  = "Ääni puskurin koko:";
+    ls->propPerfAudioBufSzText  = "Äänipuskurin koko:";
     ls->propPerfEmuGB           = "Emulaatio ";
     ls->propPerfSyncModeText    = "Tahdistus tapa:";
     ls->propFullscreenResText   = "Resoluutio kokoruututilassa:";
@@ -312,7 +315,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPortsEmulateMsxPrn  = "Emulaatio:";
 
     ls->propSetFileHistoryGB    = "Tiedostohistoria ";
-    ls->propSetFileHistorySize  = "Tiedostojen lukumäärä Tiedostohistoriassa:";
+    ls->propSetFileHistorySize  = "Tiedostojen lukumäärä:";
     ls->propSetFileHistoryClear = "Tyhjennä historia";
     ls->propFileTypes           = " Rekisteröi tiedostotyypit blueMSX:ään (.rom, .dsk, .cas, .sta)";
     ls->propWindowsEnvGB        = "Windows Ympäristö ";
@@ -379,14 +382,15 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automaattinen (nopea)";
     ls->enumEmuSyncNone         = "Ei käytössä";
     ls->enumEmuSyncVblank       = "Tahdistus PC:n ruudunpäivitykseen";
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "Tahdistamaton PC:n ruudunpäivitys";             // New in 2.5
 
     ls->enumControlsJoyNone     = "Tyhjä";
     ls->enumControlsJoyMouse    = "Hiiri";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoy2Button = "2-näppäiminen Joystick";                   // New in 2.5
+    ls->enumControlsJoyGunstick  = "Valopistooli";                      // New in 2.5
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
@@ -403,7 +407,7 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->confOpenRom             = "Valitse ROM tiedosto";
     ls->confSaveTitle           = "blueMSX - Tallenna Tietokone profiili";
-    ls->confSaveText            = "Haluatko ylikirjoittaa Tietokone profiilin:";
+    ls->confSaveText            = "Haluatko korvata Tietokone profiilin:";
     ls->confSaveAsTitle         = "Tallenna tietokone profiili nimellä...";
     ls->confSaveAsMachineName   = "Tietokone profiili:";
     ls->confDiscardTitle        = "blueMSX - Tietokone muokkain";
@@ -461,13 +465,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutDescription     = "Pikanäppäin";
 
     ls->shortcutSaveConfig      = "blueMSX - Tallenna Asetukset";
-    ls->shortcutOverwriteConfig = "Haluatko ylikirjoittaa pikanäppäin asetukset:";
-    ls->shortcutExitConfig      = "blueMSX - Poistu pikanäppäin valinnoista";
+    ls->shortcutOverwriteConfig = "Haluatko korvata pikanäppäin asetukset:";
+    ls->shortcutExitConfig      = "blueMSX - Poistu pikanäppäin asetuksista";
     ls->shortcutDiscardConfig   = "Haluatko hylätä tekemäsi muutokset pikanäppäin asetuksiin?";
     ls->shortcutSaveConfigAs    = "blueMSX - Tallenna pikanäppäin asetukset";
     ls->shortcutConfigName      = "Asetusten nimi:";
     ls->shortcutNewProfile      = "< Uusi profiili >";
-    ls->shortcutConfigTitle     = "blueMSX - Pikanäppäinten muokkaus";
+    ls->shortcutConfigTitle     = "blueMSX - Pikanäppäin asetukset";
     ls->shortcutAssign          = "Käytä";
     ls->shortcutPressText       = "Pikanäppäin (paina):";
     ls->shortcutScheme          = "Pikanäppäin profiili:";
@@ -507,7 +511,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutStop            = "Pysäytä emulatio";
     ls->shortcutResetHard       = "Kylmäkäynnistys";
     ls->shortcutResetSoft       = "Lämminkäynnistys";
-    ls->shortcutResetClean      = "Uudelleenkäynnistys virtanapista";
+    ls->shortcutResetClean      = "Täydellinen uudelleenkäynnistys";
     ls->shortcutSizeSmall       = "Aseta pieni ikkunan koko";
     ls->shortcutSizeNormal      = "Aseta normaali ikkunan koko";
     ls->shortcutSizeFullscreen  = "Aseta kokoruututila";

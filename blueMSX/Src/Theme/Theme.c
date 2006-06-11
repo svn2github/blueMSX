@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -192,7 +192,8 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY1_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort1IsMouse()); break;
     case THEME_TRIGGER_JOY1_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort1IsTetris2Dongle()); break;
     case THEME_TRIGGER_JOY1_MAGICKEY:  idx = TEST(actionType, themeTriggerJoyPort1IsMagicKeyDongle()); break;
-    case THEME_TRIGGER_JOY1_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort1IsLightgun()); break;
+    case THEME_TRIGGER_JOY1_GUNSTICK:  idx = TEST(actionType, themeTriggerJoyPort1IsGunstick()); break;
+    case THEME_TRIGGER_JOY1_ASCIILASER:idx = TEST(actionType, themeTriggerJoyPort1IsAsciiLaser()); break;
     case THEME_TRIGGER_JOY1_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort1IsColecoJoystick()); break;
 
     case THEME_TRIGGER_JOY2_ENABLE:    idx = TEST(actionType, themeTriggerJoyPort2Enabled()); break;
@@ -201,7 +202,8 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY2_MOUSE:     idx = TEST(actionType, themeTriggerJoyPort2IsMouse()); break;
     case THEME_TRIGGER_JOY2_TETRIS:    idx = TEST(actionType, themeTriggerJoyPort2IsTetris2Dongle()); break;
     case THEME_TRIGGER_JOY2_MAGICKEY:  idx = TEST(actionType, themeTriggerJoyPort2IsMagicKeyDongle()); break;
-    case THEME_TRIGGER_JOY2_LIGHTGUN:  idx = TEST(actionType, themeTriggerJoyPort2IsLightgun()); break;
+    case THEME_TRIGGER_JOY2_GUNSTICK:  idx = TEST(actionType, themeTriggerJoyPort2IsGunstick()); break;
+    case THEME_TRIGGER_JOY2_ASCIILASER:idx = TEST(actionType, themeTriggerJoyPort2IsAsciiLaser()); break;
     case THEME_TRIGGER_JOY2_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort2IsColecoJoystick()); break;
     }
 

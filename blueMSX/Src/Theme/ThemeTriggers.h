@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,7 +106,8 @@ typedef enum {
     THEME_TRIGGER_JOY1_MOUSE,
     THEME_TRIGGER_JOY1_TETRIS,
     THEME_TRIGGER_JOY1_MAGICKEY,
-    THEME_TRIGGER_JOY1_LIGHTGUN,
+    THEME_TRIGGER_JOY1_GUNSTICK,
+    THEME_TRIGGER_JOY1_ASCIILASER,
     THEME_TRIGGER_JOY1_COLECOJOY,
     THEME_TRIGGER_JOY2_ENABLE,
     THEME_TRIGGER_JOY2_NONE,
@@ -114,7 +115,8 @@ typedef enum {
     THEME_TRIGGER_JOY2_MOUSE,
     THEME_TRIGGER_JOY2_TETRIS,
     THEME_TRIGGER_JOY2_MAGICKEY,
-    THEME_TRIGGER_JOY2_LIGHTGUN,
+    THEME_TRIGGER_JOY2_GUNSTICK,
+    THEME_TRIGGER_JOY2_ASCIILASER,
     THEME_TRIGGER_JOY2_COLECOJOY,
 
     THEME_TRIGGER_TEXT_SCANLINESPCT,
@@ -275,7 +277,8 @@ int themeTriggerJoyPort1IsJoystick();
 int themeTriggerJoyPort1IsMouse();
 int themeTriggerJoyPort1IsTetris2Dongle();
 int themeTriggerJoyPort1IsMagicKeyDongle();
-int themeTriggerJoyPort1IsLightgun();
+int themeTriggerJoyPort1IsGunstick();
+int themeTriggerJoyPort1IsAsciiLaser();
 int themeTriggerJoyPort1IsColecoJoystick();
 int themeTriggerJoyPort2Enabled();
 int themeTriggerJoyPort2IsNone();
@@ -283,7 +286,8 @@ int themeTriggerJoyPort2IsJoystick();
 int themeTriggerJoyPort2IsMouse();
 int themeTriggerJoyPort2IsTetris2Dongle();
 int themeTriggerJoyPort2IsMagicKeyDongle();
-int themeTriggerJoyPort2IsLightgun();
+int themeTriggerJoyPort2IsGunstick();
+int themeTriggerJoyPort2IsAsciiLaser();
 int themeTriggerJoyPort2IsColecoJoystick();
 
 int themeTriggerConfDiskRI();

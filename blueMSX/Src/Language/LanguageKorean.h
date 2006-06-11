@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.23 $ + additions 2005/03/03
+** $Revision: 1.24 $ + additions 2005/03/03
 **
-** $Date: 2006-06-09 20:30:02 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuToolsMachine         = "머신 편집기";
     ls->menuToolsShortcuts      = "단축키 편집기";
     ls->menuToolsKeyboard       = "키보드 편집기";
+    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
+    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
+    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
 
     ls->menuFile                = "파일";
     ls->menuRun                 = "실행";
@@ -385,7 +388,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumControlsJoyTetris2Dongle = "테트리스 2 동글";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
     ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 

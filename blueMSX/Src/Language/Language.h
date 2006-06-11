@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-06-09 20:30:01 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,6 +182,9 @@ _TCHAR* langMenuToolsMachine();
 _TCHAR* langMenuToolsShortcuts();
 _TCHAR* langMenuToolsKeyboard();
 _TCHAR* langMenuToolsMixer();
+_TCHAR* langMenuToolsDebugger();
+_TCHAR* langMenuToolsTrainer();
+_TCHAR* langMenuToolsTraceLogger();
 
 _TCHAR* langMenuFile();
 _TCHAR* langMenuRun();
@@ -405,7 +408,8 @@ _TCHAR* langEnumControlsJoyTetrisDongle();
 _TCHAR* langEnumControlsJoyMagicKeyDongle();
 _TCHAR* langEnumControlsJoyMouse();
 _TCHAR* langEnumControlsJoy2Button();
-_TCHAR* langEnumControlsJoyLightGun();
+_TCHAR* langEnumControlsJoyGunStick();
+_TCHAR* langEnumControlsJoyAsciiLaser();
 _TCHAR* langEnumControlsJoyColeco();
 
 //----------------------

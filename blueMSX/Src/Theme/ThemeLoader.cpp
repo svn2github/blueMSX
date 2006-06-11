@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -449,7 +449,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "port1-mouse"))           return t | THEME_TRIGGER_JOY1_MOUSE;
     if (0 == strcmp(s, "port1-tetris2dongle"))   return t | THEME_TRIGGER_JOY1_TETRIS;
     if (0 == strcmp(s, "port1-magickeydongle"))  return t | THEME_TRIGGER_JOY1_MAGICKEY;
-    if (0 == strcmp(s, "port1-lightgun"))        return t | THEME_TRIGGER_JOY1_LIGHTGUN;
+    if (0 == strcmp(s, "port1-gunstick"))        return t | THEME_TRIGGER_JOY1_GUNSTICK;
+    if (0 == strcmp(s, "port1-asciilaser"))      return t | THEME_TRIGGER_JOY1_ASCIILASER;
     if (0 == strcmp(s, "port1-colecojoystick"))  return t | THEME_TRIGGER_JOY1_COLECOJOY;
     if (0 == strcmp(s, "port2-enable"))          return t | THEME_TRIGGER_JOY2_ENABLE;
     if (0 == strcmp(s, "port2-none"))            return t | THEME_TRIGGER_JOY2_NONE;
@@ -457,7 +458,8 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "port2-mouse"))           return t | THEME_TRIGGER_JOY2_MOUSE;
     if (0 == strcmp(s, "port2-tetris2dongle"))   return t | THEME_TRIGGER_JOY2_TETRIS;
     if (0 == strcmp(s, "port2-magickeydongle"))  return t | THEME_TRIGGER_JOY2_MAGICKEY;
-    if (0 == strcmp(s, "port2-lightgun"))        return t | THEME_TRIGGER_JOY2_LIGHTGUN;
+    if (0 == strcmp(s, "port2-gunstick"))        return t | THEME_TRIGGER_JOY2_GUNSTICK;
+    if (0 == strcmp(s, "port2-asciilaser"))      return t | THEME_TRIGGER_JOY2_ASCIILASER;
     if (0 == strcmp(s, "port2-colecojoystick"))  return t | THEME_TRIGGER_JOY2_COLECOJOY;
 
     if (0 == strcmp(s, "text-scanlinespct"))        return t | THEME_TRIGGER_TEXT_SCANLINESPCT;

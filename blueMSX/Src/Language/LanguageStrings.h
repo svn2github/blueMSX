@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-06-09 20:30:02 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -161,6 +161,9 @@ typedef struct {
     _TCHAR* menuToolsShortcuts;
     _TCHAR* menuToolsKeyboard;
     _TCHAR* menuToolsMixer;
+    _TCHAR* menuToolsDebugger;
+    _TCHAR* menuToolsTrainer;
+    _TCHAR* menuToolsTraceLogger;
 
     _TCHAR* menuFile;
     _TCHAR* menuRun;
@@ -383,7 +386,8 @@ typedef struct {
     _TCHAR* enumControlsJoyTetris2Dongle;
     _TCHAR* enumControlsJoyTMagicKeyDongle;
     _TCHAR* enumControlsJoy2Button;
-    _TCHAR* enumControlsJoyLightGun;
+    _TCHAR* enumControlsJoyGunstick;
+    _TCHAR* enumControlsJoyAsciiLaser;
     _TCHAR* enumControlsJoyColeco;
 
 

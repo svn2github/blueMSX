@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,7 +55,8 @@
 #define langEnumControlsJoyMagicKeyDongle()     "Magic Key Dongle"
 #define langEnumControlsJoyMouse()              "Mouse"
 #define langEnumControlsJoy2Button()            "2-Button Joystick"
-#define langEnumControlsJoyLightGun()           "Light Gun"
+#define langEnumControlsJoyGunStick()           "Gun Stick"
+#define langEnumControlsJoyAsciiLaser()         "ASCII Plus-X Terminator laser"
 #define langEnumControlsJoyColeco()             "ColecoVision Joystick"
 #define langTextUnknown()                       "Unknown"
 #else
@@ -495,8 +496,12 @@ int themeTriggerJoyPort1IsMagicKeyDongle() {
     return joystickPortGetType(0) == JOYSTICK_PORT_MAGICKEYDONGLE ? 1 : 0;
 }
 
-int themeTriggerJoyPort1IsLightgun() {
-    return joystickPortGetType(0) == JOYSTICK_PORT_LIGHTGUN ? 1 : 0;
+int themeTriggerJoyPort1IsGunstick() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_GUNSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort1IsAsciiLaser() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_ASCIILASER ? 1 : 0;
 }
 
 int themeTriggerJoyPort1IsColecoJoystick() {
@@ -527,8 +532,12 @@ int themeTriggerJoyPort2IsMagicKeyDongle() {
     return joystickPortGetType(1) == JOYSTICK_PORT_MAGICKEYDONGLE ? 1 : 0;
 }
 
-int themeTriggerJoyPort2IsLightgun() {
-    return joystickPortGetType(1) == JOYSTICK_PORT_LIGHTGUN ? 1 : 0;
+int themeTriggerJoyPort2IsGunstick() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_GUNSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsAsciiLaser() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_ASCIILASER ? 1 : 0;
 }
 
 int themeTriggerJoyPort2IsColecoJoystick() {
@@ -878,7 +887,8 @@ char* themeTriggerJoyPort1() {
     case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
     case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
     case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
-    case JOYSTICK_PORT_LIGHTGUN:        return langEnumControlsJoyLightGun();
+    case JOYSTICK_PORT_GUNSTICK:        return langEnumControlsJoyGunStick();
+    case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
     case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
     case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
     }
@@ -891,7 +901,8 @@ char* themeTriggerJoyPort2() {
     case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
     case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
     case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
-    case JOYSTICK_PORT_LIGHTGUN:        return langEnumControlsJoyLightGun();
+    case JOYSTICK_PORT_GUNSTICK:        return langEnumControlsJoyGunStick();
+    case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
     case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
     case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
     }

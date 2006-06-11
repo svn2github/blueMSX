@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-06-09 20:30:02 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Configuração de Atalhos";
     ls->menuToolsKeyboard       = "Configuração do Teclado"; 
     ls->menuToolsMixer          = "Mixer de Audio"; 
+    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
+    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
+    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
 
     ls->menuFile                = "Arquivo";
     ls->menuRun                 = "Execução";
@@ -385,7 +388,8 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
     ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 

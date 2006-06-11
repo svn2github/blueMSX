@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-11 19:02:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -578,8 +578,10 @@ static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
                ID_CTRLPORT1_BASE + 3, langEnumControlsJoyTetrisDongle());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 6, langEnumControlsJoyMagicKeyDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyLightGun());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_GUNSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyGunStick());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_ASCIILASER ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 7, langEnumControlsJoyAsciiLaser());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
                ID_CTRLPORT1_BASE + 5, langEnumControlsJoyColeco());
     
@@ -596,17 +598,19 @@ static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 0, langEnumControlsJoyNone());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 1, "2-button Joystick");
+               ID_CTRLPORT2_BASE + 1, langEnumControlsJoy2Button());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 2, langEnumControlsJoyMouse());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 3, langEnumControlsJoyTetrisDongle());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 6, langEnumControlsJoyMagicKeyDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_LIGHTGUN ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 4, "Light Gun");
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_GUNSTICK ? MFS_CHECKED : 0), 
+               ID_CTRLPORT2_BASE + 4, langEnumControlsJoyGunStick());
+    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_ASCIILASER ? MFS_CHECKED : 0), 
+               ID_CTRLPORT1_BASE + 7, langEnumControlsJoyAsciiLaser());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 5, "ColecoVision Joystick");
+               ID_CTRLPORT2_BASE + 5, langEnumControlsJoyColeco());
     
     return hMenu;
 }
@@ -684,7 +688,11 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts)
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
         for (i = 0; i < count; i++) {
-            AppendMenu(hMenu, MF_STRING, ID_TOOLPLUGINS + i, toolInfoGetName(toolInfoGet(i)));
+            const char* toolName = toolInfoGetName(toolInfoGet(i));
+            if (strcmp(toolName, "Debugger") == 0)      toolName = langMenuToolsDebugger();
+            if (strcmp(toolName, "Trainer") == 0)       toolName = langMenuToolsTrainer();
+            if (strcmp(toolName, "Trace Logger") == 0)  toolName = langMenuToolsTraceLogger();
+            AppendMenu(hMenu, MF_STRING, ID_TOOLPLUGINS + i, toolName);
         }
     }
     

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-06-09 20:30:02 $
+** $Date: 2006-06-11 19:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,9 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "快速鍵編輯器";
     ls->menuToolsKeyboard       = "鍵盤編輯器";
     ls->menuToolsMixer          = "混合器";
+    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
+    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
+    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
 
     ls->menuFile                = "檔案";
     ls->menuRun                 = "執行";
@@ -384,7 +387,8 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumControlsJoyTetris2Dongle = "俄羅斯方塊 2 介面模組";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
     ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyLightGun = "Light Gun";                          // New in 2.5
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
 
