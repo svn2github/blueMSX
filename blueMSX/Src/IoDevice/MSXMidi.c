@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-09-24 00:09:49 $
+** $Date: 2006-06-11 07:53:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -344,6 +344,14 @@ static void getDebugInfo(MSXMidi* msxMidi, DbgDevice* dbgDevice)
     }
 }
 
+static void midiInCallback(MSXMidi* msxMidi, UInt8* buffer, UInt32 length)
+{
+    while (length--) {
+        i8251RxData(msxMidi->i8251, *buffer++);
+    }
+}
+
+
 /*****************************************
 ** MSX MIDI Create Method
 ******************************************
@@ -372,7 +380,7 @@ int MSXMidiCreate()
     ioPortRegister(0xee, readIo, writeIo, msxMidi);
     ioPortRegister(0xef, readIo, writeIo, msxMidi);
 
-    msxMidi->midiIo = midiIoCreate();
+    msxMidi->midiIo = midiIoCreate(midiInCallback, msxMidi);
 
     reset(msxMidi);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-10 00:55:58 $
+** $Date: 2006-06-11 07:53:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,9 @@ typedef struct MidiIO MidiIO;
 
 typedef enum { MIDI_NONE, MIDI_FILE, MIDI_HOST } MidiType;
 
-MidiIO* midiIoCreate();
+typedef void (*MidiIOCb)(void*, UInt8*, UInt32);
+
+MidiIO* midiIoCreate(MidiIOCb cb, void* ref);
 void midiIoDestroy(MidiIO* midiIo);
 
 void midiIoTransmit(MidiIO* midiIo, UInt8 value);

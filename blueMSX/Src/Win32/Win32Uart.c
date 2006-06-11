@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Uart.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-05-23 00:08:27 $
+** $Date: 2006-06-11 07:53:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -147,8 +147,6 @@ static BOOL uartCreate(void)
     if (hReadThread == NULL)
 		return FALSE;
 
-	CloseHandle(hReadThread);
-
     bUartInitialized = TRUE;
 
     return TRUE;
@@ -157,6 +155,14 @@ static BOOL uartCreate(void)
 static void uartDestroy(void)
 {
     CloseHandle (hComPort);
+
+    if (hReadThread != NULL) {
+
+        WaitForSingleObject(hReadThread, INFINITE);
+	    CloseHandle(hReadThread);
+        hReadThread = NULL;
+    }
+    
     bUartInitialized = FALSE;
 }
 
@@ -164,8 +170,9 @@ static void uartTransmit(BYTE value)
 {
     DWORD dwNumBytesWritten = 0;
 
-if (uartReceiveCallback != NULL)
-(*uartReceiveCallback) (value);
+    WriteFile(hComPort, &value, 1, &dwNumBytesWritten, 0);
+//if (uartReceiveCallback != NULL)
+//(*uartReceiveCallback) (value);
 //    if (!WriteFile(hComPort, &value, 1, &dwNumBytesWritten, 0))
   //      uartDestroy();
 }
@@ -184,5 +191,6 @@ int archUartCreate(void (*archUartReceiveCallback) (BYTE))
 
 void archUartDestroy(void)
 {
+    uartReceiveCallback = NULL;
     uartDestroy();
 }

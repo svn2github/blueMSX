@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MidiIO.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-10 00:55:58 $
+** $Date: 2006-06-11 07:53:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,8 @@ typedef struct MidiIO {
     MidiType outType;
     FILE* outFile;
     ArchMidi* outHost;
+    MidiIOCb cb;
+    void* ref;
 };
 
 static MidiType theMidiInType = MIDI_NONE;
@@ -69,6 +71,9 @@ static void setOutType(int device, MidiIO* midiIo)
 
 static void midiInCb(MidiIO* midiIO, UInt8* buffer, UInt32 length)
 {
+    if (midiIO->cb != NULL) {
+        midiIO->cb(midiIO->ref, buffer, length);
+    }
 }
 
 static void setInType(int device, MidiIO* midiIo)
@@ -127,10 +132,12 @@ void midiIoTransmit(MidiIO* midiIo, UInt8 value)
     }
 }
 
-MidiIO* midiIoCreate()
+MidiIO* midiIoCreate(MidiIOCb cb, void* ref)
 {
     MidiIO* midiIo = calloc(1, sizeof(MidiIO));
 
+    midiIo->cb = cb;
+    midiIo->ref = ref;
     midiIo->outType = theMidiOutType;
     midiIo->inType = theMidiInType;
     setOutType(0, midiIo);
