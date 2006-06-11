@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-06-11 20:08:37 $
+** $Date: 2006-06-11 20:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -919,6 +919,7 @@ _TCHAR* langRomTypeExtRam2mb() { return ls->romTypeExtRam2mb; }
 _TCHAR* langRomTypeExtRam4mb() { return ls->romTypeExtRam4mb; }
 _TCHAR* langRomTypeMsxMusic() { return ls->romTypeMsxMusic; }
 _TCHAR* langRomTypeMsxAudio() { return ls->romTypeMsxAudio; }
+_TCHAR* langRomTypeY8950() { return ls->romTypeY8950; }
 _TCHAR* langRomTypeMoonsound() { return ls->romTypeMoonsound; }
 _TCHAR* langRomTypeSvi328Cart() { return ls->romTypeSvi328Cart; }
 _TCHAR* langRomTypeSvi328Fdc() { return ls->romTypeSvi328Fdc; }

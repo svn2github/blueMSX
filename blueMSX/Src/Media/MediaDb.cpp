@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-06-11 20:08:38 $
+** $Date: 2006-06-11 20:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,6 +128,7 @@ typedef map<string, MediaType*> Sha1Map;
 #define langRomTypeMsxMusic()       "MSX Music"
 #define langRomTypeMsxAudio()       "MSX Audio"
 #define langRomTypeMoonsound()      "Moonsound"
+#define langRomTypeY8950()          "Y8950";
 #define langRomTypeSvi328Cart()     "SVI-328 Cartridge"
 #define langRomTypeSvi328Fdc()      "SVI-328 Disk Controller"
 #define langRomTypeSvi328Prn()      "SVI-328 Printer"
@@ -728,7 +729,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SG1000:      return langRomTypeSg1000Cart();
     case ROM_SG1000CASTLE:return langRomTypeTheCastle();
     case ROM_SONYHBI55:   return langRomTypeSonyHbi55();
-    case ROM_MSXAUDIODEV: return langRomTypeMsxAudio();
+    case ROM_MSXAUDIODEV: return langRomTypeY8950();
     case ROM_MSXPRN:      return langRomTypeMsxPrinter();
     case ROM_TURBORPCM:   return langRomTypeTurborPcm();
     case ROM_GAMEREADER:  return langRomTypeGameReader();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-11 20:08:37 $
+** $Date: 2006-06-11 20:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -642,6 +642,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeExtRam4mb        = "4MB External RAM";
     ls->romTypeMsxMusic         = "MSX Music";
     ls->romTypeMsxAudio         = "MSX Audio";
+    ls->romTypeY8950            = "Y8950";
     ls->romTypeMoonsound        = "Moonsound";
     ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
     ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-06-11 20:08:38 $
+** $Date: 2006-06-11 20:14:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -640,6 +640,7 @@ typedef struct {
     _TCHAR* romTypeExtRam4mb;
     _TCHAR* romTypeMsxMusic;
     _TCHAR* romTypeMsxAudio;
+    _TCHAR* romTypeY8950;
     _TCHAR* romTypeMoonsound;
     _TCHAR* romTypeSvi328Cart;
     _TCHAR* romTypeSvi328Fdc;
