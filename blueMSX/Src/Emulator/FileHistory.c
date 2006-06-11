@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-01 20:09:00 $
+** $Date: 2006-06-11 21:17:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@ static char extendedName[PROP_MAX_CARTS][256];
 static char extendedDiskName[PROP_MAX_DISKS][256];
 static char extendedCasName[PROP_MAX_TAPES][256];
 
-char* stripPathExt(char* filename) {
+const char* stripPathExt(const char* filename) {
     static char buffer[128];
     
     strcpy(buffer, stripPath(filename));
@@ -58,8 +58,8 @@ char* stripPathExt(char* filename) {
     return buffer;
 }
 
-char* stripPath(char* filename) {
-    char* ptr = filename + strlen(filename) - 1;
+const char* stripPath(const char* filename) {
+    const char* ptr = filename + strlen(filename) - 1;
 
     while (--ptr >= filename) {
         if (*ptr == '/' || *ptr == '\\') {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.135 $
+** $Revision: 1.136 $
 **
-** $Date: 2006-06-10 00:55:58 $
+** $Date: 2006-06-11 21:17:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2243,7 +2243,7 @@ int setDefaultPath() {
 
     // Set current directory to where the exe is located
     GetModuleFileName((HINSTANCE)GetModuleHandle(NULL), buffer, 512);
-    ptr = stripPath(buffer);
+    ptr = (char*)stripPath(buffer);
     *ptr = 0;
     chdir(buffer);
 
@@ -2451,7 +2451,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         // Set current directory to where the exe is located
         char* ptr;
         GetModuleFileName((HINSTANCE)GetModuleHandle(NULL), buffer, 512);
-        ptr = stripPath(buffer);
+        ptr = (char*)stripPath(buffer);
         *ptr = 0;
         SetCurrentDirectory(buffer);
     }

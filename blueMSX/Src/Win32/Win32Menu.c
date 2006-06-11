@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-11 21:17:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -212,6 +212,36 @@ HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStoppe
 HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
 
 
+
+static const char* getCleanFileName(const char* fileName)
+{
+    if (strcmp(fileName, CARTNAME_SNATCHER) == 0)       return langRomTypeSnatcher();
+    if (strcmp(fileName, CARTNAME_SDSNATCHER) == 0)     return langRomTypeSdSnatcher();
+    if (strcmp(fileName, CARTNAME_SCCMIRRORED) == 0)    return langRomTypeSccMirrored();
+    if (strcmp(fileName, CARTNAME_SCCEXPANDED) == 0)    return langRomTypeSccExtended();
+    if (strcmp(fileName, CARTNAME_SCC) == 0)            return langMenuCartSCC();
+    if (strcmp(fileName, CARTNAME_SCCPLUS) == 0)        return langMenuCartSCCPlus();
+    if (strcmp(fileName, CARTNAME_FMPAC) == 0)          return langMenuCartFMPac();
+    if (strcmp(fileName, CARTNAME_PAC) == 0)            return langMenuCartPac();
+    if (strcmp(fileName, CARTNAME_SONYHBI55) == 0)      return langMenuCartHBI55();
+    if (strcmp(fileName, CARTNAME_EXTRAM512KB) == 0)    return langRomTypeExtRam512();
+    if (strcmp(fileName, CARTNAME_EXTRAM1MB) == 0)      return langRomTypeExtRam1mb();
+    if (strcmp(fileName, CARTNAME_EXTRAM2MB) == 0)      return langRomTypeExtRam2mb();
+    if (strcmp(fileName, CARTNAME_EXTRAM4MB) == 0)      return langRomTypeExtRam4mb();
+    if (strcmp(fileName, CARTNAME_MEGARAM128) == 0)     return langRomTypeMegaRam128();
+    if (strcmp(fileName, CARTNAME_MEGARAM256) == 0)     return langRomTypeMegaRam256();
+    if (strcmp(fileName, CARTNAME_MEGARAM512) == 0)     return langRomTypeMegaRam512();
+    if (strcmp(fileName, CARTNAME_MEGARAM768) == 0)     return langRomTypeMegaRam768();
+    if (strcmp(fileName, CARTNAME_MEGARAM2M) == 0)      return langRomTypeMegaRam2mb();
+    if (strcmp(fileName, CARTNAME_GAMEREADER) == 0)     return langRomTypeGameReader();
+    if (strcmp(fileName, CARTNAME_SUNRISEIDE) == 0)     return langRomTypeSunriseIde();
+    if (strcmp(fileName, CARTNAME_BEERIDE) == 0)        return langRomTypeBeerIde();
+    if (strcmp(fileName, CARTNAME_GIDE) == 0)           return langRomTypeGide();
+
+    return stripPath(fileName);
+}
+
+
 static void showPopupMenu(HMENU hMenu, int x, int y)
 {
     HWND hwnd = GetForegroundWindow();
@@ -357,7 +387,6 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     return hMenu;
 }
 
-
 static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shortcuts, int enableSpecial)
 {
     int idOffset = cartNo * ID_FILE_CART_OFFSET;
@@ -379,7 +408,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), stripPath(pProperties->media.carts[cartNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.carts[cartNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[cartNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_CART_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -395,7 +424,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cartridge[cartNo][i]));
+        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
     }
 
@@ -422,7 +451,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTNEW, langMenuDiskInsertNew());
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_DISK_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -438,7 +467,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.diskdrive[diskNo][i]));
+        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.diskdrive[diskNo][i]));
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_HISTORY + i, langBuffer);
     }
 
@@ -456,7 +485,7 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), stripPath(pProperties->media.disks[diskNo].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
 
     return hMenu;
@@ -513,7 +542,7 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->casInsert));
     AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_INSERT, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), stripPath(pProperties->media.tapes[0].fileName));
+    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), getCleanFileName(pProperties->media.tapes[0].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -541,7 +570,7 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {
-        _stprintf(langBuffer, "%hs", stripPath(pProperties->filehistory.cassette[0][i]));
+        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cassette[0][i]));
         AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
     }
 

@@ -216,6 +216,9 @@
 			RelativePath=".\LanguageEnglish.h">
 		</File>
 		<File
+			RelativePath=".\LanguageFinnish.h">
+		</File>
+		<File
 			RelativePath=".\LanguageJapanese.h">
 		</File>
 		<File
