@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-11 20:14:45 $
+** $Date: 2006-06-12 05:38:08 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2006 Daniel Vik, NYYRIKKI
 **
 ** Translated By : NYYRIKKI 2006
 **
@@ -159,9 +159,9 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Pikanäppäin asetukset";
     ls->menuToolsKeyboard       = "Peliohjaimet / Näppäimistökartta";
     ls->menuToolsMixer          = "Mikseri";
-    ls->menuToolsDebugger       = "Debuggerin";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainerin";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Loggerinna";         // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
+    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
+    ls->menuToolsTraceLogger    = "Seurantalogi";         // New in 2.5
 
     ls->menuFile                = "Tiedosto";
     ls->menuRun                 = "Emulaatio";
@@ -389,7 +389,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
     ls->enumControlsJoy2Button = "2-näppäiminen Joystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Valopistooli";                      // New in 2.5
+    ls->enumControlsJoyGunstick  = "Gun Stick-valopistooli";                      // New in 2.5
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
@@ -543,8 +543,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutShowShortcuts   = "Näytä pikanäppäin valinnat";
     ls->shortcutShowKeyboard    = "Näytä Peliohjain / Näppäimistö asetukset";
     ls->shortcutShowMixer       = "Näytä Mixeri";
-    ls->shortcutShowDebugger    = "Näytä Debuggeri";
-    ls->shortcutShowTrainer     = "Näytä Traineri";
+    ls->shortcutShowDebugger    = "Näytä Debugger";
+    ls->shortcutShowTrainer     = "Näytä Trainer";
     ls->shortcutShowHelp        = "Näytä ohjeet";
     ls->shortcutShowAbout       = "Näytä Tietoja blueMSX:stä";
     ls->shortcutShowFiles       = "Näytä tiedosto asetukset";
@@ -566,8 +566,8 @@ void langInitFinnish(LanguageStrings* ls)
     // Rom type lines
     //----------------------
 
-    ls->romTypeStandard         = "Standard";
-    ls->romTypeMsxdos2          = "MSXDOS 2";
+    ls->romTypeStandard         = "Standardi";
+    ls->romTypeMsxdos2          = "MSX-DOS 2";
     ls->romTypeKonamiScc        = "Konami SCC";
     ls->romTypeKonami           = "Konami";
     ls->romTypeAscii8           = "ASCII 8";
@@ -586,24 +586,24 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeSccPlus          = "SCC+";
     ls->romTypeSnatcher         = "The Snatcher";
     ls->romTypeSdSnatcher       = "SD Snatcher";
-    ls->romTypeSccMirrored      = "SCC mirrored";
-    ls->romTypeSccExtended      = "SCC extended";
-    ls->romTypeFmpac            = "FMPAC (SRAM)";
-    ls->romTypeFmpak            = "FMPAK";
-    ls->romTypeKonamiGeneric    = "Konami Generic";
+    ls->romTypeSccMirrored      = "SCC peilattu";
+    ls->romTypeSccExtended      = "SCC laajennettu";
+    ls->romTypeFmpac            = "FM-PAC (SRAM)";
+    ls->romTypeFmpak            = "FM-PAK";
+    ls->romTypeKonamiGeneric    = "Konami Yleinen";
     ls->romTypeSuperPierrot     = "Super Pierrot";
-    ls->romTypeMirrored         = "Mirrored ROM";
-    ls->romTypeNormal           = "Normal ROM";
-    ls->romTypeDiskPatch        = "Normal + Disk Patch";
-    ls->romTypeCasPatch         = "Normal + Cassette Patch";
-    ls->romTypeTc8566afFdc      = "TC8566AF Disk Controller";
-    ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
-    ls->romTypeNationalFdc      = "National Disk Controller";
-    ls->romTypePhilipsFdc       = "Philips Disk Controller";
-    ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
-    ls->romTypeMappedRam        = "Mapped RAM";
-    ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
-    ls->romTypeNormalRam        = "Normal RAM";
+    ls->romTypeMirrored         = "Peilattu ROM";
+    ls->romTypeNormal           = "Tavallinen ROM";
+    ls->romTypeDiskPatch        = "Tavallinen + korjaus levyltä";
+    ls->romTypeCasPatch         = "Tavallinen + korjaus kasetilta";
+    ls->romTypeTc8566afFdc      = "TC8566AF Diskettiasemaohjain";
+    ls->romTypeMicrosolFdc      = "Microsol Diskettiasemaohjain";
+    ls->romTypeNationalFdc      = "National Diskettiasemaohjain";
+    ls->romTypePhilipsFdc       = "Philips Diskettiasemaohjain";
+    ls->romTypeSvi738Fdc        = "SVI-738 Diskettiasemaohjain";
+    ls->romTypeMappedRam        = "Mapper RAM";
+    ls->romTypeMirroredRam1k    = "1kB peilattu RAM";
+    ls->romTypeNormalRam        = "Tavallinen RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";
     ls->romTypeMatsushitaSram   = "Matsushita SRAM";
@@ -616,16 +616,16 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeS1985            = "S1985";
     ls->romTypeS1990            = "S1990";
     ls->romTypeTurborPause      = "Turbo-R Pause";
-    ls->romTypeF4deviceNormal   = "F4 Device Normal";
-    ls->romTypeF4deviceInvert   = "F4 Device Inverted";
+    ls->romTypeF4deviceNormal   = "Tavallinen F4 portti";
+    ls->romTypeF4deviceInvert   = "Käännetty F4 portti";
     ls->romTypeMsxMidi          = "MSX-MIDI";
-    ls->romTypeTurborTimer      = "Turbo-R Timer";
+    ls->romTypeTurborTimer      = "Turbo-R Ajastin";
     ls->romTypeKoei             = "Koei (SRAM)";
     ls->romTypeBasic            = "Basic ROM";
     ls->romTypeHalnote          = "Halnote";
     ls->romTypeLodeRunner       = "Lode Runner";
-    ls->romTypeNormal4000       = "Normal 4000h";
-    ls->romTypeNormalC000       = "Normal C000h";
+    ls->romTypeNormal4000       = "Tavallinen #4000";
+    ls->romTypeNormalC000       = "Tavallinen #C000";
     ls->romTypeKonamiSynth      = "Konami Synthesizer";
     ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
     ls->romTypeKonamiWordPro    = "Konami Word Pro";
@@ -636,34 +636,34 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeMegaRam512       = "512kB MegaRAM";
     ls->romTypeMegaRam768       = "768kB MegaRAM";
     ls->romTypeMegaRam2mb       = "2MB MegaRAM";
-    ls->romTypeExtRam           = "External RAM";
-    ls->romTypeExtRam512        = "512kB External RAM";
-    ls->romTypeExtRam1mb        = "1MB External RAM";
-    ls->romTypeExtRam2mb        = "2MB External RAM";
-    ls->romTypeExtRam4mb        = "4MB External RAM";
-    ls->romTypeMsxMusic         = "MSX Music";
-    ls->romTypeMsxAudio         = "MSX Audio";
+    ls->romTypeExtRam           = "Ulkoinen RAM";
+    ls->romTypeExtRam512        = "512kB Ulkoinen RAM";
+    ls->romTypeExtRam1mb        = "1MB Ulkoinen RAM";
+    ls->romTypeExtRam2mb        = "2MB Ulkoinen RAM";
+    ls->romTypeExtRam4mb        = "4MB Ulkoinen RAM";
+    ls->romTypeMsxMusic         = "MSX-Music";
+    ls->romTypeMsxAudio         = "MSX-Audio";
     ls->romTypeY8950            = "Y8950";
     ls->romTypeMoonsound        = "Moonsound";
-    ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
-    ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";
-    ls->romTypeSvi328Prn        = "SVI-328 Printer";
-    ls->romTypeSvi328Uart       = "SVI-328 Serial Port";
-    ls->romTypeSvi328col80      = "SVI-328 80 Column Card";
-    ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
-    ls->romTypeColecoCart       = "Coleco Cartridge";
-    ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
+    ls->romTypeSvi328Cart       = "SVI-328 Moduli";
+    ls->romTypeSvi328Fdc        = "SVI-328 Levyasemaohjain";
+    ls->romTypeSvi328Prn        = "SVI-328 Tulostin";
+    ls->romTypeSvi328Uart       = "SVI-328 Sarjaportti";
+    ls->romTypeSvi328col80      = "SVI-328 80-merkin kortti";
+    ls->romTypeSvi727col80      = "SVI-727 80-merkin kortti";
+    ls->romTypeColecoCart       = "Coleco Moduli";
+    ls->romTypeSg1000Cart       = "SG-1000 Moduli";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
-    ls->romTypeMsxPrinter       = "MSX Printer";
-    ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
+    ls->romTypeMsxPrinter       = "MSX Tulostin";
+    ls->romTypeTurborPcm        = "Turbo-R PCM piiri";
     ls->romTypeGameReader       = "Sunrise GameReader";
     ls->romTypeSunriseIde       = "Sunrise IDE";
     ls->romTypeBeerIde          = "Beer IDE";
     ls->romTypeGide             = "GIDE";
     ls->romTypeVmx80            = "Microsol VMX-80";
-    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
-    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
+    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitoija";
+    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitoija";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg05            = "Yamaha SFG-05";
 };
