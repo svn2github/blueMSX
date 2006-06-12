@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2006-06-12 15:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,13 +28,14 @@
 ******************************************************************************
 */
 #include "Win32MouseEmu.h"
+#include "ArchInput.h"
  
 static HWND mouseHwnd;
 static int mouseIsRunning = 0;
 static int mouseTimerId;
 static RECT mouseCapRect;
 static int mouseActive;
-static int mouseEnable;
+static AmEnableMode mouseMode;
 static int mouseDX;
 static int mouseDY;
 static int mouseLockDX;
@@ -76,14 +77,14 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
         hasMouseLock = 1;
         ShowCursor(FALSE);
         SetCapture(mouseHwnd);
-        if (mouseEnable) {
+        if (mouseMode == AM_ENABLE_MOUSE) {
             pt.x = 100;
             pt.y = 100;
             ClientToScreen(mouseHwnd, &pt);
             SetCursorPos(pt.x, pt.y);
         }
     }
-    else if (mouseEnable) {
+    else if (mouseMode == AM_ENABLE_MOUSE) {
         int DX = 100 - pt.x;
         int DY = 100 - pt.y;
 
@@ -112,11 +113,13 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
 }
 
 void archMouseSetForceLock(int lock) {
-    if (mouseForceLock == lock) {
+    int tempLock = lock && (mouseMode == AM_ENABLE_MOUSE);
+
+    if (mouseForceLock == lock && mouseForceLock == tempLock) {
         return;
     }
 
-    if (lock) {
+    if (tempLock) {
         if (!hasMouseLock) {
             POINT pt = { 100, 100 };
             ClientToScreen(mouseHwnd, &pt);
@@ -154,8 +157,9 @@ void mouseEmuSetRunState(int isRunning) {
     mouseIsRunning = isRunning;
 }
 
-void archMouseEmuEnable(int enable) {
-    mouseEnable = enable;
+void archMouseEmuEnable(AmEnableMode mode) {
+    mouseMode = mode;
+    archMouseSetForceLock(mouseForceLock);
 }
 
 void mouseEmuActivate(int activate) {

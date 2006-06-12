@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-12 15:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,20 +39,30 @@ static JoystickPortType inputType[JOYSTICK_MAX_PORTS];
 
 void joystickPortSetType(int port, JoystickPortType type) 
 {
+    AmEnableMode mode;
     if (updateHandler != NULL && inputType[port] != type) {
         updateHandler(updateHandlerRef, port, type);
     }
 
     inputType[port] = type;
 
-    archMouseEmuEnable(inputType[0] == JOYSTICK_PORT_MOUSE || 
-                       inputType[0] == JOYSTICK_PORT_GUNSTICK || 
-                       inputType[0] == JOYSTICK_PORT_ASCIILASER ||
-                       inputType[0] == JOYSTICK_PORT_MOUSE || 
-                       inputType[1] == JOYSTICK_PORT_MOUSE || 
-                       inputType[1] == JOYSTICK_PORT_GUNSTICK || 
-                       inputType[1] == JOYSTICK_PORT_ASCIILASER ||
-                       inputType[1] == JOYSTICK_PORT_MOUSE);
+    mode = AM_DISABLE;
+
+    if (inputType[0] == JOYSTICK_PORT_MOUSE || 
+        inputType[1] == JOYSTICK_PORT_MOUSE)
+    {
+        mode = AM_ENABLE_MOUSE;
+    }
+
+    if (inputType[0] == JOYSTICK_PORT_GUNSTICK || 
+        inputType[0] == JOYSTICK_PORT_ASCIILASER || 
+        inputType[1] == JOYSTICK_PORT_GUNSTICK || 
+        inputType[1] == JOYSTICK_PORT_ASCIILASER)
+    {
+        mode = AM_ENABLE_LASER;
+    }
+
+    archMouseEmuEnable(mode);
 }
 
 JoystickPortType joystickPortGetType(int port)

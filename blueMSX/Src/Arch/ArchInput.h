@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchInput.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-11-11 05:14:59 $
+** $Date: 2006-06-12 15:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,9 @@
 
 #include "MsxTypes.h"
 
-void  archMouseEmuEnable();
+typedef enum { AM_DISABLE = 0, AM_ENABLE_MOUSE, AM_ENABLE_LASER } AmEnableMode;
+
+void  archMouseEmuEnable(AmEnableMode mode);
 void archMouseSetForceLock(int lock);
 void archMouseGetState(int* dx, int* dy);
 int  archMouseGetButtonState(int checkAlways);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-06-12 05:38:08 $
+** $Date: 2006-06-12 15:39:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,7 +271,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSndMidiChannel      = "MIDI Kanava:";                      // New in 2.5
     ls->propSndMidiAll          = "Kaikki";                                // New in 2.5
 
-    ls->propMonMonGB            = "Monitor ";
+    ls->propMonMonGB            = "Monitori ";
     ls->propMonTypeText         = "Monitorin tyyppi:";
     ls->propMonEmuText          = "Monitorin emulointi:";
     ls->propVideoTypeText       = "Video tyyppi:";
@@ -669,4 +669,3 @@ void langInitFinnish(LanguageStrings* ls)
 };
 
 #endif
-
