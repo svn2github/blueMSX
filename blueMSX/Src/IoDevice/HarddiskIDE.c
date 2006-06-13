@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-01 23:18:01 $
+** $Date: 2006-06-13 17:24:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include "HarddiskIde.h"
+#include "HarddiskIDE.h"
 #include "Board.h"
 #include "SaveState.h"
 #include "Disk.h"

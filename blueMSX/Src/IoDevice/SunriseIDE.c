@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-05-24 22:58:49 $
+** $Date: 2006-06-13 17:24:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,8 +27,8 @@
 **
 ******************************************************************************
 */
-#include "SunriseIde.h"
-#include "HarddiskIde.h"
+#include "SunriseIDE.h"
+#include "HarddiskIDE.h"
 #include "Board.h"
 #include "SaveState.h"
 #include "Disk.h"

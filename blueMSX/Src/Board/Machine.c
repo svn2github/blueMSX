@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-06-01 00:40:21 $
+** $Date: 2006-06-13 17:24:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,7 +96,7 @@
 #include "romMapperBunsetu.h"
 #include "romMapperTurboRTimer.h"
 #include "romMapperTurboRPCM.h"
-#include "turboRIO.h"
+#include "TurboRIO.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMsxMusic.h"
 #include "romMapperMsxPrn.h"

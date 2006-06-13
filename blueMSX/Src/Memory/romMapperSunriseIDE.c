@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSunriseIDE.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-05-24 22:58:49 $
+** $Date: 2006-06-13 17:24:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
-#include "SunriseIde.h"
+#include "SunriseIDE.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
