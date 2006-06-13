@@ -1864,6 +1864,18 @@ buildnumber.exe
 				RelativePath="..\..\Src\Input\MagicKeyDongle.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Input\MsxAsciiLaser.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxAsciiLaser.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxGunstick.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxGunstick.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Input\MsxJoystick.c">
 			</File>
 			<File

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-05-31 18:05:49 $
+** $Date: 2006-06-13 06:24:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,10 @@ UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderEx
     UInt16 *linePtr;
     int offset;
 
+    if (frameBuffer == NULL) {
+        return NULL;
+    }
+
     Y -= vdp->displayOffest;
 
     linePtr = frameBuffer->line[Y].buffer;
@@ -70,6 +74,10 @@ UInt16 *RefreshBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor2, int li
     UInt16 *linePtr;
     int offset;
 
+    if (frameBuffer == NULL) {
+        return NULL;
+    }
+
     Y -= vdp->displayOffest;
 
     linePtr = frameBuffer->line[Y].buffer;
@@ -96,6 +104,10 @@ static void RefreshRightBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int
     UInt16 *linePtr;
     int offset;
 
+    if (frameBuffer == NULL) {
+        return;
+    }
+
     Y -= vdp->displayOffest;
 
     if (!displayEnable) {
@@ -114,6 +126,10 @@ static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor
     int lineSize = line512 ? 2 : 1;
     UInt16 *linePtr;
     int offset;
+
+    if (frameBuffer == NULL) {
+        return;
+    }
 
     Y -= vdp->displayOffest;
 
@@ -145,7 +161,11 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
     }
 
     linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
-    
+
+    if (linePtr == NULL) {
+        return;
+    }
+
     if (!vdp->screenOn || !vdp->drawArea) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         for (X = 0; X < 40; X++) {
@@ -200,6 +220,10 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 
     linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 9);
     
+    if (linePtr == NULL) {
+        return;
+    }
+
     if (!vdp->screenOn || !vdp->drawArea) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         for (X = 0; X < 80; X++) {
@@ -270,6 +294,10 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
             charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
             patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -360,6 +388,10 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         }
     }
 
+    if (linePtr == NULL) {
+        return;
+    }
+
     rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
@@ -446,6 +478,10 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
             charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
             patternBase = vdp->chrGenBase & ((-1 << 11) | ((y >> 2) & 7));
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -535,7 +571,11 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
-        
+
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {
             hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
             hScroll512 = vdpHScroll512(vdp);
@@ -598,6 +638,10 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
                 }
             }
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -683,7 +727,11 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
         linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
-        
+
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {
             hScroll512 = vdpHScroll512(vdp);
             jump       = jumpTable + hScroll512 * 2;
@@ -720,6 +768,10 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
                 X++;
             }
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -837,7 +889,11 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         linePtr = RefreshBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y);
-        
+
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {
             hScroll512 = vdpHScroll512(vdp);
             scroll     = vdpHScroll(vdp);
@@ -871,6 +927,10 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
                 X++;
             }
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -1094,7 +1154,11 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
-        
+    
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {
             hScroll512 = vdpHScroll512(vdp);
             jump       = jumpTable + hScroll512 * 2;
@@ -1130,6 +1194,10 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
                 X++; 
             }
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -1375,6 +1443,10 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
 
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {        
             hScroll    = vdpHScroll(vdp);
             hScroll512 = vdpHScroll512(vdp);
@@ -1411,6 +1483,10 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
                 X++; 
             }
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -1547,6 +1623,10 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
 
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {        
             hScroll512 = vdpHScroll512(vdp);
             jump       = jumpTable + hScroll512 * 2;
@@ -1619,6 +1699,10 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             }
             charTable += 2;
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;
@@ -1763,6 +1847,10 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y);
 
+        if (linePtr == NULL) {
+            return;
+        }
+
         if (!border) {
             hScroll512 = vdpHScroll512(vdp);
             jump       = jumpTable + hScroll512 * 2;
@@ -1834,6 +1922,10 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
             }
             charTable += 2;
         }
+    }
+
+    if (linePtr == NULL) {
+        return;
     }
 
     rightBorder = X2 == 33;

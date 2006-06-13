@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-06-13 06:24:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,7 +64,6 @@ void vdpUnregisterDaConverter(int vdpDaHandle);
 
 /* The following methods needs target dependent implementation */
 extern void RefreshScreen(int);
-
 
 #endif
 

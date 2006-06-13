@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxGunstick.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.1 $
 **
-** $Date: 2006-06-13 06:24:21 $
+** $Date: 2006-06-13 06:24:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,15 +27,14 @@
 **
 ******************************************************************************
 */
-#ifndef WIN32_MOUSEEMU_H
-#define WIN32_MOUSEEMU_H
+#ifndef MSX_GUNSTICK_H
+#define MSX_GUNSTICK_H
 
-#include <windows.h>
+#include "MsxTypes.h"
+#include "MsxJoystickDevice.h"
 
-void mouseEmuInit(HWND hwnd, int timerId);
-void mouseEmuSetCaptureInfo(RECT* captureRect, RECT* displayRect);
-int mouseEmuSetCursor();
-void mouseEmuActivate(int activate);
-void mouseEmuSetRunState(int isRunning);
+typedef struct MsxGunstick MsxGunstick;
 
-#endif
+MsxJoystickDevice* msxGunstickCreate();
+
+#endif 

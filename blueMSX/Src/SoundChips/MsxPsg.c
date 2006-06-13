@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-13 06:24:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,8 @@
 
 #include "MsxJoystickDevice.h"
 #include "MsxJoystick.h"
+#include "MsxGunstick.h"
+#include "MsxAsciiLaser.h"
 #include "MsxMouse.h"
 #include "MsxTetrisDongle.h"
 #include "MagicKeyDongle.h"
@@ -64,10 +66,14 @@ static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
 
     switch (type) {
     default:
-    case JOYSTICK_PORT_GUNSTICK:
-    case JOYSTICK_PORT_ASCIILASER:
     case JOYSTICK_PORT_NONE:
         msxPsg->devFun[port] = NULL;
+        break;
+    case JOYSTICK_PORT_GUNSTICK:
+        msxPsg->devFun[port] = msxGunstickCreate();
+        break;
+    case JOYSTICK_PORT_ASCIILASER:
+        msxPsg->devFun[port] = msxAsciiLaserCreate();
         break;
     case JOYSTICK_PORT_JOYSTICK:
         msxPsg->devFun[port] = msxJoystickCreate(port);

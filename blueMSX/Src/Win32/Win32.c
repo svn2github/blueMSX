@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.136 $
+** $Revision: 1.137 $
 **
-** $Date: 2006-06-11 21:17:03 $
+** $Date: 2006-06-13 06:24:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1514,12 +1514,17 @@ void archUpdateWindow() {
 
     {
         RECT r = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
+        RECT d = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
         if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
             DxDisplayMode* ddm = DirectDrawGetDisplayMode();
             r.right  = ddm->width;
             r.bottom = ddm->height;
         }
-        mouseEmuSetCaptureInfo(&r);
+        if (!pProperties->video.horizontalStretch) {
+            d.left  += zoom * (320 - 272) / 2;
+            d.right -= zoom * (320 - 272) / 2;
+        }
+        mouseEmuSetCaptureInfo(&r, &d);
     }
 
     emulatorResume();
@@ -1617,6 +1622,9 @@ static LRESULT CALLBACK emuWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     switch (iMsg) {
     case WM_CREATE:
         return 0;
+
+    case WM_SETCURSOR:
+        return mouseEmuSetCursor();
 
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:

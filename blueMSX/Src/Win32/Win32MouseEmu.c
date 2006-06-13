@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32MouseEmu.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-12 15:39:15 $
+** $Date: 2006-06-13 06:24:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,19 +29,41 @@
 */
 #include "Win32MouseEmu.h"
 #include "ArchInput.h"
- 
+
 static HWND mouseHwnd;
+static HCURSOR hCurs;
 static int mouseIsRunning = 0;
 static int mouseTimerId;
 static RECT mouseCapRect;
+static RECT mouseDisplayRect;
 static int mouseActive;
+static int mouseEnable;
 static AmEnableMode mouseMode;
 static int mouseDX;
 static int mouseDY;
+static int mouseX;
+static int mouseY;
 static int mouseLockDX;
 static int mouseLockDY;
 static int hasMouseLock;
 static int mouseForceLock;
+static int cursorCnt = 0;
+
+static void mouseShowCursor(BOOL show)
+{
+    if (show) {
+        if (cursorCnt == -1) {
+            ShowCursor(TRUE);
+            cursorCnt++;
+        }
+    }
+    else {
+        if (cursorCnt == 0) {
+            ShowCursor(FALSE);
+            cursorCnt--;
+        }
+    }
+}
 
 static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
@@ -50,23 +72,33 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
     if (!mouseIsRunning || !mouseActive) {
         if (hasMouseLock) {
             hasMouseLock = 0;
-            ShowCursor(TRUE);
+            mouseShowCursor(TRUE);
             ReleaseCapture();
         }
         return;
     }
 
     GetCursorPos(&pt);
-
     ScreenToClient(mouseHwnd, &pt);
     
-    if (!mouseForceLock && !PtInRect(&mouseCapRect, pt)) {
+    if (!(mouseForceLock && mouseMode == AM_ENABLE_MOUSE) && !PtInRect(&mouseCapRect, pt)) {
         if (hasMouseLock) {
             hasMouseLock = 0;
-            ShowCursor(TRUE);
+            mouseShowCursor(TRUE);
             ReleaseCapture();
         }
         return;
+    }
+
+    if (mouseMode == AM_ENABLE_LASER) {
+        if (mouseDisplayRect.right - mouseDisplayRect.left > 0) {
+            mouseX = 0x10000*(pt.x - mouseDisplayRect.left) / (mouseDisplayRect.right - mouseDisplayRect.left);
+            mouseY = 0x10000*(pt.y - mouseDisplayRect.top)  / (mouseDisplayRect.bottom - mouseDisplayRect.top);
+        }
+        else {
+            mouseX = 0;
+            mouseY = 0;
+        }
     }
 
     if (!hasMouseLock) {
@@ -75,7 +107,7 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
         mouseDX = 0;
         mouseDY = 0;
         hasMouseLock = 1;
-        ShowCursor(FALSE);
+        mouseShowCursor(mouseMode == AM_ENABLE_LASER);
         SetCapture(mouseHwnd);
         if (mouseMode == AM_ENABLE_MOUSE) {
             pt.x = 100;
@@ -102,7 +134,7 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
 
             if (mouseLockDX < -600 || mouseLockDX > 600 || mouseLockDY < -600 || mouseLockDY > 600) {
                 hasMouseLock = 0;
-                ShowCursor(TRUE);
+                mouseShowCursor(TRUE);
                 ReleaseCapture();
             }
         }
@@ -113,13 +145,11 @@ static void CALLBACK mouseEmuTimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEven
 }
 
 void archMouseSetForceLock(int lock) {
-    int tempLock = lock && (mouseMode == AM_ENABLE_MOUSE);
-
-    if (mouseForceLock == lock && mouseForceLock == tempLock) {
+    if (mouseForceLock == lock) {
         return;
     }
 
-    if (tempLock) {
+    if (lock) {
         if (!hasMouseLock) {
             POINT pt = { 100, 100 };
             ClientToScreen(mouseHwnd, &pt);
@@ -137,13 +167,34 @@ void archMouseSetForceLock(int lock) {
     mouseForceLock = lock;
 }
 
-void mouseEmuInit(HWND hwnd, int timerId) {
+int mouseEmuSetCursor()
+{
+    if (mouseMode == AM_ENABLE_LASER) {
+        SetCursor(hCurs);
+        return 1;
+    }
+
+    return 0;
+}
+
+void mouseEmuInit(HWND hwnd, int timerId)
+{
+    hCurs = LoadCursor(NULL, IDC_CROSS); 
+
     mouseHwnd = hwnd;
     mouseTimerId = timerId;
     SetTimer(mouseHwnd, mouseTimerId, 10, mouseEmuTimerCallback);
 }
 
-void mouseEmuSetCaptureInfo(RECT* captureRect) {
+void mouseEmuSetCaptureInfo(RECT* captureRect, RECT* displayRect) {
+    if (displayRect != NULL) {
+        memcpy(&mouseDisplayRect, displayRect, sizeof(RECT));
+    }
+    else {
+        mouseActive = 0;
+        memset(&mouseDisplayRect, 0, sizeof(RECT));
+    }
+
     if (captureRect != NULL) {
         memcpy(&mouseCapRect, captureRect, sizeof(RECT));
     }
@@ -157,13 +208,17 @@ void mouseEmuSetRunState(int isRunning) {
     mouseIsRunning = isRunning;
 }
 
-void archMouseEmuEnable(AmEnableMode mode) {
-    mouseMode = mode;
-    archMouseSetForceLock(mouseForceLock);
-}
-
 void mouseEmuActivate(int activate) {
     mouseActive = activate;
+}
+
+void archMouseEmuEnable(AmEnableMode mode) {
+    mouseMode = mode;
+    if (hasMouseLock) {
+        mouseShowCursor(TRUE);
+        ReleaseCapture();
+        hasMouseLock = 0;
+    }
 }
 
 void archMouseGetState(int* dx, int* dy) {
@@ -171,11 +226,17 @@ void archMouseGetState(int* dx, int* dy) {
     *dy = 0;
 
     if (hasMouseLock) {
-        *dx = mouseDX;
-        *dy = mouseDY;
+        if (mouseMode == AM_ENABLE_LASER) {
+            *dx = mouseX;
+            *dy = mouseY;
+        }
+        else {
+            *dx = mouseDX;
+            *dy = mouseDY;
 
-        mouseDX = 0;
-        mouseDY = 0;
+            mouseDX = 0;
+            mouseDY = 0;
+        }
     }
 }
 

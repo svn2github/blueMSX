@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-06-13 06:24:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,9 +61,12 @@ typedef enum {
 void frameBufferSetFrameCount(int frameCount);
 
 FrameBuffer* frameBufferGetViewFrame();
-FrameBuffer* frameBufferFlipViewFrame(int mixFrames);
 FrameBuffer* frameBufferGetDrawFrame();
+FrameBuffer* frameBufferFlipViewFrame(int mixFrames);
 FrameBuffer* frameBufferFlipDrawFrame();
+
+void frameBufferSetScanline(int scanline);
+FrameBuffer* frameBufferGetLastDrawnFrame(int scanline);
 
 FrameBuffer* frameBufferGetWhiteNoiseFrame();
 FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer);

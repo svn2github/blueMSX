@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-01 23:18:01 $
+** $Date: 2006-06-13 06:24:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1192,6 +1192,7 @@ static void sync(VDP* vdp, UInt32 systemTime)
                 vdp->RefreshLine(vdp, vdp->curLine, -1, 33);
             }
             vdp->curLine++;
+            frameBufferSetScanline(vdp->curLine - vdp->displayOffest);
         }
     }
 
