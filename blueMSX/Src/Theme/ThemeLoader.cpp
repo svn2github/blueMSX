@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,7 @@
 */
 #define USE_ARCH_GLOB
 
-#include "TinyXml.h"
+#include "tinyxml.h"
 #include "ThemeLoader.h"
 extern "C" {
 #include "InputEvent.h"

@@ -76,7 +76,7 @@ chirp 12-..: vokume   0   : silent
 #if 0
 #include "driver.h"
 #include "state.h"
-#include "vlm5030.h"
+#include "VLM5030.h"
 #else
 typedef unsigned char  UINT8;
 typedef unsigned short UINT16;

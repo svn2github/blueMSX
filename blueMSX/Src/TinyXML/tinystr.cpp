@@ -31,7 +31,7 @@ distribution.
 #include <string.h>
 #include <ctype.h>
 
-#include "tinystr.h"
+#include "TinyStr.h"
 
 // TiXmlString constructor, based on a C string
 TiXmlString::TiXmlString (const char* instring)

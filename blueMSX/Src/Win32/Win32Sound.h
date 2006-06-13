@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Sound.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2006-06-13 17:40:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #define WIN32_SOUND_H
 
 #include <windows.h>
-#include "audioMixer.h"
+#include "AudioMixer.h"
 
 typedef enum {
     SOUND_DRV_NONE,

@@ -3,7 +3,7 @@
 //
 // The file was originally written by Mitsutaka Okazaki.
 //
-#include "openMsxYM2413_2.h"
+#include "OpenMsxYM2413_2.h"
 
 extern "C" {
 #include "SaveState.h"

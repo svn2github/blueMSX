@@ -19,7 +19,7 @@
 **
 */
  
-#include "ymdeltat.h"
+#include "Ymdeltat.h"
 #include "SaveState.h"
 
 void OPL_STATUS_SET(void *OPL,int	flag);

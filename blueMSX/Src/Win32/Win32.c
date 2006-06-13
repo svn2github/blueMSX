@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.137 $
+** $Revision: 1.138 $
 **
-** $Date: 2006-06-13 06:24:21 $
+** $Date: 2006-06-13 17:40:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,8 @@
 #include "Board.h"
 #include "Led.h"
 #include "Switches.h"
-#include "audioMixer.h"
-#include "videoRender.h"
+#include "AudioMixer.h"
+#include "VideoRender.h"
 #include "CommandLine.h"
 #include "Language.h"   
 #include "resource.h"

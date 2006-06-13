@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-06-03 19:20:49 $
+** $Date: 2006-06-13 17:40:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 #include "Resource.h"
 #include "MediaDb.h"
 #include "RomLoader.h"
-#include "zipHelper.h"
+#include "ziphelper.h"
 #include "Win32Common.h"
 #include "Win32ScreenShot.h"
 #include "Language.h"

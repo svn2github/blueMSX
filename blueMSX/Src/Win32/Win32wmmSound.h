@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32wmmSound.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-13 17:40:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include <windows.h>
 #include "MsxTypes.h"
-#include "audioMixer.h"
+#include "AudioMixer.h"
 
 typedef struct WmmSound WmmSound;
 

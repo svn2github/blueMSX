@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-11 20:14:45 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@ extern "C" {
 #include "Board.h"
 }
 
-#include "TinyXml.h"
+#include "tinyxml.h"
 #include "Sha1.h"
 #include <string>
 #include <map>

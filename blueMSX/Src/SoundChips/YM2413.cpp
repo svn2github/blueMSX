@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,8 +28,8 @@
 ******************************************************************************
 */
 #include "YM2413.h"
-#include "openMsxYM2413.h"
-#include "openMsxYM2413_2.h"
+#include "OpenMsxYM2413.h"
+#include "OpenMsxYM2413_2.h"
 extern "C" {
 #include "Board.h"
 #include "SaveState.h"

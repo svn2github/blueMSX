@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-10 00:55:58 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 #include "DebugDeviceManager.h"
 #include "IoPort.h"
 #include "Board.h"
-#include "YM2151.h"
+#include "ym2151.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>

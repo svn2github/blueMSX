@@ -33,8 +33,8 @@
  * - derivative works of the program are allowed.
  */
 
-#include "scale2x.h"
-#include "scale3x.h"
+#include "Scale2x.h"
+#include "Scale3x.h"
 
 
 #include <assert.h>

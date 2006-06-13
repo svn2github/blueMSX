@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Properties.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-11-11 05:15:01 $
+** $Date: 2006-06-13 17:40:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include <windows.h>
 #include "Properties.h"
-#include "audioMixer.h"
+#include "AudioMixer.h"
 #include "VideoRender.h"
 #include "Language.h"
 #include "MediaDb.h"

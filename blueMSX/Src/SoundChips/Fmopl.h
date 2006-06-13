@@ -26,7 +26,7 @@ typedef INT16 OPLSAMPLE;
 typedef unsigned char  OPLSAMPLE;
 #endif
 
-#include "ymdeltat.h"
+#include "Ymdeltat.h"
 
 /* !!!!! here is private section , do not access there member direct !!!!! */
 

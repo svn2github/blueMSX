@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-03 17:55:54 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include "YM2151.h"
+#include "ym2151.h"
 #include "MameYM2151.h"
 #include "Board.h"
 #include "SaveState.h"

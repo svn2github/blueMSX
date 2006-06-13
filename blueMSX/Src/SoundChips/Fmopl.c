@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#include "fmopl.h"
+#include "Fmopl.h"
 #include "Switches.h"
 #include "SaveState.h"
 #include "Board.h"

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 #include "MediaDb.h"
 #include "Machine.h"
 #include "VDP.h"
-#include "audioMixer.h"
+#include "AudioMixer.h"
 #include <stdio.h>
 
 typedef struct {

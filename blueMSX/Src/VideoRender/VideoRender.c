@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-01-17 08:49:34 $
-** $Date: 2006-01-17 08:49:34 $
+** $Date: 2006-06-13 17:40:08 $
+** $Date: 2006-06-13 17:40:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,11 +28,11 @@
 **
 ******************************************************************************
 */
-#include "videoRender.h"
+#include "VideoRender.h"
 #include "FrameBuffer.h"
 #include "ArchTimer.h"
 #include "Emulator.h"
-#include "scalebit.h"
+#include "Scalebit.h"
 #include "hq2x.h"
 #include "hq3x.h"
 #include <stdlib.h>

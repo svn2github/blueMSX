@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-13 17:40:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #define AY8910_H
 
 #include "MsxTypes.h"
-#include "audioMixer.h"
+#include "AudioMixer.h"
 
 /* Type definitions */
 typedef struct AY8910 AY8910;
