@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directXSound.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:31:42 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #define WIN32_DIRECTX_SOUND
 
 #include <windows.h>
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 
 typedef struct DxSound DxSound;

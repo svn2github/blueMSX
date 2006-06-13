@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WDCRC.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:57:37 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef WDCRC_H
 #define WDCRC_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 
 UInt16 calc_crc(UInt16 crc, UInt8 value);
 

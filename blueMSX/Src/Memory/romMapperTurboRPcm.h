@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2004-12-26 11:31:52 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_TURBORPCM_H
 #define ROMMAPPER_TURBORPCM_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperTurboRPcmCreate();
 

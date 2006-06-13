@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiWordPro.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_KONAMI_WORD_PRO_H
 #define ROMMAPPER_KONAMI_WORD_PRO_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperKonamiWordProCreate(char* filename, UInt8* romData, 
                                  int size, int slot, int sslot, int startPage);

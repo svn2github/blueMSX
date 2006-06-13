@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef I8255_H
 #define I8255_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef struct I8255 I8255;
 

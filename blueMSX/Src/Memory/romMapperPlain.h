@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlain.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_PLAIN_H
 #define ROMMAPPER_PLAIN_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperPlainCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);

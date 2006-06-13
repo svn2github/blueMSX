@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2004-12-28 05:09:07 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_SONY_HBI55_H
 #define ROMMAPPER_SONY_HBI55_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperSonyHBI55Create();
 

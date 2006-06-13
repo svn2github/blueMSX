@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-11 21:17:03 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,7 @@
 #include "Resource.h"
 #include "Language.h"
 #include "Board.h"
-#include "archMenu.h"
+#include "ArchMenu.h"
 #include "Actions.h"
 #include "Casette.h"
 #include "Disk.h"

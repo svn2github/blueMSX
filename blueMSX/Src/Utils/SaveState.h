@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 08:02:50 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef SAVE_STATE_H
 #define SAVE_STATE_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef struct SaveState SaveState;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-09 20:30:01 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **

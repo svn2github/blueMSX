@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000Castle.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_SG1000_CASTLE_H
 #define ROMMAPPER_SG1000_CASTLE_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperSg1000CastleCreate(char* filename, UInt8* romData, 
                                 int size, int slot, int sslot, int startPage);

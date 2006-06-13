@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxAudio.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-01-02 08:22:12 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 
 /* Constructor and destructor */

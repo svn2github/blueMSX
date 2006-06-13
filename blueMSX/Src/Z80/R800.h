@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-05-30 20:02:44 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** Author: Daniel Vik
 **
@@ -82,7 +82,7 @@
 #ifndef R800_H
 #define R800_H
 
-#include "MSXtypes.h"
+#include "MsxTypes.h"
 
 /*****************************************************
 ** Configuration options

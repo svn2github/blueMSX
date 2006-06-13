@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_SVI738_FDC_H
 #define ROMMAPPER_SVI738_FDC_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperSvi738FdcCreate(char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);

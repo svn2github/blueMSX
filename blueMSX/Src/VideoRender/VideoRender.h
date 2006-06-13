@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef VIDEO_RENDER_H
 #define VIDEO_RENDER_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "FrameBuffer.h"
 
 typedef enum { 

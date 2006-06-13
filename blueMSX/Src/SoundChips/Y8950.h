@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef Y8950_H
 #define Y8950_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 #include "DebugDeviceManager.h"
 

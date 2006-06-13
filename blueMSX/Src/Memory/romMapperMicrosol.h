@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:12 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -32,7 +32,7 @@
 #ifndef ROMMAPPER_MICROSOL_H
 #define ROMMAPPER_MICROSOL_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperMicrosolCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage);

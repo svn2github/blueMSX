@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800SaveState.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:54:15 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** Author: Daniel Vik
 **
@@ -35,7 +35,7 @@
 #ifndef R800_SAVE_STATE_H
 #define R800_SAVE_STATE_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "R800.h"
 
 void r800LoadState(R800* r800);

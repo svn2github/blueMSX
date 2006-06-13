@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomLoader.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROM_LOADER_H
 #define ROM_LOADER_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 UInt8* romLoad(const char *fileName, const char *fileInZipFile, int* size);
 

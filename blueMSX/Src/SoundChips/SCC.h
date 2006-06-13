@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include <stdio.h>
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 #include "DebugDeviceManager.h"
 

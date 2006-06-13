@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/FdcAudio.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-05-01 09:26:27 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef FDC_AUDIO_H
 #define FDC_AUDIO_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef enum { FA_WESTERN_DIGITAL, FA_PANASONIC } FdcAudioType;
 

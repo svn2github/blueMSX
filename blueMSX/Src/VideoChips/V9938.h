@@ -14,7 +14,7 @@
 #ifndef VDPCMD_H
 #define VDPCMD_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 
 typedef struct VdpCmdState VdpCmdState;

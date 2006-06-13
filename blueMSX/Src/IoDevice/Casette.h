@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-06-28 07:28:04 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef CASSETTE_H
 #define CASSETTE_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef enum { TAPE_ASCII = 0, TAPE_BINARY, TAPE_BASIC, TAPE_CUSTOM } TapeContentType;
 

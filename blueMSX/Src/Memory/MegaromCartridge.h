@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-11 04:30:25 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef MEGAROM_CARTRIDGE_H
 #define MEGAROM_CARTRIDGE_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "MediaDb.h"
 #include "YM2413.h"
 

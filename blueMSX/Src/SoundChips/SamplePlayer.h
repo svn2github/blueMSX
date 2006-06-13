@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-05-01 09:26:43 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 #include <stdio.h>
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 
 /* Type definitions */

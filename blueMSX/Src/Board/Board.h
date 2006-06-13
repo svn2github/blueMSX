@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef BOARD_H
 #define BOARD_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "MediaDb.h"
 #include "Machine.h"
 #include "VDP.h"

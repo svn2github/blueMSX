@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_SFG05_H
 #define ROMMAPPER_SFG05_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperSfg05Create(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);

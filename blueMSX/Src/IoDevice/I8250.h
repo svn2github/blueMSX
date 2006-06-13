@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-04-28 18:32:09 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef I8250_H
 #define I8250_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef int  (*I8250Transmit) (void*, UInt8);
 typedef int  (*I8250Signal) (void*);

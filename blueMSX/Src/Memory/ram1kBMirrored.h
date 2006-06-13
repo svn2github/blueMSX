@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef RAM_1KB_MIRRORED_H
 #define RAM_1KB_MIRRORED_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-13 21:20:00 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef SLOT_MANAGER_H
 #define SLOT_MANAGER_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 
 typedef UInt8 (*SlotRead)(void*, UInt16);

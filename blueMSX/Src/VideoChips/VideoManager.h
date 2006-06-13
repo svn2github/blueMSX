@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VideoManager.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef VIDEO_MANAGER_H
 #define VIDEO_MANAGER_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "FrameBuffer.h"
 
 typedef struct {

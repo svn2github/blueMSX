@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-05-31 18:05:49 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -32,7 +32,7 @@
 #ifndef WD33C93_H
 #define WD33C93_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef struct WD33C93 WD33C93;
 

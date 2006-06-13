@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFmDas.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-02-18 17:21:05 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_FM_DAS_H
 #define ROMMAPPER_FM_DAS_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperFmDasCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);

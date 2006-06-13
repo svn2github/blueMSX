@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef AUDIO_MIXER_H
 #define AUDIO_MIXER_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 
 /* Type definitions */
 typedef struct Mixer Mixer;

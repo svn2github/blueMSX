@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-02-05 06:40:20 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #ifndef SVI328_RS232_H
 #define SVI328_RS232_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef enum { SVI328_RS232, SVI328_MODEM } Svi328UartConnector;
 

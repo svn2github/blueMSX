@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAK.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-03-07 05:34:44 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_FMPAK_H
 #define ROMMAPPER_FMPAK_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperFMPAKCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);

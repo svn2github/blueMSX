@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-05-24 22:58:49 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef HARDDISK_IDE_H
 #define HARDDISK_IDE_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef struct HarddiskIde HarddiskIde;
 

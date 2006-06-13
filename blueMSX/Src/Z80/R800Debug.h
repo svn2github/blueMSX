@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** Author: Daniel Vik
 **
@@ -35,7 +35,7 @@
 #ifndef R800_DEBUG_H
 #define R800_DEBUG_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "R800.h"
 
 typedef struct R800Debug R800Debug;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-05-30 21:17:16 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef MACHINE_H
 #define MACHINE_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 #include "MediaDb.h"
 #include "VDP.h"
 #include "AY8910.h"

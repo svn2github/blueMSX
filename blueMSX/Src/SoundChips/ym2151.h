@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-05-31 22:21:58 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef YM2151_H
 #define YM2151_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "audioMixer.h"
 #include "DebugDeviceManager.h"
 

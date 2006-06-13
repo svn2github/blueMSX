@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8251.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef I8251_H
 #define I8251_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef int  (*I8251Transmit) (void*, UInt8);
 typedef int  (*I8251Signal) (void*);

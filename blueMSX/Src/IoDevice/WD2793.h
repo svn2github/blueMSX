@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -32,7 +32,7 @@
 #ifndef WD2793_H
 #define WD2793_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 typedef struct WD2793 WD2793;
 

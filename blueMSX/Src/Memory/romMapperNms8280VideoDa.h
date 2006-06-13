@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNms8280VideoDa.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-18 22:27:45 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_NMS8280_VIDEO_DA_H
 #define ROMMAPPER_NMS8280_VIDEO_DA_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperNms8280VideoDaCreate();
 

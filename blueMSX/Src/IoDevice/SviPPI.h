@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef SVI_PPI_H
 #define SVI_PPI_H
 
-#include "msxTypes.h"
+#include "MsxTypes.h"
 #include "SviJoyIo.h"
 
 void sviPPICreate(SviJoyIo* joyIO);

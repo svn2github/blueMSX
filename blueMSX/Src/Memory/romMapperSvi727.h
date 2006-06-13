@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi727.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-25 20:58:40 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #ifndef SVI727_H
 #define SVI727_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperSvi727Create(char* filename, UInt8* charRom, int charSize,
                                  int slot, int sslot, int startPage);

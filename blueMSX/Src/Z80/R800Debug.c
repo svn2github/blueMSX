@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2006-06-13 17:13:28 $
 **
 ** Author: Daniel Vik
 **
@@ -37,7 +37,7 @@
 #include "DebugDeviceManager.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "board.h"
+#include "Board.h"
 
 
 extern void debuggerTrace(const char* str);

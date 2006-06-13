@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-04-14 21:48:40 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #ifndef MSX_RS232_H
 #define MSX_RS232_H
 
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage);
 

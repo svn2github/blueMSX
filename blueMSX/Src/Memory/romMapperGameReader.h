@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-07 04:46:14 $
+** $Date: 2006-06-13 17:13:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #ifndef ROMMAPPER_GAME_READER_H
 #define ROMMAPPER_GAME_READER_H
  
-#include "MSXTypes.h"
+#include "MsxTypes.h"
 
 int romMapperGameReaderCreate(int cartSlot, int slot, int sslot);
 
