@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-13 17:40:08 $
-** $Date: 2006-06-13 17:40:08 $
+** $Date: 2006-06-13 18:50:46 $
+** $Date: 2006-06-13 18:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1426,6 +1426,7 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     }
 }
 
+#ifndef NO_ASM
 /* 7500 units -> 4100 units */
 static void copy_2x2_32_core1_SSE(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
@@ -1483,7 +1484,7 @@ inner_loop2:
 
 	}
 }
-
+#endif
 
 void copy_2x2_32_core1(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) 
 {
@@ -1507,6 +1508,8 @@ void copy_2x2_32_core1(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pD
         pDst2 += 4;
     }
 }
+
+#ifndef NO_ASM
 /* 6000 units -> 2500 units */
 void copy_2x2_32_core2_SSE(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
@@ -1581,6 +1584,7 @@ inner_loop2:
 	}
 
 }
+#endif
 
 void copy_2x2_32_core2(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
@@ -1622,6 +1626,7 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     int h;
     void (*core1) (UInt32*, UInt16*, UInt32*, UInt32* , int , int );
     void (*core2) (UInt32*, UInt16*, UInt32*, UInt32* , int , int );
+#ifndef NO_ASM
 	int hasSSE=0;
 	const int SSEbit=1<<25;
 
@@ -1635,6 +1640,10 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
     hasSSE = 1;
 	core1=hasSSE? copy_2x2_32_core1_SSE: copy_2x2_32_core1;
 	core2=hasSSE? copy_2x2_32_core2_SSE: copy_2x2_32_core2;
+#else
+	core1=copy_2x2_32_core1;
+	core2=copy_2x2_32_core2;
+#endif
 
 	/*rdtsc_start_timer(0);*/
     dstPitch /= (int)sizeof(UInt32);
@@ -2172,6 +2181,7 @@ void scanLines_32_core(UInt32* pBuf, int width, int scanLinesPct, int hint) {
         }
 }
 
+#ifndef NO_ASM
 void scanLines_32_core_SSE(UInt32* pBuf, int width, int scanLinesPct, int hint) {
 	__asm {
 		mov		ecx,width
@@ -2208,6 +2218,7 @@ inner_loop:
 		emms
 	}
 }
+#endif
 
 /* 5500 units -> 2500 units */
 void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLinesPct)
@@ -2215,6 +2226,8 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
     UInt32* pBuf = (UInt32*)pBuffer;
     int h;
     void (*core) (UInt32* , int , int , int ) ;
+
+#ifndef NO_ASM
 	int hasSSE=0;
 	const int SSEbit=1<<25;
 
@@ -2227,10 +2240,13 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
 
     hasSSE = 1;
 	core=hasSSE? scanLines_32_core_SSE: scanLines_32_core;
+	/*rdtsc_start_timer(0);*/
+#else
+	core=scanLines_32_core;
+#endif
 
-	rdtsc_start_timer(0);
     if (scanLinesPct == 100) {
-  	    rdtsc_end_timer(0);
+  	    /*rdtsc_end_timer(0);*/
         return;
     }
 
@@ -2243,7 +2259,7 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
             memset(pBuf, 0, width * sizeof(UInt32));
             pBuf += pitch;
         }
-        rdtsc_end_timer(0);
+        /*rdtsc_end_timer(0);*/
 		return;
     }
 
@@ -2251,7 +2267,7 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
 		core (pBuf,width,scanLinesPct,pitch*4);
         pBuf += pitch;
     }
-	rdtsc_end_timer(0);
+	/*rdtsc_end_timer(0);*/
 }
 
 static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom, 

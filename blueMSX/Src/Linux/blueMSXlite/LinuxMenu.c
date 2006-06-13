@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxMenu.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-13 18:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,7 @@ void archShowMenuRun(int x, int y) {}
 void archShowMenuFile(int x, int y) {}
 void archShowMenuCart1(int x, int y) {}
 void archShowMenuCart2(int x, int y) {}
+void archShowMenuHarddisk(int x, int y) {}
 void archShowMenuDiskA(int x, int y) {}
 void archShowMenuDiskB(int x, int y) {}
 void archShowMenuCassette(int x, int y) {}
@@ -46,6 +47,6 @@ void archShowMenuPrinter(int x, int y) {}
 void archShowMenuZoom(int x, int y) {}
 void archShowMenuOptions(int x, int y) {}
 void archShowMenuTools(int x, int y) {}
-void archShowMenuControlsPort1(int x, int y) {}
-void archShowMenuControlsPort2(int x, int y) {}
+void archShowMenuJoyPort1(int x, int y) {}
+void archShowMenuJoyPort2(int x, int y) {}
 

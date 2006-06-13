@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-30 05:50:27 $
+** $Date: 2006-06-13 18:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -247,7 +247,7 @@ int main(int argc, char **argv)
     resetProperties = emuCheckResetArgument(szLine);
     strcat(path, archGetCurrentDirectory());
     strcat(path, "\\bluemsx.ini");
-    properties = propCreate(path, resetProperties, 0, 0, 0, "");
+    properties = propCreate(resetProperties, 0, P_KBD_EUROPEAN, 0, "");
     
     if (resetProperties == 2) {
         propDestroy(properties);
@@ -293,16 +293,20 @@ int main(int argc, char **argv)
 
     mediaDbSetDefaultRomType(properties->cartridge.defaultType);
 
-    if (properties->cartridge.slotA[0]) insertCartridge(properties, 0, properties->cartridge.slotA, properties->cartridge.slotAZip, properties->cartridge.slotAType, -1);
-    if (properties->cartridge.slotB[0]) insertCartridge(properties, 1, properties->cartridge.slotB, properties->cartridge.slotBZip, properties->cartridge.slotBType, -1);
-    if (properties->diskdrive.slotA[0]) insertDiskette(properties, 0, properties->diskdrive.slotA, properties->diskdrive.slotAZip, -1);
-    if (properties->diskdrive.slotB[0]) insertDiskette(properties, 1, properties->diskdrive.slotB, properties->diskdrive.slotBZip, -1);
+    for (i = 0; i < PROP_MAX_CARTS; i++) {
+        if (properties->media.carts[i].fileName[0]) insertCartridge(properties, i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip, properties->media.carts[i].type, -1);
+        updateExtendedRomName(i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip);
+    }
 
-    updateExtendedRomName(0, properties->cartridge.slotA, properties->cartridge.slotAZip);
-    updateExtendedRomName(1, properties->cartridge.slotB, properties->cartridge.slotBZip);
-    updateExtendedDiskName(0, properties->diskdrive.slotA, properties->diskdrive.slotAZip);
-    updateExtendedDiskName(1, properties->diskdrive.slotB, properties->diskdrive.slotBZip);
-    updateExtendedCasName(properties->cassette.tape, properties->cassette.tapeZip);
+    for (i = 0; i < PROP_MAX_DISKS; i++) {
+        if (properties->media.disks[i].fileName[0]) insertDiskette(properties, i, properties->media.disks[i].fileName, properties->media.disks[i].fileNameInZip, -1);
+        updateExtendedDiskName(i, properties->media.disks[i].fileName, properties->media.disks[i].fileNameInZip);
+    }
+
+    for (i = 0; i < PROP_MAX_TAPES; i++) {
+        if (properties->media.tapes[i].fileName[0]) insertCassette(properties, i, properties->media.tapes[i].fileName, properties->media.tapes[i].fileNameInZip, 0);
+        updateExtendedCasName(i, properties->media.tapes[i].fileName, properties->media.tapes[i].fileNameInZip);
+    }
 
     {
         Machine* machine = machineCreate(properties->emulation.machineName);

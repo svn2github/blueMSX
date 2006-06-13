@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxNotifications.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-30 05:50:27 $
+** $Date: 2006-06-13 18:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 #include "ArchNotifications.h"
 #include <stdlib.h>
 
-void* archScreenCapture(ScreenCaptureType type, int* bitmapSize) { return NULL; }
+void* archScreenCapture(ScreenCaptureType type, int* bitmapSize, int onlyBmp) { return NULL; }
 
 //void archUpdateEmuDisplayConfig() {}
 //int  archUpdateEmuDisplay(int synchronous) { return 0; }

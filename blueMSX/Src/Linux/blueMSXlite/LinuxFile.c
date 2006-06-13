@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxFile.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-13 18:50:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,7 +58,8 @@ int archFileExists(const char* fileName)
 
 /* File dialogs: */
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType) { return NULL; }
-char* archFilenameGetOpenDisk(Properties* properties, int drive) { return NULL; }
+char* archFilenameGetOpenDisk(Properties* properties, int drive, int allowCreate) { return NULL; }
+char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCreate) { return NULL; }
 char* archFilenameGetOpenCas(Properties* properties) { return NULL; }
 char* archFilenameGetSaveCas(Properties* properties, int* type) { return NULL; }
 char* archFilenameGetOpenState(Properties* properties) { return NULL; }

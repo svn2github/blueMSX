@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxMidi.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-13 18:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,14 +28,18 @@
 ******************************************************************************
 */
 #include "ArchMidi.h"
+#include <stdlib.h>
 
-int  archMidiCreate(void) { return 1; }
-void archMidiDestroy(void) {}
-int  archMidiTransmit(UInt8 value) { return 1; }
-void archMidiUpdateDriver() {}
-void archMidiUpdateVolume(int left, int right) {}
 void archMidiEnable(int enable) {}
-int  archMidiGetNoteOn() { return 1; }
+int  archMidiGetNoteOn() { return 0; }
+void archMidiUpdateVolume(int left, int right) {}
 void archMidiLoadState(void) {}
 void archMidiSaveState(void) {}
+ArchMidi* archMidiInCreate(int device, ArchMidiInCb cb, void* ref) { return NULL; }
+void archMidiInDestroy(ArchMidi* archMidi) {}
+int archMidiInGetNoteOn(ArchMidi* archMidi, int note) { return 0; }
+ArchMidi* archMidiOutCreate(int device) { return NULL; }
+void archMidiOutDestroy(ArchMidi* archMidi) {}
+void archMidiOutTransmit(ArchMidi* archMidi, UInt8 value) {}
+
 

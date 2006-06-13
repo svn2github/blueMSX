@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxInput.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxVideoIn.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-06-13 18:50:46 $
 **
@@ -27,26 +27,8 @@
 **
 ******************************************************************************
 */
-#include "ArchInput.h"
+#include "ArchVideoIn.h"
+#include <stdlib.h>
 
-void  archUpdateJoystick() {}
-
-UInt8 archJoystickGetState(int joystickNo) { return 0; }
-int  archJoystickGetCount() { return 0; }
-char* archJoystickGetName(int index) { return ""; }
-void archMouseSetForceLock(int lock) { }
-
-void archMouseGetState(int* dx, int* dy) { *dx = *dy = 0; }
-int  archMouseGetButtonState(int checkAlways) { return 0; }
-void  archMouseEmuEnable(AmEnableMode mode) {}
-
-void  archPollInput() {}
-void  archKeyboardSetSelectedKey(int keyCode) {}
-char* archGetSelectedKey() { return ""; }
-char* archGetMappedKey() { return ""; }
-int   archKeyboardIsKeyConfigured(int msxKeyCode) { return 0; }
-int   archKeyboardIsKeySelected(int msxKeyCode) { return 0; }
-char* archKeyconfigSelectedKeyTitle() { return ""; }
-char* archKeyconfigMappedToTitle() { return ""; }
-char* archKeyconfigMappingSchemeTitle() { return ""; }
-
+int archVideoInIsVideoConnected() { return 0; }
+UInt16* archVideoInBufferGet(int width, int height) { return NULL; }
