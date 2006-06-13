@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-06-01 00:40:24 $
+** $Date: 2006-06-13 17:55:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,7 @@
 #include "romMapperKanji.h"
 #include "romMapperKanji12.h"
 #include "romMapperHolyQuran.h"
-#include "romMapperMegaRam.h"
+#include "romMapperMegaRAM.h"
 #include "romMapperMsxAudio.h"
 #include "romMapperPlain.h"
 #include "romMapperBasic.h"
@@ -84,7 +84,7 @@
 #include "romMapperSg1000Castle.h"
 #include "romMapperMicrosolVmx80.h"
 #include "romMapperSvi727.h"
-#include "romMapperSonyHbiV1.h"
+#include "romMapperSonyHBIV1.h"
 #include "romMapperFmDas.h"
 #include "romMapperSfg05.h"
 

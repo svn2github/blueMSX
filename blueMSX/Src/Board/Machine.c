@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-13 17:24:41 $
+** $Date: 2006-06-13 17:55:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,7 +55,7 @@
 #include "romMapperKonami4.h"
 #include "romMapperKoei.h"
 #include "romMapperHolyQuran.h"
-#include "romMapperMegaRam.h"
+#include "romMapperMegaRAM.h"
 #include "romMapperASCII8.h"
 #include "romMapperASCII16.h"
 #include "romMapperDisk.h"
@@ -95,7 +95,7 @@
 #include "romMapperF4device.h"
 #include "romMapperBunsetu.h"
 #include "romMapperTurboRTimer.h"
-#include "romMapperTurboRPCM.h"
+#include "romMapperTurboRPcm.h"
 #include "TurboRIO.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMsxMusic.h"
@@ -112,7 +112,7 @@
 #include "romMapperGIDE.h"
 #include "romMapperMicrosolVmx80.h"
 #include "romMapperNms8280VideoDa.h"
-#include "romMapperSonyHbiV1.h"
+#include "romMapperSonyHBIV1.h"
 #include "romMapperFmDas.h"
 #include "romMapperSfg05.h"
 
