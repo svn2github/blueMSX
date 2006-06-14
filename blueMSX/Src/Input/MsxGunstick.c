@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxGunstick.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-13 06:24:20 $
+** $Date: 2006-06-14 07:39:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,31 +49,58 @@ static UInt8 read(MsxGunstick* joystick) {
 
     archMouseGetState(&dx, &dy);
 
+#if 1
+    dy = dy * joystick->scanlines / 0x10000;
     frameBuffer = frameBufferGetLastDrawnFrame(dy * joystick->scanlines / 0x10000);
-
     if (frameBuffer != NULL) {
-        int width;
         int i;
 
         joystick->scanlines = frameBuffer->lines;
 
-        dy = dy * frameBuffer->lines / 0x10000;
-        width = (frameBuffer->line[dy].doubleWidth ? 2 : 1) * frameBuffer->maxWidth;
-        dx = dx * width / 0x10000;
+        dx = dx * (frameBuffer->line[dy].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
 
-        for (i = MAX(dx - 12, 0); i < MIN(dx + 12, width); i++) {
-            UInt16 rgb = frameBuffer->line[dy].buffer[i];
+        for (i = MAX(dy - 10, 0); i <= MIN(dy + 10, frameBuffer->lines); i++) {
+            UInt16 rgb = frameBuffer->line[i].buffer[dx];
             int R = 8 * ((rgb >> 10) & 0x01f);
             int G = 8 * ((rgb >> 5) & 0x01f);
             int B = 8 * ((rgb >> 0) & 0x01f);
             int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
         
             if (Y > 200) {
-                state |= 1 << 3;
+                state |= 1 << 1;
                 break;
             }
         }
     }
+#else
+    frameBuffer = frameBufferGetLastDrawnFrame(dy * joystick->scanlines / 0x10000);
+
+    if (frameBuffer != NULL) {
+        int width;
+        int height;
+        int i;
+
+        joystick->scanlines = frameBuffer->lines;
+
+        dy = dy * frameBuffer->lines / 0x10000;
+        width = (frameBuffer->line[dy].doubleWidth ? 2 : 1) * frameBuffer->maxWidth;
+        height = frameBuffer->lines;
+        dx = dx * width / 0x10000;
+
+        for (i = MAX(dy - 10, 0); i <= MIN(dy + 10, height); i++) {
+            UInt16 rgb = frameBuffer->line[i].buffer[dx];
+            int R = 8 * ((rgb >> 10) & 0x01f);
+            int G = 8 * ((rgb >> 5) & 0x01f);
+            int B = 8 * ((rgb >> 0) & 0x01f);
+            int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
+        
+            if (Y > 200) {
+                state |= 1 << 1;
+                break;
+            }
+        }
+    }
+#endif
     
     return ~state & 0x3f;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-06-13 06:24:20 $
+** $Date: 2006-06-14 07:39:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
-    int lastFrame;
+    int prevDrawFrame;
     int currentAge;
     FrameBuffer frame[MAX_FRAMES_PER_FRAMEBUFFER];
 };
@@ -88,7 +88,6 @@ static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames)
     if (currentBuffer == NULL) {
         return NULL;
     }
-    currentBuffer->lastFrame = currentBuffer->drawFrame;
     waitSem();
     switch (currentBuffer->viewFrame) {
     case 0: index = currentBuffer->drawFrame == 1 ? 2 : 1; break;
@@ -153,7 +152,6 @@ static FrameBuffer* frameBufferFlipDrawFrame3()
     if (currentBuffer == NULL) {
         return NULL;
     }
-    currentBuffer->lastFrame = currentBuffer->drawFrame;
     waitSem();
     switch (currentBuffer->drawFrame) {
     case 0: currentBuffer->drawFrame = currentBuffer->viewFrame == 1 ? 2 : 1; break;
@@ -176,8 +174,6 @@ static FrameBuffer* frameBufferFlipDrawFrame4()
     if (currentBuffer == NULL) {
         return NULL;
     }
-    
-    currentBuffer->lastFrame = currentBuffer->drawFrame;
 
     waitSem();
 
@@ -212,8 +208,9 @@ FrameBuffer* frameBufferGetLastDrawnFrame(int scanline)
     if (currentBuffer == NULL) {
         return NULL;
     }
+
     if (scanline >= curScanline) {
-        return currentBuffer->frame + currentBuffer->lastFrame;
+        return currentBuffer->frame + currentBuffer->prevDrawFrame;
     }
     return currentBuffer->frame + currentBuffer->drawFrame;
 }
@@ -238,7 +235,7 @@ void frameBufferSetFrameCount(int frameCount)
         int i;
         currentBuffer->viewFrame = 0;
         currentBuffer->drawFrame = 0;
-        currentBuffer->lastFrame = 0;
+        currentBuffer->prevDrawFrame = 0;
 
         for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
             currentBuffer->frame[i].age = 0;
@@ -277,6 +274,9 @@ FrameBuffer* frameBufferFlipDrawFrame()
         return NULL;
     }
 
+    currentBuffer->prevDrawFrame = currentBuffer->drawFrame;
+    curScanline = 0;
+
     if (mixMode == MIXMODE_EXTERNAL) {
         frameBufferExternal(currentBuffer->frame + currentBuffer->drawFrame);
     }
@@ -306,7 +306,7 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
     int i;
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
     frameData->drawFrame = frameBufferCount > 1 ? 1 : 0;
-    frameData->lastFrame = 0;
+    frameData->prevDrawFrame = 0;
 
     for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
         int j;

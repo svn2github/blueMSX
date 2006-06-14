@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-13 06:24:20 $
+** $Date: 2006-06-14 07:39:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,8 @@ UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderEx
 
     Y -= vdp->displayOffest;
 
+    frameBufferSetScanline(Y);
+
     linePtr = frameBuffer->line[Y].buffer;
 
     if (frameBuffer->line[Y].doubleWidth != line512 && line512 == 0) {
@@ -79,6 +81,8 @@ UInt16 *RefreshBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor2, int li
     }
 
     Y -= vdp->displayOffest;
+
+    frameBufferSetScanline(Y);
 
     linePtr = frameBuffer->line[Y].buffer;
 
