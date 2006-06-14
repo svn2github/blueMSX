@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxGunstick.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-14 21:30:29 $
+** $Date: 2006-06-14 22:03:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,26 +53,32 @@ static UInt8 read(MsxGunstick* joystick) {
     archMouseGetState(&mx, &my);
 
     my = my * joystick->scanlines / 0x10000;
-
-    frameBuffer = frameBufferGetLastDrawnFrame(my);
     
+    frameBuffer = frameBufferGetLastDrawnFrame(my);
+
     if (frameBuffer != NULL) {
+        int y;
+
         joystick->scanlines = frameBuffer->lines;
 
-        if (my >= 0 && my < frameBuffer->lines) {
-            UInt16 rgb = frameBuffer->line[my].buffer[
-                mx * (frameBuffer->line[my].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000];
-            int R = 8 * ((rgb >> 10) & 0x01f);
-            int G = 8 * ((rgb >> 5) & 0x01f);
-            int B = 8 * ((rgb >> 0) & 0x01f);
-            int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
-        
-            if (Y > 200) {
-                state |= 1 << 1;
+        for (y = my - 10; y < my + 10; y++) {
+            frameBuffer = frameBufferGetLastDrawnFrame(y);
+            if (y >= 0 && y < frameBuffer->lines) {
+                int x = mx * (frameBuffer->line[y].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
+                UInt16 rgb = frameBuffer->line[y].buffer[x];
+                int R = 8 * ((rgb >> 10) & 0x01f);
+                int G = 8 * ((rgb >> 5) & 0x01f);
+                int B = 8 * ((rgb >> 0) & 0x01f);
+                int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
+            
+                if (Y > 200) {
+                    state |= 1 << 1;
+                    break;
+                }
             }
         }
     }
-    
+
     return ~state & 0x3f;
 }
 

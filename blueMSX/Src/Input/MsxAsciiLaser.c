@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-14 21:30:29 $
+** $Date: 2006-06-14 22:03:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,6 +75,7 @@ static UInt8 read(MsxAsciiLaser* joystick) {
             }
         }
     }
+
     return state;
 }
 
