@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TurboRIO.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-08-19 06:38:27 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "Switches.h"
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,7 +71,7 @@ static void getDebugInfo(TurboRIO* turboRIO, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "TR Pause", 1);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevTrPause(), 1);
     dbgIoPortsAddPort(ioPorts, 0, 0xa7, DBG_IO_READWRITE, read(turboRIO, 0xa7));
 }
 
@@ -82,7 +83,7 @@ int romMapperTurboRIOCreate()
     TurboRIO* turboRIO = (TurboRIO*)calloc(1, sizeof(TurboRIO));
 
     turboRIO->deviceHandle = deviceManagerRegister(ROM_TURBORIO, &callbacks, turboRIO);
-    turboRIO->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "TR Pause", &dbgCallbacks, turboRIO);
+    turboRIO->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevTrPause(), &dbgCallbacks, turboRIO);
 
     ioPortRegister(0xa7, read, write, turboRIO);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "Board.h"
 #include "Y8950.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -164,11 +165,11 @@ static void getDebugInfo(RomMapperMsxAudio* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX Audio", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxAudio(), 2);
     dbgIoPortsAddPort(ioPorts, 0, rm->ioBase + 0, DBG_IO_READWRITE, y8950Peek(rm->y8950, 0));
     dbgIoPortsAddPort(ioPorts, 1, rm->ioBase + 1, DBG_IO_READWRITE, y8950Peek(rm->y8950, 1));
     
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX-A MIDI", 4);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxAudioMidi(), 4);
     dbgIoPortsAddPort(ioPorts, 0, 0x00, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0x01, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 2, 0x04, DBG_IO_READ, midiRead(rm, 0x04));
@@ -188,7 +189,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperMsxAudio));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MSXAUDIO, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX Audio", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevMsxAudio(), &dbgCallbacks, rm);
 
     rm->ioBase = 0xc0 + deviceCount++ * 2;
 

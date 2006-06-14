@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonamiKeyboardMaster.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-09-07 20:55:29 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -115,7 +116,7 @@ static void getDebugInfo(RomMapperKonamiKeyboardMaster* rm, DbgDevice* dbgDevice
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Konami Keyboard Master", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKonamiKbd(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0x00, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0x20, DBG_IO_READWRITE, read(rm, 0x20));
 }
@@ -137,7 +138,7 @@ int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperKonamiKeyboardMaster));
 
     rm->deviceHandle = deviceManagerRegister(ROM_KONAMKBDMAS, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "Konami Keyboard Master", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, langDbgDevKonamiKbd(), &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
 

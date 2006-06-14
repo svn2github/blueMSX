@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMatsuchita.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "IoPort.h"
 #include "sramLoader.h"
 #include "Switches.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -183,7 +184,7 @@ static void getDebugInfo(SramMapperMatsushita* rm, DbgDevice* dbgDevice)
         DbgIoPorts* ioPorts;
         int i;
 
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji 12", 2);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKanji12(), 2);
 
         for (i = 0; i < 16; i++) {
             dbgIoPortsAddPort(ioPorts, i, 0x40 + i, DBG_IO_READWRITE, peek(rm, i));
@@ -200,7 +201,7 @@ int sramMapperMatsushitaCreate()
     rm = malloc(sizeof(SramMapperMatsushita));
 
     rm->deviceHandle = deviceManagerRegister(SRAM_MATSUCHITA, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "MATSUSHITA", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevMatsuchita(), &dbgCallbacks, rm);
 
     memset(rm->sram, 0xff, 0x800);
     rm->address = 0;

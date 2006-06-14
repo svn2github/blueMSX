@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -38,6 +38,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -184,7 +185,7 @@ static void getDebugInfo(Microsol* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "FDC", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevFdcMicrosol(), 2);
     for (i = 0; i < 5; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0xd0, DBG_IO_READWRITE, peekIo(rm, 0xd0 + i));
     }
@@ -202,7 +203,7 @@ int romMapperMicrosolCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(Microsol));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MICROSOL, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Microsol FDC", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevFdcMicrosol(), &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
 

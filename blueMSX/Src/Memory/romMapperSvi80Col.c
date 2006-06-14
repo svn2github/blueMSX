@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-01-25 21:19:06 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "CRTC6845.h"
+#include "Language.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -132,7 +133,7 @@ static void getDebugInfo(RomMapperSvi80Col* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI 80 Column", 3);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevSvi80Col(), 3);
     dbgIoPortsAddPort(ioPorts, 0, 0x50, DBG_IO_READWRITE, peekIo(rm, 0x50));
     dbgIoPortsAddPort(ioPorts, 1, 0x51, DBG_IO_READWRITE, peekIo(rm, 0x51));
     dbgIoPortsAddPort(ioPorts, 2, 0x58, DBG_IO_READWRITE, peekIo(rm, 0x58));
@@ -155,7 +156,7 @@ int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size)
     svi80col->crtc6845 = NULL;
     svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 80, 4);
 
-    svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "SVI 80 Column", &dbgCallbacks, svi80col);
+    svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, langDbgDevSvi80Col(), &dbgCallbacks, svi80col);
     ioPortRegister(0x50, NULL,   writeIoLatch,       svi80col);
     ioPortRegister(0x51, readIo, writeIo,            svi80col);
     ioPortRegister(0x58, NULL,   writeIoMemBankCtrl, svi80col);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperBeerIDE.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-12-28 06:50:18 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "IoPort.h"
 #include "I8255.h"
 #include "Disk.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -216,7 +217,7 @@ static void getDebugInfo(RomMapperBeerIde* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Beer IDE", 12);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeBeer(), 12);
     for (i = 0; i < 12; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0x44 + i, DBG_IO_READWRITE, peekIo(rm, 0x44 + i));
     }
@@ -243,7 +244,7 @@ int romMapperBeerIdeCreate(int hdId, char* fileName, UInt8* romData,
     rm = malloc(sizeof(RomMapperBeerIde));
     
     rm->deviceHandle = deviceManagerRegister(ROM_BEERIDE, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "Beer IDE", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevIdeBeer(), &dbgCallbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, read, NULL, destroy, rm);
 
     rm->i8255 = i8255Create( NULL, readA, writeA,

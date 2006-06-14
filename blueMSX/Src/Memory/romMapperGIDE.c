@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGIDE.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-01-01 15:45:21 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "IoPort.h"
 #include "Board.h"
 #include "Disk.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -282,7 +283,7 @@ static void getDebugInfo(RomMapperGIde* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "GIDE", 12);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeGide(), 12);
     for (i = 0; i < 12; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0x44 + i, DBG_IO_READWRITE, peekIo(rm, 0x44 + i));
     }
@@ -296,9 +297,9 @@ int romMapperGIdeCreate(int hdId)
     int portBase;
 
     rm = malloc(sizeof(RomMapperGIde));
-    
+
     rm->deviceHandle = deviceManagerRegister(ROM_GIDE, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "GIDE", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevIdeGide(), &dbgCallbacks, rm);
 
     portBase = (boardGetType() == BOARD_SVI) ? 0x40:0x60;
 

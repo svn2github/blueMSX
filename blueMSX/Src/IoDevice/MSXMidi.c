@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-11 07:53:24 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "Board.h"
 #include "IoPort.h"
 #include "ArchMidi.h"
+#include "Language.h"
 #include "I8251.h"
 #include "I8254.h"
 #include <stdlib.h>
@@ -338,7 +339,7 @@ static void getDebugInfo(MSXMidi* msxMidi, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX MIDI", 8);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxMidi(), 8);
     for (i = 0; i < 8; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0xe8 + i, DBG_IO_READWRITE, peekIo(msxMidi, 0xe8 + i));
     }
@@ -365,7 +366,7 @@ int MSXMidiCreate()
     msxMidi = malloc(sizeof(MSXMidi));
     
     msxMidi->deviceHandle = deviceManagerRegister(ROM_MSXMIDI, &callbacks, msxMidi);
-    msxMidi->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX MIDI", &dbgCallbacks, msxMidi);
+    msxMidi->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevMsxMidi(), &dbgCallbacks, msxMidi);
 
     msxMidi->i8254 = i8254Create(4000000, pitOut0, pitOut1, pitOut2, msxMidi);
     msxMidi->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 

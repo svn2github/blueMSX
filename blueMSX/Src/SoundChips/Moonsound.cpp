@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 extern "C" {
 #include "Board.h"
 #include "SaveState.h"
+#include "Language.h"
 }
 
 #define FREQUENCY        3579545
@@ -233,7 +234,7 @@ void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
         c += regsAvailYMF262[r];
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YMF262 Registers", c);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsYmf262(), c);
 
     c = 0;
     dbgRegisterBankAddRegister(regBank, c++, "SR", 8, moonsound->ymf262->peekStatus());
@@ -251,7 +252,7 @@ void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
 
     // Add YMF278 registers
     c = 1 + 7 + 2 + 10 * 10;
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YMF278 Registers", c);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsYmf278(), c);
 
     c = 0;
     dbgRegisterBankAddRegister(regBank, c++, "SR", 8, moonsound->ymf278->peekStatus(systemTime));
@@ -273,7 +274,7 @@ void moonsoundGetDebugInfo(Moonsound* moonsound, DbgDevice* dbgDevice)
         }
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "YMF278 Sample RAM", 0, 0, 
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemYmf278(), 0, 0, 
                             moonsound->ymf278->getRamSize(), 
                             (UInt8*)moonsound->ymf278->getRam());
 }

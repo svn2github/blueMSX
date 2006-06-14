@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-02-18 10:02:13 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
@@ -273,9 +274,9 @@ static void getDebugInfo(CRTC6845* crtc, DbgDevice* dbgDevice)
     DbgRegisterBank* regBank;
     int i;
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "VRAM", 0, 0, crtc->vramMask + 1, crtc->vram);
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemVram(), 0, 0, crtc->vramMask + 1, crtc->vram);
    
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "VDP Registers", 16);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16);
 
     for (i = 0; i < 16; i++) {
         char reg[4];
@@ -351,7 +352,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
         DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
         DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
         crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
-        crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, "CRTC6845", &dbgCallbacks, crtc);
+        crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, langDbgDevCrtc6845(), &dbgCallbacks, crtc);
     }
 
     // Initialize video frame buffer

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** Author: Daniel Vik
 **
@@ -35,6 +35,7 @@
 #include "R800Debug.h"
 #include "SlotManager.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "Board.h"
@@ -50,7 +51,6 @@ struct R800Debug {
 static R800Debug* dbg;
 
 
-
 static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
 {
     static UInt8 mappedRAM[0x10000];
@@ -61,7 +61,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
         mappedRAM[i] = slotPeek(NULL, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Visible Memory", 0, 0, 0x10000, mappedRAM);
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemVisible(), 0, 0, 0x10000, mappedRAM);
 
     if (dbg->r800->callstackSize > 255) {
         static UInt16 callstack[0x100];
@@ -69,13 +69,13 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
         int reminder = 256 - beginning;
         memcpy(callstack, dbg->r800->callstack + beginning, reminder * sizeof(UInt16));
         memcpy(callstack + reminder, dbg->r800->callstack, beginning * sizeof(UInt16));
-        dbgDeviceAddCallstack(dbgDevice, "Callstack", callstack, 256);
+        dbgDeviceAddCallstack(dbgDevice, langDbgCallstack(), callstack, 256);
     }
     else {
-        dbgDeviceAddCallstack(dbgDevice, "Callstack", dbg->r800->callstack, dbg->r800->callstackSize);
+        dbgDeviceAddCallstack(dbgDevice, langDbgCallstack(), dbg->r800->callstack, dbg->r800->callstackSize);
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "CPU Registers", 17);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 17);
 
     dbgRegisterBankAddRegister(regBank,  0, "AF",  16, dbg->r800->regs.AF.W);
     dbgRegisterBankAddRegister(regBank,  1, "BC",  16, dbg->r800->regs.BC.W);
@@ -168,7 +168,7 @@ void r800DebugCreate(R800* r800)
     
     dbg = (R800Debug*)malloc(sizeof(R800Debug));
     dbg->r800 = r800;
-    dbg->debugHandle = debugDeviceRegister(DBGTYPE_CPU, "Z80", &dbgCallbacks, dbg);
+    dbg->debugHandle = debugDeviceRegister(DBGTYPE_CPU, langDbgDevZ80(), &dbgCallbacks, dbg);
 
     r800->debugCb      = debugCb;
     r800->breakpointCb = breakpointCb;

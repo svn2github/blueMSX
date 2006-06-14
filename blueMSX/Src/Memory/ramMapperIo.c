@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapperIo.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
+#include "Language.h"
 #include "IoPort.h"
 #include <stdlib.h>
 #include <string.h>
@@ -135,7 +136,7 @@ static void getDebugInfo(RamMapperIo* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RAM Mapper", 4);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevRamMapper(), 4);
     for (i = 0; i < 4; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0xfc + i, DBG_IO_READWRITE, read(rm, 0xfc + i));
     }
@@ -158,7 +159,7 @@ int ramMapperIoCreate()
     rm->port[3] = 0;
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RAM Mapper", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevRamMapper(), &dbgCallbacks, rm);
 
     ioPortRegister(0xfc, read, write, rm);
     ioPortRegister(0xfd, read, write, rm);

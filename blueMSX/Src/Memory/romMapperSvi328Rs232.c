@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Rs232.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "IoPort.h"
 #include "I8250.h"
 #include "ArchUart.h"
+#include "Language.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -144,7 +145,7 @@ static void getDebugInfo(RomMapperSvi328Rs232* rs232, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI RS-232", 8);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevRs232(), 8);
 
     for (i = 0; i < 8; i++) {
         dbgIoPortsAddPort(ioPorts, i, rs232->baseAddress + i, DBG_IO_READWRITE, peekIo(rs232, rs232->baseAddress + i));
@@ -160,7 +161,7 @@ int romMapperSvi328Rs232Create(Svi328UartConnector connector)
 
     rs232->connector  = connector;
     rs232->deviceHandle = deviceManagerRegister(ROM_SVI328RS232, &callbacks, rs232);
-    rs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "SVI RS-232", &dbgCallbacks, rs232);
+    rs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevRs232(), &dbgCallbacks, rs232);
 
     rs232->i8250 = NULL;
     rs232->i8250 = i8250Create(3072000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, rs232);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/RTC.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -314,7 +315,7 @@ static void getDebugInfo(RTC* rtc, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RTC", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevRtc(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0xb4, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0xb5, DBG_IO_READWRITE, rtcPeekData(rtc, 0xb5));
 }
@@ -355,7 +356,7 @@ RTC* rtcCreate(int enable, char* cmosName)
     }
 
     if (enable) {
-        rtc->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RTC", &dbgCallbacks, rtc);
+        rtc->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevRtc(), &dbgCallbacks, rtc);
         
         ioPortRegister(0xb4, NULL,        rtcWriteLatch, rtc);
         ioPortRegister(0xb5, rtcReadData, rtcWriteData,  rtc);

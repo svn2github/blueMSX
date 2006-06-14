@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Fdc.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -170,7 +171,7 @@ static void getDebugInfo(Svi328Fdc* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI FDC", 5);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevSviFdc(), 5);
     for (i = 0; i < 5; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0x30 + i, DBG_IO_READWRITE, peekIo(rm, 0x30 + i));
     }
@@ -185,7 +186,7 @@ int svi328FdcCreate(void)
     rm = malloc(sizeof(Svi328Fdc));
     
     rm->deviceHandle = deviceManagerRegister(ROM_SVI328FDC, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, "SVI FDC", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevSviFdc(), &dbgCallbacks, rm);
 
     ioPortRegister(0x30, readIo, writeIo, rm);
     ioPortRegister(0x31, readIo, writeIo, rm);

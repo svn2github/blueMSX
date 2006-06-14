@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-10-04 23:03:33 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "IoPort.h"
 #include "SaveState.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -135,7 +136,7 @@ static void setDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
     DbgRegisterBank* regBank;
     int i;
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "Registers", 16);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16);
 
     for (i = 0; i < 16; i++) {
         char reg[4];

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAK.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-13 17:55:04 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "DebugDeviceManager.h"
 #include "YM2413.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -145,7 +146,7 @@ static void getDebugInfo(RomMapperFMPAK* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "FMPAK", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevFmpak(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
     
@@ -243,7 +244,7 @@ int romMapperFMPAKCreate(char* filename, UInt8* romData,
     rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
         rm->ym2413 = ym2413Create(boardGetMixer());
-        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "FMPAK", &dbgCallbacks, rm);
+        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevFmpak(), &dbgCallbacks, rm);
         ioPortRegister(0x7c, NULL, writeIo, rm);
         ioPortRegister(0x7d, NULL, writeIo, rm);
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBI55.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 #include "KeyClick.h"
 #include "ArchInput.h"
 #include "Switches.h"
+#include "Language.h"
 #include "Led.h"
 #include <stdlib.h>
 #include <string.h>
@@ -176,7 +177,7 @@ static void getDebugInfo(SonyHBI55* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "HBI-55", 4);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevHbi55(), 4);
     dbgIoPortsAddPort(ioPorts, 0, 0xb0, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb0));
     dbgIoPortsAddPort(ioPorts, 1, 0xb1, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb1));
     dbgIoPortsAddPort(ioPorts, 2, 0xb2, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0xb2));
@@ -190,7 +191,7 @@ int romMapperSonyHBI55Create()
     SonyHBI55* rm = malloc(sizeof(SonyHBI55));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SONYHBI55, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "HBI-55", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, langDbgDevHbi55(), &dbgCallbacks, rm);
 
     memset(rm->sram, 0xff, sizeof(rm->sram));
     sramLoad(sramCreateFilename("HBI-55.SRAM"), rm->sram, 0x1000, NULL, 0);

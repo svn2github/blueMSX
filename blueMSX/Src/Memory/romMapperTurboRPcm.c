@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-01 20:09:00 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "Board.h"
 #include "DAC.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -155,7 +156,7 @@ static void getDebugInfo(RomMapperTurboRPcm* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PCM", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevPcm(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0xa4, DBG_IO_READWRITE, peek(rm, 0xa4));
     dbgIoPortsAddPort(ioPorts, 1, 0xa5, DBG_IO_READWRITE, peek(rm, 0xa5));
 }
@@ -167,7 +168,7 @@ int romMapperTurboRPcmCreate()
     RomMapperTurboRPcm* rm = malloc(sizeof(RomMapperTurboRPcm));
 
     rm->deviceHandle = deviceManagerRegister(ROM_TURBORPCM, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "PCM", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevPcm(), &dbgCallbacks, rm);
 
     rm->dac    = dacCreate(boardGetMixer(), DAC_MONO);
 	rm->status = 0;

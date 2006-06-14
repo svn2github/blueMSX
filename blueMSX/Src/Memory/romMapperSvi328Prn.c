@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Prn.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-30 00:56:59 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "PrinterIO.h"
+#include "Language.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -125,7 +126,7 @@ static void getDebugInfo(RomMapperSvi328Prn* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "SVI Printer", 3);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevSviPrn(), 3);
     dbgIoPortsAddPort(ioPorts, 0, 0x10, DBG_IO_READWRITE, peekIo(rm, 0x10));
     dbgIoPortsAddPort(ioPorts, 1, 0x11, DBG_IO_READWRITE, peekIo(rm, 0x11));
     dbgIoPortsAddPort(ioPorts, 2, 0x12, DBG_IO_READWRITE, peekIo(rm, 0x12));
@@ -142,7 +143,7 @@ int romMapperSvi328PrnCreate(void)
     prn->printerIO = printerIOCreate();
 
     prn->deviceHandle = deviceManagerRegister(ROM_SVI328PRN, &callbacks, prn);
-    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "SVI Printer", &dbgCallbacks, prn);
+    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevSviPrn(), &dbgCallbacks, prn);
 
     ioPortRegister(0x10, NULL, writeIo, prn);
     ioPortRegister(0x11, NULL, writeIo, prn);

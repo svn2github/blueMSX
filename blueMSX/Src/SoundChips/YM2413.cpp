@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/YM2413.cpp,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ extern "C" {
 #include "IoPort.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "Language.h"
 }
 
 
@@ -155,7 +156,7 @@ void ym2413GetDebugInfo(YM_2413* ym2413, DbgDevice* dbgDevice)
         c += regsAvailYM2413[r];
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "YM2413 Registers", c);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsYm2413(), c);
     
     c = 0;
     for (int r = 0; r < sizeof(regsAvailYM2413); r++) {

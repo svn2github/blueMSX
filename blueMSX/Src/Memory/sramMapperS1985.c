@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperS1985.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "sramLoader.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -152,7 +153,7 @@ static void getDebugInfo(SramMapperS1985* rm, DbgDevice* dbgDevice)
         DbgIoPorts* ioPorts;
         int i;
 
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji 12", 2);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKanji12(), 2);
 
         for (i = 0; i < 16; i++) {
             dbgIoPortsAddPort(ioPorts, i, 0x40 + i, DBG_IO_READWRITE, peek(rm, i));
@@ -169,7 +170,7 @@ int sramMapperS1985Create()
     rm = malloc(sizeof(SramMapperS1985));
 
     rm->deviceHandle = deviceManagerRegister(SRAM_S1985, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "S1985", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevS1985(), &dbgCallbacks, rm);
 
     memset(rm->sram, 0xff, 0x10);
     rm->address = 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaRAM.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -154,7 +155,7 @@ static void getDebugInfo(RomMapperMegaRAM* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Mega RAM", 1);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMegaRam(), 1);
     dbgIoPortsAddPort(ioPorts, 0, 0x77, DBG_IO_READWRITE, 0xff);
 }
 
@@ -173,7 +174,7 @@ int romMapperMegaRAMCreate(int size, int slot, int sslot, int startPage)
     rm = malloc(sizeof(RomMapperMegaRAM));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MEGARAM, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "Mega RAM", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, langDbgDevMegaRam(), &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, 8, NULL, NULL, write, destroy, rm);
 

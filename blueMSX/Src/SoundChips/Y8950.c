@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "IoPort.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -203,7 +204,7 @@ void y8950GetDebugInfo(Y8950* y8950, DbgDevice* dbgDevice)
         c += regsAvailAY8950[r];
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "AY8950 Registers", c);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsAy8950(), c);
     
     c = 0;
 
@@ -215,7 +216,7 @@ void y8950GetDebugInfo(Y8950* y8950, DbgDevice* dbgDevice)
         }
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "AY8950 Sample RAM", 0, 0, 
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemAy8950(), 0, 0, 
                             y8950->opl->deltat->memory_size, 
                             (UInt8*)y8950->opl->deltat->memory);
 }

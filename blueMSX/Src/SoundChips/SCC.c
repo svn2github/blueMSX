@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -352,7 +353,7 @@ static void getDebugInfo(SCC* scc, DbgDevice* dbgDevice)
         sccPeek(scc, i);
     }
 
-    dbgDeviceAddMemoryBlock(dbgDevice, "Memory", 1, 0, 0x100, ram);
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemScc(), 1, 0, 0x100, ram);
 }
 
 SCC* sccCreate(Mixer* mixer)
@@ -362,7 +363,7 @@ SCC* sccCreate(Mixer* mixer)
 
     scc->mixer = mixer;
 
-//    scc->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SCC", &dbgCallbacks, scc);
+//    scc->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevScc(), &dbgCallbacks, scc);
 
     scc->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_SCC, 0, sccSync, scc);
 

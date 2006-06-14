@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKanji.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -132,7 +133,7 @@ static void getDebugInfo(RomMapperKanji* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Kanji", 4);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKanji(), 4);
     dbgIoPortsAddPort(ioPorts, 0, 0xd8, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0xd9, DBG_IO_READWRITE, peek(rm, 0xd9));
     dbgIoPortsAddPort(ioPorts, 2, 0xda, DBG_IO_WRITE, 0);
@@ -156,7 +157,7 @@ int romMapperKanjiCreate(UInt8* romData, int size)
     rm->address[1] = 0x20000;
 
     rm->deviceHandle = deviceManagerRegister(ROM_KANJI, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Kanji", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevKanji(), &dbgCallbacks, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);

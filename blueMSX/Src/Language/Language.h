@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -682,6 +682,67 @@ char* langRomTypeNms8280Digitiz();
 char* langRomTypeHbiV1Digitiz();
 char* langRomTypeFmdas();
 char* langRomTypeSfg05();
+
+
+#define langDbgMemVisible()   "Visible Memory"
+#define langDbgMemRamNormal() "Normal"
+#define langDbgMemRamMapped() "Mapped"
+#define langDbgMemVram()      "VRAM"
+#define langDbgMemYmf278()    "YMF278 Sample RAM"
+#define langDbgMemAy8950()    "AY8950 Sample RAM"
+#define langDbgMemScc()       "Memory"
+
+#define langDbgCallstack()    "Callstack"
+
+#define langDbgRegs()         "Registers"
+#define langDbgRegsCpu()      "CPU Registers"
+#define langDbgRegsYmf262()   "YMF262 Registers"
+#define langDbgRegsYmf278()   "YMF278 Registers"
+#define langDbgRegsAy8950()   "AY8950 Registers"
+#define langDbgRegsYm2413()   "YM2413 Registers"
+
+#define langDbgDevRamMapper()   "RAM Mapper"
+#define langDbgDevRam()         "RAM"
+#define langDbgDevIdeBeer()     "Beer IDE"
+#define langDbgDevIdeGide()     "GIDE"
+#define langDbgDevF4Device()    "F4 Device"
+#define langDbgDevFmpac()       "FMPAC"
+#define langDbgDevFmpak()       "FMPAK"
+#define langDbgDevKanji()       "Kanji"
+#define langDbgDevKanji12()     "Kanji 12"
+#define langDbgDevKonamiKbd()   "Konami Keyboard Master"
+#define langDbgDevKorean80()    "Korean 80"
+#define langDbgDevKorean90()    "Korean 90"
+#define langDbgDevKorean128()   "Korean 128"
+#define langDbgDevMegaRam()     "Mega RAM"
+#define langDbgDevFdcMicrosol() "Microsol FDC"
+#define langDbgDevMoonsound()   "Moonsound"
+#define langDbgDevMsxAudio()    "MSX Audio"
+#define langDbgDevMsxAudioMidi()"MSX Audio MIDI"
+#define langDbgDevMsxMusic()    "MSX Music"
+#define langDbgDevPrinter()     "Printer"
+#define langDbgDevRs232()       "RS232"
+#define langDbgDevS1990()       "S1990"
+#define langDbgDevSfg05()       "Yamaha SFG-05"
+#define langDbgDevHbi55()       "Sony HBI-55"
+#define langDbgDevSviFdc()      "SVI FDC"
+#define langDbgDevSviPrn()      "SVI Printer"
+#define langDbgDevSvi80Col()    "SVI 80 Column"
+#define langDbgDevPcm()         "PCM"
+#define langDbgDevMatsuchita()  "Matsuchita"
+#define langDbgDevS1985()       "S1985"
+#define langDbgDevCrtc6845()    "CRTC6845"
+#define langDbgDevTms9929A()    "TMS9929A"
+#define langDbgDevTms99x8A()    "TMS99x8A"
+#define langDbgDevV9938()       "V9938"
+#define langDbgDevV9958()       "V9958"
+#define langDbgDevZ80()         "Z80"
+#define langDbgDevMsxMidi()     "MSX MIDI"
+#define langDbgDevPpi()         "PPI"
+#define langDbgDevRtc()         "RTC"
+#define langDbgDevTrPause()     "TR Pause"
+#define langDbgDevAy8910()      "AY8910 PSG"
+#define langDbgDevScc()         "SCC"
 
 #endif
 

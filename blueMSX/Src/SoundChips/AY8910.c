@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-05-31 04:48:23 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "IoPort.h"
 #include "SaveState.h"
 #include "DebugDeviceManager.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -171,7 +172,7 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, "Registers", 16);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16);
 
     for (i = 0; i < 16; i++) {
         char reg[4];
@@ -181,14 +182,14 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
 
     switch (ay8910->connector) {
     case AY8910_MSX:
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910 PSG", 3);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevAy8910(), 3);
         dbgIoPortsAddPort(ioPorts, 0, 0xa0, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 1, 0xa1, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 2, 0xa2, DBG_IO_READ, ay8910PeekData(ay8910, 0xa2));
         break;
 
     case AY8910_SVI:
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910 PSG", 3);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevAy8910(), 3);
         dbgIoPortsAddPort(ioPorts, 0, 0x88, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 1, 0x8c, DBG_IO_WRITE, 0);
         dbgIoPortsAddPort(ioPorts, 2, 0x90, DBG_IO_READ, ay8910PeekData(ay8910, 0x90));
@@ -254,8 +255,8 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
         ioPortRegister(0x90, ay8910ReadData, NULL,               ay8910);
         break;
     }
-    
-    ay8910->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "AY8910 PSG", &dbgCallbacks, ay8910);
+
+    ay8910->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevAy8910(), &dbgCallbacks, ay8910);
 
     return ay8910;
 }

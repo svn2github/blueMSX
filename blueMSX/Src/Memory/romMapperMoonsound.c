@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMoonsound.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "Moonsound.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -114,7 +115,7 @@ static void getDebugInfo(RomMapperMoonsound* rm, DbgDevice* dbgDevice)
 
     moonsoundGetDebugInfo(rm->moonsound, dbgDevice);
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Moonsound", 6);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMoonsound(), 6);
     dbgIoPortsAddPort(ioPorts, 0, 0x7e, DBG_IO_READWRITE, peek(rm, 0x7e));
     dbgIoPortsAddPort(ioPorts, 1, 0x7f, DBG_IO_READWRITE, peek(rm, 0x7f));
     dbgIoPortsAddPort(ioPorts, 2, 0xc4, DBG_IO_READWRITE, peek(rm, 0xc4));
@@ -130,7 +131,7 @@ int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramS
     RomMapperMoonsound* rm = malloc(sizeof(RomMapperMoonsound));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MOONSOUND, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "Moonsound", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevMoonsound(), &dbgCallbacks, rm);
     
     rm->moonsound = NULL;
 

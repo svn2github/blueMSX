@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperF4device.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -96,7 +97,7 @@ static void getDebugInfo(RomMapperF4device* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "F4 Device", 1);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevF4Device(), 1);
     dbgIoPortsAddPort(ioPorts, 0, 0xf4, DBG_IO_READWRITE, read(rm, 0xe4));
 }
 
@@ -108,7 +109,7 @@ int romMapperF4deviceCreate(int inverted)
 
     rm->inverted   = inverted;
     rm->deviceHandle = deviceManagerRegister(inverted ? ROM_F4INVERTED : ROM_F4DEVICE, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "F4 Device", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevF4Device(), &dbgCallbacks, rm);
 
     ioPortRegister(0xf4, read, write, rm);
 

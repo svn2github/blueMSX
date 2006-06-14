@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperS1990.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "SaveState.h"
 #include "Switches.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -134,7 +135,7 @@ static void getDebugInfo(RomMapperS1990* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "S1990", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevS1990(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0xe4, DBG_IO_READWRITE, read(rm, 0xe4));
     dbgIoPortsAddPort(ioPorts, 1, 0xe5, DBG_IO_READWRITE, read(rm, 0xe5));
 }
@@ -148,7 +149,7 @@ int romMapperS1990Create()
     rm = malloc(sizeof(RomMapperS1990));
 
     rm->deviceHandle = deviceManagerRegister(ROM_S1990, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "S1990", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevS1990(), &dbgCallbacks, rm);
 
     ioPortRegister(0xe4, read, write, rm);
     ioPortRegister(0xe5, read, write, rm);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
 #include "Board.h"
 #include "ym2151.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -185,7 +186,7 @@ int romMapperSfg05Create(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperSfg05));
 
     rm->deviceHandle = deviceManagerRegister(ROM_YAMAHASFG05, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "Yamaha SFG-05", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevSfg05(), &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
 

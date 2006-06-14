@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-09-24 00:09:50 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,7 @@
 #include "I8251.h"
 #include "I8254.h"
 #include "ArchUart.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <memory.h>
 
@@ -317,7 +318,7 @@ static void getDebugInfo(MSXRs232* msxRs232, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "RS232", 8);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevRs232(), 8);
     for (i = 0; i < 7; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0x80 + i, DBG_IO_READWRITE, peekIo(msxRs232, 0x80 + i));
     }
@@ -342,7 +343,7 @@ int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, 
     msxRs232 = malloc(sizeof(MSXRs232));
     
     msxRs232->deviceHandle = deviceManagerRegister(ROM_MSXRS232, &callbacks, msxRs232);
-    msxRs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "RS232", &dbgCallbacks, msxRs232);
+    msxRs232->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevRs232(), &dbgCallbacks, msxRs232);
 
     slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, msxRs232);
 

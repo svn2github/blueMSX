@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-01-07 01:53:17 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@
 #include "Switches.h"
 #include "Led.h"
 #include "InputEvent.h"
+#include "Language.h"
 #include <stdlib.h>
 
 
@@ -177,7 +178,7 @@ static void getDebugInfo(MsxPPI* ppi, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "PPI", 4);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevPpi(), 4);
     dbgIoPortsAddPort(ioPorts, 0, 0xa8, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xa8));
     dbgIoPortsAddPort(ioPorts, 1, 0xa9, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xa9));
     dbgIoPortsAddPort(ioPorts, 2, 0xaa, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xaa));
@@ -191,7 +192,7 @@ void msxPPICreate()
     MsxPPI* ppi = malloc(sizeof(MsxPPI));
 
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
-    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "PPI", &dbgCallbacks, ppi);
+    ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevPpi(), &dbgCallbacks, ppi);
 
     ppi->i8255 = i8255Create(NULL,  NULL,  writeA,
                              peekB, readB, NULL,

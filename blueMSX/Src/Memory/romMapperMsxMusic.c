@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxMusic.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-05-26 05:30:06 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "YM2413.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -111,7 +112,7 @@ static void getDebugInfo(MsxMusic* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "MSX Music", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxMusic(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
     dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
     
@@ -136,7 +137,7 @@ int romMapperMsxMusicCreate(char* filename, UInt8* romData,
     rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
         rm->ym2413 = ym2413Create(boardGetMixer());
-        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "MSX Music", &dbgCallbacks, rm);
+        rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevMsxMusic(), &dbgCallbacks, rm);
         ioPortRegister(0x7c, NULL, write, rm);
         ioPortRegister(0x7d, NULL, write, rm);
     }

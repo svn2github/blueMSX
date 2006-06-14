@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKorean90.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "DebugDeviceManager.h"
 #include "SaveState.h"
 #include "IoPort.h"
+#include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -129,7 +130,7 @@ static void getDebugInfo(RomMapperKorean90* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "KOREAN90", 1);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKorean90(), 1);
     dbgIoPortsAddPort(ioPorts, 0, 0x77, DBG_IO_WRITE, 0);
 }
 
@@ -148,7 +149,7 @@ int romMapperKorean90Create(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperKorean90));
 
     rm->deviceHandle = deviceManagerRegister(ROM_KOREAN90, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, "KOREAN90", &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_CART, langDbgDevKorean90(), &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
 

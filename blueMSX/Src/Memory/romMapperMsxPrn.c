@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxPrn.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-09-09 18:14:16 $
+** $Date: 2006-06-14 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "PrinterIO.h"
+#include "Language.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -116,7 +117,7 @@ static void getDebugInfo(RomMapperMsxPrn* prn, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "Printer", 2);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevPrinter(), 2);
     dbgIoPortsAddPort(ioPorts, 0, 0x90, DBG_IO_READWRITE, readIo(prn, 0x90));
     dbgIoPortsAddPort(ioPorts, 1, 0x91, DBG_IO_READWRITE, readIo(prn, 0x91));
 }
@@ -132,7 +133,7 @@ int romMapperMsxPrnCreate(void)
     prn->printerIO = printerIOCreate();
 
     prn->deviceHandle = deviceManagerRegister(ROM_MSXPRN, &callbacks, prn);
-    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Printer", &dbgCallbacks, prn);
+    prn->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevPrinter(), &dbgCallbacks, prn);
 
     ioPortRegister(0x90, readIo, writeIo, prn);
     ioPortRegister(0x91, readIo, writeIo, prn);
