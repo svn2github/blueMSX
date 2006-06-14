@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2005-08-16 04:14:28 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include "Win32ToolLoader.h"
 #include "BlueMSXToolInterface.h"
 #include "Debugger.h"

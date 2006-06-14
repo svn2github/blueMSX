@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include <math.h>
 #include <commctrl.h>
 #include <stdlib.h>
@@ -363,10 +362,10 @@ static BOOL CALLBACK saveProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     switch (iMsg) {        
     case WM_INITDIALOG:
         {
-            _TCHAR buffer[128];
+            char buffer[128];
             SetWindowText(hDlg, langShortcutSaveConfig());
 
-            _stprintf(buffer, "%s\n\n    \"%s\" ?", langShortcutOverwriteConfig(), shortcutProfile);
+            sprintf(buffer, "%s\n\n    \"%s\" ?", langShortcutOverwriteConfig(), shortcutProfile);
 
             SetWindowText(GetDlgItem(hDlg, IDC_CONF_SAVEDLG_TEXT), buffer);
             SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());

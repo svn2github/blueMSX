@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-06-13 17:40:08 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -271,7 +271,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     return 0;
 }
 
-char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, int mustExist, 
+char* openRomFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, int mustExist, 
                   char* defExt, int* filterIndex, RomType* romType)
 { 
     OPENFILENAME ofn; 
@@ -504,7 +504,7 @@ UINT_PTR CALLBACK hookStateProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     return 0;
 }
 
-char* openStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openStateFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                     int newFileSize, char* defExt, int* filterIndex, int* showPreview)
 { 
     OPENFILENAME ofn; 
@@ -591,7 +591,7 @@ char* openStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     return pFileName; 
 } 
 
-char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview) { 
+char* saveStateFile(HWND hwndOwner, char* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview) { 
     OPENFILENAME ofn; 
     BOOL rv; 
     static char pFileName[MAX_PATH]; 
@@ -743,7 +743,7 @@ UINT_PTR CALLBACK hookHdProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openNewHdFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                     char* defExt, int* filterIndex)
 { 
     OPENFILENAME ofn; 
@@ -914,7 +914,7 @@ UINT_PTR CALLBACK hookDskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     return 0;
 }
 
-char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openNewDskFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                     char* defExt, int* filterIndex)
 { 
     OPENFILENAME ofn; 
@@ -1036,7 +1036,7 @@ UINT_PTR CALLBACK hookProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                int newFileSize, char* defExt, int* filterIndex)
 { 
     OPENFILENAME ofn; 
@@ -1117,7 +1117,7 @@ char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir,
     return pFileName; 
 } 
 
-char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir) { 
+char* saveFile(HWND hwndOwner, char* pTitle, char* pFilter, int* pFilterIndex, char* pDir) { 
     OPENFILENAME ofn; 
     BOOL rv; 
     static char pFileName[MAX_PATH]; 

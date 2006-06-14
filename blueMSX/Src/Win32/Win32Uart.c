@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Uart.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-11 07:53:24 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include "Win32Uart.h"
 #include "ArchUart.h"
 #include "Properties.h"

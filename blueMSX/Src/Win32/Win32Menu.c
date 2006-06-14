@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,6 @@
 **
 ******************************************************************************
 */
-#include <tchar.h>
 #include <stdio.h>
 #include "Win32Menu.h"
 #include "Win32ToolLoader.h"
@@ -279,17 +278,17 @@ static void setMenuColor(HMENU hMenu)
 }
 
 static HMENU menuCreateReset(Properties* pProperties, Shortcuts* shortcuts) {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunHardReset(), shortcutsToString(shortcuts->resetHard));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunHardReset(), shortcutsToString(shortcuts->resetHard));
     AppendMenu(hMenu, MF_STRING, ID_RUN_RESET, langBuffer);
 //    ModifyMenu(hMenu, 0, MF_BYPOSITION | MF_OWNERDRAW, 0, NULL);
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunSoftReset(), shortcutsToString(shortcuts->resetSoft));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunSoftReset(), shortcutsToString(shortcuts->resetSoft));
     AppendMenu(hMenu, MF_STRING, ID_RUN_SOFTRESET, langBuffer);
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunCleanReset(), shortcutsToString(shortcuts->resetClean));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunCleanReset(), shortcutsToString(shortcuts->resetClean));
     AppendMenu(hMenu, MF_STRING, ID_RUN_CLEANRESET, langBuffer);
 
     return hMenu;
@@ -298,14 +297,14 @@ static HMENU menuCreateReset(Properties* pProperties, Shortcuts* shortcuts) {
 
 static HMENU menuCreateVideoIn(Properties* pProperties, Shortcuts* shortcuts) 
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
     int count = videoInGetCount();
     int i;
 
     for (i = 0; i < count; i++) {
-        _stprintf(langBuffer, "%s        ", videoInGetName(i));
+        sprintf(langBuffer, "%s        ", videoInGetName(i));
         AppendMenu(hMenu, MF_STRING | (videoInIsActive(i) ? MFS_CHECKED : 0), ID_VIDEOIN_CONNECTORS + i, langBuffer);
     }
     
@@ -314,25 +313,25 @@ static HMENU menuCreateVideoIn(Properties* pProperties, Shortcuts* shortcuts)
 
 static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcuts) 
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
     int count = videoManagerGetCount();
     int i;
 
     if (count == 0) {
-        _stprintf(langBuffer, "%s", langMenuVideoSourceDefault());
+        sprintf(langBuffer, "%s", langMenuVideoSourceDefault());
         AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_VIDEO_CONNECTORS + 0, langBuffer);
     }
 
     for (i = 0; i < count; i++) {
-        _stprintf(langBuffer, "%s        ", videoManagerGetName(i));
+        sprintf(langBuffer, "%s        ", videoManagerGetName(i));
         AppendMenu(hMenu, MF_STRING | (videoManagerIsActive(i) ? MFS_CHECKED : 0), ID_VIDEO_CONNECTORS + i, langBuffer);
     }
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     
-    _stprintf(langBuffer, "%s", langMenuVideoChipAutodetect());
+    sprintf(langBuffer, "%s", langMenuVideoChipAutodetect());
     AppendMenu(hMenu, MF_STRING | (count > 1 ? (pProperties->video.chipAutodetect ? MFS_CHECKED : 0) : MF_GRAYED), ID_VIDEO_AUTODETECT, langBuffer);
 
     return hMenu;
@@ -390,7 +389,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
 static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shortcuts, int enableSpecial)
 {
     int idOffset = cartNo * ID_FILE_CART_OFFSET;
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
@@ -399,7 +398,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     verifyFileHistory(*pProperties->filehistory.cartridge[cartNo],
                       pProperties->filehistory.cartridgeType[cartNo]);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
+    sprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_INSERT, langBuffer);
 
     if (enableSpecial) {
@@ -408,7 +407,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.carts[cartNo].fileName));
+    sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.carts[cartNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[cartNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_CART_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -424,7 +423,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
-        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
     }
 
@@ -435,7 +434,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shortcuts) 
 {
     int idOffset = diskNo * ID_FILE_DISK_OFFSET;
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
@@ -443,15 +442,15 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->diskInsert[diskNo]));
+    sprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->diskInsert[diskNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERT, langBuffer);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsert[diskNo]));
+    sprintf(langBuffer, "%s      \t%hs", langMenuDiskDirInsert(), shortcutsToString(shortcuts->diskDirInsert[diskNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTDIR, langBuffer);
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_INSERTNEW, langMenuDiskInsertNew());
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
+    sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_DISK_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -467,7 +466,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
-        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.diskdrive[diskNo][i]));
+        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.diskdrive[diskNo][i]));
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_HISTORY + i, langBuffer);
     }
 
@@ -478,14 +477,14 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
 {
     int idOffset = diskNo * ID_HARDDISK_OFFSET;
     HMENU hMenu = CreatePopupMenu();
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
 
     setMenuColor(hMenu);
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuInsert());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
+    sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.disks[diskNo].fileName ? 0 : MF_GRAYED), idOffset + ID_HARDDISK_REMOVE, langBuffer);
 
     return hMenu;
@@ -494,7 +493,7 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
 static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
 {
     HMENU hMenu = CreatePopupMenu();
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     int hasHd = 0;
     int i;
 
@@ -504,19 +503,19 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
         switch (boardGetHdType(i)) {
         case HD_SUNRISEIDE:
             hasHd = 1;
-            _stprintf(langBuffer, "IDE%d  - Sunrise Primary", i);
+            sprintf(langBuffer, "IDE%d  - Sunrise Primary", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
-            _stprintf(langBuffer, "IDE%d  - Sunrise Secondary", i);
+            sprintf(langBuffer, "IDE%d  - Sunrise Secondary", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 1), pProperties, shortcuts), langBuffer);
             break;
         case HD_BEERIDE:
             hasHd = 1;
-            _stprintf(langBuffer, "IDE%d Beer", i);
+            sprintf(langBuffer, "IDE%d Beer", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
             break;
         case HD_GIDE:
             hasHd = 1;
-            _stprintf(langBuffer, "IDE%d GIDE", i);
+            sprintf(langBuffer, "IDE%d GIDE", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
             break;
         }
@@ -531,7 +530,7 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
 
 static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
     int i;
 
@@ -539,10 +538,10 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->casInsert));
+    sprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->casInsert));
     AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_INSERT, langBuffer);
 
-    _stprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), getCleanFileName(pProperties->media.tapes[0].fileName));
+    sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.tapes[0].fileName ? ": " : ""), getCleanFileName(pProperties->media.tapes[0].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REMOVE, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -557,10 +556,10 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuCasSetPosition(), shortcutsToString(shortcuts->casSetPos));
+    sprintf(langBuffer, "%s      \t%hs", langMenuCasSetPosition(), shortcutsToString(shortcuts->casSetPos));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_POSITION, langBuffer);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuCasRewind(), shortcutsToString(shortcuts->casRewind));
+    sprintf(langBuffer, "%s      \t%hs", langMenuCasRewind(), shortcutsToString(shortcuts->casRewind));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REWIND, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -570,7 +569,7 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     }
 
     for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {
-        _stprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cassette[0][i]));
+        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cassette[0][i]));
         AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
     }
 
@@ -579,12 +578,12 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 
 static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts) 
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuPrnFormfeed(), shortcutsToString(shortcuts->prnFormFeed));
+    sprintf(langBuffer, "%s      \t%hs", langMenuPrnFormfeed(), shortcutsToString(shortcuts->prnFormFeed));
     AppendMenu(hMenu, MF_STRING, ID_FILE_PRINTER_FORMFEED, langBuffer);
 
     return hMenu;
@@ -646,18 +645,18 @@ static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts)
 
 static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts)
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuZoomNormal(), shortcutsToString(shortcuts->windowSizeSmall));
+    sprintf(langBuffer, "%s      \t%hs", langMenuZoomNormal(), shortcutsToString(shortcuts->windowSizeSmall));
     AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEX1 ? MFS_CHECKED : 0), ID_SIZE_NORMAL, langBuffer);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuZoomDouble(), shortcutsToString(shortcuts->windowSizeNormal));
+    sprintf(langBuffer, "%s      \t%hs", langMenuZoomDouble(), shortcutsToString(shortcuts->windowSizeNormal));
     AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEX2 ? MFS_CHECKED : 0), ID_SIZE_X2, langBuffer);
 
-    _stprintf(langBuffer, "%s      \t%hs", langMenuZoomFullscreen(), shortcutsToString(shortcuts->windowSizeFullscreen));
+    sprintf(langBuffer, "%s      \t%hs", langMenuZoomFullscreen(), shortcutsToString(shortcuts->windowSizeFullscreen));
     AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN ? MFS_CHECKED : 0), ID_SIZE_FULLSCREEN, langBuffer);
 
     return hMenu;
@@ -731,18 +730,18 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts)
 static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int tempStateExits, int enableSpecial) 
 {
     HMENU hMenu = CreatePopupMenu();
-    _TCHAR menuBuffer[512];
+    char menuBuffer[512];
 
     setMenuColor(hMenu);
 
-    _stprintf(menuBuffer, "%s 1", langMenuFileCart());
+    sprintf(menuBuffer, "%s 1", langMenuFileCart());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(0, pProperties, shortcuts, enableSpecial), menuBuffer);
-    _stprintf(menuBuffer, "%s 2", langMenuFileCart());
+    sprintf(menuBuffer, "%s 2", langMenuFileCart());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(1, pProperties, shortcuts, enableSpecial), menuBuffer);
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    _stprintf(menuBuffer, "%s A", langMenuFileDisk());
+    sprintf(menuBuffer, "%s A", langMenuFileDisk());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(0, pProperties, shortcuts), menuBuffer);
-    _stprintf(menuBuffer, "%s B", langMenuFileDisk());
+    sprintf(menuBuffer, "%s B", langMenuFileDisk());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(1, pProperties, shortcuts), menuBuffer);
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCassette(pProperties, shortcuts), langMenuFileCas());
@@ -752,29 +751,29 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreatePrinter(pProperties, shortcuts), langMenuFilePrn());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileLoadState(), shortcutsToString(shortcuts->cpuStateLoad));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileLoadState(), shortcutsToString(shortcuts->cpuStateLoad));
     AppendMenu(hMenu, MF_STRING, ID_FILE_LOAD, menuBuffer);
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileSaveState(), shortcutsToString(shortcuts->cpuStateSave));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileSaveState(), shortcutsToString(shortcuts->cpuStateSave));
     AppendMenu(hMenu, MF_STRING | (!isStopped ? 0 : MF_GRAYED), ID_FILE_SAVE, menuBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileQLoadState(), shortcutsToString(shortcuts->cpuStateQuickLoad));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileQLoadState(), shortcutsToString(shortcuts->cpuStateQuickLoad));
     AppendMenu(hMenu, MF_STRING | (tempStateExits ? 0 : MF_GRAYED), ID_FILE_QLOAD, menuBuffer);
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileQSaveState(), shortcutsToString(shortcuts->cpuStateQuickSave));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileQSaveState(), shortcutsToString(shortcuts->cpuStateQuickSave));
     AppendMenu(hMenu, MF_STRING | (!isStopped ? 0 : MF_GRAYED), ID_FILE_QSAVE, menuBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileCaptureAudio(), shortcutsToString(shortcuts->wavCapture));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileCaptureAudio(), shortcutsToString(shortcuts->wavCapture));
     AppendMenu(hMenu, MF_STRING | (logSound ? MFS_CHECKED : 0), ID_FILE_LOGWAV, menuBuffer);
 
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileScreenShot(), shortcutsToString(shortcuts->screenCapture));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileScreenShot(), shortcutsToString(shortcuts->screenCapture));
     AppendMenu(hMenu, MF_STRING, ID_FILE_PTRSCR, menuBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);  
 
-    _stprintf(menuBuffer, "%s        \t%hs", langMenuFileExit(), shortcutsToString(shortcuts->quit));
+    sprintf(menuBuffer, "%s        \t%hs", langMenuFileExit(), shortcutsToString(shortcuts->quit));
     AppendMenu(hMenu, MF_STRING, ID_FILE_EXIT, menuBuffer);
 
     return hMenu;
@@ -782,32 +781,32 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
 static HMENU menuCreateRun(Properties* pProperties, Shortcuts* shortcuts, int isRunning, int isStopped)
 {
-    _TCHAR langBuffer[560];
+    char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
 
     setMenuColor(hMenu);
 
     if (isRunning) {
-        _stprintf(langBuffer, "%s        \t%hs", langMenuRunPause(), shortcutsToString(shortcuts->emulationRunPause));
+        sprintf(langBuffer, "%s        \t%hs", langMenuRunPause(), shortcutsToString(shortcuts->emulationRunPause));
         AppendMenu(hMenu, MF_STRING, ID_RUN_RUN, langBuffer);
     }
     else {
-        _stprintf(langBuffer, "%s        \t%hs", langMenuRunRun(), shortcutsToString(shortcuts->emulationRunPause));
+        sprintf(langBuffer, "%s        \t%hs", langMenuRunRun(), shortcutsToString(shortcuts->emulationRunPause));
         AppendMenu(hMenu, MF_STRING, ID_RUN_RUN, langBuffer);
     }
 
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunStop(), shortcutsToString(shortcuts->emulationStop));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunStop(), shortcutsToString(shortcuts->emulationStop));
     AppendMenu(hMenu, MF_STRING | (!isStopped ? 0 : MF_GRAYED), ID_RUN_STOP, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunHardReset(), shortcutsToString(shortcuts->resetHard));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunHardReset(), shortcutsToString(shortcuts->resetHard));
     AppendMenu(hMenu, MF_STRING, ID_RUN_RESET, langBuffer);
 
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunSoftReset(), shortcutsToString(shortcuts->resetSoft));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunSoftReset(), shortcutsToString(shortcuts->resetSoft));
     AppendMenu(hMenu, MF_STRING, ID_RUN_SOFTRESET, langBuffer);
 
-    _stprintf(langBuffer, "%s        \t%hs", langMenuRunCleanReset(), shortcutsToString(shortcuts->resetClean));
+    sprintf(langBuffer, "%s        \t%hs", langMenuRunCleanReset(), shortcutsToString(shortcuts->resetClean));
     AppendMenu(hMenu, MF_STRING, ID_RUN_CLEANRESET, langBuffer);
 
     return hMenu;

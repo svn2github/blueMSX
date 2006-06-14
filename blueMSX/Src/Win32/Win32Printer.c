@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2005-05-13 23:58:34 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include "Properties.h"
 #include "Win32Printer.h"
 #include "ArchPrinter.h"

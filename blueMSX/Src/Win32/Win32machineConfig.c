@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-09 20:30:04 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include <math.h>
 #include <commctrl.h>
 #include <stdlib.h>
@@ -101,9 +100,9 @@ static updateMachineList(HWND hDlg) {
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_DELETESTRING, 0, 0));
 
     while (*machineNames != NULL) {
-        _TCHAR buffer[128];
+        char buffer[128];
 
-        _stprintf(buffer, "%s", *machineNames);
+        sprintf(buffer, "%s", *machineNames);
 
         SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_ADDSTRING, 0, (LPARAM)buffer);
 
@@ -348,8 +347,8 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
             int j;
 
             for (j = 0; j < 4; j++) {
-                _TCHAR buffer[128];
-                _stprintf(buffer, "%s% d-%d", langConfSlot(), i, j);
+                char buffer[128];
+                sprintf(buffer, "%s% d-%d", langConfSlot(), i, j);
                 SendDlgItemMessage(hDlg, dropdownId, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (machine->cart[cart].slot == i && machine->cart[cart].subslot == j) {
                     SendDlgItemMessage(hDlg, dropdownId, CB_SETCURSEL, index, 0);
@@ -358,8 +357,8 @@ static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId) {
             }
         }
         else {
-            _TCHAR buffer[128];
-            _stprintf(buffer, "%s %d", langConfSlot(), i);
+            char buffer[128];
+            sprintf(buffer, "%s %d", langConfSlot(), i);
             SendDlgItemMessage(hDlg, dropdownId, CB_ADDSTRING, 0, (LPARAM)buffer);
             if (machine->cart[cart].slot == i) {
                 SendDlgItemMessage(hDlg, dropdownId, CB_SETCURSEL, index, 0);
@@ -838,8 +837,8 @@ static void setEditControls(HWND hDlg)
                 int j;
 
                 for (j = 0; j < 4; j++) {
-                    _TCHAR buffer[128];
-                    _stprintf(buffer, "%s %d-%d", langConfSlot(), i, j);
+                    char buffer[128];
+                    sprintf(buffer, "%s %d-%d", langConfSlot(), i, j);
                     SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_ADDSTRING, 0, (LPARAM)buffer);
                     if (editSlotInfo.slot == i && editSlotInfo.subslot == j) {
                         SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_SETCURSEL, index, 0);
@@ -848,8 +847,8 @@ static void setEditControls(HWND hDlg)
                 }
             }
             else {
-                _TCHAR buffer[128];
-                _stprintf(buffer, "%s %d", langConfSlot(), i);
+                char buffer[128];
+                sprintf(buffer, "%s %d", langConfSlot(), i);
                 SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (editSlotInfo.slot == i) {
                     SendDlgItemMessage(hDlg, IDC_ROMSLOT, CB_SETCURSEL, index, 0);
@@ -1677,8 +1676,8 @@ static void updateCpuFreqList(HWND hDlg) {
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CPUR800FREQ, CB_DELETESTRING, 0, 0));
 
     for (i = 0; i < sizeof(cpuFreq) / sizeof(cpuFreq[0]); i++) {
-       _TCHAR buffer[128];
-        _stprintf(buffer, "%d.%.3d MHz", cpuFreq[i] / 1000000, (cpuFreq[i] / 1000) % 1000);
+       char buffer[128];
+        sprintf(buffer, "%d.%.3d MHz", cpuFreq[i] / 1000000, (cpuFreq[i] / 1000) % 1000);
         SendDlgItemMessage(hDlg, IDC_CPUZ80FREQ, CB_ADDSTRING, 0, (LPARAM)buffer);
         if (machine->cpu.freqZ80 <= cpuFreq[i]) {
             SendDlgItemMessage(hDlg, IDC_CPUZ80FREQ, CB_SETCURSEL, i, 0);
@@ -1817,10 +1816,10 @@ static void updateVramList(HWND hDlg) {
     }
 
     for (i = 0; vram <= maxVram; i++) {
-        _TCHAR buffer[128];
+        char buffer[128];
         if (vram == 256) vram = 192;
         if (vram == 32) vram = 64;
-        _stprintf(buffer, "%d kB", vram);
+        sprintf(buffer, "%d kB", vram);
         SendDlgItemMessage(hDlg, IDC_CONF_VRAM, CB_ADDSTRING, 0, (LPARAM)buffer);
         if (machine->video.vramSize >= 1024 * vram) {
             SendDlgItemMessage(hDlg, IDC_CONF_VRAM, CB_SETCURSEL, i, 0);
@@ -1944,10 +1943,10 @@ static BOOL CALLBACK saveProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
     switch (iMsg) {        
     case WM_INITDIALOG:
         {
-            _TCHAR buffer[128];
+            char buffer[128];
             SetWindowText(hDlg, langConfSaveTitle());
 
-            _stprintf(buffer, "%s\n\n    \"%s\" ?", langConfSaveText(), tmpMachineName);
+            sprintf(buffer, "%s\n\n    \"%s\" ?", langConfSaveText(), tmpMachineName);
 
             SetWindowText(GetDlgItem(hDlg, IDC_CONF_SAVEDLG_TEXT), buffer);
             SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());

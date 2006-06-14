@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-09 20:30:03 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,8 +55,8 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
     case WM_INITDIALOG:
         {
-            _TCHAR aboutText[4096];
-                _stprintf(aboutText, "%s\r\n\r\n"
+            char aboutText[4096];
+                sprintf(aboutText, "%s\r\n\r\n"
                                      "%s%\t%s\r\n"
                                      "%s%\t%d\r\n"
                                      "%s%\t%s\r\n\r\n"

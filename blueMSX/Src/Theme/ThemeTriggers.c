@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,21 +47,8 @@
 #include "VideoManager.h"
 #include "InputEvent.h"
 #include "JoystickPort.h"
-
-
-#ifdef NO_LANG
-#define langEnumControlsJoyNone()               "None"
-#define langEnumControlsJoyTetrisDongle()       "Tetris 2 Dongle"
-#define langEnumControlsJoyMagicKeyDongle()     "Magic Key Dongle"
-#define langEnumControlsJoyMouse()              "Mouse"
-#define langEnumControlsJoy2Button()            "2-Button Joystick"
-#define langEnumControlsJoyGunStick()           "Gun Stick"
-#define langEnumControlsJoyAsciiLaser()         "ASCII Plus-X Terminator laser"
-#define langEnumControlsJoyColeco()             "ColecoVision Joystick"
-#define langTextUnknown()                       "Unknown"
-#else
 #include "Language.h"
-#endif
+
 
 static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {

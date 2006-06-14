@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@ extern "C" {
 #include "StrcmpNoCase.h"
 #include "ArchGlob.h"
 #include "Board.h"
+#include "Language.h"
 }
 
 #include "tinyxml.h"
@@ -46,115 +47,6 @@ using namespace std;
 
 typedef map<UInt32, MediaType*> CrcMap;
 typedef map<string, MediaType*> Sha1Map;
-
-
-#ifdef NO_LANG
-#define langTextUnknown()           "Unknown"
-#define langRomTypeStandard()       "Standard"
-#define langRomTypeMsxdos2()        "MSXDOS 2"
-#define langRomTypeKonamiScc()      "Konami SCC"
-#define langRomTypeKonami()         "Konami"
-#define langRomTypeAscii8()         "ASCII 8"
-#define langRomTypeAscii16()        "ASCII 16"
-#define langRomTypeGameMaster2()    "Game Master 2 (SRAM)"
-#define langRomTypeAscii8Sram()     "ASCII 8 (SRAM)"
-#define langRomTypeAscii16Sram()    "ASCII 16 (SRAM)"
-#define langRomTypeRtype()          "R-Type"
-#define langRomTypeCrossblaim()     "Cross Blaim"
-#define langRomTypeHarryFox()       "Harry Fox"
-#define langRomTypeMajutsushi()     "Konami Majutsushi"
-#define langRomTypeZenima80()       "Zemina 80 in 1"
-#define langRomTypeZenima90()       "Zemina 90 in 1"
-#define langRomTypeZenima126()      "Zemina 126 in 1"
-#define langRomTypeScc()            "SCC"
-#define langRomTypeSccPlus()        "SCC+"
-#define langRomTypeSnatcher()       "The Snatcher"
-#define langRomTypeSdSnatcher()     "SD Snatcher"
-#define langRomTypeSccMirrored()    "SCC mirrored"
-#define langRomTypeSccExtended()    "SCC extended"
-#define langRomTypeFmpac()          "FMPAC (SRAM)"
-#define langRomTypeFmpak()          "FMPAK"
-#define langRomTypeKonamiGeneric()  "Konami Generic"
-#define langRomTypeSuperPierrot()   "Super Pierrot"
-#define langRomTypeMirrored()       "Mirrored ROM"
-#define langRomTypeNormal()         "Normal ROM"
-#define langRomTypeDiskPatch()      "Normal + Disk Patch"
-#define langRomTypeCasPatch()       "Normal + Cassette Patch"
-#define langRomTypeTc8566afFdc()    "TC8566AF Disk Controller"
-#define langRomTypeMicrosolFdc()    "Microsol Disk Controller"
-#define langRomTypeNationalFdc()    "National Disk Controller"
-#define langRomTypePhilipsFdc()     "Philips Disk Controller"
-#define langRomTypeSvi738Fdc()      "SVI-738 Disk Controller"
-#define langRomTypeMappedRam()      "Mapped RAM"
-#define langRomTypeMirroredRam1k()  "1kB Mirrored RAM"
-#define langRomTypeNormalRam()      "Normal RAM"
-#define langRomTypeKanji()          "Kanji"
-#define langRomTypeHolyQuran()      "Holy Quran"
-#define langRomTypeMatsushitaSram() "Matsushita SRAM"
-#define langRomTypePanasonic16()    "Panasonic 16kB SRAM"
-#define langRomTypePanasonic32()    "Panasonic 32kB SRAM"
-#define langRomTypeBunsetsu()       "Bunsetsu"
-#define langRomTypeJisyo()          "Jisyo"
-#define langRomTypeKanji12()        "Kanji12"
-#define langRomTypeNationalSram()   "National (SRAM)"
-#define langRomTypeS1985()          "S1985"
-#define langRomTypeS1990()          "S1990"
-#define langRomTypeTurborPause()    "Turbo-R Pause"
-#define langRomTypeF4deviceNormal() "F4 Device Normal"
-#define langRomTypeF4deviceInvert() "F4 Device Inverted"
-#define langRomTypeMsxMidi()        "MSX-MIDI"
-#define langRomTypeTurborTimer()    "Turbo-R Timer"
-#define langRomTypeKoei()           "Koei (SRAM)"
-#define langRomTypeBasic()          "Basic ROM"
-#define langRomTypeHalnote()        "Halnote"
-#define langRomTypeLodeRunner()     "Lode Runner"
-#define langRomTypeNormal4000()     "Normal 4000h"
-#define langRomTypeNormalC000()     "Normal C000h"
-#define langRomTypeKonamiSynth()    "Konami Synthesizer"
-#define langRomTypeKonamiKbdMast()  "Konami Keyboard Master"
-#define langRomTypeKonamiWordPro()  "Konami Word Pro"
-#define langRomTypePac()            "PAC (SRAM)"
-#define langRomTypeMegaRam()        "MegaRAM"
-#define langRomTypeMegaRam128()     "128kB MegaRAM"
-#define langRomTypeMegaRam256()     "256kB MegaRAM"
-#define langRomTypeMegaRam512()     "512kB MegaRAM"
-#define langRomTypeMegaRam768()     "768kB MegaRAM"
-#define langRomTypeMegaRam2mb()     "2MB MegaRAM"
-#define langRomTypeExtRam()         "External RAM"
-#define langRomTypeExtRam512()      "512kB External RAM"
-#define langRomTypeExtRam1mb()      "1MB External RAM"
-#define langRomTypeExtRam2mb()      "2MB External RAM"
-#define langRomTypeExtRam4mb()      "4MB External RAM"
-#define langRomTypeMsxMusic()       "MSX Music"
-#define langRomTypeMsxAudio()       "MSX Audio"
-#define langRomTypeMoonsound()      "Moonsound"
-#define langRomTypeY8950()          "Y8950";
-#define langRomTypeSvi328Cart()     "SVI-328 Cartridge"
-#define langRomTypeSvi328Fdc()      "SVI-328 Disk Controller"
-#define langRomTypeSvi328Prn()      "SVI-328 Printer"
-#define langRomTypeSvi328Uart()     "SVI-328 Serial Port"
-#define langRomTypeSvi328col80()    "SVI-328 80 Column Card"
-#define langRomTypeSvi727col80()    "SVI-727 80 Column Card"
-#define langRomTypeColecoCart()     "Coleco Cartridge"
-#define langRomTypeSg1000Cart()     "SG-1000 Cartridge"
-#define langRomTypeTheCastle()      "The Castle"
-#define langRomTypeSonyHbi55()      "Sony HBI-55"
-#define langRomTypeMsxPrinter()     "MSX Printer"
-#define langRomTypeTurborPcm()      "Turbo-R PCM Chip"
-#define langRomTypeGameReader()     "Sunrise GameReader"
-#define langRomTypeSunriseIde()     "Sunrise IDE"
-#define langRomTypeBeerIde()        "Beer IDE"
-#define langRomTypeGide()           "GIDE"
-#define langRomTypeVmx80()          "Microsol VMX-80"
-#define langRomTypeNms8280Digitiz() "Philips NMS-8280 Digitizer"
-#define langRomTypeHbiV1Digitiz()   "Sony HBI-V1 Digitizer"
-#define langRomTypeFmdas()          "F&M Direct Assembler System"
-#define langRomTypeSfg05()          "Yamaha SFG-05"
-#else
-extern "C" {
-#include "Language.h"
-}
-#endif
 
 
 struct MediaDb {

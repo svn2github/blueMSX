@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-01-15 23:55:34 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,6 @@
 #define WIN32_HELP_H
 
 #include <windows.h>
-#include <tchar.h>
 
 void helpShowAbout(HWND hwnd);
 

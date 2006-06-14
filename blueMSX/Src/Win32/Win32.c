@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.138 $
+** $Revision: 1.139 $
 **
-** $Date: 2006-06-13 17:40:08 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,6 @@
 #define DIRECTINPUT_VERSION     0x0700
 
 #include <windows.h>
-#include <tchar.h>
 #include <direct.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -229,6 +228,127 @@ void saveDialogPos(HWND hwnd, int dialogID)
         pProperties->settings.windowPos[dialogID].height = r.bottom - r.top;
     }
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+static BOOL CALLBACK langDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static int* lang = NULL;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        {
+            char buffer[64];
+            HIMAGELIST himlSmall;
+            LV_COLUMN lvc = {0};
+            LV_ITEM lvi = { 0 };
+            int i;
+
+            lang = (int*)lParam;
+
+            SetWindowText(hDlg, langDlgLangTitle());
+            SendMessage(GetDlgItem(hDlg, IDC_LANGTXT), WM_SETTEXT, 0, (LPARAM)langDlgLangLangText());
+            SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
+            SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
+
+            ListView_SetExtendedListViewStyle(GetDlgItem(hDlg, IDC_LANGLIST), LVS_EX_FULLROWSELECT);
+
+            himlSmall = ImageList_Create(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), TRUE, 1, 1); 
+
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINASIMP))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINATRAD))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_NETHERLANDS))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_USA))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_FINLAND))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_FRANCE))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_GERMANY))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_ITALY))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_JAPAN))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_KOREA))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_POLAND))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_BRAZIL))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_SPAIN))); 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_SWEDEN))); 
+            
+            ListView_SetImageList(GetDlgItem(hDlg, IDC_LANGLIST), himlSmall, LVSIL_SMALL);
+
+            SetFocus(GetDlgItem(hDlg, IDC_LANGLIST));
+
+            lvc.mask       = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
+            lvc.fmt        = LVCFMT_LEFT;
+            lvc.cx         = 185;
+            lvc.pszText    = buffer;
+	        lvc.cchTextMax = sizeof(buffer);
+            sprintf(buffer, "       %s", langMenuPropsLanguage());
+
+            ListView_InsertColumn(GetDlgItem(hDlg, IDC_LANGLIST), 0, &lvc);
+
+            for (i = 0; langGetType(i) != EMU_LANG_UNKNOWN; i++) {
+                lvi.mask       = LVIF_IMAGE | LVIF_TEXT;
+                lvi.iItem      = i;
+                lvi.pszText    = buffer;
+	            lvi.cchTextMax = sizeof(buffer);
+                lvi.iImage     = i;
+
+                sprintf(buffer, "   %s", langToName(langGetType(i)));
+
+                ListView_InsertItem(GetDlgItem(hDlg, IDC_LANGLIST), &lvi);
+ 
+                if (langGetType(i) == *lang) {
+                    ListView_SetItemState(GetDlgItem(hDlg, IDC_LANGLIST), i, LVIS_SELECTED, LVIS_SELECTED);
+                }
+           }
+
+            return FALSE;
+        }
+
+    case WM_NOTIFY:
+        switch (wParam) {
+        case IDC_LANGLIST:
+            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMACTIVATE) {
+                if (ListView_GetSelectedCount(GetDlgItem(hDlg, IDC_LANGLIST))) {
+                    int index = ListView_GetNextItem(GetDlgItem(hDlg, IDC_LANGLIST), -1, LVNI_SELECTED);
+                    if (index != -1) {
+                        SendMessage(hDlg, WM_COMMAND, IDOK, 0);
+                    }
+                }
+            }
+            return TRUE;
+        }
+        break;
+
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+        case IDOK:
+            {
+                if (ListView_GetSelectedCount(GetDlgItem(hDlg, IDC_LANGLIST))) {
+                    int index = ListView_GetNextItem(GetDlgItem(hDlg, IDC_LANGLIST), -1, LVNI_SELECTED);
+                    if (index != -1) {
+                        *lang = langGetType(index);
+                    }
+                }
+                EndDialog(hDlg, TRUE);
+            }
+            return TRUE;
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+        }
+        break;
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+int langShowDlg(HWND hwnd, int oldLanguage) {
+    int lang = oldLanguage;
+    DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LANGUAGE), hwnd, langDlgProc, (LPARAM)&lang);
+    return lang;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -539,7 +659,7 @@ static char* convertTapePos(int tapePos)
     static char str[64];
     int pos = tapePos / 128;
 
-    _stprintf(str, "%dh %02dm %02ds", pos / 3600, (pos / 60) % 60, pos % 60);
+    sprintf(str, "%dh %02dm %02ds", pos / 3600, (pos / 60) % 60, pos % 60);
     return str;
 }
 

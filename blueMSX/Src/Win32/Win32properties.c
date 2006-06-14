@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-06-10 01:11:35 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,7 +28,6 @@
 ******************************************************************************
 */
 #include <windows.h>
-#include <tchar.h>
 #include <math.h>
 #include <commctrl.h>
 #include <stdlib.h>
@@ -364,7 +363,7 @@ static char virtualKeys[256][32] = {
     ""
 };
 
-static _TCHAR* pEmuFamily[] = {
+static char* pEmuFamily[] = {
     "MSX, Basic 1.0",
     "MSX, Basic 1.0 - Brazilian",
     "MSX, Basic 1.0 - Japanese",
@@ -376,7 +375,7 @@ static _TCHAR* pEmuFamily[] = {
     NULL
 };
 
-static _TCHAR* pEmuRAM[] = {
+static char* pEmuRAM[] = {
     "16 kBytes",
     "32 kBytes",
     "64 kBytes",
@@ -389,7 +388,7 @@ static _TCHAR* pEmuRAM[] = {
     NULL
 };
 
-static _TCHAR* pEmuVRAM[] = {
+static char* pEmuVRAM[] = {
     "16 kBytes",
     "32 kBytes",
     "64 kBytes",
@@ -397,8 +396,8 @@ static _TCHAR* pEmuVRAM[] = {
     NULL
 };
 
-static _TCHAR pVideoMonData[4][64];
-static _TCHAR* pVideoMon[] = {
+static char pVideoMonData[4][64];
+static char* pVideoMon[] = {
     pVideoMonData[0],
     pVideoMonData[1],
     pVideoMonData[2],
@@ -406,15 +405,15 @@ static _TCHAR* pVideoMon[] = {
     NULL
 };
 
-static _TCHAR pVideoTypeData[2][64];
-static _TCHAR* pVideoVideoType[] = {
+static char pVideoTypeData[2][64];
+static char* pVideoVideoType[] = {
     pVideoTypeData[0], 
     pVideoTypeData[1],
     NULL
 };
 
-static _TCHAR pVideoEmuData[9][64];
-static _TCHAR* pVideoPalEmu[] = {
+static char pVideoEmuData[9][64];
+static char* pVideoPalEmu[] = {
     pVideoEmuData[0],
     pVideoEmuData[1],
     pVideoEmuData[2],
@@ -426,24 +425,24 @@ static _TCHAR* pVideoPalEmu[] = {
     NULL
 };
 
-static _TCHAR pVideoSizeData[6][64];
-static _TCHAR* pVideoMonSize[] = {
+static char pVideoSizeData[6][64];
+static char* pVideoMonSize[] = {
     pVideoSizeData[0],
     pVideoSizeData[1],
     pVideoSizeData[2],
     NULL
 };
 
-static _TCHAR pVideoDriverData[3][64];
-static _TCHAR* pVideoDriver[] = {
+static char pVideoDriverData[3][64];
+static char* pVideoDriver[] = {
     pVideoDriverData[0],
     pVideoDriverData[1],
     pVideoDriverData[2],
     NULL
 };
 
-static _TCHAR pVideoFrameSkipData[6][64];
-static _TCHAR* pVideoFrameSkip[] = {
+static char pVideoFrameSkipData[6][64];
+static char* pVideoFrameSkip[] = {
     pVideoFrameSkipData[0],
     pVideoFrameSkipData[1],
     pVideoFrameSkipData[2],
@@ -453,16 +452,16 @@ static _TCHAR* pVideoFrameSkip[] = {
     NULL
 };
 
-static _TCHAR pSoundDriverData[3][64];
-static _TCHAR* pSoundDriver[] = {
+static char pSoundDriverData[3][64];
+static char* pSoundDriver[] = {
     pSoundDriverData[0],
     pSoundDriverData[1],
     pSoundDriverData[2],
     NULL
 };
 
-static _TCHAR pEmuSyncData[5][64];
-static _TCHAR* pEmuSync[] = {
+static char pEmuSyncData[5][64];
+static char* pEmuSync[] = {
     pEmuSyncData[0],
     pEmuSyncData[1],
     pEmuSyncData[2],
@@ -473,7 +472,7 @@ static _TCHAR* pEmuSync[] = {
 
 static int soundBufSizes[] = { 10, 20, 50, 100, 150, 200, 250, 300, 350 };
 
-static _TCHAR* pSoundBufferSize[] = {
+static char* pSoundBufferSize[] = {
     "10 ms",
     "20 ms",
     "50 ms",
@@ -507,7 +506,7 @@ static int getButtonCheck(HWND hDlg, int id) {
     return BST_CHECKED == SendMessage(hwnd, BM_GETCHECK, 0, 0) ? 1 : 0;
 }
 
-static void initDropList(HWND hDlg, int id, _TCHAR** pList, int index) {
+static void initDropList(HWND hDlg, int id, char** pList, int index) {
     while (*pList != NULL && **pList != 0) {
         SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)*pList);
         pList++;
@@ -516,14 +515,14 @@ static void initDropList(HWND hDlg, int id, _TCHAR** pList, int index) {
     SendDlgItemMessage(hDlg, id, CB_SETCURSEL, index, 0);
 }
 
-static int getDropListIndex(HWND hDlg, int id, _TCHAR** pList) {
+static int getDropListIndex(HWND hDlg, int id, char** pList) {
     int index = 0;
-    _TCHAR s[64];
+    char s[64];
 
     GetDlgItemText(hDlg, id, s, 63);
     
     while (*pList != NULL) {
-        if (0 == _tcscmp(s, *pList)) {
+        if (0 == strcmp(s, *pList)) {
             return index;
         }
         index++;
@@ -586,9 +585,9 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
             char** machineNames = machineGetAvailable(1);
             int index = 0;
             while (*machineNames != NULL) {
-                _TCHAR buffer[128];
+                char buffer[128];
 
-                _stprintf(buffer, "%s", *machineNames);
+                sprintf(buffer, "%s", *machineNames);
 
                 SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_ADDSTRING, 0, (LPARAM)buffer);
 
@@ -754,8 +753,8 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), langPropSetFileHistoryClear());
 
         {
-            _TCHAR buffer[32];
-            _stprintf(buffer, "%d", pProperties->filehistory.count);
+            char buffer[32];
+            sprintf(buffer, "%d", pProperties->filehistory.count);
             SetWindowText(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZE), buffer);
         }
 
@@ -1023,26 +1022,26 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 
         /* Init language specific dropdown list data */
-        _stprintf(pVideoDriver[0], "%s", langEnumVideoDrvDirectDrawHW());
-        _stprintf(pVideoDriver[1], "%s", langEnumVideoDrvDirectDraw());
-        _stprintf(pVideoDriver[2], "%s", langEnumVideoDrvGDI());
+        sprintf(pVideoDriver[0], "%s", langEnumVideoDrvDirectDrawHW());
+        sprintf(pVideoDriver[1], "%s", langEnumVideoDrvDirectDraw());
+        sprintf(pVideoDriver[2], "%s", langEnumVideoDrvGDI());
 
-        _stprintf(pVideoFrameSkip[0], "%s", langEnumVideoFrameskip0());
-        _stprintf(pVideoFrameSkip[1], "%s", langEnumVideoFrameskip1());
-        _stprintf(pVideoFrameSkip[2], "%s", langEnumVideoFrameskip2());
-        _stprintf(pVideoFrameSkip[3], "%s", langEnumVideoFrameskip3());
-        _stprintf(pVideoFrameSkip[4], "%s", langEnumVideoFrameskip4());
-        _stprintf(pVideoFrameSkip[5], "%s", langEnumVideoFrameskip5());
+        sprintf(pVideoFrameSkip[0], "%s", langEnumVideoFrameskip0());
+        sprintf(pVideoFrameSkip[1], "%s", langEnumVideoFrameskip1());
+        sprintf(pVideoFrameSkip[2], "%s", langEnumVideoFrameskip2());
+        sprintf(pVideoFrameSkip[3], "%s", langEnumVideoFrameskip3());
+        sprintf(pVideoFrameSkip[4], "%s", langEnumVideoFrameskip4());
+        sprintf(pVideoFrameSkip[5], "%s", langEnumVideoFrameskip5());
 
-        _stprintf(pSoundDriver[0], "%s", langEnumSoundDrvNone());
-        _stprintf(pSoundDriver[1], "%s", langEnumSoundDrvWMM());
-        _stprintf(pSoundDriver[2], "%s", langEnumSoundDrvDirectX());
+        sprintf(pSoundDriver[0], "%s", langEnumSoundDrvNone());
+        sprintf(pSoundDriver[1], "%s", langEnumSoundDrvWMM());
+        sprintf(pSoundDriver[2], "%s", langEnumSoundDrvDirectX());
 
-        _stprintf(pEmuSync[0], "%s", langEnumEmuSyncNone());
-        _stprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
-        _stprintf(pEmuSync[2], "%s", langEnumEmuSync1ms());
-        _stprintf(pEmuSync[3], "%s", langEnumEmuSyncVblank());
-        _stprintf(pEmuSync[4], "%s", langEnumEmuAsyncVblank());
+        sprintf(pEmuSync[0], "%s", langEnumEmuSyncNone());
+        sprintf(pEmuSync[1], "%s", langEnumEmuSyncAuto());
+        sprintf(pEmuSync[2], "%s", langEnumEmuSync1ms());
+        sprintf(pEmuSync[3], "%s", langEnumEmuSyncVblank());
+        sprintf(pEmuSync[4], "%s", langEnumEmuAsyncVblank());
 
         /* Init language specific dialog items */
         SendDlgItemMessage(hDlg, IDC_PERFVIDEODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfVideoDrvGB());
@@ -1153,26 +1152,26 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 
         /* Init language specific dropdown list data */
-        _stprintf(pVideoMon[0], "%s", langEnumVideoMonColor());
-        _stprintf(pVideoMon[1], "%s", langEnumVideoMonGrey());
-        _stprintf(pVideoMon[2], "%s", langEnumVideoMonGreen());
-        _stprintf(pVideoMon[3], "%s", langEnumVideoMonAmber());
+        sprintf(pVideoMon[0], "%s", langEnumVideoMonColor());
+        sprintf(pVideoMon[1], "%s", langEnumVideoMonGrey());
+        sprintf(pVideoMon[2], "%s", langEnumVideoMonGreen());
+        sprintf(pVideoMon[3], "%s", langEnumVideoMonAmber());
 
-        _stprintf(pVideoVideoType[0], "%s", langEnumVideoTypePAL());
-        _stprintf(pVideoVideoType[1], "%s", langEnumVideoTypeNTSC());
+        sprintf(pVideoVideoType[0], "%s", langEnumVideoTypePAL());
+        sprintf(pVideoVideoType[1], "%s", langEnumVideoTypeNTSC());
 
-        _stprintf(pVideoPalEmu[0], "%s", langEnumVideoEmuNone());
-        _stprintf(pVideoPalEmu[1], "%s", langEnumVideoEmuMonitor());
-        _stprintf(pVideoPalEmu[2], "%s", langEnumVideoEmuYc());
-        _stprintf(pVideoPalEmu[3], "%s", langEnumVideoEmuYcBlur());
-        _stprintf(pVideoPalEmu[4], "%s", langEnumVideoEmuComp());
-        _stprintf(pVideoPalEmu[5], "%s", langEnumVideoEmuCompBlur());
-        _stprintf(pVideoPalEmu[6], "%s", langEnumVideoEmuScale2x());
-        _stprintf(pVideoPalEmu[7], "%s", langEnumVideoEmuHq2x());
+        sprintf(pVideoPalEmu[0], "%s", langEnumVideoEmuNone());
+        sprintf(pVideoPalEmu[1], "%s", langEnumVideoEmuMonitor());
+        sprintf(pVideoPalEmu[2], "%s", langEnumVideoEmuYc());
+        sprintf(pVideoPalEmu[3], "%s", langEnumVideoEmuYcBlur());
+        sprintf(pVideoPalEmu[4], "%s", langEnumVideoEmuComp());
+        sprintf(pVideoPalEmu[5], "%s", langEnumVideoEmuCompBlur());
+        sprintf(pVideoPalEmu[6], "%s", langEnumVideoEmuScale2x());
+        sprintf(pVideoPalEmu[7], "%s", langEnumVideoEmuHq2x());
 
-        _stprintf(pVideoMonSize[0], "%s", langEnumVideoSize1x());
-        _stprintf(pVideoMonSize[1], "%s", langEnumVideoSize2x());
-        _stprintf(pVideoMonSize[2], "%s", langEnumVideoSizeFullscreen());
+        sprintf(pVideoMonSize[0], "%s", langEnumVideoSize1x());
+        sprintf(pVideoMonSize[1], "%s", langEnumVideoSize2x());
+        sprintf(pVideoMonSize[2], "%s", langEnumVideoSizeFullscreen());
 
         /* Init language specific dialog items */
         SendDlgItemMessage(hDlg, IDC_MONGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropMonMonGB());
@@ -1877,7 +1876,7 @@ static BOOL updatePortsLptList(HWND hDlg, int id, Properties* pProperties)
 
     // Add printers 
     for (dwItem = 0; dwItem < dwReturned; dwItem++) {
-        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName)) {
+        if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, "%s - %s", lpPrinterInfo[dwItem].pPortName, lpPrinterInfo[dwItem].pPrinterName)) {
             SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
             if (pProperties->ports.Lpt.type == P_LPT_HOST && 0 == strcmp(pProperties->ports.Lpt.name, lpPrinterInfo[dwItem].pPrinterName)) 
                 SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 3 + dwItem, 0);
@@ -1902,8 +1901,8 @@ static BOOL IsNumeric(LPCTSTR pszString, BOOL bIgnoreColon)
         return FALSE;
 
     for (i=0; i<cch && bNumeric; i++) {
-        bNumeric = (_istdigit(pszString[i]) != 0);
-        if (bIgnoreColon && (pszString[i] == _T(':')))
+        bNumeric = (isdigit(pszString[i]) != 0);
+        if (bIgnoreColon && (pszString[i] == ':'))
             bNumeric = TRUE;
     }
     return bNumeric;
@@ -1971,8 +1970,8 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
         size_t cch;
         if SUCCEEDED(StringCchLength(lpPortInfo[dwItem].pPortName, MAX_PATH-1, &cch))
             if (cch > 3)
-                if ((_tcsnicmp(lpPortInfo[dwItem].pPortName, _T("COM"), 3) == 0) && IsNumeric(&lpPortInfo[dwItem].pPortName[3], TRUE))
-                    if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, _T("%s - %s"), lpPortInfo[dwItem].pPortName, lpPortInfo[dwItem].pDescription)) {
+                if ((strncmp(lpPortInfo[dwItem].pPortName, "COM", 3) == 0) && IsNumeric(&lpPortInfo[dwItem].pPortName[3], TRUE))
+                    if SUCCEEDED(StringCchPrintf(sBuf, MAX_PATH-1, "%s - %s", lpPortInfo[dwItem].pPortName, lpPortInfo[dwItem].pDescription)) {
                         SendDlgItemMessage(hDlg, id, CB_ADDSTRING, 0, (LPARAM)sBuf);
                         if (pProperties->ports.Com.type == P_COM_HOST && 0 == strcmp(pProperties->ports.Com.name, lpPortInfo[dwItem].pPortName)) 
                             SendDlgItemMessage(hDlg, id, CB_SETCURSEL, 2 + dwItem, 0);

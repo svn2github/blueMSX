@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-06-11 20:14:45 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,9 +30,6 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
-#include <windows.h>
-#include <tchar.h>
-
 typedef enum { 
     EMU_LANG_ENGLISH     = 0, 
     EMU_LANG_SWEDISH     = 1, 
@@ -55,635 +52,636 @@ typedef enum {
 void langInit();
 
 int langSetLanguage(EmuLanguageType languageType);
-int langShowDlg(HWND hwnd, int oldLanguage);
-EmuLanguageType langFromName(_TCHAR* name);
+EmuLanguageType langFromName(char* name);
+const char* langToName(EmuLanguageType languageType);
+EmuLanguageType langGetType(int i);
 
 
 //----------------------
 // Generic lines
 //----------------------
 
-_TCHAR* langTextDevice();
-_TCHAR* langTextFilename();
-_TCHAR* langTextFile();
-_TCHAR* langTextNone();
-_TCHAR* langTextUnknown();
+char* langTextDevice();
+char* langTextFilename();
+char* langTextFile();
+char* langTextNone();
+char* langTextUnknown();
 
 
 //----------------------
 // Warning and Error lines
 //----------------------
 
-_TCHAR* langWarningTitle();
-_TCHAR* langWarningDiscardChanges();
-_TCHAR* langWarningOverwriteFile();
-_TCHAR* langErrorTitle();
-_TCHAR* langErrorEnterFullscreen();
-_TCHAR* langErrorDirectXFailed();
-_TCHAR* langErrorNoRomInZip();
-_TCHAR* langErrorNoDskInZip();
-_TCHAR* langErrorNoCasInZip();
-_TCHAR* langErrorNoHelp();
-_TCHAR* langErrorStartEmu();
-_TCHAR* langErrorPortableReadonly();
+char* langWarningTitle();
+char* langWarningDiscardChanges();
+char* langWarningOverwriteFile();
+char* langErrorTitle();
+char* langErrorEnterFullscreen();
+char* langErrorDirectXFailed();
+char* langErrorNoRomInZip();
+char* langErrorNoDskInZip();
+char* langErrorNoCasInZip();
+char* langErrorNoHelp();
+char* langErrorStartEmu();
+char* langErrorPortableReadonly();
 
 
 //----------------------
 // File related lines
 //----------------------
 
-_TCHAR* langFileRom();
-_TCHAR* langFileAll();
-_TCHAR* langFileCpuState();
-_TCHAR* langFileDisk();
-_TCHAR* langFileCas();
+char* langFileRom();
+char* langFileAll();
+char* langFileCpuState();
+char* langFileDisk();
+char* langFileCas();
 
 
 //----------------------
 // Menu related lines
 //----------------------
 
-_TCHAR* langMenuNoRecentFiles();
-_TCHAR* langMenuInsert();
-_TCHAR* langMenuEject();
+char* langMenuNoRecentFiles();
+char* langMenuInsert();
+char* langMenuEject();
 
-_TCHAR* langMenuCartGameReader();
-_TCHAR* langMenuCartIde();
-_TCHAR* langMenuCartBeerIde();
-_TCHAR* langMenuCartGIde();
-_TCHAR* langMenuCartSunriseIde();
-_TCHAR* langMenuCartSCC();
-_TCHAR* langMenuCartSCCPlus();
-_TCHAR* langMenuCartFMPac();
-_TCHAR* langMenuCartPac();
-_TCHAR* langMenuCartHBI55();
-_TCHAR* langMenuCartInsertSpecial();
-_TCHAR* langMenuCartExternalRam();
-_TCHAR* langMenuCartMegaRam();
+char* langMenuCartGameReader();
+char* langMenuCartIde();
+char* langMenuCartBeerIde();
+char* langMenuCartGIde();
+char* langMenuCartSunriseIde();
+char* langMenuCartSCC();
+char* langMenuCartSCCPlus();
+char* langMenuCartFMPac();
+char* langMenuCartPac();
+char* langMenuCartHBI55();
+char* langMenuCartInsertSpecial();
+char* langMenuCartExternalRam();
+char* langMenuCartMegaRam();
 
-_TCHAR* langMenuDiskDirInsert();
-_TCHAR* langMenuDiskInsertNew();
-_TCHAR* langMenuDiskAutoStart();
-_TCHAR* langMenuCartAutoReset();
+char* langMenuDiskDirInsert();
+char* langMenuDiskInsertNew();
+char* langMenuDiskAutoStart();
+char* langMenuCartAutoReset();
 
-_TCHAR* langMenuCasRewindAfterInsert();
-_TCHAR* langMenuCasUseReadOnly();
-_TCHAR* langMenuCasSaveAs();
-_TCHAR* langMenuCasSetPosition();
-_TCHAR* langMenuCasRewind();
+char* langMenuCasRewindAfterInsert();
+char* langMenuCasUseReadOnly();
+char* langMenuCasSaveAs();
+char* langMenuCasSetPosition();
+char* langMenuCasRewind();
 
-_TCHAR* langMenuPrnFormfeed();
+char* langMenuPrnFormfeed();
 
-_TCHAR* langMenuZoomNormal();
-_TCHAR* langMenuZoomDouble();
-_TCHAR* langMenuZoomFullscreen();
+char* langMenuZoomNormal();
+char* langMenuZoomDouble();
+char* langMenuZoomFullscreen();
 
-_TCHAR* langMenuPropsEmulation();
-_TCHAR* langMenuPropsVideo();
-_TCHAR* langMenuPropsSound();
-_TCHAR* langMenuPropsControls();
-_TCHAR* langMenuPropsPerformance();
-_TCHAR* langMenuPropsSettings();
-_TCHAR* langMenuPropsFile();
-_TCHAR* langMenuPropsLanguage();
-_TCHAR* langMenuPropsPorts();
+char* langMenuPropsEmulation();
+char* langMenuPropsVideo();
+char* langMenuPropsSound();
+char* langMenuPropsControls();
+char* langMenuPropsPerformance();
+char* langMenuPropsSettings();
+char* langMenuPropsFile();
+char* langMenuPropsLanguage();
+char* langMenuPropsPorts();
 
-_TCHAR* langMenuVideoSource();
-_TCHAR* langMenuVideoSourceDefault();
-_TCHAR* langMenuVideoChipAutodetect();
-_TCHAR* langMenuVideoInSource();
-_TCHAR* langMenuVideoInBitmap();
+char* langMenuVideoSource();
+char* langMenuVideoSourceDefault();
+char* langMenuVideoChipAutodetect();
+char* langMenuVideoInSource();
+char* langMenuVideoInBitmap();
 
-_TCHAR* langMenuHelpHelp();
-_TCHAR* langMenuHelpAbout();
+char* langMenuHelpHelp();
+char* langMenuHelpAbout();
 
-_TCHAR* langMenuFileCart();
-_TCHAR* langMenuFileDisk();
-_TCHAR* langMenuFileCas();
-_TCHAR* langMenuFilePrn();
-_TCHAR* langMenuFileLoadState();
-_TCHAR* langMenuFileSaveState();
-_TCHAR* langMenuFileQLoadState();
-_TCHAR* langMenuFileQSaveState();
-_TCHAR* langMenuFileCaptureAudio();
-_TCHAR* langMenuFileScreenShot();
-_TCHAR* langMenuFileExit();
-_TCHAR* langMenuFileHarddisk();
-_TCHAR* langMenuFileHarddiskNoPresent();
+char* langMenuFileCart();
+char* langMenuFileDisk();
+char* langMenuFileCas();
+char* langMenuFilePrn();
+char* langMenuFileLoadState();
+char* langMenuFileSaveState();
+char* langMenuFileQLoadState();
+char* langMenuFileQSaveState();
+char* langMenuFileCaptureAudio();
+char* langMenuFileScreenShot();
+char* langMenuFileExit();
+char* langMenuFileHarddisk();
+char* langMenuFileHarddiskNoPresent();
 
-_TCHAR* langMenuRunRun();
-_TCHAR* langMenuRunPause();
-_TCHAR* langMenuRunStop();
-_TCHAR* langMenuRunSoftReset();
-_TCHAR* langMenuRunHardReset();
-_TCHAR* langMenuRunCleanReset();
+char* langMenuRunRun();
+char* langMenuRunPause();
+char* langMenuRunStop();
+char* langMenuRunSoftReset();
+char* langMenuRunHardReset();
+char* langMenuRunCleanReset();
 
-_TCHAR* langMenuToolsMachine();
-_TCHAR* langMenuToolsShortcuts();
-_TCHAR* langMenuToolsKeyboard();
-_TCHAR* langMenuToolsMixer();
-_TCHAR* langMenuToolsDebugger();
-_TCHAR* langMenuToolsTrainer();
-_TCHAR* langMenuToolsTraceLogger();
+char* langMenuToolsMachine();
+char* langMenuToolsShortcuts();
+char* langMenuToolsKeyboard();
+char* langMenuToolsMixer();
+char* langMenuToolsDebugger();
+char* langMenuToolsTrainer();
+char* langMenuToolsTraceLogger();
 
-_TCHAR* langMenuFile();
-_TCHAR* langMenuRun();
-_TCHAR* langMenuWindow();
-_TCHAR* langMenuOptions();
-_TCHAR* langMenuTools();
-_TCHAR* langMenuHelp();
+char* langMenuFile();
+char* langMenuRun();
+char* langMenuWindow();
+char* langMenuOptions();
+char* langMenuTools();
+char* langMenuHelp();
 
 
 //----------------------
 // Dialog related lines
 //----------------------
 
-_TCHAR* langDlgOK();
-_TCHAR* langDlgOpen();
-_TCHAR* langDlgCancel();
-_TCHAR* langDlgSave();
-_TCHAR* langDlgSaveAs();
-_TCHAR* langDlgRun();
-_TCHAR* langDlgClose();
+char* langDlgOK();
+char* langDlgOpen();
+char* langDlgCancel();
+char* langDlgSave();
+char* langDlgSaveAs();
+char* langDlgRun();
+char* langDlgClose();
 
-_TCHAR* langDlgLoadRom();
-_TCHAR* langDlgLoadDsk();
-_TCHAR* langDlgLoadCas();
-_TCHAR* langDlgLoadRomDskCas();
-_TCHAR* langDlgLoadRomDesc();
-_TCHAR* langDlgLoadDskDesc();
-_TCHAR* langDlgLoadCasDesc();
-_TCHAR* langDlgLoadRomDskCasDesc();
-_TCHAR* langDlgLoadState();
-_TCHAR* langDlgSaveState();
-_TCHAR* langDlgSaveCassette();
-_TCHAR* langDlgInsertRom1();
-_TCHAR* langDlgInsertRom2();
-_TCHAR* langDlgInsertDiskA();
-_TCHAR* langDlgInsertDiskB();
-_TCHAR* langDlgInsertHarddisk();
-_TCHAR* langDlgInsertCas();
-_TCHAR* langDlgRomType();
+char* langDlgLoadRom();
+char* langDlgLoadDsk();
+char* langDlgLoadCas();
+char* langDlgLoadRomDskCas();
+char* langDlgLoadRomDesc();
+char* langDlgLoadDskDesc();
+char* langDlgLoadCasDesc();
+char* langDlgLoadRomDskCasDesc();
+char* langDlgLoadState();
+char* langDlgSaveState();
+char* langDlgSaveCassette();
+char* langDlgInsertRom1();
+char* langDlgInsertRom2();
+char* langDlgInsertDiskA();
+char* langDlgInsertDiskB();
+char* langDlgInsertHarddisk();
+char* langDlgInsertCas();
+char* langDlgRomType();
 
-_TCHAR* langDlgTapeTitle();
-_TCHAR* langDlgTapeFrameText();
-_TCHAR* langDlgTapeCurrentPos();
-_TCHAR* langDlgTapeSetPosText();
-_TCHAR* langDlgTapeCustom();
-_TCHAR* langDlgTabPosition();
-_TCHAR* langDlgTabType();
-_TCHAR* langDlgTabFilename();
-_TCHAR* langDlgTapeTotalTime();
-_TCHAR* langDlgZipReset();
+char* langDlgTapeTitle();
+char* langDlgTapeFrameText();
+char* langDlgTapeCurrentPos();
+char* langDlgTapeSetPosText();
+char* langDlgTapeCustom();
+char* langDlgTabPosition();
+char* langDlgTabType();
+char* langDlgTabFilename();
+char* langDlgTapeTotalTime();
+char* langDlgZipReset();
 
-_TCHAR* langDlgAboutTitle();
+char* langDlgAboutTitle();
 
-_TCHAR* langDlgLangLangText();
-_TCHAR* langDlgLangTitle();
+char* langDlgLangLangText();
+char* langDlgLangTitle();
 
-_TCHAR* langDlgAboutAbout();
-_TCHAR* langDlgAboutVersion();
-_TCHAR* langDlgAboutBuildNumber();
-_TCHAR* langDlgAboutBuildDate();
-_TCHAR* langDlgAboutCreat();
-_TCHAR* langDlgAboutDevel();
-_TCHAR* langDlgAboutThanks();
-_TCHAR* langDlgAboutLisence();
+char* langDlgAboutAbout();
+char* langDlgAboutVersion();
+char* langDlgAboutBuildNumber();
+char* langDlgAboutBuildDate();
+char* langDlgAboutCreat();
+char* langDlgAboutDevel();
+char* langDlgAboutThanks();
+char* langDlgAboutLisence();
 
-_TCHAR* langDlgSavePreview();
-_TCHAR* langDlgSaveDate();
+char* langDlgSavePreview();
+char* langDlgSaveDate();
 
 
 //----------------------
 // Properties related lines
 //----------------------
 
-_TCHAR* langPropTitle();
-_TCHAR* langPropEmulation();
-_TCHAR* langPropVideo();
-_TCHAR* langPropSound();
-_TCHAR* langPropControls();
-_TCHAR* langPropPerformance();
-_TCHAR* langPropSettings();
-_TCHAR* langPropFile();
-_TCHAR* langPropPorts();
+char* langPropTitle();
+char* langPropEmulation();
+char* langPropVideo();
+char* langPropSound();
+char* langPropControls();
+char* langPropPerformance();
+char* langPropSettings();
+char* langPropFile();
+char* langPropPorts();
 
-_TCHAR* langPropEmuGeneralGB();
-_TCHAR* langPropEmuFamilyText();
-_TCHAR* langPropEmuMemoryGB();
-_TCHAR* langPropEmuRamSizeText();
-_TCHAR* langPropEmuVramSizeText();
-_TCHAR* langPropEmuSpeedGB();
-_TCHAR* langPropEmuSpeedText();
-_TCHAR* langPropEmuFrontSwitchGB();
-_TCHAR* langPropEmuFrontSwitch();
-_TCHAR* langPropEmuFdcTiming();
-_TCHAR* langPropEmuPauseSwitch();
-_TCHAR* langPropEmuAudioSwitch();
-_TCHAR* langPropVideoFreqText();
-_TCHAR* langPropVideoFreqAuto();
-_TCHAR* langPropSndOversampleText();
-_TCHAR* langPropSndYkInGB();
-_TCHAR* langPropSndMidiInGB();
-_TCHAR* langPropSndMidiOutGB();
-_TCHAR* langPropSndMidiChannel();
-_TCHAR* langPropSndMidiAll();
+char* langPropEmuGeneralGB();
+char* langPropEmuFamilyText();
+char* langPropEmuMemoryGB();
+char* langPropEmuRamSizeText();
+char* langPropEmuVramSizeText();
+char* langPropEmuSpeedGB();
+char* langPropEmuSpeedText();
+char* langPropEmuFrontSwitchGB();
+char* langPropEmuFrontSwitch();
+char* langPropEmuFdcTiming();
+char* langPropEmuPauseSwitch();
+char* langPropEmuAudioSwitch();
+char* langPropVideoFreqText();
+char* langPropVideoFreqAuto();
+char* langPropSndOversampleText();
+char* langPropSndYkInGB();
+char* langPropSndMidiInGB();
+char* langPropSndMidiOutGB();
+char* langPropSndMidiChannel();
+char* langPropSndMidiAll();
 
-_TCHAR* langPropMonMonGB();
-_TCHAR* langPropMonTypeText();
-_TCHAR* langPropMonEmuText();
-_TCHAR* langPropVideoTypeText();
-_TCHAR* langPropWindowSizeText();
-_TCHAR* langPropMonHorizStretch();
-_TCHAR* langPropMonVertStretch();
-_TCHAR* langPropMonDeInterlace();
-_TCHAR* langPropMonBrightness();
-_TCHAR* langPropMonContrast();
-_TCHAR* langPropMonSaturation();
-_TCHAR* langPropMonGamma();
-_TCHAR* langPropMonScanlines();
-_TCHAR* langPropMonColorGhosting();
-_TCHAR* langPropMonEffectsGB();
+char* langPropMonMonGB();
+char* langPropMonTypeText();
+char* langPropMonEmuText();
+char* langPropVideoTypeText();
+char* langPropWindowSizeText();
+char* langPropMonHorizStretch();
+char* langPropMonVertStretch();
+char* langPropMonDeInterlace();
+char* langPropMonBrightness();
+char* langPropMonContrast();
+char* langPropMonSaturation();
+char* langPropMonGamma();
+char* langPropMonScanlines();
+char* langPropMonColorGhosting();
+char* langPropMonEffectsGB();
 
-_TCHAR* langPropPerfVideoDrvGB();
-_TCHAR* langPropPerfVideoDispDrvText();
-_TCHAR* langPropPerfFrameSkipText();
-_TCHAR* langPropPerfAudioDrvGB();
-_TCHAR* langPropPerfAudioDrvText();
-_TCHAR* langPropPerfAudioBufSzText();
-_TCHAR* langPropPerfEmuGB();
-_TCHAR* langPropPerfSyncModeText();
-_TCHAR* langPropFullscreenResText();
+char* langPropPerfVideoDrvGB();
+char* langPropPerfVideoDispDrvText();
+char* langPropPerfFrameSkipText();
+char* langPropPerfAudioDrvGB();
+char* langPropPerfAudioDrvText();
+char* langPropPerfAudioBufSzText();
+char* langPropPerfEmuGB();
+char* langPropPerfSyncModeText();
+char* langPropFullscreenResText();
 
-_TCHAR* langPropSndChipEmuGB();
-_TCHAR* langPropSndMsxMusic();
-_TCHAR* langPropSndMsxAudio();
-_TCHAR* langPropSndMoonsound();
-_TCHAR* langPropSndMt32ToGm();
+char* langPropSndChipEmuGB();
+char* langPropSndMsxMusic();
+char* langPropSndMsxAudio();
+char* langPropSndMoonsound();
+char* langPropSndMt32ToGm();
 
-_TCHAR* langPropPortsLptGB();
-_TCHAR* langPropPortsComGB();
-_TCHAR* langPropPortsLptText();
-_TCHAR* langPropPortsCom1Text();
-_TCHAR* langPropPortsNone();
-_TCHAR* langPropPortsSimplCovox();
-_TCHAR* langPropPortsFile();
-_TCHAR* langPropPortsComFile();
-_TCHAR* langPropPortsOpenLogFile();
-_TCHAR* langPropPortsEmulateMsxPrn();
+char* langPropPortsLptGB();
+char* langPropPortsComGB();
+char* langPropPortsLptText();
+char* langPropPortsCom1Text();
+char* langPropPortsNone();
+char* langPropPortsSimplCovox();
+char* langPropPortsFile();
+char* langPropPortsComFile();
+char* langPropPortsOpenLogFile();
+char* langPropPortsEmulateMsxPrn();
 
-_TCHAR* langPropSetFileHistoryGB();
-_TCHAR* langPropSetFileHistorySize();
-_TCHAR* langPropSetFileHistoryClear();
-_TCHAR* langPropWindowsEnvGB();
-_TCHAR* langPropScreenSaver();
-_TCHAR* langPropFileTypes();
-_TCHAR* langPropDisableWinKeys();
-_TCHAR* langPropPriorityBoost();
-_TCHAR* langPropScreenshotPng();
-_TCHAR* langPropClearFileHistory();
-_TCHAR* langPropOpenRomGB();
-_TCHAR* langPropDefaultRomType();
-_TCHAR* langPropGuessRomType();
+char* langPropSetFileHistoryGB();
+char* langPropSetFileHistorySize();
+char* langPropSetFileHistoryClear();
+char* langPropWindowsEnvGB();
+char* langPropScreenSaver();
+char* langPropFileTypes();
+char* langPropDisableWinKeys();
+char* langPropPriorityBoost();
+char* langPropScreenshotPng();
+char* langPropClearFileHistory();
+char* langPropOpenRomGB();
+char* langPropDefaultRomType();
+char* langPropGuessRomType();
 
-_TCHAR* langPropSettDefSlotGB();
-_TCHAR* langPropSettDefSlots();
-_TCHAR* langPropSettDefSlot();
-_TCHAR* langPropSettDefDrives();
-_TCHAR* langPropSettDefDrive();
+char* langPropSettDefSlotGB();
+char* langPropSettDefSlots();
+char* langPropSettDefSlot();
+char* langPropSettDefDrives();
+char* langPropSettDefDrive();
 
-_TCHAR* langPropThemeGB();
-_TCHAR* langPropTheme();
+char* langPropThemeGB();
+char* langPropTheme();
 
 
 //----------------------
 // Dropdown related lines
 //----------------------
 
-_TCHAR* langEnumVideoMonColor();
-_TCHAR* langEnumVideoMonGrey();
-_TCHAR* langEnumVideoMonGreen();
-_TCHAR* langEnumVideoMonAmber();
+char* langEnumVideoMonColor();
+char* langEnumVideoMonGrey();
+char* langEnumVideoMonGreen();
+char* langEnumVideoMonAmber();
 
-_TCHAR* langEnumVideoTypePAL();
-_TCHAR* langEnumVideoTypeNTSC();
+char* langEnumVideoTypePAL();
+char* langEnumVideoTypeNTSC();
 
-_TCHAR* langEnumVideoEmuNone();
-_TCHAR* langEnumVideoEmuYc();
-_TCHAR* langEnumVideoEmuMonitor();
-_TCHAR* langEnumVideoEmuYcBlur();
-_TCHAR* langEnumVideoEmuComp();
-_TCHAR* langEnumVideoEmuCompBlur();
-_TCHAR* langEnumVideoEmuScale2x();
-_TCHAR* langEnumVideoEmuHq2x();
-_TCHAR* langEnumVideoEmuStreched();
+char* langEnumVideoEmuNone();
+char* langEnumVideoEmuYc();
+char* langEnumVideoEmuMonitor();
+char* langEnumVideoEmuYcBlur();
+char* langEnumVideoEmuComp();
+char* langEnumVideoEmuCompBlur();
+char* langEnumVideoEmuScale2x();
+char* langEnumVideoEmuHq2x();
+char* langEnumVideoEmuStreched();
 
-_TCHAR* langEnumVideoSize1x();
-_TCHAR* langEnumVideoSize2x();
-_TCHAR* langEnumVideoSizeFullscreen();
+char* langEnumVideoSize1x();
+char* langEnumVideoSize2x();
+char* langEnumVideoSizeFullscreen();
 
-_TCHAR* langEnumVideoDrvDirectDrawHW();
-_TCHAR* langEnumVideoDrvDirectDraw();
-_TCHAR* langEnumVideoDrvGDI();
+char* langEnumVideoDrvDirectDrawHW();
+char* langEnumVideoDrvDirectDraw();
+char* langEnumVideoDrvGDI();
 
-_TCHAR* langEnumVideoFrameskip0();
-_TCHAR* langEnumVideoFrameskip1();
-_TCHAR* langEnumVideoFrameskip2();
-_TCHAR* langEnumVideoFrameskip3();
-_TCHAR* langEnumVideoFrameskip4();
-_TCHAR* langEnumVideoFrameskip5();
+char* langEnumVideoFrameskip0();
+char* langEnumVideoFrameskip1();
+char* langEnumVideoFrameskip2();
+char* langEnumVideoFrameskip3();
+char* langEnumVideoFrameskip4();
+char* langEnumVideoFrameskip5();
 
-_TCHAR* langEnumSoundDrvNone();
-_TCHAR* langEnumSoundDrvWMM();
-_TCHAR* langEnumSoundDrvDirectX();
+char* langEnumSoundDrvNone();
+char* langEnumSoundDrvWMM();
+char* langEnumSoundDrvDirectX();
 
-_TCHAR* langEnumEmuSync1ms();
-_TCHAR* langEnumEmuSyncAuto();
-_TCHAR* langEnumEmuSyncNone();
-_TCHAR* langEnumEmuSyncVblank();
-_TCHAR* langEnumEmuAsyncVblank();
+char* langEnumEmuSync1ms();
+char* langEnumEmuSyncAuto();
+char* langEnumEmuSyncNone();
+char* langEnumEmuSyncVblank();
+char* langEnumEmuAsyncVblank();
 
-_TCHAR* langEnumControlsJoyNone();
-_TCHAR* langEnumControlsJoyTetrisDongle();
-_TCHAR* langEnumControlsJoyMagicKeyDongle();
-_TCHAR* langEnumControlsJoyMouse();
-_TCHAR* langEnumControlsJoy2Button();
-_TCHAR* langEnumControlsJoyGunStick();
-_TCHAR* langEnumControlsJoyAsciiLaser();
-_TCHAR* langEnumControlsJoyColeco();
+char* langEnumControlsJoyNone();
+char* langEnumControlsJoyTetrisDongle();
+char* langEnumControlsJoyMagicKeyDongle();
+char* langEnumControlsJoyMouse();
+char* langEnumControlsJoy2Button();
+char* langEnumControlsJoyGunStick();
+char* langEnumControlsJoyAsciiLaser();
+char* langEnumControlsJoyColeco();
 
 //----------------------
 // Configuration related lines
 //----------------------
 
-_TCHAR* langConfTitle();
-_TCHAR* langConfConfigText();
-_TCHAR* langConfSlotLayout();
-_TCHAR* langConfMemory();
-_TCHAR* langConfChipEmulation();
-_TCHAR* langConfChipExtras();
+char* langConfTitle();
+char* langConfConfigText();
+char* langConfSlotLayout();
+char* langConfMemory();
+char* langConfChipEmulation();
+char* langConfChipExtras();
 
-_TCHAR* langConfOpenRom();
-_TCHAR* langConfSaveTitle();
-_TCHAR* langConfSaveAsTitle();
-_TCHAR* langConfSaveText();
-_TCHAR* langConfSaveAsMachineName();
-_TCHAR* langConfDiscardTitle();
-_TCHAR* langConfExitSaveTitle();
-_TCHAR* langConfExitSaveText();
+char* langConfOpenRom();
+char* langConfSaveTitle();
+char* langConfSaveAsTitle();
+char* langConfSaveText();
+char* langConfSaveAsMachineName();
+char* langConfDiscardTitle();
+char* langConfExitSaveTitle();
+char* langConfExitSaveText();
 
-_TCHAR* langConfSlotLayoutGB();
-_TCHAR* langConfSlotExtSlotGB();
-_TCHAR* langConfBoardGB();
-_TCHAR* langConfBoardText();
-_TCHAR* langConfSlotPrimary();
-_TCHAR* langConfSlotExpanded();
+char* langConfSlotLayoutGB();
+char* langConfSlotExtSlotGB();
+char* langConfBoardGB();
+char* langConfBoardText();
+char* langConfSlotPrimary();
+char* langConfSlotExpanded();
 
-_TCHAR* langConfCartridge();
-_TCHAR* langConfSlot();
-_TCHAR* langConfSubslot();
+char* langConfCartridge();
+char* langConfSlot();
+char* langConfSubslot();
 
-_TCHAR* langConfMemAdd();
-_TCHAR* langConfMemEdit();
-_TCHAR* langConfMemRemove();
-_TCHAR* langConfMemSlot();
-_TCHAR* langConfMemAddress();
-_TCHAR* langConfMemType();
-_TCHAR* langConfMemRomImage();
+char* langConfMemAdd();
+char* langConfMemEdit();
+char* langConfMemRemove();
+char* langConfMemSlot();
+char* langConfMemAddress();
+char* langConfMemType();
+char* langConfMemRomImage();
 
-_TCHAR* langConfChipVideoGB();
-_TCHAR* langConfChipVideoChip();
-_TCHAR* langConfChipVideoRam();
-_TCHAR* langConfChipSoundGB();
+char* langConfChipVideoGB();
+char* langConfChipVideoChip();
+char* langConfChipVideoRam();
+char* langConfChipSoundGB();
 
-_TCHAR* langConfCmosGB();
-_TCHAR* langConfCmosEnableText();
-_TCHAR* langConfCmosBatteryText();
+char* langConfCmosGB();
+char* langConfCmosEnableText();
+char* langConfCmosBatteryText();
 
-_TCHAR* langConfChipCpuFreqGB();
-_TCHAR* langConfChipZ80FreqText();
-_TCHAR* langConfChipR800FreqText();
-_TCHAR* langConfChipFdcGB();
-_TCHAR* langConfChipFdcNumDrivesText();
+char* langConfChipCpuFreqGB();
+char* langConfChipZ80FreqText();
+char* langConfChipR800FreqText();
+char* langConfChipFdcGB();
+char* langConfChipFdcNumDrivesText();
 
-_TCHAR* langConfEditMemTitle();
-_TCHAR* langConfEditMemGB();
-_TCHAR* langConfEditMemType();
-_TCHAR* langConfEditMemFile();
-_TCHAR* langConfEditMemAddress();
-_TCHAR* langConfEditMemSize();
-_TCHAR* langConfEditMemSlot();
+char* langConfEditMemTitle();
+char* langConfEditMemGB();
+char* langConfEditMemType();
+char* langConfEditMemFile();
+char* langConfEditMemAddress();
+char* langConfEditMemSize();
+char* langConfEditMemSlot();
 
 
 //----------------------
 // Shortcut lines
 //----------------------
 
-_TCHAR* langShortcutKey();
-_TCHAR* langShortcutDescription();
+char* langShortcutKey();
+char* langShortcutDescription();
 
-_TCHAR* langShortcutSaveConfig();
-_TCHAR* langShortcutOverwriteConfig();
-_TCHAR* langShortcutExitConfig();
-_TCHAR* langShortcutDiscardConfig();
-_TCHAR* langShortcutSaveConfigAs();
-_TCHAR* langShortcutConfigName();
-_TCHAR* langShortcutNewProfile();
-_TCHAR* langShortcutConfigTitle();
-_TCHAR* langShortcutAssign();
-_TCHAR* langShortcutPressText();
-_TCHAR* langShortcutScheme();
-_TCHAR* langShortcutCartInsert1();
-_TCHAR* langShortcutCartRemove1();
-_TCHAR* langShortcutCartInsert2();
-_TCHAR* langShortcutCartRemove2();
-_TCHAR* langShortcutCartSpecialMenu1();
-_TCHAR* langShortcutCartSpecialMenu2();
-_TCHAR* langShortcutCartAutoReset();
-_TCHAR* langShortcutDiskInsertA();
-_TCHAR* langShortcutDiskDirInsertA();
-_TCHAR* langShortcutDiskRemoveA();
-_TCHAR* langShortcutDiskChangeA();
-_TCHAR* langShortcutDiskAutoResetA();
-_TCHAR* langShortcutDiskInsertB();
-_TCHAR* langShortcutDiskDirInsertB();
-_TCHAR* langShortcutDiskRemoveB();
-_TCHAR* langShortcutCasInsert();
-_TCHAR* langShortcutCasEject();
-_TCHAR* langShortcutCasAutorewind();
-_TCHAR* langShortcutCasReadOnly();
-_TCHAR* langShortcutCasSetPosition();
-_TCHAR* langShortcutCasRewind();
-_TCHAR* langShortcutCasSave();
-_TCHAR* langShortcutPrnFormFeed();
-_TCHAR* langShortcutCpuStateLoad();
-_TCHAR* langShortcutCpuStateSave();
-_TCHAR* langShortcutCpuStateQload();
-_TCHAR* langShortcutCpuStateQsave();
-_TCHAR* langShortcutAudioCapture();
-_TCHAR* langShortcutScreenshotOrig();
-_TCHAR* langShortcutScreenshotSmall();
-_TCHAR* langShortcutScreenshotLarge();
-_TCHAR* langShortcutQuit();
-_TCHAR* langShortcutRunPause();
-_TCHAR* langShortcutStop();
-_TCHAR* langShortcutResetHard();
-_TCHAR* langShortcutResetSoft();
-_TCHAR* langShortcutResetClean();
-_TCHAR* langShortcutSizeSmall();
-_TCHAR* langShortcutSizeNormal();
-_TCHAR* langShortcutSizeMinimized();
-_TCHAR* langShortcutSizeFullscreen();
-_TCHAR* langShortcutToggleFullscren();
-_TCHAR* langShortcutVolumeIncrease();
-_TCHAR* langShortcutVolumeDecrease();
-_TCHAR* langShortcutVolumeMute();
-_TCHAR* langShortcutVolumeStereo();
-_TCHAR* langShortcutSwitchMsxAudio();
-_TCHAR* langShortcutSwitchFront();
-_TCHAR* langShortcutSwitchPause();
-_TCHAR* langShortcutToggleMouseLock();
-_TCHAR* langShortcutEmuSpeedMax();
-_TCHAR* langShortcutEmuSpeedMaxToggle();
-_TCHAR* langShortcutEmuSpeedNormal();
-_TCHAR* langShortcutEmuSpeedInc();
-_TCHAR* langShortcutEmuSpeedDec();
-_TCHAR* langShortcutThemeSwitch();
-_TCHAR* langShortcutShowEmuProp();
-_TCHAR* langShortcutShowVideoProp();
-_TCHAR* langShortcutShowAudioProp();
-_TCHAR* langShortcutShowCtrlProp();
-_TCHAR* langShortcutShowPerfProp();
-_TCHAR* langShortcutShowSettProp();
-_TCHAR* langShortcutShowPorts();
-_TCHAR* langShortcutShowLanguage();
-_TCHAR* langShortcutShowMachines();
-_TCHAR* langShortcutShowShortcuts();
-_TCHAR* langShortcutShowKeyboard();
-_TCHAR* langShortcutShowMixer();
-_TCHAR* langShortcutShowDebugger();
-_TCHAR* langShortcutShowTrainer();
-_TCHAR* langShortcutShowHelp();
-_TCHAR* langShortcutShowAbout();
-_TCHAR* langShortcutShowFiles();
-_TCHAR* langShortcutToggleSpriteEnable();
-_TCHAR* langShortcutToggleFdcTiming();
-_TCHAR* langShortcutToggleCpuTrace();
+char* langShortcutSaveConfig();
+char* langShortcutOverwriteConfig();
+char* langShortcutExitConfig();
+char* langShortcutDiscardConfig();
+char* langShortcutSaveConfigAs();
+char* langShortcutConfigName();
+char* langShortcutNewProfile();
+char* langShortcutConfigTitle();
+char* langShortcutAssign();
+char* langShortcutPressText();
+char* langShortcutScheme();
+char* langShortcutCartInsert1();
+char* langShortcutCartRemove1();
+char* langShortcutCartInsert2();
+char* langShortcutCartRemove2();
+char* langShortcutCartSpecialMenu1();
+char* langShortcutCartSpecialMenu2();
+char* langShortcutCartAutoReset();
+char* langShortcutDiskInsertA();
+char* langShortcutDiskDirInsertA();
+char* langShortcutDiskRemoveA();
+char* langShortcutDiskChangeA();
+char* langShortcutDiskAutoResetA();
+char* langShortcutDiskInsertB();
+char* langShortcutDiskDirInsertB();
+char* langShortcutDiskRemoveB();
+char* langShortcutCasInsert();
+char* langShortcutCasEject();
+char* langShortcutCasAutorewind();
+char* langShortcutCasReadOnly();
+char* langShortcutCasSetPosition();
+char* langShortcutCasRewind();
+char* langShortcutCasSave();
+char* langShortcutPrnFormFeed();
+char* langShortcutCpuStateLoad();
+char* langShortcutCpuStateSave();
+char* langShortcutCpuStateQload();
+char* langShortcutCpuStateQsave();
+char* langShortcutAudioCapture();
+char* langShortcutScreenshotOrig();
+char* langShortcutScreenshotSmall();
+char* langShortcutScreenshotLarge();
+char* langShortcutQuit();
+char* langShortcutRunPause();
+char* langShortcutStop();
+char* langShortcutResetHard();
+char* langShortcutResetSoft();
+char* langShortcutResetClean();
+char* langShortcutSizeSmall();
+char* langShortcutSizeNormal();
+char* langShortcutSizeMinimized();
+char* langShortcutSizeFullscreen();
+char* langShortcutToggleFullscren();
+char* langShortcutVolumeIncrease();
+char* langShortcutVolumeDecrease();
+char* langShortcutVolumeMute();
+char* langShortcutVolumeStereo();
+char* langShortcutSwitchMsxAudio();
+char* langShortcutSwitchFront();
+char* langShortcutSwitchPause();
+char* langShortcutToggleMouseLock();
+char* langShortcutEmuSpeedMax();
+char* langShortcutEmuSpeedMaxToggle();
+char* langShortcutEmuSpeedNormal();
+char* langShortcutEmuSpeedInc();
+char* langShortcutEmuSpeedDec();
+char* langShortcutThemeSwitch();
+char* langShortcutShowEmuProp();
+char* langShortcutShowVideoProp();
+char* langShortcutShowAudioProp();
+char* langShortcutShowCtrlProp();
+char* langShortcutShowPerfProp();
+char* langShortcutShowSettProp();
+char* langShortcutShowPorts();
+char* langShortcutShowLanguage();
+char* langShortcutShowMachines();
+char* langShortcutShowShortcuts();
+char* langShortcutShowKeyboard();
+char* langShortcutShowMixer();
+char* langShortcutShowDebugger();
+char* langShortcutShowTrainer();
+char* langShortcutShowHelp();
+char* langShortcutShowAbout();
+char* langShortcutShowFiles();
+char* langShortcutToggleSpriteEnable();
+char* langShortcutToggleFdcTiming();
+char* langShortcutToggleCpuTrace();
 
 
 //----------------------
 // Keyboard config lines
 //----------------------
 
-_TCHAR* langKeyconfigSelectedKey();
-_TCHAR* langKeyconfigMappedTo();
-_TCHAR* langKeyconfigMappingScheme();
+char* langKeyconfigSelectedKey();
+char* langKeyconfigMappedTo();
+char* langKeyconfigMappingScheme();
 
 
 //----------------------
 // Rom type lines
 //----------------------
 
-_TCHAR* langRomTypeStandard();
-_TCHAR* langRomTypeMsxdos2();
-_TCHAR* langRomTypeKonamiScc();
-_TCHAR* langRomTypeKonami();
-_TCHAR* langRomTypeAscii8();
-_TCHAR* langRomTypeAscii16();
-_TCHAR* langRomTypeGameMaster2();
-_TCHAR* langRomTypeAscii8Sram();
-_TCHAR* langRomTypeAscii16Sram();
-_TCHAR* langRomTypeRtype();
-_TCHAR* langRomTypeCrossblaim();
-_TCHAR* langRomTypeHarryFox();
-_TCHAR* langRomTypeMajutsushi();
-_TCHAR* langRomTypeZenima80();
-_TCHAR* langRomTypeZenima90();
-_TCHAR* langRomTypeZenima126();
-_TCHAR* langRomTypeScc();
-_TCHAR* langRomTypeSccPlus();
-_TCHAR* langRomTypeSnatcher();
-_TCHAR* langRomTypeSdSnatcher();
-_TCHAR* langRomTypeSccMirrored();
-_TCHAR* langRomTypeSccExtended();
-_TCHAR* langRomTypeFmpac();
-_TCHAR* langRomTypeFmpak();
-_TCHAR* langRomTypeKonamiGeneric();
-_TCHAR* langRomTypeSuperPierrot();
-_TCHAR* langRomTypeMirrored();
-_TCHAR* langRomTypeNormal();
-_TCHAR* langRomTypeDiskPatch();
-_TCHAR* langRomTypeCasPatch();
-_TCHAR* langRomTypeTc8566afFdc();
-_TCHAR* langRomTypeMicrosolFdc();
-_TCHAR* langRomTypeNationalFdc();
-_TCHAR* langRomTypePhilipsFdc();
-_TCHAR* langRomTypeSvi738Fdc();
-_TCHAR* langRomTypeMappedRam();
-_TCHAR* langRomTypeMirroredRam1k();
-_TCHAR* langRomTypeNormalRam();
-_TCHAR* langRomTypeKanji();
-_TCHAR* langRomTypeHolyQuran();
-_TCHAR* langRomTypeMatsushitaSram();
-_TCHAR* langRomTypePanasonic16();
-_TCHAR* langRomTypePanasonic32();
-_TCHAR* langRomTypeBunsetsu();
-_TCHAR* langRomTypeJisyo();
-_TCHAR* langRomTypeKanji12();
-_TCHAR* langRomTypeNationalSram();
-_TCHAR* langRomTypeS1985();
-_TCHAR* langRomTypeS1990();
-_TCHAR* langRomTypeTurborPause();
-_TCHAR* langRomTypeF4deviceNormal();
-_TCHAR* langRomTypeF4deviceInvert();
-_TCHAR* langRomTypeMsxMidi();
-_TCHAR* langRomTypeTurborTimer();
-_TCHAR* langRomTypeKoei();
-_TCHAR* langRomTypeBasic();
-_TCHAR* langRomTypeHalnote();
-_TCHAR* langRomTypeLodeRunner();
-_TCHAR* langRomTypeNormal4000();
-_TCHAR* langRomTypeNormalC000();
-_TCHAR* langRomTypeKonamiSynth();
-_TCHAR* langRomTypeKonamiKbdMast();
-_TCHAR* langRomTypeKonamiWordPro();
-_TCHAR* langRomTypePac();
-_TCHAR* langRomTypeMegaRam();
-_TCHAR* langRomTypeMegaRam128();
-_TCHAR* langRomTypeMegaRam256();
-_TCHAR* langRomTypeMegaRam512();
-_TCHAR* langRomTypeMegaRam768();
-_TCHAR* langRomTypeMegaRam2mb();
-_TCHAR* langRomTypeExtRam();
-_TCHAR* langRomTypeExtRam512();
-_TCHAR* langRomTypeExtRam1mb();
-_TCHAR* langRomTypeExtRam2mb();
-_TCHAR* langRomTypeExtRam4mb();
-_TCHAR* langRomTypeMsxMusic();
-_TCHAR* langRomTypeMsxAudio();
-_TCHAR* langRomTypeY8950();
-_TCHAR* langRomTypeMoonsound();
-_TCHAR* langRomTypeSvi328Cart();
-_TCHAR* langRomTypeSvi328Fdc();
-_TCHAR* langRomTypeSvi328Prn();
-_TCHAR* langRomTypeSvi328Uart();
-_TCHAR* langRomTypeSvi328col80();
-_TCHAR* langRomTypeSvi727col80();
-_TCHAR* langRomTypeColecoCart();
-_TCHAR* langRomTypeSg1000Cart();
-_TCHAR* langRomTypeTheCastle();
-_TCHAR* langRomTypeSonyHbi55();
-_TCHAR* langRomTypeMsxPrinter();
-_TCHAR* langRomTypeTurborPcm();
-_TCHAR* langRomTypeGameReader();
-_TCHAR* langRomTypeSunriseIde();
-_TCHAR* langRomTypeBeerIde();
-_TCHAR* langRomTypeGide();
-_TCHAR* langRomTypeVmx80();
-_TCHAR* langRomTypeNms8280Digitiz();
-_TCHAR* langRomTypeHbiV1Digitiz();
-_TCHAR* langRomTypeFmdas();
-_TCHAR* langRomTypeSfg05();
+char* langRomTypeStandard();
+char* langRomTypeMsxdos2();
+char* langRomTypeKonamiScc();
+char* langRomTypeKonami();
+char* langRomTypeAscii8();
+char* langRomTypeAscii16();
+char* langRomTypeGameMaster2();
+char* langRomTypeAscii8Sram();
+char* langRomTypeAscii16Sram();
+char* langRomTypeRtype();
+char* langRomTypeCrossblaim();
+char* langRomTypeHarryFox();
+char* langRomTypeMajutsushi();
+char* langRomTypeZenima80();
+char* langRomTypeZenima90();
+char* langRomTypeZenima126();
+char* langRomTypeScc();
+char* langRomTypeSccPlus();
+char* langRomTypeSnatcher();
+char* langRomTypeSdSnatcher();
+char* langRomTypeSccMirrored();
+char* langRomTypeSccExtended();
+char* langRomTypeFmpac();
+char* langRomTypeFmpak();
+char* langRomTypeKonamiGeneric();
+char* langRomTypeSuperPierrot();
+char* langRomTypeMirrored();
+char* langRomTypeNormal();
+char* langRomTypeDiskPatch();
+char* langRomTypeCasPatch();
+char* langRomTypeTc8566afFdc();
+char* langRomTypeMicrosolFdc();
+char* langRomTypeNationalFdc();
+char* langRomTypePhilipsFdc();
+char* langRomTypeSvi738Fdc();
+char* langRomTypeMappedRam();
+char* langRomTypeMirroredRam1k();
+char* langRomTypeNormalRam();
+char* langRomTypeKanji();
+char* langRomTypeHolyQuran();
+char* langRomTypeMatsushitaSram();
+char* langRomTypePanasonic16();
+char* langRomTypePanasonic32();
+char* langRomTypeBunsetsu();
+char* langRomTypeJisyo();
+char* langRomTypeKanji12();
+char* langRomTypeNationalSram();
+char* langRomTypeS1985();
+char* langRomTypeS1990();
+char* langRomTypeTurborPause();
+char* langRomTypeF4deviceNormal();
+char* langRomTypeF4deviceInvert();
+char* langRomTypeMsxMidi();
+char* langRomTypeTurborTimer();
+char* langRomTypeKoei();
+char* langRomTypeBasic();
+char* langRomTypeHalnote();
+char* langRomTypeLodeRunner();
+char* langRomTypeNormal4000();
+char* langRomTypeNormalC000();
+char* langRomTypeKonamiSynth();
+char* langRomTypeKonamiKbdMast();
+char* langRomTypeKonamiWordPro();
+char* langRomTypePac();
+char* langRomTypeMegaRam();
+char* langRomTypeMegaRam128();
+char* langRomTypeMegaRam256();
+char* langRomTypeMegaRam512();
+char* langRomTypeMegaRam768();
+char* langRomTypeMegaRam2mb();
+char* langRomTypeExtRam();
+char* langRomTypeExtRam512();
+char* langRomTypeExtRam1mb();
+char* langRomTypeExtRam2mb();
+char* langRomTypeExtRam4mb();
+char* langRomTypeMsxMusic();
+char* langRomTypeMsxAudio();
+char* langRomTypeY8950();
+char* langRomTypeMoonsound();
+char* langRomTypeSvi328Cart();
+char* langRomTypeSvi328Fdc();
+char* langRomTypeSvi328Prn();
+char* langRomTypeSvi328Uart();
+char* langRomTypeSvi328col80();
+char* langRomTypeSvi727col80();
+char* langRomTypeColecoCart();
+char* langRomTypeSg1000Cart();
+char* langRomTypeTheCastle();
+char* langRomTypeSonyHbi55();
+char* langRomTypeMsxPrinter();
+char* langRomTypeTurborPcm();
+char* langRomTypeGameReader();
+char* langRomTypeSunriseIde();
+char* langRomTypeBeerIde();
+char* langRomTypeGide();
+char* langRomTypeVmx80();
+char* langRomTypeNms8280Digitiz();
+char* langRomTypeHbiV1Digitiz();
+char* langRomTypeFmdas();
+char* langRomTypeSfg05();
 
 #endif
 

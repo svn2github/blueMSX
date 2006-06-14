@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-06-11 20:14:45 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,639 +30,632 @@
 #ifndef LANGUAGE_STRINGS_H
 #define LANGUAGE_STRINGS_H
 
-#ifdef WIN32
-#include <windows.h>
-#include <tchar.h>
-#else
-typedef char _TCHAR;
-#endif
-
 typedef struct {
     //----------------------
     // Generic lines
     //----------------------
 
-    _TCHAR* textDevice;
-    _TCHAR* textFilename;
-    _TCHAR* textFile;
-    _TCHAR* textNone;
-    _TCHAR* textUnknown;
+    char* textDevice;
+    char* textFilename;
+    char* textFile;
+    char* textNone;
+    char* textUnknown;
 
 
     //----------------------
     // Warning and Error lines
     //----------------------
 
-    _TCHAR* warningTitle;
-    _TCHAR* warningDiscardChanges;
-    _TCHAR* warningOverwriteFile;
-    _TCHAR* errorTitle;
-    _TCHAR* errorEnterFullscreen;
-    _TCHAR* errorDirectXFailed;
-    _TCHAR* errorNoRomInZip;
-    _TCHAR* errorNoDskInZip;
-    _TCHAR* errorNoCasInZip;
-    _TCHAR* errorNoHelp;
-    _TCHAR* errorStartEmu;
-    _TCHAR* errorPortableReadonly;
+    char* warningTitle;
+    char* warningDiscardChanges;
+    char* warningOverwriteFile;
+    char* errorTitle;
+    char* errorEnterFullscreen;
+    char* errorDirectXFailed;
+    char* errorNoRomInZip;
+    char* errorNoDskInZip;
+    char* errorNoCasInZip;
+    char* errorNoHelp;
+    char* errorStartEmu;
+    char* errorPortableReadonly;
 
 
     //----------------------
     // File related lines
     //----------------------
 
-    _TCHAR* fileRom;
-    _TCHAR* fileAll;
-    _TCHAR* fileCpuState;
-    _TCHAR* fileDisk;
-    _TCHAR* fileCas;
+    char* fileRom;
+    char* fileAll;
+    char* fileCpuState;
+    char* fileDisk;
+    char* fileCas;
 
 
     //----------------------
     // Menu related lines
     //----------------------
 
-    _TCHAR* menuNoRecentFiles;
-    _TCHAR* menuInsert;
-    _TCHAR* menuEject;
+    char* menuNoRecentFiles;
+    char* menuInsert;
+    char* menuEject;
 
-    _TCHAR* menuCartGameReader;
-    _TCHAR* menuCartIde;
-    _TCHAR* menuCartBeerIde;
-    _TCHAR* menuCartGIde;
-    _TCHAR* menuCartSunriseIde;
-    _TCHAR* menuCartSCC;
-    _TCHAR* menuCartSCCPlus;
-    _TCHAR* menuCartFMPac;
-    _TCHAR* menuCartPac;
-    _TCHAR* menuCartHBI55;
-    _TCHAR* menuCartInsertSpecial;
-    _TCHAR* menuCartMegaRam;
-    _TCHAR* menuCartExternalRam;
+    char* menuCartGameReader;
+    char* menuCartIde;
+    char* menuCartBeerIde;
+    char* menuCartGIde;
+    char* menuCartSunriseIde;
+    char* menuCartSCC;
+    char* menuCartSCCPlus;
+    char* menuCartFMPac;
+    char* menuCartPac;
+    char* menuCartHBI55;
+    char* menuCartInsertSpecial;
+    char* menuCartMegaRam;
+    char* menuCartExternalRam;
 
-    _TCHAR* menuDiskInsertNew;
-    _TCHAR* menuDiskDirInsert;
-    _TCHAR* menuDiskAutoStart;
-    _TCHAR* menuCartAutoReset;
+    char* menuDiskInsertNew;
+    char* menuDiskDirInsert;
+    char* menuDiskAutoStart;
+    char* menuCartAutoReset;
 
-    _TCHAR* menuCasRewindAfterInsert;
-    _TCHAR* menuCasUseReadOnly;
-    _TCHAR* lmenuCasSaveAs;
-    _TCHAR* menuCasSetPosition;
-    _TCHAR* menuCasRewind;
+    char* menuCasRewindAfterInsert;
+    char* menuCasUseReadOnly;
+    char* lmenuCasSaveAs;
+    char* menuCasSetPosition;
+    char* menuCasRewind;
 
-    _TCHAR* menuPrnFormfeed;
+    char* menuPrnFormfeed;
 
-    _TCHAR* menuZoomNormal;
-    _TCHAR* menuZoomDouble;
-    _TCHAR* menuZoomFullscreen;
+    char* menuZoomNormal;
+    char* menuZoomDouble;
+    char* menuZoomFullscreen;
 
-    _TCHAR* menuPropsEmulation;
-    _TCHAR* menuPropsVideo;
-    _TCHAR* menuPropsSound;
-    _TCHAR* menuPropsControls;
-    _TCHAR* menuPropsPerformance;
-    _TCHAR* menuPropsSettings;
-    _TCHAR* menuPropsFile;
-    _TCHAR* menuPropsLanguage;
-    _TCHAR* menuPropsPorts;
+    char* menuPropsEmulation;
+    char* menuPropsVideo;
+    char* menuPropsSound;
+    char* menuPropsControls;
+    char* menuPropsPerformance;
+    char* menuPropsSettings;
+    char* menuPropsFile;
+    char* menuPropsLanguage;
+    char* menuPropsPorts;
 
-    _TCHAR* menuVideoSource;
-    _TCHAR* menuVideoSourceDefault;
-    _TCHAR* menuVideoChipAutodetect;
-    _TCHAR* menuVideoInSource;
-    _TCHAR* menuVideoInBitmap;
+    char* menuVideoSource;
+    char* menuVideoSourceDefault;
+    char* menuVideoChipAutodetect;
+    char* menuVideoInSource;
+    char* menuVideoInBitmap;
 
-    _TCHAR* menuHelpHelp;
-    _TCHAR* menuHelpAbout;
+    char* menuHelpHelp;
+    char* menuHelpAbout;
 
-    _TCHAR* menuFileCart;
-    _TCHAR* menuFileDisk;
-    _TCHAR* menuFileCas;
-    _TCHAR* menuFilePrn;
-    _TCHAR* menuFileLoadState;
-    _TCHAR* menuFileSaveState;
-    _TCHAR* menuFileQLoadState;
-    _TCHAR* menuFileQSaveState;
-    _TCHAR* menuFileCaptureAudio;
-    _TCHAR* menuFileScreenShot;
-    _TCHAR* menuFileExit;
-    _TCHAR* menuFileHarddisk;
-    _TCHAR* menuFileHarddiskNoPesent;
+    char* menuFileCart;
+    char* menuFileDisk;
+    char* menuFileCas;
+    char* menuFilePrn;
+    char* menuFileLoadState;
+    char* menuFileSaveState;
+    char* menuFileQLoadState;
+    char* menuFileQSaveState;
+    char* menuFileCaptureAudio;
+    char* menuFileScreenShot;
+    char* menuFileExit;
+    char* menuFileHarddisk;
+    char* menuFileHarddiskNoPesent;
 
-    _TCHAR* menuRunRun;
-    _TCHAR* menuRunPause;
-    _TCHAR* menuRunStop;
-    _TCHAR* menuRunSoftReset;
-    _TCHAR* menuRunHardReset;
-    _TCHAR* menuRunCleanReset;
+    char* menuRunRun;
+    char* menuRunPause;
+    char* menuRunStop;
+    char* menuRunSoftReset;
+    char* menuRunHardReset;
+    char* menuRunCleanReset;
 
-    _TCHAR* menuToolsMachine;
-    _TCHAR* menuToolsShortcuts;
-    _TCHAR* menuToolsKeyboard;
-    _TCHAR* menuToolsMixer;
-    _TCHAR* menuToolsDebugger;
-    _TCHAR* menuToolsTrainer;
-    _TCHAR* menuToolsTraceLogger;
+    char* menuToolsMachine;
+    char* menuToolsShortcuts;
+    char* menuToolsKeyboard;
+    char* menuToolsMixer;
+    char* menuToolsDebugger;
+    char* menuToolsTrainer;
+    char* menuToolsTraceLogger;
 
-    _TCHAR* menuFile;
-    _TCHAR* menuRun;
-    _TCHAR* menuWindow;
-    _TCHAR* menuOptions;
-    _TCHAR* menuTools;
-    _TCHAR* menuHelp;
+    char* menuFile;
+    char* menuRun;
+    char* menuWindow;
+    char* menuOptions;
+    char* menuTools;
+    char* menuHelp;
 
 
     //----------------------
     // Dialog related lines
     //----------------------
 
-    _TCHAR* dlgOK;
-    _TCHAR* dlgOpen;
-    _TCHAR* dlgCancel;
-    _TCHAR* dlgSave;
-    _TCHAR* dlgSaveAs;
-    _TCHAR* dlgRun;
-    _TCHAR* dlgClose;
+    char* dlgOK;
+    char* dlgOpen;
+    char* dlgCancel;
+    char* dlgSave;
+    char* dlgSaveAs;
+    char* dlgRun;
+    char* dlgClose;
 
-    _TCHAR* dlgLoadRom;
-    _TCHAR* dlgLoadDsk;
-    _TCHAR* dlgLoadCas;
-    _TCHAR* dlgLoadRomDskCas;
-    _TCHAR* dlgLoadRomDesc;
-    _TCHAR* dlgLoadDskDesc;
-    _TCHAR* dlgLoadCasDesc;
-    _TCHAR* dlgLoadRomDskCasDesc;
-    _TCHAR* dlgLoadState;
-    _TCHAR* dlgSaveState;
-    _TCHAR* dlgSaveCassette;
-    _TCHAR* dlgInsertRom1;
-    _TCHAR* dlgInsertRom2;
-    _TCHAR* dlgInsertDiskA;
-    _TCHAR* dlgInsertDiskB;
-    _TCHAR* dlgInsertHarddisk;
-    _TCHAR* dlgInsertCas;
-    _TCHAR* dlgRomType;
+    char* dlgLoadRom;
+    char* dlgLoadDsk;
+    char* dlgLoadCas;
+    char* dlgLoadRomDskCas;
+    char* dlgLoadRomDesc;
+    char* dlgLoadDskDesc;
+    char* dlgLoadCasDesc;
+    char* dlgLoadRomDskCasDesc;
+    char* dlgLoadState;
+    char* dlgSaveState;
+    char* dlgSaveCassette;
+    char* dlgInsertRom1;
+    char* dlgInsertRom2;
+    char* dlgInsertDiskA;
+    char* dlgInsertDiskB;
+    char* dlgInsertHarddisk;
+    char* dlgInsertCas;
+    char* dlgRomType;
 
-    _TCHAR* dlgTapeTitle;
-    _TCHAR* dlgTapeFrameText;
-    _TCHAR* dlgTapeCurrentPos;
-    _TCHAR* dlgTapeTotalTime;
-    _TCHAR* dlgTapeSetPosText;
-    _TCHAR* dlgTapeCustom;
-    _TCHAR* dlgTabPosition;
-    _TCHAR* dlgTabType;
-    _TCHAR* dlgTabFilename;
-    _TCHAR* dlgZipReset;
+    char* dlgTapeTitle;
+    char* dlgTapeFrameText;
+    char* dlgTapeCurrentPos;
+    char* dlgTapeTotalTime;
+    char* dlgTapeSetPosText;
+    char* dlgTapeCustom;
+    char* dlgTabPosition;
+    char* dlgTabType;
+    char* dlgTabFilename;
+    char* dlgZipReset;
 
-    _TCHAR* dlgAboutTitle;
+    char* dlgAboutTitle;
 
-    _TCHAR* dlgLangLangText;
-    _TCHAR* dlgLangLangTitle;
+    char* dlgLangLangText;
+    char* dlgLangLangTitle;
 
-    _TCHAR* dlgAboutAbout;
-    _TCHAR* dlgAboutVersion;
-    _TCHAR* dlgAboutBuildNumber;
-    _TCHAR* dlgAboutBuildDate;
-    _TCHAR* dlgAboutCreat;
-    _TCHAR* dlgAboutDevel;
-    _TCHAR* dlgAboutThanks;
-    _TCHAR* dlgAboutLisence;
+    char* dlgAboutAbout;
+    char* dlgAboutVersion;
+    char* dlgAboutBuildNumber;
+    char* dlgAboutBuildDate;
+    char* dlgAboutCreat;
+    char* dlgAboutDevel;
+    char* dlgAboutThanks;
+    char* dlgAboutLisence;
 
-    _TCHAR* dlgSavePreview;
-    _TCHAR* dlgSaveDate;
+    char* dlgSavePreview;
+    char* dlgSaveDate;
 
 
     //----------------------
     // Properties related lines
     //----------------------
 
-    _TCHAR* propTitle;
-    _TCHAR* propEmulation;
-    _TCHAR* propVideo;
-    _TCHAR* propSound;
-    _TCHAR* propControls;
-    _TCHAR* propPerformance;
-    _TCHAR* propSettings;
-    _TCHAR* propFile;
-    _TCHAR* propPorts;
+    char* propTitle;
+    char* propEmulation;
+    char* propVideo;
+    char* propSound;
+    char* propControls;
+    char* propPerformance;
+    char* propSettings;
+    char* propFile;
+    char* propPorts;
 
-    _TCHAR* propEmuGeneralGB;
-    _TCHAR* propEmuFamilyText;
-    _TCHAR* propEmuMemoryGB;
-    _TCHAR* propEmuRamSizeText;
-    _TCHAR* propEmuVramSizeText;
-    _TCHAR* propEmuSpeedGB;
-    _TCHAR* propEmuSpeedText;
-    _TCHAR* propEmuFrontSwitchGB;
-    _TCHAR* propEmuFrontSwitch;
-    _TCHAR* propEmuFdcTiming;
-    _TCHAR* propEmuPauseSwitch;
-    _TCHAR* propEmuAudioSwitch;
-    _TCHAR* propVideoFreqText;
-    _TCHAR* propVideoFreqAuto;
-    _TCHAR* propSndOversampleText;
-    _TCHAR* propSndMidiInGB;
-    _TCHAR* propSndYkInGB;
-    _TCHAR* propSndMidiOutGB;
-    _TCHAR* propSndMidiChannel;
-    _TCHAR* propSndMidiAll;
+    char* propEmuGeneralGB;
+    char* propEmuFamilyText;
+    char* propEmuMemoryGB;
+    char* propEmuRamSizeText;
+    char* propEmuVramSizeText;
+    char* propEmuSpeedGB;
+    char* propEmuSpeedText;
+    char* propEmuFrontSwitchGB;
+    char* propEmuFrontSwitch;
+    char* propEmuFdcTiming;
+    char* propEmuPauseSwitch;
+    char* propEmuAudioSwitch;
+    char* propVideoFreqText;
+    char* propVideoFreqAuto;
+    char* propSndOversampleText;
+    char* propSndMidiInGB;
+    char* propSndYkInGB;
+    char* propSndMidiOutGB;
+    char* propSndMidiChannel;
+    char* propSndMidiAll;
 
-    _TCHAR* propMonMonGB;
-    _TCHAR* propMonTypeText;
-    _TCHAR* propMonEmuText;
-    _TCHAR* propVideoTypeText;
-    _TCHAR* propWindowSizeText;
-    _TCHAR* propMonHorizStretch;
-    _TCHAR* propMonVertStretch;
-    _TCHAR* propMonDeInterlace;
-    _TCHAR* propMonBrightness;
-    _TCHAR* propMonContrast;
-    _TCHAR* propMonSaturation;
-    _TCHAR* propMonGamma;
-    _TCHAR* propMonScanlines;
-    _TCHAR* propMonColorGhosting;
-    _TCHAR* propMonEffectsGB;
+    char* propMonMonGB;
+    char* propMonTypeText;
+    char* propMonEmuText;
+    char* propVideoTypeText;
+    char* propWindowSizeText;
+    char* propMonHorizStretch;
+    char* propMonVertStretch;
+    char* propMonDeInterlace;
+    char* propMonBrightness;
+    char* propMonContrast;
+    char* propMonSaturation;
+    char* propMonGamma;
+    char* propMonScanlines;
+    char* propMonColorGhosting;
+    char* propMonEffectsGB;
 
-    _TCHAR* propPerfVideoDrvGB;
-    _TCHAR* propPerfVideoDispDrvText;
-    _TCHAR* propPerfFrameSkipText;
-    _TCHAR* propPerfAudioDrvGB;
-    _TCHAR* propPerfAudioDrvText;
-    _TCHAR* propPerfAudioBufSzText;
-    _TCHAR* propPerfEmuGB;
-    _TCHAR* propPerfSyncModeText;
-    _TCHAR* propFullscreenResText;
+    char* propPerfVideoDrvGB;
+    char* propPerfVideoDispDrvText;
+    char* propPerfFrameSkipText;
+    char* propPerfAudioDrvGB;
+    char* propPerfAudioDrvText;
+    char* propPerfAudioBufSzText;
+    char* propPerfEmuGB;
+    char* propPerfSyncModeText;
+    char* propFullscreenResText;
 
-    _TCHAR* propSndChipEmuGB;
-    _TCHAR* propSndMsxMusic;
-    _TCHAR* propSndMsxAudio;
-    _TCHAR* propSndMoonsound;
-    _TCHAR* propSndMt32ToGm;
+    char* propSndChipEmuGB;
+    char* propSndMsxMusic;
+    char* propSndMsxAudio;
+    char* propSndMoonsound;
+    char* propSndMt32ToGm;
 
-    _TCHAR* propPortsLptGB;
-    _TCHAR* propPortsComGB;
-    _TCHAR* propPortsLptText;
-    _TCHAR* propPortsCom1Text;
-    _TCHAR* propPortsNone;
-    _TCHAR* propPortsSimplCovox;
-    _TCHAR* propPortsFile;
-    _TCHAR* propPortsComFile;
-    _TCHAR* propPortsOpenLogFile;
-    _TCHAR* propPortsEmulateMsxPrn;
+    char* propPortsLptGB;
+    char* propPortsComGB;
+    char* propPortsLptText;
+    char* propPortsCom1Text;
+    char* propPortsNone;
+    char* propPortsSimplCovox;
+    char* propPortsFile;
+    char* propPortsComFile;
+    char* propPortsOpenLogFile;
+    char* propPortsEmulateMsxPrn;
 
-    _TCHAR* propSetFileHistoryGB;
-    _TCHAR* propSetFileHistorySize;
-    _TCHAR* propSetFileHistoryClear;
-    _TCHAR* propFileTypes;
-    _TCHAR* propWindowsEnvGB;
-    _TCHAR* propSetScreenSaver;
-    _TCHAR* propDisableWinKeys;
-    _TCHAR* propPriorityBoost;
-    _TCHAR* propScreenshotPng;
-    _TCHAR* propClearHistory;
-    _TCHAR* propOpenRomGB;
-    _TCHAR* propDefaultRomType;
-    _TCHAR* propGuessRomType;
+    char* propSetFileHistoryGB;
+    char* propSetFileHistorySize;
+    char* propSetFileHistoryClear;
+    char* propFileTypes;
+    char* propWindowsEnvGB;
+    char* propSetScreenSaver;
+    char* propDisableWinKeys;
+    char* propPriorityBoost;
+    char* propScreenshotPng;
+    char* propClearHistory;
+    char* propOpenRomGB;
+    char* propDefaultRomType;
+    char* propGuessRomType;
 
-    _TCHAR* propSettDefSlotGB;
-    _TCHAR* propSettDefSlots;
-    _TCHAR* propSettDefSlot;
-    _TCHAR* propSettDefDrives;
-    _TCHAR* propSettDefDrive;
+    char* propSettDefSlotGB;
+    char* propSettDefSlots;
+    char* propSettDefSlot;
+    char* propSettDefDrives;
+    char* propSettDefDrive;
 
-    _TCHAR* propThemeGB;
-    _TCHAR* propTheme;
+    char* propThemeGB;
+    char* propTheme;
 
 
     //----------------------
     // Dropdown related lines
     //----------------------
 
-    _TCHAR* enumVideoMonColor;
-    _TCHAR* enumVideoMonGrey;
-    _TCHAR* enumVideoMonGreen;
-    _TCHAR* enumVideoMonAmber;
+    char* enumVideoMonColor;
+    char* enumVideoMonGrey;
+    char* enumVideoMonGreen;
+    char* enumVideoMonAmber;
 
-    _TCHAR* enumVideoTypePAL;
-    _TCHAR* enumVideoTypeNTSC;
+    char* enumVideoTypePAL;
+    char* enumVideoTypeNTSC;
 
-    _TCHAR* enumVideoEmuNone;
-    _TCHAR* enumVideoEmuYc;
-    _TCHAR* enumVideoEmuMonitor;
-    _TCHAR* enumVideoEmuYcBlur;
-    _TCHAR* enumVideoEmuComp;
-    _TCHAR* enumVideoEmuCompBlur;
-    _TCHAR* enumVideoEmuScale2x;
-    _TCHAR* enumVideoEmuHq2x;
+    char* enumVideoEmuNone;
+    char* enumVideoEmuYc;
+    char* enumVideoEmuMonitor;
+    char* enumVideoEmuYcBlur;
+    char* enumVideoEmuComp;
+    char* enumVideoEmuCompBlur;
+    char* enumVideoEmuScale2x;
+    char* enumVideoEmuHq2x;
 
-    _TCHAR* enumVideoSize1x;
-    _TCHAR* enumVideoSize2x;
-    _TCHAR* enumVideoSizeFullscreen;
+    char* enumVideoSize1x;
+    char* enumVideoSize2x;
+    char* enumVideoSizeFullscreen;
 
-    _TCHAR* enumVideoDrvDirectDrawHW;
-    _TCHAR* enumVideoDrvDirectDraw;
-    _TCHAR* enumVideoDrvGDI;
+    char* enumVideoDrvDirectDrawHW;
+    char* enumVideoDrvDirectDraw;
+    char* enumVideoDrvGDI;
 
-    _TCHAR* enumVideoFrameskip0;
-    _TCHAR* enumVideoFrameskip1;
-    _TCHAR* enumVideoFrameskip2;
-    _TCHAR* enumVideoFrameskip3;
-    _TCHAR* enumVideoFrameskip4;
-    _TCHAR* enumVideoFrameskip5;
+    char* enumVideoFrameskip0;
+    char* enumVideoFrameskip1;
+    char* enumVideoFrameskip2;
+    char* enumVideoFrameskip3;
+    char* enumVideoFrameskip4;
+    char* enumVideoFrameskip5;
 
-    _TCHAR* enumSoundDrvNone;
-    _TCHAR* enumSoundDrvWMM;
-    _TCHAR* enumSoundDrvDirectX;
+    char* enumSoundDrvNone;
+    char* enumSoundDrvWMM;
+    char* enumSoundDrvDirectX;
 
-    _TCHAR* enumEmuSync1ms;
-    _TCHAR* enumEmuSyncAuto;
-    _TCHAR* enumEmuSyncNone;
-    _TCHAR* enumEmuSyncVblank;
-    _TCHAR* enumEmuAsyncVblank;
+    char* enumEmuSync1ms;
+    char* enumEmuSyncAuto;
+    char* enumEmuSyncNone;
+    char* enumEmuSyncVblank;
+    char* enumEmuAsyncVblank;
 
-    _TCHAR* enumControlsJoyNone;
-    _TCHAR* enumControlsJoyMouse;
-    _TCHAR* enumControlsJoyTetris2Dongle;
-    _TCHAR* enumControlsJoyTMagicKeyDongle;
-    _TCHAR* enumControlsJoy2Button;
-    _TCHAR* enumControlsJoyGunstick;
-    _TCHAR* enumControlsJoyAsciiLaser;
-    _TCHAR* enumControlsJoyColeco;
+    char* enumControlsJoyNone;
+    char* enumControlsJoyMouse;
+    char* enumControlsJoyTetris2Dongle;
+    char* enumControlsJoyTMagicKeyDongle;
+    char* enumControlsJoy2Button;
+    char* enumControlsJoyGunstick;
+    char* enumControlsJoyAsciiLaser;
+    char* enumControlsJoyColeco;
 
 
     //----------------------
     // Configuration related lines
     //----------------------
 
-    _TCHAR* confTitle;
-    _TCHAR* confConfigText;
-    _TCHAR* confSlotLayout;
-    _TCHAR* confMemory;
-    _TCHAR* confChipEmulation;
-    _TCHAR* confChipExtras;
+    char* confTitle;
+    char* confConfigText;
+    char* confSlotLayout;
+    char* confMemory;
+    char* confChipEmulation;
+    char* confChipExtras;
 
-    _TCHAR* confOpenRom;
-    _TCHAR* confSaveTitle;
-    _TCHAR* confSaveText;
-    _TCHAR* confSaveAsTitle;
-    _TCHAR* confSaveAsMachineName;
-    _TCHAR* confDiscardTitle;
-    _TCHAR* confExitSaveTitle;
-    _TCHAR* confExitSaveText;
+    char* confOpenRom;
+    char* confSaveTitle;
+    char* confSaveText;
+    char* confSaveAsTitle;
+    char* confSaveAsMachineName;
+    char* confDiscardTitle;
+    char* confExitSaveTitle;
+    char* confExitSaveText;
 
-    _TCHAR* confSlotLayoutGB;
-    _TCHAR* confSlotExtSlotGB;
-    _TCHAR* confBoardGB;
-    _TCHAR* confBoardText;
-    _TCHAR* confSlotPrimary;
-    _TCHAR* confSlotExpanded;
+    char* confSlotLayoutGB;
+    char* confSlotExtSlotGB;
+    char* confBoardGB;
+    char* confBoardText;
+    char* confSlotPrimary;
+    char* confSlotExpanded;
 
-    _TCHAR* confSlotCart;
-    _TCHAR* confSlot;
-    _TCHAR* confSubslot;
+    char* confSlotCart;
+    char* confSlot;
+    char* confSubslot;
 
-    _TCHAR* confMemAdd;
-    _TCHAR* confMemEdit;
-    _TCHAR* confMemRemove;
-    _TCHAR* confMemSlot;
-    _TCHAR* confMemAddresss;
-    _TCHAR* confMemType;
-    _TCHAR* confMemRomImage;
+    char* confMemAdd;
+    char* confMemEdit;
+    char* confMemRemove;
+    char* confMemSlot;
+    char* confMemAddresss;
+    char* confMemType;
+    char* confMemRomImage;
 
-    _TCHAR* confChipVideoGB;
-    _TCHAR* confChipVideoChip;
-    _TCHAR* confChipVideoRam;
-    _TCHAR* confChipSoundGB;
+    char* confChipVideoGB;
+    char* confChipVideoChip;
+    char* confChipVideoRam;
+    char* confChipSoundGB;
 
-    _TCHAR* confCmosGB;
-    _TCHAR* confCmosEnable;
-    _TCHAR* confCmosBattery;
+    char* confCmosGB;
+    char* confCmosEnable;
+    char* confCmosBattery;
 
-    _TCHAR* confCpuFreqGB;
-    _TCHAR* confZ80FreqText;
-    _TCHAR* confR800FreqText;
-    _TCHAR* confFdcGB;
-    _TCHAR* confCFdcNumDrivesText;
+    char* confCpuFreqGB;
+    char* confZ80FreqText;
+    char* confR800FreqText;
+    char* confFdcGB;
+    char* confCFdcNumDrivesText;
 
-    _TCHAR* confEditMemTitle;
-    _TCHAR* confEditMemGB;
-    _TCHAR* confEditMemType;
-    _TCHAR* confEditMemFile;
-    _TCHAR* confEditMemAddress;
-    _TCHAR* confEditMemSize;
-    _TCHAR* confEditMemSlot;
+    char* confEditMemTitle;
+    char* confEditMemGB;
+    char* confEditMemType;
+    char* confEditMemFile;
+    char* confEditMemAddress;
+    char* confEditMemSize;
+    char* confEditMemSlot;
 
 
     //----------------------
     // Shortcut lines
     //----------------------
 
-    _TCHAR* shortcutKey;
-    _TCHAR* shortcutDescription;
+    char* shortcutKey;
+    char* shortcutDescription;
 
-    _TCHAR* shortcutSaveConfig;
-    _TCHAR* shortcutOverwriteConfig;
-    _TCHAR* shortcutExitConfig;
-    _TCHAR* shortcutDiscardConfig;
-    _TCHAR* shortcutSaveConfigAs;
-    _TCHAR* shortcutConfigName;
-    _TCHAR* shortcutNewProfile;
-    _TCHAR* shortcutConfigTitle;
-    _TCHAR* shortcutAssign;
-    _TCHAR* shortcutPressText;
-    _TCHAR* shortcutScheme;
-    _TCHAR* shortcutCartInsert1;
-    _TCHAR* shortcutCartRemove1;
-    _TCHAR* shortcutCartInsert2;
-    _TCHAR* shortcutCartRemove2;
-    _TCHAR* shortcutSpecialMenu1;
-    _TCHAR* shortcutSpecialMenu2;
-    _TCHAR* shortcutCartAutoReset;
-    _TCHAR* shortcutDiskInsertA;
-    _TCHAR* shortcutDiskDirInsertA;
-    _TCHAR* shortcutDiskRemoveA;
-    _TCHAR* shortcutDiskChangeA;
-    _TCHAR* shortcutDiskAutoResetA;
-    _TCHAR* shortcutDiskInsertB;
-    _TCHAR* shortcutDiskDirInsertB;
-    _TCHAR* shortcutDiskRemoveB;
-    _TCHAR* shortcutCasInsert;
-    _TCHAR* shortcutCasEject;
-    _TCHAR* shortcutCasAutorewind;
-    _TCHAR* shortcutCasReadOnly;
-    _TCHAR* shortcutCasSetPosition;
-    _TCHAR* shortcutCasRewind;
-    _TCHAR* shortcutCasSave;
-    _TCHAR* shortcutPrnFormFeed;
-    _TCHAR* shortcutCpuStateLoad;
-    _TCHAR* shortcutCpuStateSave;
-    _TCHAR* shortcutCpuStateQload;
-    _TCHAR* shortcutCpuStateQsave;
-    _TCHAR* shortcutAudioCapture;
-    _TCHAR* shortcutScreenshotOrig;
-    _TCHAR* shortcutScreenshotSmall;
-    _TCHAR* shortcutScreenshotLarge;
-    _TCHAR* shortcutQuit;
-    _TCHAR* shortcutRunPause;
-    _TCHAR* shortcutStop;
-    _TCHAR* shortcutResetHard;
-    _TCHAR* shortcutResetSoft;
-    _TCHAR* shortcutResetClean;
-    _TCHAR* shortcutSizeSmall;
-    _TCHAR* shortcutSizeNormal;
-    _TCHAR* shortcutSizeFullscreen;
-    _TCHAR* shortcutSizeMinimized;
-    _TCHAR* shortcutToggleFullscren;
-    _TCHAR* shortcutVolumeIncrease;
-    _TCHAR* shortcutVolumeDecrease;
-    _TCHAR* shortcutVolumeMute;
-    _TCHAR* shortcutVolumeStereo;
-    _TCHAR* shortcutSwitchMsxAudio;
-    _TCHAR* shortcutSwitchFront;
-    _TCHAR* shortcutSwitchPause;
-    _TCHAR* shortcutToggleMouseLock;
-    _TCHAR* shortcutEmuSpeedMax;
-    _TCHAR* shortcutEmuSpeedToggle;
-    _TCHAR* shortcutEmuSpeedNormal;
-    _TCHAR* shortcutEmuSpeedInc;
-    _TCHAR* shortcutEmuSpeedDec;
-    _TCHAR* shortcutThemeSwitch;
-    _TCHAR* shortcutShowEmuProp;
-    _TCHAR* shortcutShowVideoProp;
-    _TCHAR* shortcutShowAudioProp;
-    _TCHAR* shortcutShowCtrlProp;
-    _TCHAR* shortcutShowPerfProp;
-    _TCHAR* shortcutShowSettProp;
-    _TCHAR* shortcutShowPorts;
-    _TCHAR* shortcutShowLanguage;
-    _TCHAR* shortcutShowMachines;
-    _TCHAR* shortcutShowShortcuts;
-    _TCHAR* shortcutShowKeyboard;
-    _TCHAR* shortcutShowMixer;
-    _TCHAR* shortcutShowDebugger;
-    _TCHAR* shortcutShowTrainer;
-    _TCHAR* shortcutShowHelp;
-    _TCHAR* shortcutShowAbout;
-    _TCHAR* shortcutShowFiles;
-    _TCHAR* shortcutToggleSpriteEnable;
-    _TCHAR* shortcutToggleFdcTiming;
-    _TCHAR* shortcutToggleCpuTrace;
+    char* shortcutSaveConfig;
+    char* shortcutOverwriteConfig;
+    char* shortcutExitConfig;
+    char* shortcutDiscardConfig;
+    char* shortcutSaveConfigAs;
+    char* shortcutConfigName;
+    char* shortcutNewProfile;
+    char* shortcutConfigTitle;
+    char* shortcutAssign;
+    char* shortcutPressText;
+    char* shortcutScheme;
+    char* shortcutCartInsert1;
+    char* shortcutCartRemove1;
+    char* shortcutCartInsert2;
+    char* shortcutCartRemove2;
+    char* shortcutSpecialMenu1;
+    char* shortcutSpecialMenu2;
+    char* shortcutCartAutoReset;
+    char* shortcutDiskInsertA;
+    char* shortcutDiskDirInsertA;
+    char* shortcutDiskRemoveA;
+    char* shortcutDiskChangeA;
+    char* shortcutDiskAutoResetA;
+    char* shortcutDiskInsertB;
+    char* shortcutDiskDirInsertB;
+    char* shortcutDiskRemoveB;
+    char* shortcutCasInsert;
+    char* shortcutCasEject;
+    char* shortcutCasAutorewind;
+    char* shortcutCasReadOnly;
+    char* shortcutCasSetPosition;
+    char* shortcutCasRewind;
+    char* shortcutCasSave;
+    char* shortcutPrnFormFeed;
+    char* shortcutCpuStateLoad;
+    char* shortcutCpuStateSave;
+    char* shortcutCpuStateQload;
+    char* shortcutCpuStateQsave;
+    char* shortcutAudioCapture;
+    char* shortcutScreenshotOrig;
+    char* shortcutScreenshotSmall;
+    char* shortcutScreenshotLarge;
+    char* shortcutQuit;
+    char* shortcutRunPause;
+    char* shortcutStop;
+    char* shortcutResetHard;
+    char* shortcutResetSoft;
+    char* shortcutResetClean;
+    char* shortcutSizeSmall;
+    char* shortcutSizeNormal;
+    char* shortcutSizeFullscreen;
+    char* shortcutSizeMinimized;
+    char* shortcutToggleFullscren;
+    char* shortcutVolumeIncrease;
+    char* shortcutVolumeDecrease;
+    char* shortcutVolumeMute;
+    char* shortcutVolumeStereo;
+    char* shortcutSwitchMsxAudio;
+    char* shortcutSwitchFront;
+    char* shortcutSwitchPause;
+    char* shortcutToggleMouseLock;
+    char* shortcutEmuSpeedMax;
+    char* shortcutEmuSpeedToggle;
+    char* shortcutEmuSpeedNormal;
+    char* shortcutEmuSpeedInc;
+    char* shortcutEmuSpeedDec;
+    char* shortcutThemeSwitch;
+    char* shortcutShowEmuProp;
+    char* shortcutShowVideoProp;
+    char* shortcutShowAudioProp;
+    char* shortcutShowCtrlProp;
+    char* shortcutShowPerfProp;
+    char* shortcutShowSettProp;
+    char* shortcutShowPorts;
+    char* shortcutShowLanguage;
+    char* shortcutShowMachines;
+    char* shortcutShowShortcuts;
+    char* shortcutShowKeyboard;
+    char* shortcutShowMixer;
+    char* shortcutShowDebugger;
+    char* shortcutShowTrainer;
+    char* shortcutShowHelp;
+    char* shortcutShowAbout;
+    char* shortcutShowFiles;
+    char* shortcutToggleSpriteEnable;
+    char* shortcutToggleFdcTiming;
+    char* shortcutToggleCpuTrace;
 
 
     //----------------------
     // Keyboard config lines
     //----------------------
 
-    _TCHAR* keyconfigSelectedKey;
-    _TCHAR* keyconfigMappedTo;
-    _TCHAR* keyconfigMappingScheme;
+    char* keyconfigSelectedKey;
+    char* keyconfigMappedTo;
+    char* keyconfigMappingScheme;
 
     
     //----------------------
     // Rom type lines
     //----------------------
 
-    _TCHAR* romTypeStandard;
-    _TCHAR* romTypeMsxdos2;
-    _TCHAR* romTypeKonamiScc;
-    _TCHAR* romTypeKonami;
-    _TCHAR* romTypeAscii8;
-    _TCHAR* romTypeAscii16;
-    _TCHAR* romTypeGameMaster2;
-    _TCHAR* romTypeAscii8Sram;
-    _TCHAR* romTypeAscii16Sram;
-    _TCHAR* romTypeRtype;
-    _TCHAR* romTypeCrossblaim;
-    _TCHAR* romTypeHarryFox;
-    _TCHAR* romTypeMajutsushi;
-    _TCHAR* romTypeZenima80;
-    _TCHAR* romTypeZenima90;
-    _TCHAR* romTypeZenima126;
-    _TCHAR* romTypeScc;
-    _TCHAR* romTypeSccPlus;
-    _TCHAR* romTypeSnatcher;
-    _TCHAR* romTypeSdSnatcher;
-    _TCHAR* romTypeSccMirrored;
-    _TCHAR* romTypeSccExtended;
-    _TCHAR* romTypeFmpac;
-    _TCHAR* romTypeFmpak;
-    _TCHAR* romTypeKonamiGeneric;
-    _TCHAR* romTypeSuperPierrot;
-    _TCHAR* romTypeMirrored;
-    _TCHAR* romTypeNormal;
-    _TCHAR* romTypeDiskPatch;
-    _TCHAR* romTypeCasPatch;
-    _TCHAR* romTypeTc8566afFdc;
-    _TCHAR* romTypeMicrosolFdc;
-    _TCHAR* romTypeNationalFdc;
-    _TCHAR* romTypePhilipsFdc;
-    _TCHAR* romTypeSvi738Fdc;
-    _TCHAR* romTypeMappedRam;
-    _TCHAR* romTypeMirroredRam1k;
-    _TCHAR* romTypeNormalRam;
-    _TCHAR* romTypeKanji;
-    _TCHAR* romTypeHolyQuran;
-    _TCHAR* romTypeMatsushitaSram;
-    _TCHAR* romTypePanasonic16;
-    _TCHAR* romTypePanasonic32;
-    _TCHAR* romTypeBunsetsu;
-    _TCHAR* romTypeJisyo;
-    _TCHAR* romTypeKanji12;
-    _TCHAR* romTypeNationalSram;
-    _TCHAR* romTypeS1985;
-    _TCHAR* romTypeS1990;
-    _TCHAR* romTypeTurborPause;
-    _TCHAR* romTypeF4deviceNormal;
-    _TCHAR* romTypeF4deviceInvert;
-    _TCHAR* romTypeMsxMidi;
-    _TCHAR* romTypeTurborTimer;
-    _TCHAR* romTypeKoei;
-    _TCHAR* romTypeBasic;
-    _TCHAR* romTypeHalnote;
-    _TCHAR* romTypeLodeRunner;
-    _TCHAR* romTypeNormal4000;
-    _TCHAR* romTypeNormalC000;
-    _TCHAR* romTypeKonamiSynth;
-    _TCHAR* romTypeKonamiKbdMast;
-    _TCHAR* romTypeKonamiWordPro;
-    _TCHAR* romTypePac;
-    _TCHAR* romTypeMegaRam;
-    _TCHAR* romTypeMegaRam128;
-    _TCHAR* romTypeMegaRam256;
-    _TCHAR* romTypeMegaRam512;
-    _TCHAR* romTypeMegaRam768;
-    _TCHAR* romTypeMegaRam2mb;
-    _TCHAR* romTypeExtRam;
-    _TCHAR* romTypeExtRam512;
-    _TCHAR* romTypeExtRam1mb;
-    _TCHAR* romTypeExtRam2mb;
-    _TCHAR* romTypeExtRam4mb;
-    _TCHAR* romTypeMsxMusic;
-    _TCHAR* romTypeMsxAudio;
-    _TCHAR* romTypeY8950;
-    _TCHAR* romTypeMoonsound;
-    _TCHAR* romTypeSvi328Cart;
-    _TCHAR* romTypeSvi328Fdc;
-    _TCHAR* romTypeSvi328Prn;
-    _TCHAR* romTypeSvi328Uart;
-    _TCHAR* romTypeSvi328col80;
-    _TCHAR* romTypeSvi727col80;
-    _TCHAR* romTypeColecoCart;
-    _TCHAR* romTypeSg1000Cart;
-    _TCHAR* romTypeTheCastle;
-    _TCHAR* romTypeSonyHbi55;
-    _TCHAR* romTypeMsxPrinter;
-    _TCHAR* romTypeTurborPcm;
-    _TCHAR* romTypeGameReader;
-    _TCHAR* romTypeSunriseIde;
-    _TCHAR* romTypeBeerIde;
-    _TCHAR* romTypeGide;
-    _TCHAR* romTypeVmx80;
-    _TCHAR* romTypeNms8280Digitiz;
-    _TCHAR* romTypeHbiV1Digitiz;
-    _TCHAR* romTypeFmdas;
-    _TCHAR* romTypeSfg05;
+    char* romTypeStandard;
+    char* romTypeMsxdos2;
+    char* romTypeKonamiScc;
+    char* romTypeKonami;
+    char* romTypeAscii8;
+    char* romTypeAscii16;
+    char* romTypeGameMaster2;
+    char* romTypeAscii8Sram;
+    char* romTypeAscii16Sram;
+    char* romTypeRtype;
+    char* romTypeCrossblaim;
+    char* romTypeHarryFox;
+    char* romTypeMajutsushi;
+    char* romTypeZenima80;
+    char* romTypeZenima90;
+    char* romTypeZenima126;
+    char* romTypeScc;
+    char* romTypeSccPlus;
+    char* romTypeSnatcher;
+    char* romTypeSdSnatcher;
+    char* romTypeSccMirrored;
+    char* romTypeSccExtended;
+    char* romTypeFmpac;
+    char* romTypeFmpak;
+    char* romTypeKonamiGeneric;
+    char* romTypeSuperPierrot;
+    char* romTypeMirrored;
+    char* romTypeNormal;
+    char* romTypeDiskPatch;
+    char* romTypeCasPatch;
+    char* romTypeTc8566afFdc;
+    char* romTypeMicrosolFdc;
+    char* romTypeNationalFdc;
+    char* romTypePhilipsFdc;
+    char* romTypeSvi738Fdc;
+    char* romTypeMappedRam;
+    char* romTypeMirroredRam1k;
+    char* romTypeNormalRam;
+    char* romTypeKanji;
+    char* romTypeHolyQuran;
+    char* romTypeMatsushitaSram;
+    char* romTypePanasonic16;
+    char* romTypePanasonic32;
+    char* romTypeBunsetsu;
+    char* romTypeJisyo;
+    char* romTypeKanji12;
+    char* romTypeNationalSram;
+    char* romTypeS1985;
+    char* romTypeS1990;
+    char* romTypeTurborPause;
+    char* romTypeF4deviceNormal;
+    char* romTypeF4deviceInvert;
+    char* romTypeMsxMidi;
+    char* romTypeTurborTimer;
+    char* romTypeKoei;
+    char* romTypeBasic;
+    char* romTypeHalnote;
+    char* romTypeLodeRunner;
+    char* romTypeNormal4000;
+    char* romTypeNormalC000;
+    char* romTypeKonamiSynth;
+    char* romTypeKonamiKbdMast;
+    char* romTypeKonamiWordPro;
+    char* romTypePac;
+    char* romTypeMegaRam;
+    char* romTypeMegaRam128;
+    char* romTypeMegaRam256;
+    char* romTypeMegaRam512;
+    char* romTypeMegaRam768;
+    char* romTypeMegaRam2mb;
+    char* romTypeExtRam;
+    char* romTypeExtRam512;
+    char* romTypeExtRam1mb;
+    char* romTypeExtRam2mb;
+    char* romTypeExtRam4mb;
+    char* romTypeMsxMusic;
+    char* romTypeMsxAudio;
+    char* romTypeY8950;
+    char* romTypeMoonsound;
+    char* romTypeSvi328Cart;
+    char* romTypeSvi328Fdc;
+    char* romTypeSvi328Prn;
+    char* romTypeSvi328Uart;
+    char* romTypeSvi328col80;
+    char* romTypeSvi727col80;
+    char* romTypeColecoCart;
+    char* romTypeSg1000Cart;
+    char* romTypeTheCastle;
+    char* romTypeSonyHbi55;
+    char* romTypeMsxPrinter;
+    char* romTypeTurborPcm;
+    char* romTypeGameReader;
+    char* romTypeSunriseIde;
+    char* romTypeBeerIde;
+    char* romTypeGide;
+    char* romTypeVmx80;
+    char* romTypeNms8280Digitiz;
+    char* romTypeHbiV1Digitiz;
+    char* romTypeFmdas;
+    char* romTypeSfg05;
 } LanguageStrings;
 
 #endif

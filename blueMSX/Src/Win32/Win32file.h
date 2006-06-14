@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-04-22 03:55:35 $
+** $Date: 2006-06-14 18:15:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,20 +31,19 @@
 #define WIN32_FILE_H
 
 #include <windows.h>
-#include <tchar.h>
 #include "MediaDb.h"
 
-char* openFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                int newFileSize, char* defExt, int* filterIndex);
-char* openStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openStateFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                     int newFileSize, char* defExt, int* filterIndex, int* showPreview);
-char* openRomFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openRomFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                   int mustExist, char* defExt, int* filterIndex, RomType* romType);
-char* openNewHdFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, 
+char* openNewHdFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, 
                     char* defExt, int* filterIndex);
-char* openNewDskFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, char* pDir, char* defExt, int* filterIndex);
-char* saveFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir);
-char* saveStateFile(HWND hwndOwner, _TCHAR* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview);
+char* openNewDskFile(HWND hwndOwner, char* pTitle, char* pFilter, char* pDir, char* defExt, int* filterIndex);
+char* saveFile(HWND hwndOwner, char* pTitle, char* pFilter, int* pFilterIndex, char* pDir);
+char* saveStateFile(HWND hwndOwner, char* pTitle, char* pFilter, int* pFilterIndex, char* pDir, int* showPreview);
 char* openConfigFile(HWND parent, char* title, char* description,
                      char** itemList, char* defaultName);
 #endif
