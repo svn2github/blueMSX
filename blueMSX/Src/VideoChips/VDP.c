@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-14 21:30:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -224,6 +224,8 @@ static UInt16 defaultPaletteRegs[16] = {
 };
 
 typedef struct VDP VDP;
+
+static VDP* theVdp = NULL;
 
 static void RefreshLineTx80(VDP*, int, int, int);
 static void RefreshLine0(VDP*, int, int, int);
@@ -1165,6 +1167,13 @@ static void writeRegister(VDP* vdp, UInt16 ioPort, UInt8 value)
     }
 }
 
+void vdpForceSync()
+{
+    if (theVdp != NULL) {
+        sync(theVdp, boardSystemTime());
+    }
+}
+
 static void sync(VDP* vdp, UInt32 systemTime) 
 {
     int frameTime = systemTime - vdp->frameStartTime;
@@ -1635,6 +1644,8 @@ static void destroy(VDP* vdp)
 {
     int i;
 
+    theVdp = NULL;
+
     debugDeviceUnregister(vdp->debugHandle);
     deviceManagerUnregister(vdp->deviceHandle);
     videoManagerUnregister(vdp->videoHandle);
@@ -1702,6 +1713,8 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     int i;
 
     VDP* vdp = (VDP*)calloc(1, sizeof(VDP));
+
+    theVdp = vdp;
 
     initPalette(vdp);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-14 07:39:24 $
+** $Date: 2006-06-14 21:30:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "ArchInput.h"
 #include "FrameBuffer.h"
 #include "Board.h"
+#include "VDP.h"
 
 #include <stdlib.h>
 
@@ -48,21 +49,22 @@ static UInt8 read(MsxAsciiLaser* joystick) {
     UInt32 systemTime = boardSystemTime();
     FrameBuffer* frameBuffer;
     UInt8 state = (~archMouseGetButtonState(0) & 1) << 5;
-    int dx, dy;
+    int mx, my;
 
-    archMouseGetState(&dx, &dy);
-#if 1
-    dy = dy * joystick->scanlines / 0x10000;
-    frameBuffer = frameBufferGetLastDrawnFrame(dy * joystick->scanlines / 0x10000);
+    vdpForceSync();
+
+    archMouseGetState(&mx, &my);
+
+    my = my * joystick->scanlines / 0x10000;
+
+    frameBuffer = frameBufferGetLastDrawnFrame(my);
+    
     if (frameBuffer != NULL) {
-        int i;
-
         joystick->scanlines = frameBuffer->lines;
 
-        dx = dx * (frameBuffer->line[dy].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
-
-        for (i = MAX(dy - 10, 0); i <= MIN(dy + 10, frameBuffer->lines); i++) {
-            UInt16 rgb = frameBuffer->line[i].buffer[dx];
+        if (my >= 0 && my < frameBuffer->lines) {
+            UInt16 rgb = frameBuffer->line[my].buffer[
+                mx * (frameBuffer->line[my].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000];
             int R = 8 * ((rgb >> 10) & 0x01f);
             int G = 8 * ((rgb >> 5) & 0x01f);
             int B = 8 * ((rgb >> 0) & 0x01f);
@@ -70,39 +72,9 @@ static UInt8 read(MsxAsciiLaser* joystick) {
         
             if (Y > 200) {
                 state |= 1 << 4;
-                break;
             }
         }
     }
-#else
-    frameBuffer = frameBufferGetLastDrawnFrame(dy * joystick->scanlines / 0x10000);
-
-    if (frameBuffer != NULL) {
-        int width;
-        int height;
-        int i;
-
-        joystick->scanlines = frameBuffer->lines;
-
-        dy = dy * frameBuffer->lines / 0x10000;
-        width  = (frameBuffer->line[dy].doubleWidth ? 2 : 1) * frameBuffer->maxWidth;
-        height = frameBuffer->lines;
-        dx = dx * width / 0x10000;
-
-        for (i = MAX(dy - 16, 0); i <= MIN(dy + 16, height); i++) {
-            UInt16 rgb = frameBuffer->line[i].buffer[dx];
-            int R = 8 * ((rgb >> 10) & 0x01f);
-            int G = 8 * ((rgb >> 5) & 0x01f);
-            int B = 8 * ((rgb >> 0) & 0x01f);
-            int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
-        
-            if (Y > 200) {
-                state |= 0x10;
-                break;
-            }
-        }
-    }
-#endif
     return state;
 }
 

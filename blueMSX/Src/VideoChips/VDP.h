@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-14 21:30:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,8 @@ void vdpSetSpritesEnable(int enable);
 int  vdpGetSpritesEnable();
 void vdpSetDisplayEnable(int enable);
 int  vdpGetDisplayEnable();
+
+void vdpForceSync();
 
 // Video DA Interface
 
