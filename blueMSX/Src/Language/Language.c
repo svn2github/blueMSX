@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-14 20:23:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -837,3 +837,68 @@ char* langRomTypeNms8280Digitiz() { return ls->romTypeNms8280Digitiz; }
 char* langRomTypeHbiV1Digitiz() { return ls->romTypeHbiV1Digitiz; }
 char* langRomTypeFmdas() { return ls->romTypeFmdas; }
 char* langRomTypeSfg05() { return ls->romTypeSfg05; }
+
+
+//----------------------
+// Debug type lines
+//----------------------
+
+char* langDbgMemVisible() { return ls->dbgMemVisible; }
+char* langDbgMemRamNormal() { return ls->dbgMemRamNormal; }
+char* langDbgMemRamMapped() { return ls->dbgMemRamMapped; }
+char* langDbgMemVram() { return ls->dbgMemVram; }
+char* langDbgMemYmf278() { return ls->dbgMemYmf278; }
+char* langDbgMemAy8950() { return ls->dbgMemAy8950; }
+char* langDbgMemScc() { return ls->dbgMemScc; }
+
+char* langDbgCallstack() { return ls->dbgCallstack; }
+
+char* langDbgRegs() { return ls->dbgRegs; }
+char* langDbgRegsCpu() { return ls->dbgRegsCpu; }
+char* langDbgRegsYmf262() { return ls->dbgRegsYmf262; }
+char* langDbgRegsYmf278() { return ls->dbgRegsYmf278; }
+char* langDbgRegsAy8950() { return ls->dbgRegsAy8950; }
+char* langDbgRegsYm2413() { return ls->dbgRegsYm2413; }
+
+char* langDbgDevRamMapper() { return ls->dbgDevRamMapper; }
+char* langDbgDevRam() { return ls->dbgDevRam; }
+char* langDbgDevIdeBeer() { return ls->dbgDevIdeBeer; }
+char* langDbgDevIdeGide() { return ls->dbgDevIdeGide; }
+char* langDbgDevF4Device() { return ls->dbgDevF4Device; }
+char* langDbgDevFmpac() { return ls->dbgDevFmpac; }
+char* langDbgDevFmpak() { return ls->dbgDevFmpak; }
+char* langDbgDevKanji() { return ls->dbgDevKanji; }
+char* langDbgDevKanji12() { return ls->dbgDevKanji12; }
+char* langDbgDevKonamiKbd() { return ls->dbgDevKonamiKbd; }
+char* langDbgDevKorean80() { return ls->dbgDevKorean80; }
+char* langDbgDevKorean90() { return ls->dbgDevKorean90; }
+char* langDbgDevKorean128() { return ls->dbgDevKorean128; }
+char* langDbgDevMegaRam() { return ls->dbgDevMegaRam; }
+char* langDbgDevFdcMicrosol() { return ls->dbgDevFdcMicrosol; }
+char* langDbgDevMoonsound() { return ls->dbgDevMoonsound; }
+char* langDbgDevMsxAudio() { return ls->dbgDevMsxAudio; }
+char* langDbgDevMsxAudioMidi() { return ls->dbgDevMsxAudioMidi; }
+char* langDbgDevMsxMusic() { return ls->dbgDevMsxMusic; }
+char* langDbgDevPrinter() { return ls->dbgDevPrinter; }
+char* langDbgDevRs232() { return ls->dbgDevRs232; }
+char* langDbgDevS1990() { return ls->dbgDevS1990; }
+char* langDbgDevSfg05() { return ls->dbgDevSfg05; }
+char* langDbgDevHbi55() { return ls->dbgDevHbi55; }
+char* langDbgDevSviFdc() { return ls->dbgDevSviFdc; }
+char* langDbgDevSviPrn() { return ls->dbgDevSviPrn; }
+char* langDbgDevSvi80Col() { return ls->dbgDevSvi80Col; }
+char* langDbgDevPcm() { return ls->dbgDevPcm; }
+char* langDbgDevMatsuchita() { return ls->dbgDevMatsuchita; }
+char* langDbgDevS1985() { return ls->dbgDevS1985; }
+char* langDbgDevCrtc6845() { return ls->dbgDevCrtc6845; }
+char* langDbgDevTms9929A() { return ls->dbgDevTms9929A; }
+char* langDbgDevTms99x8A() { return ls->dbgDevTms99x8A; }
+char* langDbgDevV9938() { return ls->dbgDevV9938; }
+char* langDbgDevV9958() { return ls->dbgDevV9958; }
+char* langDbgDevZ80() { return ls->dbgDevZ80; }
+char* langDbgDevMsxMidi() { return ls->dbgDevMsxMidi; }
+char* langDbgDevPpi() { return ls->dbgDevPpi; }
+char* langDbgDevRtc() { return ls->dbgDevRtc; }
+char* langDbgDevTrPause() { return ls->dbgDevTrPause; }
+char* langDbgDevAy8910() { return ls->dbgDevAy8910; }
+char* langDbgDevScc() { return ls->dbgDevScc; }

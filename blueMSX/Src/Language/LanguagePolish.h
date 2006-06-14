@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-11 20:14:45 $
+** $Date: 2006-06-14 20:23:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -665,6 +665,72 @@ void langInitPolish(LanguageStrings* ls)
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg05            = "Yamaha SFG-05";
+    
+    
+    //----------------------
+    // Debug type lines
+    // Note: Only needs translation if debugger is translated
+    //----------------------
+
+    ls->dbgMemVisible           = "Visible Memory";
+    ls->dbgMemRamNormal         = "Normal";
+    ls->dbgMemRamMapped         = "Mapped";
+    ls->dbgMemVram              = "VRAM";
+    ls->dbgMemYmf278            = "YMF278 Sample RAM";
+    ls->dbgMemAy8950            = "AY8950 Sample RAM";
+    ls->dbgMemScc               = "Memory";
+
+    ls->dbgCallstack            = "Callstack";
+
+    ls->dbgRegs                 = "Registers";
+    ls->dbgRegsCpu              = "CPU Registers";
+    ls->dbgRegsYmf262           = "YMF262 Registers";
+    ls->dbgRegsYmf278           = "YMF278 Registers";
+    ls->dbgRegsAy8950           = "AY8950 Registers";
+    ls->dbgRegsYm2413           = "YM2413 Registers";
+
+    ls->dbgDevRamMapper         = "RAM Mapper";
+    ls->dbgDevRam               = "RAM";
+    ls->dbgDevIdeBeer           = "Beer IDE";
+    ls->dbgDevIdeGide           = "GIDE";
+    ls->dbgDevF4Device          = "F4 Device";
+    ls->dbgDevFmpac             = "FMPAC";
+    ls->dbgDevFmpak             = "FMPAK";
+    ls->dbgDevKanji             = "Kanji";
+    ls->dbgDevKanji12           = "Kanji 12";
+    ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
+    ls->dbgDevKorean80          = "Korean 80";
+    ls->dbgDevKorean90          = "Korean 90";
+    ls->dbgDevKorean128         = "Korean 128";
+    ls->dbgDevMegaRam           = "Mega RAM";
+    ls->dbgDevFdcMicrosol       = "Microsol FDC";
+    ls->dbgDevMoonsound         = "Moonsound";
+    ls->dbgDevMsxAudio          = "MSX Audio";
+    ls->dbgDevMsxAudioMidi      = "MSX Audio MIDI";
+    ls->dbgDevMsxMusic          = "MSX Music";
+    ls->dbgDevPrinter           = "Printer";
+    ls->dbgDevRs232             = "RS232";
+    ls->dbgDevS1990             = "S1990";
+    ls->dbgDevSfg05             = "Yamaha SFG-05";
+    ls->dbgDevHbi55             = "Sony HBI-55";
+    ls->dbgDevSviFdc            = "SVI FDC";
+    ls->dbgDevSviPrn            = "SVI Printer";
+    ls->dbgDevSvi80Col          = "SVI 80 Column";
+    ls->dbgDevPcm               = "PCM";
+    ls->dbgDevMatsuchita        = "Matsuchita";
+    ls->dbgDevS1985             = "S1985";
+    ls->dbgDevCrtc6845          = "CRTC6845";
+    ls->dbgDevTms9929A          = "TMS9929A";
+    ls->dbgDevTms99x8A          = "TMS99x8A";
+    ls->dbgDevV9938             = "V9938";
+    ls->dbgDevV9958             = "V9958";
+    ls->dbgDevZ80               = "Z80";
+    ls->dbgDevMsxMidi           = "MSX MIDI";
+    ls->dbgDevPpi               = "PPI";
+    ls->dbgDevRtc               = "RTC";
+    ls->dbgDevTrPause           = "TR Pause";
+    ls->dbgDevAy8910            = "AY8910 PSG";
+    ls->dbgDevScc               = "SCC";
 };
 
 #endif

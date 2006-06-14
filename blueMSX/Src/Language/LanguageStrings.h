@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-14 20:23:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -656,6 +656,73 @@ typedef struct {
     char* romTypeHbiV1Digitiz;
     char* romTypeFmdas;
     char* romTypeSfg05;
+
+   
+    //----------------------
+    // Debug type lines
+    // Note: Only needs translation if debugger is translated
+    //----------------------
+    
+    char* dbgMemVisible;
+    char* dbgMemRamNormal;
+    char* dbgMemRamMapped;
+    char* dbgMemVram;
+    char* dbgMemYmf278;
+    char* dbgMemAy8950;
+    char* dbgMemScc;
+
+    char* dbgCallstack;
+
+    char* dbgRegs;
+    char* dbgRegsCpu;
+    char* dbgRegsYmf262;
+    char* dbgRegsYmf278;
+    char* dbgRegsAy8950;
+    char* dbgRegsYm2413;
+
+    char* dbgDevRamMapper;
+    char* dbgDevRam;
+    char* dbgDevIdeBeer;
+    char* dbgDevIdeGide;
+    char* dbgDevF4Device;
+    char* dbgDevFmpac;
+    char* dbgDevFmpak;
+    char* dbgDevKanji;
+    char* dbgDevKanji12;
+    char* dbgDevKonamiKbd;
+    char* dbgDevKorean80;
+    char* dbgDevKorean90;
+    char* dbgDevKorean128;
+    char* dbgDevMegaRam;
+    char* dbgDevFdcMicrosol;
+    char* dbgDevMoonsound;
+    char* dbgDevMsxAudio;
+    char* dbgDevMsxAudioMidi;
+    char* dbgDevMsxMusic;
+    char* dbgDevPrinter;
+    char* dbgDevRs232;
+    char* dbgDevS1990;
+    char* dbgDevSfg05;
+    char* dbgDevHbi55;
+    char* dbgDevSviFdc;
+    char* dbgDevSviPrn;
+    char* dbgDevSvi80Col;
+    char* dbgDevPcm;
+    char* dbgDevMatsuchita;
+    char* dbgDevS1985;
+    char* dbgDevCrtc6845;
+    char* dbgDevTms9929A;
+    char* dbgDevTms99x8A;
+    char* dbgDevV9938;
+    char* dbgDevV9958;
+    char* dbgDevZ80;
+    char* dbgDevMsxMidi;
+    char* dbgDevPpi;
+    char* dbgDevRtc;
+    char* dbgDevTrPause;
+    char* dbgDevAy8910;
+    char* dbgDevScc;
+
 } LanguageStrings;
 
 #endif
