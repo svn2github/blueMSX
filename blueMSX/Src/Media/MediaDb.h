@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-11 20:08:38 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -143,8 +143,6 @@ typedef struct MediaDb MediaDb;
 
 typedef enum { FORMAT_ROM, FORMAT_DISK, FORMAT_CAS } OldFormat;
 
-MediaDb* mediaDbCreate();
-void mediaDbDestroy(MediaDb* mediaDb);
 void mediaDbAddFromOldFile(MediaDb* mediaDb, const char* fileName, 
                            OldFormat format);
 void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-13 18:50:46 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,16 +54,18 @@ static Display* display;
 static Screen* screen;
 static XImage* ximage;
 static int bitDepth;
+static int displayUpdated = 0;
 
 #define WIDTH  640
 #define HEIGHT 480
 
-int createX11Window(const char *title, int width, int height, int depth)
+int createX11Window(const char *title, int width, int height, int bitDepth)
 {
   XSetWindowAttributes windowAttributes;
   XSizeHints sizeHints;
   XWMHints xvmHints;
   XVisualInfo visualInfo;
+  int depth;
   int i;
   int j;
 
@@ -112,14 +114,62 @@ int createX11Window(const char *title, int width, int height, int depth)
   }
 
     ximage = XCreateImage(display, visualInfo.visual, depth, ZPixmap, 
-                          0, NULL, width, height, 32, 0);
+                          0, NULL, width, height, bitDepth, 0);
     if (!ximage) {
         return 0;
     }
 
-    ximage->data = (char*)malloc(width * height * depth / 8);
+    ximage->data = (char*)malloc(width * height * bitDepth / 8);
   
   return 1;
+}
+
+static void updateVideoRender(Video* video, Properties* properties) {
+    videoSetDeInterlace(video, properties->video.deInterlace);
+
+    switch (properties->video.monType) {
+    case P_VIDEO_COLOR:
+        videoSetColorMode(video, VIDEO_COLOR);
+        break;
+    case P_VIDEO_BW:
+        videoSetColorMode(video, VIDEO_BLACKWHITE);
+        break;
+    case P_VIDEO_GREEN:
+        videoSetColorMode(video, VIDEO_GREEN);
+        break;
+    case P_VIDEO_AMBER:
+        videoSetColorMode(video, VIDEO_AMBER);
+        break;
+    }
+
+    switch (properties->video.palEmu) {
+    case P_VIDEO_PALNONE:
+        videoSetPalMode(video, VIDEO_PAL_FAST);
+        break;
+    case P_VIDEO_PALMON:
+        videoSetPalMode(video, VIDEO_PAL_MONITOR);
+        break;
+    case P_VIDEO_PALYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP);
+        break;
+    case P_VIDEO_PALNYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
+        break;
+    case P_VIDEO_PALCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR);
+        break;
+    case P_VIDEO_PALNCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
+        break;
+	case P_VIDEO_PALSCALE2X:
+		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(video, VIDEO_PAL_HQ2X);
+		break;
+    }
+
+    videoSetFrameSkip(video, properties->video.frameSkip);
 }
 
 
@@ -178,6 +228,8 @@ void archUpdateEmuDisplayConfig()
 int  archUpdateEmuDisplay(int synchronous) 
 {
     FrameBuffer* frameBuffer;
+    int bytesPerPixel = bitDepth / 8;
+    char* dpyData  = ximage->data;  
     int borderWidth;
     int dstOffset;
 
@@ -186,22 +238,22 @@ int  archUpdateEmuDisplay(int synchronous)
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
 
-    borderWidth = (640 - frameBuffer->maxWidth) * bitDepth / 8;
-    dstOffset = borderWidth > 0 ? borderWidth / 2 : 0;
+    borderWidth = 320 - frameBuffer->maxWidth;
 
-    videoRender(video, frameBuffer, bitDepth, 2, ximage->data, dstOffset, WIDTH * bitDepth / 8, -1);
+    videoRender(video, frameBuffer, bitDepth, 2, 
+                dpyData + borderWidth * bytesPerPixel, 
+                0, WIDTH * bytesPerPixel, -1);
 
     if (borderWidth > 0) {
-        char* ptr  = ximage->data;                    
         int h = HEIGHT;
         while (h--) {
-            memset(ptr, 0, borderWidth);
-            memset(ptr + 640 - borderWidth, 0, borderWidth);
-            ptr += WIDTH * bitDepth / 8;
+            memset(dpyData, 0, borderWidth * bytesPerPixel);
+            memset(dpyData + WIDTH - borderWidth, 0, borderWidth * bytesPerPixel);
+            dpyData += WIDTH * bytesPerPixel;
         }
     }
 
-    XSync(display, 0);
+    displayUpdated = 1;
 
     return 0; 
 }
@@ -210,23 +262,23 @@ void setDefaultPaths(const char* rootDir)
 {   
     char buffer[512];  
 
-    sprintf(buffer, "%s\\Audio Capture", rootDir);
+    sprintf(buffer, "%s/Audio Capture", rootDir);
     mkdir(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");
 
-    sprintf(buffer, "%s\\QuickSave", rootDir);
+    sprintf(buffer, "%s/QuickSave", rootDir);
     mkdir(buffer);
     actionSetQuickSaveSetDirectory(buffer, "");
 
-    sprintf(buffer, "%s\\SRAM", rootDir);
+    sprintf(buffer, "%s/SRAM", rootDir);
     mkdir(buffer);
     boardSetDirectory(buffer);
 
-    sprintf(buffer, "%s\\Casinfo", rootDir);
+    sprintf(buffer, "%s/Casinfo", rootDir);
     mkdir(buffer);
     tapeSetDirectory(buffer, "");
 
-    sprintf(buffer, "%s\\Databases", rootDir);
+    sprintf(buffer, "%s/Databases", rootDir);
     mkdir(buffer);
     mediaDbLoad(buffer);
 }
@@ -246,7 +298,7 @@ int main(int argc, char **argv)
 
     resetProperties = emuCheckResetArgument(szLine);
     strcat(path, archGetCurrentDirectory());
-    strcat(path, "\\bluemsx.ini");
+    strcat(path, DIR_SEPARATOR "bluemsx.ini");
     properties = propCreate(resetProperties, 0, P_KBD_EUROPEAN, 0, "");
     
     if (resetProperties == 2) {
@@ -261,12 +313,16 @@ int main(int argc, char **argv)
 
     setDefaultPaths(archGetCurrentDirectory());
 
-    printf("%d\n", __LINE__);
+    langInit();
+    langSetLanguage(properties->language);
+
     video = videoCreate();
     videoSetColors(video, properties->video.saturation, properties->video.brightness, 
                   properties->video.contrast, properties->video.gamma);
     videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
     videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
+    
+    updateVideoRender(video, properties);
 
     mixer = mixerCreate();
     
@@ -323,11 +379,22 @@ int main(int argc, char **argv)
 
     XSync(display, 0);
     
-    if (emuTryStartWithArguments(properties, szLine) < 0) {           
+    i = emuTryStartWithArguments(properties, szLine);
+    if (i < 0) {
+        printf("Failed to parse command line\n");
+        return 0;
+    }
+    
+    if (i == 0) {
+        printf("No command line args\n");
         return 0;
     }
 
-    for (i = 0; i < 5000; i++) {
+    for (i = 0; i < 50000; i++) {
+        if (displayUpdated) {
+            XSync(display, 0);
+            displayUpdated = 0;
+        }
         archThreadSleep(10);
     }
 

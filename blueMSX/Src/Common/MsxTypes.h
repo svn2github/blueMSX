@@ -39,6 +39,12 @@ extern "C" {
 #define __int64 long long
 #endif
 
+#ifdef _WIN32
+#define DIR_SEPARATOR "\\"
+#else
+#define DIR_SEPARATOR "/"
+#endif
+
 /* So far, only support for MSVC types
  */
 typedef unsigned char    UInt8;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramLoader.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,7 +63,7 @@ char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix)
         *--dst = *src--;
     }
 
-    sprintf(SRAMfileName, "%s\\%s", boardGetBaseDirectory(), dst);
+    sprintf(SRAMfileName, "%s" DIR_SEPARATOR "%s", boardGetBaseDirectory(), dst);
 
     return SRAMfileName;
 }

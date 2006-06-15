@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-11 21:17:03 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "Properties.h"
 #include "ziphelper.h"
 #include "RomLoader.h"
+#include "MsxTypes.h"
 #include "ArchNotifications.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
@@ -477,7 +478,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     int extensionLen = strlen(extension);
     int i;
     int numMod = 1;
-    char filenameFormat[32] = "%s\\%s%s_";
+    char filenameFormat[32] = "%s" DIR_SEPARATOR "%s%s_";
     char destfileFormat[32];
 
     for (i = 0; i < digits; i++) {
@@ -485,7 +486,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
         numMod *= 10;
     }
     strcat(filenameFormat, "%s");
-    sprintf(destfileFormat, "%%s\\%%s%%s_%%0%di%%s", digits);
+    sprintf(destfileFormat, "%%s" DIR_SEPARATOR "%%s%%s_%%0%di%%s", digits);
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 

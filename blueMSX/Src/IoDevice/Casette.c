@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-15 16:05:42 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,7 +217,7 @@ int tapeInsert(char *name, const char *fileInZipFile)
     }
 
     // Create filename for tape position file
-    sprintf(tapePosName, "%s\\%s", tapeBaseDir, stripPath(name));
+    sprintf(tapePosName, "%s" DIR_SEPARATOR "%s", tapeBaseDir, stripPath(name));
     if (fileInZipFile == NULL) {
         strcpy(tapeName, name);
     }

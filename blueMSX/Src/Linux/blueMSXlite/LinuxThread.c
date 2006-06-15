@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxThread.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-30 05:50:27 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,10 +43,10 @@ static void* threadEntry(void* data)
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 
-    pthread_kill((pthread_t)pthread_self(), SIGUSR1);
-
     entryPoint();
     
+//    pthread_kill((pthread_t)pthread_self(), SIGUSR1);
+
     return NULL;
 }
 
@@ -57,11 +57,12 @@ void* archThreadCreate(void (*entryPoint)(), int priority) {
     pthread_attr_t attr;
     static int threadsCreated = 0;
 
-    pthread_attr_init(&attr);
+    rv = pthread_attr_init(&attr);
 
     // TODO: Fix priorities
 
     do {
+        
 	    rv = pthread_create(&tid, &attr , threadEntry, entryPoint);
     } while (rv == EAGAIN);
 

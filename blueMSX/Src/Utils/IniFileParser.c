@@ -54,6 +54,9 @@ int readLine(char *line)
 
     while (iniPtr != iniEnd) {
         char c = *iniPtr++;
+        if (c == '\r') {
+            continue;
+        }
         if (c == '\n') {
             *line = 0;
             return i;

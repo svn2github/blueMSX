@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,7 +109,7 @@ void savelog()
     int totalSize = LOG_SIZE;
     int lastPct = -1;
     int cnt = 0;
-    FILE * f = fopen("c:\\bluemsxlog.txt", "w+");
+    FILE * f = fopen("bluemsxlog.txt", "w+");
     int i = 0;
     if (logwrapped == 0 && logindex == 0) {
         return;
@@ -404,16 +404,7 @@ void emulatorStart(const char* stateName) {
 
     emuSyncEvent  = archEventCreate(0);
     emuStartEvent = archEventCreate(0);
-    emuTimer      = 0;
-
-    if (properties->emulation.syncMethod == P_EMU_SYNCTOVBLANK ||
-        properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
-        properties->emulation.syncMethod == P_EMU_SYNCNONE ||
-        properties->emulation.syncMethod == P_EMU_SYNCFRAMES ||
-        properties->emulation.syncMethod == P_EMU_SYNCTOVBLANKASYNC)
-    {
-        emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
-    }
+    emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
 
     setDeviceInfo(&deviceInfo);
 

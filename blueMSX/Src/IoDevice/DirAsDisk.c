@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-15 16:05:42 $
+** $Date: 2006-06-15 22:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -469,7 +469,7 @@ void* dirLoadFile(char* directory, int* size)
 
    load_dsk();
 
-    sprintf(filename, "%s\\*.*", directory);
+    sprintf(filename, "%s" DIR_SEPARATOR "*.*", directory);
 
     hFile = FindFirstFile(filename,&fileData);
     success = hFile != INVALID_HANDLE_VALUE;

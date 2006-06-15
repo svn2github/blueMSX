@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-06-15 22:35:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -162,7 +162,7 @@ int msxCreate(Machine* machine,
               VdpSyncMode vdpSyncMode,
               BoardInfo* boardInfo)
 {
-    char cmosName[128];
+    char cmosName[512];
     int success;
     int i;
 
@@ -210,7 +210,7 @@ int msxCreate(Machine* machine,
 
     r800DebugCreate(r800);
 
-    sprintf(cmosName, "%s\\%s.cmos", boardGetBaseDirectory(), machine->name);
+    sprintf(cmosName, "%s" DIR_SEPARATOR "%s.cmos", boardGetBaseDirectory(), machine->name);
     rtc = rtcCreate(machine->cmos.enable, machine->cmos.batteryBacked ? cmosName : 0);
 
     msxRam = NULL;
