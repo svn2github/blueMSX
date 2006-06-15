@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-13 17:24:41 $
+** $Date: 2006-06-15 00:26:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -300,16 +300,42 @@ void harddiskIdeWriteRegister(HarddiskIde* hd, UInt8 reg, UInt8 value)
     }
 }
 
-void harddiskIdeLoadState(HarddiskIde* hd)
+void harddiskIdeLoadState(HarddiskIde* ide)
 {
     SaveState* state = saveStateOpenForRead("harddiskIde");
+
+    ide->errorReg               = (UInt8)saveStateGet(state, "errorReg",        0);
+    ide->sectorCountReg         = (UInt8)saveStateGet(state, "sectorCountReg",  0);
+    ide->sectorNumReg           = (UInt8)saveStateGet(state, "sectorNumReg",    0);
+    ide->cylinderLowReg         = (UInt8)saveStateGet(state, "cylinderLowReg",  0);
+    ide->cylinderHighReg        = (UInt8)saveStateGet(state, "cylinderHighReg", 0);
+    ide->devHeadReg             = (UInt8)saveStateGet(state, "devHeadReg",      0);
+    ide->statusReg              = (UInt8)saveStateGet(state, "statusReg",       0);
+    ide->featureReg             = (UInt8)saveStateGet(state, "featureReg",      0);
+    ide->transferRead           = saveStateGet(state, "transferRead",           0);
+    ide->transferWrite          = saveStateGet(state, "transferWrite",          0);
+    ide->transferCount          = saveStateGet(state, "transferCount",          0);
+    ide->transferSectorNumber   = saveStateGet(state, "transferSectorNumber",   0);
 
     saveStateClose(state);
 }
 
-void harddiskIdeSaveState(HarddiskIde* hd)
+void harddiskIdeSaveState(HarddiskIde* ide)
 {
     SaveState* state = saveStateOpenForWrite("harddiskIde");
+
+    saveStateSet(state, "errorReg",               ide->errorReg);
+    saveStateSet(state, "sectorCountReg",         ide->sectorCountReg);
+    saveStateSet(state, "sectorNumReg",           ide->sectorNumReg);
+    saveStateSet(state, "cylinderLowReg",         ide->cylinderLowReg);
+    saveStateSet(state, "cylinderHighReg",        ide->cylinderHighReg);
+    saveStateSet(state, "devHeadReg",             ide->devHeadReg);
+    saveStateSet(state, "statusReg",              ide->statusReg);
+    saveStateSet(state, "featureReg",             ide->featureReg);
+    saveStateSet(state, "transferRead",           ide->transferRead);
+    saveStateSet(state, "transferWrite",          ide->transferWrite);
+    saveStateSet(state, "transferCount",          ide->transferCount);
+    saveStateSet(state, "transferSectorNumber",   ide->transferSectorNumber);
 
     saveStateClose(state);
 }

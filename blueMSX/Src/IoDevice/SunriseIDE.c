@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SunriseIDE.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-13 17:24:41 $
+** $Date: 2006-06-15 00:26:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -164,6 +164,9 @@ void sunriseIdeLoadState(SunriseIde* ide)
 {
     SaveState* state = saveStateOpenForRead("sunriseIde");
 
+    ide->softReset     = saveStateGet(state, "softReset",     0);
+    ide->currentDevice = saveStateGet(state, "currentDevice", 0);
+
     saveStateClose(state);
 
     harddiskIdeLoadState(ide->hdide[0]);
@@ -173,6 +176,9 @@ void sunriseIdeLoadState(SunriseIde* ide)
 void sunriseIdeSaveState(SunriseIde* ide)
 {
     SaveState* state = saveStateOpenForWrite("sunriseIde");
+
+    saveStateSet(state, "softReset",     ide->softReset);
+    saveStateSet(state, "currentDevice", ide->currentDevice);
 
     saveStateClose(state);
     
