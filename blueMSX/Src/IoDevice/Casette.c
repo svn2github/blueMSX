@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-06-28 07:28:04 $
+** $Date: 2006-06-15 16:05:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include "SaveState.h"
-#include <io.h>
 #include "ziphelper.h"
 
 

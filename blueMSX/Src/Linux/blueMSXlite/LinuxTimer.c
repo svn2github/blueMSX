@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxTimer.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-09-30 05:50:27 $
+** $Date: 2006-06-15 16:05:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "ArchTimer.h"
 #include <stdlib.h>
 #include <sys/time.h>
+#include <signal.h>
 
 
 static void (*timerCb)(void*) = NULL;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-15 16:05:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 */
 #define USE_ARCH_GLOB
 #include <fcntl.h>
-#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -40,6 +39,14 @@
 #include "ArchGlob.h"
 #else
 #include <windows.h>
+#endif
+
+#ifdef _WIN32
+#include <io.h>
+#else
+#ifndef O_BINARY
+#define O_BINARY
+#endif
 #endif
 
 static const unsigned char msxboot[] = { 

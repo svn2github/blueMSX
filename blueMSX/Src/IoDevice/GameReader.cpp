@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-02 00:14:08 $
+** $Date: 2006-06-15 16:05:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,12 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#ifdef _WIN32
 #include <Windows.h>
+#else
+#define GlobalAlloc(xxx, addr) malloc(addr)
+#define GlobalFree(addr) free(addr)
+#endif
 
 
 //#define ENABLE_DEBUG

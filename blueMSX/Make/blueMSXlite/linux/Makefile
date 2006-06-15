@@ -77,6 +77,7 @@ vpath % $(ROOT_DIR)/Src/Debugger
 vpath % $(ROOT_DIR)/Src/Emulator
 vpath % $(ROOT_DIR)/Src/IoDevice
 vpath % $(ROOT_DIR)/Src/Input
+vpath % $(ROOT_DIR)/Src/Language
 vpath % $(ROOT_DIR)/Src/Media
 vpath % $(ROOT_DIR)/Src/Memory
 vpath % $(ROOT_DIR)/Src/Resources
@@ -259,6 +260,8 @@ SOURCE_FILES += UartIO.c
 SOURCE_FILES += WD2793.c
 SOURCE_FILES += wd33c93.c
 SOURCE_FILES += WDCRC.c
+
+SOURCE_FILES += Language.c
 
 SOURCE_FILES += tinystr.cpp 
 SOURCE_FILES += tinyxml.cpp 
