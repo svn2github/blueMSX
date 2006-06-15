@@ -23,10 +23,6 @@ typedef struct
 	UInt32		dt1_i;					/* DT1 index * 32 */
 	UInt32		dt2;					/* current DT2 (detune 2) value */
 
-	signed int *connect;				/* operator output 'direction' */
-
-	/* only M1 (operator 0) is filled with this data: */
-	signed int *mem_connect;			/* where to put the delayed sample (MEM) */
 	Int32		mem_value;				/* delayed sample (MEM) value */
 
 	/* channel specific data; note: each operator number 0 contains channel specific data */
@@ -60,6 +56,9 @@ typedef struct
 	UInt32		d1r;					/* decay rate   */
 	UInt32		d2r;					/* sustain rate */
 	UInt32		rr;						/* release rate */
+
+	signed int *connect;				/* operator output 'direction' */
+	signed int *mem_connect;			/* where to put the delayed sample (MEM) */
 
 	UInt32		reserved0;				/**/
 	UInt32		reserved1;				/**/
@@ -122,16 +121,21 @@ struct MameYm2151
 	*              9       note code + DT2 + LFO PM
 	*              10      note code + DT2 + LFO PM
 	*/
-	UInt32		freq[11*768];			/* 11 octaves, 768 'cents' per octave */
+	UInt32		freq[11*768];			/* 11 octaves, 768 'cents' per octave */    // No Save
 
 	/*	Frequency deltas for DT1. These deltas alter operator frequency
 	*	after it has been taken from frequency-deltas table.
 	*/
-	Int32		dt1_freq[8*32];			/* 8 DT1 levels, 32 KC values */
-	UInt32		noise_tab[32];			/* 17bit Noise Generator periods */
+	Int32		dt1_freq[8*32];			/* 8 DT1 levels, 32 KC values */              // No Save
+	UInt32		noise_tab[32];			/* 17bit Noise Generator periods */           // No Save
 
 	unsigned int clock;					/* chip clock in Hz (passed from 2151intf.c) */
 	unsigned int sampfreq;				/* sampling frequency in Hz (passed from 2151intf.c) */
+
+    signed int chanout[8];
+    signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
+    signed int mem;		/* one sample delay memory */
+
 };
 
 extern void	ym2151TimerSet(void* ref, int timer, int count);
@@ -445,9 +449,6 @@ static UInt8 lfo_noise_waveform[256] = {
 
 /* these variables stay here for speedup purposes only */
 static MameYm2151 * PSG;
-static signed int chanout[8];
-static signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
-static signed int mem;		/* one sample delay memory */
 
 
 /* own PI definition */
@@ -692,7 +693,7 @@ void YM2151TimerCallback(MameYm2151 *chip, int timer)
 }
 
 
-static void set_connect( YM2151Operator *om1, int cha, int v)
+static void set_connect( MameYm2151 *chip, YM2151Operator *om1, int cha, int v)
 {
 	YM2151Operator *om2 = om1+1;
 	YM2151Operator *oc1 = om1+2;
@@ -705,47 +706,47 @@ static void set_connect( YM2151Operator *om1, int cha, int v)
 	{
 	case 0:
 		/* M1---C1---MEM---M2---C2---OUT */
-		om1->connect = &c1;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &chip->c1;
+		oc1->connect = &chip->mem;
+		om2->connect = &chip->c2;
+		om1->mem_connect = &chip->m2;
 		break;
 
 	case 1:
 		/* M1------+-MEM---M2---C2---OUT */
 		/*      C1-+                     */
-		om1->connect = &mem;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &chip->mem;
+		oc1->connect = &chip->mem;
+		om2->connect = &chip->c2;
+		om1->mem_connect = &chip->m2;
 		break;
 
 	case 2:
 		/* M1-----------------+-C2---OUT */
 		/*      C1---MEM---M2-+          */
-		om1->connect = &c2;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &chip->c2;
+		oc1->connect = &chip->mem;
+		om2->connect = &chip->c2;
+		om1->mem_connect = &chip->m2;
 		break;
 
 	case 3:
 		/* M1---C1---MEM------+-C2---OUT */
 		/*                 M2-+          */
-		om1->connect = &c1;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &c2;
+		om1->connect = &chip->c1;
+		oc1->connect = &chip->mem;
+		om2->connect = &chip->c2;
+		om1->mem_connect = &chip->c2;
 		break;
 
 	case 4:
 		/* M1---C1-+-OUT */
 		/* M2---C2-+     */
 		/* MEM: not used */
-		om1->connect = &c1;
-		oc1->connect = &chanout[cha];
-		om2->connect = &c2;
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &chip->c1;
+		oc1->connect = &chip->chanout[cha];
+		om2->connect = &chip->c2;
+		om1->mem_connect = &chip->mem;	/* store it anywhere where it will not be used */
 		break;
 
 	case 5:
@@ -753,9 +754,9 @@ static void set_connect( YM2151Operator *om1, int cha, int v)
 		/* M1-+-MEM---M2-+-OUT */
 		/*    +----C2----+     */
 		om1->connect = 0;	/* special mark */
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &m2;
+		oc1->connect = &chip->chanout[cha];
+		om2->connect = &chip->chanout[cha];
+		om1->mem_connect = &chip->m2;
 		break;
 
 	case 6:
@@ -763,10 +764,10 @@ static void set_connect( YM2151Operator *om1, int cha, int v)
 		/*      M2-+-OUT */
 		/*      C2-+     */
 		/* MEM: not used */
-		om1->connect = &c1;
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &chip->c1;
+		oc1->connect = &chip->chanout[cha];
+		om2->connect = &chip->chanout[cha];
+		om1->mem_connect = &chip->mem;	/* store it anywhere where it will not be used */
 		break;
 
 	case 7:
@@ -775,10 +776,10 @@ static void set_connect( YM2151Operator *om1, int cha, int v)
 		/* M2-+     */
 		/* C2-+     */
 		/* MEM: not used*/
-		om1->connect = &chanout[cha];
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &chip->chanout[cha];
+		oc1->connect = &chip->chanout[cha];
+		om2->connect = &chip->chanout[cha];
+		om1->mem_connect = &chip->mem;	/* store it anywhere where it will not be used */
 		break;
 	}
 }
@@ -970,7 +971,7 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
 			chip->pan[ (r&7)*2    ] = (v & 0x40) ? ~0 : 0;
 			chip->pan[ (r&7)*2 +1 ] = (v & 0x80) ? ~0 : 0;
 			chip->connect[r&7] = v&7;
-			set_connect(op, r&7, v&7);
+			set_connect(chip, op, r&7, v&7);
 			break;
 
 		case 0x08:	/* Key Code */
@@ -1246,13 +1247,13 @@ static signed int op_calc1(YM2151Operator * OP, unsigned int env, signed int pm)
 
 #define volume_calc(OP) ((OP)->tl + ((UInt32)(OP)->volume) + (AM & (OP)->AMmask))
 
-static void chan_calc(unsigned int chan)
+static void chan_calc(MameYm2151* chip, unsigned int chan)
 {
 	YM2151Operator *op;
 	unsigned int env;
 	UInt32 AM = 0;
 
-	m2 = c1 = c2 = mem = 0;
+	chip->m2 = chip->c1 = chip->c2 = chip->mem = 0;
 	op = &PSG->oper[chan*4];	/* M1 */
 
 	*op->mem_connect = op->mem_value;	/* restore delayed sample (MEM) value to m2 or c2 */
@@ -1266,7 +1267,7 @@ static void chan_calc(unsigned int chan)
 
 		if (!op->connect)
 			/* algorithm 5 */
-			mem = c1 = c2 = op->fb_out_prev;
+			chip->mem = chip->c1 = chip->c2 = op->fb_out_prev;
 		else
 			/* other algorithms */
 			*op->connect = op->fb_out_prev;
@@ -1282,26 +1283,26 @@ static void chan_calc(unsigned int chan)
 
 	env = volume_calc(op+1);	/* M2 */
 	if (env < ENV_QUIET)
-		*(op+1)->connect += op_calc(op+1, env, m2);
+		*(op+1)->connect += op_calc(op+1, env, chip->m2);
 
 	env = volume_calc(op+2);	/* C1 */
 	if (env < ENV_QUIET)
-		*(op+2)->connect += op_calc(op+2, env, c1);
+		*(op+2)->connect += op_calc(op+2, env, chip->c1);
 
 	env = volume_calc(op+3);	/* C2 */
 	if (env < ENV_QUIET)
-		chanout[chan]    += op_calc(op+3, env, c2);
+		chip->chanout[chan]    += op_calc(op+3, env, chip->c2);
 
 	/* M1 */
-	op->mem_value = mem;
+	op->mem_value = chip->mem;
 }
-static void chan7_calc(void)
+static void chan7_calc(MameYm2151* chip)
 {
 	YM2151Operator *op;
 	unsigned int env;
 	UInt32 AM = 0;
 
-	m2 = c1 = c2 = mem = 0;
+	chip->m2 = chip->c1 = chip->c2 = chip->mem = 0;
 	op = &PSG->oper[7*4];		/* M1 */
 
 	*op->mem_connect = op->mem_value;	/* restore delayed sample (MEM) value to m2 or c2 */
@@ -1315,7 +1316,7 @@ static void chan7_calc(void)
 
 		if (!op->connect)
 			/* algorithm 5 */
-			mem = c1 = c2 = op->fb_out_prev;
+			chip->mem = chip->c1 = chip->c2 = op->fb_out_prev;
 		else
 			/* other algorithms */
 			*op->connect = op->fb_out_prev;
@@ -1331,11 +1332,11 @@ static void chan7_calc(void)
 
 	env = volume_calc(op+1);	/* M2 */
 	if (env < ENV_QUIET)
-		*(op+1)->connect += op_calc(op+1, env, m2);
+		*(op+1)->connect += op_calc(op+1, env, chip->m2);
 
 	env = volume_calc(op+2);	/* C1 */
 	if (env < ENV_QUIET)
-		*(op+2)->connect += op_calc(op+2, env, c1);
+		*(op+2)->connect += op_calc(op+2, env, chip->c1);
 
 	env = volume_calc(op+3);	/* C2 */
 	if (PSG->noise & 0x80)
@@ -1345,15 +1346,15 @@ static void chan7_calc(void)
 		noiseout = 0;
 		if (env < 0x3ff)
 			noiseout = (env ^ 0x3ff) * 2;	/* range of the YM2151 noise output is -2044 to 2040 */
-		chanout[7] += ((PSG->noise_rng&0x10000) ? noiseout: (UInt32)-(Int32)noiseout); /* bit 16 -> output */
+		chip->chanout[7] += ((PSG->noise_rng&0x10000) ? noiseout: (UInt32)-(Int32)noiseout); /* bit 16 -> output */
 	}
 	else
 	{
 		if (env < ENV_QUIET)
-			chanout[7] += op_calc(op+3, env, c2);
+			chip->chanout[7] += op_calc(op+3, env, chip->c2);
 	}
 	/* M1 */
-	op->mem_value = mem;
+	op->mem_value = chip->mem;
 }
 
 
@@ -1848,40 +1849,40 @@ void YM2151UpdateOne(MameYm2151* chip, Int16* bufL, Int16* bufR, int length)
 	{
 		advance_eg();
 
-		chanout[0] = 0;
-		chanout[1] = 0;
-		chanout[2] = 0;
-		chanout[3] = 0;
-		chanout[4] = 0;
-		chanout[5] = 0;
-		chanout[6] = 0;
-		chanout[7] = 0;
+		chip->chanout[0] = 0;
+		chip->chanout[1] = 0;
+		chip->chanout[2] = 0;
+		chip->chanout[3] = 0;
+		chip->chanout[4] = 0;
+		chip->chanout[5] = 0;
+		chip->chanout[6] = 0;
+		chip->chanout[7] = 0;
 
-		chan_calc(0);
-		chan_calc(1);
-		chan_calc(2);
-		chan_calc(3);
-		chan_calc(4);
-		chan_calc(5);
-		chan_calc(6);
-		chan7_calc();
+		chan_calc(chip, 0);
+		chan_calc(chip, 1);
+		chan_calc(chip, 2);
+		chan_calc(chip, 3);
+		chan_calc(chip, 4);
+		chan_calc(chip, 5);
+		chan_calc(chip, 6);
+		chan7_calc(chip);
 
-		outl = chanout[0] & PSG->pan[0];
-		outr = chanout[0] & PSG->pan[1];
-		outl += (chanout[1] & PSG->pan[2]);
-		outr += (chanout[1] & PSG->pan[3]);
-		outl += (chanout[2] & PSG->pan[4]);
-		outr += (chanout[2] & PSG->pan[5]);
-		outl += (chanout[3] & PSG->pan[6]);
-		outr += (chanout[3] & PSG->pan[7]);
-		outl += (chanout[4] & PSG->pan[8]);
-		outr += (chanout[4] & PSG->pan[9]);
-		outl += (chanout[5] & PSG->pan[10]);
-		outr += (chanout[5] & PSG->pan[11]);
-		outl += (chanout[6] & PSG->pan[12]);
-		outr += (chanout[6] & PSG->pan[13]);
-		outl += (chanout[7] & PSG->pan[14]);
-		outr += (chanout[7] & PSG->pan[15]);
+		outl = chip->chanout[0] & PSG->pan[0];
+		outr = chip->chanout[0] & PSG->pan[1];
+		outl += (chip->chanout[1] & PSG->pan[2]);
+		outr += (chip->chanout[1] & PSG->pan[3]);
+		outl += (chip->chanout[2] & PSG->pan[4]);
+		outr += (chip->chanout[2] & PSG->pan[5]);
+		outl += (chip->chanout[3] & PSG->pan[6]);
+		outr += (chip->chanout[3] & PSG->pan[7]);
+		outl += (chip->chanout[4] & PSG->pan[8]);
+		outr += (chip->chanout[4] & PSG->pan[9]);
+		outl += (chip->chanout[5] & PSG->pan[10]);
+		outr += (chip->chanout[5] & PSG->pan[11]);
+		outl += (chip->chanout[6] & PSG->pan[12]);
+		outr += (chip->chanout[6] & PSG->pan[13]);
+		outl += (chip->chanout[7] & PSG->pan[14]);
+		outr += (chip->chanout[7] & PSG->pan[15]);
 
 		outl >>= FINAL_SH;
 		outr >>= FINAL_SH;
@@ -1896,16 +1897,339 @@ void YM2151UpdateOne(MameYm2151* chip, Int16* bufL, Int16* bufR, int length)
 	}
 }
 
+
 void YM2151LoadState(MameYm2151* chip)
 {
-    SaveState* state = saveStateOpenForRead("ym2151");
+    SaveState* state = saveStateOpenForRead("ym2151_core");
+    char tag[32];
+    int i;
+    
+    chip->eg_cnt            = saveStateGet(state, "eg_cnt",            0);
+    chip->eg_timer          = saveStateGet(state, "eg_timer",          0);
+    chip->eg_timer_add      = saveStateGet(state, "eg_timer_add",      0);
+    chip->eg_timer_overflow = saveStateGet(state, "eg_timer_overflow", 0);
+    chip->lfo_phase         = saveStateGet(state, "lfo_phase",         0);
+    chip->lfo_timer         = saveStateGet(state, "lfo_timer",         0);
+    chip->lfo_timer_add     = saveStateGet(state, "lfo_timer_add",     0);
+    chip->lfo_overflow      = saveStateGet(state, "lfo_overflow",      0);
+    chip->lfo_counter       = saveStateGet(state, "lfo_counter",       0);
+    chip->lfo_counter_add   = saveStateGet(state, "lfo_counter_add",   0);
+    chip->lfo_wsel          = (UInt8)saveStateGet(state, "lfo_wsel",   0);
+    chip->amd               = (UInt8)saveStateGet(state, "amd",        0);
+    chip->pmd               = (UInt8)saveStateGet(state, "pmd",        0);
+    chip->lfa               = saveStateGet(state, "lfa",               0);
+    chip->lfp               = saveStateGet(state, "lfp",               0);
+    chip->test              = (UInt8)saveStateGet(state, "test",       0);
+    chip->ct                = (UInt8)saveStateGet(state, "ct",         0);
+    chip->noise             = saveStateGet(state, "noise",             0);
+    chip->noise_rng         = saveStateGet(state, "noise_rng",         0);
+    chip->noise_p           = saveStateGet(state, "noise_p",           0);
+    chip->noise_f           = saveStateGet(state, "noise_f",           0);
+    chip->csm_req           = saveStateGet(state, "csm_req",           0);
+    chip->irq_enable        = saveStateGet(state, "irq_enable",        0);
+    chip->status            = saveStateGet(state, "status",            0);
+    chip->timer_A_val       = (UInt16)saveStateGet(state, "timer_A_val", 0);
+    chip->m2                = saveStateGet(state, "m2",                0);
+    chip->c1                = saveStateGet(state, "c1",                0);
+    chip->c2                = saveStateGet(state, "c2",                0);
+    chip->mem               = saveStateGet(state, "mem",               0);
+
+    for (i = 0; i < sizeof(chip->pan) / sizeof(chip->pan[0]); i++) {
+        sprintf(tag, "pan%d", i);
+        chip->pan[i] = saveStateGet(state, tag, 0);
+    }
+
+    for (i = 0; i < sizeof(chip->connect) / sizeof(chip->connect[0]); i++) {
+        sprintf(tag, "connect%d", i);
+        chip->connect[i] = (UInt8)saveStateGet(state, tag, 0);
+    }
+
+    for (i = 0; i < sizeof(chip->chanout) / sizeof(chip->chanout[0]); i++) {
+        sprintf(tag, "chanout%d", i);
+        chip->chanout[i] = (UInt8)saveStateGet(state, tag, 0);
+    }
+
+    for (i = 0; i < sizeof(chip->oper) / sizeof(chip->oper[0]); i++) {
+        sprintf(tag, "phase%d", i);
+        chip->oper[i].phase = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "freq%d", i);
+        chip->oper[i].freq = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "dt1%d", i);
+        chip->oper[i].dt1 = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "mul%d", i);
+        chip->oper[i].mul = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "dt1_i%d", i);
+        chip->oper[i].dt1_i = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "dt2%d", i);
+        chip->oper[i].dt2 = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "mem_value%d", i);
+        chip->oper[i].mem_value = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "fb_shift%d", i);
+        chip->oper[i].fb_shift = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "fb_out_curr%d", i);
+        chip->oper[i].fb_out_curr = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "fb_out_prev%d", i);
+        chip->oper[i].fb_out_prev = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "kc%d", i);
+        chip->oper[i].kc = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "kc_i%d", i);
+        chip->oper[i].kc_i = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "pms%d", i);
+        chip->oper[i].pms = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "ams%d", i);
+        chip->oper[i].ams = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "AMmask%d", i);
+        chip->oper[i].AMmask = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "state%d", i);
+        chip->oper[i].state = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sh_ar%d", i);
+        chip->oper[i].eg_sh_ar = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sel_ar%d", i);
+        chip->oper[i].eg_sel_ar = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "tl%d", i);
+        chip->oper[i].tl = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "volume%d", i);
+        chip->oper[i].volume = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sh_d1r%d", i);
+        chip->oper[i].eg_sh_d1r = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sel_d1r%d", i);
+        chip->oper[i].eg_sel_d1r = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "d1l%d", i);
+        chip->oper[i].d1l = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sh_d2r%d", i);
+        chip->oper[i].eg_sh_d2r = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sel_d2r%d", i);
+        chip->oper[i].eg_sel_d2r = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sh_rr%d", i);
+        chip->oper[i].eg_sh_rr = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "eg_sel_rr%d", i);
+        chip->oper[i].eg_sel_rr = (UInt8)saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "key%d", i);
+        chip->oper[i].key = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "ks%d", i);
+        chip->oper[i].ks = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "ar%d", i);
+        chip->oper[i].ar = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "d1r%d", i);
+        chip->oper[i].d1r = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "d2r%d", i);
+        chip->oper[i].d2r = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "rr%d", i);
+        chip->oper[i].rr = saveStateGet(state, tag, 0);
+        
+        sprintf(tag, "connect%d", i);
+        if (chip->oper[i].connect != NULL) {
+            chip->oper[i].connect += (int*)chip - (int*)0;
+        }
+        
+        sprintf(tag, "mem_connect%d", i);
+        if (chip->oper[i].mem_connect != NULL) {
+            chip->oper[i].mem_connect +=  (int*)chip - (int*)0;
+        }
+    }
 
     saveStateClose(state);
 }
 
 void YM2151SaveState(MameYm2151* chip)
 {
-    SaveState* state = saveStateOpenForWrite("ym2151");
+    SaveState* state = saveStateOpenForWrite("ym2151_core");
+    char tag[32];
+    int i;
+
+    saveStateSet(state, "eg_cnt",            chip->eg_cnt);
+    saveStateSet(state, "eg_timer",          chip->eg_timer);
+    saveStateSet(state, "eg_timer_add",      chip->eg_timer_add);
+    saveStateSet(state, "eg_timer_overflow", chip->eg_timer_overflow);
+    saveStateSet(state, "lfo_phase",         chip->lfo_phase);
+    saveStateSet(state, "lfo_timer",         chip->lfo_timer);
+    saveStateSet(state, "lfo_timer_add",     chip->lfo_timer_add);
+    saveStateSet(state, "lfo_overflow",      chip->lfo_overflow);
+    saveStateSet(state, "lfo_counter",       chip->lfo_counter);
+    saveStateSet(state, "lfo_counter_add",   chip->lfo_counter_add);
+    saveStateSet(state, "lfo_wsel",          chip->lfo_wsel);
+    saveStateSet(state, "amd",               chip->amd);
+    saveStateSet(state, "pmd",               chip->pmd);
+    saveStateSet(state, "lfa",               chip->lfa);
+    saveStateSet(state, "lfp",               chip->lfp);
+    saveStateSet(state, "test",              chip->test);
+    saveStateSet(state, "ct",                chip->ct);
+    saveStateSet(state, "noise",             chip->noise);
+    saveStateSet(state, "noise_rng",         chip->noise_rng);
+    saveStateSet(state, "noise_p",           chip->noise_p);
+    saveStateSet(state, "noise_f",           chip->noise_f);
+    saveStateSet(state, "csm_req",           chip->csm_req);
+    saveStateSet(state, "irq_enable",        chip->irq_enable);
+    saveStateSet(state, "status",            chip->status);
+    saveStateSet(state, "timer_A_val",       chip->timer_A_val);
+    saveStateSet(state, "m2",                chip->m2);
+    saveStateSet(state, "c1",                chip->c1);
+    saveStateSet(state, "c2",                chip->c2);
+    saveStateSet(state, "mem",               chip->mem);
+
+    for (i = 0; i < sizeof(chip->pan) / sizeof(chip->pan[0]); i++) {
+        sprintf(tag, "pan%d", i);
+        saveStateSet(state, tag, chip->pan[i]);
+    }
+
+    for (i = 0; i < sizeof(chip->connect) / sizeof(chip->connect[0]); i++) {
+        sprintf(tag, "connect%d", i);
+        saveStateSet(state, tag, chip->connect[i]);
+    }
+
+    for (i = 0; i < sizeof(chip->chanout) / sizeof(chip->chanout[0]); i++) {
+        sprintf(tag, "chanout%d", i);
+        saveStateSet(state, tag, chip->chanout[i]);
+    }
+
+    for (i = 0; i < sizeof(chip->oper) / sizeof(chip->oper[0]); i++) {
+        sprintf(tag, "phase%d", i);
+        saveStateSet(state, tag, chip->oper[i].phase);
+        
+        sprintf(tag, "freq%d", i);
+        saveStateSet(state, tag, chip->oper[i].freq);
+        
+        sprintf(tag, "dt1%d", i);
+        saveStateSet(state, tag, chip->oper[i].dt1);
+        
+        sprintf(tag, "mul%d", i);
+        saveStateSet(state, tag, chip->oper[i].mul);
+        
+        sprintf(tag, "dt1_i%d", i);
+        saveStateSet(state, tag, chip->oper[i].dt1_i);
+        
+        sprintf(tag, "dt2%d", i);
+        saveStateSet(state, tag, chip->oper[i].dt2);
+        
+        sprintf(tag, "mem_value%d", i);
+        saveStateSet(state, tag, chip->oper[i].mem_value);
+        
+        sprintf(tag, "fb_shift%d", i);
+        saveStateSet(state, tag, chip->oper[i].fb_shift);
+        
+        sprintf(tag, "fb_out_curr%d", i);
+        saveStateSet(state, tag, chip->oper[i].fb_out_curr);
+        
+        sprintf(tag, "fb_out_prev%d", i);
+        saveStateSet(state, tag, chip->oper[i].fb_out_prev);
+        
+        sprintf(tag, "kc%d", i);
+        saveStateSet(state, tag, chip->oper[i].kc);
+        
+        sprintf(tag, "kc_i%d", i);
+        saveStateSet(state, tag, chip->oper[i].kc_i);
+        
+        sprintf(tag, "pms%d", i);
+        saveStateSet(state, tag, chip->oper[i].pms);
+        
+        sprintf(tag, "ams%d", i);
+        saveStateSet(state, tag, chip->oper[i].ams);
+        
+        sprintf(tag, "AMmask%d", i);
+        saveStateSet(state, tag, chip->oper[i].AMmask);
+        
+        sprintf(tag, "state%d", i);
+        saveStateSet(state, tag, chip->oper[i].state);
+        
+        sprintf(tag, "eg_sh_ar%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sh_ar);
+        
+        sprintf(tag, "eg_sel_ar%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sel_ar);
+        
+        sprintf(tag, "tl%d", i);
+        saveStateSet(state, tag, chip->oper[i].tl);
+        
+        sprintf(tag, "volume%d", i);
+        saveStateSet(state, tag, chip->oper[i].volume);
+        
+        sprintf(tag, "eg_sh_d1r%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sh_d1r);
+        
+        sprintf(tag, "eg_sel_d1r%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sel_d1r);
+        
+        sprintf(tag, "d1l%d", i);
+        saveStateSet(state, tag, chip->oper[i].d1l);
+        
+        sprintf(tag, "eg_sh_d2r%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sh_d2r);
+        
+        sprintf(tag, "eg_sel_d2r%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sel_d2r);
+        
+        sprintf(tag, "eg_sh_rr%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sh_rr);
+        
+        sprintf(tag, "eg_sel_rr%d", i);
+        saveStateSet(state, tag, chip->oper[i].eg_sel_rr);
+        
+        sprintf(tag, "key%d", i);
+        saveStateSet(state, tag, chip->oper[i].key);
+        
+        sprintf(tag, "ks%d", i);
+        saveStateSet(state, tag, chip->oper[i].ks);
+        
+        sprintf(tag, "ar%d", i);
+        saveStateSet(state, tag, chip->oper[i].ar);
+        
+        sprintf(tag, "d1r%d", i);
+        saveStateSet(state, tag, chip->oper[i].d1r);
+        
+        sprintf(tag, "d2r%d", i);
+        saveStateSet(state, tag, chip->oper[i].d2r);
+        
+        sprintf(tag, "rr%d", i);
+        saveStateSet(state, tag, chip->oper[i].rr);
+        
+        sprintf(tag, "connect%d", i);
+        if (chip->oper[i].connect != NULL) {
+            saveStateSet(state, tag, (int*)chip->oper[i].connect - (int*)chip);
+        }
+        else {
+            saveStateSet(state, tag, 0);
+        }
+        
+        sprintf(tag, "mem_connect%d", i);
+        if (chip->oper[i].mem_connect != NULL) {
+            saveStateSet(state, tag, (int*)chip->oper[i].mem_connect - (int*)chip);
+        }
+        else {
+            saveStateSet(state, tag, 0);
+        }
+    }
 
     saveStateClose(state);
 }

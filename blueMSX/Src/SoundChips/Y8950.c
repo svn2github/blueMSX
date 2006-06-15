@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-15 00:18:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -253,8 +253,10 @@ void y8950SaveState(Y8950* y8950)
     saveStateSet(state, "address",       y8950->address);
     saveStateSet(state, "timerValue1",   y8950->timerValue1);
     saveStateSet(state, "timerRunning1", y8950->timerRunning1);
+    saveStateSet(state, "timeout1",      y8950->timeout1);
     saveStateSet(state, "timerValue2",   y8950->timerValue2);
     saveStateSet(state, "timerRunning2", y8950->timerRunning2);
+    saveStateSet(state, "timeout2",      y8950->timeout2);
     saveStateSet(state, "outd",          outd);
     saveStateSet(state, "ams",           ams);
     saveStateSet(state, "vib",           vib);
@@ -272,9 +274,11 @@ void y8950LoadState(Y8950* y8950)
 
     y8950->address       = (UInt8)saveStateGet(state, "address",       0);
     y8950->timerValue1   =        saveStateGet(state, "timerValue1",   0);
+    y8950->timeout1      =        saveStateGet(state, "timeout1",      0);
     y8950->timerRunning1 =        saveStateGet(state, "timerRunning1", 0);
     y8950->timerValue2   =        saveStateGet(state, "timerValue2",   0);
     y8950->timerRunning2 =        saveStateGet(state, "timerRunning2", 0);
+    y8950->timeout2      =        saveStateGet(state, "timeout2",      0);
 
     outd      = saveStateGet(state, "outd",      0);
     ams       = saveStateGet(state, "ams",       0);

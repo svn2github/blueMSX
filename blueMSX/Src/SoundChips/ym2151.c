@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-15 00:18:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -205,8 +205,10 @@ void ym2151SaveState(YM2151* ym2151)
     saveStateSet(state, "latch",         ym2151->latch);
     saveStateSet(state, "timerValue1",   ym2151->timerValue1);
     saveStateSet(state, "timerRunning1", ym2151->timerRunning1);
+    saveStateSet(state, "timeout1",      ym2151->timeout1);
     saveStateSet(state, "timerValue2",   ym2151->timerValue2);
     saveStateSet(state, "timerRunning2", ym2151->timerRunning2);
+    saveStateSet(state, "timeout2",      ym2151->timeout2);
 
     saveStateClose(state);
 
@@ -221,8 +223,10 @@ void ym2151LoadState(YM2151* ym2151)
     ym2151->latch         = (UInt8)saveStateGet(state, "latch",         0);
     ym2151->timerValue1   =        saveStateGet(state, "timerValue1",   0);
     ym2151->timerRunning1 =        saveStateGet(state, "timerRunning1", 0);
+    ym2151->timeout1      =        saveStateGet(state, "timeout1",      0);
     ym2151->timerValue2   =        saveStateGet(state, "timerValue2",   0);
     ym2151->timerRunning2 =        saveStateGet(state, "timerRunning2", 0);
+    ym2151->timeout2      =        saveStateGet(state, "timeout2",      0);
 
     saveStateClose(state);
 
