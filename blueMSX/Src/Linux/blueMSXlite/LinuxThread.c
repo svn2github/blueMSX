@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxThread.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-15 22:35:59 $
+** $Date: 2006-06-15 23:26:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,11 @@ static void* threadEntry(void* data)
 {
     void (*entryPoint)() = data;
 
+    {
+        char buffer[32];
+        sprintf(buffer, "TADA: %d\n", 128);
+        printf(buffer);
+    }
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 
