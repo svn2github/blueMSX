@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-06-13 17:55:04 $
+** $Date: 2006-06-16 19:31:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1005,9 +1005,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             success &= romMapperKonami4Create(romName, buf, size, slot, subslot, startPage);
             break;
 
+#ifdef WIN32
         case ROM_GAMEREADER:
             success &= romMapperGameReaderCreate(0, slot, subslot);
             break;
+#endif
 
         case ROM_MAJUTSUSHI:
             success &= romMapperMajutsushiCreate(romName, buf, size, slot, subslot, startPage);

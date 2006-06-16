@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-13 17:55:04 $
+** $Date: 2006-06-16 19:32:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,7 +77,9 @@
 #include "romMapperSvi738Fdc.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMoonsound.h"
+#ifdef WIN32
 #include "romMapperGameReader.h"
+#endif
 #include "romMapperSunriseIDE.h"
 #include "romMapperBeerIDE.h"
 #include "romMapperGIDE.h"
@@ -166,9 +168,11 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         romMapperPACCreate("PacA.rom", NULL, 0, slot, sslot, 2);
         break;
 
+#ifdef WIN32
     case ROM_GAMEREADER:
         romMapperGameReaderCreate(cartNo, slot, sslot);
         break;
+#endif
 
     case ROM_GIDE:
         romMapperGIdeCreate(cartNo);
