@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-15 22:35:59 $
+** $Date: 2006-06-16 19:30:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,13 @@
 #include "SaveState.h"
 #include "ziphelper.h"
 
+#ifdef WIN32
+#include <io.h>
+#else
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#endif
 
 static UInt8 hdrSVICAS[17] = { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x7F};
 static UInt8 hdrFMSX98[17] = { 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x5f };
