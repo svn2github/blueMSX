@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-16 19:47:39 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -227,6 +227,11 @@ void archUpdateEmuDisplayConfig()
 
 int  archUpdateEmuDisplay(int syncMode) 
 {
+#ifdef LINUX_TEST
+    updateEmuDisplay();
+    XSync(display, 0);
+    return;
+#endif
     dpyUpdateEvent = 1;
     archEventWait(dpyUpdateAckEvent, 500);
     return 1;
@@ -255,10 +260,12 @@ int updateEmuDisplay()
         int h = HEIGHT;
         while (h--) {
             memset(dpyData, 0, borderWidth * bytesPerPixel);
-            memset(dpyData + WIDTH - borderWidth, 0, borderWidth * bytesPerPixel);
+            memset(dpyData + WIDTH * bytesPerPixel - borderWidth, 0, borderWidth * bytesPerPixel);
             dpyData += WIDTH * bytesPerPixel;
         }
     }
+
+    XPutImage(display, window, DefaultGCOfScreen(screen), ximage, 0, 0, 0, 0, WIDTH,HEIGHT);
 
     return 0; 
 }
@@ -306,6 +313,8 @@ int main(int argc, char **argv)
     strcat(path, DIR_SEPARATOR "bluemsx.ini");
     properties = propCreate(resetProperties, 0, P_KBD_EUROPEAN, 0, "");
     
+    properties->emulation.syncMethod = P_EMU_SYNCFRAMES;
+
     if (resetProperties == 2) {
         propDestroy(properties);
         return 0;

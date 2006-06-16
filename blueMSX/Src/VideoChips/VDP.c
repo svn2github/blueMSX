@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-06-14 21:30:29 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1727,6 +1727,8 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vdp->timerHint          = boardTimerCreate(onHint, vdp);
     vdp->timerVint          = boardTimerCreate(onVint, vdp);
     vdp->timerTmsVint       = boardTimerCreate(onTmsVint, vdp);
+
+    vdp->RefreshLine = RefreshLine0; 
 
     vdp->vramSize       = vramPages << 14;
 

@@ -32,7 +32,7 @@ ECHO  = @echo
 #
 # Flags
 #
-CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM
+CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM -DLINUX_TEST
 CPPFLAGS = -DNO_ASM
 LDFLAGS  = 
 LIBS     =  -lXext -lX11 -lz -lpthread

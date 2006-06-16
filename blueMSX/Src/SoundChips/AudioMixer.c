@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -330,6 +330,8 @@ Mixer* mixerGetGlobalMixer()
 Mixer* mixerCreate()
 {
     Mixer* mixer = (Mixer*)calloc(1, sizeof(Mixer));
+
+    mixer->fragmentSize = 512;
 
     if (globalMixer == NULL) globalMixer = mixer;
 

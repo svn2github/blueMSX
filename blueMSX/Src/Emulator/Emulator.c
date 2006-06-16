@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-06-16 19:40:54 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -418,6 +418,12 @@ void emulatorStart(const char* stateName) {
     strcpy(emuStateName, stateName ? stateName : "");
 
     clearlog();
+
+#ifdef LINUX_TEST
+emuState = EMU_RUNNING;
+emulatorThread();
+return;
+#endif
 
     emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
     

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxEvent.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-16 19:40:54 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,12 +28,12 @@
 ******************************************************************************
 */
 #include "ArchEvent.h"
-#include <pthread.h>
+#include <semaphore.h>
 #include <stdlib.h>
 
 typedef struct {
-    pthread_mutex_t mutex;
-    pthread_mutex_t event;
+    void* eventSem;
+    void* lockSem;
     int   state;
 } Event;
 
@@ -41,89 +41,56 @@ void* archEventCreate(int initState)
 { 
     Event* e = calloc(1, sizeof(Event));
     e->state = initState ? 1 : 0;
-    pthread_mutex_init(&e->mutex, NULL);
-    pthread_mutex_init(&e->event, NULL);
-    if (e->state == 0) {
-        pthread_mutex_lock(&e->event);
-    }
+    e->lockSem  = archSemaphoreCreate(1);
+    e->eventSem  = archSemaphoreCreate(e->state);
     return e; 
 }
 
 void archEventDestroy(void* event) 
 {
     Event* e = (Event*)event;
-    pthread_mutex_destroy(&e->mutex);
-    pthread_mutex_destroy(&e->event);
+    archSemaphoreDestroy(e->lockSem);
+    archSemaphoreDestroy(e->eventSem);
     free(e);
 }
 
 void archEventSet(void* event) 
 {
     Event* e = (Event*)event;
-
-    pthread_mutex_lock(&e->mutex);
     if (e->state == 0) {
         e->state = 1;
-        pthread_mutex_unlock(&e->event);
+        archSemaphoreSignal(e->eventSem);
     }
-    pthread_mutex_unlock(&e->mutex);
 }
 
 void archEventWait(void* event, int timeout) 
 {
     Event* e = (Event*)event;
-    
-    pthread_mutex_lock(&e->event);
+    archSemaphoreWait(e->eventSem, timeout);
     e->state = 0;
 }
 
-typedef struct {
-    pthread_mutex_t mutex;
-    pthread_mutex_t event;
-    int   value;
-} Semaphore;
-
 void* archSemaphoreCreate(int initCount) 
 { 
-    Semaphore* s = calloc(1, sizeof(Event));
-    s->value = initCount;
-    pthread_mutex_init(&s->mutex, NULL);
-    pthread_mutex_init(&s->event, NULL);
-    pthread_mutex_lock(&s->event);
+    void* semaphore = malloc(sizeof(sem_t));
 
-    return s; 
+    sem_init((sem_t*)semaphore, 0, initCount);
+
+    return semaphore;
 }
 
 void archSemaphoreDestroy(void* semaphore) 
 {
-    Semaphore* s = (Semaphore*)semaphore;
-
-    pthread_mutex_destroy(&s->mutex);
-    pthread_mutex_destroy(&s->event);
-    free(s);
+    sem_destroy((sem_t*)semaphore);
+    free(semaphore);
 }
 
 void archSemaphoreSignal(void* semaphore) 
 {
-    Semaphore* s = (Semaphore*)semaphore;
-
-    pthread_mutex_lock(&s->mutex);
-    s->value++;
-    if (s->value == 0) {
-        pthread_mutex_unlock(&s->event);
-    }
-    pthread_mutex_unlock(&s->mutex);
+    sem_post((sem_t*)semaphore);
 }
 
 void archSemaphoreWait(void* semaphore, int timeout) 
 {
-    Semaphore* s = (Semaphore*)semaphore;
-    int value;
-
-    pthread_mutex_lock(&s->mutex);
-    value = --s->value;
-    pthread_mutex_unlock(&s->mutex);
-    if (value < 0) {
-        pthread_mutex_lock(&s->event);
-    }
+    while (-1 == sem_wait((sem_t*)semaphore));
 }

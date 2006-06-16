@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapperIo.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-16 22:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,7 +126,9 @@ static void write(RamMapperIo* rm, UInt16 ioPort, UInt8 value)
         rm->port[ioPort] = value;
 
         for (i = 0; i < rm->count; i++) {
-            rm->mapperCb[i].write(rm->mapperCb[i].ref, ioPort, value);
+            if (rm->mapperCb[i].write != NULL) {
+                rm->mapperCb[i].write(rm->mapperCb[i].ref, ioPort, value);
+            }
         }
     }
 }
