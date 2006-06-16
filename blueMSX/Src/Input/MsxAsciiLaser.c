@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-16 05:14:36 $
+** $Date: 2006-06-16 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,7 +60,7 @@ static UInt8 read(MsxAsciiLaser* joystick) {
 
     my = my * joystick->scanlines / 0x10000;
     
-    frameBuffer = frameBufferGetLastDrawnFrame(my);
+    frameBuffer = frameBufferGetDrawFrame(my);
 
     if (frameBuffer != NULL) {
         int scanline = frameBufferGetScanline();

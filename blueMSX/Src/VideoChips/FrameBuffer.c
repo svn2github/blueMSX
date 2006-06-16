@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-16 05:14:36 $
+** $Date: 2006-06-16 05:46:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,6 @@
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
-    int prevDrawFrame;
     int currentAge;
     int currentBlendFrame;
     FrameBuffer frame[MAX_FRAMES_PER_FRAMEBUFFER];
@@ -211,22 +210,6 @@ int frameBufferGetScanline()
     return curScanline;
 }
 
-FrameBuffer* frameBufferGetLastDrawnFrame(int scanline)
-{
-    if (currentBuffer == NULL) {
-        return NULL;
-    }
-
-    if (confBlendFrames) {
-        return currentBuffer->blendFrame + (currentBuffer->currentBlendFrame ^ (scanline >= curScanline ? 1 : 0));
-    }
-
-    if (scanline >= curScanline) {
-        return currentBuffer->frame + currentBuffer->prevDrawFrame;
-    }
-    return currentBuffer->frame + currentBuffer->drawFrame;
-}
-
 FrameBuffer* frameBufferGetDrawFrame()
 {
     FrameBuffer* frameBuffer;
@@ -253,7 +236,6 @@ void frameBufferSetFrameCount(int frameCount)
         int i;
         currentBuffer->viewFrame = 0;
         currentBuffer->drawFrame = 0;
-        currentBuffer->prevDrawFrame = 0;
 
         for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
             currentBuffer->frame[i].age = 0;
@@ -297,7 +279,6 @@ FrameBuffer* frameBufferFlipDrawFrame()
                  &currentBuffer->blendFrame[0], &currentBuffer->blendFrame[1], 50);
     }
 
-    currentBuffer->prevDrawFrame = currentBuffer->drawFrame;
     curScanline = 0;
 
     if (mixMode == MIXMODE_EXTERNAL) {
@@ -340,7 +321,6 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
     int i;
     FrameBufferData* frameData = calloc(1, sizeof(FrameBufferData));
     frameData->drawFrame = frameBufferCount > 1 ? 1 : 0;
-    frameData->prevDrawFrame = 0;
 
     for (i = 0; i < MAX_FRAMES_PER_FRAMEBUFFER; i++) {
         int j;
