@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-16 19:40:54 $
+** $Date: 2006-06-16 19:47:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -398,8 +398,7 @@ int main(int argc, char **argv)
     }
     
     if (i == 0) {
-        printf("No command line args\n");
-        return 0;
+        emulatorStart(NULL);
     }
 
     for (i = 0; i < 50000; i++) {
