@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-15 22:35:59 $
+** $Date: 2006-06-16 19:40:54 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vikl, Tomas Karlsson
+** Copyright (C) 2003-2004 Daniel Vik, Tomas Karlsson
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -44,6 +44,7 @@
 #include "MidiIO.h"
 #include "Machine.h"
 #include "Board.h"
+#include "ArchEvent.h"
 
 static Properties* properties;
 static Video* video;
@@ -54,7 +55,8 @@ static Display* display;
 static Screen* screen;
 static XImage* ximage;
 static int bitDepth;
-static int displayUpdated = 0;
+static int dpyUpdateEvent = 0;
+static void* dpyUpdateAckEvent = NULL;
 
 #define WIDTH  640
 #define HEIGHT 480
@@ -221,11 +223,16 @@ void archUpdateEmuDisplayConfig()
 		videoSetPalMode(video, VIDEO_PAL_HQ2X);
 		break;
     }
-
-    archUpdateEmuDisplay(1);
 }
 
-int  archUpdateEmuDisplay(int synchronous) 
+int  archUpdateEmuDisplay(int syncMode) 
+{
+    dpyUpdateEvent = 1;
+    archEventWait(dpyUpdateAckEvent, 500);
+    return 1;
+}
+
+int updateEmuDisplay() 
 {
     FrameBuffer* frameBuffer;
     int bytesPerPixel = bitDepth / 8;
@@ -252,8 +259,6 @@ int  archUpdateEmuDisplay(int synchronous)
             dpyData += WIDTH * bytesPerPixel;
         }
     }
-
-    displayUpdated = 1;
 
     return 0; 
 }
@@ -310,11 +315,10 @@ int main(int argc, char **argv)
     if (!createX11Window("blueMSXlite", WIDTH, HEIGHT, bitDepth)) {
         return 0;
     }
+    
+    dpyUpdateAckEvent = archEventCreate(0);
 
     setDefaultPaths(archGetCurrentDirectory());
-
-    langInit();
-    langSetLanguage(properties->language);
 
     video = videoCreate();
     videoSetColors(video, properties->video.saturation, properties->video.brightness, 
@@ -322,17 +326,24 @@ int main(int argc, char **argv)
     videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
     videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
     
-    updateVideoRender(video, properties);
-
     mixer = mixerCreate();
     
     emulatorInit(properties, mixer);
     actionInit(properties, mixer);
+    langInit();
     tapeSetReadOnly(properties->cassette.readOnly);
     
+    langSetLanguage(properties->language);
+    
+    joystickPortSetType(0, properties->joy1.type);
+    joystickPortSetType(1, properties->joy2.type);
+
+    printerIoSetType(properties->ports.Lpt.type, properties->ports.Lpt.fileName);
     printerIoSetType(properties->ports.Lpt.type, properties->ports.Lpt.fileName);
     uartIoSetType(properties->ports.Com.type, properties->ports.Com.fileName);
     midiIoSetMidiOutType(properties->sound.MidiOut.type, properties->sound.MidiOut.fileName);
+    midiIoSetMidiInType(properties->sound.MidiIn.type, properties->sound.MidiIn.fileName);
+    ykIoSetMidiInType(properties->sound.YkIn.type, properties->sound.YkIn.fileName);
 
     emulatorRestartSound();
 
@@ -345,6 +356,7 @@ int main(int argc, char **argv)
     mixerSetMasterVolume(mixer, properties->sound.masterVolume);
     mixerEnableMaster(mixer, properties->sound.masterEnable);
 
+    updateVideoRender(video, properties);
     archUpdateEmuDisplayConfig();
 
     mediaDbSetDefaultRomType(properties->cartridge.defaultType);
@@ -391,9 +403,11 @@ int main(int argc, char **argv)
     }
 
     for (i = 0; i < 50000; i++) {
-        if (displayUpdated) {
+        if (dpyUpdateEvent) {
+            updateEmuDisplay();
             XSync(display, 0);
-            displayUpdated = 0;
+            dpyUpdateEvent = 0;
+            archEventSet(dpyUpdateAckEvent);
         }
         archThreadSleep(10);
     }

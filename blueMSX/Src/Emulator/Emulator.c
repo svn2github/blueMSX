@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-15 22:35:59 $
+** $Date: 2006-06-16 19:40:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -492,8 +492,6 @@ void emulatorSetFrequency(int logFrequency, int* frequency) {
     boardSetFrequency(emuFrequency);
 }
 
-
-
 void emulatorSuspend() {
     if (emuState == EMU_RUNNING) {
         emuState = EMU_SUSPENDED;
@@ -505,10 +503,6 @@ void emulatorSuspend() {
     }
 }
 
-
-
-
-
 void emulatorResume() {
     emuSysTime = 0;
 
@@ -519,7 +513,6 @@ void emulatorResume() {
         archUpdateEmuDisplay(0);
     }
 }
-
 
 int emulatorGetCurrentScreenMode()
 {

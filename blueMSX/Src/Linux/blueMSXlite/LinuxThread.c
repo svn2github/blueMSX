@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxThread.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-15 23:26:11 $
+** $Date: 2006-06-16 19:40:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,18 +39,13 @@
 static void* threadEntry(void* data) 
 {
     void (*entryPoint)() = data;
-
-    {
-        char buffer[32];
-        sprintf(buffer, "TADA: %d\n", 128);
-        printf(buffer);
-    }
+#if 0
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-
+#endif
     entryPoint();
     
-//    pthread_kill((pthread_t)pthread_self(), SIGUSR1);
+    pthread_exit(NULL);
 
     return NULL;
 }
@@ -61,13 +56,14 @@ void* archThreadCreate(void (*entryPoint)(), int priority) {
     pthread_t tid;
     pthread_attr_t attr;
     static int threadsCreated = 0;
-
+    size_t size;
     rv = pthread_attr_init(&attr);
+
+    pthread_attr_setstacksize(&attr, 65536);
 
     // TODO: Fix priorities
 
     do {
-        
 	    rv = pthread_create(&tid, &attr , threadEntry, entryPoint);
     } while (rv == EAGAIN);
 
