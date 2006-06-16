@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1182,12 +1182,14 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SendDlgItemMessage(hDlg, IDC_MONHORIZSTRETCH, WM_SETTEXT, 0, (LPARAM)langPropMonHorizStretch());
         SendDlgItemMessage(hDlg, IDC_MONVERTSTRETCH, WM_SETTEXT, 0, (LPARAM)langPropMonVertStretch());
         SendDlgItemMessage(hDlg, IDC_MONDEINTERLACE, WM_SETTEXT, 0, (LPARAM)langPropMonDeInterlace());
+        SendDlgItemMessage(hDlg, IDC_MONBLENDFRAMES, WM_SETTEXT, 0, (LPARAM)langPropMonBlendFrames());
         SendDlgItemMessage(hDlg, IDC_EFFECTSGB, WM_SETTEXT, 0, (LPARAM)langPropMonEffectsGB());
 
         setButtonCheck(hDlg, IDC_MONHORIZSTRETCH, pProperties->video.horizontalStretch, 1);
         setButtonCheck(hDlg, IDC_MONVERTSTRETCH, pProperties->video.verticalStretch, 1);
         setButtonCheck(hDlg, IDC_MONDEINTERLACE, pProperties->video.deInterlace, 1);
-
+        setButtonCheck(hDlg, IDC_MONBLENDFRAMES, pProperties->video.blendFrames, 1);
+        
         /* Init dropdown lists */
         initDropList(hDlg, IDC_MONTYPE, pVideoMon, pProperties->video.monType);
         initDropList(hDlg, IDC_PALEMU, pVideoPalEmu, pProperties->video.palEmu);
@@ -1319,6 +1321,12 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             pProperties->video.deInterlace   = getButtonCheck(hDlg, IDC_MONDEINTERLACE);
             videoSetDeInterlace(theVideo, pProperties->video.deInterlace);
             updateEmuWindow();
+            break;
+        case IDC_MONBLENDFRAMES:
+            pProperties->video.blendFrames   = getButtonCheck(hDlg, IDC_MONBLENDFRAMES);
+            videoSetBlendFrames(theVideo, pProperties->video.blendFrames);
+            updateEmuWindow();
+            break;
         }
         break;
 

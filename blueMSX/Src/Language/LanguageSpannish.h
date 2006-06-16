@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propMonHorizStretch      = " Estiramiento Horizontal";
     ls->propMonVertStretch       = " Estiramiento Vertical";
     ls->propMonDeInterlace      = " De-entrelace";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "Brillo:";
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturación:";

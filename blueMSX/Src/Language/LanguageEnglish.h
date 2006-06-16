@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Horizontal Stretch";
     ls->propMonVertStretch      = " Vertical Stretch";
     ls->propMonDeInterlace      = " De-interlace";
+    ls->propBlendFrames         = " Blend consecutive frames";
     ls->propMonBrightness       = "Brightness:";
     ls->propMonContrast         = "Contrast:";
     ls->propMonSaturation       = "Saturation:";

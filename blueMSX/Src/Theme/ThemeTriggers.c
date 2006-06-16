@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -546,6 +546,10 @@ int themeTriggerVideoVstretchEn() {
 
 int themeTriggerVideoDeinterlaceEn() {
     return propGetGlobalProperties()->video.deInterlace;
+}
+
+int themeTriggerVideoBlendFramesEn() {
+    return propGetGlobalProperties()->video.blendFrames;
 }
 
 int themeTriggerVideoRfModulatorEn() {

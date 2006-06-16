@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -295,6 +295,7 @@ char* langPropWindowSizeText();
 char* langPropMonHorizStretch();
 char* langPropMonVertStretch();
 char* langPropMonDeInterlace();
+char* langPropMonBlendFrames();
 char* langPropMonBrightness();
 char* langPropMonContrast();
 char* langPropMonSaturation();

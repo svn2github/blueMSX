@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 水平 ストレッチ";  
     ls->propMonVertStretch       = " 垂直 ストレッチ";
     ls->propMonDeInterlace      = " デインターレース";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "明るさ:";
     ls->propMonContrast         = "コントラスト:";
     ls->propMonSaturation       = "彩度:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-06-09 20:30:01 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.fullscreen.height     = 480;
     properties->video.fullscreen.bitDepth   = 32;
     properties->video.deInterlace           = 1;
+    properties->video.blendFrames           = 0;
     properties->video.horizontalStretch     = 1;
     properties->video.verticalStretch       = 0;
     properties->video.contrast              = 100;
@@ -475,6 +476,7 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_3(video, fullscreen, height);
     GET_INT_VALUE_3(video, fullscreen, bitDepth);
     GET_INT_VALUE_2(video, deInterlace);
+    GET_INT_VALUE_2(video, blendFrames);
     GET_INT_VALUE_2(video, horizontalStretch);
     GET_INT_VALUE_2(video, verticalStretch);
     GET_INT_VALUE_2(video, contrast);
@@ -678,6 +680,7 @@ void propSave(Properties* properties)
     SET_INT_VALUE_3(video, fullscreen, height);
     SET_INT_VALUE_3(video, fullscreen, bitDepth);
     SET_INT_VALUE_2(video, deInterlace);
+    SET_INT_VALUE_2(video, blendFrames);
     SET_INT_VALUE_2(video, horizontalStretch);
     SET_INT_VALUE_2(video, verticalStretch);
     SET_INT_VALUE_2(video, contrast);

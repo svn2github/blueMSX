@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.139 $
+** $Revision: 1.140 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -963,6 +963,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
 
 static void updateVideoRender(Video* pVideo, Properties* pProperties) {
     videoSetDeInterlace(pVideo, pProperties->video.deInterlace);
+    videoSetBlendFrames(pVideo, pProperties->video.blendFrames);
 
     switch (pProperties->video.monType) {
     case P_VIDEO_COLOR:
@@ -3455,6 +3456,7 @@ void archUpdateEmuDisplayConfig() {
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
     videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
     videoSetDeInterlace(st.pVideo, pProperties->video.deInterlace);
+    videoSetBlendFrames(st.pVideo, pProperties->video.blendFrames);
     switch (pProperties->video.monType) {
     case P_VIDEO_COLOR:
         videoSetColorMode(st.pVideo, VIDEO_COLOR);

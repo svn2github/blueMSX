@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -447,6 +447,7 @@ char* langPropWindowSizeText() { return ls->propWindowSizeText; }
 char* langPropMonHorizStretch() { return ls->propMonHorizStretch; }
 char* langPropMonVertStretch() { return ls->propMonVertStretch; }
 char* langPropMonDeInterlace() { return ls->propMonDeInterlace; }
+char* langPropMonBlendFrames() { return ls->propBlendFrames; }
 char* langPropMonBrightness() { return ls->propMonBrightness; }
 char* langPropMonContrast() { return ls->propMonContrast; }
 char* langPropMonSaturation() { return ls->propMonSaturation; }

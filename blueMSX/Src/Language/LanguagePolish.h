@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propMonHorizStretch      = " Rozci¹gaj w poziomie";
     ls->propMonVertStretch       = " Rozci¹gaj w pionie";
     ls->propMonDeInterlace      = " Usuwaj przeplot";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "Jasnoœæ:";
     ls->propMonColorGhosting    = "Modulator RF";
     ls->propMonContrast         = "Kontrast:";

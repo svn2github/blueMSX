@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Korrekt horizontell vidd";
     ls->propMonVertStretch      = " Vertikal stretch";
     ls->propMonDeInterlace      = " De-interlace";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "Ljusstyrka:";
     ls->propMonContrast         = "Kontrast:";
     ls->propMonSaturation       = "Färgmättnad:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,6 +182,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_CAS_RO:      idx = TEST(actionType, themeTriggerConfCasRO()); break;
     case THEME_TRIGGER_VIDEO_SCANLINES_EN: idx = TEST(actionType, themeTriggerVideoScanlinesEn()); break;
     case THEME_TRIGGER_VIDEO_DEINTERLACE_EN: idx = TEST(actionType, themeTriggerVideoDeinterlaceEn()); break;
+    case THEME_TRIGGER_VIDEO_BLENDFRAMES_EN: idx = TEST(actionType, themeTriggerVideoBlendFramesEn()); break;
     case THEME_TRIGGER_VIDEO_RFMODULATION_EN: idx = TEST(actionType, themeTriggerVideoRfModulatorEn()); break;
     case THEME_TRIGGER_VIDEO_HSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoHstretchEn()); break;
     case THEME_TRIGGER_VIDEO_VSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoVstretchEn()); break;

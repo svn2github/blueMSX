@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "switch-videovstretch"))    return (ButtonEvent)actionToggleVerticalStretch;
     if (0 == strcmp(action, "switch-videoscanlines"))   return (ButtonEvent)actionToggleScanlinesEnable;
     if (0 == strcmp(action, "switch-videodeinterlace")) return (ButtonEvent)actionToggleDeinterlaceEnable;
+    if (0 == strcmp(action, "switch-videoblendframes")) return (ButtonEvent)actionToggleBlendFrameEnable;
     if (0 == strcmp(action, "switch-videorfmodulation"))return (ButtonEvent)actionToggleRfModulatorEnable;
 
     if (0 == strcmp(action, "switch-audioswitch"))      return (ButtonEvent)actionToggleMsxAudioSwitch;
@@ -439,6 +440,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "status-casreadonly"))       return t | THEME_TRIGGER_IMG_CAS_RO;
     if (0 == strcmp(s, "status-scanlines"))         return t | THEME_TRIGGER_VIDEO_SCANLINES_EN;
     if (0 == strcmp(s, "status-deinterlace"))       return t | THEME_TRIGGER_VIDEO_DEINTERLACE_EN;
+    if (0 == strcmp(s, "status-blendframes"))       return t | THEME_TRIGGER_VIDEO_BLENDFRAMES_EN;
     if (0 == strcmp(s, "status-rfmodulation"))      return t | THEME_TRIGGER_VIDEO_RFMODULATION_EN;
     if (0 == strcmp(s, "status-hstretch"))          return t | THEME_TRIGGER_VIDEO_HSTRETCH_EN;
     if (0 == strcmp(s, "status-vstretch"))          return t | THEME_TRIGGER_VIDEO_VSTRETCH_EN;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -279,6 +279,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Vaaka Venytys";
     ls->propMonVertStretch      = " Pysty Venytys";
     ls->propMonDeInterlace      = " Lomituksen purku";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "Kirkkaus:";
     ls->propMonContrast         = "Kontrasti:";
     ls->propMonSaturation       = "Saturaatio:";

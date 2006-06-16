@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-06-14 07:39:24 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,15 +39,18 @@ struct FrameBufferData {
     int drawFrame;
     int prevDrawFrame;
     int currentAge;
+    int currentBlendFrame;
     FrameBuffer frame[MAX_FRAMES_PER_FRAMEBUFFER];
+    FrameBuffer blendFrame[2];
 };
 
 static int curScanline = 0;
 static void* semaphore = NULL;
 static FrameBuffer* deintBuffer = NULL;
+static int confBlendFrames = 0;
 
-static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct);
-static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct);
+static FrameBuffer* mixFrame(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct);
+static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct);
 static void frameBufferSuperimpose(FrameBuffer* a);
 static void frameBufferExternal(FrameBuffer* a);
 static void frameBufferBlack(FrameBuffer* a);
@@ -129,7 +132,7 @@ static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames)
         }
         signalSem();
 
-        return mixFrame(currentBuffer->frame + currentBuffer->viewFrame, currentBuffer->frame + secondFrame, getScreenCompletePercent());
+        return mixFrame(NULL, currentBuffer->frame + currentBuffer->viewFrame, currentBuffer->frame + secondFrame, getScreenCompletePercent());
     }
 
     signalSem();
@@ -209,6 +212,10 @@ FrameBuffer* frameBufferGetLastDrawnFrame(int scanline)
         return NULL;
     }
 
+    if (confBlendFrames) {
+        return currentBuffer->blendFrame + (currentBuffer->currentBlendFrame ^ (scanline >= curScanline ? 1 : 0));
+    }
+
     if (scanline >= curScanline) {
         return currentBuffer->frame + currentBuffer->prevDrawFrame;
     }
@@ -222,7 +229,13 @@ FrameBuffer* frameBufferGetDrawFrame()
     if (currentBuffer == NULL) {
         return NULL;
     }
-    frameBuffer = currentBuffer->frame + currentBuffer->drawFrame;
+    
+    if (confBlendFrames) {
+        frameBuffer = currentBuffer->blendFrame + currentBuffer->currentBlendFrame;
+    }
+    else {
+        frameBuffer = currentBuffer->frame + currentBuffer->drawFrame;
+    }
 
     return frameBuffer;
 }
@@ -274,6 +287,11 @@ FrameBuffer* frameBufferFlipDrawFrame()
         return NULL;
     }
 
+    if (confBlendFrames) {
+        mixFrame(currentBuffer->frame + currentBuffer->drawFrame, 
+                 &currentBuffer->blendFrame[0], &currentBuffer->blendFrame[1], 50);
+    }
+
     currentBuffer->prevDrawFrame = currentBuffer->drawFrame;
     curScanline = 0;
 
@@ -298,7 +316,18 @@ FrameBuffer* frameBufferFlipDrawFrame()
         frameBuffer = frameBufferFlipDrawFrame1();
         break;
     }
+    
+    if (confBlendFrames) {
+        currentBuffer->currentBlendFrame ^= 1;
+        frameBuffer = currentBuffer->blendFrame + currentBuffer->currentBlendFrame;
+    }
+
     return frameBuffer;
+}
+
+void frameBufferSetBlendFrames(int blendFrames)
+{
+    confBlendFrames = blendFrames;
 }
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
@@ -315,6 +344,16 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
         frameData->frame[i].lines = maxHeight;
         for (j = 0; j < FB_MAX_LINES; j++) {
             frameData->frame[i].line[j].doubleWidth = defaultHorizZoom - 1;
+        }
+    }
+
+    for (i = 0; i < 2; i++) {
+        int j;
+
+        frameData->blendFrame[i].maxWidth = maxWidth;
+        frameData->blendFrame[i].lines = maxHeight;
+        for (j = 0; j < FB_MAX_LINES; j++) {
+            frameData->blendFrame[i].line[j].doubleWidth = defaultHorizZoom - 1;
         }
     }
 
@@ -407,20 +446,23 @@ FrameBuffer* frameBufferDeinterlace(FrameBuffer* frameBuffer)
 #define M1 0x3E07C1F
 #define M2 0x3E0F81F
 
-static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
+static FrameBuffer* mixFrame(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct)
 {
-    static FrameBuffer* d = NULL;
+    static FrameBuffer* dst = NULL;
     int p = 0x20 * pct / 100;
     int n = 0x20 - p;
     int x;
     int y;
 
     if (d == NULL) {
-        d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+        if (dst == NULL) {
+            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+        }
+        d = dst;
     }
 
     if (a->interlace != INTERLACE_NONE) {
-        return mixFrameInterlace(a, b, pct);
+        return mixFrameInterlace(d, a, b, pct);
     }
 
     if (p == 0x20) {
@@ -454,16 +496,19 @@ static FrameBuffer* mixFrame(FrameBuffer* a, FrameBuffer* b, int pct)
 }
 
 
-static FrameBuffer* mixFrameInterlace(FrameBuffer* a, FrameBuffer* b, int pct)
+static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct)
 {
-    static FrameBuffer* d = NULL;
+    static FrameBuffer* dst = NULL;
     int p = 0x20 * pct / 100;
     int n = 0x20 - p;
     int x;
     int y;
 
     if (d == NULL) {
-        d = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+        if (dst == NULL) {
+            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+        }
+        d = dst;
     }
 
     d->lines     = a->lines * 2;

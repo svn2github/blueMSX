@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-06-01 07:02:42 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -240,6 +240,11 @@ void actionToggleScanlinesEnable() {
 
 void actionToggleDeinterlaceEnable() {
     state.properties->video.deInterlace = !state.properties->video.deInterlace;
+    archUpdateEmuDisplayConfig();
+}
+
+void actionToggleBlendFrameEnable() {
+    state.properties->video.blendFrames = !state.properties->video.blendFrames;
     archUpdateEmuDisplayConfig();
 }
 

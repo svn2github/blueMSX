@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-01 07:02:43 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -149,6 +149,7 @@ void actionToggleHorizontalStretch();
 void actionToggleVerticalStretch();
 void actionToggleScanlinesEnable();
 void actionToggleDeinterlaceEnable();
+void actionToggleBlendFrameEnable();
 void actionToggleRfModulatorEnable();
 
 void actionMuteToggleMaster();

@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-13 18:50:46 $
-** $Date: 2006-06-13 18:50:46 $
+** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1946,6 +1946,11 @@ void videoSetFrameSkip(Video* pVideo, UInt32 skipCount)
 void videoSetDeInterlace(Video* pVideo, int deInterlace)
 {
     pVideo->deInterlace = deInterlace;
+}
+
+void videoSetBlendFrames(Video* pVideo, int blendFrames)
+{
+    frameBufferSetBlendFrames(blendFrames);
 }
 
 void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma)

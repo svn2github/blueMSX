@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,6 +75,7 @@ void videoDestroy(Video* pVideo);
 void videoSetFrameSkip(Video* pVideo, UInt32 skipCount);
 
 void videoSetDeInterlace(Video* pVideo, int deInterlace);
+void videoSetBlendFrames(Video* pVideo, int blendFrames);
 
 void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
 

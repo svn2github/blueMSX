@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,6 +79,8 @@ void frameBufferSetActive(FrameBufferData* frameData);
 void frameBufferSetMixMode(FrameBufferMixMode mode, FrameBufferMixMode mask);
 
 FrameBufferData* frameBufferGetActive();
+
+void frameBufferSetBlendFrames(int blendFrames);
 
 #define videoGetTransparentColor() 0x8000
 

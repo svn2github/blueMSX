@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-06-14 20:23:13 $
+** $Date: 2006-06-16 01:19:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,6 +278,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 水平拉伸";
     ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonDeInterlace      = " 高画质除网格技术";
+    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "对比度:";
     ls->propMonSaturation       = "饱和度:";

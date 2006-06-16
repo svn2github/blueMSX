@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-11 19:02:49 $
+** $Date: 2006-06-16 01:19:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,6 +98,7 @@ typedef enum {
     THEME_TRIGGER_VIDEO_VSTRETCH_EN,
     THEME_TRIGGER_VIDEO_SCANLINES_EN,
     THEME_TRIGGER_VIDEO_DEINTERLACE_EN,
+    THEME_TRIGGER_VIDEO_BLENDFRAMES_EN,
     THEME_TRIGGER_VIDEO_RFMODULATION_EN,
     
     THEME_TRIGGER_JOY1_ENABLE,
@@ -297,6 +298,7 @@ int themeTriggerVideoHstretchEn();
 int themeTriggerVideoVstretchEn();
 int themeTriggerVideoScanlinesEn();
 int themeTriggerVideoDeinterlaceEn();
+int themeTriggerVideoBlendFramesEn();
 int themeTriggerVideoRfModulatorEn();
 
 // The following themeTrigger functions should return a value between 0 and 100
