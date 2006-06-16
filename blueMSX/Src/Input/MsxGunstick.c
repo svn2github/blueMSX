@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxGunstick.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-14 22:03:24 $
+** $Date: 2006-06-16 05:14:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,10 @@ struct MsxGunstick {
     int scanlines;
 };
 
+#define SENSITIVIY 24
+#define DELAY      64
+#define TRESHOLD   128
+
 static UInt8 read(MsxGunstick* joystick) {
     FrameBuffer* frameBuffer;
     UInt8 state = (archMouseGetButtonState(0) & 1) << 4;
@@ -54,27 +58,30 @@ static UInt8 read(MsxGunstick* joystick) {
 
     my = my * joystick->scanlines / 0x10000;
     
-    frameBuffer = frameBufferGetLastDrawnFrame(my);
+    frameBuffer = frameBufferGetDrawFrame(my);
 
     if (frameBuffer != NULL) {
+        int scanline = frameBufferGetScanline();
+        int myLow  = MAX(scanline - DELAY, my - SENSITIVIY);
+        int myHigh = MIN(scanline, my);
         int y;
-
+        
         joystick->scanlines = frameBuffer->lines;
 
-        for (y = my - 10; y < my + 10; y++) {
-            frameBuffer = frameBufferGetLastDrawnFrame(y);
-            if (y >= 0 && y < frameBuffer->lines) {
-                int x = mx * (frameBuffer->line[y].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
-                UInt16 rgb = frameBuffer->line[y].buffer[x];
-                int R = 8 * ((rgb >> 10) & 0x01f);
-                int G = 8 * ((rgb >> 5) & 0x01f);
-                int B = 8 * ((rgb >> 0) & 0x01f);
-                int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
-            
-                if (Y > 200) {
-                    state |= 1 << 1;
-                    break;
-                }
+        myLow  = MAX(myLow, 0);
+        myHigh = MIN(myHigh, frameBuffer->lines);
+
+        for (y = myLow; y < myHigh; y++) {
+            int x = mx * (frameBuffer->line[y].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
+            UInt16 rgb = frameBuffer->line[y].buffer[x];
+            int R = 8 * ((rgb >> 10) & 0x01f);
+            int G = 8 * ((rgb >> 5) & 0x01f);
+            int B = 8 * ((rgb >> 0) & 0x01f);
+            int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
+        
+            if (Y > TRESHOLD) {
+                state |= 1 << 1;
+                break;
             }
         }
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-16 05:14:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,7 @@ FrameBuffer* frameBufferFlipViewFrame(int mixFrames);
 FrameBuffer* frameBufferFlipDrawFrame();
 
 void frameBufferSetScanline(int scanline);
+int frameBufferGetScanline();
 FrameBuffer* frameBufferGetLastDrawnFrame(int scanline);
 
 FrameBuffer* frameBufferGetWhiteNoiseFrame();

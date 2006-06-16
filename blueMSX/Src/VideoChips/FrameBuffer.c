@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-16 05:14:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -204,6 +204,11 @@ FrameBuffer* frameBufferGetViewFrame()
 void frameBufferSetScanline(int scanline)
 {
     curScanline = scanline;
+}
+
+int frameBufferGetScanline()
+{
+    return curScanline;
 }
 
 FrameBuffer* frameBufferGetLastDrawnFrame(int scanline)
