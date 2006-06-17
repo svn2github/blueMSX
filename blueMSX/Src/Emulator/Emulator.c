@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-16 22:52:10 $
+** $Date: 2006-06-17 21:33:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -428,7 +428,7 @@ return;
     emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
     
     archEventWait(emuStartEvent, 3000);
-    
+
     if (emulationStartFailure) {
         archEmulationStopNotification();
         emuState = EMU_STOPPED;
@@ -584,7 +584,7 @@ void RefreshScreen(int screenMode) {
 
     lastScreenMode = screenMode;
 
-    if (emuUseSynchronousUpdate() == P_EMU_SYNCFRAMES) {
+    if (emuUseSynchronousUpdate() == P_EMU_SYNCFRAMES && emuState == EMU_RUNNING) {
         emulatorSyncScreen();
     }
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxGlob.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-17 15:50:30 $
+** $Date: 2006-06-17 21:33:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include <glob.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 ArchGlob* archGlob(const char* pattern, int flags)
 {
@@ -38,6 +39,8 @@ ArchGlob* archGlob(const char* pattern, int flags)
     glob_t g;
     int rv;
     int i;
+
+    fprintf(stderr, "Pattern: %s\n", pattern);
 
     rv = glob(pattern, GLOB_MARK, NULL, &g);
     if (rv != 0) {
@@ -83,7 +86,9 @@ void archGlobFree(ArchGlob* globHandle)
     for (i = 0; i < globHandle->count; i++) {
         free(globHandle->pathVector[i]);
     }
-    free(globHandle->pathVector);
+    if (globHandle->pathVector != NULL) {
+        free(globHandle->pathVector);
+    }
     free(globHandle);
 }
 
