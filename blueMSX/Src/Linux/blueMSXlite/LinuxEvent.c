@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxEvent.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-16 22:52:10 $
+** $Date: 2006-06-17 18:16:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,27 +70,37 @@ void archEventWait(void* event, int timeout)
     e->state = 0;
 }
 
+typedef struct {
+    sem_t semaphore;
+} Semaphore;
+
 void* archSemaphoreCreate(int initCount) 
 { 
-    void* semaphore = malloc(sizeof(sem_t));
+    Semaphore* s = (Semaphore*)malloc(sizeof(Semaphore));
 
-    sem_init((sem_t*)semaphore, 0, initCount);
+    sem_init(&s->semaphore, 0, initCount);
 
-    return semaphore;
+    return s;
 }
 
 void archSemaphoreDestroy(void* semaphore) 
 {
-    sem_destroy((sem_t*)semaphore);
-    free(semaphore);
+    Semaphore* s = (Semaphore*)semaphore;
+
+    sem_destroy(&s->semaphore);
+    free(s);
 }
 
 void archSemaphoreSignal(void* semaphore) 
 {
-    sem_post((sem_t*)semaphore);
+    Semaphore* s = (Semaphore*)semaphore;
+
+    sem_post(&s->semaphore);
 }
 
 void archSemaphoreWait(void* semaphore, int timeout) 
 {
-    while (-1 == sem_wait((sem_t*)semaphore));
+    Semaphore* s = (Semaphore*)semaphore;
+
+    while (-1 == sem_wait(&s->semaphore));
 }
