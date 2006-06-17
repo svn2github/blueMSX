@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxGlob.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-09-25 07:39:07 $
+** $Date: 2006-06-17 15:50:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,6 +69,7 @@ ArchGlob* archGlob(const char* pattern, int flags)
 
     globfree(&g);
 
+    return globHandle;
 }
 
 void archGlobFree(ArchGlob* globHandle)
