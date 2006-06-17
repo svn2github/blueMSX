@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-05-30 20:02:43 $
+** $Date: 2006-06-17 21:43:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,7 +57,7 @@ static AY8910*         ay8910;
 static AudioKeyClick*  keyClick;
 static R800*           r800;
 static SviJoyIo*       joyIO;
-static UInt8           KeyMap[16];
+static UInt8           KeyboardMap[16];
 static UInt32          sviRamSize;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
@@ -357,7 +357,7 @@ int sviCreate(Machine* machine,
         success = boardInsertExternalDevices();
     }
 
-    memset(KeyMap, 0xff, 16);
+    memset(KeyboardMap, 0xff, 16);
 
     r800SetFrequency(r800, CPU_Z80,  machine->cpu.freqZ80);
     r800SetFrequency(r800, CPU_R800, machine->cpu.freqR800);
