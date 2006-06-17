@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950Adpcm.cpp,v 1.2 2005-09-24 00:09:50 dvik Exp $
+// $Id: OpenMsxY8950Adpcm.cpp,v 1.3 2006-06-17 21:42:32 vincent_van_dam Exp $
 
 #include "OpenMsxY8950Adpcm.h"
 #include "OpenMsxY8950.h"
@@ -163,7 +163,7 @@ void Y8950Adpcm::schedule(const EmuTime &time)
 
 void Y8950Adpcm::unschedule(const EmuTime &time)
 {
-	syncTime = 0xffffffffffffffff;
+	syncTime = -1;
 }
 
 void Y8950Adpcm::executeUntil(const EmuTime& time, int /*userData*/)

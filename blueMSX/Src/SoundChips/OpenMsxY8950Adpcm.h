@@ -1,10 +1,10 @@
-// $Id: OpenMsxY8950Adpcm.h,v 1.1.1.1 2004-12-04 20:25:29 dvik Exp $
+// $Id: OpenMsxY8950Adpcm.h,v 1.2 2006-06-17 21:42:32 vincent_van_dam Exp $
 
 #ifndef __Y8950ADPCM_HH__
 #define __Y8950ADPCM_HH__
 
+#include "MsxTypes.h"
 #include <string>
-
 
 using namespace std;
 
