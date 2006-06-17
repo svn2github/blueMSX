@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-16 22:52:10 $
+** $Date: 2006-06-17 21:59:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -233,7 +233,9 @@ int  archUpdateEmuDisplay(int syncMode)
     return;
 #endif
     dpyUpdateEvent = 1;
-    archEventWait(dpyUpdateAckEvent, 500);
+    if (properties->emulation.syncMethod == P_EMU_SYNCFRAMES) {
+        archEventWait(dpyUpdateAckEvent, 500);
+    }
     return 1;
 }
 
@@ -313,7 +315,7 @@ int main(int argc, char **argv)
     strcat(path, DIR_SEPARATOR "bluemsx.ini");
     properties = propCreate(resetProperties, 0, P_KBD_EUROPEAN, 0, "");
     
-    properties->emulation.syncMethod = P_EMU_SYNCFRAMES;
+    properties->emulation.syncMethod = P_EMU_SYNCTOVBLANKASYNC;
 
     if (resetProperties == 2) {
         propDestroy(properties);

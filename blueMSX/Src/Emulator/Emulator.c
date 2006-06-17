@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-17 21:33:36 $
+** $Date: 2006-06-17 21:59:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -244,8 +244,12 @@ void emulatorRunOne() {
 }
 
 int emulatorGetSyncPeriod() {
+#ifdef _WIN32
     return properties->emulation.syncMethod == P_EMU_SYNCAUTO ||
            properties->emulation.syncMethod == P_EMU_SYNCNONE ? 2 : 1;
+#else
+    return 10;
+#endif
 }
 
 void timerCallback(void* timer) {
@@ -623,7 +627,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         emuSysTime = 0;
     }
 
-    if (((++kbdPollCnt & 0x03) >> syncPeriod) == 0) {
+    if (((++kbdPollCnt & 0x03) >> 1) == 0) {
        archPollInput();
     }
 
@@ -664,11 +668,17 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     }
 
     overflowCount = emulatorGetCpuOverflow() ? 1 : 0;
+#ifdef _WIN32
     if (diffTime > 50U) {
         overflowCount = 1;
         diffTime = 0;
     }
-
+#else
+    if (diffTime > 100U) {
+        overflowCount = 1;
+        diffTime = 0;
+    }
+#endif
     if (emuMaxSpeed || emuMaxEmuSpeed) {
         diffTime *= 10;
         if (diffTime > 20 * syncPeriod) {

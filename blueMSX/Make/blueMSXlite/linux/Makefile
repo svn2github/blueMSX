@@ -32,8 +32,10 @@ ECHO  = @echo
 #
 # Flags
 #
+#CFLAGS   = -w -O3 -DLSB_FIRST -DNO_ASM
+#CPPFLAGS = -O3 -DNO_ASM
 CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM
-CPPFLAGS = -DNO_ASM
+CPPFLAGS = -g -DNO_ASM
 LDFLAGS  = 
 LIBS     =  -lXext -lX11 -lz -lpthread
 TARGET   = blueMSXlite

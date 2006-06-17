@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxGlob.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-17 21:33:36 $
+** $Date: 2006-06-17 21:59:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,8 +39,6 @@ ArchGlob* archGlob(const char* pattern, int flags)
     glob_t g;
     int rv;
     int i;
-
-    fprintf(stderr, "Pattern: %s\n", pattern);
 
     rv = glob(pattern, GLOB_MARK, NULL, &g);
     if (rv != 0) {
