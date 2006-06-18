@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-16 05:46:46 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "ArchEvent.h"
 #include "ArchVideoIn.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_FRAMES_PER_FRAMEBUFFER 4
 

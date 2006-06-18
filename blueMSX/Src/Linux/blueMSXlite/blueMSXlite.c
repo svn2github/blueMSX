@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-17 21:59:55 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -262,7 +262,7 @@ int updateEmuDisplay()
         int h = HEIGHT;
         while (h--) {
             memset(dpyData, 0, borderWidth * bytesPerPixel);
-            memset(dpyData + WIDTH * bytesPerPixel - borderWidth, 0, borderWidth * bytesPerPixel);
+            memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
             dpyData += WIDTH * bytesPerPixel;
         }
     }

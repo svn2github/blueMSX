@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/VeryTinyXpath.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-17 21:44:32 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#ifdef _WIN32
+#include <vector>
+#else
 #include <vector.h>
+#endif
 
 struct VtXpath {
     bool openForWrite;

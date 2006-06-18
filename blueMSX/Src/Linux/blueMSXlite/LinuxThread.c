@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxThread.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-16 19:40:54 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,7 @@ static void* threadEntry(void* data)
 
 void* archThreadCreate(void (*entryPoint)(), int priority) { 
     int rv;
-    pthread_t tid;
+    pthread_t* thread;
     pthread_attr_t attr;
     static int threadsCreated = 0;
     size_t size;
@@ -61,17 +61,22 @@ void* archThreadCreate(void (*entryPoint)(), int priority) {
 
     pthread_attr_setstacksize(&attr, 65536);
 
+    thread = (pthread_t*)malloc(sizeof(pthread_t));
+
     // TODO: Fix priorities
 
     do {
-	    rv = pthread_create(&tid, &attr , threadEntry, entryPoint);
+	    rv = pthread_create(thread, &attr , threadEntry, entryPoint);
     } while (rv == EAGAIN);
 
 	if(rv != 0) {
-        return NULL;
+        free(thread);
+        thread = NULL;
     }
 
     pthread_attr_destroy(&attr);
+
+    return thread;
 }
 
 void archThreadJoin(void* thread, int timeout) 
@@ -80,7 +85,7 @@ void archThreadJoin(void* thread, int timeout)
 
     do {
         void* threadRet;
-        rv = pthread_join((pthread_t)thread, &threadRet);
+        rv = pthread_join(*(pthread_t*)thread, &threadRet);
     } while(rv != 0);
 }
 
@@ -90,8 +95,10 @@ void  archThreadDestroy(void* thread)
         pthread_exit(NULL);
     }
     else {
-        pthread_cancel((pthread_t)thread);
+        pthread_cancel(*(pthread_t*)thread);
     }
+
+    free(thread);
 }
 
 void archThreadSleep(int milliseconds) 

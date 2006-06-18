@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "LanguageStrings.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "LanguageEnglish.h"
 #include "LanguageSwedish.h"

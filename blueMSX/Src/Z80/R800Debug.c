@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** Author: Daniel Vik
 **
@@ -38,6 +38,7 @@
 #include "Language.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "Board.h"
 
 

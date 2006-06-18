@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-16 19:30:25 $
+** $Date: 2006-06-18 07:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@
 #include <windows.h>
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) || defined (WINDOWS_HOST)
 #include <io.h>
 #else
 #ifndef O_BINARY
