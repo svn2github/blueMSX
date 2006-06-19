@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-16 05:46:45 $
+** $Date: 2006-06-19 18:53:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,8 @@
 
 #include <stdlib.h>
 
+// TEST: 10 COLOR,15+STRIG(1):GOTO10
+
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
@@ -45,8 +47,10 @@ struct MsxAsciiLaser {
     UInt32 lastTrigger;
 };
 
-#define SENSITIVIY 28
-#define DELAY      28
+#define RADIUS     5
+#define DELAY      1
+#define HOLD       16
+#define AIMADJUST  (-24)
 #define TRESHOLD   128
 
 static UInt8 read(MsxAsciiLaser* joystick) {
@@ -64,8 +68,10 @@ static UInt8 read(MsxAsciiLaser* joystick) {
 
     if (frameBuffer != NULL) {
         int scanline = frameBufferGetScanline();
-        int myLow  = MAX(scanline - DELAY, my - SENSITIVIY);
-        int myHigh = MIN(scanline, my);
+        int myLow  = MAX(scanline - DELAY - HOLD - RADIUS, my + AIMADJUST - RADIUS);
+        int myHigh = MIN(scanline - DELAY, my + AIMADJUST + RADIUS + HOLD);
+//        int myLow  = MAX(scanline - 28, my - 28);
+//        int myHigh = MIN(scanline, my);
         int y;
         
         joystick->scanlines = frameBuffer->lines;

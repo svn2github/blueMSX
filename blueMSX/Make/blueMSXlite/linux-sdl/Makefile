@@ -37,7 +37,7 @@ ECHO  = @echo
 CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM -DNO_HIRES_TIMERS
 CPPFLAGS = -g -DNO_ASM
 LDFLAGS  = 
-LIBS     =  -lXext -lX11 -lz -lpthread
+LIBS     =  -lSDL -lz
 TARGET   = blueMSXlite
 
 SRCS        = $(SOURCE_FILES)
@@ -68,7 +68,7 @@ INCLUDE += -I$(ROOT_DIR)/Src/Unzip
 INCLUDE += -I$(ROOT_DIR)/Src/Utils
 INCLUDE += -I$(ROOT_DIR)/Src/VideoChips
 INCLUDE += -I$(ROOT_DIR)/Src/VideoRender
-INCLUDE += -I$(ROOT_DIR)/Src/Linux/blueMSXlite
+INCLUDE += -I$(ROOT_DIR)/Src/Sdl/blueMSXlite
 INCLUDE += -I$(ROOT_DIR)/Src/Z80
 
 vpath % $(ROOT_DIR)/Src/Arch
@@ -89,7 +89,7 @@ vpath % $(ROOT_DIR)/Src/Unzip
 vpath % $(ROOT_DIR)/Src/Utils
 vpath % $(ROOT_DIR)/Src/VideoChips
 vpath % $(ROOT_DIR)/Src/VideoRender
-vpath % $(ROOT_DIR)/Src/Linux/blueMSXlite
+vpath % $(ROOT_DIR)/Src/Sdl/blueMSXlite
 vpath % $(ROOT_DIR)/Src/Z80
 
 #
@@ -98,20 +98,20 @@ vpath % $(ROOT_DIR)/Src/Z80
 SOURCE_FILES  =
 
 SOURCE_FILES += blueMSXlite.c
-SOURCE_FILES += LinuxPrinter.c
-SOURCE_FILES += LinuxUart.c
-SOURCE_FILES += LinuxDialog.c
-SOURCE_FILES += LinuxMidi.c
-SOURCE_FILES += LinuxMenu.c
-SOURCE_FILES += LinuxInput.c
-SOURCE_FILES += LinuxFile.c
-SOURCE_FILES += LinuxGlob.c
-SOURCE_FILES += LinuxEvent.c
-SOURCE_FILES += LinuxTimer.c
-SOURCE_FILES += LinuxSound.c
-SOURCE_FILES += LinuxThread.c
-SOURCE_FILES += LinuxNotifications.c
-SOURCE_FILES += LinuxVideoIn.c
+SOURCE_FILES += SdlPrinter.c
+SOURCE_FILES += SdlUart.c
+SOURCE_FILES += SdlDialog.c
+SOURCE_FILES += SdlMidi.c
+SOURCE_FILES += SdlMenu.c
+SOURCE_FILES += SdlInput.c
+SOURCE_FILES += SdlFile.c
+SOURCE_FILES += SdlGlob.c
+SOURCE_FILES += SdlEvent.c
+SOURCE_FILES += SdlTimer.c
+SOURCE_FILES += SdlSound.c
+SOURCE_FILES += SdlThread.c
+SOURCE_FILES += SdlNotifications.c
+SOURCE_FILES += SdlVideoIn.c
 
 SOURCE_FILES += Patch.c 
 
