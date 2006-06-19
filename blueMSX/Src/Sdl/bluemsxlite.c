@@ -22,6 +22,14 @@
 #include "ArchSound.h"
 #include "JoystickPort.h"
 
+
+void keyboardSetDirectory(char* directory);
+void keyboardInit();
+void keyboardSetFocus(int handle, int focus);
+void keyboardUpdate();
+int keyboardGetModifiers();
+
+
 static Properties* properties;
 static Video* video;
 static Mixer* mixer;
@@ -244,6 +252,10 @@ void setDefaultPaths(const char* rootDir)
     sprintf(buffer, "%s/Databases", rootDir);
     archCreateDirectory(buffer);
     mediaDbLoad(buffer);
+    
+    sprintf(buffer, "%s\\Keyboard Config", rootDir);
+    archCreateDirectory(buffer);
+    keyboardSetDirectory(buffer);
 }
 
 static void handleEvent(SDL_Event* event) 
@@ -255,6 +267,11 @@ static void handleEvent(SDL_Event* event)
             updateEmuDisplay();
             archEventSet(dpyUpdateAckEvent);
             break;
+        }
+        break;
+    case SDL_ACTIVEEVENT:
+        if (event->active.state & SDL_APPINPUTFOCUS) {
+            keyboardSetFocus(1, event->active.gain);
         }
         break;
     }
@@ -296,6 +313,8 @@ int main(int argc, char **argv)
     }
     
     dpyUpdateAckEvent = archEventCreate(0);
+
+    keyboardInit();
 
     video = videoCreate();
     videoSetColors(video, properties->video.saturation, properties->video.brightness, 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-19 20:51:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,7 +56,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->warningOverwriteFile    = "Haluatko korvata tiedoston:";
     ls->errorTitle              = "blueMSX - Virhe";
     ls->errorEnterFullscreen    = "Siirtyminen kokoruututilaan epäonnistui.  \n";
-    ls->errorDirectXFailed      = "DirectX objektien luonti epäonnistui.       \nDirectX on korvattu GDI:llä.\nTarkista video asetukset.";
+    ls->errorDirectXFailed      = "DirectX objektien luonti epäonnistui.      \nDirectX on korvattu GDI:llä.\nTarkista video asetukset.";
     ls->errorNoRomInZip         = "Zip paketista ei löytynyt .ROM tiedostoa.";
     ls->errorNoDskInZip         = "Zip paketista ei löytynyt .DSK tiedostoa.";
     ls->errorNoCasInZip         = "Zip paketista ei löytynyt .CAS tiedostoa.";
@@ -229,8 +229,8 @@ void langInitFinnish(LanguageStrings* ls)
                                   "=====\r\n\r\n"
                                   "Tämä ohjelmisto toimitetaan sellaisenaan ilman minkäänlaista takuuta. "
                                   "Kehittäjät eivät ota mitään vastuuta ohjelman kaytössä tai käytöstä "
-		          "aiheutuneista mahdollisista ongelmista tai vahingoista.\r\n\r\n"
-		          "Lisätietoja löydät osoitteesta www.bluemsx.com.";
+                                  "aiheutuneista mahdollisista ongelmista tai vahingoista.\r\n\r\n"
+                                  "Lisätietoja löydät osoitteesta www.bluemsx.com.";
 
     ls->dlgSavePreview          = "Näytä Esikatselu";
     ls->dlgSaveDate             = "Tallennettu:";
@@ -279,7 +279,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Vaaka Venytys";
     ls->propMonVertStretch      = " Pysty Venytys";
     ls->propMonDeInterlace      = " Lomituksen purku";
-    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
+    ls->propBlendFrames         = " Yhdistä peräkkäiset kuvat";
     ls->propMonBrightness       = "Kirkkaus:";
     ls->propMonContrast         = "Kontrasti:";
     ls->propMonSaturation       = "Saturaatio:";
@@ -383,7 +383,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automaattinen (nopea)";
     ls->enumEmuSyncNone         = "Ei käytössä";
     ls->enumEmuSyncVblank       = "Tahdistus PC:n ruudunpäivitykseen";
-    ls->enumEmuAsyncVblank      = "Tahdistamaton PC:n ruudunpäivitys";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "Tahdistamaton PC:n ruudunpäivitys";           // New in 2.5
 
     ls->enumControlsJoyNone     = "Tyhjä";
     ls->enumControlsJoyMouse    = "Hiiri";
@@ -674,50 +674,50 @@ void langInitFinnish(LanguageStrings* ls)
     // Note: Only needs translation if debugger is translated
     //----------------------
 
-    ls->dbgMemVisible           = "Visible Memory";
-    ls->dbgMemRamNormal         = "Normal";
-    ls->dbgMemRamMapped         = "Mapped";
+    ls->dbgMemVisible           = "Näkyvä muisti";
+    ls->dbgMemRamNormal         = "Normaali";
+    ls->dbgMemRamMapped         = "Sivutettu";
     ls->dbgMemVram              = "VRAM";
     ls->dbgMemYmf278            = "YMF278 Sample RAM";
     ls->dbgMemAy8950            = "AY8950 Sample RAM";
-    ls->dbgMemScc               = "Memory";
+    ls->dbgMemScc               = "Muisti";
 
-    ls->dbgCallstack            = "Callstack";
+    ls->dbgCallstack            = "Kutsupino";
 
-    ls->dbgRegs                 = "Registers";
-    ls->dbgRegsCpu              = "CPU Registers";
-    ls->dbgRegsYmf262           = "YMF262 Registers";
-    ls->dbgRegsYmf278           = "YMF278 Registers";
-    ls->dbgRegsAy8950           = "AY8950 Registers";
-    ls->dbgRegsYm2413           = "YM2413 Registers";
+    ls->dbgRegs                 = "Rekisterit";
+    ls->dbgRegsCpu              = "CPU Rekisterit";
+    ls->dbgRegsYmf262           = "YMF262 Rekisterit";
+    ls->dbgRegsYmf278           = "YMF278 Rekisterit";
+    ls->dbgRegsAy8950           = "AY8950 Rekisterit";
+    ls->dbgRegsYm2413           = "YM2413 Rekisterit";
 
     ls->dbgDevRamMapper         = "RAM Mapper";
     ls->dbgDevRam               = "RAM";
     ls->dbgDevIdeBeer           = "Beer IDE";
     ls->dbgDevIdeGide           = "GIDE";
-    ls->dbgDevF4Device          = "F4 Device";
-    ls->dbgDevFmpac             = "FMPAC";
-    ls->dbgDevFmpak             = "FMPAK";
+    ls->dbgDevF4Device          = "F4 Portti";
+    ls->dbgDevFmpac             = "FM-PAC";
+    ls->dbgDevFmpak             = "FM-PAK";
     ls->dbgDevKanji             = "Kanji";
     ls->dbgDevKanji12           = "Kanji 12";
     ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
-    ls->dbgDevKorean80          = "Korean 80";
-    ls->dbgDevKorean90          = "Korean 90";
-    ls->dbgDevKorean128         = "Korean 128";
-    ls->dbgDevMegaRam           = "Mega RAM";
-    ls->dbgDevFdcMicrosol       = "Microsol FDC";
+    ls->dbgDevKorean80          = "Korea 80";
+    ls->dbgDevKorean90          = "Korea 90";
+    ls->dbgDevKorean128         = "Korea 128";
+    ls->dbgDevMegaRam           = "MegaRAM";
+    ls->dbgDevFdcMicrosol       = "Microsol levyohjain";
     ls->dbgDevMoonsound         = "Moonsound";
-    ls->dbgDevMsxAudio          = "MSX Audio";
-    ls->dbgDevMsxAudioMidi      = "MSX Audio MIDI";
-    ls->dbgDevMsxMusic          = "MSX Music";
-    ls->dbgDevPrinter           = "Printer";
-    ls->dbgDevRs232             = "RS232";
+    ls->dbgDevMsxAudio          = "MSX-Audio";
+    ls->dbgDevMsxAudioMidi      = "MSX-Audio MIDI";
+    ls->dbgDevMsxMusic          = "MSX-Music";
+    ls->dbgDevPrinter           = "Tulostin";
+    ls->dbgDevRs232             = "RS-232";
     ls->dbgDevS1990             = "S1990";
     ls->dbgDevSfg05             = "Yamaha SFG-05";
     ls->dbgDevHbi55             = "Sony HBI-55";
-    ls->dbgDevSviFdc            = "SVI FDC";
-    ls->dbgDevSviPrn            = "SVI Printer";
-    ls->dbgDevSvi80Col          = "SVI 80 Column";
+    ls->dbgDevSviFdc            = "SVI levyohjain";
+    ls->dbgDevSviPrn            = "SVI Tulostin";
+    ls->dbgDevSvi80Col          = "SVI 80-merkkiä";
     ls->dbgDevPcm               = "PCM";
     ls->dbgDevMatsuchita        = "Matsuchita";
     ls->dbgDevS1985             = "S1985";
@@ -729,10 +729,12 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dbgDevZ80               = "Z80";
     ls->dbgDevMsxMidi           = "MSX MIDI";
     ls->dbgDevPpi               = "PPI";
-    ls->dbgDevRtc               = "RTC";
-    ls->dbgDevTrPause           = "TR Pause";
+    ls->dbgDevRtc               = "Kellopiiri";
+    ls->dbgDevTrPause           = "tR Pause";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
 };
 
 #endif
+
+
