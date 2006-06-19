@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/LinuxTimer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-16 19:40:54 $
+** $Date: 2006-06-19 18:20:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,7 @@ void* archCreateTimer(int period, void (*timerCallback)(void*))
     struct itimerval timeVal;
     int success;
 
-    timerFreq = period * 1000;
+    timerFreq = 1000 / period;
     lastTimeout = archGetSystemUpTime(timerFreq);
     timerCb  = timerCallback;
 
