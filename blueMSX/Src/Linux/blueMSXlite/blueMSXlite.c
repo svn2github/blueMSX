@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-18 07:55:10 $
+** $Date: 2006-06-19 17:00:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -276,6 +276,8 @@ void setDefaultPaths(const char* rootDir)
 {   
     char buffer[512];  
 
+    propertiesSetDirectory(rootDir, rootDir);
+
     sprintf(buffer, "%s/Audio Capture", rootDir);
     mkdir(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");
@@ -310,6 +312,8 @@ int main(int argc, char **argv)
         strcat(szLine, " ");
     }
 
+    setDefaultPaths(archGetCurrentDirectory());
+
     resetProperties = emuCheckResetArgument(szLine);
     strcat(path, archGetCurrentDirectory());
     strcat(path, DIR_SEPARATOR "bluemsx.ini");
@@ -328,8 +332,6 @@ int main(int argc, char **argv)
     }
     
     dpyUpdateAckEvent = archEventCreate(0);
-
-    setDefaultPaths(archGetCurrentDirectory());
 
     video = videoCreate();
     videoSetColors(video, properties->video.saturation, properties->video.brightness, 
