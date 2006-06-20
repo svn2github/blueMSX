@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib OpenGL32.Lib"
-				OutputFile="$(OutDir)/windows-sdl.exe"
+				OutputFile="$(OutDir)/blueMSXlite.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/windows-sdl.pdb"
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib OpenGL32.Lib"
-				OutputFile="$(OutDir)/windows-sdl.exe"
+				OutputFile="$(OutDir)/blueMSXlite.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -739,9 +739,6 @@
 			Name="Language"
 			Filter="">
 			<File
-				RelativePath="..\..\..\Src\Language\Language.c">
-			</File>
-			<File
 				RelativePath="..\..\..\Src\Language\Language.h">
 			</File>
 			<File
@@ -773,6 +770,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Language\LanguageKorean.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Language\LanguageMinimal.c">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Language\LanguagePolish.h">

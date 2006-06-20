@@ -263,7 +263,7 @@ SOURCE_FILES += WD2793.c
 SOURCE_FILES += wd33c93.c
 SOURCE_FILES += WDCRC.c
 
-SOURCE_FILES += Language.c
+SOURCE_FILES += LanguageMinimal.c
 
 SOURCE_FILES += tinystr.cpp 
 SOURCE_FILES += tinyxml.cpp 
