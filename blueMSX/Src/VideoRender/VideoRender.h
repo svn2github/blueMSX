@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-20 06:51:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,7 @@ struct Video {
     double brightness;
     double contrast;
     int deInterlace;
+    int invertRGB;
 };
 
 Video* videoCreate();
@@ -78,6 +79,7 @@ void videoSetDeInterlace(Video* pVideo, int deInterlace);
 void videoSetBlendFrames(Video* pVideo, int blendFrames);
 
 void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
+void videoSetRgbMode(Video* pVideo, int inverted);
 
 void videoSetPalMode(Video* pVideo, VideoPalMode palMode);
 

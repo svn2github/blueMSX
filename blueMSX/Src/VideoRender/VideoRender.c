@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-06-16 01:19:19 $
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-20 06:51:40 $
+** $Date: 2006-06-20 06:51:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ static UInt16 pRgbTableAmber16[MAX_RGB_COLORS];
 
 
 static int gammaTable[3 * 256];
+
 static void generateGammaTable(Video* pVideo)
 {
     int i;
@@ -112,7 +113,12 @@ static void initRGBTable(Video* pVideo)
         B = videoGamma(B);
         L = videoGamma(Y);
 
-        pRgbTableColor32[rgb] = (R << 16) | (G << 8) | (B << 0);
+        if (pVideo->invertRGB) {
+            pRgbTableColor32[rgb] = (R << 0) | (G << 8) | (B << 16);
+        }
+        else {
+            pRgbTableColor32[rgb] = (R << 16) | (G << 8) | (B << 0);
+        }
         pRgbTableColor16[rgb] = ((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3);
 
         pRgbTableGreen32[rgb] = 0x100010 | (L << 8);
@@ -121,7 +127,12 @@ static void initRGBTable(Video* pVideo)
         pRgbTableWhite32[rgb] = (L << 16) | (L << 8) | (L << 0);
         pRgbTableWhite16[rgb] = (UInt16)(((L >> 3) << 11) | ((L >> 2) << 5) | (L >> 3));
 
-        pRgbTableAmber32[rgb] = (L << 16) | ((L * 176 / 255) << 8);
+        if (pVideo->invertRGB) {
+            pRgbTableAmber32[rgb] = (L << 0) | ((L * 176 / 255) << 8);
+        }
+        else {
+            pRgbTableAmber32[rgb] = (L << 16) | ((L * 176 / 255) << 8);
+        }
         pRgbTableAmber16[rgb] = ((L >> 3) << 11) | (((L * 176 / 255) >> 2) << 5);
     }
 }
@@ -1920,6 +1931,7 @@ Video* videoCreate()
     pVideo->brightness  = 0;
     pVideo->contrast    = 1;
     pVideo->deInterlace = 0;
+    pVideo->invertRGB   = 0;
 
     initRGBTable(pVideo);
 
@@ -1990,6 +2002,18 @@ void videoSetPalMode(Video* pVideo, VideoPalMode palMode)
 {
     pVideo->palMode = palMode;
 }
+
+void videoSetRgbMode(Video* pVideo, int inverted)
+{
+    int recalculate = pVideo->invertRGB != inverted;
+
+    pVideo->invertRGB = inverted;
+
+    if (recalculate) {
+        initRGBTable(pVideo);
+    }
+}
+
 
 void videoSetScanLines(Video* pVideo, int enable, int scanLinesPct)
 {

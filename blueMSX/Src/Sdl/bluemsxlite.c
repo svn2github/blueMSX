@@ -1,3 +1,5 @@
+#define ENABLE_OPENGL
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "SDL/SDL.h"
@@ -21,14 +23,15 @@
 #include "ArchEvent.h"
 #include "ArchSound.h"
 #include "JoystickPort.h"
-
+#ifdef ENABLE_OPENGL
+#include <SDL/SDL_opengl.h>
+#endif
 
 void keyboardSetDirectory(char* directory);
 void keyboardInit();
 void keyboardSetFocus(int handle, int focus);
 void keyboardUpdate();
 int keyboardGetModifiers();
-
 
 static Properties* properties;
 static Video* video;
@@ -42,16 +45,22 @@ static int dpyUpdateEvent = 0;
 static void* dpyUpdateAckEvent = NULL;
 
 static SDL_Surface *surface;
-static int bitDepth;
+static int   bitDepth;
+static char* displayData = NULL;
+static int   displayPitch = 0;
+#ifdef ENABLE_OPENGL
+static GLfloat texCoordX;
+static GLfloat texCoordY;
+static GLuint textureId;
+#endif
 
 #define WIDTH  640
 #define HEIGHT 480
 
 #define EVENT_UPDATE_DISPLAY 2
 
-int createSdlWindow(const char *title, int width, int height, int bitDepth)
+void createSdlSurface(int width, int height, int bitDepth, int fullscreen)
 {
-    int fullscreen = 0;
     int flags = SDL_SWSURFACE | (fullscreen ? SDL_FULLSCREEN : 0);
     int bytepp;
 
@@ -65,9 +74,75 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
     if (!surface) { bitDepth = 32; surface = SDL_SetVideoMode(width, height, bitDepth, flags); }
     if (!surface) { bitDepth = 16; surface = SDL_SetVideoMode(width, height, bitDepth, flags); }
 
-	if (!surface) {
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    if (surface != NULL) {
+        displayData = (char*)surface->pixels;
+        displayPitch = surface->pitch;
+    }
+}
+
+static int roundUpPow2(int val) {
+    int rv = 1;
+    while (rv < val) rv *= 2;
+    return rv;
+}
+
+#ifdef ENABLE_OPENGL
+void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
+{
+    unsigned texW = roundUpPow2(width);
+	unsigned texH = roundUpPow2(height);
+    int flags = SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF | (fullscreen ? SDL_FULLSCREEN : 0);
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	// try default bpp
+	surface = SDL_SetVideoMode(width, height, 0, flags);
+    
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+
+	displayData  = (char*)malloc(bitDepth / 8 * texW * texH);
+	displayPitch = width * bitDepth / 8;
+
+	texCoordX = (GLfloat)width  / texW;
+	texCoordY = (GLfloat)height / texH;
+
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	if (bitDepth == 16) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texW, texH, 0,
+			            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
+	} 
+    else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0,
+			            GL_RGBA, GL_UNSIGNED_BYTE, displayData);
 	}
+}
+#endif
+
+int createSdlWindow(const char *title, int width, int height, int bitDepth)
+{
+    int fullscreen = 0;
+    
+#ifdef ENABLE_OPENGL
+    if (properties->video.driver != P_VIDEO_DRVGDI) {
+        createSdlGlSurface(width, height, bitDepth, fullscreen);
+        if (surface == NULL) {
+            properties->video.driver = P_VIDEO_DRVGDI;
+        }
+    }
+    // Invert 24 bit RGB in GL mode
+    videoSetRgbMode(video, properties->video.driver != P_VIDEO_DRVGDI);
+#endif
+    if (surface == NULL) {
+        createSdlSurface(width, height, bitDepth, fullscreen);
+    }
 
     //Set the window caption
     SDL_WM_SetCaption( title, NULL );
@@ -190,12 +265,13 @@ int  archUpdateEmuDisplay(int syncMode)
     return 1;
 }
 
+
 int updateEmuDisplay() 
 {
     FrameBuffer* frameBuffer;
     int bytesPerPixel = bitDepth / 8;
-    char* dpyData  = (char*)surface->pixels;
-	int pitch = surface->pitch;
+    char* dpyData  = displayData;
+	int pitch = displayPitch;
     int borderWidth;
 
     frameBuffer = frameBufferGetViewFrame();
@@ -212,12 +288,41 @@ int updateEmuDisplay()
     if (borderWidth > 0) {
         int h = HEIGHT;
         while (h--) {
-            memset(dpyData, 0x00, borderWidth * bytesPerPixel);
+            memset(dpyData, 0, borderWidth * bytesPerPixel);
             memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
             dpyData += pitch;
         }
     }
 
+#ifdef ENABLE_OPENGL
+    if (properties->video.driver != P_VIDEO_DRVGDI) {
+	    glEnable(GL_TEXTURE_2D);
+	    glBindTexture(GL_TEXTURE_2D, textureId);
+	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+        if (bitDepth == 16) {
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
+	    } 
+        else {
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		                    GL_RGBA, GL_UNSIGNED_BYTE, displayData);
+	    }
+
+        glBegin(GL_QUADS);
+	    glTexCoord2f(0,         texCoordY); glVertex2i(0,     HEIGHT);
+	    glTexCoord2f(texCoordX, texCoordY); glVertex2i(WIDTH, HEIGHT);
+	    glTexCoord2f(texCoordX, 0        ); glVertex2i(WIDTH, 0     );
+	    glTexCoord2f(0,         0        ); glVertex2i(0,     0     );
+	    glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+
+	    SDL_GL_SwapBuffers();
+
+        return 0;
+    }
+#endif
 	if (SDL_MUSTLOCK(surface) && SDL_LockSurface(surface) < 0) {
         return 0;
     }
@@ -307,6 +412,12 @@ int main(int argc, char **argv)
         return 0;
     }
     
+    video = videoCreate();
+    videoSetColors(video, properties->video.saturation, properties->video.brightness, 
+                  properties->video.contrast, properties->video.gamma);
+    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
+    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
+    
     bitDepth = 32;
     if (!createSdlWindow("blueMSXlite", WIDTH, HEIGHT, bitDepth)) {
         return 0;
@@ -316,12 +427,6 @@ int main(int argc, char **argv)
 
     keyboardInit();
 
-    video = videoCreate();
-    videoSetColors(video, properties->video.saturation, properties->video.brightness, 
-                  properties->video.contrast, properties->video.gamma);
-    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
-    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
-    
     mixer = mixerCreate();
     
     emulatorInit(properties, mixer);
@@ -397,16 +502,15 @@ int main(int argc, char **argv)
 
     //While the user hasn't quit
     while(!doQuit) {
-        SDL_WaitEvent(NULL);
-        //While there's an event to handle
-        while( SDL_PollEvent( &event ) ) {
+        SDL_WaitEvent(&event);
+        do {
             if( event.type == SDL_QUIT ) {
                 doQuit = 1;
             }
             else {
                 handleEvent(&event);
             }
-        }
+        } while(SDL_PollEvent(&event));
     }
 
     videoDestroy(video);

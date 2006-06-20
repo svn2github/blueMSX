@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib "
+				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib OpenGL32.Lib"
 				OutputFile="$(OutDir)/windows-sdl.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -68,18 +68,23 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				GlobalOptimizations="TRUE"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="TRUE"
+				EnableFiberSafeOptimizations="TRUE"
 				AdditionalIncludeDirectories="..\..\..\Src\Bios;..\..\..\Src\Board;..\..\..\Src\Utils;..\..\..\Src\Emulator;..\..\..\Src\Common;..\..\..\Src\IoDevice;..\..\..\Src\SoundChips;..\..\..\Src\Unzip;..\..\..\Src\VideoChips;..\..\..\Src\VideoRender;..\..\..\Src\Z80;..\..\..\Src\Language;..\..\..\Src\Memory;..\..\..\Src\TinyXML;..\..\..\Src\Arch;..\..\..\Src\Media;..\..\..\Src\Debugger;..\..\..\Src\Input"
 				PreprocessorDefinitions="OLD_Y8950;LSB_FIRST;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;WINDOWS_HOST;NO_HIRES_TIMERS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib "
+				AdditionalDependencies="sdl.lib sdlmain.lib shlwapi.lib OpenGL32.Lib"
 				OutputFile="$(OutDir)/windows-sdl.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
