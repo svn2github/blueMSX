@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.140 $
+** $Revision: 1.141 $
 **
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-20 07:37:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1006,8 +1006,6 @@ static void updateVideoRender(Video* pVideo, Properties* pProperties) {
 		videoSetPalMode(pVideo, VIDEO_PAL_HQ2X);
 		break;
     }
-
-    videoSetFrameSkip(pVideo, pProperties->video.frameSkip);
 }
 
 

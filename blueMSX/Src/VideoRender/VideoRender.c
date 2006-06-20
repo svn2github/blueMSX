@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-20 06:51:40 $
-** $Date: 2006-06-20 06:51:40 $
+** $Date: 2006-06-20 07:37:19 $
+** $Date: 2006-06-20 07:37:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1948,11 +1948,6 @@ Video* videoCreate()
 void videoDestroy(Video* pVideo) 
 {
     free(pVideo);
-}
-
-void videoSetFrameSkip(Video* pVideo, UInt32 skipCount)
-{
-    if (skipCount > 3) skipCount = 3;
 }
 
 void videoSetDeInterlace(Video* pVideo, int deInterlace)

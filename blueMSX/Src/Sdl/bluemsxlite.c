@@ -22,6 +22,7 @@
 #include "LaunchFile.h"
 #include "ArchEvent.h"
 #include "ArchSound.h"
+#include "ArchNotifications.h"
 #include "JoystickPort.h"
 #ifdef ENABLE_OPENGL
 #include <SDL/SDL_opengl.h>
@@ -130,6 +131,8 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
 {
     int fullscreen = 0;
     
+    surface = NULL;
+
 #ifdef ENABLE_OPENGL
     if (properties->video.driver != P_VIDEO_DRVGDI) {
         createSdlGlSurface(width, height, bitDepth, fullscreen);
@@ -150,104 +153,6 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
     return 1;
 }
 
-static void updateVideoRender(Video* video, Properties* properties) {
-    videoSetDeInterlace(video, properties->video.deInterlace);
-
-    switch (properties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(video, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(video, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(video, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(video, VIDEO_AMBER);
-        break;
-    }
-
-    switch (properties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(video, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(video, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(video, VIDEO_PAL_HQ2X);
-		break;
-    }
-
-    videoSetFrameSkip(video, properties->video.frameSkip);
-}
-
-
-void archUpdateEmuDisplayConfig() 
-{
-    videoSetColors(video, properties->video.saturation, properties->video.brightness, properties->video.contrast, properties->video.gamma);
-    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
-    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
-    videoSetDeInterlace(video, properties->video.deInterlace);
-    videoSetFrameSkip(video, properties->video.frameSkip);
-    switch (properties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(video, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(video, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(video, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(video, VIDEO_AMBER);
-        break;
-    }
-
-    switch (properties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(video, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(video, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(video, VIDEO_PAL_HQ2X);
-		break;
-    }
-}
 
 int  archUpdateEmuDisplay(int syncMode) 
 {
@@ -457,7 +362,6 @@ int main(int argc, char **argv)
     mixerSetMasterVolume(mixer, properties->sound.masterVolume);
     mixerEnableMaster(mixer, properties->sound.masterEnable);
 
-    updateVideoRender(video, properties);
     archUpdateEmuDisplayConfig();
 
     mediaDbSetDefaultRomType(properties->cartridge.defaultType);
@@ -525,3 +429,57 @@ int main(int argc, char **argv)
     
     return 0;
 }
+
+
+
+
+void archUpdateEmuDisplayConfig() 
+{
+    videoSetColors(video, properties->video.saturation, properties->video.brightness, properties->video.contrast, properties->video.gamma);
+    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
+    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
+    videoSetDeInterlace(video, properties->video.deInterlace);
+
+    switch (properties->video.monType) {
+    case P_VIDEO_COLOR:
+        videoSetColorMode(video, VIDEO_COLOR);
+        break;
+    case P_VIDEO_BW:
+        videoSetColorMode(video, VIDEO_BLACKWHITE);
+        break;
+    case P_VIDEO_GREEN:
+        videoSetColorMode(video, VIDEO_GREEN);
+        break;
+    case P_VIDEO_AMBER:
+        videoSetColorMode(video, VIDEO_AMBER);
+        break;
+    }
+
+    switch (properties->video.palEmu) {
+    case P_VIDEO_PALNONE:
+        videoSetPalMode(video, VIDEO_PAL_FAST);
+        break;
+    case P_VIDEO_PALMON:
+        videoSetPalMode(video, VIDEO_PAL_MONITOR);
+        break;
+    case P_VIDEO_PALYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP);
+        break;
+    case P_VIDEO_PALNYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
+        break;
+    case P_VIDEO_PALCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR);
+        break;
+    case P_VIDEO_PALNCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
+        break;
+	case P_VIDEO_PALSCALE2X:
+		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(video, VIDEO_PAL_HQ2X);
+		break;
+    }
+}
+

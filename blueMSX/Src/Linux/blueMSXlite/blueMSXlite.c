@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-19 17:00:05 $
+** $Date: 2006-06-20 07:37:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,8 +170,6 @@ static void updateVideoRender(Video* video, Properties* properties) {
 		videoSetPalMode(video, VIDEO_PAL_HQ2X);
 		break;
     }
-
-    videoSetFrameSkip(video, properties->video.frameSkip);
 }
 
 
@@ -181,7 +179,7 @@ void archUpdateEmuDisplayConfig()
     videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
     videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
     videoSetDeInterlace(video, properties->video.deInterlace);
-    videoSetFrameSkip(video, properties->video.frameSkip);
+
     switch (properties->video.monType) {
     case P_VIDEO_COLOR:
         videoSetColorMode(video, VIDEO_COLOR);
