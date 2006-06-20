@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-06-20 07:37:19 $
-** $Date: 2006-06-20 07:37:19 $
+** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2021,6 +2021,57 @@ void videoSetColorSaturation(Video* pVideo, int enable, int width)
     pVideo->colorSaturationEnable = enable;
     pVideo->colorSaturationWidth  = width;
 }
+
+void videoUpdateAll(Video* video, Properties* properties) 
+{
+    videoSetColors(video, properties->video.saturation, properties->video.brightness, properties->video.contrast, properties->video.gamma);
+    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
+    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
+    videoSetDeInterlace(video, properties->video.deInterlace);
+
+    switch (properties->video.monType) {
+    case P_VIDEO_COLOR:
+        videoSetColorMode(video, VIDEO_COLOR);
+        break;
+    case P_VIDEO_BW:
+        videoSetColorMode(video, VIDEO_BLACKWHITE);
+        break;
+    case P_VIDEO_GREEN:
+        videoSetColorMode(video, VIDEO_GREEN);
+        break;
+    case P_VIDEO_AMBER:
+        videoSetColorMode(video, VIDEO_AMBER);
+        break;
+    }
+
+    switch (properties->video.palEmu) {
+    case P_VIDEO_PALNONE:
+        videoSetPalMode(video, VIDEO_PAL_FAST);
+        break;
+    case P_VIDEO_PALMON:
+        videoSetPalMode(video, VIDEO_PAL_MONITOR);
+        break;
+    case P_VIDEO_PALYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP);
+        break;
+    case P_VIDEO_PALNYC:
+        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
+        break;
+    case P_VIDEO_PALCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR);
+        break;
+    case P_VIDEO_PALNCOMP:
+        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
+        break;
+	case P_VIDEO_PALSCALE2X:
+		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
+		break;
+	case P_VIDEO_PALHQ2X:
+		videoSetPalMode(video, VIDEO_PAL_HQ2X);
+		break;
+    }
+}
+
 
 void colorSaturation_16(void* pBuffer, int width, int height, int pitch, int blur)
 {

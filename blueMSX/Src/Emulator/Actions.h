@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,9 +31,10 @@
 #define ACTIONS_H
 
 #include "Properties.h"
+#include "VideoRender.h"
 #include "AudioMixer.h"
 
-void actionInit(Properties* properties, Mixer* mixer);
+void actionInit(Video* video, Properties* properties, Mixer* mixer);
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix);
 void actionSetQuickSaveSetDirectory(char* dir, char* prefix);
 

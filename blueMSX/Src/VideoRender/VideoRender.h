@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-20 07:37:19 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,8 @@
 
 #include "MsxTypes.h"
 #include "FrameBuffer.h"
+
+struct Properties;
 
 typedef enum { 
     VIDEO_GREEN, 
@@ -71,21 +73,23 @@ struct Video {
 
 Video* videoCreate();
 
-void videoDestroy(Video* pVideo);
+void videoDestroy(Video* video);
 
-void videoSetDeInterlace(Video* pVideo, int deInterlace);
-void videoSetBlendFrames(Video* pVideo, int blendFrames);
+void videoSetDeInterlace(Video* video, int deInterlace);
+void videoSetBlendFrames(Video* video, int blendFrames);
 
-void videoSetColorMode(Video* pVideo, VideoColorMode colorMode);
-void videoSetRgbMode(Video* pVideo, int inverted);
+void videoSetColorMode(Video* video, VideoColorMode colorMode);
+void videoSetRgbMode(Video* video, int inverted);
 
-void videoSetPalMode(Video* pVideo, VideoPalMode palMode);
+void videoSetPalMode(Video* video, VideoPalMode palMode);
 
-int videoRender(Video* pVideo, FrameBuffer* frameBuffer, int bitDepth, int zoom, void* pDst, int dstOffset, int dstPitch, int canChangeZoom);
+int videoRender(Video* video, FrameBuffer* frameBuffer, int bitDepth, int zoom, void* pDst, int dstOffset, int dstPitch, int canChangeZoom);
 
-void videoSetColors(Video* pVideo, int saturation, int brightness, int contrast, int gamma);
+void videoSetColors(Video* video, int saturation, int brightness, int contrast, int gamma);
 
-void videoSetScanLines(Video* pVideo, int enable, int scanLinesPct);
-void videoSetColorSaturation(Video* pVideo, int enable, int width);
+void videoSetScanLines(Video* video, int enable, int scanLinesPct);
+void videoSetColorSaturation(Video* video, int enable, int width);
+
+void videoUpdateAll(Video* video, struct Properties* properties); 
 
 #endif

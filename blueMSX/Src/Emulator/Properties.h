@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -268,7 +268,7 @@ typedef struct {
     } windowPos[DLG_MAX_ID];
 } Settings;
 
-typedef struct {
+typedef struct Properties {
     char filename[512]; // Name of the properties file
 
     EmulationProperties emulation;

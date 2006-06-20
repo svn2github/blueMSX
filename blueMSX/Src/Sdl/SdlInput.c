@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlInput.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-19 20:51:20 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,8 +171,8 @@ static void initKbdTable()
     kbdTable[0][SDLK_KP8    ] = EC_NUM8;
     kbdTable[0][SDLK_KP9    ] = EC_NUM9;
 
-    kbdTable[0][SDLK_LMETA      ] = EC_TORIKE;
-    kbdTable[0][SDLK_RMETA      ] = EC_JIKKOU;
+    kbdTable[0][SDLK_LSUPER     ] = EC_TORIKE;
+    kbdTable[0][SDLK_RSUPER     ] = EC_JIKKOU;
     kbdTable[0][SDLK_LSHIFT     ] = EC_LSHIFT;
     kbdTable[0][SDLK_RSHIFT     ] = EC_RSHIFT;
     kbdTable[0][SDLK_LCTRL      ] = EC_CTRL;
@@ -332,7 +332,7 @@ void keyboardUpdate()
     kbdModifiers = (keyBuf[SDLK_LSHIFT] << 0) | (keyBuf[SDLK_RSHIFT] << 1) | 
                    (keyBuf[SDLK_LCTRL]  << 2) | (keyBuf[SDLK_RCTRL]  << 3) | 
                    (keyBuf[SDLK_LALT]   << 4) | (keyBuf[SDLK_RALT]   << 5) | 
-                   (keyBuf[SDLK_LMETA]  << 6) | (keyBuf[SDLK_RMETA]  << 7);
+                   (keyBuf[SDLK_LSUPER] << 6) | (keyBuf[SDLK_RSUPER] << 7);
 
     if (kbdModifiers &&
             (keyBuf[SDLK_F6] | keyBuf[SDLK_F7]  | keyBuf[SDLK_F8]  | keyBuf[SDLK_F9]  | 

@@ -24,6 +24,7 @@
 #include "ArchSound.h"
 #include "ArchNotifications.h"
 #include "JoystickPort.h"
+#include "SdlShortcuts.h"
 #ifdef ENABLE_OPENGL
 #include <SDL/SDL_opengl.h>
 #endif
@@ -41,6 +42,7 @@ static Mixer* mixer;
 static Properties* properties;
 static Video* video;
 static Mixer* mixer;
+static Shortcuts* shortcuts;
 
 static int dpyUpdateEvent = 0;
 static void* dpyUpdateAckEvent = NULL;
@@ -266,6 +268,10 @@ void setDefaultPaths(const char* rootDir)
     sprintf(buffer, "%s\\Keyboard Config", rootDir);
     archCreateDirectory(buffer);
     keyboardSetDirectory(buffer);
+
+    sprintf(buffer, "%s\\Shortcut Profiles", rootDir);
+    archCreateDirectory(buffer);
+    shortcutsSetDirectory(buffer);
 }
 
 static void handleEvent(SDL_Event* event) 
@@ -283,6 +289,12 @@ static void handleEvent(SDL_Event* event)
         if (event->active.state & SDL_APPINPUTFOCUS) {
             keyboardSetFocus(1, event->active.gain);
         }
+        break;
+    case SDL_KEYDOWN:
+        shortcutCheckDown(shortcuts, HOTKEY_TYPE_KEYBOARD, keyboardGetModifiers(), event->key.keysym.sym);
+        break;
+    case SDL_KEYUP:
+        shortcutCheckUp(shortcuts, HOTKEY_TYPE_KEYBOARD, keyboardGetModifiers(), event->key.keysym.sym);
         break;
     }
 }
@@ -335,7 +347,7 @@ int main(int argc, char **argv)
     mixer = mixerCreate();
     
     emulatorInit(properties, mixer);
-    actionInit(properties, mixer);
+    actionInit(video, properties, mixer);
     langInit();
     tapeSetReadOnly(properties->cassette.readOnly);
     
@@ -362,7 +374,9 @@ int main(int argc, char **argv)
     mixerSetMasterVolume(mixer, properties->sound.masterVolume);
     mixerEnableMaster(mixer, properties->sound.masterEnable);
 
-    archUpdateEmuDisplayConfig();
+    videoUpdateAll(video, properties);
+    
+    shortcuts = shortcutsCreate();
 
     mediaDbSetDefaultRomType(properties->cartridge.defaultType);
 
@@ -429,57 +443,3 @@ int main(int argc, char **argv)
     
     return 0;
 }
-
-
-
-
-void archUpdateEmuDisplayConfig() 
-{
-    videoSetColors(video, properties->video.saturation, properties->video.brightness, properties->video.contrast, properties->video.gamma);
-    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
-    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
-    videoSetDeInterlace(video, properties->video.deInterlace);
-
-    switch (properties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(video, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(video, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(video, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(video, VIDEO_AMBER);
-        break;
-    }
-
-    switch (properties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(video, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(video, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(video, VIDEO_PAL_HQ2X);
-		break;
-    }
-}
-

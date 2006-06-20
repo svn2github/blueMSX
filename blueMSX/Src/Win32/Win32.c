@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.141 $
+** $Revision: 1.142 $
 **
-** $Date: 2006-06-20 07:37:19 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,6 +77,7 @@
 #include "Emulator.h"
 #include "JoystickPort.h"
 #include "Theme.h"
+#include "VideoRender.h"
 #include "ThemeLoader.h"
 #include "Win32ThemeClassic.h"
 #include "ArchNotifications.h"
@@ -961,53 +962,6 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->helpShowAbout))                actionHelpShowAbout();
 }
 
-static void updateVideoRender(Video* pVideo, Properties* pProperties) {
-    videoSetDeInterlace(pVideo, pProperties->video.deInterlace);
-    videoSetBlendFrames(pVideo, pProperties->video.blendFrames);
-
-    switch (pProperties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(pVideo, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(pVideo, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(pVideo, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(pVideo, VIDEO_AMBER);
-        break;
-    }
-
-    switch (pProperties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(pVideo, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(pVideo, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(pVideo, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(pVideo, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(pVideo, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(pVideo, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(pVideo, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(pVideo, VIDEO_PAL_HQ2X);
-		break;
-    }
-}
-
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -1161,7 +1115,8 @@ void archShowPropertiesDialog(PropPage  startPane) {
     propSave(pProperties);
 
     /* Always update video render */
-    updateVideoRender(st.pVideo, pProperties);
+    
+    videoUpdateAll(st.pVideo, pProperties);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
@@ -2686,7 +2641,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     st.mixer  = mixerCreate();
 
     emulatorInit(pProperties, st.mixer);
-    actionInit(pProperties, st.mixer);
+    actionInit(st.pVideo, pProperties, st.mixer);
     langInit();
     tapeSetReadOnly(pProperties->cassette.readOnly);
     
@@ -2768,7 +2723,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     mixerSetMasterVolume(st.mixer, pProperties->sound.masterVolume);
     mixerEnableMaster(st.mixer, pProperties->sound.masterEnable);
 
-    updateVideoRender(st.pVideo, pProperties);
+    videoUpdateAll(st.pVideo, pProperties);
     
     mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
@@ -3450,53 +3405,6 @@ int archUpdateEmuDisplay(int syncMode) {
 }
 
 void archUpdateEmuDisplayConfig() {
-    videoSetColors(st.pVideo, pProperties->video.saturation, pProperties->video.brightness, pProperties->video.contrast, pProperties->video.gamma);
-    videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
-    videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
-    videoSetDeInterlace(st.pVideo, pProperties->video.deInterlace);
-    videoSetBlendFrames(st.pVideo, pProperties->video.blendFrames);
-    switch (pProperties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(st.pVideo, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(st.pVideo, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(st.pVideo, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(st.pVideo, VIDEO_AMBER);
-        break;
-    }
-
-    switch (pProperties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(st.pVideo, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(st.pVideo, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(st.pVideo, VIDEO_PAL_HQ2X);
-		break;
-    }
-
     updateEmuWindow();
 }
 

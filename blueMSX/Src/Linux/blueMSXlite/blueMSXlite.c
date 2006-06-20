@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-20 07:37:19 $
+** $Date: 2006-06-20 23:47:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,103 +126,6 @@ int createX11Window(const char *title, int width, int height, int bitDepth)
   return 1;
 }
 
-static void updateVideoRender(Video* video, Properties* properties) {
-    videoSetDeInterlace(video, properties->video.deInterlace);
-
-    switch (properties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(video, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(video, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(video, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(video, VIDEO_AMBER);
-        break;
-    }
-
-    switch (properties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(video, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(video, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(video, VIDEO_PAL_HQ2X);
-		break;
-    }
-}
-
-
-void archUpdateEmuDisplayConfig() 
-{
-    videoSetColors(video, properties->video.saturation, properties->video.brightness, properties->video.contrast, properties->video.gamma);
-    videoSetScanLines(video, properties->video.scanlinesEnable, properties->video.scanlinesPct);
-    videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
-    videoSetDeInterlace(video, properties->video.deInterlace);
-
-    switch (properties->video.monType) {
-    case P_VIDEO_COLOR:
-        videoSetColorMode(video, VIDEO_COLOR);
-        break;
-    case P_VIDEO_BW:
-        videoSetColorMode(video, VIDEO_BLACKWHITE);
-        break;
-    case P_VIDEO_GREEN:
-        videoSetColorMode(video, VIDEO_GREEN);
-        break;
-    case P_VIDEO_AMBER:
-        videoSetColorMode(video, VIDEO_AMBER);
-        break;
-    }
-
-    switch (properties->video.palEmu) {
-    case P_VIDEO_PALNONE:
-        videoSetPalMode(video, VIDEO_PAL_FAST);
-        break;
-    case P_VIDEO_PALMON:
-        videoSetPalMode(video, VIDEO_PAL_MONITOR);
-        break;
-    case P_VIDEO_PALYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP);
-        break;
-    case P_VIDEO_PALNYC:
-        videoSetPalMode(video, VIDEO_PAL_SHARP_NOISE);
-        break;
-    case P_VIDEO_PALCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR);
-        break;
-    case P_VIDEO_PALNCOMP:
-        videoSetPalMode(video, VIDEO_PAL_BLUR_NOISE);
-        break;
-	case P_VIDEO_PALSCALE2X:
-		videoSetPalMode(video, VIDEO_PAL_SCALE2X);
-		break;
-	case P_VIDEO_PALHQ2X:
-		videoSetPalMode(video, VIDEO_PAL_HQ2X);
-		break;
-    }
-}
-
 int  archUpdateEmuDisplay(int syncMode) 
 {
 #ifdef LINUX_TEST
@@ -340,7 +243,7 @@ int main(int argc, char **argv)
     mixer = mixerCreate();
     
     emulatorInit(properties, mixer);
-    actionInit(properties, mixer);
+    actionInit(video, properties, mixer);
     langInit();
     tapeSetReadOnly(properties->cassette.readOnly);
     
@@ -367,8 +270,7 @@ int main(int argc, char **argv)
     mixerSetMasterVolume(mixer, properties->sound.masterVolume);
     mixerEnableMaster(mixer, properties->sound.masterEnable);
 
-    updateVideoRender(video, properties);
-    archUpdateEmuDisplayConfig();
+    videoUpdateAll(video, properties);
 
     mediaDbSetDefaultRomType(properties->cartridge.defaultType);
 

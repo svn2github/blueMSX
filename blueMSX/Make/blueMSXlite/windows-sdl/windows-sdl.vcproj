@@ -209,6 +209,12 @@
 				RelativePath="..\..\..\Src\Sdl\SdlPrinter.c">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Sdl\SdlShortcuts.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Sdl\SdlShortcuts.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Sdl\SdlSound.c">
 			</File>
 			<File

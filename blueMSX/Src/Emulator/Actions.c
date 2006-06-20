@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-20 23:47:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,6 +57,7 @@
 
 static struct {
     Properties* properties;
+    Video* video;
     Mixer* mixer;
     int mouseLock;
 } state;
@@ -190,11 +191,12 @@ void actionSetQuickSaveSetDirectory(char* dir, char* prefix)
     strcpy(statePrefix, prefix);
 }
 
-void actionInit(Properties* properties, Mixer* mixer)
+void actionInit(Video* video, Properties* properties, Mixer* mixer)
 {
     memset(&state, 0, sizeof(state));
 
     state.properties = properties;
+    state.video      = video;
     state.mixer      = mixer;
 }
 
@@ -225,31 +227,37 @@ void actionToggleFdcTiming() {
 
 void actionToggleHorizontalStretch() {
     state.properties->video.horizontalStretch = !state.properties->video.horizontalStretch;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionToggleVerticalStretch() {
     state.properties->video.verticalStretch = !state.properties->video.verticalStretch;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionToggleScanlinesEnable() {
     state.properties->video.scanlinesEnable = !state.properties->video.scanlinesEnable;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionToggleDeinterlaceEnable() {
     state.properties->video.deInterlace = !state.properties->video.deInterlace;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionToggleBlendFrameEnable() {
     state.properties->video.blendFrames = !state.properties->video.blendFrames;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionToggleRfModulatorEnable() {
     state.properties->video.colorSaturationEnable = !state.properties->video.colorSaturationEnable;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
@@ -953,41 +961,49 @@ void actionVideoEnableMon3(int value) {
 
 void actionVideoSetGamma(int value) {
     state.properties->video.gamma = 50 + value;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetBrightness(int value) {
     state.properties->video.brightness = 50 + value;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetContrast(int value) {
     state.properties->video.contrast = 50 + value;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetSaturation(int value) {
     state.properties->video.saturation = 50 + value;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetScanlines(int value) {
     state.properties->video.scanlinesPct = 100 - value;
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetRfModulation(int value) {
     state.properties->video.colorSaturationWidth = (int)ceil((5 - 1) * value / 100.0);
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetColorMode(int value) {
     state.properties->video.monType = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetFilter(int value) {
     state.properties->video.palEmu = (int)ceil((P_VIDEO_PALCOUNT - 1) * value / 100.0);
+    videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
