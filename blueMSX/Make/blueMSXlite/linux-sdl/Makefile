@@ -37,7 +37,7 @@ ECHO  = @echo
 CFLAGS   = -g -w -O2 -DLSB_FIRST -DNO_ASM -DNO_HIRES_TIMERS
 CPPFLAGS = -g -DNO_ASM
 LDFLAGS  = 
-LIBS     =  -lSDL -lz
+LIBS     =  -lSDL -lz -lGL
 TARGET   = blueMSXlite
 
 SRCS        = $(SOURCE_FILES)
@@ -68,7 +68,7 @@ INCLUDE += -I$(ROOT_DIR)/Src/Unzip
 INCLUDE += -I$(ROOT_DIR)/Src/Utils
 INCLUDE += -I$(ROOT_DIR)/Src/VideoChips
 INCLUDE += -I$(ROOT_DIR)/Src/VideoRender
-INCLUDE += -I$(ROOT_DIR)/Src/Sdl/blueMSXlite
+INCLUDE += -I$(ROOT_DIR)/Src/Sdl
 INCLUDE += -I$(ROOT_DIR)/Src/Z80
 
 vpath % $(ROOT_DIR)/Src/Arch
@@ -89,7 +89,7 @@ vpath % $(ROOT_DIR)/Src/Unzip
 vpath % $(ROOT_DIR)/Src/Utils
 vpath % $(ROOT_DIR)/Src/VideoChips
 vpath % $(ROOT_DIR)/Src/VideoRender
-vpath % $(ROOT_DIR)/Src/Sdl/blueMSXlite
+vpath % $(ROOT_DIR)/Src/Sdl
 vpath % $(ROOT_DIR)/Src/Z80
 
 #
@@ -97,7 +97,7 @@ vpath % $(ROOT_DIR)/Src/Z80
 #
 SOURCE_FILES  =
 
-SOURCE_FILES += blueMSXlite.c
+SOURCE_FILES += blueMSXlite.c   ### better rename file ###
 SOURCE_FILES += SdlPrinter.c
 SOURCE_FILES += SdlUart.c
 SOURCE_FILES += SdlDialog.c
