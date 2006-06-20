@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-16 22:52:10 $
+** $Date: 2006-06-20 00:21:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 
 #define SAMPLERATE        44100
 #define BITSPERSAMPLE     16
-#define BUFFER_SIZE       10000
+#define BUFFER_SIZE       40000
 
 #define str2ul(s) ((UInt32)s[0]<<0|(UInt32)s[1]<<8|(UInt32)s[2]<<16|(UInt32)s[3]<<24)
 
