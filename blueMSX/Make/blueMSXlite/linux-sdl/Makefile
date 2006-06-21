@@ -97,7 +97,7 @@ vpath % $(ROOT_DIR)/Src/Z80
 #
 SOURCE_FILES  =
 
-SOURCE_FILES += blueMSXlite.c   ### better rename file ###
+SOURCE_FILES += bluemsxlite.c   ### better rename file ###
 SOURCE_FILES += SdlPrinter.c
 SOURCE_FILES += SdlUart.c
 SOURCE_FILES += SdlDialog.c
