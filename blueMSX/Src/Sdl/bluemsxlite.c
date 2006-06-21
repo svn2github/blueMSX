@@ -202,6 +202,7 @@ int updateEmuDisplay()
 
         glEnable(GL_TEXTURE_2D);
 	    glBindTexture(GL_TEXTURE_2D, textureId);
+
 	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
         if (bitDepth == 16) {

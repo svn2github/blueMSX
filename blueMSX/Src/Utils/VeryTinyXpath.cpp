@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/VeryTinyXpath.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-18 07:55:10 $
+** $Date: 2006-06-21 21:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,10 +32,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#ifdef _WIN32
-#include <vector>
-#else
+#ifdef __APPLE__
 #include <vector.h>
+#else
+#include <vector>
 #endif
 
 struct VtXpath {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-19 18:53:36 $
+** $Date: 2006-06-21 21:04:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,7 +50,7 @@ struct MsxAsciiLaser {
 #define RADIUS     5
 #define DELAY      1
 #define HOLD       16
-#define AIMADJUST  (-24)
+#define AIMADJUST  0
 #define TRESHOLD   128
 
 static UInt8 read(MsxAsciiLaser* joystick) {
