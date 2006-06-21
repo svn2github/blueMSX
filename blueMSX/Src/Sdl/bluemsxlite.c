@@ -44,7 +44,7 @@ static Video* video;
 static Mixer* mixer;
 static Shortcuts* shortcuts;
 
-static int dpyUpdateEvent = 0;
+static int pendingDisplayEvents = 0;
 static void* dpyUpdateAckEvent = NULL;
 
 static SDL_Surface *surface;
@@ -94,13 +94,14 @@ void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
 {
     unsigned texW = roundUpPow2(width);
 	unsigned texH = roundUpPow2(height);
-    int flags = SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF | (fullscreen ? SDL_FULLSCREEN : 0);
+
+    int flags = SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	// try default bpp
 	surface = SDL_SetVideoMode(width, height, 0, flags);
-    
+
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -116,7 +117,7 @@ void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	if (bitDepth == 16) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texW, texH, 0,
@@ -156,9 +157,100 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
 }
 
 
+int updateEmuDisplay() 
+{
+    FrameBuffer* frameBuffer;
+    int bytesPerPixel = bitDepth / 8;
+    char* dpyData  = displayData;
+    int borderWidth;
+
+    frameBuffer = frameBufferFlipViewFrame(1);
+    if (frameBuffer == NULL) {
+        frameBuffer = frameBufferGetWhiteNoiseFrame();
+    }
+
+    borderWidth = 320 - frameBuffer->maxWidth;
+
+#ifdef ENABLE_OPENGL
+    if (properties->video.driver != P_VIDEO_DRVGDI) {
+        GLfloat coordX = texCoordX;
+        GLfloat coordY = texCoordY;
+
+        if (properties->video.horizontalStretch) {
+            coordX = texCoordX * (WIDTH - 2 * borderWidth) / WIDTH;
+            borderWidth = 0;
+        }
+
+        videoRender(video, frameBuffer, bitDepth, 2,
+                    dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
+
+        if (borderWidth > 0) {
+            int h = HEIGHT;
+            while (h--) {
+                memset(dpyData, 0, borderWidth * bytesPerPixel);
+                memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+                dpyData += displayPitch;
+            }
+        }
+
+        glEnable(GL_TEXTURE_2D);
+	    glBindTexture(GL_TEXTURE_2D, textureId);
+	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+        if (bitDepth == 16) {
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
+	    } 
+        else {
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		                    GL_RGBA, GL_UNSIGNED_BYTE, dpyData);
+	    }
+
+        glBegin(GL_QUADS);
+	    glTexCoord2f(0,      coordY); glVertex2i(0,     HEIGHT);
+	    glTexCoord2f(coordX, coordY); glVertex2i(WIDTH, HEIGHT);
+	    glTexCoord2f(coordX, 0     ); glVertex2i(WIDTH, 0     );
+	    glTexCoord2f(0,      0     ); glVertex2i(0,     0     );
+	    glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+
+	    SDL_GL_SwapBuffers();
+
+        return 0;
+    }
+#endif
+    videoRender(video, frameBuffer, bitDepth, 2, 
+                dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
+
+    if (borderWidth > 0) {
+        int h = HEIGHT;
+        while (h--) {
+            memset(dpyData, 0, borderWidth * bytesPerPixel);
+            memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+            dpyData += displayPitch;
+        }
+    }
+
+
+    if (SDL_MUSTLOCK(surface) && SDL_LockSurface(surface) < 0) {
+        return 0;
+    }
+    SDL_UpdateRect(surface, 0, 0, WIDTH, HEIGHT);
+    if (SDL_MUSTLOCK(surface)) SDL_UnlockSurface(surface);
+
+    return 0; 
+}
+
 int  archUpdateEmuDisplay(int syncMode) 
 {
     SDL_Event event;
+
+    if (pendingDisplayEvents > 1) {
+        return 1;
+    }
+
+    pendingDisplayEvents++;
 
     event.type = SDL_USEREVENT;
     event.user.code = EVENT_UPDATE_DISPLAY;
@@ -172,72 +264,6 @@ int  archUpdateEmuDisplay(int syncMode)
     return 1;
 }
 
-
-int updateEmuDisplay() 
-{
-    FrameBuffer* frameBuffer;
-    int bytesPerPixel = bitDepth / 8;
-    char* dpyData  = displayData;
-	int pitch = displayPitch;
-    int borderWidth;
-
-    frameBuffer = frameBufferGetViewFrame();
-    if (frameBuffer == NULL) {
-        frameBuffer = frameBufferGetWhiteNoiseFrame();
-    }
-
-    borderWidth = 320 - frameBuffer->maxWidth;
-
-    videoRender(video, frameBuffer, bitDepth, 2, 
-                dpyData + borderWidth * bytesPerPixel, 
-                0, pitch, -1);
-
-    if (borderWidth > 0) {
-        int h = HEIGHT;
-        while (h--) {
-            memset(dpyData, 0, borderWidth * bytesPerPixel);
-            memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
-            dpyData += pitch;
-        }
-    }
-
-#ifdef ENABLE_OPENGL
-    if (properties->video.driver != P_VIDEO_DRVGDI) {
-	    glEnable(GL_TEXTURE_2D);
-	    glBindTexture(GL_TEXTURE_2D, textureId);
-	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-        if (bitDepth == 16) {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
-		                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
-	    } 
-        else {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
-		                    GL_RGBA, GL_UNSIGNED_BYTE, displayData);
-	    }
-
-        glBegin(GL_QUADS);
-	    glTexCoord2f(0,         texCoordY); glVertex2i(0,     HEIGHT);
-	    glTexCoord2f(texCoordX, texCoordY); glVertex2i(WIDTH, HEIGHT);
-	    glTexCoord2f(texCoordX, 0        ); glVertex2i(WIDTH, 0     );
-	    glTexCoord2f(0,         0        ); glVertex2i(0,     0     );
-	    glEnd();
-
-        glDisable(GL_TEXTURE_2D);
-
-	    SDL_GL_SwapBuffers();
-
-        return 0;
-    }
-#endif
-	if (SDL_MUSTLOCK(surface) && SDL_LockSurface(surface) < 0) {
-        return 0;
-    }
-    SDL_UpdateRect(surface, 0, 0, WIDTH, HEIGHT);
-    if (SDL_MUSTLOCK(surface)) SDL_UnlockSurface(surface);
-
-    return 0; 
-}
 
 void setDefaultPaths(const char* rootDir)
 {   
@@ -282,6 +308,7 @@ static void handleEvent(SDL_Event* event)
         case EVENT_UPDATE_DISPLAY:
             updateEmuDisplay();
             archEventSet(dpyUpdateAckEvent);
+            pendingDisplayEvents--;
             break;
         }
         break;

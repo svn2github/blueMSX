@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Linux/blueMSXlite/blueMSXlite.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-21 08:23:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -148,7 +148,7 @@ int updateEmuDisplay()
     int borderWidth;
     int dstOffset;
 
-    frameBuffer = frameBufferGetViewFrame();
+    frameBuffer = frameBufferFlipViewFrame(0);
     if (frameBuffer == NULL) {
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }

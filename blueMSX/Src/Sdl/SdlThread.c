@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlThread.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-19 18:53:36 $
+** $Date: 2006-06-21 08:23:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,11 +31,10 @@
 #include "SDL/SDL.h"
 #include <stdlib.h>
 
-
-
 static int threadEntry(void* data) 
 {
     void (*entryPoint)() = data;
+
     entryPoint();
     
     return 0;
