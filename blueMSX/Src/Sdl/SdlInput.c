@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlInput.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-21 08:35:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -329,10 +329,10 @@ void keyboardUpdate()
         return;
     }
 
-    kbdModifiers = (keyBuf[SDLK_LSHIFT] << 0) | (keyBuf[SDLK_RSHIFT] << 1) | 
-                   (keyBuf[SDLK_LCTRL]  << 2) | (keyBuf[SDLK_RCTRL]  << 3) | 
-                   (keyBuf[SDLK_LALT]   << 4) | (keyBuf[SDLK_RALT]   << 5) | 
-                   (keyBuf[SDLK_LSUPER] << 6) | (keyBuf[SDLK_RSUPER] << 7);
+    kbdModifiers = ((keyBuf[SDLK_LSHIFT] ? 1 : 0) << 0) | ((keyBuf[SDLK_RSHIFT] ? 1 : 0) << 1) | 
+                   ((keyBuf[SDLK_LCTRL]  ? 1 : 0) << 2) | ((keyBuf[SDLK_RCTRL]  ? 1 : 0) << 3) | 
+                   ((keyBuf[SDLK_LALT]   ? 1 : 0) << 4) | ((keyBuf[SDLK_RALT]   ? 1 : 0) << 5) | 
+                   ((keyBuf[SDLK_LSUPER] ? 1 : 0) << 6) | ((keyBuf[SDLK_RSUPER] ? 1 : 0) << 7);
 
     if (kbdModifiers &&
             (keyBuf[SDLK_F6] | keyBuf[SDLK_F7]  | keyBuf[SDLK_F8]  | keyBuf[SDLK_F9]  | 

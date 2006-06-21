@@ -61,6 +61,7 @@ static GLuint textureId;
 #define HEIGHT 480
 
 #define EVENT_UPDATE_DISPLAY 2
+#define EVENT_UPDATE_WINDOW  3
 
 void createSdlSurface(int width, int height, int bitDepth, int fullscreen)
 {
@@ -132,8 +133,14 @@ void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
 
 int createSdlWindow(const char *title, int width, int height, int bitDepth)
 {
-    int fullscreen = 0;
+    int fullscreen = properties->video.size == P_VIDEO_SIZEFULLSCREEN;
     
+    if (fullscreen) {
+        width = properties->video.fullscreen.width;
+        height = properties->video.fullscreen.height;
+        bitDepth = properties->video.fullscreen.bitDepth;
+    }
+
     surface = NULL;
 
 #ifdef ENABLE_OPENGL
@@ -264,6 +271,17 @@ int  archUpdateEmuDisplay(int syncMode)
     return 1;
 }
 
+void archUpdateWindow() 
+{
+    SDL_Event event;
+
+    event.type = SDL_USEREVENT;
+    event.user.code = EVENT_UPDATE_WINDOW;
+    event.user.data1 = NULL;
+    event.user.data2 = NULL;
+    SDL_PushEvent(&event);
+}
+
 
 void setDefaultPaths(const char* rootDir)
 {   
@@ -309,6 +327,11 @@ static void handleEvent(SDL_Event* event)
             updateEmuDisplay();
             archEventSet(dpyUpdateAckEvent);
             pendingDisplayEvents--;
+            break;
+        case EVENT_UPDATE_WINDOW:
+            if (!createSdlWindow("blueMSXlite", WIDTH, HEIGHT, bitDepth)) {
+                exit(0);
+            }
             break;
         }
         break;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlShortcuts.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-21 08:35:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,14 +109,14 @@ static int stringToHotkey(const char* name)
 
 static int stringToMod(const char* name)
 {
-    if (strcmp(name, "right shift")       == 0) return 1 << 0;
-    if (strcmp(name, "left shift")        == 0) return 1 << 1;
-    if (strcmp(name, "right ctrl")        == 0) return 1 << 2;
-    if (strcmp(name, "left ctrl")         == 0) return 1 << 3;
-    if (strcmp(name, "right alt")         == 0) return 1 << 4;
-    if (strcmp(name, "left alt")          == 0) return 1 << 5;
-    if (strcmp(name, "left windows key")  == 0) return 1 << 6;
-    if (strcmp(name, "right windows key") == 0) return 1 << 7;
+    if (strcmp(name, "left shift")        == 0) return 1 << 0;
+    if (strcmp(name, "right shift")       == 0) return 1 << 1;
+    if (strcmp(name, "left ctrl")         == 0) return 1 << 2;
+    if (strcmp(name, "right ctrl")        == 0) return 1 << 3;
+    if (strcmp(name, "left alt")          == 0) return 1 << 4;
+    if (strcmp(name, "right alt")         == 0) return 1 << 5;
+    if (strcmp(name, "right windows key") == 0) return 1 << 6;
+    if (strcmp(name, "left windows key")  == 0) return 1 << 7;
 
     return 0;
 }
