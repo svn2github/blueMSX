@@ -159,7 +159,8 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
 
     //Set the window caption
     SDL_WM_SetCaption( title, NULL );
-
+    SDL_ShowCursor(SDL_DISABLE);
+    
     return 1;
 }
 
