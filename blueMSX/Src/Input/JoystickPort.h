@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-11 19:02:48 $
+** $Date: 2006-06-22 23:51:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,9 @@ typedef void (*JoystickPortUpdateHandler)(void*, int, JoystickPortType);
 
 void joystickPortSetType(int port, JoystickPortType type);
 JoystickPortType joystickPortGetType(int port);
+
+JoystickPortType joystickPortNameToType(int port, char* name, int translate);
+char* joystickPortTypeToName(int port, JoystickPortType type, int translate);
 
 void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref);
 void joystickPortUpdateHandlerUnregister();

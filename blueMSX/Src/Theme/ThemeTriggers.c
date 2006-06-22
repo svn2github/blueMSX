@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-22 23:51:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -593,11 +593,11 @@ int themeTriggerVideoRfModulation() {
 }
 
 int themeTriggerVideoColorMode() {
-    return propGetGlobalProperties()->video.monType * 100 / (P_VIDEO_MONCOUNT - 1);
+    return propGetGlobalProperties()->video.monitorColor * 100 / (P_VIDEO_MONCOUNT - 1);
 }
 
 int themeTriggerVideoFilter() {
-    return propGetGlobalProperties()->video.palEmu * 100 / (P_VIDEO_PALCOUNT - 1);
+    return propGetGlobalProperties()->video.monitorType * 100 / (P_VIDEO_PALCOUNT - 1);
 }
 
 int themeTriggerVideoEnableMon1() {
@@ -625,51 +625,51 @@ int themeTriggerVideoPresentMon3() {
 }
 
 int themeTriggerVideoIsMonitorAmber() {
-    return propGetGlobalProperties()->video.monType == P_VIDEO_AMBER;
+    return propGetGlobalProperties()->video.monitorColor == P_VIDEO_AMBER;
 }
 
 int themeTriggerVideoIsMonitorGreen() {
-    return propGetGlobalProperties()->video.monType == P_VIDEO_GREEN;
+    return propGetGlobalProperties()->video.monitorColor == P_VIDEO_GREEN;
 }
 
 int themeTriggerVideoIsMonitorWhite() {
-    return propGetGlobalProperties()->video.monType == P_VIDEO_BW;
+    return propGetGlobalProperties()->video.monitorColor == P_VIDEO_BW;
 }
 
 int themeTriggerVideoIsMonitorColor() {
-    return propGetGlobalProperties()->video.monType == P_VIDEO_COLOR;
+    return propGetGlobalProperties()->video.monitorColor == P_VIDEO_COLOR;
 }
 
 int themeTriggerVideoIsMonitorHq2x() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALHQ2X;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALHQ2X;
 }
 
 int themeTriggerVideoIsMonitorScale2x() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALSCALE2X;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALSCALE2X;
 }
 
 int themeTriggerVideoIsMonitorCompositeNoise() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNCOMP;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALNCOMP;
 }
 
 int themeTriggerVideoIsMonitorComposite() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALCOMP;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALCOMP;
 }
 
 int themeTriggerVideoIsMonitorYcNoise() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNYC;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALNYC;
 }
 
 int themeTriggerVideoIsMonitorYc() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALYC;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALYC;
 }
 
 int themeTriggerVideoIsMonitorMonitor() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALMON;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALMON;
 }
 
 int themeTriggerVideoIsMonitorNone() {
-    return propGetGlobalProperties()->video.palEmu == P_VIDEO_PALNONE;
+    return propGetGlobalProperties()->video.monitorType == P_VIDEO_PALNONE;
 }
 
 

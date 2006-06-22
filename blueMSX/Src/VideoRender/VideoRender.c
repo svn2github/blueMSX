@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-06-20 23:47:33 $
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-22 23:51:18 $
+** $Date: 2006-06-22 23:51:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2029,7 +2029,7 @@ void videoUpdateAll(Video* video, Properties* properties)
     videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
     videoSetDeInterlace(video, properties->video.deInterlace);
 
-    switch (properties->video.monType) {
+    switch (properties->video.monitorColor) {
     case P_VIDEO_COLOR:
         videoSetColorMode(video, VIDEO_COLOR);
         break;
@@ -2044,7 +2044,7 @@ void videoUpdateAll(Video* video, Properties* properties)
         break;
     }
 
-    switch (properties->video.palEmu) {
+    switch (properties->video.monitorType) {
     case P_VIDEO_PALNONE:
         videoSetPalMode(video, VIDEO_PAL_FAST);
         break;

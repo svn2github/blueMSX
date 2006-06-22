@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-22 23:51:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -332,7 +332,7 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     
     sprintf(langBuffer, "%s", langMenuVideoChipAutodetect());
-    AppendMenu(hMenu, MF_STRING | (count > 1 ? (pProperties->video.chipAutodetect ? MFS_CHECKED : 0) : MF_GRAYED), ID_VIDEO_AUTODETECT, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (count > 1 ? (pProperties->video.detectActiveMonitor ? MFS_CHECKED : 0) : MF_GRAYED), ID_VIDEO_AUTODETECT, langBuffer);
 
     return hMenu;
 }
@@ -651,13 +651,13 @@ static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts)
     setMenuColor(hMenu);
 
     sprintf(langBuffer, "%s      \t%hs", langMenuZoomNormal(), shortcutsToString(shortcuts->windowSizeSmall));
-    AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEX1 ? MFS_CHECKED : 0), ID_SIZE_NORMAL, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (pProperties->video.windowSize == P_VIDEO_SIZEX1 ? MFS_CHECKED : 0), ID_SIZE_NORMAL, langBuffer);
 
     sprintf(langBuffer, "%s      \t%hs", langMenuZoomDouble(), shortcutsToString(shortcuts->windowSizeNormal));
-    AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEX2 ? MFS_CHECKED : 0), ID_SIZE_X2, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (pProperties->video.windowSize == P_VIDEO_SIZEX2 ? MFS_CHECKED : 0), ID_SIZE_X2, langBuffer);
 
     sprintf(langBuffer, "%s      \t%hs", langMenuZoomFullscreen(), shortcutsToString(shortcuts->windowSizeFullscreen));
-    AppendMenu(hMenu, MF_STRING | (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN ? MFS_CHECKED : 0), ID_SIZE_FULLSCREEN, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN ? MFS_CHECKED : 0), ID_SIZE_FULLSCREEN, langBuffer);
 
     return hMenu;
 }
@@ -1371,8 +1371,8 @@ int menuCommand(Properties* pProperties, int command)
 
     switch (command) {
     case ID_VIDEO_AUTODETECT:
-        pProperties->video.chipAutodetect = !pProperties->video.chipAutodetect;
-        boardSetVideoAutodetect(pProperties->video.chipAutodetect);
+        pProperties->video.detectActiveMonitor = !pProperties->video.detectActiveMonitor;
+        boardSetVideoAutodetect(pProperties->video.detectActiveMonitor);
         return 0;
     case ID_FILE_PTRSCR:                        actionScreenCapture();          return 0;
     case ID_FILE_SAVE:                      actionSaveState();              return 0;

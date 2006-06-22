@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-20 16:53:49 $
+** $Date: 2006-06-22 23:51:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -230,3 +230,13 @@ char* langDbgDevRtc()               { return "RTC"; }
 char* langDbgDevTrPause()           { return "TR Pause"; }
 char* langDbgDevAy8910()            { return "AY8910 PSG"; }
 char* langDbgDevScc()               { return "SCC"; }
+
+
+char* langEnumControlsJoyNone()             { return "None"; }
+char* langEnumControlsJoyTetrisDongle()     { return "Tetris 2 Dongle"; }
+char* langEnumControlsJoyMagicKeyDongle()   { return "MagicKey Dongle"; }
+char* langEnumControlsJoyMouse()            { return "Mouse"; }
+char* langEnumControlsJoy2Button()          { return "2-button Joystick"; }
+char* langEnumControlsJoyGunStick()         { return "Gun Stick"; }
+char* langEnumControlsJoyAsciiLaser()       { return "ASCII Plus-X Terminator Laser"; }
+char* langEnumControlsJoyColeco()           { return "ColecoVision Joystick"; }

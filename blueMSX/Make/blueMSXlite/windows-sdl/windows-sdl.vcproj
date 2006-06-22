@@ -74,7 +74,7 @@
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
 				AdditionalIncludeDirectories="..\..\..\Src\Bios;..\..\..\Src\Board;..\..\..\Src\Utils;..\..\..\Src\Emulator;..\..\..\Src\Common;..\..\..\Src\IoDevice;..\..\..\Src\SoundChips;..\..\..\Src\Unzip;..\..\..\Src\VideoChips;..\..\..\Src\VideoRender;..\..\..\Src\Z80;..\..\..\Src\Language;..\..\..\Src\Memory;..\..\..\Src\TinyXML;..\..\..\Src\Arch;..\..\..\Src\Media;..\..\..\Src\Debugger;..\..\..\Src\Input"
-				PreprocessorDefinitions="OLD_Y8950;LSB_FIRST;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;WINDOWS_HOST;NO_HIRES_TIMERS"
+				PreprocessorDefinitions="OLD_Y8950;LSB_FIRST;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;WINDOWS_HOST;NO_HIRES_TIMERS;USE_SDL"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

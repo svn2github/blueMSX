@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.142 $
+** $Revision: 1.143 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-22 23:51:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,7 +171,7 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize)
     int w;
     int h;
 
-    if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         noMove = 1;
         noSize = 1;
     }
@@ -220,7 +220,7 @@ void saveDialogPos(HWND hwnd, int dialogID)
     RECT r;
     RECT r1;
 
-    if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         GetWindowRect(hwnd, &r);
         GetWindowRect(GetParent(hwnd), &r1);
         pProperties->settings.windowPos[dialogID].left   = r.left   - r1.left;
@@ -1131,7 +1131,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
         pProperties->video.fullscreen.width != oldProp.video.fullscreen.width ||
         pProperties->video.fullscreen.height != oldProp.video.fullscreen.height ||
         pProperties->video.fullscreen.bitDepth != oldProp.video.fullscreen.bitDepth ||
-        pProperties->video.size != oldProp.video.size ||
+        pProperties->video.windowSize != oldProp.video.windowSize ||
         pProperties->video.horizontalStretch != oldProp.video.horizontalStretch ||
         pProperties->video.verticalStretch != oldProp.video.verticalStretch ||
         strcmp(pProperties->settings.themeName, oldProp.settings.themeName))
@@ -1158,7 +1158,6 @@ void archShowPropertiesDialog(PropPage  startPane) {
     /* Update sound only if changed, Must restart if changed */
     if (oldProp.sound.bufSize              != pProperties->sound.bufSize ||
         oldProp.sound.driver               != pProperties->sound.driver  ||
-        oldProp.sound.frequency            != pProperties->sound.frequency ||
         oldProp.sound.chip.enableY8950     != pProperties->sound.chip.enableY8950 ||
         oldProp.sound.chip.enableYM2413    != pProperties->sound.chip.enableYM2413 ||
         oldProp.sound.chip.enableMoonsound != pProperties->sound.chip.enableMoonsound ||
@@ -1276,7 +1275,7 @@ void updateMenu(int show) {
     int doDelay = show;
     int enableSpecial = 1;
 
-    if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         show = 1;
     }
 
@@ -1304,7 +1303,7 @@ void updateMenu(int show) {
 
     emulatorResume();
 
-    if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         mouseEmuActivate(!show);
     }
 }
@@ -1349,7 +1348,7 @@ static void checkClipRegion() {
 }
 
 static int getZoom() {
-    return pProperties->video.size == P_VIDEO_SIZEX1 ? 1 : 2;
+    return pProperties->video.windowSize == P_VIDEO_SIZEX1 ? 1 : 2;
 }
 
 
@@ -1384,7 +1383,7 @@ void themeSet(char* themeName, int forceMatch) {
     strcpy(pProperties->settings.themeName, themeName);
     strcpy(pProperties->settings.themeName, st.themeList[st.themeIndex]->name);
 
-    switch (pProperties->video.size) {
+    switch (pProperties->video.windowSize) {
     case P_VIDEO_SIZEX1:
         st.themePageActive = themeGetCurrentPage(st.themeList[st.themeIndex]->little);
         break;
@@ -1410,10 +1409,10 @@ void themeSet(char* themeName, int forceMatch) {
         menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
                     st.themePageActive->menu.textColor, 
                     st.themePageActive->menu.x, st.themePageActive->menu.y,
-                    pProperties->video.size == P_VIDEO_SIZEFULLSCREEN ? ddm->width : st.themePageActive->menu.width, 32);
+                    pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN ? ddm->width : st.themePageActive->menu.width, 32);
     }
 
-    if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         x = st.X;
         y = st.Y;
         w = st.themePageActive->width + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
@@ -1446,7 +1445,7 @@ void themeSet(char* themeName, int forceMatch) {
         st.hrgn = NULL;
     }
 
-    if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         st.rgnEnable = -1;
         setClipRegion(0);
     } 
@@ -1537,9 +1536,9 @@ void archUpdateWindow() {
         st.bmBitsGDI = NULL;
     }
 
-    if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         if (pProperties->video.driver == P_VIDEO_DRVGDI) {
-            pProperties->video.size = P_VIDEO_SIZEX2;
+            pProperties->video.windowSize = P_VIDEO_SIZEX2;
         }
         else {
             int rv;
@@ -1551,13 +1550,13 @@ void archUpdateWindow() {
             if (rv != DXE_OK) {
                 MessageBox(NULL, langErrorEnterFullscreen(), langErrorTitle(), MB_OK);
                 DirectXExitFullscreenMode();
-                pProperties->video.size = P_VIDEO_SIZEX2;
+                pProperties->video.windowSize = P_VIDEO_SIZEX2;
             }
         }
     }
 
-    if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
-        st.normalViedoSize = pProperties->video.size;
+    if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
+        st.normalViedoSize = pProperties->video.windowSize;
 
         if (GetWindowLong(st.hwnd, GWL_STYLE) & WS_POPUP) {
             mouseEmuActivate(1);
@@ -1589,7 +1588,7 @@ void archUpdateWindow() {
     {
         RECT r = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
         RECT d = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
-        if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+        if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
             DxDisplayMode* ddm = DirectDrawGetDisplayMode();
             r.right  = ddm->width;
             r.bottom = ddm->height;
@@ -1911,8 +1910,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case SC_MAXIMIZE:
             vdpSetDisplayEnable(1);
             st.minimized = 0;
-            if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
-                pProperties->video.size = P_VIDEO_SIZEFULLSCREEN;
+            if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
+                pProperties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
                 archUpdateWindow();
             }
             return 0;
@@ -1931,8 +1930,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_NCLBUTTONDBLCLK:
         if (wParam == HTCAPTION) {
-            if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
-                pProperties->video.size = P_VIDEO_SIZEFULLSCREEN;
+            if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
+                pProperties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
                 archUpdateWindow();
             }
             return 0;
@@ -1971,7 +1970,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 //KillTimer(st.hwnd, TIMER_MENUUPDATE);
                 emulatorResume();
                 updateMenu(0);
-                if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+                if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
                     PostMessage(hwnd, WM_LBUTTONDOWN, 0, 0);
                     PostMessage(hwnd, WM_LBUTTONUP, 0, 0);
                 }
@@ -1981,7 +1980,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_MOVE:
-        if (!st.enteringFullscreen && pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+        if (!st.enteringFullscreen && pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
             RECT r;
             GetWindowRect(hwnd, &r);
             st.X = r.left;
@@ -2051,7 +2050,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             themePageMouseMove(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
             checkClipRegion();
         }
-        if (pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+        if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
             if (HIWORD(lParam) < 2) {
                 if (!st.showMenu) {
                     updateMenu(1);
@@ -2080,7 +2079,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     ScreenToClient(hwnd, &pt);
                     themePageMouseButtonDown(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
                 }
-                if (st.showMenu && pProperties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+                if (st.showMenu && pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
                     updateMenu(0);
                 }
             }
@@ -2245,7 +2244,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 HDC hMemDC = CreateCompatibleDC(hdc);
                 HBITMAP hBitmap = (HBITMAP)SelectObject(hMemDC, st.hBitmap);
 
-                 if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+                 if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
 					// the theme is only drawn when not in fullscreen mode
 					themePageDraw(st.themePageActive, hMemDC, NULL);
                     BitBlt(hdc, 0, 0, st.themePageActive->width, st.themePageActive->height, hMemDC, 0, 0, SRCCOPY);
@@ -2272,7 +2271,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_DESTROY:         
         emulatorStop();
         toolUnLoadAll();
-        if (pProperties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+        if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
             RECT r;
             
             GetWindowRect(hwnd, &r);
@@ -2690,8 +2689,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     sprintf(pProperties->keyboard.configFile, keyboardGetCurrentConfig());
     
     mouseEmuInit(st.emuHwnd, 1);
-    joystickPortSetType(0, pProperties->joy1.type);
-    joystickPortSetType(1, pProperties->joy2.type);
+    joystickPortSetType(0, pProperties->joy1.typeId);
+    joystickPortSetType(1, pProperties->joy2.typeId);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);
@@ -2754,7 +2753,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     boardSetY8950Enable(pProperties->sound.chip.enableY8950);
     boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
     boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);
-    boardSetVideoAutodetect(pProperties->video.chipAutodetect);
+    boardSetVideoAutodetect(pProperties->video.detectActiveMonitor);
 
     updateMenu(0);
 
@@ -2802,8 +2801,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     videoInCleanup(pProperties);
 
-    pProperties->joy1.type = joystickPortGetType(0);
-    pProperties->joy2.type = joystickPortGetType(1);
+    pProperties->joy1.typeId = joystickPortGetType(0);
+    pProperties->joy2.typeId = joystickPortGetType(1);
     propDestroy(pProperties);
 
     archSoundDestroy();

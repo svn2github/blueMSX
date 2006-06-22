@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-20 23:47:32 $
+** $Date: 2006-06-22 23:51:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -414,22 +414,22 @@ void actionDiskQuickChange() {
 }
 
 void actionWindowSizeSmall() {
-    if (state.properties->video.size != P_VIDEO_SIZEX1) {
-        state.properties->video.size = P_VIDEO_SIZEX1;
+    if (state.properties->video.windowSize != P_VIDEO_SIZEX1) {
+        state.properties->video.windowSize = P_VIDEO_SIZEX1;
         archUpdateWindow();
     }
 }
 
 void actionWindowSizeNormal() {
-    if (state.properties->video.size != P_VIDEO_SIZEX2) {
-        state.properties->video.size = P_VIDEO_SIZEX2;
+    if (state.properties->video.windowSize != P_VIDEO_SIZEX2) {
+        state.properties->video.windowSize = P_VIDEO_SIZEX2;
         archUpdateWindow();
     }
 }
 
 void actionWindowSizeFullscreen() {
-    if (state.properties->video.size != P_VIDEO_SIZEFULLSCREEN) {
-        state.properties->video.size = P_VIDEO_SIZEFULLSCREEN;
+    if (state.properties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
+        state.properties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
         archUpdateWindow();
     }
 }
@@ -443,7 +443,7 @@ void actionMaxSpeedToggle() {
 }
 
 void actionFullscreenToggle() {
-    if (state.properties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (state.properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         if (archGetWindowedSize() == P_VIDEO_SIZEX2) {
             actionWindowSizeNormal();
         }
@@ -996,13 +996,13 @@ void actionVideoSetRfModulation(int value) {
 }
 
 void actionVideoSetColorMode(int value) {
-    state.properties->video.monType = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
+    state.properties->video.monitorColor = (int)ceil((P_VIDEO_MONCOUNT - 1) * value / 100.0);
     videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
 
 void actionVideoSetFilter(int value) {
-    state.properties->video.palEmu = (int)ceil((P_VIDEO_PALCOUNT - 1) * value / 100.0);
+    state.properties->video.monitorType = (int)ceil((P_VIDEO_PALCOUNT - 1) * value / 100.0);
     videoUpdateAll(state.video, state.properties);
     archUpdateEmuDisplayConfig();
 }
@@ -1164,7 +1164,7 @@ void actionSetMouseCapture(int value) {
 }
 
 void actionSetFullscreen(int value) {
-    if (value == 0 && state.properties->video.size == P_VIDEO_SIZEFULLSCREEN) {
+    if (value == 0 && state.properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
         if (archGetWindowedSize() == P_VIDEO_SIZEX2) {
             actionWindowSizeNormal();
         }
@@ -1172,7 +1172,7 @@ void actionSetFullscreen(int value) {
             actionWindowSizeSmall();
         }
     }
-    else if (state.properties->video.size != P_VIDEO_SIZEFULLSCREEN) {
+    else if (state.properties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         actionWindowSizeFullscreen();
     }
 }

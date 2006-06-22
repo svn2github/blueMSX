@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-06-16 01:19:19 $
+** $Date: 2006-06-22 23:51:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1128,8 +1128,8 @@ static char* strPt(int value) {
 
 static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     static Properties* pProperties;
-    static int palEmu;
-    static int monType;
+    static int monitorType;
+    static int monitorColor;
     static int oldScanlinesEnable;
     static int oldScanlinesPct;
     static int oldColorGhostingEnable;
@@ -1191,12 +1191,12 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         setButtonCheck(hDlg, IDC_MONBLENDFRAMES, pProperties->video.blendFrames, 1);
         
         /* Init dropdown lists */
-        initDropList(hDlg, IDC_MONTYPE, pVideoMon, pProperties->video.monType);
-        initDropList(hDlg, IDC_PALEMU, pVideoPalEmu, pProperties->video.palEmu);
-        initDropList(hDlg, IDC_MONSIZE, pVideoMonSize, pProperties->video.size);
+        initDropList(hDlg, IDC_MONTYPE, pVideoMon, pProperties->video.monitorColor);
+        initDropList(hDlg, IDC_PALEMU, pVideoPalEmu, pProperties->video.monitorType);
+        initDropList(hDlg, IDC_MONSIZE, pVideoMonSize, pProperties->video.windowSize);
 
-        palEmu             = pProperties->video.palEmu;
-        monType            = pProperties->video.monType;
+        monitorType             = pProperties->video.monitorType;
+        monitorColor            = pProperties->video.monitorColor;
 
         oldScanlinesEnable     = pProperties->video.scanlinesEnable;
         oldScanlinesPct        = pProperties->video.scanlinesPct;
@@ -1252,9 +1252,9 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SendMessage(GetDlgItem(hDlg, IDC_MONGAMMASLIDE), TBM_SETPOS,   1, (LPARAM)gamma);
         SendMessage(GetDlgItem(hDlg, IDC_MONGAMMAVALUE), WM_SETTEXT, 0, (LPARAM)strDec(gamma));
 
-        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), monType == P_VIDEO_COLOR);
-        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONVALUE), monType == P_VIDEO_COLOR);
-        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONTEXT), monType == P_VIDEO_COLOR);
+        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), monitorColor == P_VIDEO_COLOR);
+        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONVALUE), monitorColor == P_VIDEO_COLOR);
+        EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONTEXT), monitorColor == P_VIDEO_COLOR);
 
         return FALSE;
 
@@ -1281,14 +1281,14 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             break;
 
         case IDC_PALEMU:
-            palEmu = getDropListIndex(hDlg, IDC_PALEMU, pVideoPalEmu);
-            videoSetPalMode(theVideo, palEmu);
+            monitorType = getDropListIndex(hDlg, IDC_PALEMU, pVideoPalEmu);
+            videoSetPalMode(theVideo, monitorType);
             updateEmuWindow();
             break;
 
         case IDC_MONTYPE:
-            monType = getDropListIndex(hDlg, IDC_MONTYPE, pVideoMon);
-            switch (monType) {
+            monitorColor = getDropListIndex(hDlg, IDC_MONTYPE, pVideoMon);
+            switch (monitorColor) {
             case P_VIDEO_COLOR:
                 videoSetColorMode(theVideo, VIDEO_COLOR);
                 break;
@@ -1302,9 +1302,9 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 videoSetColorMode(theVideo, VIDEO_AMBER);
                 break;
             }
-            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), monType == P_VIDEO_COLOR);
-            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONVALUE), monType == P_VIDEO_COLOR);
-            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONTEXT), monType == P_VIDEO_COLOR);
+            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONSLIDE), monitorColor == P_VIDEO_COLOR);
+            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONVALUE), monitorColor == P_VIDEO_COLOR);
+            EnableWindow(GetDlgItem(hDlg, IDC_MONSATURATIONTEXT), monitorColor == P_VIDEO_COLOR);
             updateEmuWindow();
             break;
 
@@ -1397,10 +1397,10 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
 
             videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
-            videoSetPalMode(theVideo, pProperties->video.palEmu);
+            videoSetPalMode(theVideo, pProperties->video.monitorType);
             videoSetColors(theVideo, pProperties->video.saturation, pProperties->video.brightness, 
                            pProperties->video.contrast, pProperties->video.gamma);
-            switch (pProperties->video.monType) {
+            switch (pProperties->video.monitorColor) {
             case P_VIDEO_COLOR:
                 videoSetColorMode(theVideo, VIDEO_COLOR);
                 break;
@@ -1428,8 +1428,8 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             return FALSE;
         }
 
-        pProperties->video.monType           = monType;
-        pProperties->video.palEmu            = palEmu;
+        pProperties->video.monitorColor      = monitorColor;
+        pProperties->video.monitorType       = monitorType;
         pProperties->video.contrast          = contrast;
         pProperties->video.brightness        = brightness;
         pProperties->video.saturation        = saturation;

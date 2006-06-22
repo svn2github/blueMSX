@@ -63,7 +63,7 @@ static GLuint textureId;
 #define EVENT_UPDATE_DISPLAY 2
 #define EVENT_UPDATE_WINDOW  3
 
-void createSdlSurface(int width, int height, int bitDepth, int fullscreen)
+void createSdlSurface(int width, int height, int fullscreen)
 {
     int flags = SDL_SWSURFACE | (fullscreen ? SDL_FULLSCREEN : 0);
     int bytepp;
@@ -91,7 +91,7 @@ static int roundUpPow2(int val) {
 }
 
 #ifdef ENABLE_OPENGL
-void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
+void createSdlGlSurface(int width, int height, int fullscreen)
 {
     unsigned texW = roundUpPow2(width);
 	unsigned texH = roundUpPow2(height);
@@ -100,8 +100,11 @@ void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	// try default bpp
-	surface = SDL_SetVideoMode(width, height, 0, flags);
+	surface = SDL_SetVideoMode(width, height, fullscreen ? bitDepth : 0, flags);
+
+    if (surface != NULL) {
+        bitDepth = surface->format->BytesPerPixel * 8;
+    }
 
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -131,10 +134,12 @@ void createSdlGlSurface(int width, int height, int bitDepth, int fullscreen)
 }
 #endif
 
-int createSdlWindow(const char *title, int width, int height, int bitDepth)
+int createSdlWindow(const char *title, int width, int height, int depth)
 {
-    int fullscreen = properties->video.size == P_VIDEO_SIZEFULLSCREEN;
+    int fullscreen = properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN;
     
+    bitDepth = depth;
+
     if (fullscreen) {
         width = properties->video.fullscreen.width;
         height = properties->video.fullscreen.height;
@@ -145,7 +150,7 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
 
 #ifdef ENABLE_OPENGL
     if (properties->video.driver != P_VIDEO_DRVGDI) {
-        createSdlGlSurface(width, height, bitDepth, fullscreen);
+        createSdlGlSurface(width, height, fullscreen);
         if (surface == NULL) {
             properties->video.driver = P_VIDEO_DRVGDI;
         }
@@ -154,7 +159,7 @@ int createSdlWindow(const char *title, int width, int height, int bitDepth)
     videoSetRgbMode(video, properties->video.driver != P_VIDEO_DRVGDI);
 #endif
     if (surface == NULL) {
-        createSdlSurface(width, height, bitDepth, fullscreen);
+        createSdlSurface(width, height, fullscreen);
     }
 
     //Set the window caption
@@ -172,7 +177,7 @@ int updateEmuDisplay()
     char* dpyData  = displayData;
     int borderWidth;
 
-    frameBuffer = frameBufferFlipViewFrame(1);
+    frameBuffer = frameBufferFlipViewFrame(properties->emulation.syncMethod == P_EMU_SYNCTOVBLANKASYNC);
     if (frameBuffer == NULL) {
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
@@ -428,8 +433,8 @@ int main(int argc, char **argv)
     
     langSetLanguage(properties->language);
     
-    joystickPortSetType(0, properties->joy1.type);
-    joystickPortSetType(1, properties->joy2.type);
+    joystickPortSetType(0, properties->joy1.typeId);
+    joystickPortSetType(1, properties->joy2.typeId);
 
     printerIoSetType(properties->ports.Lpt.type, properties->ports.Lpt.fileName);
     printerIoSetType(properties->ports.Lpt.type, properties->ports.Lpt.fileName);
@@ -481,7 +486,7 @@ int main(int argc, char **argv)
     boardSetY8950Enable(properties->sound.chip.enableY8950);
     boardSetYm2413Enable(properties->sound.chip.enableYM2413);
     boardSetMoonsoundEnable(properties->sound.chip.enableMoonsound);
-    boardSetVideoAutodetect(properties->video.chipAutodetect);
+    boardSetVideoAutodetect(properties->video.detectActiveMonitor);
 
     i = emuTryStartWithArguments(properties, szLine);
     if (i < 0) {

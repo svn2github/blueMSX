@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-12 15:39:15 $
+** $Date: 2006-06-22 23:51:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "JoystickPort.h"
 #include "ArchInput.h"
+#include "Language.h"
 #include <stdlib.h>
 
 
@@ -84,4 +85,62 @@ void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref)
 void joystickPortUpdateHandlerUnregister()
 {
     updateHandler = NULL;
+}
+
+char* joystickPortTypeToName(int port, JoystickPortType type, int translate)
+{
+    if (translate) {
+        switch(inputType[port]) {
+        default:
+        case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
+        case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
+        case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
+        case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
+        case JOYSTICK_PORT_GUNSTICK:        return langEnumControlsJoyGunStick();
+        case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
+        case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
+        case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
+        }
+
+        return langTextUnknown();
+    }
+
+    switch(inputType[port]) {
+    default:
+    case JOYSTICK_PORT_NONE:            return "none";
+    case JOYSTICK_PORT_JOYSTICK:        return "joystick";
+    case JOYSTICK_PORT_MOUSE:           return "mouse";
+    case JOYSTICK_PORT_TETRIS2DONGLE:   return "tetris2 dongle";
+    case JOYSTICK_PORT_GUNSTICK:        return "gunstick";
+    case JOYSTICK_PORT_COLECOJOYSTICK:  return "coleco joystick";
+    case JOYSTICK_PORT_MAGICKEYDONGLE:  return "magic key dongle";
+    case JOYSTICK_PORT_ASCIILASER:      return "ascii laser";
+    }
+
+    return "unknown";
+}
+
+JoystickPortType joystickPortNameToType(int port, char* name, int translate)
+{
+    if (translate) {
+        if (0 == strcmp(name, langEnumControlsJoy2Button())) return JOYSTICK_PORT_JOYSTICK;
+        if (0 == strcmp(name, langEnumControlsJoyMouse())) return JOYSTICK_PORT_MOUSE;
+        if (0 == strcmp(name, langEnumControlsJoyTetrisDongle())) return JOYSTICK_PORT_TETRIS2DONGLE;
+        if (0 == strcmp(name, langEnumControlsJoyGunStick())) return JOYSTICK_PORT_GUNSTICK;
+        if (0 == strcmp(name, langEnumControlsJoyColeco())) return JOYSTICK_PORT_COLECOJOYSTICK;
+        if (0 == strcmp(name, langEnumControlsJoyMagicKeyDongle())) return JOYSTICK_PORT_MAGICKEYDONGLE;
+        if (0 == strcmp(name, langEnumControlsJoyAsciiLaser())) return JOYSTICK_PORT_ASCIILASER;
+
+        return JOYSTICK_PORT_NONE;
+    }
+
+    if (0 == strcmp(name, "joystick")) return JOYSTICK_PORT_JOYSTICK;
+    if (0 == strcmp(name, "mouse")) return JOYSTICK_PORT_MOUSE;
+    if (0 == strcmp(name, "tetris2 dongle")) return JOYSTICK_PORT_TETRIS2DONGLE;
+    if (0 == strcmp(name, "gunstick")) return JOYSTICK_PORT_GUNSTICK;
+    if (0 == strcmp(name, "coleco joystick")) return JOYSTICK_PORT_COLECOJOYSTICK;
+    if (0 == strcmp(name, "magic key dongle")) return JOYSTICK_PORT_MAGICKEYDONGLE;
+    if (0 == strcmp(name, "ascii laser")) return JOYSTICK_PORT_ASCIILASER;
+
+    return JOYSTICK_PORT_NONE;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-06-22 23:51:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,8 +80,6 @@ typedef enum { P_VIDEO_DRVDIRECTX_VIDEO = 0, P_VIDEO_DRVDIRECTX, P_VIDEO_DRVGDI 
 typedef enum { P_VIDEO_FSKIP0 = 0, P_VIDEO_FSKIP1, P_VIDEO_FSKIP2, P_VIDEO_FSKIP3, P_VIDEO_FSKIP4, P_VIDEO_FSKIP5 } PropVideoFrameSkip;
 typedef enum { P_VIDEO_FREQ_AUTO, P_VIDEO_FREQ_50HZ, P_VIDEO_FREQ_60HZ } PropVideoFrequency;
 typedef enum { P_SOUND_DRVNONE = 0, P_SOUND_DRVWMM, P_SOUND_DRVDIRECTX } PropSoundDriver;
-typedef enum { P_SOUND_FREQ11 = 0, P_SOUND_FREQ22, P_SOUND_FREQ44 } PropSoundFrequency;
-typedef enum { P_SOUND_SYNCFAST = 0, P_SOUND_SYNCQADJUST, P_SOUND_SYNCEADJUST } PropSoundSync;
 typedef enum { P_KBD_EUROPEAN = 0, P_KBD_RUSSIAN, P_KBD_JAPANESE, P_KBD_KOREAN } PropKeyboardLanguage;
 
 
@@ -104,9 +102,9 @@ typedef struct {
 } EmulationProperties;
 
 typedef struct {
-    int monType;
-    int palEmu;
-    int size;
+    int monitorColor;
+    int monitorType;
+    int windowSize;
     int driver;
     int frameSkip;
     struct {
@@ -127,7 +125,7 @@ typedef struct {
     int colorSaturationEnable;
     int colorSaturationWidth;
     int gamma;
-    int chipAutodetect;
+    int detectActiveMonitor;
 } VideoProperties;
 
 typedef struct {
@@ -153,9 +151,7 @@ typedef struct {
 
 typedef struct {
     int  driver;
-    int  frequency;
     int  bufSize;
-    int  syncMethod;
     SoundChip chip;
     int  stereo;
     int  masterVolume;
@@ -185,7 +181,8 @@ typedef struct {
 } SoundProperties;
 
 typedef struct {
-    int  type;
+    char type[64];
+    int  typeId;
     int  autofire;
 }  JoystickProperties;
 
@@ -255,6 +252,8 @@ typedef struct {
 #define DLG_MAX_ID 32
 
 typedef struct {
+    char language[64];
+
     int portable;
     int disableScreensaver;
     int showStatePreview;
@@ -269,8 +268,6 @@ typedef struct {
 } Settings;
 
 typedef struct Properties {
-    char filename[512]; // Name of the properties file
-
     EmulationProperties emulation;
     VideoProperties     video;
     VideoInProperties   videoIn;
