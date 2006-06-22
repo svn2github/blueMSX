@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-06-20 00:21:39 $
+** $Date: 2006-06-22 06:14:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -351,6 +351,10 @@ void mixerSetWriteCallback(Mixer* mixer, MixerWriteCallback callback, void* ref,
     mixer->fragmentSize = fragmentSize;
     mixer->writeCallback = callback;
     mixer->writeRef = ref;
+
+    if (mixer->fragmentSize <= 0) {
+        mixer->fragmentSize = 512;
+    }
 }
 
 Int32 mixerRegisterChannel(Mixer* mixer, Int32 audioType, Int32 stereo, MixerUpdateCallback callback, void* ref)
