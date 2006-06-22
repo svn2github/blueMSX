@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-06-18 07:55:10 $
+** $Date: 2006-06-22 06:02:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,7 @@ static LanguageStrings langChineseSimplified;
 static LanguageStrings langChineseTraditional;
 
 static LanguageStrings* ls;
+static EmuLanguageType  lType = EMU_LANG_UNKNOWN;
 
 typedef struct {
     EmuLanguageType type;
@@ -158,6 +159,10 @@ void langInit() {
     ls = &langEnglish;
 }
 
+EmuLanguageType langGetLanguage() {
+    return lType;
+}
+
 int langSetLanguage(EmuLanguageType languageType) {
     switch (languageType) {
     case EMU_LANG_ENGLISH:
@@ -208,6 +213,8 @@ int langSetLanguage(EmuLanguageType languageType) {
     default:
         return 0;
     }
+    
+    lType = languageType;
 
     return 1;
 }
@@ -904,3 +911,11 @@ char* langDbgDevRtc() { return ls->dbgDevRtc; }
 char* langDbgDevTrPause() { return ls->dbgDevTrPause; }
 char* langDbgDevAy8910() { return ls->dbgDevAy8910; }
 char* langDbgDevScc() { return ls->dbgDevScc; }
+
+
+//----------------------
+// Debug type lines
+// Note: Can only be translated to european languages
+//----------------------
+char* langAboutScrollThanksTo() { return ls->aboutScrollThanksTo; }
+char* langAboutScrollAndYou() { return ls->aboutScrollAndYou; }

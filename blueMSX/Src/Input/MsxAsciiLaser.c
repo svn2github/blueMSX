@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-06-21 21:04:57 $
+** $Date: 2006-06-22 06:02:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,8 +49,8 @@ struct MsxAsciiLaser {
 
 #define RADIUS     5
 #define DELAY      1
-#define HOLD       16
-#define AIMADJUST  0
+#define HOLD       9
+#define AIMADJUST  (-3)
 #define TRESHOLD   128
 
 static UInt8 read(MsxAsciiLaser* joystick) {
@@ -65,15 +65,12 @@ static UInt8 read(MsxAsciiLaser* joystick) {
     my = my * joystick->scanlines / 0x10000;
     
     frameBuffer = frameBufferGetDrawFrame(my);
-
     if (frameBuffer != NULL) {
         int scanline = frameBufferGetScanline();
         int myLow  = MAX(scanline - DELAY - HOLD - RADIUS, my + AIMADJUST - RADIUS);
         int myHigh = MIN(scanline - DELAY, my + AIMADJUST + RADIUS + HOLD);
-//        int myLow  = MAX(scanline - 28, my - 28);
-//        int myHigh = MIN(scanline, my);
         int y;
-        
+
         joystick->scanlines = frameBuffer->lines;
 
         myLow  = MAX(myLow, 0);

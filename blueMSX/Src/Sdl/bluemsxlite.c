@@ -183,6 +183,28 @@ int updateEmuDisplay()
         GLfloat coordX = texCoordX;
         GLfloat coordY = texCoordY;
 
+#if 0
+        int y;
+
+        videoRender(video, frameBuffer, bitDepth, 2,
+                    dpyData + borderWidth * bytesPerPixel + 
+                    (HEIGHT - 1) * displayPitch, 0, -1 * displayPitch, -1);
+
+        if (borderWidth > 0) {
+            int h = HEIGHT;
+            while (h--) {
+                memset(dpyData, 0, borderWidth * bytesPerPixel);
+                memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+                dpyData += displayPitch;
+            }
+        }
+
+        glDrawPixels(WIDTH, HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, displayData);
+	    SDL_GL_SwapBuffers();
+
+        return 0;
+#endif
+
         if (properties->video.horizontalStretch) {
             coordX = texCoordX * (WIDTH - 2 * borderWidth) / WIDTH;
             borderWidth = 0;
@@ -201,6 +223,7 @@ int updateEmuDisplay()
         }
 
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_ASYNC_TEX_IMAGE_SGIX);
 	    glBindTexture(GL_TEXTURE_2D, textureId);
 
 	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

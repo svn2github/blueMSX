@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.28 $ + additions 2005/03/03
+** $Revision: 1.29 $ + additions 2005/03/03
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -732,6 +732,14 @@ void langInitKorean(LanguageStrings* ls)
     ls->dbgDevTrPause           = "TR Pause";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+    ls->aboutScrollThanksTo     = "Special thanks to: ";
+    ls->aboutScrollAndYou       = "and YOU !!!!";
 };
 
 #endif

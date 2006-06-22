@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,6 +52,7 @@ typedef enum {
 void langInit();
 
 int langSetLanguage(EmuLanguageType languageType);
+EmuLanguageType langGetLanguage();
 EmuLanguageType langFromName(char* name);
 const char* langToName(EmuLanguageType languageType);
 EmuLanguageType langGetType(int i);
@@ -748,6 +749,14 @@ char* langDbgDevRtc();
 char* langDbgDevTrPause();
 char* langDbgDevAy8910();
 char* langDbgDevScc();
+
+
+//----------------------
+// Debug type lines
+// Note: Can only be translated to european languages
+//----------------------
+char* langAboutScrollThanksTo();
+char* langAboutScrollAndYou();
 
 #endif
 

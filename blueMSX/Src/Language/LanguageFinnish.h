@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-19 20:51:20 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -733,6 +733,14 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dbgDevTrPause           = "tR Pause";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+   ls->aboutScrollThanksTo      = "Kiitoksen ansaitsevat : ";
+   ls->aboutScrollAndYou        = "sekä SINÄ !!!!";
 };
 
 #endif

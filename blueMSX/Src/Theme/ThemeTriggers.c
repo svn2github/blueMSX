@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,11 +54,17 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
 {
     static char text[4096];
     static int  len = 0;
+    static EmuLanguageType langType = EMU_LANG_UNKNOWN;
+
+    if (langType != langGetLanguage()) {
+        langType = langGetLanguage();
+        len = 0;
+    }
 
     if (len == 0) {
         sprintf(text, 
                 "                                 "
-                "Special thanks to: "
+                "%s"
                 "Albert Beevendorp,  "
                 "Rudolf Lechleitner,  "
                 "BouKiCHi,  "
@@ -98,8 +104,10 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Roger Filipe,  "
                 "Amer Dugmag,  "
                 "......          ......"
-                "and YOU !!!!"
-                "                                     ");
+                "%s"
+                "                                     ",
+                langAboutScrollThanksTo(),
+                langAboutScrollAndYou());
 
         len = strlen(text);
     }

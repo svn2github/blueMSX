@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -723,6 +723,14 @@ typedef struct {
     char* dbgDevTrPause;
     char* dbgDevAy8910;
     char* dbgDevScc;
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+    char* aboutScrollThanksTo;
+    char* aboutScrollAndYou;
 
 } LanguageStrings;
 

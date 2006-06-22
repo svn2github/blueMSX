@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-06-22 06:02:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -732,6 +732,14 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dbgDevTrPause           = "TR Pause";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+    ls->aboutScrollThanksTo     = "Special thanks to: ";
+    ls->aboutScrollAndYou       = "and YOU !!!!";
 };
 
 #endif
