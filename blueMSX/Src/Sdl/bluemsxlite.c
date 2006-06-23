@@ -249,6 +249,8 @@ int updateEmuDisplay(int updateAll)
             }
         }
 
+        updateAll |= properties->video.driver == P_VIDEO_DRVDIRECTX;
+
         for (y = 0; y < height; y += linesPerBlock) {
             if (updateAll || isLineDirty(y, linesPerBlock)) {
                 if (!isDirty) {

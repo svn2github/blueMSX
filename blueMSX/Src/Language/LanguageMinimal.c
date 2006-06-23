@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-22 23:51:18 $
+** $Date: 2006-06-23 19:20:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -216,7 +216,7 @@ char* langDbgDevSviFdc()            { return "SVI FDC"; }
 char* langDbgDevSviPrn()            { return "SVI Printer"; }
 char* langDbgDevSvi80Col()          { return "SVI 80 Column"; }
 char* langDbgDevPcm()               { return "PCM"; }
-char* langDbgDevMatsuchita()        { return "Matsuchita"; }
+char* langDbgDevMatsushita()        { return "Matsushita"; }
 char* langDbgDevS1985()             { return "S1985"; }
 char* langDbgDevCrtc6845()          { return "CRTC6845"; }
 char* langDbgDevTms9929A()          { return "TMS9929A"; }

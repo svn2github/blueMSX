@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-22 23:51:17 $
+** $Date: 2006-06-23 19:20:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,11 +76,11 @@ typedef enum { P_VDP_SYNCAUTO = 0, P_VDP_SYNC50HZ, P_VDP_SYNC60HZ } PropVdpSync;
 typedef enum { P_VIDEO_COLOR = 0, P_VIDEO_BW, P_VIDEO_GREEN, P_VIDEO_AMBER, P_VIDEO_MONCOUNT } PropVideoMon;
 typedef enum { P_VIDEO_PALNONE = 0, P_VIDEO_PALMON, P_VIDEO_PALYC, P_VIDEO_PALNYC, P_VIDEO_PALCOMP, P_VIDEO_PALNCOMP, P_VIDEO_PALSCALE2X, P_VIDEO_PALHQ2X, P_VIDEO_PALCOUNT } PropVideoPalEmu;
 typedef enum { P_VIDEO_SIZEX1 = 0, P_VIDEO_SIZEX2, P_VIDEO_SIZEFULLSCREEN } PropVideoSize;
-typedef enum { P_VIDEO_DRVDIRECTX_VIDEO = 0, P_VIDEO_DRVDIRECTX, P_VIDEO_DRVGDI } PropVideoDriver;
 typedef enum { P_VIDEO_FSKIP0 = 0, P_VIDEO_FSKIP1, P_VIDEO_FSKIP2, P_VIDEO_FSKIP3, P_VIDEO_FSKIP4, P_VIDEO_FSKIP5 } PropVideoFrameSkip;
 typedef enum { P_VIDEO_FREQ_AUTO, P_VIDEO_FREQ_50HZ, P_VIDEO_FREQ_60HZ } PropVideoFrequency;
 typedef enum { P_SOUND_DRVNONE = 0, P_SOUND_DRVWMM, P_SOUND_DRVDIRECTX } PropSoundDriver;
 typedef enum { P_KBD_EUROPEAN = 0, P_KBD_RUSSIAN, P_KBD_JAPANESE, P_KBD_KOREAN } PropKeyboardLanguage;
+typedef enum { P_VIDEO_DRVDIRECTX_VIDEO = 0, P_VIDEO_DRVDIRECTX, P_VIDEO_DRVGDI } PropVideoDriver;
 
 
 #define MAX_HISTORY 30

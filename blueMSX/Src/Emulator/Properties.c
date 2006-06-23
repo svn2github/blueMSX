@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-06-22 23:51:17 $
+** $Date: 2006-06-23 19:20:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,7 +128,7 @@ ValueNamePair WindowSizePair[] = {
 
 #ifdef USE_SDL
 ValueNamePair VideoDriverPair[] = {
-    { P_VIDEO_DRVDIRECTX_VIDEO,    "sdlgl" },
+    { P_VIDEO_DRVDIRECTX_VIDEO,    "sdlgl opt" },
     { P_VIDEO_DRVDIRECTX,          "sdlgl" },
     { P_VIDEO_DRVGDI,              "sdl" },
     { -1,                           "" },
