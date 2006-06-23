@@ -50,7 +50,8 @@ static void* dpyUpdateAckEvent = NULL;
 static SDL_Surface *surface;
 static int   bitDepth;
 static int   zoom = 1;
-static char* displayData = NULL;
+static char* displayData[2] = { NULL, NULL };
+static int   curDisplayData = 0;
 static int   displayPitch = 0;
 #ifdef ENABLE_OPENGL
 static GLfloat texCoordX;
@@ -80,7 +81,8 @@ void createSdlSurface(int width, int height, int fullscreen)
     if (!surface) { bitDepth = 16; surface = SDL_SetVideoMode(width, height, bitDepth, flags); }
 
     if (surface != NULL) {
-        displayData = (char*)surface->pixels;
+        displayData[0] = (char*)surface->pixels;
+        curDisplayData = 0;
         displayPitch = surface->pitch;
     }
 }
@@ -113,7 +115,8 @@ void createSdlGlSurface(int width, int height, int fullscreen)
 	glOrtho(0, width, height, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 
-	displayData  = (char*)malloc(bitDepth / 8 * texW * texH);
+	displayData[0]  = (char*)calloc(1, bitDepth / 8 * texW * texH);
+	displayData[1]  = (char*)calloc(1, bitDepth / 8 * texW * texH);
 	displayPitch = width * bitDepth / 8;
 
 	texCoordX = (GLfloat)width  / texW;
@@ -126,11 +129,11 @@ void createSdlGlSurface(int width, int height, int fullscreen)
 
 	if (bitDepth == 16) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texW, texH, 0,
-			            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
+			            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData[0]);
 	} 
     else {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0,
-			            GL_RGBA, GL_UNSIGNED_BYTE, displayData);
+			            GL_RGBA, GL_UNSIGNED_BYTE, displayData[0]);
 	}
 }
 #endif
@@ -182,12 +185,36 @@ int createSdlWindow()
     return 1;
 }
 
+static int isLineDirty(int y, int lines) {
+    int width = zoom * WIDTH * bitDepth / 8 / sizeof(UInt32);
+
+    UInt32* d0 = (UInt32*)(displayData[0]) + width * y;
+    UInt32* d1 = (UInt32*)(displayData[1]) + width * y;
+    UInt32  cmp = 0;
+    UInt32  i = lines * width / 8;
+
+    while (i-- && !cmp) {
+        cmp |= d0[ 0] ^ d1[ 0];
+        cmp |= d0[ 1] ^ d1[ 1];
+        cmp |= d0[ 2] ^ d1[ 2];
+        cmp |= d0[ 3] ^ d1[ 3];
+        cmp |= d0[ 4] ^ d1[ 4];
+        cmp |= d0[ 5] ^ d1[ 5];
+        cmp |= d0[ 6] ^ d1[ 6];
+        cmp |= d0[ 7] ^ d1[ 7];
+        d0 += 8;
+        d1 += 8;
+    }
+    if (cmp) {
+        return 1;
+    }
+}
 
 int updateEmuDisplay() 
 {
     FrameBuffer* frameBuffer;
     int bytesPerPixel = bitDepth / 8;
-    char* dpyData  = displayData;
+    char* dpyData  = displayData[curDisplayData];
     int width  = zoom * WIDTH;
     int height = zoom * HEIGHT;
     int borderWidth;
@@ -201,30 +228,11 @@ int updateEmuDisplay()
 
 #ifdef ENABLE_OPENGL
     if (properties->video.driver != P_VIDEO_DRVGDI) {
+        const int linesPerBlock = 4;
         GLfloat coordX = texCoordX;
         GLfloat coordY = texCoordY;
-
-#if 0
-        int y;
-
-        videoRender(video, frameBuffer, bitDepth, zoom,
-                    dpyData + borderWidth * bytesPerPixel + 
-                    (height - 1) * displayPitch, 0, -1 * displayPitch, -1);
-
-        if (borderWidth > 0) {
-            int h = height;
-            while (h--) {
-                memset(dpyData, 0, borderWidth * bytesPerPixel);
-                memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
-                dpyData += displayPitch;
-            }
-        }
-
-        glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, displayData);
-	    SDL_GL_SwapBuffers();
-
-        return 0;
-#endif
+        int y; 
+        int isDirty = 0; 
 
         if (properties->video.horizontalStretch) {
             coordX = texCoordX * (width - 2 * borderWidth) / width;
@@ -243,35 +251,46 @@ int updateEmuDisplay()
             }
         }
 
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_ASYNC_TEX_IMAGE_SGIX);
-	    glBindTexture(GL_TEXTURE_2D, textureId);
+        for (y = 0; y < height; y += linesPerBlock) {
+            if (isLineDirty(y, linesPerBlock)) {
+                if (!isDirty) {
+                    glEnable(GL_TEXTURE_2D);
+                    glEnable(GL_ASYNC_TEX_IMAGE_SGIX);
+	                glBindTexture(GL_TEXTURE_2D, textureId);
 
-	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+                    isDirty = 1;
+                }
 
-        if (bitDepth == 16) {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
-		                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
-	    } 
-        else {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
-		                    GL_RGBA, GL_UNSIGNED_BYTE, dpyData);
-	    }
+                if (bitDepth == 16) {
+		            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, y, width, linesPerBlock,
+		                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData[curDisplayData] + y * displayPitch);
+	            } 
+                else {
+		            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, y, width, linesPerBlock,
+		                            GL_RGBA, GL_UNSIGNED_BYTE, displayData[curDisplayData] + y * displayPitch);
+	            }
+            }
+        }
 
-        glBegin(GL_QUADS);
-	    glTexCoord2f(0,      coordY); glVertex2i(0,     height);
-	    glTexCoord2f(coordX, coordY); glVertex2i(width, height);
-	    glTexCoord2f(coordX, 0     ); glVertex2i(width, 0     );
-	    glTexCoord2f(0,      0     ); glVertex2i(0,     0     );
-	    glEnd();
+        if (isDirty) {
+            glBegin(GL_QUADS);
+	        glTexCoord2f(0,      coordY); glVertex2i(0,     height);
+	        glTexCoord2f(coordX, coordY); glVertex2i(width, height);
+	        glTexCoord2f(coordX, 0     ); glVertex2i(width, 0     );
+	        glTexCoord2f(0,      0     ); glVertex2i(0,     0     );
+	        glEnd();
+            glDisable(GL_TEXTURE_2D);
+            
+	        SDL_GL_SwapBuffers();
+        }
 
-        glDisable(GL_TEXTURE_2D);
-
-	    SDL_GL_SwapBuffers();
+        curDisplayData ^= 1;
 
         return 0;
     }
 #endif
+
     videoRender(video, frameBuffer, bitDepth, zoom, 
                 dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
 

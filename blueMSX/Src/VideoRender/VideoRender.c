@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-06-22 23:51:18 $
-** $Date: 2006-06-22 23:51:18 $
+** $Date: 2006-06-23 03:33:36 $
+** $Date: 2006-06-23 03:33:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2371,7 +2371,7 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
             else copy_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16);
             break;
         case VIDEO_PAL_MONITOR:
-            if (zoom == 2) copyMonitorPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 1);
+            if (zoom == 2) copyMonitorPAL_2x2_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
             else           copyPAL_1x1_16(frame, pDst, dstPitch, pVideo->pRgbTable16, 0);
             break;
         case VIDEO_PAL_SHARP:
@@ -2426,7 +2426,7 @@ static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int z
             else           copy_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32);
             break;
         case VIDEO_PAL_MONITOR:
-            if (zoom == 2) copyMonitorPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 1);
+            if (zoom == 2) copyMonitorPAL_2x2_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
             else           copyPAL_1x1_32(frame, pDst, dstPitch, pVideo->pRgbTable32, 0);
             break;
         case VIDEO_PAL_SHARP:
