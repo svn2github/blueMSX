@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,7 @@ void langInitSwedish(LanguageStrings* ls)
     // Generic lines
     //----------------------
 
-    ls->textDevice              = "Device:";
+    ls->textDevice              = "Enhet:";
     ls->textFilename            = "Filenamn:";
     ls->textFile                = "Fil";
     ls->textNone                = "Ingen";
@@ -92,7 +92,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->menuCartInsertSpecial   = "Insert Special";
+    ls->menuCartInsertSpecial   = "Sätt in Special";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Externt RAM";
 
@@ -107,7 +107,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Sätt position";
     ls->menuCasRewind           = "Spola tillbaka";
 
-    ls->menuPrnFormfeed         = "Form Feed";
+    ls->menuPrnFormfeed         = "Pappersmatning";
 
     ls->menuZoomNormal          = "Normal storlek";
     ls->menuZoomDouble          = "Dubbel storlek";
@@ -268,7 +268,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Ut ";
     ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "All";                                // New in 2.5
+    ls->propSndMidiAll          = "Alla";                               // New in 2.5
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor typ:";
@@ -278,7 +278,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Korrekt horizontell vidd";
     ls->propMonVertStretch      = " Vertikal stretch";
     ls->propMonDeInterlace      = " De-interlace";
-    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
+    ls->propBlendFrames         = " Blanda efterföljande bilder";           // New in 2.5
     ls->propMonBrightness       = "Ljusstyrka:";
     ls->propMonContrast         = "Kontrast:";
     ls->propMonSaturation       = "Färgmättnad:";
@@ -388,10 +388,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumControlsJoyMouse    = "Mus";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 dosa";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey dosa";
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoy2Button = "2-knapps Styrspak";                   // New in 2.5
     ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision Styrspak";                // New in 2.5
 
 
     //----------------------
@@ -616,8 +616,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->romTypeS1985            = "S1985";
     ls->romTypeS1990            = "S1990";
     ls->romTypeTurborPause      = "Turbo-R Pause";
-    ls->romTypeF4deviceNormal   = "F4 Device Normal";
-    ls->romTypeF4deviceInvert   = "F4 Device Inverted";
+    ls->romTypeF4deviceNormal   = "F4 Enhet Normal";
+    ls->romTypeF4deviceInvert   = "F4 Enhet Inverted";
     ls->romTypeMsxMidi          = "MSX-MIDI";
     ls->romTypeTurborTimer      = "Turbo-R Timer";
     ls->romTypeKoei             = "Koei (SRAM)";
@@ -694,7 +694,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dbgDevRam               = "RAM";
     ls->dbgDevIdeBeer           = "Beer IDE";
     ls->dbgDevIdeGide           = "GIDE";
-    ls->dbgDevF4Device          = "F4 Device";
+    ls->dbgDevF4Device          = "F4 Enhet";
     ls->dbgDevFmpac             = "FMPAC";
     ls->dbgDevFmpak             = "FMPAK";
     ls->dbgDevKanji             = "Kanji";
@@ -718,7 +718,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dbgDevSviPrn            = "SVI Printer";
     ls->dbgDevSvi80Col          = "SVI 80 Column";
     ls->dbgDevPcm               = "PCM";
-    ls->dbgDevMatsuchita        = "Matsuchita";
+    ls->dbgDevMatsushita        = "Matsushita";
     ls->dbgDevS1985             = "S1985";
     ls->dbgDevCrtc6845          = "CRTC6845";
     ls->dbgDevTms9929A          = "TMS9929A";

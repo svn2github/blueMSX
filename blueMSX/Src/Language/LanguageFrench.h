@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -718,7 +718,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dbgDevSviPrn            = "SVI Printer";
     ls->dbgDevSvi80Col          = "SVI 80 Column";
     ls->dbgDevPcm               = "PCM";
-    ls->dbgDevMatsuchita        = "Matsuchita";
+    ls->dbgDevMatsushita        = "Matsushita";
     ls->dbgDevS1985             = "S1985";
     ls->dbgDevCrtc6845          = "CRTC6845";
     ls->dbgDevTms9929A          = "TMS9929A";

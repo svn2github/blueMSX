@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-22 06:02:58 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2004 Daniel Vik, NYYRIKKI
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -27,16 +27,33 @@
 **
 ******************************************************************************
 */
+
+
+// TEST: 10 COLOR,15+STRIG(1):GOTO10
+
+// R,G,B (MSX 512 colors, 0-7)
+// 7,0,0 is not enough
+// 0,4,0 is just enough
+// 0,0,6 is just enough
+// 7,3,5 is just enough
+
+// 31, 0,  0
+// 0,  17, 0
+// 0,  0,  26
+// 31, 13, 22
+
+// r * 15 + g * 26 + b * 17 >= 442
+
+
+
 #include "MsxAsciiLaser.h"
 #include "InputEvent.h"
 #include "ArchInput.h"
 #include "FrameBuffer.h"
 #include "Board.h"
 #include "VDP.h"
-
 #include <stdlib.h>
 
-// TEST: 10 COLOR,15+STRIG(1):GOTO10
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))

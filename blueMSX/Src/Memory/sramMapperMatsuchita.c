@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMatsuchita.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-23 19:09:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,7 +201,7 @@ int sramMapperMatsushitaCreate()
     rm = malloc(sizeof(SramMapperMatsushita));
 
     rm->deviceHandle = deviceManagerRegister(SRAM_MATSUCHITA, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevMatsuchita(), &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevMatsushita(), &dbgCallbacks, rm);
 
     memset(rm->sram, 0xff, 0x800);
     rm->address = 0;

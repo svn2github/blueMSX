@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->textFilename            = "文件名:";
     ls->textFile                = "文件";
     ls->textNone                = "无";
-    ls->textUnknown             = "Unknown";                            // New in 2.5
+    ls->textUnknown             = "未知";                            // New in 2.5
 
 
     //----------------------
@@ -51,7 +51,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - 警告";
     ls->warningDiscardChanges   = "要放弃修改吗？";
-    ls->warningOverwriteFile    = "Do you want to overwrite the file:"; // New in 2.5
+    ls->warningOverwriteFile    = "要覆盖原有文件吗:"; // New in 2.5
     ls->errorTitle              = "blueMSX - 错误";
     ls->errorEnterFullscreen    = "无法进入全屏模式。           \n";
     ls->errorDirectXFailed      = "无法创建 DirectX 对象。           \n改为使用GDI。\n请检查显卡设置。";
@@ -60,7 +60,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->errorNoCasInZip         = "无法在 zip 压缩包内找到 .cas 文件。";
     ls->errorNoHelp             = "无法找到 blueMSX 帮助文件。";
     ls->errorStartEmu           = "无法启动 MSX 模拟器。";
-    ls->errorPortableReadonly   = "Portable device is readonly";        // New in 2.5
+    ls->errorPortableReadonly   = "便携设备为只读";        // New in 2.5
 
 
     //----------------------
@@ -92,11 +92,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCartFMPac           = "FM-PAC 卡带";
     ls->menuCartPac             = "PAC 卡带";
     ls->menuCartHBI55           = "Sony HBI-55 卡带";
-    ls->menuCartInsertSpecial   = "Insert Special";                     // New in 2.5
+    ls->menuCartInsertSpecial   = "插入特殊";                     // New in 2.5
     ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
     ls->menuCartExternalRam     = "扩展内存";
 
-    ls->menuDiskInsertNew       = "Insert New Disk Image";              // New in 2.5
+    ls->menuDiskInsertNew       = "插入新的软盘映像";              // New in 2.5
     ls->menuDiskDirInsert       = "插入目录";
     ls->menuDiskAutoStart       = "插入后重置";
     ls->menuCartAutoReset       = "插入/移除后重置";
@@ -123,11 +123,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuPropsLanguage       = "语言";
     ls->menuPropsPorts          = "端口";
     
-    ls->menuVideoSource         = "Video Out Source";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "No Video Out Source Connected";      // New in 2.5
+    ls->menuVideoSource         = "视频输出源";                   // New in 2.5
+    ls->menuVideoSourceDefault  = "未连接视频输出源";      // New in 2.5
     ls->menuVideoChipAutodetect = "自动检测显示芯片";
-    ls->menuVideoInSource       = "Video In Source";                    // New in 2.5
-    ls->menuVideoInBitmap       = "Bitmap File";                        // New in 2.5
+    ls->menuVideoInSource       = "视频输入源";                    // New in 2.5
+    ls->menuVideoInBitmap       = "位图文件";                        // New in 2.5
 
     ls->menuHelpHelp            = "帮助主题";
     ls->menuHelpAbout           = "关于 blueMSX";
@@ -144,8 +144,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuFileScreenShot      = "截图";
     ls->menuFileExit            = "退出";
 
-    ls->menuFileHarddisk        = "Hard Disk";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "No Controllers Present";             // New in 2.5
+    ls->menuFileHarddisk        = "硬盘";                          // New in 2.5
+    ls->menuFileHarddiskNoPesent= "当前无控制器";             // New in 2.5
 
     ls->menuRunRun              = "运行";
     ls->menuRunPause            = "暂停";
@@ -158,9 +158,9 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "快捷键编辑工具";
     ls->menuToolsKeyboard       = "键盘编辑工具";
     ls->menuToolsMixer          = "混音器";
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
+    ls->menuToolsDebugger       = "调试工具";               // New in 2.5
+    ls->menuToolsTrainer        = "作弊工具";                // New in 2.5
+    ls->menuToolsTraceLogger    = "追踪记录工具";           // New in 2.5
 
     ls->menuFile                = "文件";
     ls->menuRun                 = "运行";
@@ -197,7 +197,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgInsertRom2           = "请在插槽 2 插入 ROM 卡带";
     ls->dlgInsertDiskA          = "请在驱动器 A 插入软盘映像";
     ls->dlgInsertDiskB          = "请在驱动器 B 插入软盘映像";
-    ls->dlgInsertHarddisk       = "Insert Hard Disk";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "请插入硬盘";                   // New in 2.5
     ls->dlgInsertCas            = "请插入磁带";
     ls->dlgRomType              = "Rom 类型:";
 
@@ -267,8 +267,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI 输入 ";
     ls->propSndMidiOutGB        = "MIDI 输出 ";
-    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "All";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI 声道:";                      // New in 2.5
+    ls->propSndMidiAll          = "全部";                                // New in 2.5
 
     ls->propMonMonGB            = "显示器 ";
     ls->propMonTypeText         = "显示器类型:";
@@ -278,7 +278,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 水平拉伸";
     ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonDeInterlace      = " 高画质除网格技术";
-    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
+    ls->propBlendFrames         = " 混合连续帧";           // New in 2.5
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "对比度:";
     ls->propMonSaturation       = "饱和度:";
@@ -308,7 +308,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propPortsLptText        = "端口:";
     ls->propPortsCom1Text       = "端口 1:";
     ls->propPortsNone           = "无";
-    ls->propPortsSimplCovox     = "SiMPL/Covox 数模转化器";
+    ls->propPortsSimplCovox     = "SiMPL/Covox 数模转换器";
     ls->propPortsFile           = "打印到文件";
     ls->propPortsComFile        = "发送到文件";
     ls->propPortsOpenLogFile    = "打开纪录文件";
@@ -322,7 +322,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSX 运行时关闭屏幕保护";
     ls->propDisableWinKeys       = " MSX 使用中周围的 Windows 按键无效"; 
     ls->propPriorityBoost       = " 提升 blueMSX 的优先级";
-    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";  // New in 2.5
+    ls->propScreenshotPng       = " 使用便携网络图像格式 (.png) 的屏幕截图";  // New in 2.5
     ls->propClearHistory         = "确认要清除历史文件？";
     ls->propOpenRomGB           = "打开 Rom 对话框 ";
     ls->propDefaultRomType      = "默认 Rom 类型:";
@@ -382,16 +382,16 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自动 (快速)";
     ls->enumEmuSyncNone         = "无";
     ls->enumEmuSyncVblank       = "同步于 PC 的垂直空白";
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "异步于 PC 的垂直空白";             // New in 2.5
 
     ls->enumControlsJoyNone     = "无";
     ls->enumControlsJoyMouse    = "鼠标";
     ls->enumControlsJoyTetris2Dongle = "俄罗斯方块 2 界面模组";
-    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey 界面模组";             // New in 2.5
+    ls->enumControlsJoy2Button = "2键操纵杆 ";                   // New in 2.5
+    ls->enumControlsJoyGunstick  = "光枪操纵杆";                         // New in 2.5
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      // New in 2.5
+    ls->enumControlsJoyColeco = "ColecoVision 操纵杆";                // New in 2.5
 
 
     //----------------------
@@ -550,7 +550,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutShowFiles       = "显示文件设定";
     ls->shortcutToggleSpriteEnable = "显示/隐藏活动块";
     ls->shortcutToggleFdcTiming = "启用/禁用软盘驱动器计时";
-    ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 跟踪";
+    ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 追踪";
 
 
     //----------------------
@@ -566,7 +566,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     // Rom type lines
     //----------------------
 
-    ls->romTypeStandard         = "Standard";
+    ls->romTypeStandard         = "标准";
     ls->romTypeMsxdos2          = "MSXDOS 2";
     ls->romTypeKonamiScc        = "Konami SCC";
     ls->romTypeKonami           = "Konami";
@@ -586,24 +586,24 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeSccPlus          = "SCC+";
     ls->romTypeSnatcher         = "The Snatcher";
     ls->romTypeSdSnatcher       = "SD Snatcher";
-    ls->romTypeSccMirrored      = "SCC mirrored";
-    ls->romTypeSccExtended      = "SCC extended";
+    ls->romTypeSccMirrored      = "SCC 反射";
+    ls->romTypeSccExtended      = "SCC 扩展";
     ls->romTypeFmpac            = "FMPAC (SRAM)";
     ls->romTypeFmpak            = "FMPAK";
     ls->romTypeKonamiGeneric    = "Konami Generic";
     ls->romTypeSuperPierrot     = "Super Pierrot";
-    ls->romTypeMirrored         = "Mirrored ROM";
-    ls->romTypeNormal           = "Normal ROM";
-    ls->romTypeDiskPatch        = "Normal + Disk Patch";
-    ls->romTypeCasPatch         = "Normal + Cassette Patch";
-    ls->romTypeTc8566afFdc      = "TC8566AF Disk Controller";
-    ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
-    ls->romTypeNationalFdc      = "National Disk Controller";
-    ls->romTypePhilipsFdc       = "Philips Disk Controller";
-    ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
-    ls->romTypeMappedRam        = "Mapped RAM";
-    ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
-    ls->romTypeNormalRam        = "Normal RAM";
+    ls->romTypeMirrored         = "反射 ROM";
+    ls->romTypeNormal           = "普通 ROM";
+    ls->romTypeDiskPatch        = "普通 + 磁盘补丁";
+    ls->romTypeCasPatch         = "普通 + 磁带补丁";
+    ls->romTypeTc8566afFdc      = "TC8566AF 磁盘控制器";
+    ls->romTypeMicrosolFdc      = "Microsol 磁盘控制器";
+    ls->romTypeNationalFdc      = "National 磁盘控制器";
+    ls->romTypePhilipsFdc       = "Philips 磁盘控制器";
+    ls->romTypeSvi738Fdc        = "SVI-738 磁盘控制器";
+    ls->romTypeMappedRam        = "映射内存";
+    ls->romTypeMirroredRam1k    = "1kB 反射内存";
+    ls->romTypeNormalRam        = "一般内存";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";
     ls->romTypeMatsushitaSram   = "Matsushita SRAM";
@@ -616,18 +616,18 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeS1985            = "S1985";
     ls->romTypeS1990            = "S1990";
     ls->romTypeTurborPause      = "Turbo-R Pause";
-    ls->romTypeF4deviceNormal   = "F4 Device Normal";
-    ls->romTypeF4deviceInvert   = "F4 Device Inverted";
+    ls->romTypeF4deviceNormal   = "F4 设备 - 普通";
+    ls->romTypeF4deviceInvert   = "F4 设备 - 反向";
     ls->romTypeMsxMidi          = "MSX-MIDI";
-    ls->romTypeTurborTimer      = "Turbo-R Timer";
+    ls->romTypeTurborTimer      = "Turbo-R 计时器";
     ls->romTypeKoei             = "Koei (SRAM)";
     ls->romTypeBasic            = "Basic ROM";
     ls->romTypeHalnote          = "Halnote";
     ls->romTypeLodeRunner       = "Lode Runner";
-    ls->romTypeNormal4000       = "Normal 4000h";
-    ls->romTypeNormalC000       = "Normal C000h";
-    ls->romTypeKonamiSynth      = "Konami Synthesizer";
-    ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
+    ls->romTypeNormal4000       = "普通 4000h";
+    ls->romTypeNormalC000       = "普通 C000h";
+    ls->romTypeKonamiSynth      = "Konami 合成器";
+    ls->romTypeKonamiKbdMast    = "Konami 键盘大师";
     ls->romTypeKonamiWordPro    = "Konami Word Pro";
     ls->romTypePac              = "PAC (SRAM)";
     ls->romTypeMegaRam          = "MegaRAM";
@@ -636,35 +636,35 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeMegaRam512       = "512kB MegaRAM";
     ls->romTypeMegaRam768       = "768kB MegaRAM";
     ls->romTypeMegaRam2mb       = "2MB MegaRAM";
-    ls->romTypeExtRam           = "External RAM";
-    ls->romTypeExtRam512        = "512kB External RAM";
-    ls->romTypeExtRam1mb        = "1MB External RAM";
-    ls->romTypeExtRam2mb        = "2MB External RAM";
-    ls->romTypeExtRam4mb        = "4MB External RAM";
-    ls->romTypeMsxMusic         = "MSX Music";
-    ls->romTypeMsxAudio         = "MSX Audio";
+    ls->romTypeExtRam           = "扩展内存";
+    ls->romTypeExtRam512        = "512kB 扩展内存";
+    ls->romTypeExtRam1mb        = "1MB 扩展内存";
+    ls->romTypeExtRam2mb        = "2MB 扩展内存";
+    ls->romTypeExtRam4mb        = "4MB 扩展内存";
+    ls->romTypeMsxMusic         = "MSX 音乐";
+    ls->romTypeMsxAudio         = "MSX 音频";
     ls->romTypeY8950            = "Y8950";
     ls->romTypeMoonsound        = "Moonsound";
-    ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
-    ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";
-    ls->romTypeSvi328Prn        = "SVI-328 Printer";
-    ls->romTypeSvi328Uart       = "SVI-328 Serial Port";
-    ls->romTypeSvi328col80      = "SVI-328 80 Column Card";
-    ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
-    ls->romTypeColecoCart       = "Coleco Cartridge";
-    ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
+    ls->romTypeSvi328Cart       = "SVI-328 卡带";
+    ls->romTypeSvi328Fdc        = "SVI-328 磁盘控制器";
+    ls->romTypeSvi328Prn        = "SVI-328 打印机";
+    ls->romTypeSvi328Uart       = "SVI-328 串行端口";
+    ls->romTypeSvi328col80      = "SVI-328 80 栏 卡片";
+    ls->romTypeSvi727col80      = "SVI-727 80 栏 卡片";
+    ls->romTypeColecoCart       = "Coleco 卡带";
+    ls->romTypeSg1000Cart       = "SG-1000 卡带";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
-    ls->romTypeMsxPrinter       = "MSX Printer";
-    ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
+    ls->romTypeMsxPrinter       = "MSX 打印机";
+    ls->romTypeTurborPcm        = "Turbo-R PCM 芯片";
     ls->romTypeGameReader       = "Sunrise GameReader";
     ls->romTypeSunriseIde       = "Sunrise IDE";
     ls->romTypeBeerIde          = "Beer IDE";
     ls->romTypeGide             = "GIDE";
     ls->romTypeVmx80            = "Microsol VMX-80";
-    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
-    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
-    ls->romTypeFmdas            = "F&M Direct Assembler System";
+    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 数模转换器";
+    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 数模转换器";
+    ls->romTypeFmdas            = "F&M 指令汇编系统";
     ls->romTypeSfg05            = "Yamaha SFG-05";
     
     
@@ -673,52 +673,52 @@ void langInitChineseSimplified(LanguageStrings* ls)
     // Note: Only needs translation if debugger is translated
     //----------------------
 
-    ls->dbgMemVisible           = "Visible Memory";
-    ls->dbgMemRamNormal         = "Normal";
-    ls->dbgMemRamMapped         = "Mapped";
-    ls->dbgMemVram              = "VRAM";
-    ls->dbgMemYmf278            = "YMF278 Sample RAM";
-    ls->dbgMemAy8950            = "AY8950 Sample RAM";
-    ls->dbgMemScc               = "Memory";
+    ls->dbgMemVisible           = "可见内存";
+    ls->dbgMemRamNormal         = "普通";
+    ls->dbgMemRamMapped         = "映射";
+    ls->dbgMemVram              = "显存";
+    ls->dbgMemYmf278            = "YMF278 取样内存";
+    ls->dbgMemAy8950            = "AY8950 取样内存";
+    ls->dbgMemScc               = "内存";
 
-    ls->dbgCallstack            = "Callstack";
+    ls->dbgCallstack            = "调用栈";
 
-    ls->dbgRegs                 = "Registers";
-    ls->dbgRegsCpu              = "CPU Registers";
-    ls->dbgRegsYmf262           = "YMF262 Registers";
-    ls->dbgRegsYmf278           = "YMF278 Registers";
-    ls->dbgRegsAy8950           = "AY8950 Registers";
-    ls->dbgRegsYm2413           = "YM2413 Registers";
+    ls->dbgRegs                 = "寄存器";
+    ls->dbgRegsCpu              = "CPU 寄存器";
+    ls->dbgRegsYmf262           = "YMF262 寄存器";
+    ls->dbgRegsYmf278           = "YMF278 寄存器";
+    ls->dbgRegsAy8950           = "AY8950 寄存器";
+    ls->dbgRegsYm2413           = "YM2413 寄存器";
 
-    ls->dbgDevRamMapper         = "RAM Mapper";
-    ls->dbgDevRam               = "RAM";
+    ls->dbgDevRamMapper         = "内存映射";
+    ls->dbgDevRam               = "内存";
     ls->dbgDevIdeBeer           = "Beer IDE";
     ls->dbgDevIdeGide           = "GIDE";
-    ls->dbgDevF4Device          = "F4 Device";
+    ls->dbgDevF4Device          = "F4 设备";
     ls->dbgDevFmpac             = "FMPAC";
     ls->dbgDevFmpak             = "FMPAK";
     ls->dbgDevKanji             = "Kanji";
     ls->dbgDevKanji12           = "Kanji 12";
-    ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
+    ls->dbgDevKonamiKbd         = "Konami 键盘大师";
     ls->dbgDevKorean80          = "Korean 80";
     ls->dbgDevKorean90          = "Korean 90";
     ls->dbgDevKorean128         = "Korean 128";
-    ls->dbgDevMegaRam           = "Mega RAM";
+    ls->dbgDevMegaRam           = "MegaRAM";
     ls->dbgDevFdcMicrosol       = "Microsol FDC";
     ls->dbgDevMoonsound         = "Moonsound";
-    ls->dbgDevMsxAudio          = "MSX Audio";
-    ls->dbgDevMsxAudioMidi      = "MSX Audio MIDI";
-    ls->dbgDevMsxMusic          = "MSX Music";
-    ls->dbgDevPrinter           = "Printer";
+    ls->dbgDevMsxAudio          = "MSX 音频";
+    ls->dbgDevMsxAudioMidi      = "MSX 音频 MIDI";
+    ls->dbgDevMsxMusic          = "MSX 音乐";
+    ls->dbgDevPrinter           = "打印机";
     ls->dbgDevRs232             = "RS232";
     ls->dbgDevS1990             = "S1990";
     ls->dbgDevSfg05             = "Yamaha SFG-05";
     ls->dbgDevHbi55             = "Sony HBI-55";
     ls->dbgDevSviFdc            = "SVI FDC";
-    ls->dbgDevSviPrn            = "SVI Printer";
-    ls->dbgDevSvi80Col          = "SVI 80 Column";
+    ls->dbgDevSviPrn            = "SVI 打印机";
+    ls->dbgDevSvi80Col          = "SVI 80 栏";
     ls->dbgDevPcm               = "PCM";
-    ls->dbgDevMatsuchita        = "Matsuchita";
+    ls->dbgDevMatsushita        = "Matsushita";
     ls->dbgDevS1985             = "S1985";
     ls->dbgDevCrtc6845          = "CRTC6845";
     ls->dbgDevTms9929A          = "TMS9929A";
@@ -729,7 +729,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dbgDevMsxMidi           = "MSX MIDI";
     ls->dbgDevPpi               = "PPI";
     ls->dbgDevRtc               = "RTC";
-    ls->dbgDevTrPause           = "TR Pause";
+    ls->dbgDevTrPause           = "TR 暂停";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
 

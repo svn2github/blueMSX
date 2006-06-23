@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -709,7 +709,7 @@ typedef struct {
     char* dbgDevSviPrn;
     char* dbgDevSvi80Col;
     char* dbgDevPcm;
-    char* dbgDevMatsuchita;
+    char* dbgDevMatsushita;
     char* dbgDevS1985;
     char* dbgDevCrtc6845;
     char* dbgDevTms9929A;

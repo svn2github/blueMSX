@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2006-06-22 06:02:59 $
+** $Date: 2006-06-23 19:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -735,7 +735,7 @@ char* langDbgDevSviFdc();
 char* langDbgDevSviPrn();
 char* langDbgDevSvi80Col();
 char* langDbgDevPcm();
-char* langDbgDevMatsuchita();
+char* langDbgDevMatsushita();
 char* langDbgDevS1985();
 char* langDbgDevCrtc6845();
 char* langDbgDevTms9929A();
