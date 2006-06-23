@@ -208,7 +208,7 @@ static int isLineDirty(int y, int lines) {
     return cmp;
 }
 
-int updateEmuDisplay() 
+int updateEmuDisplay(int updateAll) 
 {
     FrameBuffer* frameBuffer;
     int bytesPerPixel = bitDepth / 8;
@@ -250,7 +250,7 @@ int updateEmuDisplay()
         }
 
         for (y = 0; y < height; y += linesPerBlock) {
-            if (isLineDirty(y, linesPerBlock)) {
+            if (updateAll || isLineDirty(y, linesPerBlock)) {
                 if (!isDirty) {
                     glEnable(GL_TEXTURE_2D);
                     glEnable(GL_ASYNC_TEX_IMAGE_SGIX);
@@ -386,7 +386,7 @@ static void handleEvent(SDL_Event* event)
     case SDL_USEREVENT:
         switch (event->user.code) {
         case EVENT_UPDATE_DISPLAY:
-            updateEmuDisplay();
+            updateEmuDisplay(0);
             archEventSet(dpyUpdateAckEvent);
             pendingDisplayEvents--;
             break;
@@ -407,6 +407,9 @@ static void handleEvent(SDL_Event* event)
         break;
     case SDL_KEYUP:
         shortcutCheckUp(shortcuts, HOTKEY_TYPE_KEYBOARD, keyboardGetModifiers(), event->key.keysym.sym);
+        break;
+    case SDL_VIDEOEXPOSE:
+        updateEmuDisplay(1);
         break;
     }
 }
