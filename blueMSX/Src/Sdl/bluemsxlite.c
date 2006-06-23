@@ -205,9 +205,7 @@ static int isLineDirty(int y, int lines) {
         d0 += 8;
         d1 += 8;
     }
-    if (cmp) {
-        return 1;
-    }
+    return cmp;
 }
 
 int updateEmuDisplay() 
