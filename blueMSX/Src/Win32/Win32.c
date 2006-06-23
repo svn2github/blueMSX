@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.143 $
+** $Revision: 1.144 $
 **
-** $Date: 2006-06-22 23:51:18 $
+** $Date: 2006-06-23 01:33:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1021,7 +1021,6 @@ typedef struct {
     int enteringFullscreen;
     Shortcuts* shortcuts;
     DWORD buttonState;
-    int normalViedoSize;
 
     HANDLE ddrawEvent;
     HANDLE ddrawAckEvent;
@@ -1519,10 +1518,6 @@ void themeSet(char* themeName, int forceMatch) {
     InvalidateRect(st.hwnd, NULL, TRUE);
 }
 
-int archGetWindowedSize() {
-    return st.normalViedoSize;
-}
-
 void archUpdateWindow() {
     int zoom = getZoom();
 
@@ -1556,8 +1551,6 @@ void archUpdateWindow() {
     }
 
     if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
-        st.normalViedoSize = pProperties->video.windowSize;
-
         if (GetWindowLong(st.hwnd, GWL_STYLE) & WS_POPUP) {
             mouseEmuActivate(1);
             SetWindowLong(st.hwnd, GWL_STYLE, WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
@@ -2604,7 +2597,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     midiInitialize();
 
-    st.normalViedoSize = P_VIDEO_SIZEX2;
     st.active = 1;
     st.buttonState = 0;
     st.showDialog = 0;

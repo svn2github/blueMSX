@@ -49,6 +49,7 @@ static void* dpyUpdateAckEvent = NULL;
 
 static SDL_Surface *surface;
 static int   bitDepth;
+static int   zoom = 1;
 static char* displayData = NULL;
 static int   displayPitch = 0;
 #ifdef ENABLE_OPENGL
@@ -57,8 +58,8 @@ static GLfloat texCoordY;
 static GLuint textureId;
 #endif
 
-#define WIDTH  640
-#define HEIGHT 480
+#define WIDTH  320
+#define HEIGHT 240
 
 #define EVENT_UPDATE_DISPLAY 2
 #define EVENT_UPDATE_WINDOW  3
@@ -134,17 +135,29 @@ void createSdlGlSurface(int width, int height, int fullscreen)
 }
 #endif
 
-int createSdlWindow(const char *title, int width, int height, int depth)
+int createSdlWindow()
 {
+    const char *title = "blueMSXlite";
     int fullscreen = properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN;
-    
-    bitDepth = depth;
+    int width;
+    int height;
 
     if (fullscreen) {
-        width = properties->video.fullscreen.width;
-        height = properties->video.fullscreen.height;
+        zoom = properties->video.fullscreen.width / WIDTH;
         bitDepth = properties->video.fullscreen.bitDepth;
     }
+    else {
+        if (properties->video.windowSize == P_VIDEO_SIZEX1) {
+            zoom = 1;
+        }
+        else {
+            zoom = 2;
+        }
+        bitDepth = 32;
+    }
+
+    width  = zoom * WIDTH;
+    height = zoom * HEIGHT;
 
     surface = NULL;
 
@@ -175,6 +188,8 @@ int updateEmuDisplay()
     FrameBuffer* frameBuffer;
     int bytesPerPixel = bitDepth / 8;
     char* dpyData  = displayData;
+    int width  = zoom * WIDTH;
+    int height = zoom * HEIGHT;
     int borderWidth;
 
     frameBuffer = frameBufferFlipViewFrame(properties->emulation.syncMethod == P_EMU_SYNCTOVBLANKASYNC);
@@ -182,7 +197,7 @@ int updateEmuDisplay()
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
 
-    borderWidth = 320 - frameBuffer->maxWidth;
+    borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
 
 #ifdef ENABLE_OPENGL
     if (properties->video.driver != P_VIDEO_DRVGDI) {
@@ -192,38 +207,38 @@ int updateEmuDisplay()
 #if 0
         int y;
 
-        videoRender(video, frameBuffer, bitDepth, 2,
+        videoRender(video, frameBuffer, bitDepth, zoom,
                     dpyData + borderWidth * bytesPerPixel + 
-                    (HEIGHT - 1) * displayPitch, 0, -1 * displayPitch, -1);
+                    (height - 1) * displayPitch, 0, -1 * displayPitch, -1);
 
         if (borderWidth > 0) {
-            int h = HEIGHT;
+            int h = height;
             while (h--) {
                 memset(dpyData, 0, borderWidth * bytesPerPixel);
-                memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+                memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
                 dpyData += displayPitch;
             }
         }
 
-        glDrawPixels(WIDTH, HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, displayData);
+        glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, displayData);
 	    SDL_GL_SwapBuffers();
 
         return 0;
 #endif
 
         if (properties->video.horizontalStretch) {
-            coordX = texCoordX * (WIDTH - 2 * borderWidth) / WIDTH;
+            coordX = texCoordX * (width - 2 * borderWidth) / width;
             borderWidth = 0;
         }
 
-        videoRender(video, frameBuffer, bitDepth, 2,
+        videoRender(video, frameBuffer, bitDepth, zoom,
                     dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
 
         if (borderWidth > 0) {
-            int h = HEIGHT;
+            int h = height;
             while (h--) {
                 memset(dpyData, 0, borderWidth * bytesPerPixel);
-                memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+                memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
                 dpyData += displayPitch;
             }
         }
@@ -235,18 +250,18 @@ int updateEmuDisplay()
 	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
         if (bitDepth == 16) {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
 		                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, displayData);
 	    } 
         else {
-		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT,
+		    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
 		                    GL_RGBA, GL_UNSIGNED_BYTE, dpyData);
 	    }
 
         glBegin(GL_QUADS);
-	    glTexCoord2f(0,      coordY); glVertex2i(0,     HEIGHT);
-	    glTexCoord2f(coordX, coordY); glVertex2i(WIDTH, HEIGHT);
-	    glTexCoord2f(coordX, 0     ); glVertex2i(WIDTH, 0     );
+	    glTexCoord2f(0,      coordY); glVertex2i(0,     height);
+	    glTexCoord2f(coordX, coordY); glVertex2i(width, height);
+	    glTexCoord2f(coordX, 0     ); glVertex2i(width, 0     );
 	    glTexCoord2f(0,      0     ); glVertex2i(0,     0     );
 	    glEnd();
 
@@ -257,14 +272,14 @@ int updateEmuDisplay()
         return 0;
     }
 #endif
-    videoRender(video, frameBuffer, bitDepth, 2, 
+    videoRender(video, frameBuffer, bitDepth, zoom, 
                 dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
 
     if (borderWidth > 0) {
-        int h = HEIGHT;
+        int h = height;
         while (h--) {
             memset(dpyData, 0, borderWidth * bytesPerPixel);
-            memset(dpyData + (WIDTH - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+            memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
             dpyData += displayPitch;
         }
     }
@@ -273,7 +288,7 @@ int updateEmuDisplay()
     if (SDL_MUSTLOCK(surface) && SDL_LockSurface(surface) < 0) {
         return 0;
     }
-    SDL_UpdateRect(surface, 0, 0, WIDTH, HEIGHT);
+    SDL_UpdateRect(surface, 0, 0, width, height);
     if (SDL_MUSTLOCK(surface)) SDL_UnlockSurface(surface);
 
     return 0; 
@@ -359,7 +374,7 @@ static void handleEvent(SDL_Event* event)
             pendingDisplayEvents--;
             break;
         case EVENT_UPDATE_WINDOW:
-            if (!createSdlWindow("blueMSXlite", WIDTH, HEIGHT, bitDepth)) {
+            if (!createSdlWindow()) {
                 exit(0);
             }
             break;
@@ -416,7 +431,7 @@ int main(int argc, char **argv)
     videoSetColorSaturation(video, properties->video.colorSaturationEnable, properties->video.colorSaturationWidth);
     
     bitDepth = 32;
-    if (!createSdlWindow("blueMSXlite", WIDTH, HEIGHT, bitDepth)) {
+    if (!createSdlWindow()) {
         return 0;
     }
     

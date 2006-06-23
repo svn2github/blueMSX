@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlNotifications.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-21 08:35:28 $
+** $Date: 2006-06-23 01:33:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,6 @@ void archThemeSetNext() {}
 void archThemeUpdate(struct Theme* theme) {}
 
 void archVideoOutputChange() {}
-int  archGetWindowedSize() { return 1; }
 void archMinimizeMainWindow() {}
 
 int archGetFramesPerSecond() { return 60; }

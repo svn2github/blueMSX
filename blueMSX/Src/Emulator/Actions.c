@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2006-06-22 23:51:17 $
+** $Date: 2006-06-23 01:33:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,6 +60,7 @@ static struct {
     Video* video;
     Mixer* mixer;
     int mouseLock;
+    int windowedSize;
 } state;
 
 static char audioDir[PROP_MAXPATH]  = "";
@@ -198,6 +199,9 @@ void actionInit(Video* video, Properties* properties, Mixer* mixer)
     state.properties = properties;
     state.video      = video;
     state.mixer      = mixer;
+
+    state.windowedSize = properties->video.windowSize != P_VIDEO_SIZEFULLSCREEN ?
+                         properties->video.windowSize : P_VIDEO_SIZEX2;
 }
 
 void actionToggleSpriteEnable() {
@@ -414,6 +418,7 @@ void actionDiskQuickChange() {
 }
 
 void actionWindowSizeSmall() {
+    state.windowedSize = P_VIDEO_SIZEX1;
     if (state.properties->video.windowSize != P_VIDEO_SIZEX1) {
         state.properties->video.windowSize = P_VIDEO_SIZEX1;
         archUpdateWindow();
@@ -421,6 +426,7 @@ void actionWindowSizeSmall() {
 }
 
 void actionWindowSizeNormal() {
+    state.windowedSize = P_VIDEO_SIZEX2;
     if (state.properties->video.windowSize != P_VIDEO_SIZEX2) {
         state.properties->video.windowSize = P_VIDEO_SIZEX2;
         archUpdateWindow();
@@ -444,7 +450,7 @@ void actionMaxSpeedToggle() {
 
 void actionFullscreenToggle() {
     if (state.properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
-        if (archGetWindowedSize() == P_VIDEO_SIZEX2) {
+        if (state.windowedSize == P_VIDEO_SIZEX2) {
             actionWindowSizeNormal();
         }
         else {
@@ -1165,7 +1171,7 @@ void actionSetMouseCapture(int value) {
 
 void actionSetFullscreen(int value) {
     if (value == 0 && state.properties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
-        if (archGetWindowedSize() == P_VIDEO_SIZEX2) {
+        if (state.windowedSize == P_VIDEO_SIZEX2) {
             actionWindowSizeNormal();
         }
         else {
