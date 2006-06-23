@@ -194,14 +194,14 @@ static int isLineDirty(int y, int lines) {
     UInt32  i = lines * width / 8;
 
     while (i-- && !cmp) {
-        cmp |= d0[ 0] ^ d1[ 0];
-        cmp |= d0[ 1] ^ d1[ 1];
-        cmp |= d0[ 2] ^ d1[ 2];
-        cmp |= d0[ 3] ^ d1[ 3];
-        cmp |= d0[ 4] ^ d1[ 4];
-        cmp |= d0[ 5] ^ d1[ 5];
-        cmp |= d0[ 6] ^ d1[ 6];
-        cmp |= d0[ 7] ^ d1[ 7];
+        cmp |= d0[0] - d1[0];
+        cmp |= d0[1] - d1[1];
+        cmp |= d0[2] - d1[2];
+        cmp |= d0[3] - d1[3];
+        cmp |= d0[4] - d1[4];
+        cmp |= d0[5] - d1[5];
+        cmp |= d0[6] - d1[6];
+        cmp |= d0[7] - d1[7];
         d0 += 8;
         d1 += 8;
     }
