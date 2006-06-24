@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlMouse.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-24 08:35:29 $
+** $Date: 2006-06-24 08:37:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,35 +92,35 @@ static char* arrow[] = {
 
 static char* cross[] = {
     "             XXXXX              ",
-    "            X     X             ",
-    "            X     X             ",
-    "            X     X             ",
-    "            X     X             ",
-    "             X   X              ",
-    "             X   X              ",
-    "             X   X              ",
-    "              X X               ",
-    "              X X               ",
-    "              X X               ",
+    "            X.....X             ",
+    "            X.....X             ",
+    "            X.....X             ",
+    "            X.....X             ",
+    "             X...X              ",
+    "             X...X              ",
+    "             X...X              ",
+    "              X.X               ",
+    "              X.X               ",
+    "              X.X               ",
     "               X                ",
     " XXXX          X          XXXX  ",
-    "X    XXX               XXX    X ",
-    "X       XXX    X    XXX       X ",
-    "X          XX X X XX          X ",
-    "X       XXX    X    XXX       X ",
-    "X    XXX               XXX    X ",
+    "X....XXX               XXX....X ",
+    "X.......XXX    X    XXX.......X ",
+    "X..........XX X X XX..........X ",
+    "X.......XXX    X    XXX.......X ",
+    "X....XXX               XXX....X ",
     " XXXX          X          XXXX  ",
     "               X                ",
-    "              X X               ",
-    "              X X               ",
-    "              X X               ",
-    "             X   X              ",
-    "             X   X              ",
-    "             X   X              ",
-    "            X     X             ",
-    "            X     X             ",
-    "            X     X             ",
-    "            X     X             ",
+    "              X.X               ",
+    "              X.X               ",
+    "              X.X               ",
+    "             X...X              ",
+    "             X...X              ",
+    "             X...X              ",
+    "            X.....X             ",
+    "            X.....X             ",
+    "            X.....X             ",
+    "            X.....X             ",
     "             XXXXX              ",
     "                                "
 };
