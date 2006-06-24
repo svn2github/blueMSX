@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-06-23 19:20:10 $
+** $Date: 2006-06-24 02:23:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,6 @@ ValueNamePair BoolPair[] = {
     { -1,                           "" },
 };
 
-
 ValueNamePair EmuSyncPair[] = {
     { P_EMU_SYNCNONE,               "none" },
     { P_EMU_SYNCAUTO,               "auto" },
@@ -98,7 +97,6 @@ ValueNamePair VdpSyncPair[] = {
     { -1,                           "" },
 };
 
-
 ValueNamePair MonitorColorPair[] = {
     { P_VIDEO_COLOR,               "color" },
     { P_VIDEO_BW,                  "black and white" },
@@ -106,7 +104,6 @@ ValueNamePair MonitorColorPair[] = {
     { P_VIDEO_AMBER,               "amber" },
     { -1,                           "" },
 };
-
 
 ValueNamePair MonitorTypePair[] = {
     { P_VIDEO_PALNONE,             "simple" },
@@ -119,6 +116,7 @@ ValueNamePair MonitorTypePair[] = {
     { P_VIDEO_PALHQ2X,             "hq2x" },
     { -1,                           "" },
 };
+
 ValueNamePair WindowSizePair[] = {
     { P_VIDEO_SIZEX1,               "small" },
     { P_VIDEO_SIZEX2,               "normal" },
@@ -128,9 +126,9 @@ ValueNamePair WindowSizePair[] = {
 
 #ifdef USE_SDL
 ValueNamePair VideoDriverPair[] = {
-    { P_VIDEO_DRVDIRECTX_VIDEO,    "sdlgl opt" },
-    { P_VIDEO_DRVDIRECTX,          "sdlgl" },
-    { P_VIDEO_DRVGDI,              "sdl" },
+    { P_VIDEO_DRVSDLGL,            "sdlgl" },
+    { P_VIDEO_DRVSDLGL_NODIRT,     "sdlgl noopt" },
+    { P_VIDEO_DRVSDL,              "sdl" },
     { -1,                           "" },
 };
 #else
@@ -241,7 +239,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.monitorType           = P_VIDEO_PALMON;
     properties->video.windowSize            = P_VIDEO_SIZEX2;
     properties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
-    properties->video.frameSkip             = P_VIDEO_FSKIP0;
+    properties->video.frameSkip             = 0;
     properties->video.fullscreen.width      = 640;
     properties->video.fullscreen.height     = 480;
     properties->video.fullscreen.bitDepth   = 32;

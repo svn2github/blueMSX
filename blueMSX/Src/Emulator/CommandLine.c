@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-22 23:51:17 $
+** $Date: 2006-06-24 02:23:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@ La**     misrepresented as being the original software.
 #include "ziphelper.h"
 #include "Machine.h"
 #include "Casette.h"
+#include "Disk.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
@@ -286,6 +287,8 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     char    diskB[512] = "";
     char    diskAzip[256] = "";
     char    diskBzip[256] = "";
+    char    ide1p[256] = "";
+    char    ide1s[256] = "";
     char    cas[512] = "";
     char    caszip[256] = "";
     int     fullscreen = 0;
@@ -400,6 +403,18 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             strcpy(cas, argument);
             startEmu = 1;
         }
+        if (strcmp(argument, "/ide1primary") == 0) {
+            argument = extractToken(cmdLine, ++i);
+            if (argument == NULL) return 0; // Invaid argument
+            strcpy(ide1p, argument);
+            startEmu = 1;
+        }
+        if (strcmp(argument, "/ide1secondary") == 0) {
+            argument = extractToken(cmdLine, ++i);
+            if (argument == NULL) return 0; // Invaid argument
+            strcpy(ide1s, argument);
+            startEmu = 1;
+        }
         if (strcmp(argument, "/caszip") == 0) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
@@ -480,6 +495,8 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     if (strlen(rom2)  && !insertCartridge(properties, 1, rom2, *rom2zip ? rom2zip : NULL, romType2, -1)) return 0;
     if (strlen(diskA) && !insertDiskette(properties, 0, diskA, *diskAzip ? diskAzip : NULL, -1)) return 0;
     if (strlen(diskB) && !insertDiskette(properties, 1, diskB, *diskBzip ? diskBzip : NULL, -1)) return 0;
+    if (strlen(ide1p) && !insertDiskette(properties, diskGetHdDriveId(0, 0), ide1p, NULL, -1)) return 0;
+    if (strlen(ide1s) && !insertDiskette(properties, diskGetHdDriveId(0, 1), ide1s, NULL, -1)) return 0;
     if (strlen(cas)   && !insertCassette(properties, 0, cas, *caszip ? caszip : NULL, -1)) return 0;
 
     if (properties->cassette.autoRewind) {

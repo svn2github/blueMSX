@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-24 02:23:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -568,7 +568,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     // Rom type lines
     //----------------------
 
-    ls->romTypeStandard         = "標準";
+    ls->romTypeStandard         = "Standard";
     ls->romTypeMsxdos2          = "MSXDOS 2";
     ls->romTypeKonamiScc        = "Konami SCC";
     ls->romTypeKonami           = "Konami";
@@ -581,9 +581,9 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->romTypeCrossblaim       = "Cross Blaim";
     ls->romTypeHarryFox         = "Harry Fox";
     ls->romTypeMajutsushi       = "Konami Majutsushi";
-    ls->romTypeZenima80         = "Zemina 80 合 1";
-    ls->romTypeZenima90         = "Zemina 90 合 1";
-    ls->romTypeZenima126        = "Zemina 126 合 1";
+    ls->romTypeZenima80         = "Zemina 80 in 1";
+    ls->romTypeZenima90         = "Zemina 90 in 1";
+    ls->romTypeZenima126        = "Zemina 126 in 1";
     ls->romTypeScc              = "SCC";
     ls->romTypeSccPlus          = "SCC+";
     ls->romTypeSnatcher         = "The Snatcher";
@@ -595,17 +595,17 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->romTypeKonamiGeneric    = "Konami Generic";
     ls->romTypeSuperPierrot     = "Super Pierrot";
     ls->romTypeMirrored         = "Mirrored ROM";
-    ls->romTypeNormal           = "標準 ROM";
-    ls->romTypeDiskPatch        = "標準 + 磁碟補綴";
-    ls->romTypeCasPatch         = "標準 + Cassette 補綴";
-    ls->romTypeTc8566afFdc      = "TC8566AF 磁碟控制卡";
-    ls->romTypeMicrosolFdc      = "Microsol 磁碟控制卡";
-    ls->romTypeNationalFdc      = "National 磁碟控制卡";
-    ls->romTypePhilipsFdc       = "Philips 磁碟控制卡";
-    ls->romTypeSvi738Fdc        = "SVI-738 磁碟控制卡";
+    ls->romTypeNormal           = "Normal ROM";
+    ls->romTypeDiskPatch        = "Normal + Disk Patch";
+    ls->romTypeCasPatch         = "Normal + Cassette Patch";
+    ls->romTypeTc8566afFdc      = "TC8566AF Disk Controller";
+    ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
+    ls->romTypeNationalFdc      = "National Disk Controller";
+    ls->romTypePhilipsFdc       = "Philips Disk Controller";
+    ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
-    ls->romTypeNormalRam        = "標準 RAM";
+    ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";
     ls->romTypeMatsushitaSram   = "Matsushita SRAM";
@@ -617,18 +617,18 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->romTypeNationalSram     = "National (SRAM)";
     ls->romTypeS1985            = "S1985";
     ls->romTypeS1990            = "S1990";
-    ls->romTypeTurborPause      = "Turbo-R 暫停";
-    ls->romTypeF4deviceNormal   = "標準 F4 裝置";
-    ls->romTypeF4deviceInvert   = "反相 F4 裝置";
+    ls->romTypeTurborPause      = "Turbo-R Pause";
+    ls->romTypeF4deviceNormal   = "F4 Device Normal";
+    ls->romTypeF4deviceInvert   = "F4 Device Inverted";
     ls->romTypeMsxMidi          = "MSX-MIDI";
-    ls->romTypeTurborTimer      = "Turbo-R 計時器";
+    ls->romTypeTurborTimer      = "Turbo-R Timer";
     ls->romTypeKoei             = "Koei (SRAM)";
     ls->romTypeBasic            = "Basic ROM";
     ls->romTypeHalnote          = "Halnote";
     ls->romTypeLodeRunner       = "Lode Runner";
-    ls->romTypeNormal4000       = "標準 4000h";
-    ls->romTypeNormalC000       = "標準 C000h";
-    ls->romTypeKonamiSynth      = "Konami 合成器";
+    ls->romTypeNormal4000       = "Normal 4000h";
+    ls->romTypeNormalC000       = "Normal C000h";
+    ls->romTypeKonamiSynth      = "Konami Synthesizer";
     ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
     ls->romTypeKonamiWordPro    = "Konami Word Pro";
     ls->romTypePac              = "PAC (SRAM)";
@@ -638,34 +638,34 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->romTypeMegaRam512       = "512kB MegaRAM";
     ls->romTypeMegaRam768       = "768kB MegaRAM";
     ls->romTypeMegaRam2mb       = "2MB MegaRAM";
-    ls->romTypeExtRam           = "外部 RAM";
-    ls->romTypeExtRam512        = "512kB 外部 RAM";
-    ls->romTypeExtRam1mb        = "1MB 外部 RAM";
-    ls->romTypeExtRam2mb        = "2MB 外部 RAM";
-    ls->romTypeExtRam4mb        = "4MB 外部 RAM";
-    ls->romTypeMsxMusic         = "MSX 音樂";
-    ls->romTypeMsxAudio         = "MSX 音效";
+    ls->romTypeExtRam           = "External RAM";
+    ls->romTypeExtRam512        = "512kB External RAM";
+    ls->romTypeExtRam1mb        = "1MB External RAM";
+    ls->romTypeExtRam2mb        = "2MB External RAM";
+    ls->romTypeExtRam4mb        = "4MB External RAM";
+    ls->romTypeMsxMusic         = "MSX Music";
+    ls->romTypeMsxAudio         = "MSX Audio";
     ls->romTypeY8950            = "Y8950";
     ls->romTypeMoonsound        = "Moonsound";
-    ls->romTypeSvi328Cart       = "SVI-328 卡匣";
-    ls->romTypeSvi328Fdc        = "SVI-328 磁碟控制卡";
-    ls->romTypeSvi328Prn        = "SVI-328 印表機";
-    ls->romTypeSvi328Uart       = "SVI-328 序列連接埠";
-    ls->romTypeSvi328col80      = "SVI-328 80 資料欄卡";
-    ls->romTypeSvi727col80      = "SVI-727 80 資料欄卡";
-    ls->romTypeColecoCart       = "Coleco 卡匣";
-    ls->romTypeSg1000Cart       = "SG-1000 卡匣";
+    ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
+    ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";
+    ls->romTypeSvi328Prn        = "SVI-328 Printer";
+    ls->romTypeSvi328Uart       = "SVI-328 Serial Port";
+    ls->romTypeSvi328col80      = "SVI-328 80 Column Card";
+    ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
+    ls->romTypeColecoCart       = "Coleco Cartridge";
+    ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
-    ls->romTypeMsxPrinter       = "MSX 印表機";
-    ls->romTypeTurborPcm        = "Turbo-R PCM 晶片";
-    ls->romTypeGameReader       = "Sunrise 遊戲讀取器";
+    ls->romTypeMsxPrinter       = "MSX Printer";
+    ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
+    ls->romTypeGameReader       = "Sunrise GameReader";
     ls->romTypeSunriseIde       = "Sunrise IDE";
     ls->romTypeBeerIde          = "Beer IDE";
     ls->romTypeGide             = "GIDE";
     ls->romTypeVmx80            = "Microsol VMX-80";
-    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 數位轉化器";
-    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 數位轉化器";
+    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
+    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg05            = "Yamaha SFG-05";
     

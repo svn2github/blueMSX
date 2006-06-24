@@ -113,6 +113,7 @@ SOURCE_FILES += SdlThread.c
 SOURCE_FILES += SdlNotifications.c
 SOURCE_FILES += SdlVideoIn.c
 SOURCE_FILES += SdlShortcuts.c
+SOURCE_FILES += SdlMouse.c
 
 SOURCE_FILES += Patch.c 
 

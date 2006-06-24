@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-24 02:23:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -566,7 +566,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     // Rom type lines
     //----------------------
 
-    ls->romTypeStandard         = "标准";
+    ls->romTypeStandard         = "Standard";
     ls->romTypeMsxdos2          = "MSXDOS 2";
     ls->romTypeKonamiScc        = "Konami SCC";
     ls->romTypeKonami           = "Konami";
@@ -586,24 +586,24 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeSccPlus          = "SCC+";
     ls->romTypeSnatcher         = "The Snatcher";
     ls->romTypeSdSnatcher       = "SD Snatcher";
-    ls->romTypeSccMirrored      = "SCC 反射";
-    ls->romTypeSccExtended      = "SCC 扩展";
+    ls->romTypeSccMirrored      = "SCC mirrored";
+    ls->romTypeSccExtended      = "SCC extended";
     ls->romTypeFmpac            = "FMPAC (SRAM)";
     ls->romTypeFmpak            = "FMPAK";
     ls->romTypeKonamiGeneric    = "Konami Generic";
     ls->romTypeSuperPierrot     = "Super Pierrot";
-    ls->romTypeMirrored         = "反射 ROM";
-    ls->romTypeNormal           = "普通 ROM";
-    ls->romTypeDiskPatch        = "普通 + 磁盘补丁";
-    ls->romTypeCasPatch         = "普通 + 磁带补丁";
-    ls->romTypeTc8566afFdc      = "TC8566AF 磁盘控制器";
-    ls->romTypeMicrosolFdc      = "Microsol 磁盘控制器";
-    ls->romTypeNationalFdc      = "National 磁盘控制器";
-    ls->romTypePhilipsFdc       = "Philips 磁盘控制器";
-    ls->romTypeSvi738Fdc        = "SVI-738 磁盘控制器";
-    ls->romTypeMappedRam        = "映射内存";
-    ls->romTypeMirroredRam1k    = "1kB 反射内存";
-    ls->romTypeNormalRam        = "一般内存";
+    ls->romTypeMirrored         = "Mirrored ROM";
+    ls->romTypeNormal           = "Normal ROM";
+    ls->romTypeDiskPatch        = "Normal + Disk Patch";
+    ls->romTypeCasPatch         = "Normal + Cassette Patch";
+    ls->romTypeTc8566afFdc      = "TC8566AF Disk Controller";
+    ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
+    ls->romTypeNationalFdc      = "National Disk Controller";
+    ls->romTypePhilipsFdc       = "Philips Disk Controller";
+    ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
+    ls->romTypeMappedRam        = "Mapped RAM";
+    ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";
     ls->romTypeMatsushitaSram   = "Matsushita SRAM";
@@ -616,18 +616,18 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeS1985            = "S1985";
     ls->romTypeS1990            = "S1990";
     ls->romTypeTurborPause      = "Turbo-R Pause";
-    ls->romTypeF4deviceNormal   = "F4 设备 - 普通";
-    ls->romTypeF4deviceInvert   = "F4 设备 - 反向";
+    ls->romTypeF4deviceNormal   = "F4 Device Normal";
+    ls->romTypeF4deviceInvert   = "F4 Device Inverted";
     ls->romTypeMsxMidi          = "MSX-MIDI";
-    ls->romTypeTurborTimer      = "Turbo-R 计时器";
+    ls->romTypeTurborTimer      = "Turbo-R Timer";
     ls->romTypeKoei             = "Koei (SRAM)";
     ls->romTypeBasic            = "Basic ROM";
     ls->romTypeHalnote          = "Halnote";
     ls->romTypeLodeRunner       = "Lode Runner";
-    ls->romTypeNormal4000       = "普通 4000h";
-    ls->romTypeNormalC000       = "普通 C000h";
-    ls->romTypeKonamiSynth      = "Konami 合成器";
-    ls->romTypeKonamiKbdMast    = "Konami 键盘大师";
+    ls->romTypeNormal4000       = "Normal 4000h";
+    ls->romTypeNormalC000       = "Normal C000h";
+    ls->romTypeKonamiSynth      = "Konami Synthesizer";
+    ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
     ls->romTypeKonamiWordPro    = "Konami Word Pro";
     ls->romTypePac              = "PAC (SRAM)";
     ls->romTypeMegaRam          = "MegaRAM";
@@ -636,37 +636,37 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->romTypeMegaRam512       = "512kB MegaRAM";
     ls->romTypeMegaRam768       = "768kB MegaRAM";
     ls->romTypeMegaRam2mb       = "2MB MegaRAM";
-    ls->romTypeExtRam           = "扩展内存";
-    ls->romTypeExtRam512        = "512kB 扩展内存";
-    ls->romTypeExtRam1mb        = "1MB 扩展内存";
-    ls->romTypeExtRam2mb        = "2MB 扩展内存";
-    ls->romTypeExtRam4mb        = "4MB 扩展内存";
-    ls->romTypeMsxMusic         = "MSX 音乐";
-    ls->romTypeMsxAudio         = "MSX 音频";
+    ls->romTypeExtRam           = "External RAM";
+    ls->romTypeExtRam512        = "512kB External RAM";
+    ls->romTypeExtRam1mb        = "1MB External RAM";
+    ls->romTypeExtRam2mb        = "2MB External RAM";
+    ls->romTypeExtRam4mb        = "4MB External RAM";
+    ls->romTypeMsxMusic         = "MSX Music";
+    ls->romTypeMsxAudio         = "MSX Audio";
     ls->romTypeY8950            = "Y8950";
     ls->romTypeMoonsound        = "Moonsound";
-    ls->romTypeSvi328Cart       = "SVI-328 卡带";
-    ls->romTypeSvi328Fdc        = "SVI-328 磁盘控制器";
-    ls->romTypeSvi328Prn        = "SVI-328 打印机";
-    ls->romTypeSvi328Uart       = "SVI-328 串行端口";
-    ls->romTypeSvi328col80      = "SVI-328 80 栏 卡片";
-    ls->romTypeSvi727col80      = "SVI-727 80 栏 卡片";
-    ls->romTypeColecoCart       = "Coleco 卡带";
-    ls->romTypeSg1000Cart       = "SG-1000 卡带";
+    ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
+    ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";
+    ls->romTypeSvi328Prn        = "SVI-328 Printer";
+    ls->romTypeSvi328Uart       = "SVI-328 Serial Port";
+    ls->romTypeSvi328col80      = "SVI-328 80 Column Card";
+    ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
+    ls->romTypeColecoCart       = "Coleco Cartridge";
+    ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
-    ls->romTypeMsxPrinter       = "MSX 打印机";
-    ls->romTypeTurborPcm        = "Turbo-R PCM 芯片";
+    ls->romTypeMsxPrinter       = "MSX Printer";
+    ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
     ls->romTypeGameReader       = "Sunrise GameReader";
     ls->romTypeSunriseIde       = "Sunrise IDE";
     ls->romTypeBeerIde          = "Beer IDE";
     ls->romTypeGide             = "GIDE";
     ls->romTypeVmx80            = "Microsol VMX-80";
-    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 数模转换器";
-    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 数模转换器";
-    ls->romTypeFmdas            = "F&M 指令汇编系统";
+    ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
+    ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
+    ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg05            = "Yamaha SFG-05";
-    
+
     
     //----------------------
     // Debug type lines

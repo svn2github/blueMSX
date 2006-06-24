@@ -25,6 +25,7 @@
 #include "ArchNotifications.h"
 #include "JoystickPort.h"
 #include "SdlShortcuts.h"
+#include "SdlMouse.h"
 #ifdef ENABLE_OPENGL
 #include <SDL/SDL_opengl.h>
 #endif
@@ -178,9 +179,11 @@ int createSdlWindow()
         createSdlSurface(width, height, fullscreen);
     }
 
-    //Set the window caption
+    // Set the window caption
     SDL_WM_SetCaption( title, NULL );
-    SDL_ShowCursor(SDL_DISABLE);
+
+    // Update mouse capture region
+    sdlMouseSetCaptureRect(0, 0, width, height);
     
     return 1;
 }
@@ -403,6 +406,9 @@ static void handleEvent(SDL_Event* event)
         if (event->active.state & SDL_APPINPUTFOCUS) {
             keyboardSetFocus(1, event->active.gain);
         }
+        if (event->active.state == SDL_APPMOUSEFOCUS) {
+            sdlMouseSetFocus(event->active.gain);
+        }
         break;
     case SDL_KEYDOWN:
         shortcutCheckDown(shortcuts, HOTKEY_TYPE_KEYBOARD, keyboardGetModifiers(), event->key.keysym.sym);
@@ -412,6 +418,13 @@ static void handleEvent(SDL_Event* event)
         break;
     case SDL_VIDEOEXPOSE:
         updateEmuDisplay(1);
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP:
+        sdlMouseButton(event->button.button, event->button.state);
+        break;
+    case SDL_MOUSEMOTION:
+        sdlMouseMove(event->motion.x, event->motion.y);
         break;
     }
 }

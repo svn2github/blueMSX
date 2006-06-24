@@ -203,6 +203,12 @@
 				RelativePath="..\..\..\Src\Sdl\SdlMidi.c">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Sdl\SdlMouse.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Sdl\SdlMouse.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Sdl\SdlNotifications.c">
 			</File>
 			<File

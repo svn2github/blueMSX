@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlInput.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-21 08:35:28 $
+** $Date: 2006-06-24 02:23:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -365,10 +365,6 @@ UInt8 archJoystickGetState(int joystickNo) { return 0; }
 int  archJoystickGetCount() { return 0; }
 char* archJoystickGetName(int index) { return ""; }
 void archMouseSetForceLock(int lock) { }
-
-void archMouseGetState(int* dx, int* dy) { *dx = *dy = 0; }
-int  archMouseGetButtonState(int checkAlways) { return 0; }
-void  archMouseEmuEnable(AmEnableMode mode) {}
 
 void  archPollInput() 
 {

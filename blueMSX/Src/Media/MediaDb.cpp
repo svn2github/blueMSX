@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-24 02:23:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -467,7 +467,14 @@ extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
 
 extern "C" RomType mediaDbOldStringToType(const char* romName)
 {
+    RomType romType;
+
     string name(romName);
+
+    romType = mediaDbStringToType(name);
+    if (romType != ROM_UNKNOWN) {
+        return romType;
+    }
 
     if (name == "standard")     return ROM_STANDARD;
     if (name == "mirrored")     return ROM_PLAIN;

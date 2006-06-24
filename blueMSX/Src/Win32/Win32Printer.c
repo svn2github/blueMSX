@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-24 02:23:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,7 @@
 
 
 
-static PropLptEmulation printerType = P_LPT_MSXPRN;
+static int printerType = P_LPT_MSXPRN;
 
 static void ResetEmulatedPrinter(void);
 
