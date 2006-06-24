@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlMouse.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-24 02:27:08 $
+** $Date: 2006-06-24 05:02:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,7 +73,12 @@ void sdlMouseSetCaptureRect(int x, int y, int width, int height)
 void sdlMouseSetFocus(int focus)
 {
     if (focus) {
-        SDL_WarpMouse(mouse.defX, mouse.defY);
+        if (mouse.mode == AM_DISABLE) {
+            SDL_ShowCursor(SDL_DISABLE);
+        }
+        if (mouse.mode == AM_ENABLE_MOUSE) {
+            SDL_WarpMouse(mouse.defX, mouse.defY);
+        }
     }
     else {
         mouse.hasFocus = 0;
@@ -102,8 +107,8 @@ void sdlMouseMove(int x, int y)
 {
     if (mouse.mode == AM_ENABLE_LASER) {
         mouse.hasFocus = sdlMouseInRect(x, y);
-        mouse.dx = (x - mouse.captRgn.left) / (mouse.captRgn.right  - mouse.captRgn.left);
-        mouse.dy = (y - mouse.captRgn.top)  / (mouse.captRgn.bottom - mouse.captRgn.top);
+        mouse.dx = 0x10000 * (x - mouse.captRgn.left) / (mouse.captRgn.right  - mouse.captRgn.left);
+        mouse.dy = 0x10000 * (y - mouse.captRgn.top)  / (mouse.captRgn.bottom - mouse.captRgn.top);
     }
  
     if (mouse.mode == AM_ENABLE_MOUSE) {
@@ -158,8 +163,8 @@ void archMouseGetState(int* dx, int* dy)
 
     if (mouse.hasFocus) {
         if (mouse.mode == AM_ENABLE_LASER) {
-            *dx = 0x10000 * mouse.dx;
-            *dy = 0x10000 * mouse.dy;
+            *dx = mouse.dx;
+            *dy = mouse.dy;
         }
 
         if (mouse.mode == AM_ENABLE_MOUSE) {
