@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-05-30 04:10:18 $
+** $Date: 2006-06-24 17:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -291,7 +291,7 @@ void tc8566afIdlePhaseWrite(TC8566AF* tc, UInt8 value)
 	case CMD_WRITE_DATA:
 	case CMD_FORMAT:
         tc->status0 &= ~(ST0_IC0 | ST0_IC1);
-        tc->status1 &= ~ST1_ND;
+        tc->status1 &= ~(ST1_ND | ST1_NW);
 		break;
 
 	case CMD_RECALIBRATE:
@@ -327,6 +327,7 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
             tc->status3  = (value & (ST3_DS0 | ST3_DS1)) | 
                            (tc->currentTrack == 0        ? ST3_TK0 : 0) | 
                            (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) | 
+                           (diskReadOnly(tc->drive)      ? ST3_WP  : 0) |
                            (diskPresent(tc->drive)       ? ST3_RDY : 0);
 			break;
 		case 1:
@@ -372,7 +373,8 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                            (diskEnabled(tc->drive) ? 0 : ST0_IC1);
             tc->status3  = (value & (ST3_DS0 | ST3_DS1)) | 
                            (tc->currentTrack == 0        ? ST3_TK0 : 0) | 
-                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) | 
+                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) |  
+                           (diskReadOnly(tc->drive)      ? ST3_WP  : 0) |
                            (diskPresent(tc->drive)       ? ST3_RDY : 0);
 			break;
 		case 1:
@@ -399,7 +401,8 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                            (diskEnabled(tc->drive) ? 0 : ST0_IC1);
             tc->status3  = (value & (ST3_DS0 | ST3_DS1)) | 
                            (tc->currentTrack == 0        ? ST3_TK0 : 0) | 
-                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) | 
+                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) |  
+                           (diskReadOnly(tc->drive)      ? ST3_WP  : 0) |
                            (diskPresent(tc->drive)       ? ST3_RDY : 0);
 			break;
 		case 1: 
@@ -419,7 +422,8 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                            (diskEnabled(tc->drive) ? 0 : ST0_IC1);
             tc->status3  = (value & (ST3_DS0 | ST3_DS1)) | 
                            (tc->currentTrack == 0        ? ST3_TK0 : 0) | 
-                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) | 
+                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) |  
+                           (diskReadOnly(tc->drive)      ? ST3_WP  : 0) |
                            (diskPresent(tc->drive)       ? ST3_RDY : 0);
 
             tc->currentTrack = 0;
@@ -447,7 +451,8 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                            (diskEnabled(tc->drive) ? 0 : ST0_IC1);
             tc->status3  = (value & (ST3_DS0 | ST3_DS1)) | 
                            (tc->currentTrack == 0        ? ST3_TK0 : 0) | 
-                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) | 
+                           (diskGetSides(tc->drive) == 2 ? ST3_HD  : 0) |  
+                           (diskReadOnly(tc->drive)      ? ST3_WP  : 0) |
                            (diskPresent(tc->drive)       ? ST3_RDY : 0);
             
 		    tc->phase       = PHASE_RESULT;
@@ -461,14 +466,19 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
 
 static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
 {
+    int rv;
+
 	switch (tc->command) {
 	case CMD_WRITE_DATA:
 		if (tc->sectorOffset < 512) {
 			tc->sectorBuf[tc->sectorOffset++] = value;
             
     		if (tc->sectorOffset == 512) {
-                diskWriteSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
-                                tc->currentTrack, 0);
+                rv = diskWriteSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
+                                     tc->currentTrack, 0);
+                if (!rv) {
+                    tc->status1 |= ST1_NW;
+                }
 
                 fdcAudioSetReadWrite(tc->fdcAudio);
 
@@ -488,8 +498,11 @@ static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
             break;
         case 1:
             memset(tc->sectorBuf, 0, 512);
-            diskWrite(tc->drive, tc->sectorBuf, tc->sectorNumber - 1 +
+            rv = diskWrite(tc->drive, tc->sectorBuf, tc->sectorNumber - 1 +
                       diskGetSectorsPerTrack(tc->drive) * (tc->currentTrack * diskGetSides(tc->drive) + value));
+            if (!rv) {
+                tc->status1 |= ST1_NW;
+            }
             boardSetFdcActive();
             break;
         case 2:

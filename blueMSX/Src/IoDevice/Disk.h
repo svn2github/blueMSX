@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-06-24 17:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
 UInt8 diskEnabled(int driveId);
+UInt8 diskReadOnly(int driveId);
 UInt8 diskPresent(int driveId);
 UInt8 diskRead(int driveId, UInt8* buffer, int sector);
 UInt8 diskReadSector(int driveId, UInt8* buffer, int sector, int side, int track, int density, int *sectorSize);

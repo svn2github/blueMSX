@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-01-17 08:54:55 $
+** $Date: 2006-06-24 17:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,6 +112,14 @@ static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 UInt8 diskEnabled(int driveId)
 {
     return driveId >= 0 && driveId < MAXDRIVES && drivesEnabled[driveId];
+}
+
+UInt8 diskReadOnly(int driveId)
+{
+    if (!diskPresent(driveId)) {
+        return 0;
+    }
+    return RdOnly[driveId];
 }
 
 void  diskEnable(int driveId, int enable)
