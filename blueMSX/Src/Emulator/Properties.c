@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-06-24 02:23:58 $
+** $Date: 2006-06-24 07:25:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -210,6 +210,8 @@ int stringToEnum(ValueNamePair* pair, const char* name)
 void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage kbdLang, int syncMode, const char* themeName) 
 {
     int i;
+    
+    strcpy(properties->settings.language, langToName(properties->language));
     properties->language                      = langType;
 
     properties->settings.showStatePreview     = 1;
@@ -330,9 +332,11 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.MidiOut.desc[0]         = 0;
     properties->sound.MidiOut.mt32ToGm        = 0;
     
+    strcpy(properties->joy1.type, "none");
     properties->joy1.typeId            = 0;
     properties->joy1.autofire          = 0;
     
+    strcpy(properties->joy2.type, "none");
     properties->joy2.typeId            = 0;
     properties->joy2.autofire          = 0;
     
