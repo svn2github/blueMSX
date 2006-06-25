@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/RTC.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-25 17:51:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,8 +60,8 @@ static const int daysInMonth[4][12] = {
 
 #define TEST_SECONDS     0x01
 #define TEST_MINUTES     0x02
-#define TEST_HOURS       0x04
-#define TEST_DAYS        0x08
+#define TEST_DAYS        0x04
+#define TEST_YEARS       0x08
 
 #define RESET_ALARM      0x01
 #define RESET_FRACTION   0x02
@@ -178,43 +178,33 @@ static void rtcUpdateRegs(RTC* rtc)
 {
     int carryDays;
     int carryYears;
-    UInt32 testSeconds;
-    UInt32 testMinutes;
-    UInt32 testHours;
-    UInt32 testDays;
     UInt64 elapsed;
     UInt32 elapsedTime;
     UInt32 systemTime = boardSystemTime();
 
-    elapsed      = (rtc->modeReg & MODE_TIMERENABLE) ? 16384 * (UInt64)(systemTime - rtc->refTime) + rtc->refFrag : 0;
+    elapsed      = 16384 * (UInt64)(systemTime - rtc->refTime) + rtc->refFrag;
     rtc->refTime = systemTime;
     rtc->refFrag = (UInt32)(elapsed % boardFrequency());
     elapsedTime  = (UInt32)(elapsed / boardFrequency());
-
-    testSeconds = (rtc->testReg & TEST_SECONDS) ? elapsedTime : 0;
-    testMinutes = (rtc->testReg & TEST_MINUTES) ? elapsedTime : 0;
-    testHours   = (rtc->testReg & TEST_HOURS)   ? elapsedTime : 0;
-    testDays    = (rtc->testReg & TEST_DAYS)    ? elapsedTime : 0;
     
-    rtc->fraction += elapsedTime;
-    rtc->seconds  += rtc->fraction / 16384 + testSeconds; 
+    rtc->fraction += (rtc->modeReg & MODE_TIMERENABLE) ? elapsedTime : 0;
+    rtc->seconds  += (rtc->testReg & TEST_SECONDS) ? elapsedTime : rtc->fraction / 16384; 
     rtc->fraction %= 16384;
-    rtc->minutes  += rtc->seconds / 60 + testMinutes; 
+    rtc->minutes  += (rtc->testReg & TEST_MINUTES) ? elapsedTime : rtc->seconds / 60; 
     rtc->seconds  %= 60;
-    rtc->hours    +=rtc-> minutes / 60 + testHours;   
+    rtc->hours    += rtc-> minutes / 60;   
     rtc->minutes  %= 60;
-
-    carryDays    = rtc->hours / 24 + testDays; 
-    rtc->days   += carryDays;
-    rtc->hours  %= 24;
-    rtc->dayWeek = (rtc->dayWeek + carryDays) % 7;
+    carryDays      = (rtc->testReg & TEST_DAYS) ? elapsedTime : rtc->hours / 24; 
+    rtc->days     += carryDays;
+    rtc->hours    %= 24;
+    rtc->dayWeek   = (rtc->dayWeek + carryDays) % 7;
     
     while (rtc->days >= daysInMonth[rtc->leapYear][rtc->months]) {
         rtc->days -= daysInMonth[rtc->leapYear][rtc->months];
         rtc->months++;
     }
 
-    carryYears    = rtc->months / 12;
+    carryYears    = (rtc->testReg & TEST_YEARS) ? elapsedTime : rtc->months / 12;
     rtc->years    = (rtc->years + carryYears) % 100; 
     rtc->months  %= 12;
     rtc->leapYear = (rtc->leapYear + carryYears) % 4;
