@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-06-26 00:27:57 $
+** $Date: 2006-06-26 19:35:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -712,6 +712,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
+    ls->romTypeSfg01            = "Yamaha SFG-01";
     ls->romTypeSfg05            = "Yamaha SFG-05";
     
     

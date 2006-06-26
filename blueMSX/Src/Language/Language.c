@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-26 00:27:57 $
+** $Date: 2006-06-26 19:35:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -883,6 +883,7 @@ char* langRomTypeVmx80() { return ls->romTypeVmx80; }
 char* langRomTypeNms8280Digitiz() { return ls->romTypeNms8280Digitiz; }
 char* langRomTypeHbiV1Digitiz() { return ls->romTypeHbiV1Digitiz; }
 char* langRomTypeFmdas() { return ls->romTypeFmdas; }
+char* langRomTypeSfg01() { return ls->romTypeSfg01; }
 char* langRomTypeSfg05() { return ls->romTypeSfg05; }
 
 

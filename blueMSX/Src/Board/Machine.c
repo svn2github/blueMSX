@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-06-16 19:31:43 $
+** $Date: 2006-06-26 19:35:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1075,6 +1075,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_MSXAUDIO:
             success &= romMapperMsxAudioCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_YAMAHASFG01:
+            success &= romMapperSfg05Create(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_YAMAHASFG05:

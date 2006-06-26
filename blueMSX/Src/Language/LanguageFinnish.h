@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-06-26 00:27:57 $
+** $Date: 2006-06-26 19:35:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,20 +40,20 @@ void langInitFinnish(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
+    ls->langChineseSimplified   = "Kiina, yksinkertaistettu";
+    ls->langChineseTraditional  = "Kiina, perinteinen";
+    ls->langDutch               = "Hollanti";
+    ls->langEnglish             = "Englanti";
+    ls->langFinnish             = "Suomi";
+    ls->langFrench              = "Ranska";
+    ls->langGerman              = "Saksa";
+    ls->langItalian             = "Italia";
+    ls->langJapanese            = "Japani";
+    ls->langKorean              = "Korea";
+    ls->langPolish              = "Puola";
+    ls->langPortuguese          = "Portugali";
+    ls->langSpanish             = "Espanja";
+    ls->langSwedish             = "Ruotsi";
 
 
     //----------------------
@@ -414,12 +414,12 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Kaksipuolinen, 9 Sektoria";
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Kaksipuolinen, 8 Sektoria";
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Yksipuolinen, 9 Sektoria";
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Yksipuolinen, 8 Sektoria";
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Kaksipuolinen";
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Yksipuolinen";
 
 
     //----------------------
@@ -693,6 +693,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitoija";
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitoija";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
+    ls->romTypeSfg01            = "Yamaha SFG-01";
     ls->romTypeSfg05            = "Yamaha SFG-05";
     
     

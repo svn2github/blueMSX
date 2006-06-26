@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-06-16 19:32:03 $
+** $Date: 2006-06-26 19:35:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -427,6 +427,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_MSXAUDIO:
             romMapperMsxAudioCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_YAMAHASFG01:
+            romMapperSfg05Create(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_YAMAHASFG05:

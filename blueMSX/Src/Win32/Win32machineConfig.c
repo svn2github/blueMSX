@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-26 19:35:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -734,6 +734,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_YAMAHASFG01:
+        editSlotInfo.startPage = 0;
+        editSlotInfo.pageCount = 2;
+        break;
+
     case ROM_YAMAHASFG05:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 4;
@@ -1010,6 +1015,12 @@ static void setEditControls(HWND hDlg)
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
+    case ROM_YAMAHASFG01:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x3FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_YAMAHASFG05:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x7FFF");
@@ -1228,6 +1239,7 @@ static RomType romTypeList[] = {
     ROM_MICROSOL80,
     ROM_SONYHBIV1,
     ROM_FMDAS,
+    ROM_YAMAHASFG01,
     ROM_YAMAHASFG05,
     ROM_UNKNOWN,
 };

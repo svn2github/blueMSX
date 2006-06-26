@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-26 19:35:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,7 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
+    int sizeMask;
     MidiIO* midiIo; 
     UInt8 kbdLatch;
 } RomMapperSfg05;
@@ -126,10 +127,9 @@ static UInt8 getKbdStatus(RomMapperSfg05* rm)
 static UInt8 read(RomMapperSfg05* rm, UInt16 address) 
 {
     if (address < 0x3ff0 || address >= 0x3ff8) {
-    	return rm->romData[address & 0x7fff];
+    	return rm->romData[address & rm->sizeMask];
     }
 
-//    printf("R %.2x\n", address);
     switch (address & 0x3fff) {
     case 0x3ff0:
         return ym2151Read(rm->ym2151, 0);
@@ -150,12 +150,10 @@ static void reset(RomMapperSfg05* rm)
 
 static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value) 
 {
-//    printf("W %.2x: %.2x\n", address, value);
     if (address < 0x3ff0 || address >= 0x3ff8) {
     	return;
     }
 
-//    printf("W %.2x: %.2x\n", address, value);
     switch (address & 0x3fff) {
     case 0x3ff0:
         ym2151Write(rm->ym2151, 0, value);
@@ -182,21 +180,27 @@ int romMapperSfg05Create(char* filename, UInt8* romData,
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperSfg05* rm;
     int i;
+    int pages = size / 0x2000;
+    
+    if (size != 0x4000 && size != 0x8000) {
+        return 0;
+    }
 
     rm = malloc(sizeof(RomMapperSfg05));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_YAMAHASFG05, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(pages == 2 ? ROM_YAMAHASFG01 : ROM_YAMAHASFG05, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevSfg05(), &dbgCallbacks, rm);
 
-    slotRegister(slot, sslot, startPage, 4, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
+    rm->sizeMask = size - 1;
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < pages; i++) {
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
     }
 
