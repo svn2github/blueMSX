@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-23 19:20:12 $
+** $Date: 2006-06-26 00:27:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,13 +29,13 @@
 */
 #include "Language.h"
 
-EmuLanguageType langFromName(char* name)
+EmuLanguageType langFromName(char* name, int translate)
 {
     return 0 == strcmp(name, "English") ? EMU_LANG_ENGLISH : EMU_LANG_UNKNOWN;
 }
 
 
-const char* langToName(EmuLanguageType languageType)
+const char* langToName(EmuLanguageType languageType, int translate)
 {
     return languageType == EMU_LANG_ENGLISH ? "English" : "";
 }

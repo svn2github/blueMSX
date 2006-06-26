@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.144 $
+** $Revision: 1.145 $
 **
-** $Date: 2006-06-23 01:33:21 $
+** $Date: 2006-06-26 00:27:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -291,7 +291,7 @@ static BOOL CALLBACK langDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
 	            lvi.cchTextMax = sizeof(buffer);
                 lvi.iImage     = i;
 
-                sprintf(buffer, "   %s", langToName(langGetType(i)));
+                sprintf(buffer, "   %s", langToName(langGetType(i), 1));
 
                 ListView_InsertItem(GetDlgItem(hDlg, IDC_LANGLIST), &lvi);
  
@@ -2419,7 +2419,7 @@ int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
         if (strcmp(argument, "/language") == 0) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return defaultLang;
-            lang = langFromName(argument);
+            lang = langFromName(argument, 0);
             return lang == EMU_LANG_UNKNOWN ? defaultLang : lang;
         }
     }

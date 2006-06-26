@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-26 00:27:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,26 @@
 
 void langInitFinnish(LanguageStrings* ls)
 {
+    //----------------------
+    // Language lines
+    //----------------------
+
+    ls->langChineseSimplified   = "Chinese Simplified";
+    ls->langChineseTraditional  = "Chinese Traditional";
+    ls->langDutch               = "Dutch";
+    ls->langEnglish             = "English";
+    ls->langFinnish             = "Finnish";
+    ls->langFrench              = "French";
+    ls->langGerman              = "German";
+    ls->langItalian             = "Italian";
+    ls->langJapanese            = "Japanese";
+    ls->langKorean              = "Korean";
+    ls->langPolish              = "Polish";
+    ls->langPortuguese          = "Portuguese";
+    ls->langSpanish             = "Spanish";
+    ls->langSwedish             = "Swedish";
+
+
     //----------------------
     // Generic lines
     //----------------------
@@ -393,6 +413,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumControlsJoyGunstick  = "Gun Stick-valopistooli";                      // New in 2.5
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
 
 
     //----------------------

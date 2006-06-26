@@ -67,6 +67,7 @@ public:
         menuDebugRunTo              = "运行到光标处";
         menuDebugShowSymbols        = "显示符号信息";
         menuDebugGoto               = "转到";
+        menuDebugFind               = "搜索";
         menuDebugBpAdd              = "添加新断点";
         menuDebugBpToggle           = "设定/移除 ";
         menuDebugEnable             = "启用/禁用断点";

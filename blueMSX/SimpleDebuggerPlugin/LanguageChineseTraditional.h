@@ -67,6 +67,7 @@ public:
         menuDebugRunTo              = "執行到指標";
         menuDebugShowSymbols        = "顯示符號資訊";
         menuDebugGoto               = "前往";
+        menuDebugFind               = "尋找";
         menuDebugBpAdd              = "加入新的中斷點";
         menuDebugBpToggle           = "設定/移除中斷點";
         menuDebugEnable             = "啟用/停用中斷點";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-26 00:27:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,26 @@
 #define LANGUAGE_STRINGS_H
 
 typedef struct {
+    //----------------------
+    // Language lines
+    //----------------------
+
+    char* langChineseSimplified;
+    char* langChineseTraditional;
+    char* langDutch;
+    char* langEnglish;
+    char* langFinnish;
+    char* langFrench;
+    char* langGerman;
+    char* langItalian;
+    char* langJapanese;
+    char* langKorean;
+    char* langPolish;
+    char* langPortuguese;
+    char* langSpanish;
+    char* langSwedish;
+
+
     //----------------------
     // Generic lines
     //----------------------
@@ -383,6 +403,13 @@ typedef struct {
     char* enumControlsJoyGunstick;
     char* enumControlsJoyAsciiLaser;
     char* enumControlsJoyColeco;
+    
+    char* enumDiskMsx35Dbl9Sect;
+    char* enumDiskMsx35Dbl8Sect;
+    char* enumDiskMsx35Sgl9Sect;
+    char* enumDiskMsx35Sgl8Sect;
+    char* enumDiskSvi525Dbl;
+    char* enumDiskSvi525Sgl;
 
 
     //----------------------

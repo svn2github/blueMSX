@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.30 $ + additions 2005/03/03
+** $Revision: 1.31 $ + additions 2005/03/03
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-26 00:27:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,26 @@
  
 void langInitKorean(LanguageStrings* ls)
 {
+    //----------------------
+    // Language lines
+    //----------------------
+
+    ls->langChineseSimplified   = "Chinese Simplified";
+    ls->langChineseTraditional  = "Chinese Traditional";
+    ls->langDutch               = "Dutch";
+    ls->langEnglish             = "English";
+    ls->langFinnish             = "Finnish";
+    ls->langFrench              = "French";
+    ls->langGerman              = "German";
+    ls->langItalian             = "Italian";
+    ls->langJapanese            = "Japanese";
+    ls->langKorean              = "Korean";
+    ls->langPolish              = "Polish";
+    ls->langPortuguese          = "Portuguese";
+    ls->langSpanish             = "Spanish";
+    ls->langSwedish             = "Swedish";
+
+
     //----------------------
     // Generic lines
     //----------------------
@@ -392,6 +412,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumControlsJoyGunstick  = "건 스틱";                         // New in 2.5
     ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                // New in 2.5
+
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
 
 
     //----------------------

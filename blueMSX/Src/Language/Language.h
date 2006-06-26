@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-26 00:27:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,9 +53,29 @@ void langInit();
 
 int langSetLanguage(EmuLanguageType languageType);
 EmuLanguageType langGetLanguage();
-EmuLanguageType langFromName(char* name);
-const char* langToName(EmuLanguageType languageType);
+EmuLanguageType langFromName(char* name, int translate);
+const char* langToName(EmuLanguageType languageType, int translate);
 EmuLanguageType langGetType(int i);
+
+
+//----------------------
+// Language lines
+//----------------------
+
+char* langLangChineseSimplified();
+char* langLangChineseTraditional();
+char* langLangDutch();
+char* langLangEnglish();
+char* langLangFinnish();
+char* langLangFrench();
+char* langLangGerman();
+char* langLangItalian();
+char* langLangJapanese();
+char* langLangKorean();
+char* langLangPolish();
+char* langLangPortuguese();
+char* langLangSpanish();
+char* langLangSwedish();
 
 
 //----------------------
@@ -411,6 +431,13 @@ char* langEnumControlsJoy2Button();
 char* langEnumControlsJoyGunStick();
 char* langEnumControlsJoyAsciiLaser();
 char* langEnumControlsJoyColeco();
+    
+char* langEnumDiskMsx35Dbl9Sect();
+char* langEnumDiskMsx35Dbl8Sect();
+char* langEnumDiskMsx35Sgl9Sect();
+char* langEnumDiskMsx35Sgl8Sect();
+char* langEnumDiskSvi525Dbl();
+char* langEnumDiskSvi525Sgl();
 
 //----------------------
 // Configuration related lines

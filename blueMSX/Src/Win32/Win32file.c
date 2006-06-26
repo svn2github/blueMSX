@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-06-26 00:27:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -838,15 +838,15 @@ static int newDskFileSize;
 
 static const struct {
     int size;
-    char text[34];
+    char* (*translation)();
 } dskFileSizes[] = {
-    { 720 * ONEKB, "MSX 3.5 Double Sided, 9 Sectors" },
-    { 640 * ONEKB, "MSX 3.5 Double Sided, 8 Sectors" },
-    { 360 * ONEKB, "MSX 3.5 Single Sided, 9 Sectors" },
-    { 320 * ONEKB, "MSX 3.5 Single Sided, 8 Sectors" },
-    { 338 * ONEKB, "SVI-328 5.25 Double Sided" },
-    { 168 * ONEKB, "SVI-328 5.25 Single Sided" },
-    { 0, "" }
+    { 720 * ONEKB, langEnumDiskMsx35Dbl9Sect },
+    { 640 * ONEKB, langEnumDiskMsx35Dbl8Sect },
+    { 360 * ONEKB, langEnumDiskMsx35Sgl9Sect },
+    { 320 * ONEKB, langEnumDiskMsx35Sgl8Sect },
+    { 338 * ONEKB, langEnumDiskSvi525Dbl },
+    { 168 * ONEKB, langEnumDiskSvi525Sgl },
+    { 0, NULL }
 };
 
 UINT_PTR CALLBACK hookDskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
@@ -861,7 +861,7 @@ UINT_PTR CALLBACK hookDskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
             int i;
 
             for (i = 0; dskFileSizes[i].size; i++) {
-                SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_ADDSTRING, 0, (LPARAM)dskFileSizes[i].text);
+                SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_ADDSTRING, 0, (LPARAM)dskFileSizes[i].translation());
                 if (newDskFileSize == dskFileSizes[i].size || i == 0) {
                     SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_SETCURSEL, i, 0);
                 }

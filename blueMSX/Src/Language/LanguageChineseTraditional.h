@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-24 02:23:59 $
+** $Date: 2006-06-26 00:27:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,26 @@
  
 void langInitChineseTraditional(LanguageStrings* ls) 
 {
+    //----------------------
+    // Language lines
+    //----------------------
+
+    ls->langChineseSimplified   = "Chinese Simplified";
+    ls->langChineseTraditional  = "Chinese Traditional";
+    ls->langDutch               = "Dutch";
+    ls->langEnglish             = "English";
+    ls->langFinnish             = "Finnish";
+    ls->langFrench              = "French";
+    ls->langGerman              = "German";
+    ls->langItalian             = "Italian";
+    ls->langJapanese            = "Japanese";
+    ls->langKorean              = "Korean";
+    ls->langPolish              = "Polish";
+    ls->langPortuguese          = "Portuguese";
+    ls->langSpanish             = "Spanish";
+    ls->langSwedish             = "Swedish";
+
+
     //----------------------
     // Generic lines
     //----------------------
@@ -95,7 +115,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "插入特殊檔案";                     // New in 2.5
     ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
     ls->menuCartExternalRam     = "外部 RAM";
-
 
     ls->menuDiskInsertNew       = "插入新的磁碟映像檔";              // New in 2.5
     ls->menuDiskDirInsert       = "插入目錄";
@@ -339,7 +358,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propTheme               = "佈景主題:";
 
 
-
     //----------------------
     // Dropdown related lines
     //----------------------
@@ -384,6 +402,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自動 (快速)";
     ls->enumEmuSyncNone         = "無";
     ls->enumEmuSyncVblank       = "同步到 PC 垂直空白";
+    ls->enumEmuAsyncVblank      = "非同步 PC 空白";             // New in 2.5
 
     ls->enumControlsJoyNone     = "無";
     ls->enumControlsJoyMouse    = "滑鼠";
@@ -393,6 +412,13 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumControlsJoyGunstick  = "Gun Stick 光線槍";                         // New in 2.5
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 終結者雷射光線槍";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision 搖桿";                // New in 2.5
+
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
 
 
     //----------------------
@@ -464,7 +490,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
 
     ls->shortcutKey             = "快速鍵";
     ls->shortcutDescription     = "捷徑";
-
 
     ls->shortcutSaveConfig      = "blueMSX - 儲存設定";
     ls->shortcutOverwriteConfig = "您確定要覆寫快速鍵設定嗎:";
@@ -734,14 +759,6 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dbgDevTrPause           = "TR 暫停";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
-
-
-    //----------------------
-    // Debug type lines
-    // Note: Can only be translated to european languages
-    //----------------------
-    ls->aboutScrollThanksTo     = "Special thanks to: ";
-    ls->aboutScrollAndYou       = "and YOU !!!!";
 };
 
 #endif

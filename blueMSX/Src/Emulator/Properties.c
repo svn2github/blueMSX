@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-06-24 07:25:09 $
+** $Date: 2006-06-26 00:27:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -211,7 +211,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
 {
     int i;
     
-    strcpy(properties->settings.language, langToName(properties->language));
+    strcpy(properties->settings.language, langToName(properties->language, 0));
     properties->language                      = langType;
 
     properties->settings.showStatePreview     = 1;
@@ -462,7 +462,7 @@ static void propLoad(Properties* properties)
     iniFileOpen(settFilename);
 
     GET_STR_VALUE_2(settings, language);
-    i = langFromName(properties->settings.language);
+    i = langFromName(properties->settings.language, 0);
     if (i != EMU_LANG_UNKNOWN) properties->language = i;
 
     GET_ENUM_VALUE_2(settings, disableScreensaver, BoolPair);    
@@ -658,7 +658,7 @@ void propSave(Properties* properties)
     
     iniFileOpen(settFilename);
 
-    strcpy(properties->settings.language, langToName(properties->language));
+    strcpy(properties->settings.language, langToName(properties->language, 0));
     SET_STR_VALUE_2(settings, language);
     
     SET_ENUM_VALUE_2(settings, disableScreensaver, YesNoPair);    

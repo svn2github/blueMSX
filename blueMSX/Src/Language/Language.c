@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2006-06-23 19:09:49 $
+** $Date: 2006-06-26 00:27:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,46 +68,57 @@ static EmuLanguageType  lType = EMU_LANG_UNKNOWN;
 
 typedef struct {
     EmuLanguageType type;
-    char          name[32];
+    char            english[32];
+    char*           (*translation)();
 } LanguageInfo;
 
 static LanguageInfo languageInfo[] = {
-    { EMU_LANG_CHINESESIMP, "Chinese Simplified" },
-    { EMU_LANG_CHINESETRAD, "Chinese Traditional" },
-    { EMU_LANG_DUTCH,       "Dutch" },
-    { EMU_LANG_ENGLISH,     "English" },
-    { EMU_LANG_FINNISH,     "Finnish" },
-    { EMU_LANG_FRENCH,      "French" },
-    { EMU_LANG_GERMAN,      "German" },
-    { EMU_LANG_ITALIAN,     "Italian" },
-    { EMU_LANG_JAPANESE,    "Japanese" },
-    { EMU_LANG_KOREAN,      "Korean" },
-    { EMU_LANG_POLISH,      "Polish" },
-    { EMU_LANG_PORTUGUESE,  "Portuguese" },
-    { EMU_LANG_SPANISH,     "Spanish" },
-    { EMU_LANG_SWEDISH,     "Swedish" },
-    { EMU_LANG_UNKNOWN,     "" }
+    { EMU_LANG_CHINESESIMP, "Chinese Simplified",  langLangChineseSimplified },
+    { EMU_LANG_CHINESETRAD, "Chinese Traditional", langLangChineseTraditional },
+    { EMU_LANG_DUTCH,       "Dutch",               langLangDutch },
+    { EMU_LANG_ENGLISH,     "English",             langLangEnglish },
+    { EMU_LANG_FINNISH,     "Finnish",             langLangFinnish },
+    { EMU_LANG_FRENCH,      "French",              langLangFrench },
+    { EMU_LANG_GERMAN,      "German",              langLangGerman },
+    { EMU_LANG_ITALIAN,     "Italian",             langLangItalian },
+    { EMU_LANG_JAPANESE,    "Japanese",            langLangJapanese },
+    { EMU_LANG_KOREAN,      "Korean",              langLangKorean },
+    { EMU_LANG_POLISH,      "Polish",              langLangPolish },
+    { EMU_LANG_PORTUGUESE,  "Portuguese",          langLangPortuguese },
+    { EMU_LANG_SPANISH,     "Spanish",             langLangSpanish },
+    { EMU_LANG_SWEDISH,     "Swedish",             langLangSwedish },
+    { EMU_LANG_UNKNOWN,     "",                    langTextUnknown }
 };
 
-EmuLanguageType langFromName(char* name) {
+EmuLanguageType langFromName(char* name, int translate) {
     int i;
     for (i = 0; languageInfo[i].type != EMU_LANG_UNKNOWN; i++) {
-        if (0 == strcmp(name, languageInfo[i].name)) {
-            break;
+        if (translate) {
+            if (0 == strcmp(name, languageInfo[i].translation())) {
+                break;
+            }
+        }
+        else {
+            if (0 == strcmp(name, languageInfo[i].english)) {
+                break;
+            }
         }
     }
     return languageInfo[i].type;
 }
 
 
-const char* langToName(EmuLanguageType languageType) {
+const char* langToName(EmuLanguageType languageType, int translate) {
     int i;
     for (i = 0; languageInfo[i].type != EMU_LANG_UNKNOWN; i++) {
         if (languageInfo[i].type == languageType) {
             break;
         }
     }
-    return languageInfo[i].name;
+    if (translate) {
+        return languageInfo[i].translation();
+    }
+    return languageInfo[i].english;
 }
 
 EmuLanguageType langGetType(int i) {
@@ -218,6 +229,26 @@ int langSetLanguage(EmuLanguageType languageType) {
 
     return 1;
 }
+
+
+//----------------------
+// Language lines
+//----------------------
+
+char* langLangChineseSimplified() { return ls->langChineseSimplified; }
+char* langLangChineseTraditional() { return ls->langChineseTraditional; }
+char* langLangDutch() { return ls->langDutch; }
+char* langLangEnglish() { return ls->langEnglish; }
+char* langLangFinnish() { return ls->langFinnish; }
+char* langLangFrench() { return ls->langFrench; }
+char* langLangGerman() { return ls->langGerman; }
+char* langLangItalian() { return ls->langItalian; }
+char* langLangJapanese() { return ls->langJapanese; }
+char* langLangKorean() { return ls->langKorean; }
+char* langLangPolish() { return ls->langPolish; }
+char* langLangPortuguese() { return ls->langPortuguese; }
+char* langLangSpanish() { return ls->langSpanish; }
+char* langLangSwedish() { return ls->langSwedish; }
 
 
 //----------------------
@@ -569,6 +600,13 @@ char* langEnumControlsJoy2Button() { return ls->enumControlsJoy2Button; }
 char* langEnumControlsJoyGunStick() { return ls->enumControlsJoyGunstick; }
 char* langEnumControlsJoyAsciiLaser() { return ls->enumControlsJoyAsciiLaser; }
 char* langEnumControlsJoyColeco() { return ls->enumControlsJoyColeco; }
+    
+char* langEnumDiskMsx35Dbl9Sect() { return ls->enumDiskMsx35Dbl9Sect; }
+char* langEnumDiskMsx35Dbl8Sect() { return ls->enumDiskMsx35Dbl8Sect; }
+char* langEnumDiskMsx35Sgl9Sect() { return ls->enumDiskMsx35Sgl9Sect; }
+char* langEnumDiskMsx35Sgl8Sect() { return ls->enumDiskMsx35Sgl8Sect; }
+char* langEnumDiskSvi525Dbl() { return ls->enumDiskSvi525Dbl; }
+char* langEnumDiskSvi525Sgl() { return ls->enumDiskSvi525Sgl; }
 
 
 //----------------------
