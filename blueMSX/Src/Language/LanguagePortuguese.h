@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-27 15:43:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,20 +38,20 @@ void langInitPortuguese(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
+    ls->langChineseSimplified   = "Chinês simplificado";
+    ls->langChineseTraditional  = "Chinês tradicional";
+    ls->langDutch               = "Holandês";
+    ls->langEnglish             = "Inglês";
+    ls->langFinnish             = "Finlandês";
+    ls->langFrench              = "Francês";
+    ls->langGerman              = "Alemão";
+    ls->langItalian             = "Italiano";
+    ls->langJapanese            = "Japonês";
+    ls->langKorean              = "Coreano";
+    ls->langPolish              = "Polaco";
+    ls->langPortuguese          = "Português";
+    ls->langSpanish             = "Espanhol";
+    ls->langSwedish             = "Sueco";
 
 
     //----------------------
@@ -62,7 +62,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->textFilename            = "Nome:"; 
     ls->textFile                = "Arquivo"; 
     ls->textNone                = "Nenhum"; 
-    ls->textUnknown             = "Unknown";                            // New in 2.5
+    ls->textUnknown             = "Desconhecido";                            // New in 2.5
 
 
     //----------------------
@@ -71,7 +71,7 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - Advertência";
     ls->warningDiscardChanges   = "Você quer desfazer as alterações da configuração atual?"; 
-    ls->warningOverwriteFile    = "Do you want to overwrite the file:"; // New in 2.5
+    ls->warningOverwriteFile    = "Você quer substituir esto arquivo? "; // New in 2.5
     ls->errorTitle              = "blueMSX - Erro";
     ls->errorEnterFullscreen    = "Falha ao entrar em Tela Cheia.             \n";
     ls->errorDirectXFailed      = "Falha ao Criar Objetos DirectX.             \nUsando GDI ao invés.\nCheque as propriedades Video.";
@@ -80,7 +80,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->errorNoCasInZip         = "Nao foi localizado arquivo .CAS dentro do arquivo zip.";
     ls->errorNoHelp             = "Nao foi localizado arquivo ajuda do blueMSX";
     ls->errorStartEmu           = "Falha ao Iniciar o emulador MSX.";
-    ls->errorPortableReadonly   = "Portable device is readonly";        // New in 2.5
+    ls->errorPortableReadonly   = "O dispositivo portátil é somente leitura";        // New in 2.5
 
 
     //----------------------
@@ -112,11 +112,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCartFMPac           = "Cartucho FM-PAC";
     ls->menuCartPac             = "Cartucho PAC";
     ls->menuCartHBI55           = "Cartucho Sony HBI-55"; 
-    ls->menuCartInsertSpecial   = "Insert Special";                     // New in 2.5
+    ls->menuCartInsertSpecial   = "Inserir Especial";                     // New in 2.5
     ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
     ls->menuCartExternalRam     = "RAM esterno";
 
-    ls->menuDiskInsertNew       = "Insert New Disk Image";              // New in 2.5
+    ls->menuDiskInsertNew       = "Inserir novo disco";              // New in 2.5
     ls->menuDiskDirInsert       = "Inserir diretório"; 
     ls->menuDiskAutoStart       = "Reset após inserir";
     ls->menuCartAutoReset       = "Reset após inserir/remover";
@@ -129,8 +129,8 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->menuPrnFormfeed         = "Página seguinte"; 
 
-    ls->menuZoomNormal          = "Tamanho Normal";
-    ls->menuZoomDouble          = "Tamanho Duplo";
+    ls->menuZoomNormal          = "Tamanho Pequeno";
+    ls->menuZoomDouble          = "Tamanho Normal";
     ls->menuZoomFullscreen      = "Tela Cheia";
     
     ls->menuPropsEmulation      = "Emulação";
@@ -143,10 +143,10 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Linguagem";
     ls->menuPropsPorts          = "Portas"; 
     
-    ls->menuVideoSource         = "Video Out Source";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "No Video Out Source Connected";      // New in 2.5
-    ls->menuVideoInSource       = "Video In Source";                    // New in 2.5
-    ls->menuVideoInBitmap       = "Bitmap File";                        // New in 2.5
+    ls->menuVideoSource         = "Fonte vídeo";                   // New in 2.5
+    ls->menuVideoSourceDefault  = "Fonte vídeo não conectada";      // New in 2.5
+    ls->menuVideoInSource       = "Entrada vídeo";                    // New in 2.5
+    ls->menuVideoInBitmap       = "Arquivo Bitmap";                        // New in 2.5
     ls->menuVideoChipAutodetect = "Detecção automática"; 
 
     ls->menuHelpHelp            = "Tópicos Ajuda";
@@ -164,26 +164,26 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuFileScreenShot      = "Salvar Tela";
     ls->menuFileExit            = "Sair";
 
-    ls->menuFileHarddisk        = "Hard Disk";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "No Controllers Present";             // New in 2.5
+    ls->menuFileHarddisk        = "Disco duro";                          // New in 2.5
+    ls->menuFileHarddiskNoPesent= "Não controladores";             // New in 2.5
 
     ls->menuRunRun              = "Executar";
     ls->menuRunPause            = "Pausa";
     ls->menuRunStop             = "Parar";
-    ls->menuRunSoftReset        = "Reset Completo";
-    ls->menuRunHardReset        = "Reset Leve";
-    ls->menuRunCleanReset       = "Reset Geral";
+    ls->menuRunSoftReset        = "Reset Software";
+    ls->menuRunHardReset        = "Reset Hardware";
+    ls->menuRunCleanReset       = "Reset Completo";
 
     ls->menuToolsMachine         = "Configuração da Máquina";
     ls->menuToolsShortcuts      = "Configuração de Atalhos";
-    ls->menuToolsKeyboard       = "Configuração do Teclado"; 
+    ls->menuToolsKeyboard       = "Configuração de Controladores/Teclado"; 
     ls->menuToolsMixer          = "Mixer de Audio"; 
     ls->menuToolsDebugger       = "Debugger";               // New in 2.5
     ls->menuToolsTrainer        = "Trainer";                // New in 2.5
     ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
 
     ls->menuFile                = "Arquivo";
-    ls->menuRun                 = "Execução";
+    ls->menuRun                 = "Emulação";
     ls->menuWindow              = "Janela";
     ls->menuOptions             = "Opções";
     ls->menuTools                = "Ferramentas";
@@ -218,7 +218,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgInsertDiskA          = "Insira disco no drive A";
     ls->dlgInsertDiskB          = "Insira disco no drive B";
     ls->dlgInsertCas            = "Insira cassette tape";
-    ls->dlgInsertHarddisk       = "Insert Hard Disk";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "Insira disco duro";                   // New in 2.5
     ls->dlgRomType              = "Tipo rom:"; 
 
     ls->dlgTapeTitle            = "blueMSX - Posição do Tape";
@@ -287,8 +287,8 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI In "; 
     ls->propSndMidiOutGB        = "MIDI Out "; 
-    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "All";                                // New in 2.5
+    ls->propSndMidiChannel      = "Canal MIDI:";                      // New in 2.5
+    ls->propSndMidiAll          = "Todos";                                // New in 2.5
 
     ls->propMonMonGB            = "Monitor:";
     ls->propMonTypeText         = "Tipo de Monitor:";
@@ -298,7 +298,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Estiramento Horizontal"; 
     ls->propMonVertStretch      = " Estiramento Vertical"; 
     ls->propMonDeInterlace      = " De-entrelaçar";
-    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
+    ls->propBlendFrames         = " Misturar frames consecutivas";           // New in 2.5
     ls->propMonBrightness       = "Brilho:";
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturação:";
@@ -342,7 +342,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSetScreenSaver      = " Desabilitar Proteção de Tela Quando blueMSX estiver ativo";
     ls->propDisableWinKeys      = " Função MSX automática para as teclas Windows"; 
     ls->propPriorityBoost       = " Dar ao blueMSX uma prioridade elevada";
-    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";  // New in 2.5
+    ls->propScreenshotPng       = " Utilizar o formato PNG para as capturas da tela";  // New in 2.5
     ls->propClearHistory        = "Deseja realmente limpar histórico ?";
     ls->propOpenRomGB           = "Abrir arquivo rom"; 
     ls->propDefaultRomType      = "Tipo de ROM Padrão:"; 
@@ -402,7 +402,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (rapido)"; 
     ls->enumEmuSyncNone         = "Nenhum"; 
     ls->enumEmuSyncVblank       = "Sinc sobre PC Vertical Blank"; 
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "AssíncronoPC Vblank";             // New in 2.5
 
     ls->enumControlsJoyNone     = "Nenhum";
     ls->enumControlsJoyMouse    = "Mouse";
@@ -413,12 +413,12 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 duplo face, 9 sectores";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 duplo face, 8 sectores";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 simples face, 9 sectores";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 simples face, 8 sectores";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 duplo face";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 simples face";           // New in 2.5
 
 
     //----------------------
@@ -536,11 +536,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutQuit            = "Sair blueMSX";
     ls->shortcutRunPause        = "Executar/Pausa Emulação ";
     ls->shortcutStop            = "Parar Emulação";
-    ls->shortcutResetHard       = "Reset Completo";
-    ls->shortcutResetSoft       = "Reset Leve";
-    ls->shortcutResetClean      = "Reset Geral";
-    ls->shortcutSizeSmall       = "Passar em modo Janela Tamanho Normal";
-    ls->shortcutSizeNormal      = "Passar em modo Janela Tamanho Duplo";
+    ls->shortcutResetHard       = "Reset Hardware";
+    ls->shortcutResetSoft       = "Reset Software";
+    ls->shortcutResetClean      = "Reset Completo";
+    ls->shortcutSizeSmall       = "Passar em modo Janela Tamanho Pequeno";
+    ls->shortcutSizeNormal      = "Passar em modo Janela Tamanho Normal";
     ls->shortcutSizeFullscreen  = "Passar em modo Tela Cheia";
     ls->shortcutSizeMinimized   = "Reduzir a Janela"; 
     ls->shortcutToggleFullscren = "Troca de modo Janela/Tela Cheia";
@@ -568,7 +568,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutShowLanguage    = "Mostrar Diálogo da Língua";
     ls->shortcutShowMachines    = "Mostrar Configuração da Máquina";
     ls->shortcutShowShortcuts   = "Mostrar Configuração de Atalhos";
-    ls->shortcutShowKeyboard    = "Mostrar Configuração do Teclado"; 
+    ls->shortcutShowKeyboard    = "Mostrar Configuração de Controladores/Teclado"; 
     ls->shortcutShowMixer       = "Mostre Mixer de Audio"; 
     ls->shortcutShowDebugger    = "Mostrar Debugger"; 
     ls->shortcutShowTrainer     = "Mostrar Trainer"; 
@@ -584,8 +584,8 @@ void langInitPortuguese(LanguageStrings* ls)
     // Keyboard config lines
     //----------------------
 
-    ls->keyconfigSelectedKey    = "Tecla MSX seleccionada:"; 
-    ls->keyconfigMappedTo       = "Atribuída à tecla PC :"; 
+    ls->keyconfigSelectedKey    = "Tecla MSX:"; 
+    ls->keyconfigMappedTo       = "Tecla PC :"; 
     ls->keyconfigMappingScheme  = "Configuração do teclado:"; 
 
     
@@ -766,8 +766,9 @@ void langInitPortuguese(LanguageStrings* ls)
     // Debug type lines
     // Note: Can only be translated to european languages
     //----------------------
-    ls->aboutScrollThanksTo     = "Special thanks to: ";
-    ls->aboutScrollAndYou       = "and YOU !!!!";
+
+    ls->aboutScrollThanksTo     = "Agradecimentos especiais a: ";
+    ls->aboutScrollAndYou       = "e VOCÊ !!!!";
 };
 
 #endif

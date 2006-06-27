@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.32 $ + additions 2005/03/03
+** $Revision: 1.33 $ + additions 2005/03/03
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-27 15:43:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,20 +38,20 @@ void langInitKorean(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
+    ls->langChineseSimplified   = "중국어 간체";
+    ls->langChineseTraditional  = "중국어 번체";
+    ls->langDutch               = "네덜란드어";
+    ls->langEnglish             = "영어";
+    ls->langFinnish             = "핀란드어";
+    ls->langFrench              = "프랑스어";
+    ls->langGerman              = "독일어";
+    ls->langItalian             = "이탈리아어";
+    ls->langJapanese            = "일본어";
+    ls->langKorean              = "한국어";
+    ls->langPolish              = "폴란드어";
+    ls->langPortuguese          = "포르투갈어";
+    ls->langSpanish             = "스페인어";
+    ls->langSwedish             = "스웨덴어";
 
 
     //----------------------
@@ -74,7 +74,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->warningOverwriteFile    = "파일을 덮어 쓰시겠습니까:"; // New in 2.5
     ls->errorTitle              = "blueMSX - 에러";
     ls->errorEnterFullscreen    = "전체 화면모드 진입 실패.           \n";
-    ls->errorDirectXFailed      = "DirectX 오브젝트 만들기 실패.           \nGDI로 대체해서 사용합니다.\n그래픽카드 등록정보을 확인하세요.";
+    ls->errorDirectXFailed      = "DirectX 오브젝트 만들기 실패.           \nGDI로 대체해서 사용합니다.\n그래픽카드 등록정보를 확인하세요.";
     ls->errorNoRomInZip         = "zip파일 내부의 .rom을 찾을 수 없습니다.";
     ls->errorNoDskInZip         = "zip파일 내부의 .dsk를 찾을 수 없습니다.";
     ls->errorNoCasInZip         = "zip파일 내부의 .cas를 찾을 수 없습니다.";
@@ -246,7 +246,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgAboutThanks          = "도움을 주신 분들\r\n===========";
     ls->dlgAboutLisence         = "라이센스\r\n"
                                   "======\r\n\r\n"
-				  "이 소프트웨어는 원본 그대로 배포되어야 하며, 명시적이건 내포적이건 "
+				  "이 소프트웨어는 원본 그대로 배포되어야 하며, 명시적이든 암묵적이든 "
 				  "어떤 종류의 보증도 하지 않습니다.\r\n이 소프트웨어의 사용으로 일어나는 "
 				  "어떠한 문제에도 제작자에게는 책임이 없습니다.\r\n\r\n"
                                   "더 자세한 것은 www.bluemsx.com을 방문해 주세요.";
@@ -413,12 +413,12 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                // New in 2.5
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 양면, 9 섹터";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 양면, 8 섹터";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 단면, 9 섹터";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 단면, 8 섹터";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 양면";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 단면";           // New in 2.5
 
 
     //----------------------
@@ -698,7 +698,74 @@ void langInitKorean(LanguageStrings* ls)
 
     //----------------------
     // Debug type lines
+    // Note: Only needs translation if debugger is translated
+    //----------------------
+
+    ls->dbgMemVisible           = "Visible Memory";
+    ls->dbgMemRamNormal         = "Normal";
+    ls->dbgMemRamMapped         = "Mapped";
+    ls->dbgMemVram              = "VRAM";
+    ls->dbgMemYmf278            = "YMF278 Sample RAM";
+    ls->dbgMemAy8950            = "AY8950 Sample RAM";
+    ls->dbgMemScc               = "Memory";
+
+    ls->dbgCallstack            = "Callstack";
+
+    ls->dbgRegs                 = "Registers";
+    ls->dbgRegsCpu              = "CPU Registers";
+    ls->dbgRegsYmf262           = "YMF262 Registers";
+    ls->dbgRegsYmf278           = "YMF278 Registers";
+    ls->dbgRegsAy8950           = "AY8950 Registers";
+    ls->dbgRegsYm2413           = "YM2413 Registers";
+
+    ls->dbgDevRamMapper         = "RAM Mapper";
+    ls->dbgDevRam               = "RAM";
+    ls->dbgDevIdeBeer           = "Beer IDE";
+    ls->dbgDevIdeGide           = "GIDE";
+    ls->dbgDevF4Device          = "F4 Device";
+    ls->dbgDevFmpac             = "FMPAC";
+    ls->dbgDevFmpak             = "FMPAK";
+    ls->dbgDevKanji             = "Kanji";
+    ls->dbgDevKanji12           = "Kanji 12";
+    ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
+    ls->dbgDevKorean80          = "Korean 80";
+    ls->dbgDevKorean90          = "Korean 90";
+    ls->dbgDevKorean128         = "Korean 128";
+    ls->dbgDevMegaRam           = "Mega RAM";
+    ls->dbgDevFdcMicrosol       = "Microsol FDC";
+    ls->dbgDevMoonsound         = "Moonsound";
+    ls->dbgDevMsxAudio          = "MSX Audio";
+    ls->dbgDevMsxAudioMidi      = "MSX Audio MIDI";
+    ls->dbgDevMsxMusic          = "MSX Music";
+    ls->dbgDevPrinter           = "Printer";
+    ls->dbgDevRs232             = "RS232";
+    ls->dbgDevS1990             = "S1990";
+    ls->dbgDevSfg05             = "Yamaha SFG-05";
+    ls->dbgDevHbi55             = "Sony HBI-55";
+    ls->dbgDevSviFdc            = "SVI FDC";
+    ls->dbgDevSviPrn            = "SVI Printer";
+    ls->dbgDevSvi80Col          = "SVI 80 Column";
+    ls->dbgDevPcm               = "PCM";
+    ls->dbgDevMatsushita        = "Matsushita";
+    ls->dbgDevS1985             = "S1985";
+    ls->dbgDevCrtc6845          = "CRTC6845";
+    ls->dbgDevTms9929A          = "TMS9929A";
+    ls->dbgDevTms99x8A          = "TMS99x8A";
+    ls->dbgDevV9938             = "V9938";
+    ls->dbgDevV9958             = "V9958";
+    ls->dbgDevZ80               = "Z80";
+    ls->dbgDevMsxMidi           = "MSX MIDI";
+    ls->dbgDevPpi               = "PPI";
+    ls->dbgDevRtc               = "RTC";
+    ls->dbgDevTrPause           = "TR Pause";
+    ls->dbgDevAy8910            = "AY8910 PSG";
+    ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
     // Note: Can only be translated to european languages
+
     //----------------------
     ls->aboutScrollThanksTo     = "Special thanks to: ";
     ls->aboutScrollAndYou       = "and YOU !!!!";

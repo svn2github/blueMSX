@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-26 00:27:58 $
+** $Date: 2006-06-27 15:43:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -164,6 +164,7 @@ char* langRomTypeVmx80()            { return "Microsol VMX-80"; }
 char* langRomTypeNms8280Digitiz()   { return "Philips NMS-8280 Digitizer"; }
 char* langRomTypeHbiV1Digitiz()     { return "Sony HBI-V1 Digitizer"; }
 char* langRomTypeFmdas()            { return "F&M Direct Assembler System"; }
+char* langRomTypeSfg01()            { return "Yamaha SFG-01"; }
 char* langRomTypeSfg05()            { return "Yamaha SFG-05"; }
 
 

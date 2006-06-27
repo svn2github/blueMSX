@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-27 15:43:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,26 +34,6 @@
  
 void langInitEnglish(LanguageStrings* ls) 
 {
-    //----------------------
-    // Language lines
-    //----------------------
-
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
-
-
     //----------------------
     // Language lines
     //----------------------
@@ -786,6 +766,7 @@ void langInitEnglish(LanguageStrings* ls)
     // Debug type lines
     // Note: Can only be translated to european languages
     //----------------------
+
     ls->aboutScrollThanksTo     = "Special thanks to: ";
     ls->aboutScrollAndYou       = "and YOU !!!!";
 };
