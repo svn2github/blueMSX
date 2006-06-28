@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-28 20:42:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,6 +56,9 @@ typedef struct {
     int sslot;
     int startPage;
     int sramEnabled;
+    int enable;
+    UInt8 reg1ffe;
+    UInt8 reg1fff;
 } RomMapperFMPAC;
 
 static void saveState(RomMapperFMPAC* rm)
@@ -63,11 +66,12 @@ static void saveState(RomMapperFMPAC* rm)
     SaveState* state = saveStateOpenForWrite("mapperFMPAC");
 
     saveStateSet(state, "bankSelect",  rm->bankSelect);
+    saveStateSet(state, "enable",      rm->enable);
     saveStateSet(state, "sramEnabled", rm->sramEnabled);
-    saveStateSet(state, "reg1ffe",     rm->romData[0x1ffe]);
-    saveStateSet(state, "reg1fff",     rm->romData[0x1fff]);
-    saveStateSet(state, "reg3ff6",     rm->romData[0x3ff6]);
-    saveStateSet(state, "reg3ff7",     rm->romData[0x3ff7]);
+    saveStateSet(state, "reg1ffe",     rm->reg1ffe);
+    saveStateSet(state, "reg1fff",     rm->reg1fff);
+    
+    saveStateSetBuffer(state, "sram", rm->sram, sizeof(rm->sram));
 
     saveStateClose(state);
     
@@ -78,52 +82,20 @@ static void saveState(RomMapperFMPAC* rm)
 
 static void loadState(RomMapperFMPAC* rm)
 {
-    UInt8  reg1ffe;
-    UInt8  reg1fff;
-    UInt8  reg3ff6;
-    UInt8  reg3ff7;
-
     SaveState* state = saveStateOpenForRead("mapperFMPAC");
     
     rm->bankSelect  =        saveStateGet(state, "bankSelect", 0);
+    rm->enable      =        saveStateGet(state, "enable", 0);
     rm->sramEnabled =        saveStateGet(state, "sramEnabled", 0);
-    reg1ffe         = (UInt8)saveStateGet(state, "reg1ffe", 0);
-    reg1fff         = (UInt8)saveStateGet(state, "reg1fff", 0);
-    reg3ff6         = (UInt8)saveStateGet(state, "reg3ff6", 0);
-    reg3ff7         = (UInt8)saveStateGet(state, "reg3ff7", 0);
+    rm->reg1ffe     = (UInt8)saveStateGet(state, "reg1ffe", 0);
+    rm->reg1fff     = (UInt8)saveStateGet(state, "reg1fff", 0);
+    
+    saveStateGetBuffer(state, "sram", rm->sram, sizeof(rm->sram));
 
     saveStateClose(state);
 
     if (rm->ym2413 != NULL) {
         ym2413LoadState(rm->ym2413);
-    }
-
-    rm->romData[0x1FFE] = reg1ffe;
-    rm->romData[0x5FFE] = reg1ffe;
-    rm->romData[0x9FFE] = reg1ffe;
-    rm->romData[0xDFFE] = reg1ffe;
-    rm->romData[0x1FFF] = reg1fff;
-    rm->romData[0x5FFF] = reg1fff;
-    rm->romData[0x9FFF] = reg1fff;
-    rm->romData[0xDFFF] = reg1fff;
-    rm->romData[0x3FF6] = reg3ff6;
-    rm->romData[0x7FF6] = reg3ff6;
-    rm->romData[0xBFF6] = reg3ff6;
-    rm->romData[0xFFF6] = reg3ff6;
-    rm->romData[0x3FF7] = reg3ff7;
-    rm->romData[0x7FF7] = reg3ff7;
-    rm->romData[0xBFF7] = reg3ff7;
-    rm->romData[0xFFF7] = reg3ff7;
-
-    if (rm->sramEnabled) {
-        slotMapPage(rm->slot, rm->sslot, rm->startPage,     rm->sram, 1, 0);
-        slotUnmapPage(rm->slot, rm->sslot, rm->startPage + 1);
-    }
-    else {
-        UInt8* pageData = rm->romData + (rm->bankSelect << 14);
-
-        slotMapPage(rm->slot, rm->sslot, rm->startPage,     pageData, 1, 0);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, pageData + 0x2000, 1, 0);
     }
 }
 
@@ -151,36 +123,59 @@ static void reset(RomMapperFMPAC* rm)
         ym2413Reset(rm->ym2413);
     }
 
-    rm->romData[0x3ff6] = 0;
-    rm->romData[0x7ff6] = 0;
-    rm->romData[0xbff6] = 0;
-    rm->romData[0xfff6] = 0;
+    rm->reg1ffe    = 0xff;
+    rm->reg1fff    = 0xff;
+    rm->enable     = 0;
+    rm->bankSelect = 0;
+}
+
+static UInt8 read(RomMapperFMPAC* rm, UInt16 address) 
+{
+	address &= 0x3fff;
+
+    if (address == 0x3ff6) {
+        return rm->enable;
+    }
+
+    if (address == 0x3ff7) {
+        return rm->bankSelect;
+    }
+
+    if (!rm->sramEnabled) {
+		return rm->romData[(rm->bankSelect << 14) + address];
+    }
+
+	if (address < 0x1ffe) {
+		return rm->sram[address];
+	} 
+
+    if (address == 0x1ffe) {
+		return rm->reg1ffe;
+	} 
+    
+    if (address == 0x1fff) {
+		return rm->reg1fff;
+	} 
+
+    return 0xff;
 }
 
 static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value) 
 {
-    int update = 0;
-
     address &= 0x3fff;
 
     switch (address) {
     case 0x1ffe:
-        rm->sram[0x1ffe] = value;
-        rm->romData[0x1ffe] = value;
-        rm->romData[0x5ffe] = value;
-        rm->romData[0x9ffe] = value;
-        rm->romData[0xdffe] = value;
-        rm->sramEnabled = rm->romData[0x1ffe] == 0x4d && rm->romData[0x1fff] == 0x69;
-        update = 1;
+        rm->reg1ffe = value;
+        if (rm->enable & 0x10) {
+            rm->sramEnabled = rm->reg1ffe == 0x4d && rm->reg1fff == 0x69;
+        }
         break;
     case 0x1fff:
-        rm->sram[0x1fff] = value;
-        rm->romData[0x1fff] = value;
-        rm->romData[0x5fff] = value;
-        rm->romData[0x9fff] = value;
-        rm->romData[0xdfff] = value;
-        rm->sramEnabled = rm->romData[0x1ffe] == 0x4d && rm->romData[0x1fff] == 0x69;
-        update = 1;
+        rm->reg1fff = value;
+        if (rm->enable & 0x10) {
+            rm->sramEnabled = rm->reg1ffe == 0x4d && rm->reg1fff == 0x69;
+        }
         break;
 	case 0x3ff4:
         if (rm->ym2413 != NULL) {
@@ -193,20 +188,13 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
         }
 		break;
 	case 0x3ff6:
-        rm->romData[0x3ff6] = value & 0x11;
-        rm->romData[0x7ff6] = value & 0x11;
-        rm->romData[0xbff6] = value & 0x11;
-        rm->romData[0xfff6] = value & 0x11;
+        rm->enable = value & 0x11;
+        if ((rm->enable & 0x10) == 0) {
+            rm->sramEnabled = 0;
+        }
 		break;
 	case 0x3ff7:
-        if ((value & 3) != rm->bankSelect) {
-            rm->bankSelect = value & 3;
-            rm->romData[0x3ff7] = value;
-            rm->romData[0x7ff7] = value;
-            rm->romData[0xbff7] = value;
-            rm->romData[0xfff7] = value;
-            update = 1;
-        }
+        rm->bankSelect = value & 3;
 		break;
 	default:
 		if (rm->sramEnabled && address < 0x1ffe) {
@@ -214,24 +202,11 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
 		}
         break;
     }
-
-    if (update) {
-        if (rm->sramEnabled) {
-            slotMapPage(rm->slot, rm->sslot, rm->startPage,     rm->sram, 1, 0);
-            slotUnmapPage(rm->slot, rm->sslot, rm->startPage + 1);
-        }
-        else {
-            UInt8* pageData = rm->romData + (rm->bankSelect << 14);
-
-            slotMapPage(rm->slot, rm->sslot, rm->startPage,     pageData, 1, 0);
-            slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, pageData + 0x2000, 1, 0);
-        }
-    }
 }
 
 static void writeIo(RomMapperFMPAC* rm, UInt16 port, UInt8 data)
 {
-    if (rm->romData[0x3ff6] & 1) {
+    if (rm->enable & 1) {
         switch (port & 1) {
         case 0:
             ym2413WriteAddress(rm->ym2413, data);
@@ -247,10 +222,11 @@ static void getDebugInfo(RomMapperFMPAC* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevFmpac(), 2);
-    dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
-    dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
-
+    if (rm->enable & 1) {
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevFmpac(), 2);
+        dbgIoPortsAddPort(ioPorts, 0, 0x7c, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 1, 0x7d, DBG_IO_WRITE, 0);
+    }
     ym2413GetDebugInfo(rm->ym2413, dbgDevice);
 }
 
@@ -269,7 +245,7 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
 
     rm->deviceHandle = deviceManagerRegister(ROM_FMPAC, &callbacks, rm);
 
-    slotRegister(slot, sslot, startPage, 2, NULL, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 2, read, read, write, destroy, rm);
 
     rm->ym2413 = NULL;
     if (boardGetYm2413Enable()) {
@@ -290,25 +266,8 @@ int romMapperFMPACCreate(char* filename, UInt8* romData,
 
     sramLoad(rm->sramFilename, rm->sram, 0x1ffe, pacHeader, strlen(pacHeader));
 
-    slotMapPage(rm->slot, rm->sslot, rm->startPage,     rm->romData, 1, 0);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, rm->romData + 0x2000, 1, 0);
-
-    rm->romData[0x1ffe] = 0xff;
-    rm->romData[0x5ffe] = 0xff;
-    rm->romData[0x9ffe] = 0xff;
-    rm->romData[0xdffe] = 0xff;
-    rm->romData[0x1fff] = 0xff;
-    rm->romData[0x5fff] = 0xff;
-    rm->romData[0x9fff] = 0xff;
-    rm->romData[0xdfff] = 0xff;
-    rm->romData[0x3ff6] = 0;
-    rm->romData[0x7ff6] = 0;
-    rm->romData[0xbff6] = 0;
-    rm->romData[0xfff6] = 0;
-    rm->romData[0x3ff7] = 0;
-    rm->romData[0x7ff7] = 0;
-    rm->romData[0xbff7] = 0;
-    rm->romData[0xfff7] = 0;
+    slotMapPage(rm->slot, rm->sslot, rm->startPage,     rm->romData, 0, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, rm->romData + 0x2000, 0, 0);
 
     reset(rm);
 

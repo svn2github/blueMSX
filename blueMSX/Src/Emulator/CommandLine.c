@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-24 02:23:58 $
+** $Date: 2006-06-28 20:42:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -213,26 +213,6 @@ int emuCheckResetArgument(char* cmdLine) {
     }
 
     return 0;
-}
-
-char* emuCheckIniFileArgument(char* cmdLine){
-    static char iniFile[PROP_MAXPATH];
-    int i;
-    char* argument;
-    
-    iniFile[0] = 0;
-
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/inifile") == 0) {
-            argument = extractToken(cmdLine, i + 1);
-            if (argument != NULL && argument[0] != '/') {
-                strcat(iniFile, argument);
-            }
-            return iniFile;
-        }
-    }
-
-    return NULL;
 }
 
 char* emuCheckThemeArgument(char* cmdLine){

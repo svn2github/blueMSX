@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-06-26 00:27:57 $
+** $Date: 2006-06-28 20:42:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -211,8 +211,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
 {
     int i;
     
-    strcpy(properties->settings.language, langToName(properties->language, 0));
     properties->language                      = langType;
+    strcpy(properties->settings.language, langToName(properties->language, 0));
 
     properties->settings.showStatePreview     = 1;
     properties->settings.usePngScreenshots    = 1;

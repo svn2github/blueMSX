@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2005-12-29 06:35:47 $
+** $Date: 2006-06-28 20:42:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,9 +54,14 @@ void ioPortReset()
 
 void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref)
 {
-    ioTable[port].read  = read;
-    ioTable[port].write = write;
-    ioTable[port].ref   = ref;
+    if (ioTable[port].read  == NULL && 
+        ioTable[port].write == NULL && 
+        ioTable[port].ref   == NULL)
+    {
+        ioTable[port].read  = read;
+        ioTable[port].write = write;
+        ioTable[port].ref   = ref;
+    }
 }
 
 
