@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-06-18 07:55:10 $
+** $Date: 2006-06-29 05:42:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,7 +181,7 @@ static FrameBuffer* frameBufferFlipDrawFrame4()
     waitSem();
 
     for (i = 0; i < 4; i++) {
-        if (i == drawFrame) continue;
+        if (i == currentBuffer->viewFrame) continue;
         if (currentBuffer->frame[i].age < drawAge) {
             drawAge = currentBuffer->frame[i].age;
             currentBuffer->drawFrame = i;
