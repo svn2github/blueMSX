@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-06-29 07:01:13 $
+** $Date: 2006-06-29 15:58:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -166,14 +166,14 @@ static void write(RomMapperFMPAC* rm, UInt16 address, UInt8 value)
 
     switch (address) {
     case 0x1ffe:
-        rm->reg1ffe = value;
         if ((rm->enable & 0x10) == 0) {
+            rm->reg1ffe = value;
             rm->sramEnabled = rm->reg1ffe == 0x4d && rm->reg1fff == 0x69;
         }
         break;
     case 0x1fff:
-        rm->reg1fff = value;
         if ((rm->enable & 0x10) == 0) {
+            rm->reg1fff = value;
             rm->sramEnabled = rm->reg1ffe == 0x4d && rm->reg1fff == 0x69;
         }
         break;
