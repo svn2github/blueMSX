@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-06-22 23:51:18 $
+** $Date: 2006-06-29 19:24:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,6 +80,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Fabio Albergaria Dias,  "
                 "SLotman,  "
                 "Tanni,  "
+                "Eduardo Mello,  "
                 "Jon Cortázar Abraido,  "
                 "Hondarer,  "
                 "Wouter Vermaelen,  "
