@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.146 $
+** $Revision: 1.147 $
 **
-** $Date: 2006-06-26 19:35:55 $
+** $Date: 2006-06-29 04:03:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2581,6 +2581,10 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     // Load tools
     sprintf(buffer, "%s\\Tools", st.pCurDir);
     toolLoadAll(buffer, pProperties->language);
+
+    
+
+	CoInitialize(NULL); 
 
     videoInInitialize(pProperties);
 
