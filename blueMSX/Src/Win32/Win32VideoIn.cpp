@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.cpp,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-29 04:03:30 $
+** $Date: 2006-06-30 15:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,14 +78,19 @@ UInt16* archVideoInBufferGet(int width, int height)
 void videoInInitialize(Properties* properties)
 {
     videoIn.inputCount = 1;
-
-    videoIn.grabber = new CVideoGrabber;
-    
-    if (videoIn.grabber->SetupGrabber()) {
-        videoIn.inputCount++;
-    }
-
     videoIn.inputIndex = properties->videoIn.inputIndex;
+
+    if (!properties->videoIn.disabled) {
+        videoIn.grabber = new CVideoGrabber;
+        
+        if (videoIn.grabber->SetupGrabber()) {
+            videoIn.inputCount++;
+
+            if (videoIn.inputIndex == 0) {
+    //            videoIn.grabber->ShutdownGrabber();
+            }
+        }
+    }
 
     if (videoIn.inputIndex >= videoIn.inputCount) {
         videoIn.inputIndex = 0;
@@ -94,11 +99,15 @@ void videoInInitialize(Properties* properties)
 
 void videoInCleanup(Properties* properties)
 {
-    delete videoIn.grabber;
+    if (videoIn.grabber != NULL) {
+        delete videoIn.grabber;
+    }
 
     properties->videoIn.inputIndex = videoIn.inputIndex;
 
-    // Should also save name of current input device
+    if (videoIn.inputCount == 1) {
+        videoIn.grabber->ShutdownGrabber();
+    }
 }
 
 int  videoInGetCount()
@@ -136,6 +145,12 @@ void videoInSetActive(int index)
 {
     if (index >= videoIn.inputCount) {
         return;
+    }
+    if (videoIn.inputIndex != index) {
+//        switch (index) {
+//        case 0: videoIn.grabber->ShutdownGrabber(); break;
+//        case 1: videoIn.grabber->SetupGrabber(); break;
+//        }
     }
     videoIn.inputIndex = index;
 }

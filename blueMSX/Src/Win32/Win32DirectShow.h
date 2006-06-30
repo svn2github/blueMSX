@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-29 04:03:30 $
+** $Date: 2006-06-30 15:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,24 +41,31 @@ class CVideoGrabber
 public:
     CVideoGrabber();
     virtual ~CVideoGrabber();
+
     int SetupGrabber();
+    void ShutdownGrabber();
+
     int GrabFrame(PBITMAPINFO *Bitmap, ULONG *BitmapSize);
     int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height);
-    void SaveBitmap(); // For testing
 
-    char* GetName() { return "Video Grabber"; }
+    char* GetName();
 
-protected:
+private:
+    char m_szDeviceName[MAX_PATH];
     CComPtr< IGraphBuilder >  m_pGraph;
     HRESULT GetPin(IBaseFilter * pFilter, PIN_DIRECTION dirrequired,  int iNum, IPin **ppPin);
     IPin *  GetInPin ( IBaseFilter *pFilter, int Num );
     IPin *  GetOutPin( IBaseFilter *pFilter, int Num );
+
     void GetDefaultCapDevice( IBaseFilter ** ppCap);
     static ULONG CalcBitmapInfoSize(const BITMAPINFOHEADER &bmiHeader);
     HRESULT SetupVideoStreamConfig(IAMStreamConfig *pSC);
 
-private:
-
+#ifdef _DEBUG
+    DWORD m_dwGraphRegister;
+    HRESULT AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister);
+    void RemoveGraphFromRot(DWORD pdwRegister);
+#endif
 };
 
 #endif //WIN32_DIRECTSHOW

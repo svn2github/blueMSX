@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-30 15:59:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,20 +38,20 @@ void langInitChineseSimplified(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
+    ls->langChineseSimplified   = "简体中文";
+    ls->langChineseTraditional  = "繁体中文";
+    ls->langDutch               = "荷兰语";
+    ls->langEnglish             = "英语";
+    ls->langFinnish             = "芬兰语";
+    ls->langFrench              = "法语";
+    ls->langGerman              = "德语";
+    ls->langItalian             = "意大利语";
+    ls->langJapanese            = "日语";
+    ls->langKorean              = "朝鲜语";
+    ls->langPolish              = "波兰语";
+    ls->langPortuguese          = "葡萄牙语";
+    ls->langSpanish             = "西班牙语";
+    ls->langSwedish             = "瑞典语";
 
 
     //----------------------
@@ -413,12 +413,12 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision 操纵杆";                // New in 2.5
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 吋 双面, 9 个扇区";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 吋 双面, 8 个扇区";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 吋 单面, 9 个扇区";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 吋 单面, 8 个扇区";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 吋 双面";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 吋 单面";           // New in 2.5
 
 
     //----------------------
@@ -760,6 +760,15 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dbgDevTrPause           = "TR 暂停";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+
+    ls->aboutScrollThanksTo     = "Special thanks to: ";
+    ls->aboutScrollAndYou       = "and YOU !!!!";
 };
 
 #endif

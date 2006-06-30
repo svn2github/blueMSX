@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-30 15:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,20 +38,20 @@ void langInitChineseTraditional(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langChineseSimplified   = "Chinese Simplified";
-    ls->langChineseTraditional  = "Chinese Traditional";
-    ls->langDutch               = "Dutch";
-    ls->langEnglish             = "English";
-    ls->langFinnish             = "Finnish";
-    ls->langFrench              = "French";
-    ls->langGerman              = "German";
-    ls->langItalian             = "Italian";
-    ls->langJapanese            = "Japanese";
-    ls->langKorean              = "Korean";
-    ls->langPolish              = "Polish";
-    ls->langPortuguese          = "Portuguese";
-    ls->langSpanish             = "Spanish";
-    ls->langSwedish             = "Swedish";
+    ls->langChineseSimplified   = "中文 (簡體)";
+    ls->langChineseTraditional  = "中文 (繁體)";
+    ls->langDutch               = "荷蘭文";
+    ls->langEnglish             = "英文";
+    ls->langFinnish             = "芬蘭文";
+    ls->langFrench              = "法文";
+    ls->langGerman              = "德文";
+    ls->langItalian             = "義大利文";
+    ls->langJapanese            = "日文";
+    ls->langKorean              = "韓文";
+    ls->langPolish              = "波蘭文";
+    ls->langPortuguese          = "葡萄牙文";
+    ls->langSpanish             = "西班牙文";
+    ls->langSwedish             = "瑞典文";
 
 
     //----------------------
@@ -69,7 +69,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     // Warning and Error lines
     //----------------------
 
-    ls->warningTitle             = "blueMSX - 警告";
+    ls->warningTitle            = "blueMSX - 警告";
     ls->warningDiscardChanges   = "您確定要放棄變更嗎？";
     ls->warningOverwriteFile    = "您確定要覆寫檔案:"; // New in 2.5
     ls->errorTitle              = "blueMSX - 錯誤";
@@ -341,12 +341,12 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propWindowsEnvGB         = "Windows 環境 "; 
     ls->propSetScreenSaver       = " 當 blueMSX 執行時停用螢幕保護";
     ls->propDisableWinKeys       = " 使用 MSX 時自動停用 Windows 的左、右鍵功\能表"; 
-    ls->propPriorityBoost       = " 提高 blueMSX 的優先權";
-    ls->propScreenshotPng       = " 使用可攜式網路圖形 (.png) 螢幕抓圖";  // New in 2.5
+    ls->propPriorityBoost        = " 提高 blueMSX 的優先權";
+    ls->propScreenshotPng        = " 使用可攜式網路圖形 (.png) 螢幕抓圖";  // New in 2.5
     ls->propClearHistory         = "您是否確定要清除檔案記錄？";
-    ls->propOpenRomGB           = "開啟 ROM 對話方塊 ";
-    ls->propDefaultRomType      = "預設 ROM 類型:";
-    ls->propGuessRomType        = "推測 ROM 類型";
+    ls->propOpenRomGB            = "開啟 ROM 對話方塊 ";
+    ls->propDefaultRomType       = "預設 ROM 類型:";
+    ls->propGuessRomType         = "推測 ROM 類型";
 
     ls->propSettDefSlotGB       = "拖曳 ";
     ls->propSettDefSlots        = "插入 ROM 到:";
@@ -413,12 +413,12 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 終結者雷射光線槍";      // New in 2.5
     ls->enumControlsJoyColeco = "ColecoVision 搖桿";                // New in 2.5
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 雙面, 9 個磁區";     // New in 2.5
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 雙面, 8 個磁區";     // New in 2.5
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 單面, 9 個磁區";     // New in 2.5
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 單面, 8 個磁區";     // New in 2.5
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 雙面";           // New in 2.5
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 單面";           // New in 2.5
 
 
     //----------------------
@@ -760,6 +760,15 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dbgDevTrPause           = "TR 暫停";
     ls->dbgDevAy8910            = "AY8910 PSG";
     ls->dbgDevScc               = "SCC";
+
+
+    //----------------------
+    // Debug type lines
+    // Note: Can only be translated to european languages
+    //----------------------
+
+    ls->aboutScrollThanksTo     = "Special thanks to: ";
+    ls->aboutScrollAndYou       = "and YOU !!!!";
 };
 
 #endif

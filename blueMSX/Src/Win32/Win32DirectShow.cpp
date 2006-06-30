@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-06-29 04:03:30 $
+** $Date: 2006-06-30 15:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,8 @@
 */
 #include "Win32DirectShow.h"
 #include <strsafe.h>
+#include <comutil.h>
+#pragma comment(lib, "comsupp.lib")
 
 typedef struct _callbackinfo 
 {
@@ -140,15 +142,28 @@ CSampleGrabberCB CB;
 
 CVideoGrabber::CVideoGrabber()
 {
+    m_szDeviceName[0] = 0;
 }
 
 CVideoGrabber::~CVideoGrabber()
 {
 }
 
+void CVideoGrabber::ShutdownGrabber()
+{
+    HRESULT hr;
+    CComQIPtr< IMediaControl, &IID_IMediaControl > pControl = m_pGraph;
+
+    hr = pControl->Stop();
+
+#ifdef _DEBUG
+    if (m_dwGraphRegister)
+        RemoveGraphFromRot(m_dwGraphRegister);
+#endif
+}
+
 int CVideoGrabber::SetupGrabber()
 {
-    USES_CONVERSION;
     CComPtr< ISampleGrabber > pGrabber;
     CComPtr< IBaseFilter >    pSource;
     CComPtr< IVideoWindow >   pVideoWindow;
@@ -241,6 +256,11 @@ int CVideoGrabber::SetupGrabber()
     {
         hr = pWindow->put_AutoShow(OAFALSE);
     }
+
+#ifdef _DEBUG
+    m_dwGraphRegister = 0;
+    hr = AddGraphToRot(m_pGraph, &m_dwGraphRegister);
+#endif
 
     CComQIPtr< IMediaControl, &IID_IMediaControl > pControl( m_pGraph );
     hr = pControl->Run( );
@@ -429,16 +449,28 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
         if(hr != S_OK)
             break;
 
-        hr = pM->BindToObject(0,0,IID_IBaseFilter, (void **)ppCap);
+        CComPtr< IPropertyBag > pBag;
+        hr = pM->BindToStorage( 0, 0, IID_IPropertyBag, (void**) &pBag );
+        if( hr != S_OK )
+        {
+            continue;
+        }
+
+        CComVariant varName;
+        varName.vt = VT_BSTR;
+        hr = pBag->Read( L"FriendlyName", &varName, NULL);
+        if( hr != S_OK ) {
+            continue;
+        }
+        _bstr_t bstrTemp = varName;
+        LPCSTR  szTemp = (LPCSTR) bstrTemp;
+        StringCchCopy(m_szDeviceName, strlen(szTemp) , szTemp);
+
+        hr = pM->BindToObject(0,0, IID_IBaseFilter, (void **)ppCap);
         if(*ppCap)
             break;
     }
     return;
-}
-
-void CVideoGrabber::SaveBitmap()
-{
-    CB.CopyBitmap(cbInfo.dblSampleTime, cbInfo.pBuffer, cbInfo.lBufferSize);
 }
 
 ULONG CVideoGrabber::CalcBitmapInfoSize(const BITMAPINFOHEADER &bmiHeader)
@@ -490,4 +522,46 @@ HRESULT CVideoGrabber::SetupVideoStreamConfig(IAMStreamConfig *pSC)
         return S_OK;
     }
     return E_FAIL;
+}
+
+#ifdef _DEBUG
+HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
+{
+    if (!pUnkGraph || !pdwRegister)
+    { 
+        return E_POINTER;
+    }
+
+    CComPtr<IRunningObjectTable> pROT;
+    HRESULT hr = GetRunningObjectTable(0, &pROT);
+    if(FAILED(hr))
+        return hr;
+
+    WCHAR wsz[128];
+    hr = StringCchPrintfW(wsz, NUMELMS( wsz ), L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
+
+    CComPtr<IMoniker> pMoniker;
+    hr = CreateItemMoniker(L"!", wsz, &pMoniker);
+    if( SUCCEEDED( hr ) ) 
+    {
+        hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker, pdwRegister);
+    }
+
+    return hr;
+}
+
+void CVideoGrabber::RemoveGraphFromRot(DWORD pdwRegister)
+{
+    CComPtr<IRunningObjectTable> pROT;
+    HRESULT hr = GetRunningObjectTable(0, &pROT);
+    if(SUCCEEDED(hr)) 
+    {
+        pROT->Revoke(pdwRegister);
+    }
+}
+#endif
+
+char* CVideoGrabber::GetName()
+{  
+    return m_szDeviceName;
 }

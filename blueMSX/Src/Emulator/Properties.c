@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-28 20:42:35 $
+** $Date: 2006-06-30 15:59:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -259,6 +259,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.colorSaturationWidth  = 2;
     properties->video.detectActiveMonitor   = 1;
     
+    properties->videoIn.disabled            = 0;
     properties->videoIn.inputIndex          = 0;
     properties->videoIn.inputName[0]        = 0;
 
@@ -507,6 +508,7 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(video, colorSaturationWidth);
     GET_ENUM_VALUE_2(video, detectActiveMonitor, BoolPair);
 
+    GET_INT_VALUE_2(videoIn, disabled);
     GET_INT_VALUE_2(videoIn, inputIndex);
     GET_STR_VALUE_2(videoIn, inputName);
 
@@ -703,6 +705,7 @@ void propSave(Properties* properties)
     SET_INT_VALUE_3(video, fullscreen, bitDepth);
     SET_ENUM_VALUE_2(video, driver, VideoDriverPair);
     
+    SET_INT_VALUE_2(videoIn, disabled);
     SET_INT_VALUE_2(videoIn, inputIndex);
     SET_STR_VALUE_2(videoIn, inputName);
 

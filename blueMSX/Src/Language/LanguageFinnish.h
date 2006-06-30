@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-30 15:59:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,7 +80,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->errorNoRomInZip         = "Zip paketista ei löytynyt .ROM tiedostoa.";
     ls->errorNoDskInZip         = "Zip paketista ei löytynyt .DSK tiedostoa.";
     ls->errorNoCasInZip         = "Zip paketista ei löytynyt .CAS tiedostoa.";
-    ls->errorNoHelp             = "blueMSX:n ohje tiedostoa ei löytynyt.";
+    ls->errorNoHelp             = "blueMSX:n ohjetiedostoa ei löytynyt.";
     ls->errorStartEmu           = "MSX emulaattorin käynnistys epäonnistui.";
     ls->errorPortableReadonly   = "Kannettava laite tukee vain lukemista.";
 
@@ -89,11 +89,11 @@ void langInitFinnish(LanguageStrings* ls)
     // File related lines
     //----------------------
 
-    ls->fileRom                 = "ROM tiedosto";
+    ls->fileRom                 = "ROM-tiedosto";
     ls->fileAll                 = "Kaikki tiedostot";
-    ls->fileCpuState            = "Tilanne tallenne";
-    ls->fileDisk                = "Levy tiedosto";
-    ls->fileCas                 = "Kasetti tiedosto";
+    ls->fileCpuState            = "Tilannetallenne";
+    ls->fileDisk                = "Levytiedosto";
+    ls->fileCas                 = "Kasettitiedosto";
 
 
     //----------------------
@@ -114,7 +114,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCartFMPac           = "FM-PAC Moduli";
     ls->menuCartPac             = "PAC Moduli";
     ls->menuCartHBI55           = "Sony HBI-55 Moduli";
-    ls->menuCartInsertSpecial   = "Erikois moduli";
+    ls->menuCartInsertSpecial   = "Erikoismoduli";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Ulkoinen muisti";
 
@@ -145,11 +145,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Kieli";
     ls->menuPropsPorts          = "Liitännät";
     
-    ls->menuVideoSource         = "Video Ulostulo";
-    ls->menuVideoSourceDefault  = "Video Ulostuloa ei ole kytketty.";
+    ls->menuVideoSource         = "Videoulostulo";
+    ls->menuVideoSourceDefault  = "Videoulostuloa ei ole kytketty.";
     ls->menuVideoChipAutodetect = "Tunnista videopiiri automaattisesti";
-    ls->menuVideoInSource       = "Video Sisääntulo";
-    ls->menuVideoInBitmap       = "Bittikartta tiedosto";
+    ls->menuVideoInSource       = "Videosisääntulo";
+    ls->menuVideoInBitmap       = "Bittikarttatiedosto";
 
     ls->menuHelpHelp            = "Ohjeen aiheet";
     ls->menuHelpAbout           = "Tietoja blueMSX:stä";
@@ -175,8 +175,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuRunHardReset        = "Kylmäkäynnistys";
     ls->menuRunCleanReset       = "Täydellinen uudelleenkäynnistys";
 
-    ls->menuToolsMachine        = "Tietokone muokkain";
-    ls->menuToolsShortcuts      = "Pikanäppäin asetukset";
+    ls->menuToolsMachine        = "Tietokonemuokkain";
+    ls->menuToolsShortcuts      = "Pikanäppäinasetukset";
     ls->menuToolsKeyboard       = "Peliohjaimet / Näppäimistökartta";
     ls->menuToolsMixer          = "Mikseri";
     ls->menuToolsDebugger       = "Debugger";               // New in 2.5
@@ -206,7 +206,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgLoadRom              = "blueMSX - Lataa rom tiedosto";
     ls->dlgLoadDsk              = "blueMSX - Lataa dsk tiedosto";
     ls->dlgLoadCas              = "blueMSX - Lataa cas tiedosto";
-    ls->dlgLoadRomDskCas        = "blueMSX - Valitse ladatava rom, dsk tai cas tiedosto";
+    ls->dlgLoadRomDskCas        = "blueMSX - Valitse ladattava rom, dsk tai cas tiedosto";
     ls->dlgLoadRomDesc          = "Valitse ladattava ROM-tiedosto:";
     ls->dlgLoadDskDesc          = "Valitse ladattava levytiedosto:";
     ls->dlgLoadCasDesc          = "Valitse ladattava kasettitiedosto:";
@@ -252,7 +252,7 @@ void langInitFinnish(LanguageStrings* ls)
                                   "aiheutuneista mahdollisista ongelmista tai vahingoista.\r\n\r\n"
                                   "Lisätietoja löydät osoitteesta www.bluemsx.com.";
 
-    ls->dlgSavePreview          = "Näytä Esikatselu";
+    ls->dlgSavePreview          = "Näytä esikatselu";
     ls->dlgSaveDate             = "Tallennettu:";
 
 
@@ -275,29 +275,29 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propEmuMemoryGB         = "Muisti ";
     ls->propEmuRamSizeText      = "RAM koko:";
     ls->propEmuVramSizeText     = "VRAM koko:";
-    ls->propEmuSpeedGB          = "Emulaatio Nopeus ";
-    ls->propEmuSpeedText        = "Emulaatio Nopeus:";
-    ls->propEmuFrontSwitchGB     = "Panasonicin Kytkimet ";
-    ls->propEmuFrontSwitch       = " Aplikaatio kytkin";
+    ls->propEmuSpeedGB          = "Emulaationopeus ";
+    ls->propEmuSpeedText        = "Emulaationopeus:";
+    ls->propEmuFrontSwitchGB     = "Panasonicin kytkimet ";
+    ls->propEmuFrontSwitch       = " Aplikaatiokytkin";
     ls->propEmuFdcTiming        = " Poista käytöstä levyaseman ajoitus";
     ls->propEmuPauseSwitch      = " PAUSE-näppäin";
     ls->propEmuAudioSwitch       = " MSX-AUDIO modulin kytkin";
-    ls->propVideoFreqText       = "Video Taajuus:";
+    ls->propVideoFreqText       = "Videotaajuus:";
     ls->propVideoFreqAuto       = "Automaattinen";
     ls->propSndOversampleText   = "Ylinäytteistys:";
     ls->propSndYkInGB           = "YK-01/YK-10/YK-20 Sisään ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI Sisään ";
     ls->propSndMidiOutGB        = "MIDI Ulos ";
-    ls->propSndMidiChannel      = "MIDI Kanava:";                      // New in 2.5
+    ls->propSndMidiChannel      = "MIDI-kanava:";                      // New in 2.5
     ls->propSndMidiAll          = "Kaikki";                                // New in 2.5
 
     ls->propMonMonGB            = "Monitori ";
     ls->propMonTypeText         = "Monitorin tyyppi:";
     ls->propMonEmuText          = "Monitorin emulointi:";
-    ls->propVideoTypeText       = "Video tyyppi:";
+    ls->propVideoTypeText       = "Videotyyppi:";
     ls->propWindowSizeText      = "Ikkunan koko:";
-    ls->propMonHorizStretch     = " Vaaka Venytys";
-    ls->propMonVertStretch      = " Pysty Venytys";
+    ls->propMonHorizStretch     = " Vaakavenytys";
+    ls->propMonVertStretch      = " Pystyvenytys";
     ls->propMonDeInterlace      = " Lomituksen purku";
     ls->propBlendFrames         = " Yhdistä peräkkäiset kuvat";
     ls->propMonBrightness       = "Kirkkaus:";
@@ -305,17 +305,17 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturaatio:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = " Juovat:";
-    ls->propMonColorGhosting    = " Antenni muunnos:";
+    ls->propMonColorGhosting    = " Antennimuunnos:";
     ls->propMonEffectsGB        = "Tehosteet ";
 
-    ls->propPerfVideoDrvGB      = "Video Ajuri ";
-    ls->propPerfVideoDispDrvText= "Näyttö ajuri:";
+    ls->propPerfVideoDrvGB      = "Videoajuri ";
+    ls->propPerfVideoDispDrvText= "Näyttöajuri:";
     ls->propPerfFrameSkipText   = "Ruudunpäivitysten ohitus:";
-    ls->propPerfAudioDrvGB      = "Ääni ajuri ";
-    ls->propPerfAudioDrvText    = "Ääni ajuri:";
+    ls->propPerfAudioDrvGB      = "Ääniajuri ";
+    ls->propPerfAudioDrvText    = "Ääniajuri:";
     ls->propPerfAudioBufSzText  = "Äänipuskurin koko:";
     ls->propPerfEmuGB           = "Emulaatio ";
-    ls->propPerfSyncModeText    = "Tahdistus tapa:";
+    ls->propPerfSyncModeText    = "Tahdistutapa:";
     ls->propFullscreenResText   = "Resoluutio kokoruututilassa:";
 
     ls->propSndChipEmuGB        = "Äänipiirien emulointi ";
@@ -396,8 +396,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumVideoFrameskip5     = "5 päivitystä";
 
     ls->enumSoundDrvNone        = "Ei ääntä";
-    ls->enumSoundDrvWMM         = "WMM ajuri";
-    ls->enumSoundDrvDirectX     = "DirectX ajuri";
+    ls->enumSoundDrvWMM         = "WMM-ajuri";
+    ls->enumSoundDrvDirectX     = "DirectX-ajuri";
 
     ls->enumEmuSync1ms          = "Tahdistus MSX:n ruudunpäivitykseen";
     ls->enumEmuSyncAuto         = "Automaattinen (nopea)";
@@ -426,26 +426,26 @@ void langInitFinnish(LanguageStrings* ls)
     // Configuration related lines
     //----------------------
 
-    ls->confTitle               = "blueMSX - Tietokone muokkain";
-    ls->confConfigText          = "Tietokone profiili:";
-    ls->confSlotLayout          = "Slotti järjestys";
+    ls->confTitle               = "blueMSX - Tietokonemuokkain";
+    ls->confConfigText          = "Tietokoneprofiili:";
+    ls->confSlotLayout          = "Slottijärjestys";
     ls->confMemory              = "Muisti";
     ls->confChipEmulation       = "Piirien Emulointi";
     ls->confChipExtras          = "Muuta";
 
     ls->confOpenRom             = "Valitse ROM tiedosto";
-    ls->confSaveTitle           = "blueMSX - Tallenna Tietokone profiili";
-    ls->confSaveText            = "Haluatko korvata Tietokone profiilin:";
-    ls->confSaveAsTitle         = "Tallenna tietokone profiili nimellä...";
-    ls->confSaveAsMachineName   = "Tietokone profiili:";
-    ls->confDiscardTitle        = "blueMSX - Tietokone muokkain";
-    ls->confExitSaveTitle       = "blueMSX - Poistu tietokone muokkaimesta";
-    ls->confExitSaveText        = "Haluatko hylätä tekemäsi muutokset nykyiseen tietokone profiiliin?";
+    ls->confSaveTitle           = "blueMSX - Tallenna tietokoneprofiili";
+    ls->confSaveText            = "Haluatko korvata tietokoneprofiilin:";
+    ls->confSaveAsTitle         = "Tallenna tietokoneprofiili nimellä...";
+    ls->confSaveAsMachineName   = "Tietokoneprofiili:";
+    ls->confDiscardTitle        = "blueMSX - Tietokonemuokkain";
+    ls->confExitSaveTitle       = "blueMSX - Poistu tietokonemuokkaimesta";
+    ls->confExitSaveText        = "Haluatko hylätä tekemäsi muutokset nykyiseen tietokoneprofiiliin?";
 
     ls->confSlotLayoutGB        = "Slotti jako ";
     ls->confSlotExtSlotGB       = "Ulkoiset Slotit ";
     ls->confBoardGB             = "Emolevy ";
-    ls->confBoardText           = "Emolevy tyyppi:";
+    ls->confBoardText           = "Emolevytyyppi:";
     ls->confSlotPrimary         = "Jakamaton";
     ls->confSlotExpanded        = "Jaettu (4 alislottia)";
 
@@ -470,7 +470,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confCmosEnable           = " Ota kellopiiri käyttöön";
     ls->confCmosBattery          = " Käytä ladattua paristoa";
 
-    ls->confCpuFreqGB            = "Prosessori kellotaajuudet ";
+    ls->confCpuFreqGB            = "Prosessorikellotaajuudet ";
     ls->confZ80FreqText          = "Z80 Kellotaajuus:";
     ls->confR800FreqText         = "R800 Kellotaajuus:";
     ls->confFdcGB                = "Levyasemaohjain ";
@@ -493,13 +493,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutDescription     = "Pikanäppäin";
 
     ls->shortcutSaveConfig      = "blueMSX - Tallenna Asetukset";
-    ls->shortcutOverwriteConfig = "Haluatko korvata pikanäppäin asetukset:";
-    ls->shortcutExitConfig      = "blueMSX - Poistu pikanäppäin asetuksista";
-    ls->shortcutDiscardConfig   = "Haluatko hylätä tekemäsi muutokset pikanäppäin asetuksiin?";
-    ls->shortcutSaveConfigAs    = "blueMSX - Tallenna pikanäppäin asetukset";
+    ls->shortcutOverwriteConfig = "Haluatko korvata pikanäppäinasetukset:";
+    ls->shortcutExitConfig      = "blueMSX - Poistu pikanäppäinasetuksista";
+    ls->shortcutDiscardConfig   = "Haluatko hylätä tekemäsi muutokset pikanäppäinasetuksiin?";
+    ls->shortcutSaveConfigAs    = "blueMSX - Tallenna pikanäppäinasetukset";
     ls->shortcutConfigName      = "Asetusten nimi:";
     ls->shortcutNewProfile      = "< Uusi profiili >";
-    ls->shortcutConfigTitle     = "blueMSX - Pikanäppäin asetukset";
+    ls->shortcutConfigTitle     = "blueMSX - Pikanäppäinasetukset";
     ls->shortcutAssign          = "Käytä";
     ls->shortcutPressText       = "Pikanäppäin (paina):";
     ls->shortcutScheme          = "Pikanäppäin profiili:";
@@ -507,9 +507,9 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutCartRemove1     = "Poista moduli 1";
     ls->shortcutCartInsert2     = "Aseta moduli 2";
     ls->shortcutCartRemove2     = "Poista moduli 2";
-    ls->shortcutSpecialMenu1    = "Näytä erikois moduli valikko moduliportille 1";
-    ls->shortcutSpecialMenu2    = "Näytä erikois moduli valikko moduliportille 2";
-    ls->shortcutCartAutoReset   = "Käynnistä kone uudeleen modulin asettamisen jälkeen";
+    ls->shortcutSpecialMenu1    = "Näytä erikoismodulivalikko moduliportille 1";
+    ls->shortcutSpecialMenu2    = "Näytä erikoismodulivalikko moduliportille 2";
+    ls->shortcutCartAutoReset   = "Käynnistä kone uudelleen modulin asettamisen jälkeen";
     ls->shortcutDiskInsertA     = "Aseta levytiedosto asemaan A";
     ls->shortcutDiskDirInsertA  = "Aseta hakemisto levyasemaksi A";
     ls->shortcutDiskRemoveA     = "Poista levy levyasemasta A";
@@ -520,11 +520,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutDiskRemoveB     = "Poista levy levyasemasta B";
     ls->shortcutCasInsert       = "Aseta kasetti";
     ls->shortcutCasEject        = "Poista kasetti";
-    ls->shortcutCasAutorewind   = "Muuta kasetin automaattista alkuunkelaus toimintoa";
+    ls->shortcutCasAutorewind   = "Muuta kasetin automaattista alkuunkelaustoimintoa";
     ls->shortcutCasReadOnly     = "Muuta kasetin kirjoitussuojausta";
     ls->shortcutCasSetPosition  = "Aseta kasetin kohta";
     ls->shortcutCasRewind       = "Kelaa kasetti alkuun";
-    ls->shortcutCasSave         = "Tallenna kasetti image";
+    ls->shortcutCasSave         = "Tallenna kasetti-image";
     ls->shortcutPrnFormFeed     = "Vaihda tulostimessa sivua";
     ls->shortcutCpuStateLoad    = "Lataa tila";
     ls->shortcutCpuStateSave    = "Tallenna tila nimellä";
@@ -536,7 +536,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutScreenshotLarge = "Suuri filtteröimätön ruudunkaappaus";
     ls->shortcutQuit            = "Poistu blueMSX:stä";
     ls->shortcutRunPause        = "Käynnistä/Keskeytä emulaatio";
-    ls->shortcutStop            = "Pysäytä emulatio";
+    ls->shortcutStop            = "Pysäytä emulaatio";
     ls->shortcutResetHard       = "Kylmäkäynnistys";
     ls->shortcutResetSoft       = "Lämminkäynnistys";
     ls->shortcutResetClean      = "Täydellinen uudelleenkäynnistys";
@@ -552,24 +552,24 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutSwitchMsxAudio  = "Muuta MSX-AUDIO kytkimen tila";
     ls->shortcutSwitchFront     = "Muuta Panasonic aplikaatiokytkimen tila";
     ls->shortcutSwitchPause     = "Muuta Pause-näppäimen tilaa";
-    ls->shortcutToggleMouseLock = "Muuta hiiren kaappauksen tilaa";
+    ls->shortcutToggleMouseLock = "Muuta hiirenkaappauksen tilaa";
     ls->shortcutEmuSpeedMax     = "Maksimi emulointinopeus";
     ls->shortcutEmuSpeedToggle  = "Vaihda maksimi emulointinopeus";
     ls->shortcutEmuSpeedNormal  = "Normaali emulointinopeus";
     ls->shortcutEmuSpeedInc     = "Nopeuta emulointia";
     ls->shortcutEmuSpeedDec     = "Hidasta emulointia";
     ls->shortcutThemeSwitch     = "Vaihda teemaa";
-    ls->shortcutShowEmuProp     = "Näytä emulaatio asetukset";
-    ls->shortcutShowVideoProp   = "Näytä video asetukset";
-    ls->shortcutShowAudioProp   = "Näytä ääni asetukset";
-    ls->shortcutShowCtrlProp    = "Näytä kontrolli asetukset";
-    ls->shortcutShowPerfProp    = "Näytä suorituskyky asetukset";
+    ls->shortcutShowEmuProp     = "Näytä emulaatioasetukset";
+    ls->shortcutShowVideoProp   = "Näytä videoasetukset";
+    ls->shortcutShowAudioProp   = "Näytä ääniasetukset";
+    ls->shortcutShowCtrlProp    = "Näytä kontrolliasetukset";
+    ls->shortcutShowPerfProp    = "Näytä suorituskykyasetukset";
     ls->shortcutShowSettProp    = "Näytä yleisasetukset";
-    ls->shortcutShowPorts       = "Näytä liitäntä asetukset";
+    ls->shortcutShowPorts       = "Näytä liitäntäasetukset";
     ls->shortcutShowLanguage    = "Näytä kielivalinnat";
-    ls->shortcutShowMachines    = "Näytä tietokone muokkain";
-    ls->shortcutShowShortcuts   = "Näytä pikanäppäin valinnat";
-    ls->shortcutShowKeyboard    = "Näytä Peliohjain / Näppäimistö asetukset";
+    ls->shortcutShowMachines    = "Näytä tietokonemuokkain";
+    ls->shortcutShowShortcuts   = "Näytä pikanäppäinvalinnat";
+    ls->shortcutShowKeyboard    = "Näytä Peliohjain / Näppäimistöasetukset";
     ls->shortcutShowMixer       = "Näytä Mixeri";
     ls->shortcutShowDebugger    = "Näytä Debugger";
     ls->shortcutShowTrainer     = "Näytä Trainer";
@@ -585,9 +585,9 @@ void langInitFinnish(LanguageStrings* ls)
     // Keyboard config lines
     //----------------------
 
-    ls->keyconfigSelectedKey    = "kohde näppäin:";
-    ls->keyconfigMappedTo       = "PC näppäin:";
-    ls->keyconfigMappingScheme  = "Näppäinkartta profiili:";
+    ls->keyconfigSelectedKey    = "kohdenäppäin:";
+    ls->keyconfigMappedTo       = "PC-näppäin:";
+    ls->keyconfigMappingScheme  = "Näppäinkarttaprofiili:";
 
     
     //----------------------
@@ -691,6 +691,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeGide             = "GIDE";
     ls->romTypeVmx80            = "Microsol VMX-80";
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitoija";
+
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitoija";
     ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg01            = "Yamaha SFG-01";
@@ -772,5 +773,3 @@ void langInitFinnish(LanguageStrings* ls)
 };
 
 #endif
-
-

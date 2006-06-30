@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-24 02:23:58 $
+** $Date: 2006-06-30 15:59:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,6 +217,7 @@ typedef struct {
 } VideoProperties;
 
 typedef struct {
+    int disabled;
     int inputIndex;
     char inputName[256];
 } VideoInProperties;
