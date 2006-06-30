@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-06-30 22:41:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,8 +134,8 @@ enum  {
     ROM_SONYHBIV1   = 102,
     ROM_SVI727      = 103,
     ROM_FMDAS       = 104,
-    ROM_YAMAHASFG01 = 105,
-    ROM_YAMAHASFG05 = 106,
+    ROM_YAMAHASFG05 = 105,
+    ROM_YAMAHASFG01 = 106,
     ROM_MAXROMID    = 106
 };
 

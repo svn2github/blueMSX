@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-30 15:59:34 $
+** $Date: 2006-06-30 22:42:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,7 +105,7 @@ void videoInCleanup(Properties* properties)
 
     properties->videoIn.inputIndex = videoIn.inputIndex;
 
-    if (videoIn.inputCount == 1) {
+    if (videoIn.inputCount > 1) {
         videoIn.grabber->ShutdownGrabber();
     }
 }

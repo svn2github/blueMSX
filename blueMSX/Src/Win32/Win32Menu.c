@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-06-22 23:51:19 $
+** $Date: 2006-06-30 22:41:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,6 +42,7 @@
 #include "VideoManager.h"
 #include "Win32VideoIn.h"
 #include "ArchNotifications.h"
+#include "ArchMenu.h"
 #include "ArchInput.h"
 #include "JoystickPort.h"
 #include "GameReader.h"
@@ -1337,6 +1338,7 @@ int menuCommand(Properties* pProperties, int command)
     i = command - ID_TOOLPLUGINS;
     if (i >= 0 && i < 50) {
         toolInfoShowTool(toolInfoGet(i));
+        archUpdateMenu(0);
     }
 
     
