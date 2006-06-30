@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2005-08-18 05:21:51 $
+** $Date: 2006-06-30 00:52:53 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -390,6 +390,11 @@ int wd2793GetDataRequest(WD2793* wd)
     }
 
     return wd->dataRequest;
+}
+
+int wd2793PeekIrq(WD2793* wd)
+{
+	return wd->intRequest;
 }
 
 int wd2793GetIrq(WD2793* wd)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-06-30 00:52:53 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -52,7 +52,6 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
-    UInt8 regD4;
 } Microsol;
 
 static void destroy(Microsol* rm)
@@ -77,8 +76,6 @@ static void saveState(Microsol* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapperMicrosol");
 
-    saveStateSet(state, "regD4", rm->regD4);
-    
     saveStateClose(state);
 
     wd2793SaveState(rm->fdc);
@@ -87,8 +84,6 @@ static void saveState(Microsol* rm)
 static void loadState(Microsol* rm)
 {
     SaveState* state = saveStateOpenForRead("mapperMicrosol");
-
-    rm->regD4 = (UInt8)saveStateGet(state, "regD4", 0);
 
     saveStateClose(state);
 
@@ -108,7 +103,9 @@ static UInt8 peekIo(Microsol* rm, UInt16 ioPort)
 	case 0xd3:
 		return wd2793PeekDataReg(rm->fdc);
 	case 0xd4:
-		return rm->regD4;
+        return 0x3f | 
+               (wd2793PeekIrq(rm->fdc)         ? 0x80 : 0) | 
+               (wd2793PeekDataRequest(rm->fdc) ? 0    : 0x40);
     }
     return 0xff;
 }
@@ -125,7 +122,9 @@ static UInt8 readIo(Microsol* rm, UInt16 ioPort)
 	case 0xd3:
 		return wd2793GetDataReg(rm->fdc);
 	case 0xd4:
-		return rm->regD4;
+        return 0x3f | 
+               (wd2793GetIrq(rm->fdc)         ? 0x80 : 0) | 
+               (wd2793GetDataRequest(rm->fdc) ? 0 : 0x40);
     }
     return 0xff;
 }
@@ -169,7 +168,6 @@ static void writeIo(Microsol* rm, UInt16 ioPort, UInt8 value)
 		}
 
         wd2793SetSide(rm->fdc, value & 0x10 ? 1 : 0);
-		rm->regD4 = value;
 
         break;
     }

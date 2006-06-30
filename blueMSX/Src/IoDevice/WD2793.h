@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-06-30 00:52:53 $
 **
 ** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
 **
@@ -61,7 +61,9 @@ void    wd2793SetSectorReg(WD2793* wd, UInt8 value);
 UInt8   wd2793PeekTrackReg(WD2793* wd);
 UInt8   wd2793GetTrackReg(WD2793* wd);
 void    wd2793SetTrackReg(WD2793* wd, UInt8 value);
+int     wd2793PeekIrq(WD2793* wd);
 int     wd2793GetIrq(WD2793* wd);
+int     wd2793PeekDataRequest(WD2793* wd);
 int     wd2793GetDataRequest(WD2793* wd);
 void    wd2793SetSide(WD2793* wd, int side);
 void    wd2793SetDensity(WD2793* wd, int density);
