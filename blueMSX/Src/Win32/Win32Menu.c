@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-30 22:41:59 $
+** $Date: 2006-07-01 23:49:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -637,7 +637,7 @@ static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_GUNSTICK ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 4, langEnumControlsJoyGunStick());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_ASCIILASER ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 7, langEnumControlsJoyAsciiLaser());
+               ID_CTRLPORT2_BASE + 7, langEnumControlsJoyAsciiLaser());
     AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
                ID_CTRLPORT2_BASE + 5, langEnumControlsJoyColeco());
     
