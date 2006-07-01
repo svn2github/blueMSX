@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-06-14 18:15:42 $
+** $Date: 2006-07-01 19:14:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -972,8 +972,8 @@ static void updateShortcutEntries(HWND hDlg)
     
     ADD_SHORTCUTSEPARATOR();
     
-    ADD_SHORTCUT(resetSoft, langShortcutResetSoft());
     ADD_SHORTCUT(resetHard, langShortcutResetHard());
+    ADD_SHORTCUT(resetSoft, langShortcutResetSoft());
     ADD_SHORTCUT(resetClean, langShortcutResetClean());
     
     ADD_SHORTCUTSEPARATOR();

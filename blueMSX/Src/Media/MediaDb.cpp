@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-06-30 15:59:34 $
+** $Date: 2006-07-01 19:14:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,7 +157,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "MSX-AUDIO")    return ROM_MSXAUDIO;
     if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
     if (name == "National")     return ROM_NATIONAL;
-    if (name == "CX5M-MUSIC")   return ROM_UNKNOWN; // not implemented
+    if (name == "CX5M-MUSIC")   return ROM_YAMAHASFG05;
     if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
     if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
     if (name == "VMX80")        return ROM_MICROSOL80;

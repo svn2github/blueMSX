@@ -67,6 +67,7 @@ public:
         menuDebugRunTo              = "커서까지 실행";
         menuDebugShowSymbols        = "심볼 정보 보여주기";
         menuDebugGoto               = "지정주소로 가기";
+        menuDebugFind               = "찾기";
         menuDebugBpAdd              = "중단점 추가";
         menuDebugBpToggle           = "중단점 설정/제거";
         menuDebugEnable             = "중단점 활성/비활성";
