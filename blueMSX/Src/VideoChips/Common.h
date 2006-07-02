@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-06-14 07:39:24 $
+** $Date: 2006-07-02 23:55:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -192,6 +192,62 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
         for (X = 0; X < 40; X++) {
             int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+            linePtr[0] = color[(pattern >> 7) & 1];
+            linePtr[1] = color[(pattern >> 6) & 1];
+            linePtr[2] = color[(pattern >> 5) & 1];
+            linePtr[3] = color[(pattern >> 4) & 1];
+            linePtr[4] = color[(pattern >> 3) & 1];
+            linePtr[5] = color[(pattern >> 2) & 1];
+            charTable++;
+            linePtr += 6;
+        }
+    }
+}
+
+
+static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
+{
+    UInt16* linePtr;
+    UInt8*  charTable;
+    int     patternBase;
+    UInt16  color[2];
+
+    if (X2 >= 32) {
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 7);
+    }
+
+    if (X > 6 || X2 <= 6) {
+        return;
+    }
+
+    linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
+
+    if (linePtr == NULL) {
+        return;
+    }
+
+    if (!vdp->screenOn || !vdp->drawArea) {
+        UInt16 bgColor = vdp->palette[vdp->BGColor];
+        for (X = 0; X < 40; X++) {
+            linePtr[0] = bgColor;
+            linePtr[1] = bgColor;
+            linePtr[2] = bgColor;
+            linePtr[3] = bgColor;
+            linePtr[4] = bgColor;
+            linePtr[5] = bgColor;
+            linePtr += 6; 
+        }
+    }
+    else {
+        Y -= vdp->firstLine;
+        Y = Y + vdpVScroll(vdp) - vdp->scr0splitLine;
+        charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (Y / 8))));
+        patternBase =  (-1 << 13) | ((Y & 0xc0) << 5) | (Y & 7);
+        color[0] = vdp->palette[vdp->BGColor];
+        color[1] = vdp->palette[vdp->FGColor];
+
+        for (X = 0; X < 40; X++) {
+            int pattern = vdp->vram[vdp->chrGenBase & (patternBase | ((int)*charTable * 8))];
             linePtr[0] = color[(pattern >> 7) & 1];
             linePtr[1] = color[(pattern >> 6) & 1];
             linePtr[2] = color[(pattern >> 5) & 1];

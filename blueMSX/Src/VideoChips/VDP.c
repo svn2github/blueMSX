@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2006-06-16 22:52:10 $
+** $Date: 2006-07-02 23:55:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -229,6 +229,7 @@ static VDP* theVdp = NULL;
 
 static void RefreshLineTx80(VDP*, int, int, int);
 static void RefreshLine0(VDP*, int, int, int);
+static void RefreshLine0Plus(VDP*, int, int, int);
 static void RefreshLine1(VDP*, int, int, int);
 static void RefreshLine2(VDP*, int, int, int);
 static void RefreshLine3(VDP*, int, int, int);
@@ -581,6 +582,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x05: vdp->screenMode = 7; break;
     case 0x07: vdp->screenMode = 8; break;
     case 0x12: vdp->screenMode = 13; break;
+    case 0x11: vdp->screenMode = 16; break;
     }
 #endif
     vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
@@ -602,7 +604,7 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
 #endif
     vdp->screenOn = vdp->vdpRegs[1] & 0x40;
     
-    vdpSetScreenMode(vdp->cmdEngine, vdp->screenMode, vdp->vdpRegs[25] & 0x40);
+    vdpSetScreenMode(vdp->cmdEngine, vdp->screenMode & 0x0f, vdp->vdpRegs[25] & 0x40);
 
     switch (vdp->screenMode) {
     case 0: vdp->RefreshLine = RefreshLine0; break;
@@ -629,6 +631,10 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
             vdp->RefreshLine = RefreshLine12; 
             vdp->screenMode = 12;
         }
+        break;
+    case 16:
+        vdp->screenMode = 0;
+        vdp->RefreshLine = RefreshLine0Plus; 
         break;
     default:
         vdp->RefreshLine = RefreshLineTx80; break;

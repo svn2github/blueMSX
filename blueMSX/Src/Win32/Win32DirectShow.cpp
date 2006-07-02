@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-30 15:59:34 $
+** $Date: 2006-07-02 23:55:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -429,14 +429,14 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
     CComPtr<ICreateDevEnum> pCreateDevEnum;
     pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
 
-    ASSERT(pCreateDevEnum);
+//    ASSERT(pCreateDevEnum);
     if(!pCreateDevEnum)
         return;
 
     CComPtr<IEnumMoniker> pEm;
     pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
 
-    ASSERT(pEm);
+//    ASSERT(pEm);
     if(!pEm)
         return;
     pEm->Reset();
