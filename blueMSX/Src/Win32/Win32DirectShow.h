@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-30 15:59:34 $
+** $Date: 2006-07-03 19:25:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,21 +44,18 @@ public:
 
     int SetupGrabber();
     void ShutdownGrabber();
+    char *GetName();
 
-    int GrabFrame(PBITMAPINFO *Bitmap, ULONG *BitmapSize);
-    int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height);
-
-    char* GetName();
+    int GrabFrame(WORD* bitmap, LONG width, LONG height);
 
 private:
     char m_szDeviceName[MAX_PATH];
-    CComPtr< IGraphBuilder >  m_pGraph;
-    HRESULT GetPin(IBaseFilter * pFilter, PIN_DIRECTION dirrequired,  int iNum, IPin **ppPin);
-    IPin *  GetInPin ( IBaseFilter *pFilter, int Num );
-    IPin *  GetOutPin( IBaseFilter *pFilter, int Num );
+    CComPtr <IGraphBuilder>  m_pGraph;
+    HRESULT GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin);
+    IPin *GetInPin (IBaseFilter *pFilter, int Num);
+    IPin *GetOutPin(IBaseFilter *pFilter, int Num);
 
-    void GetDefaultCapDevice( IBaseFilter ** ppCap);
-    static ULONG CalcBitmapInfoSize(const BITMAPINFOHEADER &bmiHeader);
+    void GetDefaultCapDevice(IBaseFilter **ppCap);
     HRESULT SetupVideoStreamConfig(IAMStreamConfig *pSC);
 
 #ifdef _DEBUG

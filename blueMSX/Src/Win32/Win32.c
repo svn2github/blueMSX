@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.147 $
+** $Revision: 1.148 $
 **
-** $Date: 2006-06-29 04:03:30 $
+** $Date: 2006-07-03 19:25:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,7 @@
 ******************************************************************************
 */
 #define DIRECTINPUT_VERSION     0x0700
+#define _WIN32_DCOM
 
 #include <windows.h>
 #include <direct.h>
@@ -2582,9 +2583,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     sprintf(buffer, "%s\\Tools", st.pCurDir);
     toolLoadAll(buffer, pProperties->language);
 
-    
 
-	CoInitialize(NULL); 
+    CoInitializeEx(NULL,COINIT_APARTMENTTHREADED|COINIT_DISABLE_OLE1DDE|COINIT_SPEED_OVER_MEMORY);
 
     videoInInitialize(pProperties);
 
@@ -2813,6 +2813,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         kbdLockDisable();
     }
     FreeLibrary(kbdLockInst);
+
+    CoUninitialize();
 
     exit(0);
 

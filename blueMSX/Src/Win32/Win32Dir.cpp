@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Dir.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-29 04:03:30 $
+** $Date: 2006-07-03 19:25:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,6 @@ extern "C" char* openDir(HWND hwnd, char* pTitle, char* defDir) {
     defaultDirectory = defDir;
 
 	if (!initialized) {
-//		CoInitialize(NULL); 
 		initialized = true;
 	}
 

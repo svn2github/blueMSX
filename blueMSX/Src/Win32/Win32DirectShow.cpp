@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-07-02 23:55:30 $
+** $Date: 2006-07-03 19:25:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,9 +32,7 @@
 #include <comutil.h>
 #pragma comment(lib, "comsupp.lib")
 
-typedef struct _callbackinfo 
-{
-    double dblSampleTime;
+typedef struct _callbackinfo {
     long lBufferSize;
     BYTE *pBuffer;
     BITMAPINFOHEADER bih;
@@ -42,7 +40,7 @@ typedef struct _callbackinfo
 
 } CALLBACKINFO;
 
-CALLBACKINFO cbInfo={0};
+CALLBACKINFO cbInfo = {0};
 
 class CSampleGrabberCB : public ISampleGrabberCB 
 {
@@ -52,87 +50,58 @@ public:
     long Width;
     long Height;
 
-    STDMETHODIMP_(ULONG) AddRef() { return 2; }
-    STDMETHODIMP_(ULONG) Release() { return 1; }
-
-    STDMETHODIMP QueryInterface(REFIID riid, void ** ppv)
+    STDMETHODIMP_(ULONG) AddRef()
     {
-        CheckPointer(ppv,E_POINTER);
-        
-        if( riid == IID_ISampleGrabberCB || riid == IID_IUnknown ) 
-        {
-            *ppv = (void *) static_cast<ISampleGrabberCB*> ( this );
+        return 2;
+    }
+
+    STDMETHODIMP_(ULONG) Release()
+    {
+        return 1;
+    }
+
+    STDMETHODIMP QueryInterface(REFIID riid, void **ppv)
+    {
+        if ((ppv) == NULL) {
+            return (E_POINTER);
+        }
+
+        if (riid == IID_ISampleGrabberCB || riid == IID_IUnknown) {
+            *ppv = (void *) static_cast <ISampleGrabberCB*> (this);
             return NOERROR;
         }    
 
         return E_NOINTERFACE;
     }
 
-    STDMETHODIMP SampleCB( double SampleTime, IMediaSample * pSample )
+    STDMETHODIMP SampleCB(double SampleTime, IMediaSample *pSample)
     {
         return 0;
     }
 
-    STDMETHODIMP BufferCB( double dblSampleTime, BYTE * pBuffer, long lBufferSize )
+    STDMETHODIMP BufferCB(double dblSampleTime, BYTE *pBuffer, long lBufferSize)
     {
-        if (!pBuffer)
+        if (!pBuffer) {
             return E_POINTER;
+        }
 
-        if( cbInfo.lBufferSize < lBufferSize )
-        {
+        if (cbInfo.lBufferSize < lBufferSize) {
             delete [] cbInfo.pBuffer;
             cbInfo.pBuffer = NULL;
             cbInfo.lBufferSize = 0;
         }
 
-        cbInfo.dblSampleTime = dblSampleTime;
-
-        if (!cbInfo.pBuffer)
-        {
+        if (!cbInfo.pBuffer) {
             cbInfo.pBuffer = new BYTE[lBufferSize];
             cbInfo.lBufferSize = lBufferSize;
         }
 
-        if( !cbInfo.pBuffer )
-        {
+        if (!cbInfo.pBuffer) {
             cbInfo.lBufferSize = 0;
             return E_OUTOFMEMORY;
         }
 
         memcpy(cbInfo.pBuffer, pBuffer, lBufferSize);
-
-        return 0;
-    }
-
-    int CopyBitmap(double SampleTime, BYTE * pBuffer, long BufferSize)
-    {
-        TCHAR szFilename[MAX_PATH];
-        (void)StringCchPrintf(szFilename, NUMELMS(szFilename), TEXT("Frame%5.5d.bmp\0"), long( SampleTime * 1000 ) );
-
-        HANDLE hf = CreateFile(szFilename, GENERIC_WRITE, FILE_SHARE_READ, 
-                               NULL, CREATE_ALWAYS, NULL, NULL );
-
-        if( hf == INVALID_HANDLE_VALUE )
-        {
-            return 0;
-        }
-
-        BITMAPFILEHEADER bfh;
-        memset( &bfh, 0, sizeof( bfh ) );
-        bfh.bfType = 'MB';
-        bfh.bfSize = sizeof( bfh ) + BufferSize + sizeof( BITMAPINFOHEADER );
-        bfh.bfOffBits = sizeof( BITMAPINFOHEADER ) + sizeof( BITMAPFILEHEADER );
-
-        DWORD Written = 0;
-        WriteFile( hf, &bfh, sizeof( bfh ), &Written, NULL );
-   
-        Written = 0;
-        WriteFile( hf, &(cbInfo.bih), sizeof( cbInfo.bih ), &Written, NULL );
-
-        Written = 0;
-        WriteFile( hf, pBuffer, BufferSize, &Written, NULL );
-
-        CloseHandle( hf );
 
         return 0;
     }
@@ -142,7 +111,6 @@ CSampleGrabberCB CB;
 
 CVideoGrabber::CVideoGrabber()
 {
-    m_szDeviceName[0] = 0;
 }
 
 CVideoGrabber::~CVideoGrabber()
@@ -152,108 +120,131 @@ CVideoGrabber::~CVideoGrabber()
 void CVideoGrabber::ShutdownGrabber()
 {
     HRESULT hr;
-    CComQIPtr< IMediaControl, &IID_IMediaControl > pControl = m_pGraph;
+    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
 
     hr = pControl->Stop();
 
 #ifdef _DEBUG
-    if (m_dwGraphRegister)
+    if (m_dwGraphRegister) {
         RemoveGraphFromRot(m_dwGraphRegister);
+    }
 #endif
 }
 
 int CVideoGrabber::SetupGrabber()
 {
-    CComPtr< ISampleGrabber > pGrabber;
-    CComPtr< IBaseFilter >    pSource;
-    CComPtr< IVideoWindow >   pVideoWindow;
-    CComPtr< ICaptureGraphBuilder2 > pBuilder;
-    IAMStreamConfig * pConfig;
+    CComPtr <ISampleGrabber> pGrabber;
+    CComPtr <IBaseFilter>    pSource;
+    CComPtr <IVideoWindow>   pVideoWindow;
+    CComPtr <ICaptureGraphBuilder2> pBuilder;
+    IAMStreamConfig *pConfig;
     HRESULT hr;
 
-    pBuilder.CoCreateInstance( CLSID_CaptureGraphBuilder2 );
-    if( !pBuilder )
-    {
+    hr = pBuilder.CoCreateInstance(CLSID_CaptureGraphBuilder2);
+    if (FAILED(hr)) {
         return 0;
     }
 
-    pGrabber.CoCreateInstance( CLSID_SampleGrabber );
-    if( !pGrabber )
-    {
+    hr = pGrabber.CoCreateInstance(CLSID_SampleGrabber);
+    if (FAILED(hr)) {
         return 0;
     }
-    CComQIPtr< IBaseFilter, &IID_IBaseFilter > pGrabberBase( pGrabber );
 
     GetDefaultCapDevice(&pSource);
-    if( !pSource )
-    {
+    if (!pSource) {
         return 0;
     }
 
-    m_pGraph.CoCreateInstance( CLSID_FilterGraph );
-    if( !m_pGraph )
-    {
+    hr = m_pGraph.CoCreateInstance(CLSID_FilterGraph);
+    if (FAILED(hr)) {
         return 0;
     }
 
-    hr = m_pGraph->AddFilter( pSource, L"Source" );
-    hr = m_pGraph->AddFilter( pGrabberBase, L"Grabber" );
+    hr = m_pGraph->AddFilter(pSource, L"Source");
+    if (FAILED(hr)) {
+        return 0;
+    }
 
-    CComPtr < IBaseFilter > pRenderer;
+    CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
+    hr = m_pGraph->AddFilter(pGrabberBase, L"Grabber");
+    if (FAILED(hr)) {
+        return 0;
+    }
+
+    CComPtr <IBaseFilter> pRenderer;
     hr = pRenderer.CoCreateInstance(CLSID_NullRenderer);
+    if (FAILED(hr)) {
+        return 0;
+    }
     hr = m_pGraph->AddFilter(pRenderer, L"Null Renderer");
+    if (FAILED(hr)) {
+        return 0;
+    }
 
     hr = pBuilder->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pSource, IID_IAMStreamConfig, (void **)&pConfig);
+    if (FAILED(hr)) {
+        return 0;
+    }
     hr = SetupVideoStreamConfig(pConfig);
+    if (FAILED(hr)) {
+        return 0;
+    }
 
     CMediaType GrabType;
-    GrabType.SetType( &MEDIATYPE_Video );
-    GrabType.SetSubtype( &MEDIASUBTYPE_RGB555  );
-    hr = pGrabber->SetMediaType( &GrabType );
+    GrabType.SetType(&MEDIATYPE_Video);
+    GrabType.SetSubtype(&MEDIASUBTYPE_RGB555);
+    hr = pGrabber->SetMediaType(&GrabType);
+    if (FAILED(hr)) {
+        return 0;
+    }
 
-    CComPtr< IPin > pSourcePin;
-    CComPtr< IPin > pGrabPin;
-
-    pSourcePin = GetOutPin( pSource, 0 );
-    pGrabPin   = GetInPin( pGrabberBase, 0 );
-
-    hr = m_pGraph->Connect( pSourcePin, pGrabPin );
-    if( FAILED( hr ) )
-    {
+    CComPtr <IPin> pSourcePin;
+    CComPtr <IPin> pGrabPin;
+    pSourcePin = GetOutPin(pSource, 0);
+    pGrabPin = GetInPin(pGrabberBase, 0);
+    hr = m_pGraph->Connect(pSourcePin, pGrabPin);
+    if (FAILED(hr)) {
         return 0;
     }
 
     AM_MEDIA_TYPE mt;
-    hr = pGrabber->GetConnectedMediaType( &mt );
-    VIDEOINFOHEADER * vih = (VIDEOINFOHEADER*) mt.pbFormat;
-    CB.Width  = vih->bmiHeader.biWidth;
+    hr = pGrabber->GetConnectedMediaType(&mt);
+    if (FAILED(hr)) {
+        return 0;
+    }
+    VIDEOINFOHEADER *vih = (VIDEOINFOHEADER*) mt.pbFormat;
+    CB.Width = vih->bmiHeader.biWidth;
     CB.Height = vih->bmiHeader.biHeight;
-    FreeMediaType( mt );
+    FreeMediaType(mt);
 
-    memset( &(cbInfo.bih), 0, sizeof( cbInfo.bih ) );
-    cbInfo.bih.biSize = sizeof( cbInfo.bih );
+    memset(&(cbInfo.bih), 0, sizeof(cbInfo.bih));
+    cbInfo.bih.biSize = sizeof(cbInfo.bih);
     cbInfo.bih.biWidth = CB.Width;
     cbInfo.bih.biHeight = CB.Height;
     cbInfo.bih.biPlanes = 1;
     cbInfo.bih.biBitCount = 16;
 
-    CComPtr <IPin> pGrabOutPin = GetOutPin( pGrabberBase, 0 );
-    hr = m_pGraph->Render( pGrabOutPin );
-
-    if( FAILED( hr ) )
-    {
+    CComPtr <IPin> pGrabOutPin = GetOutPin(pGrabberBase, 0);
+    hr = m_pGraph->Render(pGrabOutPin);
+    if (FAILED(hr)) {
         return 0;
     }
 
-    hr = pGrabber->SetBufferSamples( FALSE );
+    hr = pGrabber->SetBufferSamples(FALSE);
+    if (FAILED(hr)) {
+        return 0;
+    }
+    hr = pGrabber->SetOneShot(TRUE);
+    if (FAILED(hr)) {
+        return 0;
+    }
+    hr = pGrabber->SetCallback(&CB, 1);
+    if (FAILED(hr)) {
+        return 0;
+    }
 
-    hr = pGrabber->SetOneShot( TRUE );
-
-    hr = pGrabber->SetCallback( &CB, 1 );
-
-    CComQIPtr< IVideoWindow, &IID_IVideoWindow > pWindow = m_pGraph;
-    if (pWindow)
-    {
+    CComQIPtr <IVideoWindow, &IID_IVideoWindow> pWindow = m_pGraph;
+    if (pWindow) {
         hr = pWindow->put_AutoShow(OAFALSE);
     }
 
@@ -262,43 +253,13 @@ int CVideoGrabber::SetupGrabber()
     hr = AddGraphToRot(m_pGraph, &m_dwGraphRegister);
 #endif
 
-    CComQIPtr< IMediaControl, &IID_IMediaControl > pControl( m_pGraph );
-    hr = pControl->Run( );
+    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
+    hr = pControl->Run();
+    if (FAILED(hr)) {
+        return 0;
+    }
 
 	return 1;
-}
-
-int CVideoGrabber::GrabFrame(PBITMAPINFO *Bitmap, ULONG *BitmapSize)
-{
-    HRESULT hr;
-    long EvCode = 0;
-
-    if (!m_pGraph)
-    {
-        return 0;    
-    }
-
-    CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( m_pGraph );
-
-    hr = pEvent->WaitForCompletion( INFINITE, &EvCode );
-        
-    BYTE *BitmapData = NULL;
-    cbInfo.biSize = CalcBitmapInfoSize(cbInfo.bih);
-    ULONG Size = cbInfo.biSize + cbInfo.lBufferSize;
-    *BitmapSize = Size;
-
-    if(Bitmap)
-    {
-        *Bitmap = (BITMAPINFO *) new BYTE[Size];
-        if(*Bitmap)
-        {
-            (**Bitmap).bmiHeader = cbInfo.bih;
-            BitmapData = (BYTE *)(*Bitmap) + cbInfo.biSize;
-            memcpy(BitmapData, cbInfo.pBuffer, cbInfo.lBufferSize);
-        }
-    }
-
-    return cbInfo.lBufferSize;
 }
 
 int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
@@ -306,14 +267,13 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
     HRESULT hr;
     long EvCode = 0;
 
-    if (!m_pGraph)
-    {
+    if (!m_pGraph) {
         return 0;    
     }
 
-    CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( m_pGraph );
+    CComQIPtr <IMediaEvent, &IID_IMediaEvent> pEvent(m_pGraph);
 
-    hr = pEvent->WaitForCompletion( INFINITE, &EvCode );
+    hr = pEvent->WaitForCompletion(INFINITE, &EvCode);
     
     if ((cbInfo.bih.biBitCount + 7) / 8 != sizeof(WORD)) {
         return 0;
@@ -368,28 +328,26 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
     return 1;
 }
 
-HRESULT CVideoGrabber::GetPin( IBaseFilter * pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin)
+HRESULT CVideoGrabber::GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin)
 {
-    CComPtr< IEnumPins > pEnum;
+    CComPtr <IEnumPins> pEnum;
     *ppPin = NULL;
 
     HRESULT hr = pFilter->EnumPins(&pEnum);
-    if(FAILED(hr)) 
+    if (FAILED(hr)) {
         return hr;
+    }
 
     ULONG ulFound;
     IPin *pPin;
     hr = E_FAIL;
 
-    while(S_OK == pEnum->Next(1, &pPin, &ulFound))
-    {
+    while(S_OK == pEnum->Next(1, &pPin, &ulFound)) {
         PIN_DIRECTION pindir = (PIN_DIRECTION)3;
 
         pPin->QueryDirection(&pindir);
-        if(pindir == dirrequired)
-        {
-            if(iNum == 0)
-            {
+        if (pindir == dirrequired) {
+            if (iNum == 0) {
                 *ppPin = pPin;
                 hr = S_OK;
                 break;
@@ -403,16 +361,16 @@ HRESULT CVideoGrabber::GetPin( IBaseFilter * pFilter, PIN_DIRECTION dirrequired,
     return hr;
 }
 
-IPin * CVideoGrabber::GetInPin( IBaseFilter * pFilter, int nPin )
+IPin *CVideoGrabber::GetInPin(IBaseFilter *pFilter, int nPin)
 {
-    CComPtr<IPin> pComPin=0;
+    CComPtr <IPin> pComPin=0;
     GetPin(pFilter, PINDIR_INPUT, nPin, &pComPin);
     return pComPin;
 }
 
-IPin * CVideoGrabber::GetOutPin( IBaseFilter * pFilter, int nPin )
+IPin *CVideoGrabber::GetOutPin(IBaseFilter *pFilter, int nPin)
 {
-    CComPtr<IPin> pComPin=0;
+    CComPtr <IPin> pComPin=0;
     GetPin(pFilter, PINDIR_OUTPUT, nPin, &pComPin);
     return pComPin;
 }
@@ -422,44 +380,56 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
     HRESULT hr;
 
     ASSERT(ppCap);
-    if (!ppCap)
+    if (!ppCap) {
         return;
+    }
     *ppCap = NULL;
-    
-    CComPtr<ICreateDevEnum> pCreateDevEnum;
-    pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
 
-//    ASSERT(pCreateDevEnum);
-    if(!pCreateDevEnum)
+    CComPtr <ICreateDevEnum> pCreateDevEnum;
+    hr = pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
+    if (FAILED(hr)) {
         return;
+    }
 
-    CComPtr<IEnumMoniker> pEm;
-    pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
-
-//    ASSERT(pEm);
-    if(!pEm)
+    ASSERT(pCreateDevEnum);
+    if (!pCreateDevEnum) {
         return;
-    pEm->Reset();
+    }
 
-    while (true)
-    {
+    CComPtr <IEnumMoniker> pEm;
+    hr = pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
+    if (FAILED(hr)) {
+        return;
+    }
+
+    ASSERT(pEm);
+    if (!pEm) {
+        return;
+    }
+
+    hr = pEm->Reset();
+    if (FAILED(hr)) {
+        return;
+    }
+
+    while (true) {
         ULONG ulFetched = 0;
-        CComPtr<IMoniker> pM;
+        CComPtr <IMoniker> pM;
         hr = pEm->Next(1, &pM, &ulFetched);
-        if(hr != S_OK)
+        if (hr != S_OK) {
             break;
+        }
 
-        CComPtr< IPropertyBag > pBag;
+        CComPtr <IPropertyBag> pBag;
         hr = pM->BindToStorage( 0, 0, IID_IPropertyBag, (void**) &pBag );
-        if( hr != S_OK )
-        {
+        if (hr != S_OK) {
             continue;
         }
 
         CComVariant varName;
         varName.vt = VT_BSTR;
         hr = pBag->Read( L"FriendlyName", &varName, NULL);
-        if( hr != S_OK ) {
+        if (hr != S_OK) {
             continue;
         }
         _bstr_t bstrTemp = varName;
@@ -467,16 +437,11 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
         StringCchCopy(m_szDeviceName, strlen(szTemp) , szTemp);
 
         hr = pM->BindToObject(0,0, IID_IBaseFilter, (void **)ppCap);
-        if(*ppCap)
+        if (*ppCap) {
             break;
+        }
     }
     return;
-}
-
-ULONG CVideoGrabber::CalcBitmapInfoSize(const BITMAPINFOHEADER &bmiHeader)
-{
-    UINT bmiSize = (bmiHeader.biSize != 0) ? bmiHeader.biSize : sizeof(BITMAPINFOHEADER);
-    return bmiSize + bmiHeader.biClrUsed * sizeof(RGBQUAD);
 }
 
 HRESULT CVideoGrabber::SetupVideoStreamConfig(IAMStreamConfig *pSC)
@@ -489,36 +454,28 @@ HRESULT CVideoGrabber::SetupVideoStreamConfig(IAMStreamConfig *pSC)
     int iSize;
 
     hr = pSC->GetNumberOfCapabilities(&iCount, &iSize);
-    if (sizeof(scc) != iSize)
-    {
+    if (sizeof(scc) != iSize) {
         return E_FAIL;
     }
 
-    for (int i=0; i<iCount;i++)
-    {
+    for (int i=0; i<iCount;i++) {
         hr = pSC->GetStreamCaps(i, &pmt, reinterpret_cast<BYTE*>(&scc));
-        if (hr == S_OK)
-        {
+        if (hr == S_OK) {
             VIDEOINFOHEADER *pVih = reinterpret_cast<VIDEOINFOHEADER*>(pmt->pbFormat);
-
             pVih->bmiHeader.biWidth = 640;
             pVih->bmiHeader.biHeight = 480;
-
             hr = pSC->SetFormat(pmt);
-            if( hr != S_OK)
-            {
+            if(hr != S_OK) {
                 hr = E_FAIL;
                 continue;
             }
-            else
-            {
+            else {
                 break;
             }
          }
     }
 
-    if (hr == S_OK)
-    {
+    if (hr == S_OK) {
         return S_OK;
     }
     return E_FAIL;
@@ -527,23 +484,24 @@ HRESULT CVideoGrabber::SetupVideoStreamConfig(IAMStreamConfig *pSC)
 #ifdef _DEBUG
 HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
 {
-    if (!pUnkGraph || !pdwRegister)
-    { 
+    HRESULT hr;
+
+    if (!pUnkGraph || !pdwRegister) { 
         return E_POINTER;
     }
 
-    CComPtr<IRunningObjectTable> pROT;
-    HRESULT hr = GetRunningObjectTable(0, &pROT);
-    if(FAILED(hr))
+    CComPtr <IRunningObjectTable> pROT;
+    hr = GetRunningObjectTable(0, &pROT);
+    if (FAILED(hr)) {
         return hr;
+    }
 
     WCHAR wsz[128];
     hr = StringCchPrintfW(wsz, NUMELMS( wsz ), L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
 
-    CComPtr<IMoniker> pMoniker;
+    CComPtr <IMoniker> pMoniker;
     hr = CreateItemMoniker(L"!", wsz, &pMoniker);
-    if( SUCCEEDED( hr ) ) 
-    {
+    if (SUCCEEDED(hr)) {
         hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker, pdwRegister);
     }
 
@@ -552,10 +510,11 @@ HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
 
 void CVideoGrabber::RemoveGraphFromRot(DWORD pdwRegister)
 {
-    CComPtr<IRunningObjectTable> pROT;
-    HRESULT hr = GetRunningObjectTable(0, &pROT);
-    if(SUCCEEDED(hr)) 
-    {
+    HRESULT hr;
+    CComPtr <IRunningObjectTable> pROT;
+
+    hr = GetRunningObjectTable(0, &pROT);
+    if (SUCCEEDED(hr)) {
         pROT->Revoke(pdwRegister);
     }
 }
