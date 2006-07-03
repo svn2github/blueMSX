@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2006-07-02 23:55:30 $
+** $Date: 2006-07-03 23:12:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -582,7 +582,11 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x05: vdp->screenMode = 7; break;
     case 0x07: vdp->screenMode = 8; break;
     case 0x12: vdp->screenMode = 13; break;
-    case 0x11: vdp->screenMode = 16; break;
+    case 0x11: 
+        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+            vdp->screenMode = 16; 
+        }
+        break;
     }
 #endif
     vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
