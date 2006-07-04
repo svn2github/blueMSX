@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-07-03 19:25:45 $
+** $Date: 2006-07-04 07:49:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -391,7 +391,7 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
         return;
     }
 
-    ASSERT(pCreateDevEnum);
+//    ASSERT(pCreateDevEnum);
     if (!pCreateDevEnum) {
         return;
     }
@@ -402,7 +402,7 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
         return;
     }
 
-    ASSERT(pEm);
+//    ASSERT(pEm);
     if (!pEm) {
         return;
     }

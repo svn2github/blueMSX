@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-30 15:59:32 $
+** $Date: 2006-07-04 07:49:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -240,6 +240,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.monitorColor          = P_VIDEO_COLOR;
     properties->video.monitorType           = P_VIDEO_PALMON;
     properties->video.windowSize            = P_VIDEO_SIZEX2;
+    properties->video.windowX               = -1;
+    properties->video.windowY               = -1;
     properties->video.driver                = P_VIDEO_DRVDIRECTX_VIDEO;
     properties->video.frameSkip             = 0;
     properties->video.fullscreen.width      = 640;
@@ -489,6 +491,8 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(video, monitorColor, MonitorColorPair);
     GET_ENUM_VALUE_2(video, monitorType, MonitorTypePair);
     GET_ENUM_VALUE_2(video, windowSize, WindowSizePair);
+    GET_INT_VALUE_2(video, windowX);
+    GET_INT_VALUE_2(video, windowY);
     GET_ENUM_VALUE_2(video, driver, VideoDriverPair);
     GET_INT_VALUE_2(video, frameSkip);
     GET_INT_VALUE_3(video, fullscreen, width);
@@ -700,6 +704,8 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(video, verticalStretch, YesNoPair);
     SET_INT_VALUE_2(video, frameSkip);
     SET_ENUM_VALUE_2(video, windowSize, WindowSizePair);
+    SET_INT_VALUE_2(video, windowX);
+    SET_INT_VALUE_2(video, windowY);
     SET_INT_VALUE_3(video, fullscreen, width);
     SET_INT_VALUE_3(video, fullscreen, height);
     SET_INT_VALUE_3(video, fullscreen, bitDepth);

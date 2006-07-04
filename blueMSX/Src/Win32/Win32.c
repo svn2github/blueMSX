@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.148 $
+** $Revision: 1.149 $
 **
-** $Date: 2006-07-03 19:25:45 $
+** $Date: 2006-07-04 07:49:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1038,9 +1038,6 @@ typedef struct {
     POINT currentHwndMouse;
     RECT currentHwndRect;
 
-    int X;
-    int Y;
-
 
 	//Precalc vars
 	int clientWidth;
@@ -1414,8 +1411,8 @@ void themeSet(char* themeName, int forceMatch) {
     }
 
     if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
-        x = st.X;
-        y = st.Y;
+        x = pProperties->video.windowX;
+        y = pProperties->video.windowY;
         w = st.themePageActive->width + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
         h = st.themePageActive->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
         ex = st.themePageActive->emuWinX;
@@ -1978,8 +1975,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         if (!st.enteringFullscreen && pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
             RECT r;
             GetWindowRect(hwnd, &r);
-            st.X = r.left;
-            st.Y = r.top;
+            pProperties->video.windowX = r.left;
+            pProperties->video.windowY = r.top;
         }
 
     case WM_DISPLAYCHANGE:
@@ -2270,8 +2267,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RECT r;
             
             GetWindowRect(hwnd, &r);
-            st.X = r.left;
-            st.Y = r.top;
+            pProperties->video.windowX = r.left;
+            pProperties->video.windowY = r.top;
         }
         st.enteringFullscreen = 1;
         DirectXExitFullscreenMode();
@@ -2699,9 +2696,19 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     st.dskWnd = diskQuickviewWindowCreate(st.hwnd);
 
-    GetWindowRect(st.hwnd, &wr);
-    st.X  = wr.left;
-    st.Y  = wr.top;
+    if (pProperties->video.windowX < 0 || pProperties->video.windowY < 0) {
+        GetWindowRect(st.hwnd, &wr);
+        pProperties->video.windowX = wr.left;
+        pProperties->video.windowY = wr.top;
+    }
+
+    if (pProperties->video.windowX > GetSystemMetrics(SM_CXSCREEN) - 300) {
+        pProperties->video.windowX = GetSystemMetrics(SM_CXSCREEN) - 300;
+    }
+
+    if (pProperties->video.windowY > GetSystemMetrics(SM_CYSCREEN) - 300) {
+        pProperties->video.windowY = GetSystemMetrics(SM_CYSCREEN) - 300;
+    }
 
     SetWindowPos(st.hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOZORDER);
 

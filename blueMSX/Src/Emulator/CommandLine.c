@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-28 20:42:35 $
+** $Date: 2006-07-04 07:49:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -243,7 +243,7 @@ void emuCheckFullscreenArgument(Properties* properties, char* cmdLine){
         return;
     }
 
-    properties->video.windowSize = P_VIDEO_SIZEX2;
+//    properties->video.windowSize = P_VIDEO_SIZEX2;
 
     for (i = 0; argument = extractToken(cmdLine, i); i++) {
         if (strcmp(argument, "/fullscreen") == 0) {

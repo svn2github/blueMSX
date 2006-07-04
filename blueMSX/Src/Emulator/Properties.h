@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-06-30 15:59:32 $
+** $Date: 2006-07-04 07:49:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -193,6 +193,8 @@ typedef struct {
     int monitorColor;
     int monitorType;
     int windowSize;
+    int windowX;
+    int windowY;
     int driver;
     int frameSkip;
     struct {

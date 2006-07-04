@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-07-03 19:25:45 $
+** $Date: 2006-07-04 07:49:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -165,12 +165,9 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         X++;
         linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
         border = !vdp->screenOn || !vdp->drawArea;
-        sprLine = spritesLine(vdp, Y);
 
         if (!border) {
             y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
-            charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (y / 8))));
-            patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
         }
     }
 
@@ -183,8 +180,10 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         X2--;
     }
     
-    X = 40  * X / 32;
-    X2 = 40 * X2 / 32;
+    X = 40  * (X - 2) / 28;
+    X2 = 40 * (X2 - 2) / 28;
+    X = X < 0 ? 0 : X; X = X > 40 ? 40 : X;
+    X2 = X2 < 0 ? 0 : X2; X2 = X2 > 40 ? 40 : X2;
 
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
@@ -200,11 +199,14 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         }
     }
     else {
+        color[0] = vdp->palette[vdp->BGColor];
+        color[1] = vdp->palette[vdp->FGColor];
+
+        charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (y / 8))));
+        patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
+
         while (X < X2) {
             int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
-
-            color[0] = vdp->palette[vdp->BGColor];
-            color[1] = vdp->palette[vdp->FGColor];
 
             linePtr[0] = color[(pattern >> 7) & 1];
             linePtr[1] = color[(pattern >> 6) & 1];
