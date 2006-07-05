@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-07-05 06:58:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->textFilename            = "Nazwa pliku:";
     ls->textFile                = "Plik";
     ls->textNone                = "Brak";
-    ls->textUnknown             = "Unknown";                            // New in 2.5
+    ls->textUnknown             = "Nieznany";                            // New in 2.5
 
 
     //----------------------
@@ -71,7 +71,7 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - Uwaga";
     ls->warningDiscardChanges   = "Czy chcesz zniszczyæ zmiany?";
-    ls->warningOverwriteFile    = "Do you want to overwrite the file:"; // New in 2.5
+    ls->warningOverwriteFile    = "Czy chcesz nadpisaæ plik:"; // New in 2.5
     ls->errorTitle              = "blueMSX - b³¹d";
     ls->errorEnterFullscreen    = "Nie mogê prze³¹czyæ na pe³ny ekran.           \n";
     ls->errorDirectXFailed      = "Nie mogê stworzyæ obiektów DirectX.           \nPrze³¹czam w tryb GDI.\nSprawdŸ w³aœciwoœci wideo.";
@@ -80,7 +80,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->errorNoCasInZip         = "Nie znaleziono pliku .cas w archiwum zip.";
     ls->errorNoHelp             = "Nie znaleziono pliku pomocy blueMSX.";
     ls->errorStartEmu           = "Nie uda³o siê uruchomiæ emulatora MSX.";
-    ls->errorPortableReadonly   = "Portable device is readonly";        // New in 2.5
+    ls->errorPortableReadonly   = "Urz¹dzenie przenoœne - tylko do odczytu";        // New in 2.5
 
 
     //----------------------
@@ -108,18 +108,18 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCartGIde            = "GIDE";                               // New in 2.5
     ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
     ls->menuCartSCC             = "SCC Cartridge";
-    ls->menuCartSCCPlus         = "SCC+ Cartridge";
+    ls->menuCartSCCPlus         = "SCC+ Kartrid¿";
     ls->menuCartFMPac           = "Kartrid¿ FM-PAC";
     ls->menuCartPac             = "Kartrid¿ PAC";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->menuCartInsertSpecial   = "Insert Special";                     // New in 2.5
+    ls->menuCartInsertSpecial   = "W³ó¿ inny";                     // New in 2.5
     ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
     ls->menuCartExternalRam     = "Zewnêtrzny RAM";
 
-    ls->menuDiskInsertNew       = "Insert New Disk Image";              // New in 2.5
+    ls->menuDiskInsertNew       = "W³ó¿ nowy obraz dysku";              // New in 2.5
     ls->menuDiskDirInsert       = "Podepnij folder";
-    ls->menuDiskAutoStart       = "Resetuj po zmianie";
-    ls->menuCartAutoReset       = "Resetuj po zmianie";
+    ls->menuDiskAutoStart       = "Resetuj po zmianie dyskietki";
+    ls->menuCartAutoReset       = "Resetuj po zmianie kartrid¿a";
     
     ls->menuCasRewindAfterInsert = "Najpierw przewiñ do pocz¹tku";
     ls->menuCasUseReadOnly       = "U¿ywaj kaset 'tylko do odczytu'";
@@ -143,11 +143,11 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Jêzyk";
     ls->menuPropsPorts          = "Porty";
     
-    ls->menuVideoSource         = "Video Out Source";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "No Video Out Source Connected";      // New in 2.5
+    ls->menuVideoSource         = "ród³o wyjœcia 'Video Out'";                   // New in 2.5
+    ls->menuVideoSourceDefault  = "Brak Ÿród³a dla 'Video Out'";      // New in 2.5
     ls->menuVideoChipAutodetect = "Autodetekcja koœci obrazu";    
-    ls->menuVideoInSource       = "Video In Source";                    // New in 2.5
-    ls->menuVideoInBitmap       = "Bitmap File";                        // New in 2.5
+    ls->menuVideoInSource       = "ród³o 'Video In'";                    // New in 2.5
+    ls->menuVideoInBitmap       = "Plik bitmapy";                        // New in 2.5
 
     ls->menuHelpHelp            = "Tematy pomocy";
     ls->menuHelpAbout           = "O blueMSX...";
@@ -164,8 +164,8 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuFileScreenShot      = "Zapisz ekran";
     ls->menuFileExit            = "Wyjœcie";
 
-    ls->menuFileHarddisk        = "Hard Disk";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "No Controllers Present";             // New in 2.5
+    ls->menuFileHarddisk        = "Dysk Twardy";                          // New in 2.5
+    ls->menuFileHarddiskNoPesent= "Brak sterownika";             // New in 2.5
 
     ls->menuRunRun              = "Uruchom";
     ls->menuRunPause            = "Pauza";
@@ -217,7 +217,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgInsertRom2           = "Wybierz kartrid¿ ROM dla slotu 2";
     ls->dlgInsertDiskA          = "Wybierz dyskietkê dla stacji A";
     ls->dlgInsertDiskB          = "Wybierz dyskietkê dla stacji B";
-    ls->dlgInsertHarddisk       = "Insert Hard Disk";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "Pod³¹cz Twardy Dysk";                   // New in 2.5
     ls->dlgInsertCas            = "Wybierz kasetê";
     ls->dlgRomType              = "Typ romu:";
 
@@ -284,11 +284,11 @@ void langInitPolish(LanguageStrings* ls)
     ls->propVideoFreqText       = "Czêstotliwoœæ obrazu:";
     ls->propVideoFreqAuto       = "Auto";
     ls->propSndOversampleText   = "Oversampling:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
+    ls->propSndYkInGB           = "Wejœcie YK-01/YK-10/YK-20 ";                // New in 2.5
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Out ";
-    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "All";                                // New in 2.5
+    ls->propSndMidiChannel      = "Kana³ MIDI:";                      // New in 2.5
+    ls->propSndMidiAll          = "Wszystkie";                                // New in 2.5
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Typ monitora:";
@@ -298,7 +298,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propMonHorizStretch      = " Rozci¹gaj w poziomie";
     ls->propMonVertStretch       = " Rozci¹gaj w pionie";
     ls->propMonDeInterlace      = " Usuwaj przeplot";
-    ls->propBlendFrames         = " Blend consecutive frames";           // New in 2.5
+    ls->propBlendFrames         = " Zlej ze sob¹ kolejne klatki";           // New in 2.5
     ls->propMonBrightness       = "Jasnoœæ:";
     ls->propMonColorGhosting    = "Modulator RF";
     ls->propMonContrast         = "Kontrast:";
@@ -342,7 +342,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Wy³¹cz wygaszacz podczas pracy blueMSX";
     ls->propDisableWinKeys       = " Automatyczna konfiguracja klawiszy Windows w MSX"; 
     ls->propPriorityBoost       = " Podnieœ priorytet blueMSX";
-    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";  // New in 2.5
+    ls->propScreenshotPng       = " u¿ywaj PNG do zapisywania ekranów";  // New in 2.5
     ls->propClearHistory         = "Na pewno wyczyœciæ historiê plików?";
     ls->propOpenRomGB           = "Okno wyboru romu ";
     ls->propDefaultRomType      = "Domyœlny typ romu:";
@@ -365,7 +365,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->enumVideoMonColor       = "Kolorowy";
     ls->enumVideoMonGrey        = "Czarno-bia³y";
     ls->enumVideoMonGreen       = "Zielony";
-    ls->enumVideoMonAmber       = "Miodowy";
+    ls->enumVideoMonAmber       = "Bursztynowy";
 
     ls->enumVideoTypePAL        = "PAL";
     ls->enumVideoTypeNTSC       = "NTSC";
@@ -408,10 +408,10 @@ void langInitPolish(LanguageStrings* ls)
     ls->enumControlsJoyMouse    = "Mysz";
     ls->enumControlsJoyTetris2Dongle = "Dongle Tetris 2";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
+    ls->enumControlsJoy2Button = "D¿ojstik 2-przyciskowy";                   // New in 2.5
     ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoyColeco = "D¿ojstik ColecoVision";                // New in 2.5
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
     ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
@@ -766,6 +766,7 @@ void langInitPolish(LanguageStrings* ls)
     // Debug type lines
     // Note: Can only be translated to european languages
     //----------------------
+
     ls->aboutScrollThanksTo     = "Special thanks to: ";
     ls->aboutScrollAndYou       = "and YOU !!!!";
 };
