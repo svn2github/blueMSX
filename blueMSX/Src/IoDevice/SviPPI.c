@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-07-07 15:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,7 +182,8 @@ static void saveState(SviPPI* ppi)
 static UInt8 read(SviPPI* ppi, UInt16 ioPort)
 {
     if (ioPort == 0x9A) {
-        return ppi->mode;
+        //return ppi->mode;
+        return i8255Read(ppi->i8255, 2);
     }
 
     return i8255Read(ppi->i8255, ioPort);

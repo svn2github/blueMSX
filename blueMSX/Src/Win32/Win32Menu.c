@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-07-01 23:49:08 $
+** $Date: 2006-07-07 15:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -415,9 +415,8 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
     if (cartNo == 0) {
         AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), idOffset + ID_FILE_CART_AUTORESET, langMenuCartAutoReset());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     }
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
         AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
@@ -458,9 +457,8 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 
     if (diskNo == 0) {
         AppendMenu(hMenu, MF_STRING | (pProperties->diskdrive.autostartA ? MFS_CHECKED : 0), idOffset + ID_FILE_DISK_AUTOSTART, langMenuDiskAutoStart());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     }
-
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (*pProperties->filehistory.diskdrive[diskNo][0] == 0) {
         AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
