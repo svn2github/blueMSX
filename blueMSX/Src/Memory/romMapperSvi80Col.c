@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi80Col.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-07-07 08:24:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,23 +91,30 @@ static UInt8 peekIo(RomMapperSvi80Col* svi80col, UInt16 ioPort)
 }
 static UInt8 readIo(RomMapperSvi80Col* svi80col, UInt16 ioPort) 
 {
-    return crtcRead(svi80col->crtc6845);
+    switch (ioPort) {
+        case 0x51:
+            return crtcRead(svi80col->crtc6845);
+        case 0x58:
+//            svi80col->memBankCtrl = 1;
+            break;
+    }
+    return 0xff;
 }
 
 static void writeIo(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value) 
 {
-    crtcWrite(svi80col->crtc6845, value);
+    switch (ioPort) {
+        case 0x50:
+            crtcWriteLatch(svi80col->crtc6845, value);
+            break;
+        case 0x51:
+            crtcWrite(svi80col->crtc6845, value);
+            break;
+        case 0x58:
+            svi80col->memBankCtrl = value & 1;
+            break;
+    }
 }  
-
-static void writeIoLatch(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value) 
-{
-    crtcWriteLatch(svi80col->crtc6845, value);
-}  
-
-static void writeIoMemBankCtrl(RomMapperSvi80Col* svi80col, UInt16 ioPort, UInt8 value)
-{
-    svi80col->memBankCtrl = value & 1;
-}
 
 int svi80colMemBankCtrlStatus(void)
 {
@@ -154,12 +161,13 @@ int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size)
     svi80col->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, svi80col);
 
     svi80col->crtc6845 = NULL;
-    svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 80, 4);
+    svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 82, 4);
 
     svi80col->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, langDbgDevSvi80Col(), &dbgCallbacks, svi80col);
-    ioPortRegister(0x50, NULL,   writeIoLatch,       svi80col);
-    ioPortRegister(0x51, readIo, writeIo,            svi80col);
-    ioPortRegister(0x58, NULL,   writeIoMemBankCtrl, svi80col);
+
+    ioPortRegister(0x50, NULL,   writeIo, svi80col);
+    ioPortRegister(0x51, readIo, writeIo, svi80col);
+    ioPortRegister(0x58, readIo, writeIo, svi80col);
 
     reset(svi80col);
 
