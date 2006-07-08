@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-05-30 20:02:44 $
+** $Date: 2006-07-08 19:10:48 $
 **
 ** Author: Daniel Vik
 **
@@ -122,8 +122,10 @@ static void fd_cb(R800* r800);
 
 
 #define delayVdpIO(r800, port) do {                                          \
-    if ((port & 0xf8) == 0x98) {                                             \
+    if ((port & 0xfffe) == 0x98) {                                           \
         delayT9769(r800);                                                    \
+    }                                                                        \
+    if ((port & 0xf8) == 0x98) {                                             \
         if (r800->cpuMode == CPU_R800) {                                     \
             if (r800->systemTime - r800->vdpTime < r800->delay[DLY_S1990VDP])\
                 r800->systemTime = r800->vdpTime + r800->delay[DLY_S1990VDP];\
