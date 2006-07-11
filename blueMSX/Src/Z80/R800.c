@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-07-09 06:22:12 $
+** $Date: 2006-07-11 19:37:48 $
 **
 ** Author: Daniel Vik
 **
@@ -5895,9 +5895,6 @@ void r800SetNmi(R800* r800) {
     if (r800->nmiState == INT_HIGH) {
         r800->nmiState = INT_EDGE;
     }
-    else {
-//        r800->nmiState = INT_HIGH;
-    }
 }
 
 void r800ClearNmi(R800* r800) {
@@ -6020,7 +6017,7 @@ void r800Execute(R800* r800) {
 #endif
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
-            r800->regs.iff2 = r800->regs.iff1;
+//            r800->regs.iff2 = r800->regs.iff1;
             r800->regs.iff1 = 0;
             r800->regs.PC.W = 0x0066;
             M1(r800);
@@ -6112,7 +6109,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
 
-            r800->regs.iff2 = r800->regs.iff1;
+//            r800->regs.iff2 = r800->regs.iff1;
             r800->regs.iff1 = 0;
             r800->regs.PC.W = 0x0066;
             M1(r800);
@@ -6198,7 +6195,7 @@ void r800ExecuteInstruction(R800* r800) {
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.h);
 	    r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
 
-        r800->regs.iff2 = r800->regs.iff1;
+//        r800->regs.iff2 = r800->regs.iff1;
         r800->regs.iff1 = 0;
         r800->regs.PC.W = 0x0066;
         M1(r800);

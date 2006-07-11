@@ -1127,9 +1127,6 @@
 			<File
 				RelativePath="..\..\Src\Z80\R800SaveState.c">
 			</File>
-			<File
-				RelativePath="..\..\Src\Z80\R800SaveState.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="IoDevice"
@@ -1229,6 +1226,9 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\PrinterIO.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Z80\R800SaveState.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\RTC.c">
