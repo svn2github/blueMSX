@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-07-04 07:49:04 $
+** $Date: 2006-07-11 02:02:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1847,7 +1847,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     }
 
     if (border) {
-        UInt16 bgColor = vdp->palette[vdp->BGColor];
+        UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
             linePtr[0] = bgColor;
             linePtr[1] = bgColor;
