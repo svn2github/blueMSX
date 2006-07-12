@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-06-30 15:59:33 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->textFilename            = "文件名:";
     ls->textFile                = "文件";
     ls->textNone                = "无";
-    ls->textUnknown             = "未知";                            // New in 2.5
+    ls->textUnknown             = "未知";                            
 
 
     //----------------------
@@ -71,7 +71,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - 警告";
     ls->warningDiscardChanges   = "要放弃修改吗？";
-    ls->warningOverwriteFile    = "要覆盖原有文件吗:"; // New in 2.5
+    ls->warningOverwriteFile    = "要覆盖原有文件吗:"; 
     ls->errorTitle              = "blueMSX - 错误";
     ls->errorEnterFullscreen    = "无法进入全屏模式。           \n";
     ls->errorDirectXFailed      = "无法创建 DirectX 对象。           \n改为使用GDI。\n请检查显卡设置。";
@@ -80,7 +80,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->errorNoCasInZip         = "无法在 zip 压缩包内找到 .cas 文件。";
     ls->errorNoHelp             = "无法找到 blueMSX 帮助文件。";
     ls->errorStartEmu           = "无法启动 MSX 模拟器。";
-    ls->errorPortableReadonly   = "便携设备为只读";        // New in 2.5
+    ls->errorPortableReadonly   = "便携设备为只读";        
 
 
     //----------------------
@@ -102,21 +102,21 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuInsert              = "插入";
     ls->menuEject               = "弹出";
     
-    ls->menuCartGameReader      = "Game Reader";                        // New in 2.5
-    ls->menuCartIde             = "IDE";                                // New in 2.5
-    ls->menuCartBeerIde         = "Beer";                               // New in 2.5
-    ls->menuCartGIde            = "GIDE";                               // New in 2.5
-    ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
+    ls->menuCartGameReader      = "Game Reader";                        
+    ls->menuCartIde             = "IDE";                                
+    ls->menuCartBeerIde         = "Beer";                               
+    ls->menuCartGIde            = "GIDE";                               
+    ls->menuCartSunriseIde      = "Sunrise";                            
     ls->menuCartSCCPlus         = "SCC+ 卡带";
     ls->menuCartSCC             = "SCC 卡带";
     ls->menuCartFMPac           = "FM-PAC 卡带";
     ls->menuCartPac             = "PAC 卡带";
     ls->menuCartHBI55           = "Sony HBI-55 卡带";
-    ls->menuCartInsertSpecial   = "插入特殊";                     // New in 2.5
-    ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
+    ls->menuCartInsertSpecial   = "插入特殊";                     
+    ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "扩展内存";
 
-    ls->menuDiskInsertNew       = "插入新的软盘映像";              // New in 2.5
+    ls->menuDiskInsertNew       = "插入新的软盘映像";              
     ls->menuDiskDirInsert       = "插入目录";
     ls->menuDiskAutoStart       = "插入后重置";
     ls->menuCartAutoReset       = "插入/移除后重置";
@@ -143,11 +143,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuPropsLanguage       = "语言";
     ls->menuPropsPorts          = "端口";
     
-    ls->menuVideoSource         = "视频输出源";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "未连接视频输出源";      // New in 2.5
+    ls->menuVideoSource         = "视频输出源";                   
+    ls->menuVideoSourceDefault  = "未连接视频输出源";      
     ls->menuVideoChipAutodetect = "自动检测显示芯片";
-    ls->menuVideoInSource       = "视频输入源";                    // New in 2.5
-    ls->menuVideoInBitmap       = "位图文件";                        // New in 2.5
+    ls->menuVideoInSource       = "视频输入源";                    
+    ls->menuVideoInBitmap       = "位图文件";                        
 
     ls->menuHelpHelp            = "帮助主题";
     ls->menuHelpAbout           = "关于 blueMSX";
@@ -164,8 +164,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuFileScreenShot      = "截图";
     ls->menuFileExit            = "退出";
 
-    ls->menuFileHarddisk        = "硬盘";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "当前无控制器";             // New in 2.5
+    ls->menuFileHarddisk        = "硬盘";                          
+    ls->menuFileHarddiskNoPesent= "当前无控制器";             
 
     ls->menuRunRun              = "运行";
     ls->menuRunPause            = "暂停";
@@ -176,11 +176,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->menuToolsMachine         = "机型资料编辑";
     ls->menuToolsShortcuts      = "快捷键编辑工具";
-    ls->menuToolsKeyboard       = "键盘编辑工具";
+    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
     ls->menuToolsMixer          = "混音器";
-    ls->menuToolsDebugger       = "调试工具";               // New in 2.5
-    ls->menuToolsTrainer        = "作弊工具";                // New in 2.5
-    ls->menuToolsTraceLogger    = "追踪记录工具";           // New in 2.5
+    ls->menuToolsDebugger       = "调试工具";               
+    ls->menuToolsTrainer        = "作弊工具";                
+    ls->menuToolsTraceLogger    = "追踪记录工具";           
 
     ls->menuFile                = "文件";
     ls->menuRun                 = "运行";
@@ -217,7 +217,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgInsertRom2           = "请在插槽 2 插入 ROM 卡带";
     ls->dlgInsertDiskA          = "请在驱动器 A 插入软盘映像";
     ls->dlgInsertDiskB          = "请在驱动器 B 插入软盘映像";
-    ls->dlgInsertHarddisk       = "请插入硬盘";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "请插入硬盘";                   
     ls->dlgInsertCas            = "请插入磁带";
     ls->dlgRomType              = "Rom 类型:";
 
@@ -284,11 +284,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propVideoFreqText       = "视频频率:";
     ls->propVideoFreqAuto       = "自动";
     ls->propSndOversampleText   = "过采样:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                
     ls->propSndMidiInGB         = "MIDI 输入 ";
     ls->propSndMidiOutGB        = "MIDI 输出 ";
-    ls->propSndMidiChannel      = "MIDI 声道:";                      // New in 2.5
-    ls->propSndMidiAll          = "全部";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI 声道:";                      
+    ls->propSndMidiAll          = "全部";                                
 
     ls->propMonMonGB            = "显示器 ";
     ls->propMonTypeText         = "显示器类型:";
@@ -298,7 +298,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 水平拉伸";
     ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonDeInterlace      = " 高画质除网格技术";
-    ls->propBlendFrames         = " 混合连续帧";           // New in 2.5
+    ls->propBlendFrames         = " 混合连续帧";           
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "对比度:";
     ls->propMonSaturation       = "饱和度:";
@@ -342,7 +342,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSX 运行时关闭屏幕保护";
     ls->propDisableWinKeys       = " MSX 使用中周围的 Windows 按键无效"; 
     ls->propPriorityBoost       = " 提升 blueMSX 的优先级";
-    ls->propScreenshotPng       = " 使用便携网络图像格式 (.png) 的屏幕截图";  // New in 2.5
+    ls->propScreenshotPng       = " 使用便携网络图像格式 (.png) 的屏幕截图";  
     ls->propClearHistory         = "确认要清除历史文件？";
     ls->propOpenRomGB           = "打开 Rom 对话框 ";
     ls->propDefaultRomType      = "默认 Rom 类型:";
@@ -402,23 +402,23 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "自动 (快速)";
     ls->enumEmuSyncNone         = "无";
     ls->enumEmuSyncVblank       = "同步于 PC 的垂直空白";
-    ls->enumEmuAsyncVblank      = "异步于 PC 的垂直空白";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "异步于 PC 的垂直空白";             
 
     ls->enumControlsJoyNone     = "无";
     ls->enumControlsJoyMouse    = "鼠标";
     ls->enumControlsJoyTetris2Dongle = "俄罗斯方块 2 界面模组";
-    ls->enumControlsJoyTMagicKeyDongle = "MagicKey 界面模组";             // New in 2.5
-    ls->enumControlsJoy2Button = "2键操纵杆 ";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "光枪操纵杆";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision 操纵杆";                // New in 2.5
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey 界面模组";             
+    ls->enumControlsJoy2Button = "2键操纵杆 ";                   
+    ls->enumControlsJoyGunstick  = "光枪操纵杆";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      
+    ls->enumControlsJoyColeco = "ColecoVision 操纵杆";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 吋 双面, 9 个扇区";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 吋 双面, 8 个扇区";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 吋 单面, 9 个扇区";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 吋 单面, 8 个扇区";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 吋 双面";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 吋 单面";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 吋 双面, 9 个扇区";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 吋 双面, 8 个扇区";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 吋 单面, 9 个扇区";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 吋 单面, 8 个扇区";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 吋 双面";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 吋 单面";           
 
 
     //----------------------

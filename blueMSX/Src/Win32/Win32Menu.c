@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-07-07 15:18:43 $
+** $Date: 2006-07-12 23:15:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -705,7 +705,7 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts)
 
     AppendMenu(hMenu, MF_STRING, ID_TOOLS_MACHINEEDITOR, langMenuToolsMachine());
     AppendMenu(hMenu, MF_STRING, ID_TOOLS_SHORTCUTSEDITOR, langMenuToolsShortcuts());
-    AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langMenuToolsKeyboard());
+    AppendMenu(hMenu, MF_STRING, ID_TOOLS_KEYBOARDEDITOR, langMenuToolsCtrlEditor());
     AppendMenu(hMenu, MF_STRING, ID_TOOLS_MIXER, langMenuToolsMixer());
 
     count = toolGetCount();

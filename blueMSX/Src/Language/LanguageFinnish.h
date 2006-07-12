@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-06-30 15:59:34 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,11 +177,11 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Tietokonemuokkain";
     ls->menuToolsShortcuts      = "Pikanäppäinasetukset";
-    ls->menuToolsKeyboard       = "Peliohjaimet / Näppäimistökartta";
+    ls->menuToolsCtrlEditor     = "Peliohjaimet / Näppäimistökartta"; // New in 2.6
     ls->menuToolsMixer          = "Mikseri";
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Seurantalogi";         // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Seurantalogi";         
 
     ls->menuFile                = "Tiedosto";
     ls->menuRun                 = "Emulaatio";
@@ -285,11 +285,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propVideoFreqText       = "Videotaajuus:";
     ls->propVideoFreqAuto       = "Automaattinen";
     ls->propSndOversampleText   = "Ylinäytteistys:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 Sisään ";                // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 Sisään ";                
     ls->propSndMidiInGB         = "MIDI Sisään ";
     ls->propSndMidiOutGB        = "MIDI Ulos ";
-    ls->propSndMidiChannel      = "MIDI-kanava:";                      // New in 2.5
-    ls->propSndMidiAll          = "Kaikki";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI-kanava:";                      
+    ls->propSndMidiAll          = "Kaikki";                                
 
     ls->propMonMonGB            = "Monitori ";
     ls->propMonTypeText         = "Monitorin tyyppi:";
@@ -403,16 +403,16 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automaattinen (nopea)";
     ls->enumEmuSyncNone         = "Ei käytössä";
     ls->enumEmuSyncVblank       = "Tahdistus PC:n ruudunpäivitykseen";
-    ls->enumEmuAsyncVblank      = "Tahdistamaton PC:n ruudunpäivitys";           // New in 2.5
+    ls->enumEmuAsyncVblank      = "Tahdistamaton PC:n ruudunpäivitys";           
 
     ls->enumControlsJoyNone     = "Tyhjä";
     ls->enumControlsJoyMouse    = "Hiiri";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
-    ls->enumControlsJoy2Button = "2-näppäiminen Joystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick-valopistooli";                      // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoy2Button = "2-näppäiminen Joystick";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick-valopistooli";                      
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Kaksipuolinen, 9 Sektoria";
     ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Kaksipuolinen, 8 Sektoria";

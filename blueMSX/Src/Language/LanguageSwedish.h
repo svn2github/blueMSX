@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,10 +177,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuToolsMachine        = "Konfigureringsverktyg";
     ls->menuToolsShortcuts      = "Kortkommando Verktyg";
     ls->menuToolsKeyboard       = "Tangentbordseditor";
+    ls->menuToolsCtrlEditor     = "Kontrollers / Tangenbordseditor"; // New in 2.6
     ls->menuToolsMixer          = "Mixer";
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Trace Logger";           
 
     ls->menuFile                = "Arkiv";
     ls->menuRun                 = "Emulering";
@@ -284,11 +285,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propVideoFreqText       = "Videofrekvens:";
     ls->propVideoFreqAuto       = "Automatisk";
     ls->propSndOversampleText   = "Översampling:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";              // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";              
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Ut ";
-    ls->propSndMidiChannel      = "MIDI Channel:";                      // New in 2.5
-    ls->propSndMidiAll          = "Alla";                               // New in 2.5
+    ls->propSndMidiChannel      = "MIDI Channel:";                      
+    ls->propSndMidiAll          = "Alla";                               
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor typ:";
@@ -298,7 +299,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Korrekt horizontell vidd";
     ls->propMonVertStretch      = " Vertikal stretch";
     ls->propMonDeInterlace      = " De-interlace";
-    ls->propBlendFrames         = " Blanda efterföljande bilder";           // New in 2.5
+    ls->propBlendFrames         = " Blanda efterföljande bilder";           
     ls->propMonBrightness       = "Ljusstyrka:";
     ls->propMonContrast         = "Kontrast:";
     ls->propMonSaturation       = "Färgmättnad:";
@@ -400,7 +401,7 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->enumEmuSync1ms          = "Synkronisera till MSX refresh";
     ls->enumEmuSyncVblank       = "Synkronisera till PC Vertikal Blank";
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             
     ls->enumEmuSyncNone         = "Ingen";
     ls->enumEmuSyncAuto         = "Automatisk (snabb)";
 
@@ -408,17 +409,17 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumControlsJoyMouse    = "Mus";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 dosa";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey dosa";
-    ls->enumControlsJoy2Button = "2-knapps Styrspak";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Styrspak";                // New in 2.5
+    ls->enumControlsJoy2Button = "2-knapps Styrspak";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsJoyColeco = "ColecoVision Styrspak";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Dubbelsidig, 9 Sektorer";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Dubbelsidig, 8 Sektorer";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Enkelsidig, 9 Sektorer";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Enkelsidig, 8 Sektorer";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Dubbelsidig";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Enkelsidig";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Dubbelsidig, 9 Sektorer";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Dubbelsidig, 8 Sektorer";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Enkelsidig, 9 Sektorer";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Enkelsidig, 8 Sektorer";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Dubbelsidig";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Enkelsidig";           
 
 
     //----------------------

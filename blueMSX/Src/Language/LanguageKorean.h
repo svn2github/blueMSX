@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.33 $ + additions 2005/03/03
+** $Revision: 1.34 $ + additions 2005/03/03
 **
-** $Date: 2006-06-27 15:43:08 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->textFilename            = "파일 이름:";
     ls->textFile                = "파일";
     ls->textNone                = "없음";
-    ls->textUnknown             = "알려지지 않음";                            // New in 2.5
+    ls->textUnknown             = "알려지지 않음";                            
 
 
     //----------------------
@@ -71,7 +71,7 @@ void langInitKorean(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - 경고";
     ls->warningDiscardChanges   = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
-    ls->warningOverwriteFile    = "파일을 덮어 쓰시겠습니까:"; // New in 2.5
+    ls->warningOverwriteFile    = "파일을 덮어 쓰시겠습니까:"; 
     ls->errorTitle              = "blueMSX - 에러";
     ls->errorEnterFullscreen    = "전체 화면모드 진입 실패.           \n";
     ls->errorDirectXFailed      = "DirectX 오브젝트 만들기 실패.           \nGDI로 대체해서 사용합니다.\n그래픽카드 등록정보를 확인하세요.";
@@ -80,7 +80,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->errorNoCasInZip         = "zip파일 내부의 .cas를 찾을 수 없습니다.";
     ls->errorNoHelp             = "blueMSX 도움말을 찾을 수 없습니다.";
     ls->errorStartEmu           = "MSX 에뮬레이터를 시작할 수 없습니다.";
-    ls->errorPortableReadonly   = "이동 장치는 읽기 전용입니다.";        // New in 2.5
+    ls->errorPortableReadonly   = "이동 장치는 읽기 전용입니다.";        
 
 
     //----------------------
@@ -102,21 +102,21 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuInsert              = "삽입";
     ls->menuEject               = "꺼내기";
 
-    ls->menuCartGameReader      = "게임 리더";                        // New in 2.5
-    ls->menuCartIde             = "IDE";                                // New in 2.5
-    ls->menuCartBeerIde         = "Beer";                               // New in 2.5
-    ls->menuCartGIde            = "GIDE";                               // New in 2.5
-    ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
+    ls->menuCartGameReader      = "게임 리더";                        
+    ls->menuCartIde             = "IDE";                                
+    ls->menuCartBeerIde         = "Beer";                               
+    ls->menuCartGIde            = "GIDE";                               
+    ls->menuCartSunriseIde      = "Sunrise";                            
     ls->menuCartSCC             = "SCC 카트리지";
     ls->menuCartSCCPlus         = "SCC+ 카트리지";
     ls->menuCartFMPac           = "FM-PAC 카트리지";
     ls->menuCartPac             = "PAC 카트리지";
     ls->menuCartHBI55           = "Sony HBI-55 카트리지";
-    ls->menuCartInsertSpecial   = "특수 카트리지 삽입";                     // New in 2.5
-    ls->menuCartMegaRam         = "메가램";                            // New in 2.5
+    ls->menuCartInsertSpecial   = "특수 카트리지 삽입";                     
+    ls->menuCartMegaRam         = "메가램";                            
     ls->menuCartExternalRam     = "외장램";
 
-    ls->menuDiskInsertNew       = "새로운 디스크 이미지 삽입";              // New in 2.5
+    ls->menuDiskInsertNew       = "새로운 디스크 이미지 삽입";              
     ls->menuDiskDirInsert       = "디렉토리 삽입";
     ls->menuDiskAutoStart       = "삽입후에 재시작";
     ls->menuCartAutoReset       = "삽입/제거 후에 재시작";
@@ -143,11 +143,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuPropsLanguage       = "언어";
     ls->menuPropsPorts          = "포트"; 
     
-    ls->menuVideoSource         = "비디오 출력 소스";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "비디오 출력 소스 연결안됨";      // New in 2.5
+    ls->menuVideoSource         = "비디오 출력 소스";                   
+    ls->menuVideoSourceDefault  = "비디오 출력 소스 연결안됨";      
     ls->menuVideoChipAutodetect = "비디오 칩 자동감지";    
-    ls->menuVideoInSource       = "비디오 입력 소스";                    // New in 2.5
-    ls->menuVideoInBitmap       = "비트맵 파일";                        // New in 2.5
+    ls->menuVideoInSource       = "비디오 입력 소스";                    
+    ls->menuVideoInBitmap       = "비트맵 파일";                        
 
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";
@@ -164,8 +164,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuFileScreenShot      = "화면 저장";
     ls->menuFileExit            = "끝내기";
 
-    ls->menuFileHarddisk        = "하드 디스크";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "컨트롤러 존재하지 않음";             // New in 2.5
+    ls->menuFileHarddisk        = "하드 디스크";                          
+    ls->menuFileHarddiskNoPesent= "컨트롤러 존재하지 않음";             
 
     ls->menuRunRun              = "실행";
     ls->menuRunPause            = "일시 정지";
@@ -177,10 +177,10 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuTools                = "도구";
     ls->menuToolsMachine         = "머신 편집기";
     ls->menuToolsShortcuts      = "단축키 편집기";
-    ls->menuToolsKeyboard       = "키보드 편집기";
-    ls->menuToolsDebugger       = "디버거";               // New in 2.5
-    ls->menuToolsTrainer        = "트레이너";                // New in 2.5
-    ls->menuToolsTraceLogger    = "트레이스 기록";           // New in 2.5
+    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
+    ls->menuToolsDebugger       = "디버거";               
+    ls->menuToolsTrainer        = "트레이너";                
+    ls->menuToolsTraceLogger    = "트레이스 기록";           
 
     ls->menuFile                = "파일";
     ls->menuRun                 = "실행";
@@ -217,7 +217,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgInsertRom2           = "슬롯 2에 ROM 카트리지 삽입";
     ls->dlgInsertDiskA          = "드라이브 A에 디스크 삽입";
     ls->dlgInsertDiskB          = "드라이브 B에 디스크 삽입";
-    ls->dlgInsertHarddisk       = "하드 디스크 삽입";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "하드 디스크 삽입";                   
     ls->dlgInsertCas            = "카세트 테잎 삽입";
     ls->dlgRomType              = "롬 형식:";
 
@@ -284,11 +284,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->propVideoFreqText       = "비디오 주파수:";
     ls->propVideoFreqAuto       = "자동";
     ls->propSndOversampleText   = "오버샘플:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 입력 ";                // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 입력 ";                
     ls->propSndMidiInGB         = "MIDI 입력 ";
     ls->propSndMidiOutGB        = "MIDI 출력 ";
-    ls->propSndMidiChannel      = "MIDI 채널:";                      // New in 2.5
-    ls->propSndMidiAll          = "전부";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI 채널:";                      
+    ls->propSndMidiAll          = "전부";                                
 
     ls->propMonMonGB            = "모니터 ";
     ls->propMonTypeText         = "모니터 유형:";
@@ -298,7 +298,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 수평 스트레치";
     ls->propMonVertStretch       = " 수직 스트레치";
     ls->propMonDeInterlace      = " 디인터레이스";
-    ls->propBlendFrames         = " 인접한 프레임 색상혼합";           // New in 2.5
+    ls->propBlendFrames         = " 인접한 프레임 색상혼합";           
     ls->propMonColorGhosting    = "RF모듈레이터";
     ls->propMonBrightness       = "밝기:";
     ls->propMonContrast         = "대비:";
@@ -342,7 +342,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSetScreenSaver       = " blueMSX 실행중에는 화면 보호기 기능 중지";
     ls->propDisableWinKeys       = " blueMSX 실행중에는 왼/오른쪽 윈도우 키 사용 않함"; 
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
-    ls->propScreenshotPng       = " Portable Network Graphics (.png) 스크린샷 사용";  // New in 2.5
+    ls->propScreenshotPng       = " Portable Network Graphics (.png) 스크린샷 사용";  
     ls->propClearHistory         = "열어본 파일 목록을 지울까요?";
     ls->propOpenRomGB           = "열때 항상 현재 설정 사용 ";
     ls->propDefaultRomType      = "기본 롬 형식:";
@@ -402,23 +402,23 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "자동 (빠름)";
     ls->enumEmuSyncNone         = "하지않음";
     ls->enumEmuSyncVblank       = "PC의 수직주파수에 동기";
-    ls->enumEmuAsyncVblank      = "PC의 수직주파수에 비동기";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "PC의 수직주파수에 비동기";             
 
     ls->enumControlsJoyNone     = "없음";
     ls->enumControlsJoyMouse    = "마우스";
     ls->enumControlsJoyTetris2Dongle = "테트리스 2 동글";
-    ls->enumControlsJoyTMagicKeyDongle = "매직키 동글";             // New in 2.5
-    ls->enumControlsJoy2Button = "2버튼 조이스틱";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "건 스틱";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                // New in 2.5
+    ls->enumControlsJoyTMagicKeyDongle = "매직키 동글";             
+    ls->enumControlsJoy2Button = "2버튼 조이스틱";                   
+    ls->enumControlsJoyGunstick  = "건 스틱";                         
+    ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      
+    ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 양면, 9 섹터";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 양면, 8 섹터";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 단면, 9 섹터";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 단면, 8 섹터";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 양면";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 단면";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 양면, 9 섹터";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 양면, 8 섹터";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 단면, 9 섹터";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 단면, 8 섹터";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 양면";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 단면";           
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-07-12 23:15:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -199,7 +199,7 @@ char* langMenuRunCleanReset();
 
 char* langMenuToolsMachine();
 char* langMenuToolsShortcuts();
-char* langMenuToolsKeyboard();
+char* langMenuToolsCtrlEditor();
 char* langMenuToolsMixer();
 char* langMenuToolsDebugger();
 char* langMenuToolsTrainer();

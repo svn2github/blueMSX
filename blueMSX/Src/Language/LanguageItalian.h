@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-06-27 15:43:08 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->textFilename            = "Nome:"; 
     ls->textFile                = "File"; 
     ls->textNone                = "Nessuno"; 
-    ls->textUnknown             = "Sconosciuto";                            // New in 2.5
+    ls->textUnknown             = "Sconosciuto";                            
 
 
     //----------------------
@@ -71,7 +71,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->warningTitle             = "blueMSX - Avvertimento";
     ls->warningDiscardChanges   = "Vuoi annullare i cambiamenti apportati a questa configurazione ?"; 
-    ls->warningOverwriteFile    = "Vuoi sovrascrivere il file:"; // New in 2.5
+    ls->warningOverwriteFile    = "Vuoi sovrascrivere il file:"; 
     ls->errorTitle              = "blueMSX - Errore";
     ls->errorEnterFullscreen    = "Non riesco ad attivare la visualizzazione a schermo intero.           \n";
     ls->errorDirectXFailed      = "Non riesco a creare gli oggetti DirectX.          \nUtilizzo GDI.\nControllo le proprietà Video.";
@@ -80,7 +80,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->errorNoCasInZip         = "Nessun file .cas trovato nell'archivio zip.";
     ls->errorNoHelp             = "Non trovo il file di Aiuto di blueMSX.";
     ls->errorStartEmu           = "Avvio dell'emulatore MSX fallito.";
-    ls->errorPortableReadonly   = "Il dispositivo portatile è a sola lettura";        // New in 2.5
+    ls->errorPortableReadonly   = "Il dispositivo portatile è a sola lettura";        
 
 
     //----------------------
@@ -102,21 +102,21 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuInsert              = "Inserisci";
     ls->menuEject               = "Rimuovi";
 
-    ls->menuCartGameReader      = "Game Reader";                        // New in 2.5
-    ls->menuCartIde             = "IDE";                                // New in 2.5
-    ls->menuCartBeerIde         = "Beer";                               // New in 2.5
-    ls->menuCartGIde            = "GIDE";                               // New in 2.5
-    ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
+    ls->menuCartGameReader      = "Game Reader";                        
+    ls->menuCartIde             = "IDE";                                
+    ls->menuCartBeerIde         = "Beer";                               
+    ls->menuCartGIde            = "GIDE";                               
+    ls->menuCartSunriseIde      = "Sunrise";                            
     ls->menuCartSCC             = "Cartuccia SCC";
     ls->menuCartSCCPlus         = "Cartuccia SCC+";
     ls->menuCartFMPac           = "Cartuccia FM-PAC";
     ls->menuCartPac             = "Cartuccia PAC";
     ls->menuCartHBI55           = "Cartuccia Sony HBI-55"; 
-    ls->menuCartInsertSpecial   = "Inserisci Speciale";                     // New in 2.5
-    ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
+    ls->menuCartInsertSpecial   = "Inserisci Speciale";                     
+    ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "RAM esterno"; 
 
-    ls->menuDiskInsertNew       = "Inserisci nuovo disco floppy";              // New in 2.5
+    ls->menuDiskInsertNew       = "Inserisci nuovo disco floppy";              
     ls->menuDiskDirInsert       = "Inserisci Directory"; 
     ls->menuDiskAutoStart       = "Riavvia dopo l'inserimento";
     ls->menuCartAutoReset       = "Riavvia dopo aver inserito/rimosso";
@@ -143,11 +143,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Linguaggi";
     ls->menuPropsPorts          = "Porte";
     
-    ls->menuVideoSource         = "Fonte video";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "Fonte video non collegata";      // New in 2.5
+    ls->menuVideoSource         = "Fonte video";                   
+    ls->menuVideoSourceDefault  = "Fonte video non collegata";      
     ls->menuVideoChipAutodetect = "Individuazione automatica";     
-    ls->menuVideoInSource       = "Entrata video";                    // New in 2.5
-    ls->menuVideoInBitmap       = "Bitmap File";                        // New in 2.5
+    ls->menuVideoInSource       = "Entrata video";                    
+    ls->menuVideoInBitmap       = "Bitmap File";                        
 
     ls->menuHelpHelp            = "Argomenti";
     ls->menuHelpAbout           = "Informazioni su blueMSX";
@@ -164,8 +164,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuFileScreenShot      = "Salva la schermata";
     ls->menuFileExit            = "Esci";
 
-    ls->menuFileHarddisk        = "Disco rigido";                          // New in 2.5
-    ls->menuFileHarddiskNoPesent= "Nessun controlli";             // New in 2.5
+    ls->menuFileHarddisk        = "Disco rigido";                          
+    ls->menuFileHarddiskNoPesent= "Nessun controlli";             
 
     ls->menuRunRun              = "Esegui";
     ls->menuRunPause            = "Pausa";
@@ -176,11 +176,11 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuToolsMachine         = "Editor della macchina";
     ls->menuToolsShortcuts      = "Editor degli shortcut";
-    ls->menuToolsKeyboard       = "Editor delli controlli/tastiera"; 
+    ls->menuToolsCtrlEditor     = "Editor delli controlli/tastiera";  // New in 2.6
     ls->menuToolsMixer          = "Mixer"; 
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Trace Logger";           
 
     ls->menuFile                = "File";
     ls->menuRun                 = "Emulazione";
@@ -217,7 +217,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgInsertRom2           = "Inserisci una cartuccia ROM nello slot 2";
     ls->dlgInsertDiskA          = "Inserisci un'immagine dischetto nell'unità A";
     ls->dlgInsertDiskB          = "Inserisci un'immagine dischetto nell'unità B";
-    ls->dlgInsertHarddisk       = "Inserisci uno disco rigido";                   // New in 2.5
+    ls->dlgInsertHarddisk       = "Inserisci uno disco rigido";                   
     ls->dlgInsertCas            = "Inserisci un'immagine cassetta";
     ls->dlgRomType              = "Tipo rom:"; 
 
@@ -284,11 +284,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->propVideoFreqText       = "Frequenza Video:"; 
     ls->propVideoFreqAuto       = "Auto"; 
     ls->propSndOversampleText   = "Oversample:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                
     ls->propSndMidiInGB         = "MIDI In "; 
     ls->propSndMidiOutGB        = "MIDI Out "; 
-    ls->propSndMidiChannel      = "Canale MIDI:";                      // New in 2.5
-    ls->propSndMidiAll          = "Tutti";                                // New in 2.5
+    ls->propSndMidiChannel      = "Canale MIDI:";                      
+    ls->propSndMidiAll          = "Tutti";                                
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Tipo monitor:";
@@ -298,7 +298,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propMonHorizStretch      = " Allungamento Orizzontale";
     ls->propMonVertStretch       = " Allungamento Verticale";
     ls->propMonDeInterlace      = " De-interlace"; 
-    ls->propBlendFrames         = " Mescolare fotogramma consecutiva";           // New in 2.5
+    ls->propBlendFrames         = " Mescolare fotogramma consecutiva";           
     ls->propMonBrightness       = "Luminosità:";
     ls->propMonContrast         = "Contrasto:";
     ls->propMonSaturation       = "Saturazione:";
@@ -342,7 +342,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propSetScreenSaver       = " Disabilita il salvaschermo durante l'esecuzione di blueMSX";
     ls->propDisableWinKeys       = " Funzioni MSX automatiche con il menu tasti di Windows"; 
     ls->propPriorityBoost       = " Dare a blueMSX una precedenza elevata";
-    ls->propScreenshotPng       = " Utilizzare il formato PNG per le salvataggio della schermata";  // New in 2.5
+    ls->propScreenshotPng       = " Utilizzare il formato PNG per le salvataggio della schermata";  
     ls->propClearHistory         = "Desiderate realmente cancellare la lista ?";
     ls->propOpenRomGB           = "Dialogo di apertura file rom "; 
     ls->propDefaultRomType      = "Tipo rom di default:"; 
@@ -402,23 +402,23 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatico (veloce)"; 
     ls->enumEmuSyncNone         = "Nessuno"; 
     ls->enumEmuSyncVblank       = "Sinc su PC Vertical Blank"; 
-    ls->enumEmuAsyncVblank      = "PC Vblank asincrono";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "PC Vblank asincrono";             
 
     ls->enumControlsJoyNone     = "Nessuno";
     ls->enumControlsJoyMouse    = "Mouse";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle"; 
-    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             // New in 2.5
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";             
+    ls->enumControlsJoy2Button = "2-button Joystick";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 doppio faccia, 9 settori";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 doppio faccia, 8 settori";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 semplice faccia, 9 settori";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 semplice faccia, 8 settori";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 doppio faccia";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 semplice faccia";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 doppio faccia, 9 settori";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 doppio faccia, 8 settori";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 semplice faccia, 9 settori";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 semplice faccia, 8 settori";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 doppio faccia";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 semplice faccia";           
 
 
     //----------------------

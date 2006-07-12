@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2006-06-27 15:43:08 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -176,11 +176,11 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Machine Editor";
     ls->menuToolsShortcuts      = "Shortcuts Editor";
-    ls->menuToolsKeyboard       = "Controllers / Keyboard Editor";
+    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
     ls->menuToolsMixer          = "Mixer";
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Trace Logger";           
 
     ls->menuFile                = "File";
     ls->menuRun                 = "Emulation";
@@ -402,23 +402,23 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (fast)";
     ls->enumEmuSyncNone         = "None";
     ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             
 
     ls->enumControlsJoyNone     = "None";
     ls->enumControlsJoyMouse    = "Mouse";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
-    ls->enumControlsJoy2Button = "2-button Joystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoy2Button = "2-button Joystick";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectors";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectors";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectors";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectors";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-07-12 22:10:27 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -71,7 +71,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->warningTitle            = "blueMSX - Waarschuwing";
     ls->warningDiscardChanges   = "Wilt u de wijzigingen ongedaan maken?";
-    ls->warningOverwriteFile    = "Wilt u het volgende bestand overschrijven?"; // New in 2.5
+    ls->warningOverwriteFile    = "Wilt u het volgende bestand overschrijven?"; 
     ls->errorTitle              = "blueMSX - Foutmelding";
     ls->errorEnterFullscreen    = "Het is niet gelukt om over te schakelen naar de volledige schermmodus.          \n";
     ls->errorDirectXFailed      = "Het is niet gelukt om DirectX te initialiseren. \nDe GDI wordt nu gebruikt.\nKijk de videoinstellingen na...";
@@ -80,7 +80,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->errorNoCasInZip         = "Er zijn geen .cas-bestanden gevonden in het zip-bestand.";
     ls->errorNoHelp             = "Het blueMSX-helpbestand is niet gevonden.";
     ls->errorStartEmu           = "Het is niet gelukt om de MSX-emulator te starten.";
-    ls->errorPortableReadonly   = "Het draagbare apparaat is Alleen Lezen";         // New in 2.5
+    ls->errorPortableReadonly   = "Het draagbare apparaat is Alleen Lezen";         
 
 
     //----------------------
@@ -102,21 +102,21 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuInsert              = "Toevoegen";
     ls->menuEject               = "Verwijderen";
 
-    ls->menuCartGameReader      = "Game Reader";                        // New in 2.5
-    ls->menuCartIde             = "IDE";                                // New in 2.5
-    ls->menuCartBeerIde         = "Beer";                               // New in 2.5
-    ls->menuCartGIde            = "GIDE";                               // New in 2.5
-    ls->menuCartSunriseIde      = "Sunrise";                            // New in 2.5
+    ls->menuCartGameReader      = "Game Reader";                        
+    ls->menuCartIde             = "IDE";                                
+    ls->menuCartBeerIde         = "Beer";                               
+    ls->menuCartGIde            = "GIDE";                               
+    ls->menuCartSunriseIde      = "Sunrise";                            
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->menuCartInsertSpecial   = "Toevoegen Speciale Cartridge";       // New in 2.5
-    ls->menuCartMegaRam         = "MegaRAM";                            // New in 2.5
+    ls->menuCartInsertSpecial   = "Toevoegen Speciale Cartridge";       
+    ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "Extern RAM-geheugen";
 
-    ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";     // New in 2.5
+    ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";     
     ls->menuDiskDirInsert       = "Toevoegen Map";
     ls->menuDiskAutoStart       = "Herstart na toevoegen";
     ls->menuCartAutoReset       = "Herstart na toevoegen/verwijderen";
@@ -143,11 +143,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Taal";
     ls->menuPropsPorts          = "Poorten";
 
-    ls->menuVideoSource         = "Video Uit-bron";                   // New in 2.5
-    ls->menuVideoSourceDefault  = "Geen Video Uit-bron verbonden";    // New in 2.5
+    ls->menuVideoSource         = "Video Uit-bron";                   
+    ls->menuVideoSourceDefault  = "Geen Video Uit-bron verbonden";    
     ls->menuVideoChipAutodetect = "Automatische detectie Videochip";
-    ls->menuVideoInSource       = "Video In-bron";                    // New in 2.5
-    ls->menuVideoInBitmap       = "Afbeedingsbestand";                // New in 2.5
+    ls->menuVideoInSource       = "Video In-bron";                    
+    ls->menuVideoInBitmap       = "Afbeedingsbestand";                
 
     ls->menuHelpHelp            = "Help";
     ls->menuHelpAbout           = "Info blueMSX";
@@ -164,8 +164,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuFileScreenShot      = "Schermafdruk maken";
     ls->menuFileExit            = "Afsluiten";
 
-    ls->menuFileHarddisk        = "Harde schijf";                       // New in 2.5
-    ls->menuFileHarddiskNoPesent= "Geen harde schijfcontrollers aanwezig";  // New in 2.5
+    ls->menuFileHarddisk        = "Harde schijf";                       
+    ls->menuFileHarddiskNoPesent= "Geen harde schijfcontrollers aanwezig";  
 
     ls->menuRunRun              = "Start";
     ls->menuRunPause            = "Pauze";
@@ -176,11 +176,11 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Aanpassen Machine";
     ls->menuToolsShortcuts      = "Maken Snelkoppeling";
-    ls->menuToolsKeyboard       = "Toetsenbord Editor";
+    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
     ls->menuToolsMixer          = "Mixer";
-    ls->menuToolsDebugger       = "Debugger";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Trace Logger";           
 
     ls->menuFile                = "Bestand";
     ls->menuRun                 = "Start";
@@ -217,7 +217,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgInsertRom2           = "Toevoegen ROM-cartridge in slot 2";
     ls->dlgInsertDiskA          = "Toevoegen diskette-beeld in station A";
     ls->dlgInsertDiskB          = "Toevoegen diskette-beeld in station B";
-    ls->dlgInsertHarddisk       = "Toevoegen Harde schijf";              // New in 2.5
+    ls->dlgInsertHarddisk       = "Toevoegen Harde schijf";              
     ls->dlgInsertCas            = "Toevoegen cassette-beeld in casettespeler";
     ls->dlgRomType              = "Rom-type :";
 
@@ -284,11 +284,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->propVideoFreqText       = "Videofrequentie:";
     ls->propVideoFreqAuto       = "Automatisch";
     ls->propSndOversampleText   = "Oversample:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                // New in 2.5
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Out ";
-    ls->propSndMidiChannel      = "MIDI-kanaal:";                      // New in 2.5
-    ls->propSndMidiAll          = "Alle";                                // New in 2.5
+    ls->propSndMidiChannel      = "MIDI-kanaal:";                      
+    ls->propSndMidiAll          = "Alle";                                
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitortype:";
@@ -298,7 +298,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propMonHorizStretch     = " Horizontaal uitrekken";
     ls->propMonVertStretch      = " Verticaal uitrekken";
     ls->propMonDeInterlace      = " Deinterlace";
-    ls->propBlendFrames         = " Opeenvolgende frames mengen";        // New in 2.5
+    ls->propBlendFrames         = " Opeenvolgende frames mengen";        
     ls->propMonBrightness       = "Helderheid:";
     ls->propMonContrast         = "Contrast:";
     ls->propMonSaturation       = "Verzadiging:";
@@ -342,7 +342,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSetScreenSaver       = "Schermbeveiliging uitschakelen als blueMSX draait";
     ls->propDisableWinKeys       = " Automatische MSX-functie voor menutoetsen Windows";
     ls->propPriorityBoost       = " blueMSX een hogere prioriteit geven";
-    ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";  // New in 2.5
+    ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";  
     ls->propClearHistory         = "Weet u zeker dat u de bestandsgeschiedenis wilt wissen?";
     ls->propOpenRomGB           = "Openen Rom-bestand";
     ls->propDefaultRomType      = "Standaardtype:";
@@ -402,23 +402,23 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatisch (snel)";
     ls->enumEmuSyncNone         = "Geen";
     ls->enumEmuSyncVblank       = "Synchroon met PC Vertical Blank";
-    ls->enumEmuAsyncVblank      = "Asynchroon met PC Vblank";             // New in 2.5
+    ls->enumEmuAsyncVblank      = "Asynchroon met PC Vblank";             
 
     ls->enumControlsJoyNone     = "Geen";
     ls->enumControlsJoyMouse    = "Muis";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2-dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey-dongle";
-    ls->enumControlsJoy2Button = "2-knopsjoystick";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                // New in 2.5
+    ls->enumControlsJoy2Button = "2-knopsjoystick";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectoren";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectoren";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectoren";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectoren";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectoren";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectoren";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectoren";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectoren";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           
 
 
     //----------------------

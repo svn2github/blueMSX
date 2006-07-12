@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-06-26 19:35:54 $
+** $Date: 2006-07-12 23:15:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,6 +173,7 @@ typedef struct {
     char* menuToolsMachine;
     char* menuToolsShortcuts;
     char* menuToolsKeyboard;
+    char* menuToolsCtrlEditor;
     char* menuToolsMixer;
     char* menuToolsDebugger;
     char* menuToolsTrainer;
