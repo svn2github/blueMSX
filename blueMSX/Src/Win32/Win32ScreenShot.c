@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-05-30 04:10:19 $
+** $Date: 2006-07-13 01:52:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,24 +58,49 @@ typedef struct PNGHeader {
     BYTE  bInterlaceType;
 } PNGHeader;
 
+#define PNG_HEADER_SIZE  13
+
 const BYTE PngSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-const char PngName[] = "blueMSX Screenshot";
+const char PngName[] = "Software\0blueMSX";
 
 #define PNG_IHDR 0x49484452
 #define PNG_IDAT 0x49444154
 #define PNG_IEND 0x49454E44
 #define PNG_TEXT 0x74455874
+#define PNG_SRGB 0x73524742
+#define PNG_GAMA 0x67414D41
+#define PNG_CHRM 0x6348524D
+#define PNG_PHYS 0x70485973
+
+static BYTE srgb[] = { 
+    0x00
+};
+
+static BYTE gama[] = { 
+    0x00, 0x00, 0xb1, 0x8f 
+};
+
+static BYTE chrm[] = { 
+    0x00, 0x00, 0x7a, 0x26, 0x00, 0x00, 0x80, 0x84,
+    0x00, 0x00, 0xfa, 0x00, 0x00, 0x00, 0x80, 0xe8,
+    0x00, 0x00, 0x75, 0x30, 0x00, 0x00, 0xea, 0x60,
+    0x00, 0x00, 0x3a, 0x98, 0x00, 0x00, 0x17, 0x70
+};
+
+static BYTE phys[] = { 
+    0x00, 0x00, 0x0e, 0xc4, 0x00, 0x00, 0x0e, 0xc4, 0x01
+};
+
 
 int pngAddChunk(BYTE* dest, int type, const void* data, int length)
 {
-    UInt32 crc = calcCrc32(&type, sizeof(type));
-    if (length > 0) {
-        crc = calcAddCrc32(data, length, crc);
-    }
+    UInt32 crc;
 
     *(DWORD*)(dest + 0) = ntohul(length);
     *(DWORD*)(dest + 4) = ntohul(type);
     memcpy(dest + 8, data, length);
+
+    crc = calcCrc32(dest + 4, length + 4);
     *(DWORD*)(dest + 8 + length) = ntohul(crc);
 
 
@@ -92,7 +117,7 @@ void* ScreenShotPng(void* src, int srcPitch, int width, int height, int* bitmapS
     DWORD* srcPtr = (DWORD*)src;
     int w;
     int h;
-    int rawSize = 3 * (width + 1) * height;
+    int rawSize = (3 * width + 1) * height;
     BYTE* rawData = (BYTE*)malloc(rawSize);
     BYTE* dstPtr = rawData;
     
@@ -113,7 +138,7 @@ void* ScreenShotPng(void* src, int srcPitch, int width, int height, int* bitmapS
         return NULL;
     }
 
-    pngData = malloc(compressedSize + 100);
+    pngData = malloc(compressedSize + 200);
     
     hdr.dwWidth          = ntohul(width);
     hdr.dwHeight         = ntohul(height);
@@ -127,9 +152,15 @@ void* ScreenShotPng(void* src, int srcPitch, int width, int height, int* bitmapS
 
     memcpy(pngData, PngSignature, sizeof(PngSignature));
     pngSize += sizeof(PngSignature);
-    pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &hdr, sizeof(hdr));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &hdr, PNG_HEADER_SIZE);
+#if 0
+    pngSize += pngAddChunk(pngData + pngSize, PNG_SRGB, srgb, sizeof(srgb));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_GAMA, gama, sizeof(gama));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_CHRM, chrm, sizeof(chrm));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_PHYS, phys, sizeof(phys));
+#endif
     pngSize += pngAddChunk(pngData + pngSize, PNG_IDAT, compressedData, compressedSize);
-    pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, strlen(PngName));
+    pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, sizeof(PngName)-1);
     pngSize += pngAddChunk(pngData + pngSize, PNG_IEND, NULL, 0);
 
     free(compressedData);
@@ -262,9 +293,9 @@ static HRESULT SavePngBitmap(char *strFileName, PBITMAPINFO pbi, HBITMAP hBMP, H
 
         memcpy(pngData, PngSignature, sizeof(PngSignature));
         pngSize += sizeof(PngSignature);
-        pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &h, sizeof(h));
+        pngSize += pngAddChunk(pngData + pngSize, PNG_IHDR, &h, PNG_HEADER_SIZE);
         pngSize += pngAddChunk(pngData + pngSize, PNG_IDAT, compressedData, compressedSize);
-        pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, strlen(PngName));
+        pngSize += pngAddChunk(pngData + pngSize, PNG_TEXT, PngName, sizeof(PngName)-1);
         pngSize += pngAddChunk(pngData + pngSize, PNG_IEND, NULL, 0);
 
         free(compressedData);
