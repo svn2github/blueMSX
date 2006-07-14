@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-06-30 22:42:00 $
+** $Date: 2006-07-14 15:33:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1152,7 +1152,7 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 }
 
 static void getMidiList(HWND hDlg, int id, Properties* pProperties) {
-    char buffer[256];
+    char buffer[MAX_PATH];
     int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
     int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
     int*  midiType;
@@ -1505,7 +1505,7 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
 
 static void getPortsLptList(HWND hDlg, int id, Properties* pProperties) {
-    char buffer[256];
+    char buffer[MAX_PATH];
     int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
     int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
 
@@ -1626,7 +1626,7 @@ static BOOL IsNumeric(LPCTSTR pszString, BOOL bIgnoreColon)
 }
 
 static void getPortsComList(HWND hDlg, int id, Properties* pProperties) {
-    char buffer[256];
+    char buffer[MAX_PATH];
     int idx = SendDlgItemMessage(hDlg, id, CB_GETCURSEL, 0, 0);
     int rv = SendDlgItemMessage(hDlg, id, CB_GETLBTEXT, idx, (LPARAM)buffer);
 

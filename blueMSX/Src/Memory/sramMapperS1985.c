@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperS1985.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-07-14 15:33:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,7 +153,7 @@ static void getDebugInfo(SramMapperS1985* rm, DbgDevice* dbgDevice)
         DbgIoPorts* ioPorts;
         int i;
 
-        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKanji12(), 2);
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevKanji12(), 16);
 
         for (i = 0; i < 16; i++) {
             dbgIoPortsAddPort(ioPorts, i, 0x40 + i, DBG_IO_READWRITE, peek(rm, i));

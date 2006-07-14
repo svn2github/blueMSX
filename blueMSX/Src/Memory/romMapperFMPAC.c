@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperFMPAC.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-06-29 15:58:56 $
+** $Date: 2006-07-14 15:33:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -223,6 +223,10 @@ static void writeIo(RomMapperFMPAC* rm, UInt16 port, UInt8 data)
 static void getDebugInfo(RomMapperFMPAC* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
+
+    if (rm->ym2413 == NULL) {
+        return;
+    }
 
     if (rm->enable & 1) {
         ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevFmpac(), 2);
