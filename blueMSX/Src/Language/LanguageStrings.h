@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -217,6 +217,7 @@ typedef struct {
     char* dlgInsertHarddisk;
     char* dlgInsertCas;
     char* dlgRomType;
+    char* dlgDiskSize;
 
     char* dlgTapeTitle;
     char* dlgTapeFrameText;

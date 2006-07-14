@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.34 $ + additions 2005/03/03
+** $Revision: 1.35 $ + additions 2005/03/03
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "하드 디스크 삽입";                   
     ls->dlgInsertCas            = "카세트 테잎 삽입";
     ls->dlgRomType              = "롬 형식:";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - 테잎 위치";
     ls->dlgTapeFrameText        = "테잎 위치";

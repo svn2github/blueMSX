@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "ハードディスクを挿入";                   
     ls->dlgInsertCas            = "カセットテープを挿入";
     ls->dlgRomType              = "ROM タイプ:"; 
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - カセットテープ";
     ls->dlgTapeFrameText        = "テープ位置";

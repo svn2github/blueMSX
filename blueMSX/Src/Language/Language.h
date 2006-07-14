@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2006-07-12 23:15:55 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -243,6 +243,7 @@ char* langDlgInsertDiskB();
 char* langDlgInsertHarddisk();
 char* langDlgInsertCas();
 char* langDlgRomType();
+char* langDlgDiskSize();
 
 char* langDlgTapeTitle();
 char* langDlgTapeFrameText();

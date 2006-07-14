@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -221,6 +221,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Aseta kovalevy";
     ls->dlgInsertCas            = "Aseta kasetti";
     ls->dlgRomType              = "ROM-malli:";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Kasetin kohta";
     ls->dlgTapeFrameText        = "Kasetin kohta";

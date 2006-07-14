@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -221,6 +221,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Sätt in hårddisk";
     ls->dlgInsertCas            = "Sätt in kassettband";
     ls->dlgRomType              = "Rom Typ:";
+    ls->dlgDiskSize             = "Diskettstorlek:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Kassettposition";
     ls->dlgTapeFrameText        = "Kassettposition";
@@ -277,10 +278,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propEmuVramSizeText     = "VRAM storlek:";
     ls->propEmuSpeedGB          = "Emuleringshastighet ";
     ls->propEmuSpeedText        = "Emuleringshastighet:";
-    ls->propEmuFrontSwitchGB    = "Panasonic Switchar ";
-    ls->propEmuFrontSwitch      = " Front switch";
-    ls->propEmuFdcTiming        = "Slå Av Diskettstationstiming";
-    ls->propEmuPauseSwitch      = " Paus switch";
+    ls->propEmuFrontSwitchGB    = "Panasonicbrytare ";
+    ls->propEmuFrontSwitch      = " Frontbrytare";
+    ls->propEmuFdcTiming        = "Slå av diskettstationstiming";
+    ls->propEmuPauseSwitch      = " Pausbrytare";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
     ls->propVideoFreqText       = "Videofrekvens:";
     ls->propVideoFreqAuto       = "Automatisk";
@@ -296,8 +297,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonEmuText          = "Monitoremulering ";
     ls->propVideoTypeText       = "Videotyp:";
     ls->propWindowSizeText      = "Fönsterstorlek:";
-    ls->propMonHorizStretch     = " Korrekt horizontell vidd";
-    ls->propMonVertStretch      = " Vertikal stretch";
+    ls->propMonHorizStretch     = " Horizontell utsträckning";
+    ls->propMonVertStretch      = " Vertikal utsträckning";
     ls->propMonDeInterlace      = " De-interlace";
     ls->propBlendFrames         = " Blanda efterföljande bilder";           
     ls->propMonBrightness       = "Ljusstyrka:";
@@ -549,9 +550,9 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutVolumeDecrease  = "Minska Volymen";
     ls->shortcutVolumeMute      = "Stäng av Volymen";
     ls->shortcutVolumeStereo    = "Växla mellan mono/stereo";
-    ls->shortcutSwitchMsxAudio  = "Slå om MSX-AUDIO Switch";
-    ls->shortcutSwitchFront     = "Slå om Panasonic Front Switch";
-    ls->shortcutSwitchPause     = "Slå om Pause Switch";
+    ls->shortcutSwitchMsxAudio  = "Slå om MSX-AUDIO brytare";
+    ls->shortcutSwitchFront     = "Slå om Panasonic Front brytare";
+    ls->shortcutSwitchPause     = "Slå om Pausbrytare";
     ls->shortcutToggleMouseLock = "Slå om Muslås";
     ls->shortcutEmuSpeedMax     = "Maximal Emuleringshastighet";
     ls->shortcutEmuSpeedToggle  = "Växla Mellan Normal och Max Emuleringshastighet";

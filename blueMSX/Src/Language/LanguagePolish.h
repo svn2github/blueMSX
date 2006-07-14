@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Pod³¹cz Twardy Dysk";                   
     ls->dlgInsertCas            = "Wybierz kasetê";
     ls->dlgRomType              = "Typ romu:";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Pozycja taœmy";
     ls->dlgTapeFrameText        = "Pozycja taœmy";

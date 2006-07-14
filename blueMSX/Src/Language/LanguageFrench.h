@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Insérer un disque dur";                   
     ls->dlgInsertCas            = "Insérer une cassette dans le lecteur";
     ls->dlgRomType              = "Type de Rom:"; 
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - position de la bande";
     ls->dlgTapeFrameText        = "Position de la bande";

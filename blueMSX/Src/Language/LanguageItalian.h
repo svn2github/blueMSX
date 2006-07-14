@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Inserisci uno disco rigido";                   
     ls->dlgInsertCas            = "Inserisci un'immagine cassetta";
     ls->dlgRomType              = "Tipo rom:"; 
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Posizione del nastro";
     ls->dlgTapeFrameText        = "Posizione del nastro";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.25 $ 
+** $Revision: 1.26 $ 
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgInsertCas            = "Cassette einfügen";
     ls->dlgInsertHarddisk       = "Insert Hard Disk";                   
     ls->dlgRomType              = "Typ des ROMs:";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Bandposition";
     ls->dlgTapeFrameText        = "Bandposition";

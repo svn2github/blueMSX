@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik, Sjoerd de Vries
+** Copyright (C) 2003-2004 Daniel Vik
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -71,7 +71,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->warningTitle            = "blueMSX - Waarschuwing";
     ls->warningDiscardChanges   = "Wilt u de wijzigingen ongedaan maken?";
-    ls->warningOverwriteFile    = "Wilt u het volgende bestand overschrijven?"; 
+    ls->warningOverwriteFile    = "Wilt u het volgende bestand overschrijven?";
     ls->errorTitle              = "blueMSX - Foutmelding";
     ls->errorEnterFullscreen    = "Het is niet gelukt om over te schakelen naar de volledige schermmodus.          \n";
     ls->errorDirectXFailed      = "Het is niet gelukt om DirectX te initialiseren. \nDe GDI wordt nu gebruikt.\nKijk de videoinstellingen na...";
@@ -80,18 +80,18 @@ void langInitDutch(LanguageStrings* ls)
     ls->errorNoCasInZip         = "Er zijn geen .cas-bestanden gevonden in het zip-bestand.";
     ls->errorNoHelp             = "Het blueMSX-helpbestand is niet gevonden.";
     ls->errorStartEmu           = "Het is niet gelukt om de MSX-emulator te starten.";
-    ls->errorPortableReadonly   = "Het draagbare apparaat is Alleen Lezen";         
+    ls->errorPortableReadonly   = "Het draagbare apparaat is Alleen Lezen";
 
 
     //----------------------
     // File related lines
     //----------------------
 
-    ls->fileRom                 = "ROM-beeld";
+    ls->fileRom                 = "Rom-beeld";
     ls->fileAll                 = "Alle bestanden";
     ls->fileCpuState            = "CPU-status";
     ls->fileDisk                = "Disk-beeld";
-    ls->fileCas                 = "Tape-beeld";
+    ls->fileCas                 = "Cassette-beeld";
 
 
     //----------------------
@@ -102,21 +102,21 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuInsert              = "Toevoegen";
     ls->menuEject               = "Verwijderen";
 
-    ls->menuCartGameReader      = "Game Reader";                        
-    ls->menuCartIde             = "IDE";                                
-    ls->menuCartBeerIde         = "Beer";                               
-    ls->menuCartGIde            = "GIDE";                               
-    ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartGameReader      = "Game Reader";
+    ls->menuCartIde             = "IDE";
+    ls->menuCartBeerIde         = "Beer";
+    ls->menuCartGIde            = "GIDE";
+    ls->menuCartSunriseIde      = "Sunrise";
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";
-    ls->menuCartInsertSpecial   = "Toevoegen Speciale Cartridge";       
-    ls->menuCartMegaRam         = "MegaRAM";                            
+    ls->menuCartInsertSpecial   = "Toevoegen Speciale Cartridge";
+    ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Extern RAM-geheugen";
 
-    ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";     
+    ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";
     ls->menuDiskDirInsert       = "Toevoegen Map";
     ls->menuDiskAutoStart       = "Herstart na toevoegen";
     ls->menuCartAutoReset       = "Herstart na toevoegen/verwijderen";
@@ -143,11 +143,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Taal";
     ls->menuPropsPorts          = "Poorten";
 
-    ls->menuVideoSource         = "Video Uit-bron";                   
-    ls->menuVideoSourceDefault  = "Geen Video Uit-bron verbonden";    
+    ls->menuVideoSource         = "Video Uit-bron";
+    ls->menuVideoSourceDefault  = "Geen Video Uit-bron verbonden";
     ls->menuVideoChipAutodetect = "Automatische detectie Videochip";
-    ls->menuVideoInSource       = "Video In-bron";                    
-    ls->menuVideoInBitmap       = "Afbeedingsbestand";                
+    ls->menuVideoInSource       = "Video In-bron";
+    ls->menuVideoInBitmap       = "Afbeedingsbestand";
 
     ls->menuHelpHelp            = "Help";
     ls->menuHelpAbout           = "Info blueMSX";
@@ -164,8 +164,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuFileScreenShot      = "Schermafdruk maken";
     ls->menuFileExit            = "Afsluiten";
 
-    ls->menuFileHarddisk        = "Harde schijf";                       
-    ls->menuFileHarddiskNoPesent= "Geen harde schijfcontrollers aanwezig";  
+    ls->menuFileHarddisk        = "Vaste schijf";
+    ls->menuFileHarddiskNoPesent= "Geen vaste schijfcontrollers aanwezig";
 
     ls->menuRunRun              = "Start";
     ls->menuRunPause            = "Pauze";
@@ -176,11 +176,11 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Aanpassen Machine";
     ls->menuToolsShortcuts      = "Maken Snelkoppeling";
-    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "Besturingseditors";      // New in 2.6
     ls->menuToolsMixer          = "Mixer";
-    ls->menuToolsDebugger       = "Debugger";               
-    ls->menuToolsTrainer        = "Trainer";                
-    ls->menuToolsTraceLogger    = "Trace Logger";           
+    ls->menuToolsDebugger       = "Debugger";
+    ls->menuToolsTrainer        = "Trainer";
+    ls->menuToolsTraceLogger    = "Trace Logger";
 
     ls->menuFile                = "Bestand";
     ls->menuRun                 = "Start";
@@ -212,14 +212,15 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgLoadRomDskCasDesc    = "Selecteer een cartridge, diskette of cassette om te laden:";
     ls->dlgLoadState            = "Laad CPU-status";
     ls->dlgSaveState            = "Opslaan CPU-status";
-    ls->dlgSaveCassette         = "blueMSX - Opslaan Tape-beeld";
-    ls->dlgInsertRom1           = "Toevoegen ROM-cartridge in slot 1";
-    ls->dlgInsertRom2           = "Toevoegen ROM-cartridge in slot 2";
+    ls->dlgSaveCassette         = "blueMSX - Opslaan Cassette-beeld";
+    ls->dlgInsertRom1           = "Toevoegen Rom-cartridge in slot 1";
+    ls->dlgInsertRom2           = "Toevoegen Rom-cartridge in slot 2";
     ls->dlgInsertDiskA          = "Toevoegen diskette-beeld in station A";
     ls->dlgInsertDiskB          = "Toevoegen diskette-beeld in station B";
-    ls->dlgInsertHarddisk       = "Toevoegen Harde schijf";              
+    ls->dlgInsertHarddisk       = "Toevoegen Vaste schijf";
     ls->dlgInsertCas            = "Toevoegen cassette-beeld in casettespeler";
-    ls->dlgRomType              = "Rom-type :";
+    ls->dlgRomType              = "Romtype :";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Tapepositie";
     ls->dlgTapeFrameText        = "Tapepositie";
@@ -276,7 +277,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propEmuVramSizeText     = "VRAM-grootte:";
     ls->propEmuSpeedGB          = "Emulatiesnelheid ";
     ls->propEmuSpeedText        = "Emulatiesnelheid:";
-    ls->propEmuFrontSwitchGB    = "Panasonic Switches ";
+    ls->propEmuFrontSwitchGB    = "Panasonic schakelaars ";
     ls->propEmuFrontSwitch      = " Front Switch";
     ls->propEmuFdcTiming        = " Diskettestation niet synchroniseren";
     ls->propEmuPauseSwitch      = " Pause Switch";
@@ -284,11 +285,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->propVideoFreqText       = "Videofrequentie:";
     ls->propVideoFreqAuto       = "Automatisch";
     ls->propSndOversampleText   = "Oversample:";
-    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                
+    ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";
     ls->propSndMidiInGB         = "MIDI In ";
     ls->propSndMidiOutGB        = "MIDI Out ";
-    ls->propSndMidiChannel      = "MIDI-kanaal:";                      
-    ls->propSndMidiAll          = "Alle";                                
+    ls->propSndMidiChannel      = "MIDI-kanaal:";
+    ls->propSndMidiAll          = "Alle";
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitortype:";
@@ -297,13 +298,13 @@ void langInitDutch(LanguageStrings* ls)
     ls->propWindowSizeText      = "Schermgrootte:";
     ls->propMonHorizStretch     = " Horizontaal uitrekken";
     ls->propMonVertStretch      = " Verticaal uitrekken";
-    ls->propMonDeInterlace      = " Deinterlace";
-    ls->propBlendFrames         = " Opeenvolgende frames mengen";        
+    ls->propMonDeInterlace      = " Deïnterlace";
+    ls->propBlendFrames         = " Opeenvolgende frames mengen";
     ls->propMonBrightness       = "Helderheid:";
     ls->propMonContrast         = "Contrast:";
     ls->propMonSaturation       = "Verzadiging:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = " Beeldlijnen:";
+    ls->propMonScanlines        = " Beeldlijnen";
     ls->propMonColorGhosting    = " RF-modulator";
     ls->propMonEffectsGB        = " Effecten ";
 
@@ -315,9 +316,9 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPerfAudioBufSzText  = "Buffergrootte:";
     ls->propPerfEmuGB           = "Emulatie ";
     ls->propPerfSyncModeText    = "Synchronisatiemodus";
-    ls->propFullscreenResText   = "Resolutie volledige schermmodus:";
+    ls->propFullscreenResText   = "Resolutie vol. schermmodus:";
 
-    ls->propSndChipEmuGB        = "Emulatie Geluidschip ";
+    ls->propSndChipEmuGB        = "Emulatie geluidschip ";
     ls->propSndMsxMusic         = " MSX-MUSIC";
     ls->propSndMsxAudio         = " MSX-AUDIO";
     ls->propSndMoonsound        = " Moonsound";
@@ -342,9 +343,9 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSetScreenSaver       = "Schermbeveiliging uitschakelen als blueMSX draait";
     ls->propDisableWinKeys       = " Automatische MSX-functie voor menutoetsen Windows";
     ls->propPriorityBoost       = " blueMSX een hogere prioriteit geven";
-    ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";  
+    ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";
     ls->propClearHistory         = "Weet u zeker dat u de bestandsgeschiedenis wilt wissen?";
-    ls->propOpenRomGB           = "Openen Rom-bestand";
+    ls->propOpenRomGB           = "Openen Rombestand";
     ls->propDefaultRomType      = "Standaardtype:";
     ls->propGuessRomType        = "Raden type";
 
@@ -402,23 +403,23 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Automatisch (snel)";
     ls->enumEmuSyncNone         = "Geen";
     ls->enumEmuSyncVblank       = "Synchroon met PC Vertical Blank";
-    ls->enumEmuAsyncVblank      = "Asynchroon met PC Vblank";             
+    ls->enumEmuAsyncVblank      = "Asynchroon met PC Vblank";
 
     ls->enumControlsJoyNone     = "Geen";
     ls->enumControlsJoyMouse    = "Muis";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2-dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey-dongle";
-    ls->enumControlsJoy2Button = "2-knopsjoystick";                   
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
-    ls->enumControlsJoyColeco = "ColecoVision Joystick";                
+    ls->enumControlsJoy2Button = "2-knopsjoystick";
+    ls->enumControlsJoyGunstick  = "Gun Stick";
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";
+    ls->enumControlsJoyColeco = "ColecoVision Joystick";
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectoren";     
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectoren";     
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectoren";     
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectoren";     
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";           
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";           
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Double Sided, 9 Sectoren";
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Double Sided, 8 Sectoren";
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Single Sided, 9 Sectoren";
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Single Sided, 8 Sectoren";
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Double Sided";
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Single Sided";
 
 
     //----------------------
@@ -426,17 +427,17 @@ void langInitDutch(LanguageStrings* ls)
     //----------------------
 
     ls->confTitle               = "blueMSX - Machineconfiguratie aanpassen";
-    ls->confConfigText          = "Configuratie";
+    ls->confConfigText          = "Configuratie:";
     ls->confSlotLayout          = "Slotinstellingen";
     ls->confMemory              = "Geheugen";
     ls->confChipEmulation       = "Chipemulatie";
     ls->confChipExtras          = "Extras";
 
-    ls->confOpenRom             = "Open ROM-beeld";
-    ls->confSaveTitle           = "blueMSX - Machine configuratie opslaan";
+    ls->confOpenRom             = "Open Rom-beeld";
+    ls->confSaveTitle           = "blueMSX - Machineconfiguratie opslaan";
     ls->confSaveText            = "Deze machine configuratie vervangen? :";
     ls->confSaveAsTitle         = "Configuratie opslaan als...";
-    ls->confSaveAsMachineName   = "Machinenaam:";
+    ls->confSaveAsMachineName   = "Configuratienaam:";
     ls->confDiscardTitle        = "blueMSX - Configuratie";
     ls->confExitSaveTitle       = "blueMSX - Machineconfiguratie afsluiten";
     ls->confExitSaveText        = "De gemaakte wijzigingen in de huidige configuratie worden niet opgeslagen. Wilt u doorgaan?";
@@ -467,7 +468,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->confCmosGB                = "CMOS ";
     ls->confCmosEnable            = " Aanzetten CMOS";
-    ls->confCmosBattery           = " Geladen Batterij gebruiken";
+    ls->confCmosBattery           = " Geladen batterij gebruiken";
 
     ls->confCpuFreqGB            = "CPU-frequentie ";
     ls->confZ80FreqText          = "Z80-frequentie:";
@@ -496,18 +497,18 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutExitConfig      = "blueMSX -  Snelkoppelingconfiguratie afsluiten";
     ls->shortcutDiscardConfig   = "Weet u zeker dat u de gemaakte wijzigingen in de huidige configuratie niet wilt toepassen?";
     ls->shortcutSaveConfigAs    = "blueMSX - Configuratie opslaan als...";
-    ls->shortcutConfigName      = "Configuratienaam:";
+    ls->shortcutConfigName      = "Snelkoppelingsnaam:";
     ls->shortcutNewProfile      = "< Nieuw Profiel >";
     ls->shortcutConfigTitle     = "blueMSX - Toewijzingen Snelkoppelingen";
     ls->shortcutAssign          = "Toewijzen";
-    ls->shortcutPressText       = "Druk op Snelkoppeling toets(en):";
+    ls->shortcutPressText       = "Snelkoppelingstoets(en):";
     ls->shortcutScheme          = "Schema:";
     ls->shortcutCartInsert1     = "Toevoegen Cartridge in Slot 1";
     ls->shortcutCartRemove1     = "Verwijder Cartridge uit Slot 1";
     ls->shortcutCartInsert2     = "Toevoegen Cartridge in Slot 2";
     ls->shortcutCartRemove2     = "Verwijder Cartridge uit Slot 2";
-    ls->shortcutSpecialMenu1    = "Dialoog: Speciaal menu voor ROM cartridge in slot 1";
-    ls->shortcutSpecialMenu2    = "Dialoog: Speciaal menu voor ROM cartridge in slot 2";
+    ls->shortcutSpecialMenu1    = "Dialoog: Speciaal menu voor Romcartridge in slot 1";
+    ls->shortcutSpecialMenu2    = "Dialoog: Speciaal menu voor Romcartridge in slot 2";
     ls->shortcutCartAutoReset   = "Herstart na toevoegen cartridge";
     ls->shortcutDiskInsertA     = "Toevoegen Diskette in station A";
     ls->shortcutDiskDirInsertA  = "Toevoegen Map als Diskette A";
@@ -577,7 +578,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Tonen van bestandseigenschappen";
     ls->shortcutToggleSpriteEnable = "Tonen/Verbergen sprites";
     ls->shortcutToggleFdcTiming = "Synchroniseren/Niet synchroniseren";
-    ls->shortcutToggleCpuTrace  = "Toelaten/niet toelaten CPU spoor";
+    ls->shortcutToggleCpuTrace  = "Toelaten/niet toelaten CPU-spoor";
 
 
     //----------------------
@@ -586,7 +587,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->keyconfigSelectedKey    = "Geselecteerde toets:";
     ls->keyconfigMappedTo       = "Gekoppeld aan:";
-    ls->keyconfigMappingScheme  = "Koppel Schema:";
+    ls->keyconfigMappingScheme  = "Koppelschema:";
 
 
     //----------------------
@@ -771,4 +772,3 @@ void langInitDutch(LanguageStrings* ls)
 };
 
 #endif
-

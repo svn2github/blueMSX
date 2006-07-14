@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Insertar disco duro";                   
     ls->dlgInsertCas            = "Insertar Cinsta de cassette";
     ls->dlgRomType              = "Tipo rom:"; 
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Posición de la Cinta";
     ls->dlgTapeFrameText        = "Posición de la Cinta";

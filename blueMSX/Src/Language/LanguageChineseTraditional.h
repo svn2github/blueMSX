@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-07-12 23:15:56 $
+** $Date: 2006-07-14 05:46:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -220,6 +220,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "插入硬碟機";                   
     ls->dlgInsertCas            = "請插入磁帶機磁帶";
     ls->dlgRomType              = "ROM 類型:";
+    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - 磁帶位置";
     ls->dlgTapeFrameText        = "磁帶位置";
