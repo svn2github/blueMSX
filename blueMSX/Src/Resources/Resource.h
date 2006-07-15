@@ -72,11 +72,9 @@
 
 #define IDD_MENU                        101
 #define IDD_VIDEO                       102
-#define IDD_CONTROLS                    103
 #define IDD_SOUND                       104
 #define IDD_EMULATION                   105
 #define IDD_SETTINGS                    106
-#define IDD_JOYKEYS                     107
 #define IDD_ABOUT                       108
 #define IDD_ZIPDSK                      109
 #define IDD_TAPEPOS                     110
@@ -255,25 +253,6 @@
 
 #define IDC_MACHINENAMETEXT             2180
 
-#define IDC_JOYPORT1GROUPBOX            2200
-#define IDC_JOYPORT2GROUPBOX            2201
-
-#define IDC_JOYAUTOFIRETEXT1            2202
-#define IDC_JOYAUTOFIRETEXT2            2203
-#define IDC_JOYKEYSETGROUPBOX           2204
-#define IDC_JOYCONTROLTEXT1             2205
-#define IDC_JOYCONTROLTEXT2             2206
-#define IDC_JOYKEYSET1                  2207
-#define IDC_JOYKEYSET2                  2208
-#define IDC_JOYBUTTONATEXT1             2209
-#define IDC_JOYBUTTONATEXT2             2210
-#define IDC_JOYBUTTONBTEXT1             2211
-#define IDC_JOYBUTTONBTEXT2             2212
-#define IDC_JOYBUTTONA1                 2213
-#define IDC_JOYBUTTONA2                 2214
-#define IDC_JOYBUTTONB1                 2215
-#define IDC_JOYBUTTONB2                 2216
-
 #define IDC_PORTSLPTGROUPBOX            2217
 #define IDC_PORTSCOMGROUPBOX            2218
 #define IDC_PORTSLPTTEXT                2219
@@ -303,22 +282,6 @@
 #define IDC_SETTINGSDISABLEWINKEYS      2408
 #define IDC_SETTINGSPRIORITYBOOST       2409
 #define IDC_SETTINGSSCREENSHOTPNG       2410
-
-#define IDC_KEYUP                       1030
-#define IDC_KEYDOWN                     1031
-#define IDC_KEYLEFT                     1032
-#define IDC_KEYRIGHT                    1033
-#define IDC_KEYBUTTON1                  1034
-#define IDC_KEYBUTTON2                  1035
-
-#define IDC_JOYUPTEXT                   2300
-#define IDC_JOYDOWNTEXT                 2301
-#define IDC_JOYLEFTTEXT                 2302
-#define IDC_JOYRIGHTTEXT                2303
-#define IDC_JOYBUTTON1TEXT              2304
-#define IDC_JOYBUTTON2TEXT              2305
-#define IDC_JOYGROUPBOX                 2306
-
 
 #define IDC_ABOUTTEXT                   1100
 
