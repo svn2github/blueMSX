@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.cpp,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-07-03 19:25:45 $
+** $Date: 2006-07-15 00:57:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,11 @@ typedef struct {
 
     int inputIndex;
     int inputCount;
+    int disabled;
 
     CVideoGrabber* grabber;
+    
+    CVideoGrabber::DeviceNameList devList;
 } VideoIn;
 
 static VideoIn videoIn;
@@ -78,34 +81,33 @@ UInt16* archVideoInBufferGet(int width, int height)
 void videoInInitialize(Properties* properties)
 {
     videoIn.inputCount = 1;
+    videoIn.inputIndex = 0;
+
+    videoIn.disabled = properties->videoIn.disabled;
+
+    if (videoIn.disabled) {
+        return;
+    }
+
+    videoIn.grabber = new CVideoGrabber;
+    
+    videoIn.devList = videoIn.grabber->GetDeviceNames();
+
+    videoIn.inputCount += videoIn.devList.size();
+
     videoIn.inputIndex = properties->videoIn.inputIndex;
 
-    if (!properties->videoIn.disabled) {
-        videoIn.grabber = new CVideoGrabber;
-        
-        if (videoIn.grabber->SetupGrabber()) {
-            videoIn.inputCount++;
-
-            if (videoIn.inputIndex == 0) {
-    //            videoIn.grabber->ShutdownGrabber();
-            }
-        }
-    }
-
-    if (videoIn.inputIndex >= videoIn.inputCount) {
-        videoIn.inputIndex = 0;
-    }
+    videoInSetActive(videoIn.inputIndex);
 }
 
 void videoInCleanup(Properties* properties)
 {
-    if (videoIn.inputCount > 1) {
-        videoIn.grabber->ShutdownGrabber();
+    if (videoIn.disabled) {
+        return;
     }
 
-    if (videoIn.grabber != NULL) {
-        delete videoIn.grabber;
-    }
+    videoIn.grabber->ShutdownGrabber();
+    delete videoIn.grabber;
 
     properties->videoIn.inputIndex = videoIn.inputIndex;
 }
@@ -125,17 +127,14 @@ int videoInGetActive()
     return videoIn.inputIndex;
 }
 
-char* videoInGetName(int index)
+const char* videoInGetName(int index)
 {
-    // Should return a list of input devices
-    // First should be 'None', second, 'Use Bitmap File'
-    // Others should be Real input devices
-    // The list probably needs updating everytime
-    // videoInGetInputCount is called (which is
-    // from the menu
-    switch (index) {
-        case 0: return langTextNone();
-        case 1: return videoIn.grabber->GetName();
+    if (index == 0) {
+        return langTextNone();
+    }
+    
+    if (index < videoIn.inputCount) {
+        return videoIn.devList[index - 1].c_str();
     }
 
     return langTextUnknown();
@@ -143,14 +142,21 @@ char* videoInGetName(int index)
 
 void videoInSetActive(int index)
 {
-    if (index >= videoIn.inputCount) {
+    if (videoIn.disabled) {
         return;
     }
-    if (videoIn.inputIndex != index) {
-//        switch (index) {
-//        case 0: videoIn.grabber->ShutdownGrabber(); break;
-//        case 1: videoIn.grabber->SetupGrabber(); break;
-//        }
-    }
+
+    videoIn.grabber->ShutdownGrabber();
+
     videoIn.inputIndex = index;
+
+    if (videoIn.inputIndex > videoIn.inputCount) {
+        videoIn.inputIndex = 0;
+    }
+
+    if (videoIn.inputIndex > 0) {
+        if (!videoIn.grabber->SetupGrabber(videoIn.devList[videoIn.inputIndex - 1])) {
+            videoIn.inputIndex = 0;
+        }
+    }
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-07-03 19:25:45 $
+** $Date: 2006-07-15 00:57:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,27 +35,35 @@
 #include <stdio.h>
 #include <atlbase.h>
 #include <qedit.h>
+#include <vector>
+#include <string>
 
 class CVideoGrabber
 {
 public:
+    typedef std::vector<std::string> DeviceNameList;
+
     CVideoGrabber();
     virtual ~CVideoGrabber();
 
-    int SetupGrabber();
+    DeviceNameList GetDeviceNames() const;
+
+    bool SetupGrabber(const std::string& devName = "");
     void ShutdownGrabber();
-    char *GetName();
+    const std::string& GetName() const;
 
     int GrabFrame(WORD* bitmap, LONG width, LONG height);
 
 private:
-    char m_szDeviceName[MAX_PATH];
+    bool m_initialized;
+    std::string m_szDeviceName;
     CComPtr <IGraphBuilder>  m_pGraph;
     HRESULT GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin);
     IPin *GetInPin (IBaseFilter *pFilter, int Num);
     IPin *GetOutPin(IBaseFilter *pFilter, int Num);
 
-    void GetDefaultCapDevice(IBaseFilter **ppCap);
+    IBaseFilter* GetCapDevice(const std::string& devName = "");
+
     HRESULT SetupVideoStreamConfig(IAMStreamConfig *pSC);
 
 #ifdef _DEBUG

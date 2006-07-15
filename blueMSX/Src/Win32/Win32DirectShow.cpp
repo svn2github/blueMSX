@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-07-04 07:49:05 $
+** $Date: 2006-07-15 00:57:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,7 +109,9 @@ public:
 
 CSampleGrabberCB CB;
 
-CVideoGrabber::CVideoGrabber()
+CVideoGrabber::CVideoGrabber() 
+:
+    m_initialized(false)
 {
 }
 
@@ -119,19 +121,23 @@ CVideoGrabber::~CVideoGrabber()
 
 void CVideoGrabber::ShutdownGrabber()
 {
-    HRESULT hr;
-    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
+    
+    if (m_initialized) {
+        HRESULT hr;
+        CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
 
-    hr = pControl->Stop();
+        hr = pControl->Stop();
 
 #ifdef _DEBUG
-    if (m_dwGraphRegister) {
-        RemoveGraphFromRot(m_dwGraphRegister);
-    }
+        if (m_dwGraphRegister) {
+            RemoveGraphFromRot(m_dwGraphRegister);
+        }
 #endif
+        m_initialized = false;
+    }
 }
 
-int CVideoGrabber::SetupGrabber()
+bool CVideoGrabber::SetupGrabber(const std::string& devName)
 {
     CComPtr <ISampleGrabber> pGrabber;
     CComPtr <IBaseFilter>    pSource;
@@ -140,54 +146,58 @@ int CVideoGrabber::SetupGrabber()
     IAMStreamConfig *pConfig;
     HRESULT hr;
 
+    if (m_initialized) {
+        ShutdownGrabber();
+    }
+
     hr = pBuilder.CoCreateInstance(CLSID_CaptureGraphBuilder2);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     hr = pGrabber.CoCreateInstance(CLSID_SampleGrabber);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
-    GetDefaultCapDevice(&pSource);
+    pSource = GetCapDevice(devName);
     if (!pSource) {
-        return 0;
+        return false;
     }
 
     hr = m_pGraph.CoCreateInstance(CLSID_FilterGraph);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     hr = m_pGraph->AddFilter(pSource, L"Source");
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
     hr = m_pGraph->AddFilter(pGrabberBase, L"Grabber");
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     CComPtr <IBaseFilter> pRenderer;
     hr = pRenderer.CoCreateInstance(CLSID_NullRenderer);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
     hr = m_pGraph->AddFilter(pRenderer, L"Null Renderer");
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     hr = pBuilder->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pSource, IID_IAMStreamConfig, (void **)&pConfig);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
     hr = SetupVideoStreamConfig(pConfig);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     CMediaType GrabType;
@@ -195,7 +205,7 @@ int CVideoGrabber::SetupGrabber()
     GrabType.SetSubtype(&MEDIASUBTYPE_RGB555);
     hr = pGrabber->SetMediaType(&GrabType);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     CComPtr <IPin> pSourcePin;
@@ -204,13 +214,13 @@ int CVideoGrabber::SetupGrabber()
     pGrabPin = GetInPin(pGrabberBase, 0);
     hr = m_pGraph->Connect(pSourcePin, pGrabPin);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     AM_MEDIA_TYPE mt;
     hr = pGrabber->GetConnectedMediaType(&mt);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
     VIDEOINFOHEADER *vih = (VIDEOINFOHEADER*) mt.pbFormat;
     CB.Width = vih->bmiHeader.biWidth;
@@ -227,20 +237,20 @@ int CVideoGrabber::SetupGrabber()
     CComPtr <IPin> pGrabOutPin = GetOutPin(pGrabberBase, 0);
     hr = m_pGraph->Render(pGrabOutPin);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     hr = pGrabber->SetBufferSamples(FALSE);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
     hr = pGrabber->SetOneShot(TRUE);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
     hr = pGrabber->SetCallback(&CB, 1);
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
     CComQIPtr <IVideoWindow, &IID_IVideoWindow> pWindow = m_pGraph;
@@ -256,10 +266,12 @@ int CVideoGrabber::SetupGrabber()
     CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
     hr = pControl->Run();
     if (FAILED(hr)) {
-        return 0;
+        return false;
     }
 
-	return 1;
+    m_initialized = true;
+
+	return true;
 }
 
 int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
@@ -267,7 +279,7 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
     HRESULT hr;
     long EvCode = 0;
 
-    if (!m_pGraph) {
+    if (!m_initialized) {
         return 0;    
     }
 
@@ -375,41 +387,34 @@ IPin *CVideoGrabber::GetOutPin(IBaseFilter *pFilter, int nPin)
     return pComPin;
 }
 
-void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
+CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
 {
+    DeviceNameList nameList;
     HRESULT hr;
-
-    ASSERT(ppCap);
-    if (!ppCap) {
-        return;
-    }
-    *ppCap = NULL;
 
     CComPtr <ICreateDevEnum> pCreateDevEnum;
     hr = pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
     if (FAILED(hr)) {
-        return;
+        return nameList;
     }
 
-//    ASSERT(pCreateDevEnum);
     if (!pCreateDevEnum) {
-        return;
+        return nameList;
     }
 
     CComPtr <IEnumMoniker> pEm;
     hr = pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
     if (FAILED(hr)) {
-        return;
+        return nameList;
     }
 
-//    ASSERT(pEm);
     if (!pEm) {
-        return;
+        return nameList;
     }
 
     hr = pEm->Reset();
     if (FAILED(hr)) {
-        return;
+        return nameList;
     }
 
     while (true) {
@@ -434,14 +439,79 @@ void CVideoGrabber::GetDefaultCapDevice(IBaseFilter **ppCap)
         }
         _bstr_t bstrTemp = varName;
         LPCSTR  szTemp = (LPCSTR) bstrTemp;
-        StringCchCopy(m_szDeviceName, strlen(szTemp) , szTemp);
 
-        hr = pM->BindToObject(0,0, IID_IBaseFilter, (void **)ppCap);
-        if (*ppCap) {
+        nameList.push_back(szTemp);
+    }
+
+    return nameList;
+}
+
+IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
+{
+    HRESULT hr;
+
+    m_szDeviceName.clear();
+
+    CComPtr <ICreateDevEnum> pCreateDevEnum;
+    hr = pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
+    if (FAILED(hr)) {
+        return NULL;
+    }
+
+    if (!pCreateDevEnum) {
+        return NULL;
+    }
+
+    CComPtr <IEnumMoniker> pEm;
+    hr = pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
+    if (FAILED(hr)) {
+        return NULL;
+    }
+
+    if (!pEm) {
+        return NULL;
+    }
+
+    hr = pEm->Reset();
+    if (FAILED(hr)) {
+        return NULL;
+    }
+
+    IBaseFilter* pCap = NULL;
+
+    while (true) {
+        ULONG ulFetched = 0;
+        CComPtr <IMoniker> pM;
+        hr = pEm->Next(1, &pM, &ulFetched);
+        if (hr != S_OK) {
             break;
         }
+
+        CComPtr <IPropertyBag> pBag;
+        hr = pM->BindToStorage( 0, 0, IID_IPropertyBag, (void**) &pBag );
+        if (hr != S_OK) {
+            continue;
+        }
+
+        CComVariant varName;
+        varName.vt = VT_BSTR;
+        hr = pBag->Read( L"FriendlyName", &varName, NULL);
+        if (hr != S_OK) {
+            continue;
+        }
+        _bstr_t bstrTemp = varName;
+        LPCSTR  szTemp = (LPCSTR) bstrTemp;
+        
+        if (devName.length() > 0 || devName == szTemp) {
+            m_szDeviceName = szTemp;
+
+            hr = pM->BindToObject(0,0, IID_IBaseFilter, (void **)&pCap);
+            if (pCap) {
+                break;
+            }
+        }
     }
-    return;
+    return pCap;
 }
 
 HRESULT CVideoGrabber::SetupVideoStreamConfig(IAMStreamConfig *pSC)
@@ -520,7 +590,7 @@ void CVideoGrabber::RemoveGraphFromRot(DWORD pdwRegister)
 }
 #endif
 
-char* CVideoGrabber::GetName()
+const std::string& CVideoGrabber::GetName() const
 {  
     return m_szDeviceName;
 }

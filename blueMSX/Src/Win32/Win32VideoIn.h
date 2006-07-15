@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-01-17 08:50:04 $
+** $Date: 2006-07-15 00:57:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,7 @@ void videoInInitialize(Properties* properties);
 void videoInCleanup(Properties* properties);
 
 int  videoInGetCount();
-char* videoInGetName(int index);
+const char* videoInGetName(int index);
 int videoInGetActive();
 void videoInSetActive(int index);
 int videoInIsActive(int index);
