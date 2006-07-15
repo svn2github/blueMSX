@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2005-05-04 18:00:07 $
+** $Date: 2006-07-15 06:45:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,8 +76,9 @@ struct I8250
 
     UInt8 reg[11];
 
-    BoardTimer*      timerBaudRate;   
-    UInt32           timeBaudRate;
+    UInt32        baudRate;
+    BoardTimer*   timerBaudRate;   
+    UInt32        timeBaudRate;
 };
 
 static int transmitDummy(void* ref, UInt8 value) {
@@ -272,6 +273,7 @@ static void i8250CounterOnTimer(I8250* i8250, UInt32 time)
         if (i8250RxBufferGetByte(&value))
             i8250Receive(i8250, value);
     }
+    i8250->timeBaudRate = time + boardFrequency() / i8250->baudRate;
     boardTimerAdd(i8250->timerBaudRate, i8250->timeBaudRate);
 }
 
@@ -289,8 +291,11 @@ static void i8250CounterCreate(I8250* i8250, UInt32 frequency)
 
     i8250->timerBaudRate = boardTimerCreate(i8250CounterOnTimer, i8250);
     // Fixme: start + stop + parity bit
-    i8250->timeBaudRate = (frequency/16/divisor/10)*1000;
-    boardTimerAdd(i8250->timerBaudRate, i8250->timeBaudRate);
+    i8250->baudRate = (frequency/16/divisor/10);
+    if (i8250->baudRate > 0) {
+        i8250->timeBaudRate = boardSystemTime() + boardFrequency() / i8250->baudRate;
+        boardTimerAdd(i8250->timerBaudRate, i8250->timeBaudRate);
+    }
 }
 
 void i8250SaveState(I8250* uart)

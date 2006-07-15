@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-07-15 04:58:53 $
+** $Date: 2006-07-15 06:45:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,31 +173,37 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
 
     hr = m_pGraph->AddFilter(pSource, L"Source");
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
     CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
     hr = m_pGraph->AddFilter(pGrabberBase, L"Grabber");
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
     CComPtr <IBaseFilter> pRenderer;
     hr = pRenderer.CoCreateInstance(CLSID_NullRenderer);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
     hr = m_pGraph->AddFilter(pRenderer, L"Null Renderer");
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
     hr = pBuilder->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pSource, IID_IAMStreamConfig, (void **)&pConfig);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
     hr = SetupVideoStreamConfig(pConfig);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
@@ -206,6 +212,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     GrabType.SetSubtype(&MEDIASUBTYPE_RGB555);
     hr = pGrabber->SetMediaType(&GrabType);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
@@ -215,12 +222,14 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     pGrabPin = GetInPin(pGrabberBase, 0);
     hr = m_pGraph->Connect(pSourcePin, pGrabPin);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
     AM_MEDIA_TYPE mt;
     hr = pGrabber->GetConnectedMediaType(&mt);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
     VIDEOINFOHEADER *vih = (VIDEOINFOHEADER*) mt.pbFormat;
@@ -238,19 +247,23 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     CComPtr <IPin> pGrabOutPin = GetOutPin(pGrabberBase, 0);
     hr = m_pGraph->Render(pGrabOutPin);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
     hr = pGrabber->SetBufferSamples(FALSE);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
     hr = pGrabber->SetOneShot(TRUE);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
     hr = pGrabber->SetCallback(&CB, 1);
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
@@ -267,6 +280,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
     hr = pControl->Run();
     if (FAILED(hr)) {
+        m_pGraph = 0;
         return false;
     }
 
