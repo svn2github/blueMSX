@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-07-15 00:57:58 $
+** $Date: 2006-07-15 04:58:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -133,6 +133,7 @@ void CVideoGrabber::ShutdownGrabber()
             RemoveGraphFromRot(m_dwGraphRegister);
         }
 #endif
+        m_pGraph = 0;
         m_initialized = false;
     }
 }
