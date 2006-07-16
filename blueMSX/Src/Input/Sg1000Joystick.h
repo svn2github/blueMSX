@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/Sg1000Joystick.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-11-01 21:19:31 $
+** $Date: 2006-07-16 17:00:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,6 @@
 
 typedef struct Sg1000Joystick Sg1000Joystick;
 
-Sg1000JoystickDevice* sg1000JoystickCreate();
+Sg1000JoystickDevice* sg1000JoystickCreate(int controller);
 
 #endif 

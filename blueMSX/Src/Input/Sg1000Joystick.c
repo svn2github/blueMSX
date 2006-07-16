@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/Sg1000Joystick.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-11-02 06:58:20 $
+** $Date: 2006-07-16 17:00:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,23 +34,37 @@
 
 struct Sg1000Joystick {
     Sg1000JoystickDevice joyDevice;
+    int controller;
 };
 
 static UInt8 read(Sg1000Joystick* joystick) {
-    UInt8 state = (inputEventGetState(EC_JOY1_UP)      << 0) |
-                  (inputEventGetState(EC_JOY1_DOWN)    << 1) |
-                  (inputEventGetState(EC_JOY1_LEFT)    << 2) |
-                  (inputEventGetState(EC_JOY1_RIGHT)   << 3) |
-                  (inputEventGetState(EC_JOY1_BUTTON1) << 4) |
-                  (inputEventGetState(EC_JOY1_BUTTON2) << 5);
+    UInt8 state;
+
+    if (joystick->controller == 0) {
+        state = (inputEventGetState(EC_JOY1_UP)      << 0) |
+                (inputEventGetState(EC_JOY1_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY1_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY1_RIGHT)   << 3) |
+                (inputEventGetState(EC_JOY1_BUTTON1) << 4) |
+                (inputEventGetState(EC_JOY1_BUTTON2) << 5);
+    }
+    else {
+        state = (inputEventGetState(EC_JOY2_UP)      << 0) |
+                (inputEventGetState(EC_JOY2_DOWN)    << 1) |
+                (inputEventGetState(EC_JOY2_LEFT)    << 2) |
+                (inputEventGetState(EC_JOY2_RIGHT)   << 3) |
+                (inputEventGetState(EC_JOY2_BUTTON1) << 4) |
+                (inputEventGetState(EC_JOY2_BUTTON2) << 5);
+    }
 
     return ~state & 0x3f;
 }
 
-Sg1000JoystickDevice* sg1000JoystickCreate()
+Sg1000JoystickDevice* sg1000JoystickCreate(int controller)
 {
     Sg1000Joystick* joystick = (Sg1000Joystick*)calloc(1, sizeof(Sg1000Joystick));
     joystick->joyDevice.read   = read;
+    joystick->controller       = controller;
     
     return (Sg1000JoystickDevice*)joystick;
 }
