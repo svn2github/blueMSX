@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-07-11 02:02:13 $
+** $Date: 2006-07-17 18:21:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1102,159 +1102,79 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         while (X < X2) {
             if (sprLine != NULL) {
                 if (scroll & 1) {
-                    (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[0],
-                        linePtr[0]  = vdp->palette[(col >> 2) & 3],
-                        linePtr[1]  = vdp->palette[(col >> 0) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[1],
-                        linePtr[2]  = vdp->palette[(col >> 6) & 3], 
-                        linePtr[3]  = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[1], 
-                        linePtr[4]  = vdp->palette[(col >> 2) & 3], 
-                        linePtr[5]  = vdp->palette[(col >> 0) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[2],
-                        linePtr[6]  = vdp->palette[(col >> 6) & 3],
-                        linePtr[7]  = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[2],
-                        linePtr[8]  = vdp->palette[(col >> 2) & 3],
-                        linePtr[9]  = vdp->palette[(col >> 0) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[5]) ? linePtr[10] = linePtr[11] = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[3], 
-                        linePtr[10] = vdp->palette[(col >> 6) & 3], 
-                        linePtr[11] = vdp->palette[(col >> 4) & 3]); 
-                    UPDATE_T();
-                    (col = sprLine[6]) ? linePtr[12] = linePtr[13] = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[3],
-                        linePtr[12] = vdp->palette[(col >> 2) & 3], 
-                        linePtr[13] = vdp->palette[(col >> 0) & 3]); 
-                    UPDATE_T();
-                    (col = sprLine[7]) ? linePtr[14] = linePtr[15] = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[4],
-                        linePtr[14] = vdp->palette[(col >> 6) & 3],
-                        linePtr[15] = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
+                    linePtr[ 0] = vdp->palette[(col = sprLine[0]) ? (col >> 3) & 3 : (charTable[0] >> 2) & 3];
+                    linePtr[ 1] = vdp->palette[(col = sprLine[0]) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_T();
+                    linePtr[ 2] = vdp->palette[(col = sprLine[1]) ? (col >> 3) & 3 : (charTable[1] >> 6) & 3];
+                    linePtr[ 3] = vdp->palette[(col = sprLine[1]) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_T();
+                    linePtr[ 4] = vdp->palette[(col = sprLine[2]) ? (col >> 3) & 3 : (charTable[1] >> 2) & 3];
+                    linePtr[ 5] = vdp->palette[(col = sprLine[2]) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_T();
+                    linePtr[ 6] = vdp->palette[(col = sprLine[3]) ? (col >> 3) & 3 : (charTable[2] >> 6) & 3];
+                    linePtr[ 7] = vdp->palette[(col = sprLine[3]) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_T();
+                    linePtr[ 8] = vdp->palette[(col = sprLine[4]) ? (col >> 3) & 3 : (charTable[2] >> 2) & 3];
+                    linePtr[ 9] = vdp->palette[(col = sprLine[4]) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_T();
+                    linePtr[10] = vdp->palette[(col = sprLine[5]) ? (col >> 3) & 3 : (charTable[3] >> 6) & 3];
+                    linePtr[11] = vdp->palette[(col = sprLine[5]) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_T();
+                    linePtr[12] = vdp->palette[(col = sprLine[6]) ? (col >> 3) & 3 : (charTable[3] >> 2) & 3];
+                    linePtr[13] = vdp->palette[(col = sprLine[6]) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_T();
+                    linePtr[14] = vdp->palette[(col = sprLine[7]) ? (col >> 3) & 3 : (charTable[4] >> 6) & 3];
+                    linePtr[15] = vdp->palette[(col = sprLine[7]) ? (col >> 1) & 3 : (charTable[4] >> 4) & 3]; UPDATE_T();
                 }
                 else {
-                    (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[0], 
-                        linePtr[0]  = vdp->palette[(col >> 6) & 3], 
-                        linePtr[1]  = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[0], 
-                        linePtr[2]  = vdp->palette[(col >> 2) & 3],
-                        linePtr[3]  = vdp->palette[(col >> 0) & 3]); 
-                    UPDATE_T();
-                    (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[1], 
-                        linePtr[4]  = vdp->palette[(col >> 6) & 3], 
-                        linePtr[5]  = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[1],
-                        linePtr[6]  = vdp->palette[(col >> 2) & 3], 
-                        linePtr[7]  = vdp->palette[(col >> 0) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[2], 
-                        linePtr[8]  = vdp->palette[(col >> 6) & 3],
-                        linePtr[9]  = vdp->palette[(col >> 4) & 3]);
-                    UPDATE_T();
-                    (col = sprLine[5]) ? linePtr[10] = linePtr[11] = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[2], 
-                        linePtr[10] = vdp->palette[(col >> 2) & 3],
-                        linePtr[11] = vdp->palette[(col >> 0) & 3]); 
-                    UPDATE_T();
-                    (col = sprLine[6]) ? linePtr[12] = linePtr[13] = vdp->palette[(col >> 1) & 3] : 
-                        (col = charTable[3],
-                        linePtr[12] = vdp->palette[(col >> 6) & 3], 
-                        linePtr[13] = vdp->palette[(col >> 4) & 3]); 
-                    UPDATE_T();
-                    (col = sprLine[7]) ? linePtr[14] = linePtr[15] = vdp->palette[(col >> 1) & 3] :
-                        (col = charTable[3],
-                        linePtr[14] = vdp->palette[(col >> 2) & 3], 
-                        linePtr[15] = vdp->palette[(col >> 0) & 3]);
-                    UPDATE_T();
+                    linePtr[ 0] = vdp->palette[(col = sprLine[0]) ? (col >> 3) & 3 : (charTable[0] >> 6) & 3];
+                    linePtr[ 1] = vdp->palette[(col = sprLine[0]) ? (col >> 1) & 3 : (charTable[0] >> 4) & 3]; UPDATE_T();
+                    linePtr[ 2] = vdp->palette[(col = sprLine[1]) ? (col >> 3) & 3 : (charTable[0] >> 2) & 3];
+                    linePtr[ 3] = vdp->palette[(col = sprLine[1]) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_T();
+                    linePtr[ 4] = vdp->palette[(col = sprLine[2]) ? (col >> 3) & 3 : (charTable[1] >> 6) & 3];
+                    linePtr[ 5] = vdp->palette[(col = sprLine[2]) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_T();
+                    linePtr[ 6] = vdp->palette[(col = sprLine[3]) ? (col >> 3) & 3 : (charTable[1] >> 2) & 3];
+                    linePtr[ 7] = vdp->palette[(col = sprLine[3]) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_T();
+                    linePtr[ 8] = vdp->palette[(col = sprLine[4]) ? (col >> 3) & 3 : (charTable[2] >> 6) & 3];
+                    linePtr[ 9] = vdp->palette[(col = sprLine[4]) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_T();
+                    linePtr[10] = vdp->palette[(col = sprLine[5]) ? (col >> 3) & 3 : (charTable[2] >> 2) & 3];
+                    linePtr[11] = vdp->palette[(col = sprLine[5]) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_T();
+                    linePtr[12] = vdp->palette[(col = sprLine[6]) ? (col >> 3) & 3 : (charTable[3] >> 6) & 3];
+                    linePtr[13] = vdp->palette[(col = sprLine[6]) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_T();
+                    linePtr[14] = vdp->palette[(col = sprLine[7]) ? (col >> 3) & 3 : (charTable[3] >> 2) & 3];
+                    linePtr[15] = vdp->palette[(col = sprLine[7]) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_T();
                 }
                 sprLine += 8; 
             }
             else {
                 if (scroll & 1) {
-                    col = charTable[0]; 
-                    linePtr[0]  = vdp->palette[(col >> 2) & 3]; 
-                    linePtr[1]  = vdp->palette[(col >> 0) & 3]; 
-                    UPDATE_T();
-                    col = charTable[1]; 
-                    linePtr[2]  = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[3]  = vdp->palette[(col >> 4) & 3];
-                    UPDATE_T();
-                    col = charTable[1]; 
-                    linePtr[4]  = vdp->palette[(col >> 2) & 3];
-                    linePtr[5]  = vdp->palette[(col >> 0) & 3];
-                    UPDATE_T();
-                    col = charTable[2]; 
-                    linePtr[6]  = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[7]  = vdp->palette[(col >> 4) & 3];
-                    UPDATE_T();
-                    col = charTable[2]; 
-                    linePtr[8]  = vdp->palette[(col >> 2) & 3]; 
-                    linePtr[9]  = vdp->palette[(col >> 0) & 3];
-                    UPDATE_T();
-                    col = charTable[3]; 
-                    linePtr[10] = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[11] = vdp->palette[(col >> 4) & 3]; 
-                    UPDATE_T();
-                    col = charTable[3]; 
-                    linePtr[12] = vdp->palette[(col >> 2) & 3]; 
-                    linePtr[13] = vdp->palette[(col >> 0) & 3];
-                    UPDATE_T();
-                    col = charTable[4]; 
-                    linePtr[14] = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[15] = vdp->palette[(col >> 4) & 3]; 
-                    UPDATE_T();
+                    linePtr[0]  = vdp->palette[(charTable[0] >> 2) & 3]; 
+                    linePtr[1]  = vdp->palette[(charTable[0] >> 0) & 3]; UPDATE_T();
+                    linePtr[2]  = vdp->palette[(charTable[1] >> 6) & 3]; 
+                    linePtr[3]  = vdp->palette[(charTable[1] >> 4) & 3]; UPDATE_T();
+                    linePtr[4]  = vdp->palette[(charTable[1] >> 2) & 3];
+                    linePtr[5]  = vdp->palette[(charTable[1] >> 0) & 3]; UPDATE_T();
+                    linePtr[6]  = vdp->palette[(charTable[2] >> 6) & 3]; 
+                    linePtr[7]  = vdp->palette[(charTable[2] >> 4) & 3]; UPDATE_T();
+                    linePtr[8]  = vdp->palette[(charTable[2] >> 2) & 3]; 
+                    linePtr[9]  = vdp->palette[(charTable[2] >> 0) & 3]; UPDATE_T();
+                    linePtr[10] = vdp->palette[(charTable[3] >> 6) & 3]; 
+                    linePtr[11] = vdp->palette[(charTable[3] >> 4) & 3]; UPDATE_T();
+                    linePtr[12] = vdp->palette[(charTable[3] >> 2) & 3]; 
+                    linePtr[13] = vdp->palette[(charTable[3] >> 0) & 3]; UPDATE_T();
+                    linePtr[14] = vdp->palette[(charTable[4] >> 6) & 3]; 
+                    linePtr[15] = vdp->palette[(charTable[4] >> 4) & 3]; UPDATE_T();
                 }
                 else {
-                    col = charTable[0];
-                    linePtr[0]  = vdp->palette[(col >> 6) & 3];
-                    linePtr[1]  = vdp->palette[(col >> 4) & 3];
-                    UPDATE_T();
-                    col = charTable[0];
-                    linePtr[2]  = vdp->palette[(col >> 2) & 3]; 
-                    linePtr[3]  = vdp->palette[(col >> 0) & 3]; 
-                    UPDATE_T();
-                    col = charTable[1];
-                    linePtr[4]  = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[5]  = vdp->palette[(col >> 4) & 3]; 
-                    UPDATE_T();
-                    col = charTable[1]; 
-                    linePtr[6]  = vdp->palette[(col >> 2) & 3];
-                    linePtr[7]  = vdp->palette[(col >> 0) & 3]; 
-                    UPDATE_T();
-                    col = charTable[2]; 
-                    linePtr[8]  = vdp->palette[(col >> 6) & 3];
-                    linePtr[9]  = vdp->palette[(col >> 4) & 3]; 
-                    UPDATE_T();
-                    col = charTable[2]; 
-                    linePtr[10] = vdp->palette[(col >> 2) & 3];
-                    linePtr[11] = vdp->palette[(col >> 0) & 3]; 
-                    UPDATE_T();
-                    col = charTable[3]; 
-                    linePtr[12] = vdp->palette[(col >> 6) & 3]; 
-                    linePtr[13] = vdp->palette[(col >> 4) & 3]; 
-                    UPDATE_T();
-                    col = charTable[3]; 
-                    linePtr[14] = vdp->palette[(col >> 2) & 3];
-                    linePtr[15] = vdp->palette[(col >> 0) & 3]; 
-                    UPDATE_T();
+                    linePtr[0]  = vdp->palette[(charTable[0] >> 6) & 3];
+                    linePtr[1]  = vdp->palette[(charTable[0] >> 4) & 3]; UPDATE_T();
+                    linePtr[2]  = vdp->palette[(charTable[0] >> 2) & 3]; 
+                    linePtr[3]  = vdp->palette[(charTable[0] >> 0) & 3]; UPDATE_T();
+                    linePtr[4]  = vdp->palette[(charTable[1] >> 6) & 3]; 
+                    linePtr[5]  = vdp->palette[(charTable[1] >> 4) & 3]; UPDATE_T();
+                    linePtr[6]  = vdp->palette[(charTable[1] >> 2) & 3];
+                    linePtr[7]  = vdp->palette[(charTable[1] >> 0) & 3]; UPDATE_T();
+                    linePtr[8]  = vdp->palette[(charTable[2] >> 6) & 3];
+                    linePtr[9]  = vdp->palette[(charTable[2] >> 4) & 3]; UPDATE_T();
+                    linePtr[10] = vdp->palette[(charTable[2] >> 2) & 3];
+                    linePtr[11] = vdp->palette[(charTable[2] >> 0) & 3]; UPDATE_T();
+                    linePtr[12] = vdp->palette[(charTable[3] >> 6) & 3]; 
+                    linePtr[13] = vdp->palette[(charTable[3] >> 4) & 3]; UPDATE_T();
+                    linePtr[14] = vdp->palette[(charTable[3] >> 2) & 3];
+                    linePtr[15] = vdp->palette[(charTable[3] >> 0) & 3]; UPDATE_T();
                 }
             }
         #undef UPDATE_T
