@@ -257,6 +257,7 @@ SOURCE_FILES += PrinterIO.c
 SOURCE_FILES += RTC.c 
 SOURCE_FILES += SunriseIDE.c 
 SOURCE_FILES += SviPPI.c 
+SOURCE_FILES += Sc3000PPI.c 
 SOURCE_FILES += Switches.c 
 SOURCE_FILES += TC8566AF.c 
 SOURCE_FILES += TurboRIO.c 
@@ -327,6 +328,7 @@ SOURCE_FILES += MsxTetrisDongle.c
 SOURCE_FILES += Sg1000Joystick.c 
 SOURCE_FILES += SviJoystick.c
 SOURCE_FILES += SviJoyIo.c 
+SOURCE_FILES += Sg1000JoyIo.c 
 
 SOURCE_FILES += DebugDeviceManager.c
 SOURCE_FILES += Debugger.c 

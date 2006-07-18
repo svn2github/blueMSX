@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-07-18 04:21:26 $
+** $Date: 2006-07-18 04:43:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@
 #include "IoPort.h"
 #include "MegaromCartridge.h"
 #include "Sg1000JoyIo.h"
+#include "Sc3000PPI.h"
 
 
 /* Hardware */
@@ -209,6 +210,7 @@ int sg1000Create(Machine* machine,
 
     joyIo = sg1000JoyIoCreate();
     sg1000IoPortCreate();
+    sc3000PPICreate(joyIo);
 
 	ledSetCapslock(0);
 
