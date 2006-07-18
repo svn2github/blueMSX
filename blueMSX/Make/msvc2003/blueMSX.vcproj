@@ -1237,6 +1237,12 @@
 				RelativePath="..\..\Src\IoDevice\RTC.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\Sc3000PPI.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\Sc3000PPI.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\SunriseIDE.c">
 			</File>
 			<File
@@ -1901,6 +1907,12 @@ buildnumber.exe
 			</File>
 			<File
 				RelativePath="..\..\Src\Input\MsxTetrisDongle.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\Sg1000JoyIo.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\Sg1000JoyIo.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Input\Sg1000Joystick.c">

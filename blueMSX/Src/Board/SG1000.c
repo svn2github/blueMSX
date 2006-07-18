@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-07-16 17:00:54 $
+** $Date: 2006-07-18 04:21:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,8 +47,7 @@
 #include "Switches.h"
 #include "IoPort.h"
 #include "MegaromCartridge.h"
-#include "JoystickPort.h"
-#include "Sg1000Joystick.h"
+#include "Sg1000JoyIo.h"
 
 
 /* Hardware */
@@ -58,137 +57,53 @@ static R800*       r800;
 // ---------------------------------------------
 // SG-1000 Joystick and PSG handler
 
-static Sg1000JoystickDevice* joyDevice[2];
-static int joyDeviceHandle;
+static Sg1000JoyIo* joyIo;
 
 static void sg1000Sn76489Write(void* dummy, UInt16 ioPort, UInt8 value) 
 {
     sn76489WriteData(sn76489, ioPort, value);
 }
 
-static UInt8 sg1000JoyIoRead(void* dummy, UInt16 ioPort)
+static UInt8 joyIoRead(void* dummy, UInt16 ioPort)
 {
-    UInt8 joyState = 0xff;
-
     switch (ioPort & 1)
     {
     case 0:
-        if (joyDevice[0] != NULL && joyDevice[0]->read != NULL) {
-            joyState &= 0xc0;
-            joyState |= joyDevice[0]->read(joyDevice[0]);
-        }
-        if (joyDevice[1] != NULL && joyDevice[1]->read != NULL) {
-            joyState &= 0x3f;
-            joyState |= joyDevice[1]->read(joyDevice[1]) << 6;
-        }
-        break;
-
+        return (UInt8)(sg1000JoyIoRead(joyIo) & 0xff);
     case 1:
-        if (joyDevice[1] != NULL && joyDevice[1]->read != NULL) {
-            joyState &= 0xf0;
-            joyState |= joyDevice[1]->read(joyDevice[1]) >> 2;
-        }
-        break;
+        return (UInt8)(sg1000JoyIoRead(joyIo) >> 8);
     }
 
-    return joyState;
+    return 0xff;
 }
 
-static void sg1000JoyIoHandler(void* dummy, int port, JoystickPortType type)
-{
-    if (port >= 2) {
-        return;
-    }
-
-    if (joyDevice[port] != NULL && joyDevice[port]->destroy != NULL) {
-        joyDevice[port]->destroy(joyDevice[port]);
-    }
-    
-    switch (type) {
-    default:
-    case JOYSTICK_PORT_NONE:
-        joyDevice[port] = NULL;
-        break;
-    case JOYSTICK_PORT_JOYSTICK:
-        joyDevice[port] = sg1000JoystickCreate(port);
-        break;
-    }
-}
-
-static void sg1000JoyIoLoadState(void* dummy)
-{
-    int port;
-
-    for (port = 0; port < 2; port++) {
-        if (joyDevice[port] != NULL && joyDevice[port]->loadState != NULL) {
-            joyDevice[port]->loadState(joyDevice[port]);
-        }
-    }
-}
-
-static void sg1000JoyIoSaveState(void* dummy)
-{
-    int port;
-
-    for (port = 0; port < 2; port++) {
-        if (joyDevice[port] != NULL && joyDevice[port]->saveState != NULL) {
-            joyDevice[port]->saveState(joyDevice[port]);
-        }
-    }
-}
-
-static void sg1000JoyIoReset(void* dummy)
-{
-    int port;
-
-    for (port = 0; port < 2; port++) {
-        if (joyDevice[port] != NULL && joyDevice[port]->reset != NULL) {
-            joyDevice[port]->reset(joyDevice[port]);
-        }
-    }
-}
-
-static void sg1000JoyIoDestroy(void* dummy)
+static void sg1000IoPortDestroy(void* dummy)
 {
 	int i;
-    int port;
 
 	for (i=0x40; i<0x80; i++)
 		ioPortUnregister(i);
 
 	for (i=0xC0; i<0x100; i+=2)
 		ioPortUnregister(i);
-    
 
-    for (port = 0; port < 2; port++) {
-        if (joyDevice[port] != NULL && joyDevice[port]->destroy != NULL) {
-            joyDevice[port]->destroy(joyDevice[port]);
-        }
-    }
-
-    deviceManagerUnregister(joyDeviceHandle);
-
-    joystickPortUpdateHandlerUnregister();
+	ioPortUnregister(0xc1);
+	ioPortUnregister(0xdd);
 }
 
-static void sg1000JoyIoCreate()
+static void sg1000IoPortCreate()
 {
-    DeviceCallbacks callbacks = { sg1000JoyIoDestroy, sg1000JoyIoReset, 
-                                  sg1000JoyIoSaveState, sg1000JoyIoLoadState };
+    DeviceCallbacks callbacks = { sg1000IoPortDestroy, NULL, NULL, NULL };
 	int i;
    
 	for (i=0x40; i<0x80; i++)
 		ioPortRegister(i, NULL, sg1000Sn76489Write, NULL);
 
 	for (i=0xC0; i<0x100; i+=2)
-		ioPortRegister(i, sg1000JoyIoRead, NULL, NULL);
+		ioPortRegister(i, joyIoRead, NULL, NULL);
     
-	ioPortRegister(0xc1, sg1000JoyIoRead, NULL, NULL);
-	ioPortRegister(0xdd, sg1000JoyIoRead, NULL, NULL);
-
-    joystickPortUpdateHandlerRegister(sg1000JoyIoHandler, NULL);
-
-    joyDeviceHandle = deviceManagerRegister(ROM_UNKNOWN, &callbacks, NULL);
+	ioPortRegister(0xc1, joyIoRead, NULL, NULL);
+	ioPortRegister(0xdd, joyIoRead, NULL, NULL);
 }
 
 // -----------------------------------------------------
@@ -292,7 +207,8 @@ int sg1000Create(Machine* machine,
     }
     vdpCreate(VDP_SG1000, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
-    sg1000JoyIoCreate();
+    joyIo = sg1000JoyIoCreate();
+    sg1000IoPortCreate();
 
 	ledSetCapslock(0);
 

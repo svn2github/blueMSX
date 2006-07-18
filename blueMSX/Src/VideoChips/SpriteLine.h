@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-05-13 17:29:06 $
+** $Date: 2006-07-18 04:21:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,10 +53,13 @@ static UInt8 colChckBuf[384] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
+static UInt8 lineBufferNull[512];
+
+#define nullSpritesLine() lineBufferNull
 
 static UInt8 lineBuffer[2][384];
-static UInt8* lineBufs[2] = { NULL, NULL };
-static UInt8* lineBuf = NULL;
+static UInt8* lineBufs[2] = { nullSpritesLine(), nullSpritesLine() };
+static UInt8* lineBuf = nullSpritesLine();
 static int nonVisibleLine = -1;
 
 
@@ -81,12 +84,12 @@ UInt8* spritesLine(VDP* vdp, int line) {
 //    vdp->vdpStatus[0] &= 0xbf;
 
     if (idx == 0) {
-        lineBufs[bufIndex] = NULL;
-        return NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
+        return nullSpritesLine();
     }
 
     if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs)) {
-        lineBufs[bufIndex] = NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
         return lineBufs[bufIndex ^ 1];
     }
 
@@ -121,7 +124,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     }
 
     if (visibleCnt == 0) {
-        lineBufs[bufIndex] = NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
         return lineBufs[bufIndex ^ 1];
     }
 
@@ -215,7 +218,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     lineBufs[bufIndex] = lineBuf + 32;
 
     if (!spritesEnable) {
-        return NULL;
+        return nullSpritesLine();
     }
 
     return lineBufs[bufIndex ^ 1];
@@ -226,7 +229,7 @@ void spriteLineInvalidate(VDP* vdp, int line) {
     nonVisibleLine = line - vdp->firstLine;
 }
 
-UInt8* colorSpritesLine(VDP* vdp, int line) {
+UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
     int solidColor;
     int bufIndex;
     UInt8 collisionBuf[384];
@@ -260,12 +263,12 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     }
 
     if (idx == 0 || nonVisibleLine == line) {
-        lineBufs[bufIndex] = NULL;
-        return NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
+        return nullSpritesLine();
     }
 
     if (!vdp->screenOn || (vdp->vdpStatus[2] & 0x40) ||vdpIsSpritesOff(vdp->vdpRegs)) {
-        lineBufs[bufIndex] = NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
         return lineBufs[bufIndex ^ 1];
     }
 
@@ -322,7 +325,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     }
 
     if (visibleCnt == 0) {
-        lineBufs[bufIndex] = NULL;
+        lineBufs[bufIndex] = nullSpritesLine();
         return lineBufs[bufIndex ^ 1];
     }
 
@@ -345,7 +348,12 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
         int offset;
         int idx2;
 
-        color = ((attrib->color & 0x0f) << 1) | solidColor;
+        if (scr6) {
+            color = ((attrib->color & 0x0c) << 2) | ((attrib->color & 0x03) << 1) | (solidColor * 9);
+        }
+        else {
+            color = ((attrib->color & 0x0f) << 1) | solidColor;
+        }
         if (color == 0) {
             continue;
         }
@@ -418,8 +426,13 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
             if (!(attrib->color & 0x40)) {
                 break;
             }
-            
-            color   = ((attrib->color & 0x0f) << 1) | solidColor;
+                
+            if (scr6) {
+                color = ((attrib->color & 0x0c) << 2) | ((attrib->color & 0x03) << 1) | (solidColor * 9);
+            }
+            else {
+                color = ((attrib->color & 0x0f) << 1) | solidColor;
+            }
             linePtr = lineBuf + attrib->horizontalPos;
             pattern = attrib->pattern;
             offset  = scale * 15;
@@ -453,11 +466,12 @@ UInt8* colorSpritesLine(VDP* vdp, int line) {
     lineBufs[bufIndex] = lineBuf + 32;
 
     if (!spritesEnable) {
-        return NULL;
+        return nullSpritesLine();
     }
 
     return lineBufs[bufIndex ^ 1];
 }
+
 
 
 #endif
