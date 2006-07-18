@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sc3000PPI.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-07-18 04:21:28 $
+** $Date: 2006-07-18 21:09:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,10 +51,10 @@ typedef struct {
 } Sc3000PPI;
 
 
-static UInt16 getKeyState(Sc3000PPI* ppi, int row)
+static UInt16 getKeyState(Sc3000PPI* ppi)
 {
-    UInt8 keyState = 0;
-    switch (row) {
+    UInt16 keyState = 0;
+    switch (ppi->row) {
     case 0:
         keyState = (inputEventGetState(EC_1      ) <<  0) |
                    (inputEventGetState(EC_Q      ) <<  1) |
@@ -198,12 +198,12 @@ static void writeCLo(Sc3000PPI* ppi, UInt8 value)
 
 static UInt8 readA(Sc3000PPI* ppi)
 {
-    return 0xff;
+    return getKeyState(ppi) & 0xff;
 }
 
 static UInt8 readB(Sc3000PPI* ppi)
 {
-    return 0xff;
+    return getKeyState(ppi) >> 8;
 }
 
 static void getDebugInfo(Sc3000PPI* ppi, DbgDevice* dbgDevice)
@@ -234,10 +234,10 @@ void sc3000PPICreate(Sg1000JoyIo* joyIo)
                              NULL,  NULL,  NULL,
                              ppi);
 
-    ioPortRegister(0xdc, i8255Read, i8255Write, ppi); // PPI Port A
-    ioPortRegister(0xdd, i8255Read, i8255Write, ppi); // PPI Port B
-    ioPortRegister(0xde, i8255Read, i8255Write, ppi); // PPI Port C
-    ioPortRegister(0xdf, i8255Read, i8255Write, ppi); // PPI Mode
+    ioPortRegister(0xdc, i8255Read, i8255Write, ppi->i8255); // PPI Port A
+    ioPortRegister(0xdd, i8255Read, i8255Write, ppi->i8255); // PPI Port B
+    ioPortRegister(0xde, i8255Read, i8255Write, ppi->i8255); // PPI Port C
+    ioPortRegister(0xdf, i8255Read, i8255Write, ppi->i8255); // PPI Mode
 
     reset(ppi);
 }

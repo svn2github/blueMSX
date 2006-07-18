@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/Sg1000JoyIo.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-07-18 04:21:27 $
+** $Date: 2006-07-18 21:09:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,12 +113,12 @@ static void destroy(Sg1000JoyIo* joyIo)
 
 UInt16 sg1000JoyIoRead(Sg1000JoyIo* joyIo) 
 {
-    UInt16 state = 0;
+    UInt16 state = 0xf000;
     if (joyIo->joyDevice[0] != NULL && joyIo->joyDevice[0]->read != NULL) {
         state |= joyIo->joyDevice[0]->read(joyIo->joyDevice[0]) << 0;
     }
     if (joyIo->joyDevice[1] != NULL && joyIo->joyDevice[1]->read != NULL) {
-        state |= joyIo->joyDevice[1]->read(joyIo->joyDevice[1]) << 6;
+        state |= (UInt16)joyIo->joyDevice[1]->read(joyIo->joyDevice[1]) << 6;
     }
     return state;
 }

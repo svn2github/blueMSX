@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-07-18 04:43:34 $
+** $Date: 2006-07-18 21:09:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,16 +49,17 @@
 #include "MegaromCartridge.h"
 #include "Sg1000JoyIo.h"
 #include "Sc3000PPI.h"
+#include "Sf7000PPI.h"
 
 
 /* Hardware */
-static SN76489*    sn76489;
-static R800*       r800;
+static Sg1000JoyIo* joyIo;
+static SN76489*     sn76489;
+static R800*        r800;
 
 // ---------------------------------------------
 // SG-1000 Joystick and PSG handler
 
-static Sg1000JoyIo* joyIo;
 
 static void sg1000Sn76489Write(void* dummy, UInt16 ioPort, UInt8 value) 
 {
@@ -67,8 +68,7 @@ static void sg1000Sn76489Write(void* dummy, UInt16 ioPort, UInt8 value)
 
 static UInt8 joyIoRead(void* dummy, UInt16 ioPort)
 {
-    switch (ioPort & 1)
-    {
+    switch (ioPort & 1) {
     case 0:
         return (UInt8)(sg1000JoyIoRead(joyIo) & 0xff);
     case 1:
@@ -209,8 +209,11 @@ int sg1000Create(Machine* machine,
     vdpCreate(VDP_SG1000, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     joyIo = sg1000JoyIoCreate();
+    if (machine->board.type == BOARD_SF7000) {
+        sc3000PPICreate(joyIo);
+        sf7000PPICreate();
+    }
     sg1000IoPortCreate();
-    sc3000PPICreate(joyIo);
 
 	ledSetCapslock(0);
 

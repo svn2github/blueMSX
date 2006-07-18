@@ -1243,6 +1243,12 @@
 				RelativePath="..\..\Src\IoDevice\Sc3000PPI.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\Sf7000PPI.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\Sf7000PPI.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\SunriseIDE.c">
 			</File>
 			<File

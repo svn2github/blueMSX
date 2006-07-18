@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-05-30 22:32:43 $
+** $Date: 2006-07-18 21:09:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -245,6 +245,7 @@ int boardRun(Machine* machine,
         success = adamCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     case BOARD_SG1000:
+    case BOARD_SF7000:
         success = sg1000Create(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     default:
