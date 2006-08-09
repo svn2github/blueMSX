@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-07-18 21:09:34 $
+** $Date: 2006-08-09 14:09:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -164,6 +164,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "HBI-V1")       return ROM_SONYHBIV1;
     if (name == "SFG-01")       return ROM_YAMAHASFG01;
     if (name == "SFG-05")       return ROM_YAMAHASFG05;
+    if (name == "SF-7000IPL")   return ROM_SF7000IPL;
     if (name == "FMDAS")        return ROM_FMDAS;
 
     // Roms not supproted in this format in the db
@@ -535,8 +536,9 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "sg1000")       return ROM_SG1000;
     if (name == "castle")       return ROM_SG1000CASTLE;
     if (name == "svi328")       return ROM_SVI328;
-    if (name == "sfg05")        return ROM_YAMAHASFG01;
+    if (name == "sfg01")        return ROM_YAMAHASFG01;
     if (name == "sfg05")        return ROM_YAMAHASFG05;
+    if (name == "sf7000ipl")    return ROM_SF7000IPL;
 
     return ROM_UNKNOWN;
 }
@@ -645,6 +647,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_FMDAS:       return langRomTypeFmdas();
     case ROM_YAMAHASFG01: return langRomTypeSfg01();
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
+    case ROM_SF7000IPL:   return "SF-7000 IPL";
 
     case ROM_UNKNOWN:     return langTextUnknown();
     }
@@ -756,6 +759,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_FMDAS:       return "FM-DAS";
     case ROM_YAMAHASFG01: return "SFG-01";
     case ROM_YAMAHASFG05: return "SFG-05";
+    case ROM_SF7000IPL:   return "SF-7000 IPL";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -794,6 +798,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_FMDAS:       return 1;
     case ROM_YAMAHASFG01: return 1;
     case ROM_YAMAHASFG05: return 1;
+    case ROM_SF7000IPL:   return 1;
     }
     return 0;
 }
@@ -1031,6 +1036,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     MediaType* mediaType = mediaDbLookupRom(buffer, size);
     if (mediaType == NULL) {
         mediaType = &staticMediaType;
+//        printf("xx %d\n", romdbDefaultType);
     }
 
     if (mediaType->romType != ROM_UNKNOWN) {

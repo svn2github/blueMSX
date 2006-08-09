@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-06-30 22:41:59 $
+** $Date: 2006-08-09 14:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -136,7 +136,8 @@ enum  {
     ROM_FMDAS       = 104,
     ROM_YAMAHASFG05 = 105,
     ROM_YAMAHASFG01 = 106,
-    ROM_MAXROMID    = 106
+    ROM_SF7000IPL   = 107,
+    ROM_MAXROMID    = 107
 };
 
 typedef struct MediaType MediaType;

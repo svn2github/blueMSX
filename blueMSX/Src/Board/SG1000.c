@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-07-18 21:09:33 $
+** $Date: 2006-08-09 14:09:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "Led.h"
 #include "Switches.h"
 #include "IoPort.h"
+#include "Disk.h"
 #include "MegaromCartridge.h"
 #include "Sg1000JoyIo.h"
 #include "Sc3000PPI.h"
@@ -56,6 +57,9 @@
 static Sg1000JoyIo* joyIo;
 static SN76489*     sn76489;
 static R800*        r800;
+static UInt8*       sfRam;
+static UInt32       sfRamSize;
+
 
 // ---------------------------------------------
 // SG-1000 Joystick and PSG handler
@@ -160,12 +164,24 @@ static void loadState()
     sn76489LoadState(sn76489);
 }
 
+static UInt8* getRamPage(int page) {
+    static UInt8 emptyRam[0x2000];
+
+    if (sfRam == NULL) {
+        return emptyRam;
+    }
+
+	return sfRam + ((page * 0x2000) & (sfRamSize - 1));
+}
+
 int sg1000Create(Machine* machine, 
                  VdpSyncMode vdpSyncMode,
                  BoardInfo* boardInfo)
 {
     int success;
     int i;
+
+    sfRam = NULL;
 
     r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
 
@@ -179,7 +195,7 @@ int sg1000Create(Machine* machine,
     boardInfo->loadState        = loadState;
     boardInfo->saveState        = saveState;
     boardInfo->getRefreshRate   = getRefreshRate;
-    boardInfo->getRamPage       = NULL;
+    boardInfo->getRamPage       = getRamPage;
 
     boardInfo->run              = r800Execute;
     boardInfo->stop             = r800StopExecution;
@@ -211,7 +227,12 @@ int sg1000Create(Machine* machine,
     joyIo = sg1000JoyIoCreate();
     if (machine->board.type == BOARD_SF7000) {
         sc3000PPICreate(joyIo);
+        
         sf7000PPICreate();
+            
+        diskEnable(0, machine->fdc.count > 0);
+        diskEnable(1, machine->fdc.count > 1);
+
     }
     sg1000IoPortCreate();
 
@@ -224,7 +245,7 @@ int sg1000Create(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
     }
 
-    success = machineInitialize(machine, NULL, NULL);
+    success = machineInitialize(machine, &sfRam, &sfRamSize);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

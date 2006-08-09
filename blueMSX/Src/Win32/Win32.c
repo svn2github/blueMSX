@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.149 $
+** $Revision: 1.150 $
 **
-** $Date: 2006-07-04 07:49:05 $
+** $Date: 2006-08-09 14:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -481,6 +481,7 @@ static RomType romTypeList[] = {
     ROM_FMDAS,
     ROM_YAMAHASFG01,
     ROM_YAMAHASFG05,
+    ROM_SF7000IPL,
     ROM_UNKNOWN,
 };
 
@@ -1115,6 +1116,8 @@ void archShowPropertiesDialog(PropPage  startPane) {
     /* Always update video render */
     
     videoUpdateAll(st.pVideo, pProperties);
+    
+    mediaDbSetDefaultRomType(pProperties->cartridge.defaultType);
 
     printerIoSetType(pProperties->ports.Lpt.type, pProperties->ports.Lpt.fileName);
     uartIoSetType(pProperties->ports.Com.type, pProperties->ports.Com.fileName);

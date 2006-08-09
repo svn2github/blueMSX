@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/NEC765.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-08-09 14:09:48 $
 **
@@ -27,38 +27,41 @@
 **
 ******************************************************************************
 */
-#ifndef I8255_H
-#define I8255_H
+#ifndef NEC765_H
+#define NEC765_H
 
 #include "MsxTypes.h"
 
-typedef struct I8255 I8255;
+typedef struct NEC765 NEC765;
 
-typedef void  (*I8255Write)(void*, UInt8);
-typedef UInt8 (*I8255Read) (void*);
+NEC765* nec765Create();
+void nec765Destroy(NEC765* fdc);
+void nec765Reset(NEC765* fdc);
 
-I8255* i8255Create(I8255Read peekA,   I8255Read readA,   I8255Write writeA, 
-                   I8255Read peekB,   I8255Read readB,   I8255Write writeB,
-                   I8255Read peekCLo, I8255Read readCLo, I8255Write writeCLo,
-                   I8255Read peekCHi, I8255Read readCHi, I8255Write writeCHi,
-                   void* ref);
-void i8255Destroy(I8255* i8255); 
-void i8255Reset(I8255* i8255);
-UInt8 i8255Peek(I8255* i8255, UInt16 port);
-UInt8 i8255Read(I8255* i8255, UInt16 port);
-void i8255Write(I8255* i8255, UInt16 port, UInt8 value);
-void i8255LoadState(I8255* i8255);
-void i8255SaveState(I8255* i8255);
+UInt8 nec765Read(NEC765* fdc);
+UInt8 nec765Peek(NEC765* fdc);
+UInt8 nec765ReadStatus(NEC765* fdc);
+UInt8 nec765PeekStatus(NEC765* fdc);
+void nec765Write(NEC765* fdc, UInt8 value);
+
+int nec765DiskChanged(NEC765* fdc, int drive);
+
+int nec765GetInt(NEC765* fdc);
+int nec765GetIndex(NEC765* fdc);
+
+void nec765SaveState(NEC765* fdc);
+void nec765LoadState(NEC765* fdc);
 
 #endif
+
 
 
 #if 0
 
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8255.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/NEC765.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-08-09 14:09:48 $
 **
@@ -84,33 +87,27 @@ void i8255SaveState(I8255* i8255);
 **
 ******************************************************************************
 */
-#ifndef I8255_H
-#define I8255_H
+#ifndef NEC765_H
+#define NEC765_H
 
 #include "MsxTypes.h"
 
-typedef struct I8255 I8255;
+typedef struct NEC765 NEC765;
 
-typedef void  (*I8255Write)(void*, UInt8);
-typedef UInt8 (*I8255Read) (void*);
+NEC765* nec765Create();
+void nec765Destroy(NEC765* fdc);
+void nec765Reset(NEC765* fdc);
 
-I8255* i8255Create(I8255Read peekA,   I8255Read readA,   I8255Write writeA, 
-                   I8255Read peekB,   I8255Read readB,   I8255Write writeB,
-                   I8255Read peekCLo, I8255Read readCLo, I8255Write writeCLo,
-                   I8255Read peekCHi, I8255Read readCHi, I8255Write writeCHi,
-                   void* ref, int useInputLatch);
-void i8255Destroy(I8255* i8255); 
-void i8255Reset(I8255* i8255);
-UInt8 i8255Peek(I8255* i8255, UInt16 port);
-UInt8 i8255Read(I8255* i8255, UInt16 port);
-void i8255Write(I8255* i8255, UInt16 port, UInt8 value);
+UInt8 nec765Read(NEC765* fdc);
+UInt8 nec765ReadStatus(NEC765* fdc);
+void nec765Write(NEC765* fdc, UInt8 value);
+int nec765GetInt(NEC765* fdc);
 
-void i8255WriteLatchA(I8255* i8255, UInt8 value);
-void i8255WriteLatchB(I8255* i8255, UInt8 value);
-void i8255WriteLatchC(I8255* i8255, UInt8 value);
+int nec765DiskChanged(NEC765* fdc, int drive);
 
-void i8255LoadState(I8255* i8255);
-void i8255SaveState(I8255* i8255);
+void nec765SaveState(NEC765* fdc);
+void nec765LoadState(NEC765* fdc);
 
 #endif
+
 #endif

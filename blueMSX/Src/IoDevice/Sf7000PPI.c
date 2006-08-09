@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sf7000PPI.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-07-18 21:09:33 $
+** $Date: 2006-08-09 14:09:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "SlotManager.h"
 #include "IoPort.h"
 #include "I8255.h"
+#include "NEC765.h"
 #include "Board.h"
 #include "SaveState.h"
 #include "Language.h"
@@ -43,6 +44,7 @@ typedef struct {
     int    deviceHandle;
     int    debugHandle;
     I8255* i8255;
+    NEC765* nec765;
 } Sf7000PPI;
 
 
@@ -56,6 +58,7 @@ static void destroy(Sf7000PPI* ppi)
     deviceManagerUnregister(ppi->deviceHandle);
     debugDeviceUnregister(ppi->debugHandle);
 
+    nec765Destroy(ppi->nec765);
     i8255Destroy(ppi->i8255);
 
     free(ppi);
@@ -84,16 +87,42 @@ static void saveState(Sf7000PPI* ppi)
     i8255SaveState(ppi->i8255);
 }
 
+static void writeCLo(Sf7000PPI* ppi, UInt8 value)
+{
+    if (value & 0x08) {
+        nec765Reset(ppi->nec765);
+        // set int ????
+    }
+}
+
 static UInt8 readA(Sf7000PPI* ppi)
 {
-    static UInt8 value = 0xff;
-    
+    UInt8 value = 0;
+
+    if (nec765GetInt(ppi->nec765)) {
+        value |= 0x01;
+    }
+
+    if (!nec765GetIndex(ppi->nec765)) {
+        value |= 0x04;
+    }
+
     return value;
 }
 
 static void writeCHi(Sf7000PPI* ppi, UInt8 value)
 {
     slotSetRamSlot(0, (value >> 2) & 0x01);
+}
+
+static UInt8 read(Sf7000PPI* ppi, UInt16 port)
+{
+    return i8255Read(ppi->i8255, port);
+}
+
+static void write(Sf7000PPI* ppi, UInt16 port, UInt8 value)
+{
+    i8255Write(ppi->i8255, port, value);
 }
 
 static void getDebugInfo(Sf7000PPI* ppi, DbgDevice* dbgDevice)
@@ -107,6 +136,30 @@ static void getDebugInfo(Sf7000PPI* ppi, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 3, 0xdf, DBG_IO_WRITE, i8255Read(ppi->i8255, 0xe7));
 }
 
+static UInt8 fdcRead(Sf7000PPI* ppi, UInt16 port)
+{
+    UInt8 value = 0xff;
+
+    switch (port & 1) {
+    case 0: value = nec765ReadStatus(ppi->nec765); break;
+    case 1: value = nec765Read(ppi->nec765); break;
+    }
+
+//    i8255WriteLatchA(ppi->i8255, nec765GetInt(ppi->nec765));
+
+    return value;
+}
+
+static void fdcWrite(Sf7000PPI* ppi, UInt16 port, UInt8 value)
+{
+    switch (port & 1) {
+    case 1: 
+        nec765Write(ppi->nec765, value); break;
+    }
+    
+//    i8255WriteLatchA(ppi->i8255, nec765GetInt(ppi->nec765));
+}
+
 void sf7000PPICreate()
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
@@ -115,17 +168,22 @@ void sf7000PPICreate()
 
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
     ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevPpi(), &dbgCallbacks, ppi);
+    
+    ppi->nec765 = nec765Create();
 
     ppi->i8255 = i8255Create(NULL,  readA,  NULL,
                              NULL,  NULL,  NULL,
-                             NULL,  NULL,  NULL,
+                             NULL,  NULL,  writeCLo,
                              NULL,  NULL,  writeCHi,
                              ppi);
 
-    ioPortRegister(0xe4, i8255Read, i8255Write, ppi->i8255); // PPI Port A
-    ioPortRegister(0xe5, i8255Read, i8255Write, ppi->i8255); // PPI Port B
-    ioPortRegister(0xe6, i8255Read, i8255Write, ppi->i8255); // PPI Port C
-    ioPortRegister(0xe7, i8255Read, i8255Write, ppi->i8255); // PPI Mode
+	ioPortRegister(0xe0, fdcRead, NULL, ppi);
+	ioPortRegister(0xe1, fdcRead, fdcWrite, ppi);
+
+    ioPortRegister(0xe4, read, write, ppi); // PPI Port A
+    ioPortRegister(0xe5, read, write, ppi); // PPI Port B
+    ioPortRegister(0xe6, read, write, ppi); // PPI Port C
+    ioPortRegister(0xe7, read, write, ppi); // PPI Mode
 
     reset(ppi);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2006-06-24 02:23:59 $
+** $Date: 2006-08-09 14:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -715,7 +715,6 @@ static UINT MsxPrnParseNumber(size_t sizeStart, size_t sizeChars)
 static size_t MsxPrnCalcEscSequenceLength(BYTE character) 
 {
     switch (character) {
-    case 'A':
     case 'C':
         return 1;
     case 'T':
@@ -905,7 +904,7 @@ static void MsxPrnProcessEscSequence(void)
 
     case 'S':
         // Print graphics, density depending on font
-        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 1, 3 );
+        stPrtRam.sizeRemainingDataBytes=MsxPrnParseNumber( 1, 4 );
         break;
 
     case 'X':

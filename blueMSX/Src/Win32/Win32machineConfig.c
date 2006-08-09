@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-07-18 21:09:34 $
+** $Date: 2006-08-09 14:09:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -744,6 +744,7 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_SF7000IPL:
     case ROM_YAMAHASFG01:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 2;
@@ -1025,6 +1026,7 @@ static void setEditControls(HWND hDlg)
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         break;
 
+    case ROM_SF7000IPL:
     case ROM_YAMAHASFG01:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x3FFF");
@@ -1251,6 +1253,7 @@ static RomType romTypeList[] = {
     ROM_FMDAS,
     ROM_YAMAHASFG01,
     ROM_YAMAHASFG05,
+    ROM_SF7000IPL,
     ROM_UNKNOWN,
 };
 

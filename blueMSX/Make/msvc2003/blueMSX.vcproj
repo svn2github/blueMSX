@@ -724,6 +724,12 @@
 					RelativePath="..\..\Src\Memory\romMapperSCCplus.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSf7000Ipl.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSf7000Ipl.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSfg05.c">
 				</File>
 				<File
@@ -1220,6 +1226,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\MsxPPI.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\NEC765.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\NEC765.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\PrinterIO.c">

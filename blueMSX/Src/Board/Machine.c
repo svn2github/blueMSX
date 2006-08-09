@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-07-18 21:09:33 $
+** $Date: 2006-08-09 14:09:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,6 +115,7 @@
 #include "romMapperSonyHBIV1.h"
 #include "romMapperFmDas.h"
 #include "romMapperSfg05.h"
+#include "romMapperSf7000Ipl.h"
 
 int toint(char* buffer) 
 {
@@ -760,7 +761,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
         size      = 0x2000 * machine->slotInfo[i].pageCount;
 
         if (machine->slotInfo[i].romType == RAM_NORMAL) {
-            if (ram == NULL) {
+            if (ram == NULL && startPage == 0) {
                 success &= ramNormalCreate(size, slot, subslot, startPage, &ram, &ramSize);
             }
             else {
@@ -770,7 +771,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
         }
 
         if (machine->slotInfo[i].romType == RAM_MAPPER) {
-            if (ram == NULL) {
+            if (ram == NULL && startPage == 0) {
                 success &= ramMapperCreate(size, slot, subslot, startPage, &ram, &ramSize);
             }
             else {
@@ -1085,6 +1086,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_YAMAHASFG05:
             success &= romMapperSfg05Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_SF7000IPL:
+            success &= romMapperSf7000IplCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_KOEI:
