@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchPrinter.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-05-13 19:57:16 $
+** $Date: 2006-08-12 19:06:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,5 @@ int archPrinterCreate(void);
 void archPrinterDestroy(void);
 
 void archForceFormFeed(void);
-
-void archPrinterSetMsxFont(void* romData, UInt32 size);
 
 #endif
