@@ -341,7 +341,7 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
     DbgWindow( hInstance, owner, 
-        Language::windowMemory, "Memory Window", 3, 422, 787, 210, 1),
+        Language::windowMemory, "Memory Window", 3, 422, 714, 210, 1),
     lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), symbolInfo(symInfo)
 {
     memory = this;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-08-12 17:03:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -311,19 +311,22 @@ void ay8910WriteAddress(AY8910* ay8910, UInt16 ioPort, UInt8 address)
 UInt8 ay8910PeekData(AY8910* ay8910, UInt16 ioPort)
 {
     UInt8  address = ay8910->address;
+    UInt8  value = ay8910->regs[address];
 
     if (address >= 14) {
         int port = address - 14;
         if (ay8910->ioPortPollCb != NULL){// && !(ay8910->regs[7] & (1 << (port + 6)))) {
-            ay8910->regs[address] = ay8910->ioPortPollCb(ay8910->ioPortArg, port);
+            value = ay8910->ioPortPollCb(ay8910->ioPortArg, port);
         }
     }
-    return ay8910->regs[address];
+    return value;
 }
 
 UInt8 ay8910ReadData(AY8910* ay8910, UInt16 ioPort)
 {
     UInt8  address = ay8910->address;
+
+//    if (address > 15) printf("TADA!!\n");
 
     if (address >= 14) {
         int port = address - 14;
