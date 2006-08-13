@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-06-13 17:40:07 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -118,6 +118,8 @@ int boardUseRom();
 int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
+
+RomType boardGetRomType(int cartNo);
 
 typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE } HdType;
 HdType boardGetHdType(int hdIndex);

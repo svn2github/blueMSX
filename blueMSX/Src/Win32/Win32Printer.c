@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Printer.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-08-12 19:06:15 $
+** $Date: 2006-08-13 00:27:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,6 @@ static int printerType = P_LPT_MSXPRN;
 static void ResetEmulatedPrinter(void);
 
 #define PIXEL_WIDTH 8
-
-#define MSX_FONT_SIZE (256 * 8)
 
 #define MIN(x, y)  ((x) < (y) ? (x) : (y))
 #define MAX(x, y)  ((x) > (y) ? (x) : (y))
@@ -358,7 +356,7 @@ static BYTE EpsonFontRom[] = {
 static BYTE MSXFont[256 * 9];
 
 // MSX-Font taken from NMS8250 BIOS ROM
-static BYTE MSXFontRaw[MSX_FONT_SIZE] = {
+static BYTE MSXFontRaw[256 * 8] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // 0
 	0x3C, 0x42, 0xA5, 0x81, 0xA5, 0x99, 0x42, 0x3C,  // 1
 	0x3C, 0x7E, 0xDB, 0xFF, 0xFF, 0xDB, 0x66, 0x3C,  // 2
@@ -614,7 +612,7 @@ static BYTE MSXFontRaw[MSX_FONT_SIZE] = {
 	0xA0, 0x50, 0x50, 0x50, 0x00, 0x00, 0x00, 0x00,  // 252
 	0x40, 0xA0, 0x20, 0x40, 0xE0, 0x00, 0x00, 0x00,  // 253
 	0x00, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x00,  // 254
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // 255
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00   // 255
 };
 
 
@@ -1214,17 +1212,16 @@ static void MsxPrnProcessCharacter(BYTE bChar)
             break;
 
         case 9:                                 // HAT: Horizontal tabulator
-            {
-                // ToDo: fix for other font-sizes ***
-                UINT            uiNewPos;
-                uiNewPos = ((UINT)stPrtRam.uiHpos + 64
-                    - stPrtRam.uiLeftBorder) & ~63;
-                uiNewPos += stPrtRam.uiLeftBorder;
+            // ToDo: fix for other font-sizes ***
+            stPrtRam.uiHpos = ((UINT)stPrtRam.uiHpos + 64
+                - stPrtRam.uiLeftBorder) & ~63;
+            stPrtRam.uiHpos += stPrtRam.uiLeftBorder;
 
-                if (uiNewPos >= stPrtRam.uiHpos)
-                    break;
-                // else fall thru: CR/LF
-            }
+            if (stPrtRam.uiHpos >= stPrtRam.uiHpos)
+                break;
+
+            stPrtRam.uiHpos = stPrtRam.uiLeftBorder;
+            // fall thru: CR/LF
 
         case 10:                                // LF: Carriage return + Line feed
         case 11:                                // VT: Vertical tabulator (like LF)

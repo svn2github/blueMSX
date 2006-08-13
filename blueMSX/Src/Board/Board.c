@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-07-18 21:09:33 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,8 @@
 #include "Disk.h"
 #include "VideoManager.h"
 #include "Casette.h"
+#include "MediaDb.h"
+#include "RomLoader.h"
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
@@ -86,6 +88,11 @@ static UInt8 emptyRam[0x2000];
 static BoardType boardLoadState(const char* stateFile);
 
 static char saveStateVersion[32] = "blueMSX - state  v 8";
+
+RomType boardGetRomType(int cartNo)
+{
+    return currentRomType[cartNo];
+}
 
 int boardGetFdcTimingEnable() {
     return fdcTimingEnable;
@@ -556,6 +563,16 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
 
     if (cartZip && strlen(cartZip) == 0) {
         cartZip = NULL;
+    }
+    
+    if (romType == ROM_UNKNOWN) {
+        int size;
+        char* buf = romLoad(cart, cartZip, &size);
+        if (buf != NULL) {
+            MediaType* mediaType = mediaDbGuessRom(buf, size);
+            romType = mediaDbGetRomType(mediaType);
+            free(buf);
+        }
     }
 
     if (boardDeviceInfo != NULL) {

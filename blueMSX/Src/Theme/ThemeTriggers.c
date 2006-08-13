@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-07-12 22:10:27 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -808,19 +808,19 @@ char* themeTriggerPerfTimerString(int timer) {
 }
 
 const char* themeTriggerRomMapper1() {
-    return propGetGlobalProperties()->media.carts[0].fileName[0] ? romTypeToString(propGetGlobalProperties()->media.carts[0].type) : "";
+    return propGetGlobalProperties()->media.carts[0].fileName[0] ? romTypeToString(boardGetRomType(0)) : "";
 }
 
 const char* themeTriggerRomMapper2() {
-    return propGetGlobalProperties()->media.carts[1].fileName[0] ? romTypeToString(propGetGlobalProperties()->media.carts[1].type) : ""; 
+    return propGetGlobalProperties()->media.carts[1].fileName[0] ? romTypeToString(boardGetRomType(1)) : ""; 
 }
 
 const char* themeTriggerRomMapper1Short() {
-    return propGetGlobalProperties()->media.carts[0].fileName[0] ? romTypeToShortString(propGetGlobalProperties()->media.carts[0].type) : "";
+    return propGetGlobalProperties()->media.carts[0].fileName[0] ? romTypeToShortString(boardGetRomType(0)) : "";
 }
 
 const char* themeTriggerRomMapper2Short() {
-    return propGetGlobalProperties()->media.carts[1].fileName[0] ? romTypeToShortString(propGetGlobalProperties()->media.carts[1].type) : "";
+    return propGetGlobalProperties()->media.carts[1].fileName[0] ? romTypeToShortString(boardGetRomType(1)) : "";
 }
 
 char* themeTriggerMachineName() {

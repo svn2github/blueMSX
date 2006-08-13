@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -166,7 +166,7 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
             }
 
             if (romType == ROM_UNKNOWN) {
-                romType = chkRomType;
+//                romType = chkRomType;
             }
         }
     }

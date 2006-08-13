@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.150 $
+** $Revision: 1.151 $
 **
-** $Date: 2006-08-09 14:09:49 $
+** $Date: 2006-08-13 00:27:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1140,6 +1140,11 @@ void archShowPropertiesDialog(PropPage  startPane) {
         archUpdateWindow();
     }
 
+    if (pProperties->cartridge.defaultType != oldProp.cartridge.defaultType) {
+        for (i = 0; i < PROP_MAX_CARTS; i++) {
+            if (pProperties->media.carts[i].fileName[0]) insertCartridge(pProperties, i, pProperties->media.carts[i].fileName, pProperties->media.carts[i].fileNameInZip, pProperties->media.carts[i].type, -1);
+        }
+    }
     /* Must restart MSX if Machine configuration changed */
     if (strcmp(oldProp.emulation.machineName, pProperties->emulation.machineName) ||
         oldProp.emulation.syncMethod != pProperties->emulation.syncMethod ||

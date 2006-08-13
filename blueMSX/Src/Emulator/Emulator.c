@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-06-19 18:20:39 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -300,7 +300,8 @@ static void getDeviceInfo(BoardDeviceInfo* deviceInfo)
     for (i = 0; i < PROP_MAX_CARTS; i++) {
         strcpy(properties->media.carts[i].fileName, deviceInfo->carts[i].name);
         strcpy(properties->media.carts[i].fileNameInZip, deviceInfo->carts[i].inZipName);
-        properties->media.carts[i].type = deviceInfo->carts[i].type;
+        // Don't save rom type
+        // properties->media.carts[i].type = deviceInfo->carts[i].type;
         updateExtendedRomName(i, properties->media.carts[i].fileName, properties->media.carts[i].fileNameInZip);
     }
 

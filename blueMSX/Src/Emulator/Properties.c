@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-07-04 07:49:03 $
+** $Date: 2006-08-13 00:27:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -594,6 +594,8 @@ static void propLoad(Properties* properties)
     GET_STR_VALUE_3(ports, Com, fileName);
     GET_STR_VALUE_3(ports, Com, portName);
     
+    GET_INT_VALUE_2(cartridge, defaultType);
+
     iniFileClose();
     
     iniFileOpen(histFilename);
@@ -793,6 +795,8 @@ void propSave(Properties* properties)
     SET_STR_VALUE_3(ports, Com, fileName);
     SET_STR_VALUE_3(ports, Com, portName);
     
+    SET_INT_VALUE_2(cartridge, defaultType);
+
     iniFileClose();
 
     iniFileOpen(histFilename);
