@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlFile.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-06-24 02:27:08 $
+** $Date: 2006-08-16 21:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,6 +96,7 @@ char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCr
 char* archFilenameGetOpenCas(Properties* properties) { return NULL; }
 char* archFilenameGetSaveCas(Properties* properties, int* type) { return NULL; }
 char* archFilenameGetOpenState(Properties* properties) { return NULL; }
+char* archFilenameGetOpenCapture(Properties* properties) { return NULL; }
 char* archFilenameGetSaveState(Properties* properties) { return NULL; }
 char* archDirnameGetOpenDisk(Properties* properties, int drive) { return NULL; }
 char* archFilenameGetOpenRomZip(Properties* properties, int cartSlot, const char* fname, const char* fileList, int count, int* autostart, int* romType) { return NULL; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-16 21:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,6 +121,8 @@ int boardCaptureIsRecording() {
 int  boardCaptureIsPlaying() {
     return cap.state == CAPTURE_PLAY;
 }
+
+extern void actionEmuTogglePause();
 
 static void boardTimerCb(void* dummy, UInt32 time)
 {

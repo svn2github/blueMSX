@@ -593,6 +593,12 @@
 				RelativePath="..\..\..\Src\IoDevice\MsxPPI.h">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\IoDevice\NEC765.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\NEC765.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\IoDevice\PrinterIO.c">
 			</File>
 			<File
@@ -603,6 +609,18 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\IoDevice\RTC.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\Sc3000PPI.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\Sc3000PPI.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\Sf7000PPI.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\Sf7000PPI.h">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\IoDevice\SunriseIDE.c">
@@ -721,6 +739,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Input\MsxTetrisDongle.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Input\Sg1000JoyIo.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Input\Sg1000JoyIo.h">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Input\Sg1000Joystick.c">
@@ -1210,6 +1234,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Memory\romMapperSCCplus.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperSf7000Ipl.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperSf7000Ipl.h">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Memory\romMapperSfg05.c">

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-06-24 08:35:29 $
+** $Date: 2006-08-16 21:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -386,6 +386,10 @@ void setDefaultPaths(const char* rootDir)
     propertiesSetDirectory(rootDir, rootDir);
 
     sprintf(buffer, "%s/Audio Capture", rootDir);
+    archCreateDirectory(buffer);
+    actionSetAudioCaptureSetDirectory(buffer, "");
+
+    sprintf(buffer, "%s/Video Capture", rootDir);
     archCreateDirectory(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");
 
