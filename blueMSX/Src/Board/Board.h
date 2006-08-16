@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-08-13 00:27:43 $
+** $Date: 2006-08-16 01:25:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,6 +97,12 @@ void boardSetMachine(Machine* machine);
 void boardReset();
 
 UInt64 boardSystemTime64();
+
+void boardCaptureStart();
+void boardCaptureStop();
+int  boardCaptureIsRecording();
+
+UInt8 boardCaptureUInt8(UInt8 value);
 
 void boardSaveState(const char* stateFile);
 

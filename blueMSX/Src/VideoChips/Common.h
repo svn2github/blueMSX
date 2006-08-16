@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-07-18 04:21:29 $
+** $Date: 2006-08-16 01:25:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,12 @@
 
 static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
 
+static UInt16* linePtr = NULL;
+
+void RefreshLineReset()
+{
+    linePtr = NULL;
+}
 
 UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderExtra)
 {
@@ -163,7 +169,6 @@ static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor
 #if 0
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt16* linePtr = NULL;
     static int     border = 0;
     static UInt8*  sprLine = nullSpritesLine();
     static UInt8*  charTable;
@@ -238,7 +243,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 #else
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    UInt16* linePtr;
     UInt8*  charTable;
     int     patternBase;
     UInt16  color[2];
@@ -294,7 +298,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 {
-    UInt16* linePtr;
     UInt8*  charTable;
     int     patternBase;
     UInt16  color[2];
@@ -350,7 +353,6 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 {
-    UInt16* linePtr;
     UInt8   colPattern;
     UInt8*  charTable;
     int     patternBase;
@@ -418,7 +420,6 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt16* linePtr = NULL;
     static int     border = 0;
     static UInt8*  sprLine = nullSpritesLine();
     static UInt8*  charTable;
@@ -496,7 +497,6 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt16* linePtr = NULL;
     static int     border = 0;
     static UInt8*  sprLine = nullSpritesLine();
     static UInt8*  charTable = NULL;
@@ -577,7 +577,6 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt16* linePtr = NULL;
     static int     border = 0;
     static UInt8*  sprLine = nullSpritesLine();
     static UInt8*  charTable;
@@ -655,7 +654,6 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt16* linePtr = NULL;
     static int     border = 0;
     static UInt8*  sprLine = nullSpritesLine();
     static UInt8*  charTable;
@@ -789,7 +787,6 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 {
     static int     border = 0;
-    static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = nullSpritesLine();
     static int     addrSwitch;
@@ -931,7 +928,6 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     static int     hScroll512;
     static int     scroll;
     static int     page;
-    static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = nullSpritesLine();
     int col;
@@ -1069,7 +1065,6 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 {
     static int     border = 0;
-    static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = nullSpritesLine();
     static int     hScroll512;
@@ -1280,7 +1275,6 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         0x49, 0x4B, 0x59, 0x5B, 0xC9, 0xCB, 0xD9, 0xDB 
     };
     static int     border = 0;
-    static UInt16* linePtr = NULL;
     static UInt8*  charTable;
     static UInt8*  sprLine = nullSpritesLine();
     static int     hScroll;
@@ -1430,7 +1424,6 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 {
     static int     border = 0;
-    static UInt16* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = nullSpritesLine();
     static int hScroll512;
@@ -1608,7 +1601,6 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 {
     static int     border = 0;
-    static UInt16* linePtr = NULL;
     static UInt8* charTable;
     static UInt8* sprLine = nullSpritesLine();
     static int hScroll512;

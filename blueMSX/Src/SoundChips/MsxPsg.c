@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-06-13 06:24:20 $
+** $Date: 2006-08-16 01:25:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 #include "MsxGunstick.h"
 #include "MsxAsciiLaser.h"
 #include "MsxMouse.h"
+#include "Board.h"
 #include "MsxTetrisDongle.h"
 #include "MagicKeyDongle.h"
 
@@ -117,7 +118,7 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 
         msxPsg->readValue[address & 1] = state;
 
-        return state;
+        return boardCaptureUInt8(state);
     }
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2006-07-12 22:10:28 $
+** $Date: 2006-08-16 01:25:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -299,6 +299,8 @@ struct VDP {
     UInt8  vdpDataLatch;
     UInt16 vramAddress;
 
+    UInt32 frameStartTime;
+
     BoardTimer* timerDisplay;
     BoardTimer* timerDrawAreaStart;
     BoardTimer* timerVStart;
@@ -307,7 +309,6 @@ struct VDP {
     BoardTimer* timerVint;
     BoardTimer* timerTmsVint;
 
-    UInt32 frameStartTime;
     UInt32 timeScrMode;
     UInt32 timeHint;
     UInt32 timeVint;
@@ -315,6 +316,13 @@ struct VDP {
     UInt32 timeDrawAreaStart;
     UInt32 timeVStart;
     UInt32 timeDisplay;
+
+    int timeScrModeEn;
+    int timeHintEn;
+    int timeVintEn;
+    int timeDrawAreaStartEn;
+    int timeVStartEn;
+    int timeDisplayEn;
 
     UInt32 screenOffTime;
     
@@ -378,6 +386,7 @@ static void vdpBlink(VDP* vdp)
 static void scheduleScrModeChange(VDP* vdp)
 {
     vdp->timeScrMode = vdp->frameStartTime + HPERIOD * (1 + (boardSystemTime() - vdp->frameStartTime) / HPERIOD);
+    vdp->timeScrModeEn = 1;
     boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
 }
 
@@ -386,6 +395,7 @@ static void scheduleHint(VDP* vdp)
     vdp->timeHint = vdp->frameStartTime + 
         (vdp->firstLine + ((vdp->vdpRegs[19] - vdp->vdpRegs[23]) & 0xff)) * HPERIOD + 
         vdp->leftBorder + vdp->displayArea;
+    vdp->timeHintEn = 1;
     boardTimerAdd(vdp->timerHint, vdp->timeHint + 20);
 }
 
@@ -394,6 +404,7 @@ static void scheduleVint(VDP* vdp)
     vdp->timeVint = vdp->frameStartTime + 
                     (vdp->firstLine + ((vdp->vdpRegs[9] & 0x80) ? 212 : 192)) * HPERIOD + 
                     vdp->leftBorder - 10;
+    vdp->timeVintEn = 1;
     boardTimerAdd(vdp->timerVint, vdp->timeVint);
 #if 0
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
@@ -406,15 +417,19 @@ static void scheduleVint(VDP* vdp)
 static void scheduleDrawAreaStart(VDP* vdp)
 {
     vdp->timeDrawAreaStart = vdp->frameStartTime + ((vdp->drawArea ? 3 + 13 : vdp->firstLine) - 1) * HPERIOD + vdp->leftBorder + vdp->displayArea;
+    vdp->timeDrawAreaStartEn = 1;
     boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
 
     vdp->timeVStart = vdp->frameStartTime + (vdp->firstLine - 1) * HPERIOD + vdp->leftBorder - 10;
+    vdp->timeVStartEn = 1;
     boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
 }
 
 static void onHint(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
+
+    vdp->timeHintEn = 0;
 
     if (vdp->vdpRegs[0] & 0x10) {
         boardSetInt(INT_IE1);
@@ -424,6 +439,8 @@ static void onHint(VDP* vdp, UInt32 time)
 static void onVint(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
+
+    vdp->timeVintEn = 0;
 
     vdp->lineOffset = -1;
     vdp->vdpStatus[0] |= 0x80;
@@ -447,6 +464,8 @@ static void onTmsVint(VDP* vdp, UInt32 time)
 static void onVStart(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
+
+    vdp->timeVStartEn = 0;
     vdp->lineOffset = -1;
     vdp->vdpStatus[2] &= ~0x40;
 }
@@ -454,6 +473,8 @@ static void onVStart(VDP* vdp, UInt32 time)
 static void onDrawAreaStart(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
+    
+    vdp->timeDrawAreaStartEn = 0;
 
     vdp->drawArea = 1;
     vdp->vdpStatus[2] &= ~0x40;
@@ -473,6 +494,8 @@ static void onDisplay(VDP* vdp, UInt32 time)
     int isPal = vdpIsVideoPal(vdp); 
     
     sync(vdp, time);
+
+    vdp->timeDisplayEn = 0;
 
     if (vdp->videoEnabled) {
         FrameBuffer* frameBuffer;
@@ -506,6 +529,7 @@ static void onDisplay(VDP* vdp, UInt32 time)
 
     vdp->frameStartTime = vdp->timeDisplay;
     vdp->timeDisplay += HPERIOD * vdp->lastLine;
+    vdp->timeDisplayEn = 1;
     boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
 
     scheduleDrawAreaStart(vdp);
@@ -555,6 +579,8 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     int scanLine = (boardSystemTime() - vdp->frameStartTime) / HPERIOD;
     int screenMode = vdp->screenMode;
     sync(vdp, time);
+    
+    vdp->timeScrModeEn = 0;
 
 #if 0
     switch (((vdp->vdpRegs[0] & 0x0e) << 1) | 
@@ -1240,14 +1266,21 @@ static void saveState(VDP* vdp)
     char tag[32];
     int index;
 
-    saveStateGet(state, "frameStartTime",    vdp->frameStartTime);
-    saveStateGet(state, "timeScrMode",       vdp->timeScrMode);
-    saveStateGet(state, "timeHint",          vdp->timeHint);
-    saveStateGet(state, "timeVint",          vdp->timeVint);
-    saveStateGet(state, "timeTmsVint",       vdp->timeTmsVint);
-    saveStateGet(state, "timeDrawAreaStart", vdp->timeDrawAreaStart);
-    saveStateGet(state, "timeVStart",        vdp->timeVStart);
-    saveStateGet(state, "timeDisplay",       vdp->timeDisplay);
+    saveStateSet(state, "timeScrMode",         vdp->timeScrMode);
+    saveStateSet(state, "timeScrModeEn",       vdp->timeScrModeEn);
+    saveStateSet(state, "timeHint",            vdp->timeHint);
+    saveStateSet(state, "timeHintEn",          vdp->timeHintEn);
+    saveStateSet(state, "timeVint",            vdp->timeVint);
+    saveStateSet(state, "timeVintEn",          vdp->timeVintEn);
+    saveStateSet(state, "timeDrawAreaStart",   vdp->timeDrawAreaStart);
+    saveStateSet(state, "timeDrawAreaStartEn", vdp->timeDrawAreaStartEn);
+    saveStateSet(state, "timeVStart",          vdp->timeVStart);
+    saveStateSet(state, "timeVStartEn",        vdp->timeVStartEn);
+    saveStateSet(state, "timeDisplay",         vdp->timeDisplay);
+    saveStateSet(state, "timeDisplayEn",       vdp->timeDisplayEn);
+//    saveStateSet(state, "timeTmsVint",         vdp->timeTmsVint);
+
+    saveStateSet(state, "frameStartTime",    vdp->frameStartTime);
 
     saveStateSet(state, "palKey",          vdp->palKey);
     saveStateSet(state, "vdpKey",          vdp->vdpKey);
@@ -1288,14 +1321,21 @@ static void loadState(VDP* vdp)
     char tag[32];
     int index;
 
-    vdp->frameStartTime    =      saveStateGet(state, "frameStartTime",    systemTime);
-    vdp->timeScrMode       =      saveStateGet(state, "timeScrMode",       systemTime);
-    vdp->timeHint          =      saveStateGet(state, "timeHint",          systemTime);
-    vdp->timeVint          =      saveStateGet(state, "timeVint",          systemTime);
-    vdp->timeTmsVint       =      saveStateGet(state, "timeTmsVint",       systemTime);
-    vdp->timeDrawAreaStart =      saveStateGet(state, "timeDrawAreaStart", systemTime);
-    vdp->timeVStart        =      saveStateGet(state, "timeVStart",        systemTime);
-    vdp->timeDisplay       =      saveStateGet(state, "timeDisplay",       systemTime);
+    vdp->timeScrMode         =      saveStateGet(state, "timeScrMode",         systemTime);
+    vdp->timeScrModeEn       =      saveStateGet(state, "timeScrModeEn",       0);
+    vdp->timeHint            =      saveStateGet(state, "timeHint",            systemTime);
+    vdp->timeHintEn          =      saveStateGet(state, "timeHintEn",          0);
+    vdp->timeVint            =      saveStateGet(state, "timeVint",            systemTime);
+    vdp->timeVintEn          =      saveStateGet(state, "timeVintEn",          0);
+    vdp->timeDrawAreaStart   =      saveStateGet(state, "timeDrawAreaStart",   systemTime);
+    vdp->timeDrawAreaStartEn =      saveStateGet(state, "timeDrawAreaStartEn", 0);
+    vdp->timeVStart          =      saveStateGet(state, "timeVStart",          systemTime);
+    vdp->timeVStartEn        =      saveStateGet(state, "timeVStartEn",        0);
+    vdp->timeDisplay         =      saveStateGet(state, "timeDisplay",         systemTime);
+    vdp->timeDisplayEn       =      saveStateGet(state, "timeDisplayEn",       0);
+
+    vdp->frameStartTime      =      saveStateGet(state, "frameStartTime",      systemTime);
+//    vdp->timeTmsVint       =      saveStateGet(state, "timeTmsVint",       systemTime);
 
     vdp->palKey         =         saveStateGet(state, "palKey",          0);
     vdp->vdpKey         =         saveStateGet(state, "vdpKey",          0);
@@ -1360,17 +1400,30 @@ static void loadState(VDP* vdp)
 
     vdpCmdLoadState(vdp->cmdEngine);
 
-    onScrModeChange(vdp, boardSystemTime());
-
-    boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
-    boardTimerAdd(vdp->timerHint, vdp->timeHint);
-    boardTimerAdd(vdp->timerVint, vdp->timeVint);
-    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
-        boardTimerAdd(vdp->timerTmsVint, vdp->timeTmsVint);
+    if (vdp->timeScrModeEn) {
+        boardTimerAdd(vdp->timerScrModeChange, vdp->timeScrMode);
     }
-    boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
-    boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
-    boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
+    if (vdp->timeHintEn) {
+        boardTimerAdd(vdp->timerHint, vdp->timeHint);
+    }
+    if (vdp->timeVintEn) {
+        boardTimerAdd(vdp->timerVint, vdp->timeVint);
+    }
+    if (vdp->timeDrawAreaStartEn) {
+        boardTimerAdd(vdp->timerDrawAreaStart, vdp->timeDrawAreaStart);
+    }
+    if (vdp->timeVStartEn) {
+        boardTimerAdd(vdp->timerVStart, vdp->timeVStart);
+    }
+    if (vdp->timeDisplayEn) {
+        boardTimerAdd(vdp->timerDisplay, vdp->timeDisplay);
+    }
+
+//    if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+//        boardTimerAdd(vdp->timerTmsVint, vdp->timeTmsVint);
+//    }
+
+    onScrModeChange(vdp, boardSystemTime());
 }
 
 static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)
@@ -1585,6 +1638,8 @@ static void reset(VDP* vdp)
 {
     int i;
 
+    RefreshLineReset();
+
     vdp->frameStartTime  = boardSystemTime();
     vdp->timeDisplay     = boardSystemTime();
     vdp->scr0splitLine   = 0;
@@ -1619,6 +1674,13 @@ static void reset(VDP* vdp)
     vdp->firstLine       = 1;
     vdp->lastLine        = -1;
     vdp->screenOffTime = boardSystemTime();
+    
+    vdp->timeScrModeEn       = 0;
+    vdp->timeHintEn          = 0;
+    vdp->timeVintEn          = 0;
+    vdp->timeDrawAreaStartEn = 0;
+    vdp->timeVStartEn        = 0;
+    vdp->timeDisplayEn       = 0;
 
     memset(vdp->vdpStatus, 0, sizeof(vdp->vdpStatus));
     memset(vdp->vdpRegs, 0, sizeof(vdp->vdpRegs));

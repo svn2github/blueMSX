@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2006-06-23 01:33:20 $
+** $Date: 2006-08-16 01:25:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -270,6 +270,7 @@ void actionQuit() {
     archQuit();
 }
 
+#if 1
 void actionToggleWaveCapture() {
     if (mixerIsLogging(state.mixer)) {
         mixerStopLog(state.mixer);
@@ -279,6 +280,27 @@ void actionToggleWaveCapture() {
     }
     archUpdateMenu(0);
 }
+#else
+void actionToggleWaveCapture() {
+    if (emulatorGetState() == EMU_STOPPED) {
+        boardCaptureStart();
+        actionEmuTogglePause();
+        return;
+    }
+
+    emulatorSuspend();
+
+    if (!boardCaptureIsRecording()) {
+        boardCaptureStart();
+    }
+    else {
+        boardCaptureStop();
+    }
+
+    emulatorResume();
+}
+
+#endif
 
 
 void actionLoadState() {

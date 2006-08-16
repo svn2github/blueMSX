@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperRType.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-08-16 01:25:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,20 +64,19 @@ static void loadState(RomMapperRType* rm)
 {
     SaveState* state = saveStateOpenForRead("mapperRType");
     char tag[16];
-    int i;
+    int bank = 2;
+    UInt8* bankData;
 
-    for (i = 0; i < 4; i++) {
-        sprintf(tag, "romMapper%d", i);
-        rm->romMapper[i] = saveStateGet(state, tag, 0);
+    for (bank = 0; bank < 4; bank++) {
+        sprintf(tag, "romMapper%d", bank);
+        rm->romMapper[bank] = saveStateGet(state, tag, 0);
     }
 
     saveStateClose(state);
 
-    for (i = 0; i < 4; i += 2) {
-        UInt8* bankData = rm->romData + (rm->romMapper[i] << 14);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i,     bankData, 1, 0);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i + 1, bankData + 0x2000, 1, 0);
-    }
+    bankData = rm->romData + (rm->romMapper[bank] << 14);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + bank,     bankData, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + bank + 1, bankData + 0x2000, 1, 0);
 }
 
 static void destroy(RomMapperRType* rm)

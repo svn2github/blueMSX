@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-08-13 00:27:43 $
+** $Date: 2006-08-16 01:25:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,194 @@ static UInt8 emptyRam[0x2000];
 static BoardType boardLoadState(const char* stateFile);
 
 static char saveStateVersion[32] = "blueMSX - state  v 8";
+
+//------------------------------------------------------
+// Capture stuff
+//------------------------------------------------------
+
+typedef enum 
+{
+    CAPTURE_IDLE = 0,
+    CAPTURE_REC  = 1,
+    CAPTURE_PLAY = 2,
+} CaptureState;
+
+typedef struct Capture {
+    BoardTimer* timer;
+
+    UInt8  initState[0x100000];
+    int    initStateSize;
+    UInt32 endTime;
+    CaptureState state;
+    UInt8  inputs[0x80000];
+    int    inputCnt;
+} Capture;
+
+static Capture cap;
+
+int boardCaptureIsRecording() {
+    return cap.state == CAPTURE_REC;
+}
+
+static void boardTimerCb(void* dummy, UInt32 time)
+{
+    if (cap.state == CAPTURE_PLAY) {
+        actionEmuTogglePause();
+        cap.state = CAPTURE_IDLE;
+    }
+    
+    if (cap.state == CAPTURE_REC) {
+        cap.state = CAPTURE_IDLE;
+        boardCaptureStart();
+    }
+}
+
+void boardCaptureInit()
+{
+    cap.timer = boardTimerCreate(boardTimerCb, NULL);
+    if (cap.state == CAPTURE_REC) {
+        boardTimerAdd(cap.timer, boardSystemTime() + 1);
+    }
+}
+
+void boardCaptureDestroy()
+{
+    boardCaptureStop();
+
+    if (cap.timer != NULL) {
+        boardTimerDestroy(cap.timer);
+        cap.timer = NULL;
+    }
+    cap.state = CAPTURE_IDLE;
+}
+
+void boardCaptureStart() {
+    FILE* f;
+
+    printf("START\n");
+    if (cap.state != CAPTURE_IDLE) {
+        return;
+    }
+
+    // If emulation is not running we want to start recording once 
+    // the emulation is started
+    if (cap.timer == NULL) {
+        cap.state = CAPTURE_REC;
+        return;
+    }
+
+    cap.initStateSize = 0;
+    boardSaveState("cap.tmp");
+    f = fopen("cap.tmp", "rb");
+    if (f != NULL) {
+        cap.initStateSize = fread(cap.initState, 1, sizeof(cap.initState), f);
+        fclose(f);
+    }
+    cap.inputCnt = 0;
+    if (cap.initStateSize > 0) {
+        cap.state = CAPTURE_REC;
+    }
+}
+
+void boardCaptureStop() {
+    printf("STOP\n");
+    
+    boardTimerRemove(cap.timer);
+
+    if (cap.state == CAPTURE_REC) {
+        SaveState* state;
+        FILE* f;
+
+        cap.endTime = boardSystemTime();
+        cap.state = CAPTURE_PLAY;
+
+        f = fopen("video.sta", "wb");
+        if (f != NULL) {
+            fwrite(cap.initState, 1, cap.initStateSize, f);
+            fclose(f);
+        }
+
+        saveStateCreate("video.sta");
+
+        state = saveStateOpenForWrite("capture");
+
+        saveStateSet(state, "state", cap.state);
+        saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "inputCnt", cap.inputCnt);
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
+        }
+
+        saveStateClose(state);
+    }
+
+    // go back to idle state
+    cap.state = CAPTURE_IDLE;
+}
+
+UInt8 boardCaptureUInt8(UInt8 value) {
+    if (cap.state == CAPTURE_REC) {
+//        printf("@ %.8x: L[ %.4d] = %.2x\n", boardSystemTime(), cap.inputCnt, value);
+        cap.inputs[cap.inputCnt++] = value;
+        if (cap.inputCnt == sizeof(cap.inputs)) {
+            cap.inputCnt = 0;
+        }
+    }
+    if (cap.state == CAPTURE_PLAY) {
+//        printf("@ %.8x: L[ %.4d] = %.2x\n", boardSystemTime(), cap.inputCnt, cap.inputs[cap.inputCnt]);
+        value = cap.inputs[cap.inputCnt++];
+        if (cap.inputCnt == sizeof(cap.inputs)) {
+            cap.inputCnt = 0;
+        }
+    }
+    return value;
+}
+
+static void boardCaptureSaveState()
+{
+    if (cap.state == CAPTURE_REC) {
+        SaveState* state = saveStateOpenForWrite("capture");
+
+        saveStateSet(state, "state", cap.state);
+        saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "inputCnt", cap.inputCnt);
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
+        }
+        saveStateSet(state, "initStateSize", cap.initStateSize);
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "initState", cap.initState, cap.initStateSize);
+        }
+
+        saveStateClose(state);
+    }
+}
+
+static void boardCaptureLoadState()
+{
+    SaveState* state = saveStateOpenForRead("capture");
+
+    cap.state = saveStateGet(state, "state", CAPTURE_IDLE);
+    cap.endTime = saveStateGet(state, "endTime", 0);
+    cap.inputCnt = saveStateGet(state, "inputCnt", 0);
+    if (cap.inputCnt > 0) {
+        saveStateGetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
+    }
+    cap.initStateSize = saveStateGet(state, "initStateSize", 0);
+    if (cap.initStateSize > 0) {
+        saveStateGetBuffer(state, "initState", cap.initState, cap.initStateSize);
+    }
+
+    saveStateClose(state);
+
+    if (cap.state == CAPTURE_PLAY) {
+        cap.inputCnt = 0;
+        boardTimerAdd(cap.timer, cap.endTime);
+    }
+}
+
+//------------------------------------------------------
+
 
 RomType boardGetRomType(int cartNo)
 {
@@ -213,6 +401,7 @@ int boardRun(Machine* machine,
         if (loadBoardType != BOARD_UNKNOWN) {
             boardType = loadBoardType;
             machineLoadState(boardMachine);
+
             loadState = 1;
         }
     }
@@ -258,9 +447,12 @@ int boardRun(Machine* machine,
     default:
         success = 0;
     }
+    
+    boardCaptureInit();
 
     if (success && loadState) {
         boardInfo.loadState();
+        boardCaptureLoadState();
     }
 
     if (success) {
@@ -271,10 +463,15 @@ int boardRun(Machine* machine,
 
         boardInfo.run(boardInfo.cpuRef);
 
+        boardCaptureDestroy();
+
         boardInfo.destroy();
 
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(syncTimer);
+    }
+    else {
+        boardCaptureStop();
     }
 
     boardRunning = 0;
@@ -337,6 +534,7 @@ void boardReset()
         boardInfo.softReset();
     }
 }
+
 
 static BoardType boardLoadState(const char* stateFile)
 {
@@ -452,6 +650,8 @@ void boardSaveState(const char* stateFile)
     saveStateSet(state, "vdpSyncMode",   di->video.vdpSyncMode);
 
     saveStateClose(state);
+
+    boardCaptureSaveState();
 
     videoManagerSaveState();
     tapeSaveState();
