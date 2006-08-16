@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-08-09 14:09:47 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -225,9 +225,11 @@ int sg1000Create(Machine* machine,
     vdpCreate(VDP_SG1000, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);
 
     joyIo = sg1000JoyIoCreate();
+    if (machine->board.type == BOARD_SC3000) {
+        sc3000PPICreate(joyIo);
+    }
     if (machine->board.type == BOARD_SF7000) {
         sc3000PPICreate(joyIo);
-        
         sf7000PPICreate();
             
         diskEnable(0, machine->fdc.count > 0);

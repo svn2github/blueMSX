@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-08-16 21:12:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -178,6 +178,11 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "audio-decreasevolume"))    return (ButtonEvent)actionVolumeDecrease;
     if (0 == strcmp(action, "audio-togglestereo"))      return (ButtonEvent)actionVolumeToggleStereo;
     if (0 == strcmp(action, "audio-togglemute"))        return (ButtonEvent)actionMuteToggleMaster;
+    
+    if (0 == strcmp(action, "video-captureload"))       return (ButtonEvent)actionVideoCaptureLoad;
+    if (0 == strcmp(action, "video-captureplay"))       return (ButtonEvent)actionVideoCapturePlay;
+    if (0 == strcmp(action, "video-capturerec"))        return (ButtonEvent)actionVideoCaptureRec;
+    if (0 == strcmp(action, "video-capturestop"))       return (ButtonEvent)actionVideoCaptureStop;
 
     if (0 == strcmp(action, "audio-togglemutemaster"))    return (ButtonEvent)actionMuteToggleMaster;
     if (0 == strcmp(action, "audio-togglemutepsg"))       return (ButtonEvent)actionMuteTogglePsg;
@@ -444,6 +449,9 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "status-rfmodulation"))      return t | THEME_TRIGGER_VIDEO_RFMODULATION_EN;
     if (0 == strcmp(s, "status-hstretch"))          return t | THEME_TRIGGER_VIDEO_HSTRETCH_EN;
     if (0 == strcmp(s, "status-vstretch"))          return t | THEME_TRIGGER_VIDEO_VSTRETCH_EN;
+    if (0 == strcmp(s, "video-captureoff"))         return t | THEME_TRIGGER_VIDEO_CAPTURE_NONE;
+    if (0 == strcmp(s, "video-captureplay"))        return t | THEME_TRIGGER_VIDEO_CAPTURE_PLAY;
+    if (0 == strcmp(s, "video-capturerec"))         return t | THEME_TRIGGER_VIDEO_CAPTURE_REC;
 
     if (0 == strcmp(s, "port1-enable"))          return t | THEME_TRIGGER_JOY1_ENABLE;
     if (0 == strcmp(s, "port1-none"))            return t | THEME_TRIGGER_JOY1_NONE;

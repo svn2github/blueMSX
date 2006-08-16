@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2006-08-16 01:25:52 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,12 +109,17 @@ typedef struct Capture {
     CaptureState state;
     UInt8  inputs[0x80000];
     int    inputCnt;
+    char   filename[512];
 } Capture;
 
 static Capture cap;
 
 int boardCaptureIsRecording() {
     return cap.state == CAPTURE_REC;
+}
+
+int  boardCaptureIsPlaying() {
+    return cap.state == CAPTURE_PLAY;
 }
 
 static void boardTimerCb(void* dummy, UInt32 time)
@@ -126,7 +131,7 @@ static void boardTimerCb(void* dummy, UInt32 time)
     
     if (cap.state == CAPTURE_REC) {
         cap.state = CAPTURE_IDLE;
-        boardCaptureStart();
+        boardCaptureStart(cap.filename);
     }
 }
 
@@ -149,13 +154,22 @@ void boardCaptureDestroy()
     cap.state = CAPTURE_IDLE;
 }
 
-void boardCaptureStart() {
+void boardCaptureStart(const char* filename) {
     FILE* f;
 
     printf("START\n");
-    if (cap.state != CAPTURE_IDLE) {
+    if (cap.state == CAPTURE_REC) {
         return;
     }
+
+    // If we're playing back a capture, we just start recording from where we're at
+    // and new recording will be appended to old recording
+    if (cap.state == CAPTURE_PLAY) {
+        cap.state = CAPTURE_REC;
+        return;
+    }
+
+    strcpy(cap.filename, filename);
 
     // If emulation is not running we want to start recording once 
     // the emulation is started
@@ -189,13 +203,13 @@ void boardCaptureStop() {
         cap.endTime = boardSystemTime();
         cap.state = CAPTURE_PLAY;
 
-        f = fopen("video.sta", "wb");
+        f = fopen(cap.filename, "wb");
         if (f != NULL) {
             fwrite(cap.initState, 1, cap.initStateSize, f);
             fclose(f);
         }
 
-        saveStateCreate("video.sta");
+        saveStateCreate(cap.filename);
 
         state = saveStateOpenForWrite("capture");
 
@@ -441,6 +455,7 @@ int boardRun(Machine* machine,
         success = adamCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     case BOARD_SG1000:
+    case BOARD_SC3000:
     case BOARD_SF7000:
         success = sg1000Create(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;

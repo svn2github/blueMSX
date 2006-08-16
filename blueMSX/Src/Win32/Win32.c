@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.151 $
+** $Revision: 1.152 $
 **
-** $Date: 2006-08-13 00:27:44 $
+** $Date: 2006-08-16 21:12:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -893,6 +893,10 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();
     if (hotkeyEq(key, s->quit))                         actionQuit();
     if (hotkeyEq(key, s->wavCapture))                   actionToggleWaveCapture();
+    if (hotkeyEq(key, s->videoCapLoad))                 actionVideoCaptureLoad();
+    if (hotkeyEq(key, s->videoCapPlay))                 actionVideoCapturePlay();
+    if (hotkeyEq(key, s->videoCapRec))                  actionVideoCaptureRec();
+    if (hotkeyEq(key, s->videoCapStop))                 actionVideoCaptureStop();
     if (hotkeyEq(key, s->screenCapture))                actionScreenCapture();
     if (hotkeyEq(key, s->screenCaptureUnfilteredSmall)) actionScreenCaptureUnfilteredSmall();
     if (hotkeyEq(key, s->screenCaptureUnfilteredLarge)) actionScreenCaptureUnfilteredLarge();
@@ -1071,6 +1075,7 @@ static void registerFileTypes() {
     registerFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
     registerFileType(".cas", "blueMSXcas", "CAS Image", 3);
     registerFileType(".sta", "blueMSXsta", "blueMSX State", 4);
+    registerFileType(".cap", "blueMSXcap", "blueMSX Video Capture", 4);
 }
 
 static void unregisterFileTypes() {
@@ -1088,6 +1093,7 @@ static void unregisterFileTypes() {
     unregisterFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
     unregisterFileType(".cas", "blueMSXcas", "CAS Image", 3);
     unregisterFileType(".sta", "blueMSXsta", "blueMSX State", 4);
+    unregisterFileType(".cap", "blueMSXcap", "blueMSX Video Capture", 4);
 }
 
 HWND getMainHwnd()
@@ -1302,6 +1308,7 @@ void updateMenu(int show) {
                emulatorGetState() == EMU_RUNNING, 
                emulatorGetState() == EMU_STOPPED, 
                mixerIsLogging(st.mixer),
+               boardCaptureIsRecording() ? 1 : boardCaptureIsPlaying() ? 2 : 0,
                fileExist(pProperties->filehistory.quicksave, NULL),
                enableSpecial);
 
@@ -2374,6 +2381,10 @@ int setDefaultPath() {
     mkdir(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");
 
+    sprintf(buffer, "%s\\Video Capture", rootDir);
+    mkdir(buffer);
+    actionSetVideoCaptureSetDirectory(buffer, "");
+
     sprintf(buffer, "%s\\QuickSave", rootDir);
     mkdir(buffer);
     actionSetQuickSaveSetDirectory(buffer, "");
@@ -3115,7 +3126,31 @@ char* archFilenameGetOpenState(Properties* properties)
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
-    fileName = openStateFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, selectedExtension, &pProperties->settings.showStatePreview);
+    fileName = openStateFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, 
+                             selectedExtension, &pProperties->settings.showStatePreview);
+    exitDialogShow();
+    SetCurrentDirectory(st.pCurDir);
+
+    return fileName;
+}
+
+char* archFilenameGetOpenCapture(Properties* properties)
+{
+    char* title = "Load Video Capture"; // FIXME: Language
+    char extensionList[512];
+    char* defaultDir = properties->emulation.statsDefDir;
+    char* extensions = ".cap\0";
+    int* selectedExtension = NULL;
+    char* defautExtension = NULL;
+    int createFileSize = -1;
+    char* fileName;
+
+    sprintf(extensionList, "%s   (*.cap)#*.cap#", "Video Capture"); // FIXME: Language
+    replaceCharInString(extensionList, '#', 0);
+
+    enterDialogShow();
+    fileName = openStateFile(getMainHwnd(), title, extensionList, defaultDir, createFileSize, defautExtension, 
+                             selectedExtension, &pProperties->settings.showStatePreview);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 

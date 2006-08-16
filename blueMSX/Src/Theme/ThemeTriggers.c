@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-08-13 00:27:43 $
+** $Date: 2006-08-16 21:12:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -565,6 +565,18 @@ int themeTriggerVideoBlendFramesEn() {
 
 int themeTriggerVideoRfModulatorEn() {
     return propGetGlobalProperties()->video.colorSaturationEnable;
+}
+
+int themeTriggerVideoCaptureNone() {
+    return !boardCaptureIsRecording() && !boardCaptureIsPlaying() ? 1 : 0;
+}
+
+int themeTriggerVideoCapturePlay() {
+    return boardCaptureIsPlaying() ? 1 : 0;
+}
+
+int themeTriggerVideoCaptureRec() {
+    return boardCaptureIsRecording() ? 1 : 0;
 }
 
 int themeTriggerVideoGamma() {

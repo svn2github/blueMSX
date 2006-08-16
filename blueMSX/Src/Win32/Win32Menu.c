@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-07-12 23:15:57 $
+** $Date: 2006-08-16 21:12:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,13 +64,17 @@
 #define ID_FILE_PTRSCR                  40017
 #define ID_FILE_EXIT                    40018
 #define ID_FILE_PRINTER_FORMFEED        40019
+#define ID_FILE_VIDEOCAPLOAD            40020
+#define ID_FILE_VIDEOCAPPLAY            40021
+#define ID_FILE_VIDEOCAPREC             40022
+#define ID_FILE_VIDEOCAPSTOP            40023
 
-#define ID_RUN_RUN                      40021
-#define ID_RUN_PAUSE                    40022
-#define ID_RUN_STOP                     40023
-#define ID_RUN_RESET                    40024
-#define ID_RUN_SOFTRESET                40025
-#define ID_RUN_CLEANRESET               40026
+#define ID_RUN_RUN                      40024
+#define ID_RUN_PAUSE                    40025
+#define ID_RUN_STOP                     40026
+#define ID_RUN_RESET                    40027
+#define ID_RUN_SOFTRESET                40028
+#define ID_RUN_CLEANRESET               40029
 
 #define ID_VIDEO_AUTODETECT             40031
 #define ID_SIZE_NORMAL                  40032
@@ -208,7 +212,7 @@ static HMENU hMenuTools = NULL;
 
 HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts);
 HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts);
-HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int tempStateExits, int enableSpecial);
+HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int logVideo, int tempStateExits, int enableSpecial);
 HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
 
 
@@ -430,6 +434,45 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     return hMenu;
 }
 
+static HMENU menuCreateVideoCapture(Properties* pProperties, Shortcuts* shortcuts, int logVideo) 
+{
+    char langBuffer[560];
+    HMENU hMenu = CreatePopupMenu();
+
+    setMenuColor(hMenu);
+
+    // FIXME: Language
+    sprintf(langBuffer, "%s      \t%hs", "Load...", shortcutsToString(shortcuts->videoCapLoad));
+    AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPLOAD, langBuffer);
+    
+    sprintf(langBuffer, "%s      \t%hs", "Play Last", shortcutsToString(shortcuts->videoCapPlay));
+    AppendMenu(hMenu, MF_STRING | (logVideo == 2 ? MF_GRAYED : 0), ID_FILE_VIDEOCAPPLAY, langBuffer);
+    
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    
+    switch (logVideo) {
+    case 0:
+    default:
+        sprintf(langBuffer, "%s      \t%hs", "Record", shortcutsToString(shortcuts->videoCapRec));
+        AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPREC, langBuffer);
+        break;
+    case 1:
+        sprintf(langBuffer, "%s      \t%hs", "Recording", shortcutsToString(shortcuts->videoCapRec));
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_FILE_VIDEOCAPREC, langBuffer);
+        break;
+    case 2:
+        sprintf(langBuffer, "%s      \t%hs", "Record (append)", shortcutsToString(shortcuts->videoCapRec));
+        AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPREC, langBuffer);
+        break;
+    }
+
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    
+    sprintf(langBuffer, "%s      \t%hs", "Stop", shortcutsToString(shortcuts->videoCapStop));
+    AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPSTOP, langBuffer);
+
+    return hMenu;
+}
 
 static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shortcuts) 
 {
@@ -726,7 +769,7 @@ static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
-static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int tempStateExits, int enableSpecial) 
+static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int logVideo, int tempStateExits, int enableSpecial) 
 {
     HMENU hMenu = CreatePopupMenu();
     char menuBuffer[512];
@@ -766,6 +809,9 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
     sprintf(menuBuffer, "%s        \t%hs", langMenuFileCaptureAudio(), shortcutsToString(shortcuts->wavCapture));
     AppendMenu(hMenu, MF_STRING | (logSound ? MFS_CHECKED : 0), ID_FILE_LOGWAV, menuBuffer);
+
+    sprintf(menuBuffer, "%s", "Video Capture");  // FIXME: Language
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoCapture(pProperties, shortcuts, logVideo), menuBuffer);
 
     sprintf(menuBuffer, "%s        \t%hs", langMenuFileScreenShot(), shortcutsToString(shortcuts->screenCapture));
     AppendMenu(hMenu, MF_STRING, ID_FILE_PTRSCR, menuBuffer);
@@ -1002,6 +1048,7 @@ void menuUpdate(Properties* pProperties,
                 int isRunning, 
                 int isStopped, 
                 int logSound,
+                int logVideo,
                 int tempStateExits,
                 int enableSpecial)
 {
@@ -1044,7 +1091,7 @@ void menuUpdate(Properties* pProperties,
     hMenuZoom          = menuCreateZoom(pProperties, shortcuts);
     hMenuOptions       = menuCreateOptions(pProperties, shortcuts);
     hMenuHelp          = menuCreateHelp(pProperties, shortcuts);
-    hMenuFile          = menuCreateFile(pProperties, shortcuts, isStopped, logSound, tempStateExits, enableSpecial);
+    hMenuFile          = menuCreateFile(pProperties, shortcuts, isStopped, logSound, logVideo, tempStateExits, enableSpecial);
     hMenuTools         = menuCreateTools(pProperties, shortcuts);
  
     InvalidateRect(menuHwnd, NULL, TRUE);
@@ -1374,12 +1421,16 @@ int menuCommand(Properties* pProperties, int command)
         pProperties->video.detectActiveMonitor = !pProperties->video.detectActiveMonitor;
         boardSetVideoAutodetect(pProperties->video.detectActiveMonitor);
         return 0;
-    case ID_FILE_PTRSCR:                        actionScreenCapture();          return 0;
+    case ID_FILE_PTRSCR:                    actionScreenCapture();          return 0;
     case ID_FILE_SAVE:                      actionSaveState();              return 0;
     case ID_FILE_LOAD:                      actionLoadState();              return 0;
     case ID_FILE_QSAVE:                     actionQuickSaveState();         return 0;
     case ID_FILE_QLOAD:                     actionQuickLoadState();         return 0;
-    case ID_FILE_LOGWAV:                        actionToggleWaveCapture();      return 0;
+    case ID_FILE_LOGWAV:                    actionToggleWaveCapture();      return 0;
+    case ID_FILE_VIDEOCAPLOAD:              actionVideoCaptureLoad();       return 0;
+    case ID_FILE_VIDEOCAPPLAY:              actionVideoCapturePlay();       return 0;
+    case ID_FILE_VIDEOCAPREC:               actionVideoCaptureRec();        return 0;
+    case ID_FILE_VIDEOCAPSTOP:              actionVideoCaptureStop();       return 0;
     case ID_FILE_EXIT:                      actionQuit();                   return 0;
     case ID_SIZE_NORMAL:                    actionWindowSizeSmall();        return 0;
     case ID_SIZE_X2:                        actionWindowSizeNormal();       return 0;

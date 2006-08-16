@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-08-09 14:09:47 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,7 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else if (0 == strcmp(buffer, "ColecoAdam"))   machine->board.type = BOARD_COLECOADAM;
     else if (0 == strcmp(buffer, "SG-1000"))      machine->board.type = BOARD_SG1000;
     else if (0 == strcmp(buffer, "SF-7000"))      machine->board.type = BOARD_SF7000;
+    else if (0 == strcmp(buffer, "SC-3000"))      machine->board.type = BOARD_SC3000;
     else                                          machine->board.type = BOARD_MSX;
 
     // Read video info
@@ -329,6 +330,7 @@ void machineSave(Machine* machine)
     case BOARD_COLECOADAM: iniFileWriteString("Board", "type", "ColecoAdam"); break;
     case BOARD_SG1000:     iniFileWriteString("Board", "type", "SG-1000"); break;
     case BOARD_SF7000:     iniFileWriteString("Board", "type", "SF-7000"); break;
+    case BOARD_SC3000:     iniFileWriteString("Board", "type", "SC-3000"); break;
     }
 
     // Write video info
@@ -709,7 +711,9 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 {
     UInt8* ram     = NULL;
     UInt32 ramSize = 0;
-    void* jisyoRom = NULL;
+    UInt8* ram2     = NULL;
+    UInt32 ram2Size = 0;
+    void* jisyoRom  = NULL;
     int jisyoRomSize = 0;
     int success = 1;
     int hdId = FIRST_INTERNAL_HD_INDEX;
@@ -765,7 +769,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
                 success &= ramNormalCreate(size, slot, subslot, startPage, &ram, &ramSize);
             }
             else {
-                success &= ramNormalCreate(size, slot, subslot, startPage, NULL, NULL);
+                success &= ramNormalCreate(size, slot, subslot, startPage, &ram2, &ram2Size);
             }
             continue;
         }
@@ -791,6 +795,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             }
             continue;
         }
+    }
+
+    if (ram == NULL) {
+        ram = ram2;
+        ramSize = ram2Size;
     }
 
     if (ram == NULL) {

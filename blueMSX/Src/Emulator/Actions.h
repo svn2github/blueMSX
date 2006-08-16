@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-06-20 23:47:33 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 
 void actionInit(Video* video, Properties* properties, Mixer* mixer);
 void actionSetAudioCaptureSetDirectory(char* dir, char* prefix);
+void actionSetVideoCaptureSetDirectory(char* dir, char* prefix);
 void actionSetQuickSaveSetDirectory(char* dir, char* prefix);
 
 void actionCartInsert(int cartNo);
@@ -141,6 +142,10 @@ void actionToggleFrontSwitch();
 void actionTogglePauseSwitch();
 void actionToggleWaveCapture();
 void actionToggleMouseCapture();
+void actionVideoCaptureLoad();
+void actionVideoCapturePlay();
+void actionVideoCaptureRec();
+void actionVideoCaptureStop();
 void actionMaxSpeedToggle();
 void actionFullscreenToggle();
 void actionCasToggleReadonly();

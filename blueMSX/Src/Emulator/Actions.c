@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2006-08-16 01:25:52 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,9 +64,11 @@ static struct {
 } state;
 
 static char audioDir[PROP_MAXPATH]  = "";
-static char audioPrefix[64]     = "";
+static char audioPrefix[64]         = "";
+static char videoDir[PROP_MAXPATH]  = "";
+static char videoPrefix[64]         = "";
 static char stateDir[PROP_MAXPATH]  = "";
-static char statePrefix[64]     = "";
+static char statePrefix[64]         = "";
 
 
 void actionCartInsert(int cartNo)
@@ -186,6 +188,12 @@ void actionSetAudioCaptureSetDirectory(char* dir, char* prefix)
     strcpy(audioPrefix, prefix);
 }
 
+void actionSetVideoCaptureSetDirectory(char* dir, char* prefix)
+{
+    strcpy(videoDir, dir);
+    strcpy(videoPrefix, prefix);
+}
+
 void actionSetQuickSaveSetDirectory(char* dir, char* prefix)
 {
     strcpy(stateDir, dir);
@@ -270,7 +278,6 @@ void actionQuit() {
     archQuit();
 }
 
-#if 1
 void actionToggleWaveCapture() {
     if (mixerIsLogging(state.mixer)) {
         mixerStopLog(state.mixer);
@@ -280,28 +287,63 @@ void actionToggleWaveCapture() {
     }
     archUpdateMenu(0);
 }
-#else
-void actionToggleWaveCapture() {
+
+void actionVideoCaptureLoad() {
+    char* filename;
+
+    emulatorSuspend();
+    filename = archFilenameGetOpenCapture(state.properties);
+    if (filename != NULL) {
+        emulatorStop();
+        emulatorStart(filename);
+    }
+    else {
+        emulatorResume();
+    }
+    archUpdateMenu(0);
+}
+
+void actionVideoCapturePlay() {
+    if (emulatorGetState() != EMU_STOPPED) {
+        emulatorStop();
+    }
+
+    if (fileExist(state.properties->filehistory.videocap, NULL)) {
+        emulatorStart(state.properties->filehistory.videocap);
+    }
+    archUpdateMenu(0);
+}
+
+void actionVideoCaptureStop() {
     if (emulatorGetState() == EMU_STOPPED) {
-        boardCaptureStart();
+        return;
+    }
+    
+    emulatorSuspend();
+    
+    boardCaptureStop();
+
+    emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionVideoCaptureRec() {
+    if (emulatorGetState() == EMU_STOPPED) {
+        strcpy(state.properties->filehistory.videocap, generateSaveFilename(state.properties, videoDir, videoPrefix, ".cap", 2));
+        boardCaptureStart(state.properties->filehistory.videocap);
         actionEmuTogglePause();
+        archUpdateMenu(0);
         return;
     }
 
     emulatorSuspend();
 
-    if (!boardCaptureIsRecording()) {
-        boardCaptureStart();
-    }
-    else {
-        boardCaptureStop();
-    }
+    strcpy(state.properties->filehistory.videocap, generateSaveFilename(state.properties, videoDir, videoPrefix, ".cap", 2));
+    boardCaptureStart(state.properties->filehistory.videocap);
 
     emulatorResume();
+    archUpdateMenu(0);
 }
-
-#endif
-
 
 void actionLoadState() {
     char* filename;

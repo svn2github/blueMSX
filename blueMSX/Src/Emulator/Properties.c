@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-08-13 00:27:43 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -410,6 +410,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     }
 
     properties->filehistory.quicksave[0] = 0;
+    properties->filehistory.videocap[0]  = 0;
     properties->filehistory.count        = 10;
 }
 
@@ -648,6 +649,7 @@ static void propLoad(Properties* properties)
     }
 
     GET_STR_VALUE_2(filehistory, quicksave);
+    GET_STR_VALUE_2(filehistory, videocap);
     GET_INT_VALUE_2(filehistory, count);
 
     for (i = 0; i < DLG_MAX_ID; i++) {
@@ -849,6 +851,7 @@ void propSave(Properties* properties)
     }
 
     SET_STR_VALUE_2(filehistory, quicksave);
+    SET_STR_VALUE_2(filehistory, videocap);
     SET_INT_VALUE_2(filehistory, count);
 
     for (i = 0; i < DLG_MAX_ID; i++) {

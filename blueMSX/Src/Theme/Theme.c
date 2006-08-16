@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-06-16 01:19:18 $
+** $Date: 2006-08-16 21:12:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -186,6 +186,9 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_VIDEO_RFMODULATION_EN: idx = TEST(actionType, themeTriggerVideoRfModulatorEn()); break;
     case THEME_TRIGGER_VIDEO_HSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoHstretchEn()); break;
     case THEME_TRIGGER_VIDEO_VSTRETCH_EN:  idx = TEST(actionType, themeTriggerVideoVstretchEn()); break;
+    case THEME_TRIGGER_VIDEO_CAPTURE_NONE: idx = TEST(actionType, themeTriggerVideoCaptureNone()); break;
+    case THEME_TRIGGER_VIDEO_CAPTURE_PLAY: idx = TEST(actionType, themeTriggerVideoCapturePlay()); break;
+    case THEME_TRIGGER_VIDEO_CAPTURE_REC:  idx = TEST(actionType, themeTriggerVideoCaptureRec()); break;
 
     case THEME_TRIGGER_JOY1_ENABLE:    idx = TEST(actionType, themeTriggerJoyPort1Enabled()); break;
     case THEME_TRIGGER_JOY1_NONE:      idx = TEST(actionType, themeTriggerJoyPort1IsNone()); break;

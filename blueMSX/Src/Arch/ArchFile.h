@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchFile.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-01-06 18:10:53 $
+** $Date: 2006-08-16 21:12:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCr
 char* archFilenameGetSaveCas(Properties* properties, int* type);
 
 char* archFilenameGetOpenState(Properties* properties);
+char* archFilenameGetOpenCapture(Properties* properties);
 
 char* archFilenameGetSaveState(Properties* properties);
 

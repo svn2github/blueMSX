@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-08-09 14:09:50 $
+** $Date: 2006-08-16 21:12:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -524,6 +524,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                     }
 
                     pProperties->filehistory.quicksave[0] = 0;
+                    pProperties->filehistory.videocap[0] = 0;
 
                     EnableWindow(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), FALSE);
                 }

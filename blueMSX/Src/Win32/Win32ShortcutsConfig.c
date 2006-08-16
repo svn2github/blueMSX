@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-07-01 19:14:12 $
+** $Date: 2006-08-16 21:12:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -720,6 +720,10 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(pauseSwitch);
     LOAD_SHORTCUT(quit);
     LOAD_SHORTCUT(wavCapture);
+    LOAD_SHORTCUT(videoCapLoad);
+    LOAD_SHORTCUT(videoCapPlay);
+    LOAD_SHORTCUT(videoCapRec);
+    LOAD_SHORTCUT(videoCapStop);
     LOAD_SHORTCUT(screenCapture);
     LOAD_SHORTCUT(screenCaptureUnfilteredSmall);
     LOAD_SHORTCUT(screenCaptureUnfilteredLarge);
@@ -807,6 +811,10 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(pauseSwitch);
     SAVE_SHORTCUT(quit);
     SAVE_SHORTCUT(wavCapture);
+    SAVE_SHORTCUT(videoCapLoad);
+    SAVE_SHORTCUT(videoCapPlay);
+    SAVE_SHORTCUT(videoCapRec);
+    SAVE_SHORTCUT(videoCapStop);
     SAVE_SHORTCUT(screenCapture);
     SAVE_SHORTCUT(screenCaptureUnfilteredSmall);
     SAVE_SHORTCUT(screenCaptureUnfilteredLarge);
@@ -960,6 +968,16 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUTSEPARATOR();
     
     ADD_SHORTCUT(wavCapture, langShortcutAudioCapture());
+    
+    ADD_SHORTCUTSEPARATOR();
+
+    ADD_SHORTCUT(videoCapLoad, "Load...");      // FIXME: Lanugage
+    ADD_SHORTCUT(videoCapPlay, "Play Last");    // FIXME: Lanugage
+    ADD_SHORTCUT(videoCapRec,  "Record");       // FIXME: Lanugage
+    ADD_SHORTCUT(videoCapStop, "Stop");         // FIXME: Lanugage
+    
+    ADD_SHORTCUTSEPARATOR();
+
     ADD_SHORTCUT(screenCapture, langShortcutScreenshotOrig());
     ADD_SHORTCUT(screenCaptureUnfilteredSmall, langShortcutScreenshotSmall());
     ADD_SHORTCUT(screenCaptureUnfilteredLarge, langShortcutScreenshotLarge());
