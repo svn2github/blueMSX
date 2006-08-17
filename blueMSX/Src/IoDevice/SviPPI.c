@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-07-07 15:18:43 $
+** $Date: 2006-08-17 19:43:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -221,15 +221,26 @@ static void writeCHi(SviPPI* ppi, UInt8 value)
     }
 }
 
-static UInt8 readA(SviPPI* ppi)
+static UInt8 peekA(SviPPI* ppi)
 {
     return sviJoyIoReadTrigger(ppi->joyIO) | 
            (boardGetCassetteInserted() ? 0:0x40);
 }
 
-static UInt8 readB(SviPPI* ppi)
+static UInt8 readA(SviPPI* ppi)
+{
+    return boardCaptureUInt8(sviJoyIoReadTrigger(ppi->joyIO)) | 
+           (boardGetCassetteInserted() ? 0:0x40);
+}
+
+static UInt8 peekB(SviPPI* ppi)
 {
     return getKeyState(ppi->row);
+}
+
+static UInt8 readB(SviPPI* ppi)
+{
+    return boardCaptureUInt8(getKeyState(ppi->row));
 }
 
 static void getDebugInfo(SviPPI* ppi, DbgDevice* dbgDevice)
@@ -254,8 +265,8 @@ void sviPPICreate(SviJoyIo* joyIO)
     ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevPpi(), &dbgCallbacks, ppi);
 
     ppi->joyIO = joyIO;
-    ppi->i8255 = i8255Create(readA, readA, NULL,
-                             readB, readB, NULL,
+    ppi->i8255 = i8255Create(peekA, readA, NULL,
+                             peekB, readB, NULL,
                              NULL,  NULL,  writeCLo,
                              NULL,  NULL,  writeCHi,
                              ppi);

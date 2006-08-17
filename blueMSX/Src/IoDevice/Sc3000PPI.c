@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sc3000PPI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-09 14:09:48 $
+** $Date: 2006-08-17 19:43:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -199,10 +199,20 @@ static void writeCLo(Sc3000PPI* ppi, UInt8 value)
 
 static UInt8 readA(Sc3000PPI* ppi)
 {
-    return getKeyState(ppi) & 0xff;
+    return boardCaptureUInt8(getKeyState(ppi) & 0xff);
 }
 
 static UInt8 readB(Sc3000PPI* ppi)
+{
+    return boardCaptureUInt8(getKeyState(ppi) >> 8);
+}
+
+static UInt8 peekA(Sc3000PPI* ppi)
+{
+    return getKeyState(ppi) & 0xff;
+}
+
+static UInt8 peekB(Sc3000PPI* ppi)
 {
     return getKeyState(ppi) >> 8;
 }
@@ -229,8 +239,8 @@ void sc3000PPICreate(Sg1000JoyIo* joyIo)
 
     ppi->joyIo = joyIo;
 
-    ppi->i8255 = i8255Create(readA, readA, NULL,
-                             readB, readB, NULL,
+    ppi->i8255 = i8255Create(peekA, readA, NULL,
+                             peekB, readB, NULL,
                              NULL,  NULL,  writeCLo,
                              NULL,  NULL,  NULL,
                              ppi);

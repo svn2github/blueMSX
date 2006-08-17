@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -201,7 +201,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -245,6 +245,12 @@
 				Filter="">
 				<File
 					RelativePath="..\..\Src\Win32\Win32.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Avi.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Avi.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Bitmap.c">

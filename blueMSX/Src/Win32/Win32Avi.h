@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Sound.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-08-17 19:43:17 $
 **
@@ -27,23 +27,18 @@
 **
 ******************************************************************************
 */
-#ifndef WIN32_SOUND_H
-#define WIN32_SOUND_H
+#ifndef WIN32_AVI
+#define WIN32_AVI
 
 #include <windows.h>
+#include "MsxTypes.h"
 #include "AudioMixer.h"
 
-typedef enum {
-    SOUND_DRV_NONE,
-    SOUND_DRV_WMM,
-    SOUND_DRV_DIRECTX,
-    SOUND_DRV_AVI
-} SoundDriver;
+typedef struct AviSound AviSound;
 
-void soundDriverConfig(HWND hwnd, SoundDriver driver);
-void archSoundCreate(Mixer* mixer, UInt32 sampleRate, UInt32 bufferSize, Int16 channels);
-void archSoundDestroy(void);
-void archSoundResume(void); 
-void archSoundSuspend(void);
+AviSound* aviSoundCreate(HWND hwnd, Mixer* mixer, UInt32 sampleRate, UInt32 bufferSize, Int16 channels);
+void aviSoundDestroy(AviSound* aviSound);
+void aviSoundSuspend(AviSound* aviSound);
+void aviSoundResume(AviSound* aviSound);
 
-#endif
+#endif //WIN32_AVI

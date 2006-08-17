@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32snd.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:32:03 $
+** $Date: 2006-08-17 19:43:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,11 +30,13 @@
 #include "Win32Sound.h"
 #include "Win32directXSound.h"
 #include "Win32wmmSound.h"
+#include "Win32Avi.h"
 
 #include "ArchSound.h"
 
 static DxSound* dxSound = NULL;
 static WmmSound* wmmSound = NULL;
+static AviSound* aviSound = NULL;
 
 static HWND        cfgHwnd   = NULL;
 static SoundDriver cfgDriver = SOUND_DRV_NONE;
@@ -58,6 +60,9 @@ void archSoundCreate(Mixer* mixer, UInt32 sampleRate, UInt32 bufferSize, Int16 c
     case SOUND_DRV_WMM:
         wmmSound = wmmSoundCreate(cfgHwnd, mixer, sampleRate, bufferSize, channels);
         break;
+    case SOUND_DRV_AVI:
+        aviSound = aviSoundCreate(cfgHwnd, mixer, sampleRate, bufferSize, channels);
+        break;
     }
 }
 
@@ -71,6 +76,10 @@ void archSoundDestroy(void)
         wmmSoundDestroy(wmmSound);
         wmmSound = NULL;
     }
+    if (aviSound) {
+        aviSoundDestroy(aviSound);
+        aviSound = NULL;
+    }
 }
 
 void archSoundResume(void) 
@@ -80,6 +89,9 @@ void archSoundResume(void)
     }
     if (wmmSound) {
         wmmSoundResume(wmmSound);
+    }
+    if (aviSound) {
+        aviSoundResume(aviSound);
     }
 }
 
@@ -91,5 +103,8 @@ void archSoundSuspend(void)
     }
     if (wmmSound) {
         wmmSoundSuspend(wmmSound);
+    }
+    if (aviSound) {
+        aviSoundSuspend(aviSound);
     }
 }
