@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchVideoIn.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-01-22 22:31:29 $
+** $Date: 2006-08-18 05:34:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,5 +38,8 @@ int archVideoInIsVideoConnected();
 // can't be freed until a succeeding call to archVideoInBufferGet is called.
 
 UInt16* archVideoInBufferGet(int width, int height);
+
+// Saves video capture to file (really not video in :/)
+void archVideoCaptureSave();
 
 #endif

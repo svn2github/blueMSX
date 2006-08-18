@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-17 19:43:17 $
+** $Date: 2006-08-18 05:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,11 @@
 #include <windows.h>
 #include "MsxTypes.h"
 #include "AudioMixer.h"
+#include "VideoRender.h"
+#include "Properties.h"
+
+void aviStartRender(HWND hwnd, Properties* properties, Video* video);
+void aviStopRender();
 
 typedef struct AviSound AviSound;
 

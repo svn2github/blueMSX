@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-08-13 00:27:43 $
+** $Date: 2006-08-18 05:35:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -184,6 +184,10 @@ static void emuCalcCpuUsage() {
 
 static int emuUseSynchronousUpdate()
 {
+    if (properties->emulation.syncMethod == P_EMU_SYNCIGNORE) {
+        return properties->emulation.syncMethod;
+    }
+
     if (properties->emulation.speed == 50 &&
         enableSynchronousUpdate &&
         emulatorGetMaxSpeed() == 0)

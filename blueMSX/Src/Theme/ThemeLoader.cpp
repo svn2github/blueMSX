@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-16 21:12:39 $
+** $Date: 2006-08-18 05:35:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -183,6 +183,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "video-captureplay"))       return (ButtonEvent)actionVideoCapturePlay;
     if (0 == strcmp(action, "video-capturerec"))        return (ButtonEvent)actionVideoCaptureRec;
     if (0 == strcmp(action, "video-capturestop"))       return (ButtonEvent)actionVideoCaptureStop;
+    if (0 == strcmp(action, "video-capturestop"))       return (ButtonEvent)actionVideoCaptureSave;
 
     if (0 == strcmp(action, "audio-togglemutemaster"))    return (ButtonEvent)actionMuteToggleMaster;
     if (0 == strcmp(action, "audio-togglemutepsg"))       return (ButtonEvent)actionMuteTogglePsg;

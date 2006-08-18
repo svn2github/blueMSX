@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-18 05:35:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,6 +146,7 @@ void actionVideoCaptureLoad();
 void actionVideoCapturePlay();
 void actionVideoCaptureRec();
 void actionVideoCaptureStop();
+void actionVideoCaptureSave();
 void actionMaxSpeedToggle();
 void actionFullscreenToggle();
 void actionCasToggleReadonly();

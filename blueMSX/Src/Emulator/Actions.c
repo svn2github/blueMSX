@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-18 05:35:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@
 #include "ArchPrinter.h"
 #include "ArchMidi.h"
 #include "ArchInput.h"
+#include "ArchVideoIn.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -294,6 +295,7 @@ void actionVideoCaptureLoad() {
     emulatorSuspend();
     filename = archFilenameGetOpenCapture(state.properties);
     if (filename != NULL) {
+        strcpy(state.properties->filehistory.videocap, filename);
         emulatorStop();
         emulatorStart(filename);
     }
@@ -312,6 +314,10 @@ void actionVideoCapturePlay() {
         emulatorStart(state.properties->filehistory.videocap);
     }
     archUpdateMenu(0);
+}
+
+void actionVideoCaptureSave() {
+    archVideoCaptureSave();
 }
 
 void actionVideoCaptureStop() {

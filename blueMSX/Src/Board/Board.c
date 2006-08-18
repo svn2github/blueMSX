@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-08-16 21:20:37 $
+** $Date: 2006-08-18 05:34:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,34 @@ static UInt8 emptyRam[0x2000];
 static BoardType boardLoadState(const char* stateFile);
 
 static char saveStateVersion[32] = "blueMSX - state  v 8";
+
+static BoardTimerCb periodicCb;
+static void*        periodicRef;
+static UInt32       periodicInterval;
+static BoardTimer*  periodicTimer;
+
+static void boardPeriodicCallback(void* ref, UInt32 time)
+{
+    if (periodicCb != NULL) {
+        periodicCb(periodicRef, time);
+        boardTimerAdd(periodicTimer, time + periodicInterval);
+    }
+}
+
+//------------------------------------------------------
+// Board supports one external periodic timer (can be
+// used to sync external components with the emulation)
+// The callback needs to be added before the emulation
+// starts in order to be called.
+//------------------------------------------------------
+void boardSetPeriodicCallback(BoardTimerCb cb, void* ref, UInt32 freq)
+{
+    periodicCb       = cb;
+    periodicRef      = ref;
+    if (periodicCb != NULL && freq > 0) {
+        periodicInterval = boardFrequency() / freq;
+    }
+}
 
 //------------------------------------------------------
 // Capture stuff
@@ -478,7 +506,17 @@ int boardRun(Machine* machine,
         
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
 
+        if (boardPeriodicCallback != NULL) {
+            periodicTimer = boardTimerCreate(boardPeriodicCallback, periodicRef);
+            boardTimerAdd(periodicTimer, boardSystemTime() + periodicInterval);
+        }
+
         boardInfo.run(boardInfo.cpuRef);
+
+        if (periodicTimer != NULL) {
+            boardTimerRemove(periodicTimer);
+            periodicTimer = NULL;
+        }
 
         boardCaptureDestroy();
 

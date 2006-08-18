@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-08-16 21:12:39 $
+** $Date: 2006-08-18 05:35:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,11 +107,12 @@ enum {
 };
 
 enum { 
+    P_EMU_SYNCIGNORE = -1, 
     P_EMU_SYNCNONE = 0, 
     P_EMU_SYNCAUTO, 
     P_EMU_SYNCFRAMES, 
     P_EMU_SYNCTOVBLANK, 
-    P_EMU_SYNCTOVBLANKASYNC 
+    P_EMU_SYNCTOVBLANKASYNC,
 };
 
 enum { 

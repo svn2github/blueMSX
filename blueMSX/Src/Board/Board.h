@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-18 05:34:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,6 +190,8 @@ void boardSetMoonsoundEnable(int value);
 int  boardGetMoonsoundEnable();
 void boardSetVideoAutodetect(int value);
 int  boardGetVideoAutodetect();
+
+void boardSetPeriodicCallback(BoardTimerCb cb, void* reference, UInt32 frequency);
 
 #endif /* BOARD_H */
 

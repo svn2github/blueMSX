@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.152 $
+** $Revision: 1.153 $
 **
-** $Date: 2006-08-16 21:12:39 $
+** $Date: 2006-08-18 05:35:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,7 @@
 #include "Win32keyboard.h"
 #include "Win32Printer.h"
 #include "Win32directx.h"
+#include "Win32Avi.h"
 #include "FileHistory.h"
 #include "Win32Dir.h"
 #include "Win32Help.h"
@@ -897,6 +898,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->videoCapPlay))                 actionVideoCapturePlay();
     if (hotkeyEq(key, s->videoCapRec))                  actionVideoCaptureRec();
     if (hotkeyEq(key, s->videoCapStop))                 actionVideoCaptureStop();
+    if (hotkeyEq(key, s->videoCapSave))                 actionVideoCaptureSave();
     if (hotkeyEq(key, s->screenCapture))                actionScreenCapture();
     if (hotkeyEq(key, s->screenCaptureUnfilteredSmall)) actionScreenCaptureUnfilteredSmall();
     if (hotkeyEq(key, s->screenCaptureUnfilteredLarge)) actionScreenCaptureUnfilteredLarge();
@@ -3056,12 +3058,12 @@ static void replaceCharInString(char* str, char oldChar, char newChar)
     }
 }
 
-static char* archFileSave(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension)
+char* archFileSave(char* title, char* extensionList, char* defaultDir, char* extensions, int* selectedExtension, char* defExt)
 {
     char* fileName;
 
     enterDialogShow();
-    fileName = saveFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir);
+    fileName = saveFile(getMainHwnd(), title, extensionList, selectedExtension, defaultDir, defExt);
     exitDialogShow();
     SetCurrentDirectory(st.pCurDir);
 
@@ -3263,7 +3265,7 @@ char* archFilenameGetSaveCas(Properties* properties, int* type)
     sprintf(extensionList, "%s - fMSX-DOS     (*.cas)#*.cas#%s - fMSX98/AT   (*.cas)#*.cas#%s - SVI-328         (*.cas)#*.cas#", langFileCas(), langFileCas(), langFileCas());
     replaceCharInString(extensionList, '#', 0);
 
-    return archFileSave(title, extensionList, defaultDir, extensions, selectedExtension);
+    return archFileSave(title, extensionList, defaultDir, extensions, selectedExtension, ".cas");
 }
 
 char* archFilenameGetSaveState(Properties* properties)
@@ -3481,7 +3483,8 @@ int archGetFramesPerSecond() {
 }
 
 void archEmulationStartFailure() {
-     MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
+    aviStopRender();
+    MessageBox(NULL, langErrorStartEmu(), langErrorTitle(), MB_ICONHAND | MB_OK);
 }
 
 int archFileExists(const char* fileName)
@@ -3532,6 +3535,11 @@ void archWindowMove() {
 
 void archWindowEndMove() {
     st.currentHwndRect.right = 0;
+}
+
+void archVideoCaptureSave()
+{
+    aviStartRender(getMainHwnd(), propGetGlobalProperties(), st.pVideo);
 }
 
 void SetCurrentWindow(HWND hwnd) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-08-16 21:12:39 $
+** $Date: 2006-08-18 05:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,13 +68,14 @@
 #define ID_FILE_VIDEOCAPPLAY            40021
 #define ID_FILE_VIDEOCAPREC             40022
 #define ID_FILE_VIDEOCAPSTOP            40023
+#define ID_FILE_VIDEOCAPSAVE            40024
 
-#define ID_RUN_RUN                      40024
-#define ID_RUN_PAUSE                    40025
-#define ID_RUN_STOP                     40026
-#define ID_RUN_RESET                    40027
-#define ID_RUN_SOFTRESET                40028
-#define ID_RUN_CLEANRESET               40029
+#define ID_RUN_RUN                      40025
+#define ID_RUN_PAUSE                    40026
+#define ID_RUN_STOP                     40027
+#define ID_RUN_RESET                    40028
+#define ID_RUN_SOFTRESET                40029
+#define ID_RUN_CLEANRESET               40030
 
 #define ID_VIDEO_AUTODETECT             40031
 #define ID_SIZE_NORMAL                  40032
@@ -471,6 +472,11 @@ static HMENU menuCreateVideoCapture(Properties* pProperties, Shortcuts* shortcut
     sprintf(langBuffer, "%s      \t%hs", "Stop", shortcutsToString(shortcuts->videoCapStop));
     AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPSTOP, langBuffer);
 
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+    sprintf(langBuffer, "%s      \t%hs", "Render Video File", shortcutsToString(shortcuts->videoCapSave));
+    AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPSAVE, langBuffer);
+    
     return hMenu;
 }
 
@@ -1431,6 +1437,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_FILE_VIDEOCAPPLAY:              actionVideoCapturePlay();       return 0;
     case ID_FILE_VIDEOCAPREC:               actionVideoCaptureRec();        return 0;
     case ID_FILE_VIDEOCAPSTOP:              actionVideoCaptureStop();       return 0;
+    case ID_FILE_VIDEOCAPSAVE:              actionVideoCaptureSave();       return 0;
     case ID_FILE_EXIT:                      actionQuit();                   return 0;
     case ID_SIZE_NORMAL:                    actionWindowSizeSmall();        return 0;
     case ID_SIZE_X2:                        actionWindowSizeNormal();       return 0;

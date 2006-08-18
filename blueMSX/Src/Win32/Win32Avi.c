@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-17 19:43:17 $
+** $Date: 2006-08-18 05:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,8 +29,11 @@
 */
 #include "Win32Avi.h"
 #include <Vfw.h>
-#include "VideoRender.h"
-#include "Properties.h"
+#include "Actions.h"
+#include "Board.h"
+#include "Win32Sound.h"
+#include "ArchFile.h"
+#include "Emulator.h"
 
 static PAVIFILE     aviFile;
 static PAVISTREAM   aviStream;
@@ -39,8 +42,13 @@ static PAVISTREAM   aviVidStream;
 static int          frameCount;
 static int          sampleCount;
 static int          aviStatusOk;
+static HWND         hwnd;
 static Properties*  properties;
 static Video*       video;
+static int          syncMethod;
+static int          emuSpeed;
+static int          rendering;
+
 
 int aviOpen(HWND hwndOwner, char* filename, int fps)
 {
@@ -98,7 +106,7 @@ int aviOpen(HWND hwndOwner, char* filename, int fps)
     wfex.wFormatTag      = WAVE_FORMAT_PCM;
     wfex.nChannels       = 2;
     wfex.nSamplesPerSec  = 44100;
-    wfex.wBitsPerSample  = 8 * sizeof(UInt16);
+    wfex.wBitsPerSample  = 8 * sizeof(Int16);
     wfex.nBlockAlign     = wfex.nChannels * wfex.wBitsPerSample / 8;
     wfex.nAvgBytesPerSec = wfex.nSamplesPerSec * wfex.nBlockAlign;
     
@@ -106,7 +114,7 @@ int aviOpen(HWND hwndOwner, char* filename, int fps)
     soundHdr.fccType         = streamtypeAUDIO;
     soundHdr.dwQuality       = (DWORD)-1;
     soundHdr.dwScale         = wfex.nBlockAlign;
-    soundHdr.dwInitialFrames = 1;
+    soundHdr.dwInitialFrames = 0;
     soundHdr.dwRate          = wfex.nAvgBytesPerSec;
     soundHdr.dwSampleSize    = wfex.nBlockAlign;
 
@@ -167,6 +175,7 @@ void aviAddFrame(void* buffer, int length)
         return;
     }
 
+    printf("%d\n", frameCount);
     if (AVIStreamWrite(aviVidStream, frameCount++, 1, buffer, length, AVIIF_KEYFRAME, NULL, NULL) != 0) {
         aviStatusOk = 0;
     }
@@ -196,7 +205,7 @@ AviSound* aviSoundCreate(HWND hwnd, Mixer* mixer, UInt32 sampleRate, UInt32 buff
 
     // Force stereo
     mixerSetStereo(mixer, 1);
-    mixerSetWriteCallback(mixer, aviSoundWrite, NULL, 256);
+    mixerSetWriteCallback(mixer, aviSoundWrite, NULL, 128);
 
     return aviSound;
 }
@@ -215,19 +224,20 @@ void aviSoundResume(AviSound* aviSound)
 {
 }
 
-int updateEmuDisplay(int updateAll) 
+static char displayData[4 * 640 * 480];
+
+void aviVideoCallback(void* dummy, UInt32 time) 
 {
     FrameBuffer* frameBuffer;
     int bitDepth = 32;
     int bytesPerPixel = bitDepth / 8;
-    char displayData[4 * 640 * 480];
     char* dpyData = displayData;
     int width  = 640;
     int height = 480;
     int borderWidth;
     int displayPitch = width * bitDepth / 8;
 
-    frameBuffer = frameBufferFlipViewFrame(0); // Mix frames?
+    frameBuffer = frameBufferFlipViewFrame(1);
     if (frameBuffer == NULL) {
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
@@ -235,7 +245,7 @@ int updateEmuDisplay(int updateAll)
     borderWidth = (320 - frameBuffer->maxWidth);
 
     videoRender(video, frameBuffer, bitDepth, 2, 
-                dpyData + borderWidth * bytesPerPixel, 0, displayPitch, -1);
+                dpyData + (height - 1) * displayPitch + borderWidth * bytesPerPixel, 0, -1 * displayPitch, -1);
 
     if (borderWidth > 0) {
         int h = height;
@@ -246,6 +256,106 @@ int updateEmuDisplay(int updateAll)
         }
     }
 
+    aviAddFrame(displayData, width * height * 4);
+}
 
-    return 0; 
+
+static void replaceCharInString(char* str, char oldChar, char newChar) 
+{
+    while (*str) {
+        if (*str == oldChar) {
+            *str = newChar;
+        }
+        str++;
+    }
+}
+
+char* aviGetFilename(Properties* properties)
+{
+    char* title = "Save Videoclip As..."; // FIXME: Language
+    char  extensionList[512];
+    char defaultDir[512] = "";
+    char* extensions = ".avi\0";
+    int selectedExtension = 0;
+
+    sprintf(extensionList, "%s         (*.avi)#*.avi#", "Video Clip"); // FIXME: Language
+    replaceCharInString(extensionList, '#', 0);
+
+    return archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");
+}
+
+
+
+void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
+{
+    char* filename;
+
+    hwnd       = hwndOwner;
+    properties = prop;
+    video      = vid;
+    syncMethod = properties->emulation.syncMethod;
+    emuSpeed   = emulatorGetMaxSpeed();
+
+    actionEmuStop();
+
+    filename = aviGetFilename(properties);
+    if (filename == NULL) {
+        return;
+    }
+
+    boardSetPeriodicCallback(aviVideoCallback, NULL, 60);
+    properties->emulation.syncMethod = P_EMU_SYNCIGNORE;
+    emulatorSetMaxSpeed(1);
+    frameBufferSetFrameCount(4);
+
+    soundDriverConfig(hwnd, SOUND_DRV_AVI);
+    emulatorRestartSound();
+
+    aviOpen(hwnd, filename, 60);
+
+    actionVideoCapturePlay();
+
+    rendering = 1;
+
+    Sleep(1000);
+
+    while (rendering && boardCaptureIsPlaying()) {
+        Sleep(100);
+    }
+    actionEmuStop();
+    aviStopRender();
+}
+
+void aviStopRender()
+{
+    if (!rendering) {
+        return;
+    }
+    rendering = 0;
+
+    aviClose();
+
+    // Restore sound driver
+    soundDriverConfig(hwnd, properties->sound.driver);
+    emulatorRestartSound();
+
+    // Restore sync method
+    properties->emulation.syncMethod = syncMethod;
+    switch(properties->emulation.syncMethod) {
+    case P_EMU_SYNCNONE:
+        frameBufferSetFrameCount(1);
+        break;
+    case P_EMU_SYNCTOVBLANK:
+    case P_EMU_SYNCTOVBLANKASYNC:
+        frameBufferSetFrameCount(4);
+        break;
+    default:
+        frameBufferSetFrameCount(3);
+    }
+
+    // Restore emu speed
+    emulatorSetMaxSpeed(emuSpeed);
+
+    // Remove board timer
+    boardSetPeriodicCallback(NULL, NULL, 0);
 }

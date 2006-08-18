@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-08-16 21:12:40 $
+** $Date: 2006-08-18 05:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ typedef struct {
     ShotcutHotkey videoCapPlay;
     ShotcutHotkey videoCapRec;
     ShotcutHotkey videoCapStop;
+    ShotcutHotkey videoCapSave;
     ShotcutHotkey screenCapture;
     ShotcutHotkey screenCaptureUnfilteredSmall;
     ShotcutHotkey screenCaptureUnfilteredLarge;

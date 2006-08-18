@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-08-16 21:12:40 $
+** $Date: 2006-08-18 05:35:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -724,6 +724,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(videoCapPlay);
     LOAD_SHORTCUT(videoCapRec);
     LOAD_SHORTCUT(videoCapStop);
+    LOAD_SHORTCUT(videoCapSave);
     LOAD_SHORTCUT(screenCapture);
     LOAD_SHORTCUT(screenCaptureUnfilteredSmall);
     LOAD_SHORTCUT(screenCaptureUnfilteredLarge);
@@ -815,6 +816,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(videoCapPlay);
     SAVE_SHORTCUT(videoCapRec);
     SAVE_SHORTCUT(videoCapStop);
+    SAVE_SHORTCUT(videoCapSave);
     SAVE_SHORTCUT(screenCapture);
     SAVE_SHORTCUT(screenCaptureUnfilteredSmall);
     SAVE_SHORTCUT(screenCaptureUnfilteredLarge);
@@ -975,6 +977,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(videoCapPlay, "Play Last");    // FIXME: Lanugage
     ADD_SHORTCUT(videoCapRec,  "Record");       // FIXME: Lanugage
     ADD_SHORTCUT(videoCapStop, "Stop");         // FIXME: Lanugage
+    ADD_SHORTCUT(videoCapSave, "Render Video File");         // FIXME: Lanugage
     
     ADD_SHORTCUTSEPARATOR();
 
