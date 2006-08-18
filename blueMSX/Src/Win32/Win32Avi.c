@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-18 05:35:02 $
+** $Date: 2006-08-18 07:16:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "Win32Sound.h"
 #include "ArchFile.h"
 #include "Emulator.h"
+#include "Resource.h"
 
 static PAVIFILE     aviFile;
 static PAVISTREAM   aviStream;
@@ -175,7 +176,6 @@ void aviAddFrame(void* buffer, int length)
         return;
     }
 
-    printf("%d\n", frameCount);
     if (AVIStreamWrite(aviVidStream, frameCount++, 1, buffer, length, AVIIF_KEYFRAME, NULL, NULL) != 0) {
         aviStatusOk = 0;
     }
@@ -284,6 +284,50 @@ char* aviGetFilename(Properties* properties)
     return archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");
 }
 
+static char* progressText()
+{
+    static char text[128];
+    int amount = boardCaptureCompleteAmount();
+
+    sprintf(text, "%s: %d.%d%%", "Amount Completed:", amount / 10, amount % 10); // FIXME: Language
+
+    return text;
+}
+
+static BOOL CALLBACK statusDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    switch (iMsg) {
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDCANCEL) {
+            EndDialog(hDlg, TRUE);
+            return TRUE;
+        }
+        break;
+
+    case WM_CLOSE:
+        return TRUE;
+
+    case WM_TIMER:
+        SendDlgItemMessage(hDlg, IDC_VIDEOPROGRESSTEXT, WM_SETTEXT, 0, (LPARAM)progressText());
+        if (!boardCaptureIsPlaying()) {
+            EndDialog(hDlg, TRUE);
+        }
+        return FALSE;
+
+    case WM_DESTROY:
+        KillTimer(hwnd, 2);
+        return 0;
+
+    case WM_INITDIALOG:
+        SetWindowText(hDlg, "blueMSX - Rendering Video Capture..."); // FIXME: Language
+        SendDlgItemMessage(hDlg, IDC_VIDEOPROGRESSTEXT, WM_SETTEXT, 0, (LPARAM)progressText());
+        SetTimer(hDlg, 2, 250, NULL);
+        return FALSE;
+    }
+
+    return FALSE;
+}
+
 
 
 void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
@@ -317,11 +361,8 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
 
     rendering = 1;
 
-    Sleep(1000);
+    DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RENDERVIDEO), hwnd, statusDlgProc);
 
-    while (rendering && boardCaptureIsPlaying()) {
-        Sleep(100);
-    }
     actionEmuStop();
     aviStopRender();
 }

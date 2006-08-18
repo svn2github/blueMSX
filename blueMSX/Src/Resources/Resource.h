@@ -102,6 +102,8 @@
 #define IDD_BUTTON                      130
 #define IDD_DROPDOWN                    131
 
+#define IDD_RENDERVIDEO                 132
+
 #define IDC_JOY1                        1000
 #define IDC_JOY2                        1001
 #define IDC_CHARSET                     1002
@@ -288,6 +290,8 @@
 #define IDC_DSKLIST                     1200
 #define IDC_DSKRESET                    1201
 #define IDC_DSKLOADTXT                  1202
+
+#define IDC_VIDEOPROGRESSTEXT           1210
 
 #define IDC_LANGLIST                    1250
 #define IDC_LANGTXT                     1251

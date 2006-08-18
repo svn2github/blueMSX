@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-18 05:35:02 $
+** $Date: 2006-08-18 07:16:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -475,7 +475,7 @@ static HMENU menuCreateVideoCapture(Properties* pProperties, Shortcuts* shortcut
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     sprintf(langBuffer, "%s      \t%hs", "Render Video File", shortcutsToString(shortcuts->videoCapSave));
-    AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPSAVE, langBuffer);
+    AppendMenu(hMenu, MF_STRING | (boardCaptureHasData() ? 0 : MF_GRAYED), ID_FILE_VIDEOCAPSAVE, langBuffer);
     
     return hMenu;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-08-18 05:35:00 $
+** $Date: 2006-08-18 07:16:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -317,7 +317,9 @@ void actionVideoCapturePlay() {
 }
 
 void actionVideoCaptureSave() {
-    archVideoCaptureSave();
+    if (boardCaptureHasData()) {
+        archVideoCaptureSave();
+    }
 }
 
 void actionVideoCaptureStop() {

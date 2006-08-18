@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-08-18 05:34:59 $
+** $Date: 2006-08-18 07:16:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,6 +94,11 @@ static void*        periodicRef;
 static UInt32       periodicInterval;
 static BoardTimer*  periodicTimer;
 
+
+#define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
+#define boardFrequency64() (HIRES_CYCLES_PER_LORES_CYCLE * boardFrequency())
+
+
 static void boardPeriodicCallback(void* ref, UInt32 time)
 {
     if (periodicCb != NULL) {
@@ -134,13 +139,19 @@ typedef struct Capture {
     UInt8  initState[0x100000];
     int    initStateSize;
     UInt32 endTime;
+    UInt64 endTime64;
+    UInt64 startTime64;
     CaptureState state;
-    UInt8  inputs[0x80000];
+    UInt8  inputs[0x100000];
     int    inputCnt;
     char   filename[512];
 } Capture;
 
 static Capture cap;
+
+int boardCaptureHasData() {
+    return cap.endTime != 0 || cap.endTime64 != 0 || boardCaptureIsRecording();
+}
 
 int boardCaptureIsRecording() {
     return cap.state == CAPTURE_REC;
@@ -150,13 +161,35 @@ int  boardCaptureIsPlaying() {
     return cap.state == CAPTURE_PLAY;
 }
 
+int boardCaptureCompleteAmount() {
+    UInt64 length = (cap.endTime64 - cap.startTime64) / 1000;
+    UInt64 current = (boardSysTime64 - cap.startTime64) / 1000;
+    if (length == 0) {
+        return 1000;
+    }
+    return (int)(1000 * current / length);
+}
+
 extern void actionEmuTogglePause();
 
 static void boardTimerCb(void* dummy, UInt32 time)
 {
     if (cap.state == CAPTURE_PLAY) {
-        actionEmuTogglePause();
-        cap.state = CAPTURE_IDLE;
+        // If we reached the end time +/- 2 seconds we know we should stop
+        // the capture. If not, we restart the timer 1/4 of max time into
+        // the future. (Enventually we'll hit the real end time
+        // This is an ugly workaround for the internal timers short timespan
+        // (~3 minutes). Using the 64 bit timer we can extend the capture to
+        // 90 days.
+        // Will work correct with 'real' 64 bit timers
+        UInt32 delta = (UInt32)((boardSystemTime64() - cap.endTime64) / boardFrequency64()) / 4;
+        if (delta == 0) {
+            actionEmuTogglePause();
+            cap.state = CAPTURE_IDLE;
+        }
+        else {
+            boardTimerAdd(cap.timer, time + 0x40000000);
+        }
     }
     
     if (cap.state == CAPTURE_REC) {
@@ -187,7 +220,6 @@ void boardCaptureDestroy()
 void boardCaptureStart(const char* filename) {
     FILE* f;
 
-    printf("START\n");
     if (cap.state == CAPTURE_REC) {
         return;
     }
@@ -219,11 +251,11 @@ void boardCaptureStart(const char* filename) {
     if (cap.initStateSize > 0) {
         cap.state = CAPTURE_REC;
     }
+
+    cap.startTime64 = boardSystemTime64();
 }
 
 void boardCaptureStop() {
-    printf("STOP\n");
-    
     boardTimerRemove(cap.timer);
 
     if (cap.state == CAPTURE_REC) {
@@ -231,6 +263,7 @@ void boardCaptureStop() {
         FILE* f;
 
         cap.endTime = boardSystemTime();
+        cap.endTime64 = boardSystemTime64();
         cap.state = CAPTURE_PLAY;
 
         f = fopen(cap.filename, "wb");
@@ -245,6 +278,8 @@ void boardCaptureStop() {
 
         saveStateSet(state, "state", cap.state);
         saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "endTime64Hi", (UInt32)(cap.endTime64 >> 32));
+        saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
         saveStateSet(state, "inputCnt", cap.inputCnt);
         if (cap.inputCnt > 0) {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
@@ -259,14 +294,12 @@ void boardCaptureStop() {
 
 UInt8 boardCaptureUInt8(UInt8 value) {
     if (cap.state == CAPTURE_REC) {
-//        printf("@ %.8x: L[ %.4d] = %.2x\n", boardSystemTime(), cap.inputCnt, value);
         cap.inputs[cap.inputCnt++] = value;
         if (cap.inputCnt == sizeof(cap.inputs)) {
             cap.inputCnt = 0;
         }
     }
     if (cap.state == CAPTURE_PLAY) {
-//        printf("@ %.8x: L[ %.4d] = %.2x\n", boardSystemTime(), cap.inputCnt, cap.inputs[cap.inputCnt]);
         value = cap.inputs[cap.inputCnt++];
         if (cap.inputCnt == sizeof(cap.inputs)) {
             cap.inputCnt = 0;
@@ -301,6 +334,8 @@ static void boardCaptureLoadState()
 
     cap.state = saveStateGet(state, "state", CAPTURE_IDLE);
     cap.endTime = saveStateGet(state, "endTime", 0);
+    cap.endTime64 = (UInt64)saveStateGet(state, "endTime64Hi", 0) << 32 |
+                    (UInt64)saveStateGet(state, "endTime64Lo", 0);
     cap.inputCnt = saveStateGet(state, "inputCnt", 0);
     if (cap.inputCnt > 0) {
         saveStateGetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
@@ -314,7 +349,7 @@ static void boardCaptureLoadState()
 
     if (cap.state == CAPTURE_PLAY) {
         cap.inputCnt = 0;
-        boardTimerAdd(cap.timer, cap.endTime);
+        boardTimerAdd(cap.timer, ((cap.endTime & 0x3fffffff) | (boardSystemTime() & 0xc0000000)) + 0x40000000);
     }
 }
 
@@ -367,6 +402,8 @@ static void doSync(UInt32 time, int breakpointHit)
     }
 
     mixerSync(boardMixer);
+
+    boardSystemTime64();
 
     if (execTime == 0) {
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
@@ -905,9 +942,6 @@ int boardGetCassetteInserted()
 {
     return tapeIsInserted();
 }
-
-#define HIRES_CYCLES_PER_LORES_CYCLE (UInt64)100000
-#define boardFrequency64() (HIRES_CYCLES_PER_LORES_CYCLE * boardFrequency())
 
 UInt32 boardCalcRelativeTimeout(UInt32 timerFrequency, UInt32 nextTimeout)
 {

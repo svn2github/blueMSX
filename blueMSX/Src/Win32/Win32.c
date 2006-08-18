@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.153 $
+** $Revision: 1.154 $
 **
-** $Date: 2006-08-18 05:35:01 $
+** $Date: 2006-08-18 07:16:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1036,6 +1036,8 @@ typedef struct {
     int    diplayUpdated;
     int    diplaySync;
     int    diplayUpdateOnVblank;
+
+    int renderVideo;
 
     HBITMAP hBitmap;
     ThemePage* themePageActive;
@@ -3412,6 +3414,9 @@ char* archFilenameGetOpenRomZip(Properties* properties, int cartSlot, const char
 
 
 void archEmulationStartNotification() {
+    if (st.renderVideo) {
+        return;
+    }
     ShowWindow(st.emuHwnd, SW_NORMAL);
 
     if (kbdLockEnable != NULL && pProperties->emulation.disableWinKeys) {
@@ -3421,6 +3426,10 @@ void archEmulationStartNotification() {
 
 void archEmulationStopNotification()
 {
+    if (st.renderVideo) {
+        return;
+    }
+
     DirectXSetGDISurface();
     ShowWindow(st.emuHwnd, SW_HIDE);
 
@@ -3539,7 +3548,11 @@ void archWindowEndMove() {
 
 void archVideoCaptureSave()
 {
+    actionEmuStop();
+
+    st.renderVideo = 1;
     aviStartRender(getMainHwnd(), propGetGlobalProperties(), st.pVideo);
+    st.renderVideo = 0;
 }
 
 void SetCurrentWindow(HWND hwnd) {
