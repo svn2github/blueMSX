@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-08-16 01:25:53 $
+** $Date: 2006-08-19 22:59:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,11 +46,35 @@
 
 static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
 
-static UInt16* linePtr = NULL;
+static UInt16* linePtr0 = NULL;
+static UInt16* linePtr0p = NULL;
+static UInt16* linePtr0w = NULL;
+static UInt16* linePtr1 = NULL;
+static UInt16* linePtr2 = NULL;
+static UInt16* linePtr3 = NULL;
+static UInt16* linePtr4 = NULL;
+static UInt16* linePtr5 = NULL;
+static UInt16* linePtr6 = NULL;
+static UInt16* linePtr7 = NULL;
+static UInt16* linePtr8 = NULL;
+static UInt16* linePtr10 = NULL;
+static UInt16* linePtr12 = NULL;
 
 void RefreshLineReset()
 {
-    linePtr = NULL;
+    linePtr0 = NULL;
+    linePtr0p = NULL;
+    linePtr0w = NULL;
+    linePtr1 = NULL;
+    linePtr2 = NULL;
+    linePtr3 = NULL;
+    linePtr4 = NULL;
+    linePtr5 = NULL;
+    linePtr6 = NULL;
+    linePtr7 = NULL;
+    linePtr8 = NULL;
+    linePtr10 = NULL;
+    linePtr12 = NULL;
 }
 
 UInt16 *RefreshBorder(VDP* vdp, int Y, UInt16 bgColor, int line512, int borderExtra)
@@ -169,8 +193,8 @@ static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor
 #if 0
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
-    static UInt8*  sprLine = nullSpritesLine();
+    static int     border;
+    static UInt8*  sprLine;
     static UInt8*  charTable;
     static int     patternBase;
     UInt16 color[2];
@@ -179,7 +203,7 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
+        linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
         border = !vdp->screenOn || !vdp->drawArea;
 
         if (!border) {
@@ -187,7 +211,7 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr0 == NULL) {
         return;
     }
 
@@ -204,13 +228,13 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr += 6; 
+            linePtr0[0] = bgColor;
+            linePtr0[1] = bgColor;
+            linePtr0[2] = bgColor;
+            linePtr0[3] = bgColor;
+            linePtr0[4] = bgColor;
+            linePtr0[5] = bgColor;
+            linePtr0 += 6; 
             X++;
         }
     }
@@ -224,14 +248,14 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         while (X < X2) {
             int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
 
-            linePtr[0] = color[(pattern >> 7) & 1];
-            linePtr[1] = color[(pattern >> 6) & 1];
-            linePtr[2] = color[(pattern >> 5) & 1];
-            linePtr[3] = color[(pattern >> 4) & 1];
-            linePtr[4] = color[(pattern >> 3) & 1];
-            linePtr[5] = color[(pattern >> 2) & 1];
+            linePtr0[0] = color[(pattern >> 7) & 1];
+            linePtr0[1] = color[(pattern >> 6) & 1];
+            linePtr0[2] = color[(pattern >> 5) & 1];
+            linePtr0[3] = color[(pattern >> 4) & 1];
+            linePtr0[4] = color[(pattern >> 3) & 1];
+            linePtr0[5] = color[(pattern >> 2) & 1];
             charTable++;
-            linePtr += 6;
+            linePtr0 += 6;
             X++;
         }
     }
@@ -255,22 +279,22 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
+    linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
 
-    if (linePtr == NULL) {
+    if (linePtr0 == NULL) {
         return;
     }
 
     if (!vdp->screenOn || !vdp->drawArea) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         for (X = 0; X < 40; X++) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr += 6; 
+            linePtr0[0] = bgColor;
+            linePtr0[1] = bgColor;
+            linePtr0[2] = bgColor;
+            linePtr0[3] = bgColor;
+            linePtr0[4] = bgColor;
+            linePtr0[5] = bgColor;
+            linePtr0 += 6; 
         }
     }
     else {
@@ -283,14 +307,14 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
         for (X = 0; X < 40; X++) {
             int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
-            linePtr[0] = color[(pattern >> 7) & 1];
-            linePtr[1] = color[(pattern >> 6) & 1];
-            linePtr[2] = color[(pattern >> 5) & 1];
-            linePtr[3] = color[(pattern >> 4) & 1];
-            linePtr[4] = color[(pattern >> 3) & 1];
-            linePtr[5] = color[(pattern >> 2) & 1];
+            linePtr0[0] = color[(pattern >> 7) & 1];
+            linePtr0[1] = color[(pattern >> 6) & 1];
+            linePtr0[2] = color[(pattern >> 5) & 1];
+            linePtr0[3] = color[(pattern >> 4) & 1];
+            linePtr0[4] = color[(pattern >> 3) & 1];
+            linePtr0[5] = color[(pattern >> 2) & 1];
             charTable++;
-            linePtr += 6;
+            linePtr0 += 6;
         }
     }
 }
@@ -310,22 +334,22 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
+    linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
 
-    if (linePtr == NULL) {
+    if (linePtr0p == NULL) {
         return;
     }
 
     if (!vdp->screenOn || !vdp->drawArea) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         for (X = 0; X < 40; X++) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr += 6; 
+            linePtr0p[0] = bgColor;
+            linePtr0p[1] = bgColor;
+            linePtr0p[2] = bgColor;
+            linePtr0p[3] = bgColor;
+            linePtr0p[4] = bgColor;
+            linePtr0p[5] = bgColor;
+            linePtr0p += 6; 
         }
     }
     else {
@@ -338,14 +362,14 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 
         for (X = 0; X < 40; X++) {
             int pattern = vdp->vram[vdp->chrGenBase & (patternBase | ((int)*charTable * 8))];
-            linePtr[0] = color[(pattern >> 7) & 1];
-            linePtr[1] = color[(pattern >> 6) & 1];
-            linePtr[2] = color[(pattern >> 5) & 1];
-            linePtr[3] = color[(pattern >> 4) & 1];
-            linePtr[4] = color[(pattern >> 3) & 1];
-            linePtr[5] = color[(pattern >> 2) & 1];
+            linePtr0p[0] = color[(pattern >> 7) & 1];
+            linePtr0p[1] = color[(pattern >> 6) & 1];
+            linePtr0p[2] = color[(pattern >> 5) & 1];
+            linePtr0p[3] = color[(pattern >> 4) & 1];
+            linePtr0p[4] = color[(pattern >> 3) & 1];
+            linePtr0p[5] = color[(pattern >> 2) & 1];
             charTable++;
-            linePtr += 6;
+            linePtr0p += 6;
         }
     }
 }
@@ -367,22 +391,22 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
-    linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 9);
+    linePtr0w = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 9);
     
-    if (linePtr == NULL) {
+    if (linePtr0w == NULL) {
         return;
     }
 
     if (!vdp->screenOn || !vdp->drawArea) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         for (X = 0; X < 80; X++) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr += 6; 
+            linePtr0w[0] = bgColor;
+            linePtr0w[1] = bgColor;
+            linePtr0w[2] = bgColor;
+            linePtr0w[3] = bgColor;
+            linePtr0w[4] = bgColor;
+            linePtr0w[5] = bgColor;
+            linePtr0w += 6; 
         }
     }
     else {
@@ -406,22 +430,22 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
             color = colors + ((colPattern >> 6) & 2);
             colPattern <<= 1;
 
-            linePtr[0] = color[(charPattern >> 7) & 1];
-            linePtr[1] = color[(charPattern >> 6) & 1];
-            linePtr[2] = color[(charPattern >> 5) & 1];
-            linePtr[3] = color[(charPattern >> 4) & 1];
-            linePtr[4] = color[(charPattern >> 3) & 1];
-            linePtr[5] = color[(charPattern >> 2) & 1];
+            linePtr0w[0] = color[(charPattern >> 7) & 1];
+            linePtr0w[1] = color[(charPattern >> 6) & 1];
+            linePtr0w[2] = color[(charPattern >> 5) & 1];
+            linePtr0w[3] = color[(charPattern >> 4) & 1];
+            linePtr0w[4] = color[(charPattern >> 3) & 1];
+            linePtr0w[5] = color[(charPattern >> 2) & 1];
             charTable++;
-            linePtr += 6;
+            linePtr0w += 6;
         }
     }
 }
 
 static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
-    static UInt8*  sprLine = nullSpritesLine();
+    static int     border;
+    static UInt8*  sprLine;
     static UInt8*  charTable;
     static int     patternBase;
     UInt8  charPattern;
@@ -433,7 +457,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        linePtr1 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
 
@@ -444,7 +468,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr1 == NULL) {
         return;
     }
 
@@ -456,15 +480,15 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr1[0] = bgColor;
+            linePtr1[1] = bgColor;
+            linePtr1[2] = bgColor;
+            linePtr1[3] = bgColor;
+            linePtr1[4] = bgColor;
+            linePtr1[5] = bgColor;
+            linePtr1[6] = bgColor;
+            linePtr1[7] = bgColor;
+            linePtr1 += 8; 
             X++;
         }
     }
@@ -475,17 +499,17 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
             color[1] = vdp->palette[colPattern >> 4];
             charPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
 
-            col = sprLine[0]; linePtr[0] = col ? vdp->palette[col] : color[(charPattern >> 7) & 1]; 
-            col = sprLine[1]; linePtr[1] = col ? vdp->palette[col] : color[(charPattern >> 6) & 1];
-            col = sprLine[2]; linePtr[2] = col ? vdp->palette[col] : color[(charPattern >> 5) & 1]; 
-            col = sprLine[3]; linePtr[3] = col ? vdp->palette[col] : color[(charPattern >> 4) & 1];
-            col = sprLine[4]; linePtr[4] = col ? vdp->palette[col] : color[(charPattern >> 3) & 1]; 
-            col = sprLine[5]; linePtr[5] = col ? vdp->palette[col] : color[(charPattern >> 2) & 1];
-            col = sprLine[6]; linePtr[6] = col ? vdp->palette[col] : color[(charPattern >> 1) & 1]; 
-            col = sprLine[7]; linePtr[7] = col ? vdp->palette[col] : color[(charPattern >> 0) & 1];
+            col = sprLine[0]; linePtr1[0] = col ? vdp->palette[col] : color[(charPattern >> 7) & 1]; 
+            col = sprLine[1]; linePtr1[1] = col ? vdp->palette[col] : color[(charPattern >> 6) & 1];
+            col = sprLine[2]; linePtr1[2] = col ? vdp->palette[col] : color[(charPattern >> 5) & 1]; 
+            col = sprLine[3]; linePtr1[3] = col ? vdp->palette[col] : color[(charPattern >> 4) & 1];
+            col = sprLine[4]; linePtr1[4] = col ? vdp->palette[col] : color[(charPattern >> 3) & 1]; 
+            col = sprLine[5]; linePtr1[5] = col ? vdp->palette[col] : color[(charPattern >> 2) & 1];
+            col = sprLine[6]; linePtr1[6] = col ? vdp->palette[col] : color[(charPattern >> 1) & 1]; 
+            col = sprLine[7]; linePtr1[7] = col ? vdp->palette[col] : color[(charPattern >> 0) & 1];
             sprLine += 8;
             charTable++; 
-            linePtr += 8; 
+            linePtr1 += 8; 
             X++;
         }
     }
@@ -497,11 +521,11 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
-    static UInt8*  sprLine = nullSpritesLine();
-    static UInt8*  charTable = NULL;
-    static int     patternBase = 0;
-    static int     base = 0;
+    static int     border;
+    static UInt8*  sprLine;
+    static UInt8*  charTable;
+    static int     patternBase;
+    static int     base;
     UInt8  charPattern;
     UInt8  colPattern;
     UInt8  col;
@@ -512,7 +536,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
+        linePtr2 = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
         
@@ -523,7 +547,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr2 == NULL) {
         return;
     }
 
@@ -535,15 +559,15 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr2[0] = bgColor;
+            linePtr2[1] = bgColor;
+            linePtr2[2] = bgColor;
+            linePtr2[3] = bgColor;
+            linePtr2[4] = bgColor;
+            linePtr2[5] = bgColor;
+            linePtr2[6] = bgColor;
+            linePtr2[7] = bgColor;
+            linePtr2 += 8; 
             X++;
         }
     }
@@ -555,17 +579,17 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
             color[1]   = vdp->palette[colPattern >> 4];
             charPattern = vdp->vram[vdp->chrGenBase & index];
 
-            col = sprLine[0]; linePtr[0] = col ? vdp->palette[col] : color[(charPattern >> 7) & 1]; 
-            col = sprLine[1]; linePtr[1] = col ? vdp->palette[col] : color[(charPattern >> 6) & 1];
-            col = sprLine[2]; linePtr[2] = col ? vdp->palette[col] : color[(charPattern >> 5) & 1];
-            col = sprLine[3]; linePtr[3] = col ? vdp->palette[col] : color[(charPattern >> 4) & 1];
-            col = sprLine[4]; linePtr[4] = col ? vdp->palette[col] : color[(charPattern >> 3) & 1];
-            col = sprLine[5]; linePtr[5] = col ? vdp->palette[col] : color[(charPattern >> 2) & 1];
-            col = sprLine[6]; linePtr[6] = col ? vdp->palette[col] : color[(charPattern >> 1) & 1];
-            col = sprLine[7]; linePtr[7] = col ? vdp->palette[col] : color[(charPattern >> 0) & 1];
+            col = sprLine[0]; linePtr2[0] = col ? vdp->palette[col] : color[(charPattern >> 7) & 1]; 
+            col = sprLine[1]; linePtr2[1] = col ? vdp->palette[col] : color[(charPattern >> 6) & 1];
+            col = sprLine[2]; linePtr2[2] = col ? vdp->palette[col] : color[(charPattern >> 5) & 1];
+            col = sprLine[3]; linePtr2[3] = col ? vdp->palette[col] : color[(charPattern >> 4) & 1];
+            col = sprLine[4]; linePtr2[4] = col ? vdp->palette[col] : color[(charPattern >> 3) & 1];
+            col = sprLine[5]; linePtr2[5] = col ? vdp->palette[col] : color[(charPattern >> 2) & 1];
+            col = sprLine[6]; linePtr2[6] = col ? vdp->palette[col] : color[(charPattern >> 1) & 1];
+            col = sprLine[7]; linePtr2[7] = col ? vdp->palette[col] : color[(charPattern >> 0) & 1];
             sprLine += 8;
             charTable++;
-            linePtr += 8; 
+            linePtr2 += 8; 
             X++;
         }
     }
@@ -577,8 +601,8 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
-    static UInt8*  sprLine = nullSpritesLine();
+    static int     border;
+    static UInt8*  sprLine;
     static UInt8*  charTable;
     static int     patternBase;
     UInt8  colPattern;
@@ -590,7 +614,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        linePtr3 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = spritesLine(vdp, Y);
 
@@ -601,7 +625,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr3 == NULL) {
         return;
     }
 
@@ -614,15 +638,15 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr3[0] = bgColor;
+            linePtr3[1] = bgColor;
+            linePtr3[2] = bgColor;
+            linePtr3[3] = bgColor;
+            linePtr3[4] = bgColor;
+            linePtr3[5] = bgColor;
+            linePtr3[6] = bgColor;
+            linePtr3[7] = bgColor;
+            linePtr3 += 8; 
             X++;
         }
     }
@@ -632,17 +656,17 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
             fc = vdp->palette[colPattern >> 4];
             bc = vdp->palette[colPattern & 0x0f];
 
-            col = sprLine[0]; linePtr[0] = col ? vdp->palette[col] : fc; 
-            col = sprLine[1]; linePtr[1] = col ? vdp->palette[col] : fc;
-            col = sprLine[2]; linePtr[2] = col ? vdp->palette[col] : fc; 
-            col = sprLine[3]; linePtr[3] = col ? vdp->palette[col] : fc;
-            col = sprLine[4]; linePtr[4] = col ? vdp->palette[col] : bc; 
-            col = sprLine[5]; linePtr[5] = col ? vdp->palette[col] : bc;
-            col = sprLine[6]; linePtr[6] = col ? vdp->palette[col] : bc; 
-            col = sprLine[7]; linePtr[7] = col ? vdp->palette[col] : bc;
+            col = sprLine[0]; linePtr3[0] = col ? vdp->palette[col] : fc; 
+            col = sprLine[1]; linePtr3[1] = col ? vdp->palette[col] : fc;
+            col = sprLine[2]; linePtr3[2] = col ? vdp->palette[col] : fc; 
+            col = sprLine[3]; linePtr3[3] = col ? vdp->palette[col] : fc;
+            col = sprLine[4]; linePtr3[4] = col ? vdp->palette[col] : bc; 
+            col = sprLine[5]; linePtr3[5] = col ? vdp->palette[col] : bc;
+            col = sprLine[6]; linePtr3[6] = col ? vdp->palette[col] : bc; 
+            col = sprLine[7]; linePtr3[7] = col ? vdp->palette[col] : bc;
             sprLine += 8;
             charTable++; 
-            linePtr += 8; 
+            linePtr3 += 8; 
             X++;
         }
     }
@@ -654,10 +678,10 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
-    static UInt8*  sprLine = nullSpritesLine();
+    static int     border;
+    static UInt8*  sprLine;
     static UInt8*  charTable;
-    static int     base = 0;
+    static int     base;
     static int     hScroll;
     static int     hScroll512;
     static int*    jump;
@@ -674,11 +698,11 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         int y;
 
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        linePtr4 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y, 0);
 
-        if (linePtr == NULL) {
+        if (linePtr4 == NULL) {
             return;
         }
 
@@ -695,18 +719,18 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->palette[vdp->BGColor];
-                linePtr[0] = bgColor;
-                linePtr[1] = bgColor;
-                linePtr[2] = bgColor;
-                linePtr[3] = bgColor;
-                linePtr[4] = bgColor;
-                linePtr[5] = bgColor;
-                linePtr[6] = bgColor;
-                linePtr[7] = bgColor;
+                linePtr4[0] = bgColor;
+                linePtr4[1] = bgColor;
+                linePtr4[2] = bgColor;
+                linePtr4[3] = bgColor;
+                linePtr4[4] = bgColor;
+                linePtr4[5] = bgColor;
+                linePtr4[6] = bgColor;
+                linePtr4[7] = bgColor;
                 charTable++; 
                 X++;
                 sprLine += sprLine != NULL ? 8 : 0;
-                linePtr += 8;
+                linePtr4 += 8;
             }
 
             if (hScroll512) {
@@ -722,18 +746,18 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             charPattern = vdp->vram[vdp->chrGenBase & index];
 
             switch (hScroll & 7) {
-                case 1: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
-                case 2: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
-                case 3: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
-                case 4: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
-                case 5: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
-                case 6: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
-                case 7: col = *sprLine++; *linePtr++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++;
+            case 1: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
+            case 2: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
+            case 3: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
+            case 4: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
+            case 5: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
+            case 6: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
+            case 7: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++;
             }
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr4 == NULL) {
         return;
     }
 
@@ -745,15 +769,15 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr4[0] = bgColor;
+            linePtr4[1] = bgColor;
+            linePtr4[2] = bgColor;
+            linePtr4[3] = bgColor;
+            linePtr4[4] = bgColor;
+            linePtr4[5] = bgColor;
+            linePtr4[6] = bgColor;
+            linePtr4[7] = bgColor;
+            linePtr4 += 8; 
             X++;
         }
     }
@@ -765,17 +789,17 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             color[1]   = vdp->palette[colPattern >> 4];
             charPattern = vdp->vram[vdp->chrGenBase & index];
 
-            linePtr[0] = (col = sprLine[0]) ? vdp->palette[col >> 1] : color[(charPattern >> 7) & 1]; 
-            linePtr[1] = (col = sprLine[1]) ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1];
-            linePtr[2] = (col = sprLine[2]) ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1];
-            linePtr[3] = (col = sprLine[3]) ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1];
-            linePtr[4] = (col = sprLine[4]) ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1];
-            linePtr[5] = (col = sprLine[5]) ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1];
-            linePtr[6] = (col = sprLine[6]) ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1];
-            linePtr[7] = (col = sprLine[7]) ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1];
+            linePtr4[0] = (col = sprLine[0]) ? vdp->palette[col >> 1] : color[(charPattern >> 7) & 1]; 
+            linePtr4[1] = (col = sprLine[1]) ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1];
+            linePtr4[2] = (col = sprLine[2]) ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1];
+            linePtr4[3] = (col = sprLine[3]) ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1];
+            linePtr4[4] = (col = sprLine[4]) ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1];
+            linePtr4[5] = (col = sprLine[5]) ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1];
+            linePtr4[6] = (col = sprLine[6]) ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1];
+            linePtr4[7] = (col = sprLine[7]) ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1];
             sprLine += 8;
             charTable++;
-            linePtr += 8; 
+            linePtr4 += 8; 
             X++;
         }
     }
@@ -786,9 +810,9 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
+    static int     border;
     static UInt8*  charTable;
-    static UInt8*  sprLine = nullSpritesLine();
+    static UInt8*  sprLine;
     static int     addrSwitch;
     static int     hScroll512;
     static int*    jump;
@@ -802,11 +826,11 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
+        linePtr5 = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y, 0);
 
-        if (linePtr == NULL) {
+        if (linePtr5 == NULL) {
             return;
         }
 
@@ -828,25 +852,25 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->palette[vdp->BGColor];
-                linePtr[0] = bgColor;
-                linePtr[1] = bgColor;
-                linePtr[2] = bgColor;
-                linePtr[3] = bgColor;
-                linePtr[4] = bgColor;
-                linePtr[5] = bgColor;
-                linePtr[6] = bgColor;
-                linePtr[7] = bgColor;
+                linePtr5[0] = bgColor;
+                linePtr5[1] = bgColor;
+                linePtr5[2] = bgColor;
+                linePtr5[3] = bgColor;
+                linePtr5[4] = bgColor;
+                linePtr5[5] = bgColor;
+                linePtr5[6] = bgColor;
+                linePtr5[7] = bgColor;
 
                 UPDATE_TABLE_5(); UPDATE_TABLE_5(); UPDATE_TABLE_5(); UPDATE_TABLE_5();
                 sprLine   += sprLine != NULL ? 8 : 0;
-                linePtr += 8;
+                linePtr5 += 8;
                 charTable += 4;
                 X++;
             }
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr5 == NULL) {
         return;
     }
 
@@ -858,15 +882,15 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr5[0] = bgColor;
+            linePtr5[1] = bgColor;
+            linePtr5[2] = bgColor;
+            linePtr5[3] = bgColor;
+            linePtr5[4] = bgColor;
+            linePtr5[5] = bgColor;
+            linePtr5[6] = bgColor;
+            linePtr5[7] = bgColor;
+            linePtr5 += 8; 
             X++;
         }
     }
@@ -889,28 +913,28 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
         }
         while (X < X2) {
             if (hScroll & 1) {
-                linePtr[0] = vdp->palette[(col = sprLine[0]) ? col >> 1 : charTable[0] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[1] = vdp->palette[(col = sprLine[1]) ? col >> 1 : charTable[1] >> 4];
-                linePtr[2] = vdp->palette[(col = sprLine[2]) ? col >> 1 : charTable[1] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[3] = vdp->palette[(col = sprLine[3]) ? col >> 1 : charTable[2] >> 4];
-                linePtr[4] = vdp->palette[(col = sprLine[4]) ? col >> 1 : charTable[2] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[5] = vdp->palette[(col = sprLine[5]) ? col >> 1 : charTable[3] >> 4];
-                linePtr[6] = vdp->palette[(col = sprLine[6]) ? col >> 1 : charTable[3] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[7] = vdp->palette[(col = sprLine[7]) ? col >> 1 : charTable[4] >> 4];
+                linePtr5[0] = vdp->palette[(col = sprLine[0]) ? col >> 1 : charTable[0] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[1] = vdp->palette[(col = sprLine[1]) ? col >> 1 : charTable[1] >> 4];
+                linePtr5[2] = vdp->palette[(col = sprLine[2]) ? col >> 1 : charTable[1] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[3] = vdp->palette[(col = sprLine[3]) ? col >> 1 : charTable[2] >> 4];
+                linePtr5[4] = vdp->palette[(col = sprLine[4]) ? col >> 1 : charTable[2] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[5] = vdp->palette[(col = sprLine[5]) ? col >> 1 : charTable[3] >> 4];
+                linePtr5[6] = vdp->palette[(col = sprLine[6]) ? col >> 1 : charTable[3] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[7] = vdp->palette[(col = sprLine[7]) ? col >> 1 : charTable[4] >> 4];
             }
             else {     
-                linePtr[0] = vdp->palette[(col = sprLine[0]) ? col >> 1 : charTable[0] >> 4];
-                linePtr[1] = vdp->palette[(col = sprLine[1]) ? col >> 1 : charTable[0] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[2] = vdp->palette[(col = sprLine[2]) ? col >> 1 : charTable[1] >> 4];
-                linePtr[3] = vdp->palette[(col = sprLine[3]) ? col >> 1 : charTable[1] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[4] = vdp->palette[(col = sprLine[4]) ? col >> 1 : charTable[2] >> 4];
-                linePtr[5] = vdp->palette[(col = sprLine[5]) ? col >> 1 : charTable[2] & 0x0f]; UPDATE_TABLE_5();
-                linePtr[6] = vdp->palette[(col = sprLine[6]) ? col >> 1 : charTable[3] >> 4];
-                linePtr[7] = vdp->palette[(col = sprLine[7]) ? col >> 1 : charTable[3] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[0] = vdp->palette[(col = sprLine[0]) ? col >> 1 : charTable[0] >> 4];
+                linePtr5[1] = vdp->palette[(col = sprLine[1]) ? col >> 1 : charTable[0] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[2] = vdp->palette[(col = sprLine[2]) ? col >> 1 : charTable[1] >> 4];
+                linePtr5[3] = vdp->palette[(col = sprLine[3]) ? col >> 1 : charTable[1] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[4] = vdp->palette[(col = sprLine[4]) ? col >> 1 : charTable[2] >> 4];
+                linePtr5[5] = vdp->palette[(col = sprLine[5]) ? col >> 1 : charTable[2] & 0x0f]; UPDATE_TABLE_5();
+                linePtr5[6] = vdp->palette[(col = sprLine[6]) ? col >> 1 : charTable[3] >> 4];
+                linePtr5[7] = vdp->palette[(col = sprLine[7]) ? col >> 1 : charTable[3] & 0x0f]; UPDATE_TABLE_5();
             }
             sprLine += 8;
 
-            linePtr += 8; 
+            linePtr5 += 8; 
             charTable += 4;
             X++;
         }
@@ -923,23 +947,23 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
+    static int     border;
     static int*    jump;
     static int     hScroll512;
     static int     scroll;
     static int     page;
     static UInt8*  charTable;
-    static UInt8*  sprLine = nullSpritesLine();
+    static UInt8*  sprLine;
     int col;
     int rightBorder;
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
+        linePtr6 = RefreshBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine   = colorSpritesLine(vdp, Y, 1);
 
-        if (linePtr == NULL) {
+        if (linePtr6 == NULL) {
             return;
         }
 
@@ -958,25 +982,25 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->palette[vdp->BGColor & 0x03];
-                linePtr[0]  = linePtr[1]  = bgColor; 
-                linePtr[2]  = linePtr[3]  = bgColor; 
-                linePtr[4]  = linePtr[5]  = bgColor; 
-                linePtr[6]  = linePtr[7]  = bgColor; 
-                linePtr[8]  = linePtr[9]  = bgColor; 
-                linePtr[10] = linePtr[11] = bgColor; 
-                linePtr[12] = linePtr[13] = bgColor; 
-                linePtr[14] = linePtr[15] = bgColor; 
+                linePtr6[0]  = linePtr6[1]  = bgColor; 
+                linePtr6[2]  = linePtr6[3]  = bgColor; 
+                linePtr6[4]  = linePtr6[5]  = bgColor; 
+                linePtr6[6]  = linePtr6[7]  = bgColor; 
+                linePtr6[8]  = linePtr6[9]  = bgColor; 
+                linePtr6[10] = linePtr6[11] = bgColor; 
+                linePtr6[12] = linePtr6[13] = bgColor; 
+                linePtr6[14] = linePtr6[15] = bgColor; 
                 UPDATE_TABLE_6(); UPDATE_TABLE_6(); UPDATE_TABLE_6(); UPDATE_TABLE_6();
                 UPDATE_TABLE_6(); UPDATE_TABLE_6(); UPDATE_TABLE_6(); UPDATE_TABLE_6();
                 sprLine += sprLine != NULL ? 8 : 0; 
-                linePtr += 16; 
+                linePtr6 += 16; 
                 charTable += 4;
                 X++;
             }
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr6 == NULL) {
         return;
     }
 
@@ -989,70 +1013,70 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         UInt16 bgColor1 = vdp->palette[(vdp->BGColor >> 2) & 0x03];
         UInt16 bgColor2 = vdp->palette[vdp->BGColor & 0x03];
         while (X < X2) {
-            linePtr[ 0] = bgColor1;
-            linePtr[ 1] = bgColor2;
-            linePtr[ 2] = bgColor1;
-            linePtr[ 3] = bgColor2;
-            linePtr[ 4] = bgColor1;
-            linePtr[ 5] = bgColor2;
-            linePtr[ 6] = bgColor1;
-            linePtr[ 7] = bgColor2;
-            linePtr[ 8] = bgColor1;
-            linePtr[ 9] = bgColor2;
-            linePtr[10] = bgColor1;
-            linePtr[11] = bgColor2;
-            linePtr[12] = bgColor1;
-            linePtr[13] = bgColor2;
-            linePtr[14] = bgColor1;
-            linePtr[15] = bgColor2;
-            linePtr += 16; 
+            linePtr6[ 0] = bgColor1;
+            linePtr6[ 1] = bgColor2;
+            linePtr6[ 2] = bgColor1;
+            linePtr6[ 3] = bgColor2;
+            linePtr6[ 4] = bgColor1;
+            linePtr6[ 5] = bgColor2;
+            linePtr6[ 6] = bgColor1;
+            linePtr6[ 7] = bgColor2;
+            linePtr6[ 8] = bgColor1;
+            linePtr6[ 9] = bgColor2;
+            linePtr6[10] = bgColor1;
+            linePtr6[11] = bgColor2;
+            linePtr6[12] = bgColor1;
+            linePtr6[13] = bgColor2;
+            linePtr6[14] = bgColor1;
+            linePtr6[15] = bgColor2;
+            linePtr6 += 16; 
             X++;
         }
     }
     else {
 
-        linePtr[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
+        linePtr6[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
 
         while (X < X2) {
             if (scroll & 1) {
-                linePtr[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
-                linePtr[ 1] = vdp->palette[(col = sprLine[0]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[ 2] = vdp->palette[(col = sprLine[1] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 6) & 3];
-                linePtr[ 3] = vdp->palette[(col = sprLine[1]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[ 4] = vdp->palette[(col = sprLine[2] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 2) & 3];
-                linePtr[ 5] = vdp->palette[(col = sprLine[2]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[ 6] = vdp->palette[(col = sprLine[3] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 6) & 3];
-                linePtr[ 7] = vdp->palette[(col = sprLine[3]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[ 8] = vdp->palette[(col = sprLine[4] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 2) & 3];
-                linePtr[ 9] = vdp->palette[(col = sprLine[4]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[10] = vdp->palette[(col = sprLine[5] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 6) & 3];
-                linePtr[11] = vdp->palette[(col = sprLine[5]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[12] = vdp->palette[(col = sprLine[6] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 2) & 3];
-                linePtr[13] = vdp->palette[(col = sprLine[6]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[14] = vdp->palette[(col = sprLine[7] >> 3) ? (col >> 1) & 3 : (charTable[4] >> 6) & 3];
-                linePtr[15] = vdp->palette[(col = sprLine[7]  & 7) ? (col >> 1) & 3 : (charTable[4] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
+                linePtr6[ 1] = vdp->palette[(col = sprLine[0]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 2] = vdp->palette[(col = sprLine[1] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 6) & 3];
+                linePtr6[ 3] = vdp->palette[(col = sprLine[1]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 4] = vdp->palette[(col = sprLine[2] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 2) & 3];
+                linePtr6[ 5] = vdp->palette[(col = sprLine[2]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 6] = vdp->palette[(col = sprLine[3] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 6) & 3];
+                linePtr6[ 7] = vdp->palette[(col = sprLine[3]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 8] = vdp->palette[(col = sprLine[4] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 2) & 3];
+                linePtr6[ 9] = vdp->palette[(col = sprLine[4]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[10] = vdp->palette[(col = sprLine[5] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 6) & 3];
+                linePtr6[11] = vdp->palette[(col = sprLine[5]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[12] = vdp->palette[(col = sprLine[6] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 2) & 3];
+                linePtr6[13] = vdp->palette[(col = sprLine[6]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[14] = vdp->palette[(col = sprLine[7] >> 3) ? (col >> 1) & 3 : (charTable[4] >> 6) & 3];
+                linePtr6[15] = vdp->palette[(col = sprLine[7]  & 7) ? (col >> 1) & 3 : (charTable[4] >> 4) & 3]; UPDATE_TABLE_6();
             }
             else {
-                linePtr[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 6) & 3];
-                linePtr[ 1] = vdp->palette[(col = sprLine[0]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[ 2] = vdp->palette[(col = sprLine[1] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
-                linePtr[ 3] = vdp->palette[(col = sprLine[1]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[ 4] = vdp->palette[(col = sprLine[2] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 6) & 3];
-                linePtr[ 5] = vdp->palette[(col = sprLine[2]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[ 6] = vdp->palette[(col = sprLine[3] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 2) & 3];
-                linePtr[ 7] = vdp->palette[(col = sprLine[3]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[ 8] = vdp->palette[(col = sprLine[4] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 6) & 3];
-                linePtr[ 9] = vdp->palette[(col = sprLine[4]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[10] = vdp->palette[(col = sprLine[5] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 2) & 3];
-                linePtr[11] = vdp->palette[(col = sprLine[5]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_TABLE_6();
-                linePtr[12] = vdp->palette[(col = sprLine[6] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 6) & 3];
-                linePtr[13] = vdp->palette[(col = sprLine[6]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_TABLE_6();
-                linePtr[14] = vdp->palette[(col = sprLine[7] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 2) & 3];
-                linePtr[15] = vdp->palette[(col = sprLine[7]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 0] = vdp->palette[(col = sprLine[0] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 6) & 3];
+                linePtr6[ 1] = vdp->palette[(col = sprLine[0]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 2] = vdp->palette[(col = sprLine[1] >> 3) ? (col >> 1) & 3 : (charTable[0] >> 2) & 3];
+                linePtr6[ 3] = vdp->palette[(col = sprLine[1]  & 7) ? (col >> 1) & 3 : (charTable[0] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 4] = vdp->palette[(col = sprLine[2] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 6) & 3];
+                linePtr6[ 5] = vdp->palette[(col = sprLine[2]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 6] = vdp->palette[(col = sprLine[3] >> 3) ? (col >> 1) & 3 : (charTable[1] >> 2) & 3];
+                linePtr6[ 7] = vdp->palette[(col = sprLine[3]  & 7) ? (col >> 1) & 3 : (charTable[1] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[ 8] = vdp->palette[(col = sprLine[4] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 6) & 3];
+                linePtr6[ 9] = vdp->palette[(col = sprLine[4]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[10] = vdp->palette[(col = sprLine[5] >> 3) ? (col >> 1) & 3 : (charTable[2] >> 2) & 3];
+                linePtr6[11] = vdp->palette[(col = sprLine[5]  & 7) ? (col >> 1) & 3 : (charTable[2] >> 0) & 3]; UPDATE_TABLE_6();
+                linePtr6[12] = vdp->palette[(col = sprLine[6] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 6) & 3];
+                linePtr6[13] = vdp->palette[(col = sprLine[6]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 4) & 3]; UPDATE_TABLE_6();
+                linePtr6[14] = vdp->palette[(col = sprLine[7] >> 3) ? (col >> 1) & 3 : (charTable[3] >> 2) & 3];
+                linePtr6[15] = vdp->palette[(col = sprLine[7]  & 7) ? (col >> 1) & 3 : (charTable[3] >> 0) & 3]; UPDATE_TABLE_6();
             }
             sprLine += 8; 
 
-            linePtr += 16; 
+            linePtr6 += 16; 
             charTable += 4;
             X++;
         }
@@ -1064,9 +1088,9 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
+    static int     border;
     static UInt8*  charTable;
-    static UInt8*  sprLine = nullSpritesLine();
+    static UInt8*  sprLine;
     static int     hScroll512;
     static int     page;
     static int*    jump;
@@ -1078,11 +1102,11 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
+        linePtr7 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y, 0);
     
-        if (linePtr == NULL) {
+        if (linePtr7 == NULL) {
             return;
         }
 
@@ -1104,25 +1128,25 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->palette[vdp->BGColor];
-                linePtr[0]  = linePtr[1]  = bgColor; 
-                linePtr[2]  = linePtr[3]  = bgColor; 
-                linePtr[4]  = linePtr[5]  = bgColor; 
-                linePtr[6]  = linePtr[7]  = bgColor; 
-                linePtr[8]  = linePtr[9]  = bgColor; 
-                linePtr[10] = linePtr[11] = bgColor; 
-                linePtr[12] = linePtr[13] = bgColor; 
-                linePtr[14] = linePtr[15] = bgColor; 
+                linePtr7[0]  = linePtr7[1]  = bgColor; 
+                linePtr7[2]  = linePtr7[3]  = bgColor; 
+                linePtr7[4]  = linePtr7[5]  = bgColor; 
+                linePtr7[6]  = linePtr7[7]  = bgColor; 
+                linePtr7[8]  = linePtr7[9]  = bgColor; 
+                linePtr7[10] = linePtr7[11] = bgColor; 
+                linePtr7[12] = linePtr7[13] = bgColor; 
+                linePtr7[14] = linePtr7[15] = bgColor; 
                 UPDATE_TABLE_7(); UPDATE_TABLE_7(); UPDATE_TABLE_7(); UPDATE_TABLE_7();
                 UPDATE_TABLE_7(); UPDATE_TABLE_7(); UPDATE_TABLE_7(); UPDATE_TABLE_7();
                 sprLine   += sprLine != NULL ? 8 : 0;
-                linePtr += 16; 
+                linePtr7 += 16; 
                 charTable += 4;
                 X++; 
             }
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr7 == NULL) {
         return;
     }
 
@@ -1134,23 +1158,23 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr[8] = bgColor;
-            linePtr[9] = bgColor;
-            linePtr[10] = bgColor;
-            linePtr[11] = bgColor;
-            linePtr[12] = bgColor;
-            linePtr[13] = bgColor;
-            linePtr[14] = bgColor;
-            linePtr[15] = bgColor;
-            linePtr += 16; 
+            linePtr7[0] = bgColor;
+            linePtr7[1] = bgColor;
+            linePtr7[2] = bgColor;
+            linePtr7[3] = bgColor;
+            linePtr7[4] = bgColor;
+            linePtr7[5] = bgColor;
+            linePtr7[6] = bgColor;
+            linePtr7[7] = bgColor;
+            linePtr7[8] = bgColor;
+            linePtr7[9] = bgColor;
+            linePtr7[10] = bgColor;
+            linePtr7[11] = bgColor;
+            linePtr7[12] = bgColor;
+            linePtr7[13] = bgColor;
+            linePtr7[14] = bgColor;
+            linePtr7[15] = bgColor;
+            linePtr7 += 16; 
             X++;
         }
     }
@@ -1173,92 +1197,92 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
         while (X < X2) {
             if (scroll & 1) {
-                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = vdp->palette[col >> 1] : 
+                (col = sprLine[0]) ? linePtr7[0]  = linePtr7[1]  = vdp->palette[col >> 1] : 
                 (col = charTable[vdp->vram128], 
-                linePtr[0]  = vdp->palette[col >> 4],
-                linePtr[1]  = vdp->palette[col & 0xf]);
+                linePtr7[0]  = vdp->palette[col >> 4],
+                linePtr7[1]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = vdp->palette[col >> 1] :
+                (col = sprLine[1]) ? linePtr7[2]  = linePtr7[3]  = vdp->palette[col >> 1] :
                 (col = charTable[1],  
-                linePtr[2]  = vdp->palette[col >> 4],
-                linePtr[3]  = vdp->palette[col & 0xf]); 
+                linePtr7[2]  = vdp->palette[col >> 4],
+                linePtr7[3]  = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = vdp->palette[col >> 1] : 
+                (col = sprLine[2]) ? linePtr7[4]  = linePtr7[5]  = vdp->palette[col >> 1] : 
                 (col = charTable[vdp->vram128|1],
-                linePtr[4]  = vdp->palette[col >> 4],
-                linePtr[5]  = vdp->palette[col & 0xf]);
+                linePtr7[4]  = vdp->palette[col >> 4],
+                linePtr7[5]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = vdp->palette[col >> 1] : 
+                (col = sprLine[3]) ? linePtr7[6]  = linePtr7[7]  = vdp->palette[col >> 1] : 
                 (col = charTable[2],   
-                linePtr[6]  = vdp->palette[col >> 4],
-                linePtr[7]  = vdp->palette[col & 0xf]); 
+                linePtr7[6]  = vdp->palette[col >> 4],
+                linePtr7[7]  = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = vdp->palette[col >> 1] :
+                (col = sprLine[4]) ? linePtr7[8]  = linePtr7[9]  = vdp->palette[col >> 1] :
                 (col = charTable[vdp->vram128|2], 
-                linePtr[8]  = vdp->palette[col >> 4], 
-                linePtr[9]  = vdp->palette[col & 0xf]);
+                linePtr7[8]  = vdp->palette[col >> 4], 
+                linePtr7[9]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = vdp->palette[col >> 1] : 
+                (col = sprLine[5]) ? linePtr7[10] = linePtr7[11] = vdp->palette[col >> 1] : 
                 (col = charTable[3],      
-                linePtr[10] = vdp->palette[col >> 4],
-                linePtr[11] = vdp->palette[col & 0xf]); 
+                linePtr7[10] = vdp->palette[col >> 4],
+                linePtr7[11] = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = vdp->palette[col >> 1] : 
+                (col = sprLine[6]) ? linePtr7[12] = linePtr7[13] = vdp->palette[col >> 1] : 
                 (col = charTable[vdp->vram128|3], 
-                linePtr[12] = vdp->palette[col >> 4], 
-                linePtr[13] = vdp->palette[col & 0xf]);
+                linePtr7[12] = vdp->palette[col >> 4], 
+                linePtr7[13] = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = vdp->palette[col >> 1] : 
+                (col = sprLine[7]) ? linePtr7[14] = linePtr7[15] = vdp->palette[col >> 1] : 
                 (col = charTable[4],  
-                linePtr[14] = vdp->palette[col >> 4], 
-                linePtr[15] = vdp->palette[col & 0xf]); 
+                linePtr7[14] = vdp->palette[col >> 4], 
+                linePtr7[15] = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
             }
             else {
-                (col = sprLine[0]) ? linePtr[0]  = linePtr[1]  = vdp->palette[col >> 1] : 
+                (col = sprLine[0]) ? linePtr7[0]  = linePtr7[1]  = vdp->palette[col >> 1] : 
                 (col = charTable[0],      
-                linePtr[0]  = vdp->palette[col >> 4],
-                linePtr[1]  = vdp->palette[col & 0xf]);
+                linePtr7[0]  = vdp->palette[col >> 4],
+                linePtr7[1]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[1]) ? linePtr[2]  = linePtr[3]  = vdp->palette[col >> 1] : 
+                (col = sprLine[1]) ? linePtr7[2]  = linePtr7[3]  = vdp->palette[col >> 1] : 
                 (col = charTable[vdp->vram128], 
-                linePtr[2]  = vdp->palette[col >> 4],
-                linePtr[3]  = vdp->palette[col & 0xf]);
+                linePtr7[2]  = vdp->palette[col >> 4],
+                linePtr7[3]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[2]) ? linePtr[4]  = linePtr[5]  = vdp->palette[col >> 1] :
+                (col = sprLine[2]) ? linePtr7[4]  = linePtr7[5]  = vdp->palette[col >> 1] :
                 (col = charTable[1],    
-                linePtr[4]  = vdp->palette[col >> 4], 
-                linePtr[5]  = vdp->palette[col & 0xf]);
+                linePtr7[4]  = vdp->palette[col >> 4], 
+                linePtr7[5]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[3]) ? linePtr[6]  = linePtr[7]  = vdp->palette[col >> 1] :
+                (col = sprLine[3]) ? linePtr7[6]  = linePtr7[7]  = vdp->palette[col >> 1] :
                 (col = charTable[vdp->vram128|1],
-                linePtr[6]  = vdp->palette[col >> 4], 
-                linePtr[7]  = vdp->palette[col & 0xf]);
+                linePtr7[6]  = vdp->palette[col >> 4], 
+                linePtr7[7]  = vdp->palette[col & 0xf]);
                 UPDATE_TABLE_7();
-                (col = sprLine[4]) ? linePtr[8]  = linePtr[9]  = vdp->palette[col >> 1] : 
+                (col = sprLine[4]) ? linePtr7[8]  = linePtr7[9]  = vdp->palette[col >> 1] : 
                 (col = charTable[2],      
-                linePtr[8]  = vdp->palette[col >> 4], 
-                linePtr[9]  = vdp->palette[col & 0xf]); 
+                linePtr7[8]  = vdp->palette[col >> 4], 
+                linePtr7[9]  = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[5]) ? linePtr[10] = linePtr[11] = vdp->palette[col >> 1] :
+                (col = sprLine[5]) ? linePtr7[10] = linePtr7[11] = vdp->palette[col >> 1] :
                 (col = charTable[vdp->vram128|2], 
-                linePtr[10] = vdp->palette[col >> 4], 
-                linePtr[11] = vdp->palette[col & 0xf]); 
+                linePtr7[10] = vdp->palette[col >> 4], 
+                linePtr7[11] = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[6]) ? linePtr[12] = linePtr[13] = vdp->palette[col >> 1] : 
+                (col = sprLine[6]) ? linePtr7[12] = linePtr7[13] = vdp->palette[col >> 1] : 
                 (col = charTable[3],   
-                linePtr[12] = vdp->palette[col >> 4], 
-                linePtr[13] = vdp->palette[col & 0xf]); 
+                linePtr7[12] = vdp->palette[col >> 4], 
+                linePtr7[13] = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
-                (col = sprLine[7]) ? linePtr[14] = linePtr[15] = vdp->palette[col >> 1] : 
+                (col = sprLine[7]) ? linePtr7[14] = linePtr7[15] = vdp->palette[col >> 1] : 
                 (col = charTable[vdp->vram128|3], 
-                linePtr[14] = vdp->palette[col >> 4], 
-                linePtr[15] = vdp->palette[col & 0xf]); 
+                linePtr7[14] = vdp->palette[col >> 4], 
+                linePtr7[15] = vdp->palette[col & 0xf]); 
                 UPDATE_TABLE_7();
             }
             sprLine += 8; 
 
-            linePtr += 16; 
+            linePtr7 += 16; 
             charTable += 4;
             X++;
         }
@@ -1274,9 +1298,9 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
         0x00, 0x02, 0x10, 0x12, 0x80, 0x82, 0x90, 0x92, 
         0x49, 0x4B, 0x59, 0x5B, 0xC9, 0xCB, 0xD9, 0xDB 
     };
-    static int     border = 0;
+    static int     border;
     static UInt8*  charTable;
-    static UInt8*  sprLine = nullSpritesLine();
+    static UInt8*  sprLine;
     static int     hScroll;
     static int     hScroll512;
     static int*    jump;
@@ -1289,11 +1313,11 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        linePtr8 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y, 0);
 
-        if (linePtr == NULL) {
+        if (linePtr8 == NULL) {
             return;
         }
 
@@ -1315,25 +1339,25 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
-                linePtr[0] = bgColor;
-                linePtr[1] = bgColor;
-                linePtr[2] = bgColor;
-                linePtr[3] = bgColor;
-                linePtr[4] = bgColor;
-                linePtr[5] = bgColor;
-                linePtr[6] = bgColor;
-                linePtr[7] = bgColor;
+                linePtr8[0] = bgColor;
+                linePtr8[1] = bgColor;
+                linePtr8[2] = bgColor;
+                linePtr8[3] = bgColor;
+                linePtr8[4] = bgColor;
+                linePtr8[5] = bgColor;
+                linePtr8[6] = bgColor;
+                linePtr8[7] = bgColor;
                 UPDATE_TABLE_8(); UPDATE_TABLE_8(); UPDATE_TABLE_8(); UPDATE_TABLE_8();
                 UPDATE_TABLE_8(); UPDATE_TABLE_8(); UPDATE_TABLE_8(); UPDATE_TABLE_8();
                 sprLine   += sprLine != NULL ? 8 : 0; 
                 charTable += 4;
-                linePtr += 8; 
+                linePtr8 += 8; 
                 X++; 
             }
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr8 == NULL) {
         return;
     }
 
@@ -1345,15 +1369,15 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr8[0] = bgColor;
+            linePtr8[1] = bgColor;
+            linePtr8[2] = bgColor;
+            linePtr8[3] = bgColor;
+            linePtr8[4] = bgColor;
+            linePtr8[5] = bgColor;
+            linePtr8[6] = bgColor;
+            linePtr8[7] = bgColor;
+            linePtr8 += 8; 
             X++;
         }
     }
@@ -1375,44 +1399,44 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
         while (X < X2) {
             if (scroll & 1) {
-                col = sprLine[0]; linePtr[0] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[0]; linePtr8[0] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128]]; UPDATE_TABLE_8();
-                col = sprLine[1]; linePtr[1] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[1]; linePtr8[1] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[1]]; UPDATE_TABLE_8();
-                col = sprLine[2]; linePtr[2] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[2]; linePtr8[2] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|1]]; UPDATE_TABLE_8();
-                col = sprLine[3]; linePtr[3] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[3]; linePtr8[3] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[2]]; UPDATE_TABLE_8();
-                col = sprLine[4]; linePtr[4] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[4]; linePtr8[4] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|2]]; UPDATE_TABLE_8();
-                col = sprLine[5]; linePtr[5] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[5]; linePtr8[5] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[3]]; UPDATE_TABLE_8();
-                col = sprLine[6]; linePtr[6] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[6]; linePtr8[6] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|3]]; UPDATE_TABLE_8();
-                col = sprLine[7]; linePtr[7] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[7]; linePtr8[7] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[4]]; UPDATE_TABLE_8();
             }
             else {
-                col = sprLine[0]; linePtr[0] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[0]; linePtr8[0] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[0]]; UPDATE_TABLE_8();
-                col = sprLine[1]; linePtr[1] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[1]; linePtr8[1] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128]]; UPDATE_TABLE_8();
-                col = sprLine[2]; linePtr[2] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[2]; linePtr8[2] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[1]]; UPDATE_TABLE_8();
-                col = sprLine[3]; linePtr[3] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[3]; linePtr8[3] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|1]]; UPDATE_TABLE_8();
-                col = sprLine[4]; linePtr[4] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[4]; linePtr8[4] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[2]]; UPDATE_TABLE_8();
-                col = sprLine[5]; linePtr[5] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[5]; linePtr8[5] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|2]]; UPDATE_TABLE_8();
-                col = sprLine[6]; linePtr[6] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[6]; linePtr8[6] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[3]]; UPDATE_TABLE_8();
-                col = sprLine[7]; linePtr[7] = col ? vdp->paletteSprite8[col >> 1] : 
+                col = sprLine[7]; linePtr8[7] = col ? vdp->paletteSprite8[col >> 1] : 
                 vdp->paletteFixed[charTable[vdp->vram128|3]]; UPDATE_TABLE_8();
             }
             sprLine += 8; 
 
-            charTable += 4; linePtr += 8; X++;
+            charTable += 4; linePtr8 += 8; X++;
         }
     }
 
@@ -1423,9 +1447,9 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
+    static int     border;
     static UInt8* charTable;
-    static UInt8* sprLine = nullSpritesLine();
+    static UInt8* sprLine;
     static int hScroll512;
     static int* jump;
     static int page;
@@ -1440,11 +1464,11 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        linePtr10 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y, 0);
 
-        if (linePtr == NULL) {
+        if (linePtr10 == NULL) {
             return;
         }
 
@@ -1466,19 +1490,19 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
-                linePtr[0] = bgColor;
-                linePtr[1] = bgColor;
-                linePtr[2] = bgColor;
-                linePtr[3] = bgColor;
-                linePtr[4] = bgColor;
-                linePtr[5] = bgColor;
-                linePtr[6] = bgColor;
-                linePtr[7] = bgColor;
+                linePtr10[0] = bgColor;
+                linePtr10[1] = bgColor;
+                linePtr10[2] = bgColor;
+                linePtr10[3] = bgColor;
+                linePtr10[4] = bgColor;
+                linePtr10[5] = bgColor;
+                linePtr10[6] = bgColor;
+                linePtr10[7] = bgColor;
                 UPDATE_TABLE_10(); UPDATE_TABLE_10(); UPDATE_TABLE_10(); UPDATE_TABLE_10();
                 UPDATE_TABLE_10(); UPDATE_TABLE_10(); UPDATE_TABLE_10(); UPDATE_TABLE_10();
                 sprLine   += sprLine != NULL ? 8 : 0; 
                 charTable += 4; 
-                linePtr += 8;
+                linePtr10 += 8;
                 X++; 
             }
 
@@ -1493,20 +1517,20 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
             switch (hscroll & 3) {
             case 0:
-                col = sprLine[0]; y = t0 >> 3; *linePtr++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[0]; y = t0 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
             case 1:
-                col = sprLine[1]; y = t1 >> 3; *linePtr++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[1]; y = t1 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
             case 2:
-                col = sprLine[2]; y = t2 >> 3; *linePtr++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[2]; y = t2 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
             case 3:
-                col = sprLine[3]; y = t3 >> 3; *linePtr++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[3]; y = t3 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
             }
             sprLine += 4;
             charTable += 2;
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr10 == NULL) {
         return;
     }
 
@@ -1518,15 +1542,15 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr10[0] = bgColor;
+            linePtr10[1] = bgColor;
+            linePtr10[2] = bgColor;
+            linePtr10[3] = bgColor;
+            linePtr10[4] = bgColor;
+            linePtr10[5] = bgColor;
+            linePtr10[6] = bgColor;
+            linePtr10[7] = bgColor;
+            linePtr10 += 8; 
             X++;
         }
     }
@@ -1557,10 +1581,10 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             K=(t0 & 0x07) | ((t1 & 0x07) << 3);
             J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
-            col = sprLine[0]; y = t0 >> 3; linePtr[0] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-            col = sprLine[1]; y = t1 >> 3; linePtr[1] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-            col = sprLine[2]; y = t2 >> 3; linePtr[2] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-            col = sprLine[3]; y = t3 >> 3; linePtr[3] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            col = sprLine[0]; y = t0 >> 3; linePtr10[0] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            col = sprLine[1]; y = t1 >> 3; linePtr10[1] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            col = sprLine[2]; y = t2 >> 3; linePtr10[2] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            col = sprLine[3]; y = t3 >> 3; linePtr10[3] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
 
             t0 = charTable[2];        UPDATE_TABLE_10();
             t1 = charTable[vdp->vram128|2];  UPDATE_TABLE_10();
@@ -1573,22 +1597,22 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
             if (X == 31) {
                 switch (hscroll & 3) {
                 case 1:
-                    y = t2 >> 3; col = sprLine[6]; linePtr[6] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                    y = t2 >> 3; col = sprLine[6]; linePtr10[6] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
                 case 2:
-                    y = t1 >> 3; col = sprLine[5]; linePtr[5] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                    y = t1 >> 3; col = sprLine[5]; linePtr10[5] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
                 case 3:
-                    y = t0 >> 3; col = sprLine[4]; linePtr[4] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                    y = t0 >> 3; col = sprLine[4]; linePtr10[4] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
                 }
             }
             else {
-                col = sprLine[4]; y = t0 >> 3; linePtr[4] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-                col = sprLine[5]; y = t1 >> 3; linePtr[5] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-                col = sprLine[6]; y = t2 >> 3; linePtr[6] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-                col = sprLine[7]; y = t3 >> 3; linePtr[7] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[4]; y = t0 >> 3; linePtr10[4] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[5]; y = t1 >> 3; linePtr10[5] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[6]; y = t2 >> 3; linePtr10[6] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+                col = sprLine[7]; y = t3 >> 3; linePtr10[7] = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
                 sprLine += 8; 
             }
 
-            charTable += 4; linePtr += 8;
+            charTable += 4; linePtr10 += 8;
             X++;
         }
     }
@@ -1600,9 +1624,9 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 {
-    static int     border = 0;
+    static int     border;
     static UInt8* charTable;
-    static UInt8* sprLine = nullSpritesLine();
+    static UInt8* sprLine;
     static int hScroll512;
     static int* jump;
     static int page;
@@ -1617,11 +1641,11 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
+        linePtr12 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
         border = !vdp->screenOn || !vdp->drawArea;
         sprLine = colorSpritesLine(vdp, Y, 0);
 
-        if (linePtr == NULL) {
+        if (linePtr12 == NULL) {
             return;
         }
 
@@ -1643,19 +1667,19 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
-                linePtr[0] = bgColor;
-                linePtr[1] = bgColor;
-                linePtr[2] = bgColor;
-                linePtr[3] = bgColor;
-                linePtr[4] = bgColor;
-                linePtr[5] = bgColor;
-                linePtr[6] = bgColor;
-                linePtr[7] = bgColor;
+                linePtr12[0] = bgColor;
+                linePtr12[1] = bgColor;
+                linePtr12[2] = bgColor;
+                linePtr12[3] = bgColor;
+                linePtr12[4] = bgColor;
+                linePtr12[5] = bgColor;
+                linePtr12[6] = bgColor;
+                linePtr12[7] = bgColor;
                 UPDATE_TABLE_12(); UPDATE_TABLE_12(); UPDATE_TABLE_12(); UPDATE_TABLE_12();
                 UPDATE_TABLE_12(); UPDATE_TABLE_12(); UPDATE_TABLE_12(); UPDATE_TABLE_12();
                 sprLine   += sprLine != NULL ? 8 : 0; 
                 charTable += 4; 
-                linePtr += 8;
+                linePtr12 += 8;
                 X++; 
             }
 
@@ -1669,20 +1693,20 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
 
             switch (hscroll & 3) {
             case 0:
-                col = sprLine[0]; *linePtr++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
+                col = sprLine[0]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
             case 1:
-                col = sprLine[1]; *linePtr++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
+                col = sprLine[1]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
             case 2:
-                col = sprLine[2]; *linePtr++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
+                col = sprLine[2]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
             case 3:
-                col = sprLine[3]; *linePtr++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
+                col = sprLine[3]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
             }
             sprLine += 4;
             charTable += 2;
         }
     }
 
-    if (linePtr == NULL) {
+    if (linePtr12 == NULL) {
         return;
     }
 
@@ -1694,15 +1718,15 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
     if (border) {
         UInt16 bgColor = vdp->paletteFixed[vdp->vdpRegs[7]];
         while (X < X2) {
-            linePtr[0] = bgColor;
-            linePtr[1] = bgColor;
-            linePtr[2] = bgColor;
-            linePtr[3] = bgColor;
-            linePtr[4] = bgColor;
-            linePtr[5] = bgColor;
-            linePtr[6] = bgColor;
-            linePtr[7] = bgColor;
-            linePtr += 8; 
+            linePtr12[0] = bgColor;
+            linePtr12[1] = bgColor;
+            linePtr12[2] = bgColor;
+            linePtr12[3] = bgColor;
+            linePtr12[4] = bgColor;
+            linePtr12[5] = bgColor;
+            linePtr12[6] = bgColor;
+            linePtr12[7] = bgColor;
+            linePtr12 += 8; 
             X++;
         }
     }
@@ -1733,10 +1757,10 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
             K=(t0 & 0x07) | ((t1 & 0x07) << 3);
             J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
-            col = sprLine[0]; linePtr[0] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
-            col = sprLine[1]; linePtr[1] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
-            col = sprLine[2]; linePtr[2] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
-            col = sprLine[3]; linePtr[3] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
+            col = sprLine[0]; linePtr12[0] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
+            col = sprLine[1]; linePtr12[1] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
+            col = sprLine[2]; linePtr12[2] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
+            col = sprLine[3]; linePtr12[3] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
 
             t0 = charTable[2];        UPDATE_TABLE_12();
             t1 = charTable[vdp->vram128|2];  UPDATE_TABLE_12();
@@ -1749,22 +1773,22 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
             if (X == 31) {
                 switch (hscroll & 3) {
                 case 1:
-                    col = sprLine[6]; linePtr[6] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
+                    col = sprLine[6]; linePtr12[6] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
                 case 2:
-                    col = sprLine[5]; linePtr[5] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
+                    col = sprLine[5]; linePtr12[5] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
                 case 3:
-                    col = sprLine[4]; linePtr[4] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
+                    col = sprLine[4]; linePtr12[4] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
                 }
             }
             else {
-                col = sprLine[4]; linePtr[4] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
-                col = sprLine[5]; linePtr[5] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
-                col = sprLine[6]; linePtr[6] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
-                col = sprLine[7]; linePtr[7] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
+                col = sprLine[4]; linePtr12[4] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
+                col = sprLine[5]; linePtr12[5] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
+                col = sprLine[6]; linePtr12[6] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
+                col = sprLine[7]; linePtr12[7] = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
                 sprLine += 8; 
             }
 
-            charTable += 4; linePtr += 8;
+            charTable += 4; linePtr12 += 8;
             X++;
         }
     }

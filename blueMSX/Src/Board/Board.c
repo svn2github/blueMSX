@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-08-19 06:41:13 $
+** $Date: 2006-08-19 22:59:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,6 +126,8 @@ void boardSetPeriodicCallback(BoardTimerCb cb, void* ref, UInt32 freq)
 // Capture stuff
 //------------------------------------------------------
 
+#define CAPTURE_VERSION     1
+
 typedef enum 
 {
     CAPTURE_IDLE = 0,
@@ -164,6 +166,10 @@ int  boardCaptureIsPlaying() {
 int boardCaptureCompleteAmount() {
     UInt64 length = (cap.endTime64 - cap.startTime64) / 1000;
     UInt64 current = (boardSysTime64 - cap.startTime64) / 1000;
+    // Return complete if almost complete
+    if (cap.endTime64 - boardSysTime64 < HIRES_CYCLES_PER_LORES_CYCLE * 100) {
+        return 1000;
+    }
     if (length == 0) {
         return 1000;
     }
@@ -182,12 +188,13 @@ static void boardTimerCb(void* dummy, UInt32 time)
         // (~3 minutes). Using the 64 bit timer we can extend the capture to
         // 90 days.
         // Will work correct with 'real' 64 bit timers
+        boardSystemTime64(); // Sync clock
         if (boardCaptureCompleteAmount() < 1000) {
-            actionEmuTogglePause();
-            cap.state = CAPTURE_IDLE;
+            boardTimerAdd(cap.timer, time + 0x40000000);
         }
         else {
-            boardTimerAdd(cap.timer, time + 0x40000000);
+            actionEmuTogglePause();
+            cap.state = CAPTURE_IDLE;
         }
     }
     
@@ -247,6 +254,7 @@ void boardCaptureStart(const char* filename) {
         fclose(f);
     }
     cap.inputCnt = 0;
+
     if (cap.initStateSize > 0) {
         cap.state = CAPTURE_REC;
     }
@@ -275,11 +283,14 @@ void boardCaptureStop() {
 
         state = saveStateOpenForWrite("capture");
 
+        saveStateSet(state, "version", CAPTURE_VERSION);
+
         saveStateSet(state, "state", cap.state);
         saveStateSet(state, "endTime", cap.endTime);
         saveStateSet(state, "endTime64Hi", (UInt32)(cap.endTime64 >> 32));
         saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
         saveStateSet(state, "inputCnt", cap.inputCnt);
+        
         if (cap.inputCnt > 0) {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
         }
@@ -295,13 +306,12 @@ UInt8 boardCaptureUInt8(UInt8 value) {
     if (cap.state == CAPTURE_REC) {
         cap.inputs[cap.inputCnt++] = value;
         if (cap.inputCnt == sizeof(cap.inputs)) {
-            cap.inputCnt = 0;
+            boardCaptureStop();
         }
     }
     if (cap.state == CAPTURE_PLAY) {
-        value = cap.inputs[cap.inputCnt++];
-        if (cap.inputCnt == sizeof(cap.inputs)) {
-            cap.inputCnt = 0;
+        if (cap.inputCnt < sizeof(cap.inputs)) {
+            value= cap.inputs[cap.inputCnt++];
         }
     }
     return value;
@@ -312,8 +322,12 @@ static void boardCaptureSaveState()
     if (cap.state == CAPTURE_REC) {
         SaveState* state = saveStateOpenForWrite("capture");
 
+        saveStateSet(state, "version", CAPTURE_VERSION);
+
         saveStateSet(state, "state", cap.state);
         saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "endTime64Hi", (UInt32)(cap.endTime64 >> 32));
+        saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
         saveStateSet(state, "inputCnt", cap.inputCnt);
         if (cap.inputCnt > 0) {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
@@ -329,7 +343,11 @@ static void boardCaptureSaveState()
 
 static void boardCaptureLoadState()
 {
+    int version;
+
     SaveState* state = saveStateOpenForRead("capture");
+
+    version = saveStateGet(state, "version", 0);
 
     cap.state = saveStateGet(state, "state", CAPTURE_IDLE);
     cap.endTime = saveStateGet(state, "endTime", 0);
@@ -346,8 +364,14 @@ static void boardCaptureLoadState()
 
     saveStateClose(state);
 
+    if (version != CAPTURE_VERSION) {
+        cap.state = CAPTURE_IDLE;
+        return;
+    }
+
     if (cap.state == CAPTURE_PLAY) {
         cap.inputCnt = 0;
+
         while (cap.endTime - boardSystemTime() > 0x40000000 || cap.endTime == boardSystemTime()) {
             cap.endTime -= 0x40000000;
         }

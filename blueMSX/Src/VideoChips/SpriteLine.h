@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-07-18 04:21:29 $
+** $Date: 2006-08-19 22:59:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,6 +308,10 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
         color  = *MAP_VRAM(vdp, vdp->sprTabBase & ((-1 << 10) | (sprite * 16 + spriteLine)));
 
         if (color & 0x40) {
+            if (visibleCnt == 0) {
+                continue;
+            }
+
             color &= ccColorMask;
         }
         else if ((color & 0x0f) || solidColor) {
@@ -413,12 +417,12 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
                 }
             }
         }
-
+#if 0
         /* Skip CC sprites for now */
         if (attrib->color & 0x40) {
             continue;
         }
-
+#endif
         /* Draw CC sprites */
         for (idx2 = idx + 1; idx2 < visibleCnt; idx2++) {
             SpriteAttribute* attrib = &attribTable[idx2];

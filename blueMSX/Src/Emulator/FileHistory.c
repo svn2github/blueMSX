@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-08-09 14:09:48 $
+** $Date: 2006-08-19 22:59:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -431,8 +431,6 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
 
-	archCreateDirectory(directory);
-
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
     glob = archGlob(filename, ARCH_GLOB_FILES);
@@ -491,8 +489,6 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     sprintf(destfileFormat, "%%s" DIR_SEPARATOR "%%s%%s_%%0%di%%s", digits);
     
     strcpy(baseName, createSaveFileBaseName(properties, 0));
-
-	archCreateDirectory(directory);
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
