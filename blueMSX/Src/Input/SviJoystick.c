@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/SviJoystick.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-07-15 06:45:43 $
+** $Date: 2006-08-19 23:22:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,10 +62,10 @@ static UInt8 readTrigger(SviJoystick* joystick)
     UInt8 state;
 
     if (joystick->controller == 0) {
-        state = ~inputEventGetState(EC_JOY1_BUTTON1);
+        state = inputEventGetState(EC_JOY1_BUTTON1);
     }
     else {
-        state = ~inputEventGetState(EC_JOY2_BUTTON1);
+        state = inputEventGetState(EC_JOY2_BUTTON1);
     }
 
     return state;
