@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-08-19 00:11:21 $
+** $Date: 2006-08-19 06:41:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -218,6 +218,8 @@ typedef struct {
     int colorSaturationWidth;
     int gamma;
     int detectActiveMonitor;
+    int captureFps;
+    int captureSize;
 } VideoProperties;
 
 typedef struct {

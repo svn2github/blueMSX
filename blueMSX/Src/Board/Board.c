@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-08-18 07:16:07 $
+** $Date: 2006-08-19 06:41:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,8 +182,7 @@ static void boardTimerCb(void* dummy, UInt32 time)
         // (~3 minutes). Using the 64 bit timer we can extend the capture to
         // 90 days.
         // Will work correct with 'real' 64 bit timers
-        UInt32 delta = (UInt32)((boardSystemTime64() - cap.endTime64) / boardFrequency64()) / 4;
-        if (delta == 0) {
+        if (boardCaptureCompleteAmount() < 1000) {
             actionEmuTogglePause();
             cap.state = CAPTURE_IDLE;
         }
@@ -349,7 +348,10 @@ static void boardCaptureLoadState()
 
     if (cap.state == CAPTURE_PLAY) {
         cap.inputCnt = 0;
-        boardTimerAdd(cap.timer, ((cap.endTime & 0x3fffffff) | (boardSystemTime() & 0xc0000000)) + 0x40000000);
+        while (cap.endTime - boardSystemTime() > 0x40000000 || cap.endTime == boardSystemTime()) {
+            cap.endTime -= 0x40000000;
+        }
+        boardTimerAdd(cap.timer, cap.endTime);
     }
 }
 

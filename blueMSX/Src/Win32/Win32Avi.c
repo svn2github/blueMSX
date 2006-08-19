@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-18 07:16:11 $
+** $Date: 2006-08-19 06:41:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@ static Video*       video;
 static int          syncMethod;
 static int          emuSpeed;
 static int          rendering;
+static int          zoom = 2;
 
 
 int aviOpen(HWND hwndOwner, char* filename, int fps)
@@ -74,8 +75,8 @@ int aviOpen(HWND hwndOwner, char* filename, int fps)
 	bi.biSize       = 0x28;    
 	bi.biPlanes     = 1;
 	bi.biBitCount   = 32;
-	bi.biWidth      = 640;
-	bi.biHeight     = 480;
+	bi.biWidth      = 320 * zoom;
+	bi.biHeight     = 240 * zoom;
 	bi.biSizeImage  = bi.biWidth * bi.biHeight * bi.biBitCount / 8;
 
     memset(&steamHdr, 0, sizeof(steamHdr));
@@ -224,16 +225,50 @@ void aviSoundResume(AviSound* aviSound)
 {
 }
 
-static char displayData[4 * 640 * 480];
+
+#define stretchLine(TYPE, dst, dstLen, src, srcLen, M, N, R) do {           \
+    TYPE*  d = (TYPE*)dst;                                                  \
+    TYPE*  s = (TYPE*)src;                                                  \
+    UInt32 a = *s++;                                                        \
+    UInt32 b = *s++;                                                        \
+    int    n = 0;                                                           \
+    int    w;                                                               \
+                                                                            \
+    for (w = 0; w < dstLen; w++) {                                          \
+        int q = R * n / dstLen;                                             \
+        int p = R - q;                                                      \
+        d[w] = (TYPE)(((((a&M)*p+(b&M)*q)/R)&M)|((((a&N)*p+(b&N)*q)/R)&N)); \
+        n += srcLen;                                                        \
+        if (n >= dstLen) {                                                  \
+            n -= dstLen;                                                    \
+            a = b;                                                          \
+            b = *s++;                                                       \
+        }                                                                   \
+    }                                                                       \
+} while (0)
+
+void stretchImage(char* dst, int dstWidth, char* src, int srcWidth, int pitch, int height, int bitDepth)
+{
+    // Assume destination is wider than source
+    int h;
+    for (h = 0; h < height; h++) {
+        if (bitDepth == 16) stretchLine(UInt16, dst, dstWidth, src, srcWidth, 0xf81f, 0x07e0, 32);
+        else                stretchLine(UInt32, dst, dstWidth, src, srcWidth, 0x00ff00ff, 0x0000ff00, 256);
+        dst += pitch;
+        src += pitch;
+    }
+}
 
 void aviVideoCallback(void* dummy, UInt32 time) 
 {
+    static char displayData[4 * 640 * (480 + 1)];
+
     FrameBuffer* frameBuffer;
     int bitDepth = 32;
     int bytesPerPixel = bitDepth / 8;
     char* dpyData = displayData;
-    int width  = 640;
-    int height = 480;
+    int width  = 320 * zoom;
+    int height = 240 * zoom;
     int borderWidth;
     int displayPitch = width * bitDepth / 8;
 
@@ -242,17 +277,32 @@ void aviVideoCallback(void* dummy, UInt32 time)
         frameBuffer = frameBufferGetWhiteNoiseFrame();
     }
 
-    borderWidth = (320 - frameBuffer->maxWidth);
+    borderWidth = (320 - frameBuffer->maxWidth) * zoom / 2;
 
-    videoRender(video, frameBuffer, bitDepth, 2, 
-                dpyData + (height - 1) * displayPitch + borderWidth * bytesPerPixel, 0, -1 * displayPitch, -1);
+    if (properties->video.horizontalStretch) {
+        if (borderWidth > 0) {
+            // Render image one line higher, resizing will move it back to correct location
+            videoRender(video, frameBuffer, bitDepth, zoom, 
+                        dpyData + (height - 1 + 1) * displayPitch, 0, -1 * displayPitch, -1);
+            stretchImage(dpyData, width, dpyData + displayPitch, width - 2 * borderWidth, displayPitch, height, bitDepth);
+            borderWidth = 0;
+        }
+        else {
+            videoRender(video, frameBuffer, bitDepth, zoom, 
+                        dpyData + (height - 1) * displayPitch, 0, -1 * displayPitch, -1);
+        }
+    }
+    else {
+        videoRender(video, frameBuffer, bitDepth, zoom, 
+                    dpyData + (height - 1) * displayPitch + borderWidth * bytesPerPixel, 0, -1 * displayPitch, -1);
 
-    if (borderWidth > 0) {
-        int h = height;
-        while (h--) {
-            memset(dpyData, 0, borderWidth * bytesPerPixel);
-            memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
-            dpyData += displayPitch;
+        if (borderWidth > 0) {
+            int h = height;
+            while (h--) {
+                memset(dpyData, 0, borderWidth * bytesPerPixel);
+                memset(dpyData + (width - borderWidth) * bytesPerPixel, 0, borderWidth * bytesPerPixel);
+                dpyData += displayPitch;
+            }
         }
     }
 
@@ -340,6 +390,8 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
     syncMethod = properties->emulation.syncMethod;
     emuSpeed   = emulatorGetMaxSpeed();
 
+    zoom = properties->video.captureSize == 0 ? 1 : 2;
+
     actionEmuStop();
 
     filename = aviGetFilename(properties);
@@ -347,7 +399,7 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
         return;
     }
 
-    boardSetPeriodicCallback(aviVideoCallback, NULL, 60);
+    boardSetPeriodicCallback(aviVideoCallback, NULL, properties->video.captureFps);
     properties->emulation.syncMethod = P_EMU_SYNCIGNORE;
     emulatorSetMaxSpeed(1);
     frameBufferSetFrameCount(4);
@@ -355,7 +407,7 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
     soundDriverConfig(hwnd, SOUND_DRV_AVI);
     emulatorRestartSound();
 
-    aviOpen(hwnd, filename, 60);
+    aviOpen(hwnd, filename, properties->video.captureFps);
 
     actionVideoCapturePlay();
 

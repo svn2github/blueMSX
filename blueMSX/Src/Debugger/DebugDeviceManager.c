@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-07-14 15:33:04 $
+** $Date: 2006-08-19 06:41:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,7 +52,7 @@ static DebugDeviceManager devManager;
 void debugDeviceManagerReset() 
 {
     devManager.count = 0;
-    devManager.lastHandle = 0;
+//    devManager.lastHandle = 0;
 }
 
 int debugDeviceRegister(DbgDeviceType type, const char* name, DebugCallbacks* callbacks, void* ref)
