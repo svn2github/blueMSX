@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/SviJoyIo.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-07-15 06:45:43 $
+** $Date: 2006-08-19 00:11:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -123,12 +123,12 @@ UInt8 sviJoyIoRead(SviJoyIo* joyIo) {
 }
 
 UInt8 sviJoyIoReadTrigger(SviJoyIo* joyIo) {
-    UInt8 value = 0;
+    UInt8 value = 0x3f;
     if (joyIo->joyDevice[0] != NULL && joyIo->joyDevice[0]->readTrigger != NULL) {
-        value |= (joyIo->joyDevice[0]->readTrigger(joyIo->joyDevice[0]) << 4);
+        value &= ~(joyIo->joyDevice[0]->readTrigger(joyIo->joyDevice[0]) << 4);
     }
     if (joyIo->joyDevice[1] != NULL && joyIo->joyDevice[1]->readTrigger != NULL) {
-        value |= (joyIo->joyDevice[1]->readTrigger(joyIo->joyDevice[1]) << 5);
+        value &= ~(joyIo->joyDevice[1]->readTrigger(joyIo->joyDevice[1]) << 5);
     }
     return value;
 }

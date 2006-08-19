@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.154 $
+** $Revision: 1.155 $
 **
-** $Date: 2006-08-18 07:16:10 $
+** $Date: 2006-08-19 00:11:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1365,6 +1365,13 @@ static void checkClipRegion() {
 }
 
 static int getZoom() {
+    if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN && 
+        (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
+        pProperties->video.driver == P_VIDEO_DRVDIRECTX))
+    {
+        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+        return ddm->width == 320 ? 1 : 2;
+    }
     return pProperties->video.windowSize == P_VIDEO_SIZEX1 ? 1 : 2;
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-19 00:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,6 +181,7 @@ ValueNamePair PrinterTypePair[] = {
 ValueNamePair PrinterEmulationPair[] = {
     { P_LPT_RAW,                   "raw" },
     { P_LPT_MSXPRN,                "msxprinter" },
+    { P_LPT_SVIPRN,                "sviprinter" },
     { P_LPT_EPSONFX80,             "epsonfx80" },
     { -1,                          "" },
 };

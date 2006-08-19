@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2005-07-23 06:10:51 $
+** $Date: 2006-08-19 00:11:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,8 +158,10 @@ static HRESULT WINAPI EnumDisplayModes(LPDDSURFACEDESC desc, LPVOID context) {
     int height    = desc->dwHeight;
     int bitCount  = desc->ddpfPixelFormat.dwRGBBitCount;
 
-    if (width < 640 || height < 480 || (bitCount != 16 && bitCount != 32)) {
-        return DDENUMRET_OK;
+    if (!(width == 320 && height == 240 && (bitCount == 16 || bitCount == 32))) {
+        if (width < 640 || height < 480 || (bitCount != 16 && bitCount != 32)) {
+            return DDENUMRET_OK;
+        }
     }
 
     if (displayModeCount < MAX_DISPLAY_MODES) {

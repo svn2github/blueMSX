@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-08-17 19:43:17 $
+** $Date: 2006-08-19 00:11:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,6 @@ typedef struct {
 
     UInt8 row;
     Int32 regCHi;
-    UInt8 mode;
 } SviPPI;
 
 static void destroy(SviPPI* ppi)
@@ -148,7 +147,6 @@ static void reset(SviPPI* ppi)
 {
     ppi->row    = 0;
     ppi->regCHi = -1;
-    ppi->mode   = 0;
 
     i8255Reset(ppi->i8255);
 }
@@ -158,7 +156,6 @@ static void loadState(SviPPI* ppi)
     SaveState* state = saveStateOpenForRead("SviPPI");
 
     ppi->row    = (UInt8)saveStateGet(state, "row", 0);
-    ppi->mode   = (UInt8)saveStateGet(state, "mode", 0);
     ppi->regCHi =        saveStateGet(state, "regCHi", -1);
 
     saveStateClose(state);
@@ -171,7 +168,6 @@ static void saveState(SviPPI* ppi)
     SaveState* state = saveStateOpenForWrite("SviPPI");
     
     saveStateSet(state, "row", ppi->row);
-    saveStateSet(state, "mode", ppi->mode);
     saveStateSet(state, "regCHi", ppi->regCHi);
 
     saveStateClose(state);
@@ -179,32 +175,18 @@ static void saveState(SviPPI* ppi)
     i8255SaveState(ppi->i8255);
 }
 
-static UInt8 read(SviPPI* ppi, UInt16 ioPort)
+static UInt8 readRow(SviPPI* ppi, UInt16 ioPort)
 {
-    if (ioPort == 0x9A) {
-        //return ppi->mode;
-        return i8255Read(ppi->i8255, 2);
-    }
-
-    return i8255Read(ppi->i8255, ioPort);
+    return ppi->row;
 }
 
 static UInt8 peek(SviPPI* ppi, UInt16 ioPort)
 {
     if (ioPort == 0x9A) {
-        return ppi->mode;
+        return ppi->row;
     }
 
     return i8255Peek(ppi->i8255, ioPort);
-}
-
-static void write(SviPPI* ppi, UInt16 ioPort, UInt8 value)
-{
-    if (ioPort == 0x97) {
-        ppi->mode = value;
-    }
-
-    i8255Write(ppi->i8255, ioPort, value);
 }
 
 static void writeCLo(SviPPI* ppi, UInt8 value)
@@ -273,11 +255,11 @@ void sviPPICreate(SviJoyIo* joyIO)
 
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());
 
-    ioPortRegister(0x98, read, write, ppi); // PPI Port A
-    ioPortRegister(0x99, read, write, ppi); // PPI Port B
-    ioPortRegister(0x96, read, write, ppi); // PPI Port C
-    ioPortRegister(0x97, read, write, ppi); // PPI Mode
-    ioPortRegister(0x9A, read, NULL,  ppi); // PPI Return Mode
+    ioPortRegister(0x98, i8255Read, i8255Write, ppi->i8255); // PPI Port A
+    ioPortRegister(0x99, i8255Read, i8255Write, ppi->i8255); // PPI Port B
+    ioPortRegister(0x96, i8255Read, i8255Write, ppi->i8255); // PPI Port C
+    ioPortRegister(0x97, i8255Read, i8255Write, ppi->i8255); // PPI Mode
+    ioPortRegister(0x9A, readRow, NULL,  ppi); // PPI Return Port C (Low)
 
     reset(ppi);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-08-18 05:35:00 $
+** $Date: 2006-08-19 00:11:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,6 +103,7 @@ enum {
 enum { 
     P_LPT_RAW, 
     P_LPT_MSXPRN, 
+    P_LPT_SVIPRN, 
     P_LPT_EPSONFX80 
 };
 
