@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.155 $
+** $Revision: 1.156 $
 **
-** $Date: 2006-08-19 00:11:22 $
+** $Date: 2006-08-19 23:43:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2877,6 +2877,9 @@ void archShowHelpDialog()
     HINSTANCE rv = 0;
     if (pProperties->language == EMU_LANG_JAPANESE) {
          rv = ShellExecute(getMainHwnd(), "open", "blueMSXjp.chm", NULL, NULL, SW_SHOWNORMAL);
+    }
+    if (pProperties->language == EMU_LANG_DUTCH) {
+         rv = ShellExecute(getMainHwnd(), "open", "blueMSXnl.chm", NULL, NULL, SW_SHOWNORMAL);
     }
     if (rv <= (HINSTANCE)32) {
         rv = ShellExecute(getMainHwnd(), "open", "blueMSX.chm", NULL, NULL, SW_SHOWNORMAL);
