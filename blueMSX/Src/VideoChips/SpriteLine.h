@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-08-19 22:59:51 $
+** $Date: 2006-08-19 23:10:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -299,7 +299,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
 
         if (visibleCnt == 8) {
 			if (~vdp->vdpStatus[0] & 0x40) {
-				vdp->vdpStatus[0] |= 0x40 | sprite;
+				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | sprite;
 			}
             break;
         }
@@ -334,7 +334,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
     }
 
     if (~vdp->vdpStatus[0] & 0x40) {
-		vdp->vdpStatus[0] |= sprite < 32 ? sprite : 31;
+		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
 	}
     
     lineBuf = lineBuffer[bufIndex];
