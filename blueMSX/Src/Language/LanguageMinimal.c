@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-08-20 05:08:28 $
+** $Date: 2006-08-20 07:06:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -167,6 +167,7 @@ char* langRomTypeHbiV1Digitiz()     { return "Sony HBI-V1 Digitizer"; }
 char* langRomTypeFmdas()            { return "F&M Direct Assembler System"; }
 char* langRomTypeSfg01()            { return "Yamaha SFG-01"; }
 char* langRomTypeSfg05()            { return "Yamaha SFG-05"; }
+char* langRomTypePlayBall()         { return "Sony Playball"; }
 
 
 //----------------------

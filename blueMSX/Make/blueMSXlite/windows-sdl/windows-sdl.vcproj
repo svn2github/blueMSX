@@ -870,6 +870,9 @@
 				RelativePath="..\..\..\Src\Memory\MegaromCartridge.h">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Memory\PlayballSamples.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Memory\ram1kBMirrored.c">
 			</File>
 			<File
@@ -1216,6 +1219,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Memory\romMapperPlain.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperPlayBall.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperPlayBall.h">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Memory\romMapperRType.c">
