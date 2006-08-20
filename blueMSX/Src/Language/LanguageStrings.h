@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -87,6 +87,7 @@ typedef struct {
     char* fileRom;
     char* fileAll;
     char* fileCpuState;
+    char* fileVideoCapture;
     char* fileDisk;
     char* fileCas;
 
@@ -124,6 +125,14 @@ typedef struct {
     char* menuCasSetPosition;
     char* menuCasRewind;
 
+    char* menuVideoLoad;
+    char* menuVideoPlay;
+    char* menuVideoRecord;
+    char* menuVideoRecording;
+    char* menuVideoRecAppend;
+    char* menuVideoStop;
+    char* menuVideoRender;
+
     char* menuPrnFormfeed;
 
     char* menuZoomNormal;
@@ -158,6 +167,7 @@ typedef struct {
     char* menuFileQLoadState;
     char* menuFileQSaveState;
     char* menuFileCaptureAudio;
+    char* menuFileCaptureVideo;
     char* menuFileScreenShot;
     char* menuFileExit;
     char* menuFileHarddisk;
@@ -208,6 +218,7 @@ typedef struct {
     char* dlgLoadCasDesc;
     char* dlgLoadRomDskCasDesc;
     char* dlgLoadState;
+    char* dlgLoadVideoCapture;
     char* dlgSaveState;
     char* dlgSaveCassette;
     char* dlgInsertRom1;

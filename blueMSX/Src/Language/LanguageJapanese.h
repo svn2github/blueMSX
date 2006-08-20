@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->fileRom                 = "ROM イメージ"; 
     ls->fileAll                 = "全てのファイル"; 
     ls->fileCpuState            = "CPU ステート"; 
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "ディスクイメージ"; 
     ls->fileCas                 = "テープイメージ"; 
 
@@ -126,6 +127,14 @@ void langInitJapanese(LanguageStrings* ls)
     ls->lmenuCasSaveAs           = "テープを別名で保存...";
     ls->menuCasSetPosition      = "テープ位置セット";
     ls->menuCasRewind           = "巻き戻し";
+
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
     
     ls->menuPrnFormfeed         = "紙送り"; 
 
@@ -161,6 +170,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuFileQLoadState      = "クイックロード";
     ls->menuFileQSaveState      = "クイックセーブ";
     ls->menuFileCaptureAudio    = "録音";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "スクリーンショット";
     ls->menuFileExit            = "終了";
 
@@ -211,6 +221,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "読み込むcasイメージ:";
     ls->dlgLoadRomDskCasDesc    = "読み込むrom, dsk, casイメージ:";
     ls->dlgLoadState            = "CPUステート 読み込み";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "CPUステート 保存";
     ls->dlgSaveCassette          = "blueMSX - テープを保存";
     ls->dlgInsertRom1           = "ROM イメージをスロット1に挿入";

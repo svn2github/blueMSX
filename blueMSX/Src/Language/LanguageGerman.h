@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.27 $ 
+** $Revision: 1.28 $ 
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->fileRom                 = "ROM-Image";
     ls->fileAll                 = "All Files";
     ls->fileCpuState            = "CPU-Status";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Diskette-Image";
     ls->fileCas                 = "Cassette-Image";
 
@@ -121,6 +122,14 @@ void langInitGerman(LanguageStrings* ls)
     ls->lmenuCasSaveAs           = "Speichere Cassetten-Image als ...";
     ls->menuCasSetPosition      = "Positionieren";
     ls->menuCasRewind           = "Zurück";
+
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
 
     ls->menuDiskInsertNew       = "Insert New Disk Image";              
     ls->menuDiskDirInsert       = "Directory einfügen";
@@ -161,6 +170,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Quick Load State";
     ls->menuFileQSaveState      = "Quick Save State";
     ls->menuFileCaptureAudio    = "Capture Audio";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "Speichere Screenshot";
     ls->menuFileExit            = "Exit";
 
@@ -211,6 +221,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Wähle ein CASSETTEN-Image aus:";
     ls->dlgLoadRomDskCasDesc    = "Wähle ein ROM-, DSK- oder CAS- File zum Laden aus:";
     ls->dlgLoadState            = "Lade CPU-Status";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Speichere CPU-Status";
     ls->dlgSaveCassette          = "blueMSX - Speichere Tape-Image";
     ls->dlgInsertRom1           = "ROM-Cartridge in Slot 1 einfügen";

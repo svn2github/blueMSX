@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->fileRom                 = "Rom-beeld";
     ls->fileAll                 = "Alle bestanden";
     ls->fileCpuState            = "CPU-status";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Disk-beeld";
     ls->fileCas                 = "Cassette-beeld";
 
@@ -127,6 +128,14 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Bepaal positie";
     ls->menuCasRewind           = "Terugspoelen cassette";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuPrnFormfeed         = "Paginadoorvoer";
 
     ls->menuZoomNormal          = "Normale grootte";
@@ -161,6 +170,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Snel laden CPU-status";
     ls->menuFileQSaveState      = "Snel opslaan CPU-status";
     ls->menuFileCaptureAudio    = "Opslaan Geluid";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "Schermafdruk maken";
     ls->menuFileExit            = "Afsluiten";
 
@@ -211,6 +221,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Selecteer een cassette om te laden:";
     ls->dlgLoadRomDskCasDesc    = "Selecteer een cartridge, diskette of cassette om te laden:";
     ls->dlgLoadState            = "Laad CPU-status";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Opslaan CPU-status";
     ls->dlgSaveCassette         = "blueMSX - Opslaan Cassette-beeld";
     ls->dlgInsertRom1           = "Toevoegen Rom-cartridge in slot 1";

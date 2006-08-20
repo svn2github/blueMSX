@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->fileRom                 = "Rom fil";
     ls->fileAll                 = "Alla Filer";
     ls->fileCpuState            = "CPU-tillstand";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Diskettfil";
     ls->fileCas                 = "Kasettfil";
 
@@ -127,6 +128,14 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Sätt position";
     ls->menuCasRewind           = "Spola tillbaka";
 
+    ls->menuVideoLoad           = "Ladda...";             // New in 2.6
+    ls->menuVideoPlay           = "Spela upp senaste";   // New in 2.6
+    ls->menuVideoRecord         = "Spela in";              // New in 2.6
+    ls->menuVideoRecording      = "Spelar in";           // New in 2.6
+    ls->menuVideoRecAppend      = "Spela in (lagg till)";     // New in 2.6
+    ls->menuVideoStop           = "Stopp";                // New in 2.6
+    ls->menuVideoRender         = "Spara videofil";   // New in 2.6
+
     ls->menuPrnFormfeed         = "Pappersmatning";
 
     ls->menuZoomNormal          = "Normal storlek";
@@ -161,6 +170,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Snabbladda CPU-tillstand";
     ls->menuFileQSaveState      = "Snabbspara CPU-tillstand";
     ls->menuFileCaptureAudio    = "Spara ljud";
+    ls->menuFileCaptureVideo    = "Videoinspelning"; // New in 2.6
     ls->menuFileScreenShot      = "Spara skärmdump";
     ls->menuFileExit            = "Avsluta";
 
@@ -212,6 +222,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Välj en kassett fil:";
     ls->dlgLoadRomDskCasDesc    = "Välj en fil:";
     ls->dlgLoadState            = "Ladda CPU-tillstand";
+    ls->dlgLoadVideoCapture     = "Ladda videoinspelning";      // New in 2.6
     ls->dlgSaveState            = "Spara CPU-tillstand";
     ls->dlgSaveCassette         = "blueMSX - Spara Kasett";
     ls->dlgInsertRom1           = "Sätt in ROM cartridge i slot 1";
@@ -770,8 +781,8 @@ void langInitSwedish(LanguageStrings* ls)
     // Debug type lines
     // Note: Can only be translated to european languages
     //----------------------
-    ls->aboutScrollThanksTo     = "Special thanks to: ";
-    ls->aboutScrollAndYou       = "and YOU !!!!";
+    ls->aboutScrollThanksTo     = "Speciellt tack till: ";
+    ls->aboutScrollAndYou       = "och DIG !!!!";
 };
 
 #endif

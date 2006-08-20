@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->fileRom                 = "ROM-tiedosto";
     ls->fileAll                 = "Kaikki tiedostot";
     ls->fileCpuState            = "Tilannetallenne";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Levytiedosto";
     ls->fileCas                 = "Kasettitiedosto";
 
@@ -129,6 +130,14 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Valitse kohta";
     ls->menuCasRewind           = "Kelaa alkuun";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuPrnFormfeed         = "Paperin vaihto";
 
     ls->menuZoomNormal          = "Pieni koko";
@@ -163,6 +172,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Tilan pikalataus";
     ls->menuFileQSaveState      = "Tilan pikatallennus";
     ls->menuFileCaptureAudio    = "Tallenna äänet";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "Tallenna kuvaruutukaappaus";
     ls->menuFileExit            = "Poistu";
     ls->menuFileHarddisk        = "Kovalevy";
@@ -212,6 +222,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Valitse ladattava kasettitiedosto:";
     ls->dlgLoadRomDskCasDesc    = "Valitse ladattava ROM-, kasetti- tai levytiedosto:";
     ls->dlgLoadState            = "Lataa tila";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Tallenna tila nimellä";
     ls->dlgSaveCassette         = "blueMSX - Tallenna kasetti";
     ls->dlgInsertRom1           = "Aseta moduli porttiin 1";

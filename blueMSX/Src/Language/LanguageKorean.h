@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.36 $ + additions 2005/03/03
+** $Revision: 1.37 $ + additions 2005/03/03
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->fileRom                 = "롬 이미지";
     ls->fileAll                 = "모든 파일";
     ls->fileCpuState            = "CPU 상태";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "디스크 이미지";
     ls->fileCas                 = "테이프 이미지";
 
@@ -127,6 +128,14 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuCasSetPosition      = "위치 설정";
     ls->menuCasRewind           = "되감기";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuPrnFormfeed         = "폼피드";
 
     ls->menuZoomNormal          = "보통 크기";
@@ -161,6 +170,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuFileQLoadState      = "상태 바로 불러오기";
     ls->menuFileQSaveState      = "상태 바로 저장";
     ls->menuFileCaptureAudio    = "소리 저장";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "화면 저장";
     ls->menuFileExit            = "끝내기";
 
@@ -211,6 +221,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "카세트 플레이어에 넣을 테잎 이미지를 선택해 주세요:";
     ls->dlgLoadRomDskCasDesc    = "읽어 들일 롬,디스크,또는 테잎 이미지를 선택해 주세요:";
     ls->dlgLoadState            = "CPU 상태 불러오기";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "CPU 상태 저장";
     ls->dlgSaveCassette          = "blueMSX - 테잎 이미지 저장";
     ls->dlgInsertRom1           = "슬롯 1에 ROM 카트리지 삽입";

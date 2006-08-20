@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-08-18 07:16:11 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -442,11 +442,10 @@ static HMENU menuCreateVideoCapture(Properties* pProperties, Shortcuts* shortcut
 
     setMenuColor(hMenu);
 
-    // FIXME: Language
-    sprintf(langBuffer, "%s      \t%hs", "Load...", shortcutsToString(shortcuts->videoCapLoad));
+    sprintf(langBuffer, "%s      \t%hs", langMenuVideoLoad(), shortcutsToString(shortcuts->videoCapLoad));
     AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPLOAD, langBuffer);
     
-    sprintf(langBuffer, "%s      \t%hs", "Play Last", shortcutsToString(shortcuts->videoCapPlay));
+    sprintf(langBuffer, "%s      \t%hs", langMenuVideoPlay(), shortcutsToString(shortcuts->videoCapPlay));
     AppendMenu(hMenu, MF_STRING | (logVideo == 2 ? MF_GRAYED : 0), ID_FILE_VIDEOCAPPLAY, langBuffer);
     
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -454,27 +453,27 @@ static HMENU menuCreateVideoCapture(Properties* pProperties, Shortcuts* shortcut
     switch (logVideo) {
     case 0:
     default:
-        sprintf(langBuffer, "%s      \t%hs", "Record", shortcutsToString(shortcuts->videoCapRec));
+        sprintf(langBuffer, "%s      \t%hs", langMenuVideoRecord(), shortcutsToString(shortcuts->videoCapRec));
         AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPREC, langBuffer);
         break;
     case 1:
-        sprintf(langBuffer, "%s      \t%hs", "Recording", shortcutsToString(shortcuts->videoCapRec));
+        sprintf(langBuffer, "%s      \t%hs", langMenuVideoRecording(), shortcutsToString(shortcuts->videoCapRec));
         AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_FILE_VIDEOCAPREC, langBuffer);
         break;
     case 2:
-        sprintf(langBuffer, "%s      \t%hs", "Record (append)", shortcutsToString(shortcuts->videoCapRec));
+        sprintf(langBuffer, "%s      \t%hs", langMenuVideoRecAppend(), shortcutsToString(shortcuts->videoCapRec));
         AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPREC, langBuffer);
         break;
     }
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     
-    sprintf(langBuffer, "%s      \t%hs", "Stop", shortcutsToString(shortcuts->videoCapStop));
+    sprintf(langBuffer, "%s      \t%hs", langMenuVideoStop(), shortcutsToString(shortcuts->videoCapStop));
     AppendMenu(hMenu, MF_STRING, ID_FILE_VIDEOCAPSTOP, langBuffer);
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    sprintf(langBuffer, "%s      \t%hs", "Render Video File", shortcutsToString(shortcuts->videoCapSave));
+    sprintf(langBuffer, "%s      \t%hs", langMenuVideoRender(), shortcutsToString(shortcuts->videoCapSave));
     AppendMenu(hMenu, MF_STRING | (boardCaptureHasData() ? 0 : MF_GRAYED), ID_FILE_VIDEOCAPSAVE, langBuffer);
     
     return hMenu;
@@ -816,7 +815,7 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
     sprintf(menuBuffer, "%s        \t%hs", langMenuFileCaptureAudio(), shortcutsToString(shortcuts->wavCapture));
     AppendMenu(hMenu, MF_STRING | (logSound ? MFS_CHECKED : 0), ID_FILE_LOGWAV, menuBuffer);
 
-    sprintf(menuBuffer, "%s", "Video Capture");  // FIXME: Language
+    sprintf(menuBuffer, "%s", langMenuFileCaptureVideo());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoCapture(pProperties, shortcuts, logVideo), menuBuffer);
 
     sprintf(menuBuffer, "%s        \t%hs", langMenuFileScreenShot(), shortcutsToString(shortcuts->screenCapture));

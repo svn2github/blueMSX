@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->fileRom                 = "ROM 映像";
     ls->fileAll                 = "所有文件";
     ls->fileCpuState            = "CPU 状态";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "软盘映像";
     ls->fileCas                 = "磁带映像";
 
@@ -127,6 +128,14 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCasSetPosition      = "磁带位置设置";
     ls->menuCasRewind           = "倒带";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuZoomNormal          = "标准尺寸";
     ls->menuZoomDouble          = "两倍尺寸";
     ls->menuZoomFullscreen      = "全屏幕";
@@ -161,6 +170,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuFileQLoadState      = "快速读取";
     ls->menuFileQSaveState      = "快速保存";
     ls->menuFileCaptureAudio    = "录音";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "截图";
     ls->menuFileExit            = "退出";
 
@@ -211,6 +221,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "请选择要读取的磁带映像:";
     ls->dlgLoadRomDskCasDesc    = "请选择要读取的卡带、软盘或磁带映像:";
     ls->dlgLoadState            = "读取 CPU 状态";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "保存 CPU 状态";
     ls->dlgSaveCassette          = "blueMSX - 保存磁带映像";
     ls->dlgInsertRom1           = "请在插槽 1 插入 ROM 卡带";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.157 $
+** $Revision: 1.158 $
 **
-** $Date: 2006-08-20 01:39:18 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3152,7 +3152,7 @@ char* archFilenameGetOpenState(Properties* properties)
 
 char* archFilenameGetOpenCapture(Properties* properties)
 {
-    char* title = "Load Video Capture"; // FIXME: Language
+    char* title = langDlgLoadVideoCapture();
     char extensionList[512];
     char* defaultDir = properties->emulation.statsDefDir;
     char* extensions = ".cap\0";
@@ -3161,7 +3161,7 @@ char* archFilenameGetOpenCapture(Properties* properties)
     int createFileSize = -1;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.cap)#*.cap#", "Video Capture"); // FIXME: Language
+    sprintf(extensionList, "%s   (*.cap)#*.cap#", langFileVideoCapture());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();

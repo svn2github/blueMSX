@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -287,6 +287,7 @@ char* langErrorPortableReadonly()  {return ls->errorPortableReadonly; }
 char* langFileRom() { return ls->fileRom; }
 char* langFileAll() { return ls->fileAll; }
 char* langFileCpuState() { return ls->fileCpuState; }
+char* langFileVideoCapture() { return ls->fileVideoCapture; }
 char* langFileDisk() { return ls->fileDisk; }
 char* langFileCas() { return ls->fileCas; }
 
@@ -324,6 +325,14 @@ char* langMenuCasSaveAs() { return ls->lmenuCasSaveAs; }
 char* langMenuCasSetPosition() { return ls->menuCasSetPosition; }
 char* langMenuCasRewind() { return ls->menuCasRewind; }
 
+char* langMenuVideoLoad() { return ls->menuVideoLoad; }
+char* langMenuVideoPlay() { return ls->menuVideoPlay; }
+char* langMenuVideoRecord() { return ls->menuVideoRecord; }
+char* langMenuVideoRecording() { return ls->menuVideoRecording; }
+char* langMenuVideoRecAppend() { return ls->menuVideoRecAppend; }
+char* langMenuVideoStop() { return ls->menuVideoStop; }
+char* langMenuVideoRender() { return ls->menuVideoRender; }
+
 char* langMenuPrnFormfeed() { return ls->menuPrnFormfeed; }
 
 char* langMenuZoomNormal() { return ls->menuZoomNormal; }
@@ -358,6 +367,7 @@ char* langMenuFileSaveState() { return ls->menuFileSaveState; }
 char* langMenuFileQLoadState() { return ls->menuFileQLoadState; }
 char* langMenuFileQSaveState() { return ls->menuFileQSaveState; }
 char* langMenuFileCaptureAudio() { return ls->menuFileCaptureAudio; }
+char* langMenuFileCaptureVideo() { return ls->menuFileCaptureVideo; }
 char* langMenuFileScreenShot() { return ls->menuFileScreenShot; }
 char* langMenuFileExit() { return ls->menuFileExit; }
 char* langMenuFileHarddisk() { return ls->menuFileHarddisk; }
@@ -407,6 +417,7 @@ char* langDlgLoadDskDesc() { return ls->dlgLoadDskDesc; }
 char* langDlgLoadCasDesc() { return ls->dlgLoadCasDesc; }
 char* langDlgLoadRomDskCasDesc() { return ls->dlgLoadRomDskCasDesc; }
 char* langDlgLoadState() { return ls->dlgLoadState; }
+char* langDlgLoadVideoCapture() { return ls->dlgLoadVideoCapture; }
 char* langDlgSaveState() { return ls->dlgSaveState; }
 char* langDlgSaveCassette() { return ls->dlgSaveCassette; }
 char* langDlgInsertRom1() { return ls->dlgInsertRom1; }

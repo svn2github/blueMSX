@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->fileRom                 = "ROM image";
     ls->fileAll                 = "Wszystkie pliki";
     ls->fileCpuState            = "Stan CPU";
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Obraz dysku";
     ls->fileCas                 = "Obraz taœmy";
 
@@ -127,6 +128,14 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Ustaw pozycjê";
     ls->menuCasRewind           = "Przewiñ do pocz¹tku";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuPrnFormfeed         = "Wysuñ papier";
 
     ls->menuZoomNormal          = "Standardowe";
@@ -161,6 +170,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Szybki odczyt stanu";
     ls->menuFileQSaveState      = "Szybki zapis stanu";
     ls->menuFileCaptureAudio    = "Przechwyæ dŸwiêk";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "Zapisz ekran";
     ls->menuFileExit            = "Wyjœcie";
 
@@ -211,6 +221,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Wybierz taœmê do wczytania:";
     ls->dlgLoadRomDskCasDesc    = "Wybierz rom, dyskietkê lub taœmê do wczytania:";
     ls->dlgLoadState            = "Wczytaj stan CPU";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Zapisz stan CPU";
     ls->dlgSaveCassette          = "blueMSX - Zapisz obraz kasety";
     ls->dlgInsertRom1           = "Wybierz kartrid¿ ROM dla slotu 1";

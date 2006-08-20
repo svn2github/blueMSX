@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,6 +114,7 @@ char* langErrorPortableReadonly();
 char* langFileRom();
 char* langFileAll();
 char* langFileCpuState();
+char* langFileVideoCapture();
 char* langFileDisk();
 char* langFileCas();
 
@@ -151,6 +152,14 @@ char* langMenuCasSaveAs();
 char* langMenuCasSetPosition();
 char* langMenuCasRewind();
 
+char* langMenuVideoLoad();
+char* langMenuVideoPlay();
+char* langMenuVideoRecord();
+char* langMenuVideoRecording();
+char* langMenuVideoRecAppend();
+char* langMenuVideoStop();
+char* langMenuVideoRender();
+
 char* langMenuPrnFormfeed();
 
 char* langMenuZoomNormal();
@@ -185,6 +194,7 @@ char* langMenuFileSaveState();
 char* langMenuFileQLoadState();
 char* langMenuFileQSaveState();
 char* langMenuFileCaptureAudio();
+char* langMenuFileCaptureVideo();
 char* langMenuFileScreenShot();
 char* langMenuFileExit();
 char* langMenuFileHarddisk();
@@ -234,6 +244,7 @@ char* langDlgLoadDskDesc();
 char* langDlgLoadCasDesc();
 char* langDlgLoadRomDskCasDesc();
 char* langDlgLoadState();
+char* langDlgLoadVideoCapture();
 char* langDlgSaveState();
 char* langDlgSaveCassette();
 char* langDlgInsertRom1();

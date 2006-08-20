@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->fileRom                 = "ROM image"; 
     ls->fileAll                 = "Todos os arquivos"; 
     ls->fileCpuState            = "Status da CPU"; 
+    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Disk Image"; 
     ls->fileCas                 = "Tape Image"; 
 
@@ -127,6 +128,14 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Ajustar Posição";
     ls->menuCasRewind           = "Rebobinar";
 
+    ls->menuVideoLoad           = "Load...";             // New in 2.6
+    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
+    ls->menuVideoRecord         = "Record";              // New in 2.6
+    ls->menuVideoRecording      = "Recording";           // New in 2.6
+    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoStop           = "Stop";                // New in 2.6
+    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+
     ls->menuPrnFormfeed         = "Página seguinte"; 
 
     ls->menuZoomNormal          = "Tamanho Pequeno";
@@ -161,6 +170,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Carregar rápido Status";
     ls->menuFileQSaveState      = "Salvar rápido Status";
     ls->menuFileCaptureAudio    = "Capturar áudio";
+    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
     ls->menuFileScreenShot      = "Salvar Tela";
     ls->menuFileExit            = "Sair";
 
@@ -211,6 +221,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Escolha um tape para carregar:";
     ls->dlgLoadRomDskCasDesc    = "Escolha uma ROM, disco, ou tape para carregar:";
     ls->dlgLoadState            = "Carregar Status da CPU";
+    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Salvar Status da CPU";
     ls->dlgSaveCassette          = "blueMSX - Salvar Imagem Tape";
     ls->dlgInsertRom1           = "Insira cartucho ROM no slot 1";

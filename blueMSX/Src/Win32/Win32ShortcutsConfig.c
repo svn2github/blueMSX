@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-08-18 05:35:02 $
+** $Date: 2006-08-20 04:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -973,11 +973,11 @@ static void updateShortcutEntries(HWND hDlg)
     
     ADD_SHORTCUTSEPARATOR();
 
-    ADD_SHORTCUT(videoCapLoad, "Load...");      // FIXME: Lanugage
-    ADD_SHORTCUT(videoCapPlay, "Play Last");    // FIXME: Lanugage
-    ADD_SHORTCUT(videoCapRec,  "Record");       // FIXME: Lanugage
-    ADD_SHORTCUT(videoCapStop, "Stop");         // FIXME: Lanugage
-    ADD_SHORTCUT(videoCapSave, "Render Video File");         // FIXME: Lanugage
+    ADD_SHORTCUT(videoCapLoad, langMenuVideoLoad());
+    ADD_SHORTCUT(videoCapPlay, langMenuVideoPlay());
+    ADD_SHORTCUT(videoCapRec,  langMenuVideoRecord());
+    ADD_SHORTCUT(videoCapStop, langMenuVideoStop());
+    ADD_SHORTCUT(videoCapSave, langMenuVideoRender());
     
     ADD_SHORTCUTSEPARATOR();
 
