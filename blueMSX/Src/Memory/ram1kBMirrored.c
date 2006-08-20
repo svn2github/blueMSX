@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-14 19:59:52 $
+** $Date: 2006-08-20 17:22:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,6 @@ static void saveState(Ram1kBMirrored* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapper1kBMirroredRam");
 
-    saveStateSet(state, "pages", rm->pages);
     saveStateSetBuffer(state, "ramData", rm->ramData, 0x400);
 
     saveStateClose(state);
@@ -62,16 +61,10 @@ static void saveState(Ram1kBMirrored* rm)
 static void loadState(Ram1kBMirrored* rm)
 {
     SaveState* state = saveStateOpenForRead("mapper1kBMirroredRam");
-    int i;
 
-    rm->pages = saveStateGet(state, "pages", 0);
     saveStateGetBuffer(state, "ramData", rm->ramData, 0x400);
 
     saveStateClose(state);
-    
-    for (i = 0; i < rm->pages; i++) {
-        slotMapPage(rm->slot, rm->sslot, i + rm->startPage, rm->ramData + 0x2000 * i, 1, 1);
-    }
 }
 
 static void destroy(Ram1kBMirrored* rm)
