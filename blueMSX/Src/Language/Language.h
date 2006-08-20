@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-07-14 05:46:45 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -439,6 +439,7 @@ char* langEnumDiskMsx35Sgl9Sect();
 char* langEnumDiskMsx35Sgl8Sect();
 char* langEnumDiskSvi525Dbl();
 char* langEnumDiskSvi525Sgl();
+char* langEnumDiskSf3Sgl();
 
 //----------------------
 // Configuration related lines
@@ -699,6 +700,7 @@ char* langRomTypeSvi328col80();
 char* langRomTypeSvi727col80();
 char* langRomTypeColecoCart();
 char* langRomTypeSg1000Cart();
+char* langRomTypeSc3000Cart();
 char* langRomTypeTheCastle();
 char* langRomTypeSonyHbi55();
 char* langRomTypeMsxPrinter();

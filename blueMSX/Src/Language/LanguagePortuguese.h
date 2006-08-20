@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-07-14 05:46:45 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -414,12 +414,13 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 duplo face, 9 sectores";     
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 duplo face, 8 sectores";     
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 simples face, 9 sectores";     
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 simples face, 8 sectores";     
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 duplo face";           
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 simples face";           
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" duplo face, 9 sectores";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5\" duplo face, 8 sectores";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5\" simples face, 9 sectores";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" simples face, 8 sectores";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" duplo face";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" simples face";     
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" simples face";  // New in 2.6         
 
 
     //----------------------
@@ -681,6 +682,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
+    ls->romTypeSc3000Cart       = "SC-3000 Cartridge";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Printer";

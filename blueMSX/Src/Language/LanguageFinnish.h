@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-07-14 05:46:45 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -415,12 +415,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Kaksipuolinen, 9 Sektoria";
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Kaksipuolinen, 8 Sektoria";
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Yksipuolinen, 9 Sektoria";
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Yksipuolinen, 8 Sektoria";
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Kaksipuolinen";
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Yksipuolinen";
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" Kaksipuolinen, 9 Sektoria";
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5\" Kaksipuolinen, 8 Sektoria";
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5\" Yksipuolinen, 9 Sektoria";
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Yksipuolinen, 8 Sektoria";
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" Kaksipuolinen";
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" Yksipuolinen";
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Yksipuolinen";  // New in 2.6
 
 
     //----------------------
@@ -682,6 +683,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeSvi727col80      = "SVI-727 80-merkin kortti";
     ls->romTypeColecoCart       = "Coleco Moduli";
     ls->romTypeSg1000Cart       = "SG-1000 Moduli";
+    ls->romTypeSc3000Cart       = "SC-3000 Moduli";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Tulostin";

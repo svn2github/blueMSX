@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-07-14 05:46:46 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -415,12 +415,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
     ls->enumControlsJoyColeco = "ColecoVision Styrspak";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 Dubbelsidig, 9 Sektorer";     
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 Dubbelsidig, 8 Sektorer";     
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 Enkelsidig, 9 Sektorer";     
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 Enkelsidig, 8 Sektorer";     
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 Dubbelsidig";           
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 Enkelsidig";           
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" Dubbelsidig, 9 Sektorer";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5\" Dubbelsidig, 8 Sektorer";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5\" Enkelsidig, 9 Sektorer";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Enkelsidig, 8 Sektorer";     
+    ls->enumDiskSvi525Dbl        = "SVI-328\" 5.25 Dubbelsidig";           
+    ls->enumDiskSvi525Sgl        = "SVI-328\" 5.25 Enkelsidig";   
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Enkelsidig";  // New in 2.6
 
 
     //----------------------
@@ -682,6 +683,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
+    ls->romTypeSc3000Cart       = "SC-3000 Cartridge";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Printer";

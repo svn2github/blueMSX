@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2006-07-14 05:46:46 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -412,6 +412,7 @@ typedef struct {
     char* enumDiskMsx35Sgl8Sect;
     char* enumDiskSvi525Dbl;
     char* enumDiskSvi525Sgl;
+    char* enumDiskSf3Sgl;
 
 
     //----------------------
@@ -673,6 +674,7 @@ typedef struct {
     char* romTypeSvi727col80;
     char* romTypeColecoCart;
     char* romTypeSg1000Cart;
+    char* romTypeSc3000Cart;
     char* romTypeTheCastle;
     char* romTypeSonyHbi55;
     char* romTypeMsxPrinter;

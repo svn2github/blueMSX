@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-08-18 05:35:02 $
+** $Date: 2006-08-20 01:39:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -100,6 +100,7 @@ static RomType romTypeList[] = {
     ROM_SVI738FDC,
     ROM_COLECO,
     ROM_SG1000,
+    ROM_SC3000,
     ROM_SG1000CASTLE,
     ROM_MICROSOL80,
     ROM_SVI727,
@@ -848,6 +849,7 @@ static const struct {
     { 320 * ONEKB, langEnumDiskMsx35Sgl8Sect },
     { 338 * ONEKB, langEnumDiskSvi525Dbl },
     { 168 * ONEKB, langEnumDiskSvi525Sgl },
+    { 160 * ONEKB, langEnumDiskSf3Sgl },
     { 0, NULL }
 };
 

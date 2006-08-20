@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-07-04 07:49:03 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,6 +169,13 @@ static int isDskFileType(char* filename, char* inZip) {
             free(fileList);
             return 1;
         }
+        
+        fileList = zipGetFileList(filename, ".sf7", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
 
         return 0;
     }
@@ -177,7 +184,8 @@ static int isDskFileType(char* filename, char* inZip) {
            isFileExtension(filename, ".di1") ||
            isFileExtension(filename, ".di2") ||
            isFileExtension(filename, ".360") ||
-           isFileExtension(filename, ".720");
+           isFileExtension(filename, ".720") ||
+           isFileExtension(filename, ".Sf7");
 }
 
 static int isCasFileType(char* filename, char* inZip) {

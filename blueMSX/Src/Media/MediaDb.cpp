@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-16 21:12:39 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -127,6 +127,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "CasPatch")     return ROM_CASPATCH;
     if (name == "Coleco")       return ROM_COLECO;
     if (name == "SG1000")       return ROM_SG1000;
+    if (name == "SC3000")       return ROM_SC3000;
     if (name == "SG1000Castle") return ROM_SG1000CASTLE;
     if (name == "FMPAC")        return ROM_FMPAC;
     if (name == "FMPAK")        return ROM_FMPAK;
@@ -278,8 +279,16 @@ static void mediaDbAddDump(TiXmlElement* dmp,
             }
         }
 
-        if (strcmpnocase(system.c_str(), "sg1000") == 0 && romType != ROM_SG1000CASTLE) {
-            romType = ROM_SG1000;
+        if (romType != ROM_SG1000CASTLE) {
+            if (strcmpnocase(system.c_str(), "sg1000") == 0) {
+                romType = ROM_SG1000;
+            }
+
+            if (strcmpnocase(system.c_str(), "sc3000") == 0 ||
+                strcmpnocase(system.c_str(), "sf7000") == 0)
+            {
+                romType = ROM_SC3000;
+            }
         }
 
         // For standard roms, a start tag is used to specify start address
@@ -534,6 +543,7 @@ extern "C" RomType mediaDbOldStringToType(const char* romName)
     if (name == "bunsetsu")     return ROM_BUNSETU;
     if (name == "coleco")       return ROM_COLECO;
     if (name == "sg1000")       return ROM_SG1000;
+    if (name == "sc3000")       return ROM_SC3000;
     if (name == "castle")       return ROM_SG1000CASTLE;
     if (name == "svi328")       return ROM_SVI328;
     if (name == "sfg01")        return ROM_YAMAHASFG01;
@@ -632,6 +642,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI727:      return langRomTypeSvi727col80();
     case ROM_COLECO:      return langRomTypeColecoCart();
     case ROM_SG1000:      return langRomTypeSg1000Cart();
+    case ROM_SC3000:      return langRomTypeSc3000Cart();
     case ROM_SG1000CASTLE:return langRomTypeTheCastle();
     case ROM_SONYHBI55:   return langRomTypeSonyHbi55();
     case ROM_MSXAUDIODEV: return langRomTypeY8950();
@@ -743,7 +754,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI80COL:    return "SVI80COL";
     case ROM_SVI727:      return "SVI727";
     case ROM_COLECO:      return "COLECO";
-    case ROM_SG1000:      return "SG1000";
+    case ROM_SG1000:      return "SG-1000";
+    case ROM_SC3000:      return "SC-3000";
     case ROM_SG1000CASTLE:return "THECASTLE";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";
@@ -893,6 +905,7 @@ extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size)
     static MediaType defaultColeco(ROM_COLECO, "Unknown Coleco rom");
     static MediaType defaultSvi(ROM_SVI328, "Unknown SVI rom");
     static MediaType defaultSg1000(ROM_SG1000, "Unknown SG-1000 rom");
+    static MediaType defaultSc3000(ROM_SC3000, "Unknown SC-3000 rom");
 
     if (romdb == NULL) {
         return NULL;
@@ -1054,9 +1067,11 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
         staticMediaType.romType = ROM_COLECO;
         return &staticMediaType;
     case BOARD_SG1000:
+        staticMediaType.romType = ROM_SG1000;
+        return &staticMediaType;
     case BOARD_SC3000:
     case BOARD_SF7000:
-        staticMediaType.romType = ROM_SG1000;
+        staticMediaType.romType = ROM_SC3000;
         return &staticMediaType;
     case BOARD_MSX:
         break;

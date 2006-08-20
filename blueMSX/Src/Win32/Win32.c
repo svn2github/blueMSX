@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.156 $
+** $Revision: 1.157 $
 **
-** $Date: 2006-08-19 23:43:24 $
+** $Date: 2006-08-20 01:39:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1070,6 +1070,7 @@ static void registerFileTypes() {
     registerFileType(".di2", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".360", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".720", "blueMSXdsk", "DSK Image", 1);
+    registerFileType(".sf7", "blueMSXdsk", "DSK Image", 1);
     registerFileType(".rom", "blueMSXrom", "ROM Image", 2);
     registerFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     registerFileType(".mx1", "blueMSXrom", "ROM Image", 2);
@@ -1088,6 +1089,7 @@ static void unregisterFileTypes() {
     unregisterFileType(".di2", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".360", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".720", "blueMSXdsk", "DSK Image", 1);
+    unregisterFileType(".sf7", "blueMSXdsk", "DSK Image", 1);
     unregisterFileType(".rom", "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
@@ -3218,13 +3220,13 @@ char* archFilenameGetOpenDisk(Properties* properties, int drive, int allowCreate
     char* title = drive == 1 ? langDlgInsertDiskB() : langDlgInsertDiskA();
     char  extensionList[512];
     char* defaultDir = properties->diskdrive.defDir;
-    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
+    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.sf7\0.zip\0";
     int* selectedExtension = &properties->media.disks[drive].extensionFilter;
     char* defautExtension = ".dsk";
     int createFileSize = 720 * 1024;
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.sf7, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.sf7; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();
@@ -3245,12 +3247,12 @@ char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCr
     char* title = langDlgInsertHarddisk();
     char  extensionList[512];
     char* defaultDir = properties->diskdrive.defDir;
-    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.zip\0";
+    char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.sf7\0.zip\0";
     int* selectedExtension = &properties->media.disks[drive].extensionFilter;
     char* defautExtension = ".dsk";
     char* fileName;
 
-    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
+    sprintf(extensionList, "%s   (*.dsk, *.di1, *.di2, *.360, *.720, *.sf7, *.zip)#*.dsk; *.di1; *.di2; *.360; *.720; *.sf7; *.zip#%s   (*.*)#*.*#", langFileDisk(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();

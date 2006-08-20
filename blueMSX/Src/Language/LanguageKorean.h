@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.35 $ + additions 2005/03/03
+** $Revision: 1.36 $ + additions 2005/03/03
 **
-** $Date: 2006-07-14 05:46:45 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -414,12 +414,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      
     ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                
 
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 양면, 9 섹터";     
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 양면, 8 섹터";     
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 단면, 9 섹터";     
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 단면, 8 섹터";     
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 양면";           
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 단면";           
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" 양면, 9 섹터";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5\" 양면, 8 섹터";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5\" 단면, 9 섹터";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" 단면, 8 섹터";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" 양면";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" 단면";  
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" 단면";  // New in 2.6           
 
 
     //----------------------
@@ -681,6 +682,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
+    ls->romTypeSc3000Cart       = "SC-3000 Cartridge";
     ls->romTypeTheCastle        = "The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Printer";

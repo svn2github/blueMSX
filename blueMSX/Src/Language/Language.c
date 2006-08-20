@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2006-07-14 05:46:45 $
+** $Date: 2006-08-20 01:39:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -608,6 +608,7 @@ char* langEnumDiskMsx35Sgl9Sect() { return ls->enumDiskMsx35Sgl9Sect; }
 char* langEnumDiskMsx35Sgl8Sect() { return ls->enumDiskMsx35Sgl8Sect; }
 char* langEnumDiskSvi525Dbl() { return ls->enumDiskSvi525Dbl; }
 char* langEnumDiskSvi525Sgl() { return ls->enumDiskSvi525Sgl; }
+char* langEnumDiskSf3Sgl() { return ls->enumDiskSf3Sgl; }
 
 
 //----------------------
@@ -872,6 +873,7 @@ char* langRomTypeSvi328col80() { return ls->romTypeSvi328col80; }
 char* langRomTypeSvi727col80() { return ls->romTypeSvi727col80; }
 char* langRomTypeColecoCart() { return ls->romTypeColecoCart; }
 char* langRomTypeSg1000Cart() { return ls->romTypeSg1000Cart; }
+char* langRomTypeSc3000Cart() { return ls->romTypeSc3000Cart; }
 char* langRomTypeTheCastle() { return ls->romTypeTheCastle; }
 char* langRomTypeSonyHbi55() { return ls->romTypeSonyHbi55; }
 char* langRomTypeMsxPrinter() { return ls->romTypeMsxPrinter; }
