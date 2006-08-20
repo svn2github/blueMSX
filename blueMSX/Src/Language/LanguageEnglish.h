@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2006-08-20 04:26:22 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Disk Image";
     ls->fileCas                 = "Tape Image";
+    ls->fileAvi                 = "Video Clip";    // New in 2.6
 
 
     //----------------------
@@ -224,6 +225,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Save state as...";
     ls->dlgSaveCassette         = "blueMSX - Save Tape Image";
+    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
     ls->dlgInsertRom1           = "Insert ROM cartridge into slot 1";
     ls->dlgInsertRom2           = "Insert ROM cartridge into slot 2";
     ls->dlgInsertDiskA          = "Insert disk image into drive A";
@@ -265,6 +267,8 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->dlgSavePreview          = "Show Preview";
     ls->dlgSaveDate             = "Time Saved:";
+
+    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
 
 
     //----------------------

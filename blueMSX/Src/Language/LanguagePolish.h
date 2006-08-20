@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-08-20 04:26:23 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "Obraz dysku";
     ls->fileCas                 = "Obraz taœmy";
+    ls->fileAvi                 = "Video Clip";    // New in 2.6
 
 
     //----------------------
@@ -224,6 +225,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "Zapisz stan CPU";
     ls->dlgSaveCassette          = "blueMSX - Zapisz obraz kasety";
+    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
     ls->dlgInsertRom1           = "Wybierz kartrid¿ ROM dla slotu 1";
     ls->dlgInsertRom2           = "Wybierz kartrid¿ ROM dla slotu 2";
     ls->dlgInsertDiskA          = "Wybierz dyskietkê dla stacji A";
@@ -265,6 +267,8 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->dlgSavePreview          = "Poka¿ podgl¹d";
     ls->dlgSaveDate             = "Czas zapisu:";
+
+    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2006-08-20 04:26:23 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@ typedef struct {
     char* fileVideoCapture;
     char* fileDisk;
     char* fileCas;
+    char* fileAvi;
 
 
     //----------------------
@@ -221,6 +222,7 @@ typedef struct {
     char* dlgLoadVideoCapture;
     char* dlgSaveState;
     char* dlgSaveCassette;
+    char* dlgSaveVideoClipAs;
     char* dlgInsertRom1;
     char* dlgInsertRom2;
     char* dlgInsertDiskA;
@@ -257,6 +259,8 @@ typedef struct {
 
     char* dlgSavePreview;
     char* dlgSaveDate;
+    
+    char* dlgRenderVideoCapture;
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-08-20 04:26:22 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -290,6 +290,7 @@ char* langFileCpuState() { return ls->fileCpuState; }
 char* langFileVideoCapture() { return ls->fileVideoCapture; }
 char* langFileDisk() { return ls->fileDisk; }
 char* langFileCas() { return ls->fileCas; }
+char* langFileAvi() { return ls->fileAvi; }
 
 
 //----------------------
@@ -420,6 +421,7 @@ char* langDlgLoadState() { return ls->dlgLoadState; }
 char* langDlgLoadVideoCapture() { return ls->dlgLoadVideoCapture; }
 char* langDlgSaveState() { return ls->dlgSaveState; }
 char* langDlgSaveCassette() { return ls->dlgSaveCassette; }
+char* langDlgSaveVideoClipAs() { return ls->dlgSaveVideoClipAs; }
 char* langDlgInsertRom1() { return ls->dlgInsertRom1; }
 char* langDlgInsertRom2() { return ls->dlgInsertRom2; }
 char* langDlgInsertDiskA() { return ls->dlgInsertDiskA; }
@@ -628,6 +630,8 @@ char* langEnumDiskSf3Sgl() { return ls->enumDiskSf3Sgl; }
 
 char* langDlgSavePreview() { return ls->dlgSavePreview; }
 char* langDlgSaveDate() { return ls->dlgSaveDate; }
+
+char* langDlgRenderVideoCapture() { return ls->dlgRenderVideoCapture; }
 
 char* langConfTitle() { return ls->confTitle; }
 char* langConfConfigText() { return ls->confConfigText; }

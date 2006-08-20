@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-08-20 04:26:22 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->fileVideoCapture        = "Video Capture"; // New in 2.6
     ls->fileDisk                = "ÈíÅÌÓ³Ïñ";
     ls->fileCas                 = "´Å´øÓ³Ïñ";
+    ls->fileAvi                 = "Video Clip";    // New in 2.6
 
 
     //----------------------
@@ -224,6 +225,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
     ls->dlgSaveState            = "±£´æ CPU ×´Ì¬";
     ls->dlgSaveCassette          = "blueMSX - ±£´æ´Å´øÓ³Ïñ";
+    ls->dlgSaveVideoClipAs      = "Save video clip as...";     // New in 2.6
     ls->dlgInsertRom1           = "ÇëÔÚ²å²Û 1 ²åÈë ROM ¿¨´ø";
     ls->dlgInsertRom2           = "ÇëÔÚ²å²Û 2 ²åÈë ROM ¿¨´ø";
     ls->dlgInsertDiskA          = "ÇëÔÚÇý¶¯Æ÷ A ²åÈëÈíÅÌÓ³Ïñ";
@@ -265,6 +267,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->dlgSavePreview          = "ÏÔÊ¾Ô¤ÀÀ";
     ls->dlgSaveDate             = "±£´æÊ±¼ä:";
+
+    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
 
 
     //----------------------

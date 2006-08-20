@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-08-20 04:26:23 $
+** $Date: 2006-08-20 04:39:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,9 +90,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->fileRom                 = "Rom fil";
     ls->fileAll                 = "Alla Filer";
     ls->fileCpuState            = "CPU-tillstand";
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "Videoinspelning"; // New in 2.6
     ls->fileDisk                = "Diskettfil";
     ls->fileCas                 = "Kasettfil";
+    ls->fileAvi                 = "Videofil";    // New in 2.6
 
 
     //----------------------
@@ -225,6 +226,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgLoadVideoCapture     = "Ladda videoinspelning";      // New in 2.6
     ls->dlgSaveState            = "Spara CPU-tillstand";
     ls->dlgSaveCassette         = "blueMSX - Spara Kasett";
+    ls->dlgSaveVideoClipAs      = "Spara videoinspeling som...";      // New in 2.6
     ls->dlgInsertRom1           = "Sätt in ROM cartridge i slot 1";
     ls->dlgInsertRom2           = "Sätt in ROM cartridge i slot 2";
     ls->dlgInsertDiskA          = "Sätt in diskett i diskettstation A";
@@ -266,6 +268,8 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->dlgSavePreview          = "Förvisning";
     ls->dlgSaveDate             = "Tid Sparad:";
+
+    ls->dlgRenderVideoCapture   = "blueMSX - Generera videofil...";  // New in 2.6
 
 
     //----------------------

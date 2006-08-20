@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-08-19 06:41:16 $
+** $Date: 2006-08-20 04:39:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include "ArchFile.h"
 #include "Emulator.h"
 #include "Resource.h"
+#include "Language.h"
 
 static PAVIFILE     aviFile;
 static PAVISTREAM   aviStream;
@@ -322,13 +323,13 @@ static void replaceCharInString(char* str, char oldChar, char newChar)
 
 char* aviGetFilename(Properties* properties)
 {
-    char* title = "Save Videoclip As..."; // FIXME: Language
+    char* title = langDlgSaveVideoClipAs();
     char  extensionList[512];
     char defaultDir[512] = "";
     char* extensions = ".avi\0";
     int selectedExtension = 0;
 
-    sprintf(extensionList, "%s         (*.avi)#*.avi#", "Video Clip"); // FIXME: Language
+    sprintf(extensionList, "%s         (*.avi)#*.avi#", langFileAvi());
     replaceCharInString(extensionList, '#', 0);
 
     return archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");
@@ -369,7 +370,7 @@ static BOOL CALLBACK statusDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
         return 0;
 
     case WM_INITDIALOG:
-        SetWindowText(hDlg, "blueMSX - Rendering Video Capture..."); // FIXME: Language
+        SetWindowText(hDlg, langDlgRenderVideoCapture());
         SendDlgItemMessage(hDlg, IDC_VIDEOPROGRESSTEXT, WM_SETTEXT, 0, (LPARAM)progressText());
         SetTimer(hDlg, 2, 250, NULL);
         return FALSE;
