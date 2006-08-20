@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgSaveState            = "Opslaan CPU-status";
     ls->dlgSaveCassette         = "blueMSX - Opslaan Cassette-beeld";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "Toevoegen Rom-cartridge in slot 1";
     ls->dlgInsertRom2           = "Toevoegen Rom-cartridge in slot 2";
     ls->dlgInsertDiskA          = "Toevoegen diskette-beeld in station A";

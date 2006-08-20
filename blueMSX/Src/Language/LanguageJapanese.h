@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgSaveState            = "CPUステート 保存";
     ls->dlgSaveCassette          = "blueMSX - テープを保存";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "ROM イメージをスロット1に挿入";
     ls->dlgInsertRom2           = "ROM イメージをスロット2に挿入";
     ls->dlgInsertDiskA          = "ディスクイメージをドライブAに挿入";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->dlgSaveState            = "Salvar Estado CPU";
     ls->dlgSaveCassette          = "blueMSX - Salvar Imagen de Cinta";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "Insertar Cartucho ROM en slot 1";
     ls->dlgInsertRom2           = "Insertar Cartucho ROM en slot 2";
     ls->dlgInsertDiskA          = "Insertar imagen de Disco en Unidad A";

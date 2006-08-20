@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -223,6 +223,7 @@ typedef struct {
     char* dlgSaveState;
     char* dlgSaveCassette;
     char* dlgSaveVideoClipAs;
+    char* dlgAmountCompleted;
     char* dlgInsertRom1;
     char* dlgInsertRom2;
     char* dlgInsertDiskA;

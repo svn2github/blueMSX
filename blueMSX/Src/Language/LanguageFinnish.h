@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -227,6 +227,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgSaveState            = "Tallenna tila nimellä";
     ls->dlgSaveCassette         = "blueMSX - Tallenna kasetti";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "Aseta moduli porttiin 1";
     ls->dlgInsertRom2           = "Aseta moduli porttiin 2";
     ls->dlgInsertDiskA          = "Aseta levy asemaan A";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgSaveState            = "Sauver une image du CPU";
     ls->dlgSaveCassette         = "blueMSX - Sauver une image de cassette";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "Insérer une cartouche dans le port 1";
     ls->dlgInsertRom2           = "Insérer une cartouche dans le port 2";
     ls->dlgInsertDiskA          = "Insérer une disquette dans le lecteur A";

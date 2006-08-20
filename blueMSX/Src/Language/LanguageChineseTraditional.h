@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgSaveState            = "儲存 CPU 狀態";
     ls->dlgSaveCassette          = "blueMSX - 儲存磁帶映像檔";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "請在插槽 1 插入 ROM 卡匣";
     ls->dlgInsertRom2           = "請在插槽 2 插入 ROM 卡匣";
     ls->dlgInsertDiskA          = "請在磁碟機 A 插入磁碟映像檔";

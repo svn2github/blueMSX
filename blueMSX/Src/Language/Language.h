@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -249,6 +249,7 @@ char* langDlgLoadVideoCapture();
 char* langDlgSaveState();
 char* langDlgSaveCassette();
 char* langDlgSaveVideoClipAs();
+char* langDlgAmountCompleted();
 char* langDlgInsertRom1();
 char* langDlgInsertRom2();
 char* langDlgInsertDiskA();

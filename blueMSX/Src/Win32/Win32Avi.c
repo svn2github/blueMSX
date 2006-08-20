@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-08-20 04:39:24 $
+** $Date: 2006-08-20 05:04:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -340,7 +340,7 @@ static char* progressText()
     static char text[128];
     int amount = boardCaptureCompleteAmount();
 
-    sprintf(text, "%s: %d.%d%%", "Amount Completed:", amount / 10, amount % 10); // FIXME: Language
+    sprintf(text, "%s %d.%d%%", langDlgAmountCompleted(), amount / 10, amount % 10);
 
     return text;
 }

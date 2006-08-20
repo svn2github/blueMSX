@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-06-27 15:43:09 $
+** $Date: 2006-08-20 05:08:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,6 +152,7 @@ char* langRomTypeSvi328col80()      { return "SVI-328 80 Column Card"; }
 char* langRomTypeSvi727col80()      { return "SVI-727 80 Column Card"; }
 char* langRomTypeColecoCart()       { return "Coleco Cartridge"; }
 char* langRomTypeSg1000Cart()       { return "SG-1000 Cartridge"; }
+char* langRomTypeSc3000Cart()       { return "SC-3000 Cartridge"; }
 char* langRomTypeTheCastle()        { return "The Castle"; }
 char* langRomTypeSonyHbi55()        { return "Sony HBI-55"; }
 char* langRomTypeMsxPrinter()       { return "MSX Printer"; }

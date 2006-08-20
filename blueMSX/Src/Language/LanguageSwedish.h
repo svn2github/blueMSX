@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -227,6 +227,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgSaveState            = "Spara CPU-tillstand";
     ls->dlgSaveCassette         = "blueMSX - Spara Kasett";
     ls->dlgSaveVideoClipAs      = "Spara videoinspeling som...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Andel färdigt:";          // New in 2.6
     ls->dlgInsertRom1           = "Sätt in ROM cartridge i slot 1";
     ls->dlgInsertRom2           = "Sätt in ROM cartridge i slot 2";
     ls->dlgInsertDiskA          = "Sätt in diskett i diskettstation A";

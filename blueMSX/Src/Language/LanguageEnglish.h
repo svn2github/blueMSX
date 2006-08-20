@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgSaveState            = "Save state as...";
     ls->dlgSaveCassette         = "blueMSX - Save Tape Image";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "Insert ROM cartridge into slot 1";
     ls->dlgInsertRom2           = "Insert ROM cartridge into slot 2";
     ls->dlgInsertDiskA          = "Insert disk image into drive A";

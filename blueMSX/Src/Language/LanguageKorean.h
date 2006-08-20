@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.38 $ + additions 2005/03/03
+** $Revision: 1.39 $ + additions 2005/03/03
 **
-** $Date: 2006-08-20 04:39:23 $
+** $Date: 2006-08-20 05:04:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -226,6 +226,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgSaveState            = "CPU 상태 저장";
     ls->dlgSaveCassette          = "blueMSX - 테잎 이미지 저장";
     ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
     ls->dlgInsertRom1           = "슬롯 1에 ROM 카트리지 삽입";
     ls->dlgInsertRom2           = "슬롯 2에 ROM 카트리지 삽입";
     ls->dlgInsertDiskA          = "드라이브 A에 디스크 삽입";
