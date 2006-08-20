@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2005-05-01 09:26:43 $
+** $Date: 2006-08-20 07:02:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,7 +65,7 @@ void samplePlayerReset(SamplePlayer* samplePlayer) {
     samplePlayer->enabled         = 0;
 }
 
-SamplePlayer* samplePlayerCreate(Mixer* mixer)
+SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel)
 {
     SamplePlayer* samplePlayer = (SamplePlayer*)calloc(1, sizeof(SamplePlayer));
 
@@ -73,7 +73,7 @@ SamplePlayer* samplePlayerCreate(Mixer* mixer)
 
     samplePlayerReset(samplePlayer);
 
-    samplePlayer->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_IO, 0, samplePlayerSync, samplePlayer);
+    samplePlayer->handle = mixerRegisterChannel(mixer, mixerChannel, 0, samplePlayerSync, samplePlayer);
 
     return samplePlayer;
 }
@@ -134,7 +134,7 @@ static Int32* samplePlayerSync(SamplePlayer* samplePlayer, UInt32 count)
     for (index = 0; index < count; index++) {
         Int32 sample = 0;
         if (samplePlayer->playAttack) {
-            sample = samplePlayer->attackBuffer[samplePlayer->index];
+            sample = samplePlayer->attackBuffer[samplePlayer->index] * 9 / 10;
             if (++samplePlayer->index == samplePlayer->attackBufferSize) {
                 samplePlayer->index = 0;
                 samplePlayer->playAttack = 0;
@@ -148,6 +148,9 @@ static Int32* samplePlayerSync(SamplePlayer* samplePlayer, UInt32 count)
                     samplePlayer->enabled = 0;
                 }
             }
+        }
+        else {
+            samplePlayer->enabled = 0;
         }
 
         /* Perform simple 1 pole low pass IIR filtering */

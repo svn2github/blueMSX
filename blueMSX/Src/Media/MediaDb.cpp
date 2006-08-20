@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-08-20 07:02:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -163,6 +163,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
     if (name == "VMX80")        return ROM_MICROSOL80;
     if (name == "HBI-V1")       return ROM_SONYHBIV1;
+    if (name == "PLAYBALL")     return ROM_PLAYBALL;
     if (name == "SFG-01")       return ROM_YAMAHASFG01;
     if (name == "SFG-05")       return ROM_YAMAHASFG05;
     if (name == "SF-7000IPL")   return ROM_SF7000IPL;
@@ -655,6 +656,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MICROSOL80:  return langRomTypeVmx80();
     case ROM_NMS8280DIGI: return langRomTypeNms8280Digitiz();
     case ROM_SONYHBIV1:   return langRomTypeHbiV1Digitiz();
+    case ROM_PLAYBALL:    return langRomTypePlayBall();
     case ROM_FMDAS:       return langRomTypeFmdas();
     case ROM_YAMAHASFG01: return langRomTypeSfg01();
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
@@ -768,6 +770,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MICROSOL80:  return "MICROSOL80";
     case ROM_NMS8280DIGI: return "8280 DIGI";
     case ROM_SONYHBIV1:   return "SONY HBI-V1";
+    case ROM_PLAYBALL:    return "PLAYBALL";
     case ROM_FMDAS:       return "FM-DAS";
     case ROM_YAMAHASFG01: return "SFG-01";
     case ROM_YAMAHASFG05: return "SFG-05";
@@ -807,6 +810,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_KONWORDPRO:  return 1;
     case ROM_MICROSOL80:  return 1;
     case ROM_SONYHBIV1:   return 1;
+    case ROM_PLAYBALL:    return 1;
     case ROM_FMDAS:       return 1;
     case ROM_YAMAHASFG01: return 1;
     case ROM_YAMAHASFG05: return 1;

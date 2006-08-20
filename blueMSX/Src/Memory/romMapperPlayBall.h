@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlayBall.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.1 $
 **
-** $Date: 2006-08-20 07:02:11 $
+** $Date: 2006-08-20 07:02:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,29 +27,12 @@
 **
 ******************************************************************************
 */
-#ifndef SAMPLE_PLAYER_H
-#define SAMPLE_PLAYER_H
-
-#include <stdio.h>
-
+#ifndef ROMMAPPER_PLAYBALL_H
+#define ROMMAPPER_PLAYBALL_H
+ 
 #include "MsxTypes.h"
-#include "AudioMixer.h"
 
-/* Type definitions */
-typedef struct SamplePlayer SamplePlayer;
-
-/* Constructor and destructor */
-SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel);
-void samplePlayerDestroy(SamplePlayer* samplePlayer);
-void samplePlayerReset(SamplePlayer* samplePlayer);
-
-/* Register read/write methods */
-void samplePlayerWrite(SamplePlayer* samplePlayer, 
-                       const Int16* attackBuffer, UInt32 attackBufferSize, 
-                       const Int16* loopBuffer, UInt32 loopBufferSize);
-void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops);
-int samplePlayerIsIdle(SamplePlayer* samplePlayer);
-int samplePlayerIsLooping(SamplePlayer* samplePlayer);
+int romMapperPlayBallCreate(char* filename, UInt8* romData, 
+                            int size, int slot, int sslot, int startPage);
 
 #endif
-

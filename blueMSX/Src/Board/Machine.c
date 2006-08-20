@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-20 07:02:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,6 +116,7 @@
 #include "romMapperFmDas.h"
 #include "romMapperSfg05.h"
 #include "romMapperSf7000Ipl.h"
+#include "romMapperPlayBall.h"
 
 int toint(char* buffer) 
 {
@@ -1219,6 +1220,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         case ROM_SONYHBIV1:
             success &= romMapperSonyHbiV1Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_PLAYBALL:
+            success &= romMapperPlayBallCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_MICROSOL80:

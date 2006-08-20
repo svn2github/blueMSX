@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-08-20 05:04:09 $
+** $Date: 2006-08-20 07:02:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -713,6 +713,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->romTypeFmdas            = "F&M Direct Assembler System";
     ls->romTypeSfg01            = "Yamaha SFG-01";
     ls->romTypeSfg05            = "Yamaha SFG-05";
+    ls->romTypePlayBall         = "Sony Playball";  // New in 2.6
     
     
     //----------------------

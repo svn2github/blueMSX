@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2006-08-19 00:11:23 $
+** $Date: 2006-08-20 07:02:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -396,6 +396,7 @@ static RomType romTypeList[] = {
     ROM_CROSSBLAIM,
     ROM_HARRYFOX,
     ROM_LODERUNNER,
+    ROM_PLAYBALL,
     ROM_KONAMISYNTH,
     ROM_KONAMKBDMAS,
     ROM_KONWORDPRO,

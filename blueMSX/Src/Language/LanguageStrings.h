@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2006-08-20 05:04:09 $
+** $Date: 2006-08-20 07:02:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -702,6 +702,7 @@ typedef struct {
     char* romTypeVmx80;
     char* romTypeNms8280Digitiz;
     char* romTypeHbiV1Digitiz;
+    char* romTypePlayBall;
     char* romTypeFmdas;
     char* romTypeSfg01;
     char* romTypeSfg05;

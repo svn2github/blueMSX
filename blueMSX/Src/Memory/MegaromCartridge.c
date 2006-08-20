@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-08-20 01:39:18 $
+** $Date: 2006-08-20 07:02:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,6 +90,7 @@
 #include "romMapperFmDas.h"
 #include "romMapperSfg05.h"
 #include "romMapperSf7000Ipl.h"
+#include "romMapperPlayBall.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -505,6 +506,10 @@ void cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SONYHBIV1:
             romMapperSonyHbiV1Create(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_PLAYBALL:
+            romMapperPlayBallCreate(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_SVI727:
