@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,6 +60,7 @@ void slotRegisterWrite0(SlotWrite writeCb, void* ref);
 void slotUnregisterWrite0();
 
 void slotSetRamSlot(int slot, int psl);
+int slotGetRamSlot(int page);
 void slotMapRamPage(int slot, int sslot, int page);
 
 void slotMapPage(int slot, int sslot, int page, UInt8* pageData, 

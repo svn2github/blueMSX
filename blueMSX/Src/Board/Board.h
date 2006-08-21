@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-08-18 07:16:07 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,6 +80,8 @@ typedef struct {
     void   (*setCpuTimeout)(void*, UInt32);
     void   (*setBreakpoint)(void*, UInt16);
     void   (*clearBreakpoint)(void*, UInt16);
+
+    void   (*changeCartridge)(void*, int, int);
 } BoardInfo;
 
 void boardInit(UInt32* systemTime);

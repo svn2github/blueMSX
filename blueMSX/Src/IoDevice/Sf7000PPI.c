@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sf7000PPI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,26 +65,15 @@ static void destroy(Sf7000PPI* ppi)
     free(ppi);
 }
 
-static void reset(Sf7000PPI* ppi) 
-{
-    i8255Reset(ppi->i8255);
-    
-    ppi->ramSlot = 0;
-    slotSetRamSlot(0, ppi->ramSlot);
-}
-
 static void loadState(Sf7000PPI* ppi)
 {
     SaveState* state = saveStateOpenForRead("Sf7000PPI");
 
     ppi->ramSlot = (UInt8)saveStateGet(state, "ramSlot", 0);
-
     saveStateClose(state);
     
     i8255LoadState(ppi->i8255);
     nec765LoadState(ppi->nec765);
-
-    slotSetRamSlot(0, ppi->ramSlot);
 }
 
 static void saveState(Sf7000PPI* ppi)
@@ -92,7 +81,7 @@ static void saveState(Sf7000PPI* ppi)
     SaveState* state = saveStateOpenForWrite("Sf7000PPI");
     
     saveStateSet(state, "ramSlot", ppi->ramSlot);
-    
+
     saveStateClose(state);
 
     i8255SaveState(ppi->i8255);
@@ -124,8 +113,21 @@ static UInt8 readA(Sf7000PPI* ppi)
 
 static void writeCHi(Sf7000PPI* ppi, UInt8 value)
 {
-    ppi->ramSlot = (value >> 2) & 0x01;
-    slotSetRamSlot(0, ppi->ramSlot);
+    int slot = slotGetRamSlot(0);
+
+    ppi->ramSlot = (~value >> 2) & 0x01;
+
+    if (slot == 0 || slot == 1) {
+        slotSetRamSlot(0, ppi->ramSlot);
+    }
+}
+
+static void reset(Sf7000PPI* ppi) 
+{
+    i8255Reset(ppi->i8255);
+    
+    ppi->ramSlot = 1;
+    writeCHi(ppi, ppi->ramSlot);
 }
 
 static UInt8 read(Sf7000PPI* ppi, UInt16 port)
@@ -158,8 +160,6 @@ static UInt8 fdcRead(Sf7000PPI* ppi, UInt16 port)
     case 1: value = nec765Read(ppi->nec765); break;
     }
 
-//    i8255WriteLatchA(ppi->i8255, nec765GetInt(ppi->nec765));
-
     return value;
 }
 
@@ -169,8 +169,6 @@ static void fdcWrite(Sf7000PPI* ppi, UInt16 port, UInt8 value)
     case 1: 
         nec765Write(ppi->nec765, value); break;
     }
-    
-//    i8255WriteLatchA(ppi->i8255, nec765GetInt(ppi->nec765));
 }
 
 void sf7000PPICreate()

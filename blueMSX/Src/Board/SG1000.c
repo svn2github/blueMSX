@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-08-17 19:43:14 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,6 +174,14 @@ static UInt8* getRamPage(int page) {
 	return sfRam + ((page * 0x2000) & (sfRamSize - 1));
 }
 
+static void changeCartridge(void* ref, int cartNo, int inserted)
+{
+    int slot = inserted ? 2 + cartNo : 0;
+
+    slotSetRamSlot(0, slot);
+    slotSetRamSlot(1, slot);
+}
+
 int sg1000Create(Machine* machine, 
                  VdpSyncMode vdpSyncMode,
                  BoardInfo* boardInfo)
@@ -205,6 +213,8 @@ int sg1000Create(Machine* machine,
     boardInfo->setBreakpoint    = r800SetBreakpoint;
     boardInfo->clearBreakpoint  = r800ClearBreakpoint;
 
+    boardInfo->changeCartridge  = changeCartridge;
+
     deviceManagerCreate();
     
     boardInit(&r800->systemTime);
@@ -234,7 +244,6 @@ int sg1000Create(Machine* machine,
             
         diskEnable(0, machine->fdc.count > 0);
         diskEnable(1, machine->fdc.count > 1);
-
     }
     sg1000IoPortCreate();
 
@@ -244,13 +253,17 @@ int sg1000Create(Machine* machine,
         slotSetSubslotted(i, 0);
     }
     for (i = 0; i < 2; i++) {
-        cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
+        cartridgeSetSlotInfo(i, 2 + i, 0);
     }
 
     success = machineInitialize(machine, &sfRam, &sfRamSize);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);
+    }
+
+    if (machine->board.type == BOARD_SF7000) {
+        slotSetRamSlot(0, 1);
     }
 
     if (success) {

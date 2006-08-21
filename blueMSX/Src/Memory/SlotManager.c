@@ -2,9 +2,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -483,9 +483,9 @@ void slotLoadState()
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/SlotManager.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-19 07:11:56 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -569,6 +569,17 @@ void slotSetRamSlot(int slot, int psl)
     
     slotMapRamPage(psl, ssl, 2 * slot);
     slotMapRamPage(psl, ssl, 2 * slot + 1);
+}
+
+int slotGetRamSlot(int page)
+{
+    int i;
+    for (i = 0; i < 4; i++) {
+        if (pslot[i].state == page) {
+            return i;
+        }
+    }
+    return 0;
 }
 
 void slotMapPage(int slot, int sslot, int page, UInt8* pageData, 

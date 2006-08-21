@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-08-19 22:59:50 $
+** $Date: 2006-08-21 20:47:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -529,6 +529,8 @@ int boardRun(Machine* machine,
 
     boardSetFrequency(frequency);
 
+    memset(&boardInfo, 0, sizeof(boardInfo));
+
     boardRunning = 1;
     switch (boardType) {
     case BOARD_MSX:
@@ -920,7 +922,10 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
     }
 
     if (boardRunning) {
-        cartridgeInsert(cartNo, romType, cart, cartZip);
+        int inserted = cartridgeInsert(cartNo, romType, cart, cartZip);
+        if (boardInfo.changeCartridge != NULL) {
+            boardInfo.changeCartridge(boardInfo.cpuRef, cartNo, inserted);
+        }
     }
 }
 
