@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2006-08-20 07:02:05 $
+** $Date: 2006-08-21 15:18:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -787,6 +787,11 @@ char* langShortcutShowFiles() { return ls->shortcutShowFiles; }
 char* langShortcutToggleSpriteEnable() { return ls->shortcutToggleSpriteEnable; }
 char* langShortcutToggleFdcTiming() { return ls->shortcutToggleFdcTiming; }
 char* langShortcutToggleCpuTrace() { return ls->shortcutToggleCpuTrace; }
+char* langShortcutVideoLoad() { return ls->shortcutVideoLoad; }
+char* langShortcutVideoPlay() { return ls->shortcutVideoPlay; }
+char* langShortcutVideoRecord() { return ls->shortcutVideoRecord; }
+char* langShortcutVideoStop() { return ls->shortcutVideoStop; }
+char* langShortcutVideoRender() { return ls->shortcutVideoRender; }
 
 
 //----------------------

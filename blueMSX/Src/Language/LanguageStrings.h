@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2006-08-20 07:02:07 $
+** $Date: 2006-08-21 15:18:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -588,6 +588,11 @@ typedef struct {
     char* shortcutToggleSpriteEnable;
     char* shortcutToggleFdcTiming;
     char* shortcutToggleCpuTrace;
+    char* shortcutVideoLoad;
+    char* shortcutVideoPlay;
+    char* shortcutVideoRecord;
+    char* shortcutVideoStop;
+    char* shortcutVideoRender;
 
 
     //----------------------

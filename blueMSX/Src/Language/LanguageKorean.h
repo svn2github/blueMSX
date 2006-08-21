@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.40 $ + additions 2005/03/03
+** $Revision: 1.41 $ + additions 2005/03/03
 **
-** $Date: 2006-08-20 07:02:06 $
+** $Date: 2006-08-21 15:18:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -596,6 +596,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "스프라이트 보이기/숨기기 변환";
     ls->shortcutToggleFdcTiming = "플로피 드라이브 타이밍 사용/않함 변환";
     ls->shortcutToggleCpuTrace  = "CPU 트레이스 변환";
+    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
+    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
+    ls->shortcutVideoRecord     = "Record";              // New in 2.6
+    ls->shortcutVideoStop       = "Stop";                // New in 2.6
+    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
 
 
     //----------------------

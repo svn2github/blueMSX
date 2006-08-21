@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-08-20 07:02:06 $
+** $Date: 2006-08-21 15:18:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -596,6 +596,11 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "顯示/隱藏前景圖層";
     ls->shortcutToggleFdcTiming = "啟用/停用軟式磁碟機計時";
     ls->shortcutToggleCpuTrace  = "啟用/停用 CPU 追蹤";
+    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
+    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
+    ls->shortcutVideoRecord     = "Record";              // New in 2.6
+    ls->shortcutVideoStop       = "Stop";                // New in 2.6
+    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
 
 
     //----------------------

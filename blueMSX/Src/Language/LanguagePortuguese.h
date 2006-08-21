@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2006-08-20 07:02:06 $
+** $Date: 2006-08-21 15:18:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -596,6 +596,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostrar/esconder os sprites";
     ls->shortcutToggleFdcTiming = "sincronizar ou não disco drive"; 
     ls->shortcutToggleCpuTrace  = "Ativar/Desativar Traço da CPU"; 
+    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
+    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
+    ls->shortcutVideoRecord     = "Record";              // New in 2.6
+    ls->shortcutVideoStop       = "Stop";                // New in 2.6
+    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
 
 
     //----------------------

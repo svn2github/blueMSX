@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sf7000PPI.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-09 14:09:48 $
+** $Date: 2006-08-21 15:18:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 typedef struct {
     int    deviceHandle;
     int    debugHandle;
+    UInt8  ramSlot;
     I8255* i8255;
     NEC765* nec765;
 } Sf7000PPI;
@@ -67,24 +68,35 @@ static void destroy(Sf7000PPI* ppi)
 static void reset(Sf7000PPI* ppi) 
 {
     i8255Reset(ppi->i8255);
+    
+    ppi->ramSlot = 0;
+    slotSetRamSlot(0, ppi->ramSlot);
 }
 
 static void loadState(Sf7000PPI* ppi)
 {
     SaveState* state = saveStateOpenForRead("Sf7000PPI");
 
+    ppi->ramSlot = (UInt8)saveStateGet(state, "ramSlot", 0);
+
     saveStateClose(state);
     
     i8255LoadState(ppi->i8255);
+    nec765LoadState(ppi->nec765);
+
+    slotSetRamSlot(0, ppi->ramSlot);
 }
 
 static void saveState(Sf7000PPI* ppi)
 {
     SaveState* state = saveStateOpenForWrite("Sf7000PPI");
     
+    saveStateSet(state, "ramSlot", ppi->ramSlot);
+    
     saveStateClose(state);
 
     i8255SaveState(ppi->i8255);
+    nec765SaveState(ppi->nec765);
 }
 
 static void writeCLo(Sf7000PPI* ppi, UInt8 value)
@@ -112,7 +124,8 @@ static UInt8 readA(Sf7000PPI* ppi)
 
 static void writeCHi(Sf7000PPI* ppi, UInt8 value)
 {
-    slotSetRamSlot(0, (value >> 2) & 0x01);
+    ppi->ramSlot = (value >> 2) & 0x01;
+    slotSetRamSlot(0, ppi->ramSlot);
 }
 
 static UInt8 read(Sf7000PPI* ppi, UInt16 port)

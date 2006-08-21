@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-08-20 07:02:07 $
+** $Date: 2006-08-21 15:18:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -597,6 +597,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Visa/Dölj Sprites";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
     ls->shortcutToggleCpuTrace  = "Slå på/av CPU trace";
+    ls->shortcutVideoLoad       = "Ladda...";             // New in 2.6
+    ls->shortcutVideoPlay       = "Spela upp senaste";   // New in 2.6
+    ls->shortcutVideoRecord     = "Spela in";              // New in 2.6
+    ls->shortcutVideoStop       = "Stopp";                // New in 2.6
+    ls->shortcutVideoRender     = "Spara videofil";   // New in 2.6
 
 
     //----------------------

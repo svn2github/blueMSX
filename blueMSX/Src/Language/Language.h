@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2006-08-20 07:06:01 $
+** $Date: 2006-08-21 15:18:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -614,6 +614,11 @@ char* langShortcutShowFiles();
 char* langShortcutToggleSpriteEnable();
 char* langShortcutToggleFdcTiming();
 char* langShortcutToggleCpuTrace();
+char* langShortcutVideoLoad();
+char* langShortcutVideoPlay();
+char* langShortcutVideoRecord();
+char* langShortcutVideoStop();
+char* langShortcutVideoRender();
 
 
 //----------------------

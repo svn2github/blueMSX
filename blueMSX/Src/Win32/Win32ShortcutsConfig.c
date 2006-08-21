@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2006-08-20 04:26:23 $
+** $Date: 2006-08-21 15:18:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -973,11 +973,11 @@ static void updateShortcutEntries(HWND hDlg)
     
     ADD_SHORTCUTSEPARATOR();
 
-    ADD_SHORTCUT(videoCapLoad, langMenuVideoLoad());
-    ADD_SHORTCUT(videoCapPlay, langMenuVideoPlay());
-    ADD_SHORTCUT(videoCapRec,  langMenuVideoRecord());
-    ADD_SHORTCUT(videoCapStop, langMenuVideoStop());
-    ADD_SHORTCUT(videoCapSave, langMenuVideoRender());
+    ADD_SHORTCUT(videoCapLoad, langShortcutVideoLoad());
+    ADD_SHORTCUT(videoCapPlay, langShortcutVideoPlay());
+    ADD_SHORTCUT(videoCapRec,  langShortcutVideoRecord());
+    ADD_SHORTCUT(videoCapStop, langShortcutVideoStop());
+    ADD_SHORTCUT(videoCapSave, langShortcutVideoRender());
     
     ADD_SHORTCUTSEPARATOR();
 
