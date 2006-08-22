@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/FdcAudio.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-20 07:02:05 $
+** $Date: 2006-08-22 00:15:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,15 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef NO_EMBEDDED_SAMPLES
+
+FdcAudio* fdcAudioCreate(FdcAudioType type) { return NULL; }
+void fdcAudioDestroy(FdcAudio* fdcAudio) {}
+void fdcAudioReset(FdcAudio* fdcAudio) {}
+void fdcAudioSetMotor(FdcAudio* fdcAudio, int motorOn) {}
+void fdcAudioSetReadWrite(FdcAudio* fdcAudio) {}
+
+#else
 
 static Int32 PanasonicReadCount = 17733;
 static Int16 PanasonicReadSamples[] = {
@@ -3546,3 +3555,5 @@ void fdcAudioSetMotor(FdcAudio* fdcAudio, int motorOn)
         fdcAudio->motorOn = motorOn;
     }
 }
+
+#endif

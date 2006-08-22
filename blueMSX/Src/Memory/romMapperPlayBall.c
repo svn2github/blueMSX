@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlayBall.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-20 07:02:10 $
+** $Date: 2006-08-22 00:15:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,11 +34,9 @@
 #include "DeviceManager.h"
 #include "SamplePlayer.h"
 #include "SaveState.h"
-#include "PlayballSamples.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 
 typedef struct {
     SamplePlayer* samplePlayer;
@@ -50,19 +48,50 @@ typedef struct {
     int size;
 } RomMapperPlayBall;
 
-static void saveState(RomMapperPlayBall* rm)
-{
-    SaveState* state = saveStateOpenForWrite("mapperPlayBall");
+#ifdef NO_EMBEDDED_SAMPLES
 
-    saveStateClose(state);
+static void destroy(RomMapperPlayBall* rm)
+{
+    slotUnregister(rm->slot, rm->sslot, rm->startPage);
+    deviceManagerUnregister(rm->deviceHandle);
+    free(rm->romData);
+    free(rm);
 }
 
-static void loadState(RomMapperPlayBall* rm)
+int romMapperPlayBallCreate(char* filename, UInt8* romData, 
+                          int size, int slot, int sslot, int startPage) 
 {
-    SaveState* state = saveStateOpenForRead("mapperPlayBall");
+    DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
+    RomMapperPlayBall* rm;
 
-    saveStateClose(state);
+    rm = malloc(sizeof(RomMapperPlayBall));
+
+    if (size > 0x8000) {
+        size = 0x8000;
+    }
+
+    rm->deviceHandle = deviceManagerRegister(ROM_PLAYBALL, &callbacks, rm);
+    slotRegister(slot, sslot, startPage, 4, NULL, NULL, NULL, destroy, rm);
+
+    rm->romData = malloc(0x8000);
+    memset(rm->romData + size, 0xff, 0x8000 - size);
+    memcpy(rm->romData, romData, size);
+    rm->size = size;
+    rm->slot  = slot;
+    rm->sslot = sslot;
+    rm->startPage  = startPage;
+
+    slotMapPage(rm->slot, rm->sslot, rm->startPage,     rm->romData + 0x0000, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, rm->romData + 0x2000, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, rm->romData + 0x4000, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, rm->romData + 0x6000, 0, 0);
+
+    return 1;
 }
+
+#else
+
+#include "PlayballSamples.h"
 
 static void destroy(RomMapperPlayBall* rm)
 {
@@ -110,7 +139,7 @@ static void write(RomMapperPlayBall* rm, UInt16 address, UInt8 value)
 int romMapperPlayBallCreate(char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
-    DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
+    DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
     RomMapperPlayBall* rm;
 
     rm = malloc(sizeof(RomMapperPlayBall));
@@ -140,3 +169,4 @@ int romMapperPlayBallCreate(char* filename, UInt8* romData,
     return 1;
 }
 
+#endif

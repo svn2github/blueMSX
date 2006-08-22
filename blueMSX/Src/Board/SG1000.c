@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-08-21 20:47:28 $
+** $Date: 2006-08-22 00:15:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,27 @@ static SN76489*     sn76489;
 static R800*        r800;
 static UInt8*       sfRam;
 static UInt32       sfRamSize;
+
+
+/* Although the Sega machines doesn't have the slotted layout
+   described below, it makes handling of carts and boot roms
+   easy when memory is layed out as below:
+
+       SLOT 0    SLOT 1    SLOT 2    SLOT 3
+0000 +---------+---------+---------+---------+
+     | RAM*    |   IPL*  |  CART   |         |
+4000 +---------+---------+---------+---------+
+     | RAM*    |         |  CART   |         |
+8000 +---------+---------+---------+---------+
+     | RAM*    |         |         |         |
+C000 +---------+---------+---------+---------+
+     | RAM*    |         |         |         |
+     +---------+---------+---------+---------+
+
+     * All RAM is not present in all Sega machines. Some use
+       1kB mirrored ram, some use normal ram
+     * The IPL boot rom is only present in SF-7000 machines
+*/
 
 
 // ---------------------------------------------

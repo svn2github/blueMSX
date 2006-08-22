@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-08-21 20:47:28 $
+** $Date: 2006-08-22 00:15:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -482,7 +482,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_SG1000CASTLE:
-            success &= romMapperSg1000CastleCreate(romName, buf, size, 0, 0, 0);
+            success &= romMapperSg1000CastleCreate(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_KANJI:

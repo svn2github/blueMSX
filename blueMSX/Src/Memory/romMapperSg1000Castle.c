@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000Castle.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2005-10-30 01:49:54 $
+** $Date: 2006-08-22 00:15:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,7 +90,15 @@ int romMapperSg1000CastleCreate(char* filename, UInt8* romData,
     for (i = 0; i < pages; i++) {
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
-    slotMapPage(rm->slot, rm->sslot, 4 + rm->startPage, rm->sram, 1, 1);
+    // Always map SRAM in slot 0. This is an unfortunate workaround because
+    // Sega roms are mapped in slot 2, but the page size is 16kB and the SRAM
+    // is only 8kB which makes it impossible in current implementation to
+    // map it in the same slot as the cart.
+    // Note though that mapping carts to slot 2 is also sort of a workaround to
+    // allow carts to be inserted/removed more easily in a running system. This
+    // patch prevent removing the cart to be handled correctly though
+    slotMapPage(0, 0, 4 + rm->startPage, rm->sram, 1, 1);
+//    slotMapPage(rm->slot, rm->sslot, 4 + rm->startPage, rm->sram, 1, 1);
 
     return 1;
 }
