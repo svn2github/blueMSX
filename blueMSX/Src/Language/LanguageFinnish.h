@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-23 16:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -597,10 +597,10 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Näytä/Piilota Spritet";
     ls->shortcutToggleFdcTiming = "Ota käyttöön/Poista käytöstä levyaseman ajoitus";
     ls->shortcutToggleCpuTrace  = "Ota käyttöön/Poista käytöstä Prosessorin jäljitystoiminto";
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
+    ls->shortcutVideoLoad       = "Load Video Capture";             // New in 2.6
+    ls->shortcutVideoPlay       = "Play Last Video Capture";   // New in 2.6
+    ls->shortcutVideoRecord     = "Record Video Capture";              // New in 2.6
+    ls->shortcutVideoStop       = "Stop Video Capture";                // New in 2.6
     ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
 
 

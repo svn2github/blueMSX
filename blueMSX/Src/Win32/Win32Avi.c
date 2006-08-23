@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-08-20 05:04:10 $
+** $Date: 2006-08-23 16:26:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -327,12 +327,29 @@ char* aviGetFilename(Properties* properties)
     char  extensionList[512];
     char defaultDir[512] = "";
     char* extensions = ".avi\0";
+    char* filename;
     int selectedExtension = 0;
+    FILE* file;
 
     sprintf(extensionList, "%s         (*.avi)#*.avi#", langFileAvi());
     replaceCharInString(extensionList, '#', 0);
 
-    return archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");
+    filename = archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");
+
+    file = fopen(filename, "r");
+    if (file != NULL) {
+        char langBuffer[200];
+        fclose(file);
+        sprintf(langBuffer, "%s %s", langWarningOverwriteFile(), filename);
+        if (IDOK != MessageBox(NULL, langBuffer, langWarningTitle(), MB_OKCANCEL)) {
+            return NULL;
+        }
+
+        file = fopen(filename, "wb");
+        fclose(file);
+    }
+
+    return filename;
 }
 
 static char* progressText()
@@ -389,7 +406,7 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
     properties = prop;
     video      = vid;
     syncMethod = properties->emulation.syncMethod;
-    emuSpeed   = emulatorGetMaxSpeed();
+    emuSpeed   = properties->emulation.speed;
 
     zoom = properties->video.captureSize == 0 ? 1 : 2;
 
@@ -402,7 +419,7 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
 
     boardSetPeriodicCallback(aviVideoCallback, NULL, properties->video.captureFps);
     properties->emulation.syncMethod = P_EMU_SYNCIGNORE;
-    emulatorSetMaxSpeed(1);
+    actionEmuSpeedSet(100);
     frameBufferSetFrameCount(4);
 
     soundDriverConfig(hwnd, SOUND_DRV_AVI);
@@ -448,7 +465,7 @@ void aviStopRender()
     }
 
     // Restore emu speed
-    emulatorSetMaxSpeed(emuSpeed);
+    actionEmuSpeedSet(emuSpeed);
 
     // Remove board timer
     boardSetPeriodicCallback(NULL, NULL, 0);
