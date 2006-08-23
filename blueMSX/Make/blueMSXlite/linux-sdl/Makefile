@@ -218,7 +218,7 @@ SOURCE_FILES += SlotManager.c
 SOURCE_FILES += sramLoader.c
 SOURCE_FILES += sramMapperMatsuchita.c
 SOURCE_FILES += sramMapperS1985.c
-SOURCE_FILES += ramMapperPlayBall.c
+SOURCE_FILES += romMapperPlayBall.c
 
 SOURCE_FILES += Crc32Calc.c
 SOURCE_FILES += MediaDb.cpp
