@@ -712,6 +712,12 @@
 					RelativePath="..\..\Src\Memory\romMapperNormal.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperObsonet.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.c">
 				</File>
 				<File

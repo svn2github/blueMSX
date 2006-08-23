@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-08-20 07:02:03 $
+** $Date: 2006-08-23 21:11:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -117,6 +117,7 @@
 #include "romMapperSfg05.h"
 #include "romMapperSf7000Ipl.h"
 #include "romMapperPlayBall.h"
+#include "romMapperObsonet.h"
 
 int toint(char* buffer) 
 {
@@ -1000,6 +1001,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
             
         case ROM_KONAMI5:
             success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_OBSONET:
+            success &= romMapperObsonetCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_MOONSOUND:

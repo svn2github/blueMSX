@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-08-20 07:02:12 $
+** $Date: 2006-08-23 21:11:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -720,6 +720,7 @@ static void endEditControls(HWND hDlg)
     case ROM_ASCII16SRAM:
     case ROM_KONAMI4:
     case ROM_KONAMI5:
+    case ROM_OBSONET:
     case ROM_SCC:
     case ROM_SCCPLUS:
     case ROM_KOEI:
@@ -1095,6 +1096,7 @@ static void setEditControls(HWND hDlg)
     case ROM_ASCII16SRAM:
     case ROM_KONAMI4:
     case ROM_KONAMI5:
+    case ROM_OBSONET:
     case ROM_SCC:
     case ROM_SCCPLUS:
     case ROM_KOEI:
@@ -1267,6 +1269,7 @@ static RomType romTypeList[] = {
     ROM_YAMAHASFG01,
     ROM_YAMAHASFG05,
     ROM_SF7000IPL,
+    ROM_OBSONET,
     ROM_UNKNOWN,
 };
 

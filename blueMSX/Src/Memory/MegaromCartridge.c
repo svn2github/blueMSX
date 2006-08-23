@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-08-22 00:15:31 $
+** $Date: 2006-08-23 21:11:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,6 +91,7 @@
 #include "romMapperSfg05.h"
 #include "romMapperSf7000Ipl.h"
 #include "romMapperPlayBall.h"
+#include "romMapperObsonet.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -293,6 +294,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             
         case ROM_KONAMI5:
             success &= romMapperKonami5Create(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_OBSONET:
+            success &= romMapperObsonetCreate(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_SNATCHER:
