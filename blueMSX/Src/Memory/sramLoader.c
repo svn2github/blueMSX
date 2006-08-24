@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramLoader.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-06-15 22:35:59 $
+** $Date: 2006-08-24 04:02:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 
 
 
-char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix)
+char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix, char* ext)
 {
     static char SRAMfileName[512];
     char fileName[512];
@@ -43,11 +43,19 @@ char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix)
     char* src;
 
     *--dst = '\0';
-    *--dst = 'm';
-    *--dst = 'a';
-    *--dst = 'r';
-    *--dst = 's';
-    *--dst = '.';
+    if (ext == NULL) {
+        *--dst = 'm';
+        *--dst = 'a';
+        *--dst = 'r';
+        *--dst = 's';
+        *--dst = '.';
+    }
+    else {
+        char* p = ext + strlen(ext);
+        do {
+            *--dst = *--p;
+        } while (p != ext);
+    }
 
     dst -= strlen(suffix);
     memcpy(dst, suffix, strlen(suffix));
@@ -70,7 +78,7 @@ char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix)
 
 
 char* sramCreateFilename(char* romFilename) {
-    return sramCreateFilenameWithSuffix(romFilename, "");
+    return sramCreateFilenameWithSuffix(romFilename, "", NULL);
 }
 void sramLoad(char* filename, UInt8* sram, int length, void* header, int headerLength) {
     FILE* file;

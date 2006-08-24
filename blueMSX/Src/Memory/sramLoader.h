@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramLoader.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-08-24 04:02:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #include "MsxTypes.h"
 
 char* sramCreateFilename(char* romFilename);
-char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix);
+char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix, char* ext);
 void sramLoad(char* filename, UInt8* sram, int length, void* header, int headerLength);
 void sramSave(char* filename, UInt8* sram, int length, void* header, int headerLength);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-08-24 04:02:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -301,7 +301,7 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     sprintf(suffix, "_%d", sramSize / 1024);
-    strcpy(rm->sramFilename, sramCreateFilenameWithSuffix(filename, suffix));
+    strcpy(rm->sramFilename, sramCreateFilenameWithSuffix(filename, suffix, NULL));
 
     sramLoad(rm->sramFilename, rm->sram, rm->sramSize, NULL, 0);
 

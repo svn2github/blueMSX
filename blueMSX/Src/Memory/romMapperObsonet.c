@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperObsonet.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-23 21:11:36 $
+** $Date: 2006-08-24 04:02:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,20 +33,153 @@
 #include "DeviceManager.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "sramLoader.h"
 #include <stdlib.h>
 #include <string.h>
 
 
+// Minimal AMD flash emulation to support the obsonet flash
+// TODO: Use correct block size, currently its 16kB
+
+typedef struct {
+    UInt32 address;
+    UInt8  value;
+} AmdCmd;
+
+typedef struct
+{
+    UInt8* romData;
+    int    length;
+    AmdCmd cmd[8];
+    int    cmdIdx;
+    char   sramFilename[512];
+} AmdFlash;
+
+
+static void checkCommandEraseSector(AmdFlash* rm) 
+{
+    if (rm->cmdIdx != 6) {
+        return;
+    }
+    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
+    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
+    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80) return;
+    if ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa) return;
+    if ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55) return;
+    if (                                         rm->cmd[5].value != 0x30) return;
+
+    memset(rm->romData + (rm->cmd[5].address & ~0x3fff & (rm->length - 1)), 0xff, 0x4000);
+    rm->cmdIdx = 0;
+}
+
+static void checkCommandEraseChip(AmdFlash* rm) 
+{
+    if (rm->cmdIdx != 6) {
+        return;
+    }
+    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
+    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
+    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80) return;
+    if ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa) return;
+    if ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55) return;
+    if (                                         rm->cmd[5].value != 0x10) return;
+
+    memset(rm->romData, 0xff, rm->length);
+    rm->cmdIdx = 0;
+}
+
+static void checkCommandProgram(AmdFlash* rm) 
+{
+    if (rm->cmdIdx != 4) {
+        return;
+    }
+
+    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
+    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
+    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0xa0) return;
+
+    rm->romData[rm->cmd[3].address & (rm->length - 1)] &= rm->cmd[3].value;
+    rm->cmdIdx = 0;
+}
+
+void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value)
+{
+    if (rm->cmdIdx < sizeof(rm->cmd) / sizeof(rm->cmd[0])) {
+        rm->cmd[rm->cmdIdx].address = address;
+        rm->cmd[rm->cmdIdx].value   = value;
+        rm->cmdIdx++;
+        checkCommandEraseSector(rm);
+        checkCommandProgram(rm);
+        checkCommandEraseChip(rm);
+    }
+}
+
+UInt8* amdFlashGetPage(AmdFlash* rm, UInt32 address)
+{
+    return rm->romData + address;
+}
+
+void amdFlashReset(AmdFlash* rm)
+{
+    rm->cmdIdx = 0;
+}
+
+static void amdFlashSaveState(AmdFlash* rm)
+{
+    SaveState* state = saveStateOpenForWrite("amdFlash");
+
+    saveStateClose(state);
+}
+
+static void amdFlashLoadState(AmdFlash* rm)
+{
+    SaveState* state = saveStateOpenForRead("amdFlash");
+
+    saveStateClose(state);
+}
+
+AmdFlash* amdFlashCreate(int flashSize, void* romData, int size, char* sramFilename)
+{
+    AmdFlash* rm = (AmdFlash*)calloc(1, sizeof(AmdFlash));
+    
+    if (sramFilename != NULL) {
+        strcpy(rm->sramFilename, sramFilename);
+    }
+
+    rm->length = flashSize;
+
+    rm->romData = malloc(flashSize);
+    if (size >= flashSize) {
+        size = flashSize;
+    }
+    memcpy(rm->romData, romData, size);
+    memset(rm->romData + size, 0xff, flashSize - size);
+
+    return rm;
+}
+
+void amdFlashDestroy(AmdFlash* rm)
+{
+    if (rm->sramFilename[0]) {
+        sramSave(rm->sramFilename, rm->romData, rm->length, NULL, 0);
+    }
+}
+
+//////////////////////////////////////////////////////////
+
+
 typedef struct {
     int deviceHandle;
-    UInt8* romData;
+    AmdFlash* amdFlash;
     int slot;
     int sslot;
     int startPage;
-    int size;
     UInt8 romMapper;
     UInt8 regBank;
+    UInt8* flashPage;
 } RomMapperObsonet;
+
+
 
 static void saveState(RomMapperObsonet* rm)
 {
@@ -56,6 +189,8 @@ static void saveState(RomMapperObsonet* rm)
     saveStateSet(state, "regBank", rm->regBank);
 
     saveStateClose(state);
+
+    amdFlashSaveState(rm->amdFlash);
 }
 
 static void loadState(RomMapperObsonet* rm)
@@ -66,16 +201,20 @@ static void loadState(RomMapperObsonet* rm)
     rm->regBank = (UInt8)saveStateGet(state, "regBank", 0);
 
     saveStateClose(state);
-    
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->romData + rm->romMapper * 0x4000, 1, 0);
+
+    amdFlashLoadState(rm->amdFlash);
+
+    rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
+
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
 }
 
 static void destroy(RomMapperObsonet* rm)
 {
+    amdFlashDestroy(rm->amdFlash);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
-    free(rm->romData);
     free(rm);
 }
 
@@ -83,17 +222,10 @@ static void reset(RomMapperObsonet* rm)
 {
     rm->regBank   = 0;
     rm->romMapper = 0;
+    amdFlashReset(rm->amdFlash);
 }
 
 static UInt8 read(RomMapperObsonet* rm, UInt16 address) 
-{
-    if (address < 0x4000) {
-        return rm->romData[rm->romMapper * 0x4000 + address];
-    }
-    return 0xff;
-}
-
-static UInt8 peek(RomMapperObsonet* rm, UInt16 address) 
 {
     if ((address & 0x3fe0) == 0x3fe0) {
         // The register reads should return the values from the ethernet controller.
@@ -105,16 +237,32 @@ static UInt8 peek(RomMapperObsonet* rm, UInt16 address)
             if (rm->regBank == 3) {
                 return rm->romMapper;
             }
+            break;
+        case 10:
+            if (rm->regBank == 0) {
+                return 0x50;
+            }
+            break;
+        case 11:
+            if (rm->regBank == 0) {
+                return 0x70;
+            }
+            break;
         }
         return 0xff;
     }
 
     if (address < 0x4000) {
         // This is reads to 0x6000-0x7FDF, rest are directly mapped
-        return rm->romData[rm->romMapper * 0x4000 + address];
+        return rm->flashPage[address];
     }
 
     return 0xff;
+}
+
+static UInt8 peek(RomMapperObsonet* rm, UInt16 address) 
+{
+    return read(rm, address);
 }
 
 static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value) 
@@ -127,9 +275,13 @@ static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value)
         case 2:
             if (rm->regBank == 3) {
                 rm->romMapper = value & 0x1f;
-                slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->romData + rm->romMapper * 0x4000, 1, 0);
+                rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
+                slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
             }
         }
+    }
+    else if (address < 0x4000) {
+        amdFlashWrite(rm->amdFlash, address + 0x4000 * rm->romMapper, value);
     }
 }
 
@@ -144,18 +296,14 @@ int romMapperObsonetCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_OBSONET, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
-    rm->romData = malloc(0x80000);
-    if (size >= 0x80000) {
-        size = 0x80000;
-    }
-    memcpy(rm->romData, romData, size);
-    memset(rm->romData + size, 0xff, 0x80000 - size);
-    rm->size = size;
+    rm->amdFlash = amdFlashCreate(0x80000, romData, size, sramCreateFilenameWithSuffix("obsonet.rom", "", ".rom"));
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->romData, 1, 0);
+    rm->flashPage = amdFlashGetPage(rm->amdFlash, 0);
+
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, NULL, 0, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, NULL, 0, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, NULL, 0, 0);
