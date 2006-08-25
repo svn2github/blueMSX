@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-21 20:47:28 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,7 @@ static R800*           r800;
 static SviJoyIo*       joyIO;
 static UInt8           KeyboardMap[16];
 static UInt32          sviRamSize;
+static UInt32          sviRamStart;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
 static int             svi80ColEnabled;
@@ -343,7 +344,7 @@ int sviCreate(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
     }
 
-    success = machineInitialize(machine, &sviRam, &sviRamSize);
+    success = machineInitialize(machine, &sviRam, &sviRamSize, &sviRamStart);
     success &= sviLoad80Col(machine, vdpSyncMode);
 
     for (i = 0; i < 8; i++) {

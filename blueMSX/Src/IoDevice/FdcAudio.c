@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/FdcAudio.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-08-22 00:15:31 $
+** $Date: 2006-08-25 06:27:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3491,7 +3491,7 @@ FdcAudio* fdcAudioCreate(FdcAudioType type)
 {
     FdcAudio* fdcAudio = malloc(sizeof(FdcAudio));
 
-    fdcAudio->samplePlayer = samplePlayerCreate(boardGetMixer(), MIXER_CHANNEL_IO);
+    fdcAudio->samplePlayer = samplePlayerCreate(boardGetMixer(), MIXER_CHANNEL_IO, 16, 44100);
 
     switch (type) {
     default:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperObsonet.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-24 04:02:57 $
+** $Date: 2006-08-25 06:27:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -228,6 +228,7 @@ static void reset(RomMapperObsonet* rm)
 static UInt8 read(RomMapperObsonet* rm, UInt16 address) 
 {
     if ((address & 0x3fe0) == 0x3fe0) {
+        printf("R %d: %.4x\n", rm->regBank, address & 0x1f);
         // The register reads should return the values from the ethernet controller.
         // This is just test code.
         switch (address & 0x1f) {
@@ -262,12 +263,15 @@ static UInt8 read(RomMapperObsonet* rm, UInt16 address)
 
 static UInt8 peek(RomMapperObsonet* rm, UInt16 address) 
 {
+    
+    if ((address & 0x3fe0) == 0x3fe0) return 0xff;
     return read(rm, address);
 }
 
 static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value) 
 {
     if ((address & 0x3fe0) == 0x3fe0) {
+        printf("W %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
         switch (address & 0x1f) {
         case 0:
             rm->regBank = value >> 6;

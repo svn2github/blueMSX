@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-08-16 21:12:38 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,7 +109,7 @@ void machineUpdate(Machine* machine);
 
 void machineSave(Machine* machine);
 
-int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize);
+int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UInt32* mainRamStart);
 
 void machineLoadState(Machine* machine);
 void machineSaveState(Machine* machine);

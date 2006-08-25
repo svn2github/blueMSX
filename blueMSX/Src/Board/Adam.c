@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Adam.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-05-30 21:17:16 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -405,7 +405,7 @@ int adamCreate(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
     }
 
-    success = machineInitialize(machine, NULL, NULL);
+    success = machineInitialize(machine, NULL, NULL, NULL);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

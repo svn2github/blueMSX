@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-08-24 04:02:57 $
+** $Date: 2006-08-25 06:27:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,8 @@ typedef struct {
     int    startPage;
 } RomMapperPanasonic;
 
+static UInt8 emptyRam[0x2000];
+
 static int SRAM_BASE = 0x80;
 static int RAM_BASE  = 0x180;
 
@@ -113,6 +115,9 @@ static void loadState(RomMapperPanasonic* rm)
         break;
     case READ_RAM:
         rm->readBlock = boardGetRamPage(rm->readOffset);
+        if (rm->readBlock == NULL) {
+            rm->readBlock = emptyRam;
+        }
         break;
     case READ_ROM:
         rm->readBlock = rm->romData + rm->readOffset;
@@ -148,12 +153,23 @@ static void changeBank(RomMapperPanasonic* rm, int region, int bank)
         slotMapPage(rm->slot, rm->sslot, region, rm->sram + offset, region != 3, 0);
 	} 
     else if (bank >= RAM_BASE) {
+        UInt8* ram;
+
         if (region == 3) {
             rm->readSection = READ_RAM;
             rm->readOffset = bank - RAM_BASE;
             rm->readBlock = boardGetRamPage(bank - RAM_BASE);
+            if (rm->readBlock == NULL) {
+                rm->readBlock = emptyRam;
+            }
         }
-        slotMapPage(rm->slot, rm->sslot, region, boardGetRamPage(bank - RAM_BASE), region != 3, 0);
+        
+        ram = boardGetRamPage(bank - RAM_BASE);
+        if (ram == NULL) {
+            ram = emptyRam;
+        }
+
+        slotMapPage(rm->slot, rm->sslot, region, ram, region != 3, 0);
 	} 
     else {
 		int offset = bank * 0x2000 & (rm->romSize - 1);
@@ -202,6 +218,9 @@ static UInt8 read(RomMapperPanasonic* rm, UInt16 address)
 	} 
     if (bank >= RAM_BASE) {
         UInt8* ram = boardGetRamPage(bank - RAM_BASE);
+        if (ram == NULL) {
+            ram = emptyRam;
+        }
         return ram[address & 0x1fff];
 	}
 
@@ -253,6 +272,9 @@ static void write(RomMapperPanasonic* rm, UInt16 address, UInt8 value)
 		} 
         else if (bank >= RAM_BASE) {
             UInt8* ram = boardGetRamPage(bank - RAM_BASE);
+            if (ram == NULL) {
+                ram = emptyRam;
+            }
             ram[address & 0x1fff] = value;
 		}
 	} 
@@ -281,6 +303,8 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
     if (size < 0x8000 || startPage != 0) {
         return 0;
     }
+
+    memset(emptyRam, 0xff, sizeof(emptyRam));
 
     rm = malloc(sizeof(RomMapperPanasonic));
 

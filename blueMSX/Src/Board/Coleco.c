@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-08-20 17:22:33 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -327,7 +327,7 @@ int colecoCreate(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, 0);
     }
 
-    success = machineInitialize(machine, NULL, NULL);
+    success = machineInitialize(machine, NULL, NULL, NULL);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

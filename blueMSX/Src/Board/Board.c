@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2006-08-23 05:39:05 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,8 +82,6 @@ static int     useMegaRom;
 static int     useMegaRam;
 static int     useFmPac;
 static RomType currentRomType[2];
-
-static UInt8 emptyRam[0x2000];
 
 static BoardType boardLoadState(const char* stateFile);
 
@@ -1154,7 +1152,7 @@ UInt32 boardGetInt(UInt32 irq)
 UInt8* boardGetRamPage(int page)
 {
     if (boardInfo.getRamPage == NULL) {
-        return emptyRam;
+        return NULL;
     }
     return boardInfo.getRamPage(page);
 }

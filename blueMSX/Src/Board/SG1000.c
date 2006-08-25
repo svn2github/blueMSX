@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-08-22 00:15:30 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,7 @@ static SN76489*     sn76489;
 static R800*        r800;
 static UInt8*       sfRam;
 static UInt32       sfRamSize;
+static UInt32       sfRamStart;
 
 
 /* Although the Sega machines doesn't have the slotted layout
@@ -186,13 +187,17 @@ static void loadState()
 }
 
 static UInt8* getRamPage(int page) {
-    static UInt8 emptyRam[0x2000];
+    int start = page * 0x2000 - (int)sfRamStart;
 
     if (sfRam == NULL) {
-        return emptyRam;
+        return NULL;
     }
 
-	return sfRam + ((page * 0x2000) & (sfRamSize - 1));
+    if (start < 0 || start >= (int)sfRamSize) {
+        return NULL;
+    }
+
+	return sfRam + start;
 }
 
 static void changeCartridge(void* ref, int cartNo, int inserted)
@@ -277,7 +282,7 @@ int sg1000Create(Machine* machine,
         cartridgeSetSlotInfo(i, 2 + i, 0);
     }
 
-    success = machineInitialize(machine, &sfRam, &sfRamSize);
+    success = machineInitialize(machine, &sfRam, &sfRamSize, &sfRamStart);
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

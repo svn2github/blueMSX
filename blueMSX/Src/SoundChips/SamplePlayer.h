@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-08-20 07:02:11 $
+** $Date: 2006-08-25 06:27:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,14 +39,14 @@
 typedef struct SamplePlayer SamplePlayer;
 
 /* Constructor and destructor */
-SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel);
+SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel, int bitDepth, int frequency);
 void samplePlayerDestroy(SamplePlayer* samplePlayer);
 void samplePlayerReset(SamplePlayer* samplePlayer);
 
 /* Register read/write methods */
 void samplePlayerWrite(SamplePlayer* samplePlayer, 
-                       const Int16* attackBuffer, UInt32 attackBufferSize, 
-                       const Int16* loopBuffer, UInt32 loopBufferSize);
+                       const void* attackBuffer, UInt32 attackBufferSize, 
+                       const void* loopBuffer, UInt32 loopBufferSize);
 void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops);
 int samplePlayerIsIdle(SamplePlayer* samplePlayer);
 int samplePlayerIsLooping(SamplePlayer* samplePlayer);

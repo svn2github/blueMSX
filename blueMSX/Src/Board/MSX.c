@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-06-15 23:26:11 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,6 +60,7 @@ static R800*           r800;
 static RTC*            rtc;
 static UInt8*          msxRam;
 static UInt32          msxRamSize;
+static UInt32          msxRamStart;
 static UInt32          z80Frequency;
 
 void msxSetCpu(int mode)
@@ -119,13 +120,17 @@ static int getRefreshRate()
 }
 
 static UInt8* getRamPage(int page) {
-    static UInt8 emptyRam[0x2000];
+    int start = page * 0x2000 - (int)msxRamStart;
 
     if (msxRam == NULL) {
-        return emptyRam;
+        return NULL;
     }
 
-	return msxRam + ((page * 0x2000) & (msxRamSize - 1));
+    if (start < 0 || start >= (int)msxRamSize) {
+        return NULL;
+    }
+
+	return msxRam + start;
 }
     
 static void saveState()
@@ -225,7 +230,7 @@ int msxCreate(Machine* machine,
         cartridgeSetSlotInfo(i, machine->cart[i].slot, machine->cart[i].subslot);
     }
 
-    success = machineInitialize(machine, &msxRam, &msxRamSize);
+    success = machineInitialize(machine, &msxRam, &msxRamSize, &msxRamStart);
 
     msxPsg = msxPsgCreate(machine->board.type == BOARD_MSX ? PSGTYPE_AY8910 : PSGTYPE_YM2149);
 

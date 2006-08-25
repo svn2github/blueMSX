@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2006-08-23 21:11:35 $
+** $Date: 2006-08-25 06:27:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -709,13 +709,15 @@ void machineSaveState(Machine* machine)
     saveStateClose(state);
 }
 
-int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
+int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UInt32* mainRamStart)
 {
-    UInt8* ram     = NULL;
-    UInt32 ramSize = 0;
-    UInt8* ram2     = NULL;
-    UInt32 ram2Size = 0;
-    void* jisyoRom  = NULL;
+    UInt8* ram       = NULL;
+    UInt32 ramSize   = 0;
+    UInt32 ramStart  = 0;
+    UInt8* ram2      = NULL;
+    UInt32 ram2Size  = 0;
+    UInt32 ram2Start = 0;
+    void* jisyoRom   = NULL;
     int jisyoRomSize = 0;
     int success = 1;
     int hdId = FIRST_INTERNAL_HD_INDEX;
@@ -744,6 +746,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
 
         if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
             success &= ram1kBMirroredCreate(size, slot, subslot, startPage, &ram, &ramSize);
+            ramStart = startPage * 0x2000;
             continue;
         }
     }
@@ -769,9 +772,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
         if (machine->slotInfo[i].romType == RAM_NORMAL) {
             if (ram == NULL && startPage == 0) {
                 success &= ramNormalCreate(size, slot, subslot, startPage, &ram, &ramSize);
+                ramStart = startPage * 0x2000;
             }
             else {
                 success &= ramNormalCreate(size, slot, subslot, startPage, &ram2, &ram2Size);
+                ram2Start = startPage * 0x2000;
             }
             continue;
         }
@@ -802,6 +807,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
     if (ram == NULL) {
         ram = ram2;
         ramSize = ram2Size;
+        ramStart = ram2Start;
     }
 
     if (ram == NULL) {
@@ -1270,6 +1276,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize)
     
     if (mainRamSize != NULL) {
         *mainRamSize = ramSize;
+    }
+
+    if (mainRamStart != NULL) {
+        *mainRamStart = ramStart;
     }
 
     return success;

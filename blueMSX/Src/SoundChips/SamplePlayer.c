@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-20 07:02:11 $
+** $Date: 2006-08-25 06:27:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,10 +44,14 @@ struct SamplePlayer
     Mixer* mixer;
     Int32 handle;
 
+    int   bitDepth;
+    int   stepCnt;
+    int   stepCur;
+
     Int32  enabled;
-    const Int16* attackBuffer;
+    const void* attackBuffer;
     UInt32 attackBufferSize;
-    const Int16* loopBuffer;
+    const void* loopBuffer;
     UInt32 loopBufferSize;
     int index;
     int playAttack;
@@ -65,11 +69,14 @@ void samplePlayerReset(SamplePlayer* samplePlayer) {
     samplePlayer->enabled         = 0;
 }
 
-SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel)
+SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel, int bitDepth, int frequency)
 {
     SamplePlayer* samplePlayer = (SamplePlayer*)calloc(1, sizeof(SamplePlayer));
 
-    samplePlayer->mixer = mixer;
+    samplePlayer->mixer    = mixer;
+    samplePlayer->bitDepth = bitDepth;
+    samplePlayer->stepCur  = 0;
+    samplePlayer->stepCnt  = 44100 / frequency;
 
     samplePlayerReset(samplePlayer);
 
@@ -101,8 +108,8 @@ int samplePlayerIsLooping(SamplePlayer* samplePlayer)
 }
 
 void samplePlayerWrite(SamplePlayer* samplePlayer, 
-                       const Int16* attackBuffer, UInt32 attackBufferSize, 
-                       const Int16* loopBuffer, UInt32 loopBufferSize)
+                       const void* attackBuffer, UInt32 attackBufferSize, 
+                       const void* loopBuffer, UInt32 loopBufferSize)
 {
     mixerSync(samplePlayer->mixer);
 
@@ -134,19 +141,27 @@ static Int32* samplePlayerSync(SamplePlayer* samplePlayer, UInt32 count)
     for (index = 0; index < count; index++) {
         Int32 sample = 0;
         if (samplePlayer->playAttack) {
-            sample = samplePlayer->attackBuffer[samplePlayer->index] * 9 / 10;
-            if (++samplePlayer->index == samplePlayer->attackBufferSize) {
-                samplePlayer->index = 0;
-                samplePlayer->playAttack = 0;
+            if (samplePlayer->bitDepth == 8)  sample = ((Int32)((UInt8*)samplePlayer->attackBuffer)[samplePlayer->index] - 0x80) * 256 * 9 / 10;
+            if (samplePlayer->bitDepth == 16) sample = ((Int32)((Int16*)samplePlayer->attackBuffer)[samplePlayer->index]) * 9 / 10;
+            if (++samplePlayer->stepCur >= samplePlayer->stepCnt) {
+                if (++samplePlayer->index == samplePlayer->attackBufferSize) {
+                    samplePlayer->index = 0;
+                    samplePlayer->playAttack = 0;
+                }
+                samplePlayer->stepCur = 0;
             }
         }
         else if (samplePlayer->stopCount > 0) {
-            sample = samplePlayer->loopBuffer[samplePlayer->index];
-            if (++samplePlayer->index == samplePlayer->loopBufferSize) {
-                samplePlayer->index = 0;
-                if (--samplePlayer->stopCount <= 0) {
-                    samplePlayer->enabled = 0;
+            if (samplePlayer->bitDepth == 8)  sample = ((Int32)((UInt8*)samplePlayer->loopBuffer)[samplePlayer->index] - 0x80) * 256 * 9 / 10;
+            if (samplePlayer->bitDepth == 16) sample = ((Int32)((Int16*)samplePlayer->loopBuffer)[samplePlayer->index]) * 9 / 10;
+            if (++samplePlayer->stepCur >= samplePlayer->stepCnt) {
+                if (++samplePlayer->index == samplePlayer->loopBufferSize) {
+                    samplePlayer->index = 0;
+                    if (--samplePlayer->stopCount <= 0) {
+                        samplePlayer->enabled = 0;
+                    }
                 }
+                samplePlayer->stepCur = 0;
             }
         }
         else {

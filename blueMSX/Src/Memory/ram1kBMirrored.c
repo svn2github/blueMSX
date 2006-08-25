@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-08-20 17:22:34 $
+** $Date: 2006-08-25 06:27:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -143,7 +143,7 @@ int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** r
     }
 
     if (ramSize != NULL) {
-        *ramSize = 0x400;
+        *ramSize = rm->pages * 0x2000;
     }
 
     return 1;

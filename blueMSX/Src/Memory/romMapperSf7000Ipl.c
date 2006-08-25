@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSf7000Ipl.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-09 14:09:49 $
+** $Date: 2006-08-25 06:27:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,7 +59,9 @@ static void write(RomMapperSf7000Ipl* rm, UInt16 address, UInt8 value)
 {
     UInt8* ramPage = boardGetRamPage(address / 0x2000);
 
-    ramPage[address & 0x1fff] = value;
+    if (ramPage != NULL) {
+        ramPage[address & 0x1fff] = value;
+    }
 }
 
 int romMapperSf7000IplCreate(char* filename, UInt8* romData, 

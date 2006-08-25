@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlayBall.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-22 00:15:31 $
+** $Date: 2006-08-25 06:27:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -144,7 +144,7 @@ int romMapperPlayBallCreate(char* filename, UInt8* romData,
 
     rm = malloc(sizeof(RomMapperPlayBall));
 
-    rm->samplePlayer = samplePlayerCreate(boardGetMixer(), MIXER_CHANNEL_PCM);
+    rm->samplePlayer = samplePlayerCreate(boardGetMixer(), MIXER_CHANNEL_PCM, 8, 11025);
 
     if (size > 0x8000) {
         size = 0x8000;
