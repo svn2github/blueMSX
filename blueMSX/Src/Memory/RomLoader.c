@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomLoader.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2004-12-06 07:47:11 $
+** $Date: 2006-08-25 15:54:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,8 @@ UInt8* romLoad(const char *fileName, const char *fileInZipFile, int* size)
     }
 
     if (fileInZipFile != NULL) {
-        return zipLoadFile(fileName, fileInZipFile, size);
+        buf = zipLoadFile(fileName, fileInZipFile, size);
+        return buf;
     }
 
     file = fopen(fileName, "rb");
