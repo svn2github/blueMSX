@@ -1270,6 +1270,12 @@
 				RelativePath="..\..\Src\IoDevice\RTC.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\rtl8019.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\rtl8019.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\Sc3000PPI.c">
 			</File>
 			<File
