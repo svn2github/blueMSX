@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-26 08:02:07 $
+** $Date: 2006-08-26 08:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include "RTL8019.h"
+#include "rtl8019.h"
 #include "Board.h"
 #include "SaveState.h"
 #include <stdlib.h>
