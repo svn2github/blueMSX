@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperObsonet.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-08-25 15:54:47 $
+** $Date: 2006-08-26 08:02:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "sramLoader.h"
+#include "rtl8019.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -171,6 +172,7 @@ void amdFlashDestroy(AmdFlash* rm)
 typedef struct {
     int deviceHandle;
     AmdFlash* amdFlash;
+    RTL8019*  rtl8019;
     int slot;
     int sslot;
     int startPage;
@@ -191,6 +193,7 @@ static void saveState(RomMapperObsonet* rm)
     saveStateClose(state);
 
     amdFlashSaveState(rm->amdFlash);
+    rtl8019SaveState(rm->rtl8019);
 }
 
 static void loadState(RomMapperObsonet* rm)
@@ -203,6 +206,7 @@ static void loadState(RomMapperObsonet* rm)
     saveStateClose(state);
 
     amdFlashLoadState(rm->amdFlash);
+    rtl8019LoadState(rm->rtl8019);
 
     rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
 
@@ -212,6 +216,7 @@ static void loadState(RomMapperObsonet* rm)
 static void destroy(RomMapperObsonet* rm)
 {
     amdFlashDestroy(rm->amdFlash);
+    rtl8019Destroy(rm->rtl8019);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -223,34 +228,15 @@ static void reset(RomMapperObsonet* rm)
     rm->regBank   = 0;
     rm->romMapper = 0;
     amdFlashReset(rm->amdFlash);
+    rtl8019Reset(rm->rtl8019);
 }
 
 static UInt8 read(RomMapperObsonet* rm, UInt16 address) 
 {
-    if ((address & 0x3fe0) == 0x3fe0) {
-//        printf("R %d: %.4x\n", rm->regBank, address & 0x1f);
-        // The register reads should return the values from the ethernet controller.
-        // This is just test code.
-        switch (address & 0x1f) {
-        case 0:
-            return rm->regBank << 6;
-        case 2:
-            if (rm->regBank == 3) {
-                return rm->romMapper;
-            }
-            break;
-        case 10:
-            if (rm->regBank == 0) {
-                return 0x50;
-            }
-            break;
-        case 11:
-            if (rm->regBank == 0) {
-                return 0x70;
-            }
-            break;
-        }
-        return 0xff;
+    if ((address & 0x3fe0) == 0x3fe0) { 
+        UInt8 value = rtl8019Read(rm->rtl8019, address & 0x1f);
+//        printf("R %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
+        return value;
     }
 
     if (address < 0x4000) {
@@ -271,6 +257,7 @@ static UInt8 peek(RomMapperObsonet* rm, UInt16 address)
 static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value) 
 {
     if ((address & 0x3fe0) == 0x3fe0) {
+        if (rm->regBank < 3)
 //        printf("W %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
         switch (address & 0x1f) {
         case 0:
@@ -282,7 +269,9 @@ static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value)
                 rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
                 slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
             }
+            break;
         }
+        rtl8019Write(rm->rtl8019, address & 0x1f, value);
     }
     else if (address < 0x4000) {
         amdFlashWrite(rm->amdFlash, address + 0x4000 * rm->romMapper, value);
@@ -304,6 +293,8 @@ int romMapperObsonetCreate(char* filename, UInt8* romData,
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
+
+    rm->rtl8019 = rtl8019Create();
 
     rm->flashPage = amdFlashGetPage(rm->amdFlash, 0);
 

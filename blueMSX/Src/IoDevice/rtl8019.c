@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-26 01:03:35 $
+** $Date: 2006-08-26 08:02:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+static void archEthSendPacket(UInt8* buffer, UInt16 length) {
+    printf("Sending from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
+        buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6],
+        buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]) ;
+}
+static void archEthGetMacAddress(UInt8* macAddress) { memcpy(macAddress, "\0ABCDE", 6); }
 
 #define MEM_SIZE  0x8000
 #define MEM_START 0x4000
@@ -67,17 +74,21 @@ typedef struct RTL8019
     UInt8  regCntr0;
     UInt8  regCntr1;
     UInt8  regCntr2;
+    UInt8  regBpage;
 
     UInt8  regPar[6];
     UInt8  regMar[8];
     UInt8  macaddr[32];
     
     UInt8 memory[MEM_SIZE];
+
+    BoardTimer*  timerTx;
+    UInt32       timeTx;
 };
 
 
 #define CR_STP          0x01    // Stop command
-#define CR_STA          0x02    // Nothing
+#define CR_STA          0x02    // Start command
 #define CR_TXP          0x04    // Transmit
 #define CR_RD           0x38    // DMA command mode
 #define CR_PS           0xc0    // Page select
@@ -131,14 +142,15 @@ typedef struct RTL8019
 
 #define TCR_CRC         0x01    // CRC logic
 #define TCR_LB0         0x02    // Loopback mode
-#define TCR_LB1         0x03    // Loopback mode
-#define TCR_ATD         0x04    // Auto transmit disable
-#define TCR_OFST        0x05    // Collision offset enable
+#define TCR_LB1         0x04    // Loopback mode
+#define TCR_ATD         0x08    // Auto transmit disable
+#define TCR_OFST        0x10    // Collision offset enable
+
 #define TCR_LB_MASK     0x06
 #define TCR_LB_NORMAL   0x00
-#define TCR_LB_INT      0x02
-#define TCR_LB_EXT1     0x04
-#define TCR_LB_EXT2     0x06
+#define TCR_LB_INTERN   0x02
+#define TCR_LB_EXTERN1  0x04
+#define TCR_LB_EXTERN2  0x06
 
 #define TSR_PTX         0x01    // Transmission complete, no errors
 #define TSR_BIT1        0x02
@@ -175,6 +187,11 @@ static UInt8 readPage1(RTL8019* rtl, UInt8 address);
 static UInt8 readPage2(RTL8019* rtl, UInt8 address);
 static UInt8 readPage3(RTL8019* rtl, UInt8 address);
 
+static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length);
+
+static void onTxTimer(RTL8019* rtl, UInt32 time);
+
+static UInt8 BroadcastMac[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 void rtl8019SaveState(RTL8019* rtl)
 {
@@ -187,14 +204,29 @@ void rtl8019LoadState(RTL8019* rtl)
 RTL8019* rtl8019Create()
 {
     RTL8019* rtl = malloc(sizeof(RTL8019));
+    int i;
+
+    rtl->timerTx = boardTimerCreate(onTxTimer, rtl);
 
     rtl8019Reset(rtl);
+
+    archEthGetMacAddress(rtl->regPar);
+
+    for (i = 0; i < 6; i++) {
+        rtl->macaddr[2 * i + 0] = rtl->regPar[i];
+        rtl->macaddr[2 * i + 1] = rtl->regPar[i];
+    }
+    
+    for (i = 12; i < sizeof(rtl->macaddr); i++) {
+        rtl->macaddr[i] = 0x70;
+    }
 
     return rtl;
 }
 
 void rtl8019Destroy(RTL8019* rtl)
 {
+    boardTimerDestroy(rtl->timerTx);
     free(rtl);
 }
 
@@ -226,6 +258,7 @@ void rtl8019Reset(RTL8019* rtl)
     rtl->regCntr0   = 0;
     rtl->regCntr1   = 0;
     rtl->regCntr2   = 0;
+    rtl->regBpage   = 0;
     
     memset(rtl->regPar, 0, sizeof(rtl->regPar));
     memset(rtl->regMar, 0, sizeof(rtl->regMar));
@@ -292,6 +325,59 @@ static void setIrq(int enable)
 
 static void writeCr(RTL8019* rtl, UInt8 value)
 {
+    UInt8 changed = rtl->regCr ^ value;
+
+    rtl->regCr = value | (rtl->regCr & CR_TXP);
+
+    if ((rtl->regCr & CR_RD) == CR_RD_NA) {
+        rtl->regCr |= CR_RD_DMA;
+    }
+
+    if (rtl->regCr & CR_STP) {
+        rtl->regIsr |= ISR_RST;
+    }
+
+    if ((rtl->regCr & CR_RD) == CR_RD_SEND) {
+        rtl->regRsar = rtl->regCrda = rtl->regBnry * 256;
+        rtl->regRbcr = rtl->memory[rtl->regCrda - MEM_START + 2] * 256 + // FIXME: Check endian
+                       rtl->memory[rtl->regCrda - MEM_START + 3];
+    }
+
+    if (rtl->regCr & CR_TXP) {
+        switch (rtl->regTcr & TCR_LB_MASK) {
+        case TCR_LB_NORMAL:
+            if (rtl->regCr & CR_STP) {
+                rtl->regCr &= ~CR_TXP;
+                break;
+            }
+            if (rtl->regTbcr == 0) {
+                rtl->regCr &= ~CR_TXP;
+                break;
+            }
+            archEthSendPacket(rtl->memory + rtl->regTpsr * 256 - MEM_START, rtl->regTbcr);
+
+            rtl->timeTx = (192 + 8 * rtl->regTbcr) * boardFrequency() / 10000000;
+            boardTimerAdd(rtl->timerTx, rtl->timeTx);
+            break;
+        case TCR_LB_INTERN:
+            receiveFrame(rtl, rtl->memory + rtl->regTpsr * 256 - MEM_START, rtl->regTbcr);
+            rtl->regCr &= ~CR_TXP;
+            break;
+        default:
+            rtl->regCr &= ~CR_TXP;
+             // External loopback not supported
+            break;
+        }
+    }
+
+    if ((rtl->regCr & CR_RD) == CR_RD_READ) {
+        if (rtl->regRbcr == 0) {
+            rtl->regIsr |= ISR_RDC;
+            if (rtl->regImr & IMR_RDC) {
+                setIrq(1);
+            }
+        }
+    }
 }
 
 static void writeRemoteDma(RTL8019* rtl, UInt8 address, UInt8 value)
@@ -317,7 +403,9 @@ static void writeRemoteDma(RTL8019* rtl, UInt8 address, UInt8 value)
     rtl->regRbcr--;
     if (rtl->regRbcr == 0) {
         rtl->regIsr |= ISR_RDC;
-        setIrq(rtl->regImr & IMR_RDC);
+        if (rtl->regImr & IMR_RDC) {
+            setIrq(1);
+        }
     }
 }
 
@@ -332,22 +420,22 @@ static void writePage0(RTL8019* rtl, UInt8 address, UInt8 value)
         writeCr(rtl, value);
         break;
     case 0x01:
-        rtl->regPstart = value;
+        rtl->regPstart = value & (MEM_SIZE / 256 - 1);
         break;
     case 0x02:
-        rtl->regPstop = value;
+        rtl->regPstop = value & (MEM_SIZE / 256 - 1);
         break;
     case 0x03:
-        rtl->regBnry = value;
+        rtl->regBnry = value & (MEM_SIZE / 256 - 1);
         break;
     case 0x04:
-        rtl->regTpsr = value;
+        rtl->regTpsr = value & (MEM_SIZE / 256 - 1);
         break;
     case 0x05:
-        rtl->regTbcr = (rtl->regTbcr & 0xff00) | value;
+        rtl->regTbcr = (rtl->regTbcr & 0xff00) | value & (MEM_SIZE - 1);
         break;
     case 0x06:
-        rtl->regTbcr = (rtl->regTbcr & 0x00ff) | ((UInt16)value << 8);
+        rtl->regTbcr = (rtl->regTbcr & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
         break;
     case 0x07:
         rtl->regIsr = (rtl->regIsr & ISR_RST) | (rtl->regIsr & ~(value & 0x7f));
@@ -356,18 +444,18 @@ static void writePage0(RTL8019* rtl, UInt8 address, UInt8 value)
         }
         break;
     case 0x08:
-        rtl->regRsar = (rtl->regRsar & 0xff00) | value;
+        rtl->regRsar = (rtl->regRsar & 0xff00) | value & (MEM_SIZE - 1);
         rtl->regCrda = rtl->regRsar;
         break;
     case 0x09:
-        rtl->regRsar = (rtl->regRsar & 0x00ff) | ((UInt16)value << 8);
+        rtl->regRsar = (rtl->regRsar & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
         rtl->regCrda = rtl->regRsar;
         break;
     case 0x0a:
-        rtl->regRbcr = (rtl->regRbcr & 0xff00) | value;
+        rtl->regRbcr = (rtl->regRbcr & 0xff00) | value & (MEM_SIZE - 1);
         break;
     case 0x0b:
-        rtl->regRbcr = (rtl->regRbcr & 0x00ff) | ((UInt16)value << 8);
+        rtl->regRbcr = (rtl->regRbcr & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
         break;
     case 0x0c:
         rtl->regRcr = value & 0x3f;
@@ -447,6 +535,9 @@ static void writePage3(RTL8019* rtl, UInt8 address, UInt8 value)
     switch (address) {
     case 0x00:
         writeCr(rtl, value);
+        break;
+    case 0x02:
+        rtl->regBpage = value;
         break;
     }
 }
@@ -598,6 +689,8 @@ static UInt8 readPage3(RTL8019* rtl, UInt8 address)
     switch (address) {
     case 0x00:
         return rtl->regCr;
+    case 0x02:
+        return rtl->regBpage;
     case 0x05:
     case 0x06:
         return 0x40;
@@ -606,3 +699,120 @@ static UInt8 readPage3(RTL8019* rtl, UInt8 address)
     return 0;
 }
 
+static void onTxTimer(RTL8019* rtl, UInt32 time)
+{
+    rtl->regCr &= ~CR_TXP;
+    rtl->regTsr |= TSR_PTX;
+    rtl->regIsr |= IMR_PTX;
+
+    if (rtl->regImr & IMR_PTX) {
+        setIrq(1);
+    }
+}
+
+static UInt32 getMulticastIndex(UInt8* macAddress)
+{
+    UInt32 crc = 0xffffffffL;
+    int i;
+
+    for (i = 0; i < 6; i++) {
+        UInt8 val = *macAddress++;
+        int j;
+
+        for (j = 0; j < 8; j++) {
+            int carry = ((crc & 0x80000000L) ? 1 : 0) ^ (val & 0x01);
+            crc <<= 1;
+            val >>= 1;
+            if (carry) {
+                crc = ((crc ^ 0x04c11db6) | carry);
+            }
+        }
+    }
+    return crc >> 26;
+}
+
+static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length)
+{
+    UInt8  pages;
+    UInt8  pagesFree;
+    UInt8  pageNext;
+    UInt8* packet;
+
+    if ((rtl->regCr & CR_STP) || (rtl->regDcr & DCR_LS) || (rtl->regTcr & TCR_LB_MASK)) {
+        return;
+    }
+
+    if (length < 60 && !(rtl->regRcr & RCR_AR)) {
+        return;
+    }
+
+    if (rtl->regPstart >= rtl->regPstop) {
+        return;
+    }
+
+    pages = (UInt8)((length + 8 + 255) / 256);
+    if (rtl->regCurr < rtl->regBnry) {
+        pagesFree = rtl->regBnry - rtl->regCurr;
+    }
+    else {
+        pagesFree = rtl->regPstop - rtl->regPstart + rtl->regBnry - rtl->regCurr;
+    }
+
+    if (pagesFree <= pages) {
+        return;
+    }
+
+    if (!(rtl->regRcr & RCR_PRO)) {
+        if (memcmp(buffer, BroadcastMac, 6) == 0) {
+            if (!(rtl->regRcr & RCR_AB)) {
+                return;
+            }
+        }
+        else if (buffer[0] & 0x01) {
+            UInt32 index;
+            if (!(rtl->regRcr & RCR_AM)) {
+                return;
+            }
+            index = getMulticastIndex(buffer);
+            if (!(rtl->regMar[index >> 3] & (1 << (index & 0x7)))) {
+                return;
+            }
+        }
+        else if (memcmp(buffer, rtl->regPar, 6) != 0) {
+            return;
+        }
+    }
+
+    pageNext = rtl->regCurr + pages;
+    if (pageNext >= rtl->regPstop) {
+        pageNext = rtl->regPstop - rtl->regPstart;
+    }
+
+    packet = rtl->memory + 256 * rtl->regCurr - MEM_START;
+
+    packet[0] = (buffer[0] & 0x01) ? 0x21 : 0x01;
+    packet[1] = pageNext;
+    packet[2] = (UInt8)((length + 4) & 0xff);
+    packet[3] = (UInt8)((length + 4) >> 8);
+
+    if (pageNext > rtl->regCurr) {
+        memcpy(packet + 4, buffer, length);
+    }
+    else {
+        UInt16 wrapLen = 256 * (rtl->regPstop - rtl->regCurr) - 4;
+        memcpy(packet + 4, buffer, wrapLen);
+        memcpy(rtl->memory + 256 * rtl->regPstart - MEM_START, buffer + wrapLen, length - wrapLen);
+    }
+
+    rtl->regCurr = pageNext;
+
+    rtl->regRsr |= RSR_PRX | RSR_PHY;
+    if (!(buffer[0] & 0x01)) {
+        rtl->regRsr &= ~RSR_PHY;
+    }
+
+    rtl->regIsr |= ISR_PRX;
+    if (rtl->regImr & IMR_PRX) {
+        setIrq(1);
+    }
+}
