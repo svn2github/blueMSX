@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-08-25 06:27:05 $
+** $Date: 2006-08-28 05:42:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -895,6 +895,8 @@ int boardRun(Machine* machine,
             periodicTimer = boardTimerCreate(boardPeriodicCallback, periodicRef);
             boardTimerAdd(periodicTimer, boardSystemTime() + periodicInterval);
         }
+
+        syncToRealClock(0, 0);
 
         boardInfo.run(boardInfo.cpuRef);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-08-28 03:32:41 $
+** $Date: 2006-08-28 05:42:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,6 +82,8 @@ typedef struct RTL8019
     UInt32       timeTx;
     
     BoardTimer*  timerRx;
+
+    int archInit;
 };
 
 
@@ -205,12 +207,11 @@ RTL8019* rtl8019Create()
     RTL8019* rtl = malloc(sizeof(RTL8019));
     int i;
 
-    archEthCreate();
-
+    rtl->archInit = 0;
     rtl->timerTx = boardTimerCreate(onTxTimer, rtl);
     rtl->timerRx = boardTimerCreate(onRxTimer, rtl);
 
-    boardTimerAdd(rtl->timerRx, boardSystemTime() + boardFrequency() / RX_FREQUENCY);
+    boardTimerAdd(rtl->timerRx, boardSystemTime() + 1);
 
     rtl8019Reset(rtl);
 
@@ -394,7 +395,7 @@ static void writeRemoteDma(RTL8019* rtl, UInt8 address, UInt8 value)
         return;
     }
 
-    printf("DMA W %.4x: %.2x\n", (rtl->regCrda - MEM_START) & (MEM_SIZE - 1), value);
+//    printf("DMA W %.4x: %.2x\n", (rtl->regCrda - MEM_START) & (MEM_SIZE - 1), value);
     rtl->memory[(rtl->regCrda - MEM_START) & (MEM_SIZE - 1)] = value;
     rtl->regCrda++;
     if (rtl->regCrda == rtl->regPstop << 8) {
@@ -713,13 +714,19 @@ static void onTxTimer(RTL8019* rtl, UInt32 time)
 
 static void onRxTimer(RTL8019* rtl, UInt32 time)
 {
-    UInt8* buffer;
-    UInt32 length;
 
-    int rv = archEthRecvPacket(&buffer, &length);
+    if (!rtl->archInit) {
+        archEthCreate();
+        rtl->archInit = 1;
+    }
+    else {
+        UInt8* buffer;
+        UInt32 length;
+        int rv = archEthRecvPacket(&buffer, &length);
 
-    if (rv == 1) {
-        receiveFrame(rtl, buffer, (UInt16)length);
+        if (rv == 1) {
+            receiveFrame(rtl, buffer, (UInt16)length);
+        }
     }
 
     boardTimerAdd(rtl->timerRx, time + boardFrequency() / RX_FREQUENCY);

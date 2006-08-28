@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-28 03:32:41 $
+** $Date: 2006-08-28 05:42:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,5 @@
 */
 #ifndef WIN32_ETH_H
 #define WIN32_ETH_H
-
-#include <windows.h>
 
 #endif
