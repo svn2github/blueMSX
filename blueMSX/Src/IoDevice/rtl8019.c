@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-26 08:30:19 $
+** $Date: 2006-08-28 03:32:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,20 +30,16 @@
 #include "rtl8019.h"
 #include "Board.h"
 #include "SaveState.h"
+#include "ArchEth.h"
 #include <stdlib.h>
 #include <string.h>
-
-
-static void archEthSendPacket(UInt8* buffer, UInt16 length) {
-    printf("Sending from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-        buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6],
-        buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]) ;
-}
-static void archEthGetMacAddress(UInt8* macAddress) { memcpy(macAddress, "\0ABCDE", 6); }
 
 #define MEM_SIZE  0x8000
 #define MEM_START 0x4000
 #define MEM_END   (MEM_START + MEM_SIZE)
+
+
+#define RX_FREQUENCY  1000
 
 
 typedef struct RTL8019
@@ -84,6 +80,8 @@ typedef struct RTL8019
 
     BoardTimer*  timerTx;
     UInt32       timeTx;
+    
+    BoardTimer*  timerRx;
 };
 
 
@@ -190,6 +188,7 @@ static UInt8 readPage3(RTL8019* rtl, UInt8 address);
 static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length);
 
 static void onTxTimer(RTL8019* rtl, UInt32 time);
+static void onRxTimer(RTL8019* rtl, UInt32 time);
 
 static UInt8 BroadcastMac[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
@@ -206,7 +205,12 @@ RTL8019* rtl8019Create()
     RTL8019* rtl = malloc(sizeof(RTL8019));
     int i;
 
+    archEthCreate();
+
     rtl->timerTx = boardTimerCreate(onTxTimer, rtl);
+    rtl->timerRx = boardTimerCreate(onRxTimer, rtl);
+
+    boardTimerAdd(rtl->timerRx, boardSystemTime() + boardFrequency() / RX_FREQUENCY);
 
     rtl8019Reset(rtl);
 
@@ -226,7 +230,10 @@ RTL8019* rtl8019Create()
 
 void rtl8019Destroy(RTL8019* rtl)
 {
+    archEthDestroy();
+
     boardTimerDestroy(rtl->timerTx);
+    boardTimerDestroy(rtl->timerRx);
     free(rtl);
 }
 
@@ -292,10 +299,10 @@ UInt8 rtl8019Read(RTL8019* rtl, UInt8 address)
 
 void rtl8019Write(RTL8019* rtl, UInt8 address, UInt8 value)
 {
-    if (address == 0x10 || address == 0x11) {
+    if (address >= 0x10 && address < 0x18) {
         writeRemoteDma(rtl, address, value);
     }
-    else if (address == 0x1f) {
+    else if (address >= 0x18 && address < 0x20) {
         writeResetDma(rtl, address, value);
     }
     else if (address < 0x10) {
@@ -356,7 +363,7 @@ static void writeCr(RTL8019* rtl, UInt8 value)
             }
             archEthSendPacket(rtl->memory + rtl->regTpsr * 256 - MEM_START, rtl->regTbcr);
 
-            rtl->timeTx = (192 + 8 * rtl->regTbcr) * boardFrequency() / 10000000;
+            rtl->timeTx = boardSystemTime() + (192 + 8 * (int)rtl->regTbcr) / 100 * boardFrequency() / 100000;
             boardTimerAdd(rtl->timerTx, rtl->timeTx);
             break;
         case TCR_LB_INTERN:
@@ -382,19 +389,13 @@ static void writeCr(RTL8019* rtl, UInt8 value)
 
 static void writeRemoteDma(RTL8019* rtl, UInt8 address, UInt8 value)
 {
-    // If 8 bit mode, don't allow writes to second DMA port
-    if ((address & 1) && !(rtl->regDcr & DCR_WTS)) {
-        return;
-    }
-
     if (rtl->regRbcr == 0) {
         // No data to write
         return;
     }
 
-    if (rtl->regCrda >= MEM_START && rtl->regCrda < MEM_END) {
-        rtl->memory[rtl->regCrda - MEM_START] = value;
-    }
+    printf("DMA W %.4x: %.2x\n", (rtl->regCrda - MEM_START) & (MEM_SIZE - 1), value);
+    rtl->memory[(rtl->regCrda - MEM_START) & (MEM_SIZE - 1)] = value;
     rtl->regCrda++;
     if (rtl->regCrda == rtl->regPstop << 8) {
         rtl->regCrda = rtl->regPstart << 8;
@@ -420,22 +421,22 @@ static void writePage0(RTL8019* rtl, UInt8 address, UInt8 value)
         writeCr(rtl, value);
         break;
     case 0x01:
-        rtl->regPstart = value & (MEM_SIZE / 256 - 1);
+        rtl->regPstart = value;
         break;
     case 0x02:
-        rtl->regPstop = value & (MEM_SIZE / 256 - 1);
+        rtl->regPstop = value;
         break;
     case 0x03:
-        rtl->regBnry = value & (MEM_SIZE / 256 - 1);
+        rtl->regBnry = value;
         break;
     case 0x04:
-        rtl->regTpsr = value & (MEM_SIZE / 256 - 1);
+        rtl->regTpsr = value;
         break;
     case 0x05:
-        rtl->regTbcr = (rtl->regTbcr & 0xff00) | value & (MEM_SIZE - 1);
+        rtl->regTbcr = (rtl->regTbcr & 0xff00) | value;
         break;
     case 0x06:
-        rtl->regTbcr = (rtl->regTbcr & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
+        rtl->regTbcr = (rtl->regTbcr & 0x00ff) | ((UInt16)value << 8);
         break;
     case 0x07:
         rtl->regIsr = (rtl->regIsr & ISR_RST) | (rtl->regIsr & ~(value & 0x7f));
@@ -444,18 +445,18 @@ static void writePage0(RTL8019* rtl, UInt8 address, UInt8 value)
         }
         break;
     case 0x08:
-        rtl->regRsar = (rtl->regRsar & 0xff00) | value & (MEM_SIZE - 1);
+        rtl->regRsar = (rtl->regRsar & 0xff00) | value;
         rtl->regCrda = rtl->regRsar;
         break;
     case 0x09:
-        rtl->regRsar = (rtl->regRsar & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
+        rtl->regRsar = (rtl->regRsar & 0x00ff) | ((UInt16)value << 8);
         rtl->regCrda = rtl->regRsar;
         break;
     case 0x0a:
-        rtl->regRbcr = (rtl->regRbcr & 0xff00) | value & (MEM_SIZE - 1);
+        rtl->regRbcr = (rtl->regRbcr & 0xff00) | value;
         break;
     case 0x0b:
-        rtl->regRbcr = (rtl->regRbcr & 0x00ff) | ((UInt16)value << 8) & (MEM_SIZE - 1);
+        rtl->regRbcr = (rtl->regRbcr & 0x00ff) | ((UInt16)value << 8);
         break;
     case 0x0c:
         rtl->regRcr = value & 0x3f;
@@ -561,7 +562,7 @@ static UInt8 readRemoteDma(RTL8019* rtl, UInt8 address)
     }
 
     if (rtl->regCrda >= MEM_START && rtl->regCrda < MEM_END) {
-        value = rtl->memory[rtl->regCrda - MEM_START];
+        value = rtl->memory[(rtl->regCrda - MEM_START) & (MEM_SIZE - 1)];
     }
 
     rtl->regCrda++;
@@ -710,6 +711,20 @@ static void onTxTimer(RTL8019* rtl, UInt32 time)
     }
 }
 
+static void onRxTimer(RTL8019* rtl, UInt32 time)
+{
+    UInt8* buffer;
+    UInt32 length;
+
+    int rv = archEthRecvPacket(&buffer, &length);
+
+    if (rv == 1) {
+        receiveFrame(rtl, buffer, (UInt16)length);
+    }
+
+    boardTimerAdd(rtl->timerRx, time + boardFrequency() / RX_FREQUENCY);
+}
+
 static UInt32 getMulticastIndex(UInt8* macAddress)
 {
     UInt32 crc = 0xffffffffL;
@@ -736,7 +751,7 @@ static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length)
     UInt8  pages;
     UInt8  pagesFree;
     UInt8  pageNext;
-    UInt8* packet;
+    UInt32 packetIdx;
 
     if ((rtl->regCr & CR_STP) || (rtl->regDcr & DCR_LS) || (rtl->regTcr & TCR_LB_MASK)) {
         return;
@@ -788,20 +803,29 @@ static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length)
         pageNext = rtl->regPstop - rtl->regPstart;
     }
 
-    packet = rtl->memory + 256 * rtl->regCurr - MEM_START;
+    packetIdx =  + 256 * rtl->regCurr - MEM_START;
 
-    packet[0] = (buffer[0] & 0x01) ? 0x21 : 0x01;
-    packet[1] = pageNext;
-    packet[2] = (UInt8)((length + 4) & 0xff);
-    packet[3] = (UInt8)((length + 4) >> 8);
+    rtl->memory[packetIdx + 0] = (buffer[0] & 0x01) ? 0x21 : 0x01;
+    rtl->memory[packetIdx + 1] = pageNext;
+    rtl->memory[packetIdx + 2] = (UInt8)((length + 4) & 0xff);
+    rtl->memory[packetIdx + 3] = (UInt8)((length + 4) >> 8);
 
     if (pageNext > rtl->regCurr) {
-        memcpy(packet + 4, buffer, length);
+        int i;
+        for (i = 0; i < length; i++) {
+            rtl->memory[packetIdx + 4 + i] = buffer[i];
+        }
     }
     else {
-        UInt16 wrapLen = 256 * (rtl->regPstop - rtl->regCurr) - 4;
-        memcpy(packet + 4, buffer, wrapLen);
-        memcpy(rtl->memory + 256 * rtl->regPstart - MEM_START, buffer + wrapLen, length - wrapLen);
+        UInt16 wrapLen =   256 * (rtl->regPstop - rtl->regCurr) - 4;
+        UInt16 wrapStart = 256 * rtl->regPstart - MEM_START - wrapLen;
+        int i;
+        for (i = 0; i < wrapLen; i++) {
+            rtl->memory[packetIdx + 4 + i] = buffer[i];
+        }
+        for (; i < length; i++) {
+            rtl->memory[packetIdx + wrapStart + 4 + i] = buffer[i];
+        }
     }
 
     rtl->regCurr = pageNext;

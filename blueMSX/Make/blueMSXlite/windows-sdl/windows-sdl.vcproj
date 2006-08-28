@@ -185,6 +185,9 @@
 				RelativePath="..\..\..\Src\Sdl\SdlDialog.c">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Sdl\SdlEth.c">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Sdl\SdlEvent.c">
 			</File>
 			<File
@@ -609,6 +612,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\IoDevice\RTC.h">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\rtl8019.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IoDevice\rtl8019.h">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\IoDevice\Sc3000PPI.c">

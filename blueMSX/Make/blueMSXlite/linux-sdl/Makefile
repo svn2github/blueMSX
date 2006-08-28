@@ -104,6 +104,7 @@ SOURCE_FILES += SdlDialog.c
 SOURCE_FILES += SdlMidi.c
 SOURCE_FILES += SdlMenu.c
 SOURCE_FILES += SdlInput.c
+SOURCE_FILES += SdlEth.c
 SOURCE_FILES += SdlFile.c
 SOURCE_FILES += SdlGlob.c
 SOURCE_FILES += SdlEvent.c

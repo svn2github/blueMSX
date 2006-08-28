@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-28 03:32:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,10 +90,10 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->fileRom                 = "ROM 映像";
     ls->fileAll                 = "所有文件";
     ls->fileCpuState            = "CPU 状态";
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "截取视频"; // New in 2.6
     ls->fileDisk                = "软盘映像";
     ls->fileCas                 = "磁带映像";
-    ls->fileAvi                 = "Video Clip";    // New in 2.6
+    ls->fileAvi                 = "剪辑视频";    // New in 2.6
 
 
     //----------------------
@@ -129,13 +129,13 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCasSetPosition      = "磁带位置设置";
     ls->menuCasRewind           = "倒带";
 
-    ls->menuVideoLoad           = "Load...";             // New in 2.6
-    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
-    ls->menuVideoRecord         = "Record";              // New in 2.6
-    ls->menuVideoRecording      = "Recording";           // New in 2.6
-    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
-    ls->menuVideoStop           = "Stop";                // New in 2.6
-    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+    ls->menuVideoLoad           = "读取...";             // New in 2.6
+    ls->menuVideoPlay           = "播放上一个截取视频";   // New in 2.6
+    ls->menuVideoRecord         = "录制";              // New in 2.6
+    ls->menuVideoRecording      = "正在录制";           // New in 2.6
+    ls->menuVideoRecAppend      = "录制 （附加）";     // New in 2.6
+    ls->menuVideoStop           = "停止";                // New in 2.6
+    ls->menuVideoRender         = "渲染视频文件";   // New in 2.6
 
     ls->menuZoomNormal          = "标准尺寸";
     ls->menuZoomDouble          = "两倍尺寸";
@@ -170,8 +170,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuFileSaveState       = "保存 CPU 状态";
     ls->menuFileQLoadState      = "快速读取";
     ls->menuFileQSaveState      = "快速保存";
-    ls->menuFileCaptureAudio    = "录音";
-    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
+    ls->menuFileCaptureAudio    = "截取音频";
+    ls->menuFileCaptureVideo    = "截取视频"; // New in 2.6
     ls->menuFileScreenShot      = "截图";
     ls->menuFileExit            = "退出";
 
@@ -187,7 +187,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->menuToolsMachine         = "机型资料编辑";
     ls->menuToolsShortcuts      = "快捷键编辑工具";
-    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "控制器 / 键盘编辑器"; // New in 2.6
     ls->menuToolsMixer          = "混音器";
     ls->menuToolsDebugger       = "调试工具";               
     ls->menuToolsTrainer        = "作弊工具";                
@@ -222,11 +222,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "请选择要读取的磁带映像:";
     ls->dlgLoadRomDskCasDesc    = "请选择要读取的卡带、软盘或磁带映像:";
     ls->dlgLoadState            = "读取 CPU 状态";
-    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "读取截取视频";      // New in 2.6
     ls->dlgSaveState            = "保存 CPU 状态";
     ls->dlgSaveCassette          = "blueMSX - 保存磁带映像";
-    ls->dlgSaveVideoClipAs      = "Save video clip as...";     // New in 2.6
-    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "另存剪裁视频为...";     // New in 2.6
+    ls->dlgAmountCompleted      = "总计完成:";          // New in 2.6
     ls->dlgInsertRom1           = "请在插槽 1 插入 ROM 卡带";
     ls->dlgInsertRom2           = "请在插槽 2 插入 ROM 卡带";
     ls->dlgInsertDiskA          = "请在驱动器 A 插入软盘映像";
@@ -234,7 +234,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "请插入硬盘";                   
     ls->dlgInsertCas            = "请插入磁带";
     ls->dlgRomType              = "Rom 类型:";
-    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
+    ls->dlgDiskSize             = "软盘大小:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - 磁带";
     ls->dlgTapeFrameText        = "磁带位置";
@@ -269,7 +269,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgSavePreview          = "显示预览";
     ls->dlgSaveDate             = "保存时间:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - 正在渲染截取的视频...";  // New in 2.6
 
 
     //----------------------
@@ -596,11 +596,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "显示/隐藏活动块";
     ls->shortcutToggleFdcTiming = "启用/禁用软盘驱动器计时";
     ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 追踪";
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
-    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
+    ls->shortcutVideoLoad       = "读取截取视频";        // New in 2.6
+    ls->shortcutVideoPlay       = "播放上一个截取视频";   // New in 2.6
+    ls->shortcutVideoRecord     = "录制截取视频";      // New in 2.6
+    ls->shortcutVideoStop       = "停止截取视频";        // New in 2.6
+    ls->shortcutVideoRender     = "渲染视频文件";         // New in 2.6
 
 
     //----------------------
