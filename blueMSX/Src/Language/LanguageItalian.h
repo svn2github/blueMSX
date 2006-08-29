@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,7 +90,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->fileRom                 = "ROM image"; 
     ls->fileAll                 = "Tutti gli archivi"; 
     ls->fileCpuState             = "Stato della CPU"; 
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "Cattura il video"; // New in 2.6
     ls->fileDisk                = "Disk Image"; 
     ls->fileCas                 = "Tape Image"; 
     ls->fileAvi                 = "Video Clip";    // New in 2.6
@@ -118,7 +118,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "RAM esterno"; 
 
-    ls->menuDiskInsertNew       = "Inserisci nuovo disco floppy";              
+    ls->menuDiskInsertNew       = "Inserisci nuovo disco";              
     ls->menuDiskDirInsert       = "Inserisci Directory"; 
     ls->menuDiskAutoStart       = "Riavvia dopo l'inserimento";
     ls->menuCartAutoReset       = "Riavvia dopo aver inserito/rimosso";
@@ -129,13 +129,13 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Imposta la posizione";
     ls->menuCasRewind           = "Riavvolgi";
 
-    ls->menuVideoLoad           = "Load...";             // New in 2.6
-    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
-    ls->menuVideoRecord         = "Record";              // New in 2.6
-    ls->menuVideoRecording      = "Recording";           // New in 2.6
-    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
+    ls->menuVideoLoad           = "Carica...";             // New in 2.6
+    ls->menuVideoPlay           = "Vede la più recente cattura video";   // New in 2.6
+    ls->menuVideoRecord         = "Salva";              // New in 2.6
+    ls->menuVideoRecording      = "Salva in corso";           // New in 2.6
+    ls->menuVideoRecAppend      = "Salva (aggiungi)";     // New in 2.6
     ls->menuVideoStop           = "Stop";                // New in 2.6
-    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+    ls->menuVideoRender         = "Crea video clip";   // New in 2.6
 
     ls->menuPrnFormfeed         = "Pagina seguente"; 
 
@@ -171,7 +171,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Carica rapidamente lo stato";
     ls->menuFileQSaveState      = "Salva rapidamente lo stato";
     ls->menuFileCaptureAudio    = "Cattura l'audio";
-    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Cattura il video"; // New in 2.6
     ls->menuFileScreenShot      = "Salva la schermata";
     ls->menuFileExit            = "Esci";
 
@@ -222,11 +222,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Scegli un'immagine cassetta da caricare:";
     ls->dlgLoadRomDskCasDesc    = "Scegli l'immagine di una rom, di un dischetto, o di un nastro da caricare:";
     ls->dlgLoadState            = "Carica lo stato della CPU";
-    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Carica cattura video";      // New in 2.6
     ls->dlgSaveState            = "Salva lo stato della CPU";
     ls->dlgSaveCassette          = "blueMSX - Salva l'immagine nastro";
-    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Salva video clip con...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Salva in corso:";          // New in 2.6
     ls->dlgInsertRom1           = "Inserisci una cartuccia ROM nello slot 1";
     ls->dlgInsertRom2           = "Inserisci una cartuccia ROM nello slot 2";
     ls->dlgInsertDiskA          = "Inserisci un'immagine dischetto nell'unità A";
@@ -234,7 +234,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Inserisci uno disco rigido";                   
     ls->dlgInsertCas            = "Inserisci un'immagine cassetta";
     ls->dlgRomType              = "Tipo rom:"; 
-    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
+    ls->dlgDiskSize             = "Formato del disco:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Posizione del nastro";
     ls->dlgTapeFrameText        = "Posizione del nastro";
@@ -269,7 +269,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgSavePreview          = "Mostra anteprima"; 
     ls->dlgSaveDate             = "Data:"; 
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Crea video clip ...";  // New in 2.6
 
 
     //----------------------
@@ -596,11 +596,11 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostra/Disattiva Sprites";
     ls->shortcutToggleFdcTiming = "Sincronizzare o no disco floppy"; 
     ls->shortcutToggleCpuTrace  = "Convalidare/invalidare la traccia della CPU"; 
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
-    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
+    ls->shortcutVideoLoad       = "Carica cattura video";             // New in 2.6
+    ls->shortcutVideoPlay       = "Vede la più recente cattura video";   // New in 2.6
+    ls->shortcutVideoRecord     = "Salva cattura video";              // New in 2.6
+    ls->shortcutVideoStop       = "Stop cattura video";                // New in 2.6
+    ls->shortcutVideoRender     = "Crea video clip";   // New in 2.6
 
 
     //----------------------

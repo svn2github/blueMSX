@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-28 05:42:06 $
+** $Date: 2006-08-29 00:09:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 */
 #include "ArchEth.h"
 #include "Win32Eth.h"
+#include "Properties.h"
 
 #define WPCAP
 #define HAVE_REMOTE
@@ -38,21 +39,57 @@
 
 static char errbuf[PCAP_ERRBUF_SIZE];
 static pcap_t *pcapHandle = NULL;
-
+static UInt8 macAddress[6];
 static char devName[512];
-void win32EthGetDeviceList()
+
+static UInt8 InvalidMac[] = { 0, 0, 0, 0, 0, 0 };
+
+
+static int parseMac(UInt8* macAddr, char* macStr) {
+    int m[6];
+    int i;
+
+    if (sscanf(macStr, "%d:%d:%d:%d:%d:%d", m+0,m+1,m+2,m+3,m+4,m+5) != 6) {
+        memset(macAddr, 0, 6);
+        return 0;
+    }
+
+    for (i = 0; i < 6; i++) {
+        if (m[i] < 0 || m[i] > 255) {
+            memset(macAddr, 0, 6);
+            return 0;
+        }
+        macAddr[i] = (UInt8)m[i];
+    }
+
+    return 1;
+}
+
+void win32EthGetDevice()
 {
+    int ethIndex;
     pcap_if_t *alldevs;
     pcap_if_t *d;
     int i = 0;
+
+    // Clear globals
+    devName[0] = 0;
+    memset(macAddress, 0, sizeof(macAddress));
+
+    // Get config from properties
+    ethIndex = propGetGlobalProperties()->ports.Eth.ethIndex;
+    parseMac(macAddress, propGetGlobalProperties()->ports.Eth.macAddress);
+
+    if (memcmp(macAddress, InvalidMac, 6) == 0) {
+        return;
+    }
 
     if (pcap_findalldevs(&alldevs, errbuf) == -1)
     {
         return;
     }
-
-    strcpy(devName, alldevs->name);
     
+
     for(d=alldevs; d; d=d->next)
     {
         if (!d->description) {
@@ -61,6 +98,11 @@ void win32EthGetDeviceList()
 
         printf("%d. %s\n", ++i, d->name);
         printf(" (%s)\n", d->description);
+
+        if (ethIndex == i) {
+            strcpy(devName, d->name);
+            printf("Using device: %s\n", devName);
+        }
      }
 
     pcap_freealldevs(alldevs);
@@ -68,7 +110,7 @@ void win32EthGetDeviceList()
 
 void archEthCreate() 
 {
-    win32EthGetDeviceList();
+    win32EthGetDevice();
 
     pcapHandle = pcap_open_live(devName, 65536, PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
     if (pcapHandle != NULL) {
@@ -88,10 +130,18 @@ void archEthDestroy()
 }
 
 int archEthSendPacket(UInt8* buffer, UInt32 length) {
+    int i;
+#if 0
     printf("Sending to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
         buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6],
         buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]);
 
+    for (i = 0; i < length; i++) {
+        printf("%.2x ", buffer[i]);
+        if (i % 16 == 15) printf("\n");
+    }
+    printf("\n");
+#endif
     if (pcapHandle == NULL) {
         return 0;
     }
@@ -108,14 +158,19 @@ int archEthRecvPacket(UInt8** buffer, UInt32* length)
     }
 
     while(pcap_next_ex(pcapHandle, &header, buffer) > 0){
-        printf("RECEIVED PACKET len:%d\n", header->len);
+        UInt8 * b = *buffer;
+#if 0
+        printf("Received to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6],
+            b[7], b[8], b[9], b[10], b[11]);
+#endif
         *length = header->len;
         return 1;
     }
     return 0;
 }
 
-void archEthGetMacAddress(UInt8* macAddress) 
+void archEthGetMacAddress(UInt8* macAddr) 
 { 
-    memcpy(macAddress, "\0ABCDE", 6); 
+    memcpy(macAddr, macAddress, 6); 
 }

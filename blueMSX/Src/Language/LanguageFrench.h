@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,8 +61,8 @@ void langInitFrench(LanguageStrings* ls)
     ls->textDevice              = "Type:";
     ls->textFilename            = "Fichier:";
     ls->textFile                = "Fichier";
-    ls->textNone                = "Aucun";
-    ls->textUnknown             = "Aucun";                            
+    ls->textNone                = "Aucun(e)";
+    ls->textUnknown             = "Inconnu";                            
 
 
     //----------------------
@@ -90,10 +90,10 @@ void langInitFrench(LanguageStrings* ls)
     ls->fileRom                 = "Image-ROM";
     ls->fileAll                 = "Tous les fichiers";
     ls->fileCpuState            = "Image du CPU";
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "Capture vidéo"; // New in 2.6
     ls->fileDisk                = "Image-disque";
     ls->fileCas                 = "Image-cassette";
-    ls->fileAvi                 = "Video Clip";    // New in 2.6
+    ls->fileAvi                 = "Clip vidéo";    // New in 2.6
 
 
     //----------------------
@@ -118,7 +118,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "RAM externe";
 
-    ls->menuDiskInsertNew       = "Insérer nouvelle disquette";              
+    ls->menuDiskInsertNew       = "Insérer un nouveau disque";              
     ls->menuDiskDirInsert       = "Insérer répertoire"; 
     ls->menuDiskAutoStart       = "Reset après insertion";
     ls->menuCartAutoReset       = "Reset après insérer/éjecter";
@@ -129,13 +129,13 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Définir la position";
     ls->menuCasRewind           = "Rembobiner ";
 
-    ls->menuVideoLoad           = "Load...";             // New in 2.6
-    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
-    ls->menuVideoRecord         = "Record";              // New in 2.6
-    ls->menuVideoRecording      = "Recording";           // New in 2.6
-    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
-    ls->menuVideoStop           = "Stop";                // New in 2.6
-    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+    ls->menuVideoLoad           = "Charger ...";             // New in 2.6
+    ls->menuVideoPlay           = "Voir la plus récente capture";   // New in 2.6
+    ls->menuVideoRecord         = "Enregistrer";              // New in 2.6
+    ls->menuVideoRecording      = "Enregistrement";           // New in 2.6
+    ls->menuVideoRecAppend      = "Enregistrer (accoler)";     // New in 2.6
+    ls->menuVideoStop           = "Arrêter";                // New in 2.6
+    ls->menuVideoRender         = "Créer un clip vidéo";   // New in 2.6
 
     ls->menuPrnFormfeed         = "Page suivante"; 
 
@@ -171,7 +171,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Accès instantané à l'image du CPU";
     ls->menuFileQSaveState      = "Sauvegarde instantanée de l'image du CPU";
     ls->menuFileCaptureAudio    = "Capture du son";
-    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Capture vidéo"; // New in 2.6
     ls->menuFileScreenShot      = "Capture d'écran";
     ls->menuFileExit            = "Quitter";
 
@@ -222,11 +222,11 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Choisissez une cassette à charger:";
     ls->dlgLoadRomDskCasDesc    = "Choisissez un fichier rom, dsk, ou cas à charger:";
     ls->dlgLoadState            = "Charger une image du CPU";
-    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Charger une capture vidéo";      // New in 2.6
     ls->dlgSaveState            = "Sauver une image du CPU";
     ls->dlgSaveCassette         = "blueMSX - Sauver une image de cassette";
-    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Sauver le clip vidéo comme ...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Sauvegarde en cours:";          // New in 2.6
     ls->dlgInsertRom1           = "Insérer une cartouche dans le port 1";
     ls->dlgInsertRom2           = "Insérer une cartouche dans le port 2";
     ls->dlgInsertDiskA          = "Insérer une disquette dans le lecteur A";
@@ -234,7 +234,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Insérer un disque dur";                   
     ls->dlgInsertCas            = "Insérer une cassette dans le lecteur";
     ls->dlgRomType              = "Type de Rom:"; 
-    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
+    ls->dlgDiskSize             = "Taille du disque:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - position de la bande";
     ls->dlgTapeFrameText        = "Position de la bande";
@@ -269,7 +269,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgSavePreview          = "Prévisualiser"; 
     ls->dlgSaveDate             = "Date:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Création du clip vidéo ...";  // New in 2.6
 
 
     //----------------------
@@ -320,7 +320,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Lignes de scannage:";
+    ls->propMonScanlines        = "Scanlines:";
     ls->propMonColorGhosting    = "Modulateur RF"; 
     ls->propMonEffectsGB        = "Effets ";
 
@@ -596,11 +596,11 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Montrer/Cacher les sprites";
     ls->shortcutToggleFdcTiming = "Synchroniser ou non le lecteur de disquettes"; 
     ls->shortcutToggleCpuTrace  = "Valider/Invalider la trace du CPU";
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
-    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
+    ls->shortcutVideoLoad       = "Charger une capture vidéo";             // New in 2.6
+    ls->shortcutVideoPlay       = "Voir la plus récente capture vidéo";   // New in 2.6
+    ls->shortcutVideoRecord     = "Enregistrer une capture vidéo";              // New in 2.6
+    ls->shortcutVideoStop       = "Arrêter la capture vidéo";                // New in 2.6
+    ls->shortcutVideoRender     = "Créer un clip vidéo";   // New in 2.6
 
 
     //----------------------

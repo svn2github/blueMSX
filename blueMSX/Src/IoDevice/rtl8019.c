@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-08-28 05:42:05 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,7 +37,6 @@
 #define MEM_SIZE  0x8000
 #define MEM_START 0x4000
 #define MEM_END   (MEM_START + MEM_SIZE)
-
 
 #define RX_FREQUENCY  1000
 
@@ -85,6 +84,9 @@ typedef struct RTL8019
 
     int archInit;
 };
+
+
+#define SAFEMEM(rtl, offset) (rtl)->memory[((offset) - MEM_START) & (MEM_SIZE - 1)]
 
 
 #define CR_STP          0x01    // Stop command
@@ -277,10 +279,10 @@ void rtl8019Reset(RTL8019* rtl)
 
 UInt8 rtl8019Read(RTL8019* rtl, UInt8 address)
 {
-    if (address == 0x10 || address == 0x11) {
+    if (address >= 0x10 && address < 0x18) {
         return readRemoteDma(rtl, address);
     }
-    else if (address == 0x1f) {
+    else if (address >= 0x18 && address < 0x20) {
         return readResetDma(rtl, address);
     }
     else if (address < 0x10) {
@@ -347,8 +349,8 @@ static void writeCr(RTL8019* rtl, UInt8 value)
 
     if ((rtl->regCr & CR_RD) == CR_RD_SEND) {
         rtl->regRsar = rtl->regCrda = rtl->regBnry * 256;
-        rtl->regRbcr = rtl->memory[rtl->regCrda - MEM_START + 2] * 256 + // FIXME: Check endian
-                       rtl->memory[rtl->regCrda - MEM_START + 3];
+        rtl->regRbcr = SAFEMEM(rtl, rtl->regCrda + 2) * 256 + // FIXME: Check endian
+                       SAFEMEM(rtl, rtl->regCrda + 3);
     }
 
     if (rtl->regCr & CR_TXP) {
@@ -362,13 +364,17 @@ static void writeCr(RTL8019* rtl, UInt8 value)
                 rtl->regCr &= ~CR_TXP;
                 break;
             }
-            archEthSendPacket(rtl->memory + rtl->regTpsr * 256 - MEM_START, rtl->regTbcr);
+            if (rtl->regTpsr * 256 >= MEM_START && rtl->regTpsr * 256 + rtl->regTbcr < MEM_SIZE) {
+                archEthSendPacket(&SAFEMEM(rtl, rtl->regTpsr * 256), rtl->regTbcr);
+            }
 
             rtl->timeTx = boardSystemTime() + (192 + 8 * (int)rtl->regTbcr) / 100 * boardFrequency() / 100000;
             boardTimerAdd(rtl->timerTx, rtl->timeTx);
             break;
         case TCR_LB_INTERN:
-            receiveFrame(rtl, rtl->memory + rtl->regTpsr * 256 - MEM_START, rtl->regTbcr);
+            if (rtl->regTpsr * 256 >= MEM_START && rtl->regTpsr * 256 + rtl->regTbcr < MEM_SIZE) {
+                receiveFrame(rtl, &SAFEMEM(rtl, rtl->regTpsr * 256), rtl->regTbcr);
+            }
             rtl->regCr &= ~CR_TXP;
             break;
         default:
@@ -396,7 +402,7 @@ static void writeRemoteDma(RTL8019* rtl, UInt8 address, UInt8 value)
     }
 
 //    printf("DMA W %.4x: %.2x\n", (rtl->regCrda - MEM_START) & (MEM_SIZE - 1), value);
-    rtl->memory[(rtl->regCrda - MEM_START) & (MEM_SIZE - 1)] = value;
+    SAFEMEM(rtl, rtl->regCrda) = value;
     rtl->regCrda++;
     if (rtl->regCrda == rtl->regPstop << 8) {
         rtl->regCrda = rtl->regPstart << 8;
@@ -553,28 +559,25 @@ static UInt8 readRemoteDma(RTL8019* rtl, UInt8 address)
         return value;
     }
 
-    // If 8 bit mode, don't allow writes to second DMA port
-    if ((address & 1) && !(rtl->regDcr & DCR_WTS)) {
-        return value;
-    }
-
     if (rtl->regCrda < 32) {
         value = rtl->macaddr[rtl->regCrda];
     }
 
     if (rtl->regCrda >= MEM_START && rtl->regCrda < MEM_END) {
-        value = rtl->memory[(rtl->regCrda - MEM_START) & (MEM_SIZE - 1)];
+        value = SAFEMEM(rtl, rtl->regCrda);
     }
 
     rtl->regCrda++;
-    if (rtl->regCrda == rtl->regPstop << 8) {
-        rtl->regCrda = rtl->regPstart << 8;
+    if (rtl->regCrda == 256 * rtl->regPstop) {
+        rtl->regCrda = 256 * rtl->regPstart;
     }
 
     rtl->regRbcr--;
     if (rtl->regRbcr == 0) {
         rtl->regIsr |= ISR_RDC;
-        setIrq(rtl->regImr & IMR_RDC);
+        if (rtl->regImr & IMR_RDC) {
+            setIrq(1);
+        }
     }
 
     return value;
@@ -760,7 +763,7 @@ static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length)
     UInt8  pageNext;
     UInt32 packetIdx;
 
-    if ((rtl->regCr & CR_STP) || (rtl->regDcr & DCR_LS) || (rtl->regTcr & TCR_LB_MASK)) {
+    if ((rtl->regCr & CR_STP) || !(rtl->regDcr & DCR_LS) || (rtl->regTcr & TCR_LB_MASK)) {
         return;
     }
 
@@ -807,33 +810,36 @@ static void receiveFrame(RTL8019* rtl, UInt8* buffer, UInt16 length)
 
     pageNext = rtl->regCurr + pages;
     if (pageNext >= rtl->regPstop) {
-        pageNext = rtl->regPstop - rtl->regPstart;
+        pageNext -= rtl->regPstop - rtl->regPstart;
     }
 
-    packetIdx =  + 256 * rtl->regCurr - MEM_START;
+    packetIdx = 256 * rtl->regCurr;
 
-    rtl->memory[packetIdx + 0] = (buffer[0] & 0x01) ? 0x21 : 0x01;
-    rtl->memory[packetIdx + 1] = pageNext;
-    rtl->memory[packetIdx + 2] = (UInt8)((length + 4) & 0xff);
-    rtl->memory[packetIdx + 3] = (UInt8)((length + 4) >> 8);
+    SAFEMEM(rtl, packetIdx + 0) = (buffer[0] & 0x01) ? 0x21 : 0x01;
+    SAFEMEM(rtl, packetIdx + 1) = pageNext;
+    SAFEMEM(rtl, packetIdx + 2) = (UInt8)((length + 4) & 0xff);
+    SAFEMEM(rtl, packetIdx + 3) = (UInt8)((length + 4) >> 8);
 
     if (pageNext > rtl->regCurr) {
         int i;
         for (i = 0; i < length; i++) {
-            rtl->memory[packetIdx + 4 + i] = buffer[i];
+//            printf("%.2x ", buffer[i]); if(i%16==15)printf("\n");
+            SAFEMEM(rtl, packetIdx + 4 + i) = buffer[i];
         }
     }
     else {
-        UInt16 wrapLen =   256 * (rtl->regPstop - rtl->regCurr) - 4;
-        UInt16 wrapStart = 256 * rtl->regPstart - MEM_START - wrapLen;
+        UInt16 wrapLen = 256 * (rtl->regPstop - rtl->regCurr) - 4;
         int i;
         for (i = 0; i < wrapLen; i++) {
-            rtl->memory[packetIdx + 4 + i] = buffer[i];
+//            printf("%.2x ", buffer[i]); if(i%16==15)printf("\n");
+            SAFEMEM(rtl, packetIdx + 4 + i) = buffer[i];
         }
         for (; i < length; i++) {
-            rtl->memory[packetIdx + wrapStart + 4 + i] = buffer[i];
+//            printf("%.2x ", buffer[i]); if(i%16==15)printf("\n");
+            SAFEMEM(rtl, packetIdx + 4 + i - (rtl->regPstop - rtl->regPstart)) = buffer[i];
         }
     }
+//    printf("\n");
 
     rtl->regCurr = pageNext;
 

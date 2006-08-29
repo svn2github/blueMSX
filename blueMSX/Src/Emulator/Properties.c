@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-19 06:41:15 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -402,6 +402,9 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     strcpy(properties->ports.Com.fileName, "uart.dat");
     properties->ports.Com.portName[0]    = 0;
 
+    properties->ports.Eth.ethIndex       = -1;
+    strcpy(properties->ports.Eth.macAddress, "00:00:00:00:00:00");
+
     for (i = 0; i < MAX_HISTORY; i++) {
         properties->filehistory.cartridge[0][i][0] = 0;
         properties->filehistory.cartridgeType[0][i] = ROM_UNKNOWN;
@@ -599,6 +602,10 @@ static void propLoad(Properties* properties)
     GET_STR_VALUE_3(ports, Com, name);
     GET_STR_VALUE_3(ports, Com, fileName);
     GET_STR_VALUE_3(ports, Com, portName);
+
+    GET_INT_VALUE_3(ports, Eth, ethIndex);
+    GET_STR_VALUE_3(ports, Eth, macAddress);
+    
     
     GET_INT_VALUE_2(cartridge, defaultType);
 
@@ -803,6 +810,9 @@ void propSave(Properties* properties)
     SET_STR_VALUE_3(ports, Com, name);
     SET_STR_VALUE_3(ports, Com, fileName);
     SET_STR_VALUE_3(ports, Com, portName);
+
+    SET_INT_VALUE_3(ports, Eth, ethIndex);
+    SET_STR_VALUE_3(ports, Eth, macAddress);
     
     SET_INT_VALUE_2(cartridge, defaultType);
 

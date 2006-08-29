@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-08-21 15:18:54 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,7 +90,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->fileRom                 = "ROM image"; 
     ls->fileAll                 = "Todos los archivos"; 
     ls->fileCpuState            = "Carga CPU"; 
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "Captura video"; // New in 2.6
     ls->fileDisk                = "Disk Image"; 
     ls->fileCas                 = "Tape Image"; 
     ls->fileAvi                 = "Video Clip";    // New in 2.6
@@ -123,19 +123,19 @@ void langInitSpanish(LanguageStrings* ls)
     ls->menuDiskAutoStart       = "Reinicio Tras Insertar";
     ls->menuCartAutoReset       = "Reinicio Tras Insertar/Sacar";
 
-    ls->menuCasRewindAfterInsert = "Rebovinar tras Insertar";
+    ls->menuCasRewindAfterInsert = "Rebobinar tras Insertar";
     ls->menuCasUseReadOnly       = "Usar Imagen de Cassette Sólo Lectura";
     ls->lmenuCasSaveAs           = "Salvar Imagen de Cassette Como...";
     ls->menuCasSetPosition      = "Posicionar";
-    ls->menuCasRewind           = "Rebovinar";
+    ls->menuCasRewind           = "Rebobinar";
 
-    ls->menuVideoLoad           = "Load...";             // New in 2.6
-    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
-    ls->menuVideoRecord         = "Record";              // New in 2.6
-    ls->menuVideoRecording      = "Recording";           // New in 2.6
-    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
-    ls->menuVideoStop           = "Stop";                // New in 2.6
-    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+    ls->menuVideoLoad           = "Cargar...";             // New in 2.6
+    ls->menuVideoPlay           = "Ver la más reciente captura";   // New in 2.6
+    ls->menuVideoRecord         = "Grabar";              // New in 2.6
+    ls->menuVideoRecording      = "Grabar en curso";           // New in 2.6
+    ls->menuVideoRecAppend      = "Grabar (añadir)";     // New in 2.6
+    ls->menuVideoStop           = "Parada";                // New in 2.6
+    ls->menuVideoRender         = "Crear video clip";   // New in 2.6
 
     ls->menuPrnFormfeed         = "Página siguiente"; 
 
@@ -171,7 +171,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Carga rápida Estado";
     ls->menuFileQSaveState      = "Grabación Rápida Estado";
     ls->menuFileCaptureAudio    = "Captura Audio";
-    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Captura Video"; // New in 2.6
     ls->menuFileScreenShot      = "Grabar Pantalla";
     ls->menuFileExit            = "Salir";
 
@@ -222,19 +222,19 @@ void langInitSpanish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Seleccionar imagen de cinta a cargar:";
     ls->dlgLoadRomDskCasDesc    = "Seleccionar imagen Rom, Disco, o Cinta a cargar:";
     ls->dlgLoadState            = "Cargar Estado CPU";
-    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Cargar captura video";      // New in 2.6
     ls->dlgSaveState            = "Salvar Estado CPU";
     ls->dlgSaveCassette          = "blueMSX - Salvar Imagen de Cinta";
-    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Guardar video clip como...";      // New in 2.6
+    ls->dlgAmountCompleted      = "Guardar en curso:";          // New in 2.6
     ls->dlgInsertRom1           = "Insertar Cartucho ROM en slot 1";
     ls->dlgInsertRom2           = "Insertar Cartucho ROM en slot 2";
     ls->dlgInsertDiskA          = "Insertar imagen de Disco en Unidad A";
     ls->dlgInsertDiskB          = "Insertar imagen de Disco en Unidad B";
     ls->dlgInsertHarddisk       = "Insertar disco duro";                   
-    ls->dlgInsertCas            = "Insertar Cinsta de cassette";
+    ls->dlgInsertCas            = "Insertar Cinta de cassette";
     ls->dlgRomType              = "Tipo rom:"; 
-    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
+    ls->dlgDiskSize             = "Tamaño del disco:";             // New in 2.6
 
     ls->dlgTapeTitle            = "blueMSX - Posición de la Cinta";
     ls->dlgTapeFrameText        = "Posición de la Cinta";
@@ -269,7 +269,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->dlgSavePreview          = "Imaginar"; 
     ls->dlgSaveDate             = "Fecha:"; 
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Crear video clip...";  // New in 2.6
 
 
     //----------------------
@@ -295,7 +295,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Velocidad de la Emulación:";
     ls->propEmuFrontSwitchGB     = "Botones Panasonic "; 
     ls->propEmuFrontSwitch       = " Botón Frontal"; 
-    ls->propEmuFdcTiming        = "No sincronizar unidade disco"; 
+    ls->propEmuFdcTiming        = "No sincronizar unidad de disco"; 
     ls->propEmuPauseSwitch      = " Botón Pause"; 
     ls->propEmuAudioSwitch       = " Botón cartucho MSX-AUDIO"; 
     ls->propVideoFreqText       = "Frecuencia video:"; 
@@ -540,7 +540,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->shortcutCasAutorewind   = "Rebobinado Automático o no de Cassette";
     ls->shortcutCasReadOnly     = "Cassette en método sólo Lectura o no";
     ls->shortcutCasSetPosition  = "Posicionar Cassette";
-    ls->shortcutCasRewind       = "Rebovinar Cassette";
+    ls->shortcutCasRewind       = "Rebobinar Cassette";
     ls->shortcutCasSave         = "Salvar Imagen de Cassette";
     ls->shortcutPrnFormFeed     = "Paso a la página siguiente"; 
     ls->shortcutCpuStateLoad    = "Cargar Estado CPU";
@@ -596,11 +596,11 @@ void langInitSpanish(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostrar/ocultar los sprites";
     ls->shortcutToggleFdcTiming = "Sincronizar o no unidade disco"; 
     ls->shortcutToggleCpuTrace  = "Activar/Desactivar Rastro de la CPU"; 
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
-    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
+    ls->shortcutVideoLoad       = "Cargar captura video";             // New in 2.6
+    ls->shortcutVideoPlay       = "Ver la más reciente captura video";   // New in 2.6
+    ls->shortcutVideoRecord     = "Grabar captura video";              // New in 2.6
+    ls->shortcutVideoStop       = "Parada captura video";                // New in 2.6
+    ls->shortcutVideoRender     = "Crear video clip";   // New in 2.6
 
 
     //----------------------

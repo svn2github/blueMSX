@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-08-19 06:41:15 $
+** $Date: 2006-08-29 00:09:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -343,6 +343,10 @@ typedef struct {
         char portName[PROP_MAXPATH];
         char fileName[PROP_MAXPATH];
     } Com;
+    struct {
+        int ethIndex;
+        char macAddress[64];
+    } Eth;
 } PortProperties;
 
 #define DLG_MAX_ID 32
