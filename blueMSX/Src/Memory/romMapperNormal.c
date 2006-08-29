@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-08-12 19:06:15 $
+** $Date: 2006-08-29 17:34:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,7 +55,7 @@ static void destroy(RomMapperNormal* rm)
 }
 
 int romMapperNormalCreate(char* filename, UInt8* romData, 
-                          int size, int slot, int sslot, int startPage) 
+                          int size, int slot, int sslot, int startPage, RomType romType) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
     RomMapperNormal* rm;
@@ -79,6 +79,7 @@ int romMapperNormalCreate(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     for (i = 0; i < pages; i++) {
+        if ((romType == ROM_SG1000 || romType == ROM_SC3000) && i >= 2) slot = 0;
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
 

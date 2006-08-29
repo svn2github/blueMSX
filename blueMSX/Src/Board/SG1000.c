@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-08-25 06:27:05 $
+** $Date: 2006-08-29 17:34:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -202,10 +202,11 @@ static UInt8* getRamPage(int page) {
 
 static void changeCartridge(void* ref, int cartNo, int inserted)
 {
-    int slot = inserted ? 2 + cartNo : 0;
+    if (cartNo == 0) {
+        int slot = inserted ? 2 + cartNo : 0;
 
-    slotSetRamSlot(0, slot);
-    slotSetRamSlot(1, slot);
+        slotSetRamSlot(0, slot);
+    }
 }
 
 int sg1000Create(Machine* machine, 

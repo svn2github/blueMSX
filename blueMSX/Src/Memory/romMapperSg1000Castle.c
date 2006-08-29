@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000Castle.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-22 00:15:31 $
+** $Date: 2006-08-29 17:34:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,7 @@ int romMapperSg1000CastleCreate(char* filename, UInt8* romData,
     sramLoad(rm->sramFilename, rm->sram, 0x2000, NULL, 0);
 
     for (i = 0; i < pages; i++) {
+        if (i + startPage >= 2) slot = 0;
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
     // Always map SRAM in slot 0. This is an unfortunate workaround because

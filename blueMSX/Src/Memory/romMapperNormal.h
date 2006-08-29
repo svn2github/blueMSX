@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-06-13 17:13:27 $
+** $Date: 2006-08-29 17:34:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,8 +31,9 @@
 #define ROMMAPPER_NORMAL_H
 
 #include "MsxTypes.h"
+#include "MediaDb.h"
 
 int romMapperNormalCreate(char* filename, UInt8* romData, 
-                          int size, int slot, int sslot, int startPage);
+                          int size, int slot, int sslot, int startPage, RomType romType);
 
 #endif
