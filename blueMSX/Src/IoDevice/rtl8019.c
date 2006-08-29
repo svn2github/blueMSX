@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/rtl8019.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-08-29 00:09:58 $
+** $Date: 2006-08-29 22:55:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,7 @@
 #define MEM_START 0x4000
 #define MEM_END   (MEM_START + MEM_SIZE)
 
-#define RX_FREQUENCY  1000
+#define RX_FREQUENCY  10000
 
 
 typedef struct RTL8019
@@ -260,7 +260,7 @@ void rtl8019Reset(RTL8019* rtl)
     rtl->regRppr    = 0;
     rtl->regLppr    = 0;
     rtl->regAcnt    = 0;
-    rtl->regTsr     = TSR_BIT1 | TSR_BIT5;
+    rtl->regTsr     = TSR_BIT1;
     rtl->regNcr     = 0;
     rtl->regFifo    = 0;
     rtl->regCrda    = 0;
@@ -354,6 +354,7 @@ static void writeCr(RTL8019* rtl, UInt8 value)
     }
 
     if (rtl->regCr & CR_TXP) {
+        rtl->regTsr &= ~(TSR_CDH);
         switch (rtl->regTcr & TCR_LB_MASK) {
         case TCR_LB_NORMAL:
             if (rtl->regCr & CR_STP) {
@@ -368,7 +369,7 @@ static void writeCr(RTL8019* rtl, UInt8 value)
                 archEthSendPacket(&SAFEMEM(rtl, rtl->regTpsr * 256), rtl->regTbcr);
             }
 
-            rtl->timeTx = boardSystemTime() + (192 + 8 * (int)rtl->regTbcr) / 100 * boardFrequency() / 100000;
+            rtl->timeTx = boardSystemTime() + (192 + 8 * (int)rtl->regTbcr + 99) / 100 * boardFrequency() / 100000;
             boardTimerAdd(rtl->timerTx, rtl->timeTx);
             break;
         case TCR_LB_INTERN:
@@ -378,8 +379,15 @@ static void writeCr(RTL8019* rtl, UInt8 value)
             rtl->regCr &= ~CR_TXP;
             break;
         default:
+            // External loopback not supported, 
+            // this just sets flags expected by obsonet
             rtl->regCr &= ~CR_TXP;
-             // External loopback not supported
+            rtl->regTsr |= TSR_PTX | TSR_CDH;
+            rtl->regIsr |= ISR_PTX;
+
+            if (rtl->regImr & IMR_PTX) {
+                setIrq(1);
+            }
             break;
         }
     }
@@ -601,7 +609,7 @@ static UInt8 readPage0(RTL8019* rtl, UInt8 address)
     case 0x03:
         return rtl->regBnry;
     case 0x04:
-        return rtl->regTsr | 0x22;
+        return rtl->regTsr;
     case 0x05:
         return rtl->regNcr;
     case 0x06:
@@ -708,7 +716,7 @@ static void onTxTimer(RTL8019* rtl, UInt32 time)
 {
     rtl->regCr &= ~CR_TXP;
     rtl->regTsr |= TSR_PTX;
-    rtl->regIsr |= IMR_PTX;
+    rtl->regIsr |= ISR_PTX;
 
     if (rtl->regImr & IMR_PTX) {
         setIrq(1);

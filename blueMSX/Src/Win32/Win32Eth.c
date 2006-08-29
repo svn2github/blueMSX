@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-08-29 00:09:59 $
+** $Date: 2006-08-29 22:55:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,6 +106,9 @@ void win32EthGetDevice()
      }
 
     pcap_freealldevs(alldevs);
+    
+    printf("Set MAC Address = %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n", 
+        macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 }
 
 void archEthCreate() 
@@ -136,11 +139,13 @@ int archEthSendPacket(UInt8* buffer, UInt32 length) {
         buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6],
         buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]);
 
+#if 0
     for (i = 0; i < length; i++) {
         printf("%.2x ", buffer[i]);
         if (i % 16 == 15) printf("\n");
     }
     printf("\n");
+#endif
 #endif
     if (pcapHandle == NULL) {
         return 0;
@@ -172,5 +177,5 @@ int archEthRecvPacket(UInt8** buffer, UInt32* length)
 
 void archEthGetMacAddress(UInt8* macAddr) 
 { 
-    memcpy(macAddr, macAddress, 6); 
+    parseMac(macAddr, propGetGlobalProperties()->ports.Eth.macAddress);
 }
