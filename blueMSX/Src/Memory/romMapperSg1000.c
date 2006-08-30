@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-08-30 17:30:26 $
 **
@@ -27,7 +27,7 @@
 **
 ******************************************************************************
 */
-#include "romMapperNormal.h"
+#include "romMapperSg1000.h"
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
@@ -43,9 +43,9 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
-} RomMapperNormal;
+} RomMapperSg1000;
 
-static void destroy(RomMapperNormal* rm)
+static void destroy(RomMapperSg1000* rm)
 {
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
@@ -54,11 +54,11 @@ static void destroy(RomMapperNormal* rm)
     free(rm);
 }
 
-int romMapperNormalCreate(char* filename, UInt8* romData, 
+int romMapperSg1000Create(char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
-    RomMapperNormal* rm;
+    RomMapperSg1000* rm;
     int pages = size / 0x2000 + ((size & 0x1fff) ? 1 : 0);
     int i;
 
@@ -66,9 +66,9 @@ int romMapperNormalCreate(char* filename, UInt8* romData,
         return 0;
     }
 
-    rm = malloc(sizeof(RomMapperNormal));
+    rm = malloc(sizeof(RomMapperSg1000));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_NORMAL, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_SG1000, &callbacks, rm);
     slotRegister(slot, sslot, startPage, pages, NULL, NULL, NULL, destroy, rm);
 
     rm->romData = malloc(pages * 0x2000);
@@ -79,6 +79,7 @@ int romMapperNormalCreate(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     for (i = 0; i < pages; i++) {
+        if (i >= 2) slot = 0;
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
 

@@ -763,6 +763,12 @@
 					RelativePath="..\..\Src\Memory\romMapperSfg05.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.c">
 				</File>
 				<File

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-08-30 17:30:26 $
 **
@@ -32,7 +32,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperNormalCreate(char* filename, UInt8* romData, 
+int romMapperSg1000Create(char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-08-29 17:34:05 $
+** $Date: 2006-08-30 17:30:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,6 +119,7 @@
 #include "romMapperPlayBall.h"
 #include "romMapperObsonet.h"
 #include "romMapperSg1000Castle.h"
+#include "romMapperSg1000.h"
 
 int toint(char* buffer) 
 {
@@ -979,11 +980,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         switch (machine->slotInfo[i].romType) {
         case ROM_0x4000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage, machine->slotInfo[i].romType);
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_0xC000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage, machine->slotInfo[i].romType);
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_BASIC:
@@ -1179,12 +1180,12 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             break;
 
         case ROM_NORMAL:
-            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage, machine->slotInfo[i].romType);
+            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_SG1000:
         case ROM_SC3000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage, machine->slotInfo[i].romType);
+            success &= romMapperSg1000Create(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_SG1000CASTLE:

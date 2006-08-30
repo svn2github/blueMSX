@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-08-29 22:55:12 $
+** $Date: 2006-08-30 17:30:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,7 +49,7 @@ static int parseMac(UInt8* macAddr, char* macStr) {
     int m[6];
     int i;
 
-    if (sscanf(macStr, "%d:%d:%d:%d:%d:%d", m+0,m+1,m+2,m+3,m+4,m+5) != 6) {
+    if (sscanf(macStr, "%x:%x:%x:%x:%x:%x", m+0,m+1,m+2,m+3,m+4,m+5) != 6) {
         memset(macAddr, 0, 6);
         return 0;
     }
@@ -79,6 +79,10 @@ void win32EthGetDevice()
     // Get config from properties
     ethIndex = propGetGlobalProperties()->ports.Eth.ethIndex;
     parseMac(macAddress, propGetGlobalProperties()->ports.Eth.macAddress);
+
+    printf("Prop Addr = %s\n", propGetGlobalProperties()->ports.Eth.macAddress);
+    printf("Mac address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
+        macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 
     if (memcmp(macAddress, InvalidMac, 6) == 0) {
         return;

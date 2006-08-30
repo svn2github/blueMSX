@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-08-29 17:34:06 $
+** $Date: 2006-08-30 17:30:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,7 @@
 #include "romMapperSf7000Ipl.h"
 #include "romMapperPlayBall.h"
 #include "romMapperObsonet.h"
+#include "romMapperSg1000.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -261,11 +262,11 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         switch (romType) {
         case ROM_0x4000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, sslot, 2, romType);
+            success &= romMapperNormalCreate(romName, buf, size, slot, sslot, 2);
             break;
             
         case ROM_0xC000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, sslot, 2, romType);
+            success &= romMapperNormalCreate(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_BASIC:
@@ -474,16 +475,16 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_SVI328:
-            success &= romMapperNormalCreate(romName, buf, size, 1, 0, 0, romType);
+            success &= romMapperNormalCreate(romName, buf, size, 1, 0, 0);
             break;
 
         case ROM_COLECO:
-            success &= romMapperNormalCreate(romName, buf, size, 0, 0, 4, romType);
+            success &= romMapperNormalCreate(romName, buf, size, 0, 0, 4);
             break;
 
         case ROM_SG1000:
         case ROM_SC3000:
-            success &= romMapperNormalCreate(romName, buf, size, slot, sslot, 0, romType);
+            success &= romMapperSg1000Create(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_SG1000CASTLE:

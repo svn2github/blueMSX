@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-08-28 05:42:02 $
+** $Date: 2006-08-30 17:30:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1243,7 +1243,7 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         if (currentRomType[cartNo] == ROM_GIDE)       hdType[cartNo] = HD_GIDE;
     }
 
-    if (boardRunning) {
+    if (boardRunning && cartNo < boardInfo.cartridgeCount) {
         int inserted = cartridgeInsert(cartNo, romType, cart, cartZip);
         if (boardInfo.changeCartridge != NULL) {
             boardInfo.changeCartridge(boardInfo.cpuRef, cartNo, inserted);
