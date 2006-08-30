@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-30 23:39:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,8 @@
 #define WPCAP
 #define HAVE_REMOTE
 #include "pcap.h"
+#include "Packet32.h"
+#include "NtDDNdis.h"
 
 #include <stdio.h>
 
@@ -102,9 +104,24 @@ static char* mactos(UInt8* mac)
 	return buffer;
 }
 
-static int getMacAddress(pcap_if_t *dev, UInt8* macAddress)
+static int getMacAddress(char* devName, UInt8* macAddress)
 {
-    return 1;
+    int rv = 0;
+
+    LPADAPTER lpAdapter = PacketOpenAdapter(devName);
+    if (lpAdapter) {
+        UInt8 data[128];
+        PACKET_OID_DATA* oidData = (PACKET_OID_DATA*)data;
+        oidData->Oid = OID_802_3_CURRENT_ADDRESS;
+        oidData->Length = 6;
+        if (PacketRequest(lpAdapter, 0, oidData)) {
+            memcpy(macAddress, oidData->Data, 6);
+            rv = 1;
+        }
+        PacketCloseAdapter(lpAdapter);
+    }
+
+    return rv;
 }
 
 void ethIfInitialize(Properties* properties)
@@ -124,7 +141,7 @@ void ethIfInitialize(Properties* properties)
 
             for (a = dev->addresses; a != NULL; a = a->next) {
                 if (a->addr->sa_family == AF_INET) {
-                    if (!getMacAddress(dev, ethIf.devList[ethIf.ifCount].macAddress)) {
+                    if (!getMacAddress(dev->name, ethIf.devList[ethIf.ifCount].macAddress)) {
                         continue;
                     }
                     sprintf(ethIf.devList[ethIf.ifCount].description, "%s    [%s]", 
