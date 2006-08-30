@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-30 17:30:26 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,8 +27,8 @@
 **
 ******************************************************************************
 */
-#ifndef ROMMAPPER_NORMAL_H
-#define ROMMAPPER_NORMAL_H
+#ifndef ROMMAPPER_SG1000_H
+#define ROMMAPPER_SG1000_H
 
 #include "MsxTypes.h"
 

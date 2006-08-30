@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-08-20 07:06:01 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -102,6 +102,7 @@ char* langRomTypePhilipsFdc()       { return "Philips Disk Controller"; }
 char* langRomTypeSvi738Fdc()        { return "SVI-738 Disk Controller"; }
 char* langRomTypeMappedRam()        { return "Mapped RAM"; }
 char* langRomTypeMirroredRam1k()    { return "1kB Mirrored RAM"; }
+char* langRomTypeMirroredRam2k()    { return "2kB Mirrored RAM"; }
 char* langRomTypeNormalRam()        { return "Normal RAM"; }
 char* langRomTypeKanji()            { return "Kanji"; }
 char* langRomTypeHolyQuran()        { return "Holy Quran"; }

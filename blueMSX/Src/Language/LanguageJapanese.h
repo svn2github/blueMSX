@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2006-08-22 23:21:14 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuVideoSourceDefault  = "ビデオ出力が見つかりません";
     ls->menuVideoInSource       = "ビデオ入力";
     ls->menuVideoInBitmap       = "ビットマップファイル";
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "ヘルプ目次";
     ls->menuHelpAbout           = "blueMSXについて";
@@ -654,6 +656,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

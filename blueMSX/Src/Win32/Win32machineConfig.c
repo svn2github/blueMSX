@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2006-08-23 21:11:37 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -525,6 +525,14 @@ static void getSizeControl(HWND hDlg)
         }
     }
 
+    if (editSlotInfo.romType == RAM_2KB_MIRRORED) {
+        if (value ==  8 || value == 16 || value == 24 || value == 32 || 
+            value == 40 || value == 48 || value == 56 || value == 64) {
+            editRamMirroredSize = 2048 * value;
+            editSlotInfo.startPage = 8 - editRamMirroredSize / 0x2000;
+        }
+    }
+
     if (editSlotInfo.romType == RAM_MAPPER) {
         if (value == 1 || value == 2 || value == 4) {
             editRamMapperSize = 1024 * 1024 * value;
@@ -595,6 +603,7 @@ static void getAddressControl(HWND hDlg)
 {
     if (editSlotInfo.romType == RAM_NORMAL       || 
         editSlotInfo.romType == RAM_1KB_MIRRORED || 
+        editSlotInfo.romType == RAM_2KB_MIRRORED || 
         editSlotInfo.romType == ROM_NORMAL       || 
         editSlotInfo.romType == ROM_MSXMUSIC     ||
         editSlotInfo.romType == ROM_DISKPATCH    || 
@@ -629,6 +638,7 @@ static void endEditControls(HWND hDlg)
 {
     switch (editSlotInfo.romType) {
     case RAM_1KB_MIRRORED:
+    case RAM_2KB_MIRRORED:
         strcpy(editSlotInfo.name, "");
         editSlotInfo.pageCount = editRamMirroredSize / 0x2000;
         break;
@@ -821,7 +831,8 @@ static void setEditControls(HWND hDlg)
     }
     romPages = romSize / 0x2000;
 
-    if (romType != RAM_1KB_MIRRORED && romType != RAM_NORMAL && romType != RAM_MAPPER && 
+    if (romType != RAM_1KB_MIRRORED && romType != RAM_2KB_MIRRORED && 
+        romType != RAM_NORMAL && romType != RAM_MAPPER && 
         romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
@@ -887,7 +898,7 @@ static void setEditControls(HWND hDlg)
     }
 
     // Set address
-    if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED ||
+    if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED || romType == RAM_2KB_MIRRORED ||
         romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
         romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || 
@@ -895,6 +906,7 @@ static void setEditControls(HWND hDlg)
     {
         int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
                    romType == RAM_1KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
+                   romType == RAM_2KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
                    (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
                    romType == ROM_FMPAC || romType == ROM_PAC ? 2 : 
                    romPages > 8 ? 8 : romPages < 1 ? 1 : romPages;
@@ -913,6 +925,7 @@ static void setEditControls(HWND hDlg)
 
     switch (romType) {
     case RAM_1KB_MIRRORED:
+    case RAM_2KB_MIRRORED:
         {
             int index = 0;
             for (i = 8; i <= 64; i += 8) {
@@ -1183,6 +1196,7 @@ static RomType romTypeList[] = {
     ROM_GAMEREADER,
     RAM_NORMAL,
     RAM_1KB_MIRRORED,
+    RAM_2KB_MIRRORED,
     RAM_MAPPER,
     ROM_EXTRAM,
     ROM_MEGARAM,
@@ -1329,6 +1343,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         editRamNormalSize   = editSlotInfo.romType == RAM_NORMAL       ? editSlotInfo.pageCount * 0x2000 : 0x10000;
         editRamMirroredSize = editSlotInfo.romType == RAM_1KB_MIRRORED ? editSlotInfo.pageCount * 0x2000 : 0x2000;
+        editRamMirroredSize = editSlotInfo.romType == RAM_2KB_MIRRORED ? editSlotInfo.pageCount * 0x2000 : editRamMirroredSize;
         editRamMapperSize   = editSlotInfo.romType == RAM_MAPPER       ? editSlotInfo.pageCount * 0x2000 : 0x10000;
         editMegaRamSize     = editSlotInfo.romType == ROM_MEGARAM      ? editSlotInfo.pageCount * 0x2000 : 0xc0000;
         editExtRamSize      = editSlotInfo.romType == ROM_EXTRAM       ? editSlotInfo.pageCount * 0x2000 : 0x400000;

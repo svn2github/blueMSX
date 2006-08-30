@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSg1000.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-08-30 17:30:26 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,7 +79,7 @@ int romMapperSg1000Create(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     for (i = 0; i < pages; i++) {
-        if (i >= 2) slot = 0;
+        if (i + startPage >= 2) slot = 0;
         slotMapPage(slot, sslot, i + startPage, rm->romData + 0x2000 * i, 1, 0);
     }
 

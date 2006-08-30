@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-08-28 03:32:41 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "自動偵測視訊晶片";
     ls->menuVideoInSource       = "視訊輸入來源";                    
     ls->menuVideoInBitmap       = "點陣圖檔";                        
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "說明主題";
     ls->menuHelpAbout           = "關於 blueMSX";
@@ -653,6 +655,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

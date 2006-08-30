@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -355,6 +355,8 @@ char* langMenuVideoSourceDefault() { return ls->menuVideoSourceDefault; }
 char* langMenuVideoChipAutodetect() { return ls->menuVideoChipAutodetect; }
 char* langMenuVideoInSource() { return ls->menuVideoInSource; }
 char* langMenuVideoInBitmap() { return ls->menuVideoInBitmap; }
+    
+char* langMenuEthInterface() { return ls->menuEthInterface; }
 
 char* langMenuHelpHelp() { return ls->menuHelpHelp; }
 char* langMenuHelpAbout() { return ls->menuHelpAbout; }
@@ -844,6 +846,7 @@ char* langRomTypePhilipsFdc() { return ls->romTypePhilipsFdc; }
 char* langRomTypeSvi738Fdc() { return ls->romTypeSvi738Fdc; }
 char* langRomTypeMappedRam() { return ls->romTypeMappedRam; }
 char* langRomTypeMirroredRam1k() { return ls->romTypeMirroredRam1k; }
+char* langRomTypeMirroredRam2k() { return ls->romTypeMirroredRam2k; }
 char* langRomTypeNormalRam() { return ls->romTypeNormalRam; }
 char* langRomTypeKanji() { return ls->romTypeKanji; }
 char* langRomTypeHolyQuran() { return ls->romTypeHolyQuran; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-08-28 05:42:06 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,5 +29,16 @@
 */
 #ifndef WIN32_ETH_H
 #define WIN32_ETH_H
+
+#include "Properties.h"
+
+void ethIfInitialize(Properties* properties);
+void ethIfCleanup(Properties* properties);
+
+int ethIfGetCount();
+char* ethIfGetName(int index);
+int ethIfIsActive(int index);
+void ethIfSetActive(int index);
+
 
 #endif

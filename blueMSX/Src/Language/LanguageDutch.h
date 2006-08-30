@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-08-21 15:18:53 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "Automatische detectie Videochip";
     ls->menuVideoInSource       = "Video In-bron";
     ls->menuVideoInBitmap       = "Afbeedingsbestand";
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "Help";
     ls->menuHelpAbout           = "Info blueMSX";
@@ -653,6 +655,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

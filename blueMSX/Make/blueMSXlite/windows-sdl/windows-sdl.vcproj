@@ -787,52 +787,7 @@
 				RelativePath="..\..\..\Src\Language\Language.h">
 			</File>
 			<File
-				RelativePath="..\..\..\Src\Language\LanguageChineseSimplified.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageChineseTraditional.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageDutch.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageEnglish.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageFinnish.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageFrench.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageGerman.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageItalian.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageJapanese.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageKorean.h">
-			</File>
-			<File
 				RelativePath="..\..\..\Src\Language\LanguageMinimal.c">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguagePolish.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguagePortuguese.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageSpannish.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageStrings.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Language\LanguageSwedish.h">
 			</File>
 		</Filter>
 		<Filter

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2006-08-21 15:18:54 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,8 @@ typedef struct {
     char* menuVideoChipAutodetect;
     char* menuVideoInSource;
     char* menuVideoInBitmap;
+    
+    char* menuEthInterface;
 
     char* menuHelpHelp;
     char* menuHelpAbout;
@@ -645,6 +647,7 @@ typedef struct {
     char* romTypeSvi738Fdc;
     char* romTypeMappedRam;
     char* romTypeMirroredRam1k;
+    char* romTypeMirroredRam2k;
     char* romTypeNormalRam;
     char* romTypeKanji;
     char* romTypeHolyQuran;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-08-30 17:30:20 $
+** $Date: 2006-08-30 21:33:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -955,6 +955,9 @@ void boardSetMachine(Machine* machine)
     for (i = 0; i < machine->slotInfoCount; i++) {
         if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
             boardRamSize = 0x400;
+        }
+        if (machine->slotInfo[i].romType == RAM_2KB_MIRRORED) {
+            boardRamSize = 0x800;
         }
     }
 

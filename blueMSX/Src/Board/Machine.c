@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-08-30 17:30:20 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -747,7 +747,13 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         size      = 0x2000 * machine->slotInfo[i].pageCount;
 
         if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
-            success &= ram1kBMirroredCreate(size, slot, subslot, startPage, &ram, &ramSize);
+            success &= ramMirroredCreate(size, slot, subslot, startPage, 0x400, &ram, &ramSize);
+            ramStart = startPage * 0x2000;
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == RAM_2KB_MIRRORED) {
+            success &= ramMirroredCreate(size, slot, subslot, startPage, 0x800, &ram, &ramSize);
             ramStart = startPage * 0x2000;
             continue;
         }
@@ -834,6 +840,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         size      = 0x2000 * machine->slotInfo[i].pageCount;
         
         if (machine->slotInfo[i].romType == RAM_1KB_MIRRORED) {
+            continue;
+        }
+        
+        if (machine->slotInfo[i].romType == RAM_2KB_MIRRORED) {
             continue;
         }
 

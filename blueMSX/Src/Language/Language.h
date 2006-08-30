@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2006-08-23 21:11:36 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,6 +182,8 @@ char* langMenuVideoSourceDefault();
 char* langMenuVideoChipAutodetect();
 char* langMenuVideoInSource();
 char* langMenuVideoInBitmap();
+
+char* langMenuEthInterface();
 
 char* langMenuHelpHelp();
 char* langMenuHelpAbout();
@@ -671,6 +673,7 @@ char* langRomTypePhilipsFdc();
 char* langRomTypeSvi738Fdc();
 char* langRomTypeMappedRam();
 char* langRomTypeMirroredRam1k();
+char* langRomTypeMirroredRam2k();
 char* langRomTypeNormalRam();
 char* langRomTypeKanji();
 char* langRomTypeHolyQuran();

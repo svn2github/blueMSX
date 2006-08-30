@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-08-25 15:54:46 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -160,6 +160,8 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "Tunnista videopiiri automaattisesti";
     ls->menuVideoInSource       = "Videosisääntulo";
     ls->menuVideoInBitmap       = "Bittikarttatiedosto";
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "Ohjeen aiheet";
     ls->menuHelpAbout           = "Tietoja blueMSX:stä";
@@ -654,6 +656,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Diskettiasemaohjain";
     ls->romTypeMappedRam        = "Mapper RAM";
     ls->romTypeMirroredRam1k    = "1kB peilattu RAM";
+    ls->romTypeMirroredRam2k    = "2kB peilattu RAM";
     ls->romTypeNormalRam        = "Tavallinen RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

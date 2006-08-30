@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.42 $ + additions 2005/03/03
+** $Revision: 1.43 $ + additions 2005/03/03
 **
-** $Date: 2006-08-24 04:02:57 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "비디오 칩 자동감지";    
     ls->menuVideoInSource       = "비디오 입력 소스";                    
     ls->menuVideoInBitmap       = "비트맵 파일";                        
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";
@@ -653,6 +655,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

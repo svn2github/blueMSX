@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-08-20 04:26:23 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@
 #include "Disk.h"
 #include "VideoManager.h"
 #include "Win32VideoIn.h"
+#include "Win32Eth.h"
 #include "ArchNotifications.h"
 #include "ArchMenu.h"
 #include "ArchInput.h"
@@ -54,6 +55,7 @@
 #define ID_CTRLPORT2_BASE               30350
 #define ID_TOOLPLUGINS                  30400
 #define ID_VIDEOIN_CONNECTORS           30450
+#define ID_ETH_INTERFACE                30500
 
 #define ID_FILE                         40011
 #define ID_FILE_LOAD                    40012
@@ -194,6 +196,7 @@ static HMENU hMenuCartSpecialA = NULL;
 static HMENU hMenuCartSpecialB = NULL;
 static HMENU hMenuVideoConnect = NULL;
 static HMENU hMenuVideoIn = NULL;
+static HMENU hMenuEthInterface = NULL;
 static HMENU hMenuCartA = NULL;
 static HMENU hMenuCartB = NULL;
 static HMENU hMenuHarddisk = NULL;
@@ -300,6 +303,21 @@ static HMENU menuCreateReset(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
+static HMENU menuCreateEthInterface(Properties* pProperties, Shortcuts* shortcuts) 
+{
+    char langBuffer[560];
+    HMENU hMenu = CreatePopupMenu();
+
+    int count = ethIfGetCount();
+    int i;
+
+    for (i = 0; i < count; i++) {
+        sprintf(langBuffer, "%s        ", ethIfGetName(i));
+        AppendMenu(hMenu, MF_STRING | (ethIfIsActive(i) ? MFS_CHECKED : 0), ID_ETH_INTERFACE + i, langBuffer);
+    }
+    
+    return hMenu;
+}
 
 static HMENU menuCreateVideoIn(Properties* pProperties, Shortcuts* shortcuts) 
 {
@@ -718,6 +736,8 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoIn(pProperties, shortcuts), langMenuVideoInSource());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoConnect(pProperties, shortcuts), langMenuVideoSource());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateEthInterface(pProperties, shortcuts), langMenuEthInterface());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langMenuPropsEmulation());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_VIDEO, langMenuPropsVideo());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langMenuPropsSound());
@@ -1062,6 +1082,7 @@ void menuUpdate(Properties* pProperties,
     if (hMenuCartSpecialB) DestroyMenu(hMenuCartSpecialB);
     if (hMenuVideoConnect) DestroyMenu(hMenuVideoConnect);
     if (hMenuVideoIn) DestroyMenu(hMenuVideoIn);
+    if (hMenuEthInterface) DestroyMenu(hMenuEthInterface);
     if (hMenuCartA) DestroyMenu(hMenuCartA);
     if (hMenuCartB) DestroyMenu(hMenuCartB);
     if (hMenuHarddisk) DestroyMenu(hMenuHarddisk);
@@ -1083,6 +1104,7 @@ void menuUpdate(Properties* pProperties,
     hMenuCartSpecialB  = menuCreateCartSpecial(1, pProperties, shortcuts);
     hMenuVideoConnect  = menuCreateVideoConnect(pProperties, shortcuts);
     hMenuVideoIn       = menuCreateVideoIn(pProperties, shortcuts);
+    hMenuEthInterface  = menuCreateEthInterface(pProperties, shortcuts);
     hMenuCartA         = menuCreateCart(0, pProperties, shortcuts, enableSpecial);
     hMenuCartB         = menuCreateCart(1, pProperties, shortcuts, enableSpecial);
     hMenuHarddisk      = menuCreateHarddisk(pProperties, shortcuts);
@@ -1409,6 +1431,13 @@ int menuCommand(Properties* pProperties, int command)
         return 1;
     }
     
+    i = command - ID_ETH_INTERFACE;
+    if (i >= 0 && i < 16) {
+        ethIfSetActive(i);
+        return 1;
+    }
+    
+
     i = command - ID_CTRLPORT1_BASE;
     if (i >= 0 && i < 16) {
         joystickPortSetType(0, i);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-08-25 06:27:07 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,14 +46,16 @@ typedef struct {
     int sslot;
     int startPage;
     int pages;
-    UInt8 ramData[0x400];
+    UInt32 mask;
+    UInt8 ramData[0x2000];
 } Ram1kBMirrored;
 
 static void saveState(Ram1kBMirrored* rm)
 {
     SaveState* state = saveStateOpenForWrite("mapper1kBMirroredRam");
 
-    saveStateSetBuffer(state, "ramData", rm->ramData, 0x400);
+    saveStateGet(state, "mask", rm->mask);
+    saveStateSetBuffer(state, "ramData", rm->ramData, rm->mask + 1);
 
     saveStateClose(state);
 }
@@ -62,7 +64,8 @@ static void loadState(Ram1kBMirrored* rm)
 {
     SaveState* state = saveStateOpenForRead("mapper1kBMirroredRam");
 
-    saveStateGetBuffer(state, "ramData", rm->ramData, 0x400);
+    rm->mask = saveStateGet(state, "mask", 0x400);
+    saveStateGetBuffer(state, "ramData", rm->ramData, rm->mask + 1);
 
     saveStateClose(state);
 }
@@ -84,7 +87,7 @@ static void getDebugInfo(Ram1kBMirrored* rm, DbgDevice* dbgDevice)
 
 static int dbgWriteMemory(Ram1kBMirrored* rm, char* name, void* data, int start, int size)
 {
-    if (strcmp(name, "Normal") || start + size > 0x400) {
+    if (strcmp(name, "Normal") || start + size >= (int)rm->mask) {
         return 0;
     }
 
@@ -95,15 +98,16 @@ static int dbgWriteMemory(Ram1kBMirrored* rm, char* name, void* data, int start,
 
 static UInt8 read(Ram1kBMirrored* rm, UInt16 address) 
 {
-    return rm->ramData[address & 0x3ff];
+    return rm->ramData[address & rm->mask];
 }
 
 static void write(Ram1kBMirrored* rm, UInt16 address, UInt8 value) 
 {
-    rm->ramData[address & 0x3ff] = value;
+    rm->ramData[address & rm->mask] = value;
 }
 
-int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
+int ramMirroredCreate(int size, int slot, int sslot, int startPage, 
+                      UInt32 ramBlockSize, UInt8** ramPtr, UInt32* ramSize) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, NULL, NULL };
@@ -122,6 +126,7 @@ int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** r
 
     rm = malloc(sizeof(Ram1kBMirrored));
 
+    rm->mask      = ramBlockSize - 1;
     rm->slot      = slot;
     rm->sslot     = sslot;
     rm->startPage = startPage;
@@ -135,7 +140,8 @@ int ram1kBMirroredCreate(int size, int slot, int sslot, int startPage, UInt8** r
         slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     } 
 
-    rm->deviceHandle = deviceManagerRegister(RAM_1KB_MIRRORED, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ramBlockSize == 0x400 ? RAM_1KB_MIRRORED : RAM_2KB_MIRRORED, 
+                                             &callbacks, rm);
     slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
     if (ramPtr != NULL) {

@@ -250,9 +250,6 @@
 					RelativePath="..\..\Src\Win32\Win32Avi.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Win32\Win32Avi.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Win32\Win32Bitmap.c">
 				</File>
 				<File
@@ -340,9 +337,6 @@
 					RelativePath="..\..\Src\Win32\Win32VideoIn.cpp">
 				</File>
 				<File
-					RelativePath="..\..\Src\Win32\Win32VideoIn.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Win32\Win32Window.c">
 				</File>
 				<File
@@ -354,6 +348,9 @@
 				Filter="">
 				<File
 					RelativePath="..\..\Src\Win32\BlueMSXToolInterface.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Avi.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Common.h">
@@ -414,6 +411,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Uart.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32VideoIn.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Window.h">

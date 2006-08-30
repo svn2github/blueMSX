@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2006-08-23 21:11:36 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -596,6 +596,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI738FDC:   return langRomTypeSvi738Fdc();
     case RAM_MAPPER:      return langRomTypeMappedRam();
     case RAM_1KB_MIRRORED:return langRomTypeMirroredRam1k();
+    case RAM_2KB_MIRRORED:return langRomTypeMirroredRam2k();
     case RAM_NORMAL:      return langRomTypeNormalRam();
     case ROM_KANJI:       return langRomTypeKanji();
     case ROM_HOLYQURAN:   return langRomTypeHolyQuran();
@@ -710,6 +711,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI738FDC:   return "SVI738 FDC";
     case RAM_MAPPER:      return "MAPPED RAM";
     case RAM_1KB_MIRRORED:return "1K MIR RAM";
+    case RAM_2KB_MIRRORED:return "2K MIR RAM";
     case RAM_NORMAL:      return "NORMAL RAM";
     case ROM_KANJI:       return "KANJI";
     case ROM_HOLYQURAN:   return "HOLYQURAN";

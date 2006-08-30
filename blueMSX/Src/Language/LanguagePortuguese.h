@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-08-29 00:09:58 $
+** $Date: 2006-08-30 21:33:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuVideoInSource       = "Entrada vídeo";                    
     ls->menuVideoInBitmap       = "Arquivo Bitmap";                        
     ls->menuVideoChipAutodetect = "Detecção automática"; 
+    
+    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
 
     ls->menuHelpHelp            = "Tópicos Ajuda";
     ls->menuHelpAbout           = "Sobre blueMSX";
@@ -653,6 +655,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
     ls->romTypeKanji            = "Kanji";
     ls->romTypeHolyQuran        = "Holy Quran";

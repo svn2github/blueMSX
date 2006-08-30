@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-08-30 17:30:27 $
+** $Date: 2006-08-30 21:33:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,7 @@
 */
 #include "ArchEth.h"
 #include "Win32Eth.h"
-#include "Properties.h"
+#include "Language.h"
 
 #define WPCAP
 #define HAVE_REMOTE
@@ -37,13 +37,30 @@
 
 #include <stdio.h>
 
+
+
+
 static char errbuf[PCAP_ERRBUF_SIZE];
-static pcap_t *pcapHandle = NULL;
-static UInt8 macAddress[6];
-static char devName[512];
 
 static UInt8 InvalidMac[] = { 0, 0, 0, 0, 0, 0 };
 
+
+typedef struct {
+    int currIf;
+    int ifCount;
+
+    pcap_t *pcapHandle;
+
+    UInt8 defaultMac[6];
+
+    struct {
+        UInt8 macAddress[6];
+        char  devName[512];
+        char  description[128];
+    } devList[32];
+} EthIf;
+
+static EthIf ethIf;
 
 static int parseMac(UInt8* macAddr, char* macStr) {
     int m[6];
@@ -65,114 +82,141 @@ static int parseMac(UInt8* macAddr, char* macStr) {
     return 1;
 }
 
-void win32EthGetDevice()
+
+static char* iptos(UInt32 address)
 {
-    int ethIndex;
-    pcap_if_t *alldevs;
-    pcap_if_t *d;
-    int i = 0;
+	static char buffer[32];
+    UInt8* p = (UInt8*)&address;
 
-    // Clear globals
-    devName[0] = 0;
-    memset(macAddress, 0, sizeof(macAddress));
+	sprintf(buffer, "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
 
-    // Get config from properties
-    ethIndex = propGetGlobalProperties()->ports.Eth.ethIndex;
-    parseMac(macAddress, propGetGlobalProperties()->ports.Eth.macAddress);
-
-    printf("Prop Addr = %s\n", propGetGlobalProperties()->ports.Eth.macAddress);
-    printf("Mac address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-        macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
-
-    if (memcmp(macAddress, InvalidMac, 6) == 0) {
-        return;
-    }
-
-    if (pcap_findalldevs(&alldevs, errbuf) == -1)
-    {
-        return;
-    }
-    
-
-    for(d=alldevs; d; d=d->next)
-    {
-        if (!d->description) {
-            continue;
-        }
-
-        printf("%d. %s\n", ++i, d->name);
-        printf(" (%s)\n", d->description);
-
-        if (ethIndex == i) {
-            strcpy(devName, d->name);
-            printf("Using device: %s\n", devName);
-        }
-     }
-
-    pcap_freealldevs(alldevs);
-    
-    printf("Set MAC Address = %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n", 
-        macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
+	return buffer;
 }
+
+static int getMacAddress(pcap_if_t *dev, UInt8* macAddress)
+{
+    return 1;
+}
+
+void ethIfInitialize(Properties* properties)
+{
+    pcap_if_t *alldevs;
+
+    ethIf.ifCount = 1;
+
+    strcpy(ethIf.devList[0].description, langTextNone());
+    memcpy(ethIf.devList[0].macAddress, InvalidMac, 6);
+
+    if (pcap_findalldevs(&alldevs, errbuf) != -1) {
+        pcap_if_t *dev;
+
+        for (dev = alldevs; dev != NULL; dev = dev->next) {
+            pcap_addr_t* a;
+
+            for (a = dev->addresses; a != NULL; a = a->next) {
+                if (a->addr->sa_family == AF_INET) {
+                    if (!getMacAddress(dev, ethIf.devList[ethIf.ifCount].macAddress)) {
+                        continue;
+                    }
+                    sprintf(ethIf.devList[ethIf.ifCount].description, "%s", 
+                        iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr));
+                    strcpy(ethIf.devList[ethIf.ifCount].devName, dev->name);
+
+                    ethIf.ifCount++;
+                    break;
+                }
+            }
+
+            if (ethIf.ifCount == 32) {
+                break;
+            }
+        }
+        pcap_freealldevs(alldevs);
+    }
+
+    ethIf.currIf = properties->ports.Eth.ethIndex;
+    if (ethIf.currIf >= ethIf.ifCount) {
+        ethIf.currIf = 0;
+    }
+
+    parseMac(ethIf.defaultMac, properties->ports.Eth.macAddress);
+}
+
+void ethIfCleanup(Properties* properties)
+{
+    properties->ports.Eth.ethIndex = ethIf.currIf;
+}
+
+int  ethIfGetCount()
+{
+    return ethIf.ifCount;
+}
+
+int ethIfIsActive(int index)
+{
+    return index == ethIf.currIf;
+}
+
+char* ethIfGetName(int index)
+{
+    if (index < ethIf.ifCount) {
+        return ethIf.devList[index].description;
+    }
+
+    return langTextUnknown();
+}
+
+void ethIfSetActive(int index)
+{
+    ethIf.currIf = index;
+
+    if (ethIf.currIf > ethIf.ifCount) {
+        ethIf.currIf = 0;
+    }
+}
+
 
 void archEthCreate() 
 {
-    win32EthGetDevice();
-
-    pcapHandle = pcap_open_live(devName, 65536, PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
-    if (pcapHandle != NULL) {
-        pcap_setnonblock(pcapHandle, 1, errbuf);
+    if (ethIf.currIf > 0) {
+        ethIf.pcapHandle = pcap_open_live(ethIf.devList[ethIf.currIf].devName, 65536, 
+                                          PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
+        if (ethIf.pcapHandle != NULL) {
+            pcap_setnonblock(ethIf.pcapHandle, 1, errbuf);
+        }
     }
 }
 
 void archEthDestroy() 
 {
-    if (pcapHandle == NULL) {
+    if (ethIf.pcapHandle == NULL) {
         return;
     }
 
-    pcap_close(pcapHandle);
+    pcap_close(ethIf.pcapHandle);
 
-    pcapHandle = NULL;
+    ethIf.pcapHandle = NULL;
 }
 
-int archEthSendPacket(UInt8* buffer, UInt32 length) {
-    int i;
-#if 0
-    printf("Sending to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-        buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6],
-        buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]);
-
-#if 0
-    for (i = 0; i < length; i++) {
-        printf("%.2x ", buffer[i]);
-        if (i % 16 == 15) printf("\n");
-    }
-    printf("\n");
-#endif
-#endif
-    if (pcapHandle == NULL) {
+int archEthSendPacket(UInt8* buffer, UInt32 length) 
+{
+    if (ethIf.pcapHandle == NULL) {
         return 0;
     }
 
-    return pcap_sendpacket(pcapHandle, buffer, length) == 0;
+    return pcap_sendpacket(ethIf.pcapHandle, buffer, length) == 0;
 }
 
 int archEthRecvPacket(UInt8** buffer, UInt32* length) 
 {
     struct pcap_pkthdr* header;
 
-    if (pcapHandle == NULL) {
+    if (ethIf.pcapHandle == NULL) {
         return 0;
     }
 
-    while(pcap_next_ex(pcapHandle, &header, buffer) > 0){
+    while(pcap_next_ex(ethIf.pcapHandle, &header, buffer) > 0){
         UInt8 * b = *buffer;
-#if 0
-        printf("Received to %.2x:%.2x:%.2x:%.2x:%.2x:%.2x from %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-            b[0], b[1], b[2], b[3], b[4], b[5], b[6],
-            b[7], b[8], b[9], b[10], b[11]);
-#endif
         *length = header->len;
         return 1;
     }
@@ -181,5 +225,10 @@ int archEthRecvPacket(UInt8** buffer, UInt32* length)
 
 void archEthGetMacAddress(UInt8* macAddr) 
 { 
-    parseMac(macAddr, propGetGlobalProperties()->ports.Eth.macAddress);
+    if (memcmp(ethIf.defaultMac, InvalidMac, 6) != 0) {
+        memcpy(macAddr, ethIf.defaultMac, 6);
+    }
+    else {
+        memcpy(macAddr, ethIf.devList[ethIf.currIf].macAddress, 6);
+    }
 }
