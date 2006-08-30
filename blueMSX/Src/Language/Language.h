@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2006-08-30 21:33:48 $
+** $Date: 2006-08-30 22:44:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -740,7 +740,7 @@ char* langRomTypePlayBall();
 char* langRomTypeFmdas();
 char* langRomTypeSfg01();
 char* langRomTypeSfg05();
-char* langRomTypePlayBall();
+char* langRomTypeObsonet();
 
 
 //----------------------
@@ -814,9 +814,6 @@ char* langDbgDevScc();
 //----------------------
 char* langAboutScrollThanksTo();
 char* langAboutScrollAndYou();
-
-
-#define langRomTypeObsonet() "Obsonet"
 
 #endif
 

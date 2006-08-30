@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-08-30 22:44:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,15 @@ static char* iptos(UInt32 address)
 	return buffer;
 }
 
+static char* mactos(UInt8* mac)
+{
+	static char buffer[32];
+
+    sprintf(buffer, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+	return buffer;
+}
+
 static int getMacAddress(pcap_if_t *dev, UInt8* macAddress)
 {
     return 1;
@@ -118,8 +127,9 @@ void ethIfInitialize(Properties* properties)
                     if (!getMacAddress(dev, ethIf.devList[ethIf.ifCount].macAddress)) {
                         continue;
                     }
-                    sprintf(ethIf.devList[ethIf.ifCount].description, "%s", 
-                        iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr));
+                    sprintf(ethIf.devList[ethIf.ifCount].description, "%s    [%s]", 
+                        iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr),
+                        mactos(ethIf.devList[ethIf.ifCount].macAddress));
                     strcpy(ethIf.devList[ethIf.ifCount].devName, dev->name);
 
                     ethIf.ifCount++;

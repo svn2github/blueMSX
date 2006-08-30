@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-08-30 22:44:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,7 +214,7 @@ static HMENU hMenuFile = NULL;
 static HMENU hMenuTools = NULL;
 
 
-HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts);
+HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, int isStopped);
 HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts);
 HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int logVideo, int tempStateExits, int enableSpecial);
 HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
@@ -303,7 +303,7 @@ static HMENU menuCreateReset(Properties* pProperties, Shortcuts* shortcuts) {
     return hMenu;
 }
 
-static HMENU menuCreateEthInterface(Properties* pProperties, Shortcuts* shortcuts) 
+static HMENU menuCreateEthInterface(Properties* pProperties, int isStopped) 
 {
     char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
@@ -311,9 +311,11 @@ static HMENU menuCreateEthInterface(Properties* pProperties, Shortcuts* shortcut
     int count = ethIfGetCount();
     int i;
 
+    setMenuColor(hMenu);
+
     for (i = 0; i < count; i++) {
         sprintf(langBuffer, "%s        ", ethIfGetName(i));
-        AppendMenu(hMenu, MF_STRING | (ethIfIsActive(i) ? MFS_CHECKED : 0), ID_ETH_INTERFACE + i, langBuffer);
+        AppendMenu(hMenu, MF_STRING | (isStopped ? 0 : MF_GRAYED) | (ethIfIsActive(i) ? MFS_CHECKED : 0), ID_ETH_INTERFACE + i, langBuffer);
     }
     
     return hMenu;
@@ -326,6 +328,8 @@ static HMENU menuCreateVideoIn(Properties* pProperties, Shortcuts* shortcuts)
 
     int count = videoInGetCount();
     int i;
+
+    setMenuColor(hMenu);
 
     for (i = 0; i < count; i++) {
         sprintf(langBuffer, "%s        ", videoInGetName(i));
@@ -342,6 +346,8 @@ static HMENU menuCreateVideoConnect(Properties* pProperties, Shortcuts* shortcut
 
     int count = videoManagerGetCount();
     int i;
+
+    setMenuColor(hMenu);
 
     if (count == 0) {
         sprintf(langBuffer, "%s", langMenuVideoSourceDefault());
@@ -727,7 +733,7 @@ static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
-static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts)
+static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, int isStopped)
 {
     HMENU hMenu = CreatePopupMenu();
 
@@ -736,7 +742,7 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoIn(pProperties, shortcuts), langMenuVideoInSource());
     AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateVideoConnect(pProperties, shortcuts), langMenuVideoSource());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateEthInterface(pProperties, shortcuts), langMenuEthInterface());
+    AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateEthInterface(pProperties, isStopped), langMenuEthInterface());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langMenuPropsEmulation());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_VIDEO, langMenuPropsVideo());
@@ -1104,7 +1110,7 @@ void menuUpdate(Properties* pProperties,
     hMenuCartSpecialB  = menuCreateCartSpecial(1, pProperties, shortcuts);
     hMenuVideoConnect  = menuCreateVideoConnect(pProperties, shortcuts);
     hMenuVideoIn       = menuCreateVideoIn(pProperties, shortcuts);
-    hMenuEthInterface  = menuCreateEthInterface(pProperties, shortcuts);
+    hMenuEthInterface  = menuCreateEthInterface(pProperties, isStopped);
     hMenuCartA         = menuCreateCart(0, pProperties, shortcuts, enableSpecial);
     hMenuCartB         = menuCreateCart(1, pProperties, shortcuts, enableSpecial);
     hMenuHarddisk      = menuCreateHarddisk(pProperties, shortcuts);
@@ -1116,7 +1122,7 @@ void menuUpdate(Properties* pProperties,
     hMenuJoyPort1      = menuCreateJoyPort1(pProperties, shortcuts);
     hMenuJoyPort2      = menuCreateJoyPort2(pProperties, shortcuts);
     hMenuZoom          = menuCreateZoom(pProperties, shortcuts);
-    hMenuOptions       = menuCreateOptions(pProperties, shortcuts);
+    hMenuOptions       = menuCreateOptions(pProperties, shortcuts, isStopped);
     hMenuHelp          = menuCreateHelp(pProperties, shortcuts);
     hMenuFile          = menuCreateFile(pProperties, shortcuts, isStopped, logSound, logVideo, tempStateExits, enableSpecial);
     hMenuTools         = menuCreateTools(pProperties, shortcuts);
