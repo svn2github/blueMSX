@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib c:\WpdPack\Lib\wpcap.lib c:\WpdPack\Lib\Packet.lib"
+				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib C:\WpdPack\Lib\wpcap.lib c:\WpdPack\Lib\Packet.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -201,7 +201,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib C:\WpdPack\Lib\wpcap.lib c:\WpdPack\Lib\Packet.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
