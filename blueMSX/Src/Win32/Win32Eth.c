@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-08-30 23:39:09 $
+** $Date: 2006-08-31 19:51:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,6 +39,19 @@
 
 #include <stdio.h>
 
+struct bpf_hdr 
+{
+	struct timeval	bh_tstamp;	///< The timestamp associated with the captured packet. 
+								///< It is stored in a TimeVal structure.
+	UINT	bh_caplen;			///< Length of captured portion. The captured portion <b>can be different</b>
+								///< from the original packet, because it is possible (with a proper filter)
+								///< to instruct the driver to capture only a portion of the packets.
+	UINT	bh_datalen;			///< Original length of packet
+	USHORT		bh_hdrlen;		///< Length of bpf header (this struct plus alignment padding). In some cases,
+								///< a padding could be added between the end of this structure and the packet
+								///< data for performance reasons. This filed can be used to retrieve the actual data 
+								///< of the packet.
+};
 
 
 
@@ -46,12 +59,21 @@ static char errbuf[PCAP_ERRBUF_SIZE];
 
 static UInt8 InvalidMac[] = { 0, 0, 0, 0, 0, 0 };
 
+#define USE_PACKET32
 
 typedef struct {
     int currIf;
     int ifCount;
 
+#ifdef USE_PACKET32
+    ADAPTER* pcapHandle;
+    PACKET*  pkSend;
+    PACKET*  pkRecv;
+    UInt32   packetOffset;
+    UInt32   packetLenth;
+#else
     pcap_t *pcapHandle;
+#endif
 
     UInt8 defaultMac[6];
 
@@ -137,24 +159,24 @@ void ethIfInitialize(Properties* properties)
         pcap_if_t *dev;
 
         for (dev = alldevs; dev != NULL; dev = dev->next) {
+            UInt32 ipAddress = 0;
             pcap_addr_t* a;
 
-            for (a = dev->addresses; a != NULL; a = a->next) {
-                if (a->addr->sa_family == AF_INET) {
-                    if (!getMacAddress(dev->name, ethIf.devList[ethIf.ifCount].macAddress)) {
-                        continue;
-                    }
-                    sprintf(ethIf.devList[ethIf.ifCount].description, "%s    [%s]", 
-                        iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr),
-                        mactos(ethIf.devList[ethIf.ifCount].macAddress));
-                    strcpy(ethIf.devList[ethIf.ifCount].devName, dev->name);
+            if (!getMacAddress(dev->name, ethIf.devList[ethIf.ifCount].macAddress)) {
+                continue;
+            }
 
-                    ethIf.ifCount++;
-                    break;
+            for (a = dev->addresses; a != NULL && ipAddress == 0; a = a->next) {
+                if (a->addr->sa_family == AF_INET) {
+                    ipAddress = ((struct sockaddr_in*)a->addr)->sin_addr.s_addr;
                 }
             }
 
-            if (ethIf.ifCount == 32) {
+            sprintf(ethIf.devList[ethIf.ifCount].description, "[%s]  - %s",
+                    mactos(ethIf.devList[ethIf.ifCount].macAddress), iptos(ipAddress));
+            strcpy(ethIf.devList[ethIf.ifCount].devName, dev->name);
+
+            if (++ethIf.ifCount == 32) {
                 break;
             }
         }
@@ -205,13 +227,31 @@ void ethIfSetActive(int index)
 
 void archEthCreate() 
 {
-    if (ethIf.currIf > 0) {
-        ethIf.pcapHandle = pcap_open_live(ethIf.devList[ethIf.currIf].devName, 65536, 
-                                          PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
-        if (ethIf.pcapHandle != NULL) {
-            pcap_setnonblock(ethIf.pcapHandle, 1, errbuf);
+    if (ethIf.currIf == 0) {
+        return;
+    }
+
+#ifdef USE_PACKET32
+    ethIf.pcapHandle = PacketOpenAdapter(ethIf.devList[ethIf.currIf].devName);
+    if (ethIf.pcapHandle != NULL) {
+        PacketSetHwFilter(ethIf.pcapHandle, NDIS_PACKET_TYPE_PROMISCUOUS);
+        PacketSetBuff(ethIf.pcapHandle, 128000);
+        PacketSetReadTimeout(ethIf.pcapHandle, -1);
+
+        ethIf.pkSend = PacketAllocatePacket();
+        ethIf.pkRecv = PacketAllocatePacket();
+
+        if (ethIf.pkSend == NULL || ethIf.pkRecv == NULL) {
+            archEthDestroy();
         }
     }
+#else
+    ethIf.pcapHandle = pcap_open_live(ethIf.devList[ethIf.currIf].devName, 65536, 
+                                        PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
+    if (ethIf.pcapHandle != NULL) {
+        pcap_setnonblock(ethIf.pcapHandle, 1, errbuf);
+    }
+#endif
 }
 
 void archEthDestroy() 
@@ -220,7 +260,18 @@ void archEthDestroy()
         return;
     }
 
+#ifdef USE_PACKET32
+    if (ethIf.pkSend) {
+        PacketFreePacket(ethIf.pkSend);
+    }
+    if (ethIf.pkRecv) {
+        PacketFreePacket(ethIf.pkRecv);
+    }
+
+    PacketCloseAdapter(ethIf.pcapHandle);
+#else
     pcap_close(ethIf.pcapHandle);
+#endif
 
     ethIf.pcapHandle = NULL;
 }
@@ -231,22 +282,50 @@ int archEthSendPacket(UInt8* buffer, UInt32 length)
         return 0;
     }
 
+#ifdef USE_PACKET32
+    PacketInitPacket(ethIf.pkSend, (char*)buffer, length);
+    return PacketSendPacket(ethIf.pcapHandle, ethIf.pkSend, TRUE) != 0;
+
+#else
     return pcap_sendpacket(ethIf.pcapHandle, buffer, length) == 0;
+#endif
 }
 
 int archEthRecvPacket(UInt8** buffer, UInt32* length) 
 {
+    static UInt8 buf[65536];
     struct pcap_pkthdr* header;
 
     if (ethIf.pcapHandle == NULL) {
         return 0;
     }
 
-    while(pcap_next_ex(ethIf.pcapHandle, &header, buffer) > 0){
-        UInt8 * b = *buffer;
+#ifdef USE_PACKET32
+    if (ethIf.packetOffset >= ethIf.packetLenth) {
+        ethIf.packetOffset = 0;
+        ethIf.packetLenth = 0;
+
+        PacketInitPacket(ethIf.pkRecv, (char*)buf, sizeof(buf));
+        if (PacketReceivePacket(ethIf.pcapHandle, ethIf.pkRecv, TRUE)) {
+            ethIf.packetLenth = ethIf.pkRecv->ulBytesReceived;
+        }
+    }
+
+    if (ethIf.packetOffset < ethIf.packetLenth) {
+        UInt8* packetStart = (UInt8*)ethIf.pkRecv->Buffer + ethIf.packetOffset;
+        struct bpf_hdr* hdr = (struct bpf_hdr*)packetStart;
+        *buffer = packetStart + hdr->bh_hdrlen;
+        *length = hdr->bh_caplen;
+        ethIf.packetOffset += Packet_WORDALIGN(hdr->bh_hdrlen + hdr->bh_caplen);
+        return 1;
+    }
+#else
+    if (pcap_next_ex(ethIf.pcapHandle, &header, buffer) > 0) {
         *length = header->len;
         return 1;
     }
+#endif
+
     return 0;
 }
 
@@ -258,4 +337,7 @@ void archEthGetMacAddress(UInt8* macAddr)
     else {
         memcpy(macAddr, ethIf.devList[ethIf.currIf].macAddress, 6);
     }
+//    macAddr[1] ^= 0xd8;
+
+    printf("MAC: %s\n", mactos(macAddr));
 }
