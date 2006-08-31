@@ -200,6 +200,7 @@ SOURCE_FILES += romMapperPlain.c
 SOURCE_FILES += romMapperRType.c
 SOURCE_FILES += romMapperS1990.c
 SOURCE_FILES += romMapperSCCplus.c
+SOURCE_FILES += romMapperSegaBasic.c
 SOURCE_FILES += romMapperSf7000Ipl.c
 SOURCE_FILES += romMapperSfg05.c
 SOURCE_FILES += romMapperSg1000.c

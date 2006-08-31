@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,7 +82,7 @@ static void destroy(Ram1kBMirrored* rm)
 
 static void getDebugInfo(Ram1kBMirrored* rm, DbgDevice* dbgDevice)
 {
-    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemRamNormal(), 0, 0, 0x0400, rm->ramData);
+    dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemRamNormal(), 0, 0, rm->mask + 1, rm->ramData);
 }
 
 static int dbgWriteMemory(Ram1kBMirrored* rm, char* name, void* data, int start, int size)

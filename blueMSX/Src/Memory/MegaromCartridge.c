@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2006-08-30 17:30:26 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@
 #include "romMapperPlayBall.h"
 #include "romMapperObsonet.h"
 #include "romMapperSg1000.h"
+#include "romMapperSegaBasic.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -489,6 +490,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_SG1000CASTLE:
             success &= romMapperSg1000CastleCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_SEGABASIC:
+            success &= romMapperSegaBasicCreate(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_KANJI:

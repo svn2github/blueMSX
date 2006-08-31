@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -700,6 +700,7 @@ typedef struct {
     char* romTypeSg1000Cart;
     char* romTypeSc3000Cart;
     char* romTypeTheCastle;
+    char* romTypeSegaBasic;
     char* romTypeSonyHbi55;
     char* romTypeMsxPrinter;
     char* romTypeTurborPcm;

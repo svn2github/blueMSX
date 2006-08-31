@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,6 +130,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "SG1000")       return ROM_SG1000;
     if (name == "SC3000")       return ROM_SC3000;
     if (name == "SG1000Castle") return ROM_SG1000CASTLE;
+    if (name == "SegaBasic")    return ROM_SEGABASIC;
     if (name == "FMPAC")        return ROM_FMPAC;
     if (name == "FMPAK")        return ROM_FMPAK;
     if (name == "DiskPatch")    return ROM_DISKPATCH;
@@ -178,6 +179,7 @@ static RomType mediaDbStringToType(const std::string name)
 
     // SG-1000 roms
     if (name == "sg1000castle") return ROM_SG1000CASTLE;
+
 
     return ROM_UNKNOWN;
 }
@@ -281,7 +283,7 @@ static void mediaDbAddDump(TiXmlElement* dmp,
             }
         }
 
-        if (romType != ROM_SG1000CASTLE) {
+        if (romType != ROM_SG1000CASTLE && romType != ROM_SEGABASIC) {
             if (strcmpnocase(system.c_str(), "sg1000") == 0) {
                 romType = ROM_SG1000;
             }
@@ -648,6 +650,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SG1000:      return langRomTypeSg1000Cart();
     case ROM_SC3000:      return langRomTypeSc3000Cart();
     case ROM_SG1000CASTLE:return langRomTypeTheCastle();
+    case ROM_SEGABASIC:   return langRomTypeSegaBasic();
     case ROM_SONYHBI55:   return langRomTypeSonyHbi55();
     case ROM_MSXAUDIODEV: return langRomTypeY8950();
     case ROM_MSXPRN:      return langRomTypeMsxPrinter();
@@ -764,6 +767,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SG1000:      return "SG-1000";
     case ROM_SC3000:      return "SC-3000";
     case ROM_SG1000CASTLE:return "THECASTLE";
+    case ROM_SEGABASIC:   return "SEGABASIC";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";
     case ROM_MSXPRN:      return "MSXPRN";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -723,6 +723,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->romTypeSfg05            = "Yamaha SFG-05";
     ls->romTypePlayBall         = "Sony Playball";  // New in 2.6
     ls->romTypeObsonet          = "Obsonet";  // New in 2.6
+    ls->romTypeSegaBasic        = "Sega Basic";  // New in 2.6
     
     
     //----------------------

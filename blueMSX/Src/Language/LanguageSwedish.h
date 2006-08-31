@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -708,7 +708,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
     ls->romTypeSc3000Cart       = "SC-3000 Cartridge";
-    ls->romTypeTheCastle        = "The Castle";
+    ls->romTypeTheCastle        = "Sega The Castle";
     ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Printer";
     ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
@@ -724,6 +724,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->romTypeSfg05            = "Yamaha SFG-05";
     ls->romTypePlayBall         = "Sony Playball";  // New in 2.6
     ls->romTypeObsonet          = "Obsonet";  // New in 2.6
+    ls->romTypeSegaBasic        = "Sega Basic";  // New in 2.6
     
     
     //----------------------

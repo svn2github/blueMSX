@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,6 +170,7 @@ char* langRomTypeSfg01()            { return "Yamaha SFG-01"; }
 char* langRomTypeSfg05()            { return "Yamaha SFG-05"; }
 char* langRomTypePlayBall()         { return "Sony Playball"; }
 char* langRomTypeObsonet()          { return "Obsonet"; }
+char* langRomTypeSegaBasic()        { return "Sega Basic"; }
 
 //----------------------
 // Debug type lines

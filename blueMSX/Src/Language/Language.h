@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.80 $
+** $Revision: 1.81 $
 **
-** $Date: 2006-08-30 22:44:27 $
+** $Date: 2006-08-31 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -726,6 +726,7 @@ char* langRomTypeColecoCart();
 char* langRomTypeSg1000Cart();
 char* langRomTypeSc3000Cart();
 char* langRomTypeTheCastle();
+char* langRomTypeSegaBasic();
 char* langRomTypeSonyHbi55();
 char* langRomTypeMsxPrinter();
 char* langRomTypeTurborPcm();
