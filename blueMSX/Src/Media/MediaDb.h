@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -142,16 +142,13 @@ enum  {
     ROM_OBSONET     = 110,
     RAM_2KB_MIRRORED= 111,
     ROM_SEGABASIC   = 112,
-    ROM_MAXROMID    = 112
+    ROM_CVMEGACART  = 113,
+    ROM_MAXROMID    = 113
 };
 
 typedef struct MediaType MediaType;
 typedef struct MediaDb MediaDb;
 
-typedef enum { FORMAT_ROM, FORMAT_DISK, FORMAT_CAS } OldFormat;
-
-void mediaDbAddFromOldFile(MediaDb* mediaDb, const char* fileName, 
-                           OldFormat format);
 void mediaDbAddFromXmlFile(MediaDb* mediaDb, const char* fileName, 
                            const char* rootTag, const char* elemTag);
 
@@ -160,9 +157,9 @@ MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size);
 
 void mediaDbLoad(const char* directory);
 
-void mediaDbCreateRomdb(const char* oldFileName);
-void mediaDbCreateDiskdb(const char* oldFileName);
-void mediaDbCreateCasdb(const char* oldFileName);
+void mediaDbCreateRomdb();
+void mediaDbCreateDiskdb();
+void mediaDbCreateCasdb();
 
 
 MediaType* mediaDbLookupRom(const void *buffer, int size);
@@ -178,7 +175,7 @@ const char* mediaDbGetRemark(MediaType* mediaType);
 const char* mediaDbGetPrettyString(MediaType* mediaType);
 
 void mediaDbSetDefaultRomType(RomType romType);
-RomType mediaDbOldStringToType(const char* romName);
+RomType mediaDbStringToType(const char* romName);
 const char* romTypeToString(RomType romType);
 const char* romTypeToShortString(RomType romType);
 

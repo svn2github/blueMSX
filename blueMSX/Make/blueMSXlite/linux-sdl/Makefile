@@ -155,6 +155,7 @@ SOURCE_FILES += romMapperBeerIDE.c
 SOURCE_FILES += romMapperBunsetu.c
 SOURCE_FILES += romMapperCasette.c
 SOURCE_FILES += romMapperCrossBlaim.c
+SOURCE_FILES += romMapperCvMegaCart.c
 SOURCE_FILES += romMapperDisk.c
 SOURCE_FILES += romMapperF4device.c
 SOURCE_FILES += romMapperFmDas.c

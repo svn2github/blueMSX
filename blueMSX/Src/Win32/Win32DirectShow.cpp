@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.cpp,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-07-15 06:45:43 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,6 +135,47 @@ void CVideoGrabber::ShutdownGrabber()
 #endif
         m_pGraph = 0;
         m_initialized = false;
+    }
+}
+
+HRESULT CVideoGrabber::ShowFilterPropertyPage(HWND hwndParent, IBaseFilter *pFilter)
+{
+    HRESULT hr;
+
+    if(!pFilter) {
+        return E_POINTER;
+    }
+
+    CComPtr <ISpecifyPropertyPages> pPropertyPage;
+    hr = pFilter->QueryInterface(IID_ISpecifyPropertyPages, (void **) &pPropertyPage);
+    if(SUCCEEDED(hr)) {
+        FILTER_INFO FilterInfo;
+        hr = pFilter->QueryFilterInfo(&FilterInfo);
+        if(FAILED(hr)) {
+            return hr;
+        }
+
+        CAUUID caGUID;
+        hr = pPropertyPage->GetPages(&caGUID);
+        if (FAILED(hr)) {
+            return hr;
+        }
+    
+        OleCreatePropertyFrame(hwndParent, 0, 0, FilterInfo.achName, 1, (IUnknown **)&pFilter, caGUID.cElems, caGUID.pElems, 0, 0, NULL);
+
+        CoTaskMemFree(caGUID.pElems);
+    }
+        
+    return hr;
+}
+
+void CVideoGrabber::ShowProperties(HWND hwndParent, const std::string& devName)
+{
+    CComPtr <IBaseFilter> pSource;
+
+    pSource = GetCapDevice(devName);
+    if (pSource) {
+        ShowFilterPropertyPage(hwndParent, pSource);
     }
 }
 

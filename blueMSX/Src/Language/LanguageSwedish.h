@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -156,7 +156,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuVideoSource         = "Video ut källa";
     ls->menuVideoSourceDefault  = "Ingen videokälla inkopplad";
     ls->menuVideoChipAutodetect = "Automatisk detektering av video chip";    
-    ls->menuVideoInSource       = "Video ut källa";
+    ls->menuVideoInSource       = "Video in källa";
     ls->menuVideoInBitmap       = "Bitmap fil";
     
     ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6

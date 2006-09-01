@@ -604,6 +604,12 @@
 					RelativePath="..\..\Src\Memory\romMapperCrossBlaim.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperCvMegaCart.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperCvMegaCart.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperDisk.c">
 				</File>
 				<File

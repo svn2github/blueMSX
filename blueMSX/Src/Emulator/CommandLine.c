@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-08-20 01:39:17 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,7 @@ static RomType romNameToType(char* name) {
         return ROM_UNKNOWN;
     }
 
-    romType = mediaDbOldStringToType(name);
+    romType = mediaDbStringToType(name);
 
     if (romType == ROM_UNKNOWN) {
         romType = atoi(name);

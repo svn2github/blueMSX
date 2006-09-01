@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.161 $
+** $Revision: 1.162 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2429,14 +2429,11 @@ int setDefaultPath() {
     mkdir(buffer);
     mediaDbLoad(buffer);
 
-    sprintf(buffer, "%s\\Databases\\romdb.dat", rootDir);
-    mediaDbCreateRomdb(buffer);
+    mediaDbCreateRomdb();
 
-    sprintf(buffer, "%s\\Databases\\diskdb.dat", rootDir);
-    mediaDbCreateDiskdb(buffer);
+    mediaDbCreateDiskdb();
 
-    sprintf(buffer, "%s\\Databases\\casdb.dat", rootDir);
-    mediaDbCreateCasdb(buffer);
+    mediaDbCreateCasdb();
 
     return readOnlyDir;
 }

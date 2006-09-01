@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,8 +92,10 @@ static string parseCountryCode(const string& code)
     return code;
 }
 
-static RomType mediaDbStringToType(const std::string name)
+RomType mediaDbStringToType(const char* romName)
 {
+    const std::string name = romName;
+
     // Megaroms
     if (name == "ASCII16")          return ROM_ASCII16;
     if (name == "ASCII16SRAM2")     return ROM_ASCII16SRAM;
@@ -127,6 +129,7 @@ static RomType mediaDbStringToType(const std::string name)
     if (name == "Bunsetsu")     return ROM_BUNSETU;
     if (name == "CasPatch")     return ROM_CASPATCH;
     if (name == "Coleco")       return ROM_COLECO;
+    if (name == "MegaCart")     return ROM_CVMEGACART;
     if (name == "SG1000")       return ROM_SG1000;
     if (name == "SC3000")       return ROM_SC3000;
     if (name == "SG1000Castle") return ROM_SG1000CASTLE;
@@ -273,8 +276,10 @@ static void mediaDbAddDump(TiXmlElement* dmp,
             }
         }
 
-        if (strcmpnocase(system.c_str(), "coleco") == 0) {
-            romType = ROM_COLECO;
+        if (romType != ROM_CVMEGACART) {
+            if (strcmpnocase(system.c_str(), "coleco") == 0) {
+                romType = ROM_COLECO;
+            }
         }
 
         if (strcmpnocase(system.c_str(), "svi") == 0) {
@@ -482,81 +487,6 @@ extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
     return NULL;
 }
 
-extern "C" RomType mediaDbOldStringToType(const char* romName)
-{
-    RomType romType;
-
-    string name(romName);
-
-    romType = mediaDbStringToType(name);
-    if (romType != ROM_UNKNOWN) {
-        return romType;
-    }
-
-    if (name == "standard")     return ROM_STANDARD;
-    if (name == "mirrored")     return ROM_PLAIN;
-    if (name == "msxdos2")      return ROM_MSXDOS2;
-    if (name == "konami5")      return ROM_KONAMI5;
-    if (name == "konami4")      return ROM_KONAMI4;
-    if (name == "ascii8")       return ROM_ASCII8;
-    if (name == "halnote")      return ROM_HALNOTE;
-    if (name == "basic")        return ROM_BASIC;
-    if (name == "0x4000")       return ROM_0x4000;
-    if (name == "0xC000")       return ROM_0xC000;
-    if (name == "konamisynth")  return ROM_KONAMISYNTH;
-    if (name == "kbdmaster")    return ROM_KONAMKBDMAS;
-    if (name == "majutsushi")   return ROM_MAJUTSUSHI;
-    if (name == "ascii16")      return ROM_ASCII16;
-    if (name == "gamemaster2")  return ROM_GAMEMASTER2;
-    if (name == "ascii8sram")   return ROM_ASCII8SRAM;
-    if (name == "koei")         return ROM_KOEI;
-    if (name == "ascii16sram")  return ROM_ASCII16SRAM;
-    if (name == "konami4nf")    return ROM_KONAMI4NF;
-    if (name == "ascii16nf")    return ROM_ASCII16NF;
-    if (name == "snatcher")     return ROM_SNATCHER;
-    if (name == "sdsnatcher")   return ROM_SDSNATCHER;
-    if (name == "sccmirrored")  return ROM_SCCMIRRORED;
-    if (name == "sccexpanded")  return ROM_SCCEXTENDED;
-    if (name == "scc")          return ROM_SCC;
-    if (name == "sccplus")      return ROM_SCCPLUS;
-    if (name == "scc+")         return ROM_SCCPLUS;
-    if (name == "pac")          return ROM_PAC;
-    if (name == "fmpac")        return ROM_FMPAC;
-    if (name == "fmpak")        return ROM_FMPAK;
-    if (name == "msxaudio")     return ROM_MSXAUDIO;
-    if (name == "msxmusic")     return ROM_MSXMUSIC;
-    if (name == "moonsound")    return ROM_MOONSOUND;
-    if (name == "tc8566af")     return ROM_TC8566AF;
-    if (name == "mb8877a")      return ROM_NATIONALFDC;
-    if (name == "diskpatch")    return ROM_DISKPATCH;
-    if (name == "caspatch")     return ROM_CASPATCH;
-    if (name == "wd2793")       return ROM_PHILIPSFDC;
-    if (name == "svi738fdc")    return ROM_SVI738FDC;
-    if (name == "microsol")     return ROM_MICROSOL;
-    if (name == "rtype")        return ROM_RTYPE;
-    if (name == "crossblaim")   return ROM_CROSSBLAIM;
-    if (name == "harryfox")     return ROM_HARRYFOX;
-    if (name == "loderunner")   return ROM_LODERUNNER;
-    if (name == "korean80")     return ROM_KOREAN80;
-    if (name == "korean90")     return ROM_KOREAN90;
-    if (name == "korean126")    return ROM_KOREAN126;
-    if (name == "holyquran")    return ROM_HOLYQURAN;  
-    if (name == "kanji")        return ROM_KANJI;      
-    if (name == "kanji12")      return ROM_KANJI12;    
-    if (name == "jisyo")        return ROM_JISYO;    
-    if (name == "bunsetsu")     return ROM_BUNSETU;
-    if (name == "coleco")       return ROM_COLECO;
-    if (name == "sg1000")       return ROM_SG1000;
-    if (name == "sc3000")       return ROM_SC3000;
-    if (name == "castle")       return ROM_SG1000CASTLE;
-    if (name == "svi328")       return ROM_SVI328;
-    if (name == "sfg01")        return ROM_YAMAHASFG01;
-    if (name == "sfg05")        return ROM_YAMAHASFG05;
-    if (name == "sf7000ipl")    return ROM_SF7000IPL;
-
-    return ROM_UNKNOWN;
-}
-
 extern "C" const char* romTypeToString(RomType romType)
 {
     switch (romType) {    
@@ -667,6 +597,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_YAMAHASFG01: return langRomTypeSfg01();
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
     case ROM_SF7000IPL:   return "SF-7000 IPL";
+    case ROM_CVMEGACART:  return "ColecoVision MegaCart(R)";
 
     case ROM_UNKNOWN:     return langTextUnknown();
     }
@@ -784,6 +715,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_YAMAHASFG01: return "SFG-01";
     case ROM_YAMAHASFG05: return "SFG-05";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
+    case ROM_CVMEGACART:  return "MEGACART";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -1182,91 +1114,24 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-void mediaDbAddFromOldFile(MediaDb* mediaDb, 
-                           const char* fileName, OldFormat format) 
-{
-    FILE* file = fopen(fileName, "r");
-    if (file == NULL) {
-        return;
-    }
-
-    char buffer[1024];
-    while (fgets(buffer, 1024, file)) {
-        char* tokenStr     = extractToken(buffer, 1);
-        if (tokenStr == NULL) {
-            continue;
-        }
-
-        RomType romType    = format == FORMAT_ROM ? mediaDbOldStringToType(tokenStr) : ROM_UNKNOWN;
-        std::string title  = extractTokens(buffer, format == FORMAT_ROM ? 2 : 1);
-        
-        std::string crcStr = extractToken(buffer, 0);
-        UInt32 crc32;
-        
-        if (sscanf(crcStr.c_str(), "%x", &crc32) != 1) {
-            continue;
-        }
-
-        if (title.length() == 0 || crc32 == 0) {
-            continue;
-        }
-        
-        if (title.length() > 10 && title[title.length() - 1] == ']' && title[title.length() - 10] == '[') {
-            title = title.substr(0, title.length() - 10);
-        }
-
-        if (mediaDb->crcMap.find(crc32) == mediaDb->crcMap.end()) {
-            mediaDb->crcMap[crc32] = new MediaType(romType, title);
-        }
-    }
-}
-
-
-extern "C" void mediaDbCreateRomdb(const char* oldFileName)
+extern "C" void mediaDbCreateRomdb()
 {
     if (romdb == NULL) {
         romdb = new MediaDb;
     }
-
-    mediaDbAddFromOldFile(romdb, oldFileName, FORMAT_ROM);
 }
 
-extern "C" void mediaDbCreateDiskdb(const char* oldFileName)
+extern "C" void mediaDbCreateDiskdb()
 {
     if (diskdb == NULL) {
         diskdb = new MediaDb;
     }
-
-    mediaDbAddFromOldFile(diskdb, oldFileName, FORMAT_DISK);
 }
 
-extern "C" void mediaDbCreateCasdb(const char* oldFileName)
+extern "C" void mediaDbCreateCasdb()
 {
     if (casdb == NULL) {
         casdb = new MediaDb;
     }
-
-    mediaDbAddFromOldFile(casdb, oldFileName, FORMAT_CAS);
 }
+

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-07-15 00:57:58 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,8 @@ void videoInSetActive(int index)
     }
 
     if (videoIn.inputIndex > 0) {
+        videoIn.grabber->ShowProperties(NULL, videoIn.devList[videoIn.inputIndex - 1]);
+
         if (!videoIn.grabber->SetupGrabber(videoIn.devList[videoIn.inputIndex - 1])) {
             videoIn.inputIndex = 0;
         }

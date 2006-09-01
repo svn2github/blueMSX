@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32DirectShow.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-07-15 00:57:58 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,11 +46,12 @@ public:
     CVideoGrabber();
     virtual ~CVideoGrabber();
 
-    DeviceNameList GetDeviceNames() const;
-
     bool SetupGrabber(const std::string& devName = "");
     void ShutdownGrabber();
+
+    DeviceNameList GetDeviceNames() const;
     const std::string& GetName() const;
+    void ShowProperties(HWND hwndParent, const std::string& devName);
 
     int GrabFrame(WORD* bitmap, LONG width, LONG height);
 
@@ -65,6 +66,7 @@ private:
     IBaseFilter* GetCapDevice(const std::string& devName = "");
 
     HRESULT SetupVideoStreamConfig(IAMStreamConfig *pSC);
+    HRESULT ShowFilterPropertyPage(HWND hwndParent, IBaseFilter *pFilter);
 
 #ifdef _DEBUG
     DWORD m_dwGraphRegister;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-08-31 23:48:10 $
+** $Date: 2006-09-01 19:29:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,45 +27,14 @@
 **
 ******************************************************************************
 */
-
-#define USE_PACKET32
-
-
 #include "ArchEth.h"
 #include "Win32Eth.h"
 #include "Language.h"
 
-
-#ifdef USE_PACKET32
-#else
-#define WPCAP
-#define HAVE_REMOTE
-#include "pcap.h"
-#endif
 #include "Packet32.h"
 #include "NtDDNdis.h"
 
 #include <stdio.h>
-
-#ifndef USE_PACKET32
-
-struct bpf_hdr 
-{
-	struct timeval	bh_tstamp;	///< The timestamp associated with the captured packet. 
-								///< It is stored in a TimeVal structure.
-	UINT	bh_caplen;			///< Length of captured portion. The captured portion <b>can be different</b>
-								///< from the original packet, because it is possible (with a proper filter)
-								///< to instruct the driver to capture only a portion of the packets.
-	UINT	bh_datalen;			///< Original length of packet
-	USHORT		bh_hdrlen;		///< Length of bpf header (this struct plus alignment padding). In some cases,
-								///< a padding could be added between the end of this structure and the packet
-								///< data for performance reasons. This filed can be used to retrieve the actual data 
-								///< of the packet.
-};
-
-static char errbuf[PCAP_ERRBUF_SIZE];
-
-#endif
 
 
 static LPADAPTER (*pcapPacketOpenAdapter)     (PCHAR);
@@ -89,15 +58,11 @@ typedef struct {
     int currIf;
     int ifCount;
 
-#ifdef USE_PACKET32
     ADAPTER* pcapHandle;
     PACKET*  pkSend;
     PACKET*  pkRecv;
     UInt32   packetOffset;
     UInt32   packetLenth;
-#else
-    pcap_t *pcapHandle;
-#endif
 
     UInt8 defaultMac[6];
 
@@ -235,7 +200,6 @@ void archEthGetMacAddress(UInt8* macAddr)
     printf("MAC: %s\n", mactos(macAddr));
 }
 
-#ifdef USE_PACKET32
 
 static int loadPacketLibrary()
 {
@@ -394,103 +358,3 @@ int archEthRecvPacket(UInt8** buffer, UInt32* length)
 
     return 0;
 }
-
-#else
-
-void ethIfInitialize(Properties* properties)
-{
-    pcap_if_t *alldevs;
-
-    ethIf.ifCount = 1;
-
-    strcpy(ethIf.devList[0].description, langTextNone());
-    memcpy(ethIf.devList[0].macAddress, InvalidMac, 6);
-
-    if (pcap_findalldevs(&alldevs, errbuf) != -1) {
-        pcap_if_t *dev;
-
-        for (dev = alldevs; dev != NULL; dev = dev->next) {
-            UInt32 ipAddress = 0;
-            pcap_addr_t* a;
-
-            if (!getMacAddress(dev->name, ethIf.devList[ethIf.ifCount].macAddress)) {
-                continue;
-            }
-
-            for (a = dev->addresses; a != NULL && ipAddress == 0; a = a->next) {
-                if (a->addr->sa_family == AF_INET) {
-                    ipAddress = ((struct sockaddr_in*)a->addr)->sin_addr.s_addr;
-                }
-            }
-
-            sprintf(ethIf.devList[ethIf.ifCount].description, "[%s]  - %s",
-                    mactos(ethIf.devList[ethIf.ifCount].macAddress), iptos(ipAddress));
-            strcpy(ethIf.devList[ethIf.ifCount].devName, dev->name);
-
-            if (++ethIf.ifCount == 32) {
-                break;
-            }
-        }
-        pcap_freealldevs(alldevs);
-    }
-
-    ethIf.currIf = properties->ports.Eth.ethIndex;
-    if (ethIf.currIf >= ethIf.ifCount) {
-        ethIf.currIf = 0;
-    }
-
-    parseMac(ethIf.defaultMac, properties->ports.Eth.macAddress);
-}
-
-void archEthCreate() 
-{
-    if (ethIf.currIf == 0) {
-        return;
-    }
-
-    ethIf.pcapHandle = pcap_open_live(ethIf.devList[ethIf.currIf].devName, 65536, 
-                                        PCAP_OPENFLAG_PROMISCUOUS, 0, errbuf);
-    if (ethIf.pcapHandle != NULL) {
-        pcap_setnonblock(ethIf.pcapHandle, 1, errbuf);
-    }
-}
-
-void archEthDestroy() 
-{
-    if (ethIf.pcapHandle == NULL) {
-        return;
-    }
-
-    pcap_close(ethIf.pcapHandle);
-
-    ethIf.pcapHandle = NULL;
-}
-
-int archEthSendPacket(UInt8* buffer, UInt32 length) 
-{
-    if (ethIf.pcapHandle == NULL) {
-        return 0;
-    }
-
-    return pcap_sendpacket(ethIf.pcapHandle, buffer, length) == 0;
-}
-
-int archEthRecvPacket(UInt8** buffer, UInt32* length) 
-{
-    static UInt8 buf[65536];
-    struct pcap_pkthdr* header;
-
-    if (ethIf.pcapHandle == NULL) {
-        return 0;
-    }
-
-    if (pcap_next_ex(ethIf.pcapHandle, &header, buffer) > 0) {
-        *length = header->len;
-        return 1;
-    }
-
-    return 0;
-}
-
-#endif
-
