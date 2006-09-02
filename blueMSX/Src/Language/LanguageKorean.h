@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.46 $ + additions 2005/03/03
+** $Revision: 1.47 $ + additions 2005/03/03
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuVideoInSource       = "비디오 입력 소스";                    
     ls->menuVideoInBitmap       = "비트맵 파일";                        
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; // New in 2.6
 
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";

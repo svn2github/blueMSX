@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuVideoInSource       = "视频输入源";                    
     ls->menuVideoInBitmap       = "位图文件";                        
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; // New in 2.6
 
     ls->menuHelpHelp            = "帮助主题";
     ls->menuHelpAbout           = "关于 blueMSX";

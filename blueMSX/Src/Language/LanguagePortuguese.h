@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuVideoInBitmap       = "Arquivo Bitmap";                        
     ls->menuVideoChipAutodetect = "Detecção automática"; 
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Relação Do Ethernet"; // New in 2.6
 
     ls->menuHelpHelp            = "Tópicos Ajuda";
     ls->menuHelpAbout           = "Sobre blueMSX";

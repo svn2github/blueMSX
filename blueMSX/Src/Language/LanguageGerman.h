@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.37 $ 
+** $Revision: 1.38 $ 
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuVideoInSource        = "Video In Source";                    
     ls->menuVideoInBitmap        = "Bitmap-File";                        
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; // New in 2.6
 
     ls->menuHelpHelp             = "Hilfethemen";
     ls->menuHelpAbout            = "Über blueMSX";

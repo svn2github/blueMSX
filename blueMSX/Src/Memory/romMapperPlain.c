@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlain.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-02-13 21:20:01 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,8 +57,6 @@ static void destroy(void* arg)
     free(rm);
 }
 
-
-
 static UInt16 getRomStart(UInt8* romData, int size) 
 {
     int pages[3] = { 0, 0, 0 };
@@ -68,6 +66,9 @@ static UInt16 getRomStart(UInt8* romData, int size)
     for (startPage = 0; startPage < 2; startPage++) {
         UInt8* romPtr = romData + 0x4000 * startPage;
 
+        if (size < 0x4000 * startPage + 0x10) {
+            continue;
+        }
 	    if (romPtr[0] == 'A' && romPtr[1] =='B') {
 		    for (i = 0; i < 4; i++) {
                 UInt16 address = romPtr[2 * i + 2] + 256 * (UInt16)romPtr[2 * i + 3];
@@ -95,8 +96,9 @@ static UInt16 getRomStart(UInt8* romData, int size)
 		return 0x8000;
 	}
 
-    return 0x4000;
+    return 0x0000;
 }
+
 
 int romMapperPlainCreate(char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 

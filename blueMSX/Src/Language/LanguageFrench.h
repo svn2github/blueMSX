@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuVideoInSource       = "Entrée vidéo";                    
     ls->menuVideoInBitmap       = "Fichier Bitmap";                        
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Interface D'Ethernet"; // New in 2.6
 
     ls->menuHelpHelp            = "Rubriques d'aide";
     ls->menuHelpAbout           = "A propos de blueMSX";

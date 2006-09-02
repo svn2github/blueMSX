@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-02 22:16:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,7 +159,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuVideoInSource       = "Video in källa";
     ls->menuVideoInBitmap       = "Bitmap fil";
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Nätverksanslutning"; // New in 2.6
 
     ls->menuHelpHelp            = "Hjälp";
     ls->menuHelpAbout           = "Om blueMSX";
