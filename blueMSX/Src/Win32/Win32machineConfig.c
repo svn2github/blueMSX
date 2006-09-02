@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2006-08-30 21:33:49 $
+** $Date: 2006-09-02 20:17:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -517,18 +517,10 @@ static void getSizeControl(HWND hDlg)
         }
     }
 
-    if (editSlotInfo.romType == RAM_1KB_MIRRORED) {
+    if (editSlotInfo.romType == RAM_1KB_MIRRORED || editSlotInfo.romType == RAM_2KB_MIRRORED) {
         if (value ==  8 || value == 16 || value == 24 || value == 32 || 
             value == 40 || value == 48 || value == 56 || value == 64) {
             editRamMirroredSize = 1024 * value;
-            editSlotInfo.startPage = 8 - editRamMirroredSize / 0x2000;
-        }
-    }
-
-    if (editSlotInfo.romType == RAM_2KB_MIRRORED) {
-        if (value ==  8 || value == 16 || value == 24 || value == 32 || 
-            value == 40 || value == 48 || value == 56 || value == 64) {
-            editRamMirroredSize = 2048 * value;
             editSlotInfo.startPage = 8 - editRamMirroredSize / 0x2000;
         }
     }

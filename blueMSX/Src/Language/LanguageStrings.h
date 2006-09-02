@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -611,31 +611,16 @@ typedef struct {
     //----------------------
 
     char* romTypeStandard;
-    char* romTypeMsxdos2;
-    char* romTypeKonamiScc;
-    char* romTypeKonami;
-    char* romTypeAscii8;
-    char* romTypeAscii16;
-    char* romTypeGameMaster2;
-    char* romTypeAscii8Sram;
-    char* romTypeAscii16Sram;
-    char* romTypeRtype;
-    char* romTypeCrossblaim;
-    char* romTypeHarryFox;
-    char* romTypeMajutsushi;
+
     char* romTypeZenima80;
     char* romTypeZenima90;
     char* romTypeZenima126;
-    char* romTypeScc;
-    char* romTypeSccPlus;
-    char* romTypeSnatcher;
-    char* romTypeSdSnatcher;
+
     char* romTypeSccMirrored;
     char* romTypeSccExtended;
-    char* romTypeFmpac;
-    char* romTypeFmpak;
+
     char* romTypeKonamiGeneric;
-    char* romTypeSuperPierrot;
+
     char* romTypeMirrored;
     char* romTypeNormal;
     char* romTypeDiskPatch;
@@ -649,47 +634,22 @@ typedef struct {
     char* romTypeMirroredRam1k;
     char* romTypeMirroredRam2k;
     char* romTypeNormalRam;
-    char* romTypeKanji;
-    char* romTypeHolyQuran;
-    char* romTypeMatsushitaSram;
-    char* romTypePanasonic16;
-    char* romTypePanasonic32;
-    char* romTypeBunsetsu;
-    char* romTypeJisyo;
-    char* romTypeKanji12;
-    char* romTypeNationalSram;
-    char* romTypeS1985;
-    char* romTypeS1990;
+
     char* romTypeTurborPause;
     char* romTypeF4deviceNormal;
     char* romTypeF4deviceInvert;
-    char* romTypeMsxMidi;
+
     char* romTypeTurborTimer;
-    char* romTypeKoei;
-    char* romTypeBasic;
-    char* romTypeHalnote;
-    char* romTypeLodeRunner;
+
     char* romTypeNormal4000;
     char* romTypeNormalC000;
-    char* romTypeKonamiSynth;
-    char* romTypeKonamiKbdMast;
-    char* romTypeKonamiWordPro;
-    char* romTypePac;
-    char* romTypeMegaRam;
-    char* romTypeMegaRam128;
-    char* romTypeMegaRam256;
-    char* romTypeMegaRam512;
-    char* romTypeMegaRam768;
-    char* romTypeMegaRam2mb;
+
     char* romTypeExtRam;
     char* romTypeExtRam512;
     char* romTypeExtRam1mb;
     char* romTypeExtRam2mb;
     char* romTypeExtRam4mb;
-    char* romTypeMsxMusic;
-    char* romTypeMsxAudio;
-    char* romTypeY8950;
-    char* romTypeMoonsound;
+
     char* romTypeSvi328Cart;
     char* romTypeSvi328Fdc;
     char* romTypeSvi328Prn;
@@ -699,23 +659,12 @@ typedef struct {
     char* romTypeColecoCart;
     char* romTypeSg1000Cart;
     char* romTypeSc3000Cart;
-    char* romTypeTheCastle;
-    char* romTypeSegaBasic;
-    char* romTypeSonyHbi55;
+
     char* romTypeMsxPrinter;
     char* romTypeTurborPcm;
-    char* romTypeGameReader;
-    char* romTypeSunriseIde;
-    char* romTypeBeerIde;
-    char* romTypeGide;
-    char* romTypeVmx80;
+
     char* romTypeNms8280Digitiz;
     char* romTypeHbiV1Digitiz;
-    char* romTypePlayBall;
-    char* romTypeFmdas;
-    char* romTypeSfg01;
-    char* romTypeSfg05;
-    char* romTypeObsonet;
 
    
     //----------------------
@@ -726,7 +675,6 @@ typedef struct {
     char* dbgMemVisible;
     char* dbgMemRamNormal;
     char* dbgMemRamMapped;
-    char* dbgMemVram;
     char* dbgMemYmf278;
     char* dbgMemAy8950;
     char* dbgMemScc;
@@ -742,46 +690,20 @@ typedef struct {
 
     char* dbgDevRamMapper;
     char* dbgDevRam;
-    char* dbgDevIdeBeer;
-    char* dbgDevIdeGide;
     char* dbgDevF4Device;
-    char* dbgDevFmpac;
-    char* dbgDevFmpak;
-    char* dbgDevKanji;
-    char* dbgDevKanji12;
-    char* dbgDevKonamiKbd;
     char* dbgDevKorean80;
     char* dbgDevKorean90;
     char* dbgDevKorean128;
-    char* dbgDevMegaRam;
     char* dbgDevFdcMicrosol;
-    char* dbgDevMoonsound;
-    char* dbgDevMsxAudio;
-    char* dbgDevMsxAudioMidi;
-    char* dbgDevMsxMusic;
+
     char* dbgDevPrinter;
-    char* dbgDevRs232;
-    char* dbgDevS1990;
-    char* dbgDevSfg05;
-    char* dbgDevHbi55;
+
     char* dbgDevSviFdc;
     char* dbgDevSviPrn;
     char* dbgDevSvi80Col;
-    char* dbgDevPcm;
-    char* dbgDevMatsushita;
-    char* dbgDevS1985;
-    char* dbgDevCrtc6845;
-    char* dbgDevTms9929A;
-    char* dbgDevTms99x8A;
-    char* dbgDevV9938;
-    char* dbgDevV9958;
-    char* dbgDevZ80;
-    char* dbgDevMsxMidi;
-    char* dbgDevPpi;
+
     char* dbgDevRtc;
     char* dbgDevTrPause;
-    char* dbgDevAy8910;
-    char* dbgDevScc;
 
 
     //----------------------

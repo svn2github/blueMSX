@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32VideoIn.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-01 19:29:54 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -142,12 +142,15 @@ const char* videoInGetName(int index)
 
 void videoInSetActive(int index)
 {
+    bool showdialog;
+
     if (videoIn.disabled) {
         return;
     }
 
     videoIn.grabber->ShutdownGrabber();
 
+    showdialog = (videoIn.inputIndex != index);
     videoIn.inputIndex = index;
 
     if (videoIn.inputIndex > videoIn.inputCount) {
@@ -155,7 +158,9 @@ void videoInSetActive(int index)
     }
 
     if (videoIn.inputIndex > 0) {
-        videoIn.grabber->ShowProperties(NULL, videoIn.devList[videoIn.inputIndex - 1]);
+        if (showdialog) {
+            videoIn.grabber->ShowProperties(NULL, videoIn.devList[videoIn.inputIndex - 1]);
+        }
 
         if (!videoIn.grabber->SetupGrabber(videoIn.devList[videoIn.inputIndex - 1])) {
             videoIn.inputIndex = 0;

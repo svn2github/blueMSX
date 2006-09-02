@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -620,31 +620,16 @@ void langInitFinnish(LanguageStrings* ls)
     //----------------------
 
     ls->romTypeStandard         = "Standardi";
-    ls->romTypeMsxdos2          = "MSX-DOS 2";
-    ls->romTypeKonamiScc        = "Konami SCC";
-    ls->romTypeKonami           = "Konami";
-    ls->romTypeAscii8           = "ASCII 8";
-    ls->romTypeAscii16          = "ASCII 16";
-    ls->romTypeGameMaster2      = "Game Master 2 (SRAM)";
-    ls->romTypeAscii8Sram       = "ASCII 8 (SRAM)";
-    ls->romTypeAscii16Sram      = "ASCII 16 (SRAM)";
-    ls->romTypeRtype            = "R-Type";
-    ls->romTypeCrossblaim       = "Cross Blaim";
-    ls->romTypeHarryFox         = "Harry Fox";
-    ls->romTypeMajutsushi       = "Konami Majutsushi";
+
     ls->romTypeZenima80         = "Zemina 80 in 1";
     ls->romTypeZenima90         = "Zemina 90 in 1";
     ls->romTypeZenima126        = "Zemina 126 in 1";
-    ls->romTypeScc              = "SCC";
-    ls->romTypeSccPlus          = "SCC+";
-    ls->romTypeSnatcher         = "The Snatcher";
-    ls->romTypeSdSnatcher       = "SD Snatcher";
+
     ls->romTypeSccMirrored      = "SCC peilattu";
     ls->romTypeSccExtended      = "SCC laajennettu";
-    ls->romTypeFmpac            = "FM-PAC (SRAM)";
-    ls->romTypeFmpak            = "FM-PAK";
+
     ls->romTypeKonamiGeneric    = "Konami Yleinen";
-    ls->romTypeSuperPierrot     = "Super Pierrot";
+
     ls->romTypeMirrored         = "Peilattu ROM";
     ls->romTypeNormal           = "Tavallinen ROM";
     ls->romTypeDiskPatch        = "Tavallinen + korjaus levyltä";
@@ -658,47 +643,22 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeMirroredRam1k    = "1kB peilattu RAM";
     ls->romTypeMirroredRam2k    = "2kB peilattu RAM";
     ls->romTypeNormalRam        = "Tavallinen RAM";
-    ls->romTypeKanji            = "Kanji";
-    ls->romTypeHolyQuran        = "Holy Quran";
-    ls->romTypeMatsushitaSram   = "Matsushita SRAM";
-    ls->romTypePanasonic16      = "Panasonic 16kB SRAM";
-    ls->romTypePanasonic32      = "Panasonic 32kB SRAM";
-    ls->romTypeBunsetsu         = "Bunsetsu";
-    ls->romTypeJisyo            = "Jisyo";
-    ls->romTypeKanji12          = "Kanji12";
-    ls->romTypeNationalSram     = "National (SRAM)";
-    ls->romTypeS1985            = "S1985";
-    ls->romTypeS1990            = "S1990";
+
     ls->romTypeTurborPause      = "Turbo-R Pause";
     ls->romTypeF4deviceNormal   = "Tavallinen F4 portti";
     ls->romTypeF4deviceInvert   = "Käännetty F4 portti";
-    ls->romTypeMsxMidi          = "MSX-MIDI";
+
     ls->romTypeTurborTimer      = "Turbo-R Ajastin";
-    ls->romTypeKoei             = "Koei (SRAM)";
-    ls->romTypeBasic            = "Basic ROM";
-    ls->romTypeHalnote          = "Halnote";
-    ls->romTypeLodeRunner       = "Lode Runner";
+
     ls->romTypeNormal4000       = "Tavallinen #4000";
     ls->romTypeNormalC000       = "Tavallinen #C000";
-    ls->romTypeKonamiSynth      = "Konami Synthesizer";
-    ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
-    ls->romTypeKonamiWordPro    = "Konami Word Pro";
-    ls->romTypePac              = "PAC (SRAM)";
-    ls->romTypeMegaRam          = "MegaRAM";
-    ls->romTypeMegaRam128       = "128kB MegaRAM";
-    ls->romTypeMegaRam256       = "256kB MegaRAM";
-    ls->romTypeMegaRam512       = "512kB MegaRAM";
-    ls->romTypeMegaRam768       = "768kB MegaRAM";
-    ls->romTypeMegaRam2mb       = "2MB MegaRAM";
+
     ls->romTypeExtRam           = "Ulkoinen RAM";
     ls->romTypeExtRam512        = "512kB Ulkoinen RAM";
     ls->romTypeExtRam1mb        = "1MB Ulkoinen RAM";
     ls->romTypeExtRam2mb        = "2MB Ulkoinen RAM";
     ls->romTypeExtRam4mb        = "4MB Ulkoinen RAM";
-    ls->romTypeMsxMusic         = "MSX-Music";
-    ls->romTypeMsxAudio         = "MSX-Audio";
-    ls->romTypeY8950            = "Y8950";
-    ls->romTypeMoonsound        = "Moonsound";
+
     ls->romTypeSvi328Cart       = "SVI-328 Moduli";
     ls->romTypeSvi328Fdc        = "SVI-328 Levyasemaohjain";
     ls->romTypeSvi328Prn        = "SVI-328 Tulostin";
@@ -708,24 +668,12 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeColecoCart       = "Coleco Moduli";
     ls->romTypeSg1000Cart       = "SG-1000 Moduli";
     ls->romTypeSc3000Cart       = "SC-3000 Moduli";
-    ls->romTypeTheCastle        = "The Castle";
-    ls->romTypeSonyHbi55        = "Sony HBI-55";
+
     ls->romTypeMsxPrinter       = "MSX Tulostin";
     ls->romTypeTurborPcm        = "Turbo-R PCM piiri";
-    ls->romTypeGameReader       = "Sunrise GameReader";
-    ls->romTypeSunriseIde       = "Sunrise IDE";
-    ls->romTypeBeerIde          = "Beer IDE";
-    ls->romTypeGide             = "GIDE";
-    ls->romTypeVmx80            = "Microsol VMX-80";
+    
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitoija";
-
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitoija";
-    ls->romTypeFmdas            = "F&M Direct Assembler System";
-    ls->romTypeSfg01            = "Yamaha SFG-01";
-    ls->romTypeSfg05            = "Yamaha SFG-05";
-    ls->romTypePlayBall         = "Sony Playball";  // New in 2.6
-    ls->romTypeObsonet          = "Obsonet";  // New in 2.6
-    ls->romTypeSegaBasic        = "Sega Basic";  // New in 2.6
     
     
     //----------------------
@@ -736,62 +684,32 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dbgMemVisible           = "Näkyvä muisti";
     ls->dbgMemRamNormal         = "Normaali";
     ls->dbgMemRamMapped         = "Sivutettu";
-    ls->dbgMemVram              = "VRAM";
     ls->dbgMemYmf278            = "YMF278 Sample RAM";
     ls->dbgMemAy8950            = "AY8950 Sample RAM";
     ls->dbgMemScc               = "Muisti";
-
     ls->dbgCallstack            = "Kutsupino";
-
     ls->dbgRegs                 = "Rekisterit";
     ls->dbgRegsCpu              = "CPU Rekisterit";
     ls->dbgRegsYmf262           = "YMF262 Rekisterit";
     ls->dbgRegsYmf278           = "YMF278 Rekisterit";
     ls->dbgRegsAy8950           = "AY8950 Rekisterit";
     ls->dbgRegsYm2413           = "YM2413 Rekisterit";
-
     ls->dbgDevRamMapper         = "RAM Mapper";
     ls->dbgDevRam               = "RAM";
-    ls->dbgDevIdeBeer           = "Beer IDE";
-    ls->dbgDevIdeGide           = "GIDE";
     ls->dbgDevF4Device          = "F4 Portti";
-    ls->dbgDevFmpac             = "FM-PAC";
-    ls->dbgDevFmpak             = "FM-PAK";
-    ls->dbgDevKanji             = "Kanji";
-    ls->dbgDevKanji12           = "Kanji 12";
-    ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
     ls->dbgDevKorean80          = "Korea 80";
     ls->dbgDevKorean90          = "Korea 90";
     ls->dbgDevKorean128         = "Korea 128";
-    ls->dbgDevMegaRam           = "MegaRAM";
     ls->dbgDevFdcMicrosol       = "Microsol levyohjain";
-    ls->dbgDevMoonsound         = "Moonsound";
-    ls->dbgDevMsxAudio          = "MSX-Audio";
-    ls->dbgDevMsxAudioMidi      = "MSX-Audio MIDI";
-    ls->dbgDevMsxMusic          = "MSX-Music";
+
     ls->dbgDevPrinter           = "Tulostin";
-    ls->dbgDevRs232             = "RS-232";
-    ls->dbgDevS1990             = "S1990";
-    ls->dbgDevSfg05             = "Yamaha SFG-05";
-    ls->dbgDevHbi55             = "Sony HBI-55";
+
     ls->dbgDevSviFdc            = "SVI levyohjain";
     ls->dbgDevSviPrn            = "SVI Tulostin";
     ls->dbgDevSvi80Col          = "SVI 80-merkkiä";
-    ls->dbgDevPcm               = "PCM";
-    ls->dbgDevMatsushita        = "Matsushita";
-    ls->dbgDevS1985             = "S1985";
-    ls->dbgDevCrtc6845          = "CRTC6845";
-    ls->dbgDevTms9929A          = "TMS9929A";
-    ls->dbgDevTms99x8A          = "TMS99x8A";
-    ls->dbgDevV9938             = "V9938";
-    ls->dbgDevV9958             = "V9958";
-    ls->dbgDevZ80               = "Z80";
-    ls->dbgDevMsxMidi           = "MSX MIDI";
-    ls->dbgDevPpi               = "PPI";
+
     ls->dbgDevRtc               = "Kellopiiri";
     ls->dbgDevTrPause           = "tR Pause";
-    ls->dbgDevAy8910            = "AY8910 PSG";
-    ls->dbgDevScc               = "SCC";
 
 
     //----------------------

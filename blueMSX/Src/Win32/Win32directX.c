@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-08-19 00:11:23 $
+** $Date: 2006-09-02 20:17:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,11 +158,17 @@ static HRESULT WINAPI EnumDisplayModes(LPDDSURFACEDESC desc, LPVOID context) {
     int height    = desc->dwHeight;
     int bitCount  = desc->ddpfPixelFormat.dwRGBBitCount;
 
+#if 1
+    if (bitCount != 16 && bitCount != 32) {
+        return DDENUMRET_OK;
+    }
+#else
     if (!(width == 320 && height == 240 && (bitCount == 16 || bitCount == 32))) {
         if (width < 640 || height < 480 || (bitCount != 16 && bitCount != 32)) {
-            return DDENUMRET_OK;
         }
     }
+#endif
+
 
     if (displayModeCount < MAX_DISPLAY_MODES) {
         displayModes[displayModeCount].width    = width;
@@ -700,6 +706,15 @@ int DirectXUpdateSurface(Video* pVideo,
     if (destRect.right  < 64) destRect.right = 64;
     if (destRect.bottom < 64)  destRect.bottom = 64;
 
+#if 0
+    if (zoom == 1) {
+        destRect.right = 320;
+        destRect.bottom = 240;
+        pt.x += (screenWidth  - destRect.right)  / 2;
+        pt.y += (screenHeight - destRect.bottom) / 2;
+
+    }
+#endif
     pt.x -= MyDeviceRect.left;
     pt.y -= MyDeviceRect.top;
     OffsetRect(&destRect, pt.x, pt.y);

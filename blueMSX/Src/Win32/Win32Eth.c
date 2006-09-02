@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-09-01 19:29:54 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -194,8 +194,8 @@ void archEthGetMacAddress(UInt8* macAddr)
     }
     else {
         memcpy(macAddr, ethIf.devList[ethIf.currIf].macAddress, 6);
+        macAddr[1] ^= 0xd8;
     }
-    macAddr[1] ^= 0xd8;
 
     printf("MAC: %s\n", mactos(macAddr));
 }

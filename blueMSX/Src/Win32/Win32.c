@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.162 $
+** $Revision: 1.163 $
 **
-** $Date: 2006-09-01 19:29:54 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1375,7 +1375,7 @@ static int getZoom() {
         pProperties->video.driver == P_VIDEO_DRVDIRECTX))
     {
         DxDisplayMode* ddm = DirectDrawGetDisplayMode();
-        return ddm->width == 320 ? 1 : 2;
+        return ddm->width < 640 || ddm->height < 480 ? 1 : 2;
     }
     return pProperties->video.windowSize == P_VIDEO_SIZEX1 ? 1 : 2;
 }
@@ -1459,7 +1459,12 @@ void themeSet(char* themeName, int forceMatch) {
         z  = HWND_TOPMOST;
     }
 
-    st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), w, h);
+    if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
+        st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), w, h);
+    }
+    else {
+        st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), 640, 480);
+    }
     SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
     SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
 

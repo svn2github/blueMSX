@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-02 20:17:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -619,31 +619,12 @@ void langInitItalian(LanguageStrings* ls)
     //----------------------
 
     ls->romTypeStandard         = "Standard";
-    ls->romTypeMsxdos2          = "MSXDOS 2";
-    ls->romTypeKonamiScc        = "Konami SCC";
-    ls->romTypeKonami           = "Konami";
-    ls->romTypeAscii8           = "ASCII 8";
-    ls->romTypeAscii16          = "ASCII 16";
-    ls->romTypeGameMaster2      = "Game Master 2 (SRAM)";
-    ls->romTypeAscii8Sram       = "ASCII 8 (SRAM)";
-    ls->romTypeAscii16Sram      = "ASCII 16 (SRAM)";
-    ls->romTypeRtype            = "R-Type";
-    ls->romTypeCrossblaim       = "Cross Blaim";
-    ls->romTypeHarryFox         = "Harry Fox";
-    ls->romTypeMajutsushi       = "Konami Majutsushi";
     ls->romTypeZenima80         = "Zemina 80 in 1";
     ls->romTypeZenima90         = "Zemina 90 in 1";
     ls->romTypeZenima126        = "Zemina 126 in 1";
-    ls->romTypeScc              = "SCC";
-    ls->romTypeSccPlus          = "SCC+";
-    ls->romTypeSnatcher         = "The Snatcher";
-    ls->romTypeSdSnatcher       = "SD Snatcher";
     ls->romTypeSccMirrored      = "SCC mirrored";
     ls->romTypeSccExtended      = "SCC extended";
-    ls->romTypeFmpac            = "FMPAC (SRAM)";
-    ls->romTypeFmpak            = "FMPAK";
     ls->romTypeKonamiGeneric    = "Konami Generic";
-    ls->romTypeSuperPierrot     = "Super Pierrot";
     ls->romTypeMirrored         = "Mirrored ROM";
     ls->romTypeNormal           = "Normal ROM";
     ls->romTypeDiskPatch        = "Normal + Disk Patch";
@@ -657,47 +638,17 @@ void langInitItalian(LanguageStrings* ls)
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";
     ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "Normal RAM";
-    ls->romTypeKanji            = "Kanji";
-    ls->romTypeHolyQuran        = "Holy Quran";
-    ls->romTypeMatsushitaSram   = "Matsushita SRAM";
-    ls->romTypePanasonic16      = "Panasonic 16kB SRAM";
-    ls->romTypePanasonic32      = "Panasonic 32kB SRAM";
-    ls->romTypeBunsetsu         = "Bunsetsu";
-    ls->romTypeJisyo            = "Jisyo";
-    ls->romTypeKanji12          = "Kanji12";
-    ls->romTypeNationalSram     = "National (SRAM)";
-    ls->romTypeS1985            = "S1985";
-    ls->romTypeS1990            = "S1990";
     ls->romTypeTurborPause      = "Turbo-R Pause";
     ls->romTypeF4deviceNormal   = "F4 Device Normal";
     ls->romTypeF4deviceInvert   = "F4 Device Inverted";
-    ls->romTypeMsxMidi          = "MSX-MIDI";
     ls->romTypeTurborTimer      = "Turbo-R Timer";
-    ls->romTypeKoei             = "Koei (SRAM)";
-    ls->romTypeBasic            = "Basic ROM";
-    ls->romTypeHalnote          = "Halnote";
-    ls->romTypeLodeRunner       = "Lode Runner";
     ls->romTypeNormal4000       = "Normal 4000h";
     ls->romTypeNormalC000       = "Normal C000h";
-    ls->romTypeKonamiSynth      = "Konami Synthesizer";
-    ls->romTypeKonamiKbdMast    = "Konami Keyboard Master";
-    ls->romTypeKonamiWordPro    = "Konami Word Pro";
-    ls->romTypePac              = "PAC (SRAM)";
-    ls->romTypeMegaRam          = "MegaRAM";
-    ls->romTypeMegaRam128       = "128kB MegaRAM";
-    ls->romTypeMegaRam256       = "256kB MegaRAM";
-    ls->romTypeMegaRam512       = "512kB MegaRAM";
-    ls->romTypeMegaRam768       = "768kB MegaRAM";
-    ls->romTypeMegaRam2mb       = "2MB MegaRAM";
     ls->romTypeExtRam           = "External RAM";
     ls->romTypeExtRam512        = "512kB External RAM";
     ls->romTypeExtRam1mb        = "1MB External RAM";
     ls->romTypeExtRam2mb        = "2MB External RAM";
     ls->romTypeExtRam4mb        = "4MB External RAM";
-    ls->romTypeMsxMusic         = "MSX Music";
-    ls->romTypeMsxAudio         = "MSX Audio";
-    ls->romTypeY8950            = "Y8950";
-    ls->romTypeMoonsound        = "Moonsound";
     ls->romTypeSvi328Cart       = "SVI-328 Cartridge";
     ls->romTypeSvi328Fdc        = "SVI-328 Disk Controller";
     ls->romTypeSvi328Prn        = "SVI-328 Printer";
@@ -707,23 +658,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";
     ls->romTypeSc3000Cart       = "SC-3000 Cartridge";
-    ls->romTypeTheCastle        = "The Castle";
-    ls->romTypeSonyHbi55        = "Sony HBI-55";
     ls->romTypeMsxPrinter       = "MSX Printer";
     ls->romTypeTurborPcm        = "Turbo-R PCM Chip";
-    ls->romTypeGameReader       = "Sunrise GameReader";
-    ls->romTypeSunriseIde       = "Sunrise IDE";
-    ls->romTypeBeerIde          = "Beer IDE";
-    ls->romTypeGide             = "GIDE";
-    ls->romTypeVmx80            = "Microsol VMX-80";
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitizer";
     ls->romTypeHbiV1Digitiz     = "Sony HBI-V1 Digitizer";
-    ls->romTypeFmdas            = "F&M Direct Assembler System";
-    ls->romTypeSfg01            = "Yamaha SFG-01";
-    ls->romTypeSfg05            = "Yamaha SFG-05";
-    ls->romTypePlayBall         = "Sony Playball";  // New in 2.6
-    ls->romTypeObsonet          = "Obsonet";  // New in 2.6
-    ls->romTypeSegaBasic        = "Sega Basic";  // New in 2.6
     
     
     //----------------------
@@ -734,7 +672,6 @@ void langInitItalian(LanguageStrings* ls)
     ls->dbgMemVisible           = "Visible Memory";
     ls->dbgMemRamNormal         = "Normal";
     ls->dbgMemRamMapped         = "Mapped";
-    ls->dbgMemVram              = "VRAM";
     ls->dbgMemYmf278            = "YMF278 Sample RAM";
     ls->dbgMemAy8950            = "AY8950 Sample RAM";
     ls->dbgMemScc               = "Memory";
@@ -750,46 +687,17 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->dbgDevRamMapper         = "RAM Mapper";
     ls->dbgDevRam               = "RAM";
-    ls->dbgDevIdeBeer           = "Beer IDE";
-    ls->dbgDevIdeGide           = "GIDE";
     ls->dbgDevF4Device          = "F4 Device";
-    ls->dbgDevFmpac             = "FMPAC";
-    ls->dbgDevFmpak             = "FMPAK";
-    ls->dbgDevKanji             = "Kanji";
-    ls->dbgDevKanji12           = "Kanji 12";
-    ls->dbgDevKonamiKbd         = "Konami Keyboard Master";
     ls->dbgDevKorean80          = "Korean 80";
     ls->dbgDevKorean90          = "Korean 90";
     ls->dbgDevKorean128         = "Korean 128";
-    ls->dbgDevMegaRam           = "Mega RAM";
     ls->dbgDevFdcMicrosol       = "Microsol FDC";
-    ls->dbgDevMoonsound         = "Moonsound";
-    ls->dbgDevMsxAudio          = "MSX Audio";
-    ls->dbgDevMsxAudioMidi      = "MSX Audio MIDI";
-    ls->dbgDevMsxMusic          = "MSX Music";
     ls->dbgDevPrinter           = "Printer";
-    ls->dbgDevRs232             = "RS232";
-    ls->dbgDevS1990             = "S1990";
-    ls->dbgDevSfg05             = "Yamaha SFG-05";
-    ls->dbgDevHbi55             = "Sony HBI-55";
     ls->dbgDevSviFdc            = "SVI FDC";
     ls->dbgDevSviPrn            = "SVI Printer";
     ls->dbgDevSvi80Col          = "SVI 80 Column";
-    ls->dbgDevPcm               = "PCM";
-    ls->dbgDevMatsushita        = "Matsushita";
-    ls->dbgDevS1985             = "S1985";
-    ls->dbgDevCrtc6845          = "CRTC6845";
-    ls->dbgDevTms9929A          = "TMS9929A";
-    ls->dbgDevTms99x8A          = "TMS99x8A";
-    ls->dbgDevV9938             = "V9938";
-    ls->dbgDevV9958             = "V9958";
-    ls->dbgDevZ80               = "Z80";
-    ls->dbgDevMsxMidi           = "MSX MIDI";
-    ls->dbgDevPpi               = "PPI";
     ls->dbgDevRtc               = "RTC";
     ls->dbgDevTrPause           = "TR Pause";
-    ls->dbgDevAy8910            = "AY8910 PSG";
-    ls->dbgDevScc               = "SCC";
 
 
     //----------------------
