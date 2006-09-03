@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-09-02 20:17:56 $
+** $Date: 2006-09-03 07:23:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -574,6 +574,44 @@ int DirectXCheckVBlank()
     return FALSE;
 }
 
+static UInt8 lowresOffscreen[640 * 480 * 4];
+
+
+static int renderNoStretch(Video* pVideo, FrameBuffer* frameBuffer, int bitCount, 
+                            int zoom, void* dstBuffer, int dstPitch, int canChangeZoom)
+{
+    int borderWidth = (320 - frameBuffer->maxWidth) / 2;
+    int dstOffset = borderWidth > 0 ? borderWidth * bitCount / 8 : 0;
+
+    zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
+                       dstBuffer, dstOffset, dstPitch, canChangeZoom);
+
+    if (borderWidth > 0) {
+        borderWidth *= zoom;
+        if (bitCount == 16) {
+            UInt16* ptr  = dstBuffer;                    
+            int h = zoom * 240;
+            while (h--) {
+                memset(ptr, 0, borderWidth * sizeof(UInt16));
+                memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt16));
+                ptr += dstPitch / sizeof(UInt16);
+            }
+        }
+        else if (bitCount == 32) {
+            UInt32* ptr  = dstBuffer;                 
+            int h = zoom * 240;
+            while (h--) {
+                memset(ptr, 0, borderWidth * sizeof(UInt32));
+                memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt32));
+                ptr += dstPitch / sizeof(UInt32);
+            }
+        }
+    }
+
+    return zoom;
+}
+
+
 int DirectXUpdateSurface(Video* pVideo, 
                           int noFlip, int dstPitchY, int dstOffset, int zoom, 
                           int horizontalStretch, int verticalStretch, 
@@ -587,8 +625,13 @@ int DirectXUpdateSurface(Video* pVideo,
     POINT pt = {0, 0};
     int canChangeZoom;
     RECT destRect = { 0, 0, screenWidth, screenHeight };
-    RECT rcRect;
+    RECT rcRect = { 0, 0, screenWidth, screenHeight };
     void* surfaceBuffer;
+    int lowresMode = 0; // Lowres mode is a non stretched lowres mode centering the screen with a black border if needed
+
+    if (screenWidth < 320 || screenHeight < 240) lowresMode = 1;
+    if (zoom == 1 && (screenWidth != 320 || screenHeight != 240) && !horizontalStretch) lowresMode = 1;
+
 
     if (lpTheDD == NULL) {
         return 0;
@@ -648,41 +691,31 @@ int DirectXUpdateSurface(Video* pVideo,
     if (isFullscreen && currentFullscreenMode->width >= 3 * 320) {
         canChangeZoom = 1; // Allow scale up in fullscreen
     }
-    
-    if (horizontalStretch) {
-        zoom = videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, 
-                            surfaceBuffer, 0, ddsd.lPitch, canChangeZoom);
+
+    if (lowresMode) {
+        int bytesPerPixel = ddsd.ddpfPixelFormat.dwRGBBitCount / 8;
+        UInt8* rdrPtr = lowresOffscreen + (((480 - 240) / 2) * 640 + ((640 - 320) / 2)) * bytesPerPixel;
+        UInt8* dstPtr = surfaceBuffer;
+        UInt8* srcPtr = lowresOffscreen + (((480 - screenHeight) / 2) * 640 + ((640 - screenWidth) / 2)) * bytesPerPixel;
+        int y;
+
+        renderNoStretch(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, 
+                        rdrPtr, 640 * bytesPerPixel, -1);
+
+        for (y = 0; y < screenHeight; y++) {
+            memcpy(dstPtr, srcPtr, screenWidth * bytesPerPixel);
+            srcPtr += 640 * bytesPerPixel;
+            dstPtr += ddsd.lPitch;
+        }
     }
     else {
-        int bitCount = ddsd.ddpfPixelFormat.dwRGBBitCount;
-        int borderWidth = (320 - frameBuffer->maxWidth) / 2;
-        int dstOffset = borderWidth > 0 ? borderWidth * bitCount / 8 : 0;
-
-        zoom = videoRender(pVideo, frameBuffer, bitCount, zoom, 
-                           surfaceBuffer, dstOffset, ddsd.lPitch, canChangeZoom);
-
-        if (borderWidth > 0) {
-            borderWidth *= zoom;
-            if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16) {
-                UInt16* ptr  = surfaceBuffer;                    
-                int h = zoom * 240;
-                surfaceBuffer = ptr + borderWidth;
-                while (h--) {
-                    memset(ptr, 0, borderWidth * sizeof(UInt16));
-                    memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt16));
-                    ptr += ddsd.lPitch / sizeof(UInt16);
-                }
-            }
-            else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32) {
-                UInt32* ptr  = surfaceBuffer;                 
-                int h = zoom * 240;
-                surfaceBuffer = ptr + borderWidth;
-                while (h--) {
-                    memset(ptr, 0, borderWidth * sizeof(UInt32));
-                    memset(ptr + zoom * 320 - borderWidth, 0, borderWidth * sizeof(UInt32));
-                    ptr += ddsd.lPitch / sizeof(UInt32);
-                }
-            }
+        if (horizontalStretch) {
+            zoom = videoRender(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, 
+                                surfaceBuffer, 0, ddsd.lPitch, canChangeZoom);
+        }
+        else {
+            zoom = renderNoStretch(pVideo, frameBuffer, ddsd.ddpfPixelFormat.dwRGBBitCount, zoom, 
+                                   surfaceBuffer, ddsd.lPitch, canChangeZoom);
         }
     }
 
@@ -706,23 +739,12 @@ int DirectXUpdateSurface(Video* pVideo,
     if (destRect.right  < 64) destRect.right = 64;
     if (destRect.bottom < 64)  destRect.bottom = 64;
 
-#if 0
-    if (zoom == 1) {
-        destRect.right = 320;
-        destRect.bottom = 240;
-        pt.x += (screenWidth  - destRect.right)  / 2;
-        pt.y += (screenHeight - destRect.bottom) / 2;
-
-    }
-#endif
     pt.x -= MyDeviceRect.left;
     pt.y -= MyDeviceRect.top;
+    pt.y += dstOffset;
     OffsetRect(&destRect, pt.x, pt.y);
 
-    destRect.top += dstOffset;
-    destRect.bottom += dstOffset;
-    
-    do {
+    if (!lowresMode) {
         rcRect.top = 0;
         rcRect.left = 0;
         rcRect.bottom = 240 * zoom;
@@ -737,7 +759,7 @@ int DirectXUpdateSurface(Video* pVideo,
             rcRect.top    += 7 * zoom;
             rcRect.bottom -= 7 * zoom;
         }
-    } while (0);
+    }
 
     if (syncVblank) {
         DirectXAdjustVBlankOffset();
