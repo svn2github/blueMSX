@@ -2,9 +2,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -175,7 +175,7 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
 
     rm = malloc(sizeof(RomMapperGameReader));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_KONAMI4, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_GAMEREADER, &callbacks, rm);
 
     rm->slot     = slot;
     rm->sslot    = sslot;
@@ -204,9 +204,9 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGameReader.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-12-28 23:39:02 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -473,7 +473,7 @@ int romMapperGameReaderCreate(int cartSlot, int slot, int sslot)
 
     rm = malloc(sizeof(RomMapperGameReader));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_KONAMI4, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_GAMEREADER, &callbacks, rm);
 
     rm->slot     = slot;
     rm->sslot    = sslot;

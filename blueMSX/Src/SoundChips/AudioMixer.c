@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-06-22 06:14:00 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,10 +47,22 @@
 
 static int mixerCPUFrequency;
 static int mixerConnector;
+static int mixerCPUFrequencyFixed;
 
 void mixerSetBoardFrequency(int CPUFrequency)
 {
-	mixerCPUFrequency = CPUFrequency;
+    if (mixerCPUFrequencyFixed != 0) {
+    	mixerCPUFrequency = mixerCPUFrequencyFixed;
+    }
+    else {
+    	mixerCPUFrequency = CPUFrequency;
+    }
+}
+
+void mixerSetBoardFrequencyFixed(int CPUFrequency)
+{
+	mixerCPUFrequencyFixed = CPUFrequency;
+    mixerCPUFrequency = mixerCPUFrequencyFixed;
 }
 
 typedef struct {

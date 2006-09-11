@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-11 05:56:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -902,7 +902,7 @@ char* langRomTypeTheCastle() { return "The Castle"; }
 char* langRomTypeSonyHbi55() { return "Sony HBI-55"; }
 char* langRomTypeMsxPrinter() { return ls->romTypeMsxPrinter; }
 char* langRomTypeTurborPcm() { return ls->romTypeTurborPcm; }
-char* langRomTypeGameReader() { return "Sunrise GameReader"; }
+char* langRomTypeGameReader() { return "GameReader"; }
 char* langRomTypeSunriseIde() { return "Sunrise IDE"; }
 char* langRomTypeBeerIde() { return "Beer IDE"; }
 char* langRomTypeGide() { return "GIDE"; }

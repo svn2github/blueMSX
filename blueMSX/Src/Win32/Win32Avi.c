@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-08-23 16:26:23 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -419,6 +419,7 @@ void aviStartRender(HWND hwndOwner, Properties* prop, Video* vid)
 
     boardSetPeriodicCallback(aviVideoCallback, NULL, properties->video.captureFps);
     properties->emulation.syncMethod = P_EMU_SYNCIGNORE;
+    mixerSetBoardFrequencyFixed(3579545);
     actionEmuSpeedSet(100);
     frameBufferSetFrameCount(4);
 
@@ -465,6 +466,7 @@ void aviStopRender()
     }
 
     // Restore emu speed
+    mixerSetBoardFrequencyFixed(0);
     actionEmuSpeedSet(emuSpeed);
 
     // Remove board timer

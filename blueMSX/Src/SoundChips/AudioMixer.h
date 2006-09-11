@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-06-13 17:13:28 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@ Int32 mixerRegisterChannel(Mixer* mixer, Int32 audioType, Int32 stereo,
 void mixerUnregisterChannel(Mixer* mixer, Int32 handle);
 
 void mixerSetBoardFrequency(int CPUFrequency);
+void mixerSetBoardFrequencyFixed(int CPUFrequency);
 
 #endif
 

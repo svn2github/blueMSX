@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ram1kBMirrored.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-08-31 22:32:06 $
+** $Date: 2006-09-11 05:56:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,9 +52,9 @@ typedef struct {
 
 static void saveState(Ram1kBMirrored* rm)
 {
-    SaveState* state = saveStateOpenForWrite("mapper1kBMirroredRam");
+    SaveState* state = saveStateOpenForWrite("mapperMirroredRam");
 
-    saveStateGet(state, "mask", rm->mask);
+    saveStateSet(state, "mask", rm->mask);
     saveStateSetBuffer(state, "ramData", rm->ramData, rm->mask + 1);
 
     saveStateClose(state);
@@ -62,7 +62,7 @@ static void saveState(Ram1kBMirrored* rm)
 
 static void loadState(Ram1kBMirrored* rm)
 {
-    SaveState* state = saveStateOpenForRead("mapper1kBMirroredRam");
+    SaveState* state = saveStateOpenForRead("mapperMirroredRam");
 
     rm->mask = saveStateGet(state, "mask", 0x400);
     saveStateGetBuffer(state, "ramData", rm->ramData, rm->mask + 1);
