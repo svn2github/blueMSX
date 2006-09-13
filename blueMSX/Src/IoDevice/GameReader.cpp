@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/GameReader.cpp,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-11 05:56:15 $
+** $Date: 2006-09-13 06:50:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,28 @@
 extern "C" {
 #include "GameReader.h"
 };
+
+#ifdef _WIN32
 #include "msxgr.h"
+#else
+class CMSXGr
+{
+	public:
+		CMSXGr() {};
+		~CMSXGr() {};
+
+        int  Init() { return 0; }
+
+        bool IsSlotEnable(int) { return false; }
+		bool IsCartridgeInserted(int) { return false; }
+
+		int  ReadMemory(int,char*,int,int) { return 0; }
+		int  WriteMemory(int,char*,int,int) { return 0; }
+		int  WriteIO(int,char*,int,int) { return 0; }
+		int  ReadIO(int,char*,int,int) { return 0; }
+};
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
