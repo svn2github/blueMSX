@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-09-02 20:17:55 $
+** $Date: 2006-09-15 06:44:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,10 +90,10 @@ void langInitDutch(LanguageStrings* ls)
     ls->fileRom                 = "Rom-beeld";
     ls->fileAll                 = "Alle bestanden";
     ls->fileCpuState            = "CPU-status";
-    ls->fileVideoCapture        = "Video Capture"; // New in 2.6
+    ls->fileVideoCapture        = "Videoopname";
     ls->fileDisk                = "Disk-beeld";
     ls->fileCas                 = "Cassette-beeld";
-    ls->fileAvi                 = "Video Clip";    // New in 2.6
+    ls->fileAvi                 = "Videobestand";
 
 
     //----------------------
@@ -129,13 +129,13 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Bepaal positie";
     ls->menuCasRewind           = "Terugspoelen cassette";
 
-    ls->menuVideoLoad           = "Load...";             // New in 2.6
-    ls->menuVideoPlay           = "Play Last Capture";   // New in 2.6
-    ls->menuVideoRecord         = "Record";              // New in 2.6
-    ls->menuVideoRecording      = "Recording";           // New in 2.6
-    ls->menuVideoRecAppend      = "Record (append)";     // New in 2.6
-    ls->menuVideoStop           = "Stop";                // New in 2.6
-    ls->menuVideoRender         = "Render Video File";   // New in 2.6
+    ls->menuVideoLoad           = "Laden...";
+    ls->menuVideoPlay           = "Laatste opname afspelen";
+    ls->menuVideoRecord         = "Opnemen";
+    ls->menuVideoRecording      = "Bezig met openemen";
+    ls->menuVideoRecAppend      = "Opnemen (toevoegen)";
+    ls->menuVideoStop           = "Stoppen";
+    ls->menuVideoRender         = "Maak Videobestand";
 
     ls->menuPrnFormfeed         = "Paginadoorvoer";
 
@@ -158,8 +158,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuVideoChipAutodetect = "Automatische detectie Videochip";
     ls->menuVideoInSource       = "Video In-bron";
     ls->menuVideoInBitmap       = "Afbeedingsbestand";
-    
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+
+    ls->menuEthInterface        = "Ethernet koppeling";
 
     ls->menuHelpHelp            = "Help";
     ls->menuHelpAbout           = "Info blueMSX";
@@ -173,7 +173,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Snel laden CPU-status";
     ls->menuFileQSaveState      = "Snel opslaan CPU-status";
     ls->menuFileCaptureAudio    = "Opslaan Geluid";
-    ls->menuFileCaptureVideo    = "Video Capture"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Opslaan Video";
     ls->menuFileScreenShot      = "Schermafdruk maken";
     ls->menuFileExit            = "Afsluiten";
 
@@ -189,7 +189,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Aanpassen Machine";
     ls->menuToolsShortcuts      = "Maken Snelkoppeling";
-    ls->menuToolsCtrlEditor     = "Besturingseditors";      // New in 2.6
+    ls->menuToolsCtrlEditor     = "Besturingseditors";
     ls->menuToolsMixer          = "Mixer";
     ls->menuToolsDebugger       = "Debugger";
     ls->menuToolsTrainer        = "Trainer";
@@ -224,11 +224,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Selecteer een cassette om te laden:";
     ls->dlgLoadRomDskCasDesc    = "Selecteer een cartridge, diskette of cassette om te laden:";
     ls->dlgLoadState            = "Laad CPU-status";
-    ls->dlgLoadVideoCapture     = "Load video capture";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Laad Video-opname";
     ls->dlgSaveState            = "Opslaan CPU-status";
     ls->dlgSaveCassette         = "blueMSX - Opslaan Cassette-beeld";
-    ls->dlgSaveVideoClipAs      = "Save video clip as...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Amount completed:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Videoclip opslaan als...";
+    ls->dlgAmountCompleted      = "Aantal gereed:";
     ls->dlgInsertRom1           = "Toevoegen Rom-cartridge in slot 1";
     ls->dlgInsertRom2           = "Toevoegen Rom-cartridge in slot 2";
     ls->dlgInsertDiskA          = "Toevoegen diskette-beeld in station A";
@@ -236,7 +236,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Toevoegen Vaste schijf";
     ls->dlgInsertCas            = "Toevoegen cassette-beeld in casettespeler";
     ls->dlgRomType              = "Romtype :";
-    ls->dlgDiskSize             = "Disk Size:";             // New in 2.6
+    ls->dlgDiskSize             = "Diskomvang:";
 
     ls->dlgTapeTitle            = "blueMSX - Tapepositie";
     ls->dlgTapeFrameText        = "Tapepositie";
@@ -271,7 +271,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgSavePreview          = "Voorbeeld weergeven";
     ls->dlgSaveDate             = "Opgeslagen op:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Videoclip wordt gemaakt...";
 
 
     //----------------------
@@ -438,7 +438,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Single Sided, 8 Sectoren";
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" Double Sided";
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" Single Sided";
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Single Sided";  // New in 2.6   
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Single Sided";
 
 
     //----------------------
@@ -598,11 +598,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Tonen/Verbergen sprites";
     ls->shortcutToggleFdcTiming = "Synchroniseren/Niet synchroniseren";
     ls->shortcutToggleCpuTrace  = "Toelaten/niet toelaten CPU-spoor";
-    ls->shortcutVideoLoad       = "Load...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Play Last Capture";   // New in 2.6
-    ls->shortcutVideoRecord     = "Record";              // New in 2.6
-    ls->shortcutVideoStop       = "Stop";                // New in 2.6
-    ls->shortcutVideoRender     = "Render Video File";   // New in 2.6
+    ls->shortcutVideoLoad       = "Laden...";
+    ls->shortcutVideoPlay       = "Laatste opname afspelen";
+    ls->shortcutVideoRecord     = "Opnemen";
+    ls->shortcutVideoStop       = "Stoppen";
+    ls->shortcutVideoRender     = "Maak Videobestand";
 
 
     //----------------------
