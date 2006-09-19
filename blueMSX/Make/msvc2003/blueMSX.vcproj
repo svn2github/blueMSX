@@ -259,9 +259,6 @@
 					RelativePath="..\..\Src\Win32\Win32DirectShow.cpp">
 				</File>
 				<File
-					RelativePath="..\..\Src\Win32\Win32DirectShow.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Win32\Win32directX.c">
 				</File>
 				<File
@@ -357,6 +354,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Dir.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32DirectShow.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32directx.h">
@@ -553,13 +553,7 @@
 					RelativePath="..\..\Src\Memory\MegaromCartridge.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\PlayballSamples.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\ram1kBMirrored.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\ram1kBMirrored.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\ramMapper.c">
@@ -605,9 +599,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperCvMegaCart.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperCvMegaCart.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperDisk.c">
@@ -727,9 +718,6 @@
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperObsonet.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.c">
 				</File>
 				<File
@@ -743,9 +731,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperPlayBall.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperPlayBall.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperRType.c">
@@ -763,19 +748,10 @@
 					RelativePath="..\..\Src\Memory\romMapperSf7000Ipl.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperSf7000Ipl.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperSfg05.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperSfg05.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperSg1000.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperSg1000.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.c">
@@ -845,6 +821,12 @@
 					RelativePath="..\..\Src\Memory\MegaromCartridge.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\PlayballSamples.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\ram1kBMirrored.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\ramMapper.h">
 				</File>
 				<File
@@ -885,6 +867,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperCrossBlaim.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperCvMegaCart.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperDisk.h">
@@ -1001,6 +986,9 @@
 					RelativePath="..\..\Src\Memory\romMapperNormal.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperObsonet.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.h">
 				</File>
 				<File
@@ -1013,6 +1001,9 @@
 					RelativePath="..\..\Src\Memory\romMapperPlain.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperPlayBall.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperRType.h">
 				</File>
 				<File
@@ -1023,6 +1014,15 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSegaBasic.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSf7000Ipl.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSfg05.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSg1000.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.h">
