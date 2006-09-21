@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2006-09-19 06:00:12 $
+** $Date: 2006-09-21 04:49:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,7 @@ static int fdcTimingEnable = 1;
 static int fdcActive       = 0;
 static BoardTimer* fdcTimer;
 static BoardTimer* syncTimer;
+static BoardTimer* mixerTimer;
 static BoardDeviceInfo* boardDeviceInfo;
 static Machine* boardMachine;
 static BoardInfo boardInfo;
@@ -745,8 +746,6 @@ static void doSync(UInt32 time, int breakpointHit)
         return;
     }
 
-    mixerSync(boardMixer);
-
     boardSystemTime64();
 
     if (execTime == 0) {
@@ -755,6 +754,13 @@ static void doSync(UInt32 time, int breakpointHit)
     else {
         boardTimerAdd(syncTimer, time + (UInt32)((UInt64)execTime * boardFreq / 1000));
     }
+}
+
+static void onMixerSync(void* ref, UInt32 time)
+{
+    mixerSync(boardMixer);
+
+    boardTimerAdd(mixerTimer, boardSystemTime() + boardFrequency() / 50);
 }
 
 static void onSync(void* ref, UInt32 time)
@@ -886,9 +892,11 @@ int boardRun(Machine* machine,
     if (success) {
         syncTimer = boardTimerCreate(onSync, NULL);
         fdcTimer = boardTimerCreate(onFdcDone, NULL);
+        mixerTimer = boardTimerCreate(onMixerSync, NULL);
         
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
-
+        boardTimerAdd(mixerTimer, boardSystemTime() + boardFrequency() / 50);
+        
         if (boardPeriodicCallback != NULL) {
             periodicTimer = boardTimerCreate(boardPeriodicCallback, periodicRef);
             boardTimerAdd(periodicTimer, boardSystemTime() + periodicInterval);
@@ -909,6 +917,7 @@ int boardRun(Machine* machine,
 
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(syncTimer);
+        boardTimerDestroy(mixerTimer);
     }
     else {
         boardCaptureStop();
