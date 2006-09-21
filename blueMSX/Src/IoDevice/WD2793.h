@@ -1,15 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:25 $
-**
-** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
+** $Date: 2006-09-21 04:28:06 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik
+** Copyright (C) 2003-2006 Daniel Vik, Ricardo Bittencourt
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by

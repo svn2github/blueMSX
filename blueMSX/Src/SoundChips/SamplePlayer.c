@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:34 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,8 +33,6 @@
 
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
 
-#define BUFFER_SIZE     10000
-
 static Int32* samplePlayerSync(SamplePlayer* samplePlayer, UInt32 count);
 
 struct SamplePlayer
@@ -57,8 +55,8 @@ struct SamplePlayer
     Int32  ctrlVolume;
     Int32  daVolume;
 
-    Int32  defaultBuffer[BUFFER_SIZE];
-    Int32  buffer[BUFFER_SIZE];
+    Int32  defaultBuffer[AUDIO_MONO_BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 void samplePlayerReset(SamplePlayer* samplePlayer) {

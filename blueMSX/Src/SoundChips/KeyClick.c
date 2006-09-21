@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/KeyClick.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,8 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BUFFER_SIZE     10000
-
 
 static Int32* audioKeyClickSync(void* ref, UInt32 count);
 
@@ -46,7 +44,7 @@ struct AudioKeyClick
     Int32 daVolume;
     Int32 count;
 
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 AudioKeyClick* audioKeyClickCreate(Mixer* mixer)

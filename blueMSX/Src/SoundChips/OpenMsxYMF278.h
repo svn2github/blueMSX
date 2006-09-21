@@ -17,7 +17,9 @@ typedef unsigned short word;
 #ifndef OPENMSX_SOUNDDEVICE
 #define OPENMSX_SOUNDDEVICE
 
-#define MAX_BUFFER_SIZE 10000
+extern "C" {
+#include "AudioMixer.h"
+}
 
 class SoundDevice
 {
@@ -128,7 +130,7 @@ class YMF278 : public SoundDevice
 		bool anyActive();
 		void keyOnHelper(YMF278Slot& slot);
 
-		int buffer[2 * MAX_BUFFER_SIZE];
+		int buffer[AUDIO_STEREO_BUFFER_SIZE];
 		byte* rom;
 		byte* ram;
 

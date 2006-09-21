@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-09-19 06:00:34 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,8 +38,6 @@
 
 #define FREQUENCY        3579545
 #define SAMPLERATE       (FREQUENCY / 72)
-#define SAMPLERATE_OUT   44100
-#define BUFFER_SIZE      10000
 #define TIMER_FREQUENCY  (4 * boardFrequency() / SAMPLERATE)
 
 
@@ -61,7 +59,7 @@ struct Y8950 {
     Int32  off;
     Int32  s1;
     Int32  s2;
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 extern INT32 outd;
@@ -225,12 +223,12 @@ static Int32* y8950Sync(void* ref, UInt32 count)
     UInt32 i;
 
     for (i = 0; i < count; i++) {
-#if SAMPLERATE > SAMPLERATE_OUT
-        y8950->off -= SAMPLERATE - SAMPLERATE_OUT;
+#if SAMPLERATE > AUDIO_SAMPLERATE
+        y8950->off -= SAMPLERATE - AUDIO_SAMPLERATE;
         y8950->s1 = y8950->s2;
         y8950->s2 = Y8950UpdateOne(y8950->opl);
         if (y8950->off < 0) {
-            y8950->off += SAMPLERATE_OUT;
+            y8950->off += AUDIO_SAMPLERATE;
             y8950->s1 = y8950->s2;
             y8950->s2 = Y8950UpdateOne(y8950->opl);
         }

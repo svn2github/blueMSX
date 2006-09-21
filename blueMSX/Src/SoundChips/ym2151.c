@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-19 06:00:34 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,8 +37,6 @@
 
 #define FREQUENCY        3579545
 #define SAMPLERATE       (FREQUENCY / 64)
-#define SAMPLERATE_OUT   44100
-#define BUFFER_SIZE      10000
 #define TIMER_FREQUENCY  (boardFrequency() / FREQUENCY * 64)
 
 
@@ -63,7 +61,7 @@ struct YM2151 {
     Int32  s2l;
     Int32  s1r;
     Int32  s2r;
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_STEREO_BUFFER_SIZE];
 };
 
 void ym2151TimerStart(void* ptr, int timer, int start);
@@ -173,14 +171,14 @@ static Int32* ym2151Sync(void* ref, UInt32 count)
 
     for (i = 0; i < count; i++) {
         Int16 sl, sr;
-        ym2151->off -= SAMPLERATE - SAMPLERATE_OUT;
+        ym2151->off -= SAMPLERATE - AUDIO_SAMPLERATE;
         ym2151->s1l = ym2151->s2l;
         ym2151->s1r = ym2151->s2r;
         YM2151UpdateOne(ym2151->opl, &sl, &sr, 1);
         ym2151->s2l = sl;
         ym2151->s2r = sr;
         if (ym2151->off < 0) {
-            ym2151->off += SAMPLERATE_OUT;
+            ym2151->off += AUDIO_SAMPLERATE;
             ym2151->s1l = ym2151->s2l;
             ym2151->s1r = ym2151->s2r;
             YM2151UpdateOne(ym2151->opl, &sl, &sr, 1);

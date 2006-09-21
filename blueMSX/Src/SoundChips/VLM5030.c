@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/VLM5030.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:34 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,6 @@
 
 #define FREQUENCY        3579545
 #define FREQINCR         (FREQUENCY / 440)
-#define BUFFER_SIZE      10000
 
 struct VLM5030 {
     Mixer* mixer;
@@ -48,7 +47,7 @@ struct VLM5030 {
     Int32 oldSampleVolume;
     Int32 ctrlVolume;
     
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 static VLM5030* theVlm5030 = NULL;

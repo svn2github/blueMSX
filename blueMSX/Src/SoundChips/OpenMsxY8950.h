@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.h,v 1.1.1.1 2004-12-04 20:25:28 dvik Exp $
+// $Id: OpenMsxY8950.h,v 1.2 2006-09-21 04:28:08 dvik Exp $
 
 #ifndef __Y8950_HH__
 #define __Y8950_HH__
@@ -8,9 +8,8 @@
 
 extern "C" {
 #include "Board.h"
+#include "AudioMixer.h"
 }
-
-#define MAX_BUFFER_SIZE 10000
 
 
 class TimerCallback
@@ -329,7 +328,7 @@ private:
 	void resetStatus(byte flags);
 	void changeStatusMask(byte newMask);
 
-    int buffer[MAX_BUFFER_SIZE];
+    int buffer[AUDIO_MONO_BUFFER_SIZE];
 
 	int adr;
 	int output[2];

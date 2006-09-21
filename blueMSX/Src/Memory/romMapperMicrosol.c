@@ -1,15 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-19 06:00:29 $
-**
-** Based on the Mircosol FDC emulation in BRMSX by Ricardo Bittencourt.
+** $Date: 2006-09-21 04:28:07 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik
+** Copyright (C) 2003-2006 Daniel Vik, Ricardo Bittencourt
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by

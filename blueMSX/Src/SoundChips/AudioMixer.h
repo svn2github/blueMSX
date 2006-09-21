@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.h,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-09-19 06:00:32 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,11 @@
 
 /* Type definitions */
 typedef struct Mixer Mixer;
+
+#define AUDIO_MONO_BUFFER_SIZE    10000
+#define AUDIO_STEREO_BUFFER_SIZE  (2 * AUDIO_MONO_BUFFER_SIZE)
+
+#define AUDIO_SAMPLERATE       44100
 
 typedef enum { 
     MIXER_CHANNEL_PSG = 0,

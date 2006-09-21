@@ -13,7 +13,9 @@ typedef unsigned long  EmuTime;
 typedef unsigned char  byte;
 typedef unsigned short word;
 
-#define MAX_BUFFER_SIZE 10000
+extern "C" {
+#include "AudioMixer.h"
+}
 
 
 #ifndef OPENMSX_SOUNDDEVICE
@@ -351,7 +353,7 @@ private:
 
 	const std::string name;
 
-    int buffer[MAX_BUFFER_SIZE];
+    int buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 #endif

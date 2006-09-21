@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directXSound.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:40 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,8 +49,6 @@ struct DxSound {
     LPDIRECTSOUNDBUFFER secondaryBuffer;
     LPDIRECTSOUND directSound;
 };
-
-static Int16 tmpBuffer[20000];
 
 static void dxClear(DxSound* dxSound)
 {

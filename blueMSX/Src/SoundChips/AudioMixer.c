@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-19 06:00:32 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,9 +33,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define SAMPLERATE        44100
 #define BITSPERSAMPLE     16
-#define BUFFER_SIZE       40000
 
 #define str2ul(s) ((UInt32)s[0]<<0|(UInt32)s[1]<<8|(UInt32)s[2]<<16|(UInt32)s[3]<<24)
 
@@ -117,14 +115,14 @@ struct Mixer
     UInt32 refFrag;
     UInt32 index;
     UInt32 volIndex;
-    Int16   buffer[BUFFER_SIZE];
+    Int16   buffer[AUDIO_STEREO_BUFFER_SIZE];
     AudioTypeInfo audioTypeInfo[MIXER_CHANNEL_TYPE_COUNT];
     MixerChannel channels[MAX_CHANNELS];
     MixerChannel midi; // This channel is only used for meter output
     Int32   channelCount;
     Int32   handleCount;
     UInt32  oldTick;
-    Int32   dummyBuffer[BUFFER_SIZE];
+    Int32   dummyBuffer[AUDIO_STEREO_BUFFER_SIZE];
     Int32   logging;
     Int32   stereo;
     double  masterVolume;
@@ -435,18 +433,19 @@ void mixerSync(Mixer* mixer)
     Int16* buffer   = mixer->buffer;
     Int32* chBuff[MAX_CHANNELS];
     UInt32 count;
+    UInt32 loopCnt;
     UInt64 elapsed;
     int i;
 
-    elapsed        = SAMPLERATE * (UInt64)(systemTime - mixer->refTime) + mixer->refFrag;
+    elapsed        = AUDIO_SAMPLERATE * (UInt64)(systemTime - mixer->refTime) + mixer->refFrag;
     mixer->refTime = systemTime;
     mixer->refFrag = (UInt32)(elapsed % (mixerCPUFrequency * (boardFrequency() / 3579545)));
     count          = (UInt32)(elapsed / (mixerCPUFrequency * (boardFrequency() / 3579545)));
 
-    if (count == 0 || count > BUFFER_SIZE) {
+    if (count == 0 || count > AUDIO_MONO_BUFFER_SIZE) {
         return;
     }
-
+    
     for (i = 0; i < mixer->channelCount; i++) {
         if (mixer->channels[i].updateCallback != NULL) {
             chBuff[i] = mixer->channels[i].updateCallback(mixer->channels[i].ref, count);
@@ -647,8 +646,8 @@ void mixerStopLog(Mixer* mixer)
     header.wavHeader.chunkSize      = 16;
     header.wavHeader.formatType     = 1;
     header.wavHeader.channels       = (mixer->stereo ? 2 : 1);
-    header.wavHeader.samplesPerSec  = SAMPLERATE;
-    header.wavHeader.avgBytesPerSec = (mixer->stereo ? 2 : 1) * SAMPLERATE * BITSPERSAMPLE / 8;
+    header.wavHeader.samplesPerSec  = AUDIO_SAMPLERATE;
+    header.wavHeader.avgBytesPerSec = (mixer->stereo ? 2 : 1) * AUDIO_SAMPLERATE * BITSPERSAMPLE / 8;
     header.wavHeader.blockAlign     = (mixer->stereo ? 2 : 1) * BITSPERSAMPLE / 8;
     header.wavHeader.bitsPerSample  = BITSPERSAMPLE;
     header.data                     = str2ul("data");

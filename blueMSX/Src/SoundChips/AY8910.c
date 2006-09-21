@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-09-19 06:00:32 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,6 @@
 #include <math.h>
 
 #define BASE_PHASE_STEP 0x28959becUL  /* = (1 << 28) * 3579545 / 32 / 44100 */
-#define BUFFER_SIZE     10000
 
 static Int16 voltTable[16];
 static Int16 voltEnvTable[32];
@@ -81,7 +80,7 @@ struct AY8910 {
     Int32  oldSampleVolume;
     Int32  daVolume;
 
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 void ay8910LoadState(AY8910* ay8910)

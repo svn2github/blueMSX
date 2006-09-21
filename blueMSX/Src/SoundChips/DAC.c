@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/DAC.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,8 +33,6 @@
 
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
 
-#define BUFFER_SIZE     20000
-
 static Int32* dacSyncMono(DAC* dac, UInt32 count);
 static Int32* dacSyncStereo(DAC* dac, UInt32 count);
 static void dacSyncChannel(DAC* dac, UInt32 count, int ch, UInt32 index, UInt32 delta);
@@ -53,8 +51,8 @@ struct DAC
     Int32   ctrlVolume[2];
     Int32   daVolume[2];
 
-    Int32   defaultBuffer[BUFFER_SIZE];
-    Int32   buffer[BUFFER_SIZE];
+    Int32   defaultBuffer[AUDIO_STEREO_BUFFER_SIZE];
+    Int32   buffer[AUDIO_STEREO_BUFFER_SIZE];
 };
 
 void dacReset(DAC* dac) {

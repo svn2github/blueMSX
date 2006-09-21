@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxAudio.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,8 +38,6 @@ extern "C" {
 }
 
 #define FREQUENCY        3579545
-#define SAMPLERATE       44100
-#define BUFFER_SIZE      10000
  
 extern "C" Int32* msxaudioSync(void* ref, UInt32 count);
 
@@ -56,8 +54,8 @@ struct MsxAudio {
 
     Int32  deviceHandle;
     Y8950* y8950;
-    Int32  buffer[BUFFER_SIZE];
-    Int32  defaultBuffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
+    Int32  defaultBuffer[AUDIO_MONO_BUFFER_SIZE];
     UInt32 timer1;
     UInt32 counter1;
     UInt8  timerRef1;
@@ -211,7 +209,7 @@ extern "C" int msxaudioCreate(Mixer* mixer)
     msxaudio->deviceHandle = deviceManagerRegister(ROM_MSXAUDIO, &callbacks, msxaudio);
 
     msxaudio->y8950 = new Y8950("MsxAudio", 256*1024, systemTime);
-    msxaudio->y8950->setSampleRate(SAMPLERATE, boardGetY8950Oversampling());
+    msxaudio->y8950->setSampleRate(AUDIO_SAMPLERATE, boardGetY8950Oversampling());
 	msxaudio->y8950->setVolume(32767);
 
     ioPortRegister(0xc0, (IoPortRead)msxaudioRead, (IoPortWrite)msxaudioWrite, msxaudio);

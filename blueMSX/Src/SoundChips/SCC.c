@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SCC.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,8 +41,6 @@
 
 #define OFFSETOF(s, a) ((int)(&((s*)0)->a))
 
-#define BUFFER_SIZE     10000
-
 static Int32* sccSync(SCC* scc, UInt32 count);
 
 
@@ -73,7 +71,7 @@ struct SCC
     Int32 inHp[3];
     Int32 outHp[3];
 
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 void sccLoadState(SCC* scc)

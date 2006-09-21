@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,7 +36,6 @@
 #include <math.h>
 
 #define BASE_PHASE_STEP 0x28959becUL  /* = (1 << 28) * 3579545 / 32 / 44100 */
-#define BUFFER_SIZE     10000
 
 static const Int16 voltTable[16] = {
     0x26a9, 0x1eb5, 0x1864, 0x1360, 0x0f64, 0x0c39, 0x09b6, 0x07b6, 
@@ -64,7 +63,7 @@ struct SN76489 {
     Int32  oldSampleVolume;
     Int32  daVolume;
 
-    Int32  buffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
 };
 
 void sn76489LoadState(SN76489* sn76489)

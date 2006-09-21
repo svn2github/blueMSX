@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-21 04:28:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,8 +36,6 @@ extern "C" {
 }
 
 #define FREQUENCY        3579545
-#define SAMPLERATE       44100
-#define BUFFER_SIZE      2 * 10000
  
 struct Moonsound {
     Moonsound() : opl3latch(0), opl4latch(0),
@@ -50,8 +48,8 @@ struct Moonsound {
 
     YMF278* ymf278;
     YMF262* ymf262;
-    Int32  buffer[BUFFER_SIZE];
-    Int32  defaultBuffer[BUFFER_SIZE];
+    Int32  buffer[AUDIO_STEREO_BUFFER_SIZE];
+    Int32  defaultBuffer[AUDIO_STEREO_BUFFER_SIZE];
     BoardTimer* timer1;
     BoardTimer* timer2;
     UInt32 timeout1;
@@ -417,11 +415,11 @@ Moonsound* moonsoundCreate(Mixer* mixer, void* romData, int romSize, int sramSiz
     moonsound->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MOONSOUND, 1, moonsoundSync, moonsound);
 
     moonsound->ymf262 = new YMF262(0, systemTime, moonsound);
-    moonsound->ymf262->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
+    moonsound->ymf262->setSampleRate(AUDIO_SAMPLERATE, boardGetMoonsoundOversampling());
 	moonsound->ymf262->setVolume(32767 * 9 / 10);
 
     moonsound->ymf278 = new YMF278(0, sramSize, romData, romSize, systemTime);
-    moonsound->ymf278->setSampleRate(SAMPLERATE, boardGetMoonsoundOversampling());
+    moonsound->ymf278->setSampleRate(AUDIO_SAMPLERATE, boardGetMoonsoundOversampling());
     moonsound->ymf278->setVolume(32767 * 9 / 10);
 
     return moonsound;
