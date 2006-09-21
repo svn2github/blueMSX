@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-09-19 06:00:12 $
+** $Date: 2006-09-21 20:20:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,6 +119,7 @@
 #include "romMapperSg1000Castle.h"
 #include "romMapperSg1000.h"
 #include "romMapperSegaBasic.h"
+#include "romMapperDumas.h"
 
 int toint(char* buffer) 
 {
@@ -1022,6 +1023,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_OBSONET:
             success &= romMapperObsonetCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_DUMAS:
+            success &= romMapperDumasCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_MOONSOUND:

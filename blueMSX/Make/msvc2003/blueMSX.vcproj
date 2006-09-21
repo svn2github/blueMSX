@@ -544,6 +544,12 @@
 				Name="Source"
 				Filter="">
 				<File
+					RelativePath="..\..\Src\Memory\AmdFlash.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\AmdFlash.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\DeviceManager.c">
 				</File>
 				<File
@@ -602,6 +608,12 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperDisk.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperDumas.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperDumas.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperF4device.c">
@@ -1249,6 +1261,12 @@
 				RelativePath="..\..\Src\IoDevice\Led.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\Microwire93Cx6.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\Microwire93Cx6.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\MidiIO.c">
 			</File>
 			<File
@@ -1310,6 +1328,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Sf7000PPI.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\sl811hs.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\sl811hs.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\SunriseIDE.c">

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperObsonet.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDumas.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.1 $
 **
 ** $Date: 2006-09-21 20:20:49 $
 **
@@ -25,7 +25,7 @@
 **
 ******************************************************************************
 */
-#include "romMapperObsonet.h"
+#include "romMapperDumas.h"
 #include "AmdFlash.h"
 #include "MediaDb.h"
 #include "SlotManager.h"
@@ -33,7 +33,8 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "sramLoader.h"
-#include "rtl8019.h"
+#include "sl811hs.h"
+#include "Microwire93Cx6.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -41,20 +42,23 @@
 typedef struct {
     int deviceHandle;
     AmdFlash* amdFlash;
-    RTL8019*  rtl8019;
+    SL811HS*  sl811hs;
+    Microwire93Cx6* eeprom;
     int slot;
     int sslot;
     int startPage;
     UInt8 romMapper;
     UInt8 regBank;
     UInt8* flashPage;
-} RomMapperObsonet;
+    UInt8  reg3ffd;
+    UInt8 ram[0x4000];
+} RomMapperDumas;
 
 
 
-static void saveState(RomMapperObsonet* rm)
+static void saveState(RomMapperDumas* rm)
 {
-    SaveState* state = saveStateOpenForWrite("mapperObsonet");
+    SaveState* state = saveStateOpenForWrite("mapperDumas");
 
     saveStateSet(state, "romMapper", rm->romMapper);
     saveStateSet(state, "regBank", rm->regBank);
@@ -62,12 +66,13 @@ static void saveState(RomMapperObsonet* rm)
     saveStateClose(state);
 
     amdFlashSaveState(rm->amdFlash);
-    rtl8019SaveState(rm->rtl8019);
+    sl811hsSaveState(rm->sl811hs);
+    microwire93Cx6SaveState(rm->eeprom);
 }
 
-static void loadState(RomMapperObsonet* rm)
+static void loadState(RomMapperDumas* rm)
 {
-    SaveState* state = saveStateOpenForRead("mapperObsonet");
+    SaveState* state = saveStateOpenForRead("mapperDumas");
 
     rm->romMapper = (UInt8)saveStateGet(state, "romMapper", 0);
     rm->regBank = (UInt8)saveStateGet(state, "regBank", 0);
@@ -75,104 +80,119 @@ static void loadState(RomMapperObsonet* rm)
     saveStateClose(state);
 
     amdFlashLoadState(rm->amdFlash);
-    rtl8019LoadState(rm->rtl8019);
+    sl811hsLoadState(rm->sl811hs);
+    microwire93Cx6LoadState(rm->eeprom);
 
     rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
 
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
 }
 
-static void destroy(RomMapperObsonet* rm)
+static void destroy(RomMapperDumas* rm)
 {
     amdFlashDestroy(rm->amdFlash);
-    rtl8019Destroy(rm->rtl8019);
+    sl811hsDestroy(rm->sl811hs);
+    microwire93Cx6Destroy(rm->eeprom);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
     free(rm);
 }
 
-static void reset(RomMapperObsonet* rm)
+static void reset(RomMapperDumas* rm)
 {
+    memset(rm->ram, 0xff, sizeof(rm->ram));
     rm->regBank   = 0;
     rm->romMapper = 0;
+    rm->reg3ffd   = 0;
     amdFlashReset(rm->amdFlash);
-    rtl8019Reset(rm->rtl8019);
+    sl811hsReset(rm->sl811hs);
+    microwire93Cx6Reset(rm->eeprom);
     rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
 }
 
-static UInt8 read(RomMapperObsonet* rm, UInt16 address) 
+static UInt8 read(RomMapperDumas* rm, UInt16 address) 
 {
-    if ((address & 0x3fe0) == 0x3fe0) { 
-        UInt8 value = rtl8019Read(rm->rtl8019, address & 0x1f);
-//        printf("R %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
-        return value;
+    if (address < 0x3ffc) {
+        return rm->flashPage[address];
     }
 
-    if (address < 0x4000) {
-        // This is reads to 0x6000-0x7FDF, rest are directly mapped
-        return rm->flashPage[address];
+    switch (address)
+    {
+    case 0x3ffc:
+        return rm->romMapper;
+        break;
+    case 0x3ffd:
+        return (rm->reg3ffd & ~0x02) | (microwire93Cx6GetDi(rm->eeprom) ? 0x02 : 0x00);
+    case 0x3ffe:
+    case 0x3fff:
+        return sl811hsRead(rm->sl811hs, address & 1);
     }
 
     return 0xff;
 }
 
-static UInt8 peek(RomMapperObsonet* rm, UInt16 address) 
+static UInt8 peek(RomMapperDumas* rm, UInt16 address) 
 {
-    
-    if ((address & 0x3fe0) == 0x3fe0) return 0xff;
-    return read(rm, address);
+    if (address < 0x3ffc) {
+        return rm->flashPage[address];
+    }
+    return 0xff;
 }
 
-static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value) 
+static void write(RomMapperDumas* rm, UInt16 address, UInt8 value) 
 {
-    if ((address & 0x3fe0) == 0x3fe0) {
-        if (rm->regBank < 3)
-//        printf("W %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
-        switch (address & 0x1f) {
-        case 0:
-            rm->regBank = value >> 6;
-            break;
-        case 2:
-            if (rm->regBank == 3) {
-                rm->romMapper = value & 0x1f;
-                rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
-                slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
-            }
-            break;
-        }
-        rtl8019Write(rm->rtl8019, address & 0x1f, value);
-    }
-    else if (address < 0x4000) {
+    if (address < 0x3ffc) {
         amdFlashWrite(rm->amdFlash, address + 0x4000 * rm->romMapper, value);
+        return;
+    }
+
+    switch (address)
+    {
+    case 0x3ffc:
+        rm->romMapper = value & 0x1f;
+        rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
+        break;
+    case 0x3ffd:
+        rm->reg3ffd = value;
+        microwire93Cx6SetCs(rm->eeprom,  value & 0x08);
+        microwire93Cx6SetClk(rm->eeprom, value & 0x04);
+        microwire93Cx6SetDo(rm->eeprom,  value & 0x01);
+        break;
+    case 0x3ffe:
+    case 0x3fff:
+        sl811hsWrite(rm->sl811hs, address & 1, value);
+        break;
     }
 }
 
-int romMapperObsonetCreate(char* filename, UInt8* romData, 
+int romMapperDumasCreate(char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
-    RomMapperObsonet* rm;
+    RomMapperDumas* rm;
 
-    rm = malloc(sizeof(RomMapperObsonet));
+    rm = malloc(sizeof(RomMapperDumas));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_OBSONET, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_DUMAS, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
-    rm->amdFlash = amdFlashCreate(0x80000, 0x10000, romData, size, sramCreateFilenameWithSuffix("obsonet.rom", "", ".rom"));
+    rm->amdFlash = amdFlashCreate(0x80000, 0x10000, romData, size, sramCreateFilenameWithSuffix("dumas.rom", "", ".rom"));
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    rm->rtl8019 = rtl8019Create();
+    rm->sl811hs = sl811hsCreate();
+    rm->eeprom  = microwire93Cx6Create(0x400, 8, NULL, 0, sramCreateFilenameWithSuffix("dumas_eeprom.rom", "", ".rom"));
 
     rm->flashPage = amdFlashGetPage(rm->amdFlash, 0);
 
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 1, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, NULL, 0, 0);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, NULL, 0, 0);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, NULL, 0, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, rm->ram + 0x0000, 1, 1);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, rm->ram + 0x2000, 1, 1);
 
     reset(rm);
 
