@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDumas.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-09-21 20:20:49 $
+** $Date: 2006-09-22 06:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,7 @@ static UInt8 read(RomMapperDumas* rm, UInt16 address)
         return rm->romMapper;
         break;
     case 0x3ffd:
-        return (rm->reg3ffd & ~0x02) | (microwire93Cx6GetDi(rm->eeprom) ? 0x02 : 0x00);
+        return (rm->reg3ffd & ~0x02) | (microwire93Cx6GetDo(rm->eeprom) ? 0x02 : 0x00);
     case 0x3ffe:
     case 0x3fff:
         return sl811hsRead(rm->sl811hs, address & 1);
@@ -158,8 +158,8 @@ static void write(RomMapperDumas* rm, UInt16 address, UInt8 value)
     case 0x3ffd:
         rm->reg3ffd = value;
         microwire93Cx6SetCs(rm->eeprom,  value & 0x08);
+        microwire93Cx6SetDi(rm->eeprom,  value & 0x01);
         microwire93Cx6SetClk(rm->eeprom, value & 0x04);
-        microwire93Cx6SetDo(rm->eeprom,  value & 0x01);
         break;
     case 0x3ffe:
     case 0x3fff:
@@ -169,7 +169,8 @@ static void write(RomMapperDumas* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperDumasCreate(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage) 
+                         int size, int slot, int sslot, int startPage,
+                         UInt8* eepromData, int eepromSize) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperDumas* rm;
@@ -185,7 +186,7 @@ int romMapperDumasCreate(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     rm->sl811hs = sl811hsCreate();
-    rm->eeprom  = microwire93Cx6Create(0x400, 8, NULL, 0, sramCreateFilenameWithSuffix("dumas_eeprom.rom", "", ".rom"));
+    rm->eeprom  = microwire93Cx6Create(0x400, 8, eepromData, eepromSize, sramCreateFilenameWithSuffix("dumas_eeprom.rom", "", ".rom"));
 
     rm->flashPage = amdFlashGetPage(rm->amdFlash, 0);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2006-09-21 20:20:49 $
+** $Date: 2006-09-22 06:18:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -303,7 +303,24 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_DUMAS:
-            success &= romMapperDumasCreate(romName, buf, size, slot, sslot, 2);
+            {
+                // Try to load voice rom before creating the rom mapper
+                char eepromName[512];
+                int eepromSize = 0;
+                UInt8* eepromData;
+                int i;
+
+                strcpy(eepromName, cart);
+                for (i = strlen(eepromName); i > 0 && eepromName[i] != '.'; i--);
+                eepromName[i] = 0;
+                strcat(eepromName, "_eeprom.rom");
+                    
+                eepromData = romLoad(eepromName, NULL, &eepromSize);
+                success &= romMapperDumasCreate(romName, buf, size, slot, sslot, 2, eepromData, eepromSize);
+                if (eepromData != NULL) {
+                    free(eepromData);
+                }
+            }
             break;
 
         case ROM_SNATCHER:

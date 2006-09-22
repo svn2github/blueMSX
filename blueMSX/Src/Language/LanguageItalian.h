@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2006-09-22 06:18:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -258,12 +258,12 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Data:";
     ls->dlgAboutCreat           = "Creato da Daniel Vik";
     ls->dlgAboutDevel           = "SVILUPPATORI\r\n========";
-    ls->dlgAboutThanks          = "RINGRAZIAMENTI SPECIALI A\r\n============";
+    ls->dlgAboutThanks          = "RINGRAZIAMENTI SPECIALI A\r\n=================";
     ls->dlgAboutLisence         = "LICENZA\r\n"
-                                  "======\r\n\r\n"
+                                  "========\r\n\r\n"
                                   "Questo programma è fornito \"così com'è\", senza alcuna esplicita o implicita "
-                                  "garanzia. In nessun caso l'autore potrà essere ritenuto responsabile per "
-                                  "qualunque danno derivante dall'uso di questo programma.\r\n\r\n"
+                                  "garanzia. In nessun caso l'autore potrà essere ritenuto responsabile per qualunque "
+                                  "danno derivante dall'uso di questo programma.\r\n\r\n"
                                   "Visita www.bluemsx.com per maggiori dettagli.";
 
     ls->dlgSavePreview          = "Mostra anteprima"; 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-09-21 20:20:46 $
+** $Date: 2006-09-22 06:18:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1026,7 +1026,24 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             break;
 
         case ROM_DUMAS:
-            success &= romMapperDumasCreate(romName, buf, size, slot, subslot, startPage);
+            {
+                char eepromName[512];
+                int eepromSize = 0;
+                UInt8* eepromData;
+                int j;
+
+                strcpy(eepromName, machine->slotInfo[i].name);
+                for (j = strlen(eepromName); j > 0 && eepromName[j] != '.'; j--);
+                eepromName[j] = 0;
+                strcat(eepromName, "_eeprom.rom");
+                    
+                eepromData = romLoad(eepromName, NULL, &eepromSize);
+                success &= romMapperDumasCreate(romName, buf, size, slot, subslot, startPage,
+                                                eepromData, eepromSize);
+                if (eepromData != NULL) {
+                    free(eepromData);
+                }
+            }
             break;
 
         case ROM_MOONSOUND:

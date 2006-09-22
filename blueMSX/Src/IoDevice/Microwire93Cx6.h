@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Microwire93Cx6.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-09-21 20:20:46 $
+** $Date: 2006-09-22 06:18:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -39,9 +39,9 @@ void microwire93Cx6Reset(Microwire93Cx6* rtl);
 
 void microwire93Cx6SetCs(Microwire93Cx6* rtl, int value);
 void microwire93Cx6SetClk(Microwire93Cx6* rtl, int value);
-void microwire93Cx6SetDo(Microwire93Cx6* rtl, int value);
+void microwire93Cx6SetDi(Microwire93Cx6* rtl, int value);
 
-int microwire93Cx6GetDi(Microwire93Cx6* rtl);
+int microwire93Cx6GetDo(Microwire93Cx6* rtl);
 
 void microwire93Cx6SaveState(Microwire93Cx6* rtl);
 void microwire93Cx6LoadState(Microwire93Cx6* rtl);

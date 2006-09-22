@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2006-09-21 20:20:49 $
+** $Date: 2006-09-22 06:18:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "sramLoader.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 
 // Minimal AMD flash emulation to support the obsonet flash
@@ -121,6 +122,17 @@ void amdFlashReset(AmdFlash* rm)
 void amdFlashSaveState(AmdFlash* rm)
 {
     SaveState* state = saveStateOpenForWrite("amdFlash");
+    int i;
+
+    for (i = 0; i < 8; i++) {
+        char buf[32];
+        sprintf(buf, "cmd_%d_address", i);
+        saveStateSet(state, buf,   rm->cmd[i].address);
+        sprintf(buf, "cmd_%d_value", i);
+        saveStateSet(state, buf,   rm->cmd[i].value);
+    }
+
+    saveStateSet(state, "cmdIdx",   rm->cmdIdx);
 
     saveStateClose(state);
 }
@@ -128,6 +140,17 @@ void amdFlashSaveState(AmdFlash* rm)
 void amdFlashLoadState(AmdFlash* rm)
 {
     SaveState* state = saveStateOpenForRead("amdFlash");
+    int i;
+
+    for (i = 0; i < 8; i++) {
+        char buf[32];
+        sprintf(buf, "cmd_%d_address", i);
+        rm->cmd[i].address = saveStateGet(state, buf,   0);
+        sprintf(buf, "cmd_%d_value", i);
+        rm->cmd[i].value = (UInt8)saveStateGet(state, buf,   0);
+    }
+
+    rm->cmdIdx = saveStateGet(state, "cmdIdx", 0);
 
     saveStateClose(state);
 }
@@ -158,4 +181,5 @@ void amdFlashDestroy(AmdFlash* rm)
     if (rm->sramFilename[0]) {
         sramSave(rm->sramFilename, rm->romData, rm->flashSize, NULL, 0);
     }
+    free(rm);
 }
