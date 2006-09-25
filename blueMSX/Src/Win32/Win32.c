@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.165 $
+** $Revision: 1.166 $
 **
-** $Date: 2006-09-21 20:20:49 $
+** $Date: 2006-09-25 19:19:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2662,6 +2662,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
                   pProperties->video.contrast, pProperties->video.gamma);
     videoSetScanLines(st.pVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
     videoSetColorSaturation(st.pVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
+    videoSetBlendFrames(st.pVideo, pProperties->video.blendFrames);
 
     DirectDrawSetDisplayMode(pProperties->video.fullscreen.width,
                              pProperties->video.fullscreen.height,

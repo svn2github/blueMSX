@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-09-22 06:18:42 $
+** $Date: 2006-09-25 19:19:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,61 +51,67 @@ struct AmdFlash
 };
 
 
-static void checkCommandEraseSector(AmdFlash* rm) 
+static int checkCommandEraseSector(AmdFlash* rm) 
 {
-    if (rm->cmdIdx != 6) {
-        return;
-    }
-    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
-    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
-    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80) return;
-    if ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa) return;
-    if ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55) return;
-    if (                                         rm->cmd[5].value != 0x30) return;
+    if (rm->cmdIdx > 0 && ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 1 && ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
+    if (rm->cmdIdx > 2 && ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80)) return 0;
+    if (rm->cmdIdx > 3 && ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 4 && ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55)) return 0;
+    if (rm->cmdIdx > 5 && (                                         rm->cmd[5].value != 0x30)) return 0;
+
+    if (rm->cmdIdx < 6) return 1;
 
     memset(rm->romData + (rm->cmd[5].address & ~(rm->sectorSize - 1) & (rm->flashSize - 1)), 0xff, rm->sectorSize);
-    rm->cmdIdx = 0;
+    return 0;
 }
 
-static void checkCommandEraseChip(AmdFlash* rm) 
+static int checkCommandEraseChip(AmdFlash* rm) 
 {
-    if (rm->cmdIdx != 6) {
-        return;
-    }
-    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
-    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
-    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80) return;
-    if ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa) return;
-    if ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55) return;
-    if (                                         rm->cmd[5].value != 0x10) return;
+    if (rm->cmdIdx > 0 && (((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 1 && (((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
+    if (rm->cmdIdx > 2 && (((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80)) return 0;
+    if (rm->cmdIdx > 3 && (((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 4 && (((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55)) return 0;
+    if (rm->cmdIdx > 5 && ((                                         rm->cmd[5].value != 0x10)) return 0;
+
+    if (rm->cmdIdx < 6) return 1;
 
     memset(rm->romData, 0xff, rm->flashSize);
-    rm->cmdIdx = 0;
+    return 0;
 }
 
-static void checkCommandProgram(AmdFlash* rm) 
+static int checkCommandProgram(AmdFlash* rm) 
 {
     if (rm->cmdIdx != 4) {
         return;
     }
 
-    if ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa) return;
-    if ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55) return;
-    if ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0xa0) return;
+    if (rm->cmdIdx > 0 && ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 0 && ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
+    if (rm->cmdIdx > 0 && ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0xa0)) return 0;
+
+    if (rm->cmdIdx < 4) return 1;
 
     rm->romData[rm->cmd[3].address & (rm->flashSize - 1)] &= rm->cmd[3].value;
-    rm->cmdIdx = 0;
+    return 0;
 }
 
 void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value)
 {
     if (rm->cmdIdx < sizeof(rm->cmd) / sizeof(rm->cmd[0])) {
+        int stateValid = 0;
+
         rm->cmd[rm->cmdIdx].address = address;
         rm->cmd[rm->cmdIdx].value   = value;
         rm->cmdIdx++;
-        checkCommandEraseSector(rm);
-        checkCommandProgram(rm);
-        checkCommandEraseChip(rm);
+        stateValid |= checkCommandEraseSector(rm);
+        stateValid |= checkCommandProgram(rm);
+        stateValid |= checkCommandEraseChip(rm);
+
+        if (!stateValid) {
+            rm->cmdIdx = 0;
+        }
     }
 }
 
