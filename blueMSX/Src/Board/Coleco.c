@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,7 +82,7 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
     }
 
     if (joyMode != 0) {
-        return boardCaptureUInt8(((joyState & 0x01) ? 0x01 : 0) |
+        return boardCaptureUInt8(ioPort & 2, ((joyState & 0x01) ? 0x01 : 0) |
                                  ((joyState & 0x08) ? 0x02 : 0) |
                                  ((joyState & 0x02) ? 0x04 : 0) |
                                  ((joyState & 0x04) ? 0x08 : 0) |
@@ -121,7 +121,7 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 		else if (inputEventGetState(EC_COLECO1_HASH)) value |= 0x06;
 	}
 
-    return boardCaptureUInt8(value);
+    return boardCaptureUInt8(4 + (ioPort & 2), value);
 }
 
 static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)

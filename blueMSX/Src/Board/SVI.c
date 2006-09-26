@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -147,7 +147,7 @@ static UInt8 sviPsgReadHandler(void* arg, UInt16 address)
 
     switch (address) {
         case 0:
-            value = boardCaptureUInt8(sviJoyIoRead(joyIO));
+            value = boardCaptureUInt8(17, sviJoyIoRead(joyIO));
             lastJoystickValue = value;
             break;
         case 1:

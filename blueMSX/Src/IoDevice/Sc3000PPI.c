@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sc3000PPI.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:24 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -197,12 +197,12 @@ static void writeCLo(Sc3000PPI* ppi, UInt8 value)
 
 static UInt8 readA(Sc3000PPI* ppi)
 {
-    return boardCaptureUInt8(getKeyState(ppi) & 0xff);
+    return boardCaptureUInt8(16 + ppi->row * 2, getKeyState(ppi) & 0xff);
 }
 
 static UInt8 readB(Sc3000PPI* ppi)
 {
-    return boardCaptureUInt8(getKeyState(ppi) >> 8);
+    return boardCaptureUInt8(16 + ppi->row * 2 + 1, getKeyState(ppi) >> 8);
 }
 
 static UInt8 peekA(Sc3000PPI* ppi)

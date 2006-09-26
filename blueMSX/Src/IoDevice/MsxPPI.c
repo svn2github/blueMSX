@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-09-19 06:00:23 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,7 +169,7 @@ static UInt8 readB(MsxPPI* ppi)
         }
     }
 
-    return boardCaptureUInt8(value);
+    return boardCaptureUInt8(ppi->row, value);
 }
 
 static void getDebugInfo(MsxPPI* ppi, DbgDevice* dbgDevice)

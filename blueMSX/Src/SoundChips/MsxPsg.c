@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,7 +116,7 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 
         msxPsg->readValue[address & 1] = state;
 
-        return boardCaptureUInt8(state);
+        return boardCaptureUInt8(16 + msxPsg->currentPort, state);
     }
 }
 

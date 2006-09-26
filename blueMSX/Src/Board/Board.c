@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2006-09-21 04:49:21 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -123,9 +123,343 @@ void boardSetPeriodicCallback(BoardTimerCb cb, void* ref, UInt32 freq)
 // Capture stuff
 //------------------------------------------------------
 
-#define CAPTURE_VERSION     2
+#define CAPTURE_VERSION     3
 
-#if CAPTURE_VERSION==2
+
+#if CAPTURE_VERSION==3
+
+
+typedef struct {
+    UInt8  index;
+    UInt8  value;
+    UInt16 count;
+} RleData;
+
+static RleData* rleData;
+static int      rleDataSize;
+static int      rleIdx;
+static UInt8    rleCache[256];
+
+static void rleEncStartEncode(void* buffer, int length, int startOffset)
+{
+    rleIdx = startOffset - 1;
+    rleDataSize = length / sizeof(RleData) - 1;
+    rleData = (RleData*)buffer;
+
+    memset(rleCache, 0, sizeof(rleCache));
+}
+
+static void rleEncAdd(UInt8 index, UInt8 value)
+{
+    if (rleIdx < 0 || rleCache[index] != value || rleData[rleIdx].count == 0) {
+        rleIdx++;
+        rleData[rleIdx].value = value;
+        rleData[rleIdx].count = 1;
+        rleData[rleIdx].index = index;
+    }
+    else {
+        rleData[rleIdx].count++;
+    }
+}
+
+static int rleEncGetLength()
+{
+    return rleIdx + 1;
+}
+
+static void rleEncStartDecode(void* encodedData, int encodedSize)
+{
+    rleIdx = 0;
+    rleDataSize = encodedSize;
+    rleData = (RleData*)encodedData;
+    
+    memset(rleCache, 0, sizeof(rleCache));
+
+    rleCache[rleData[rleIdx].index] = rleData[rleIdx].value;
+}
+
+static UInt8 rleEncGet(UInt8 index)
+{
+    UInt8 value;
+
+    value = rleCache[index];
+
+    rleData[rleIdx].count--;
+    if (rleData[rleIdx].count == 0) {
+        rleIdx++;
+        rleCache[rleData[rleIdx].index] = rleData[rleIdx].value;
+    }
+
+    return value;
+}
+
+static int rleEncEof()
+{
+    return rleIdx > rleDataSize;
+}
+
+
+typedef enum 
+{
+    CAPTURE_IDLE = 0,
+    CAPTURE_REC  = 1,
+    CAPTURE_PLAY = 2,
+} CaptureState;
+
+typedef struct Capture {
+    BoardTimer* timer;
+
+    UInt8  initState[0x100000];
+    int    initStateSize;
+    UInt32 endTime;
+    UInt64 endTime64;
+    UInt64 startTime64;
+    CaptureState state;
+    UInt8  inputs[0x100000];
+    int    inputCnt;
+    char   filename[512];
+} Capture;
+
+static Capture cap;
+
+int boardCaptureHasData() {
+    return cap.endTime != 0 || cap.endTime64 != 0 || boardCaptureIsRecording();
+}
+
+int boardCaptureIsRecording() {
+    return cap.state == CAPTURE_REC;
+}
+
+int  boardCaptureIsPlaying() {
+    return cap.state == CAPTURE_PLAY;
+}
+
+int boardCaptureCompleteAmount() {
+    UInt64 length = (cap.endTime64 - cap.startTime64) / 1000;
+    UInt64 current = (boardSysTime64 - cap.startTime64) / 1000;
+    // Return complete if almost complete
+    if (cap.endTime64 - boardSysTime64 < HIRES_CYCLES_PER_LORES_CYCLE * 100) {
+        return 1000;
+    }
+    if (length == 0) {
+        return 1000;
+    }
+    return (int)(1000 * current / length);
+}
+
+extern void actionEmuTogglePause();
+
+static void boardTimerCb(void* dummy, UInt32 time)
+{
+    if (cap.state == CAPTURE_PLAY) {
+        // If we reached the end time +/- 2 seconds we know we should stop
+        // the capture. If not, we restart the timer 1/4 of max time into
+        // the future. (Enventually we'll hit the real end time
+        // This is an ugly workaround for the internal timers short timespan
+        // (~3 minutes). Using the 64 bit timer we can extend the capture to
+        // 90 days.
+        // Will work correct with 'real' 64 bit timers
+        boardSystemTime64(); // Sync clock
+        if (boardCaptureCompleteAmount() < 1000) {
+            boardTimerAdd(cap.timer, time + 0x40000000);
+        }
+        else {
+            actionEmuTogglePause();
+            cap.state = CAPTURE_IDLE;
+        }
+    }
+    
+    if (cap.state == CAPTURE_REC) {
+        cap.state = CAPTURE_IDLE;
+        boardCaptureStart(cap.filename);
+    }
+}
+
+void boardCaptureInit()
+{
+    cap.timer = boardTimerCreate(boardTimerCb, NULL);
+    if (cap.state == CAPTURE_REC) {
+        boardTimerAdd(cap.timer, boardSystemTime() + 1);
+    }
+}
+
+void boardCaptureDestroy()
+{
+    boardCaptureStop();
+
+    if (cap.timer != NULL) {
+        boardTimerDestroy(cap.timer);
+        cap.timer = NULL;
+    }
+    cap.state = CAPTURE_IDLE;
+}
+
+void boardCaptureStart(const char* filename) {
+    FILE* f;
+
+    if (cap.state == CAPTURE_REC) {
+        return;
+    }
+
+    // If we're playing back a capture, we just start recording from where we're at
+    // and new recording will be appended to old recording
+    if (cap.state == CAPTURE_PLAY) {
+        cap.state = CAPTURE_REC;
+        return;
+    }
+
+    strcpy(cap.filename, filename);
+
+    // If emulation is not running we want to start recording once 
+    // the emulation is started
+    if (cap.timer == NULL) {
+        cap.state = CAPTURE_REC;
+        return;
+    }
+
+    cap.initStateSize = 0;
+    boardSaveState("cap.tmp");
+    f = fopen("cap.tmp", "rb");
+    if (f != NULL) {
+        cap.initStateSize = fread(cap.initState, 1, sizeof(cap.initState), f);
+        fclose(f);
+    }
+
+    if (cap.initStateSize > 0) {
+        rleEncStartEncode(cap.inputs, sizeof(cap.inputs), 0);
+        cap.state = CAPTURE_REC;
+    }
+
+    cap.startTime64 = boardSystemTime64();
+}
+
+void boardCaptureStop() {
+    boardTimerRemove(cap.timer);
+
+    if (cap.state == CAPTURE_REC) {
+        SaveState* state;
+        FILE* f;
+
+        cap.endTime = boardSystemTime();
+        cap.endTime64 = boardSystemTime64();
+        cap.state = CAPTURE_PLAY;
+        cap.inputCnt = rleEncGetLength();
+
+        f = fopen(cap.filename, "wb");
+        if (f != NULL) {
+            fwrite(cap.initState, 1, cap.initStateSize, f);
+            fclose(f);
+        }
+
+        saveStateCreate(cap.filename);
+
+        state = saveStateOpenForWrite("capture");
+
+        saveStateSet(state, "version", CAPTURE_VERSION);
+
+        saveStateSet(state, "state", cap.state);
+        saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "endTime64Hi", (UInt32)(cap.endTime64 >> 32));
+        saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
+        saveStateSet(state, "inputCnt", cap.inputCnt);
+        
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+        }
+
+        saveStateClose(state);
+    }
+
+    // go back to idle state
+    cap.state = CAPTURE_IDLE;
+}
+
+UInt8 boardCaptureUInt8(UInt8 logId, UInt8 value) {
+    if (cap.state == CAPTURE_REC) {
+        rleEncAdd(logId, value);
+        if (rleEncEof()) {
+            boardCaptureStop();
+        }
+    }
+    if (cap.state == CAPTURE_PLAY) {
+        if (!rleEncEof()) {
+            value= rleEncGet(logId);
+        }
+    }
+    return value;
+}
+
+static void boardCaptureSaveState()
+{
+    if (cap.state == CAPTURE_REC) {
+        SaveState* state = saveStateOpenForWrite("capture");
+
+        cap.inputCnt = rleEncGetLength();
+
+        saveStateSet(state, "version", CAPTURE_VERSION);
+
+        saveStateSet(state, "state", cap.state);
+        saveStateSet(state, "endTime", cap.endTime);
+        saveStateSet(state, "endTime64Hi", (UInt32)(cap.endTime64 >> 32));
+        saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
+        saveStateSet(state, "inputCnt", cap.inputCnt);
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+        }
+        saveStateSet(state, "initStateSize", cap.initStateSize);
+        if (cap.inputCnt > 0) {
+            saveStateSetBuffer(state, "initState", cap.initState, cap.initStateSize);
+        }
+
+        saveStateClose(state);
+    }
+}
+
+static void boardCaptureLoadState()
+{
+    int version;
+
+    SaveState* state = saveStateOpenForRead("capture");
+
+    version = saveStateGet(state, "version", 0);
+
+    cap.state = saveStateGet(state, "state", CAPTURE_IDLE);
+    cap.endTime = saveStateGet(state, "endTime", 0);
+    cap.endTime64 = (UInt64)saveStateGet(state, "endTime64Hi", 0) << 32 |
+                    (UInt64)saveStateGet(state, "endTime64Lo", 0);
+    cap.inputCnt = saveStateGet(state, "inputCnt", 0);
+    if (cap.inputCnt > 0) {
+        saveStateGetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+    }
+    cap.initStateSize = saveStateGet(state, "initStateSize", 0);
+    if (cap.initStateSize > 0) {
+        saveStateGetBuffer(state, "initState", cap.initState, cap.initStateSize);
+    }
+
+    saveStateClose(state);
+
+    if (version != CAPTURE_VERSION) {
+        cap.state = CAPTURE_IDLE;
+        return;
+    }
+
+    if (cap.state == CAPTURE_PLAY) {
+        rleEncStartDecode(cap.inputs, cap.inputCnt);
+
+        while (cap.endTime - boardSystemTime() > 0x40000000 || cap.endTime == boardSystemTime()) {
+            cap.endTime -= 0x40000000;
+        }
+        boardTimerAdd(cap.timer, cap.endTime);
+    }
+    
+    if (cap.state == CAPTURE_REC) {
+        rleEncStartEncode(cap.inputs, sizeof(cap.inputs), cap.inputCnt);
+    }
+}
+
+
+
+#elif CAPTURE_VERSION==2
 
 typedef struct {
     UInt8 value;
@@ -359,7 +693,7 @@ void boardCaptureStop() {
     cap.state = CAPTURE_IDLE;
 }
 
-UInt8 boardCaptureUInt8(UInt8 value) {
+UInt8 boardCaptureUInt8(UInt8 logId, UInt8 value) {
     if (cap.state == CAPTURE_REC) {
         rleEncAdd(value);
         if (rleEncEof()) {
@@ -442,8 +776,7 @@ static void boardCaptureLoadState()
     }
 }
 
-
-#else
+#else // CAPTURE_VERSION==1
 
 typedef enum 
 {
@@ -619,7 +952,7 @@ void boardCaptureStop() {
     cap.state = CAPTURE_IDLE;
 }
 
-UInt8 boardCaptureUInt8(UInt8 value) {
+UInt8 boardCaptureUInt8(UInt8 logId, UInt8 value) {
     if (cap.state == CAPTURE_REC) {
         cap.inputs[cap.inputCnt++] = value;
         if (cap.inputCnt == sizeof(cap.inputs)) {

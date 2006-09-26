@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,9 +94,9 @@ static UInt8 joyIoRead(void* dummy, UInt16 ioPort)
 {
     switch (ioPort & 1) {
     case 0:
-        return boardCaptureUInt8((UInt8)(sg1000JoyIoRead(joyIo) & 0xff));
+        return boardCaptureUInt8(0, (UInt8)(sg1000JoyIoRead(joyIo) & 0xff));
     case 1:
-        return boardCaptureUInt8((UInt8)(sg1000JoyIoRead(joyIo) >> 8));
+        return boardCaptureUInt8(1, (UInt8)(sg1000JoyIoRead(joyIo) >> 8));
     }
 
     return 0xff;

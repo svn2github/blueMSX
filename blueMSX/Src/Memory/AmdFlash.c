@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-25 19:19:09 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,12 +68,12 @@ static int checkCommandEraseSector(AmdFlash* rm)
 
 static int checkCommandEraseChip(AmdFlash* rm) 
 {
-    if (rm->cmdIdx > 0 && (((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
-    if (rm->cmdIdx > 1 && (((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
-    if (rm->cmdIdx > 2 && (((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80)) return 0;
-    if (rm->cmdIdx > 3 && (((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa)) return 0;
-    if (rm->cmdIdx > 4 && (((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55)) return 0;
-    if (rm->cmdIdx > 5 && ((                                         rm->cmd[5].value != 0x10)) return 0;
+    if (rm->cmdIdx > 0 && ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 1 && ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
+    if (rm->cmdIdx > 2 && ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0x80)) return 0;
+    if (rm->cmdIdx > 3 && ((rm->cmd[3].address & 0xfff) != 0xaaa || rm->cmd[3].value != 0xaa)) return 0;
+    if (rm->cmdIdx > 4 && ((rm->cmd[4].address & 0xfff) != 0x555 || rm->cmd[4].value != 0x55)) return 0;
+    if (rm->cmdIdx > 5 && (                                         rm->cmd[5].value != 0x10)) return 0;
 
     if (rm->cmdIdx < 6) return 1;
 
@@ -83,10 +83,6 @@ static int checkCommandEraseChip(AmdFlash* rm)
 
 static int checkCommandProgram(AmdFlash* rm) 
 {
-    if (rm->cmdIdx != 4) {
-        return;
-    }
-
     if (rm->cmdIdx > 0 && ((rm->cmd[0].address & 0xfff) != 0xaaa || rm->cmd[0].value != 0xaa)) return 0;
     if (rm->cmdIdx > 0 && ((rm->cmd[1].address & 0xfff) != 0x555 || rm->cmd[1].value != 0x55)) return 0;
     if (rm->cmdIdx > 0 && ((rm->cmd[2].address & 0xfff) != 0xaaa || rm->cmd[2].value != 0xa0)) return 0;

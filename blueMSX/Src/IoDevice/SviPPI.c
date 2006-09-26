@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2006-09-26 03:17:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -209,7 +209,7 @@ static UInt8 peekA(SviPPI* ppi)
 
 static UInt8 readA(SviPPI* ppi)
 {
-    return boardCaptureUInt8(sviJoyIoReadTrigger(ppi->joyIO)) | 
+    return boardCaptureUInt8(16, sviJoyIoReadTrigger(ppi->joyIO)) | 
            (boardGetCassetteInserted() ? 0:0x40);
 }
 
@@ -220,7 +220,7 @@ static UInt8 peekB(SviPPI* ppi)
 
 static UInt8 readB(SviPPI* ppi)
 {
-    return boardCaptureUInt8(getKeyState(ppi->row));
+    return boardCaptureUInt8(ppi->row, getKeyState(ppi->row));
 }
 
 static void getDebugInfo(SviPPI* ppi, DbgDevice* dbgDevice)
