@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2006-09-26 05:47:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,7 +146,9 @@ static void rleEncStartEncode(void* buffer, int length, int startOffset)
     rleDataSize = length / sizeof(RleData) - 1;
     rleData = (RleData*)buffer;
 
-    memset(rleCache, 0, sizeof(rleCache));
+    if (startOffset == 0) {
+        memset(rleCache, 0, sizeof(rleCache));
+    }
 }
 
 static void rleEncAdd(UInt8 index, UInt8 value)
@@ -156,6 +158,7 @@ static void rleEncAdd(UInt8 index, UInt8 value)
         rleData[rleIdx].value = value;
         rleData[rleIdx].count = 1;
         rleData[rleIdx].index = index;
+        rleCache[index] = value;
     }
     else {
         rleData[rleIdx].count++;
@@ -180,9 +183,7 @@ static void rleEncStartDecode(void* encodedData, int encodedSize)
 
 static UInt8 rleEncGet(UInt8 index)
 {
-    UInt8 value;
-
-    value = rleCache[index];
+    UInt8 value = rleCache[index];
 
     rleData[rleIdx].count--;
     if (rleData[rleIdx].count == 0) {
@@ -364,7 +365,7 @@ void boardCaptureStop() {
         saveStateSet(state, "inputCnt", cap.inputCnt);
         
         if (cap.inputCnt > 0) {
-            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
         }
 
         saveStateClose(state);
@@ -404,12 +405,14 @@ static void boardCaptureSaveState()
         saveStateSet(state, "endTime64Lo", (UInt32)cap.endTime64);
         saveStateSet(state, "inputCnt", cap.inputCnt);
         if (cap.inputCnt > 0) {
-            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+            saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
         }
         saveStateSet(state, "initStateSize", cap.initStateSize);
         if (cap.inputCnt > 0) {
             saveStateSetBuffer(state, "initState", cap.initState, cap.initStateSize);
         }
+        
+        saveStateSetBuffer(state, "rleCache", rleCache, sizeof(rleCache));
 
         saveStateClose(state);
     }
@@ -429,12 +432,14 @@ static void boardCaptureLoadState()
                     (UInt64)saveStateGet(state, "endTime64Lo", 0);
     cap.inputCnt = saveStateGet(state, "inputCnt", 0);
     if (cap.inputCnt > 0) {
-        saveStateGetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
+        saveStateGetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
     }
     cap.initStateSize = saveStateGet(state, "initStateSize", 0);
     if (cap.initStateSize > 0) {
         saveStateGetBuffer(state, "initState", cap.initState, cap.initStateSize);
     }
+        
+    saveStateGetBuffer(state, "rleCache", rleCache, sizeof(rleCache));
 
     saveStateClose(state);
 

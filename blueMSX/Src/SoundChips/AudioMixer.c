@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2006-09-26 05:47:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -433,7 +433,6 @@ void mixerSync(Mixer* mixer)
     Int16* buffer   = mixer->buffer;
     Int32* chBuff[MAX_CHANNELS];
     UInt32 count;
-    UInt32 loopCnt;
     UInt64 elapsed;
     int i;
 

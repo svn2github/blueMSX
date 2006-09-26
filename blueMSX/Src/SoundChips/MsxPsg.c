@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2006-09-26 05:47:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,7 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
             msxPsg->devFun[msxPsg->currentPort]->read != NULL) {
             state = msxPsg->devFun[msxPsg->currentPort]->read(msxPsg->devFun[msxPsg->currentPort]);
         }
+        state = boardCaptureUInt8(16 + msxPsg->currentPort, state);
         if (renshaSpeed) {
             state &= ~((((UInt64)renshaSpeed * boardSystemTime() / boardFrequency()) & 1) << 4);
         }
@@ -116,7 +117,7 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 
         msxPsg->readValue[address & 1] = state;
 
-        return boardCaptureUInt8(16 + msxPsg->currentPort, state);
+        return state;
     }
 }
 

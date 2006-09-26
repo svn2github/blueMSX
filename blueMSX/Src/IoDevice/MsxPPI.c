@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2006-09-26 05:47:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,7 +155,7 @@ static UInt8 peekB(MsxPPI* ppi)
 
 static UInt8 readB(MsxPPI* ppi)
 {
-    UInt8 value = getKeyState(ppi->row);
+    UInt8 value = boardCaptureUInt8(ppi->row, getKeyState(ppi->row));
 
     if (ppi->row == 8) {
         int renshaSpeed = switchGetRensha();
@@ -169,7 +169,7 @@ static UInt8 readB(MsxPPI* ppi)
         }
     }
 
-    return boardCaptureUInt8(ppi->row, value);
+    return value;
 }
 
 static void getDebugInfo(MsxPPI* ppi, DbgDevice* dbgDevice)
