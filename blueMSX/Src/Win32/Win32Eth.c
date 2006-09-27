@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-09-19 06:00:37 $
+** $Date: 2006-09-27 23:27:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -244,34 +244,36 @@ void ethIfInitialize(Properties* properties)
     strcpy(ethIf.devList[0].description, langTextNone());
     memcpy(ethIf.devList[0].macAddress, InvalidMac, 6);
 
-    if (loadPacketLibrary()) {
-	    pcapPacketGetAdapterNames(NULL, &nameLen);
-        if (nameLen > 0) {
-            char* nameStr = malloc(nameLen);
+    if (!properties->ports.Eth.disabled) {
+        if (loadPacketLibrary()) {
+	        pcapPacketGetAdapterNames(NULL, &nameLen);
+            if (nameLen > 0) {
+                char* nameStr = malloc(nameLen);
 
-	        if (pcapPacketGetAdapterNames(nameStr, &nameLen)) {
-                char* devName;
+	            if (pcapPacketGetAdapterNames(nameStr, &nameLen)) {
+                    char* devName;
 
-                for (devName = nameStr; *devName; devName += strlen(devName) + 1) {
-                    if (!getMacAddress(devName, ethIf.devList[ethIf.ifCount].macAddress)) {
-                        continue;
-                    }
+                    for (devName = nameStr; *devName; devName += strlen(devName) + 1) {
+                        if (!getMacAddress(devName, ethIf.devList[ethIf.ifCount].macAddress)) {
+                            continue;
+                        }
 
-                    sprintf(ethIf.devList[ethIf.ifCount].description, "[%s]  - %s",
-                            mactos(ethIf.devList[ethIf.ifCount].macAddress), iptos(getIpAddress(devName)));
-                    strcpy(ethIf.devList[ethIf.ifCount].devName, devName);
+                        sprintf(ethIf.devList[ethIf.ifCount].description, "[%s]  - %s",
+                                mactos(ethIf.devList[ethIf.ifCount].macAddress), iptos(getIpAddress(devName)));
+                        strcpy(ethIf.devList[ethIf.ifCount].devName, devName);
 
-                    if (++ethIf.ifCount == 32) {
-                        break;
+                        if (++ethIf.ifCount == 32) {
+                            break;
+                        }
                     }
                 }
+                free(nameStr);
             }
-            free(nameStr);
         }
     }
 
     ethIf.currIf = properties->ports.Eth.ethIndex;
-    if (ethIf.currIf >= ethIf.ifCount) {
+    if (ethIf.currIf < 0 || ethIf.currIf >= ethIf.ifCount) {
         ethIf.currIf = 0;
     }
 

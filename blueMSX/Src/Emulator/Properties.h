@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-09-19 06:00:15 $
+** $Date: 2006-09-27 23:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -342,6 +342,7 @@ typedef struct {
         char fileName[PROP_MAXPATH];
     } Com;
     struct {
+        int disabled;
         int ethIndex;
         char macAddress[64];
     } Eth;

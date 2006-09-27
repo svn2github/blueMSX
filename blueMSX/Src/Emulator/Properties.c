@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2006-09-27 23:27:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -401,6 +401,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->ports.Com.portName[0]    = 0;
 
     properties->ports.Eth.ethIndex       = -1;
+    properties->ports.Eth.disabled       = 0;
     strcpy(properties->ports.Eth.macAddress, "00:00:00:00:00:00");
 
     for (i = 0; i < MAX_HISTORY; i++) {
@@ -602,6 +603,7 @@ static void propLoad(Properties* properties)
     GET_STR_VALUE_3(ports, Com, portName);
 
     GET_INT_VALUE_3(ports, Eth, ethIndex);
+    GET_INT_VALUE_3(ports, Eth, disabled);
     GET_STR_VALUE_3(ports, Eth, macAddress);
     
     
@@ -810,6 +812,7 @@ void propSave(Properties* properties)
     SET_STR_VALUE_3(ports, Com, portName);
 
     SET_INT_VALUE_3(ports, Eth, ethIndex);
+    SET_INT_VALUE_3(ports, Eth, disabled);
     SET_STR_VALUE_3(ports, Eth, macAddress);
     
     SET_INT_VALUE_2(cartridge, defaultType);
