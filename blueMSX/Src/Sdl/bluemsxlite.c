@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2006-09-27 22:09:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -472,7 +472,14 @@ int main(int argc, char **argv)
     SDL_Init( SDL_INIT_EVERYTHING );
 
     for (i = 1; i < argc; i++) {
-        strcat(szLine, argv[i]);
+        if (strchr(argv[i], ' ') != NULL && argv[i][0] != '\"') {
+            strcat(szLine, "\"");
+            strcat(szLine, argv[i]);
+            strcat(szLine, "\"");
+        }
+        else {
+            strcat(szLine, argv[i]);
+        }
         strcat(szLine, " ");
     }
 
