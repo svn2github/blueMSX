@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2006-09-30 19:58:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1687,12 +1687,14 @@ static void reset(VDP* vdp)
     vdp->vdpStatus[1] = vdp->vdpVersion == VDP_V9958 ? 0x04 : 0;
     vdp->vdpStatus[2] = 0x6c;
         
-    vdp->vdpRegs[1] = 0x10;
-    vdp->vdpRegs[2] = 0xff;
-    vdp->vdpRegs[3] = 0xff;
-    vdp->vdpRegs[4] = 0xff;
-    vdp->vdpRegs[5] = 0xff;
-    vdp->vdpRegs[9] = (0x02 & vdp->palMask) | vdp->palValue;
+    vdp->vdpRegs[1]  = 0x10;
+    vdp->vdpRegs[2]  = 0xff;
+    vdp->vdpRegs[3]  = 0xff;
+    vdp->vdpRegs[4]  = 0xff;
+    vdp->vdpRegs[5]  = 0xff;
+    vdp->vdpRegs[9]  = (0x02 & vdp->palMask) | vdp->palValue;
+    vdp->vdpRegs[21] = 0x3b;
+    vdp->vdpRegs[22] = 0x05;
 
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
         for (i = 0; i < 16; i++) {

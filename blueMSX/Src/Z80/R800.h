@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-09-19 06:00:44 $
+** $Date: 2006-09-30 19:58:17 $
 **
 ** Author: Daniel Vik
 **
@@ -142,18 +142,18 @@ typedef UInt32 SystemTime;
 /*****************************************************
 ** RegisterPair
 **
-** Defines a register pair. Define LSB_FIRST on
-** little endian host machines.
+** Defines a register pair. Define __BIG_ENDIAN__ on
+** big endian host machines.
 ******************************************************
 */
 typedef union {
   struct { 
-#ifdef LSB_FIRST
-      UInt8 l; 
-      UInt8 h; 
-#else
+#ifdef __BIG_ENDIAN__
       UInt8 h;
       UInt8 l; 
+#else
+      UInt8 l; 
+      UInt8 h; 
 #endif
   } B;
   UInt16 W;

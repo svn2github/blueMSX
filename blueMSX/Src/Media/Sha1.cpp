@@ -1,4 +1,4 @@
-// $Id: Sha1.cpp,v 1.1 2005-02-11 16:49:43 dvik Exp $
+// $Id: Sha1.cpp,v 1.2 2006-09-30 19:58:16 dvik Exp $
 
 /*
 Based on:
@@ -39,11 +39,11 @@ private:
 
 	UInt32 next0(int i)
 	{
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
+        return data[i];
+#else
 		return data[i] = (rol32(data[i], 24) & 0xFF00FF00)
 			            | (rol32(data[i],  8) & 0x00FF00FF);
-#else
-        return data[i];
 #endif
 	}
 	UInt32 next(int i)

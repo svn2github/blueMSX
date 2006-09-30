@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-09-27 22:09:10 $
+** $Date: 2006-09-30 19:58:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -407,11 +407,11 @@ void setDefaultPaths(const char* rootDir)
     archCreateDirectory(buffer);
     mediaDbLoad(buffer);
     
-    sprintf(buffer, "%s\\Keyboard Config", rootDir);
+    sprintf(buffer, "%s/Keyboard Config", rootDir);
     archCreateDirectory(buffer);
     keyboardSetDirectory(buffer);
 
-    sprintf(buffer, "%s\\Shortcut Profiles", rootDir);
+    sprintf(buffer, "%s/Shortcut Profiles", rootDir);
     archCreateDirectory(buffer);
     shortcutsSetDirectory(buffer);
 }
