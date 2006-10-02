@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-09-19 06:00:13 $
+** $Date: 2006-10-02 20:20:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -205,15 +205,24 @@ static int isCasFileType(char* filename, char* inZip) {
     return isFileExtension(filename, ".cas");
 }
 
+static int checkArg(const char* arg, const char* value) {
+    if (arg[0] != '/' && arg[0] != '-') {
+        return 0;
+    }
+
+    return strcmp(arg + 1, value) == 0;
+}
+
+
 int emuCheckResetArgument(char* cmdLine) {
     int i;
     char*   argument;
     
     for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/reset") == 0) {
+        if (checkArg(argument, "reset")) {
             return 1;
         }
-        if (strcmp(argument, "/resetregs") == 0) {
+        if (checkArg(argument, "resetregs")) {
             return 2;
         }
     }
@@ -229,9 +238,9 @@ char* emuCheckThemeArgument(char* cmdLine){
     themeName[0] = 0;
 
     for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/theme") == 0) {
+        if (checkArg(argument, "theme")) {
             argument = extractToken(cmdLine, i + 1);
-            if (argument != NULL && argument[0] != '/') {
+            if (argument != NULL) {
                 strcat(themeName, argument);
             }
             return themeName;
@@ -252,7 +261,7 @@ void emuCheckFullscreenArgument(Properties* properties, char* cmdLine){
 //    properties->video.windowSize = P_VIDEO_SIZEX2;
 
     for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/fullscreen") == 0) {
+        if (checkArg(argument, "fullscreen")) {
             properties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
         }
     }
@@ -327,93 +336,93 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     // set configuration and then run
 
     for (i = 0; argument = extractToken(cmdLine, i); i++) {
-        if (strcmp(argument, "/rom1") == 0) {
+        if (checkArg(argument, "rom1")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL || !isRomFileType(argument, rom1zip)) return 0; // Invaid argument
             strcpy(rom1, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/rom1zip") == 0) {
+        if (checkArg(argument, "rom1zip")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(rom1zip, argument);
         }
-        if (strcmp(argument, "/romtype1") == 0) {
+        if (checkArg(argument, "romtype1")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0; // Invaid argument
             romType1 = romNameToType(argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/rom2") == 0) {
+        if (checkArg(argument, "rom2")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL || !isRomFileType(argument, rom2zip)) return 0; // Invaid argument
             strcpy(rom2, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/rom2zip") == 0) {
+        if (checkArg(argument, "rom2zip")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(rom2zip, argument);
         }
-        if (strcmp(argument, "/romtype2") == 0) {
+        if (checkArg(argument, "romtype2")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0; // Invaid argument
             romType2 = romNameToType(argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/diskA") == 0) {
+        if (checkArg(argument, "diskA")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL || !isDskFileType(argument, diskAzip)) return 0; // Invaid argument
             strcpy(diskA, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/diskAzip") == 0) {
+        if (checkArg(argument, "diskAzip")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(diskAzip, argument);
         }
-        if (strcmp(argument, "/diskB") == 0) {
+        if (checkArg(argument, "diskB")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL || !isDskFileType(argument, diskBzip)) return 0; // Invaid argument
             strcpy(diskB, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/diskBzip") == 0) {
+        if (checkArg(argument, "diskBzip")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(diskBzip, argument);
         }
-        if (strcmp(argument, "/cas") == 0) {
+        if (checkArg(argument, "cas")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL || !isCasFileType(argument, caszip)) return 0; // Invaid argument
             strcpy(cas, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/ide1primary") == 0) {
+        if (checkArg(argument, "ide1primary")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0; // Invaid argument
             strcpy(ide1p, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/ide1secondary") == 0) {
+        if (checkArg(argument, "ide1secondary")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0; // Invaid argument
             strcpy(ide1s, argument);
             startEmu = 1;
         }
-        if (strcmp(argument, "/caszip") == 0) {
+        if (checkArg(argument, "caszip")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0;
             strcpy(caszip, argument);
         }
-        if (strcmp(argument, "/machine") == 0) {
+        if (checkArg(argument, "machine")) {
             argument = extractToken(cmdLine, ++i);
             if (argument == NULL) return 0; // Invaid argument
             strcpy(machineName, argument);
             if (!machineIsValid(machineName, 1)) return 0;
             startEmu = 1;
         }
-        if (strcmp(argument, "/fullscreen") == 0) {
+        if (checkArg(argument, "fullscreen")) {
             fullscreen = 1;
         }
     }
