@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-09-30 19:58:17 $
+** $Date: 2006-10-06 05:32:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -873,6 +873,7 @@ UINT_PTR CALLBACK hookDskProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                     SendDlgItemMessage(hDlg, IDC_OPEN_HDSIZE, CB_SETCURSEL, i, 0);
                 }
             }
+            SetWindowText(GetDlgItem(hDlg, IDC_OPEN_HDSIZETEXT), langDlgDiskSize());
         }
         return 0;
 

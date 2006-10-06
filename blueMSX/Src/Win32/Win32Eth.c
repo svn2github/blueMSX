@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Eth.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-27 23:27:12 $
+** $Date: 2006-10-06 05:32:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,6 +169,10 @@ int ethIfIsActive(int index)
 
 char* ethIfGetName(int index)
 {
+    if (index == 0) {
+        return langTextNone();
+    }
+
     if (index < ethIf.ifCount) {
         return ethIf.devList[index].description;
     }
