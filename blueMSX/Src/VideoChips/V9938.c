@@ -1160,7 +1160,7 @@ UInt8 vdpCmdPeek(VdpCmdState* vdpCmd, UInt8 reg, UInt32 systemTime)
 	case 0x0b: return vdpCmd->NY >> 8;
     case 0x0c: return vdpCmd->CL;
     case 0x0d: return vdpCmd->ARG;
-    case 0x0e: return vdpCmd->LO | vdpCmd->CM;
+    case 0x0e: return vdpCmd->LO | (vdpCmd->CM << 4);
     }
     return 0xff;
 }
