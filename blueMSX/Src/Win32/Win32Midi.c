@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-10-07 20:56:14 $
+** $Date: 2006-10-08 17:52:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -337,8 +337,8 @@ void archMidiSaveState(void)
             saveStateGet(state, buf, di->buffer.count);
             sprintf(buf, "buffer_%d_remain", i);
             saveStateGet(state, buf, di->buffer.remain);
-+            // no need to save di->buffer.runningStatus
-+            // (set 0 at archMidiLoadState())
+            // no need to save di->buffer.runningStatus
+            // (set 0 at archMidiLoadState())
             sprintf(buf, "buffer_%d_data", i);
             saveStateSetBuffer(state, buf, di->buffer.data, sizeof(di->buffer.data));
         }
