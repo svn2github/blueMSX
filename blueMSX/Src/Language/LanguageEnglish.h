@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2006-10-06 05:32:49 $
+** $Date: 2006-10-10 21:35:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -483,7 +483,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->confChipVideoRam         = "Video RAM:";
     ls->confChipSoundGB          = "Sound ";
 
-    ls->confCmosGB               = "Clock Chip ";
+    ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " Enable CMOS";
     ls->confCmosBattery          = " Use Charged Battery";
 

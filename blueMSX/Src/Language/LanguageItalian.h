@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2006-10-06 05:32:49 $
+** $Date: 2006-10-10 21:35:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -78,7 +78,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->errorNoDskInZip                 = "Nessun file .dsk trovato nell'archivio compresso.";
     ls->errorNoCasInZip                 = "Nessun file .cas trovato nell'archivio compresso.";
     ls->errorNoHelp                     = "Non trovo il file della guida in linea di blueMSX.";
-    ls->errorStartEmu                   = "Avvio dell'emulatore MSX fallito!";
+    ls->errorStartEmu                   = "Avvio dell'emulatore fallito!";
     ls->errorPortableReadonly           = "Il dispositivo rimovibile è di sola lettura";
 
 
@@ -123,8 +123,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCartAutoReset               = "Riavvia quando inserisci/rimuovi";
 
     ls->menuCasRewindAfterInsert        = "Riavvolgi quando inserisci";
-    ls->menuCasUseReadOnly              = "Usa un'immagine cassetta di sola lettura";
-    ls->lmenuCasSaveAs                  = "Salva l'immagine cassetta con...";
+    ls->menuCasUseReadOnly              = "Usa una cassetta di sola lettura";
+    ls->lmenuCasSaveAs                  = "Salva la cassetta come...";
     ls->menuCasSetPosition              = "Cambia la posizione del nastro...";
     ls->menuCasRewind                   = "Riavvolgi";
 
@@ -152,10 +152,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuPropsLanguage               = "Lingua...";
     ls->menuPropsPorts                  = "Porte...";
 
-    ls->menuVideoSource                 = "Origine dell'uscita video";
-    ls->menuVideoSourceDefault          = "Nessun chip video connesso";
+    ls->menuVideoSource                 = "Origine uscita video";
+    ls->menuVideoSourceDefault          = "Chip video non rilevato";
     ls->menuVideoChipAutodetect         = "Selezione automatica del chip video";
-    ls->menuVideoInSource               = "Origine dell'ingresso video";
+    ls->menuVideoInSource               = "Origine ingresso video";
     ls->menuVideoInBitmap               = "Bitmap come ingresso video...";
 
     ls->menuEthInterface                = "Interfaccia ethernet";                                   // New in 2.6
@@ -186,13 +186,13 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuRunHardReset                = "Riavvia hardware";
     ls->menuRunCleanReset               = "Riavvia completamente";
 
-    ls->menuToolsMachine                = "Configura la macchina...";
-    ls->menuToolsShortcuts              = "Configura i tasti rapidi...";
-    ls->menuToolsCtrlEditor             = "Configura i joystick e la tastiera...";                  // New in 2.6
-    ls->menuToolsMixer                  = "Configura il mixer audio...";
-    ls->menuToolsDebugger               = "Visualizza il debugger...";
-    ls->menuToolsTrainer                = "Visualizza la gestione trainer...";
-    ls->menuToolsTraceLogger            = "Visualizza il trace logger...";
+    ls->menuToolsMachine                = "Configurazione della macchina...";
+    ls->menuToolsShortcuts              = "Configurazione dei tasti rapidi...";
+    ls->menuToolsCtrlEditor             = "Configurazione di joystick e tastiera...";                                   // New in 2.6
+    ls->menuToolsMixer                  = "Mixer audio...";
+    ls->menuToolsDebugger               = "Debugger...";
+    ls->menuToolsTrainer                = "Gestione trainer...";
+    ls->menuToolsTraceLogger            = "Trace logger...";
 
     ls->menuFile                        = "File";
     ls->menuRun                         = "Emulazione";
@@ -210,7 +210,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgOpen                         = "Apri...";
     ls->dlgCancel                       = "Annulla";
     ls->dlgSave                         = "Salva";
-    ls->dlgSaveAs                       = "Salva con...";
+    ls->dlgSaveAs                       = "Salva come...";
     ls->dlgRun                          = "Esegui";
     ls->dlgClose                        = "Chiudi";
 
@@ -225,7 +225,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgLoadState                    = "Carica lo stato della CPU";
     ls->dlgLoadVideoCapture             = "Carica un video acquisito";                              // New in 2.6
     ls->dlgSaveState                    = "Salva lo stato della CPU";
-    ls->dlgSaveCassette                 = "blueMSX - Salva l'immagine cassetta con nome";
+    ls->dlgSaveCassette                 = "blueMSX - Salva la cassetta con nome";
     ls->dlgSaveVideoClipAs              = "Crea un filmato con nome";                               // New in 2.6
     ls->dlgAmountCompleted              = "Salvataggio in corso:";                                  // New in 2.6
     ls->dlgInsertRom1                   = "Inserisci una cartuccia nello slot 1";
@@ -335,7 +335,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propPerfSyncModeText            = "Modalità di sincronizzazione:";
     ls->propFullscreenResText           = "Risoluzione a schermo intero:";
 
-    ls->propSndChipEmuGB                = "Emulazione delle schede sonore ";
+    ls->propSndChipEmuGB                = "Emulazione cartuccia sonora ";
     ls->propSndMsxMusic                 = " MSX-MUSIC";
     ls->propSndMsxAudio                 = " MSX-AUDIO";
     ls->propSndMoonsound                = " Moonsound";
@@ -437,7 +437,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect           = "MSX 3.5\" singola faccia, 8 settori";
     ls->enumDiskSvi525Dbl               = "SVI-328 5.25\" doppia faccia";
     ls->enumDiskSvi525Sgl               = "SVI-328 5.25\" singola faccia";
-    ls->enumDiskSf3Sgl                  = "Sega SF-7000 3\" singola faccia";                        // New in 2.6
+    ls->enumDiskSf3Sgl                  = "Sega SF-7000 3\" singola faccia";
 
 
     //-----------------------------
@@ -448,7 +448,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->confConfigText                  = "Configurazione:";
     ls->confSlotLayout                  = "Disposizione degli slot";
     ls->confMemory                      = "Gestione della memoria";
-    ls->confChipEmulation               = "Selezione dei chip";
+    ls->confChipEmulation               = "Selezione del chip";
     ls->confChipExtras                  = "Altre opzioni";
 
     ls->confOpenRom                     = "Seleziona un'immagine ROM";
@@ -479,10 +479,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->confMemType                     = "Tipo";
     ls->confMemRomImage                 = "Immagine ROM";
     
-    ls->confChipVideoGB                 = "Chip video ";
+    ls->confChipVideoGB                 = "Video ";
     ls->confChipVideoChip               = "Modello:";
     ls->confChipVideoRam                = "VRAM:";
-    ls->confChipSoundGB                 = "Chip audio ";
+    ls->confChipSoundGB                 = "Audio ";
 
     ls->confCmosGB                      = "CMOS ";
     ls->confCmosEnable                  = "Abilita il CMOS";
@@ -539,10 +539,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutCasInsert               = "Inserisci una cassetta nel registratore";
     ls->shortcutCasEject                = "Rimuovi la cassetta dal registratore";
     ls->shortcutCasAutorewind           = "Riavvolgi il nastro quando inserisci una cassetta";
-    ls->shortcutCasReadOnly             = "Usa un'immagine cassetta di sola lettura";
+    ls->shortcutCasReadOnly             = "Usa una cassetta di sola lettura";
     ls->shortcutCasSetPosition          = "Imposta la posizione del nastro";
     ls->shortcutCasRewind               = "Riavvolgi il nastro";
-    ls->shortcutCasSave                 = "Salva l'immagine cassetta";
+    ls->shortcutCasSave                 = "Salva la cassetta";
     ls->shortcutPrnFormFeed             = "Salta alla pagina successiva sulla stampante";
     ls->shortcutCpuStateLoad            = "Carica lo stato della CPU";
     ls->shortcutCpuStateSave            = "Salva lo stato della CPU";
@@ -577,9 +577,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutEmuSpeedInc             = "Aumenta la velocità di emulazione";
     ls->shortcutEmuSpeedDec             = "Diminuisci la velocità di emulazione";
     ls->shortcutThemeSwitch             = "Cambia il tema corrente";
-    ls->shortcutShowEmuProp             = "Mostra le proprietà dell'emulazione";
-    ls->shortcutShowVideoProp           = "Mostra le proprietà del video";
-    ls->shortcutShowAudioProp           = "Mostra le proprietà dell'audio";
+    ls->shortcutShowEmuProp             = "Mostra le proprietà di emulazione";
+    ls->shortcutShowVideoProp           = "Mostra le proprietà video";
+    ls->shortcutShowAudioProp           = "Mostra le proprietà audio";
     ls->shortcutShowCtrlProp            = "Mostra le proprietà dei controlli";
     ls->shortcutShowPerfProp            = "Mostra le proprietà delle prestazioni";
     ls->shortcutShowSettProp            = "Mostra le proprietà delle impostazioni";
@@ -587,7 +587,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutShowLanguage            = "Visualizza il menù della lingua";
     ls->shortcutShowMachines            = "Configura la macchina";
     ls->shortcutShowShortcuts           = "Configura i tasti rapidi";
-    ls->shortcutShowKeyboard            = "Configura i joystick e la tastiera";
+    ls->shortcutShowKeyboard            = "Configura joystick e tastiera";
     ls->shortcutShowDebugger            = "Visualizza il debugger";
     ls->shortcutShowTrainer             = "Visualizza la gestione trainer";
     ls->shortcutShowMixer               = "Configura il mixer audio";
@@ -652,8 +652,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->romTypeSvi328Fdc                = "SVI-328 Disk Controller";
     ls->romTypeSvi328Prn                = "SVI-328 Printer";
     ls->romTypeSvi328Uart               = "SVI-328 Serial Port";
-    ls->romTypeSvi328col80              = "SVI-328 80 Columns Card";
-    ls->romTypeSvi727col80              = "SVI-727 80 Columns Card";
+    ls->romTypeSvi328col80              = "SVI-328 80 Column Card";
+    ls->romTypeSvi727col80              = "SVI-727 80 Column Card";
     ls->romTypeColecoCart               = "Coleco Cartridge";
     ls->romTypeSg1000Cart               = "SG-1000 Cartridge";
     ls->romTypeSc3000Cart               = "SC-3000 Cartridge";
@@ -694,7 +694,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dbgDevPrinter                   = "Printer";
     ls->dbgDevSviFdc                    = "SVI FDC";
     ls->dbgDevSviPrn                    = "SVI Printer";
-    ls->dbgDevSvi80Col                  = "SVI 80 Columns";
+    ls->dbgDevSvi80Col                  = "SVI 80 Column";
     ls->dbgDevRtc                       = "RTC";
     ls->dbgDevTrPause                   = "TR Pause";
 
@@ -705,7 +705,7 @@ void langInitItalian(LanguageStrings* ls)
     //----------------------------------------------------
 
     ls->aboutScrollThanksTo             = "Un ringraziamento speciale a:  ";
-    ls->aboutScrollAndYou               = "e tutti VOI!!! ";
+    ls->aboutScrollAndYou               = "e tutti VOI!!!";
 };
 
 #endif

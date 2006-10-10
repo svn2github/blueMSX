@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-09-19 06:00:38 $
+** $Date: 2006-10-10 21:35:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,84 +54,91 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     case WM_INITDIALOG:
         {
             char aboutText[4096];
-                sprintf(aboutText, "%s\r\n\r\n"
-                                     "%s%\t%s\r\n"
-                                     "%s%\t%d\r\n"
-                                     "%s%\t%s\r\n\r\n"
-                                     "%s\r\n\r\n\r\n"
-                                     "%s\r\n\r\n"
-                              
-                                     "Daniel Vik\r\n"
-                                     "Benoît Delvaux\r\n"
-                                     "Tomas Karlsson\r\n"
-                                     "Ray Zero\r\n"
-                                     "Ricardo Bittencourt\r\n"
-                                     "Johan van Leur\r\n\r\n\r\n"
-   
-                                     "%s\r\n\r\n"
 
-                                     "Sjoerd de Vries\r\n"
-                                     "Albert Beevendorp\r\n"
-                                     "Rudolf Lechleitner\r\n"
-                                     "Hiro\r\n"
-                                     "BouKiCHi\r\n"
-                                     "Vincent van Dam\r\n"
-                                     "NYYRIKKI\r\n"
-                                     "SaebaRYO\r\n"
-                                     "Tobias Keizer\r\n"
-                                     "Sandy Pleyte\r\n"
-                                     "Marco Casali\r\n"
-                                     "UC_ARS\r\n"
-                                     "nhlay\r\n"
-                                     "Rob Hiep\r\n"
-                                     "Fabio Albergaria Dias\r\n"
-                                     "SLotman\r\n"
-                                     "Tanni\r\n"
-                                     "Eduardo Mello\r\n"
-                                     "Jon Cortázar Abraido\r\n"
-                                     "Hondarer\r\n"
-                                     "Wouter Vermaelen\r\n"
-                                     "Manuel Bilderbeek\r\n"
-                                     "Maarten ter Huurne\r\n"
-                                     "Patrick van Arkel\r\n"
-                                     "Martijn van Tienen\r\n"
-                                     "Laurent Halter\r\n"
-                                     "Glafouk\r\n"
-                                     "Ulver\r\n"
-                                     "Nicolas Beyaert\r\n"
-                                     "Víctor Fernández Sánchez\r\n"
-                                     "William Ouwehand\r\n"
-                                     "Jacek Bogucki (Gucek)\r\n"
-                                     "Miikka \"MP83\" Poikela\r\n"
-                                     "Jussi Pitkänen\r\n"
-                                     "Atarulum\r\n"
-                                     "MkII\r\n"
-                                     "Kobayashi Michiko\r\n"
-                                     "Davide Platania a.k.a. Kruznak\r\n"
-                                     "Shimanuki Koshi\r\n"
-                                     "Roger Filipe\r\n"
-                                     "Amer Dugmag\r\n"
-                                     "Alex Wulms\r\n"
-                                     "Mitsutaka Okazaki\r\n"
-                                     "Tatsuyuki Satoh\r\n"
-                                     "Marat Fayzullin\r\n"
-                                     "Jarek Burczynski\r\n"
-                                     "R. Belmont\r\n"
-                                     "O. Galibert\r\n"
-                                     "Gilles Vollant\r\n\r\n\r\n"
-            
-                                     "%s",
-                          langDlgAboutAbout(),
-                          langDlgAboutVersion(),
-                          BLUE_MSX_VERSION,
-                          langDlgAboutBuildNumber(),
-                          BUILD_NUMBER,
-                          langDlgAboutBuildDate(),
-                          BUILD_DATE,
-                          langDlgAboutCreat(),
-                          langDlgAboutDevel(),
-                          langDlgAboutThanks(),
-                          langDlgAboutLisence());
+            char buildDate[32] = BUILD_DATE;
+            int i;
+
+            for (i = 0; buildDate[i] != ' '; i++);
+            buildDate[i] = '/';
+
+            sprintf(aboutText, "%s\r\n\r\n"
+                                "%s%\t%s\r\n"
+                                "%s%\t%d\r\n"
+                                "%s%\t%s\r\n\r\n"
+                                "%s\r\n\r\n\r\n"
+                                "%s\r\n\r\n"
+                        
+                                "Daniel Vik\r\n"
+                                "Benoît Delvaux\r\n"
+                                "Tomas Karlsson\r\n"
+                                "Ray Zero\r\n"
+                                "Ricardo Bittencourt\r\n"
+                                "Johan van Leur\r\n\r\n\r\n"
+
+                                "%s\r\n\r\n"
+
+                                "Sjoerd de Vries\r\n"
+                                "Albert Beevendorp\r\n"
+                                "Rudolf Lechleitner\r\n"
+                                "Hiro\r\n"
+                                "BouKiCHi\r\n"
+                                "Vincent van Dam\r\n"
+                                "NYYRIKKI\r\n"
+                                "SaebaRYO\r\n"
+                                "Tobias Keizer\r\n"
+                                "Sandy Pleyte\r\n"
+                                "Marco Casali\r\n"
+                                "UC_ARS\r\n"
+                                "nhlay\r\n"
+                                "Rob Hiep\r\n"
+                                "Fabio Albergaria Dias\r\n"
+                                "SLotman\r\n"
+                                "Tanni\r\n"
+                                "Eduardo Mello\r\n"
+                                "Jon Cortázar Abraido\r\n"
+                                "Hondarer\r\n"
+                                "Wouter Vermaelen\r\n"
+                                "Manuel Bilderbeek\r\n"
+                                "Maarten ter Huurne\r\n"
+                                "Patrick van Arkel\r\n"
+                                "Martijn van Tienen\r\n"
+                                "Laurent Halter\r\n"
+                                "Glafouk\r\n"
+                                "Ulver\r\n"
+                                "Nicolas Beyaert\r\n"
+                                "Víctor Fernández Sánchez\r\n"
+                                "William Ouwehand\r\n"
+                                "Jacek Bogucki (Gucek)\r\n"
+                                "Miikka \"MP83\" Poikela\r\n"
+                                "Jussi Pitkänen\r\n"
+                                "Atarulum\r\n"
+                                "MkII\r\n"
+                                "Kobayashi Michiko\r\n"
+                                "Davide Platania a.k.a. Kruznak\r\n"
+                                "Shimanuki Koshi\r\n"
+                                "Roger Filipe\r\n"
+                                "Amer Dugmag\r\n"
+                                "Alex Wulms\r\n"
+                                "Mitsutaka Okazaki\r\n"
+                                "Tatsuyuki Satoh\r\n"
+                                "Marat Fayzullin\r\n"
+                                "Jarek Burczynski\r\n"
+                                "R. Belmont\r\n"
+                                "O. Galibert\r\n"
+                                "Gilles Vollant\r\n\r\n\r\n"
+    
+                                "%s",
+                        langDlgAboutAbout(),
+                        langDlgAboutVersion(),
+                        BLUE_MSX_VERSION,
+                        langDlgAboutBuildNumber(),
+                        BUILD_NUMBER,
+                        langDlgAboutBuildDate(),
+                        buildDate,
+                        langDlgAboutCreat(),
+                        langDlgAboutDevel(),
+                        langDlgAboutThanks(),
+                        langDlgAboutLisence());
 
             updateDialogPos(hDlg, DLG_ID_ABOUT, 0, 1);
             SetWindowText(hDlg, langDlgAboutTitle());

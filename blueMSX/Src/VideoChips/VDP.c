@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2006-09-30 19:58:16 $
+** $Date: 2006-10-10 21:35:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -495,6 +495,8 @@ static void onDisplay(VDP* vdp, UInt32 time)
 
     vdp->timeDisplayEn = 0;
 
+//    printf("Frame\t\t%d\n", boardSystemTime());
+
     if (vdp->videoEnabled) {
         FrameBuffer* frameBuffer;
         frameBuffer = frameBufferFlipDrawFrame();
@@ -700,6 +702,9 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     value &= vdp->registerValueMask[reg];
     sync(vdp, boardSystemTime());
 
+//    if (reg == 0 || reg == 1 || reg == 5 || reg == 6 || reg == 8 || reg == 9 || reg == 11 || reg == 23)
+//        printf("W %.2x: 0x%.2x\t%d\n", reg, value, boardSystemTime());
+
 #if 0
     if (reg == 0 || reg == 8 || reg == 9)
         printf("W %.2x: 0x%.2x\n", reg, value);
@@ -798,6 +803,9 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
         break;
 
     case 11: 
+        if (change & 0x03) {
+            vdp->vdpStatus[0] &= ~0x40;
+        }
         vdp->sprTabBase = ((value << 15) | (vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & ((vdp->vramPages << 14) - 1);
         break;
 
@@ -947,6 +955,7 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
    
     switch(vdp->vdpRegs[15]) {
     case 0: 
+//        printf("I %.2x: 0x%.2x\t%d\n", vdp->vdpRegs[15], vdpStatus, boardSystemTime());
         vdp->vdpStatus[0] &= 0x1f;
         boardClearInt(INT_IE0);
         break;
