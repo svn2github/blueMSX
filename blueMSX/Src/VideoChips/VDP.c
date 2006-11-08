@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.80 $
+** $Revision: 1.81 $
 **
-** $Date: 2006-10-10 21:35:23 $
+** $Date: 2006-11-08 18:41:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -803,9 +803,9 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
         break;
 
     case 11: 
-        if (change & 0x03) {
-            vdp->vdpStatus[0] &= ~0x40;
-        }
+//        if (change & 0x03) {
+//            vdp->vdpStatus[0] &= ~0x40;
+//        }
         vdp->sprTabBase = ((value << 15) | (vdp->vdpRegs[5] << 7) | ~(-1 << 7)) & ((vdp->vramPages << 14) - 1);
         break;
 

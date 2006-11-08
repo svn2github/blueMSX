@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Avi.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-19 06:00:37 $
+** $Date: 2006-11-08 18:41:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -329,7 +329,7 @@ char* aviGetFilename(Properties* properties)
     int selectedExtension = 0;
     FILE* file;
 
-    sprintf(extensionList, "%s         (*.avi)#*.avi#", langFileAvi());
+    sprintf(extensionList, "%s   (*.avi)#*.avi#", langFileAvi());
     replaceCharInString(extensionList, '#', 0);
 
     filename = archFileSave(title, extensionList, defaultDir, extensions, &selectedExtension, ".avi");

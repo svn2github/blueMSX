@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2006-10-10 21:35:23 $
+** $Date: 2006-11-08 18:41:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,7 +112,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
         }
         
         if (visibleCnt == 4) {
-			if (~vdp->vdpStatus[0] & 0x40) {
+			if ((vdp->vdpStatus[0] & 0xc0) == 0) {
 				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | idx;
 			}
             break;
@@ -126,7 +126,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
         return lineBufs[bufIndex ^ 1];
     }
 
-	if (~vdp->vdpStatus[0] & 0x40) {
+	if ((vdp->vdpStatus[0] & 0xc0) == 0) {
 		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (idx < 32 ? idx : 31);
 	}
     
@@ -297,7 +297,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
 
         if (visibleCnt == 8) {
 //            printf("%d\t%d\t%d\t####\n", idx, line, boardSystemTime());
-			if (~vdp->vdpStatus[0] & 0x40) {
+			if ((vdp->vdpStatus[0] & 0xc0) == 0) {
 				vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | 0x40 | sprite;
 			}
             break;
@@ -332,7 +332,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
         return lineBufs[bufIndex ^ 1];
     }
 
-    if (~vdp->vdpStatus[0] & 0x40) {
+	if ((vdp->vdpStatus[0] & 0xc0) == 0) {
 		vdp->vdpStatus[0] = (vdp->vdpStatus[0] & 0xe0) | (sprite < 32 ? sprite : 31);
 	}
     
