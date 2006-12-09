@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2006-12-09 19:59:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -265,7 +265,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 #else
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    UInt8*  charTable;
     int     patternBase;
     UInt16  color[2];
 
@@ -298,12 +297,13 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
     else {
         Y -= vdp->firstLine;
         Y = Y + vdpVScroll(vdp) - vdp->scr0splitLine;
-        charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (Y / 8))));
         patternBase = vdp->chrGenBase & ((-1 << 11) | (Y & 7));
         color[0] = vdp->palette[vdp->BGColor];
         color[1] = vdp->palette[vdp->FGColor];
 
         for (X = 0; X < 40; X++) {
+            int charIdx = 0xc00 + 40 * (Y / 8) + X;
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
             int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
             linePtr0[0] = color[(pattern >> 7) & 1];
             linePtr0[1] = color[(pattern >> 6) & 1];
@@ -320,7 +320,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 {
-    UInt8*  charTable;
     int     patternBase;
     UInt16  color[2];
 
@@ -353,12 +352,13 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
     else {
         Y -= vdp->firstLine;
         Y = Y + vdpVScroll(vdp) - vdp->scr0splitLine;
-        charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (Y / 8))));
         patternBase =  (-1 << 13) | ((Y & 0xc0) << 5) | (Y & 7);
         color[0] = vdp->palette[vdp->BGColor];
         color[1] = vdp->palette[vdp->FGColor];
 
         for (X = 0; X < 40; X++) {
+            int charIdx = 0xc00 + 40 * (Y / 8) + X;
+            UInt8* charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
             int pattern = vdp->vram[vdp->chrGenBase & (patternBase | ((int)*charTable * 8))];
             linePtr0p[0] = color[(pattern >> 7) & 1];
             linePtr0p[1] = color[(pattern >> 6) & 1];
@@ -376,9 +376,6 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 {
     UInt8   colPattern;
-    UInt8*  charTable;
-    int     patternBase;
-    UInt8*  colTable;
     UInt16  colors[4];
 
     if (X2 >= 32) {
@@ -408,21 +405,26 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         }
     }
     else {
+        int patternBase;
+
         Y -= vdp->firstLine;
         Y = Y + vdpVScroll(vdp) - vdp->scr0splitLine;
-
-        charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (80 * (Y / 8))));
+        
         patternBase = vdp->chrGenBase & ((-1 << 11) | (Y & 7));
-        colTable    = vdp->vram + (vdp->colTabBase & ((-1 << 9) | (10 * (Y / 8))));
+
         colors[0]   = vdp->palette[vdp->BGColor];
         colors[1]   = vdp->palette[vdp->FGColor];
         colors[2]   = vdp->palette[vdp->XBGColor];
         colors[3]   = vdp->palette[vdp->XFGColor];
 
         for(X = 0; X < 80; X++) {
-            int charPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+            int charIdx = 80 * (Y / 8) + X;
+            UInt8*  charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
+            int charPattern     = vdp->vram[patternBase | ((int)*charTable * 8)];
+
             UInt16* color;
             if ((X & 0x07) == 0) {
+                UInt8*  colTable    = vdp->vram + (vdp->colTabBase & ((-1 << 9) | (charIdx / 8)));
                 colPattern = *colTable++;
             }
             color = colors + ((colPattern >> 6) & 2);
@@ -434,7 +436,6 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
             linePtr0w[3] = color[(charPattern >> 4) & 1];
             linePtr0w[4] = color[(charPattern >> 3) & 1];
             linePtr0w[5] = color[(charPattern >> 2) & 1];
-            charTable++;
             linePtr0w += 6;
         }
     }
