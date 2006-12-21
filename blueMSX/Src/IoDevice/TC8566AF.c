@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-12-21 21:04:57 $
+** $Date: 2006-12-21 21:06:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -385,7 +385,7 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
             tc->sectorNumber       = value;
 			break;
 		case 4:
-            fdc->fillerByte  = value;
+            tc->fillerByte   = value;
             tc->sectorOffset = 0;
             tc->mainStatus  &= ~STM_DIO;
 			tc->phase        = PHASE_DATATRANSFER;
@@ -498,7 +498,7 @@ static void tc8566afExecutionPhaseWrite(TC8566AF* tc, UInt8 value)
             tc->currentTrack = value;
             break;
         case 1:
-            memset(tc->sectorBuf, fdc->fillerByte, 512);
+            memset(tc->sectorBuf, tc->fillerByte, 512);
             rv = diskWrite(tc->drive, tc->sectorBuf, tc->sectorNumber - 1 +
                       diskGetSectorsPerTrack(tc->drive) * (tc->currentTrack * diskGetSides(tc->drive) + value));
             if (!rv) {
