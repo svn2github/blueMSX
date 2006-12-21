@@ -180,10 +180,16 @@
 			RelativePath=".\LanguageKorean.h">
 		</File>
 		<File
+			RelativePath=".\open.ico">
+		</File>
+		<File
 			RelativePath=".\Resource.h">
 		</File>
 		<File
 			RelativePath=".\resrc1.h">
+		</File>
+		<File
+			RelativePath=".\save.ico">
 		</File>
 		<File
 			RelativePath=".\ToolDllMain.cpp">

@@ -43,6 +43,7 @@ using namespace std;
 
 static HWND dbgHwnd = NULL;
 static HWND hDlgSearch = NULL;
+static HWND hDlgCheats = NULL;
 static LanguageId langId = LID_ENGLISH;
 
 static HBRUSH hBrush = NULL;
@@ -684,6 +685,92 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     return FALSE;
 }
 
+////////////////////////////////////////////////////////////////////////
+
+static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt32 address, 
+                     Int32 value, DataSize dataSize, DisplayType displayType)
+{
+    char buffer[512] = {0};
+    LV_ITEM lvi = {0};
+    
+    lvi.mask       = LVIF_TEXT;
+    lvi.iItem      = entry;
+    lvi.pszText    = description;
+	lvi.cchTextMax = 512;
+
+    ListView_InsertItem(hwnd, &lvi);
+    
+    lvi.mask       = LVIF_TEXT;
+    lvi.pszText    = buffer;
+
+    lvi.iSubItem++;
+    sprintf(buffer, "%.4x", address);
+    ListView_SetItem(hwnd, &lvi);
+    
+    lvi.iSubItem++;
+    sprintf(buffer, DpySizeFormat[dataSize][displayType], value);
+    ListView_SetItem(hwnd, &lvi);
+
+    ListView_SetCheckState(hwnd, entry, enable);
+}
+
+
+static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static int currIndex;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        {
+//            HBITMAP hIcon = LoadBitmap(GetDllHinstance(), MAKEINTRESOURCE(IDB_TRAINER));
+//            SendDlgItemMessage(hDlg, IDC_OPEN, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hIcon);
+            HICON hIcon = LoadIcon(GetDllHinstance(), MAKEINTRESOURCE(IDI_OPEN));
+            SendDlgItemMessage(hDlg, IDC_OPEN, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
+
+            hIcon = LoadIcon(GetDllHinstance(), MAKEINTRESOURCE(IDI_SAVE));
+            SendDlgItemMessage(hDlg, IDC_SAVE, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
+                        char buffer[32];
+            LV_COLUMN lvc = {0};
+            
+
+            HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
+
+            ListView_SetExtendedListViewStyle(hwnd, LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
+
+            lvc.mask       = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            lvc.fmt        = LVCFMT_LEFT;
+            lvc.pszText    = buffer;
+	        lvc.cchTextMax = 32;
+
+            sprintf(buffer, "Description");
+            lvc.cx = 225;
+            ListView_InsertColumn(hwnd, 0, &lvc);
+            sprintf(buffer, "Address");
+            lvc.cx = 65;
+            ListView_InsertColumn(hwnd, 1, &lvc);
+            sprintf(buffer, "Value");
+            lvc.cx = 60;
+            ListView_InsertColumn(hwnd, 2, &lvc);
+
+            addCheat(hwnd, 0, "Cheat Number one", true, 0x1234, 156, DATASIZE_8BIT, DPY_HEXADECIMAL);
+            addCheat(hwnd, 1, "Another cheat", false, 0x8423, 33, DATASIZE_8BIT, DPY_HEXADECIMAL);
+        }
+
+        return FALSE;
+
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORSTATIC:
+        SetBkColor((HDC)wParam, GetSysColor(COLOR_3DLIGHT));
+        return (BOOL)hBrush;
+
+    case WM_ERASEBKGND:
+        return TRUE;
+    }
+    return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////
+
 static BOOL CALLBACK trainerProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     switch (iMsg) {
@@ -695,7 +782,10 @@ static BOOL CALLBACK trainerProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         hDlgSearch  = CreateDialog(GetDllHinstance(), MAKEINTRESOURCE(IDD_SEARCH),  GetDlgItem(hDlg, IDC_TAB), searchProc);
         SetWindowPos(hDlgSearch,  NULL, 3, 24, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
-        ShowWindow(hDlgSearch, SW_NORMAL);
+        hDlgCheats  = CreateDialog(GetDllHinstance(), MAKEINTRESOURCE(IDD_CHEATS),  GetDlgItem(hDlg, IDC_TAB), cheatsProc);
+        SetWindowPos(hDlgCheats,  NULL, 3, 24, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+        ShowWindow(hDlgCheats, SW_NORMAL);
 
         {
             TCITEM tcItem = { TCIF_TEXT, 0, 0, 0, 0, -1, 0 };
@@ -713,9 +803,13 @@ static BOOL CALLBACK trainerProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         case IDC_TAB:
             if ((((NMHDR FAR *)lParam)->code) == TCN_SELCHANGE) {
                 ShowWindow(hDlgSearch,  SW_HIDE);
+                ShowWindow(hDlgCheats,  SW_HIDE);
                 switch(TabCtrl_GetCurSel(GetDlgItem(hDlg, IDC_TAB))) {
                 case 0:
                 default:
+                    ShowWindow(hDlgCheats, SW_NORMAL);
+                    break;
+                case 1:
                     ShowWindow(hDlgSearch, SW_NORMAL);
                     break;
                 }

@@ -4,6 +4,9 @@
 //
 #define IDD_SEARCH                      9
 #define IDD_TRAINER                     101
+#define IDD_CHEATS                      102
+#define IDI_OPEN                        103
+#define IDI_SAVE                        104
 #define IDB_TRAINER                     1000
 #define IDC_LIST                        1001
 #define IDC_MEMLIST                     1002
@@ -32,8 +35,15 @@
 #define IDC_BUTTON3                     1023
 #define IDC_TAB                         1023
 #define IDC_ADDCHEAT                    1023
-#define IDC_BUTTON4                     1024
 #define IDC_UNDO                        1024
+#define IDC_ENABLE                      1025
+#define IDC_REMOVEALL                   1026
+#define IDC_EDIT1                       1027
+#define IDC_CHEATFILETEXT               1028
+#define IDC_REMOVE2                     1029
+#define IDC_OPEN                        1030
+#define IDC_SAVE                        1031
+#define IDC_CHEATLIST                   1032
 #define IDC_DISPLAY                     -1
 #define IDC_STATIC                      -1
 
@@ -41,9 +51,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        102
+#define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

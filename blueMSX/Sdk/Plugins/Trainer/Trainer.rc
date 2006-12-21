@@ -39,7 +39,9 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+IDI_OPEN                ICON                    "open.ico"
 IDI_BLUEMSX             ICON                    "bluemsx.ico"
+IDI_SAVE                ICON                    "save.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -131,6 +133,24 @@ BEGIN
     CONTROL         1000,IDC_STATIC,"Static",SS_BITMAP,0,0,288,39
 END
 
+IDD_CHEATS DIALOGEX 0, 0, 266, 270
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_CHEATLIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,
+                    57,252,179
+    PUSHBUTTON      "Remove All",IDC_REMOVEALL,72,246,59,16
+    PUSHBUTTON      "Add Cheat",IDC_ADDCHEAT,200,246,59,16
+    PUSHBUTTON      "Enable/Disable",IDC_ENABLE,136,246,59,16
+    EDITTEXT        IDC_EDIT1,7,21,218,13,ES_AUTOHSCROLL
+    LTEXT           "Cheat File:",IDC_CHEATFILETEXT,7,7,102,11
+    PUSHBUTTON      "Remove",IDC_REMOVE2,7,246,59,16
+    LTEXT           "Active Cheats:",IDC_STATIC,7,46,127,9
+    PUSHBUTTON      "",IDC_OPEN,227,20,15,15,BS_ICON
+    PUSHBUTTON      "",IDC_SAVE,244,20,15,15,BS_ICON
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -154,6 +174,14 @@ BEGIN
         RIGHTMARGIN, 278
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
+    END
+
+    IDD_CHEATS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 259
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 262
     END
 END
 #endif    // APSTUDIO_INVOKED
