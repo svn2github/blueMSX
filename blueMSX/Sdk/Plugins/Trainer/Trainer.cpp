@@ -59,10 +59,30 @@ static bool canSearch   = false;
 static bool canUndo     = false;
 static bool canAddCheat = false;
 static bool hasSnapshot = false;
+static bool canRemoveCheat = false;
+static bool canRemoveAllCheat = false;
 
 static Int32 DataMask[]  = { 0xff, 0xffff };
 static char* DpyFormat[] = { "%d", "%X" }; 
 static char* DpySizeFormat[2][2]  = { { "%d", "%.2X" }, { "%d", "%.4X" } };
+
+struct CheatInfo {
+    char description[128];
+    UInt32      address;
+    Int32       value;
+    DataSize    dataSize;
+    DisplayType displayType;
+    bool        enabled;
+
+    CheatInfo(char* d, UInt32 a, Int32 v, DataSize ds, DisplayType dt, bool e) : address(a), value(v), dataSize(ds), displayType(dt), enabled(e) {
+        strncpy(description, d, sizeof(description));
+        description[sizeof(description) - 1] = 0;
+    }
+};
+
+bool showCheatDialog(CheatInfo* ci);
+void addCheat(CheatInfo* ci);
+static void updateCheatList();
 
 static UInt16 getData(DataSize dataSize, UInt8* mem, Int32 offset)
 {
@@ -146,12 +166,19 @@ static void updateWindowMenu()
 }
 #endif
 
-static char* cheatFileDialog(HWND hwndOwner, bool openForSave)
+static char* cheatFileDialog(HWND hwndOwner, char* defExt, bool openForSave)
 {
+    static bool firstOpen = true;
     OPENFILENAME ofn; 
-    static char fileName[MAX_PATH];
+    static char fileName[MAX_PATH] = {0};
 
-    fileName[0] = 0; 
+    char cheatPath[512];
+    strcpy(cheatPath, GetToolPath());
+    strcat(cheatPath, "\\Cheats");
+
+    if (!openForSave) {
+        fileName[0] = 0; 
+    }
 
     char  curDir[MAX_PATH];
     GetCurrentDirectory(MAX_PATH, curDir);
@@ -167,13 +194,15 @@ static char* cheatFileDialog(HWND hwndOwner, bool openForSave)
     ofn.nMaxFile = 1024; 
     ofn.lpstrFileTitle = NULL; 
     ofn.nMaxFileTitle = 0; 
-    ofn.lpstrInitialDir = NULL; 
+    ofn.lpstrInitialDir = firstOpen ? cheatPath : NULL; 
     ofn.nFileOffset = 0; 
     ofn.nFileExtension = 0; 
     ofn.lpstrDefExt = NULL; 
     ofn.lCustData = 0; 
     ofn.lpfnHook = NULL; 
     ofn.lpTemplateName = NULL; 
+
+    firstOpen = false;
 
     BOOL rv = FALSE;
     if (openForSave) {
@@ -195,7 +224,38 @@ static char* cheatFileDialog(HWND hwndOwner, bool openForSave)
         return NULL; 
     }
 
+    if (defExt) {
+        if (strlen(fileName) <= strlen(defExt)) {
+            strcat(fileName, defExt);
+        }
+        else {
+            char* pos = fileName + strlen(fileName) - strlen(defExt);
+            int  len  = strlen(defExt);
+            while (len--) {
+                if (toupper(pos[len]) != toupper(defExt[len])) {
+                    break;
+                }
+            }
+            if (len >= 0) {
+                strcat(fileName, defExt);
+            }
+        }
+    }
+
     return fileName;
+}
+
+void updateButtons()
+{
+    EnableWindow(GetDlgItem(hDlgSearch, IDC_MEMLIST),  GetEmulatorState() == EMULATOR_PAUSED);
+    EnableWindow(GetDlgItem(hDlgSearch, IDC_SNAPSHOT), GetEmulatorState() == EMULATOR_PAUSED);
+    EnableWindow(GetDlgItem(hDlgSearch, IDC_SEARCH),   GetEmulatorState() == EMULATOR_PAUSED && hasSnapshot);
+    EnableWindow(GetDlgItem(hDlgSearch, IDC_UNDO),     GetEmulatorState() == EMULATOR_PAUSED && canUndo);
+    EnableWindow(GetDlgItem(hDlgSearch, IDC_ADDCHEAT), GetEmulatorState() == EMULATOR_PAUSED && canAddCheat);
+
+    EnableWindow(GetDlgItem(hDlgCheats, IDC_REMOVE),    canRemoveCheat);
+    EnableWindow(GetDlgItem(hDlgCheats, IDC_REMOVEALL), canRemoveAllCheat);
+    EnableWindow(GetDlgItem(hDlgCheats, IDC_SAVE),      canRemoveAllCheat);
 }
 
 void updateSnapshot(bool reset = false)
@@ -275,6 +335,16 @@ void updateListView()
         if (snapshotData.mask[i]) {
             Int32 oldData = getData(dataSize, snapshotData.dataOld, i);
             Int32 newData = getData(dataSize, snapshotData.dataNew, i);
+            if (idx >= 1024) {
+                LV_ITEM lvi = {0};
+                
+                lvi.mask       = LVIF_TEXT;
+                lvi.iItem      = idx;
+                lvi.pszText    = "truncated...";
+	            lvi.cchTextMax = 512;
+                ListView_InsertItem(hwnd, &lvi);
+                break;
+            }
             if (displayType == DPY_DECIMAL) {
                 addAddress(hwnd, idx++, i, oldData, newData, newData - oldData);
             }
@@ -408,16 +478,6 @@ bool undoSearch()
     return true;
 }
 
-
-void updateButtons(HWND hDlg)
-{
-    EnableWindow(GetDlgItem(hDlgSearch, IDC_MEMLIST),  GetEmulatorState() == EMULATOR_PAUSED);
-    EnableWindow(GetDlgItem(hDlgSearch, IDC_SNAPSHOT), GetEmulatorState() == EMULATOR_PAUSED);
-    EnableWindow(GetDlgItem(hDlgSearch, IDC_SEARCH),   GetEmulatorState() == EMULATOR_PAUSED && hasSnapshot);
-    EnableWindow(GetDlgItem(hDlgSearch, IDC_UNDO),     GetEmulatorState() == EMULATOR_PAUSED && canUndo);
-    EnableWindow(GetDlgItem(hDlgSearch, IDC_ADDCHEAT), GetEmulatorState() == EMULATOR_PAUSED && canAddCheat);
-}
-
 void updateSearchFields(HWND hDlg)
 {
     setBtCheck(hDlg, IDC_CMP_EQUAL,          compareType == CMP_EQUAL);
@@ -516,6 +576,39 @@ void checkNumberInput(HWND hDlg, int id, DisplayType displayType, DataSize dataS
     SendDlgItemMessage(hDlg, id, EM_SETSEL, 8, 8);
     isUpdating = false;
 }
+
+void prepareAndShowAddCheatDialog(HWND hDlg)
+{
+    HWND hwnd = GetDlgItem(hDlg, IDC_MEMLIST);
+
+    if (ListView_GetSelectedCount(hwnd)) {
+        int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+
+        if (index >= 0) {
+            char buffer[32];
+            LVITEM lvi = {0};
+            lvi.mask = LVIF_TEXT;
+            lvi.pszText = buffer;
+            lvi.cchTextMax = sizeof(buffer) - 1;
+            lvi.iItem = index;
+            lvi.iSubItem = 0;
+
+            if (ListView_GetItem(hwnd, &lvi)) {
+                int address;
+                if (1 == sscanf(buffer, "%x", &address)) {
+                    CheatInfo ci("New cheat", address, snapshotData.dataNew[address], 
+                                    dataSize, displayType, true);
+                    if (showCheatDialog(&ci)) {
+                        addCheat(&ci);
+                        updateCheatList();
+                        updateButtons();
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
@@ -616,24 +709,25 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             updateSnapshot(true);
             clearSearch();
             updateListView();
-            updateButtons(dbgHwnd);
+            updateButtons();
             break;
 
         case IDC_SEARCH:
             if (doSearch(compareType, dataSize, compareValue, cmpChangeVal, cmpSpecificVal)) {
                 updateListView();
             }
-            updateButtons(dbgHwnd);
+            updateButtons();
             break;
 
         case IDC_UNDO:
             if (undoSearch()) {
                 updateListView();
             }
-            updateButtons(dbgHwnd);
+            updateButtons();
             break;
 
-        case IDC_ADDCHEAT:
+        case IDC_ADDCHEAT: 
+            prepareAndShowAddCheatDialog(hDlg);
             break;
         }
         return TRUE;
@@ -649,26 +743,21 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                     if (currIndex == -1 && index != -1) {
                         canAddCheat = true;
-                        updateButtons(hDlg);
+                        updateButtons();
                     }
                     currIndex = index;
                 }
                 else {
                     if (currIndex != -1) {
                         canAddCheat = false;
-                        updateButtons(hDlg);
+                        updateButtons();
                     }
                     currIndex = -1;
                 }
             }
 
             if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMACTIVATE) {
-                HWND hwnd = GetDlgItem(hDlg, IDC_MEMLIST);
-
-                if (ListView_GetSelectedCount(hwnd)) {
-                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
-                    // Add cheat here
-                }
+                prepareAndShowAddCheatDialog(hDlg);
                 return TRUE;
             }
         }
@@ -687,6 +776,48 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
 ////////////////////////////////////////////////////////////////////////
 
+typedef std::list<CheatInfo> CheatList;
+
+CheatList cheatList;
+
+void clearAllCheats()
+{
+    while(!cheatList.empty()) {
+        cheatList.pop_front();
+    }
+
+    canRemoveAllCheat = false;
+}
+
+void addCheat(char* description, UInt32 address, Int32 value, DataSize dataSize, DisplayType displayType, bool enabled)
+{
+    CheatInfo ci(description, address, value, dataSize, displayType, enabled);
+    CheatList::iterator i = cheatList.begin();
+
+    for (; i != cheatList.end(); ++i) {
+        if (i->address > address) break;
+    }
+    cheatList.insert(i, ci);
+    
+    canRemoveAllCheat = !cheatList.empty();
+}
+
+void addCheat(CheatInfo* ci) 
+{
+    addCheat(ci->description, ci->address, ci->value, ci->dataSize, ci->displayType, ci->enabled);
+}
+
+void removeCheat(int idx) {
+    for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
+        if (idx-- == 0) {
+            cheatList.erase(i);
+            break;
+        }
+    }
+    
+    canRemoveAllCheat = !cheatList.empty();
+}
+
 static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt32 address, 
                      Int32 value, DataSize dataSize, DisplayType displayType)
 {
@@ -704,7 +835,7 @@ static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt3
     lvi.pszText    = buffer;
 
     lvi.iSubItem++;
-    sprintf(buffer, "%.4x", address);
+    sprintf(buffer, "%.4X", address);
     ListView_SetItem(hwnd, &lvi);
     
     lvi.iSubItem++;
@@ -712,6 +843,111 @@ static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt3
     ListView_SetItem(hwnd, &lvi);
 
     ListView_SetCheckState(hwnd, entry, enable);
+}
+
+static void updateCheatList()
+{
+    HWND hwnd = GetDlgItem(hDlgCheats, IDC_CHEATLIST);
+    ListView_DeleteAllItems(hwnd);
+    
+    canRemoveCheat = false;
+
+    int idx = 0;
+    for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
+        addCheat(hwnd, idx++, i->description, i->enabled, i->address, i->value, i->dataSize, i->displayType);
+    }
+}
+
+static CheatInfo* getCheat(int index)
+{
+    int idx = 0;
+    for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
+        if (idx++ == index) {
+            return &(*i);
+        }
+    }
+    return NULL;
+}
+
+static bool saveCheatFile(const char* filename)
+{
+    if (filename == NULL) {
+        return false;
+    }
+
+    FILE* f = fopen(filename, "w");
+    if (f == NULL) {
+        return FALSE;
+    }
+
+    const char* fname = filename + strlen(filename) - 1;
+    while (fname >= filename && *fname != '/' && *fname != '\\') {
+        fname--;
+    }
+
+    fprintf(f, "!cheats v2.0 for blueMSX: %s\n", fname);
+
+    for (int index = 0; index < 2048; index++) {
+        CheatInfo* ci = getCheat(index);
+        if (ci == NULL) {
+            break;
+        }
+        fprintf(f, "%.4X:%.2X:%d:%d:%s\n", ci->address, ci->value, ci->dataSize, ci->displayType, ci->description);
+    }
+    fclose(f);
+
+    return true;
+}
+
+static bool loadCheatFile(const char* filename)
+{
+    if (filename == NULL) {
+        return false;
+    }
+
+    FILE* f = fopen(filename, "r");
+    if (f == NULL) {
+        return FALSE;
+    }
+
+    clearAllCheats();
+
+    for (int i = 0; i < 1000; i++) {
+        char buffer[1024];
+        if (NULL == fgets(buffer, sizeof(buffer), f)) {
+            break;
+        }
+        if (buffer[0] == '!') {
+            continue;
+        }
+        int memType;
+        int address;
+        int value;
+        int dummy;
+        int dataSize = DATASIZE_8BIT;
+        int displayType = DPY_HEXADECIMAL;
+
+        int rv = sscanf(buffer, "%X:%X:%d:%d\n", &address, &value, &dataSize, &displayType);
+        if (rv != 4) {
+            rv = sscanf(buffer, "%d,%d,%d,%d", &memType, &address, &value, &dummy);
+        }
+        if (rv != 4) continue;
+        char* desc = buffer + strlen(buffer) - 1;
+        if (desc[0] == '\r' || desc[0] == '\n') desc[0] = 0;
+        if (desc[-1] == '\r' || desc[-1] == '\n') desc[-1] = 0;
+        desc = buffer;
+        int commaCnt = 0;
+        while (*desc && commaCnt < 4) {
+            if (*desc == ',' || *desc == ':') commaCnt++;
+            desc++;
+        }
+
+        addCheat(desc, address, value, (DataSize)dataSize, (DisplayType)displayType, true);
+    }
+
+    fclose(f);
+
+    return true;
 }
 
 
@@ -751,12 +987,109 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             sprintf(buffer, "Value");
             lvc.cx = 60;
             ListView_InsertColumn(hwnd, 2, &lvc);
-
-            addCheat(hwnd, 0, "Cheat Number one", true, 0x1234, 156, DATASIZE_8BIT, DPY_HEXADECIMAL);
-            addCheat(hwnd, 1, "Another cheat", false, 0x8423, 33, DATASIZE_8BIT, DPY_HEXADECIMAL);
         }
 
         return FALSE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDC_OPEN:
+            {
+                char* filename = cheatFileDialog(hDlg, ".mcf", false);
+                if (loadCheatFile(filename)) {
+                    SetWindowText(GetDlgItem(hDlg, IDC_FILENAME), filename);
+                    updateCheatList();
+                    updateButtons();
+                }
+            }
+            break;
+
+        case IDC_REMOVEALL:
+            SetWindowText(GetDlgItem(hDlg, IDC_FILENAME), "");
+            clearAllCheats();
+            updateCheatList();
+            updateButtons();
+            break;
+
+        case IDC_REMOVE:
+            {
+                HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
+
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+                    removeCheat(index);
+                    ListView_DeleteItem(hwnd, index);
+                    ListView_SetItemState(hwnd, index, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
+                    canRemoveCheat = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED) != -1;
+                    updateButtons();
+                }
+            }
+            break;
+
+        case IDC_ADDCHEAT: 
+            {
+                CheatInfo ci("New cheat", 0, 0, DATASIZE_8BIT, displayType, true);
+                if (showCheatDialog(&ci)) {
+                    addCheat(&ci);
+                    updateCheatList();
+                    updateButtons();
+                }
+            }
+            break;
+
+        case IDC_SAVE:
+            {
+                char* filename = cheatFileDialog(hDlg, ".mcf", true);
+                saveCheatFile(filename);
+            }
+            break;
+        }
+        break;
+
+    case WM_NOTIFY:
+        switch (wParam) {
+        case IDC_CHEATLIST:
+            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMCHANGED) {
+                HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
+
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+
+                    if (currIndex == -1 && index != -1) {
+                        canRemoveCheat = true;
+                        updateButtons();
+                    }
+                    currIndex = index;
+                }
+                else {
+                    if (currIndex != -1) {
+                        canRemoveCheat = false;
+                        updateButtons();
+                    }
+                    currIndex = -1;
+                }
+            }
+
+            if ((((NMHDR FAR *)lParam)->code) == LVN_ITEMACTIVATE) {
+                HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
+
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+                    CheatInfo* ci = getCheat(index);
+                    if (ci != NULL) {
+                        if (showCheatDialog(ci)) {
+                            CheatInfo newCi = *ci;
+                            removeCheat(index);
+                            addCheat(&newCi);
+                            updateCheatList();
+                            updateButtons();
+                        }
+                    }
+                }
+                return TRUE;
+            }
+        }
+        break;
 
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORSTATIC:
@@ -767,6 +1100,91 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         return TRUE;
     }
     return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////
+static BOOL CALLBACK cheatDialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static CheatInfo* ci;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        {
+            char buffer[32];
+            ci = (CheatInfo*)lParam;
+
+            sprintf(buffer, "%.4X", ci->address);
+            SetWindowText(GetDlgItem(hDlg, IDC_ADDRESSEDIT), buffer);
+            sprintf(buffer, DpySizeFormat[ci->dataSize][ci->displayType], ci->value);
+            SetWindowText(GetDlgItem(hDlg, IDC_VALUEEDIT), buffer);
+            SetWindowText(GetDlgItem(hDlg, IDC_DESCRIPTIONEDIT), ci->description);
+            
+            setBtCheck(hDlg, IDC_VAL_DEC, ci->displayType == DPY_DECIMAL);
+            setBtCheck(hDlg, IDC_VAL_HEX, ci->displayType == DPY_HEXADECIMAL);            
+            setBtCheck(hDlg, IDC_VAL_8BIT,  ci->dataSize == DATASIZE_8BIT);
+            setBtCheck(hDlg, IDC_VAL_16BIT, ci->dataSize == DATASIZE_16BIT);
+        }
+        return FALSE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDC_VAL_DEC:   ci->displayType  = DPY_DECIMAL;        break;
+        case IDC_VAL_HEX:   ci->displayType  = DPY_HEXADECIMAL;    break;
+        case IDC_VAL_8BIT:  ci->dataSize     = DATASIZE_8BIT;      break;
+        case IDC_VAL_16BIT: ci->dataSize     = DATASIZE_16BIT;     break;
+
+        case IDOK:
+            EndDialog(hDlg, TRUE);
+            return TRUE;
+
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+
+        case IDC_VALUEEDIT:
+            checkNumberInput(hDlg, IDC_VALUEEDIT, ci->displayType, ci->dataSize, &ci->value);
+            break;
+            
+        case IDC_ADDRESSEDIT:
+            checkNumberInput(hDlg, IDC_ADDRESSEDIT, DPY_HEXADECIMAL, DATASIZE_16BIT, (Int32*)&ci->address);
+            break;
+
+        case IDC_DESCRIPTIONEDIT:
+            GetWindowText(GetDlgItem(hDlg, IDC_DESCRIPTIONEDIT), ci->description, sizeof(ci->description) - 1);
+            ci->description[sizeof(ci->description) - 1] = 0;
+        }
+
+        switch (LOWORD(wParam)) {
+        case IDC_VAL_DEC:
+        case IDC_VAL_HEX:
+        case IDC_VAL_8BIT:
+        case IDC_VAL_16BIT:
+            {
+                char buffer[32];
+                sprintf(buffer, DpySizeFormat[ci->dataSize][ci->displayType], ci->value);
+                SetWindowText(GetDlgItem(hDlg, IDC_VALUEEDIT), buffer);
+            }
+            break;
+        }
+        break;
+
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool showCheatDialog(CheatInfo* ci)
+{
+    CheatInfo tmp = *ci;
+    if (DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_ADDCHEAT), 
+                       dbgHwnd, cheatDialogProc, (LPARAM)&tmp))
+    {
+        *ci = tmp;
+        return true;
+    }
+    return false;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -848,28 +1266,28 @@ void OnShowTool() {
     canAddCheat = false;
     
     updateListView();
-    updateButtons(dbgHwnd);
+    updateButtons();
 
     Language::SetLanguage(langId);
 }
 
 void OnEmulatorStart() {
-    updateButtons(dbgHwnd);
+    updateButtons();
 }
 
 void OnEmulatorStop() {
-    updateButtons(dbgHwnd);
+    updateButtons();
 }
 
 void OnEmulatorPause() {
     updateSnapshot();
     clearSearch();
     updateListView();
-    updateButtons(dbgHwnd);
+    updateButtons();
 }
 
 void OnEmulatorResume() {
-    updateButtons(dbgHwnd);
+    updateButtons();
 }
 
 void OnEmulatorReset() {
