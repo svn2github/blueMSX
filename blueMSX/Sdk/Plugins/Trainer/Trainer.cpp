@@ -59,12 +59,15 @@ static bool canSearch   = false;
 static bool canUndo     = false;
 static bool canAddCheat = false;
 static bool hasSnapshot = false;
+static bool canCheat    = false;
 static bool canRemoveCheat = false;
 static bool canRemoveAllCheat = false;
 
 static Int32 DataMask[]  = { 0xff, 0xffff };
 static char* DpyFormat[] = { "%d", "%X" }; 
 static char* DpySizeFormat[2][2]  = { { "%d", "%.2X" }, { "%d", "%.4X" } };
+
+#define CHEAT_TIMER_ID 29
 
 struct CheatInfo {
     char description[128];
@@ -255,10 +258,49 @@ void updateButtons()
 
     EnableWindow(GetDlgItem(hDlgCheats, IDC_REMOVE),    canRemoveCheat);
     EnableWindow(GetDlgItem(hDlgCheats, IDC_REMOVEALL), canRemoveAllCheat);
+    EnableWindow(GetDlgItem(hDlgCheats, IDC_ENABLE),    canRemoveCheat);
     EnableWindow(GetDlgItem(hDlgCheats, IDC_SAVE),      canRemoveAllCheat);
 }
 
-void updateSnapshot(bool reset = false)
+static Snapshot* currentSnapshot = NULL;
+MemoryBlock* memoryBlock = NULL;
+
+void updateSnapshot()
+{
+    memoryBlock = NULL;
+
+    bool isRunning = GetEmulatorState() == EMULATOR_RUNNING;
+
+    if (isRunning) {
+        EmulatorPause();
+    }
+
+    Snapshot* snapshot = SnapshotCreate();
+    if (snapshot != NULL) {
+        int deviceCount = SnapshotGetDeviceCount(snapshot);
+
+        for (int i = 0; i < deviceCount; i++) {
+            Device* device = SnapshotGetDevice(snapshot, i);
+            int memCount = DeviceGetMemoryBlockCount(device);
+
+            if (device->type == DEVTYPE_CPU && memCount > 0) {
+                memoryBlock = DeviceGetMemoryBlock(device, 0);
+            }
+        }
+    }
+
+    if (currentSnapshot != NULL) {
+        SnapshotDestroy(currentSnapshot);
+    }
+
+    currentSnapshot = snapshot;
+    
+    if (isRunning) {
+        EmulatorRun();
+    }
+}
+
+void createSnapshot(bool reset = false)
 {
     if ((!hasSnapshot && !reset) || GetEmulatorState() == EMULATOR_RUNNING) {
         return;
@@ -290,6 +332,7 @@ void updateSnapshot(bool reset = false)
             }
         }
     }
+
     SnapshotDestroy(snapshot);
 }
 
@@ -706,7 +749,7 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             break;
 
         case IDC_SNAPSHOT:
-            updateSnapshot(true);
+            createSnapshot(true);
             clearSearch();
             updateListView();
             updateButtons();
@@ -807,7 +850,8 @@ void addCheat(CheatInfo* ci)
     addCheat(ci->description, ci->address, ci->value, ci->dataSize, ci->displayType, ci->enabled);
 }
 
-void removeCheat(int idx) {
+void removeCheat(int idx) 
+{
     for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
         if (idx-- == 0) {
             cheatList.erase(i);
@@ -816,6 +860,47 @@ void removeCheat(int idx) {
     }
     
     canRemoveAllCheat = !cheatList.empty();
+}
+
+void updateEnableCheat(int idx, bool enable)
+{
+    for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
+        if (idx-- == 0) {
+            (*i).enabled = enable;
+            break;
+        }
+    }
+}
+
+void executeCheats()
+{
+    if (!canCheat) {
+        return;
+    }
+
+    if (memoryBlock == NULL) {
+        updateSnapshot();
+    }
+
+    if (memoryBlock == NULL) {
+        return;
+    }
+
+    for (CheatList::iterator i = cheatList.begin(); i != cheatList.end(); ++i) {
+        CheatInfo& ci = (*i);
+
+        if (ci.enabled) {
+            int size = 1;
+            UInt8 data[2];
+            data[0] = (UInt8)(ci.value & 0xff);
+            if (ci.dataSize == DATASIZE_16BIT) {
+                size = 2;
+                data[1] = data[0];
+                data[0] = (UInt8)(ci.value >> 8);
+            }
+            DeviceWriteMemoryBlockMemory(memoryBlock, data, ci.address, size);
+        }
+    }
 }
 
 static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt32 address, 
@@ -958,8 +1043,6 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
     switch (iMsg) {
     case WM_INITDIALOG:
         {
-//            HBITMAP hIcon = LoadBitmap(GetDllHinstance(), MAKEINTRESOURCE(IDB_TRAINER));
-//            SendDlgItemMessage(hDlg, IDC_OPEN, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hIcon);
             HICON hIcon = LoadIcon(GetDllHinstance(), MAKEINTRESOURCE(IDI_OPEN));
             SendDlgItemMessage(hDlg, IDC_OPEN, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
 
@@ -1037,6 +1120,19 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             break;
 
+        case IDC_ENABLE:
+            {
+                HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
+
+                if (ListView_GetSelectedCount(hwnd)) {
+                    int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
+                    bool enable = !ListView_GetCheckState(hwnd, index);
+                    ListView_SetCheckState(hwnd, index, enable);
+                    updateEnableCheat(index, enable);
+                }
+            }
+            break;
+
         case IDC_SAVE:
             {
                 char* filename = cheatFileDialog(hDlg, ".mcf", true);
@@ -1067,6 +1163,12 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                         updateButtons();
                     }
                     currIndex = -1;
+                }
+
+                int index = ((NMLISTVIEW FAR *)lParam)->iItem;
+                if (index != -1) {
+                    bool enable = ListView_GetCheckState(hwnd, index) != 0;
+                    updateEnableCheat(index, enable);
                 }
             }
 
@@ -1214,7 +1316,16 @@ static BOOL CALLBACK trainerProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
             tcItem.pszText = "Find Cheats ";
             TabCtrl_InsertItem(GetDlgItem(hDlg, IDC_TAB), 1, &tcItem);
         }
+
+        SetTimer(hDlg, CHEAT_TIMER_ID, 100, 0);
+
         return FALSE;
+
+    case WM_TIMER:
+        if (wParam == CHEAT_TIMER_ID) {
+            executeCheats();
+        }
+        return 0;
 
     case WM_NOTIFY:
         switch (wParam) {
@@ -1273,21 +1384,26 @@ void OnShowTool() {
 
 void OnEmulatorStart() {
     updateButtons();
+    canCheat = true;
 }
 
 void OnEmulatorStop() {
+    memoryBlock = NULL;
     updateButtons();
+    canCheat = false;
 }
 
 void OnEmulatorPause() {
-    updateSnapshot();
+    createSnapshot();
     clearSearch();
     updateListView();
     updateButtons();
+    canCheat = false;
 }
 
 void OnEmulatorResume() {
     updateButtons();
+    canCheat = true;
 }
 
 void OnEmulatorReset() {

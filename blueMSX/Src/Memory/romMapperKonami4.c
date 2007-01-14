@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami4.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:29 $
+** $Date: 2007-01-14 16:09:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,7 +93,7 @@ static void write(RomMapperKonami4* rm, UInt16 address, UInt8 value)
     address += 0x4000;
 
     /* Page at 4000h is fixed */
-    if (address < 0x6000 || address > 0xA000) {
+    if (address < 0x6000 || address >= 0xc000) {
         return;
     }
 
