@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:32 $
+** $Date: 2007-02-04 20:39:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,8 +114,27 @@ static void reset(RomMapperTC8566AF* rm)
 static UInt8 read(RomMapperTC8566AF* rm, UInt16 address) 
 {
     address += 0x4000;
-
 	if ((address & 0x3fff) >= 0x3ff0) {
+#if 1
+		switch (address & 0x0f) {
+        case 0x00:
+            return (UInt8)(address / 0x4000);
+        case 0x01:
+            return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
+        case 0x04:
+            return tc8566afReadRegister(rm->fdc, 4);
+        case 0x05:
+            return tc8566afReadRegister(rm->fdc, 5);
+        case 0x0c:
+            return 0xfc;
+        case 0x0d:
+            return 0xfc;
+        case 0x0f:
+            return 0x3f;
+        default:
+            return 0xff;
+        }
+#else
 		switch (address & 0x3FFF) {
 		case 0x3ff1:
             return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
@@ -128,6 +147,7 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
 		default:
 			return 0xff;
 		}
+#endif
 	} 
    
     if (address >= 0x4000 && address < 0x8000) {

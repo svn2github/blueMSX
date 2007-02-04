@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-10-02 20:20:39 $
+** $Date: 2007-02-04 20:39:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
+#include "StrcmpNoCase.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -210,7 +211,7 @@ static int checkArg(const char* arg, const char* value) {
         return 0;
     }
 
-    return strcmp(arg + 1, value) == 0;
+    return strcmpnocase(arg + 1, value) == 0;
 }
 
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2006-10-10 21:35:23 $
+** $Date: 2007-02-04 20:39:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,7 +70,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->warningTitle                    = "blueMSX - Attenzione";
     ls->warningDiscardChanges           = "Vuoi veramente annullare le modifiche effettuate?";
-    ls->warningOverwriteFile            = "Vuoi sovrascrivere il file: ";
+    ls->warningOverwriteFile            = "Vuoi veramente sovrascrivere il file: ";
     ls->errorTitle                      = "blueMSX - Errore";
     ls->errorEnterFullscreen            = "Non riesco ad attivare la visualizzazione a schermo intero.           \n";
     ls->errorDirectXFailed              = "Non riesco a creare gli oggetti DirectX.          \nHo selezionato automaticamente le GDI.\nVerifica le proprietà video.";
@@ -188,7 +188,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuToolsMachine                = "Configurazione della macchina...";
     ls->menuToolsShortcuts              = "Configurazione dei tasti rapidi...";
-    ls->menuToolsCtrlEditor             = "Configurazione di joystick e tastiera...";                                   // New in 2.6
+    ls->menuToolsCtrlEditor             = "Configurazione di joystick e tastiera...";               // New in 2.6
     ls->menuToolsMixer                  = "Mixer audio...";
     ls->menuToolsDebugger               = "Debugger...";
     ls->menuToolsTrainer                = "Gestione trainer...";
@@ -210,7 +210,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgOpen                         = "Apri...";
     ls->dlgCancel                       = "Annulla";
     ls->dlgSave                         = "Salva";
-    ls->dlgSaveAs                       = "Salva come...";
+    ls->dlgSaveAs                       = "Salva con...";
     ls->dlgRun                          = "Esegui";
     ls->dlgClose                        = "Chiudi";
 
@@ -225,8 +225,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgLoadState                    = "Carica lo stato della CPU";
     ls->dlgLoadVideoCapture             = "Carica un video acquisito";                              // New in 2.6
     ls->dlgSaveState                    = "Salva lo stato della CPU";
-    ls->dlgSaveCassette                 = "blueMSX - Salva la cassetta con nome";
-    ls->dlgSaveVideoClipAs              = "Crea un filmato con nome";                               // New in 2.6
+    ls->dlgSaveCassette                 = "blueMSX - Salva la cassetta come file immagine";
+    ls->dlgSaveVideoClipAs              = "Salva il filmato con nome";                              // New in 2.6
     ls->dlgAmountCompleted              = "Salvataggio in corso:";                                  // New in 2.6
     ls->dlgInsertRom1                   = "Inserisci una cartuccia nello slot 1";
     ls->dlgInsertRom2                   = "Inserisci una cartuccia nello slot 2";
@@ -309,7 +309,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propSndMidiAll                  = "Tutti";
 
     ls->propMonMonGB                    = "Monitor ";
-    ls->propMonTypeText                 = "Tipologia:";
+    ls->propMonTypeText                 = "Tipo:";
     ls->propMonEmuText                  = "Emulazione:";
     ls->propVideoTypeText               = "Video:";
     ls->propWindowSizeText              = "Dimensioni della finestra:";
@@ -362,9 +362,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->propPriorityBoost               = " Utilizza blueMSX con priorità elevata";
     ls->propScreenshotPng               = " Utilizza il formato PNG per il salvataggio degli screenshot";
     ls->propClearHistory                = "Vuoi veramente svuotare la cronologia dei file recenti?";
-    ls->propOpenRomGB                   = "Inserimento delle immagini ROM ";
-    ls->propDefaultRomType              = "Tipologia di default:";
-    ls->propGuessRomType                = "Richiedi il tipo se necessario";
+    ls->propOpenRomGB                   = "Esecuzione delle immagini ROM ";
+    ls->propDefaultRomType              = "Tipo per default:";
+    ls->propGuessRomType                = "Selezione automatica";
 
     ls->propSettDefSlotGB               = "Trascinamento ";
     ls->propSettDefSlots                = "Inserisci la cartuccia nello:";
@@ -437,7 +437,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect           = "MSX 3.5\" singola faccia, 8 settori";
     ls->enumDiskSvi525Dbl               = "SVI-328 5.25\" doppia faccia";
     ls->enumDiskSvi525Sgl               = "SVI-328 5.25\" singola faccia";
-    ls->enumDiskSf3Sgl                  = "Sega SF-7000 3\" singola faccia";
+    ls->enumDiskSf3Sgl                  = "Sega SF-7000 3\" singola faccia";                        // New in 2.6
 
 
     //-----------------------------
@@ -445,25 +445,25 @@ void langInitItalian(LanguageStrings* ls)
     //-----------------------------
 
     ls->confTitle                       = "blueMSX - Configurazione della macchina";
-    ls->confConfigText                  = "Configurazione:";
+    ls->confConfigText                  = "Modello corrente:";
     ls->confSlotLayout                  = "Disposizione degli slot";
     ls->confMemory                      = "Gestione della memoria";
     ls->confChipEmulation               = "Selezione del chip";
     ls->confChipExtras                  = "Altre opzioni";
 
     ls->confOpenRom                     = "Seleziona un'immagine ROM";
-    ls->confSaveTitle                   = "blueMSX - Salva la configurazione della macchina";
-    ls->confSaveText                    = "Vuoi sovrascrivere la configurazione della macchina";
-    ls->confSaveAsTitle                 = "Salva con nome";
-    ls->confSaveAsMachineName           = "Nome della macchina:";
+    ls->confSaveTitle                   = "blueMSX - Salva il modello corrente";
+    ls->confSaveText                    = "Vuoi veramente sovrascrivere il modello";
+    ls->confSaveAsTitle                 = "Salva il modello con nome";
+    ls->confSaveAsMachineName           = "Nome del modello:";
     ls->confDiscardTitle                = "blueMSX - Configurazione";
     ls->confExitSaveTitle               = "blueMSX - Esci dalla configurazione della macchina";
     ls->confExitSaveText                = "Vuoi veramente annullare le modifiche effettuate?";
 
     ls->confSlotLayoutGB                = "Disposizione degli slot interni ";
     ls->confSlotExtSlotGB               = "Slot di espansione esterni ";
-    ls->confBoardGB                     = "Scheda madre ";
-    ls->confBoardText                   = "Modello:";
+    ls->confBoardGB                     = "Sistema ";
+    ls->confBoardText                   = "Tipo:";
     ls->confSlotPrimary                 = "Primario";
     ls->confSlotExpanded                = "Espanso (4 subslot)";
 
@@ -480,7 +480,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->confMemRomImage                 = "Immagine ROM";
     
     ls->confChipVideoGB                 = "Video ";
-    ls->confChipVideoChip               = "Modello:";
+    ls->confChipVideoChip               = "Chip:";
     ls->confChipVideoRam                = "VRAM:";
     ls->confChipSoundGB                 = "Audio ";
 
@@ -510,13 +510,13 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutKey                     = "Azione";
     ls->shortcutDescription             = "Tasti rapidi";
 
-    ls->shortcutSaveConfig              = "blueMSX - Salva lo schema dei tasti rapidi";
-    ls->shortcutOverwriteConfig         = "Vuoi sovrascrivere lo schema";
+    ls->shortcutSaveConfig              = "blueMSX - Salva lo schema corrente";
+    ls->shortcutOverwriteConfig         = "Vuoi veramente sovrascrivere lo schema";
     ls->shortcutExitConfig              = "blueMSX - Esci dalla configurazione dei tasti rapidi";
     ls->shortcutDiscardConfig           = "Vuoi veramente annullare le modifiche effettuate?";
     ls->shortcutSaveConfigAs            = "blueMSX - Salva lo schema con nome";
-    ls->shortcutConfigName              = "Nome del profilo:";
-    ls->shortcutNewProfile              = "< Nuovo Profilo >";
+    ls->shortcutConfigName              = "Nome dello schema:";
+    ls->shortcutNewProfile              = "< Nuovo >";
     ls->shortcutConfigTitle             = "blueMSX - Configurazione dei tasti rapidi";
     ls->shortcutAssign                  = "Assegna";
     ls->shortcutPressText               = "Combinazione scelta:";
@@ -542,7 +542,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutCasReadOnly             = "Usa una cassetta di sola lettura";
     ls->shortcutCasSetPosition          = "Imposta la posizione del nastro";
     ls->shortcutCasRewind               = "Riavvolgi il nastro";
-    ls->shortcutCasSave                 = "Salva la cassetta";
+    ls->shortcutCasSave                 = "Salva la cassetta come file immagine";
     ls->shortcutPrnFormFeed             = "Salta alla pagina successiva sulla stampante";
     ls->shortcutCpuStateLoad            = "Carica lo stato della CPU";
     ls->shortcutCpuStateSave            = "Salva lo stato della CPU";
@@ -571,8 +571,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutSwitchFront             = "Interruttore frontale Panasonic";
     ls->shortcutSwitchPause             = "Tasto pausa Panasonic";
     ls->shortcutToggleMouseLock         = "Mostra/Nascondi il puntatore del mouse";
-    ls->shortcutEmuSpeedMax             = "Aumenta temporaneamente la velocità di emulazione";
-    ls->shortcutEmuSpeedToggle          = "Passa alla velocità massima emulabile";
+    ls->shortcutEmuSpeedMax             = "Esegui temporaneamente alla massima velocità";
+    ls->shortcutEmuSpeedToggle          = "Esegui alla massima velocità di emulazione";
     ls->shortcutEmuSpeedNormal          = "Normalizza la velocità di emulazione";
     ls->shortcutEmuSpeedInc             = "Aumenta la velocità di emulazione";
     ls->shortcutEmuSpeedDec             = "Diminuisci la velocità di emulazione";

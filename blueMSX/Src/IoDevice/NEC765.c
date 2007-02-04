@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/NEC765.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:23 $
+** $Date: 2007-02-04 20:39:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -307,6 +307,7 @@ void nec765IdlePhaseWrite(NEC765* fdc, UInt8 value)
 	case CMD_SENSE_INTERRUPT_STATUS:
         fdc->mainStatus |= STM_DIO;
 		fdc->phase       = PHASE_RESULT;
+        fdc->phaseStep   = 0;
         fdc->interrupt   = 1;
         break;
 

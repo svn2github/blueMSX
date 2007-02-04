@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlain.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:31 $
+** $Date: 2007-02-04 20:39:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -143,10 +143,16 @@ int romMapperPlainCreate(char* filename, UInt8* romData,
         
     case 0x8000:
         if (getRomStart(romData, size) == 0x4000) {
+#if 1
+            for (i = 0; i < 8; i++) {
+                romMapper[i] = (i + 2) & 3;
+            }
+#else
             for (i = 0; i < 4; i++) {
                 romMapper[i] = i & 1;
                 romMapper[i + 4] = 2 + (i & 1);
             }
+#endif
         }
         else {
             for (i = 0; i < 8; i++) {
