@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-09-19 06:00:13 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void actionHarddiskInsert(int diskNo);
 void actionHarddiskInsertNew(int diskNo);
 void actionHarddiskInsertDir(int diskNo);
 void actionHarddiskRemove(int diskNo);
+void actionHarddiskRemoveAll();
 
 void actionQuit();
 void actionLoadState();

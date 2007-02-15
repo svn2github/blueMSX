@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2006-09-22 06:18:43 $
+** $Date: 2007-02-15 22:19:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,6 +94,8 @@
 #include "romMapperSegaBasic.h"
 #include "romMapperCvMegaCart.h"
 #include "romMapperDumas.h"
+#include "sramMapperMegaSCSI.h"
+#include "sramMapperEseSCC.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -182,6 +184,66 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
     case ROM_GIDE:
         success &= romMapperGIdeCreate(cartNo);
+        break;
+
+    case SRAM_MEGASCSI128:
+        sramMapperMegaSCSICreate("", NULL, 0x20000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_MEGASCSI256:
+        sramMapperMegaSCSICreate("", NULL, 0x40000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_MEGASCSI512:
+        sramMapperMegaSCSICreate("", NULL, 0x80000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_MEGASCSI1MB:
+        sramMapperMegaSCSICreate("", NULL, 0x100000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_ESERAM128:
+        sramMapperMegaSCSICreate("", NULL, 0x20000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_ESERAM256:
+        sramMapperMegaSCSICreate("", NULL, 0x40000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_ESERAM512:
+        sramMapperMegaSCSICreate("", NULL, 0x80000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_ESERAM1MB:
+        sramMapperMegaSCSICreate("", NULL, 0x100000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_WAVESCSI128:
+        sramMapperEseSCCCreate("", NULL, 0x20000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_WAVESCSI256:
+        sramMapperEseSCCCreate("", NULL, 0x40000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_WAVESCSI512:
+        sramMapperEseSCCCreate("", NULL, 0x80000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_WAVESCSI1MB:
+        sramMapperEseSCCCreate("", NULL, 0x100000, slot, sslot, 2, cartNo, 1);
+        break;
+
+    case SRAM_ESESCC128:
+        sramMapperEseSCCCreate("", NULL, 0x20000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_ESESCC256:
+        sramMapperEseSCCCreate("", NULL, 0x40000, slot, sslot, 2, 0, 0);
+        break;
+
+    case SRAM_ESESCC512:
+        sramMapperEseSCCCreate("", NULL, 0x80000, slot, sslot, 2, 0, 0);
         break;
 
     case ROM_FMPAC:

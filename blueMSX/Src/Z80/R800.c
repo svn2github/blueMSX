@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2006-09-19 06:00:43 $
+** $Date: 2007-02-15 22:19:01 $
 **
 ** Author: Daniel Vik
 **
@@ -86,6 +86,8 @@ static void fd_cb(R800* r800);
 #define DLY_RET       27
 #define DLY_S1990VDP  28
 #define DLY_T9769VDP  29
+#define DLY_LDSPHL    30
+#define DLY_BITIX     31
 
 #define delayMem(r800)      { r800->systemTime += r800->delay[DLY_MEM];      }
 #define delayMemOp(r800)    { r800->systemTime += r800->delay[DLY_MEMOP];    }
@@ -116,8 +118,10 @@ static void fd_cb(R800* r800);
 #define delayRet(r800)      { r800->systemTime += r800->delay[DLY_RET];      }
 #define delayRld(r800)      { r800->systemTime += r800->delay[DLY_RLD];      }
 #define delayT9769(r800)    { r800->systemTime += r800->delay[DLY_T9769VDP]; }
+#define delayLdSpHl(r800)   { r800->systemTime += r800->delay[DLY_LDSPHL];   }
+#define delayBitIx(r800)    { r800->systemTime += r800->delay[DLY_BITIX];    }
 
-
+/*
 #define delayVdpIO(r800, port) do {                                          \
     if ((port & 0xfffc) == 0x98) {                                           \
         delayT9769(r800);                                                    \
@@ -130,7 +134,20 @@ static void fd_cb(R800* r800);
         }                                                                    \
     }                                                                        \
 } while (0)
+*/
 
+#define delayVdpIO(r800, port) do {                                          \
+    if ((port & 0xfc) == 0x98) {                                             \
+        delayT9769(r800);                                                    \
+    }                                                                        \
+    if ((port & 0xf8) == 0x98) {                                             \
+        if (r800->cpuMode == CPU_R800) {                                     \
+            if (r800->systemTime - r800->vdpTime < r800->delay[DLY_S1990VDP])\
+                r800->systemTime = r800->vdpTime + r800->delay[DLY_S1990VDP];\
+            r800->vdpTime = r800->systemTime;                                \
+        }                                                                    \
+    }                                                                        \
+} while (0)
 
 static UInt8 readPort(R800* r800, UInt16 port) {
     UInt8 value;
@@ -514,14 +531,17 @@ static void ld_sp_word(R800* r800) {
 }
 
 static void ld_sp_hl(R800* r800) { 
+    delayLdSpHl(r800);                  // white cat append
     r800->regs.SP.W = r800->regs.HL.W; 
 }
 
 static void ld_sp_ix(R800* r800) { 
+    delayLdSpHl(r800);                  // white cat append
     r800->regs.SP.W = r800->regs.IX.W; 
 }
 
 static void ld_sp_iy(R800* r800) { 
+    delayLdSpHl(r800);                  // white cat append
     r800->regs.SP.W = r800->regs.IY.W; 
 }
 
@@ -2414,6 +2434,7 @@ static UInt8 SLA_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SLA(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2490,6 +2511,7 @@ static UInt8 SLL_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SLL(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2566,6 +2588,7 @@ static UInt8 SRA_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SRA(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2642,6 +2665,7 @@ static UInt8 SRL_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SRL(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2718,6 +2742,7 @@ static UInt8 RL_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RL(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2794,6 +2819,7 @@ static UInt8 RLC_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RLC(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2870,6 +2896,7 @@ static UInt8 RR_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RR(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -2946,6 +2973,7 @@ static UInt8 RRC_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RRC(r800, &val);
+    delayBit(r800);                 // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3019,6 +3047,7 @@ static void bit_0_xhl(R800* r800) {
 }
 
 static void bit_0_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3061,6 +3090,7 @@ static void bit_1_xhl(R800* r800) {
 }
 
 static void bit_1_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3103,6 +3133,7 @@ static void bit_2_xhl(R800* r800) {
 }
 
 static void bit_2_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3145,6 +3176,7 @@ static void bit_3_xhl(R800* r800) {
 }
 
 static void bit_3_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3187,6 +3219,7 @@ static void bit_4_xhl(R800* r800) {
 }
 
 static void bit_4_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3229,6 +3262,7 @@ static void bit_5_xhl(R800* r800) {
 }
 
 static void bit_5_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3271,6 +3305,7 @@ static void bit_6_xhl(R800* r800) {
 }
 
 static void bit_6_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3313,6 +3348,7 @@ static void bit_7_xhl(R800* r800) {
 }
 
 static void bit_7_xnn(R800* r800, UInt16 addr) { 
+    delayBitIx(r800);           // white cat append
     r800->regs.SH.W   = addr;
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         (r800->regs.SH.B.h & (X_FLAG | Y_FLAG)) |
@@ -3358,6 +3394,7 @@ static UInt8 RES_0_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 0, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3434,6 +3471,7 @@ static UInt8 RES_1_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 1, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3510,6 +3548,7 @@ static UInt8 RES_2_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 2, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3586,6 +3625,7 @@ static UInt8 RES_3_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 3, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3662,6 +3702,7 @@ static UInt8 RES_4_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 4, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3738,6 +3779,7 @@ static UInt8 RES_5_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 5, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3806,6 +3848,7 @@ static void res_6_l(R800* r800) {
 static void res_6_xhl(R800* r800) {
     UInt8 val = readMem(r800, r800->regs.HL.W);
     RES(r800, 6, &val); 
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, r800->regs.HL.W, val);
 }
@@ -3890,6 +3933,7 @@ static UInt8 RES_7_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     RES(r800, 7, &val);
+    delayBit(r800)              // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -3968,6 +4012,7 @@ static UInt8 SET_0_XNN(R800* r800, UInt16 addr) {
     r800->regs.SH.W = addr;
 
     SET(r800, 0, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
 
     writeMem(r800, addr, val);
@@ -4045,6 +4090,7 @@ static UInt8 SET_1_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 1, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4121,6 +4167,7 @@ static UInt8 SET_2_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 2, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4197,6 +4244,7 @@ static UInt8 SET_3_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 3, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4273,6 +4321,7 @@ static UInt8 SET_4_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 4, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4349,6 +4398,7 @@ static UInt8 SET_5_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 5, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4425,6 +4475,7 @@ static UInt8 SET_6_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 6, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -4501,6 +4552,7 @@ static UInt8 SET_7_XNN(R800* r800, UInt16 addr) {
     UInt8 val = readMem(r800, addr);
     r800->regs.SH.W = addr;
     SET(r800, 7, &val);
+    delayBit(r800);             // white cat append
     delayInc(r800);
     writeMem(r800, addr, val);
     return val;
@@ -5272,8 +5324,8 @@ static void outi(R800* r800) {
     UInt16 tmp;
     delayInOut(r800);
     val = readMem(r800, r800->regs.HL.W++);
-    r800->regs.BC.B.h--;
     writePort(r800, r800->regs.BC.W, val);
+    r800->regs.BC.B.h--;
     r800->regs.AF.B.l = (ZSXYTable[r800->regs.BC.B.h]) |
         ((val >> 6) & N_FLAG);
     tmp = val + r800->regs.HL.B.l;
@@ -5294,8 +5346,8 @@ static void outd(R800* r800) {
     UInt16 tmp;
     delayInOut(r800);
     val = readMem(r800, r800->regs.HL.W--);
-    r800->regs.BC.B.h--;
     writePort(r800, r800->regs.BC.W, val);
+    r800->regs.BC.B.h--;
     r800->regs.AF.B.l = (ZSXYTable[r800->regs.BC.B.h]) |
         ((val >> 6) & N_FLAG);
     tmp = val + r800->regs.HL.B.l;
@@ -5733,6 +5785,8 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_RLD]       = freqAdjust * 4;
         r800->delay[DLY_S1990VDP]  = freqAdjust * 0;
         r800->delay[DLY_T9769VDP]  = freqAdjust * ((r800->cpuFlags & CPU_VDP_IO_DELAY) ? 1 : 0);
+        r800->delay[DLY_LDSPHL]    = freqAdjust * 2;
+        r800->delay[DLY_BITIX]     = freqAdjust * 2;
         break;
 
     case CPU_R800:
@@ -5766,6 +5820,8 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_RLD]       = freqAdjust * 1;
         r800->delay[DLY_S1990VDP]  = freqAdjust * 57;
         r800->delay[DLY_T9769VDP]  = freqAdjust * ((r800->cpuFlags & CPU_VDP_IO_DELAY) ? 1 : 0);
+        r800->delay[DLY_LDSPHL]    = freqAdjust * 0;
+        r800->delay[DLY_BITIX]     = freqAdjust * 0;
         break;
     }
 }

@@ -84,6 +84,7 @@ void handleKeyboardInput(WPARAM wParam)
     if ( mod ==  MOD_CONTROL              && key == 'B')       SendMessage(hwnd, WM_HOTKEY, 15, 0);
     if ( mod ==  MOD_CONTROL              && key == 'F')       SendMessage(hwnd, WM_HOTKEY, 16, 0);
     if ( mod ==  0                        && key == VK_F3)     SendMessage(hwnd, WM_HOTKEY, 17, 0);
+    if ( mod ==  0                        && key == VK_HOME)   SendMessage(hwnd, WM_HOTKEY, 18, 0);
 }
 
 static void updateTooltip(int id, char* str)
@@ -835,10 +836,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 15, MOD_CONTROL, 'B');
             RegisterHotKey(hwnd, 16, MOD_CONTROL, 'F');
             RegisterHotKey(hwnd, 17, 0, VK_F3);
+            RegisterHotKey(hwnd, 18, 0, VK_HOME);
         }
         else {
             int i;
-            for (i = 1; i <= 17; i++) {
+            for (i = 1; i <= 18; i++) {
                 UnregisterHotKey(hwnd, i);
             }
         }
@@ -912,6 +914,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             case 17:
                 if (GetEmulatorState() != EMULATOR_STOPPED)
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_FINDNEXT, 0);
+                break;
+            case 18:
+                disassembly->updateScroll();
                 break;
             }
         }

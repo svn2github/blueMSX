@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.167 $
+** $Revision: 1.168 $
 **
-** $Date: 2006-09-30 19:58:17 $
+** $Date: 2007-02-15 22:19:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2146,11 +2146,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     }
                 }
 
+                themePageUpdate(st.themePageActive, GetDC(hwnd));
+
                 PatchDiskSetBusy(0, 0);
                 PatchDiskSetBusy(1, 0);
                 tapeSetBusy(0);
 
-                themePageUpdate(st.themePageActive, GetDC(hwnd));
             }
             break;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-09-30 19:58:17 $
+** $Date: 2007-02-15 22:19:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,7 +62,12 @@ static int      editRamNormalSize;
 static int      editRamMapperSize;
 static int      editRamMirroredSize;
 static int      editExtRamSize;
+
 static int      editMegaRamSize;
+static int      editMegaSCSISize;
+static int      editEseRamSize;
+static int      editWaveSCSISize;
+static int      editEseSCCSize;
 
 static void setCartSlotDropdown(HWND hDlg, int cart, int dropdownId);
 
@@ -549,6 +554,39 @@ static void getSizeControl(HWND hDlg)
             editMegaRamSize = 1024 * value;
         }
     }
+
+    if (editSlotInfo.romType == SRAM_MEGASCSI) {
+        if (value == 1) {
+            editMegaSCSISize = 0x100000;
+        }
+        if (value == 128 || value == 256 || value == 512) {
+            editMegaSCSISize = 1024 * value;
+        }
+    }
+
+    if (editSlotInfo.romType == SRAM_ESERAM) {
+        if (value == 1) {
+            editEseRamSize = 0x100000;
+        }
+        if (value == 128 || value == 256 || value == 512) {
+            editEseRamSize = 1024 * value;
+        }
+    }
+
+    if (editSlotInfo.romType == SRAM_WAVESCSI) {
+        if (value == 1) {
+            editWaveSCSISize = 0x100000;
+        }
+        if (value == 128 || value == 256 || value == 512) {
+            editWaveSCSISize = 1024 * value;
+        }
+    }
+
+    if (editSlotInfo.romType == SRAM_ESESCC) {
+        if (value == 128 || value == 256 || value == 512) {
+            editEseSCCSize = 1024 * value;
+        }
+    }
 }
 
 static void getSlotControl(HWND hDlg)
@@ -662,6 +700,26 @@ static void endEditControls(HWND hDlg)
         strcpy(editSlotInfo.name, "");
         editSlotInfo.pageCount = editMegaRamSize / 0x2000;
         editSlotInfo.startPage = 0;
+        break;
+
+    case SRAM_MEGASCSI:
+        editSlotInfo.pageCount = editMegaSCSISize / 0x2000;
+        editSlotInfo.startPage = 2;
+        break;
+
+    case SRAM_ESERAM:
+        editSlotInfo.pageCount = editEseRamSize / 0x2000;
+        editSlotInfo.startPage = 2;
+        break;
+
+    case SRAM_WAVESCSI:
+        editSlotInfo.pageCount = editWaveSCSISize / 0x2000;
+        editSlotInfo.startPage = 2;
+        break;
+
+    case SRAM_ESESCC:
+        editSlotInfo.pageCount = editEseSCCSize / 0x2000;
+        editSlotInfo.startPage = 2;
         break;
 
     case ROM_PAC:
@@ -830,6 +888,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
         romType != ROM_MSXMIDI && romType != ROM_MSXPRN &&
+        romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
         romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
         if (romSize == 0) {
@@ -1027,6 +1086,55 @@ static void setEditControls(HWND hDlg)
         }            
         break;
 
+    case SRAM_MEGASCSI:
+    case SRAM_ESERAM:
+    case SRAM_WAVESCSI:
+    case SRAM_ESESCC:
+        {
+            int src_size;
+            INT max;
+            int index = 0;
+
+            switch (romType) {
+            case SRAM_MEGASCSI:
+                src_size = editMegaSCSISize / 1024;
+                max = 1024;
+                break;
+            case SRAM_ESERAM:
+                src_size = editEseRamSize / 1024;
+                max = 1024;
+                break;
+            case SRAM_WAVESCSI:
+                src_size = editWaveSCSISize / 1024;
+                max = 1024;
+                break;
+            case SRAM_ESESCC:
+                src_size = editEseSCCSize / 1024;
+                max = 512;
+                break;
+            }
+
+            for (i = 128; i <= max; i *= 2) {
+                int size = i;
+                if (size < 1000) {
+                    sprintf(buffer, "%d kB", size);
+                }
+                else {
+                    sprintf(buffer, "%d MB", size / 1024);
+                }
+                SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_ADDSTRING, 0, (LPARAM)buffer);
+                if ((index == 0) || (size == src_size)) {
+                    SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_SETCURSEL, index, 0);
+                }
+                index++;
+            }
+            EnableWindow(GetDlgItem(hDlg, IDC_ROMSIZE), editSlotInfo.name[0] ? FALSE : TRUE);
+            SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+            EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+            SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
+        }
+        break;
+
     case ROM_NORMAL:
     case ROM_DISKPATCH:
     case ROM_CASPATCH:
@@ -1202,6 +1310,8 @@ static RomType romTypeList[] = {
     ROM_GIDE,
     ROM_SUNRISEIDE,
     ROM_BEERIDE,
+    SRAM_MEGASCSI,
+    SRAM_WAVESCSI,
     ROM_SVI738FDC,
     ROM_SVI328FDC,
     ROM_SVI328PRN,
@@ -1277,6 +1387,8 @@ static RomType romTypeList[] = {
     ROM_SF7000IPL,
     ROM_OBSONET,
 //    ROM_DUMAS,
+    SRAM_ESERAM,
+    SRAM_ESESCC,
     ROM_UNKNOWN,
 };
 
@@ -1285,6 +1397,32 @@ static void setEditProps(HWND hDlg, char* fileName)
     int size;
     int idx = 0;
     char* buf = romLoad(fileName, NULL, &size);
+
+    if ((buf != NULL) &&
+       ((editSlotInfo.romType == SRAM_MEGASCSI) ||
+        (editSlotInfo.romType == SRAM_ESERAM)   ||
+        (editSlotInfo.romType == SRAM_WAVESCSI) ||
+        (editSlotInfo.romType == SRAM_ESESCC))) {
+        if (((size == 0x100000) && (editSlotInfo.romType != SRAM_ESESCC)) ||
+              size == 0x80000 || size == 0x40000 || size == 0x20000) {
+            switch (editSlotInfo.romType) {
+            case SRAM_MEGASCSI:
+                editMegaSCSISize = size;
+                break;
+            case SRAM_ESERAM:
+                editEseRamSize   = size;
+                break;
+            case SRAM_WAVESCSI:
+                editWaveSCSISize = size;
+                break;
+            case SRAM_ESESCC:
+                editEseSCCSize   = size;
+                break;
+            }
+            free(buf);
+            return;
+        }
+    }
 
     editSlotInfo.romType = ROM_NORMAL;
 
@@ -1340,6 +1478,10 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         editRamMapperSize   = editSlotInfo.romType == RAM_MAPPER       ? editSlotInfo.pageCount * 0x2000 : 0x10000;
         editMegaRamSize     = editSlotInfo.romType == ROM_MEGARAM      ? editSlotInfo.pageCount * 0x2000 : 0xc0000;
         editExtRamSize      = editSlotInfo.romType == ROM_EXTRAM       ? editSlotInfo.pageCount * 0x2000 : 0x400000;
+        editMegaSCSISize    = editSlotInfo.romType == SRAM_MEGASCSI    ? editSlotInfo.pageCount * 0x2000 : 0x100000;
+        editEseRamSize      = editSlotInfo.romType == SRAM_ESERAM      ? editSlotInfo.pageCount * 0x2000 : 0x100000;
+        editWaveSCSISize    = editSlotInfo.romType == SRAM_WAVESCSI    ? editSlotInfo.pageCount * 0x2000 : 0x100000;
+        editEseSCCSize      = editSlotInfo.romType == SRAM_ESESCC      ? editSlotInfo.pageCount * 0x2000 : 0x80000;
 
         setEditControls(hDlg);
 
@@ -1379,7 +1521,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
+                sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.sram, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.sram; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
                 replaceCharInString(extensionList, '#', 0);
 
                 fileName = openFile(hDlg, langConfOpenRom(), extensionList, defDir, -1, NULL, NULL);
@@ -1474,9 +1616,19 @@ static void addMachineEntry(HWND hwnd, int entry) {
         sprintf(buffer, "");
     }
     else {
+        if  (machine->slotInfo[entry].romType == SRAM_MEGASCSI ||
+             machine->slotInfo[entry].romType == SRAM_ESERAM   ||
+             machine->slotInfo[entry].romType == SRAM_WAVESCSI ||
+             machine->slotInfo[entry].romType == SRAM_ESESCC)
+        {
+            start = 0x4000;
+            end   = 0xbfff;
+        }
+        else {
         start = machine->slotInfo[entry].startPage * 0x2000;
         end   = start + machine->slotInfo[entry].pageCount * 0x2000 - 1;
         if (end > 0xffff) end = 0xffff;
+        }
         sprintf(buffer, "%.4X-%.4X", start, end);
     }
     ListView_SetItem(hwnd, &lvi);
@@ -1485,7 +1637,11 @@ static void addMachineEntry(HWND hwnd, int entry) {
     if (machine->slotInfo[entry].romType == RAM_MAPPER ||
         machine->slotInfo[entry].romType == RAM_NORMAL ||
         machine->slotInfo[entry].romType == ROM_EXTRAM ||
-        machine->slotInfo[entry].romType == ROM_MEGARAM)
+        machine->slotInfo[entry].romType == ROM_MEGARAM ||
+        machine->slotInfo[entry].romType == SRAM_MEGASCSI ||
+        machine->slotInfo[entry].romType == SRAM_ESERAM ||
+        machine->slotInfo[entry].romType == SRAM_WAVESCSI ||
+        machine->slotInfo[entry].romType == SRAM_ESESCC)
     {
         int size = machine->slotInfo[entry].pageCount * 8;
         if (size < 1024) {

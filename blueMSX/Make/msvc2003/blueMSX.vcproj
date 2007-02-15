@@ -559,6 +559,9 @@
 					RelativePath="..\..\Src\Memory\MegaromCartridge.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\MegaSCSIsub.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\ram1kBMirrored.c">
 				</File>
 				<File
@@ -814,7 +817,13 @@
 					RelativePath="..\..\Src\Memory\sramLoader.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\sramMapperEseSCC.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\sramMapperMatsuchita.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\sramMapperMegaSCSI.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\sramMapperS1985.c">
@@ -831,6 +840,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\MegaromCartridge.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\MegaSCSIsub.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\PlayballSamples.h">
@@ -1085,7 +1097,13 @@
 					RelativePath="..\..\Src\Memory\sramLoader.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\sramMapperEseSCC.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\sramMapperMatsuchita.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\sramMapperMegaSCSI.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\sramMapperS1985.h">
@@ -1261,6 +1279,12 @@
 				RelativePath="..\..\Src\IoDevice\Led.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\IoDevice\MB89352.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\MB89352.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\IoDevice\Microwire93Cx6.c">
 			</File>
 			<File
@@ -1322,6 +1346,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Sc3000PPI.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\ScsiDevice.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\ScsiDevice.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\Sf7000PPI.c">

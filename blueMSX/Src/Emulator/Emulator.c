@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -618,11 +618,15 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         debuggerNotifyEmulatorPause();
         emuSingleStep = 0;
         emuState = EMU_PAUSED;
+        archSoundSuspend();
+        archMidiEnable(0);
     }
 
     if (breakpointHit) {
         debuggerNotifyEmulatorPause();
         emuState = EMU_PAUSED;
+        archSoundSuspend();
+        archMidiEnable(0);
     }
     
     if (emuState != EMU_RUNNING) {

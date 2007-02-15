@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -130,7 +130,7 @@ int boardUseFmPac();
 
 RomType boardGetRomType(int cartNo);
 
-typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE } HdType;
+typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE, HD_MEGASCSI, HD_WAVESCSI } HdType;
 HdType boardGetHdType(int hdIndex);
 
 

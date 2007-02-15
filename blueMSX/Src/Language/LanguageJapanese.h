@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,6 +109,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer IDE";
     ls->menuCartGIde            = "GIDE";
     ls->menuCartSunriseIde      = "Sunrise IDE";
+    ls->menuCartScsi            = "SCSI カートリッジ";          // white cat append
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";                  // white cat append
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // white cat append
     ls->menuCartSCC              = "SCC カートリッジ";
     ls->menuCartSCCPlus          = "SCC+ カートリッジ";
     ls->menuCartFMPac           = "FMPAC+ カートリッジ";
@@ -117,6 +120,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "特殊カートリッジ";
     ls->menuCartMegaRam         = "メガRAM カートリッジ";
     ls->menuCartExternalRam     = "外部RAM カートリッジ"; 
+    ls->menuCartEseRam          = "似非RAM カートリッジ";       // white cat append
+    ls->menuCartEseSCC          = "似非SCC カートリッジ";       // white cat append
 
     ls->menuDiskInsertNew       = "新規ディスクイメージを挿入";
     ls->menuDiskDirInsert       = "ディレクトリ挿入";
@@ -179,6 +184,7 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "ハードディスク";
     ls->menuFileHarddiskNoPesent= "ハードディスクは無効です";
+    ls->menuFileHarddiskRemoveAll= "ハードディスクを全て取り出す"; // white cat append
 
     ls->menuRunRun              = "実行";
     ls->menuRunPause            = "中断";

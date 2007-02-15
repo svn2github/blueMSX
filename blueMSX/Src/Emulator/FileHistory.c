@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "RomLoader.h"
 #include "MsxTypes.h"
 #include "ArchNotifications.h"
+#include "disk.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #include "ArchFile.h"
@@ -120,7 +121,22 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_MEGARAM256)  && 
             strcmp(fname, CARTNAME_MEGARAM512)  && 
             strcmp(fname, CARTNAME_MEGARAM768)  && 
-            strcmp(fname, CARTNAME_MEGARAM2M)) 
+            strcmp(fname, CARTNAME_MEGARAM2M)   &&
+            strcmp(fname, CARTNAME_MEGASCSI128) &&
+            strcmp(fname, CARTNAME_MEGASCSI256) &&
+            strcmp(fname, CARTNAME_MEGASCSI512) &&
+            strcmp(fname, CARTNAME_MEGASCSI1MB) &&
+            strcmp(fname, CARTNAME_ESERAM128)   &&
+            strcmp(fname, CARTNAME_ESERAM256)   &&
+            strcmp(fname, CARTNAME_ESERAM512)   &&
+            strcmp(fname, CARTNAME_ESERAM1MB)   &&
+            strcmp(fname, CARTNAME_WAVESCSI128) &&
+            strcmp(fname, CARTNAME_WAVESCSI256) &&
+            strcmp(fname, CARTNAME_WAVESCSI512) &&
+            strcmp(fname, CARTNAME_WAVESCSI1MB) &&
+            strcmp(fname, CARTNAME_ESESCC128)   &&
+            strcmp(fname, CARTNAME_ESESCC256)   &&
+            strcmp(fname, CARTNAME_ESESCC512))
         {
             struct stat s;
             int rv = archFileExists(fname);
@@ -265,6 +281,29 @@ void updateExtendedRomName(int drive, char* filename, char* zipFile) {
 
 void updateExtendedDiskName(int drive, char* filename, char* zipFile) {
     int size;
+    char* buf;
+    char* name;
+
+    extendedDiskName[drive][0] = 0;
+
+    if (drive < MAX_FDC_COUNT) {
+        buf = romLoad(filename, zipFile[0] ? zipFile : NULL, &size);
+        if (buf != NULL) {
+            strcpy(extendedDiskName[drive], mediaDbGetPrettyString(mediaDbLookupDisk(buf, size)));
+            free(buf);
+            if (extendedDiskName[drive][0] == 0) {
+                strcpy(extendedDiskName[drive], stripPathExt(zipFile[0] ? zipFile : filename));
+            }
+        }
+    } else {
+        name = zipFile[0] ? zipFile : filename;
+        if ((name != NULL) && name[0]) {
+            archFileExists(name);
+            strcpy(extendedDiskName[drive], stripPathExt(name));
+        }
+    }
+/*
+    int size;
     char* buf = romLoad(filename, zipFile[0] ? zipFile : NULL, &size);
 
     extendedDiskName[drive][0] = 0;
@@ -275,6 +314,7 @@ void updateExtendedDiskName(int drive, char* filename, char* zipFile) {
             strcpy(extendedDiskName[drive], stripPathExt(zipFile[0] ? zipFile : filename));
         }
     }
+*/
 }
 
 void updateExtendedCasName(int drive, char* filename, char* zipFile) {
@@ -335,6 +375,21 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM512)   &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM768)   &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_MEGARAM2M)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGASCSI128)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGASCSI256)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGASCSI512)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGASCSI1MB)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM128)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM256)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM512)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM1MB)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI128)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI256)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI512)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI1MB)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESESCC128)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESESCC256)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_ESESCC512)    &&
                 properties->media.carts[i].type != ROM_FMPAC               &&
                 properties->media.carts[i].type != ROM_PAC                 &&
                 properties->media.carts[i].type != ROM_GAMEREADER          &&

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,9 @@ typedef struct {
     char* menuCartBeerIde;
     char* menuCartGIde;
     char* menuCartSunriseIde;
+    char* menuCartScsi;
+    char* menuCartMegaSCSI;
+    char* menuCartWaveSCSI;
     char* menuCartSCC;
     char* menuCartSCCPlus;
     char* menuCartFMPac;
@@ -112,6 +115,8 @@ typedef struct {
     char* menuCartInsertSpecial;
     char* menuCartMegaRam;
     char* menuCartExternalRam;
+    char* menuCartEseRam;
+    char* menuCartEseSCC;
 
     char* menuDiskInsertNew;
     char* menuDiskDirInsert;
@@ -173,6 +178,7 @@ typedef struct {
     char* menuFileExit;
     char* menuFileHarddisk;
     char* menuFileHarddiskNoPesent;
+    char* menuFileHarddiskRemoveAll;
 
     char* menuRunRun;
     char* menuRunPause;
@@ -664,7 +670,6 @@ typedef struct {
     char* romTypeNms8280Digitiz;
     char* romTypeHbiV1Digitiz;
 
-   
     //----------------------
     // Debug type lines
     // Note: Only needs translation if debugger is translated

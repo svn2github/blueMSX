@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-09-22 06:18:42 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -120,6 +120,8 @@
 #include "romMapperSg1000.h"
 #include "romMapperSegaBasic.h"
 #include "romMapperDumas.h"
+#include "sramMapperMegaSCSI.h"
+#include "sramMapperEseSCC.h"
 
 int toint(char* buffer) 
 {
@@ -981,6 +983,42 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         }
         // -------------------------------
         
+        // MEGA-SCSI etc
+        switch (machine->slotInfo[i].romType) {
+        case SRAM_MEGASCSI:
+        case SRAM_ESERAM:
+        case SRAM_WAVESCSI:
+        case SRAM_ESESCC:
+            buf = NULL;
+            if (strlen(romName)) {
+                buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
+                if (buf == NULL) {
+                    success = 0;
+                    continue;
+                }
+            }
+            {
+                int mode = strlen(machine->slotInfo[i].inZipName) ? 2 : 0;
+                if (machine->slotInfo[i].romType == SRAM_MEGASCSI ||
+                    machine->slotInfo[i].romType == SRAM_WAVESCSI) {
+                    mode++;
+                }
+                if (machine->slotInfo[i].romType == SRAM_WAVESCSI ||
+                    machine->slotInfo[i].romType == SRAM_ESESCC) {
+                    success &= sramMapperEseSCCCreate
+                                (romName, buf, size, slot, subslot, startPage,
+                                machine->slotInfo[i].romType == SRAM_WAVESCSI ? hdId++ : 0, mode);
+                } else {
+                    success &= sramMapperMegaSCSICreate
+                                (romName, buf, size, slot, subslot, startPage,
+                                machine->slotInfo[i].romType == SRAM_MEGASCSI ? hdId++ : 0, mode);
+                }
+                if (buf) free(buf);
+            }
+            continue;
+        }
+        // -------------------------------
+
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {

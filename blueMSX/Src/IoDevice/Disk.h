@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,7 @@
 #define DISK_H
 
 #include "MsxTypes.h"
+#include <stdio.h>
 
 #define MAX_FDC_COUNT            2
 
@@ -52,7 +53,9 @@ int   diskGetSectorsPerTrack(int driveId);
 int   diskGetSectorSize(int driveId, int side, int track, int density);
 int   diskGetSides(int driveId);
 int   diskChanged(int driveId);
-
+int   _diskRead2(int driveId, UInt8* buffer, int sector, int numSectors);
+int   _diskWrite2(int driveId, UInt8* buffer, int sector, int numSectors);
+int   _diskGetTotalSectors(int driveId);
 static int diskGetHdDriveId(int hdId, int driveNo) {
     return MAX_FDC_COUNT + MAX_DRIVES_PER_HD * hdId + driveNo;
 }

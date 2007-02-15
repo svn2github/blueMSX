@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-09-21 20:20:47 $
+** $Date: 2007-02-15 22:18:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -598,6 +598,25 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
     case ROM_SF7000IPL:   return "SF-7000 IPL";
     case ROM_CVMEGACART:  return "ColecoVision MegaCart(R)";
+    case SRAM_MEGASCSI:   return langRomTypeMegaSCSI();
+    case SRAM_MEGASCSI128:return langRomTypeMegaSCSI128();
+    case SRAM_MEGASCSI256:return langRomTypeMegaSCSI256();
+    case SRAM_MEGASCSI512:return langRomTypeMegaSCSI512();
+    case SRAM_MEGASCSI1MB:return langRomTypeMegaSCSI1mb();
+    case SRAM_ESERAM:     return langRomTypeEseRam();
+    case SRAM_ESERAM128:  return langRomTypeEseRam128();
+    case SRAM_ESERAM256:  return langRomTypeEseRam256();
+    case SRAM_ESERAM512:  return langRomTypeEseRam512();
+    case SRAM_ESERAM1MB:  return langRomTypeEseRam1mb();
+    case SRAM_WAVESCSI:   return langRomTypeWaveSCSI();
+    case SRAM_WAVESCSI128:return langRomTypeWaveSCSI128();
+    case SRAM_WAVESCSI256:return langRomTypeWaveSCSI256();
+    case SRAM_WAVESCSI512:return langRomTypeWaveSCSI512();
+    case SRAM_WAVESCSI1MB:return langRomTypeWaveSCSI1mb();
+    case SRAM_ESESCC:     return langRomTypeEseSCC();
+    case SRAM_ESESCC128:  return langRomTypeEseSCC128();
+    case SRAM_ESESCC256:  return langRomTypeEseSCC256();
+    case SRAM_ESESCC512:  return langRomTypeEseSCC512();
 
     case ROM_UNKNOWN:     return langTextUnknown();
     }
@@ -717,6 +736,25 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_YAMAHASFG05: return "SFG-05";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
     case ROM_CVMEGACART:  return "MEGACART";
+    case SRAM_MEGASCSI:   return "MEGASCSI";
+    case SRAM_MEGASCSI128:return "MEGASCSI128";
+    case SRAM_MEGASCSI256:return "MEGASCSI256";
+    case SRAM_MEGASCSI512:return "MEGASCSI512";
+    case SRAM_MEGASCSI1MB:return "MEGASCSI1MB";
+    case SRAM_ESERAM:     return "ESE-RAM";
+    case SRAM_ESERAM128:  return "ESE-RAM128";
+    case SRAM_ESERAM256:  return "ESE-RAM256";
+    case SRAM_ESERAM512:  return "ESE-RAM512";
+    case SRAM_ESERAM1MB:  return "ESE-RAM1MB";
+    case SRAM_WAVESCSI:   return "WAVESCSI";
+    case SRAM_WAVESCSI128:return "WAVESCSI128";
+    case SRAM_WAVESCSI256:return "WAVESCSI256";
+    case SRAM_WAVESCSI512:return "WAVESCSI512";
+    case SRAM_WAVESCSI1MB:return "WAVESCSI1MB";
+    case SRAM_ESESCC:     return "ESE-SCC";
+    case SRAM_ESESCC128:  return "ESE-SCC128";
+    case SRAM_ESESCC256:  return "ESE-SCC256";
+    case SRAM_ESESCC512:  return "ESE-SCC512";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }
@@ -797,6 +835,25 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_GAMEREADER:  return 1;
     case ROM_SUNRISEIDE:  return 1;
     case ROM_BEERIDE:     return 1;
+    case SRAM_MEGASCSI:   return 1;
+    case SRAM_MEGASCSI128:return 1;
+    case SRAM_MEGASCSI256:return 1;
+    case SRAM_MEGASCSI512:return 1;
+    case SRAM_MEGASCSI1MB:return 1;
+    case SRAM_ESERAM:     return 1;
+    case SRAM_ESERAM128:  return 1;
+    case SRAM_ESERAM256:  return 1;
+    case SRAM_ESERAM512:  return 1;
+    case SRAM_ESERAM1MB:  return 1;
+    case SRAM_WAVESCSI:   return 1;
+    case SRAM_WAVESCSI128:return 1;
+    case SRAM_WAVESCSI256:return 1;
+    case SRAM_WAVESCSI512:return 1;
+    case SRAM_WAVESCSI1MB:return 1;
+    case SRAM_ESESCC:     return 1;
+    case SRAM_ESESCC128:  return 1;
+    case SRAM_ESESCC256:  return 1;
+    case SRAM_ESESCC512:  return 1;
     }
     return 0;
 }

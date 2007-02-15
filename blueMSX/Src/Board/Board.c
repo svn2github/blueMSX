@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2006-09-26 05:47:38 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1290,6 +1290,8 @@ void boardSetMachine(Machine* machine)
         case ROM_SUNRISEIDE: hdType[hdIndex++] = HD_SUNRISEIDE; break;
         case ROM_BEERIDE:    hdType[hdIndex++] = HD_BEERIDE;    break;
         case ROM_GIDE:       hdType[hdIndex++] = HD_GIDE;       break;
+        case SRAM_MEGASCSI:  hdType[hdIndex++] = HD_MEGASCSI;   break;
+        case SRAM_WAVESCSI:  hdType[hdIndex++] = HD_WAVESCSI;   break;
         }
     }
 
@@ -1333,6 +1335,8 @@ static BoardType boardLoadState(const char* stateFile)
     BoardType boardType;
     char* version;
     int   size;
+    int   i;
+    char  tag[16];
 
     saveStateCreate(stateFile);
     version = zipLoadFile(stateFile, "version", &size);
@@ -1364,7 +1368,7 @@ static BoardType boardLoadState(const char* stateFile)
     di->carts[1].type     = saveStateGet(state, "cartType01",     0);
     saveStateGetBuffer(state, "cartName01",  di->carts[1].name, sizeof(di->carts[1].name));
     saveStateGetBuffer(state, "cartInZip01", di->carts[1].inZipName, sizeof(di->carts[1].inZipName));
-
+#if 0
     di->disks[0].inserted = saveStateGet(state, "diskInserted00", 0);
     saveStateGetBuffer(state, "diskName00",  di->disks[0].name, sizeof(di->disks[0].name));
     saveStateGetBuffer(state, "diskInZip00", di->disks[0].inZipName, sizeof(di->disks[0].inZipName));
@@ -1372,6 +1376,16 @@ static BoardType boardLoadState(const char* stateFile)
     di->disks[1].inserted = saveStateGet(state, "diskInserted01", 0);
     saveStateGetBuffer(state, "diskName01",  di->disks[1].name, sizeof(di->disks[1].name));
     saveStateGetBuffer(state, "diskInZip01", di->disks[1].inZipName, sizeof(di->disks[1].inZipName));
+#else
+    for (i = 0; i < MAXDRIVES; i++) {
+        sprintf(tag, "diskInserted%.2d", i);
+        di->disks[i].inserted = saveStateGet(state, tag, 0);
+        sprintf(tag, "diskName%.2d", i);
+        saveStateGetBuffer(state, tag, di->disks[i].name, sizeof(di->disks[i].name));
+        sprintf(tag, "diskInZip%.2d", i);
+        saveStateGetBuffer(state, tag, di->disks[i].inZipName, sizeof(di->disks[i].inZipName));
+    }
+#endif
 
     di->tapes[0].inserted = saveStateGet(state, "casInserted", 0);
     saveStateGetBuffer(state, "casName",  di->tapes[0].name, sizeof(di->tapes[0].name));
@@ -1397,6 +1411,7 @@ void boardSaveState(const char* stateFile)
     int size;
     void* bitmap;
     int rv;
+    int i;
 
     if (!boardRunning) {
         return;
@@ -1425,14 +1440,23 @@ void boardSaveState(const char* stateFile)
     saveStateSet(state, "cartType01",     di->carts[1].type);
     saveStateSetBuffer(state, "cartName01",  di->carts[1].name, strlen(di->carts[1].name) + 1);
     saveStateSetBuffer(state, "cartInZip01", di->carts[1].inZipName, strlen(di->carts[1].inZipName) + 1);
-
+#if 0
     saveStateSet(state, "diskInserted00", di->disks[0].inserted);
     saveStateSetBuffer(state, "diskName00",  di->disks[0].name, strlen(di->disks[0].name) + 1);
     saveStateSetBuffer(state, "diskInZip00", di->disks[0].inZipName, strlen(di->disks[0].inZipName) + 1);
     saveStateSet(state, "diskInserted01", di->disks[1].inserted);
     saveStateSetBuffer(state, "diskName01",  di->disks[1].name, strlen(di->disks[1].name) + 1);
     saveStateSetBuffer(state, "diskInZip01", di->disks[1].inZipName, strlen(di->disks[1].inZipName) + 1);
-
+#else
+    for (i = 0; i < MAXDRIVES; i++) {
+    sprintf(buf, "diskInserted%.2d", i);
+    saveStateSet(state, buf, di->disks[i].inserted);
+    sprintf(buf, "diskName%.2d", i);
+    saveStateSetBuffer(state, buf,  di->disks[i].name, strlen(di->disks[i].name) + 1);
+    sprintf(buf, "diskInZip%.2d", i);
+    saveStateSetBuffer(state, buf, di->disks[i].inZipName, strlen(di->disks[i].inZipName) + 1);
+    }
+#endif
     saveStateSet(state, "casInserted", di->tapes[0].inserted);
     saveStateSetBuffer(state, "casName",  di->tapes[0].name, strlen(di->tapes[0].name) + 1);
     saveStateSetBuffer(state, "casInZip", di->tapes[0].inZipName, strlen(di->tapes[0].inZipName) + 1);
@@ -1589,6 +1613,14 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         if (currentRomType[cartNo] == ROM_SUNRISEIDE) hdType[cartNo] = HD_SUNRISEIDE;
         if (currentRomType[cartNo] == ROM_BEERIDE)    hdType[cartNo] = HD_BEERIDE;
         if (currentRomType[cartNo] == ROM_GIDE)       hdType[cartNo] = HD_GIDE;
+        if (currentRomType[cartNo] == SRAM_MEGASCSI128) hdType[cartNo] = HD_MEGASCSI;
+        if (currentRomType[cartNo] == SRAM_MEGASCSI256) hdType[cartNo] = HD_MEGASCSI;
+        if (currentRomType[cartNo] == SRAM_MEGASCSI512) hdType[cartNo] = HD_MEGASCSI;
+        if (currentRomType[cartNo] == SRAM_MEGASCSI1MB) hdType[cartNo] = HD_MEGASCSI;
+        if (currentRomType[cartNo] == SRAM_WAVESCSI128) hdType[cartNo] = HD_WAVESCSI;
+        if (currentRomType[cartNo] == SRAM_WAVESCSI256) hdType[cartNo] = HD_WAVESCSI;
+        if (currentRomType[cartNo] == SRAM_WAVESCSI512) hdType[cartNo] = HD_WAVESCSI;
+        if (currentRomType[cartNo] == SRAM_WAVESCSI1MB) hdType[cartNo] = HD_WAVESCSI;
     }
 
     if (boardRunning && cartNo < boardInfo.cartridgeCount) {

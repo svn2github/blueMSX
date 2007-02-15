@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2006-09-19 06:00:13 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "Board.h"
 #include "Casette.h"
 #include "Debugger.h"
+#include "Disk.h"
 #include "FileHistory.h"
 #include "LaunchFile.h"
 #include "Emulator.h"
@@ -178,6 +179,32 @@ void actionHarddiskRemove(int diskNo)
         boardChangeDiskette(diskNo, NULL, NULL);
         emulatorResume();
     }
+    archUpdateMenu(0);
+}
+
+void actionHarddiskRemoveAll()
+{
+    int i, j;
+    int diskNo;
+    int flag;
+
+    flag = (emulatorGetState() != EMU_STOPPED);
+    if (flag) emulatorSuspend();
+
+    for (i = 0; i < MAX_HD_COUNT; i++) {
+        //if (boardGetHdType(i) != HD_NONE) {
+            for (j = 0; j < MAX_DRIVES_PER_HD; j++) {
+                diskNo = diskGetHdDriveId(i, j);
+                if (state.properties->media.disks[diskNo].fileName) {
+                    state.properties->media.disks[diskNo].fileName[0] = 0;
+                    state.properties->media.disks[diskNo].fileNameInZip[0] = 0;
+                    updateExtendedDiskName(diskNo, state.properties->media.disks[diskNo].fileName, state.properties->media.disks[diskNo].fileNameInZip);
+                    if (flag) boardChangeDiskette(diskNo, NULL, NULL);
+                }
+            }
+        //}
+    }
+    if (flag) emulatorResume();
     archUpdateMenu(0);
 }
 

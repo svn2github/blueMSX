@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-09-27 23:27:11 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -60,7 +60,21 @@
 #define CARTNAME_SUNRISEIDE  "Sunrise IDE"
 #define CARTNAME_BEERIDE     "Beer IDE"
 #define CARTNAME_GIDE        "GIDE"
-
+#define CARTNAME_MEGASCSI128 "128kB MEGA-SCSI"
+#define CARTNAME_MEGASCSI256 "256kB MEGA-SCSI"
+#define CARTNAME_MEGASCSI512 "512kB MEGA-SCSI"
+#define CARTNAME_MEGASCSI1MB "1MB MEGA-SCSI"
+#define CARTNAME_ESERAM128   "128kB Ese-RAM"
+#define CARTNAME_ESERAM256   "256kB Ese-RAM"
+#define CARTNAME_ESERAM512   "512kB Ese-RAM"
+#define CARTNAME_ESERAM1MB   "1MB Ese-RAM"
+#define CARTNAME_WAVESCSI128 "128kB WAVE-SCSI"
+#define CARTNAME_WAVESCSI256 "256kB WAVE-SCSI"
+#define CARTNAME_WAVESCSI512 "512kB WAVE-SCSI"
+#define CARTNAME_WAVESCSI1MB "1MB WAVE-SCSI"
+#define CARTNAME_ESESCC128   "128kB Ese-SCC"
+#define CARTNAME_ESESCC256   "256kB Ese-SCC"
+#define CARTNAME_ESESCC512   "512kB Ese-SCC"
 
 typedef enum { 
     PROP_EMULATION = 0, 

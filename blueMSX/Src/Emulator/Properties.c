@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-09-27 23:27:11 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -727,6 +727,7 @@ void propSave(Properties* properties)
     SET_INT_VALUE_3(video, fullscreen, bitDepth);
     SET_ENUM_VALUE_2(video, driver, VideoDriverPair);
     SET_INT_VALUE_2(video, captureFps);
+    
     SET_INT_VALUE_2(video, captureSize);
     
     SET_INT_VALUE_2(videoIn, disabled);

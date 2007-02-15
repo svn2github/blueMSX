@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -550,4 +550,57 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     diskUpdateInfo(driveId);
 
     return 1;
+}
+
+/*
+	optimized routine for ScsiDevice.c
+*/
+int _diskRead2(int driveId, UInt8* buffer, int sector, int numSectors)
+{
+	int length  = numSectors * 512;
+	if (!diskPresent(driveId))
+		return 0;
+
+	if (ramImageBuffer[driveId] == NULL) {
+		if ((drives[driveId] != NULL)) {
+			if (0 == fseek(drives[driveId], sector * 512, SEEK_SET))
+				return (fread(buffer, 1, length, drives[driveId]) == length);
+		}
+		return 0;
+	}
+
+	memcpy(buffer, ramImageBuffer[driveId] + sector * 512, numSectors * 512);
+	return 1;
+}
+
+/*
+	optimized routine for ScsiDevice.c
+*/
+int _diskWrite2(int driveId, UInt8* buffer, int sector, int numSectors)
+{
+	int length  = numSectors * 512;
+	if (!diskPresent(driveId))
+		return 0;
+
+	if (ramImageBuffer[driveId] == NULL) {
+		if ((drives[driveId] != NULL)) {
+			if (0 == fseek(drives[driveId], sector * 512, SEEK_SET))
+				return (fwrite(buffer, 1, length, drives[driveId]) == length);
+		}
+		return 0;
+	}
+
+	memcpy(ramImageBuffer[driveId] + sector * 512, buffer, length);
+	return 1;
+}
+
+/*
+	for mb89352.c
+	corresponds to harddisk and floppy disk
+*/
+int   _diskGetTotalSectors(int driveId)
+{
+    if ((diskPresent(driveId)) && (driveId < MAXDRIVES))
+        return fileSize[driveId] / 512;
+	return 0;
 }

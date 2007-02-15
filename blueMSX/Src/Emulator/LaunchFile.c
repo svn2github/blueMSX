@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2007-02-15 22:18:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -191,6 +191,21 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               0 == strcmp(CARTNAME_MEGARAM512,  filename) ? ROM_MEGARAM512 :
               0 == strcmp(CARTNAME_MEGARAM768,  filename) ? ROM_MEGARAM768 :
               0 == strcmp(CARTNAME_MEGARAM2M,   filename) ? ROM_MEGARAM2M  :
+              0 == strcmp(CARTNAME_MEGASCSI128, filename) ? SRAM_MEGASCSI128 :
+              0 == strcmp(CARTNAME_MEGASCSI256, filename) ? SRAM_MEGASCSI256 :
+              0 == strcmp(CARTNAME_MEGASCSI512, filename) ? SRAM_MEGASCSI512 :
+              0 == strcmp(CARTNAME_MEGASCSI1MB, filename) ? SRAM_MEGASCSI1MB :
+              0 == strcmp(CARTNAME_ESERAM128,   filename) ? SRAM_ESERAM128 :
+              0 == strcmp(CARTNAME_ESERAM256,   filename) ? SRAM_ESERAM256 :
+              0 == strcmp(CARTNAME_ESERAM512,   filename) ? SRAM_ESERAM512 :
+              0 == strcmp(CARTNAME_ESERAM1MB,   filename) ? SRAM_ESERAM1MB :
+              0 == strcmp(CARTNAME_WAVESCSI128, filename) ? SRAM_WAVESCSI128 :
+              0 == strcmp(CARTNAME_WAVESCSI256, filename) ? SRAM_WAVESCSI256 :
+              0 == strcmp(CARTNAME_WAVESCSI512, filename) ? SRAM_WAVESCSI512 :
+              0 == strcmp(CARTNAME_WAVESCSI1MB, filename) ? SRAM_WAVESCSI1MB :
+              0 == strcmp(CARTNAME_ESESCC128,   filename) ? SRAM_ESESCC128 :
+              0 == strcmp(CARTNAME_ESESCC256,   filename) ? SRAM_ESESCC256 :
+              0 == strcmp(CARTNAME_ESESCC512,   filename) ? SRAM_ESESCC512 :
               romType;
 
     if (drive == 0) {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2006-10-10 21:35:23 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,6 +107,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
     ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartScsi            = "SCSI";
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -115,6 +118,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Insert Special";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "External RAM";
+    ls->menuCartEseRam          = "Ese-RAM";
+    ls->menuCartEseSCC          = "Ese-SCC";
 
     ls->menuDiskInsertNew       = "Insert New Disk Image";
     ls->menuDiskDirInsert       = "Insert Directory";
@@ -177,6 +182,7 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Hard Disk";
     ls->menuFileHarddiskNoPesent= "No Controllers Present";
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk"; // append
 
     ls->menuRunRun              = "Run";
     ls->menuRunPause            = "Pause";

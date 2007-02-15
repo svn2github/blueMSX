@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.82 $
+** $Revision: 1.83 $
 **
-** $Date: 2006-09-21 20:20:46 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -304,6 +304,9 @@ char* langMenuCartIde() { return ls->menuCartIde; }
 char* langMenuCartBeerIde() { return ls->menuCartBeerIde; }
 char* langMenuCartGIde() { return ls->menuCartGIde; }
 char* langMenuCartSunriseIde() { return ls->menuCartSunriseIde; }
+char* langMenuCartScsi() { return ls->menuCartScsi; }
+char* langMenuCartMegaSCSI() { return ls->menuCartMegaSCSI; }
+char* langMenuCartWaveSCSI() { return ls->menuCartWaveSCSI; }
 char* langMenuCartSCC() { return ls->menuCartSCC; }
 char* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
 char* langMenuCartFMPac()  { return ls->menuCartFMPac; }
@@ -312,6 +315,8 @@ char* langMenuCartHBI55() { return ls->menuCartHBI55; }
 char* langMenuCartInsertSpecial() { return ls->menuCartInsertSpecial; }
 char* langMenuCartMegaRam() { return ls->menuCartMegaRam; }
 char* langMenuCartExternalRam() { return ls->menuCartExternalRam; }
+char* langMenuCartEseRam() { return ls->menuCartEseRam; }
+char* langMenuCartEseSCC() { return ls->menuCartEseSCC; }
 
 char* langMenuDiskInsertNew() { return ls->menuDiskInsertNew; }
 char* langMenuDiskDirInsert() { return ls->menuDiskDirInsert; }
@@ -373,6 +378,7 @@ char* langMenuFileScreenShot() { return ls->menuFileScreenShot; }
 char* langMenuFileExit() { return ls->menuFileExit; }
 char* langMenuFileHarddisk() { return ls->menuFileHarddisk; }
 char* langMenuFileHarddiskNoPresent() { return ls->menuFileHarddiskNoPesent; }
+char* langMenuFileHarddiskRemoveAll() { return ls->menuFileHarddiskRemoveAll; }
 
 char* langMenuRunRun() { return ls->menuRunRun; }
 char* langMenuRunPause() { return ls->menuRunPause; }
@@ -914,7 +920,25 @@ char* langRomTypeSfg05() { return "Yamaha SFG-05"; }
 char* langRomTypeObsonet() { return "Obsonet"; }
 char* langRomTypeDumas() { return "Dumas"; }
 char* langRomTypeSegaBasic() { return "Sega Basic"; }
-
+char* langRomTypeMegaSCSI() { return "MEGA-SCSI"; }
+char* langRomTypeMegaSCSI128() { return "128kb MEGA-SCSI"; }
+char* langRomTypeMegaSCSI256() { return "256kb MEGA-SCSI"; }
+char* langRomTypeMegaSCSI512() { return "512kb MEGA-SCSI"; }
+char* langRomTypeMegaSCSI1mb() { return "1MB MEGA-SCSI"; }
+char* langRomTypeEseRam() { return "Ese-RAM"; }
+char* langRomTypeEseRam128() { return "128kb Ese-RAM"; }
+char* langRomTypeEseRam256() { return "256kb Ese-RAM"; }
+char* langRomTypeEseRam512() { return "512kb Ese-RAM"; }
+char* langRomTypeEseRam1mb() { return "1MB Ese-RAM"; }
+char* langRomTypeWaveSCSI() { return "WAVE-SCSI"; }
+char* langRomTypeWaveSCSI128() { return "128kb WAVE-SCSI"; }
+char* langRomTypeWaveSCSI256() { return "256kb WAVE-SCSI"; }
+char* langRomTypeWaveSCSI512() { return "512kb WAVE-SCSI"; }
+char* langRomTypeWaveSCSI1mb() { return "1MB WAVE-SCSI"; }
+char* langRomTypeEseSCC() { return "Ese-SCC"; }
+char* langRomTypeEseSCC128() { return "128kb Ese-SCC"; }
+char* langRomTypeEseSCC256() { return "256kb Ese-SCC"; }
+char* langRomTypeEseSCC512() { return "512kb Ese-SCC"; }
 
 //----------------------
 // Debug type lines

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-09-21 20:20:46 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -170,6 +170,25 @@ char* langRomTypePlayBall()         { return "Sony Playball"; }
 char* langRomTypeObsonet()          { return "Obsonet"; }
 char* langRomTypeDumas()            { return "Dumas"; }
 char* langRomTypeSegaBasic()        { return "Sega Basic"; }
+char* langRomTypeMegaSCSI()         { return "MEGA-SCSI"; }
+char* langRomTypeMegaSCSI128()      { return "128kB MEGA-SCSI"; }
+char* langRomTypeMegaSCSI256()      { return "256kB MEGA-SCSI"; }
+char* langRomTypeMegaSCSI512()      { return "512kB MEGA-SCSI"; }
+char* langRomTypeMegaSCSI1mb()      { return "1MB MEGA-SCSI"; }
+char* langRomTypeEseRam()           { return "Ese-RAM"; }
+char* langRomTypeEseRam128()        { return "128kB Ese-RAM"; }
+char* langRomTypeEseRam256()        { return "256kB Ese-RAM"; }
+char* langRomTypeEseRam512()        { return "512kB Ese-RAM"; }
+char* langRomTypeEseRam1mb()        { return "1MB Ese-RAM"; }
+char* langRomTypeWaveSCSI()         { return "WAVE-SCSI"; }
+char* langRomTypeWaveSCSI128()      { return "128kB WAVE-SCSI"; }
+char* langRomTypeWaveSCSI256()      { return "256kB WAVE-SCSI"; }
+char* langRomTypeWaveSCSI512()      { return "512kB WAVE-SCSI"; }
+char* langRomTypeWaveSCSI1mb()      { return "1MB WAVE-SCSI"; }
+char* langRomTypeEseSCC()           { return "Ese-SCC"; }
+char* langRomTypeEseSCC128()        { return "128kB Ese-SCC"; }
+char* langRomTypeEseSCC256()        { return "256kB Ese-SCC"; }
+char* langRomTypeEseSCC512()        { return "512kB Ese-SCC"; }
 
 //----------------------
 // Debug type lines

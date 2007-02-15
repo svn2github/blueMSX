@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2006-09-19 06:00:38 $
+** $Date: 2007-02-15 22:19:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -101,7 +101,7 @@
 #define ID_TOOLS_MIXER                  40061
 
 
-#define ID_FILE_CART_OFFSET               100
+#define ID_FILE_CART_OFFSET               150
 
 #define ID_FILE_CART_INSERT             41000
 #define ID_FILE_CART_REMOVE             41001
@@ -130,34 +130,50 @@
 #define ID_FILE_CART_SUNRISEIDE         41089
 #define ID_FILE_CART_BEERIDE            41090
 #define ID_FILE_CART_GIDE               41091
+#define ID_FILE_CART_MEGASCSI128        41092
+#define ID_FILE_CART_MEGASCSI256        41093
+#define ID_FILE_CART_MEGASCSI512        41094
+#define ID_FILE_CART_MEGASCSI1MB        41095
+#define ID_FILE_CART_ESERAM128          41096
+#define ID_FILE_CART_ESERAM256          41097
+#define ID_FILE_CART_ESERAM512          41098
+#define ID_FILE_CART_ESERAM1MB          41099
+#define ID_FILE_CART_WAVESCSI128        41100
+#define ID_FILE_CART_WAVESCSI256        41101
+#define ID_FILE_CART_WAVESCSI512        41102
+#define ID_FILE_CART_WAVESCSI1MB        41103
+#define ID_FILE_CART_ESESCC128          41104
+#define ID_FILE_CART_ESESCC256          41105
+#define ID_FILE_CART_ESESCC512          41106
 
 #define ID_FILE_DISK_OFFSET               100
 
-#define ID_FILE_DISK_INSERT             41200
-#define ID_FILE_DISK_INSERTDIR          41201
-#define ID_FILE_DISK_REMOVE             41202
-#define ID_FILE_DISK_AUTOSTART          41203
-#define ID_FILE_DISK_INSERTNEW          41204
-#define ID_FILE_DISK_HISTORY            41205
+#define ID_FILE_DISK_INSERT             41300
+#define ID_FILE_DISK_INSERTDIR          41301
+#define ID_FILE_DISK_REMOVE             41302
+#define ID_FILE_DISK_AUTOSTART          41303
+#define ID_FILE_DISK_INSERTNEW          41304
+#define ID_FILE_DISK_HISTORY            41305
 
-#define ID_FILE_TAPE_INSERT             41400
-#define ID_FILE_TAPE_REMOVE             41401
-#define ID_FILE_TAPE_REWIND             41402
-#define ID_FILE_TAPE_POSITION           41403
-#define ID_FILE_TAPE_SAVE               41404
-#define ID_FILE_TAPE_READONLY           41405
-#define ID_FILE_TAPE_AUTOREWNIND        41406
-#define ID_FILE_TAPE_HISTORY            41407
+#define ID_FILE_TAPE_INSERT             41500
+#define ID_FILE_TAPE_REMOVE             41501
+#define ID_FILE_TAPE_REWIND             41502
+#define ID_FILE_TAPE_POSITION           41503
+#define ID_FILE_TAPE_SAVE               41504
+#define ID_FILE_TAPE_READONLY           41505
+#define ID_FILE_TAPE_AUTOREWNIND        41506
+#define ID_FILE_TAPE_HISTORY            41507
 
+#define ID_HARDDISK_REMOVEALL           41599
 
 #define ID_HARDDISK_OFFSET                 50
 #define ID_HARDDISK_COUNT                  30
 
-#define ID_HARDDISK_INSERT              41500
-#define ID_HARDDISK_INSERTNEW           41501
-#define ID_HARDDISK_INSERTDIR           41502
-#define ID_HARDDISK_REMOVE              41503
-#define ID_HARDDISK_HISTORY             41504
+#define ID_HARDDISK_INSERT              41600
+#define ID_HARDDISK_INSERTNEW           41601
+#define ID_HARDDISK_INSERTDIR           41602
+#define ID_HARDDISK_REMOVE              41603
+#define ID_HARDDISK_HISTORY             41604
 
 
 
@@ -243,6 +259,21 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_SUNRISEIDE) == 0)     return langRomTypeSunriseIde();
     if (strcmp(fileName, CARTNAME_BEERIDE) == 0)        return langRomTypeBeerIde();
     if (strcmp(fileName, CARTNAME_GIDE) == 0)           return langRomTypeGide();
+    if (strcmp(fileName, CARTNAME_MEGASCSI128) == 0)    return langRomTypeMegaSCSI128();
+    if (strcmp(fileName, CARTNAME_MEGASCSI256) == 0)    return langRomTypeMegaSCSI256();
+    if (strcmp(fileName, CARTNAME_MEGASCSI512) == 0)    return langRomTypeMegaSCSI512();
+    if (strcmp(fileName, CARTNAME_MEGASCSI1MB) == 0)    return langRomTypeMegaSCSI1mb();
+    if (strcmp(fileName, CARTNAME_ESERAM128) == 0)      return langRomTypeEseRam128();
+    if (strcmp(fileName, CARTNAME_ESERAM256) == 0)      return langRomTypeEseRam256();
+    if (strcmp(fileName, CARTNAME_ESERAM512) == 0)      return langRomTypeEseRam512();
+    if (strcmp(fileName, CARTNAME_ESERAM1MB) == 0)      return langRomTypeEseRam1mb();
+    if (strcmp(fileName, CARTNAME_WAVESCSI128) == 0)    return langRomTypeWaveSCSI128();
+    if (strcmp(fileName, CARTNAME_WAVESCSI256) == 0)    return langRomTypeWaveSCSI256();
+    if (strcmp(fileName, CARTNAME_WAVESCSI512) == 0)    return langRomTypeWaveSCSI512();
+    if (strcmp(fileName, CARTNAME_WAVESCSI1MB) == 0)    return langRomTypeWaveSCSI1mb();
+    if (strcmp(fileName, CARTNAME_ESESCC128) == 0)      return langRomTypeEseSCC128();
+    if (strcmp(fileName, CARTNAME_ESESCC256) == 0)      return langRomTypeEseSCC256();
+    if (strcmp(fileName, CARTNAME_ESESCC512) == 0)      return langRomTypeEseSCC512();
 
     return stripPath(fileName);
 }
@@ -372,11 +403,21 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     HMENU hMenu = CreatePopupMenu();
     HMENU hMenuExtRam = CreatePopupMenu();
     HMENU hMenuMegaRam = CreatePopupMenu();
+    HMENU hMenuMegaSCSI = CreatePopupMenu();
+    HMENU hMenuEseRam = CreatePopupMenu();
+    HMENU hMenuWaveSCSI = CreatePopupMenu();
+    HMENU hMenuEseSCC = CreatePopupMenu();
+
     HMENU hMenuIde = CreatePopupMenu();
+    HMENU hMenuScsi = CreatePopupMenu();
 
     setMenuColor(hMenu);
     setMenuColor(hMenuExtRam);
     setMenuColor(hMenuMegaRam);
+    setMenuColor(hMenuMegaSCSI);
+    setMenuColor(hMenuEseRam);
+    setMenuColor(hMenuWaveSCSI);
+    setMenuColor(hMenuEseSCC);
 
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM512KB, "512 kB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM1MB, "1 MB");
@@ -389,9 +430,31 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM768, "768 kB");
     AppendMenu(hMenuMegaRam, MF_STRING, idOffset + ID_FILE_CART_MEGARAM2M, "2 MB");
 
+    AppendMenu(hMenuMegaSCSI, MF_STRING, idOffset + ID_FILE_CART_MEGASCSI128, "128 kB");
+    AppendMenu(hMenuMegaSCSI, MF_STRING, idOffset + ID_FILE_CART_MEGASCSI256, "256 kB");
+    AppendMenu(hMenuMegaSCSI, MF_STRING, idOffset + ID_FILE_CART_MEGASCSI512, "512 kB");
+    AppendMenu(hMenuMegaSCSI, MF_STRING, idOffset + ID_FILE_CART_MEGASCSI1MB, "1 MB");
+
+    AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM128, "128 kB");
+    AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM256, "256 kB");
+    AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM512, "512 kB");
+    AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM1MB, "1 MB");
+
+    AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI128, "128 kB");
+    AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI256, "256 kB");
+    AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI512, "512 kB");
+    AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI1MB, "1 MB");
+
+    AppendMenu(hMenuEseSCC, MF_STRING, idOffset + ID_FILE_CART_ESESCC128, "128 kB");
+    AppendMenu(hMenuEseSCC, MF_STRING, idOffset + ID_FILE_CART_ESESCC256, "256 kB");
+    AppendMenu(hMenuEseSCC, MF_STRING, idOffset + ID_FILE_CART_ESESCC512, "512 kB");
+
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_SUNRISEIDE, langMenuCartSunriseIde());
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_BEERIDE, langMenuCartBeerIde());
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_GIDE, langMenuCartGIde());
+
+    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuMegaSCSI, langMenuCartMegaSCSI());
+    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuWaveSCSI, langMenuCartWaveSCSI());
 
     if (gameReaderSupported()) {
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
@@ -399,8 +462,10 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     }
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCC, langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCCPLUS, langMenuCartSCCPlus());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEseSCC, langMenuCartEseSCC());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuIde, langMenuCartIde());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuScsi, langMenuCartScsi());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_FMPAC, langMenuCartFMPac());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_PAC, langMenuCartPac());
@@ -410,6 +475,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langMenuCartExternalRam());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langMenuCartMegaRam());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEseRam, langMenuCartEseRam());
 
     return hMenu;
 }
@@ -565,6 +632,8 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
     char langBuffer[560];
     int hasHd = 0;
     int i;
+    int j;
+    int flag;
 
     setMenuColor(hMenu);
 
@@ -587,13 +656,43 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
             sprintf(langBuffer, "IDE%d GIDE", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
             break;
+        case HD_MEGASCSI:
+            hasHd = 1;
+            for (j = 0; j < 8; j++) {
+                sprintf(langBuffer, "SCSI%d MEGA-SCSI #%d", i, j);
+                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
         }
+            break;
+        case HD_WAVESCSI:
+            hasHd = 1;
+            for (j = 0; j < 8; j++) {
+                sprintf(langBuffer, "SCSI%d WAVE-SCSI #%d", i, j);
+                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+            }
+            break;
     }
+    }
+#if 1
+    if (hasHd) {
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
+        flag = 1;
+        for (i = 0; i < MAX_HD_COUNT && flag; i++) {
+            for (j = 0; j < MAX_DRIVES_PER_HD && flag; j++) {
+                if (*pProperties->media.disks[diskGetHdDriveId(i, j)].fileName) {
+                    flag = 0;
+                }
+            }
+        }
+        AppendMenu(hMenu, MF_STRING | flag ? MF_GRAYED : 0, ID_HARDDISK_REMOVEALL, langMenuFileHarddiskRemoveAll());
+    } else {
+        AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
+    }
+#else
     if (!hasHd) {
         AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langMenuFileHarddiskNoPresent());
     }
-
+#endif
     return hMenu;
 }
 
@@ -1322,6 +1421,51 @@ int menuCommand(Properties* pProperties, int command)
         case ID_FILE_CART_SONYHBI55:            
             insertCartridge(pProperties, i, CARTNAME_SONYHBI55, NULL, ROM_SONYHBI55, 0);
             return 1;
+        case ID_FILE_CART_MEGASCSI128:
+            insertCartridge(pProperties, i, CARTNAME_MEGASCSI128, NULL, SRAM_MEGASCSI128, 0);
+            return 1;
+        case ID_FILE_CART_MEGASCSI256:
+            insertCartridge(pProperties, i, CARTNAME_MEGASCSI256, NULL, SRAM_MEGASCSI256, 0);
+            return 1;
+        case ID_FILE_CART_MEGASCSI512:
+            insertCartridge(pProperties, i, CARTNAME_MEGASCSI512, NULL, SRAM_MEGASCSI512, 0);
+            return 1;
+        case ID_FILE_CART_MEGASCSI1MB:
+            insertCartridge(pProperties, i, CARTNAME_MEGASCSI1MB, NULL, SRAM_MEGASCSI1MB, 0);
+            return 1;
+        case ID_FILE_CART_ESERAM128:
+            insertCartridge(pProperties, i, CARTNAME_ESERAM128, NULL, SRAM_ESERAM128, 0);
+            return 1;
+        case ID_FILE_CART_ESERAM256:
+            insertCartridge(pProperties, i, CARTNAME_ESERAM256, NULL, SRAM_ESERAM256, 0);
+            return 1;
+        case ID_FILE_CART_ESERAM512:
+            insertCartridge(pProperties, i, CARTNAME_ESERAM512, NULL, SRAM_ESERAM512, 0);
+            return 1;
+        case ID_FILE_CART_ESERAM1MB:
+            insertCartridge(pProperties, i, CARTNAME_ESERAM1MB, NULL, SRAM_ESERAM1MB, 0);
+            return 1;
+        case ID_FILE_CART_WAVESCSI128:
+            insertCartridge(pProperties, i, CARTNAME_WAVESCSI128, NULL, SRAM_WAVESCSI128, 0);
+            return 1;
+        case ID_FILE_CART_WAVESCSI256:
+            insertCartridge(pProperties, i, CARTNAME_WAVESCSI256, NULL, SRAM_WAVESCSI256, 0);
+            return 1;
+        case ID_FILE_CART_WAVESCSI512:
+            insertCartridge(pProperties, i, CARTNAME_WAVESCSI512, NULL, SRAM_WAVESCSI512, 0);
+            return 1;
+        case ID_FILE_CART_WAVESCSI1MB:
+            insertCartridge(pProperties, i, CARTNAME_WAVESCSI1MB, NULL, SRAM_WAVESCSI1MB, 0);
+            return 1;
+        case ID_FILE_CART_ESESCC128:
+            insertCartridge(pProperties, i, CARTNAME_ESESCC128, NULL, SRAM_ESESCC128, 0);
+            return 1;
+        case ID_FILE_CART_ESESCC256:
+            insertCartridge(pProperties, i, CARTNAME_ESESCC256, NULL, SRAM_ESESCC256, 0);
+            return 1;
+        case ID_FILE_CART_ESESCC512:
+            insertCartridge(pProperties, i, CARTNAME_ESESCC512, NULL, SRAM_ESESCC512, 0);
+            return 1;
         case ID_FILE_CART_INSERT:       
             actionCartInsert(i);            
             return 0;
@@ -1407,6 +1551,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_FILE_TAPE_READONLY:             actionCasToggleReadonly();      return 0;
     case ID_FILE_TAPE_AUTOREWNIND:          actionToggleCasAutoRewind();    return 0;
     case ID_FILE_TAPE_SAVE:                 actionCasSave();                return 0;
+    case ID_HARDDISK_REMOVEALL:             actionHarddiskRemoveAll();      return 0;
     }
 
     // Parse other Menu Items

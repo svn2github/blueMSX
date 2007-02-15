@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:39 $
+** $Date: 2007-02-15 22:19:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,6 +121,9 @@ void archTimerDestroy(void* timer)
 static unsigned long long last[RDTSC_MAX_TIMERS];
 
 void rdtsc_start_timer (int timer) {
+#ifdef __GNUC__
+	__asm__ __volatile__("rdtsc" : "=A" (last[timer]));
+#else
 	unsigned int a,b; 
 	__asm { 
 		rdtsc
@@ -128,6 +131,7 @@ void rdtsc_start_timer (int timer) {
 		mov b,eax
 	}
 	last[timer]=(((unsigned long long int)a)<<32)+((unsigned long long int)b);
+#endif
 }
 
 static unsigned long long int rdtsc_queue[RDTSC_MAX_TIMERS][30]={
@@ -139,12 +143,18 @@ static unsigned long long int rdtsc_queue[RDTSC_MAX_TIMERS][30]={
 void rdtsc_end_timer (int timer) {
 	unsigned int a,b,i; 
 	unsigned long long int c;
+
+#ifdef __GNUC__
+	__asm__ __volatile__("rdtsc" : "=A" (c));
+#else
 	__asm { 
 		rdtsc
 		mov a,edx
 		mov b,eax
 	}
 	c=((((unsigned long long int)a)<<32)+((unsigned long long int)b))-last[timer];
+#endif
+
 	for (i=0; i<29; i++)
 	  rdtsc_queue[timer][i]=rdtsc_queue[timer][i+1];
     rdtsc_queue[timer][29]=c;

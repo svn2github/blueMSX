@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.83 $
+** $Revision: 1.84 $
 **
-** $Date: 2006-09-21 20:20:46 $
+** $Date: 2007-02-15 22:18:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,6 +131,9 @@ char* langMenuCartIde();
 char* langMenuCartBeerIde();
 char* langMenuCartGIde();
 char* langMenuCartSunriseIde();
+char* langMenuCartScsi();
+char* langMenuCartMegaSCSI();
+char* langMenuCartWaveSCSI();
 char* langMenuCartSCC();
 char* langMenuCartSCCPlus();
 char* langMenuCartFMPac();
@@ -139,6 +142,8 @@ char* langMenuCartHBI55();
 char* langMenuCartInsertSpecial();
 char* langMenuCartExternalRam();
 char* langMenuCartMegaRam();
+char* langMenuCartEseRam();
+char* langMenuCartEseSCC();
 
 char* langMenuDiskDirInsert();
 char* langMenuDiskInsertNew();
@@ -200,6 +205,7 @@ char* langMenuFileScreenShot();
 char* langMenuFileExit();
 char* langMenuFileHarddisk();
 char* langMenuFileHarddiskNoPresent();
+char* langMenuFileHarddiskRemoveAll();
 
 char* langMenuRunRun();
 char* langMenuRunPause();
@@ -741,7 +747,25 @@ char* langRomTypeSfg01();
 char* langRomTypeSfg05();
 char* langRomTypeObsonet();
 char* langRomTypeDumas();
-
+char* langRomTypeMegaSCSI();
+char* langRomTypeMegaSCSI128();
+char* langRomTypeMegaSCSI256();
+char* langRomTypeMegaSCSI512();
+char* langRomTypeMegaSCSI1mb();
+char* langRomTypeEseRam();
+char* langRomTypeEseRam128();
+char* langRomTypeEseRam256();
+char* langRomTypeEseRam512();
+char* langRomTypeEseRam1mb();
+char* langRomTypeWaveSCSI();
+char* langRomTypeWaveSCSI128();
+char* langRomTypeWaveSCSI256();
+char* langRomTypeWaveSCSI512();
+char* langRomTypeWaveSCSI1mb();
+char* langRomTypeEseSCC();
+char* langRomTypeEseSCC128();
+char* langRomTypeEseSCC256();
+char* langRomTypeEseSCC512();
 
 //----------------------
 // Debug type lines
