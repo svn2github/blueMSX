@@ -730,6 +730,12 @@
 					RelativePath="..\..\Src\Memory\romMapperNormal.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNoWind.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNoWind.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
 				</File>
 				<File
@@ -1235,6 +1241,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\FdcAudio.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\ft245.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\ft245.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\GameReader.cpp">

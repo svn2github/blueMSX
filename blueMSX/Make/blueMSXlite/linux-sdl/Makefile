@@ -196,6 +196,7 @@ SOURCE_FILES += romMapperNational.c
 SOURCE_FILES += romMapperNationalFdc.c
 SOURCE_FILES += romMapperNms8280VideoDa.c
 SOURCE_FILES += romMapperNormal.c
+SOURCE_FILES += romMapperNoWind.c
 SOURCE_FILES += romMapperObsonet.c
 SOURCE_FILES += romMapperPAC.c
 SOURCE_FILES += romMapperPanasonic.c
@@ -283,6 +284,7 @@ SOURCE_FILES += wd33c93.c
 SOURCE_FILES += WDCRC.c
 SOURCE_FILES += MB89352.c
 SOURCE_FILES += ScsiDevice.c
+SOURCE_FILES += ft245.c
 
 SOURCE_FILES += LanguageMinimal.c
 

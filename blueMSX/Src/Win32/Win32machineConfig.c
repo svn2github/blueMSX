@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2007-02-15 22:19:01 $
+** $Date: 2007-02-16 22:24:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -799,6 +799,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 4;
         break;
 
+    case ROM_NOWIND:
+        editSlotInfo.startPage = 0;
+        editSlotInfo.pageCount = 6;
+        break;
+
     case ROM_LODERUNNER:
     case ROM_BASIC:
         editSlotInfo.startPage = 4;
@@ -1230,6 +1235,12 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
+    case ROM_NOWIND:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xBFFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_GAMEREADER:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xFFFF");
@@ -1386,6 +1397,7 @@ static RomType romTypeList[] = {
     ROM_YAMAHASFG05,
     ROM_SF7000IPL,
     ROM_OBSONET,
+    ROM_NOWIND,
 //    ROM_DUMAS,
     SRAM_ESERAM,
     SRAM_ESESCC,

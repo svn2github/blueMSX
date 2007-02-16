@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-16 22:24:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -189,6 +189,7 @@ char* langRomTypeEseSCC()           { return "Ese-SCC"; }
 char* langRomTypeEseSCC128()        { return "128kB Ese-SCC"; }
 char* langRomTypeEseSCC256()        { return "256kB Ese-SCC"; }
 char* langRomTypeEseSCC512()        { return "512kB Ese-SCC"; }
+char* langRomTypeNoWind()           { return "NoWind USB"; }
 
 //----------------------
 // Debug type lines
@@ -253,7 +254,6 @@ char* langDbgDevRtc()               { return "RTC"; }
 char* langDbgDevTrPause()           { return "TR Pause"; }
 char* langDbgDevAy8910()            { return "AY8910 PSG"; }
 char* langDbgDevScc()               { return "SCC"; }
-
 
 char* langEnumControlsJoyNone()             { return "None"; }
 char* langEnumControlsJoyTetrisDongle()     { return "Tetris 2 Dongle"; }

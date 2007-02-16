@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2007-02-15 22:18:59 $
+** $Date: 2007-02-16 22:24:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,6 +172,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "FMDAS")        return ROM_FMDAS;
     if (name == "Obsonet")      return ROM_OBSONET;
     if (name == "Dumas")        return ROM_DUMAS;
+    if (name == "NoWind")       return ROM_NOWIND;
 
     // Roms not supproted in this format in the db
     if (name == "0x4000")       return ROM_0x4000;
@@ -494,6 +495,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KONAMI5:     return langRomTypeKonamiScc();
     case ROM_OBSONET:     return langRomTypeObsonet();
     case ROM_DUMAS:       return langRomTypeDumas();
+    case ROM_NOWIND:      return langRomTypeNoWind();
     case ROM_KONAMI4:     return langRomTypeKonami();
     case ROM_ASCII8:      return langRomTypeAscii8();
     case ROM_ASCII16:     return langRomTypeAscii16();
@@ -632,6 +634,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_KONAMI5:     return "KONAMI SCC";
     case ROM_OBSONET:     return "OBSONET";
     case ROM_DUMAS:       return "DUMAS";
+    case ROM_NOWIND:      return "NOWIND";
     case ROM_KONAMI4:     return "KONAMI";
     case ROM_ASCII8:      return "ASCII8";
     case ROM_ASCII16:     return "ASCII16";
@@ -806,6 +809,7 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_KONAMI5:     return 1;
     case ROM_OBSONET:     return 1;
     case ROM_DUMAS:       return 1;
+    case ROM_NOWIND:      return 1;
     case ROM_KONAMI4:     return 1;
     case ROM_ASCII8:      return 1;
     case ROM_ASCII16:     return 1;

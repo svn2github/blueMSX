@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-16 22:24:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -747,6 +747,7 @@ char* langRomTypeSfg01();
 char* langRomTypeSfg05();
 char* langRomTypeObsonet();
 char* langRomTypeDumas();
+char* langRomTypeNoWind();
 char* langRomTypeMegaSCSI();
 char* langRomTypeMegaSCSI128();
 char* langRomTypeMegaSCSI256();

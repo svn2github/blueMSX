@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.168 $
+** $Revision: 1.169 $
 **
-** $Date: 2007-02-15 22:19:00 $
+** $Date: 2007-02-16 22:24:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -485,6 +485,7 @@ static RomType romTypeList[] = {
     ROM_SF7000IPL,
     ROM_OBSONET,
 //    ROM_DUMAS,
+    ROM_NOWIND,
     ROM_UNKNOWN,
 };
 

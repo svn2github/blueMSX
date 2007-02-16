@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.83 $
+** $Revision: 1.84 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-16 22:24:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -919,6 +919,7 @@ char* langRomTypeSfg01() { return "Yamaha SFG-01"; }
 char* langRomTypeSfg05() { return "Yamaha SFG-05"; }
 char* langRomTypeObsonet() { return "Obsonet"; }
 char* langRomTypeDumas() { return "Dumas"; }
+char* langRomTypeNoWind() { return "NoWind USB"; }
 char* langRomTypeSegaBasic() { return "Sega Basic"; }
 char* langRomTypeMegaSCSI() { return "MEGA-SCSI"; }
 char* langRomTypeMegaSCSI128() { return "128kb MEGA-SCSI"; }

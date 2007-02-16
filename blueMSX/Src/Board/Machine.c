@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-02-16 22:24:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,6 +122,7 @@
 #include "romMapperDumas.h"
 #include "sramMapperMegaSCSI.h"
 #include "sramMapperEseSCC.h"
+#include "romMapperNoWind.h"
 
 int toint(char* buffer) 
 {
@@ -1061,6 +1062,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_OBSONET:
             success &= romMapperObsonetCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_NOWIND:
+            success &= romMapperNoWindCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_DUMAS:
