@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-02-16 16:16:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 #include "RomLoader.h"
 #include "MsxTypes.h"
 #include "ArchNotifications.h"
-#include "disk.h"
+#include "Disk.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #include "ArchFile.h"

@@ -141,6 +141,7 @@ SOURCE_FILES += AmdFlash.c
 SOURCE_FILES += DeviceManager.c
 SOURCE_FILES += IoPort.c
 SOURCE_FILES += MegaromCartridge.c
+SOURCE_FILES += MegaSCSIsub.c
 SOURCE_FILES += ram1kBMirrored.c
 SOURCE_FILES += ramMapper.c
 SOURCE_FILES += ramMapperIo.c
@@ -226,6 +227,8 @@ SOURCE_FILES += sramLoader.c
 SOURCE_FILES += sramMapperMatsuchita.c
 SOURCE_FILES += sramMapperS1985.c
 SOURCE_FILES += romMapperPlayBall.c
+SOURCE_FILES += sramMapperEseSCC.c
+SOURCE_FILES += sramMapperMegaSCSI.c
 
 SOURCE_FILES += Crc32Calc.c
 SOURCE_FILES += MediaDb.cpp
@@ -278,6 +281,8 @@ SOURCE_FILES += UartIO.c
 SOURCE_FILES += WD2793.c
 SOURCE_FILES += wd33c93.c
 SOURCE_FILES += WDCRC.c
+SOURCE_FILES += MB89352.c
+SOURCE_FILES += ScsiDevice.c
 
 SOURCE_FILES += LanguageMinimal.c
 

@@ -40,7 +40,7 @@
 #include "Board.h"
 #include "Disk.h"
 #include "FileHistory.h"
-#include "properties.h"
+#include "Properties.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
