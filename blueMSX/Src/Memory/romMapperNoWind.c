@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-17 14:41:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,7 +90,7 @@ static void loadState(RomMapperNoWind* rm)
 
     ft245LoadState(rm->ft245);
 
-    updateMapper(rm->romMapper, rm->romMapper);
+    updateMapper(rm, rm->romMapper);
 }
 
 static void destroy(RomMapperNoWind* rm)
@@ -136,7 +136,12 @@ static UInt8 peek(RomMapperNoWind* rm, UInt16 address)
 }
 
 static void write(RomMapperNoWind* rm, UInt16 address, UInt8 value) 
-{
+{   
+    if (address < 0x4000) {
+        amdFlashWrite(rm->amdFlash, address + 0x4000 * rm->romMapper, value);
+        return;
+    }
+
     if ((address >= 0x4000 && address < 0x6000) || 
         (address >= 0x8000 && address < 0xa000)) 
     {

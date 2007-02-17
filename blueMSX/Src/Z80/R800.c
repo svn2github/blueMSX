@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2007-02-15 22:19:01 $
+** $Date: 2007-02-17 14:41:09 $
 **
 ** Author: Daniel Vik
 **
@@ -45,10 +45,8 @@ static UInt16 DAATable[0x800];
 
 static void cb(R800* r800);
 static void dd(R800* r800);
-static void dd2(R800* r800);
 static void ed(R800* r800);
 static void fd(R800* r800);
-static void fd2(R800* r800);
 static void dd_cb(R800* r800);
 static void fd_cb(R800* r800);
 
@@ -5278,9 +5276,9 @@ static void ini(R800* r800) {  // Diff on flags
     UInt8  val;
     UInt16 tmp;
     delayInOut(r800);
+    r800->regs.BC.B.h--;
     val = readPort(r800, r800->regs.BC.W);
     writeMem(r800, r800->regs.HL.W++, val);
-    r800->regs.BC.B.h--;
     r800->regs.AF.B.l = (ZSPXYTable[r800->regs.BC.B.h] & (Z_FLAG | S_FLAG)) |
         ((val >> 6) & N_FLAG);
     tmp = val + ((r800->regs.BC.B.l + 1) & 0xFF);
@@ -5301,9 +5299,9 @@ static void ind(R800* r800) {
     UInt8 val;
     UInt16 tmp;
     delayInOut(r800);
+    r800->regs.BC.B.h--;
     val = readPort(r800, r800->regs.BC.W);
     writeMem(r800, r800->regs.HL.W--, val);
-    r800->regs.BC.B.h--;
     r800->regs.AF.B.l = (ZSPXYTable[r800->regs.BC.B.h] & (Z_FLAG | S_FLAG)) | 
         ((val >> 6) & N_FLAG);
     tmp = val + ((r800->regs.BC.B.l - 1) & 0xFF);
@@ -5465,11 +5463,11 @@ static Opcode opcodeDd[256] = {
     ret_nz,      pop_bc,      jp_nz,       jp,          call_nz,     push_bc,     add_a_byte,  rst_00,
     ret_z,       ret,         jp_z,        dd_cb,       call_z,      call,        adc_a_byte,  rst_08,
     ret_nc,      pop_de,      jp_nc,       out_byte_a,  call_nc,     push_de,     sub_byte,    rst_10,
-    ret_c,       exx,         jp_c,        in_a_byte,   call_c,      dd2,         sbc_a_byte,  rst_18,
+    ret_c,       exx,         jp_c,        in_a_byte,   call_c,      dd,          sbc_a_byte,  rst_18,
     ret_po,      pop_ix,      jp_po,       ex_xsp_ix,   call_po,     push_ix,     and_byte,    rst_20,
     ret_pe,      jp_ix,       jp_pe,       ex_de_hl,    call_pe,     ed,          xor_byte,    rst_28,
     ret_p,       pop_af,      jp_p,        di,          call_p,      push_af,     or_byte,     rst_30,
-    ret_m,       ld_sp_ix,    jp_m,        ei,          call_m,      fd2,         cp_byte,     rst_38  
+    ret_m,       ld_sp_ix,    jp_m,        ei,          call_m,      fd,          cp_byte,     rst_38  
 };
 
 static Opcode opcodeEd[256] = {
@@ -5535,11 +5533,11 @@ static Opcode opcodeFd[256] = {
     ret_nz,      pop_bc,      jp_nz,       jp,          call_nz,     push_bc,     add_a_byte,  rst_00,
     ret_z,       ret,         jp_z,        fd_cb,       call_z,      call,        adc_a_byte,  rst_08,
     ret_nc,      pop_de,      jp_nc,       out_byte_a,  call_nc,     push_de,     sub_byte,    rst_10,
-    ret_c,       exx,         jp_c,        in_a_byte,   call_c,      dd2,         sbc_a_byte,  rst_18,
+    ret_c,       exx,         jp_c,        in_a_byte,   call_c,      dd,          sbc_a_byte,  rst_18,
     ret_po,      pop_iy,      jp_po,       ex_xsp_iy,   call_po,     push_iy,     and_byte,    rst_20,
     ret_pe,      jp_iy,       jp_pe,       ex_de_hl,    call_pe,     ed,          xor_byte,    rst_28,
     ret_p,       pop_af,      jp_p,        di,          call_p,      push_af,     or_byte,     rst_30,
-    ret_m,       ld_sp_iy,    jp_m,        ei,          call_m,      fd2,         cp_byte,     rst_38  
+    ret_m,       ld_sp_iy,    jp_m,        ei,          call_m,      fd,          cp_byte,     rst_38  
 };
 
 static OpcodeNn opcodeNnCb[256] = {
@@ -5599,18 +5597,7 @@ static void cb(R800* r800) {
 
 static void dd(R800* r800) {
     int opcode = readOpcode(r800, r800->regs.PC.W++);
-    if (opcode != 0xcb && opcode != 0xdd && opcode != 0xfd) {
-        M1(r800);
-    }
-    else {
-        delayXD(r800);
-    }
-    opcodeDd[opcode](r800);
-}
-
-static void dd2(R800* r800) {
-    int opcode = readOpcode(r800, r800->regs.PC.W++);
-    delayXD(r800);
+    M1(r800);
     opcodeDd[opcode](r800);
 }
 
@@ -5622,18 +5609,7 @@ static void ed(R800* r800) {
 
 static void fd(R800* r800) {
     int opcode = readOpcode(r800, r800->regs.PC.W++);
-    if (opcode != 0xcb && opcode != 0xdd && opcode != 0xfd) {
-        M1(r800);
-    }
-    else {
-        delayXD(r800);
-    }
-    opcodeFd[opcode](r800);
-}
-
-static void fd2(R800* r800) {
-    int opcode = readOpcode(r800, r800->regs.PC.W++);
-    delayXD(r800);
+    M1(r800);
     opcodeFd[opcode](r800);
 }
 
