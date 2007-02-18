@@ -260,6 +260,11 @@ void updateButtons()
     EnableWindow(GetDlgItem(hDlgCheats, IDC_REMOVEALL), canRemoveAllCheat);
     EnableWindow(GetDlgItem(hDlgCheats, IDC_ENABLE),    canRemoveCheat);
     EnableWindow(GetDlgItem(hDlgCheats, IDC_SAVE),      canRemoveAllCheat);
+
+    bool running = GetEmulatorState() == EMULATOR_RUNNING;
+    SetWindowText(GetDlgItem(hDlgCheats, IDC_RUNSTOP), running ? "Pause" : "Run");
+    SetWindowText(GetDlgItem(hDlgSearch, IDC_RUNSTOP), running ? "Pause" : "Run");
+
 }
 
 static Snapshot* currentSnapshot = NULL;
@@ -652,7 +657,6 @@ void prepareAndShowAddCheatDialog(HWND hDlg)
     }
 }
 
-
 static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     static int currIndex;
@@ -771,6 +775,16 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case IDC_ADDCHEAT: 
             prepareAndShowAddCheatDialog(hDlg);
+            break;
+
+        case IDC_RUNSTOP:
+            if (GetEmulatorState() == EMULATOR_RUNNING) {
+                EmulatorPause();
+            }
+            else {
+                EmulatorRun();
+            }
+            updateButtons();
             break;
         }
         return TRUE;
@@ -928,6 +942,8 @@ static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt3
     ListView_SetItem(hwnd, &lvi);
 
     ListView_SetCheckState(hwnd, entry, enable);
+
+    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
 }
 
 static void updateCheatList()
@@ -1027,7 +1043,7 @@ static bool loadCheatFile(const char* filename)
             desc++;
         }
 
-        addCheat(desc, address, value, (DataSize)dataSize, (DisplayType)displayType, true);
+        addCheat(desc, address, value, (DataSize)dataSize, (DisplayType)displayType, false);
     }
 
     fclose(f);
@@ -1120,6 +1136,16 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             break;
 
+        case IDC_RUNSTOP:
+            if (GetEmulatorState() == EMULATOR_RUNNING) {
+                EmulatorPause();
+            }
+            else {
+                EmulatorRun();
+            }
+            updateButtons();
+            break;
+
         case IDC_ENABLE:
             {
                 HWND hwnd = GetDlgItem(hDlg, IDC_CHEATLIST);
@@ -1128,6 +1154,7 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                     int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
                     bool enable = !ListView_GetCheckState(hwnd, index);
                     ListView_SetCheckState(hwnd, index, enable);
+                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
                     updateEnableCheat(index, enable);
                 }
             }
@@ -1153,6 +1180,8 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                     if (currIndex == -1 && index != -1) {
                         canRemoveCheat = true;
+                        bool enable = ListView_GetCheckState(hwnd, index);
+                        SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
                         updateButtons();
                     }
                     currIndex = index;
@@ -1168,6 +1197,7 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                 int index = ((NMLISTVIEW FAR *)lParam)->iItem;
                 if (index != -1) {
                     bool enable = ListView_GetCheckState(hwnd, index) != 0;
+                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
                     updateEnableCheat(index, enable);
                 }
             }
@@ -1284,6 +1314,7 @@ bool showCheatDialog(CheatInfo* ci)
                        dbgHwnd, cheatDialogProc, (LPARAM)&tmp))
     {
         *ci = tmp;
+        ci->enabled = false;
         return true;
     }
     return false;
