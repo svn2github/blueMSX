@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.h,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : MB89352.h
+** $Date: 2007-02-18 23:56:47 $
 **
 ** More info: http://www.bluemsx.com
 **
