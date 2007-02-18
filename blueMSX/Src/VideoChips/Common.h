@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2006-12-09 19:59:52 $
+** $Date: 2007-02-18 23:59:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -188,24 +188,28 @@ static void RefreshRightBorder6(VDP* vdp, int Y, UInt16 bgColor1, UInt16 bgColor
     }
 }
 
-#if 0
+#if 1
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
     static int     border;
     static UInt8*  sprLine;
-    static UInt8*  charTable;
     static int     patternBase;
-    UInt16 color[2];
-    int    y;
+    static int     pattern;
+    static int     x;
+    static int     y;
+    static int     shift;
     int    rightBorder;
 
     if (X == -1) {
         X++;
-        linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 9);
+        linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 1);
         border = !vdp->screenOn || !vdp->drawArea;
 
         if (!border) {
             y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
+            x = 0;
+            patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
+            shift = 0;
         }
     }
 
@@ -217,11 +221,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
     if (rightBorder) {
         X2--;
     }
-    
-    X = 40  * (X - 2) / 28;
-    X2 = 40 * (X2 - 2) / 28;
-    X = X < 0 ? 0 : X; X = X > 40 ? 40 : X;
-    X2 = X2 < 0 ? 0 : X2; X2 = X2 > 40 ? 40 : X2;
 
     if (border) {
         UInt16 bgColor = vdp->palette[vdp->BGColor];
@@ -232,33 +231,243 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
             linePtr0[3] = bgColor;
             linePtr0[4] = bgColor;
             linePtr0[5] = bgColor;
-            linePtr0 += 6; 
+            linePtr0[6] = bgColor;
+            linePtr0[7] = bgColor;
+            linePtr0 += 8; 
             X++;
         }
     }
     else {
-        color[0] = vdp->palette[vdp->BGColor];
-        color[1] = vdp->palette[vdp->FGColor];
-
-        charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | (0xc00 + 40 * (y / 8))));
-        patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
+        UInt16 color[2] = { vdp->palette[vdp->BGColor], vdp->palette[vdp->FGColor] };
 
         while (X < X2) {
-            int pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+            if (X == 0 || X == 31) {
+                linePtr0[0] = color[0];
+                linePtr0[1] = color[0];
+                linePtr0[2] = color[0];
+                linePtr0[3] = color[0];
+                linePtr0[4] = color[0];
+                linePtr0[5] = color[0];
+                linePtr0[6] = color[0];
+                linePtr0[7] = color[0];
+                linePtr0 += 8; 
+                X++;
+            }
+            else {
+                int j;
+                for (j = 0; j < 4; j++) {
+                    if (shift <= 2) { 
+                        int charIdx = 0xc00 + 40 * (y / 8) + x++;
+                        UInt8* charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
+                        pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+                        shift = 8; 
+                    }
 
-            linePtr0[0] = color[(pattern >> 7) & 1];
-            linePtr0[1] = color[(pattern >> 6) & 1];
-            linePtr0[2] = color[(pattern >> 5) & 1];
-            linePtr0[3] = color[(pattern >> 4) & 1];
-            linePtr0[4] = color[(pattern >> 3) & 1];
-            linePtr0[5] = color[(pattern >> 2) & 1];
-            charTable++;
-            linePtr0 += 6;
-            X++;
+                    linePtr0[0] = color[(pattern >> --shift) & 1];
+                    linePtr0[1] = color[(pattern >> --shift) & 1];
+                    linePtr0 += 2; 
+                }
+                X++;
+            }
         }
     }
     if (rightBorder) {
-        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 7);
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+    }
+}
+
+
+static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
+{
+    static int     border;
+    static UInt8*  sprLine;
+    static int     patternBase;
+    static int     pattern;
+    static int     x;
+    static int     y;
+    static int     shift;
+    int    rightBorder;
+
+    if (X == -1) {
+        X++;
+        linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 1);
+        border = !vdp->screenOn || !vdp->drawArea;
+
+        if (!border) {
+            y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
+            x = 0;
+            patternBase =  (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
+            shift = 0;
+        }
+    }
+
+    if (linePtr0p == NULL) {
+        return;
+    }
+
+    rightBorder = X2 == 33;
+    if (rightBorder) {
+        X2--;
+    }
+
+    if (border) {
+        UInt16 bgColor = vdp->palette[vdp->BGColor];
+        while (X < X2) {
+            linePtr0p[0] = bgColor;
+            linePtr0p[1] = bgColor;
+            linePtr0p[2] = bgColor;
+            linePtr0p[3] = bgColor;
+            linePtr0p[4] = bgColor;
+            linePtr0p[5] = bgColor;
+            linePtr0p[6] = bgColor;
+            linePtr0p[7] = bgColor;
+            linePtr0p += 8; 
+            X++;
+        }
+    }
+    else {
+        UInt16 color[2] = { vdp->palette[vdp->BGColor], vdp->palette[vdp->FGColor] };
+
+        while (X < X2) {
+            if (X == 0 || X == 31) {
+                linePtr0p[0] = color[0];
+                linePtr0p[1] = color[0];
+                linePtr0p[2] = color[0];
+                linePtr0p[3] = color[0];
+                linePtr0p[4] = color[0];
+                linePtr0p[5] = color[0];
+                linePtr0p[6] = color[0];
+                linePtr0p[7] = color[0];
+                linePtr0p += 8; 
+                X++;
+            }
+            else {
+                int j;
+                for (j = 0; j < 4; j++) {
+                    if (shift <= 2) { 
+                        int charIdx = 0xc00 + 40 * (y / 8) + x++;
+                        UInt8* charTable = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
+                        pattern = vdp->vram[vdp->chrGenBase & (patternBase | ((int)*charTable * 8))];
+                        shift = 8; 
+                    }
+
+                    linePtr0p[0] = color[(pattern >> --shift) & 1];
+                    linePtr0p[1] = color[(pattern >> --shift) & 1];
+                    linePtr0p += 2; 
+                }
+                X++;
+            }
+        }
+    }
+    if (rightBorder) {
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+    }
+}
+
+static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
+{
+    static int     border;
+    static UInt8*  sprLine;
+    static int     patternBase;
+    static UInt8   colPattern;
+    static int     pattern;
+    static UInt16* col;
+    static int     x;
+    static int     y;
+    static int     shift;
+    int    rightBorder;
+
+    if (X == -1) {
+        X++;
+        linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 1);
+        border = !vdp->screenOn || !vdp->drawArea;
+
+        if (!border) {
+            y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
+            x = 0;
+            patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
+            shift = 0;
+        }
+    }
+
+    if (linePtr0p == NULL) {
+        return;
+    }
+
+    rightBorder = X2 == 33;
+    if (rightBorder) {
+        X2--;
+    }
+
+    if (border) {
+        UInt16 bgColor = vdp->palette[vdp->BGColor];
+        while (X < X2) {
+            int j;
+            for (j = 0; j < 2; j++) {
+                linePtr0p[0] = bgColor;
+                linePtr0p[1] = bgColor;
+                linePtr0p[2] = bgColor;
+                linePtr0p[3] = bgColor;
+                linePtr0p[4] = bgColor;
+                linePtr0p[5] = bgColor;
+                linePtr0p[6] = bgColor;
+                linePtr0p[7] = bgColor;
+                linePtr0p += 8; 
+            }
+            X++;
+        }
+    }
+    else {
+        UInt16 color[4] = { 
+            vdp->palette[vdp->BGColor],  vdp->palette[vdp->FGColor],
+            vdp->palette[vdp->XBGColor], vdp->palette[vdp->XFGColor]
+        };
+
+        while (X < X2) {
+            if (X == 0 || X == 31) {
+                int j;
+                for (j = 0; j < 2; j++) {
+                    linePtr0p[0] = color[0];
+                    linePtr0p[1] = color[0];
+                    linePtr0p[2] = color[0];
+                    linePtr0p[3] = color[0];
+                    linePtr0p[4] = color[0];
+                    linePtr0p[5] = color[0];
+                    linePtr0p[6] = color[0];
+                    linePtr0p[7] = color[0];
+                    linePtr0p += 8; 
+                }
+                X++;
+            }
+            else {
+                int j;
+                for (j = 0; j < 8; j++) {
+                    if (shift <= 2) { 
+                        int charIdx = 80 * (y / 8) + x;
+                        UInt8*  charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 12) | charIdx));
+                        pattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+                        shift = 8; 
+
+                        if ((x & 0x07) == 0) {
+                            UInt8*  colTable = vdp->vram + (vdp->colTabBase & ((-1 << 9) | (charIdx / 8)));
+                            colPattern = *colTable++;
+                        }
+                        col = color + ((colPattern >> 6) & 2);
+                        colPattern <<= 1;
+
+                        x++;
+                    }
+
+                    linePtr0p[0] = col[(pattern >> --shift) & 1];
+                    linePtr0p[1] = col[(pattern >> --shift) & 1];
+                    linePtr0p += 2; 
+                }
+                X++;
+            }
+        }
+    }
+    if (rightBorder) {
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
     }
 }
 
@@ -316,7 +525,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         }
     }
 }
-#endif
 
 static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 {
@@ -371,7 +579,6 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
         }
     }
 }
-
 
 static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 {
@@ -440,6 +647,8 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         }
     }
 }
+
+#endif
 
 static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
 {
