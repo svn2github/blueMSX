@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Led.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:23 $
+** $Date: 2007-02-18 05:09:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,12 @@ int  ledGetFdd1();
 
 void ledSetFdd2(int enable);
 int  ledGetFdd2();
+
+void ledSetHd(int enable);
+int  ledGetHd();
+
+void ledSetCas(int enable);
+int  ledGetCas();
 
 #endif
 

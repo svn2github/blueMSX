@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Led.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:23 $
+** $Date: 2007-02-18 05:09:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,8 @@ static int ledPause    = 0;
 static int ledRensha   = 0;
 static int ledFdd1     = 0;
 static int ledFdd2     = 0;
+static int ledHd       = 0;
+static int ledCas      = 0;
 
 void ledSetAll(int enable) {
     enable = enable ? 1 : 0;
@@ -45,6 +47,8 @@ void ledSetAll(int enable) {
     ledRensha   = enable;
     ledFdd1     = enable;
     ledFdd2     = enable;
+    ledHd       = enable;
+    ledCas      = enable;
 }
 
 void ledSetCapslock(int enable) {
@@ -101,5 +105,21 @@ void ledSetFdd2(int enable) {
 
 int ledGetFdd2() {
     return ledFdd2;
+}
+
+void ledSetHd(int enable) {
+    ledHd = enable ? 1 : 0;
+}
+
+int ledGetHd() {
+    return ledHd;
+}
+
+void ledSetCas(int enable) {
+    ledCas = enable ? 1 : 0;
+}
+
+int ledGetCas() {
+    return ledCas;
 }
 

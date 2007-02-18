@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.169 $
+** $Revision: 1.170 $
 **
-** $Date: 2007-02-16 22:24:23 $
+** $Date: 2007-02-18 05:09:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2151,7 +2151,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                 PatchDiskSetBusy(0, 0);
                 PatchDiskSetBusy(1, 0);
-                tapeSetBusy(0);
+                ledSetCas(0);
 
             }
             break;

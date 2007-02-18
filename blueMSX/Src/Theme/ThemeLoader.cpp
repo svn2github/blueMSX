@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2006-09-19 06:00:35 $
+** $Date: 2007-02-18 05:09:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -326,6 +326,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "led-diska"))                return t | THEME_TRIGGER_IMG_DISKA;
     if (0 == strcmp(s, "led-diskb"))                return t | THEME_TRIGGER_IMG_DISKB;
     if (0 == strcmp(s, "led-cassette"))             return t | THEME_TRIGGER_IMG_CAS;
+    if (0 == strcmp(s, "led-hd"))                   return t | THEME_TRIGGER_IMG_HD;
     if (0 == strcmp(s, "led-audioswitch"))          return t | THEME_TRIGGER_IMG_AS;
     if (0 == strcmp(s, "led-frontswitch"))          return t | THEME_TRIGGER_IMG_FS;
     if (0 == strcmp(s, "led-pauseswitch"))          return t | THEME_TRIGGER_IMG_PS;

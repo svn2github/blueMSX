@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-09-19 06:00:35 $
+** $Date: 2007-02-18 05:09:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,7 +153,11 @@ int themeTriggerLedDiskB() {
 }
 
 int themeTriggerLedCas() {
-    return tapeIsBusy();
+    return ledGetCas();
+}
+
+int themeTriggerLedHd() {
+    return ledGetHd();
 }
 
 int themeTriggerLedAudioSwitch() {

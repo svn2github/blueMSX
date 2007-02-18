@@ -44,16 +44,16 @@
 #include <string.h>
 
 //#define USE_DEBUGGER
-#define USE_CASLED
+#define USE_HDLED
 
 #ifdef USE_DEBUGGER
 #include "DebugDeviceManager.h"
 #include "Language.h"
 #endif
 
-#ifdef USE_CASLED
-#include "Casette.h"
-#define setLed(a)	tapeSetBusy(a)
+#ifdef USE_HDLED
+#include "Led.h"
+#define setLed(a)	ledSetHd(a)
 #else
 #define setLed(a)
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-19 06:00:22 $
+** $Date: 2007-02-18 05:09:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 #include "Casette.h"
+#include "Led.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,7 +58,6 @@ static int    tapeHeaderSize;
 static char*  ramImageBuffer = NULL;
 static int    ramImageSize = 0;
 static int    ramImagePos = 0;
-static int    casBusy;
 static int    autoRewind = 0;
 
 static char* stripPath(char* filename) {
@@ -114,7 +114,7 @@ UInt8 tapeRead(UInt8* value)
 
         if (ramImagePos < ramImageSize) {
             *value = ramImageBuffer[ramImagePos++];
-            casBusy = 1;
+            ledSetCas(1);
             return 1;
         }
         return 0;
@@ -137,7 +137,7 @@ UInt8 tapeWrite(UInt8 value)
 
         if (ramImagePos < ramImageSize) {
             ramImageBuffer[ramImagePos++] = value;
-            casBusy = 1;
+            ledSetCas(1);
             return 1;
         }
         return 0;
@@ -459,12 +459,3 @@ void tapeSetCurrentPos(int pos)
     }
 }
 
-int tapeIsBusy()
-{
-    return casBusy;
-}
-
-void tapeSetBusy(int busy)
-{
-    casBusy = busy;
-}
