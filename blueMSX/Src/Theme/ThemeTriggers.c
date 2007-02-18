@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2007-02-18 05:09:15 $
+** $Date: 2007-02-18 05:18:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "                                 "
                 "%s"
                 "Sjoerd de Vries,  "
+                "Johan van Leur,  "
                 "Albert Beevendorp,  "
                 "Rudolf Lechleitner,  "
                 "Hiro,  "

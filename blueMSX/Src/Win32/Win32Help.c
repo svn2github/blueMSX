@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-10-10 21:35:23 $
+** $Date: 2007-02-18 05:18:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -73,11 +73,12 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                 "Tomas Karlsson\r\n"
                                 "Ray Zero\r\n"
                                 "Ricardo Bittencourt\r\n"
-                                "Johan van Leur\r\n\r\n\r\n"
+                                "white cat\r\n\r\n\r\n"
 
                                 "%s\r\n\r\n"
 
                                 "Sjoerd de Vries\r\n"
+                                "Johan van Leur\r\n"
                                 "Albert Beevendorp\r\n"
                                 "Rudolf Lechleitner\r\n"
                                 "Hiro\r\n"
