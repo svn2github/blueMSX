@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.h,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : ScsiDevice.h
+** $Date: 2007-02-19 18:26:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,6 +125,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 UInt8 scsiDeviceGetStatusCode(SCSIDEVICE* scsi);
 int scsiDeviceMsgOut(SCSIDEVICE* scsi, UInt8 value);
 UInt8 scsiDeviceMsgIn(SCSIDEVICE* scsi);
+void scsiDeviceDisconnect(SCSIDEVICE* scsi);
 void scsiDeviceBusReset(SCSIDEVICE* scsi);
 
 int scsiDeviceDataIn(SCSIDEVICE* scsi, int* blocks);

@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision:
+** $Revision: 1.3 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : ScsiDevice.c
+** $Date: 2007-02-19 18:26:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,14 +37,13 @@
 #include "Board.h"
 #include "Disk.h"
 #include "FileHistory.h"
+#include "Led.h"
 #include "Properties.h"
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
 
 #define USE_SPECIALCOMMAND
-
-//#define setLed(a)
 
 // Sense data					 KEY | ASC | ASCQ
 #define SENSE_NoSense				0x000000
@@ -99,6 +95,7 @@ struct SCSIDEVICE {
 	int changed;			// Enhanced change flag for MEGA-SCSI driver
 	int changeCheck2;		// Disk change control flag
 	int sector;
+	int sectorSize;
 	int length;
 	int message;
 	int lun;
@@ -184,6 +181,7 @@ SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int
 	scsi->deviceType	= type;
 	scsi->mode			= mode;
 	scsi->enabled		= 1;
+	scsi->sectorSize	= 512;
 /*
 	scsi->disk.fileName[0] = 0;
 	scsi->disk.fileNameInZip[0] = 0;
@@ -225,6 +223,11 @@ void scsiDeviceBusReset(SCSIDEVICE* scsi)
 	SCSILOG1("SCSI %d: bus reset\n", scsi->scsiId);
 	scsi->keycode = 0;
 	scsi->reset = (scsi->mode & MODE_UNITATTENTION) ? 1 : 0;
+}
+
+void scsiDeviceDisconnect(SCSIDEVICE* scsi)
+{
+	ledSetHd(0);
 }
 
 void scsiDeviceEnable(SCSIDEVICE* scsi, int enable)
@@ -335,16 +338,14 @@ static int scsiDeviceInquiry(SCSIDEVICE* scsi)
 	int length	 	= scsi->length;
 	UInt8* buffer	= scsi->buffer;
 	UInt8 type		= scsi->deviceType;
-
+	UInt8 removable;
 	const char* fileName;
 	int i;
-
-	UInt8 removable;
 
 	if (length == 0) return 0;
 
 	if ((scsi->mode & MODE_FDS120) && (total > 0) && (total <= 2880)) {
-		memcpy(buffer + 4, inqdata + 4, 4);
+		memcpy(buffer + 2, inqdata + 2, 6);
 		memcpy(buffer + 8, fds120, 28);
 		removable = 0x80;
 		if (type != SDT_DirectAccess) {
@@ -374,18 +375,17 @@ static int scsiDeviceInquiry(SCSIDEVICE* scsi)
 	if (!(scsi->mode & BIT_SCSI2)) {
 		buffer[2]  = 1;
 		buffer[3]  = 1;
-		buffer[20] = '1';
+		if (!(scsi->mode & MODE_FDS120)) buffer[20] = '1';
 	} else {
 		if (scsi->mode & BIT_SCSI3) {
 			buffer[2]  = 5;
-			buffer[20] = '3';
+			if (!(scsi->mode & MODE_FDS120)) buffer[20] = '3';
 		}
 	}
 
-	if (scsi->mode & MODE_CHECK2) {
+	if ((scsi->mode & (MODE_CHECK2 | MODE_FDS120)) == MODE_CHECK2) {
 		buffer[35] = 'A';
 	}
-
 	if (scsi->mode & BIT_SCSI3) {
 		if (length > 96) length = 96;
 		buffer[4] = 91;
@@ -421,16 +421,15 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
 	int length  = scsi->length;
 
 	if ((length > 0) && (scsi->cdb[2] == 3)) {
-		UInt8* buffer = scsi->buffer;
-
+		UInt8* buffer	= scsi->buffer;
 		int total		= _diskGetTotalSectors(scsi->diskId);
 		int media		= MT_UNKNOWN;
 		int sectors		= 64;
-		int blockLength	= 512 >> 8;
+		int blockLength	= scsi->sectorSize >> 8;
 		int tracks		= 8;
 		int size		= 4 + 24;
 		int removable	= scsi->mode & MODE_REMOVABLE ? 0xa0 : 0x80;
-        
+
 		memset(buffer + 2, 0, 34);
 
 		if (total == 0) {
@@ -440,7 +439,7 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
 				if (total == 1440) {
 					media		= MT_2DD;
 					sectors		= 9;
-					blockLength	= 2048 >> 8;		// FDS-120 value
+					blockLength	= 2048 >> 8;			// FDS-120 value
 					tracks		= 160;
 					removable	= 0xa0;
 				} else {
@@ -463,10 +462,10 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
 		// Disable Block Descriptor check
 		if (!(scsi->cdb[1] & 0x08)) {
 			// Block Descriptor 8bytes
-			buffer[1]  = total >> 16;	// 1..3 Number of Blocks
-			buffer[2]  = total >>  8;
-			buffer[3]  = total;
-			buffer[6]  = blockLength;	// 5..7 Block Length in Bytes
+			buffer[1]  = (UInt8)(total >> 16);		// 1..3 Number of Blocks
+			buffer[2]  = (UInt8)(total >>  8);
+			buffer[3]  = (UInt8)(total);
+			buffer[6]  = (UInt8)blockLength;		// 5..7 Block Length in Bytes
 			buffer	  += 8;
 			size   	  += 8;
 		}
@@ -474,9 +473,9 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
 		// Format Device Page 24bytes
 		buffer[0]  = 3;					//     0 Page
 		buffer[1]  = 0x16;				//     1 Page Length
-		buffer[3]  = tracks;			//  2, 3 Tracks per Zone
-		buffer[11] = sectors;			// 10,11 Sectors per Track
-		buffer[12] = 2;					// 12,13 Data Bytes per Physical Sector (512)
+		buffer[3]  = (UInt8)tracks;		//  2, 3 Tracks per Zone
+		buffer[11] = (UInt8)sectors;	// 10,11 Sectors per Track
+		buffer[12] = (UInt8)blockLength;// 12,13 Data Bytes per Physical Sector
 		buffer[20] = removable;			// 20	 bit7 Soft Sector bit5 Removable
 
 		scsi->buffer[0] = size - 1;		// sense data length
@@ -493,8 +492,8 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
 static int scsiDeviceRequestSense(SCSIDEVICE* scsi)
 {
 	int keycode;
-    UInt8* buffer;
-    int length;
+    UInt8* buffer = scsi->buffer;
+    int length = scsi->length;
 
 	if (scsi->reset) {
 		scsi->reset = 0;
@@ -505,25 +504,20 @@ static int scsiDeviceRequestSense(SCSIDEVICE* scsi)
 
 	SCSILOG1("Requeset Sense: keycode = %X\n", keycode);
 	scsi->keycode = SENSE_NoSense;
-	buffer = scsi->buffer;
-	length = scsi->length;
 
+	memset(buffer + 1, 0, 17);
 	if (length == 0) {
 		if (scsi->mode & BIT_SCSI2) {
 			return 0;
 		}
-		buffer[0]	 = keycode;
-		buffer[1]	 = 0;
-		buffer[2]	 = 0;
-		buffer[3]	 = 0;
+		buffer[0]	 = (UInt8)(keycode >> 8);	// Sense code
 		length = 4;
 	} else {
-		memset(buffer + 1, 0, 17);
 		buffer[0]  = 0x70;
-		buffer[2]  = keycode >> 16;		// Sense key
-		buffer[7]  = 10;				// Additional sense length
-		buffer[12] = keycode >> 8;		// Additional sense code
-		buffer[13] = keycode;			// Additional sense code qualifier
+		buffer[2]  = (UInt8)(keycode >> 16);	// Sense key
+		buffer[7]  = 10;						// Additional sense length
+		buffer[12] = (UInt8)(keycode >> 8);		// Additional sense code
+		buffer[13] = (UInt8)keycode;			// Additional sense code qualifier
 		if (length > 18) length = 18;
 	}
 	return length;
@@ -540,8 +534,8 @@ static int scsiDeviceCheckReadOnly(SCSIDEVICE* scsi)
 
 static int scsiDeviceReadCapacity(SCSIDEVICE* scsi)
 {
-	UInt32 block = _diskGetTotalSectors(scsi->diskId);
-    UInt8* buffer;
+	UInt32 block  = _diskGetTotalSectors(scsi->diskId);
+    UInt8* buffer = scsi->buffer;
 
 	if (block == 0) {
 		scsi->keycode = SENSE_MediumNotPresent;
@@ -550,15 +544,19 @@ static int scsiDeviceReadCapacity(SCSIDEVICE* scsi)
 	}
 
 	SCSILOG1("total block: %u\n", (unsigned int)block);
+/*
+	if (scsi->sectorSize == 1024) {
+		block >>= 1;
+	}
+*/
 	--block;
-	buffer = scsi->buffer;
 	buffer[0] = (UInt8)(block >> 24);
 	buffer[1] = (UInt8)(block >> 16);
 	buffer[2] = (UInt8)(block >> 8);
 	buffer[3] = (UInt8)(block);
 	buffer[4] = 0;
 	buffer[5] = 0;
-	buffer[6] = 2;
+	buffer[6] = (UInt8)(scsi->sectorSize >> 8);
 	buffer[7] = 0;
 
 	return 8;
@@ -582,7 +580,7 @@ static int scsiDeviceBlueMSX(SCSIDEVICE* scsi)
 	if (cmd == 0) {
 		// revision
 		memcpy(buffer , scsicat, 16);		// SCSI-CAT(8) + emulator name(8)
-		buffer[16] = scsi->deviceType; 							// device type
+		buffer[16] = (UInt8)scsi->deviceType; 					// device type
 		buffer[17] = scsi->mode & MODE_REMOVABLE ? 0x80 : 0;	// removable device
 		buffer[18] = 0;						// revision MSB
 		buffer[19] = 1;						// LSB
@@ -601,8 +599,8 @@ static int scsiDeviceBlueMSX(SCSIDEVICE* scsi)
 			fileName = stripPath(fileName);
 		}
 		length = strlen(fileName);
-		buffer[0] = length >> 8;
-		buffer[1] = length;
+		buffer[0] = (UInt8)(length >> 8);
+		buffer[1] = (UInt8)length;
 		strcpy(buffer + 2, fileName);
 		SCSILOG1("file info:\n%s\n", buffer + 2);
 		return length + 3;  // + \0
@@ -636,6 +634,7 @@ static int scsiDeviceReadSector(SCSIDEVICE* scsi, int* blocks)
 	int counter;
 	int numSectors;
 
+	ledSetHd(1);
 	if (scsi->length >= BUFFER_BLOCK_SIZE) {
 		numSectors	= BUFFER_BLOCK_SIZE;
 		counter		= BUFFER_SIZE;
@@ -677,6 +676,7 @@ static int scsiDeviceWriteSector(SCSIDEVICE* scsi, int* blocks)
 	int counter;
 	int numSectors;
 
+	ledSetHd(1);
 	if (scsi->length >= BUFFER_BLOCK_SIZE) {
 		numSectors	= BUFFER_BLOCK_SIZE;
 	} else {
@@ -768,7 +768,12 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 		scsi->sector = ((cdb[1] & 0x1f) << 16) |
 					   (cdb[2] << 8) | cdb[3];
 		scsi->length = cdb[4];
-
+/*
+		if (scsi->sectorSize == 1024) {
+			scsi->sector *= 2;
+			scsi->length *= 2;
+		}
+*/
 		switch (cdb[0]) {
 		case SCSI_TestUnitReady:
 			SCSILOG("TestUnitReady\n");
@@ -793,8 +798,8 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_Read6:
 			SCSILOG2("Read6: %d %d\n", scsi->sector, scsi->length);
-			//setLed(1);
 			if (scsi->length == 0) {
+				//scsi->length = scsi->sectorSize >> 1;
 				scsi->length = 256;
 			}
 			if (scsiDeviceCheckAddress(scsi)) {
@@ -809,11 +814,12 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_Write6:
 			SCSILOG2("Write6: %d %d\n", scsi->sector, scsi->length);
-			//setLed(1);
 			if (scsi->length == 0) {
+				//scsi->length = scsi->sectorSize >> 1;
 				scsi->length = 256;
 			}
 			if (scsiDeviceCheckAddress(scsi) && !scsiDeviceCheckReadOnly(scsi)) {
+				ledSetHd(1);
 				if (scsi->length >= BUFFER_BLOCK_SIZE) {
 					*blocks = scsi->length - BUFFER_BLOCK_SIZE;
 					counter = BUFFER_SIZE;
@@ -828,7 +834,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_Seek6:
 			SCSILOG1("Seek6: %d\n", scsi->sector);
-			//setLed(1);
+			ledSetHd(1);
 			scsi->length = 1;
 			scsiDeviceCheckAddress(scsi);
 			return 0;
@@ -843,7 +849,6 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_FormatUnit:
 			SCSILOG("FormatUnit\n");
-			//setLed(1);
 			scsiDeviceFormatUnit(scsi);
 			return 0;
 
@@ -864,11 +869,15 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 		scsi->sector = (cdb[2] << 24) | (cdb[3] << 16) |
 					   (cdb[4] << 8)  |  cdb[5];
 		scsi->length = (cdb[7] << 8) + cdb[8];
-
+/*
+		if (scsi->sectorSize == 1024) {
+			scsi->sector *= 2;
+			scsi->length *= 2;
+		}
+*/
 		switch (cdb[0]) {
 		case SCSI_Read10:
 			SCSILOG2("Read10: %d %d\n", scsi->sector, scsi->length);
-			//setLed(1);
 
 			if (scsiDeviceCheckAddress(scsi)) {
 				counter = scsiDeviceReadSector(scsi, blocks);
@@ -881,7 +890,6 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_Write10:
 			SCSILOG2("Write10: %d %d\n", scsi->sector, scsi->length);
-			//setLed(1);
 
 			if (scsiDeviceCheckAddress(scsi) && !scsiDeviceCheckReadOnly(scsi)) {
 				if (scsi->length >= BUFFER_BLOCK_SIZE) {
@@ -905,7 +913,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 		case SCSI_Seek10:
 			SCSILOG1("Seek10: %d\n", scsi->sector);
-			//setLed(1);
+			ledSetHd(1);
 			scsi->length = 1;
 			scsiDeviceCheckAddress(scsi);
 			return 0;
@@ -983,6 +991,7 @@ void scsiDeviceSaveState(SCSIDEVICE* scsi)
 	saveStateSet(state, "inserted",	  scsi->inserted);
 	saveStateSet(state, "changed",	  scsi->changed);
 	saveStateSet(state, "sector", 	  scsi->sector);
+	saveStateSet(state, "sectorSize", scsi->sectorSize);
 	saveStateSet(state, "length", 	  scsi->length);
 	saveStateSet(state, "lun",		  scsi->lun);
 	saveStateSet(state, "message", 	  scsi->message);
@@ -1006,6 +1015,7 @@ void scsiDeviceLoadState(SCSIDEVICE* scsi)
 	scsi->inserted	 = saveStateGet(state, "inserted",	 0);
 	scsi->changed	 = saveStateGet(state, "changed",	 1);
 	scsi->sector	 = saveStateGet(state, "sector",	 0);
+	scsi->sectorSize = saveStateGet(state, "sectorSize", 512);
 	scsi->length	 = saveStateGet(state, "length",	 0);
 	scsi->lun		 = saveStateGet(state, "lun",		 0);
 	scsi->message	 = saveStateGet(state, "message",	 0);
