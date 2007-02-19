@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision:
+** $Revision: 1.3 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : MB89352.c
+** $Date: 2007-02-19 18:26:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,22 +37,15 @@
 #include "ScsiDevice.h"
 #include "Disk.h"
 #include "SaveState.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 //#define USE_DEBUGGER
-#define USE_HDLED
 
 #ifdef USE_DEBUGGER
 #include "DebugDeviceManager.h"
 #include "Language.h"
-#endif
-
-#ifdef USE_HDLED
-#include "Led.h"
-#define setLed(a)	ledSetHd(a)
-#else
-#define setLed(a)
 #endif
 
 #define Target	spc->scsiDevice[spc->targetId]
@@ -80,7 +70,6 @@
 #define REG_TCM  13		// Transfer Counter Mid	(r/w)
 #define REG_TCL	 14		// Transfer Counter Low	(r/w)
 
-#define SAV_DREGWR 12	// (use debugger)
 #define REG_TEMPWR 13	// (TEMP register preservation place for writing)
 #define FIX_PCTL   14	// (REG_PCTL & 7)
 
@@ -137,7 +126,6 @@ struct MB89352 {
 	int blockCounter;				// Number of blocks outside buffer
 									// (512bytes / block)
 	int tc;							// counter for hardware transfer
-	int ledOn;
 	SCSIDEVICE* scsiDevice[8];		//
 	UInt8* pCdb;					// cdb pointer
 	UInt8* pBuffer;					// buffer pointer
@@ -150,11 +138,12 @@ static FILE* scsiLog = NULL;
 static void mb89352ChangeBusFree(MB89352* spc)
 {
 	if (spc->phase != BusFree) {
+		if ((spc->targetId >= 0) && (spc->targetId < 8)) {
+			scsiDeviceDisconnect(Target);
+		}
 		spc->regs[REG_INTS] |= INTS_Disconnected;
 		spc->phase		= BusFree;
 		spc->nextPhase	= -1;
-		spc->ledOn 		= 0;
-		setLed(0);
 	}
 
 	spc->regs[REG_PSNS]	= 0;
@@ -195,7 +184,6 @@ void mb89352Reset(MB89352* spc, int scsireset)
 	spc->regs[REG_SCTL] = 0x80;
 	spc->rst   = 0;
 	spc->atn   = 0;
-	spc->ledOn = 0;
 	spc->myId  = 7;
 
 	mb89352SoftReset(spc);
@@ -234,7 +222,6 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
 
 	// Transfer phase (data in)
 	case DataIn:
-		if (spc->ledOn) setLed(1);
 		*value = *spc->pBuffer;
 		++spc->pBuffer;
 		spc->regs[REG_PSNS] = PSNS_ACK | PSNS_BSY | PSNS_DATAIN;
@@ -242,7 +229,6 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
 
 	//Transfer phase (data out)
 	case DataOut:
-		if (spc->ledOn) setLed(1);
 		*spc->pBuffer = *value;
 		++spc->pBuffer;
 		spc->regs[REG_PSNS] = PSNS_ACK | PSNS_BSY | PSNS_DATAOUT;
@@ -252,7 +238,7 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
 	case Command:
 		if (spc->counter < 0) {
 			//Initialize command routine
-			spc->pCdb 			= spc->cdb;
+			spc->pCdb    = spc->cdb;
 			spc->counter = (*value < SCSI_Group1) ? 6 : 10;
 		}
 		*spc->pCdb = *value;
@@ -347,19 +333,10 @@ static void mb89352ResetACKREQ(MB89352* spc)
 
 			switch (spc->phase) {
 			case DataIn:
-				switch (spc->cdb[0]) {
-				case SCSI_Read10:
-				case SCSI_Read6:
-				case SCSI_FormatUnit:
-					spc->ledOn = 1;
-					setLed(1);
-				}
 				spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAIN;
 				break;
 
 			case DataOut:
-				spc->ledOn = 1;
-				setLed(1);
 				spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAOUT;
 				break;
 
@@ -476,11 +453,13 @@ UInt8 mb89352ReadDREG(MB89352* spc)
 
 void mb89352WriteDREG(MB89352* spc, UInt8 value)
 {
+#ifdef USE_DEBUGGER
+	spc->regs[REG_DREG] = value;
+#endif
+
 	if (spc->isTransfer && (spc->tc > 0)) {
 		//SCSILOG("DREG write: %d %x\n", spc->tc, value);
-#ifdef USE_DEBUGGER
-		spc->regs[SAV_DREGWR] = value;
-#endif
+
 		mb89352SetACKREQ(spc, &value);
 		mb89352ResetACKREQ(spc);
 
@@ -632,7 +611,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 
 		case CMD_SetATN:
 			SCSILOG("CMD_SetATN\n");
-			spc->atn = 1;
+			spc->atn = PSNS_ATN;
 			break;
 
 		case CMD_ResetATN:
@@ -650,6 +629,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 	// Reset Interrupts
 	case REG_INTS:
 		spc->regs[REG_INTS] &= ~value;
+		if (spc->rst) spc->regs[REG_INTS] |= INTS_ResetCondition;
 		//SCSILOG("INTS reset: %x %x\n", value, spc->regs[REG_INTS]);
 		break;
 
@@ -658,17 +638,17 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 		break;
 
 	case REG_TCL:
-		spc->tc = (spc->tc & 0xffff00) + value;
+		spc->tc = (spc->tc & 0x00ffff00) + value;
 		//SCSILOG("set tcl: %d\n", spc->tc);
 		break;
 
 	case REG_TCM:
-		spc->tc = (spc->tc & 0xff00ff) + (value << 8);
+		spc->tc = (spc->tc & 0x00ff00ff) + (value << 8);
 		//SCSILOG("set tcm: %d\n", spc->tc);
 		break;
 
 	case REG_TCH:
-		spc->tc = (spc->tc & 0x00ffff) + (value << 16);
+		spc->tc = (spc->tc & 0x0000ffff) + (value << 16);
 		//SCSILOG("set tch: %d\n", spc->tc);
 		break;
 
@@ -753,8 +733,7 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
 		break;
 
 	case REG_PSNS:
-		result = spc->regs[REG_PSNS];
-		if (spc->atn) result |= 0x20;
+		result = (UInt8)(spc->regs[REG_PSNS] | spc->atn);
 		break;
 
 	case REG_SSTS:
@@ -762,19 +741,19 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
 		break;
 
 	case REG_TCL:
-		result = spc->tc;
+		result = (UInt8)(spc->tc);
 		break;
 
 	case REG_TCM:
-		result = spc->tc >> 8;
+		result = (UInt8)(spc->tc >> 8);
 		break;
 
 	case REG_TCH:
-		result = spc->tc >> 16;
+		result = (UInt8)(spc->tc >> 16);
 		break;
 
 	default:
-		result = spc->regs[reg];
+		result = (UInt8)spc->regs[reg];
 	}
 
 	//SCSILOG("SPC reg read: %x %x\n", reg, result);
@@ -790,30 +769,29 @@ UInt8 mb89352PeekRegister(MB89352* spc, UInt8 reg)
 	switch (reg) {
 	case REG_DREG:
 		if (spc->isTransfer && (spc->tc > 0)) {
-			return spc->regs[REG_DREG];
+			return (UInt8)spc->regs[REG_DREG];
 		} else {
 			return 0xff;
 		}
 
 	case REG_PSNS:
-		result = spc->regs[REG_PSNS];
-		if (spc->atn) result |= 0x20;
+		result = (UInt8)(spc->regs[REG_PSNS] | spc->atn);
 		return result;
 
 	case REG_SSTS:
 		return mb89352GetSSTS(spc);
 
 	case REG_TCH:
-		return spc->tc >> 16;
+		return (UInt8)(spc->tc >> 16);
 
 	case REG_TCM:
-		return spc->tc >> 8;
+		return (UInt8)(spc->tc >> 8);
 
 	case REG_TCL:
-		return spc->tc;
+		return (UInt8)spc->tc;
 
 	default:
-		return spc->regs[reg];
+		return (UInt8)spc->regs[reg];
 	}
 }
 
@@ -836,14 +814,11 @@ void mb89352SaveState(MB89352* spc)
 	saveStateSet(state, "counter",		spc->counter);
 	saveStateSet(state, "blockCounter",	spc->blockCounter);
 	saveStateSet(state, "tc", 			spc->tc);
-	saveStateSet(state, "ledOn", 		spc->ledOn);
 	saveStateSet(state, "msgin", 		spc->msgin);
 	saveStateSet(state, "pCdb", 		spc->pCdb - spc->cdb);
 	saveStateSet(state, "pBuffer", 		spc->pBuffer - spc->buffer);
 
-	if (spc->atn) {
-		spc->regs[REG_PSNS] |= 0x20;
-	}
+	spc->regs[REG_PSNS] |= spc->atn;
 
 	for (i = 0; i < 16; i++) {
 		sprintf(tag, "regs%d", i);
@@ -868,7 +843,7 @@ void mb89352LoadState(MB89352* spc)
 	SaveState* state = saveStateOpenForRead("mb89352");
 	SCSILOG("Load state\n");
 
-	spc->myId			= saveStateGet(state, "myId",7);
+	spc->myId			= saveStateGet(state, "myId", 7);
 	spc->targetId		= saveStateGet(state, "targetId", 0);
 	spc->rst			= saveStateGet(state, "rst", 0);
 	spc->phase			= saveStateGet(state, "phase", BusFree);
@@ -879,7 +854,6 @@ void mb89352LoadState(MB89352* spc)
 	spc->counter		= saveStateGet(state, "counter", 0);
 	spc->blockCounter	= saveStateGet(state, "blockCounter", 0);
 	spc->tc				= saveStateGet(state, "tc", 0);
-	spc->ledOn			= saveStateGet(state, "ledOn", 0);
 	spc->msgin			= saveStateGet(state, "msgin", 0);
 	spc->pCdb			= saveStateGet(state, "pCdb", 0) + spc->cdb;
 	spc->pBuffer		= saveStateGet(state, "pBuffer", 0) + spc->buffer;
@@ -889,7 +863,7 @@ void mb89352LoadState(MB89352* spc)
 		spc->regs[i] = saveStateGet(state, tag, 0);
 	}
 	spc->regs[FIX_PCTL] = spc->regs[REG_PCTL] & 7;
-	spc->atn = (spc->regs[REG_PSNS] & 0x20) >> 5;
+	spc->atn = spc->regs[REG_PSNS] & PSNS_ATN;
 
 	saveStateGetBuffer(state, "cdb", spc->cdb, 10);
 	saveStateGetBuffer(state, "buffer", spc->buffer, BUFFER_SIZE);
@@ -905,35 +879,27 @@ void mb89352LoadState(MB89352* spc)
 static void mb89352GetDebugInfo(MB89352* spc, DbgDevice* dbgDevice)
 {
 	DbgRegisterBank* regBank;
-	char str[5];
+	char str[8];
 	int i;
 
-	regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 17 + 10);
+	regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16 + 10);
+	spc->regs[REG_SSTS]  = mb89352GetSSTS(spc);
+	spc->regs[REG_PSNS] |= spc->atn;
 
-	for (i = 0; i < 10; i++) {
-
-		UInt32 value;
+	for (i = 0; i < 11; i++) {
 		sprintf(str, "R%d", i);
-
-		if (i == REG_SSTS) {
-			value = mb89352GetSSTS(spc);
-		} else {
-			value = spc->regs[i];
-		}
-		dbgRegisterBankAddRegister(regBank,  i, str, 8, value);
+		dbgRegisterBankAddRegister(regBank,  i, str, 8, spc->regs[i]);
 	}
 
-	dbgRegisterBankAddRegister(regBank, 10, "R10R", 8, spc->regs[REG_DREG]);
-	dbgRegisterBankAddRegister(regBank, 11, "R10W", 8, spc->regs[SAV_DREGWR]);
-	dbgRegisterBankAddRegister(regBank, 12, "R11R", 8, spc->regs[REG_TEMP]);
-	dbgRegisterBankAddRegister(regBank, 13, "R11W", 8, spc->regs[REG_TEMPWR]);
-	dbgRegisterBankAddRegister(regBank, 14, "R12",  8, (spc->tc >> 16) & 0xff);
-	dbgRegisterBankAddRegister(regBank, 15, "R13",  8, (spc->tc >>  8) & 0xff);
-	dbgRegisterBankAddRegister(regBank, 16, "R14",  8, spc->tc & 0xff);
+	dbgRegisterBankAddRegister(regBank, 11, "R11R", 8, spc->regs[REG_TEMP]);
+	dbgRegisterBankAddRegister(regBank, 12, "R11W", 8, spc->regs[REG_TEMPWR]);
+	dbgRegisterBankAddRegister(regBank, 13, "R12",  8, (spc->tc >> 16) & 0xff);
+	dbgRegisterBankAddRegister(regBank, 14, "R13",  8, (spc->tc >>  8) & 0xff);
+	dbgRegisterBankAddRegister(regBank, 15, "R14",  8, spc->tc & 0xff);
 
 	for (i = 0; i < 10; i++) {
 		sprintf(str, "CDB%d", i);
-		dbgRegisterBankAddRegister(regBank,  i + 17, str, 8, spc->cdb[i]);
+		dbgRegisterBankAddRegister(regBank,  i + 16, str, 8, spc->cdb[i]);
 	}
 }
 #endif
