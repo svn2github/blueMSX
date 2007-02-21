@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMegaSCSI.c,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : sramMapperMegaSCSI.c
+** $Date: 2007-02-21 16:25:24 $
 **
 ** More info: http://www.bluemsx.com
 **

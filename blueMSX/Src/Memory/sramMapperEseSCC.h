@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.h,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : sramMapperEseSCC.h
+** $Date: 2007-02-21 16:25:24 $
 **
 ** More info: http://www.bluemsx.com
 **

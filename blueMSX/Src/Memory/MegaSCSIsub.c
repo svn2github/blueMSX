@@ -1,12 +1,10 @@
 /*
- * $Source:
+ * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision:
+ * $Revision: 1.2 $
  *
- * $Date:
+ * $Date: 2007-02-21 16:25:24 $
  *
- * Author: white cat
- * File  : MegaSCSIsub.c
  * Copyright (C) 2007 white cat
  *
  * Drive setting parameters for MEGA-SCSI and WAVE-SCSI.

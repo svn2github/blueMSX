@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMegaSCSI.h,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : sramMapperMegaSCSI.h
+** $Date: 2007-02-21 16:25:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +30,7 @@
 
 #include "MsxTypes.h"
 
-int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, int sSlot, int startPage, int hdId, int flag);
+int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size,
+                int pSlot, int sSlot, int startPage, int hdId, int flag);
 
 #endif

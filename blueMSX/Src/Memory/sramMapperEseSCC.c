@@ -1,12 +1,9 @@
 /*****************************************************************************
-** $Source:
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision:
+** $Revision: 1.2 $
 **
-** $Date:
-**
-** Author: white cat
-** File  : sramMapperEseSCC.c
+** $Date: 2007-02-21 16:25:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -205,7 +202,7 @@ static void setMapperHigh(SramMapperEseSCC* rm, UInt8 value)
 	if (newValue != rm->mapperHigh) {
         int mapperLow0;
 
-		rm->writeEnable = (newValue & 0x80)  ? 1 : 0;
+		rm->writeEnable = (newValue & 0x80) ? 1 : 0;
 		rm->spcEnable   = (newValue == 0x40);
 		rm->mapperHigh	= newValue;
 		mapperLow0	= rm->mapper[0] & 0x3f;
