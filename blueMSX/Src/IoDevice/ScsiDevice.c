@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-02-19 18:26:31 $
+** $Date: 2007-02-21 16:19:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -139,17 +139,17 @@ static const char sdt_name[10][10] =
 static const char fds120[28]  = "IODATA  LS-120 COSM     0001";
 
 /*
-	Log routine for debugging
+	Log output routine for debug
 */
 #ifdef SCSIDEBUG
 
 static int logNumber = 0;
 static FILE* scsiLog = NULL;
 
-FILE* scsiDeviceLogCreate(const char* filename)
+FILE* scsiDeviceLogCreate()
 {
 	if (!logNumber) {
-		scsiLog = fopen(filename, "wb");
+		scsiLog = fopen(SCSIDEBUG, "wb");
 	}
 	logNumber++;
 	return scsiLog;
@@ -1009,7 +1009,7 @@ void scsiDeviceLoadState(SCSIDEVICE* scsi)
 	scsi->enabled	 = saveStateGet(state, "enabled",	 1);
 	scsi->deviceType = saveStateGet(state, "deviceType", 0);
 	scsi->mode		 = saveStateGet(state, "mode", 		 MODE_UNITATTENTION);
-	scsi->reset		 = saveStateGet(state, "reset"	,	 0);
+	scsi->reset		 = saveStateGet(state, "reset",		 0);
 	scsi->motor		 = saveStateGet(state, "motor",		 1);
 	scsi->keycode	 = saveStateGet(state, "keycode",	 0);
 	scsi->inserted	 = saveStateGet(state, "inserted",	 0);

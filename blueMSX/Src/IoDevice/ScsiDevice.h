@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-02-19 18:26:31 $
+** $Date: 2007-02-21 16:19:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,12 +135,12 @@ void scsiDeviceEnable(SCSIDEVICE* scsi, int enable);
 /*
 	debug routine
 */
-//#define SCSIDEBUG
+//#define SCSIDEBUG "scsilog.txt"
 
 #ifdef SCSIDEBUG
 #include <stdio.h>
 
-FILE* scsiDeviceLogCreate(const char* filename);
+FILE* scsiDeviceLogCreate();
 void scsiDeviceLogFlush();
 void scsiDeviceLogClose();
 #define SCSILOG(fmt) fprintf(scsiLog, fmt)
@@ -149,7 +149,7 @@ void scsiDeviceLogClose();
 #define SCSILOG3(fmt, arg1, arg2, arg3) fprintf(scsiLog, fmt, arg1, arg2, arg3)
 
 #else
-#define scsiDeviceLogCreate(a) NULL
+#define scsiDeviceLogCreate() NULL
 #define scsiDeviceLogFlush()
 #define scsiDeviceLogClose()
 #define SCSILOG(fmt)

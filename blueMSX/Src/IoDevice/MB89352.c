@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-02-19 18:26:54 $
+** $Date: 2007-02-21 16:19:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,7 +157,7 @@ static void mb89352ChangeBusFree(MB89352* spc)
 	scsiDeviceLogFlush();
 }
 
-void mb89352SoftReset(MB89352* spc)
+static void mb89352SoftReset(MB89352* spc)
 {
 	int i;
 
@@ -190,7 +190,7 @@ void mb89352Reset(MB89352* spc, int scsireset)
 
 	if (scsireset) {
 		for (i = 0; i < 8; ++i) {
-		scsiDeviceReset(spc->scsiDevice[i]);
+			scsiDeviceReset(spc->scsiDevice[i]);
 		}
 	}
 }
@@ -915,7 +915,7 @@ void mb89352Destroy(MB89352* spc)
 	debugDeviceUnregister(spc->debugHandle);
 #endif
 
-	SCSILOG("spc destroy \n");
+	SCSILOG("spc destroy\n");
 	scsiDeviceLogClose();
 
 	free(spc);
@@ -927,7 +927,7 @@ MB89352* mb89352Create(int hdId, const SCSICREATE* create)
 	MB89352* spc;
 
 	spc = malloc(sizeof(MB89352));
-	scsiLog = scsiDeviceLogCreate("scsilog.txt");
+	scsiLog = scsiDeviceLogCreate();
 	SCSILOG("spc debug mode\n");
 	SCSILOG2("Compiled date: %s %s\n",__DATE__, __TIME__);
 
