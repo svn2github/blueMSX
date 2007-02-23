@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-02-17 14:41:08 $
+** $Date: 2007-02-23 03:10:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -153,7 +153,7 @@ static void write(RomMapperNoWind* rm, UInt16 address, UInt8 value)
         (address >= 0xa000 && address < 0xc000)) 
     {
         // FIXME: Is the page selected based on address or data lines?
-        updateMapper(rm, (UInt8)address & 0x1f);
+        updateMapper(rm, value & 0x1f);
     }
 }
 
