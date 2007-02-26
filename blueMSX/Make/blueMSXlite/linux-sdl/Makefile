@@ -167,6 +167,7 @@ SOURCE_FILES += romMapperFMPAK.c
 SOURCE_FILES += romMapperGameMaster2.c
 SOURCE_FILES += romMapperGameReader.c
 SOURCE_FILES += romMapperGIDE.c
+SOURCE_FILES += romMapperGoudaSCSI.c
 SOURCE_FILES += romMapperHalnote.c
 SOURCE_FILES += romMapperHarryFox.c
 SOURCE_FILES += romMapperHolyQuran.c

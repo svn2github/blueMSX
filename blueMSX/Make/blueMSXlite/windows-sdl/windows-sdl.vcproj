@@ -1035,6 +1035,12 @@
 				RelativePath="..\..\..\Src\Memory\romMapperGIDE.h">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Memory\romMapperGoudaSCSI.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperGoudaSCSI.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Memory\romMapperHalnote.c">
 			</File>
 			<File

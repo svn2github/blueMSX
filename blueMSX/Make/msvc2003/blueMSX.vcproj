@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;C:\WpdPack\Include"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
 				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib"
+				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -189,7 +189,7 @@
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;C:\WpdPack\Include"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
 				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_CONSOLE;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
@@ -201,7 +201,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Release\STRMBASE.lib"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib"
@@ -640,6 +640,9 @@
 					RelativePath="..\..\Src\Memory\romMapperGIDE.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperGoudaSCSI.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperHalnote.c">
 				</File>
 				<File
@@ -924,6 +927,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGIDE.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperGoudaSCSI.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperHalnote.h">

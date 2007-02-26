@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-02-26 19:49:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,6 +190,7 @@ char* langRomTypeEseSCC128()        { return "128kB Ese-SCC"; }
 char* langRomTypeEseSCC256()        { return "256kB Ese-SCC"; }
 char* langRomTypeEseSCC512()        { return "512kB Ese-SCC"; }
 char* langRomTypeNoWind()           { return "NoWind USB"; }
+char* langRomTypeGoudaSCSI()        { return "Gouda SCSI"; }
 
 //----------------------
 // Debug type lines

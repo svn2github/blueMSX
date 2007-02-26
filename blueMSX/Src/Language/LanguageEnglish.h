@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-02-26 19:49:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -265,7 +265,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Date:";
     ls->dlgAboutCreat           = "Created by Daniel Vik";
     ls->dlgAboutDevel           = "DEVELOPERS\r\n========";
-    ls->dlgAboutThanks          = "SPECIAL THANKS TO\r\n============";
+    ls->dlgAboutThanks          = "CONTRIBUTORS\r\n==========";
     ls->dlgAboutLisence         = "LICENSE\r\n"
                                   "======\r\n\r\n"
                                   "This software is provided 'as-is', without any express or implied "
