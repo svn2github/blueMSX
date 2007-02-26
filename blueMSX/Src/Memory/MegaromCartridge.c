@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,6 +97,7 @@
 #include "sramMapperMegaSCSI.h"
 #include "sramMapperEseSCC.h"
 #include "romMapperNoWind.h"
+#include "romMapperGoudaSCSI.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -280,6 +281,14 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             buf = romLoad("Machines/Shared Roms/beeride.rom", cartZip, &size);
             if (buf == 0) {
                 success &= romMapperBeerIdeCreate(cartNo, romName, NULL, 0, slot, sslot, 0);
+                break;
+            }
+        }
+        // Load roms for Special Carts
+        else if (strcmp(cart, "Gouda SCSI") == 0) {
+            buf = romLoad("Machines/Shared Roms/novaxis.rom", cartZip, &size);
+            if (buf == 0) {
+                success &= romMapperGoudaSCSICreate(cartNo, romName, NULL, 0, slot, sslot, 2);
                 break;
             }
         }
@@ -606,6 +615,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_BEERIDE:
             success &= romMapperBeerIdeCreate(cartNo, romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_GOUDASCSI:
+            success &= romMapperGoudaSCSICreate(cartNo, romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_SONYHBIV1:

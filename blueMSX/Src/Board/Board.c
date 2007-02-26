@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-02-26 19:16:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1292,6 +1292,7 @@ void boardSetMachine(Machine* machine)
         case ROM_GIDE:       hdType[hdIndex++] = HD_GIDE;       break;
         case SRAM_MEGASCSI:  hdType[hdIndex++] = HD_MEGASCSI;   break;
         case SRAM_WAVESCSI:  hdType[hdIndex++] = HD_WAVESCSI;   break;
+        case ROM_GOUDASCSI:  hdType[hdIndex++] = HD_GOUDASCSI;  break;
         }
     }
 
@@ -1610,9 +1611,9 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         useMegaRom += romTypeIsMegaRom(romType);
         useMegaRam += romTypeIsMegaRam(romType);
         useFmPac   += romTypeIsFmPac(romType);
-        if (currentRomType[cartNo] == ROM_SUNRISEIDE) hdType[cartNo] = HD_SUNRISEIDE;
-        if (currentRomType[cartNo] == ROM_BEERIDE)    hdType[cartNo] = HD_BEERIDE;
-        if (currentRomType[cartNo] == ROM_GIDE)       hdType[cartNo] = HD_GIDE;
+        if (currentRomType[cartNo] == ROM_SUNRISEIDE)   hdType[cartNo] = HD_SUNRISEIDE;
+        if (currentRomType[cartNo] == ROM_BEERIDE)      hdType[cartNo] = HD_BEERIDE;
+        if (currentRomType[cartNo] == ROM_GIDE)         hdType[cartNo] = HD_GIDE;
         if (currentRomType[cartNo] == SRAM_MEGASCSI128) hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI256) hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI512) hdType[cartNo] = HD_MEGASCSI;
@@ -1621,6 +1622,7 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         if (currentRomType[cartNo] == SRAM_WAVESCSI256) hdType[cartNo] = HD_WAVESCSI;
         if (currentRomType[cartNo] == SRAM_WAVESCSI512) hdType[cartNo] = HD_WAVESCSI;
         if (currentRomType[cartNo] == SRAM_WAVESCSI1MB) hdType[cartNo] = HD_WAVESCSI;
+        if (currentRomType[cartNo] == ROM_GOUDASCSI)    hdType[cartNo] = HD_GOUDASCSI;
     }
 
     if (boardRunning && cartNo < boardInfo.cartridgeCount) {

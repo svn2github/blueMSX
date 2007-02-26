@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -216,6 +216,7 @@ char* langDbgDevRamMapper()         { return "RAM Mapper"; }
 char* langDbgDevRam()               { return "RAM"; }
 char* langDbgDevIdeBeer()           { return "Beer IDE"; }
 char* langDbgDevIdeGide()           { return "GIDE"; }
+char* langDbgDevScsiGouda()         { return "Gouda SCSI"; }
 char* langDbgDevF4Device()          { return "F4 Device"; }
 char* langDbgDevFmpac()             { return "FMPAC"; }
 char* langDbgDevFmpak()             { return "FMPAK"; }

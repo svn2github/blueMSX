@@ -1,12 +1,10 @@
 /*
- * $Source:
+ * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.h,v $
  *
- * $Revision:
+ * $Revision: 1.2 $
  *
- * $Date:
+ * $Date: 2007-02-26 19:16:29 $
  *
- * Author: white cat
- * File  : MegaSCSIsub.h
  * Copyright (C) 2007 white cat
  *
  */

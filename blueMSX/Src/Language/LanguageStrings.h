@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.80 $
+** $Revision: 1.81 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,6 +107,7 @@ typedef struct {
     char* menuCartScsi;
     char* menuCartMegaSCSI;
     char* menuCartWaveSCSI;
+    char* menuCartGoudaSCSI;
     char* menuCartSCC;
     char* menuCartSCCPlus;
     char* menuCartFMPac;

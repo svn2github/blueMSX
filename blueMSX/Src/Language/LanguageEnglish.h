@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -110,6 +110,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartScsi            = "SCSI";
     ls->menuCartMegaSCSI        = "MEGA-SCSI";
     ls->menuCartWaveSCSI        = "WAVE-SCSI";
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";

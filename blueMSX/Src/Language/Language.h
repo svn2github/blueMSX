@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,6 +134,7 @@ char* langMenuCartSunriseIde();
 char* langMenuCartScsi();
 char* langMenuCartMegaSCSI();
 char* langMenuCartWaveSCSI();
+char* langMenuCartGoudaSCSI();
 char* langMenuCartSCC();
 char* langMenuCartSCCPlus();
 char* langMenuCartFMPac();
@@ -767,6 +768,7 @@ char* langRomTypeEseSCC();
 char* langRomTypeEseSCC128();
 char* langRomTypeEseSCC256();
 char* langRomTypeEseSCC512();
+char* langRomTypeGoudaSCSI();
 
 //----------------------
 // Debug type lines
@@ -793,6 +795,7 @@ char* langDbgDevRamMapper();
 char* langDbgDevRam();
 char* langDbgDevIdeBeer();
 char* langDbgDevIdeGide();
+char* langDbgDevScsiGouda();
 char* langDbgDevF4Device();
 char* langDbgDevFmpac();
 char* langDbgDevFmpak();

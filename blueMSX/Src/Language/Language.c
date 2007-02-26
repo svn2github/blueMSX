@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -307,6 +307,7 @@ char* langMenuCartSunriseIde() { return ls->menuCartSunriseIde; }
 char* langMenuCartScsi() { return ls->menuCartScsi; }
 char* langMenuCartMegaSCSI() { return ls->menuCartMegaSCSI; }
 char* langMenuCartWaveSCSI() { return ls->menuCartWaveSCSI; }
+char* langMenuCartGoudaSCSI() { return ls->menuCartGoudaSCSI; }
 char* langMenuCartSCC() { return ls->menuCartSCC; }
 char* langMenuCartSCCPlus() { return ls->menuCartSCCPlus; }
 char* langMenuCartFMPac()  { return ls->menuCartFMPac; }
@@ -940,6 +941,7 @@ char* langRomTypeEseSCC() { return "Ese-SCC"; }
 char* langRomTypeEseSCC128() { return "128kb Ese-SCC"; }
 char* langRomTypeEseSCC256() { return "256kb Ese-SCC"; }
 char* langRomTypeEseSCC512() { return "512kb Ese-SCC"; }
+char* langRomTypeGoudaSCSI() { return "Gouda SCSI"; }
 
 //----------------------
 // Debug type lines
@@ -963,6 +965,7 @@ char* langDbgDevRamMapper() { return ls->dbgDevRamMapper; }
 char* langDbgDevRam() { return ls->dbgDevRam; }
 char* langDbgDevIdeBeer() { return "Beer IDE"; }
 char* langDbgDevIdeGide() { return "GIDE"; }
+char* langDbgDevScsiGouda() { return "Gouda SCSI"; }
 char* langDbgDevF4Device() { return ls->dbgDevF4Device; }
 char* langDbgDevFmpac() { return "FMPAC"; }
 char* langDbgDevFmpak() { return "FMPAK"; }

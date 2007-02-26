@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2007-02-15 22:19:01 $
+** $Date: 2007-02-26 19:16:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,6 +145,7 @@
 #define ID_FILE_CART_ESESCC128          41104
 #define ID_FILE_CART_ESESCC256          41105
 #define ID_FILE_CART_ESESCC512          41106
+#define ID_FILE_CART_GOUDASCSI          41107
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -274,6 +275,7 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_ESESCC128) == 0)      return langRomTypeEseSCC128();
     if (strcmp(fileName, CARTNAME_ESESCC256) == 0)      return langRomTypeEseSCC256();
     if (strcmp(fileName, CARTNAME_ESESCC512) == 0)      return langRomTypeEseSCC512();
+    if (strcmp(fileName, CARTNAME_GOUDASCSI) == 0)      return langRomTypeGoudaSCSI();
 
     return stripPath(fileName);
 }
@@ -453,8 +455,9 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_BEERIDE, langMenuCartBeerIde());
     AppendMenu(hMenuIde, MF_STRING, idOffset + ID_FILE_CART_GIDE, langMenuCartGIde());
 
-    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuMegaSCSI, langMenuCartMegaSCSI());
-    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuWaveSCSI, langMenuCartWaveSCSI());
+    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuMegaSCSI,  langMenuCartMegaSCSI());
+    AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuWaveSCSI,  langMenuCartWaveSCSI());
+    AppendMenu(hMenuScsi, MF_STRING, idOffset + ID_FILE_CART_GOUDASCSI, langMenuCartGoudaSCSI());
 
     if (gameReaderSupported()) {
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
@@ -661,7 +664,7 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
             for (j = 0; j < 8; j++) {
                 sprintf(langBuffer, "SCSI%d MEGA-SCSI #%d", i, j);
                 AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
-        }
+            }
             break;
         case HD_WAVESCSI:
             hasHd = 1;
@@ -670,7 +673,14 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
                 AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
             }
             break;
-    }
+        case HD_GOUDASCSI:
+            hasHd = 1;
+            for (j = 0; j < 2; j++) {
+                sprintf(langBuffer, "SCSI%d Gouda SCSI #%d", i, j);
+                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+            }
+            break;
+        }
     }
 #if 1
     if (hasHd) {
@@ -1465,6 +1475,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_ESESCC512:
             insertCartridge(pProperties, i, CARTNAME_ESESCC512, NULL, SRAM_ESESCC512, 0);
+            return 1;
+        case ID_FILE_CART_GOUDASCSI:
+            insertCartridge(pProperties, i, CARTNAME_GOUDASCSI, NULL, ROM_GOUDASCSI, 0);
             return 1;
         case ID_FILE_CART_INSERT:       
             actionCartInsert(i);            

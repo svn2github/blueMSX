@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,19 +109,20 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer IDE";
     ls->menuCartGIde            = "GIDE";
     ls->menuCartSunriseIde      = "Sunrise IDE";
-    ls->menuCartScsi            = "SCSI カートリッジ";          // white cat append
-    ls->menuCartMegaSCSI        = "MEGA-SCSI";                  // white cat append
-    ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // white cat append
-    ls->menuCartSCC              = "SCC カートリッジ";
-    ls->menuCartSCCPlus          = "SCC+ カートリッジ";
+    ls->menuCartScsi            = "SCSI カートリッジ";          // New
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";                  // New
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // New
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";                 // New
+    ls->menuCartSCC             = "SCC カートリッジ";
+    ls->menuCartSCCPlus         = "SCC+ カートリッジ";
     ls->menuCartFMPac           = "FMPAC+ カートリッジ";
     ls->menuCartPac             = "PAC+ カートリッジ";
     ls->menuCartHBI55           = "Sony HBI-55 カートリッジ";
     ls->menuCartInsertSpecial   = "特殊カートリッジ";
     ls->menuCartMegaRam         = "メガRAM カートリッジ";
     ls->menuCartExternalRam     = "外部RAM カートリッジ"; 
-    ls->menuCartEseRam          = "似非RAM カートリッジ";       // white cat append
-    ls->menuCartEseSCC          = "似非SCC カートリッジ";       // white cat append
+    ls->menuCartEseRam          = "似非RAM カートリッジ";       // New
+    ls->menuCartEseSCC          = "似非SCC カートリッジ";       // New
 
     ls->menuDiskInsertNew       = "新規ディスクイメージを挿入";
     ls->menuDiskDirInsert       = "ディレクトリ挿入";

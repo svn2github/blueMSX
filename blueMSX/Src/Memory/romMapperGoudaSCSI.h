@@ -1,13 +1,13 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGoudaSCSI.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.1 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-02-26 19:20:12 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2007 Daniel Vik, Ricardo Bittencourt, white cat
+** Copyright (C) 2003-2006 Daniel Vik, white cat
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -25,22 +25,12 @@
 **
 ******************************************************************************
 */
-#ifndef WD33C93_H
-#define WD33C93_H
+#ifndef ROMMAPPER_GOUDASCSI_H
+#define ROMMAPPER_GOUDASCSI_H
 
 #include "MsxTypes.h"
 
-typedef struct WD33C93 WD33C93;
-
-WD33C93* wd33c93Create(int hdId);
-void	 wd33c93Reset(WD33C93* wd33c93, int scsireset);
-void     wd33c93Destroy(WD33C93* wd33c93);
-
-UInt8    wd33c93Read(WD33C93* wd33c93, UInt16 port);
-UInt8    wd33c93Peek(WD33C93* wd33c93, UInt16 port);
-void     wd33c93Write(WD33C93* wd33c93, UInt16 port, UInt8 value);
-
-void     wd33c93LoadState(WD33C93* wd33c93);
-void     wd33c93SaveState(WD33C93* wd33c93);
+int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData, 
+                          int size, int slot, int sslot, int startPage);
 
 #endif

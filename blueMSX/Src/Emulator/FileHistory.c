@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2007-02-16 16:16:09 $
+** $Date: 2007-02-26 19:16:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,6 +112,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_SUNRISEIDE)  &&
             strcmp(fname, CARTNAME_BEERIDE)     &&
             strcmp(fname, CARTNAME_GIDE)        &&
+            strcmp(fname, CARTNAME_GOUDASCSI)   &&
             strcmp(fname, CARTNAME_SONYHBI55)   && 
             strcmp(fname, CARTNAME_EXTRAM512KB) && 
             strcmp(fname, CARTNAME_EXTRAM1MB)   &&
@@ -365,6 +366,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 strcmp(properties->media.carts[i].fileName, CARTNAME_SUNRISEIDE)   &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_BEERIDE)      &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_GIDE)         &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_GOUDASCSI)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_SONYHBI55)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM512KB)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM1MB)    &&
@@ -396,6 +398,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 properties->media.carts[i].type != ROM_SUNRISEIDE          &&
                 properties->media.carts[i].type != ROM_BEERIDE             &&
                 properties->media.carts[i].type != ROM_GIDE                &&
+                properties->media.carts[i].type != ROM_GOUDASCSI           &&
                 properties->media.carts[i].type != ROM_MSXAUDIO            &&
                 properties->media.carts[i].type != ROM_MOONSOUND           &&
                 properties->media.carts[i].type != ROM_SNATCHER            &&

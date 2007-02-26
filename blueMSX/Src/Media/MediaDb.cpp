@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2007-02-16 22:24:22 $
+** $Date: 2007-02-26 19:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,6 +150,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "SunriseIDE")   return ROM_SUNRISEIDE;
     if (name == "BeerIDE")      return ROM_BEERIDE;
     if (name == "GIDE")         return ROM_GIDE;
+    if (name == "GoudaSCSI")    return ROM_GOUDASCSI;
 
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
@@ -619,6 +620,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case SRAM_ESESCC128:  return langRomTypeEseSCC128();
     case SRAM_ESESCC256:  return langRomTypeEseSCC256();
     case SRAM_ESESCC512:  return langRomTypeEseSCC512();
+    case ROM_GOUDASCSI:   return langRomTypeGoudaSCSI();
 
     case ROM_UNKNOWN:     return langTextUnknown();
     }
@@ -758,6 +760,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case SRAM_ESESCC128:  return "ESE-SCC128";
     case SRAM_ESESCC256:  return "ESE-SCC256";
     case SRAM_ESESCC512:  return "ESE-SCC512";
+    case ROM_GOUDASCSI:   return "GOUDA SCSI";
 
     case ROM_UNKNOWN:     return "UNKNOWN";
     }

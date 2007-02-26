@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2007-02-16 22:24:23 $
+** $Date: 2007-02-26 19:16:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -722,6 +722,8 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.startPage = 2;
         break;
 
+    case ROM_GOUDASCSI:
+        editSlotInfo.startPage = 0;
     case ROM_PAC:
     case ROM_FMPAC:
     case ROM_BEERIDE:
@@ -1254,6 +1256,12 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMIMAGE), FALSE);
         break;
 
+    case ROM_GOUDASCSI:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0x7FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_SNATCHER:
     case ROM_SDSNATCHER:
     case ROM_SCCMIRRORED:
@@ -1323,6 +1331,7 @@ static RomType romTypeList[] = {
     ROM_BEERIDE,
     SRAM_MEGASCSI,
     SRAM_WAVESCSI,
+    ROM_GOUDASCSI,
     ROM_SVI738FDC,
     ROM_SVI328FDC,
     ROM_SVI328PRN,
