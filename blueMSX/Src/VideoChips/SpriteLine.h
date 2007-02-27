@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2007-02-23 03:10:43 $
+** $Date: 2007-02-27 06:07:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -477,5 +477,12 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
 }
 
 
+UInt8* getSpritesLine(VDP* vdp, int line) {
+    if (!spritesEnable) {
+        return nullSpritesLine();
+    }
+
+    return lineBufs[(line & 1)];
+}
 
 #endif

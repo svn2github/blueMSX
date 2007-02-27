@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2007-02-19 06:27:45 $
+** $Date: 2007-02-27 06:07:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -654,7 +654,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr1 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
-        sprLine = spritesLine(vdp, Y);
+        sprLine = getSpritesLine(vdp, Y);
 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
@@ -707,6 +707,7 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
+        spritesLine(vdp, Y);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
     }
 }
@@ -729,7 +730,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr2 = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
-        sprLine = spritesLine(vdp, Y);
+        sprLine = getSpritesLine(vdp, Y);
         
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
@@ -784,6 +785,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
     }
 
     if (rightBorder) {
+        spritesLine(vdp, Y);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
     }
 }
@@ -803,7 +805,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr3 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
-        sprLine = spritesLine(vdp, Y);
+        sprLine = getSpritesLine(vdp, Y);
 
         y = Y - vdp->firstLine + vdpVScroll(vdp);
         charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
@@ -856,6 +858,7 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
+        spritesLine(vdp, Y);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
     }
 }
@@ -883,7 +886,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
 
         X++;
         linePtr4 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
-        sprLine = colorSpritesLine(vdp, Y, 0);
+        sprLine = getSpritesLine(vdp, Y);
 
         if (linePtr4 == NULL) {
             return;
@@ -985,6 +988,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
     }
 }
@@ -1007,7 +1011,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr5 = RefreshBorder(vdp, Y,  vdp->palette[vdp->BGColor], 0, 0);
-        sprLine   = colorSpritesLine(vdp, Y, 0);
+        sprLine   = getSpritesLine(vdp, Y);
 
         if (linePtr5 == NULL) {
             return;
@@ -1118,6 +1122,7 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
     }
 
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
     }
 }
@@ -1136,7 +1141,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr6 = RefreshBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
-        sprLine   = colorSpritesLine(vdp, Y, 1);
+        sprLine   = getSpritesLine(vdp, Y);
 
         if (linePtr6 == NULL) {
             return;
@@ -1255,6 +1260,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 1);
         RefreshRightBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
     }
 }
@@ -1275,7 +1281,7 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr7 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
-        sprLine = colorSpritesLine(vdp, Y, 0);
+        sprLine = getSpritesLine(vdp, Y);
     
         if (linePtr7 == NULL) {
             return;
@@ -1457,6 +1463,7 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
         }
     }    
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
     }
 }
@@ -1482,7 +1489,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr8 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
-        sprLine = colorSpritesLine(vdp, Y, 0);
+        sprLine = getSpritesLine(vdp, Y);
 
         if (linePtr8 == NULL) {
             return;
@@ -1606,6 +1613,7 @@ static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
     }
 
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
     }
 }
@@ -1629,7 +1637,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr10 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
-        sprLine = colorSpritesLine(vdp, Y, 0);
+        sprLine = getSpritesLine(vdp, Y);
 
         if (linePtr10 == NULL) {
             return;
@@ -1779,6 +1787,7 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
     }
 
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
     }
 }
@@ -1802,7 +1811,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
     if (X == -1) {
         X++;
         linePtr12 = RefreshBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
-        sprLine = colorSpritesLine(vdp, Y, 0);
+        sprLine = getSpritesLine(vdp, Y);
 
         if (linePtr12 == NULL) {
             return;
@@ -1951,6 +1960,7 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
     }
 
     if (rightBorder) {
+        colorSpritesLine(vdp, Y, 0);
         RefreshRightBorder(vdp, Y, vdp->paletteFixed[vdp->vdpRegs[7]], 0, 0);
     }
 }
