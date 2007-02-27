@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2007-02-26 19:16:30 $
+** $Date: 2007-02-27 12:56:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -723,7 +723,7 @@ static void endEditControls(HWND hDlg)
         break;
 
     case ROM_GOUDASCSI:
-        editSlotInfo.startPage = 0;
+        editSlotInfo.startPage = 2;
     case ROM_PAC:
     case ROM_FMPAC:
     case ROM_BEERIDE:
@@ -1606,7 +1606,7 @@ static void addMachineEntry(HWND hwnd, int entry) {
     lvi.mask       = LVIF_IMAGE;
     lvi.iItem      = entry;
     lvi.pszText    = buffer;
-	lvi.cchTextMax = 512;
+    lvi.cchTextMax = 512;
 
     lvi.iImage = machine->slotInfo[entry].error;
 
@@ -1748,7 +1748,7 @@ static BOOL CALLBACK memoryProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             lvc.fmt        = LVCFMT_LEFT;
             lvc.cx         = 100;
             lvc.pszText    = buffer;
-	        lvc.cchTextMax = 32;
+            lvc.cchTextMax = 32;
 
             sprintf(buffer, "");
             lvc.cx = 20;
