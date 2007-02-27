@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGoudaSCSI.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-02-26 19:20:12 $
+** $Date: 2007-02-27 13:02:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,7 @@ static void destroy(RomMapperGoudaSCSI* rm)
     ioPortUnregister(PORT_BASE + 1);
     ioPortUnregister(PORT_BASE + 2);
 
+    debugDeviceUnregister(rm->debugHandle);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
