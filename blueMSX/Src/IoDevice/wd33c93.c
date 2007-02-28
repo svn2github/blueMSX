@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-02-28 08:55:18 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -29,7 +29,7 @@
 */
 #include "wd33c93.h"
 #include "ScsiDevice.h"
-#include "disk.h"
+#include "Disk.h"
 #include "Board.h"
 #include "SaveState.h"
 #include <stdio.h>
