@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2007-02-27 06:07:52 $
+** $Date: 2007-02-28 19:27:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #define SCREEN_HEIGHT  240
 
 
-
+#define UPDATE_TABLE_4() if ((++scroll & 0x1f) == 0) charTable += jump[page ^= 1];
 #define UPDATE_TABLE_5() if ((++scroll & 0x7f) == 0) charTable += jump[page ^= 1];
 #define UPDATE_TABLE_6() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 #define UPDATE_TABLE_7() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
@@ -42,7 +42,8 @@
 #define UPDATE_TABLE_12() if ((++scroll & 0xff) == 0) charTable += jump[page ^= 1];
 
 
-static int jumpTable[] = { -128, -128, -0x8080, 0x7f80 };
+static int jumpTable[] =  { -128, -128, -0x8080, 0x7f80 };
+static int jumpTable4[] = {  -32, -32,  -0x8020, 0x7fe0 };
 
 static UInt16* linePtr0 = NULL;
 static UInt16* linePtr0p = NULL;
@@ -893,8 +894,9 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         }
 
         hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
+        hScroll    = vdpHScroll(vdp);
         hScroll512 = vdpHScroll512(vdp);
-        jump       = jumpTable + hScroll512 * 2;
+        jump       = jumpTable4 + hScroll512 * 2;
         page       = (vdp->chrTabBase / 0x8000) & 1;
         scroll     = hScroll >> 3;
 
@@ -903,9 +905,8 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         base        = (-1 << 13) | ((y & 0xc0) << 5) | (y & 7);
 
         if (hScroll512) {
-            if (scroll & 0x20) {
-                charTable -= 32;
-            }
+            if (scroll & 0x20) charTable += jump[page ^= 1];
+            if (vdp->chrTabBase & (1 << 15)) charTable += jump[page ^= 1] + 32;
         }
 
         if (vdpIsEdgeMasked(vdp->vdpRegs)) {
@@ -919,6 +920,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             linePtr4[6] = bgColor;
             linePtr4[7] = bgColor;
             charTable++; 
+            UPDATE_TABLE_4(); 
             X++;
             sprLine += sprLine != NULL ? 8 : 0;
             linePtr4 += 8;
@@ -930,14 +932,29 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         color[1]   = vdp->palette[colPattern >> 4];
         charPattern = vdp->vram[vdp->chrGenBase & index];
 
-        switch (hScroll & 7) {
-        case 1: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
-        case 2: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
-        case 3: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
-        case 4: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
-        case 5: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
-        case 6: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
-        case 7: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++;
+        if (!vdp->screenOn || !vdp->drawArea) {
+            UInt16 bgColor = vdp->palette[vdp->BGColor];
+
+            switch (hScroll & 7) {
+            case 1: *linePtr4++ = bgColor; 
+            case 2: *linePtr4++ = bgColor; 
+            case 3: *linePtr4++ = bgColor; 
+            case 4: *linePtr4++ = bgColor; 
+            case 5: *linePtr4++ = bgColor; 
+            case 6: *linePtr4++ = bgColor; 
+            case 7: *linePtr4++ = bgColor;  charTable++; UPDATE_TABLE_4();
+            }
+        }
+        else {
+            switch (hScroll & 7) {
+            case 1: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
+            case 2: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
+            case 3: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
+            case 4: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
+            case 5: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
+            case 6: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
+            case 7: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
+            }
         }
     }
 
@@ -983,6 +1000,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             linePtr4[7] = (col = sprLine[7]) ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1];
             sprLine += 8;
             charTable++;
+            UPDATE_TABLE_4();
             linePtr4 += 8; 
             X++;
         }
