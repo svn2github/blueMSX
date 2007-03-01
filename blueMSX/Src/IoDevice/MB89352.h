@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-02-18 23:56:47 $
+** $Date: 2007-03-01 16:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,9 +33,9 @@
 typedef struct MB89352 MB89352;
 
 typedef struct {
-	char* productName;
-	int deviceType;
-	int scsiMode;
+    char* productName;
+    int deviceType;
+    int scsiMode;
 } SCSICREATE;
 
 MB89352* mb89352Create(int hdId, const SCSICREATE* create);

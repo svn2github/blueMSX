@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-02-21 16:25:24 $
+** $Date: 2007-03-01 16:16:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,18 +31,18 @@
  *
  * Specification:
  *  SRAM(MegaROM) controller: KONAMI_SCC type (KONAMI5)
- *  SRAM capacity			: 128, 256, 512kB and 1024kb(WAVE-SCSI only)
+ *  SRAM capacity           : 128, 256, 512kB and 1024kb(WAVE-SCSI only)
  *  SCSI Protocol controller: Fujitsu MB89352A
  *
  * ESE-SCC sram write control register:
- *	7FFEH, 7FFFH SRAM write control.
- *	 bit4		= 1..SRAM writing in 4000H-7FFDH can be done.
- *					 It is given priority more than bank changing.
- *				= 0..SRAM read only
- *   othet bit	= not used
+ *  7FFEH, 7FFFH SRAM write control.
+ *   bit4       = 1..SRAM writing in 4000H-7FFDH can be done.
+ *                   It is given priority more than bank changing.
+ *              = 0..SRAM read only
+ *   othet bit  = not used
  *
  * WAVE-SCSI bank control register
- *			   6bit register (MA13-MA18, B0-B5)
+ *             6bit register (MA13-MA18, B0-B5)
  *  5000-57FF: 4000-5FFF change
  *  7000-77FF: 6000-7FFF change
  *  9000-97FF: 8000-AFFF change
@@ -66,7 +66,7 @@
  *      5FFF un mapped
  *
  * WAVE-SCSI bank access map:
- *			 00-3F 80-BF C0-FF SPC  SCC
+ *           00-3F 80-BF C0-FF SPC  SCC
  * 4000-5FFF   o     o     o    o    x
  * 6000-7FFF   o     o     x    x    x
  * 8000-9FFF   o     x     x    x    o
@@ -87,9 +87,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* #define ESESCCDEBUG	"esescclog.txt" */
+/* #define ESESCCDEBUG  "esescclog.txt" */
 
-#define Offset		0x4000
+#define Offset      0x4000
 
 #ifdef ESESCCDEBUG
 #include <stdio.h>
@@ -109,26 +109,26 @@ static int esesccFdCount = 0;
 #endif
 
 typedef struct {
-	int deviceHandle;
-	int pSlot;
-	int sSlot;
-	int startPage;
-	MB89352* spc;
-	int mapper[4];
-	int mapperHigh;			// MA19, MA20 save value
-	int spcEnable;
-	int sccEnable;
-	int preChange;
-	int writeEnable;
-	UInt32 mapperMask;
-	int haveSPC;
-	int isZip;
-	int isAutoName;
-	int element;
-	SCC* scc;
-	int sramSize;
-	UInt8* sramData;
-	char sramFilename[512];
+    int deviceHandle;
+    int pSlot;
+    int sSlot;
+    int startPage;
+    MB89352* spc;
+    int mapper[4];
+    int mapperHigh;         // MA19, MA20 save value
+    int spcEnable;
+    int sccEnable;
+    int preChange;
+    int writeEnable;
+    UInt32 mapperMask;
+    int haveSPC;
+    int isZip;
+    int isAutoName;
+    int element;
+    SCC* scc;
+    int sramSize;
+    UInt8* sramData;
+    char sramFilename[512];
 } SramMapperEseSCC;
 
 // Counter for two or more Ese-SCC, WAVE-SCSI
@@ -138,158 +138,158 @@ static char wavescsiName[2][9] = {"esescc", "wavescsi"};
 
 static void setMapperLow(SramMapperEseSCC* rm, int page, UInt8 value)
 {
-	int readMode  = 1;
-	int writeMode = 0;
-	int change	  = 0;
+    int readMode  = 1;
+    int writeMode = 0;
+    int change    = 0;
 
-	DBGLOG2("setMapperLow: p%x v%x\n", page, value);
+    DBGLOG2("setMapperLow: p%x v%x\n", page, value);
 
-	value &= 0x3f;					// use 6bit
+    value &= 0x3f;                  // use 6bit
 
-	if (page == 0) {
-		if (rm->spcEnable) {
-			rm->mapper[0] = value & rm->mapperMask;
-			rm->preChange = 1;
-			DBGLOG1("mapper low change (pre): p0 v%x\n", rm->mapper[0]);
-			return;
-		} else {
-			value |= rm->mapperHigh & 0x40;
-			if (rm->writeEnable) {
-				writeMode = 1;
-			}
-			if (rm->preChange) {
-				rm->preChange = 0;
-				change = 1;
-			}
-		}
-	} else {
-		if (page == 2) {
-			int newEnable = (value == 0x3f);
-			if (rm->sccEnable != newEnable) {
-				rm->sccEnable = newEnable;
-				change = 1;
-			}
-			if (newEnable) {
-				readMode = 0;
-			}
-		}
-	}
+    if (page == 0) {
+        if (rm->spcEnable) {
+            rm->mapper[0] = value & rm->mapperMask;
+            rm->preChange = 1;
+            DBGLOG1("mapper low change (pre): p0 v%x\n", rm->mapper[0]);
+            return;
+        } else {
+            value |= rm->mapperHigh & 0x40;
+            if (rm->writeEnable) {
+                writeMode = 1;
+            }
+            if (rm->preChange) {
+                rm->preChange = 0;
+                change = 1;
+            }
+        }
+    } else {
+        if (page == 2) {
+            int newEnable = (value == 0x3f);
+            if (rm->sccEnable != newEnable) {
+                rm->sccEnable = newEnable;
+                change = 1;
+            }
+            if (newEnable) {
+                readMode = 0;
+            }
+        }
+    }
 
-	value &= rm->mapperMask;
+    value &= rm->mapperMask;
 
-	if ((value != rm->mapper[page]) || change)  {
-		rm->mapper[page] = value;
-		slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + page,
-					rm->sramData + value * 0x2000, readMode, writeMode);
-		DBGLOG4("mapper low change: p%x v%x r%x w%x\n", page, value, readMode, writeMode);
-	} else {
-		DBGLOG2("mapper low not change: p%x v%x\n", page, value);
-	}
+    if ((value != rm->mapper[page]) || change)  {
+        rm->mapper[page] = value;
+        slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + page,
+                    rm->sramData + value * 0x2000, readMode, writeMode);
+        DBGLOG4("mapper low change: p%x v%x r%x w%x\n", page, value, readMode, writeMode);
+    } else {
+        DBGLOG2("mapper low not change: p%x v%x\n", page, value);
+    }
 }
 
 static void setMapperHigh(SramMapperEseSCC* rm, UInt8 value)
 {
-	int newValue;
+    int newValue;
 
-	DBGLOG1("setMapperHigh: v%x\n", value);
+    DBGLOG1("setMapperHigh: v%x\n", value);
 
-	if (rm->haveSPC) {
-		newValue = ((value & 0x10) << 3) | (value & 0x40);
-	} else {
-		newValue =  (value & 0x10) << 3;
-	}
+    if (rm->haveSPC) {
+        newValue = ((value & 0x10) << 3) | (value & 0x40);
+    } else {
+        newValue =  (value & 0x10) << 3;
+    }
 
-	if (newValue != rm->mapperHigh) {
+    if (newValue != rm->mapperHigh) {
         int mapperLow0;
 
-		rm->writeEnable = (newValue & 0x80) ? 1 : 0;
-		rm->spcEnable   = (newValue == 0x40);
-		rm->mapperHigh	= newValue;
-		mapperLow0	= rm->mapper[0] & 0x3f;
+        rm->writeEnable = (newValue & 0x80) ? 1 : 0;
+        rm->spcEnable   = (newValue == 0x40);
+        rm->mapperHigh  = newValue;
+        mapperLow0  = rm->mapper[0] & 0x3f;
 
-		if (rm->spcEnable) {
-			rm->mapper[0] = mapperLow0;
-			rm->preChange = 1;
-			slotMapPage(rm->pSlot, rm->sSlot, rm->startPage, NULL, 0, 0);
-			DBGLOG1("mapper high change: p0 SPC (hidden %x) r0 w0\n", rm->mapper[0]);
-		} else {
-			int B6 = newValue & 0x40;
-			rm->preChange = 0;
-			rm->mapper[0] = (mapperLow0 | B6) & rm->mapperMask;
-			slotMapPage(rm->pSlot, rm->sSlot, rm->startPage,
-						rm->sramData + rm->mapper[0] * 0x2000,
-						1, rm->writeEnable);
-			DBGLOG2("mapper high change: p0 v%x r1 w%d\n", rm->mapper[0], rm->writeEnable);
-		}
-	} else {
-		DBGLOG("mapper high not change\n");
-	}
+        if (rm->spcEnable) {
+            rm->mapper[0] = mapperLow0;
+            rm->preChange = 1;
+            slotMapPage(rm->pSlot, rm->sSlot, rm->startPage, NULL, 0, 0);
+            DBGLOG1("mapper high change: p0 SPC (hidden %x) r0 w0\n", rm->mapper[0]);
+        } else {
+            int B6 = newValue & 0x40;
+            rm->preChange = 0;
+            rm->mapper[0] = (mapperLow0 | B6) & rm->mapperMask;
+            slotMapPage(rm->pSlot, rm->sSlot, rm->startPage,
+                        rm->sramData + rm->mapper[0] * 0x2000,
+                        1, rm->writeEnable);
+            DBGLOG2("mapper high change: p0 v%x r1 w%d\n", rm->mapper[0], rm->writeEnable);
+        }
+    } else {
+        DBGLOG("mapper high not change\n");
+    }
 }
 
 static void reset(SramMapperEseSCC* rm)
 {
-	int i;
+    int i;
 
-	DBGLOG("Reset\n");
+    DBGLOG("Reset\n");
 
-	setMapperHigh(rm, 0);
+    setMapperHigh(rm, 0);
 
-	for (i = 0; i < 4; ++i) {
-		setMapperLow(rm, i, i);
-	}
+    for (i = 0; i < 4; ++i) {
+        setMapperLow(rm, i, i);
+    }
 
-	sccReset(rm->scc);
-	if (rm->haveSPC) mb89352Reset(rm->spc, 1);
+    sccReset(rm->scc);
+    if (rm->haveSPC) mb89352Reset(rm->spc, 1);
 
 #ifdef ESESCCDEBUG
-	fflush(esesccFd);
+    fflush(esesccFd);
 #endif
 }
 
 static void saveState(SramMapperEseSCC* rm)
 {
-	char tag[16];
-	int i;
-	SaveState* state = saveStateOpenForWrite("mapperEseSCC");
+    char tag[16];
+    int i;
+    SaveState* state = saveStateOpenForWrite("mapperEseSCC");
 
-	saveStateSetBuffer(state, "sramData", rm->sramData, rm->sramSize);
-	saveStateSet(state, "sccEnable"  , rm->sccEnable);
-	saveStateSet(state, "spcEnable"  , rm->spcEnable);
-	saveStateSet(state, "writeEnable", rm->writeEnable);
-	saveStateSet(state, "preChange"  , rm->preChange);
-	saveStateSet(state, "mapperHigh" , rm->mapperHigh);
+    saveStateSetBuffer(state, "sramData", rm->sramData, rm->sramSize);
+    saveStateSet(state, "sccEnable"  , rm->sccEnable);
+    saveStateSet(state, "spcEnable"  , rm->spcEnable);
+    saveStateSet(state, "writeEnable", rm->writeEnable);
+    saveStateSet(state, "preChange"  , rm->preChange);
+    saveStateSet(state, "mapperHigh" , rm->mapperHigh);
 
-	for (i = 0; i < 4; i++) {
-		sprintf(tag, "mapper%d", i);
-		saveStateSet(state, tag, rm->mapper[i]);
-	}
-	saveStateClose(state);
+    for (i = 0; i < 4; i++) {
+        sprintf(tag, "mapper%d", i);
+        saveStateSet(state, tag, rm->mapper[i]);
+    }
+    saveStateClose(state);
 
-	sccSaveState(rm->scc);
-	if (rm->haveSPC) mb89352SaveState(rm->spc);
+    sccSaveState(rm->scc);
+    if (rm->haveSPC) mb89352SaveState(rm->spc);
 }
 
 static void loadState(SramMapperEseSCC* rm)
 {
-	SaveState* state = saveStateOpenForRead("mapperEseSCC");
-	char tag[16];
-	int i;
+    SaveState* state = saveStateOpenForRead("mapperEseSCC");
+    char tag[16];
+    int i;
 
-	DBGLOG("load State\n");
+    DBGLOG("load State\n");
 
-	saveStateGetBuffer(state, "sramData", rm->sramData, rm->sramSize);
-	rm->sccEnable   = saveStateGet(state, "sccEnable"  , 0);
-	rm->spcEnable   = saveStateGet(state, "spcEnable"  , 0);
-	rm->writeEnable = saveStateGet(state, "writeEnable", 0);
-	rm->preChange   = saveStateGet(state, "preChange"  , 0);
+    saveStateGetBuffer(state, "sramData", rm->sramData, rm->sramSize);
+    rm->sccEnable   = saveStateGet(state, "sccEnable"  , 0);
+    rm->spcEnable   = saveStateGet(state, "spcEnable"  , 0);
+    rm->writeEnable = saveStateGet(state, "writeEnable", 0);
+    rm->preChange   = saveStateGet(state, "preChange"  , 0);
 
-	setMapperHigh(rm, (UInt8)saveStateGet(state, "mapperHigh", 0));
+    setMapperHigh(rm, (UInt8)saveStateGet(state, "mapperHigh", 0));
 
-	for (i = 0; i < 4; i++) {
-		sprintf(tag, "mapper%d", i);
-		setMapperLow(rm, i, (UInt8)saveStateGet(state, tag, 0));
-	}
-	saveStateClose(state);
+    for (i = 0; i < 4; i++) {
+        sprintf(tag, "mapper%d", i);
+        setMapperLow(rm, i, (UInt8)saveStateGet(state, tag, 0));
+    }
+    saveStateClose(state);
 
     sccLoadState(rm->scc);
     if (rm->haveSPC) mb89352LoadState(rm->spc);
@@ -298,249 +298,249 @@ static void loadState(SramMapperEseSCC* rm)
 static void destroy(SramMapperEseSCC* rm)
 {
 #ifdef ESESCCDEBUG
-	--esesccFdCount;
-	DBGLOG("%d close\n", esesccFdCount);
-	if (!esesccFdCount) {
-		fclose(esesccFd);
-		esesccFd = NULL;
-	}
+    --esesccFdCount;
+    DBGLOG("%d close\n", esesccFdCount);
+    if (!esesccFdCount) {
+        fclose(esesccFd);
+        esesccFd = NULL;
+    }
 #endif
 
-	if (!rm->isZip) {
-		sramSave(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
-	}
+    if (!rm->isZip) {
+        sramSave(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
+    }
 
-	slotUnregister(rm->pSlot, rm->sSlot, rm->startPage);
-	deviceManagerUnregister(rm->deviceHandle);
+    slotUnregister(rm->pSlot, rm->sSlot, rm->startPage);
+    deviceManagerUnregister(rm->deviceHandle);
 
-	if (rm->isAutoName) --autoNameCounter[rm->haveSPC][rm->element];
+    if (rm->isAutoName) --autoNameCounter[rm->haveSPC][rm->element];
 
-	// device release
-	sccDestroy(rm->scc);
-	if (rm->haveSPC) mb89352Destroy(rm->spc);
+    // device release
+    sccDestroy(rm->scc);
+    if (rm->haveSPC) mb89352Destroy(rm->spc);
 
-	free(rm->sramData);
-	free(rm);
+    free(rm->sramData);
+    free(rm);
 }
 
 static UInt8 read(SramMapperEseSCC* rm, UInt16 address)
 {
-	int page = (address >> 13);
+    int page = (address >> 13);
 
-	// SPC
+    // SPC
 #if 0
-	if (rm->spcEnable && (page == 0)) {
-		UInt16 fixadr = address & 0x1fff;
-		if (fixadr < 0x1000) {
-			return mb89352ReadDREG(rm->spc);
-		} else {
-			if (fixadr >= 0x1ff0) {
-				return mb89352ReadRegister(rm->spc, fixadr & 0x0f);
-			}
-		}
-		DBGLOG("Reading of undefined area: %x", address);
-		return 0xff;
-	}
+    if (rm->spcEnable && (page == 0)) {
+        UInt16 fixadr = address & 0x1fff;
+        if (fixadr < 0x1000) {
+            return mb89352ReadDREG(rm->spc);
+        } else {
+            if (fixadr >= 0x1ff0) {
+                return mb89352ReadRegister(rm->spc, fixadr & 0x0f);
+            }
+        }
+        DBGLOG("Reading of undefined area: %x", address);
+        return 0xff;
+    }
 #else
-	if (rm->spcEnable && (page == 0)) {
-		address &= 0x1fff;
-		if (address < 0x1000) {
-			return mb89352ReadDREG(rm->spc);
-		}
-		return mb89352ReadRegister(rm->spc, address & 0x0f);
-	}
+    if (rm->spcEnable && (page == 0)) {
+        address &= 0x1fff;
+        if (address < 0x1000) {
+            return mb89352ReadDREG(rm->spc);
+        }
+        return mb89352ReadRegister(rm->spc, address & 0x0f);
+    }
 #endif
 
-	// SCC bank
-	if (rm->sccEnable) {
-		if((address >= (0x9800 - Offset)) && (address < (0xa000 - Offset))) {
-			return sccRead(rm->scc, (UInt8)(address & 0xff));
-		} else {
-			return rm->sramData[rm->mapper[2] * 0x2000 + (address & 0x1fff)];
-		}
-	}
+    // SCC bank
+    if (rm->sccEnable) {
+        if((address >= (0x9800 - Offset)) && (address < (0xa000 - Offset))) {
+            return sccRead(rm->scc, (UInt8)(address & 0xff));
+        } else {
+            return rm->sramData[rm->mapper[2] * 0x2000 + (address & 0x1fff)];
+        }
+    }
 
-	DBGLOG1("read error??? %x\n", address + Offset);
-	return 0xff;
+    DBGLOG1("read error??? %x\n", address + Offset);
+    return 0xff;
 }
 
 static UInt8 peek(SramMapperEseSCC* rm, UInt16 address)
 {
-	int page = (address >> 13);
+    int page = (address >> 13);
 
-	// SPC peek
-	if (rm->spcEnable && (page == 0)) {
-		address &= 0x1fff;
-		if (address < 0x1000) {
-			address = REG_DREG;
-		}
-		return mb89352PeekRegister(rm->spc, address & 0x0f);
-	}
+    // SPC peek
+    if (rm->spcEnable && (page == 0)) {
+        address &= 0x1fff;
+        if (address < 0x1000) {
+            address = REG_DREG;
+        }
+        return mb89352PeekRegister(rm->spc, address & 0x0f);
+    }
 
-	// SCC peek
-	address += 0x4000;
-	if ((address >= 0x9800) && (address < 0xa000) && rm->sccEnable) {
-		return sccPeek(rm->scc, (UInt8)(address & 0xff));
-	}
+    // SCC peek
+    address += 0x4000;
+    if ((address >= 0x9800) && (address < 0xa000) && rm->sccEnable) {
+        return sccPeek(rm->scc, (UInt8)(address & 0xff));
+    }
 
-	// SCC bank. sram peek.
-	if ((page == 2) && rm->sccEnable) {
-		return rm->sramData[rm->mapper[2] * 0x2000 + (address & 0x1fff)];
-	}
+    // SCC bank. sram peek.
+    if ((page == 2) && rm->sccEnable) {
+        return rm->sramData[rm->mapper[2] * 0x2000 + (address & 0x1fff)];
+    }
 
-	DBGLOG1("peek error???: %x", address);
-	return 0xff;
+    DBGLOG1("peek error???: %x", address);
+    return 0xff;
 }
 
 static void write(SramMapperEseSCC* rm, UInt16 address, UInt8 value)
 {
-	int page = (address >> 13);
+    int page = (address >> 13);
 
-	// SPC Write
+    // SPC Write
 #if 0
-	if (rm->spcEnable && (page == 0)) {
-		UInt16 fixadr = address & 0x1fff;
-		if (fixadr < 0x1000) {
-			mb89352WriteDREG(rm->spc, value);
-			return;
-		} else {
-			if (fixadr >= 0x1ff0) {
-				mb89352WriteRegister(rm->spc, fixadr & 0x0f, value);
-				return;
-			}
-		}
-		DBGLOG("bank change? %x\n", address);
-	}
+    if (rm->spcEnable && (page == 0)) {
+        UInt16 fixadr = address & 0x1fff;
+        if (fixadr < 0x1000) {
+            mb89352WriteDREG(rm->spc, value);
+            return;
+        } else {
+            if (fixadr >= 0x1ff0) {
+                mb89352WriteRegister(rm->spc, fixadr & 0x0f, value);
+                return;
+            }
+        }
+        DBGLOG("bank change? %x\n", address);
+    }
 #else
-	if (rm->spcEnable && (page == 0)) {
-		address &= 0x1fff;
-		if (address < 0x1000) {
-			mb89352WriteDREG(rm->spc, value);
-		} else {
-			mb89352WriteRegister(rm->spc, address & 0x0f, value);
-		}
-		return;
-	}
+    if (rm->spcEnable && (page == 0)) {
+        address &= 0x1fff;
+        if (address < 0x1000) {
+            mb89352WriteDREG(rm->spc, value);
+        } else {
+            mb89352WriteRegister(rm->spc, address & 0x0f, value);
+        }
+        return;
+    }
 #endif
 
-	address += 0x4000;
+    address += 0x4000;
 
-	// SCC write
-	if (rm->sccEnable && (0x9800 <= address) && (address < 0xa000)) {
-		sccWrite(rm->scc, address & 0xff, value);
-		return;
-	}
+    // SCC write
+    if (rm->sccEnable && (0x9800 <= address) && (address < 0xa000)) {
+        sccWrite(rm->scc, address & 0xff, value);
+        return;
+    }
 
-	// set mapper high control register
-	if ((address | 0x0001) == 0x7FFF) {
-		setMapperHigh(rm, value);
-		return;
-	}
+    // set mapper high control register
+    if ((address | 0x0001) == 0x7FFF) {
+        setMapperHigh(rm, value);
+        return;
+    }
 
-	// SRAM write. processing of 6000-7FFDH
-	if (rm->writeEnable && (page < 2)) {
-		rm->sramData[rm->mapper[page] * 0x2000 + (address & 0x1FFF)] = value;
-		DBGLOG2("p1 write: %x %x\n", address, value);
-		return;
-	}
+    // SRAM write. processing of 6000-7FFDH
+    if (rm->writeEnable && (page < 2)) {
+        rm->sramData[rm->mapper[page] * 0x2000 + (address & 0x1FFF)] = value;
+        DBGLOG2("p1 write: %x %x\n", address, value);
+        return;
+    }
 
-	// Bank change
-	if (((address & 0x1800) == 0x1000) && ((page >= 2) || (rm->writeEnable == 0))) {
-		setMapperLow(rm, page, value);
-		return;
-	}
+    // Bank change
+    if (((address & 0x1800) == 0x1000) && ((page >= 2) || (rm->writeEnable == 0))) {
+        setMapperLow(rm, page, value);
+        return;
+    }
 
-	DBGLOG1("can't write: %x\n", address);
+    DBGLOG1("can't write: %x\n", address);
 }
 
 int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int sSlot, int startPage, int hdId, int mode)
 {
-	DeviceCallbacks callbacks = { (void*)destroy, (void*)reset, (void*)saveState, (void*)loadState };
+    DeviceCallbacks callbacks = { (void*)destroy, (void*)reset, (void*)saveState, (void*)loadState };
 
-	SramMapperEseSCC* rm;
-	int i;
-	int xs;
+    SramMapperEseSCC* rm;
+    int i;
+    int xs;
 
-	if	((!((size == 0x100000) && (mode & 1))) && (size != 0x80000) &&
-    	 (size != 0x40000) && (size != 0x20000) && (mode > 2)) {
-		return 0;
-	}
+    if  ((!((size == 0x100000) && (mode & 1))) && (size != 0x80000) &&
+         (size != 0x40000) && (size != 0x20000) && (mode > 2)) {
+        return 0;
+    }
 
-	rm = malloc(sizeof(SramMapperEseSCC));
+    rm = malloc(sizeof(SramMapperEseSCC));
 
-	rm->haveSPC = mode & 1;
-	rm->isZip = mode & 2;
+    rm->haveSPC = mode & 1;
+    rm->isZip = mode & 2;
 
-	rm->deviceHandle = deviceManagerRegister(SRAM_ESESCC, &callbacks, rm);
-	slotRegister(pSlot, sSlot, startPage, 4, (SlotRead)read, (SlotRead)peek,
-				(SlotWrite)write, (SlotEject)destroy, rm);
+    rm->deviceHandle = deviceManagerRegister(SRAM_ESESCC, &callbacks, rm);
+    slotRegister(pSlot, sSlot, startPage, 4, (SlotRead)read, (SlotRead)peek,
+                (SlotWrite)write, (SlotEject)destroy, rm);
 
-	rm->pSlot			= pSlot;
-	rm->sSlot			= sSlot;
-	rm->startPage		= startPage;
-	rm->mapperMask		= ((size >> 13) - 1);
+    rm->pSlot           = pSlot;
+    rm->sSlot           = sSlot;
+    rm->startPage       = startPage;
+    rm->mapperMask      = ((size >> 13) - 1);
 
-	if (strlen(filename)) {
-		rm->isAutoName = 0;
-	} else {
-		i = 0;
-		xs = size / 0x20000;
-		do {
-			if ((xs >>= 1) == 0) {
-				break;
-			}
-			++i;
-		} while (i < 3);
-		rm->element = i;
-		rm->isAutoName = 1;
-	}
+    if (strlen(filename)) {
+        rm->isAutoName = 0;
+    } else {
+        i = 0;
+        xs = size / 0x20000;
+        do {
+            if ((xs >>= 1) == 0) {
+                break;
+            }
+            ++i;
+        } while (i < 3);
+        rm->element = i;
+        rm->isAutoName = 1;
+    }
 
 #ifdef ESESCCDEBUG
-	if (!esesccFdCount) {
-		esesccFd = fopen(ESESCCDEBUG, "wb");
-	}
-	DBGLOG("%s %d: debug mode\n", wavescsiName[rm->haveSPC], esesccFdCount);
-	if (strlen(filename)) {
-		DBGLOG("filename: %s size: %d\n", filename, size);
-	}
-	DBGLOG("mapper mask: %x\n", (unsigned int)rm->mapperMask);
-	++esesccFdCount;
+    if (!esesccFdCount) {
+        esesccFd = fopen(ESESCCDEBUG, "wb");
+    }
+    DBGLOG("%s %d: debug mode\n", wavescsiName[rm->haveSPC], esesccFdCount);
+    if (strlen(filename)) {
+        DBGLOG("filename: %s size: %d\n", filename, size);
+    }
+    DBGLOG("mapper mask: %x\n", (unsigned int)rm->mapperMask);
+    ++esesccFdCount;
 #endif
 
-	// create sram
-	rm->sramSize = size;
-	rm->sramData = calloc(1, rm->sramSize);
+    // create sram
+    rm->sramSize = size;
+    rm->sramData = calloc(1, rm->sramSize);
 
-	if (rm->isAutoName) {
-		sprintf(rm->sramFilename, "%s%d%c.rom", wavescsiName[rm->haveSPC], size / 1024,
-								   autoNameCounter[rm->haveSPC][rm->element] + (int)'A');
-		strcpy(rm->sramFilename, sramCreateFilename(rm->sramFilename));
-		sramLoad(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
-		++autoNameCounter[rm->haveSPC][rm->element];
-	} else {
-		memcpy(rm->sramData, buf, rm->sramSize);
-		strcpy(rm->sramFilename, filename);
-	}
+    if (rm->isAutoName) {
+        sprintf(rm->sramFilename, "%s%d%c.rom", wavescsiName[rm->haveSPC], size / 1024,
+                                   autoNameCounter[rm->haveSPC][rm->element] + (int)'A');
+        strcpy(rm->sramFilename, sramCreateFilename(rm->sramFilename));
+        sramLoad(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
+        ++autoNameCounter[rm->haveSPC][rm->element];
+    } else {
+        memcpy(rm->sramData, buf, rm->sramSize);
+        strcpy(rm->sramFilename, filename);
+    }
 
-	// initialized mapper
-	rm->mapperHigh  = 0;
-	rm->sccEnable   = 0;
-	rm->spcEnable   = 0;
-	rm->writeEnable = 0;
-	rm->preChange   = 0;
+    // initialized mapper
+    rm->mapperHigh  = 0;
+    rm->sccEnable   = 0;
+    rm->spcEnable   = 0;
+    rm->writeEnable = 0;
+    rm->preChange   = 0;
 
-	for (i = 0; i < 4; ++i) {
-		rm->mapper[i] = i;
-		slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + i,
-					rm->sramData + i * 0x2000, 1, 0);
-	}
+    for (i = 0; i < 4; ++i) {
+        rm->mapper[i] = i;
+        slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + i,
+                    rm->sramData + i * 0x2000, 1, 0);
+    }
 
-	// initialized SCC
-	rm->scc = sccCreate(boardGetMixer());
-	sccSetMode(rm->scc, SCC_REAL);
+    // initialized SCC
+    rm->scc = sccCreate(boardGetMixer());
+    sccSetMode(rm->scc, SCC_REAL);
 
-	// initialized SPC
-	rm->spc = rm->haveSPC ? mb89352Create(hdId, MegaSCSIparm) : NULL;
+    // initialized SPC
+    rm->spc = rm->haveSPC ? mb89352Create(hdId, MegaSCSIparm) : NULL;
 
-	return 1;
+    return 1;
 }
