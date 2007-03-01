@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-02-28 08:55:18 $
+** $Date: 2007-03-01 15:48:24 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -85,7 +85,7 @@
 #define SS_RESET        0x00    // reset
 #define SS_RESET_ADV    0x01    // reset w/adv. features
 #define SS_XFER_END     0x16    // select and transfer complete
-#define SS_SEL_TIMEOUT  0x42    // selrction timeout
+#define SS_SEL_TIMEOUT  0x42    // selection timeout
 #define SS_DISCONNECT   0x85
 
 // AUX STATUS
@@ -330,6 +330,7 @@ static void wd33c93ExecCmd(WD33C93* wd33c93, UInt8 value)
             //wd33c93->timeout = boardSystemTime() + boardFrequency() / 16384;
             //wd33c93->timerRunning = 1;
             //boardTimerAdd(wd33c93->timer, wd33c93->timeout);
+            SCSILOG1("wd33c93 %d timeout\n", wd33c93->targetId);
             wd33c93->tc = 0;
             wd33c93->regs[REG_SCSI_STATUS]  = SS_SEL_TIMEOUT;
             wd33c93->regs[REG_AUX_STATUS]   = AS_INT;

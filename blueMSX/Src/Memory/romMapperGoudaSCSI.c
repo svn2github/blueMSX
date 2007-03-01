@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGoudaSCSI.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-02-27 13:02:45 $
+** $Date: 2007-03-01 15:48:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -24,6 +24,11 @@
 ** Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ******************************************************************************
+*/
+/*
+  NOTE:
+    The write protect error occurs, when the host id excluding 7.
+    Is it a bug of NOVAXIS?
 */
 #include "romMapperGoudaSCSI.h"
 #include "wd33c93.h"
@@ -67,7 +72,7 @@ static UInt8 dummy(RomMapperGoudaSCSI* rm, UInt16 ioPort)
     //bit 4: 1 = Halt on SCSI parity error
 }
 
-static void icReset(RomMapperGoudaSCSI* rm, UInt16 ioPort, UInt8 value)
+static void sbicReset(RomMapperGoudaSCSI* rm, UInt16 ioPort, UInt8 value)
 {
     wd33c93Reset(rm->wd33c93, 1);
 }
@@ -111,6 +116,10 @@ int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData,
     RomMapperGoudaSCSI* rm;
     int i;
     UInt8* pBuf;
+    UInt8 id15964[16] = {
+        0x4b, 0x4d, 0x63, 0x73, 0x02, 0x01, 0x59, 0xb0,
+        0x34, 0x64, 0x00, 0x37, 0x00, 0x00, 0x00, 0x00 };
+    UInt8 bugcode[5] = { 0xc1, 0x16, 0x02, 0xc1, 0xc9 };
 
     if (romData == NULL) {
         size = 0x4000;
@@ -129,9 +138,17 @@ int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData,
     rm->romData = malloc(0x4000);
     if (romData != NULL) {
         memcpy(rm->romData, romData, 0x4000);
-        // NOVAXIS bug patch (a setting menu comes to function)
-        i = 0x3ffd;
         pBuf = rm->romData;
+        if (memcmp(pBuf + 0x3ff0, id15964, 16) == 0) {
+            // Bug patch for NOVAXIS SCSI bios 1.59.64
+            // fixed stack pointer
+            if (memcmp(pBuf + 0x91c, bugcode, 5) == 0) {
+                pBuf[0x091f] = 0;
+            }
+        }
+
+        // Bug patch for NOVAXIS (a setting menu comes to function)
+        i = 0x3ffd;
         do {
             if (*pBuf == 0xcd && *(pBuf+1) == 0x65 && *(pBuf+2) == 0xf3) {
                 *pBuf++ = 0xdb; // in a,(0a8h)
@@ -157,7 +174,7 @@ int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData,
 
     ioPortRegister(PORT_BASE + 0, (IoPortRead)wd33c93Read, (IoPortWrite)wd33c93Write, rm->wd33c93);
     ioPortRegister(PORT_BASE + 1, (IoPortRead)wd33c93Read, (IoPortWrite)wd33c93Write, rm->wd33c93);
-    ioPortRegister(PORT_BASE + 2, (IoPortRead)dummy,       (IoPortWrite)icReset,      rm);
+    ioPortRegister(PORT_BASE + 2, (IoPortRead)dummy,       (IoPortWrite)sbicReset,    rm);
 
     return 1;
 }

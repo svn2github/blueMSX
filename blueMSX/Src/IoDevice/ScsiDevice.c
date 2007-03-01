@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-01 15:48:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -720,7 +720,10 @@ static void scsiDeviceFormatUnit(SCSIDEVICE* scsi)
 {
     if (scsiDeviceGetReady(scsi) && !scsiDeviceCheckReadOnly(scsi)) {
         memset(scsi->buffer, 0, 512);
-        if (!_diskWrite2(scsi->diskId, scsi->buffer, 0, 1)) {
+        if (_diskWrite2(scsi->diskId, scsi->buffer, 0, 1)) {
+            scsi->reset   = 1;
+            scsi->changed = 1;
+        } else {
             scsi->keycode = SENSE_WriteFault;
         }
     }
