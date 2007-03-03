@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * $Date: 2007-03-01 16:16:29 $
+ * $Date: 2007-03-03 17:29:11 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -55,3 +55,16 @@ const SCSICREATE MegaSCSIparm[8] = {
     "PRODUCT NAME    ", SDT_DirectAccess,
     MODE_SCSI2 | MODE_UNITATTNTION | MODE_MEGASCSI | MODE_REMOVABLE }
 */
+
+int MegaSCSIsize(int size)
+{
+    int i = 0;
+    size /= 0x20000;
+    do {
+        if ((size >>= 1) == 0) {
+            break;
+        }
+        ++i;
+    } while (i < 3);
+    return i;
+}

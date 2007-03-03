@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,14 +25,12 @@
 **
 ******************************************************************************
 */
-
 /*
  * Notes:
  *  Not suppport padding transfer and interrupt signal. (Not used MEGA-SCSI)
  *  Message system might be imperfect. (Not used in MEGA-SCSI usually)
  *  Response time is always 0.
  */
-
 #include "MB89352.h"
 #include "ScsiDevice.h"
 #include "Disk.h"
@@ -135,7 +133,7 @@ struct MB89352 {
 
 static FILE* scsiLog = NULL;
 
-static void mb89352ChangeBusFree(MB89352* spc)
+static void mb89352Disconnect(MB89352* spc)
 {
     if (spc->phase != BusFree) {
         if ((spc->targetId >= 0) && (spc->targetId < 8)) {
@@ -171,9 +169,8 @@ static void mb89352SoftReset(MB89352* spc)
 
     spc->pCdb    = spc->cdb;
     spc->pBuffer = spc->buffer;
-
-    spc->phase     = BusFree;
-    mb89352ChangeBusFree(spc);
+    spc->phase   = BusFree;
+    mb89352Disconnect(spc);
 }
 
 void mb89352Reset(MB89352* spc, int scsireset)
@@ -360,7 +357,7 @@ static void mb89352ResetACKREQ(MB89352* spc)
     // Message In phase
     case MsgIn:
         if (spc->msgin <= 0) {
-            mb89352ChangeBusFree(spc);
+            mb89352Disconnect(spc);
             break;
         }
         spc->msgin = 0;
@@ -369,13 +366,13 @@ static void mb89352ResetACKREQ(MB89352* spc)
     // Message Out phase
     case MsgOut:
         if (spc->msgin == -1) {
-            mb89352ChangeBusFree(spc);
+            mb89352Disconnect(spc);
             return;
         }
 
         if (spc->atn) {
             if (spc->msgin & 2) {
-                mb89352ChangeBusFree(spc);
+                mb89352Disconnect(spc);
                 return;
             }
             spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_MSGOUT;
@@ -436,7 +433,7 @@ UInt8 mb89352ReadDREG(MB89352* spc)
     if (spc->isTransfer && (spc->tc > 0)) {
         mb89352SetACKREQ(spc, (UInt8*)&spc->regs[REG_DREG]);
         mb89352ResetACKREQ(spc);
-        //DBGLOG("DREG read: %d %x\n", spc->tc, spc->regs[REG_DREG]);
+        //SCSILOG2("DREG read: %d %x\n", spc->tc, spc->regs[REG_DREG]);
 
         --spc->tc;
         if (spc->tc == 0) {
@@ -457,7 +454,7 @@ void mb89352WriteDREG(MB89352* spc, UInt8 value)
 #endif
 
     if (spc->isTransfer && (spc->tc > 0)) {
-        //SCSILOG("DREG write: %d %x\n", spc->tc, value);
+        //SCSILOG2("DREG write: %d %x\n", spc->tc, value);
 
         mb89352SetACKREQ(spc, &value);
         mb89352ResetACKREQ(spc);
@@ -475,11 +472,11 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 {
     int err;
     int flag;
-    UInt8 x;
+    int x;
     int i;
     int cmd;
 
-    //SCSILOG("SPC write register: %x %x\n", reg, value);
+    //SCSILOG2("SPC write register: %x %x\n", reg, value);
 
     switch (reg) {
 
@@ -502,7 +499,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
                 for (i = 0; i < 8; ++i) {
                     scsiDeviceBusReset(spc->scsiDevice[i]);
                 }
-                mb89352ChangeBusFree(spc);  // alternative routine
+                mb89352Disconnect(spc);  // alternative routine
             }
         } else {
             spc->rst = 0;
@@ -511,7 +508,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
         spc->regs[REG_SCMD] = value;
 
         cmd = value >> 5;
-        //SCSILOG("SPC command: %x\n", cmd);
+        //SCSILOG1("SPC command: %x\n", cmd);
 
         // execute spc command
         switch (cmd) {
@@ -540,7 +537,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
             if (spc->regs[REG_PCTL] & 1) {
                 SCSILOG1("reselection error %x", spc->regs[REG_TEMPWR]);
                 spc->regs[REG_INTS] |= INTS_TimeOut;
-                mb89352ChangeBusFree(spc);
+                mb89352Disconnect(spc);
                 break;
             }
 
@@ -560,15 +557,15 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
                 if (scsiDeviceSelection(Target)) {
                     SCSILOG1("selection: %d OK\n", spc->targetId);
                     spc->regs[REG_INTS] |= INTS_CommandComplete;
-                    spc->isBusy     =  1;           // set SPC BUSY
-                    spc->counter    = -1;           // Initialize counter
-                    spc->msgin      =  0;
-                    err             =  0;
+                    spc->isBusy  =  1;
+                    spc->msgin   =  0;
+                    spc->counter = -1;
+                    err          =  0;
                     if (spc->atn) {
                         spc->phase          = MsgOut;
                         spc->nextPhase      = Command;
                         spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_MSGOUT;
-                    }else {
+                    } else {
                         spc->phase          = Command;
                         spc->nextPhase      = -1;
                         spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_COMMAND;
@@ -586,14 +583,13 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
             if (err) {
                 SCSILOG1("selection: %d error\n", spc->targetId);
                 spc->regs[REG_INTS] |= INTS_TimeOut;
-                mb89352ChangeBusFree(spc);
+                mb89352Disconnect(spc);
             }
             break;
 
         // hardware transfer
         case CMD_Transfer:
             SCSILOG2("CMD_Transfer %d (%d)\n", spc->tc, spc->tc / 512);
-            //SCSILOG("T");
             if ((spc->regs[FIX_PCTL] == (spc->regs[REG_PSNS] & 7)) &&
                 (spc->regs[REG_PSNS] & (PSNS_REQ | PSNS_BSY))) {
                 spc->isTransfer = 1;            // set Xfer in Progress
@@ -605,7 +601,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 
         case CMD_BusRelease:
             SCSILOG("CMD_BusRelease\n");
-            mb89352ChangeBusFree(spc);
+            mb89352Disconnect(spc);
             break;
 
         case CMD_SetATN:
@@ -629,7 +625,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
     case REG_INTS:
         spc->regs[REG_INTS] &= ~value;
         if (spc->rst) spc->regs[REG_INTS] |= INTS_ResetCondition;
-        //SCSILOG("INTS reset: %x %x\n", value, spc->regs[REG_INTS]);
+        //SCSILOG2("INTS reset: %x %x\n", value, spc->regs[REG_INTS]);
         break;
 
     case REG_TEMP:
@@ -638,17 +634,17 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
 
     case REG_TCL:
         spc->tc = (spc->tc & 0x00ffff00) + value;
-        //SCSILOG("set tcl: %d\n", spc->tc);
+        //SCSILOG1("set tcl: %d\n", spc->tc);
         break;
 
     case REG_TCM:
         spc->tc = (spc->tc & 0x00ff00ff) + (value << 8);
-        //SCSILOG("set tcm: %d\n", spc->tc);
+        //SCSILOG1("set tcm: %d\n", spc->tc);
         break;
 
     case REG_TCH:
         spc->tc = (spc->tc & 0x0000ffff) + (value << 16);
-        //SCSILOG("set tch: %d\n", spc->tc);
+        //SCSILOG1("set tch: %d\n", spc->tc);
         break;
 
     case REG_PCTL:
@@ -732,7 +728,7 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
         break;
 
     case REG_PSNS:
-        result = (UInt8)(spc->regs[REG_PSNS] | spc->atn);
+        result = (UInt8)((spc->regs[REG_PSNS] | spc->atn) & 0xff);
         break;
 
     case REG_SSTS:
@@ -740,22 +736,22 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
         break;
 
     case REG_TCL:
-        result = (UInt8)(spc->tc);
+        result = (UInt8)(spc->tc & 0xff);
         break;
 
     case REG_TCM:
-        result = (UInt8)(spc->tc >> 8);
+        result = (UInt8)((spc->tc >>  8) & 0xff);
         break;
 
     case REG_TCH:
-        result = (UInt8)(spc->tc >> 16);
+        result = (UInt8)((spc->tc >> 16) & 0xff);
         break;
 
     default:
-        result = (UInt8)spc->regs[reg];
+        result = (UInt8)(spc->regs[reg] & 0xff);
     }
 
-    //SCSILOG("SPC reg read: %x %x\n", reg, result);
+    //SCSILOG2("SPC reg read: %x %x\n", reg, result);
 
     return result;
 
@@ -763,34 +759,31 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
 
 UInt8 mb89352PeekRegister(MB89352* spc, UInt8 reg)
 {
-    UInt8 result;
-
     switch (reg) {
     case REG_DREG:
         if (spc->isTransfer && (spc->tc > 0)) {
-            return (UInt8)spc->regs[REG_DREG];
+            return (UInt8)(spc->regs[REG_DREG] & 0xff);
         } else {
             return 0xff;
         }
 
     case REG_PSNS:
-        result = (UInt8)(spc->regs[REG_PSNS] | spc->atn);
-        return result;
+        return (UInt8)((spc->regs[REG_PSNS] | spc->atn) & 0xff);
 
     case REG_SSTS:
         return mb89352GetSSTS(spc);
 
     case REG_TCH:
-        return (UInt8)(spc->tc >> 16);
+        return (UInt8)((spc->tc >> 16) & 0xff);
 
     case REG_TCM:
-        return (UInt8)(spc->tc >> 8);
+        return (UInt8)((spc->tc >>  8) & 0xff);
 
     case REG_TCL:
-        return (UInt8)spc->tc;
+        return (UInt8)(spc->tc & 0xff);
 
     default:
-        return (UInt8)spc->regs[reg];
+        return (UInt8)(spc->regs[reg] & 0xff);
     }
 }
 

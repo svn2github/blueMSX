@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMegaSCSI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-03-01 16:16:29 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,7 +25,6 @@
 **
 ******************************************************************************
 */
-
 /*
  * MEGA-SCSI and ESE-RAM cartridge:
  *  The mapping does SRAM and MB89352A(MEGA-SCSI) to ASCII8 or
@@ -68,8 +67,6 @@
  *  though the SPC bank is arranged in chiefly 4000H-5FFF.
  *
  */
-
-
 #include "sramMapperMegaSCSI.h"
 #include "MegaSCSIsub.h"
 #include "MB89352.h"
@@ -307,7 +304,6 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
 
     SramMapperMegaSCSI* rm;
     int i;
-    int xs;
 
     if  (((size != 0x100000) && (size != 0x80000)  &&
           (size !=  0x40000) && (size != 0x20000)) || (flag & ~3)) {
@@ -349,15 +345,7 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
     if (strlen(filename)) {
         rm->isAutoName = 0;
     } else {
-        i = 0;
-        xs = size / 0x20000;
-        do {
-            if ((xs >>= 1) == 0) {
-                break;
-            }
-            ++i;
-        } while (i < 3);
-        rm->element = i;
+        rm->element    = MegaSCSIsize(size);
         rm->isAutoName = 1;
     }
 

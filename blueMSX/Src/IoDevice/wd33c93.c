@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-01 15:48:24 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -425,15 +425,15 @@ UInt8 wd33c93Read(WD33C93* wd33c93, UInt16 port)
     } else {
         switch (wd33c93->latch) {
         case REG_TCH:
-            rv = (UInt8)(wd33c93->tc >> 16);
+            rv = (UInt8)((wd33c93->tc >> 16) & 0xff);
             break;
 
         case REG_TCM:
-            rv = (UInt8)(wd33c93->tc >> 8);
+            rv = (UInt8)((wd33c93->tc >> 8) & 0xff);
             break;
 
         case REG_TCL:
-            rv = (UInt8)wd33c93->tc;
+            rv = (UInt8)(wd33c93->tc & 0xff);
             break;
 
         case REG_SCSI_STATUS:
@@ -496,13 +496,13 @@ UInt8 wd33c93Peek(WD33C93* wd33c93, UInt16 port)
     } else {
         switch (wd33c93->latch) {
         case REG_TCH:
-            rv = (UInt8)(wd33c93->tc >> 16);
+            rv = (UInt8)((wd33c93->tc >> 16) & 0xff);
             break;
         case REG_TCM:
-            rv = (UInt8)(wd33c93->tc >> 8);
+            rv = (UInt8)((wd33c93->tc >> 8) & 0xff);
             break;
         case REG_TCL:
-            rv = (UInt8)wd33c93->tc;
+            rv = (UInt8)(wd33c93->tc & 0xff);
             break;
         default:
             rv = wd33c93->regs[wd33c93->latch];

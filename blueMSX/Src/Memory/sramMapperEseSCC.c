@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-03-01 16:16:29 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,7 +25,6 @@
 **
 ******************************************************************************
 */
-
 /*
  * 'Ese-SCC' cartride and 'MEGA-SCSI with SCC'(alias WAVE-SCSI) cartrige.
  *
@@ -73,7 +72,6 @@
  * A000-BFFF   o     x     x    x    x
  *
  */
-
 #include "sramMapperEseSCC.h"
 #include "MegaSCSIsub.h"
 #include "MB89352.h"
@@ -459,7 +457,6 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
 
     SramMapperEseSCC* rm;
     int i;
-    int xs;
 
     if  ((!((size == 0x100000) && (mode & 1))) && (size != 0x80000) &&
          (size != 0x40000) && (size != 0x20000) && (mode > 2)) {
@@ -481,18 +478,10 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
     rm->mapperMask      = ((size >> 13) - 1);
 
     if (strlen(filename)) {
-        rm->isAutoName = 0;
+        rm->isAutoName  = 0;
     } else {
-        i = 0;
-        xs = size / 0x20000;
-        do {
-            if ((xs >>= 1) == 0) {
-                break;
-            }
-            ++i;
-        } while (i < 3);
-        rm->element = i;
-        rm->isAutoName = 1;
+        rm->element = MegaSCSIsize(size);
+        rm->isAutoName  = 1;
     }
 
 #ifdef ESESCCDEBUG

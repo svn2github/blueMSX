@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-01 15:48:24 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,14 +25,12 @@
 **
 ******************************************************************************
 */
-
 /*
  * Notes:
  *  It follows the SCSI1(CCS) standard or the SCSI2 standard.
  *  Only the direct access device is supported now.
  *  Message system might be imperfect.
  */
-
 #include "ScsiDevice.h"
 #include "Board.h"
 #include "Disk.h"
@@ -339,7 +337,7 @@ static int scsiDeviceInquiry(SCSIDEVICE* scsi)
     int total       = _diskGetTotalSectors(scsi->diskId);
     int length      = scsi->length;
     UInt8* buffer   = scsi->buffer;
-    UInt8 type      = scsi->deviceType;
+    UInt8 type      = (UInt8)(scsi->deviceType & 0xff);
     UInt8 removable;
     const char* fileName;
     int i;
@@ -465,10 +463,10 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
         // Disable Block Descriptor check
         if (!(scsi->cdb[1] & 0x08)) {
             // Block Descriptor 8bytes
-            buffer[1]  = (UInt8)(total >> 16);      // 1..3 Number of Blocks
-            buffer[2]  = (UInt8)(total >>  8);
-            buffer[3]  = (UInt8)(total);
-            buffer[6]  = (UInt8)blockLength;        // 5..7 Block Length in Bytes
+            buffer[1]  = (UInt8)((total >> 16) & 0xff); // 1..3 Number of Blocks
+            buffer[2]  = (UInt8)((total >>  8) & 0xff);
+            buffer[3]  = (UInt8)(total & 0xff);
+            buffer[6]  = (UInt8)(blockLength & 0xff);   // 5..7 Block Length in Bytes
             buffer    += 8;
             size      += 8;
         }
@@ -513,14 +511,14 @@ static int scsiDeviceRequestSense(SCSIDEVICE* scsi)
         if (scsi->mode & BIT_SCSI2) {
             return 0;
         }
-        buffer[0]    = (UInt8)(keycode >> 8);   // Sense code
+        buffer[0]    = (UInt8)((keycode >> 8) & 0xff);  // Sense code
         length = 4;
     } else {
         buffer[0]  = 0x70;
-        buffer[2]  = (UInt8)(keycode >> 16);    // Sense key
-        buffer[7]  = 10;                        // Additional sense length
-        buffer[12] = (UInt8)(keycode >> 8);     // Additional sense code
-        buffer[13] = (UInt8)keycode;            // Additional sense code qualifier
+        buffer[2]  = (UInt8)((keycode >> 16) & 0xff);   // Sense key
+        buffer[7]  = 10;                                // Additional sense length
+        buffer[12] = (UInt8)((keycode >> 8) & 0xff);    // Additional sense code
+        buffer[13] = (UInt8)(keycode & 0xff);           // Additional sense code qualifier
         if (length > 18) length = 18;
     }
     return length;
@@ -553,13 +551,13 @@ static int scsiDeviceReadCapacity(SCSIDEVICE* scsi)
     }
 */
     --block;
-    buffer[0] = (UInt8)(block >> 24);
-    buffer[1] = (UInt8)(block >> 16);
-    buffer[2] = (UInt8)(block >> 8);
-    buffer[3] = (UInt8)(block);
+    buffer[0] = (UInt8)((block >> 24) & 0xff);
+    buffer[1] = (UInt8)((block >> 16) & 0xff);
+    buffer[2] = (UInt8)((block >>  8) & 0xff);
+    buffer[3] = (UInt8)(block & 0xff);
     buffer[4] = 0;
     buffer[5] = 0;
-    buffer[6] = (UInt8)(scsi->sectorSize >> 8);
+    buffer[6] = (UInt8)((scsi->sectorSize >> 8) & 0xff);
     buffer[7] = 0;
 
     return 8;
@@ -583,7 +581,7 @@ static int scsiDeviceBlueMSX(SCSIDEVICE* scsi)
     if (cmd == 0) {
         // revision
         memcpy(buffer , scsicat, 16);       // SCSI-CAT(8) + emulator name(8)
-        buffer[16] = (UInt8)scsi->deviceType;                   // device type
+        buffer[16] = (UInt8)(scsi->deviceType & 0xff);  // device type
         buffer[17] = scsi->mode & MODE_REMOVABLE ? 0x80 : 0;    // removable device
         buffer[18] = 0;                     // revision MSB
         buffer[19] = 1;                     // LSB
@@ -602,8 +600,8 @@ static int scsiDeviceBlueMSX(SCSIDEVICE* scsi)
             fileName = stripPath(fileName);
         }
         length = strlen(fileName);
-        buffer[0] = (UInt8)(length >> 8);
-        buffer[1] = (UInt8)length;
+        buffer[0] = (UInt8)((length >> 8) & 0xff);
+        buffer[1] = (UInt8)(length & 0xff);
         strcpy(buffer + 2, fileName);
         SCSILOG1("file info:\n%s\n", buffer + 2);
         return length + 3;  // + \0
@@ -779,7 +777,6 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 /*
         if (scsi->sectorSize == 1024) {
             scsi->sector *= 2;
-            scsi->length *= 2;
         }
 */
         switch (cdb[0]) {
@@ -880,7 +877,6 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 /*
         if (scsi->sectorSize == 1024) {
             scsi->sector *= 2;
-            scsi->length *= 2;
         }
 */
         switch (cdb[0]) {
@@ -945,7 +941,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
 UInt8 scsiDeviceMsgIn(SCSIDEVICE* scsi)
 {
-    UInt8 result = scsi->message;
+    UInt8 result = (UInt8)(scsi->message & 0xff);
     scsi->message = 0;
     return result;
 }

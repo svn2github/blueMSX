@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGoudaSCSI.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-03-01 15:48:24 $
+** $Date: 2007-03-03 17:29:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -24,11 +24,6 @@
 ** Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ******************************************************************************
-*/
-/*
-  NOTE:
-    The write protect error occurs, when the host id excluding 7.
-    Is it a bug of NOVAXIS?
 */
 #include "romMapperGoudaSCSI.h"
 #include "wd33c93.h"
