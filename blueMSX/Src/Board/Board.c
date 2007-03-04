@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2007-02-26 19:16:28 $
+** $Date: 2007-03-04 14:13:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1614,10 +1614,12 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         if (currentRomType[cartNo] == ROM_SUNRISEIDE)   hdType[cartNo] = HD_SUNRISEIDE;
         if (currentRomType[cartNo] == ROM_BEERIDE)      hdType[cartNo] = HD_BEERIDE;
         if (currentRomType[cartNo] == ROM_GIDE)         hdType[cartNo] = HD_GIDE;
+        if (currentRomType[cartNo] == SRAM_MEGASCSI)    hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI128) hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI256) hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI512) hdType[cartNo] = HD_MEGASCSI;
         if (currentRomType[cartNo] == SRAM_MEGASCSI1MB) hdType[cartNo] = HD_MEGASCSI;
+        if (currentRomType[cartNo] == SRAM_WAVESCSI)    hdType[cartNo] = HD_WAVESCSI;
         if (currentRomType[cartNo] == SRAM_WAVESCSI128) hdType[cartNo] = HD_WAVESCSI;
         if (currentRomType[cartNo] == SRAM_WAVESCSI256) hdType[cartNo] = HD_WAVESCSI;
         if (currentRomType[cartNo] == SRAM_WAVESCSI512) hdType[cartNo] = HD_WAVESCSI;
