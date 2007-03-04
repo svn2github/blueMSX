@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * $Date: 2007-03-03 17:29:11 $
+ * $Date: 2007-03-04 16:07:25 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -56,7 +56,7 @@ const SCSICREATE MegaSCSIparm[8] = {
     MODE_SCSI2 | MODE_UNITATTNTION | MODE_MEGASCSI | MODE_REMOVABLE }
 */
 
-int MegaSCSIsize(int size)
+int EseRamSize(int size)
 {
     int i = 0;
     size /= 0x20000;

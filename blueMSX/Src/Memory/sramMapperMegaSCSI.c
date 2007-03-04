@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMegaSCSI.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-04 16:07:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -79,16 +79,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* #define MEGASCSIDEBUG "megascsilog.txt" */
+//#define MEGASCSIDEBUG "megascsilog.txt"
 
 #ifdef MEGASCSIDEBUG
-static FILE* megascsiFd = NULL;
+static FILE* logFd = NULL;
 static int megascsiTotal = 0;
-#define DBGLOG(fmt) fprintf(megascsiFd, fmt)
-#define DBGLOG1(fmt, arg1) fprintf(megascsiFd, fmt, arg1)
-#define DBGLOG2(fmt, arg1, arg2) fprintf(megascsiFd, fmt, arg1, arg2)
-#define DBGLOG3(fmt, arg1, arg2, arg3) fprintf(megascsiFd, fmt, arg1, arg2, arg3)
-#define DBGLOG4(fmt, arg1, arg2, arg3, arg4) fprintf(megascsiFd, fmt, arg1, arg2, arg3, arg4)
+#define DBGLOG(fmt) fprintf(logFd, fmt)
+#define DBGLOG1(fmt, arg1) fprintf(logFd, fmt, arg1)
+#define DBGLOG2(fmt, arg1, arg2) fprintf(logFd, fmt, arg1, arg2)
+#define DBGLOG3(fmt, arg1, arg2, arg3) fprintf(logFd, fmt, arg1, arg2, arg3)
+#define DBGLOG4(fmt, arg1, arg2, arg3, arg4) fprintf(logFd, fmt, arg1, arg2, arg3, arg4)
 #else
 #define DBGLOG(fmt)
 #define DBGLOG1(fmt, arg1)
@@ -106,7 +106,7 @@ typedef struct {
     int startPage;
     int mapper[4];          // use 8bit
     UInt32 mapperMask;
-    int haveSPC;            // 0 = ESE-RAM, 1 = MEGA-SCSI
+    int type;               // 0 = ESE-RAM, 1 = MEGA-SCSI, other = reserve
     int isZip;
     int isAutoName;
     int element;
@@ -129,7 +129,7 @@ static void setMapper(SramMapperMegaSCSI* rm, int page, UInt8 value)
 
     DBGLOG2("setMapper: %x %x\n", page, value);
 
-    if (rm->haveSPC && (0x40 <= value) && (value < 0x80)) {
+    if (rm->type && (value & 0xc0) == 0x40) {
         readFlag  = 0;
         writeFlag = 0;
         value = SPC_BANK;
@@ -143,9 +143,7 @@ static void setMapper(SramMapperMegaSCSI* rm, int page, UInt8 value)
 
     if (rm->mapper[page] != value) {
         rm->mapper[page] = value;
-
         DBGLOG4("bank change: p%x v%x r%d w%d\n", page, value, readFlag, writeFlag);
-
         slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + page,
                     adr, readFlag, writeFlag);
     } else {
@@ -163,11 +161,11 @@ static void reset(SramMapperMegaSCSI* rm)
         slotMapPage(rm->pSlot, rm->sSlot, rm->startPage + i, rm->sramData, 1, 0);
     }
 
-    if (rm->haveSPC) mb89352Reset(rm->spc, 1);
+    if (rm->type) mb89352Reset(rm->spc, 1);
 
 #ifdef MEGASCSIDEBUG
-    fprintf(megascsiFd, "Reset\n");
-    fflush(megascsiFd);
+    fprintf(logFd, "Reset\n");
+    fflush(logFd);
 #endif
 }
 
@@ -185,7 +183,7 @@ static void saveState(SramMapperMegaSCSI* rm)
     }
     saveStateClose(state);
 
-    if (rm->haveSPC) {
+    if (rm->type) {
         mb89352SaveState(rm->spc);
     }
 }
@@ -206,7 +204,7 @@ static void loadState(SramMapperMegaSCSI* rm)
     }
     saveStateClose(state);
 
-    if (rm->haveSPC) {
+    if (rm->type) {
         mb89352LoadState(rm->spc);
     }
 }
@@ -220,12 +218,12 @@ static void destroy(SramMapperMegaSCSI* rm)
     slotUnregister(rm->pSlot, rm->sSlot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
-    if (rm->haveSPC) {
+    if (rm->type) {
         mb89352Destroy(rm->spc);
     }
 
     if (rm->isAutoName) {
-        --autoNameCounter[rm->haveSPC][rm->element];
+        --autoNameCounter[rm->type][rm->element];
     }
 
     free(rm->sramData);
@@ -233,10 +231,10 @@ static void destroy(SramMapperMegaSCSI* rm)
 
 #ifdef MEGASCSIDEBUG
     --megascsiTotal;
-    fprintf(megascsiFd, "%d close\n", megascsiTotal);
+    fprintf(logFd, "%d close\n", megascsiTotal);
     if (!megascsiTotal) {
-        fclose(megascsiFd);
-        megascsiFd = NULL;
+        fclose(logFd);
+        logFd = NULL;
     }
 #endif
 }
@@ -287,7 +285,7 @@ static void write(SramMapperMegaSCSI* rm, UInt16 address, UInt8 value)
         return;
     }
 
-    if (rm->haveSPC && (rm->mapper[page] == SPC_BANK)){
+    if (rm->type && (rm->mapper[page] == SPC_BANK)){
         address &= 0x1fff;
         if (address < 0x1000) {
             mb89352WriteDREG(rm->spc, value);
@@ -306,28 +304,28 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
     int i;
 
     if  (((size != 0x100000) && (size != 0x80000)  &&
-          (size !=  0x40000) && (size != 0x20000)) || (flag & ~3)) {
+          (size !=  0x40000) && (size != 0x20000)) || (flag & ~0x81)) {
         return 0;
     }
 
     rm = malloc(sizeof(SramMapperMegaSCSI));
-    rm->haveSPC = flag & 1;
-    rm->isZip = flag & 2;
+    rm->type = flag & 1;
+    rm->isZip = flag & 0x80;
 
 #ifdef MEGASCSIDEBUG
     if (!megascsiTotal) {
-        megascsiFd = fopen(MEGASCSIDEBUG, "wb");
+        logFd = fopen(MEGASCSIDEBUG, "wb");
     }
     ++megascsiTotal;
-    DBGLOG("%s %d: debug mode\n", megascsiName[rm->haveSPC], megascsiTotal);
+    DBGLOG2("%s %d: create\n", megascsiName[rm->type], megascsiTotal);
     if (strlen(filename)) {
-        DBGLOG("filename: %s size: %d\n", filename, size);
+        DBGLOG2("filename: %s size: %d\n", filename, size);
     }
 #endif
 
     rm->deviceHandle = deviceManagerRegister(SRAM_MEGASCSI, &callbacks, rm);
 
-    if (rm->haveSPC) {
+    if (rm->type) {
         slotRegister(pSlot, sSlot, startPage, 4,
                     (SlotRead)read, (SlotRead)peek, (SlotWrite)write,
                     (SlotEject)destroy, rm);
@@ -345,7 +343,7 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
     if (strlen(filename)) {
         rm->isAutoName = 0;
     } else {
-        rm->element    = MegaSCSIsize(size);
+        rm->element    = EseRamSize(size);
         rm->isAutoName = 1;
     }
 
@@ -354,11 +352,11 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
     rm->sramData = calloc(1, rm->sramSize);
 
     if (rm->isAutoName) {
-        sprintf(rm->sramFilename, "%s%d%c.rom", megascsiName[rm->haveSPC], size / 1024,
-                                   autoNameCounter[rm->haveSPC][rm->element] + (int)'A');
+        sprintf(rm->sramFilename, "%s%d%c.rom", megascsiName[rm->type], size / 1024,
+                                   autoNameCounter[rm->type][rm->element] + (int)'A');
         strcpy(rm->sramFilename, sramCreateFilename(rm->sramFilename));
         sramLoad(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
-        ++autoNameCounter[rm->haveSPC][rm->element];
+        ++autoNameCounter[rm->type][rm->element];
     } else {
         memcpy(rm->sramData, buf, rm->sramSize);
         strcpy(rm->sramFilename, filename);
@@ -371,7 +369,7 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
     }
 
     // initialized spc
-    rm->spc = rm->haveSPC ? mb89352Create(hdId, MegaSCSIparm) : NULL;
+    rm->spc = rm->type ? mb89352Create(hdId, MegaSCSIparm) : NULL;
 
     return 1;
 }

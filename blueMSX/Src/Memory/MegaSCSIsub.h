@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.h,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * $Date: 2007-03-03 17:29:11 $
+ * $Date: 2007-03-04 16:07:25 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -17,6 +17,6 @@
 #define REG_DREG 10
 
 const SCSICREATE MegaSCSIparm[8];
-int MegaSCSIsize(int size);
+int EseRamSize(int size);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2007-02-26 19:16:28 $
+** $Date: 2007-03-04 16:07:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1000,7 +1000,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
                 }
             }
             {
-                int mode = strlen(machine->slotInfo[i].inZipName) ? 2 : 0;
+                int mode = strlen(machine->slotInfo[i].inZipName) ? 0x80 : 0;
                 if (machine->slotInfo[i].romType == SRAM_MEGASCSI ||
                     machine->slotInfo[i].romType == SRAM_WAVESCSI) {
                     mode++;

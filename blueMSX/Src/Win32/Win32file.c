@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2007-02-26 19:16:30 $
+** $Date: 2007-03-04 16:07:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,6 +84,8 @@ static RomType romTypeList[] = {
     ROM_GIDE,
     ROM_SUNRISEIDE,
     ROM_BEERIDE,
+    SRAM_MEGASCSI,
+    SRAM_WAVESCSI,
     ROM_GOUDASCSI,
     ROM_KANJI,
     ROM_KANJI12,
@@ -114,6 +116,8 @@ static RomType romTypeList[] = {
     ROM_OBSONET,
     ROM_NOWIND,
 //    ROM_DUMAS,
+    SRAM_ESERAM,
+    SRAM_ESESCC,
     ROM_UNKNOWN,
 };
 

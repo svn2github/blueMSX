@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-04 16:07:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,19 +85,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* #define ESESCCDEBUG  "esescclog.txt" */
+//#define ESESCCDEBUG "esescclog.txt"
 
 #define Offset      0x4000
 
 #ifdef ESESCCDEBUG
 #include <stdio.h>
-static FILE* esesccFd = NULL;
-static int esesccFdCount = 0;
-#define DBGLOG(fmt) fprintf(esesccFd, fmt)
-#define DBGLOG1(fmt, arg1) fprintf(esesccFd, fmt, arg1)
-#define DBGLOG2(fmt, arg1, arg2) fprintf(esesccFd, fmt, arg1, arg2)
-#define DBGLOG3(fmt, arg1, arg2, arg3) fprintf(esesccFd, fmt, arg1, arg2, arg3)
-#define DBGLOG4(fmt, arg1, arg2, arg3, arg4) fprintf(esesccFd, fmt, arg1, arg2, arg3, arg4)
+static FILE* logFd = NULL;
+static int logNo = 0;
+#define DBGLOG(fmt) fprintf(logFd, fmt)
+#define DBGLOG1(fmt, arg1) fprintf(logFd, fmt, arg1)
+#define DBGLOG2(fmt, arg1, arg2) fprintf(logFd, fmt, arg1, arg2)
+#define DBGLOG3(fmt, arg1, arg2, arg3) fprintf(logFd, fmt, arg1, arg2, arg3)
+#define DBGLOG4(fmt, arg1, arg2, arg3, arg4) fprintf(logFd, fmt, arg1, arg2, arg3, arg4)
 #else
 #define DBGLOG(fmt)
 #define DBGLOG1(fmt, arg1)
@@ -119,7 +119,7 @@ typedef struct {
     int preChange;
     int writeEnable;
     UInt32 mapperMask;
-    int haveSPC;
+    int type;
     int isZip;
     int isAutoName;
     int element;
@@ -191,7 +191,7 @@ static void setMapperHigh(SramMapperEseSCC* rm, UInt8 value)
 
     DBGLOG1("setMapperHigh: v%x\n", value);
 
-    if (rm->haveSPC) {
+    if (rm->type) {
         newValue = ((value & 0x10) << 3) | (value & 0x40);
     } else {
         newValue =  (value & 0x10) << 3;
@@ -237,10 +237,10 @@ static void reset(SramMapperEseSCC* rm)
     }
 
     sccReset(rm->scc);
-    if (rm->haveSPC) mb89352Reset(rm->spc, 1);
+    if (rm->type) mb89352Reset(rm->spc, 1);
 
 #ifdef ESESCCDEBUG
-    fflush(esesccFd);
+    fflush(logFd);
 #endif
 }
 
@@ -264,7 +264,7 @@ static void saveState(SramMapperEseSCC* rm)
     saveStateClose(state);
 
     sccSaveState(rm->scc);
-    if (rm->haveSPC) mb89352SaveState(rm->spc);
+    if (rm->type) mb89352SaveState(rm->spc);
 }
 
 static void loadState(SramMapperEseSCC* rm)
@@ -290,32 +290,29 @@ static void loadState(SramMapperEseSCC* rm)
     saveStateClose(state);
 
     sccLoadState(rm->scc);
-    if (rm->haveSPC) mb89352LoadState(rm->spc);
+    if (rm->type) mb89352LoadState(rm->spc);
 }
 
 static void destroy(SramMapperEseSCC* rm)
 {
-#ifdef ESESCCDEBUG
-    --esesccFdCount;
-    DBGLOG("%d close\n", esesccFdCount);
-    if (!esesccFdCount) {
-        fclose(esesccFd);
-        esesccFd = NULL;
-    }
-#endif
-
-    if (!rm->isZip) {
-        sramSave(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
-    }
+    if (!rm->isZip) sramSave(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
+    if (rm->isAutoName) --autoNameCounter[rm->type][rm->element];
 
     slotUnregister(rm->pSlot, rm->sSlot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
-    if (rm->isAutoName) --autoNameCounter[rm->haveSPC][rm->element];
+#ifdef ESESCCDEBUG
+    --logNo;
+    DBGLOG1("%d close\n", logNo);
+    if (!logNo) {
+        fclose(logFd);
+        logFd = NULL;
+    }
+#endif
 
     // device release
     sccDestroy(rm->scc);
-    if (rm->haveSPC) mb89352Destroy(rm->spc);
+    if (rm->type) mb89352Destroy(rm->spc);
 
     free(rm->sramData);
     free(rm);
@@ -458,42 +455,42 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
     SramMapperEseSCC* rm;
     int i;
 
-    if  ((!((size == 0x100000) && (mode & 1))) && (size != 0x80000) &&
-         (size != 0x40000) && (size != 0x20000) && (mode > 2)) {
+    if  (((!(size == 0x100000 && (mode & 1))) && size != 0x80000 &&
+             size != 0x40000 && size != 0x20000) || (mode & ~0x81)) {
         return 0;
     }
 
     rm = malloc(sizeof(SramMapperEseSCC));
 
-    rm->haveSPC = mode & 1;
-    rm->isZip = mode & 2;
+    rm->type  = mode & 1;
+    rm->isZip = mode & 0x80;
 
     rm->deviceHandle = deviceManagerRegister(SRAM_ESESCC, &callbacks, rm);
     slotRegister(pSlot, sSlot, startPage, 4, (SlotRead)read, (SlotRead)peek,
                 (SlotWrite)write, (SlotEject)destroy, rm);
 
-    rm->pSlot           = pSlot;
-    rm->sSlot           = sSlot;
-    rm->startPage       = startPage;
-    rm->mapperMask      = ((size >> 13) - 1);
+    rm->pSlot          = pSlot;
+    rm->sSlot          = sSlot;
+    rm->startPage      = startPage;
+    rm->mapperMask     = ((size >> 13) - 1);
 
     if (strlen(filename)) {
-        rm->isAutoName  = 0;
+        rm->isAutoName = 0;
     } else {
-        rm->element = MegaSCSIsize(size);
-        rm->isAutoName  = 1;
+        rm->element    = EseRamSize(size);
+        rm->isAutoName = 1;
     }
 
 #ifdef ESESCCDEBUG
-    if (!esesccFdCount) {
-        esesccFd = fopen(ESESCCDEBUG, "wb");
+    if (!logNo) {
+        logFd = fopen(ESESCCDEBUG, "wb");
     }
-    DBGLOG("%s %d: debug mode\n", wavescsiName[rm->haveSPC], esesccFdCount);
+    DBGLOG2("%s %d: create\n", wavescsiName[rm->type], logNo);
     if (strlen(filename)) {
-        DBGLOG("filename: %s size: %d\n", filename, size);
+        DBGLOG2("filename: %s\nsize: %d\n", filename, size);
     }
-    DBGLOG("mapper mask: %x\n", (unsigned int)rm->mapperMask);
-    ++esesccFdCount;
+    DBGLOG1("mapper mask: %x\n", (unsigned int)rm->mapperMask);
+    ++logNo;
 #endif
 
     // create sram
@@ -501,11 +498,11 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
     rm->sramData = calloc(1, rm->sramSize);
 
     if (rm->isAutoName) {
-        sprintf(rm->sramFilename, "%s%d%c.rom", wavescsiName[rm->haveSPC], size / 1024,
-                                   autoNameCounter[rm->haveSPC][rm->element] + (int)'A');
+        sprintf(rm->sramFilename, "%s%d%c.rom", wavescsiName[rm->type], size / 1024,
+                                   autoNameCounter[rm->type][rm->element] + (int)'A');
         strcpy(rm->sramFilename, sramCreateFilename(rm->sramFilename));
         sramLoad(rm->sramFilename, rm->sramData, rm->sramSize, NULL, 0);
-        ++autoNameCounter[rm->haveSPC][rm->element];
+        ++autoNameCounter[rm->type][rm->element];
     } else {
         memcpy(rm->sramData, buf, rm->sramSize);
         strcpy(rm->sramFilename, filename);
@@ -524,12 +521,12 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
                     rm->sramData + i * 0x2000, 1, 0);
     }
 
-    // initialized SCC
+    // initialize SCC
     rm->scc = sccCreate(boardGetMixer());
     sccSetMode(rm->scc, SCC_REAL);
 
-    // initialized SPC
-    rm->spc = rm->haveSPC ? mb89352Create(hdId, MegaSCSIparm) : NULL;
+    // initialize SPC
+    rm->spc = rm->type ? mb89352Create(hdId, MegaSCSIparm) : NULL;
 
     return 1;
 }
