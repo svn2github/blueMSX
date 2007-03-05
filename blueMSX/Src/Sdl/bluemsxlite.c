@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2006-09-30 19:58:16 $
+** $Date: 2007-03-05 07:52:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -490,6 +490,7 @@ int main(int argc, char **argv)
     strcat(path, DIR_SEPARATOR "bluemsx.ini");
     properties = propCreate(resetProperties, 0, P_KBD_EUROPEAN, 0, "");
     
+    properties->emulation.syncMethod = P_EMU_SYNCFRAMES;    
 //    properties->emulation.syncMethod = P_EMU_SYNCTOVBLANKASYNC;
 
     if (resetProperties == 2) {

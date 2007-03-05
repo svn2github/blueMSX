@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-02-23 03:10:41 $
+** $Date: 2007-03-05 07:52:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,12 +57,12 @@ static void updateMapper(RomMapperNoWind* rm, UInt8 page)
     rm->romMapper = page & 0x1f;
     rm->flashPage = amdFlashGetPage(rm->amdFlash, rm->romMapper * 0x4000);
 
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, rm->flashPage, 0, 1);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, rm->flashPage, 0, 1);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 0, NULL, 0, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, NULL, 0, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, rm->flashPage, 1, 0);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, rm->flashPage, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, rm->flashPage + 0x2000, 1, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 4, NULL,          0, 0);
-    slotMapPage(rm->slot, rm->sslot, rm->startPage + 5, rm->flashPage, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, rm->startPage + 5, rm->flashPage + 0x2000, 1, 0);
 }
 
 

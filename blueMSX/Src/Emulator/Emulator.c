@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-03-05 07:52:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -241,9 +241,6 @@ void emulatorSetState(EmuState state) {
     emuState = state;
 }
 
-void emulatorRunOne() {
-    archEventSet(emuSyncEvent);
-}
 
 int emulatorGetSyncPeriod() {
 #ifdef NO_HIRES_TIMERS
@@ -257,8 +254,6 @@ int emulatorGetSyncPeriod() {
 void timerCallback(void* timer) {
     if (properties != NULL) {
         static UInt32 frameCount = 0;
-        static UInt32 emuCount = 0;
-        static UInt32 kbdCount = 0;
         static UInt32 oldSysTime = 0;
         static UInt32 refreshRate = 50;
         UInt32 framePeriod = (properties->video.frameSkip + 1) * 1000;
@@ -291,7 +286,7 @@ void timerCallback(void* timer) {
         }
 
         // Update emulation
-        emulatorRunOne();
+        archEventSet(emuSyncEvent);
     }
 }
 

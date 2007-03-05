@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2007-03-05 07:52:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,7 +53,6 @@ int emulatorGetCpuOverflow();
 int emulatorGetSyncPeriod();
 EmuState emulatorGetState();
 void emulatorSetState(EmuState state);
-void emulatorRunOne();
 UInt32 emulatorGetCpuSpeed();
 UInt32 emulatorGetCpuUsage();
 void emulatorResetMixer();
