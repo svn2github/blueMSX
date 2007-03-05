@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlEvent.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,16 @@
 #include "ArchEvent.h"
 #include <SDL/SDL.h>
 #include <stdlib.h>
+
+#ifdef SINGLE_THREADED
+
+// No semaphores needed in single threaded version
+void* archEventCreate(int initState) { return NULL; }
+void archEventDestroy(void* event) {}
+void archEventSet(void* event) {}
+void archEventWait(void* event, int timeout) {}
+
+#else
 
 typedef struct {
     void* eventSem;
@@ -67,6 +77,9 @@ void archEventWait(void* event, int timeout)
     archSemaphoreWait(e->eventSem, timeout);
     e->state = 0;
 }
+
+#endif
+
 
 typedef struct {
     SDL_sem* semaphore;

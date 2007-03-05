@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2007-03-05 07:52:00 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -251,8 +251,11 @@ int emulatorGetSyncPeriod() {
 #endif
 }
 
-void timerCallback(void* timer) {
-    if (properties != NULL) {
+static int timerCallback(void* timer) {
+    if (properties == NULL) {
+        return 1;
+    }
+    else {
         static UInt32 frameCount = 0;
         static UInt32 oldSysTime = 0;
         static UInt32 refreshRate = 50;
@@ -263,7 +266,7 @@ void timerCallback(void* timer) {
         int syncMethod = emuUseSynchronousUpdate();
 
         if (diffTime == 0) {
-            return;
+            return 0;
         }
 
         oldSysTime = sysTime;
@@ -288,6 +291,8 @@ void timerCallback(void* timer) {
         // Update emulation
         archEventSet(emuSyncEvent);
     }
+
+    return 1;
 }
 
 static void getDeviceInfo(BoardDeviceInfo* deviceInfo) 
@@ -404,9 +409,11 @@ void emulatorStart(const char* stateName) {
 
     boardSetMachine(machine);
 
+#ifndef NO_TIMERS
     emuSyncEvent  = archEventCreate(0);
     emuStartEvent = archEventCreate(0);
     emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
+#endif
 
     setDeviceInfo(&deviceInfo);
 
@@ -421,12 +428,16 @@ void emulatorStart(const char* stateName) {
 
     clearlog();
 
-#ifdef LINUX_TEST
-emuState = EMU_RUNNING;
-emulatorThread();
-return;
-#endif
+#ifdef SINGLE_THREADED
+    emuState = EMU_RUNNING;
+    emulatorThread();
 
+    if (emulationStartFailure) {
+        archEmulationStopNotification();
+        emuState = EMU_STOPPED;
+        archEmulationStartFailure();
+    }
+#else
     emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
     
     archEventWait(emuStartEvent, 3000);
@@ -449,6 +460,7 @@ return;
         
         emuState = EMU_RUNNING;
     }
+#endif
 } 
 
 void emulatorStop() {
@@ -628,6 +640,10 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         archEventSet(emuStartEvent);
         emuSysTime = 0;
     }
+    
+#ifdef SINGLE_THREADED
+    emuExitFlag |= archPollEvent();
+#endif
 
     if (((++kbdPollCnt & 0x03) >> 1) == 0) {
        archPollInput();
@@ -637,13 +653,22 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         overflowCount += emulatorSyncScreen() ? 0 : 1;
         while ((!emuExitFlag && emuState != EMU_RUNNING) || overflowCount > 0) {
             archEventWait(emuSyncEvent, -1);
+#ifdef NO_TIMERS
+            while (timerCallback(NULL) == 0) emuExitFlag |= archPollEvent();
+#endif
             overflowCount--;
         }
     }
     else {
         do {
+#ifdef NO_TIMERS
+            while (timerCallback(NULL) == 0) emuExitFlag |= archPollEvent();
+#endif
             archEventWait(emuSyncEvent, -1);
-            if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
+            if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {          
+#ifdef NO_TIMERS
+                while (timerCallback(NULL) == 0) emuExitFlag |= archPollEvent();
+#endif
                 archEventWait(emuSyncEvent, -1);
             }
             overflowCount = 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlTimer.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,31 @@
 #include <stdlib.h>
 #include "SDL/SDL.h"
 
+#ifdef NO_TIMERS
+
+// Timer callbacks are not needed. When disabled, there is no need for
+// archEvents either.
+
+void* archCreateTimer(int period, int (*timerCallback)(void*)) { return NULL; }
+void archTimerDestroy(void* timer) {}
+
+
+// The only timer that is required is a high res timer. The resolution is
+// not super important, the higher the better, but one tick every 10ms is
+// good enough. The frequency argument is in Hz and is 1000 or less.
+UInt32 archGetSystemUpTime(UInt32 frequency) 
+{
+    return SDL_GetTicks() / (1000 / frequency);
+}
+
+// This is just a timer value with a frequency as high as possible. 
+// The frequency of the timer is not important.
+UInt32 archGetHiresTimer() {
+    return SDL_GetTicks();
+}
+
+#else 
+
 static void (*timerCb)(void*) = NULL;
 static UInt32 timerFreq;
 static UInt32 lastTimeout;
@@ -46,7 +71,7 @@ Uint32 timerCalback(Uint32 interval)
     return interval;
 }
 
-void* archCreateTimer(int period, void (*timerCallback)(void*)) 
+void* archCreateTimer(int period, int (*timerCallback)(void*)) 
 { 
     timerFreq = 1000 / period;
     lastTimeout = archGetSystemUpTime(timerFreq);
@@ -76,27 +101,4 @@ UInt32 archGetHiresTimer() {
     return SDL_GetTicks();
 }
 
-#if 0
-#ifdef WINDOWS_HOST
-
-UInt32 archGetHiresTimer() {
-    LARGE_INTEGER li;
-    QueryPerformanceCounter(&li);
-    return li.LowPart;
-}
-
-#else
-
-#include <sys/time.h>
-
-UInt32 archGetHiresTimer() 
-{
-    struct timeval tv;
-    
-    gettimeofday(&tv, NULL);
-
-    return tv.tv_sec * 1000000 + tv.tv_usec;
-}
-
-#endif
 #endif

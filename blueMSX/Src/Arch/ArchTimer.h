@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchTimer.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:12 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,7 +31,7 @@
 #include "MsxTypes.h"
 
 UInt32 archGetSystemUpTime(UInt32 frequency);
-void* archCreateTimer(int period, void (*timerCallback)(void*));
+void* archCreateTimer(int period, int (*timerCallback)(void*));
 void archTimerDestroy(void* timer);
 UInt32 archGetHiresTimer();
 

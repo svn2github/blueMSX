@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlNotifications.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,9 +33,11 @@ void* archScreenCapture(ScreenCaptureType type, int* bitmapSize, int onlyBmp) { 
 void archUpdateEmuDisplayConfig() {}
 
 void archDiskQuickChangeNotify() {}
+#if 0 // moved to bluemsxlite.c
 void archEmulationStartNotification() {}
 void archEmulationStopNotification() {}
 void archEmulationStartFailure() {}
+#endif
 
 void archQuit() {}
 

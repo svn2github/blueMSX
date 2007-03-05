@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlInput.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -77,9 +77,7 @@ static char currentConfigFile[512];
 // initKbdTable initializes the keyboard table with default keys
 static void initKbdTable()
 {
-    memset (kbdTable[0], 0, sizeof(kbdTable));
-    memset (kbdTable[1], 0, sizeof(kbdTable));
-    memset (kbdTable[2], 0, sizeof(kbdTable));
+    memset (kbdTable, 0, sizeof(kbdTable));
 
     kbdTable[0][SDLK_0          ] = EC_0;
     kbdTable[0][SDLK_1          ] = EC_1;

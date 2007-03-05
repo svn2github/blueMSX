@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2007-03-05 07:52:00 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,7 @@ void keyboardInit();
 void keyboardSetFocus(int handle, int focus);
 void keyboardUpdate();
 int keyboardGetModifiers();
+static void handleEvent(SDL_Event* event);
 
 static Properties* properties;
 static Video* video;
@@ -71,6 +72,7 @@ static Properties* properties;
 static Video* video;
 static Mixer* mixer;
 static Shortcuts* shortcuts;
+static int doQuit = 0;
 
 static int pendingDisplayEvents = 0;
 static void* dpyUpdateAckEvent = NULL;
@@ -359,9 +361,11 @@ int  archUpdateEmuDisplay(int syncMode)
     event.user.data2 = NULL;
     SDL_PushEvent(&event);
 
+#ifndef SINGLE_THREADED
     if (properties->emulation.syncMethod == P_EMU_SYNCFRAMES) {
         archEventWait(dpyUpdateAckEvent, 500);
     }
+#endif
     return 1;
 }
 
@@ -374,6 +378,41 @@ void archUpdateWindow()
     event.user.data1 = NULL;
     event.user.data2 = NULL;
     SDL_PushEvent(&event);
+}
+
+#ifdef SINGLE_THREADED
+int archPollEvent()
+{
+    SDL_Event event;
+
+    while(SDL_PollEvent(&event)) {
+        if( event.type == SDL_QUIT ) {
+            doQuit = 1;
+        }
+        else {
+            handleEvent(&event);
+        }
+    }
+    return doQuit;
+}
+#endif
+
+void archEmulationStartNotification() 
+{
+}
+
+void archEmulationStopNotification() 
+{
+#ifdef RUN_EMU_ONCE_ONLY
+    doQuit = 1;
+#endif
+}
+
+void archEmulationStartFailure() 
+{
+#ifdef RUN_EMU_ONCE_ONLY
+    doQuit = 1;
+#endif
 }
 
 
@@ -467,7 +506,6 @@ int main(int argc, char **argv)
     int resetProperties;
     char path[512] = "";
     int i;
-    int doQuit = 0;
 
     SDL_Init( SDL_INIT_EVERYTHING );
 

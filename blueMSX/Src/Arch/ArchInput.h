@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchInput.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:10 $
+** $Date: 2007-03-05 23:38:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,8 @@ void  archMouseEmuEnable(AmEnableMode mode);
 void archMouseSetForceLock(int lock);
 void archMouseGetState(int* dx, int* dy);
 int  archMouseGetButtonState(int checkAlways);
+
+int   archPollEvent();
 
 void  archPollInput();
 void  archKeyboardSetSelectedKey(int keyCode);
