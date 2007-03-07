@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2006-09-19 06:00:36 $
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2007-03-07 19:08:20 $
+** $Date: 2007-03-07 19:08:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1439,6 +1439,63 @@ static void copy_2x2_16(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 /* 7500 units -> 4100 units */
 static void copy_2x2_32_core1_SSE(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
+#ifdef __GNUC__
+    __asm__(
+        "movl   $0,%%esi                \n\t"
+        "movl   %4,%%ecx                \n\t"   // width
+        "movl   %1,%%eax                \n\t"   // pSrc
+        "movl   %2,%%ebx                \n\t"   // pDst1
+        "movl   %0,%%edi                \n\t"   // rgbTable
+"inner_loop1:                           \n\t"
+        "movw   (%%eax),%%si            \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "movw   2(%%eax),%%si           \n\t"
+        "movd   (%%edi,%%esi,4),%%mm1   \n\t"
+        "movw   6(%%eax),%%si           \n\t"
+        "punpckldq %%mm1,%%mm0          \n\t"
+        "movd   (%%edi,%%esi,4),%%mm3   \n\t"
+        "movw   4(%%eax),%%si           \n\t"
+        "movntq %%mm0,0(%%ebx)          \n\t"
+        "addl   $8,%%eax                \n\t"
+        "movd   (%%edi,%%esi,4),%%mm2   \n\t"
+        "addl   $16,%%ebx               \n\t"
+        "punpckldq %%mm3,%%mm2          \n\t"
+        "decl   %%ecx                   \n\t"
+        "movntq %%mm2,-8(%%ebx)         \n\t"
+        "jnz    inner_loop1             \n\t"
+
+        //#-- second line
+
+        "movl   %4,%%ecx                \n\t"   // width
+        "movl   %1,%%eax                \n\t"   // pSrc
+        "movl   %5,%%ebx                \n\t"   // hint
+        "movl   %3,%%edx                \n\t"   // pDst2
+        "movl   %0,%%edi                \n\t"   // rgbTable
+"inner_loop2:                           \n\t"
+        "movw   (%%eax),%%si            \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "movw   2(%%eax),%%si           \n\t"
+        "movd   (%%edi,%%esi,4),%%mm1   \n\t"
+        "movw   6(%%eax),%%si           \n\t"
+        "punpckldq %%mm1,%%mm0          \n\t"
+        "movd   (%%edi,%%esi,4),%%mm3   \n\t"
+        "movw   4(%%eax),%%si           \n\t"
+        "prefetcht0 (%%eax,%%ebx)       \n\t"
+        "movntq %%mm0,0(%%edx)          \n\t"
+        "addl   $8,%%eax                \n\t"
+        "movd   (%%edi,%%esi,4),%%mm2   \n\t"
+        "addl   $16,%%edx               \n\t"
+        "punpckldq %%mm3,%%mm2          \n\t"
+        "decl   %%ecx                   \n\t"
+        "movntq %%mm2,-8(%%edx)         \n\t"
+        "jnz    inner_loop2             \n\t"
+
+        "emms                           \n\t"
+        :
+        : "m" (rgbTable), "m" (pSrc), "m" (pDst1), "m" (pDst2), "m" (width), "m" (hint)
+        : "%eax", "%ebx", "%ecx", "%edx", "%edi", "%esi"
+    );
+#else
 	__asm{
         mov     esi,0
 		mov		ecx,width
@@ -1492,6 +1549,7 @@ inner_loop2:
 		emms 
 
 	}
+#endif
 }
 #endif
 
@@ -1522,6 +1580,79 @@ void copy_2x2_32_core1(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pD
 /* 6000 units -> 2500 units */
 void copy_2x2_32_core2_SSE(UInt32* rgbTable, UInt16* pSrc, UInt32* pDst1, UInt32* pDst2, int width, int hint) {
 
+#ifdef __GNUC__
+    __asm__(
+        "movl   $0,%%esi                \n\t"
+        "movl   %4,%%ecx                \n\t"   // width
+        "movl   %1,%%eax                \n\t"   // pSrc
+        "movl   %2,%%ebx                \n\t"   // pDst1
+        "movl   %0,%%edi                \n\t"   // rgbTable
+"inner_loop3:                           \n\t"
+        "movw   (%%eax),%%si            \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "movw   2(%%eax),%%si           \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "movd   (%%edi,%%esi,4),%%mm1   \n\t"
+        "movntq %%mm0,0(%%ebx)          \n\t"
+
+        "punpckldq %%mm1,%%mm1          \n\t"
+        "movw   4(%%eax),%%si           \n\t"
+        "movntq %%mm1,8(%%ebx)          \n\t"
+
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "movw   6(%%eax),%%si           \n\t"
+        "movntq %%mm0,16(%%ebx)         \n\t"
+
+        "addl   $32,%%ebx               \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "addl   $8,%%eax                \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "decl   %%ecx                   \n\t"
+        "movntq %%mm0,24-32(%%ebx)      \n\t"
+
+        "jnz    inner_loop3             \n\t"
+
+        //#-- second line
+
+        "movl   %4,%%ecx                \n\t"   // width
+        "movl   %1,%%eax                \n\t"   // pSrc
+        "movl   %5,%%edx                \n\t"   // hint
+        "movl   %3,%%ebx                \n\t"   // pDst2
+        "movl   %0,%%edi                \n\t"   // rgbTable
+"inner_loop4:                           \n\t"
+        "movw   (%%eax),%%si            \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "movw   2(%%eax),%%si           \n\t"
+        "movntq %%mm0,0(%%ebx)          \n\t"
+
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "movw   4(%%eax),%%si \n\t"
+        "movntq %%mm0,8(%%ebx)          \n\t"
+
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "prefetcht0 (%%eax,%%edx)       \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "movw   6(%%eax),%%si           \n\t"
+        "movntq %%mm0,16(%%ebx)         \n\t"
+
+        "addl   $32,%%ebx               \n\t"
+        "movd   (%%edi,%%esi,4),%%mm0   \n\t"
+        "addl   $8,%%eax                \n\t"
+        "punpckldq %%mm0,%%mm0          \n\t"
+        "decl   %%ecx                   \n\t"
+        "movntq %%mm0,24-32(%%ebx)      \n\t"
+
+        "jnz    inner_loop4             \n\t"
+
+        "emms                           \n\t"
+        :
+        : "m" (rgbTable), "m" (pSrc), "m" (pDst1), "m" (pDst2), "m" (width), "m" (hint)
+        : "%eax", "%ebx", "%ecx", "%edx", "%edi", "%esi"
+    );
+#else
 	__asm{
         mov     esi,0
 		mov		ecx,width
@@ -1591,6 +1722,7 @@ inner_loop2:
 		emms 
 
 	}
+#endif
 
 }
 #endif
@@ -1639,12 +1771,22 @@ static void copy_2x2_32(FrameBuffer* frame, void* pDestination, int dstPitch, UI
 	int hasSSE=0;
 	const int SSEbit=1<<25;
 
+#ifdef __GNUC__
+    __asm__ (
+        "movl   $1,%%eax            \n\t"
+        "cpuid                      \n\t"
+        "andl   $0x2000000,%%edx    \n\t"
+        "movl   %%edx,%0            \n\t"
+        : "=r" (hasSSE) : : "%eax", "%ebx", "%ecx", "%edx"
+    );
+#else
 	__asm {
 		mov eax,1
 		cpuid
 		and edx,SSEbit
 		mov hasSSE,edx
 	}
+#endif
     
     hasSSE = 1;
 	core1=hasSSE? copy_2x2_32_core1_SSE: copy_2x2_32_core1;
@@ -2256,6 +2398,46 @@ void scanLines_32_core(UInt32* pBuf, int width, int scanLinesPct, int hint) {
 
 #ifndef NO_ASM
 void scanLines_32_core_SSE(UInt32* pBuf, int width, int scanLinesPct, int hint) {
+
+#ifdef __GNUC__
+    __asm__ (
+        "movl   %1,%%ecx            \n\t"   // width
+        "shrl   $2,%%ecx            \n\t"
+        "movl   %0,%%eax            \n\t"   // pbuf
+        "movl   %3,%%ebx            \n\t"   // hint
+        "pxor   %%mm0,%%mm0         \n\t"
+        "movd   %2,%%mm1            \n\t"   // scanLinesPct
+        "punpcklwd %%mm1,%%mm1      \n\t"
+        "punpckldq %%mm1,%%mm1      \n\t"
+        "psllw  $8,%%mm1            \n\t"
+"inner_loop5:                       \n\t"
+        "movq   (%%eax),%%mm2       \n\t"
+        "movq   8(%%eax),%%mm4      \n\t"
+        "movq   %%mm2,%%mm3         \n\t"
+        "punpcklbw %%mm0,%%mm2      \n\t"
+        "movq   %%mm4,%%mm5         \n\t"
+        "pmulhuw %%mm1,%%mm2        \n\t"
+        "punpcklbw %%mm0,%%mm4      \n\t"
+        "punpckhbw %%mm0,%%mm3      \n\t"
+        "prefetcht1 (%%eax,%%ebx)   \n\t"
+        "pmulhuw %%mm1,%%mm4        \n\t"
+        "punpckhbw %%mm0,%%mm5      \n\t"
+        "addl   $16,%%eax           \n\t"
+        "pmulhuw %%mm1,%%mm3        \n\t"
+        "pmulhuw %%mm1,%%mm5        \n\t"
+        "packuswb %%mm3,%%mm2       \n\t"
+        "packuswb %%mm5,%%mm4       \n\t"
+        "movq   %%mm2,-16(%%eax)    \n\t"
+        "decl   %%ecx               \n\t"
+        "movq   %%mm4,-8(%%eax)     \n\t"
+
+        "jnz    inner_loop5         \n\t"
+        "emms                       \n\t"
+        :
+        : "m" (pBuf), "m" (width), "m" (scanLinesPct), "m" (hint)
+        : "%eax", "%ebx", "%ecx"
+	);
+#else
 	__asm {
 		mov		ecx,width
 		shr		ecx,2
@@ -2290,6 +2472,8 @@ inner_loop:
 		jnz		inner_loop
 		emms
 	}
+#endif
+
 }
 #endif
 
@@ -2304,12 +2488,22 @@ void scanLines_32(void* pBuffer, int width, int height, int pitch, int scanLines
 	int hasSSE=0;
 	const int SSEbit=1<<25;
 
+#ifdef __GNUC__
+    __asm__ (
+        "movl   $1,%%eax            \n\t"
+        "cpuid                      \n\t"
+        "andl   $0x2000000,%%edx    \n\t"
+        "movl   %%edx,%0            \n\t"
+        : "=r" (hasSSE) : : "%eax", "%ebx", "%ecx", "%edx"
+    );
+#else
 	__asm {
 		mov eax,1
 		cpuid
 		and edx,SSEbit
 		mov hasSSE,edx
 	}
+#endif
 
     hasSSE = 1;
 	core=hasSSE? scanLines_32_core_SSE: scanLines_32_core;
