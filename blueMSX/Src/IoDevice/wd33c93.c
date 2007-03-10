@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-10 08:24:54 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -133,8 +133,8 @@ struct WD33C93
     UInt8       regs[32];
     SCSIDEVICE* dev[8];
     int         maxDev;
-    PHASE       phase;
-    //PHASE     nextPhase;
+    SCSI_PHASE  phase;
+    //SCSI_PHASE  nextPhase;
     //BoardTimer* timer;
     //UInt32    timeout;
     //int       timerRunning;
@@ -143,7 +143,7 @@ struct WD33C93
     int         tc;
     int         hdId;
     UInt8*      pBuf;
-    UInt8       buffer[BUFFER_SIZE];
+    UInt8*      buffer;
 };
 
 static FILE* scsiLog = NULL;
@@ -548,6 +548,7 @@ void  wd33c93Destroy(WD33C93* wd33c93)
     SCSILOG("WD33C93 destroy\n");
     scsiDeviceLogClose();
 
+    free(wd33c93->buffer);
     free(wd33c93);
 }
 
@@ -557,6 +558,7 @@ WD33C93* wd33c93Create(int hdId)
     int i;
 
     scsiLog = scsiDeviceLogCreate();
+    wd33c93->buffer = calloc(1, BUFFER_SIZE);
     wd33c93->maxDev = 2;
     wd33c93->hdId   = hdId;
 

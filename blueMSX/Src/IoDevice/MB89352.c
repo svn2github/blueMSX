@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-10 08:24:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,8 +113,8 @@ struct MB89352 {
     int regs[16];                   // SPC register
     int rst;                        // SCSI bus reset signal
     int atn;                        // SCSI bus attention signal
-    PHASE phase;                    //
-    PHASE nextPhase;                // for message system
+    SCSI_PHASE phase;               //
+    SCSI_PHASE nextPhase;           // for message system
     int isEnabled;                  // spc enable flag
     int isBusy;                     // spc now working
     int isTransfer;                 // hardware transfer mode
@@ -127,8 +127,8 @@ struct MB89352 {
     SCSIDEVICE* scsiDevice[8];      //
     UInt8* pCdb;                    // cdb pointer
     UInt8* pBuffer;                 // buffer pointer
-    UInt8 cdb[10];                  // Command Descripter Block
-    UInt8 buffer[BUFFER_SIZE];      // buffer for transfer
+    UInt8  cdb[12];                 // Command Descripter Block
+    UInt8* buffer;                  // buffer for transfer
 };
 
 static FILE* scsiLog = NULL;
@@ -165,7 +165,7 @@ static void mb89352SoftReset(MB89352* spc)
         spc->regs[i] = 0;
     }
     spc->regs[15] = 0xff;               // un mapped
-    memset(spc->cdb, 0, 10);
+    memset(spc->cdb, 0, 12);
 
     spc->pCdb    = spc->cdb;
     spc->pBuffer = spc->buffer;
@@ -236,7 +236,7 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
         if (spc->counter < 0) {
             //Initialize command routine
             spc->pCdb    = spc->cdb;
-            spc->counter = (*value < SCSI_Group1) ? 6 : 10;
+            spc->counter = (*value < SCSIOP_GROUP1) ? 6 : 10;
         }
         *spc->pCdb = *value;
         ++spc->pCdb;
@@ -817,7 +817,7 @@ void mb89352SaveState(MB89352* spc)
         saveStateSet(state, tag, spc->regs[i]);
     }
 
-    saveStateSetBuffer(state, "cdb", spc->cdb, 10);
+    saveStateSetBuffer(state, "cdb", spc->cdb, 12);
     saveStateSetBuffer(state, "buffer", spc->buffer, BUFFER_SIZE);
 
     saveStateClose(state);
@@ -857,7 +857,7 @@ void mb89352LoadState(MB89352* spc)
     spc->regs[FIX_PCTL] = spc->regs[REG_PCTL] & 7;
     spc->atn = spc->regs[REG_PSNS] & PSNS_ATN;
 
-    saveStateGetBuffer(state, "cdb", spc->cdb, 10);
+    saveStateGetBuffer(state, "cdb", spc->cdb, 12);
     saveStateGetBuffer(state, "buffer", spc->buffer, BUFFER_SIZE);
 
     saveStateClose(state);
@@ -874,7 +874,7 @@ static void mb89352GetDebugInfo(MB89352* spc, DbgDevice* dbgDevice)
     char str[8];
     int i;
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16 + 10);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16 + 12);
     spc->regs[REG_SSTS]  = mb89352GetSSTS(spc);
     spc->regs[REG_PSNS] |= spc->atn;
 
@@ -889,7 +889,7 @@ static void mb89352GetDebugInfo(MB89352* spc, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "R13",  8, (spc->tc >>  8) & 0xff);
     dbgRegisterBankAddRegister(regBank, 15, "R14",  8, spc->tc & 0xff);
 
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < 12; i++) {
         sprintf(str, "CDB%d", i);
         dbgRegisterBankAddRegister(regBank,  i + 16, str, 8, spc->cdb[i]);
     }
@@ -909,7 +909,7 @@ void mb89352Destroy(MB89352* spc)
 
     SCSILOG("spc destroy\n");
     scsiDeviceLogClose();
-
+    free(spc->buffer);
     free(spc);
 }
 
@@ -919,6 +919,7 @@ MB89352* mb89352Create(int hdId, const SCSICREATE* create)
     MB89352* spc;
 
     spc = malloc(sizeof(MB89352));
+    spc->buffer = calloc(1, BUFFER_SIZE);
     scsiLog = scsiDeviceLogCreate();
     SCSILOG("spc create\n");
 

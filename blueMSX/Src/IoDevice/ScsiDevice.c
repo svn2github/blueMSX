@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-10 08:24:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -97,7 +97,7 @@ struct SCSIDEVICE {
     int length;
     int message;
     int lun;
-    UInt8 cdb[10];          // Command Descriptor Block
+    UInt8 cdb[12];          // Command Descriptor Block
     UInt8* buffer;
     char* productName;
     FileProperties disk;
@@ -660,7 +660,7 @@ int scsiDeviceDataIn(SCSIDEVICE* scsi, int* blocks)
 {
     int counter;
 
-    if (scsi->cdb[0] == SCSI_Read10) {
+    if (scsi->cdb[0] == SCSIOP_READ10) {
         counter = scsiDeviceReadSector(scsi, blocks);
         if (counter) {
             return counter;
@@ -705,7 +705,7 @@ static int scsiDeviceWriteSector(SCSIDEVICE* scsi, int* blocks)
 
 int scsiDeviceDataOut(SCSIDEVICE* scsi, int* blocks)
 {
-    if (scsi->cdb[0] == SCSI_Write10) {
+    if (scsi->cdb[0] == SCSIOP_WRITE10) {
         return scsiDeviceWriteSector(scsi, blocks);
     }
     SCSILOG1("dataout error %x\n", scsi->cdb[0]);
@@ -734,7 +734,7 @@ UInt8 scsiDeviceGetStatusCode(SCSIDEVICE* scsi)
     return result;
 }
 
-int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* blocks)
+int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks)
 {
     int counter;
 
@@ -748,10 +748,10 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
 
     // check unit attention
     if (scsi->reset && (scsi->mode & MODE_UNITATTENTION) &&
-       (cdb[0] != SCSI_Inquiry) && (cdb[0] != SCSI_RequestSense)) {
+       (cdb[0] != SCSIOP_INQUIRY) && (cdb[0] != SCSIOP_REQUEST_SENSE)) {
         scsi->reset = 0;
         scsi->keycode = SENSE_PowerOn;
-        if (cdb[0] == SCSI_TestUnitReady) {
+        if (cdb[0] == SCSIOP_TEST_UNIT_READY) {
             scsi->changed = 0;
         }
         SCSILOG("Unit Attention. This command is not executed.\n");
@@ -759,18 +759,18 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
     }
 
     // check LUN
-    if (((cdb[1] & 0xe0) || scsi->lun) && (cdb[0] != SCSI_RequestSense) &&
-        !(cdb[0] == SCSI_Inquiry && !(scsi->mode & MODE_NOVAXIS))) {
+    if (((cdb[1] & 0xe0) || scsi->lun) && (cdb[0] != SCSIOP_REQUEST_SENSE) &&
+        !(cdb[0] == SCSIOP_INQUIRY && !(scsi->mode & MODE_NOVAXIS))) {
         scsi->keycode = SENSE_InvalidLUN;
         SCSILOG("check LUN error\n");
         return 0;
     }
 
-    if (cdb[0] != SCSI_RequestSense) {
+    if (cdb[0] != SCSIOP_REQUEST_SENSE) {
         scsi->keycode = SENSE_NoSense;
     }
 
-    if (cdb[0] < SCSI_Group1) {
+    if (cdb[0] < SCSIOP_GROUP1) {
         scsi->sector = ((cdb[1] & 0x1f) << 16) |
                        (cdb[2] << 8) | cdb[3];
         scsi->length = cdb[4];
@@ -780,12 +780,12 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
         }
 */
         switch (cdb[0]) {
-        case SCSI_TestUnitReady:
+        case SCSIOP_TEST_UNIT_READY:
             SCSILOG("TestUnitReady\n");
             scsiDeviceTestUnitReady(scsi);
             return 0;
 
-        case SCSI_Inquiry:
+        case SCSIOP_INQUIRY:
             SCSILOG1("Inquiry %d\n", scsi->length);
             counter = scsiDeviceInquiry(scsi);
             if (counter) {
@@ -793,7 +793,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return counter;
 
-        case SCSI_RequestSense:
+        case SCSIOP_REQUEST_SENSE:
             SCSILOG("RequestSense\n");
             counter = scsiDeviceRequestSense(scsi);
             if (counter) {
@@ -801,7 +801,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return counter;
 
-        case SCSI_Read6:
+        case SCSIOP_READ6:
             SCSILOG2("Read6: %d %d\n", scsi->sector, scsi->length);
             if (scsi->length == 0) {
                 //scsi->length = scsi->sectorSize >> 1;
@@ -810,14 +810,14 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             if (scsiDeviceCheckAddress(scsi)) {
                 counter = scsiDeviceReadSector(scsi, blocks);
                 if(counter) {
-                    scsi->cdb[0] = SCSI_Read10;
+                    scsi->cdb[0] = SCSIOP_READ10;
                     *phase = DataIn;
                     return counter;
                 }
             }
             return 0;
 
-        case SCSI_Write6:
+        case SCSIOP_WRITE6:
             SCSILOG2("Write6: %d %d\n", scsi->sector, scsi->length);
             if (scsi->length == 0) {
                 //scsi->length = scsi->sectorSize >> 1;
@@ -831,20 +831,20 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
                 } else {
                     counter = scsi->length * 512;
                 }
-                scsi->cdb[0] = SCSI_Write10;
+                scsi->cdb[0] = SCSIOP_WRITE10;
                 *phase = DataOut;
                 return counter;
             }
             return 0;
 
-        case SCSI_Seek6:
+        case SCSIOP_SEEK6:
             SCSILOG1("Seek6: %d\n", scsi->sector);
             ledSetHd(1);
             scsi->length = 1;
             scsiDeviceCheckAddress(scsi);
             return 0;
 
-        case SCSI_ModeSense:
+        case SCSIOP_MODE_SENSE:
             SCSILOG1("ModeSense: %d\n", scsi->length);
             counter = scsiDeviceModeSense(scsi);
             if (counter) {
@@ -852,21 +852,21 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return counter;
 
-        case SCSI_FormatUnit:
+        case SCSIOP_FORMAT_UNIT:
             SCSILOG("FormatUnit\n");
             scsiDeviceFormatUnit(scsi);
             return 0;
 
-        case SCSI_StartStopUnit:
+        case SCSIOP_START_STOP_UNIT:
             SCSILOG("StartStopUnit\n");
             scsiDeviceStartStopUnit(scsi);
             return 0;
 
-        case SCSI_ReZeroUnit:
-        case SCSI_ReassignBlocks:
-        case SCSI_ReserveUnit:
-        case SCSI_ReleaseUnit:
-        case SCSI_SendDiagnostic:
+        case SCSIOP_REZERO_UNIT:
+        case SCSIOP_REASSIGN_BLOCKS:
+        case SCSIOP_RESERVE_UNIT:
+        case SCSIOP_RELEASE_UNIT:
+        case SCSIOP_SEND_DIAGNOSTIC:
             SCSILOG("SCSI_Group0 dummy\n");
             return 0;
         }
@@ -880,7 +880,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
         }
 */
         switch (cdb[0]) {
-        case SCSI_Read10:
+        case SCSIOP_READ10:
             SCSILOG2("Read10: %d %d\n", scsi->sector, scsi->length);
 
             if (scsiDeviceCheckAddress(scsi)) {
@@ -892,7 +892,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return 0;
 
-        case SCSI_Write10:
+        case SCSIOP_WRITE10:
             SCSILOG2("Write10: %d %d\n", scsi->sector, scsi->length);
 
             if (scsiDeviceCheckAddress(scsi) && !scsiDeviceCheckReadOnly(scsi)) {
@@ -907,7 +907,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return 0;
 
-        case SCSI_ReadCapacity:
+        case SCSIOP_READ_CAPACITY:
             SCSILOG("ReadCapacity\n");
             counter = scsiDeviceReadCapacity(scsi);
             if (counter) {
@@ -915,7 +915,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             }
             return counter;
 
-        case SCSI_Seek10:
+        case SCSIOP_SEEK10:
             SCSILOG1("Seek10: %d\n", scsi->sector);
             ledSetHd(1);
             scsi->length = 1;
@@ -923,7 +923,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* bl
             return 0;
 
 #ifdef USE_SPECIALCOMMAND
-        case SCSI_blueMSX:
+        case SCSIOP_BLUE_MSX:
             SCSILOG("blueMSX\n");
             counter = scsiDeviceBlueMSX(scsi);
             if (counter) {
@@ -1000,7 +1000,7 @@ void scsiDeviceSaveState(SCSIDEVICE* scsi)
     saveStateSet(state, "lun",        scsi->lun);
     saveStateSet(state, "message",    scsi->message);
 
-    saveStateSetBuffer(state, "cdb", scsi->cdb, 10);
+    saveStateSetBuffer(state, "cdb", scsi->cdb, 12);
     saveStateSetBuffer(state, "fileName", scsi->disk.fileName, strlen(scsi->disk.fileName) + 1);
     saveStateSetBuffer(state, "fileNameInZip", scsi->disk.fileNameInZip, strlen(scsi->disk.fileNameInZip) + 1);
     saveStateClose(state);
@@ -1024,7 +1024,7 @@ void scsiDeviceLoadState(SCSIDEVICE* scsi)
     scsi->lun        = saveStateGet(state, "lun",        0);
     scsi->message    = saveStateGet(state, "message",    0);
 
-    saveStateGetBuffer(state, "cdb", scsi->cdb, 10);
+    saveStateGetBuffer(state, "cdb", scsi->cdb, 12);
     saveStateGetBuffer(state, "fileName", scsi->disk.fileName, sizeof(scsi->disk.fileName));
     saveStateGetBuffer(state, "fileNameInZip", scsi->disk.fileNameInZip, sizeof(scsi->disk.fileNameInZip));
     saveStateClose(state);

@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * $Date: 2007-03-04 16:07:25 $
+ * $Date: 2007-03-10 08:25:36 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -45,7 +45,7 @@ const SCSICREATE MegaSCSIparm[8] = {
     MODE_SCSI2 | MODE_MEGASCSI | MODE_CHECK2 | MODE_FDS120 | MODE_REMOVABLE },
 {
     /* #7 */
-    NULL, SDT_MediaChanger,
+    NULL, SDT_DirectAccess,
     MODE_SCSI3 | MODE_MEGASCSI | MODE_CHECK2 | MODE_FDS120 | MODE_REMOVABLE }
 };
 

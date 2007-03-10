@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-10 08:24:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,40 +30,42 @@
 
 #include "MsxTypes.h"
 
-#define SCSI_TestUnitReady  0x00    // Group 0: 6bytes cdb
-#define SCSI_ReZeroUnit     0x01
-#define SCSI_RequestSense   0x03
-#define SCSI_FormatUnit     0x04
-#define SCSI_ReassignBlocks 0x07
-#define SCSI_Read6          0x08
-#define SCSI_Write6         0x0a
-#define SCSI_Seek6          0x0b
-#define SCSI_Inquiry        0x12
-#define SCSI_ReserveUnit    0x16
-#define SCSI_ReleaseUnit    0x17
-#define SCSI_ModeSense      0x1a
-#define SCSI_StartStopUnit  0x1b
-#define SCSI_SendDiagnostic 0x1d
+// Group 0: 6bytes cdb
+#define SCSIOP_TEST_UNIT_READY      0x00
+#define SCSIOP_REZERO_UNIT          0x01
+#define SCSIOP_REQUEST_SENSE        0x03
+#define SCSIOP_FORMAT_UNIT          0x04
+#define SCSIOP_REASSIGN_BLOCKS      0x07
+#define SCSIOP_READ6                0x08
+#define SCSIOP_WRITE6               0x0A
+#define SCSIOP_SEEK6                0x0B
+#define SCSIOP_INQUIRY              0x12
+#define SCSIOP_RESERVE_UNIT         0x16
+#define SCSIOP_RELEASE_UNIT         0x17
+#define SCSIOP_MODE_SENSE           0x1A
+#define SCSIOP_START_STOP_UNIT      0x1B
+#define SCSIOP_SEND_DIAGNOSTIC      0x1D
 
-#define SCSI_Group1         0x20    // Group 1: 10bytes cdb
-#define SCSI_ReadCapacity   0x25
-#define SCSI_Read10         0x28
-#define SCSI_Write10        0x2a
-#define SCSI_Seek10         0x2b
+// Group 1: 10bytes cdb
+#define SCSIOP_GROUP1               0x20
+#define SCSIOP_BLUE_MSX             0x20    // special command (vendor option)
+#define SCSIOP_READ_CAPACITY        0x25
+#define SCSIOP_READ10               0x28
+#define SCSIOP_WRITE10              0x2A
+#define SCSIOP_SEEK10               0x2B
 
-#define SCSI_blueMSX        0x20    // special command (vendor option)
-
-/* TODO: CD-ROM
-#define SCSI Group2                 0x40
-#define SCSI_ReadSubChannel         0x42
-#define SCSI_ReadToc                0x43
-#define SCSI_PlayAudio              0x45
-#define SCSI PlayAudioMsf           0x47
-#define SCSI_PlayAudioTrackIndex    0x48
-#define SCSI_PlayTrackRelative      0x49
-#define SCSI_PauseResume            0x4b
+/*
+#define SCSIOP_GROUP2               0x40
+#define SCSIOP_CHANGE_DEFINITION    0x40
+#define SCSIOP_READ_SUB_CHANNEL     0x42
+#define SCSIOP_READ_TOC             0x43
+#define SCSIOP_READ_HEADER          0x44
+#define SCSIOP_PLAY_AUDIO           0x45
+#define SCSIOP_PLAY_AUDIO_MSF       0x47
+#define SCSIOP_PLAY_TRACK_INDEX     0x48
+#define SCSIOP_PLAY_TRACK_RELATIVE  0x49
+#define SCSIOP_PAUSE_RESUME         0x4B
 */
-
 
 // SCSI device type
 #define SDT_DirectAccess        0x00
@@ -111,7 +113,7 @@ typedef enum {
     Status      =  8,
     MsgOut      =  9,
     MsgIn       = 10
-} PHASE;
+} SCSI_PHASE;
 
 typedef struct SCSIDEVICE SCSIDEVICE;
 
@@ -122,7 +124,7 @@ void scsiDeviceSaveState(SCSIDEVICE* scsi);
 void scsiDeviceLoadState(SCSIDEVICE* scsi);
 
 int scsiDeviceSelection(SCSIDEVICE* scsi);
-int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, PHASE* phase, int* blocks);
+int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks);
 UInt8 scsiDeviceGetStatusCode(SCSIDEVICE* scsi);
 int scsiDeviceMsgOut(SCSIDEVICE* scsi, UInt8 value);
 UInt8 scsiDeviceMsgIn(SCSIDEVICE* scsi);
