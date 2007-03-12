@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2007-02-28 19:27:38 $
+** $Date: 2007-03-12 21:45:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -481,7 +481,7 @@ UInt8* getSpritesLine(VDP* vdp, int line) {
         return nullSpritesLine();
     }
 
-    return lineBufs[(line & 1) ^ 1];
+    return lineBufs[line & 1];
 }
 
 #endif

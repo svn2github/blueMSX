@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-09-19 06:00:30 $
+** $Date: 2007-03-12 21:45:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,11 +34,223 @@
 #include "IoPort.h"
 #include "Board.h"
 #include "Y8950.h"
+#include "MSXMidi.h"
+#include "MidiIO.h"
 #include "SaveState.h"
 #include "Language.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "ArchEvent.h"
+
+#define RX_QUEUE_SIZE 256
+
+typedef struct {
+    MidiIO* midiIo;
+    UInt8   command;
+    UInt8   rxData;
+    UInt8   status;
+    UInt8   rxQueue[RX_QUEUE_SIZE];
+    int     rxPending;
+    int     rxHead;
+    void*   semaphore;
+    UInt32      charTime;
+    BoardTimer* timerRecv;
+    UInt32      timeRecv;
+    BoardTimer* timerTrans;
+    UInt32      timeTrans;
+} PhilipsMidi;
+
+#define STAT_RXRDY      0x01
+#define STAT_TXEMPTY    0x02
+#define STAT_OE         0x20
+#define ST_INT          0x80
+
+#define CMD_WRINT  0x20
+#define CMD_RDINT  0x80
+
+static void midiInCallback(PhilipsMidi* midi, UInt8* buffer, UInt32 length)
+{
+    archSemaphoreWait(midi->semaphore, -1);
+    if (midi->rxPending + length < RX_QUEUE_SIZE) {
+        while (length--) {
+            midi->rxQueue[midi->rxHead & (RX_QUEUE_SIZE - 1)] = *buffer++;
+            midi->rxHead++;
+            midi->rxPending++;
+        }
+    }
+    archSemaphoreSignal(midi->semaphore);
+}
+
+static void onRecv(PhilipsMidi* midi, UInt32 time)
+{
+    midi->timeRecv = 0;
+
+	if (midi->status & STAT_RXRDY) {
+		midi->status |= STAT_OE;
+	} 
+    else if (midi->rxPending != 0) {
+        archSemaphoreWait(midi->semaphore, -1);
+        midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
+        midi->rxPending--;
+        archSemaphoreSignal(midi->semaphore);
+        midi->status |= STAT_RXRDY;
+        if (midi->command & CMD_RDINT) {
+            boardSetInt(0x400);
+            midi->status |= ST_INT;
+        }
+    }
+    
+    midi->timeRecv = boardSystemTime() + midi->charTime;
+    boardTimerAdd(midi->timerRecv, midi->timeRecv);
+}
+
+static void onTrans(PhilipsMidi* midi, UInt32 time)
+{
+    midi->timeTrans = 0;
+    midi->status |= STAT_TXEMPTY;
+    if (midi->command & CMD_WRINT) {
+        boardSetInt(0x400);
+        midi->status |= ST_INT;
+    }
+}
+
+void philipsMidiReset(PhilipsMidi* midi)
+{
+    midi->status = STAT_TXEMPTY;
+    midi->rxPending = 0;
+    midi->command = 0;
+    midi->timeRecv = 0;
+    midi->timeTrans = 0;
+    midi->charTime = 144;
+
+    boardTimerRemove(midi->timerRecv);
+    boardTimerRemove(midi->timerTrans);
+    
+    midi->timeRecv = boardSystemTime() + midi->charTime;
+    boardTimerAdd(midi->timerRecv, midi->timeRecv);
+}
+
+PhilipsMidi* philipsMidiCreate()
+{
+    PhilipsMidi* midi = (PhilipsMidi*)calloc(1, sizeof(PhilipsMidi));
+
+    midi->midiIo = midiIoCreate(midiInCallback, midi);
+    midi->semaphore = archSemaphoreCreate(1);
+    midi->timerRecv   = boardTimerCreate(onRecv, midi);
+    midi->timerTrans  = boardTimerCreate(onTrans, midi);
+
+    return midi;
+}
+
+void philipsMidiDestroy(PhilipsMidi* midi)
+{
+    midiIoDestroy(midi->midiIo);
+    archSemaphoreDestroy(midi->semaphore);
+}
+
+UInt8 philipsMidiReadStatus(PhilipsMidi* midi)
+{
+    UInt8 val = midi->status;
+
+    boardClearInt(0x400);
+    midi->status &= ~ST_INT;
+
+    return val;
+}
+
+UInt8 philipsMidiReadData(PhilipsMidi* midi)
+{
+    midi->status &= ~(STAT_RXRDY | STAT_OE);
+    return midi->rxData;
+}
+
+void philipsMidiWriteCommand(PhilipsMidi* midi, UInt8 value)
+{
+    int baudrate      = 1;
+    int dataBits      = 8;
+    int parityEnable  = 0;
+    int stopBits      = 1;
+    UInt64 charLength;
+
+    midi->command = value;
+
+    switch (value & 0x03) {
+    case 0:
+        baudrate = 1;
+        break;
+    case 1:
+        baudrate = 16;
+        break;
+    case 2:
+        baudrate = 64;
+        break;
+    case 3:
+        philipsMidiReset(midi);
+        break;
+    }
+    
+    switch (value & 0x1c) {
+    case 0:
+        dataBits     = 7;
+        parityEnable = 1;
+        stopBits     = 2;
+        break;
+    case 1:
+        dataBits     = 7;
+        parityEnable = 1;
+        stopBits     = 2;
+        break;
+    case 2:
+        dataBits     = 7;
+        parityEnable = 1;
+        stopBits     = 1;
+        break;
+    case 3:
+        dataBits     = 7;
+        parityEnable = 1;
+        stopBits     = 1;
+        break;
+    case 4:
+        dataBits     = 8;
+        parityEnable = 0;
+        stopBits     = 2;
+        break;
+    case 5:
+        dataBits     = 8;
+        parityEnable = 0;
+        stopBits     = 1;
+        break;
+    case 6:
+        dataBits     = 8;
+        parityEnable = 0;
+        stopBits     = 1;
+        break;
+    case 7:
+        dataBits     = 8;
+        parityEnable = 1;
+        stopBits     = 1;
+        break;
+    }
+
+	charLength = (dataBits + parityEnable + stopBits) * baudrate;
+    midi->charTime = (UInt32)(charLength * boardFrequency() / 500000);
+    
+    midi->timeRecv = boardSystemTime() + midi->charTime;
+    boardTimerAdd(midi->timerRecv, midi->timeRecv);
+}
+
+void philipsMidiWriteData(PhilipsMidi* midi, UInt8 value)
+{
+    if (midi->status & STAT_TXEMPTY) {
+        midiIoTransmit(midi->midiIo, value);
+        midi->status &= ~STAT_TXEMPTY;
+
+        midi->timeTrans = boardSystemTime() + midi->charTime;
+        boardTimerAdd(midi->timerTrans, midi->timeTrans);
+    }
+}
+
 
 typedef struct {
     int deviceHandle;
@@ -49,10 +261,14 @@ typedef struct {
     UInt8 ram[0x1000];
     int bankSelect; 
     int sizeMask;
+
+    PhilipsMidi* midi;
+
     int slot;
     int sslot;
     int startPage;
 } RomMapperMsxAudio;
+
 
 static int deviceCount = 0;
 
@@ -86,6 +302,10 @@ static void loadState(RomMapperMsxAudio* rm)
 
 static void destroy(RomMapperMsxAudio* rm)
 {
+    if (rm->midi) {
+        philipsMidiDestroy(rm->midi);
+    }
+
     ioPortUnregister(0x00);
     ioPortUnregister(0x01);
     ioPortUnregister(0x04);
@@ -127,6 +347,8 @@ static void reset(RomMapperMsxAudio* rm)
     if (rm->y8950 != NULL) {
         y8950Reset(rm->y8950);
     }
+
+    philipsMidiReset(rm->midi);
 }
 
 static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
@@ -144,16 +366,28 @@ static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value)
 
 static void midiWrite(RomMapperMsxAudio* rm, UInt16 ioPort, UInt8 value)
 {
+    if (!rm->midi) {
+        return;
+    }
+
+    switch (ioPort & 1) {
+    case 0x00:
+        philipsMidiWriteCommand(rm->midi, value);
+        break;
+    case 0x01:
+        philipsMidiWriteData(rm->midi, value);
+        break;
+    }
 }
+
 
 static UInt8 midiRead(RomMapperMsxAudio* rm, UInt16 ioPort)
 {
     switch (ioPort & 1) {
-    case 0x00: 
-        return 2;
-
-    case 0x01: 
-        return 0;
+    case 0x00:
+        return philipsMidiReadStatus(rm->midi);
+    case 0x01:
+        return philipsMidiReadData(rm->midi);
     }
 
     return 0xff;
@@ -229,6 +463,10 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         ioPortRegister(0x01, NULL, midiWrite, rm);
         ioPortRegister(0x04, midiRead, NULL, rm);
         ioPortRegister(0x05, midiRead, NULL, rm);
+    }
+
+    if (deviceCount == 1) {
+        rm->midi = philipsMidiCreate();
     }
 
     reset(rm);
