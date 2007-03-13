@@ -934,8 +934,8 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
                 if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 0);
 			}
 
-			ym2151TimerStart(chip->ref, 0, v & 1);
-			ym2151TimerStart(chip->ref, 1, v & 2);
+			ym2151TimerStart(chip->ref, 0, v & 4);
+			ym2151TimerStart(chip->ref, 1, v & 8);
 			break;
 
 		case 0x18:	/* LFO frequency */

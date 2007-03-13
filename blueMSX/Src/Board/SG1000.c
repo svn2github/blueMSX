@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2007-03-13 03:23:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -237,6 +237,7 @@ int sg1000Create(Machine* machine,
     boardInfo->setCpuTimeout    = r800SetTimeoutAt;
     boardInfo->setBreakpoint    = r800SetBreakpoint;
     boardInfo->clearBreakpoint  = r800ClearBreakpoint;
+    boardInfo->setDataBus       = r800SetDataBus;
 
     boardInfo->changeCartridge  = changeCartridge;
 

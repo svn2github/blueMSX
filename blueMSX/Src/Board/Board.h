@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.h,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2007-02-26 19:16:28 $
+** $Date: 2007-03-13 03:23:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,6 +70,7 @@ typedef struct {
     void   (*saveState)();
     int    (*getRefreshRate)();
     UInt8* (*getRamPage)(int);
+    void   (*setDataBus)(void*, UInt8);
 
     void   (*run)(void*);
     void   (*stop)(void*);
@@ -95,6 +96,8 @@ BoardType boardGetType();
 
 void boardSetMachine(Machine* machine);
 void boardReset();
+
+void boardSetDataBus(UInt8 value);
 
 UInt64 boardSystemTime64();
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-13 03:23:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,6 +55,7 @@ struct YM2151 {
     UInt32 timerRunning2;
     UInt8  address;
     UInt8  latch;
+    UInt8  irqVector;
     // Variables used for resampling
     Int32  off;
     Int32  s1l;
@@ -68,7 +69,9 @@ void ym2151TimerStart(void* ptr, int timer, int start);
 
 void ym2151Irq(void* ptr, int irq)
 {
+    YM2151* ym2151 = (YM2151*)ptr;
     if (irq) {
+        boardSetDataBus(ym2151->irqVector);
 		boardSetInt(0x40);
     }
     else {
@@ -135,6 +138,11 @@ void ym2151TimerStart(void* ptr, int timer, int start)
             }
         }
     }
+}
+
+void ym2151SetIrqVector(YM2151* ym2151, UInt8 irqVector)
+{
+    ym2151->irqVector = irqVector;
 }
 
 UInt8 ym2151Peek(YM2151* ym2151, UInt16 ioPort)
@@ -205,7 +213,8 @@ void ym2151SaveState(YM2151* ym2151)
     saveStateSet(state, "timerValue2",   ym2151->timerValue2);
     saveStateSet(state, "timerRunning2", ym2151->timerRunning2);
     saveStateSet(state, "timeout2",      ym2151->timeout2);
-
+    saveStateSet(state, "irqVector",     ym2151->irqVector);
+    
     saveStateClose(state);
 
     YM2151SaveState(ym2151->opl);
@@ -223,6 +232,7 @@ void ym2151LoadState(YM2151* ym2151)
     ym2151->timerValue2   =        saveStateGet(state, "timerValue2",   0);
     ym2151->timerRunning2 =        saveStateGet(state, "timerRunning2", 0);
     ym2151->timeout2      =        saveStateGet(state, "timeout2",      0);
+    ym2151->irqVector     = (UInt8)saveStateGet(state, "irqVector",     0);
 
     saveStateClose(state);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2007-03-13 03:23:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -310,6 +310,7 @@ int sviCreate(Machine* machine,
     boardInfo->setCpuTimeout    = r800SetTimeoutAt;
     boardInfo->setBreakpoint    = r800SetBreakpoint;
     boardInfo->clearBreakpoint  = r800ClearBreakpoint;
+    boardInfo->setDataBus       = r800SetDataBus;
 
     deviceManagerCreate();
     boardInit(&r800->systemTime);

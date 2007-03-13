@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:34 $
+** $Date: 2007-03-13 03:23:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -44,6 +44,7 @@ void ym2151SaveState(YM2151* ym2151);
 UInt8 ym2151Peek(YM2151* ym2151, UInt16 ioPort);
 UInt8 ym2151Read(YM2151* ym2151, UInt16 ioPort);
 void ym2151Write(YM2151* ym2151, UInt16 ioPort, UInt8 value);
+void ym2151SetIrqVector(YM2151* ym2151, UInt8 irqVector);
 void ym2151GetDebugInfo(YM2151* ym2151, DbgDevice* dbgDevice);
 
 #endif
