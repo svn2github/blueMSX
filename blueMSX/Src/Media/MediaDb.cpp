@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-16 07:38:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,6 +103,8 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "KoeiSRAM32")       return ROM_KOEI;
     if (name == "Konami")           return ROM_KONAMI4;
     if (name == "KonamiSCC")        return ROM_KONAMI5;
+    if (name == "Manbow2")          return ROM_MANBOW2;
+    if (name == "MegaFlashRomScc")  return ROM_MEGAFLSHSCC;
     if (name == "Halnote")          return ROM_HALNOTE;
     if (name == "HarryFox")         return ROM_HARRYFOX;
     if (name == "Playball")         return ROM_PLAYBALL;
@@ -494,6 +496,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_STANDARD:    return langRomTypeStandard();
     case ROM_MSXDOS2:     return langRomTypeMsxdos2();
     case ROM_KONAMI5:     return langRomTypeKonamiScc();
+    case ROM_MANBOW2:     return langRomTypeManbow2();
+    case ROM_MEGAFLSHSCC: return langRomTypeMegaFlashRomScc();
     case ROM_OBSONET:     return langRomTypeObsonet();
     case ROM_DUMAS:       return langRomTypeDumas();
     case ROM_NOWIND:      return langRomTypeNoWind();
@@ -634,6 +638,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_STANDARD:    return "STANDARD";
     case ROM_MSXDOS2:     return "MSXDOS2";
     case ROM_KONAMI5:     return "KONAMI SCC";
+    case ROM_MANBOW2:     return "MANBOW 2";
+    case ROM_MEGAFLSHSCC: return "MEGAFLSHSCC";
     case ROM_OBSONET:     return "OBSONET";
     case ROM_DUMAS:       return "DUMAS";
     case ROM_NOWIND:      return "NOWIND";
@@ -810,6 +816,8 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_STANDARD:    return 1;
     case ROM_MSXDOS2:     return 1;
     case ROM_KONAMI5:     return 1;
+    case ROM_MANBOW2:     return 1;
+    case ROM_MEGAFLSHSCC: return 1;
     case ROM_OBSONET:     return 1;
     case ROM_DUMAS:       return 1;
     case ROM_NOWIND:      return 1;

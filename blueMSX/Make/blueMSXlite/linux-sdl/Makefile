@@ -185,6 +185,7 @@ SOURCE_FILES += romMapperKorean90.c
 SOURCE_FILES += romMapperKorean80.c
 SOURCE_FILES += romMapperLodeRunner.c
 SOURCE_FILES += romMapperMajutsushi.c
+SOURCE_FILES += romMapperMegaFlashRomScc.c
 SOURCE_FILES += romMapperMegaRAM.c
 SOURCE_FILES += romMapperMicrosol.c
 SOURCE_FILES += romMapperMicrosolVmx80.c

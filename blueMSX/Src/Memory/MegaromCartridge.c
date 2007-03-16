@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2007-03-04 16:07:25 $
+** $Date: 2007-03-16 07:38:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,6 +98,7 @@
 #include "sramMapperEseSCC.h"
 #include "romMapperNoWind.h"
 #include "romMapperGoudaSCSI.h"
+#include "romMapperMegaFlashRomScc.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -324,6 +325,14 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             case ROM_SONYHBI55:
                 success &= romMapperSonyHBI55Create();
                 break;
+
+            case ROM_MANBOW2:
+                success &= romMapperMegaFlashRomSccCreate("Manbow2.rom", NULL, 0, slot, sslot, 2, 0x10000);
+                break;
+
+            case ROM_MEGAFLSHSCC:
+                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, -1);
+                break;
             }
             break;
         }
@@ -368,6 +377,14 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             
         case ROM_KONAMI5:
             success &= romMapperKonami5Create(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_MANBOW2:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x10000);
+            break;
+
+        case ROM_MEGAFLSHSCC:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, -1);
             break;
 
         case ROM_OBSONET:

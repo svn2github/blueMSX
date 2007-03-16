@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.91 $
+** $Revision: 1.92 $
 **
-** $Date: 2007-02-26 19:49:15 $
+** $Date: 2007-03-16 07:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,6 +121,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartExternalRam     = "External RAM";
     ls->menuCartEseRam          = "Ese-RAM";
     ls->menuCartEseSCC          = "Ese-SCC";
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";
 
     ls->menuDiskInsertNew       = "Insert New Disk Image";
     ls->menuDiskDirInsert       = "Insert Directory";

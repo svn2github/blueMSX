@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2007-02-26 19:16:28 $
+** $Date: 2007-03-16 07:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -131,6 +131,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_ESERAM256)   &&
             strcmp(fname, CARTNAME_ESERAM512)   &&
             strcmp(fname, CARTNAME_ESERAM1MB)   &&
+            strcmp(fname, CARTNAME_MEGAFLSHSCC) &&
             strcmp(fname, CARTNAME_WAVESCSI128) &&
             strcmp(fname, CARTNAME_WAVESCSI256) &&
             strcmp(fname, CARTNAME_WAVESCSI512) &&
@@ -385,6 +386,7 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
                 strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM256)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM512)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM1MB)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGAFLSHSCC)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI128)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI256)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI512)  &&

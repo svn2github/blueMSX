@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2007-03-04 16:07:24 $
+** $Date: 2007-03-16 07:38:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,6 +124,7 @@
 #include "sramMapperEseSCC.h"
 #include "romMapperNoWind.h"
 #include "romMapperGoudaSCSI.h"
+#include "romMapperMegaFlashRomScc.h"
 
 int toint(char* buffer) 
 {
@@ -1024,7 +1025,18 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
         if (buf == NULL) {
-            success = 0;
+
+            switch (machine->slotInfo[i].romType) {
+            case ROM_MANBOW2:
+                success &= romMapperMegaFlashRomSccCreate("Manbow2.rom", NULL, 0, slot, subslot, startPage, 0x10000);
+                break;
+            case ROM_MEGAFLSHSCC:
+                success &= romMapperMegaFlashRomSccCreate("Manbow2.rom", NULL, 0, slot, subslot, startPage, -1);
+                break;
+            default:
+                success = 0;
+                break;
+            }
             continue;
         }
 
@@ -1059,6 +1071,14 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             
         case ROM_KONAMI5:
             success &= romMapperKonami5Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_MANBOW2:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x10000);
+            break;
+
+        case ROM_MEGAFLSHSCC:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, -1);
             break;
 
         case ROM_OBSONET:

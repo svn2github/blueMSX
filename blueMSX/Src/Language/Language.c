@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-16 07:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -318,6 +318,7 @@ char* langMenuCartMegaRam() { return ls->menuCartMegaRam; }
 char* langMenuCartExternalRam() { return ls->menuCartExternalRam; }
 char* langMenuCartEseRam() { return ls->menuCartEseRam; }
 char* langMenuCartEseSCC() { return ls->menuCartEseSCC; }
+char* langMenuCartMegaFlashRom() { return ls->menuCartMegaFlashRom; }
 
 char* langMenuDiskInsertNew() { return ls->menuDiskInsertNew; }
 char* langMenuDiskDirInsert() { return ls->menuDiskDirInsert; }
@@ -817,6 +818,8 @@ char* langKeyconfigMappingScheme() { return ls->keyconfigMappingScheme; }
 char* langRomTypeStandard() { return ls->romTypeStandard; }
 char* langRomTypeMsxdos2() { return "MSXDOS 2"; }
 char* langRomTypeKonamiScc() { return "Konami SCC"; }
+char* langRomTypeManbow2() { return "Manbow 2"; }
+char* langRomTypeMegaFlashRomScc() { return "Mega Flash Rom SCC"; }
 char* langRomTypeKonami() { return "Konami"; }
 char* langRomTypeAscii8() { return "ASCII 8"; }
 char* langRomTypeAscii16() { return "ASCII 16"; }

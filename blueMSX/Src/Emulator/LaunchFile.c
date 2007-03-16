@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2007-02-26 19:16:28 $
+** $Date: 2007-03-16 07:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -200,6 +200,7 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               0 == strcmp(CARTNAME_ESERAM256,   filename) ? SRAM_ESERAM256 :
               0 == strcmp(CARTNAME_ESERAM512,   filename) ? SRAM_ESERAM512 :
               0 == strcmp(CARTNAME_ESERAM1MB,   filename) ? SRAM_ESERAM1MB :
+              0 == strcmp(CARTNAME_MEGAFLSHSCC, filename) ? ROM_MEGAFLSHSCC :
               0 == strcmp(CARTNAME_WAVESCSI128, filename) ? SRAM_WAVESCSI128 :
               0 == strcmp(CARTNAME_WAVESCSI256, filename) ? SRAM_WAVESCSI256 :
               0 == strcmp(CARTNAME_WAVESCSI512, filename) ? SRAM_WAVESCSI512 :

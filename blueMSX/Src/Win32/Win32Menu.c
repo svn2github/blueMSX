@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2007-02-26 19:16:30 $
+** $Date: 2007-03-16 07:38:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -146,6 +146,7 @@
 #define ID_FILE_CART_ESESCC256          41105
 #define ID_FILE_CART_ESESCC512          41106
 #define ID_FILE_CART_GOUDASCSI          41107
+#define ID_FILE_CART_MEGAFLASHROMSCC    41108
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -265,6 +266,7 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_MEGASCSI512) == 0)    return langRomTypeMegaSCSI512();
     if (strcmp(fileName, CARTNAME_MEGASCSI1MB) == 0)    return langRomTypeMegaSCSI1mb();
     if (strcmp(fileName, CARTNAME_ESERAM128) == 0)      return langRomTypeEseRam128();
+    if (strcmp(fileName, CARTNAME_MEGAFLSHSCC) == 0)    return langRomTypeMegaFlashRomScc();
     if (strcmp(fileName, CARTNAME_ESERAM256) == 0)      return langRomTypeEseRam256();
     if (strcmp(fileName, CARTNAME_ESERAM512) == 0)      return langRomTypeEseRam512();
     if (strcmp(fileName, CARTNAME_ESERAM1MB) == 0)      return langRomTypeEseRam1mb();
@@ -407,6 +409,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     HMENU hMenuMegaRam = CreatePopupMenu();
     HMENU hMenuMegaSCSI = CreatePopupMenu();
     HMENU hMenuEseRam = CreatePopupMenu();
+    HMENU hMenuFlashRom = CreatePopupMenu();
     HMENU hMenuWaveSCSI = CreatePopupMenu();
     HMENU hMenuEseSCC = CreatePopupMenu();
 
@@ -418,6 +421,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     setMenuColor(hMenuMegaRam);
     setMenuColor(hMenuMegaSCSI);
     setMenuColor(hMenuEseRam);
+    setMenuColor(hMenuFlashRom);
     setMenuColor(hMenuWaveSCSI);
     setMenuColor(hMenuEseSCC);
 
@@ -441,6 +445,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM256, "256 kB");
     AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM512, "512 kB");
     AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM1MB, "1 MB");
+
+    AppendMenu(hMenuFlashRom, MF_STRING, idOffset + ID_FILE_CART_MEGAFLASHROMSCC, langRomTypeMegaFlashRomScc());
 
     AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI128, "128 kB");
     AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI256, "256 kB");
@@ -480,6 +486,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuMegaRam, langMenuCartMegaRam());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEseRam, langMenuCartEseRam());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuFlashRom, langMenuCartMegaFlashRom());
 
     return hMenu;
 }
@@ -1454,6 +1462,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_ESERAM1MB:
             insertCartridge(pProperties, i, CARTNAME_ESERAM1MB, NULL, SRAM_ESERAM1MB, 0);
+            return 1;
+        case ID_FILE_CART_MEGAFLASHROMSCC:
+            insertCartridge(pProperties, i, CARTNAME_MEGAFLSHSCC, NULL, ROM_MEGAFLSHSCC, 0);
             return 1;
         case ID_FILE_CART_WAVESCSI128:
             insertCartridge(pProperties, i, CARTNAME_WAVESCSI128, NULL, SRAM_WAVESCSI128, 0);

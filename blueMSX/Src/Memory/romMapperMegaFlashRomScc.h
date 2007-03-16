@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.1 $
 **
 ** $Date: 2007-03-16 07:38:44 $
 **
@@ -25,26 +25,12 @@
 **
 ******************************************************************************
 */
-#ifndef AMD_FLASH_H
-#define AMD_FLASH_H
+#ifndef ROMMAPPER_MEGA_FLASH_ROM_SCC_H
+#define ROMMAPPER_MEGA_FLASH_ROM_SCC_H
  
 #include "MsxTypes.h"
 
-typedef struct AmdFlash AmdFlash;
-
-typedef enum { AMD_TYPE_1, AMD_TYPE_2 } AmdType;
-
-
-AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, void* romData, int size, char* sramFilename);
-void amdFlashDestroy(AmdFlash* rm);
-
-int amdFlashCmdInProgress(AmdFlash* rm);
-
-UInt8 amdFlashRead(AmdFlash* rm, UInt32 address);
-void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value);
-UInt8* amdFlashGetPage(AmdFlash* rm, UInt32 address);
-void amdFlashReset(AmdFlash* rm);
-void amdFlashSaveState(AmdFlash* rm);
-void amdFlashLoadState(AmdFlash* rm);
+int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData, 
+                                   int size, int slot, int sslot, int startPage, int flashSize);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2007-02-26 19:49:15 $
+** $Date: 2007-03-16 07:38:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,8 @@ char* langTextUnknown()             { return "Unknown"; }
 char* langRomTypeStandard()         { return "Standard"; }
 char* langRomTypeMsxdos2()          { return "MSXDOS 2"; }
 char* langRomTypeKonamiScc()        { return "Konami SCC"; }
+char* langRomTypeManbow2()          { return "Manbbow 2"; }
+char* langRomTypeMegaFlashRomScc()  { return "Mega Flash Rom SCC"; }
 char* langRomTypeKonami()           { return "Konami"; }
 char* langRomTypeAscii8()           { return "ASCII 8"; }
 char* langRomTypeAscii16()          { return "ASCII 16"; }

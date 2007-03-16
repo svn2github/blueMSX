@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-16 07:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -145,6 +145,7 @@ char* langMenuCartExternalRam();
 char* langMenuCartMegaRam();
 char* langMenuCartEseRam();
 char* langMenuCartEseSCC();
+char* langMenuCartMegaFlashRom();
 
 char* langMenuDiskDirInsert();
 char* langMenuDiskInsertNew();
@@ -644,6 +645,8 @@ char* langKeyconfigMappingScheme();
 char* langRomTypeStandard();
 char* langRomTypeMsxdos2();
 char* langRomTypeKonamiScc();
+char* langRomTypeManbow2();
+char* langRomTypeMegaFlashRomScc();
 char* langRomTypeKonami();
 char* langRomTypeAscii8();
 char* langRomTypeAscii16();

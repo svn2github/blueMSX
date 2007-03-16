@@ -1143,6 +1143,12 @@
 				RelativePath="..\..\..\Src\Memory\romMapperMajutsushi.h">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Memory\romMapperMegaFlashRomScc.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Memory\romMapperMegaFlashRomScc.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Memory\romMapperMegaRAM.c">
 			</File>
 			<File

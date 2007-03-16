@@ -204,6 +204,7 @@ SOURCE_FILES += romMapperKorean80.c
 SOURCE_FILES += romMapperKorean90.c
 SOURCE_FILES += romMapperLodeRunner.c
 SOURCE_FILES += romMapperMegaRAM.c
+SOURCE_FILES += romMapperMegaFlashRomScc.c
 SOURCE_FILES += romMapperMicrosol.c
 SOURCE_FILES += romMapperMicrosolVmx80.c
 SOURCE_FILES += romMapperMsxAudio.c
@@ -434,4 +435,3 @@ $(OUTPUT_DIR)/%.o: %.cxx  $(HEADER_FILES)
 $(OUTPUT_DIR)/%.res: %.rc $(HEADER_FILES)
 	$(ECHO) Compiling $<...
 	$(RC) $(RCFLAGS) $(INCLUDE) -o $@ -i $<
-
