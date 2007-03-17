@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-02-16 22:24:23 $
+** $Date: 2007-03-17 05:55:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperNoWindCreate(char* filename, UInt8* romData, 
+int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

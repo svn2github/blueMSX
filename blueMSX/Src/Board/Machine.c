@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2007-03-16 07:38:42 $
+** $Date: 2007-03-17 05:55:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1086,7 +1086,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             break;
 
         case ROM_NOWIND:
-            success &= romMapperNoWindCreate(romName, buf, size, slot, subslot, startPage);
+            success &= romMapperNoWindCreate(hdId++, romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_DUMAS:

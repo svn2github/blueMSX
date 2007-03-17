@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2007-03-16 07:38:45 $
+** $Date: 2007-03-17 05:55:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -660,6 +660,11 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
         case HD_BEERIDE:
             hasHd = 1;
             sprintf(langBuffer, "IDE%d Beer", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            break;
+        case HD_NOWIND:
+            hasHd = 1;
+            sprintf(langBuffer, "NoWind USB Disk", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
             break;
         case HD_GIDE:

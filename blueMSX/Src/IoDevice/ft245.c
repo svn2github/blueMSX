@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-03-17 03:24:11 $
+** $Date: 2007-03-17 05:55:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -127,11 +127,11 @@ static void onTimer(Ft245UsbHost* host, UInt32 time)
     boardTimerAdd(host->timer, boardSystemTime() + boardFrequency());
 }
 
-static Ft245UsbHost* ft245UsbHostCreate(ReadCb readCb, WriteCb writeCb, void* ref)
+static Ft245UsbHost* ft245UsbHostCreate(int driveId, ReadCb readCb, WriteCb writeCb, void* ref)
 {
     Ft245UsbHost* host = calloc(1, sizeof(Ft245UsbHost));
 
-    host->driveId = diskGetUsbDriveId(0);
+    host->driveId = diskGetUsbDriveId(driveId, 0);
 
     host->readCb  = readCb;
     host->writeCb = writeCb;
@@ -614,14 +614,14 @@ static void hostSend(FT245* ft, UInt8 value)
     fifoPush(ft->recvFifo, value);
 }
 
-FT245* ft245Create()
+FT245* ft245Create(int driveId)
 {
     FT245* ft = malloc(sizeof(FT245));
 
     ft->recvFifo = fifoCreate(1000);
     ft->sendFifo = fifoCreate(400);
 
-    ft->usbHost = ft245UsbHostCreate(hostRead, hostSend, ft);
+    ft->usbHost = ft245UsbHostCreate(driveId, hostRead, hostSend, ft);
 
     return ft;
 }

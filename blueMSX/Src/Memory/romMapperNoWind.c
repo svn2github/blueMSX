@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-17 01:04:35 $
+** $Date: 2007-03-17 05:55:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -157,7 +157,7 @@ static void write(RomMapperNoWind* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperNoWindCreate(char* filename, UInt8* romData, 
+int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
@@ -173,7 +173,7 @@ int romMapperNoWindCreate(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    rm->ft245 = ft245Create();
+    rm->ft245 = ft245Create(driveId);
 
     reset(rm);
 

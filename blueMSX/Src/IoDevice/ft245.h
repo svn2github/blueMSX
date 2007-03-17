@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-02-16 22:24:21 $
+** $Date: 2007-03-17 05:55:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 typedef struct FT245 FT245;
 
-FT245* ft245Create();
+FT245* ft245Create(int driveId);
 void ft245Destroy(FT245* ft);
 void ft245Reset(FT245* ft);
 
