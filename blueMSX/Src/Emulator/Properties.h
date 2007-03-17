@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-17 17:46:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 #include "VideoRender.h"
 #include "MediaDb.h"
 
-#define PROP_MAX_DISKS  32
+#define PROP_MAX_DISKS  34
 #define PROP_MAX_CARTS  2
 #define PROP_MAX_TAPES  1
 
