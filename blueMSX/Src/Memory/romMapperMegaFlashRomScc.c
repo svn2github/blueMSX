@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-03-17 01:04:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,7 +56,7 @@ typedef struct {
 static void mapPage(RomMapperMegaFlashRomScc* rm, int bank, int page)
 {
     int flashPageStart  = rm->flashStart / 0x2000;
-    int readEnable = (bank == 2 && rm->sccEnable) || page >= rm->flashPage[bank] ? 0 : 1;
+    int readEnable;
     UInt8* bankData;
 
     rm->romMapper[bank] = page & (rm->size / 0x2000 - 1);
@@ -68,6 +68,8 @@ static void mapPage(RomMapperMegaFlashRomScc* rm, int bank, int page)
     else {
         bankData = amdFlashGetPage(rm->flash, rm->flashPage[bank] * 0x2000);
     }
+
+    readEnable = (bank == 2 && rm->sccEnable) || rm->flashPage[bank] >= 0 ? 0 : 1;
 
     slotMapPage(rm->slot, rm->sslot, rm->startPage + bank, bankData, readEnable, 0);
 }
@@ -230,10 +232,10 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
     rm->sccEnable = 0;
 
     if (size > rm->flashStart) {
-        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x4000, romData + rm->flashStart, size - rm->flashStart, sramCreateFilenameWithSuffix(filename, "", ".sram"));
+        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x10000, romData + rm->flashStart, size - rm->flashStart, sramCreateFilenameWithSuffix(filename, "", ".sram"));
     }
     else {
-        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x4000, NULL, 0, sramCreateFilenameWithSuffix(filename, "", ".sram"));
+        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x10000, NULL, 0, sramCreateFilenameWithSuffix(filename, "", ".sram"));
     }
 
     for (i = 0; i < 4; i++) {   
