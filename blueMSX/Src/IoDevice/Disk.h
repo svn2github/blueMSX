@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2007-02-15 22:18:58 $
+** $Date: 2007-03-17 03:24:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,7 @@ int   _diskGetTotalSectors(int driveId);
 static int diskGetHdDriveId(int hdId, int driveNo) {
     return MAX_FDC_COUNT + MAX_DRIVES_PER_HD * hdId + driveNo;
 }
+static int diskGetUsbDriveId(int driveNo) { return driveNo; } // FIXME
 
 #endif
 
