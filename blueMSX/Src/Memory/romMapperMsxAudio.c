@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2007-03-12 21:45:41 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,7 +122,7 @@ void philipsMidiReset(PhilipsMidi* midi)
     midi->command = 0;
     midi->timeRecv = 0;
     midi->timeTrans = 0;
-    midi->charTime = 144;
+    midi->charTime = 9 * boardFrequency() / 31250;
 
     boardTimerRemove(midi->timerRecv);
     boardTimerRemove(midi->timerTrans);

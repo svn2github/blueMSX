@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-03-17 05:55:48 $
+** $Date: 2007-03-19 19:30:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -382,6 +382,8 @@ static void ft245UsbHostSetDate(Ft245UsbHost* host)
 
 void ft245UsbHostTrigger(Ft245UsbHost* host) 
 {
+    printf("State: %d\n", host->state);
+
     switch (host->state) {
     case ST_WAIT:
         if (host->readCb(host->ref) == 0xaf) {
@@ -463,6 +465,7 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
         case 7: 
             host->reg_a = host->readCb(host->ref);
             
+            printf("Command: %d\n", host->command);
             switch (host->command) {
             case 0: ft245UsbHostDskio(host); break;
             case 1: ft245UsbHostDskchg(host); break;

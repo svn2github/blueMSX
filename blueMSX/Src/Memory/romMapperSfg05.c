@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-13 03:23:30 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,12 +55,15 @@
 #include "ArchEvent.h"
 
 #define RX_QUEUE_SIZE 256
-
+#define TX_QUEUE_SIZE 8
 typedef struct {
     MidiIO*     midiIo;
     UInt8       command;
     UInt8       rxData;
     UInt8       status;
+    UInt8       txBuffer[TX_QUEUE_SIZE];
+    int         txHead;
+    int         txPending;
     UInt8       rxQueue[RX_QUEUE_SIZE];
     int         rxPending;
     int         rxHead;
@@ -75,7 +78,7 @@ typedef struct {
 
 #define STAT_RXRDY      0x02
 #define STAT_TXEMPTY    0x01
-#define STAT_OE         0x20
+#define STAT_OE         0x20        //???  MR checks 0x30
 #define ST_INT          0x800
 
 #define CMD_WRINT  0x10
@@ -99,9 +102,10 @@ static void onRecv(YM2148* midi, UInt32 time)
     midi->timeRecv = 0;
 
 	if (midi->status & STAT_RXRDY) {
-		midi->status |= STAT_OE;
+        midi->status |= STAT_OE;
 	} 
-    else if (midi->rxPending != 0) {
+    
+    if (midi->rxPending != 0) {
         archSemaphoreWait(midi->semaphore, -1);
         midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
         midi->rxPending--;
@@ -109,7 +113,7 @@ static void onRecv(YM2148* midi, UInt32 time)
         midi->status |= STAT_RXRDY;
         if (midi->command & CMD_RDINT) {
             boardSetDataBus(midi->vector);
-            boardSetInt(0x400);
+            boardSetInt(0x800);
             midi->status |= ST_INT;
         }
     }
@@ -121,22 +125,36 @@ static void onRecv(YM2148* midi, UInt32 time)
 static void onTrans(YM2148* midi, UInt32 time)
 {
     midi->timeTrans = 0;
-    midi->status |= STAT_TXEMPTY;
-    if (midi->command & CMD_WRINT) {
-        boardSetDataBus(midi->vector);
-        boardSetInt(0x400);
-        midi->status |= ST_INT;
+
+    if (midi->txPending > 0) {
+//        printf("Sending byte %d, %d\n", (midi->txHead - midi->txPending) & (TX_QUEUE_SIZE - 1), midi->txPending);
+        midiIoTransmit(midi->midiIo, midi->txBuffer[(midi->txHead - midi->txPending) & (TX_QUEUE_SIZE - 1)]);
+        midi->timeTrans = boardSystemTime() + midi->charTime;
+        boardTimerAdd(midi->timerTrans, midi->timeTrans);
+    }
+    
+    midi->txPending--;
+
+    if (midi->txPending == 0) {
+        midi->status |= STAT_TXEMPTY;
+        if (midi->command & CMD_WRINT) {
+//            printf("Setting int\n");
+            boardSetDataBus(midi->vector);
+            boardSetInt(0x800);
+            midi->status |= ST_INT;
+        }
     }
 }
 
 void ym2148Reset(YM2148* midi)
 {
     midi->status = STAT_TXEMPTY;
+    midi->txPending = -1;
     midi->rxPending = 0;
     midi->command = 0;
     midi->timeRecv = 0;
     midi->timeTrans = 0;
-    midi->charTime = 144;
+    midi->charTime = 9 * boardFrequency() / 31250;
 
     boardTimerRemove(midi->timerRecv);
     boardTimerRemove(midi->timerTrans);
@@ -167,7 +185,7 @@ UInt8 ym2148ReadStatus(YM2148* midi)
 {
     UInt8 val = midi->status;
 
-    boardClearInt(0x400);
+    boardClearInt(0x800);
     midi->status &= ~ST_INT;
 
     return val;
@@ -201,12 +219,23 @@ void ym2148WriteCommand(YM2148* midi, UInt8 value)
 
 void ym2148WriteData(YM2148* midi, UInt8 value)
 {
-    if (midi->status & STAT_TXEMPTY) {
-        midiIoTransmit(midi->midiIo, value);
-//        midi->status &= ~STAT_TXEMPTY;
+    if (midi->txPending == TX_QUEUE_SIZE) {
+        return;
+    }
 
+//    printf("Queuing byte %d, %d\n", (midi->txHead - 0)  & (TX_QUEUE_SIZE - 1), midi->txPending);
+    midi->txBuffer[midi->txHead & (TX_QUEUE_SIZE - 1)] = value;
+    midi->txHead++;
+    midi->txPending++;
+
+    if (midi->txPending == 0) {
+//        printf("Immsend byte %d, %d\n", (midi->txHead - 1) & (TX_QUEUE_SIZE - 1), midi->txPending);
+        midiIoTransmit(midi->midiIo, value);
         midi->timeTrans = boardSystemTime() + midi->charTime;
         boardTimerAdd(midi->timerTrans, midi->timeTrans);
+    }
+    else {
+        midi->status &= ~STAT_TXEMPTY;
     }
 }
 
@@ -247,7 +276,7 @@ typedef struct {
     int sslot;
     int startPage;
     int sizeMask;
-    MidiIO* midiIo; 
+    MidiIO* ykIo; 
     UInt8 kbdLatch;
 } RomMapperSfg05;
 
@@ -288,8 +317,8 @@ static void destroy(RomMapperSfg05* rm)
         ym2148Destroy(rm->ym2148);
     }
 
-    if (rm->midiIo != NULL) {
-        ykIoDestroy(rm->midiIo);
+    if (rm->ykIo != NULL) {
+        ykIoDestroy(rm->ykIo);
     }
 
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
@@ -312,12 +341,12 @@ static UInt8 getKbdStatus(RomMapperSfg05* rm)
 
     for (row = 0; row < 8; row++) {
         if ((1 << row) & rm->kbdLatch) {
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 0) ? ~0x01 : 0xff;
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 1) ? ~0x02 : 0xff;
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 2) ? ~0x04 : 0xff;
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 3) ? ~0x10 : 0xff;
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 4) ? ~0x20 : 0xff;
-            val &= ykIoGetKeyState(rm->midiIo, YK01_KEY_START + row * 6 + 5) ? ~0x40 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 0) ? ~0x01 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 1) ? ~0x02 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 2) ? ~0x04 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 3) ? ~0x10 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 4) ? ~0x20 : 0xff;
+            val &= ykIoGetKeyState(rm->ykIo, YK01_KEY_START + row * 6 + 5) ? ~0x40 : 0xff;
         }
     }
 
@@ -423,7 +452,7 @@ int romMapperSfg05Create(char* filename, UInt8* romData,
 
     rm->ym2151 = ym2151Create(boardGetMixer());
     rm->ym2148 = ym2148Create();
-    rm->midiIo = ykIoCreate();
+    rm->ykIo = ykIoCreate();
 
     reset(rm);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Y8950.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "SaveState.h"
 #include "IoPort.h"
 #include "MediaDb.h"
+#include "MidiIO.h"
 #include "DeviceManager.h"
 #include "Language.h"
 #include <stdlib.h>
@@ -46,6 +47,7 @@ struct Y8950 {
     Int32  handle;
 
     FM_OPL* opl;
+    MidiIO* ykIo; 
     BoardTimer* timer1;
     BoardTimer* timer2;
     UInt32 timerValue1;
@@ -127,6 +129,30 @@ void y8950TimerStart(void* ptr, int timer, int start)
             }
         }
     }
+}
+
+#define Y8950_KEY_START 36
+
+int y8950GetNoteOn(void* ref, int kbdLatch)
+{
+    Y8950* y8950 = (Y8950*)ref;
+    UInt8 val = 0xff;
+    int row;
+
+    for (row = 0; row < 8; row++) {
+        if ((1 << row) & kbdLatch) {
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 0) ? ~0x01 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 1) ? ~0x02 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 2) ? ~0x04 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 3) ? ~0x08 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 4) ? ~0x10 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 5) ? ~0x20 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 6) ? ~0x40 : 0xff;
+            val &= ykIoGetKeyState(y8950->ykIo, Y8950_KEY_START + row * 8 + 7) ? ~0x80 : 0xff;
+        }
+    }
+
+    return val;
 }
 
 UInt8 y8950Peek(Y8950* y8950, UInt16 ioPort)
@@ -302,6 +328,10 @@ void y8950Destroy(Y8950* y8950)
     boardTimerDestroy(y8950->timer2);
     OPLDestroy(y8950->opl);
 
+    if (y8950->ykIo != NULL) {
+        ykIoDestroy(y8950->ykIo);
+    }
+
     free(y8950);
 }
 
@@ -327,6 +357,8 @@ Y8950* y8950Create(Mixer* mixer)
 
     y8950->timer1 = boardTimerCreate(onTimeout1, y8950);
     y8950->timer2 = boardTimerCreate(onTimeout2, y8950);
+    
+    y8950->ykIo = ykIoCreate();
 
     y8950->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXAUDIO, 0, y8950Sync, y8950);
 

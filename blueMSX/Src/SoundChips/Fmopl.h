@@ -127,9 +127,11 @@ typedef struct fm_opl_f {
     int dacEnabled;
 
     UINT8 regs[256];
+    int reg6;
     int reg15;
     int reg16;
     int reg17;
+
 } FM_OPL;
 
 /* ---------- Generic interface section ---------- */

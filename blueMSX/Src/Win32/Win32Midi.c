@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-10-08 17:52:03 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -691,6 +691,9 @@ void archMidiInDestroy(ArchMidi* archMidi)
 int archMidiInGetNoteOn(ArchMidi* archMidi, int note)
 {
     if (archMidi->devInfo == NULL) {
+        return 0;
+    }
+    if (note > 256) {
         return 0;
     }
     return archMidi->devInfo->notes[note];

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-03-17 01:04:35 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,7 +172,6 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
     int change = 0;
     int bank;
 
-    
     address += 0x4000;
     if (address >= 0x9800 && address < 0xa000 && rm->sccEnable) {
         sccWrite(rm->scc, address & 0xff, value);
@@ -180,17 +179,15 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
     }
     address -= 0x4000;
 
-    if (((address - 0x1000) & 0x1800) || amdFlashCmdInProgress(rm->flash)) {
-        int bank = address / 0x2000;
+    bank = address >> 13;
 
-        if (rm->flashPage[bank] >= 0) {
-            amdFlashWrite(rm->flash, (address & 0x1fff) + 0x2000 * rm->flashPage[bank], value);
-        }
-        
-        return;
+    if (rm->flashPage[bank] >= 0) {
+        amdFlashWrite(rm->flash, (address & 0x1fff) + 0x2000 * rm->flashPage[bank], value);
     }
 
-    bank = address >> 13;
+    if ((address - 0x1000) & 0x1800) {
+        return;
+    }
 
     if (bank == 2) {
         int newEnable = (value & 0x3F) == 0x3F;

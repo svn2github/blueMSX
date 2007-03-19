@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-17 01:04:35 $
+** $Date: 2007-03-19 19:30:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,11 +40,15 @@ typedef struct {
     UInt8  value;
 } AmdCmd;
 
+#define ST_IDLE     0
+#define ST_IDENT    1
+
 struct AmdFlash
 {
     UInt8* romData;
     UInt32 cmdAddr1;
     UInt32 cmdAddr2;
+    int    state;
     int    flashSize;
     int    sectorSize;
     AmdCmd cmd[8];
@@ -59,7 +63,7 @@ static int checkCommandEraseSector(AmdFlash* rm)
     if (rm->cmdIdx > 2 && ((rm->cmd[2].address & 0xfff) != rm->cmdAddr1 || rm->cmd[2].value != 0x80)) return 0;
     if (rm->cmdIdx > 3 && ((rm->cmd[3].address & 0xfff) != rm->cmdAddr1 || rm->cmd[3].value != 0xaa)) return 0;
     if (rm->cmdIdx > 4 && ((rm->cmd[4].address & 0xfff) != rm->cmdAddr2 || rm->cmd[4].value != 0x55)) return 0;
-    if (rm->cmdIdx > 5 && (                                         rm->cmd[5].value != 0x30)) return 0;
+    if (rm->cmdIdx > 5 && (                                                rm->cmd[5].value != 0x30)) return 0;
 
     if (rm->cmdIdx < 6) return 1;
 
@@ -100,6 +104,9 @@ static int checkCommandManifacturer(AmdFlash* rm)
     if (rm->cmdIdx > 1 && ((rm->cmd[1].address & 0xfff) != rm->cmdAddr2 || rm->cmd[1].value != 0x55)) return 0;
     if (rm->cmdIdx > 2 && ((rm->cmd[2].address & 0xfff) != rm->cmdAddr1 || rm->cmd[2].value != 0x90)) return 0;
 
+    if (rm->cmdIdx == 3) {
+        rm->state = ST_IDENT;
+    }
     if (rm->cmdIdx < 4) return 1;
 
     return 0;
@@ -107,8 +114,9 @@ static int checkCommandManifacturer(AmdFlash* rm)
 
 UInt8 amdFlashRead(AmdFlash* rm, UInt32 address)
 {
-    // This is somewhat invalid, it assumes that reads are done properly
-    if (rm->cmdIdx == 3) {
+    if (rm->state == ST_IDENT) {
+        rm->state = ST_IDLE;
+        rm->cmdIdx = 0;
         switch (address & 0xff) {
         case 0: 
             return 0x01;
@@ -129,7 +137,7 @@ void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value)
     if (rm->cmdIdx < sizeof(rm->cmd) / sizeof(rm->cmd[0])) {
         int stateValid = 0;
 
-        { static int x = 0; if (++x < 20) printf("W %.4x: %.2x  %d\n", address, value, rm->cmdIdx);}
+//        { static int x = 0; if (++x < 20) printf("W %.4x: %.2x  %d\n", address, value, rm->cmdIdx);}
 
         rm->cmd[rm->cmdIdx].address = address;
         rm->cmd[rm->cmdIdx].value   = value;
@@ -140,11 +148,13 @@ void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value)
         stateValid |= checkCommandEraseChip(rm);
         if (stateValid) {
             if (value == 0xf0) {
+                rm->state = ST_IDLE;
                 rm->cmdIdx = 0;
             }
         }
 
         if (!stateValid) {
+            rm->state = ST_IDLE;
             rm->cmdIdx = 0;
         }
     }
@@ -164,6 +174,7 @@ int amdFlashCmdInProgress(AmdFlash* rm)
 void amdFlashReset(AmdFlash* rm)
 {
     rm->cmdIdx = 0;
+    rm->state = ST_IDLE;
 }
 
 void amdFlashSaveState(AmdFlash* rm)

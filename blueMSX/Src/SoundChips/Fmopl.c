@@ -25,6 +25,7 @@
 
 extern void	y8950TimerSet(void* ref, int timer, int count);
 extern void	y8950TimerStart(void* ref, int timer, int start);
+extern int  y8950GetNoteOn(void* ref, int row);
 
 /* --------------------	preliminary	define section --------------------- */
 /* attack/decay	rate time rate */
@@ -760,6 +761,7 @@ void OPLWriteReg(FM_OPL	*OPL, int r, int v)
 		case 0x06:		/* Key Board OUT */
 			if(OPL->type&OPL_TYPE_KEYBOARD)
 			{
+                OPL->reg6 = v;
 			}
 			return;
 		case 0x07:	/* DELTA-T controll	: START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
@@ -1095,6 +1097,7 @@ void OPLResetChip(FM_OPL *OPL)
     OPL->dacDaVolume = 0;
     OPL->dacEnabled = 0;
 
+    OPL->reg6  = 0;
     OPL->reg15 = 0;
     OPL->reg16 = 0;
     OPL->reg17 = 0;
@@ -1199,6 +1202,7 @@ unsigned char OPLRead(FM_OPL *OPL,int a)
 	case 0x05: /* KeyBoard IN */
 		if(OPL->type&OPL_TYPE_KEYBOARD)
 		{
+            return y8950GetNoteOn(OPL->ref, OPL->reg6);
 		}
 		return 0xff;
 	case 0x14:
@@ -1290,6 +1294,7 @@ void Y8950LoadState(FM_OPL *OPL)
     OPL->dacCtrlVolume      = saveStateGet(state, "dacCtrlVolume",      0);
     OPL->dacDaVolume        = saveStateGet(state, "dacDaVolume",        0);
     OPL->dacEnabled         = saveStateGet(state, "dacEnabled",         0);
+    OPL->reg6               = saveStateGet(state, "reg6",               0);
     OPL->reg15              = saveStateGet(state, "reg15",              0);
     OPL->reg16              = saveStateGet(state, "reg16",              0);
     OPL->reg17              = saveStateGet(state, "reg17",              0);
@@ -1439,6 +1444,7 @@ void Y8950SaveState(FM_OPL *OPL)
     saveStateSet(state, "dacCtrlVolume",      OPL->dacCtrlVolume);
     saveStateSet(state, "dacDaVolume",        OPL->dacDaVolume);
     saveStateSet(state, "dacEnabled",         OPL->dacEnabled);
+    saveStateSet(state, "reg6",               OPL->reg6);
     saveStateSet(state, "reg15",              OPL->reg15);
     saveStateSet(state, "reg16",              OPL->reg16);
     saveStateSet(state, "reg17",              OPL->reg17);
