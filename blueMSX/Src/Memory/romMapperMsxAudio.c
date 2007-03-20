@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2007-03-19 19:30:19 $
+** $Date: 2007-03-20 02:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,8 @@ typedef struct {
     UInt8   command;
     UInt8   rxData;
     UInt8   status;
+    UInt8   txBuffer;
+    int     txPending;
     UInt8   rxQueue[RX_QUEUE_SIZE];
     int     rxPending;
     int     rxHead;
@@ -108,21 +110,32 @@ static void onRecv(PhilipsMidi* midi, UInt32 time)
 static void onTrans(PhilipsMidi* midi, UInt32 time)
 {
     midi->timeTrans = 0;
-    midi->status |= STAT_TXEMPTY;
-    if (midi->command & CMD_WRINT) {
-        boardSetInt(0x400);
-        midi->status |= ST_INT;
+
+    if (midi->status & STAT_TXEMPTY) {
+        midi->txPending = 0;
+    }
+    else {
+        midiIoTransmit(midi->midiIo, midi->txBuffer);
+        midi->timeTrans = boardSystemTime() + midi->charTime;
+        boardTimerAdd(midi->timerTrans, midi->timeTrans);
+
+        midi->status |= STAT_TXEMPTY;
+        if (midi->command & CMD_WRINT) {
+            boardSetInt(0x400);
+            midi->status |= ST_INT;
+        }
     }
 }
 
 void philipsMidiReset(PhilipsMidi* midi)
 {
     midi->status = STAT_TXEMPTY;
+    midi->txPending = 0;
     midi->rxPending = 0;
     midi->command = 0;
     midi->timeRecv = 0;
     midi->timeTrans = 0;
-    midi->charTime = 9 * boardFrequency() / 31250;
+    midi->charTime = 10 * boardFrequency() / 31250;
 
     boardTimerRemove(midi->timerRecv);
     boardTimerRemove(midi->timerTrans);
@@ -242,12 +255,19 @@ void philipsMidiWriteCommand(PhilipsMidi* midi, UInt8 value)
 
 void philipsMidiWriteData(PhilipsMidi* midi, UInt8 value)
 {
-    if (midi->status & STAT_TXEMPTY) {
-        midiIoTransmit(midi->midiIo, value);
-        midi->status &= ~STAT_TXEMPTY;
+    if (!(midi->status & STAT_TXEMPTY)) {
+        return;
+    }
 
+    if (midi->txPending == 0) {
+        midiIoTransmit(midi->midiIo, value);
         midi->timeTrans = boardSystemTime() + midi->charTime;
         boardTimerAdd(midi->timerTrans, midi->timeTrans);
+        midi->txPending = 1;
+    }
+    else {
+        midi->status &= ~STAT_TXEMPTY;
+        midi->txBuffer = value;
     }
 }
 

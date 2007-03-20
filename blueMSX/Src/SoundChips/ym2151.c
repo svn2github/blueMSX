@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2007-03-20 02:30:32 $
+** $Date: 2007-03-20 02:50:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -140,12 +140,8 @@ void ym2151TimerStart(void* ptr, int timer, int start)
     }
 }
 
-UInt8 xxxVector = 0x77;
-
 void ym2151SetIrqVector(YM2151* ym2151, UInt8 irqVector)
 {
-    printf("IRQ VECTOR: %.2x\n", irqVector);
-    xxxVector = irqVector;
     ym2151->irqVector = irqVector;
 }
 

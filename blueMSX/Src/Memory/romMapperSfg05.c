@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2007-03-20 02:30:31 $
+** $Date: 2007-03-20 02:50:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,14 +58,13 @@
 #include "ArchEvent.h"
 
 #define RX_QUEUE_SIZE 256
-#define TX_QUEUE_SIZE 1
+
 typedef struct {
     MidiIO*     midiIo;
     UInt8       command;
     UInt8       rxData;
     UInt8       status;
-    UInt8       txBuffer[TX_QUEUE_SIZE];
-    int         txHead;
+    UInt8       txBuffer;
     int         txPending;
     UInt8       rxQueue[RX_QUEUE_SIZE];
     int         rxPending;
@@ -129,19 +128,16 @@ static void onTrans(YM2148* midi, UInt32 time)
 {
     midi->timeTrans = 0;
 
-    if (midi->txPending > 0) {
-//        printf("Sending byte %d, %d\n", (midi->txHead - midi->txPending) & (TX_QUEUE_SIZE - 1), midi->txPending);
-        midiIoTransmit(midi->midiIo, midi->txBuffer[(midi->txHead - midi->txPending) & (TX_QUEUE_SIZE - 1)]);
+    if (midi->status & STAT_TXEMPTY) {
+        midi->txPending = 0;
+    }
+    else {
+        midiIoTransmit(midi->midiIo, midi->txBuffer);
         midi->timeTrans = boardSystemTime() + midi->charTime;
         boardTimerAdd(midi->timerTrans, midi->timeTrans);
-    }
-    
-    midi->txPending--;
 
-    if (midi->txPending == 0) {
         midi->status |= STAT_TXEMPTY;
         if (midi->command & CMD_WRINT) {
-//            printf("Setting int\n");
             boardSetDataBus(midi->vector, 0, 0);
             boardSetInt(0x800);
             midi->status |= ST_INT;
@@ -152,7 +148,7 @@ static void onTrans(YM2148* midi, UInt32 time)
 void ym2148Reset(YM2148* midi)
 {
     midi->status = STAT_TXEMPTY;
-    midi->txPending = -1;
+    midi->txPending = 0;
     midi->rxPending = 0;
     midi->command = 0;
     midi->timeRecv = 0;
@@ -213,10 +209,7 @@ void ym2148WriteCommand(YM2148* midi, UInt8 value)
 {
     midi->command = value;
 
-//    printf("CMD: %.2x\n", value);
-
     if (value & 0x02) {
-//        midi->status &= ~STAT_OE;
     }
 
     if (value & 0x80) {
@@ -228,23 +221,19 @@ void ym2148WriteCommand(YM2148* midi, UInt8 value)
 
 void ym2148WriteData(YM2148* midi, UInt8 value)
 {
-    if (midi->txPending == TX_QUEUE_SIZE) {
+    if (!(midi->status & STAT_TXEMPTY)) {
         return;
     }
 
-//    printf("Queuing byte %d, %d\n", (midi->txHead - 0)  & (TX_QUEUE_SIZE - 1), midi->txPending);
-    midi->txBuffer[midi->txHead & (TX_QUEUE_SIZE - 1)] = value;
-    midi->txHead++;
-    midi->txPending++;
-
     if (midi->txPending == 0) {
-//        printf("Immsend byte %d, %d\n", (midi->txHead - 1) & (TX_QUEUE_SIZE - 1), midi->txPending);
         midiIoTransmit(midi->midiIo, value);
         midi->timeTrans = boardSystemTime() + midi->charTime;
         boardTimerAdd(midi->timerTrans, midi->timeTrans);
+        midi->txPending = 1;
     }
     else {
         midi->status &= ~STAT_TXEMPTY;
+        midi->txBuffer = value;
     }
 }
 
