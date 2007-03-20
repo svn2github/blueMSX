@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/ym2151.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2007-03-13 03:23:30 $
+** $Date: 2007-03-20 02:30:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,8 +36,8 @@
 #include <string.h>
 
 #define FREQUENCY        3579545
-#define SAMPLERATE       (FREQUENCY / 64)
-#define TIMER_FREQUENCY  (boardFrequency() / FREQUENCY * 64)
+#define SAMPLERATE       (FREQUENCY / 64 )
+#define TIMER_FREQUENCY  (boardFrequency() / (FREQUENCY / 2) * 64)
 
 
 struct YM2151 {
@@ -71,7 +71,7 @@ void ym2151Irq(void* ptr, int irq)
 {
     YM2151* ym2151 = (YM2151*)ptr;
     if (irq) {
-        boardSetDataBus(ym2151->irqVector);
+        boardSetDataBus(ym2151->irqVector, 0, 0);
 		boardSetInt(0x40);
     }
     else {
@@ -140,8 +140,12 @@ void ym2151TimerStart(void* ptr, int timer, int start)
     }
 }
 
+UInt8 xxxVector = 0x77;
+
 void ym2151SetIrqVector(YM2151* ym2151, UInt8 irqVector)
 {
+    printf("IRQ VECTOR: %.2x\n", irqVector);
+    xxxVector = irqVector;
     ym2151->irqVector = irqVector;
 }
 
@@ -295,9 +299,9 @@ void ym2151TimerSet(void* ref, int timer, int count)
     YM2151* ym2151 = (YM2151*)ref;
 
     if (timer == 0) {
-        ym2151->timerValue1 = 2 * count;
+        ym2151->timerValue1 = count;
     }
     else {
-        ym2151->timerValue2 = 2 * count;
+        ym2151->timerValue2 = count;
     }
 }

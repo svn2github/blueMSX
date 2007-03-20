@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2007-02-17 14:41:09 $
+** $Date: 2007-03-20 02:30:32 $
 **
 ** Author: Daniel Vik
 **
@@ -5901,15 +5901,19 @@ void r800Reset(R800 *r800, UInt32 cpuTime) {
     r800SetMode(r800, CPU_Z80);
     r800SwitchCpu(r800);
 
-    r800->dataBus   = 0xff;
-    r800->intState  = INT_HIGH;
-    r800->nmiState  = INT_HIGH;
+    r800->dataBus        = 0xff;
+    r800->defaultDatabus = 0xff;
+    r800->intState       = INT_HIGH;
+    r800->nmiState       = INT_HIGH;
 
     r800->callstackSize = 0;
 }
 
-void r800SetDataBus(R800* r800, UInt8 value) {
+void r800SetDataBus(R800* r800, UInt8 value, UInt8 defaultValue, int setDefault) {
     r800->dataBus = value;
+    if (setDefault) {
+        r800->defaultDatabus = defaultValue;
+    }
 }
 
 void r800SetInt(R800* r800) {
@@ -6061,7 +6065,9 @@ void r800Execute(R800* r800) {
 
         case 0:
             delayIm(r800);
-            executeInstruction(r800, r800->dataBus);
+            address = r800->dataBus;
+            r800->dataBus = r800->defaultDatabus;
+            executeInstruction(r800, address);
             break;
 
         case 1:
@@ -6071,6 +6077,7 @@ void r800Execute(R800* r800) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+            r800->dataBus = r800->defaultDatabus;
 #ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
@@ -6153,6 +6160,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
         case 0:
             delayIm(r800);
             executeInstruction(r800, r800->dataBus);
+            r800->dataBus = r800->defaultDatabus;
             break;
 
         case 1:
@@ -6162,6 +6170,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 
         case 2:
             address = r800->dataBus | ((Int16)r800->regs.I << 8);
+            r800->dataBus = r800->defaultDatabus;
 #ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
@@ -6239,6 +6248,7 @@ void r800ExecuteInstruction(R800* r800) {
     case 0:
         delayIm(r800);
         executeInstruction(r800, r800->dataBus);
+        r800->dataBus = r800->defaultDatabus;
         break;
 
     case 1:
@@ -6248,6 +6258,7 @@ void r800ExecuteInstruction(R800* r800) {
 
     case 2:
         address = r800->dataBus | ((Int16)r800->regs.I << 8);
+        r800->dataBus = r800->defaultDatabus;
 #ifdef ENABLE_CALLSTACK
         r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif

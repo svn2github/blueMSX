@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-09-30 19:58:17 $
+** $Date: 2007-03-20 02:30:32 $
 **
 ** Author: Daniel Vik
 **
@@ -235,6 +235,7 @@ typedef struct
     CpuRegs       regs;             /* Active register bank            */
     UInt32        delay[32];        /* Instruction timing table        */
     UInt8         dataBus;          /* Current value on the data bus   */
+    UInt8         defaultDatabus;   /* Value that is set after im2     */
     int           intState;         /* Sate of interrupt line          */
     int           nmiState;         /* Current NMI state               */
 
@@ -415,9 +416,11 @@ void r800ClearNmi(R800* r800);
 ** Arguments:
 **      r800        - Pointer to an R800 object
 **      value       - New value on the data bus
+**      defValue    - Value that the data bus restores to after int
+**      useDef      - Tells whether to modify the def value
 *************************************************************************
 */
-void r800SetDataBus(R800* r800, UInt8 value);
+void r800SetDataBus(R800* r800, UInt8 value, UInt8 defValue, int useDef);
 
 /************************************************************************
 ** r800Execute

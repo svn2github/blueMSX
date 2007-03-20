@@ -770,6 +770,9 @@ bool Disassembly::writeToFile(const char* fileName)
             char buffer[128];
             int offset = lineInfo[i].isLabel ? 0 : 8;
             memset(buffer, 32, offset);
+            if (offset) {
+                memcpy(buffer, lineInfo[i].addr, lineInfo[i].addrLength);
+            }
             memcpy(buffer + offset, lineInfo[i].text, lineInfo[i].textLength);
             buffer[lineInfo[i].textLength + offset]     = '\n';
             buffer[lineInfo[i].textLength + offset + 1] = '\0';

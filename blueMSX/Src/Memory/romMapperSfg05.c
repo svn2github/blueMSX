@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2007-03-19 19:30:19 $
+** $Date: 2007-03-20 02:30:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -52,10 +52,13 @@
 //             The command bits are not clear at all. Only known bit is the
 //             reset bit.
 
+// NOTES: Cmd bit 3: seems to be enable/disable something (checked before RX
+//        Cmd bit 4: is set when IM2 is used, cleared when IM1 is used
+
 #include "ArchEvent.h"
 
 #define RX_QUEUE_SIZE 256
-#define TX_QUEUE_SIZE 8
+#define TX_QUEUE_SIZE 1
 typedef struct {
     MidiIO*     midiIo;
     UInt8       command;
@@ -112,7 +115,7 @@ static void onRecv(YM2148* midi, UInt32 time)
         archSemaphoreSignal(midi->semaphore);
         midi->status |= STAT_RXRDY;
         if (midi->command & CMD_RDINT) {
-            boardSetDataBus(midi->vector);
+            boardSetDataBus(midi->vector, 0, 0);
             boardSetInt(0x800);
             midi->status |= ST_INT;
         }
@@ -139,7 +142,7 @@ static void onTrans(YM2148* midi, UInt32 time)
         midi->status |= STAT_TXEMPTY;
         if (midi->command & CMD_WRINT) {
 //            printf("Setting int\n");
-            boardSetDataBus(midi->vector);
+            boardSetDataBus(midi->vector, 0, 0);
             boardSetInt(0x800);
             midi->status |= ST_INT;
         }
@@ -154,7 +157,7 @@ void ym2148Reset(YM2148* midi)
     midi->command = 0;
     midi->timeRecv = 0;
     midi->timeTrans = 0;
-    midi->charTime = 9 * boardFrequency() / 31250;
+    midi->charTime = 10 * boardFrequency() / 31250;
 
     boardTimerRemove(midi->timerRecv);
     boardTimerRemove(midi->timerTrans);
@@ -171,6 +174,9 @@ YM2148* ym2148Create()
     midi->semaphore = archSemaphoreCreate(1);
     midi->timerRecv   = boardTimerCreate(onRecv, midi);
     midi->timerTrans  = boardTimerCreate(onTrans, midi);
+
+    midi->timeRecv = boardSystemTime() + midi->charTime;
+    boardTimerAdd(midi->timerRecv, midi->timeRecv);
 
     return midi;
 }
@@ -200,21 +206,24 @@ UInt8 ym2148ReadData(YM2148* midi)
 void ym2148SetVector(YM2148* midi, UInt8 value)
 {
     midi->vector = value;
-    boardSetDataBus(midi->vector);
+    boardSetDataBus(midi->vector, 0, 0);
 }
 
 void ym2148WriteCommand(YM2148* midi, UInt8 value)
 {
     midi->command = value;
 
+//    printf("CMD: %.2x\n", value);
+
+    if (value & 0x02) {
+//        midi->status &= ~STAT_OE;
+    }
+
     if (value & 0x80) {
         ym2148Reset(midi);
     }
 
     midi->charTime = (UInt32)((UInt64)144 * boardFrequency() / 500000);
-    
-    midi->timeRecv = boardSystemTime() + midi->charTime;
-    boardTimerAdd(midi->timerRecv, midi->timeRecv);
 }
 
 void ym2148WriteData(YM2148* midi, UInt8 value)
@@ -402,6 +411,7 @@ static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value)
         ym2148SetVector(rm->ym2148, value);
         break;
     case 0x3ff4:
+        boardSetDataBus(value, value, 1);
         ym2151SetIrqVector(rm->ym2151, value);
         break;
     case 0x3ff5:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2007-03-17 05:55:45 $
+** $Date: 2007-03-20 02:30:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1329,9 +1329,9 @@ void boardReset()
     }
 }
 
-void boardSetDataBus(UInt8 value) {
+void boardSetDataBus(UInt8 value, UInt8 defValue, int useDef) {
     if (boardRunning) {
-        boardInfo.setDataBus(boardInfo.cpuRef, value);
+        boardInfo.setDataBus(boardInfo.cpuRef, value, defValue, useDef);
     }
 }
 
