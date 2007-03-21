@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2007-03-05 23:38:46 $
+** $Date: 2007-03-21 22:26:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,11 +25,13 @@
 **
 ******************************************************************************
 */
+#ifndef __APPLE__
 #define ENABLE_OPENGL
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "SDL/SDL.h"
+#include <SDL.h>
 
 #include "CommandLine.h"
 #include "Properties.h"
@@ -638,15 +640,16 @@ int main(int argc, char **argv)
         } while(SDL_PollEvent(&event));
     }
 
+	// For stop threads before destroy.
+	// Clean up.
+	if (SDL_WasInit(SDL_INIT_EVERYTHING)) {
+		SDL_Quit(); 
+	}
+
     videoDestroy(video);
     propDestroy(properties);
     archSoundDestroy();
     mixerDestroy(mixer);
-
-	// Clean up.
-	if (SDL_WasInit(SDL_INIT_EVERYTHING)) {
-		SDL_Quit();
-	}
     
     return 0;
 }

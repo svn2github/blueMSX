@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-21 22:27:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -265,7 +265,7 @@ static int transmit(MSXMidi* msxMidi, UInt8 value)
     return 1;
 }
 
-static int signal(MSXMidi* msxMidi)
+static int signal8251(MSXMidi* msxMidi)
 {
     return 0;
 }
@@ -367,7 +367,7 @@ int MSXMidiCreate()
     msxMidi->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevMsxMidi(), &dbgCallbacks, msxMidi);
 
     msxMidi->i8254 = i8254Create(4000000, pitOut0, pitOut1, pitOut2, msxMidi);
-    msxMidi->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 
+    msxMidi->i8251 = i8251Create(transmit, signal8251, setDataBits, setStopBits, setParity, 
                                  setRxReady, setDtr, setRts, getDtr, getRts, msxMidi);
 
     ioPortRegister(0xe8, readIo, writeIo, msxMidi);

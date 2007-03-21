@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlTimer.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-05 23:38:46 $
+** $Date: 2007-03-21 22:26:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 */
 #include "ArchTimer.h"
 #include <stdlib.h>
-#include "SDL/SDL.h"
+#include <SDL.h>
 
 #ifdef NO_TIMERS
 

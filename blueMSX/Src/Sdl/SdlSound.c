@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlSound.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-03-21 22:26:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -26,7 +26,7 @@
 ******************************************************************************
 */
 #include "ArchSound.h"
-#include "SDL/SDL.h"
+#include <SDL.h>
 #include <stdlib.h>
 
 typedef struct SdlSound {
