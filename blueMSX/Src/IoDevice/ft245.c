@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-19 19:30:17 $
+** $Date: 2007-03-21 00:01:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,6 @@
 #include "SaveState.h"
 #include <stdlib.h>
 #include <string.h>
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///     Ft245UsbHost
@@ -161,6 +160,7 @@ void ft245UsbHostLoadState(Ft245UsbHost* host)
 
 static void ft245UsbHostSendCommand(Ft245UsbHost* host, UInt8 command)
 {
+    printf("Sending USB command %d\n", command);
     host->writeCb(host->ref, 0xaf);
     host->writeCb(host->ref, 0x05);
     host->writeCb(host->ref, command);
@@ -170,6 +170,8 @@ static void ft245UsbHostSendCommand(Ft245UsbHost* host, UInt8 command)
 void ft245UsbHostTransferSectors(Ft245UsbHost* host, UInt16 address, UInt16 amount, UInt8* data) 
 {
     UInt16 i;
+
+    printf("Going to read %u bytes to address: 0x%04X\n", amount, address);
 
     host->writeCb(host->ref, address & 0xff);
     host->writeCb(host->ref, address >> 8);
@@ -266,7 +268,9 @@ static void ft245UsbHostDskio(Ft245UsbHost* host)
         // diskio read
         UInt8 transferBuffer[64 * 1024];
 
-        _diskRead2(host->driveId, transferBuffer, startSector, sectorAmount);
+        int rv = _diskRead2(host->driveId, transferBuffer, startSector, sectorAmount);
+
+        printf("Reading sector %d - %d, %s\n", startSector, sectorAmount, (rv ? "OK" : "FAILED"));
 
         if (transferAddress >= 0x8000) {
             ft245UsbHostSendCommand(host, CMD_DISKIOREADPAGE2AND3);
@@ -382,8 +386,6 @@ static void ft245UsbHostSetDate(Ft245UsbHost* host)
 
 void ft245UsbHostTrigger(Ft245UsbHost* host) 
 {
-    printf("State: %d\n", host->state);
-
     switch (host->state) {
     case ST_WAIT:
         if (host->readCb(host->ref) == 0xaf) {
@@ -585,7 +587,7 @@ typedef struct FT245
 {
     Fifo* sendFifo;
     Fifo* recvFifo;
-    UInt32 dataRevcTime;
+    UInt32 dataRecvTime;
     Ft245UsbHost* usbHost;
 };
 
@@ -612,7 +614,7 @@ static UInt8 hostRead(FT245* ft)
 static void hostSend(FT245* ft, UInt8 value)
 {
     if (fifoIsEmpty(ft->recvFifo)) {
-        ft->dataRevcTime = boardSystemTime();
+        ft->dataRecvTime = boardSystemTime();
     }
     fifoPush(ft->recvFifo, value);
 }
@@ -621,8 +623,8 @@ FT245* ft245Create(int driveId)
 {
     FT245* ft = malloc(sizeof(FT245));
 
-    ft->recvFifo = fifoCreate(1000);
-    ft->sendFifo = fifoCreate(400);
+    ft->recvFifo = fifoCreate(65536);
+    ft->sendFifo = fifoCreate(65536);
 
     ft->usbHost = ft245UsbHostCreate(driveId, hostRead, hostSend, ft);
 
@@ -645,7 +647,7 @@ void ft245Reset(FT245* ft)
 
 UInt8 ft245Peek(FT245* ft)
 {
-    UInt32 elapsed = boardSystemTime() - ft->dataRevcTime;
+    UInt32 elapsed = boardSystemTime() - ft->dataRecvTime;
     if (elapsed < boardFrequency() / (1000000 / 1250)) {
         return 0xff;
     } 
@@ -654,9 +656,15 @@ UInt8 ft245Peek(FT245* ft)
 
 UInt8 ft245Read(FT245* ft)
 {
-    UInt8 val = ft245Peek(ft);
-    fifoPop(ft->recvFifo);
-    return val;
+    UInt8 value;
+
+    UInt32 elapsed = boardSystemTime() - ft->dataRecvTime;
+    if (elapsed < boardFrequency() / (1000000 / 1250)) {
+        return 0xff;
+    } 
+
+    value = fifoPop(ft->recvFifo);
+    return value;
 }
 
 UInt8 ft245GetTxe(FT245* ft)
