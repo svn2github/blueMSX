@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-22 20:30:47 $
+** $Date: 2007-03-22 23:15:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,8 +43,6 @@ typedef void  (*WriteCb)(void*, UInt8);
 
 typedef struct {
     int state;
-    int debugCommand;
-    int command;
 
     UInt8 reg_a;
     UInt8 reg_f;
@@ -54,12 +52,17 @@ typedef struct {
     UInt8 reg_e;
     UInt8 reg_h;
     UInt8 reg_l;
-    UInt32 parameterCount;
+    UInt16 parameterCount;
 
     UInt8 writeBuffer[64 * 1024];
     UInt16 writePointer;
+    UInt8  transferBuffer[64 * 1024];
+    UInt8  deviceBuffer[64 *1024];
+    UInt16 devicePointer;
+    UInt8  fileName[12];
+    UInt16 fileLength;
+    
     char debugString[250];
-
 
     int driveId;
 
@@ -79,6 +82,7 @@ typedef struct {
 #define ST_DEBUGSTRING          6
 #define ST_DEBUGDUMPREGISTERS   7
 #define ST_WRITE                8
+#define ST_DEVICEFILENAME       9
 
 
 #define CMD_DISKIOREADPAGE0AND1      0
@@ -235,7 +239,6 @@ static void ft245UsbHostDskio(Ft245UsbHost* host)
             host->writeCb(host->ref, transferAddress >> 8);
             host->writeCb(host->ref, (sectorAmount * 512) & 0xff);
             host->writeCb(host->ref, (sectorAmount * 512) >> 8);
-
         } 
         else {
             UInt16 endAddress;
@@ -267,15 +270,13 @@ static void ft245UsbHostDskio(Ft245UsbHost* host)
     } 
     else {
         // diskio read
-        UInt8 transferBuffer[64 * 1024];
-
-        int rv = _diskRead2(host->driveId, transferBuffer, startSector, sectorAmount);
+        int rv = _diskRead2(host->driveId, host->transferBuffer, startSector, sectorAmount);
 
         printf("Reading sector %d - %d, %s\n", startSector, sectorAmount, (rv ? "OK" : "FAILED"));
 
         if (transferAddress >= 0x8000) {
             ft245UsbHostSendCommand(host, CMD_DISKIOREADPAGE2AND3);
-            ft245UsbHostTransferSectors(host, transferAddress, sectorAmount * 512, transferBuffer);
+            ft245UsbHostTransferSectors(host, transferAddress, sectorAmount * 512, host->transferBuffer);
         } 
         else {
             UInt16 endAddress;
@@ -284,11 +285,11 @@ static void ft245UsbHostDskio(Ft245UsbHost* host)
             endAddress = transferAddress + (sectorAmount * 512);
             
             if (endAddress > 0x8000) {
-                ft245UsbHostTransferSectors(host, transferAddress, 0x8000 - transferAddress, transferBuffer);
+                ft245UsbHostTransferSectors(host, transferAddress, 0x8000 - transferAddress, host->transferBuffer);
                 ft245UsbHostSendCommand(host, CMD_DISKIOREADPAGE2AND3);
-                ft245UsbHostTransferSectors(host, 0x8000, endAddress - 0x8000, transferBuffer + 0x8000 - transferAddress);
+                ft245UsbHostTransferSectors(host, 0x8000, endAddress - 0x8000, host->transferBuffer + 0x8000 - transferAddress);
             } else {
-                ft245UsbHostTransferSectors(host, transferAddress, endAddress - transferAddress, transferBuffer);
+                ft245UsbHostTransferSectors(host, transferAddress, endAddress - transferAddress, host->transferBuffer);
                 ft245UsbHostDiskioWriteExit(host, 0, 0); 
             }
         }
@@ -319,39 +320,6 @@ static void ft245UsbHostDskfmt(Ft245UsbHost* host)
         host->state = ST_WAIT;
         return;
     }
-
-    // boot sector
-    host->writeBuffer[0] = 0xEB;
-    host->writeBuffer[1] = 0xFE;
-    host->writeBuffer[2] = 0x90;
-    sprintf(host->writeBuffer + 3, "Nowind10");
-    host->writeBuffer[0x0b] = 0x00;       // sector size
-    host->writeBuffer[0x0c] = 0x02;
-    host->writeBuffer[0x0d] = 0x02;       // number of sectors per cluster
-    host->writeBuffer[0x0e] = 0x01;       // number of reserved sectors
-    host->writeBuffer[0x0f] = 0x00;
-    host->writeBuffer[0x10] = 0x02;       // number of FATs
-    host->writeBuffer[0x11] = 112;        // number of directory entries
-    host->writeBuffer[0x12] = 0x00;
-    host->writeBuffer[0x13] = 0xA0;       // total number of sectors (1440)
-    host->writeBuffer[0x14] = 0x05;
-    host->writeBuffer[0x15] = 0xf9;       // media descriptor
-    host->writeBuffer[0x16] = 0x03;       // number of sectors per FAT
-    host->writeBuffer[0x17] = 0x00;
-    host->writeBuffer[0x18] = 0x09;       // sectors per track
-    host->writeBuffer[0x19] = 0x00;
-    host->writeBuffer[0x1a] = 0x02;       // number of heads
-    host->writeBuffer[0x1b] = 0x00;
-    host->writeBuffer[0x1c] = 0x00;       // number of hidden sectors
-    host->writeBuffer[0x1d] = 0x00;
-    host->writeBuffer[0x1e] = 0xc9;       // RET (boot routine!)
-
-    // TODO: bootroutine and clear the rest
-    //    disk->writeSectors(writeBuffer, 0, 1);
-
-    host->writeBuffer[0] = 0xf9;    
-    host->writeBuffer[0] = 0xff;
-    host->writeBuffer[0] = 0xff;
 
     ft245UsbHostSendCommand(host, CMD_LOWLEVELEXIT);
     host->writeCb(host->ref, host->reg_f | 1);
@@ -385,6 +353,31 @@ static void ft245UsbHostSetDate(Ft245UsbHost* host)
     host->state = ST_WAIT;
 }
 
+static void ft245UsbHostDeviceOpen(Ft245UsbHost* host)
+{
+    host->state = ST_WAIT;
+}
+
+static void ft245UsbHostDeviceClose(Ft245UsbHost* host)
+{
+    host->state = ST_WAIT;
+}
+
+static void ft245UsbHostDeviceRandomIO(Ft245UsbHost* host)
+{
+    host->state = ST_WAIT;
+}
+
+static void ft245UsbHostDeviceOutput(Ft245UsbHost* host)
+{
+    host->state = ST_WAIT;
+}
+
+static void ft245UsbHostDeviceInput(Ft245UsbHost* host)
+{
+    host->state = ST_WAIT;
+}
+
 void ft245UsbHostTrigger(Ft245UsbHost* host) 
 {
     switch (host->state) {
@@ -396,8 +389,13 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
     
     case ST_AFDETECTED:
         switch (host->readCb(host->ref)) {
-        case 0x05: host->state = ST_AF05DETECTED; break;
-        case 0x66: host->state = ST_AF66DETECTED; break;
+        case 0x05: 
+            host->parameterCount = 0;
+            host->state = ST_AF05DETECTED; 
+            break;
+        case 0x66: 
+            host->state = ST_AF66DETECTED; 
+            break;
         case 0xff:
             host->state = ST_WAIT;
             break;
@@ -408,8 +406,7 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
         break;
 
     case ST_AF66DETECTED:
-        host->debugCommand = host->readCb(host->ref);
-        switch (host->debugCommand) {
+        switch (host->readCb(host->ref)) {
         case 0:
             host->state = ST_DEBUGSTRING;
             host->debugString[0] = 0;
@@ -434,12 +431,6 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
         }
         break;
 
-    case 123:
-        host->parameterCount++;
-        host->readCb(host->ref);
-        if (host->parameterCount == 256) host->state = ST_WAIT;
-        break;
-
     case ST_DEBUGSTRING: 
         {
             UInt8 temp = host->readCb(host->ref);
@@ -451,12 +442,6 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
         }
     
     case ST_AF05DETECTED:
-        host->command = host->readCb(host->ref);
-        host->state = ST_GETPARAMETERS;
-        host->parameterCount = 0;
-        break;
-
-    case ST_GETPARAMETERS:
         switch (host->parameterCount++) {
         case 0: host->reg_c = host->readCb(host->ref); break;
         case 1: host->reg_b = host->readCb(host->ref); break;
@@ -465,20 +450,30 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
         case 4: host->reg_l = host->readCb(host->ref); break;
         case 5: host->reg_h = host->readCb(host->ref); break;
         case 6: host->reg_f = host->readCb(host->ref); break;
-        case 7: 
-            host->reg_a = host->readCb(host->ref);
-            
-            printf("Command: %d\n", host->command);
-            switch (host->command) {
-            case 0: ft245UsbHostDskio(host); break;
-            case 1: ft245UsbHostDskchg(host); break;
-            case 2: ft245UsbHostGetdpb(host); break;
-            case 3: ft245UsbHostChoice(host); break;
-            case 4: ft245UsbHostDskfmt(host); break;
-            case 6: ft245UsbHostBootOptions(host); break;
-            case 7: ft245UsbHostSetDate(host); break;
-            default:
-                host->state = ST_WAIT;
+        case 7: host->reg_a = host->readCb(host->ref); break;
+        case 8:
+            {
+                UInt8 command = host->readCb(host->ref);
+                printf("Got USB Command: %d\n", command);
+                switch (command) {
+                case 0: ft245UsbHostDskio(host); break;
+                case 1: ft245UsbHostDskchg(host); break;
+                case 2: ft245UsbHostGetdpb(host); break;
+                case 3: ft245UsbHostChoice(host); break;
+                case 4: ft245UsbHostDskfmt(host); break;
+                case 6: ft245UsbHostBootOptions(host); break;
+                case 7: ft245UsbHostSetDate(host); break;
+                case 8:
+                    host->parameterCount = 0;
+                    host->state = ST_DEVICEFILENAME;
+                    break;
+                case 9: ft245UsbHostDeviceClose(host); break;
+                case 10: ft245UsbHostDeviceRandomIO(host); break;
+                case 11: ft245UsbHostDeviceOutput(host); break;
+                case 12: ft245UsbHostDeviceInput(host); break;
+                default:
+                    host->state = ST_WAIT;
+                }
             }
             break;
         }
@@ -498,6 +493,16 @@ void ft245UsbHostTrigger(Ft245UsbHost* host)
             }
             break;
         }
+    case ST_DEVICEFILENAME: 
+        {
+            UInt8 tmp = host->readCb(host->ref);
+            if ((tmp >= 'a') && (tmp <= 'z')) tmp &= 0xdf;
+            host->fileName[host->parameterCount++] = tmp;
+            if (host->parameterCount == 11) {
+                ft245UsbHostDeviceOpen(host);
+            }
+        }
+        break;
     }
 }
 
@@ -609,7 +614,8 @@ void ft245LoadState(FT245* ft)
 
 static UInt8 hostRead(FT245* ft)
 {
-    return fifoPop(ft->sendFifo);
+    UInt8 value = fifoPop(ft->sendFifo);
+    return value;
 }
 
 static void hostSend(FT245* ft, UInt8 value)
@@ -665,6 +671,7 @@ UInt8 ft245Read(FT245* ft)
     } 
 
     value = fifoPop(ft->recvFifo);
+
     return value;
 }
 

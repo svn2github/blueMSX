@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2007-03-22 20:33:39 $
+** $Date: 2007-03-22 23:15:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -984,7 +984,6 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
     }
     else {
         while (X < X2) {
-//            if (X==10)colorSpritesLine(vdp, Y, 0);
             index       = base | ((int)*charTable * 8);
             colPattern = vdp->vram[vdp->colTabBase & index];
             color[0]   = vdp->palette[colPattern & 0x0f];
