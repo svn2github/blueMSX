@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -352,6 +352,7 @@ char* langMenuPropsControls() { return ls->menuPropsControls; }
 char* langMenuPropsPerformance() { return ls->menuPropsPerformance; }
 char* langMenuPropsSettings() { return ls->menuPropsSettings; }
 char* langMenuPropsFile() { return ls->menuPropsFile; }
+char* langMenuPropsDisk() { return ls->menuPropsDisk; }
 char* langMenuPropsLanguage() { return ls->menuPropsLanguage; }
 char* langMenuPropsPorts() { return ls->menuPropsPorts; }
 
@@ -478,6 +479,7 @@ char* langPropControls() { return ls->propControls; }
 char* langPropPerformance() { return ls->propPerformance; }
 char* langPropSettings() { return ls->propSettings; }
 char* langPropFile()  { return ls->propFile; }
+char* langPropDisk()  { return ls->propDisk; }
 char* langPropPorts() { return ls->propPorts; }
 
 char* langPropEmuGeneralGB() { return ls->propEmuGeneralGB; }
@@ -568,6 +570,12 @@ char* langPropSettDefDrive() { return ls->propSettDefDrive; }
 char* langPropThemeGB() { return ls->propThemeGB; }
 char* langPropTheme() { return ls->propTheme; }
 
+char* langPropCdromGB() { return ls->propCdromGB; }
+char* langPropCdromMethod() { return ls->propCdromMethod; }
+char* langPropCdromMethodNone() { return ls->propCdromMethodNone; }
+char* langPropCdromMethodIoctl() { return ls->propCdromMethodIoctl; }
+char* langPropCdromMethodAspi() { return ls->propCdromMethodAspi; }
+char* langPropCdromDrive() { return ls->propCdromDrive; }
 
 //----------------------
 // Dropdown related lines

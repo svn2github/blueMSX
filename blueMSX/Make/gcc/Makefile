@@ -105,6 +105,7 @@ SOURCE_FILES  =
 SOURCE_FILES += Win32.c 
 SOURCE_FILES += Win32Avi.c
 SOURCE_FILES += Win32Bitmap.c 
+SOURCE_FILES += Win32Cdrom.c 
 SOURCE_FILES += Win32Dir.cpp 
 #SOURCE_FILES += Win32DirectShow.cpp
 SOURCE_FILES += Win32directX.c 

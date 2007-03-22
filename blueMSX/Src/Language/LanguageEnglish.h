@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.92 $
+** $Revision: 1.93 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -107,10 +107,10 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
     ls->menuCartSunriseIde      = "Sunrise";
-    ls->menuCartScsi            = "SCSI";
-    ls->menuCartMegaSCSI        = "MEGA-SCSI";
-    ls->menuCartWaveSCSI        = "WAVE-SCSI";
-    ls->menuCartGoudaSCSI       = "Gouda SCSI";
+    ls->menuCartScsi            = "SCSI";                // New
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -119,8 +119,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Insert Special";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "External RAM";
-    ls->menuCartEseRam          = "Ese-RAM";
-    ls->menuCartEseSCC          = "Ese-SCC";
+    ls->menuCartEseRam          = "Ese-RAM";             // New
+    ls->menuCartEseSCC          = "Ese-SCC";             // New
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";
 
     ls->menuDiskInsertNew       = "Insert New Disk Image";
@@ -155,6 +155,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Performance";
     ls->menuPropsSettings       = "Settings";
     ls->menuPropsFile           = "Files";
+    ls->menuPropsDisk           = "Disks";               // New
     ls->menuPropsLanguage       = "Language";
     ls->menuPropsPorts          = "Ports";
     
@@ -292,6 +293,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propPerformance         = "Performance";
     ls->propSettings            = "Settings";
     ls->propFile                = "Files";
+    ls->propDisk                = "Disks";
     ls->propPorts               = "Ports";
     
     ls->propEmuGeneralGB        = "General ";
@@ -381,6 +383,13 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->propThemeGB             = "Theme ";
     ls->propTheme               = "Theme:";
+
+    ls->propCdromGB             = "CD-ROM";          // New
+    ls->propCdromMethod         = "Access Method:";  // New
+    ls->propCdromMethodNone     = "None";            // New
+    ls->propCdromMethodIoctl    = "IOCTL";           // New
+    ls->propCdromMethodAspi     = "ASPI";            // New
+    ls->propCdromDrive          = "Drive:";          // New
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperMegaSCSI.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-03-04 16:07:25 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -314,7 +314,7 @@ int sramMapperMegaSCSICreate(char* filename, UInt8* buf, int size, int pSlot, in
 
 #ifdef MEGASCSIDEBUG
     if (!megascsiTotal) {
-        logFd = fopen(MEGASCSIDEBUG, "wb");
+        logFd = fopen(MEGASCSIDEBUG, "w");
     }
     ++megascsiTotal;
     DBGLOG2("%s %d: create\n", megascsiName[rm->type], megascsiTotal);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.82 $
+** $Revision: 1.83 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,6 +152,7 @@ typedef struct {
     char* menuPropsPerformance;
     char* menuPropsSettings;
     char* menuPropsFile;
+    char* menuPropsDisk;
     char* menuPropsLanguage;
     char* menuPropsPorts;
 
@@ -284,6 +285,7 @@ typedef struct {
     char* propPerformance;
     char* propSettings;
     char* propFile;
+    char* propDisk;
     char* propPorts;
 
     char* propEmuGeneralGB;
@@ -373,6 +375,13 @@ typedef struct {
 
     char* propThemeGB;
     char* propTheme;
+
+    char* propCdromGB;
+    char* propCdromMethod;
+    char* propCdromMethodNone;
+    char* propCdromMethodIoctl;
+    char* propCdromMethodAspi;
+    char* propCdromDrive;
 
 
     //----------------------

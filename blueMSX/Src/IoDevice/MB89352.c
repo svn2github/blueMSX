@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-03-10 08:24:54 $
+** $Date: 2007-03-22 10:55:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,10 +29,11 @@
  * Notes:
  *  Not suppport padding transfer and interrupt signal. (Not used MEGA-SCSI)
  *  Message system might be imperfect. (Not used in MEGA-SCSI usually)
- *  Response time is always 0.
  */
 #include "MB89352.h"
 #include "ScsiDevice.h"
+#include "ScsiDefs.h"
+#include "ArchCdrom.h"
 #include "Disk.h"
 #include "SaveState.h"
 #include <stdio.h>
@@ -46,7 +47,7 @@
 #include "Language.h"
 #endif
 
-#define Target  spc->scsiDevice[spc->targetId]
+#define TARGET spc->scsiDevice[spc->targetId]
 
 #define REG_BDID  0     // Bus Device ID        (r/w)
 #define REG_SCTL  1     // Spc Control          (r/w)
@@ -124,6 +125,7 @@ struct MB89352 {
     int blockCounter;               // Number of blocks outside buffer
                                     // (512bytes / block)
     int tc;                         // counter for hardware transfer
+    int devBusy;                    // CDROM busy (buffer conflict prevention)
     SCSIDEVICE* scsiDevice[8];      //
     UInt8* pCdb;                    // cdb pointer
     UInt8* pBuffer;                 // buffer pointer
@@ -133,11 +135,16 @@ struct MB89352 {
 
 static FILE* scsiLog = NULL;
 
+static void mb89352XferCb(MB89352* spc, int length)
+{
+    spc->devBusy = 0;
+}
+
 static void mb89352Disconnect(MB89352* spc)
 {
     if (spc->phase != BusFree) {
         if ((spc->targetId >= 0) && (spc->targetId < 8)) {
-            scsiDeviceDisconnect(Target);
+            scsiDeviceDisconnect(TARGET);
         }
         spc->regs[REG_INTS] |= INTS_Disconnected;
         spc->phase      = BusFree;
@@ -236,7 +243,7 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
         if (spc->counter < 0) {
             //Initialize command routine
             spc->pCdb    = spc->cdb;
-            spc->counter = (*value < SCSIOP_GROUP1) ? 6 : 10;
+            spc->counter = cdbLength(*value);
         }
         *spc->pCdb = *value;
         ++spc->pCdb;
@@ -245,19 +252,19 @@ static void mb89352SetACKREQ(MB89352* spc, UInt8* value)
 
     // Status phase
     case Status:
-        *value = scsiDeviceGetStatusCode(Target);
+        *value = scsiDeviceGetStatusCode(TARGET);
         spc->regs[REG_PSNS] = PSNS_ACK | PSNS_BSY | PSNS_STATUS;
         break;
 
     // Message In phase
     case MsgIn:
-        *value = scsiDeviceMsgIn(Target);
+        *value = scsiDeviceMsgIn(TARGET);
         spc->regs[REG_PSNS] = PSNS_ACK | PSNS_BSY | PSNS_MSGIN;
         break;
 
     // Message Out phase
     case MsgOut:
-        spc->msgin |= scsiDeviceMsgOut(Target, *value);
+        spc->msgin |= scsiDeviceMsgOut(TARGET, *value);
         spc->regs[REG_PSNS] = PSNS_ACK | PSNS_BSY | PSNS_MSGOUT;
         break;
 
@@ -291,7 +298,7 @@ static void mb89352ResetACKREQ(MB89352* spc)
             spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAIN;
         } else {
             if (spc->blockCounter > 0) {
-                spc->counter = scsiDeviceDataIn(Target, &spc->blockCounter);
+                spc->counter = scsiDeviceDataIn(TARGET, &spc->blockCounter);
                 if (spc->counter) {
                     spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAIN;
                     spc->pBuffer = spc->buffer;
@@ -308,7 +315,7 @@ static void mb89352ResetACKREQ(MB89352* spc)
         if (--spc->counter > 0) {
             spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAOUT;
         } else {
-            spc->counter = scsiDeviceDataOut(Target, &spc->blockCounter);
+            spc->counter = scsiDeviceDataOut(TARGET, &spc->blockCounter);
             if (spc->counter) {
                 spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAOUT;
                 spc->pBuffer = spc->buffer;
@@ -324,27 +331,29 @@ static void mb89352ResetACKREQ(MB89352* spc)
         if (--spc->counter > 0) {
             spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_COMMAND;
         } else {
+            spc->pBuffer = spc->buffer; // reset buffer pointer
+            spc->devBusy = 1;
             spc->counter =
-             scsiDeviceExecuteCommand(Target, spc->cdb, &spc->phase, &spc->blockCounter);
+             scsiDeviceExecuteCmd(TARGET, spc->cdb, &spc->phase, &spc->blockCounter);
 
             switch (spc->phase) {
             case DataIn:
                 spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAIN;
                 break;
-
             case DataOut:
                 spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAOUT;
                 break;
-
             case Status:
                 spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_STATUS;
                 break;
-
+            case Execute:
+                spc->regs[REG_PSNS] = PSNS_BSY;
+                return;
             default:
-                SCSILOG("phase setting error!!\n");
+                SCSILOG("phase error\n");
                 break;
             }
-            spc->pBuffer = spc->buffer; // reset buffer pointer
+            spc->devBusy = 0;
         }
         break;
 
@@ -542,7 +551,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
             }
 
             x = spc->regs[REG_BDID] & spc->regs[REG_TEMPWR];
-            if ((spc->phase == BusFree) && x && (x != spc->regs[REG_TEMPWR])) {
+            if (spc->phase == BusFree && x && x != spc->regs[REG_TEMPWR]) {
                 x = spc->regs[REG_TEMPWR] & ~spc->regs[REG_BDID];
 
                 // the targetID is calculated.
@@ -554,7 +563,7 @@ void mb89352WriteRegister(MB89352* spc, UInt8 reg, UInt8 value)
                     }
                 }
 
-                if (scsiDeviceSelection(Target)) {
+                if (!spc->devBusy && scsiDeviceSelection(TARGET)) {
                     SCSILOG1("selection: %d OK\n", spc->targetId);
                     spc->regs[REG_INTS] |= INTS_CommandComplete;
                     spc->isBusy  =  1;
@@ -728,6 +737,35 @@ UInt8 mb89352ReadRegister(MB89352* spc, UInt8 reg)
         break;
 
     case REG_PSNS:
+        if (spc->phase == Execute) {
+            spc->counter =
+                 scsiDeviceExecutingCmd(TARGET, &spc->phase, &spc->blockCounter);
+
+            if (spc->atn && spc->phase != Execute) {
+                spc->nextPhase = spc->phase;
+                spc->phase = MsgOut;
+                spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_MSGOUT;
+            } else {
+                switch (spc->phase) {
+                case DataIn:
+                    spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAIN;
+                    break;
+                case DataOut:
+                    spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_DATAOUT;
+                    break;
+                case Status:
+                    spc->regs[REG_PSNS] = PSNS_REQ | PSNS_BSY | PSNS_STATUS;
+                    break;
+                case Execute:
+                    spc->regs[REG_PSNS] = PSNS_BSY;
+                    break;
+                default:
+                    SCSILOG("phase error\n");
+                    break;
+                }
+            }
+        }
+
         result = (UInt8)((spc->regs[REG_PSNS] | spc->atn) & 0xff);
         break;
 
@@ -907,21 +945,21 @@ void mb89352Destroy(MB89352* spc)
     debugDeviceUnregister(spc->debugHandle);
 #endif
 
-    SCSILOG("spc destroy\n");
-    scsiDeviceLogClose();
-    free(spc->buffer);
+    archCdromBufferFree(spc->buffer);
     free(spc);
-}
+    SCSILOG("spc destroy\n");
+    scsiDeviceLogClose();}
 
 MB89352* mb89352Create(int hdId, const SCSICREATE* create)
 {
     int i;
     MB89352* spc;
 
-    spc = malloc(sizeof(MB89352));
-    spc->buffer = calloc(1, BUFFER_SIZE);
     scsiLog = scsiDeviceLogCreate();
     SCSILOG("spc create\n");
+    spc = malloc(sizeof(MB89352));
+    spc->buffer  = archCdromBufferMalloc(BUFFER_SIZE);
+    spc->devBusy = 0;
 
 #ifdef USE_DEBUGGER
     DebugCallbacks dbgCallbacks = { (void*)mb89352GetDebugInfo, NULL, NULL, NULL };
@@ -932,7 +970,8 @@ MB89352* mb89352Create(int hdId, const SCSICREATE* create)
     for (i = 0; i < 8; ++i) {
         spc->scsiDevice[i] =
             scsiDeviceCreate(i, diskGetHdDriveId(hdId, i), spc->buffer,
-                     create[i].productName, create[i].deviceType, create[i].scsiMode);
+                     create[i].productName, create[i].deviceType,
+                     create[i].scsiMode, (CdromXferCompCb)mb89352XferCb, spc);
     }
 
     mb89352Reset(spc, 0);

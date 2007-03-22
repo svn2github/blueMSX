@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-03-22 10:55:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -181,6 +181,12 @@ ValueNamePair PrinterEmulationPair[] = {
     { P_LPT_MSXPRN,                "msxprinter" },
     { P_LPT_SVIPRN,                "sviprinter" },
     { P_LPT_EPSONFX80,             "epsonfx80" },
+    { -1,                          "" },
+};
+
+ValueNamePair CdromDrvPair[] = {
+    { P_CDROM_DRVNONE,             "none" },
+    { P_CDROM_DRVIOCTL,            "ioctl" },
     { -1,                          "" },
 };
 
@@ -383,6 +389,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->diskdrive.defDir[0]    = 0;
     properties->diskdrive.autostartA   = 0;
     properties->diskdrive.quickStartDrive = 0;
+    properties->diskdrive.cdromMethod     = P_CDROM_DRVNONE;
+    properties->diskdrive.cdromDrive      = 0;
 
     properties->cassette.defDir[0]       = 0;
     properties->cassette.showCustomFiles = 1;
@@ -609,6 +617,9 @@ static void propLoad(Properties* properties)
     
     GET_INT_VALUE_2(cartridge, defaultType);
 
+    GET_ENUM_VALUE_2(diskdrive, cdromMethod, CdromDrvPair);
+    GET_INT_VALUE_2(diskdrive, cdromDrive);
+
     iniFileClose();
     
     iniFileOpen(histFilename);
@@ -817,6 +828,9 @@ void propSave(Properties* properties)
     SET_STR_VALUE_3(ports, Eth, macAddress);
     
     SET_INT_VALUE_2(cartridge, defaultType);
+
+    SET_ENUM_VALUE_2(diskdrive, cdromMethod, CdromDrvPair);
+    SET_INT_VALUE_2(diskdrive, cdromDrive);
 
     iniFileClose();
 

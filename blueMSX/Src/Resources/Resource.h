@@ -95,14 +95,15 @@
 #define IDD_SHORTCUTSCONFIG             125
 #define IDD_APEARANCE                   126
 #define IDD_PORTS                       127
+#define IDD_DISKEMU                     128
 
-#define IDD_OPEN_STATEDIALOG            128
-#define IDD_OPEN_HDSIZEDROPDOWN         129
+#define IDD_OPEN_STATEDIALOG            129
+#define IDD_OPEN_HDSIZEDROPDOWN         130
 
-#define IDD_BUTTON                      130
-#define IDD_DROPDOWN                    131
+#define IDD_BUTTON                      131
+#define IDD_DROPDOWN                    132
 
-#define IDD_RENDERVIDEO                 132
+#define IDD_RENDERVIDEO                 133
 
 #define IDC_JOY1                        1000
 #define IDC_JOY2                        1001
@@ -284,6 +285,13 @@
 #define IDC_SETTINGSDISABLEWINKEYS      2408
 #define IDC_SETTINGSPRIORITYBOOST       2409
 #define IDC_SETTINGSSCREENSHOTPNG       2410
+
+#define IDC_CDROMGROUPBOX               2500
+#define IDC_CDROMDISABLE                2501
+#define IDC_CDROMMETHODTEXT             2502
+#define IDC_CDROMMETHODLIST             2503
+#define IDC_CDROMDRIVETEXT              2504
+#define IDC_CDROMDRIVELIST              2505
 
 #define IDC_ABOUTTEXT                   1100
 

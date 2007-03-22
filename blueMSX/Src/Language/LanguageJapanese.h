@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2007-02-26 19:16:29 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,8 +154,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuPropsSound          = "サウンド";
     ls->menuPropsControls       = "コントロール";
     ls->menuPropsPerformance    = "パフォーマンス";
-    ls->menuPropsSettings        = "その他";
+    ls->menuPropsSettings       = "その他";
     ls->menuPropsFile           = "ファイル";
+    ls->menuPropsDisk           = "ディスク";            // New
     ls->menuPropsLanguage       = "言語";
     ls->menuPropsPorts          = "ポート";
     
@@ -185,7 +186,7 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "ハードディスク";
     ls->menuFileHarddiskNoPesent= "ハードディスクは無効です";
-    ls->menuFileHarddiskRemoveAll= "ハードディスクを全て取り出す"; // white cat append
+    ls->menuFileHarddiskRemoveAll= "ハードディスクを全て取り出す"; // new
 
     ls->menuRunRun              = "実行";
     ls->menuRunPause            = "中断";
@@ -291,8 +292,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSound               = "サウンド";
     ls->propControls            = "コントロール";
     ls->propPerformance         = "パフォーマンス";
-    ls->propSettings             = "その他";
+    ls->propSettings            = "その他";
     ls->propFile                = "ファイル";
+    ls->propDisk                = "ディスク";            // New
     ls->propPorts               = "ポート";
     
     ls->propEmuGeneralGB        = " 一般 ";
@@ -360,16 +362,16 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPortsOpenLogFile    = "ログファイルを開く";
     ls->propPortsEmulateMsxPrn  = "エミュレート:";
 
-    ls->propSetFileHistoryGB     = " ファイルヒストリ ";
-    ls->propSetFileHistorySize   = "ファイルヒストリの個数:";
-    ls->propSetFileHistoryClear  = "ヒストリの消去";
-    ls->propFileTypes            = " blueMSX で使用するファイル (rom, dsk, cas, sta) を関連付け";
-    ls->propWindowsEnvGB         = " Windows ";
-    ls->propSetScreenSaver       = " blueMSX の動作中はスクリーンセーバを無効にする";
-    ls->propDisableWinKeys       = " Windows キー及び漢字キーを blueMSX に割り当てる";
-    ls->propPriorityBoost        = " Windows で blueMSX の優先度を高くする";
+    ls->propSetFileHistoryGB    = " ファイルヒストリ ";
+    ls->propSetFileHistorySize  = "ファイルヒストリの個数:";
+    ls->propSetFileHistoryClear = "ヒストリの消去";
+    ls->propFileTypes           = " blueMSX で使用するファイル (rom, dsk, cas, sta) を関連付け";
+    ls->propWindowsEnvGB        = " Windows ";
+    ls->propSetScreenSaver      = " blueMSX の動作中はスクリーンセーバを無効にする";
+    ls->propDisableWinKeys      = " Windows キー及び漢字キーを blueMSX に割り当てる";
+    ls->propPriorityBoost       = " Windows で blueMSX の優先度を高くする";
     ls->propScreenshotPng       = " スクリーンショットを PNG 形式で取得する";
-    ls->propClearHistory         = "ヒストリの消去を実行してよろしいですか?";
+    ls->propClearHistory        = "ヒストリの消去を実行してよろしいですか?";
     ls->propOpenRomGB           = " ROM イメージ ";
     ls->propDefaultRomType      = "デフォルトROMタイプ:";
     ls->propGuessRomType        = "ROMタイプを自動判定";
@@ -383,6 +385,12 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propThemeGB             = " テーマ ";
     ls->propTheme               = "テーマ:";
 
+    ls->propCdromGB             = "CD-ROM";         // New
+    ls->propCdromMethod         = "アクセス方式:";  // New
+    ls->propCdromMethodNone     = "なし";           // New
+    ls->propCdromMethodIoctl    = "IOCTL";          // New
+    ls->propCdromMethodAspi     = "ASPI";           // New
+    ls->propCdromDrive          = "ドライブ:";      // New
 
     //----------------------
     // Dropdown related lines

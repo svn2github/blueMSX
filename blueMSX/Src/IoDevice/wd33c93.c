@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-10 08:24:54 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -28,7 +28,9 @@
 ******************************************************************************
 */
 #include "wd33c93.h"
+#include "ScsiDefs.h"
 #include "ScsiDevice.h"
+#include "ArchCdrom.h"
 #include "Disk.h"
 #include "Board.h"
 #include "SaveState.h"
@@ -141,87 +143,13 @@ struct WD33C93
     int         counter;
     int         blockCounter;
     int         tc;
+    int         devBusy;
     int         hdId;
     UInt8*      pBuf;
     UInt8*      buffer;
 };
 
 static FILE* scsiLog = NULL;
-
-static SCSIDEVICE* wd33c93ScsiDevCreate(WD33C93* wd33c93, int id)
-{
-    SCSIDEVICE* dev;
-    dev = scsiDeviceCreate(id, diskGetHdDriveId(wd33c93->hdId, id),
-                           wd33c93->buffer, NULL, SDT_DirectAccess,
-    MODE_SCSI1 | MODE_UNITATTENTION | MODE_FDS120 | MODE_REMOVABLE | MODE_NOVAXIS);
-    return dev;
-}
-
-void  wd33c93SaveState(WD33C93* wd33c93)
-{
-    SaveState* state = saveStateOpenForWrite("wd33c93");
-    int i;
-
-    saveStateSet(state, "myId",         wd33c93->myId);
-    saveStateSet(state, "targetId",     wd33c93->targetId);
-    saveStateSet(state, "latch",        wd33c93->latch);
-    saveStateSet(state, "phase",        wd33c93->phase);
-    saveStateSet(state, "counter",      wd33c93->counter);
-    saveStateSet(state, "blockCounter", wd33c93->blockCounter);
-    saveStateSet(state, "tc",           wd33c93->tc);
-    saveStateSet(state, "maxDev",       wd33c93->maxDev);
-    saveStateSet(state, "pBuf",         wd33c93->pBuf - wd33c93->buffer);
-    //saveStateGet(state, "timeout",    wd33c93->timeout);
-    //saveStateGet(state, "timerRunning", wd33c93->timerRunning);
-
-    saveStateSetBuffer(state, "regs",   wd33c93->regs,   sizeof(wd33c93->regs));
-    saveStateSetBuffer(state, "buffer", wd33c93->buffer, BUFFER_SIZE);
-
-    saveStateClose(state);
-
-    for (i = 0; i < wd33c93->maxDev; ++i) {
-        scsiDeviceSaveState(wd33c93->dev[i]);
-    }
-}
-
-void  wd33c93LoadState(WD33C93* wd33c93)
-{
-    SaveState* state = saveStateOpenForRead("wd33c93");
-    int old = wd33c93->maxDev;
-    int i;
-
-    wd33c93->myId         =        saveStateGet(state, "myId",          0);
-    wd33c93->targetId     =        saveStateGet(state, "targetId",      0);
-    wd33c93->latch        = (UInt8)saveStateGet(state, "latch",         0);
-    wd33c93->phase        =        saveStateGet(state, "phase",         BusFree);
-    wd33c93->counter      =        saveStateGet(state, "counter",       0);
-    wd33c93->blockCounter =        saveStateGet(state, "blockCounter",  0);
-    wd33c93->tc           =        saveStateGet(state, "tc",            0);
-    wd33c93->maxDev       =        saveStateGet(state, "maxDev",        8);
-    wd33c93->pBuf         =        saveStateGet(state, "pBuf",          0) + wd33c93->buffer;
-    //wd33c93->timeout    =        saveStateGet(state, "timeout",       0);
-    //wd33c93->timerRunning =      saveStateGet(state, "timerRunning",  0);
-
-    saveStateGetBuffer(state, "regs",   wd33c93->regs,   sizeof(wd33c93->regs));
-    saveStateGetBuffer(state, "buffer", wd33c93->buffer, BUFFER_SIZE);
-
-    saveStateClose(state);
-
-    if (old < wd33c93->maxDev) {
-        for (i = old; i < wd33c93->maxDev; ++i) {
-            wd33c93->dev[i] = wd33c93ScsiDevCreate(wd33c93, i);
-        }
-    }
-
-    for (i = 0; i < wd33c93->maxDev; ++i) {
-        scsiDeviceLoadState(wd33c93->dev[i]);
-    }
-/*  
-    if (wd33c93->timerRunning) {
-        boardTimerAdd(wd33c93->timer, wd33c93->timeout);
-    }
-*/
-}
 
 static void wd33c93Disconnect(WD33C93* wd33c93)
 {
@@ -262,6 +190,11 @@ static void wd33c93Irq(WD33C93* wd33c93, UInt32 time)
     //setInt();
 }
 */
+
+static void wd33c93XferCb(WD33C93* wd33c93, int length)
+{
+    wd33c93->devBusy = 0;
+}
 
 static void wd33c93ExecCmd(WD33C93* wd33c93, UInt8 value)
 {
@@ -308,20 +241,32 @@ static void wd33c93ExecCmd(WD33C93* wd33c93, UInt8 value)
         SCSILOG1("wd33c93 [CMD] Select and transfer (ATN %d)\n", atn);
         wd33c93->targetId = wd33c93->regs[REG_DST_ID] & 7;
 
-        if (wd33c93->targetId < wd33c93->maxDev &&
-            wd33c93->targetId != wd33c93->myId  &&
+        if (!wd33c93->devBusy &&
+            wd33c93->targetId < wd33c93->maxDev &&
+            /* wd33c93->targetId != wd33c93->myId  && */
             scsiDeviceSelection(TARGET)) {
             if (atn) scsiDeviceMsgOut(TARGET, wd33c93->regs[REG_TLUN] | 0x80);
-            wd33c93->counter = scsiDeviceExecuteCommand(
+            wd33c93->devBusy = 1;
+            wd33c93->counter = scsiDeviceExecuteCmd(
                             TARGET, &wd33c93->regs[REG_CDB1],
                             &wd33c93->phase, &wd33c93->blockCounter);
 
-            if (wd33c93->phase == Status) {
+            switch (wd33c93->phase) {
+            case Status:
+                wd33c93->devBusy = 0;
                 wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
                 scsiDeviceMsgIn(TARGET);
-                wd33c93->regs[REG_SCSI_STATUS]  = SS_XFER_END;
+                wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
                 wd33c93Disconnect(wd33c93);
-            } else {
+                break;
+
+            case Execute:
+                wd33c93->regs[REG_AUX_STATUS]  = AS_CIP | AS_BSY;
+                wd33c93->pBuf = wd33c93->buffer;
+                break;
+
+            default:
+                wd33c93->devBusy = 0;
                 wd33c93->regs[REG_AUX_STATUS]  = AS_CIP | AS_BSY | AS_DBR;
                 wd33c93->pBuf = wd33c93->buffer;
             }
@@ -343,145 +288,164 @@ static void wd33c93ExecCmd(WD33C93* wd33c93, UInt8 value)
         break;
     }
 }
-
-void wd33c93Write(WD33C93* wd33c93, UInt16 port, UInt8 value)
+void wd33c93WriteAdr(WD33C93* wd33c93, UInt16 port, UInt8 value)
 {
-    port &= 1;
-
-    if (port == 0) {
-        wd33c93->latch = value & 0x1f;
-    } else {
-        //SCSILOG2("wd33c93 write #%X, %X\n", wd33c93->latch, value);
-        switch (wd33c93->latch) {
-        case REG_OWN_ID:
-            wd33c93->regs[REG_OWN_ID] = value;
-            wd33c93->myId = value & 7;
-            SCSILOG1("wd33c93 myid = %X\n", wd33c93->myId);
-            break;
-
-        case REG_TCH:
-            wd33c93->tc = (wd33c93->tc & 0x0000ffff) + (value << 16);
-            break;
-
-        case REG_TCM:
-            wd33c93->tc = (wd33c93->tc & 0x00ff00ff) + (value << 8);
-            break;
-
-        case REG_TCL:
-            wd33c93->tc = (wd33c93->tc & 0x00ffff00) + value;
-            break;
-
-        case REG_CMD_PHASE:
-            SCSILOG1("wd33c93 CMD_PHASE = %X\n", value);
-            wd33c93->regs[REG_CMD_PHASE] = value;
-            break;
-
-        case REG_CMD:
-            wd33c93ExecCmd(wd33c93, value);
-            return;     
-
-        case REG_DATA:
-            wd33c93->regs[REG_DATA] = value;
-            if (wd33c93->phase == DataOut) {
-                *wd33c93->pBuf++ = value;
-                --wd33c93->tc;
-                if (--wd33c93->counter == 0) {
-                    wd33c93->counter = scsiDeviceDataOut(TARGET, &wd33c93->blockCounter);
-                    if (wd33c93->counter) {
-                        wd33c93->pBuf = wd33c93->buffer;
-                        return;
-                    }
-                    wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
-                    scsiDeviceMsgIn(TARGET);
-                    wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
-                    wd33c93Disconnect(wd33c93);
-                }
-            }
-            return;
-
-        case REG_AUX_STATUS:
-            return;
-
-        default:
-            if (wd33c93->latch <= REG_SRC_ID) {
-                wd33c93->regs[wd33c93->latch] = value;
-            }
-            break;
-        }
-        wd33c93->latch++;
-        wd33c93->latch &= 0x1f;
-    }
+    wd33c93->latch = value & 0x1f;
 }
 
-UInt8 wd33c93Read(WD33C93* wd33c93, UInt16 port)
+void wd33c93WriteCtrl(WD33C93* wd33c93, UInt16 port, UInt8 value)
+{
+    //SCSILOG2("wd33c93 write #%X, %X\n", wd33c93->latch, value);
+    switch (wd33c93->latch) {
+    case REG_OWN_ID:
+        wd33c93->regs[REG_OWN_ID] = value;
+        wd33c93->myId = value & 7;
+        SCSILOG1("wd33c93 myid = %X\n", wd33c93->myId);
+        break;
+
+    case REG_TCH:
+        wd33c93->tc = (wd33c93->tc & 0x0000ffff) + (value << 16);
+        break;
+
+    case REG_TCM:
+        wd33c93->tc = (wd33c93->tc & 0x00ff00ff) + (value << 8);
+        break;
+
+    case REG_TCL:
+        wd33c93->tc = (wd33c93->tc & 0x00ffff00) + value;
+        break;
+
+    case REG_CMD_PHASE:
+        SCSILOG1("wd33c93 CMD_PHASE = %X\n", value);
+        wd33c93->regs[REG_CMD_PHASE] = value;
+        break;
+
+    case REG_CMD:
+        wd33c93ExecCmd(wd33c93, value);
+        return;     
+
+    case REG_DATA:
+        wd33c93->regs[REG_DATA] = value;
+        if (wd33c93->phase == DataOut) {
+            *wd33c93->pBuf++ = value;
+            --wd33c93->tc;
+            if (--wd33c93->counter == 0) {
+                wd33c93->counter = scsiDeviceDataOut(TARGET, &wd33c93->blockCounter);
+                if (wd33c93->counter) {
+                    wd33c93->pBuf = wd33c93->buffer;
+                    return;
+                }
+                wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
+                scsiDeviceMsgIn(TARGET);
+                wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
+                wd33c93Disconnect(wd33c93);
+            }
+        }
+        return;
+
+    case REG_AUX_STATUS:
+        return;
+
+    default:
+        if (wd33c93->latch <= REG_SRC_ID) {
+            wd33c93->regs[wd33c93->latch] = value;
+        }
+        break;
+    }
+    wd33c93->latch++;
+    wd33c93->latch &= 0x1f;
+}
+
+UInt8 wd33c93ReadAuxStatus(WD33C93* wd33c93, UInt16 port)
+{
+    UInt8 rv = wd33c93->regs[REG_AUX_STATUS];
+
+    if (wd33c93->phase == Execute) {
+        wd33c93->counter =
+          scsiDeviceExecutingCmd(TARGET, &wd33c93->phase, &wd33c93->blockCounter);
+
+        switch (wd33c93->phase) {
+        case Status:
+            wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
+            scsiDeviceMsgIn(TARGET);
+            wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
+            wd33c93Disconnect(wd33c93);
+            break;
+
+        case Execute:
+            break;
+
+        default:
+            wd33c93->regs[REG_AUX_STATUS] |= AS_DBR;
+        }
+    }
+
+    return rv;
+}
+
+UInt8 wd33c93ReadCtrl(WD33C93* wd33c93, UInt16 port)
 {
     UInt8 rv;
 
-    port &= 1;
+    switch (wd33c93->latch) {
+    case REG_SCSI_STATUS:
+        rv = wd33c93->regs[REG_SCSI_STATUS];
+        //SCSILOG1("wd33c93 SCSI_STATUS = %X\n", rv);
+        if (rv != SS_XFER_END) {
+            wd33c93->regs[REG_AUX_STATUS] &= ~AS_INT;
+        } else {
+            wd33c93->regs[REG_SCSI_STATUS] = SS_DISCONNECT;
+            wd33c93->regs[REG_AUX_STATUS]  = AS_INT;
+        }
+        break;
 
-    if (port == 0) {
-        rv = wd33c93->regs[REG_AUX_STATUS];
-        //SCSILOG1("wd33c93 AUX_STATUS = %X\n", rv);
-    } else {
-        switch (wd33c93->latch) {
-        case REG_TCH:
-            rv = (UInt8)((wd33c93->tc >> 16) & 0xff);
-            break;
-
-        case REG_TCM:
-            rv = (UInt8)((wd33c93->tc >> 8) & 0xff);
-            break;
-
-        case REG_TCL:
-            rv = (UInt8)(wd33c93->tc & 0xff);
-            break;
-
-        case REG_SCSI_STATUS:
-            rv = wd33c93->regs[REG_SCSI_STATUS];
-            //SCSILOG1("wd33c93 SCSI_STATUS = %X\n", rv);
-            if (rv != SS_XFER_END) {
-                wd33c93->regs[REG_AUX_STATUS] &= ~AS_INT;
-            } else {
-                wd33c93->regs[REG_SCSI_STATUS] = SS_DISCONNECT;
-                wd33c93->regs[REG_AUX_STATUS]  = AS_INT;
-            }
-            break;
-
-        case REG_DATA:
-            if (wd33c93->phase == DataIn) {
-                rv = *wd33c93->pBuf++;
-                wd33c93->regs[REG_DATA] = rv;
-                --wd33c93->tc;
-                if (--wd33c93->counter == 0) {
-                    if (wd33c93->blockCounter > 0) {
-                        wd33c93->counter = scsiDeviceDataIn(TARGET, &wd33c93->blockCounter);
-                        if (wd33c93->counter) {
-                            wd33c93->pBuf = wd33c93->buffer;
-                            return rv;
-                        }
+    case REG_DATA:
+        if (wd33c93->phase == DataIn) {
+            rv = *wd33c93->pBuf++;
+            wd33c93->regs[REG_DATA] = rv;
+            --wd33c93->tc;
+            if (--wd33c93->counter == 0) {
+                if (wd33c93->blockCounter > 0) {
+                    wd33c93->counter = scsiDeviceDataIn(TARGET, &wd33c93->blockCounter);
+                    if (wd33c93->counter) {
+                        wd33c93->pBuf = wd33c93->buffer;
+                        return rv;
                     }
-                    wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
-                    scsiDeviceMsgIn(TARGET);
-                    wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
-                    wd33c93Disconnect(wd33c93);
                 }
-            } else {
-                rv = wd33c93->regs[REG_DATA];
+                wd33c93->regs[REG_TLUN] = scsiDeviceGetStatusCode(TARGET);
+                scsiDeviceMsgIn(TARGET);
+                wd33c93->regs[REG_SCSI_STATUS] = SS_XFER_END;
+                wd33c93Disconnect(wd33c93);
             }
-            return rv;
-
-        default:
-            rv = wd33c93->regs[wd33c93->latch];
-            break;
+        } else {
+            rv = wd33c93->regs[REG_DATA];
         }
-        //SCSILOG2("wd33c93 read #%X, %X\n", wd33c93->latch, rv);
+        return rv;
 
-        if ((wd33c93->latch != REG_CMD) &&
-         /* (wd33c93->latch != REG_DATA) && */
-            (wd33c93->latch != REG_AUX_STATUS)) {
-                wd33c93->latch++;
-                wd33c93->latch &= 0x1f;
-        }
+    case REG_TCH:
+        rv = (UInt8)((wd33c93->tc >> 16) & 0xff);
+        break;
+
+    case REG_TCM:
+        rv = (UInt8)((wd33c93->tc >> 8) & 0xff);
+        break;
+
+    case REG_TCL:
+        rv = (UInt8)(wd33c93->tc & 0xff);
+        break;
+
+    case REG_AUX_STATUS:
+        return wd33c93ReadAuxStatus(wd33c93, port);
+
+    default:
+        rv = wd33c93->regs[wd33c93->latch];
+        break;
+    }
+    //SCSILOG2("wd33c93 read #%X, %X\n", wd33c93->latch, rv);
+
+    if (wd33c93->latch != REG_CMD) {
+            wd33c93->latch++;
+            wd33c93->latch &= 0x1f;
     }
     return rv;
 }
@@ -548,8 +512,26 @@ void  wd33c93Destroy(WD33C93* wd33c93)
     SCSILOG("WD33C93 destroy\n");
     scsiDeviceLogClose();
 
-    free(wd33c93->buffer);
+    archCdromBufferFree(wd33c93->buffer);
     free(wd33c93);
+}
+
+static SCSIDEVICE* wd33c93ScsiDevCreate(WD33C93* wd33c93, int id)
+{
+    SCSIDEVICE* dev;
+    int mode;
+    int type;
+
+    if (id != 2) {
+        mode = MODE_SCSI1 | MODE_UNITATTENTION | MODE_FDS120 | MODE_REMOVABLE | MODE_NOVAXIS;
+        type = SDT_DirectAccess;
+    } else {
+        mode = MODE_SCSI1 | MODE_UNITATTENTION | MODE_REMOVABLE | MODE_NOVAXIS;
+        type = SDT_CDROM;
+    }
+    dev = scsiDeviceCreate(id, diskGetHdDriveId(wd33c93->hdId, id),
+            wd33c93->buffer, NULL, type, mode, (CdromXferCompCb)wd33c93XferCb, wd33c93);
+    return dev;
 }
 
 WD33C93* wd33c93Create(int hdId)
@@ -558,10 +540,10 @@ WD33C93* wd33c93Create(int hdId)
     int i;
 
     scsiLog = scsiDeviceLogCreate();
-    wd33c93->buffer = calloc(1, BUFFER_SIZE);
-    wd33c93->maxDev = 2;
-    wd33c93->hdId   = hdId;
-
+    wd33c93->buffer  = archCdromBufferMalloc(BUFFER_SIZE);
+    wd33c93->maxDev  = 3;
+    wd33c93->hdId    = hdId;
+    wd33c93->devBusy = 0;
     //wd33c93->timer = boardTimerCreate(wd33c93Irq, wd33c93);
 
     memset(wd33c93->dev, 0, sizeof(wd33c93->dev));
@@ -572,4 +554,70 @@ WD33C93* wd33c93Create(int hdId)
     wd33c93Reset(wd33c93, 0);
 
     return wd33c93;
+}
+
+void  wd33c93SaveState(WD33C93* wd33c93)
+{
+    SaveState* state = saveStateOpenForWrite("wd33c93");
+    int i;
+
+    saveStateSet(state, "myId",         wd33c93->myId);
+    saveStateSet(state, "targetId",     wd33c93->targetId);
+    saveStateSet(state, "latch",        wd33c93->latch);
+    saveStateSet(state, "phase",        wd33c93->phase);
+    saveStateSet(state, "counter",      wd33c93->counter);
+    saveStateSet(state, "blockCounter", wd33c93->blockCounter);
+    saveStateSet(state, "tc",           wd33c93->tc);
+    saveStateSet(state, "maxDev",       wd33c93->maxDev);
+    saveStateSet(state, "pBuf",         wd33c93->pBuf - wd33c93->buffer);
+    //saveStateGet(state, "timeout",    wd33c93->timeout);
+    //saveStateGet(state, "timerRunning", wd33c93->timerRunning);
+
+    saveStateSetBuffer(state, "regs",   wd33c93->regs,   sizeof(wd33c93->regs));
+    saveStateSetBuffer(state, "buffer", wd33c93->buffer, BUFFER_SIZE);
+
+    saveStateClose(state);
+
+    for (i = 0; i < wd33c93->maxDev; ++i) {
+        scsiDeviceSaveState(wd33c93->dev[i]);
+    }
+}
+
+void  wd33c93LoadState(WD33C93* wd33c93)
+{
+    SaveState* state = saveStateOpenForRead("wd33c93");
+    int old = wd33c93->maxDev;
+    int i;
+
+    wd33c93->myId         =        saveStateGet(state, "myId",          0);
+    wd33c93->targetId     =        saveStateGet(state, "targetId",      0);
+    wd33c93->latch        = (UInt8)saveStateGet(state, "latch",         0);
+    wd33c93->phase        =        saveStateGet(state, "phase",         BusFree);
+    wd33c93->counter      =        saveStateGet(state, "counter",       0);
+    wd33c93->blockCounter =        saveStateGet(state, "blockCounter",  0);
+    wd33c93->tc           =        saveStateGet(state, "tc",            0);
+    wd33c93->maxDev       =        saveStateGet(state, "maxDev",        8);
+    wd33c93->pBuf         =        saveStateGet(state, "pBuf",          0) + wd33c93->buffer;
+    //wd33c93->timeout    =        saveStateGet(state, "timeout",       0);
+    //wd33c93->timerRunning =      saveStateGet(state, "timerRunning",  0);
+
+    saveStateGetBuffer(state, "regs",   wd33c93->regs,   sizeof(wd33c93->regs));
+    saveStateGetBuffer(state, "buffer", wd33c93->buffer, BUFFER_SIZE);
+
+    saveStateClose(state);
+
+    if (old < wd33c93->maxDev) {
+        for (i = old; i < wd33c93->maxDev; ++i) {
+            wd33c93->dev[i] = wd33c93ScsiDevCreate(wd33c93, i);
+        }
+    }
+
+    for (i = 0; i < wd33c93->maxDev; ++i) {
+        scsiDeviceLoadState(wd33c93->dev[i]);
+    }
+/*  
+    if (wd33c93->timerRunning) {
+        boardTimerAdd(wd33c93->timer, wd33c93->timeout);
+    }
+*/
 }

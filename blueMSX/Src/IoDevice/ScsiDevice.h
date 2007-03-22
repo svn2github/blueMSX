@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-03-10 08:24:54 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,56 +29,7 @@
 #define SCSIDEVICE_H
 
 #include "MsxTypes.h"
-
-// Group 0: 6bytes cdb
-#define SCSIOP_TEST_UNIT_READY      0x00
-#define SCSIOP_REZERO_UNIT          0x01
-#define SCSIOP_REQUEST_SENSE        0x03
-#define SCSIOP_FORMAT_UNIT          0x04
-#define SCSIOP_REASSIGN_BLOCKS      0x07
-#define SCSIOP_READ6                0x08
-#define SCSIOP_WRITE6               0x0A
-#define SCSIOP_SEEK6                0x0B
-#define SCSIOP_INQUIRY              0x12
-#define SCSIOP_RESERVE_UNIT         0x16
-#define SCSIOP_RELEASE_UNIT         0x17
-#define SCSIOP_MODE_SENSE           0x1A
-#define SCSIOP_START_STOP_UNIT      0x1B
-#define SCSIOP_SEND_DIAGNOSTIC      0x1D
-
-// Group 1: 10bytes cdb
-#define SCSIOP_GROUP1               0x20
-#define SCSIOP_BLUE_MSX             0x20    // special command (vendor option)
-#define SCSIOP_READ_CAPACITY        0x25
-#define SCSIOP_READ10               0x28
-#define SCSIOP_WRITE10              0x2A
-#define SCSIOP_SEEK10               0x2B
-
-/*
-#define SCSIOP_GROUP2               0x40
-#define SCSIOP_CHANGE_DEFINITION    0x40
-#define SCSIOP_READ_SUB_CHANNEL     0x42
-#define SCSIOP_READ_TOC             0x43
-#define SCSIOP_READ_HEADER          0x44
-#define SCSIOP_PLAY_AUDIO           0x45
-#define SCSIOP_PLAY_AUDIO_MSF       0x47
-#define SCSIOP_PLAY_TRACK_INDEX     0x48
-#define SCSIOP_PLAY_TRACK_RELATIVE  0x49
-#define SCSIOP_PAUSE_RESUME         0x4B
-*/
-
-// SCSI device type
-#define SDT_DirectAccess        0x00
-#define SDT_SequencialAccess    0x01
-#define SDT_Printer             0x02
-#define SDT_Processor           0x03
-#define SDT_WriteOnce           0x04
-#define SDT_CDROM               0x05
-#define SDT_Scanner             0x06
-#define SDT_OpticalMemory       0x07
-#define SDT_MediaChanger        0x08
-#define SDT_Communications      0x09
-#define SDT_Undefined           0x1f
+#include "ArchCdrom.h"
 
 #define BIT_SCSI2           0x0001
 #define BIT_SCSI2_ONLY      0x0002
@@ -95,10 +46,7 @@
 #define MODE_REMOVABLE      0x0080
 #define MODE_NOVAXIS        0x0100
 
-#define STATUS_GOOD             0
-#define STATUS_CHECK_CONDITION  2
-
-#define BUFFER_SIZE         0x4000                  // 16KB
+#define BUFFER_SIZE         0x10000                 // 64KB
 #define BUFFER_BLOCK_SIZE   (BUFFER_SIZE / 512)
 
 typedef enum {
@@ -117,14 +65,16 @@ typedef enum {
 
 typedef struct SCSIDEVICE SCSIDEVICE;
 
-SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int type, int mode);
+SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name,
+                  int type, int mode, CdromXferCompCb xferCompCb, void* ref);
 void scsiDeviceDestroy(SCSIDEVICE* scsi);
 void scsiDeviceReset(SCSIDEVICE* scsi);
 void scsiDeviceSaveState(SCSIDEVICE* scsi);
 void scsiDeviceLoadState(SCSIDEVICE* scsi);
 
 int scsiDeviceSelection(SCSIDEVICE* scsi);
-int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks);
+int scsiDeviceExecuteCmd(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks);
+int scsiDeviceExecutingCmd(SCSIDEVICE* scsi, SCSI_PHASE* phase, int* blocks);
 UInt8 scsiDeviceGetStatusCode(SCSIDEVICE* scsi);
 int scsiDeviceMsgOut(SCSIDEVICE* scsi, UInt8 value);
 UInt8 scsiDeviceMsgIn(SCSIDEVICE* scsi);

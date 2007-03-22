@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2007-03-17 05:55:48 $
+** $Date: 2007-03-22 10:55:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,6 +91,7 @@
 #define ID_OPTIONS_LANGUAGE             40046
 #define ID_OPTIONS_APEARANCE            40047
 #define ID_OPTIONS_PORTS                40048
+#define ID_OPTIONS_DISK                 40049
 
 #define ID_HELP_HELP                    40051
 #define ID_HELP_ABOUT                   40052
@@ -673,17 +674,15 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
             break;
         case HD_MEGASCSI:
-            hasHd = 1;
-            for (j = 0; j < 8; j++) {
-                sprintf(langBuffer, "SCSI%d MEGA-SCSI #%d", i, j);
-                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
-            }
-            break;
         case HD_WAVESCSI:
             hasHd = 1;
             for (j = 0; j < 8; j++) {
-                sprintf(langBuffer, "SCSI%d WAVE-SCSI #%d", i, j);
-                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+                sprintf(langBuffer, "SCSI%d %s-SCSI #%d", i, (boardGetHdType(i) == HD_MEGASCSI) ? "MEGA" : "WAVE", j);
+                if (j != 6) {
+                    AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+                } else {
+                    AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langBuffer);
+                }
             }
             break;
         case HD_GOUDASCSI:
@@ -869,6 +868,7 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, in
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langMenuPropsSound());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PERFORMANCE, langMenuPropsPerformance());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_SETTINGS, langMenuPropsFile());
+    AppendMenu(hMenu, MF_STRING, ID_OPTIONS_DISK, langMenuPropsDisk());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_APEARANCE, langMenuPropsSettings());
     AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PORTS, langMenuPropsPorts());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -1660,6 +1660,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_OPTIONS_AUDIO:                  actionPropShowAudio();          return 0;
     case ID_OPTIONS_PERFORMANCE:            actionPropShowPerformance();    return 0;
     case ID_OPTIONS_SETTINGS:               actionPropShowSettings();       return 0;
+    case ID_OPTIONS_DISK:                   actionPropShowDisk();           return 0;
     case ID_OPTIONS_APEARANCE:              actionPropShowApearance();      return 0;
     case ID_OPTIONS_PORTS:                  actionPropShowPorts();          return 0;
     case ID_OPTIONS_LANGUAGE:               actionOptionsShowLanguage();    return 0;

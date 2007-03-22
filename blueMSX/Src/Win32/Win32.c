@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.173 $
+** $Revision: 1.174 $
 **
-** $Date: 2007-03-16 07:38:45 $
+** $Date: 2007-03-22 10:55:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,7 @@
 #include <CommCtrl.h>
 #include <shlobj.h> 
 #include <shlwapi.h>
+#include <dbt.h>
 #include "Win32FileTypes.h"
 #include "Win32ThemeClassic.h"
 #include "Board.h"
@@ -72,6 +73,7 @@
 #include "Win32MouseEmu.h"
 #include "Win32machineConfig.h"
 #include "Win32ShortcutsConfig.h"
+#include "Win32Cdrom.h"
 #include "Actions.h"
 #include "LaunchFile.h"
 #include "TokenExtract.h"
@@ -2319,8 +2321,25 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         PostQuitMessage(0);
         inputDestroy();
         return 0;
-    }
 
+    case WM_DEVICECHANGE:
+        {
+            PDEV_BROADCAST_HDR lpdb = (PDEV_BROADCAST_HDR)lParam;
+
+            switch(wParam) {
+            case DBT_DEVICEARRIVAL:
+            case DBT_DEVICEREMOVECOMPLETE:
+                if (lpdb->dbch_devicetype == DBT_DEVTYP_VOLUME) {
+                    PDEV_BROADCAST_VOLUME lpdbv = (PDEV_BROADCAST_VOLUME)lpdb;
+
+                    if (lpdbv->dbcv_flags & DBTF_MEDIA) {
+                        cdromOnMediaChange(lpdbv->dbcv_unitmask);
+                    }
+                }
+                break;
+            }
+        }
+    }
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 

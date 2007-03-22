@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2007-02-15 22:18:57 $
+** $Date: 2007-03-22 10:55:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -807,6 +807,10 @@ void actionPropShowPerformance() {
 
 void actionPropShowSettings() {
     archShowPropertiesDialog(PROP_SETTINGS);
+}
+
+void actionPropShowDisk() {
+    archShowPropertiesDialog(PROP_DISK);
 }
 
 void actionPropShowPorts() {

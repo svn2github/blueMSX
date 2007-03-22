@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2007-03-17 17:46:11 $
+** $Date: 2007-03-22 10:55:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -84,6 +84,7 @@ typedef enum {
     PROP_SOUND, 
     PROP_PERFORMANCE, 
     PROP_SETTINGS, 
+    PROP_DISK,
     PROP_APEARANCE, 
     PROP_PORTS 
 } PropPage;
@@ -186,6 +187,11 @@ enum {
     P_VIDEO_DRVSDL
 };
 
+enum {
+    P_CDROM_DRVNONE = 0,
+    P_CDROM_DRVIOCTL,
+    P_CDROM_DRVASPI
+};
 
 #define MAX_HISTORY 30
 
@@ -324,6 +330,8 @@ typedef struct {
     char defDir[PROP_MAXPATH];
     int  autostartA;
     int  quickStartDrive;
+    int  cdromMethod;
+    int  cdromDrive;
 } DiskdriveProperties;
 
 typedef struct {

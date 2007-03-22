@@ -1,19 +1,19 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.1 $
 **
-** $Date: 2007-03-22 10:55:08 $
+** $Date: 2007-03-22 10:55:09 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2007 Daniel Vik, Ricardo Bittencourt, white cat
+** Copyright (C) 2003-2007 Daniel Vik, white cat
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,24 +25,14 @@
 **
 ******************************************************************************
 */
-#ifndef WD33C93_H
-#define WD33C93_H
+#ifndef WIN32_CDROM_H
+#define WIN32_CDROM_H
 
 #include "MsxTypes.h"
+#include <windows.h>
 
-typedef struct WD33C93 WD33C93;
-
-WD33C93* wd33c93Create(int hdId);
-void	 wd33c93Reset(WD33C93* wd33c93, int scsireset);
-void     wd33c93Destroy(WD33C93* wd33c93);
-
-UInt8    wd33c93ReadAuxStatus(WD33C93* wd33c93, UInt16 port);
-UInt8    wd33c93ReadCtrl(WD33C93* wd33c93, UInt16 port);
-UInt8    wd33c93Peek(WD33C93* wd33c93, UInt16 port);
-void     wd33c93WriteAdr(WD33C93* wd33c93, UInt16 port, UInt8 value);
-void     wd33c93WriteCtrl(WD33C93* wd33c93, UInt16 port, UInt8 value);
-
-void     wd33c93LoadState(WD33C93* wd33c93);
-void     wd33c93SaveState(WD33C93* wd33c93);
+const char* cdromGetDriveListIoctl();
+//const char* cdromGetDriveListAspi();
+void cdromOnMediaChange(DWORD unitMask);
 
 #endif

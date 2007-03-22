@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-03-04 16:07:25 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -483,7 +483,7 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
 
 #ifdef ESESCCDEBUG
     if (!logNo) {
-        logFd = fopen(ESESCCDEBUG, "wb");
+        logFd = fopen(ESESCCDEBUG, "w");
     }
     DBGLOG2("%s %d: create\n", wavescsiName[rm->type], logNo);
     if (strlen(filename)) {

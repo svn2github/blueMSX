@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-10 08:24:54 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,8 +32,10 @@
  *  Message system might be imperfect.
  */
 #include "ScsiDevice.h"
-#include "Board.h"
+#include "ArchCdrom.h"
+#include "ScsiDefs.h"
 #include "Disk.h"
+#include "Board.h"
 #include "FileHistory.h"
 #include "Led.h"
 #include "Properties.h"
@@ -42,30 +44,6 @@
 #include <string.h>
 
 #define USE_SPECIALCOMMAND
-
-// Sense data                    KEY | ASC | ASCQ
-#define SENSE_NoSense               0x000000
-#define SENSE_NotReady              0x020400
-#define SENSE_MediumNotPresent      0x023a00
-#define SENSE_UnrecoveredReadError  0x031100
-#define SENSE_WriteFault            0x040300
-#define SENSE_InvalidCommandCode    0x052000
-#define SENSE_IllegalBlockAddress   0x052100
-#define SENSE_InvalidLUN            0x052500
-#define SENSE_PowerOn               0x062900 // POWER ON, RESET, OR BUS DEVICE RESET OCCURRED
-#define SENSE_WriteProtect          0x072700
-#define SENSE_MessageRejectError    0x0b4300
-#define SENSE_InitiatorDetectedErr  0x0b4800
-#define SENSE_IllegalMessage        0x0b4900
-
-// Message
-#define MSG_COMMAND_COMPLETE        0x00
-#define MSG_INITIATOR_DETECT_ERROR  0x05
-#define MSG_ABORT                   0x06
-#define MSG_REJECT                  0x07
-#define MSG_NO_OPERATION            0x08
-#define MSG_PARITY_ERROR            0x09
-#define MSG_BUS_DEVICE_RESET        0x0c
 
 // Medium type (value like LS-120)
 #define MT_UNKNOWN      0x00
@@ -97,6 +75,7 @@ struct SCSIDEVICE {
     int length;
     int message;
     int lun;
+    ArchCdrom* cdrom;
     UInt8 cdb[12];          // Command Descriptor Block
     UInt8* buffer;
     char* productName;
@@ -124,7 +103,7 @@ static const char sdt_name[10][10] =
     "Tape      ",
     "Printer   ",
     "Processor ",
-    "CD-R      ",
+    "WORM      ",
     "CD-ROM    ",
     "Scanner   ",
     "MO        ",
@@ -147,7 +126,7 @@ static FILE* scsiLog = NULL;
 FILE* scsiDeviceLogCreate()
 {
     if (!logNumber) {
-        scsiLog = fopen(SCSIDEBUG, "wb");
+        scsiLog = fopen(SCSIDEBUG, "w");
     }
     logNumber++;
     return scsiLog;
@@ -168,7 +147,8 @@ void scsiDeviceLogClose()
 
 #endif
 
-SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int type, int mode)
+SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name,
+                  int type, int mode, CdromXferCompCb xferCompCb, void* ref)
 {
     SCSIDEVICE* scsi = malloc(sizeof(SCSIDEVICE));
 
@@ -180,6 +160,7 @@ SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int
     scsi->mode          = mode;
     scsi->enabled       = 1;
     scsi->sectorSize    = 512;
+    scsi->cdrom         = NULL;
 /*
     scsi->disk.fileName[0] = 0;
     scsi->disk.fileNameInZip[0] = 0;
@@ -187,6 +168,13 @@ SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int
     scsi->disk.extensionFilter = 0;
     scsi->disk.type = 0;
 */
+    if (type == SDT_CDROM) {
+        scsi->sectorSize = 2048;
+        scsi->cdrom = archCdromCreate(xferCompCb, ref);
+        if (scsi->cdrom == NULL) {
+            scsi->enabled = 0;
+        }
+    }
     scsiDeviceReset(scsi);
     return scsi;
 }
@@ -194,11 +182,17 @@ SCSIDEVICE* scsiDeviceCreate(int scsiId, int diskId, UInt8* buf, char* name, int
 void scsiDeviceDestroy(SCSIDEVICE* scsi)
 {
     SCSILOG1("hdd %d: close\n", scsi->scsiId);
+    if (scsi->deviceType == SDT_CDROM) {
+        archCdromDestroy(scsi->cdrom);
+    }
     free(scsi);
 }
 
 void scsiDeviceReset(SCSIDEVICE* scsi)
 {
+    if (scsi->deviceType == SDT_CDROM) {
+        archCdromHwReset(scsi->cdrom);
+    }
     scsi->changed       = 0;
     scsi->keycode       = 0;
     scsi->sector        = 0;
@@ -221,11 +215,18 @@ void scsiDeviceBusReset(SCSIDEVICE* scsi)
     SCSILOG1("SCSI %d: bus reset\n", scsi->scsiId);
     scsi->keycode = 0;
     scsi->reset = (scsi->mode & MODE_UNITATTENTION) ? 1 : 0;
+    if (scsi->deviceType == SDT_CDROM) {
+        archCdromBusReset(scsi->cdrom);
+    }
 }
 
 void scsiDeviceDisconnect(SCSIDEVICE* scsi)
 {
-    ledSetHd(0);
+    if (scsi->deviceType != SDT_CDROM) {
+        ledSetHd(0);
+    } else {
+        archCdromDisconnect(scsi->cdrom);
+    }
 }
 
 void scsiDeviceEnable(SCSIDEVICE* scsi, int enable)
@@ -248,7 +249,7 @@ static int scsiDeviceGetReady(SCSIDEVICE* scsi)
     if (diskPresent(scsi->diskId)) {
         return 1;
     }
-    scsi->keycode = SENSE_MediumNotPresent;
+    scsi->keycode = SENSE_MEDIUM_NOT_PRESENT;
     return 0;
 }
 
@@ -297,7 +298,7 @@ static void scsiDeviceTestUnitReady(SCSIDEVICE* scsi)
     if ((scsi->mode & MODE_NOVAXIS) == 0) {
         if (scsiDeviceGetReady(scsi) && scsi->changed && (scsi->mode & MODE_MEGASCSI)) {
             // Disk change is surely sent for the driver of MEGA-SCSI.
-            scsi->keycode = SENSE_PowerOn;
+            scsi->keycode = SENSE_POWER_ON;
         }
     }
     scsi->changed = 0;
@@ -486,7 +487,7 @@ static int scsiDeviceModeSense(SCSIDEVICE* scsi)
         }
         return length;
     }
-    scsi->keycode = SENSE_InvalidCommandCode;
+    scsi->keycode = SENSE_INVALID_COMMAND_CODE;
     return 0;
 }
 
@@ -498,13 +499,13 @@ static int scsiDeviceRequestSense(SCSIDEVICE* scsi)
 
     if (scsi->reset) {
         scsi->reset = 0;
-        keycode = SENSE_PowerOn;
+        keycode = SENSE_POWER_ON;
     } else {
         keycode = scsi->keycode;
     }
 
-    SCSILOG1("Requeset Sense: keycode = %X\n", keycode);
-    scsi->keycode = SENSE_NoSense;
+    SCSILOG1("Request Sense: keycode = %X\n", keycode);
+    scsi->keycode = SENSE_NO_SENSE;
 
     memset(buffer + 1, 0, 17);
     if (length == 0) {
@@ -528,7 +529,7 @@ static int scsiDeviceCheckReadOnly(SCSIDEVICE* scsi)
 {
     int result = diskReadOnly(scsi->diskId);
     if (result) {
-        scsi->keycode = SENSE_WriteProtect;
+        scsi->keycode = SENSE_WRITE_PROTECT;
     }
     return result;
 }
@@ -539,17 +540,13 @@ static int scsiDeviceReadCapacity(SCSIDEVICE* scsi)
     UInt8* buffer = scsi->buffer;
 
     if (block == 0) {
-        scsi->keycode = SENSE_MediumNotPresent;
+        scsi->keycode = SENSE_MEDIUM_NOT_PRESENT;
         SCSILOG1("hdd %d: drive not ready\n", scsi->scsiId);
         return 0;
     }
 
     SCSILOG1("total block: %u\n", (unsigned int)block);
-/*
-    if (scsi->sectorSize == 1024) {
-        block >>= 1;
-    }
-*/
+
     --block;
     buffer[0] = (UInt8)((block >> 24) & 0xff);
     buffer[1] = (UInt8)((block >> 16) & 0xff);
@@ -606,7 +603,7 @@ static int scsiDeviceBlueMSX(SCSIDEVICE* scsi)
         SCSILOG1("file info:\n%s\n", buffer + 2);
         return length + 3;  // + \0
     }
-    scsi->keycode = SENSE_InvalidCommandCode;
+    scsi->keycode = SENSE_INVALID_COMMAND_CODE;
     return 0;
 }
 #endif
@@ -615,7 +612,7 @@ static int scsiDeviceCheckAddress(SCSIDEVICE* scsi)
 {
     int total = _diskGetTotalSectors(scsi->diskId);
     if (total == 0) {
-        scsi->keycode = SENSE_MediumNotPresent;
+        scsi->keycode = SENSE_MEDIUM_NOT_PRESENT;
         SCSILOG1("hdd %d: drive not ready\n", scsi->scsiId);
         return 0;
     }
@@ -625,7 +622,7 @@ static int scsiDeviceCheckAddress(SCSIDEVICE* scsi)
         return 1;
     }
     SCSILOG1("hdd %d: IllegalBlockAddress\n", scsi->scsiId);
-    scsi->keycode = SENSE_IllegalBlockAddress;
+    scsi->keycode = SENSE_ILLEGAL_BLOCK_ADDRESS;
     return 0;
 }
 
@@ -652,7 +649,7 @@ static int scsiDeviceReadSector(SCSIDEVICE* scsi, int* blocks)
         return counter;
     }
     *blocks = 0;
-    scsi->keycode = SENSE_UnrecoveredReadError;
+    scsi->keycode = SENSE_UNRECOVERED_READ_ERROR;
     return 0;
 }
 
@@ -698,7 +695,7 @@ static int scsiDeviceWriteSector(SCSIDEVICE* scsi, int* blocks)
         }
         return counter;
     }
-    scsi->keycode = SENSE_WriteFault;
+    scsi->keycode = SENSE_WRITE_FAULT;
     *blocks = 0;
     return 0;
 }
@@ -722,27 +719,50 @@ static void scsiDeviceFormatUnit(SCSIDEVICE* scsi)
             scsi->reset   = 1;
             scsi->changed = 1;
         } else {
-            scsi->keycode = SENSE_WriteFault;
+            scsi->keycode = SENSE_WRITE_FAULT;
         }
     }
 }
 
 UInt8 scsiDeviceGetStatusCode(SCSIDEVICE* scsi)
 {
-    UInt8 result = scsi->keycode ? STATUS_CHECK_CONDITION : STATUS_GOOD;
+    UInt8 result;
+    if (scsi->deviceType != SDT_CDROM) {
+        result = scsi->keycode ? SCSIST_CHECK_CONDITION : SCSIST_GOOD;
+    } else {
+        result = archCdromGetStatusCode(scsi->cdrom);
+    }
     SCSILOG1("SCSI status code: %x\n", result);
     return result;
 }
 
-int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks)
+int scsiDeviceExecuteCmd(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, int* blocks)
 {
     int counter;
 
     SCSILOG1("SCSI Command: %x\n", cdb[0]);
-    memcpy(scsi->cdb, cdb, 10);
+    memcpy(scsi->cdb, cdb, 12);
     scsi->message = 0;
     *phase = Status;
     *blocks = 0;
+
+    if (scsi->deviceType == SDT_CDROM) {
+        int retval;
+        scsi->keycode = SENSE_NO_SENSE;
+        *phase = Execute;
+        retval = archCdromExecCmd(scsi->cdrom, cdb, scsi->buffer, BUFFER_SIZE);
+        switch (retval) {
+        case 0:
+            *phase = Status;
+            break;
+        case -1:
+            break;
+        default:
+            *phase = DataIn;
+            return retval;
+        }
+        return 0;
+    }
 
     scsiDeviceDiskChanged(scsi);
 
@@ -750,7 +770,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, in
     if (scsi->reset && (scsi->mode & MODE_UNITATTENTION) &&
        (cdb[0] != SCSIOP_INQUIRY) && (cdb[0] != SCSIOP_REQUEST_SENSE)) {
         scsi->reset = 0;
-        scsi->keycode = SENSE_PowerOn;
+        scsi->keycode = SENSE_POWER_ON;
         if (cdb[0] == SCSIOP_TEST_UNIT_READY) {
             scsi->changed = 0;
         }
@@ -761,24 +781,20 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, in
     // check LUN
     if (((cdb[1] & 0xe0) || scsi->lun) && (cdb[0] != SCSIOP_REQUEST_SENSE) &&
         !(cdb[0] == SCSIOP_INQUIRY && !(scsi->mode & MODE_NOVAXIS))) {
-        scsi->keycode = SENSE_InvalidLUN;
+        scsi->keycode = SENSE_INVALID_LUN;
         SCSILOG("check LUN error\n");
         return 0;
     }
 
     if (cdb[0] != SCSIOP_REQUEST_SENSE) {
-        scsi->keycode = SENSE_NoSense;
+        scsi->keycode = SENSE_NO_SENSE;
     }
 
     if (cdb[0] < SCSIOP_GROUP1) {
         scsi->sector = ((cdb[1] & 0x1f) << 16) |
                        (cdb[2] << 8) | cdb[3];
         scsi->length = cdb[4];
-/*
-        if (scsi->sectorSize == 1024) {
-            scsi->sector *= 2;
-        }
-*/
+
         switch (cdb[0]) {
         case SCSIOP_TEST_UNIT_READY:
             SCSILOG("TestUnitReady\n");
@@ -874,11 +890,7 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, in
         scsi->sector = (cdb[2] << 24) | (cdb[3] << 16) |
                        (cdb[4] << 8)  |  cdb[5];
         scsi->length = (cdb[7] << 8) + cdb[8];
-/*
-        if (scsi->sectorSize == 1024) {
-            scsi->sector *= 2;
-        }
-*/
+
         switch (cdb[0]) {
         case SCSIOP_READ10:
             SCSILOG2("Read10: %d %d\n", scsi->sector, scsi->length);
@@ -935,8 +947,21 @@ int scsiDeviceExecuteCommand(SCSIDEVICE* scsi, UInt8* cdb, SCSI_PHASE* phase, in
     }
 
     SCSILOG1("unsupport command %x\n", cdb[0]);
-    scsi->keycode = SENSE_InvalidCommandCode;
+    scsi->keycode = SENSE_INVALID_COMMAND_CODE;
     return 0;
+}
+
+int scsiDeviceExecutingCmd(SCSIDEVICE* scsi, SCSI_PHASE* phase, int* blocks)
+{
+    int result = 0;
+
+    if (archCdromIsXferComplete(scsi->cdrom, &result)) {
+        *phase = result ? DataIn : Status;
+    } else {
+        *phase = Execute;
+    }
+    *blocks = 0;
+    return result;
 }
 
 UInt8 scsiDeviceMsgIn(SCSIDEVICE* scsi)
@@ -965,7 +990,7 @@ int scsiDeviceMsgOut(SCSIDEVICE* scsi, UInt8 value)
 
     switch (value) {
     case MSG_INITIATOR_DETECT_ERROR:
-        scsi->keycode = SENSE_InitiatorDetectedErr;
+        scsi->keycode = SENSE_INITIATOR_DETECTED_ERR;
         return 6;
 
     case MSG_BUS_DEVICE_RESET:
@@ -1004,6 +1029,10 @@ void scsiDeviceSaveState(SCSIDEVICE* scsi)
     saveStateSetBuffer(state, "fileName", scsi->disk.fileName, strlen(scsi->disk.fileName) + 1);
     saveStateSetBuffer(state, "fileNameInZip", scsi->disk.fileNameInZip, strlen(scsi->disk.fileNameInZip) + 1);
     saveStateClose(state);
+
+    if (scsi->deviceType == SDT_CDROM) {
+        archCdromSaveState(scsi->cdrom);
+    }
 }
 
 void scsiDeviceLoadState(SCSIDEVICE* scsi)
@@ -1030,5 +1059,9 @@ void scsiDeviceLoadState(SCSIDEVICE* scsi)
     saveStateClose(state);
 
     scsi->changeCheck2  = scsi->mode & MODE_CHECK2;
+
+    if (scsi->deviceType == SDT_CDROM) {
+        archCdromLoadState(scsi->cdrom);
+    }
 }
 

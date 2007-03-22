@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -179,6 +179,7 @@ char* langMenuPropsControls();
 char* langMenuPropsPerformance();
 char* langMenuPropsSettings();
 char* langMenuPropsFile();
+char* langMenuPropsDisk();
 char* langMenuPropsLanguage();
 char* langMenuPropsPorts();
 
@@ -310,6 +311,7 @@ char* langPropControls();
 char* langPropPerformance();
 char* langPropSettings();
 char* langPropFile();
+char* langPropDisk();
 char* langPropPorts();
 
 char* langPropEmuGeneralGB();
@@ -400,6 +402,12 @@ char* langPropSettDefDrive();
 char* langPropThemeGB();
 char* langPropTheme();
 
+char* langPropCdromGB();
+char* langPropCdromMethod();
+char* langPropCdromMethodNone();
+char* langPropCdromMethodIoctl();
+char* langPropCdromMethodAspi();
+char* langPropCdromDrive();
 
 //----------------------
 // Dropdown related lines

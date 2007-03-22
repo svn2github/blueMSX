@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2007-03-16 07:38:45 $
+** $Date: 2007-03-22 10:55:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 #include "Machine.h"
 #include "Board.h"
 #include "Win32Midi.h"
+#include "Win32Cdrom.h"
 
 static HWND hDlgSound = NULL;
 static int propModified = 0;
@@ -1510,6 +1511,82 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     return FALSE;
 }
 
+static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    static Properties* pProperties;
+    int index, drvidx;
+    const char* list;
+    char str[8];
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        if (!centered) {
+            updateDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES, 0, 1);
+            centered = 1;
+        }
+        pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMGROUPBOX), langPropCdromGB());
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMMETHODTEXT), langPropCdromMethod());
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMDRIVETEXT), langPropCdromDrive());
+        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodNone());
+        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETITEMDATA, 0, P_CDROM_DRVNONE);
+
+        drvidx = 0;
+        list = cdromGetDriveListIoctl();
+        if (list && list[0]) {
+            const char* p = list;
+            index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodIoctl());
+            SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETITEMDATA, index, P_CDROM_DRVIOCTL);
+            while (*p) {
+                sprintf(str, "%c:", *p);
+                index = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_ADDSTRING, 0, (LPARAM)str);
+                SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_SETITEMDATA, index, (LPARAM)*p);
+                if (pProperties->diskdrive.cdromDrive == (int)*p) {
+                    drvidx = index;
+                }
+                p++;
+            }
+            index = (pProperties->diskdrive.cdromMethod == P_CDROM_DRVIOCTL) ? P_CDROM_DRVIOCTL : P_CDROM_DRVNONE;
+        } else {
+            EnableWindow(GetDlgItem(hDlg, IDC_CDROMMETHODLIST), FALSE);
+            EnableWindow(GetDlgItem(hDlg, IDC_CDROMDRIVELIST), FALSE);
+            index = 0;
+        }
+        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETCURSEL, index, 0);
+        SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_SETCURSEL, drvidx, 0);
+
+        return FALSE;
+
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+        case IDC_CDROMMETHODLIST:
+            index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETCURSEL, 0, 0);
+            EnableWindow(GetDlgItem(hDlg, IDC_CDROMDRIVELIST), index == P_CDROM_DRVIOCTL);
+            return TRUE;
+        }
+        return FALSE;
+
+    case WM_NOTIFY:
+        if (((NMHDR FAR*)lParam)->code == PSN_APPLY || ((NMHDR FAR*)lParam)->code == PSN_QUERYCANCEL) {
+            saveDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES);
+        }
+
+        if ((((NMHDR FAR *)lParam)->code) != PSN_APPLY) {
+            return FALSE;
+        }
+
+        index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETCURSEL, 0, 0);
+        pProperties->diskdrive.cdromMethod     = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETITEMDATA, index, 0);
+        index = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETCURSEL, 0, 0);
+        pProperties->diskdrive.cdromDrive = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETITEMDATA, index, 0);
+
+        propModified = 1;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1819,10 +1896,9 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video) {
 	HINSTANCE       hInst = (HINSTANCE)GetModuleHandle(NULL);
-    PROPSHEETPAGE   psp[7];
+    PROPSHEETPAGE   psp[8];
     PROPSHEETHEADER psh;
     Properties oldProp = *pProperties;
 
@@ -1884,22 +1960,32 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
     psp[5].dwSize = sizeof(PROPSHEETPAGE);
     psp[5].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[5].hInstance = hInst;
-    psp[5].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
+    psp[5].pszTemplate = MAKEINTRESOURCE(IDD_DISKEMU);
     psp[5].pszIcon = NULL;
-    psp[5].pfnDlgProc = settingsDlgProc;
-    psp[5].pszTitle = langPropSettings();
+    psp[5].pfnDlgProc = diskDlgProc;
+    psp[5].pszTitle = langPropDisk();
     psp[5].lParam = (LPARAM)pProperties;
     psp[5].pfnCallback = NULL;
 
     psp[6].dwSize = sizeof(PROPSHEETPAGE);
     psp[6].dwFlags = PSP_USEICONID | PSP_USETITLE;
     psp[6].hInstance = hInst;
-    psp[6].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
+    psp[6].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
     psp[6].pszIcon = NULL;
-    psp[6].pfnDlgProc = portsDlgProc;
-    psp[6].pszTitle = langPropPorts();
+    psp[6].pfnDlgProc = settingsDlgProc;
+    psp[6].pszTitle = langPropSettings();
     psp[6].lParam = (LPARAM)pProperties;
     psp[6].pfnCallback = NULL;
+
+    psp[7].dwSize = sizeof(PROPSHEETPAGE);
+    psp[7].dwFlags = PSP_USEICONID | PSP_USETITLE;
+    psp[7].hInstance = hInst;
+    psp[7].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
+    psp[7].pszIcon = NULL;
+    psp[7].pfnDlgProc = portsDlgProc;
+    psp[7].pszTitle = langPropPorts();
+    psp[7].lParam = (LPARAM)pProperties;
+    psp[7].pfnCallback = NULL;
     
     psh.dwSize = sizeof(PROPSHEETHEADER);
     psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE | PSH_NOAPPLYNOW;

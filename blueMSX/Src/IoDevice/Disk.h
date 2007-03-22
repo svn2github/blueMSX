@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2007-03-17 05:55:48 $
+** $Date: 2007-03-22 10:55:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,6 @@
 #define DISK_H
 
 #include "MsxTypes.h"
-#include <stdio.h>
 
 #define MAX_FDC_COUNT            2
 

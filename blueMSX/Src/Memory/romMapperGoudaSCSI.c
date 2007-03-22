@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperGoudaSCSI.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-03 17:29:11 $
+** $Date: 2007-03-22 10:55:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -167,9 +167,9 @@ int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData,
     slotMapPage(slot, sslot, startPage    , rm->romData         , 1, 0);
     slotMapPage(slot, sslot, startPage + 1, rm->romData + 0x2000, 1, 0);
 
-    ioPortRegister(PORT_BASE + 0, (IoPortRead)wd33c93Read, (IoPortWrite)wd33c93Write, rm->wd33c93);
-    ioPortRegister(PORT_BASE + 1, (IoPortRead)wd33c93Read, (IoPortWrite)wd33c93Write, rm->wd33c93);
-    ioPortRegister(PORT_BASE + 2, (IoPortRead)dummy,       (IoPortWrite)sbicReset,    rm);
+    ioPortRegister(PORT_BASE + 0, (IoPortRead)wd33c93ReadAuxStatus, (IoPortWrite)wd33c93WriteAdr, rm->wd33c93);
+    ioPortRegister(PORT_BASE + 1, (IoPortRead)wd33c93ReadCtrl, (IoPortWrite)wd33c93WriteCtrl, rm->wd33c93);
+    ioPortRegister(PORT_BASE + 2, (IoPortRead)dummy, (IoPortWrite)sbicReset, rm);
 
     return 1;
 }
