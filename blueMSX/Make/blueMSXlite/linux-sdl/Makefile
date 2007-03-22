@@ -45,6 +45,15 @@ OBJS        = $(patsubst %.rc,%.res,$(patsubst %.cxx,%.o,$(patsubst %.cpp,%.o,$(
 OUTPUT_OBJS = $(addprefix $(OUTPUT_DIR)/, $(OBJS))
 
 #
+# SDL specific flags
+#
+SDL_CFLAGS := $(shell sdl-config --cflags)
+SDL_LDFLAGS := $(shell sdl-config --libs)
+CFLAGS += $(SDL_CFLAGS)
+CPPFLAGS += $(SDL_CFLAGS)
+LDFLAGS += $(SDL_LDFLAGS)
+
+#
 # Include paths
 #
 INCLUDE = 
