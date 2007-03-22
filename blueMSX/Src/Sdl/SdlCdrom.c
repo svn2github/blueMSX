@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlCdrom.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-22 10:55:09 $
+** $Date: 2007-03-22 20:30:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,7 +29,9 @@
 #include "ScsiDefs.h"
 #include <stdlib.h>
 
-struct ArchCdrom {};
+struct ArchCdrom {
+    int dummy;
+};
 
 void archCdromDestroy(ArchCdrom* cdrom) {}
 void archCdromHwReset(ArchCdrom* cdrom) {}

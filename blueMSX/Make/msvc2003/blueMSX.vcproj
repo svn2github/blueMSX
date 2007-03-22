@@ -253,6 +253,9 @@
 					RelativePath="..\..\Src\Win32\Win32Bitmap.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Win32\Win32Cdrom.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Win32\Win32Dir.cpp">
 				</File>
 				<File
@@ -348,6 +351,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Avi.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Win32\Win32Cdrom.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Win32\Win32Common.h">
@@ -1858,6 +1864,9 @@ buildnumber.exe
 			Filter="">
 			<File
 				RelativePath="..\..\Src\Arch\ArchBitmap.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\Arch\ArchCdrom.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchDialog.h">

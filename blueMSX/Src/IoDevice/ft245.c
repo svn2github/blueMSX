@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ft245.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-03-21 00:01:14 $
+** $Date: 2007-03-22 20:30:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -161,6 +161,7 @@ void ft245UsbHostLoadState(Ft245UsbHost* host)
 static void ft245UsbHostSendCommand(Ft245UsbHost* host, UInt8 command)
 {
     printf("Sending USB command %d\n", command);
+//    if (command == 10) actionEmuTogglePause();
     host->writeCb(host->ref, 0xaf);
     host->writeCb(host->ref, 0x05);
     host->writeCb(host->ref, command);

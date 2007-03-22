@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-22 10:55:09 $
+** $Date: 2007-03-22 20:30:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -253,7 +253,13 @@ ArchCdrom* archCdromCreate(CdromXferCompCb xferCompCb, void* ref)
 
     if (driveCnt == 0) {
         tocbuf = malloc(sizeof(CDROM_TOC) + 0x10);
+#if 0 // Orignial code
+        // FIXME: tocbuf is of type void* so vc fails because the size of void is unknown
         toc    = (CDROM_TOC*)((unsigned int)(tocbuf + 0x10) & ~0x0f);
+#else
+        // Is it correct to treat the tocbuf as a char*
+        toc    = (CDROM_TOC*)((unsigned int)((char*)tocbuf + 0x10) & ~0x0f);
+#endif
     }
 
     driveCnt++;
@@ -362,8 +368,9 @@ static DWORD execCmdThread(LPVOID lpvoid)
     case SCSIOP_PLAY_AUDIO:
         {
             int i = 9;
+            UCHAR* p;
             stop = 1;
-            UCHAR* p = &cdb[1];
+            p = &cdb[1];
             while (i) {
                 if (*p) {
                     stop = 0;

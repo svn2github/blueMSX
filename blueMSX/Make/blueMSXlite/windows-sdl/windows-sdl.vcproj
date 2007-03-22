@@ -124,6 +124,9 @@
 				RelativePath="..\..\..\Src\Arch\ArchBitmap.h">
 			</File>
 			<File
+				RelativePath="..\..\..\Src\Arch\ArchCdrom.h">
+			</File>
+			<File
 				RelativePath="..\..\..\Src\Arch\ArchControls.h">
 			</File>
 			<File
@@ -180,6 +183,9 @@
 			Filter="">
 			<File
 				RelativePath="..\..\..\Src\Sdl\bluemsxlite.c">
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Sdl\SdlCdrom.c">
 			</File>
 			<File
 				RelativePath="..\..\..\Src\Sdl\SdlDialog.c">

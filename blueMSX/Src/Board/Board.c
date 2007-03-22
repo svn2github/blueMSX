@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2007-03-20 02:30:31 $
+** $Date: 2007-03-22 20:30:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1760,6 +1760,21 @@ void boardTimerAdd(BoardTimer* timer, UInt32 timeout)
     while (timeout - timeAnchor > refTimer->timeout - timeAnchor) {
         refTimer = refTimer->next;
     }
+#if 0
+    {
+        static int highWatermark = 0;
+        int cnt = 0;
+        BoardTimer* t = timerList->next;
+        while (t != timerList) {
+            cnt++;
+            t = t->next;
+        }
+        if (cnt > highWatermark) {
+            highWatermark = cnt;
+            printf("HIGH: %d\n", highWatermark);
+        }
+    }
+#endif
 
     timer->timeout       = timeout;
     timer->next          = refTimer;
