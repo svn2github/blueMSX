@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-22 20:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -70,6 +70,7 @@ const char* stripPath(const char* filename) {
     return filename;
 }
 
+#ifndef NO_FILE_HISTORY
 void updateFileHistory(char* history, RomType* historyType, char* filename, RomType romType) {
     char fname[PROP_MAXPATH];
     int i = 0;
@@ -165,6 +166,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
         }
     }
 }
+#endif
 
 int fileExist(char* fileName, char* zipFile) {
     if (fileName == NULL || *fileName == 0) {

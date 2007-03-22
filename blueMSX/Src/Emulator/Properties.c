@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2007-03-22 10:55:07 $
+** $Date: 2007-03-22 20:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -412,6 +412,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->ports.Eth.disabled       = 0;
     strcpy(properties->ports.Eth.macAddress, "00:00:00:00:00:00");
 
+#ifndef NO_FILE_HISTORY
     for (i = 0; i < MAX_HISTORY; i++) {
         properties->filehistory.cartridge[0][i][0] = 0;
         properties->filehistory.cartridgeType[0][i] = ROM_UNKNOWN;
@@ -425,6 +426,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->filehistory.quicksave[0] = 0;
     properties->filehistory.videocap[0]  = 0;
     properties->filehistory.count        = 10;
+#endif
 }
 
 #define ROOT_ELEMENT "config"
@@ -619,9 +621,14 @@ static void propLoad(Properties* properties)
 
     GET_ENUM_VALUE_2(diskdrive, cdromMethod, CdromDrvPair);
     GET_INT_VALUE_2(diskdrive, cdromDrive);
+    
+    GET_INT_VALUE_2(cassette, showCustomFiles);
+    GET_INT_VALUE_2(cassette, readOnly);
+    GET_INT_VALUE_2(cassette, autoRewind);
 
     iniFileClose();
     
+#ifndef NO_FILE_HISTORY
     iniFileOpen(histFilename);
     
     GET_STR_VALUE_2(cartridge, defDir);
@@ -633,9 +640,6 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(diskdrive, quickStartDrive);
     
     GET_STR_VALUE_2(cassette, defDir);
-    GET_INT_VALUE_2(cassette, showCustomFiles);
-    GET_INT_VALUE_2(cassette, readOnly);
-    GET_INT_VALUE_2(cassette, autoRewind);
 
     for (i = 0; i < PROP_MAX_CARTS; i++) {
         GET_STR_VALUE_2i1(media, carts, i, fileName);
@@ -683,6 +687,7 @@ static void propLoad(Properties* properties)
     }
     
     iniFileClose();
+#endif
 }
 
 void propSave(Properties* properties) 
@@ -831,9 +836,14 @@ void propSave(Properties* properties)
 
     SET_ENUM_VALUE_2(diskdrive, cdromMethod, CdromDrvPair);
     SET_INT_VALUE_2(diskdrive, cdromDrive);
+    
+    SET_INT_VALUE_2(cassette, showCustomFiles);
+    SET_INT_VALUE_2(cassette, readOnly);
+    SET_INT_VALUE_2(cassette, autoRewind);
 
     iniFileClose();
 
+#ifndef NO_FILE_HISTORY
     iniFileOpen(histFilename);
     
     SET_STR_VALUE_2(cartridge, defDir);
@@ -845,9 +855,6 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(diskdrive, quickStartDrive);
     
     SET_STR_VALUE_2(cassette, defDir);
-    SET_INT_VALUE_2(cassette, showCustomFiles);
-    SET_INT_VALUE_2(cassette, readOnly);
-    SET_INT_VALUE_2(cassette, autoRewind);
 
     for (i = 0; i < PROP_MAX_CARTS; i++) {
         SET_STR_VALUE_2i1(media, carts, i, fileName);
@@ -895,6 +902,7 @@ void propSave(Properties* properties)
     }
     
     iniFileClose();
+#endif
 }
 
 static Properties* globalProperties = NULL;

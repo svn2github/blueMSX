@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:14 $
+** $Date: 2007-03-22 20:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,8 +33,12 @@
 
 const char* stripPath(const char* filename);
 const char* stripPathExt(const char* filename);
+
+#ifndef NO_FILE_HISTORY
 void verifyFileHistory(char* history, RomType* historyType);
 void updateFileHistory(char* history, RomType* historyType, char* filename, RomType romType);
+#endif
+
 int tempStateExists();
 int fileExist(char* filename, char* zipFile);
 char* fileGetNext(char* filename, char* zipFile);

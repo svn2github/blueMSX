@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2007-03-16 07:38:43 $
+** $Date: 2007-03-22 20:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -214,17 +214,21 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
         strcpy(properties->media.carts[0].fileName, filename);
         strcpy(properties->media.carts[0].fileNameInZip, romName);
         properties->media.carts[0].type = romType;
+#ifndef NO_FILE_HISTORY
         updateFileHistory(*properties->filehistory.cartridge[0], 
                           properties->filehistory.cartridgeType[0], 
                           filename, romType);
+#endif
     }
     else {
         strcpy(properties->media.carts[1].fileName, filename);
         strcpy(properties->media.carts[1].fileNameInZip, romName);
         properties->media.carts[1].type = romType;
+#ifndef NO_FILE_HISTORY
         updateFileHistory(*properties->filehistory.cartridge[1], 
                           properties->filehistory.cartridgeType[1], 
                           filename, romType);
+#endif
     }
 
     if (autostart && !noautostart) {
@@ -341,9 +345,11 @@ int insertDiskette(Properties* properties, int drive, const char* fname, const c
     strcpy(properties->media.disks[drive].fileName, filename);
     strcpy(properties->media.disks[drive].fileNameInZip, diskName);
     updateExtendedDiskName(drive, properties->media.disks[drive].fileName, properties->media.disks[drive].fileNameInZip);
+#ifndef NO_FILE_HISTORY
     if (drive < 2) {
         updateFileHistory(*properties->filehistory.diskdrive[drive], NULL, filename, 0);
     }
+#endif
 
     if (autostart && !noautostart) {
         emulatorStop();
@@ -398,7 +404,9 @@ int insertCassette(Properties* properties, int drive, const char* fname, const c
     strcpy(properties->media.tapes[0].fileName, filename);
     strcpy(properties->media.tapes[0].fileNameInZip, tapeName);
     updateExtendedCasName(0, properties->media.tapes[0].fileName, properties->media.tapes[0].fileNameInZip);
+#ifndef NO_FILE_HISTORY
     updateFileHistory(*properties->filehistory.cassette[0], NULL, filename, 0);
+#endif
 
     if (autostart && !noautostart) {
         emulatorStart(NULL);

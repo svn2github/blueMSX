@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2007-03-22 10:55:07 $
+** $Date: 2007-03-22 20:50:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -342,11 +342,13 @@ typedef struct {
 } CassetteProperties;
 
 typedef struct {
+#ifndef NO_FILE_HISTORY
     int     count;
     char    cartridge[2][MAX_HISTORY][PROP_MAXPATH];
     RomType cartridgeType[2][MAX_HISTORY];
     char    diskdrive[2][MAX_HISTORY][PROP_MAXPATH];
     char    cassette[1][MAX_HISTORY][PROP_MAXPATH];
+#endif
     char    quicksave[PROP_MAXPATH];
     char    videocap[PROP_MAXPATH];
 } FileHistory;
