@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2007-03-22 23:15:15 $
+** $Date: 2007-03-23 05:13:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,9 +75,9 @@ UInt8* spritesLine(VDP* vdp, int line) {
 
     idx = line;
 
-    line -= vdp->firstLine;
-
     bufIndex = line & 1;
+
+    line -= vdp->firstLine;
 
 //    vdp->vdpStatus[0] &= 0xbf;
 
