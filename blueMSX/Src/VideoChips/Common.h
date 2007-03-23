@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2007-03-22 23:15:15 $
+** $Date: 2007-03-23 20:47:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -371,14 +371,14 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 
     if (X == -1) {
         X++;
-        linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 1);
+        linePtr0w = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 1);
         y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
         x = 0;
         patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
         shift = 0;
     }
 
-    if (linePtr0p == NULL) {
+    if (linePtr0w == NULL) {
         return;
     }
 
@@ -392,15 +392,15 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         while (X < X2) {
             int j;
             for (j = 0; j < 2; j++) {
-                linePtr0p[0] = bgColor;
-                linePtr0p[1] = bgColor;
-                linePtr0p[2] = bgColor;
-                linePtr0p[3] = bgColor;
-                linePtr0p[4] = bgColor;
-                linePtr0p[5] = bgColor;
-                linePtr0p[6] = bgColor;
-                linePtr0p[7] = bgColor;
-                linePtr0p += 8; 
+                linePtr0w[0] = bgColor;
+                linePtr0w[1] = bgColor;
+                linePtr0w[2] = bgColor;
+                linePtr0w[3] = bgColor;
+                linePtr0w[4] = bgColor;
+                linePtr0w[5] = bgColor;
+                linePtr0w[6] = bgColor;
+                linePtr0w[7] = bgColor;
+                linePtr0w += 8; 
             }
             X++;
         }
@@ -411,15 +411,15 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
                 UInt16 bgColor = vdp->palette[vdp->BGColor];
                 int j;
                 for (j = 0; j < 2; j++) {
-                    linePtr0p[0] = bgColor;
-                    linePtr0p[1] = bgColor;
-                    linePtr0p[2] = bgColor;
-                    linePtr0p[3] = bgColor;
-                    linePtr0p[4] = bgColor;
-                    linePtr0p[5] = bgColor;
-                    linePtr0p[6] = bgColor;
-                    linePtr0p[7] = bgColor;
-                    linePtr0p += 8; 
+                    linePtr0w[0] = bgColor;
+                    linePtr0w[1] = bgColor;
+                    linePtr0w[2] = bgColor;
+                    linePtr0w[3] = bgColor;
+                    linePtr0w[4] = bgColor;
+                    linePtr0w[5] = bgColor;
+                    linePtr0w[6] = bgColor;
+                    linePtr0w[7] = bgColor;
+                    linePtr0w += 8; 
                 }
                 X++;
             }
@@ -448,7 +448,7 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
                         x++;
                     }
 
-                    linePtr0p[0] = color[(pattern >> --shift) & 1];
+                    linePtr0w[0] = color[(pattern >> --shift) & 1];
                     linePtr0p[1] = color[(pattern >> --shift) & 1];
                     linePtr0p += 2; 
                 }
@@ -1703,18 +1703,20 @@ static void RefreshLine10(VDP* vdp, int Y, int X, int X2)
         K=(t0 & 0x07) | ((t1 & 0x07) << 3);
         J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
-        switch (hscroll & 3) {
-        case 0:
-            col = sprLine[0]; y = t0 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-        case 1:
-            col = sprLine[1]; y = t1 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-        case 2:
-            col = sprLine[2]; y = t2 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
-        case 3:
-            col = sprLine[3]; y = t3 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+        if (vdp->screenOn && vdp->drawArea) {
+            switch (hscroll & 3) {
+            case 0:
+                col = sprLine[0]; y = t0 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            case 1:
+                col = sprLine[1]; y = t1 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            case 2:
+                col = sprLine[2]; y = t2 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            case 3:
+                col = sprLine[3]; y = t3 >> 3; *linePtr10++ = col ? vdp->palette[col >> 1] : y & 1 ? vdp->palette[y >> 1] : vdp->yjkColor[y][J][K];
+            }
+            sprLine += 4;
+            charTable += 2;
         }
-        sprLine += 4;
-        charTable += 2;
     }
 
     if (linePtr10 == NULL) {
@@ -1876,18 +1878,20 @@ static void RefreshLine12(VDP* vdp, int Y, int X, int X2)
         K=(t0 & 0x07) | ((t1 & 0x07) << 3);
         J=(t2 & 0x07) | ((t3 & 0x07) << 3);
 
-        switch (hscroll & 3) {
-        case 0:
-            col = sprLine[0]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
-        case 1:
-            col = sprLine[1]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
-        case 2:
-            col = sprLine[2]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
-        case 3:
-            col = sprLine[3]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
+        if (vdp->screenOn && vdp->drawArea) {
+            switch (hscroll & 3) {
+            case 0:
+                col = sprLine[0]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t0 >> 3][J][K];
+            case 1:
+                col = sprLine[1]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t1 >> 3][J][K];
+            case 2:
+                col = sprLine[2]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t2 >> 3][J][K];
+            case 3:
+                col = sprLine[3]; *linePtr12++ = col ? vdp->palette[col >> 1] : vdp->yjkColor[t3 >> 3][J][K];
+            }
+            sprLine += 4;
+            charTable += 2;
         }
-        sprLine += 4;
-        charTable += 2;
     }
 
     if (linePtr12 == NULL) {
