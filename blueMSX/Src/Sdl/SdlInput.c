@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlInput.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2007-03-21 22:26:25 $
+** $Date: 2007-03-23 17:55:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -72,6 +72,129 @@ static char currentConfigFile[512];
 #define SDLK_JOY2_DOWN     (SDLK_LAST + 10)
 #define SDLK_JOY2_LEFT     (SDLK_LAST + 11)
 #define SDLK_JOY2_RIGHT    (SDLK_LAST + 12)
+
+
+
+
+
+
+
+#if 0
+
+char* dik2str(int dikKey) 
+{
+    if (dikKey < 0 || dikKey >= KBD_TABLE_LEN) {
+        return "";
+    }
+    return dikStrings[dikKey];
+}
+
+void keyboardSaveConfig(char* configName)
+{
+    char fileName[512];
+    int i, n;
+    
+    if (configName[0] == 0) {
+        return;
+    }
+
+    sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+    
+    iniFileOpen(fileName);
+    for (n = 0; n < KBD_TABLE_NUM; n++) {
+        char profString[32];
+        sprintf(profString, "Keymapping-%d", n);
+        for (i = 0; i < EC_KEYCOUNT; i++) {
+            const char* keyCode = inputEventCodeToString(i);
+            const char* dikName = "";
+            int j;
+            for (j = 0; j < KBD_TABLE_LEN; j++) {
+                if (kbdTable[n][j] == i) {
+                    dikName = dik2str(j);
+                    break;
+                }
+            }
+            if (keyCode != NULL) {
+                char key[32] = { 0 };
+                strcat(key, keyCode);
+                strcat(key, " ");
+                iniFileWriteString(profString, key, (char*)dikName);
+//            WritePrivateProfileString(profString, keyCode, dikName, fileName);
+            }
+        }
+    
+        memcpy(kbdTableBackup[n], kbdTable[n], sizeof(kbdTableBackup[n]));
+    }
+    sprintf(currentConfigFile, configName);
+    iniFileClose();
+}
+int keyboardLoadConfig(char* configName)
+{
+    char fileName[MAX_PATH];
+    FILE* file;
+    int i;
+    int n;
+
+    keyboardResetKbd();
+
+    if (configName[0] == 0) {
+        sprintf(fileName, "%s/%s.config", keyboardConfigDir, DefaultConfigName);
+    }
+    else {
+        sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
+    }
+
+    file = fopen(fileName, "r");
+    if (file == NULL) {
+        if (kbdTable[0][DIK_NUMPADENTER] == 0) {
+            kbdTable[0][DIK_NUMPADENTER] = kbdTable[0][DIK_RETURN];
+        }
+        return 0;
+    }
+    fclose(file);
+
+    sprintf(currentConfigFile, *configName ? configName : DefaultConfigName);
+
+    iniFileOpen(fileName);
+
+    for (n = 0; n < KBD_TABLE_NUM; n++) {
+        char profString[32];
+        sprintf(profString, "Keymapping-%d", n);
+        for (i = 0; i < EC_KEYCOUNT; i++) {
+            const char* keyCode = inputEventCodeToString(i);
+            if (keyCode != NULL && *keyCode != 0) {
+                char dikName[256];
+                int dikKey;
+                char key[32] = { 0 };
+                strcat(key, keyCode);
+                strcat(key, " ");
+                iniFileGetString(profString, key, "", dikName, sizeof(dikName));
+//                GetPrivateProfileString(profString, keyCode, "", dikName, sizeof(dikName), fileName);
+                dikKey = str2dik(dikName);
+                if (dikKey > 0) {
+                    int j;
+                    for (j = 0; j < KBD_TABLE_LEN; j++) {
+                        if (kbdTable[n][j] == i) {
+                            kbdTable[n][j] = 0;
+                        }
+                    }
+                    kbdTable[n][dikKey] = i;
+                }
+            }
+        }
+    }
+    iniFileClose();
+
+    if (kbdTable[0][DIK_NUMPADENTER] == 0) {
+        kbdTable[0][DIK_NUMPADENTER] = kbdTable[0][DIK_RETURN];
+    }
+
+    return 1;
+}
+
+#endif
+
+
 
 
 // initKbdTable initializes the keyboard table with default keys

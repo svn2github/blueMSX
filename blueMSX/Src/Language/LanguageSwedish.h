@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,10 +88,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->fileRom                 = "Rom fil";
     ls->fileAll                 = "Alla Filer";
     ls->fileCpuState            = "CPU-tillstand";
-    ls->fileVideoCapture        = "Videoinspelning"; // New in 2.6
+    ls->fileVideoCapture        = "Videoinspelning"; 
     ls->fileDisk                = "Diskettfil";
     ls->fileCas                 = "Kasettfil";
-    ls->fileAvi                 = "Videofil";    // New in 2.6
+    ls->fileAvi                 = "Videofil";    
 
 
     //----------------------
@@ -106,7 +106,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
-    ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartSunriseIde      = "Sunrise";  
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -115,6 +119,9 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Sätt in Special";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Externt RAM";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Sätt in ny diskett fil";
     ls->menuDiskDirInsert       = "Sätt in mapp";
@@ -127,13 +134,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Sätt position";
     ls->menuCasRewind           = "Spola tillbaka";
 
-    ls->menuVideoLoad           = "Ladda...";             // New in 2.6
-    ls->menuVideoPlay           = "Spela upp senaste";   // New in 2.6
-    ls->menuVideoRecord         = "Spela in";              // New in 2.6
-    ls->menuVideoRecording      = "Spelar in";           // New in 2.6
-    ls->menuVideoRecAppend      = "Spela in (lagg till)";     // New in 2.6
-    ls->menuVideoStop           = "Stopp";                // New in 2.6
-    ls->menuVideoRender         = "Spara videofil";   // New in 2.6
+    ls->menuVideoLoad           = "Ladda...";             
+    ls->menuVideoPlay           = "Spela upp senaste";   
+    ls->menuVideoRecord         = "Spela in";              
+    ls->menuVideoRecording      = "Spelar in";           
+    ls->menuVideoRecAppend      = "Spela in (lagg till)";     
+    ls->menuVideoStop           = "Stopp";                
+    ls->menuVideoRender         = "Spara videofil";   
 
     ls->menuPrnFormfeed         = "Pappersmatning";
 
@@ -148,6 +155,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Prestanda";
     ls->menuPropsSettings       = "Inställningar";
     ls->menuPropsFile           = "Filer";
+    ls->menuPropsDisk           = "Enheter";               // New in 2.7
     ls->menuPropsLanguage       = "Språk";
     ls->menuPropsPorts          = "Portar";
     
@@ -157,7 +165,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuVideoInSource       = "Video in källa";
     ls->menuVideoInBitmap       = "Bitmap fil";
     
-    ls->menuEthInterface        = "Nätverksanslutning"; // New in 2.6
+    ls->menuEthInterface        = "Nätverksanslutning"; 
 
     ls->menuHelpHelp            = "Hjälp";
     ls->menuHelpAbout           = "Om blueMSX";
@@ -171,12 +179,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Snabbladda CPU-tillstand";
     ls->menuFileQSaveState      = "Snabbspara CPU-tillstand";
     ls->menuFileCaptureAudio    = "Spara ljud";
-    ls->menuFileCaptureVideo    = "Videoinspelning"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Videoinspelning"; 
     ls->menuFileScreenShot      = "Spara skärmdump";
     ls->menuFileExit            = "Avsluta";
 
     ls->menuFileHarddisk        = "Hårddisk";
     ls->menuFileHarddiskNoPesent= "Inga enheter tillgängliga";
+    ls->menuFileHarddiskRemoveAll= "Ta ur alla hårddiskar";    // New in 2.7
 
     ls->menuRunRun              = "Kör";
     ls->menuRunPause            = "Paus";
@@ -188,7 +197,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuToolsMachine        = "Konfigureringsverktyg";
     ls->menuToolsShortcuts      = "Kortkommando Verktyg";
     ls->menuToolsKeyboard       = "Tangentbordseditor";
-    ls->menuToolsCtrlEditor     = "Kontrollers / Tangenbordseditor"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "Kontrollers / Tangenbordseditor"; 
     ls->menuToolsMixer          = "Mixer";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
@@ -223,11 +232,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Välj en kassett fil:";
     ls->dlgLoadRomDskCasDesc    = "Välj en fil:";
     ls->dlgLoadState            = "Ladda CPU-tillstand";
-    ls->dlgLoadVideoCapture     = "Ladda videoinspelning";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Ladda videoinspelning";      
     ls->dlgSaveState            = "Spara CPU-tillstand";
     ls->dlgSaveCassette         = "blueMSX - Spara Kasett";
-    ls->dlgSaveVideoClipAs      = "Spara videoinspeling som...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Andel färdigt:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Spara videoinspeling som...";      
+    ls->dlgAmountCompleted      = "Andel färdigt:";          
     ls->dlgInsertRom1           = "Sätt in ROM cartridge i slot 1";
     ls->dlgInsertRom2           = "Sätt in ROM cartridge i slot 2";
     ls->dlgInsertDiskA          = "Sätt in diskett i diskettstation A";
@@ -235,7 +244,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Sätt in hårddisk";
     ls->dlgInsertCas            = "Sätt in kassettband";
     ls->dlgRomType              = "Rom Typ:";
-    ls->dlgDiskSize             = "Diskettstorlek:";             // New in 2.6
+    ls->dlgDiskSize             = "Diskettstorlek:";             
 
     ls->dlgTapeTitle            = "blueMSX - Kassettposition";
     ls->dlgTapeFrameText        = "Kassettposition";
@@ -259,7 +268,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Datum:";
     ls->dlgAboutCreat           = "Skapat av Daniel Vik";
     ls->dlgAboutDevel           = "UTVECKLARE\r\n========";
-    ls->dlgAboutThanks          = "TACK TILL\r\n=======";
+    ls->dlgAboutThanks          = "BIDRAGARE\r\n=======";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LICENS\r\n"
                                   "=====\r\n\r\n"
                                   "Denna programvara är erbjuden 'som den är', utan någon explicit eller "
@@ -270,7 +279,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgSavePreview          = "Förvisning";
     ls->dlgSaveDate             = "Tid Sparad:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Generera videofil...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Generera videofil...";  
 
 
     //----------------------
@@ -285,6 +294,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propPerformance         = "Prestanda";
     ls->propSettings            = "Inställningar";
     ls->propFile                = "Filer";
+    ls->propDisk                = "Enheter";              // New in 2.7
     ls->propPorts               = "Portar";
 
     ls->propEmuGeneralGB        = "Allmänt ";
@@ -375,6 +385,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Åtkomstmetod:";   // New in 2.7
+    ls->propCdromMethodNone     = "Ingen";           // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Enhet:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -437,7 +454,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Enkelsidig, 8 Sektorer";     
     ls->enumDiskSvi525Dbl        = "SVI-328\" 5.25 Dubbelsidig";           
     ls->enumDiskSvi525Sgl        = "SVI-328\" 5.25 Enkelsidig";   
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Enkelsidig";  // New in 2.6
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Enkelsidig";  
 
 
     //----------------------
@@ -597,11 +614,11 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Visa/Dölj Sprites";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
     ls->shortcutToggleCpuTrace  = "Slå på/av CPU trace";
-    ls->shortcutVideoLoad       = "Ladda...";             // New in 2.6
-    ls->shortcutVideoPlay       = "Spela upp senaste";   // New in 2.6
-    ls->shortcutVideoRecord     = "Spela in";              // New in 2.6
-    ls->shortcutVideoStop       = "Stopp";                // New in 2.6
-    ls->shortcutVideoRender     = "Spara videofil";   // New in 2.6
+    ls->shortcutVideoLoad       = "Ladda...";             
+    ls->shortcutVideoPlay       = "Spela upp senaste";   
+    ls->shortcutVideoRecord     = "Spela in";              
+    ls->shortcutVideoStop       = "Stopp";                
+    ls->shortcutVideoRender     = "Spara videofil";   
 
 
     //----------------------

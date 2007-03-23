@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,10 +90,10 @@ void langInitFinnish(LanguageStrings* ls)
     ls->fileRom                 = "ROM-tiedosto";
     ls->fileAll                 = "Kaikki tiedostot";
     ls->fileCpuState            = "Tilannetallenne";
-    ls->fileVideoCapture        = "Videokaappaus"; // New in 2.6
+    ls->fileVideoCapture        = "Videokaappaus"; 
     ls->fileDisk                = "Levytiedosto";
     ls->fileCas                 = "Kasettitiedosto";
-    ls->fileAvi                 = "Videopätkä";    // New in 2.6
+    ls->fileAvi                 = "Videopätkä";    
 
 
     //----------------------
@@ -108,7 +108,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
-    ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartSunriseIde      = "Sunrise";  
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Moduli";
     ls->menuCartSCCPlus         = "SCC+ Moduli";
     ls->menuCartFMPac           = "FM-PAC Moduli";
@@ -117,6 +121,9 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Erikoismoduli";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Ulkoinen muisti";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Uusi levytiedosto";
     ls->menuDiskDirInsert       = "Aseta hakemisto";
@@ -129,13 +136,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Valitse kohta";
     ls->menuCasRewind           = "Kelaa alkuun";
 
-    ls->menuVideoLoad           = "Lataa...";             // New in 2.6
-    ls->menuVideoPlay           = "Toista viimeisin kaappaus";   // New in 2.6
-    ls->menuVideoRecord         = "Nauhoita";              // New in 2.6
-    ls->menuVideoRecording      = "Nauhoittaa";           // New in 2.6
-    ls->menuVideoRecAppend      = "Jatka nauhoitusta";     // New in 2.6
-    ls->menuVideoStop           = "Pysäytä";                // New in 2.6
-    ls->menuVideoRender         = "Koosta videotiedosto";   // New in 2.6
+    ls->menuVideoLoad           = "Lataa...";             
+    ls->menuVideoPlay           = "Toista viimeisin kaappaus";   
+    ls->menuVideoRecord         = "Nauhoita";              
+    ls->menuVideoRecording      = "Nauhoittaa";           
+    ls->menuVideoRecAppend      = "Jatka nauhoitusta";     
+    ls->menuVideoStop           = "Pysäytä";                
+    ls->menuVideoRender         = "Koosta videotiedosto";   
 
     ls->menuPrnFormfeed         = "Paperin vaihto";
 
@@ -150,6 +157,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Suorituskyky";
     ls->menuPropsSettings       = "Asetukset";
     ls->menuPropsFile           = "Tiedostot";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Kieli";
     ls->menuPropsPorts          = "Liitännät";
     
@@ -159,7 +167,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuVideoInSource       = "Videosisääntulo";
     ls->menuVideoInBitmap       = "Bittikarttatiedosto";
     
-    ls->menuEthInterface        = "Ethernet Interface"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet Interface"; 
 
     ls->menuHelpHelp            = "Ohjeen aiheet";
     ls->menuHelpAbout           = "Tietoja blueMSX:stä";
@@ -173,11 +181,12 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Tilan pikalataus";
     ls->menuFileQSaveState      = "Tilan pikatallennus";
     ls->menuFileCaptureAudio    = "Tallenna äänet";
-    ls->menuFileCaptureVideo    = "Videokaappaus"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Videokaappaus"; 
     ls->menuFileScreenShot      = "Tallenna kuvaruutukaappaus";
     ls->menuFileExit            = "Poistu";
     ls->menuFileHarddisk        = "Kovalevy";
     ls->menuFileHarddiskNoPesent= "Ohjaimia ei ole kytketty";
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "Käynnistä";
     ls->menuRunPause            = "Keskeytä";
@@ -188,7 +197,7 @@ void langInitFinnish(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Tietokonemuokkain";
     ls->menuToolsShortcuts      = "Pikanäppäinasetukset";
-    ls->menuToolsCtrlEditor     = "Peliohjaimet / Näppäimistökartta"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "Peliohjaimet / Näppäimistökartta"; 
     ls->menuToolsMixer          = "Mikseri";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
@@ -223,11 +232,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Valitse ladattava kasettitiedosto:";
     ls->dlgLoadRomDskCasDesc    = "Valitse ladattava ROM-, kasetti- tai levytiedosto:";
     ls->dlgLoadState            = "Lataa tila";
-    ls->dlgLoadVideoCapture     = "Lataa videokaappaus";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Lataa videokaappaus";      
     ls->dlgSaveState            = "Tallenna tila nimellä";
     ls->dlgSaveCassette         = "blueMSX - Tallenna kasetti";
-    ls->dlgSaveVideoClipAs      = "Tallenna videokaappaus nimellä";      // New in 2.6
-    ls->dlgAmountCompleted      = "Valmiina:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Tallenna videokaappaus nimellä";      
+    ls->dlgAmountCompleted      = "Valmiina:";          
     ls->dlgInsertRom1           = "Aseta moduli porttiin 1";
     ls->dlgInsertRom2           = "Aseta moduli porttiin 2";
     ls->dlgInsertDiskA          = "Aseta levy asemaan A";
@@ -235,7 +244,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Aseta kovalevy";
     ls->dlgInsertCas            = "Aseta kasetti";
     ls->dlgRomType              = "ROM-malli:";
-    ls->dlgDiskSize             = "Levyn koko:";             // New in 2.6
+    ls->dlgDiskSize             = "Levyn koko:";             
 
     ls->dlgTapeTitle            = "blueMSX - Kasetin kohta";
     ls->dlgTapeFrameText        = "Kasetin kohta";
@@ -259,7 +268,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Päiväys:";
     ls->dlgAboutCreat           = "Tekijä: Daniel Vik";
     ls->dlgAboutDevel           = "KEHITTÄJÄT\r\n=======";
-    ls->dlgAboutThanks          = "ERITYIS KIITOKSET\r\n===========";
+    ls->dlgAboutThanks          = "ERITYIS KIITOKSET\r\n===========";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LISENSSI\r\n"
                                   "=====\r\n\r\n"
                                   "Tämä ohjelmisto toimitetaan sellaisenaan ilman minkäänlaista takuuta. "
@@ -270,7 +279,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgSavePreview          = "Näytä esikatselu";
     ls->dlgSaveDate             = "Tallennettu:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Videokaappauksen koostaminen...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Videokaappauksen koostaminen...";  
 
 
     //----------------------
@@ -285,6 +294,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPerformance         = "Suorituskyky";
     ls->propSettings            = "Asetukset";
     ls->propFile                = "Tiedostot";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "Liitännät";
 
     ls->propEmuGeneralGB        = "Yleistä ";
@@ -375,6 +385,13 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propThemeGB             = "Teemat ";
     ls->propTheme               = "Teema:";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -437,7 +454,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Yksipuolinen, 8 Sektoria";
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" Kaksipuolinen";
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" Yksipuolinen";
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Yksipuolinen";  // New in 2.6
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Yksipuolinen";  
 
 
     //----------------------
@@ -597,11 +614,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Näytä/Piilota Spritet";
     ls->shortcutToggleFdcTiming = "Ota käyttöön/Poista käytöstä levyaseman ajoitus";
     ls->shortcutToggleCpuTrace  = "Ota käyttöön/Poista käytöstä Prosessorin jäljitystoiminto";
-    ls->shortcutVideoLoad       = "Lataa Videokaappaus";             // New in 2.6
-    ls->shortcutVideoPlay       = "Toista viimeisin videokaappaus";   // New in 2.6
-    ls->shortcutVideoRecord     = "Tallenna videokaappaus";              // New in 2.6
-    ls->shortcutVideoStop       = "Pysäytä videokaappaus";                // New in 2.6
-    ls->shortcutVideoRender     = "Koosta videotiedosto";   // New in 2.6
+    ls->shortcutVideoLoad       = "Lataa Videokaappaus";             
+    ls->shortcutVideoPlay       = "Toista viimeisin videokaappaus";   
+    ls->shortcutVideoRecord     = "Tallenna videokaappaus";              
+    ls->shortcutVideoStop       = "Pysäytä videokaappaus";                
+    ls->shortcutVideoRender     = "Koosta videotiedosto";   
 
 
     //----------------------

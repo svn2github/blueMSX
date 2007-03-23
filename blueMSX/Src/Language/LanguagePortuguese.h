@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,10 +88,10 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->fileRom                 = "ROM image"; 
     ls->fileAll                 = "Todos os arquivos"; 
     ls->fileCpuState            = "Status da CPU"; 
-    ls->fileVideoCapture        = "Captura vídeo"; // New in 2.6
+    ls->fileVideoCapture        = "Captura vídeo"; 
     ls->fileDisk                = "Disk Image"; 
     ls->fileCas                 = "Tape Image"; 
-    ls->fileAvi                 = "Video Clip";    // New in 2.6
+    ls->fileAvi                 = "Video Clip";    
 
 
     //----------------------
@@ -106,7 +106,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";                                
     ls->menuCartBeerIde         = "Beer";                               
     ls->menuCartGIde            = "GIDE";                               
-    ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartSunriseIde      = "Sunrise";                              
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "Cartucho SCC";
     ls->menuCartSCCPlus         = "Cartucho SCC+";
     ls->menuCartFMPac           = "Cartucho FM-PAC";
@@ -115,6 +119,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Inserir Especial";                     
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "RAM esterno";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Inserir novo disco";              
     ls->menuDiskDirInsert       = "Inserir diretório"; 
@@ -127,13 +134,13 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Ajustar Posição";
     ls->menuCasRewind           = "Rebobinar";
 
-    ls->menuVideoLoad           = "Carregar...";             // New in 2.6
-    ls->menuVideoPlay           = "Ver mais recente captura";   // New in 2.6
-    ls->menuVideoRecord         = "Salvar";              // New in 2.6
-    ls->menuVideoRecording      = "Salvar em curso";           // New in 2.6
-    ls->menuVideoRecAppend      = "Salvar (adicionar)";     // New in 2.6
-    ls->menuVideoStop           = "Parar";                // New in 2.6
-    ls->menuVideoRender         = "Criar video clip";   // New in 2.6
+    ls->menuVideoLoad           = "Carregar...";             
+    ls->menuVideoPlay           = "Ver mais recente captura";   
+    ls->menuVideoRecord         = "Salvar";              
+    ls->menuVideoRecording      = "Salvar em curso";           
+    ls->menuVideoRecAppend      = "Salvar (adicionar)";     
+    ls->menuVideoStop           = "Parar";                
+    ls->menuVideoRender         = "Criar video clip";   
 
     ls->menuPrnFormfeed         = "Página seguinte"; 
 
@@ -148,6 +155,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Performance";
     ls->menuPropsSettings       = "Ajustes";
     ls->menuPropsFile           = "Arquivo"; 
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Linguagem";
     ls->menuPropsPorts          = "Portas"; 
     
@@ -157,7 +165,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuVideoInBitmap       = "Arquivo Bitmap";                        
     ls->menuVideoChipAutodetect = "Detecção automática"; 
     
-    ls->menuEthInterface        = "Relação Do Ethernet"; // New in 2.6
+    ls->menuEthInterface        = "Relação Do Ethernet"; 
 
     ls->menuHelpHelp            = "Tópicos Ajuda";
     ls->menuHelpAbout           = "Sobre blueMSX";
@@ -171,12 +179,13 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuFileQLoadState      = "Carregar rápido Status";
     ls->menuFileQSaveState      = "Salvar rápido Status";
     ls->menuFileCaptureAudio    = "Capturar áudio";
-    ls->menuFileCaptureVideo    = "Capturar vídeo"; // New in 2.6
+    ls->menuFileCaptureVideo    = "Capturar vídeo"; 
     ls->menuFileScreenShot      = "Salvar Tela";
     ls->menuFileExit            = "Sair";
 
     ls->menuFileHarddisk        = "Disco duro";                          
     ls->menuFileHarddiskNoPesent= "Não controladores";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "Executar";
     ls->menuRunPause            = "Pausa";
@@ -187,7 +196,7 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Configuração da Máquina";
     ls->menuToolsShortcuts      = "Configuração de Atalhos";
-    ls->menuToolsCtrlEditor     = "Configuração de Controladores/Teclado";  // New in 2.6
+    ls->menuToolsCtrlEditor     = "Configuração de Controladores/Teclado";  
     ls->menuToolsMixer          = "Mixer de Audio"; 
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
@@ -222,11 +231,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Escolha um tape para carregar:";
     ls->dlgLoadRomDskCasDesc    = "Escolha uma ROM, disco, ou tape para carregar:";
     ls->dlgLoadState            = "Carregar Status da CPU";
-    ls->dlgLoadVideoCapture     = "Carregar captura vídeo";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "Carregar captura vídeo";      
     ls->dlgSaveState            = "Salvar Status da CPU";
     ls->dlgSaveCassette          = "blueMSX - Salvar Imagem Tape";
-    ls->dlgSaveVideoClipAs      = "Salvar video clip como...";      // New in 2.6
-    ls->dlgAmountCompleted      = "Salvar em curso:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "Salvar video clip como...";      
+    ls->dlgAmountCompleted      = "Salvar em curso:";          
     ls->dlgInsertRom1           = "Insira cartucho ROM no slot 1";
     ls->dlgInsertRom2           = "Insira cartucho ROM no slot 2";
     ls->dlgInsertDiskA          = "Insira disco no drive A";
@@ -234,7 +243,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgInsertCas            = "Insira cassette tape";
     ls->dlgInsertHarddisk       = "Insira disco duro";                   
     ls->dlgRomType              = "Tipo rom:"; 
-    ls->dlgDiskSize             = "Tamanho do disco:";             // New in 2.6
+    ls->dlgDiskSize             = "Tamanho do disco:";             
 
     ls->dlgTapeTitle            = "blueMSX - Posição do Tape";
     ls->dlgTapeFrameText        = "Posição do Tape";
@@ -258,7 +267,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Data:";
     ls->dlgAboutCreat           = "Criado Por Daniel Vik";
     ls->dlgAboutDevel           = "DESENVOLVEDORES\r\n========";
-    ls->dlgAboutThanks          = "MUITO OBRIGADO PARA\r\n============";
+    ls->dlgAboutThanks          = "MUITO OBRIGADO PARA\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LICENÇA\r\n"
                                   "======\r\n\r\n"
                                   "Este software é provido 'como-está', sem Garantia expressa ou implicada."
@@ -269,7 +278,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->dlgSavePreview          = "Visualizar"; 
     ls->dlgSaveDate             = "Data:"; 
 
-    ls->dlgRenderVideoCapture   = "blueMSX - Criar video clip...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - Criar video clip...";  
 
 
     //----------------------
@@ -284,6 +293,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propPerformance         = "Performance";
     ls->propSettings             = "Ajustes";
     ls->propFile                = "Arquivo"; 
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "Portas";
     
     ls->propEmuGeneralGB        = "Geral ";
@@ -374,6 +384,13 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -436,7 +453,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" simples face, 8 sectores";     
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" duplo face";           
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" simples face";     
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" simples face";  // New in 2.6         
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" simples face";           
 
 
     //----------------------
@@ -596,11 +613,11 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostrar/esconder os sprites";
     ls->shortcutToggleFdcTiming = "sincronizar ou não disco drive"; 
     ls->shortcutToggleCpuTrace  = "Ativar/Desativar Traço da CPU"; 
-    ls->shortcutVideoLoad       = "Carregar captura vídeo";             // New in 2.6
-    ls->shortcutVideoPlay       = "Ver mais recente captura vídeo";   // New in 2.6
-    ls->shortcutVideoRecord     = "Salvar captura vídeo";              // New in 2.6
-    ls->shortcutVideoStop       = "Parar captura vídeo";                // New in 2.6
-    ls->shortcutVideoRender     = "Criar video clip";   // New in 2.6
+    ls->shortcutVideoLoad       = "Carregar captura vídeo";             
+    ls->shortcutVideoPlay       = "Ver mais recente captura vídeo";   
+    ls->shortcutVideoRecord     = "Salvar captura vídeo";              
+    ls->shortcutVideoStop       = "Parar captura vídeo";                
+    ls->shortcutVideoRender     = "Criar video clip";   
 
 
     //----------------------

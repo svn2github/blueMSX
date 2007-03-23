@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,10 +88,10 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->fileRom                 = "ROM 映像";
     ls->fileAll                 = "所有文件";
     ls->fileCpuState            = "CPU 状态";
-    ls->fileVideoCapture        = "截取视频"; // New in 2.6
+    ls->fileVideoCapture        = "截取视频"; 
     ls->fileDisk                = "软盘映像";
     ls->fileCas                 = "磁带映像";
-    ls->fileAvi                 = "剪辑视频";    // New in 2.6
+    ls->fileAvi                 = "剪辑视频";    
 
 
     //----------------------
@@ -107,6 +107,10 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer";                               
     ls->menuCartGIde            = "GIDE";                               
     ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCCPlus         = "SCC+ 卡带";
     ls->menuCartSCC             = "SCC 卡带";
     ls->menuCartFMPac           = "FM-PAC 卡带";
@@ -115,6 +119,9 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "插入特殊";                     
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "扩展内存";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "插入新的软盘映像";              
     ls->menuDiskDirInsert       = "插入目录";
@@ -127,13 +134,13 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCasSetPosition      = "磁带位置设置";
     ls->menuCasRewind           = "倒带";
 
-    ls->menuVideoLoad           = "读取...";             // New in 2.6
-    ls->menuVideoPlay           = "播放上一个截取视频";   // New in 2.6
-    ls->menuVideoRecord         = "录制";              // New in 2.6
-    ls->menuVideoRecording      = "正在录制";           // New in 2.6
-    ls->menuVideoRecAppend      = "录制 （附加）";     // New in 2.6
-    ls->menuVideoStop           = "停止";                // New in 2.6
-    ls->menuVideoRender         = "渲染视频文件";   // New in 2.6
+    ls->menuVideoLoad           = "读取...";             
+    ls->menuVideoPlay           = "播放上一个截取视频";   
+    ls->menuVideoRecord         = "录制";              
+    ls->menuVideoRecording      = "正在录制";           
+    ls->menuVideoRecAppend      = "录制 （附加）";     
+    ls->menuVideoStop           = "停止";                
+    ls->menuVideoRender         = "渲染视频文件";   
 
     ls->menuZoomNormal          = "标准尺寸";
     ls->menuZoomDouble          = "两倍尺寸";
@@ -148,6 +155,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuPropsPerformance    = "性能";
     ls->menuPropsSettings        = "设定";
     ls->menuPropsFile           = "文件";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "语言";
     ls->menuPropsPorts          = "端口";
     
@@ -157,7 +165,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuVideoInSource       = "视频输入源";                    
     ls->menuVideoInBitmap       = "位图文件";                        
     
-    ls->menuEthInterface        = "Ethernet"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; 
 
     ls->menuHelpHelp            = "帮助主题";
     ls->menuHelpAbout           = "关于 blueMSX";
@@ -171,12 +179,13 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuFileQLoadState      = "快速读取";
     ls->menuFileQSaveState      = "快速保存";
     ls->menuFileCaptureAudio    = "截取音频";
-    ls->menuFileCaptureVideo    = "截取视频"; // New in 2.6
+    ls->menuFileCaptureVideo    = "截取视频"; 
     ls->menuFileScreenShot      = "截图";
     ls->menuFileExit            = "退出";
 
     ls->menuFileHarddisk        = "硬盘";                          
     ls->menuFileHarddiskNoPesent= "当前无控制器";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "运行";
     ls->menuRunPause            = "暂停";
@@ -187,7 +196,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
 
     ls->menuToolsMachine         = "机型资料编辑";
     ls->menuToolsShortcuts      = "快捷键编辑工具";
-    ls->menuToolsCtrlEditor     = "控制器 / 键盘编辑器"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "控制器 / 键盘编辑器"; 
     ls->menuToolsMixer          = "混音器";
     ls->menuToolsDebugger       = "调试工具";               
     ls->menuToolsTrainer        = "作弊工具";                
@@ -222,11 +231,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "请选择要读取的磁带映像:";
     ls->dlgLoadRomDskCasDesc    = "请选择要读取的卡带、软盘或磁带映像:";
     ls->dlgLoadState            = "读取 CPU 状态";
-    ls->dlgLoadVideoCapture     = "读取截取视频";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "读取截取视频";      
     ls->dlgSaveState            = "保存 CPU 状态";
     ls->dlgSaveCassette          = "blueMSX - 保存磁带映像";
-    ls->dlgSaveVideoClipAs      = "另存剪裁视频为...";     // New in 2.6
-    ls->dlgAmountCompleted      = "总计完成:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "另存剪裁视频为...";     
+    ls->dlgAmountCompleted      = "总计完成:";          
     ls->dlgInsertRom1           = "请在插槽 1 插入 ROM 卡带";
     ls->dlgInsertRom2           = "请在插槽 2 插入 ROM 卡带";
     ls->dlgInsertDiskA          = "请在驱动器 A 插入软盘映像";
@@ -234,7 +243,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "请插入硬盘";                   
     ls->dlgInsertCas            = "请插入磁带";
     ls->dlgRomType              = "Rom 类型:";
-    ls->dlgDiskSize             = "软盘大小:";             // New in 2.6
+    ls->dlgDiskSize             = "软盘大小:";             
 
     ls->dlgTapeTitle            = "blueMSX - 磁带";
     ls->dlgTapeFrameText        = "磁带位置";
@@ -258,7 +267,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "日期:";
     ls->dlgAboutCreat           = "制作:	Daniel Vik";
     ls->dlgAboutDevel           = "各位协力的开发者们\r\n========";
-    ls->dlgAboutThanks          = "特别鸣谢\r\n============";
+    ls->dlgAboutThanks          = "特别鸣谢\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "授权\r\n"
                                   "======\r\n\r\n"
                                   "本软件是根据目前状况而发布的，没有任何明确或默许的授权。 "
@@ -269,7 +278,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->dlgSavePreview          = "显示预览";
     ls->dlgSaveDate             = "保存时间:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - 正在渲染截取的视频...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - 正在渲染截取的视频...";  
 
 
     //----------------------
@@ -284,6 +293,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propPerformance         = "性能";
     ls->propSettings             = "其他";
     ls->propFile                = "文件";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "端口";
     
     ls->propEmuGeneralGB        = "常规 ";
@@ -374,6 +384,13 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propThemeGB             = "布景主题 ";
     ls->propTheme               = "布景主题:";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -436,7 +453,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" 吋 单面, 8 个扇区";     
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" 吋 双面";           
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" 吋 单面";           
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" 吋 单面";  // New in 2.6   
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" 吋 单面";     
 
 
     //----------------------
@@ -596,11 +613,11 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "显示/隐藏活动块";
     ls->shortcutToggleFdcTiming = "启用/禁用软盘驱动器计时";
     ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 追踪";
-    ls->shortcutVideoLoad       = "读取截取视频";        // New in 2.6
-    ls->shortcutVideoPlay       = "播放上一个截取视频";   // New in 2.6
-    ls->shortcutVideoRecord     = "录制截取视频";      // New in 2.6
-    ls->shortcutVideoStop       = "停止截取视频";        // New in 2.6
-    ls->shortcutVideoRender     = "渲染视频文件";         // New in 2.6
+    ls->shortcutVideoLoad       = "读取截取视频";        
+    ls->shortcutVideoPlay       = "播放上一个截取视频";   
+    ls->shortcutVideoRecord     = "录制截取视频";      
+    ls->shortcutVideoStop       = "停止截取视频";        
+    ls->shortcutVideoRender     = "渲染视频文件";         
 
 
     //----------------------

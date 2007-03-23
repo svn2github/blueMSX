@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.48 $ + additions 2005/03/03
+** $Revision: 1.49 $ + additions 2005/03/03
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,10 +88,10 @@ void langInitKorean(LanguageStrings* ls)
     ls->fileRom                 = "롬 이미지";
     ls->fileAll                 = "모든 파일";
     ls->fileCpuState            = "CPU 상태";
-    ls->fileVideoCapture        = "녹화된 영상"; // New in 2.6
+    ls->fileVideoCapture        = "녹화된 영상"; 
     ls->fileDisk                = "디스크 이미지";
     ls->fileCas                 = "테이프 이미지";
-    ls->fileAvi                 = "동영상 클립";    // New in 2.6
+    ls->fileAvi                 = "동영상 클립";    
 
 
     //----------------------
@@ -106,7 +106,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";                                
     ls->menuCartBeerIde         = "Beer";                               
     ls->menuCartGIde            = "GIDE";                               
-    ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartSunriseIde      = "Sunrise";                              
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC 카트리지";
     ls->menuCartSCCPlus         = "SCC+ 카트리지";
     ls->menuCartFMPac           = "FM-PAC 카트리지";
@@ -115,6 +119,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "특수 카트리지 삽입";                     
     ls->menuCartMegaRam         = "메가램";                            
     ls->menuCartExternalRam     = "외장램";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "새로운 디스크 이미지 삽입";              
     ls->menuDiskDirInsert       = "디렉토리 삽입";
@@ -127,13 +134,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuCasSetPosition      = "위치 설정";
     ls->menuCasRewind           = "되감기";
 
-    ls->menuVideoLoad           = "불러오기...";             // New in 2.6
-    ls->menuVideoPlay           = "마지막으로 녹화한 영상 재생";   // New in 2.6
-    ls->menuVideoRecord         = "녹화";              // New in 2.6
-    ls->menuVideoRecording      = "녹화중";           // New in 2.6
-    ls->menuVideoRecAppend      = "녹화 (추가)";     // New in 2.6
-    ls->menuVideoStop           = "정지";                // New in 2.6
-    ls->menuVideoRender         = "동영상 파일로 저장";   // New in 2.6
+    ls->menuVideoLoad           = "불러오기...";             
+    ls->menuVideoPlay           = "마지막으로 녹화한 영상 재생";   
+    ls->menuVideoRecord         = "녹화";              
+    ls->menuVideoRecording      = "녹화중";           
+    ls->menuVideoRecAppend      = "녹화 (추가)";     
+    ls->menuVideoStop           = "정지";                
+    ls->menuVideoRender         = "동영상 파일로 저장";   
 
     ls->menuPrnFormfeed         = "폼피드";
 
@@ -148,6 +155,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuPropsPerformance    = "성능";
     ls->menuPropsSettings        = "외부 설정";
     ls->menuPropsFile           = "파일";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "언어";
     ls->menuPropsPorts          = "포트"; 
     
@@ -157,7 +165,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuVideoInSource       = "비디오 입력 소스";                    
     ls->menuVideoInBitmap       = "비트맵 파일";                        
     
-    ls->menuEthInterface        = "Ethernet"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; 
 
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";
@@ -171,12 +179,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuFileQLoadState      = "상태 바로 불러오기";
     ls->menuFileQSaveState      = "상태 바로 저장";
     ls->menuFileCaptureAudio    = "소리 저장";
-    ls->menuFileCaptureVideo    = "영상 녹화"; // New in 2.6
+    ls->menuFileCaptureVideo    = "영상 녹화"; 
     ls->menuFileScreenShot      = "화면 저장";
     ls->menuFileExit            = "끝내기";
 
     ls->menuFileHarddisk        = "하드 디스크";                          
     ls->menuFileHarddiskNoPesent= "컨트롤러 존재하지 않음";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "실행";
     ls->menuRunPause            = "일시 정지";
@@ -188,7 +197,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuTools                = "도구";
     ls->menuToolsMachine         = "머신 편집기";
     ls->menuToolsShortcuts      = "단축키 편집기";
-    ls->menuToolsCtrlEditor     = "컨트롤러 / 키보드 편집기"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "컨트롤러 / 키보드 편집기"; 
     ls->menuToolsDebugger       = "디버거";               
     ls->menuToolsTrainer        = "트레이너";                
     ls->menuToolsTraceLogger    = "트레이스 기록";           
@@ -222,11 +231,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "카세트 플레이어에 넣을 테잎 이미지를 선택해 주세요:";
     ls->dlgLoadRomDskCasDesc    = "읽어 들일 롬,디스크,또는 테잎 이미지를 선택해 주세요:";
     ls->dlgLoadState            = "CPU 상태 불러오기";
-    ls->dlgLoadVideoCapture     = "녹화된 영상 불러오기";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "녹화된 영상 불러오기";      
     ls->dlgSaveState            = "CPU 상태 저장";
     ls->dlgSaveCassette          = "blueMSX - 테잎 이미지 저장";
-    ls->dlgSaveVideoClipAs      = "다른 이름으로 영상 클립 저장...";      // New in 2.6
-    ls->dlgAmountCompleted      = "저장 완료율:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "다른 이름으로 영상 클립 저장...";      
+    ls->dlgAmountCompleted      = "저장 완료율:";          
     ls->dlgInsertRom1           = "슬롯 1에 ROM 카트리지 삽입";
     ls->dlgInsertRom2           = "슬롯 2에 ROM 카트리지 삽입";
     ls->dlgInsertDiskA          = "드라이브 A에 디스크 삽입";
@@ -234,7 +243,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "하드 디스크 삽입";                   
     ls->dlgInsertCas            = "카세트 테잎 삽입";
     ls->dlgRomType              = "롬 형식:";
-    ls->dlgDiskSize             = "디스크 사이즈:";             // New in 2.6
+    ls->dlgDiskSize             = "디스크 사이즈:";             
 
     ls->dlgTapeTitle            = "blueMSX - 테잎 위치";
     ls->dlgTapeFrameText        = "테잎 위치";
@@ -258,7 +267,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "날짜:";
     ls->dlgAboutCreat           = "제작자: Daniel Vik";
     ls->dlgAboutDevel           = "개발자 분들\r\n========";
-    ls->dlgAboutThanks          = "도움을 주신 분들\r\n===========";
+    ls->dlgAboutThanks          = "도움을 주신 분들\r\n===========";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "라이센스\r\n"
                                   "======\r\n\r\n"
 				  "이 소프트웨어는 원본 그대로 배포되어야 하며, 명시적이든 암묵적이든 "
@@ -269,7 +278,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgSavePreview          = "미리 보기";
     ls->dlgSaveDate             = "시간 저장됨:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - 동영상 파일로 저장...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - 동영상 파일로 저장...";  
 
 
     //----------------------
@@ -284,6 +293,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPerformance         = "성능";
     ls->propSettings             = "외부 설정";
     ls->propFile                = "파일";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "포트";
     
     ls->propEmuGeneralGB        = "일반 ";
@@ -374,6 +384,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -436,7 +453,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" 단면, 8 섹터";     
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" 양면";           
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" 단면";  
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" 단면";  // New in 2.6           
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" 단면";             
 
 
     //----------------------
@@ -596,11 +613,11 @@ void langInitKorean(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "스프라이트 보이기/숨기기 변환";
     ls->shortcutToggleFdcTiming = "플로피 드라이브 타이밍 사용/않함 변환";
     ls->shortcutToggleCpuTrace  = "CPU 트레이스 변환";
-    ls->shortcutVideoLoad       = "녹화된 영상 불러오기";             // New in 2.6
-    ls->shortcutVideoPlay       = "마지막으로 녹화한 영상 재생";   // New in 2.6
-    ls->shortcutVideoRecord     = "영상 녹화";              // New in 2.6
-    ls->shortcutVideoStop       = "영상 녹화 정지";                // New in 2.6
-    ls->shortcutVideoRender     = "동영상 파일로 저장";   // New in 2.6
+    ls->shortcutVideoLoad       = "녹화된 영상 불러오기";             
+    ls->shortcutVideoPlay       = "마지막으로 녹화한 영상 재생";   
+    ls->shortcutVideoRecord     = "영상 녹화";              
+    ls->shortcutVideoStop       = "영상 녹화 정지";                
+    ls->shortcutVideoRender     = "동영상 파일로 저장";   
 
 
     //----------------------

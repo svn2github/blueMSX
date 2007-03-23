@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2007-03-22 10:55:08 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -90,10 +90,10 @@ void langInitJapanese(LanguageStrings* ls)
     ls->fileRom                 = "ROM イメージ";
     ls->fileAll                 = "全てのファイル";
     ls->fileCpuState            = "CPU ステート";
-    ls->fileVideoCapture        = "ビデオのキャプチャ"; // New in 2.6
+    ls->fileVideoCapture        = "ビデオのキャプチャ"; 
     ls->fileDisk                = "ディスクイメージ";
     ls->fileCas                 = "テープイメージ";
-    ls->fileAvi                 = "ビデオ クリップ";    // New in 2.6
+    ls->fileAvi                 = "ビデオ クリップ";    
 
 
     //----------------------
@@ -109,10 +109,10 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartBeerIde         = "Beer IDE";
     ls->menuCartGIde            = "GIDE";
     ls->menuCartSunriseIde      = "Sunrise IDE";
-    ls->menuCartScsi            = "SCSI カートリッジ";          // New
-    ls->menuCartMegaSCSI        = "MEGA-SCSI";                  // New
-    ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // New
-    ls->menuCartGoudaSCSI       = "Gouda SCSI";                 // New
+    ls->menuCartScsi            = "SCSI カートリッジ";          // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";                  // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";                 // New in 2.7
     ls->menuCartSCC             = "SCC カートリッジ";
     ls->menuCartSCCPlus         = "SCC+ カートリッジ";
     ls->menuCartFMPac           = "FMPAC+ カートリッジ";
@@ -121,8 +121,9 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "特殊カートリッジ";
     ls->menuCartMegaRam         = "メガRAM カートリッジ";
     ls->menuCartExternalRam     = "外部RAM カートリッジ"; 
-    ls->menuCartEseRam          = "似非RAM カートリッジ";       // New
-    ls->menuCartEseSCC          = "似非SCC カートリッジ";       // New
+    ls->menuCartEseRam          = "似非RAM カートリッジ";       // New in 2.7
+    ls->menuCartEseSCC          = "似非SCC カートリッジ";       // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";             // New in 2.7
 
     ls->menuDiskInsertNew       = "新規ディスクイメージを挿入";
     ls->menuDiskDirInsert       = "ディレクトリ挿入";
@@ -135,13 +136,13 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCasSetPosition      = "テープ位置セット";
     ls->menuCasRewind           = "巻き戻し";
 
-    ls->menuVideoLoad           = "読み込み...";             // New in 2.6
-    ls->menuVideoPlay           = "キャプチャ映像の再生";   // New in 2.6
-    ls->menuVideoRecord         = "録画";              // New in 2.6
-    ls->menuVideoRecording      = "録画中";           // New in 2.6
-    ls->menuVideoRecAppend      = "録画 (付加する)";     // New in 2.6
-    ls->menuVideoStop           = "停止";                // New in 2.6
-    ls->menuVideoRender         = "ビデオファイルのレンダリング";   // New in 2.6
+    ls->menuVideoLoad           = "読み込み...";             
+    ls->menuVideoPlay           = "キャプチャ映像の再生";   
+    ls->menuVideoRecord         = "録画";              
+    ls->menuVideoRecording      = "録画中";           
+    ls->menuVideoRecAppend      = "録画 (付加する)";     
+    ls->menuVideoStop           = "停止";                
+    ls->menuVideoRender         = "ビデオファイルのレンダリング";   
     
     ls->menuPrnFormfeed         = "紙送り"; 
 
@@ -156,7 +157,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuPropsPerformance    = "パフォーマンス";
     ls->menuPropsSettings       = "その他";
     ls->menuPropsFile           = "ファイル";
-    ls->menuPropsDisk           = "ディスク";            // New
+    ls->menuPropsDisk           = "ディスク";            // New in 2.7
     ls->menuPropsLanguage       = "言語";
     ls->menuPropsPorts          = "ポート";
     
@@ -166,7 +167,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuVideoInSource       = "ビデオ入力";
     ls->menuVideoInBitmap       = "ビットマップファイル";
     
-    ls->menuEthInterface        = "イーサーネット　インターフェース"; // New in 2.6
+    ls->menuEthInterface        = "イーサーネット　インターフェース"; 
 
     ls->menuHelpHelp            = "ヘルプ目次";
     ls->menuHelpAbout           = "blueMSXについて";
@@ -180,13 +181,13 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuFileQLoadState      = "クイックロード";
     ls->menuFileQSaveState      = "クイックセーブ";
     ls->menuFileCaptureAudio    = "録音";
-    ls->menuFileCaptureVideo    = "ビデオのキャプチャ"; // New in 2.6
+    ls->menuFileCaptureVideo    = "ビデオのキャプチャ"; 
     ls->menuFileScreenShot      = "スクリーンショット";
     ls->menuFileExit            = "終了";
 
     ls->menuFileHarddisk        = "ハードディスク";
     ls->menuFileHarddiskNoPesent= "ハードディスクは無効です";
-    ls->menuFileHarddiskRemoveAll= "ハードディスクを全て取り出す"; // new
+    ls->menuFileHarddiskRemoveAll= "ハードディスクを全て取り出す"; // New in 2.7
 
     ls->menuRunRun              = "実行";
     ls->menuRunPause            = "中断";
@@ -197,7 +198,7 @@ void langInitJapanese(LanguageStrings* ls)
 
     ls->menuToolsMachine         = "マシン構\成編集";
     ls->menuToolsShortcuts      = "ショートカット構\成編集";
-    ls->menuToolsCtrlEditor     = "コントローラー / キーボード構\成編集"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "コントローラー / キーボード構\成編集"; 
     ls->menuToolsMixer          = "ミキサー";
     ls->menuToolsDebugger       = "デバッガー";
     ls->menuToolsTrainer        = "トレーナー";
@@ -232,11 +233,11 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "読み込むcasイメージ:";
     ls->dlgLoadRomDskCasDesc    = "読み込むrom, dsk, casイメージ:";
     ls->dlgLoadState            = "CPUステート 読み込み";
-    ls->dlgLoadVideoCapture     = "キャプチャ映像の読み込み";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "キャプチャ映像の読み込み";      
     ls->dlgSaveState            = "CPUステート 保存";
     ls->dlgSaveCassette          = "blueMSX - テープを保存";
-    ls->dlgSaveVideoClipAs      = "ビデオクリップを別名で保存...";      // New in 2.6
-    ls->dlgAmountCompleted      = "処理済:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "ビデオクリップを別名で保存...";      
+    ls->dlgAmountCompleted      = "処理済:";          
     ls->dlgInsertRom1           = "ROM イメージをスロット1に挿入";
     ls->dlgInsertRom2           = "ROM イメージをスロット2に挿入";
     ls->dlgInsertDiskA          = "ディスクイメージをドライブAに挿入";
@@ -244,7 +245,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "ハードディスクを挿入";                   
     ls->dlgInsertCas            = "カセットテープを挿入";
     ls->dlgRomType              = "ROM タイプ:"; 
-    ls->dlgDiskSize             = "ディスク要領:";             // New in 2.6
+    ls->dlgDiskSize             = "ディスク要領:";             
 
     ls->dlgTapeTitle            = "blueMSX - カセットテープ";
     ls->dlgTapeFrameText        = "テープ位置";
@@ -268,7 +269,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "ビルド日付:";
     ls->dlgAboutCreat           = "製作:\tDaniel Vik";
     ls->dlgAboutDevel           = "開発者\r\n=====";
-    ls->dlgAboutThanks          = "ご協力いただいた方々\r\n=============";
+    ls->dlgAboutThanks          = "ご協力いただいた方々\r\n=============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "ライセンス\r\n"
                                   "======\r\n\r\n"
                                   "このソ\フトウェアは現状をそのままの状態で配布するものであり、明示的または"
@@ -279,7 +280,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->dlgSavePreview          = "プレビュー表\示";
     ls->dlgSaveDate             = "セーブ時刻:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - キャプチャ映像をレンダリング中...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - キャプチャ映像をレンダリング中...";  
 
 
     //----------------------
@@ -294,7 +295,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propPerformance         = "パフォーマンス";
     ls->propSettings            = "その他";
     ls->propFile                = "ファイル";
-    ls->propDisk                = "ディスク";            // New
+    ls->propDisk                = "ディスク";            // New in 2.7
     ls->propPorts               = "ポート";
     
     ls->propEmuGeneralGB        = " 一般 ";
@@ -385,12 +386,12 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propThemeGB             = " テーマ ";
     ls->propTheme               = "テーマ:";
 
-    ls->propCdromGB             = "CD-ROM";         // New
-    ls->propCdromMethod         = "アクセス方式:";  // New
-    ls->propCdromMethodNone     = "なし";           // New
-    ls->propCdromMethodIoctl    = "IOCTL";          // New
-    ls->propCdromMethodAspi     = "ASPI";           // New
-    ls->propCdromDrive          = "ドライブ:";      // New
+    ls->propCdromGB             = "CD-ROM";         // New in 2.7
+    ls->propCdromMethod         = "アクセス方式:";  // New in 2.7
+    ls->propCdromMethodNone     = "なし";           // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";          // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";           // New in 2.7
+    ls->propCdromDrive          = "ドライブ:";      // New in 2.7
 
     //----------------------
     // Dropdown related lines
@@ -453,7 +454,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5インチ 2D (8セクタ)";
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25インチ 2DD";
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25インチ 2D";
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3インチ 2D";  // New in 2.6
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3インチ 2D";  
 
 
     //----------------------
@@ -613,11 +614,11 @@ void langInitJapanese(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "スプライトの表\示/非表\示";
     ls->shortcutToggleFdcTiming = "FDDドライブのタイミングの有効/無効";
     ls->shortcutToggleCpuTrace  = "CPUトレースの有効/無効";
-    ls->shortcutVideoLoad       = "読み込み...";             // New in 2.6
-    ls->shortcutVideoPlay       = "キャプチャ映像の再生";   // New in 2.6
-    ls->shortcutVideoRecord     = "録画";              // New in 2.6
-    ls->shortcutVideoStop       = "停止";                // New in 2.6
-    ls->shortcutVideoRender     = "ビデオファイルのレンダリング";   // New in 2.6
+    ls->shortcutVideoLoad       = "読み込み...";             
+    ls->shortcutVideoPlay       = "キャプチャ映像の再生";   
+    ls->shortcutVideoRecord     = "録画";              
+    ls->shortcutVideoStop       = "停止";                
+    ls->shortcutVideoRender     = "ビデオファイルのレンダリング";   
 
 
     //----------------------

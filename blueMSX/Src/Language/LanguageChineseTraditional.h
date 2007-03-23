@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.40 $
+** $Revision: 1.41 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,10 +88,10 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->fileRom                 = "ROM 映像檔";
     ls->fileAll                 = "所有檔案";
     ls->fileCpuState            = "CPU 狀態";
-    ls->fileVideoCapture        = "擷取視訊"; // New in 2.6
+    ls->fileVideoCapture        = "擷取視訊"; 
     ls->fileDisk                = "磁碟映像檔";
     ls->fileCas                 = "磁帶映像檔";
-    ls->fileAvi                 = "裁剪視訊";    // New in 2.6
+    ls->fileAvi                 = "裁剪視訊";    
 
 
     //----------------------
@@ -106,7 +106,11 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";                                
     ls->menuCartBeerIde         = "Beer";                               
     ls->menuCartGIde            = "GIDE";                               
-    ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartSunriseIde      = "Sunrise";                              
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCCPlus         = "SCC + 卡匣";
     ls->menuCartSCC             = "SCC 卡匣";
     ls->menuCartFMPac           = "FM-PAC 卡匣";
@@ -115,6 +119,9 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "插入特殊檔案";                     
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "外部 RAM";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "插入新的磁碟映像檔";              
     ls->menuDiskDirInsert       = "插入目錄";
@@ -127,13 +134,13 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuCasSetPosition      = "設定位置";
     ls->menuCasRewind           = "迴帶";
 
-    ls->menuVideoLoad           = "載入...";             // New in 2.6
-    ls->menuVideoPlay           = "播放上次的擷取";   // New in 2.6
-    ls->menuVideoRecord         = "錄製";              // New in 2.6
-    ls->menuVideoRecording      = "正在錄製";           // New in 2.6
-    ls->menuVideoRecAppend      = "錄製 (附加)";     // New in 2.6
-    ls->menuVideoStop           = "停止";                // New in 2.6
-    ls->menuVideoRender         = "渲染視訊檔案";   // New in 2.6
+    ls->menuVideoLoad           = "載入...";             
+    ls->menuVideoPlay           = "播放上次的擷取";   
+    ls->menuVideoRecord         = "錄製";              
+    ls->menuVideoRecording      = "正在錄製";           
+    ls->menuVideoRecAppend      = "錄製 (附加)";     
+    ls->menuVideoStop           = "停止";                
+    ls->menuVideoRender         = "渲染視訊檔案";   
 
     ls->menuPrnFormfeed         = "換頁";
 
@@ -148,6 +155,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuPropsPerformance    = "效能";
     ls->menuPropsSettings        = "設定";
     ls->menuPropsFile           = "檔案";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "語言";
     ls->menuPropsPorts          = "連接埠";
     
@@ -157,7 +165,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuVideoInSource       = "視訊輸入來源";                    
     ls->menuVideoInBitmap       = "點陣圖檔";                        
     
-    ls->menuEthInterface        = "Ethernet"; // New in 2.6
+    ls->menuEthInterface        = "Ethernet"; 
 
     ls->menuHelpHelp            = "說明主題";
     ls->menuHelpAbout           = "關於 blueMSX";
@@ -171,12 +179,13 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuFileQLoadState      = "快速載入狀態";
     ls->menuFileQSaveState      = "快速儲存狀態";
     ls->menuFileCaptureAudio    = "擷取音訊";
-    ls->menuFileCaptureVideo    = "擷取視訊"; // New in 2.6
+    ls->menuFileCaptureVideo    = "擷取視訊"; 
     ls->menuFileScreenShot      = "儲存螢幕抓圖";
     ls->menuFileExit            = "結束";
 
     ls->menuFileHarddisk        = "硬碟機";                          
     ls->menuFileHarddiskNoPesent= "沒有硬碟機顯示";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "執行";
     ls->menuRunPause            = "暫停";
@@ -187,7 +196,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "機種編輯器";
     ls->menuToolsShortcuts      = "快速鍵編輯器";
-    ls->menuToolsCtrlEditor     = "控制器 / 鍵盤編輯器"; // New in 2.6
+    ls->menuToolsCtrlEditor     = "控制器 / 鍵盤編輯器"; 
     ls->menuToolsMixer          = "混合器";
     ls->menuToolsDebugger       = "偵錯工具";               
     ls->menuToolsTrainer        = "訓練器";                
@@ -222,11 +231,11 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "請選擇要載入的磁帶映像檔:";
     ls->dlgLoadRomDskCasDesc    = "請選擇要載入的卡匣、磁碟或磁帶映像檔:";
     ls->dlgLoadState            = "載入 CPU 狀態";
-    ls->dlgLoadVideoCapture     = "載入擷取視訊";      // New in 2.6
+    ls->dlgLoadVideoCapture     = "載入擷取視訊";      
     ls->dlgSaveState            = "儲存 CPU 狀態";
     ls->dlgSaveCassette          = "blueMSX - 儲存磁帶映像檔";
-    ls->dlgSaveVideoClipAs      = "儲存視訊裁剪為...";      // New in 2.6
-    ls->dlgAmountCompleted      = "產生完成:";          // New in 2.6
+    ls->dlgSaveVideoClipAs      = "儲存視訊裁剪為...";      
+    ls->dlgAmountCompleted      = "產生完成:";          
     ls->dlgInsertRom1           = "請在插槽 1 插入 ROM 卡匣";
     ls->dlgInsertRom2           = "請在插槽 2 插入 ROM 卡匣";
     ls->dlgInsertDiskA          = "請在磁碟機 A 插入磁碟映像檔";
@@ -234,7 +243,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "插入硬碟機";                   
     ls->dlgInsertCas            = "請插入磁帶機磁帶";
     ls->dlgRomType              = "ROM 類型:";
-    ls->dlgDiskSize             = "磁碟大小:";             // New in 2.6
+    ls->dlgDiskSize             = "磁碟大小:";             
 
     ls->dlgTapeTitle            = "blueMSX - 磁帶位置";
     ls->dlgTapeFrameText        = "磁帶位置";
@@ -258,7 +267,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "日期:";
     ls->dlgAboutCreat           = "由 Daniel Vik 創作";
     ls->dlgAboutDevel           = "開發成員\r\n========";
-    ls->dlgAboutThanks          = "特別感謝\r\n============";
+    ls->dlgAboutThanks          = "特別感謝\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "授權協議\r\n"
                                   "======\r\n\r\n"
                                   "這個軟體依據目前的狀態來提供，沒有任何明確的或暗示的擔保。 "
@@ -269,7 +278,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->dlgSavePreview          = "顯示預覽";
     ls->dlgSaveDate             = "儲存時間:";
 
-    ls->dlgRenderVideoCapture   = "blueMSX - 正在渲染擷取視訊...";  // New in 2.6
+    ls->dlgRenderVideoCapture   = "blueMSX - 正在渲染擷取視訊...";  
 
 
     //----------------------
@@ -284,6 +293,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propPerformance         = "效能";
     ls->propSettings             = "設定";
     ls->propFile                = "檔案";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "連接埠";
     
     ls->propEmuGeneralGB        = "一般 ";
@@ -374,6 +384,13 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propThemeGB             = "佈景主題 ";
     ls->propTheme               = "佈景主題:";
 
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
+
 
     //----------------------
     // Dropdown related lines
@@ -436,7 +453,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" 單面, 8 個磁區";     
     ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" 雙面";           
     ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" 單面"; 
-    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\"  單面";  // New in 2.6             
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\"  單面";               
 
 
     //----------------------
@@ -596,11 +613,11 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "顯示/隱藏前景圖層";
     ls->shortcutToggleFdcTiming = "啟用/停用軟式磁碟機計時";
     ls->shortcutToggleCpuTrace  = "啟用/停用 CPU 追蹤";
-    ls->shortcutVideoLoad       = "載入...";             // New in 2.6
-    ls->shortcutVideoPlay       = "播放上次的擷取";   // New in 2.6
-    ls->shortcutVideoRecord     = "錄製";              // New in 2.6
-    ls->shortcutVideoStop       = "停止";                // New in 2.6
-    ls->shortcutVideoRender     = "渲染視訊檔案";   // New in 2.6
+    ls->shortcutVideoLoad       = "載入...";             
+    ls->shortcutVideoPlay       = "播放上次的擷取";   
+    ls->shortcutVideoRecord     = "錄製";              
+    ls->shortcutVideoStop       = "停止";                
+    ls->shortcutVideoRender     = "渲染視訊檔案";   
 
 
     //----------------------

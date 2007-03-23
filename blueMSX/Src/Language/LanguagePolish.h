@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,7 +106,11 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";                                
     ls->menuCartBeerIde         = "Beer";                               
     ls->menuCartGIde            = "GIDE";                               
-    ls->menuCartSunriseIde      = "Sunrise";                            
+    ls->menuCartSunriseIde      = "Sunrise";                              
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Kartrid¿";
     ls->menuCartFMPac           = "Kartrid¿ FM-PAC";
@@ -115,6 +119,9 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "W³ó¿ inny";                     
     ls->menuCartMegaRam         = "MegaRAM";                            
     ls->menuCartExternalRam     = "Zewnêtrzny RAM";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "W³ó¿ nowy obraz dysku";              
     ls->menuDiskDirInsert       = "Podepnij folder";
@@ -148,6 +155,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Wydajnoœæ";
     ls->menuPropsSettings        = "Ustawienia";
     ls->menuPropsFile           = "Pliki";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Jêzyk";
     ls->menuPropsPorts          = "Porty";
     
@@ -177,6 +185,7 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Dysk Twardy";                          
     ls->menuFileHarddiskNoPesent= "Brak sterownika";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "Uruchom";
     ls->menuRunPause            = "Pauza";
@@ -258,7 +267,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Data:";
     ls->dlgAboutCreat           = "Program Daniela Vika";
     ls->dlgAboutDevel           = "PROGRAMIŒCI\r\n========";
-    ls->dlgAboutThanks          = "SPECJALNE PODZIÊKOWANIA DLA\r\n============";
+    ls->dlgAboutThanks          = "SPECJALNE PODZIÊKOWANIA DLA\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LICENSE\r\n"
                                   "======\r\n\r\n"
                                   "This software is provided 'as-is', without any express or implied "
@@ -284,6 +293,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propPerformance         = "Wydajnoœæ";
     ls->propSettings             = "Ustawienia";
     ls->propFile                = "Pliki";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "Porty";
     
     ls->propEmuGeneralGB        = "Ogólne ";
@@ -373,6 +383,13 @@ void langInitPolish(LanguageStrings* ls)
 
     ls->propThemeGB             = "Temat ";
     ls->propTheme               = "Temat:";
+
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
 
 
     //----------------------

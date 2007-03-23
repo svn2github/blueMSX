@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,7 +106,11 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCartIde             = "IDE";
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
-    ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartSunriseIde      = "Sunrise";  
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC+ Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
@@ -115,6 +119,9 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Toevoegen Speciale Cartridge";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "Extern RAM-geheugen";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";
     ls->menuDiskDirInsert       = "Toevoegen Map";
@@ -148,6 +155,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Prestatie";
     ls->menuPropsSettings       = "Instellingen";
     ls->menuPropsFile           = "Bestand";
+    ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Taal";
     ls->menuPropsPorts          = "Poorten";
 
@@ -177,6 +185,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Vaste schijf";
     ls->menuFileHarddiskNoPesent= "Geen vaste schijfcontrollers aanwezig";
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun              = "Start";
     ls->menuRunPause            = "Pauze";
@@ -258,7 +267,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Datum:";
     ls->dlgAboutCreat           = "Gemaakt door Daniel Vik";
     ls->dlgAboutDevel           = "GEMAAKT DOOR\r\n========";
-    ls->dlgAboutThanks          = "MET DANK AAN\r\n============";
+    ls->dlgAboutThanks          = "MET DANK AAN\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LICENTIE\r\n"
                                   "======\r\n\r\n"
                                   "Deze software wordt gegeven 'as-is', zonder enige vorm van garantie. "
@@ -284,6 +293,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPerformance         = "Prestaties";
     ls->propSettings            = "Instellingen";
     ls->propFile                = "Bestand";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts               = "Poorten";
 
     ls->propEmuGeneralGB        = "Algemeen ";
@@ -373,6 +383,13 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->propThemeGB             = "Thema ";
     ls->propTheme               = "Thema";
+
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
 
 
     //----------------------

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.39 $ 
+** $Revision: 1.40 $ 
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2007-03-23 17:55:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,7 +106,11 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuCartIde              = "IDE";                                
     ls->menuCartBeerIde          = "Beer";                               
     ls->menuCartGIde             = "GIDE";                               
-    ls->menuCartSunriseIde       = "Sunrise";                            
+    ls->menuCartSunriseIde       = "Sunrise";                              
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC              = "SCC Cartridge";
     ls->menuCartSCCPlus          = "SCC+ Cartridge";
     ls->menuCartFMPac            = "FM-PAC-Cartridge";
@@ -115,6 +119,9 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuCartInsertSpecial    = "Insert Special";                     
     ls->menuCartMegaRam          = "MegaRAM";                            
     ls->menuCartExternalRam      = "Externes RAM";
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuCasRewindAfterInsert = "Zurück nach Einfügen";
     ls->menuCasUseReadOnly       = "Cassetten-Image nur lesend benutzen";
@@ -148,6 +155,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->menuPropsPerformance     = "Performance";
     ls->menuPropsSettings        = "Einstellungen";
     ls->menuPropsFile            = "Files";
+    ls->menuPropsDisk            = "Disks";               // New in 2.7
     ls->menuPropsLanguage        = "Sprache";
     ls->menuPropsPorts           = "Ports";
     
@@ -177,6 +185,7 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->menuFileHarddisk         = "Hard Disk";                          
     ls->menuFileHarddiskNoPesent = "No Controllers Present";             
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
 
     ls->menuRunRun               = "Start";
     ls->menuRunPause             = "Pause";
@@ -258,7 +267,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->dlgAboutBuildDate        = "Datum:";
     ls->dlgAboutCreat            = "von Daniel Vik";
     ls->dlgAboutDevel            = "ENTWICKLER\r\n========";
-    ls->dlgAboutThanks           = "BESONDEREN DANK AN\r\n============";
+    ls->dlgAboutThanks           = "BESONDEREN DANK AN\r\n============";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence          = "LIZENZ\r\n"
                                    "======\r\n\r\n"
                                    "Diese Software wird ''wie sie ist'' zur Verfügung gestellt, ohne jegliche Garantie. "
@@ -284,6 +293,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propPerformance          = "Performance";
     ls->propSettings             = "Einstellungen";
     ls->propFile                 = "Files";
+    ls->propDisk                = "Disks";              // New in 2.7
     ls->propPorts                = "Ports";
     
     ls->propEmuGeneralGB         = "Allgemeines ";
@@ -373,6 +383,13 @@ void langInitGerman(LanguageStrings* ls)
 
     ls->propThemeGB              = "Theme ";
     ls->propTheme                = "Theme:";
+
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Drive:";          // New in 2.7
 
 
     //----------------------
