@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.41 $
+** $Revision: 1.42 $
 **
-** $Date: 2007-03-23 20:47:21 $
+** $Date: 2007-03-23 21:07:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -449,8 +449,8 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
                     }
 
                     linePtr0w[0] = color[(pattern >> --shift) & 1];
-                    linePtr0p[1] = color[(pattern >> --shift) & 1];
-                    linePtr0p += 2; 
+                    linePtr0w[1] = color[(pattern >> --shift) & 1];
+                    linePtr0w += 2; 
                 }
                 X++;
             }
