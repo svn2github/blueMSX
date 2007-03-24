@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-03-24 07:56:24 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -515,15 +515,23 @@ void  wd33c93Destroy(WD33C93* wd33c93)
     archCdromBufferFree(wd33c93->buffer);
     free(wd33c93);
 }
-#include "MegaSCSIsub.h"
+
 static SCSIDEVICE* wd33c93ScsiDevCreate(WD33C93* wd33c93, int id)
 {
 #if 1
     // CD_UPDATE: Use dynamic parameters instead of hard coded ones
-    const SCSICREATE* create = getMegaSCSIparm(wd33c93->hdId);
-    return scsiDeviceCreate(id, diskGetHdDriveId(wd33c93->hdId, id), wd33c93->buffer,
-                            create[id].productName, create[id].deviceType,
-                            create[id].scsiMode, (CdromXferCompCb)wd33c93XferCb, wd33c93);
+    int diskId, mode, type;
+
+    diskId = diskGetHdDriveId(wd33c93->hdId, id);
+    if (diskIsCdrom(diskId)) {
+        mode = MODE_SCSI1 | MODE_UNITATTENTION | MODE_REMOVABLE | MODE_NOVAXIS;
+        type = SDT_CDROM;
+    } else {
+        mode = MODE_SCSI1 | MODE_UNITATTENTION | MODE_FDS120 | MODE_REMOVABLE | MODE_NOVAXIS;
+        type = SDT_DirectAccess;
+    }
+    return scsiDeviceCreate(id, diskId, wd33c93->buffer, NULL, type, mode,
+                           (CdromXferCompCb)wd33c93XferCb, wd33c93);
 #else
     SCSIDEVICE* dev;
     int mode;
