@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2007-03-24 05:20:28 $
+** $Date: 2007-03-24 22:12:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1652,6 +1652,9 @@ static void boardUpdateDisketteInfo()
         if (boardDeviceInfo->disks[i].inserted) {
             diskSetInfo(i, boardDeviceInfo->disks[i].name,
                         boardDeviceInfo->disks[i].inZipName);
+        }
+        else {
+            diskSetInfo(i, NULL, NULL);
         }
     }
 }

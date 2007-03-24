@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2007-03-24 05:20:34 $
+** $Date: 2007-03-24 22:12:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -500,7 +500,7 @@ UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int trac
 
 void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile)
 {
-    drivesIsCdrom[driveId] = strcmp(fileName, DISK_CDROM) == 0;
+    drivesIsCdrom[driveId] = fileName && strcmp(fileName, DISK_CDROM) == 0;
 }
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
