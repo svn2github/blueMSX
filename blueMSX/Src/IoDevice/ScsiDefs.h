@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDefs.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-22 10:55:08 $
+** $Date: 2007-03-24 08:01:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,6 +64,12 @@
 #define SCSIOP_PLAY_TRACK_INDEX     0x48
 #define SCSIOP_PLAY_TRACK_RELATIVE  0x49
 #define SCSIOP_PAUSE_RESUME         0x4B
+
+#define SCSIOP_PLAY_AUDIO12         0xA5
+#define SCSIOP_READ12               0xA8
+#define SCSIOP_PLAY_TRACK_RELATIVE12 0xA9
+#define SCSIOP_READ_CD_MSF          0xB9
+#define SCSIOP_READ_CD              0xBE
 
 // Sense data                    KEY | ASC | ASCQ
 #define SENSE_NO_SENSE               0x000000
