@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-03-22 20:30:48 $
+** $Date: 2007-03-24 08:18:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,8 +128,9 @@ static int execId         = 0;
 //static int isWinNT      = 0;
 static int nBytesRead     = 0;
 static int tocFlag        = 0;
+static int cdPlayed       = 0;
 static HANDLE hExecThread = NULL;
-static void*      tocbuf  = NULL;
+static char*      tocbuf  = NULL;
 static CDROM_TOC* toc;
 
 #ifdef CDROMDEBUG
@@ -163,14 +164,14 @@ void* archCdromBufferMalloc(size_t size)
 #ifdef USE_VIRTUAL_ALLOC
     return VirtualAlloc(NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
-    void* ptr = calloc(1, size + 2048 + 0x10);
-    void* newPtr;
+    char* ptr = calloc(1, size + 2048 + 0x10);
+    char* newPtr;
     unsigned int* p;
 
     if (ptr == NULL) {
         return NULL;
     }
-    newPtr = (void*)((unsigned int)(ptr + 2048 + 0x10) & ~2047);
+    newPtr = (char*)((unsigned int)(ptr + 2048 + 0x10) & ~2047);
     p  = (unsigned int*)(newPtr - 0x10);
     *p = (unsigned int)ptr;
     return newPtr;
@@ -182,11 +183,12 @@ void archCdromBufferFree(void* ptr)
 #ifdef USE_VIRTUAL_ALLOC
     VirtualFree(ptr, 0, MEM_RELEASE);
 #else
+    char* nptr = ptr;
     unsigned int* p;
 
-    if (ptr) {
-        ptr = ptr - 0x10;
-        p = (unsigned int*)ptr;
+    if (nptr) {
+        nptr = nptr - 0x10;
+        p = (unsigned int*)nptr;
         free((void*)*p);
     }
 #endif
@@ -253,13 +255,7 @@ ArchCdrom* archCdromCreate(CdromXferCompCb xferCompCb, void* ref)
 
     if (driveCnt == 0) {
         tocbuf = malloc(sizeof(CDROM_TOC) + 0x10);
-#if 0 // Orignial code
-        // FIXME: tocbuf is of type void* so vc fails because the size of void is unknown
         toc    = (CDROM_TOC*)((unsigned int)(tocbuf + 0x10) & ~0x0f);
-#else
-        // Is it correct to treat the tocbuf as a char*
-        toc    = (CDROM_TOC*)((unsigned int)((char*)tocbuf + 0x10) & ~0x0f);
-#endif
     }
 
     driveCnt++;
@@ -274,22 +270,36 @@ ArchCdrom* archCdromCreate(CdromXferCompCb xferCompCb, void* ref)
 
 void archCdromDestroy(ArchCdrom* cdrom)
 {
-    if (cdrom) {
-        CloseHandle(cdrom->hDevice);
+    DWORD returned;
 
+    if (cdrom) {
+        if (execId == cdrom->cdromId) {
+            threadClose();
+        }
         if (--driveCnt == 0) {
+            threadClose();
             free(tocbuf);
             tocbuf    = NULL;
             tocFlag   = 0;
             driveMask = 0;
-        }
 
-        if (execId == cdrom->cdromId) {
-            threadClose();
+            if (cdPlayed) {
+#ifdef CDROMDEBUG
+                DWORD counter = GetTickCount();
+                DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
+                                     NULL, 0, NULL, 0, &returned, NULL);
+                counter = GetTickCount() - counter;
+                DBGLOG1("Time until stopping cd %dms\n", (int)counter);
+#else
+                DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
+                                     NULL, 0, NULL, 0, &returned, NULL);
+#endif
+            }
+            cdPlayed = 0;
         }
+        CloseHandle(cdrom->hDevice);
         free(cdrom);
     }
-
 #ifdef CDROMDEBUG
     if (--logCnt == 0) {
         DBGLOG("cdrom destroy\n");
@@ -336,7 +346,7 @@ void archCdromDisconnect(ArchCdrom* cdrom)
 static DWORD execCmdThread(LPVOID lpvoid)
 {
     BOOL   status;
-    ULONG  returned;
+    DWORD  returned;
     UCHAR* sense;
     UCHAR* cdb;
     UInt8* buf;
@@ -367,17 +377,14 @@ static DWORD execCmdThread(LPVOID lpvoid)
 
     case SCSIOP_PLAY_AUDIO:
         {
-            int i = 9;
-            UCHAR* p;
-            stop = 1;
-            p = &cdb[1];
-            while (i) {
-                if (*p) {
+            int i = 2;
+            stop  = 1;
+            while (i < 9) {
+                if (cdb[i]) {
                     stop = 0;
                     break;
                 }
-                p++;
-                i--;
+                i++;
             }
         }
         break;
@@ -387,13 +394,13 @@ static DWORD execCmdThread(LPVOID lpvoid)
         DBGLOG("play track\n");
         if (!tocFlag) {
             status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, FALSE);
+                                     NULL, 0, NULL, 0, &returned, NULL);
             if (!status) break;
 
             status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_READ_TOC_EX,
                                      &tocex, sizeof(CDROM_READ_TOC_EX),
                                      toc, sizeof(CDROM_TOC),
-                                     &returned, FALSE);
+                                     &returned, NULL);
             if (!status) break;
             tocFlag = 1;
         }
@@ -431,7 +438,7 @@ static DWORD execCmdThread(LPVOID lpvoid)
 
         if (stop) {
             status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, FALSE);
+                                     NULL, 0, NULL, 0, &returned, NULL);
             if (status == TRUE) {
                 cdrom->keycode = 0;
                 break;
@@ -449,7 +456,7 @@ static DWORD execCmdThread(LPVOID lpvoid)
         status = DeviceIoControl(cdrom->hDevice, IOCTL_SCSI_PASS_THROUGH_DIRECT,
                                  sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
                                  sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
-                                 &returned, FALSE);
+                                 &returned, NULL);
 
         if (status == TRUE) {
 
@@ -621,7 +628,7 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
         tl = (ULONG)cdb[4];
         break;
     case 12:
-        tl = (ULONG)(cdb[9] << 8) + (ULONG)cdb[10];
+        tl = 0;
         break;
     default:
         tl = (ULONG)(cdb[7] << 8) + (ULONG)cdb[8];
@@ -629,6 +636,9 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
     }
 
     switch (cdb[0]) {
+    case SCSIOP_READ12:
+        tl = (ULONG)(cdb[6] << 24) + (ULONG)(cdb[7] << 16) +
+             (ULONG)(cdb[8] << 8) + (ULONG)cdb[9];
     case SCSIOP_READ10:
         tl *= 2048;
         break;
@@ -638,16 +648,19 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
         tl = 8;
         break;
 
-/*  case SCSIOP_TEST_UNIT_READY: */
-    case SCSIOP_REZERO_UNIT:
-    case SCSIOP_START_STOP_UNIT:
-    case SCSIOP_SEEK6:
-    case SCSIOP_SEEK10:
     case SCSIOP_PLAY_AUDIO:
     case SCSIOP_PLAY_AUDIO_MSF:
     case SCSIOP_PLAY_TRACK_INDEX:
     case SCSIOP_PLAY_TRACK_RELATIVE:
     case SCSIOP_PAUSE_RESUME:
+    case SCSIOP_PLAY_AUDIO12:
+    case SCSIOP_PLAY_TRACK_RELATIVE12:
+        cdPlayed = 1;
+    /*  case SCSIOP_TEST_UNIT_READY: */
+    case SCSIOP_REZERO_UNIT:
+    case SCSIOP_START_STOP_UNIT:
+    case SCSIOP_SEEK6:
+    case SCSIOP_SEEK10:
         tl = 0;
         break;
     }
@@ -748,6 +761,6 @@ void cdromOnMediaChange(DWORD unitMask)
 {
     if (unitMask & driveMask) {
         changeCnt++;
-        tocFlag = 0;
+        tocFlag  = 0;
     }
 }
