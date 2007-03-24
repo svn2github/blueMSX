@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2007-03-23 17:55:28 $
+** $Date: 2007-03-24 05:20:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,6 +124,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Sätt in ny diskett fil";
+    ls->menuDiskInsertCdrom     = "Sätt in CD-Rom";      // New in 2.7
     ls->menuDiskDirInsert       = "Sätt in mapp";
     ls->menuDiskAutoStart       = "Starta om efter insättning/urdagning";
     ls->menuCartAutoReset       = "Starta om efter insättning/urdagning";

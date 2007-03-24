@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * $Date: 2007-03-22 10:55:08 $
+ * $Date: 2007-03-24 05:20:37 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -13,9 +13,10 @@
 #include "MegaSCSIsub.h"
 #include "ScsiDefs.h"
 #include "ScsiDevice.h"
+#include "Disk.h"
 #include <stdlib.h>
 
-const SCSICREATE MegaSCSIparm[8] = {
+SCSICREATE MegaSCSIparm[8] = {
 {
     /* #0 */
     NULL, SDT_DirectAccess,
@@ -56,6 +57,24 @@ const SCSICREATE MegaSCSIparm[8] = {
     "PRODUCT NAME    ", SDT_DirectAccess,
     MODE_SCSI2 | MODE_UNITATTENTION | MODE_MEGASCSI | MODE_REMOVABLE }
 */
+
+const SCSICREATE* getMegaSCSIparm(int hdId)
+{
+    // CD_UPDATE: Dynnamically create parameter table and select correct
+    //            parameters based on inserted disk
+    int i;
+    for (i = 0; i < 8; ++i) {
+        if (diskIsCdrom(diskGetHdDriveId(hdId, i))) {
+            MegaSCSIparm[i].deviceType = SDT_CDROM;
+            MegaSCSIparm[i].scsiMode   = MODE_SCSI2 | MODE_UNITATTENTION | MODE_REMOVABLE;
+        }
+        else {
+            MegaSCSIparm[i].deviceType = SDT_DirectAccess;
+            MegaSCSIparm[i].scsiMode   = MODE_SCSI2 | MODE_MEGASCSI | MODE_CHECK2 | MODE_FDS120 | MODE_REMOVABLE;
+        }
+    }
+    return MegaSCSIparm;
+}
 
 int EseRamSize(int size)
 {

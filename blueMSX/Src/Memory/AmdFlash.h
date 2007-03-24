@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-03-24 05:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,8 @@ typedef struct AmdFlash AmdFlash;
 typedef enum { AMD_TYPE_1, AMD_TYPE_2 } AmdType;
 
 
-AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, void* romData, int size, char* sramFilename);
+AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, 
+                         void* romData, int size, char* sramFilename, int loadSram);
 void amdFlashDestroy(AmdFlash* rm);
 
 int amdFlashCmdInProgress(AmdFlash* rm);

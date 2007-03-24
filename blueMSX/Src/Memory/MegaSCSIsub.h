@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.h,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * $Date: 2007-03-04 16:07:25 $
+ * $Date: 2007-03-24 05:20:37 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -16,7 +16,9 @@
 
 #define REG_DREG 10
 
-const SCSICREATE MegaSCSIparm[8];
+// CD_UPDATE: Dynnamically create parameter table and select correct
+//            parameters based on inserted disk
+const SCSICREATE* getMegaSCSIparm(int hdId);
 int EseRamSize(int size);
 
 #endif

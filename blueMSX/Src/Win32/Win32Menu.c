@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2007-03-22 10:55:09 $
+** $Date: 2007-03-24 05:20:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,9 +174,10 @@
 
 #define ID_HARDDISK_INSERT              41600
 #define ID_HARDDISK_INSERTNEW           41601
-#define ID_HARDDISK_INSERTDIR           41602
-#define ID_HARDDISK_REMOVE              41603
-#define ID_HARDDISK_HISTORY             41604
+#define ID_HARDDISK_INSERTCDROM         41602
+#define ID_HARDDISK_INSERTDIR           41603
+#define ID_HARDDISK_REMOVE              41604
+#define ID_HARDDISK_HISTORY             41605
 
 
 
@@ -621,7 +622,7 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     return hMenu;
 }
 
-static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* shortcuts)
+static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* shortcuts, int showCdrom)
 {
     int idOffset = diskNo * ID_HARDDISK_OFFSET;
     HMENU hMenu = CreatePopupMenu();
@@ -630,6 +631,9 @@ static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* sho
     setMenuColor(hMenu);
 
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERT, langMenuInsert());
+    if (showCdrom) {
+        AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTCDROM, langMenuDiskDirInsertCdrom());
+    }
     AppendMenu(hMenu, MF_STRING, idOffset + ID_HARDDISK_INSERTNEW, langMenuDiskInsertNew());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.disks[diskNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.disks[diskNo].fileName));
@@ -654,42 +658,47 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
         case HD_SUNRISEIDE:
             hasHd = 1;
             sprintf(langBuffer, "IDE%d  - Sunrise Primary", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
             sprintf(langBuffer, "IDE%d  - Sunrise Secondary", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 1), pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 1), pProperties, shortcuts, 0), langBuffer);
             break;
         case HD_BEERIDE:
             hasHd = 1;
             sprintf(langBuffer, "IDE%d Beer", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
             break;
         case HD_NOWIND:
             hasHd = 1;
             sprintf(langBuffer, "NoWind USB Disk", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
             break;
         case HD_GIDE:
             hasHd = 1;
             sprintf(langBuffer, "IDE%d GIDE", i);
-            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts), langBuffer);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
             break;
         case HD_MEGASCSI:
         case HD_WAVESCSI:
             hasHd = 1;
             for (j = 0; j < 8; j++) {
                 sprintf(langBuffer, "SCSI%d %s-SCSI #%d", i, (boardGetHdType(i) == HD_MEGASCSI) ? "MEGA" : "WAVE", j);
+#if 1  // CD_UPDATE: Don't grey out id #6
+                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts, 1), langBuffer);
+#else
                 if (j != 6) {
-                    AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+                    AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts, 1), langBuffer);
                 } else {
                     AppendMenu(hMenu, MF_STRING | MF_GRAYED, 0, langBuffer);
                 }
+#endif
             }
             break;
         case HD_GOUDASCSI:
             hasHd = 1;
-            for (j = 0; j < 2; j++) {
+            // CD_UPDATE: Add id #3 (should it be 8 as the mega scsi??
+            for (j = 0; j < 3; j++) {
                 sprintf(langBuffer, "SCSI%d Gouda SCSI #%d", i, j);
-                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts), langBuffer);
+                AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts, 1), langBuffer);
             }
             break;
         }
@@ -1558,6 +1567,9 @@ int menuCommand(Properties* pProperties, int command)
         switch (cmd) {
         case ID_HARDDISK_INSERT: 
             actionHarddiskInsert(i); 
+            return 0;
+        case ID_HARDDISK_INSERTCDROM:
+            actionHarddiskInsertCdrom(i); 
             return 0;
         case ID_HARDDISK_INSERTNEW:
             actionHarddiskInsertNew(i); 

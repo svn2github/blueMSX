@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2007-03-22 20:30:45 $
+** $Date: 2007-03-24 05:20:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,6 +83,7 @@ static int     useFmPac;
 static RomType currentRomType[2];
 
 static BoardType boardLoadState(const char* stateFile);
+static void boardUpdateDisketteInfo();
 
 static char saveStateVersion[32] = "blueMSX - state  v 8";
 
@@ -1165,6 +1166,8 @@ int boardRun(Machine* machine,
     boardDeviceInfo = deviceInfo;
     boardMachine    = machine;
 
+    boardUpdateDisketteInfo();
+
     if (stateFile != NULL) {
         BoardType loadBoardType = boardLoadState(stateFile);
         if (loadBoardType != BOARD_UNKNOWN) {
@@ -1638,6 +1641,17 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
         int inserted = cartridgeInsert(cartNo, romType, cart, cartZip);
         if (boardInfo.changeCartridge != NULL) {
             boardInfo.changeCartridge(boardInfo.cpuRef, cartNo, inserted);
+        }
+    }
+}
+
+static void boardUpdateDisketteInfo()
+{
+    int i;
+    for (i = 0; i < MAXDRIVES; i++) {
+        if (boardDeviceInfo->disks[i].inserted) {
+            diskSetInfo(i, boardDeviceInfo->disks[i].name,
+                        boardDeviceInfo->disks[i].inZipName);
         }
     }
 }

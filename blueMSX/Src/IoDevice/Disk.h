@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2007-03-22 10:55:07 $
+** $Date: 2007-03-24 05:20:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,9 +37,12 @@
 
 #define MAX_DRIVES_PER_HD        8
 
+#define DISK_CDROM               "CD-Rom"
+
 #define MAXDRIVES (MAX_FDC_COUNT + MAX_DRIVES_PER_HD * MAX_HD_COUNT)
 
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
+void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
 UInt8 diskEnabled(int driveId);
 UInt8 diskReadOnly(int driveId);
@@ -50,6 +53,7 @@ UInt8 diskWrite(int driveId, UInt8* buffer, int sector);
 UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int track, int density);
 int   diskGetSectorsPerTrack(int driveId);
 int   diskGetSectorSize(int driveId, int side, int track, int density);
+int   diskIsCdrom(int driveId);
 int   diskGetSides(int driveId);
 int   diskChanged(int driveId);
 int   _diskRead2(int driveId, UInt8* buffer, int sector, int numSectors);

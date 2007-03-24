@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2007-03-22 10:55:07 $
+** $Date: 2007-03-24 05:20:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -148,6 +148,14 @@ void actionHarddiskInsert(int diskNo)
     if (filename != NULL) {        
         insertDiskette(state.properties, diskNo, filename, NULL, 0);
     }
+    emulatorResume();
+    archUpdateMenu(0);
+}
+
+void actionHarddiskInsertCdrom(int diskNo)
+{
+    emulatorSuspend();
+    insertDiskette(state.properties, diskNo, DISK_CDROM, NULL, 0);
     emulatorResume();
     archUpdateMenu(0);
 }

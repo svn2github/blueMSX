@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2007-03-23 17:55:28 $
+** $Date: 2007-03-24 05:20:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,6 +126,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";             // New in 2.7
 
     ls->menuDiskInsertNew       = "新規ディスクイメージを挿入";
+    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
     ls->menuDiskDirInsert       = "ディレクトリ挿入";
     ls->menuDiskAutoStart       = "挿入/取り出し後リセット";
     ls->menuCartAutoReset       = "挿入/取り出し後リセット";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2007-02-21 16:19:05 $
+** $Date: 2007-03-24 05:20:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #define MAXSECTOR (2 * 9 * 81)
 
 static int   drivesEnabled[MAXDRIVES] = { 1, 1 };
+static int   drivesIsCdrom[MAXDRIVES];
 static FILE* drives[MAXDRIVES];
 static int   RdOnly[MAXDRIVES];
 static char* ramImageBuffer[MAXDRIVES];
@@ -112,6 +113,12 @@ UInt8 diskEnabled(int driveId)
 {
     return driveId >= 0 && driveId < MAXDRIVES && drivesEnabled[driveId];
 }
+
+int diskIsCdrom(int driveId)
+{
+    return driveId >= 0 && driveId < MAXDRIVES && drivesIsCdrom[driveId];
+}
+
 
 UInt8 diskReadOnly(int driveId)
 {
@@ -491,6 +498,11 @@ UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int trac
     return 0;
 }
 
+void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile)
+{
+    drivesIsCdrom[driveId] = strcmp(fileName, DISK_CDROM) == 0;
+}
+
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
 {
     struct stat s;
@@ -498,6 +510,8 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
 
     if (driveId >= MAXDRIVES)
         return 0;
+
+    drivesIsCdrom[driveId] = 0;
 
     /* Close previous disk image */
     if(drives[driveId] != NULL) { 
@@ -512,6 +526,11 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     }
 
     if(!fileName) {
+        return 1;
+    }
+
+    if (strcmp(fileName, DISK_CDROM) == 0) {
+        drivesIsCdrom[driveId] = 1;
         return 1;
     }
 

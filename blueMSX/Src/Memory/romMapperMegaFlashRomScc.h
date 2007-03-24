@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-03-24 05:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "MsxTypes.h"
 
 int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData, 
-                                   int size, int slot, int sslot, int startPage, int flashSize);
+                                   int size, int slot, int sslot, int startPage, 
+                                   int flashSize, int loadSram);
 
 #endif

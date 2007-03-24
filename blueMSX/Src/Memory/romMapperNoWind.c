@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-19 19:30:19 $
+** $Date: 2007-03-24 05:20:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,7 +171,7 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
     if (filename == NULL) {
         filename = "nowind.rom";
     }
-    rm->amdFlash = amdFlashCreate(AMD_TYPE_1, 0x80000, 0x10000, romData, size, sramCreateFilenameWithSuffix(filename, "", ".rom"));
+    rm->amdFlash = amdFlashCreate(AMD_TYPE_1, 0x80000, 0x10000, romData, size, sramCreateFilenameWithSuffix(filename, "", ".rom"), 0);
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
