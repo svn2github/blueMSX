@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2007-03-24 05:20:40 $
+** $Date: 2007-03-25 17:04:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -696,7 +696,7 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
         case HD_GOUDASCSI:
             hasHd = 1;
             // CD_UPDATE: Add id #3 (should it be 8 as the mega scsi??
-            for (j = 0; j < 3; j++) {
+            for (j = 0; j < 8; j++) {
                 sprintf(langBuffer, "SCSI%d Gouda SCSI #%d", i, j);
                 AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, j), pProperties, shortcuts, 1), langBuffer);
             }

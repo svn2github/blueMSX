@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/ScsiDevice.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2007-03-22 10:55:08 $
+** $Date: 2007-03-25 17:05:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -208,6 +208,9 @@ void scsiDeviceReset(SCSIDEVICE* scsi)
         SCSILOG1("filename: %s\n", scsi->disk.fileName);
         SCSILOG1("     zip: %s\n", scsi->disk.fileNameInZip);
     }
+    else if ((scsi->mode & MODE_NOVAXIS) && scsi->deviceType != SDT_CDROM) {
+        scsi->enabled = 0;
+    }
 }
 
 void scsiDeviceBusReset(SCSIDEVICE* scsi)
@@ -239,9 +242,13 @@ int scsiDeviceSelection(SCSIDEVICE* scsi)
 {
     scsi->lun = 0;
     if (scsi->mode & MODE_REMOVABLE) {
+        if (!scsi->enabled &&
+           (scsi->mode & MODE_NOVAXIS) && scsi->deviceType != SDT_CDROM) {
+            scsi->enabled = diskPresent(scsi->diskId) ? 1 : 0;
+        }
         return scsi->enabled;
     }
-        return scsi->enabled && diskPresent(scsi->diskId);
+    return scsi->enabled && diskPresent(scsi->diskId);
 }
 
 static int scsiDeviceGetReady(SCSIDEVICE* scsi)

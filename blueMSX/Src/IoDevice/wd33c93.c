@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2007-03-24 07:56:24 $
+** $Date: 2007-03-25 17:05:07 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -557,7 +557,7 @@ WD33C93* wd33c93Create(int hdId)
 
     scsiLog = scsiDeviceLogCreate();
     wd33c93->buffer  = archCdromBufferMalloc(BUFFER_SIZE);
-    wd33c93->maxDev  = 3;
+    wd33c93->maxDev  = 8;
     wd33c93->hdId    = hdId;
     wd33c93->devBusy = 0;
     //wd33c93->timer = boardTimerCreate(wd33c93Irq, wd33c93);
