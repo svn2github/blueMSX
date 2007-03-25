@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2007-03-25 09:17:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -98,7 +98,7 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
     color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
 
     for (y = 0; y < DISPLAY_HEIGHT; y++) {
-        UInt16* linePtr = crtcFrameBuffer->line[y].buffer;
+        UInt16* linePtr = frameBufferGetLine(crtcFrameBuffer, y);
         int charRaster = y % Nr;
         int vadjust = 2; // Fix vertical adjust from regs (the value 4)
         int hadjust = 2; // Fix horizontal adjust from regs (the value 1)

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxAsciiLaser.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-09-19 06:00:20 $
+** $Date: 2007-03-25 09:17:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -86,14 +86,15 @@ static UInt8 read(MsxAsciiLaser* joystick) {
         int myHigh = MIN(scanline - DELAY, my + AIMADJUST + RADIUS + HOLD);
         int y;
 
-        joystick->scanlines = frameBuffer->lines;
+        joystick->scanlines = frameBufferGetLineCount(frameBuffer);
 
+        
         myLow  = MAX(myLow, 0);
-        myHigh = MIN(myHigh, frameBuffer->lines);
+        myHigh = MIN(myHigh, frameBufferGetLineCount(frameBuffer));
 
         for (y = myLow; y < myHigh; y++) {
-            int x = mx * (frameBuffer->line[y].doubleWidth ? 2 : 1) * frameBuffer->maxWidth / 0x10000;
-            UInt16 rgb = frameBuffer->line[y].buffer[x];
+            int x = mx * (frameBufferGetDoubleWidth(frameBuffer, y) ? 2 : 1) * frameBufferGetMaxWidth(frameBuffer) / 0x10000;
+            UInt16 rgb = frameBufferGetLine(frameBuffer, y)[x];
             int R = 8 * ((rgb >> 10) & 0x01f);
             int G = 8 * ((rgb >> 5) & 0x01f);
             int B = 8 * ((rgb >> 0) & 0x01f);
