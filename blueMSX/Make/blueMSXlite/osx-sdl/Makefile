@@ -33,9 +33,12 @@ ECHO  = @echo
 #
 # Flags
 #
-#CFLAGS   = -w -O3 -DNO_ASM -DNO_HIRES_TIMERS -DNO_EMBEDDED_SAMPLES -DUSE_SDL
-#CPPFLAGS = -O3 -DNO_ASM
-CFLAGS   = -g -w -O2 -DNO_ASM -DNO_HIRES_TIMERS -DNO_EMBEDDED_SAMPLES -DUSE_SDL `sdl-config --cflags` -I$(PREF_INC)
+#CFLAGS   = -w -O3 -DNO_ASM -DNO_HIRES_TIMERS 
+# -DNO_FILE_HISTORY  -DNO_EMBEDDED_SAMPLES -DUSE_SDL
+# CPPFLAGS = -O3 -DNO_ASM
+CFLAGS   = -g -w -O2 -DNO_ASM -DNO_HIRES_TIMERS \
+-DNO_FILE_HISTORY  -DNO_EMBEDDED_SAMPLES -DUSE_SDL \
+`sdl-config --cflags` -I$(PREF_INC)
 CPPFLAGS = -g -DNO_ASM `sdl-config --cflags`
 LDFLAGS  = 
 LIBS     = `sdl-config --libs`
@@ -116,6 +119,7 @@ SOURCE_FILES += SdlNotifications.c
 SOURCE_FILES += SdlVideoIn.c
 SOURCE_FILES += SdlShortcuts.c
 SOURCE_FILES += SdlMouse.c
+SOURCE_FILES += SdlCdrom.c
 
 SOURCE_FILES += Patch.c 
 
