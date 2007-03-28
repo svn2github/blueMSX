@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-02-15 22:19:01 $
+** $Date: 2007-03-28 17:30:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,7 +81,11 @@ static void CALLBACK timerCallback(unsigned int unused1,
     syncCallback();
 }
 
+#ifdef __GNUC__
+void* archCreateTimer(int period, int (*callback)(void*)) {
+#else
 void* archCreateTimer(int period, void (*callback)(void*)) {
+#endif
     Win32Timer* win32Timer = (Win32Timer*)malloc(sizeof(Win32Timer));
 
     win32Timer->timerId = 0;
