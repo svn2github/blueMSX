@@ -1,9 +1,9 @@
 /*
  * $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaSCSIsub.c,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * $Date: 2007-03-24 05:20:37 $
+ * $Date: 2007-03-28 17:35:35 $
  *
  * Copyright (C) 2007 white cat
  *
@@ -11,10 +11,15 @@
  */
 
 #include "MegaSCSIsub.h"
+
+#if 0
+// The SCSI mode making parameter moves to MB89352.c.
+
 #include "ScsiDefs.h"
 #include "ScsiDevice.h"
 #include "Disk.h"
 #include <stdlib.h>
+
 
 SCSICREATE MegaSCSIparm[8] = {
 {
@@ -71,10 +76,12 @@ const SCSICREATE* getMegaSCSIparm(int hdId)
         else {
             MegaSCSIparm[i].deviceType = SDT_DirectAccess;
             MegaSCSIparm[i].scsiMode   = MODE_SCSI2 | MODE_MEGASCSI | MODE_CHECK2 | MODE_FDS120 | MODE_REMOVABLE;
+            MegaSCSIparm[i].scsiMode   = MODE_SCSI2 | MODE_MEGASCSI | MODE_FDS120 | MODE_REMOVABLE;
         }
     }
     return MegaSCSIparm;
 }
+#endif
 
 int EseRamSize(int size)
 {

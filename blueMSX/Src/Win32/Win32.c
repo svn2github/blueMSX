@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.174 $
+** $Revision: 1.175 $
 **
-** $Date: 2007-03-22 10:55:09 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2704,6 +2704,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     tapeSetReadOnly(pProperties->cassette.readOnly);
     
     ethIfInitialize(pProperties);
+    cdromInitialize();
 
     // Initialize shortcuts profile
     if (!shortcutsIsProfileValid(pProperties->emulation.shortcutProfile)) {
@@ -2872,6 +2873,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     videoInCleanup(pProperties);
     ethIfCleanup(pProperties);
+    cdromCleanup();
 
     pProperties->joy1.typeId = joystickPortGetType(0);
     pProperties->joy2.typeId = joystickPortGetType(1);

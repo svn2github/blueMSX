@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MB89352.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-22 10:55:07 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -950,10 +950,12 @@ void mb89352Destroy(MB89352* spc)
     SCSILOG("spc destroy\n");
     scsiDeviceLogClose();}
 
-MB89352* mb89352Create(int hdId, const SCSICREATE* create)
+MB89352* mb89352Create(int hdId)
 {
     int i;
+    int diskId;
     MB89352* spc;
+    int deviceType, scsiMode;
 
     scsiLog = scsiDeviceLogCreate();
     SCSILOG("spc create\n");
@@ -967,11 +969,24 @@ MB89352* mb89352Create(int hdId, const SCSICREATE* create)
         debugDeviceRegister(DBGTYPE_PORT, "MB89352 SPC", &dbgCallbacks, spc);
 #endif
 
-    for (i = 0; i < 8; ++i) {
+    // this SCSI creating parameter is for MEGA-SCSI
+    for (i = 0; i < 8; i++) {
+        diskId = diskGetHdDriveId(hdId, i);
+        if (diskIsCdrom(diskId)) {
+            deviceType = SDT_CDROM;
+            scsiMode   = MODE_SCSI2 | MODE_UNITATTENTION | MODE_REMOVABLE;
+        }
+        else {
+            deviceType = SDT_DirectAccess;
+#if 1
+            scsiMode   = MODE_SCSI2 | MODE_MEGASCSI | MODE_FDS120 | MODE_REMOVABLE;
+#else
+            scsiMode   = MODE_SCSI2 | MODE_MEGASCSI | MODE_CHECK2 | MODE_FDS120 | MODE_REMOVABLE;
+#endif
+        }
         spc->scsiDevice[i] =
-            scsiDeviceCreate(i, diskGetHdDriveId(hdId, i), spc->buffer,
-                     create[i].productName, create[i].deviceType,
-                     create[i].scsiMode, (CdromXferCompCb)mb89352XferCb, spc);
+            scsiDeviceCreate(i, diskId, spc->buffer, NULL, deviceType,
+                             scsiMode, (CdromXferCompCb)mb89352XferCb, spc);
     }
 
     mb89352Reset(spc, 0);

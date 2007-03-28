@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2007-03-22 20:50:28 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -187,6 +187,7 @@ ValueNamePair PrinterEmulationPair[] = {
 ValueNamePair CdromDrvPair[] = {
     { P_CDROM_DRVNONE,             "none" },
     { P_CDROM_DRVIOCTL,            "ioctl" },
+    { P_CDROM_DRVASPI,             "aspi" },
     { -1,                          "" },
 };
 

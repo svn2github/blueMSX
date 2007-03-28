@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2007-03-24 08:18:04 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,12 +34,12 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#define USE_VIRTUAL_ALLOC
 //#define CDROMDEBUG "cdromLog.txt"
+#define USE_VIRTUAL_ALLOC
+#define MAX_ASPIDRV 32
 
 #ifdef CDROMDEBUG
-static FILE* logFd  = NULL;
-static int   logCnt = 0;
+static FILE* logFd;
 #define DBGLOG(fmt) fprintf(logFd, fmt)
 #define DBGLOG1(fmt, arg1) fprintf(logFd, fmt, arg1)
 #define DBGLOG2(fmt, arg1, arg2) fprintf(logFd, fmt, arg1, arg2)
@@ -62,7 +62,6 @@ static int   logCnt = 0;
 
 struct ArchCdrom
 {
-    HANDLE hDevice;
     int    keycode;
     int    cdromId;
     int    busy;
@@ -114,8 +113,88 @@ typedef struct {
     TRACK_DATA TrackData[100];
 } CDROM_TOC;
 
+// winaspi
+#pragma pack(1)
+
+#define SENSE_LEN           18
+#define SRB_DIR_IN          0x08
+#define SRB_DIR_OUT         0x10
+#define SRB_EVENT_NOTIFY    0x40
+
+#define SS_PENDING          0x00
+#define SS_COMP             0x01
+
+#define SC_HA_INQUIRY       0x00
+#define SC_GET_DEV_TYPE     0x01
+#define SC_EXEC_SCSI_CMD    0x02
+
+#define HASTAT_OK           0x00
+#define HASTAT_DO_DU        0x12
+
+typedef struct
+{
+    BYTE    SRB_Cmd;
+    BYTE    SRB_Status;
+    BYTE    SRB_HaId;
+    BYTE    SRB_Flags;
+    DWORD   SRB_Hdr_Rsvd;
+    BYTE    HA_Count;
+    BYTE    HA_SCSI_ID;
+    BYTE    HA_ManagerId[16];
+    BYTE    HA_Identifier[16];
+    WORD    HA_BufAlignMask;
+    BYTE    HA_Flags;
+    BYTE    HA_MaxTargets;
+    DWORD   HA_MaxTransferLength;
+    DWORD   HA_MaxSGElements;
+    BYTE    HA_Rsvd2[4];
+    WORD    HA_Rsvd1;
+} SRB_HAInquiry;
+
+typedef struct
+{
+    BYTE    SRB_Cmd;
+    BYTE    SRB_Status;
+    BYTE    SRB_HaId;
+    BYTE    SRB_Flags;
+    DWORD   SRB_Hdr_Rsvd;
+    BYTE    SRB_Target;
+    BYTE    SRB_Lun;
+    BYTE    SRB_DeviceType;
+    BYTE    SRB_Rsvd1;
+} SRB_GDEVBlock;
+
+typedef struct
+{
+    BYTE    SRB_Cmd;
+    BYTE    SRB_Status;
+    BYTE    SRB_HaId;
+    BYTE    SRB_Flags;
+    DWORD   SRB_Hdr_Rsvd;
+    BYTE    SRB_Target;
+    BYTE    SRB_Lun;
+    WORD    SRB_Rsvd1;
+    DWORD   SRB_BufLen;
+    BYTE    *SRB_BufPointer;
+    BYTE    SRB_SenseLen;
+    BYTE    SRB_CDBLen;
+    BYTE    SRB_HaStat;
+    BYTE    SRB_TargStat;
+    VOID    *SRB_PostProc;
+    BYTE    SRB_Rsvd2[20];
+    BYTE    CDBByte[16];
+    BYTE    SenseArea[SENSE_LEN+2];
+} SRB_ExecSCSICmd;
+
+typedef void *LPSRB;
+
+typedef DWORD (*fGetASPI32SupportInfo)(void);
+typedef DWORD (*fSendASPI32Command)(LPSRB);
+
+#pragma pack()
+
 typedef struct {
-    SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER* sptdwb;
+    LPVOID param;
     ArchCdrom* cdrom;
 } EXECINFO;
 
@@ -125,21 +204,30 @@ static int changeCnt      = 0;
 static int isXferComp     = 1;
 static int isBusy         = 0;
 static int execId         = 0;
-//static int isWinNT      = 0;
 static int nBytesRead     = 0;
 static int tocFlag        = 0;
 static int cdPlayed       = 0;
+static int cdMethod       = -1;
 static HANDLE hExecThread = NULL;
 static char*      tocbuf  = NULL;
+static HANDLE hEvent      = INVALID_HANDLE_VALUE;
+static HANDLE hDevice     = INVALID_HANDLE_VALUE;
+
 static CDROM_TOC* toc;
+static HMODULE hModule;
+static int aspiTbl[MAX_ASPIDRV + 1];
+static int aspiId;
+
+static fGetASPI32SupportInfo GetASPI32SupportInfo;
+static fSendASPI32Command SendASPI32Command;
 
 #ifdef CDROMDEBUG
-static void winapiError(ULONG errorCode)
+static void winapiError()
 {
     UCHAR errorBuffer[80];
     ULONG count;
 
-    count = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0,
+    count = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0,
                           errorBuffer, sizeof(errorBuffer), NULL);
 
     if (count != 0) {
@@ -149,8 +237,10 @@ static void winapiError(ULONG errorCode)
     }
 }
 #else
-#define winapiError(dmy)
+#define winapiError()
 #endif
+
+static int cdromAudioStop(); // proto type
 
 void archCdromLoadState(ArchCdrom* cdrom) {}
 void archCdromSaveState(ArchCdrom* cdrom) {}
@@ -211,54 +301,61 @@ static void threadClose()
 ArchCdrom* archCdromCreate(CdromXferCompCb xferCompCb, void* ref)
 {
     ArchCdrom*  cdrom;
-    HANDLE      hDevice;
     DiskdriveProperties* prop;
     char        str[16];
     OSVERSIONINFO osInfo;
+    int* p;
 
-#ifdef CDROMDEBUG
-    if (!logCnt) {
-        logFd = fopen(CDROMDEBUG, "w");
+    if (driveCnt++ == 0) {
+        cdMethod = P_CDROM_DRVNONE;
+        prop = &propGetGlobalProperties()->diskdrive;
+
+        if (prop->cdromMethod == P_CDROM_DRVIOCTL) {
+            osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+            if (GetVersionEx(&osInfo) && osInfo.dwMajorVersion >= 5) {
+                sprintf(str, "%c:\\", prop->cdromDrive);
+                if (GetDriveType(str) == DRIVE_CDROM) {
+                    sprintf(str, "\\\\.\\%c:", prop->cdromDrive);
+                    DBGLOG1("cdrom open: %s\n", str);
+                    hDevice = CreateFile(str, GENERIC_READ | GENERIC_WRITE,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                    winapiError();
+                    if (hDevice != INVALID_HANDLE_VALUE) {
+                        cdMethod = P_CDROM_DRVIOCTL;
+                        driveMask = 1 << (prop->cdromDrive - 'A');
+                    }
+                }
+            }
+        }
+        else if (prop->cdromMethod == P_CDROM_DRVASPI) {
+            if (hModule) {
+                p = aspiTbl;
+                while (*p) {
+                    if (prop->cdromDrive == *p) {
+                        cdMethod  = P_CDROM_DRVASPI;
+                        // FIXME: ASPI drive is related to a physical drive
+                        driveMask = ~0;
+                        aspiId = *p;
+                        break;
+                    }
+                    p++;
+                }
+            }
+        }
     }
-    logCnt++;
-#endif
-    driveMask = 0;
-    osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    if (GetVersionEx(&osInfo) && osInfo.dwMajorVersion < 5) {
-        return NULL;
-    }
 
-    //isWinNT = 1;
-    DBGLOG("cdrom create\n");
-    prop = &propGetGlobalProperties()->diskdrive;
-    if (prop->cdromMethod != P_CDROM_DRVIOCTL) {
-        return NULL;
-    }
-
-    sprintf(str, "%c:\\", prop->cdromDrive);
-    if (GetDriveType(str) != DRIVE_CDROM) {
-        return NULL;
-    }
-
-    sprintf(str, "\\\\.\\%c:", prop->cdromDrive);
-    DBGLOG1("cdrom open: %s\n", str);
-
-    hDevice = CreateFile(str, GENERIC_READ | GENERIC_WRITE,
-                          FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-    if (hDevice == INVALID_HANDLE_VALUE) {
+    if (cdMethod == P_CDROM_DRVNONE) {
         return NULL;
     }
 
     cdrom = calloc(1, sizeof(ArchCdrom));
-    cdrom->hDevice = hDevice;
-    driveMask = 1 << (prop->cdromDrive - 'A');
 
-    if (driveCnt == 0) {
+    if (driveCnt == 1) {
         tocbuf = malloc(sizeof(CDROM_TOC) + 0x10);
         toc    = (CDROM_TOC*)((unsigned int)(tocbuf + 0x10) & ~0x0f);
     }
 
-    driveCnt++;
     cdrom->diskChange = ~0;
     cdrom->cdromId    = driveCnt;
     cdrom->xferCompCb = xferCompCb;
@@ -270,42 +367,44 @@ ArchCdrom* archCdromCreate(CdromXferCompCb xferCompCb, void* ref)
 
 void archCdromDestroy(ArchCdrom* cdrom)
 {
-    DWORD returned;
-
+    driveCnt--;
     if (cdrom) {
         if (execId == cdrom->cdromId) {
             threadClose();
         }
-        if (--driveCnt == 0) {
+        if (driveCnt == 0) {
             threadClose();
-            free(tocbuf);
-            tocbuf    = NULL;
-            tocFlag   = 0;
-            driveMask = 0;
 
             if (cdPlayed) {
 #ifdef CDROMDEBUG
                 DWORD counter = GetTickCount();
-                DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, NULL);
+                cdromAudioStop();
                 counter = GetTickCount() - counter;
                 DBGLOG1("Time until stopping cd %dms\n", (int)counter);
 #else
-                DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, NULL);
+                cdromAudioStop();
 #endif
             }
-            cdPlayed = 0;
+
+            if (hDevice != INVALID_HANDLE_VALUE) {
+                CloseHandle(hDevice);
+                hDevice = INVALID_HANDLE_VALUE;
+                winapiError();
+            }
+
+            free(tocbuf);
+            tocbuf    = NULL;
+            tocFlag   = 0;
+            driveMask = 0;
+            cdMethod  = -1;
+            cdPlayed  = 0;
         }
-        CloseHandle(cdrom->hDevice);
         free(cdrom);
-    }
-#ifdef CDROMDEBUG
-    if (--logCnt == 0) {
         DBGLOG("cdrom destroy\n");
-        fclose(logFd);
-        logFd = NULL;
     }
+
+#ifdef CDROMDEBUG
+    fflush(logFd);
 #endif
 }
 
@@ -343,26 +442,99 @@ void archCdromDisconnect(ArchCdrom* cdrom)
     }
 }
 
+static void execAspiCmd(int id, SRB_ExecSCSICmd* cmd)
+{
+    DWORD status;
+
+    ResetEvent(hEvent);
+
+    cmd->SRB_HaId     = (BYTE)((id >> 16) & 0xff);
+    cmd->SRB_Target   = (BYTE)((id >>  8) & 0xff);
+    cmd->SRB_Lun      = (BYTE)(id & 0xff);
+    cmd->SRB_Cmd      = SC_EXEC_SCSI_CMD;
+    cmd->SRB_Flags    = SRB_DIR_IN | SRB_EVENT_NOTIFY;// | SRB_ENABLE_RESIDUAL_COUNT;
+    cmd->SRB_PostProc = (LPVOID)hEvent;
+    cmd->SRB_SenseLen = SENSE_LEN;
+    status = SendASPI32Command((LPSRB)cmd);
+
+    if (status == SS_PENDING) {
+        WaitForSingleObject(hEvent, INFINITE);
+    }
+}
+
+static int cdromAudioStop()
+{
+    DWORD returned;
+    SRB_ExecSCSICmd cmd;
+
+    if (cdMethod == P_CDROM_DRVIOCTL) {
+        return DeviceIoControl(hDevice, IOCTL_CDROM_STOP_AUDIO,
+                               NULL, 0, NULL, 0, &returned, NULL);
+    }
+    else {
+        memset(&cmd, 0, sizeof(cmd));
+        cmd.SRB_BufPointer = NULL;
+        cmd.SRB_BufLen = 0;
+        cmd.SRB_CDBLen = 6;
+        cmd.CDBByte[0] = SCSIOP_START_STOP_UNIT;
+        execAspiCmd(aspiId, &cmd);
+        DBGLOG2("aspi cd stop %d %d\n", cmd.SRB_HaStat, cmd.SRB_TargStat);
+        return (cmd.SRB_HaStat == HASTAT_OK || cmd.SRB_HaStat == HASTAT_DO_DU);
+    }
+}
+
+static int cdromReadToc()
+{
+    DWORD returned;
+    SRB_ExecSCSICmd cmd;
+    CDROM_READ_TOC_EX  tocex = { CDROM_READ_TOC_EX_FORMAT_TOC, 0, 0, 1, 0, 0};
+
+    if (cdMethod == P_CDROM_DRVIOCTL) {
+        return DeviceIoControl(hDevice, IOCTL_CDROM_READ_TOC_EX,
+                                 &tocex, sizeof(CDROM_READ_TOC_EX),
+                                 toc, sizeof(CDROM_TOC),
+                                 &returned, NULL);
+    }
+    else {
+        memset(&cmd, 0, sizeof(cmd));
+        cmd.SRB_BufPointer = (BYTE*)toc;
+        cmd.SRB_BufLen = sizeof(CDROM_TOC);
+        cmd.SRB_CDBLen = 10;
+        cmd.CDBByte[0] = SCSIOP_READ_TOC;
+        cmd.CDBByte[6] = 1;
+        cmd.CDBByte[7] = (BYTE)((sizeof(CDROM_TOC) >> 8) & 0xff);
+        cmd.CDBByte[8] = (BYTE)(sizeof(CDROM_TOC) & 0xff);
+        execAspiCmd(aspiId, &cmd);
+        return (cmd.SRB_HaStat == HASTAT_OK || cmd.SRB_HaStat == HASTAT_DO_DU);
+    }
+}
+
 static DWORD execCmdThread(LPVOID lpvoid)
 {
     BOOL   status;
     DWORD  returned;
-    UCHAR* sense;
-    UCHAR* cdb;
+    UInt8* sense;
+    UInt8* cdb;
     UInt8* buf;
+    UInt8  scsiStat;
     int    stop = 0;
     int    lba, s, track;
-    ArchCdrom* cdrom;
-    EXECINFO* execInfo;
     TRACK_DATA* td;
-    SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER* sptdwb;
-    CDROM_READ_TOC_EX  tocex = { CDROM_READ_TOC_EX_FORMAT_TOC, 0, 0, 1, 0, 0};
+    EXECINFO* execInfo = (EXECINFO*)lpvoid;
+    ArchCdrom* cdrom = execInfo->cdrom;
+    SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER* sptdwb = execInfo->param;
+    SRB_ExecSCSICmd* cmd = execInfo->param;
 
-    execInfo = (EXECINFO*)lpvoid;
-    sptdwb   = execInfo->sptdwb;
-    cdrom    = execInfo->cdrom;
-    cdb      = sptdwb->Cdb;
-    buf      = sptdwb->DataBuffer;
+    if (cdMethod == P_CDROM_DRVIOCTL) {
+        buf      = sptdwb->DataBuffer;
+        cdb      = sptdwb->Cdb;
+        sense    = sptdwb->ucSenseBuf;
+    }
+    else {
+        buf      = cmd->SRB_BufPointer;
+        cdb      = cmd->CDBByte;
+        sense    = cmd->SenseArea;
+    }
 
     switch (cdb[0]) {
     case SCSIOP_REZERO_UNIT:
@@ -393,15 +565,8 @@ static DWORD execCmdThread(LPVOID lpvoid)
     case SCSIOP_PLAY_TRACK_INDEX:
         DBGLOG("play track\n");
         if (!tocFlag) {
-            status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, NULL);
-            if (!status) break;
-
-            status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_READ_TOC_EX,
-                                     &tocex, sizeof(CDROM_READ_TOC_EX),
-                                     toc, sizeof(CDROM_TOC),
-                                     &returned, NULL);
-            if (!status) break;
+            if (!cdromAudioStop()) break;
+            if (!cdromReadToc()) break;
             tocFlag = 1;
         }
 
@@ -437,41 +602,52 @@ static DWORD execCmdThread(LPVOID lpvoid)
         BOOL bugpatch = FALSE;
 
         if (stop) {
-            status = DeviceIoControl(cdrom->hDevice, IOCTL_CDROM_STOP_AUDIO,
-                                     NULL, 0, NULL, 0, &returned, NULL);
-            if (status == TRUE) {
-                cdrom->keycode = 0;
-                break;
-            }
-            cdrom->keycode = SENSE_INVALID_COMMAND_CODE;
+            cdrom->keycode = cdromAudioStop() ? 0 : SENSE_INVALID_COMMAND_CODE;
             break;
         }
 
-        // bug evasion of windows 2000 (KB259573)
-        if (sptdwb->DataTransferLength == 1) {
-            sptdwb->DataTransferLength = 2;
-            bugpatch = TRUE;
-        }
+        if (cdMethod == P_CDROM_DRVIOCTL) {
+            // bug evasion of windows 2000 (KB259573)
+            if (sptdwb->DataTransferLength == 1) {
+                sptdwb->DataTransferLength = 2;
+                bugpatch = TRUE;
+            }
 
-        status = DeviceIoControl(cdrom->hDevice, IOCTL_SCSI_PASS_THROUGH_DIRECT,
-                                 sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
-                                 sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
-                                 &returned, NULL);
+            status = DeviceIoControl(hDevice, IOCTL_SCSI_PASS_THROUGH_DIRECT,
+                                     sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
+                                     sptdwb, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER),
+                                     &returned, NULL);
+            if (!status) winapiError();
+        }
+        else {
+            execAspiCmd(aspiId, cmd);
+            status = (cmd->SRB_HaStat == HASTAT_OK || cmd->SRB_HaStat == HASTAT_DO_DU)
+                     ? TRUE : FALSE;
+            DBGLOG1("HaStat %d\n", cmd->SRB_HaStat);
+        }
 
         if (status == TRUE) {
 
-            DBGLOG3("exec: read %d, ret %X, status %d\n",
-                    (int)sptdwb->DataTransferLength, (int)returned, sptdwb->ScsiStatus);
+            if (cdMethod == P_CDROM_DRVIOCTL) {
+                scsiStat = sptdwb->ScsiStatus;
+                DBGLOG3("exec: read %d, ret %X, status %d\n",
+                        (int)sptdwb->DataTransferLength, (int)returned, scsiStat);
+            }
+            else {
+                scsiStat = cmd->SRB_TargStat;
+                DBGLOG2("exec: read %d, status %d\n", (int)cmd->SRB_BufLen, scsiStat);
+            }
 
-            if (sptdwb->ScsiStatus == 0) {
+            if (scsiStat == SCSIST_GOOD) {
                 cdrom->keycode = 0;
                 if (bugpatch && sptdwb->DataTransferLength > 0) {
                     nBytesRead = 1;
                 } else {
-                    nBytesRead = sptdwb->DataTransferLength;
+                    nBytesRead = (cdMethod == P_CDROM_DRVIOCTL) ? 
+                                 sptdwb->DataTransferLength : cmd->SRB_BufLen;
                 }
 
-                switch (sptdwb->Cdb[0]) {
+                switch (cdb[0]) {
                 case SCSIOP_READ_SUB_CHANNEL:
                     if (buf[1] == 0) {
                         buf[1] = 0x15;      // unknown -> stop
@@ -490,13 +666,10 @@ static DWORD execCmdThread(LPVOID lpvoid)
                 break;
             }
 
-            sense = sptdwb->ucSenseBuf;
             DBGLOG3("sense %X %X %X\n", (int)sense[2], (int)sense[12], (int)sense[13]);
             cdrom->keycode = (int)(sense[2] << 16) | (int)(sense[12] << 8) | (int)sense[13];
             break;
         }
-
-        winapiError(GetLastError());
         cdrom->keycode = SENSE_INVALID_COMMAND_CODE;
     } while (0);
 
@@ -512,12 +685,15 @@ static DWORD execCmdThread(LPVOID lpvoid)
 // [ret] -1 = Execute phase  (CD-ROM response waiting)
 //        0 = Status phase
 //    other = Transfer phase (Data In), Number of bytes read.
-int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int bufferSize)
+int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* srcCdb, UInt8* buffer, int bufferSize)
 {
     static SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER sptdwb;
+    static SRB_ExecSCSICmd cmd;
     static EXECINFO execInfo;
     DWORD dwThreadID;
     ULONG tl;
+    UInt8* dstCdb;
+    UInt8 cdbLen;
 
     if (cdrom == NULL) {
         cdrom->keycode = SENSE_INVALID_COMMAND_CODE;
@@ -525,9 +701,10 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
     }
 
 #ifdef CDROMDEBUG
-    DBGLOG1("\nexec cmd: %X\n", cdb[0]);
+    DBGLOG1("\nexec cmd: %X\n", srcCdb[0]);
     fprintf(logFd, "%X %X %X %X %X %X %X %X %X %X\n",
-            cdb[0],cdb[1],cdb[2],cdb[3],cdb[4],cdb[5],cdb[6],cdb[7],cdb[8],cdb[9]);
+            srcCdb[0],srcCdb[1],srcCdb[2],srcCdb[3],srcCdb[4],
+            srcCdb[5],srcCdb[6],srcCdb[7],srcCdb[8],srcCdb[9]);
 #endif
 
     if (isBusy) {
@@ -537,7 +714,7 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
     cdrom->busy = 0;
 
     if (cdrom->diskChange != changeCnt) {
-        if (cdb[0] != SCSIOP_INQUIRY && cdb[0] != SCSIOP_REQUEST_SENSE) {
+        if (srcCdb[0] != SCSIOP_INQUIRY && srcCdb[0] != SCSIOP_REQUEST_SENSE) {
             cdrom->diskChange = changeCnt;
             cdrom->keycode    = SENSE_POWER_ON;
             DBGLOG("Unit Attention\n");
@@ -547,7 +724,7 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
         }
     }
 
-    if (cdb[0] == SCSIOP_TEST_UNIT_READY) {
+    if (srcCdb[0] == SCSIOP_TEST_UNIT_READY) {
         // hack the command for a high-speed response
         cdrom->keycode = SENSE_NO_SENSE;
         isXferComp = 1;
@@ -555,9 +732,9 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
         return 0;
     }
 
-    if (cdb[0] == SCSIOP_REQUEST_SENSE) {
+    if (srcCdb[0] == SCSIOP_REQUEST_SENSE) {
         int keycode = cdrom->keycode;
-        int length  = cdb[4];
+        int length  = srcCdb[4];
 
         DBGLOG1("Request Sense: keycode = %X\n", keycode);
         cdrom->keycode = SENSE_NO_SENSE;
@@ -581,64 +758,60 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
     }
 
     isBusy = 1;
-    memset(&sptdwb, 0, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER));
-    memcpy(sptdwb.Cdb, cdb, 12);
 
-    switch (cdb[0]) {
+    if (cdMethod == P_CDROM_DRVIOCTL) {
+        memset(&sptdwb, 0, sizeof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER));
+        dstCdb = sptdwb.Cdb;
+    }
+    else {
+        memset(&cmd, 0, sizeof(cmd));
+        dstCdb = cmd.CDBByte;
+    }
+    memcpy(dstCdb, srcCdb, 12);
+
+    switch (dstCdb[0]) {
 
     // convert READ6 to READ10 (some drives need this)
     case SCSIOP_READ6:
-        memset(sptdwb.Cdb + 2, 0, 8);
-        sptdwb.Cdb[0] = SCSIOP_READ10;
-        sptdwb.Cdb[1] &= 0xe0;
-        sptdwb.Cdb[3] = cdb[1] & 0x1f;
-        sptdwb.Cdb[4] = cdb[2];
-        sptdwb.Cdb[5] = cdb[3];
-        if (cdb[4] == 0) sptdwb.Cdb[7] = 1;
-        sptdwb.Cdb[8] = cdb[4];
-        sptdwb.Cdb[9] = cdb[5];
+        memset(dstCdb + 2, 0, 8);
+        dstCdb[0] = SCSIOP_READ10;
+        dstCdb[1] &= 0xe0;
+        dstCdb[3] = srcCdb[1] & 0x1f;
+        dstCdb[4] = srcCdb[2];
+        dstCdb[5] = srcCdb[3];
+        if (srcCdb[4] == 0) dstCdb[7] = 1;
+        dstCdb[8] = srcCdb[4];
+        dstCdb[9] = srcCdb[5];
         break;
 
     // convert Format 0 to Format 1 (some drives need this)
     // this code is not complete
     case SCSIOP_READ_SUB_CHANNEL:
-        if (sptdwb.Cdb[3] == 0) {
-            sptdwb.Cdb[3] = 1;
+        if (dstCdb[3] == 0) {
+            dstCdb[3] = 1;
         }
         break;
     }
 
-    sptdwb.CdbLength = cdbLength(sptdwb.Cdb[0]);
-    sptdwb.Length = offsetof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER, Filler);
-    sptdwb.PathId = 0;
-    sptdwb.TargetId = 1;
-    sptdwb.Lun = 0;
-    sptdwb.DataIn = SCSI_IOCTL_DATA_IN;
-    sptdwb.TimeOutValue = 10;
-    sptdwb.DataBuffer = buffer;
-    sptdwb.SenseInfoLength = 32;
-    sptdwb.SenseInfoOffset =
-       offsetof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER, ucSenseBuf);
-
     // calculation of transfer length (some drives need this)
     // this code isn't complete
-    cdb = sptdwb.Cdb;
-    switch (sptdwb.CdbLength) {
+    cdbLen = cdbLength(dstCdb[0]);
+    switch (cdbLen) {
     case 6:
-        tl = (ULONG)cdb[4];
+        tl = (ULONG)dstCdb[4];
         break;
     case 12:
         tl = 0;
         break;
     default:
-        tl = (ULONG)(cdb[7] << 8) + (ULONG)cdb[8];
+        tl = (ULONG)(dstCdb[7] << 8) + (ULONG)dstCdb[8];
         break;
     }
 
-    switch (cdb[0]) {
+    switch (dstCdb[0]) {
     case SCSIOP_READ12:
-        tl = (ULONG)(cdb[6] << 24) + (ULONG)(cdb[7] << 16) +
-             (ULONG)(cdb[8] << 8) + (ULONG)cdb[9];
+        tl = (ULONG)(dstCdb[6] << 24) + (ULONG)(dstCdb[7] << 16) +
+             (ULONG)(dstCdb[8] << 8) + (ULONG)dstCdb[9];
     case SCSIOP_READ10:
         tl *= 2048;
         break;
@@ -664,16 +837,34 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* cdb, UInt8* buffer, int buff
         tl = 0;
         break;
     }
-
     if (tl > bufferSize) tl = bufferSize;
-    sptdwb.DataTransferLength = tl;
+
+    if (cdMethod == P_CDROM_DRVIOCTL) {
+        sptdwb.DataTransferLength = tl;
+        sptdwb.CdbLength = cdbLen;
+        sptdwb.Length = offsetof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER, Filler);
+        sptdwb.PathId = 0;
+        sptdwb.TargetId = 1;
+        sptdwb.Lun = 0;
+        sptdwb.DataIn = SCSI_IOCTL_DATA_IN;
+        sptdwb.TimeOutValue = 10;
+        sptdwb.DataBuffer = buffer;
+        sptdwb.SenseInfoLength = 32;
+        sptdwb.SenseInfoOffset =
+           offsetof(SCSI_PASS_THROUGH_DIRECT_WITH_BUFFER, ucSenseBuf);
+        execInfo.param = &sptdwb;
+    }
+    else {
+        cmd.SRB_BufPointer = buffer;
+        cmd.SRB_BufLen = tl;
+        cmd.SRB_CDBLen = cdbLen;
+        execInfo.param = &cmd;
+    }
 
     execId = cdrom->cdromId;
     isXferComp = 0;
     nBytesRead = 0;
-
     execInfo.cdrom  = cdrom;
-    execInfo.sptdwb = &sptdwb;
 
 #if 1
     hExecThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)execCmdThread,
@@ -726,8 +917,8 @@ int archCdromGetSenseKeyCode(ArchCdrom* cdrom)
 const char* cdromGetDriveListIoctl()
 {
     static int flag = 0;
-    static UInt8 list[32];
-    UInt8* p = list;
+    static char list[32];
+    char* p = list;
     char drives[128];
     OSVERSIONINFO osInfo;
     int i;
@@ -751,11 +942,41 @@ const char* cdromGetDriveListIoctl()
     return list;
 }
 
-/*
-const char* cdromGetDriveListAspi()
+const int* cdromGetDriveTblAspi()
 {
+    return aspiTbl;
 }
-*/
+
+const char* cdromGetDriveListAspi(int id)
+{
+    SRB_ExecSCSICmd cmd;
+    static char str[64];
+    char vendor[9];
+    char product[17];
+    char revision[5];
+    char buffer[100];
+
+    memset(&cmd, 0, sizeof(cmd));
+    memset(buffer, 0, 100);
+
+    cmd.SRB_BufPointer = buffer;
+    cmd.SRB_BufLen = 100;
+    cmd.SRB_CDBLen = 6;
+    cmd.CDBByte[0] = SCSIOP_INQUIRY;
+    cmd.CDBByte[4] = 100;
+    execAspiCmd(id, &cmd);
+
+    memcpy(vendor,   buffer +  8,  8);
+    memcpy(product,  buffer + 16, 16);
+    memcpy(revision, buffer + 32,  4);
+    vendor[8]   = '\0';
+    product[16] = '\0';
+    revision[4] = '\0';
+
+    sprintf(str, "%d:%d:%d %s %s %s ", (id >> 16) & 0xff, (id >> 8) & 0xff, id & 0xff,
+            vendor, product, revision);
+    return str;
+}
 
 void cdromOnMediaChange(DWORD unitMask)
 {
@@ -764,3 +985,90 @@ void cdromOnMediaChange(DWORD unitMask)
         tocFlag  = 0;
     }
 }
+
+void cdromInitialize()
+{
+    BYTE Ha, Tgt, HaMax, TgtMax;
+    DWORD status;
+    int count;
+    int* pTbl = aspiTbl;
+    int dllOk = 0;
+
+#ifdef CDROMDEBUG
+    logFd = fopen(CDROMDEBUG, "w");
+#endif
+
+    *pTbl = 0;
+    hModule = LoadLibrary("WNASPI32.DLL");
+    if (hModule == NULL) {
+        return;
+    }
+    DBGLOG("WINASPI load ok\n");
+    GetASPI32SupportInfo = (fGetASPI32SupportInfo)GetProcAddress(hModule, "GetASPI32SupportInfo");
+    SendASPI32Command = (fSendASPI32Command)GetProcAddress(hModule, "SendASPI32Command");
+
+    if (GetASPI32SupportInfo && SendASPI32Command) {
+        status = GetASPI32SupportInfo();
+        if (HIBYTE(LOWORD(status)) == SS_COMP) {
+            dllOk = 1;
+        }
+    }
+
+    if (!dllOk) {
+        FreeLibrary(hModule);
+        hModule = NULL;
+        return;
+    }
+
+    HaMax = status & 0xff;
+    DBGLOG1("HaMax %d\n", HaMax);
+
+    for(Ha = 0; Ha < HaMax; Ha++){
+        SRB_HAInquiry ha_cmd;
+        memset(&ha_cmd, 0, sizeof(ha_cmd));
+        ha_cmd.SRB_Cmd  = SC_HA_INQUIRY;
+        ha_cmd.SRB_HaId = Ha;
+        SendASPI32Command((LPSRB)&ha_cmd);
+        TgtMax = (ha_cmd.HA_MaxTargets == 0) ? 8 : ha_cmd.HA_MaxTargets;
+        DBGLOG3("mask %X TgtMax %d tl %d\n", ha_cmd.HA_BufAlignMask, TgtMax, (int)ha_cmd.HA_MaxTransferLength);
+        DBGLOG2("%s %s\n", ha_cmd.HA_ManagerId, ha_cmd.HA_Identifier);
+
+        count =0;
+        for(Tgt = 0; Tgt < TgtMax; Tgt++){
+            SRB_GDEVBlock dev_cmd;
+            memset(&dev_cmd, 0, sizeof(dev_cmd));
+
+            dev_cmd.SRB_Cmd    = SC_GET_DEV_TYPE;
+            dev_cmd.SRB_HaId   = Ha;
+            dev_cmd.SRB_Target = Tgt;
+            dev_cmd.SRB_Lun    = 0;
+            SendASPI32Command((LPSRB)&dev_cmd);
+
+            if (dev_cmd.SRB_Status == SS_COMP && dev_cmd.SRB_DeviceType == 5){
+                DBGLOG2("ha %d Tgt %d\n", Ha, Tgt);
+                *pTbl++ = (int)(Ha << 16) + (int)(Tgt << 8);
+                count++;
+                if(count >= MAX_ASPIDRV) {
+                    goto InitEnd;
+                }
+            }
+        }
+    }
+InitEnd:
+    *pTbl  = 0;
+    hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+}
+
+void cdromCleanup()
+{
+    if (hModule) FreeLibrary(hModule);
+    if (hEvent != INVALID_HANDLE_VALUE) {
+        CloseHandle(hEvent);
+        hEvent = INVALID_HANDLE_VALUE;
+    }
+
+#ifdef CDROMDEBUG
+    fclose(logFd);
+#endif
+}
+

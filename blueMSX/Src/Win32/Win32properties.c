@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2007-03-22 10:55:10 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1511,11 +1511,60 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     return FALSE;
 }
 
-static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    static Properties* pProperties;
-    int index, drvidx;
+static void updateCdromListIoctl(HWND hWnd, Properties* pProperties)
+{
+    int index;
+    int drvidx = 0;
     const char* list;
     char str[8];
+
+    SendMessage(hWnd, CB_RESETCONTENT, 0, 0);
+    list = cdromGetDriveListIoctl();
+    if (list && list[0]) {
+        const char* p = list;
+        while (*p) {
+            sprintf(str, "%c:", *p);
+            index = SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)str);
+            SendMessage(hWnd, CB_SETITEMDATA, index, (LPARAM)*p);
+            if (pProperties->diskdrive.cdromDrive == (int)*p) {
+                drvidx = index;
+            }
+            p++;
+        }
+    }
+    SendMessage(hWnd, CB_SETCURSEL, (WPARAM)drvidx, 0);
+}
+
+static void updateCdromListAspi(HWND hWnd, Properties* pProperties)
+{
+    int index;
+    int drvidx = 0;
+    const int* tbl = cdromGetDriveTblAspi();
+
+    SendMessage(hWnd, CB_RESETCONTENT, 0, 0);
+    if (tbl && *tbl) {
+        const char* str;
+        do {
+            str = cdromGetDriveListAspi(*tbl);
+            index = SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)str);
+            SendMessage(hWnd, CB_SETITEMDATA, index, (LPARAM)*tbl);
+            if (pProperties->diskdrive.cdromDrive == *tbl) {
+                drvidx = index;
+            }
+            tbl++;
+        } while(*tbl);
+    }
+    SendMessage(hWnd, CB_SETCURSEL, (WPARAM)drvidx, 0);
+}
+
+static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    HWND hMethod, hDrive;
+    static Properties* pProperties;
+    int index, data;
+    const char* list;
+    const int* tbl;
+    int methodIdx[3];
+    int method;
 
     switch (iMsg) {
     case WM_INITDIALOG:
@@ -1527,41 +1576,68 @@ static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         SetWindowText(GetDlgItem(hDlg, IDC_CDROMGROUPBOX), langPropCdromGB());
         SetWindowText(GetDlgItem(hDlg, IDC_CDROMMETHODTEXT), langPropCdromMethod());
         SetWindowText(GetDlgItem(hDlg, IDC_CDROMDRIVETEXT), langPropCdromDrive());
-        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodNone());
-        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETITEMDATA, 0, P_CDROM_DRVNONE);
+        hMethod = GetDlgItem(hDlg, IDC_CDROMMETHODLIST);
+        SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodNone());
+        SendMessage(hMethod, CB_SETITEMDATA, 0, (LPARAM)P_CDROM_DRVNONE);
 
-        drvidx = 0;
+        memset(methodIdx, 0, sizeof(methodIdx));
         list = cdromGetDriveListIoctl();
         if (list && list[0]) {
-            const char* p = list;
-            index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodIoctl());
-            SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETITEMDATA, index, P_CDROM_DRVIOCTL);
-            while (*p) {
-                sprintf(str, "%c:", *p);
-                index = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_ADDSTRING, 0, (LPARAM)str);
-                SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_SETITEMDATA, index, (LPARAM)*p);
-                if (pProperties->diskdrive.cdromDrive == (int)*p) {
-                    drvidx = index;
-                }
-                p++;
-            }
-            index = (pProperties->diskdrive.cdromMethod == P_CDROM_DRVIOCTL) ? P_CDROM_DRVIOCTL : P_CDROM_DRVNONE;
-        } else {
-            EnableWindow(GetDlgItem(hDlg, IDC_CDROMMETHODLIST), FALSE);
-            EnableWindow(GetDlgItem(hDlg, IDC_CDROMDRIVELIST), FALSE);
-            index = 0;
+            index = SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodIoctl());
+            SendMessage(hMethod, CB_SETITEMDATA, (WPARAM)index, (LPARAM)P_CDROM_DRVIOCTL);
+            methodIdx[P_CDROM_DRVIOCTL] = index;
         }
-        SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_SETCURSEL, index, 0);
-        SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_SETCURSEL, drvidx, 0);
+
+        tbl = cdromGetDriveTblAspi();
+        if (tbl && *tbl) {
+            index = SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodAspi());
+            SendMessage(hMethod, CB_SETITEMDATA, (WPARAM)index, (LPARAM)P_CDROM_DRVASPI);
+            methodIdx[P_CDROM_DRVASPI] = index;
+        }
+
+        method = pProperties->diskdrive.cdromMethod;
+        index = 0;
+        if (method == P_CDROM_DRVIOCTL || method == P_CDROM_DRVASPI) {
+            index = methodIdx[method];
+        }
+        SendMessage(hMethod, CB_SETCURSEL, (WPARAM)index, 0);
+
+        hDrive = GetDlgItem(hDlg, IDC_CDROMDRIVELIST);
+        switch (method) {
+        case P_CDROM_DRVIOCTL:
+            updateCdromListIoctl(hDrive, pProperties);
+            break;
+        case P_CDROM_DRVASPI:
+            updateCdromListAspi(hDrive, pProperties);
+            break;
+        }
+
+        if (SendMessage(hMethod, CB_GETCOUNT, 0, 0) < 2) {
+            EnableWindow(hMethod, FALSE);
+            EnableWindow(hDrive, FALSE);
+        }
 
         return FALSE;
 
     case WM_COMMAND:
         switch(LOWORD(wParam)) {
         case IDC_CDROMMETHODLIST:
-            index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETCURSEL, 0, 0);
-            EnableWindow(GetDlgItem(hDlg, IDC_CDROMDRIVELIST), index == P_CDROM_DRVIOCTL);
-            return TRUE;
+            if (HIWORD(wParam) == CBN_SELCHANGE) {
+                hMethod = (HWND)lParam;
+                index = SendMessage(hMethod, CB_GETCURSEL, 0, 0);
+                data  = (int)SendMessage(hMethod, CB_GETITEMDATA, index, 0);
+                hDrive = GetDlgItem(hDlg, IDC_CDROMDRIVELIST);
+                EnableWindow(hDrive, data > 0);
+                switch (data) {
+                case P_CDROM_DRVIOCTL:
+                    updateCdromListIoctl(hDrive, pProperties);
+                    break;
+                case P_CDROM_DRVASPI:
+                    updateCdromListAspi(hDrive, pProperties);
+                    break;
+                }
+                return TRUE;
+            }
         }
         return FALSE;
 
@@ -1575,9 +1651,9 @@ static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         }
 
         index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETCURSEL, 0, 0);
-        pProperties->diskdrive.cdromMethod     = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETITEMDATA, index, 0);
+        pProperties->diskdrive.cdromMethod = (int)SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETITEMDATA, index, 0);
         index = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETCURSEL, 0, 0);
-        pProperties->diskdrive.cdromDrive = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETITEMDATA, index, 0);
+        pProperties->diskdrive.cdromDrive = (int)SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETITEMDATA, index, 0);
 
         propModified = 1;
 

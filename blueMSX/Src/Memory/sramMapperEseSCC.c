@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/sramMapperEseSCC.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-03-24 05:20:37 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -526,8 +526,7 @@ int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int 
     sccSetMode(rm->scc, SCC_REAL);
 
     // initialize SPC
-    // CD_UPDATE: Use dynamic parameters instead of hard coded ones
-    rm->spc = rm->type ? mb89352Create(hdId, getMegaSCSIparm(hdId)) : NULL;
+    rm->spc = rm->type ? mb89352Create(hdId) : NULL;
 
     return 1;
 }

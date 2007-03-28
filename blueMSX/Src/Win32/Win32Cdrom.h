@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-22 10:55:09 $
+** $Date: 2007-03-28 17:35:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,11 @@
 #include <windows.h>
 
 const char* cdromGetDriveListIoctl();
-//const char* cdromGetDriveListAspi();
+const char* cdromGetDriveListAspi(int id);
+const int* cdromGetDriveTblAspi();
 void cdromOnMediaChange(DWORD unitMask);
+
+void cdromInitialize();
+void cdromCleanup();
 
 #endif
