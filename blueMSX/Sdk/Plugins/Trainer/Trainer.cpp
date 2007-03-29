@@ -77,7 +77,7 @@ struct CheatInfo {
     DisplayType displayType;
     bool        enabled;
 
-    CheatInfo(char* d, UInt32 a, Int32 v, DataSize ds, DisplayType dt, bool e) : address(a), value(v), dataSize(ds), displayType(dt), enabled(e) {
+    CheatInfo(const char* d, UInt32 a, Int32 v, DataSize ds, DisplayType dt, bool e) : address(a), value(v), dataSize(ds), displayType(dt), enabled(e) {
         strncpy(description, d, sizeof(description));
         description[sizeof(description) - 1] = 0;
     }
@@ -262,8 +262,8 @@ void updateButtons()
     EnableWindow(GetDlgItem(hDlgCheats, IDC_SAVE),      canRemoveAllCheat);
 
     bool running = GetEmulatorState() == EMULATOR_RUNNING;
-    SetWindowText(GetDlgItem(hDlgCheats, IDC_RUNSTOP), running ? "Pause" : "Run");
-    SetWindowText(GetDlgItem(hDlgSearch, IDC_RUNSTOP), running ? "Pause" : "Run");
+    SetWindowText(GetDlgItem(hDlgCheats, IDC_RUNSTOP), running ? Language::pause : Language::run);
+    SetWindowText(GetDlgItem(hDlgSearch, IDC_RUNSTOP), running ? Language::pause : Language::run);
 
 }
 
@@ -388,7 +388,7 @@ void updateListView()
                 
                 lvi.mask       = LVIF_TEXT;
                 lvi.iItem      = idx;
-                lvi.pszText    = "truncated...";
+                lvi.pszText    = (LPSTR)Language::truncated;
 	            lvi.cchTextMax = 512;
                 ListView_InsertItem(hwnd, &lvi);
                 break;
@@ -644,8 +644,8 @@ void prepareAndShowAddCheatDialog(HWND hDlg)
             if (ListView_GetItem(hwnd, &lvi)) {
                 int address;
                 if (1 == sscanf(buffer, "%x", &address)) {
-                    CheatInfo ci("New cheat", address, snapshotData.dataNew[address], 
-                                    dataSize, displayType, true);
+                    CheatInfo ci(Language::newCheat, address, snapshotData.dataNew[address], 
+                                 dataSize, displayType, true);
                     if (showCheatDialog(&ci)) {
                         addCheat(&ci);
                         updateCheatList();
@@ -679,18 +679,41 @@ static BOOL CALLBACK searchProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             lvc.pszText    = buffer;
 	        lvc.cchTextMax = 32;
 
-            sprintf(buffer, "Address");
+            sprintf(buffer, Language::address);
             lvc.cx = 108;
             ListView_InsertColumn(hwnd, 0, &lvc);
-            sprintf(buffer, "Old Value");
+            sprintf(buffer, Language::oldValue);
             lvc.cx = 75;
             ListView_InsertColumn(hwnd, 1, &lvc);
-            sprintf(buffer, "New Value");
+            sprintf(buffer, Language::newValue);
             lvc.cx = 75;
             ListView_InsertColumn(hwnd, 2, &lvc);
-            sprintf(buffer, "Change");
+            sprintf(buffer, Language::change);
             lvc.cx = 75;
             ListView_InsertColumn(hwnd, 3, &lvc);
+            
+            SetWindowText(GetDlgItem(hDlg, IDC_CMPTYPE), Language::compareType);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_EQUAL), Language::equal);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_NOTEQUAL), Language::notEqual);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_LESSTHAN), Language::lessThan);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_LESSOREQUAL), Language::lessOrEqual);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_GREATERTHAN), Language::greaterThan);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_GREATEROREQUAL), Language::greaterOrEqual);
+            SetWindowText(GetDlgItem(hDlg, IDC_DISPLAY), Language::display);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_DEC), Language::decimal);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_HEX), Language::hexadecimal);
+            SetWindowText(GetDlgItem(hDlg, IDC_DATASIZE), Language::dataSize);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_8BIT), Language::eightBit);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_16BIT), Language::sixteenBit);
+            SetWindowText(GetDlgItem(hDlg, IDC_SEARCHTYPE), Language::compareNewValueWith);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_OLDVAL), Language::oldValue);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_CHANGE), Language::change);
+            SetWindowText(GetDlgItem(hDlg, IDC_CMP_SPECIFIC), Language::specificValue);
+            SetWindowText(GetDlgItem(hDlg, IDC_SNAPSHOT), Language::snapshot);
+            SetWindowText(GetDlgItem(hDlg, IDC_SEARCH), Language::search);
+            SetWindowText(GetDlgItem(hDlg, IDC_ADDCHEAT), Language::addCheat);
+            SetWindowText(GetDlgItem(hDlg, IDC_UNDO), Language::undo);
+            SetWindowText(GetDlgItem(hDlg, IDC_RUNSTOP), GetEmulatorState() == EMULATOR_RUNNING ? Language::pause : Language::run);
         }
 
         updateSearchFields(hDlg);
@@ -943,7 +966,7 @@ static void addCheat(HWND hwnd, int entry, char* description, bool enable, UInt3
 
     ListView_SetCheckState(hwnd, entry, enable);
 
-    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
+    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? Language::disable : Language::enable);
 }
 
 static void updateCheatList()
@@ -1077,15 +1100,23 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             lvc.pszText    = buffer;
 	        lvc.cchTextMax = 32;
 
-            sprintf(buffer, "Description");
+            sprintf(buffer, Language::description);
             lvc.cx = 225;
             ListView_InsertColumn(hwnd, 0, &lvc);
-            sprintf(buffer, "Address");
+            sprintf(buffer, Language::address);
             lvc.cx = 65;
             ListView_InsertColumn(hwnd, 1, &lvc);
-            sprintf(buffer, "Value");
+            sprintf(buffer, Language::value);
             lvc.cx = 60;
             ListView_InsertColumn(hwnd, 2, &lvc);
+
+            SetWindowText(GetDlgItem(hDlg, IDC_REMOVEALL), Language::removeAll);
+            SetWindowText(GetDlgItem(hDlg, IDC_ADDCHEAT), Language::addCheat);
+            SetWindowText(GetDlgItem(hDlg, IDC_ENABLE), Language::enable);
+            SetWindowText(GetDlgItem(hDlg, IDC_CHEATFILETEXT), Language::cheatFile);
+            SetWindowText(GetDlgItem(hDlg, IDC_REMOVE), Language::remove);
+            SetWindowText(GetDlgItem(hDlg, IDC_ACTIVECHEATS), Language::activeCheats);
+            SetWindowText(GetDlgItem(hDlg, IDC_RUNSTOP), GetEmulatorState() == EMULATOR_RUNNING ? Language::pause : Language::run);
         }
 
         return FALSE;
@@ -1127,7 +1158,7 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case IDC_ADDCHEAT: 
             {
-                CheatInfo ci("New cheat", 0, 0, DATASIZE_8BIT, displayType, true);
+                CheatInfo ci(Language::newCheat, 0, 0, DATASIZE_8BIT, displayType, true);
                 if (showCheatDialog(&ci)) {
                     addCheat(&ci);
                     updateCheatList();
@@ -1154,7 +1185,7 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                     int index = ListView_GetNextItem(hwnd, -1, LVNI_SELECTED);
                     bool enable = !ListView_GetCheckState(hwnd, index);
                     ListView_SetCheckState(hwnd, index, enable);
-                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
+                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? Language::disable : Language::enable);
                     updateEnableCheat(index, enable);
                 }
             }
@@ -1180,8 +1211,8 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                     if (currIndex == -1 && index != -1) {
                         canRemoveCheat = true;
-                        bool enable = ListView_GetCheckState(hwnd, index);
-                        SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
+                        bool enable = ListView_GetCheckState(hwnd, index) ? true : false;
+                        SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? Language::disable : Language::enable);
                         updateButtons();
                     }
                     currIndex = index;
@@ -1197,7 +1228,7 @@ static BOOL CALLBACK cheatsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                 int index = ((NMLISTVIEW FAR *)lParam)->iItem;
                 if (index != -1) {
                     bool enable = ListView_GetCheckState(hwnd, index) != 0;
-                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? "Disable" : "Enable");
+                    SetWindowText(GetDlgItem(hDlgCheats, IDC_ENABLE), enable ? Language::disable : Language::enable);
                     updateEnableCheat(index, enable);
                 }
             }
@@ -1255,6 +1286,18 @@ static BOOL CALLBACK cheatDialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
             setBtCheck(hDlg, IDC_VAL_HEX, ci->displayType == DPY_HEXADECIMAL);            
             setBtCheck(hDlg, IDC_VAL_8BIT,  ci->dataSize == DATASIZE_8BIT);
             setBtCheck(hDlg, IDC_VAL_16BIT, ci->dataSize == DATASIZE_16BIT);
+
+            SetWindowText(GetDlgItem(hDlg, IDOK), Language::ok);
+            SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::cancel);
+            SetWindowText(GetDlgItem(hDlg, IDC_DESCRIPTIONTEXT), Language::description);
+            SetWindowText(GetDlgItem(hDlg, IDC_ADDRESSTEXT), Language::address);
+            SetWindowText(GetDlgItem(hDlg, IDC_VALUETEXT), Language::value);
+            SetWindowText(GetDlgItem(hDlg, IDC_DISPLAY), Language::displayValueAs);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_DEC), Language::decimal);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_HEX), Language::hexadecimal);
+            SetWindowText(GetDlgItem(hDlg, IDC_DATASIZE), Language::dataSize);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_8BIT), Language::eightBit);
+            SetWindowText(GetDlgItem(hDlg, IDC_VAL_16BIT), Language::sixteenBit);
         }
         return FALSE;
 
@@ -1341,10 +1384,10 @@ static BOOL CALLBACK trainerProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         {
             TCITEM tcItem = { TCIF_TEXT, 0, 0, 0, 0, -1, 0 };
 
-            tcItem.pszText = "Active Cheats ";
+            tcItem.pszText = (LPSTR)Language::activeCheats;
             TabCtrl_InsertItem(GetDlgItem(hDlg, IDC_TAB), 0, &tcItem);
             
-            tcItem.pszText = "Find Cheats ";
+            tcItem.pszText = (LPSTR)Language::findCheats;
             TabCtrl_InsertItem(GetDlgItem(hDlg, IDC_TAB), 1, &tcItem);
         }
 

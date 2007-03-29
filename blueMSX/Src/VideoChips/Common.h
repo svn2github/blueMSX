@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2007-03-25 09:17:11 $
+** $Date: 2007-03-29 21:13:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -740,23 +740,12 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
 {
     static UInt8*  sprLine;
-    static UInt8*  charTable;
-    static int     patternBase;
-    UInt8  colPattern;
-    UInt16 fc;
-    UInt16 bc;
-    UInt8 col;
-    int   y;
     int    rightBorder;
 
     if (X == -1) {
         X++;
         linePtr3 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
         sprLine = getSpritesLine(vdp, Y);
-
-        y = Y - vdp->firstLine + vdpVScroll(vdp);
-        charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8))));
-        patternBase = vdp->chrGenBase & ((-1 << 11) | ((y >> 2) & 7));
     }
 
     if (linePtr3 == NULL) {
@@ -785,10 +774,15 @@ static void RefreshLine3(VDP* vdp, int Y, int X, int X2)
         }
     }
     else {
+        int    y = Y - vdp->firstLine + vdpVScroll(vdp);
+        UInt8* charTable   = vdp->vram + (vdp->chrTabBase & ((-1 << 10) | (32 * (y / 8)))) + X;
+        int    patternBase = vdp->chrGenBase & ((-1 << 11) | ((y >> 2) & 7));
+
         while (X < X2) {
-            colPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
-            fc = vdp->palette[colPattern >> 4];
-            bc = vdp->palette[colPattern & 0x0f];
+            UInt8  colPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
+            UInt16 fc = vdp->palette[colPattern >> 4];
+            UInt16 bc = vdp->palette[colPattern & 0x0f];
+            UInt8 col;
 
             col = sprLine[0]; linePtr3[0] = col ? vdp->palette[col] : fc; 
             col = sprLine[1]; linePtr3[1] = col ? vdp->palette[col] : fc;

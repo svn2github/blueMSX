@@ -31,6 +31,49 @@ class LanguageChineseTraditional : public LanguageEnglish
 {
 public:
     LanguageChineseTraditional() {
+        trainerName             = "Trainer";
+        trainerCaption          = "blueMSX - Trainer";
+        saveCheatCaption        = "Save Cheat";
+        loadCheatCaption        = "Load Cheat";
+        pause                   = "Pause";
+        run                     = "Run";
+        truncated               = "truncated...";
+        newCheat                = "New cheat";
+        address                 = "Address";
+        oldValue                = "Old Value";
+        newValue                = "New Value";
+        change                  = "Change";
+        disable                 = "Disable";
+        enable                  = "Enable";
+        description             = "Description";
+        value                   = "Value";
+        activeCheats            = "Active Cheats ";
+        findCheats              = "Find Cheats ";
+        removeAll               = "Remove All";
+        remove                  = "Remove";
+        addCheat                = "Add Cheat";
+        cheatFile               = "Cheat File:";
+        ok                      = "OK";
+        cancel                  = "Cancel";
+        displayValueAs          = "Display value as ";
+        decimal                 = "Decimal";
+        hexadecimal             = "Hexadecimal";
+        dataSize                = "Data size ";
+        eightBit                = "8 bit";
+        sixteenBit              = "16 bit";
+        compareType             = "Compare type ";
+        equal                   = "Equal";
+        notEqual                = "Not equal";
+        lessThan                = "Less than";
+        lessOrEqual             = "Less or equal";
+        greaterThan             = "Greater than";
+        greaterOrEqual          = "Greater or equal";
+        display                 = "Display ";
+        compareNewValueWith     = "Compare new value with ";
+        specificValue           = "Specific value: ";
+        snapshot                = "Snapshot";
+        search                  = "Search";
+        undo                    = "Undo";
     }
 };
 

@@ -53,6 +53,7 @@
 #define IDC_VALUETEXT                   1038
 #define IDC_ADDRESSEDIT                 1039
 #define IDC_VALUEEDIT                   1040
+#define IDC_ACTIVECHEATS                1041
 #define IDC_DISPLAY                     -1
 #define IDC_STATIC                      -1
 
@@ -62,7 +63,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1038
+#define _APS_NEXT_CONTROL_VALUE         1042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

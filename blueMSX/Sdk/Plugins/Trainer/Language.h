@@ -39,6 +39,46 @@ public:
     static const char* saveCheatCaption;
     static const char* loadCheatCaption;
 
+    static const char* pause;
+    static const char* run;
+    static const char* truncated;
+    static const char* newCheat;
+    static const char* address;
+    static const char* oldValue;
+    static const char* newValue;
+    static const char* change;
+    static const char* disable;
+    static const char* enable;
+    static const char* description;
+    static const char* value;
+    static const char* activeCheats;
+    static const char* findCheats;
+    static const char* removeAll;
+    static const char* remove;
+    static const char* addCheat;
+    static const char* cheatFile;
+    static const char* ok;
+    static const char* cancel;
+    static const char* displayValueAs;
+    static const char* decimal;
+    static const char* hexadecimal;
+    static const char* dataSize;
+    static const char* eightBit;
+    static const char* sixteenBit;
+    static const char* compareType;
+    static const char* equal;
+    static const char* notEqual;
+    static const char* lessThan;
+    static const char* lessOrEqual;
+    static const char* greaterThan;
+    static const char* greaterOrEqual;
+    static const char* display;
+    static const char* compareNewValueWith;
+    static const char* specificValue;
+    static const char* snapshot;
+    static const char* search;
+    static const char* undo;
+
     Language() {}
 };
 
