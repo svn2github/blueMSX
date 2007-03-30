@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2007-03-28 17:35:35 $
+** $Date: 2007-03-30 19:07:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1610,11 +1610,12 @@ static BOOL CALLBACK diskDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
         case P_CDROM_DRVASPI:
             updateCdromListAspi(hDrive, pProperties);
             break;
+        default:
+            EnableWindow(hDrive, FALSE);
         }
 
         if (SendMessage(hMethod, CB_GETCOUNT, 0, 0) < 2) {
             EnableWindow(hMethod, FALSE);
-            EnableWindow(hDrive, FALSE);
         }
 
         return FALSE;
