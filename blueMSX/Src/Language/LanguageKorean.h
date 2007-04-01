@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.50 $ + additions 2005/03/03
+** $Revision: 1.51 $ + additions 2005/03/03
 **
-** $Date: 2007-03-24 05:20:36 $
+** $Date: 2007-04-01 23:04:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -68,14 +68,14 @@ void langInitKorean(LanguageStrings* ls)
     //----------------------
 
     ls->warningTitle             = "blueMSX - 경고";
-    ls->warningDiscardChanges   = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
+    ls->warningDiscardChanges   = "변경한 설정이 적용되기 위해선 저장을 해야 합니다. 현재 설정에 아무런 영향을 주지않고 그냥 나가겠습니까?";
     ls->warningOverwriteFile    = "파일을 덮어 쓰시겠습니까:"; 
     ls->errorTitle              = "blueMSX - 에러";
     ls->errorEnterFullscreen    = "전체 화면모드 진입 실패.           \n";
     ls->errorDirectXFailed      = "DirectX 오브젝트 만들기 실패.           \nGDI로 대체해서 사용합니다.\n그래픽카드 등록정보를 확인하세요.";
-    ls->errorNoRomInZip         = "zip파일 내부의 .rom을 찾을 수 없습니다.";
-    ls->errorNoDskInZip         = "zip파일 내부의 .dsk를 찾을 수 없습니다.";
-    ls->errorNoCasInZip         = "zip파일 내부의 .cas를 찾을 수 없습니다.";
+    ls->errorNoRomInZip         = "zip파일 내부의 rom을 찾을 수 없습니다.";
+    ls->errorNoDskInZip         = "zip파일 내부의 dsk를 찾을 수 없습니다.";
+    ls->errorNoCasInZip         = "zip파일 내부의 cas를 찾을 수 없습니다.";
     ls->errorNoHelp             = "blueMSX 도움말을 찾을 수 없습니다.";
     ls->errorStartEmu           = "MSX 에뮬레이터를 시작할 수 없습니다.";
     ls->errorPortableReadonly   = "이동 장치는 읽기 전용입니다.";        
@@ -124,7 +124,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "새로운 디스크 이미지 삽입";              
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     = "시디롬 삽입";       // New in 2.7
     ls->menuDiskDirInsert       = "디렉토리 삽입";
     ls->menuDiskAutoStart       = "삽입후에 재시작";
     ls->menuCartAutoReset       = "삽입/제거 후에 재시작";
@@ -156,7 +156,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuPropsPerformance    = "성능";
     ls->menuPropsSettings        = "외부 설정";
     ls->menuPropsFile           = "파일";
-    ls->menuPropsDisk           = "Disks";               // New in 2.7
+    ls->menuPropsDisk           = "디스크";               // New in 2.7
     ls->menuPropsLanguage       = "언어";
     ls->menuPropsPorts          = "포트"; 
     
@@ -166,7 +166,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuVideoInSource       = "비디오 입력 소스";                    
     ls->menuVideoInBitmap       = "비트맵 파일";                        
     
-    ls->menuEthInterface        = "Ethernet"; 
+    ls->menuEthInterface        = "이더넷 인터페이스"; 
 
     ls->menuHelpHelp            = "도움말 항목";
     ls->menuHelpAbout           = "blueMSX에 대하여";
@@ -186,7 +186,7 @@ void langInitKorean(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "하드 디스크";                          
     ls->menuFileHarddiskNoPesent= "컨트롤러 존재하지 않음";             
-    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll= "모든 하드 디스크 제거";    // New in 2.7
 
     ls->menuRunRun              = "실행";
     ls->menuRunPause            = "일시 정지";
@@ -262,7 +262,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgLangLangText         = "blueMSX에 사용할 언어 선택";
     ls->dlgLangLangTitle        = "blueMSX - 언어";
 
-    ls->dlgAboutAbout           = "대하여\r\n=====";
+    ls->dlgAboutAbout           = "blueMSX에 대하여\r\n=====";
     ls->dlgAboutVersion         = "버전:";
     ls->dlgAboutBuildNumber     = "빌드:";
     ls->dlgAboutBuildDate       = "날짜:";
@@ -272,9 +272,9 @@ void langInitKorean(LanguageStrings* ls)
     ls->dlgAboutLisence         = "라이센스\r\n"
                                   "======\r\n\r\n"
 				  "이 소프트웨어는 원본 그대로 배포되어야 하며, 명시적이든 암묵적이든 "
-				  "어떤 종류의 보증도 하지 않습니다.\r\n이 소프트웨어의 사용으로 일어나는 "
-				  "어떠한 문제에도 제작자에게는 책임이 없습니다.\r\n\r\n"
-                                  "더 자세한 것은 www.bluemsx.com을 방문해 주세요.";
+				  "어떤 보증도 하지 않습니다.\r\n이 소프트웨어의 사용으로 일어나는 "
+				  "어떠한 문제에 대해서도 제작자에게는 책임이 없습니다.\r\n\r\n"
+                                  "더 자세한 것은 www.bluemsx.com에 방문해 주세요.";
 
     ls->dlgSavePreview          = "미리 보기";
     ls->dlgSaveDate             = "시간 저장됨:";
@@ -294,7 +294,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propPerformance         = "성능";
     ls->propSettings             = "외부 설정";
     ls->propFile                = "파일";
-    ls->propDisk                = "Disks";              // New in 2.7
+    ls->propDisk                = "디스크";              // New in 2.7
     ls->propPorts               = "포트";
     
     ls->propEmuGeneralGB        = "일반 ";
@@ -306,7 +306,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propEmuSpeedText        = "에뮬레이션 속도:";
     ls->propEmuFrontSwitchGB     = "파나소닉 스위치 ";
     ls->propEmuFrontSwitch       = " 프론트 스위치";
-    ls->propEmuFdcTiming        = "플로피 드라이브 타이밍 사용 않함";
+    ls->propEmuFdcTiming        = "플로피 드라이브 타이밍 사용 안함";
     ls->propEmuPauseSwitch      = " 일시 정지 스위치";
     ls->propEmuAudioSwitch       = " MSX-AUDIO 카트리지 스위치";
     ls->propVideoFreqText       = "비디오 주파수:";
@@ -368,7 +368,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propFileTypes            = " blueMSX에 파일형식(.rom .dsk .cas .sta) 연결";
     ls->propWindowsEnvGB         = "윈도우즈 환경 "; 
     ls->propSetScreenSaver       = " blueMSX 실행중에는 화면 보호기 기능 중지";
-    ls->propDisableWinKeys       = " blueMSX 실행중에는 왼/오른쪽 윈도우 키 사용 않함"; 
+    ls->propDisableWinKeys       = " blueMSX 실행중에는 왼/오른쪽 윈도우 키 사용 안함"; 
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
     ls->propScreenshotPng       = " Portable Network Graphics (.png) 스크린샷 사용";  
     ls->propClearHistory         = "열어본 파일 목록을 지울까요?";
@@ -385,12 +385,12 @@ void langInitKorean(LanguageStrings* ls)
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
-    ls->propCdromMethod         = "Access Method:";  // New in 2.7
-    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromGB             = "시디롬";          // New in 2.7
+    ls->propCdromMethod         = "액세스 방법:";  // New in 2.7
+    ls->propCdromMethodNone     = "없음";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
-    ls->propCdromDrive          = "Drive:";          // New in 2.7
+    ls->propCdromDrive          = "드라이브:";          // New in 2.7
 
 
     //----------------------
@@ -431,7 +431,7 @@ void langInitKorean(LanguageStrings* ls)
 
     ls->enumSoundDrvNone        = "소리없음";
     ls->enumSoundDrvWMM         = "WMM 드라이버";
-    ls->enumSoundDrvDirectX     = "DirectX 드라이버";
+    ls->enumSoundDrvDirectX     = "다이렉트X 드라이버";
 
     ls->enumEmuSync1ms          = "MSX의 속도에 동기";
     ls->enumEmuSyncAuto         = "자동 (빠름)";
@@ -475,7 +475,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->confSaveAsMachineName    = "머신 이름:";
     ls->confDiscardTitle         = "blueMSX - 설정";
     ls->confExitSaveTitle        = "blueMSX - 머신 설정 편집기 나가기";
-    ls->confExitSaveText         = "변경한 설정이 적용되기 위해선 저장을 하셔야 합니다만 현재 설정에는 아무런 영향도 주지않고 그냥 나가겠습니까?";
+    ls->confExitSaveText         = "변경한 설정이 적용되기 위해선 저장을 해야 합니다. 현재 설정에 아무런 영향을 주지않고 그냥 나가겠습니까?";
 
     ls->confSlotLayoutGB         = "슬롯 배치 ";
     ls->confSlotExtSlotGB        = "외부 슬롯 ";
