@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2007-03-20 02:50:46 $
+** $Date: 2007-04-04 05:13:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -368,7 +368,9 @@ static void reset(RomMapperMsxAudio* rm)
         y8950Reset(rm->y8950);
     }
 
-    philipsMidiReset(rm->midi);
+    if (rm->midi) {
+        philipsMidiReset(rm->midi);
+    }
 }
 
 static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
@@ -403,6 +405,10 @@ static void midiWrite(RomMapperMsxAudio* rm, UInt16 ioPort, UInt8 value)
 
 static UInt8 midiRead(RomMapperMsxAudio* rm, UInt16 ioPort)
 {
+    if (!rm->midi) {
+        return 0xff;
+    }
+
     switch (ioPort & 1) {
     case 0x00:
         return philipsMidiReadStatus(rm->midi);
@@ -462,6 +468,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         rm->slot  = slot;
         rm->sslot = sslot;
         rm->startPage  = startPage;
+        rm->midi = NULL;
 
         if (!switchGetAudio()) {
             rm->romData[0x408e] = 0;
