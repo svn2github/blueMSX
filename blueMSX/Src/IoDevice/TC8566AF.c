@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2007-02-04 20:39:44 $
+** $Date: 2007-04-05 23:32:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -561,6 +561,7 @@ UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
                 tc->mainStatus |= STM_RQM;
             } 
         }
+//        return tc->mainStatus;
   return (tc->mainStatus & ~ STM_NDM) | (tc->phase == PHASE_DATATRANSFER ? STM_NDM : 0);
 
 	case 5:

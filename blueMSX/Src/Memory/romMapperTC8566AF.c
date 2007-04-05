@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-02-04 20:39:44 $
+** $Date: 2007-04-05 23:32:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,8 +122,10 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
         case 0x01:
             return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
         case 0x04:
+        case 0x0a:
             return tc8566afReadRegister(rm->fdc, 4);
         case 0x05:
+        case 0x0b:
             return tc8566afReadRegister(rm->fdc, 5);
         case 0x0c:
             return 0xfc;
