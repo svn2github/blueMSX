@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2007-03-23 05:13:56 $
+** $Date: 2007-04-07 00:14:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -152,13 +152,15 @@ UInt8* spritesLine(VDP* vdp, int line) {
         colOffset = ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
         colPtr     = collisionBuf + colOffset;
         colChck    = colChckBuf   + colOffset;
-        linePtr    = lineBuf + ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
+        linePtr    = lineBuf      + colOffset;
         color      = attrib[3] & 0x0f;
         patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine];
 
+#if 0
         if (!vdpIsColor0Solid(vdp->vdpRegs) && color == 0) {
             continue;
         }
+#endif
         if (scale == 1) {
             pattern = patternPtr[0]; 
             if (pattern & 0x80) { linePtr[0] = color; collision |= colPtr[0]; colPtr[0] = colChck[0]; }

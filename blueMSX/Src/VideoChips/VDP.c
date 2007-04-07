@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2007-04-05 23:32:12 $
+** $Date: 2007-04-07 00:14:37 $
 **
 ** More info: http://www.bluemsx.com
 **
