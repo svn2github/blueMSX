@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2007-04-07 00:14:37 $
+** $Date: 2007-04-10 03:15:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,7 +571,9 @@ static void onDisplay(VDP* vdp, UInt32 time)
     timeDisplay    = HPERIOD * vdp->lastLine;
 
     if (vdp->vdpRegs[0] & 0x40) {
-        digitize(vdp);
+        if (vdp->screenMode >= 5 && vdp->screenMode <= 12) {
+            digitize(vdp);
+        }
     }
 }
 
@@ -1177,8 +1179,14 @@ static void updateOutputMode(VDP* vdp)
     int transparency = (vdp->screenMode < 8 || vdp->screenMode > 12) && (vdp->vdpRegs[8] & 0x20) == 0;
 
     if (mode == 2 || 
-        (!(vdp->vdpRegs[8] & 0x80) && (vdp->vdpRegs[8] & 0x10) || (vdp->vdpRegs[0] & 0x40))) {
-        videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL, vdpDaDevice.videoModeMask);
+        (!(vdp->vdpRegs[8] & 0x80) && (vdp->vdpRegs[8] & 0x10)) || (vdp->vdpRegs[0] & 0x40)) 
+    {
+        if (vdp->screenMode >=5 && vdp->screenMode <= 12) {
+            videoManagerSetMode(vdp->videoHandle, VIDEO_EXTERNAL, vdpDaDevice.videoModeMask);
+        }
+        else {
+            videoManagerSetMode(vdp->videoHandle, VIDEO_INTERNAL, vdpDaDevice.videoModeMask);
+        }
     }
     else if (mode == 1 && transparency) {
         vdp->palette[0] = videoGetTransparentColor();
