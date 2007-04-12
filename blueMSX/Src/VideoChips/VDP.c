@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2007-04-10 03:15:20 $
+** $Date: 2007-04-12 06:06:34 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1061,6 +1061,9 @@ static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 			if (!(value & 0x40)) {
                 vdpUpdateRegisters(vdp, value, vdp->vdpDataLatch);
 			}
+            if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+			    vdp->vramAddress = ((UInt16)value << 8 | vdp->vdpDataLatch) & 0x3fff;
+            }
 		} 
         else {
 			vdp->vramAddress = ((UInt16)value << 8 | vdp->vdpDataLatch) & 0x3fff;
