@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-04-15 23:59:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -182,6 +182,45 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "0xC000")       return ROM_0xC000;
     if (name == "auto")         return ROM_PLAIN;
     if (name == "basic")        return ROM_BASIC;
+
+    if (name == "mirrored")     return ROM_PLAIN;
+    if (name == "msxdos2")      return ROM_MSXDOS2;
+    if (name == "konami5")      return ROM_KONAMI5;
+    if (name == "konami4")      return ROM_KONAMI4;
+    if (name == "ascii8")       return ROM_ASCII8;
+    if (name == "halnote")      return ROM_HALNOTE;
+    if (name == "konamisynth")  return ROM_KONAMISYNTH;
+    if (name == "kbdmaster")    return ROM_KONAMKBDMAS;
+    if (name == "majutsushi")   return ROM_MAJUTSUSHI;
+    if (name == "ascii16")      return ROM_ASCII16;
+    if (name == "gamemaster2")  return ROM_GAMEMASTER2;
+    if (name == "ascii8sram")   return ROM_ASCII8SRAM;
+    if (name == "koei")         return ROM_KOEI;
+    if (name == "ascii16sram")  return ROM_ASCII16SRAM;
+    if (name == "konami4nf")    return ROM_KONAMI4NF;
+    if (name == "ascii16nf")    return ROM_ASCII16NF;
+    if (name == "snatcher")     return ROM_SNATCHER;
+    if (name == "sdsnatcher")   return ROM_SDSNATCHER;
+    if (name == "sccmirrored")  return ROM_SCCMIRRORED;
+    if (name == "sccexpanded")  return ROM_SCCEXTENDED;
+    if (name == "scc")          return ROM_SCC;
+    if (name == "sccplus")      return ROM_SCCPLUS;
+    if (name == "scc+")         return ROM_SCCPLUS;
+    if (name == "pac")          return ROM_PAC;
+    if (name == "fmpac")        return ROM_FMPAC;
+    if (name == "fmpak")        return ROM_FMPAK;
+    if (name == "rtype")        return ROM_RTYPE;
+    if (name == "crossblaim")   return ROM_CROSSBLAIM;
+    if (name == "harryfox")     return ROM_HARRYFOX;
+    if (name == "loderunner")   return ROM_LODERUNNER;
+    if (name == "korean80")     return ROM_KOREAN80;
+    if (name == "korean90")     return ROM_KOREAN90;
+    if (name == "korean126")    return ROM_KOREAN126;
+    if (name == "holyquran")    return ROM_HOLYQURAN;  
+    if (name == "coleco")       return ROM_COLECO;
+    if (name == "sg1000")       return ROM_SG1000;
+    if (name == "castle")       return ROM_SG1000CASTLE;
+
 
     // SG-1000 roms
     if (name == "sg1000castle") return ROM_SG1000CASTLE;
