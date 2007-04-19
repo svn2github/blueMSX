@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2007-03-13 03:23:29 $
+** $Date: 2007-04-19 04:10:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -104,6 +104,8 @@ static void destroy() {
     slotManagerDestroy();
 
     r800DebugDestroy();
+    
+	ioPortUnregister(0x2e);
 
     deviceManagerDestroy();
 
@@ -161,6 +163,11 @@ static void loadState()
     rtcLoadState(rtc);
 }
 
+static UInt8 testPort(void* dummy, UInt16 ioPort)
+{
+    return 0x27;
+}
+
 int msxCreate(Machine* machine, 
               VdpSyncMode vdpSyncMode,
               BoardInfo* boardInfo)
@@ -213,6 +220,8 @@ int msxCreate(Machine* machine,
     slotManagerCreate();
 
     r800DebugCreate(r800);
+    
+	ioPortRegister(0x2e, testPort, NULL, NULL);
 
     sprintf(cmosName, "%s" DIR_SEPARATOR "%s.cmos", boardGetBaseDirectory(), machine->name);
     rtc = rtcCreate(machine->cmos.enable, machine->cmos.batteryBacked ? cmosName : 0);

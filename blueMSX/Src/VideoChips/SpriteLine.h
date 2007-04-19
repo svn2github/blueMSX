@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2007-04-07 00:14:37 $
+** $Date: 2007-04-19 04:10:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
     UInt8 collisionBuf[384];
     UInt8* attrib;
     UInt8* attribTable[4];
+    int spriteLine[5];
     UInt8 patternMask;
     int idx;
     int size;
@@ -101,14 +102,33 @@ UInt8* spritesLine(VDP* vdp, int line) {
     collision = 0;
     /* Find visible sprites on current line */
     for (idx = 0; idx < 32; idx++, attrib += 4) {
-        int spriteLine = attrib[0];
-        if (spriteLine == 208) {
+        if (attrib[0] == 208) {
             break;
         }
        
-        spriteLine = ((line - spriteLine) & 0xff) / scale;
-		if (spriteLine >= size) {
-            continue;
+        spriteLine[visibleCnt] = ((line - attrib[0]) & 0xff) / scale;
+		if (spriteLine[visibleCnt] >= size) {
+            if ((vdp->vdpRegs[3] & 0x40) == 0 && (vdp->vdpRegs[4] & 0x01) == 0 &&
+                (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) &&
+                idx >= 8) 
+            {
+                if (line < 64) {
+                    continue;
+                }
+                spriteLine[visibleCnt] = ((line - 64 - attrib[0]) & 0xff) / scale;
+		        if (spriteLine[visibleCnt] >= size) {
+                    if (line < 128) {
+                        continue;
+                    }
+                    spriteLine[visibleCnt] = ((line - 128 - attrib[0]) & 0xff) / scale;
+    		        if (spriteLine[visibleCnt] >= size) {
+                        continue;
+                    }
+                }
+            }
+            else {
+                continue;
+            }
         }
         
         if (visibleCnt == 4) {
@@ -137,7 +157,6 @@ UInt8* spritesLine(VDP* vdp, int line) {
     collision = 0;
     
     while (visibleCnt--) {
-        int    spriteLine;
         UInt8  color;
         UInt8* patternPtr;
         UInt8  pattern;
@@ -147,14 +166,13 @@ UInt8* spritesLine(VDP* vdp, int line) {
         int    colOffset;
 
         attrib     = attribTable[visibleCnt];
-        spriteLine = ((line - attrib[0]) & 0xff) / scale;
 
         colOffset = ((int)attrib[1] + 32 - ((attrib[3] >> 2) & 0x20));
         colPtr     = collisionBuf + colOffset;
         colChck    = colChckBuf   + colOffset;
         linePtr    = lineBuf      + colOffset;
         color      = attrib[3] & 0x0f;
-        patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine];
+        patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine[visibleCnt]];
 
 #if 0
         if (!vdpIsColor0Solid(vdp->vdpRegs) && color == 0) {
