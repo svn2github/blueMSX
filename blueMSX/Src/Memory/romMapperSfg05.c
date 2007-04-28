@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2007-03-20 02:50:46 $
+** $Date: 2007-04-28 05:06:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -80,11 +80,16 @@ typedef struct {
 
 #define STAT_RXRDY      0x02
 #define STAT_TXEMPTY    0x01
+#define STAT_PE         0x10
 #define STAT_OE         0x20        //???  MR checks 0x30
 #define ST_INT          0x800
 
-#define CMD_WRINT  0x10
-#define CMD_RDINT  0x20
+#define CMD_RDINT  0x08
+#define CMD_RSTER  0x10
+#define CMD_WRINT  0x100
+#define CMD_RST    0x80
+
+void ym2148Reset(YM2148* midi);
 
 static void midiInCallback(YM2148* midi, UInt8* buffer, UInt32 length)
 {
@@ -105,6 +110,10 @@ static void onRecv(YM2148* midi, UInt32 time)
 
 	if (midi->status & STAT_RXRDY) {
         midi->status |= STAT_OE;
+        if (midi->command & CMD_RSTER) {
+            ym2148Reset(midi);
+            return;
+        }
 	} 
     
     if (midi->rxPending != 0) {
@@ -212,7 +221,7 @@ void ym2148WriteCommand(YM2148* midi, UInt8 value)
     if (value & 0x02) {
     }
 
-    if (value & 0x80) {
+    if (value & CMD_RST) {
         ym2148Reset(midi);
     }
 

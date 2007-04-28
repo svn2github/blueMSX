@@ -84,7 +84,7 @@ BOOL Memory::toolDlgProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (iMsg) {
     case WM_INITDIALOG:
-        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, true, symbolInfo);
+        addressInput = new HexInputDialog(hwnd, 330,3,75,22,6, true, symbolInfo, cpuRegisters);
         SendDlgItemMessage(hwnd, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::memWindowAddress);
         SendDlgItemMessage(hwnd, IDC_TEXT_MEMORY, WM_SETTEXT, 0, (LPARAM)Language::memWindowMemory);
         return FALSE;
@@ -339,10 +339,10 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
-Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
+Memory::Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo, CpuRegisters* cpuRegs) : 
     DbgWindow( hInstance, owner, 
         Language::windowMemory, "Memory Window", 3, 422, 714, 210, 1),
-    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), symbolInfo(symInfo)
+    lineCount(0), currentAddress(0), currentMemory(NULL), currentEditAddress(-1), symbolInfo(symInfo), cpuRegisters(cpuRegs)
 {
     memory = this;
 

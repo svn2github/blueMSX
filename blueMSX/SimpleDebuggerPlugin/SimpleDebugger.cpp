@@ -714,7 +714,7 @@ static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
         if (addressInput) {
             delete addressInput;
         }
-        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, true, symbolInfo);
+        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, true, symbolInfo, cpuRegisters);
         addressInput->setFocus();
         
         return FALSE;
@@ -1331,7 +1331,7 @@ void OnShowTool() {
     cpuRegisters  = new CpuRegisters(GetDllHinstance(), viewHwnd);
     callstack     = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
     stack         = new StackWindow(GetDllHinstance(), viewHwnd);
-    memory        = new Memory(GetDllHinstance(), viewHwnd, symbolInfo);
+    memory        = new Memory(GetDllHinstance(), viewHwnd, symbolInfo, cpuRegisters);
     periRegisters = new PeripheralRegs(GetDllHinstance(), viewHwnd);
     ioPorts       = new IoPortWindow(GetDllHinstance(), viewHwnd);
     

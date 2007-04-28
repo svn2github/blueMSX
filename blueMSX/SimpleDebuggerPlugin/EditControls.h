@@ -31,6 +31,8 @@
 #include <list>
 #include <map>
 
+class CpuRegisters;
+
 class InputDialog {
 public:
     enum { EC_NEWVALUE = WM_USER + 7029, EC_KILLFOCUS = WM_USER + 7030 };
@@ -69,7 +71,9 @@ private:
 
 class HexInputDialog : public InputDialog {
 public:
-    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, bool returnNeeded = false, SymbolInfo* symInfo = NULL);
+    HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, 
+                   bool returnNeeded = false, SymbolInfo* symInfo = NULL,
+                   CpuRegisters* cpuRegs = NULL);
     ~HexInputDialog();
 
     void setValue(int value, bool setFocus = true);
@@ -84,6 +88,7 @@ private:
     int  charCount;
     int  fastValue;
     SymbolInfo* symbolInfo;
+    CpuRegisters* cpuRegisters;
 };
 
 

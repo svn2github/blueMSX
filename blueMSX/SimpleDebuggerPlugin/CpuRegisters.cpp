@@ -277,6 +277,26 @@ CpuRegisters::FlagMode CpuRegisters::getFlagMode()
     return flagMode;
 }
 
+BOOL CpuRegisters::lookup(const char* name, WORD* addr)
+{
+    if (strlen(name) > 3) {
+        return FALSE;
+    }
+
+    char text[4] = "   ";
+    for (UInt32 i = 0; i < strlen(name); i++) {
+        text[i] = toupper(name[i]);
+    }
+
+    for (int i = 0; i < sizeof(regName) / sizeof(regName[0]); i++) {
+        if (strcmp(text, regName[i]) == 0) {
+            *addr = regValue[i];
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 void CpuRegisters::invalidateContent()
 {
     currentRegBank = NULL;

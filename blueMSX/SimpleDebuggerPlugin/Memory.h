@@ -29,12 +29,13 @@
 #include <string>
 #include <list>
 #include "DbgWindow.h"
+#include "CpuRegisters.h"
 #include "ToolInterface.h"
 #include "EditControls.h"
 
 class Memory : public DbgWindow {
 public:
-    Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
+    Memory(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo, CpuRegisters* cpuRegs);
     ~Memory();
 
     virtual void disableEdit();
@@ -111,6 +112,7 @@ private:
     TextInputDialog* dataInput1;
     HexInputDialog* dataInput2;
     SymbolInfo* symbolInfo;
+    CpuRegisters* cpuRegisters;
 };
 
 #endif //MEMORY_H

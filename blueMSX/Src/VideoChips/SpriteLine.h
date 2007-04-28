@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2007-04-19 04:10:20 $
+** $Date: 2007-04-28 05:06:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -109,15 +109,15 @@ UInt8* spritesLine(VDP* vdp, int line) {
         spriteLine[visibleCnt] = ((line - attrib[0]) & 0xff) / scale;
 		if (spriteLine[visibleCnt] >= size) {
             if ((vdp->vdpRegs[3] & 0x40) == 0 && (vdp->vdpRegs[4] & 0x01) == 0 &&
-                (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) &&
-                idx >= 8) 
+                vdp->screenMode == 2 &&
+                (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A)) 
             {
-                if (line < 64) {
+                if (line < 56) {
                     continue;
                 }
                 spriteLine[visibleCnt] = ((line - 64 - attrib[0]) & 0xff) / scale;
 		        if (spriteLine[visibleCnt] >= size) {
-                    if (line < 128) {
+                    if (line < 120) {
                         continue;
                     }
                     spriteLine[visibleCnt] = ((line - 128 - attrib[0]) & 0xff) / scale;

@@ -45,6 +45,8 @@ public:
     void updateContent(RegisterBank* regBank);
     void invalidateContent();
 
+    BOOL lookup(const char* name, WORD* addr);
+
     virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 private:

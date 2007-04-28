@@ -26,6 +26,7 @@
 #include "EditControls.h"
 #include "Resource.h"
 #include "ToolInterface.h"
+#include "CpuRegisters.h"
 #include <windows.h>
 #include <stdio.h>
 #ifndef _WIN32_IE
@@ -154,9 +155,10 @@ void InputDialog::setFocus()
 /////////////////////////////////////////////////////////
 
 HexInputDialog::HexInputDialog(HWND parent, int x, int y, int width, int height, int numChars, 
-                               bool returnNeeded, SymbolInfo* symInfo) :
+                               bool returnNeeded, SymbolInfo* symInfo, CpuRegisters* cpuRegs) :
     InputDialog(parent, x, y, width, height), chars(numChars), 
-    needReturn(returnNeeded), charCount(0), fastValue(0), symbolInfo(symInfo)
+    needReturn(returnNeeded), charCount(0), fastValue(0), 
+    symbolInfo(symInfo), cpuRegisters(cpuRegs)
 {
     initDialog();
 }
@@ -190,9 +192,12 @@ int HexInputDialog::getValue()
     int address = 0;
     sscanf(text, "%X", &address);
 
-    WORD addr = 0;
-    if (symbolInfo != NULL && symbolInfo->rfind(text, &addr)) {
-        address = addr;
+    WORD val = 0;
+        if (cpuRegisters != NULL && toupper(text[0]) == 'R' && cpuRegisters->lookup(text + 1, &val)) {
+        address = val;
+    }
+    if (symbolInfo != NULL && symbolInfo->rfind(text, &val)) {
+        address = val;
     }
 
     return address;
@@ -215,10 +220,17 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                 int len = SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text);
                 text[len] = 0;
                 WORD addr = 0;
-                if (symbolInfo == NULL || !symbolInfo->rfind(text, &addr)) {
-                    int address = 0;
-                    sscanf(text, "%X", &address);
-                    addr = (WORD)address;
+                
+                int address = 0;
+                sscanf(text, "%X", &address);
+                addr = (WORD)address;
+
+                WORD val  = 0;
+                if (cpuRegisters != NULL && toupper(text[0]) == 'R' && cpuRegisters->lookup(text + 1, &val)) {
+                    addr = val;
+                }
+                if (symbolInfo != NULL && symbolInfo->rfind(text, &val)) {
+                    addr = val;
                 }
                 SendMessage(GetParent(hwnd), EC_KILLFOCUS, (WPARAM)this, addr);
             }
@@ -284,7 +296,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                         }
 
                         // Only check chars if symbolInfo is not available
-                        if (symbolInfo == NULL && len - selLen < chars) {
+                        if (symbolInfo == NULL && cpuRegisters == NULL && len - selLen < chars) {
                             if ((keyCode >= '0' && keyCode <= '9') ||
                                 (keyCode >= 'a' && keyCode <= 'f') ||
                                 (keyCode >= 'A' && keyCode <= 'F'))
@@ -299,7 +311,7 @@ BOOL HexInputDialog::dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                         if (keyCode == '\r' || keyCode == '\n') {
                             SendMessage(GetParent(hwnd), EC_NEWVALUE, (WPARAM)this, getValue());
                         }
-                        else if (symbolInfo != NULL) {
+                        else if (symbolInfo != NULL || cpuRegisters != NULL) {
                             SetWindowLong(hwnd, DWL_MSGRESULT, 0);
                             return TRUE;
                         }
