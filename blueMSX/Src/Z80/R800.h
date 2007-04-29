@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2007-03-20 02:30:32 $
+** $Date: 2007-04-29 23:43:22 $
 **
 ** Author: Daniel Vik
 **
@@ -243,6 +243,8 @@ typedef struct
     CpuMode       oldCpuMode;       /* CPU mode before CPU switch      */
     CpuRegs       regBanks[2];      /* Z80 and R800 register banks     */
     UInt32        cpuFlags;         /* Current CPU flags               */
+
+    UInt32        instCnt;          /* Instruction counter             */
 
     UInt32        frequencyZ80;     /* Frequency of Z80 (in Hz)        */
     UInt32        frequencyR800;    /* Frequency of R800 (in Hz)       */

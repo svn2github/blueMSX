@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2006-09-19 06:00:44 $
+** $Date: 2007-04-29 23:43:22 $
 **
 ** Author: Daniel Vik
 **
@@ -53,6 +53,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
 {
     static UInt8 mappedRAM[0x10000];
     DbgRegisterBank* regBank;
+    int freqAdjust;
     int i;
 
     for (i = 0; i < 0x10000; i++) {
@@ -73,7 +74,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
         dbgDeviceAddCallstack(dbgDevice, langDbgCallstack(), dbg->r800->callstack, dbg->r800->callstackSize);
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 17);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 19);
 
     dbgRegisterBankAddRegister(regBank,  0, "AF",  16, dbg->r800->regs.AF.W);
     dbgRegisterBankAddRegister(regBank,  1, "BC",  16, dbg->r800->regs.BC.W);
@@ -92,6 +93,19 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
     dbgRegisterBankAddRegister(regBank, 14, "IM",  8,  dbg->r800->regs.im);
     dbgRegisterBankAddRegister(regBank, 15, "IFF1",8,  dbg->r800->regs.iff1);
     dbgRegisterBankAddRegister(regBank, 16, "IFF2",8,  dbg->r800->regs.iff2);
+    
+    switch (dbg->r800->cpuMode) {
+    default:
+    case CPU_Z80:
+        freqAdjust = R800_MASTER_FREQUENCY / (dbg->r800->frequencyZ80 - 1);
+        break;
+    case CPU_R800:
+        freqAdjust = R800_MASTER_FREQUENCY / (dbg->r800->frequencyR800 - 1);
+        break;
+    }
+
+    dbgRegisterBankAddRegister(regBank, 17, "CLK",16,  (UInt16)(dbg->r800->systemTime / freqAdjust));
+    dbgRegisterBankAddRegister(regBank, 18, "CNT",16,  (UInt16)dbg->r800->instCnt);
 }
 
 

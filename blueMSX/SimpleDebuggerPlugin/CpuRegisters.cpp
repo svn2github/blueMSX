@@ -54,7 +54,9 @@ const char regName[20][8] = {
     "R  ",
     "IM ",
     "IF1",
-    "IF2"
+    "IF2",
+    "CLK",
+    "CNT"
 };
 
 }
@@ -247,7 +249,7 @@ CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) :
                Language::windowCpuRegisters, "CPU Registers Window", 437, 3, 214, 191, 1),
     lineCount(0), flagMode(FM_ASM), currentEditRegister(-1)
 {
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 19; i++) {
         regValue[i] = -1;
     }
 
@@ -303,7 +305,7 @@ void CpuRegisters::invalidateContent()
 
     dataInput2->hide();
     dataInput4->hide();
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 19; i++) {
         refRegValue[i] = -1;
         regValue[i] = -1;
     }
@@ -318,7 +320,7 @@ void CpuRegisters::updateContent(RegisterBank* regBank)
     dataInput2->hide();
     dataInput4->hide();
 
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 19; i++) {
         int val = regBank->reg[i].value;
         refRegValue[i] = regValue[i];
         regValue[i] = val;
@@ -342,7 +344,7 @@ void CpuRegisters::updateScroll()
         r.right -= 11 * textWidth;
     }
 
-    lineCount = 1 + (14 + registersPerRow) / registersPerRow;
+    lineCount = 1 + (16 + registersPerRow) / registersPerRow;
 
     SCROLLINFO si;
     si.cbSize    = sizeof(SCROLLINFO);
@@ -467,8 +469,10 @@ void CpuRegisters::drawText(int top, int bottom)
         RECT r = { 10, textHeight * (i - yPos), 100, textHeight * (i + 1 - yPos) };
         for (int j = 0; j < registersPerRow; j++) {
             int reg = j * (lineCount - 1) + i - 1;
-
-            if (reg >= 15) {
+            if (reg > 14) {
+                reg += 2;
+            }
+            if (reg >= 19) {
                 continue;
             }
 
@@ -486,7 +490,7 @@ void CpuRegisters::drawText(int top, int bottom)
             }
             else {
                 SetTextColor(hMemdc, refRegValue[reg] != regValue[reg] ? colorRed : colorGray);
-                if (reg < 12) {
+                if (reg < 12 || reg > 14) {
                     sprintf(text, "%.4X", regValue[reg]);
                 }
                 else {

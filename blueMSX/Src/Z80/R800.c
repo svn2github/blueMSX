@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2007-03-20 02:30:32 $
+** $Date: 2007-04-29 23:43:22 $
 **
 ** Author: Daniel Vik
 **
@@ -5209,6 +5209,7 @@ static void cpir(R800* r800) {
     if (r800->regs.BC.W && !(r800->regs.AF.B.l & Z_FLAG)) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2;
+        r800->instCnt--;
     }
 }
 
@@ -5231,6 +5232,7 @@ static void cpdr(R800* r800) {
     if (r800->regs.BC.W && !(r800->regs.AF.B.l & Z_FLAG)) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2;
+        r800->instCnt--;
     }
 }
 
@@ -5250,6 +5252,7 @@ static void ldir(R800* r800) {
     if (r800->regs.BC.W != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5269,6 +5272,7 @@ static void lddr(R800* r800) {
     if (r800->regs.BC.W != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5291,6 +5295,7 @@ static void inir(R800* r800) {
     if (r800->regs.BC.B.h != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5314,6 +5319,7 @@ static void indr(R800* r800) {
     if (r800->regs.BC.B.h != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5336,6 +5342,7 @@ static void otir(R800* r800) {
     if (r800->regs.BC.B.h != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5358,6 +5365,7 @@ static void otdr(R800* r800) {
     if (r800->regs.BC.B.h != 0) {
         delayBlock(r800); 
         r800->regs.PC.W -= 2; 
+        r800->instCnt--;
     }
 }
 
@@ -5615,6 +5623,7 @@ static void fd(R800* r800) {
 
 static void executeInstruction(R800* r800, UInt8 opcode) {
     M1(r800);
+    r800->instCnt++;
     opcodeMain[opcode](r800);
 }
 
@@ -5831,6 +5840,8 @@ R800* r800Create(UInt32 cpuFlags,
     r800->systemTime      = 0;
     r800->cpuMode         = -1;
     r800->oldCpuMode      = -1;
+
+    r800->instCnt         = 0;
 
     r800Reset(r800, 0);
 
