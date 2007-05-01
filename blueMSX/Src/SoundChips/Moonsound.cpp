@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/Moonsound.cpp,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-05-01 03:21:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -352,6 +352,7 @@ UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
 	if (ioPort < 0xC0) {
 		switch (ioPort & 0x01) {
 		case 1: // read wave register
+            mixerSync(moonsound->mixer);
 			result = moonsound->ymf278->readRegOPL4(moonsound->opl4latch, systemTime);
 			break;
 		}
@@ -359,11 +360,13 @@ UInt8 moonsoundRead(Moonsound* moonsound, UInt16 ioPort)
 		switch (ioPort & 0x03) {
 		case 0: // read status
 		case 2:
+            mixerSync(moonsound->mixer);
 			result = moonsound->ymf262->readStatus() | 
                      moonsound->ymf278->readStatus(systemTime);
 			break;
 		case 1:
 		case 3: // read fm register
+            mixerSync(moonsound->mixer);
 			result = moonsound->ymf262->readReg(moonsound->opl3latch);
 			break;
 		}
@@ -381,6 +384,7 @@ void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
 			moonsound->opl4latch = value;
 			break;
 		case 1:
+            mixerSync(moonsound->mixer);
   			moonsound->ymf278->writeRegOPL4(moonsound->opl4latch, value, systemTime);
 			break;
 		}
@@ -394,6 +398,7 @@ void moonsoundWrite(Moonsound* moonsound, UInt16 ioPort, UInt8 value)
 			break;
 		case 1:
 		case 3: // write fm register
+            mixerSync(moonsound->mixer);
 			moonsound->ymf262->writeReg(moonsound->opl3latch, value, systemTime);
 			break;
 		}
