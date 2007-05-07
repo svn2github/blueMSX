@@ -55,7 +55,8 @@ const char regName[20][8] = {
     "IM ",
     "IF1",
     "IF2",
-    "CLK",
+    "CLH",
+    "CLL",
     "CNT"
 };
 
@@ -249,7 +250,7 @@ CpuRegisters::CpuRegisters(HINSTANCE hInstance, HWND owner) :
                Language::windowCpuRegisters, "CPU Registers Window", 437, 3, 214, 191, 1),
     lineCount(0), flagMode(FM_ASM), currentEditRegister(-1)
 {
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 20; i++) {
         regValue[i] = -1;
     }
 
@@ -305,7 +306,7 @@ void CpuRegisters::invalidateContent()
 
     dataInput2->hide();
     dataInput4->hide();
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 20; i++) {
         refRegValue[i] = -1;
         regValue[i] = -1;
     }
@@ -320,7 +321,7 @@ void CpuRegisters::updateContent(RegisterBank* regBank)
     dataInput2->hide();
     dataInput4->hide();
 
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 20; i++) {
         int val = regBank->reg[i].value;
         refRegValue[i] = regValue[i];
         regValue[i] = val;
@@ -472,7 +473,7 @@ void CpuRegisters::drawText(int top, int bottom)
             if (reg > 14) {
                 reg += 2;
             }
-            if (reg >= 19) {
+            if (reg >= 20) {
                 continue;
             }
 

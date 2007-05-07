@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-04-29 23:43:22 $
+** $Date: 2007-05-07 01:57:14 $
 **
 ** Author: Daniel Vik
 **
@@ -74,7 +74,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
         dbgDeviceAddCallstack(dbgDevice, langDbgCallstack(), dbg->r800->callstack, dbg->r800->callstackSize);
     }
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 19);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 20);
 
     dbgRegisterBankAddRegister(regBank,  0, "AF",  16, dbg->r800->regs.AF.W);
     dbgRegisterBankAddRegister(regBank,  1, "BC",  16, dbg->r800->regs.BC.W);
@@ -104,8 +104,9 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
         break;
     }
 
-    dbgRegisterBankAddRegister(regBank, 17, "CLK",16,  (UInt16)(dbg->r800->systemTime / freqAdjust));
-    dbgRegisterBankAddRegister(regBank, 18, "CNT",16,  (UInt16)dbg->r800->instCnt);
+    dbgRegisterBankAddRegister(regBank, 17, "CLKH",16,  (UInt16)(dbg->r800->systemTime / freqAdjust / 0x10000));
+    dbgRegisterBankAddRegister(regBank, 18, "CLKL",16,  (UInt16)(dbg->r800->systemTime / freqAdjust));
+    dbgRegisterBankAddRegister(regBank, 19, "CNT",16,  (UInt16)dbg->r800->instCnt);
 }
 
 

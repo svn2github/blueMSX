@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2007-03-24 05:20:36 $
+** $Date: 2007-05-07 01:57:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Insérer un nouveau disque";              
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     = "Insérer CD-Rom";       // New in 2.7
     ls->menuDiskDirInsert       = "Insérer répertoire"; 
     ls->menuDiskAutoStart       = "Reset après insertion";
     ls->menuCartAutoReset       = "Reset après insérer/éjecter";
@@ -156,7 +156,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Performances";
     ls->menuPropsSettings       = "Réglages";
     ls->menuPropsFile           = "Fichiers";
-    ls->menuPropsDisk           = "Disks";               // New in 2.7
+    ls->menuPropsDisk           = "Disques";               // New in 2.7
     ls->menuPropsLanguage       = "Langue";
     ls->menuPropsPorts          = "Ports";
 
@@ -186,7 +186,7 @@ void langInitFrench(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Disque dur";                          
     ls->menuFileHarddiskNoPesent= "Aucun contrôleur";             
-    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll= "Ejecter tous les disques durs";    // New in 2.7
 
     ls->menuRunRun              = "Lancer";
     ls->menuRunPause            = "Pause";
@@ -268,7 +268,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Date:";
     ls->dlgAboutCreat           = "Créé par Daniel Vik";
     ls->dlgAboutDevel           = "DEVELOPPEURS\r\n========";
-    ls->dlgAboutThanks          = "Un grand merci à\r\n============";       // New in 2.7 (retranslate, see english)
+    ls->dlgAboutThanks          = "CONTRIBUTEURS\r\n==========";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LICENCE\r\n"
                                   "======\r\n\r\n"
                                   "Ce logiciel est livré \"tel quel\" sans garantie. "
@@ -294,7 +294,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propPerformance         = "Performances";
     ls->propSettings             = "Réglages";
     ls->propFile                = "Fichiers"; 
-    ls->propDisk                = "Disks";              // New in 2.7
+    ls->propDisk                = "Disques";              // New in 2.7
     ls->propPorts               = "Ports";
 
     ls->propEmuGeneralGB        = "Général ";
@@ -386,11 +386,11 @@ void langInitFrench(LanguageStrings* ls)
     ls->propTheme               = "Thème";
 
     ls->propCdromGB             = "CD-ROM";          // New in 2.7
-    ls->propCdromMethod         = "Access Method:";  // New in 2.7
-    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromMethod         = "Méthode d'accès:";  // New in 2.7
+    ls->propCdromMethodNone     = "Aucune";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
-    ls->propCdromDrive          = "Drive:";          // New in 2.7
+    ls->propCdromDrive          = "Lecteur:";          // New in 2.7
 
 
     //----------------------

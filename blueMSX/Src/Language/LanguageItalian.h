@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2007-03-24 05:20:36 $
+** $Date: 2007-05-07 01:57:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -125,7 +125,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCartMegaFlashRom            = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew               = "Inserisci un nuovo disco...";
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     	    = "Inserisci CD-Rom";       // New in 2.7
     ls->menuDiskDirInsert               = "Inserisci una cartella...";
     ls->menuDiskAutoStart               = "Riavvia quando inserisci";
     ls->menuCartAutoReset               = "Riavvia quando inserisci/rimuovi";
@@ -157,7 +157,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuPropsPerformance            = "Prestazioni...";
     ls->menuPropsSettings               = "Impostazioni...";
     ls->menuPropsFile                   = "File...";
-    ls->menuPropsDisk                   = "Disks";               // New in 2.7
+    ls->menuPropsDisk                   = "Disci";               // New in 2.7
     ls->menuPropsLanguage               = "Lingua...";
     ls->menuPropsPorts                  = "Porte...";
 
@@ -187,7 +187,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuFileHarddisk                = "Disco rigido";
     ls->menuFileHarddiskNoPesent        = "Controller non presente";
-    ls->menuFileHarddiskRemoveAll       = "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll       = "Rimuovi tutti i disci rigidi";    // New in 2.7
 
     ls->menuRunRun                      = "Esegui";
     ls->menuRunPause                    = "Sospendi";
@@ -295,7 +295,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propPerformance                 = "Prestazioni";
     ls->propSettings                    = "Impostazioni";
     ls->propFile                        = "File";
-    ls->propDisk                        = "Disks";              // New in 2.7
+    ls->propDisk                        = "Disci";              // New in 2.7
     ls->propPorts                       = "Porte";
 
     ls->propEmuGeneralGB                = "Generale ";
@@ -387,8 +387,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->propTheme                       = "Tema corrente:";
 
     ls->propCdromGB                     = "CD-ROM";          // New in 2.7
-    ls->propCdromMethod                 = "Access Method:";  // New in 2.7
-    ls->propCdromMethodNone             = "None";            // New in 2.7
+    ls->propCdromMethod                 = "Metodo di accesso :";  // New in 2.7
+    ls->propCdromMethodNone             = "Nessuno";            // New in 2.7
     ls->propCdromMethodIoctl            = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi             = "ASPI";            // New in 2.7
     ls->propCdromDrive                  = "Drive:";          // New in 2.7
