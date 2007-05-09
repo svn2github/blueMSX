@@ -186,6 +186,12 @@
 			RelativePath=".\LanguageKorean.h">
 		</File>
 		<File
+			RelativePath=".\LanguagePortuguese.h">
+		</File>
+		<File
+			RelativePath=".\LanguageSpanish.h">
+		</File>
+		<File
 			RelativePath=".\open.ico">
 		</File>
 		<File

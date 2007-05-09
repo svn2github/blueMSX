@@ -32,6 +32,8 @@
 #include "LanguageGerman.h"
 #include "LanguageItalian.h"
 #include "LanguageFrench.h"
+#include "LanguagePortuguese.h"
+#include "LanguageSpanish.h"
 #include <stdlib.h>
 
 namespace {
@@ -64,6 +66,11 @@ void Language::SetLanguage(LanguageId langId)
     case LID_FRENCH:
         ls = new LanguageFrench;
         break;
+    case LID_SPANISH:
+        ls = new LanguageSpanish;
+        break;
+    case LID_PORTUGUESE:
+        ls = new LanguagePortuguese;
     case LID_ENGLISH:
     default:
         ls = new LanguageEnglish;
