@@ -71,6 +71,7 @@ void Language::SetLanguage(LanguageId langId)
         break;
     case LID_PORTUGUESE:
         ls = new LanguagePortuguese;
+        break;
     case LID_ENGLISH:
     default:
         ls = new LanguageEnglish;
