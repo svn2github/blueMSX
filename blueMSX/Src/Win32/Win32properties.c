@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.80 $
+** $Revision: 1.81 $
 **
-** $Date: 2007-03-30 19:07:11 $
+** $Date: 2007-05-11 02:28:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1115,6 +1115,14 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         }
 
         if ((((NMHDR FAR *)lParam)->code) == PSN_QUERYCANCEL) {
+            pProperties->video.horizontalStretch     = oldHoriz;
+            pProperties->video.verticalStretch       = oldVert;
+            pProperties->video.deInterlace           = oldDeinterlace;
+            pProperties->video.scanlinesEnable       = oldScanlinesEnable;
+            pProperties->video.scanlinesPct          = oldScanlinesPct;
+            pProperties->video.colorSaturationEnable = oldColorGhostingEnable;
+            pProperties->video.colorSaturationWidth  = oldColorGhostingWidth;
+
             videoSetScanLines(theVideo, pProperties->video.scanlinesEnable, pProperties->video.scanlinesPct);
 
             videoSetColorSaturation(theVideo, pProperties->video.colorSaturationEnable, pProperties->video.colorSaturationWidth);
@@ -1135,13 +1143,6 @@ static BOOL CALLBACK videoDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 videoSetColorMode(theVideo, VIDEO_AMBER);
                 break;
             }
-            pProperties->video.horizontalStretch     = oldHoriz;
-            pProperties->video.verticalStretch       = oldVert;
-            pProperties->video.deInterlace           = oldDeinterlace;
-            pProperties->video.scanlinesEnable       = oldScanlinesEnable;
-            pProperties->video.scanlinesPct          = oldScanlinesPct;
-            pProperties->video.colorSaturationEnable = oldColorGhostingEnable;
-            pProperties->video.colorSaturationWidth  = oldColorGhostingWidth;
             updateEmuWindow();
             return FALSE;
         }
