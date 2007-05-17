@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2007-03-25 09:17:11 $
+** $Date: 2007-05-17 04:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,13 +91,15 @@ void frameBufferSetBlendFrames(int blendFrames);
 
 #ifdef NO_FRAMEBUFFER
 // User implementation
-UInt16* frameBufferGetLine(FrameBuffer* frameBuffer, int y);
+Pixel* frameBufferGetLine(FrameBuffer* frameBuffer, int y);
 int    frameBufferGetDoubleWidth(FrameBuffer* frameBuffer, int y);
 void   frameBufferSetDoubleWidth(FrameBuffer* frameBuffer, int y, int val);
 void   frameBufferSetInterlace(FrameBuffer* frameBuffer, int val);
 void   frameBufferSetLineCount(FrameBuffer* frameBuffer, int val);
 int    frameBufferGetLineCount(FrameBuffer* frameBuffer);
 int    frameBufferGetMaxWidth(FrameBuffer* frameBuffer);
+
+Pixel videoGetColor(int R, int G, int B);
 
 #else
 
@@ -108,11 +110,12 @@ int    frameBufferGetMaxWidth(FrameBuffer* frameBuffer);
 #define frameBufferSetLineCount(frameBuffer, val)       frameBuffer->lines     = val
 #define frameBufferGetLineCount(frameBuffer)            frameBuffer->lines
 #define frameBufferGetMaxWidth(frameBuffer)             frameBuffer->maxWidth
-#endif
 
-static UInt16 videoGetColor(int R, int G, int B)
+static Pixel videoGetColor(int R, int G, int B)
 {
     return ((R >> 3) << 10) | ((G >> 3) << 5) | (B >> 3);
 }
+
+#endif
 
 #endif

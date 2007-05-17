@@ -53,6 +53,42 @@ typedef signed   char    Int8;
 typedef signed   short   Int16;
 typedef signed   long    Int32;
 
+// Define color stuff
+
+#if PIXEL_WIDTH==32
+
+#define COLSHIFT_R  16
+#define COLMASK_R   0xff
+#define COLSHIFT_G  8
+#define COLMASK_G   0xff
+#define COLSHIFT_B  0
+#define COLMASK_B   0xff
+
+typedef UInt32 Pixel;
+
+#elif PIXEL_WIDTH==8
+
+#define COLSHIFT_R  10
+#define COLMASK_R   0x1f
+#define COLSHIFT_G  5
+#define COLMASK_G   0x1f
+#define COLSHIFT_B  0
+#define COLMASK_B   0x1f
+
+typedef UInt8 Pixel;
+
+#else
+
+#define COLSHIFT_R  5
+#define COLMASK_R   0x07
+#define COLSHIFT_G  2
+#define COLMASK_G   0x03
+#define COLSHIFT_B  0
+#define COLMASK_B   0x07
+
+typedef UInt16 Pixel;
+
+#endif
 
 // Debug replacement for malloc and free to easier find memory leaks.
 #if 0

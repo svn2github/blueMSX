@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.h,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2007-05-17 04:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -56,7 +56,7 @@ void vdpForceSync();
 typedef struct {
     void (*daStart)(void*, int);
     void (*daEnd)(void*);
-    UInt8 (*daRead)(void*, int, int, int, UInt16*, int);
+    UInt8 (*daRead)(void*, int, int, int, Pixel*, int);
 } VdpDaCallbacks;
 
 int vdpRegisterDaConverter(VdpDaCallbacks* callbacks, void* ref, VideoMode videoModeMask);

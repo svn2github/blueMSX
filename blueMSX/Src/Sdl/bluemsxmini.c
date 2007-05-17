@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxmini.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2007-03-25 09:17:11 $
+** $Date: 2007-05-17 04:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -458,6 +458,18 @@ int main(int argc, char **argv)
     return 0;
 }
 
+#if PIXEL_WIDTH==32
+Pixel videoGetColor(int R, int G, int B)
+{
+    return (R << 16) | (G << 8) | B;
+}
+#else
+Pixel videoGetColor(int R, int G, int B)
+{
+    return ((R >> 3) << 10) | ((G >> 3) << 5) | (B >> 3);
+}
+#endif
+
 #define NOT_NULL ((void*)1)
 
 // No back buffers implemented, so these methods just need to return something not NULL
@@ -467,8 +479,8 @@ FrameBuffer* frameBufferGetDrawFrame() {return NOT_NULL; }
 FrameBuffer* frameBufferFlipDrawFrame() { return NOT_NULL; }
 
 // This is the important method and it should return a pointer to scan line y (0-239)
-UInt16* frameBufferGetLine(FrameBuffer* frameBuffer, int y) { 
-    return (UInt16*)(displayData + y * WIDTH * bitDepth / 8); 
+Pixel* frameBufferGetLine(FrameBuffer* frameBuffer, int y) { 
+    return (Pixel*)(displayData + y * WIDTH * bitDepth / 8); 
 }
 
 // Used by gunstick and asciilaser

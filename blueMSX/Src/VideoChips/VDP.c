@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2007-04-12 06:06:34 $
+** $Date: 2007-05-17 04:48:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,7 +83,7 @@ typedef struct {
 
 static void  daStart(void* ref, int oddPage) {}
 static void  daEnd(void* ref) {}
-static UInt8 daRead(void* ref, int screenMode, int x, int y, UInt16* palette, int count) { return 0x00; }
+static UInt8 daRead(void* ref, int screenMode, int x, int y, Pixel* palette, int count) { return 0x00; }
 
 static VdpDaDevice vdpDaDevice = {
     0,
@@ -346,11 +346,11 @@ struct VDP {
 
     UInt32 screenOffTime;
     
-    UInt16 paletteFixed[256];
-    UInt16 paletteSprite8[16];
-    UInt16 palette0;
-    UInt16 palette[16];
-    UInt16 yjkColor[32][64][64];
+    Pixel paletteFixed[256];
+    Pixel paletteSprite8[16];
+    Pixel  palette0;
+    Pixel palette[16];
+    Pixel yjkColor[32][64][64];
 
     UInt8* vramPtr;
     int    vramAccMask;
@@ -366,7 +366,7 @@ struct VDP {
     FrameBufferData* frameBuffer;
 };
 
-
+#include "SpriteLine.h"
 #include "Common.h"
 
 
@@ -1208,7 +1208,7 @@ static void updateOutputMode(VDP* vdp)
 
 static void updatePalette(VDP* vdp, int palEntry, int r, int g, int b)
 {
-    UInt16 color = videoGetColor(r, g, b);
+    Pixel color = videoGetColor(r, g, b);
     if (palEntry == 0) {
         vdp->palette0 = color;
         updateOutputMode(vdp);

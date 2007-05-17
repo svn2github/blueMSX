@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNms8280VideoDa.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2006-09-19 06:00:30 $
+** $Date: 2007-05-17 04:48:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,7 +48,7 @@ static void daStart(RomMapperNms8280VideoDa* rm, int oddPage)
     }
 }
 
-static UInt8 daRead(RomMapperNms8280VideoDa* rm, int screenMode, int x, int y, UInt16* palette, int paletteCount)
+static UInt8 daRead(RomMapperNms8280VideoDa* rm, int screenMode, int x, int y, Pixel* palette, int paletteCount)
 {
     UInt16 color;
     int bestDiff;
@@ -66,9 +66,9 @@ static UInt8 daRead(RomMapperNms8280VideoDa* rm, int screenMode, int x, int y, U
     match = 0;
     
     for (i = 0; i < paletteCount; i++) {
-        int dR = ((palette[i] >> 10) & 0x1f) - ((color >> 10) & 0x1f);
-        int dG = ((palette[i] >>  5) & 0x1f) - ((color >>  5) & 0x1f);
-        int dB = ((palette[i] >>  0) & 0x1f) - ((color >>  0) & 0x1f);
+        int dR = ((palette[i] >> COLSHIFT_R) & COLMASK_R) - ((color >> COLSHIFT_R) & COLMASK_R);
+        int dG = ((palette[i] >> COLSHIFT_G) & COLMASK_G) - ((color >> COLSHIFT_G) & COLMASK_G);
+        int dB = ((palette[i] >> COLSHIFT_B) & COLMASK_B) - ((color >> COLSHIFT_B) & COLMASK_B);
         int test = dR * dR + dG * dG + dB * dB;
         if (test < bestDiff) {
             bestDiff = test;
