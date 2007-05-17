@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2007-03-24 08:02:52 $
+** $Date: 2007-05-17 03:38:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -603,6 +603,8 @@ void RefreshScreen(int screenMode) {
     }
 }
 
+#ifndef NO_TIMERS
+
 static int WaitForSync(int maxSpeed, int breakpointHit) {
     UInt32 li1;
     UInt32 li2;
@@ -717,3 +719,35 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 
     return emuExitFlag ? -1 : diffTime;
 }
+
+#else
+
+static int WaitForSync(int maxSpeed, int breakpointHit) {
+    emuSuspendFlag = 1;
+
+    emuExitFlag |= archPollEvent();
+
+    archPollInput();
+
+    do {
+        for (;;) {
+            UInt32 sysTime = archGetSystemUpTime(1000);
+            UInt32 diffTime = sysTime - emuSysTime;
+            emuExitFlag |= archPollEvent();
+            if (diffTime < 10) {
+                continue;
+            }
+            emuSysTime += 10;
+            if (diffTime > 30) {
+                emuSysTime = sysTime;
+            }
+            break;
+        }
+    } while (!emuExitFlag && emuState != EMU_RUNNING);
+
+    emuSuspendFlag = 0;
+
+    return emuExitFlag ? -1 : 10;
+}
+
+#endif
