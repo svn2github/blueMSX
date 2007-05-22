@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2007-05-17 03:38:40 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -721,9 +721,32 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 }
 
 #else
+#include <windows.h>
+
+UInt32 getHiresTimer() {
+    static LONGLONG hfFrequency = 0;
+    LARGE_INTEGER li;
+
+    if (!hfFrequency) {
+        if (QueryPerformanceFrequency(&li)) {
+            hfFrequency = li.QuadPart;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    QueryPerformanceCounter(&li);
+
+    return (DWORD)(li.QuadPart * 1000000 / hfFrequency);
+}
+
+static UInt32 busy, total, oldTime;
 
 static int WaitForSync(int maxSpeed, int breakpointHit) {
     emuSuspendFlag = 1;
+
+    busy += getHiresTimer() - oldTime;
 
     emuExitFlag |= archPollEvent();
 
@@ -746,6 +769,17 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     } while (!emuExitFlag && emuState != EMU_RUNNING);
 
     emuSuspendFlag = 0;
+    
+    total += getHiresTimer() - oldTime;
+    oldTime = getHiresTimer();
+#if 0
+    if (total >= 1000000) {
+        UInt32 pct = 10000 * busy / total;
+        printf("CPU Usage = %d.%d%%\n", pct / 100, pct % 100);
+        total = 0;
+        busy = 0;
+    }
+#endif
 
     return emuExitFlag ? -1 : 10;
 }

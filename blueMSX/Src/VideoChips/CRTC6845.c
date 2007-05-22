@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.c,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2007-05-17 04:48:16 $
+** $Date: 2007-05-22 06:23:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,6 @@
 #include "Language.h"
 #include <stdlib.h>
 #include <string.h>
-#include <memory.h>
 
 /*
    AR Address Register

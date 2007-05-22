@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,7 @@
 #include "ArchUart.h"
 #include "Language.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 
 /*
   80H  R/W  8251 data port

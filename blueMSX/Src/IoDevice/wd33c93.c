@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/wd33c93.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2007-03-25 17:05:07 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** Based on the WD33C93 emulation in MESS (www.mess.org).
 **
@@ -36,7 +36,7 @@
 #include "SaveState.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 
 #define REG_OWN_ID      0x00
 #define REG_CONTROL     0x01

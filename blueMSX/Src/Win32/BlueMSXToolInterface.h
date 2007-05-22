@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2006-09-19 06:00:37 $
+** $Date: 2007-05-22 06:23:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,16 @@ typedef unsigned __int64 UInt64;
 typedef signed   char    Int8;
 typedef signed   short   Int16;
 typedef signed   long    Int32;
+
+// Define color stuff
+#if PIXEL_WIDTH==32
+typedef UInt32 Pixel;
+#elif PIXEL_WIDTH==8
+typedef UInt8 Pixel;
+#else
+typedef UInt16 Pixel;
+#endif
+
 
 #endif
 

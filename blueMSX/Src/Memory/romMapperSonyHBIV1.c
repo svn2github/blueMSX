@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSonyHBIV1.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,7 +34,7 @@
 #include "ArchVideoIn.h"
 #include "SaveState.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 
 
 typedef struct {

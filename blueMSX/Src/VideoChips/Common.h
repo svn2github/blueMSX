@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2007-05-17 04:48:16 $
+** $Date: 2007-05-22 06:23:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -206,7 +206,6 @@ static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2,
 
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt8*  sprLine;
     static int     patternBase;
     static int     pattern;
     static int     x;
@@ -249,7 +248,10 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         }
     }
     else {
-        Pixel color[2] = { vdp->palette[vdp->BGColor], vdp->palette[vdp->FGColor] };
+        Pixel color[2];
+        
+        color[0] = vdp->palette[vdp->BGColor];
+        color[1] = vdp->palette[vdp->FGColor];
 
         while (X < X2) {
             if (X == 0 || X == 31) {
@@ -290,7 +292,6 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt8*  sprLine;
     static int     patternBase;
     static int     pattern;
     static int     x;
@@ -333,7 +334,10 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
         }
     }
     else {
-        Pixel color[2] = { vdp->palette[vdp->BGColor], vdp->palette[vdp->FGColor] };
+        Pixel color[2];
+        
+        color[0] = vdp->palette[vdp->BGColor];
+        color[1] = vdp->palette[vdp->FGColor];
 
         while (X < X2) {
             if (X == 0 || X == 31) {
@@ -375,7 +379,7 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt8*  sprLine;
+
     static int     patternBase;
     static UInt8   colPattern;
     static int     pattern;
@@ -663,7 +667,6 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
 {
     static UInt8*  sprLine;
     static UInt8*  charTable;
-    static int     patternBase;
     static int     base;
     UInt8  charPattern;
     UInt8  colPattern;
@@ -954,7 +957,6 @@ static void RefreshLine5(VDP* vdp, int Y, int X, int X2)
 {
     static UInt8*  charTable;
     static UInt8*  sprLine;
-    static int     addrSwitch;
     static int     hScroll512;
     static int*    jump;
     static int     page;
@@ -1757,10 +1759,6 @@ static void RefreshLine7(VDP* vdp, int Y, int X, int X2)
 
 static void RefreshLine8(VDP* vdp, int Y, int X, int X2)
 {
-    static UInt8   SprToScr[16] = { 
-        0x00, 0x02, 0x10, 0x12, 0x80, 0x82, 0x90, 0x92, 
-        0x49, 0x4B, 0x59, 0x5B, 0xC9, 0xCB, 0xD9, 0xDB 
-    };
     static UInt8*  charTable;
     static UInt8*  sprLine;
     static int     hScroll;

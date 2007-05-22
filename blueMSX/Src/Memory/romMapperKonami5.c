@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKonami5.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-19 06:00:29 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,7 +42,7 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
-    int size;
+    int romMask;
     int romMapper[4];
     int sccEnable;
     SCC* scc;
@@ -158,7 +158,7 @@ static void write(RomMapperKonami5* rm, UInt16 address, UInt8 value)
         rm->sccEnable = newEnable;
     }
 
-    value &= (rm->size / 8192 - 1);
+    value &= rm->romMask;
     if (rm->romMapper[bank] != value || change) {
         UInt8* bankData = rm->romData + ((int)value << 13);
 
@@ -180,18 +180,22 @@ int romMapperKonami5Create(char* filename, UInt8* romData,
     RomMapperKonami5* rm;
     int i;
 
-    if (size < 0x8000) {
-        return 1;
+    int origSize = size;
+    
+    size = 0x8000;
+    while (size < origSize) {
+        size *= 2;
     }
+
 
     rm = malloc(sizeof(RomMapperKonami5));
 
     rm->deviceHandle = deviceManagerRegister(ROM_KONAMI5, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
-    rm->romData = malloc(size);
-    memcpy(rm->romData, romData, size);
-    rm->size = size;
+    rm->romData = calloc(1, size);
+    memcpy(rm->romData, romData, origSize);
+    rm->romMask = size / 0x2000 - 1;
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

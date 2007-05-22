@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2007-03-24 22:12:00 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -537,7 +537,7 @@ UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
     rv = stat(fileName, &s);
     if (rv == 0) {
         if (s.st_mode & S_IFDIR) {
-            ramImageBuffer[driveId] = dirLoadFile(fileName, &ramImageSize[driveId]);
+            ramImageBuffer[driveId] = dirLoadFile(DDT_MSX, fileName, &ramImageSize[driveId]);
             fileSize[driveId] = ramImageSize[driveId];
             diskUpdateInfo(driveId);
             return ramImageBuffer[driveId] != NULL;

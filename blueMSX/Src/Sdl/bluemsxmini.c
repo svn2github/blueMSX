@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxmini.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2007-05-17 04:48:16 $
+** $Date: 2007-05-22 06:23:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -149,7 +149,7 @@ int createSdlWindow()
     return 1;
 }
 
-int updateEmuDisplay(int updateAll) 
+static int updateEmuDisplay(int updateAll) 
 {
     if (SDL_MUSTLOCK(surface) && SDL_LockSurface(surface) < 0) {
         return 0;

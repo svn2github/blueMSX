@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2007-05-07 01:57:14 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -187,7 +187,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuFileHarddisk                = "Disco rigido";
     ls->menuFileHarddiskNoPesent        = "Controller non presente";
-    ls->menuFileHarddiskRemoveAll       = "Rimuovi tutti i disci rigidi";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll       = "Rimuovi tutti i dischi rigidi";    // New in 2.7
 
     ls->menuRunRun                      = "Esegui";
     ls->menuRunPause                    = "Sospendi";

@@ -1,13 +1,13 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-19 06:00:22 $
+** $Date: 2007-05-22 06:23:17 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik
+** Copyright (C) 2003-2007 Daniel Vik, Tomas Karlsson
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -30,7 +30,17 @@
 
 #include "MsxTypes.h"
 
-void* dirLoadFile(char* fileName, int* size);
+typedef enum {
+    DDT_MSX                = 0,
+    DDT_SVI_328_CPM_SSDD   = 1,
+    DDT_SVI_328_CPM_DSDD   = 2,
+    DDT_SVI_738_CPM_SSDD   = 3,
+    DDT_SVI_328_Basic_SSDD = 4,
+    DDT_SVI_328_Basic_DSDD = 5,
+    DDT_MSX_CPM_SSDD       = 6,
+    DDT_MSX_CPM_DSDD       = 7,
+} DirDiskType;
+
+void* dirLoadFile(DirDiskType diskType, char* fileName, int* size);
 
 #endif
-

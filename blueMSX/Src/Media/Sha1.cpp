@@ -1,4 +1,4 @@
-// $Id: Sha1.cpp,v 1.2 2006-09-30 19:58:16 dvik Exp $
+// $Id: Sha1.cpp,v 1.3 2007-05-22 06:23:17 dvik Exp $
 
 /*
 Based on:
@@ -22,7 +22,7 @@ A million repetitions of "a"
 
 #include <cassert>
 #include <cstdio>
-#include <memory.h>
+#include <string.h>
 #include "Sha1.h"
 
 using std::string;

@@ -1,10 +1,10 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoRender/VideoRender.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2007-03-07 19:08:20 $
-** $Date: 2007-03-07 19:08:20 $
+** $Date: 2007-05-22 06:23:18 $
+** $Date: 2007-05-22 06:23:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,7 +35,7 @@
 #include "hq3x.h"
 #include <stdlib.h>
 #include <math.h>
-#include <memory.h>
+#include <string.h>
  
 #define RGB_MASK 0x7fff
 
