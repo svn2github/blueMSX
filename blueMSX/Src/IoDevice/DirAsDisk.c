@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2007-05-22 06:23:17 $
+** $Date: 2007-05-23 07:49:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <ctype.h>
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #else
@@ -619,6 +620,17 @@ static int add_single_file(char *name, char *pathname) {
   return result;
 }
 
+/* strupr is not a standard ANSI function, so define our own version */
+static char* my_strupr(char* s)
+{
+    char* p = s;
+    while (*p) {
+        *p = toupper(*p);
+        ++p;
+    }
+    return s;
+}
+
 static int add_single_file_svi(int diskType, char *name, char *pathname)
 {
     typedef struct
@@ -721,7 +733,7 @@ static int add_single_file_svi(int diskType, char *name, char *pathname)
     myDir.fatpointer = fatCounter;
     myDir.attrib = 0;
 
-    pext = strupr(extension);
+    pext = my_strupr(extension);
     if (0 == strncmp(extension, "BAS ", 3))
         myDir.attrib = 0x80;
     else if (0 == strncmp(extension, "BIN ", 3))
@@ -838,7 +850,7 @@ static int add_single_file_cpm(int diskType, char *name, char *pathname)
     strcat(fullname, "/");
     strcat(fullname, name);
 
-    name = strupr(name);
+    name = my_strupr(name);
     strcpy(myname, name);
 
     memset(filename, 0x20, sizeof(filename));
