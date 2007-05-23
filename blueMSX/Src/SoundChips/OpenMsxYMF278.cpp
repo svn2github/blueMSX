@@ -1,10 +1,11 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF278.cpp,v 1.3 2005-09-24 00:09:50 dvik Exp $
+// $Id: OpenMsxYMF278.cpp,v 1.4 2007-05-23 09:41:56 m9710797 Exp $
 
 #include "OpenMsxYMF278.h"
 #include <cmath>
+#include <cstring>
 
 extern "C" {
 #include "SaveState.h"

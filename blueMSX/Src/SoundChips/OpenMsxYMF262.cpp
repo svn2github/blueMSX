@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.4 2005-09-24 00:09:50 dvik Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.5 2007-05-23 09:41:56 m9710797 Exp $
 
 /*
  *
@@ -44,6 +44,7 @@
 
 #include "OpenMsxYMF262.h"
 #include <cmath>
+#include <cstring>
 
 
 extern "C" {
