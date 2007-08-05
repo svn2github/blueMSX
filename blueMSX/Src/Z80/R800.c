@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2007-04-29 23:43:22 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** Author: Daniel Vik
 **
@@ -5716,7 +5716,7 @@ static void r800SwitchCpu(R800* r800) {
         break;
     }
 
-    r800->oldCpuMode = -1;
+    r800->oldCpuMode = CPU_UNKNOWN;
 
     switch (r800->cpuMode) {
     case CPU_Z80:
@@ -5838,8 +5838,8 @@ R800* r800Create(UInt32 cpuFlags,
     r800->terminate       = 0;
     r800->breakpointCount = 0;
     r800->systemTime      = 0;
-    r800->cpuMode         = -1;
-    r800->oldCpuMode      = -1;
+    r800->cpuMode         = CPU_UNKNOWN;
+    r800->oldCpuMode      = CPU_UNKNOWN;
 
     r800->instCnt         = 0;
 
@@ -6013,7 +6013,7 @@ void r800Execute(R800* r800) {
             }
         }
 
-        if (r800->oldCpuMode != -1) {
+        if (r800->oldCpuMode != CPU_UNKNOWN) {
             r800SwitchCpu(r800);
         }
 
@@ -6110,7 +6110,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
         UInt16 address;
         int iff1 = 0;
 
-        if (r800->oldCpuMode != -1) {
+        if (r800->oldCpuMode != CPU_UNKNOWN) {
             r800SwitchCpu(r800);
         }
 

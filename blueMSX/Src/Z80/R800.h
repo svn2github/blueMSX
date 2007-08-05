@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2007-04-29 23:43:22 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** Author: Daniel Vik
 **
@@ -96,7 +96,11 @@
 ** CPU mode definitions
 ******************************************************
 */
-typedef enum { CPU_Z80 = 0, CPU_R800 = 1 } CpuMode;
+typedef enum { 
+    CPU_Z80 = 0, 
+    CPU_R800 = 1, 
+    CPU_UNKNOWN 
+} CpuMode;
 
 
 /*****************************************************

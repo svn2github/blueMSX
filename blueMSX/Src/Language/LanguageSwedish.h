@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2007-03-24 05:20:36 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->langJapanese            = "Japanska";
     ls->langKorean              = "Koreanska";
     ls->langPolish              = "Polska";
-    ls->langPortuguese          = "Portgiskiska";
+    ls->langPortuguese          = "Portugisiska";
     ls->langSpanish             = "Spanska";
     ls->langSwedish             = "Svenska";
 
@@ -57,7 +57,7 @@ void langInitSwedish(LanguageStrings* ls)
     //----------------------
 
     ls->textDevice              = "Enhet:";
-    ls->textFilename            = "Filenamn:";
+    ls->textFilename            = "Filnamn:";
     ls->textFile                = "Fil";
     ls->textNone                = "Ingen";
     ls->textUnknown             = "Okänd";
@@ -87,10 +87,10 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->fileRom                 = "Rom fil";
     ls->fileAll                 = "Alla Filer";
-    ls->fileCpuState            = "CPU-tillstand";
+    ls->fileCpuState            = "CPU-tillstånd";
     ls->fileVideoCapture        = "Videoinspelning"; 
     ls->fileDisk                = "Diskettfil";
-    ls->fileCas                 = "Kasettfil";
+    ls->fileCas                 = "Kassettfil";
     ls->fileAvi                 = "Videofil";    
 
 
@@ -126,12 +126,12 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuDiskInsertNew       = "Sätt in ny diskett fil";
     ls->menuDiskInsertCdrom     = "Sätt in CD-Rom";      // New in 2.7
     ls->menuDiskDirInsert       = "Sätt in mapp";
-    ls->menuDiskAutoStart       = "Starta om efter insättning/urdagning";
-    ls->menuCartAutoReset       = "Starta om efter insättning/urdagning";
+    ls->menuDiskAutoStart       = "Starta om efter insättning/urdragning";
+    ls->menuCartAutoReset       = "Starta om efter insättning/urdragning";
 
     ls->menuCasRewindAfterInsert= "Spola tillbaka vid insättning";
-    ls->menuCasUseReadOnly      = "Tillåt endast läsning av kasett";
-    ls->lmenuCasSaveAs          = "Spara kasett som...";
+    ls->menuCasUseReadOnly      = "Tillåt endast läsning av kassett";
+    ls->lmenuCasSaveAs          = "Spara kassett som...";
     ls->menuCasSetPosition      = "Sätt position";
     ls->menuCasRewind           = "Spola tillbaka";
 
@@ -139,7 +139,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuVideoPlay           = "Spela upp senaste";   
     ls->menuVideoRecord         = "Spela in";              
     ls->menuVideoRecording      = "Spelar in";           
-    ls->menuVideoRecAppend      = "Spela in (lagg till)";     
+    ls->menuVideoRecAppend      = "Spela in (lägg till)";     
     ls->menuVideoStop           = "Stopp";                
     ls->menuVideoRender         = "Spara videofil";   
 
@@ -147,7 +147,7 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->menuZoomNormal          = "Normal storlek";
     ls->menuZoomDouble          = "Dubbel storlek";
-    ls->menuZoomFullscreen      = "Helskärm";
+    ls->menuZoomFullscreen      = "Fullskärm";
     
     ls->menuPropsEmulation      = "Emulering";
     ls->menuPropsVideo          = "Video";
@@ -172,13 +172,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuHelpAbout           = "Om blueMSX";
 
     ls->menuFileCart            = "Cartridge slot";
-    ls->menuFileDisk            = "Diskettstaion";
-    ls->menuFileCas             = "Kasett";
+    ls->menuFileDisk            = "Diskettstation";
+    ls->menuFileCas             = "Kassett";
     ls->menuFilePrn             = "Skrivare";
-    ls->menuFileLoadState       = "Läs in CPU-tillstand";
-    ls->menuFileSaveState       = "Spara CPU-tillstand";
-    ls->menuFileQLoadState      = "Snabbladda CPU-tillstand";
-    ls->menuFileQSaveState      = "Snabbspara CPU-tillstand";
+    ls->menuFileLoadState       = "Läs in CPU-tillstånd";
+    ls->menuFileSaveState       = "Spara CPU-tillstånd";
+    ls->menuFileQLoadState      = "Snabbladda CPU-tillstånd";
+    ls->menuFileQSaveState      = "Snabbspara CPU-tillstånd";
     ls->menuFileCaptureAudio    = "Spara ljud";
     ls->menuFileCaptureVideo    = "Videoinspelning"; 
     ls->menuFileScreenShot      = "Spara skärmdump";
@@ -200,9 +200,9 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuToolsKeyboard       = "Tangentbordseditor";
     ls->menuToolsCtrlEditor     = "Kontrollers / Tangenbordseditor"; 
     ls->menuToolsMixer          = "Mixer";
-    ls->menuToolsDebugger       = "Debugger";               
-    ls->menuToolsTrainer        = "Trainer";                
-    ls->menuToolsTraceLogger    = "Trace Logger";           
+    ls->menuToolsDebugger       = "Avlusare";               
+    ls->menuToolsTrainer        = "Spelfusk";                
+    ls->menuToolsTraceLogger    = "Spårutskrift";           
 
     ls->menuFile                = "Arkiv";
     ls->menuRun                 = "Emulering";
@@ -232,10 +232,10 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgLoadDskDesc          = "Välj en diskett fil:";
     ls->dlgLoadCasDesc          = "Välj en kassett fil:";
     ls->dlgLoadRomDskCasDesc    = "Välj en fil:";
-    ls->dlgLoadState            = "Ladda CPU-tillstand";
+    ls->dlgLoadState            = "Ladda CPU-tillstånd";
     ls->dlgLoadVideoCapture     = "Ladda videoinspelning";      
-    ls->dlgSaveState            = "Spara CPU-tillstand";
-    ls->dlgSaveCassette         = "blueMSX - Spara Kasett";
+    ls->dlgSaveState            = "Spara CPU-tillstånd";
+    ls->dlgSaveCassette         = "blueMSX - Spara Kassett";
     ls->dlgSaveVideoClipAs      = "Spara videoinspeling som...";      
     ls->dlgAmountCompleted      = "Andel färdigt:";          
     ls->dlgInsertRom1           = "Sätt in ROM cartridge i slot 1";
@@ -251,7 +251,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->dlgTapeFrameText        = "Kassettposition";
     ls->dlgTapeCurrentPos       = "Aktuell position";
     ls->dlgTapeTotalTime        = "Total längd";
-    ls->dlgTapeSetPosText       = "Kasettposition:";
+    ls->dlgTapeSetPosText       = "Kassettposition:";
     ls->dlgTapeCustom           = "Visa Specialfiler";
     ls->dlgTabPosition          = "Position";
     ls->dlgTabType              = "Typ";
@@ -417,7 +417,7 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->enumVideoSize1x         = "Normal - 320x200";
     ls->enumVideoSize2x         = "Dubbel - 640x400";
-    ls->enumVideoSizeFullscreen = "Helskärm";
+    ls->enumVideoSizeFullscreen = "Fullskärm";
 
     ls->enumVideoDrvDirectDrawHW= "DirectDraw HW accel.";
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
@@ -554,13 +554,13 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutDiskInsertB     = "Sätt in Diskett B";
     ls->shortcutDiskDirInsertB  = "Sätt in Directory som Diskett B";
     ls->shortcutDiskRemoveB     = "Ta ur Diskett B";
-    ls->shortcutCasInsert       = "Sätt in Kasett";
-    ls->shortcutCasEject        = "Ta ur Kasett";
+    ls->shortcutCasInsert       = "Sätt in Kassett";
+    ls->shortcutCasEject        = "Ta ur Kassett";
     ls->shortcutCasAutorewind   = "Slå Av/På Automatisk Tillbakaspolning";
-    ls->shortcutCasReadOnly     = "Slå Av/På Skrivskydd på Kasettfiler";
-    ls->shortcutCasSetPosition  = "Sätt Kasettposition";
-    ls->shortcutCasRewind       = "Spola Tillabaka Kasett";
-    ls->shortcutCasSave         = "Spara Kasett till fil";
+    ls->shortcutCasReadOnly     = "Slå Av/På Skrivskydd på Kassettfiler";
+    ls->shortcutCasSetPosition  = "Sätt Kassettposition";
+    ls->shortcutCasRewind       = "Spola Tillabaka Kassett";
+    ls->shortcutCasSave         = "Spara Kassett till fil";
     ls->shortcutPrnFormFeed     = "Form Feed på Skrivare";
     ls->shortcutCpuStateLoad    = "Ladda CPU-tillstånd";
     ls->shortcutCpuStateSave    = "Spara CPU-tillstånd";

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/CoinDevice.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2007-08-05 18:05:05 $
 **
@@ -25,12 +25,14 @@
 **
 ******************************************************************************
 */
-#ifndef MSX_PPI_H
-#define MSX_PPI_H
+#ifndef COIN_DEVICE_H
+#define COIN_DEVICE_H
 
 #include "MsxTypes.h"
 
-void msxPPICreate(int ignoreKeyboard);
+typedef struct CoinDevice CoinDevice;
 
-#endif
+CoinDevice* coinDeviceCreate();
+UInt8 coinDeviceRead(CoinDevice* coinDev);
 
+#endif 

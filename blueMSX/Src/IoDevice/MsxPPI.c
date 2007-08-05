@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-26 05:47:39 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -183,7 +183,7 @@ static void getDebugInfo(MsxPPI* ppi, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 3, 0xab, DBG_IO_READWRITE, i8255Peek(ppi->i8255, 0xab));
 }
 
-void msxPPICreate()
+void msxPPICreate(int ignoreKeyboard)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -192,12 +192,20 @@ void msxPPICreate()
     ppi->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, ppi);
     ppi->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, langDbgDevPpi(), &dbgCallbacks, ppi);
 
-    ppi->i8255 = i8255Create(NULL,  NULL,  writeA,
-                             peekB, readB, NULL,
-                             NULL,  NULL,  writeCLo,
-                             NULL,  NULL,  writeCHi,
-                             ppi);
-
+    if (ignoreKeyboard) {
+        ppi->i8255 = i8255Create(NULL,  NULL,  writeA,
+                                 NULL,  NULL,  NULL,
+                                 NULL,  NULL,  writeCLo,
+                                 NULL,  NULL,  writeCHi,
+                                 ppi);
+    }
+    else {
+        ppi->i8255 = i8255Create(NULL,  NULL,  writeA,
+                                 peekB, readB, NULL,
+                                 NULL,  NULL,  writeCLo,
+                                 NULL,  NULL,  writeCHi,
+                                 ppi);
+    }
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());
 
     ioPortRegister(0xa8, i8255Read, i8255Write, ppi->i8255);

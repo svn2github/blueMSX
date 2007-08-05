@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-09-26 05:47:41 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,9 @@ struct MsxPsg {
     int deviceHandle;
     AY8910* ay8910;
     int currentPort;
+    int maxPorts;
+    CassetteCb casCb;
+    void*      casRef;
     UInt8 registers[2];
     UInt8 readValue[2];
     MsxJoystickDevice* devFun[2];
@@ -55,7 +58,7 @@ struct MsxPsg {
 
 static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
 {
-    if (port >= 2) {
+    if (port >= msxPsg->maxPorts) {
         return;
     }
 
@@ -114,6 +117,9 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
             state &= ~((((UInt64)renshaSpeed * boardSystemTime() / boardFrequency()) & 1) << 4);
         }
         state |= 0x40;
+        if (msxPsg->casCb != NULL && msxPsg->casCb(msxPsg->casRef)) {
+            state |= 0x80;
+        }
 
         msxPsg->readValue[address & 1] = state;
 
@@ -188,15 +194,24 @@ static void destroy(MsxPsg* msxPsg)
     ay8910Destroy(msxPsg->ay8910);
     joystickPortUpdateHandlerUnregister();
     deviceManagerUnregister(msxPsg->deviceHandle);
+    
+    free(msxPsg);
 }
 
-MsxPsg* msxPsgCreate(PsgType type)
+void msxPsgRegisterCassetteRead(MsxPsg* msxPsg, CassetteCb cb, void* ref)
+{
+    msxPsg->casCb  = cb;
+    msxPsg->casRef = ref;
+}
+
+MsxPsg* msxPsgCreate(PsgType type, int maxPorts)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     MsxPsg* msxPsg = (MsxPsg*)calloc(1, sizeof(MsxPsg));
 
     msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, type);
-    
+    msxPsg->maxPorts = maxPorts;
+
     ay8910SetIoPort(msxPsg->ay8910, read, peek, write, msxPsg);
 
     joystickPortUpdateHandlerRegister(joystickPortHandler, msxPsg);

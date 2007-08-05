@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2007-03-24 22:12:37 $
+** $Date: 2007-08-05 18:05:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1203,6 +1203,7 @@ int boardRun(Machine* machine,
     case BOARD_MSX_S1985:
     case BOARD_MSX_T9769B:
     case BOARD_MSX_T9769C:
+    case BOARD_MSX_FORTE_II:
         success = msxCreate(machine, deviceInfo->video.vdpSyncMode, &boardInfo);
         break;
     case BOARD_SVI:

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2007-04-15 23:59:08 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -184,6 +184,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "basic")        return ROM_BASIC;
 
     if (name == "mirrored")     return ROM_PLAIN;
+    if (name == "forteII")      return ROM_FORTEII;
     if (name == "msxdos2")      return ROM_MSXDOS2;
     if (name == "konami5")      return ROM_KONAMI5;
     if (name == "konami4")      return ROM_KONAMI4;
@@ -564,6 +565,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KONAMI4NF:   return langRomTypeKonamiGeneric();
     case ROM_ASCII16NF:   return langRomTypeSuperPierrot();
     case ROM_PLAIN:       return langRomTypeMirrored();
+    case ROM_FORTEII:     return "Forte II";
     case ROM_NORMAL:      return langRomTypeNormal();
     case ROM_DISKPATCH:   return langRomTypeDiskPatch();
     case ROM_CASPATCH:    return langRomTypeCasPatch();
@@ -705,6 +707,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_KONAMI4NF:   return "KONAMI GEN";
     case ROM_ASCII16NF:   return "SUPERPIERR";
     case ROM_PLAIN:       return "MIRRORED";
+    case ROM_FORTEII:     return "FORTE II";
     case ROM_NORMAL:      return "NORMAL";
     case ROM_DISKPATCH:   return "DISKPATCH";
     case ROM_CASPATCH:    return "CASPATCH";
@@ -823,6 +826,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_SCCMIRRORED: return 1;
     case ROM_SCCEXTENDED: return 1;
     case ROM_PLAIN:       return 1;
+    case ROM_FORTEII:     return 1;
     case ROM_FMPAK:       return 1;
     case ROM_NORMAL:      return 1;
     case ROM_DISKPATCH:   return 1;

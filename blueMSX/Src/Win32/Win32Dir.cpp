@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Dir.cpp,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:37 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,21 @@ static int CALLBACK browseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 {
     switch (uMsg) {
     case BFFM_INITIALIZED:
+        HWND cbohWnd = CreateWindow("COMBOBOX", NULL, CBS_DROPDOWNLIST|WS_VSCROLL|CBS_AUTOHSCROLL|WS_CHILD|WS_VISIBLE,
+            17, 30, 286, 150, hwnd, (HMENU)1005, (HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), NULL); 
+
+        SendMessage(cbohWnd, CB_RESETCONTENT, 0, 0);
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"MSX 3.5\" DSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"MSX2 CP/M 3.0 DSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"MSX2 CP/M 3.0 SSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-328 CP/M 2.24 DSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-328 CP/M 2.24 SSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-328 Disk Basic DSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-328 Disk Basic SSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-328 Z-CPR3 DSDD");
+        SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-738 CP/M 2.28 SSDD");
+        SendMessage(cbohWnd, CB_SETCURSEL, 0, 0);
+
         if (*defaultDirectory) {
             SendMessage(hwnd, BFFM_SETSELECTION, 1, (LPARAM)defaultDirectory);
         }

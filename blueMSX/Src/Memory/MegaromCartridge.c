@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2007-03-24 05:20:37 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,6 +99,7 @@
 #include "romMapperNoWind.h"
 #include "romMapperGoudaSCSI.h"
 #include "romMapperMegaFlashRomScc.h"
+#include "romMapperForteII.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -357,6 +358,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_PLAIN:
             success &= romMapperPlainCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_FORTEII:
+            success &= romMapperForteIICreate(romName, buf, size, slot, sslot, 0);
             break;
 
         case ROM_FMPAK:

@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperForteII.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.1 $
 **
 ** $Date: 2007-08-05 18:05:05 $
 **
@@ -25,12 +25,12 @@
 **
 ******************************************************************************
 */
-#ifndef MSX_PPI_H
-#define MSX_PPI_H
-
+#ifndef ROMMAPPER_FORTE_II_H
+#define ROMMAPPER_FORTE_II_H
+ 
 #include "MsxTypes.h"
 
-void msxPPICreate(int ignoreKeyboard);
+int romMapperForteIICreate(char* filename, UInt8* romData, 
+                           int size, int slot, int sslot, int startPage);
 
 #endif
-

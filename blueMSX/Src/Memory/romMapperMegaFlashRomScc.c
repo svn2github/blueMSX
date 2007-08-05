@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-24 05:20:37 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@ typedef struct {
     int sslot;
     int startPage;
     int size;
+    int romMask;
     int flashStart;
     int romMapper[4];
     int flashPage[4];
@@ -195,6 +196,7 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
         rm->sccEnable = newEnable;
     }
 
+    value &= rm->romMask;
     if (rm->romMapper[bank] != value || change) {
         mapPage(rm, bank, value);
     }
@@ -223,6 +225,7 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
     rm->size = 0x80000;
     rm->slot  = slot;
     rm->sslot = sslot;
+    rm->romMask = rm->size / 0x2000 - 1;
     rm->startPage  = startPage;
     rm->scc = sccCreate(boardGetMixer());
     sccSetMode(rm->scc, SCC_REAL);

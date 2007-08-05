@@ -637,6 +637,12 @@
 					RelativePath="..\..\Src\Memory\romMapperFMPAK.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperForteII.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperForteII.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.c">
 				</File>
 				<File
@@ -2007,6 +2013,12 @@ buildnumber.exe
 		<Filter
 			Name="Input"
 			Filter="">
+			<File
+				RelativePath="..\..\Src\Input\CoinDevice.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\CoinDevice.h">
+			</File>
 			<File
 				RelativePath="..\..\Src\Input\ColecoJoystick.c">
 			</File>

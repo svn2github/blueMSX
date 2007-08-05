@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-19 06:00:33 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,10 @@
 
 typedef struct MsxPsg MsxPsg;
 
-MsxPsg* msxPsgCreate(PsgType type);
+typedef UInt8 (*CassetteCb)(void*);
+
+void msxPsgRegisterCassetteRead(MsxPsg* msxPsg, CassetteCb cb, void* ref);
+MsxPsg* msxPsgCreate(PsgType type, int maxPorts);
 
 #endif // MSX_PSG_H
 

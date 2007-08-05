@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2007-04-19 04:10:20 $
+** $Date: 2007-08-05 18:05:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "ramMapperIo.h"
+#include "CoinDevice.h"
 
 void PatchZ80(void* ref, CpuRegs* cpuRegs);
 
@@ -216,7 +217,7 @@ int msxCreate(Machine* machine,
     r800Reset(r800, 0);
     mixerReset(boardGetMixer());
 
-    msxPPICreate();
+    msxPPICreate(machine->board.type == BOARD_MSX_FORTE_II);
     slotManagerCreate();
 
     r800DebugCreate(r800);
@@ -240,7 +241,15 @@ int msxCreate(Machine* machine,
 
     success = machineInitialize(machine, &msxRam, &msxRamSize, &msxRamStart);
 
-    msxPsg = msxPsgCreate(machine->board.type == BOARD_MSX ? PSGTYPE_AY8910 : PSGTYPE_YM2149);
+    msxPsg = msxPsgCreate(machine->board.type == BOARD_MSX || 
+                          machine->board.type == BOARD_MSX_FORTE_II 
+                          ? PSGTYPE_AY8910 : PSGTYPE_YM2149,
+                          machine->board.type == BOARD_MSX_FORTE_II ? 1 : 2);
+
+    if (machine->board.type == BOARD_MSX_FORTE_II) {
+        CoinDevice* coinDevice = coinDeviceCreate(msxPsg);
+        msxPsgRegisterCassetteRead(msxPsg, coinDeviceRead, coinDevice);
+    }
 
     for (i = 0; i < 8; i++) {
         slotMapRamPage(0, 0, i);

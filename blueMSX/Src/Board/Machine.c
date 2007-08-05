@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2007-03-24 05:20:29 $
+** $Date: 2007-08-05 18:05:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -125,6 +125,7 @@
 #include "romMapperNoWind.h"
 #include "romMapperGoudaSCSI.h"
 #include "romMapperMegaFlashRomScc.h"
+#include "romMapperForteII.h"
 
 int toint(char* buffer) 
 {
@@ -159,6 +160,7 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else if (0 == strcmp(buffer, "MSX-S1985"))    machine->board.type = BOARD_MSX_S1985;
     else if (0 == strcmp(buffer, "MSX-T9769B"))   machine->board.type = BOARD_MSX_T9769B;
     else if (0 == strcmp(buffer, "MSX-T9769C"))   machine->board.type = BOARD_MSX_T9769C;
+    else if (0 == strcmp(buffer, "MSX-ForteII"))  machine->board.type = BOARD_MSX_FORTE_II;
     else if (0 == strcmp(buffer, "SVI"))          machine->board.type = BOARD_SVI;
     else if (0 == strcmp(buffer, "ColecoVision")) machine->board.type = BOARD_COLECO;
     else if (0 == strcmp(buffer, "ColecoAdam"))   machine->board.type = BOARD_COLECOADAM;
@@ -329,17 +331,18 @@ void machineSave(Machine* machine)
 
     // Write Board info
     switch (machine->board.type) {
-    case BOARD_MSX:        iniFileWriteString("Board", "type", "MSX"); break;
-    case BOARD_MSX_S3527:  iniFileWriteString("Board", "type", "MSX-S3527"); break;
-    case BOARD_MSX_S1985:  iniFileWriteString("Board", "type", "MSX-S1985"); break;
-    case BOARD_MSX_T9769B: iniFileWriteString("Board", "type", "MSX-T9769B"); break;
-    case BOARD_MSX_T9769C: iniFileWriteString("Board", "type", "MSX-T9769C"); break;
-    case BOARD_SVI:        iniFileWriteString("Board", "type", "SVI"); break;
-    case BOARD_COLECO:     iniFileWriteString("Board", "type", "ColecoVision"); break;
-    case BOARD_COLECOADAM: iniFileWriteString("Board", "type", "ColecoAdam"); break;
-    case BOARD_SG1000:     iniFileWriteString("Board", "type", "SG-1000"); break;
-    case BOARD_SF7000:     iniFileWriteString("Board", "type", "SF-7000"); break;
-    case BOARD_SC3000:     iniFileWriteString("Board", "type", "SC-3000"); break;
+    case BOARD_MSX:          iniFileWriteString("Board", "type", "MSX"); break;
+    case BOARD_MSX_S3527:    iniFileWriteString("Board", "type", "MSX-S3527"); break;
+    case BOARD_MSX_S1985:    iniFileWriteString("Board", "type", "MSX-S1985"); break;
+    case BOARD_MSX_T9769B:   iniFileWriteString("Board", "type", "MSX-T9769B"); break;
+    case BOARD_MSX_T9769C:   iniFileWriteString("Board", "type", "MSX-T9769C"); break;
+    case BOARD_MSX_FORTE_II: iniFileWriteString("Board", "type", "MSX-ForteII"); break;
+    case BOARD_SVI:          iniFileWriteString("Board", "type", "SVI"); break;
+    case BOARD_COLECO:       iniFileWriteString("Board", "type", "ColecoVision"); break;
+    case BOARD_COLECOADAM:   iniFileWriteString("Board", "type", "ColecoAdam"); break;
+    case BOARD_SG1000:       iniFileWriteString("Board", "type", "SG-1000"); break;
+    case BOARD_SF7000:       iniFileWriteString("Board", "type", "SF-7000"); break;
+    case BOARD_SC3000:       iniFileWriteString("Board", "type", "SC-3000"); break;
     }
 
     // Write video info
@@ -1052,6 +1055,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_PLAIN:
             success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_FORTEII:
+            success &= romMapperForteIICreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_FMDAS:

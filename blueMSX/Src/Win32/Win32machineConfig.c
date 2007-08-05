@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2007-03-16 07:38:45 $
+** $Date: 2007-08-05 18:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -207,6 +207,7 @@ static void setBoardDropdown(HWND hDlg) {
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX S-1985");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX T-9769B");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX T-9769C");
+    SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"MSX Forte II");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"SVI");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoVision");
     SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_ADDSTRING, 0, (LPARAM)"ColecoAdam");
@@ -236,28 +237,32 @@ static void setBoardDropdown(HWND hDlg) {
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 4, 0);
         setSubSlotsEnable(hDlg, 1);
         break;
-    case BOARD_SVI:
+    case BOARD_MSX_FORTE_II:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 5, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_COLECO:
+    case BOARD_SVI:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 6, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_COLECOADAM:
+    case BOARD_COLECO:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 7, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_SG1000:
+    case BOARD_COLECOADAM:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 8, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_SC3000:
+    case BOARD_SG1000:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 9, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
-    case BOARD_SF7000:
+    case BOARD_SC3000:
         SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 10, 0);
+        setSubSlotsEnable(hDlg, 0);
+        break;
+    case BOARD_SF7000:
+        SendDlgItemMessage(hDlg, IDC_CONFBOARD, CB_SETCURSEL, 11, 0);
         setSubSlotsEnable(hDlg, 0);
         break;
     }
@@ -290,26 +295,30 @@ static int getBoardDropDown(HWND hDlg) {
         setSubSlotsEnable(hDlg, 1);
         break;
     case 5:
+        machine->board.type = BOARD_MSX_FORTE_II;
+        setSubSlotsEnable(hDlg, 1);
+        break;
+    case 6:
         machine->board.type = BOARD_SVI;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 6:
+    case 7:
         machine->board.type = BOARD_COLECO;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 7:
+    case 8:
         machine->board.type = BOARD_COLECOADAM;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 8:
+    case 9:
         machine->board.type = BOARD_SG1000;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 9:
+    case 10:
         machine->board.type = BOARD_SC3000;
         setSubSlotsEnable(hDlg, 0);
         break;
-    case 10:
+    case 11:
         machine->board.type = BOARD_SF7000;
         setSubSlotsEnable(hDlg, 0);
         break;
@@ -838,6 +847,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
+    case ROM_FORTEII:
     case ROM_FMDAS:
     case ROM_FMPAK:
     case ROM_PANASONIC16:
@@ -1180,6 +1190,7 @@ static void setEditControls(HWND hDlg)
     case ROM_FMPAK:
     case ROM_MSXAUDIO:
     case ROM_FMDAS:
+    case ROM_FORTEII:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xFFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1416,6 +1427,7 @@ static RomType romTypeList[] = {
     SRAM_ESERAM,
     SRAM_ESESCC,
     ROM_MEGAFLSHSCC,
+    ROM_FORTEII,
     ROM_UNKNOWN,
 };
 
