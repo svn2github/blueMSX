@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-08-05 21:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -172,7 +172,7 @@ void sn76489Reset(SN76489* sn76489)
             sn76489->regs[2 * i] = 0;
             sn76489->regs[2 * i + 1] = 0;
             sn76489->tonePhase[i] = 0;
-            sn76489->ampVolume[i] = 0;
+            sn76489->ampVolume[i] = 0x0f;
             sn76489->toneStep[i]  = 1 << 31;
 
         }
