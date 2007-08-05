@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.175 $
+** $Revision: 1.176 $
 **
-** $Date: 2007-03-28 17:35:35 $
+** $Date: 2007-08-05 21:14:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1231,7 +1231,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
         if (pProperties->emulation.registerFileTypes && !oldProp.emulation.registerFileTypes) {
             registerFileTypes();
         }
-        else {
+        else if (!pProperties->emulation.registerFileTypes) {
             unregisterFileTypes();
         }
     }

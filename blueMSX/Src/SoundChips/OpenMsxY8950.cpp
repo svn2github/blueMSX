@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.cpp,v 1.4 2007-08-05 18:56:21 dvik Exp $
+// $Id: OpenMsxY8950.cpp,v 1.5 2007-08-05 21:14:39 dvik Exp $
 
 /*
   * Based on:
@@ -28,7 +28,7 @@ unsigned int Y8950::Slot::dphaseDRTable[16][16];
 unsigned int Y8950::Slot::dphaseTable[1024][8][16];
 
 
-//extern "C" unsigned long boardSystemTime();
+extern "C" UInt32 boardSystemTime();
 extern "C" int switchGetAudio();
 
 //**************************************************//

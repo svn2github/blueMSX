@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2007-08-05 18:05:04 $
+** $Date: 2007-08-05 21:14:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -187,9 +187,9 @@ int msxCreate(Machine* machine,
 
     r800 = r800Create(cpuFlags, slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
 
-    boardInfo->cartridgeCount   = 2;
-    boardInfo->diskdriveCount   = 2;
-    boardInfo->casetteCount     = 1;
+    boardInfo->cartridgeCount   = machine->board.type == BOARD_MSX_FORTE_II ? 0 : 2;
+    boardInfo->diskdriveCount   = machine->board.type == BOARD_MSX_FORTE_II ? 0 : 2;
+    boardInfo->casetteCount     = machine->board.type == BOARD_MSX_FORTE_II ? 0 : 1;
     boardInfo->cpuRef           = r800;
 
     boardInfo->destroy          = destroy;
