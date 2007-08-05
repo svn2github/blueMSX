@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2007-03-13 03:23:29 $
+** $Date: 2007-08-05 21:51:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,11 +83,11 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 
     if (joyMode != 0) {
         return boardCaptureUInt8(ioPort & 2, ((joyState & 0x01) ? 0x01 : 0) |
-                                 ((joyState & 0x08) ? 0x02 : 0) |
-                                 ((joyState & 0x02) ? 0x04 : 0) |
-                                 ((joyState & 0x04) ? 0x08 : 0) |
-                                 ((joyState & 0x10) ? 0x40 : 0) |
-                                  0x30);
+                                             ((joyState & 0x08) ? 0x02 : 0) |
+                                             ((joyState & 0x02) ? 0x04 : 0) |
+                                             ((joyState & 0x04) ? 0x08 : 0) |
+                                             ((joyState & 0x10) ? 0x40 : 0) |
+                                             0x30);
     }
 
     value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
@@ -200,6 +200,10 @@ static void colecoJoyIoCreate()
                                   colecoJoyIoSaveState, colecoJoyIoLoadState };
 
     int i;
+    
+    // Initialize joyMode
+    joyMode = 1;
+
     for (i = 0xe0; i <= 0xff; i++) {
         ioPortRegister(i, colecoJoyIoRead, colecoSN76489Write, NULL);
     }
