@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950Adpcm.cpp,v 1.3 2006-06-17 21:42:32 vincent_van_dam Exp $
+// $Id: OpenMsxY8950Adpcm.cpp,v 1.4 2007-08-05 18:56:21 dvik Exp $
 
 #include "OpenMsxY8950Adpcm.h"
 #include "OpenMsxY8950.h"
@@ -59,7 +59,7 @@ int Y8950Adpcm::CLAP(int min, int x, int max)
 //                                                          //
 //**********************************************************//
 
-extern "C" unsigned long boardSystemTime();
+//extern "C" unsigned long boardSystemTime();
 
 
 Y8950Adpcm::Y8950Adpcm(Y8950& y8950_, const string& name_, int sampleRam)

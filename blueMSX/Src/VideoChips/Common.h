@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2007-05-22 06:23:18 $
+** $Date: 2007-08-05 18:56:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -122,7 +122,6 @@ Pixel *RefreshBorder(VDP* vdp, int Y, Pixel bgColor, int line512, int borderExtr
     return linePtr;
 }
 
-
 Pixel *RefreshBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2, int line512, int borderExtra)
 {
     FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
@@ -202,7 +201,6 @@ static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2,
         linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor2;
     }
 }
-
 
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
@@ -1469,6 +1467,9 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         return;
     }
 
+#define BRK_6 24
+    if (X < BRK_6 && X2 >= BRK_6) colorSpritesLine(vdp, Y, 1);
+
     rightBorder = X2 == 33;
     if (rightBorder) {
         X2--;
@@ -1547,7 +1548,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
-        colorSpritesLine(vdp, Y, 1);
+//        colorSpritesLine(vdp, Y, 1);
         RefreshRightBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
     }
 }
