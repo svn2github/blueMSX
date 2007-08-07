@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2007-03-28 17:35:35 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -809,11 +809,11 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, pan);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, volume);
     
-    strcpy(properties->joy1.type, joystickPortTypeToName(0, properties->joy1.typeId, 0));
+    strcpy(properties->joy1.type, joystickPortTypeToName(0, 0));
     SET_STR_VALUE_2(joy1, type);
     SET_ENUM_VALUE_2(joy1, autofire, OnOffPair);
     
-    strcpy(properties->joy2.type, joystickPortTypeToName(1, properties->joy2.typeId, 0));
+    strcpy(properties->joy2.type, joystickPortTypeToName(1, 0));
     SET_STR_VALUE_2(joy2, type);
     SET_ENUM_VALUE_2(joy2, autofire, OnOffPair);
     

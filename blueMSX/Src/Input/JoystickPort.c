@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-19 06:00:19 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,12 +28,87 @@
 #include "JoystickPort.h"
 #include "ArchInput.h"
 #include "Language.h"
+#include "Board.h"
 #include <stdlib.h>
+#include <string.h>
 
+typedef struct
+{
+    int              typeEnabled[JOYSTICK_MAX_PORTS][JOYSTICK_PORT_MAX_COUNT];
+    JoystickPortType defaultType[JOYSTICK_MAX_PORTS];
+    int              keyboardEnabled;
+} JoystickConfig;
 
 static JoystickPortUpdateHandler updateHandler = NULL;
 static void* updateHandlerRef;
 static JoystickPortType inputType[JOYSTICK_MAX_PORTS];
+
+static JoystickConfig joystickConfig;
+
+void joystickPortUpdateBoardInfo()
+{
+    int i;
+    BoardType boardType = boardGetType();
+
+    memset(&joystickConfig, 0, sizeof(joystickConfig));
+
+    switch (boardType) {
+    case BOARD_MSX:
+        for (i = 0; i < 2; i++) {
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_NONE] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_JOYSTICK] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_MOUSE] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_TETRIS2DONGLE] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_GUNSTICK] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_MAGICKEYDONGLE] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_ASCIILASER] = 1;
+            joystickConfig.defaultType[i] = JOYSTICK_PORT_NONE;
+        }
+        joystickConfig.keyboardEnabled = 1;
+        break;
+
+    case BOARD_SG1000:
+    case BOARD_SVI:
+        for (i = 0; i < 2; i++) {
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_NONE] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_JOYSTICK] = 1;
+            joystickConfig.defaultType[i] = JOYSTICK_PORT_NONE;
+        }
+        joystickConfig.keyboardEnabled = 1;
+        break;
+
+    case BOARD_COLECO:
+        for (i = 0; i < 2; i++) {
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_COLECOJOYSTICK] = 1;
+            joystickConfig.defaultType[i] = JOYSTICK_PORT_COLECOJOYSTICK;
+        }
+        joystickConfig.keyboardEnabled = 0;
+        break;
+
+    case BOARD_MSX_FORTE_II:
+        joystickConfig.typeEnabled[0][JOYSTICK_PORT_JOYSTICK] = 1;
+        joystickConfig.defaultType[0] = JOYSTICK_PORT_JOYSTICK;
+        joystickConfig.keyboardEnabled = 1;
+        break;
+    }
+
+    for (i = 0; i < JOYSTICK_MAX_PORTS; i++) {
+        if (!joystickPortTypeEnabled(i, inputType[i])) {
+            joystickPortSetType(i, joystickConfig.defaultType[i]);
+        }
+    }
+}
+
+int joystickPortKeyboardEnabled()
+{
+    return joystickConfig.keyboardEnabled;
+}
+
+int joystickPortTypeEnabled(int port, JoystickPortType type)
+{
+    return joystickConfig.typeEnabled[port][type];
+}
+
 
 
 void joystickPortSetType(int port, JoystickPortType type) 
@@ -85,10 +160,15 @@ void joystickPortUpdateHandlerUnregister()
     updateHandler = NULL;
 }
 
-char* joystickPortTypeToName(int port, JoystickPortType type, int translate)
+int joystickPortGetTypeCount()
+{
+    return JOYSTICK_PORT_MAX_COUNT;
+}
+
+char* joystickPortGetDescription(JoystickPortType type, int translate) 
 {
     if (translate) {
-        switch(inputType[port]) {
+        switch(type) {
         default:
         case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
         case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
@@ -103,7 +183,7 @@ char* joystickPortTypeToName(int port, JoystickPortType type, int translate)
         return langTextUnknown();
     }
 
-    switch(inputType[port]) {
+    switch(type) {
     default:
     case JOYSTICK_PORT_NONE:            return "none";
     case JOYSTICK_PORT_JOYSTICK:        return "joystick";
@@ -116,6 +196,11 @@ char* joystickPortTypeToName(int port, JoystickPortType type, int translate)
     }
 
     return "unknown";
+}
+
+char* joystickPortTypeToName(int port, int translate)
+{
+    return joystickPortGetDescription(inputType[port], translate);
 }
 
 JoystickPortType joystickPortNameToType(int port, char* name, int translate)

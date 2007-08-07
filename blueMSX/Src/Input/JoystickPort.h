@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:19 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,16 +40,25 @@ typedef enum {
     JOYSTICK_PORT_GUNSTICK,
     JOYSTICK_PORT_COLECOJOYSTICK,
     JOYSTICK_PORT_MAGICKEYDONGLE,
-    JOYSTICK_PORT_ASCIILASER
+    JOYSTICK_PORT_ASCIILASER,
+    JOYSTICK_PORT_MAX_COUNT
 } JoystickPortType;
 
 typedef void (*JoystickPortUpdateHandler)(void*, int, JoystickPortType);
 
+// Machine dependent config methods that probably belongs somewhere else...
+void joystickPortUpdateBoardInfo();
+int  joystickPortKeyboardEnabled();
+
+int joystickPortGetTypeCount();
+
 void joystickPortSetType(int port, JoystickPortType type);
 JoystickPortType joystickPortGetType(int port);
+int joystickPortTypeEnabled(int port, JoystickPortType type);
 
+char* joystickPortGetDescription(JoystickPortType type, int translate);
 JoystickPortType joystickPortNameToType(int port, char* name, int translate);
-char* joystickPortTypeToName(int port, JoystickPortType type, int translate);
+char* joystickPortTypeToName(int port, int translate);
 
 void joystickPortUpdateHandlerRegister(JoystickPortUpdateHandler fn, void* ref);
 void joystickPortUpdateHandlerUnregister();

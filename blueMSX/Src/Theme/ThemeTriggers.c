@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2007-02-18 05:18:44 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -473,6 +473,10 @@ int themeTriggerConfCasRO() {
     return propGetGlobalProperties()->cassette.readOnly;
 }
 
+int themeTriggerKeyboardEnabled() {
+    return joystickPortKeyboardEnabled();
+}
+
 int themeTriggerJoyPort1Enabled() {
     return joystickPortGetType(0) != JOYSTICK_PORT_NONE ? 1 : 0;
 }
@@ -899,29 +903,9 @@ char* themeTriggerMappedKey() {
 }
 
 char* themeTriggerJoyPort1() {
-    switch (joystickPortGetType(0)) {
-    case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
-    case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
-    case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
-    case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
-    case JOYSTICK_PORT_GUNSTICK:        return langEnumControlsJoyGunStick();
-    case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
-    case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
-    case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
-    }
-    return langTextUnknown();
+    return joystickPortTypeToName(0, 1);
 }
 
 char* themeTriggerJoyPort2() {
-    switch (joystickPortGetType(1)) {
-    case JOYSTICK_PORT_NONE:            return langEnumControlsJoyNone();
-    case JOYSTICK_PORT_JOYSTICK:        return langEnumControlsJoy2Button();
-    case JOYSTICK_PORT_MOUSE:           return langEnumControlsJoyMouse();
-    case JOYSTICK_PORT_TETRIS2DONGLE:   return langEnumControlsJoyTetrisDongle();
-    case JOYSTICK_PORT_GUNSTICK:        return langEnumControlsJoyGunStick();
-    case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
-    case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
-    case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
-    }
-    return langTextUnknown();
+    return joystickPortTypeToName(1, 1);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2007-08-05 18:05:05 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -296,7 +296,7 @@ static int getBoardDropDown(HWND hDlg) {
         break;
     case 5:
         machine->board.type = BOARD_MSX_FORTE_II;
-        setSubSlotsEnable(hDlg, 1);
+        setSubSlotsEnable(hDlg, 0);
         break;
     case 6:
         machine->board.type = BOARD_SVI;

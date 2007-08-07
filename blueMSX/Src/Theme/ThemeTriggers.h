@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.h,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2007-02-18 05:09:15 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,6 +103,7 @@ typedef enum {
     THEME_TRIGGER_VIDEO_CAPTURE_PLAY,
     THEME_TRIGGER_VIDEO_CAPTURE_REC,
     
+    THEME_TRIGGER_KEYBOARD_ENABLE,
     THEME_TRIGGER_JOY1_ENABLE,
     THEME_TRIGGER_JOY1_NONE,
     THEME_TRIGGER_JOY1_JOYSTICK,
@@ -275,6 +276,7 @@ int themeTriggerMachineMegaRom();
 int themeTriggerMachineMegaRam();
 int themeTriggerMachineFmPac();
 
+int themeTriggerKeyboardEnabled();
 int themeTriggerJoyPort1Enabled();
 int themeTriggerJoyPort1IsNone();
 int themeTriggerJoyPort1IsJoystick();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2007-03-25 17:04:37 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -788,58 +788,34 @@ static HMENU menuCreatePrinter(Properties* pProperties, Shortcuts* shortcuts)
     return hMenu;
 }
 
-static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
+static HMENU menuCreateJoyPort(int port, int portBase,
+                               Properties* pProperties, Shortcuts* shortcuts)
 {
     HMENU            hMenu = CreatePopupMenu();
-    JoystickPortType joyType = joystickPortGetType(0);
+    JoystickPortType joyType = joystickPortGetType(port);
+    int count = joystickPortGetTypeCount();
+    int type;
 
     setMenuColor(hMenu);
 
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 0, langEnumControlsJoyNone());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 1, langEnumControlsJoy2Button());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 2, langEnumControlsJoyMouse());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 3, langEnumControlsJoyTetrisDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 6, langEnumControlsJoyMagicKeyDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_GUNSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 4, langEnumControlsJoyGunStick());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_ASCIILASER ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 7, langEnumControlsJoyAsciiLaser());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT1_BASE + 5, langEnumControlsJoyColeco());
-    
+    for (type = 0; type < count; type++) {
+        if (joystickPortTypeEnabled(port, type)) {
+            AppendMenu(hMenu, MF_STRING | (joyType == type ? MFS_CHECKED : 0), 
+                       portBase + type, joystickPortGetDescription(type, 1));
+        }
+    }
+
     return hMenu;
+}
+
+static HMENU menuCreateJoyPort1(Properties* pProperties, Shortcuts* shortcuts)
+{
+    return menuCreateJoyPort(0, ID_CTRLPORT1_BASE, pProperties, shortcuts);
 }
 
 static HMENU menuCreateJoyPort2(Properties* pProperties, Shortcuts* shortcuts) 
 {
-    HMENU            hMenu = CreatePopupMenu();
-    JoystickPortType joyType = joystickPortGetType(1);
-
-    setMenuColor(hMenu);
-
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_NONE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 0, langEnumControlsJoyNone());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_JOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 1, langEnumControlsJoy2Button());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MOUSE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 2, langEnumControlsJoyMouse());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_TETRIS2DONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 3, langEnumControlsJoyTetrisDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_MAGICKEYDONGLE ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 6, langEnumControlsJoyMagicKeyDongle());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_GUNSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 4, langEnumControlsJoyGunStick());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_ASCIILASER ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 7, langEnumControlsJoyAsciiLaser());
-    AppendMenu(hMenu, MF_STRING | (joyType == JOYSTICK_PORT_COLECOJOYSTICK ? MFS_CHECKED : 0), 
-               ID_CTRLPORT2_BASE + 5, langEnumControlsJoyColeco());
-    
-    return hMenu;
+    return menuCreateJoyPort(1, ID_CTRLPORT2_BASE, pProperties, shortcuts);
 }
 
 static HMENU menuCreateZoom(Properties* pProperties, Shortcuts* shortcuts)

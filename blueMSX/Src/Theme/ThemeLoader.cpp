@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2007-02-18 05:09:15 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -453,6 +453,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "video-captureplay"))        return t | THEME_TRIGGER_VIDEO_CAPTURE_PLAY;
     if (0 == strcmp(s, "video-capturerec"))         return t | THEME_TRIGGER_VIDEO_CAPTURE_REC;
 
+    if (0 == strcmp(s, "keyboard-enable"))       return t | THEME_TRIGGER_KEYBOARD_ENABLE;
     if (0 == strcmp(s, "port1-enable"))          return t | THEME_TRIGGER_JOY1_ENABLE;
     if (0 == strcmp(s, "port1-none"))            return t | THEME_TRIGGER_JOY1_NONE;
     if (0 == strcmp(s, "port1-joystick"))        return t | THEME_TRIGGER_JOY1_JOYSTICK;

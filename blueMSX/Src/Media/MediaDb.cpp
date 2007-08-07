@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2007-08-05 18:05:05 $
+** $Date: 2007-08-07 07:04:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1136,6 +1136,8 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     case BOARD_SF7000:
         staticMediaType.romType = ROM_SC3000;
         return &staticMediaType;
+    case BOARD_MSX_FORTE_II:
+        break;
     case BOARD_MSX:
         break;
     }

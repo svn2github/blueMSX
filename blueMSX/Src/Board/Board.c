@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2007-08-05 18:05:04 $
+** $Date: 2007-08-07 07:04:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,7 @@
 #include "Casette.h"
 #include "MediaDb.h"
 #include "RomLoader.h"
+#include "JoystickPort.h"
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
@@ -1324,6 +1325,8 @@ void boardSetMachine(Machine* machine)
 
     boardType = machine->board.type;
     PatchReset(boardType);
+
+    joystickPortUpdateBoardInfo();
 }
 
 void boardReset()
