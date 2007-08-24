@@ -2047,6 +2047,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Input\MagicKeyDongle.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Input\MsxArkanoidPad.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\MsxArkanoidPad.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Input\MsxAsciiLaser.c">
 			</File>
 			<File

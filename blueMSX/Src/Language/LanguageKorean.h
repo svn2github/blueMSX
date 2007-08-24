@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.51 $ + additions 2005/03/03
+** $Revision: 1.52 $ + additions 2005/03/03
 **
-** $Date: 2007-04-01 23:04:29 $
+** $Date: 2007-08-24 05:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,6 +446,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "2버튼 조이스틱";                   
     ls->enumControlsJoyGunstick  = "건 스틱";                         
     ls->enumControlsJoyAsciiLaser="아스키 플러스-X 터미네이터 레이저";      
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "ColecoVision 조이스틱";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" 양면, 9 섹터";     

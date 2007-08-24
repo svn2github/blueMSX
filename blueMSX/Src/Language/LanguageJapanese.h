@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2007-03-28 18:32:17 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -447,6 +447,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "2ボタン ジョイスティック";
     ls->enumControlsJoyGunstick  = "ガンスティック";
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X ターミネーターレーザー";
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "ColecoVision ジョイスティック";
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5インチ 2DD (9セクタ)";

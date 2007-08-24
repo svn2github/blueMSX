@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -464,6 +464,7 @@ char* langEnumControlsJoyMouse();
 char* langEnumControlsJoy2Button();
 char* langEnumControlsJoyGunStick();
 char* langEnumControlsJoyAsciiLaser();
+char* langEnumControlsJoyArkanoidPad();
 char* langEnumControlsJoyColeco();
     
 char* langEnumDiskMsx35Dbl9Sect();

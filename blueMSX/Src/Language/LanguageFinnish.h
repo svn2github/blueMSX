@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -447,6 +447,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "2-näppäiminen Joystick";                   
     ls->enumControlsJoyGunstick  = "Gun Stick-valopistooli";                      
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "ColecoVision Joystick";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" Kaksipuolinen, 9 Sektoria";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -631,6 +631,7 @@ char* langEnumControlsJoyMagicKeyDongle() { return ls->enumControlsJoyTMagicKeyD
 char* langEnumControlsJoy2Button() { return ls->enumControlsJoy2Button; }
 char* langEnumControlsJoyGunStick() { return ls->enumControlsJoyGunstick; }
 char* langEnumControlsJoyAsciiLaser() { return ls->enumControlsJoyAsciiLaser; }
+char* langEnumControlsJoyArkanoidPad() { return ls->enumControlsArkanoidPad; }
 char* langEnumControlsJoyColeco() { return ls->enumControlsJoyColeco; }
     
 char* langEnumDiskMsx35Dbl9Sect() { return ls->enumDiskMsx35Dbl9Sect; }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,6 +446,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "2 按鈕搖桿";                   
     ls->enumControlsJoyGunstick  = "Gun Stick 光線槍";                         
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 終結者雷射光線槍";      
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "ColecoVision 搖桿";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" 雙面, 9 個磁區";     

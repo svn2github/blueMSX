@@ -356,6 +356,7 @@ SOURCE_FILES += MsxAsciiLaser.c
 SOURCE_FILES += MsxGunstick.c 
 SOURCE_FILES += MsxJoystick.c 
 SOURCE_FILES += MsxMouse.c 
+SOURCE_FILES += MsxArkanoidPad.c 
 SOURCE_FILES += MsxTetrisDongle.c 
 SOURCE_FILES += Sg1000Joystick.c 
 SOURCE_FILES += SviJoystick.c

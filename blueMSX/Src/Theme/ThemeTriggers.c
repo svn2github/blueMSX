@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2007-08-24 05:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -493,6 +493,10 @@ int themeTriggerJoyPort1IsMouse() {
     return joystickPortGetType(0) == JOYSTICK_PORT_MOUSE ? 1 : 0;
 }
 
+int themeTriggerJoyPort1IsArkanoidPad() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_ARKANOID_PAD ? 1 : 0;
+}
+
 int themeTriggerJoyPort1IsTetris2Dongle() {
     return joystickPortGetType(0) == JOYSTICK_PORT_TETRIS2DONGLE ? 1 : 0;
 }
@@ -527,6 +531,10 @@ int themeTriggerJoyPort2IsJoystick() {
 
 int themeTriggerJoyPort2IsMouse() {
     return joystickPortGetType(1) == JOYSTICK_PORT_MOUSE ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsArkanoidPad() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_ARKANOID_PAD ? 1 : 0;
 }
 
 int themeTriggerJoyPort2IsTetris2Dongle() {

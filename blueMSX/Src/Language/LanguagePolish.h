@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.38 $
+** $Revision: 1.39 $
 **
-** $Date: 2007-03-24 05:20:36 $
+** $Date: 2007-08-24 05:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,6 +446,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "D¿ojstik 2-przyciskowy";                   
     ls->enumControlsJoyGunstick  = "Gun Stick";                         
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "D¿ojstik ColecoVision";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" Double Sided, 9 Sectors";     

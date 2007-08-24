@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -62,6 +62,7 @@ void joystickPortUpdateBoardInfo()
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_GUNSTICK] = 1;
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_MAGICKEYDONGLE] = 1;
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_ASCIILASER] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_ARKANOID_PAD] = 1;
             joystickConfig.defaultType[i] = JOYSTICK_PORT_NONE;
         }
         joystickConfig.keyboardEnabled = 1;
@@ -123,7 +124,9 @@ void joystickPortSetType(int port, JoystickPortType type)
     mode = AM_DISABLE;
 
     if (inputType[0] == JOYSTICK_PORT_MOUSE || 
-        inputType[1] == JOYSTICK_PORT_MOUSE)
+        inputType[0] == JOYSTICK_PORT_ARKANOID_PAD || 
+        inputType[1] == JOYSTICK_PORT_MOUSE || 
+        inputType[1] == JOYSTICK_PORT_ARKANOID_PAD)
     {
         mode = AM_ENABLE_MOUSE;
     }
@@ -178,6 +181,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
         case JOYSTICK_PORT_COLECOJOYSTICK:  return langEnumControlsJoyColeco();
         case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
         case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
+        case JOYSTICK_PORT_ARKANOID_PAD:    return langEnumControlsJoyArkanoidPad();
         }
 
         return langTextUnknown();
@@ -193,6 +197,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
     case JOYSTICK_PORT_COLECOJOYSTICK:  return "coleco joystick";
     case JOYSTICK_PORT_MAGICKEYDONGLE:  return "magic key dongle";
     case JOYSTICK_PORT_ASCIILASER:      return "ascii laser";
+    case JOYSTICK_PORT_ARKANOID_PAD:    return "arkanoid pad";
     }
 
     return "unknown";
@@ -213,6 +218,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
         if (0 == strcmp(name, langEnumControlsJoyColeco())) return JOYSTICK_PORT_COLECOJOYSTICK;
         if (0 == strcmp(name, langEnumControlsJoyMagicKeyDongle())) return JOYSTICK_PORT_MAGICKEYDONGLE;
         if (0 == strcmp(name, langEnumControlsJoyAsciiLaser())) return JOYSTICK_PORT_ASCIILASER;
+        if (0 == strcmp(name, langEnumControlsJoyArkanoidPad())) return JOYSTICK_PORT_ARKANOID_PAD;
 
         return JOYSTICK_PORT_NONE;
     }
@@ -224,6 +230,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
     if (0 == strcmp(name, "coleco joystick")) return JOYSTICK_PORT_COLECOJOYSTICK;
     if (0 == strcmp(name, "magic key dongle")) return JOYSTICK_PORT_MAGICKEYDONGLE;
     if (0 == strcmp(name, "ascii laser")) return JOYSTICK_PORT_ASCIILASER;
+    if (0 == strcmp(name, "arkanoid pad")) return JOYSTICK_PORT_ARKANOID_PAD;
 
     return JOYSTICK_PORT_NONE;
 }

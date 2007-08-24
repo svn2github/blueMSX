@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2007-08-24 05:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -208,7 +208,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
     int i;
 
     double v = 0x26a9;
-    for (i = 15; i > 0; i--) {
+    for (i = 15; i >= 0; i--) {
         voltTable[i] = (Int16)v;
         voltEnvTable[2 * i + 0] = (Int16)v;
         voltEnvTable[2 * i + 1] = (Int16)v;
@@ -217,14 +217,18 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
 
     if ( type == PSGTYPE_YM2149) {
         double v = 0x26a9;
-        for (i = 31; i > 0; i--) {
+        for (i = 31; i >= 0; i--) {
             voltEnvTable[i] = (Int16)v;
             v *= 0.84139514164519509115274189380029;
         }
     }
 
-    voltTable[0] = 0;
-    voltEnvTable[0] = 0;
+    for (i = 0; i < 16; i++) {
+        voltTable[i] -= voltTable[0];
+    }
+    for (i = 0; i < 32; i++) {
+        voltEnvTable[i] -= voltEnvTable[0];
+    }
 
     ay8910->mixer = mixer;
     ay8910->connector = connector;
@@ -356,12 +360,12 @@ static void updateRegister(AY8910* ay8910, UInt8 regIndex, UInt8 data)
     case 5:
         period = ay8910->regs[regIndex & 6] | ((Int32)(ay8910->regs[regIndex | 1]) << 8);
 //        period *= (~ay8910->enable >> (address >> 1)) & 1;
-        ay8910->toneStep[regIndex >> 1] = period > 4 ? BASE_PHASE_STEP / period : 1 << 31;
+        ay8910->toneStep[regIndex >> 1] = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
         break;
         
     case 6:
         period = data ? data : 1;
-        ay8910->noiseStep = period > 3 ? BASE_PHASE_STEP / period : 1 << 31;
+        ay8910->noiseStep = period > 0 ? BASE_PHASE_STEP / period : 1 << 31;
         break;
         
     case 7:

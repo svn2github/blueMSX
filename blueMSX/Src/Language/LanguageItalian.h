@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2007-05-22 06:23:17 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -447,6 +447,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumControlsJoy2Button          = "Joystick/Gamepad a 2 tasti";
     ls->enumControlsJoyGunstick         = "Gun Stick";
     ls->enumControlsJoyAsciiLaser       = "ASCII Plus-X Terminator Laser";
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco           = "Joystick ColecoVision";
 
     ls->enumDiskMsx35Dbl9Sect           = "MSX 3.5\" doppia faccia, 9 settori";

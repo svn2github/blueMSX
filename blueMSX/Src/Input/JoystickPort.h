@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/JoystickPort.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ typedef enum {
     JOYSTICK_PORT_COLECOJOYSTICK,
     JOYSTICK_PORT_MAGICKEYDONGLE,
     JOYSTICK_PORT_ASCIILASER,
+    JOYSTICK_PORT_ARKANOID_PAD,
     JOYSTICK_PORT_MAX_COUNT
 } JoystickPortType;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2007-03-16 07:38:44 $
+** $Date: 2007-08-24 05:12:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,4 +266,5 @@ char* langEnumControlsJoyMouse()            { return "Mouse"; }
 char* langEnumControlsJoy2Button()          { return "2-button Joystick"; }
 char* langEnumControlsJoyGunStick()         { return "Gun Stick"; }
 char* langEnumControlsJoyAsciiLaser()       { return "ASCII Plus-X Terminator Laser"; }
+char* langEnumControlsJoyArkanoidPad()      { return "Arkanoid Pad"; }
 char* langEnumControlsJoyColeco()           { return "ColecoVision Joystick"; }

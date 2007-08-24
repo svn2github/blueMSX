@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2007-03-24 05:20:35 $
+** $Date: 2007-08-24 05:12:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -446,6 +446,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumControlsJoy2Button = "2键操纵杆 ";                   
     ls->enumControlsJoyGunstick  = "光枪操纵杆";                         
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      
+    ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
     ls->enumControlsJoyColeco = "ColecoVision 操纵杆";                
 
     ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" 吋 双面, 9 个扇区";     
