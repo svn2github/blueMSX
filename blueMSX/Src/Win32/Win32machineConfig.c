@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2007-09-26 11:59:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -798,7 +798,6 @@ static void endEditControls(HWND hDlg)
     case ROM_KOEI:
     case ROM_GAMEMASTER2:
     case ROM_RTYPE:
-    case ROM_HALNOTE:
     case ROM_MAJUTSUSHI:
     case ROM_CROSSBLAIM:
     case ROM_HARRYFOX:
@@ -812,6 +811,7 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 4;
         break;
 
+    case ROM_HALNOTE:
     case ROM_NOWIND:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 6;
@@ -1237,7 +1237,6 @@ static void setEditControls(HWND hDlg)
     case ROM_KOEI:
     case ROM_GAMEMASTER2:
     case ROM_RTYPE:
-    case ROM_HALNOTE:
     case ROM_CROSSBLAIM:
     case ROM_HARRYFOX:
     case ROM_MAJUTSUSHI:
@@ -1252,6 +1251,7 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
+    case ROM_HALNOTE:
     case ROM_NOWIND:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xBFFF");

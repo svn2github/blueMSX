@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2007-08-05 18:05:05 $
+** $Date: 2007-09-26 11:58:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -523,7 +523,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
             
         case ROM_HALNOTE:
-            success &= romMapperHalnoteCreate(romName, buf, size, slot, sslot, 2);
+            success &= romMapperHalnoteCreate(romName, buf, size, slot, sslot, 0);
             break;
             
         case ROM_RTYPE:
