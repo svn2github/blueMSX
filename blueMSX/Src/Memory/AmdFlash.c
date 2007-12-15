@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2007-03-25 09:17:10 $
+** $Date: 2007-12-15 00:50:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -117,6 +117,7 @@ UInt8 amdFlashRead(AmdFlash* rm, UInt32 address)
     if (rm->state == ST_IDENT) {
         rm->state = ST_IDLE;
         rm->cmdIdx = 0;
+//        printf("R %.4x: %.2x\n", address, 0);
         switch (address & 0xff) {
         case 0: 
             return 0x01;

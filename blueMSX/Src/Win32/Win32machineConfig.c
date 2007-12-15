@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2007-09-26 11:59:11 $
+** $Date: 2007-12-15 00:50:22 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -673,6 +673,10 @@ static void getAddressControl(HWND hDlg)
 
 static void endEditControls(HWND hDlg)
 {
+    char fileName[512];
+    GetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), fileName, sizeof(fileName));
+    strcpy(editSlotInfo.name, fileName);
+
     switch (editSlotInfo.romType) {
     case RAM_1KB_MIRRORED:
     case RAM_2KB_MIRRORED:

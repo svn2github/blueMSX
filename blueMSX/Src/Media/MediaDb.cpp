@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2007-12-15 00:50:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1161,6 +1161,17 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
         mediaType->romType = ROM_PLAIN;
 		return mediaType;
 	}
+    
+    const char ManbowTag[] = "Mapper: Manbow 2";
+    UInt32 tagLength = strlen(ManbowTag);
+    for (i = 0; i < size - tagLength; i++) {
+        if (romData[i] == ManbowTag[0]) {
+            if (memcmp(romData + i, ManbowTag, tagLength) == 0) {
+                mediaType->romType = ROM_MANBOW2;
+			    return mediaType;
+            }
+        }
+    }
 
     /* Count occurences of characteristic addresses */
     for (i = 0; i < size - 3; i++) {

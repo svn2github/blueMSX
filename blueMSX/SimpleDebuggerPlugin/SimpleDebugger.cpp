@@ -388,10 +388,11 @@ void loadSymbolFile(HWND hwndOwner)
 
     GetCurrentDirectory(MAX_PATH, curDir);
 
+
     ofn.lStructSize = sizeof(OPENFILENAME); 
     ofn.hwndOwner = hwndOwner; 
     ofn.hInstance = GetDllHinstance();
-    ofn.lpstrFilter = "*.SYM\0*.*\0\0"; 
+    ofn.lpstrFilter = "Symbol Files   (*.SYM)\0*.SYM\0All Files   (*.*)\0*.*\0"; 
     ofn.lpstrCustomFilter = NULL; 
     ofn.nMaxCustFilter = 0;
     ofn.nFilterIndex = 0; 
