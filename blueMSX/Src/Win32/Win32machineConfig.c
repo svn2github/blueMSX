@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2007-12-15 00:50:22 $
+** $Date: 2008-01-08 01:59:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -843,6 +843,11 @@ static void endEditControls(HWND hDlg)
         editSlotInfo.pageCount = 2;
         break;
 
+    case ROM_FSA1FMMODEM:
+        editSlotInfo.startPage = 2;
+        editSlotInfo.pageCount = 2;
+        break;
+
     case ROM_YAMAHASFG05:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 4;
@@ -854,8 +859,9 @@ static void endEditControls(HWND hDlg)
     case ROM_FORTEII:
     case ROM_FMDAS:
     case ROM_FMPAK:
-    case ROM_PANASONIC16:
     case ROM_SUNRISEIDE:
+    case ROM_PANASONIC8:
+    case ROM_PANASONIC16:
     case ROM_PANASONIC32:
     case ROM_GAMEREADER:
         editSlotInfo.startPage = 0;
@@ -1180,6 +1186,12 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
+    case ROM_FSA1FMMODEM:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0x7FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_YAMAHASFG05:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x7FFF");
@@ -1187,6 +1199,7 @@ static void setEditControls(HWND hDlg)
         break;
 
     case ROM_SUNRISEIDE:
+    case ROM_PANASONIC8:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
     case ROM_NATIONAL:
@@ -1370,8 +1383,10 @@ static RomType romTypeList[] = {
     ROM_NATIONAL,
     ROM_BUNSETU,
     ROM_JISYO,
+    ROM_PANASONIC8,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
+    ROM_FSA1FMMODEM,
     ROM_PLAIN,
     ROM_BASIC,
     ROM_0x4000,

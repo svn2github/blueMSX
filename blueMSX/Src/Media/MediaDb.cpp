@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2007-12-15 00:50:21 $
+** $Date: 2008-01-08 01:59:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -137,8 +137,6 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "FMPAC")        return ROM_FMPAC;
     if (name == "FMPAK")        return ROM_FMPAK;
     if (name == "DiskPatch")    return ROM_DISKPATCH;
-    if (name == "fsa1fm1")      return ROM_UNKNOWN;
-    if (name == "fsa1fm2")      return ROM_UNKNOWN;
     if (name == "Jisyo")        return ROM_JISYO;
     if (name == "Kanji1")       return ROM_KANJI;
     if (name == "Kanji12")      return ROM_KANJI12;
@@ -154,8 +152,14 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "GIDE")         return ROM_GIDE;
     if (name == "GoudaSCSI")    return ROM_GOUDASCSI;
 
+    if (name == "fsa1fm2")      return ROM_PANASONIC8;
+    if (name == "FSA1FM2")      return ROM_PANASONIC8;
+    if (name == "Panasonic8")   return ROM_PANASONIC8;
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
+    if (name == "A1FMModem")    return ROM_FSA1FMMODEM;
+    if (name == "fsa1fm1")      return ROM_FSA1FMMODEM;
+    if (name == "FSA1FM1")      return ROM_FSA1FMMODEM;
     if (name == "Standard16K")  return ROM_MSXDOS2;
     if (name == "SVI328CART")   return ROM_SVI328;
     if (name == "SVI80COL")     return ROM_SVI80COL;
@@ -165,8 +169,6 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
     if (name == "National")     return ROM_NATIONAL;
     if (name == "CX5M-MUSIC")   return ROM_YAMAHASFG05;
-    if (name == "FSA1FM1")      return ROM_UNKNOWN; // not implemented
-    if (name == "FSA1FM2")      return ROM_UNKNOWN; // not implemented
     if (name == "VMX80")        return ROM_MICROSOL80;
     if (name == "HBI-V1")       return ROM_SONYHBIV1;
     if (name == "SFG-01")       return ROM_YAMAHASFG01;
@@ -581,8 +583,10 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KANJI:       return langRomTypeKanji();
     case ROM_HOLYQURAN:   return langRomTypeHolyQuran();
     case SRAM_MATSUCHITA: return langRomTypeMatsushitaSram();
+    case ROM_PANASONIC8:  return langRomTypePanasonic8();
     case ROM_PANASONIC16: return langRomTypePanasonic16();
     case ROM_PANASONIC32: return langRomTypePanasonic32();
+    case ROM_FSA1FMMODEM: return langRomTypePanasonicModem();
     case ROM_BUNSETU:     return langRomTypeBunsetsu();
     case ROM_JISYO:       return langRomTypeJisyo();
     case ROM_KANJI12:     return langRomTypeKanji12();

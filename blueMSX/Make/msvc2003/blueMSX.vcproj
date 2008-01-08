@@ -583,6 +583,18 @@
 					RelativePath="..\..\Src\Memory\RomLoader.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperA1FM.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperA1FM.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperA1FMModem.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperA1FMModem.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperASCII16.c">
 				</File>
 				<File

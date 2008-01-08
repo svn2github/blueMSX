@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2007-08-24 05:12:19 $
+** $Date: 2008-01-08 01:59:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -696,8 +696,10 @@ char* langRomTypeNormalRam();
 char* langRomTypeKanji();
 char* langRomTypeHolyQuran();
 char* langRomTypeMatsushitaSram();
+char* langRomTypePanasonic8();
 char* langRomTypePanasonic16();
 char* langRomTypePanasonic32();
+char* langRomTypePanasonicModem();
 char* langRomTypeBunsetsu();
 char* langRomTypeJisyo();
 char* langRomTypeKanji12();

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2007-08-05 18:05:04 $
+** $Date: 2008-01-08 01:59:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,6 +126,8 @@
 #include "romMapperGoudaSCSI.h"
 #include "romMapperMegaFlashRomScc.h"
 #include "romMapperForteII.h"
+#include "romMapperA1FMModem.h"
+#include "romMapperA1FM.h"
 
 int toint(char* buffer) 
 {
@@ -1182,12 +1184,20 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperASCII16Create(romName, buf, size, slot, subslot, startPage);
             break;
 
+        case ROM_PANASONIC8:
+            success &= romMapperA1FMCreate(romName, buf, size, slot, subslot, startPage, 0x2000);
+            break;
+
         case ROM_PANASONIC16:
             success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x4000);
             break;
 
         case ROM_PANASONIC32:
             success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x8000);
+            break;
+
+        case ROM_FSA1FMMODEM:
+            success &= romMapperA1FMModemCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
         case ROM_ASCII8SRAM:

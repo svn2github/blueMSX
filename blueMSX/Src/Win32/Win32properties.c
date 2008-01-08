@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.81 $
+** $Revision: 1.82 $
 **
-** $Date: 2007-05-11 02:28:11 $
+** $Date: 2008-01-08 01:59:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -435,8 +435,10 @@ static RomType romTypeList[] = {
     ROM_BUNSETU,
     ROM_MSXDOS2,
     ROM_NATIONAL,
+    ROM_PANASONIC8,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
+    ROM_FSA1FMMODEM,
     ROM_SONYHBI55,
     ROM_MSXAUDIODEV,
     ROM_TURBORPCM,
