@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperA1FM.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-09 06:28:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -197,13 +197,17 @@ static void changeBank(RomMapperA1FM* rm, int region, int bank)
         readBlock = rm->romData + 0x2000 * (bank & 0x7f);
 	}
 
+    if (region >=6) {
+        readBlock = emptyRam;
+    }
+
     slotMapPage(rm->slot, rm->sslot, region, readBlock, region != 3, 0);
 }
 
 static UInt8 read(RomMapperA1FM* rm, UInt16 address) 
 {
 	if ((rm->control & 0x04) && address >= 0x7ff0 && address < 0x7ff8) {
-		return rm->romMapper[address & 7] & 0xff;
+		return rm->romMapper[address & 7];
 	} 
     
     return rm->readBlock[address & 0x1fff];

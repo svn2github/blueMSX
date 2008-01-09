@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperA1FMModem.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-09 06:28:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,10 +43,10 @@ typedef struct {
     int deviceHandle;
     UInt8* romData;
     int    romSize;
-    int    romMapper;
     int    slot;
     int    sslot;
     int    startPage;
+    int    romMapper;
 } RomMapperA1FMModem;
 
 static void saveState(RomMapperA1FMModem* rm)
@@ -84,7 +84,7 @@ static UInt8 read(RomMapperA1FMModem* rm, UInt16 address)
     if (address >= 0x7fc0 && address < 0x7fd0) {
 		switch (address & 0x0f) {
 		case 4:
-			return panasonicSramGet(address & 0x1fff);
+			return rm->romMapper;
 		case 6:
 			return switchGetFront() ? 0xfb : 0xff;
 		default:
@@ -97,6 +97,8 @@ static UInt8 read(RomMapperA1FMModem* rm, UInt16 address)
 
 static void write(RomMapperA1FMModem* rm, UInt16 address, UInt8 value) 
 {
+    address += 0x4000;
+
     if (address >= 0x6000 && address < 0x8000) {
         panasonicSramSet(address & 0x1fff, value);
 
@@ -122,7 +124,7 @@ int romMapperA1FMModemCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperA1FMModem));
 
     rm->deviceHandle = deviceManagerRegister(ROM_FSA1FMMODEM, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 2, read, read, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
@@ -131,7 +133,7 @@ int romMapperA1FMModemCreate(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    rm->romMapper = panasonicSramGet(0x1cf4) & 0x0f;
+    rm->romMapper = 0;
 
     reset(rm);
 
