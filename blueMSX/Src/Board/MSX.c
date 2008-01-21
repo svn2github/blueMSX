@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2007-08-05 21:14:39 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,10 +121,15 @@ static int getRefreshRate()
 }
 
 static UInt8* getRamPage(int page) {
-    int start = page * 0x2000 - (int)msxRamStart;
+    int start;
 
     if (msxRam == NULL) {
         return NULL;
+    }
+
+    start = page * 0x2000 - (int)msxRamStart;
+    if (page < 0) {
+        start += msxRamSize;
     }
 
     if (start < 0 || start >= (int)msxRamSize) {

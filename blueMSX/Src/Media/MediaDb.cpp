@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -587,6 +587,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_PANASONIC16: return langRomTypePanasonic16();
     case ROM_PANASONIC32: return langRomTypePanasonic32();
     case ROM_FSA1FMMODEM: return langRomTypePanasonicModem();
+    case ROM_DRAM:        return langRomTypeDram();
     case ROM_BUNSETU:     return langRomTypeBunsetsu();
     case ROM_JISYO:       return langRomTypeJisyo();
     case ROM_KANJI12:     return langRomTypeKanji12();
@@ -713,6 +714,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_PLAIN:       return "MIRRORED";
     case ROM_FORTEII:     return "FORTE II";
     case ROM_NORMAL:      return "NORMAL";
+    case ROM_DRAM:        return "DRAM";
     case ROM_DISKPATCH:   return "DISKPATCH";
     case ROM_CASPATCH:    return "CASPATCH";
     case ROM_TC8566AF:    return "TC8566AF";
@@ -833,6 +835,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_FORTEII:     return 1;
     case ROM_FMPAK:       return 1;
     case ROM_NORMAL:      return 1;
+    case ROM_DRAM:        return 1;
     case ROM_DISKPATCH:   return 1;
     case ROM_CASPATCH:    return 1;
     case ROM_MICROSOL:    return 1;

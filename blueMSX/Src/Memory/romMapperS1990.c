@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperS1990.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:31 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,6 +25,7 @@
 **
 ******************************************************************************
 */
+#include "romMapperDRAM.h"
 #include "MediaDb.h"
 #include "DeviceManager.h"
 #include "DebugDeviceManager.h"
@@ -80,6 +81,7 @@ static void updateStatus(RomMapperS1990* rm, UInt8 value)
 {
 	rm->cpuStatus = value & 0x60;
     msxSetCpu((rm->cpuStatus & 0x20) ? 0 : 1);
+    panasonicDramUpdate((rm->cpuStatus & 0x40) ? 0 : 1);
 }
 
 static UInt8 read(RomMapperS1990* rm, UInt16 ioPort)

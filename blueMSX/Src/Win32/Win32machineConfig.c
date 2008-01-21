@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -642,6 +642,7 @@ static void getAddressControl(HWND hDlg)
         editSlotInfo.romType == RAM_1KB_MIRRORED || 
         editSlotInfo.romType == RAM_2KB_MIRRORED || 
         editSlotInfo.romType == ROM_NORMAL       || 
+        editSlotInfo.romType == ROM_DRAM         ||
         editSlotInfo.romType == ROM_MSXMUSIC     ||
         editSlotInfo.romType == ROM_DISKPATCH    || 
         editSlotInfo.romType == ROM_CASPATCH     ||
@@ -980,7 +981,7 @@ static void setEditControls(HWND hDlg)
     if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED || romType == RAM_2KB_MIRRORED ||
         romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
-        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || 
+        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || romType == ROM_DRAM ||
         romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU || romType == ROM_MICROSOL80)
     {
         int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
@@ -1165,6 +1166,7 @@ static void setEditControls(HWND hDlg)
         break;
 
     case ROM_NORMAL:
+    case ROM_DRAM:
     case ROM_DISKPATCH:
     case ROM_CASPATCH:
     case ROM_MICROSOL:
@@ -1387,6 +1389,7 @@ static RomType romTypeList[] = {
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_FSA1FMMODEM,
+    ROM_DRAM,
     ROM_PLAIN,
     ROM_BASIC,
     ROM_0x4000,

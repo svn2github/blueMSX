@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,6 +128,8 @@
 #include "romMapperForteII.h"
 #include "romMapperA1FMModem.h"
 #include "romMapperA1FM.h"
+#include "romMapperDRAM.h"
+
 
 int toint(char* buffer) 
 {
@@ -1290,6 +1292,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_NORMAL:
             success &= romMapperNormalCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_DRAM:
+            success &= romMapperDramCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_SG1000:

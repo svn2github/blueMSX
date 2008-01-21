@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2007-05-22 06:23:17 $
+** $Date: 2008-01-21 05:21:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -354,6 +354,9 @@ static void diskUpdateInfo(int driveId)
 	        sides[driveId]           = 1;
             tracks[driveId]          = 80;
 	        sectorsPerTrack[driveId] = 8;
+            if (fileSize[driveId] == 368640) {
+	            sectorsPerTrack[driveId] = 9;
+            }
             return;
         case 0xfb:
 	        sides[driveId]           = 2;
