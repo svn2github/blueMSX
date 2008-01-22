@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDRAM.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,10 @@
 int romMapperDramCreate(char* filename, UInt8* romData, 
                         int size, int slot, int sslot, int startPage);
 
+typedef void (*PanasonicDramCallback)(void*, int);
+
 void panasonicDramUpdate(int mode);
+int  panasonicDramRegister(PanasonicDramCallback callback, void* ref);
+void panasonicDramUnregister(int handle);
 
 #endif

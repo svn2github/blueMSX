@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -818,6 +818,8 @@ static void endEditControls(HWND hDlg)
 
     case ROM_HALNOTE:
     case ROM_NOWIND:
+    case ROM_PANASONIC8:
+    case ROM_PANASONICWX16:
         editSlotInfo.startPage = 0;
         editSlotInfo.pageCount = 6;
         break;
@@ -861,7 +863,6 @@ static void endEditControls(HWND hDlg)
     case ROM_FMDAS:
     case ROM_FMPAK:
     case ROM_SUNRISEIDE:
-    case ROM_PANASONIC8:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
     case ROM_GAMEREADER:
@@ -1201,7 +1202,6 @@ static void setEditControls(HWND hDlg)
         break;
 
     case ROM_SUNRISEIDE:
-    case ROM_PANASONIC8:
     case ROM_PANASONIC16:
     case ROM_PANASONIC32:
     case ROM_NATIONAL:
@@ -1272,6 +1272,8 @@ static void setEditControls(HWND hDlg)
 
     case ROM_HALNOTE:
     case ROM_NOWIND:
+    case ROM_PANASONIC8:
+    case ROM_PANASONICWX16:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1386,6 +1388,7 @@ static RomType romTypeList[] = {
     ROM_BUNSETU,
     ROM_JISYO,
     ROM_PANASONIC8,
+    ROM_PANASONICWX16,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_FSA1FMMODEM,

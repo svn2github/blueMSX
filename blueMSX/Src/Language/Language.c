@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.91 $
+** $Revision: 1.92 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -869,7 +869,8 @@ char* langRomTypeNormalRam() { return ls->romTypeNormalRam; }
 char* langRomTypeKanji() { return "Kanji"; }
 char* langRomTypeHolyQuran() { return "Holy Quran"; }
 char* langRomTypeMatsushitaSram() { return "Matsushita SRAM"; }
-char* langRomTypePanasonic8()  { return "Panasonic 8kB SRAM"; }
+char* langRomTypePanasonic8()  { return "Panasonic FM 8kB SRAM"; }
+char* langRomTypePanasonicWx16() { return "Panasonic WX 16kB SRAM"; }
 char* langRomTypePanasonic16() { return "Panasonic 16kB SRAM"; }
 char* langRomTypePanasonic32() { return "Panasonic 32kB SRAM"; }
 char* langRomTypePanasonicModem() { return "Panasonic Modem"; }

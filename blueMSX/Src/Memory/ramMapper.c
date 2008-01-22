@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-09-19 06:00:26 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 #include "ramMapper.h"
+#include "romMapperDRAM.h"
 #include "ramMapperIo.h"
 #include "MediaDb.h"
 #include "SlotManager.h"
@@ -44,6 +45,7 @@ typedef struct {
     UInt8* ramData;
     int handle;
     int debugHandle;
+    int dramHandle;
     int slot;
     int sslot;
     int mask;
@@ -107,6 +109,7 @@ static void destroy(RamMapper* rm)
     ramMapperIoRemove(rm->handle);
     slotUnregister(rm->slot, rm->sslot, 0);
     deviceManagerUnregister(rm->deviceHandle);
+    panasonicDramUnregister(rm->dramHandle);
     free(rm->ramData);
 
     free(rm);
@@ -126,6 +129,11 @@ static int dbgWriteMemory(RamMapper* rm, char* name, void* data, int start, int 
     memcpy(rm->ramData + start, data, size);
 
     return 1;
+}
+
+static void setDram(RamMapper* rm, int enable)
+{
+    // Should set high 64kB of RAM read only
 }
 
 int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr, UInt32* ramSize) 
@@ -165,6 +173,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, langDbgDevRam(), &dbgCallbacks, rm);
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
+    rm->dramHandle = panasonicDramRegister(setDram, rm);
     slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);
 
     reset(rm);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1190,12 +1190,16 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperA1FMCreate(romName, buf, size, slot, subslot, startPage, 0x2000);
             break;
 
+        case ROM_PANASONICWX16:
+            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x4000, 6);
+            break;
+
         case ROM_PANASONIC16:
-            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x4000);
+            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x4000, 8);
             break;
 
         case ROM_PANASONIC32:
-            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x8000);
+            success &= romMapperPanasonicCreate(romName, buf, size, slot, subslot, startPage, 0x8000, 8);
             break;
 
         case ROM_FSA1FMMODEM:

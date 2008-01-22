@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "MsxTypes.h"
 
 int romMapperPanasonicCreate(char* filename, UInt8* romData, 
-                             int size, int slot, int sslot, int startPage, int sramSize);
+                             int size, int slot, int sslot, int startPage, 
+                             int sramSize, int mappedSlots);
 
 #endif

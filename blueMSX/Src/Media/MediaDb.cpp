@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,6 +155,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "fsa1fm2")      return ROM_PANASONIC8;
     if (name == "FSA1FM2")      return ROM_PANASONIC8;
     if (name == "Panasonic8")   return ROM_PANASONIC8;
+    if (name == "PanasonicWx16")return ROM_PANASONICWX16;
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
     if (name == "A1FMModem")    return ROM_FSA1FMMODEM;
@@ -584,6 +585,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_HOLYQURAN:   return langRomTypeHolyQuran();
     case SRAM_MATSUCHITA: return langRomTypeMatsushitaSram();
     case ROM_PANASONIC8:  return langRomTypePanasonic8();
+    case ROM_PANASONICWX16:return langRomTypePanasonicWx16();
     case ROM_PANASONIC16: return langRomTypePanasonic16();
     case ROM_PANASONIC32: return langRomTypePanasonic32();
     case ROM_FSA1FMMODEM: return langRomTypePanasonicModem();
@@ -729,6 +731,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_KANJI:       return "KANJI";
     case ROM_HOLYQURAN:   return "HOLYQURAN";
     case SRAM_MATSUCHITA: return "MATSUSHITA";
+    case ROM_PANASONICWX16: return "PANASON 16";
     case ROM_PANASONIC16: return "PANASON 16";
     case ROM_PANASONIC32: return "PANASON 32";
     case ROM_BUNSETU:     return "BUNSETSU";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDRAM.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,8 +37,6 @@
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 
-
-typedef void (*PanasonicDramCallback)(void*, int);
 
 struct {
     PanasonicDramCallback callback;
@@ -95,7 +93,7 @@ static void destroy(RomMapperDram* rm)
     free(rm);
 }
 
-void setDram(RomMapperDram* rm, int enable)
+static void setDram(RomMapperDram* rm, int enable)
 {
     if (enable) {
         if (rm->slot == 0 && rm->sslot == 0) {

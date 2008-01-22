@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPanasonic.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2008-01-08 01:59:35 $
+** $Date: 2008-01-22 04:34:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -53,12 +53,16 @@ typedef struct {
     char   sramFilename[512];
     int    maxSRAMBank;
     int    romSize;
+    int    mappedSlots;
     UInt8  control;
     int    romMapper[8];
     int    slot;
     int    sslot;
     int    startPage;
 } RomMapperPanasonic;
+
+extern void panasonicSramDestroy();
+extern void panasonicSramCreate(UInt8* sram, UInt32 size);
 
 static UInt8 emptyRam[0x2000];
 
@@ -286,7 +290,7 @@ static void reset(RomMapperPanasonic* rm)
 
     rm->control = 0;
     
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < rm->mappedSlots; i++) {
         rm->romMapper[i] = 0;
         slotMapPage(rm->slot, rm->sslot, i, rm->romData, i != 3, 0);
     }
@@ -294,7 +298,7 @@ static void reset(RomMapperPanasonic* rm)
 
 int romMapperPanasonicCreate(char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage,
-                             int sramSize) 
+                             int sramSize, int mappedSlots) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperPanasonic* rm;
@@ -309,21 +313,27 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
 
     rm = malloc(sizeof(RomMapperPanasonic));
 
-    switch (sramSize) {
-    default:
-    case 0x2000:
-        romType = ROM_PANASONIC8;
-        break;
-    case 0x4000:
-        romType = ROM_PANASONIC16;
-        break;
-    case 0x8000:
-        romType = ROM_PANASONIC32;
-        break;
+    rm->mappedSlots = mappedSlots;
+
+    if (mappedSlots == 6) {
+        rm->maxSRAMBank = SRAM_BASE + 8;
+        romType = ROM_PANASONICWX16;
+    }
+    else {
+        rm->maxSRAMBank = SRAM_BASE + sramSize / 0x2000;
+        switch (sramSize) {
+        default:
+        case 0x4000:
+            romType = ROM_PANASONIC16;
+            break;
+        case 0x8000:
+            romType = ROM_PANASONIC32;
+            break;
+        }
     }
 
     rm->deviceHandle = deviceManagerRegister(romType, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, read, read, write, destroy, rm);
+    slotRegister(slot, sslot, 0, rm->mappedSlots, read, read, write, destroy, rm);
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
@@ -331,7 +341,6 @@ int romMapperPanasonicCreate(char* filename, UInt8* romData,
     rm->sramSize = sramSize;
     rm->sram = malloc(sramSize);
     memset(rm->sram, 0xff, sramSize);
-    rm->maxSRAMBank = SRAM_BASE + sramSize / 0x2000;
     memset(rm->romMapper, 0, sizeof(rm->romMapper));
     rm->readBlock = rm->romData;
     rm->slot  = slot;
