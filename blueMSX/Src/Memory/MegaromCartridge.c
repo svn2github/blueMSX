@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2007-09-26 11:58:12 $
+** $Date: 2008-01-22 04:57:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -571,7 +571,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
            break;
 
         case ROM_TC8566AF:
-            success &= romMapperTC8566AFCreate(romName, buf, size, slot, sslot, 2);
+            success &= romMapperTC8566AFCreate(romName, buf, size, slot, sslot, 2, TC_MAPPER_ALL);
             break;
 
         case ROM_MICROSOL:

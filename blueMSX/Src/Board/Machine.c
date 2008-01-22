@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2008-01-22 04:34:12 $
+** $Date: 2008-01-22 04:57:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1324,7 +1324,15 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
            break;
 
         case ROM_TC8566AF:
-            success &= romMapperTC8566AFCreate(romName, buf, size, slot, subslot, startPage);
+            if (machine->video.vdpVersion == VDP_V9938) {
+                success &= romMapperTC8566AFCreate(romName, buf, size, slot, subslot, startPage, TC_MAPPER_MSX2);
+            }
+            else if(machine->cpu.hasR800) {
+                success &= romMapperTC8566AFCreate(romName, buf, size, slot, subslot, startPage, TC_MAPPER_MSXTR);
+            }
+            else {
+                success &= romMapperTC8566AFCreate(romName, buf, size, slot, subslot, startPage, TC_MAPPER_MSX2P);
+            }
             break;
 
         case ROM_MICROSOL:

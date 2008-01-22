@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2007-04-05 23:32:12 $
+** $Date: 2008-01-22 04:57:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
+    TcMapperType type;
     UInt32 romMask;
     int romMapper[4];
 } RomMapperTC8566AF;
@@ -115,41 +116,76 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
 {
     address += 0x4000;
 	if ((address & 0x3fff) >= 0x3ff0) {
-#if 1
-		switch (address & 0x0f) {
-        case 0x00:
-            return (UInt8)(address / 0x4000);
-        case 0x01:
-            return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
-        case 0x04:
-        case 0x0a:
-            return tc8566afReadRegister(rm->fdc, 4);
-        case 0x05:
-        case 0x0b:
-            return tc8566afReadRegister(rm->fdc, 5);
-        case 0x0c:
-            return 0xfc;
-        case 0x0d:
-            return 0xfc;
-        case 0x0f:
-            return 0x3f;
-        default:
-            return 0xff;
+        switch (rm->type) {
+        case TC_MAPPER_MSX2:
+		    switch (address & 0x0f) {
+            case 0x0a:
+                return tc8566afReadRegister(rm->fdc, 4);
+            case 0x0b:
+                return tc8566afReadRegister(rm->fdc, 5);
+            default:
+                return 0xff;
+            }
+            break;
+            
+        case TC_MAPPER_MSX2P:
+		    switch (address & 0x0f) {
+            case 0x0a:
+                return tc8566afReadRegister(rm->fdc, 4);
+            case 0x0b:
+                return tc8566afReadRegister(rm->fdc, 5);
+            case 0x0c:
+            case 0x0d:
+                return 0xfc;
+            case 0x0f:
+                return 0x3f;
+            default:
+                return 0xff;
+            }
+            break;
+            
+        case TC_MAPPER_MSXTR:
+		    switch (address & 0x0f) {
+            case 0x00:
+                return (UInt8)(address / 0x4000);
+            case 0x01:
+                return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
+            case 0x04:
+                return tc8566afReadRegister(rm->fdc, 4);
+            case 0x05:
+                return tc8566afReadRegister(rm->fdc, 5);
+            case 0x0c:
+            case 0x0d:
+                return 0xfc;
+            case 0x0f:
+                return 0x3f;
+            default:
+                return 0xff;
+            }
+            break;
+            
+        case TC_MAPPER_ALL:
+		    switch (address & 0x0f) {
+            case 0x00:
+                return (UInt8)(address / 0x4000);
+            case 0x01:
+                return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
+            case 0x04:
+            case 0x0a:
+                return tc8566afReadRegister(rm->fdc, 4);
+            case 0x05:
+            case 0x0b:
+                return tc8566afReadRegister(rm->fdc, 5);
+            case 0x0c:
+            case 0x0d:
+                return 0xfc;
+            case 0x0f:
+                return 0x3f;
+            default:
+                return 0xff;
+            }
+            break;
         }
-#else
-		switch (address & 0x3FFF) {
-		case 0x3ff1:
-            return 0x03 | (tc8566afDiskChanged(rm->fdc, 0) ? 0x00 : 0x10) | (tc8566afDiskChanged(rm->fdc, 1) ? 0x00 : 0x20);
-		case 0x3ff4:
-		case 0x3ffa:
-            return tc8566afReadRegister(rm->fdc, 4);
-		case 0x3ff5:
-		case 0x3ffb:
-            return tc8566afReadRegister(rm->fdc, 5);
-		default:
-			return 0xff;
-		}
-#endif
 	} 
    
     if (address >= 0x4000 && address < 0x8000) {
@@ -216,7 +252,8 @@ static void write(RomMapperTC8566AF* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperTC8566AFCreate(char* filename, UInt8* romData, 
-                           int size, int slot, int sslot, int startPage) 
+                           int size, int slot, int sslot, int startPage,
+                           TcMapperType type) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperTC8566AF* rm;
@@ -234,6 +271,7 @@ int romMapperTC8566AFCreate(char* filename, UInt8* romData,
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
+    rm->type = type;
 
     rm->fdc = tc8566afCreate();
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2007-04-05 23:32:11 $
+** $Date: 2008-01-22 04:57:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -577,7 +577,7 @@ UInt8 tc8566afReadRegister(TC8566AF* tc, UInt8 reg)
         }
     }
 
-    return 0xff;
+    return 0x00;
 }
 
 UInt8 tc8566afPeekRegister(TC8566AF* tc, UInt8 reg)
