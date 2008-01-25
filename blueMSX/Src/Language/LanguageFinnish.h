@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2007-08-24 05:12:19 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -652,6 +652,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeDiskPatch        = "Tavallinen + korjaus levyltä";
     ls->romTypeCasPatch         = "Tavallinen + korjaus kasetilta";
     ls->romTypeTc8566afFdc      = "TC8566AF Diskettiasemaohjain";
+    ls->romTypeTc8566afTrFdc    = "TC8566AF Turbo-R Diskettiasemaohjain";
     ls->romTypeMicrosolFdc      = "Microsol Diskettiasemaohjain";
     ls->romTypeNationalFdc      = "National Diskettiasemaohjain";
     ls->romTypePhilipsFdc       = "Philips Diskettiasemaohjain";

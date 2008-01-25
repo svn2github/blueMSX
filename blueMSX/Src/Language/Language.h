@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.h,v $
 **
-** $Revision: 1.93 $
+** $Revision: 1.94 $
 **
-** $Date: 2008-01-22 04:34:12 $
+** $Date: 2008-01-25 07:33:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -685,6 +685,7 @@ char* langRomTypeNormal();
 char* langRomTypeDiskPatch();
 char* langRomTypeCasPatch();
 char* langRomTypeTc8566afFdc();
+char* langRomTypeTc8566afTrFdc();
 char* langRomTypeMicrosolFdc();
 char* langRomTypeNationalFdc();
 char* langRomTypePhilipsFdc();

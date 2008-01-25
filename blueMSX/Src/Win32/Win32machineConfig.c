@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2008-01-22 04:34:13 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -791,6 +791,7 @@ static void endEditControls(HWND hDlg)
     case ROM_ASCII8SRAM:
     case ROM_ASCII16:
     case ROM_TC8566AF:
+    case ROM_TC8566AF_TR:
     case ROM_ASCII16SRAM:
     case ROM_KONAMI4:
     case ROM_KONAMI5:
@@ -1244,6 +1245,7 @@ static void setEditControls(HWND hDlg)
     case ROM_ASCII8SRAM:
     case ROM_ASCII16:
     case ROM_TC8566AF:
+    case ROM_TC8566AF_TR:
     case ROM_ASCII16SRAM:
     case ROM_KONAMI4:
     case ROM_KONAMI5:
@@ -1359,6 +1361,7 @@ static RomType romTypeList[] = {
     ROM_DISKPATCH,
     ROM_CASPATCH,
     ROM_TC8566AF,
+    ROM_TC8566AF_TR,
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,

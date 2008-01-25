@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2008-01-22 04:34:12 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -143,6 +143,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "MB8877A")      return ROM_NATIONALFDC;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "TC8566AF")     return ROM_TC8566AF;
+    if (name == "TC8566AFTR")   return ROM_TC8566AF_TR;
     if (name == "WD2793")       return ROM_PHILIPSFDC;
     if (name == "Microsol")     return ROM_MICROSOL;
     if (name == "MoonSound")    return ROM_MOONSOUND;
@@ -155,6 +156,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "fsa1fm2")      return ROM_PANASONIC8;
     if (name == "FSA1FM2")      return ROM_PANASONIC8;
     if (name == "Panasonic8")   return ROM_PANASONIC8;
+    if (name == "PanasonicDram")return ROM_DRAM;
     if (name == "PanasonicWx16")return ROM_PANASONICWX16;
     if (name == "Panasonic16")  return ROM_PANASONIC16;
     if (name == "Panasonic32")  return ROM_PANASONIC32;
@@ -573,6 +575,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_DISKPATCH:   return langRomTypeDiskPatch();
     case ROM_CASPATCH:    return langRomTypeCasPatch();
     case ROM_TC8566AF:    return langRomTypeTc8566afFdc();
+    case ROM_TC8566AF_TR: return langRomTypeTc8566afTrFdc();
     case ROM_MICROSOL:    return langRomTypeMicrosolFdc();
     case ROM_NATIONALFDC: return langRomTypeNationalFdc();
     case ROM_PHILIPSFDC:  return langRomTypePhilipsFdc();
@@ -720,6 +723,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_DISKPATCH:   return "DISKPATCH";
     case ROM_CASPATCH:    return "CASPATCH";
     case ROM_TC8566AF:    return "TC8566AF";
+    case ROM_TC8566AF_TR: return "TC8566AF";
     case ROM_MICROSOL:    return "MICROSOL";
     case ROM_NATIONALFDC: return "NATNL FDC";
     case ROM_PHILIPSFDC:  return "PHILIPSFDC";
@@ -880,6 +884,7 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_GAMEMASTER2: return 1;
     case ROM_ASCII8SRAM:  return 1;
     case ROM_TC8566AF:    return 1;
+    case ROM_TC8566AF_TR: return 1;
     case ROM_ASCII16SRAM: return 1;
     case ROM_RTYPE:       return 1;
     case ROM_CROSSBLAIM:  return 1;

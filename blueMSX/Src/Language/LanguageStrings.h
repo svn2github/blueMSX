@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2007-08-24 05:12:20 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -643,6 +643,7 @@ typedef struct {
     char* romTypeDiskPatch;
     char* romTypeCasPatch;
     char* romTypeTc8566afFdc;
+    char* romTypeTc8566afTrFdc;
     char* romTypeMicrosolFdc;
     char* romTypeNationalFdc;
     char* romTypePhilipsFdc;

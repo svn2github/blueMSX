@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.178 $
+** $Revision: 1.179 $
 **
-** $Date: 2008-01-22 04:34:12 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -464,6 +464,7 @@ static RomType romTypeList[] = {
     ROM_DISKPATCH,
     ROM_CASPATCH,
     ROM_TC8566AF,
+    ROM_TC8566AF_TR,
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,

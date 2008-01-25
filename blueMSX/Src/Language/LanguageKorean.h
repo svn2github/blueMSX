@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.52 $ + additions 2005/03/03
+** $Revision: 1.53 $ + additions 2005/03/03
 **
-** $Date: 2007-08-24 05:12:20 $
+** $Date: 2008-01-25 07:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -647,6 +647,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->romTypeDiskPatch        = "Normal + Disk Patch";
     ls->romTypeCasPatch         = "Normal + Cassette Patch";
     ls->romTypeTc8566afFdc      = "TC8566AF Disk Controller";
+    ls->romTypeTc8566afTrFdc    = "TC8566AF Turbo-R Disk Controller";
     ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
     ls->romTypeNationalFdc      = "National Disk Controller";
     ls->romTypePhilipsFdc       = "Philips Disk Controller";
