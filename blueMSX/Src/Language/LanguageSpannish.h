@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2008-02-10 04:57:43 $
+** $Date: 2008-02-10 17:25:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ void langInitSpanish(LanguageStrings* ls)
     // Language lines
     //----------------------
 
+    ls->langCatalan             = "Catalan";
     ls->langChineseSimplified   = "Chino simplificado";
     ls->langChineseTraditional  = "Chino tradicional";
     ls->langDutch               = "Holandés";

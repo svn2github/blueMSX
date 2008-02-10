@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2008-02-10 04:57:43 $
+** $Date: 2008-02-10 17:25:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@ typedef struct {
     // Language lines
     //----------------------
 
+    char* langCatalan;
     char* langChineseSimplified;
     char* langChineseTraditional;
     char* langDutch;

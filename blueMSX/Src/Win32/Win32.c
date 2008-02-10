@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.180 $
+** $Revision: 1.181 $
 **
-** $Date: 2008-02-10 04:57:43 $
+** $Date: 2008-02-10 17:25:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -119,6 +119,7 @@ static EmuLanguageType getLangType()
         case 0x0a: return EMU_LANG_SPANISH;
         case 0x1d: return EMU_LANG_SWEDISH;
         case 0x19: return EMU_LANG_RUSSIAN;
+        case 0x03: return EMU_LANG_CATALAN;
     }
 
     return EMU_LANG_ENGLISH;
@@ -260,6 +261,7 @@ static BOOL CALLBACK langDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
 
             himlSmall = ImageList_Create(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), TRUE, 1, 1); 
 
+            ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CATALONIA))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINASIMP))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_CHINATRAD))); 
             ImageList_AddIcon(himlSmall, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FLAG_NETHERLANDS))); 

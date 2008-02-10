@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.54 $ + additions 2005/03/03
+** $Revision: 1.55 $ + additions 2005/03/03
 **
-** $Date: 2008-02-10 04:57:43 $
+** $Date: 2008-02-10 17:25:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ void langInitKorean(LanguageStrings* ls)
     // Language lines
     //----------------------
 
+    ls->langCatalan             = "Catalan";
     ls->langChineseSimplified   = "중국어 간체";
     ls->langChineseTraditional  = "중국어 번체";
     ls->langDutch               = "네덜란드어";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2008-02-10 04:57:42 $
+** $Date: 2008-02-10 17:25:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     // Language lines
     //----------------------
 
+    ls->langCatalan             = "Catalan";
     ls->langChineseSimplified   = "简体中文";
     ls->langChineseTraditional  = "繁体中文";
     ls->langDutch               = "荷兰语";

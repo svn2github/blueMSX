@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.94 $
+** $Revision: 1.95 $
 **
-** $Date: 2008-02-10 04:57:42 $
+** $Date: 2008-02-10 17:25:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 #include "LanguageFinnish.h"
 #include "LanguageGerman.h"
 #include "LanguagePolish.h"
+#include "LanguageCatalan.h"
 #include "LanguageRussian.h"
 #include "LanguageChineseSimplified.h"
 #include "LanguageChineseTraditional.h"
@@ -60,6 +61,7 @@ static LanguageStrings langItalian;
 static LanguageStrings langFinnish;
 static LanguageStrings langGerman;
 static LanguageStrings langPolish;
+static LanguageStrings langCatalan;
 static LanguageStrings langChineseSimplified;
 static LanguageStrings langChineseTraditional;
 
@@ -73,6 +75,7 @@ typedef struct {
 } LanguageInfo;
 
 static LanguageInfo languageInfo[] = {
+    { EMU_LANG_CATALAN,     "Catalan",             langLangCatalan },
     { EMU_LANG_CHINESESIMP, "Chinese Simplified",  langLangChineseSimplified },
     { EMU_LANG_CHINESETRAD, "Chinese Traditional", langLangChineseTraditional },
     { EMU_LANG_DUTCH,       "Dutch",               langLangDutch },
@@ -165,6 +168,9 @@ void langInit() {
     langInitEnglish(&langPolish);
     langInitPolish(&langPolish);
 
+    langInitEnglish(&langCatalan);
+    langInitCatalan(&langCatalan);
+
     langInitEnglish(&langChineseSimplified);
     langInitChineseSimplified(&langChineseSimplified);
 
@@ -228,6 +234,11 @@ int langSetLanguage(EmuLanguageType languageType) {
     case EMU_LANG_CHINESETRAD:
         ls = &langChineseTraditional;
         break;
+
+    case EMU_LANG_CATALAN:
+        ls = &langCatalan;
+        break;
+
     default:
         return 0;
     }
@@ -242,6 +253,7 @@ int langSetLanguage(EmuLanguageType languageType) {
 // Language lines
 //----------------------
 
+char* langLangCatalan() { return ls->langCatalan; }
 char* langLangChineseSimplified() { return ls->langChineseSimplified; }
 char* langLangChineseTraditional() { return ls->langChineseTraditional; }
 char* langLangDutch() { return ls->langDutch; }

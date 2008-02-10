@@ -69,7 +69,7 @@
 #define IDI_FLAG_CHINASIMP              30162
 #define IDI_FLAG_CHINATRAD              30163
 #define IDI_FLAG_RUSSIA                 30164
-
+#define IDI_FLAG_CATALONIA              30165
 
 #define IDD_MENU                        101
 #define IDD_VIDEO                       102
