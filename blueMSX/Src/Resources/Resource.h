@@ -68,6 +68,7 @@
 #define IDI_FLAG_POLAND                 30161
 #define IDI_FLAG_CHINASIMP              30162
 #define IDI_FLAG_CHINATRAD              30163
+#define IDI_FLAG_RUSSIA                 30164
 
 
 #define IDD_MENU                        101

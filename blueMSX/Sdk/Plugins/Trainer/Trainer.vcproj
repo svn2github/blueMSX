@@ -189,6 +189,9 @@
 			RelativePath=".\LanguagePortuguese.h">
 		</File>
 		<File
+			RelativePath=".\LanguageRussian.h">
+		</File>
+		<File
 			RelativePath=".\LanguageSpanish.h">
 		</File>
 		<File

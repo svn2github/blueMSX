@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->langKorean              = "Koreanska";
     ls->langPolish              = "Polska";
     ls->langPortuguese          = "Portugisiska";
+    ls->langRussian             = "Ryska";            // v2.8
     ls->langSpanish             = "Spanska";
     ls->langSwedish             = "Svenska";
 

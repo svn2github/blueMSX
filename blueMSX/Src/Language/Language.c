@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.93 $
+** $Revision: 1.94 $
 **
-** $Date: 2008-01-25 07:33:58 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,7 @@
 #include "LanguageFinnish.h"
 #include "LanguageGerman.h"
 #include "LanguagePolish.h"
+#include "LanguageRussian.h"
 #include "LanguageChineseSimplified.h"
 #include "LanguageChineseTraditional.h"
  
@@ -52,6 +53,7 @@ static LanguageStrings langSpanish;
 static LanguageStrings langJapanese;
 static LanguageStrings langKorean;
 static LanguageStrings langPortuguese;
+static LanguageStrings langRussian;
 static LanguageStrings langFrench;
 static LanguageStrings langDutch;
 static LanguageStrings langItalian;
@@ -83,6 +85,7 @@ static LanguageInfo languageInfo[] = {
     { EMU_LANG_KOREAN,      "Korean",              langLangKorean },
     { EMU_LANG_POLISH,      "Polish",              langLangPolish },
     { EMU_LANG_PORTUGUESE,  "Portuguese",          langLangPortuguese },
+    { EMU_LANG_RUSSIAN,     "Russian",             langLangRussian },
     { EMU_LANG_SPANISH,     "Spanish",             langLangSpanish },
     { EMU_LANG_SWEDISH,     "Swedish",             langLangSwedish },
     { EMU_LANG_UNKNOWN,     "",                    langTextUnknown }
@@ -141,6 +144,9 @@ void langInit() {
     langInitEnglish(&langPortuguese);
     langInitPortuguese(&langPortuguese);
     
+    langInitEnglish(&langRussian);
+    langInitRussian(&langRussian);
+
     langInitEnglish(&langFrench);
     langInitFrench(&langFrench);
     
@@ -191,6 +197,9 @@ int langSetLanguage(EmuLanguageType languageType) {
         break;
     case EMU_LANG_PORTUGUESE:
         ls = &langPortuguese;
+        break;
+    case EMU_LANG_RUSSIAN:
+        ls = &langRussian;
         break;
     case EMU_LANG_FRENCH:
         ls = &langFrench;
@@ -245,6 +254,7 @@ char* langLangJapanese() { return ls->langJapanese; }
 char* langLangKorean() { return ls->langKorean; }
 char* langLangPolish() { return ls->langPolish; }
 char* langLangPortuguese() { return ls->langPortuguese; }
+char* langLangRussian() { return ls->langRussian; }
 char* langLangSpanish() { return ls->langSpanish; }
 char* langLangSwedish() { return ls->langSwedish; }
 

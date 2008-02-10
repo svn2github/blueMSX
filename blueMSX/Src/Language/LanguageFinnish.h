@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->langKorean              = "Korea";
     ls->langPolish              = "Puola";
     ls->langPortuguese          = "Portugali";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish             = "Espanja";
     ls->langSwedish             = "Ruotsi";
 

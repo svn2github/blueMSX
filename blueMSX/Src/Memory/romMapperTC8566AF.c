@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,9 +115,9 @@ static void reset(RomMapperTC8566AF* rm)
 static UInt8 read(RomMapperTC8566AF* rm, UInt16 address) 
 {
     address += 0x4000;
-	if ((address & 0x3fff) >= 0x3ff0) {
+    if ((address & 0x3fff) >= 0x3ff0) {
         if (rm->romType == ROM_TC8566AF) {
-		    switch (address & 0x0f) {
+            switch (address & 0x0f) {
             case 0x0a:
                 return tc8566afReadRegister(rm->fdc, 4);
             case 0x0b:
@@ -125,7 +125,7 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
             }
         }
         else if (rm->romType == ROM_TC8566AF_TR) {
-		    switch (address & 0x0f) {
+            switch (address & 0x0f) {
             case 0x00:
                 return rm->romMapper[0];
             case 0x01:
@@ -136,12 +136,12 @@ static UInt8 read(RomMapperTC8566AF* rm, UInt16 address)
                 return tc8566afReadRegister(rm->fdc, 5);
             }
         }
-		return rm->romData[address & 0x3fff];
-	} 
+        return rm->romData[address & 0x3fff];
+    } 
    
     if (address >= 0x4000 && address < 0x8000) {
-		return rm->romData[0x4000 * rm->romMapper[0] + (address & 0x3fff)];
-	} 
+        return rm->romData[0x4000 * rm->romMapper[0] + (address & 0x3fff)];
+    } 
 
     return 0xff;
 }
@@ -150,9 +150,9 @@ static UInt8 peek(RomMapperTC8566AF* rm, UInt16 address)
 {
     address += 0x4000;
 
-	if ((address & 0x3fff) >= 0x3ff0) {
+    if ((address & 0x3fff) >= 0x3ff0) {
         if (rm->romType == ROM_TC8566AF) {
-		    switch (address & 0x0f) {
+            switch (address & 0x0f) {
             case 0x0a:
                 return 0xff; // Get from fdc
             case 0x0b:
@@ -160,7 +160,7 @@ static UInt8 peek(RomMapperTC8566AF* rm, UInt16 address)
             }
         }
         else if (rm->romType == ROM_TC8566AF_TR) {
-		    switch (address & 0x0f) {
+            switch (address & 0x0f) {
             case 0x00:
                 return rm->romMapper[0];
             case 0x01:
@@ -171,12 +171,12 @@ static UInt8 peek(RomMapperTC8566AF* rm, UInt16 address)
                 return 0xff; // Get from fdc
             }
         }
-		return rm->romData[address & 0x3fff];
-	} 
+        return rm->romData[address & 0x3fff];
+    } 
    
     if (address >= 0x4000 && address < 0x8000) {
-		return rm->romData[0x4000 * rm->romMapper[0] + (address & 0x3fff)];
-	} 
+        return rm->romData[0x4000 * rm->romMapper[0] + (address & 0x3fff)];
+    } 
 
     return 0xff;
 }
@@ -184,30 +184,44 @@ static UInt8 peek(RomMapperTC8566AF* rm, UInt16 address)
 static void write(RomMapperTC8566AF* rm, UInt16 address, UInt8 value) 
 {
     address += 0x4000;
-	
+    
     if ((address == 0x6000) || (address == 0x7ff0) || (address == 0x7ffe)) {
-		rm->romMapper[0] =  value & rm->romMask;
-		return;
-	} 
+        rm->romMapper[0] =  value & rm->romMask;
+        return;
+    } 
     else {
-		switch (address & 0x3fff) {
-		case 0x3ff2:
-		case 0x3ff8:
-            tc8566afWriteRegister(rm->fdc, 2, value);
-			break;
-		case 0x3ff3:
-		case 0x3ff9:
-            tc8566afWriteRegister(rm->fdc, 3, value);
-			break;
-		case 0x3ff4:
-		case 0x3ffa:
-            tc8566afWriteRegister(rm->fdc, 4, value);
-			break;
-		case 0x3ff5:
-		case 0x3ffb:
-            tc8566afWriteRegister(rm->fdc, 5, value);
-			break;
-		}
+        if (rm->romType == ROM_TC8566AF) {
+            switch (address & 0x3fff) {
+            case 0x3ff8:
+                tc8566afWriteRegister(rm->fdc, 2, value);
+                break;
+            case 0x3ff9:
+                tc8566afWriteRegister(rm->fdc, 3, value);
+                break;
+            case 0x3ffa:
+                tc8566afWriteRegister(rm->fdc, 4, value);
+                break;
+            case 0x3ffb:
+                tc8566afWriteRegister(rm->fdc, 5, value);
+                break;
+            }
+        }
+        else if (rm->romType == ROM_TC8566AF_TR) {
+            switch (address & 0x3fff) {
+            case 0x3ff2:
+                tc8566afWriteRegister(rm->fdc, 2, value);
+                break;
+            case 0x3ff3:
+                tc8566afWriteRegister(rm->fdc, 3, value);
+                break;
+            case 0x3ff4:
+                tc8566afWriteRegister(rm->fdc, 4, value);
+                break;
+            case 0x3ff5:
+                tc8566afWriteRegister(rm->fdc, 5, value);
+                break;
+            }
+        }
     }
 }
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2008-01-25 07:33:58 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->langKorean              = "Koreaans";
     ls->langPolish              = "Pools";
     ls->langPortuguese          = "Portugees";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish             = "Spaans";
     ls->langSwedish             = "Zweeds";
 

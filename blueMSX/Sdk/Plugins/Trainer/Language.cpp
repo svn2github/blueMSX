@@ -33,6 +33,7 @@
 #include "LanguageItalian.h"
 #include "LanguageFrench.h"
 #include "LanguagePortuguese.h"
+#include "LanguageRussian.h"
 #include "LanguageSpanish.h"
 #include <stdlib.h>
 
@@ -71,6 +72,9 @@ void Language::SetLanguage(LanguageId langId)
         break;
     case LID_PORTUGUESE:
         ls = new LanguagePortuguese;
+        break;
+    case LID_RUSSIAN:
+        ls = new LanguageRussian;
         break;
     case LID_ENGLISH:
     default:

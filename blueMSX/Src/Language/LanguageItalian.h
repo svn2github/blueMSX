@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -49,6 +49,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->langKorean                      = "Coreano";
     ls->langPolish                      = "Polacco";
     ls->langPortuguese                  = "Portoghese";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish                     = "Spagnolo";
     ls->langSwedish                     = "Svedese";
 

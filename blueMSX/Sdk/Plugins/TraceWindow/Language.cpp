@@ -27,7 +27,8 @@
 #include "LanguageChineseSimplified.h"
 #include "LanguageChineseTraditional.h"
 #include "LanguageEnglish.h"
-#include "LanguageFinnish.h"
+//#include "LanguageFinnish.h"
+#include "LanguageRussian.h"
 #include "LanguageJapanese.h"
 #include "LanguageKorean.h"
 #include <stdlib.h>
@@ -50,12 +51,15 @@ void Language::SetLanguage(LanguageId langId)
     case LID_JAPANESE:
         ls = new LanguageJapanese;
         break;
+    case LID_RUSSIAN:
+        ls = new LanguageRussian;
+        break;
     case LID_KOREAN:
         ls = new LanguageKorean;
         break;
-    case LID_FINNISH:
-        ls = new LanguageFinnish;
-        break;
+//    case LID_FINNISH:
+//        ls = new LanguageFinnish;
+//        break;
     case LID_ENGLISH:
     default:
         ls = new LanguageEnglish;

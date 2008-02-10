@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.44 $
+** $Revision: 1.45 $
 **
-** $Date: 2008-01-25 07:33:58 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->langKorean              = "韓文";
     ls->langPolish              = "波蘭文";
     ls->langPortuguese          = "葡萄牙文";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish             = "西班牙文";
     ls->langSwedish             = "瑞典文";
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -50,6 +50,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->langKorean              = "韓国語";
     ls->langPolish              = "ポーランド語";
     ls->langPortuguese          = "ポルトガル語";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish             = "スペイン語";
     ls->langSwedish             = "スウェーデン語";
 

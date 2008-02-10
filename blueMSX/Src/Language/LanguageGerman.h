@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.44 $ 
+** $Revision: 1.45 $ 
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-10 04:57:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->langKorean               = "Korean";
     ls->langPolish               = "Polish";
     ls->langPortuguese           = "Portuguese";
+    ls->langRussian             = "Russian";            // v2.8
     ls->langSpanish              = "Spanish";
     ls->langSwedish              = "Swedish";
 

@@ -225,6 +225,9 @@
 			RelativePath=".\LanguageKorean.h">
 		</File>
 		<File
+			RelativePath=".\LanguageRussian.h">
+		</File>
+		<File
 			RelativePath=".\Memory.cpp">
 		</File>
 		<File
