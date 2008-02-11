@@ -1,29 +1,27 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageCatalan.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-11 06:11:43 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2008 Daniel Vik
+** Copyright (C) 2003-2006 Daniel Vik
 **
-**  This software is provided 'as-is', without any express or implied
-**  warranty.  In no event will the authors be held liable for any damages
-**  arising from the use of this software.
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
 **
-**  Permission is granted to anyone to use this software for any purpose,
-**  including commercial applications, and to alter it and redistribute it
-**  freely, subject to the following restrictions:
-**
-**  1. The origin of this software must not be misrepresented; you must not
-**     claim that you wrote the original software. If you use this software
-**     in a product, an acknowledgment in the product documentation would be
-**     appreciated but is not required.
-**  2. Altered source versions must be plainly marked as such, and must not be
-**     misrepresented as being the original software.
-**  3. This notice may not be removed or altered from any source distribution.
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ******************************************************************************
 */
@@ -38,8 +36,7 @@ void langInitCatalan(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-
-    ls->langCatalan             = "Catalan";
+    ls->langCatalan             = "Català";
     ls->langChineseSimplified   = "Xinès simplificat";
     ls->langChineseTraditional  = "Xinès tradicional";
     ls->langDutch               = "Neerlandès";
@@ -52,6 +49,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->langKorean              = "Koreà";
     ls->langPolish              = "Polonès";
     ls->langPortuguese          = "Portuguès";
+    ls->langRussian             = "Rus";            // v2.8
     ls->langSpanish             = "Espanyol";
     ls->langSwedish             = "Suec";
 
@@ -59,7 +57,6 @@ void langInitCatalan(LanguageStrings* ls)
     //----------------------
     // Generic lines
     //----------------------
-
 
     ls->textDevice              = "Dispositiu:";
     ls->textFilename            = "Nom del fitxer:";
@@ -71,7 +68,6 @@ void langInitCatalan(LanguageStrings* ls)
     //----------------------
     // Warning and Error lines
     //----------------------
-
 
     ls->warningTitle            = "blueMSX - Avís";
     ls->warningDiscardChanges   = "Voleu descartar els canvis?";
@@ -91,29 +87,32 @@ void langInitCatalan(LanguageStrings* ls)
     // File related lines
     //----------------------
 
-
     ls->fileRom                 = "Imatge ROM";
     ls->fileAll                 = "Tots els fitxers";
     ls->fileCpuState            = "Estat de la CPU";
+    ls->fileVideoCapture        = "Captura de vídeo"; 
     ls->fileDisk                = "Imatge de disc";
     ls->fileCas                 = "Imatge de cinta";
+    ls->fileAvi                 = "Videoclip";    
 
 
     //----------------------
     // Menu related lines
     //----------------------
 
-
     ls->menuNoRecentFiles       = "- no hi ha fitxers recents -";
     ls->menuInsert              = "Insereix";
     ls->menuEject               = "Expulsa";
 
-
-    ls->menuCartGameReader      = "Lector de jocs";
+    ls->menuCartGameReader      = "Game Reader";
     ls->menuCartIde             = "IDE";
     ls->menuCartBeerIde         = "Beer";
     ls->menuCartGIde            = "GIDE";
-    ls->menuCartSunriseIde      = "Sunrise";
+    ls->menuCartSunriseIde      = "Sunrise";  
+    ls->menuCartScsi            = "SCSI";                // New in 2.7
+    ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
+    ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
+    ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "Cartutx SCC";
     ls->menuCartSCCPlus         = "Cartutx SCC+";
     ls->menuCartFMPac           = "Cartutx FM-PAC";
@@ -122,13 +121,15 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuCartInsertSpecial   = "Insereix Especial";
     ls->menuCartMegaRam         = "MegaRAM";
     ls->menuCartExternalRam     = "RAM externa";
-
+    ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
+    ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
+    ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Insereix una nova imatge de disc";
+    ls->menuDiskInsertCdrom     = "Insereix un CD-Rom";       // New in 2.7
     ls->menuDiskDirInsert       = "Insereix directori";
     ls->menuDiskAutoStart       = "Reinicia després de la inserció";
     ls->menuCartAutoReset       = "Reinicia després de la inserció/expulsió";
-
 
     ls->menuCasRewindAfterInsert= "Rebobina després de la inserció";
     ls->menuCasUseReadOnly      = "Utilitza una imatge de casset només lectura";
@@ -136,15 +137,20 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuCasSetPosition      = "Estableix la posició";
     ls->menuCasRewind           = "Rebobina";
 
+    ls->menuVideoLoad           = "Carrega...";             
+    ls->menuVideoPlay           = "Reprodueix la darrera captura";   
+    ls->menuVideoRecord         = "Enregistra";              
+    ls->menuVideoRecording      = "Enregistrant";           
+    ls->menuVideoRecAppend      = "Enregistra (afig)";     
+    ls->menuVideoStop           = "Atura";                
+    ls->menuVideoRender         = "Renderitza el fitxer de vídeo";   
 
     ls->menuPrnFormfeed         = "Pàgina següent";
-
 
     ls->menuZoomNormal          = "Finestra petita";
     ls->menuZoomDouble          = "Finestra normal";
     ls->menuZoomFullscreen      = "Pantalla completa";
     
-
     ls->menuPropsEmulation      = "Emulació";
     ls->menuPropsVideo          = "Vídeo";
     ls->menuPropsSound          = "So";
@@ -152,20 +158,20 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Rendiment";
     ls->menuPropsSettings       = "Paràmetres";
     ls->menuPropsFile           = "Fitxers";
+    ls->menuPropsDisk           = "Discs";               // New in 2.7
     ls->menuPropsLanguage       = "Idioma";
     ls->menuPropsPorts          = "Ports";
     
-
     ls->menuVideoSource         = "Font de la sortida de vídeo";
     ls->menuVideoSourceDefault  = "No hi ha conectada cap font de sortida de vídeo";
     ls->menuVideoChipAutodetect = "Detecció automàtica del xip de vídeo";
     ls->menuVideoInSource       = "Font de la entrada de vídeo";
     ls->menuVideoInBitmap       = "Fitxer de mapa de bits";
-
+    
+    ls->menuEthInterface        = "Interfície Ethernet"; 
 
     ls->menuHelpHelp            = "Temes d'ajuda";
     ls->menuHelpAbout           = "Al voltant de blueMSX";
-
 
     ls->menuFileCart            = "Ranura de cartutx";
     ls->menuFileDisk            = "Unitat de disc";
@@ -175,14 +181,14 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuFileSaveState       = "Desa l'estat de la CPU";
     ls->menuFileQLoadState      = "Estat de càrrega ràpida";
     ls->menuFileQSaveState      = "Estat de desat ràpid";
-    ls->menuFileCaptureAudio    = "Captura àudio";
+    ls->menuFileCaptureAudio    = "Captura d'àudio";
+    ls->menuFileCaptureVideo    = "Captura de vídeo"; 
     ls->menuFileScreenShot      = "Desa la captura de pantalla";
     ls->menuFileExit            = "Surt";
 
-
     ls->menuFileHarddisk        = "Disc dur";
     ls->menuFileHarddiskNoPesent= "No hi ha controladors";
-
+    ls->menuFileHarddiskRemoveAll= "Expulsa tots els discs durs";    // New in 2.7
 
     ls->menuRunRun              = "Executa";
     ls->menuRunPause            = "Posa en pausa";
@@ -191,15 +197,13 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuRunHardReset        = "Reinicialització dura";
     ls->menuRunCleanReset       = "Reinicialització completa";
 
-
     ls->menuToolsMachine        = "Editor màquina";
     ls->menuToolsShortcuts      = "Editor de drecera";
-    ls->menuToolsKeyboard       = "Controladors / editor de teclat";
+    ls->menuToolsCtrlEditor     = "Controladors / editor de teclat"; 
     ls->menuToolsMixer          = "Mesclador";
-    ls->menuToolsDebugger       = "Depurador";               // New in 2.5
-    ls->menuToolsTrainer        = "Trainer";                // New in 2.5
-    ls->menuToolsTraceLogger    = "Trace Logger";           // New in 2.5
-
+    ls->menuToolsDebugger       = "Debugger";               
+    ls->menuToolsTrainer        = "Trainer";                
+    ls->menuToolsTraceLogger    = "Trace Logger";           
 
     ls->menuFile                = "Fitxer";
     ls->menuRun                 = "Emulació";
@@ -213,7 +217,6 @@ void langInitCatalan(LanguageStrings* ls)
     // Dialog related lines
     //----------------------
 
-
     ls->dlgOK                   = "D'acord";
     ls->dlgOpen                 = "Obri";
     ls->dlgCancel               = "Cancel·la";
@@ -221,7 +224,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dlgSaveAs               = "Anomena i desa...";
     ls->dlgRun                  = "Executa";
     ls->dlgClose                = "Tanca";
-
 
     ls->dlgLoadRom              = "blueMSX - Selecciona i carrega una imatge rom";
     ls->dlgLoadDsk              = "blueMSX - Selecciona i carrega una imatge dsk";
@@ -232,8 +234,11 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dlgLoadCasDesc          = "Tria i carrega una imatge de cinta:";
     ls->dlgLoadRomDskCasDesc    = "Tria i carrega una imatge rom, de disc o de cinta:";
     ls->dlgLoadState            = "Carrega l'estat";
+    ls->dlgLoadVideoCapture     = "Load video capture";      
     ls->dlgSaveState            = "Anomena i desa l'estat...";
     ls->dlgSaveCassette         = "blueMSX - Desa la imatge de cinta";
+    ls->dlgSaveVideoClipAs      = "Desa i anomena el videoclip...";      
+    ls->dlgAmountCompleted      = "Quantitat completada:";          
     ls->dlgInsertRom1           = "Insereix el cartutx ROM en la ranura 1";
     ls->dlgInsertRom2           = "Insereix el cartutx ROM en la ranura 2";
     ls->dlgInsertDiskA          = "Insereix la imatge de disc en la unitat A";
@@ -241,7 +246,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dlgInsertHarddisk       = "Insereix el disc dur";
     ls->dlgInsertCas            = "Insereix una cinta de casset";
     ls->dlgRomType              = "Tipus de Rom:";
-
+    ls->dlgDiskSize             = "Mida del disc:";             
 
     ls->dlgTapeTitle            = "blueMSX - Posició de la cinta";
     ls->dlgTapeFrameText        = "Posició de la cinta";
@@ -254,13 +259,10 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dlgTabFilename          = "Nom del fitxer:";
     ls->dlgZipReset             = "Reinicia després de la inserció";
 
-
     ls->dlgAboutTitle           = "blueMSX - Al voltant de";
-
 
     ls->dlgLangLangText         = "Tria el idioma que blueMSX emprarà";
     ls->dlgLangLangTitle        = "blueMSX - Idioma";
-
 
     ls->dlgAboutAbout           = "AL VOLTANT DE\r\n====";
     ls->dlgAboutVersion         = "Versió:";
@@ -268,7 +270,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Data:";
     ls->dlgAboutCreat           = "Creat per Daniel Vik";
     ls->dlgAboutDevel           = "DESENVOLUPADORS\r\n========";
-    ls->dlgAboutThanks          = "AGRAÏMENTS ESPECIALS A\r\n============";
+    ls->dlgAboutThanks          = "COL·LABORADORS\r\n==========";       // New in 2.7 (retranslate, see english)
     ls->dlgAboutLisence         = "LLICÈNSIA\r\n"
                                   "======\r\n\r\n"
                                   "This software is provided 'as-is', without any express or implied "
@@ -276,15 +278,15 @@ void langInitCatalan(LanguageStrings* ls)
                                   "arising from the use of this software.\r\n\r\n"
                                   "Visit www.bluemsx.com for more details.";
 
-
     ls->dlgSavePreview          = "Mostra previsualització";
     ls->dlgSaveDate             = "Temps desat:";
+
+    ls->dlgRenderVideoCapture   = "blueMSX - Rendering Video Capture...";  
 
 
     //----------------------
     // Properties related lines
     //----------------------
-
 
     ls->propTitle               = "blueMSX - Propietats";
     ls->propEmulation           = "Emulació";
@@ -294,9 +296,9 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propPerformance         = "Rendiment";
     ls->propSettings            = "Paràmetres";
     ls->propFile                = "Fitxers";
+    ls->propDisk                = "Discs";              // New in 2.7
     ls->propPorts               = "Ports";
     
-
     ls->propEmuGeneralGB        = "General ";
     ls->propEmuFamilyText       = "Màquina MSX:";
     ls->propEmuMemoryGB         = "Memòria ";
@@ -318,7 +320,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propSndMidiChannel      = "Canal MIDI:";
     ls->propSndMidiAll          = "Tot";
 
-
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Tipus de monitor:";
     ls->propMonEmuText          = "Emulació del monitor:";
@@ -336,7 +337,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propMonColorGhosting    = "Modulador RF";
     ls->propMonEffectsGB        = "Efectes ";
 
-
     ls->propPerfVideoDrvGB      = "Controlador de vídeo ";
     ls->propPerfVideoDispDrvText= "Controlador de visualització:";
     ls->propPerfFrameSkipText   = "Omissió de marcs:";
@@ -347,13 +347,11 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propPerfSyncModeText    = "Mode SYNC:";
     ls->propFullscreenResText   = "Resolució a pantalla completa:";
 
-
     ls->propSndChipEmuGB        = "Emulació del xip de so ";
     ls->propSndMsxMusic         = " MSX-MUSIC";
     ls->propSndMsxAudio         = " MSX-AUDIO";
     ls->propSndMoonsound        = " Moonsound";
     ls->propSndMt32ToGm         = " Mapeja MT-32 instruments a General MIDI";
-
 
     ls->propPortsLptGB          = "Port paral·lel ";
     ls->propPortsComGB          = "Ports sèrie ";
@@ -365,7 +363,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propPortsComFile        = "Envia a un fitxer";
     ls->propPortsOpenLogFile    = "Obri el fitxer de registre";
     ls->propPortsEmulateMsxPrn  = "Emulació";
-
 
     ls->propSetFileHistoryGB    = "Historial del fitxer ";
     ls->propSetFileHistorySize  = "Nombre d'elements en el historial del fitxer:";
@@ -381,32 +378,34 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propDefaultRomType      = "Tipus predeterminat de Rom:";
     ls->propGuessRomType        = "Endevina el tipus de Rrom";
 
-
     ls->propSettDefSlotGB       = "Arrossega i deixa anar ";
     ls->propSettDefSlots        = "Insereix el Rom en:";
     ls->propSettDefSlot         = " Ranura";
     ls->propSettDefDrives       = "Insereix el disquet en:";
     ls->propSettDefDrive        = " Unitat";
 
-
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema ";
+
+    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromMethod         = "Mètode d'accés:";  // New in 2.7
+    ls->propCdromMethodNone     = "Cap";            // New in 2.7
+    ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
+    ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
+    ls->propCdromDrive          = "Unitat:";          // New in 2.7
 
 
     //----------------------
     // Dropdown related lines
     //----------------------
 
-
     ls->enumVideoMonColor       = "Color";
     ls->enumVideoMonGrey        = "Blanc i negre";
     ls->enumVideoMonGreen       = "Verd";
     ls->enumVideoMonAmber       = "Ambre";
 
-
     ls->enumVideoTypePAL        = "PAL";
     ls->enumVideoTypeNTSC       = "NTSC";
-
 
     ls->enumVideoEmuNone        = "Cap";
     ls->enumVideoEmuYc          = "Cable Y/C (nítid)";
@@ -417,16 +416,13 @@ void langInitCatalan(LanguageStrings* ls)
     ls->enumVideoEmuScale2x     = "Escala 2x";
     ls->enumVideoEmuHq2x        = "Hq2x";
 
-
     ls->enumVideoSize1x         = "Normal - 320x200";
     ls->enumVideoSize2x         = "Doble - 640x400";
     ls->enumVideoSizeFullscreen = "Pantalla completa";
 
-
     ls->enumVideoDrvDirectDrawHW= "Acceleració DirectDraw de maquinari";  
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
-
 
     ls->enumVideoFrameskip0     = "Cap";
     ls->enumVideoFrameskip1     = "1 marc";
@@ -435,41 +431,38 @@ void langInitCatalan(LanguageStrings* ls)
     ls->enumVideoFrameskip4     = "4 marcs";
     ls->enumVideoFrameskip5     = "5 marcs";
 
-
     ls->enumSoundDrvNone        = "Sense so";
     ls->enumSoundDrvWMM         = "Controlador WMM";
     ls->enumSoundDrvDirectX     = "Controlador DirectX";
-
 
     ls->enumEmuSync1ms          = "Sincronitza al refresc de MSX";
     ls->enumEmuSyncAuto         = "Auto (ràpid)";
     ls->enumEmuSyncNone         = "Cap";
     ls->enumEmuSyncVblank       = "Sincronització sobre PC Vertical Blank";
-    ls->enumEmuAsyncVblank      = "Desincronització PC Vblank";             // New in 2.5
-
+    ls->enumEmuAsyncVblank      = "Desincronització PC Vblank";             
 
     ls->enumControlsJoyNone     = "Cap";
     ls->enumControlsJoyMouse    = "Ratolí";
     ls->enumControlsJoyTetris2Dongle = "Tetris 2 Dongle";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey Dongle";
-    ls->enumControlsJoy2Button = "Palanca de control de 2 botons";                   // New in 2.5
-    ls->enumControlsJoyGunstick  = "Gun Stick";                         // New in 2.5
-    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      // New in 2.5
-    ls->enumControlsJoyColeco = "Palanca de control ColecoVision";                // New in 2.5
+    ls->enumControlsJoy2Button = "Palanca de control de 2 botons";                   
+    ls->enumControlsJoyGunstick  = "Gun Stick";                         
+    ls->enumControlsJoyAsciiLaser="ASCII Plus-X Terminator Laser";      
+    ls->enumControlsArkanoidPad  ="Palanca de control de Arkanoid Pad";                   // New in 2.7.1
+    ls->enumControlsJoyColeco = "Palanca de control de ColecoVision";                
 
-
-    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5 dues cares, 9 sectors";     // New in 2.5
-    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5 dues cares, 8 sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5 una cara, 9 sectors";     // New in 2.5
-    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5 una cara, 8 sectors";     // New in 2.5
-    ls->enumDiskSvi525Dbl        = "SVI-328 5.25 dues cares";           // New in 2.5
-    ls->enumDiskSvi525Sgl        = "SVI-328 5.25 una cara";           // New in 2.5
+    ls->enumDiskMsx35Dbl9Sect    = "MSX 3.5\" Dues cares, 9 Sectors";     
+    ls->enumDiskMsx35Dbl8Sect    = "MSX 3.5\" Dues cares, 8 Sectors";     
+    ls->enumDiskMsx35Sgl9Sect    = "MSX 3.5\" Una cara, 9 Sectors";     
+    ls->enumDiskMsx35Sgl8Sect    = "MSX 3.5\" Una cara, 8 Sectors";     
+    ls->enumDiskSvi525Dbl        = "SVI-328 5.25\" Dues cares";           
+    ls->enumDiskSvi525Sgl        = "SVI-328 5.25\" Una cara"; 
+    ls->enumDiskSf3Sgl           = "Sega SF-7000 3\" Una cara";            
 
 
     //----------------------
     // Configuration related lines
     //----------------------
-
 
     ls->confTitle               = "blueMSX - Editor de configuració de la màquina";
     ls->confConfigText          = "Nom del perfil";
@@ -477,7 +470,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confMemory              = "Memòria";
     ls->confChipEmulation       = "Emulació del xip";
     ls->confChipExtras          = "Extras";
-
 
     ls->confOpenRom             = "Obri la imatge ROM";
     ls->confSaveTitle           = "blueMSX - Desa la configuració";
@@ -488,7 +480,6 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confExitSaveTitle       = "blueMSX - Surt de l'editor de configuració";
     ls->confExitSaveText        = "Voleu descartar els canvis de la configuració actual?";
 
-
     ls->confSlotLayoutGB        = "Format de la ranura";
     ls->confSlotExtSlotGB       = "Ranures externes ";
     ls->confBoardGB             = "Taula ";
@@ -496,11 +487,9 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confSlotPrimary         = "Primària";
     ls->confSlotExpanded        = "Expandida (quatre subranures)";
 
-
     ls->confSlotCart            = "Cartutx";
     ls->confSlot                = "Ranura";
     ls->confSubslot             = "Subranura";
-
 
     ls->confMemAdd              = "Afegeix...";
     ls->confMemEdit             = "Edita...";
@@ -510,24 +499,20 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confMemType             = "Tipus";
     ls->confMemRomImage         = "Imatge rom";
 
-
     ls->confChipVideoGB          = "Vídeo";
     ls->confChipVideoChip        = "Xip de vídeo:";
     ls->confChipVideoRam         = "RAM de vídeo:";
     ls->confChipSoundGB          = "So";
 
-
-    ls->confCmosGB               = "Xip del rellotge ";
-    ls->confCmosEnable           = " Activa el xip del rellotge";
+    ls->confCmosGB               = "CMOS ";
+    ls->confCmosEnable           = " Enable CMOS";
     ls->confCmosBattery          = " Utilitza la bateria carregada";
-
 
     ls->confCpuFreqGB            = "Freqüència de la CPU ";
     ls->confZ80FreqText          = "Freqüència del Z80:";
     ls->confR800FreqText         = "Freqüència del R800:";
     ls->confFdcGB                = "Controlador del disquet ";
     ls->confCFdcNumDrivesText    = "Nombre d'unitats:";
-
 
     ls->confEditMemTitle         = "blueMSX - Edita el mapejador";
     ls->confEditMemGB            = "Detalls del mapejador ";
@@ -542,10 +527,8 @@ void langInitCatalan(LanguageStrings* ls)
     // Shortcut lines
     //----------------------
 
-
     ls->shortcutKey             = "Acció";
     ls->shortcutDescription     = "Drecera";
-
 
     ls->shortcutSaveConfig      = "blueMSX - Desa la configuració";
     ls->shortcutOverwriteConfig = "Voleu sobreescriure la configuració de drecera? :";
@@ -634,13 +617,17 @@ void langInitCatalan(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Mostra/Amaga els Sprites";
     ls->shortcutToggleFdcTiming = "Activa/Desactiva la sincronització de la unitat de disc";
     ls->shortcutToggleCpuTrace  = "Activa/Desactiva el rastre de la CPU";
+    ls->shortcutVideoLoad       = "Carrega la captura de vídeo";             
+    ls->shortcutVideoPlay       = "Reprodueix la darrera captura de vídeo";   
+    ls->shortcutVideoRecord     = "Enregistra la captura de vídeo";              
+    ls->shortcutVideoStop       = "Atura la captura de vídeo";                
+    ls->shortcutVideoRender     = "Renderitza el fitxer de vídeo";   
 
 
     //----------------------
     // Keyboard config lines
     //----------------------    
  
-
     ls->keyconfigSelectedKey    = "Tecla seleccionada:";
     ls->keyconfigMappedTo       = "Mapejat a:";
     ls->keyconfigMappingScheme  = "Esquema de mapatge:";
@@ -650,23 +637,26 @@ void langInitCatalan(LanguageStrings* ls)
     // Rom type lines
     //----------------------
 
-
     ls->romTypeStandard         = "Estàndard";
     ls->romTypeZenima80         = "Zemina 80 in 1";
     ls->romTypeZenima90         = "Zemina 90 in 1";
     ls->romTypeZenima126        = "Zemina 126 in 1";
+    ls->romTypeSccMirrored      = "SCC replicat";
+    ls->romTypeSccExtended      = "SCC estès";
     ls->romTypeKonamiGeneric    = "Konami Generic";
     ls->romTypeMirrored         = "ROM replicat";
     ls->romTypeNormal           = "ROM normal";
     ls->romTypeDiskPatch        = "Normal + pedaç de disc";
     ls->romTypeCasPatch         = "Normal + pedaç de casset";
     ls->romTypeTc8566afFdc      = "Controladora de disc TC8566AF";
+    ls->romTypeTc8566afTrFdc    = "TC8566AF Turbo-R Disk Controller";
     ls->romTypeMicrosolFdc      = "Controladora de disc Microsol";
     ls->romTypeNationalFdc      = "Controladora de disc National";
     ls->romTypePhilipsFdc       = "Controladora de disc Philips";
     ls->romTypeSvi738Fdc        = "Controladora de disc SVI-738";
     ls->romTypeMappedRam        = "RAM mapejada";
     ls->romTypeMirroredRam1k    = "1kB de RAM replicada";
+    ls->romTypeMirroredRam2k    = "2kB Mirrored RAM";
     ls->romTypeNormalRam        = "RAM normal";
     ls->romTypeTurborPause      = "Pausa del Turbo-R";
     ls->romTypeF4deviceNormal   = "Dispositiu F4 normal";
@@ -687,25 +677,26 @@ void langInitCatalan(LanguageStrings* ls)
     ls->romTypeSvi727col80      = "Tarja de 80 columnes del SVI-727";
     ls->romTypeColecoCart       = "Cartutx Coleco";
     ls->romTypeSg1000Cart       = "Cartutx SG-1000";
+    ls->romTypeSc3000Cart       = "Cartutx SC-3000";
     ls->romTypeMsxPrinter       = "Impressora MSX";
     ls->romTypeTurborPcm        = "Xip PCM del Turbo-R";
     ls->romTypeNms8280Digitiz   = "Digitalitzador del Philips NMS-8280";
     ls->romTypeHbiV1Digitiz     = "Digitalitzador del Sony HBI-V1";
-        
+    
+    
     //----------------------
     // Debug type lines
     // Note: Only needs translation if debugger is translated
     //----------------------
 
+    ls->dbgMemVisible           = "Memòria visible";
     ls->dbgMemRamNormal         = "Normal";
     ls->dbgMemRamMapped         = "Mapejat";
     ls->dbgMemYmf278            = "RAM de mostra del YMF278";
     ls->dbgMemAy8950            = "RAM de mosstra del AY8950";
     ls->dbgMemScc               = "Memòria";
 
-
     ls->dbgCallstack            = "Callstack";
-
 
     ls->dbgRegs                 = "Registres";
     ls->dbgRegsCpu              = "Registres de la CPU";
@@ -714,13 +705,12 @@ void langInitCatalan(LanguageStrings* ls)
     ls->dbgRegsAy8950           = "Registres del AY8950";
     ls->dbgRegsYm2413           = "Registres del YM2413";
 
-
     ls->dbgDevRamMapper         = "Mapejador de RAM";
     ls->dbgDevRam               = "RAM";
     ls->dbgDevF4Device          = "Dispositiu F4";
-    ls->dbgDevKorean80          = "Korean 80";
-    ls->dbgDevKorean90          = "Korean 90";
-    ls->dbgDevKorean128         = "Korean 128";
+    ls->dbgDevKorean80          = "80 coreà";
+    ls->dbgDevKorean90          = "90 coreà";
+    ls->dbgDevKorean128         = "128 coreà";
     ls->dbgDevFdcMicrosol       = "Microsol FDC";
     ls->dbgDevPrinter           = "Impressora";
     ls->dbgDevSviFdc            = "SVI FDC";
@@ -735,10 +725,8 @@ void langInitCatalan(LanguageStrings* ls)
     // Note: Can only be translated to european languages
     //----------------------
 
-
     ls->aboutScrollThanksTo     = "Agraïments especials a: ";
     ls->aboutScrollAndYou       = "i a TU !!!!";
 };
 
 #endif
-
