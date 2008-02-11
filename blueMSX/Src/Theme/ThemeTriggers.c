@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2007-12-15 00:50:22 $
+** $Date: 2008-02-11 06:17:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -63,6 +63,8 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
         sprintf(text, 
                 "                                 "
                 "%s"
+                "Oleg Malyshev,  "
+                "Manuel Soler,  "
                 "Alexandre Souza,  "
                 "Luciano Sturaro,  "
                 "Sjoerd de Vries,  "
