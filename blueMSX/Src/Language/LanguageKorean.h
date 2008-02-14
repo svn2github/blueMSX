@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.55 $ + additions 2005/03/03
+** $Revision: 1.56 $ + additions 2005/03/03
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -329,7 +329,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propMonVertStretch       = " 수직 스트레치";
     ls->propMonDeInterlace      = " 디인터레이스";
     ls->propBlendFrames         = " 인접한 프레임 색상혼합";           
-    ls->propMonColorGhosting    = "RF모듈레이터";
+    ls->propMonColorGhosting    = "RF모듈레이터:";
     ls->propMonBrightness       = "밝기:";
     ls->propMonContrast         = "대비:";
     ls->propMonSaturation       = "채도:";

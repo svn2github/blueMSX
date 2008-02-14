@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2007-08-24 05:12:20 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,6 +96,7 @@ char* langRomTypeNormal()           { return "Normal ROM"; }
 char* langRomTypeDiskPatch()        { return "Normal + Disk Patch"; }
 char* langRomTypeCasPatch()         { return "Normal + Cassette Patch"; }
 char* langRomTypeTc8566afFdc()      { return "TC8566AF Disk Controller"; }
+char* langRomTypeTc8566afTrFdc()    { return "TC8566AF Turbo-R Disk Controller"; }
 char* langRomTypeMicrosolFdc()      { return "Microsol Disk Controller"; }
 char* langRomTypeNationalFdc()      { return "National Disk Controller"; }
 char* langRomTypePhilipsFdc()       { return "Philips Disk Controller"; }
@@ -107,8 +108,12 @@ char* langRomTypeNormalRam()        { return "Normal RAM"; }
 char* langRomTypeKanji()            { return "Kanji"; }
 char* langRomTypeHolyQuran()        { return "Holy Quran"; }
 char* langRomTypeMatsushitaSram()   { return "Matsushita SRAM"; }
+char* langRomTypePanasonic8()       { return "Panasonic FM 8kB SRAM"; }
+char* langRomTypePanasonicWx16()    { return "Panasonic WX 16kB SRAM"; }
 char* langRomTypePanasonic16()      { return "Panasonic 16kB SRAM"; }
 char* langRomTypePanasonic32()      { return "Panasonic 32kB SRAM"; }
+char* langRomTypePanasonicModem()   { return "Panasonic Modem"; }
+char* langRomTypeDram()             { return "Panasonic DRAM"; }
 char* langRomTypeBunsetsu()         { return "Bunsetsu"; }
 char* langRomTypeJisyo()            { return "Jisyo"; }
 char* langRomTypeKanji12()          { return "Kanji 12"; }

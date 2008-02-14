@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2008-02-10 17:25:04 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -335,7 +335,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonSaturation       = "Färgmättnad:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Scanlinjer:";
-    ls->propMonColorGhosting    = "RF-modulering";
+    ls->propMonColorGhosting    = "RF-modulering:";
     ls->propMonEffectsGB        = "Effekter ";
 
     ls->propPerfVideoDrvGB      = "Videodriver ";

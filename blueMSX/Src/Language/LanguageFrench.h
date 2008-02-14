@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.53 $
+** $Revision: 1.54 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "Modulateur RF"; 
+    ls->propMonColorGhosting    = "Modulateur RF:"; 
     ls->propMonEffectsGB        = "Effets ";
 
     ls->propPerfVideoDrvGB      = "Vidéo ";

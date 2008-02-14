@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.46 $ 
+** $Revision: 1.47 $ 
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propMonSaturation        = "Sättigung:";
     ls->propMonGamma             = "Gamma:";
     ls->propMonScanlines         = "Scanlines:";
-    ls->propMonColorGhosting     = "RF-Modulator";
+    ls->propMonColorGhosting     = "RF-Modulator:";
     ls->propMonEffectsGB         = "Effekte ";
 
     ls->propPerfVideoDrvGB       = "Video-Treiber ";

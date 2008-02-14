@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propMonSaturation       = "Verzadiging:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = " Beeldlijnen";
-    ls->propMonColorGhosting    = " RF-modulator";
+    ls->propMonColorGhosting    = " RF-modulator:";
     ls->propMonEffectsGB        = " Effecten ";
 
     ls->propPerfVideoDrvGB      = "Beeldinstellingen ";

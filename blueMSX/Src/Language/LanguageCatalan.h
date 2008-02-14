@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageCatalan.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-02-11 06:11:43 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -179,8 +179,8 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuFilePrn             = "Impressora";
     ls->menuFileLoadState       = "Carrega l'estat de la CPU";
     ls->menuFileSaveState       = "Desa l'estat de la CPU";
-    ls->menuFileQLoadState      = "Estat de càrrega ràpida";
-    ls->menuFileQSaveState      = "Estat de desat ràpid";
+    ls->menuFileQLoadState      = "Carrega ràpid l'estat";
+    ls->menuFileQSaveState      = "Desa ràpid l'estat";
     ls->menuFileCaptureAudio    = "Captura d'àudio";
     ls->menuFileCaptureVideo    = "Captura de vídeo"; 
     ls->menuFileScreenShot      = "Desa la captura de pantalla";
@@ -261,7 +261,7 @@ void langInitCatalan(LanguageStrings* ls)
 
     ls->dlgAboutTitle           = "blueMSX - Al voltant de";
 
-    ls->dlgLangLangText         = "Tria el idioma que blueMSX emprarà";
+    ls->dlgLangLangText         = "Trieu el idioma que blueMSX emprarà";
     ls->dlgLangLangTitle        = "blueMSX - Idioma";
 
     ls->dlgAboutAbout           = "AL VOLTANT DE\r\n====";
@@ -334,7 +334,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturació:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Línies d'exploració:";
-    ls->propMonColorGhosting    = "Modulador RF";
+    ls->propMonColorGhosting    = "Modulador RF:";
     ls->propMonEffectsGB        = "Efectes ";
 
     ls->propPerfVideoDrvGB      = "Controlador de vídeo ";
@@ -482,8 +482,8 @@ void langInitCatalan(LanguageStrings* ls)
 
     ls->confSlotLayoutGB        = "Format de la ranura";
     ls->confSlotExtSlotGB       = "Ranures externes ";
-    ls->confBoardGB             = "Taula ";
-    ls->confBoardText           = "Tipus de taula:";
+    ls->confBoardGB             = "Placa ";
+    ls->confBoardText           = "Tipus de placa:";
     ls->confSlotPrimary         = "Primària";
     ls->confSlotExpanded        = "Expandida (quatre subranures)";
 
@@ -505,7 +505,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confChipSoundGB          = "So";
 
     ls->confCmosGB               = "CMOS ";
-    ls->confCmosEnable           = " Enable CMOS";
+    ls->confCmosEnable           = " Activa la CMOS";
     ls->confCmosBattery          = " Utilitza la bateria carregada";
 
     ls->confCpuFreqGB            = "Freqüència de la CPU ";
@@ -548,15 +548,15 @@ void langInitCatalan(LanguageStrings* ls)
     ls->shortcutSpecialMenu1    = "Mostra el menú especial per al cartutx 1";
     ls->shortcutSpecialMenu2    = "Mostra el menú especial per al cartutx 2";
     ls->shortcutCartAutoReset   = "Reinicia l'emulador quan s'inserisca el cartutx";
-    ls->shortcutDiskInsertA     = "Inseriu el disquet A";
-    ls->shortcutDiskDirInsertA  = "Inseriu el directori com a disquet A";
+    ls->shortcutDiskInsertA     = "Inserta el disquet A";
+    ls->shortcutDiskDirInsertA  = "Inserta el directori com a disquet A";
     ls->shortcutDiskRemoveA     = "Expulsa el disquet A";
     ls->shortcutDiskChangeA     = "Expulsa ràpid el disquet A";
     ls->shortcutDiskAutoResetA  = "Reinicia l'emulador quan s'inserisca el disquet";
-    ls->shortcutDiskInsertB     = "Inseriu el disquet B";
-    ls->shortcutDiskDirInsertB  = "Inseriu el directori com a disquet B";
+    ls->shortcutDiskInsertB     = "Inserta el disquet B";
+    ls->shortcutDiskDirInsertB  = "Inserta el directori com a disquet B";
     ls->shortcutDiskRemoveB     = "Expulsa el disquet B";
-    ls->shortcutCasInsert       = "Inseriu el casset";
+    ls->shortcutCasInsert       = "Inserta el casset";
     ls->shortcutCasEject        = "Expulsa el casset";
     ls->shortcutCasAutorewind   = "Commuta el rebobinat automàtic en el casset";
     ls->shortcutCasReadOnly     = "Commuta el casset només de lectura";

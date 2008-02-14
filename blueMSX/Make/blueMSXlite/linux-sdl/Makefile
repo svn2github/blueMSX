@@ -242,6 +242,11 @@ SOURCE_FILES += sramMapperS1985.c
 SOURCE_FILES += romMapperPlayBall.c
 SOURCE_FILES += sramMapperEseSCC.c
 SOURCE_FILES += sramMapperMegaSCSI.c
+SOURCE_FILES += romMapperForteII.c
+SOURCE_FILES += romMapperDRAM.c
+SOURCE_FILES += romMapperA1FM.c
+SOURCE_FILES += romMapperA1FMModem.c
+
 
 SOURCE_FILES += Crc32Calc.c
 SOURCE_FILES += MediaDb.cpp
@@ -362,6 +367,7 @@ SOURCE_FILES += Sg1000Joystick.c
 SOURCE_FILES += SviJoystick.c
 SOURCE_FILES += SviJoyIo.c 
 SOURCE_FILES += Sg1000JoyIo.c 
+SOURCE_FILES += CoinDevice.c
 
 SOURCE_FILES += DebugDeviceManager.c
 SOURCE_FILES += Debugger.c 

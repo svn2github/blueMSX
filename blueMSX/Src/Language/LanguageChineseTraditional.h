@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -328,7 +328,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propMonHorizStretch      = " 水平拉伸";
     ls->propMonDeInterlace      = " 去雜紋高畫質功\能";
     ls->propBlendFrames         = " 混合連續的畫格";           
-    ls->propMonColorGhosting    = "RF 調變器";
+    ls->propMonColorGhosting    = "RF 調變器:";
     ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "對比度:";

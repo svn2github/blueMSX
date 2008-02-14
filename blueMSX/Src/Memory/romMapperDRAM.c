@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDRAM.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-01-22 04:34:12 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,12 +25,12 @@
 **
 ******************************************************************************
 */
-#include "romMapperDram.h"
+#include "romMapperDRAM.h"
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
 #include "SaveState.h"
-#include "board.h"
+#include "Board.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

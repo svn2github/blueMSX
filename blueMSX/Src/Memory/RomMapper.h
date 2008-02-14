@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,97 +28,9 @@
 #ifndef ROM_MAPPER_H
 #define ROM_MAPPER_H
 
-typedef int RomType;
-enum  {
-    ROM_UNKNOWN     = 0,
-    ROM_STANDARD    = 1,
-    ROM_MSXDOS2     = 2,
-    ROM_KONAMI5     = 3,
-    ROM_KONAMI4     = 4,
-    ROM_ASCII8      = 5,
-    ROM_ASCII16     = 6,
-    ROM_GAMEMASTER2 = 7,
-    ROM_ASCII8SRAM  = 8,
-    ROM_ASCII16SRAM = 9,
-    ROM_RTYPE       = 10,
-    ROM_CROSSBLAIM  = 11,
-    ROM_HARRYFOX    = 12,
-    ROM_KOREAN80    = 13,
-    ROM_KOREAN126   = 14,
-    ROM_SCCEXTENDED = 15,
-    ROM_FMPAC       = 16,
-    ROM_KONAMI4NF   = 17,
-    ROM_ASCII16NF   = 18,
-    ROM_PLAIN       = 19,
-    ROM_NORMAL      = 20,
-    ROM_DISKPATCH   = 21,
-    RAM_MAPPER      = 22,
-    RAM_NORMAL      = 23,
-    ROM_KANJI       = 24,
-    ROM_HOLYQURAN   = 25,
-    SRAM_MATSUCHITA = 26,
-    ROM_PANASONIC16 = 27,
-    ROM_BUNSETU     = 28,
-    ROM_JISYO       = 29,
-    ROM_KANJI12     = 30,
-    ROM_NATIONAL    = 31,
-    SRAM_S1985      = 32,
-    ROM_F4DEVICE    = 33,
-    ROM_F4INVERTED  = 34,
-    AUDIO_MOONSOUND = 35,
-    AUDIO_Y8950     = 36,
-    AUDIO_YM2413    = 37,
-    ROM_KOEI        = 38,
-    ROM_BASIC       = 39,
-    ROM_HALNOTE     = 40,
-    ROM_LODERUNNER  = 41,
-    ROM_0x4000      = 42,
-    ROM_PAC         = 43,
-    ROM_MEGARAM     = 44,
-    ROM_MEGARAM128  = 45,
-    ROM_MEGARAM256  = 46,
-    ROM_MEGARAM512  = 47,
-    ROM_MEGARAM768  = 48,
-    ROM_MEGARAM2M   = 49,
-    ROM_MSXAUDIO    = 50,
-    ROM_KOREAN90    = 51,
-    ROM_SNATCHER    = 52,
-    ROM_SDSNATCHER  = 53,
-    ROM_SCCMIRRORED = 54,
-    ROM_SCC         = 55,
-    ROM_SCCPLUS     = 56,
-    ROM_TC8566AF    = 57,
-    ROM_S1990       = 58,
-    ROM_TURBORTIMER = 59,
-    ROM_TURBORPCM   = 60,
-    ROM_KONAMISYNTH = 61,
-    ROM_MAJUTSUSHI  = 62,
-    ROM_MICROSOL    = 63,
-    ROM_NATIONALFDC = 64,
-    ROM_PHILIPSFDC  = 65,
-    ROM_CASPATCH    = 66,
-    ROM_SVI738FDC   = 67,
-    ROM_PANASONIC32 = 68,
-    ROM_EXTRAM      = 69,
-    ROM_EXTRAM512KB = 70,
-    ROM_EXTRAM1MB   = 71,
-    ROM_EXTRAM2MB   = 72,
-    ROM_EXTRAM4MB   = 73,
-    ROM_SVI328      = 74,
-    ROM_SVI328FDC   = 75,
-    ROM_COLECO      = 76,
-    ROM_SONYHBI55   = 77,
-    ROM_MSXMUSIC    = 78,
-    ROM_MOONSOUND   = 79,
-    ROM_MSXAUDIODEV = 80,
-    ROM_V9958       = 81,
-    ROM_SVI80COL    = 82,
-    ROM_SVI328PRN   = 83,
-    ROM_MSXPRN      = 84,
-    ROM_SVI328RS232 = 85,
-    ROM_MSXRS232    = 86,
-    ROM_MAXROMID    = 86
-};
+
+#include "MediaDb.h"
+
 
 static char* romTypeToString(RomType romType) {
     switch (romType) {    

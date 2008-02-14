@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2008-02-10 17:25:04 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propMonSaturation       = "Saturación:";
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "Modulador RF"; 
+    ls->propMonColorGhosting    = "Modulador RF:"; 
     ls->propMonEffectsGB        = "Efectos  "; 
 
     ls->propPerfVideoDrvGB      = "Controlador de Video ";

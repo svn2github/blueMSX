@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageRussian.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propMonSaturation       = "Насыщенность:";
     ls->propMonGamma            = "Гамма:";
     ls->propMonScanlines        = "Черезполосица:";
-    ls->propMonColorGhosting    = "RF-модулятор";
+    ls->propMonColorGhosting    = "RF-модулятор:";
     ls->propMonEffectsGB        = "Эффекты ";
 
     ls->propPerfVideoDrvGB      = "Видеодрайвер ";

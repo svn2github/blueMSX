@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTC8566AF.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-01-22 04:57:54 $
+** $Date: 2008-02-14 06:07:09 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,16 +29,10 @@
 #define ROMMAPPER_TC8566AF_H
 
 #include "MsxTypes.h"
-
-typedef enum {
-    TC_MAPPER_MSX2,
-    TC_MAPPER_MSX2P,
-    TC_MAPPER_MSXTR,
-    TC_MAPPER_ALL,
-} TcMapperType;
+#include "MediaDb.h"
 
 int romMapperTC8566AFCreate(char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage,
-                            TcMapperType type);
+                            RomType type);
 
 #endif

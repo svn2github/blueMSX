@@ -634,9 +634,6 @@
 					RelativePath="..\..\Src\Memory\romMapperDRAM.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperDRAM.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperDumas.c">
 				</File>
 				<File
@@ -942,6 +939,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperDisk.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperDRAM.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperF4device.h">

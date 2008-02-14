@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-02-14 06:07:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,7 +334,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonSaturation       = "饱和度:";
     ls->propMonGamma            = "伽玛值:";
     ls->propMonScanlines        = " 扫描线:";
-    ls->propMonColorGhosting    = " RF-调制器";
+    ls->propMonColorGhosting    = " RF-调制器:";
     ls->propMonEffectsGB        = "特效";
 
     ls->propPerfVideoDrvGB      = "视频驱动 ";
