@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/Trainer/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-02-10 04:57:42 $
+** $Date: 2008-02-15 00:57:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -69,6 +69,7 @@ typedef enum {
     LID_CHINESESIMP = 12,
     LID_CHINESETRAD = 13,
     LID_RUSSIAN     = 14,
+    LID_CATALAN     = 15,
 } LanguageId;
 
 typedef struct Snapshot Snapshot;
