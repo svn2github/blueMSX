@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2007-08-05 18:05:05 $
+** $Date: 2008-02-27 07:01:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,6 @@ typedef struct {
     int startPage;
     int size;
     int romMask;
-    int flashStart;
     int romMapper[4];
     int flashPage[4];
     int sccEnable;
@@ -56,12 +55,11 @@ typedef struct {
 
 static void mapPage(RomMapperMegaFlashRomScc* rm, int bank, int page)
 {
-    int flashPageStart  = rm->flashStart / 0x2000;
     int readEnable;
     UInt8* bankData;
 
     rm->romMapper[bank] = page & (rm->size / 0x2000 - 1);
-    rm->flashPage[bank] = page - flashPageStart;
+    rm->flashPage[bank] = page;
 
     if (rm->flashPage[bank] < 0) {
         bankData = rm->romData + page * 0x2000;
@@ -207,6 +205,7 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMegaFlashRomScc* rm;
+    UInt32 writeProtect;
     int i;
 
     rm = calloc(1, sizeof(RomMapperMegaFlashRomScc));
@@ -218,7 +217,12 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
         size = 0x80000;
     }
 
-    rm->flashStart = flashSize < 0 ? 0 : 0x80000 - flashSize;
+    writeProtect = 0xff;
+    i = (flashSize < 0 ? 0 : 0x80000 - flashSize) / 0x10000;
+    for (; i < 0x80000 / 0x10000; i ++) {
+        writeProtect &= ~(1 << i);
+    }
+    
     rm->romData = malloc(0x80000);
     memset(rm->romData, 0xff, 0x80000);
     memcpy(rm->romData, romData, size);
@@ -231,12 +235,7 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
     sccSetMode(rm->scc, SCC_REAL);
     rm->sccEnable = 0;
 
-    if (size > rm->flashStart) {
-        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x10000, romData + rm->flashStart, size - rm->flashStart, sramCreateFilenameWithSuffix(filename, "", ".sram"), loadSram);
-    }
-    else {
-        rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000 - rm->flashStart, 0x10000, NULL, 0, sramCreateFilenameWithSuffix(filename, "", ".sram"), loadSram);
-    }
+    rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000, 0x10000, writeProtect, romData, size, sramCreateFilenameWithSuffix(filename, "", ".sram"), loadSram);
 
     for (i = 0; i < 4; i++) {   
         mapPage(rm, i, i);

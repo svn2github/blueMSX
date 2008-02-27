@@ -222,6 +222,7 @@ SOURCE_FILES += romMapperSf7000Ipl.c
 SOURCE_FILES += romMapperSfg05.c
 SOURCE_FILES += romMapperSg1000.c
 SOURCE_FILES += romMapperSg1000Castle.c
+SOURCE_FILES += romMapperShockware.c
 SOURCE_FILES += romMapperSonyHBI55.c
 SOURCE_FILES += romMapperSonyHBIV1.c
 SOURCE_FILES += romMapperStandard.c

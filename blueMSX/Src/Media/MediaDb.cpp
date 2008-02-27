@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-02-27 07:01:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,6 +124,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
     if (name == "WordPro")          return ROM_KONWORDPRO;
     if (name == "Normal")           return ROM_STANDARD;
+    if (name == "MatraShockware")   return ROM_SHOCKWARE;
 
     // System roms
     if (name == "Bunsetsu")     return ROM_BUNSETU;
@@ -570,6 +571,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KONAMI4NF:   return langRomTypeKonamiGeneric();
     case ROM_ASCII16NF:   return langRomTypeSuperPierrot();
     case ROM_PLAIN:       return langRomTypeMirrored();
+    case ROM_SHOCKWARE:   return "Matra Shockware";
     case ROM_FORTEII:     return "Forte II";
     case ROM_NORMAL:      return langRomTypeNormal();
     case ROM_DISKPATCH:   return langRomTypeDiskPatch();
@@ -717,6 +719,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_KONAMI4NF:   return "KONAMI GEN";
     case ROM_ASCII16NF:   return "SUPERPIERR";
     case ROM_PLAIN:       return "MIRRORED";
+    case ROM_SHOCKWARE:   return "SHOCKWARE";
     case ROM_FORTEII:     return "FORTE II";
     case ROM_NORMAL:      return "NORMAL";
     case ROM_DRAM:        return "DRAM";
@@ -839,6 +842,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_SCCMIRRORED: return 1;
     case ROM_SCCEXTENDED: return 1;
     case ROM_PLAIN:       return 1;
+    case ROM_SHOCKWARE:   return 1;
     case ROM_FORTEII:     return 1;
     case ROM_FMPAK:       return 1;
     case ROM_NORMAL:      return 1;

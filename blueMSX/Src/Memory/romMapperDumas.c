@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDumas.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2007-03-24 05:20:37 $
+** $Date: 2008-02-27 07:01:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -180,7 +180,7 @@ int romMapperDumasCreate(char* filename, UInt8* romData,
     rm->deviceHandle = deviceManagerRegister(ROM_DUMAS, &callbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
-    rm->amdFlash = amdFlashCreate(AMD_TYPE_1, 0x80000, 0x10000, romData, size, sramCreateFilenameWithSuffix("dumas.rom", "", ".rom"), 0);
+    rm->amdFlash = amdFlashCreate(AMD_TYPE_1, 0x80000, 0x10000, 0, romData, size, sramCreateFilenameWithSuffix("dumas.rom", "", ".rom"), 0);
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
