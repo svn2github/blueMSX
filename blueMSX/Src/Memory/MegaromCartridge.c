@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-02-27 07:18:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -329,7 +329,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
                 break;
 
             case ROM_MEGAFLSHSCC:
-                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, -1, 1);
+                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, 0);
                 break;
             }
             break;
@@ -386,11 +386,12 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
 
         case ROM_MANBOW2:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x10000, 1);
+            if (size > 0x70000) size = 0x70000;
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f);
             break;
 
         case ROM_MEGAFLSHSCC:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, -1, 0);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0);
             break;
 
         case ROM_OBSONET:

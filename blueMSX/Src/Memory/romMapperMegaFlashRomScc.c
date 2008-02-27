@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-02-27 07:18:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,11 +201,10 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
 }
 
 int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData, 
-                                   int size, int slot, int sslot, int startPage, int flashSize, int loadSram) 
+                                   int size, int slot, int sslot, int startPage, UInt32 writeProtectMask) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperMegaFlashRomScc* rm;
-    UInt32 writeProtect;
     int i;
 
     rm = calloc(1, sizeof(RomMapperMegaFlashRomScc));
@@ -215,12 +214,6 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
 
     if (size >= 0x80000) {
         size = 0x80000;
-    }
-
-    writeProtect = 0xff;
-    i = (flashSize < 0 ? 0 : 0x80000 - flashSize) / 0x10000;
-    for (; i < 0x80000 / 0x10000; i ++) {
-        writeProtect &= ~(1 << i);
     }
     
     rm->romData = malloc(0x80000);
@@ -235,7 +228,7 @@ int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData,
     sccSetMode(rm->scc, SCC_REAL);
     rm->sccEnable = 0;
 
-    rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000, 0x10000, writeProtect, romData, size, sramCreateFilenameWithSuffix(filename, "", ".sram"), loadSram);
+    rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000, 0x10000, writeProtectMask, romData, size, sramCreateFilenameWithSuffix(filename, "", ".sram"), 1);
 
     for (i = 0; i < 4; i++) {   
         mapPage(rm, i, i);

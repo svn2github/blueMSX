@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-02-27 07:18:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -250,7 +250,7 @@ AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, UInt32 wri
         size = flashSize;
     }
 
-    if (rm->sramFilename[0] && !loadSram) {
+    if (rm->sramFilename[0]) {
         memset(rm->romData + size, 0xff, flashSize - size);
         sramLoad(rm->sramFilename, rm->romData, rm->flashSize, NULL, 0);
     }
@@ -258,10 +258,11 @@ AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, UInt32 wri
     if (size > 0) {
         memcpy(rm->romData, romData, size);
     }
-
+#if 0
     if (rm->sramFilename[0] && loadSram) {
         sramLoad(rm->sramFilename, rm->romData, rm->flashSize, NULL, 0);
     }
+#endif
 
     return rm;
 }
