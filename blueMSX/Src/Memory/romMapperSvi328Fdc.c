@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi328Fdc.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -193,7 +193,7 @@ int svi328FdcCreate(void)
     ioPortRegister(0x34, readIo, writeIo, rm);
     ioPortRegister(0x38, readIo, writeIo, rm);
 
-    rm->fdc = wd2793Create();
+    rm->fdc = wd2793Create(FDC_TYPE_WD2793);
 
     reset(rm);
 

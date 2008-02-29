@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,6 +59,7 @@ struct WD2793 {
     int    diskSide;
 	int    diskDensity;
     FdcAudio* fdcAudio;
+    Wd2793FdcType type;
     UInt8  sectorBuf[512];
 };
 
@@ -281,7 +282,9 @@ int wd2793GetSide(WD2793* wd)
 void wd2793SetSide(WD2793* wd, int side)
 {
     sync(wd);
-    wd->diskSide = side;
+    if (wd->type != FDC_TYPE_WD1772) {
+        wd->diskSide = side;
+    }
 }
 
 void wd2793SetDensity(WD2793* wd, int density)
@@ -664,11 +667,14 @@ void wd2793Reset(WD2793* wd)
     fdcAudioReset(wd->fdcAudio);
 }
 
-WD2793* wd2793Create()
+WD2793* wd2793Create(Wd2793FdcType type)
 {
     WD2793* wd = malloc(sizeof(WD2793));
 
     wd->fdcAudio = fdcAudioCreate(FA_WESTERN_DIGITAL);
+
+    wd->type = type;
+
     wd2793Reset(wd);
 
     return wd;

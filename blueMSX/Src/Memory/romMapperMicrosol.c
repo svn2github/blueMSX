@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMicrosol.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-09-21 04:28:07 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -219,7 +219,7 @@ int romMapperMicrosolCreate(char* filename, UInt8* romData,
     ioPortRegister(0xd3, readIo, writeIo, rm);
     ioPortRegister(0xd4, readIo, writeIo, rm);
 
-    rm->fdc = wd2793Create();
+    rm->fdc = wd2793Create(FDC_TYPE_WD2793);
 
     reset(rm);
 

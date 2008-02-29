@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPhilipsFdc.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-19 06:00:31 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -205,7 +205,7 @@ int romMapperPhilipsFdcCreate(char* filename, UInt8* romData,
         slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     }
 
-    rm->fdc = wd2793Create();
+    rm->fdc = wd2793Create(FDC_TYPE_WD2793);
 
     reset(rm);
 

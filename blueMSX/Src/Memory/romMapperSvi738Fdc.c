@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSvi738Fdc.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -196,7 +196,7 @@ int romMapperSvi738FdcCreate(char* filename, UInt8* romData,
         slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     }
 
-    rm->fdc = wd2793Create();
+    rm->fdc = wd2793Create(FDC_TYPE_WD2793);
 
     reset(rm);
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2008-02-29 06:21:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,9 +30,16 @@
 
 #include "MsxTypes.h"
 
+typedef enum
+{
+        FDC_TYPE_WD1772,
+        FDC_TYPE_WD1793,
+        FDC_TYPE_WD2793
+} Wd2793FdcType;
+
 typedef struct WD2793 WD2793;
 
-WD2793* wd2793Create();
+WD2793* wd2793Create(Wd2793FdcType type);
 void    wd2793Destroy(WD2793* tc);
 void    wd2793Reset(WD2793* tc);
 
