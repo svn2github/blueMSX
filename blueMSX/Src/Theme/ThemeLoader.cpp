@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2007-08-24 05:12:20 $
+** $Date: 2008-03-09 07:14:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1337,7 +1337,32 @@ extern "C" ThemeCollection* themeLoad(const char* themePath)
 
 static ThemeCollection** currentWin32Theme = NULL;
 
-#ifdef USE_ARCH_GLOB
+#ifdef SINGLE_THEME
+extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
+{
+    ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
+    int index = 0;
+
+    // Set default theme
+    if (defaultTheme != NULL) {
+        themeList[index++] = defaultTheme;
+    }
+
+    ThemeCollection* themeCollection = themeLoad("Themes/" SINGLE_THEME);
+    if (themeCollection != NULL) {
+        if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
+        if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
+        if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
+        themeList[index++] = themeCollection;
+    }
+
+    themeList[index] = NULL;
+
+    currentWin32Theme = themeList;
+
+    return themeList;
+}
+#else
 extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 {
     ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
@@ -1362,44 +1387,6 @@ extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
         }
         archGlobFree(glob);
     }
-    themeList[index] = NULL;
-
-    currentWin32Theme = themeList;
-
-    return themeList;
-}
-#else
-extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
-{
-    ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
-    int index = 0;
-
-    // Set default theme
-    if (defaultTheme != NULL) {
-        themeList[index++] = defaultTheme;
-    }
-
-    // Load custom made themes
-    WIN32_FIND_DATA wfd;
-    HANDLE handle = FindFirstFile("Themes/*", &wfd);
-
-    if (handle != INVALID_HANDLE_VALUE) {
-        do {
-		    DWORD fa = GetFileAttributes(wfd.cFileName);
-            if (fa & FILE_ATTRIBUTE_DIRECTORY) {
-                ThemeCollection* themeCollection = themeLoad(wfd.cFileName, NULL);
-                if (themeCollection != NULL) {
-                    if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
-                    if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
-                    if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
-                    themeList[index++] = themeCollection;
-                }
-            }
-        } while (FindNextFile(handle, &wfd));
-
-    	FindClose(handle);
-    }
-
     themeList[index] = NULL;
 
     currentWin32Theme = themeList;

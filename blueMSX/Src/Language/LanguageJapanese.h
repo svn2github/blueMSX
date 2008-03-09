@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-03-09 07:14:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -116,7 +116,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuCartWaveSCSI        = "WAVE-SCSI";                  // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";                 // New in 2.7
     ls->menuCartSCC             = "SCC カートリッジ";
-    ls->menuCartSCCPlus         = "SCC+ カートリッジ";
+    ls->menuCartSCCPlus         = "SCC-I カートリッジ";
     ls->menuCartFMPac           = "FMPAC+ カートリッジ";
     ls->menuCartPac             = "PAC+ カートリッジ";
     ls->menuCartHBI55           = "Sony HBI-55 カートリッジ";

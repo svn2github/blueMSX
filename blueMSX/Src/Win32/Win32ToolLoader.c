@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2006-09-21 04:28:08 $
+** $Date: 2008-03-09 07:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "build_number.h"
 #include "version.h"
 
+#ifndef NO_TOOL_SUPPORT
 
 #define MAX_TOOLS 16
 
@@ -419,3 +420,4 @@ void toolInfoSetLanguage(ToolInfo* toolInfo, int langId)
     }
 }
 
+#endif

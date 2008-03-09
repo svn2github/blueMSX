@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.95 $
+** $Revision: 1.96 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -866,7 +866,7 @@ char* langRomTypeZenima80() { return ls->romTypeZenima80; }
 char* langRomTypeZenima90() { return ls->romTypeZenima90; }
 char* langRomTypeZenima126() { return ls->romTypeZenima126; }
 char* langRomTypeScc() { return "SCC"; }
-char* langRomTypeSccPlus() { return "SCC+"; }
+char* langRomTypeSccPlus() { return "SCC-I"; }
 char* langRomTypeSnatcher() { return "The Snatcher"; }
 char* langRomTypeSdSnatcher() { return "SD Snatcher"; }
 char* langRomTypeSccMirrored() { return ls->romTypeSccMirrored; }

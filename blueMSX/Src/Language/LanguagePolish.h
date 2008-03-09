@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2008-02-14 06:07:09 $
+** $Date: 2008-03-09 07:14:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Cartridge";
-    ls->menuCartSCCPlus         = "SCC+ Kartrid¿";
+    ls->menuCartSCCPlus         = "SCC-I Kartrid¿";
     ls->menuCartFMPac           = "Kartrid¿ FM-PAC";
     ls->menuCartPac             = "Kartrid¿ PAC";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";

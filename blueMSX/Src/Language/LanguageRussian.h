@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageRussian.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2008-02-14 06:07:09 $
+** $Date: 2008-03-09 07:14:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC картридж";
-    ls->menuCartSCCPlus         = "SCC+ картридж";
+    ls->menuCartSCCPlus         = "SCC-I картридж";
     ls->menuCartFMPac           = "FM-PAC картридж";
     ls->menuCartPac             = "PAC Cartridge";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";

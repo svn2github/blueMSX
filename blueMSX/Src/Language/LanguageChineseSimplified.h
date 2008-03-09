@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2008-02-14 06:07:08 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,7 +113,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
-    ls->menuCartSCCPlus         = "SCC+ 卡带";
+    ls->menuCartSCCPlus         = "SCC-I 卡带";
     ls->menuCartSCC             = "SCC 卡带";
     ls->menuCartFMPac           = "FM-PAC 卡带";
     ls->menuCartPac             = "PAC 卡带";

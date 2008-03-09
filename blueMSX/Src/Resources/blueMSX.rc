@@ -21,7 +21,7 @@
 
 IDB_BLUEMSX             BITMAP                  "blueMSXtop.bmp"
 
-
+#ifndef NO_DEFAULT_THEME
 IDB_CLASSIC_BG          BITMAP                  "classic/background.bmp"
 IDB_CLASSIC_BGSMALL     BITMAP                  "classic/backgroundsmall.bmp"
 IDB_CLASSIC_FONT        BITMAP                  "classic/font.bmp"
@@ -48,6 +48,8 @@ IDB_CLASSIC_BTCAS       BITMAP                  "classic/buttonCas.bmp"
 IDB_CLASSIC_BTSIZE      BITMAP                  "classic/buttonSize.bmp"
 IDB_CLASSIC_BTOPTIONS   BITMAP                  "classic/buttonOptions.bmp"
 IDB_CLASSIC_BTHELP      BITMAP                  "classic/buttonHelp.bmp"
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -222,11 +224,13 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE |
     WS_CAPTION | WS_SYSMENU
 FONT 8, DEFAULT_FONT, 0, 0, 0x0
 BEGIN
+#ifndef NO_FILE_HISTORY
     GROUPBOX        "File History ",IDC_SETINGSFILEHISTORYGOUPBOX,19,16,282,53
     ICON            IDI_HISTORY,IDC_STATIC,30,30,20,20
     RTEXT           "Number of items in File History:",IDC_SETINGSHISTORYSIZETEXT,65,29,147,11
     EDITTEXT        IDC_SETINGSHISTORYSIZE,249,27,30,14,ES_AUTOHSCROLL | ES_NUMBER,WS_EX_RIGHT
     PUSHBUTTON      "Clear History",IDC_SETTINGSHISTORYCLEAR,171,48,109,14
+#endif
     GROUPBOX        "",IDC_SETTINGSDEFSLOTSGB,19,73,282,61
     ICON            IDI_SCRSAVER,IDC_STATIC,30,90,20,20
     LTEXT           "",IDC_SETTINGSSLOTS,65,85,105,11    

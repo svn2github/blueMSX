@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.182 $
+** $Revision: 1.183 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-03-09 07:14:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2643,6 +2643,14 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
         emuCheckFullscreenArgument(pProperties, szLine);
     }
+
+#ifdef SINGLE_THEME
+    strcpy(pProperties->settings.themeName, SINGLE_THEME);
+#endif
+
+#ifdef SINGLE_MACHINE
+    strcpy(pProperties->emulation.machineName, SINGLE_MACHINE);
+#endif
 
     if (readOnlyDir && pProperties->settings.portable) {
         MessageBox(NULL, langErrorPortableReadonly(), langErrorTitle(), MB_OK);

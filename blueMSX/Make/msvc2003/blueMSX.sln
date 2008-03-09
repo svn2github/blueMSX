@@ -6,14 +6,20 @@ EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
+		Debug Canned = Debug Canned
 		Release = Release
+		Release Canned = Release Canned
 		Release Console = Release Console
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Debug.ActiveCfg = Debug|Win32
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Debug.Build.0 = Debug|Win32
+		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Debug Canned.ActiveCfg = Debug Canned|Win32
+		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Debug Canned.Build.0 = Debug Canned|Win32
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release.ActiveCfg = Release|Win32
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release.Build.0 = Release|Win32
+		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release Canned.ActiveCfg = Release Canned|Win32
+		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release Canned.Build.0 = Release Canned|Win32
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release Console.ActiveCfg = Release Console|Win32
 		{4AE8471F-8983-42BC-9ACB-7420F79C82C2}.Release Console.Build.0 = Release Console|Win32
 	EndGlobalSection

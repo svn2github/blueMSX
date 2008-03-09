@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2007-03-22 20:50:28 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,7 +43,7 @@
 #define CARTNAME_SCCMIRRORED "SCC Mirrored Cartridge"
 #define CARTNAME_SCCEXPANDED "SCC Expanded Cartridge"
 #define CARTNAME_SCC         "SCC Cartridge"
-#define CARTNAME_SCCPLUS     "SCC+ Cartridge"
+#define CARTNAME_SCCPLUS     "SCC-I Cartridge"
 #define CARTNAME_FMPAC       "FM-PAC Cartridge"
 #define CARTNAME_PAC         "PAC Cartridge"
 #define CARTNAME_SONYHBI55   "Sony HBI-55"

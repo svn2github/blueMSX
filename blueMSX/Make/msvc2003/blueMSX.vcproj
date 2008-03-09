@@ -233,6 +233,120 @@
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
+		<Configuration
+			Name="Release Canned|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				GlobalOptimizations="TRUE"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="TRUE"
+				EnableFiberSafeOptimizations="TRUE"
+				OptimizeForProcessor="0"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
+				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY; NO_TOOL_SUPPORT"
+				RuntimeLibrary="0"
+				EnableEnhancedInstructionSet="0"
+				UsePrecompiledHeader="0"
+				AssemblerOutput="4"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
+				OutputFile="$(OutDir)/blueMSX.exe"
+				LinkIncremental="1"
+				IgnoreDefaultLibraryNames="libc.lib"
+				GenerateDebugInformation="TRUE"
+				GenerateMapFile="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NO_DEFAULT_THEME"
+				AdditionalIncludeDirectories="..\..\Src\BuildInfo"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Debug Canned|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
+				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
+				OutputFile="$(OutDir)/blueMSX.exe"
+				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="libc.lib"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/blueMSX.pdb"
+				GenerateMapFile="TRUE"
+				SubSystem="1"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NO_DEFAULT_THEME"
+				AdditionalIncludeDirectories="..\..\Src\BuildInfo"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -1598,6 +1712,26 @@ buildnumber.exe
 ..\..\bin\buildnumber.exe
 "
 						AdditionalDependencies="..\..\Src\Win32\Win32.c;..\..\Src\Win32\Win32directX.c;..\..\Src\Win32\Win32directXSound.c;..\..\Src\Win32\Win32file.c;..\..\Src\Win32\Win32FileHistory.c;..\..\Src\Win32\Win32Help.c;..\..\Src\Win32\Win32joystick.c;..\..\Src\Win32\Win32Keyboard.c;..\..\Src\Win32\Win32machineConfig.c;..\..\Src\Win32\Win32Menu.c;..\..\Src\Win32\Win32MouseEmu.c;..\..\Src\Win32\Win32properties.c;..\..\Src\Win32\Win32screenshot.c;..\..\Src\Win32\Win32snd.c;..\..\Src\Win32\Win32StatusBar.c;..\..\Src\Win32\Win32StatusBar2.c;..\..\Src\Win32\Win32Timer.c;..\..\Src\Win32\Win32ToolBar.c;..\..\Src\Win32\Win32WaveCapture.c;..\..\Src\Win32\Win32wmmSound.c;..\..\Src\Common\RomMapper.c;..\..\Src\Common\audioMixer.c;..\..\Src\Common\MSX.c;..\..\Src\SoundChips\AY8910.c;..\..\Src\SoundChips\SCC.c;..\..\Src\SoundChips\FMOpl.c;..\..\Src\SoundChips\KeyClick.c;..\..\Src\SoundChips\Y8950.c;..\..\Src\SoundChips\YMDeltat.c;..\..\Src\SoundChips\openMsxYM2413.cpp;..\..\Src\SoundChips\YM2413.cpp;..\..\Src\Bios\Patch.c;..\..\Src\Z80\Debug.c;..\..\Src\Z80\Z80.c;..\..\Src\IoDevice\Disk.c;..\..\Src\IoDevice\Casette.c;..\..\Src\IoDevice\I8251.c;..\..\Src\IoDevice\I8255.c;..\..\Src\VideoChips\V9938.c;..\..\Src\VideoChips\VDP.c;..\..\Src\VideoRender\videoRender.c;..\..\Src\Win32\Win32directx.h;..\..\Src\Win32\Win32file.h;..\..\Src\Win32\Win32joystick.h;..\..\Src\Win32\Win32MouseEmu.h;..\..\Src\Win32\Win32Properties.h;..\..\Src\Win32\Win32Sound.h;..\..\Src\Win32\Win32SystemTime.h;..\..\Src\Win32\Win32Timer.h;..\..\Src\Win32\Win32Screenshot.h;..\..\Src\Win32\Win32wmmsound.h;..\..\Src\Win32\Win32wmmdirectxsound.h;..\..\Src\Win32\Win32ShortcutsConfig.h;..\..\Src\Win32\Win32ShortcutsConfig.c;..\..\Src\Common\audioMixer.h;..\..\Src\Common\Disk.h;..\..\Src\Common\Casette.h;..\..\Src\Common\Common.h;..\..\Src\Common\MSX.h;..\..\Src\Common\msxTypes.h;..\..\Src\Common\romMapper.h;..\..\Src\SoundChips\AY8910.h;..\..\Src\SoundChips\SCC.h;..\..\Src\SoundChips\Y8950.h;..\..\Src\SoundChips\fmopl.h;..\..\Src\SoundChips\KeyClick.h;..\..\Src\SoundChips\OpenMsxYM2413.h;..\..\Src\SoundChips\YM2413.h;..\..\Src\SoundChips\ymdeltat.h;..\..\Src\Z80\Codes.h;..\..\Src\Z80\CodesCB.h;..\..\Src\Z80\CodesED.h;..\..\Src\Z80\CodesXCB.h;..\..\Src\Z80\CodesXX.h;..\..\Src\IoDevice\DiskUtil.h;..\..\Src\IoDevice\I8251.h;..\..\Src\IoDevice\I8255.h;..\..\Src\SoundChips\openMsxYM2413.h;..\..\Src\Resources\resource.h;..\..\Src\IoDevice\Disk.h;..\..\Src\IoDevice\Casette.h;..\..\Src\Bios\Boot.h;..\..\Src\Bios\Patch.h;..\..\Src\Bios\romDISK.h;..\..\Src\Bios\romFMPAC.h;..\..\Src\Bios\romKANJI.h;..\..\Src\Bios\romMapper.h;..\..\Src\Bios\romMSX.h;..\..\Src\Bios\romMSX2.h;..\..\Src\Bios\romMSX2EXT.h;..\..\Src\Bios\romMSX2P.h;..\..\Src\Bios\romMSX2PEXT.h;..\..\Src\Bios\romMSXDOS2.h;..\..\Src\Bios\romRS232.h;..\..\Src\Z80\Tables.h;..\..\Src\Z80\Z80.h;..\..\Src\VideoChips\V9938.h;..\..\Src\VideoChips\VDP.h;..\..\Src\VideoRender\videoRender.h;..\..\Src\Resources\blueMSX.rc;..\..\Src\Memory\IoPort.c;..\..\Src\Memory\MegaromCartridge.c;..\..\Src\Memory\ramMapper.c;..\..\Src\Memory\ramNormal.c;..\..\Src\Memory\RomLoader.c;..\..\Src\Memory\RomMapper.c;..\..\Src\Memory\SlotManager.c;..\..\Src\Memory\sramLoader.c"
+						Outputs="$(ProjectDir)..\..\Src\BuildInfo\build_number.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Canned|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="cd ..\..\Src\BuildInfo
+..\..\bin\buildnumber.exe
+"
+						AdditionalDependencies="..\..\Src\Win32\Win32.c;..\..\Src\Win32\Win32directX.c;..\..\Src\Win32\Win32directXSound.c;..\..\Src\Win32\Win32file.c;..\..\Src\Win32\Win32FileHistory.c;..\..\Src\Win32\Win32Help.c;..\..\Src\Win32\Win32joystick.c;..\..\Src\Win32\Win32Keyboard.c;..\..\Src\Win32\Win32machineConfig.c;..\..\Src\Win32\Win32Menu.c;..\..\Src\Win32\Win32MouseEmu.c;..\..\Src\Win32\Win32properties.c;..\..\Src\Win32\Win32screenshot.c;..\..\Src\Win32\Win32snd.c;..\..\Src\Win32\Win32StatusBar.c;..\..\Src\Win32\Win32StatusBar2.c;..\..\Src\Win32\Win32Timer.c;..\..\Src\Win32\Win32ToolBar.c;..\..\Src\Win32\Win32WaveCapture.c;..\..\Src\Win32\Win32wmmSound.c;..\..\Src\Common\RomMapper.c;..\..\Src\Common\audioMixer.c;..\..\Src\Common\MSX.c;..\..\Src\SoundChips\AY8910.c;..\..\Src\SoundChips\SCC.c;..\..\Src\SoundChips\FMOpl.c;..\..\Src\SoundChips\KeyClick.c;..\..\Src\SoundChips\Y8950.c;..\..\Src\SoundChips\YMDeltat.c;..\..\Src\SoundChips\openMsxYM2413.cpp;..\..\Src\SoundChips\YM2413.cpp;..\..\Src\Bios\Patch.c;..\..\Src\Z80\Debug.c;..\..\Src\Z80\Z80.c;..\..\Src\IoDevice\Disk.c;..\..\Src\IoDevice\Casette.c;..\..\Src\IoDevice\I8251.c;..\..\Src\IoDevice\I8255.c;..\..\Src\VideoChips\V9938.c;..\..\Src\VideoChips\VDP.c;..\..\Src\VideoRender\videoRender.c;..\..\Src\Win32\Win32directx.h;..\..\Src\Win32\Win32file.h;..\..\Src\Win32\Win32joystick.h;..\..\Src\Win32\Win32MouseEmu.h;..\..\Src\Win32\Win32Properties.h;..\..\Src\Win32\Win32Sound.h;..\..\Src\Win32\Win32SystemTime.h;..\..\Src\Win32\Win32Timer.h;..\..\Src\Win32\Win32Screenshot.h;..\..\Src\Win32\Win32wmmsound.h;..\..\Src\Win32\Win32wmmdirectxsound.h;..\..\Src\Win32\Win32ShortcutsConfig.h;..\..\Src\Win32\Win32ShortcutsConfig.c;..\..\Src\Common\audioMixer.h;..\..\Src\Common\Disk.h;..\..\Src\Common\Casette.h;..\..\Src\Common\Common.h;..\..\Src\Common\MSX.h;..\..\Src\Common\msxTypes.h;..\..\Src\Common\romMapper.h;..\..\Src\SoundChips\AY8910.h;..\..\Src\SoundChips\SCC.h;..\..\Src\SoundChips\Y8950.h;..\..\Src\SoundChips\fmopl.h;..\..\Src\SoundChips\KeyClick.h;..\..\Src\SoundChips\OpenMsxYM2413.h;..\..\Src\SoundChips\YM2413.h;..\..\Src\SoundChips\ymdeltat.h;..\..\Src\Z80\Codes.h;..\..\Src\Z80\CodesCB.h;..\..\Src\Z80\CodesED.h;..\..\Src\Z80\CodesXCB.h;..\..\Src\Z80\CodesXX.h;..\..\Src\IoDevice\DiskUtil.h;..\..\Src\IoDevice\I8251.h;..\..\Src\IoDevice\I8255.h;..\..\Src\SoundChips\openMsxYM2413.h;..\..\Src\Resources\resource.h;..\..\Src\IoDevice\Disk.h;..\..\Src\IoDevice\Casette.h;..\..\Src\Bios\Boot.h;..\..\Src\Bios\Patch.h;..\..\Src\Bios\romDISK.h;..\..\Src\Bios\romFMPAC.h;..\..\Src\Bios\romKANJI.h;..\..\Src\Bios\romMapper.h;..\..\Src\Bios\romMSX.h;..\..\Src\Bios\romMSX2.h;..\..\Src\Bios\romMSX2EXT.h;..\..\Src\Bios\romMSX2P.h;..\..\Src\Bios\romMSX2PEXT.h;..\..\Src\Bios\romMSXDOS2.h;..\..\Src\Bios\romRS232.h;..\..\Src\Z80\Tables.h;..\..\Src\Z80\Z80.h;..\..\Src\VideoChips\V9938.h;..\..\Src\VideoChips\VDP.h;..\..\Src\VideoRender\videoRender.h;..\..\Src\Resources\blueMSX.rc;..\..\Src\Memory\IoPort.c;..\..\Src\Memory\MegaromCartridge.c;..\..\Src\Memory\ramMapper.c;..\..\Src\Memory\ramNormal.c;..\..\Src\Memory\RomLoader.c;..\..\Src\Memory\RomMapper.c;..\..\Src\Memory\SlotManager.c;..\..\Src\Memory\sramLoader.c"
+						Outputs="$(ProjectDir)..\..\Src\BuildInfo\build_number.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Canned|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="cd ..\..\Src\BuildInfo
+..\..\bin\buildnumber.exe
+"
+						AdditionalDependencies="..\..\Src\Win32\Win32.c;..\..\Src\Win32\Win32screenshot.c;..\..\Src\Win32\Win32directX.c;..\..\Src\Win32\Win32wmmSound.c;..\..\Src\Win32\Win32directXSound.c;..\..\Src\Win32\Win32file.c;..\..\Src\Win32\Win32joystick.c;..\..\Src\Win32\Win32properties.c;..\..\Src\Win32\Win32statusbar2.c;..\..\Src\Win32\Win32snd.c;..\..\Src\Win32\Win32Timer.c;..\..\Src\Common\RomMapper.c;..\..\Src\Common\audioMixer.c;..\..\Src\Common\MSX.c;..\..\Src\SoundChips\AY8910.c;..\..\Src\SoundChips\SCC.c;..\..\Src\SoundChips\FMOpl.c;..\..\Src\SoundChips\KeyClick.c;..\..\Src\SoundChips\Y8950.c;..\..\Src\SoundChips\YMDeltat.c;..\..\Src\SoundChips\openMsxYM2413.cpp;..\..\Src\SoundChips\YM2413.cpp;..\..\Src\Bios\Patch.c;..\..\Src\Z80\Debug.c;..\..\Src\Z80\Z80.c;..\..\Src\IoDevice\Disk.c;..\..\Src\IoDevice\Casette.c;..\..\Src\IoDevice\I8251.c;..\..\Src\IoDevice\I8255.c;..\..\Src\VideoChips\V9938.c;..\..\Src\VideoChips\VDP.c;..\..\Src\VideoRender\videoRender.c;..\..\Src\Win32\Win32directx.h;..\..\Src\Win32\Win32file.h;..\..\Src\Win32\Win32joystick.h;..\..\Src\Win32\Win32MouseEmu.h;..\..\Src\Win32\Win32Properties.h;..\..\Src\Win32\Win32Sound.h;..\..\Src\Win32\Win32SystemTime.h;..\..\Src\Win32\Win32Timer.h;..\..\Src\Win32\Win32Screenshot.h;..\..\Src\Win32\Win32wmmsound.h;..\..\Src\Win32\Win32wmmdirectxsound.h;..\..\Src\Win32\Win32ShortcutsConfig.h;..\..\Src\Win32\Win32ShortcutsConfig.c;..\..\Src\Common\audioMixer.h;..\..\Src\Common\Disk.h;..\..\Src\Common\Casette.h;..\..\Src\Common\Common.h;..\..\Src\Common\MSX.h;..\..\Src\Common\msxTypes.h;..\..\Src\Common\romMapper.h;..\..\Src\SoundChips\AY8910.h;..\..\Src\SoundChips\SCC.h;..\..\Src\SoundChips\Y8950.h;..\..\Src\SoundChips\fmopl.h;..\..\Src\SoundChips\KeyClick.h;..\..\Src\SoundChips\OpenMsxYM2413.h;..\..\Src\SoundChips\YM2413.h;..\..\Src\SoundChips\ymdeltat.h;..\..\Src\Z80\Codes.h;..\..\Src\Z80\CodesCB.h;..\..\Src\Z80\CodesED.h;..\..\Src\Z80\CodesXCB.h;..\..\Src\Z80\CodesXX.h;..\..\Src\IoDevice\DiskUtil.h;..\..\Src\IoDevice\I8251.h;..\..\Src\IoDevice\I8255.h;..\..\Src\SoundChips\openMsxYM2413.h;..\..\Src\Resources\resource.h;..\..\Src\IoDevice\Disk.h;..\..\Src\IoDevice\Casette.h;..\..\Src\Bios\Boot.h;..\..\Src\Bios\Patch.h;..\..\Src\Bios\romDISK.h;..\..\Src\Bios\romFMPAC.h;..\..\Src\Bios\romKANJI.h;..\..\Src\Bios\romMapper.h;..\..\Src\Bios\romMSX.h;..\..\Src\Bios\romMSX2.h;..\..\Src\Bios\romMSX2EXT.h;..\..\Src\Bios\romMSX2P.h;..\..\Src\Bios\romMSX2PEXT.h;..\..\Src\Bios\romMSXDOS2.h;..\..\Src\Bios\romRS232.h;..\..\Src\Z80\Tables.h;..\..\Src\Z80\Z80.h;..\..\Src\VideoChips\V9938.h;..\..\Src\VideoChips\VDP.h;..\..\Src\VideoRender\videoRender.h;..\..\Src\Resources\blueMSX.rc"
 						Outputs="$(ProjectDir)..\..\Src\BuildInfo\build_number.h"/>
 				</FileConfiguration>
 			</File>

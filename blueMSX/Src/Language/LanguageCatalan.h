@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageCatalan.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2008-02-14 06:07:08 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "Cartutx SCC";
-    ls->menuCartSCCPlus         = "Cartutx SCC+";
+    ls->menuCartSCCPlus         = "Cartutx SCC-I";
     ls->menuCartFMPac           = "Cartutx FM-PAC";
     ls->menuCartPac             = "Cartutx PAC";
     ls->menuCartHBI55           = "Cartutx Sony HBI-55";

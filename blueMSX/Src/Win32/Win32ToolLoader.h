@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-19 06:00:39 $
+** $Date: 2008-03-09 07:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,8 @@
 
 typedef struct ToolInfo ToolInfo;
 
+#ifndef NO_TOOL_SUPPORT
+
 void toolLoadAll(const char* path, int languageId);
 void toolUnLoadAll();
 
@@ -45,5 +47,21 @@ const char* toolInfoGetName(ToolInfo* toolInfo);
 void toolInfoShowTool(ToolInfo* toolInfo);
 void toolInfoSetLanguage(ToolInfo* toolInfo, int langId);
 
+#else
+
+static void toolLoadAll(const char* path, int languageId) {}
+static void toolUnLoadAll() {}
+
+static int toolGetCount() { return 0; }
+
+static ToolInfo* toolInfoGet(int index) { return NULL; }
+static ToolInfo* toolInfoFind(char* name) { return NULL; }
+
+static const char* toolInfoGetName(ToolInfo* toolInfo) { return ""; }
+
+static void toolInfoShowTool(ToolInfo* toolInfo) {}
+static void toolInfoSetLanguage(ToolInfo* toolInfo, int langId) {}
+
+#endif
 
 #endif

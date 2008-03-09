@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2008-02-14 06:07:09 $
+** $Date: 2008-03-09 07:14:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -114,7 +114,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC             = "SCC Cartridge";
-    ls->menuCartSCCPlus         = "SCC+ Cartridge";
+    ls->menuCartSCCPlus         = "SCC-I Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";
     ls->menuCartPac             = "PAC Cartridge";
     ls->menuCartHBI55           = "Sony HBI-55 Cartridge";

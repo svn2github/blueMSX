@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2008-02-10 17:25:03 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,7 +115,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCartWaveSCSI                = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI               = "Gouda SCSI";          // New in 2.7
     ls->menuCartSCC                     = "Cartuccia SCC";
-    ls->menuCartSCCPlus                 = "Cartuccia SCC+";
+    ls->menuCartSCCPlus                 = "Cartuccia SCC-I";
     ls->menuCartFMPac                   = "Cartuccia FM-PAC";
     ls->menuCartPac                     = "Cartuccia PAC";
     ls->menuCartHBI55                   = "Cartuccia Sony HBI-55";

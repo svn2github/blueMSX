@@ -1,6 +1,7 @@
 
 #define IDB_BLUEMSX                     1003
 
+#ifndef NO_DEFAULT_THEME
 
 #define IDB_CLASSIC_BG                  2100
 #define IDB_CLASSIC_FONT                2101
@@ -28,6 +29,7 @@
 #define IDB_CLASSIC_FPS                 2150
 #define IDB_CLASSIC_FREQ                2151
 
+#endif
 
 #define IDI_BLUEMSX                     30102
 #define IDI_DISKIMAGE                   30103

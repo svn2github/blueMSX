@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2006-09-19 06:00:39 $
+** $Date: 2008-03-09 07:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef NO_DEFAULT_THEME
+
+ThemeCollection* themeClassicCreate() 
+{
+    return NULL;
+}
+#else
 static ThemePage* themeCreateSmall() 
 {
     ThemePage* theme = themePageCreate("small",
@@ -219,3 +226,4 @@ ThemeCollection* themeClassicCreate()
 
     return themeCollection;
 }
+#endif

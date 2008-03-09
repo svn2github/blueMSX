@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-03-09 07:14:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
     if (name == "WordPro")          return ROM_KONWORDPRO;
     if (name == "Normal")           return ROM_STANDARD;
-    if (name == "MatraShockware")   return ROM_SHOCKWARE;
+    if (name == "MatraINK")         return ROM_SHOCKWARE;
 
     // System roms
     if (name == "Bunsetsu")     return ROM_BUNSETU;
@@ -212,6 +212,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "sccexpanded")  return ROM_SCCEXTENDED;
     if (name == "scc")          return ROM_SCC;
     if (name == "sccplus")      return ROM_SCCPLUS;
+    if (name == "scc-i")        return ROM_SCCPLUS;
     if (name == "scc+")         return ROM_SCCPLUS;
     if (name == "pac")          return ROM_PAC;
     if (name == "fmpac")        return ROM_FMPAC;
@@ -571,7 +572,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KONAMI4NF:   return langRomTypeKonamiGeneric();
     case ROM_ASCII16NF:   return langRomTypeSuperPierrot();
     case ROM_PLAIN:       return langRomTypeMirrored();
-    case ROM_SHOCKWARE:   return "Matra Shockware";
+    case ROM_SHOCKWARE:   return "Matra INK";
     case ROM_FORTEII:     return "Forte II";
     case ROM_NORMAL:      return langRomTypeNormal();
     case ROM_DISKPATCH:   return langRomTypeDiskPatch();
@@ -709,7 +710,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_KOREAN126:   return "ZEM 126IN1";
     case ROM_KOREAN90:    return "ZEM 90IN1";
     case ROM_SCC:         return "SCC";
-    case ROM_SCCPLUS:     return "SCC+";
+    case ROM_SCCPLUS:     return "SCC-I";
     case ROM_SNATCHER:    return "SNATCHER";
     case ROM_SDSNATCHER:  return "SDSNATCHER";
     case ROM_SCCMIRRORED: return "SCCMIRRORED";

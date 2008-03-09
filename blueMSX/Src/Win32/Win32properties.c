@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2008-01-25 07:33:59 $
+** $Date: 2008-03-09 07:14:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -472,6 +472,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         }
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
   
+#ifndef NO_FILE_HISTORY
         SendMessage(GetDlgItem(hDlg, IDC_SETINGSFILEHISTORYGOUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistoryGB());
         SendMessage(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZETEXT), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistorySize());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), langPropSetFileHistoryClear());
@@ -481,7 +482,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             sprintf(buffer, "%d", pProperties->filehistory.count);
             SetWindowText(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZE), buffer);
         }
-
+#endif
         for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
             SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
             if (pProperties->cartridge.defaultType == romTypeList[i]) {
@@ -524,6 +525,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
         case IDC_SETTINGSHISTORYCLEAR:
+#ifndef NO_FILE_HISTORY
             {
                 int rv = MessageBox(NULL, langPropClearFileHistory(), langWarningTitle(), MB_ICONWARNING | MB_OKCANCEL);
                 if (rv == IDOK) {
@@ -543,6 +545,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                     EnableWindow(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), FALSE);
                 }
             }
+#endif
             break;
 
         case IDC_SETTINGSSLOT1:
@@ -581,6 +584,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             pProperties->cartridge.defaultType = romTypeList[i];
         }
 
+#ifndef NO_FILE_HISTORY
         {
             char buffer[64];
 
@@ -594,7 +598,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 pProperties->filehistory.count = count;
             }
         }
-
+#endif
         pProperties->cartridge.quickStartDrive = getButtonCheck(hDlg, IDC_SETTINGSSLOT2) ? 1 : 0;
         pProperties->diskdrive.quickStartDrive = getButtonCheck(hDlg, IDC_SETTINGSDRIVEB) ? 1 : 0;
 

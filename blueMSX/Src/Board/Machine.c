@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.60 $
+** $Revision: 1.61 $
 **
-** $Date: 2008-02-27 07:18:56 $
+** $Date: 2008-03-09 07:14:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -458,6 +458,29 @@ int machineIsValid(const char* machineName, int checkRoms)
     return success;
 }
 
+#ifdef SINGLE_MACHINE
+char** machineGetAvailable(int checkRoms)
+{
+    static char* machineNames[256];
+    static char  names[256][64];
+    int index = 0;
+
+    FILE* file;
+    file = fopen("Machines/" SINGLE_MACHINE "config.ini", "rb");
+    if (file != NULL) {
+        if (machineIsValid(SINGLE_MACHINE, checkRoms)) {
+            strcpy(names[index], SINGLE_MACHINE);
+            machineNames[index] = names[index];
+            index++;
+        }
+        fclose(file);
+    }
+    
+    machineNames[index] = NULL;
+
+    return machineNames;
+}
+#else
 char** machineGetAvailable(int checkRoms)
 {
     static char* machineNames[256];
@@ -500,6 +523,7 @@ char** machineGetAvailable(int checkRoms)
 
     return machineNames;
 }
+#endif
 
 void machineUpdate(Machine* machine)
 {
