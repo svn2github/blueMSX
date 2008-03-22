@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/Theme.c,v $
 **
-** $Revision: 1.43 $
+** $Revision: 1.44 $
 **
-** $Date: 2007-08-24 05:12:20 $
+** $Date: 2008-03-22 05:24:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -858,7 +858,7 @@ ThemePage* themeGetPage(Theme* theme, int index)
     return NULL;
 }
 
-UInt32 themeGetNameHash(const char* name)
+unsigned long themeGetNameHash(const char* name)
 {
     UInt32 tag = 0;
     UInt32 mod = 1;
