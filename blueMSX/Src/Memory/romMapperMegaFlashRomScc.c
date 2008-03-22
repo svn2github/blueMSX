@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-02-27 07:18:56 $
+** $Date: 2008-03-22 11:41:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -174,7 +174,6 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
     address += 0x4000;
     if (address >= 0x9800 && address < 0xa000 && rm->sccEnable) {
         sccWrite(rm->scc, address & 0xff, value);
-        return;
     }
     address -= 0x4000;
 
