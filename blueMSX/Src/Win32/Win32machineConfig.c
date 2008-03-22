@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2008-02-27 07:02:00 $
+** $Date: 2008-03-22 09:24:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -860,7 +860,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXAUDIO:
     case ROM_NATIONAL:
     case ROM_PLAIN:
-    case ROM_SHOCKWARE:
+    case ROM_MATRAINK:
     case ROM_FORTEII:
     case ROM_FMDAS:
     case ROM_FMPAK:
@@ -1208,7 +1208,7 @@ static void setEditControls(HWND hDlg)
     case ROM_PANASONIC32:
     case ROM_NATIONAL:
     case ROM_PLAIN:
-    case ROM_SHOCKWARE:
+    case ROM_MATRAINK:
     case ROM_FMPAK:
     case ROM_MSXAUDIO:
     case ROM_FMDAS:
@@ -1457,7 +1457,7 @@ static RomType romTypeList[] = {
     SRAM_ESERAM,
     SRAM_ESESCC,
     ROM_MEGAFLSHSCC,
-    ROM_SHOCKWARE,
+    ROM_MATRAINK,
     ROM_FORTEII,
     ROM_UNKNOWN,
 };

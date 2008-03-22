@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.183 $
+** $Revision: 1.184 $
 **
-** $Date: 2008-03-09 07:14:57 $
+** $Date: 2008-03-22 09:24:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -503,7 +503,7 @@ static RomType romTypeList[] = {
     SRAM_ESERAM,
     SRAM_ESESCC,
     ROM_MEGAFLSHSCC,
-    ROM_SHOCKWARE,
+    ROM_MATRAINK,
     ROM_UNKNOWN,
 };
 

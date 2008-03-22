@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-03-22 09:24:30 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -171,7 +171,7 @@ enum  {
     ROM_DRAM        = 141,
     ROM_PANASONICWX16=142,
     ROM_TC8566AF_TR = 143,
-    ROM_SHOCKWARE   = 144,
+    ROM_MATRAINK    = 144,
     ROM_MAXROMID    = 144
 };
 
