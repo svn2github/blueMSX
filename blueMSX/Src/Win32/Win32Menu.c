@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2008-03-09 07:14:58 $
+** $Date: 2008-03-22 04:55:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -232,10 +232,10 @@ static HMENU hMenuFile = NULL;
 static HMENU hMenuTools = NULL;
 
 
-HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, int isStopped);
-HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts);
-HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int logVideo, int tempStateExits, int enableSpecial);
-HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
+static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, int isStopped);
+static HMENU menuCreateHelp(Properties* pProperties, Shortcuts* shortcuts);
+static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int isStopped, int logSound, int logVideo, int tempStateExits, int enableSpecial);
+static HMENU menuCreateTools(Properties* pProperties, Shortcuts* shortcuts);
 
 
 
