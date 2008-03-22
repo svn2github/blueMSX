@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.81 $
+** $Revision: 1.82 $
 **
-** $Date: 2008-03-22 09:24:30 $
+** $Date: 2008-03-22 19:05:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -124,7 +124,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "SuperPierrot")     return ROM_ASCII16NF;
     if (name == "WordPro")          return ROM_KONWORDPRO;
     if (name == "Normal")           return ROM_STANDARD;
-    if (name == "MatraINK")         return ROM_MATRAINK;
+    if (name == "MatraInk")         return ROM_MATRAINK;
 
     // System roms
     if (name == "Bunsetsu")     return ROM_BUNSETU;
