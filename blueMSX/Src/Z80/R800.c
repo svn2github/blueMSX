@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2007-08-05 18:05:05 $
+** $Date: 2008-03-27 14:23:44 $
 **
 ** Author: Daniel Vik
 **
@@ -492,6 +492,11 @@ static void M1(R800* r800) {
     UInt8 value = r800->regs.R;
     r800->regs.R = (value & 0x80) | ((value + 1) & 0x7f); 
     delayM1(r800);
+}
+
+static void M1_nodelay(R800* r800) { 
+    UInt8 value = r800->regs.R;
+    r800->regs.R = (value & 0x80) | ((value + 1) & 0x7f); 
 }
 
 
@@ -5747,7 +5752,7 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_POSTIO]    = freqAdjust * 3;
         r800->delay[DLY_M1]        = freqAdjust * ((r800->cpuFlags & CPU_ENABLE_M1) ? 2 : 0);
         r800->delay[DLY_XD]        = freqAdjust * 1;
-        r800->delay[DLY_IM]        = freqAdjust * 2;
+        r800->delay[DLY_IM]        = freqAdjust * 4;
         r800->delay[DLY_IM2]       = freqAdjust * 19;
         r800->delay[DLY_NMI]       = freqAdjust * 11;
         r800->delay[DLY_PARALLEL]  = freqAdjust * 2;
@@ -6096,7 +6101,7 @@ void r800Execute(R800* r800) {
 	        r800->writeMemory(r800->ref, --r800->regs.SP.W, r800->regs.PC.B.l);
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
             r800->regs.PC.B.h = r800->readMemory(r800->ref, address);
-            M1(r800);
+            M1_nodelay(r800);
             delayIm2(r800);
             break;
         }
@@ -6190,7 +6195,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 
             r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
             r800->regs.PC.B.h = r800->readMemory(r800->ref, address);
-            M1(r800);
+            M1_nodelay(r800);
             delayIm2(r800);
             break;
         }
@@ -6278,7 +6283,7 @@ void r800ExecuteInstruction(R800* r800) {
 
         r800->regs.PC.B.l = r800->readMemory(r800->ref, address++);
         r800->regs.PC.B.h = r800->readMemory(r800->ref, address);
-        M1(r800);
+        M1_nodelay(r800);
         delayIm2(r800);
         break;
     }
