@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2007-08-07 07:04:24 $
+** $Date: 2008-03-27 16:48:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -289,15 +289,15 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.chip.moonsoundOversampling = 1;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_PSG].enable = 1;
-    properties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = 42;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PSG].pan = 40;
     properties->sound.mixerChannel[MIXER_CHANNEL_PSG].volume = 100;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_SCC].enable = 1;
-    properties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = 58;
+    properties->sound.mixerChannel[MIXER_CHANNEL_SCC].pan = 60;
     properties->sound.mixerChannel[MIXER_CHANNEL_SCC].volume = 100;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].enable = 1;
-    properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = 58;
+    properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].pan = 60;
     properties->sound.mixerChannel[MIXER_CHANNEL_MSXMUSIC].volume = 95;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_MSXAUDIO].enable = 1;
@@ -313,7 +313,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.mixerChannel[MIXER_CHANNEL_YAMAHA_SFG].volume = 95;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_PCM].enable = 1;
-    properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 48;
+    properties->sound.mixerChannel[MIXER_CHANNEL_PCM].pan = 50;
     properties->sound.mixerChannel[MIXER_CHANNEL_PCM].volume = 95;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_IO].enable = 0;
@@ -325,7 +325,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.mixerChannel[MIXER_CHANNEL_MIDI].volume = 90;
 
     properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].enable = 1;
-    properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 54;
+    properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].pan = 55;
     properties->sound.mixerChannel[MIXER_CHANNEL_KEYBOARD].volume = 65;
     
     properties->sound.YkIn.type               = P_MIDI_NONE;
