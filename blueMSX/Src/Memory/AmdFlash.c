@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/AmdFlash.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-02-29 06:01:54 $
+** $Date: 2008-03-27 06:44:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -121,7 +121,7 @@ UInt8 amdFlashRead(AmdFlash* rm, UInt32 address)
 {
     if (rm->state == ST_IDENT) {
         rm->cmdIdx = 0;
-        printf("R %.4x: XX\n", address);
+//        printf("R %.4x: XX\n", address);
         switch (address & 0x03) {
         case 0: 
             return 0x01;
@@ -146,7 +146,7 @@ void amdFlashWrite(AmdFlash* rm, UInt32 address, UInt8 value)
     if (rm->cmdIdx < sizeof(rm->cmd) / sizeof(rm->cmd[0])) {
         int stateValid = 0;
 
-        { static int x = 0; if (++x < 220) printf("W %.4x: %.2x  %d\n", address, value, rm->cmdIdx);}
+//        { static int x = 0; if (++x < 220) printf("W %.4x: %.2x  %d\n", address, value, rm->cmdIdx);}
 
         rm->cmd[rm->cmdIdx].address = address;
         rm->cmd[rm->cmdIdx].value   = value;

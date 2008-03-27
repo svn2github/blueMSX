@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-02-27 07:01:59 $
+** $Date: 2008-03-27 06:44:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,15 +33,69 @@
 #include "Board.h"
 #include "SaveState.h"
 #include "sramLoader.h"
-#include "ft245.h"
+
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef USE_NOWIND_DLL
+#include "Disk.h"
+#include "Properties.h"
+#include <windows.h>
+
+typedef void (__cdecl *NoWind_Init)(void);
+typedef void (__cdecl *NoWind_StartUp)(void);
+typedef void (__cdecl *NoWind_Cleanup)(void);
+typedef void (__cdecl *NoWind_SetImage)(int, const char*);
+typedef void (__cdecl *NoWind_Write)(unsigned char);
+typedef unsigned char (__cdecl *NoWind_Read)(void);
+
+static NoWind_Init     nowindusb_init       = NULL;
+static NoWind_StartUp  nowindusb_startup    = NULL;
+static NoWind_Cleanup  nowindusb_cleanup    = NULL;
+static NoWind_SetImage nowindusb_set_image  = NULL;
+static NoWind_Write    nowindusb_write      = NULL;
+static NoWind_Read     nowindusb_read       = NULL;
+
+static HINSTANCE hLib = NULL;
+
+void nowindLoadDll()
+{
+	// Load DLL.
+	hLib = LoadLibrary("nowindusb.dll");
+
+	if (!hLib)	{
+		return;
+	}
+
+	nowindusb_init      = (NoWind_Init)    GetProcAddress(hLib, "nowindusb_init");
+	nowindusb_startup   = (NoWind_StartUp) GetProcAddress(hLib, "nowindusb_startup");
+	nowindusb_cleanup   = (NoWind_Cleanup) GetProcAddress(hLib, "nowindusb_cleanup");
+	nowindusb_set_image = (NoWind_SetImage)GetProcAddress(hLib, "nowindusb_set_image");
+	nowindusb_write     = (NoWind_Write)   GetProcAddress(hLib, "nowindusb_write");
+	nowindusb_read      = (NoWind_Read)    GetProcAddress(hLib, "nowindusb_read");
+}
+
+void nowindUnloadDll()
+{
+    nowindusb_init      = NULL;
+    nowindusb_startup   = NULL;
+    nowindusb_cleanup   = NULL;
+    nowindusb_set_image = NULL;
+    nowindusb_write     = NULL;
+    nowindusb_read      = NULL;
+
+    if (hLib != NULL) {
+	    FreeLibrary(hLib);
+	    hLib = NULL;
+    }
+}
+
+#endif
 
 
 typedef struct {
     int deviceHandle;
     AmdFlash* amdFlash;
-    FT245*  ft245;
     int slot;
     int sslot;
     int startPage;
@@ -75,7 +129,6 @@ static void saveState(RomMapperNoWind* rm)
     saveStateClose(state);
 
     amdFlashSaveState(rm->amdFlash);
-    ft245SaveState(rm->ft245);
 }
 
 static void loadState(RomMapperNoWind* rm)
@@ -88,15 +141,16 @@ static void loadState(RomMapperNoWind* rm)
 
     amdFlashLoadState(rm->amdFlash);
 
-    ft245LoadState(rm->ft245);
-
     updateMapper(rm, rm->romMapper);
 }
 
 static void destroy(RomMapperNoWind* rm)
 {
     amdFlashDestroy(rm->amdFlash);
-    ft245Destroy(rm->ft245);
+#ifdef USE_NOWIND_DLL
+    if (nowindusb_cleanup) nowindusb_cleanup();
+    nowindUnloadDll();
+#endif
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
 
@@ -106,7 +160,6 @@ static void destroy(RomMapperNoWind* rm)
 static void reset(RomMapperNoWind* rm)
 {
     amdFlashReset(rm->amdFlash);
-    ft245Reset(rm->ft245);
 
     updateMapper(rm, 0);
 }
@@ -114,10 +167,14 @@ static void reset(RomMapperNoWind* rm)
 static UInt8 read(RomMapperNoWind* rm, UInt16 address) 
 {
     if (address >= 0x2000 && address < 0x4000) {
-        return ft245Read(rm->ft245);
+#ifdef USE_NOWIND_DLL
+        if (nowindusb_read) return nowindusb_read();
+#endif
     }
     if (address >= 0x8000 && address < 0xa000) {
-        return ft245Read(rm->ft245);
+#ifdef USE_NOWIND_DLL
+        if (nowindusb_read) return nowindusb_read();
+#endif
     }
 
     return 0xff;
@@ -125,13 +182,6 @@ static UInt8 read(RomMapperNoWind* rm, UInt16 address)
 
 static UInt8 peek(RomMapperNoWind* rm, UInt16 address) 
 {
-    if (address >= 0x2000 && address < 0x4000) {
-        return ft245Peek(rm->ft245);
-    }
-    if (address >= 0x8000 && address < 0xa000) {
-        return ft245Peek(rm->ft245);
-    }
-
     return 0xff;
 }
 
@@ -145,7 +195,9 @@ static void write(RomMapperNoWind* rm, UInt16 address, UInt8 value)
     if ((address >= 0x4000 && address < 0x6000) || 
         (address >= 0x8000 && address < 0xa000)) 
     {
-        ft245Write(rm->ft245, value);
+#ifdef USE_NOWIND_DLL
+        if (nowindusb_write) nowindusb_write(value);
+#endif
         return;
     }
 
@@ -176,7 +228,13 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    rm->ft245 = ft245Create(driveId);
+#ifdef USE_NOWIND_DLL
+    nowindLoadDll();
+    if (nowindusb_init)     nowindusb_init();
+    if (nowindusb_startup)  nowindusb_startup();
+    if (nowindusb_set_image) nowindusb_set_image(driveId, propGetGlobalProperties()->media.disks[
+                                                 diskGetUsbDriveId(driveId, 0)].fileName);
+#endif
 
     reset(rm);
 

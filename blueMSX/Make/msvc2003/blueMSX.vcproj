@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
-				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
+				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -79,7 +79,7 @@
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="0"
 				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap"
-				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE"
+				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
@@ -835,6 +835,12 @@
 					RelativePath="..\..\Src\Memory\romMapperMajutsushi.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMatraINK.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMatraINK.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMegaFlashRomScc.c">
 				</File>
 				<File
@@ -926,12 +932,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSg1000Castle.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperShockware.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperShockware.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSonyHBI55.c">
@@ -1493,6 +1493,9 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\NEC765.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\ThirdParty\NowindUsb\nowindusb.h">
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\PrinterIO.c">
