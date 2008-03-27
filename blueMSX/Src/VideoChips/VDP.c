@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2007-05-17 04:48:16 $
+** $Date: 2008-03-27 06:44:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -460,6 +460,10 @@ static void onHint(VDP* vdp, UInt32 time)
     }
 }
 
+#if 0
+int framecounter = 0;
+#endif
+
 static void onVint(VDP* vdp, UInt32 time)
 {
     sync(vdp, time);
@@ -471,6 +475,9 @@ static void onVint(VDP* vdp, UInt32 time)
     vdp->vdpStatus[2] |= 0x40;
 //    if (vdp->vdpVersion != VDP_TMS9929A && vdp->vdpVersion != VDP_TMS99x8A) {
         if (vdp->vdpRegs[1] & 0x20) {
+#if 0
+            framecounter++;
+#endif
             boardSetInt(INT_IE0);
         }
 //    }
