@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2008-03-27 06:44:21 $
+** $Date: 2008-03-27 15:22:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1063,25 +1063,43 @@ static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
 
 static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
-    if (vdp->vdpKey) {
-		if (value & 0x80) {
-			if (!(value & 0x40)) {
-                vdpUpdateRegisters(vdp, value, vdp->vdpDataLatch);
+	switch (vdp->vdpVersion) {
+		
+		/* MSX1 VDP: address always updates */
+		case VDP_TMS9929A: case VDP_TMS99x8A:
+			if (vdp->vdpKey) {
+				vdp->vramAddress = ((UInt16)value << 8 | (vdp->vramAddress & 0xff)) & 0x3fff;
+				if (!(value & 0x40)) {
+					if (value & 0x80) vdpUpdateRegisters(vdp, value, vdp->vdpDataLatch);
+					else read(vdp, ioPort);
+				}
+				vdp->vdpKey = 0;
 			}
-            if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
-			    vdp->vramAddress = ((UInt16)value << 8 | vdp->vdpDataLatch) & 0x3fff;
-            }
-		} 
-        else {
-			vdp->vramAddress = ((UInt16)value << 8 | vdp->vdpDataLatch) & 0x3fff;
-			if (!(value & 0x40)) {
-				read(vdp, ioPort);
+			else {
+				vdp->vramAddress = (vdp->vramAddress & 0x3f00) | value;
+				vdp->vdpDataLatch = value;
+				vdp->vdpKey = 1;
 			}
-		}
-		vdp->vdpKey = 0;
-	} else {
-		vdp->vdpDataLatch = value;
-		vdp->vdpKey = 1;
+			
+			break;
+		
+		default:
+			if (vdp->vdpKey) {
+				if (value & 0x80) {
+					if (!(value & 0x40)) vdpUpdateRegisters(vdp, value, vdp->vdpDataLatch);
+				} 
+				else {
+					vdp->vramAddress = ((UInt16)value << 8 | vdp->vdpDataLatch) & 0x3fff;
+					if (!(value & 0x40)) read(vdp, ioPort);
+				}
+				vdp->vdpKey = 0;
+			}
+			else {
+				vdp->vdpDataLatch = value;
+				vdp->vdpKey = 1;
+			}
+			
+			break;
 	}
 }
 
