@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-03-29 20:06:07 $
+** $Date: 2008-03-29 20:25:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -67,6 +67,7 @@ void nowindLoadDll()
 	hLib = LoadLibrary("libnowindusbms.dll");
 
 	if (!hLib)	{
+        printf("Failed to load: libnowindusbms.dll\n");
 		return;
 	}
 
@@ -250,4 +251,3 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
 
     return 1;
 }
-
