@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-03-29 20:00:43 $
+** $Date: 2008-03-29 20:06:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -96,7 +96,7 @@ void nowindUnloadDll()
 
 static void debugCb(const char* message)
 {
-    //printf(message);
+    printf(message);
 }
 
 #endif
@@ -181,7 +181,6 @@ static UInt8 read(RomMapperNoWind* rm, UInt16 address)
 #ifdef USE_NOWIND_DLL
         if (nowindusb_read) {
             UInt8 value = nowindusb_read();
-            printf("R%.4x: %.2x\n", value);
             return value;
         }
 #endif
