@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2008-03-22 09:24:31 $
+** $Date: 2008-03-29 20:14:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,92 +41,110 @@
 #define WM_DIALOGRESIZE (WM_USER + 1500)
 
 static RomType romTypeList[] = {
+    ROM_PLAIN, /* mirror */
+    ROM_0x4000,
+    ROM_BASIC, /* 8000 */
+    ROM_0xC000,
     ROM_ASCII8,
     ROM_ASCII8SRAM,
     ROM_ASCII16,
     ROM_ASCII16SRAM,
-    ROM_KONAMI4,
-    ROM_KONAMI5,
-    ROM_PLAIN,
-    ROM_BASIC,
-    ROM_0x4000,
-    ROM_0xC000,
     ROM_KOEI,
-    ROM_RTYPE,
-    ROM_CROSSBLAIM,
-    ROM_HARRYFOX,
-    ROM_LODERUNNER,
-    ROM_HALNOTE,
-    ROM_MANBOW2,
-    ROM_PLAYBALL,
-    ROM_KONAMISYNTH,
-    ROM_KONAMKBDMAS,
-    ROM_KONWORDPRO,
-    ROM_MAJUTSUSHI,
-    ROM_SCC,
-    ROM_SCCPLUS,
-    ROM_KONAMI4NF, 
-    ROM_ASCII16NF,
     ROM_GAMEMASTER2,
+    ROM_KONAMI4NF,
+    ROM_KONAMKBDMAS,
+    ROM_MAJUTSUSHI,
+    ROM_KONAMISYNTH,
+    ROM_KONWORDPRO,
+    ROM_KONAMI4,
+    ROM_KONAMI5, /* SCC */
+    ROM_SCC,
+    ROM_SCCPLUS, /* SCC-I */
+    ROM_MANBOW2, /* contains SCC */
+    ROM_MEGAFLSHSCC,
+    SRAM_ESESCC, /* contains SCC */
+    SRAM_ESERAM,
+    ROM_CROSSBLAIM,
+    ROM_HALNOTE,
+    ROM_HARRYFOX,
+    ROM_HOLYQURAN,
+    ROM_LODERUNNER,
+    ROM_MATRAINK,
+    ROM_RTYPE,
+    ROM_PLAYBALL,
+    ROM_ASCII16NF, /* super pierrot */
     ROM_KOREAN80,
     ROM_KOREAN90,
     ROM_KOREAN126,
-    ROM_HOLYQURAN,
-    ROM_FMPAC,
-    ROM_FMPAK,
-    ROM_MSXMUSIC,
-    ROM_MSXAUDIO,
-    ROM_MOONSOUND,
+    
     ROM_DISKPATCH,
     ROM_TC8566AF,
     ROM_TC8566AF_TR,
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
+    ROM_SVI738FDC,
+    ROM_MSXDOS2, /* related */
+    ROM_BEERIDE,
     ROM_GIDE,
     ROM_SUNRISEIDE,
-    ROM_BEERIDE,
+    ROM_GOUDASCSI,
     SRAM_MEGASCSI,
     SRAM_WAVESCSI,
-    ROM_GOUDASCSI,
-    ROM_KANJI,
-    ROM_KANJI12,
-    ROM_JISYO,
-    ROM_BUNSETU,
-    ROM_MSXDOS2,
-    ROM_NATIONAL,
+    
+    ROM_FMPAC,
+    ROM_FMPAK,
+    ROM_MSXMUSIC,
+    ROM_MSXAUDIO,
+    ROM_MSXAUDIODEV,
+    ROM_MOONSOUND,
+    ROM_TURBORPCM,
+    ROM_YAMAHASFG01,
+    ROM_YAMAHASFG05,
+    
+    ROM_NOWIND,
+    ROM_OBSONET,
+    
     ROM_PANASONIC8,
     ROM_PANASONICWX16,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_FSA1FMMODEM,
+    
+    ROM_BUNSETU,
+    ROM_JISYO,
+    ROM_KANJI,
+    ROM_KANJI12,
+    ROM_NATIONAL,
     ROM_SONYHBI55,
-    ROM_MSXAUDIODEV,
-    ROM_TURBORPCM,
+    ROM_SONYHBIV1,
+    ROM_SVI727,
+    ROM_MICROSOL80,
+    ROM_FMDAS,
+    
+    /* no msx */
     ROM_SVI328,
-    ROM_SVI738FDC,
     ROM_COLECO,
     ROM_CVMEGACART,
+    ROM_SG1000CASTLE,
     ROM_SG1000,
     ROM_SC3000,
-    ROM_SG1000CASTLE,
-    ROM_SEGABASIC,
-    ROM_MICROSOL80,
-    ROM_SVI727,
-    ROM_SONYHBIV1,
-    ROM_FMDAS,
-    ROM_YAMAHASFG01,
-    ROM_YAMAHASFG05,
     ROM_SF7000IPL,
-    ROM_OBSONET,
-    ROM_NOWIND,
-//    ROM_DUMAS,
-    SRAM_ESERAM,
-    SRAM_ESESCC,
-    ROM_MEGAFLSHSCC,
-    ROM_MATRAINK,
+    ROM_SEGABASIC,
+    
     ROM_UNKNOWN,
 };
+
+RomType opendialog_getromtype(int i)
+{
+	int last;
+	
+	/* prevent overflow */
+	for (last=0;romTypeList[last]!=ROM_UNKNOWN;last++) { ; }
+	if (i>=last) return ROM_UNKNOWN;
+	
+	return romTypeList[i];
+}
 
 static RomType openRomType;
 

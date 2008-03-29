@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2008-03-09 07:14:58 $
+** $Date: 2008-03-29 20:14:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -51,6 +51,7 @@ static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s);
 #include "Board.h"
 #include "Win32Midi.h"
 #include "Win32Cdrom.h"
+#include "Win32File.h"
 
 static HWND hDlgSound = NULL;
 static int propModified = 0;
@@ -378,88 +379,6 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
     return FALSE;
 }
 
-static RomType romTypeList[] = {
-    ROM_GAMEREADER,
-    ROM_ASCII8,
-    ROM_ASCII8SRAM,
-    ROM_ASCII16,
-    ROM_ASCII16SRAM,
-    ROM_KONAMI4,
-    ROM_KONAMI5,
-    ROM_PLAIN,
-    ROM_BASIC,
-    ROM_0x4000,
-    ROM_0xC000,
-    ROM_KOEI,
-    ROM_RTYPE,
-    ROM_CROSSBLAIM,
-    ROM_HARRYFOX,
-    ROM_LODERUNNER,
-    ROM_PLAYBALL,
-    ROM_MANBOW2,
-    ROM_KONAMISYNTH,
-    ROM_KONAMKBDMAS,
-    ROM_KONWORDPRO,
-    ROM_MAJUTSUSHI,
-    ROM_HALNOTE,
-    ROM_SCC,
-    ROM_SCCPLUS,
-    ROM_KONAMI4NF, 
-    ROM_ASCII16NF,
-    ROM_GAMEMASTER2,
-    ROM_KOREAN80,
-    ROM_KOREAN90,
-    ROM_KOREAN126,
-    ROM_HOLYQURAN,
-    ROM_FMPAC,
-    ROM_FMPAK,
-    ROM_MSXMUSIC,
-    ROM_MSXAUDIO,
-    ROM_MOONSOUND,
-    ROM_DISKPATCH,
-    ROM_CASPATCH,
-    ROM_TC8566AF,
-    ROM_TC8566AF_TR,
-    ROM_MICROSOL,
-    ROM_NATIONALFDC,
-    ROM_PHILIPSFDC,
-    ROM_SVI738FDC,
-    ROM_GIDE,
-    ROM_SUNRISEIDE,
-    ROM_BEERIDE,
-    SRAM_MEGASCSI,
-    SRAM_WAVESCSI,
-    ROM_GOUDASCSI,
-    ROM_KANJI,
-    ROM_KANJI12,
-    ROM_JISYO,
-    ROM_BUNSETU,
-    ROM_MSXDOS2,
-    ROM_NATIONAL,
-    ROM_PANASONIC8,
-    ROM_PANASONICWX16,
-    ROM_PANASONIC16,
-    ROM_PANASONIC32,
-    ROM_FSA1FMMODEM,
-    ROM_SONYHBI55,
-    ROM_MSXAUDIODEV,
-    ROM_TURBORPCM,
-    ROM_MICROSOL80,
-    ROM_SVI727,
-    ROM_SONYHBIV1,
-    ROM_FMDAS,
-    ROM_YAMAHASFG01,
-    ROM_YAMAHASFG05,
-    ROM_SF7000IPL,
-    ROM_OBSONET,
-    ROM_NOWIND,
-//    ROM_DUMAS,
-    SRAM_ESERAM,
-    SRAM_ESESCC,
-    ROM_MEGAFLSHSCC,
-    ROM_UNKNOWN,
-};
-
 static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     static Properties* pProperties;
     int i;
@@ -483,9 +402,9 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             SetWindowText(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZE), buffer);
         }
 #endif
-        for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
-            SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
-            if (pProperties->cartridge.defaultType == romTypeList[i]) {
+        for (i = 0; opendialog_getromtype(i) != ROM_UNKNOWN; i++) {
+            SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(opendialog_getromtype(i)));
+            if (pProperties->cartridge.defaultType == opendialog_getromtype(i)) {
                 SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_SETCURSEL, i, 0);
             }
         }
@@ -494,7 +413,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSROMTYPETEXT), langPropDefaultRomType());
 
         SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_ADDSTRING, 0, (LPARAM)langPropGuessRomType());
-        if (pProperties->cartridge.defaultType == romTypeList[i]) {
+        if (pProperties->cartridge.defaultType == opendialog_getromtype(i)) {
             SendDlgItemMessage(hDlg, IDC_SETTINGSROMTYPE, CB_SETCURSEL, i, 0);
         }
 
@@ -581,7 +500,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         
         i = SendMessage(GetDlgItem(hDlg, IDC_SETTINGSROMTYPE), CB_GETCURSEL, 0, 0);
         if (i != CB_ERR) {
-            pProperties->cartridge.defaultType = romTypeList[i];
+            pProperties->cartridge.defaultType = opendialog_getromtype(i);
         }
 
 #ifndef NO_FILE_HISTORY

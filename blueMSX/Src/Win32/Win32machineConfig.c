@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2008-03-22 09:24:31 $
+** $Date: 2008-03-29 20:14:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1352,7 +1352,6 @@ static void setEditControls(HWND hDlg)
 }
 
 static RomType romTypeList[] = {
-    ROM_GAMEREADER,
     RAM_NORMAL,
     RAM_1KB_MIRRORED,
     RAM_2KB_MIRRORED,
@@ -1360,105 +1359,117 @@ static RomType romTypeList[] = {
     ROM_EXTRAM,
     ROM_MEGARAM,
     ROM_NORMAL,
-    ROM_DISKPATCH,
+    
     ROM_CASPATCH,
+    ROM_DISKPATCH,
     ROM_TC8566AF,
     ROM_TC8566AF_TR,
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
+    ROM_SVI738FDC,
+    ROM_MSXDOS2, /* related */
+    ROM_BEERIDE,
     ROM_GIDE,
     ROM_SUNRISEIDE,
-    ROM_BEERIDE,
+    ROM_GOUDASCSI,
     SRAM_MEGASCSI,
     SRAM_WAVESCSI,
-    ROM_GOUDASCSI,
-    ROM_SVI738FDC,
-    ROM_SVI328FDC,
-    ROM_SVI328PRN,
-    ROM_SVI328RS232,
-    ROM_SVI80COL,
-    ROM_SVI727,
-    ROM_KANJI,
-    ROM_KANJI12,
-    SRAM_MATSUCHITA,
+    
+    ROM_NMS8280DIGI,
     SRAM_S1985,
     ROM_S1990,
     ROM_F4DEVICE,
-    ROM_NMS8280DIGI,
     ROM_F4INVERTED,
     ROM_TURBORTIMER,
     ROM_TURBORIO,
-    ROM_NATIONAL,
-    ROM_BUNSETU,
-    ROM_JISYO,
+    ROM_MSXPRN,
+    
+    ROM_PAC, /* related */
+    ROM_FMPAC,
+    ROM_FMPAK,
+    ROM_MSXMIDI,
+    ROM_MSXMUSIC,
+    ROM_MSXAUDIO,
+    ROM_MSXAUDIODEV,
+    ROM_MOONSOUND,
+    ROM_TURBORPCM,
+    ROM_YAMAHASFG01,
+    ROM_YAMAHASFG05,
+    
+    ROM_GAMEREADER,
+    ROM_NOWIND,
+    ROM_OBSONET,
+    
+    SRAM_MATSUCHITA,
+    ROM_DRAM,
     ROM_PANASONIC8,
     ROM_PANASONICWX16,
     ROM_PANASONIC16,
     ROM_PANASONIC32,
     ROM_FSA1FMMODEM,
-    ROM_DRAM,
-    ROM_PLAIN,
-    ROM_BASIC,
+    
+    ROM_BUNSETU,
+    ROM_JISYO,
+    ROM_KANJI,
+    ROM_KANJI12,
+    ROM_NATIONAL,
+    ROM_SONYHBI55,
+    ROM_SONYHBIV1,
+    ROM_SVI727,
+    ROM_MICROSOL80,
+    ROM_FMDAS,
+    
+    ROM_FORTEII,
+    
+    /* normally used with games */
+    ROM_PLAIN, /* mirror */
     ROM_0x4000,
+    ROM_BASIC, /* 8000 */
     ROM_0xC000,
-    ROM_MSXDOS2,
     ROM_ASCII8,
     ROM_ASCII8SRAM,
     ROM_ASCII16,
     ROM_ASCII16SRAM,
-    ROM_KONAMI4,
-    ROM_KONAMI5,
-    ROM_SCC,
-    ROM_SCCPLUS,
     ROM_KOEI,
     ROM_GAMEMASTER2,
-    ROM_RTYPE,
-    ROM_CROSSBLAIM,
-    ROM_HARRYFOX,
-    ROM_LODERUNNER,
-    ROM_MANBOW2,
-    ROM_PLAYBALL,
-    ROM_HALNOTE,
-    ROM_KONAMISYNTH,
+    ROM_KONAMI4NF,
     ROM_KONAMKBDMAS,
-    ROM_KONWORDPRO,
     ROM_MAJUTSUSHI,
+    ROM_KONAMISYNTH,
+    ROM_KONWORDPRO,
+    ROM_KONAMI4,
+    ROM_KONAMI5, /* SCC */
+    ROM_SCC,
+    ROM_SCCMIRRORED,
+    ROM_SCCEXTENDED,
+    ROM_SCCPLUS, /* SCC-I */
+    ROM_SNATCHER, /* SCC-I */
+    ROM_SDSNATCHER, /* SCC-I */
+    ROM_MANBOW2, /* contains SCC */
+    ROM_MEGAFLSHSCC,
+    SRAM_ESESCC, /* contains SCC */
+    SRAM_ESERAM,
+    ROM_CROSSBLAIM,
+    ROM_HALNOTE,
+    ROM_HARRYFOX,
+    ROM_HOLYQURAN,
+    ROM_LODERUNNER,
+    ROM_MATRAINK,
+    ROM_RTYPE,
+    ROM_PLAYBALL,
+    ROM_ASCII16NF, /* super pierrot */
     ROM_KOREAN80,
     ROM_KOREAN90,
     ROM_KOREAN126,
-    ROM_HOLYQURAN,
-    ROM_FMPAC,
-    ROM_FMPAK,
-    ROM_PAC,
-    ROM_MSXMUSIC,
-    ROM_MSXAUDIO,
-    ROM_MSXPRN,
-    ROM_MOONSOUND,
-    ROM_MSXMIDI,
-    ROM_KONAMI4NF, 
-    ROM_ASCII16NF,
-    ROM_SNATCHER,
-    ROM_SDSNATCHER,
-    ROM_SCCMIRRORED,
-    ROM_SCCEXTENDED,
-    ROM_SONYHBI55,
-    ROM_MSXAUDIODEV,
-    ROM_TURBORPCM,
-    ROM_MICROSOL80,
-    ROM_SONYHBIV1,
-    ROM_FMDAS,
-    ROM_YAMAHASFG01,
-    ROM_YAMAHASFG05,
+    
+    /* no msx */
+    ROM_SVI328FDC,
+    ROM_SVI328PRN,
+    ROM_SVI328RS232,
+    ROM_SVI80COL,
     ROM_SF7000IPL,
-    ROM_OBSONET,
-    ROM_NOWIND,
-//    ROM_DUMAS,
-    SRAM_ESERAM,
-    SRAM_ESESCC,
-    ROM_MEGAFLSHSCC,
-    ROM_MATRAINK,
-    ROM_FORTEII,
+    
     ROM_UNKNOWN,
 };
 
