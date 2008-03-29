@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2008-03-27 06:47:37 $
+** $Date: 2008-03-29 20:00:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,20 +42,23 @@
 #include "Properties.h"
 #include <windows.h>
 
+typedef void (*Nowind_DebugCb)(const char*);
+
 typedef void (__cdecl *NoWind_Init)(void);
 typedef void (__cdecl *NoWind_StartUp)(void);
 typedef void (__cdecl *NoWind_Cleanup)(void);
 typedef void (__cdecl *NoWind_SetImage)(int, const char*);
 typedef void (__cdecl *NoWind_Write)(unsigned char);
 typedef unsigned char (__cdecl *NoWind_Read)(void);
+typedef void (__cdecl *NoWind_SetDebugCb)(Nowind_DebugCb);
 
-static NoWind_Init     nowindusb_init       = NULL;
-static NoWind_StartUp  nowindusb_startup    = NULL;
-static NoWind_Cleanup  nowindusb_cleanup    = NULL;
-static NoWind_SetImage nowindusb_set_image  = NULL;
-static NoWind_Write    nowindusb_write      = NULL;
-static NoWind_Read     nowindusb_read       = NULL;
-
+static NoWind_Init       nowindusb_init       = NULL;
+static NoWind_StartUp    nowindusb_startup    = NULL;
+static NoWind_Cleanup    nowindusb_cleanup    = NULL;
+static NoWind_SetImage   nowindusb_set_image  = NULL;
+static NoWind_Write      nowindusb_write      = NULL;
+static NoWind_Read       nowindusb_read       = NULL;
+static NoWind_SetDebugCb nowindusb_set_debug_callback = NULL;
 static HINSTANCE hLib = NULL;
 
 void nowindLoadDll()
@@ -73,6 +76,7 @@ void nowindLoadDll()
 	nowindusb_set_image = (NoWind_SetImage)GetProcAddress(hLib, "nowindusb_set_image");
 	nowindusb_write     = (NoWind_Write)   GetProcAddress(hLib, "nowindusb_write");
 	nowindusb_read      = (NoWind_Read)    GetProcAddress(hLib, "nowindusb_read");
+    nowindusb_set_debug_callback = (NoWind_SetDebugCb) GetProcAddress(hLib, "nowindusb_set_debug_callback");
 }
 
 void nowindUnloadDll()
@@ -88,6 +92,11 @@ void nowindUnloadDll()
 	    FreeLibrary(hLib);
 	    hLib = NULL;
     }
+}
+
+static void debugCb(const char* message)
+{
+    //printf(message);
 }
 
 #endif
@@ -166,14 +175,15 @@ static void reset(RomMapperNoWind* rm)
 
 static UInt8 read(RomMapperNoWind* rm, UInt16 address) 
 {
-    if (address >= 0x2000 && address < 0x4000) {
+    if ((address >= 0x2000 && address < 0x4000) || 
+        (address >= 0x8000 && address < 0xa000))
+    {
 #ifdef USE_NOWIND_DLL
-        if (nowindusb_read) return nowindusb_read();
-#endif
-    }
-    if (address >= 0x8000 && address < 0xa000) {
-#ifdef USE_NOWIND_DLL
-        if (nowindusb_read) return nowindusb_read();
+        if (nowindusb_read) {
+            UInt8 value = nowindusb_read();
+            printf("R%.4x: %.2x\n", value);
+            return value;
+        }
 #endif
     }
 
@@ -234,6 +244,7 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
     if (nowindusb_startup)  nowindusb_startup();
     if (nowindusb_set_image) nowindusb_set_image(driveId, propGetGlobalProperties()->media.disks[
                                                  diskGetUsbDriveId(driveId, 0)].fileName);
+    if (nowindusb_set_debug_callback) nowindusb_set_debug_callback(debugCb);
 #endif
 
     reset(rm);
