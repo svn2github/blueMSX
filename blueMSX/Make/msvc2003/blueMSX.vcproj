@@ -2141,6 +2141,9 @@ buildnumber.exe
 			Name="Utils"
 			Filter="">
 			<File
+				RelativePath="..\..\Src\Utils\authkey.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Utils\blowfish.c">
 			</File>
 			<File

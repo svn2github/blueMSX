@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/PacketFileSystem.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2008-03-30 08:04:45 $
+** $Date: 2008-03-30 17:46:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 #include "strcmpnocase.h"
 
 #include "blowfish.h"
+#include "authkey.h"
 
 
 typedef struct {
@@ -59,7 +60,8 @@ static char* pkg_buf = NULL;
 
 int pkg_load(const char* filename, char* key, int keyLen)
 {
-    BLOWFISH_CTX ctx;
+    BLOWFISH_CTX userEnc;
+    BLOWFISH_CTX emuEnc;
     FileInfo* fi;
     int i;
     int len;
@@ -78,14 +80,6 @@ int pkg_load(const char* filename, char* key, int keyLen)
         return 0;
     }
 
-    if (keyLen > 0) {
-        Blowfish_Init(&ctx, (unsigned char*)key, keyLen);
-    }
-    else {
-        unsigned char val = 0;
-        Blowfish_Init(&ctx, &val, 1);
-    }
-
     pkg_buf = (char*)malloc(len);
 
     len = fread(pkg_buf, 1, len, f);
@@ -96,15 +90,39 @@ int pkg_load(const char* filename, char* key, int keyLen)
         return 0;
     }
 
+    fclose(f);
+
+    // Decrypt using private emulator key
+    Blowfish_Init(&emuEnc, (unsigned char*)AuthKey, (int)strlen(AuthKey));
+    
     for (i = 0; i < len; i += 8) {
         unsigned long* l = (unsigned long*)(pkg_buf + i + 0);
         unsigned long* r = (unsigned long*)(pkg_buf + i + 4);
 
-        Blowfish_Decrypt(&ctx, l, r);
+        Blowfish_Decrypt(&emuEnc, l, r);
     }
 
-    fclose(f);
-    
+    // Decrypt using user key
+    if (keyLen > 0) {
+        Blowfish_Init(&userEnc, (unsigned char*)key, keyLen);
+    }
+    else {
+        unsigned char val = 0;
+        Blowfish_Init(&userEnc, &val, 1);
+    }
+
+    for (i = 0; i < len; i += 8) {
+        unsigned long* l = (unsigned long*)(pkg_buf + i + 0);
+        unsigned long* r = (unsigned long*)(pkg_buf + i + 4);
+
+        Blowfish_Decrypt(&userEnc, l, r);
+    }
+
+    // Unsalt data
+    for (i = 0; i < len - 8; i++) {
+        pkg_buf[i] ^= pkg_buf[len - 8 + (i & 7)];
+    }
+
     if (memcmp(pkg_buf, PKG_HDR, PKG_HDR_SIZE) != 0) {
         free(pkg_buf);
         pkg_buf = NULL;
