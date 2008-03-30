@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2008-03-09 07:14:58 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "BlueMSXToolInterface.h"
 #include "Debugger.h"
 #include "Actions.h"
+#include "AppConfig.h"
 #include "build_number.h"
 #include "version.h"
 
@@ -265,6 +266,10 @@ void toolLoadAll(const char* path, int languageId)
     char  curDir[MAX_PATH];
     HANDLE handle;
 
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return;
+    }
+
     GetCurrentDirectory(MAX_PATH, curDir);
     strcat(toolDir, curDir);
     strcat(toolDir, "\\Tools");
@@ -364,6 +369,10 @@ void toolUnLoadAll()
 {
     int i;
 
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return;
+    }
+
     for (i = 0; i < toolListCount; i++) {
         if (toolList[i]->callbacks.destroy != NULL) {
             toolList[i]->callbacks.destroy();
@@ -374,11 +383,19 @@ void toolUnLoadAll()
 }
 
 int toolGetCount() {
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return 0;
+    }
+
     return toolListCount;
 }
 
 ToolInfo* toolInfoGet(int index)
 {
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return NULL;
+    }
+
     if (index < 0 || index >= toolListCount) {
         return NULL;
     }
@@ -390,6 +407,11 @@ ToolInfo* toolInfoGet(int index)
 ToolInfo* toolInfoFind(char* name)
 {
     int i;
+
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return NULL;
+    }
+
     for (i = 0; i < toolListCount; i++) {
         if (strcmp(toolList[i]->description, name) == 0) {
             return toolList[i];
@@ -400,6 +422,10 @@ ToolInfo* toolInfoFind(char* name)
 
 const char* toolInfoGetName(ToolInfo* toolInfo)
 {
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return "";
+    }
+
     if (toolInfo->callbacks.getName != NULL) {
         return toolInfo->callbacks.getName();
     }
@@ -408,6 +434,10 @@ const char* toolInfoGetName(ToolInfo* toolInfo)
 
 void toolInfoShowTool(ToolInfo* toolInfo)
 {
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return;
+    }
+
     if (toolInfo->callbacks.show != NULL) {
         toolInfo->callbacks.show();
     }
@@ -415,6 +445,10 @@ void toolInfoShowTool(ToolInfo* toolInfo)
 
 void toolInfoSetLanguage(ToolInfo* toolInfo, int langId) 
 {
+    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+        return;
+    }
+
     if (toolInfo->callbacks.onEmulatorSetLg != NULL) {
         toolInfo->callbacks.onEmulatorSetLg(langId);
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2007-03-22 20:50:28 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 #include "MsxTypes.h"
 #include "ArchNotifications.h"
 #include "Disk.h"
+#include "AppConfig.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
 #include "ArchFile.h"
@@ -75,6 +76,10 @@ void updateFileHistory(char* history, RomType* historyType, char* filename, RomT
     char fname[PROP_MAXPATH];
     int i = 0;
 
+    if (appConfigGetInt("FileHistory", 1) == 0) {
+        return;
+    }
+
     if (strcmp(filename, CARTNAME_GAMEREADER) == 0) {
         return;
     }
@@ -97,6 +102,10 @@ void updateFileHistory(char* history, RomType* historyType, char* filename, RomT
 
 void verifyFileHistory(char* history, RomType* historyType) {
     int i, j;
+
+    if (appConfigGetInt("FileHistory", 1) == 0) {
+        return;
+    }
 
     for (i = 0; i < MAX_HISTORY; i++) {
         char *fname = history + PROP_MAXPATH * i;

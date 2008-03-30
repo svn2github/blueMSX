@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2008-03-09 07:14:57 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,7 @@
 extern "C" {
 #include "InputEvent.h"
 #include "StrcmpNoCase.h"
+#include "AppConfig.h"
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "ArchFile.h"
@@ -51,6 +52,27 @@ struct ThemeDefaultInfo {
     { "normal",          640, 480 },
     { "fullscreen",      640, 480 }
 };
+
+static char rootPath[512];
+
+const char* fullPath(const char* filename)
+{
+    static char path[512];
+
+    if (filename[1] == ':') {
+        return filename;
+    }
+
+    strcpy(path, rootPath);
+
+    if (path[strlen(path)-1] != '/' && path[strlen(path)-1] != '\\') {
+        strcat(path, "/");
+    }
+
+    strcat(path, filename);
+
+    return path;
+}
 
 enum ThemeInfo { THEME_SMALL = 0, THEME_NORMAL = 1, THEME_FULLSCREEN = 2 };
 
@@ -533,7 +555,7 @@ static ArchBitmap* loadBitmap(TiXmlElement* el, int* x, int* y, int* columns)
         return NULL;
     }
     
-    return archBitmapCreateFromFile(src);
+    return archBitmapCreateFromFile(fullPath(src));
 }
 
 
@@ -1279,25 +1301,19 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 
 extern "C" ThemeCollection* themeLoad(const char* themePath) 
 {
-    char oldDirName[512];
+    strcpy(rootPath, themePath);
 
-    strcpy(oldDirName, archGetCurrentDirectory());
-
-    archSetCurrentDirectory(themePath);
-
-    TiXmlDocument doc("Theme.xml");
+    TiXmlDocument doc(fullPath("Theme.xml"));
 
     doc.LoadFile();
 
     if (doc.Error()) {
-        archSetCurrentDirectory(oldDirName);
         return NULL;
     }
 
     TiXmlElement* root = doc.RootElement();
 
     if (root == NULL || strcmp(root->Value(), "bluemsxtheme") != 0) {
-        archSetCurrentDirectory(oldDirName);
         return NULL;
     }
 
@@ -1331,69 +1347,72 @@ extern "C" ThemeCollection* themeLoad(const char* themePath)
         themeCollection = NULL;
     }
 
-    archSetCurrentDirectory(oldDirName);
     return themeCollection;
 }
 
 static ThemeCollection** currentWin32Theme = NULL;
 
-#ifdef SINGLE_THEME
 extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 {
-    ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
-    int index = 0;
+    const char* singleTheme = appConfigGetString("SingleTheme", NULL);
 
-    // Set default theme
-    if (defaultTheme != NULL) {
-        themeList[index++] = defaultTheme;
-    }
+    if (singleTheme != NULL) {
+        ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
+        int index = 0;
 
-    ThemeCollection* themeCollection = themeLoad("Themes/" SINGLE_THEME);
-    if (themeCollection != NULL) {
-        if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
-        if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
-        if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
-        themeList[index++] = themeCollection;
-    }
-
-    themeList[index] = NULL;
-
-    currentWin32Theme = themeList;
-
-    return themeList;
-}
-#else
-extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
-{
-    ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
-    int index = 0;
-
-    // Set default theme
-    if (defaultTheme != NULL) {
-        themeList[index++] = defaultTheme;
-    }
-
-    ArchGlob* glob = archGlob("Themes/*", ARCH_GLOB_DIRS);
-
-    if (glob != NULL) {
-        for (int i = 0; i < glob->count; i++) {
-            ThemeCollection* themeCollection = themeLoad(glob->pathVector[i]);
-            if (themeCollection != NULL) {
-                if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
-                if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
-                if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
-                themeList[index++] = themeCollection;
-            }
+        // Set default theme
+        if (defaultTheme != NULL) {
+            themeList[index++] = defaultTheme;
         }
-        archGlobFree(glob);
+
+        char themeName[64] = "Themes/";
+        strcat(themeName, singleTheme);
+        ThemeCollection* themeCollection = themeLoad(themeName);
+        if (themeCollection != NULL) {
+            if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
+            if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
+            if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
+            themeList[index++] = themeCollection;
+        }
+
+        themeList[index] = NULL;
+
+        currentWin32Theme = themeList;
+
+        return themeList;
     }
-    themeList[index] = NULL;
+    else {
+        ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));
+        int index = 0;
 
-    currentWin32Theme = themeList;
+        // Set default theme
+        if (defaultTheme != NULL) {
+            themeList[index++] = defaultTheme;
+        }
 
-    return themeList;
+        ArchGlob* glob = archGlob("Themes/*", ARCH_GLOB_DIRS);
+
+        if (glob != NULL) {
+            for (int i = 0; i < glob->count; i++) {
+                ThemeCollection* themeCollection = themeLoad(glob->pathVector[i]);
+                if (themeCollection != NULL) {
+                    if (themeCollection->little == NULL)          themeCollection->little =          themeList[0]->little;
+                    if (themeCollection->normal == NULL)          themeCollection->normal =          themeList[0]->normal;
+                    if (themeCollection->fullscreen == NULL)      themeCollection->fullscreen =      themeList[0]->fullscreen;
+                    themeList[index++] = themeCollection;
+                }
+            }
+            archGlobFree(glob);
+        }
+        themeList[index] = NULL;
+
+        currentWin32Theme = themeList;
+
+        return themeList;
+    }
+
+    return NULL;
 }
-#endif
 
 extern "C" ThemeCollection** themeGetAvailable()
 {

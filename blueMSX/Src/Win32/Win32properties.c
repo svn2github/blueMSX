@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2008-03-29 20:14:40 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **

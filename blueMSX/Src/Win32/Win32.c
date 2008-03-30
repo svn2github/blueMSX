@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.184 $
+** $Revision: 1.185 $
 **
-** $Date: 2008-03-22 09:24:31 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -88,6 +88,7 @@
 #include "ArchTimer.h"
 #include "ArchFile.h"
 #include "ArchInput.h"
+#include "AppConfig.h"
 
 void vdpSetDisplayEnable(int enable);
 
@@ -2523,6 +2524,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     int i;
     HINSTANCE kbdLockInst;
     int readOnlyDir;
+    const char* tempName;
     
 #ifdef _CONSOLE
     for (i = 1; i < argc; i++) {
@@ -2561,13 +2563,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
     }
 
-    kbdLockInst = LoadLibrary("kbdlock.dll");
-
-    if (kbdLockInst != NULL) {
-        kbdLockEnable  = (KbdLockFun)GetProcAddress(kbdLockInst, (LPCSTR)2);
-        kbdLockDisable = (KbdLockFun)GetProcAddress(kbdLockInst, (LPCSTR)3);
-    }
-
     InitCommonControls(); 
 
     DirectDrawInitDisplayModes();
@@ -2600,6 +2595,15 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         ptr = (char*)stripPath(buffer);
         *ptr = 0;
         SetCurrentDirectory(buffer);
+    }
+
+    appConfigLoad();
+
+    kbdLockInst = LoadLibrary("kbdlock.dll");
+
+    if (kbdLockInst != NULL) {
+        kbdLockEnable  = (KbdLockFun)GetProcAddress(kbdLockInst, (LPCSTR)2);
+        kbdLockDisable = (KbdLockFun)GetProcAddress(kbdLockInst, (LPCSTR)3);
     }
 
     readOnlyDir = setDefaultPath();
@@ -2644,13 +2648,15 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         emuCheckFullscreenArgument(pProperties, szLine);
     }
 
-#ifdef SINGLE_THEME
-    strcpy(pProperties->settings.themeName, SINGLE_THEME);
-#endif
+    tempName = appConfigGetString("SingleMachine", NULL);
+    if (tempName != NULL) {
+        strcpy(pProperties->emulation.machineName, tempName);
+    }
 
-#ifdef SINGLE_MACHINE
-    strcpy(pProperties->emulation.machineName, SINGLE_MACHINE);
-#endif
+    tempName = appConfigGetString("SingleTheme", NULL);
+    if (tempName != NULL) {
+        strcpy(pProperties->settings.themeName, tempName);
+    }
 
     if (readOnlyDir && pProperties->settings.portable) {
         MessageBox(NULL, langErrorPortableReadonly(), langErrorTitle(), MB_OK);

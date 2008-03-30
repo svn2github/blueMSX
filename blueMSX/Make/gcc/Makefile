@@ -377,6 +377,7 @@ SOURCE_FILES += Emulator.c
 SOURCE_FILES += FileHistory.c 
 SOURCE_FILES += LaunchFile.c 
 SOURCE_FILES += Properties.c 
+SOURCE_FILES += AppConfig.c 
 
 SOURCE_FILES += IsFileExtension.c 
 SOURCE_FILES += SaveState.c 

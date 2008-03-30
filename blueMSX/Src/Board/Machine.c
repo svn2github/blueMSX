@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2008-03-22 09:24:30 $
+** $Date: 2008-03-30 05:12:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,8 @@
 #include "MediaDb.h"
 #include "TokenExtract.h"
 #include "Disk.h"
+
+#include "AppConfig.h"
 
 #include "RomLoader.h"
 #include "MSXMidi.h"
@@ -458,72 +460,76 @@ int machineIsValid(const char* machineName, int checkRoms)
     return success;
 }
 
-#ifdef SINGLE_MACHINE
 char** machineGetAvailable(int checkRoms)
 {
-    static char* machineNames[256];
-    static char  names[256][64];
-    int index = 0;
+    const char* machineName = appConfigGetString("SingleMachine", NULL);
 
-    FILE* file;
-    file = fopen("Machines/" SINGLE_MACHINE "config.ini", "rb");
-    if (file != NULL) {
-        if (machineIsValid(SINGLE_MACHINE, checkRoms)) {
-            strcpy(names[index], SINGLE_MACHINE);
-            machineNames[index] = names[index];
-            index++;
-        }
-        fclose(file);
-    }
-    
-    machineNames[index] = NULL;
+    if (machineName != NULL) {
+        char filename[128];
+        static char* machineNames[256];
+        static char  names[256][64];
+        int index = 0;
 
-    return machineNames;
-}
-#else
-char** machineGetAvailable(int checkRoms)
-{
-    static char* machineNames[256];
-    static char  names[256][64];
-    ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
-    int index = 0;
-    int i;
-
-    if (glob == NULL) {
-        machineNames[0] = NULL;
-        return machineNames;
-    }
-
-    for (i = 0; i < glob->count; i++) {
-        char fileName[512];
         FILE* file;
-		sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
-        file = fopen(fileName, "rb");
+
+        sprintf(filename, "Machines/%s/config.ini", machineName);
+        file = fopen(filename, "rb");
         if (file != NULL) {
-            const char* name = strrchr(glob->pathVector[i], '/');
-            if (name == NULL) {
-                name = strrchr(glob->pathVector[i], '\\');
-            }
-            if (name == NULL) {
-                name = glob->pathVector[i] - 1;
-            }
-            name++;
-            if (machineIsValid(name, checkRoms)) {
-                strcpy(names[index], name);
+            if (machineIsValid(machineName, checkRoms)) {
+                strcpy(names[index], machineName);
                 machineNames[index] = names[index];
                 index++;
             }
             fclose(file);
         }
+        
+        machineNames[index] = NULL;
+
+        return machineNames;
     }
+    else {
+        static char* machineNames[256];
+        static char  names[256][64];
+        ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
+        int index = 0;
+        int i;
 
-    archGlobFree(glob);
-    
-    machineNames[index] = NULL;
+        if (glob == NULL) {
+            machineNames[0] = NULL;
+            return machineNames;
+        }
 
-    return machineNames;
+        for (i = 0; i < glob->count; i++) {
+            char fileName[512];
+            FILE* file;
+		    sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
+            file = fopen(fileName, "rb");
+            if (file != NULL) {
+                const char* name = strrchr(glob->pathVector[i], '/');
+                if (name == NULL) {
+                    name = strrchr(glob->pathVector[i], '\\');
+                }
+                if (name == NULL) {
+                    name = glob->pathVector[i] - 1;
+                }
+                name++;
+                if (machineIsValid(name, checkRoms)) {
+                    strcpy(names[index], name);
+                    machineNames[index] = names[index];
+                    index++;
+                }
+                fclose(file);
+            }
+        }
+
+        archGlobFree(glob);
+        
+        machineNames[index] = NULL;
+
+        return machineNames;
+    }
 }
-#endif
+
 
 void machineUpdate(Machine* machine)
 {

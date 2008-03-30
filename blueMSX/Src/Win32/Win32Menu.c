@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2008-03-22 04:55:50 $
+** $Date: 2008-03-30 05:12:53 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,6 +45,7 @@
 #include "ArchInput.h"
 #include "JoystickPort.h"
 #include "GameReader.h"
+#include "AppConfig.h"
 
 
 
@@ -503,8 +504,10 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
 
     setMenuColor(hMenu);
 #ifndef NO_FILE_HISTORY
-    verifyFileHistory(*pProperties->filehistory.cartridge[cartNo],
-                      pProperties->filehistory.cartridgeType[cartNo]);
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        verifyFileHistory(*pProperties->filehistory.cartridge[cartNo],
+                        pProperties->filehistory.cartridgeType[cartNo]);
+    }
 #endif
     sprintf(langBuffer, "%s      \t%hs", langMenuInsert(), shortcutsToString(shortcuts->cartInsert[cartNo]));
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_INSERT, langBuffer);
@@ -526,13 +529,15 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     }
 
 #ifndef NO_FILE_HISTORY
-    if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
-    }
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
+            AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
+        }
 
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
-        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
-        AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+            sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+            AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+        }
     }
 #endif
     return hMenu;
@@ -590,7 +595,9 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     int i;
 
 #ifndef NO_FILE_HISTORY
-    verifyFileHistory(*pProperties->filehistory.diskdrive[diskNo], NULL);
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        verifyFileHistory(*pProperties->filehistory.diskdrive[diskNo], NULL);
+    }
 #endif
     setMenuColor(hMenu);
 
@@ -613,13 +620,15 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     }
 
 #ifndef NO_FILE_HISTORY
-    if (*pProperties->filehistory.diskdrive[diskNo][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
-    }
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        if (*pProperties->filehistory.diskdrive[diskNo][0] == 0) {
+            AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
+        }
 
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
-        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.diskdrive[diskNo][i]));
-        AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_HISTORY + i, langBuffer);
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.diskdrive[diskNo][i]; i++) {
+            sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.diskdrive[diskNo][i]));
+            AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_DISK_HISTORY + i, langBuffer);
+        }
     }
 #endif
     return hMenu;
@@ -737,7 +746,9 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     int i;
 
 #ifndef NO_FILE_HISTORY
-    verifyFileHistory(*pProperties->filehistory.cassette[0], NULL);
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        verifyFileHistory(*pProperties->filehistory.cassette[0], NULL);
+    }
 #endif
 
     setMenuColor(hMenu);
@@ -767,15 +778,17 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.tapes[0].fileName ? 0 : MF_GRAYED), ID_FILE_TAPE_REWIND, langBuffer);
 
 #ifndef NO_FILE_HISTORY
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    if (*pProperties->filehistory.cassette[0][0] == 0) {
-        AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
-    }
+        if (*pProperties->filehistory.cassette[0][0] == 0) {
+            AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
+        }
 
-    for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {
-        sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cassette[0][i]));
-        AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cassette[0][i]; i++) {
+            sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cassette[0][i]));
+            AppendMenu(hMenu, MF_STRING, ID_FILE_TAPE_HISTORY + i, langBuffer);
+        }
     }
 #endif
     return hMenu;
@@ -1363,10 +1376,12 @@ int menuCommand(Properties* pProperties, int command)
         int cmd = command - i * ID_FILE_CART_OFFSET;
         
 #ifndef NO_FILE_HISTORY
-        h = cmd - ID_FILE_CART_HISTORY;
-        if (h >= 0 && h < MAX_HISTORY) {
-            insertCartridge(pProperties, i, pProperties->filehistory.cartridge[i][h], NULL, pProperties->filehistory.cartridgeType[i][h], 0);
-            return 1;
+        if (appConfigGetInt("FileHistory", 1) != 0) {
+            h = cmd - ID_FILE_CART_HISTORY;
+            if (h >= 0 && h < MAX_HISTORY) {
+                insertCartridge(pProperties, i, pProperties->filehistory.cartridge[i][h], NULL, pProperties->filehistory.cartridgeType[i][h], 0);
+                return 1;
+            }
         }
 #endif
 
@@ -1505,10 +1520,12 @@ int menuCommand(Properties* pProperties, int command)
         int cmd = command - i * ID_FILE_DISK_OFFSET;
         
 #ifndef NO_FILE_HISTORY
-        h = cmd - ID_FILE_DISK_HISTORY;
-        if (h >= 0 && h < MAX_HISTORY) {
-            insertDiskette(pProperties, i, pProperties->filehistory.diskdrive[i][h], NULL, 0);
-            return 1;
+        if (appConfigGetInt("FileHistory", 1) != 0) {
+            h = cmd - ID_FILE_DISK_HISTORY;
+            if (h >= 0 && h < MAX_HISTORY) {
+                insertDiskette(pProperties, i, pProperties->filehistory.diskdrive[i][h], NULL, 0);
+                return 1;
+            }
         }
 #endif
 
@@ -1532,14 +1549,16 @@ int menuCommand(Properties* pProperties, int command)
     }
     
 #ifndef NO_FILE_HISTORY
-    // Parse Tape Menu Items
-    h = command - ID_FILE_TAPE_HISTORY;
-    if (h >= 0 && h < MAX_HISTORY) {
-        insertCassette(pProperties, 0, pProperties->filehistory.cassette[0][h], NULL, 0);
-        if (pProperties->cassette.autoRewind) {
-            tapeSetCurrentPos(0);
+    if (appConfigGetInt("FileHistory", 1) != 0) {
+        // Parse Tape Menu Items
+        h = command - ID_FILE_TAPE_HISTORY;
+        if (h >= 0 && h < MAX_HISTORY) {
+            insertCassette(pProperties, 0, pProperties->filehistory.cassette[0][h], NULL, 0);
+            if (pProperties->cassette.autoRewind) {
+                tapeSetCurrentPos(0);
+            }
+            return 1;
         }
-        return 1;
     }
 #endif
 
@@ -1548,9 +1567,11 @@ int menuCommand(Properties* pProperties, int command)
         int cmd = command - i * ID_HARDDISK_OFFSET;
         
 #ifndef NO_FILE_HISTORY
-        h = command - ID_HARDDISK_HISTORY;
-        if (h >= 0 && h < MAX_HISTORY) {
-            return 1;   
+        if (appConfigGetInt("FileHistory", 1) != 0) {
+            h = command - ID_HARDDISK_HISTORY;
+            if (h >= 0 && h < MAX_HISTORY) {
+                return 1;   
+            }
         }
 #endif
         switch (cmd) {

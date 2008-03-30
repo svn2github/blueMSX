@@ -1928,6 +1928,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Emulator\Actions.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Emulator\AppConfig.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Emulator\AppConfig.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Emulator\CommandLine.c">
 			</File>
 			<File
