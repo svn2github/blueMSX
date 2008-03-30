@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.185 $
+** $Revision: 1.186 $
 **
-** $Date: 2008-03-30 05:12:53 $
+** $Date: 2008-03-30 06:54:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,6 +89,9 @@
 #include "ArchFile.h"
 #include "ArchInput.h"
 #include "AppConfig.h"
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 
 void vdpSetDisplayEnable(int enable);
 
@@ -2596,6 +2599,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         *ptr = 0;
         SetCurrentDirectory(buffer);
     }
+
+    pkg_load("BombaPack.bpk", NULL, 0);
 
     appConfigLoad();
 

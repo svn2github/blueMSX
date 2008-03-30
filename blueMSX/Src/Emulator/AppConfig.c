@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/AppConfig.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-03-30 05:12:53 $
+** $Date: 2008-03-30 06:54:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -29,6 +29,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "AppConfig.h"
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
 
 typedef struct
 {
