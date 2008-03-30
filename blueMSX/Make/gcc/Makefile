@@ -371,19 +371,21 @@ SOURCE_FILES += Ymdeltat.c
 SOURCE_FILES += ym2151.c
 
 SOURCE_FILES += Actions.c 
+SOURCE_FILES += Appconfig.c 
 SOURCE_FILES += CommandLine.c 
 SOURCE_FILES += Emulator.c 
 #SOURCE_FILES += Keyboard.c
 SOURCE_FILES += FileHistory.c 
 SOURCE_FILES += LaunchFile.c 
 SOURCE_FILES += Properties.c 
-SOURCE_FILES += AppConfig.c 
 
+SOURCE_FILES += blowfish.c 
+SOURCE_FILES += IniFileParser.c
 SOURCE_FILES += IsFileExtension.c 
+SOURCE_FILES += PacketFileSystem.c 
 SOURCE_FILES += SaveState.c 
 SOURCE_FILES += StrcmpNoCase.c 
 SOURCE_FILES += TokenExtract.c 
-SOURCE_FILES += IniFileParser.c
 SOURCE_FILES += ziphelper.c 
 
 SOURCE_FILES += Theme.c 
