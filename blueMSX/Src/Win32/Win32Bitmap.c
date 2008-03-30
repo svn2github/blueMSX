@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Bitmap.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2006-09-19 06:00:37 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,10 @@
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include <windows.h>
+#include <stdio.h>
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 
 struct ArchText {
     HFONT hFont;
@@ -115,8 +119,41 @@ ArchBitmap* archBitmapCreate(int width, int height)
 
 ArchBitmap* archBitmapCreateFromFile(const char* filename)
 {
-    HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0,
-                               LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE);
+    HBITMAP hBitmap;
+
+    if (pkg_file_exists(filename)) {
+        // TODO: Make better bitmap loader for bitmaps in packages
+        char* bitmap = NULL;
+        int size = 0;
+        FILE* f = fopen(filename, "rb");
+        if (f != NULL) {
+            fseek(f, 0, SEEK_END);
+            size = ftell(f);
+            fseek(f, 0, SEEK_SET);
+            
+            if (size > 0) {
+                bitmap = malloc(size);
+                if (bitmap != NULL) {
+                    fread(bitmap, 1, size, f);
+                }
+            }
+            fclose(f);
+        }
+        if (bitmap != NULL) {
+            FILE* f = fopen("tmp.bmp", "wb");
+            if (f != NULL) {
+                fwrite(bitmap, 1, size, f);
+                fclose(f);
+            }
+            free(bitmap);
+        }
+        hBitmap = (HBITMAP)LoadImage(NULL, "tmp.bmp", IMAGE_BITMAP, 0, 0,
+                                     LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE);
+    }
+    else {
+        hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0,
+                                     LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE);
+    }
 
     return bitmapCreate(hBitmap);
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2008-03-30 05:12:53 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,6 +38,10 @@ extern "C" {
 #include "ArchFile.h"
 #ifdef USE_ARCH_GLOB
 #include "ArchGlob.h"
+    
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 #endif
 }
 
@@ -1301,11 +1305,24 @@ static Theme* loadMainTheme(ThemeCollection* themeCollection, TiXmlElement* root
 
 extern "C" ThemeCollection* themeLoad(const char* themePath) 
 {
+    static char themeData[256 * 1024];
+
     strcpy(rootPath, themePath);
 
-    TiXmlDocument doc(fullPath("Theme.xml"));
+    FILE* f = fopen(fullPath("Theme.xml"), "rb");
+    if (f == NULL) {
+        return NULL;
+    }
 
-    doc.LoadFile();
+    int len = fread(themeData, 1, sizeof(themeData), f);
+	fclose(f);
+    if (len <= 0) {
+        return NULL;
+    }
+    themeData[len] = 0;
+
+    TiXmlDocument doc;
+    doc.Parse(themeData);
 
     if (doc.Error()) {
         return NULL;

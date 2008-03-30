@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/PacketFileSystem.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-03-30 06:54:01 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,6 +46,16 @@ void pkg_unload();
 
 #ifdef USE_PACKET_FS
 
+int pkg_file_exists(const char* fname);
+
+FILE* pkg_fopen(const char* fname, const char* mode);
+int pkg_fclose(FILE* file);
+size_t pkg_fwrite(const void* buffer, size_t size, size_t count, FILE* file);
+size_t pkg_fread(void* buffer, size_t size, size_t count, FILE* file);
+int pkg_fseek(FILE* file, long offset, int origin);
+long pkg_ftell(FILE* file);
+char *pkg_fgets(char* string, int n, FILE* file);
+
 #define fopen   pkg_fopen
 #define fclose  pkg_fclose
 #define fread   pkg_fread
@@ -53,6 +63,10 @@ void pkg_unload();
 #define fseek   pkg_fseek
 #define ftell   pkg_ftell
 #define fgets   pkg_fgets
+
+#else
+
+#define pkg_file_exists(fname) 0
 
 #endif
 

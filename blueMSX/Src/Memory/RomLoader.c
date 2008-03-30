@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomLoader.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-19 06:00:26 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
 
 UInt8* romLoad(const char *fileName, const char *fileInZipFile, int* size)
 {

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2006-09-19 06:00:43 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -35,6 +35,9 @@
 #include <winioctl.h>
 #include <dinput.h>
 
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 
 #define MAX_JOYSTICKS 8
 

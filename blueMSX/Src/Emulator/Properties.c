@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2008-03-27 16:48:54 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,9 @@
 #include "JoystickPort.h"
 #include "Board.h"
 
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 
 static char settFilename[512];
 static char histFilename[512];

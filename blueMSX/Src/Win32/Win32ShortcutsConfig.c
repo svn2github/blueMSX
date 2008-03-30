@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2006-09-19 06:00:38 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,12 @@
 #include "Win32Common.h"
 #include "Win32keyboard.h"
 #include "Resource.h"
+
+
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
 
 #define WM_INITIALIZE (WM_USER + 1634)
 #define WM_SET_HOTKEY (WM_USER + 1635)

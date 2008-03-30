@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2008-03-30 05:12:52 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,6 +132,12 @@
 #include "romMapperA1FM.h"
 #include "romMapperDRAM.h"
 #include "romMapperMatraINK.h"
+
+
+
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
 
 
 int toint(char* buffer) 

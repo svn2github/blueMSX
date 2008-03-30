@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2007-03-22 20:50:28 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,11 @@
 #include <string.h>
 
 #include "ArchDialog.h"
+
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
 
 void archUpdateMenu(int show);
 

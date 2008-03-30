@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/PacketFileSystem.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-03-30 06:54:01 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "strcmpnocase.h"
 
 #include "blowfish.h"
 
@@ -127,13 +129,28 @@ void pkg_unload()
     }
 }
 
+int pkg_file_exists(const char* fname)
+{
+    FileInfo* fi = (FileInfo*)(pkg_buf + 16);
+
+    if (pkg_buf != NULL) {
+        while (fi->offset != 0) {
+            if (strcmpnocase(fi->path, fname) == 0) {
+                return 1;
+            }
+            fi++;
+        }
+    }
+    return 0;
+}
+
 FILE* pkg_fopen(const char* fname, const char* mode)
 {
     FileInfo* fi = (FileInfo*)(pkg_buf + 16);
 
     if (pkg_buf != NULL) {
         while (fi->offset != 0) {
-            if (strcmp(fi->path, fname) == 0) {
+            if (strcmpnocase(fi->path, fname) == 0) {
                 int i;
 
                 for (i = 0; i < PKG_FILE_CNT; i++) {
@@ -143,8 +160,8 @@ FILE* pkg_fopen(const char* fname, const char* mode)
                         pkg_files[i].pos    = 0;
                         return (FILE*)&pkg_files[i];
                     }
-                    return NULL;
                 }
+                return NULL;
             }
             fi++;
         }

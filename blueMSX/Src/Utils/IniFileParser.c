@@ -4,6 +4,11 @@
 #include <ctype.h>
 #include "IniFileParser.h"
 
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
+
 static char* iniBuffer;
 static char* iniPtr;
 static char* iniEnd;

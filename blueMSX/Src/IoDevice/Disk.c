@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2008-01-21 05:21:33 $
+** $Date: 2008-03-30 07:39:56 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
+
+
+// PacketFileSystem.h Need to be included after all other includes
+#include "PacketFileSystem.h"
+
 
 #define MAXSECTOR (2 * 9 * 81)
 
