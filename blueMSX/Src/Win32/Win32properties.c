@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2008-03-30 05:12:53 $
+** $Date: 2008-03-30 05:14:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "AppConfig.h"
 
 #ifdef __GNUC__ // FIXME: Include is not available in gnu c
 static HRESULT StringCchCopy(LPTSTR d, size_t l, LPCTSTR s) { strncpy(d, s, l); d[l-1]=0; return S_OK; }
@@ -392,14 +394,16 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
   
 #ifndef NO_FILE_HISTORY
-        SendMessage(GetDlgItem(hDlg, IDC_SETINGSFILEHISTORYGOUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistoryGB());
-        SendMessage(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZETEXT), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistorySize());
-        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), langPropSetFileHistoryClear());
+        if (appConfigGetInt("FileHistory", 1) != 0) {
+            SendMessage(GetDlgItem(hDlg, IDC_SETINGSFILEHISTORYGOUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistoryGB());
+            SendMessage(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZETEXT), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistorySize());
+            SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), langPropSetFileHistoryClear());
 
-        {
-            char buffer[32];
-            sprintf(buffer, "%d", pProperties->filehistory.count);
-            SetWindowText(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZE), buffer);
+            {
+                char buffer[32];
+                sprintf(buffer, "%d", pProperties->filehistory.count);
+                SetWindowText(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZE), buffer);
+            }
         }
 #endif
         for (i = 0; opendialog_getromtype(i) != ROM_UNKNOWN; i++) {
@@ -445,7 +449,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         switch (LOWORD(wParam)) {
         case IDC_SETTINGSHISTORYCLEAR:
 #ifndef NO_FILE_HISTORY
-            {
+            if (appConfigGetInt("FileHistory", 1) != 0) {
                 int rv = MessageBox(NULL, langPropClearFileHistory(), langWarningTitle(), MB_ICONWARNING | MB_OKCANCEL);
                 if (rv == IDOK) {
                     int i;
@@ -504,7 +508,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         }
 
 #ifndef NO_FILE_HISTORY
-        {
+        if (appConfigGetInt("FileHistory", 1) != 0) {
             char buffer[64];
 
             GetDlgItemText(hDlg, IDC_SETINGSHISTORYSIZE, buffer, 63);
