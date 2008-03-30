@@ -270,7 +270,7 @@ public:
     {
         return COARefTime(m_time / l);
     };
-
+ 
 private:
     //  Prevent bugs from constructing from LONG (which gets
     //  converted to double and then multiplied by 10000000
