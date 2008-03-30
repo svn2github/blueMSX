@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2008-03-30 18:38:39 $
 **
 ** More info: http://www.bluemsx.com
 **

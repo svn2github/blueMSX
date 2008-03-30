@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2007-04-28 05:06:29 $
+** $Date: 2008-03-30 18:38:47 $
 **
 ** More info: http://www.bluemsx.com
 **

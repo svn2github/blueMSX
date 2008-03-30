@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Cdrom.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2007-03-28 17:35:35 $
+** $Date: 2008-03-30 18:38:48 $
 **
 ** More info: http://www.bluemsx.com
 **

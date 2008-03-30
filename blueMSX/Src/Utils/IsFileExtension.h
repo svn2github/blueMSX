@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/IsFileExtension.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2006-09-19 06:00:35 $
+** $Date: 2008-03-30 18:38:47 $
 **
 ** More info: http://www.bluemsx.com
 **

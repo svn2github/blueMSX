@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.5 2007-05-23 09:41:56 m9710797 Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.6 2008-03-30 18:38:45 dvik Exp $
 
 /*
  *
