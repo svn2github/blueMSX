@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/PacketFileSystem.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-03-30 07:39:56 $
+** $Date: 2008-03-30 08:04:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -229,13 +229,13 @@ int pkg_fseek(FILE* file, long offset, int origin)
 
     switch (origin) {
     case 0:
-        newPos = origin;
+        newPos = offset;
         break;
     case 1:
-        newPos = pkg_file->pos + origin;
+        newPos = pkg_file->pos + offset;
         break;
     case 2:
-        newPos = pkg_file->length + origin;
+        newPos = pkg_file->length + offset;
         break;
     default:
         return -1;
@@ -245,7 +245,7 @@ int pkg_fseek(FILE* file, long offset, int origin)
         newPos = 0;
     }
     if (newPos >= pkg_file->length) {
-        newPos = pkg_file->length - 1;
+        newPos = pkg_file->length;
     }
 
     pkg_file->pos = newPos;
