@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008-03-30 21:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,10 @@
 #define USE_ARCH_GLOB
 
 #include "DirAsDisk.h"
+
+#pragma warning(disable: 4996)
+#include <io.h>
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>

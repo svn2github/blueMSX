@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008-03-30 21:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,6 +27,7 @@
 */
 #include "zip.h"
 #include "unzip.h"
+#include "ctype.h"
 #include <stdlib.h>
 #include <string.h>
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.186 $
+** $Revision: 1.187 $
 **
-** $Date: 2008-03-30 06:54:02 $
+** $Date: 2008-03-30 21:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -89,6 +89,8 @@
 #include "ArchFile.h"
 #include "ArchInput.h"
 #include "AppConfig.h"
+
+#pragma warning(disable: 4996)
 
 // PacketFileSystem.h Need to be included after all other includes
 #include "PacketFileSystem.h"

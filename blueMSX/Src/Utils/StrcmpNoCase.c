@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/StrcmpNoCase.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008-03-30 21:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -26,9 +26,9 @@
 ******************************************************************************
 */
 #include "StrcmpNoCase.h"
+#include "ctype.h"
 #include <string.h>
 #include <stdlib.h>
-
 
 int strcmpnocase(const char* str1, const char* str2) {
     char s1[128];
