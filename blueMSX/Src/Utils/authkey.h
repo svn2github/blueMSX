@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/authkey.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-03-30 17:46:33 $
+** $Date: 2008-03-30 18:59:02 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,6 +28,6 @@
 #ifndef AUTH_KEY_H
 #define AUTH_KEY_H
 
-static const char AuthKey = "blueMSX";
+static const char AuthKey[] = "blueMSX";
 
 #endif
