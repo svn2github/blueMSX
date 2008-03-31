@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2008-03-30 07:39:56 $
+** $Date: 2008-03-31 17:09:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -242,6 +242,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->emulation.frontSwitch       = 0;
     properties->emulation.pauseSwitch       = 0;
     properties->emulation.audioSwitch       = 0;
+    properties->emulation.ejectMediaOnExit  = 0;
     properties->emulation.registerFileTypes = 0;
     properties->emulation.disableWinKeys    = 0;
     properties->emulation.priorityBoost     = 0;
@@ -494,6 +495,7 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(settings, portable, BoolPair);
     GET_STR_VALUE_2(settings, themeName);
 
+    GET_ENUM_VALUE_2(emulation, ejectMediaOnExit, BoolPair);
     GET_ENUM_VALUE_2(emulation, registerFileTypes, BoolPair);
     GET_ENUM_VALUE_2(emulation, disableWinKeys, BoolPair);
     GET_STR_VALUE_2(emulation, statsDefDir);
@@ -709,6 +711,7 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(settings, portable, YesNoPair);
     SET_STR_VALUE_2(settings, themeName);
 
+    SET_ENUM_VALUE_2(emulation, ejectMediaOnExit, YesNoPair);
     SET_ENUM_VALUE_2(emulation, registerFileTypes, YesNoPair);
     SET_ENUM_VALUE_2(emulation, disableWinKeys, YesNoPair);
     SET_STR_VALUE_2(emulation, statsDefDir);

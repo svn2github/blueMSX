@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2008-03-09 07:14:53 $
+** $Date: 2008-03-31 17:09:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -204,6 +204,7 @@ typedef struct {
     int  audioSwitch;
     int  pauseSwitch;
     int  speed;
+    int  ejectMediaOnExit;
     int  registerFileTypes;
     int  disableWinKeys;
     int  priorityBoost;

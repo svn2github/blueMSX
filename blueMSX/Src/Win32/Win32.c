@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.187 $
+** $Revision: 1.188 $
 **
-** $Date: 2008-03-30 21:38:43 $
+** $Date: 2008-03-31 17:09:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2321,7 +2321,15 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         DestroyWindow(hwnd);
         return 0;
 
-    case WM_DESTROY:         
+    case WM_DESTROY:
+        
+        if (pProperties->emulation.ejectMediaOnExit) {
+        	actionCartRemove1(); actionCartRemove2();
+        	actionDiskRemoveA(); actionDiskRemoveB();
+        	actionCasRemove();
+        	actionHarddiskRemoveAll();
+        }
+        
         emulatorStop();
         toolUnLoadAll();
         if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
