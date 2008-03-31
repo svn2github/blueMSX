@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.6 2008-03-30 18:38:45 dvik Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.7 2008-03-31 22:07:05 hap-hap Exp $
 
 /*
  *
@@ -10,7 +10,7 @@
  *
  * Copyright (C) 2003 Jarek Burczynski
  *
- * Version 0.1
+ * Version 0.2
  *
  *
  * Revision History:
@@ -1659,8 +1659,7 @@ void YMF262::writeRegForce(int r, byte v, const EmuTime &time)
 			case 9: case 10: case 11:
 				if (ch.extended) {
 					YMF262Channel &ch3 = channels[chan_no + 3];
-					byte conn = (ch.slots[SLOT1].CON << 1) || (ch3.slots[SLOT1].CON);
-					switch(conn) {
+					switch((ch.slots[SLOT1].CON << 1) | ch3.slots[SLOT1].CON) {
 					case 0:
 						// 1 -> 2 -> 3 -> 4 - out 
 						ch.slots[SLOT1].connect = PHASE_MOD1;
@@ -1708,8 +1707,7 @@ void YMF262::writeRegForce(int r, byte v, const EmuTime &time)
 			case 12: case 13: case 14: {
 				YMF262Channel &ch3 = channels[chan_no - 3];
 				if (ch3.extended) {
-					byte conn = (ch3.slots[SLOT1].CON << 1) || (ch.slots[SLOT1].CON);
-					switch(conn) {
+					switch((ch3.slots[SLOT1].CON << 1) | ch.slots[SLOT1].CON) {
 					case 0:
 						// 1 -> 2 -> 3 -> 4 - out 
 						ch3.slots[SLOT1].connect = PHASE_MOD1;
@@ -1918,7 +1916,7 @@ int* YMF262::updateBuffer(int length)
 		    channels[1].chan_calc(LFO_AM);
 		    if (channels[1].extended) {
 			    // extended 4op ch#1 part 2 
-			    channels[5].chan_calc_ext(LFO_AM);
+			    channels[4].chan_calc_ext(LFO_AM);
 		    } else {
 			    // standard 2op ch#4 
 			    channels[4].chan_calc(LFO_AM);

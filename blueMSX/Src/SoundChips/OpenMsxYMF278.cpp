@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF278.cpp,v 1.5 2008-03-30 18:38:45 dvik Exp $
+// $Id: OpenMsxYMF278.cpp,v 1.6 2008-03-31 22:07:05 hap-hap Exp $
 
 #include "OpenMsxYMF278.h"
 #include <cmath>
@@ -593,7 +593,14 @@ void YMF278::writeRegOPL4(byte reg, byte data, const EmuTime &time)
 			}
 			break;
 		case 4:
-			slot.pan = data & 0x0F;
+			if (data & 0x10) {
+				// output to DO1 pin:
+				// this pin is not used in moonsound
+				// we emulate this by muting the sound
+				slot.pan = 8; // both left/right -inf dB
+			} else {
+				slot.pan = data & 0x0F;
+			}
 
 			if (data & 0x020) {
 				// LFO reset
@@ -612,14 +619,12 @@ void YMF278::writeRegOPL4(byte reg, byte data, const EmuTime &time)
 					slot.state = EG_REL;
 				}
 				break;
-			case 1:	//tone off, damp
-				slot.state = EG_DMP;
-				break;
 			case 2:	//tone on, no damp
 				if (!(regs[reg] & 0x080)) {
 					keyOnHelper(slot);
 				}
 				break;
+			case 1:	//tone off, damp
 			case 3:	//tone on, damp
 				slot.state = EG_DMP;
 				break;

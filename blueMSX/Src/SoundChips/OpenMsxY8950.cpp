@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.cpp,v 1.5 2007-08-05 21:14:39 dvik Exp $
+// $Id: OpenMsxY8950.cpp,v 1.6 2008-03-31 22:07:05 hap-hap Exp $
 
 /*
   * Based on:
@@ -519,6 +519,7 @@ void Y8950::reset(const EmuTime &time)
 		reg[i] = 0x00;
 
 	reg[0x04] = 0x18;
+	reg[0x19] = 0x0F; // fixes 'Thunderbirds are Go'
 	status = 0x00;
 	statusMask = 0;
 	irq.reset();
