@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/SdlNotifications.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2007-03-05 23:38:46 $
+** $Date: 2008-03-31 19:42:23 $
 **
 ** More info: http://www.bluemsx.com
 **

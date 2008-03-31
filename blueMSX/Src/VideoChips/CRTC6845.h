@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/CRTC6845.h,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2006-09-19 06:00:36 $
+** $Date: 2008-03-31 19:42:23 $
 **
 ** More info: http://www.bluemsx.com
 **

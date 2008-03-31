@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2008-03-09 07:14:53 $
+** $Date: 2008-03-31 19:42:20 $
 **
 ** More info: http://www.bluemsx.com
 **

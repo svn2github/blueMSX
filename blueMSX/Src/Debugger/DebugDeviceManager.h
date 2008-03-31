@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/DebugDeviceManager.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2006-09-19 06:00:13 $
+** $Date: 2008-03-31 19:42:19 $
 **
 ** More info: http://www.bluemsx.com
 **

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8250.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2006-09-21 04:28:06 $
+** $Date: 2008-03-31 19:42:19 $
 **
 ** More info: http://www.bluemsx.com
 **

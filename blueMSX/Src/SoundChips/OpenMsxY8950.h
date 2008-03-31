@@ -1,4 +1,4 @@
-// $Id: OpenMsxY8950.h,v 1.2 2006-09-21 04:28:08 dvik Exp $
+// $Id: OpenMsxY8950.h,v 1.3 2008-03-31 19:42:23 jancasper Exp $
 
 #ifndef __Y8950_HH__
 #define __Y8950_HH__

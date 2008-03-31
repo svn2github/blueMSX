@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageMinimal.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2008-02-14 06:07:09 $
+** $Date: 2008-03-31 19:42:21 $
 **
 ** More info: http://www.bluemsx.com
 **

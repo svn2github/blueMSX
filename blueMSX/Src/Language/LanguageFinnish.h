@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2008-03-09 07:14:53 $
+** $Date: 2008-03-31 19:42:20 $
 **
 ** More info: http://www.bluemsx.com
 **

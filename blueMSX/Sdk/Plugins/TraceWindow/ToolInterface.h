@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/ToolInterface.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2005-08-16 04:14:27 $
+** $Date: 2008-03-31 19:42:18 $
 **
 ** More info: http://www.bluemsx.com
 **

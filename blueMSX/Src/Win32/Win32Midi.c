@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Midi.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2007-03-19 19:30:19 $
+** $Date: 2008-03-31 19:42:24 $
 **
 ** More info: http://www.bluemsx.com
 **

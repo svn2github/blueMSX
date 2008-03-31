@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/Trainer/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2008-02-15 00:57:21 $
+** $Date: 2008-03-31 19:42:18 $
 **
 ** More info: http://www.bluemsx.com
 **

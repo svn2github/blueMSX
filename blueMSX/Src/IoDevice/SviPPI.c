@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2006-09-26 03:17:20 $
+** $Date: 2008-03-31 19:42:20 $
 **
 ** More info: http://www.bluemsx.com
 **

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2005-02-22 03:43:28 $
+** $Date: 2008-03-31 19:42:18 $
 **
 ** More info: http://www.bluemsx.com
 **
