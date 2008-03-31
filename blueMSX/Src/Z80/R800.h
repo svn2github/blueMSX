@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-03-31 17:48:26 $
 **
 ** Author: Daniel Vik
 **
@@ -183,7 +183,7 @@ typedef struct {
     RegisterPair BC1;
     RegisterPair DE1;
     RegisterPair HL1;
-    RegisterPair SH;
+    RegisterPair SH; /* on a genuine ZiLOG Z80, this register is also included in the secondary set (EXX), but most MSXes use a Z80 clone */
     UInt8 I;
     UInt8 R;
     UInt8 R2;
