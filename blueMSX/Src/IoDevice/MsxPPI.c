@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-04-01 17:22:51 $
+** $Date: 2008-04-01 17:49:08 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -256,14 +256,30 @@ static UInt8 getKeyState(int row)
 	Slower than the above, since it needs data of all rows
 	*/
 	UInt8 keyrow[12]={ROW0,ROW1,ROW2,ROW3,ROW4,ROW5,ROW6,ROW7,ROW8,ROW9,ROW10,ROW11};
-	int i,j,k=0;
+	int i,j;
 	
 	if (row>11) return 0xff;
 	
 	for (i=0;i<11;i++) {
-		if (i==6) { k=keyrow[6]&0x15; keyrow[6]|=0x15; } /* modifier keys */
-		for (j=i+1;j<12;j++) if ((keyrow[i]|keyrow[j])!=0xff) keyrow[i]=keyrow[j]=keyrow[i]&keyrow[j];
-		if (i==6) keyrow[6]=k|(keyrow[6]&0xea);
+		
+		if (keyrow[i]==0xff) continue;
+		
+		if (i==6) {
+			/* modifier keys */
+			int k=keyrow[6]&0x15; keyrow[6]|=0x15;
+			if (keyrow[6]!=0xff) {
+				for (j=7;j<12;j++) {
+					if ((keyrow[6]|keyrow[j])!=0xff) keyrow[6]=keyrow[j]=keyrow[6]&keyrow[j];
+				}
+			}
+			keyrow[6]=k|(keyrow[6]&0xea);
+		}
+		
+		else {
+			for (j=i+1;j<12;j++) {
+				if ((keyrow[i]|keyrow[j])!=0xff) keyrow[i]=keyrow[j]=keyrow[i]&keyrow[j];
+			}
+		}
 	}
 	
 	return keyrow[row];
