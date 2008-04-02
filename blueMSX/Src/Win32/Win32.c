@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.188 $
+** $Revision: 1.189 $
 **
-** $Date: 2008-03-31 17:09:05 $
+** $Date: 2008-04-02 01:39:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1319,6 +1319,7 @@ void exitDialogShow() {
 void updateMenu(int show) {
     int doDelay = show;
     int enableSpecial = 1;
+    int emuState = emulatorGetState();
 
     if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         show = 1;
@@ -1338,8 +1339,8 @@ void updateMenu(int show) {
 
     menuUpdate(pProperties, 
                st.shortcuts,
-               emulatorGetState() == EMU_RUNNING, 
-               emulatorGetState() == EMU_STOPPED, 
+               emuState == EMU_RUNNING, 
+               emuState == EMU_STOPPED, 
                mixerIsLogging(st.mixer),
                boardCaptureIsRecording() ? 1 : boardCaptureIsPlaying() ? 2 : 0,
                fileExist(pProperties->filehistory.quicksave, NULL),
