@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.189 $
+** $Revision: 1.190 $
 **
-** $Date: 2008-04-02 01:39:40 $
+** $Date: 2008-04-02 14:43:07 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -65,6 +65,7 @@
 #include "Win32Avi.h"
 #include "FileHistory.h"
 #include "Win32Dir.h"
+#include "Win32file.h"
 #include "Win32Help.h"
 #include "Win32Menu.h"
 #include "Win32Eth.h"
@@ -435,85 +436,6 @@ void diskQuickviewWindowShow(DiskQuickviewWindow* dqw)
 
 ///////////////////////////////////////////////////////////////////////////
 
-static RomType romTypeList[] = {
-    ROM_ASCII8,
-    ROM_ASCII8SRAM,
-    ROM_ASCII16,
-    ROM_ASCII16SRAM,
-    ROM_KONAMI4,
-    ROM_KONAMI5,
-    ROM_PLAIN,
-    ROM_BASIC,
-    ROM_0x4000,
-    ROM_0xC000,
-    ROM_KOEI,
-    ROM_RTYPE,
-    ROM_CROSSBLAIM,
-    ROM_HARRYFOX,
-    ROM_LODERUNNER,
-    ROM_PLAYBALL,
-    ROM_MANBOW2,
-    ROM_HALNOTE,
-    ROM_KONAMISYNTH,
-    ROM_KONAMKBDMAS,
-    ROM_KONWORDPRO,
-    ROM_MAJUTSUSHI,
-    ROM_SCC,
-    ROM_SCCPLUS,
-    ROM_KONAMI4NF, 
-    ROM_ASCII16NF,
-    ROM_GAMEMASTER2,
-    ROM_KOREAN80,
-    ROM_KOREAN90,
-    ROM_KOREAN126,
-    ROM_HOLYQURAN,
-    ROM_FMPAC,
-    ROM_FMPAK,
-    ROM_MSXAUDIO,
-    ROM_MOONSOUND,
-    ROM_DISKPATCH,
-    ROM_CASPATCH,
-    ROM_TC8566AF,
-    ROM_TC8566AF_TR,
-    ROM_MICROSOL,
-    ROM_NATIONALFDC,
-    ROM_PHILIPSFDC,
-    ROM_SVI738FDC,
-    ROM_GIDE,
-    ROM_SUNRISEIDE,
-    ROM_BEERIDE,
-    SRAM_MEGASCSI,
-    SRAM_WAVESCSI,
-    ROM_GOUDASCSI,
-    ROM_KANJI,
-    ROM_KANJI12,
-    ROM_JISYO,
-    ROM_BUNSETU,
-    ROM_MSXDOS2,
-    ROM_NATIONAL,
-    ROM_PANASONIC8,
-    ROM_PANASONICWX16,
-    ROM_PANASONIC16,
-    ROM_PANASONIC32,
-    ROM_FSA1FMMODEM,
-    ROM_MICROSOL80,
-    ROM_SVI727,
-    ROM_SONYHBIV1,
-    ROM_FMDAS,
-    ROM_YAMAHASFG01,
-    ROM_YAMAHASFG05,
-    ROM_SF7000IPL,
-    ROM_OBSONET,
-//    ROM_DUMAS,
-    ROM_NOWIND,
-    SRAM_ESERAM,
-    SRAM_ESESCC,
-    ROM_MEGAFLSHSCC,
-    ROM_MATRAINK,
-    ROM_UNKNOWN,
-};
-
-
 typedef struct {
     char        title[128];
     char        description[128];
@@ -548,7 +470,7 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
         RomType romType = mediaType != NULL ? mediaDbGetRomType(mediaType) : ROM_UNKNOWN;
         int idx = 0;
 
-        while (romTypeList[idx] != romType) {
+        while (opendialog_getromtype(idx) != romType) {
             idx++;
         }
 
@@ -599,8 +521,8 @@ static BOOL CALLBACK dskZipDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
 
             fileList = dlgInfo->fileList;
 
-            for (i = 0; romTypeList[i] != ROM_UNKNOWN; i++) {
-                SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(romTypeList[i]));
+            for (i = 0; opendialog_getromtype(i) != ROM_UNKNOWN; i++) {
+                SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(opendialog_getromtype(i)));
                 SendDlgItemMessage(hDlg, IDC_ROMTYPE, CB_SETCURSEL, i, 0);
             }
             SendDlgItemMessage(hDlg, IDC_OPEN_ROMTYPE, CB_ADDSTRING, 0, (LPARAM)romTypeToString(ROM_UNKNOWN));
@@ -638,7 +560,7 @@ static BOOL CALLBACK dskZipDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
             if (HIWORD(wParam) == 1 || HIWORD(wParam) == 2) {
                 int idx = SendMessage(GetDlgItem(hDlg, IDC_OPEN_ROMTYPE), CB_GETCURSEL, 0, 0);
 
-                dlgInfo->openRomType = idx == CB_ERR ? -1 : romTypeList[idx];
+                dlgInfo->openRomType = idx == CB_ERR ? -1 : opendialog_getromtype(idx);
             }
             return 0;
         case IDC_DSKRESET:
@@ -2940,9 +2862,6 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-
-#include "Win32file.h"
-
 
 void archShowCassettePosDialog()
 {
