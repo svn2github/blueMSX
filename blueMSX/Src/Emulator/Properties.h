@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2008-03-31 17:09:05 $
+** $Date: 2008-04-03 05:57:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -410,8 +410,6 @@ typedef struct Properties {
     int                 language;
     Settings            settings;
 } Properties;
-
-void propertiesSetDirectory(const char* defDir, const char* altDir);
 
 Properties* propCreate(int useDefault, 
                        int langType, 

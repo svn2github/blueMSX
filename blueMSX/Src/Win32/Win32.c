@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.191 $
+** $Revision: 1.192 $
 **
-** $Date: 2008-04-03 02:31:52 $
+** $Date: 2008-04-03 05:57:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2387,10 +2387,6 @@ int setDefaultPath() {
     mkdir(buffer);
     boardSetDirectory(buffer);
 
-    sprintf(buffer, "%s\\Shortcut Profiles", rootDir);
-    mkdir(buffer);
-    shortcutsSetDirectory(buffer);
-
     sprintf(buffer, "%s\\Keyboard Config", rootDir);
     mkdir(buffer);
     keyboardSetDirectory(buffer);
@@ -2533,7 +2529,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         SetCurrentDirectory(buffer);
     }
 
-    pkg_load("BombaPack.bpk", NULL, 0);
+    pkg_load("Packages/BombaPack.bpk", NULL, 0);
 
     appConfigLoad();
 

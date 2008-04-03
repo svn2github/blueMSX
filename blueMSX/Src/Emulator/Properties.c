@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2008-03-31 17:09:05 $
+** $Date: 2008-04-03 05:57:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "Language.h"
 #include "JoystickPort.h"
 #include "Board.h"
+#include "AppConfig.h"
 
 
 // PacketFileSystem.h Need to be included after all other includes
@@ -709,13 +710,17 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(settings, showStatePreview, YesNoPair);
     SET_ENUM_VALUE_2(settings, usePngScreenshots, YesNoPair);
     SET_ENUM_VALUE_2(settings, portable, YesNoPair);
-    SET_STR_VALUE_2(settings, themeName);
+    if (appConfigGetString("singletheme", NULL) == NULL) {
+        SET_STR_VALUE_2(settings, themeName);
+    }
 
     SET_ENUM_VALUE_2(emulation, ejectMediaOnExit, YesNoPair);
     SET_ENUM_VALUE_2(emulation, registerFileTypes, YesNoPair);
     SET_ENUM_VALUE_2(emulation, disableWinKeys, YesNoPair);
     SET_STR_VALUE_2(emulation, statsDefDir);
-    SET_STR_VALUE_2(emulation, machineName);
+    if (appConfigGetString("singlemachine", NULL) == NULL) {
+        SET_STR_VALUE_2(emulation, machineName);
+    }
     SET_STR_VALUE_2(emulation, shortcutProfile);
     SET_INT_VALUE_2(emulation, speed);
     SET_ENUM_VALUE_2(emulation, syncMethod, EmuSyncPair);
@@ -923,7 +928,7 @@ void propertiesSetDirectory(const char* defDir, const char* altDir)
 {
     FILE* f;
 
-    sprintf(settFilename, "%s/bluemsx.ini", defDir);
+    sprintf(settFilename, "bluemsx.ini", defDir);
     f = fopen(settFilename, "r");
     if (f != NULL) {
         fclose(f);
@@ -932,7 +937,7 @@ void propertiesSetDirectory(const char* defDir, const char* altDir)
         sprintf(settFilename, "%s/bluemsx.ini", altDir);
     }
 
-    sprintf(histFilename, "%s/bluemsx_history.ini", defDir);
+    sprintf(histFilename, "bluemsx_history.ini", defDir);
     f = fopen(histFilename, "r");
     if (f != NULL) {
         fclose(f);

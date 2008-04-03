@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2008-04-03 02:31:55 $
+** $Date: 2008-04-03 05:57:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ static char virtualKeys[256][32] = {
     ""
 };
 
-static char       profileDir[MAX_PATH];
+static char       profileDir[] = "Shortcut Profiles";
 static char       shortcutProfile[128];
 static char       tmpShortcutProfile[128];
 static WNDPROC    baseHotkeyCtrlProc = NULL;
@@ -1375,11 +1375,6 @@ char* shortcutsToString(ShotcutHotkey hotkey)
     }
 
     return buf;
-}
-
-void shortcutsSetDirectory(char* directory)
-{
-    strcpy(profileDir, directory);
 }
 
 
