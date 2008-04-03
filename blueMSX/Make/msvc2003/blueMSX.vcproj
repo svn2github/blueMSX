@@ -2066,9 +2066,6 @@ buildnumber.exe
 				RelativePath="..\..\Src\Arch\ArchInput.h">
 			</File>
 			<File
-				RelativePath="..\..\Src\Arch\ArchKeyStorage.h">
-			</File>
-			<File
 				RelativePath="..\..\Src\Arch\ArchMenu.h">
 			</File>
 			<File

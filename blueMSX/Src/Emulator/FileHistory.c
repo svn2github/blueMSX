@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2008-03-30 05:12:53 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,7 +76,7 @@ void updateFileHistory(char* history, RomType* historyType, char* filename, RomT
     char fname[PROP_MAXPATH];
     int i = 0;
 
-    if (appConfigGetInt("FileHistory", 1) == 0) {
+    if (appConfigGetInt("filehistory", 1) == 0) {
         return;
     }
 
@@ -103,7 +103,7 @@ void updateFileHistory(char* history, RomType* historyType, char* filename, RomT
 void verifyFileHistory(char* history, RomType* historyType) {
     int i, j;
 
-    if (appConfigGetInt("FileHistory", 1) == 0) {
+    if (appConfigGetInt("filehistory", 1) == 0) {
         return;
     }
 

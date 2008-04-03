@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Arch/ArchKeyStorage.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-30 18:38:39 $
+** $Date: 2008-04-03 02:31:51 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,10 +27,5 @@
 */
 #ifndef ARCH_KEY_STORAGE_H
 #define ARCH_KEY_STORAGE_H
-
-void getIntValue(char* keyFile, char* keyDir, char* keyStr, int* returnValue);
-int  setIntValue(char* keyFile, char* keyDir, char* keyStr, int value);
-void getStrValue(char* keyFile, char* keyDir, char* keyStr, char* returnValue);
-int  setStrValue(char* keyFile, char* keyDir, char* keyStr, char* value);
 
 #endif

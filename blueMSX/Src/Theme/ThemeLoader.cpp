@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeLoader.cpp,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1371,7 +1371,7 @@ static ThemeCollection** currentWin32Theme = NULL;
 
 extern "C" ThemeCollection** createThemeList(ThemeCollection* defaultTheme)
 {
-    const char* singleTheme = appConfigGetString("SingleTheme", NULL);
+    const char* singleTheme = appConfigGetString("singletheme", NULL);
 
     if (singleTheme != NULL) {
         ThemeCollection** themeList = (ThemeCollection**)calloc(1, 128 * sizeof(ThemeCollection*));

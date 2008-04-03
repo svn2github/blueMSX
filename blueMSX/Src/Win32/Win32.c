@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.190 $
+** $Revision: 1.191 $
 **
-** $Date: 2008-04-02 14:43:07 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2586,12 +2586,12 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         emuCheckFullscreenArgument(pProperties, szLine);
     }
 
-    tempName = appConfigGetString("SingleMachine", NULL);
+    tempName = appConfigGetString("singlemachine", NULL);
     if (tempName != NULL) {
         strcpy(pProperties->emulation.machineName, tempName);
     }
 
-    tempName = appConfigGetString("SingleTheme", NULL);
+    tempName = appConfigGetString("singletheme", NULL);
     if (tempName != NULL) {
         strcpy(pProperties->settings.themeName, tempName);
     }
@@ -2696,12 +2696,24 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     menuCreate(st.hwnd);
 
-    addMenuItem(langMenuFile(), actionMenuFile, 0);
-    addMenuItem(langMenuRun(), actionMenuRun, 1);
-    addMenuItem(langMenuWindow(), actionMenuZoom, 1);
-    addMenuItem(langMenuOptions(), actionMenuOptions, 1);
-    addMenuItem(langMenuTools(), actionMenuTools, 1);
-    addMenuItem(langMenuHelp(), actionMenuHelp, 1);
+    if (appConfigGetInt("menu.file", 1) != 0) {
+        addMenuItem(langMenuFile(), actionMenuFile, 0);
+    }
+    if (appConfigGetInt("menu.emulation", 1) != 0) {
+        addMenuItem(langMenuRun(), actionMenuRun, 1);
+    }
+    if (appConfigGetInt("menu.window", 1) != 0) {
+        addMenuItem(langMenuWindow(), actionMenuZoom, 1);
+    }
+    if (appConfigGetInt("menu.options", 1) != 0) {
+        addMenuItem(langMenuOptions(), actionMenuOptions, 1);
+    }
+    if (appConfigGetInt("menu.tools", 1) != 0) {
+        addMenuItem(langMenuTools(), actionMenuTools, 1);
+    }
+    if (appConfigGetInt("menu.help", 1) != 0) {
+        addMenuItem(langMenuHelp(), actionMenuHelp, 1);
+    }
 
     st.emuHwnd = CreateWindow("blueMSXemuWindow", "", WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE, 0, 0, 0, 0, st.hwnd, NULL, hInstance, NULL);
     ShowWindow(st.emuHwnd, SW_HIDE);
@@ -2928,12 +2940,24 @@ void archShowLanguageDialog()
     success = langSetLanguage(lang);
     if (success) {
         pProperties->language = lang;
-        addMenuItem(langMenuFile(), actionMenuFile, 0);
-        addMenuItem(langMenuRun(), actionMenuRun, 1);
-        addMenuItem(langMenuWindow(), actionMenuZoom, 1);
-        addMenuItem(langMenuOptions(), actionMenuOptions, 1);
-        addMenuItem(langMenuTools(), actionMenuTools, 1);
-        addMenuItem(langMenuHelp(), actionMenuHelp, 1);
+        if (appConfigGetInt("menu.file", 1) != 0) {
+            addMenuItem(langMenuFile(), actionMenuFile, 0);
+        }
+        if (appConfigGetInt("menu.emulation", 1) != 0) {
+            addMenuItem(langMenuRun(), actionMenuRun, 1);
+        }
+        if (appConfigGetInt("menu.window", 1) != 0) {
+            addMenuItem(langMenuWindow(), actionMenuZoom, 1);
+        }
+        if (appConfigGetInt("menu.options", 1) != 0) {
+            addMenuItem(langMenuOptions(), actionMenuOptions, 1);
+        }
+        if (appConfigGetInt("menu.tools", 1) != 0) {
+            addMenuItem(langMenuTools(), actionMenuTools, 1);
+        }
+        if (appConfigGetInt("menu.help", 1) != 0) {
+            addMenuItem(langMenuHelp(), actionMenuHelp, 1);
+        }
     }
     
     for (i = 0; i < toolGetCount(); i++) {

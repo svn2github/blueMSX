@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/AppConfig.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-03-30 06:54:01 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@ typedef struct
     int  intVal;
 } AppEntry;
 
-#define MAX_APP_ENTRIES 16
+#define MAX_APP_ENTRIES 128
 
 static AppEntry appEntries[MAX_APP_ENTRIES];
 static int      appEntryCnt = 0;

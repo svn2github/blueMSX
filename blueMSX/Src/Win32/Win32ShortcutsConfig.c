@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-04-03 02:31:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,7 @@
 #include "Win32ShortcutsConfig.h"
 #include "Win32Common.h"
 #include "Win32keyboard.h"
+#include "IniFileParser.h"
 #include "Resource.h"
 
 
@@ -693,12 +694,11 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
     return CallWindowProc(baseHotkeyCtrlProc, hwnd, iMsg, wParam, lParam);
 }
 
-
 #define LOAD_SHORTCUT(hotkey)                                                   \
 do {                                                                            \
     char buffer[32];                                                            \
     int value;                                                                  \
-    GetPrivateProfileString("Shortcuts", #hotkey, "0", buffer, 32, fileName);   \
+    iniFileGetString("Shortcuts", #hotkey, "0", buffer, 32);                    \
     if (0 == sscanf(buffer, "%X", &value)) value = 0;                           \
     shortcuts->hotkey = int2hotkey(value);                                      \
 } while(0)
@@ -707,8 +707,9 @@ do {                                                                            
 do {                                                                            \
     char buffer[32];                                                            \
     sprintf(buffer, "%.8X", hotkey2int(shortcuts->hotkey));                     \
-    WritePrivateProfileString("Shortcuts", #hotkey, buffer, fileName);          \
+    iniFileWriteString("Shortcuts", #hotkey, buffer);                           \
 } while(0)
+
 
 static Shortcuts* loadShortcuts(char* profileName)
 {
@@ -716,6 +717,8 @@ static Shortcuts* loadShortcuts(char* profileName)
     Shortcuts* shortcuts = (Shortcuts*)malloc(sizeof(Shortcuts));
 
     sprintf(fileName, "%s/%s.shortcuts", profileDir, profileName);
+
+    iniFileOpen(fileName);
 
     LOAD_SHORTCUT(msxAudioSwitch);
     LOAD_SHORTCUT(spritesEnable);
@@ -800,6 +803,9 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(toolsShowTrainer);
     LOAD_SHORTCUT(helpShowHelp);
     LOAD_SHORTCUT(helpShowAbout);
+
+    iniFileClose();
+
     return shortcuts;
 }
 
@@ -808,6 +814,8 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     char fileName[MAX_PATH];
 
     sprintf(fileName, "%s/%s.shortcuts", profileDir, profileName);
+
+    iniFileOpen(fileName);
 
     SAVE_SHORTCUT(msxAudioSwitch);
     SAVE_SHORTCUT(spritesEnable);
@@ -892,6 +900,8 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(toolsShowTrainer);
     SAVE_SHORTCUT(helpShowHelp);
     SAVE_SHORTCUT(helpShowAbout);
+
+    iniFileClose();
 }
 
 static void addShortcutEntry(HWND hwnd, int entry, char* description, ShotcutHotkey hotkey) {

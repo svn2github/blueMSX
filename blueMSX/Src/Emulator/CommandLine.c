@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.30 $
+** $Revision: 1.31 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "LaunchFile.h"
 #include "Emulator.h"
 #include "StrcmpNoCase.h"
+#include "AppConfig.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -511,6 +512,10 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
 
 int emuTryStartWithArguments(Properties* properties, char* cmdLine) {
     if (cmdLine == NULL || *cmdLine == 0) {
+        if (appConfigGetInt("autostart", 0) != 0) {
+            emulatorStop();
+            emulatorStart(NULL);
+        }
         return 0;
     }
 

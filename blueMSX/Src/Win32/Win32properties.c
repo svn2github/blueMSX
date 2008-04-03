@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-04-03 02:31:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -394,7 +394,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
   
 #ifndef NO_FILE_HISTORY
-        if (appConfigGetInt("FileHistory", 1) != 0) {
+        if (appConfigGetInt("filehistory", 1) != 0) {
             SendMessage(GetDlgItem(hDlg, IDC_SETINGSFILEHISTORYGOUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistoryGB());
             SendMessage(GetDlgItem(hDlg, IDC_SETINGSHISTORYSIZETEXT), WM_SETTEXT, 0, (LPARAM)langPropSetFileHistorySize());
             SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSHISTORYCLEAR), langPropSetFileHistoryClear());
@@ -449,7 +449,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         switch (LOWORD(wParam)) {
         case IDC_SETTINGSHISTORYCLEAR:
 #ifndef NO_FILE_HISTORY
-            if (appConfigGetInt("FileHistory", 1) != 0) {
+            if (appConfigGetInt("filehistory", 1) != 0) {
                 int rv = MessageBox(NULL, langPropClearFileHistory(), langWarningTitle(), MB_ICONWARNING | MB_OKCANCEL);
                 if (rv == IDOK) {
                     int i;
@@ -508,7 +508,7 @@ static BOOL CALLBACK filesDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         }
 
 #ifndef NO_FILE_HISTORY
-        if (appConfigGetInt("FileHistory", 1) != 0) {
+        if (appConfigGetInt("filehistory", 1) != 0) {
             char buffer[64];
 
             GetDlgItemText(hDlg, IDC_SETINGSHISTORYSIZE, buffer, 63);
@@ -1905,104 +1905,154 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, Mixer* mixer, Video* video) {
+int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStartPage, Mixer* mixer, Video* video) {
 	HINSTANCE       hInst = (HINSTANCE)GetModuleHandle(NULL);
     PROPSHEETPAGE   psp[8];
     PROPSHEETHEADER psh;
     Properties oldProp = *pProperties;
+    UINT startPage = -1;
+    UINT curPage = 0;
 
     centered = 0;
     hDlgSound = NULL;
     theMixer = mixer;
     theVideo = video;
 
-    psp[0].dwSize = sizeof(PROPSHEETPAGE);
-    psp[0].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[0].hInstance = hInst;
-    psp[0].pszTemplate = MAKEINTRESOURCE(IDD_EMULATION);
-    psp[0].pszIcon = NULL;
-    psp[0].pfnDlgProc = emulationDlgProc;
-    psp[0].pszTitle = langPropEmulation();
-    psp[0].lParam = (LPARAM)pProperties;
-    psp[0].pfnCallback = NULL;
+    if (appConfigGetInt("properties.emulation", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_EMULATION);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = emulationDlgProc;
+        psp[curPage].pszTitle = langPropEmulation();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_EMULATION || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[1].dwSize = sizeof(PROPSHEETPAGE);
-    psp[1].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[1].hInstance = hInst;
-    psp[1].pszTemplate = MAKEINTRESOURCE(IDD_VIDEO);
-    psp[1].pszIcon = NULL;
-    psp[1].pfnDlgProc = videoDlgProc;
-    psp[1].pszTitle = langPropVideo();
-    psp[1].lParam = (LPARAM)pProperties;
-    psp[1].pfnCallback = NULL;
+    if (appConfigGetInt("properties.video", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_VIDEO);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = videoDlgProc;
+        psp[curPage].pszTitle = langPropVideo();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_VIDEO || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[2].dwSize = sizeof(PROPSHEETPAGE);
-    psp[2].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[2].hInstance = hInst;
-    psp[2].pszTemplate = MAKEINTRESOURCE(IDD_SOUND);
-    psp[2].pszIcon = NULL;
-    psp[2].pfnDlgProc = soundDlgProc;
-    psp[2].pszTitle = langPropSound();
-    psp[2].lParam = (LPARAM)pProperties;
-    psp[2].pfnCallback = NULL;
+    if (appConfigGetInt("properties.sound", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_SOUND);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = soundDlgProc;
+        psp[curPage].pszTitle = langPropSound();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_SOUND || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[3].dwSize = sizeof(PROPSHEETPAGE);
-    psp[3].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[3].hInstance = hInst;
-    psp[3].pszTemplate = MAKEINTRESOURCE(IDD_PERFORMANCE);
-    psp[3].pszIcon = NULL;
-    psp[3].pfnDlgProc = performanceDlgProc;
-    psp[3].pszTitle = langPropPerformance();
-    psp[3].lParam = (LPARAM)pProperties;
-    psp[3].pfnCallback = NULL;
+    if (appConfigGetInt("properties.performance", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_PERFORMANCE);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = performanceDlgProc;
+        psp[curPage].pszTitle = langPropPerformance();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_PERFORMANCE || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[4].dwSize = sizeof(PROPSHEETPAGE);
-    psp[4].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[4].hInstance = hInst;
-    psp[4].pszTemplate = MAKEINTRESOURCE(IDD_SETTINGS);
-    psp[4].pszIcon = NULL;
-    psp[4].pfnDlgProc = filesDlgProc;
-    psp[4].pszTitle = langPropFile();
-    psp[4].lParam = (LPARAM)pProperties;
-    psp[4].pfnCallback = NULL;
+    if (appConfigGetInt("properties.settings", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_SETTINGS);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = filesDlgProc;
+        psp[curPage].pszTitle = langPropFile();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_SETTINGS || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[5].dwSize = sizeof(PROPSHEETPAGE);
-    psp[5].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[5].hInstance = hInst;
-    psp[5].pszTemplate = MAKEINTRESOURCE(IDD_DISKEMU);
-    psp[5].pszIcon = NULL;
-    psp[5].pfnDlgProc = diskDlgProc;
-    psp[5].pszTitle = langPropDisk();
-    psp[5].lParam = (LPARAM)pProperties;
-    psp[5].pfnCallback = NULL;
+    if (appConfigGetInt("properties.disk", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_DISKEMU);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = diskDlgProc;
+        psp[curPage].pszTitle = langPropDisk();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_DISK || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[6].dwSize = sizeof(PROPSHEETPAGE);
-    psp[6].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[6].hInstance = hInst;
-    psp[6].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
-    psp[6].pszIcon = NULL;
-    psp[6].pfnDlgProc = settingsDlgProc;
-    psp[6].pszTitle = langPropSettings();
-    psp[6].lParam = (LPARAM)pProperties;
-    psp[6].pfnCallback = NULL;
+    if (appConfigGetInt("properties.appearance", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_APEARANCE);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = settingsDlgProc;
+        psp[curPage].pszTitle = langPropSettings();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_APEARANCE || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
 
-    psp[7].dwSize = sizeof(PROPSHEETPAGE);
-    psp[7].dwFlags = PSP_USEICONID | PSP_USETITLE;
-    psp[7].hInstance = hInst;
-    psp[7].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
-    psp[7].pszIcon = NULL;
-    psp[7].pfnDlgProc = portsDlgProc;
-    psp[7].pszTitle = langPropPorts();
-    psp[7].lParam = (LPARAM)pProperties;
-    psp[7].pfnCallback = NULL;
-    
+    if (appConfigGetInt("properties.ports", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = portsDlgProc;
+        psp[curPage].pszTitle = langPropPorts();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_PORTS || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
+
     psh.dwSize = sizeof(PROPSHEETHEADER);
     psh.dwFlags = PSH_USEICONID | PSH_PROPSHEETPAGE | PSH_NOAPPLYNOW;
     psh.hwndParent = hwndOwner;
     psh.hInstance = hInst;
     psh.pszIcon = NULL;
     psh.pszCaption = langPropTitle();
-    psh.nPages = sizeof(psp) / sizeof(PROPSHEETPAGE);
+    psh.nPages = curPage;
     psh.nStartPage = startPage;
     psh.ppsp = (LPCPROPSHEETPAGE) &psp;
     psh.pfnCallback = NULL;
@@ -2016,29 +2066,4 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage startPage, 
     }
 
     return propModified;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Host dependent load/save methods, Can be moved to its own file
-
-void getStrValue(char* keyFile, char* keyDir, char* keyStr, char* returnValue) {  
-    char defStr[512];
-    strcpy(defStr, returnValue);
-    GetPrivateProfileString("General", keyStr, defStr, returnValue, 512, keyFile);      
-}
-
-void getIntValue(char* keyFile, char* keyDir, char* keyStr, DWORD* returnValue) {  
-    DWORD def = *returnValue;
-    *returnValue = GetPrivateProfileInt("General", keyStr, def, keyFile);                           
-}
-
-void setIntValue(char* keyFile, char* keyDir, char* keyStr, DWORD value) {
-    char buf[30];
-
-    sprintf(buf, "%d", value);
-    WritePrivateProfileString("General", keyStr, buf, keyFile);
-}
-
-void setStrValue(char* keyFile, char* keyDir, char* keyStr, char* value) {
-    WritePrivateProfileString("General", keyStr, value, keyFile);
 }

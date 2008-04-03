@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2008-03-30 07:39:56 $
+** $Date: 2008-04-03 02:31:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -468,7 +468,7 @@ int machineIsValid(const char* machineName, int checkRoms)
 
 char** machineGetAvailable(int checkRoms)
 {
-    const char* machineName = appConfigGetString("SingleMachine", NULL);
+    const char* machineName = appConfigGetString("singlemachine", NULL);
 
     if (machineName != NULL) {
         char filename[128];

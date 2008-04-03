@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2008-03-31 19:42:24 $
+** $Date: 2008-04-03 02:31:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -266,7 +266,7 @@ void toolLoadAll(const char* path, int languageId)
     char  curDir[MAX_PATH];
     HANDLE handle;
 
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return;
     }
 
@@ -369,7 +369,7 @@ void toolUnLoadAll()
 {
     int i;
 
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return;
     }
 
@@ -383,7 +383,7 @@ void toolUnLoadAll()
 }
 
 int toolGetCount() {
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return 0;
     }
 
@@ -392,7 +392,7 @@ int toolGetCount() {
 
 ToolInfo* toolInfoGet(int index)
 {
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return NULL;
     }
 
@@ -408,7 +408,7 @@ ToolInfo* toolInfoFind(char* name)
 {
     int i;
 
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return NULL;
     }
 
@@ -422,7 +422,7 @@ ToolInfo* toolInfoFind(char* name)
 
 const char* toolInfoGetName(ToolInfo* toolInfo)
 {
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return "";
     }
 
@@ -434,7 +434,7 @@ const char* toolInfoGetName(ToolInfo* toolInfo)
 
 void toolInfoShowTool(ToolInfo* toolInfo)
 {
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return;
     }
 
@@ -445,7 +445,7 @@ void toolInfoShowTool(ToolInfo* toolInfo)
 
 void toolInfoSetLanguage(ToolInfo* toolInfo, int langId) 
 {
-    if (appConfigGetInt("ToolsEnable", 1) == 0) {
+    if (appConfigGetInt("toolsenable", 1) == 0) {
         return;
     }
 
