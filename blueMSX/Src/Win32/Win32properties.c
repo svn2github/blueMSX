@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2008-04-03 02:31:55 $
+** $Date: 2008-04-05 14:46:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -180,12 +180,13 @@ static char* pEmuSync[] = {
     NULL
 };
 
-static int soundBufSizes[] = { 10, 20, 50, 100, 150, 200, 250, 300, 350 };
+static int soundBufSizes[] = { 10, 25, 50, 75, 100, 150, 200, 250, 300, 350 };
 
 static char* pSoundBufferSize[] = {
     "10 ms",
-    "20 ms",
+    "25 ms",
     "50 ms",
+    "75 ms",
     "100 ms",
     "150 ms",
     "200 ms",
