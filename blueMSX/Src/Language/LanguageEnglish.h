@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.102 $
+** $Revision: 1.103 $
 **
-** $Date: 2008-03-31 19:42:20 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -188,7 +188,7 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Hard Disk";
     ls->menuFileHarddiskNoPesent= "No Controllers Present";
-    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll= "Eject All Harddisks";    // New in 2.7
 
     ls->menuRunRun              = "Run";
     ls->menuRunPause            = "Pause";
@@ -308,7 +308,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Emulation Speed:";
     ls->propEmuFrontSwitchGB    = "Panasonic Switches ";
     ls->propEmuFrontSwitch      = " Front Switch";
-    ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
+    ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
     ls->propEmuPauseSwitch      = " Pause Switch";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
     ls->propVideoFreqText       = "Video Frequency:";
@@ -333,8 +333,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propMonContrast         = "Contrast:";
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "RF-Modulator:";
+    ls->propMonScanlines        = " Scanlines:";
+    ls->propMonColorGhosting    = " RF-Modulator:";
     ls->propMonEffectsGB        = "Effects ";
 
     ls->propPerfVideoDrvGB      = "Video Driver ";
@@ -373,7 +373,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Automatic MSX function for Windows menu keys"; 
     ls->propPriorityBoost       = " Boost the priority of blueMSX";
     ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
-    ls->propClearHistory        = "Are you sure you want to clear the file history ?";
+    ls->propClearHistory        = "Are you sure you want to clear the file history?";
     ls->propOpenRomGB           = "Open Rom Dialog ";
     ls->propDefaultRomType      = "Default Rom Type:";
     ls->propGuessRomType        = "Guess Rom Type";
@@ -387,7 +387,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propThemeGB             = "Theme ";
     ls->propTheme               = "Theme:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Access Method:";  // New in 2.7
     ls->propCdromMethodNone     = "None";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7

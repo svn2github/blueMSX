@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2008-03-31 19:42:20 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -309,7 +309,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmuSpeedText                = "Velocità di emulazione:";
     ls->propEmuFrontSwitchGB            = "Interruttori Panasonic ";
     ls->propEmuFrontSwitch              = " Interruttore frontale";
-    ls->propEmuFdcTiming                = "Non sincronizzare le unità disco";
+    ls->propEmuFdcTiming                = " Non sincronizzare le unità disco";
     ls->propEmuPauseSwitch              = " Tasto pausa";
     ls->propEmuAudioSwitch              = " Cartuccia MSX-AUDIO";
     ls->propVideoFreqText               = "Frequenza video:";
@@ -388,7 +388,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propThemeGB                     = "Temi ";
     ls->propTheme                       = "Tema corrente:";
 
-    ls->propCdromGB                     = "CD-ROM";          // New in 2.7
+    ls->propCdromGB                     = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod                 = "Metodo di accesso :";  // New in 2.7
     ls->propCdromMethodNone             = "Nessuno";            // New in 2.7
     ls->propCdromMethodIoctl            = "IOCTL";           // New in 2.7
@@ -506,8 +506,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->confChipSoundGB                 = "Audio ";
 
     ls->confCmosGB                      = "CMOS ";
-    ls->confCmosEnable                  = "Abilita il CMOS";
-    ls->confCmosBattery                 = "Usa una batteria carica";
+    ls->confCmosEnable                  = " Abilita il CMOS";
+    ls->confCmosBattery                 = " Usa una batteria carica";
 
     ls->confCpuFreqGB                   = "Frequenza di clock delle CPU ";
     ls->confZ80FreqText                 = "ZiLOG Z80:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.58 $ + additions 2005/03/03
+** $Revision: 1.59 $ + additions 2005/03/03
 **
-** $Date: 2008-03-31 19:42:21 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propEmuSpeedText        = "에뮬레이션 속도:";
     ls->propEmuFrontSwitchGB     = "파나소닉 스위치 ";
     ls->propEmuFrontSwitch       = " 프론트 스위치";
-    ls->propEmuFdcTiming        = "플로피 드라이브 타이밍 사용 안함";
+    ls->propEmuFdcTiming        = " 플로피 드라이브 타이밍 사용 안함";
     ls->propEmuPauseSwitch      = " 일시 정지 스위치";
     ls->propEmuAudioSwitch       = " MSX-AUDIO 카트리지 스위치";
     ls->propVideoFreqText       = "비디오 주파수:";
@@ -329,13 +329,13 @@ void langInitKorean(LanguageStrings* ls)
     ls->propMonVertStretch       = " 수직 스트레치";
     ls->propMonDeInterlace      = " 디인터레이스";
     ls->propBlendFrames         = " 인접한 프레임 색상혼합";           
-    ls->propMonColorGhosting    = "RF모듈레이터:";
+    ls->propMonColorGhosting    = " RF모듈레이터:";
     ls->propMonBrightness       = "밝기:";
     ls->propMonContrast         = "대비:";
     ls->propMonSaturation       = "채도:";
     ls->propMonGamma            = "감마:";
-    ls->propMonScanlines        = "스캔라인:";
-    ls->propMonEffectsGB        = "효과";
+    ls->propMonScanlines        = " 스캔라인:";
+    ls->propMonEffectsGB        = "효과 ";
 
     ls->propPerfVideoDrvGB      = "비디오 드라이버 ";
     ls->propPerfVideoDispDrvText= "화면 드라이버:";
@@ -387,7 +387,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propThemeGB             = "테마 ";
     ls->propTheme               = "기본 테마:";
 
-    ls->propCdromGB             = "시디롬";          // New in 2.7
+    ls->propCdromGB             = "시디롬 ";         // New in 2.7
     ls->propCdromMethod         = "액세스 방법:";  // New in 2.7
     ls->propCdromMethodNone     = "없음";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7

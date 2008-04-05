@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.49 $ 
+** $Revision: 1.50 $ 
 **
-** $Date: 2008-03-31 19:42:20 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propEmuSpeedText         = "Emulationsgeschwindigkeit:";
     ls->propEmuFrontSwitchGB     = "Panasonic-Schalter";              // "Panasonic Switches ";
     ls->propEmuFrontSwitch       = " Frontschalter";                  // " Front Switch";
-    ls->propEmuFdcTiming         = "Floppy-Drive-Timing sperren";
+    ls->propEmuFdcTiming         = " Floppy-Drive-Timing sperren";
     ls->propEmuPauseSwitch       = " Unterbrechungstaste";
     ls->propEmuAudioSwitch       = " MSX-AUDIO-Cartridge-Schalter";
     ls->propVideoFreqText        = "Videofrequenz:";
@@ -333,8 +333,8 @@ void langInitGerman(LanguageStrings* ls)
     ls->propMonContrast          = "Kontrast:";
     ls->propMonSaturation        = "Sättigung:";
     ls->propMonGamma             = "Gamma:";
-    ls->propMonScanlines         = "Scanlines:";
-    ls->propMonColorGhosting     = "RF-Modulator:";
+    ls->propMonScanlines         = " Scanlines:";
+    ls->propMonColorGhosting     = " RF-Modulator:";
     ls->propMonEffectsGB         = "Effekte ";
 
     ls->propPerfVideoDrvGB       = "Video-Treiber ";
@@ -387,7 +387,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propThemeGB              = "Theme ";
     ls->propTheme                = "Theme:";
 
-    ls->propCdromGB              = "CDROM";             // New in 2.7
+    ls->propCdromGB              = "CDROM ";            // New in 2.7
     ls->propCdromMethod          = "Zugriffsmethode:";  // New in 2.7 -- "Access Method:";
     ls->propCdromMethodNone      = "Keine";             // New in 2.7 -- "None";
     ls->propCdromMethodIoctl     = "IOCTL";             // New in 2.7
@@ -724,8 +724,8 @@ void langInitGerman(LanguageStrings* ls)
     // Debug type lines
     // Note: Can only be translated to european languages
     //----------------------
-    ls->aboutScrollThanksTo      = "Special thanks to: ";
-    ls->aboutScrollAndYou        = "and YOU !!!!";
+    ls->aboutScrollThanksTo      = "Vielen Dank an: ";
+    ls->aboutScrollAndYou        = "und SIE !!!!";
 };
 
 #endif

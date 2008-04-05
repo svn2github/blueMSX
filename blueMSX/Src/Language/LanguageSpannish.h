@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2008-03-31 19:42:21 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Velocidad de la Emulación:";
     ls->propEmuFrontSwitchGB     = "Botones Panasonic "; 
     ls->propEmuFrontSwitch       = " Botón Frontal"; 
-    ls->propEmuFdcTiming        = "No sincronizar unidad de disco"; 
+    ls->propEmuFdcTiming        = " No sincronizar unidad de disco"; 
     ls->propEmuPauseSwitch      = " Botón Pause"; 
     ls->propEmuAudioSwitch       = " Botón cartucho MSX-AUDIO"; 
     ls->propVideoFreqText       = "Frecuencia video:"; 
@@ -333,8 +333,8 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturación:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "Modulador RF:"; 
+    ls->propMonScanlines        = " Scanlines:";
+    ls->propMonColorGhosting    = " Modulador RF:"; 
     ls->propMonEffectsGB        = "Efectos  "; 
 
     ls->propPerfVideoDrvGB      = "Controlador de Video ";
@@ -368,13 +368,13 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propSetFileHistorySize   = "Número de items en Histórico de Archivos:";
     ls->propSetFileHistoryClear  = "Borrar Hostórico";
     ls->propFileTypes            = " Asociar algunos tipos de archivo con blueMSX";
-    ls->propWindowsEnvGB         = "Ambiente Windows";
+    ls->propWindowsEnvGB         = "Ambiente Windows ";
     ls->propSetScreenSaver       = " Deshabilitar Salvapantallas mientras blueMSX esté en ejecución";
     ls->propDisableWinKeys       = " Función MSX automática para las teclas Windows"; 
     ls->propPriorityBoost       = " Dar a blueMSX una elevada prioridad";
     ls->propScreenshotPng       = " Utilizar el formato PNG para las capturas de pantalla";  
-    ls->propClearHistory         = "¿Desean realmente borrar hostórico ?";
-    ls->propOpenRomGB           = "Abrir archivo rom"; 
+    ls->propClearHistory         = "¿Desean realmente borrar hostórico?";
+    ls->propOpenRomGB           = "Abrir archivo rom "; 
     ls->propDefaultRomType      = "Tipo por defecto:"; 
     ls->propGuessRomType        = "Conjeturar tipo"; 
 
@@ -387,7 +387,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Método de acceso:";  // New in 2.7
     ls->propCdromMethodNone     = "Ninguno";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -476,7 +476,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->confSaveText             = "Usted desea sobreescribir la configuración de máquina?:";
     ls->confSaveAsTitle         = "Guardar Como..."; 
     ls->confSaveAsMachineName    = "Nombre de Máquina:";
-    ls->confDiscardTitle         = "blueMSX - Configuración ";
+    ls->confDiscardTitle         = "blueMSX - Configuración";
     ls->confExitSaveTitle        = "blueMSX - Salir del Editor de Configuración";
     ls->confExitSaveText         = "Quieres descartar cambios de la configuración actual?";
 

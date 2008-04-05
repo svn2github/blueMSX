@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageCatalan.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-03-09 07:14:53 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -305,10 +305,10 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propEmuRamSizeText      = "Mida de la RAM:";
     ls->propEmuVramSizeText     = "Mida de la VRAM:";
     ls->propEmuSpeedGB          = "Velocitat d'emulació ";
-    ls->propEmuSpeedText        = "Velocitat d'emulació ";
+    ls->propEmuSpeedText        = "Velocitat d'emulació:";
     ls->propEmuFrontSwitchGB    = "Commutadors Panasonic ";
     ls->propEmuFrontSwitch      = " Commutador frontal";
-    ls->propEmuFdcTiming        = "Desactiva la sincronització de la unitat de disc";
+    ls->propEmuFdcTiming        = " Desactiva la sincronització de la unitat de disc";
     ls->propEmuPauseSwitch      = " Commutador de pausa";
     ls->propEmuAudioSwitch      = " Commutador del cartutx MSX-AUDIO";
     ls->propVideoFreqText       = "Freqüència de vídeo:";
@@ -333,8 +333,8 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propMonContrast         = "Contrast:";
     ls->propMonSaturation       = "Saturació:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Línies d'exploració:";
-    ls->propMonColorGhosting    = "Modulador RF:";
+    ls->propMonScanlines        = " Línies d'exploració:";
+    ls->propMonColorGhosting    = " Modulador RF:";
     ls->propMonEffectsGB        = "Efectes ";
 
     ls->propPerfVideoDrvGB      = "Controlador de vídeo ";
@@ -373,7 +373,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Funció automàtica MSX per les tecles de menú de Windows";  
     ls->propPriorityBoost       = " Augmenta la prioritat de blueMSX";
     ls->propScreenshotPng       = " Empra captures de pantalla Portable Network Graphics (.png)";
-    ls->propClearHistory        = "Esteu segur que voleu buidar l'historial del fitxer ?";
+    ls->propClearHistory        = "Esteu segur que voleu buidar l'historial del fitxer?";
     ls->propOpenRomGB           = "Obri el diàlog Rom ";
     ls->propDefaultRomType      = "Tipus predeterminat de Rom:";
     ls->propGuessRomType        = "Endevina el tipus de Rrom";
@@ -385,9 +385,9 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propSettDefDrive        = " Unitat";
 
     ls->propThemeGB             = "Tema ";
-    ls->propTheme               = "Tema ";
+    ls->propTheme               = "Tema:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Mètode d'accés:";  // New in 2.7
     ls->propCdromMethodNone     = "Cap";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -480,7 +480,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confExitSaveTitle       = "blueMSX - Surt de l'editor de configuració";
     ls->confExitSaveText        = "Voleu descartar els canvis de la configuració actual?";
 
-    ls->confSlotLayoutGB        = "Format de la ranura";
+    ls->confSlotLayoutGB        = "Format de la ranura ";
     ls->confSlotExtSlotGB       = "Ranures externes ";
     ls->confBoardGB             = "Placa ";
     ls->confBoardText           = "Tipus de placa:";
@@ -499,10 +499,10 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confMemType             = "Tipus";
     ls->confMemRomImage         = "Imatge rom";
 
-    ls->confChipVideoGB          = "Vídeo";
+    ls->confChipVideoGB          = "Vídeo ";
     ls->confChipVideoChip        = "Xip de vídeo:";
     ls->confChipVideoRam         = "RAM de vídeo:";
-    ls->confChipSoundGB          = "So";
+    ls->confChipSoundGB          = "So ";
 
     ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " Activa la CMOS";

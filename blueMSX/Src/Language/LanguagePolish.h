@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.45 $
+** $Revision: 1.46 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Szybkoœæ emulacji:";
     ls->propEmuFrontSwitchGB     = "Prze³¹czniki Panasonic ";
     ls->propEmuFrontSwitch       = " Prze³¹cznik g³ówny";
-    ls->propEmuFdcTiming        = "Wy³¹cz timing stacji dyskietek";
+    ls->propEmuFdcTiming        = " Wy³¹cz timing stacji dyskietek";
     ls->propEmuPauseSwitch      = " Prze³¹cznik pauzy";
     ls->propEmuAudioSwitch       = " Prze³¹cznik kartrid¿a MSX-AUDIO";
     ls->propVideoFreqText       = "Czêstotliwoœæ obrazu:";
@@ -330,24 +330,24 @@ void langInitPolish(LanguageStrings* ls)
     ls->propMonDeInterlace      = " Usuwaj przeplot";
     ls->propBlendFrames         = " Zlej ze sob¹ kolejne klatki";           
     ls->propMonBrightness       = "Jasnoœæ:";
-    ls->propMonColorGhosting    = "Modulator RF:";
+    ls->propMonColorGhosting    = " Modulator RF:";
     ls->propMonContrast         = "Kontrast:";
     ls->propMonSaturation       = "Nasycenie:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Przeplot:";
+    ls->propMonScanlines        = " Przeplot:";
     ls->propMonEffectsGB        = "Efekty ";
 
-    ls->propPerfVideoDrvGB      = "Ustawienia Video";
+    ls->propPerfVideoDrvGB      = "Ustawienia Video ";
     ls->propPerfVideoDispDrvText= "Sterownik obrazu:";
     ls->propPerfFrameSkipText   = "Gubienie klatek:";
-    ls->propPerfAudioDrvGB      = "Ustawienia Audio";
+    ls->propPerfAudioDrvGB      = "Ustawienia Audio ";
     ls->propPerfAudioDrvText    = "Sterownik dŸwiêku:";
     ls->propPerfAudioBufSzText  = "Rozmiar bufora dŸwiêku:";
     ls->propPerfEmuGB           = "Emulacja ";
     ls->propPerfSyncModeText    = "Tryb synchronizacji:";
     ls->propFullscreenResText   = "Pe³ny ekran:";
 
-    ls->propSndChipEmuGB        = "Emulacja dŸwiêku";
+    ls->propSndChipEmuGB        = "Emulacja dŸwiêku ";
     ls->propSndMsxMusic         = " MSX-MUSIC";
     ls->propSndMsxAudio         = " MSX-AUDIO";
     ls->propSndMoonsound         = " Moonsound";
@@ -387,7 +387,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propThemeGB             = "Temat ";
     ls->propTheme               = "Temat:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Access Method:";  // New in 2.7
     ls->propCdromMethodNone     = "None";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -515,7 +515,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->confCFdcNumDrivesText    = "Number of Drives:";
 
     ls->confEditMemTitle         = "blueMSX - Edytuj Mapper";
-    ls->confEditMemGB            = "Konfiguracja Mappera";
+    ls->confEditMemGB            = "Konfiguracja Mappera ";
     ls->confEditMemType          = "Typ:";
     ls->confEditMemFile          = "Plik:";
     ls->confEditMemAddress       = "Adres";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePortuguese.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2008-03-31 19:42:21 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -309,7 +309,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Botão Panasonic "; 
     ls->propEmuFrontSwitch      = " Botão Frontal"; 
     ls->propEmuFdcTiming        = " Não sincronizar disco do drive"; 
-    ls->propEmuPauseSwitch      = " Botão Pause "; 
+    ls->propEmuPauseSwitch      = " Botão Pause"; 
     ls->propEmuAudioSwitch      = " Botão Cartucho MSX-AUDIO"; 
     ls->propVideoFreqText       = "Freqüência video:"; 
     ls->propVideoFreqAuto       = "Auto"; 
@@ -320,7 +320,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSndMidiChannel      = "Canal MIDI:";                      
     ls->propSndMidiAll          = "Todos";                                
 
-    ls->propMonMonGB            = "Monitor:";
+    ls->propMonMonGB            = "Monitor: ";
     ls->propMonTypeText         = "Tipo de Monitor:";
     ls->propMonEmuText          = "Emulacão de Monitor:";
     ls->propVideoTypeText       = "Tipo de Video:";
@@ -337,17 +337,17 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propMonColorGhosting    = " Modulador RF:"; 
     ls->propMonEffectsGB        = "Efeitos "; 
 
-    ls->propPerfVideoDrvGB      = "Driver de Video:";
+    ls->propPerfVideoDrvGB      = "Driver de Video ";
     ls->propPerfVideoDispDrvText= "Driver do Display:";
     ls->propPerfFrameSkipText   = "Frame skipping:";
-    ls->propPerfAudioDrvGB      = "Driver de Audio:";
+    ls->propPerfAudioDrvGB      = "Driver de Audio ";
     ls->propPerfAudioDrvText    = "Driver de Som:";
     ls->propPerfAudioBufSzText  = "Tamanho buffer Som:";
-    ls->propPerfEmuGB           = "Emulação:";
+    ls->propPerfEmuGB           = "Emulação ";
     ls->propPerfSyncModeText    = "Modo Sincronismo:";
     ls->propFullscreenResText   = "Resolução tela cheia:"; 
 
-    ls->propSndChipEmuGB        = "Emulação do Chip de Som";
+    ls->propSndChipEmuGB        = "Emulação do Chip de Som ";
     ls->propSndMsxMusic         = " MSX-MUSIC";
     ls->propSndMsxAudio         = " MSX-AUDIO";
     ls->propSndMoonsound         = " Moonsound";
@@ -368,13 +368,13 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propSetFileHistorySize  = "Numero de itens no Histórico:";
     ls->propSetFileHistoryClear = "Limpar Histórico";
     ls->propFileTypes           = " Associar certos tipos de arquivo com blueMSX";
-    ls->propWindowsEnvGB        = "Ambiente Windows";
+    ls->propWindowsEnvGB        = "Ambiente Windows ";
     ls->propSetScreenSaver      = " Desabilitar Proteção de Tela Quando blueMSX estiver ativo";
     ls->propDisableWinKeys      = " Função MSX automática para as teclas Windows"; 
     ls->propPriorityBoost       = " Dar ao blueMSX uma prioridade elevada";
     ls->propScreenshotPng       = " Utilizar o formato PNG para as capturas da tela";  
-    ls->propClearHistory        = "Deseja realmente limpar histórico ?";
-    ls->propOpenRomGB           = "Abrir arquivo rom"; 
+    ls->propClearHistory        = "Deseja realmente limpar histórico?";
+    ls->propOpenRomGB           = "Abrir arquivo rom "; 
     ls->propDefaultRomType      = "Tipo de ROM Padrão:"; 
     ls->propGuessRomType        = "Adivinhar tipo"; 
 
@@ -387,7 +387,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Método De Acesso:";  // New in 2.7
     ls->propCdromMethodNone     = "Nenhum";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -478,10 +478,10 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->confSaveAsMachineName   = "Nome da Maquina:";
     ls->confDiscardTitle        = "blueMSX - Configuração";
     ls->confExitSaveTitle       = "blueMSX - Sair do Editor de Configuração";
-    ls->confExitSaveText        = "Voce quer desfazer as alterações da Configuração atual ?";
+    ls->confExitSaveText        = "Voce quer desfazer as alterações da Configuração atual?";
 
     ls->confSlotLayoutGB        = "Layout do Slot ";
-    ls->confSlotExtSlotGB       = "Slots Externos";
+    ls->confSlotExtSlotGB       = "Slots Externos ";
     ls->confBoardGB             = "Sistema "; 
     ls->confBoardText           = "Sistema tipo:"; 
     ls->confSlotPrimary         = "Primário";
@@ -497,7 +497,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->confMemSlot              = "Slot";
     ls->confMemAddresss          = "Endereço";
     ls->confMemType              = "Tipo";
-    ls->confMemRomImage          = "Imagem Rom ";
+    ls->confMemRomImage          = "Imagem Rom";
     
     ls->confChipVideoGB          = "Video ";
     ls->confChipVideoChip        = "Video Chip:";
@@ -533,7 +533,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutSaveConfig      = "blueMSX - Salvar Configuração";
     ls->shortcutOverwriteConfig = "Você quer  substituir esta configuração da máquina?:";
     ls->shortcutExitConfig      = "blueMSX - Sair do Editor de Atalhos";
-    ls->shortcutDiscardConfig   = "Voce quer desfazer as alterações da Configuração atual ?";
+    ls->shortcutDiscardConfig   = "Voce quer desfazer as alterações da Configuração atual?";
     ls->shortcutSaveConfigAs    = "blueMSX - Salvar Configuração de Atalhos Como...";
     ls->shortcutConfigName      = "Nome da Configuração:";
     ls->shortcutNewProfile      = "< Novo Perfil >";
@@ -550,9 +550,9 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutCartAutoReset   = "Reset após inserir cartucho";
     ls->shortcutDiskInsertA     = "Inserir Disco no Drive A";
     ls->shortcutDiskDirInsertA  = "Inserir um diretório como disco A"; 
-    ls->shortcutDiskRemoveA     = "Ejetar  Disco no Drive A ";
+    ls->shortcutDiskRemoveA     = "Ejetar  Disco no Drive A";
     ls->shortcutDiskChangeA     = "Alterar rapidamente Disco no Drive A";
-    ls->shortcutDiskAutoResetA  = "Reset após inserir Disco no Drive A ";
+    ls->shortcutDiskAutoResetA  = "Reset após inserir Disco no Drive A";
     ls->shortcutDiskInsertB     = "Insira Disco no Drive B";
     ls->shortcutDiskDirInsertB  = "Inserir um diretório como disco B"; 
     ls->shortcutDiskRemoveB     = "Ejetar Disco no Drive B";
@@ -573,7 +573,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutScreenshotSmall = "Pequena captura da tela sem filtro";
     ls->shortcutScreenshotLarge = "Grande captura da tela sem filtro";
     ls->shortcutQuit            = "Sair blueMSX";
-    ls->shortcutRunPause        = "Executar/Pausa Emulação ";
+    ls->shortcutRunPause        = "Executar/Pausa Emulação";
     ls->shortcutStop            = "Parar Emulação";
     ls->shortcutResetHard       = "Reset Hardware";
     ls->shortcutResetSoft       = "Reset Software";

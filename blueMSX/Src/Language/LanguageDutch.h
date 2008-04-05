@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.54 $
+** $Revision: 1.55 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -126,7 +126,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Toevoegen Nieuw Diskette-beeld";
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     = "Toevoegen CD-Rom";       // New in 2.7
     ls->menuDiskDirInsert       = "Toevoegen Map";
     ls->menuDiskAutoStart       = "Herstart na toevoegen";
     ls->menuCartAutoReset       = "Herstart na toevoegen/verwijderen";
@@ -158,7 +158,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Prestatie";
     ls->menuPropsSettings       = "Instellingen";
     ls->menuPropsFile           = "Bestand";
-    ls->menuPropsDisk           = "Disks";               // New in 2.7
+    ls->menuPropsDisk           = "Diskettes";               // New in 2.7
     ls->menuPropsLanguage       = "Taal";
     ls->menuPropsPorts          = "Poorten";
 
@@ -188,7 +188,7 @@ void langInitDutch(LanguageStrings* ls)
 
     ls->menuFileHarddisk        = "Vaste schijf";
     ls->menuFileHarddiskNoPesent= "Geen vaste schijfcontrollers aanwezig";
-    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll= "Verwijder Alle Vaste schijven";    // New in 2.7
 
     ls->menuRunRun              = "Start";
     ls->menuRunPause            = "Pauze";
@@ -296,7 +296,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propPerformance         = "Prestaties";
     ls->propSettings            = "Instellingen";
     ls->propFile                = "Bestand";
-    ls->propDisk                = "Disks";              // New in 2.7
+    ls->propDisk                = "Diskettes";              // New in 2.7
     ls->propPorts               = "Poorten";
 
     ls->propEmuGeneralGB        = "Algemeen ";
@@ -335,7 +335,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propMonGamma            = "Gamma:";
     ls->propMonScanlines        = " Beeldlijnen";
     ls->propMonColorGhosting    = " RF-modulator:";
-    ls->propMonEffectsGB        = " Effecten ";
+    ls->propMonEffectsGB        = "Effecten ";
 
     ls->propPerfVideoDrvGB      = "Beeldinstellingen ";
     ls->propPerfVideoDispDrvText= "Stuurprogramma:";
@@ -368,8 +368,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSetFileHistorySize   = "Aantal bestanden in geschiedenis:";
     ls->propSetFileHistoryClear  = "Leegmaken Geschiedenis";
     ls->propFileTypes            = " Bestanden registreren bij blueMSX (.rom, .dsk, .cas, .sta)";
-    ls->propWindowsEnvGB         = "Windows Omgeving";
-    ls->propSetScreenSaver       = "Schermbeveiliging uitschakelen als blueMSX draait";
+    ls->propWindowsEnvGB         = "Windows Omgeving ";
+    ls->propSetScreenSaver       = " Schermbeveiliging uitschakelen als blueMSX draait";
     ls->propDisableWinKeys       = " Automatische MSX-functie voor menutoetsen Windows";
     ls->propPriorityBoost       = " blueMSX een hogere prioriteit geven";
     ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";
@@ -387,12 +387,12 @@ void langInitDutch(LanguageStrings* ls)
     ls->propThemeGB             = "Thema ";
     ls->propTheme               = "Thema";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
-    ls->propCdromMethod         = "Access Method:";  // New in 2.7
-    ls->propCdromMethodNone     = "None";            // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
+    ls->propCdromMethod         = "Leesmethode:";   // New in 2.7
+    ls->propCdromMethodNone     = "Geen";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
-    ls->propCdromDrive          = "Drive:";          // New in 2.7
+    ls->propCdromDrive          = "Station:";        // New in 2.7
 
 
     //----------------------
@@ -725,7 +725,7 @@ void langInitDutch(LanguageStrings* ls)
     // Note: Can only be translated to european languages
     //----------------------
     ls->aboutScrollThanksTo     = "Speciale dank aan: ";
-    ls->aboutScrollAndYou       = "en U!!!!";
+    ls->aboutScrollAndYou       = "en U !!!!";
 };
 
 #endif

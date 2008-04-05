@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propEmuSpeedText        = "模擬速度:";
     ls->propEmuFrontSwitchGB     = "Panasonic 開關 ";
     ls->propEmuFrontSwitch       = " 前端開關";
-    ls->propEmuFdcTiming        = "停用軟式磁碟機計時";
+    ls->propEmuFdcTiming        = " 停用軟式磁碟機計時";
     ls->propEmuPauseSwitch      = " 暫停開關";
     ls->propEmuAudioSwitch       = " MSX 音效卡開關";
     ls->propVideoFreqText       = "視訊頻率:";
@@ -326,16 +326,16 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propVideoTypeText       = "視訊類型:";
     ls->propWindowSizeText      = "視窗大小:";
     ls->propMonHorizStretch      = " 水平拉伸";
+    ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonDeInterlace      = " 去雜紋高畫質功\能";
     ls->propBlendFrames         = " 混合連續的畫格";           
-    ls->propMonColorGhosting    = "RF 調變器:";
-    ls->propMonVertStretch       = " 垂直拉伸";
     ls->propMonBrightness       = "亮度:";
     ls->propMonContrast         = "對比度:";
     ls->propMonSaturation       = "飽合度:";
     ls->propMonGamma            = "珈瑪值:";
-    ls->propMonScanlines        = "掃瞄線:";
-    ls->propMonEffectsGB        = "效果";
+    ls->propMonScanlines        = " 掃瞄線:";
+    ls->propMonColorGhosting    = " RF 調變器:";
+    ls->propMonEffectsGB        = "效果 ";
 
     ls->propPerfVideoDrvGB      = "視訊驅動程式 ";
     ls->propPerfVideoDispDrvText= "顯示驅動程式:";
@@ -387,7 +387,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propThemeGB             = "佈景主題 ";
     ls->propTheme               = "佈景主題:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Access Method:";  // New in 2.7
     ls->propCdromMethodNone     = "None";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageRussian.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Скорость эмуляции:";
     ls->propEmuFrontSwitchGB    = "Переключатели Panasonic ";
     ls->propEmuFrontSwitch      = " Передний выключатель";
-    ls->propEmuFdcTiming        = "Disable Floppy Drive Timing";
+    ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
     ls->propEmuPauseSwitch      = " Кнопка паузы";
     ls->propEmuAudioSwitch      = " Переключатель картриджа MSX-AUDIO";
     ls->propVideoFreqText       = "Частота экрана:";
@@ -333,8 +333,8 @@ void langInitRussian(LanguageStrings* ls)
     ls->propMonContrast         = "Контраст:";
     ls->propMonSaturation       = "Насыщенность:";
     ls->propMonGamma            = "Гамма:";
-    ls->propMonScanlines        = "Черезполосица:";
-    ls->propMonColorGhosting    = "RF-модулятор:";
+    ls->propMonScanlines        = " Черезполосица:";
+    ls->propMonColorGhosting    = " RF-модулятор:";
     ls->propMonEffectsGB        = "Эффекты ";
 
     ls->propPerfVideoDrvGB      = "Видеодрайвер ";
@@ -387,7 +387,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propThemeGB             = "Тема ";
     ls->propTheme               = "Тема:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Метод доступа:";  // New in 2.7
     ls->propCdromMethodNone     = "Нет";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -533,7 +533,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->shortcutSaveConfig      = "blueMSX - Сохранить конфигурацию";
     ls->shortcutOverwriteConfig = "Вы хотите перезаписать конфигурацию кнопок:";
     ls->shortcutExitConfig      = "blueMSX - Выход из редактора кнопок";
-    ls->shortcutDiscardConfig   = "Вы хотите отменить все текущие изменения?";
+    ls->shortcutDiscardConfig   = "Вы хотите отменить все текущие изменени?";
     ls->shortcutSaveConfigAs    = "blueMSX - Сохранить конфигурацию как...";
     ls->shortcutConfigName      = "Имя конфига:";
     ls->shortcutNewProfile      = "< Новый профайл >";

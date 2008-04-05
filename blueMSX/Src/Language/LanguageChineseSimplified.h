@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -308,7 +308,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propEmuSpeedText        = "模拟速度:";
     ls->propEmuFrontSwitchGB     = "Panasonic 开关 ";
     ls->propEmuFrontSwitch       = " 前端开关";
-    ls->propEmuFdcTiming        = "禁用软盘驱动器计时";
+    ls->propEmuFdcTiming        = " 禁用软盘驱动器计时";
     ls->propEmuPauseSwitch      = " 暂停开关";
     ls->propEmuAudioSwitch       = " MSX-AUDIO 卡开关";
     ls->propVideoFreqText       = "视频频率:";
@@ -335,7 +335,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propMonGamma            = "伽玛值:";
     ls->propMonScanlines        = " 扫描线:";
     ls->propMonColorGhosting    = " RF-调制器:";
-    ls->propMonEffectsGB        = "特效";
+    ls->propMonEffectsGB        = "特效 ";
 
     ls->propPerfVideoDrvGB      = "视频驱动 ";
     ls->propPerfVideoDispDrvText= "显示驱动:";
@@ -387,7 +387,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propThemeGB             = "布景主题 ";
     ls->propTheme               = "布景主题:";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Access Method:";  // New in 2.7
     ls->propCdromMethodNone     = "None";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -445,7 +445,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumControlsJoyMouse    = "鼠标";
     ls->enumControlsJoyTetris2Dongle = "俄罗斯方块 2 界面模组";
     ls->enumControlsJoyTMagicKeyDongle = "MagicKey 界面模组";             
-    ls->enumControlsJoy2Button = "2键操纵杆 ";                   
+    ls->enumControlsJoy2Button = "2键操纵杆";                   
     ls->enumControlsJoyGunstick  = "光枪操纵杆";                         
     ls->enumControlsJoyAsciiLaser="ASCII Plus-X 终结者镭射";      
     ls->enumControlsArkanoidPad  ="Arkanoid Pad";                   // New in 2.7.1
@@ -515,7 +515,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confCFdcNumDrivesText    = "驱动器数量:";
 
     ls->confEditMemTitle         = "blueMSX - 编辑 Mapper";
-    ls->confEditMemGB            = "Mapper 详细";
+    ls->confEditMemGB            = "Mapper 详细 ";
     ls->confEditMemType          = "类型:";
     ls->confEditMemFile          = "文件:";
     ls->confEditMemAddress       = "地址";

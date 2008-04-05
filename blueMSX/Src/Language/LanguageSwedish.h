@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2008-03-31 19:42:21 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -309,7 +309,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Emuleringshastighet:";
     ls->propEmuFrontSwitchGB    = "Panasonicbrytare ";
     ls->propEmuFrontSwitch      = " Frontbrytare";
-    ls->propEmuFdcTiming        = "Slå av diskettstationstiming";
+    ls->propEmuFdcTiming        = " Slå av diskettstationstiming";
     ls->propEmuPauseSwitch      = " Pausbrytare";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
     ls->propVideoFreqText       = "Videofrekvens:";
@@ -323,7 +323,7 @@ void langInitSwedish(LanguageStrings* ls)
 
     ls->propMonMonGB            = "Monitor ";
     ls->propMonTypeText         = "Monitor typ:";
-    ls->propMonEmuText          = "Monitoremulering ";
+    ls->propMonEmuText          = "Monitoremulering:";
     ls->propVideoTypeText       = "Videotyp:";
     ls->propWindowSizeText      = "Fönsterstorlek:";
     ls->propMonHorizStretch     = " Horizontell utsträckning";
@@ -334,8 +334,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propMonContrast         = "Kontrast:";
     ls->propMonSaturation       = "Färgmättnad:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Scanlinjer:";
-    ls->propMonColorGhosting    = "RF-modulering:";
+    ls->propMonScanlines        = " Scanlinjer:";
+    ls->propMonColorGhosting    = " RF-modulering:";
     ls->propMonEffectsGB        = "Effekter ";
 
     ls->propPerfVideoDrvGB      = "Videodriver ";
@@ -374,7 +374,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Avaktivera WIndows menyer när emulatorn kör";
     ls->propPriorityBoost       = " Höj prioriteten på blueMSX";
     ls->propScreenshotPng       = " Använd Portable Network Graphics (.png) skärmdump";
-    ls->propClearHistory        = "Vill du verkligen radera filhistorien ?";
+    ls->propClearHistory        = "Vill du verkligen radera filhistorien?";
     ls->propOpenRomGB           = "Öppna Rom Dialog ";
     ls->propDefaultRomType      = "Default Rom Typ:";
     ls->propGuessRomType        = "Gissa Rom Typ";
@@ -388,7 +388,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propThemeGB             = "Tema ";
     ls->propTheme               = "Tema";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Åtkomstmetod:";   // New in 2.7
     ls->propCdromMethodNone     = "Ingen";           // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7

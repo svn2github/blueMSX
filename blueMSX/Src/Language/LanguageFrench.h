@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2008-03-31 19:42:20 $
+** $Date: 2008-04-05 21:19:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,7 +135,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuCasUseReadOnly      = "Utiliser l'image de la cassette en mode lecture seule";
     ls->lmenuCasSaveAs          = "Sauver l'image de la cassette sous...";
     ls->menuCasSetPosition      = "Définir la position";
-    ls->menuCasRewind           = "Rembobiner ";
+    ls->menuCasRewind           = "Rembobiner";
 
     ls->menuVideoLoad           = "Charger ...";             
     ls->menuVideoPlay           = "Voir la plus récente capture";   
@@ -308,7 +308,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Vitesse de l'émulation:";
     ls->propEmuFrontSwitchGB    = "Commutateurs Panasonic "; 
     ls->propEmuFrontSwitch      = " Commutateur frontal"; 
-    ls->propEmuFdcTiming        = "Ne pas synchroniser le lecteur de disquettes"; 
+    ls->propEmuFdcTiming        = " Ne pas synchroniser le lecteur de disquettes"; 
     ls->propEmuPauseSwitch      = " Commutateur Pause";
     ls->propEmuAudioSwitch      = " Commutateur MSX-AUDIO"; 
     ls->propVideoFreqText       = "Fréquence Vidéo:";
@@ -326,15 +326,15 @@ void langInitFrench(LanguageStrings* ls)
     ls->propVideoTypeText       = "Mode:";
     ls->propWindowSizeText      = "Taille de la fenêtre:";
     ls->propMonHorizStretch     = " Etirement Horizontal";
-    ls->propMonVertStretch      = " Etirement Vertical "; 
+    ls->propMonVertStretch      = " Etirement Vertical"; 
     ls->propMonDeInterlace      = " Dé-entrelacé";
     ls->propBlendFrames         = " Mixer des images consécutives";           
     ls->propMonBrightness       = "Brillance:";
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturation:";
     ls->propMonGamma            = "Gamma:";
-    ls->propMonScanlines        = "Scanlines:";
-    ls->propMonColorGhosting    = "Modulateur RF:"; 
+    ls->propMonScanlines        = " Scanlines:";
+    ls->propMonColorGhosting    = " Modulateur RF:"; 
     ls->propMonEffectsGB        = "Effets ";
 
     ls->propPerfVideoDrvGB      = "Vidéo ";
@@ -374,7 +374,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propPriorityBoost       = " Donner à blueMSX une priorité élevée";
     ls->propScreenshotPng       = " Utiliser le format PNG pour les captures d'écran";  
     ls->propClearHistory         = "Désirez-vous vraiment purger l'historique ?";
-    ls->propOpenRomGB           = "Ouvrir un fichier Rom"; 
+    ls->propOpenRomGB           = "Ouvrir un fichier Rom ";
     ls->propDefaultRomType      = "Type par défaut:"; 
     ls->propGuessRomType        = "Deviner le type"; 
 
@@ -387,7 +387,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propThemeGB             = "Thème ";
     ls->propTheme               = "Thème";
 
-    ls->propCdromGB             = "CD-ROM";          // New in 2.7
+    ls->propCdromGB             = "CD-ROM ";         // New in 2.7
     ls->propCdromMethod         = "Méthode d'accès:";  // New in 2.7
     ls->propCdromMethodNone     = "Aucune";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
@@ -611,8 +611,8 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutShowMixer       = "Accéder au Mélangeur audio";
     ls->shortcutShowDebugger    = "Accéder au Débogueur"; 
     ls->shortcutShowTrainer     = "Accéder au Trainer"; 
-    ls->shortcutShowHelp        = "Accéder aux rubriques d'aide ";
-    ls->shortcutShowAbout       = "Voir la rubrique A propos de blueMSX ";
+    ls->shortcutShowHelp        = "Accéder aux rubriques d'aide";
+    ls->shortcutShowAbout       = "Voir la rubrique A propos de blueMSX";
     ls->shortcutShowFiles       = "Accéder au menu Fichiers";
     ls->shortcutToggleSpriteEnable = "Montrer/Cacher les sprites";
     ls->shortcutToggleFdcTiming = "Synchroniser ou non le lecteur de disquettes"; 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2008-04-05 21:19:29 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -389,7 +389,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propThemeGB             = " テーマ ";
     ls->propTheme               = "テーマ:";
 
-    ls->propCdromGB             = "CD-ROM";         // New in 2.7
+    ls->propCdromGB             = " CD-ROM ";       // New in 2.7
     ls->propCdromMethod         = "アクセス方式:";  // New in 2.7
     ls->propCdromMethodNone     = "なし";           // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";          // New in 2.7
