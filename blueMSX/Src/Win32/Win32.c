@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.192 $
+** $Revision: 1.193 $
 **
-** $Date: 2008-04-03 05:57:55 $
+** $Date: 2008-04-05 19:27:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1904,7 +1904,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         break;
 
     case WM_NCLBUTTONDBLCLK:
-        if (wParam == HTCAPTION) {
+        if (wParam == HTCAPTION && pProperties->video.maximizeIsFullscreen) {
             if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
                 pProperties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
                 archUpdateWindow();
@@ -2687,7 +2687,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     st.hwnd = CreateWindow("blueMSX", "  blueMSX", 
                             WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
-                            WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, 
+                            WS_SYSMENU | WS_MINIMIZEBOX | (pProperties->video.maximizeIsFullscreen?WS_MAXIMIZEBOX:0), 
                             CW_USEDEFAULT, CW_USEDEFAULT, 800, 200, NULL, NULL, hInstance, NULL);
 
     menuCreate(st.hwnd);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2008-04-05 18:47:11 $
+** $Date: 2008-04-05 19:27:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -225,6 +225,7 @@ typedef struct {
         int height;
         int bitDepth;
     } fullscreen;
+    int maximizeIsFullscreen;
     int frequency;
     int deInterlace;
     int blendFrames;
