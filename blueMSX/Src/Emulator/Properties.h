@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2008-04-03 05:57:55 $
+** $Date: 2008-04-05 18:47:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -268,6 +268,7 @@ typedef struct {
 typedef struct {
     int  driver;
     int  bufSize;
+    int  stabilizeDSoundTiming;
     SoundChip chip;
     int  stereo;
     int  masterVolume;

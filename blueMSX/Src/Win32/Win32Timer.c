@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Timer.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2007-03-28 17:30:40 $
+** $Date: 2008-04-05 18:47:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -36,6 +36,12 @@ typedef struct {
 static void (*timerCb)(void*) = NULL;
 static void* timerId = NULL;
 
+static LONGLONG uptime_hfFrequency = 0;
+static signed long long uptime_offset = 0;
+
+LONGLONG win32timer_get_uptime_freq(void) { return uptime_hfFrequency; }
+void win32timer_uptime_offset(int d) { uptime_offset+=d; }
+
 static void syncCallback() {
     if (timerCb) {
         timerCb(timerId);
@@ -50,12 +56,11 @@ UInt32 archGetHiresTimer() {
 
 UInt32 archGetSystemUpTime(UInt32 frequency)
 {
-    static LONGLONG hfFrequency = 0;
     LARGE_INTEGER li;
 
-    if (!hfFrequency) {
+    if (!uptime_hfFrequency) {
         if (QueryPerformanceFrequency(&li)) {
-            hfFrequency = li.QuadPart;
+            uptime_hfFrequency = li.QuadPart;
         }
         else {
             return 0;
@@ -64,7 +69,7 @@ UInt32 archGetSystemUpTime(UInt32 frequency)
 
     QueryPerformanceCounter(&li);
 
-    return (DWORD)(li.QuadPart * frequency / hfFrequency);
+    return (DWORD)((li.QuadPart + uptime_offset) * frequency / uptime_hfFrequency);
 }
 
 static void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)

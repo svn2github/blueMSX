@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.69 $
+** $Revision: 1.70 $
 **
-** $Date: 2008-04-03 05:57:55 $
+** $Date: 2008-04-05 18:47:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,9 +278,10 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->videoIn.inputIndex          = 0;
     properties->videoIn.inputName[0]        = 0;
 
-    properties->sound.driver           = P_SOUND_DRVDIRECTX;
-    properties->sound.bufSize          = 100;
-
+    properties->sound.driver                = P_SOUND_DRVDIRECTX;
+    properties->sound.bufSize               = 100;
+    properties->sound.stabilizeDSoundTiming = 1;
+    
     properties->sound.stereo = 1;
     properties->sound.masterVolume = 75;
     properties->sound.masterEnable = 1;
@@ -543,6 +544,7 @@ static void propLoad(Properties* properties)
 
     GET_ENUM_VALUE_2(sound, driver, SoundDriverPair);
     GET_INT_VALUE_2(sound, bufSize);
+    GET_ENUM_VALUE_2(sound, stabilizeDSoundTiming, BoolPair);
     GET_ENUM_VALUE_2(sound, stereo, BoolPair);
     GET_INT_VALUE_2(sound, masterVolume);
     GET_ENUM_VALUE_2(sound, masterEnable, BoolPair);
@@ -764,6 +766,7 @@ void propSave(Properties* properties)
 
     SET_ENUM_VALUE_2(sound, driver, SoundDriverPair);
     SET_INT_VALUE_2(sound, bufSize);
+    SET_ENUM_VALUE_2(sound, stabilizeDSoundTiming, YesNoPair);
     SET_ENUM_VALUE_2(sound, stereo, YesNoPair);
     SET_INT_VALUE_2(sound, masterVolume);
     SET_ENUM_VALUE_2(sound, masterEnable, YesNoPair);

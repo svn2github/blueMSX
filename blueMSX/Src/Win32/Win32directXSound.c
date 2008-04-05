@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directXSound.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-04-05 18:47:11 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -26,6 +26,8 @@
 ******************************************************************************
 */
 #include "Win32directXSound.h"
+#include "Win32Timer.h"
+#include "Properties.h"
 #include <stdio.h>
 #define DIRECTSOUND_VERSION 0x0500
 #include <dsound.h>
@@ -45,6 +47,7 @@ struct DxSound {
     UInt32 fragmentSize;
     Int16  bytesPerSample;
     Int32  skipCount;
+    UInt32 cur_writepos;
     LPDIRECTSOUNDBUFFER primaryBuffer;
     LPDIRECTSOUNDBUFFER secondaryBuffer;
     LPDIRECTSOUND directSound;
@@ -84,7 +87,9 @@ static int dxCanWrite(DxSound* dxSound, UInt32 start, UInt32 size)
     if (writePos < readPos) writePos += dxSound->bufferSize;
     if (start    < readPos) start    += dxSound->bufferSize;
     if (end      < readPos) end      += dxSound->bufferSize;
-
+    
+    dxSound->cur_writepos=writePos;
+    
     if (start < writePos || end < writePos) {
         return (dxSound->bufferSize - (writePos - readPos)) / 2 - dxSound->fragmentSize;
     }
@@ -141,6 +146,9 @@ static int dxWriteOne(DxSound* dxSound, Int16 *buffer, UInt32 lockSize)
 
 static Int32 dxWrite(DxSound* dxSound, Int16 *buffer, UInt32 count)
 {
+    LONGLONG qpf=win32timer_get_uptime_freq();
+    Properties* prop=propGetGlobalProperties();
+    
     if (dxSound->state == DX_SOUND_ENABLED) {
         HRESULT result;
         UInt32 readPos;
@@ -171,7 +179,17 @@ static Int32 dxWrite(DxSound* dxSound, Int16 *buffer, UInt32 count)
     if (dxSound->skipCount > 0) {
         return 0;
     }
-
+    
+    if (qpf&&prop&&prop->sound.stabilizeDSoundTiming&&prop->sound.bufSize>=50) {
+	UInt32 diff=dxSound->bufferOffset;
+	if (diff<dxSound->cur_writepos) diff+=dxSound->bufferSize;
+	diff-=dxSound->cur_writepos;
+	
+	/* force a short delay/speedup to prevent asynchronous timing */
+	if (diff<(500<<(prop->sound.stereo!=0))) win32timer_uptime_offset(qpf/333);
+	else if (diff>(dxSound->bufferSize>>1)) win32timer_uptime_offset(qpf/-333);
+    }
+    
     return dxWriteOne(dxSound, buffer, count);
 }
 
