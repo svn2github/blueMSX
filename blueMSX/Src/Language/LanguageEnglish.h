@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.103 $
+** $Revision: 1.104 $
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-04-05 22:08:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -372,7 +372,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSetScreenSaver      = " Disable screen saver when blueMSX is running";
     ls->propDisableWinKeys      = " Automatic MSX function for Windows menu keys"; 
     ls->propPriorityBoost       = " Boost the priority of blueMSX";
-    ls->propScreenshotPng       = " Use Portable Network Graphics (.png) screenshots";
+    ls->propScreenshotPng       = " Save screenshots in PNG format instead of BMP";
     ls->propClearHistory        = "Are you sure you want to clear the file history?";
     ls->propOpenRomGB           = "Open Rom Dialog ";
     ls->propDefaultRomType      = "Default Rom Type:";
@@ -439,7 +439,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumEmuSyncAuto         = "Auto (fast)";
     ls->enumEmuSyncNone         = "None";
     ls->enumEmuSyncVblank       = "Sync to PC Vertical Blank";
-    ls->enumEmuAsyncVblank      = "Asynchronous PC Vblank";             
+    ls->enumEmuAsyncVblank      = "Asynchronous PC VBlank";             
 
     ls->enumControlsJoyNone     = "None";
     ls->enumControlsJoyMouse    = "Mouse";
