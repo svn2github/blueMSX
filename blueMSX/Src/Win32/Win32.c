@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.193 $
+** $Revision: 1.194 $
 **
-** $Date: 2008-04-05 19:27:38 $
+** $Date: 2008-04-05 19:48:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1536,7 +1536,7 @@ void archUpdateWindow() {
         if (GetWindowLong(st.hwnd, GWL_STYLE) & WS_POPUP) {
             mouseEmuActivate(1);
             SetWindowLong(st.hwnd, GWL_STYLE, WS_OVERLAPPED | WS_CLIPCHILDREN | WS_BORDER | WS_DLGFRAME | 
-                                WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+                                WS_SYSMENU | WS_MINIMIZEBOX | (pProperties->video.maximizeIsFullscreen?WS_MAXIMIZEBOX:0));
         }
 
         if (pProperties->video.driver != P_VIDEO_DRVGDI) {
