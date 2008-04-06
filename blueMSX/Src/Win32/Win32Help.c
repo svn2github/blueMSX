@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-04-06 19:00:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -43,6 +43,9 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         }
         break;
 
+    case WM_CTLCOLORSTATIC:
+        return (BOOL)GetSysColorBrush(COLOR_WINDOW);
+    
     case WM_CLOSE:
         EndDialog(hDlg, TRUE);
         return TRUE;
@@ -151,7 +154,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
             SendMessage(GetDlgItem(hDlg, IDC_ABOUTTEXT), WM_SETTEXT, 0, (LPARAM)aboutText);
         }
-        return FALSE;
+        return 1;
     }
 
     return FALSE;
