@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2008-04-06 16:11:20 $
+** $Date: 2008-04-06 17:50:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -196,8 +196,8 @@ static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2)
     linePtr = frameBufferGetLine(frameBuffer, Y);
 
     for(offset = 2 * (BORDER_WIDTH - vdp->HAdjust); offset > 0; offset-= 2) {
-        linePtr[2 * SCREEN_WIDTH - offset - 1] = bgColor1;
-        linePtr[2 * SCREEN_WIDTH - offset] = bgColor2;
+        linePtr[2 * SCREEN_WIDTH - offset] = bgColor1;
+        linePtr[2 * SCREEN_WIDTH - offset + 1] = bgColor2;
     }
 }
 
