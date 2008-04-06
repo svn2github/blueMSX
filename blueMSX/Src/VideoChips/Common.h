@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008-04-06 16:11:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,14 +173,13 @@ static void RefreshRightBorder(VDP* vdp, int Y, Pixel bgColor, int line512, int 
     
     linePtr = frameBufferGetLine(frameBuffer, Y);
 
-    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra + 1) - 1; offset > 0; offset--) {
+    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra); offset > 0; offset--) {
         linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor;
     }
 }
 
-static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2, int line512, int borderExtra) {
+static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2) {
     FrameBuffer* frameBuffer = frameBufferGetDrawFrame();
-    int lineSize = line512 ? 2 : 1;
     Pixel *linePtr;
     int offset;
 
@@ -196,9 +195,9 @@ static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2,
     
     linePtr = frameBufferGetLine(frameBuffer, Y);
 
-    for(offset = lineSize * (BORDER_WIDTH - vdp->HAdjust + borderExtra + 1) - 1; offset > 0; offset-= 2) {
-        linePtr[lineSize * SCREEN_WIDTH - offset - 1] = bgColor1;
-        linePtr[lineSize * SCREEN_WIDTH - offset] = bgColor2;
+    for(offset = 2 * (BORDER_WIDTH - vdp->HAdjust); offset > 0; offset-= 2) {
+        linePtr[2 * SCREEN_WIDTH - offset - 1] = bgColor1;
+        linePtr[2 * SCREEN_WIDTH - offset] = bgColor2;
     }
 }
 
@@ -1549,7 +1548,7 @@ static void RefreshLine6(VDP* vdp, int Y, int X, int X2)
     }
     if (rightBorder) {
 //        colorSpritesLine(vdp, Y, 1);
-        RefreshRightBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03], 1, 0);
+        RefreshRightBorder6(vdp, Y, vdp->palette[(vdp->BGColor >> 2) & 0x03], vdp->palette[vdp->BGColor & 0x03]);
     }
 }
 
