@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.194 $
+** $Revision: 1.195 $
 **
-** $Date: 2008-04-05 19:48:45 $
+** $Date: 2008-04-06 01:40:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2006,8 +2006,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             mouseEmuActivate(1);
         }
         if (st.themePageActive) {
+            HDC hdc = GetDC(hwnd);
             st.active = LOWORD(wParam) != WA_INACTIVE;
-            themePageSetActive(st.themePageActive, GetDC(hwnd), st.active);
+            themePageSetActive(st.themePageActive, hdc, st.active);
+            ReleaseDC(hwnd, hdc);
         }
         break;
 
