@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2008-04-03 02:31:52 $
+** $Date: 2008-04-06 14:43:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -350,10 +350,11 @@ void setExtendedRomName(int drive, char* name) {
 
 char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 {
-    static char fileBase[128] = { 0 };
+    static char fileBase[128];
     int done = 0;
     int i;
-
+    fileBase[0]=0;
+    
     for (i = 0; !done && i < PROP_MAX_CARTS; i++) {
         if (properties->media.carts[i].fileName[0]) {
             if (useExtendedName && extendedName[i][0]) {
