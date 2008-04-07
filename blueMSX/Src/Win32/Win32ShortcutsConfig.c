@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2008-04-03 05:57:55 $
+** $Date: 2008-04-07 14:43:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -319,11 +319,11 @@ static ShotcutHotkey* hotkeyList[128];
 
 
 static DWORD hotkey2int(ShotcutHotkey hotkey) {
-    return *(DWORD*)&hotkey;
+    return (hotkey.key<<16)|(hotkey.mods<<8)|hotkey.type;
 }
 
-static ShotcutHotkey int2hotkey(DWORD hotkey) {
-    return *(ShotcutHotkey*)&hotkey;
+static ShotcutHotkey int2hotkey(DWORD* hotkey) {
+    return *(ShotcutHotkey*)hotkey;
 }
 
 static char** getProfileList() 
@@ -561,7 +561,7 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
 
     case WM_SET_HOTKEY:
         {
-            ShotcutHotkey hotkey = int2hotkey(wParam);
+            ShotcutHotkey hotkey = int2hotkey((DWORD*)&wParam);
             modifiers = 0;
             virtKey   = 0;
             joyButton = -1;
@@ -697,10 +697,10 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
 #define LOAD_SHORTCUT(hotkey)                                                   \
 do {                                                                            \
     char buffer[32];                                                            \
-    int value;                                                                  \
+    DWORD value;                                                                \
     iniFileGetString("Shortcuts", #hotkey, "0", buffer, 32);                    \
     if (0 == sscanf(buffer, "%X", &value)) value = 0;                           \
-    shortcuts->hotkey = int2hotkey(value);                                      \
+    shortcuts->hotkey = int2hotkey(&value);                                     \
 } while(0)
 
 #define SAVE_SHORTCUT(hotkey)                                                   \
@@ -930,8 +930,9 @@ do {                                                                            
 
 #define ADD_SHORTCUTSEPARATOR()                                                 \
 do {                                                                            \
+    ShotcutHotkey hotkey = {0,0,0};                                             \
     hotkeyList[entry] = NULL;                                                   \
-    addShortcutEntry(hwnd, entry++, "", int2hotkey(0));                         \
+    addShortcutEntry(hwnd, entry++, "", hotkey);                                \
 } while(0)
 
 static void updateShortcutEntries(HWND hDlg) 
@@ -1099,7 +1100,7 @@ static void updateHotkeys(HWND hDlg, int index, ShotcutHotkey newHotkey)
 
     for (i = 0; i < sizeof(hotkeyList) / sizeof(void*); i++) {
         if (hotkeyList[i] && hotkey2int(*hotkeyList[i]) == hotkey2int(newHotkey)) {
-            *hotkeyList[i] = int2hotkey(0);
+            hotkeyList[i]->type=hotkeyList[i]->mods=hotkeyList[i]->key=0;
             updateShortcutEntry(hwnd, i, *hotkeyList[i]); 
         }
     }
@@ -1286,7 +1287,8 @@ static BOOL CALLBACK shortcutsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM l
 
         case IDC_SCUTASSIGN:
             if (currIndex >= 0) {
-                ShotcutHotkey hotkey = int2hotkey(SendDlgItemMessage(hDlg, IDC_SCUTHOTKEY, WM_GET_HOTKEY, 0, 0));
+                DWORD key=SendDlgItemMessage(hDlg, IDC_SCUTHOTKEY, WM_GET_HOTKEY, 0, 0);
+                ShotcutHotkey hotkey = int2hotkey(&key);
                 updateHotkeys(hDlg, currIndex, hotkey);
                 ListView_SetItemState(hwnd, currIndex, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
             }
