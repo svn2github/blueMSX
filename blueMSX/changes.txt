@@ -1,0 +1,5 @@
+
+apr 10 2008 - hap-hap
+ - Added changes.txt, a list of significant blueMSX CVS commits in
+   reverse chronological order (newest change first).
+
