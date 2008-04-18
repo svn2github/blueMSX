@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Adam.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -351,7 +351,7 @@ int adamCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 2;

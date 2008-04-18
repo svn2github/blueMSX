@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.195 $
+** $Revision: 1.196 $
 **
-** $Date: 2008-04-06 01:40:06 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3587,4 +3587,11 @@ void archVideoCaptureSave()
 
 void SetCurrentWindow(HWND hwnd) {
     st.currentHwnd = hwnd;
+}
+
+void archTrap(UInt8 value)
+{
+    if (appConfigGetInt("trap.quit", 0) != 0) {
+        archQuit();
+    }
 }

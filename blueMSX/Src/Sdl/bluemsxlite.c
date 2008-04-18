@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Sdl/bluemsxlite.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -417,6 +417,9 @@ void archEmulationStartFailure()
 #endif
 }
 
+void archTrap(UInt8 value)
+{
+}
 
 void setDefaultPaths(const char* rootDir)
 {   

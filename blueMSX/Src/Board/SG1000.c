@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SG1000.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2008-03-30 18:38:39 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -216,7 +216,7 @@ int sg1000Create(Machine* machine,
 
     sfRam = NULL;
 
-    r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(0, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 0;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2008-03-30 18:38:39 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -277,7 +277,7 @@ int colecoCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(CPU_ENABLE_M1, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(CPU_ENABLE_M1, slotRead, slotWrite, ioPortRead, ioPortWrite, NULL, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 0;

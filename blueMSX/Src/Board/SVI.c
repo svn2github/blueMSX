@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/SVI.c,v $
 **
-** $Revision: 1.62 $
+** $Revision: 1.63 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -289,7 +289,7 @@ int sviCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(0, sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(0, sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 2;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800Debug.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** Author: Daniel Vik
 **
@@ -40,6 +40,7 @@
 
 
 extern void debuggerTrace(const char* str);
+extern void archTrap(UInt8 value);
 
 struct R800Debug {
     int debugHandle;
@@ -175,6 +176,11 @@ static void debugCb(R800Debug* dbg, int command, const char* data)
     }
 }
 
+void trapCb(R800* r800, UInt8 value)
+{
+    archTrap(value);
+}
+
 void r800DebugCreate(R800* r800)
 {
     DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
@@ -185,6 +191,7 @@ void r800DebugCreate(R800* r800)
 
     r800->debugCb      = debugCb;
     r800->breakpointCb = breakpointCb;
+    r800->trapCb       = trapCb;
 }
 
 void r800DebugDestroy()

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.h,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2008-03-31 17:48:26 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** Author: Daniel Vik
 **
@@ -88,7 +88,7 @@
 #define ENABLE_BREAKPOINTS
 #define ENABLE_CALLSTACK
 #define ENABLE_ASMSX_DEBUG_COMMANDS
-
+#define ENABLE_TRAP_CALLBACK
 
 /*****************************************************
 ** CpuMode
@@ -204,8 +204,9 @@ typedef struct {
 typedef UInt8 (*R800ReadCb)(void*, UInt16);
 typedef void  (*R800WriteCb)(void*, UInt16, UInt8);
 typedef void  (*R800PatchCb)(void*, CpuRegs*);
-typedef void  (*R800BreakptCb)(void* ref, UInt16);
-typedef void  (*R800DebugCb)(void* ref, int command, const char* data);
+typedef void  (*R800BreakptCb)(void*, UInt16);
+typedef void  (*R800DebugCb)(void*, int, const char*);
+typedef void  (*R800TrapCb)(void*, UInt8);
 typedef void  (*R800TimerCb)(void*);
 
 
@@ -264,6 +265,7 @@ typedef struct
     R800TimerCb   timerCb;
     R800BreakptCb breakpointCb;
     R800DebugCb   debugCb;
+    R800TrapCb    trapCb;
     void*         ref;              /* User defined pointer which is   */
                                     /* passed to the callbacks         */
 
@@ -295,6 +297,8 @@ typedef struct
 **                     is executed. 
 **      timerCb      - Function called on user scheduled timeouts
 **      breakpointCb - Function called when a breakpoint is hit
+**      debugCb      - Function called when a debug trap is hit
+**      trapCb       - Function called when a trap is hit
 **      ref          - User defined reference that will be passed to the
 **                     callbacks.
 **
@@ -307,6 +311,7 @@ R800* r800Create(UInt32 cpuFlags,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
                  R800BreakptCb bpCb,    R800DebugCb debugCb,
+                 R800TrapCb trapCb,
                  void* ref);
 
 /************************************************************************

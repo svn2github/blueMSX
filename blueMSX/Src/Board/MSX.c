@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/MSX.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,7 +190,7 @@ int msxCreate(Machine* machine,
         cpuFlags |= CPU_VDP_IO_DELAY;
     }
 
-    r800 = r800Create(cpuFlags, slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL);
+    r800 = r800Create(cpuFlags, slotRead, slotWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = machine->board.type == BOARD_MSX_FORTE_II ? 0 : 2;
     boardInfo->diskdriveCount   = machine->board.type == BOARD_MSX_FORTE_II ? 0 : 2;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2008-03-27 14:23:44 $
+** $Date: 2008-04-18 04:09:54 $
 **
 ** Author: Daniel Vik
 **
@@ -872,7 +872,6 @@ static void ld_b_a(R800* r800) {
 
 static void ld_b_b(R800* r800) { 
 #ifdef ENABLE_ASMSX_DEBUG_COMMANDS
-#if 1
     char debugString[256];
     UInt16 addr = r800->regs.PC.W;
     UInt16 bpAddr = 0;
@@ -910,38 +909,6 @@ static void ld_b_b(R800* r800) {
 
     sprintf(debugString, "%.4x %.4x %.4x", slot, page, bpAddr);
     r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
-
-#else
-    char debugString[256];
-    UInt16 addr = r800->regs.PC.W;
-    UInt16 end;
-    UInt16 bpAddr = 0;
-
-    if (r800->readMemory(r800->ref, addr++) != 24) {
-        return;
-    }
-    end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
-    if (end < addr + 6 || end - addr > 255) {
-        return;
-    }
-    addr++;
-
-    if (r800->readMemory(r800->ref, addr + 0) != 100 || 
-        r800->readMemory(r800->ref, addr + 1) != 100 || 
-        r800->readMemory(r800->ref, addr + 2) != 0   || 
-        r800->readMemory(r800->ref, addr + 3) != 0) 
-    {
-        return;
-    }
-    addr += 4;
-    
-    bpAddr = r800->readMemory(r800->ref, addr++);
-    bpAddr |= r800->readMemory(r800->ref, addr++) << 8;
-
-    sprintf(debugString, "%.4x", bpAddr);
-
-    r800->debugCb(r800->ref, ASDBG_SETBP, debugString);
-#endif
 #endif
 }
 
@@ -1022,6 +989,18 @@ static void ld_c_b(R800* r800) {
 }
 
 static void ld_c_c(R800* r800) { 
+#ifdef ENABLE_TRAP_CALLBACK
+    UInt16 addr = r800->regs.PC.W;
+    UInt8  value;
+
+    if (r800->readMemory(r800->ref, addr++) != 24) {
+        return;
+    }
+
+    value = r800->readMemory(r800->ref, addr++);
+    
+    r800->trapCb(r800->ref, value);
+#endif
 }
 
 static void ld_c_d(R800* r800) { 
@@ -5658,6 +5637,9 @@ static void breakpointCbDummy(void* ref, UInt16 pc) {
 static void debugCbDummy(void* ref, int command, const char* data) {
 }
 
+static void trapCbDummy(void* ref, UInt8 value) {
+}
+
 static void r800InitTables() {
     int i;
 
@@ -5821,6 +5803,7 @@ R800* r800Create(UInt32 cpuFlags,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
                  R800BreakptCb bpCb,    R800DebugCb debugCb,
+                 R800TrapCb trapCb,
                  void* ref)
 {
     R800* r800 = calloc(1, sizeof(R800));
@@ -5835,6 +5818,7 @@ R800* r800Create(UInt32 cpuFlags,
     r800->timerCb     = timerCb     ? timerCb     : timerCbDummy;
     r800->breakpointCb= bpCb        ? bpCb        : breakpointCbDummy;
     r800->debugCb     = debugCb     ? debugCb     : debugCbDummy;
+    r800->trapCb      = trapCb      ? trapCb      : trapCbDummy;
     r800->ref         = ref;
 
     r800->frequencyZ80  = 3579545;
