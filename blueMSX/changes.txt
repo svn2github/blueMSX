@@ -5,6 +5,7 @@ Next release
 - Added support for Panasonic FS-A1FM machine
 - Added support for FS-A1WX and FS-A1WSX firmware mapper
 - Added support for Matra INK mapper
+- Added support for Jaleco Moero!! Nettou Yakyuu '88 mapper with sample player
 - Added support for Ark-A-Noah copy protected disks
 - Updated support for TC8566AF Disk Controller
 - Updated machine structure

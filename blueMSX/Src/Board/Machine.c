@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2008-04-03 02:31:52 $
+** $Date: 2008-04-27 21:30:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,6 +132,7 @@
 #include "romMapperA1FM.h"
 #include "romMapperDRAM.h"
 #include "romMapperMatraINK.h"
+#include "romMapperNettouYakyuu.h"
 
 
 
@@ -1098,6 +1099,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_PLAIN:
             success &= romMapperPlainCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_NETTOUYAKYUU:
+            success &= romMapperNettouYakyuuCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_MATRAINK:

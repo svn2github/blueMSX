@@ -226,6 +226,7 @@ SOURCE_FILES += romMapperMsxPrn.c
 SOURCE_FILES += romMapperMsxRs232.c
 SOURCE_FILES += romMapperNational.c
 SOURCE_FILES += romMapperNationalFdc.c
+SOURCE_FILES += romMapperNettouYakyuu.c
 SOURCE_FILES += romMapperNms8280VideoDa.c
 SOURCE_FILES += romMapperNormal.c
 SOURCE_FILES += romMapperNoWind.c

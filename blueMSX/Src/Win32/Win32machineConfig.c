@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2008-03-29 20:14:40 $
+** $Date: 2008-04-27 21:30:49 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -813,6 +813,7 @@ static void endEditControls(HWND hDlg)
     case ROM_HOLYQURAN:
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
+    case ROM_NETTOUYAKYUU:
         editSlotInfo.startPage = 2;
         editSlotInfo.pageCount = 4;
         break;
@@ -1269,6 +1270,7 @@ static void setEditControls(HWND hDlg)
     case ROM_HOLYQURAN:
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
+    case ROM_NETTOUYAKYUU:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1454,6 +1456,7 @@ static RomType romTypeList[] = {
     ROM_HALNOTE,
     ROM_HARRYFOX,
     ROM_HOLYQURAN,
+    ROM_NETTOUYAKYUU, /* jaleco */
     ROM_LODERUNNER,
     ROM_MATRAINK,
     ROM_RTYPE,
