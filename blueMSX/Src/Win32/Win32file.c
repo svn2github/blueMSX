@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2008-03-29 20:14:40 $
+** $Date: 2008-04-27 12:42:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -278,9 +278,12 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                     if (buf != NULL) {
 
                         MediaType* mediaType = mediaDbLookupRom(buf, size);
-                        RomType romType = mediaType != NULL ? mediaDbGetRomType(mediaType) : ROM_UNKNOWN;
+                        RomType romType;
                         int idx = 0;
-
+                        
+                        if (!mediaType) mediaType=mediaDbGuessRom(buf, size);
+                        romType = mediaType != NULL ? mediaDbGetRomType(mediaType) : ROM_UNKNOWN;
+			
                         while (romTypeList[idx] != romType) {
                             idx++;
                         }
