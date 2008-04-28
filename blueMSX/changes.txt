@@ -13,7 +13,7 @@ Next release
 - Added Russian translation
 - Fixed DigiBlue Suite theme thinking a cartridge or disk was still present after ejecting it
 - Fixed DirectSound bug that happened on constant intervals depending on sound buffer size
-- Added ejectMediaOnExit setting. If enabled, all media are ejected when exiting blueMSX. (needs to be added to GUI yet)
+- **Needs to be added to GUI yet** Added ejectMediaOnExit setting. If enabled, all media are ejected when exiting blueMSX
 - Added MSX keyboard matrix quirk emulation, eg. pressing X+Z+J results in X+Z+H+J
 - Fixed 512 pixel width screen modes having a width of 511
 - Fixed small bug with MSX1 VDP address writes
@@ -22,8 +22,8 @@ Next release
 - Fixed Moonsound FM 4-op bug
 - Fixed small resource leak when minimizing the window
 - Added 75ms setting for soundbuffer size (step from 50 to 100 was a bit too big)
-- (Soon) New generic machines that don't have the keyboard repeat bug
-- (Soon) More accurate configuration of real machines (Correct RAM, no patches and more)
+- **Soon** New generic machines that don't have the keyboard repeat bug
+- **Soon** More accurate configuration of real machines (Correct RAM, no patches and more)
 
 
 v 2.7.1     December 15, 2007  
