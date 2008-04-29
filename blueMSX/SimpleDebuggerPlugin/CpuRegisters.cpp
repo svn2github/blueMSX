@@ -65,11 +65,9 @@ const char regName[20][8] = {
 
 LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    HDC hdc;
-
     switch (iMsg) {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
+    case WM_CREATE: {
+        HDC hdc = GetDC(hwnd);
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
         colorBlack = RGB(0, 0, 0);
@@ -96,6 +94,7 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         dataInput2->hide();
         dataInput4->hide();
         return 0;
+    }
 
     case WM_ERASEBKGND:
         return 1;
@@ -209,6 +208,7 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
+            HDC hdcw = GetWindowDC(NULL);
             HDC hdc = BeginPaint(hwnd, &ps);
 
             RECT r;
@@ -216,7 +216,7 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             int top    = ps.rcPaint.top;
             int height = ps.rcPaint.bottom - ps.rcPaint.top;
 
-            HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), r.right, r.bottom);
+            HBITMAP hBitmap = CreateCompatibleBitmap(hdcw, r.right, r.bottom);
             HBITMAP hBitmapOrig = (HBITMAP)SelectObject(hMemdc, hBitmap);
             
             SelectObject(hMemdc, hBrushWhite); 
@@ -228,6 +228,7 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             DeleteObject(SelectObject(hMemdc, hBitmapOrig));
             EndPaint(hwnd, &ps);
+            ReleaseDC(NULL, hdcw);
         }
         return TRUE;
 
@@ -237,6 +238,8 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         DeleteObject(hBrushDkGray);
         delete dataInput2;
         delete dataInput4;
+        DeleteObject(hFont);
+        DeleteObject(hFontBold);
         DeleteDC(hMemdc);
         break;
     }

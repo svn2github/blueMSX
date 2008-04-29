@@ -39,11 +39,9 @@
 
 LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    HDC hdc;
-
     switch (iMsg) {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
+    case WM_CREATE: {
+        HDC hdc = GetDC(hwnd);
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
         SetBkMode(hMemdc, TRANSPARENT);
@@ -64,6 +62,7 @@ LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             textWidth = tm.tmMaxCharWidth;
         }
         return 0;
+    }
 
     case WM_ERASEBKGND:
         return 1;
@@ -86,6 +85,7 @@ LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
+            HDC hdcw = GetWindowDC(NULL);
             HDC hdc = BeginPaint(hwnd, &ps);
 
             RECT r;
@@ -93,7 +93,7 @@ LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             int top    = ps.rcPaint.top;
             int height = ps.rcPaint.bottom - ps.rcPaint.top;
 
-            HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), r.right, r.bottom);
+            HBITMAP hBitmap = CreateCompatibleBitmap(hdcw, r.right, r.bottom);
             HBITMAP hBitmapOrig = (HBITMAP)SelectObject(hMemdc, hBitmap);
 
             SelectObject(hMemdc, hBrushWhite); 
@@ -105,6 +105,7 @@ LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             DeleteObject(SelectObject(hMemdc, hBitmapOrig));
             EndPaint(hwnd, &ps);
+            ReleaseDC(NULL, hdcw);
         }
         return TRUE;
 
@@ -112,6 +113,7 @@ LRESULT IoPortWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         DeleteObject(hBrushWhite);
         DeleteObject(hBrushLtGray);
         DeleteObject(hBrushDkGray);
+        DeleteObject(hFont);
         DeleteDC(hMemdc);
         break;
     }

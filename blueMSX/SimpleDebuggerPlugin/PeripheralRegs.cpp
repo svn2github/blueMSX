@@ -150,11 +150,9 @@ LRESULT PeripheralRegs::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    HDC hdc;
-
     switch (iMsg) {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
+    case WM_CREATE: {
+        HDC hdc = GetDC(hwnd);
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
         colorBlack = RGB(0, 0, 0);
@@ -180,6 +178,7 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         dataInput2->hide();
         dataInput4->hide();
         return 0;
+    }
 
     case WM_LBUTTONDOWN:
         {
@@ -255,6 +254,7 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
+            HDC hdcw = GetWindowDC(NULL);
             HDC hdc = BeginPaint(hwnd, &ps);
 
             RECT r;
@@ -262,7 +262,7 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             int top    = ps.rcPaint.top;
             int height = ps.rcPaint.bottom - ps.rcPaint.top;
 
-            HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), r.right, r.bottom);
+            HBITMAP hBitmap = CreateCompatibleBitmap(hdcw, r.right, r.bottom);
             HBITMAP hBitmapOrig = (HBITMAP)SelectObject(hMemdc, hBitmap);
             
             SelectObject(hMemdc, hBrushWhite); 
@@ -274,6 +274,7 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
             DeleteObject(SelectObject(hMemdc, hBitmapOrig));
             EndPaint(hwnd, &ps);
+            ReleaseDC(NULL, hdcw);
         }
         return TRUE;
 
@@ -283,6 +284,8 @@ LRESULT PeripheralRegs::regWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         DeleteObject(hBrushDkGray);
         delete dataInput2;
         delete dataInput4;
+        DeleteObject(hFont);
+        DeleteObject(hFontBold);
         DeleteDC(hMemdc);
         break;
     }

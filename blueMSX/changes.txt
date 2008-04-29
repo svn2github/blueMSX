@@ -20,6 +20,7 @@ Next release
 - Fixed audio mixer knobs being one notch to the left
 - Fixed Z80 IRQ timing
 - Fixed Moonsound FM 4-op bug
+- Fixed resource leaks in debugger
 - Fixed small resource leak when minimizing the window
 - Added 75ms setting for soundbuffer size (step from 50 to 100 was a bit too big)
 - **Soon** New generic machines that don't have the keyboard repeat bug

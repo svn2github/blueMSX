@@ -45,7 +45,8 @@ class BitmapIcons
 public:
     BitmapIcons(HINSTANCE hInstance, int id, int count) {
         HBITMAP hBitmap = (HBITMAP)LoadBitmap(hInstance, MAKEINTRESOURCE(id));
-        hMemDC  = CreateCompatibleDC(GetWindowDC(NULL));
+        hdcw = GetWindowDC(NULL);
+        hMemDC = CreateCompatibleDC(hdcw);
         SelectObject(hMemDC, hBitmap);
         
         BITMAP bmp; 
@@ -56,6 +57,7 @@ public:
 
     ~BitmapIcons() {
         DeleteDC(hMemDC);
+        ReleaseDC(NULL, hdcw);
     }
 
     void drawIcon(HDC hdc, int x, int y, int index) {
@@ -63,6 +65,7 @@ public:
     }
 
 private:
+    HDC hdcw;
     HDC hMemDC;
     int width;
     int height;
@@ -406,11 +409,9 @@ int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
 
 LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    HDC hdc;
-
     switch (iMsg) {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
+    case WM_CREATE: {
+        HDC hdc = GetDC(hwnd);
         hMemdc = CreateCompatibleDC(hdc);
         ReleaseDC(hwnd, hdc);
         SetBkMode(hMemdc, TRANSPARENT);
@@ -432,6 +433,7 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             textWidth = tm.tmAveCharWidth;
         }
         return 0;
+    }
 
     case WM_ERASEBKGND:
         return 1;
@@ -497,6 +499,7 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
+            HDC hdcw = GetWindowDC(NULL);
             HDC hdc = BeginPaint(hwnd, &ps);
 
             RECT r;
@@ -504,7 +507,7 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             int top    = ps.rcPaint.top;
             int height = ps.rcPaint.bottom - ps.rcPaint.top;
 
-            HBITMAP hBitmap = CreateCompatibleBitmap(GetWindowDC(NULL), r.right, r.bottom);
+            HBITMAP hBitmap = CreateCompatibleBitmap(hdcw, r.right, r.bottom);
             HBITMAP hBitmapOrig = (HBITMAP)SelectObject(hMemdc, hBitmap);
 
             SelectObject(hMemdc, hBrushLtGray);  
@@ -519,6 +522,7 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             DeleteObject(SelectObject(hMemdc, hBitmapOrig));
             EndPaint(hwnd, &ps);
+            ReleaseDC(NULL, hdcw);
         }
         return TRUE;
 
@@ -527,6 +531,7 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         DeleteObject(hBrushLtGray);
         DeleteObject(hBrushDkGray);
         DeleteObject(hBrushBlack);
+        DeleteObject(hFont);
         DeleteDC(hMemdc);
         break;
     }
