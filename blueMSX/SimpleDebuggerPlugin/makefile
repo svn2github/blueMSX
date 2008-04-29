@@ -14,8 +14,8 @@ ECHO  = @echo
 
 CFLAGS+=-W -O2 -finline-functions -march=pentiumpro -D_M_IX86=600 -DWIN32 -DNDEBUG -D_WINDOWS
 LDFLAGSTARGET=SimpleDebugger.dll
-LDFLAGS+=-Wl,--subsystem,windows --implib libSimpleDebugger.a
-LIBS+=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lcomctl32
+LDFLAGS+=-Wl,--subsystem,windows --implib libSimpleDebugger.a --def SimpleDebugger.def
+LIBS+=-lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lcomctl32 -lstdc++
 
 ifndef TARGET
 TARGET=SimpleDebugger.dll
@@ -75,11 +75,18 @@ SRCS= \
 	EditControls.h \
 	IoPorts.cpp \
 	IoPorts.h \
+	DbgWindow.cpp \
+	DbgWindow.h \
+	IniFileParser.cpp \
+	IniFileParser.h \
 	PeripheralRegs.cpp \
 	PeripheralRegs.h \
 	LanguageChineseSimplified.h \
 	LanguageChineseTraditional.h \
 	LanguageEnglish.h \
+	LanguageFinnish.h \
+	LanguageRussian.h \
+	LanguageKorean.h \
 	LanguageJapanese.h
 
 

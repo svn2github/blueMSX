@@ -168,7 +168,7 @@ void IoPortWindow::refresh()
 
 void IoPortWindow::updateContent(Snapshot* snapshot)
 {
-    static char* readWrite[4] = { "", "In", "Out", "I/O" };
+    static char* readWrite[4] = { (char*)"", (char*)"In", (char*)"Out", (char*)"I/O" };
 
     currentLine = -1;
     for (int i = 0; i < 256; i++) {

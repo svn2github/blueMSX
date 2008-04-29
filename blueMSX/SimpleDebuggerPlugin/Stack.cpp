@@ -272,8 +272,9 @@ void StackWindow::drawText(int top, int bottom)
     si.fMask  = SIF_POS;
     GetScrollInfo (hwnd, SB_VERT, &si);
     int yPos = si.nPos;
-    int FirstLine = max (0, yPos + top / textHeight);
-    int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
+    int yrel = yPos + top / textHeight;
+    int FirstLine = (yrel>0)?yrel:0;
+    int LastLine = (yrel<(lineCount-1))?yrel:lineCount-1;
 
     RECT r = { 10, textHeight * (FirstLine - yPos), 300, textHeight };
 
