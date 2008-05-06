@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2008-05-06 12:52:10 $
+** $Date: 2008-05-06 14:56:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -250,11 +250,7 @@ void themeClassicTitlebarUpdate(HWND wnd)
 		strcat(title,baseName);
 	}
 	
-	if (!strcmp(title,title_old)) return;
-	
-	SetWindowText(wnd,title);
-	
-	return;
+	if (strcmp(title,title_old)) SetWindowText(wnd,title);
 }
 
 #endif

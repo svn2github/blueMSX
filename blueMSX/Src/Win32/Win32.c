@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.197 $
+** $Revision: 1.198 $
 **
-** $Date: 2008-05-06 12:52:10 $
+** $Date: 2008-05-06 14:56:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1412,6 +1412,7 @@ void themeSet(char* themeName, int forceMatch) {
     else {
         st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), 640, 480);
     }
+    if (strcmp(themeName,"Classic")) SetWindowText(st.hwnd, "  blueMSX");
     SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
     SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
 
