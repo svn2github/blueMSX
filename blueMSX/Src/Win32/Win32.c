@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.198 $
+** $Revision: 1.199 $
 **
-** $Date: 2008-05-06 14:56:24 $
+** $Date: 2008-05-06 16:25:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2885,6 +2885,7 @@ void archShowCassettePosDialog()
 void archShowHelpDialog()
 {
     HINSTANCE rv = 0;
+    /* NOTE: leaks 10 resource handles everytime ShellExecute is called, XP SP2 */
     if (pProperties->language == EMU_LANG_JAPANESE) {
          rv = ShellExecute(getMainHwnd(), "open", "blueMSXjp.chm", NULL, NULL, SW_SHOWNORMAL);
     }
