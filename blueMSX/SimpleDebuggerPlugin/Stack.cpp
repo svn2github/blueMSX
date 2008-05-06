@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File:        Win32Toolbar.c
+** File:        Stack.cpp
 **
 ** Author:      Daniel Vik
 **
@@ -29,6 +29,12 @@
 #include "Language.h"
 #include <stdio.h>
 
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
 
 LRESULT StackWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
@@ -274,9 +280,8 @@ void StackWindow::drawText(int top, int bottom)
     si.fMask  = SIF_POS;
     GetScrollInfo (hwnd, SB_VERT, &si);
     int yPos = si.nPos;
-    int yrel = yPos + top / textHeight;
-    int FirstLine = (yrel>0)?yrel:0;
-    int LastLine = (yrel<(lineCount-1))?yrel:lineCount-1;
+    int FirstLine = max (0, yPos + top / textHeight);
+    int LastLine = min (lineCount - 1, yPos + bottom / textHeight);
 
     RECT r = { 10, textHeight * (FirstLine - yPos), 300, textHeight };
 

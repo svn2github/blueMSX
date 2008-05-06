@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File:        Win32StatusBar.c
+** File:        StatusBar.cpp
 **
 ** Author:      Daniel Vik
 **

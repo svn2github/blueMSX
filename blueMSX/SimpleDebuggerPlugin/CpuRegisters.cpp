@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File:        Win32Toolbar.c
+** File:        CpuRegisters.cpp
 **
 ** Author:      Daniel Vik
 **

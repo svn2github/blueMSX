@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File:        Win32Toolbar.c
+** File:        PeripheralRegs.cpp
 **
 ** Author:      Daniel Vik
 **

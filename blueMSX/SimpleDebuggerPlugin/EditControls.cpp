@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File:        Win32Toolbar.c
+** File:        EditControls.cpp
 **
 ** Author:      Daniel Vik
 **
