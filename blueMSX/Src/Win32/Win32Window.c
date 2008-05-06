@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-05-06 20:10:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -617,6 +617,8 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             KillTimer(hwnd, TIMER_STATUSBAR_UPDATE);
             windowDataSet(hwnd, 0, NULL);
             themePageActivate(themeGetCurrentPage(wi->theme), NULL);
+            if (wi->hrgn) { DeleteObject(wi->hrgn); wi->hrgn=NULL; }
+            if (wi->hBitmap) { DeleteObject(wi->hBitmap); wi->hBitmap=NULL; }
             wi->theme->reference = NULL;
             free(wi);
             wi = NULL;
