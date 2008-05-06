@@ -11,6 +11,7 @@ Next release
 - Updated machine structure
 - Added Catalonian translation
 - Added Russian translation
+- Added current machine and currently inserted media information to the Classic theme titlebar
 - Fixed DigiBlue Suite theme thinking a cartridge or disk was still present after ejecting it
 - Fixed DirectSound bug that happened on constant intervals depending on sound buffer size
 - **Needs to be added to GUI yet** Added ejectMediaOnExit setting. If enabled, all media are ejected when exiting blueMSX

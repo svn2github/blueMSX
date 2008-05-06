@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.h,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,7 +47,7 @@ void updateExtendedRomName(int drive, char* filename, char* zipFile);
 void updateExtendedDiskName(int drive, char* filename, char* zipFile);
 void updateExtendedCasName(int drive, char* filename, char* zipFile);
 
-char* createSaveFileBaseName(Properties* properties, int useExtendedName);
+int createSaveFileBaseName(char* fileBase,Properties* properties, int useExtendedName);
 char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension, int digits);
 
 #endif

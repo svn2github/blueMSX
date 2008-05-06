@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.36 $
+** $Revision: 1.37 $
 **
-** $Date: 2008-04-06 14:43:23 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -348,9 +348,8 @@ void setExtendedRomName(int drive, char* name) {
     strcpy(extendedName[drive], name);
 }
 
-char* createSaveFileBaseName(Properties* properties, int useExtendedName)
+int createSaveFileBaseName(char* fileBase,Properties* properties, int useExtendedName)
 {
-    static char fileBase[128];
     int done = 0;
     int i;
     fileBase[0]=0;
@@ -462,9 +461,10 @@ char* createSaveFileBaseName(Properties* properties, int useExtendedName)
 
     if (fileBase[0] == 0) {
         strcpy(fileBase, "unknown");
+        return 0;
     }
 
-    return fileBase;
+    return strlen(fileBase);
 }
 
 
@@ -499,7 +499,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     strcat(filenameFormat, "%s");
     sprintf(destfileFormat, "%%s/%%s%%s_%%0%di%%s", digits);
     
-    strcpy(baseName, createSaveFileBaseName(properties, 0));
+    createSaveFileBaseName(baseName, properties, 0);
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 
@@ -558,7 +558,7 @@ char* generateSaveFilename(Properties* properties, char* directory, char* prefix
     strcat(filenameFormat, "%s");
     sprintf(destfileFormat, "%%s" DIR_SEPARATOR "%%s%%s_%%0%di%%s", digits);
     
-    strcpy(baseName, createSaveFileBaseName(properties, 0));
+    createSaveFileBaseName(baseName, properties, 0);
 
     sprintf(filename, filenameFormat, directory, prefix, baseName, extension);
 

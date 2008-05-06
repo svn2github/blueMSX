@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,8 +28,10 @@
 #ifndef THEME_CLASSIC_H
 #define THEME_CLASSIC_H
 
+#include <windows.h>
 #include "Theme.h"
 
 ThemeCollection* themeClassicCreate();
+void themeClassicTitlebarUpdate(HWND);
 
 #endif //WIN32_THEME_CLASSIC_H

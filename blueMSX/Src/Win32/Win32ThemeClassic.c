@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ThemeClassic.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,8 @@
 #include "ArchBitmap.h"
 #include "ArchText.h"
 #include "Resource.h"
+#include "FileHistory.h"
+#include "Properties.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -40,6 +42,12 @@ ThemeCollection* themeClassicCreate()
 {
     return NULL;
 }
+
+void themeClassicTitlebarUpdate(HWND wnd)
+{
+	return;
+}
+
 #else
 static ThemePage* themeCreateSmall() 
 {
@@ -226,4 +234,27 @@ ThemeCollection* themeClassicCreate()
 
     return themeCollection;
 }
+
+void themeClassicTitlebarUpdate(HWND wnd)
+{
+	char title[1024]={0};
+	char title_old[1024]={0};
+	char baseName[128];
+	Properties* pProperties = propGetGlobalProperties();
+	
+	if (!GetWindowText(wnd,(LPTSTR)title_old,1024)||!strlen(pProperties->emulation.machineName)) return;
+	
+	sprintf(title,"  blueMSX - %s",pProperties->emulation.machineName);
+	if (createSaveFileBaseName(baseName, pProperties, 0)) {
+		strcat(title," - ");
+		strcat(title,baseName);
+	}
+	
+	if (!strcmp(title,title_old)) return;
+	
+	SetWindowText(wnd,title);
+	
+	return;
+}
+
 #endif

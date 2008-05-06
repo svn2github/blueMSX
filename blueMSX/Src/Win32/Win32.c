@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.196 $
+** $Revision: 1.197 $
 **
-** $Date: 2008-04-18 04:09:54 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -2096,6 +2096,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     }
                 }
 
+                if (!strcmp(pProperties->settings.themeName,"Classic")) themeClassicTitlebarUpdate(hwnd);
                 themePageUpdate(st.themePageActive, GetDC(hwnd));
 
                 PatchDiskSetBusy(0, 0);

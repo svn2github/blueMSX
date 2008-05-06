@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Theme/ThemeTriggers.c,v $
 **
-** $Revision: 1.52 $
+** $Revision: 1.53 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-05-06 12:52:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -859,7 +859,9 @@ char* themeTriggerMachineName() {
 }
 
 char* themeTriggerRunningName() {
-    return createSaveFileBaseName(propGetGlobalProperties(), 1);
+	static char baseName[128];
+	createSaveFileBaseName(baseName, propGetGlobalProperties(), 1);
+	return baseName;
 }
 
 char* themeTriggerBuildNumber() {
