@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ShortcutsConfig.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2008-04-07 14:43:17 $
+** $Date: 2008-05-06 17:48:55 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -341,7 +341,7 @@ static char** getProfileList()
     handle = FindFirstFile(fileName, &wfd);
     
     cont = handle != INVALID_HANDLE_VALUE;
-            
+    
     while (cont) {
 		DWORD fa = GetFileAttributes(wfd.cFileName);
 
@@ -357,6 +357,7 @@ static char** getProfileList()
         cont = FindNextFile(handle, &wfd);
     }
     
+    if (handle != INVALID_HANDLE_VALUE) FindClose(handle);
     profileList[index] = NULL;
 
     return profileList;
