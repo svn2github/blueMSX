@@ -1,6 +1,4 @@
 
-#define IDB_BLUEMSX                     1003
-
 #ifndef NO_DEFAULT_THEME
 
 #define IDB_CLASSIC_BG                  2100

@@ -19,8 +19,6 @@
 // Bitmap
 //
 
-IDB_BLUEMSX             BITMAP                  "blueMSXtop.bmp"
-
 #ifndef NO_DEFAULT_THEME
 IDB_CLASSIC_BG          BITMAP                  "classic/background.bmp"
 IDB_CLASSIC_BGSMALL     BITMAP                  "classic/backgroundsmall.bmp"
