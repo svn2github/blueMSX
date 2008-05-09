@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.199 $
+** $Revision: 1.200 $
 **
-** $Date: 2008-05-06 16:25:04 $
+** $Date: 2008-05-09 17:21:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -989,6 +989,7 @@ typedef struct {
     int renderVideo;
 
     HBITMAP hBitmap;
+    HDC hdc;
     ThemePage* themePageActive;
     ThemeCollection** themeList;
     int themeIndex;
@@ -1376,10 +1377,6 @@ void themeSet(char* themeName, int forceMatch) {
         themePageSetActive(st.themePageActive, NULL, st.active);
     }
 
-    if (st.hBitmap) {
-        DeleteObject(st.hBitmap);
-    }
-
     {
         DxDisplayMode* ddm = DirectDrawGetDisplayMode();
         menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
@@ -1406,12 +1403,16 @@ void themeSet(char* themeName, int forceMatch) {
         z  = HWND_TOPMOST;
     }
 
+    if (st.hBitmap) { DeleteObject(st.hBitmap); st.hBitmap=NULL; }
+    if (st.hdc) { ReleaseDC(st.hwnd,st.hdc); st.hdc=NULL; }
+    st.hdc=GetDC(st.hwnd);
     if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
-        st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), w, h);
+        st.hBitmap = CreateCompatibleBitmap(st.hdc, w, h);
     }
     else {
-        st.hBitmap = CreateCompatibleBitmap(GetDC(st.hwnd), 640, 480);
+        st.hBitmap = CreateCompatibleBitmap(st.hdc, 640, 480);
     }
+    
     if (strcmp(themeName,"Classic")) SetWindowText(st.hwnd, "  blueMSX");
     SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
     SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
@@ -2022,10 +2023,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
     case WM_MOUSEMOVE:
         if (st.themePageActive) {
+            HDC hdc = GetDC(hwnd);
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themePageMouseMove(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseMove(st.themePageActive, hdc, pt.x, pt.y);
+            ReleaseDC(hwnd, hdc);
             checkClipRegion();
         }
         if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
@@ -2052,10 +2055,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 st.currentHwnd = hwnd;
 
                 if (st.themePageActive) {
+                    HDC hdc = GetDC(hwnd);
                     POINT pt;
                     GetCursorPos(&pt);
                     ScreenToClient(hwnd, &pt);
-                    themePageMouseButtonDown(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
+                    themePageMouseButtonDown(st.themePageActive, hdc, pt.x, pt.y);
+                    ReleaseDC(hwnd, hdc);
                 }
                 if (st.showMenu && pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
                     updateMenu(0);
@@ -2067,10 +2072,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
     case WM_LBUTTONUP:
         ReleaseCapture();
         if (st.themePageActive) {
+            HDC hdc = GetDC(hwnd);
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themePageMouseButtonUp(st.themePageActive, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseButtonUp(st.themePageActive, hdc, pt.x, pt.y);
+            ReleaseDC(hwnd, hdc);
             st.currentHwnd = NULL;
         }
 
@@ -2086,6 +2093,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case TIMER_STATUSBAR_UPDATE:
             if (!st.minimized) {
                 static UInt32 resetCnt = 0;
+                HDC hdc = GetDC(hwnd);
 
                 if (emulatorGetState() == EMU_RUNNING) {
                     if ((resetCnt++ & 0x3f) == 0) {
@@ -2098,7 +2106,8 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 }
 
                 if (!strcmp(pProperties->settings.themeName,"Classic")) themeClassicTitlebarUpdate(hwnd);
-                themePageUpdate(st.themePageActive, GetDC(hwnd));
+                themePageUpdate(st.themePageActive, hdc);
+                ReleaseDC(hwnd, hdc);
 
                 PatchDiskSetBusy(0, 0);
                 PatchDiskSetBusy(1, 0);

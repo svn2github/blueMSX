@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2008-04-03 02:31:53 $
+** $Date: 2008-05-09 17:21:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1104,7 +1104,9 @@ static void menuMouseMove(HWND hwnd, unsigned int x, unsigned int y, int forceUp
         MenuInfo* mi = menuInfo + i;
         int focused = ((x - mi->x) < mi->w) && ((y - mi->y) < mi->h);
         if (focused != mi->focused || forceUpdate) {
-            menuDrawItem(GetDC(hwnd), mi, focused || menuDown == i);
+            HDC hdc = GetDC(hwnd);
+            menuDrawItem(hdc, mi, focused || menuDown == i);
+            ReleaseDC(hwnd, hdc);
         }
         if (focused && menuDown != -1 && menuDown != i) {
             menuDown = -1;
@@ -1198,6 +1200,7 @@ void addMenuItem(char* text, void (*action)(int, int), int append)
     SIZE size;
     int i;
     int offset = 0;
+    HDC hdc;
 
     if (!append) {
         menuItemCount = 0;
@@ -1207,7 +1210,10 @@ void addMenuItem(char* text, void (*action)(int, int), int append)
         offset += menuInfo[i].w;
     }
 
-    GetTextExtentPoint32(GetDC(menuHwnd), text, strlen(text), &size);
+    hdc = GetDC(menuHwnd);
+    GetTextExtentPoint32(hdc, text, strlen(text), &size);
+    ReleaseDC(menuHwnd, hdc);
+    
     menuInfo[menuItemCount].x = offset;
     menuInfo[menuItemCount].y = 0;
     menuInfo[menuItemCount].w = size.cx + 17;
@@ -1237,6 +1243,8 @@ int menuShow(int show)
 
 void menuSetInfo(COLORREF color, COLORREF focusColor, COLORREF textColor, int x, int y, int width, int height)
 {
+    HDC hdc;
+    
     DeleteObject(menuBrush);
     menuBrush = CreateSolidBrush(color);
     menuText = textColor;
@@ -1247,7 +1255,9 @@ void menuSetInfo(COLORREF color, COLORREF focusColor, COLORREF textColor, int x,
 
     SetWindowPos(menuHwnd, HWND_TOP, x, y, width, 20, 0);
 
-    SetTextColor(GetDC(menuHwnd), textColor);
+    hdc = GetDC(menuHwnd);
+    SetTextColor(hdc, textColor);
+    ReleaseDC(menuHwnd, hdc);
 }
 
 void menuUpdate(Properties* pProperties, 
@@ -1314,6 +1324,7 @@ void menuCreate(HWND parent)
 {
     static WNDCLASSEX wndClass;
     HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
+    HDC hdc;
 
     wndClass.cbSize         = sizeof(wndClass);
     wndClass.style          = CS_OWNDC;
@@ -1336,10 +1347,13 @@ void menuCreate(HWND parent)
 
     menuHwnd = CreateWindow(wndClass.lpszClassName, NULL, WS_CHILD | WS_CLIPSIBLINGS, 
                             0, 0, 0, 0, parent, 0, hInstance, NULL);
-    SelectObject(GetDC(menuHwnd), CreatePen(PS_NULL, 0, 0));
-    SelectObject(GetDC(menuHwnd), (HFONT)SendMessage(CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DISKIMAGE), menuHwnd, dummyProc), WM_GETFONT, 0, 0));
-    SetBkMode (GetDC(menuHwnd), TRANSPARENT);
-    SetTextColor(GetDC(menuHwnd), 0);
+    
+    hdc = GetDC(menuHwnd);
+    SelectObject(hdc, CreatePen(PS_NULL, 0, 0));
+    SelectObject(hdc, (HFONT)SendMessage(CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DISKIMAGE), menuHwnd, dummyProc), WM_GETFONT, 0, 0));
+    SetBkMode (hdc, TRANSPARENT);
+    SetTextColor(hdc, 0);
+    ReleaseDC(menuHwnd, hdc);
 }
 
 void archShowMenuSpecialCart1(int x, int y) {

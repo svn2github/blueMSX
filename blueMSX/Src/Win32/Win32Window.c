@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Window.c,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2008-05-06 20:10:00 $
+** $Date: 2008-05-09 17:21:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -169,6 +169,7 @@ typedef struct WindowInfo {
     Theme* theme;
     
     HBITMAP hBitmap;
+    HDC hdc;
     
     HRGN     hrgn;
     int      clipAlways;
@@ -303,6 +304,7 @@ static void windowCreateClipRegion(WindowInfo* wi)
                 int width  = themePage->width  + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
                 int height = themePage->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + wi->captionHeight;
 
+                if (wi->hrgn) { DeleteObject(wi->hrgn); wi->hrgn=NULL; }
                 wi->hrgn = CreateRectRgn(0, 0, width, height);
                 CombineRgn(wi->hrgn, wi->hrgn, hrgn, RGN_XOR);
             }
@@ -464,9 +466,12 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     case WM_TIMER:
         if (wi != NULL) {
             switch(wParam) {
-            case TIMER_STATUSBAR_UPDATE:
-                themePageUpdate(themeGetCurrentPage(wi->theme), GetDC(hwnd));
+            case TIMER_STATUSBAR_UPDATE: {
+                HDC hdc = GetDC(hwnd);
+                themePageUpdate(themeGetCurrentPage(wi->theme), hdc);
+                ReleaseDC(hwnd, hdc);
                 break;
+            }
             case TIMER_CLIP_REGION:
                 windowUpdateClipRegion(wi);
                 break;
@@ -496,8 +501,10 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
 
     case WM_ACTIVATE:
         if (wi != NULL) {
+            HDC hdc = GetDC(hwnd);
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
-            themePageSetActive(themePage, GetDC(hwnd), LOWORD(wParam) != WA_INACTIVE);
+            themePageSetActive(themePage, hdc, LOWORD(wParam) != WA_INACTIVE);
+            ReleaseDC(hwnd, hdc);
         }
         if (LOWORD(wParam) != WA_INACTIVE) {
             inputReset(hwnd);
@@ -513,10 +520,10 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             width  = themePage->width  + 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
             height = themePage->height + 2 * GetSystemMetrics(SM_CYFIXEDFRAME) + wi->captionHeight;
             
-            if (wi->hBitmap) {
-                DeleteObject(wi->hBitmap);
-            }
-            wi->hBitmap = CreateCompatibleBitmap(GetDC(hwnd), width, height);
+            if (wi->hBitmap) { DeleteObject(wi->hBitmap); wi->hBitmap=NULL; }
+            if (wi->hdc) { ReleaseDC(hwnd,wi->hdc); wi->hdc=NULL; }
+            wi->hdc=GetDC(hwnd);
+            wi->hBitmap = CreateCompatibleBitmap(wi->hdc, width, height);
             themePageActivate(themePage, NULL);
 
             SetWindowPos(hwnd, NULL, 0, 0, width, height, 
@@ -546,10 +553,12 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
         archWindowMove();
         if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            HDC hdc = GetDC(hwnd);
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themePageMouseMove(themePage, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseMove(themePage, hdc, pt.x, pt.y);
+            ReleaseDC(hwnd, hdc);
             windowCheckClipRegion(wi);
         }
         SetTimer(hwnd, TIMER_THEME, 250, NULL);
@@ -559,24 +568,28 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
     case WM_LBUTTONDOWN:
         if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            HDC hdc = GetDC(hwnd);
             POINT pt;
             SetCapture(hwnd);
             SetCurrentWindow(hwnd);
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themePageMouseButtonDown(themePage, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseButtonDown(themePage, hdc, pt.x, pt.y);
+            ReleaseDC(hwnd, hdc);
         }
         break;
 
     case WM_LBUTTONUP:
         if (wi != NULL) {
             ThemePage* themePage = themeGetCurrentPage(wi->theme);
+            HDC hdc = GetDC(hwnd);
             POINT pt;
             
             ReleaseCapture();
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
-            themePageMouseButtonUp(themePage, GetDC(hwnd), pt.x, pt.y);
+            themePageMouseButtonUp(themePage, hdc, pt.x, pt.y);
+            ReleaseDC(hwnd, hdc);
             SetCurrentWindow(NULL);
         }
 
@@ -619,6 +632,7 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM l
             themePageActivate(themeGetCurrentPage(wi->theme), NULL);
             if (wi->hrgn) { DeleteObject(wi->hrgn); wi->hrgn=NULL; }
             if (wi->hBitmap) { DeleteObject(wi->hBitmap); wi->hBitmap=NULL; }
+            if (wi->hdc) { ReleaseDC(hwnd,wi->hdc); wi->hdc=NULL; }
             wi->theme->reference = NULL;
             free(wi);
             wi = NULL;

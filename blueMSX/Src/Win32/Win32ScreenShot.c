@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ScreenShot.c,v $
 **
-** $Revision: 1.9 $
+** $Revision: 1.10 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-05-09 17:21:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -522,7 +522,7 @@ HBITMAP BitmapFromData(void* bmp) {
     BMPHeader*  hdr    = (BMPHeader*)(bitmap + 2);
     char*       data   = (char*)(hdr + 1);
     BITMAPINFO* bmi;
-    HDC         hdc;
+    static HDC  hdc=NULL;
     HBITMAP     hbm;
 
     if (bitmap[0] != 'B' || bitmap[1] != 'M') {
@@ -539,12 +539,11 @@ HBITMAP BitmapFromData(void* bmp) {
     bmi->bmiHeader.biSizeImage    = hdr->SizeImage;
     bmi->bmiHeader.biClrImportant = 0; 
 
+    if (hdc) { ReleaseDC(NULL,hdc); hdc=NULL; }
     hdc = GetDC(NULL);
     hbm = CreateCompatibleBitmap(hdc, hdr->Width, hdr->Height);
 
     SetDIBits(hdc, hbm, 0, hdr->Height, data, bmi, DIB_RGB_COLORS);
-
-    DeleteDC(hdc);
 
     return hbm;
 }
