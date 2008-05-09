@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2008-05-09 17:42:45 $
+** $Date: 2008-05-09 22:05:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1098,14 +1098,14 @@ static void menuButtonDown(HWND hwnd, unsigned int x, unsigned int y)
 static void menuMouseMove(HWND hwnd, unsigned int x, unsigned int y, int forceUpdate)
 {
     MenuInfo* mi = menuInfo;
-    int i;
+    int i=menuItemCount;
 
-    for (i = 0; i < menuItemCount; i++) {
+    while (i--) {
         MenuInfo* mi = menuInfo + i;
-        int focused = ((x - mi->x) < mi->w) && ((y - mi->y) < mi->h);
-        if (focused != mi->focused || forceUpdate) {
+        int focused = ((x - mi->x) < mi->w) & ((y - mi->y) < mi->h);
+        if ((focused ^ mi->focused) | forceUpdate) {
             HDC hdc = GetDC(hwnd);
-            menuDrawItem(hdc, mi, focused || menuDown == i);
+            menuDrawItem(hdc, mi, focused | (menuDown == i));
             ReleaseDC(hwnd, hdc);
         }
         if (focused && menuDown != -1 && menuDown != i) {
@@ -1130,7 +1130,7 @@ static LRESULT CALLBACK menuProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
             menuMouseMove(hwnd, pt.x, pt.y, 0);
-            SetTimer(hwnd, 1, 250, NULL);
+            SetTimer(hwnd, 1, 20, NULL);
         }
         return 0;
 
