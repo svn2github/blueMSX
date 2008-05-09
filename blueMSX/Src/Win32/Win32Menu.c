@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2008-05-09 17:30:33 $
+** $Date: 2008-05-09 17:42:45 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1105,7 +1105,7 @@ static void menuMouseMove(HWND hwnd, unsigned int x, unsigned int y, int forceUp
         int focused = ((x - mi->x) < mi->w) && ((y - mi->y) < mi->h);
         if (focused != mi->focused || forceUpdate) {
             HDC hdc = GetDC(hwnd);
-            menuDrawItem(hdc, mi, focused | (menuDown == i));
+            menuDrawItem(hdc, mi, focused || menuDown == i);
             ReleaseDC(hwnd, hdc);
         }
         if (focused && menuDown != -1 && menuDown != i) {
