@@ -1227,21 +1227,15 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         delete toolBar;
         toolBar = NULL;
         viewHwnd = NULL;
-        DestroyWindow(hwnd);
-        delete disassembly;
-        disassembly = NULL;
-        delete cpuRegisters;
-        cpuRegisters = NULL;
-        delete periRegisters;
-        periRegisters = NULL;
-        delete ioPorts;
-        ioPorts = NULL;
-        delete callstack;
-        callstack = NULL;
-        delete stack;
-        stack = NULL;
-        delete memory;
-        memory = NULL;
+        
+        if (disassembly) { DestroyWindow(disassembly->hwnd); delete disassembly; disassembly = NULL; }
+        if (cpuRegisters) {DestroyWindow(cpuRegisters->hwnd); delete cpuRegisters; cpuRegisters = NULL; }
+        if (periRegisters) {DestroyWindow(periRegisters->hwnd); delete periRegisters; periRegisters = NULL; }
+        if (ioPorts) {DestroyWindow(ioPorts->hwnd); delete ioPorts; ioPorts = NULL; }
+        if (callstack) {DestroyWindow(callstack->hwnd); delete callstack; callstack = NULL; }
+        if (stack) {DestroyWindow(stack->hwnd); delete stack; stack = NULL; }
+        if (memory) {DestroyWindow(memory->hwnd); delete memory; memory = NULL; }
+        
         delete symbolInfo;
         symbolInfo = NULL;
         

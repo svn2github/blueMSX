@@ -233,14 +233,14 @@ LRESULT CpuRegisters::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_DESTROY:
-        DeleteObject(hBrushWhite);
-        DeleteObject(hBrushLtGray);
-        DeleteObject(hBrushDkGray);
-        delete dataInput2;
-        delete dataInput4;
-        DeleteObject(hFont);
-        DeleteObject(hFontBold);
-        DeleteDC(hMemdc);
+        if (hBrushWhite) { DeleteObject(hBrushWhite); hBrushWhite=NULL; }
+        if (hBrushLtGray) { DeleteObject(hBrushLtGray); hBrushLtGray=NULL; }
+        if (hBrushDkGray) { DeleteObject(hBrushDkGray); hBrushDkGray=NULL; }
+        if (dataInput2) { delete dataInput2; dataInput2=NULL; }
+        if (dataInput4) { delete dataInput4; dataInput4=NULL; }
+        if (hFont) { DeleteObject(hFont); hFont=NULL; }
+        if (hFontBold) { DeleteObject(hFontBold); hFontBold=NULL; }
+        if (hMemdc) { DeleteDC(hMemdc); hMemdc=NULL; }
         break;
     }
 

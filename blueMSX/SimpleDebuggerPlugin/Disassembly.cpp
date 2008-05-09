@@ -56,8 +56,8 @@ public:
     }
 
     ~BitmapIcons() {
-        DeleteDC(hMemDC);
-        ReleaseDC(NULL, hdcw);
+        if (hMemDC) { DeleteDC(hMemDC); hMemDC=NULL; }
+        if (hdcw) { ReleaseDC(NULL, hdcw); hdcw=NULL; }
     }
 
     void drawIcon(HDC hdc, int x, int y, int index) {
@@ -527,12 +527,12 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_DESTROY:
-        DeleteObject(hBrushWhite);
-        DeleteObject(hBrushLtGray);
-        DeleteObject(hBrushDkGray);
-        DeleteObject(hBrushBlack);
-        DeleteObject(hFont);
-        DeleteDC(hMemdc);
+        if (hBrushWhite) { DeleteObject(hBrushWhite); hBrushWhite=NULL; }
+        if (hBrushLtGray) { DeleteObject(hBrushLtGray); hBrushLtGray=NULL; }
+        if (hBrushDkGray) { DeleteObject(hBrushDkGray); hBrushDkGray=NULL; }
+        if (hBrushBlack) { DeleteObject(hBrushBlack); hBrushBlack=NULL; }
+        if (hFont) { DeleteObject(hFont); hFont=NULL; }
+        if (hMemdc) { DeleteDC(hMemdc); hMemdc=NULL; }
         break;
     }
 

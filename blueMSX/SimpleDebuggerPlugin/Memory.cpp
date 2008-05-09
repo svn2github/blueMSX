@@ -147,10 +147,10 @@ LRESULT Memory::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_DESTROY:
-        DeleteObject(hBrushWhite);
-        DeleteObject(hBrushLtGray);
-        DeleteObject(hBrushDkGray);
-        DeleteDC(hMemdc);
+        if (hBrushWhite) { DeleteObject(hBrushWhite); hBrushWhite=NULL; }
+        if (hBrushLtGray) { DeleteObject(hBrushLtGray); hBrushLtGray=NULL; }
+        if (hBrushDkGray) { DeleteObject(hBrushDkGray); hBrushDkGray=NULL; }
+        if (hMemdc) { DeleteDC(hMemdc); hMemdc=NULL; }
         break;
     }
 
@@ -328,13 +328,13 @@ LRESULT Memory::memWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_DESTROY:
-        DeleteObject(hBrushWhite);
-        DeleteObject(hBrushLtGray);
-        DeleteObject(hBrushDkGray);
-        delete dataInput1;
-        delete dataInput2;
-        DeleteObject(hFont);
-        DeleteDC(hMemdc);
+        if (hBrushWhite) { DeleteObject(hBrushWhite); hBrushWhite=NULL; }
+        if (hBrushLtGray) { DeleteObject(hBrushLtGray); hBrushLtGray=NULL; }
+        if (hBrushDkGray) { DeleteObject(hBrushDkGray); hBrushDkGray=NULL; }
+        if (dataInput1) { delete dataInput1; dataInput1=NULL; }
+        if (dataInput2) { delete dataInput2; dataInput2=NULL; }
+        if (hFont) { DeleteObject(hFont); hFont=NULL; }
+        if (hMemdc) { DeleteDC(hMemdc); hMemdc=NULL; }
         break;
     }
 

@@ -120,11 +120,11 @@ LRESULT CallstackWindow::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_DESTROY:
-        DeleteObject(hBrushWhite);
-        DeleteObject(hBrushLtGray);
-        DeleteObject(hBrushDkGray);
-        DeleteObject(hFont);
-        DeleteDC(hMemdc);
+        if (hBrushWhite) { DeleteObject(hBrushWhite); hBrushWhite=NULL; }
+        if (hBrushLtGray) { DeleteObject(hBrushLtGray); hBrushLtGray=NULL; }
+        if (hBrushDkGray) { DeleteObject(hBrushDkGray); hBrushDkGray=NULL; }
+        if (hFont) { DeleteObject(hFont); hFont=NULL; }
+        if (hMemdc) { DeleteDC(hMemdc); hMemdc=NULL; }
         break;
     }
 
