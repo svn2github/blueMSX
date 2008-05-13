@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2008-04-05 19:27:38 $
+** $Date: 2008-05-13 17:13:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -341,7 +341,7 @@ typedef struct {
     char defDir[PROP_MAXPATH];
     int showCustomFiles;
     int readOnly;
-    int autoRewind;
+    int rewindAfterInsert;
 } CassetteProperties;
 
 typedef struct {

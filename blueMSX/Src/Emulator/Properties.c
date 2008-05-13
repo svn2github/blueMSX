@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.71 $
+** $Revision: 1.72 $
 **
-** $Date: 2008-04-05 19:27:38 $
+** $Date: 2008-05-13 17:13:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -403,7 +403,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->cassette.defDir[0]       = 0;
     properties->cassette.showCustomFiles = 1;
     properties->cassette.readOnly        = 1;
-    properties->cassette.autoRewind      = 0;
+    properties->cassette.rewindAfterInsert = 0;
 
     properties->ports.Lpt.type           = P_LPT_NONE;
     properties->ports.Lpt.emulation      = P_LPT_MSXPRN;
@@ -635,7 +635,7 @@ static void propLoad(Properties* properties)
     
     GET_INT_VALUE_2(cassette, showCustomFiles);
     GET_INT_VALUE_2(cassette, readOnly);
-    GET_INT_VALUE_2(cassette, autoRewind);
+    GET_INT_VALUE_2(cassette, rewindAfterInsert);
 
     iniFileClose();
     
@@ -857,7 +857,7 @@ void propSave(Properties* properties)
     
     SET_INT_VALUE_2(cassette, showCustomFiles);
     SET_INT_VALUE_2(cassette, readOnly);
-    SET_INT_VALUE_2(cassette, autoRewind);
+    SET_INT_VALUE_2(cassette, rewindAfterInsert);
 
     iniFileClose();
 

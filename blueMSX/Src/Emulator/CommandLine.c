@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2008-04-03 02:31:52 $
+** $Date: 2008-05-13 17:13:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -498,9 +498,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     if (strlen(ide1s) && !insertDiskette(properties, diskGetHdDriveId(0, 1), ide1s, NULL, -1)) return 0;
     if (strlen(cas)   && !insertCassette(properties, 0, cas, *caszip ? caszip : NULL, -1)) return 0;
 
-    if (properties->cassette.autoRewind) {
-        tapeSetCurrentPos(0);
-    }
+    if (properties->cassette.rewindAfterInsert) tapeRewindNextInsert();
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
 

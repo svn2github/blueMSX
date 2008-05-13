@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2007-03-24 05:20:32 $
+** $Date: 2008-05-13 17:13:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -594,9 +594,7 @@ void actionCasInsert() {
     filename = archFilenameGetOpenCas(state.properties);
     if (filename != NULL) {        
         insertCassette(state.properties, 0, filename, NULL, 0);
-        if (state.properties->cassette.autoRewind) {
-            tapeSetCurrentPos(0);
-        }
+        if (state.properties->cassette.rewindAfterInsert) tapeRewindNextInsert();
     }
     emulatorResume();
     archUpdateMenu(0);
@@ -757,7 +755,7 @@ void actionCasToggleReadonly() {
 }
 
 void actionToggleCasAutoRewind() {
-    state.properties->cassette.autoRewind ^= 1;
+    state.properties->cassette.rewindAfterInsert ^= 1;
     archUpdateMenu(0);
 }
 
@@ -1308,7 +1306,7 @@ void actionSetCasReadonly(int value) {
 }
 
 void actionSetCasAutoRewind(int value) {
-    state.properties->cassette.autoRewind = value ? 1 : 0;
+    state.properties->cassette.rewindAfterInsert = value ? 1 : 0;
     archUpdateMenu(0);
 }
 

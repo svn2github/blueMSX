@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2008-05-13 16:22:27 $
+** $Date: 2008-05-13 17:13:15 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -761,7 +761,7 @@ static HMENU menuCreateCassette(Properties* pProperties, Shortcuts* shortcuts)
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
-    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.autoRewind ? MFS_CHECKED : 0), ID_FILE_TAPE_AUTOREWNIND, langMenuCasRewindAfterInsert());
+    AppendMenu(hMenu, MF_STRING | (pProperties->cassette.rewindAfterInsert ? MFS_CHECKED : 0), ID_FILE_TAPE_AUTOREWNIND, langMenuCasRewindAfterInsert());
 
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -1620,9 +1620,7 @@ int menuCommand(Properties* pProperties, int command)
         h = command - ID_FILE_TAPE_HISTORY;
         if (h >= 0 && h < MAX_HISTORY) {
             insertCassette(pProperties, 0, pProperties->filehistory.cassette[0][h], NULL, 0);
-            if (pProperties->cassette.autoRewind) {
-                tapeSetCurrentPos(0);
-            }
+            if (pProperties->cassette.rewindAfterInsert) tapeRewindNextInsert();
             return 1;
         }
     }
