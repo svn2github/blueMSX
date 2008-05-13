@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-05-13 17:13:15 $
+** $Date: 2008-05-13 17:25:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -54,7 +54,6 @@ static int    tapeHeaderSize;
 static char*  ramImageBuffer = NULL;
 static int    ramImageSize = 0;
 static int    ramImagePos = 0;
-static int    autoRewind = 0;
 static int    rewindNextInsert = 0;
 
 static char* stripPath(char* filename) {
@@ -105,10 +104,6 @@ void tapeSaveState() {
 UInt8 tapeRead(UInt8* value) 
 {
     if (ramImageBuffer != NULL) {
-        if (autoRewind && ramImagePos == ramImageSize) {
-            ramImagePos = 0;
-        }
-
         if (ramImagePos < ramImageSize) {
             *value = ramImageBuffer[ramImagePos++];
             ledSetCas(1);
