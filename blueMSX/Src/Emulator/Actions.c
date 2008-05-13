@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Actions.c,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2008-05-13 17:13:14 $
+** $Date: 2008-05-13 18:32:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -526,6 +526,7 @@ void actionWindowSizeSmall() {
     state.windowedSize = P_VIDEO_SIZEX1;
     if (state.properties->video.windowSize != P_VIDEO_SIZEX1) {
         state.properties->video.windowSize = P_VIDEO_SIZEX1;
+        state.properties->video.windowSizeChanged = 1;
         archUpdateWindow();
     }
 }
@@ -534,6 +535,7 @@ void actionWindowSizeNormal() {
     state.windowedSize = P_VIDEO_SIZEX2;
     if (state.properties->video.windowSize != P_VIDEO_SIZEX2) {
         state.properties->video.windowSize = P_VIDEO_SIZEX2;
+        state.properties->video.windowSizeChanged = 1;
         archUpdateWindow();
     }
 }
@@ -541,6 +543,7 @@ void actionWindowSizeNormal() {
 void actionWindowSizeFullscreen() {
     if (state.properties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
         state.properties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
+        state.properties->video.windowSizeChanged = 1;
         archUpdateWindow();
     }
 }
