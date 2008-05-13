@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2008-05-09 22:05:45 $
+** $Date: 2008-05-13 16:22:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1130,7 +1130,7 @@ static LRESULT CALLBACK menuProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPa
             GetCursorPos(&pt);
             ScreenToClient(hwnd, &pt);
             menuMouseMove(hwnd, pt.x, pt.y, 0);
-            SetTimer(hwnd, 1, 20, NULL);
+            SetTimer(hwnd, 1, 25, NULL);
         }
         return 0;
 
