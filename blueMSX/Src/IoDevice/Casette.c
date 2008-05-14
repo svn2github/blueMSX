@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2008-05-14 09:53:35 $
+** $Date: 2008-05-14 12:55:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -55,7 +55,7 @@ static int    tapeHeaderSize;
 static char*  ramImageBuffer = NULL;
 static int    ramImageSize = 0;
 static int    ramImagePos = 0;
-static int    tapeIsInserting = 0;
+static int    rewindNextInsert = 0;
 
 static char* stripPath(char* filename) {
     char* ptr = filename + strlen(filename) - 1;
@@ -260,8 +260,8 @@ int tapeInsert(char *name, const char *fileInZipFile)
         }
     }
     
-    if (tapeIsInserting&&pProperties->cassette.rewindAfterInsert) ramImagePos=0;
-    tapeIsInserting=0;
+    if (rewindNextInsert&&pProperties->cassette.rewindAfterInsert) ramImagePos=0;
+    rewindNextInsert=0;
 
     if (ramImageBuffer != NULL) {
         UInt8* ptr = ramImageBuffer + ramImageSize - 17;
@@ -456,7 +456,7 @@ void tapeSetCurrentPos(int pos)
     }
 }
 
-void tapeInserting(void)
+void tapeRewindNextInsert(void)
 {
-	tapeIsInserting=1;
+	rewindNextInsert=1;
 }

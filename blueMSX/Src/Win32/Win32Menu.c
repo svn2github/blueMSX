@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.81 $
+** $Revision: 1.82 $
 **
-** $Date: 2008-05-14 09:53:35 $
+** $Date: 2008-05-14 12:55:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1619,7 +1619,7 @@ int menuCommand(Properties* pProperties, int command)
         // Parse Tape Menu Items
         h = command - ID_FILE_TAPE_HISTORY;
         if (h >= 0 && h < MAX_HISTORY) {
-            tapeInserting();
+            if (pProperties->cassette.rewindAfterInsert) tapeRewindNextInsert();
             insertCassette(pProperties, 0, pProperties->filehistory.cassette[0][h], NULL, 0);
             return 1;
         }

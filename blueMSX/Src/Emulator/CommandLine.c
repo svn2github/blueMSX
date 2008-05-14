@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2008-05-14 09:53:35 $
+** $Date: 2008-05-14 12:55:31 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -490,7 +490,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         }
     }
 
-    tapeInserting();
+    if (properties->cassette.rewindAfterInsert) tapeRewindNextInsert();
 
     if (strlen(rom1)  && !insertCartridge(properties, 0, rom1, *rom1zip ? rom1zip : NULL, romType1, -1)) return 0;
     if (strlen(rom2)  && !insertCartridge(properties, 1, rom2, *rom2zip ? rom2zip : NULL, romType2, -1)) return 0;
