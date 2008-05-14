@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.27 $
+** $Revision: 1.28 $
 **
-** $Date: 2008-03-30 07:39:56 $
+** $Date: 2008-05-14 13:21:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,6 +34,7 @@
 #include "Board.h"
 #include "ArchFile.h"
 #include "Disk.h"
+#include "Casette.h"
 #include "ArchDialog.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -659,6 +660,7 @@ int tryLaunchUnknownFile(Properties* properties, const char* fileName, int force
         rv = insertDiskette(properties, drive, fileName, NULL, forceAutostart);
     }
     else if (isFileExtension(fileName, ".cas")) {
+        if (properties->cassette.rewindAfterInsert) tapeRewindNextInsert();
         rv = insertCassette(properties, 0, fileName, NULL, forceAutostart);
     }
     else if (isFileExtension(fileName, ".zip")) {
