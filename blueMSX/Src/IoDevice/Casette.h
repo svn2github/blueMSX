@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-05-13 17:13:15 $
+** $Date: 2008-05-14 09:53:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -46,7 +46,7 @@ int    tapeIsInserted();
 int    tapeSave(char *name, TapeFormat format);
 void tapeLoadState();
 void tapeSaveState();
-void tapeRewindNextInsert(void);
+void tapeInserting(void);
 UInt32 tapeGetLength();
 UInt32 tapeGetCurrentPos();
 void   tapeSetCurrentPos(int pos);

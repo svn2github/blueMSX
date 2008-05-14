@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.32 $
+** $Revision: 1.33 $
 **
-** $Date: 2008-05-13 17:13:14 $
+** $Date: 2008-05-14 09:53:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -490,6 +490,8 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         }
     }
 
+    tapeInserting();
+
     if (strlen(rom1)  && !insertCartridge(properties, 0, rom1, *rom1zip ? rom1zip : NULL, romType1, -1)) return 0;
     if (strlen(rom2)  && !insertCartridge(properties, 1, rom2, *rom2zip ? rom2zip : NULL, romType2, -1)) return 0;
     if (strlen(diskA) && !insertDiskette(properties, 0, diskA, *diskAzip ? diskAzip : NULL, -1)) return 0;
@@ -497,8 +499,6 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     if (strlen(ide1p) && !insertDiskette(properties, diskGetHdDriveId(0, 0), ide1p, NULL, -1)) return 0;
     if (strlen(ide1s) && !insertDiskette(properties, diskGetHdDriveId(0, 1), ide1s, NULL, -1)) return 0;
     if (strlen(cas)   && !insertCassette(properties, 0, cas, *caszip ? caszip : NULL, -1)) return 0;
-
-    if (properties->cassette.rewindAfterInsert) tapeRewindNextInsert();
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
 

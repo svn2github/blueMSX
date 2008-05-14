@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-05-13 17:25:21 $
+** $Date: 2008-05-14 09:53:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include "Properties.h"
 #include "SaveState.h"
 #include "ziphelper.h"
 
@@ -54,7 +55,7 @@ static int    tapeHeaderSize;
 static char*  ramImageBuffer = NULL;
 static int    ramImageSize = 0;
 static int    ramImagePos = 0;
-static int    rewindNextInsert = 0;
+static int    tapeIsInserting = 0;
 
 static char* stripPath(char* filename) {
     char* ptr = filename + strlen(filename) - 1;
@@ -189,7 +190,8 @@ void tapeSetReadOnly(int readOnly)
 int tapeInsert(char *name, const char *fileInZipFile) 
 {
     FILE* file;
-
+    Properties* pProperties = propGetGlobalProperties();
+    
     if (ramImageBuffer != NULL) {
         file = fopen(tapePosName, "w");
         if (file != NULL) {
@@ -258,10 +260,8 @@ int tapeInsert(char *name, const char *fileInZipFile)
         }
     }
     
-    if (rewindNextInsert) {
-    	rewindNextInsert=0;
-    	ramImagePos=0;
-    }
+    if (tapeIsInserting&&pProperties->cassette.rewindAfterInsert) ramImagePos=0;
+    tapeIsInserting=0;
 
     if (ramImageBuffer != NULL) {
         UInt8* ptr = ramImageBuffer + ramImageSize - 17;
@@ -456,7 +456,7 @@ void tapeSetCurrentPos(int pos)
     }
 }
 
-void tapeRewindNextInsert(void)
+void tapeInserting(void)
 {
-	rewindNextInsert=1;
+	tapeIsInserting=1;
 }
