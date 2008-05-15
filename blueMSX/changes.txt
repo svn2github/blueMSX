@@ -15,6 +15,7 @@ Next release
 - Fixed DigiBlue Suite theme thinking a cartridge or disk was still present after ejecting it
 - Fixed DirectSound bug that happened on constant intervals depending on sound buffer size
 - **Needs to be added to GUI yet** Added ejectMediaOnExit setting. If enabled, all media are ejected when exiting blueMSX
+- **Needs to be added to GUI yet** Added support for joystick POV hat switch
 - Added MSX keyboard matrix quirk emulation, eg. pressing X+Z+J results in X+Z+H+J
 - Fixed cassette rewind after insert setting
 - **Scroll bug: http://www.msx.org/forumtopic8494p30.html **

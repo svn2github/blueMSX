@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32keyboard.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-05-15 10:23:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,7 @@
 #include "Language.h"
 #include "InputEvent.h"
 #include "IniFileParser.h"
+#include "Properties.h"
 #include <windows.h>
 #include <stdio.h>
 #include <winioctl.h>
@@ -653,6 +654,7 @@ static int joystickUpdateState(int index,  DWORD* buttonMask) {
     int state = 0;
     DWORD bMask = 0;
     int i;
+    Properties* pProperties = propGetGlobalProperties();
 
     *buttonMask = 0;
     if (index >= joyCount) {
@@ -671,11 +673,19 @@ static int joystickUpdateState(int index,  DWORD* buttonMask) {
     if (rv != DI_OK) {
         return 0;
     }
-
-    if (js.lX < -50) state |= 0x04; 
-    if (js.lX >  50) state |= 0x08;
-    if (js.lY < -50) state |= 0x01; 
-    if (js.lY >  50) state |= 0x02; 
+    
+    if (pProperties->joystick.POV0isAxes) {
+        state|=(((js.rgdwPOV[0]<=31500)&(js.rgdwPOV[0]>=22500))<<2);
+        state|=(((js.rgdwPOV[0]<=13500)&(js.rgdwPOV[0]>=4500))<<3);
+        state|=((js.rgdwPOV[0]<=4500)|((js.rgdwPOV[0]>=31500)&(js.rgdwPOV[0]<36000)));
+        state|=(((js.rgdwPOV[0]<=22500)&(js.rgdwPOV[0]>=13500))<<1);
+    }
+    else {
+        if (js.lX < -50) state |= 0x04;
+        if (js.lX >  50) state |= 0x08;
+        if (js.lY < -50) state |= 0x01;
+        if (js.lY >  50) state |= 0x02;
+    }
     if (js.rgbButtons[joyInfo[index].buttonA]) state |= 0x10;
     if (js.rgbButtons[joyInfo[index].buttonB]) state |= 0x20;
 

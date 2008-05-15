@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2008-05-13 18:32:20 $
+** $Date: 2008-05-15 10:23:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -352,6 +352,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->sound.MidiOut.desc[0]         = 0;
     properties->sound.MidiOut.mt32ToGm        = 0;
     
+    properties->joystick.POV0isAxes    = 0;
+    
     strcpy(properties->joy1.type, "none");
     properties->joy1.typeId            = 0;
     properties->joy1.autofire          = 0;
@@ -605,7 +607,9 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, enable, BoolPair);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, pan);
     GET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, volume);
-   
+    
+    GET_ENUM_VALUE_2(joystick, POV0isAxes, BoolPair);
+    
     GET_STR_VALUE_2(joy1, type);
     properties->joy1.typeId = joystickPortNameToType(0, properties->joy1.type, 0);
     GET_ENUM_VALUE_2(joy1, autofire, OnOffPair);
@@ -637,8 +641,8 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(diskdrive, cdromDrive);
     
     GET_INT_VALUE_2(cassette, showCustomFiles);
-    GET_INT_VALUE_2(cassette, readOnly);
-    GET_INT_VALUE_2(cassette, rewindAfterInsert);
+    GET_ENUM_VALUE_2(cassette, readOnly, BoolPair);
+    GET_ENUM_VALUE_2(cassette, rewindAfterInsert, BoolPair);
 
     iniFileClose();
     
@@ -754,8 +758,15 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(video, horizontalStretch, YesNoPair);
     SET_ENUM_VALUE_2(video, verticalStretch, YesNoPair);
     SET_INT_VALUE_2(video, frameSkip);
-    if (properties->video.windowSizeChanged) { SET_ENUM_VALUE_2(video, windowSize, WindowSizePair); }
-    else { SET_ENUM_VALUE_2(video, windowSizeInitial, WindowSizePair); }
+    if (properties->video.windowSizeChanged) {
+    	SET_ENUM_VALUE_2(video, windowSize, WindowSizePair);
+    }
+    else {
+    	int temp=properties->video.windowSize;
+    	properties->video.windowSize=properties->video.windowSizeInitial;
+    	SET_ENUM_VALUE_2(video, windowSize, WindowSizePair);
+    	properties->video.windowSize=temp;
+    }
     SET_INT_VALUE_2(video, windowX);
     SET_INT_VALUE_2(video, windowY);
     SET_INT_VALUE_3(video, fullscreen, width);
@@ -830,6 +841,8 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, pan);
     SET_INT_VALUE_2s1(sound, mixerChannel, MIXER_CHANNEL_MIDI, volume);
     
+    SET_ENUM_VALUE_2(joystick, POV0isAxes, YesNoPair);
+    
     strcpy(properties->joy1.type, joystickPortTypeToName(0, 0));
     SET_STR_VALUE_2(joy1, type);
     SET_ENUM_VALUE_2(joy1, autofire, OnOffPair);
@@ -860,8 +873,8 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(diskdrive, cdromDrive);
     
     SET_INT_VALUE_2(cassette, showCustomFiles);
-    SET_INT_VALUE_2(cassette, readOnly);
-    SET_INT_VALUE_2(cassette, rewindAfterInsert);
+    SET_ENUM_VALUE_2(cassette, readOnly, YesNoPair);
+    SET_ENUM_VALUE_2(cassette, rewindAfterInsert, YesNoPair);
 
     iniFileClose();
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2008-05-13 18:32:20 $
+** $Date: 2008-05-15 10:23:42 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -301,6 +301,10 @@ typedef struct {
 } SoundProperties;
 
 typedef struct {
+	int POV0isAxes;
+} JoystickGeneric;
+
+typedef struct {
     char type[64];
     int  typeId;
     int  autofire;
@@ -402,6 +406,7 @@ typedef struct Properties {
     VideoProperties     video;
     VideoInProperties   videoIn;
     SoundProperties     sound;
+    JoystickGeneric     joystick;
     JoystickProperties  joy1;
     JoystickProperties  joy2;
     KeyboardProperties  keyboard;
