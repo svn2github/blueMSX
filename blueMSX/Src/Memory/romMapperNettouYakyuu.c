@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNettouYakyuu.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-05-17 04:51:04 $
+** $Date: 2008-05-17 04:55:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,7 +75,7 @@ static void loadState(RomMapperNettouYakyuu* rm)
     saveStateClose(state);
 
     for (i = 0; i < 4; i++) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + (rm->romMapper[i]&rm->romMask) * 0x2000, 1, 0);
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + (rm->romMapper[i]&rm->romMask) * 0x2000, (rm->romMapper[i]>>7^1)&1, 0);
     }
 }
 
