@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNettouYakyuu.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2008-05-17 04:55:24 $
+** $Date: 2008-05-17 06:42:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -185,7 +185,7 @@ static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value)
 	}
 	
 	/* sample player */
-	if (!(rm->romMapper[((address>>13)-2)&3]&0x80)) return; /* bank not redirected to sample player */
+	if (!(rm->romMapper[((address>>13)-2)&3]&0x80)) return; /* page not redirected to sample player */
 	
 	samplePlayerDoSync(rm->samplePlayer);
 	index=samplePlayerGetIndex(rm->samplePlayer);
@@ -200,7 +200,7 @@ static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value)
 	
 	/* bit 6=1: no retrigger */
 	if (value&0x40) {
-		if (!idle) samplePlayerStopAfter(rm->samplePlayer,0+(samplePlayerIsLooping(rm->samplePlayer)!=0));
+		if (!idle) samplePlayerStopAfter(rm->samplePlayer,samplePlayerIsLooping(rm->samplePlayer)!=0);
 		return;
 	}
 	
