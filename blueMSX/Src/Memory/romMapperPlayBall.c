@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperPlayBall.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-05-17 04:51:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -112,6 +112,7 @@ static UInt8 read(RomMapperPlayBall* rm, UInt16 address)
 static void write(RomMapperPlayBall* rm, UInt16 address, UInt8 value) 
 {
     if (address == 0x7fff) {
+        samplePlayerDoSync(rm->samplePlayer);
         if (samplePlayerIsIdle(rm->samplePlayer)) {
             switch (value) {
             case 0:  samplePlayerWrite(rm->samplePlayer, playball_0,  sizeof(playball_0)  / sizeof(playball_0[0]),  NULL, 0); break;
@@ -129,6 +130,7 @@ static void write(RomMapperPlayBall* rm, UInt16 address, UInt8 value)
             case 12: samplePlayerWrite(rm->samplePlayer, playball_12, sizeof(playball_12) / sizeof(playball_12[0]), NULL, 0); break;
             case 13: samplePlayerWrite(rm->samplePlayer, playball_13, sizeof(playball_13) / sizeof(playball_13[0]), NULL, 0); break;
             case 14: samplePlayerWrite(rm->samplePlayer, playball_14, sizeof(playball_14) / sizeof(playball_14[0]), NULL, 0); break;
+            default: break;
             }
         }
     }

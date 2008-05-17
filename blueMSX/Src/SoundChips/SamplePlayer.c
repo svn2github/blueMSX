@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-05-17 04:51:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -93,6 +93,38 @@ void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops)
     samplePlayer->stopCount = loops;
 }
 
+void samplePlayerSetIndex(SamplePlayer* samplePlayer, int index)
+{
+	if (samplePlayer->playAttack&&index>=samplePlayer->attackBufferSize) index=0;
+	else if (index>=samplePlayer->loopBufferSize) index=0;
+	samplePlayer->index=index;
+}
+
+int samplePlayerGetIndex(SamplePlayer* samplePlayer)
+{
+	return samplePlayer->index;
+}
+
+const void* samplePlayerGetAttackBuffer(SamplePlayer* samplePlayer)
+{
+	return samplePlayer->attackBuffer;
+}
+
+const void* samplePlayerGetLoopBuffer(SamplePlayer* samplePlayer)
+{
+	return samplePlayer->loopBuffer;
+}
+
+UInt32 samplePlayerGetAttackBufferSize(SamplePlayer* samplePlayer)
+{
+	return samplePlayer->attackBufferSize;
+}
+
+UInt32 samplePlayerGetLoopBufferSize(SamplePlayer* samplePlayer)
+{
+	return samplePlayer->loopBufferSize;
+}
+
 int samplePlayerIsIdle(SamplePlayer* samplePlayer)
 {
     return !samplePlayer->enabled;
@@ -103,12 +135,15 @@ int samplePlayerIsLooping(SamplePlayer* samplePlayer)
     return !samplePlayer->playAttack;
 }
 
+void samplePlayerDoSync(SamplePlayer* samplePlayer)
+{
+	mixerSync(samplePlayer->mixer);
+}
+
 void samplePlayerWrite(SamplePlayer* samplePlayer, 
                        const void* attackBuffer, UInt32 attackBufferSize, 
                        const void* loopBuffer, UInt32 loopBufferSize)
 {
-    mixerSync(samplePlayer->mixer);
-
     if (attackBuffer == NULL) {
         attackBuffer = loopBuffer;
         attackBufferSize = loopBufferSize;

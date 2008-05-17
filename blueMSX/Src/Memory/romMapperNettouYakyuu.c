@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNettouYakyuu.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-05-17 04:51:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -38,7 +38,6 @@
 
 typedef struct {
     SamplePlayer* samplePlayer;
-    int sample;
     int deviceHandle;
     UInt8* romData;
     int slot;
@@ -76,14 +75,14 @@ static void loadState(RomMapperNettouYakyuu* rm)
     saveStateClose(state);
 
     for (i = 0; i < 4; i++) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + rm->romMapper[i] * 0x2000, 1, 0);
+        slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + (rm->romMapper[i]&rm->romMask) * 0x2000, 1, 0);
     }
 }
 
 
 #ifdef NO_EMBEDDED_SAMPLES
 
-/* standard ASCII8 */
+/* like standard ASCII8 */
 
 static void destroy(RomMapperNettouYakyuu* rm)
 {
@@ -96,24 +95,19 @@ static void destroy(RomMapperNettouYakyuu* rm)
 
 static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value) 
 {
-    int bank;
-
-    address += 0x4000;
-    
-    if (address < 0x6000 || address > 0x7fff) {
-        return;
-    }
-
-    bank = (address & 0x1800) >> 11;
-
-    value &= rm->romMask;
-    if (rm->romMapper[bank] != value) {
-        UInt8* bankData = rm->romData + ((int)value << 13);
-
-        rm->romMapper[bank] = value;
-        
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + bank, bankData, 1, 0);
-    }
+	int bank;
+	
+	address += 0x4000;
+	
+	if (address < 0x6000 || address > 0x7fff) return;
+	
+	bank = (address & 0x1800) >> 11;
+	
+	if (rm->romMapper[bank] != value) {
+		UInt8* bankData = rm->romData + ((int)(value&rm->romMask) << 13);
+		slotMapPage(rm->slot, rm->sslot, rm->startPage + bank, bankData, value>>7^1, 0);
+	}
+	rm->romMapper[bank] = value;
 }
 
 int romMapperNettouYakyuuCreate(char* filename, UInt8* romData, 
@@ -170,50 +164,67 @@ static void destroy(RomMapperNettouYakyuu* rm)
 
 static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value) 
 {
-    int bank;
-
-    address += 0x4000;
-    
-	if (address==0xb000) {
-		if (!(value&0x80)) return;
-		if (value&0x40) {
-			switch (rm->sample) {
-				case 0:  samplePlayerWrite(rm->samplePlayer, nettou_0, sizeof(nettou_0) / sizeof(nettou_0[0]), NULL, 0); break;
-				case 1:  samplePlayerWrite(rm->samplePlayer, nettou_1, sizeof(nettou_1) / sizeof(nettou_1[0]), NULL, 0); break;
-				case 2:  samplePlayerWrite(rm->samplePlayer, nettou_2, sizeof(nettou_2) / sizeof(nettou_2[0]), NULL, 0); break;
-				case 3:  samplePlayerWrite(rm->samplePlayer, nettou_3, sizeof(nettou_3) / sizeof(nettou_3[0]), NULL, 0); break;
-				case 4:  samplePlayerWrite(rm->samplePlayer, nettou_4, sizeof(nettou_4) / sizeof(nettou_4[0]), NULL, 0); break;
-				case 5:  samplePlayerWrite(rm->samplePlayer, nettou_5, sizeof(nettou_5) / sizeof(nettou_5[0]), NULL, 0); break;
-				case 6:  samplePlayerWrite(rm->samplePlayer, nettou_6, sizeof(nettou_6) / sizeof(nettou_6[0]), NULL, 0); break;
-				case 7:  samplePlayerWrite(rm->samplePlayer, nettou_7, sizeof(nettou_7) / sizeof(nettou_7[0]), NULL, 0); break;
-				case 8:  samplePlayerWrite(rm->samplePlayer, nettou_8, sizeof(nettou_8) / sizeof(nettou_8[0]), NULL, 0); break;
-				case 9:  samplePlayerWrite(rm->samplePlayer, nettou_9, sizeof(nettou_9) / sizeof(nettou_9[0]), NULL, 0); break;
-				case 0xa:samplePlayerWrite(rm->samplePlayer, nettou_a, sizeof(nettou_a) / sizeof(nettou_a[0]), NULL, 0); break;
-				case 0xb:samplePlayerWrite(rm->samplePlayer, nettou_b, sizeof(nettou_b) / sizeof(nettou_b[0]), NULL, 0); break;
-				case 0xc:samplePlayerWrite(rm->samplePlayer, nettou_c, sizeof(nettou_c) / sizeof(nettou_c[0]), NULL, 0); break;
-				case 0xd:samplePlayerWrite(rm->samplePlayer, nettou_d, sizeof(nettou_d) / sizeof(nettou_d[0]), NULL, 0); break;
-				case 0xe:samplePlayerWrite(rm->samplePlayer, nettou_e, sizeof(nettou_e) / sizeof(nettou_e[0]), NULL, 0); break;
-				case 0xf:samplePlayerWrite(rm->samplePlayer, nettou_f, sizeof(nettou_f) / sizeof(nettou_f[0]), NULL, 0); break;
-				default: break;
-			}
+	int index,idle;
+	const UInt8* attack_sample=NULL;
+	const UInt8* loop_sample=NULL;
+	UInt32 attack_sample_size=0;
+	UInt32 loop_sample_size=0;
+	
+	address += 0x4000;
+	
+	/* bankswitch like ASCII8 */
+	if (address>=0x6000&&address<=0x7fff) {
+		int bank = (address & 0x1800) >> 11;
+		
+		if (rm->romMapper[bank] != value) {
+			UInt8* bankData = rm->romData + ((int)(value&rm->romMask) << 13);
+			slotMapPage(rm->slot, rm->sslot, rm->startPage + bank, bankData, value>>7^1, 0);
 		}
-		else rm->sample=value&0xf;
+		rm->romMapper[bank] = value;
+		return;
 	}
-    
-    if (address < 0x6000 || address > 0x7fff) {
-        return;
-    }
-
-    bank = (address & 0x1800) >> 11;
-
-    value &= rm->romMask;
-    if (rm->romMapper[bank] != value) {
-        UInt8* bankData = rm->romData + ((int)value << 13);
-
-        rm->romMapper[bank] = value;
-        
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + bank, bankData, 1, 0);
-    }
+	
+	/* sample player */
+	if (!(rm->romMapper[((address>>13)-2)&3]&0x80)) return; /* bank not redirected to sample player */
+	
+	samplePlayerDoSync(rm->samplePlayer);
+	index=samplePlayerGetIndex(rm->samplePlayer);
+	idle=samplePlayerIsIdle(rm->samplePlayer);
+	
+	/* bit 7=0: reset */
+	if (!(value&0x80)) {
+		samplePlayerReset(rm->samplePlayer);
+		samplePlayerSetIndex(rm->samplePlayer,0);
+		return;
+	}
+	
+	/* bit 6=1: no retrigger */
+	if (value&0x40) {
+		if (!idle) samplePlayerStopAfter(rm->samplePlayer,0+(samplePlayerIsLooping(rm->samplePlayer)!=0));
+		return;
+	}
+	
+	switch (value&0xf) {
+		#define S(x) case 0x##x: loop_sample=nettou_##x; loop_sample_size=sizeof(nettou_##x) / sizeof(nettou_##x[0]); break
+		S(0); S(1); S(2); S(3); S(4); S(5); S(6); S(7);
+		S(8); S(9); S(a); S(b); S(c); S(d); S(e); S(f);
+		#undef S
+		default: break;
+	}
+	
+	if (!idle) {
+		if (samplePlayerIsLooping(rm->samplePlayer)) {
+			attack_sample=samplePlayerGetLoopBuffer(rm->samplePlayer);
+			attack_sample_size=samplePlayerGetLoopBufferSize(rm->samplePlayer);
+		}
+		else {
+			attack_sample=samplePlayerGetAttackBuffer(rm->samplePlayer);
+			attack_sample_size=samplePlayerGetAttackBufferSize(rm->samplePlayer);
+		}
+	}
+	
+	samplePlayerWrite(rm->samplePlayer,attack_sample,attack_sample_size,loop_sample,loop_sample_size);
+	samplePlayerSetIndex(rm->samplePlayer,index);
 }
 
 int romMapperNettouYakyuuCreate(char* filename, UInt8* romData, 

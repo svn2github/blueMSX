@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/FdcAudio.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008-05-17 04:51:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3533,6 +3533,7 @@ void fdcAudioReset(FdcAudio* fdcAudio)
 void fdcAudioSetReadWrite(FdcAudio* fdcAudio)
 {
     if (fdcAudio->motorOn) {
+        samplePlayerDoSync(fdcAudio->samplePlayer);
         if (samplePlayerIsLooping(fdcAudio->samplePlayer)) {
             samplePlayerWrite(fdcAudio->samplePlayer, fdcAudio->readSamples, fdcAudio->readCount, fdcAudio->motorSamples, fdcAudio->motorCount);
         }
@@ -3543,6 +3544,7 @@ void fdcAudioSetMotor(FdcAudio* fdcAudio, int motorOn)
 {
     if (motorOn != fdcAudio->motorOn) {
         if (motorOn) {
+            samplePlayerDoSync(fdcAudio->samplePlayer);
             if (samplePlayerIsIdle(fdcAudio->samplePlayer)) {
                 samplePlayerWrite(fdcAudio->samplePlayer, NULL, 0, fdcAudio->motorSamples, fdcAudio->motorCount);
             }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SamplePlayer.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-05-17 04:51:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,13 @@ void samplePlayerWrite(SamplePlayer* samplePlayer,
 void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops);
 int samplePlayerIsIdle(SamplePlayer* samplePlayer);
 int samplePlayerIsLooping(SamplePlayer* samplePlayer);
+void samplePlayerSetIndex(SamplePlayer* samplePlayer, int index);
+int samplePlayerGetIndex(SamplePlayer* samplePlayer);
+const void* samplePlayerGetAttackBuffer(SamplePlayer* samplePlayer);
+const void* samplePlayerGetLoopBuffer(SamplePlayer* samplePlayer);
+UInt32 samplePlayerGetAttackBufferSize(SamplePlayer* samplePlayer);
+UInt32 samplePlayerGetLoopBufferSize(SamplePlayer* samplePlayer);
+void samplePlayerDoSync(SamplePlayer* samplePlayer);
 
 #endif
 
