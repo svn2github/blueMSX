@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageJapanese.h,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -375,6 +375,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Windows キー及び漢字キーを blueMSX に割り当てる";
     ls->propPriorityBoost       = " Windows で blueMSX の優先度を高くする";
     ls->propScreenshotPng       = " スクリーンショットを PNG 形式で取得する";
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory        = "ヒストリの消去を実行してよろしいですか?";
     ls->propOpenRomGB           = " ROM イメージ ";
     ls->propDefaultRomType      = "デフォルトROMタイプ:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageRussian.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Отключение кнопок Windows для работы MSX"; 
     ls->propPriorityBoost       = " Повышенный приоритет для blueMSX";
     ls->propScreenshotPng       = " Использовать тип PNG файлов для скриншотов";
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory        = "Вы точно хотите очистить файл истории?";
     ls->propOpenRomGB           = "Диалог открытия Rom файла ";
     ls->propDefaultRomType      = "Тип файла Rom по умолчанию:";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageCatalan.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Funció automàtica MSX per les tecles de menú de Windows";  
     ls->propPriorityBoost       = " Augmenta la prioritat de blueMSX";
     ls->propScreenshotPng       = " Empra captures de pantalla Portable Network Graphics (.png)";
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory        = "Esteu segur que voleu buidar l'historial del fitxer?";
     ls->propOpenRomGB           = "Obri el diàlog Rom ";
     ls->propDefaultRomType      = "Tipus predeterminat de Rom:";

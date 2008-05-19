@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -374,6 +374,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Ota Windows-näppäimet MSX käyttöön";
     ls->propPriorityBoost       = " Nosta blueMSX:n prioriteettia";
     ls->propScreenshotPng       = " Tallenna kuvaruutukaappaukset PNG-muodossa";
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory        = "Oletko varma, että haluat poistaa kaikki tiedostohistorian tiedot?";
     ls->propOpenRomGB           = "ROM-tiedostojen avaus ";
     ls->propDefaultRomType      = "Oletus ROM tyyppi:";

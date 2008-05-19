@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseSimplified.h,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propDisableWinKeys       = " MSX 使用中周围的 Windows 按键无效"; 
     ls->propPriorityBoost       = " 提升 blueMSX 的优先级";
     ls->propScreenshotPng       = " 使用便携网络图像格式 (.png) 的屏幕截图";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "确认要清除历史文件？";
     ls->propOpenRomGB           = "打开 Rom 对话框 ";
     ls->propDefaultRomType      = "默认 Rom 类型:";

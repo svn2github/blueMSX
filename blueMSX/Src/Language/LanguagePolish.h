@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.46 $
+** $Revision: 1.47 $
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propDisableWinKeys       = " Automatyczna konfiguracja klawiszy Windows w MSX"; 
     ls->propPriorityBoost       = " Podnieœ priorytet blueMSX";
     ls->propScreenshotPng       = " u¿ywaj PNG do zapisywania ekranów";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "Na pewno wyczyœciæ historiê plików?";
     ls->propOpenRomGB           = "Okno wyboru romu ";
     ls->propDefaultRomType      = "Domyœlny typ romu:";

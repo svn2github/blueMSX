@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propDisableWinKeys       = " Función MSX automática para las teclas Windows"; 
     ls->propPriorityBoost       = " Dar a blueMSX una elevada prioridad";
     ls->propScreenshotPng       = " Utilizar el formato PNG para las capturas de pantalla";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "¿Desean realmente borrar hostórico?";
     ls->propOpenRomGB           = "Abrir archivo rom "; 
     ls->propDefaultRomType      = "Tipo por defecto:"; 

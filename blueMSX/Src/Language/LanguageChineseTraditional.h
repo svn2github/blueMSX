@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->propDisableWinKeys       = " 使用 MSX 時自動停用 Windows 的左、右鍵功\能表"; 
     ls->propPriorityBoost        = " 提高 blueMSX 的優先權";
     ls->propScreenshotPng        = " 使用可攜式網路圖形 (.png) 螢幕抓圖";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "您是否確定要清除檔案記錄？";
     ls->propOpenRomGB            = "開啟 ROM 對話方塊 ";
     ls->propDefaultRomType       = "預設 ROM 類型:";

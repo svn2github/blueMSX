@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageGerman.h,v $
 **
-** $Revision: 1.50 $ 
+** $Revision: 1.51 $ 
 **
-** $Date: 2008-04-05 21:19:28 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propDisableWinKeys       = " Automatische MSX-Funktion für Windows-Menütasten"; 
     ls->propPriorityBoost        = " Die Priorität von blueMSX erhöhen";
     ls->propScreenshotPng        = " Benutze Portable Network Graphics (.png) Screenshots";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "Wollen Sie die File-History wirklich löschen?"; // "Sind Sie sicher, daß Sie die File-History löschen wollen?";
     ls->propOpenRomGB            = "Öffne ROM-Dialog ";
     ls->propDefaultRomType       = "Voreingestellter ROM-Typ:";

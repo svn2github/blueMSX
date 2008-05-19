@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/I8254.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -750,7 +750,7 @@ static void i8254out1(void* ref, int state) {
 
     cnt = i8254Read(i8254, 0) | (i8254Read(i8254, 0) << 8);
 
-    printf("Counter 1 = %d  %.4x\n", state, cnt);
+//    printf("Counter 1 = %d  %.4x\n", state, cnt);
 
     if (state == 0) {
         i8254SetGate(i8254, I8254_COUNTER_3, 1);
@@ -768,7 +768,7 @@ static void i8254out2(void* ref, int state)
 
     cnt = i8254Read(i8254, 1) | (i8254Read(i8254, 1) << 8);
 
-    printf("Counter 2 = %d  %.4x\n", state, cnt);
+//    printf("Counter 2 = %d  %.4x\n", state, cnt);
 }
 
 static void i8254out3(void* ref, int state) 
@@ -781,7 +781,7 @@ static void i8254out3(void* ref, int state)
     cnt2 = i8254Read(i8254, 1) | (i8254Read(i8254, 1) << 8);
     cnt3 = i8254Read(i8254, 2) | (i8254Read(i8254, 2) << 8);
 
-    printf("Counter 3: %d  %.4x  %.4x  %.4x\n", state, cnt1, cnt2, cnt3);
+//    printf("Counter 3: %d  %.4x  %.4x  %.4x\n", state, cnt1, cnt2, cnt3);
 }
 
 

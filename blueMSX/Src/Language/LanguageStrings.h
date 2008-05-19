@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2008-02-10 17:25:04 $
+** $Date: 2008-05-19 19:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -365,6 +365,7 @@ typedef struct {
     char* propDisableWinKeys;
     char* propPriorityBoost;
     char* propScreenshotPng;
+    char* propEjectMediaOnExit;
     char* propClearHistory;
     char* propOpenRomGB;
     char* propDefaultRomType;

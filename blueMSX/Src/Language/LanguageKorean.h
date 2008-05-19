@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageKorean.h,v $
 **
-** $Revision: 1.59 $ + additions 2005/03/03
+** $Revision: 1.60 $ + additions 2005/03/03
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,6 +373,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propDisableWinKeys       = " blueMSX 실행중에는 왼/오른쪽 윈도우 키 사용 안함"; 
     ls->propPriorityBoost        = " blueMSX에 작업 우선권 주기";
     ls->propScreenshotPng       = " Portable Network Graphics (.png) 스크린샷 사용";  
+    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
     ls->propClearHistory         = "열어본 파일 목록을 지울까요?";
     ls->propOpenRomGB           = "열때 항상 현재 설정 사용 ";
     ls->propDefaultRomType      = "기본 롬 형식:";

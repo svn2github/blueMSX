@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSwedish.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2008-04-05 21:19:29 $
+** $Date: 2008-05-19 19:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -374,6 +374,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Avaktivera WIndows menyer när emulatorn kör";
     ls->propPriorityBoost       = " Höj prioriteten på blueMSX";
     ls->propScreenshotPng       = " Använd Portable Network Graphics (.png) skärmdump";
+    ls->propEjectMediaOnExit    = " Ta ur media när blueMSX avslutas";
     ls->propClearHistory        = "Vill du verkligen radera filhistorien?";
     ls->propOpenRomGB           = "Öppna Rom Dialog ";
     ls->propDefaultRomType      = "Default Rom Typ:";

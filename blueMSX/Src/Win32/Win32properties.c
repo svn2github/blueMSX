@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32properties.c,v $
 **
-** $Revision: 1.91 $
+** $Revision: 1.92 $
 **
-** $Date: 2008-04-05 14:46:33 $
+** $Date: 2008-05-19 19:56:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -572,13 +572,15 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSDISABLEWINKEYS), langPropDisableWinKeys());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSPRIORITYBOOST), langPropPriorityBoost());
         SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSSCREENSHOTPNG), langPropScreenshotPng());
+        SetWindowText(GetDlgItem(hDlg, IDC_SETTINGSEJECTMEDIAONEXIT), langPropEjectMediaOnExit());
 
         setButtonCheck(hDlg, IDC_SETTINGSFILETYPES, pProperties->emulation.registerFileTypes, 1);
         setButtonCheck(hDlg, IDC_SETTINGSDISABLEWINKEYS, pProperties->emulation.disableWinKeys, 1);
         setButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST, pProperties->emulation.priorityBoost, 1);
         setButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER, pProperties->settings.disableScreensaver, 1);
         setButtonCheck(hDlg, IDC_SETTINGSSCREENSHOTPNG, pProperties->settings.usePngScreenshots, 1);
-
+        setButtonCheck(hDlg, IDC_SETTINGSEJECTMEDIAONEXIT, pProperties->emulation.ejectMediaOnExit, 1);
+    
         EnableWindow(GetDlgItem(hDlg, IDC_SETTINGSFILETYPES), !pProperties->settings.portable);
 
         return FALSE;
@@ -620,6 +622,7 @@ static BOOL CALLBACK settingsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM
         pProperties->settings.disableScreensaver = getButtonCheck(hDlg, IDC_SETTINGSSCREENSAVER);
         pProperties->emulation.priorityBoost     = getButtonCheck(hDlg, IDC_SETTINGSPRIORITYBOOST);
         pProperties->settings.usePngScreenshots  = getButtonCheck(hDlg, IDC_SETTINGSSCREENSHOTPNG);
+        pProperties->emulation.ejectMediaOnExit  = getButtonCheck(hDlg, IDC_SETTINGSEJECTMEDIAONEXIT);
         propModified = 1;
         
         return TRUE;

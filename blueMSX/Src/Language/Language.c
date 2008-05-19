@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.96 $
+** $Revision: 1.97 $
 **
-** $Date: 2008-03-09 07:14:53 $
+** $Date: 2008-05-19 19:56:58 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -579,6 +579,7 @@ char* langPropScreenSaver() { return ls->propSetScreenSaver; }
 char* langPropDisableWinKeys() { return ls->propDisableWinKeys; }
 char* langPropPriorityBoost() { return ls->propPriorityBoost; }
 char* langPropScreenshotPng() { return ls->propScreenshotPng; }
+char* langPropEjectMediaOnExit() { return ls->propEjectMediaOnExit; }
 char* langPropClearFileHistory() { return ls->propClearHistory; }
 char* langPropOpenRomGB() { return ls->propOpenRomGB; }
 char* langPropDefaultRomType() { return ls->propDefaultRomType; }
