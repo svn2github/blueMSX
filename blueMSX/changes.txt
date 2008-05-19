@@ -19,7 +19,7 @@ Next release
 - **Needs to be added to GUI yet** Added support for joystick POV hat switch
 - Added MSX keyboard matrix quirk emulation, eg. pressing X+Z+J results in X+Z+H+J
 - Fixed cassette rewind after insert setting
-- **Scroll bug: http://www.msx.org/forumtopic8494p30.html **
+- Fixed scroll bug: http://www.msx.org/forumtopic8494p30.html
 - Fixed 512 pixel width screen modes having a width of 511
 - Fixed small bug with MSX1 VDP address writes
 - Fixed audio mixer knobs being one notch to the left
