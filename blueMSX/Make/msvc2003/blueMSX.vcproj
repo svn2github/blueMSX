@@ -1748,6 +1748,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\BuildInfo\build_number.h">
 			</File>
 			<File
+				RelativePath="..\..\changes.txt">
+			</File>
+			<File
+				RelativePath="..\..\license.txt">
+			</File>
+			<File
 				RelativePath="..\..\Src\Resources\Resource.h">
 			</File>
 			<File
