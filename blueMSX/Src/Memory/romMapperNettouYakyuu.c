@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNettouYakyuu.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-05-17 06:42:17 $
+** $Date: 2008-05-19 19:25:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -31,6 +31,7 @@
 #include "DeviceManager.h"
 #include "SaveState.h"
 #include "SamplePlayer.h"
+#include "Board.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -205,9 +206,9 @@ static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value)
 	}
 	
 	switch (value&0xf) {
-		#define S(x) case 0x##x: loop_sample=nettou_##x; loop_sample_size=sizeof(nettou_##x) / sizeof(nettou_##x[0]); break
-		S(0); S(1); S(2); S(3); S(4); S(5); S(6); S(7);
-		S(8); S(9); S(a); S(b); S(c); S(d); S(e); S(f);
+		#define S(c, x) case c: loop_sample=nettou_##x; loop_sample_size=sizeof(nettou_##x) / sizeof(nettou_##x[0]); break
+		S(0x0,0); S(0x1,1); S(0x2,2); S(0x3,3); S(0x4,4); S(0x5,5); S(0x6,6); S(0x7,7);
+		S(0x8,8); S(0x9,9); S(0xa,a); S(0xb,b); S(0xc,c); S(0xd,d); S(0xe,e); S(0xf,f);
 		#undef S
 		default: break;
 	}

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2008-04-18 04:09:54 $
+** $Date: 2008-05-19 19:25:59 $
 **
 ** Author: Daniel Vik
 **
@@ -5892,8 +5892,8 @@ void r800Reset(R800 *r800, UInt32 cpuTime) {
 	r800->regBanks[1].R2    = 0;
 	r800->regBanks[1].PC.W  = 0x0000;
 
-    r800->regBanks[0].iff1  = 0;
-    r800->regBanks[0].iff2  = 0;
+    r800->regBanks[1].iff1  = 0;
+    r800->regBanks[1].iff2  = 0;
     r800->regBanks[1].im    = 0;
     r800->regBanks[1].halt  = 0;
     r800->regBanks[1].ei_mode  = 0;
@@ -6138,7 +6138,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
 
         /* If it is NMI... */
         if (r800->nmiState == INT_EDGE) {
-            r800->nmiState = INT_HIGH;
+            r800->nmiState = INT_LOW;
 #ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
@@ -6226,7 +6226,7 @@ void r800ExecuteInstruction(R800* r800) {
 
     /* If it is NMI... */
     if (r800->nmiState == INT_EDGE) {
-        r800->nmiState = INT_HIGH;
+        r800->nmiState = INT_LOW;
 #ifdef ENABLE_CALLSTACK
         r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
