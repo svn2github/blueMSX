@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directXSound.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-04-05 18:47:11 $
+** $Date: 2008-05-19 12:41:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -332,9 +332,8 @@ void dxSoundSuspend(DxSound* dxSound)
         return;
     }
 
-    dxClear(dxSound);
-
     IDirectSoundBuffer_Stop(dxSound->primaryBuffer);
+    dxClear(dxSound);
     dxSound->state = DX_SOUND_DISABLED;
 }
 

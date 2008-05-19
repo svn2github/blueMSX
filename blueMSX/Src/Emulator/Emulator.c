@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008-05-19 12:41:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -478,8 +478,8 @@ void emulatorStop() {
 
     emuExitFlag = 1;
     archEventSet(emuSyncEvent);
-    archThreadJoin(emuThread, 3000);
     archSoundSuspend();
+    archThreadJoin(emuThread, 3000);
     archMidiEnable(0);
     machineDestroy(machine);
     archThreadDestroy(emuThread);
