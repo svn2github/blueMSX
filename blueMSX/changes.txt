@@ -7,6 +7,7 @@ Next release
 - Added support for Matra INK mapper
 - Added support for Jaleco Moero!! Nettou Yakyuu '88 mapper with sample player
 - Added support for Ark-A-Noah copy protected disks
+- Replaced SN76489 emulation
 - Updated support for TC8566AF Disk Controller
 - Updated machine structure
 - Added Catalonian translation
@@ -25,6 +26,7 @@ Next release
 - Fixed Z80 IRQ timing
 - Fixed Moonsound FM 4-op bug
 - Fixed many resource leaks, most notably in the debugger
+- Fixed ColecoVision RAM initialization bug
 - Added 75ms setting for soundbuffer size (step from 50 to 100 was a bit too big)
 - **Soon** New generic machines that don't have the keyboard repeat bug
 - **Soon** More accurate configuration of real machines (Correct RAM, no patches and more)

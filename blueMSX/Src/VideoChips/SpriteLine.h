@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.33 $
+** $Revision: 1.34 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008-05-19 19:34:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -108,6 +108,10 @@ UInt8* spritesLine(VDP* vdp, int line) {
        
         spriteLine[visibleCnt] = ((line - attrib[0]) & 0xff) / scale;
 		if (spriteLine[visibleCnt] >= size) {
+#if 1
+            // Disable sprite mirroring for now...
+            continue;
+#else
             if ((vdp->vdpRegs[3] & 0x40) == 0 && (vdp->vdpRegs[4] & 0x01) == 0 &&
                 vdp->screenMode == 2 &&
                 (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A)) 
@@ -129,6 +133,7 @@ UInt8* spritesLine(VDP* vdp, int line) {
             else {
                 continue;
             }
+#endif
         }
         
         if (visibleCnt == 4) {
