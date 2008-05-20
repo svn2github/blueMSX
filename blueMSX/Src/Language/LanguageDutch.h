@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.58 $
+** $Revision: 1.59 $
 **
-** $Date: 2008-05-20 13:59:26 $
+** $Date: 2008-05-20 14:05:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,7 +158,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Prestatie";
     ls->menuPropsSettings       = "Instellingen";
     ls->menuPropsFile           = "Bestand";
-    ls->menuPropsDisk           = "Diskette";
+    ls->menuPropsDisk           = "Diskettes";
     ls->menuPropsLanguage       = "Taal";
     ls->menuPropsPorts          = "Poorten";
 
