@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.200 $
+** $Revision: 1.201 $
 **
-** $Date: 2008-05-09 17:21:04 $
+** $Date: 2008-05-20 14:32:37 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3003,7 +3003,7 @@ void archShowKeyboardEditor()
         MessageBox(NULL, "Could not find the Keyboard Editor Theme", langErrorTitle(), MB_ICONERROR | MB_OK);
     }
     else {
-        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Keyboard Editor"));
+        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX - Input Editor"));
     }
 }
 
@@ -3022,7 +3022,7 @@ void archShowMixer()
         MessageBox(NULL, "Could not find the Mixer Theme", langErrorTitle(), MB_ICONERROR | MB_OK);
     }
     else {
-        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX Mixer"));
+        themeCollectionOpenWindow(tc, themeGetNameHash("blueMSX - Sound Mixer"));
     }
 }
 

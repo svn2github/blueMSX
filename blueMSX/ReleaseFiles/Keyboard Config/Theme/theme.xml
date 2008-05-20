@@ -1,4 +1,4 @@
-<bluemsxtheme name="blueMSX Keyboard Editor">
+<bluemsxtheme name="blueMSX - Input Editor">
     <window name="blueMSX - Input Editor" type="multipage" handler="keyboard-config" frame="0">
         <page width="500" height="330" name="joystick1">
 	<clipregion>

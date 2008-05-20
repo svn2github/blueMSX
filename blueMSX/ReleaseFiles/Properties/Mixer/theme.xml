@@ -1,4 +1,4 @@
-<bluemsxtheme name="blueMSX Mixer">
+<bluemsxtheme name="blueMSX - Sound Mixer">
     <window name="blueMSX - Sound Mixer" type="multipage" frame="0">
         <page width="544" height="160" name="MixerOpen">
 	<clipregion>
