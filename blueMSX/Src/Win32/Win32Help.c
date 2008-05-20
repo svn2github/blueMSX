@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Help.c,v $
 **
-** $Revision: 1.28 $
+** $Revision: 1.29 $
 **
-** $Date: 2008-05-19 20:51:44 $
+** $Date: 2008-05-20 12:03:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -106,6 +106,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                 "Eduardo Mello\r\n"
                                 "Jon Cortázar Abraido\r\n"
                                 "Hondarer\r\n"
+                                "David Heremans\r\n"
                                 "Wouter Vermaelen\r\n"
                                 "Manuel Bilderbeek\r\n"
                                 "Maarten ter Huurne\r\n"
@@ -133,7 +134,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                 "Marat Fayzullin\r\n"
                                 "Jarek Burczynski\r\n"
                                 "R. Belmont\r\n"
-                                "O. Galibert\r\n"
+                                "Olivier Galibert\r\n"
                                 "Gilles Vollant\r\n\r\n\r\n"
     
                                 "%s",
