@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2008-05-19 19:56:58 $
+** $Date: 2008-05-20 12:05:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -373,7 +373,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propDisableWinKeys       = " Automatische MSX-functie voor menutoetsen Windows";
     ls->propPriorityBoost       = " blueMSX een hogere prioriteit geven";
     ls->propScreenshotPng       = " Gebruik Portable Network Graphics (.png) voor afbeeldingen";
-    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
+    ls->propEjectMediaOnExit    = " Werp alle media uit na afsluiten";        // New in 2.8
     ls->propClearHistory         = "Weet u zeker dat u de bestandsgeschiedenis wilt wissen?";
     ls->propOpenRomGB           = "Openen Rombestand";
     ls->propDefaultRomType      = "Standaardtype:";
