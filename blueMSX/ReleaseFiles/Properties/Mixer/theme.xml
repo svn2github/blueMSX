@@ -1,5 +1,5 @@
 <bluemsxtheme name="blueMSX Mixer">
-    <window name="blueMSX Mixer" type="multipage" frame="0">
+    <window name="blueMSX - Sound Mixer" type="multipage" frame="0">
         <page width="544" height="160" name="MixerOpen">
 	<clipregion>
 		<point x="4" y="0"/>
