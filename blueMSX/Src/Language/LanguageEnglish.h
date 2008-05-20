@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageEnglish.h,v $
 **
-** $Revision: 1.105 $
+** $Revision: 1.106 $
 **
-** $Date: 2008-05-19 19:56:58 $
+** $Date: 2008-05-20 13:59:26 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,9 +75,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->errorTitle              = "blueMSX - Error";
     ls->errorEnterFullscreen    = "Failed to enter fullscreen mode.           \n";
     ls->errorDirectXFailed      = "Failed to create DirectX objects.           \nUsing GDI instead.\nCheck Video properties.";
-    ls->errorNoRomInZip         = "Could not locate a .rom file in the zip archive.";
-    ls->errorNoDskInZip         = "Could not locate a .dsk file in the zip archive.";
-    ls->errorNoCasInZip         = "Could not locate a .cas file in the zip archive.";
+    ls->errorNoRomInZip         = "Could not locate a .ROM file in the ZIP archive.";
+    ls->errorNoDskInZip         = "Could not locate a .DSK file in the ZIP archive.";
+    ls->errorNoCasInZip         = "Could not locate a .CAS file in the ZIP archive.";
     ls->errorNoHelp             = "Could not locate the blueMSX help file.";
     ls->errorStartEmu           = "Failed to Start MSX emulator.";
     ls->errorPortableReadonly   = "Portable device is readonly";
@@ -126,7 +126,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Insert New Disk Image";
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     = "Insert CD-ROM";       // New in 2.7
     ls->menuDiskDirInsert       = "Insert Directory";
     ls->menuDiskAutoStart       = "Reset After Insert";
     ls->menuCartAutoReset       = "Reset After Insert/Remove";
@@ -199,8 +199,8 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->menuToolsMachine        = "Machine Editor";
     ls->menuToolsShortcuts      = "Shortcuts Editor";
-    ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; 
-    ls->menuToolsMixer          = "Mixer";
+    ls->menuToolsCtrlEditor     = "Input Editor"; 
+    ls->menuToolsMixer          = "Sound Mixer";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
     ls->menuToolsTraceLogger    = "Trace Logger";           
@@ -225,14 +225,14 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgRun                  = "Run";
     ls->dlgClose                = "Close";
 
-    ls->dlgLoadRom              = "blueMSX - Select a rom image to load";
-    ls->dlgLoadDsk              = "blueMSX - Select a dsk image to load";
-    ls->dlgLoadCas              = "blueMSX - Select a cas image to load";
-    ls->dlgLoadRomDskCas        = "blueMSX - Select a rom, dsk, or cas file to load";
-    ls->dlgLoadRomDesc          = "Choose a rom image to load:";
+    ls->dlgLoadRom              = "blueMSX - Select a ROM image to load";
+    ls->dlgLoadDsk              = "blueMSX - Select a DSK image to load";
+    ls->dlgLoadCas              = "blueMSX - Select a CAS image to load";
+    ls->dlgLoadRomDskCas        = "blueMSX - Select a ROM, DSK, or CAS file to load";
+    ls->dlgLoadRomDesc          = "Choose a ROM image to load:";
     ls->dlgLoadDskDesc          = "Choose a disk image to load:";
     ls->dlgLoadCasDesc          = "Choose a tape image to load:";
-    ls->dlgLoadRomDskCasDesc    = "Choose a rom, disk, or tape image to load:";
+    ls->dlgLoadRomDskCasDesc    = "Choose a ROM, disk, or tape image to load:";
     ls->dlgLoadState            = "Load state";
     ls->dlgLoadVideoCapture     = "Load video capture";      
     ls->dlgSaveState            = "Save state as...";
@@ -245,7 +245,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->dlgInsertDiskB          = "Insert disk image into drive B";
     ls->dlgInsertHarddisk       = "Insert Hard Disk";
     ls->dlgInsertCas            = "Insert cassette tape";
-    ls->dlgRomType              = "Rom Type:";
+    ls->dlgRomType              = "ROM Type:";
     ls->dlgDiskSize             = "Disk Size:";             
 
     ls->dlgTapeTitle            = "blueMSX - Tape Position";
@@ -367,20 +367,20 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSetFileHistoryGB    = "File History ";
     ls->propSetFileHistorySize  = "Number of items in File History:";
     ls->propSetFileHistoryClear = "Clear History";
-    ls->propFileTypes           = " Register file types with blueMSX (.rom, .dsk, .cas, .sta)";
+    ls->propFileTypes           = " Register file types with blueMSX (.ROM, .DSK, .CAS, .STA)";
     ls->propWindowsEnvGB        = "Windows Environment "; 
     ls->propSetScreenSaver      = " Disable screen saver when blueMSX is running";
     ls->propDisableWinKeys      = " Automatic MSX function for Windows menu keys"; 
     ls->propPriorityBoost       = " Boost the priority of blueMSX";
     ls->propScreenshotPng       = " Save screenshots in PNG format instead of BMP";
-    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
+    ls->propEjectMediaOnExit    = " Eject all media when blueMSX exits";        // New in 2.8
     ls->propClearHistory        = "Are you sure you want to clear the file history?";
-    ls->propOpenRomGB           = "Open Rom Dialog ";
-    ls->propDefaultRomType      = "Default Rom Type:";
-    ls->propGuessRomType        = "Guess Rom Type";
+    ls->propOpenRomGB           = "Open ROM Dialog ";
+    ls->propDefaultRomType      = "Default ROM Type:";
+    ls->propGuessRomType        = "Guess ROM Type";
 
     ls->propSettDefSlotGB       = "Drag and Drop ";
-    ls->propSettDefSlots        = "Insert Rom Into:";
+    ls->propSettDefSlots        = "Insert ROM Into:";
     ls->propSettDefSlot         = " Slot";
     ls->propSettDefDrives       = "Insert Diskette Into:";
     ls->propSettDefDrive        = " Drive";
@@ -498,7 +498,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->confMemSlot             = "Slot";
     ls->confMemAddresss         = "Address";
     ls->confMemType             = "Type";
-    ls->confMemRomImage         = "Rom Image";
+    ls->confMemRomImage         = "ROM Image";
 
     ls->confChipVideoGB          = "Video ";
     ls->confChipVideoChip        = "Video Chip:";
@@ -546,8 +546,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutCartRemove1     = "Remove Cartridge 1";
     ls->shortcutCartInsert2     = "Insert Cartridge 2";
     ls->shortcutCartRemove2     = "Remove Cartridge 2";
-    ls->shortcutSpecialMenu1    = "Show Special Rom Menu for Cartridge 1";
-    ls->shortcutSpecialMenu2    = "Show Special Rom Menu for Cartridge 2";
+    ls->shortcutSpecialMenu1    = "Show Special ROM Menu for Cartridge 1";
+    ls->shortcutSpecialMenu2    = "Show Special ROM Menu for Cartridge 2";
     ls->shortcutCartAutoReset   = "Reset Emulator when Cartridge is Inserted";
     ls->shortcutDiskInsertA     = "Insert Diskette A";
     ls->shortcutDiskDirInsertA  = "Insert Directory as Diskette A";
@@ -608,8 +608,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowLanguage    = "Show Language Dialog";
     ls->shortcutShowMachines    = "Show Machine Editor";
     ls->shortcutShowShortcuts   = "Show Shortcuts Editor";
-    ls->shortcutShowKeyboard    = "Show Controllers / Keyboard Editor";
-    ls->shortcutShowMixer       = "Show Mixer";
+    ls->shortcutShowKeyboard    = "Show Input Editor";
+    ls->shortcutShowMixer       = "Show Sound Mixer";
     ls->shortcutShowDebugger    = "Show Debugger";
     ls->shortcutShowTrainer     = "Show Trainer";
     ls->shortcutShowHelp        = "Show Help Dialog";
@@ -635,7 +635,7 @@ void langInitEnglish(LanguageStrings* ls)
 
     
     //----------------------
-    // Rom type lines
+    // ROM type lines
     //----------------------
 
     ls->romTypeStandard         = "Standard";
