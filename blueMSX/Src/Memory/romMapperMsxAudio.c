@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-05-25 14:22:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -287,6 +287,7 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
+    int is_fs_ca1;
 } RomMapperMsxAudio;
 
 
@@ -333,6 +334,15 @@ static void destroy(RomMapperMsxAudio* rm)
 
     ioPortUnregister(rm->ioBase + 0);
     ioPortUnregister(rm->ioBase + 1);
+    
+    if (rm->y8950) {
+    	if (ioPortGetRef(0xc0)==rm->y8950&&ioPortGetRef(0xc1)==rm->y8950) {
+    		ioPortUnregister(0xc0); ioPortUnregister(0xc1);
+    	}
+    	if (ioPortGetRef(0xc2)==rm->y8950&&ioPortGetRef(0xc3)==rm->y8950) {
+    		ioPortUnregister(0xc2); ioPortUnregister(0xc3);
+    	}
+    }
 
     deviceCount--;
 
@@ -362,6 +372,42 @@ static UInt8 read(RomMapperMsxAudio* rm, UInt16 address)
 	return rm->romData[(0x8000 * rm->bankSelect + (address & 0x7fff)) & rm->sizeMask];
 }
 
+static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
+{
+	address &= 0x7fff;
+	
+	if (address>=0x7fc0) {
+#if 0
+		// FS-CA1 port select, bit 0:c0/c1, bit 1:c2/c3
+		if (rm->is_fs_ca1&&address&1&&rm->y8950) {
+			if (value&1) {
+				ioPortRegister(0xc0, y8950Read, y8950Write, rm->y8950);
+				ioPortRegister(0xc1, y8950Read, y8950Write, rm->y8950);
+			}
+			else if (ioPortGetRef(0xc0)==rm->y8950&&ioPortGetRef(0xc1)==rm->y8950) {
+				ioPortUnregister(0xc0); ioPortUnregister(0xc1);
+			}
+			
+			if (value&2) {
+				ioPortRegister(0xc2, y8950Read, y8950Write, rm->y8950);
+				ioPortRegister(0xc3, y8950Read, y8950Write, rm->y8950);
+			}
+			else if (ioPortGetRef(0xc2)==rm->y8950&&ioPortGetRef(0xc3)==rm->y8950) {
+				ioPortUnregister(0xc2); ioPortUnregister(0xc3);
+			}
+		}
+#endif
+		// bankswitch
+		if (~address&1) rm->bankSelect = value & 3;
+	}
+	
+	address &= 0x3fff;
+	if (rm->bankSelect == 0 && address >= 0x3000) {
+		rm->ram[address - 0x3000] = value;
+	}
+}
+
+
 static void reset(RomMapperMsxAudio* rm) 
 {
     if (rm->y8950 != NULL) {
@@ -371,18 +417,10 @@ static void reset(RomMapperMsxAudio* rm)
     if (rm->midi) {
         philipsMidiReset(rm->midi);
     }
-}
-
-static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value) 
-{
-	address &= 0x7fff;
-	if (address == 0x7ffe) {
-		rm->bankSelect = value & 3;
-	}
-	address &= 0x3fff;
-	if (rm->bankSelect == 0 && address >= 0x3000) {
-		rm->ram[address - 0x3000] = value;
-	}
+    
+    // FS-CA1
+    write (rm,0x7ffe,0);
+    write (rm,0x7fff,0);
 }
 
 
@@ -464,6 +502,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         memcpy(rm->romData, romData, size);
         memset(rm->ram, 0, 0x1000);
         rm->bankSelect = 0;
+        rm->is_fs_ca1 = (size == 0x20000); // meh
         rm->sizeMask = size - 1;
         rm->slot  = slot;
         rm->sslot = sslot;
@@ -471,9 +510,11 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
         rm->midi = NULL;
 
         if (!switchGetAudio()) {
+            // FS-CA1 BIOS hack, ret z -> nop
+            // not needed if port select register is emulated
             rm->romData[0x408e] = 0;
         }
-
+        
         for (i = 0; i < 8; i++) {
             slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
         }
@@ -483,19 +524,20 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
 
     if (boardGetY8950Enable()) {
         rm->y8950 = y8950Create(boardGetMixer());
-        ioPortRegister(rm->ioBase + 0, y8950Read, y8950Write, rm->y8950);
-        ioPortRegister(rm->ioBase + 1, y8950Read, y8950Write, rm->y8950);
-
+       	
+       	ioPortRegister(rm->ioBase + 0, y8950Read, y8950Write, rm->y8950);
+       	ioPortRegister(rm->ioBase + 1, y8950Read, y8950Write, rm->y8950);
+	
         ioPortRegister(0x00, NULL, midiWrite, rm);
         ioPortRegister(0x01, NULL, midiWrite, rm);
         ioPortRegister(0x04, midiRead, NULL, rm);
         ioPortRegister(0x05, midiRead, NULL, rm);
     }
-
+    
     if (deviceCount == 1) {
         rm->midi = philipsMidiCreate();
     }
-
+    
     reset(rm);
 
     return 1;

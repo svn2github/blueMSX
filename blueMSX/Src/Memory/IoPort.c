@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-31 19:42:22 $
+** $Date: 2008-05-25 14:22:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -48,6 +48,11 @@ void ioPortReset()
     memset(ioSubTable, 0, sizeof(ioSubTable));
 
     currentSubport = 0;
+}
+
+void* ioPortGetRef(int port)
+{
+	return ioTable[port].ref;
 }
 
 void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref)

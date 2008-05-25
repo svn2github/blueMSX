@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/IoPort.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-03-30 18:38:42 $
+** $Date: 2008-05-25 14:22:39 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,6 +33,7 @@
 typedef UInt8 (*IoPortRead)(void*, UInt16);
 typedef void  (*IoPortWrite)(void*, UInt16, UInt8);
 
+void* ioPortGetRef(int port);
 void ioPortRegister(int port, IoPortRead read, IoPortWrite write, void* ref);
 void ioPortUnregister(int port);
 
