@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperASCII16sram.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-30 18:38:42 $
+** $Date: 2008-05-30 13:57:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -160,7 +160,7 @@ int romMapperASCII16sramCreate(char* filename, UInt8* romData,
 
     rm->romData = calloc(1, size);
     memcpy(rm->romData, romData, origSize);
-    memset(rm->sram, 0, 0x2000);
+    memset(rm->sram, 0xff, 0x2000);
     rm->romMask = size / 0x4000 - 1;
     rm->slot  = slot;
     rm->sslot = sslot;

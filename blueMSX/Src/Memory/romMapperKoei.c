@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKoei.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-05-30 13:57:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -173,7 +173,7 @@ int romMapperKoeiCreate(char* filename, UInt8* romData,
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
-    memset(rm->sram, 0, SRAM_PAGES << 13);
+    memset(rm->sram, 0xff, SRAM_PAGES << 13);
     rm->romMask = size / 8192 - 1;
     rm->slot  = slot;
     rm->sslot = sslot;
