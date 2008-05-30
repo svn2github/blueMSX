@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2008-05-19 19:25:59 $
+** $Date: 2008-05-30 22:53:17 $
 **
 ** Author: Daniel Vik
 **
@@ -879,9 +879,10 @@ static void ld_b_b(R800* r800) {
     UInt16 page = 0xffff;
     UInt16 slot = 0xffff;
 
-    if (r800->readMemory(r800->ref, addr++) != 24) {
+    if (r800->readMemory(r800->ref, addr) != 24) {
         return;
     }
+    addr++;
 
     size = r800->readMemory(r800->ref, addr++);
     switch (size) {
@@ -993,9 +994,10 @@ static void ld_c_c(R800* r800) {
     UInt16 addr = r800->regs.PC.W;
     UInt8  value;
 
-    if (r800->readMemory(r800->ref, addr++) != 24) {
+    if (r800->readMemory(r800->ref, addr) != 24) {
         return;
     }
+    addr++;
 
     value = r800->readMemory(r800->ref, addr++);
     
@@ -1086,10 +1088,10 @@ static void ld_d_d(R800* r800) {
     UInt16 end;
     char* ptr = debugString;
 
-    if (r800->readMemory(r800->ref, addr++) != 24) {
+    if (r800->readMemory(r800->ref, addr) != 24) {
         return;
     }
-
+    addr++;
     end = addr + 1 + (Int8)r800->readMemory(r800->ref, addr);
     addr++;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.51 $
+** $Revision: 1.52 $
 **
-** $Date: 2008-05-19 23:11:07 $
+** $Date: 2008-05-30 22:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -696,13 +696,13 @@ static void RefreshLine1(VDP* vdp, int Y, int X, int X2)
                 charPattern = vdp->vram[patternBase | ((int)*charTable * 8)];
 
                 switch (hScroll & 7) {
-                case 1: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
-                case 2: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
-                case 3: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
-                case 4: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
-                case 5: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
-                case 6: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
-                case 7: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
+                case 1: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 6) & 1]; 
+                case 2: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 5) & 1]; 
+                case 3: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 4) & 1]; 
+                case 4: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 3) & 1]; 
+                case 5: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 2) & 1]; 
+                case 6: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 1) & 1]; 
+                case 7: col = *sprLine++; *linePtr1++ = col ? vdp->palette[col] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
                 }
             }
             else {
@@ -854,13 +854,13 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
         else {
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 switch (hScroll & 7) {
-                case 1: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
-                case 2: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
-                case 3: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
-                case 4: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
-                case 5: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
-                case 6: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
-                case 7: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
+                case 1: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 6) & 1]; 
+                case 2: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 5) & 1]; 
+                case 3: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 4) & 1]; 
+                case 4: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 3) & 1]; 
+                case 5: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 2) & 1]; 
+                case 6: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 1) & 1]; 
+                case 7: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
                 }
             }
             else {
@@ -911,14 +911,14 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
             color[1]   = vdp->palette[colPattern >> 4];
             charPattern = vdp->vram[vdp->chrGenBase & index];
 
-            linePtr2[0] = (col = sprLine[0]) ? vdp->palette[col >> 1] : color[(charPattern >> 7) & 1]; 
-            linePtr2[1] = (col = sprLine[1]) ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1];
-            linePtr2[2] = (col = sprLine[2]) ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1];
-            linePtr2[3] = (col = sprLine[3]) ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1];
-            linePtr2[4] = (col = sprLine[4]) ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1];
-            linePtr2[5] = (col = sprLine[5]) ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1];
-            linePtr2[6] = (col = sprLine[6]) ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1];
-            linePtr2[7] = (col = sprLine[7]) ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1];
+            linePtr2[0] = (col = sprLine[0]) ? vdp->palette[col] : color[(charPattern >> 7) & 1]; 
+            linePtr2[1] = (col = sprLine[1]) ? vdp->palette[col] : color[(charPattern >> 6) & 1];
+            linePtr2[2] = (col = sprLine[2]) ? vdp->palette[col] : color[(charPattern >> 5) & 1];
+            linePtr2[3] = (col = sprLine[3]) ? vdp->palette[col] : color[(charPattern >> 4) & 1];
+            linePtr2[4] = (col = sprLine[4]) ? vdp->palette[col] : color[(charPattern >> 3) & 1];
+            linePtr2[5] = (col = sprLine[5]) ? vdp->palette[col] : color[(charPattern >> 2) & 1];
+            linePtr2[6] = (col = sprLine[6]) ? vdp->palette[col] : color[(charPattern >> 1) & 1];
+            linePtr2[7] = (col = sprLine[7]) ? vdp->palette[col] : color[(charPattern >> 0) & 1];
             sprLine += 8;
             charTable++;
             UPDATE_TABLE_4();
@@ -1081,26 +1081,26 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
         else {
             if (vdpIsEdgeMasked(vdp->vdpRegs)) {
                 switch (hScroll & 7) {
-                case 1: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
-                case 2: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
-                case 3: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
-                case 4: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
-                case 5: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
-                case 6: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
-                case 7: col = *sprLine++; *linePtr2++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
+                case 1: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 6) & 1]; 
+                case 2: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 5) & 1]; 
+                case 3: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 4) & 1]; 
+                case 4: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 3) & 1]; 
+                case 5: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 2) & 1]; 
+                case 6: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 1) & 1]; 
+                case 7: col = *sprLine++; *linePtr4++ = col ? vdp->palette[col >> 1] : color[(charPattern >> 0) & 1]; charTable++; UPDATE_TABLE_4();
                 }
             }
             else {
                 Pixel bgColor = vdp->palette[vdp->BGColor];
 
                 switch (hScroll & 7) {
-                case 1: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 2: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 3: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 4: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 5: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 6: col = *sprLine++; *linePtr2++ = bgColor; 
-                case 7: col = *sprLine++; *linePtr2++ = bgColor; charTable++; UPDATE_TABLE_4();
+                case 1: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 2: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 3: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 4: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 5: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 6: col = *sprLine++; *linePtr4++ = bgColor; 
+                case 7: col = *sprLine++; *linePtr4++ = bgColor; charTable++; UPDATE_TABLE_4();
                 }
             }
         }

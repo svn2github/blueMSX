@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.201 $
+** $Revision: 1.202 $
 **
-** $Date: 2008-05-20 14:32:37 $
+** $Date: 2008-05-30 22:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3604,6 +3604,6 @@ void SetCurrentWindow(HWND hwnd) {
 void archTrap(UInt8 value)
 {
     if (appConfigGetInt("trap.quit", 0) != 0) {
-        archQuit();
+        PostMessage(getMainHwnd(), WM_CLOSE, 0, 0);
     }
 }

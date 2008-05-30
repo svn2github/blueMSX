@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.92 $
+** $Revision: 1.93 $
 **
-** $Date: 2008-05-19 19:25:59 $
+** $Date: 2008-05-30 22:53:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1043,6 +1043,18 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
 static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
     sync(vdp, boardSystemTime());
+
+#if 0
+    {
+        static UInt32 oldTime = 0xffff0000;
+        if ((ioPort & 2) == 0 && (vdp->vdpStatus[2] & 0x40) == 0) {
+            if (boardSystemTime() - oldTime < 29 * 6) {
+                printf("outs too close !!\n");
+            }
+            oldTime = boardSystemTime();
+        }
+    }
+#endif
 
     if (vdp->vramEnable) {
         *MAP_VRAM(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress) = value;
