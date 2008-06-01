@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-05-25 14:22:39 $
+** $Date: 2008-06-01 19:33:33 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -376,30 +376,28 @@ static void write(RomMapperMsxAudio* rm, UInt16 address, UInt8 value)
 {
 	address &= 0x7fff;
 	
-	if (address>=0x7fc0) {
 #if 0
-		// FS-CA1 port select, bit 0:c0/c1, bit 1:c2/c3
-		if (rm->is_fs_ca1&&address&1&&rm->y8950) {
-			if (value&1) {
-				ioPortRegister(0xc0, y8950Read, y8950Write, rm->y8950);
-				ioPortRegister(0xc1, y8950Read, y8950Write, rm->y8950);
-			}
-			else if (ioPortGetRef(0xc0)==rm->y8950&&ioPortGetRef(0xc1)==rm->y8950) {
-				ioPortUnregister(0xc0); ioPortUnregister(0xc1);
-			}
-			
-			if (value&2) {
-				ioPortRegister(0xc2, y8950Read, y8950Write, rm->y8950);
-				ioPortRegister(0xc3, y8950Read, y8950Write, rm->y8950);
-			}
-			else if (ioPortGetRef(0xc2)==rm->y8950&&ioPortGetRef(0xc3)==rm->y8950) {
-				ioPortUnregister(0xc2); ioPortUnregister(0xc3);
-			}
+	// FS-CA1 port select, bit 0:c0/c1, bit 1:c2/c3
+	if (rm->is_fs_ca1&&address==0x7fff&&rm->y8950) {
+		if (value&1) {
+			ioPortRegister(0xc0, y8950Read, y8950Write, rm->y8950);
+			ioPortRegister(0xc1, y8950Read, y8950Write, rm->y8950);
 		}
-#endif
-		// bankswitch
-		if (~address&1) rm->bankSelect = value & 3;
+		else if (ioPortGetRef(0xc0)==rm->y8950&&ioPortGetRef(0xc1)==rm->y8950) {
+			ioPortUnregister(0xc0); ioPortUnregister(0xc1);
+		}
+		
+		if (value&2) {
+			ioPortRegister(0xc2, y8950Read, y8950Write, rm->y8950);
+			ioPortRegister(0xc3, y8950Read, y8950Write, rm->y8950);
+		}
+		else if (ioPortGetRef(0xc2)==rm->y8950&&ioPortGetRef(0xc3)==rm->y8950) {
+			ioPortUnregister(0xc2); ioPortUnregister(0xc3);
+		}
 	}
+#endif
+	// bankswitch
+	if (address==0x7ffe) rm->bankSelect = value & 3;
 	
 	address &= 0x3fff;
 	if (rm->bankSelect == 0 && address >= 0x3000) {
@@ -496,13 +494,17 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
     rm->romData = NULL;
 
     if (size > 0) {
-        slotRegister(slot, sslot, startPage, 8, read, read, write, destroy, rm);
+        int pages;
+        rm->is_fs_ca1 = (size == 0x20000); // meh
+        pages=rm->is_fs_ca1?4:8;
+        
+        // For FS-CA1, $8000-$FFFF is unmapped
+        slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
         rm->romData = malloc(size);
         memcpy(rm->romData, romData, size);
         memset(rm->ram, 0, 0x1000);
         rm->bankSelect = 0;
-        rm->is_fs_ca1 = (size == 0x20000); // meh
         rm->sizeMask = size - 1;
         rm->slot  = slot;
         rm->sslot = sslot;
@@ -515,7 +517,7 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
             rm->romData[0x408e] = 0;
         }
         
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < pages; i++) {
             slotMapPage(rm->slot, rm->sslot, rm->startPage + i, NULL, 0, 0);
         }
     }
