@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2008-06-01 19:33:33 $
+** $Date: 2008-06-01 20:36:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -494,11 +494,12 @@ int romMapperMsxAudioCreate(char* filename, UInt8* romData,
     rm->romData = NULL;
 
     if (size > 0) {
-        int pages;
+        int pages=8;
         rm->is_fs_ca1 = (size == 0x20000); // meh
-        pages=rm->is_fs_ca1?4:8;
+        // pages=rm->is_fs_ca1?4:8;
         
         // For FS-CA1, $8000-$FFFF is unmapped
+        // firmware locks up, needs more testing
         slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
         rm->romData = malloc(size);
