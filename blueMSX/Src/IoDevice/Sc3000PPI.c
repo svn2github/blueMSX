@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Sc3000PPI.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-06-02 04:49:50 $
+** $Date: 2008-06-04 03:48:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,9 +94,8 @@ static UInt16 getKeyState(Sc3000PPI* ppi)
                    (inputEventGetState(EC_R      ) <<  1) |
                    (inputEventGetState(EC_F      ) <<  2) |
                    (inputEventGetState(EC_V      ) <<  3) |
-                   (inputEventGetState(EC_UNDSCRE) <<  4) |
                    (inputEventGetState(EC_BKSPACE) <<  4) |
-                   (inputEventGetState(EC_JIKKOU ) <<  5) |
+                   (inputEventGetState(EC_UNDSCRE) <<  5) |
                    (inputEventGetState(EC_COLON  ) <<  6) |
                    (inputEventGetState(EC_AT     ) <<  7) |
                    (inputEventGetState(EC_NEG    ) <<  8);
