@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.82 $
+** $Revision: 1.83 $
 **
-** $Date: 2008-05-14 12:55:32 $
+** $Date: 2008-06-04 04:14:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -960,16 +960,20 @@ static HMENU menuCreateFile(Properties* pProperties, Shortcuts* shortcuts, int i
 
     setMenuColor(hMenu);
 
-    if (appConfigGetInt("menu.file.cart", 1) != 0) {
+    if (appConfigGetInt("menu.file.cart", 2) > 0) {
         sprintf(langBuffer, "%s 1", langMenuFileCart());
         AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(0, pProperties, shortcuts, enableSpecial), langBuffer);
+    }
+    if (appConfigGetInt("menu.file.cart", 2) > 1) {
         sprintf(langBuffer, "%s 2", langMenuFileCart());
         AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateCart(1, pProperties, shortcuts, enableSpecial), langBuffer);
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     }
-    if (appConfigGetInt("menu.file.disk", 1) != 0) {
+    if (appConfigGetInt("menu.file.disk", 2) > 0) {
         sprintf(langBuffer, "%s A", langMenuFileDisk());
         AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(0, pProperties, shortcuts), langBuffer);
+    }
+    if (appConfigGetInt("menu.file.disk", 2) > 1) {
         sprintf(langBuffer, "%s B", langMenuFileDisk());
         AppendMenu(hMenu, MF_POPUP,     (UINT)menuCreateDisk(1, pProperties, shortcuts), langBuffer);
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
