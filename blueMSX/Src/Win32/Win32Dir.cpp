@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Dir.cpp,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-06-06 23:55:57 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,6 +41,7 @@ static int CALLBACK browseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 {
     switch (uMsg) {
     case BFFM_INITIALIZED:
+#if 0
         HWND cbohWnd = CreateWindow("COMBOBOX", NULL, CBS_DROPDOWNLIST|WS_VSCROLL|CBS_AUTOHSCROLL|WS_CHILD|WS_VISIBLE,
             17, 30, 286, 150, hwnd, (HMENU)1005, (HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), NULL); 
 
@@ -56,6 +57,7 @@ static int CALLBACK browseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
         SendMessage(cbohWnd, CB_ADDSTRING, 0, (LPARAM)"SVI-738 CP/M 2.28 SSDD");
         SendMessage(cbohWnd, CB_SETCURSEL, 0, 0);
 
+#endif
         if (*defaultDirectory) {
             SendMessage(hwnd, BFFM_SETSELECTION, 1, (LPARAM)defaultDirectory);
         }
