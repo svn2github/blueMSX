@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2008-03-30 18:38:42 $
+** $Date: 2008-06-07 00:00:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -85,8 +85,8 @@ static void loadState(RamMapper* rm)
     for (i = 0; i < 4; i++) {
         int value = ramMapperIoGetPortValue(i) & rm->mask;
         int mapped = rm->dramMode && (rm->mask - value < 4) ? 0 : 1;
-        slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, mapped, mapped);
-        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, mapped, mapped);
+        slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, 1, mapped);
+        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, 1, mapped);
     }
 }
 
@@ -95,8 +95,8 @@ static void write(RamMapper* rm, UInt16 page, UInt8 value)
     int mapped = rm->dramMode && (rm->mask - value < 4) ? 0 : 1;
     value &= rm->mask;
 
-    slotMapPage(rm->slot, rm->sslot, 2 * page,     rm->ramData + 0x4000 * value, mapped, mapped);
-    slotMapPage(rm->slot, rm->sslot, 2 * page + 1, rm->ramData + 0x4000 * value + 0x2000, mapped, mapped);
+    slotMapPage(rm->slot, rm->sslot, 2 * page,     rm->ramData + 0x4000 * value, 1, mapped);
+    slotMapPage(rm->slot, rm->sslot, 2 * page + 1, rm->ramData + 0x4000 * value + 0x2000, 1, mapped);
 }
 
 static void setDram(RamMapper* rm, int enable)
@@ -109,8 +109,8 @@ static void setDram(RamMapper* rm, int enable)
         int value = ramMapperIoGetPortValue(i) & rm->mask;
         int mapped = rm->dramMode && (rm->mask - value < 4) ? 0 : 1;
 
-        slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, mapped, mapped);
-        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, mapped, mapped);
+        slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, 1, mapped);
+        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, 1, mapped);
     }
 }
 
