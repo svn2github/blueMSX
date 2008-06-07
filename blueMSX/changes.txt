@@ -1,4 +1,7 @@
 Next release
+- **later, 4<->2** Fixed Z80 IRQ timing
+
+v 2,8 xxx
 ============
 
 - Added support for DRAM mode in Turbo-R machines
@@ -23,7 +26,6 @@ Next release
 - Fixed 512 pixel width screen modes having a width of 511
 - Fixed small bug with MSX1 VDP address writes
 - Fixed audio mixer knobs being one notch to the left
-- Fixed Z80 IRQ timing
 - Fixed Moonsound FM 4-op bug
 - Fixed many resource leaks, most notably in the debugger
 - Fixed ColecoVision RAM initialization bug
