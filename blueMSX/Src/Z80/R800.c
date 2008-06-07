@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2008-05-30 22:53:17 $
+** $Date: 2008-06-07 03:59:04 $
 **
 ** Author: Daniel Vik
 **
@@ -5269,7 +5269,7 @@ static void ini(R800* r800) {  // Diff on flags
     r800->regs.BC.B.h--;
     val = readPort(r800, r800->regs.BC.W);
     writeMem(r800, r800->regs.HL.W++, val);
-    r800->regs.AF.B.l = (ZSPXYTable[r800->regs.BC.B.h] & (Z_FLAG | S_FLAG)) |
+    r800->regs.AF.B.l = (ZSXYTable[r800->regs.BC.B.h]) |
         ((val >> 6) & N_FLAG);
     tmp = val + ((r800->regs.BC.B.l + 1) & 0xFF);
     r800->regs.AF.B.l |= (tmp >> 8) * (H_FLAG | C_FLAG) |
@@ -5293,7 +5293,7 @@ static void ind(R800* r800) {
     r800->regs.BC.B.h--;
     val = readPort(r800, r800->regs.BC.W);
     writeMem(r800, r800->regs.HL.W--, val);
-    r800->regs.AF.B.l = (ZSPXYTable[r800->regs.BC.B.h] & (Z_FLAG | S_FLAG)) | 
+    r800->regs.AF.B.l = (ZSXYTable[r800->regs.BC.B.h]) | 
         ((val >> 6) & N_FLAG);
     tmp = val + ((r800->regs.BC.B.l - 1) & 0xFF);
     r800->regs.AF.B.l |= (tmp >> 8) * (H_FLAG | C_FLAG) |
