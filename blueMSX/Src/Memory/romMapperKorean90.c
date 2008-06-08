@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKorean90.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-06-08 13:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -82,7 +82,8 @@ static void loadState(RomMapperKorean90* rm)
 
 static void destroy(RomMapperKorean90* rm)
 {
-    ioPortUnregister(0x77);
+    if (ioPortGetRef(0x77)&&ioPortGetRef(0x77)==rm) ioPortUnregister(0x77);
+    
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
     debugDeviceUnregister(rm->debugHandle);
@@ -93,33 +94,25 @@ static void destroy(RomMapperKorean90* rm)
 
 static void write(RomMapperKorean90* rm, UInt16 address, UInt8 value) 
 {
-    int page = (value & 0x3f) << 1;
-    int mode = value >> 6;
+    int page = ((value & 0x7f) << 1) & (rm->size / 8192 - 1);
     int i;
 
-    switch (mode) {
-    case 0:
-    case 1:
-        rm->romMapper[0] = page + 0;
-        rm->romMapper[1] = page + 1;
-        rm->romMapper[2] = page + 0;
-        rm->romMapper[3] = page + 1;
-        break;
-    case 2:
+    if (value&0x80) {
+        // 32K mode
         rm->romMapper[0] = (page & 0xfc) + 0;
         rm->romMapper[1] = (page & 0xfc) + 1;
         rm->romMapper[2] = (page & 0xfc) + 2;
         rm->romMapper[3] = (page & 0xfc) + 3;
-        break;
-    case 3:
+    }
+    else {
+        // 16K mode
         rm->romMapper[0] = page + 0;
         rm->romMapper[1] = page + 1;
-        rm->romMapper[2] = page + 1;
-        rm->romMapper[3] = page + 0;
-        break;
+        rm->romMapper[2] = page + 0;
+        rm->romMapper[3] = page + 1;
     }
 
-    for (i = 0; i < 4; i++) {   
+    for (i = 0; i < 4; i++) {
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + rm->romMapper[i] * 0x2000, 1, 0);
     }
 }
@@ -160,13 +153,15 @@ int romMapperKorean90Create(char* filename, UInt8* romData,
 
     rm->romMapper[0] = 0;
     rm->romMapper[1] = 1;
-    rm->romMapper[2] = 2;
-    rm->romMapper[3] = 3;
+    rm->romMapper[2] = 0;
+    rm->romMapper[3] = 1;
 
     for (i = 0; i < 4; i++) {   
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + rm->romMapper[i] * 0x2000, 1, 0);
     }
     
+    // bankswitch I/O at port $77, 1st insertion only
+    // it's very likely though that writes to that port get intercepted by every inserted Korean90 cart, and not just 1
     ioPortRegister(0x77, NULL, write, rm);
 
     return 1;

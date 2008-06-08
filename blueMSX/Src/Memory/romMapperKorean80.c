@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperKorean80.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-06-08 13:02:48 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -91,11 +91,9 @@ static void write(RomMapperKorean80* rm, UInt16 address, UInt8 value)
 
     address += 0x4000;
 
-    if (address < 0x4000 || address >= 0x4004) {
-        return;
-    }
-
-    bank = address - 0x4000;
+    // $4000-$7FFF: bit 0,1=bank
+    if (address>0x7fff) return;
+    bank=address&3;
 
     value &= (rm->size / 8192 - 1);
     if (rm->romMapper[bank] != value) {
@@ -131,9 +129,9 @@ int romMapperKorean80Create(char* filename, UInt8* romData,
     rm->startPage  = startPage;
 
     rm->romMapper[0] = 0;
-    rm->romMapper[1] = 1;
-    rm->romMapper[2] = 2;
-    rm->romMapper[3] = 3;
+    rm->romMapper[1] = 0;
+    rm->romMapper[2] = 0;
+    rm->romMapper[3] = 0;
 
     for (i = 0; i < 4; i++) {   
         slotMapPage(rm->slot, rm->sslot, rm->startPage + i, rm->romData + rm->romMapper[i] * 0x2000, 1, 0);

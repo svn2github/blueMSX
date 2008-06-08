@@ -1,6 +1,7 @@
 Next release
 ============
 - **later, 4<->2** Fixed Z80 IRQ timing
+- Corrected emulation of Korean Bootleg mappers
 
 
 v 2.8       June 8, 2008
