@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Z80/R800.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.38 $
 **
-** $Date: 2008-06-07 06:39:20 $
+** $Date: 2008-06-08 11:49:19 $
 **
 ** Author: Daniel Vik
 **
@@ -5736,7 +5736,7 @@ static void r800SwitchCpu(R800* r800) {
         r800->delay[DLY_POSTIO]    = freqAdjust * 3;
         r800->delay[DLY_M1]        = freqAdjust * ((r800->cpuFlags & CPU_ENABLE_M1) ? 2 : 0);
         r800->delay[DLY_XD]        = freqAdjust * 1;
-        r800->delay[DLY_IM]        = freqAdjust * 2;
+        r800->delay[DLY_IM]        = freqAdjust * 2; // should be 4, but currently will break vdp timing
         r800->delay[DLY_IM2]       = freqAdjust * 19;
         r800->delay[DLY_NMI]       = freqAdjust * 11;
         r800->delay[DLY_PARALLEL]  = freqAdjust * 2;

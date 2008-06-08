@@ -1,10 +1,14 @@
 Next release
+============
 - **later, 4<->2** Fixed Z80 IRQ timing
 
-v 2,8 xxx
-============
 
-- Added support for DRAM mode in Turbo-R machines
+v 2.7       June 8, 2008
+========================
+- ** Fixed Z80 IRQ timing (not yet)
+- ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
+- ** Added support for Manbow 2 mapper (it was added earlier, but not mentioned in the releasenotes before)
+- Added support for DRAM mode in MSXturboR machines
 - Added support for Panasonic FS-A1FM machine
 - Added support for FS-A1WX and FS-A1WSX firmware mapper
 - Added support for Matra INK mapper
@@ -13,13 +17,18 @@ v 2,8 xxx
 - Replaced SN76489 emulation
 - Updated support for TC8566AF Disk Controller
 - Updated machine structure
+- Added 2 new generic machines : MSX1 Estonian and MSX2 Estonian 
+- Updated some generic MSX1 machines (no keyboard repeat bug)
+- More accurate configuration of specific machines (correct RAM size, no CAS patch on the BIOS)
+- Updated all specific machines to use MESS file names when it's possible
 - Added Catalonian translation
 - Added Russian translation
+- Added infos in the manual about specific machines with internal or external firmware
+- Extended or improved other parts of the manual
 - Added current machine and currently inserted media information to the Classic theme titlebar
 - Fixed DigiBlue Suite theme thinking a cartridge or disk was still present after ejecting it
 - Fixed DirectSound bug that happened on constant intervals depending on sound buffer size
 - Added ejectMediaOnExit setting. If enabled, all media are ejected when exiting blueMSX
-- Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0
 - Added MSX keyboard matrix quirk emulation, eg. pressing X+Z+J results in X+Z+H+J
 - Fixed cassette rewind after insert setting
 - Fixed horizontal scroll in lower screenmodes
@@ -30,8 +39,6 @@ v 2,8 xxx
 - Fixed many resource leaks, most notably in the debugger
 - Fixed ColecoVision RAM initialization bug
 - Added 75ms setting for soundbuffer size (step from 50 to 100 was a bit too big)
-- **Soon** New generic machines that don't have the keyboard repeat bug
-- **Soon** More accurate configuration of real machines (Correct RAM, no patches and more)
 
 
 v 2.7.1     December 15, 2007  
