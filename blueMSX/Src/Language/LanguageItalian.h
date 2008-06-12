@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2008-06-12 05:02:57 $
+** $Date: 2008-06-12 23:52:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -59,7 +59,7 @@ void langInitItalian(LanguageStrings* ls)
     // Generic lines
     //---------------
 
-    ls->textDevice                      = "Periferica:";
+    ls->textDevice                      = "Origine:";
     ls->textFilename                    = "Nome del file:";
     ls->textFile                        = "File";
     ls->textNone                        = "Nessuna";
@@ -155,7 +155,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuPropsEmulation              = "Emulazione...";
     ls->menuPropsVideo                  = "Video...";
     ls->menuPropsSound                  = "Audio...";
-    ls->menuPropsControls               = "Controlli...";
+    ls->menuPropsControls               = "Periferiche...";
     ls->menuPropsPerformance            = "Prestazioni...";
     ls->menuPropsSettings               = "Impostazioni...";
     ls->menuPropsFile                   = "File...";
@@ -198,9 +198,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuRunHardReset                = "Riavvio hardware";
     ls->menuRunCleanReset               = "Riavvio completo";
 
-    ls->menuToolsMachine                = "Configura l'hardware...";
-    ls->menuToolsShortcuts              = "Configura i tasti rapidi...";
-    ls->menuToolsCtrlEditor             = "Configura joystick e tastiera...";               
+    ls->menuToolsMachine                = "Configurazione hardware...";
+    ls->menuToolsShortcuts              = "Configurazione tasti rapidi...";
+    ls->menuToolsCtrlEditor             = "Configurazione periferiche...";               
     ls->menuToolsMixer                  = "Mixer audio...";
     ls->menuToolsDebugger               = "Debugger...";
     ls->menuToolsTrainer                = "Gestione trainer...";
@@ -293,7 +293,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmulation                   = "Emulazione";
     ls->propVideo                       = "Video";
     ls->propSound                       = "Audio";
-    ls->propControls                    = "Controlli";
+    ls->propControls                    = "Periferiche";
     ls->propPerformance                 = "Prestazioni";
     ls->propSettings                    = "Impostazioni";
     ls->propFile                        = "File";
@@ -366,7 +366,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propPortsEmulateMsxPrn          = "Emulazione:";
 
     ls->propSetFileHistoryGB            = "File recenti ";
-    ls->propSetFileHistorySize          = "Numero dei file recenti:";
+    ls->propSetFileHistorySize          = "Numero di file recenti:";
     ls->propSetFileHistoryClear         = "Svuota la cronologia";
     ls->propFileTypes                   = " Associa alcuni tipi di file a blueMSX (.rom, .dsk, .cas, .sta)";
     ls->propWindowsEnvGB                = "Ambiente Windows ";
@@ -374,7 +374,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propDisableWinKeys              = " Associa automaticamente le funzionalità MSX ai tasti Windows";
     ls->propPriorityBoost               = " Utilizza blueMSX a priorità elevata";
     ls->propScreenshotPng               = " Utilizza il formato PNG per il salvataggio delle schermate";
-    ls->propEjectMediaOnExit            = " Espelli il supporto quando blueMSX esce";                      // New in 2.8
+    ls->propEjectMediaOnExit            = " Rimuovi tutti i supporti quando esci da blueMSX";                      // New in 2.8
     ls->propClearHistory                = "Vuoi veramente svuotare la cronologia dei file recenti?";
     ls->propOpenRomGB                   = "Esecuzione delle immagini ROM ";
     ls->propDefaultRomType              = "Tipo predefinito:";
@@ -534,12 +534,12 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->shortcutSaveConfig              = "blueMSX - Salva lo schema corrente";
     ls->shortcutOverwriteConfig         = "Vuoi veramente sovrascrivere lo schema";
-    ls->shortcutExitConfig              = "blueMSX - Esci dalla configurazione dei tasti rapidi";
+    ls->shortcutExitConfig              = "blueMSX - Esci dalla configurazione tasti rapidi";
     ls->shortcutDiscardConfig           = "Vuoi veramente annullare le modifiche effettuate?";
     ls->shortcutSaveConfigAs            = "blueMSX - Salva lo schema con nome";
     ls->shortcutConfigName              = "Nome dello schema:";
     ls->shortcutNewProfile              = "< Nuovo >";
-    ls->shortcutConfigTitle             = "blueMSX - Configurazione dei tasti rapidi";
+    ls->shortcutConfigTitle             = "blueMSX - Configurazione tasti rapidi";
     ls->shortcutAssign                  = "Assegna";
     ls->shortcutPressText               = "Combinazione scelta:";
     ls->shortcutScheme                  = "Schema corrente:";
@@ -600,16 +600,16 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutEmuSpeedDec             = "Diminuisci la velocità di emulazione";
     ls->shortcutThemeSwitch             = "Cambia il tema corrente";
     ls->shortcutShowEmuProp             = "Mostra le proprietà di emulazione";
-    ls->shortcutShowVideoProp           = "Mostra le proprietà video";
-    ls->shortcutShowAudioProp           = "Mostra le proprietà audio";
-    ls->shortcutShowCtrlProp            = "Mostra le proprietà dei controlli";
+    ls->shortcutShowVideoProp           = "Mostra le proprietà del video";
+    ls->shortcutShowAudioProp           = "Mostra le proprietà dell'audio";
+    ls->shortcutShowCtrlProp            = "Mostra le proprietà delle periferiche";
     ls->shortcutShowPerfProp            = "Mostra le proprietà delle prestazioni";
     ls->shortcutShowSettProp            = "Mostra le proprietà delle impostazioni";
     ls->shortcutShowPorts               = "Mostra le proprietà delle porte";
     ls->shortcutShowLanguage            = "Visualizza il menù della lingua";
-    ls->shortcutShowMachines            = "Configura l'hardware";
+    ls->shortcutShowMachines            = "Visualizza la configurazione hardware";
     ls->shortcutShowShortcuts           = "Configura i tasti rapidi";
-    ls->shortcutShowKeyboard            = "Configura joystick e tastiera";
+    ls->shortcutShowKeyboard            = "Configura le periferiche";
     ls->shortcutShowDebugger            = "Visualizza il debugger";
     ls->shortcutShowTrainer             = "Visualizza la gestione trainer";
     ls->shortcutShowMixer               = "Configura il mixer audio";
