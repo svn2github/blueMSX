@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperCrossBlaim.c,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-06-14 12:07:21 $
+** $Date: 2008-06-14 12:20:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,8 +75,9 @@ static void loadState(RomMapperCrossBlaim* rm)
 
     saveStateClose(state);
     
-    rm->romMapper[2]&=3;
-    write(rm,0,rm->romMapper[2]);
+    i=rm->romMapper[2];
+    rm->romMapper[2]=-1;
+    write(rm,0,i);
 }
 
 static void destroy(RomMapperCrossBlaim* rm)
