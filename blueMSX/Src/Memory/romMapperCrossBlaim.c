@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperCrossBlaim.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-30 18:38:42 $
+** $Date: 2008-06-14 11:50:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -42,8 +42,11 @@ typedef struct {
     int sslot;
     int startPage;
     int size;
-    int romMapper[4];
+    int romMapper[4]; // no need for 4, but kept in for savestate backward compatibility
 } RomMapperCrossBlaim;
+
+static void write(RomMapperCrossBlaim* rm, UInt16 address, UInt8 value);
+
 
 static void saveState(RomMapperCrossBlaim* rm)
 {
@@ -71,12 +74,8 @@ static void loadState(RomMapperCrossBlaim* rm)
     }
 
     saveStateClose(state);
-
-    for (i = 0; i < 4; i += 2) {
-        UInt8* bankData = rm->romData + (rm->romMapper[i] << 14);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i,     bankData, 1, 0);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i + 1, bankData + 0x2000, 1, 0);
-    }
+    
+    write(rm,0,rm->romMapper[2]);
 }
 
 static void destroy(RomMapperCrossBlaim* rm)
@@ -90,23 +89,37 @@ static void destroy(RomMapperCrossBlaim* rm)
 
 static void write(RomMapperCrossBlaim* rm, UInt16 address, UInt8 value) 
 {
-    int bank;
+    value&=3;
 
-    address += 0x4000;
-
-    if (address != 0x4045) {
-        return;
-    }
-
-    bank = 2;
-
-    if (rm->romMapper[bank] != value) {
-        UInt8* bankData = rm->romData + ((int)value << 14);
-        
-        rm->romMapper[bank] = value;
-
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + bank,     bankData, 1, 0);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + bank + 1, bankData + 0x2000, 1, 0);
+    if (rm->romMapper[2] != value) {
+    	
+    	rm->romMapper[2] = value;
+    	
+    	if (value&2) {
+    		// ROM 1
+    		// page 2 specified bank
+    		UInt8* bankData = rm->romData + ((int)value << 14);
+    		
+	        slotMapPage(rm->slot, rm->sslot, 4, bankData, 1, 0);
+        	slotMapPage(rm->slot, rm->sslot, 5, bankData + 0x2000, 1, 0);
+    		
+    		// page 0 and 3 unmapped
+    		slotMapPage(rm->slot, rm->sslot, 0, NULL, 0, 0);
+    		slotMapPage(rm->slot, rm->sslot, 1, NULL, 0, 0);
+    		slotMapPage(rm->slot, rm->sslot, 6, NULL, 0, 0);
+    		slotMapPage(rm->slot, rm->sslot, 7, NULL, 0, 0);
+    	}
+    	else {
+    		int i;
+    		
+    		// ROM 0
+    		// page 2 bank 1, page 0 and 3 mirrors of page 2
+    		for (i=0;i<8;i+=2) {
+    			if (i==2) continue;
+    			slotMapPage(rm->slot, rm->sslot, i,   rm->romData+0x4000, 1, 0);
+    			slotMapPage(rm->slot, rm->sslot, i+1, rm->romData+0x6000, 1, 0);
+    		}
+    	}
     }
 }
 
@@ -124,7 +137,7 @@ int romMapperCrossBlaimCreate(char* filename, UInt8* romData,
     rm = malloc(sizeof(RomMapperCrossBlaim));
 
     rm->deviceHandle = deviceManagerRegister(ROM_CROSSBLAIM, &callbacks, rm);
-    slotRegister(slot, sslot, startPage, 4, NULL, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, startPage, 8, NULL, NULL, write, destroy, rm); // $0000-$FFFF
 
     rm->romData = malloc(size);
     memcpy(rm->romData, romData, size);
@@ -133,13 +146,13 @@ int romMapperCrossBlaimCreate(char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
+    // page 1 fixed to ROM 0 bank 0
+    slotMapPage(rm->slot, rm->sslot, 2, rm->romData+0x0000, 1, 0);
+    slotMapPage(rm->slot, rm->sslot, 3, rm->romData+0x2000, 1, 0);
+    
     rm->romMapper[0] = 0;
-    rm->romMapper[2] = 0;
-
-    for (i = 0; i < 4; i += 2) {   
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i,     rm->romData + rm->romMapper[i] * 0x2000, 1, 0);
-        slotMapPage(rm->slot, rm->sslot, rm->startPage + i + 1, rm->romData + rm->romMapper[i] * 0x2000 + 0x2000, 1, 0);
-    }
+    rm->romMapper[2] = -1;
+    write(rm,0,0);
 
     return 1;
 }

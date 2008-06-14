@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-06-14 11:50:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -546,7 +546,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
             break;
             
         case ROM_CROSSBLAIM:
-            success &= romMapperCrossBlaimCreate(romName, buf, size, slot, sslot, 2);
+            success &= romMapperCrossBlaimCreate(romName, buf, size, slot, sslot, 0);
             break;
             
         case ROM_KOREAN80:
