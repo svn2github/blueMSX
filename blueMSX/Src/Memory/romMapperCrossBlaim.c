@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperCrossBlaim.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-06-14 11:50:38 $
+** $Date: 2008-06-14 12:07:21 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,6 +75,7 @@ static void loadState(RomMapperCrossBlaim* rm)
 
     saveStateClose(state);
     
+    rm->romMapper[2]&=3;
     write(rm,0,rm->romMapper[2]);
 }
 
@@ -100,7 +101,7 @@ static void write(RomMapperCrossBlaim* rm, UInt16 address, UInt8 value)
     		// page 2 specified bank
     		UInt8* bankData = rm->romData + ((int)value << 14);
     		
-	        slotMapPage(rm->slot, rm->sslot, 4, bankData, 1, 0);
+	        slotMapPage(rm->slot, rm->sslot, 4, bankData,          1, 0);
         	slotMapPage(rm->slot, rm->sslot, 5, bankData + 0x2000, 1, 0);
     		
     		// page 0 and 3 unmapped
