@@ -2,7 +2,8 @@
 ** File:
 **      Language.h
 **
-** Copyright (C) 2003-2004 Daniel Vik
+** Copyright (C) 2003-2008 Daniel Vik
+** Italian translation by Luca Chiodi (KdL)
 **
 **  This software is provided 'as-is', without any express or implied
 **  warranty.  In no event will the authors be held liable for any damages
@@ -33,48 +34,48 @@ public:
     LanguageItalian() {
         trainerName             = "Trainer";
         trainerCaption          = "blueMSX - Trainer";
-        saveCheatCaption        = "Salva Cheat";
-        loadCheatCaption        = "Carica Cheat";
-        pause                   = "Pausa";
+        saveCheatCaption        = "Salva il cheat con nome";
+        loadCheatCaption        = "Carica un cheat";
+        pause                   = "Sospendi";
         run                     = "Esegui";
-        truncated               = "troncato...";
-        newCheat                = "Nuovo Cheat";
+        truncated               = "(troncato...)";
+        newCheat                = "Nuovo cheat";
         address                 = "Indirizzo";
-        oldValue                = "Vecchio Valore";
-        newValue                = "Nuovo Valore";
-        change                  = "Modifica";
+        oldValue                = "Vecchio valore";
+        newValue                = "Nuovo valore";
+        change                  = "Valore modificato";
         disable                 = "Disattiva";
         enable                  = "Attiva";
         description             = "Descrizione";
         value                   = "Valore";
-        activeCheats            = "Attivi Cheats ";
-        findCheats              = "Trova Cheats ";
-        removeAll               = "Tutto rimuovi";
+        activeCheats            = "Cheat attivi ";
+        findCheats              = "Trova cheat ";
+        removeAll               = "Rimuovi tutto";
         remove                  = "Rimuovi";
-        addCheat                = "Aggiungi Cheat";
-        cheatFile               = "Cheat File:";
+        addCheat                = "Aggiungi";
+        cheatFile               = "File cheat in uso:";
         ok                      = "OK";
         cancel                  = "Annulla";
-        displayValueAs          = "Mostri il valore ";
+        displayValueAs          = "Mostra il valore in ";
         decimal                 = "Decimale";
-        hexadecimal             = "Hexadecimale";
-        dataSize                = "Formato dei dati ";
+        hexadecimal             = "Esadecimale";
+        dataSize                = "Formato dati ";
         eightBit                = "8 bit";
         sixteenBit              = "16 bit";
-        compareType             = "Tipo di raffronto ";
-        equal                   = "Uguale";
-        notEqual                = "Non uguale";
-        lessThan                = "Meno che";
-        lessOrEqual             = "Meno o uguale";
-        greaterThan             = "Più grande che";
-        greaterOrEqual          = "Più grande o uguale";
-        display                 = "Mostra ";
-        compareNewValueWith     = "Compara il nuovo valore a ";
-        specificValue           = "Calore specifico: ";
-        snapshot                = "Snapshot";
-        search                  = "Ricerca";
-        undo                    = "Annulla";
+        compareType             = "Tipo di confronto ";
+        equal                   = "Uguale a";
+        notEqual                = "Diverso da";
+        lessThan                = "Minore di";
+        lessOrEqual             = "Minore o uguale a";
+        greaterThan             = "Maggiore di";
+        greaterOrEqual          = "Maggiore o uguale a";
+        display                 = "Visualizza in ";
+        compareNewValueWith     = "Confronta il nuovo valore al ";
+        specificValue           = "Valore specifico ";
+        snapshot                = "Acquisisci";
+        search                  = "Cerca";
+        undo                    = "Ripristina";
     }
 };
 
-#endif //LANGUAGE_FRENCH_H
+#endif //LANGUAGE_ITALIAN_H
