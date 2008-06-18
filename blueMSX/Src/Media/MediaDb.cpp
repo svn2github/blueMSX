@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.83 $
+** $Revision: 1.84 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-06-18 20:58:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1169,7 +1169,8 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 
 	if (size <= 0x10000) {
 		if (size == 0x10000) {
-            mediaType->romType = ROM_ASCII16;
+            if (romData[0x4000] == 'A' && romData[0x4001] == 'B') mediaType->romType = ROM_PLAIN;
+            else mediaType->romType = ROM_ASCII16;
 			return mediaType;
 		} 
         
