@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperHarryFox.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-06-20 21:20:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,7 +94,7 @@ static void write(RomMapperHarryFox* rm, UInt16 address, UInt8 value)
 
     address += 0x4000;
 
-    if (address != 0x6000 && address != 0x7000) {
+    if ((address&0xf000) != 0x6000 && (address&0xf000) != 0x7000) {
         return;
     }
 
