@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/DirAsDisk.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-03-30 21:38:43 $
+** $Date: 2008-06-24 20:10:38 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,9 @@
 #include "DirAsDisk.h"
 
 #pragma warning(disable: 4996)
-#include <io.h>
+#if defined(WIN32) || defined (WINDOWS_HOST)
+#include <io.h> // not on Linux
+#endif
 
 #include <fcntl.h>
 #include <sys/types.h>
