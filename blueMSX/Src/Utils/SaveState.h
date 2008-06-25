@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008-06-25 22:26:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -34,15 +34,15 @@ typedef struct SaveState SaveState;
 
 void saveStateCreate(const char* fileName);
 
-SaveState* saveStateOpenForRead(char* fileName);
-SaveState* saveStateOpenForWrite(char* fileName);
+SaveState* saveStateOpenForRead(const char* fileName);
+SaveState* saveStateOpenForWrite(const char* fileName);
 void saveStateClose(SaveState* state);
 
-UInt32 saveStateGet(SaveState* state, char* tagName, UInt32 defValue);
-void saveStateSet(SaveState* state, char* tagName, UInt32 value);
+UInt32 saveStateGet(SaveState* state, const char* tagName, UInt32 defValue);
+void saveStateSet(SaveState* state, const char* tagName, UInt32 value);
 
-void saveStateGetBuffer(SaveState* state, char* tagName, void* buffer, UInt32 length);
-void saveStateSetBuffer(SaveState* state, char* tagName, void* buffer, UInt32 length);
+void saveStateGetBuffer(SaveState* state, const char* tagName, void* buffer, UInt32 length);
+void saveStateSetBuffer(SaveState* state, const char* tagName, void* buffer, UInt32 length);
 
 #endif /* SAVE_STATE_H */
 
