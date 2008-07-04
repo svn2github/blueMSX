@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-07-04 13:41:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,17 +99,23 @@ static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
 static UInt8 peek(MsxPsg* msxPsg, UInt16 address)
 {
     if (address & 1) {
-        return msxPsg->registers[1] & 0xf0;
+        /* r15 */
+        return msxPsg->registers[1];
     }
-    return msxPsg->readValue[address & 1];
+    
+    /* r14 */
+    else return msxPsg->readValue[address & 1];
 }
 
 static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 {
     if (address & 1) {
-        return msxPsg->registers[1] & 0xf0;
+    	/* r15 */
+        return msxPsg->registers[1];
     }
     else {
+        /* r14 */
+        /* joystick pins */
         int renshaSpeed = switchGetRensha();
 	    UInt8 state = 0x3f;
         if (msxPsg->devFun[msxPsg->currentPort] != NULL &&
@@ -120,7 +126,13 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
         if (renshaSpeed) {
             state &= ~((((UInt64)renshaSpeed * boardSystemTime() / boardFrequency()) & 1) << 4);
         }
+        /* pins 6/7 input ANDed with pins 6/7 output */
+        state&=((msxPsg->registers[1]>>(msxPsg->currentPort<<1&2)&3)<<4|0xf);
+        
+        /* ANSI/JIS */
         state |= 0x40;
+        
+        /* cas signal */
         if (msxPsg->casCb != NULL && msxPsg->casCb(msxPsg->casRef)) {
             state |= 0x80;
         }
@@ -134,6 +146,7 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 static void write(MsxPsg* msxPsg, UInt16 address, UInt8 value)
 {
     if (address & 1) {
+        /* r15 */
         if (msxPsg->devFun[0] != NULL && msxPsg->devFun[0]->write != NULL) {
 	        UInt8 val = ((value >> 0) & 0x03) | ((value >> 2) & 0x04);
 	        msxPsg->devFun[0]->write(msxPsg->devFun[0], val);
