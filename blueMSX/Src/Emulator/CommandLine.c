@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2008-05-14 12:55:31 $
+** $Date: 2008-08-31 06:13:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -512,7 +512,7 @@ int emuTryStartWithArguments(Properties* properties, char* cmdLine) {
     if (cmdLine == NULL || *cmdLine == 0) {
         if (appConfigGetInt("autostart", 0) != 0) {
             emulatorStop();
-            emulatorStart(NULL);
+            emulatorStart(properties->filehistory.quicksave);
         }
         return 0;
     }

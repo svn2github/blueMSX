@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.202 $
+** $Revision: 1.203 $
 **
-** $Date: 2008-05-30 22:53:17 $
+** $Date: 2008-08-31 06:13:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1395,6 +1395,11 @@ void themeSet(char* themeName, int forceMatch) {
         ew = getZoom() * WIDTH;
         eh = getZoom() * HEIGHT;
         z  = HWND_NOTOPMOST;
+
+        if (pProperties->video.windowSize == P_VIDEO_SIZEX2) {
+            ew = appConfigGetInt("screen.normal.width", 640);
+            eh = appConfigGetInt("screen.normal.height", 480);
+        }
     }
     else {
         DxDisplayMode* ddm = DirectDrawGetDisplayMode();
@@ -1609,7 +1614,8 @@ static void emuWindowDraw(int onlyOnVblank)
                                   0, 0, getZoom(), 
                                   pProperties->video.horizontalStretch, 
                                   pProperties->video.verticalStretch,
-                                  st.diplaySync);
+                                  st.diplaySync,
+                                  pProperties->video.windowSize == P_VIDEO_SIZEX2);
         st.diplaySync = 0;
         if (rv) {
             st.frameCount++;

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2008-03-30 18:38:48 $
+** $Date: 2008-08-31 06:13:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -37,6 +37,7 @@
 #include "Win32directx.h"
 #include "VideoRender.h"
 #include "FrameBuffer.h"
+#include "AppConfig.h"
 
 
 static LPDIRECTDRAW         lpDD = NULL;            // DirectDraw object
@@ -613,7 +614,7 @@ static int renderNoStretch(Video* pVideo, FrameBuffer* frameBuffer, int bitCount
 int DirectXUpdateSurface(Video* pVideo, 
                           int noFlip, int dstPitchY, int dstOffset, int zoom, 
                           int horizontalStretch, int verticalStretch, 
-                          int syncVblank) 
+                          int syncVblank, int zoomModeNormal) 
 {
     DDSURFACEDESC ddsd;
     LPDIRECTDRAWSURFACE surface = NULL;
@@ -757,6 +758,19 @@ int DirectXUpdateSurface(Video* pVideo,
             rcRect.top    += 7 * zoom;
             rcRect.bottom -= 7 * zoom;
         }
+    }
+
+    if (zoomModeNormal) {
+        static int deltaWidth = -9999;
+        static int deltaHeight = -9999;
+        if (deltaWidth = -9999) {
+            deltaWidth  = (640 - appConfigGetInt("screen.normal.width", 640)) / 2;
+            deltaHeight = (480 - appConfigGetInt("screen.normal.height", 480)) / 2;
+        }
+        destRect.right  -= deltaWidth;
+        destRect.left   -= deltaWidth;
+        destRect.top    -= deltaHeight;
+        destRect.bottom -= deltaHeight;
     }
 
     if (syncVblank) {
