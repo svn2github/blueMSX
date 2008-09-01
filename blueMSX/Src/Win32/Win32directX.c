@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32directX.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2008-08-31 06:13:13 $
+** $Date: 2008-09-01 21:22:01 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -763,7 +763,7 @@ int DirectXUpdateSurface(Video* pVideo,
     if (zoomModeNormal) {
         static int deltaWidth = -9999;
         static int deltaHeight = -9999;
-        if (deltaWidth = -9999) {
+        if (deltaWidth == -9999) {
             deltaWidth  = (640 - appConfigGetInt("screen.normal.width", 640)) / 2;
             deltaHeight = (480 - appConfigGetInt("screen.normal.height", 480)) / 2;
         }
