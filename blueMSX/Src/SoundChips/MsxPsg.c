@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-07-04 13:41:23 $
+** $Date: 2008-09-09 04:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,6 +32,8 @@
 #include "DeviceManager.h"
 #include "Led.h"
 #include "Switches.h"
+#include "Casette.h"
+#include "DAC.h"
 
 #include "MsxJoystickDevice.h"
 #include "MsxJoystick.h"
@@ -55,6 +57,7 @@ struct MsxPsg {
     UInt8 registers[2];
     UInt8 readValue[2];
     MsxJoystickDevice* devFun[2];
+    DAC*   dac;
 };
 
 static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
@@ -109,6 +112,8 @@ static UInt8 peek(MsxPsg* msxPsg, UInt16 address)
 
 static UInt8 read(MsxPsg* msxPsg, UInt16 address)
 {
+    UInt8 casdat = 0;
+
     if (address & 1) {
     	/* r15 */
         return msxPsg->registers[1];
@@ -133,9 +138,14 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
         state |= 0x40;
         
         /* cas signal */
+/* IOCCC?
         if (msxPsg->casCb != NULL && msxPsg->casCb(msxPsg->casRef)) {
             state |= 0x80;
         }
+*/
+        tapeRead(&casdat);
+        state |= (casdat) ? 0:0x80;
+       	dacWrite(msxPsg->dac, DAC_CH_MONO, (casdat) ? 0 : 255);
 
         msxPsg->readValue[address & 1] = state;
 
@@ -211,6 +221,7 @@ static void destroy(MsxPsg* msxPsg)
     ay8910Destroy(msxPsg->ay8910);
     joystickPortUpdateHandlerUnregister();
     deviceManagerUnregister(msxPsg->deviceHandle);
+    dacDestroy(msxPsg->dac);
     
     free(msxPsg);
 }
@@ -228,6 +239,8 @@ MsxPsg* msxPsgCreate(PsgType type, int maxPorts)
 
     msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, type);
     msxPsg->maxPorts = maxPorts;
+
+    msxPsg->dac = dacCreate(boardGetMixer(), DAC_MONO);
 
     ay8910SetIoPort(msxPsg->ay8910, read, peek, write, msxPsg);
 

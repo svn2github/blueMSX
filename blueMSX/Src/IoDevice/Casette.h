@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-05-14 12:55:31 $
+** $Date: 2008-09-09 04:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 
 typedef enum { TAPE_ASCII = 0, TAPE_BINARY, TAPE_BASIC, TAPE_CUSTOM } TapeContentType;
 
-typedef enum { TAPE_UNKNOWN = 0, TAPE_FMSXDOS, TAPE_FMSX98AT, TAPE_SVICAS } TapeFormat;
+typedef enum { TAPE_UNKNOWN = 0, TAPE_FMSXDOS, TAPE_FMSX98AT, TAPE_SVICAS, TAPE_WAV  } TapeFormat;
 
 typedef struct {
     int             pos;
@@ -60,4 +60,3 @@ UInt8 tapeReadHeader();
 UInt8 tapeWriteHeader();
 
 #endif
-

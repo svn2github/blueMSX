@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MsxPPI.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2008-04-02 18:19:19 $
+** $Date: 2008-09-09 04:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -40,6 +40,7 @@
 #include "Led.h"
 #include "InputEvent.h"
 #include "Language.h"
+#include "DAC.h"
 #include <stdlib.h>
 
 
@@ -52,6 +53,7 @@ typedef struct {
     I8255* i8255;
 
     AudioKeyClick* keyClick;
+    DAC*   dac;
 
     UInt8 row;
     Int32 regA;
@@ -68,6 +70,8 @@ static void destroy(MsxPPI* ppi)
     audioKeyClickDestroy(ppi->keyClick);
     deviceManagerUnregister(ppi->deviceHandle);
     debugDeviceUnregister(ppi->debugHandle);
+
+    dacDestroy(ppi->dac);
 
     i8255Destroy(ppi->i8255);
 
@@ -134,6 +138,7 @@ static void writeCHi(MsxPPI* ppi, UInt8 value)
         ppi->regCHi = value;
 
         audioKeyClick(ppi->keyClick, value & 0x08);
+        dacWrite(ppi->dac, DAC_CH_MONO, (value & 0x02) ? 0 : 255);
         ledSetCapslock(!(value & 0x04));
     }
 }
@@ -207,6 +212,8 @@ void msxPPICreate(int ignoreKeyboard)
                                  ppi);
     }
     ppi->keyClick = audioKeyClickCreate(boardGetMixer());
+
+    ppi->dac = dacCreate(boardGetMixer(), DAC_MONO);
 
     ioPortRegister(0xa8, i8255Read, i8255Write, ppi->i8255);
     ioPortRegister(0xa9, i8255Read, i8255Write, ppi->i8255);
