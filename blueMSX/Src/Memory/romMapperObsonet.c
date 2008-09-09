@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperObsonet.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2008-09-09 04:33:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -128,8 +128,9 @@ static UInt8 peek(RomMapperObsonet* rm, UInt16 address)
 static void write(RomMapperObsonet* rm, UInt16 address, UInt8 value) 
 {
     if ((address & 0x3fe0) == 0x3fe0) {
-        if (rm->regBank < 3)
+        if (rm->regBank < 3) {
 //        printf("W %d: %.4x  %.2x\n", rm->regBank, address & 0x1f, value);
+        }
         switch (address & 0x1f) {
         case 0:
             rm->regBank = value >> 6;
