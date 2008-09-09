@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-09-09 04:32:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,7 @@ static RomType romTypeList[] = {
     
     ROM_NOWIND,
     ROM_OBSONET,
+    ROM_YAMAHANET,
     
     ROM_PANASONIC8,
     ROM_PANASONICWX16,

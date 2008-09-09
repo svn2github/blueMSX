@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-09-09 04:32:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -133,6 +133,8 @@
 #include "romMapperDRAM.h"
 #include "romMapperMatraINK.h"
 #include "romMapperNettouYakyuu.h"
+#include "romMapperNet.h"
+
 
 
 
@@ -1273,6 +1275,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_YAMAHASFG05:
             success &= romMapperSfg05Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_YAMAHANET:
+            success &= romMapperNetCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_SF7000IPL:

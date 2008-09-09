@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2008-04-27 21:30:49 $
+** $Date: 2008-09-09 04:32:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -814,6 +814,7 @@ static void endEditControls(HWND hDlg)
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
     case ROM_NETTOUYAKYUU:
+    case ROM_YAMAHANET:
         editSlotInfo.startPage = 2;
         editSlotInfo.pageCount = 4;
         break;
@@ -1271,6 +1272,7 @@ static void setEditControls(HWND hDlg)
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
     case ROM_NETTOUYAKYUU:
+    case ROM_YAMAHANET:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1402,6 +1404,7 @@ static RomType romTypeList[] = {
     ROM_GAMEREADER,
     ROM_NOWIND,
     ROM_OBSONET,
+    ROM_YAMAHANET,
     
     SRAM_MATSUCHITA,
     ROM_DRAM,

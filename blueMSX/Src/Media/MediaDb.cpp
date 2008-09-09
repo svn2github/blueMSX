@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2008-06-18 20:58:10 $
+** $Date: 2008-09-09 04:32:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -178,6 +178,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "HBI-V1")       return ROM_SONYHBIV1;
     if (name == "SFG-01")       return ROM_YAMAHASFG01;
     if (name == "SFG-05")       return ROM_YAMAHASFG05;
+    if (name == "NET")          return ROM_YAMAHANET;
     if (name == "SF-7000IPL")   return ROM_SF7000IPL;
     if (name == "FMDAS")        return ROM_FMDAS;
     if (name == "Obsonet")      return ROM_OBSONET;
@@ -659,6 +660,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_FMDAS:       return langRomTypeFmdas();
     case ROM_YAMAHASFG01: return langRomTypeSfg01();
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
+    case ROM_YAMAHANET:   return "Yamaha Net";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
     case ROM_CVMEGACART:  return "ColecoVision MegaCart(R)";
     case SRAM_MEGASCSI:   return langRomTypeMegaSCSI();
@@ -807,6 +809,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_FMDAS:       return "FM-DAS";
     case ROM_YAMAHASFG01: return "SFG-01";
     case ROM_YAMAHASFG05: return "SFG-05";
+    case ROM_YAMAHANET:   return "YAMAHA NET";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
     case ROM_CVMEGACART:  return "MEGACART";
     case SRAM_MEGASCSI:   return "MEGASCSI";
@@ -873,6 +876,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_YAMAHASFG01: return 1;
     case ROM_YAMAHASFG05: return 1;
     case ROM_SF7000IPL:   return 1;
+    case ROM_YAMAHANET:   return 1;
     }
     return 0;
 }

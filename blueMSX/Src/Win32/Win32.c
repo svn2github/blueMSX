@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.203 $
+** $Revision: 1.204 $
 **
-** $Date: 2008-08-31 06:13:13 $
+** $Date: 2008-09-09 04:32:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -1579,6 +1579,12 @@ void archUpdateWindow() {
             d.left  += zoom * (320 - 272) / 2;
             d.right -= zoom * (320 - 272) / 2;
         }
+        
+        if (pProperties->video.windowSize == P_VIDEO_SIZEX2) {
+            r.right = appConfigGetInt("screen.normal.width", 640);
+            r.bottom = appConfigGetInt("screen.normal.height", 480);
+        }
+
         mouseEmuSetCaptureInfo(&r, &d);
     }
 

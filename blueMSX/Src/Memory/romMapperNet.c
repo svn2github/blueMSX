@@ -1,7 +1,7 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperSfg05.c,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNet.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.1 $
 **
 ** $Date: 2008-09-09 04:32:19 $
 **
@@ -25,7 +25,7 @@
 **
 ******************************************************************************
 */
-#include "romMapperSfg05.h"
+#include "romMapperNet.h"
 #include "MediaDb.h"
 #include "MidiIO.h"
 #include "Switches.h"
@@ -271,6 +271,16 @@ static void ym2148LoadState(YM2148* midi)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#if 0
+IO Write #09
+         ym2148WriteCommand(...)
+
+IO Write #0E
+         ym2148WriteData(...)
+
+IO Read #0C
+        return ym2148ReadStatus(rm->ym2148);
+#endif
 
 
 typedef struct {
@@ -285,13 +295,13 @@ typedef struct {
     int sizeMask;
     MidiIO* ykIo; 
     UInt8 kbdLatch;
-} RomMapperSfg05;
+} RomMapperNet;
 
 static int deviceCount = 0;
 
-static void saveState(RomMapperSfg05* rm)
+static void saveState(RomMapperNet* rm)
 {
-    SaveState* state = saveStateOpenForWrite("mapperSfg05");
+    SaveState* state = saveStateOpenForWrite("mapperNet");
     
     saveStateSet(state, "kbdLatch", rm->kbdLatch);
     
@@ -301,9 +311,9 @@ static void saveState(RomMapperSfg05* rm)
     ym2148SaveState(rm->ym2148);
 }
 
-static void loadState(RomMapperSfg05* rm)
+static void loadState(RomMapperNet* rm)
 {
-    SaveState* state = saveStateOpenForRead("mapperSfg05");
+    SaveState* state = saveStateOpenForRead("mapperNet");
 
     rm->kbdLatch = (UInt8)saveStateGet(state, "kbdLatch", 0);
 
@@ -313,7 +323,7 @@ static void loadState(RomMapperSfg05* rm)
     ym2148LoadState(rm->ym2148);
 }
 
-static void destroy(RomMapperSfg05* rm)
+static void destroy(RomMapperNet* rm)
 {
     deviceCount--;
 
@@ -341,7 +351,7 @@ static void destroy(RomMapperSfg05* rm)
 
 #define YK01_KEY_START 37
 
-static UInt8 getKbdStatus(RomMapperSfg05* rm)
+static UInt8 getKbdStatus(RomMapperNet* rm)
 {
     UInt8 val = 0xff;
     int row;
@@ -360,7 +370,7 @@ static UInt8 getKbdStatus(RomMapperSfg05* rm)
     return val;
 }
 
-static UInt8 read(RomMapperSfg05* rm, UInt16 address) 
+static UInt8 read(RomMapperNet* rm, UInt16 address) 
 {
     if (address < 0x3ff0 || address >= 0x3ff8) {
     	return rm->romData[address & rm->sizeMask];
@@ -382,14 +392,14 @@ static UInt8 read(RomMapperSfg05* rm, UInt16 address)
     return 0xff;
 }
 
-static void reset(RomMapperSfg05* rm) 
+static void reset(RomMapperNet* rm) 
 {
     ym2151Reset(rm->ym2151);
     ym2148Reset(rm->ym2148);
     rm->kbdLatch = 0;
 }
 
-static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value) 
+static void write(RomMapperNet* rm, UInt16 address, UInt8 value) 
 {
     if (address < 0x3ff0 || address >= 0x3ff8) {
     	return;
@@ -422,28 +432,28 @@ static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value)
 }
 
 
-static void getDebugInfo(RomMapperSfg05* rm, DbgDevice* dbgDevice)
+static void getDebugInfo(RomMapperNet* rm, DbgDevice* dbgDevice)
 {
     ym2151GetDebugInfo(rm->ym2151, dbgDevice);
 }
 
-int romMapperSfg05Create(char* filename, UInt8* romData, 
-                            int size, int slot, int sslot, int startPage) 
+int romMapperNetCreate(char* filename, UInt8* romData, 
+                       int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
-    RomMapperSfg05* rm;
+    RomMapperNet* rm;
     int i;
     int pages = size / 0x2000;
-    
+
     if (size != 0x4000 && size != 0x8000) {
         return 0;
     }
 
-    rm = malloc(sizeof(RomMapperSfg05));
+    rm = malloc(sizeof(RomMapperNet));
 
-    rm->deviceHandle = deviceManagerRegister(pages == 2 ? ROM_YAMAHASFG01 : ROM_YAMAHASFG05, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevSfg05(), &dbgCallbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_YAMAHANET, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_BIOS, "Yamaha Net", &dbgCallbacks, rm);
 
     slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 

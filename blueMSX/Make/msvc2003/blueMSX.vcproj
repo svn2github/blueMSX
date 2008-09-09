@@ -880,6 +880,12 @@
 					RelativePath="..\..\Src\Memory\romMapperNationalFdc.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNet.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNet.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.c">
 				</File>
 				<File
