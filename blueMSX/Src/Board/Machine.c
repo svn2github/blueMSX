@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.67 $
+** $Revision: 1.68 $
 **
-** $Date: 2008-09-09 04:32:19 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -134,8 +134,7 @@
 #include "romMapperMatraINK.h"
 #include "romMapperNettouYakyuu.h"
 #include "romMapperNet.h"
-
-
+#include "romMapperJoyrexPsg.h"
 
 
 
@@ -1005,6 +1004,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         if (machine->slotInfo[i].romType == ROM_MSXAUDIODEV) {
             success &= romMapperMsxAudioCreate(NULL, NULL, 0, 0, 0, 0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_JOYREXPSG) {
+            success &= romMapperJoyrexPsgCreate();
             continue;
         }
 

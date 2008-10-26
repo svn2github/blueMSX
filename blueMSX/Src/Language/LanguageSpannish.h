@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageSpannish.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2008-05-19 19:56:59 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
+    ls->menuJoyrexPsg           = "Cartucho Joyrex PSG"; // New in 2.9
     ls->menuCartSCCPlus         = "Cartucho SCC-I";
     ls->menuCartSCC             = "Cartucho SCC";
     ls->menuCartFMPac           = "Cartucho FM-PAC";

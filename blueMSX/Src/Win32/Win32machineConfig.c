@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32machineConfig.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2008-09-09 04:32:20 $
+** $Date: 2008-10-26 19:48:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -614,6 +614,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
         editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC ||
+        editSlotInfo.romType == ROM_JOYREXPSG ||
         editSlotInfo.romType == ROM_SVI80COL || editSlotInfo.romType == ROM_SVI328PRN ||
         editSlotInfo.romType == ROM_SVI727 ||
         editSlotInfo.romType == ROM_MSXPRN || editSlotInfo.romType == ROM_SVI328RS232) {
@@ -760,6 +761,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MSXMIDI:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
+    case ROM_JOYREXPSG:
     case ROM_TURBORTIMER:
     case ROM_TURBORIO:
     case ROM_SVI328FDC:
@@ -922,7 +924,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE &&
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
-        romType != ROM_MSXMIDI && romType != ROM_MSXPRN &&
+        romType != ROM_MSXMIDI && romType != ROM_MSXPRN && romType != ROM_JOYREXPSG &&
         romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
         romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
@@ -946,7 +948,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
         romType == ROM_NMS8280DIGI ||
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
-        romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM ||
+        romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM || romType == ROM_JOYREXPSG ||
         romType == ROM_KANJI12 || romType == ROM_JISYO ||
         romType == ROM_SVI328FDC || romType == ROM_SVI80COL || romType == ROM_SVI727 ||
         romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232)
@@ -1339,6 +1341,7 @@ static void setEditControls(HWND hDlg)
     case ROM_TURBORIO:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
+    case ROM_JOYREXPSG:
     case ROM_SVI328FDC:
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
@@ -1400,6 +1403,7 @@ static RomType romTypeList[] = {
     ROM_TURBORPCM,
     ROM_YAMAHASFG01,
     ROM_YAMAHASFG05,
+    ROM_JOYREXPSG,
     
     ROM_GAMEREADER,
     ROM_NOWIND,

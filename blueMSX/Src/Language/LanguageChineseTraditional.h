@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageChineseTraditional.h,v $
 **
-** $Revision: 1.50 $
+** $Revision: 1.51 $
 **
-** $Date: 2008-05-19 19:56:58 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
+    ls->menuJoyrexPsg           = "Joyrex PSG 卡匣"; // New in 2.9
     ls->menuCartSCCPlus         = "SCC + 卡匣";
     ls->menuCartSCC             = "SCC 卡匣";
     ls->menuCartFMPac           = "FM-PAC 卡匣";

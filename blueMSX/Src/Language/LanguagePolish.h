@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguagePolish.h,v $
 **
-** $Revision: 1.47 $
+** $Revision: 1.48 $
 **
-** $Date: 2008-05-19 19:56:58 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
+    ls->menuJoyrexPsg           = "Joyrex PSG Cartridge"; // New in 2.9
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC-I Kartrid¿";
     ls->menuCartFMPac           = "Kartrid¿ FM-PAC";

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFinnish.h,v $
 **
-** $Revision: 1.57 $
+** $Revision: 1.58 $
 **
-** $Date: 2008-05-19 19:56:58 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -115,6 +115,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";           // New in 2.7
     ls->menuCartWaveSCSI        = "WAVE-SCSI";           // New in 2.7
     ls->menuCartGoudaSCSI       = "Gouda SCSI";          // New in 2.7
+    ls->menuJoyrexPsg           = "Joyrex PSG Moduli"; // New in 2.9
     ls->menuCartSCC             = "SCC Moduli";
     ls->menuCartSCCPlus         = "SCC-I Moduli";
     ls->menuCartFMPac           = "FM-PAC Moduli";

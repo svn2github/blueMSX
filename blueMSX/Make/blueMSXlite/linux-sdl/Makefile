@@ -181,6 +181,7 @@ SOURCE_FILES += romMapperGoudaSCSI.c
 SOURCE_FILES += romMapperHalnote.c
 SOURCE_FILES += romMapperHarryFox.c
 SOURCE_FILES += romMapperHolyQuran.c
+SOURCE_FILES += romMapperJoyrexPsg.c
 SOURCE_FILES += romMapperKanji.c
 SOURCE_FILES += romMapperKanji12.c
 SOURCE_FILES += romMapperKoei.c

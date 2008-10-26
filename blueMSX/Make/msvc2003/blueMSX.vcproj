@@ -793,6 +793,12 @@
 					RelativePath="..\..\Src\Memory\romMapperHolyQuran.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperKanji.c">
 				</File>
 				<File

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageDutch.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2008-05-20 14:05:14 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -113,6 +113,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuCartMegaSCSI        = "MEGA-SCSI";
     ls->menuCartWaveSCSI        = "WAVE-SCSI";
     ls->menuCartGoudaSCSI       = "Gouda SCSI";
+    ls->menuJoyrexPsg           = "Joyrex PSG Cartridge"; // New in 2.9
     ls->menuCartSCC             = "SCC Cartridge";
     ls->menuCartSCCPlus         = "SCC-I Cartridge";
     ls->menuCartFMPac           = "FM-PAC Cartridge";

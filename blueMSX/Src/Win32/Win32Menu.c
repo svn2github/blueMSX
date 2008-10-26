@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.84 $
+** $Revision: 1.85 $
 **
-** $Date: 2008-08-31 06:13:13 $
+** $Date: 2008-10-26 19:48:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -149,6 +149,7 @@
 #define ID_FILE_CART_ESESCC512          41106
 #define ID_FILE_CART_GOUDASCSI          41107
 #define ID_FILE_CART_MEGAFLASHROMSCC    41108
+#define ID_FILE_CART_JOYREXPSG          41109
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -248,6 +249,7 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_SCCEXPANDED) == 0)    return langRomTypeSccExtended();
     if (strcmp(fileName, CARTNAME_SCC) == 0)            return langMenuCartSCC();
     if (strcmp(fileName, CARTNAME_SCCPLUS) == 0)        return langMenuCartSCCPlus();
+    if (strcmp(fileName, CARTNAME_JOYREXPSG) == 0)      return langMenuCartJoyrexPsg();
     if (strcmp(fileName, CARTNAME_FMPAC) == 0)          return langMenuCartFMPac();
     if (strcmp(fileName, CARTNAME_PAC) == 0)            return langMenuCartPac();
     if (strcmp(fileName, CARTNAME_SONYHBI55) == 0)      return langMenuCartHBI55();
@@ -472,6 +474,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     }
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_JOYREXPSG, langMenuCartJoyrexPsg());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCC, langMenuCartSCC());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SCCPLUS, langMenuCartSCCPlus());
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuEseSCC, langMenuCartEseSCC());
@@ -1521,6 +1524,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_SCCPLUS:
             insertCartridge(pProperties, i, CARTNAME_SCCPLUS, NULL, ROM_SCCPLUS, 0);
+            return 1;
+        case ID_FILE_CART_JOYREXPSG:
+            insertCartridge(pProperties, i, CARTNAME_JOYREXPSG, NULL, ROM_JOYREXPSG, 0);
             return 1;
         case ID_FILE_CART_FMPAC:
             insertCartridge(pProperties, i, CARTNAME_FMPAC, NULL, ROM_FMPAC, 0);

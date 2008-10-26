@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.61 $
+** $Revision: 1.62 $
 **
-** $Date: 2008-09-09 04:32:19 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -103,6 +103,7 @@
 #include "romMapperMatraINK.h"
 #include "romMapperNettouYakyuu.h"
 #include "romMapperNet.h"
+#include "romMapperJoyrexPsg.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -188,6 +189,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         success &= romMapperGameReaderCreate(cartNo, slot, sslot);
         break;
 #endif
+
+    case ROM_JOYREXPSG:
+        success &= romMapperJoyrexPsgCreate();
+        break;
 
     case ROM_GIDE:
         success &= romMapperGIdeCreate(cartNo);

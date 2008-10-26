@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2008-05-15 10:23:42 $
+** $Date: 2008-10-26 19:48:18 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,7 @@
 #define CARTNAME_BEERIDE     "Beer IDE"
 #define CARTNAME_GIDE        "GIDE"
 #define CARTNAME_GOUDASCSI   "Gouda SCSI"
+#define CARTNAME_JOYREXPSG   "Joyrex PSG"
 #define CARTNAME_MEGASCSI128 "128kB MEGA-SCSI"
 #define CARTNAME_MEGASCSI256 "256kB MEGA-SCSI"
 #define CARTNAME_MEGASCSI512 "512kB MEGA-SCSI"
