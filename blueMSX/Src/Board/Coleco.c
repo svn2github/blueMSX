@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Coleco.c,v $
 **
-** $Revision: 1.49 $
+** $Revision: 1.50 $
 **
-** $Date: 2008-04-18 04:09:54 $
+** $Date: 2008-11-23 20:26:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -105,6 +105,7 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 		else if (inputEventGetState(EC_COLECO2_9))    value |= 0x0B;
 		else if (inputEventGetState(EC_COLECO2_STAR)) value |= 0x09;
 		else if (inputEventGetState(EC_COLECO2_HASH)) value |= 0x06;
+        else                                          value |= 0x0f;
     }
     else {
 		if      (inputEventGetState(EC_COLECO1_0))    value |= 0x0A;
@@ -119,6 +120,7 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 		else if (inputEventGetState(EC_COLECO1_9))    value |= 0x0B;
 		else if (inputEventGetState(EC_COLECO1_STAR)) value |= 0x09;
 		else if (inputEventGetState(EC_COLECO1_HASH)) value |= 0x06;
+        else                                          value |= 0x0f;
 	}
 
     return boardCaptureUInt8(4 + (ioPort & 2), value);

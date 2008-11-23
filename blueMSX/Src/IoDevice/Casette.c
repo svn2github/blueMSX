@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Casette.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-09-09 04:40:32 $
+** $Date: 2008-11-23 20:26:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,7 +25,6 @@
 **
 ******************************************************************************
 */
-#include "Board.h"
 #include "Casette.h"
 #include "Led.h"
 #include <stdio.h>
@@ -57,26 +56,6 @@ static char*  ramImageBuffer = NULL;
 static int    ramImageSize = 0;
 static int    ramImagePos = 0;
 static int    rewindNextInsert = 0;
-
-typedef struct {
-    char chunkId[4];
-    UInt32 chunkSize;
-    char format[4];
-
-    char subChunk1Id[4];
-    UInt32 subChunk1Size;
-    UInt16 audioFormat;
-    UInt16 numChannels;
-    UInt32 sampleRate;
-    UInt32 byteRate;
-    UInt16 blockAlign;
-    UInt16 bitsPerSample;
-
-    char subChunk2Id[4];
-    UInt32 subChunk2Size;
-} TapeWavHeader;
-
-static TapeWavHeader tapeWavHeader;
 
 static char* stripPath(char* filename) {
     char* ptr = filename + strlen(filename) - 1;
@@ -123,48 +102,13 @@ void tapeSaveState() {
     saveStateClose(state);
 }
 
-static UInt64 tapeCyclesStart;
-static UInt64 tapeCyclesNow;
-static UInt64 tapeCyclesElapsed;
-static int tapeDataSize;
-static int tapeCenter;
-static int tapeDivval;
-static int tapeChannels;
-
 UInt8 tapeRead(UInt8* value) 
 {
-    UInt32 data;
-    int count;
-
     if (ramImageBuffer != NULL) {
         if (ramImagePos < ramImageSize) {
-
-            if (tapeFormat == TAPE_WAV) {
-                data = 0;
-                if (tapeCyclesStart == 0) {
-                    ramImagePos = sizeof(tapeWavHeader);
-                    memcpy(&data, &ramImageBuffer[ramImagePos], tapeDataSize);
-                    ramImagePos += tapeDataSize;
-                    tapeCyclesStart = boardSystemTime64();
-                }
-                else {
-                    tapeCyclesNow = boardSystemTime64();
-                    tapeCyclesElapsed = (tapeCyclesNow - tapeCyclesStart);
-
-                    count = (tapeCyclesElapsed / tapeDivval);
-                    ramImagePos = sizeof(tapeWavHeader) + tapeDataSize * tapeChannels * count;
-                    if (ramImagePos < ramImageSize) {
-                        memcpy(&data, &ramImageBuffer[ramImagePos], tapeDataSize);
-                    }
-                }
-                *value = (data < tapeCenter) ? 0 : 1;
-                return 1;
-            }
-            else {
-                *value = ramImageBuffer[ramImagePos++];
-                ledSetCas(1);
-                return 1;
-            }
+            *value = ramImageBuffer[ramImagePos++];
+            ledSetCas(1);
+            return 1;
         }
         return 0;
     }
@@ -172,59 +116,24 @@ UInt8 tapeRead(UInt8* value)
     return 0;
 }
 
-static UInt8 tapeWriteBefore;
-
 UInt8 tapeWrite(UInt8 value) 
 {
-    int count;
-    int level;
-    int x;
-
     if (ramImageBuffer != NULL) {
-
-    	if (tapeFormat == TAPE_WAV) {
-            if (value & 0x01 != tapeWriteBefore) {
-    	        tapeWriteBefore = value & 0x01;
-                if (ramImagePos >= ramImageSize) {
-                    char* newBuf = realloc(ramImageBuffer, ramImageSize + tapeDataSize * tapeChannels * 1024);
-                    if (newBuf) {
-                        ramImageBuffer = newBuf;
-                        memset(ramImageBuffer + ramImageSize, 0, tapeDataSize * tapeChannels * 1024);
-                        ramImageSize += tapeDataSize * tapeChannels * 1024;
-                    }
-                }
-                tapeCyclesNow = boardSystemTime64();
-                tapeCyclesElapsed = tapeCyclesNow - tapeCyclesStart;
-                tapeCyclesStart = tapeCyclesNow;
-                count = tapeCyclesElapsed / tapeDivval;
-
-                level = (tapeWriteBefore) ? 128 + 16 : 128 - 16;
-
-                while (count) {
-                    x = (count >= ramImageSize) ? ramImageSize : count;
-                    memset(&ramImageBuffer[count], level, x);
-                    count -= x;
-                }
+        if (ramImagePos >= ramImageSize) {
+            char* newBuf = realloc(ramImageBuffer, ramImageSize + 128);
+            if (newBuf) {
+                ramImageBuffer = newBuf;
+                memset(ramImageBuffer + ramImageSize, 0, 128);
+                ramImageSize += 128;
             }
-    	}
-
-    	else {
-            if (ramImagePos >= ramImageSize) {
-                char* newBuf = realloc(ramImageBuffer, ramImageSize + 128);
-                if (newBuf) {
-                    ramImageBuffer = newBuf;
-                    memset(ramImageBuffer + ramImageSize, 0, 128);
-                    ramImageSize += 128;
-                }
-            }
-
-            if (ramImagePos < ramImageSize) {
-                ramImageBuffer[ramImagePos++] = value;
-                ledSetCas(1);
-                return 1;
-            }
-            return 0;
         }
+
+        if (ramImagePos < ramImageSize) {
+            ramImageBuffer[ramImagePos++] = value;
+            ledSetCas(1);
+            return 1;
+        }
+        return 0;
     }
 
     return 0;
@@ -232,7 +141,7 @@ UInt8 tapeWrite(UInt8 value)
 
 UInt8 tapeReadHeader() 
 {    
-    if ((ramImageBuffer != NULL) || (tapeFormat != TAPE_WAV)) {
+    if (ramImageBuffer != NULL) {
         UInt8 buf[32];
         int i;
         for (i = 0; i < tapeHeaderSize; i++) {
@@ -255,7 +164,7 @@ UInt8 tapeReadHeader()
 
 UInt8 tapeWriteHeader() 
 {
-    if ((ramImageBuffer != NULL) || (tapeFormat != TAPE_WAV)) {
+    if (ramImageBuffer != NULL) {
         int i;
         
         for (i = 0; i < tapeHeaderSize; i++) {
@@ -351,68 +260,55 @@ int tapeInsert(char *name, const char *fileInZipFile)
         }
     }
     
-    if (rewindNextInsert && pProperties->cassette.rewindAfterInsert) ramImagePos = 0;
-    rewindNextInsert = 0;
+    if (rewindNextInsert&&pProperties->cassette.rewindAfterInsert) ramImagePos=0;
+    rewindNextInsert=0;
 
     if (ramImageBuffer != NULL) {
+        UInt8* ptr = ramImageBuffer + ramImageSize - 17;
+        int cntFMSXDOS = 0;
+        int cntFMSX98  = 0;
+        int cntSVICAS  = 0;
 
-        if ((memcmp(ramImageBuffer, "RIFF", 4) == 0) && (memcmp(ramImageBuffer + 8, "WAVE", 4) == 0)) {
-            memcpy(&tapeWavHeader, ramImageBuffer, sizeof(tapeWavHeader));
-            tapeDivval = boardFrequency() / tapeWavHeader.sampleRate;
-            tapeDataSize = tapeWavHeader.bitsPerSample / 8;
-            tapeChannels = tapeWavHeader.numChannels;
-            tapeCenter = 0x01 << ((tapeDataSize * 8) - 1);
-            tapeCyclesStart = 0;
-            tapeFormat = TAPE_WAV;
+        while (ptr >= ramImageBuffer) {
+            if (!memcmp(ptr, hdrFMSXDOS, sizeof(hdrFMSXDOS))) {
+                cntFMSXDOS++;
+            }
+            if (!memcmp(ptr, hdrFMSX98, sizeof(hdrFMSX98))) {
+                cntFMSX98++;
+            }
+            if (!memcmp(ptr, hdrSVICAS, sizeof(hdrSVICAS))) {
+                cntSVICAS++;
+            }
+            ptr--;
+        }
+
+        if (cntSVICAS > cntFMSXDOS && cntSVICAS > cntFMSX98) {
+            tapeFormat     = TAPE_SVICAS;
+            tapeHeader     = hdrSVICAS;
+            tapeHeaderSize = sizeof(hdrSVICAS);
+        }
+        else if (cntFMSXDOS >= cntFMSX98) {
+            tapeFormat     = TAPE_FMSXDOS;
+            tapeHeader     = hdrFMSXDOS;
+            tapeHeaderSize = sizeof(hdrFMSXDOS);
         }
         else {
-            UInt8* ptr = ramImageBuffer + ramImageSize - 17;
-            int cntFMSXDOS = 0;
-            int cntFMSX98  = 0;
-            int cntSVICAS  = 0;
-            	
-            while (ptr >= ramImageBuffer) {
-                if (!memcmp(ptr, hdrFMSXDOS, sizeof(hdrFMSXDOS))) {
-                    cntFMSXDOS++;
-                }
-                if (!memcmp(ptr, hdrFMSX98, sizeof(hdrFMSX98))) {
-                    cntFMSX98++;
-                }
-                if (!memcmp(ptr, hdrSVICAS, sizeof(hdrSVICAS))) {
-                    cntSVICAS++;
-                }
-                ptr--;
-            }
-    
-            if (cntSVICAS > cntFMSXDOS && cntSVICAS > cntFMSX98) {
-                tapeFormat     = TAPE_SVICAS;
-                tapeHeader     = hdrSVICAS;
-                tapeHeaderSize = sizeof(hdrSVICAS);
-            }
-            else if (cntFMSXDOS >= cntFMSX98) {
-                tapeFormat     = TAPE_FMSXDOS;
-                tapeHeader     = hdrFMSXDOS;
-                tapeHeaderSize = sizeof(hdrFMSXDOS);
-            }
-            else {
-                tapeFormat     = TAPE_FMSX98AT;
-                tapeHeader     = hdrFMSX98;
-                tapeHeaderSize = sizeof(hdrFMSX98);
-            }
+            tapeFormat     = TAPE_FMSX98AT;
+            tapeHeader     = hdrFMSX98;
+            tapeHeaderSize = sizeof(hdrFMSX98);
         }
-
     }
 
     if (ramImagePos > ramImageSize) {
         ramImagePos = ramImageSize;
     }
 
-    return (ramImageBuffer != NULL);
+    return ramImageBuffer != NULL;
 }
 
 int tapeIsInserted()
 {
-    return (ramImageBuffer != NULL);
+    return ramImageBuffer != NULL;
 }
 
 int tapeSave(char *name, TapeFormat format)
@@ -500,7 +396,7 @@ TapeContent* tapeGetContent(int* count)
 
     *count = 0;
 
-    if ((ramImageBuffer == NULL) || (tapeFormat == TAPE_WAV)) {
+    if (ramImageBuffer == NULL) {
         return tapeContent;
     }
 
@@ -562,5 +458,5 @@ void tapeSetCurrentPos(int pos)
 
 void tapeRewindNextInsert(void)
 {
-	rewindNextInsert = 1;
+	rewindNextInsert=1;
 }

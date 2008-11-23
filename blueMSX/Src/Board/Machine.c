@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Machine.c,v $
 **
-** $Revision: 1.68 $
+** $Revision: 1.69 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2008-11-23 20:26:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -135,6 +135,7 @@
 #include "romMapperNettouYakyuu.h"
 #include "romMapperNet.h"
 #include "romMapperJoyrexPsg.h"
+#include "romMapperOpcodePsg.h"
 
 
 
@@ -1009,6 +1010,11 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         if (machine->slotInfo[i].romType == ROM_JOYREXPSG) {
             success &= romMapperJoyrexPsgCreate();
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_OPCODEPSG) {
+            success &= romMapperOpcodePsgCreate();
             continue;
         }
 

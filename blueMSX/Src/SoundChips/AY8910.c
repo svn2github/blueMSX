@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AY8910.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2008-11-23 20:26:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -400,7 +400,7 @@ static void updateRegister(AY8910* ay8910, UInt8 regIndex, UInt8 data)
     }
 }
 
-#if 0
+#if 1
 extern int framecounter;
 int   curFramecounter = 0;
 #endif
@@ -408,7 +408,7 @@ int   curFramecounter = 0;
 void ay8910WriteData(AY8910* ay8910, UInt16 ioPort, UInt8 data)
 {
 #if 0
-    if (ay8910->address <= 13) {
+    if (ay8910->address < 2 || ay8910->address == 8) {
         if (framecounter > curFramecounter) {
             int delta = framecounter - curFramecounter;
             printf("    dw  $10%.2x     ; Delay %d frames\n", delta, delta);

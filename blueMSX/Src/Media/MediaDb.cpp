@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2008-11-23 20:26:12 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -650,6 +650,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MSXPRN:      return langRomTypeMsxPrinter();
     case ROM_TURBORPCM:   return langRomTypeTurborPcm();
     case ROM_JOYREXPSG:   return "Joyrex PSG";
+    case ROM_OPCODEPSG:   return "Opcode PSG";
     case ROM_GAMEREADER:  return langRomTypeGameReader();
     case ROM_SUNRISEIDE:  return langRomTypeSunriseIde();
     case ROM_BEERIDE:     return langRomTypeBeerIde();
@@ -800,6 +801,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MSXPRN:      return "MSXPRN";
     case ROM_TURBORPCM:   return "TURBOR PCM";
     case ROM_JOYREXPSG:   return "JOYREX PSG";
+    case ROM_OPCODEPSG:   return "OPCODE PSG";
     case ROM_GAMEREADER:  return "GAMEREADER";
     case ROM_SUNRISEIDE:  return "SUNRISEIDE";
     case ROM_BEERIDE:     return "BEER IDE";

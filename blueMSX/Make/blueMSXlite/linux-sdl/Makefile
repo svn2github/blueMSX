@@ -214,6 +214,7 @@ SOURCE_FILES += romMapperNms8280VideoDa.c
 SOURCE_FILES += romMapperNormal.c
 SOURCE_FILES += romMapperNoWind.c
 SOURCE_FILES += romMapperObsonet.c
+SOURCE_FILES += romMapperOpcodePsg.c
 SOURCE_FILES += romMapperPAC.c
 SOURCE_FILES += romMapperPanasonic.c
 SOURCE_FILES += romMapperPhilipsFdc.c

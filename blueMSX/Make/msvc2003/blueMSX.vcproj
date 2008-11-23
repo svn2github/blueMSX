@@ -913,6 +913,12 @@
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.c">
 				</File>
 				<File
