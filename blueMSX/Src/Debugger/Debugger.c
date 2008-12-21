@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-03-30 18:38:39 $
+** $Date: 2008-12-21 08:38:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -33,7 +33,7 @@
 #include "Board.h"
 #include <stdlib.h>
 
-struct Debugger {
+struct BlueDebugger {
     DebuggerEvent onEmulatorStart;
     DebuggerEvent onEmulatorStop;
     DebuggerEvent onEmulatorPause;
@@ -52,7 +52,7 @@ struct DbgSnapshot {
     DbgDevice* dbgDevice[MAX_DEVICES];
 };
 
-static Debugger* debuggerList[MAX_DEBUGGERS];
+static BlueDebugger* debuggerList[MAX_DEBUGGERS];
 static DbgState  dbgState = DBG_STOPPED;
 
 static void onDefault(void* ref) {
@@ -64,7 +64,7 @@ static void onDefTrace(void* ref, const char* dummy) {
 static void onDefSetBp(void* ref, UInt16 d1, UInt16 d2, UInt16 d3) {
 }
 
-Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
+BlueDebugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorStop,
                          DebuggerEvent onEmulatorPause,
                          DebuggerEvent onEmulatorResume,
@@ -73,7 +73,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerSetBp onDebugSetBp,
                          void* ref)
 {
-    Debugger* debugger = malloc(sizeof(Debugger));
+    BlueDebugger* debugger = malloc(sizeof(BlueDebugger));
     int i;
 
     debugger->onEmulatorStart  = onEmulatorStart  ? onEmulatorStart  : onDefault;
@@ -96,7 +96,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
 }
 
 
-void debuggerDestroy(Debugger* debugger)
+void debuggerDestroy(BlueDebugger* debugger)
 {
     int i;
 

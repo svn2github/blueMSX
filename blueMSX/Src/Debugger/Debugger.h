@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.21 $
+** $Revision: 1.22 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-12-21 08:38:52 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-typedef struct Debugger    Debugger;
+typedef struct BlueDebugger    BlueDebugger;
 typedef struct DbgSnapshot DbgSnapshot;
 typedef struct DbgDevice   DbgDevice;
 
@@ -91,7 +91,7 @@ typedef struct {
     } port[1];
 } DbgIoPorts;
 
-Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
+BlueDebugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerEvent onEmulatorStop,
                          DebuggerEvent onEmulatorPause,
                          DebuggerEvent onEmulatorResume,
@@ -100,7 +100,7 @@ Debugger* debuggerCreate(DebuggerEvent onEmulatorStart,
                          DebuggerSetBp onDebugSetBp,
                          void* ref);
 
-void debuggerDestroy(Debugger* debugger);
+void debuggerDestroy(BlueDebugger* debugger);
 
 DbgSnapshot*     dbgSnapshotCreate();
 void             dbgSnapshotDestroy(DbgSnapshot* dbgSnapshot);
