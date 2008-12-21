@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.17 $
 **
-** $Date: 2008-03-31 19:42:22 $
+** $Date: 2008-12-21 08:49:50 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -83,9 +83,11 @@ static char* romTypeToString(RomType romType) {
     case ROM_F4DEVICE:    return "F4 Device Normal";
     case ROM_F4INVERTED:  return "F4 Device Inverted";
     case ROM_TURBORTIMER: return "Turbo-R Timer";
+	/*
     case AUDIO_MOONSOUND: return "Moonsound Audio";
     case AUDIO_Y8950:     return "Y8950 Audio";
     case AUDIO_YM2413:    return "YM2413 Audio";
+	*/
     case ROM_KOEI:        return "Koei (SRAM)";
     case ROM_BASIC:       return "Basic ROM";
     case ROM_HALNOTE:     return "Halnote";
@@ -176,9 +178,11 @@ static char* romTypeToShortString(RomType romType) {
     case ROM_F4DEVICE:    return "F4NORMAL";
     case ROM_F4INVERTED:  return "F4INV";
     case ROM_TURBORTIMER: return "TURBORTMR";
+	/*
     case AUDIO_MOONSOUND: return "MOONSOUND";
     case AUDIO_Y8950:     return "Y8950";
     case AUDIO_YM2413:    return "YM2413";
+	*/
     case ROM_KOEI:        return "KOEI";
     case ROM_BASIC:       return "BASIC";
     case ROM_HALNOTE:     return "HALNOTE";
