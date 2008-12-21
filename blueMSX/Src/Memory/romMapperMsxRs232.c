@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxRs232.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-03-31 19:42:22 $
+** $Date: 2008-12-21 08:40:24 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -238,11 +238,11 @@ static void writeIo(MSXRs232* msxRs232, UInt16 ioPort, UInt8 value)
 ** I8251 callbacks
 ******************************************
 */
-static int transmit(MSXRs232* msxRs232, UInt8 value) {
+static int rs232transmit(MSXRs232* msxRs232, UInt8 value) {
     return 0;
 }
 
-static int signal(MSXRs232* msxRs232) {
+static int rs232signal(MSXRs232* msxRs232) {
     return 0;
 }
 
@@ -356,7 +356,7 @@ int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, 
         slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     }
 
-    msxRs232->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 
+    msxRs232->i8251 = i8251Create(rs232transmit, rs232signal, setDataBits, setStopBits, setParity, 
                                  setRxReady, setDtr, setRts, getDtr, getRts, msxRs232);
 
     msxRs232->i8254 = i8254Create(1843200, pitOut0, pitOut1, pitOut2, msxRs232);
