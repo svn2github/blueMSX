@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.h,v $
 **
-** $Revision: 1.48 $
+** $Revision: 1.49 $
 **
-** $Date: 2008-12-21 08:42:54 $
+** $Date: 2008-12-22 21:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -209,8 +209,8 @@ const char* mediaDbGetPrettyString(MediaType* mediaType);
 
 void mediaDbSetDefaultRomType(RomType romType);
 RomType mediaDbStringToType(const char* romName);
-static char* romTypeToString(RomType romType);
-static char* romTypeToShortString(RomType romType);
+const char* romTypeToString(RomType romType);
+const char* romTypeToShortString(RomType romType);
 
 int romTypeIsRom(RomType romType);
 int romTypeIsMegaRom(RomType romType);

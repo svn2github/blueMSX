@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2008-12-21 08:42:54 $
+** $Date: 2008-12-22 21:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -539,7 +539,7 @@ extern MediaType* mediaDbLookup(MediaDb* mediaDb, const void *buffer, int size)
     return NULL;
 }
 
-extern "C" static char* romTypeToString(RomType romType)
+extern "C" const char* romTypeToString(RomType romType)
 {
     switch (romType) {    
     case ROM_STANDARD:    return langRomTypeStandard();
@@ -692,7 +692,7 @@ extern "C" static char* romTypeToString(RomType romType)
     return langTextUnknown();
 }
 
-extern "C" static char* romTypeToShortString(RomType romType) 
+extern "C" const char* romTypeToShortString(RomType romType) 
 {
     switch (romType) {
     case ROM_STANDARD:    return "STANDARD";

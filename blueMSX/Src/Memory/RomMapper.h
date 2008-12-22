@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/RomMapper.h,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-12-21 08:49:50 $
+** $Date: 2008-12-22 21:33:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,7 @@
 #include "MediaDb.h"
 
 
-static char* romTypeToString(RomType romType) {
+const char* romTypeToString(RomType romType) {
     switch (romType) {    
     case ROM_STANDARD:    return "Standard";
     case ROM_MSXDOS2:     return "MSXDOS 2";
@@ -128,7 +128,7 @@ static char* romTypeToString(RomType romType) {
     return "unknown";
 }
 
-static char* romTypeToShortString(RomType romType) {
+const char* romTypeToShortString(RomType romType) {
     switch (romType) {    
     case ROM_STANDARD:    return "STANDARD";
     case ROM_MSXDOS2:     return "MSXDOS2";
