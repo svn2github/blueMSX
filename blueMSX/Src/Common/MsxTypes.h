@@ -46,7 +46,7 @@ extern "C" {
 /* So far, only support for MSVC types
  */
 typedef unsigned char    UInt8;
-#ifndef __APPLE__
+#ifndef __CARBON__
 typedef unsigned short   UInt16;
 typedef unsigned int     UInt32;
 typedef unsigned __int64 UInt64;
