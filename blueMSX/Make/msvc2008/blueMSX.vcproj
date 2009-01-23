@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9.00"
 	Name="blueMSX"
 	ProjectGUID="{4AE8471F-8983-42BC-9ACB-7420F79C82C2}"
 	RootNamespace="fMSXwin"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -41,8 +42,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
-				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include&quot;;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
+				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -63,15 +64,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib comsuppwd.lib"
+				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
-				GenerateManifest="false"
-				IgnoreDefaultLibraryNames="LIBCMT.lib libc.lib"
+				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/blueMSX.pdb"
 				GenerateMapFile="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -91,9 +93,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -128,8 +127,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
-				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include&quot;;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
+				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
@@ -153,13 +152,14 @@
 				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib comsuppw.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
-				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -179,9 +179,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -213,7 +210,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\Input"
-				PreprocessorDefinitions="_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;FMSX;PROPERTIES_LOCAL_INI_FILE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;FMSX;PROPERTIES_LOCAL_INI_FILE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -231,16 +228,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib comsuppw.lib"
+				AdditionalDependencies="dxguid.lib winmm.lib ComCtl32.Lib ddraw.lib dsound.lib dinput.lib ..\..\Src\Unzip\zlibstat.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
-				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -260,9 +258,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -299,8 +294,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
-				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_CONSOLE;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include&quot;;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
+				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_CONSOLE;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
@@ -323,13 +318,15 @@
 				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib comsuppw.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
-				GenerateManifest="false"
+				AdditionalLibraryDirectories="C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -349,9 +346,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -386,8 +380,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
-				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY; NO_TOOL_SUPPORT;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include&quot;;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
+				PreprocessorDefinitions="OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY; NO_TOOL_SUPPORT"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
@@ -412,13 +406,14 @@
 				AdditionalDependencies="dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib comsuppw.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="1"
-				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -438,9 +433,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -472,8 +464,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
-				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;&quot;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include&quot;;&quot;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl&quot;"
+				PreprocessorDefinitions="OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME=\&quot;Canned\&quot;;SINGLE_MACHINE=\&quot;Canned\&quot;;NO_DEFAULT_THEME;NO_FILE_HISTORY"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -495,15 +487,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib comsuppwd.lib"
+				AdditionalDependencies="wsock32.lib ws2_32.lib dxguid.lib Vfw32.lib winmm.lib ComCtl32.Lib shlwapi.lib ddraw.lib dsound.lib dinput.lib ..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib"
 				OutputFile="$(OutDir)/blueMSX.exe"
 				LinkIncremental="2"
-				GenerateManifest="false"
-				IgnoreDefaultLibraryNames="LIBCMT.lib libc.lib"
+				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/blueMSX.pdb"
 				GenerateMapFile="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -523,9 +516,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -1114,6 +1104,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperKanji.c"
 					>
 				</File>
@@ -1230,6 +1228,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNet.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.c"
 					>
 				</File>
@@ -1247,6 +1261,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.h"
 					>
 				</File>
 				<File
@@ -2273,54 +2295,6 @@
 			<File
 				RelativePath="..\..\Src\Resources\bluemsx.manifest"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Console|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Canned|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Canned|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\Src\Resources\blueMSX.rc"
@@ -2392,6 +2366,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\BuildInfo\build_number.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\changes.txt"
+				>
+			</File>
+			<File
+				RelativePath="..\..\license.txt"
 				>
 			</File>
 			<File
@@ -2816,10 +2798,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Arch\ArchInput.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Src\Arch\ArchKeyStorage.h"
 				>
 			</File>
 			<File
