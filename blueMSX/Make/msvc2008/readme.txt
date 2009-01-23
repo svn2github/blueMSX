@@ -35,6 +35,11 @@ contains atlthunk.lib but I understand it is only needed for 64-bit compatibilit
 if you get linker errors about "ConvertBSTRToString"
 - add to additional dependencies: comsuppw.lib to release builds, and comsuppwd.lib to debug build
 
+if yet get a linker error like "Fatal error CVT1100: duplicate resource. type:MANIFEST, name:1, language:0×0409 CVTRES”)"
+- comment out the manifest line in blueMSX.rc like:
+	// 1                       24      MOVEABLE PURE   "bluemsx.manifest"
 
--- 
+if you get a linker error "LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library"
+- add to Linker->command line: /nodefaultlib:"libcmt.lib"
+
 Comments by Jan Wilmans, Jan 23, 2009, check sourceforge for email address
