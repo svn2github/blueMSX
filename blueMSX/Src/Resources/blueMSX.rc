@@ -54,7 +54,7 @@ IDB_CLASSIC_BTHELP      BITMAP                  "classic/buttonHelp.bmp"
 // Manifest
 //
 
-1                       24      MOVEABLE PURE   "bluemsx.manifest"
+//1                       24      MOVEABLE PURE   "bluemsx.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //

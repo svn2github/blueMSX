@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.24 $
+** $Revision: 1.25 $
 **
-** $Date: 2008-04-03 02:31:55 $
+** $Date: 2009-01-23 19:05:03 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,7 +41,7 @@
 struct ToolInfo {
     char description[32];
     HINSTANCE library;
-    Debugger* debugger;
+    BlueDebugger* debugger;
 
     struct {
         NotifyFn  show;
