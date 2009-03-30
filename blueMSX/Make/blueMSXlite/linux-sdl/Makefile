@@ -148,6 +148,7 @@ SOURCE_FILES += ioapi.c
 SOURCE_FILES += zip.c
 
 SOURCE_FILES += AmdFlash.c
+SOURCE_FILES += AtmelPerom.c
 SOURCE_FILES += DeviceManager.c
 SOURCE_FILES += IoPort.c
 SOURCE_FILES += MegaromCartridge.c

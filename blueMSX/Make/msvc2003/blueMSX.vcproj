@@ -670,6 +670,12 @@
 					RelativePath="..\..\Src\Memory\AmdFlash.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\AtmelPerom.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\AtmelPerom.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\DeviceManager.c">
 				</File>
 				<File

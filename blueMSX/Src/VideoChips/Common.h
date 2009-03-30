@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.55 $
+** $Revision: 1.56 $
 **
-** $Date: 2008-11-23 20:26:12 $
+** $Date: 2009-03-30 14:28:20 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -801,7 +801,7 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
             return;
         }
 
-        hScroll    = vdpHScroll(vdp) & 7;
+        hScroll    = vdpHScroll(vdp);
         hScroll512 = 0;//vdpHScroll512(vdp);
         jump       = jumpTable4 + hScroll512 * 2;
         page       = (vdp->chrTabBase / 0x8000) & 1;
