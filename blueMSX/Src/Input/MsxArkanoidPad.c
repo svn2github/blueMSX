@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxArkanoidPad.c,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.3 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2009-04-02 23:02:41 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -64,7 +64,7 @@ static void loadState(MsxArkanoidPad* arkPad)
 
 static UInt8 read(MsxArkanoidPad* arkPad)
 {
-    return 0x3c | ((arkPad->shiftReg >> 8) & 1) | (archMouseGetButtonState(0) << 1);
+    return 0x3c | ((arkPad->shiftReg >> 8) & 1) | ((archMouseGetButtonState(0) << 1) ^ 2);
 }
 
 static void write(MsxArkanoidPad* arkPad, UInt8 value)
