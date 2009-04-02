@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperRType.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2009-04-02 22:32:06 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,7 +92,7 @@ static void write(RomMapperRType* rm, UInt16 address, UInt8 value)
 
     address += 0x4000;
 
-    if (address < 0x7000 || address >= 0x8000) {
+    if (address < 0x4000 || address >= 0xc000) {
         return;
     }
     
