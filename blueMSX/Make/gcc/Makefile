@@ -33,12 +33,12 @@ ECHO  = @echo
 #
 # Flags
 #
-CFLAGS   = -g -w -O2 -D_MBCS -D__WINCRYPT_H__ -DWIN32 -D_WINDOWS -DWINDOWS -DLSB_FIRST -DNARROW -DSOUND -DDISK -DFMSX -D_WIN32_IE=0x0500 -DPROPERTIES_DEFAULTS_ALT_1 -DPROPERTIES_NO_REGISTRY -DPROPERTIES_LOCAL_INI_FILE
+CFLAGS   = -g -w -O2 -D_MBCS -D__WINCRYPT_H__ -DWIN32 -D_WINDOWS -DWINDOWS -DLSB_FIRST -DNARROW -DSOUND -DDISK -DFMSX -DNO_ASM -D_WIN32_IE=0x0500 -DPROPERTIES_DEFAULTS_ALT_1 -DPROPERTIES_NO_REGISTRY -DPROPERTIES_LOCAL_INI_FILE
 # Optimization sample
 #CFLAGS   = -w -O2 -march=pentium3 -mmmx -msse -mfpmath=sse -DNDEBUG -D_MBCS -D__WINCRYPT_H__ -DWIN32 -D_WINDOWS -DWINDOWS -DLSB_FIRST -DNARROW -DSOUND -DDISK -DFMSX -D_WIN32_IE=0x0500 -DPROPERTIES_DEFAULTS_ALT_1 -DPROPERTIES_NO_REGISTRY -DPROPERTIES_LOCAL_INI_FILE -fomit-frame-pointer -finline-functions -fforce-addr -fforce-mem -funroll-loops
 CPPFLAGS = $(CFLAGS)
 RCFLAGS  =
-LDFLAGS  = -Wl,--subsystem,windows
+LDFLAGS  = -Wl #,--subsystem,windows
 TARGET   = blueMSX.exe
 LIBS     = -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -lshlwapi -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -ldxguid -lwinmm -lComCtl32 -lddraw -ldsound -ldinput -lmsvcrt -lvfw32
 
@@ -160,6 +160,7 @@ SOURCE_FILES += ioapi.c
 SOURCE_FILES += zip.c
 SOURCE_FILES += iowin32.c
 
+SOURCE_FILES += AtmelPerom.c
 SOURCE_FILES += AmdFlash.c
 SOURCE_FILES += DeviceManager.c
 SOURCE_FILES += IoPort.c
@@ -199,6 +200,7 @@ SOURCE_FILES += romMapperGameReader.c
 SOURCE_FILES += romMapperHalnote.c
 SOURCE_FILES += romMapperHarryFox.c
 SOURCE_FILES += romMapperHolyQuran.c
+SOURCE_FILES += romMapperJoyrexPsg.c
 SOURCE_FILES += romMapperKanji.c
 SOURCE_FILES += romMapperKanji12.c
 SOURCE_FILES += romMapperKoei.c
@@ -226,11 +228,13 @@ SOURCE_FILES += romMapperMsxPrn.c
 SOURCE_FILES += romMapperMsxRs232.c
 SOURCE_FILES += romMapperNational.c
 SOURCE_FILES += romMapperNationalFdc.c
+SOURCE_FILES += romMapperNet.c
 SOURCE_FILES += romMapperNettouYakyuu.c
 SOURCE_FILES += romMapperNms8280VideoDa.c
 SOURCE_FILES += romMapperNormal.c
 SOURCE_FILES += romMapperNoWind.c
 SOURCE_FILES += romMapperObsonet.c
+SOURCE_FILES += romMapperOpcodePsg.c
 SOURCE_FILES += romMapperPanasonic.c
 SOURCE_FILES += romMapperPhilipsFdc.c
 SOURCE_FILES += romMapperPlain.c
