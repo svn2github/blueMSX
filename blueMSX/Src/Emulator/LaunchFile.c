@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/LaunchFile.c,v $
 **
-** $Revision: 1.29 $
+** $Revision: 1.30 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -190,6 +190,14 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               0 == strcmp(CARTNAME_BEERIDE,     filename) ? ROM_BEERIDE :
               0 == strcmp(CARTNAME_GOUDASCSI,   filename) ? ROM_GOUDASCSI :
               0 == strcmp(CARTNAME_SONYHBI55,   filename) ? ROM_SONYHBI55 :
+              0 == strcmp(CARTNAME_EXTRAM16KB,  filename) ? ROM_EXTRAM16KB :
+              0 == strcmp(CARTNAME_EXTRAM32KB,  filename) ? ROM_EXTRAM32KB :
+              0 == strcmp(CARTNAME_EXTRAM48KB,  filename) ? ROM_EXTRAM48KB :
+              0 == strcmp(CARTNAME_EXTRAM64KB,  filename) ? ROM_EXTRAM64KB :
+              0 == strcmp(CARTNAME_EXTRAM16KB,  filename) ? ROM_EXTRAM16KB :
+              0 == strcmp(CARTNAME_EXTRAM32KB,  filename) ? ROM_EXTRAM32KB :
+              0 == strcmp(CARTNAME_EXTRAM48KB,  filename) ? ROM_EXTRAM48KB :
+              0 == strcmp(CARTNAME_EXTRAM64KB,  filename) ? ROM_EXTRAM64KB :
               0 == strcmp(CARTNAME_EXTRAM512KB, filename) ? ROM_EXTRAM512KB :
               0 == strcmp(CARTNAME_EXTRAM1MB,   filename) ? ROM_EXTRAM1MB :
               0 == strcmp(CARTNAME_EXTRAM2MB,   filename) ? ROM_EXTRAM2MB :

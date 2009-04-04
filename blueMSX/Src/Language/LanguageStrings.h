@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageStrings.h,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -667,6 +667,10 @@ typedef struct {
     char* romTypeNormalC000;
 
     char* romTypeExtRam;
+    char* romTypeExtRam16;
+    char* romTypeExtRam32;
+    char* romTypeExtRam48;
+    char* romTypeExtRam64;
     char* romTypeExtRam512;
     char* romTypeExtRam1mb;
     char* romTypeExtRam2mb;

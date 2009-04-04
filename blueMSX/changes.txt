@@ -1,7 +1,28 @@
 Next release
 ============
 - **later, 4<->2** Fixed Z80 IRQ timing
-- Corrected emulation of Korean Bootleg mappers
+
+
+v 2.8.1     April 20, 2008
+==========================
+- Added support for 16kB, 32kB, 48kB and 64kB external ram cartridges
+- Added support for Joyrex PSG module
+- Added support for PSG pin 6/7 quirk
+- Fixed SVI M1 Wait state
+- Fixed ColecoVision Keyboard read error
+- Fixed DirectX initialization bug
+- Fixed V9958 Scroll masking bug in Screen 4 (introduced in 2.8)
+- Fixed Screen 2 scroll bug
+- Fixed R15 PSG register read
+- Fixed bug in obsonet write method
+- Fixed bug in Harryfox rom mapper
+- Fixed bug in Crossblaim rom mapper
+- Fixed bug in Korean bootleg rom mapper
+- Made bluemsxlite compile on OSX
+- Fixed bug in Arkanoid Pad emulation
+- Fixed addressing bug in R-Type mapper
+- Fixed x/y flags on scf/ccf
+- Fixed instructions ld a,i or ld a,r to handle interrupts correclty
 
 
 v 2.8       June 8, 2008

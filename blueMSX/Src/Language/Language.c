@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/Language.c,v $
 **
-** $Revision: 1.98 $
+** $Revision: 1.99 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -928,6 +928,10 @@ char* langRomTypeMegaRam512() { return "512kB MegaRAM"; }
 char* langRomTypeMegaRam768() { return "768kB MegaRAM"; }
 char* langRomTypeMegaRam2mb() { return "2MB MegaRAM"; }
 char* langRomTypeExtRam() { return ls->romTypeExtRam; }
+char* langRomTypeExtRam16() { return ls->romTypeExtRam16; }
+char* langRomTypeExtRam32() { return ls->romTypeExtRam32; }
+char* langRomTypeExtRam48() { return ls->romTypeExtRam48; }
+char* langRomTypeExtRam64() { return ls->romTypeExtRam64; }
 char* langRomTypeExtRam512() { return ls->romTypeExtRam512; }
 char* langRomTypeExtRam1mb() { return ls->romTypeExtRam1mb; }
 char* langRomTypeExtRam2mb() { return ls->romTypeExtRam2mb; }

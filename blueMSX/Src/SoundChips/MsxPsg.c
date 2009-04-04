@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2008-09-09 04:40:32 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -138,15 +138,17 @@ static UInt8 read(MsxPsg* msxPsg, UInt16 address)
         state |= 0x40;
         
         /* cas signal */
-/* IOCCC?
+        // Call cassette Callback (for coin select
         if (msxPsg->casCb != NULL && msxPsg->casCb(msxPsg->casRef)) {
             state |= 0x80;
         }
-*/
+
+#if 0
+        // COmment out until cassette wave is working
         tapeRead(&casdat);
         state |= (casdat) ? 0:0x80;
        	dacWrite(msxPsg->dac, DAC_CH_MONO, (casdat) ? 0 : 255);
-
+#endif
         msxPsg->readValue[address & 1] = state;
 
         return state;

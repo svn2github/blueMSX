@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageRussian.h,v $
 **
-** $Revision: 1.8 $
+** $Revision: 1.9 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -667,6 +667,10 @@ void langInitRussian(LanguageStrings* ls)
     ls->romTypeNormal4000       = "Normal 4000h";
     ls->romTypeNormalC000       = "Normal C000h";
     ls->romTypeExtRam           = "¬нешн€€ RAM";
+    ls->romTypeExtRam16         = "16kB внешн€€ RAM";
+    ls->romTypeExtRam32         = "32kB внешн€€ RAM";
+    ls->romTypeExtRam48         = "48kB внешн€€ RAM";
+    ls->romTypeExtRam64         = "64kB внешн€€ RAM";
     ls->romTypeExtRam512        = "512kB внешн€€ RAM";
     ls->romTypeExtRam1mb        = "1MB внешн€€ RAM";
     ls->romTypeExtRam2mb        = "2MB внешн€€ RAM";

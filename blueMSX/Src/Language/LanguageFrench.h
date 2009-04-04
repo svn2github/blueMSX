@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageFrench.h,v $
 **
-** $Revision: 1.59 $
+** $Revision: 1.60 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -667,6 +667,10 @@ void langInitFrench(LanguageStrings* ls)
     ls->romTypeNormal4000       = "Normal 4000h";
     ls->romTypeNormalC000       = "Normal C000h";
     ls->romTypeExtRam           = "External RAM";
+    ls->romTypeExtRam16         = "16kB External RAM";
+    ls->romTypeExtRam32         = "32kB External RAM";
+    ls->romTypeExtRam48         = "48kB External RAM";
+    ls->romTypeExtRam64         = "64kB External RAM";
     ls->romTypeExtRam512        = "512kB External RAM";
     ls->romTypeExtRam1mb        = "1MB External RAM";
     ls->romTypeExtRam2mb        = "2MB External RAM";

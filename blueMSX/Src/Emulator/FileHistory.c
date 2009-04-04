@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.39 $
+** $Revision: 1.40 $
 **
-** $Date: 2008-10-26 19:48:18 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -125,6 +125,10 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_GIDE)        &&
             strcmp(fname, CARTNAME_GOUDASCSI)   &&
             strcmp(fname, CARTNAME_SONYHBI55)   && 
+            strcmp(fname, CARTNAME_EXTRAM16KB)  && 
+            strcmp(fname, CARTNAME_EXTRAM32KB)  && 
+            strcmp(fname, CARTNAME_EXTRAM48KB)  && 
+            strcmp(fname, CARTNAME_EXTRAM64KB)  && 
             strcmp(fname, CARTNAME_EXTRAM512KB) && 
             strcmp(fname, CARTNAME_EXTRAM1MB)   &&
             strcmp(fname, CARTNAME_EXTRAM2MB)   &&
@@ -382,6 +386,11 @@ int createSaveFileBaseName(char* fileBase,Properties* properties, int useExtende
                 strcmp(properties->media.carts[i].fileName, CARTNAME_GIDE)         &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_GOUDASCSI)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_SONYHBI55)    &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM512KB)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM16KB)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM32KB)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM48KB)   &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM64KB)   &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM512KB)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM1MB)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_EXTRAM2MB)    &&

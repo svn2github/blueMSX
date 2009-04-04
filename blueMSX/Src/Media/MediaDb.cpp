@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.89 $
+** $Revision: 1.90 $
 **
-** $Date: 2008-12-22 21:33:59 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -627,6 +627,10 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MEGARAM768:  return langRomTypeMegaRam768();
     case ROM_MEGARAM2M:   return langRomTypeMegaRam2mb();
     case ROM_EXTRAM:      return langRomTypeExtRam();
+    case ROM_EXTRAM16KB:  return langRomTypeExtRam16();
+    case ROM_EXTRAM32KB:  return langRomTypeExtRam32();
+    case ROM_EXTRAM48KB:  return langRomTypeExtRam48();
+    case ROM_EXTRAM64KB:  return langRomTypeExtRam64();
     case ROM_EXTRAM512KB: return langRomTypeExtRam512();
     case ROM_EXTRAM1MB:   return langRomTypeExtRam1mb();
     case ROM_EXTRAM2MB:   return langRomTypeExtRam2mb();
@@ -778,6 +782,10 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MEGARAM768:  return "MEGARAM768";
     case ROM_MEGARAM2M:   return "MEGARAM2MB";
     case ROM_EXTRAM:      return "EXTERN RAM";
+    case ROM_EXTRAM16KB:  return "EXTRAM 16";
+    case ROM_EXTRAM32KB:  return "EXTRAM 32";
+    case ROM_EXTRAM48KB:  return "EXTRAM 48";
+    case ROM_EXTRAM64KB:  return "EXTRAM 64";
     case ROM_EXTRAM512KB: return "EXTRAM 512";
     case ROM_EXTRAM1MB:   return "EXTRAM 2MB";
     case ROM_EXTRAM2MB:   return "EXTRAM 1MB";
@@ -881,6 +889,10 @@ int romTypeIsRom(RomType romType) {
     case ROM_YAMAHASFG05: return 1;
     case ROM_SF7000IPL:   return 1;
     case ROM_YAMAHANET:   return 1;
+    case ROM_EXTRAM16KB:  return 1;
+    case ROM_EXTRAM32KB:  return 1;
+    case ROM_EXTRAM48KB:  return 1;
+    case ROM_EXTRAM64KB:  return 1;
     }
     return 0;
 }

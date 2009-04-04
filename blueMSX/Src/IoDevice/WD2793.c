@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.11 $
+** $Revision: 1.12 $
 **
-** $Date: 2008-03-30 18:38:41 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -591,7 +591,9 @@ UInt8 wd2793GetStatusReg(WD2793* wd)
 		wd->regStatus |=  ST_NOT_READY;
 	}
 
-	wd->intRequest = wd->immediateInt;
+    if (wd->immediateInt) {
+        wd->intRequest = wd->immediateInt;
+    }
 
 	return wd->regStatus;
 }
@@ -602,6 +604,7 @@ void wd2793SetCommandReg(WD2793* wd, UInt8 value)
 	wd->regCommand = value;
 	wd->intRequest = wd->immediateInt;
 
+//    printf("WD2793 Cmd : %d\n", wd->regCommand >> 4);
 	switch (wd->regCommand >> 4) {
 	case CMD_RESTORE:
 	case CMD_SEEK:

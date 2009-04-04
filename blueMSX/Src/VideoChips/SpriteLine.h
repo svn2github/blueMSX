@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.34 $
+** $Revision: 1.35 $
 **
-** $Date: 2008-05-19 19:34:19 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -489,6 +489,7 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
     }
 
     if (collision) {
+//        printf("Collision: %d\t%d\t####\n", line, boardSystemTime());
         vdp->vdpStatus[0] |= 0x20;
     }
 

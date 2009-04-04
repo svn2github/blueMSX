@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.85 $
+** $Revision: 1.86 $
 **
-** $Date: 2008-10-26 19:48:19 $
+** $Date: 2009-04-04 20:57:19 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -150,6 +150,10 @@
 #define ID_FILE_CART_GOUDASCSI          41107
 #define ID_FILE_CART_MEGAFLASHROMSCC    41108
 #define ID_FILE_CART_JOYREXPSG          41109
+#define ID_FILE_CART_EXTRAM16KB         41110
+#define ID_FILE_CART_EXTRAM32KB         41111
+#define ID_FILE_CART_EXTRAM48KB         41112
+#define ID_FILE_CART_EXTRAM64KB         41113
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -253,6 +257,10 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_FMPAC) == 0)          return langMenuCartFMPac();
     if (strcmp(fileName, CARTNAME_PAC) == 0)            return langMenuCartPac();
     if (strcmp(fileName, CARTNAME_SONYHBI55) == 0)      return langMenuCartHBI55();
+    if (strcmp(fileName, CARTNAME_EXTRAM16KB) == 0)     return langRomTypeExtRam16();
+    if (strcmp(fileName, CARTNAME_EXTRAM32KB) == 0)     return langRomTypeExtRam32();
+    if (strcmp(fileName, CARTNAME_EXTRAM48KB) == 0)     return langRomTypeExtRam48();
+    if (strcmp(fileName, CARTNAME_EXTRAM64KB) == 0)     return langRomTypeExtRam64();
     if (strcmp(fileName, CARTNAME_EXTRAM512KB) == 0)    return langRomTypeExtRam512();
     if (strcmp(fileName, CARTNAME_EXTRAM1MB) == 0)      return langRomTypeExtRam1mb();
     if (strcmp(fileName, CARTNAME_EXTRAM2MB) == 0)      return langRomTypeExtRam2mb();
@@ -430,6 +438,10 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     setMenuColor(hMenuWaveSCSI);
     setMenuColor(hMenuEseSCC);
 
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM16KB, "16 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM32KB, "32 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM48KB, "48 kB");
+    AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM64KB, "64 kB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM512KB, "512 kB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM1MB, "1 MB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM2MB, "2 MB");
@@ -1468,6 +1480,18 @@ int menuCommand(Properties* pProperties, int command)
 #endif
 
         switch (cmd) {
+        case ID_FILE_CART_EXTRAM16KB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM16KB, NULL, ROM_EXTRAM16KB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM32KB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM32KB, NULL, ROM_EXTRAM32KB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM48KB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM48KB, NULL, ROM_EXTRAM48KB, 0);
+            return 1;
+        case ID_FILE_CART_EXTRAM64KB:
+            insertCartridge(pProperties, i, CARTNAME_EXTRAM64KB, NULL, ROM_EXTRAM64KB, 0);
+            return 1;
         case ID_FILE_CART_EXTRAM512KB:
             insertCartridge(pProperties, i, CARTNAME_EXTRAM512KB, NULL, ROM_EXTRAM512KB, 0);
             return 1;
