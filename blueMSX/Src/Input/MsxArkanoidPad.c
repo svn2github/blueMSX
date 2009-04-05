@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxArkanoidPad.c,v $
 **
-** $Revision: 1.3 $
+** $Revision: 1.4 $
 **
-** $Date: 2009-04-02 23:02:41 $
+** $Date: 2009-04-05 14:39:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,14 +81,14 @@ static void write(MsxArkanoidPad* arkPad, UInt8 value)
 
         arkPad->pos -= dx;
 
-        if (arkPad->pos < 163) arkPad->pos = 163;
+        if (arkPad->pos < 152) arkPad->pos = 152;
         if (arkPad->pos > 309) arkPad->pos = 309;
 
         arkPad->shiftReg = arkPad->pos;
     }
 
     if (edge & 0x01) {
-        arkPad->shiftReg <<= 1;
+        arkPad->shiftReg = arkPad->shiftReg << 1 | 1;
     }
 }
 
