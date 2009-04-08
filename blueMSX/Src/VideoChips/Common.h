@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/Common.h,v $
 **
-** $Revision: 1.56 $
+** $Revision: 1.57 $
 **
-** $Date: 2009-03-30 14:28:20 $
+** $Date: 2009-04-08 02:52:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -61,6 +61,7 @@ static int jumpTable4[] = {  -32, -32,  -0x8020, 0x7fe0 };
 
 static Pixel* linePtr0 = NULL;
 static Pixel* linePtr0p = NULL;
+static Pixel* linePtr0m = NULL;
 static Pixel* linePtr0w = NULL;
 static Pixel* linePtr1 = NULL;
 static Pixel* linePtr2 = NULL;
@@ -72,11 +73,14 @@ static Pixel* linePtr7 = NULL;
 static Pixel* linePtr8 = NULL;
 static Pixel* linePtr10 = NULL;
 static Pixel* linePtr12 = NULL;
+static Pixel* linePtrBlank = NULL;
+
 
 void RefreshLineReset()
 {
     linePtr0 = NULL;
     linePtr0p = NULL;
+    linePtr0m = NULL;
     linePtr0w = NULL;
     linePtr1 = NULL;
     linePtr2 = NULL;
@@ -88,6 +92,7 @@ void RefreshLineReset()
     linePtr8 = NULL;
     linePtr10 = NULL;
     linePtr12 = NULL;
+    linePtrBlank = NULL;
 }
 
 Pixel *RefreshBorder(VDP* vdp, int Y, Pixel bgColor, int line512, int borderExtra)
@@ -201,6 +206,43 @@ static void RefreshRightBorder6(VDP* vdp, int Y, Pixel bgColor1, Pixel bgColor2)
     }
 }
 
+static void RefreshLineBlank(VDP* vdp, int Y, int X, int X2)
+{
+    Pixel bgColor = vdp->palette[0];
+    int rightBorder;
+
+    if (X == -1) {
+        X++;
+        linePtrBlank = RefreshBorder(vdp, Y, bgColor, 0, 0);
+    }
+
+    if (linePtrBlank == NULL) {
+        return;
+    }
+    
+    rightBorder = X2 == 33;
+    if (rightBorder) {
+        X2--;
+    }
+
+    while (X < X2) {
+        linePtrBlank[0] = bgColor;
+        linePtrBlank[1] = bgColor;
+        linePtrBlank[2] = bgColor;
+        linePtrBlank[3] = bgColor;
+        linePtrBlank[4] = bgColor;
+        linePtrBlank[5] = bgColor;
+        linePtrBlank[6] = bgColor;
+        linePtrBlank[7] = bgColor;
+        linePtrBlank += 8; 
+        X++;
+    }
+
+    if (rightBorder) {
+        RefreshRightBorder(vdp, Y, bgColor, 0, 0);
+    }
+}
+
 static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
 {
     static int     patternBase;
@@ -217,7 +259,7 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         int i;
 
         X++;
-        linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 1);
+        linePtr0 = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, vdp->hAdjustSc0);
 
         hScroll    = vdpHScroll(vdp) % 6;
 
@@ -294,7 +336,7 @@ static void RefreshLine0(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
-        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, -vdp->hAdjustSc0);
     }
 }
 
@@ -315,7 +357,7 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
         int i;
 
         X++;
-        linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 1);
+        linePtr0p = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, vdp->hAdjustSc0);
 
         hScroll    = vdpHScroll(vdp) % 6;
 
@@ -392,7 +434,102 @@ static void RefreshLine0Plus(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
-        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, 0);
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, -vdp->hAdjustSc0);
+    }
+}
+
+static void RefreshLine0Mix(VDP* vdp, int Y, int X, int X2)
+{
+    static int     patternBase;
+    static int     pattern;
+    static int     x;
+    static int     y;
+    static int     shift;
+
+    static int     hScroll;
+
+    int    rightBorder;
+
+    if (X == -1) {
+        int i;
+
+        X++;
+        linePtr0m = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, vdp->hAdjustSc0);
+
+        hScroll    = vdpHScroll(vdp) % 6;
+
+        y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
+        x = 0;
+        patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
+        shift = 0;
+
+        for (i = 0; i < hScroll; i++) {
+            *linePtr0m++ = vdp->palette[vdp->BGColor];
+        }
+    }
+
+    if (linePtr0m == NULL) {
+        return;
+    }
+
+    rightBorder = X2 == 33;
+    if (rightBorder) {
+        X2--;
+    }
+
+    if (!vdp->screenOn || !vdp->drawArea) {
+        Pixel bgColor = vdp->palette[vdp->BGColor];
+        while (X < X2) {
+            linePtr0m[0] = bgColor;
+            linePtr0m[1] = bgColor;
+            linePtr0m[2] = bgColor;
+            linePtr0m[3] = bgColor;
+            linePtr0m[4] = bgColor;
+            linePtr0m[5] = bgColor;
+            linePtr0m[6] = bgColor;
+            linePtr0m[7] = bgColor;
+            linePtr0m += 8; 
+            X++;
+        }
+    }
+    else {
+        Pixel bgColor = vdp->palette[vdp->BGColor];
+        Pixel fgColor = vdp->palette[vdp->FGColor];
+
+        while (X < X2) {
+            if (X == 0 || X == 31) {
+                if (X == 31) linePtr0m -= hScroll;
+                linePtr0m[0] = bgColor;
+                linePtr0m[1] = bgColor;
+                linePtr0m[2] = bgColor;
+                linePtr0m[3] = bgColor;
+                linePtr0m[4] = bgColor;
+                linePtr0m[5] = bgColor;
+                linePtr0m[6] = bgColor;
+                linePtr0m[7] = bgColor;
+                linePtr0m += 8; 
+                X++;
+            }
+            else {
+                int j;
+                for (j = 0; j < 4; j++) {
+                    if (++shift >= 3) {
+                        linePtr0m[0] = bgColor;
+                        linePtr0m[1] = bgColor;
+                        shift = 0;
+                    }
+                    else {
+                        linePtr0m[0] = fgColor;
+                        linePtr0m[1] = fgColor;
+                    }
+                    linePtr0m += 2; 
+                }
+                X++;
+            }
+        }
+    }
+    if (rightBorder) {
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 0, -vdp->hAdjustSc0);
     }
 }
 
@@ -521,7 +658,7 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         int i;
 
         X++;
-        linePtr0w = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 1);
+        linePtr0w = RefreshBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, vdp->hAdjustSc0);
         y = Y - vdp->firstLine + vdpVScroll(vdp) - vdp->scr0splitLine;
         x = 0;
         patternBase = vdp->chrGenBase & ((-1 << 11) | (y & 7));
@@ -616,7 +753,7 @@ static void RefreshLineTx80(VDP* vdp, int Y, int X, int X2)
         }
     }
     if (rightBorder) {
-        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, 0);
+        RefreshRightBorder(vdp, Y, vdp->palette[vdp->BGColor], 1, -vdp->hAdjustSc0);
     }
 }
 
@@ -827,6 +964,8 @@ static void RefreshLine2(VDP* vdp, int Y, int X, int X2)
             linePtr2[5] = bgColor;
             linePtr2[6] = bgColor;
             linePtr2[7] = bgColor;
+            charTable++; 
+            UPDATE_TABLE_4(); 
             X++;
             sprLine += sprLine != NULL ? 8 : 0;
             linePtr2 += 8;
@@ -1029,7 +1168,7 @@ static void RefreshLine4(VDP* vdp, int Y, int X, int X2)
             return;
         }
 
-        hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
+        //hScroll    =  ((((int)(vdp->vdpRegs[26] & 0x3F & ~(~vdpHScroll512(vdp) << 5))) << 3) - (int)(vdp->vdpRegs[27] & 0x07) & 0xffffffff);
         hScroll    = vdpHScroll(vdp);
         hScroll512 = vdpHScroll512(vdp);
         jump       = jumpTable4 + hScroll512 * 2;

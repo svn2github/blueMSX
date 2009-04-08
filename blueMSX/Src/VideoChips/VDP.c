@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.93 $
+** $Revision: 1.94 $
 **
-** $Date: 2008-05-30 22:53:17 $
+** $Date: 2009-04-08 02:52:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -306,6 +306,7 @@ struct VDP {
     int    screenOn;
     int    VAdjust;
     int    HAdjust;
+    int    hAdjustSc0;
 
     int screenMode;
     UInt8  vdpRegs[64];
@@ -619,23 +620,6 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     
     vdp->timeScrModeEn = 0;
 
-#if 0
-    switch (((vdp->vdpRegs[0] & 0x0e) << 1) | 
-            ((vdp->vdpRegs[1] & 0x08) >> 2) | 
-            ((vdp->vdpRegs[1] & 0x10) >> 4)) 
-    {
-    case 0x01: vdp->screenMode = 0; break;
-    case 0x00: vdp->screenMode = 1; break;
-    case 0x04: vdp->screenMode = 2; break;
-    case 0x02: vdp->screenMode = 3; break;
-    case 0x08: vdp->screenMode = 4; break;
-    case 0x0c: vdp->screenMode = 5; break;
-    case 0x10: vdp->screenMode = 6; break;
-    case 0x14: vdp->screenMode = 7; break;
-    case 0x1c: vdp->screenMode = 8; break;
-    case 0x09: vdp->screenMode = 13; break;
-    }
-#else
     switch (((vdp->vdpRegs[0] & 0x0e) >> 1) | (vdp->vdpRegs[1] & 0x18)) {
     case 0x10: vdp->screenMode = 0; break;
     case 0x00: vdp->screenMode = 1; break;
@@ -647,13 +631,18 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
     case 0x05: vdp->screenMode = 7; break;
     case 0x07: vdp->screenMode = 8; break;
     case 0x12: vdp->screenMode = 13; break;
-    case 0x11: 
-        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
-            vdp->screenMode = 16; 
-        }
+    case 0x11:  // Screen 0 + 2
+        vdp->screenMode = 16;
+        break;
+    case 0x18: // Screen 0 + 3
+    case 0x19: // Screen 0 + 2 + 3
+        vdp->screenMode = 32;
+        break;
+    default: // Unknown screen mode
+        vdp->screenMode = 64;
         break;
     }
-#endif
+
     vdp->chrTabBase = ((((int)vdp->vdpRegs[2] << 10) & ~((int)(vdp->vdpRegs[25] & 1) << 15)) | ~(-1 << 10)) & vdp->vramMask;
     vdp->chrGenBase = (((int)vdp->vdpRegs[4] << 11) | ~(-1 << 11)) & vdp->vramMask;
     vdp->colTabBase = (((int)vdp->vdpRegs[10] << 14) | ((int)vdp->vdpRegs[3] << 6) | ~(-1 << 6)) & vdp->vramMask;
@@ -703,11 +692,29 @@ static void onScrModeChange(VDP* vdp, UInt32 time)
         break;
     case 16:
         vdp->screenMode = 0;
-        vdp->RefreshLine = RefreshLine0Plus; 
+        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+            vdp->RefreshLine = RefreshLine0Plus; 
+        }
+        else {
+            vdp->RefreshLine = RefreshLineBlank; 
+        }
         break;
-    default:
+    case 32:
+        vdp->screenMode = 0;
+        if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
+            vdp->RefreshLine = RefreshLine0Mix; 
+        }
+        else {
+            vdp->RefreshLine = RefreshLineBlank; 
+        }
+        break;
+    case 13:
         vdp->RefreshLine = RefreshLineTx80; break;
         vdp->screenMode = 13;
+        break;
+    default:
+        vdp->screenMode = 1;
+        vdp->RefreshLine = RefreshLineBlank; 
         break;
     }
     
@@ -1950,22 +1957,26 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
         vdpVersionString       = langDbgDevTms9929A();
+        vdp->hAdjustSc0        = -2; // 6
         break;
     case VDP_TMS99x8A:
         vdp->registerValueMask = registerValueMaskMSX1;
         vdp->registerMask      = 0x07;
         vdp->vdpRegs[9]          &= ~0x02;
         vdpVersionString       = langDbgDevTms99x8A();
+        vdp->hAdjustSc0        = -2; // 6
         break;
     case VDP_V9938:
         vdp->registerValueMask = registerValueMaskMSX2;
         vdp->registerMask      = 0x3f;
         vdpVersionString       = langDbgDevV9938();
+        vdp->hAdjustSc0        = 1; // 9
         break;
     case VDP_V9958:
         vdp->registerValueMask = registerValueMaskMSX2p;
         vdp->registerMask      = 0x3f;
         vdpVersionString       = langDbgDevV9958();
+        vdp->hAdjustSc0        = 1; // 9
         break;
     }
     
