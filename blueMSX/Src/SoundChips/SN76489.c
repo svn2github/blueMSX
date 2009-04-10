@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/SN76489.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2008-05-19 19:25:59 $
+** $Date: 2009-04-10 04:38:10 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,18 +41,18 @@
 
 #if 1
 
-#define FB_BBCMICRO  0x8005
-#define FB_SC3000    0x8006
-#define FB_SEGA      0x8009
-#define FB_COLECO    0x8009
+#define FB_BBCMICRO  0x0005
+#define FB_SC3000    0x0006
+#define FB_SEGA      0x0009
+#define FB_COLECO    0x0003
 
 #define SRW_SEGA     16
-#define SRW_COLECO   16
+#define SRW_COLECO   15
 
 #define VOL_TRUNC    0
 #define VOL_FULL     0
 
-#define SR_INIT       0x8000
+#define SR_INIT       0x4000
 #define PSG_CUTOFF    0x6
 
 static int VoltTables[2][16] = 
@@ -194,7 +194,7 @@ void sn76489Reset(SN76489* sn76489)
 
     p->clock    = 0;
     p->latch    = 0;
-    p->shiftReg = SR_INIT;
+    p->shiftReg = 1 << (sn76489->shiftRegisterWidth - 1);
 }
 
 SN76489* sn76489Create(Mixer* mixer)
@@ -239,10 +239,18 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
         if ( p->regs[p->latch] == 0 ) {
             p->regs[p->latch] = 1;
         }
+        if (p->latch == 4 && (p->regs[6] & 3) == 0x03) {
+            p->noiseFreq = p->regs[4];
+        }
         break;
     case 6:
         p->shiftReg = SR_INIT;
-        p->noiseFreq = 0x10 << (p->regs[6] & 0x3);
+        if ((p->regs[6] & 3) == 0x03) {
+            p->noiseFreq = p->regs[4];
+        }
+        else {
+            p->noiseFreq = 0x10 << (p->regs[6] & 0x3);
+        }
         break;
     }
 }
@@ -310,7 +318,7 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
                 p->toneInterpol[i] = FLT_MIN;
             }
         }
-    
+
         if (p->toneFrequency[3] <= 0) {
             p->toneFlipFlop[3] = -p->toneFlipFlop[3];
             if (p->noiseFreq != 0x80) {
@@ -319,21 +327,12 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
             if (p->toneFlipFlop[3] == 1) {
                 int feedback;
                 if ( p->regs[6] & 0x4 ) {
-                    switch (p->whiteNoiseFeedback) {
-                    case 0x0003: /* SC-3000  */
-                    case 0x0009: /* SMS, GG, MD */
-                        feedback = ((p->shiftReg & p->whiteNoiseFeedback) && 
-                                   ((p->shiftReg & p->whiteNoiseFeedback) ^ p->whiteNoiseFeedback));
-                        break;
-                    default:
-                        feedback = p->shiftReg & p->whiteNoiseFeedback;
-                        feedback ^= feedback >> 8;
-                        feedback ^= feedback >> 4;
-                        feedback ^= feedback >> 2;
-                        feedback ^= feedback >> 1;
-                        feedback &= 1;
-                        break;
-                    }
+                    feedback = p->shiftReg & p->whiteNoiseFeedback;
+                    feedback ^= feedback >> 8;
+                    feedback ^= feedback >> 4;
+                    feedback ^= feedback >> 2;
+                    feedback ^= feedback >> 1;
+                    feedback &= 1;
                 } else {
                     feedback = p->shiftReg & 1;
                 }

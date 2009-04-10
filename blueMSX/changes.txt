@@ -10,6 +10,7 @@ v 2.8.1     April 20, 2008
 - Added support for PSG pin 6/7 quirk
 - Fixed SVI M1 Wait state
 - Fixed ColecoVision Keyboard read error
+- Fixed ColceoVision PSG noise bug
 - Fixed DirectX initialization bug
 - Fixed V9958 Scroll masking bug in Screen 4 (introduced in 2.8)
 - Fixed Screen 2 scroll bug
