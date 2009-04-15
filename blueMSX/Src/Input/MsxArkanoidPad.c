@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxArkanoidPad.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2009-04-05 14:39:05 $
+** $Date: 2009-04-15 08:56:46 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -81,6 +81,8 @@ static void write(MsxArkanoidPad* arkPad, UInt8 value)
 
         arkPad->pos -= dx;
 
+        /* measurements on the real device show a minimum of about 55, and a maximum of about 325 */
+        /* the values below are aimed at user friendly mouse control */
         if (arkPad->pos < 152) arkPad->pos = 152;
         if (arkPad->pos > 309) arkPad->pos = 309;
 
@@ -88,7 +90,8 @@ static void write(MsxArkanoidPad* arkPad, UInt8 value)
     }
 
     if (edge & 0x01) {
-        arkPad->shiftReg = arkPad->shiftReg << 1 | 1;
+        /* in reality, due to a 556 IC (dual timer) on the device, a small delay is required in between shifts */
+        arkPad->shiftReg = arkPad->shiftReg << 1 | (arkPad->shiftReg & 1);
     }
 }
 
