@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.13 $
+** $Revision: 1.14 $
 **
-** $Date: 2009-04-19 19:51:30 $
+** $Date: 2009-04-19 19:58:06 $
 **
 ** More info: http://www.bluemsx.com
 **
