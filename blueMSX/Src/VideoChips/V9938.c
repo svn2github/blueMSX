@@ -523,13 +523,13 @@ static void LineEngine(VdpCmdState* vdpCmd)
 
 #define post_linexmaj(MX) \
     DX+=TX; \
+    if (ADX++==NX || (DX&MX)) \
+    break; \
     if ((ASX-=NY)<0) { \
     ASX+=NX; \
     DY+=TY; \
     } \
     ASX&=1023; /* Mask to 10 bits range */ \
-    if (ADX++==NX || (DX&MX)) \
-    break; \
         cnt-=delta; \
 }
 #define post_lineymaj(MX) \
