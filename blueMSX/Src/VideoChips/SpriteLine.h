@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/SpriteLine.h,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2009-04-19 19:53:16 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -232,10 +232,19 @@ UInt8* spritesLine(VDP* vdp, int line) {
                 if (pattern & 0x01) { linePtr[30] = linePtr[31] = color; collision |= colPtr[30]; colPtr[30] = colChck[30]; collision |= colPtr[31]; colPtr[31] = colChck[31]; }
             }
         }
-    }
 
-    if (collision) {
-        vdp->vdpStatus[0] |= 0x20;
+        if (collision && (vdp->vdpStatus[0] & 0x20) == 0) {
+            UInt16 xCol;
+            UInt16 yCol;
+            for (xCol = 0; xCol < 256 && collisionBuf[xCol + 32] == 0; xCol++);
+            xCol += 12;
+            yCol = line + 8;
+            vdp->vdpStatus[0] |= 0x20;
+            vdp->vdpStatus[3] = xCol & 0xff;
+            vdp->vdpStatus[4] = xCol >> 8;
+            vdp->vdpStatus[5] = yCol & 0xff;
+            vdp->vdpStatus[6] = yCol >> 8;
+        }
     }
 
     lineBufs[bufIndex] = lineBuf + 32;
@@ -442,6 +451,20 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
                 }
             }
         }
+
+        if (collision && (vdp->vdpStatus[0] & 0x20) == 0) {
+            UInt16 xCol;
+            UInt16 yCol;
+            for (xCol = 0; xCol < 256 && collisionBuf[xCol + 32] == 0; xCol++);
+            xCol += 12;
+            yCol = line + 8;
+            vdp->vdpStatus[0] |= 0x20;
+            vdp->vdpStatus[3] = xCol & 0xff;
+            vdp->vdpStatus[4] = xCol >> 8;
+            vdp->vdpStatus[5] = yCol & 0xff;
+            vdp->vdpStatus[6] = yCol >> 8;
+        }
+
 #if 0
         /* Skip CC sprites for now */
         if (attrib->color & 0x40) {
@@ -486,11 +509,6 @@ UInt8* colorSpritesLine(VDP* vdp, int line, int scr6) {
                 }
             }
         }
-    }
-
-    if (collision) {
-//        printf("Collision: %d\t%d\t####\n", line, boardSystemTime());
-        vdp->vdpStatus[0] |= 0x20;
     }
 
     lineBufs[bufIndex] = lineBuf + 32;
