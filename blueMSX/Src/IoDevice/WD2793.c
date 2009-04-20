@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2009-04-19 19:58:06 $
+** $Date: 2009-04-20 05:07:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -591,9 +591,7 @@ UInt8 wd2793GetStatusReg(WD2793* wd)
 		wd->regStatus |=  ST_NOT_READY;
 	}
 
-    if (wd->immediateInt) {
-        wd->intRequest = wd->immediateInt;
-    }
+    wd->intRequest = wd->immediateInt;
 
 	return wd->regStatus;
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/SviPPI.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-09-09 04:40:32 $
+** $Date: 2009-04-20 05:07:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -215,6 +215,11 @@ static UInt8 peekA(SviPPI* ppi)
 
 static UInt8 readA(SviPPI* ppi)
 {
+#if 1
+    // dvik: reverted to 2.8 since wav support is not finished yet
+    return boardCaptureUInt8(16, sviJoyIoReadTrigger(ppi->joyIO)) | 
+        (boardGetCassetteInserted() ? 0:0x40);
+#else
     UInt8 value;
     UInt8 casdat = 0;
 
@@ -227,6 +232,7 @@ static UInt8 readA(SviPPI* ppi)
     dacWrite(ppi->dac, DAC_CH_MONO, (casdat & 0x01) ? 0 : 255);
 
     return value;
+#endif
 }
 
 static UInt8 peekB(SviPPI* ppi)
