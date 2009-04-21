@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.76 $
+** $Revision: 1.77 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2009-04-21 05:08:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -334,6 +334,14 @@ typedef struct {
 } Media;
 
 typedef struct {
+    int enableDos2;
+    int enablePhantomDrives;
+    int enableOtherDiskRoms;
+    int partitionNumber;
+    int ignoreBootFlag;
+} NoWindProperties;
+
+typedef struct {
     RomType defaultType;
     char    defDir[PROP_MAXPATH];
     int     autoReset;
@@ -423,6 +431,7 @@ typedef struct Properties {
     PortProperties      ports;
     int                 language;
     Settings            settings;
+    NoWindProperties    nowind;
 } Properties;
 
 Properties* propCreate(int useDefault, 

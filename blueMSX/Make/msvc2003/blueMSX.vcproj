@@ -910,7 +910,7 @@
 					RelativePath="..\..\Src\Memory\romMapperNormal.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperNoWind.c">
+					RelativePath="..\..\Src\Memory\romMapperNoWind.cpp">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNoWind.h">

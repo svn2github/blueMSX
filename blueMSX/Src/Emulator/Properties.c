@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.74 $
+** $Revision: 1.75 $
 **
-** $Date: 2008-05-15 10:23:42 $
+** $Date: 2009-04-21 05:08:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -368,6 +368,11 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
         strcpy(properties->keyboard.configFile, "blueMSX Japanese Default");
     }
 
+    properties->nowind.enableDos2 = 0;
+    properties->nowind.enableOtherDiskRoms = 0;
+    properties->nowind.enablePhantomDrives = 1;
+    properties->nowind.partitionNumber = 0xff;
+    properties->nowind.ignoreBootFlag = 0;
 
     for (i = 0; i < PROP_MAX_CARTS; i++) {
         properties->media.carts[i].fileName[0] = 0;
@@ -643,6 +648,12 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(cassette, showCustomFiles);
     GET_ENUM_VALUE_2(cassette, readOnly, BoolPair);
     GET_ENUM_VALUE_2(cassette, rewindAfterInsert, BoolPair);
+    
+    GET_ENUM_VALUE_2(nowind, enableDos2, BoolPair);    
+    GET_ENUM_VALUE_2(nowind, enableOtherDiskRoms, BoolPair);    
+    GET_ENUM_VALUE_2(nowind, enablePhantomDrives, BoolPair);    
+    GET_ENUM_VALUE_2(nowind, ignoreBootFlag, BoolPair);   
+    GET_INT_VALUE_2(nowind,  partitionNumber);
 
     iniFileClose();
     
@@ -875,6 +886,12 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(cassette, showCustomFiles);
     SET_ENUM_VALUE_2(cassette, readOnly, YesNoPair);
     SET_ENUM_VALUE_2(cassette, rewindAfterInsert, YesNoPair);
+
+    SET_ENUM_VALUE_2(nowind, enableDos2, YesNoPair);    
+    SET_ENUM_VALUE_2(nowind, enableOtherDiskRoms, BoolPair);    
+    SET_ENUM_VALUE_2(nowind, enablePhantomDrives, BoolPair);    
+    SET_ENUM_VALUE_2(nowind, ignoreBootFlag, BoolPair);   
+    SET_INT_VALUE_2(nowind,  partitionNumber);
 
     iniFileClose();
 
