@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/VDP.c,v $
 **
-** $Revision: 1.96 $
+** $Revision: 1.97 $
 **
-** $Date: 2009-04-20 05:09:23 $
+** $Date: 2009-04-21 02:50:54 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -357,7 +357,7 @@ struct VDP {
     UInt8* vramPtr;
     int    vramAccMask;
     int vramOffsets[2];
-    int vramMasks[2];
+    int vramMasks[4];
     UInt8  vram[VRAM_SIZE];
     
     int deviceHandle;
@@ -761,7 +761,7 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
     if (reg >= 0x20) {
         if (reg == 0x2d && (change & 0x40)) {
             vdp->vramPtr      = vdp->vram + vdp->vramOffsets[(value >> 6) & 1];
-            vdp->vramAccMask  = vdp->vramMasks[(value >> 6) & 1];
+            vdp->vramAccMask  = vdp->vramMasks[((vdp->vdpRegs[8] & 0x08) >> 2) | (((vdp->vdpRegs[0x2d] >> 6) & 1))];
             vdp->vramEnable   = vdp->vram192 || !((value >> 6) & 1);
         }
         vdpCmdWrite(vdp->cmdEngine, reg - 0x20, value, boardSystemTime());
@@ -828,12 +828,10 @@ static void vdpUpdateRegisters(VDP* vdp, UInt8 reg, UInt8 value)
         break;
 
     case 8:
+        vdp->vramAccMask  = vdp->vramMasks[((vdp->vdpRegs[8] & 0x08) >> 2) | (((vdp->vdpRegs[0x2d] >> 6) & 1))];
         vdpSetTimingMode(vdp->cmdEngine, ((vdp->vdpRegs[1] >> 6) & vdp->drawArea) | (value & 2));
         if (change & 0xb0) {
             updateOutputMode(vdp);
-        }
-        if (change & 0x08) {
-            vdp->vdpRegs[14] = 0;
         }
         break;
 
@@ -1495,7 +1493,7 @@ static void loadState(VDP* vdp)
     }
     
     vdp->vramPtr        = vdp->vram + vdp->vramOffsets[(vdp->vdpRegs[0x2d] >> 6) & 1];
-    vdp->vramAccMask    = vdp->vramMasks[(vdp->vdpRegs[0x2d] >> 6) & 1];
+    vdp->vramAccMask    = vdp->vramAccMask  = vdp->vramMasks[((vdp->vdpRegs[8] & 0x08) >> 2) | (((vdp->vdpRegs[0x2d] >> 6) & 1))];
     vdp->vramEnable     = vdp->vram192 || !((vdp->vdpRegs[0x2d] >> 6) & 1);
     vdp->vramEnable    &= !vdp->vram16 || vdp->vdpRegs[14] == 0;
 
@@ -1795,6 +1793,7 @@ static void reset(VDP* vdp)
     vdp->vdpRegs[3]  = 0xff;
     vdp->vdpRegs[4]  = 0xff;
     vdp->vdpRegs[5]  = 0xff;
+    vdp->vdpRegs[8]  = 0x08;
     vdp->vdpRegs[9]  = (0x02 & vdp->palMask) | vdp->palValue;
     vdp->vdpRegs[21] = 0x3b;
     vdp->vdpRegs[22] = 0x05;
@@ -1921,10 +1920,12 @@ void vdpCreate(VdpConnector connector, VdpVersion version, VdpSyncMode sync, int
     vramSize            = vramPages << 14;
     vdp->vramOffsets[0] = 0;
     vdp->vramOffsets[1] = vramSize > 0x20000 ? 0x20000 : 0;
-    vdp->vramMasks[0]   = vramSize > 0x20000 ? 0x1ffff : vramSize - 1;
-    vdp->vramMasks[1]   = vramSize > 0x20000 ? 0xffff  : vramSize - 1;
+    vdp->vramMasks[0]   = vramSize > 0x8000  ? 0x7fff  : vramSize - 1;
+    vdp->vramMasks[1]   = vramSize > 0x8000  ? 0x7fff  : vramSize - 1;
+    vdp->vramMasks[2]   = vramSize > 0x20000 ? 0x1ffff : vramSize - 1;
+    vdp->vramMasks[3]   = vramSize > 0x20000 ? 0xffff  : vramSize - 1;
     vdp->vramPtr        = vdp->vram + vdp->vramOffsets[0];
-    vdp->vramAccMask    = vdp->vramMasks[0];
+    vdp->vramAccMask    = vdp->vramMasks[2];
     vdp->vramEnable     = 1;
 
     if (vramPages > 8) {
