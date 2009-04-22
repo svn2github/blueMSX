@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.63 $
+** $Revision: 1.64 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2009-04-22 03:44:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -313,6 +313,14 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
                 success &= romMapperGoudaSCSICreate(cartNo, romName, NULL, 0, slot, sslot, 2);
                 break;
             }
+        }
+        // Load roms for Special Carts
+        else if (strcmp(cart, "Nowind MSXDOS1") == 0) {
+            buf = romLoad("Machines/Shared Roms/nowindDos1.rom", cartZip, &size);
+        }
+        // Load roms for Special Carts
+        else if (strcmp(cart, "Nowind MSXDOS2") == 0) {
+            buf = romLoad("Machines/Shared Roms/nowindDos2.rom", cartZip, &size);
         }
         else {
             buf = romLoad(cart, cartZip, &size);

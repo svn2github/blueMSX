@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.35 $
+** $Revision: 1.36 $
 **
-** $Date: 2008-08-31 06:13:13 $
+** $Date: 2009-04-22 03:44:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -464,6 +464,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         case ROM_PAC:         strcat(rom1, CARTNAME_PAC); break;
         case ROM_GAMEREADER:  strcat(rom1, CARTNAME_GAMEREADER); break;
         case ROM_SUNRISEIDE:  strcat(rom1, CARTNAME_SUNRISEIDE); break;
+        case ROM_NOWIND:      strcat(rom1, CARTNAME_NOWINDDOS1); break;
         case ROM_BEERIDE:     strcat(rom1, CARTNAME_BEERIDE); break;
         case ROM_GIDE:        strcat(rom1, CARTNAME_GIDE); break;
         case ROM_GOUDASCSI:   strcat(rom1, CARTNAME_GOUDASCSI); break;
@@ -483,6 +484,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
         case ROM_PAC:         strcat(rom2, CARTNAME_PAC); break;
         case ROM_GAMEREADER:  strcat(rom2, CARTNAME_GAMEREADER); break;
         case ROM_SUNRISEIDE:  strcat(rom2, CARTNAME_SUNRISEIDE); break;
+        case ROM_NOWIND:      strcat(rom2, CARTNAME_NOWINDDOS1); break;
         case ROM_BEERIDE:     strcat(rom2, CARTNAME_BEERIDE); break;
         case ROM_GIDE:        strcat(rom2, CARTNAME_GIDE); break;
         case ROM_GOUDASCSI:   strcat(rom2, CARTNAME_GOUDASCSI); break;

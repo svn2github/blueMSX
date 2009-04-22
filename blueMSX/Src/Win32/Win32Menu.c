@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.86 $
+** $Revision: 1.87 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2009-04-22 03:44:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,6 +154,8 @@
 #define ID_FILE_CART_EXTRAM32KB         41111
 #define ID_FILE_CART_EXTRAM48KB         41112
 #define ID_FILE_CART_EXTRAM64KB         41113
+#define ID_FILE_CART_NOWINDDOS1         41114
+#define ID_FILE_CART_NOWINDDOS2         41115
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -278,6 +280,8 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_MEGASCSI256) == 0)    return langRomTypeMegaSCSI256();
     if (strcmp(fileName, CARTNAME_MEGASCSI512) == 0)    return langRomTypeMegaSCSI512();
     if (strcmp(fileName, CARTNAME_MEGASCSI1MB) == 0)    return langRomTypeMegaSCSI1mb();
+    if (strcmp(fileName, CARTNAME_NOWINDDOS1) == 0)     return "Nowind USB MSXDOS1";
+    if (strcmp(fileName, CARTNAME_NOWINDDOS2) == 0)     return "Nowind USB MSXDOS2";
     if (strcmp(fileName, CARTNAME_ESERAM128) == 0)      return langRomTypeEseRam128();
     if (strcmp(fileName, CARTNAME_MEGAFLSHSCC) == 0)    return langRomTypeMegaFlashRomScc();
     if (strcmp(fileName, CARTNAME_ESERAM256) == 0)      return langRomTypeEseRam256();
@@ -425,9 +429,11 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     HMENU hMenuFlashRom = CreatePopupMenu();
     HMENU hMenuWaveSCSI = CreatePopupMenu();
     HMENU hMenuEseSCC = CreatePopupMenu();
+    HMENU hMenuNowind = CreatePopupMenu();
 
     HMENU hMenuIde = CreatePopupMenu();
     HMENU hMenuScsi = CreatePopupMenu();
+    HMENU hMenuUsb = CreatePopupMenu();
 
     setMenuColor(hMenu);
     setMenuColor(hMenuExtRam);
@@ -436,7 +442,11 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     setMenuColor(hMenuEseRam);
     setMenuColor(hMenuFlashRom);
     setMenuColor(hMenuWaveSCSI);
+    setMenuColor(hMenuNowind);
     setMenuColor(hMenuEseSCC);
+    setMenuColor(hMenuIde);
+    setMenuColor(hMenuScsi);
+    setMenuColor(hMenuUsb);
 
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM16KB, "16 kB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM32KB, "32 kB");
@@ -463,6 +473,9 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM512, "512 kB");
     AppendMenu(hMenuEseRam, MF_STRING, idOffset + ID_FILE_CART_ESERAM1MB, "1 MB");
 
+    AppendMenu(hMenuNowind, MF_STRING, idOffset + ID_FILE_CART_NOWINDDOS1, "MSXDOS1");
+    AppendMenu(hMenuNowind, MF_STRING, idOffset + ID_FILE_CART_NOWINDDOS2, "MSXDOS2");
+
     AppendMenu(hMenuFlashRom, MF_STRING, idOffset + ID_FILE_CART_MEGAFLASHROMSCC, langRomTypeMegaFlashRomScc());
 
     AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI128, "128 kB");
@@ -482,6 +495,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuWaveSCSI,  langMenuCartWaveSCSI());
     AppendMenu(hMenuScsi, MF_STRING, idOffset + ID_FILE_CART_GOUDASCSI, langMenuCartGoudaSCSI());
 
+    AppendMenu(hMenuUsb, MF_POPUP, (UINT)hMenuNowind, "Nowind");
+
     if (gameReaderSupported()) {
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -493,6 +508,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuIde, langMenuCartIde());
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuScsi, langMenuCartScsi());
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuUsb, "USB Disk");
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_FMPAC, langMenuCartFMPac());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_PAC, langMenuCartPac());
@@ -1584,6 +1600,12 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_ESERAM1MB:
             insertCartridge(pProperties, i, CARTNAME_ESERAM1MB, NULL, SRAM_ESERAM1MB, 0);
+            return 1;
+        case ID_FILE_CART_NOWINDDOS1:
+            insertCartridge(pProperties, i, CARTNAME_NOWINDDOS1, NULL, ROM_NOWIND, 0);
+            return 1;
+        case ID_FILE_CART_NOWINDDOS2:
+            insertCartridge(pProperties, i, CARTNAME_NOWINDDOS2, NULL, ROM_NOWIND, 0);
             return 1;
         case ID_FILE_CART_MEGAFLASHROMSCC:
             insertCartridge(pProperties, i, CARTNAME_MEGAFLSHSCC, NULL, ROM_MEGAFLSHSCC, 0);

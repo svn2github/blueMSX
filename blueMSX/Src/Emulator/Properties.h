@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.77 $
+** $Revision: 1.78 $
 **
-** $Date: 2009-04-21 05:08:47 $
+** $Date: 2009-04-22 03:44:35 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -74,6 +74,8 @@
 #define CARTNAME_ESERAM256   "256kB Ese-RAM"
 #define CARTNAME_ESERAM512   "512kB Ese-RAM"
 #define CARTNAME_ESERAM1MB   "1MB Ese-RAM"
+#define CARTNAME_NOWINDDOS1  "Nowind MSXDOS1"
+#define CARTNAME_NOWINDDOS2  "Nowind MSXDOS2"
 #define CARTNAME_MEGAFLSHSCC "MegaFlashRomScc"
 #define CARTNAME_WAVESCSI128 "128kB WAVE-SCSI"
 #define CARTNAME_WAVESCSI256 "256kB WAVE-SCSI"
