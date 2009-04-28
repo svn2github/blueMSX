@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.c,v $
 **
-** $Revision: 1.23 $
+** $Revision: 1.24 $
 **
-** $Date: 2008-03-30 07:39:56 $
+** $Date: 2009-04-28 23:40:44 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -318,17 +318,35 @@ static void diskUpdateInfo(int driveId)
     }
 
     switch (fileSize[driveId]) {
-        case 172032:	/* Single sided */
+        case 172032:  /* SVI-328 SSDD */
             sides[driveId] = 1;
             tracks[driveId] = 40;
             sectorsPerTrack[driveId] = 17;
             diskType[driveId] = SVI328_DISK;
             return;
-        case 346112:	/* Double sided */
+        case 184320:  /* BW 12 SSDD */
+            sectorSize[driveId] = 256;
+            sectorsPerTrack[driveId] = 18;
+            tracks[driveId] = 40;
+            sides[driveId] = 1;
+            return;
+        case 204800:  /* Kaypro II SSDD */
+            sectorSize[driveId] = 512;
+            sectorsPerTrack[driveId] = 10;
+            tracks[driveId] = 40;
+            sides[driveId] = 1;
+            return;
+        case 346112:  /* SVI-328 DSDD */
             sides[driveId] = 2;
             tracks[driveId] = 40;
             sectorsPerTrack[driveId] = 17;
             diskType[driveId] = SVI328_DISK;
+            return;
+        case 348160:  /* SVI-728 DSDD (CP/M) */
+            sectorSize[driveId] = 256;
+            sectorsPerTrack[driveId] = 17;
+            tracks[driveId] = 40;
+            sides[driveId] = 2;
             return;
 	}
 
