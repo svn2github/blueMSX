@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNoWind.cpp,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2009-04-21 05:08:47 $
+** $Date: 2009-04-29 00:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -155,12 +155,53 @@ typedef struct {
     int slot;
     int sslot;
     int startPage;
-    int deviceId;
+    int deviceId[4];
     UInt8 romMapper;
     UInt8* flashPage;
 } RomMapperNoWind;
 
 
+static int nowindLoaded = 0;
+
+static void diskInsert(RomMapperNoWind* rm, int driveId, int driveNo)
+{
+    NoWindProperties* prop = &propGetGlobalProperties()->nowind;
+    FileProperties* disk = &propGetGlobalProperties()->media.disks[diskGetHdDriveId(driveId, driveNo)];
+    int diskHasPartitionTable = 0;
+    FILE* f;
+    
+    UInt8 header[512];
+
+    f = fopen(disk->fileName, "rb");    
+    if (f == NULL) {
+        rm->deviceId[driveNo] = -1;
+        return;
+    }
+    rm->deviceId[driveNo] = deviceIdAlloc();
+    if (rm->deviceId[driveNo] < 0) {
+        fclose(f);
+        return;
+    }
+
+    if (fread(header, 1, sizeof(header), f) != 0) {
+        diskHasPartitionTable =
+                header[510] == 0x55 && 
+                header[511] == 0xaa;
+    }
+    fclose(f);
+
+    if (diskHasPartitionTable) {
+        if (nowindusb_set_harddisk_image) {
+            nowindusb_set_harddisk_image(rm->deviceId[driveNo], prop->partitionNumber, 
+                prop->ignoreBootFlag != 0, disk->fileName);
+        }
+    }
+    else {
+        if (nowindusb_set_image) {
+            nowindusb_set_image(rm->deviceId[driveNo], disk->fileName);
+        }
+    }
+}
 
 
 static void updateMapper(RomMapperNoWind* rm, UInt8 page)
@@ -208,11 +249,16 @@ static void loadState(void* _rm)
 static void destroy(void* _rm)
 {
     RomMapperNoWind* rm = (RomMapperNoWind*)_rm;
+    int i;
 
     amdFlashDestroy(rm->amdFlash);
-    deviceIdFree(rm->deviceId);
+    for (i = 0; i < 4; i++) {
+        if (rm->deviceId[i] != -1) {
+            deviceIdFree(rm->deviceId[i]);
+        } 
+    }
 #ifdef USE_NOWIND_DLL
-    if (deviceIdCount() == 0) {
+    if (--nowindLoaded == 0) {
         if (nowindusb_cleanup) nowindusb_cleanup();
         nowindUnloadDll();
     }
@@ -281,25 +327,9 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
                          int size, int slot, int sslot, int startPage) 
 {
     NoWindProperties* prop = &propGetGlobalProperties()->nowind;
-    FileProperties* disk = &propGetGlobalProperties()->media.disks[driveId];
-
-    int diskHasPartitionTable = 0;
-    FILE* f = fopen(disk->fileName, "rb");
-    if (f != NULL) {
-        UInt8 header[512];
-        if (fread(header, 1, sizeof(header), f) != 0) {
-            diskHasPartitionTable =
-                (header[0]   == 0xEB && 
-                 header[1]   == 0xFE && 
-                 header[2]   == 0x90 && 
-                 header[510] == 0x55 && 
-                 header[511] == 0xaa);
-        }
-        fclose(f);
-    }
-
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     RomMapperNoWind* rm;
+    int i;
 
     rm = (RomMapperNoWind*)malloc(sizeof(RomMapperNoWind));
 
@@ -314,10 +344,8 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
     rm->sslot = sslot;
     rm->startPage  = startPage;
 
-    rm->deviceId = deviceIdAlloc();
-
 #ifdef USE_NOWIND_DLL
-    if (deviceIdCount() == 1) {
+    if (++nowindLoaded == 1) {
         nowindLoadDll();
         if (nowindusb_startup)  nowindusb_startup();
     }
@@ -326,19 +354,13 @@ int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData,
         nowindusb_attribute(ATTR_ENABLE_OTHER_DISKROMS, prop->enableOtherDiskRoms != 0);
         nowindusb_attribute(ATTR_ENABLE_PHANTOM_DRIVES, prop->enablePhantomDrives != 0);
     }
-    if (diskHasPartitionTable) {
-        if (nowindusb_set_harddisk_image) {
-            nowindusb_set_harddisk_image(rm->deviceId, prop->partitionNumber, prop->ignoreBootFlag != 0,
-            propGetGlobalProperties()->media.disks[diskGetHdDriveId(driveId, 0)].fileName);
-        }
+    if (nowindusb_set_debug_callback) {
+        nowindusb_set_debug_callback(debugCb);
     }
-    else {
-        if (nowindusb_set_image) {
-            nowindusb_set_image(rm->deviceId, 
-                propGetGlobalProperties()->media.disks[diskGetHdDriveId(driveId, 0)].fileName);
-        }
+
+    for (i = 0; i < 4; i++) {
+        diskInsert(rm, driveId, i);
     }
-    if (nowindusb_set_debug_callback) nowindusb_set_debug_callback(debugCb);
 #endif
 
     reset(rm);

@@ -904,6 +904,12 @@
 					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNms1210Rs232.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNms1210Rs232.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.c">
 				</File>
 				<File
@@ -1625,6 +1631,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\IoDevice\WDCRC.h">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\Z8530.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\IoDevice\Z8530.h">
 			</File>
 		</Filter>
 		<Filter

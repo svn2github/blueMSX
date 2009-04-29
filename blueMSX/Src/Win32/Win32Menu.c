@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.87 $
+** $Revision: 1.88 $
 **
-** $Date: 2009-04-22 03:44:35 $
+** $Date: 2009-04-29 00:05:05 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -102,6 +102,9 @@
 #define ID_TOOLS_KEYBOARDEDITOR         40066
 #define ID_TOOLS_MIXER                  40061
 
+#define ID_NOWIND_ENABLEDOS2            40100
+#define ID_NOWIND_ENABLEPHANTOMDRIVES   40101
+#define ID_NOWIND_ENABLEOTHERDISKROMS   40102
 
 #define ID_FILE_CART_OFFSET               150
 
@@ -186,6 +189,8 @@
 #define ID_HARDDISK_INSERTDIR           41603
 #define ID_HARDDISK_REMOVE              41604
 #define ID_HARDDISK_HISTORY             41605
+#define ID_NOWINDHD_INSERT              41606
+#define ID_NOWINDDD_INSERT              41607
 
 
 
@@ -433,7 +438,6 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
 
     HMENU hMenuIde = CreatePopupMenu();
     HMENU hMenuScsi = CreatePopupMenu();
-    HMENU hMenuUsb = CreatePopupMenu();
 
     setMenuColor(hMenu);
     setMenuColor(hMenuExtRam);
@@ -446,7 +450,6 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     setMenuColor(hMenuEseSCC);
     setMenuColor(hMenuIde);
     setMenuColor(hMenuScsi);
-    setMenuColor(hMenuUsb);
 
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM16KB, "16 kB");
     AppendMenu(hMenuExtRam, MF_STRING, idOffset + ID_FILE_CART_EXTRAM32KB, "32 kB");
@@ -495,8 +498,6 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenuScsi, MF_POPUP, (UINT)hMenuWaveSCSI,  langMenuCartWaveSCSI());
     AppendMenu(hMenuScsi, MF_STRING, idOffset + ID_FILE_CART_GOUDASCSI, langMenuCartGoudaSCSI());
 
-    AppendMenu(hMenuUsb, MF_POPUP, (UINT)hMenuNowind, "Nowind");
-
     if (gameReaderSupported()) {
         AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_GAMEREADER, langMenuCartGameReader());
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -508,7 +509,7 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuIde, langMenuCartIde());
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuScsi, langMenuCartScsi());
-    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuUsb, "USB Disk");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hMenuNowind, "Nowind USB Disk Controller");
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_FMPAC, langMenuCartFMPac());
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_PAC, langMenuCartPac());
@@ -674,6 +675,20 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
     return hMenu;
 }
 
+static HMENU menuCreateNowindSettings(Properties* pProperties)
+{
+    HMENU hMenu = CreatePopupMenu();
+    char langBuffer[560];
+
+    setMenuColor(hMenu);
+
+    AppendMenu(hMenu, MF_STRING | (pProperties->nowind.enableDos2 ? MFS_CHECKED : 0), ID_NOWIND_ENABLEDOS2, "Enable DOS2");
+    AppendMenu(hMenu, MF_STRING | (pProperties->nowind.enablePhantomDrives ? MFS_CHECKED : 0), ID_NOWIND_ENABLEPHANTOMDRIVES, "Enable Phantom Drives");
+    AppendMenu(hMenu, MF_STRING | (pProperties->nowind.enableOtherDiskRoms ? MFS_CHECKED : 0), ID_NOWIND_ENABLEOTHERDISKROMS, "Enable Other Diskroms");
+
+    return hMenu;
+}
+
 static HMENU menuCreateIdeHd(int diskNo, Properties* pProperties, Shortcuts* shortcuts, int showCdrom)
 {
     int idOffset = diskNo * ID_HARDDISK_OFFSET;
@@ -721,8 +736,16 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
             break;
         case HD_NOWIND:
             hasHd = 1;
-            sprintf(langBuffer, "NoWind USB Disk", i);
+            sprintf(langBuffer, "Disk 1", i);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
+            sprintf(langBuffer, "Disk 2", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 1), pProperties, shortcuts, 0), langBuffer);
+            sprintf(langBuffer, "Disk 3", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 2), pProperties, shortcuts, 0), langBuffer);
+            sprintf(langBuffer, "Disk 4", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 3), pProperties, shortcuts, 0), langBuffer);
+            AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateNowindSettings(pProperties), langPropSettings());
             break;
         case HD_GIDE:
             hasHd = 1;
@@ -1719,6 +1742,15 @@ int menuCommand(Properties* pProperties, int command)
         case ID_HARDDISK_REMOVE:
             actionHarddiskRemove(i);
             return 0;
+        case ID_NOWINDHD_INSERT:
+            pProperties->media.disks[i].type = 1;
+            actionHarddiskInsert(i); 
+            return 0;
+        case ID_NOWINDDD_INSERT:
+            pProperties->media.disks[i].type = 0;
+            actionHarddiskInsert(i); 
+            return 0;
+
         }
         
     }
@@ -1780,10 +1812,19 @@ int menuCommand(Properties* pProperties, int command)
     }
 
     switch (command) {
+    case ID_NOWIND_ENABLEDOS2:
+        pProperties->nowind.enableDos2 = !pProperties->nowind.enableDos2;
+        return 1;
+    case ID_NOWIND_ENABLEPHANTOMDRIVES:
+        pProperties->nowind.enablePhantomDrives = !pProperties->nowind.enablePhantomDrives;
+        return 1;
+    case ID_NOWIND_ENABLEOTHERDISKROMS:
+        pProperties->nowind.enableOtherDiskRoms = !pProperties->nowind.enableOtherDiskRoms;
+        return 1;
     case ID_VIDEO_AUTODETECT:
         pProperties->video.detectActiveMonitor = !pProperties->video.detectActiveMonitor;
         boardSetVideoAutodetect(pProperties->video.detectActiveMonitor);
-        return 0;
+        return 1;
     case ID_FILE_PTRSCR:                    actionScreenCapture();          return 0;
     case ID_FILE_SAVE:                      actionSaveState();              return 0;
     case ID_FILE_LOAD:                      actionLoadState();              return 0;
