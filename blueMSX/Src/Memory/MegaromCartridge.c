@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/MegaromCartridge.c,v $
 **
-** $Revision: 1.64 $
+** $Revision: 1.65 $
 **
-** $Date: 2009-04-22 03:44:35 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -208,6 +208,10 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
     case ROM_GIDE:
         success &= romMapperGIdeCreate(cartNo);
+        break;
+
+    case ROM_NMS1210:
+        romMapperNms1210Rs232Create(slot, sslot, 2);
         break;
 
     case SRAM_MEGASCSI128:

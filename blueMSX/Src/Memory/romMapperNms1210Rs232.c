@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNms1210Rs232.c,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2009-04-29 00:05:05 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -177,10 +177,16 @@ static UInt8 readIo(NMS1210Rs232* nms1210Rs232, UInt16 ioPort)
     case 0x37:
         break;
     case 0x38:
+        value = z8530Read(nms1210Rs232->z8530, 0);
+        break;
     case 0x39:
+        value = z8530Read(nms1210Rs232->z8530, 2);
+        break;
     case 0x3a:
+        value = z8530Read(nms1210Rs232->z8530, 1);
+        break;
     case 0x3b:
-        value = z8530Read(nms1210Rs232->z8530, ioPort & 0x03);
+        value = z8530Read(nms1210Rs232->z8530, 3);
         break;
     case 0x3c:
     case 0x3d:
@@ -198,10 +204,16 @@ static void writeIo(NMS1210Rs232* nms1210Rs232, UInt16 ioPort, UInt8 value)
     case 0x37:
         break;
     case 0x38:
+        z8530Write(nms1210Rs232->z8530, 0, value);
+        break;
     case 0x39:
+        z8530Write(nms1210Rs232->z8530, 2, value);
+        break;
     case 0x3a:
+        z8530Write(nms1210Rs232->z8530, 1, value);
+        break;
     case 0x3b:
-        z8530Write(nms1210Rs232->z8530, ioPort & 0x03, value);
+        z8530Write(nms1210Rs232->z8530, 3, value);
         break;
     case 0x3c:
     case 0x3d:
@@ -216,11 +228,11 @@ static void writeIo(NMS1210Rs232* nms1210Rs232, UInt16 ioPort, UInt8 value)
 ** I8251 callbacks
 ******************************************
 */
-static int transmit(NMS1210Rs232* nms1210Rs232, UInt8 value) {
+static int rs232transmit(NMS1210Rs232* nms1210Rs232, UInt8 value) {
     return 0;
 }
 
-static int signal(NMS1210Rs232* nms1210Rs232) {
+static int rs232signal(NMS1210Rs232* nms1210Rs232) {
     return 0;
 }
 
@@ -305,7 +317,7 @@ static void getDebugInfo(NMS1210Rs232* nms1210Rs232, DbgDevice* dbgDevice)
 ** NMS1210 RS-232 Create Method
 ******************************************
 */
-int romMapperNms1210Rs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage)
+int romMapperNms1210Rs232Create(int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
@@ -331,7 +343,7 @@ int romMapperNms1210Rs232Create(char* filename, UInt8* romData, int size, int sl
         slotMapPage(slot, sslot, i + startPage, NULL, 0, 0);
     }
 
-//    nms1210Rs232->i8251 = i8251Create(transmit, signal, setDataBits, setStopBits, setParity, 
+//    nms1210Rs232->i8251 = i8251Create(rs232transmit, rs232signal, setDataBits, setStopBits, setParity, 
 //                                 setRxReady, setDtr, setRts, getDtr, getRts, nms1210Rs232);
     nms1210Rs232->z8530 = z8530Create(nms1210Rs232);
 

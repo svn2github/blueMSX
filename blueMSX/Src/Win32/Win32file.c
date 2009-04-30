@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32file.c,v $
 **
-** $Revision: 1.70 $
+** $Revision: 1.71 $
 **
-** $Date: 2008-11-23 20:26:12 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,6 +92,8 @@ static RomType romTypeList[] = {
     ROM_GOUDASCSI,
     SRAM_MEGASCSI,
     SRAM_WAVESCSI,
+
+    ROM_NMS1210, /* related */
     
     ROM_FMPAC,
     ROM_FMPAK,

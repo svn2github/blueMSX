@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNms1210Rs232.h,v $
 **
-** $Revision: 1.1 $
+** $Revision: 1.2 $
 **
-** $Date: 2009-04-29 00:05:05 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,6 @@
 
 #include "MsxTypes.h"
 
-int romMapperNms1210Rs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage);
+int romMapperNms1210Rs232Create(int slot, int sslot, int startPage);
 
 #endif

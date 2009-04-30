@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Media/MediaDb.cpp,v $
 **
-** $Revision: 1.90 $
+** $Revision: 1.91 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -154,6 +154,8 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "BeerIDE")      return ROM_BEERIDE;
     if (name == "GIDE")         return ROM_GIDE;
     if (name == "GoudaSCSI")    return ROM_GOUDASCSI;
+
+    if (name == "NMS1210")      return ROM_NMS1210;
 
     if (name == "fsa1fm2")      return ROM_PANASONIC8;
     if (name == "FSA1FM2")      return ROM_PANASONIC8;
@@ -658,6 +660,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_GAMEREADER:  return langRomTypeGameReader();
     case ROM_SUNRISEIDE:  return langRomTypeSunriseIde();
     case ROM_BEERIDE:     return langRomTypeBeerIde();
+    case ROM_NMS1210:     return "Philips NMS1210 Serial Interface";
     case ROM_GIDE:        return langRomTypeGide();
     case ROM_MICROSOL80:  return langRomTypeVmx80();
     case ROM_NMS8280DIGI: return langRomTypeNms8280Digitiz();
@@ -813,6 +816,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_GAMEREADER:  return "GAMEREADER";
     case ROM_SUNRISEIDE:  return "SUNRISEIDE";
     case ROM_BEERIDE:     return "BEER IDE";
+    case ROM_NMS1210:     return "NMS1210";
     case ROM_GIDE:        return "GIDE";
     case ROM_MICROSOL80:  return "MICROSOL80";
     case ROM_NMS8280DIGI: return "8280 DIGI";

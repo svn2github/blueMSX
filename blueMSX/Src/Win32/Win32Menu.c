@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32Menu.c,v $
 **
-** $Revision: 1.88 $
+** $Revision: 1.89 $
 **
-** $Date: 2009-04-29 00:05:05 $
+** $Date: 2009-04-30 03:53:28 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -159,6 +159,7 @@
 #define ID_FILE_CART_EXTRAM64KB         41113
 #define ID_FILE_CART_NOWINDDOS1         41114
 #define ID_FILE_CART_NOWINDDOS2         41115
+#define ID_FILE_CART_NMS1210            41116
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -281,6 +282,7 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_SUNRISEIDE) == 0)     return langRomTypeSunriseIde();
     if (strcmp(fileName, CARTNAME_BEERIDE) == 0)        return langRomTypeBeerIde();
     if (strcmp(fileName, CARTNAME_GIDE) == 0)           return langRomTypeGide();
+    if (strcmp(fileName, CARTNAME_NMS1210) == 0)        return "Philips NMS 1210";
     if (strcmp(fileName, CARTNAME_MEGASCSI128) == 0)    return langRomTypeMegaSCSI128();
     if (strcmp(fileName, CARTNAME_MEGASCSI256) == 0)    return langRomTypeMegaSCSI256();
     if (strcmp(fileName, CARTNAME_MEGASCSI512) == 0)    return langRomTypeMegaSCSI512();
@@ -515,6 +517,8 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_PAC, langMenuCartPac());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_SONYHBI55, langMenuCartHBI55());
+    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_NMS1210, "Philips NMS1210 Serial Interface");
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(hMenu, MF_POPUP, (UINT)hMenuExtRam, langMenuCartExternalRam());
     AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -1554,6 +1558,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_GIDE:
             insertCartridge(pProperties, i, CARTNAME_GIDE, NULL, ROM_GIDE, 0);
+            return 1;
+        case ID_FILE_CART_NMS1210:
+            insertCartridge(pProperties, i, CARTNAME_NMS1210, NULL, ROM_GIDE, 0);
             return 1;
         case ID_FILE_CART_MEGARAM128:
             insertCartridge(pProperties, i, CARTNAME_MEGARAM128, NULL, ROM_MEGARAM128, 0);
