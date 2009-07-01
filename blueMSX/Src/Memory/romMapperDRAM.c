@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperDRAM.c,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:43 $
+** $Date: 2009-07-01 05:00:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,14 +99,14 @@ static void setDram(RomMapperDram* rm, int enable)
         if (rm->slot == 0 && rm->sslot == 0) {
             int endPage = MIN(4, rm->startPage + rm->pages);
             int page;
-            for (page = rm->startPage; page < 4; page++) {
+            for (page = rm->startPage; page < endPage; page++) {
                 slotMapPage(rm->slot, rm->sslot, page, boardGetRamPage(page - 8), 1, 0);
             }
         }
         else if (rm->slot == 3 && rm->sslot == 1) {
             int endPage = MIN(4, rm->startPage + rm->pages);
             int page;
-            for (page = rm->startPage; page < 4; page++) {
+            for (page = rm->startPage; page < endPage; page++) {
                 slotMapPage(rm->slot, rm->sslot, page, boardGetRamPage(page - 4), 1, 0);
             }
         }
@@ -114,7 +114,7 @@ static void setDram(RomMapperDram* rm, int enable)
     else {
         int endPage = MIN(4, rm->startPage + rm->pages);
         int page;
-        for (page = rm->startPage; page < 4; page++) {
+        for (page = rm->startPage; page < endPage; page++) {
             slotMapPage(rm->slot, rm->sslot, page, rm->romData + 0x2000 * (page - rm->startPage), 1, 0);
         }
     }

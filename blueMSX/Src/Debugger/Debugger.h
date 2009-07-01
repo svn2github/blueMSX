@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.h,v $
 **
-** $Revision: 1.22 $
+** $Revision: 1.23 $
 **
-** $Date: 2008-12-21 08:38:52 $
+** $Date: 2009-07-01 05:00:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -129,6 +129,10 @@ void dbgStep();
 void dbgSetBreakpoint(UInt16 address);
 void dbgClearBreakpoint(UInt16 address);
 
+int debuggerCheckVramAccess(void);
+
+void dbgEnableVramAccessCheck(int enable);
+
 // Internal structure and interface
 
 #define MAX_DBG_COMPONENTS 4
@@ -152,5 +156,7 @@ void debuggerNotifyEmulatorResume();
 void debuggerNotifyEmulatorReset();
 void debuggerTrace(const char* str);
 void debuggerSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address);
+
+int debuggerIsPresent(void);
 
 #endif /*DEBUGGER_H*/

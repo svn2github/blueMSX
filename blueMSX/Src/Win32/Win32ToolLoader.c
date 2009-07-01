@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32ToolLoader.c,v $
 **
-** $Revision: 1.25 $
+** $Revision: 1.26 $
 **
-** $Date: 2009-01-23 19:05:03 $
+** $Date: 2009-07-01 05:00:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -201,6 +201,11 @@ void __stdcall toolSetBreakpoint(UInt16 address)
     dbgSetBreakpoint(address);
 }
 
+void __stdcall toolEnableVramAccessCheck(int enable)
+{
+    dbgEnableVramAccessCheck(enable);
+}
+
 void __stdcall toolClearBreakpoint(UInt16 address)
 {
     dbgClearBreakpoint(address);
@@ -258,6 +263,7 @@ static Interface toolInterface = {
     toolClearBreakpoint,
     toolGetPath,
     toolGetEmulatorVersion,
+    toolEnableVramAccessCheck,
 };
 
 void toolLoadAll(const char* path, int languageId)
@@ -291,7 +297,7 @@ void toolLoadAll(const char* path, int languageId)
 
         if (lib != NULL) {
             char description[32] = "Unknown";
-            CreateFn  create   = (CreateFn) GetProcAddress(lib, "Create11");
+            CreateFn  create   = (CreateFn) GetProcAddress(lib, "Create12");
             NotifyFn  destroy  = (NotifyFn) GetProcAddress(lib, "Destroy");
             NotifyFn  show     = (NotifyFn) GetProcAddress(lib, "Show");
             NotifyFn  onStart  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorStart");
@@ -304,6 +310,21 @@ void toolLoadAll(const char* path, int languageId)
             SetLgFn   onSetLg  = (SetLgFn)  GetProcAddress(lib, "SetLanguage");
             GetNameFn onGetNm  = (GetNameFn)GetProcAddress(lib, "GetName");
 
+            if (create == NULL) {
+                // Check old style dll exports (of blueMSX 2.8.1)
+                create   = (CreateFn) GetProcAddress(lib, "Create11");
+                destroy  = (NotifyFn) GetProcAddress(lib, "Destroy");
+                show     = (NotifyFn) GetProcAddress(lib, "Show");
+                onStart  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorStart");
+                onStop   = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorStop");
+                onPause  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorPause");
+                onResume = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorResume");
+                onReset  = (NotifyFn) GetProcAddress(lib, "NotifyEmulatorReset");
+                onTrace  = (TraceFn)  GetProcAddress(lib, "EmulatorTrace");
+                onSetBp  = (SetBpFn)  GetProcAddress(lib, "EmulatorSetBreakpoint");
+                onSetLg  = (SetLgFn)  GetProcAddress(lib, "SetLanguage");
+                onGetNm  = (GetNameFn)GetProcAddress(lib, "GetName");
+            }
             if (create == NULL) {
                 // Check old style dll exports (of blueMSX 2.2)
                 create   = (CreateFn)GetProcAddress(lib, (LPCSTR)1);

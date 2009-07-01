@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Debugger/Debugger.c,v $
 **
-** $Revision: 1.18 $
+** $Revision: 1.19 $
 **
-** $Date: 2008-12-21 08:38:52 $
+** $Date: 2009-07-01 05:00:23 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -45,7 +45,7 @@ struct BlueDebugger {
 };
 
 #define MAX_DEVICES 64
-#define MAX_DEBUGGERS 64
+#define MAX_DEBUGGERS 8
 
 struct DbgSnapshot {
     int count;
@@ -54,6 +54,7 @@ struct DbgSnapshot {
 
 static BlueDebugger* debuggerList[MAX_DEBUGGERS];
 static DbgState  dbgState = DBG_STOPPED;
+static int debuggerVramAccessEnable = 0;
 
 static void onDefault(void* ref) {
 }
@@ -108,6 +109,11 @@ void debuggerDestroy(BlueDebugger* debugger)
     }
 
     free(debugger);
+}
+
+int debuggerCheckVramAccess(void)
+{
+    return debuggerVramAccessEnable > 0;
 }
 
 void debuggerNotifyEmulatorStart()
@@ -356,4 +362,14 @@ void dbgClearBreakpoint(UInt16 address)
 {
     boardClearBreakpoint(address);
 }
+
+void dbgEnableVramAccessCheck(int enable)
+{
+    if (enable) {
+        debuggerVramAccessEnable++;
+    }
+    else {
+        debuggerVramAccessEnable--;
+    }
+}    
 
