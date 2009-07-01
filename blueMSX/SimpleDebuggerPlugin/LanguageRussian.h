@@ -75,6 +75,7 @@ public:
         menuDebugEnableAll          = "Включить все прерывания";
         menuDebugDisableAll         = "Отключить все прерывания";
         menuDebugShowAssemblyFlags  = "Показать метки ассемблера";
+        menuDebugFastVram           = "Break on too fast VRAM access";
 
         menuWindow                  = "Окно";
 

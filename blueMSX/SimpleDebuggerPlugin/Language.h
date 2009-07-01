@@ -77,6 +77,7 @@ public:
     static const char* menuDebugEnableAll;
     static const char* menuDebugDisableAll;
     static const char* menuDebugShowAssemblyFlags;
+    static const char* menuDebugFastVram;
 
     static const char* menuWindow;
     static const char* menuHelp;

@@ -74,6 +74,7 @@ public:
         menuDebugEnableAll          = "ブレイクポイント全有効化";
         menuDebugDisableAll         = "ブレイクポイント全無効化";
         menuDebugShowAssemblyFlags  = "アセンブリフラッグ表\示";
+        menuDebugFastVram           = "Break on too fast VRAM access";
 
         menuWindow                  = "ウィンドウ";
 

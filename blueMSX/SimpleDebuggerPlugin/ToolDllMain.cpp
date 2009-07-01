@@ -29,6 +29,7 @@ static ToolBreakpoint                  toolSetBreakpoint;
 static ToolBreakpoint                  toolClearBreakpoint;
 static ToolPath                        toolGetToolDirectory;
 static ToolEmulatorVersion             toolGetEmulatorVersion;
+static ToolEnableVramAccessCheck       toolEnableVramAccessCheck;
 
 static HINSTANCE hInstance;
 
@@ -122,6 +123,10 @@ void ClearBreakpoint(UInt16 address) {
     toolClearBreakpoint(address);
 }
 
+void EnableVramAccessCheck(int enable) {
+    toolEnableVramAccessCheck(enable);
+}
+
 char* GetToolPath() {
     return toolGetToolDirectory();
 }
@@ -150,7 +155,7 @@ HINSTANCE GetDllHinstance()
     return hInstance;
 }
 
-extern "C" __declspec(dllexport) int __stdcall Create11(Interface* toolInterface, char* name, int length)
+extern "C" __declspec(dllexport) int __stdcall Create12(Interface* toolInterface, char* name, int length)
 {
     strcpy(name, OnGetName());
     
@@ -178,6 +183,7 @@ extern "C" __declspec(dllexport) int __stdcall Create11(Interface* toolInterface
     toolClearBreakpoint             = toolInterface->clearBreakpoint;
     toolGetToolDirectory            = toolInterface->getToolDirectory;
     toolGetEmulatorVersion          = toolInterface->getEmulatorVersion;
+    toolEnableVramAccessCheck       = toolInterface->enableVramAccessCheck;
 
     OnCreateTool();
 

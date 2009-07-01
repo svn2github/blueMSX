@@ -75,6 +75,7 @@ public:
         menuDebugEnableAll          = "启用所有断点";
         menuDebugDisableAll         = "禁用所有断点";
         menuDebugShowAssemblyFlags  = "显示汇编标志";
+        menuDebugFastVram           = "Break on too fast VRAM access";
 
         menuWindow                  = "窗口";
 

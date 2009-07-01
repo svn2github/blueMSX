@@ -75,6 +75,7 @@ public:
         menuDebugEnableAll          = "모든 중단점 활성";
         menuDebugDisableAll         = "모든 중단점 비활성";
         menuDebugShowAssemblyFlags  = "어셈블리 플래그 보여주기";
+        menuDebugFastVram           = "Break on too fast VRAM access";
 
         menuWindow                  = "윈도우";
 

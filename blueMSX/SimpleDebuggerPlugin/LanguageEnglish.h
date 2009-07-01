@@ -75,7 +75,7 @@ public:
         menuDebugEnableAll          = "Enable All Breakpoints";
         menuDebugDisableAll         = "Disable All Breakpoints";
         menuDebugShowAssemblyFlags  = "Show Assembly Flags";
-
+        menuDebugFastVram           = "Break on too fast VRAM access";
         menuWindow                  = "Window";
 
         menuHelp                    = "Help";

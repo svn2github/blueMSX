@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2009-07-01 05:01:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -66,6 +66,8 @@ char* GetToolPath();
 int GetEmulatorMajorVersion();
 int GetEmulatorMinorVersion();
 int GetEmulatorBuildNumber();
+
+void EnableVramAccessCheck(int enable);
 
 HINSTANCE GetDllHinstance();
 

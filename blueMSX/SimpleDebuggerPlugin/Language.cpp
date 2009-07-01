@@ -111,6 +111,7 @@ const char* Language::menuDebugRemoveAll;
 const char* Language::menuDebugEnableAll;
 const char* Language::menuDebugDisableAll;
 const char* Language::menuDebugShowAssemblyFlags;
+const char* Language::menuDebugFastVram;
 
 const char* Language::menuWindow;
 const char* Language::menuHelp;

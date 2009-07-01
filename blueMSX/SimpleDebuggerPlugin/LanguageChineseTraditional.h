@@ -75,6 +75,7 @@ public:
         menuDebugEnableAll          = "啟用所有中斷點";
         menuDebugDisableAll         = "停用所有中斷點";
         menuDebugShowAssemblyFlags  = "顯示組合旗標";
+        menuDebugFastVram           = "Break on too fast VRAM access";
 
         menuWindow                  = "視窗";
 

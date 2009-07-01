@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.14 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2009-07-01 05:01:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -165,6 +165,7 @@ typedef void          (__stdcall *ToolAction)();
 typedef void          (__stdcall *ToolBreakpoint)(UInt16);
 typedef char*         (__stdcall *ToolPath)();
 typedef void          (__stdcall *ToolEmulatorVersion)(int* major, int* minor, int* buildNumber);
+typedef void          (__stdcall *ToolEnableVramAccessCheck)(int enable);
 typedef struct {
     ToolSnapshotCreate              create;
     ToolSnapshotDestroy             destroy;
@@ -194,6 +195,8 @@ typedef struct {
 
     ToolPath                        getToolDirectory;
     ToolEmulatorVersion             getEmulatorVersion;
+
+    ToolEnableVramAccessCheck       enableVramAccessCheck;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);

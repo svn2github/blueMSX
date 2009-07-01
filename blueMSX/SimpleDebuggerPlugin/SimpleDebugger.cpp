@@ -38,6 +38,7 @@ static IoPortWindow* ioPorts = NULL;
 static SymbolInfo* symbolInfo = NULL;
 static Memory* memory = NULL;
 static LanguageId langId = LID_ENGLISH;
+static int vramCheckAccess = 0;
 
 #define WM_STATUS (WM_USER + 1797)
 
@@ -201,6 +202,7 @@ static void updateStatusBar()
 #define MENU_DEBUG_SETBP            37216
 #define MENU_DEBUG_FIND             37217
 #define MENU_DEBUG_FINDNEXT         37218
+#define MENU_DEBUG_CHECK_VRAM       37219
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -290,6 +292,11 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, buf);
     sprintf(buf, "%s", Language::menuDebugDisableAll);
     AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, buf);
+
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    sprintf(buf, "%s", Language::menuDebugFastVram);
+    AppendMenu(hMenuDebug, MF_STRING | (vramCheckAccess ? MF_CHECKED : 0), MENU_DEBUG_CHECK_VRAM, buf);
 
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
@@ -1095,6 +1102,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             }
             return 0;
 
+        case MENU_DEBUG_CHECK_VRAM:
+            vramCheckAccess ^= 1;
+            EnableVramAccessCheck(vramCheckAccess);
+            updateWindowMenu();
+            return 0;
+
         case MENU_DEBUG_FIND:
              {
                 FindProcData procData(Language::findWindowCaption);
@@ -1211,6 +1224,9 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         return 0;
 
     case WM_CLOSE:
+        if (vramCheckAccess) {
+            EnableVramAccessCheck(0);
+        }
         DestroyWindow(hwnd);
         return 0;
 
@@ -1219,6 +1235,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         iniFileWriteInt( "Main Window", "y",       y);
         iniFileWriteInt( "Main Window", "width",   width);
         iniFileWriteInt( "Main Window", "height",  height);
+        iniFileWriteInt( "Main Window", "check vram access",  vramCheckAccess);
 
         disassembly->clearAllBreakpoints();
         dbgHwnd = NULL;
@@ -1292,6 +1309,11 @@ void OnShowTool() {
     y       = iniFileGetInt( "Main Window", "y", CW_USEDEFAULT );
     width   = iniFileGetInt( "Main Window", "width", 800 );
     height  = iniFileGetInt( "Main Window", "height", 740 );
+    vramCheckAccess = iniFileGetInt( "Main Window", "check vram access", 0 );
+    
+    if (vramCheckAccess) {
+        EnableVramAccessCheck(1);
+    }
 
     if (x > GetSystemMetrics(SM_CXSCREEN) - 200) {
         x = GetSystemMetrics(SM_CXSCREEN) - 200;
