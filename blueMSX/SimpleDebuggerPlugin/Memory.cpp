@@ -469,6 +469,7 @@ void Memory::invalidateContent()
     }
 
     currentMemory = NULL;
+
     updateScroll();
 
     updateDropdown();
@@ -503,7 +504,7 @@ void Memory::updateContent(Snapshot* snapshot)
         int j;
 
         int memCount = DeviceGetMemoryBlockCount(device);
-
+        
         for (j = 0; j < memCount; j++) {
             MemoryBlock* mem = DeviceGetMemoryBlock(device, j);
 
@@ -521,6 +522,7 @@ void Memory::updateContent(Snapshot* snapshot)
                 if (mi->title == memName && mi->size == mem->size) {
                     memcpy(mi->memory, mem->memory, mi->size);
                     mi->flag = true;
+                    mi->memBlock = mem;
                     break;
                 }
             }
@@ -565,7 +567,6 @@ void Memory::findData(const char* text)
     if (currentMemory == NULL ) {
         return;
     }
-
     int len = strlen(text);
     int startAddr = currentEditAddress >= 0 ? currentEditAddress + 1 : 0;
     int endAddr = currentMemory->size - len;

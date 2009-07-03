@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperTurboRPcm.c,v $
 **
-** $Revision: 1.12 $
+** $Revision: 1.13 $
 **
-** $Date: 2008-03-30 18:38:44 $
+** $Date: 2009-07-03 21:27:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -47,6 +47,7 @@ typedef struct {
     UInt8  time;
     UInt32 refTime;
     UInt32 refFrag;
+    Mixer* mixer;
 } RomMapperTurboRPcm;
 
 static void saveState(RomMapperTurboRPcm* rm)
@@ -71,6 +72,8 @@ static void loadState(RomMapperTurboRPcm* rm)
     rm->time    = (UInt8)saveStateGet(state, "time",    0);
     rm->refTime =        saveStateGet(state, "refTime", 0);
     rm->refFrag =        saveStateGet(state, "refFrag", 0);
+
+    mixerSetEnable(rm->mixer, rm->status & 1);
 
     saveStateClose(state);
 }
@@ -139,6 +142,8 @@ static void write(RomMapperTurboRPcm* rm, UInt16 ioPort, UInt8 value)
             dacWrite(rm->dac, DAC_CH_MONO, rm->sample);
 		}
 		rm->status = value & 0x1f;
+        
+        mixerSetEnable(rm->mixer, rm->status & 2);
         break;
     }
 }
@@ -168,7 +173,9 @@ int romMapperTurboRPcmCreate()
     rm->deviceHandle = deviceManagerRegister(ROM_TURBORPCM, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, langDbgDevPcm(), &dbgCallbacks, rm);
 
-    rm->dac    = dacCreate(boardGetMixer(), DAC_MONO);
+    rm->mixer  = boardGetMixer();
+
+    rm->dac    = dacCreate(rm->mixer, DAC_MONO);
 	rm->status = 0;
     rm->time   = 0;
 

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/AudioMixer.c,v $
 **
-** $Revision: 1.17 $
+** $Revision: 1.18 $
 **
-** $Date: 2008-03-30 18:38:45 $
+** $Date: 2009-07-03 21:27:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -132,6 +132,7 @@ struct Mixer
     Int32   volCntLeft;
     Int32   volCntRight;
     FILE*   file;
+    int     enable;
 };
 
 
@@ -340,6 +341,7 @@ Mixer* mixerCreate()
     Mixer* mixer = (Mixer*)calloc(1, sizeof(Mixer));
 
     mixer->fragmentSize = 512;
+    mixer->enable = 1;
 
     if (globalMixer == NULL) globalMixer = mixer;
 
@@ -442,6 +444,29 @@ void mixerSync(Mixer* mixer)
     count          = (UInt32)(elapsed / (mixerCPUFrequency * (boardFrequency() / 3579545)));
 
     if (count == 0 || count > AUDIO_MONO_BUFFER_SIZE) {
+        return;
+    }
+
+    if (!mixer->enable) {
+        while (count--) {
+            if (mixer->stereo) {
+                buffer[mixer->index++] = 0;
+                buffer[mixer->index++] = 0;
+            }
+            else {
+                buffer[mixer->index++] = 0;
+            }
+
+            if (mixer->index == mixer->fragmentSize) {
+                if (mixer->writeCallback != NULL) {
+                    mixer->writeCallback(mixer->writeRef, buffer, mixer->fragmentSize);
+                }
+                if (mixer->logging) {
+                    fwrite(buffer, 2 * mixer->fragmentSize, 1, mixer->file);
+                }
+                mixer->index = 0;
+            }
+        }
         return;
     }
     
@@ -655,4 +680,10 @@ void mixerStopLog(Mixer* mixer)
     fseek(mixer->file, 0, SEEK_SET);
     fwrite(&header, 1, sizeof(WavHeader), mixer->file);
     fclose(mixer->file);
+}
+
+void mixerSetEnable(Mixer* mixer, int enable)
+{
+    mixer->enable = enable;
+//    printf("AUDIO: %s\n", enable?"enabled":"disabled");
 }

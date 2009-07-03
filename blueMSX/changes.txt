@@ -1,9 +1,11 @@
 Next release
 ============
 - **later, 4<->2** Fixed Z80 IRQ timing
+- ** Fixed Z80 IRQ timing (not yet)
+- ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
 
 
-v 2.8.1     April 20, 2008
+v 2.8.1     May 3, 2009
 ==========================
 - Added support for 16kB, 32kB, 48kB and 64kB external ram cartridges
 - Added support for Joyrex PSG module
@@ -33,9 +35,7 @@ v 2.8.1     April 20, 2008
 
 v 2.8       June 8, 2008
 ========================
-- ** Fixed Z80 IRQ timing (not yet)
-- ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
-- ** Added support for Manbow 2 mapper (it was added earlier, but not mentioned in the releasenotes before)
+- Added support for Manbow 2 mapper
 - Added support for DRAM mode in MSXturboR machines
 - Added support for Panasonic FS-A1FM machine
 - Added support for FS-A1WX and FS-A1WSX firmware mapper

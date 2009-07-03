@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/ramMapper.c,v $
 **
-** $Revision: 1.20 $
+** $Revision: 1.21 $
 **
-** $Date: 2009-07-01 05:00:23 $
+** $Date: 2009-07-03 21:27:14 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -92,50 +92,31 @@ static void loadState(RamMapper* rm)
 
 static void writeIo(RamMapper* rm, UInt16 page, UInt8 value)
 {
-    int mapped = rm->dramMode && (rm->mask - value < 3) ? 0 : 1;
-    value &= rm->mask;
-
-    slotMapPage(rm->slot, rm->sslot, 2 * page,     rm->ramData + 0x4000 * value, 1, mapped);
-    slotMapPage(rm->slot, rm->sslot, 2 * page + 1, rm->ramData + 0x4000 * value + 0x2000, 1, mapped);
-}
-
-UInt8 writeEnabled[4];
-
-static void write(RamMapper* rm, UInt16 address, UInt8 value)
-{
-    if (!rm->dramMode || (address < (rm->size - 0x10000))) {
-        rm->ramData[0x4000 * (ramMapperIoGetPortValue(address >> 14) & rm->mask) + (address & 0x3fff)] = value;
+    int baseAddr = 0x4000 * (value & rm->mask);
+    if (rm->dramMode && baseAddr >= (rm->size - 0x10000)) {
+        slotMapPage(rm->slot, rm->sslot, 2 * page,     NULL, 0, 0);
+        slotMapPage(rm->slot, rm->sslot, 2 * page + 1, NULL, 0, 0);
+    }
+    else {
+        slotMapPage(rm->slot, rm->sslot, 2 * page,     rm->ramData + baseAddr, 1, 1);
+        slotMapPage(rm->slot, rm->sslot, 2 * page + 1, rm->ramData + baseAddr + 0x2000, 1, 1);
     }
 }
-
-#if 0
-static void setDram(RamMapper* rm, int enable)
-{
-    rm->dramMode = enable;
-}
-#endif
 
 static void setDram(RamMapper* rm, int enable)
 {
     int i;
+
     rm->dramMode = enable;
 
     for (i = 0; i < 4; i++) {
-        int value = ramMapperIoGetPortValue(i) & rm->mask;
-        int writeEnable = !rm->dramMode || ((value << 14) < (rm->size - 0x10000)) ? 1 : 0;
-
-        slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, 1, writeEnable);
-        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, 1, writeEnable);
+        writeIo(rm, i, ramMapperIoGetPortValue(i));
     }
 }
 
 static void reset(RamMapper* rm)
 {
-    int i;
-    for (i = 0; i < 4; i++) {
-        slotMapPage(rm->slot, rm->sslot, 2 * i, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask), 1, 1);
-        slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * (ramMapperIoGetPortValue(i) & rm->mask) + 0x2000, 1, 1);
-    }
+    setDram(rm, 0);
 }
 
 static void destroy(RamMapper* rm)
@@ -204,7 +185,7 @@ int ramMapperCreate(int size, int slot, int sslot, int startPage, UInt8** ramPtr
     rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, langDbgDevRam(), &dbgCallbacks, rm);
 
     rm->deviceHandle = deviceManagerRegister(RAM_MAPPER, &callbacks, rm);
-    slotRegister(slot, sslot, 0, 8, NULL, NULL, write, destroy, rm);
+    slotRegister(slot, sslot, 0, 8, NULL, NULL, NULL, destroy, rm);
 
     reset(rm);
 
