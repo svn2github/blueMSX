@@ -5,8 +5,16 @@ Next release
 - ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
 
 
+v 2.8.2     July 31, 2009
+=========================
+- Added support for MSX1 VDP timing checks in the debugger
+- Fixed multiple bugs in DRAM management that fixes many known Turbo R issues
+- Fixed memory write bug in debugger that made memory writes occasionally fail
+- Fixed default directroy for hard disk insert
+
+
 v 2.8.1     May 3, 2009
-==========================
+=======================
 - Added support for 16kB, 32kB, 48kB and 64kB external ram cartridges
 - Added support for Joyrex PSG module
 - Added support for PSG pin 6/7 quirk

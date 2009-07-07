@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.h,v $
 **
-** $Revision: 1.79 $
+** $Revision: 1.80 $
 **
-** $Date: 2009-04-30 03:53:28 $
+** $Date: 2009-07-07 02:38:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -353,6 +353,7 @@ typedef struct {
 
 typedef struct {
     char defDir[PROP_MAXPATH];
+    char defHdDir[PROP_MAXPATH];
     int  autostartA;
     int  quickStartDrive;
     int  cdromMethod;

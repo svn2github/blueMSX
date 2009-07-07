@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Win32/Win32.c,v $
 **
-** $Revision: 1.204 $
+** $Revision: 1.205 $
 **
-** $Date: 2008-09-09 04:32:20 $
+** $Date: 2009-07-07 02:38:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -3288,7 +3288,7 @@ char* archFilenameGetOpenHarddisk(Properties* properties, int drive, int allowCr
 {
     char* title = langDlgInsertHarddisk();
     char  extensionList[512];
-    char* defaultDir = properties->diskdrive.defDir;
+    char* defaultDir = properties->diskdrive.defHdDir;
     char* extensions = ".dsk\0.di1\0.di2\0.360\0.720\0.sf7\0.zip\0";
     int* selectedExtension = &properties->media.disks[drive].extensionFilter;
     char* defautExtension = ".dsk";

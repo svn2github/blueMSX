@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Properties.c,v $
 **
-** $Revision: 1.75 $
+** $Revision: 1.76 $
 **
-** $Date: 2009-04-21 05:08:47 $
+** $Date: 2009-07-07 02:38:25 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -404,6 +404,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->cartridge.quickStartDrive = 0;
 
     properties->diskdrive.defDir[0]    = 0;
+    properties->diskdrive.defHdDir[0]  = 0;
     properties->diskdrive.autostartA   = 0;
     properties->diskdrive.quickStartDrive = 0;
     properties->diskdrive.cdromMethod     = P_CDROM_DRVNONE;
@@ -665,6 +666,7 @@ static void propLoad(Properties* properties)
     GET_INT_VALUE_2(cartridge, quickStartDrive);
 
     GET_STR_VALUE_2(diskdrive, defDir);
+    GET_STR_VALUE_2(diskdrive, defHdDir);
     GET_INT_VALUE_2(diskdrive, autostartA);
     GET_INT_VALUE_2(diskdrive, quickStartDrive);
     
@@ -903,6 +905,7 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(cartridge, quickStartDrive);
 
     SET_STR_VALUE_2(diskdrive, defDir);
+    SET_STR_VALUE_2(diskdrive, defHdDir);
     SET_INT_VALUE_2(diskdrive, autostartA);
     SET_INT_VALUE_2(diskdrive, quickStartDrive);
     
