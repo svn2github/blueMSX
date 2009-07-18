@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2009-07-18 14:10:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -28,11 +28,12 @@
 #ifndef ZIPHELPER_H
 #define ZIPHELPER_H
 
+void zipCacheReadOnlyZip(const char* zipName);
 void* zipLoadFile(const char* zipName, const char* fileName, int* size);
 int zipSaveFile(const char* zipName, const char* fileName, int append, void* buffer, int size);
 char* zipGetFileList(const char* zipName, const char* ext, int* count);
 int zipHasFileType(char* zipName, char* ext);
 
-void* zipCompress(void* buffer, int size, int* retSize);
+void* zipCompress(void* buffer, int size, unsigned long* retSize);
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-06-25 22:26:17 $
+** $Date: 2009-07-18 14:10:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -99,9 +99,22 @@ static char* getIndexedFilename(const char* fileName)
     return indexedFileName;
 }
 
-void saveStateCreate(const char* fileName) {
+void saveStateCreateForRead(const char* fileName) 
+{
     tableCount = 0;
     strcpy(stateFile, fileName);
+    zipCacheReadOnlyZip(fileName);
+}
+
+void saveStateCreateForWrite(const char* fileName) 
+{
+    tableCount = 0;
+    strcpy(stateFile, fileName);
+}
+
+void saveStateDestroy(void)
+{
+    zipCacheReadOnlyZip(NULL);
 }
 
 SaveState* saveStateOpenForRead(const char* fileName) {

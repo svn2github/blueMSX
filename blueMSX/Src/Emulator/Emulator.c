@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.65 $
+** $Revision: 1.66 $
 **
-** $Date: 2008-05-19 12:41:13 $
+** $Date: 2009-07-18 14:10:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -524,9 +524,9 @@ void emulatorSuspend() {
 }
 
 void emulatorResume() {
-    emuSysTime = 0;
-
     if (emuState == EMU_SUSPENDED) {
+        emuSysTime = 0;
+
         archSoundResume();
         archMidiEnable(1);
         emuState = EMU_RUNNING;

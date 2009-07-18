@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.h,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.7 $
 **
-** $Date: 2008-06-25 22:26:17 $
+** $Date: 2009-07-18 14:10:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -32,7 +32,9 @@
 
 typedef struct SaveState SaveState;
 
-void saveStateCreate(const char* fileName);
+void saveStateCreateForRead(const char* fileName);
+void saveStateCreateForWrite(const char* fileName);
+void saveStateDestroy(void);
 
 SaveState* saveStateOpenForRead(const char* fileName);
 SaveState* saveStateOpenForWrite(const char* fileName);

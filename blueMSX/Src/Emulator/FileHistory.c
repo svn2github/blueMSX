@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/FileHistory.c,v $
 **
-** $Revision: 1.42 $
+** $Revision: 1.43 $
 **
-** $Date: 2009-04-30 03:53:28 $
+** $Date: 2009-07-18 14:10:27 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -453,7 +453,8 @@ int createSaveFileBaseName(char* fileBase,Properties* properties, int useExtende
                 strcpy(fileBase, extendedDiskName[i]);
             }
             else if (*properties->media.disks[i].fileNameInZip) {
-                strcpy(fileBase, stripPathExt(properties->media.disks[i].fileNameInZip));
+                // Use the same name for state files for every disk image within one zip file
+ 	            strcpy(fileBase, stripPathExt(properties->media.disks[i].fileName));
             }
             else {
                 strcpy(fileBase, stripPathExt(properties->media.disks[i].fileName));
