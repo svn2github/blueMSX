@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.c,v $
 **
-** $Revision: 1.31 $
+** $Revision: 1.32 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2009-07-18 14:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,21 +31,31 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef WII
+#define MAX_FRAMES_PER_FRAMEBUFFER 3
+#else
 #define MAX_FRAMES_PER_FRAMEBUFFER 4
+#endif
 
 struct FrameBufferData {
     int viewFrame;
     int drawFrame;
     int currentAge;
+#ifndef WII
     int currentBlendFrame;
+#endif
     FrameBuffer frame[MAX_FRAMES_PER_FRAMEBUFFER];
+#ifndef WII
     FrameBuffer blendFrame[2];
+#endif
 };
 
 static int curScanline = 0;
 static void* semaphore = NULL;
 static FrameBuffer* deintBuffer = NULL;
+#ifndef WII
 static int confBlendFrames = 0;
+#endif
 
 static FrameBuffer* mixFrame(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct);
 static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int pct);
@@ -73,7 +83,7 @@ static FrameBufferMixMode mixMask = MIXMODE_INTERNAL;
 static int frameBufferCount = MAX_FRAMES_PER_FRAMEBUFFER;
 
 
-static FrameBuffer* frameBufferFlipViewFrame1(int mixFrames) 
+static FrameBuffer* frameBufferFlipViewFrame1(int mixFrames)
 {
     if (currentBuffer == NULL) {
         return NULL;
@@ -82,7 +92,23 @@ static FrameBuffer* frameBufferFlipViewFrame1(int mixFrames)
     return currentBuffer->frame;
 }
 
-static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames) 
+static FrameBuffer* frameBufferFlipViewFrame2(int mixFrames)
+{
+    int index;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    waitSem();
+    index = currentBuffer->viewFrame == 1 ? 0 : 1;
+    if (currentBuffer->frame[index].age > currentBuffer->frame[currentBuffer->viewFrame].age) {
+        currentBuffer->viewFrame = index;
+    }
+    signalSem();
+    return currentBuffer->frame + currentBuffer->viewFrame;
+}
+
+static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames)
 {
     int index;
 
@@ -102,7 +128,7 @@ static FrameBuffer* frameBufferFlipViewFrame3(int mixFrames)
     return currentBuffer->frame + currentBuffer->viewFrame;
 }
 
-static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames) 
+static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames)
 {
     int i;
 
@@ -116,7 +142,7 @@ static FrameBuffer* frameBufferFlipViewFrame4(int mixFrames)
             currentBuffer->viewFrame = i;
         }
     }
-        
+
     if (mixFrames) {
         int secondFrame = 0;
         int viewAge = 0;
@@ -143,7 +169,22 @@ static FrameBuffer* frameBufferFlipDrawFrame1()
     if (currentBuffer == NULL) {
         return NULL;
     }
-    return currentBuffer->frame; 
+    return currentBuffer->frame;
+}
+
+static FrameBuffer* frameBufferFlipDrawFrame2()
+{
+    FrameBuffer* frame;
+
+    if (currentBuffer == NULL) {
+        return NULL;
+    }
+    waitSem();
+    currentBuffer->drawFrame = currentBuffer->viewFrame;
+    frame = currentBuffer->frame + currentBuffer->drawFrame;
+    frame->age = ++currentBuffer->currentAge;
+    signalSem();
+    return frame;
 }
 
 static FrameBuffer* frameBufferFlipDrawFrame3()
@@ -164,6 +205,7 @@ static FrameBuffer* frameBufferFlipDrawFrame3()
     signalSem();
     return frame;
 }
+
 
 static FrameBuffer* frameBufferFlipDrawFrame4()
 {
@@ -216,13 +258,17 @@ FrameBuffer* frameBufferGetDrawFrame()
     if (currentBuffer == NULL) {
         return NULL;
     }
-    
+#ifdef WII
+
+    frameBuffer = currentBuffer->frame + currentBuffer->drawFrame;
+#else
     if (confBlendFrames) {
         frameBuffer = currentBuffer->blendFrame + currentBuffer->currentBlendFrame;
     }
     else {
         frameBuffer = currentBuffer->frame + currentBuffer->drawFrame;
     }
+#endif
 
     return frameBuffer;
 }
@@ -243,7 +289,7 @@ void frameBufferSetFrameCount(int frameCount)
     signalSem();
 }
 
-FrameBuffer* frameBufferFlipViewFrame(int mixFrames) 
+FrameBuffer* frameBufferFlipViewFrame(int mixFrames)
 {
     FrameBuffer* frameBuffer;
 
@@ -252,6 +298,9 @@ FrameBuffer* frameBufferFlipViewFrame(int mixFrames)
     }
 
     switch (frameBufferCount) {
+    case 2:
+        frameBuffer = frameBufferFlipViewFrame2(mixFrames);
+        break;
     case 3:
         frameBuffer = frameBufferFlipViewFrame3(mixFrames);
         break;
@@ -265,19 +314,22 @@ FrameBuffer* frameBufferFlipViewFrame(int mixFrames)
     return frameBuffer;
 }
 
-FrameBuffer* frameBufferFlipDrawFrame() 
+FrameBuffer* frameBufferFlipDrawFrame()
 {
     FrameBuffer* frameBuffer;
 
+#ifdef WII
+    archThreadSleep(0); // wait one frame
+#endif
     if (currentBuffer == NULL) {
         return NULL;
     }
-
+#ifndef WII
     if (confBlendFrames) {
-        mixFrame(currentBuffer->frame + currentBuffer->drawFrame, 
+        mixFrame(currentBuffer->frame + currentBuffer->drawFrame,
                  &currentBuffer->blendFrame[0], &currentBuffer->blendFrame[1], 50);
     }
-
+#endif
     curScanline = 0;
 
     if (mixMode == MIXMODE_EXTERNAL) {
@@ -291,6 +343,9 @@ FrameBuffer* frameBufferFlipDrawFrame()
     }
 
     switch (frameBufferCount) {
+    case 2:
+        frameBuffer = frameBufferFlipDrawFrame2();
+        break;
     case 3:
         frameBuffer = frameBufferFlipDrawFrame3();
         break;
@@ -301,18 +356,22 @@ FrameBuffer* frameBufferFlipDrawFrame()
         frameBuffer = frameBufferFlipDrawFrame1();
         break;
     }
-    
+#ifndef WII
     if (confBlendFrames) {
         currentBuffer->currentBlendFrame ^= 1;
         frameBuffer = currentBuffer->blendFrame + currentBuffer->currentBlendFrame;
     }
-
+#endif
     return frameBuffer;
 }
 
 void frameBufferSetBlendFrames(int blendFrames)
 {
+#ifdef WII
+    (void)blendFrames;
+#else
     confBlendFrames = blendFrames;
+#endif
 }
 
 FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultHorizZoom)
@@ -330,7 +389,7 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
             frameData->frame[i].line[j].doubleWidth = defaultHorizZoom - 1;
         }
     }
-
+#ifndef WII
     for (i = 0; i < 2; i++) {
         int j;
 
@@ -340,7 +399,7 @@ FrameBufferData* frameBufferDataCreate(int maxWidth, int maxHeight, int defaultH
             frameData->blendFrame[i].line[j].doubleWidth = defaultHorizZoom - 1;
         }
     }
-
+#endif
     return frameData;
 }
 
@@ -350,7 +409,12 @@ void frameBufferDataDestroy(FrameBufferData* frameData)
         currentBuffer = NULL;
     }
     free(frameData);
+    if (semaphore != NULL) {
+        archSemaphoreDestroy(semaphore);
+        semaphore = NULL;
+    }
 }
+
 
 void frameBufferSetActive(FrameBufferData* frameData)
 {
@@ -366,12 +430,12 @@ void frameBufferSetMixMode(FrameBufferMixMode mode,  FrameBufferMixMode mask)
     mixMask = mask;
 }
 
-FrameBufferData* frameBufferGetActive() 
+FrameBufferData* frameBufferGetActive()
 {
     return currentBuffer;
 }
 
-FrameBuffer* frameBufferGetWhiteNoiseFrame() 
+FrameBuffer* frameBufferGetWhiteNoiseFrame()
 {
     static FrameBuffer* frameBuffer = NULL;
     UInt16 colors[32];
@@ -440,7 +504,7 @@ static FrameBuffer* mixFrame(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int
 
     if (d == NULL) {
         if (dst == NULL) {
-            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer));
         }
         d = dst;
     }
@@ -468,11 +532,19 @@ static FrameBuffer* mixFrame(FrameBuffer* d, FrameBuffer* a, FrameBuffer* b, int
 
         d->line[y].doubleWidth = a->line[y].doubleWidth;
         for (x = 0; x < width; x ++) {
+#ifdef WII
+            UInt32 av = ((ap[x] >> 1) & 0xffe0ffe0) | (ap[x] & 0x001f001f);
+            UInt32 bv = ((bp[x] >> 1) & 0xffe0ffe0) | (bp[x] & 0x001f001f);
+            UInt32 dd = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
+            dp[x] = ((dd << 1) & 0xffc0ffc0) | (dd & 0x001f001f);
+#else
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
             dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
                     ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5) |
                     (av & 0x80008000);
+#endif
         }
     }
 
@@ -490,7 +562,7 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffe
 
     if (d == NULL) {
         if (dst == NULL) {
-            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer)); 
+            dst = (FrameBuffer*)malloc(sizeof(FrameBuffer));
         }
         d = dst;
     }
@@ -520,7 +592,7 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffe
         UInt32* ap;
         UInt32* bp;
         UInt32* dp;
-        
+
         if (y & 1) {
             ap = (UInt32*)a->line[y / 2].buffer;
             bp = (UInt32*)b->line[y / 2].buffer;
@@ -538,13 +610,22 @@ static FrameBuffer* mixFrameInterlace(FrameBuffer* d, FrameBuffer* a, FrameBuffe
         d->line[y].doubleWidth = a->line[y / 2].doubleWidth;
 
         for (x = 0; x < width; x++) {
+#ifdef WII
+            UInt32 av = ((ap[x] >> 1) & 0xffe0ffe0) | (ap[x] & 0x001f001f);
+            UInt32 bv = ((bp[x] >> 1) & 0xffe0ffe0) | (bp[x] & 0x001f001f);
+            UInt32 dd = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
+                    ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5);
+            dp[x] = ((dd << 1) & 0xffc0ffc0) | (dd & 0x001f001f);
+#else
             UInt32 av = ap[x];
             UInt32 bv = bp[x];
             dp[x] = ((((av & M1) * p + (bv & M1) * n) >> 5) & M1) |
                     ((((((av >> 5) & M2) * p + ((bv >> 5) & M2) * n) >> 5) & M2) << 5) |
                     (av & 0x80008000);
+#endif
         }
     }
+
 
     return d;
 }
@@ -601,10 +682,10 @@ static void frameBufferExternal(FrameBuffer* a)
     if (pImage == NULL) {
         pImage = getBlackImage();
     }
-    
+
     if (scaleHeight) {
         a->lines *= 2;
-        
+
         for (y = 0; y < a->lines; y++) {
             memcpy(a->line[y].buffer, pImage + y * imageWidth, imageWidth * sizeof(UInt16));
             if (scaleWidth) {
@@ -657,7 +738,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             if (scaleWidth && a->line[y].doubleWidth) {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x];
-                    if (val & 0x8000) {
+                    if (val & TRANSPARENT) {
                         pDst1[x] = pImg1[x];
                         pDst2[x] = pImg2[x];
                     }
@@ -670,7 +751,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             else {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x / 2];
-                    if (val & 0x8000) {
+                    if (val & TRANSPARENT) {
                         pDst1[x] = pImg1[x];
                         pDst2[x] = pImg2[x];
                         x--;
@@ -686,13 +767,13 @@ static void frameBufferSuperimpose(FrameBuffer* a)
                     }
                 }
             }
-            
+
             if (scaleWidth) {
                 a->line[2*y+0].doubleWidth = 1;
                 a->line[2*y+1].doubleWidth = 1;
             }
         }
-        
+
         a->lines *= 2;
     }
     else {
@@ -708,7 +789,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             if (scaleWidth && a->line[y].doubleWidth) {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x];
-                    if (val & 0x8000) {
+                    if (val & TRANSPARENT) {
                         pDst[x] = pImg[x];
                     }
                     else {
@@ -719,7 +800,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             else {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x / 2];
-                    if (val & 0x8000) {
+                    if (val & TRANSPARENT) {
                         pDst[x] = pImg[x];
                         x--;
                         pDst[x] = pImg[x];

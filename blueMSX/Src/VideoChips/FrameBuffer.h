@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/VideoChips/FrameBuffer.h,v $
 **
-** $Revision: 1.26 $
+** $Revision: 1.27 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2009-07-18 14:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,7 +30,11 @@
 
 #include "../Common/MsxTypes.h"
 
+#ifdef WII
+#define FB_MAX_LINE_WIDTH 544
+#else
 #define FB_MAX_LINE_WIDTH 640
+#endif
 #define FB_MAX_LINES      480
 
 #ifndef NO_FRAMEBUFFER
@@ -47,7 +51,7 @@ typedef void FrameBuffer;
 #else
 typedef struct {
     int age;           // Internal use
-    InterlaceMode interlace; 
+    InterlaceMode interlace;
     int maxWidth;
     int lines;         // Number of lines in frame buffer
     LineBuffer line[FB_MAX_LINES];
@@ -87,7 +91,17 @@ FrameBufferData* frameBufferGetActive();
 
 void frameBufferSetBlendFrames(int blendFrames);
 
-#define videoGetTransparentColor() 0x8000
+#ifdef WII
+#define TRANSPARENT 0x0020
+#define videoGetColor(R, G, B) \
+          ((((int)(R) >> 3) << 11) | (((int)(G) >> 3) << 6) | ((int)(B) >> 3))
+#else
+#define TRANSPARENT 0x8000
+#define videoGetColor(R, G, B) \
+          ((((int)(R) >> 3) << 10) | (((int)(G) >> 3) << 5) | ((int)(B) >> 3))
+#endif
+#define videoGetTransparentColor() TRANSPARENT
+
 
 #ifdef NO_FRAMEBUFFER
 // User implementation
@@ -99,8 +113,6 @@ void   frameBufferSetLineCount(FrameBuffer* frameBuffer, int val);
 int    frameBufferGetLineCount(FrameBuffer* frameBuffer);
 int    frameBufferGetMaxWidth(FrameBuffer* frameBuffer);
 
-Pixel videoGetColor(int R, int G, int B);
-
 #else
 
 #define frameBufferGetLine(frameBuffer, y)              (frameBuffer->line[y].buffer)
@@ -110,12 +122,6 @@ Pixel videoGetColor(int R, int G, int B);
 #define frameBufferSetLineCount(frameBuffer, val)       frameBuffer->lines     = val
 #define frameBufferGetLineCount(frameBuffer)            frameBuffer->lines
 #define frameBufferGetMaxWidth(frameBuffer)             frameBuffer->maxWidth
-
-static Pixel videoGetColor(int R, int G, int B)
-{
-    return ((R >> 3) << 10) | ((G >> 3) << 5) | (B >> 3);
-}
-
 #endif
 
 #endif

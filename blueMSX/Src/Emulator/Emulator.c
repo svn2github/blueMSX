@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/Emulator.c,v $
 **
-** $Revision: 1.66 $
+** $Revision: 1.67 $
 **
-** $Date: 2009-07-18 14:10:27 $
+** $Date: 2009-07-18 14:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -51,9 +51,13 @@
 static int WaitForSync(int maxSpeed, int breakpointHit);
 
 static void*  emuThread;
+#ifndef WII
 static void*  emuSyncEvent;
+#endif
 static void*  emuStartEvent;
+#ifndef WII
 static void*  emuTimer;
+#endif
 static int    emuExitFlag;
 static UInt32 emuSysTime = 0;
 static UInt32 emuFrequency = 3579545;
@@ -132,7 +136,7 @@ void savelog()
             lastPct = newPct;
         }
         fprintf(f, "%c(%d:%d) %.4x: %.2x\n", rw, (v>>26)&3, (v>>24)&3,v & 0xffff, (v >> 16) & 0xff);
-        
+
         if (++i == LOG_SIZE) {
             i = 0;
         }
@@ -140,7 +144,7 @@ void savelog()
     printf("\n");
     fclose(f);
 }
-#else 
+#else
 #define clearlog()
 #define savelog()
 #endif
@@ -157,7 +161,7 @@ static void emuCalcCpuUsage() {
     }
     newSysTime = archGetSystemUpTime(1000);
     emuTimeAverage = 100 * (emuTimeTotal - emuTimeIdle) / (emuTimeTotal / 10);
-    
+
     emuTimeOverflow = emuTimeAverage > 940;
 
     if ((cnt++ & 0x1f) == 0) {
@@ -194,6 +198,7 @@ static int emuUseSynchronousUpdate()
     }
     return P_EMU_SYNCAUTO;
 }
+
 
 UInt32 emulatorGetCpuSpeed() {
     return emuCpuSpeed;
@@ -251,6 +256,7 @@ int emulatorGetSyncPeriod() {
 #endif
 }
 
+#ifndef WII
 static int timerCallback(void* timer) {
     if (properties == NULL) {
         return 1;
@@ -294,8 +300,9 @@ static int timerCallback(void* timer) {
 
     return 1;
 }
+#endif
 
-static void getDeviceInfo(BoardDeviceInfo* deviceInfo) 
+static void getDeviceInfo(BoardDeviceInfo* deviceInfo)
 {
     int i;
 
@@ -323,7 +330,7 @@ static void getDeviceInfo(BoardDeviceInfo* deviceInfo)
 
 }
 
-static void setDeviceInfo(BoardDeviceInfo* deviceInfo) 
+static void setDeviceInfo(BoardDeviceInfo* deviceInfo)
 {
     int i;
 
@@ -370,17 +377,19 @@ static void emulatorThread() {
     ledSetAll(0);
     emuState = EMU_STOPPED;
 
+#ifndef WII
     archTimerDestroy(emuTimer);
+#endif
 
     if (!success) {
         emulationStartFailure = 1;
     }
-    
+
     archEventSet(emuStartEvent);
 }
 
 void emulatorStart(const char* stateName) {
-	dbgEnable();
+        dbgEnable();
 
     archEmulationStartNotification();
 
@@ -393,13 +402,14 @@ void emulatorStart(const char* stateName) {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXAUDIO, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MSXMUSIC, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
-    
+
+
     properties->emulation.pauseSwitch = 0;
     switchSetPause(properties->emulation.pauseSwitch);
 
     machine = machineCreate(properties->emulation.machineName);
 
-    if (machine == NULL) {  
+    if (machine == NULL) {
         archShowStartEmuFailDialog();
         archEmulationStopNotification();
         emuState = EMU_STOPPED;
@@ -410,9 +420,13 @@ void emulatorStart(const char* stateName) {
     boardSetMachine(machine);
 
 #ifndef NO_TIMERS
+#ifndef WII
     emuSyncEvent  = archEventCreate(0);
+#endif
     emuStartEvent = archEventCreate(0);
+#ifndef WII
     emuTimer = archCreateTimer(emulatorGetSyncPeriod(), timerCallback);
+#endif
 #endif
 
     setDeviceInfo(&deviceInfo);
@@ -439,7 +453,7 @@ void emulatorStart(const char* stateName) {
     }
 #else
     emuThread = archThreadCreate(emulatorThread, THREAD_PRIO_HIGH);
-    
+
     archEventWait(emuStartEvent, 3000);
 
     if (emulationStartFailure) {
@@ -457,11 +471,11 @@ void emulatorStart(const char* stateName) {
         strcpy(properties->emulation.machineName, machine->name);
 
         debuggerNotifyEmulatorStart();
-        
+
         emuState = EMU_RUNNING;
     }
 #endif
-} 
+}
 
 void emulatorStop() {
     if (emuState == EMU_STOPPED) {
@@ -477,15 +491,19 @@ void emulatorStop() {
     } while (!emuSuspendFlag);
 
     emuExitFlag = 1;
+#ifndef WII
     archEventSet(emuSyncEvent);
+#endif
     archSoundSuspend();
     archThreadJoin(emuThread, 3000);
     archMidiEnable(0);
     machineDestroy(machine);
     archThreadDestroy(emuThread);
+#ifndef WII
     archEventDestroy(emuSyncEvent);
+#endif
     archEventDestroy(emuStartEvent);
-    
+
     // Reset active indicators in mixer
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_YAMAHA_SFG, 1);
@@ -494,7 +512,7 @@ void emulatorStop() {
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_SCC, 1);
 
     archEmulationStopNotification();
-    
+
     dbgDisable();
     dbgPrint();
     savelog();
@@ -594,6 +612,7 @@ int emulatorSyncScreen()
     return rv;
 }
 
+
 void RefreshScreen(int screenMode) {
 
     lastScreenMode = screenMode;
@@ -604,6 +623,42 @@ void RefreshScreen(int screenMode) {
 }
 
 #ifndef NO_TIMERS
+
+#ifdef WII
+
+static int WaitForSync(int maxSpeed, int breakpointHit)
+{
+    UInt32 diffTime;
+
+    emuMaxEmuSpeed = maxSpeed;
+
+    emuSuspendFlag = 1;
+
+    archPollInput();
+
+    if (emuState != EMU_RUNNING) {
+        archEventSet(emuStartEvent);
+        archThreadSleep(100);
+        emuSuspendFlag = 0;
+        return emuExitFlag ? -1 : 0;
+    }
+
+    emuSuspendFlag = 0;
+
+    if (emuSingleStep) {
+        diffTime = 0;
+    }else{
+        diffTime = 20;
+    }
+
+    if (emuMaxSpeed || emuMaxEmuSpeed) {
+        diffTime *= 10;
+    }
+
+    return emuExitFlag ? -1 : diffTime;
+}
+
+#else
 
 static int WaitForSync(int maxSpeed, int breakpointHit) {
     UInt32 li1;
@@ -622,7 +677,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     li1 = archGetHiresTimer();
 
     emuSuspendFlag = 1;
-        
+
     if (emuSingleStep) {
         debuggerNotifyEmulatorPause();
         emuSingleStep = 0;
@@ -637,12 +692,12 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         archSoundSuspend();
         archMidiEnable(0);
     }
-    
+
     if (emuState != EMU_RUNNING) {
         archEventSet(emuStartEvent);
         emuSysTime = 0;
     }
-    
+
 #ifdef SINGLE_THREADED
     emuExitFlag |= archPollEvent();
 #endif
@@ -667,7 +722,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
             while (timerCallback(NULL) == 0) emuExitFlag |= archPollEvent();
 #endif
             archEventWait(emuSyncEvent, -1);
-            if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {          
+            if (((emuMaxSpeed || emuMaxEmuSpeed) && !emuExitFlag) || overflowCount > 0) {
 #ifdef NO_TIMERS
                 while (timerCallback(NULL) == 0) emuExitFlag |= archPollEvent();
 #endif
@@ -683,7 +738,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     emuTimeIdle  += li2 - li1;
     emuTimeTotal += li2 - tmp;
     tmp = li2;
-    
+
     sysTime = archGetSystemUpTime(1000);
     diffTime = sysTime - emuSysTime;
     emuSysTime = sysTime;
@@ -719,6 +774,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 
     return emuExitFlag ? -1 : diffTime;
 }
+#endif
 
 #else
 #include <windows.h>
@@ -768,8 +824,9 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
         }
     } while (!emuExitFlag && emuState != EMU_RUNNING);
 
+
     emuSuspendFlag = 0;
-    
+
     total += getHiresTimer() - oldTime;
     oldTime = getHiresTimer();
 #if 0
@@ -785,3 +842,4 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 }
 
 #endif
+

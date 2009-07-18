@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Board/Board.c,v $
 **
-** $Revision: 1.78 $
+** $Revision: 1.79 $
 **
-** $Date: 2009-07-18 14:10:27 $
+** $Date: 2009-07-18 14:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -75,8 +75,6 @@ static int boardRunning = 0;
 
 static HdType hdType[MAX_HD_COUNT];
   
-static int cartIdeCount[5];
-
 static int     useRom;
 static int     useMegaRom;
 static int     useMegaRam;
@@ -1263,7 +1261,7 @@ int boardRun(Machine* machine,
         boardInfo.run(boardInfo.cpuRef);
 
         if (periodicTimer != NULL) {
-            boardTimerRemove(periodicTimer);
+            boardTimerDestroy(periodicTimer);
             periodicTimer = NULL;
         }
 
@@ -1595,7 +1593,7 @@ void boardChangeCartridge(int cartNo, RomType romType, char* cart, char* cartZip
     
     if (romType == ROM_UNKNOWN) {
         int size;
-        char* buf = romLoad(cart, cartZip, &size);
+        UInt8* buf = romLoad(cart, cartZip, &size);
         if (buf != NULL) {
             MediaType* mediaType = mediaDbGuessRom(buf, size);
             romType = mediaDbGetRomType(mediaType);
@@ -1852,23 +1850,21 @@ UInt64 boardSystemTime64() {
 
 void boardInit(UInt32* systemTime)
 {
+    static BoardTimer dummy_timer;
     boardSysTime = systemTime;
     oldTime = *systemTime;
     boardSysTime64 = oldTime * HIRES_CYCLES_PER_LORES_CYCLE;
 
     timeAnchor = *systemTime;
-    if (timerList != NULL) {
-        for (;;) {
-            BoardTimer* timer = timerList->next;
-            if (timer == timerList) {
-                break;
-            }
-            boardTimerRemove(timer);
-        }
 
-        free(timerList);
+    if (timerList == NULL) {
+        dummy_timer.next     = &dummy_timer;
+        dummy_timer.prev     = &dummy_timer;
+        dummy_timer.callback = NULL;
+        dummy_timer.ref      = &dummy_timer;
+        dummy_timer.timeout  = 0;
+        timerList = &dummy_timer;
     }
-    timerList = boardTimerCreate(NULL, NULL);
 }
 
 

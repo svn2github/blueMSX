@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMsxAudio.c,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2008-06-01 20:36:24 $
+** $Date: 2009-07-18 14:35:59 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -158,6 +158,8 @@ PhilipsMidi* philipsMidiCreate()
 
 void philipsMidiDestroy(PhilipsMidi* midi)
 {
+    boardTimerDestroy(midi->timerTrans);
+    boardTimerDestroy(midi->timerRecv);
     midiIoDestroy(midi->midiIo);
     archSemaphoreDestroy(midi->semaphore);
 }
