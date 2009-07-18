@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/VeryTinyXpath.cpp,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.8 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2009-07-18 17:16:36 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -27,7 +27,7 @@
 */
 #include "VeryTinyXpath.h"
 #include "tinyxml.h"
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 #include <stdarg.h>
 #ifdef __APPLE__
