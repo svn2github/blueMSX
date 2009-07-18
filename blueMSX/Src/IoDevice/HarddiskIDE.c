@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/HarddiskIDE.c,v $
 **
-** $Revision: 1.10 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2009-07-18 15:08:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -94,7 +94,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         break;
 
     case 0xec: // ATA Identify Device
-        if (!diskReadSector(hd->diskId, hd->sectorData, -1, 0, 0, 0, NULL)) {
+        if (diskReadSector(hd->diskId, hd->sectorData, -1, 0, 0, 0, NULL) != DSKE_OK) {
             setError(hd, 0x44);
             break;
         }
@@ -140,7 +140,7 @@ static void executeCommand(HarddiskIde* hd, UInt8 cmd)
         }
           
         for (i = 0; i < numSectors; i++) {
-            if (!diskReadSector(hd->diskId, hd->sectorData + i * 512, sectorNumber + i + 1, 0, 0, 0, NULL)) {
+            if (diskReadSector(hd->diskId, hd->sectorData + i * 512, sectorNumber + i + 1, 0, 0, 0, NULL) != DSKE_OK) {
                 break;
             }
         }

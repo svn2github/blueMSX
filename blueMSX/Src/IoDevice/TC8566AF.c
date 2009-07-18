@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/TC8566AF.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2009-07-18 15:08:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -292,6 +292,7 @@ void tc8566afIdlePhaseWrite(TC8566AF* tc, UInt8 value)
 	case CMD_FORMAT:
         tc->status0 &= ~(ST0_IC0 | ST0_IC1);
         tc->status1 &= ~(ST1_ND | ST1_NW);
+        tc->status2 &= ~ST2_DD;
 		break;
 
 	case CMD_RECALIBRATE:
@@ -346,13 +347,17 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
 		case 7:
             if (tc->command == CMD_READ_DATA) {
                 int sectorSize;
-        		int rv = diskReadSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
-                                        tc->currentTrack, 0, &sectorSize);
+        		DSKE rv = diskReadSector(tc->drive, tc->sectorBuf, tc->sectorNumber, tc->side, 
+                                         tc->currentTrack, 0, &sectorSize);
                 fdcAudioSetReadWrite(tc->fdcAudio);
                 boardSetFdcActive();
-                if (!rv) {
+                if (rv == DSKE_NO_DATA) {
                     tc->status0 |= ST0_IC0;
                     tc->status1 |= ST1_ND;
+                }
+                if (rv == DSKE_CRC_ERROR) {
+                    tc->status0 |= ST0_IC0;
+                    tc->status2 |= ST2_DD;
                 }
                 tc->mainStatus |= STM_DIO;
             }

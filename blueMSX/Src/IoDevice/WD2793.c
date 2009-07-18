@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/WD2793.c,v $
 **
-** $Revision: 1.15 $
+** $Revision: 1.16 $
 **
-** $Date: 2009-04-20 05:07:32 $
+** $Date: 2009-07-18 15:08:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -100,7 +100,7 @@ struct WD2793 {
 
 static void wd2793ReadSector(WD2793* wd)
 {
-    int rv = 0;
+    DSKE rv = 0;
     int sectorSize = 0;
 
     if (wd->drive >= 0) {
@@ -108,12 +108,15 @@ static void wd2793ReadSector(WD2793* wd)
         fdcAudioSetReadWrite(wd->fdcAudio);
         boardSetFdcActive();
     }
-    if (!rv || wd->diskTrack != wd->regTrack) {
+    if (rv == DSKE_NO_DATA || wd->diskTrack != wd->regTrack) {
 	    wd->regStatus |= ST_RECORD_NOT_FOUND;
 	    wd->intRequest = 1;
 	    wd->regStatus &= ~ST_BUSY;
     }
     else {
+        if (rv == DSKE_CRC_ERROR) {
+            wd->regStatus |= ST_CRC_ERROR;
+        }
 		wd->sectorOffset    = 0;
 		wd->dataRequest     = 0;
         wd->dataReady       = 0;

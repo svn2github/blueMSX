@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/Disk.h,v $
 **
-** $Revision: 1.19 $
+** $Revision: 1.20 $
 **
-** $Date: 2007-03-24 05:20:34 $
+** $Date: 2009-07-18 15:08:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -41,14 +41,20 @@
 
 #define MAXDRIVES (MAX_FDC_COUNT + MAX_DRIVES_PER_HD * MAX_HD_COUNT)
 
+typedef enum {
+    DSKE_OK,
+    DSKE_NO_DATA,
+    DSKE_CRC_ERROR
+} DSKE;
+
 UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
 void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
 UInt8 diskEnabled(int driveId);
 UInt8 diskReadOnly(int driveId);
 UInt8 diskPresent(int driveId);
-UInt8 diskRead(int driveId, UInt8* buffer, int sector);
-UInt8 diskReadSector(int driveId, UInt8* buffer, int sector, int side, int track, int density, int *sectorSize);
+DSKE  diskRead(int driveId, UInt8* buffer, int sector);
+DSKE  diskReadSector(int driveId, UInt8* buffer, int sector, int side, int track, int density, int *sectorSize);
 UInt8 diskWrite(int driveId, UInt8* buffer, int sector);
 UInt8 diskWriteSector(int driveId, UInt8 *buffer, int sector, int side, int track, int density);
 int   diskGetSectorsPerTrack(int driveId);

@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/NEC765.c,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2009-07-18 15:08:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -298,7 +298,8 @@ void nec765IdlePhaseWrite(NEC765* fdc, UInt8 value)
 	case CMD_FORMAT:
         fdc->status0 &= ~(ST0_IC0 | ST0_IC1);
         fdc->status1 &= ~(ST1_ND | ST1_NW);
-		break;
+		fdc->status2 &= ~ST2_DD;
+        break;
 
 	case CMD_RECALIBRATE:
         fdc->status0 &= ~ST0_SE;
@@ -359,14 +360,18 @@ static void nec765CommandPhaseWrite(NEC765* fdc, UInt8 value)
             if (fdc->command == CMD_READ_DATA) {
                 int sectorSize;
     
-        		int rv = diskReadSector(fdc->drive, fdc->sectorBuf, fdc->sectorNumber, fdc->side, 
-                                        fdc->currentTrack, 0, &sectorSize);
+        		DSKE rv = diskReadSector(fdc->drive, fdc->sectorBuf, fdc->sectorNumber, fdc->side, 
+                                         fdc->currentTrack, 0, &sectorSize);
                 
                 fdcAudioSetReadWrite(fdc->fdcAudio);
                 boardSetFdcActive();
-                if (!rv) {
+                if (rv == DSKE_NO_DATA) {
                     fdc->status0 |= ST0_IC0;
                     fdc->status1 |= ST1_ND;
+                }
+                if (rv == DSKE_CRC_ERROR) {
+                    fdc->status0 |= ST0_IC0;
+                    fdc->status2 |= ST2_DD;
                 }
                 fdc->mainStatus |= STM_DIO;
             }
