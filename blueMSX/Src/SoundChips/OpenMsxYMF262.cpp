@@ -1,7 +1,7 @@
 // This file is taken from the openMSX project. 
 // The file has been modified to be built in the blueMSX environment.
 
-// $Id: OpenMsxYMF262.cpp,v 1.7 2008-03-31 22:07:05 hap-hap Exp $
+// $Id: OpenMsxYMF262.cpp,v 1.8 2009-07-18 15:08:35 dvik Exp $
 
 /*
  *
@@ -356,7 +356,7 @@ const byte lfo_am_table[LFO_AM_TAB_ELEMENTS] =
 };
 
 // LFO Phase Modulation table (verified on real YM3812) 
-const char lfo_pm_table[8 * 8 * 2] =
+const int lfo_pm_table[8 * 8 * 2] =
 {
 	// FNUM2/FNUM = 00 0xxxxxxx (0x0000)
 	0, 0, 0, 0, 0, 0, 0, 0,	//LFO PM depth = 0
