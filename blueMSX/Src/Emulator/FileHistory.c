@@ -352,7 +352,7 @@ void updateExtendedCasName(int drive, char* filename, char* zipFile) {
     }
 }
 
-void setExtendedRomName(int drive, char* name) {
+void setExtendedRomName(int drive, const char* name) {
     strcpy(extendedName[drive], name);
 }
 

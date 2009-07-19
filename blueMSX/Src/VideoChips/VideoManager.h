@@ -56,7 +56,7 @@ void videoManagerReset();
 void videoManagerLoadState();
 void videoManagerSaveState();
 
-int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
+int videoManagerRegister(const char* name, FrameBufferData* frameBuffer, 
                         VideoCallbacks* callbacks, void* ref);
 void videoManagerUnregister(int handle);
 

@@ -31,6 +31,8 @@
 #include "SlotManager.h"
 
 #include "ramMapper.h"
+#include "ramNormal.h"
+#include "romMapperNms1210Rs232.h"
 #include "romMapperStandard.h"
 #include "romMapperMsxDos2.h"
 #include "romMapperKonami5.h"

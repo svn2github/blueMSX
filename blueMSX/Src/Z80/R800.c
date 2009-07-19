@@ -6073,7 +6073,7 @@ void r800Execute(R800* r800) {
             delayIm(r800);
             address = r800->dataBus;
             r800->dataBus = r800->defaultDatabus;
-            executeInstruction(r800, address);
+            executeInstruction(r800, (UInt8)(address & 0xff));
             break;
 
         case 1:

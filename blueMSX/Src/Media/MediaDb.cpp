@@ -1213,7 +1213,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
     
     const char ManbowTag[] = "Mapper: Manbow 2";
     UInt32 tagLength = strlen(ManbowTag);
-    for (i = 0; i < size - tagLength; i++) {
+    for (i = 0; i < (int)(size - tagLength); i++) {
         if (romData[i] == ManbowTag[0]) {
             if (memcmp(romData + i, ManbowTag, tagLength) == 0) {
                 mediaType->romType = ROM_MANBOW2;

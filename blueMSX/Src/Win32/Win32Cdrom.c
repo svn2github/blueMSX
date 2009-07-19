@@ -837,7 +837,7 @@ int archCdromExecCmd(ArchCdrom* cdrom, const UInt8* srcCdb, UInt8* buffer, int b
         tl = 0;
         break;
     }
-    if (tl > bufferSize) tl = bufferSize;
+    if (tl > (ULONG)bufferSize) tl = bufferSize;
 
     if (cdMethod == P_CDROM_DRVIOCTL) {
         sptdwb.DataTransferLength = tl;
@@ -1020,7 +1020,7 @@ void cdromInitialize()
         return;
     }
 
-    HaMax = status & 0xff;
+    HaMax = (BYTE)(status & 0xff);
     DBGLOG1("HaMax %d\n", HaMax);
 
     for(Ha = 0; Ha < HaMax; Ha++){

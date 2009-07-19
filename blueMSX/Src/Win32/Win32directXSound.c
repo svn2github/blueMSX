@@ -186,8 +186,8 @@ static Int32 dxWrite(DxSound* dxSound, Int16 *buffer, UInt32 count)
 	diff-=dxSound->cur_writepos;
 	
 	/* force a short delay/speedup to prevent asynchronous timing */
-	if (diff<(500<<(prop->sound.stereo!=0))) win32timer_uptime_offset(qpf/333);
-	else if (diff>(dxSound->bufferSize>>1)) win32timer_uptime_offset(qpf/-333);
+    if (diff<(500UL<<(prop->sound.stereo!=0?1:0))) win32timer_uptime_offset((int)(qpf/333));
+	else if (diff>(dxSound->bufferSize>>1)) win32timer_uptime_offset((int)(qpf/-333));
     }
     
     return dxWriteOne(dxSound, buffer, count);

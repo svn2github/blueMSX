@@ -42,7 +42,7 @@ void updateFileHistory(char* history, RomType* historyType, char* filename, RomT
 int tempStateExists();
 int fileExist(char* filename, char* zipFile);
 char* fileGetNext(char* filename, char* zipFile);
-void setExtendedRomName(int drive, char* name);
+void setExtendedRomName(int drive, const char* name);
 void updateExtendedRomName(int drive, char* filename, char* zipFile);
 void updateExtendedDiskName(int drive, char* filename, char* zipFile);
 void updateExtendedCasName(int drive, char* filename, char* zipFile);

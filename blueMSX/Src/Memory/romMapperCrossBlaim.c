@@ -130,7 +130,6 @@ int romMapperCrossBlaimCreate(char* filename, UInt8* romData,
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
     RomMapperCrossBlaim* rm;
-    int i;
 
     if (size < 0x8000) {
         return 0;

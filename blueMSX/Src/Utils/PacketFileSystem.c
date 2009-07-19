@@ -221,7 +221,7 @@ size_t pkg_fread(void* buffer, size_t size, size_t count, FILE* file)
         return -1;
     }
 
-    if (pkg_file->pos + count * size > pkg_file->length) {
+    if (pkg_file->pos + (int)(count * size) > pkg_file->length) {
         count = (pkg_file->length - pkg_file->pos) / size;
     }
 

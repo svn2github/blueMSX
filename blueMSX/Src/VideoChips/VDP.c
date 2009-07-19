@@ -976,8 +976,6 @@ static UInt8 readNoTimingCheck(VDP* vdp, UInt16 ioPort)
 
 static UInt8 read(VDP* vdp, UInt16 ioPort) 
 {
-    UInt8 value;
-
     if (vdp->vdpVersion == VDP_TMS9929A || vdp->vdpVersion == VDP_TMS99x8A) {
         checkVramAccessTimeTms(vdp);
     }

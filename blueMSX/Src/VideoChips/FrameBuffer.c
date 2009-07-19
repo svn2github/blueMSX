@@ -738,7 +738,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             if (scaleWidth && a->line[y].doubleWidth) {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x];
-                    if (val & TRANSPARENT) {
+                    if (val & BKMODE_TRANSPARENT) {
                         pDst1[x] = pImg1[x];
                         pDst2[x] = pImg2[x];
                     }
@@ -751,7 +751,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             else {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x / 2];
-                    if (val & TRANSPARENT) {
+                    if (val & BKMODE_TRANSPARENT) {
                         pDst1[x] = pImg1[x];
                         pDst2[x] = pImg2[x];
                         x--;
@@ -789,7 +789,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             if (scaleWidth && a->line[y].doubleWidth) {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x];
-                    if (val & TRANSPARENT) {
+                    if (val & BKMODE_TRANSPARENT) {
                         pDst[x] = pImg[x];
                     }
                     else {
@@ -800,7 +800,7 @@ static void frameBufferSuperimpose(FrameBuffer* a)
             else {
                 for (x = imageWidth - 1; x >= 0; x--) {
                     UInt16 val = pSrc[x / 2];
-                    if (val & TRANSPARENT) {
+                    if (val & BKMODE_TRANSPARENT) {
                         pDst[x] = pImg[x];
                         x--;
                         pDst[x] = pImg[x];

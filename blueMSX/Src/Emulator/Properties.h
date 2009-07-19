@@ -446,6 +446,8 @@ Properties* propCreate(int useDefault,
 void propSave(Properties* pProperties);
 void propDestroy(Properties* pProperties);
 
+void propertiesSetDirectory(const char* defDir, const char* altDir);
+
 Properties* propGetGlobalProperties();
 
 #endif

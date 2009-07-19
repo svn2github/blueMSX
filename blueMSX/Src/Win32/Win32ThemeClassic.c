@@ -33,6 +33,7 @@
 #include "Resource.h"
 #include "FileHistory.h"
 #include "Properties.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

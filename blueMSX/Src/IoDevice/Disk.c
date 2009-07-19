@@ -546,7 +546,7 @@ void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile)
     drivesIsCdrom[driveId] = fileName && strcmp(fileName, DISK_CDROM) == 0;
 }
 
-static char *makeErrorsFileName(char *fileName)
+static char *makeErrorsFileName(const char *fileName)
 {
     char *p, *fname = (char*)malloc(strlen(fileName)+4);
     strcpy(fname, fileName);

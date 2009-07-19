@@ -368,7 +368,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
         }
 
-        saveStateDestroy(state);
+        saveStateDestroy();
     }
 
     // go back to idle state
@@ -691,7 +691,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
         }
 
-        saveStateDestroy(state);
+        saveStateDestroy();
     }
 
     // go back to idle state
@@ -950,7 +950,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
         }
 
-        saveStateDestroy(state);
+        saveStateDestroy();
     }
 
     // go back to idle state

@@ -2236,7 +2236,7 @@ static int printerCreate(void)
     hBitmap = CreateCompatibleBitmap(hdcPrinter, width, height);
     DeleteObject(SelectObject(hdcMem, hBitmap));
 
-    SetBkMode(hdcMem, TRANSPARENT);
+    SetBkMode(hdcMem, BKMODE_TRANSPARENT);
 
     eraseBackground(hdcMem);
     stPrtRam.uiPrintAreaTop    = (UINT)-1;

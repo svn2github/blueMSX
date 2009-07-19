@@ -133,7 +133,7 @@ char* videoManagerGetName(int index)
     return videoManager.di[index].name;
 }
 
-int videoManagerRegister(char* name, FrameBufferData* frameBuffer, 
+int videoManagerRegister(const char* name, FrameBufferData* frameBuffer, 
                          VideoCallbacks* callbacks, void* ref)
 {
     if (videoManager.count >= MAX_DEVICES) {

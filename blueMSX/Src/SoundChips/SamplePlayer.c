@@ -95,8 +95,8 @@ void samplePlayerStopAfter(SamplePlayer* samplePlayer, int loops)
 
 void samplePlayerSetIndex(SamplePlayer* samplePlayer, int index)
 {
-	if (samplePlayer->playAttack&&index>=samplePlayer->attackBufferSize) index=0;
-	else if (index>=samplePlayer->loopBufferSize) index=0;
+	if (samplePlayer->playAttack&&index>=(int)samplePlayer->attackBufferSize) index=0;
+	else if (index>=(int)samplePlayer->loopBufferSize) index=0;
 	samplePlayer->index=index;
 }
 

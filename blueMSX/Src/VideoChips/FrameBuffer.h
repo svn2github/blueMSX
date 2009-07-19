@@ -92,15 +92,15 @@ FrameBufferData* frameBufferGetActive();
 void frameBufferSetBlendFrames(int blendFrames);
 
 #ifdef WII
-#define TRANSPARENT 0x0020
+#define BKMODE_TRANSPARENT 0x0020
 #define videoGetColor(R, G, B) \
           ((((int)(R) >> 3) << 11) | (((int)(G) >> 3) << 6) | ((int)(B) >> 3))
 #else
-#define TRANSPARENT 0x8000
+#define BKMODE_TRANSPARENT 0x8000
 #define videoGetColor(R, G, B) \
           ((((int)(R) >> 3) << 10) | (((int)(G) >> 3) << 5) | ((int)(B) >> 3))
 #endif
-#define videoGetTransparentColor() TRANSPARENT
+#define videoGetTransparentColor() BKMODE_TRANSPARENT
 
 
 #ifdef NO_FRAMEBUFFER

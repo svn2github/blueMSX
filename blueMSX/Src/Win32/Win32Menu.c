@@ -682,8 +682,6 @@ static HMENU menuCreateDisk(int diskNo, Properties* pProperties, Shortcuts* shor
 static HMENU menuCreateNowindSettings(Properties* pProperties)
 {
     HMENU hMenu = CreatePopupMenu();
-    char langBuffer[560];
-
     setMenuColor(hMenu);
 
     AppendMenu(hMenu, MF_STRING | (pProperties->nowind.enableDos2 ? MFS_CHECKED : 0), ID_NOWIND_ENABLEDOS2, "Enable DOS2");
@@ -1422,7 +1420,7 @@ void menuCreate(HWND parent)
     hdc = GetDC(menuHwnd);
     SelectObject(hdc, CreatePen(PS_NULL, 0, 0));
     SelectObject(hdc, (HFONT)SendMessage(CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DISKIMAGE), menuHwnd, dummyProc), WM_GETFONT, 0, 0));
-    SetBkMode (hdc, TRANSPARENT);
+    SetBkMode (hdc, BKMODE_TRANSPARENT);
     SetTextColor(hdc, 0);
     ReleaseDC(menuHwnd, hdc);
 }
