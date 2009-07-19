@@ -7,7 +7,7 @@
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Tomas Karlsson
+** Copyright (C) 2003-2006 Daniel Vik, Tomas Karlsson
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -157,6 +157,10 @@ static void write(RomMapperSvi738Fdc* rm, UInt16 address, UInt8 value)
                 default:
                     wd2793SetDrive(rm->fdc, -1);
             }
+            break;
+        case 0x3fbe:	// Set CP/M boot
+            break;
+        case 0x3fbf:	// Set DOS boot
             break;
     }
 }       
