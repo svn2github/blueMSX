@@ -1420,7 +1420,7 @@ void menuCreate(HWND parent)
     hdc = GetDC(menuHwnd);
     SelectObject(hdc, CreatePen(PS_NULL, 0, 0));
     SelectObject(hdc, (HFONT)SendMessage(CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DISKIMAGE), menuHwnd, dummyProc), WM_GETFONT, 0, 0));
-    SetBkMode (hdc, BKMODE_TRANSPARENT);
+    SetBkMode (hdc, TRANSPARENT);
     SetTextColor(hdc, 0);
     ReleaseDC(menuHwnd, hdc);
 }
