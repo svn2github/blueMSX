@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/TokenExtract.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Utils/TokenExtract.c,v $
 **
 ** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:47 $
+** $Date: 2008/03/30 18:38:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -57,6 +57,24 @@ char* extractToken(char* szLine, int argNo) {
         }
     }
     return argBuf;
+}
+
+char* extractTokenEx(char* szLine, int argNo, char *dir) {
+    static char argBuf[512];
+    char *p;
+
+    p = extractToken(szLine, argNo);
+    if (dir == NULL) {
+        return p;
+    }
+    if( p ) {
+        strcpy(argBuf, dir);
+        strcat(argBuf, "/");
+        strcat(argBuf, p);
+        return argBuf;
+    }else{
+        return NULL;
+    }
 }
 
 char* extractTokens(char* szLine, int argNo) {

@@ -2237,6 +2237,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Utils\VeryTinyXpath.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Utils\ZipFromMem.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Utils\ZipFromMem.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Utils\ziphelper.c">
 			</File>
 			<File

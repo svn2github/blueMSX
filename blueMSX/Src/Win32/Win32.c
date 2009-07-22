@@ -2823,7 +2823,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     updateMenu(0);
 
-    if (emuTryStartWithArguments(pProperties, szLine) < 0) {           
+    if (emuTryStartWithArguments(pProperties, szLine, NULL) < 0) {           
         exit(0);
         return 0;
     }

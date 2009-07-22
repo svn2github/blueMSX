@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.h,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Utils/ziphelper.h,v $
 **
-** $Revision: 1.5 $
+** $Revision: 1.4 $
 **
-** $Date: 2009-07-18 14:10:27 $
+** $Date: 2008/03/30 18:38:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,12 +28,26 @@
 #ifndef ZIPHELPER_H
 #define ZIPHELPER_H
 
+#include "unzip.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef void(*ZIP_EXTRACT_CB)(int, int);
+
 void zipCacheReadOnlyZip(const char* zipName);
 void* zipLoadFile(const char* zipName, const char* fileName, int* size);
 int zipSaveFile(const char* zipName, const char* fileName, int append, void* buffer, int size);
+int zipFileExists(const char* zipName, const char* fileName);
 char* zipGetFileList(const char* zipName, const char* ext, int* count);
 int zipHasFileType(char* zipName, char* ext);
-
+int zipExtractCurrentfile(unzFile uf, int overwrite, const char* password);
+int zipExtract(unzFile uf, int overwrite, const char* password, ZIP_EXTRACT_CB progress_callback);
 void* zipCompress(void* buffer, int size, unsigned long* retSize);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cvsroot/bluemsx/blueMSX/Src/Emulator/CommandLine.h,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Utils/ziphelper.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.4 $
 **
-** $Date: 2008/03/30 18:38:40 $
+** $Date: 2008/03/30 18:38:47 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,15 +25,21 @@
 **
 ******************************************************************************
 */
-#ifndef COMMAND_LINE_H
-#define COMMAND_LINE_H
+#ifndef ZIPFROMMEM_H
+#define ZIPFROMMEM_H
 
-#include "Properties.h"
-
-int emuCheckResetArgument(char* szLine);
-char* emuCheckThemeArgument(char* szLine);
-void emuCheckFullscreenArgument(Properties* properties, char* szLine);
-int emuTryStartWithArguments(Properties* properties, char* cmdLine, char *gamedir);
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+#include "zip.h"
+#include "unzip.h"
+
+extern void fill_fopen_memfunc(zlib_filefunc_def *pzlib_filefunc_def, unsigned int size);
+extern void free_fopen_memfunc(zlib_filefunc_def *pzlib_filefunc_def);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

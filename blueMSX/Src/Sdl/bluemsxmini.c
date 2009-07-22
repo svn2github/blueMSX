@@ -422,7 +422,7 @@ int main(int argc, char **argv)
     boardSetMoonsoundEnable(properties->sound.chip.enableMoonsound);
     boardSetVideoAutodetect(properties->video.detectActiveMonitor);
 
-    i = emuTryStartWithArguments(properties, szLine);
+    i = emuTryStartWithArguments(properties, szLine, NULL);
     if (i < 0) {
         printf("Failed to parse command line\n");
         return 0;

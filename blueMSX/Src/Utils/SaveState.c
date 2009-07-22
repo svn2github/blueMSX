@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/SaveState.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Utils/SaveState.c,v $
 **
-** $Revision: 1.6 $
+** $Revision: 1.5 $
 **
-** $Date: 2009-07-18 14:10:27 $
+** $Date: 2008/06/25 22:26:17 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -34,7 +34,7 @@
 struct SaveState {
     UInt32 size;
     UInt32 offset;
-    UInt32 buffer[0x100000];
+    UInt32 *buffer;
     char   fileName[64];
 };
 
@@ -99,14 +99,14 @@ static char* getIndexedFilename(const char* fileName)
     return indexedFileName;
 }
 
-void saveStateCreateForRead(const char* fileName) 
+void saveStateCreateForRead(const char* fileName)
 {
     tableCount = 0;
     strcpy(stateFile, fileName);
     zipCacheReadOnlyZip(fileName);
 }
 
-void saveStateCreateForWrite(const char* fileName) 
+void saveStateCreateForWrite(const char* fileName)
 {
     tableCount = 0;
     strcpy(stateFile, fileName);
@@ -121,14 +121,8 @@ SaveState* saveStateOpenForRead(const char* fileName) {
     SaveState* state = (SaveState*)malloc(sizeof(SaveState));
     Int32 size = 0;
     void* buffer = zipLoadFile(stateFile, getIndexedFilename(fileName), &size);
-    if (buffer != 0) {
-        memcpy(state->buffer, buffer, size);
-        free(buffer);
-    }
-    else {
-        memset(state->buffer, 0, 32);
-    }
 
+    state->buffer = buffer;
     state->size = size / sizeof(UInt32);
     state->offset = 0;
     state->fileName[0] = 0;
@@ -141,9 +135,10 @@ SaveState* saveStateOpenForWrite(const char* fileName) {
 
     state->size      = 0;
     state->offset    = 0;
-    
+    state->buffer    = NULL;
+
     strcpy(state->fileName, getIndexedFilename(fileName));
-    
+
     return state;
 }
 
@@ -151,22 +146,32 @@ void saveStateClose(SaveState* state) {
     if (state->fileName[0]) {
         zipSaveFile(stateFile, state->fileName, 1, state->buffer, state->offset * sizeof(UInt32));
     }
+    if (state->buffer != NULL) {
+        free(state->buffer);
+    }
     free(state);
 }
 
-void saveStateSet(SaveState* state, const char* tagName, UInt32 value) 
+static void stateExtendBuffer(SaveState* state, UInt32 extend) {
+    state->size += extend;
+    state->buffer = realloc(state->buffer, state->size * sizeof(UInt32));
+}
+
+void saveStateSet(SaveState* state, const char* tagName, UInt32 value)
 {
     checkTag(state, tagName);
 
+    stateExtendBuffer(state, 3);
     state->buffer[state->offset++] = tagFromName(tagName);
     state->buffer[state->offset++] = sizeof(UInt32);
     state->buffer[state->offset++] = value;
 }
 
-void saveStateSetBuffer(SaveState* state, const char* tagName, void* buffer, UInt32 length) 
+void saveStateSetBuffer(SaveState* state, const char* tagName, void* buffer, UInt32 length)
 {
     checkTag(state, tagName);
 
+    stateExtendBuffer(state, 2 + (length + sizeof(UInt32) - 1) / sizeof(UInt32));
     state->buffer[state->offset++] = tagFromName(tagName);
     state->buffer[state->offset++] = length;
     memcpy(state->buffer + state->offset, buffer, length);

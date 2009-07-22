@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/SoundChips/MsxPsg.c,v $
 **
-** $Revision: 1.16 $
+** $Revision: 1.15 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2008/09/09 04:40:32 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -224,7 +224,12 @@ static void destroy(MsxPsg* msxPsg)
     joystickPortUpdateHandlerUnregister();
     deviceManagerUnregister(msxPsg->deviceHandle);
     dacDestroy(msxPsg->dac);
-    
+    if (msxPsg->devFun[0] != NULL && msxPsg->devFun[0]->destroy != NULL) {
+	    msxPsg->devFun[0]->destroy(msxPsg->devFun[0]);
+    }
+    if (msxPsg->devFun[1] != NULL && msxPsg->devFun[1]->destroy != NULL) {
+	    msxPsg->devFun[1]->destroy(msxPsg->devFun[1]);
+    }
     free(msxPsg);
 }
 

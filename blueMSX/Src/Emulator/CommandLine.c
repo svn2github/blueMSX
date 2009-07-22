@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Emulator/CommandLine.c,v $
 **
-** $Revision: 1.37 $
+** $Revision: 1.35 $
 **
-** $Date: 2009-04-30 03:53:28 $
+** $Date: 2008/08/31 06:13:13 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -13,7 +13,7 @@
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -66,49 +66,49 @@ static int isRomFileType(char* filename, char* inZip) {
     if (isFileExtension(filename, ".zip")) {
         int count;
         char* fileList;
-        
+
         fileList = zipGetFileList(filename, ".rom", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".ri", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".mx1", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".mx2", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".col", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".sg", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".sc", &count);
         if (fileList) {
             strcpy(inZip, fileList);
@@ -134,42 +134,42 @@ static int isDskFileType(char* filename, char* inZip) {
     if (isFileExtension(filename, ".zip")) {
         int count;
         char* fileList;
-        
+
         fileList = zipGetFileList(filename, ".dsk", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".di1", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".di2", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".360", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".720", &count);
         if (fileList) {
             strcpy(inZip, fileList);
             free(fileList);
             return 1;
         }
-        
+
         fileList = zipGetFileList(filename, ".sf7", &count);
         if (fileList) {
             strcpy(inZip, fileList);
@@ -194,7 +194,7 @@ static int isCasFileType(char* filename, char* inZip) {
     if (isFileExtension(filename, ".zip")) {
         int count;
         char* fileList;
-        
+
         fileList = zipGetFileList(filename, ".cas", &count);
         if (fileList) {
             strcpy(inZip, fileList);
@@ -219,8 +219,8 @@ static int checkArg(const char* arg, const char* value) {
 int emuCheckResetArgument(char* cmdLine) {
     int i;
     char*   argument;
-    
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+
+    for (i = 0; (argument = extractToken(cmdLine, i)) != NULL; i++) {
         if (checkArg(argument, "reset")) {
             return 1;
         }
@@ -236,10 +236,10 @@ char* emuCheckThemeArgument(char* cmdLine){
     static char themeName[PROP_MAXPATH];
     int i;
     char* argument;
-    
+
     themeName[0] = 0;
 
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+    for (i = 0; (argument = extractToken(cmdLine, i)) != NULL; i++) {
         if (checkArg(argument, "theme")) {
             argument = extractToken(cmdLine, i + 1);
             if (argument != NULL) {
@@ -262,14 +262,14 @@ void emuCheckFullscreenArgument(Properties* properties, char* cmdLine){
 
 //    properties->video.windowSize = P_VIDEO_SIZEX2;
 
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+    for (i = 0; (argument = extractToken(cmdLine, i)) != NULL; i++) {
         if (checkArg(argument, "fullscreen")) {
             properties->video.windowSize = P_VIDEO_SIZEFULLSCREEN;
         }
     }
 }
 
-static int emuStartWithArguments(Properties* properties, char* commandLine) {
+static int emuStartWithArguments(Properties* properties, char* commandLine, char *gamedir) {
     int i;
     char    cmdLine[512] = "";
     char*   argument;
@@ -289,7 +289,11 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     char    cas[512] = "";
     char    caszip[256] = "";
     int     fullscreen = 0;
+#ifdef WII
+    int     startEmu = 1; // always start
+#else
     int     startEmu = 0;
+#endif
 
     if (commandLine[0] != '/' && commandLine[1] == ':') {
         char* ptr;
@@ -308,13 +312,13 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     // If one argument, assume it is a rom or disk to run
     if (!extractToken(cmdLine, 1)) {
         argument = extractToken(cmdLine, 0);
-        
-        if (*argument != '/') {
+
+        if (argument && *argument != '/') {
             if (*argument == '\"') argument++;
 
             if (*argument) {
                 int i;
-                
+
                 for (i = 0; i < PROP_MAX_CARTS; i++) {
                     properties->media.carts[i].fileName[0] = 0;
                     properties->media.carts[i].fileNameInZip[0] = 0;
@@ -337,9 +341,9 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     // If more than one argument, check arguments,
     // set configuration and then run
 
-    for (i = 0; argument = extractToken(cmdLine, i); i++) {
+    for (i = 0; (argument = extractToken(cmdLine, i)) != NULL; i++) {
         if (checkArg(argument, "rom1")) {
-            argument = extractToken(cmdLine, ++i);
+            argument = extractTokenEx(cmdLine, ++i, gamedir);
             if (argument == NULL || !isRomFileType(argument, rom1zip)) return 0; // Invaid argument
             strcpy(rom1, argument);
             startEmu = 1;
@@ -356,7 +360,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             startEmu = 1;
         }
         if (checkArg(argument, "rom2")) {
-            argument = extractToken(cmdLine, ++i);
+            argument = extractTokenEx(cmdLine, ++i, gamedir);
             if (argument == NULL || !isRomFileType(argument, rom2zip)) return 0; // Invaid argument
             strcpy(rom2, argument);
             startEmu = 1;
@@ -373,7 +377,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             startEmu = 1;
         }
         if (checkArg(argument, "diskA")) {
-            argument = extractToken(cmdLine, ++i);
+            argument = extractTokenEx(cmdLine, ++i, gamedir);
             if (argument == NULL || !isDskFileType(argument, diskAzip)) return 0; // Invaid argument
             strcpy(diskA, argument);
             startEmu = 1;
@@ -384,7 +388,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             strcpy(diskAzip, argument);
         }
         if (checkArg(argument, "diskB")) {
-            argument = extractToken(cmdLine, ++i);
+            argument = extractTokenEx(cmdLine, ++i, gamedir);
             if (argument == NULL || !isDskFileType(argument, diskBzip)) return 0; // Invaid argument
             strcpy(diskB, argument);
             startEmu = 1;
@@ -395,7 +399,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
             strcpy(diskBzip, argument);
         }
         if (checkArg(argument, "cas")) {
-            argument = extractToken(cmdLine, ++i);
+            argument = extractTokenEx(cmdLine, ++i, gamedir);
             if (argument == NULL || !isCasFileType(argument, caszip)) return 0; // Invaid argument
             strcpy(cas, argument);
             startEmu = 1;
@@ -505,6 +509,9 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     if (strlen(cas)   && !insertCassette(properties, 0, cas, *caszip ? caszip : NULL, -1)) return 0;
 
     if (strlen(machineName)) strcpy(properties->emulation.machineName, machineName);
+#ifdef WII
+    else strcpy(properties->emulation.machineName, "MSX2 - No Moonsound"); /* If not specified, use MSX2 without moonsound as default */
+#endif
 
     emulatorStop();
     emulatorStart(NULL);
@@ -512,7 +519,7 @@ static int emuStartWithArguments(Properties* properties, char* commandLine) {
     return 1;
 }
 
-int emuTryStartWithArguments(Properties* properties, char* cmdLine) {
+int emuTryStartWithArguments(Properties* properties, char* cmdLine, char *gamedir) {
     if (cmdLine == NULL || *cmdLine == 0) {
         if (appConfigGetInt("autostart", 0) != 0) {
             emulatorStop();
@@ -529,13 +536,13 @@ int emuTryStartWithArguments(Properties* properties, char* cmdLine) {
             sprintf(args, "\"%s", cmdLine + 8);
             ptr = args + strlen(args);
             while(*--ptr == ' ') {
-                *ptr = 0; 
+                *ptr = 0;
             }
             strcat(args, "\"");
-            success = emuStartWithArguments(properties, args);
+            success = emuStartWithArguments(properties, args, gamedir);
         }
         else {
-            success = emuStartWithArguments(properties, cmdLine);
+            success = emuStartWithArguments(properties, cmdLine, gamedir);
         }
         if (!success) {
             return -1;

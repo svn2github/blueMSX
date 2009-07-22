@@ -304,7 +304,7 @@ int main(int argc, char **argv)
 
     XSync(display, 0);
     
-    i = emuTryStartWithArguments(properties, szLine);
+    i = emuTryStartWithArguments(properties, szLine, NULL);
     if (i < 0) {
         printf("Failed to parse command line\n");
         return 0;

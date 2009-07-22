@@ -37,6 +37,240 @@
 #include <math.h>
 #include <string.h>
  
+#ifdef WII
+static UInt16 empty_line_buffer[FB_MAX_LINE_WIDTH];
+
+static int videoRender240(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom,
+                          void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
+{
+    UInt16* pDst1;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    //dstOffset = (dstOffset & ~3) << 2;
+    pDst = (char*)pDst;// + zoom * dstOffset;
+    pDst1 = (UInt16*)pDst;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    for (h = 0; h < height; h+=2) {
+        UInt16* pDst1old = pDst1;
+        UInt16* pSrc1;
+        UInt16* pSrc2;
+        UInt16* pSrc3;
+        UInt16* pSrc4;
+        if (frame->interlace != INTERLACE_ODD) {
+            pSrc1 = frame->line[h].buffer;
+            pSrc2 = frame->line[h].buffer;
+            pSrc3 = frame->line[h+1].buffer;
+            pSrc4 = frame->line[h+1].buffer;
+        }else{
+            pSrc1 = h? frame->line[h-1].buffer : empty_line_buffer;
+            pSrc2 = frame->line[h].buffer;
+            pSrc3 = frame->line[h].buffer;
+            pSrc4 = frame->line[h+1].buffer;
+        }
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
+            while (width--) {
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+            }
+        }
+        else {
+            int width = srcWidth / 4;
+            while (width--) {
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+            }
+        }
+
+        pDst1 = pDst1old + dstPitch * 4;
+    }
+    return zoom;
+}
+
+static int videoRender480(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom,
+                          void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
+{
+    UInt16* pDst1;
+    int height          = frame->lines;
+    int srcWidth        = frame->maxWidth;
+    int h;
+
+    //dstOffset = (dstOffset & ~3) << 2;
+    pDst = (char*)pDst;// + zoom * dstOffset;
+    pDst1 = (UInt16*)pDst;
+
+    dstPitch /= (int)sizeof(UInt16);
+
+    for (h = 0; h < height; h+=4) {
+        UInt16* pDst1old = pDst1;
+        UInt16* pSrc1 = frame->line[h].buffer;
+        UInt16* pSrc2 = frame->line[h+1].buffer;
+        UInt16* pSrc3 = frame->line[h+2].buffer;
+        UInt16* pSrc4 = frame->line[h+3].buffer;
+
+        if (frame->line[h].doubleWidth) {
+            int width = srcWidth / 4 * 2;
+            while (width--) {
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4++;
+            }
+        }
+        else {
+            int width = srcWidth / 4;
+            while (width--) {
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc1;
+                *pDst1++ = *pSrc1++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc2;
+                *pDst1++ = *pSrc2++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc3;
+                *pDst1++ = *pSrc3++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+                *pDst1++ = *pSrc4;
+                *pDst1++ = *pSrc4++;
+            }
+        }
+
+        pDst1 = pDst1old + dstPitch * 4;
+    }
+    return zoom;
+}
+
+/*****************************************************************************
+**
+** Public interface methods
+**
+******************************************************************************
+*/
+
+int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom,
+                void* pDst, int dstOffset, int dstPitch, int canChangeZoom)
+{
+    if (frame == NULL) {
+        return zoom;
+    }
+
+    if (frame->interlace != INTERLACE_NONE && pVideo->deInterlace) {
+        frame = frameBufferDeinterlace(frame);
+    }
+
+    if (frame->lines <= 240) {
+        zoom = videoRender240(pVideo, frame, bitDepth, zoom, pDst, dstOffset, dstPitch, canChangeZoom);
+    }
+    else {
+        zoom = videoRender480(pVideo, frame, bitDepth, zoom, pDst, dstOffset, dstPitch, canChangeZoom);
+    }
+    return zoom;
+}
+
+Video* videoCreate()
+{
+    Video* pVideo = (Video*)calloc(1, sizeof(Video));
+
+    pVideo->deInterlace = 0;
+
+    return pVideo;
+}
+
+void videoDestroy(Video* pVideo)
+{
+    free(pVideo);
+}
+
+void videoUpdateAll(Video* video, Properties* properties)
+{
+    video->deInterlace = properties->video.deInterlace;
+}
+
+#else
+
 #define RGB_MASK 0x7fff
 
 #define MAX_RGB_COLORS (1 << 16)
@@ -2790,3 +3024,4 @@ int videoRender(Video* pVideo, FrameBuffer* frame, int bitDepth, int zoom,
 
     return zoom;
 }
+#endif

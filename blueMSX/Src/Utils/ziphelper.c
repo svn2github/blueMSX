@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Utils/ziphelper.c,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.6 $
 **
-** $Date: 2009-07-18 14:10:27 $
+** $Date: 2008/03/30 21:38:43 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -25,12 +25,18 @@
 **
 ******************************************************************************
 */
+#include "ZipHelper.h"
+
 #include "zip.h"
 #include "unzip.h"
 #include "ctype.h"
+#include "ZipFromMem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <direct.h>
 
 static void toLower(char* str) {
     while (*str) {
@@ -112,77 +118,6 @@ void* _zipLoadFile(const char* zipName, const char* fileName, int* size, zlib_fi
 ***
 ******************************************************************************/
 
-static unsigned long memfile_index;
-static unsigned long memfile_size;
-
-void *fopen_mem_func(void *opaque, const char *filename, int mode)
-{
-    memfile_index = 0;
-    return (void *)filename;
-}
-
-unsigned long fread_mem_func(void *opaque, void *stream, void *buf, unsigned long size)
-{
-    if( memfile_index + size > memfile_size ) {
-        size = memfile_size - memfile_index;
-    }
-    memcpy(buf, (char*)stream + memfile_index, size);
-    memfile_index += size;
-    return size;
-}
-
-unsigned long fwrite_mem_func(void *opaque, void *stream, const void *buf, unsigned long size)
-{
-    return -1;
-}
-
-long ftell_mem_func(void *opaque, void *stream)
-{
-    return memfile_index;
-}
-
-long fseek_mem_func(void *opaque, void *stream, unsigned long offset, int origin)
-{
-    switch (origin)
-    {
-    case ZLIB_FILEFUNC_SEEK_CUR :
-        memfile_index += offset;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
-        memfile_index = memfile_size - offset;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
-        memfile_index = offset;
-        break;
-    default: return -1;
-    }
-    if( memfile_index > memfile_size ) memfile_index = memfile_size;
-    if( memfile_index < 0 ) memfile_index = 0;
-    return 0;
-}
-
-int fclose_mem_func(void *opaque, void *stream)
-{
-    return 0;
-}
-
-int ferror_mem_func(void *opaque, void *stream)
-{
-    return 0;
-}
-
-void fill_fopen_memfunc(zlib_filefunc_def *pzlib_filefunc_def)
-{
-    pzlib_filefunc_def->zopen_file = fopen_mem_func;
-    pzlib_filefunc_def->zread_file = fread_mem_func;
-    pzlib_filefunc_def->zwrite_file = fwrite_mem_func;
-    pzlib_filefunc_def->ztell_file = ftell_mem_func;
-    pzlib_filefunc_def->zseek_file = fseek_mem_func;
-    pzlib_filefunc_def->zclose_file = fclose_mem_func;
-    pzlib_filefunc_def->zerror_file = ferror_mem_func;
-    pzlib_filefunc_def->opaque = NULL;
-}
-
 static char *cacheData = NULL, cacheFile[512];
 static zlib_filefunc_def cacheFilefunc;
 
@@ -201,19 +136,21 @@ void zipCacheReadOnlyZip(const char* zipName)
     if( cacheData != NULL ) {
         free(cacheData);
         cacheData = NULL;
+        free_fopen_memfunc(&cacheFilefunc);
     }
     if( zipName != NULL ) {
         FILE *file;
-        fill_fopen_memfunc(&cacheFilefunc);
         file = fopen(zipName, "rb");
         if( file != NULL ) {
+            unsigned int filesize;
             fseek(file, 0, SEEK_END);
-            memfile_size = ftell(file);
+            filesize = ftell(file);
+            fill_fopen_memfunc(&cacheFilefunc, filesize);
             fseek(file, 0, SEEK_SET);
-            cacheData = malloc(memfile_size);
+            cacheData = malloc(filesize);
             if( cacheData != NULL ) {
-                size_t size = fread(cacheData, 1, memfile_size, file);
-                if( size == memfile_size ) {
+                size_t size = fread(cacheData, 1, filesize, file);
+                if( size == filesize ) {
                     strcpy(cacheFile, zipName);
                 }
             }
@@ -221,7 +158,6 @@ void zipCacheReadOnlyZip(const char* zipName)
         }
     }
 }
-
 
 
 /******************************************************************************
@@ -236,7 +172,7 @@ void zipCacheReadOnlyZip(const char* zipName)
 ***
 *******************************************************************************
 */
-int zipSaveFile(const char* zipName, char* fileName, int append, void* buffer, int size)
+int zipSaveFile(const char* zipName, const char* fileName, int append, void* buffer, int size)
 {
     zipFile zip;
     zip_fileinfo zi;
@@ -356,7 +292,7 @@ int zipFileExists(const char* zipName, const char* fileName)
 ***
 *******************************************************************************
 */
-char* zipGetFileList(char* zipName, char* ext, int* count) {
+char* zipGetFileList(const char* zipName, const char* ext, int* count) {
     char tempName[256];
     char extension[8];
     unzFile zip;
@@ -402,6 +338,198 @@ char* zipGetFileList(char* zipName, char* ext, int* count) {
     unzClose(zip);
 
     return fileArray;
+}
+
+/******************************************************************************
+*** Description
+***     zipExtractCurrentfile - Extracts the current file from the zip
+***     zipExtract - Extracts the whole zip file
+***
+*** Arguments
+***     uf        - The zip file
+***     overwrite - 1 = overwrite files, 0 = do not overwrite files
+***     password  - Optional password for the zip
+***
+*** Return
+***     1 okay,
+***     0 failed.
+***
+*******************************************************************************
+*/
+#define WRITEBUFFERSIZE 8192
+
+static int makedir(const char *newdir)
+{
+    char *buffer;
+    char *p;
+    int len = (int)strlen(newdir);
+
+    if (len <= 0) return 0;
+
+    buffer = (char*)malloc(len+1);
+    strcpy(buffer,newdir);
+
+    if (buffer[len-1] == '/') {
+        buffer[len-1] = '\0';
+    }
+    if (mkdir(buffer, 0777) == 0) {
+        free(buffer);
+        return 1;
+    }
+
+    p = buffer+1;
+    while (1) {
+        char hold;
+
+        while(*p && *p != '\\' && *p != '/') p++;
+        hold = *p;
+        *p = 0;
+        if ((mkdir(buffer, 0777) == -1) && (errno == ENOENT))
+        {
+            printf("couldn't create directory %s\n",buffer);
+            free(buffer);
+            return 0;
+        }
+        if (hold == 0) break;
+        *p++ = hold;
+    }
+    free(buffer);
+    return 1;
+}
+
+int zipExtractCurrentfile(unzFile uf, int overwrite, const char* password)
+{
+    char filename_inzip[256];
+    char* filename_withoutpath;
+    char* p;
+    int err=UNZ_OK;
+    FILE *fout=NULL;
+    void* buf;
+    uInt size_buf;
+
+    unz_file_info file_info;
+    err = unzGetCurrentFileInfo(uf,&file_info,filename_inzip,sizeof(filename_inzip),NULL,0,NULL,0);
+
+    if( err != UNZ_OK ) {
+        printf("error %d with zipfile in unzGetCurrentFileInfo\n",err);
+        return 0;
+    }
+
+    size_buf = WRITEBUFFERSIZE;
+    buf = (void*)malloc(size_buf);
+
+    p = filename_withoutpath = filename_inzip;
+    while ((*p) != '\0') {
+        if (((*p)=='/') || ((*p)=='\\'))
+            filename_withoutpath = p+1;
+        p++;
+    }
+
+    if ((*filename_withoutpath)=='\0') {
+        mkdir(filename_inzip, 0777);
+    }else{
+        const char* write_filename;
+        int skip=0;
+
+        write_filename = filename_inzip;
+
+        err = unzOpenCurrentFilePassword(uf,password);
+        if (err!=UNZ_OK) {
+            printf("error %d with zipfile in unzOpenCurrentFilePassword\n",err);
+        }
+
+        if ((overwrite==0) && (err==UNZ_OK)) {
+            FILE* ftestexist = fopen(write_filename,"rb");
+            if (ftestexist!=NULL) {
+                fclose(ftestexist);
+                skip = 1;
+            }
+        }
+
+        if ((skip==0) && (err==UNZ_OK)) {
+            fout=fopen(write_filename,"wb");
+
+            /* some zipfile don't contain directory alone before file */
+            if( (fout==NULL) && (filename_withoutpath!=(char*)filename_inzip) ) {
+                char c=*(filename_withoutpath-1);
+                *(filename_withoutpath-1)='\0';
+                makedir(write_filename);
+                *(filename_withoutpath-1)=c;
+                fout=fopen(write_filename,"wb");
+            }
+
+            if( fout == NULL ) {
+                printf("error opening %s\n",write_filename);
+            }
+        }
+
+        if (fout!=NULL)
+        {
+            printf(" extracting: %s\n",write_filename);
+            do {
+                err = unzReadCurrentFile(uf,buf,size_buf);
+                if( err < 0 ) {
+                    printf("error %d with zipfile in unzReadCurrentFile\n",err);
+                    break;
+                }
+                if( err > 0 ) {
+                    if (fwrite(buf,err,1,fout)!=1) {
+                        printf("error in writing extracted file\n");
+                        err=UNZ_ERRNO;
+                        break;
+                    }
+                }
+            }while( err > 0 );
+            if( fout ) fclose(fout);
+        }
+
+        if(err == UNZ_OK) {
+            err = unzCloseCurrentFile (uf);
+            if( err != UNZ_OK ) {
+                printf("error %d with zipfile in unzCloseCurrentFile\n",err);
+            }
+        }else{
+            unzCloseCurrentFile(uf); /* don't lose the error */
+        }
+    }
+
+    free(buf);
+    return 1;
+}
+
+int zipExtract(unzFile uf, int overwrite, const char* password,
+               ZIP_EXTRACT_CB progress_callback)
+{
+    uLong i;
+    unz_global_info gi;
+    int err;
+
+    err = unzGetGlobalInfo(uf,&gi);
+    if (err!=UNZ_OK) {
+        printf("error %d with zipfile in unzGetGlobalInfo \n",err);
+        return 0;
+    }
+
+    for (i = 0; i < gi.number_entry; i++)
+    {
+        if( progress_callback ) {
+            progress_callback(gi.number_entry, i);
+        }
+        if( !zipExtractCurrentfile(uf, overwrite, password) ) {
+            return 0;
+        }
+        if ((i+1) < gi.number_entry)
+        {
+            err = unzGoToNextFile(uf);
+            if (err!=UNZ_OK)
+            {
+                printf("error %d with zipfile in unzGoToNextFile\n",err);
+                return 0;
+            }
+        }
+    }
+
+    return 1;
 }
 
 void* zipCompress(void* buffer, int size, unsigned long* retSize)
