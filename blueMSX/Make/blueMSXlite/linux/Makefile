@@ -116,6 +116,7 @@ SOURCE_FILES += LinuxVideoIn.c
 SOURCE_FILES += Patch.c 
 
 SOURCE_FILES += ziphelper.c 
+SOURCE_FILES += ZipFromMem.c
 
 SOURCE_FILES += adler32.c
 SOURCE_FILES += compress.c
