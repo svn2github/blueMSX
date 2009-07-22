@@ -25,7 +25,7 @@
 **
 ******************************************************************************
 */
-#include "ZipHelper.h"
+#include "ziphelper.h"
 
 #include "zip.h"
 #include "unzip.h"
@@ -36,7 +36,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <direct.h>
 
 static void toLower(char* str) {
     while (*str) {

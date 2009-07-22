@@ -213,6 +213,7 @@ SOURCE_FILES += romMapperNationalFdc.c
 SOURCE_FILES += romMapperNet.c
 SOURCE_FILES += romMapperNettouYakyuu.c
 SOURCE_FILES += romMapperNms8280VideoDa.c
+SOURCE_FILES += romMapperNms1210Rs232.c
 SOURCE_FILES += romMapperNormal.c
 SOURCE_FILES += romMapperNoWind.c
 SOURCE_FILES += romMapperObsonet.c
@@ -309,6 +310,7 @@ SOURCE_FILES += WDCRC.c
 SOURCE_FILES += MB89352.c
 SOURCE_FILES += ScsiDevice.c
 SOURCE_FILES += ft245.c
+SOURCE_FILES += Z8530.c
 
 SOURCE_FILES += LanguageMinimal.c
 
