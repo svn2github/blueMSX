@@ -36,6 +36,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
+#ifdef WIN32
+#include <direct.h>
+#endif
 
 static void toLower(char* str) {
     while (*str) {
