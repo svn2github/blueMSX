@@ -1469,7 +1469,9 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperSvi727Create(romName, buf, size, slot, subslot, startPage);
             break;
         }
-        free(buf);
+        if( buf != NULL ) {
+            free(buf);
+        }
     }
 
     if (jisyoRom != NULL) {

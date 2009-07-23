@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/MsxJoystick.c,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Input/MsxJoystick.c,v $
 **
 ** $Revision: 1.5 $
 **
-** $Date: 2008-03-30 18:38:40 $
+** $Date: 2008/03/30 18:38:40 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,11 +58,17 @@ static UInt8 read(MsxJoystick* joystick) {
     return ~state & 0x3f;
 }
 
+void destroy(MsxJoystick* joystick)
+{
+    free(joystick);
+}
+
 MsxJoystickDevice* msxJoystickCreate(int controller)
 {
     MsxJoystick* joystick = (MsxJoystick*)calloc(1, sizeof(MsxJoystick));
-    joystick->joyDevice.read   = read;
-    joystick->controller       = controller;
+    joystick->joyDevice.read    = read;
+    joystick->joyDevice.destroy = destroy;
+    joystick->controller        = controller;
     
     return (MsxJoystickDevice*)joystick;
 }

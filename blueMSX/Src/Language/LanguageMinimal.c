@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 #include "Language.h"
+#include <string.h>
 
 EmuLanguageType langFromName(char* name, int translate)
 {

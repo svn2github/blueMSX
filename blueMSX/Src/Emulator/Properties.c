@@ -354,6 +354,16 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     
     properties->joystick.POV0isAxes    = 0;
     
+#ifdef WII
+    // Use joystick by default
+    strcpy(properties->joy1.type, "joystick");
+    properties->joy1.typeId            = JOYSTICK_PORT_JOYSTICK;
+    properties->joy1.autofire          = 0;
+    
+    strcpy(properties->joy2.type, "joystick");
+    properties->joy2.typeId            = JOYSTICK_PORT_JOYSTICK;
+    properties->joy2.autofire          = 0;
+#else
     strcpy(properties->joy1.type, "none");
     properties->joy1.typeId            = 0;
     properties->joy1.autofire          = 0;
@@ -361,7 +371,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     strcpy(properties->joy2.type, "none");
     properties->joy2.typeId            = 0;
     properties->joy2.autofire          = 0;
-    
+#endif
+
     properties->keyboard.configFile[0] = 0;
 
     if (kbdLang == P_KBD_JAPANESE) {
@@ -1006,7 +1017,7 @@ Properties* propCreate(int useDefault, int langType, PropKeyboardLanguage kbdLan
     if (!useDefault) {
         propLoad(properties);
     }
-
+#ifndef WII
     // Verify machine name
     {
         char** machineNames = machineGetAvailable(1);
@@ -1039,7 +1050,7 @@ Properties* propCreate(int useDefault, int langType, PropKeyboardLanguage kbdLan
             }
         }
     }
-
+#endif
     return properties;
 }
 

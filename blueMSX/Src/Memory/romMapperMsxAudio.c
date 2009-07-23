@@ -162,6 +162,7 @@ void philipsMidiDestroy(PhilipsMidi* midi)
     boardTimerDestroy(midi->timerRecv);
     midiIoDestroy(midi->midiIo);
     archSemaphoreDestroy(midi->semaphore);
+    free(midi);
 }
 
 UInt8 philipsMidiReadStatus(PhilipsMidi* midi)

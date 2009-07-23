@@ -258,5 +258,9 @@ extern "C" int gameReaderWriteIo(GrHandle* grHandle, UInt16 port, UInt8 value)
 
 extern "C" int gameReaderSupported()
 {
+#ifdef WII
+    return 0;
+#else
     return 1;
+#endif
 }

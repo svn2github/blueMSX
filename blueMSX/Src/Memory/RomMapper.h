@@ -32,6 +32,7 @@
 #include "MediaDb.h"
 
 
+#ifndef WII
 const char* romTypeToString(RomType romType) {
     switch (romType) {    
     case ROM_STANDARD:    return "Standard";
@@ -223,6 +224,7 @@ const char* romTypeToShortString(RomType romType) {
 
     return "UNKNOWN";
 }
+#endif
 
 extern RomType romMapperGuessRom(const void *buffer, int size, int guess, char* extendedName);
 extern RomType romMapperTypeFromString(const char* name);

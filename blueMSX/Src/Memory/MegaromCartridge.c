@@ -486,6 +486,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_MOONSOUND:
             success &= romMapperMoonsoundCreate(romName, buf, size, 640);
+            buf = NULL; // Buffer ownership is transferred to YMF278
             break;
             
         case ROM_KONAMI4:

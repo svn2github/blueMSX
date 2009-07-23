@@ -368,6 +368,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
         }
 
+        saveStateClose(state);
         saveStateDestroy();
     }
 
@@ -691,6 +692,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * 2);
         }
 
+        saveStateClose(state);
         saveStateDestroy();
     }
 
@@ -950,6 +952,7 @@ void boardCaptureStop() {
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt);
         }
 
+        saveStateClose(state);
         saveStateDestroy();
     }
 
@@ -1353,7 +1356,7 @@ void boardSetDataBus(UInt8 value, UInt8 defValue, int useDef) {
     }
 }
 
-static BoardType boardLoadState()
+static BoardType boardLoadState(void)
 {
     BoardDeviceInfo* di = boardDeviceInfo;
     SaveState* state;
@@ -1487,10 +1490,16 @@ void boardSaveState(const char* stateFile)
     boardInfo.saveState(stateFile);
 
     bitmap = archScreenCapture(SC_SMALL, &size, 1);
-    if (size > 0) {
+    if( bitmap != NULL && size > 0 ) {
+#ifdef WII
+        zipSaveFile(stateFile, "screenshot.png", 1, bitmap, size);
+#else
         zipSaveFile(stateFile, "screenshot.bmp", 1, bitmap, size);
+#endif
     }
-    free(bitmap);
+    if( bitmap != NULL ) {
+        free(bitmap);
+    }
 
     memset(buf, 0, 128);
     time(&ltime);

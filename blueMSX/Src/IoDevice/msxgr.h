@@ -14,7 +14,11 @@
 // Copyright 2005 Vincent van Dam (vincentd@erg.verweg.com)
 // -----------------------------------------------------------------------
 
+#ifdef WII
+#define _CMSXGR
+#else
 #include <windows.h>
+#endif
 
 #ifndef _CMSXGR
 #define _CMSXGR

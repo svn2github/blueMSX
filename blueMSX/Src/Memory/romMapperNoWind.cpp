@@ -163,6 +163,7 @@ typedef struct {
 
 static int nowindLoaded = 0;
 
+#ifdef USE_NOWIND_DLL
 static void diskInsert(RomMapperNoWind* rm, int driveId, int driveNo)
 {
     NoWindProperties* prop = &propGetGlobalProperties()->nowind;
@@ -202,7 +203,7 @@ static void diskInsert(RomMapperNoWind* rm, int driveId, int driveNo)
         }
     }
 }
-
+#endif
 
 static void updateMapper(RomMapperNoWind* rm, UInt8 page)
 {
@@ -252,12 +253,13 @@ static void destroy(void* _rm)
     int i;
 
     amdFlashDestroy(rm->amdFlash);
+#ifdef USE_NOWIND_DLL
     for (i = 0; i < 4; i++) {
         if (rm->deviceId[i] != -1) {
             deviceIdFree(rm->deviceId[i]);
         } 
     }
-#ifdef USE_NOWIND_DLL
+
     if (--nowindLoaded == 0) {
         if (nowindusb_cleanup) nowindusb_cleanup();
         nowindUnloadDll();

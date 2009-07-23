@@ -27,7 +27,11 @@
 */
 #include "VeryTinyXpath.h"
 #include "tinyxml.h"
+#ifdef WII
 #include <string>
+#else
+#include <string.h>
+#endif
 #include <stdlib.h>
 #include <stdarg.h>
 #ifdef __APPLE__

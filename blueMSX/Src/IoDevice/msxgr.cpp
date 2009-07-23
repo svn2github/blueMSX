@@ -15,6 +15,9 @@
 
 #include "msxgr.h"
 
+#ifdef WII
+// Not supported on WII
+#else
 int CMSXGr::Init()
 {
 	// Load DLL.
@@ -154,3 +157,5 @@ int CMSXGr::ReadIO(int nSlot,char* pBuffer,int nAddress,int nLength)
 	nLastError = MSXGR_ReadIO(nSlot,pBuffer,nAddress,nLength);
 	return nLastError;
 }
+#endif
+
