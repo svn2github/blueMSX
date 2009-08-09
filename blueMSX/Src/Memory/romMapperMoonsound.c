@@ -146,6 +146,11 @@ int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramS
         ioPortRegister(0xc6, read, write, rm);
         ioPortRegister(0xc7, read, write, rm);
     }
+    else {
+        // moonsound emulation has ownership of rom data. Need to
+        // free it if its not being used.
+        free(romData);
+    }
 
     reset(rm);
 
